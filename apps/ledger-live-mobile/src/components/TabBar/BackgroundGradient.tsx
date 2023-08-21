@@ -15,7 +15,7 @@ type Props = {
 };
 
 const BackgroundGradient = ({ height, opacity, stops }: Props) => (
-  <StyledSVG style={{ height }}>
+  <StyledSVG pointerEvents="none" style={{ height }}>
     <Defs>
       <LinearGradient
         id="myGradient"
@@ -28,14 +28,7 @@ const BackgroundGradient = ({ height, opacity, stops }: Props) => (
         {stops}
       </LinearGradient>
     </Defs>
-    <Rect
-      x="0"
-      y="0"
-      width="100%"
-      height="100%"
-      opacity={opacity}
-      fill="url(#myGradient)"
-    />
+    <Rect x="0" y="0" width="100%" height="100%" opacity={opacity} fill="url(#myGradient)" />
   </StyledSVG>
 );
 

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended", ":dependencyDashboard"],
+  "dependencyDashboard": true,
+  "labels": ["dependencies"],
+  "automerge": false,
+  "detectGlobalManagerConfig": true,
+  "ignoreScripts": false,
+  "packageRules": [
+    {
+      "description": "Tag Ledger Live Core Team for major updates",
+      "matchUpdateTypes": ["major"],
+      "reviewers": ["team:@ledgerhq/live-eng-core"]
+    }
+  ],
+  "prConcurrentLimit": 10,
+  "separateMinorPatch": true,
+  "timezone": "Europe/Paris",
+  "enabledManagers": ["npm"]
+}

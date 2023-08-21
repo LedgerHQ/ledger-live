@@ -17,9 +17,12 @@ import { SettingsNavigatorStackParamList } from "../../../../components/RootNavi
 
 import NavigationScrollView from "../../../../components/NavigationScrollView";
 import LText from "../../../../components/LText";
-import BottomModal from "../../../../components/BottomModal";
+import QueuedDrawer from "../../../../components/QueuedDrawer";
 
-const commandsById: { [key: string]: (transport: Transport) => unknown } = {
+const commandsById: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: (transport: Transport, ...args: any[]) => unknown;
+} = {
   getDeviceInfo,
   quitApp,
   getAppAndVersion,
@@ -28,10 +31,7 @@ const commandsById: { [key: string]: (transport: Transport) => unknown } = {
   listApps,
 };
 
-type Props = StackNavigatorProps<
-  SettingsNavigatorStackParamList,
-  ScreenName.DebugCommandSender
->;
+type Props = StackNavigatorProps<SettingsNavigatorStackParamList, ScreenName.DebugCommandSender>;
 
 const CommandSender = ({ route }: Props) => {
   const { params } = route || {};
@@ -67,19 +67,12 @@ const CommandSender = ({ route }: Props) => {
   return (
     <NavigationScrollView>
       <Flex style={styles.root}>
-        <Alert
-          type="info"
-          title="Run commands on the selected device and get the output if any."
-        />
+        <Alert type="info" title="Run commands on the selected device and get the output if any." />
         <Flex flex={1} mt={4}>
-          <Tag type={running ? "color" : "shade"}>
-            {running ? "Running" : "Not running"}
-          </Tag>
+          <Tag type={running ? "color" : "shade"}>{running ? "Running" : "Not running"}</Tag>
         </Flex>
         <Flex flex={1} mt={4}>
-          {result ? (
-            <LText monospace>{JSON.stringify(result, undefined, 4)} </LText>
-          ) : null}
+          {result ? <LText monospace>{JSON.stringify(result, undefined, 4)} </LText> : null}
         </Flex>
         {!modalVisible ? (
           <Button
@@ -92,10 +85,7 @@ const CommandSender = ({ route }: Props) => {
             {"Show commands"}
           </Button>
         ) : null}
-        <BottomModal
-          isOpened={modalVisible}
-          onClose={setModalVisible as () => void}
-        >
+        <QueuedDrawer isRequestingToBeOpened={modalVisible} onClose={setModalVisible as () => void}>
           <ScrollView>
             {Object.keys(commandsById).map((key, i) => (
               <Button
@@ -111,7 +101,7 @@ const CommandSender = ({ route }: Props) => {
               </Button>
             ))}
           </ScrollView>
-        </BottomModal>
+        </QueuedDrawer>
       </Flex>
     </NavigationScrollView>
   );

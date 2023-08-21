@@ -10,13 +10,7 @@ export default function AlertTriangle({ size = 16, color }: Props) {
   const { colors } = useTheme();
   return (
     <Svg viewBox="0 0 16 16" width={size} height={size}>
-      <G
-        id="Page-1"
-        stroke="none"
-        strokeWidth="1"
-        fill="none"
-        fillRule="evenodd"
-      >
+      <G id="Page-1" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
         <G id="Group">
           <Path
             d="M6.217,1.188 C6.59490311,0.564573719 7.27097936,0.183803405 8,0.183803405 C8.72902064,0.183803405 9.40509689,0.564573719 9.783,1.188 L15.436,10.625 C15.8071263,11.2673616 15.8085985,12.0586318 15.4398653,12.70237 C15.071132,13.3461083 14.3878488,13.7451505 13.646,13.75 L2.346,13.75 C1.6035504,13.7422431 0.92136012,13.3398671 0.555381149,12.6938401 C0.189402178,12.047813 0.19497167,11.2558161 0.57,10.615 L6.217,1.188 Z"

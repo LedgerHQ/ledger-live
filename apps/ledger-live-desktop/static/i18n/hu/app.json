@@ -1965,13 +1965,13 @@
   "elrond": {
     "account": {
       "subHeader": {
-        "cardTitle": "Powered by Elrond",
+        "cardTitle": "Powered by MultiversX",
         "moreInfo": "More info",
-        "drawerTitle": "Elrond integration",
-        "title": "Elrond eGold (EGLD) token is now available on Ledger Live",
+        "drawerTitle": "MultiversX integration",
+        "title": "MultiversX eGold (EGLD) token is now available on Ledger Live",
         "description": "You can now safely secure your eGold (EGLD) tokens and manage them through Ledger Live.",
-        "description2": "The Elrond eGold (EGLD) Token is native to the Elrond Network and will be used for everything from transactions, staking, smart contracts, governance and validator rewards.",
-        "description3": "We are actively working with the Elrond team to add more functionality, such as staking, native ESDT (Elrond Standard Digital Token) support, and more.",
+        "description2": "The MultiversX eGold (EGLD) Token is native to the MultiversX Network and will be used for everything from transactions, staking, smart contracts, governance and validator rewards.",
+        "description3": "We are actively working with the MultiversX team to add more functionality, such as staking, native ESDT (Elrond Standard Digital Token) support, and more.",
         "website": "The Internet Scale Blockchain"
       }
     }
@@ -2870,10 +2870,6 @@
     "experimental": {
       "disclaimer": "These are experimental features we provide on an \"as is\" basis for our tech savvy community to test. They may change, break or be removed at any time. By enabling them, you agree to use them at your own risk.",
       "features": {
-        "apiTrongridProxy": {
-          "title": "use TronGrid.io",
-          "description": "Use trongrid directly without ledger proxy"
-        },
         "experimentalCurrencies": {
           "title": "Experimental integrations",
           "description": "Use available experimental crypto assets integrations."

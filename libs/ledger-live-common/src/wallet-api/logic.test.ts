@@ -11,16 +11,11 @@ import {
   createFixtureAccount,
   createFixtureCryptoCurrency,
 } from "../mock/fixtures/cryptoCurrencies";
-import {
-  OperationType,
-  SignedOperation,
-  TokenAccount,
-} from "@ledgerhq/types-live";
+import { OperationType, SignedOperation, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 
 import * as converters from "./converters";
 import * as signMessage from "../hw/signMessage/index";
-import { DerivationMode } from "../derivation";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { TrackingAPI } from "./tracking";
 import { cryptocurrenciesById } from "@ledgerhq/cryptoassets/currencies";
@@ -41,7 +36,7 @@ describe("receiveOnAccountLogic", () => {
   const uiNavigation = jest.fn();
   const getAccountIdFromWalletAccountIdSpy = jest.spyOn(
     converters,
-    "getAccountIdFromWalletAccountId"
+    "getAccountIdFromWalletAccountId",
   );
 
   beforeEach(() => {
@@ -68,16 +63,10 @@ describe("receiveOnAccountLogic", () => {
         ...createWalletAPIAccount(),
         address: "Converted address",
       };
-      jest
-        .spyOn(converters, "accountToWalletAPIAccount")
-        .mockReturnValueOnce(convertedAccount);
+      jest.spyOn(converters, "accountToWalletAPIAccount").mockReturnValueOnce(convertedAccount);
 
       // When
-      const result = await receiveOnAccountLogic(
-        context,
-        walletAccountId,
-        uiNavigation
-      );
+      const result = await receiveOnAccountLogic(context, walletAccountId, uiNavigation);
 
       // Then
       expect(uiNavigation).toBeCalledTimes(1);
@@ -141,7 +130,7 @@ describe("broadcastTransactionLogic", () => {
 
   const getAccountIdFromWalletAccountIdSpy = jest.spyOn(
     converters,
-    "getAccountIdFromWalletAccountId"
+    "getAccountIdFromWalletAccountId",
   );
 
   beforeEach(() => {
@@ -174,7 +163,7 @@ describe("broadcastTransactionLogic", () => {
         context,
         walletAccountId,
         signedTransaction,
-        uiNavigation
+        uiNavigation,
       );
 
       // Then
@@ -185,12 +174,7 @@ describe("broadcastTransactionLogic", () => {
 
     it("calls the tracking for success", async () => {
       // When
-      await broadcastTransactionLogic(
-        context,
-        walletAccountId,
-        signedTransaction,
-        uiNavigation
-      );
+      await broadcastTransactionLogic(context, walletAccountId, signedTransaction, uiNavigation);
 
       // Then
       expect(mockWalletAPIBroadcastFail).toBeCalledTimes(0);
@@ -218,12 +202,7 @@ describe("broadcastTransactionLogic", () => {
 
       // When
       await expect(async () => {
-        await broadcastTransactionLogic(
-          context,
-          walletAccountId,
-          signedTransaction,
-          uiNavigation
-        );
+        await broadcastTransactionLogic(context, walletAccountId, signedTransaction, uiNavigation);
       }).rejects.toThrowError("Account required");
 
       // Then
@@ -233,12 +212,7 @@ describe("broadcastTransactionLogic", () => {
     it("calls the tracking for error", async () => {
       // When
       await expect(async () => {
-        await broadcastTransactionLogic(
-          context,
-          walletAccountId,
-          signedTransaction,
-          uiNavigation
-        );
+        await broadcastTransactionLogic(context, walletAccountId, signedTransaction, uiNavigation);
       }).rejects.toThrow();
 
       // Then
@@ -264,7 +238,7 @@ describe("signMessageLogic", () => {
 
   const getAccountIdFromWalletAccountIdSpy = jest.spyOn(
     converters,
-    "getAccountIdFromWalletAccountId"
+    "getAccountIdFromWalletAccountId",
   );
 
   beforeEach(() => {
@@ -278,10 +252,7 @@ describe("signMessageLogic", () => {
     // Given
     const accountId = "ethereumjs:2:ethereum:0x012:";
     const messageToSign = "Message to sign";
-    const spyPrepareMessageToSign = jest.spyOn(
-      signMessage,
-      "prepareMessageToSign"
-    );
+    const spyPrepareMessageToSign = jest.spyOn(signMessage, "prepareMessageToSign");
 
     const walletAccountId = "806ea21d-f5f0-425a-add3-39d4b78209f1";
 
@@ -298,12 +269,7 @@ describe("signMessageLogic", () => {
       uiNavigation.mockResolvedValueOnce(expectedResult);
 
       // When
-      const result = await signMessageLogic(
-        context,
-        walletAccountId,
-        messageToSign,
-        uiNavigation
-      );
+      const result = await signMessageLogic(context, walletAccountId, messageToSign, uiNavigation);
 
       // Then
       expect(uiNavigation).toBeCalledTimes(1);
@@ -335,12 +301,7 @@ describe("signMessageLogic", () => {
     it("returns an error", async () => {
       // When
       await expect(async () => {
-        await signMessageLogic(
-          context,
-          walletAccountId,
-          messageToSign,
-          uiNavigation
-        );
+        await signMessageLogic(context, walletAccountId, messageToSign, uiNavigation);
       }).rejects.toThrowError("account not found");
 
       // Then
@@ -350,12 +311,7 @@ describe("signMessageLogic", () => {
     it("calls the tracking for error", async () => {
       // When
       await expect(async () => {
-        await signMessageLogic(
-          context,
-          walletAccountId,
-          messageToSign,
-          uiNavigation
-        );
+        await signMessageLogic(context, walletAccountId, messageToSign, uiNavigation);
       }).rejects.toThrow();
 
       // Then
@@ -368,10 +324,7 @@ describe("signMessageLogic", () => {
     // Given
     const tokenAccountId = "15";
     const messageToSign = "Message to sign";
-    context.accounts = [
-      createTokenAccount(tokenAccountId),
-      ...context.accounts,
-    ];
+    context.accounts = [createTokenAccount(tokenAccountId), ...context.accounts];
 
     const walletAccountId = "806ea21d-f5f0-425a-add3-39d4b78209f1";
 
@@ -382,12 +335,7 @@ describe("signMessageLogic", () => {
     it("returns an error", async () => {
       // When
       await expect(async () => {
-        await signMessageLogic(
-          context,
-          walletAccountId,
-          messageToSign,
-          uiNavigation
-        );
+        await signMessageLogic(context, walletAccountId, messageToSign, uiNavigation);
       }).rejects.toThrowError("account provided should be the main one");
 
       // Then
@@ -397,12 +345,7 @@ describe("signMessageLogic", () => {
     it("calls the tracking for error", async () => {
       // When
       await expect(async () => {
-        await signMessageLogic(
-          context,
-          walletAccountId,
-          messageToSign,
-          uiNavigation
-        );
+        await signMessageLogic(context, walletAccountId, messageToSign, uiNavigation);
       }).rejects.toThrow();
 
       // Then
@@ -415,10 +358,7 @@ describe("signMessageLogic", () => {
     // Given
     const accountId = "ethereumjs:2:ethereum:0x012:";
     const messageToSign = "Message to sign";
-    const spyPrepareMessageToSign = jest.spyOn(
-      signMessage,
-      "prepareMessageToSign"
-    );
+    const spyPrepareMessageToSign = jest.spyOn(signMessage, "prepareMessageToSign");
 
     const walletAccountId = "806ea21d-f5f0-425a-add3-39d4b78209f1";
 
@@ -435,12 +375,7 @@ describe("signMessageLogic", () => {
 
       // When
       await expect(async () => {
-        await signMessageLogic(
-          context,
-          walletAccountId,
-          messageToSign,
-          uiNavigation
-        );
+        await signMessageLogic(context, walletAccountId, messageToSign, uiNavigation);
       }).rejects.toThrowError("Some error");
 
       // Then
@@ -455,12 +390,7 @@ describe("signMessageLogic", () => {
 
       // When
       await expect(async () => {
-        await signMessageLogic(
-          context,
-          walletAccountId,
-          messageToSign,
-          uiNavigation
-        );
+        await signMessageLogic(context, walletAccountId, messageToSign, uiNavigation);
       }).rejects.toThrow();
 
       // Then
@@ -480,21 +410,16 @@ describe("bitcoinFamillyAccountGetXPubLogic", () => {
 
   const context = createContextContainingAccountId({
     tracking: {
-      bitcoinFamillyAccountXpubRequested:
-        mockBitcoinFamillyAccountXpubRequested,
+      bitcoinFamillyAccountXpubRequested: mockBitcoinFamillyAccountXpubRequested,
       bitcoinFamillyAccountXpubFail: mockBitcoinFamillyAccountXpubFail,
       bitcoinFamillyAccountXpubSuccess: mockBitcoinFamillyAccountXpubSuccess,
     },
-    accountsParams: [
-      { id: "11" },
-      { id: "12" },
-      { id: "13", currency: bitcoinCrypto },
-    ],
+    accountsParams: [{ id: "11" }, { id: "12" }, { id: "13", currency: bitcoinCrypto }],
   });
 
   const getAccountIdFromWalletAccountIdSpy = jest.spyOn(
     converters,
-    "getAccountIdFromWalletAccountId"
+    "getAccountIdFromWalletAccountId",
   );
 
   beforeEach(() => {
@@ -544,10 +469,7 @@ describe("bitcoinFamillyAccountGetXPubLogic", () => {
     getAccountIdFromWalletAccountIdSpy.mockReturnValueOnce(accountId);
 
     // When
-    const result = await bitcoinFamillyAccountGetXPubLogic(
-      context,
-      walletAccountId
-    );
+    const result = await bitcoinFamillyAccountGetXPubLogic(context, walletAccountId);
 
     // Then
     expect(result).toEqual("testxpub");
@@ -566,7 +488,7 @@ function createAppManifest(id = "1"): AppManifest {
     homepageUrl: "https://www.ledger.com",
     supportUrl: "https://www.ledger.com",
     icon: null,
-    platform: "all",
+    platforms: ["ios", "android", "desktop"],
     apiVersion: "1.0.0",
     manifestVersion: "1.0.0",
     branch: "debug",
@@ -583,6 +505,7 @@ function createAppManifest(id = "1"): AppManifest {
     },
     permissions: [],
     domains: [],
+    visibility: "complete",
   };
 }
 
@@ -639,11 +562,8 @@ function createWalletAPIAccount() {
 
 function createMessageData() {
   return {
-    currency: createFixtureCryptoCurrency("eth"),
-    path: "path",
-    derivationMode: "ethM" as DerivationMode,
+    account: createFixtureAccount("17"),
     message: "default message",
-    rawMessage: "raw default message",
   };
 }
 

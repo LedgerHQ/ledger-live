@@ -2,7 +2,7 @@ name: turbo-affected
 description: Returns a list of affected packages
 author: valpinkman
 inputs:
-  head-ref:
+  ref:
     description: "name of branch or ref to compare with (defaults to 'develop'). Git syntax allowed (HEAD^1)"
     default: develop
     required: false

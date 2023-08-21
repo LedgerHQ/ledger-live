@@ -1,10 +1,5 @@
-import {
-  AccountComparator,
-  ImportAccountsReduceInput,
-} from "@ledgerhq/live-common/account/index";
 import { implicitMigration } from "@ledgerhq/live-common/migrations/accounts";
 import type { Account, AccountRaw } from "@ledgerhq/types-live";
-import type { Dispatch } from "redux";
 import { createAction } from "redux-actions";
 import accountModel from "../logic/accountModel";
 import type {
@@ -17,89 +12,50 @@ import type {
   AccountsUpdateAccountWithUpdaterPayload,
 } from "./types";
 import { AccountsActionTypes } from "./types";
+import logger from "../logger";
 
 const version = 0; // FIXME this needs to come from user data
 
 const importStoreAction = createAction<AccountsImportStorePayload>(
   AccountsActionTypes.ACCOUNTS_IMPORT,
 );
-export const importStore = (rawAccounts: { active: { data: AccountRaw }[] }) =>
-  importStoreAction({
-    active:
-      rawAccounts && Array.isArray(rawAccounts.active)
-        ? implicitMigration(
-            rawAccounts.active.map(({ data }) =>
-              accountModel.decode({ data, version }),
-            ),
-          )
-        : [],
-  });
-
-const reorderAccountsAction = createAction<AccountsReorderPayload>(
+export const importStore = (rawAccounts: { active: { data: AccountRaw }[] }) => {
+  const accounts = [];
+  if (rawAccounts && Array.isArray(rawAccounts.active)) {
+    for (const { data } of rawAccounts.active) {
+      try {
+        accounts.push(accountModel.decode({ data, version }));
+      } catch (e) {
+        if (e instanceof Error) logger.critical(e);
+      }
+    }
+  }
+  return importStoreAction(implicitMigration(accounts));
+};
+export const reorderAccounts = createAction<AccountsReorderPayload>(
   AccountsActionTypes.REORDER_ACCOUNTS,
 );
-export const reorderAccounts =
-  (comparator: AccountComparator) => (dispatch: Dispatch) =>
-    dispatch(
-      reorderAccountsAction({
-        comparator,
-      }),
-    );
-
-const importAccountsAction = createAction<AccountsImportAccountsPayload>(
+export const importAccounts = createAction<AccountsImportAccountsPayload>(
   AccountsActionTypes.ACCOUNTS_USER_IMPORT,
 );
-export const importAccounts = (input: ImportAccountsReduceInput) =>
-  importAccountsAction({
-    input,
-  });
-
-const replaceAccountsAction = createAction<AccountsReplaceAccountsPayload>(
+export const replaceAccounts = createAction<AccountsReplaceAccountsPayload>(
   AccountsActionTypes.ACCOUNTS_ADD,
 );
-export const replaceAccounts = (payload: {
-  scannedAccounts: Account[];
-  selectedIds: string[];
-  renamings: Record<string, string>;
-}) =>
-  replaceAccountsAction({
-    ...payload,
-  });
-
-const setAccountsAction = createAction<AccountsSetAccountsPayload>(
+export const setAccounts = createAction<AccountsSetAccountsPayload>(
   AccountsActionTypes.SET_ACCOUNTS,
 );
-export const setAccounts = (accounts: Account[]) =>
-  setAccountsAction({
-    active: accounts,
+export const updateAccountWithUpdater = createAction<AccountsUpdateAccountWithUpdaterPayload>(
+  AccountsActionTypes.UPDATE_ACCOUNT,
+);
+export const updateAccount = (payload: Pick<Account, "id"> & Partial<Account>) =>
+  updateAccountWithUpdater({
+    accountId: payload.id,
+    updater: (account: Account) => ({
+      ...account,
+      ...payload,
+    }),
   });
-
-const updateAccountWithUpdaterAction =
-  createAction<AccountsUpdateAccountWithUpdaterPayload>(
-    AccountsActionTypes.UPDATE_ACCOUNT,
-  );
-export const updateAccountWithUpdater = (
-  accountId: string,
-  updater: (arg0: Account) => Account,
-) =>
-  updateAccountWithUpdaterAction({
-    accountId,
-    updater,
-  });
-
-export const updateAccount = (
-  payload: Pick<Account, "id"> & Partial<Account>,
-) =>
-  updateAccountWithUpdater(payload.id, (account: Account) => ({
-    ...account,
-    ...payload,
-  }));
-
-const deleteAccountAction = createAction<AccountsDeleteAccountPayload>(
+export const deleteAccount = createAction<AccountsDeleteAccountPayload>(
   AccountsActionTypes.DELETE_ACCOUNT,
 );
-export const deleteAccount = (account: Account) =>
-  deleteAccountAction({ account });
-
-const cleanCacheAction = createAction(AccountsActionTypes.CLEAN_CACHE);
-export const cleanCache = () => cleanCacheAction();
+export const cleanCache = createAction(AccountsActionTypes.CLEAN_CACHE);

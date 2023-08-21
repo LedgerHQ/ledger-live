@@ -8,11 +8,7 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import type { Transaction } from "@ledgerhq/live-common/families/ethereum/types";
 import { getDefaultFeeUnit } from "@ledgerhq/live-common/families/ethereum/logic";
-import {
-  reverseRangeIndex,
-  projectRangeIndex,
-  Range,
-} from "@ledgerhq/live-common/range";
+import { reverseRangeIndex, projectRangeIndex, Range } from "@ledgerhq/live-common/range";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 
@@ -85,9 +81,7 @@ export default function EditFeeUnitEthereum({
           <LText style={styles.feeLabel} semiBold>
             {t(title)}
           </LText>
-          <View
-            style={[styles.feeAmount, { backgroundColor: colors.lightLive }]}
-          >
+          <View style={[styles.feeAmount, { backgroundColor: colors.lightLive }]}>
             <LText
               style={[
                 styles.currencyUnitText,
@@ -96,10 +90,7 @@ export default function EditFeeUnitEthereum({
                 },
               ]}
             >
-              <CurrencyUnitValue
-                unit={unit || feeCustomUnit}
-                value={feeAmount}
-              />
+              <CurrencyUnitValue unit={unit || feeCustomUnit} value={feeAmount} />
             </LText>
           </View>
         </View>

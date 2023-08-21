@@ -6,229 +6,154 @@ import {
   LedgerErrorConstructor,
 } from "./helpers";
 
-export {
-  serializeError,
-  deserializeError,
-  createCustomErrorClass,
-  addCustomErrorDeserializer,
-};
+export { serializeError, deserializeError, createCustomErrorClass, addCustomErrorDeserializer };
 
-export const AccountNameRequiredError = createCustomErrorClass(
-  "AccountNameRequired"
-);
-export const AccountNotSupported = createCustomErrorClass(
-  "AccountNotSupported"
-);
+export const AccountNameRequiredError = createCustomErrorClass("AccountNameRequired");
+export const AccountNotSupported = createCustomErrorClass("AccountNotSupported");
 export const AmountRequired = createCustomErrorClass("AmountRequired");
 export const BluetoothRequired = createCustomErrorClass("BluetoothRequired");
 export const BtcUnmatchedApp = createCustomErrorClass("BtcUnmatchedApp");
 export const CantOpenDevice = createCustomErrorClass("CantOpenDevice");
-export const CashAddrNotSupported = createCustomErrorClass(
-  "CashAddrNotSupported"
-);
+export const CashAddrNotSupported = createCustomErrorClass("CashAddrNotSupported");
+export const ClaimRewardsFeesWarning = createCustomErrorClass("ClaimRewardsFeesWarning");
 export const CurrencyNotSupported = createCustomErrorClass<
   { currencyName: string },
   LedgerErrorConstructor<{ currencyName: string }>
 >("CurrencyNotSupported");
-export const DeviceAppVerifyNotSupported = createCustomErrorClass(
-  "DeviceAppVerifyNotSupported"
-);
+export const DeviceAppVerifyNotSupported = createCustomErrorClass("DeviceAppVerifyNotSupported");
 export const DeviceGenuineSocketEarlyClose = createCustomErrorClass(
-  "DeviceGenuineSocketEarlyClose"
+  "DeviceGenuineSocketEarlyClose",
 );
 export const DeviceNotGenuineError = createCustomErrorClass("DeviceNotGenuine");
-export const DeviceOnDashboardExpected = createCustomErrorClass(
-  "DeviceOnDashboardExpected"
-);
-export const DeviceOnDashboardUnexpected = createCustomErrorClass(
-  "DeviceOnDashboardUnexpected"
-);
-export const DeviceInOSUExpected = createCustomErrorClass(
-  "DeviceInOSUExpected"
-);
+export const DeviceOnDashboardExpected = createCustomErrorClass("DeviceOnDashboardExpected");
+export const DeviceOnDashboardUnexpected = createCustomErrorClass("DeviceOnDashboardUnexpected");
+export const DeviceInOSUExpected = createCustomErrorClass("DeviceInOSUExpected");
 export const DeviceHalted = createCustomErrorClass("DeviceHalted");
 export const DeviceNameInvalid = createCustomErrorClass("DeviceNameInvalid");
 export const DeviceSocketFail = createCustomErrorClass("DeviceSocketFail");
-export const DeviceSocketNoBulkStatus = createCustomErrorClass(
-  "DeviceSocketNoBulkStatus"
-);
+export const DeviceSocketNoBulkStatus = createCustomErrorClass("DeviceSocketNoBulkStatus");
 export const LockedDeviceError = createCustomErrorClass("LockedDeviceError");
+export const UnresponsiveDeviceError = createCustomErrorClass("UnresponsiveDeviceError");
 export const DisconnectedDevice = createCustomErrorClass("DisconnectedDevice");
 export const DisconnectedDeviceDuringOperation = createCustomErrorClass(
-  "DisconnectedDeviceDuringOperation"
+  "DisconnectedDeviceDuringOperation",
 );
 export const DeviceExtractOnboardingStateError = createCustomErrorClass(
-  "DeviceExtractOnboardingStateError"
+  "DeviceExtractOnboardingStateError",
 );
 export const DeviceOnboardingStatePollingError = createCustomErrorClass(
-  "DeviceOnboardingStatePollingError"
+  "DeviceOnboardingStatePollingError",
 );
 export const EnpointConfigError = createCustomErrorClass("EnpointConfig");
 export const EthAppPleaseEnableContractData = createCustomErrorClass(
-  "EthAppPleaseEnableContractData"
+  "EthAppPleaseEnableContractData",
 );
-export const FeeEstimationFailed = createCustomErrorClass(
-  "FeeEstimationFailed"
-);
-export const FirmwareNotRecognized = createCustomErrorClass(
-  "FirmwareNotRecognized"
-);
+export const FeeEstimationFailed = createCustomErrorClass("FeeEstimationFailed");
+export const FirmwareNotRecognized = createCustomErrorClass("FirmwareNotRecognized");
 export const HardResetFail = createCustomErrorClass("HardResetFail");
 export const InvalidXRPTag = createCustomErrorClass("InvalidXRPTag");
 export const InvalidAddress = createCustomErrorClass("InvalidAddress");
-export const InvalidAddressBecauseDestinationIsAlsoSource =
-  createCustomErrorClass("InvalidAddressBecauseDestinationIsAlsoSource");
-export const LatestMCUInstalledError = createCustomErrorClass(
-  "LatestMCUInstalledError"
+export const InvalidNonce = createCustomErrorClass("InvalidNonce");
+export const InvalidAddressBecauseDestinationIsAlsoSource = createCustomErrorClass(
+  "InvalidAddressBecauseDestinationIsAlsoSource",
 );
+export const LatestMCUInstalledError = createCustomErrorClass("LatestMCUInstalledError");
 export const UnknownMCU = createCustomErrorClass("UnknownMCU");
 export const LedgerAPIError = createCustomErrorClass("LedgerAPIError");
-export const LedgerAPIErrorWithMessage = createCustomErrorClass(
-  "LedgerAPIErrorWithMessage"
-);
-export const LedgerAPINotAvailable = createCustomErrorClass(
-  "LedgerAPINotAvailable"
-);
-export const ManagerAppAlreadyInstalledError = createCustomErrorClass(
-  "ManagerAppAlreadyInstalled"
-);
-export const ManagerAppRelyOnBTCError = createCustomErrorClass(
-  "ManagerAppRelyOnBTC"
-);
-export const ManagerAppDepInstallRequired = createCustomErrorClass(
-  "ManagerAppDepInstallRequired"
-);
+export const LedgerAPIErrorWithMessage = createCustomErrorClass("LedgerAPIErrorWithMessage");
+export const LedgerAPINotAvailable = createCustomErrorClass("LedgerAPINotAvailable");
+export const ManagerAppAlreadyInstalledError = createCustomErrorClass("ManagerAppAlreadyInstalled");
+export const ManagerAppRelyOnBTCError = createCustomErrorClass("ManagerAppRelyOnBTC");
+export const ManagerAppDepInstallRequired = createCustomErrorClass("ManagerAppDepInstallRequired");
 export const ManagerAppDepUninstallRequired = createCustomErrorClass(
-  "ManagerAppDepUninstallRequired"
+  "ManagerAppDepUninstallRequired",
 );
-export const ManagerDeviceLockedError = createCustomErrorClass(
-  "ManagerDeviceLocked"
-);
+export const ManagerDeviceLockedError = createCustomErrorClass("ManagerDeviceLocked");
 export const ManagerFirmwareNotEnoughSpaceError = createCustomErrorClass(
-  "ManagerFirmwareNotEnoughSpace"
+  "ManagerFirmwareNotEnoughSpace",
 );
-export const ManagerNotEnoughSpaceError = createCustomErrorClass(
-  "ManagerNotEnoughSpace"
-);
-export const ManagerUninstallBTCDep = createCustomErrorClass(
-  "ManagerUninstallBTCDep"
-);
+export const ManagerNotEnoughSpaceError = createCustomErrorClass("ManagerNotEnoughSpace");
+export const ManagerUninstallBTCDep = createCustomErrorClass("ManagerUninstallBTCDep");
 export const NetworkDown = createCustomErrorClass("NetworkDown");
 export const NoAddressesFound = createCustomErrorClass("NoAddressesFound");
 export const NotEnoughBalance = createCustomErrorClass("NotEnoughBalance");
-export const NotEnoughBalanceToDelegate = createCustomErrorClass(
-  "NotEnoughBalanceToDelegate"
-);
+export const NotEnoughBalanceToDelegate = createCustomErrorClass("NotEnoughBalanceToDelegate");
 export const NotEnoughBalanceInParentAccount = createCustomErrorClass(
-  "NotEnoughBalanceInParentAccount"
+  "NotEnoughBalanceInParentAccount",
 );
-export const NotEnoughSpendableBalance = createCustomErrorClass(
-  "NotEnoughSpendableBalance"
+export const NotEnoughSpendableBalance = createCustomErrorClass("NotEnoughSpendableBalance");
+export const NotEnoughBalanceBecauseDestinationNotCreated = createCustomErrorClass(
+  "NotEnoughBalanceBecauseDestinationNotCreated",
 );
-export const NotEnoughBalanceBecauseDestinationNotCreated =
-  createCustomErrorClass("NotEnoughBalanceBecauseDestinationNotCreated");
 export const NoAccessToCamera = createCustomErrorClass("NoAccessToCamera");
 export const NotEnoughGas = createCustomErrorClass("NotEnoughGas");
-export const NotSupportedLegacyAddress = createCustomErrorClass(
-  "NotSupportedLegacyAddress"
-);
-export const GasLessThanEstimate = createCustomErrorClass(
-  "GasLessThanEstimate"
-);
+// Error message specifically for the PTX swap flow
+export const NotEnoughGasSwap = createCustomErrorClass("NotEnoughGasSwap");
+export const NotSupportedLegacyAddress = createCustomErrorClass("NotSupportedLegacyAddress");
+export const GasLessThanEstimate = createCustomErrorClass("GasLessThanEstimate");
 export const PriorityFeeTooLow = createCustomErrorClass("PriorityFeeTooLow");
 export const PriorityFeeTooHigh = createCustomErrorClass("PriorityFeeTooHigh");
-export const PriorityFeeHigherThanMaxFee = createCustomErrorClass(
-  "PriorityFeeHigherThanMaxFee"
-);
+export const PriorityFeeHigherThanMaxFee = createCustomErrorClass("PriorityFeeHigherThanMaxFee");
 export const MaxFeeTooLow = createCustomErrorClass("MaxFeeTooLow");
-export const PasswordsDontMatchError =
-  createCustomErrorClass("PasswordsDontMatch");
-export const PasswordIncorrectError =
-  createCustomErrorClass("PasswordIncorrect");
-export const RecommendSubAccountsToEmpty = createCustomErrorClass(
-  "RecommendSubAccountsToEmpty"
-);
-export const RecommendUndelegation = createCustomErrorClass(
-  "RecommendUndelegation"
-);
+export const PasswordsDontMatchError = createCustomErrorClass("PasswordsDontMatch");
+export const PasswordIncorrectError = createCustomErrorClass("PasswordIncorrect");
+export const RecommendSubAccountsToEmpty = createCustomErrorClass("RecommendSubAccountsToEmpty");
+export const RecommendUndelegation = createCustomErrorClass("RecommendUndelegation");
 export const TimeoutTagged = createCustomErrorClass("TimeoutTagged");
-export const UnexpectedBootloader = createCustomErrorClass(
-  "UnexpectedBootloader"
-);
-export const MCUNotGenuineToDashboard = createCustomErrorClass(
-  "MCUNotGenuineToDashboard"
-);
+export const UnexpectedBootloader = createCustomErrorClass("UnexpectedBootloader");
+export const MCUNotGenuineToDashboard = createCustomErrorClass("MCUNotGenuineToDashboard");
 export const RecipientRequired = createCustomErrorClass("RecipientRequired");
 export const UnavailableTezosOriginatedAccountReceive = createCustomErrorClass(
-  "UnavailableTezosOriginatedAccountReceive"
+  "UnavailableTezosOriginatedAccountReceive",
 );
 export const UnavailableTezosOriginatedAccountSend = createCustomErrorClass(
-  "UnavailableTezosOriginatedAccountSend"
+  "UnavailableTezosOriginatedAccountSend",
 );
-export const UpdateFetchFileFail = createCustomErrorClass(
-  "UpdateFetchFileFail"
-);
-export const UpdateIncorrectHash = createCustomErrorClass(
-  "UpdateIncorrectHash"
-);
+export const UpdateFetchFileFail = createCustomErrorClass("UpdateFetchFileFail");
+export const UpdateIncorrectHash = createCustomErrorClass("UpdateIncorrectHash");
 export const UpdateIncorrectSig = createCustomErrorClass("UpdateIncorrectSig");
 export const UpdateYourApp = createCustomErrorClass("UpdateYourApp");
-export const UserRefusedDeviceNameChange = createCustomErrorClass(
-  "UserRefusedDeviceNameChange"
-);
+export const UserRefusedDeviceNameChange = createCustomErrorClass("UserRefusedDeviceNameChange");
 export const UserRefusedAddress = createCustomErrorClass("UserRefusedAddress");
-export const UserRefusedFirmwareUpdate = createCustomErrorClass(
-  "UserRefusedFirmwareUpdate"
-);
-export const UserRefusedAllowManager = createCustomErrorClass(
-  "UserRefusedAllowManager"
-);
-export const UserRefusedOnDevice = createCustomErrorClass(
-  "UserRefusedOnDevice"
-); // TODO rename because it's just for transaction refusal
-export const TransportOpenUserCancelled = createCustomErrorClass(
-  "TransportOpenUserCancelled"
-);
+export const UserRefusedFirmwareUpdate = createCustomErrorClass("UserRefusedFirmwareUpdate");
+export const UserRefusedAllowManager = createCustomErrorClass("UserRefusedAllowManager");
+export const UserRefusedOnDevice = createCustomErrorClass("UserRefusedOnDevice"); // TODO rename because it's just for transaction refusal
+export const TransportOpenUserCancelled = createCustomErrorClass("TransportOpenUserCancelled");
 export const TransportInterfaceNotAvailable = createCustomErrorClass(
-  "TransportInterfaceNotAvailable"
+  "TransportInterfaceNotAvailable",
 );
-export const TransportRaceCondition = createCustomErrorClass(
-  "TransportRaceCondition"
-);
+export const TransportRaceCondition = createCustomErrorClass("TransportRaceCondition");
 export const TransportWebUSBGestureRequired = createCustomErrorClass(
-  "TransportWebUSBGestureRequired"
+  "TransportWebUSBGestureRequired",
 );
-export const DeviceShouldStayInApp = createCustomErrorClass(
-  "DeviceShouldStayInApp"
+export const TransactionHasBeenValidatedError = createCustomErrorClass(
+  "TransactionHasBeenValidatedError",
 );
-export const WebsocketConnectionError = createCustomErrorClass(
-  "WebsocketConnectionError"
-);
-export const WebsocketConnectionFailed = createCustomErrorClass(
-  "WebsocketConnectionFailed"
-);
-export const WrongDeviceForAccount = createCustomErrorClass(
-  "WrongDeviceForAccount"
-);
-export const WrongAppForCurrency = createCustomErrorClass(
-  "WrongAppForCurrency"
-);
+export const DeviceShouldStayInApp = createCustomErrorClass("DeviceShouldStayInApp");
+export const WebsocketConnectionError = createCustomErrorClass("WebsocketConnectionError");
+export const WebsocketConnectionFailed = createCustomErrorClass("WebsocketConnectionFailed");
+export const WrongDeviceForAccount = createCustomErrorClass("WrongDeviceForAccount");
+export const WrongAppForCurrency = createCustomErrorClass("WrongAppForCurrency");
+
 export const ETHAddressNonEIP = createCustomErrorClass("ETHAddressNonEIP");
 export const CantScanQRCode = createCustomErrorClass("CantScanQRCode");
 export const FeeNotLoaded = createCustomErrorClass("FeeNotLoaded");
 export const FeeRequired = createCustomErrorClass("FeeRequired");
 export const FeeTooHigh = createCustomErrorClass("FeeTooHigh");
-export const DustLimit = createCustomErrorClass("DustLimit");
 export const PendingOperation = createCustomErrorClass("PendingOperation");
 export const SyncError = createCustomErrorClass("SyncError");
 export const PairingFailed = createCustomErrorClass("PairingFailed");
+export const PeerRemovedPairing = createCustomErrorClass("PeerRemovedPairing");
 export const GenuineCheckFailed = createCustomErrorClass("GenuineCheckFailed");
 export const LedgerAPI4xx = createCustomErrorClass("LedgerAPI4xx");
 export const LedgerAPI5xx = createCustomErrorClass("LedgerAPI5xx");
-export const FirmwareOrAppUpdateRequired = createCustomErrorClass(
-  "FirmwareOrAppUpdateRequired"
-);
+export const FirmwareOrAppUpdateRequired = createCustomErrorClass("FirmwareOrAppUpdateRequired");
 
+// Bitcoin family
+export const OpReturnDataSizeLimit = createCustomErrorClass("OpReturnSizeLimit");
+export const DustLimit = createCustomErrorClass("DustLimit");
+
+// Language
 export const LanguageNotFound = createCustomErrorClass("LanguageNotFound");
 
 // db stuff, no need to translate
@@ -240,14 +165,14 @@ export const DBNotReset = createCustomErrorClass("DBNotReset");
  * Type of a Transport error used to represent all equivalent errors coming from all possible implementation of Transport
  */
 export enum HwTransportErrorType {
-  Unknown = 0,
-  BleLocationServicesDisabled = 1,
-  BleBluetoothUnauthorized = 2,
-  BleScanStartFailed = 3,
+  Unknown = "Unknown",
+  LocationServicesDisabled = "LocationServicesDisabled",
+  LocationServicesUnauthorized = "LocationServicesUnauthorized",
+  BluetoothScanStartFailed = "BluetoothScanStartFailed",
 }
 
 /**
- * Represents an error coming from any Transport implementation.
+ * Represents an error coming from the usage of any Transport implementation.
  *
  * Needed to map a specific implementation error into an error that
  * can be managed by any code unaware of the specific Transport implementation
@@ -277,15 +202,12 @@ export class TransportError extends Error {
     super(message || name);
     this.name = name;
     this.message = message;
-    this.stack = new Error().stack;
+    this.stack = new Error(message).stack;
     this.id = id;
   }
 }
 
-addCustomErrorDeserializer(
-  "TransportError",
-  (e) => new TransportError(e.message, e.id)
-);
+addCustomErrorDeserializer("TransportError", e => new TransportError(e.message, e.id));
 
 export const StatusCodes = {
   ACCESS_CONDITION_NOT_FULFILLED: 0x9804,
@@ -308,6 +230,8 @@ export const StatusCodes = {
   INCORRECT_LENGTH: 0x6700,
   INCORRECT_P1_P2: 0x6b00,
   INS_NOT_SUPPORTED: 0x6d00,
+  DEVICE_NOT_ONBOARDED: 0x6d07,
+  DEVICE_NOT_ONBOARDED_2: 0x6611,
   INVALID_KCV: 0x9485,
   INVALID_OFFSET: 0x9402,
   LICENSING: 0x6f42,
@@ -324,6 +248,7 @@ export const StatusCodes = {
   TECHNICAL_PROBLEM: 0x6f00,
   UNKNOWN_APDU: 0x6d02,
   USER_REFUSED_ON_DEVICE: 0x5501,
+  NOT_ENOUGH_SPACE: 0x5102,
 };
 
 export function getAltStatusMessage(code: number): string | undefined | null {
@@ -355,8 +280,7 @@ export function getAltStatusMessage(code: number): string | undefined | null {
  */
 export function TransportStatusError(statusCode: number): void {
   const statusText =
-    Object.keys(StatusCodes).find((k) => StatusCodes[k] === statusCode) ||
-    "UNKNOWN_ERROR";
+    Object.keys(StatusCodes).find(k => StatusCodes[k] === statusCode) || "UNKNOWN_ERROR";
   const smsg = getAltStatusMessage(statusCode) || statusText;
   const statusCodeStr = statusCode.toString(16);
   const message = `Ledger device: ${smsg} (0x${statusCodeStr})`;
@@ -368,13 +292,10 @@ export function TransportStatusError(statusCode: number): void {
 
   this.name = "TransportStatusError";
   this.message = message;
-  this.stack = new Error().stack;
+  this.stack = new Error(message).stack;
   this.statusCode = statusCode;
   this.statusText = statusText;
 }
 TransportStatusError.prototype = new Error();
 
-addCustomErrorDeserializer(
-  "TransportStatusError",
-  (e) => new TransportStatusError(e.statusCode)
-);
+addCustomErrorDeserializer("TransportStatusError", e => new TransportStatusError(e.statusCode));

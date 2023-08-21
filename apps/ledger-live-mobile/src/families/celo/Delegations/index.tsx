@@ -3,14 +3,8 @@ import React, { useCallback, useState, useMemo } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { Trans, useTranslation } from "react-i18next";
-import {
-  getAccountCurrency,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
-import {
-  getDefaultExplorerView,
-  getAddressExplorer,
-} from "@ledgerhq/live-common/explorers";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 import type { Account } from "@ledgerhq/types-live";
 import { useCeloPreloadData } from "@ledgerhq/live-common/families/celo/react";
 import {
@@ -20,10 +14,7 @@ import {
   isDefaultValidatorGroupAddress,
   voteStatus,
 } from "@ledgerhq/live-common/families/celo/logic";
-import {
-  CeloAccount,
-  CeloVote,
-} from "@ledgerhq/live-common/families/celo/types";
+import { CeloAccount, CeloVote } from "@ledgerhq/live-common/families/celo/types";
 import { StackNavigationProp } from "@react-navigation/stack";
 import Alert from "../../../components/Alert";
 import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
@@ -64,9 +55,7 @@ function Delegations({ account }: Props) {
   const { celoResources } = mainAccount as CeloAccount;
   const { votes, lockedBalance } = celoResources;
 
-  const withdrawEnabled = availablePendingWithdrawals(
-    account as CeloAccount,
-  ).length;
+  const withdrawEnabled = availablePendingWithdrawals(account as CeloAccount).length;
   const activatingEnabled = activatableVotes(account as CeloAccount).length;
   const noLockedCelo = !lockedBalance.gt(0);
   const [vote, setVote] = useState<CeloVote>();
@@ -82,13 +71,10 @@ function Delegations({ account }: Props) {
     }) => {
       setVote(undefined);
       // This is complicated (even impossible?) to type properly…
-      (navigation as StackNavigationProp<{ [key: string]: object }>).navigate(
-        route,
-        {
-          screen,
-          params: { ...params, accountId: account.id },
-        },
-      );
+      (navigation as StackNavigationProp<{ [key: string]: object }>).navigate(route, {
+        screen,
+        params: { ...params, accountId: account.id },
+      });
     },
     [navigation, account.id],
   );
@@ -117,10 +103,7 @@ function Delegations({ account }: Props) {
   const onVote = useCallback(() => {
     onNavigate({
       route: NavigatorName.CeloVoteFlow,
-      screen:
-        votes?.length === 0
-          ? ScreenName.CeloVoteStarted
-          : ScreenName.CeloVoteSummary,
+      screen: votes?.length === 0 ? ScreenName.CeloVoteStarted : ScreenName.CeloVoteSummary,
       params: {},
     });
   }, [onNavigate, votes?.length]);
@@ -132,9 +115,8 @@ function Delegations({ account }: Props) {
   const getValidatorName = useCallback(
     (vote: CeloVote): string => {
       const validatorInfo =
-        validatorGroups.find(
-          validator => validator.address === vote.validatorGroup,
-        ) || fallbackValidatorGroup(vote?.validatorGroup);
+        validatorGroups.find(validator => validator.address === vote.validatorGroup) ||
+        fallbackValidatorGroup(vote?.validatorGroup);
       return validatorInfo.name;
     },
     [validatorGroups],
@@ -142,10 +124,7 @@ function Delegations({ account }: Props) {
 
   const onOpenExplorer = useCallback(
     (address: string) => {
-      const url = getAddressExplorer(
-        getDefaultExplorerView(account.currency),
-        address,
-      );
+      const url = getAddressExplorer(getDefaultExplorerView(account.currency), address);
       if (url) Linking.openURL(url);
     },
     [account.currency],
@@ -220,33 +199,21 @@ function Delegations({ account }: Props) {
                 {!!(status === "active") && (
                   <>
                     {" "}
-                    <CheckCircle
-                      color={colors.green}
-                      size={14}
-                      style={styles.icon}
-                    />{" "}
+                    <CheckCircle color={colors.green} size={14} style={styles.icon} />{" "}
                     <Trans i18nKey={"celo.revoke.vote.active"} />{" "}
                   </>
                 )}
                 {!!(status === "awaitingActivation") && (
                   <>
                     {" "}
-                    <Loader
-                      color={colors.warning}
-                      size={14}
-                      style={styles.icon}
-                    />{" "}
+                    <Loader color={colors.warning} size={14} style={styles.icon} />{" "}
                     <Trans i18nKey={"celo.revoke.vote.awaitingActivation"} />{" "}
                   </>
                 )}
                 {!!(status === "pending") && (
                   <>
                     {" "}
-                    <Loader
-                      color={rgba(colors.grey, 0.8)}
-                      size={14}
-                      style={styles.icon}
-                    />{" "}
+                    <Loader color={rgba(colors.grey, 0.8)} size={14} style={styles.icon} />{" "}
                     <Trans i18nKey={"celo.revoke.vote.pending"} />{" "}
                   </>
                 )}
@@ -259,11 +226,7 @@ function Delegations({ account }: Props) {
                   label: t("operations.types.VOTE"),
                   Component: (
                     <>
-                      <LText
-                        numberOfLines={1}
-                        semiBold
-                        style={[styles.valueText]}
-                      >
+                      <LText numberOfLines={1} semiBold style={[styles.valueText]}>
                         {formatAmount(account as CeloAccount, vote.amount ?? 0)}
                       </LText>
                     </>
@@ -325,10 +288,7 @@ function Delegations({ account }: Props) {
           {
             label: t("celo.delegation.actions.activate"),
             Icon: (props: IconProps) => (
-              <Circle
-                {...props}
-                bg={activateEnabled ? colors.lightFog : rgba(colors.grey, 0.2)}
-              >
+              <Circle {...props} bg={activateEnabled ? colors.lightFog : rgba(colors.grey, 0.2)}>
                 <NominateIcon
                   color={activateEnabled ? colors.grey : rgba(colors.grey, 0.2)}
                   size={24}
@@ -342,10 +302,7 @@ function Delegations({ account }: Props) {
           {
             label: t("celo.delegation.actions.revoke"),
             Icon: (props: IconProps) => (
-              <Circle
-                {...props}
-                bg={revokeEnabled ? colors.lightFog : rgba(colors.grey, 0.2)}
-              >
+              <Circle {...props} bg={revokeEnabled ? colors.lightFog : rgba(colors.grey, 0.2)}>
                 <RevokeIcon
                   color={revokeEnabled ? colors.grey : rgba(colors.grey, 0.2)}
                   size={24}
@@ -368,9 +325,7 @@ function Delegations({ account }: Props) {
         account={account}
         ValidatorImage={({ size }) => (
           <ValidatorImage
-            isLedger={
-              vote && isDefaultValidatorGroupAddress(vote.validatorGroup)
-            }
+            isLedger={vote && isDefaultValidatorGroupAddress(vote.validatorGroup)}
             name={vote ? getValidatorName(vote) : ""}
             size={size}
           />
@@ -395,9 +350,7 @@ function Delegations({ account }: Props) {
         <View style={styles.wrapper}>
           <AccountSectionLabel
             name={t("account.delegation.sectionLabel")}
-            RightComponent={
-              <DelegationLabelRight disabled={noLockedCelo} onPress={onVote} />
-            }
+            RightComponent={<DelegationLabelRight disabled={noLockedCelo} onPress={onVote} />}
           />
 
           {!!withdrawEnabled && (

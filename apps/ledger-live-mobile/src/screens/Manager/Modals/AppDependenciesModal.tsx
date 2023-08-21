@@ -7,11 +7,11 @@ import { Action } from "@ledgerhq/live-common/apps/index";
 import { App } from "@ledgerhq/types-live";
 
 import styled from "styled-components/native";
-import { Flex, Icons, Text, Button } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy, Text, Button } from "@ledgerhq/native-ui";
 import { hasInstalledAnyAppSelector } from "../../../reducers/settings";
 import { installAppFirstTime } from "../../../actions/settings";
 import AppIcon from "../AppsList/AppIcon";
-import BottomModal from "../../../components/BottomModal";
+import QueuedDrawer from "../../../components/QueuedDrawer";
 
 type Props = {
   appInstallWithDependencies: { app: App; dependencies: App[] };
@@ -79,7 +79,7 @@ function AppDependenciesModal({
   }, [dispatch, dispatchProps, onClose, name, hasInstalledAnyApp]);
 
   return (
-    <BottomModal isOpened={!!app} onClose={onClose}>
+    <QueuedDrawer isRequestingToBeOpened={!!app} onClose={onClose}>
       <Flex alignItems="center">
         {!!dependencies.length && (
           <>
@@ -87,7 +87,7 @@ function AppDependenciesModal({
               <AppIcon app={app} size={40} />
               <SeparatorText color="neutral.c40">- - -</SeparatorText>
               <LinkIconContainer backgroundColor="neutral.c30">
-                <Icons.LinkMedium size={16} color="neutral.c80" />
+                <IconsLegacy.LinkMedium size={16} color="neutral.c80" />
               </LinkIconContainer>
               <SeparatorText color="neutral.c40">- - -</SeparatorText>
               <AppIcon app={dependencies[0]} size={40} />
@@ -116,11 +116,7 @@ function AppDependenciesModal({
                 <Trans i18nKey="AppAction.install.continueInstall" />
               </Button>
               <CancelButton onPress={onClose}>
-                <Text
-                  variant="large"
-                  fontWeight="semiBold"
-                  color="neutral.c100"
-                >
+                <Text variant="large" fontWeight="semiBold" color="neutral.c100">
                   <Trans i18nKey="common.cancel" />
                 </Text>
               </CancelButton>
@@ -128,7 +124,7 @@ function AppDependenciesModal({
           </>
         )}
       </Flex>
-    </BottomModal>
+    </QueuedDrawer>
   );
 }
 

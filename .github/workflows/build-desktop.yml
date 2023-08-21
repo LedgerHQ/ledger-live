@@ -1,4 +1,5 @@
-name: "[Build] Desktop App"
+name: "@Desktop • Build App"
+run-name: "@Desktop • Build App triggered by ${{ github.event_name == 'workflow_dispatch' && inputs.login || github.actor }} ${{ format('on ref {0}', github.ref_name) }}"
 
 on:
   push:
@@ -7,194 +8,52 @@ on:
       - develop
       - release
       - hotfix
-    # paths:
-    #   - apps/ledger-live-desktop/**
-  pull_request:
-    # branches:
-    #   - main
-    #   - develop
-    # paths:
-    #   - apps/ledger-live-desktop/**
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: the branch which triggered this workflow
+        required: false
+      login:
+        description: The GitHub username that triggered the workflow
+        required: true
+      base_ref:
+        description: The base branch to merge the head into when checking out the code
+        required: false
+      draft:
+        description: true if the PR is in draft
+        required: false
+        default: "false"
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.ref_name != 'develop' }}
+  group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
-  is-affected:
-    outputs:
-      is-desktop-affected: ${{ steps.affected.outputs.is-package-affected }}
-    runs-on: [ubuntu-latest]
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          ref: develop
-          fetch-depth: 0
-      - name: checkout branch (PR)
-        if: ${{ github.event_name == 'pull_request' }}
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh pr checkout ${{ github.event.pull_request.number }}
-      - name: checkout branch (not PR)
-        if: ${{ github.event_name != 'pull_request' }}
-        run: |
-          git checkout $GITHUB_SHA
-      - uses: ./tools/actions/turbo-affected
-        id: affected
-        with:
-          package: "ledger-live-desktop"
-          head-ref: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.event.pull_request.base.ref) || 'HEAD^' }}
-
-  # Run dummy jobs when not affected to pass the required status checks
-  dummy:
-    name: "Build Ledger Live Desktop"
-    needs: is-affected
-    if: ${{ needs.is-affected.outputs.is-desktop-affected != 'true' }}
-    strategy:
-      matrix:
-        names:
-          - Linux
-          - Windows
-          - Mac OS X
-    runs-on: ubuntu-latest
-    steps:
-      - id: dummy
-        run: exit 0
-
-  pr-is-fork:
-    name: "Check if the PR is a fork"
-    needs: is-affected
-    if: ${{ needs.is-affected.outputs.is-desktop-affected == 'true' }}
-    uses: ./.github/workflows/pr-is-fork.yml
-    with:
-      non-pr-result: false
-    secrets:
-      token: ${{ secrets.COMMON_READ_ORG }}
-
-  start-runner:
-    name: Start self-hosted EC2 runner
-    runs-on: [ledger-live, linux]
-    needs: [pr-is-fork]
-    if: ${{ !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
-    outputs:
-      label: ${{ steps.start-ec2-linux-runner.outputs.label }}
-      ec2-instance-id: ${{ steps.start-ec2-linux-runner.outputs.ec2-instance-id }}
-    steps:
-      - name: Start EC2 Linux Runner
-        id: start-ec2-linux-runner
-        uses: LedgerHQ/actions/ec2-linux-runner@main
-        with:
-          mode: start
-          github-token: ${{ secrets.CI_BOT_TOKEN }}
-          project: 2049
-          aws-nfs-logging: true
-          ami-name-filter: ledger-live-runner
-          instance-volume-size: 30
-          instance-type: c5.4xlarge
-
-  stop-runner:
-    name: Stop self-hosted EC2 runner
-    if: ${{ always() && needs.start-runner.result == 'success' && !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
-    needs: [start-runner, pr-is-fork, build-desktop-app-linux]
-    runs-on: [ledger-live, linux]
-    steps:
-      - name: Stop EC2 Linux Runner
-        if: ${{ always() && needs.start-runner.result == 'success' }}
-        uses: LedgerHQ/actions/ec2-linux-runner@main
-        with:
-          mode: stop
-          github-token: ${{ secrets.CI_BOT_TOKEN }}
-          label: ${{ needs.start-runner.outputs.label }}
-          ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
-
   build-desktop-app-linux:
     name: "Build Ledger Live Desktop (Linux)"
-    if: ${{ !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
-    needs: [pr-is-fork, start-runner]
-    runs-on: ${{ needs.start-runner.outputs.label }}
+    runs-on: [ledger-live-4xlarge-linux]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
-      - uses: actions/checkout@v3
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.event.push.head.sha }}
-          persist-credentials: false
-      - name: set git user
+          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
+          base: ${{ inputs.base_ref }}
+      - name: Set git user
         run: |
-          git config user.email "team-live@ledger.fr"
-          git config user.name "Team Live"
-      - uses: pnpm/action-setup@v2
-        with:
-          version: latest
-          dest: ${{ runner.temp }}/setup-pnpm
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16.x
-          cache: pnpm
-          cache-dependency-path: "**/pnpm-lock.yaml"
-      - name: TurboRepo local caching server
-        id: turborepo-cache-server
-        uses: ./tools/actions/turborepo-gh-cache
-        with:
-          server-token: "yolo"
-          cleanup-cache-folder: "true"
-      - uses: ./tools/actions/composites/build-desktop
+          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
+          git config user.name "live-github-bot[bot]"
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
+      - uses: ./tools/actions/composites/setup-build-desktop
         id: build-desktop
         with:
           os: linux
-      - name: build the app
-        run: pnpm build:lld --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
-      - name: upload linux app
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
-          path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
-
-  build-desktop-app-linux-external:
-    name: "Build Ledger Live Desktop (Linux)"
-    if: ${{ fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
-    needs: [pr-is-fork]
-    runs-on: ubuntu-latest
-    env:
-      NODE_OPTIONS: "--max-old-space-size=7168"
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.pull_request.head.sha || github.event.push.head.sha }}
-          persist-credentials: false
-      - name: set git user
-        run: |
-          git config user.email "team-live@ledger.fr"
-          git config user.name "Team Live"
-      - uses: actions/setup-python@v2
-        with:
-          python-version: "3.x"
-      # - uses: ruby/setup-ruby@v1
-      #   with:
-      #     ruby-version: 3.1.2
-      - uses: pnpm/action-setup@v2
-        with:
-          version: latest
-          dest: ${{ runner.temp }}/setup-pnpm
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16.x
-          cache: pnpm
-          cache-dependency-path: "**/pnpm-lock.yaml"
-      - name: TurboRepo local caching server
-        id: turborepo-cache-server
-        uses: ./tools/actions/turborepo-gh-cache
-        with:
-          server-token: "yolo"
-          cleanup-cache-folder: "true"
-      - uses: ./tools/actions/composites/build-desktop
-        id: build-desktop
-        with:
-          os: linux
-      - name: build the app
-        run: pnpm build:lld --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
-      - name: upload linux app
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+      - name: Build the app
+        run: pnpm build:lld --api="http://127.0.0.1:${{ steps.build-desktop.outputs.port }}" --token="yolo" --team="foo"
+      - name: Upload linux app
         uses: actions/upload-artifact@v3
         with:
           name: ${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
@@ -202,44 +61,33 @@ jobs:
 
   build-desktop-app-windows:
     name: "Build Ledger Live Desktop (Windows)"
-    runs-on: [ledger-live, windows]
-    needs: is-affected
-    if: ${{ needs.is-affected.outputs.is-desktop-affected == 'true' }}
+    runs-on: [ledger-live-4xlarge-windows-2022]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
-      - uses: actions/checkout@v3
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.event.push.head.sha }}
-      - name: update path
+          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
+          base: ${{ inputs.base_ref }}
+      - name: Set git user
         run: |
-          echo "C:\Program Files\Git\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-      - uses: actions/setup-dotnet@v1
+          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
+          git config user.name "live-github-bot[bot]"
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
         with:
-          dotnet-version: 2.1.816
-      - name: set git user
-        run: |
-          git config user.email "team-live@ledger.fr"
-          git config user.name "Team Live"
-      - uses: pnpm/action-setup@v2
-        with:
-          version: latest
-          dest: ${{ runner.temp }}/setup-pnpm
-      - name: TurboRepo local caching server
-        id: turborepo-cache-server
-        uses: ./tools/actions/turborepo-gh-cache
-        with:
-          server-token: "yolo"
-          cleanup-cache-folder: "true"
-      - uses: ./tools/actions/composites/build-desktop
+          install_dotnet: true
+      - uses: ./tools/actions/composites/setup-build-desktop
         id: build-desktop
         with:
           os: win
-      - name: build the app
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+      - name: Build the app
         run: |
-          pnpm build:lld --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+          pnpm build:lld --api="http://127.0.0.1:${{ steps.build-desktop.outputs.port }}" --token="yolo" --team="foo"
         shell: bash
-      - name: upload windows
+      - name: Upload windows
         uses: actions/upload-artifact@v3
         with:
           name: ${{ steps.build-desktop.outputs.version }}-win-x64.exe
@@ -247,45 +95,137 @@ jobs:
 
   build-desktop-app-macos:
     name: "Build Ledger Live Desktop (Mac OS X)"
-    needs: is-affected
-    if: ${{ needs.is-affected.outputs.is-desktop-affected == 'true' }}
-    runs-on: [ledger-live, macos]
+    runs-on: [m1, ARM64]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
-      - uses: actions/checkout@v3
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.event.push.head.sha }}
+          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
+          base: ${{ inputs.base_ref }}
           persist-credentials: false
-      - name: set git user
+      - name: Set git user
         run: |
-          git config user.email "team-live@ledger.fr"
-          git config user.name "Team Live"
-      - uses: pnpm/action-setup@v2
+          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
+          git config user.name "live-github-bot[bot]"
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
         with:
-          version: latest
-          dest: ${{ runner.temp }}/setup-pnpm
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16.x
-          cache: pnpm
-          cache-dependency-path: "**/pnpm-lock.yaml"
-      - name: TurboRepo local caching server
-        id: turborepo-cache-server
-        uses: ./tools/actions/turborepo-gh-cache
-        with:
-          server-token: "yolo"
-          cleanup-cache-folder: "true"
-      - uses: ./tools/actions/composites/build-desktop
+          pnpm_dest: ${{ runner.temp }}/setup-pnpm
+      - uses: ./tools/actions/composites/setup-build-desktop
         id: build-desktop
         with:
           os: mac
-      - name: build the app
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+      - name: Build the app
         run: |
-          eval "$(rbenv init - bash)"
-          pnpm build:lld --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
-      - name: upload macOS app
+          pnpm build:lld --api="http://127.0.0.1:${{ steps.build-desktop.outputs.port }}" --token="yolo" --team="foo"
+      - name: Upload macOS app
         uses: actions/upload-artifact@v3
         with:
           name: ${{ steps.build-desktop.outputs.version }}-mac.dmg
           path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-mac.dmg
+
+  report:
+    needs: [build-desktop-app-linux, build-desktop-app-macos, build-desktop-app-windows]
+    runs-on: ubuntu-latest
+    if: always() && !cancelled() && github.event_name == 'workflow_dispatch'
+    steps:
+      - uses: actions/github-script@v6
+        name: build summary
+        with:
+          script: |
+            const fs = require("fs");
+
+            const [ owner, repo ] = "${{ github.repository }}".split("/");
+
+            const jobs = await github.paginate(github.rest.actions.listJobsForWorkflowRunAttempt, {
+              owner,
+              repo,
+              run_id: "${{ github.run_id }}",
+              attempt_number: "${{ github.run_attempt }}",
+            });
+
+            const findJobUrl = os =>
+              jobs.find(job => job.name == `Build Ledger Live Desktop (${os})`)?.html_url;
+
+            const statuses = [
+              "${{ needs.build-desktop-app-macos.result }}",
+              "${{ needs.build-desktop-app-linux.result }}",
+              "${{ needs.build-desktop-app-windows.result }}",
+            ];
+            const keys = {
+              mac: {
+                symbol: "🍏",
+                name: "macOS",
+                jobUrl: findJobUrl("Mac OS X")
+              },
+              windows: {
+                symbol: "🪟",
+                name: "Windows",
+                jobUrl: findJobUrl("Windows")
+              },
+              linux: {
+                symbol: "🐧",
+                name: "Linux",
+                jobUrl: findJobUrl("Linux")
+              },
+            };
+            const report = {
+              mac: {
+                pass: ${{ needs.build-desktop-app-macos.result == 'success' }},
+                status: "${{ needs.build-desktop-app-macos.result }}",
+              },
+              linux: {
+                pass: ${{ needs.build-desktop-app-linux.result == 'success' }},
+                status: "${{ needs.build-desktop-app-linux.result }}",
+              },
+              windows: {
+                pass: ${{ needs.build-desktop-app-windows.result == 'success' }},
+                status: "${{ needs.build-desktop-app-windows.result }}",
+              },
+            };
+            const isFailed = statuses.some(e => e === "failure");
+            const isCancelled = statuses.some(e => e === "cancelled");
+
+            let summary = ``;
+
+            summary += `|`
+
+            const reportKeys = Object.keys(report);
+
+            reportKeys.forEach((k) => {
+              summary += ` [${keys[k].symbol} ${keys[k].name}](${keys[k].jobUrl}) |`;
+            });
+
+            summary += `
+            |`;
+
+            for (let i = 0; i < reportKeys.length; i++) {
+              summary += ` :--: |`;
+            }
+
+            summary += `
+            |`;
+
+            Object.entries(report).forEach(([os, values]) => {
+              summary += ` ${values.pass ? "✅" : "❌"} (${values.status}) |`;
+            });
+
+            summary += `
+
+            [⚙️ Summary](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${{ github.run_id }})
+            `;
+
+            const data = {
+              isFailed,
+              isCancelled,
+              summary,
+            }
+            fs.writeFileSync("summary.json", JSON.stringify(data), "utf-8");
+      - uses: actions/upload-artifact@v3
+        name: Upload output
+        with:
+          path: ${{ github.workspace }}/summary.json
+          name: summary.json

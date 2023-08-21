@@ -1,13 +1,14 @@
 import React, { useCallback, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { BottomDrawer, Checkbox, Text } from "@ledgerhq/native-ui";
+import { Checkbox, Text } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
 import { themeSelector } from "../../../reducers/settings";
 import SettingsRow from "../../../components/SettingsRow";
 import Touchable from "../../../components/Touchable";
 import { setTheme } from "../../../actions/settings";
 import { Theme } from "../../../reducers/types";
+import QueuedDrawer from "../../../components/QueuedDrawer";
 
 const StyledTouchableThemeRow = styled(Touchable)`
   align-items: center;
@@ -39,8 +40,8 @@ export default function ThemeSettingsRow() {
           {t(`settings.display.themes.${currentTheme}`)}
         </Text>
       </SettingsRow>
-      <BottomDrawer
-        isOpen={isOpen}
+      <QueuedDrawer
+        isRequestingToBeOpened={isOpen}
         onClose={onClose}
         title={t("settings.display.theme")}
       >
@@ -61,7 +62,7 @@ export default function ThemeSettingsRow() {
             {currentTheme === theme && <Checkbox checked={true} />}
           </StyledTouchableThemeRow>
         ))}
-      </BottomDrawer>
+      </QueuedDrawer>
     </>
   );
 }

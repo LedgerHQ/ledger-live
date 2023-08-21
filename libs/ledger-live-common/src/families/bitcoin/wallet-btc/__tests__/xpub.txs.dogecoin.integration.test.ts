@@ -8,13 +8,12 @@ import BitcoinLikeStorage from "../storage";
 import { Merge } from "../pickingstrategies/Merge";
 import BitcoinLikeWallet from "../wallet";
 import MockBtc from "../../mockBtc";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
 describe("testing dogecoin transactions", () => {
   const wallet = new BitcoinLikeWallet();
   const explorer = new BitcoinLikeExplorer({
-    explorerURI: "https://explorers.api.vault.ledger.com/blockchain/v3/doge",
-    explorerVersion: "v3",
-    disableBatchSize: true,
+    cryptoCurrency: getCryptoCurrencyById("dogecoin"),
   });
 
   const network = coininfo.dogecoin.main.toBitcoinJS();
@@ -40,8 +39,7 @@ describe("testing dogecoin transactions", () => {
             output_index: 0,
             value: "500000000000000000", // huge utxo
             address: "mwXTtHo8Yy3aNKUUZLkBDrTcKT9qG9TqLb",
-            output_hash:
-              "c4ee70c30b9c5c5fed60c37ce86046156af3623f32aa5be94556b35dcf0af147",
+            output_hash: "c4ee70c30b9c5c5fed60c37ce86046156af3623f32aa5be94556b35dcf0af147",
             block_height: 1,
             rbf: false,
           },
@@ -49,8 +47,7 @@ describe("testing dogecoin transactions", () => {
             output_index: 1,
             value: "0",
             address: "<unknown>",
-            output_hash:
-              "c4ee70c30b9c5c5fed60c37ce86046156af3623f32aa5be94556b35dcf0af147",
+            output_hash: "c4ee70c30b9c5c5fed60c37ce86046156af3623f32aa5be94556b35dcf0af147",
             block_height: 1,
             rbf: false,
           },
@@ -75,18 +72,17 @@ describe("testing dogecoin transactions", () => {
       utxoPickingStrategy,
       sequence: 0,
     });
-    const account = await wallet.generateAccount({
-      xpub: xpub.xpub,
-      path: "44'/0'",
-      index: 0,
-      currency: "dogecoin",
-      network: "mainnet",
-      derivationMode: DerivationModes.LEGACY,
-      explorer: "ledgerv3",
-      explorerURI: "https://explorers.api.vault.ledger.com/blockchain/v3/doge",
-      storage: "mock",
-      storageParams: [],
-    });
+    const account = await wallet.generateAccount(
+      {
+        xpub: xpub.xpub,
+        path: "44'/0'",
+        index: 0,
+        currency: "dogecoin",
+        network: "mainnet",
+        derivationMode: DerivationModes.LEGACY,
+      },
+      getCryptoCurrencyById("dogecoin"),
+    );
     await wallet.signAccountTx({
       btc: new MockBtc(),
       fromAccount: account,

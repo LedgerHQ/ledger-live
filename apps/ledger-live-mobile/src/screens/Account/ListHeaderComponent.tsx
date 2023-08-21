@@ -1,8 +1,6 @@
 import React, { ReactNode } from "react";
-import {
-  isAccountEmpty,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { LayoutChangeEvent } from "react-native";
+import { isAccountEmpty, getMainAccount } from "@ledgerhq/live-common/account/index";
 import {
   AccountLike,
   Account,
@@ -11,32 +9,32 @@ import {
   BalanceHistoryWithCountervalue,
 } from "@ledgerhq/types-live";
 import { Currency } from "@ledgerhq/types-cryptoassets";
-import { CompoundAccountSummary } from "@ledgerhq/live-common/compound/types";
 import { Box, ColorPalette } from "@ledgerhq/native-ui";
 import { isNFTActive } from "@ledgerhq/live-common/nft/index";
 import { TFunction } from "react-i18next";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
+import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
 import { NearAccount } from "@ledgerhq/live-common/families/near/types";
-import { LayoutChangeEvent } from "react-native";
+import { isEditableOperation } from "@ledgerhq/coin-framework/operation";
+import { getEnv } from "@ledgerhq/live-common/env";
+
 import Header from "./Header";
 import AccountGraphCard from "../../components/AccountGraphCard";
 import SubAccountsList from "./SubAccountsList";
 import NftCollectionsList from "./NftCollectionsList";
-import CompoundSummary from "../Lending/Account/CompoundSummary";
-import CompoundAccountBodyHeader from "../Lending/Account/AccountBodyHeader";
 import perFamilyAccountHeader from "../../generated/AccountHeader";
 import perFamilyAccountSubHeader from "../../generated/AccountSubHeader";
 import perFamilyAccountBodyHeader from "../../generated/AccountBodyHeader";
 import perFamilyAccountBalanceSummaryFooter from "../../generated/AccountBalanceSummaryFooter";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import SectionContainer from "../WalletCentricSections/SectionContainer";
-
 import {
   FabAccountActions,
   FabAccountMainActions,
 } from "../../components/FabActions/actionsList/account";
 import { ActionButtonEvent } from "../../components/FabActions";
+import { EditOperationCard } from "../../components/EditOperationCard";
 
 type Props = {
   account?: AccountLike;
@@ -50,7 +48,6 @@ type Props = {
   counterValueCurrency: Currency;
   onAccountPress: () => void;
   onSwitchAccountCurrency: () => void;
-  compoundSummary?: CompoundAccountSummary;
   onAccountCardLayout: (event: LayoutChangeEvent) => void;
   colors: ColorPalette;
   secondaryActions: ActionButtonEvent[];
@@ -78,7 +75,6 @@ export function getListHeaderComponents({
   counterValueCurrency,
   onAccountPress,
   onSwitchAccountCurrency,
-  compoundSummary,
   onAccountCardLayout,
   colors,
   secondaryActions,
@@ -87,8 +83,7 @@ export function getListHeaderComponents({
   listHeaderComponents: ReactNode[];
   stickyHeaderIndices?: number[];
 } {
-  if (!account)
-    return { listHeaderComponents: [], stickyHeaderIndices: undefined };
+  if (!account) return { listHeaderComponents: [], stickyHeaderIndices: undefined };
 
   const mainAccount = getMainAccount(account, parentAccount);
   const family: string = mainAccount.currency.family;
@@ -96,22 +91,15 @@ export function getListHeaderComponents({
   const empty = isAccountEmpty(account);
   const shouldUseCounterValue = countervalueAvailable && useCounterValue;
 
-  const AccountHeader = (
-    perFamilyAccountHeader as Record<string, MaybeComponent>
-  )[family];
-  const AccountHeaderRendered =
-    AccountHeader && AccountHeader({ account, parentAccount });
+  const AccountHeader = (perFamilyAccountHeader as Record<string, MaybeComponent>)[family];
+  const AccountHeaderRendered = AccountHeader && AccountHeader({ account, parentAccount });
 
-  const AccountBodyHeader = (
-    perFamilyAccountBodyHeader as Record<string, MaybeComponent>
-  )[family];
+  const AccountBodyHeader = (perFamilyAccountBodyHeader as Record<string, MaybeComponent>)[family];
   // Pre-render component, cause we need to know if it return null so we don't render an empty border container (Tezos was doing it)
   const AccountBodyHeaderRendered =
     AccountBodyHeader && AccountBodyHeader({ account, parentAccount });
 
-  const AccountSubHeader = (
-    perFamilyAccountSubHeader as Record<string, MaybeComponent>
-  )[family];
+  const AccountSubHeader = (perFamilyAccountSubHeader as Record<string, MaybeComponent>)[family];
 
   const AccountBalanceSummaryFooter =
     perFamilyAccountBalanceSummaryFooter[
@@ -120,58 +108,61 @@ export function getListHeaderComponents({
   const AccountBalanceSummaryFooterRendered =
     AccountBalanceSummaryFooter &&
     AccountBalanceSummaryFooter({
-      account: account as Account &
-        CosmosAccount &
-        PolkadotAccount &
-        NearAccount,
+      account: account as Account & CosmosAccount & PolkadotAccount & ElrondAccount & NearAccount,
     });
 
   const stickyHeaderIndices = empty ? [] : [0];
 
+  const [oldestEditableOperation] = account.pendingOperations
+    .filter(pendingOperation => {
+      return isEditableOperation(account, pendingOperation);
+    })
+    .sort((a, b) => a.transactionSequenceNumber! - b.transactionSequenceNumber!);
+
+  const isOperationStuck =
+    oldestEditableOperation &&
+    oldestEditableOperation.date.getTime() <=
+      new Date().getTime() - getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT");
+
   return {
     listHeaderComponents: [
-      <Box mt={6} onLayout={onAccountCardLayout}>
+      <Box mt={6} onLayout={onAccountCardLayout} key="AccountGraphCard">
         <AccountGraphCard
           account={account}
           range={range}
           history={history}
           useCounterValue={shouldUseCounterValue}
-          valueChange={
-            shouldUseCounterValue ? countervalueChange : cryptoChange
-          }
+          valueChange={shouldUseCounterValue ? countervalueChange : cryptoChange}
           countervalueAvailable={countervalueAvailable}
           counterValueCurrency={counterValueCurrency}
           onSwitchAccountCurrency={onSwitchAccountCurrency}
           parentAccount={parentAccount}
         />
       </Box>,
-      <Header />,
+      <Header key="Header" />,
       !!AccountSubHeader && (
-        <Box bg={colors.background.main}>
+        <Box bg={colors.background.main} key="AccountSubHeader">
           <AccountSubHeader />
         </Box>
       ),
-      <SectionContainer px={6} bg={colors.background.main}>
-        <SectionTitle
-          title={t("account.quickActions")}
-          containerProps={{ mb: 6 }}
-        />
-        <FabAccountMainActions
+      oldestEditableOperation ? (
+        <EditOperationCard
+          oldestEditableOperation={oldestEditableOperation}
+          isOperationStuck={isOperationStuck}
           account={account}
           parentAccount={parentAccount}
+          key="EditOperationCard"
         />
+      ) : null,
+      <SectionContainer px={6} bg={colors.background.main} key="FabAccountMainActions">
+        <SectionTitle title={t("account.quickActions")} containerProps={{ mb: 6 }} />
+        <FabAccountMainActions account={account} parentAccount={parentAccount} />
       </SectionContainer>,
       ...(!empty &&
-      (AccountHeaderRendered ||
-        AccountBalanceSummaryFooterRendered ||
-        (compoundSummary && account.type === "TokenAccount") ||
-        secondaryActions.length > 0)
+      (AccountHeaderRendered || AccountBalanceSummaryFooterRendered || secondaryActions.length > 0)
         ? [
-            <SectionContainer>
-              <SectionTitle
-                title={t("account.earn")}
-                containerProps={{ mx: 6, mb: 6 }}
-              />
+            <SectionContainer key="AccountHeader">
+              <SectionTitle title={t("account.earn")} containerProps={{ mx: 6, mb: 6 }} />
               <Box>
                 {AccountHeaderRendered && (
                   <Box mx={6} mb={6}>
@@ -181,29 +172,17 @@ export function getListHeaderComponents({
                 {AccountBalanceSummaryFooterRendered && (
                   <Box mb={6}>{AccountBalanceSummaryFooterRendered}</Box>
                 )}
-                {compoundSummary && account.type === "TokenAccount" && (
-                  <Box>
-                    <CompoundSummary
-                      key="compoundSummary"
-                      account={account}
-                      compoundSummary={compoundSummary}
-                    />
-                  </Box>
-                )}
-                <FabAccountActions
-                  account={account}
-                  parentAccount={parentAccount}
-                />
+                <FabAccountActions account={account} parentAccount={parentAccount} />
               </Box>
             </SectionContainer>,
           ]
         : []),
       ...(!empty && AccountBodyHeaderRendered
-        ? [<SectionContainer>{AccountBodyHeaderRendered}</SectionContainer>]
+        ? [<SectionContainer key="AccountBody">{AccountBodyHeaderRendered}</SectionContainer>]
         : []),
       ...(!empty && account.type === "Account" && account.subAccounts
         ? [
-            <SectionContainer px={6}>
+            <SectionContainer px={6} key="SubAccountsList">
               <SubAccountsList
                 accountId={account.id}
                 onAccountPress={onAccountPress}
@@ -215,22 +194,8 @@ export function getListHeaderComponents({
         : []),
       ...(!empty && account.type === "Account" && isNFTActive(account.currency)
         ? [
-            <SectionContainer px={6}>
+            <SectionContainer px={6} key="NftCollectionsList">
               <NftCollectionsList account={account} />
-            </SectionContainer>,
-          ]
-        : []),
-      ...(compoundSummary &&
-      account &&
-      account.type === "TokenAccount" &&
-      parentAccount
-        ? [
-            <SectionContainer px={6}>
-              <CompoundAccountBodyHeader
-                account={account}
-                parentAccount={parentAccount}
-                compoundSummary={compoundSummary}
-              />
             </SectionContainer>,
           ]
         : []),

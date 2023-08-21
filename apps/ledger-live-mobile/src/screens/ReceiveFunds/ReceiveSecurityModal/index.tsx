@@ -1,11 +1,7 @@
 import React, { useCallback, useEffect, useState, useMemo } from "react";
-import { BottomDrawer } from "@ledgerhq/native-ui";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-} from "react-native-reanimated";
+import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import QueuedDrawer from "../../../components/QueuedDrawer";
 import InitMessage from "./InitMessage";
 import ConfirmUnverified from "./ConfirmUnverified";
 
@@ -14,8 +10,10 @@ const shouldNotRemindUserAgainToVerifyAddressOnReceive =
 
 const ReceiveSecurityModal = ({
   onVerifyAddress,
+  triggerSuccessEvent,
 }: {
   onVerifyAddress: () => void;
+  triggerSuccessEvent: () => void;
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -23,9 +21,7 @@ const ReceiveSecurityModal = ({
     const shouldNotRemindUserAgain = await AsyncStorage.getItem(
       shouldNotRemindUserAgainToVerifyAddressOnReceive,
     );
-    return shouldNotRemindUserAgain
-      ? JSON.parse(shouldNotRemindUserAgain)
-      : false;
+    return shouldNotRemindUserAgain ? JSON.parse(shouldNotRemindUserAgain) : false;
   }
 
   async function setShouldNotRemindUserAgain() {
@@ -41,9 +37,11 @@ const ReceiveSecurityModal = ({
         setTimeout(() => {
           setIsModalOpen(true);
         }, 800);
+      } else {
+        triggerSuccessEvent();
       }
     });
-  }, []);
+  }, [triggerSuccessEvent]);
 
   const [step, setStep] = useState("initMessage");
   const sharedHeight = useSharedValue(0);
@@ -86,8 +84,8 @@ const ReceiveSecurityModal = ({
   }, [closeModal, onVerify, step]);
 
   return (
-    <BottomDrawer
-      isOpen={isModalOpen}
+    <QueuedDrawer
+      isRequestingToBeOpened={isModalOpen}
       onClose={closeModal}
       noCloseButton
       preventBackdropClick
@@ -95,7 +93,7 @@ const ReceiveSecurityModal = ({
       <Animated.ScrollView style={animatedStyle}>
         <Animated.View onLayout={onLayout}>{component}</Animated.View>
       </Animated.ScrollView>
-    </BottomDrawer>
+    </QueuedDrawer>
   );
 };
 

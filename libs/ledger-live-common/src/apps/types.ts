@@ -5,7 +5,7 @@ import type { Observable, Subject } from "rxjs";
 export type Exec = (
   appOp: AppOp,
   targetId: string | number,
-  app: App
+  app: App,
 ) => Observable<{
   progress: number;
 }>;
@@ -32,6 +32,46 @@ export type ListAppsEvent =
   | {
       type: "allow-manager-requested";
     };
+export type InlineAppInstallEvent =
+  | {
+      type: "device-permission-requested";
+      wording: string;
+    }
+  | {
+      type: "listing-apps";
+    }
+  | {
+      type: "listed-apps";
+      installQueue: string[];
+    }
+  | {
+      type: "device-permission-granted";
+    }
+  | {
+      type: "app-not-installed";
+      appName: string;
+      appNames: string[];
+    }
+  | {
+      type: "some-apps-skipped";
+      skippedAppOps: SkippedAppOp[];
+    }
+  | {
+      type: "inline-install";
+      progress: number;
+      itemProgress: number;
+      currentAppOp: AppOp;
+      installQueue: string[];
+    };
+
+export type ListAppResponse = Array<{
+  name: string;
+  hash: string;
+  hash_code_data: string; // To match HSM response.
+  blocks?: number;
+  flags?: number;
+}>;
+
 export type ListAppsResult = {
   appByName: Record<string, App>;
   appsListNames: string[];
@@ -39,6 +79,7 @@ export type ListAppsResult = {
   installed: InstalledItem[];
   deviceInfo: DeviceInfo;
   deviceModelId: DeviceModelId;
+  deviceName: string;
   firmware: FinalFirmware | null | undefined;
   customImageBlocks: number;
 };
@@ -54,8 +95,8 @@ export type State = {
   recentlyInstalledApps: string[];
   installQueue: string[];
   uninstallQueue: string[];
-  // queue saved at the time of a "updateAll" action
-  updateAllQueue: string[];
+  skippedAppOps: SkippedAppOp[]; // Nb If an AppOp couldn't be completed, track why.
+  updateAllQueue: string[]; // queue saved at the time of a "updateAll" action
   currentAppOp: AppOp | null | undefined;
   currentProgressSubject: Subject<number> | null | undefined;
   currentError:
@@ -75,36 +116,57 @@ export type AppOp =
       type: "uninstall";
       name: string;
     };
-export type Action =  // recover from an error
-  | {
-      type: "recover";
-    } // wipe will remove all apps of the device
-  | {
-      type: "wipe";
-    } // uninstall a specific app by name
-  | {
-      type: "uninstall";
-      name: string;
-      force?: boolean;
-    } // install or update a specific app by name
-  | {
-      type: "install";
-      name: string;
-    } // update all
-  | {
-      type: "updateAll";
-    } // action to run after an update was done on the device (uninstall/install)
-  | {
-      type: "setCustomImage";
-      lastSeenCustomImage: {
-        hash: string;
-        size: number;
+
+export enum SkipReason {
+  NoSuchAppOnProvider,
+  AppAlreadyInstalled,
+  NotEnoughSpace,
+}
+
+export type SkippedAppOp = {
+  reason: SkipReason;
+  appOp: AppOp;
+};
+
+export type Action = // recover from an error
+
+    | {
+        type: "reset";
+        initialState: State;
+      }
+    | {
+        type: "recover";
+      } // wipe will remove all apps of the device
+    | {
+        type: "wipe";
+      } // uninstall a specific app by name
+    | {
+        type: "uninstall";
+        name: string;
+        force?: boolean;
+      } // install or update a specific app by name
+    | {
+        type: "install";
+        name: string;
+        allowPartialDependencies?: boolean;
+      } // update all
+    | {
+        type: "updateAll";
+      } // action to run after an update was done on the device (uninstall/install)
+    | {
+        type: "setCustomImage";
+        lastSeenCustomImage: {
+          hash: string;
+          size: number;
+        };
+      } // action to run after a successful custom image flow, to update the UI accordingly
+    | {
+        type: "onRunnerEvent";
+        event: RunnerEvent;
+      }
+    | {
+        type: "wiped";
       };
-    } // action to run after a successful custom image flow, to update the UI accordingly
-  | {
-      type: "onRunnerEvent";
-      event: RunnerEvent;
-    };
 export type RunnerEvent =
   | {
       type: "runStart";
@@ -124,6 +186,7 @@ export type RunnerEvent =
       type: "runSuccess";
       appOp: AppOp;
     };
+
 export type AppData = {
   currency: CryptoCurrency | null | undefined;
   name: string;

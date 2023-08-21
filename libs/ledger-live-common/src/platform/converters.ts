@@ -13,7 +13,7 @@ import {
 
 export function accountToPlatformAccount(
   account: AccountLike,
-  parentAccount?: Account
+  parentAccount?: Account,
 ): PlatformAccount {
   if (isSubAccount(account)) {
     if (!parentAccount) {
@@ -52,14 +52,8 @@ export function accountToPlatformAccount(
   };
 }
 
-export function currencyToPlatformCurrency(
-  currency: PlatformSupportedCurrency
-): PlatformCurrency {
+export function currencyToPlatformCurrency(currency: PlatformSupportedCurrency): PlatformCurrency {
   if (currency.type === "TokenCurrency") {
-    if (currency.parentCurrency.family !== "ethereum") {
-      throw new Error("Only ERC20 tokens are supported");
-    }
-
     return {
       type: PlatformCurrencyType.TokenCurrency,
       standard: PlatformTokenStandard.ERC20,
@@ -69,7 +63,7 @@ export function currencyToPlatformCurrency(
       name: currency.name,
       parent: currency.parentCurrency.id,
       color: currency.parentCurrency.color,
-      units: currency.units.map((unit) => ({
+      units: currency.units.map(unit => ({
         name: unit.name,
         code: unit.code,
         magnitude: unit.magnitude,
@@ -84,7 +78,7 @@ export function currencyToPlatformCurrency(
     name: currency.name,
     family: currency.family,
     color: currency.color,
-    units: currency.units.map((unit) => ({
+    units: currency.units.map(unit => ({
       name: unit.name,
       code: unit.code,
       magnitude: unit.magnitude,
@@ -93,7 +87,7 @@ export function currencyToPlatformCurrency(
 }
 
 export const getPlatformTransactionSignFlowInfos = (
-  platformTx: PlatformTransaction
+  platformTx: PlatformTransaction,
 ): {
   canEditFees: boolean;
   hasFeesProvided: boolean;

@@ -1,17 +1,13 @@
 import Btc, { AddressFormat } from "@ledgerhq/hw-app-btc";
 import { log } from "@ledgerhq/logs";
-import { getAddressFormatDerivationMode } from "../../derivation";
-import type {
-  Resolver,
-  GetAddressOptions,
-  Result,
-} from "../../hw/getAddress/types";
+import { getAddressFormatDerivationMode } from "@ledgerhq/coin-framework/derivation";
+import type { Resolver, GetAddressOptions, Result } from "../../hw/getAddress/types";
 import { UnsupportedDerivation } from "../../errors";
 import Transport from "@ledgerhq/hw-transport";
 
 export const getAddress = async (
   transport: Transport,
-  { currency, path, verify, derivationMode, forceFormat }: GetAddressOptions
+  { currency, path, verify, derivationMode, forceFormat }: GetAddressOptions,
 ): Promise<Result> => {
   const format = forceFormat || getAddressFormatDerivationMode(derivationMode);
   const btc = new Btc({ transport, currency: currency.id });
@@ -26,8 +22,7 @@ export const getAddress = async (
     if (
       e &&
       e.message &&
-      (e.message.includes("invalid format") ||
-        e.message.includes("Unsupported address format"))
+      (e.message.includes("invalid format") || e.message.includes("Unsupported address format"))
     ) {
       throw new UnsupportedDerivation();
     }
@@ -38,7 +33,7 @@ export const getAddress = async (
 
   log(
     "hw",
-    `getAddress ${currency.id} path=${path} address=${bitcoinAddress} publicKey=${publicKey} chainCode=${chainCode}`
+    `getAddress ${currency.id} path=${path} address=${bitcoinAddress} publicKey=${publicKey} chainCode=${chainCode}`,
   );
   return {
     address: bitcoinAddress,

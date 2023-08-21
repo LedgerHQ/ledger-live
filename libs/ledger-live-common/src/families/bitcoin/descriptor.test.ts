@@ -1,17 +1,15 @@
 import invariant from "invariant";
 import { getCryptoCurrencyById } from "../../currencies";
-import {
-  inferDescriptorFromDeviceInfo,
-  inferDescriptorFromAccount,
-} from "./descriptor";
+import { inferDescriptorFromDeviceInfo, inferDescriptorFromAccount } from "./descriptor";
 import { fromAccountRaw } from "../../account";
 import bitcoinDatasets from "./datasets/bitcoin";
+import { setSupportedCurrencies } from "../../currencies";
+
+setSupportedCurrencies(["bitcoin"]);
 describe("inferDescriptorFromAccount", () => {
   invariant(bitcoinDatasets.accounts, "bitcoin datasets have accounts");
   // FIXME: migrate away from invariant for more type guard
-  const [bitcoin1, bitcoin2] = (bitcoinDatasets.accounts as any).map((a) =>
-    fromAccountRaw(a.raw)
-  );
+  const [bitcoin1, bitcoin2] = (bitcoinDatasets.accounts as any).map(a => fromAccountRaw(a.raw));
   it("should work on bitcoin account 1", () => {
     expect(inferDescriptorFromAccount(bitcoin1)).toEqual({
       external:
@@ -40,16 +38,14 @@ describe("inferDescriptorFromDeviceInfo", () => {
         path: "44'/0'",
         publicKey:
           "041caa3a42db5bdd125b2530c47cfbe829539b5a20a5562ec839d241c67d1862f2980d26ebffee25e4f924410c3316b397f34bd572543e72c59a7569ef9032f498",
-        chainCode:
-          "9f819c7d45eb9eb1e9bd5fa695158cca9e493182f95068b22c8c440ae6eb0720",
+        chainCode: "9f819c7d45eb9eb1e9bd5fa695158cca9e493182f95068b22c8c440ae6eb0720",
       },
       accountDerivation: {
         address: "15o6uBtRzKojbxqBe4Kni66BSvXfKYT2GY",
         path: "44'/0'/0'",
         publicKey:
           "04238878d371ce61cdd04d22ccab50c542e94ffa7a27d02d6bcefaa22e4fcee6db4c2029fd4de0b595e98002c0be01fc1fbd3568671e394c97a6d52c3d4c113fb5",
-        chainCode:
-          "44728146118df8d18d38c2615154eaffcdd53829957f4e26863344f35653364e",
+        chainCode: "44728146118df8d18d38c2615154eaffcdd53829957f4e26863344f35653364e",
       },
     });
     expect(descriptor).toEqual({

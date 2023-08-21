@@ -4,11 +4,7 @@ import { Flex, Link, Tag, Box, Switch, Text } from "@ledgerhq/react-ui";
 import { FeatureId } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import FeatureFlagDetails from "./FeatureFlagDetails";
-import { withV2StyleProvider } from "~/renderer/styles/StyleProvider";
-import ButtonV2 from "~/renderer/components/Button";
-
-const OldButton = withV2StyleProvider(ButtonV2);
+import FeatureFlagDetails, { Row } from "./FeatureFlagDetails";
 
 type Props = {
   groupName: string;
@@ -60,14 +56,10 @@ const GroupedFeatures = ({ groupName, focused, setFocusedGroupName }: Props) => 
   return (
     <>
       <Flex flexDirection="row" alignItems="center" justifyContent="space-between">
-        <OldButton
-          flexDirection="row"
-          py={1}
-          onClick={() => setFocusedGroupName(focused ? undefined : groupName)}
-        >
+        <Row flex={1} onClick={() => setFocusedGroupName(focused ? undefined : groupName)}>
           <Flex flex={1} mr={3} alignItems="center">
             <Box
-              bg={allEnabled ? "success.c100" : someEnabled ? "palette.warning.c100" : "error.c100"}
+              bg={allEnabled ? "success.c50" : someEnabled ? "palette.warning.c50" : "error.c50"}
               height={10}
               width={10}
               mr={2}
@@ -88,7 +80,7 @@ const GroupedFeatures = ({ groupName, focused, setFocusedGroupName }: Props) => 
               <Flex mr={3} />
             </Flex>
           </Flex>
-        </OldButton>
+        </Row>
         <Switch name="group-feature-flags" checked={allEnabled} onChange={handleSwitchChange} />
       </Flex>
       {focused ? (

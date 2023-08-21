@@ -3,13 +3,10 @@ import { Linking } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { BigNumber } from "bignumber.js";
-import {
-  getDefaultExplorerView,
-  getAddressExplorer,
-} from "@ledgerhq/live-common/explorers";
+import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 import { Account, OperationType } from "@ledgerhq/types-live";
 import { useCeloPreloadData } from "@ledgerhq/live-common/families/celo/react";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/formatCurrencyUnit";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { useRoute } from "@react-navigation/native";
 import Section from "../../screens/OperationDetails/Section";
@@ -28,10 +25,7 @@ type Props = {
   account: Account;
 };
 
-type Navigation = StackNavigatorProps<
-  BaseNavigatorStackParamList,
-  ScreenName.OperationDetails
->;
+type Navigation = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.OperationDetails>;
 
 const OperationDetailsExtra = ({ extra, type, account }: Props) => {
   const { t } = useTranslation();
@@ -39,15 +33,11 @@ const OperationDetailsExtra = ({ extra, type, account }: Props) => {
   const locale = useSelector(localeSelector);
   const unit = getAccountUnit(account);
   const { validatorGroups: celoValidators } = useCeloPreloadData();
-  const optimisticOperation =
-    useRoute<Navigation["route"]>().params?.operation ?? null;
+  const optimisticOperation = useRoute<Navigation["route"]>().params?.operation ?? null;
 
   const redirectAddressCreator = useCallback(
     address => () => {
-      const url = getAddressExplorer(
-        getDefaultExplorerView(account.currency),
-        address,
-      );
+      const url = getAddressExplorer(getDefaultExplorerView(account.currency), address);
       if (url) Linking.openURL(url);
     },
     [account],
@@ -57,8 +47,7 @@ const OperationDetailsExtra = ({ extra, type, account }: Props) => {
   const recipient = extra.celoSourceValidator;
   const validatorGroup = recipient
     ? celoValidators.find(
-        validatorGroup =>
-          validatorGroup.address.toLowerCase() === recipient.toLowerCase(),
+        validatorGroup => validatorGroup.address.toLowerCase() === recipient.toLowerCase(),
       )
     : null;
 
@@ -89,17 +78,12 @@ const OperationDetailsExtra = ({ extra, type, account }: Props) => {
             <Section
               title={t(`delegation.validatorGroup`)}
               value={validatorGroup?.name || extra.celoSourceValidator}
-              onPress={redirectAddressCreator(
-                validatorGroup?.address || extra.celoSourceValidator,
-              )}
+              onPress={redirectAddressCreator(validatorGroup?.address || extra.celoSourceValidator)}
             />
           )}
           {type !== "ACTIVATE" && (
             <>
-              <Section
-                title={t(`operations.types.${type}`)}
-                value={formattedAmount}
-              />
+              <Section title={t(`operations.types.${type}`)} value={formattedAmount} />
             </>
           )}
         </>
@@ -112,9 +96,7 @@ const OperationDetailsExtra = ({ extra, type, account }: Props) => {
   return (
     <>
       {ret}
-      {extra.memo && (
-        <Section title={t("operationDetails.extra.memo")} value={extra.memo} />
-      )}
+      {extra.memo && <Section title={t("operationDetails.extra.memo")} value={extra.memo} />}
     </>
   );
 };

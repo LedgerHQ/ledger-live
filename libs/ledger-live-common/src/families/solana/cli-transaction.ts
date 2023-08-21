@@ -1,9 +1,5 @@
 import { findTokenById, findTokenByTicker } from "@ledgerhq/cryptoassets";
-import type {
-  Account,
-  AccountLike,
-  AccountLikeArray,
-} from "@ledgerhq/types-live";
+import type { Account, AccountLike, AccountLikeArray } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import { getAccountCurrency } from "../../account";
 import type { Transaction } from "../../generated/types";
@@ -19,7 +15,7 @@ const modes = [
   "stake.withdraw",
   "stake.split",
 ] as const;
-type Mode = typeof modes[number];
+type Mode = (typeof modes)[number];
 
 // some options already specified for other blockchains like ethereum.
 // trying to reuse existing ones like <token>, <mode>, etc.
@@ -42,7 +38,7 @@ function inferTransactions(
     mainAccount: Account;
     transaction: Transaction;
   }>,
-  opts: Partial<Record<string, string>>
+  opts: Partial<Record<string, string>>,
 ): Transaction[] {
   const mode = inferMode(opts.mode);
 
@@ -57,9 +53,7 @@ function inferTransactions(
 
   return transactions.map(({ account, transaction }) => {
     if (transaction.family !== "solana") {
-      throw new Error(
-        `Solana family transaction expected, got <${transaction.family}>`
-      );
+      throw new Error(`Solana family transaction expected, got <${transaction.family}>`);
     }
     switch (mode) {
       case "send":
@@ -183,10 +177,7 @@ function inferTransactions(
   });
 }
 
-function inferAccounts(
-  mainAccount: Account,
-  opts: Record<string, string>
-): AccountLikeArray {
+function inferAccounts(mainAccount: Account, opts: Record<string, string>): AccountLikeArray {
   invariant(mainAccount.currency.family === "solana", "solana family currency");
 
   const mode = inferMode(opts.mode);
@@ -206,7 +197,7 @@ function inferAccounts(
 
       const token = tokens[0];
 
-      const subAccount = mainAccount.subAccounts?.find((subAcc) => {
+      const subAccount = mainAccount.subAccounts?.find(subAcc => {
         const currency = getAccountCurrency(subAcc);
         return token === currency.ticker || token === currency.id;
       });
@@ -216,9 +207,7 @@ function inferAccounts(
           "token account '" +
             opts.token +
             "' not found. Available: " +
-            mainAccount.subAccounts
-              ?.map((subAcc) => getAccountCurrency(subAcc).ticker)
-              .join(", ")
+            mainAccount.subAccounts?.map(subAcc => getAccountCurrency(subAcc).ticker).join(", "),
         );
       }
       return [subAccount];
@@ -238,15 +227,13 @@ function inferAccounts(
 
 function inferMode(input?: string): Mode {
   const mode: Mode | undefined = input
-    ? modes.some((m) => m === input)
+    ? modes.some(m => m === input)
       ? (input as Mode)
       : undefined
     : "send";
 
   if (mode === undefined) {
-    throw new Error(
-      `Unexpected mode <${mode}>. Supported modes: ${modes.join(", ")}`
-    );
+    throw new Error(`Unexpected mode <${mode}>. Supported modes: ${modes.join(", ")}`);
   }
 
   return mode;

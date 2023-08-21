@@ -29,19 +29,17 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   const { account } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
+  const { mode, result } = route.params || {};
   const goToOperationDetails = useCallback(() => {
-    if (!account) return;
-    const result = route.params?.result;
-    if (!result) return;
+    if (!account || !result) return;
     navigation.navigate(ScreenName.OperationDetails, {
       accountId: account.id,
       operation: result,
     });
-  }, [account, route.params, navigation]);
+  }, [account, result, navigation]);
+  const action = mode.replace(/([A-Z])/g, "_$1").toLowerCase();
   return (
     <View
       style={[
@@ -51,14 +49,18 @@ export default function ValidationSuccess({ navigation, route }: Props) {
         },
       ]}
     >
-      <TrackScreen category="SimpleOperationFlow" name="ValidationSuccess" />
+      <TrackScreen
+        category="SimpleOperationFlow"
+        name="ValidationSuccess"
+        flow="stake"
+        action={action}
+        currency="dot"
+      />
       <PreventNativeBack />
       <ValidateSuccess
         onClose={onClose}
         onViewDetails={goToOperationDetails}
-        title={
-          <Trans i18nKey="polkadot.simpleOperation.steps.validation.success.title" />
-        }
+        title={<Trans i18nKey="polkadot.simpleOperation.steps.validation.success.title" />}
         description={
           <Trans i18nKey="polkadot.simpleOperation.steps.validation.success.description" />
         }

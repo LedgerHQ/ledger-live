@@ -1,19 +1,13 @@
 import { useSelector } from "react-redux";
 import type { AccountLike, PortfolioRange } from "@ledgerhq/types-live";
-import type {
-  TokenCurrency,
-  CryptoCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency, CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   useBalanceHistoryWithCountervalue as useBalanceHistoryWithCountervalueCommon,
-  usePortfolio as usePortfolioCommon,
   useCurrencyPortfolio as useCurrencyPortfolioCommon,
+  usePortfolioThrottled,
 } from "@ledgerhq/live-common/portfolio/v2/react";
 import { GetPortfolioOptionsType } from "@ledgerhq/live-common/portfolio/v2/index";
-import {
-  selectedTimeRangeSelector,
-  counterValueCurrencySelector,
-} from "../reducers/settings";
+import { selectedTimeRangeSelector, counterValueCurrencySelector } from "../reducers/settings";
 import { accountsSelector } from "../reducers/accounts";
 
 export function useBalanceHistoryWithCountervalue({
@@ -31,15 +25,26 @@ export function useBalanceHistoryWithCountervalue({
   });
 }
 
-export function usePortfolio(
-  accounts?: AccountLike[],
+export function usePortfolioAllAccounts(options?: GetPortfolioOptionsType) {
+  const to = useSelector(counterValueCurrencySelector);
+  const accounts = useSelector(accountsSelector);
+  const range = useSelector(selectedTimeRangeSelector);
+  return usePortfolioThrottled({
+    accounts,
+    range,
+    to,
+    options,
+  });
+}
+
+export function usePortfolioForAccounts(
+  accounts: AccountLike[],
   options?: GetPortfolioOptionsType,
 ) {
   const to = useSelector(counterValueCurrencySelector);
-  const accountsSelected = useSelector(accountsSelector);
   const range = useSelector(selectedTimeRangeSelector);
-  return usePortfolioCommon({
-    accounts: accounts || accountsSelected,
+  return usePortfolioThrottled({
+    accounts,
     range,
     to,
     options,

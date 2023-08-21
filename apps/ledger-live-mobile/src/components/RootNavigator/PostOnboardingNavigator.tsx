@@ -9,15 +9,14 @@ import PostOnboardingDebugScreen from "../../screens/PostOnboarding/PostOnboardi
 import PostOnboardingHub from "../../screens/PostOnboarding/PostOnboardingHub";
 import PostOnboardingMockActionScreen from "../../screens/PostOnboarding/PostOnboardingMockActionScreen";
 import { PostOnboardingNavigatorParamList } from "./types/PostOnboardingNavigator";
+import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
+import { NavigationHeaderCloseButton } from "../NavigationHeaderCloseButton";
 
 const Stack = createStackNavigator<PostOnboardingNavigatorParamList>();
 
 const PostOnboardingNavigator = () => {
   const { colors } = useTheme();
-  const stackNavigationConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
-  );
+  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
   return (
     <Stack.Navigator
@@ -29,6 +28,12 @@ const PostOnboardingNavigator = () => {
       <Stack.Screen
         name={ScreenName.PostOnboardingHub}
         component={PostOnboardingHub}
+        options={{
+          headerShown: true,
+          headerLeft: () => null,
+          headerTitle: () => null,
+          headerRight: () => <NavigationHeaderCloseButton />,
+        }}
       />
       <Stack.Screen
         name={ScreenName.PostOnboardingDebugScreen}
@@ -37,6 +42,10 @@ const PostOnboardingNavigator = () => {
       <Stack.Screen
         name={ScreenName.PostOnboardingMockActionScreen}
         component={PostOnboardingMockActionScreen}
+        options={{
+          headerShown: true,
+          headerLeft: () => <NavigationHeaderBackButton />,
+        }}
       />
     </Stack.Navigator>
   );

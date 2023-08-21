@@ -6,9 +6,9 @@
   "private": true,
   "dependencies": {
     "@rnx-kit/metro-config": "^1.3.2",
-    "@rnx-kit/metro-resolver-symlinks": "0.1.16",
-    "metro-config": "^0.67.0",
-    "metro-resolver": "^0.67.0"
+    "@rnx-kit/metro-resolver-symlinks": "0.1.27",
+    "metro-config": "^0.76.0",
+    "metro-resolver": "^0.76.0"
   },
   "author": "",
   "license": "ISC"

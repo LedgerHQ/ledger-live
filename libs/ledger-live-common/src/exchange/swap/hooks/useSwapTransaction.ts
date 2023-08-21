@@ -1,20 +1,23 @@
-import { AmountRequired } from "@ledgerhq/errors";
+import { AmountRequired, NotEnoughGas, NotEnoughGasSwap } from "@ledgerhq/errors";
 import { useMemo } from "react";
 import {
   ExchangeRate,
   SwapSelectorStateType,
   OnNoRatesCallback,
   SwapTransactionType,
-  SetIsSendMaxLoading,
   AvailableProviderV3,
+  OnBeforeTransaction,
 } from "../types";
-import useBridgeTransaction from "../../../bridge/useBridgeTransaction";
+import useBridgeTransaction, { Result } from "../../../bridge/useBridgeTransaction";
 import { useFromState } from "./useFromState";
 import { useProviderRates } from "./useProviderRates";
 import { useToState } from "./useToState";
 import { useReverseAccounts } from "./useReverseAccounts";
 import { Account } from "@ledgerhq/types-live";
 import { useUpdateMaxAmount } from "./useUpdateMaxAmount";
+import { Transaction } from "../../../generated/types";
+import { getAccountCurrency, getFeesUnit } from "@ledgerhq/coin-framework/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 
 export const selectorStateDefaultValues = {
   currency: undefined,
@@ -25,42 +28,81 @@ export const selectorStateDefaultValues = {
 
 export type SetExchangeRateCallback = (exchangeRate?: ExchangeRate) => void;
 
-export const useFromAmountError = (
-  errors: Record<string, Error | undefined>
+export const useFromAmountStatusMessage = (
+  { account, parentAccount, status, transaction }: Result<Transaction>,
+  // The order of errors/warnings here will determine the precedence
+  statusTypeToInclude: string[],
 ): Error | undefined => {
-  const fromAmountError = useMemo(() => {
-    const [error] = [errors?.gasPrice, errors?.amount]
+  const statusEntries = useMemo(
+    () => statusTypeToInclude.map(statusType => (status.errors || status.warnings)?.[statusType]),
+    [status.errors, status.warnings, statusTypeToInclude],
+  );
+
+  const currency = useMemo(() => {
+    if (parentAccount) {
+      return getAccountCurrency(parentAccount);
+    }
+    if (account) {
+      return getAccountCurrency(account);
+    }
+    return undefined;
+  }, [account, parentAccount]);
+
+  const estimatedFees = useMemo(() => {
+    return status.estimatedFees;
+  }, [status]);
+
+  return useMemo(() => {
+    // don't return an error/warning if we have no transaction or if transaction.amount <= 0
+    if (transaction?.amount.lte(0)) return undefined;
+
+    const [relevantStatus] = statusEntries
       .filter(Boolean)
-      .filter((error) => !(error instanceof AmountRequired));
+      .filter(errorOrWarning => !(errorOrWarning instanceof AmountRequired));
 
-    return error;
-  }, [errors?.gasPrice, errors?.amount]);
+    if (relevantStatus instanceof NotEnoughGas && currency && estimatedFees) {
+      const query = new URLSearchParams({
+        // get account id first and set it equal to account.
+        // if parent account exists then overwrite the former.
+        ...(account?.id ? { account: account.id } : {}),
+        ...(parentAccount?.id ? { account: parentAccount.id } : {}),
+      });
+      return new NotEnoughGasSwap(undefined, {
+        fees: formatCurrencyUnit(getFeesUnit(currency), estimatedFees),
+        ticker: currency.ticker,
+        cryptoName: currency.name,
+        links: [`/platform/multibuy?${query.toString()}`],
+      });
+    }
 
-  return fromAmountError;
+    return relevantStatus;
+  }, [statusEntries, currency, estimatedFees, transaction?.amount, account?.id, parentAccount?.id]);
 };
 
 export const useSwapTransaction = ({
   accounts,
   setExchangeRate,
-  setIsSendMaxLoading,
   defaultCurrency = selectorStateDefaultValues.currency,
   defaultAccount = selectorStateDefaultValues.account,
   defaultParentAccount = selectorStateDefaultValues.parentAccount,
   onNoRates,
+  onBeforeTransaction,
   excludeFixedRates,
   providers,
-  includeDEX,
+  timeout,
+  timeoutErrorMessage,
 }: {
   accounts?: Account[];
   setExchangeRate?: SetExchangeRateCallback;
-  setIsSendMaxLoading?: SetIsSendMaxLoading;
   defaultCurrency?: SwapSelectorStateType["currency"];
   defaultAccount?: SwapSelectorStateType["account"];
   defaultParentAccount?: SwapSelectorStateType["parentAccount"];
   onNoRates?: OnNoRatesCallback;
+  onBeforeTransaction?: OnBeforeTransaction;
   excludeFixedRates?: boolean;
   providers?: AvailableProviderV3[];
-  includeDEX?: boolean;
+  timeout?: number;
+  timeoutErrorMessage?: string;
 } = {}): SwapTransactionType => {
   const bridgeTransaction = useBridgeTransaction(() => ({
     account: defaultAccount,
@@ -73,8 +115,9 @@ export const useSwapTransaction = ({
     defaultParentAccount,
     bridgeTransaction,
   });
-  const { toState, setToAccount, setToAmount, setToCurrency, targetAccounts } =
-    useToState({ accounts });
+  const { toState, setToAccount, setToAmount, setToCurrency, targetAccounts } = useToState({
+    accounts,
+  });
   const {
     account: fromAccount,
     parentAccount: fromParentAccount,
@@ -83,7 +126,9 @@ export const useSwapTransaction = ({
   const { account: toAccount } = toState;
   const transaction = bridgeTransaction?.transaction;
 
-  const fromAmountError = useFromAmountError(bridgeTransaction.status.errors);
+  const fromAmountError = useFromAmountStatusMessage(bridgeTransaction, ["amount"]);
+  // treat the gasPrice error as a warning for swap.
+  const fromAmountWarning = useFromAmountStatusMessage(bridgeTransaction, ["gasPrice"]);
 
   const { isSwapReversable, reverseSwap } = useReverseAccounts({
     accounts,
@@ -95,23 +140,24 @@ export const useSwapTransaction = ({
     setToAccount,
   });
 
-  const { isMaxEnabled, toggleMax } = useUpdateMaxAmount({
+  const { isMaxEnabled, toggleMax, isMaxLoading } = useUpdateMaxAmount({
     setFromAmount,
     account: fromAccount,
     parentAccount: fromParentAccount,
     transaction,
     feesStrategy: transaction?.feesStrategy,
-    setIsSendMaxLoading,
   });
 
   const { rates, refetchRates, updateSelectedRate } = useProviderRates({
     fromState,
     toState,
     transaction,
+    onBeforeTransaction,
     onNoRates,
     setExchangeRate,
     providers,
-    includeDEX,
+    timeout,
+    timeoutErrorMessage,
   });
 
   return {
@@ -120,12 +166,13 @@ export const useSwapTransaction = ({
       to: toState,
       from: fromState,
       isMaxEnabled,
+      isMaxLoading,
       isSwapReversable,
       rates:
         rates.value && excludeFixedRates
           ? {
               ...rates,
-              value: rates.value.filter((v) => v.tradeMethod !== "fixed"),
+              value: rates.value.filter(v => v.tradeMethod !== "fixed"),
             }
           : rates,
       refetchRates,
@@ -135,6 +182,7 @@ export const useSwapTransaction = ({
     setFromAmount,
     toggleMax,
     fromAmountError,
+    fromAmountWarning,
     setToAccount,
     setToCurrency,
     setFromAccount,

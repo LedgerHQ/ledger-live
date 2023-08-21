@@ -6,7 +6,7 @@ const rootFolder = path.resolve(__dirname, "..", "..");
 
 module.exports = {
   ...common,
-  entryPoints: ["./src/index.js"],
+  entryPoints: ["./src/index.ts"],
   entryNames: "main.bundle",
   target: ["node12"],
   platform: "node",
@@ -15,7 +15,7 @@ module.exports = {
   // Picking the the main field first is safer.
   // See this comment: https://github.com/webpack/webpack/issues/4742#issuecomment-295115576
   mainFields: ["main", "module"],
-  external: [...electronMainExternals],
+  external: [...electronMainExternals, "@ledgerhq/react-devtools/package.json"],
   plugins: [
     ...common.plugins,
     CopyPlugin({

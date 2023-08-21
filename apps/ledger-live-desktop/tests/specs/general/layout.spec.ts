@@ -9,7 +9,7 @@ import { SettingsPage } from "../../models/SettingsPage";
 
 test.use({ userdata: "1AccountBTC1AccountETHStarred" });
 
-test("Layout", async ({ page }) => {
+test("Layout @smoke", async ({ page }) => {
   const layout = new Layout(page);
   const drawer = new Drawer(page);
   const sendModal = new SendModal(page);
@@ -44,12 +44,9 @@ test("Layout", async ({ page }) => {
     await layout.goToDiscover();
     await expect(page).toHaveURL(/.*\/platform.*/);
     await page.waitForLoadState("domcontentloaded");
-    await expect(page).toHaveScreenshot("discover.png");
-  });
-
-  await test.step("go to buy / sell cryto", async () => {
-    await layout.goToBuyCrypto();
-    await expect.soft(page).toHaveScreenshot("buy-sell.png");
+    await expect.soft(page).toHaveScreenshot("discover.png", {
+      mask: [page.locator("data-test-id=live-icon-container")],
+    });
   });
 
   await test.step("go to experimental features", async () => {

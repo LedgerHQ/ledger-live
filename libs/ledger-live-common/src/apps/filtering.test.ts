@@ -2,13 +2,10 @@ import { initState } from "./logic";
 import { deviceInfo155, mockListAppsResult } from "./mock";
 import type { FilterOptions, SortOptions } from "./filtering";
 import { sortFilterApps } from "./filtering";
-import { setSupportedCurrencies } from "../currencies/support";
-import { setPlatformVersion } from "../platform/version";
-import { PLATFORM_VERSION } from "../platform/constants";
+import { setSupportedCurrencies } from "../currencies/index";
 import { WALLET_API_VERSION } from "../wallet-api/constants";
 import { setWalletAPIVersion } from "../wallet-api/version";
 
-setPlatformVersion(PLATFORM_VERSION);
 setWalletAPIVersion(WALLET_API_VERSION);
 
 type FilteringScenario = {
@@ -117,8 +114,7 @@ const scenarios: FilteringScenario[] = [
       type: ["supported"],
       installedApps: [],
     },
-    expectedApps:
-      "Bitcoin, Dogecoin, Ethereum, Ethereum Classic, Litecoin, XRP",
+    expectedApps: "Bitcoin, Dogecoin, Ethereum, Ethereum Classic, Litecoin, XRP",
   },
   {
     name: "Catalog - Only apps not supported by Live",
@@ -246,18 +242,18 @@ const scenarios: FilteringScenario[] = [
     expectedApps: "",
   },
 ];
-scenarios.forEach((scenario) => {
+scenarios.forEach(scenario => {
   test("Scenario: " + scenario.name, async () => {
     const { apps, installed: installedApps } = initState(
-      mockListAppsResult(scenario.apps, scenario.installed, deviceInfo155)
+      mockListAppsResult(scenario.apps, scenario.installed, deviceInfo155),
     );
     const sortedFilteredApps = sortFilterApps(
       apps,
       { ...scenario._filterOptions, installedApps },
-      scenario._sortOptions
+      scenario._sortOptions,
     );
-    expect(sortedFilteredApps.map((app) => app.name)).toEqual(
-      scenario.expectedApps ? scenario.expectedApps.split(", ") : []
+    expect(sortedFilteredApps.map(app => app.name)).toEqual(
+      scenario.expectedApps ? scenario.expectedApps.split(", ") : [],
     );
   });
 });

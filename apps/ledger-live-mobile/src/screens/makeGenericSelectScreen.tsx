@@ -35,12 +35,7 @@ function getEntryFromOptions<Item>(opts: Opts<Item>): EntryComponent<Item> {
     }, [onPress, item]);
 
     return (
-      <SettingsRow
-        title={formatItem(item)}
-        onPress={onPressAction}
-        selected={!!selected}
-        compact
-      />
+      <SettingsRow title={formatItem(item)} onPress={onPressAction} selected={!!selected} compact />
     );
   };
 
@@ -62,9 +57,9 @@ type GenericScreenProps<Item> = {
   cancelNavigateBack?: boolean;
 };
 
-export default function makeGenericSelectScreen<
-  Item extends { value: string; label: string },
->(opts: Opts<Item>) {
+export default function makeGenericSelectScreen<Item extends { value: string; label: string }>(
+  opts: Opts<Item>,
+) {
   const { id, itemEventProperties, keyExtractor } = opts;
   const Entry: EntryComponent<Item> = getEntryFromOptions(opts);
 

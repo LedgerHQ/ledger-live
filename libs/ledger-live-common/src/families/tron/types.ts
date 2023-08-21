@@ -8,12 +8,7 @@ import {
 } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 
-export type TronOperationMode =
-  | "send"
-  | "freeze"
-  | "unfreeze"
-  | "vote"
-  | "claimReward";
+export type TronOperationMode = "send" | "freeze" | "unfreeze" | "vote" | "claimReward";
 export type TronResource = "BANDWIDTH" | "ENERGY";
 export type NetworkInfo = {
   family: "tron";

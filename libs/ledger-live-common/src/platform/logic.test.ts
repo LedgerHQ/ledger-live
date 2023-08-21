@@ -6,7 +6,7 @@ import {
   WebPlatformContext,
 } from "./logic";
 
-import { AppManifest } from "./types";
+import { LiveAppManifest } from "./types";
 import {
   createFixtureAccount,
   createFixtureTokenAccount,
@@ -23,7 +23,6 @@ import BigNumber from "bignumber.js";
 import * as converters from "./converters";
 import * as serializers from "./serializers";
 import * as signMessage from "../hw/signMessage/index";
-import { DerivationMode } from "../derivation";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { RawPlatformTransaction } from "./rawTypes";
 import { setSupportedCurrencies } from "../currencies";
@@ -39,7 +38,7 @@ describe("receiveOnAccountLogic", () => {
       platformReceiveFail: mockPlatformReceiveFail,
     },
     "11",
-    "12"
+    "12",
   );
   const uiNavigation = jest.fn();
 
@@ -62,16 +61,10 @@ describe("receiveOnAccountLogic", () => {
         ...createPlatformAccount(),
         address: "Converted address",
       };
-      jest
-        .spyOn(converters, "accountToPlatformAccount")
-        .mockReturnValueOnce(convertedAccount);
+      jest.spyOn(converters, "accountToPlatformAccount").mockReturnValueOnce(convertedAccount);
 
       // When
-      const result = await receiveOnAccountLogic(
-        context,
-        accountId,
-        uiNavigation
-      );
+      const result = await receiveOnAccountLogic(context, accountId, uiNavigation);
 
       // Then
       expect(uiNavigation).toBeCalledTimes(1);
@@ -124,7 +117,7 @@ describe("completeExchangeLogic", () => {
       platformCompleteExchangeRequested: mockPlatformCompleteExchangeRequested,
     },
     "11",
-    "12"
+    "12",
   );
   const uiNavigation = jest.fn();
 
@@ -154,8 +147,7 @@ describe("completeExchangeLogic", () => {
       const rawPlatformTransaction = createRawEtherumTransaction();
       const completeExchangeRequest = {
         provider: "provider",
-        fromAccountId:
-          "js:2:ethereum:0x16:+ethereum%2Ferc20%2Fusd_tether__erc20_",
+        fromAccountId: "js:2:ethereum:0x16:+ethereum%2Ferc20%2Fusd_tether__erc20_",
         toAccountId: "ethereumjs:2:ethereum:0x042:",
         transaction: rawPlatformTransaction,
         binaryPayload: "binaryPayload",
@@ -167,8 +159,7 @@ describe("completeExchangeLogic", () => {
       const expectedTransaction: EthereumTransaction = {
         family: "ethereum",
         amount: new BigNumber("1000000000"),
-        subAccountId:
-          "js:2:ethereum:0x16:+ethereum%2Ferc20%2Fusd_tether__erc20_",
+        subAccountId: "js:2:ethereum:0x16:+ethereum%2Ferc20%2Fusd_tether__erc20_",
         recipient: "0x0123456",
         nonce: 8,
         data: Buffer.from("Some data...", "hex"),
@@ -185,11 +176,7 @@ describe("completeExchangeLogic", () => {
       };
 
       // When
-      const result = await completeExchangeLogic(
-        context,
-        completeExchangeRequest,
-        uiNavigation
-      );
+      const result = await completeExchangeLogic(context, completeExchangeRequest, uiNavigation);
 
       // Then
       expect(uiNavigation).toBeCalledTimes(1);
@@ -245,11 +232,7 @@ describe("completeExchangeLogic", () => {
       };
 
       // When
-      const result = await completeExchangeLogic(
-        context,
-        completeExchangeRequest,
-        uiNavigation
-      );
+      const result = await completeExchangeLogic(context, completeExchangeRequest, uiNavigation);
 
       // Then
       expect(uiNavigation).toBeCalledTimes(1);
@@ -272,7 +255,7 @@ describe("completeExchangeLogic", () => {
 
     it.each(["slow", "medium", "fast", "custom"])(
       "calls uiNavigation with a transaction that has the %s feeStrategy",
-      async (expectedFeeStrategy) => {
+      async expectedFeeStrategy => {
         // Given
         const fromAccount = createFixtureAccount("17");
         context.accounts = [...context.accounts, fromAccount];
@@ -289,18 +272,14 @@ describe("completeExchangeLogic", () => {
         };
 
         // When
-        await completeExchangeLogic(
-          context,
-          completeExchangeRequest,
-          uiNavigation
-        );
+        await completeExchangeLogic(context, completeExchangeRequest, uiNavigation);
 
         // Then
         expect(uiNavigation).toBeCalledTimes(1);
-        expect(
-          uiNavigation.mock.calls[0][0]["transaction"].feesStrategy
-        ).toEqual(expectedFeeStrategy);
-      }
+        expect(uiNavigation.mock.calls[0][0]["transaction"].feesStrategy).toEqual(
+          expectedFeeStrategy,
+        );
+      },
     );
 
     it("calls the tracking for success", async () => {
@@ -317,11 +296,7 @@ describe("completeExchangeLogic", () => {
       };
 
       // When
-      await completeExchangeLogic(
-        context,
-        completeExchangeRequest,
-        uiNavigation
-      );
+      await completeExchangeLogic(context, completeExchangeRequest, uiNavigation);
 
       // Then
       expect(mockPlatformCompleteExchangeRequested).toBeCalledTimes(1);
@@ -352,14 +327,8 @@ describe("completeExchangeLogic", () => {
 
       // When
       await expect(async () => {
-        await completeExchangeLogic(
-          context,
-          completeExchangeRequest,
-          uiNavigation
-        );
-      }).rejects.toThrowError(
-        "Account and transaction must be from the same family"
-      );
+        await completeExchangeLogic(context, completeExchangeRequest, uiNavigation);
+      }).rejects.toThrowError("Account and transaction must be from the same family");
 
       // Then
       expect(uiNavigation).toBeCalledTimes(0);
@@ -375,7 +344,7 @@ describe("broadcastTransactionLogic", () => {
       platformBroadcastFail: mockplatformBroadcastFail,
     },
     "11",
-    "12"
+    "12",
   );
   const uiNavigation = jest.fn();
 
@@ -403,7 +372,7 @@ describe("broadcastTransactionLogic", () => {
         context,
         accountId,
         rawSignedTransaction,
-        uiNavigation
+        uiNavigation,
       );
 
       // Then
@@ -414,12 +383,7 @@ describe("broadcastTransactionLogic", () => {
 
     it("calls the tracking for success", async () => {
       // When
-      await broadcastTransactionLogic(
-        context,
-        accountId,
-        rawSignedTransaction,
-        uiNavigation
-      );
+      await broadcastTransactionLogic(context, accountId, rawSignedTransaction, uiNavigation);
 
       // Then
       expect(mockplatformBroadcastFail).toBeCalledTimes(0);
@@ -446,7 +410,7 @@ describe("broadcastTransactionLogic", () => {
           context,
           nonFoundAccountId,
           rawSignedTransaction,
-          uiNavigation
+          uiNavigation,
         );
       }).rejects.toThrowError("Account required");
 
@@ -461,7 +425,7 @@ describe("broadcastTransactionLogic", () => {
           context,
           nonFoundAccountId,
           rawSignedTransaction,
-          uiNavigation
+          uiNavigation,
         );
       }).rejects.toThrow();
 
@@ -481,7 +445,7 @@ describe("signMessageLogic", () => {
       platformSignMessageFail: mockPlatformSignMessageFail,
     },
     "11",
-    "12"
+    "12",
   );
   const uiNavigation = jest.fn();
 
@@ -495,10 +459,7 @@ describe("signMessageLogic", () => {
     // Given
     const accountId = "ethereumjs:2:ethereum:0x012:";
     const messageToSign = "Message to sign";
-    const spyPrepareMessageToSign = jest.spyOn(
-      signMessage,
-      "prepareMessageToSign"
-    );
+    const spyPrepareMessageToSign = jest.spyOn(signMessage, "prepareMessageToSign");
 
     beforeEach(() => spyPrepareMessageToSign.mockClear());
 
@@ -510,12 +471,7 @@ describe("signMessageLogic", () => {
       uiNavigation.mockResolvedValueOnce(expectedResult);
 
       // When
-      const result = await signMessageLogic(
-        context,
-        accountId,
-        messageToSign,
-        uiNavigation
-      );
+      const result = await signMessageLogic(context, accountId, messageToSign, uiNavigation);
 
       // Then
       expect(uiNavigation).toBeCalledTimes(1);
@@ -541,15 +497,8 @@ describe("signMessageLogic", () => {
     it("returns an error", async () => {
       // When
       await expect(async () => {
-        await signMessageLogic(
-          context,
-          nonFoundAccountId,
-          messageToSign,
-          uiNavigation
-        );
-      }).rejects.toThrowError(
-        `account with id "${nonFoundAccountId}" not found`
-      );
+        await signMessageLogic(context, nonFoundAccountId, messageToSign, uiNavigation);
+      }).rejects.toThrowError(`account with id "${nonFoundAccountId}" not found`);
 
       // Then
       expect(uiNavigation).toBeCalledTimes(0);
@@ -558,12 +507,7 @@ describe("signMessageLogic", () => {
     it("calls the tracking for error", async () => {
       // When
       await expect(async () => {
-        await signMessageLogic(
-          context,
-          nonFoundAccountId,
-          messageToSign,
-          uiNavigation
-        );
+        await signMessageLogic(context, nonFoundAccountId, messageToSign, uiNavigation);
       }).rejects.toThrow();
 
       // Then
@@ -576,20 +520,12 @@ describe("signMessageLogic", () => {
     // Given
     const tokenAccountId = "15";
     const messageToSign = "Message to sign";
-    context.accounts = [
-      createTokenAccount(tokenAccountId),
-      ...context.accounts,
-    ];
+    context.accounts = [createTokenAccount(tokenAccountId), ...context.accounts];
 
     it("returns an error", async () => {
       // When
       await expect(async () => {
-        await signMessageLogic(
-          context,
-          tokenAccountId,
-          messageToSign,
-          uiNavigation
-        );
+        await signMessageLogic(context, tokenAccountId, messageToSign, uiNavigation);
       }).rejects.toThrowError("account provided should be the main one");
 
       // Then
@@ -599,12 +535,7 @@ describe("signMessageLogic", () => {
     it("calls the tracking for error", async () => {
       // When
       await expect(async () => {
-        await signMessageLogic(
-          context,
-          tokenAccountId,
-          messageToSign,
-          uiNavigation
-        );
+        await signMessageLogic(context, tokenAccountId, messageToSign, uiNavigation);
       }).rejects.toThrow();
 
       // Then
@@ -617,10 +548,7 @@ describe("signMessageLogic", () => {
     // Given
     const accountId = "ethereumjs:2:ethereum:0x012:";
     const messageToSign = "Message to sign";
-    const spyPrepareMessageToSign = jest.spyOn(
-      signMessage,
-      "prepareMessageToSign"
-    );
+    const spyPrepareMessageToSign = jest.spyOn(signMessage, "prepareMessageToSign");
 
     beforeEach(() => spyPrepareMessageToSign.mockClear());
 
@@ -657,7 +585,7 @@ describe("signMessageLogic", () => {
   });
 });
 
-function createAppManifest(id = "1"): AppManifest {
+function createAppManifest(id = "1"): LiveAppManifest {
   return {
     id,
     private: false,
@@ -666,7 +594,7 @@ function createAppManifest(id = "1"): AppManifest {
     homepageUrl: "https://www.ledger.com",
     supportUrl: "https://www.ledger.com",
     icon: null,
-    platform: "all",
+    platforms: ["ios", "android", "desktop"],
     apiVersion: "1.0.0",
     manifestVersion: "1.0.0",
     branch: "debug",
@@ -683,6 +611,7 @@ function createAppManifest(id = "1"): AppManifest {
     },
     permissions: [],
     domains: [],
+    visibility: "complete",
   };
 }
 
@@ -692,10 +621,7 @@ function createContextContainingAccountId(
 ): WebPlatformContext {
   return {
     manifest: createAppManifest(),
-    accounts: [
-      ...accountIds.map((val) => createFixtureAccount(val)),
-      createFixtureAccount(),
-    ],
+    accounts: [...accountIds.map(val => createFixtureAccount(val)), createFixtureAccount()],
     tracking,
   };
 }
@@ -759,11 +685,8 @@ function createPlatformAccount() {
 
 function createMessageData() {
   return {
-    currency: createFixtureCryptoCurrency("eth"),
-    path: "path",
-    derivationMode: "ethM" as DerivationMode,
+    account: createFixtureAccount("17"),
     message: "default message",
-    rawMessage: "raw default message",
   };
 }
 

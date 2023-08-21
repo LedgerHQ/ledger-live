@@ -33,7 +33,7 @@ function Sample({ children, ...args }: Props) {
 export const Chip = (args: Props): React.ReactNode[] =>
   navItems.reduce<React.ReactNode[]>((acc, _, index) => {
     const labels = [
-      navItems.slice(0, index + 1).map((label) => (
+      navItems.slice(0, index + 1).map(label => (
         <Text color="inherit" variant="small">
           {label}
         </Text>

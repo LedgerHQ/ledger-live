@@ -1,9 +1,13 @@
 import { Observable } from "rxjs";
-import { getDeviceRunningMode, GetDeviceRunningModeResult } from "@ledgerhq/live-common/hw/getDeviceRunningMode";
+import {
+  getDeviceRunningMode,
+  GetDeviceRunningModeResult,
+} from "@ledgerhq/live-common/hw/getDeviceRunningMode";
 import { deviceOpt } from "../scan";
 
 export default {
-  description: "Get the mode (bootloader, main, locked-device, disconnected-or-locked-device) in which the device is",
+  description:
+    "Get the mode (bootloader, main, locked-device, disconnected-or-locked-device) in which the device is",
   args: [
     {
       name: "nbUnresponsiveRetry",
@@ -28,9 +32,9 @@ export default {
     unresponsiveTimeoutMs: number;
     cantOpenDeviceRetryLimit: number;
   }>): Observable<GetDeviceRunningModeResult | null> =>
-    getDeviceRunningMode({ 
+    getDeviceRunningMode({
       deviceId: device ?? "",
       unresponsiveTimeoutMs,
       cantOpenDeviceRetryLimit,
-  })
+    }),
 };

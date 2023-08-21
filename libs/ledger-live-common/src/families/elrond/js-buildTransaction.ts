@@ -1,31 +1,43 @@
-import type { ElrondAccount, Transaction } from "./types";
-import { getNonce } from "./logic";
-import { getNetworkConfig } from "./api";
-import { HASH_TRANSACTION } from "./constants";
-import BigNumber from "bignumber.js";
+import { INetworkConfig } from "@elrondnetwork/erdjs/out";
+import { Account } from "@ledgerhq/types-live";
+import { isAmountSpentFromBalance } from "./logic";
+import type { ElrondProtocolTransaction, Transaction } from "./types";
+import { getAccountNonce, getNetworkConfig } from "./api";
+import { GAS_PRICE, HASH_TRANSACTION } from "./constants";
 
 /**
  *
- * @param {ElrondAccount} a
- * @param {Transaction} t
+ * @param {ElrondAccount} account
+ * @param {SubAccount | null | undefined} tokenAccount
+ * @param {Transaction} transaction
  */
-export const buildTransaction = async (a: ElrondAccount, t: Transaction) => {
-  const address = a.freshAddress;
-  const nonce = getNonce(a);
-  const { gasPrice, gasLimit, chainId } = await getNetworkConfig();
+export const buildTransactionToSign = async (
+  account: Account,
+  transaction: Transaction,
+): Promise<string> => {
+  const address = account.freshAddress;
+  const nonce = await getAccountNonce(address);
+  const networkConfig: INetworkConfig = await getNetworkConfig();
+  const chainID = networkConfig.ChainID.valueOf();
 
-  const unsigned = {
-    nonce,
-    value: t.useAllAmount
-      ? a.balance.minus(t.fees ? t.fees : new BigNumber(0))
-      : t.amount,
-    receiver: t.recipient,
+  const isTokenAccount = account.subAccounts?.some(ta => ta.id === transaction.subAccountId);
+  const value =
+    !isTokenAccount && isAmountSpentFromBalance(transaction.mode)
+      ? transaction.amount.toFixed()
+      : "0";
+
+  const unsigned: ElrondProtocolTransaction = {
+    nonce: nonce.valueOf(),
+    value,
+    receiver: transaction.recipient,
     sender: address,
-    gasPrice,
-    gasLimit,
-    chainID: chainId,
+    gasPrice: GAS_PRICE,
+    gasLimit: transaction.gasLimit || networkConfig.MinGasLimit.valueOf(),
+    data: transaction.data,
+    chainID,
     ...HASH_TRANSACTION,
   };
+
   // Will likely be a call to Elrond SDK
   return JSON.stringify(unsigned);
 };

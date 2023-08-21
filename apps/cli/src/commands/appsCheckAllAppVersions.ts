@@ -2,17 +2,11 @@
 import invariant from "invariant";
 import fs from "fs";
 import { from, EMPTY, concat, defer, of } from "rxjs";
-import {
-  mergeMap,
-  ignoreElements,
-  catchError,
-  filter,
-  map,
-} from "rxjs/operators";
+import { mergeMap, ignoreElements, catchError, filter, map } from "rxjs/operators";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
-import ManagerAPI from "@ledgerhq/live-common/api/Manager";
-import network from "@ledgerhq/live-common/network";
+import ManagerAPI from "@ledgerhq/live-common/manager/api";
+import network from "@ledgerhq/live-network/network";
 import installApp from "@ledgerhq/live-common/hw/installApp";
 import uninstallApp from "@ledgerhq/live-common/hw/uninstallApp";
 import { initState, reducer, runAll } from "@ledgerhq/live-common/apps/index";
@@ -34,7 +28,7 @@ type Result =
       status: "KO";
       error: string;
     });
-const blacklistApps = ["Fido U2F"];
+const blacklistApps = ["Fido U2F", "Security Key"];
 
 class MemoFile {
   file: string;
@@ -51,9 +45,7 @@ class MemoFile {
           data
             .split("\n")
             .map((line: string): Result | null | undefined => {
-              const [versionIdStr, appPath, status, ...rest] = line
-                .split(":")
-                .map((s) => s.trim());
+              const [versionIdStr, appPath, status, ...rest] = line.split(":").map(s => s.trim());
               const error = rest.join(": ");
               const versionId = parseInt(versionIdStr, 10);
               if (isNaN(versionId) || !isFinite(versionId) || versionId <= 0) {
@@ -77,7 +69,7 @@ class MemoFile {
                 }
               }
             })
-            .filter(Boolean) as Result[]
+            .filter(Boolean) as Result[],
         );
       });
     });
@@ -90,19 +82,19 @@ class MemoFile {
         (a, b) =>
           1000000 * a.status.localeCompare(b.status) +
           100000 * a.appPath.localeCompare(b.appPath) +
-          (a.versionId - b.versionId)
+          (a.versionId - b.versionId),
       )
-      .map((result) =>
+      .map(result =>
         [
           result.versionId,
           result.appPath,
           result.status,
           result.status === "KO" ? result.error : "",
-        ].join(": ")
+        ].join(": "),
       )
       .join("\n");
     return new Promise((resolve, reject) => {
-      fs.writeFile(this.file, data, "utf8", (err) => {
+      fs.writeFile(this.file, data, "utf8", err => {
         if (err) reject(err);
         else resolve();
       });
@@ -118,9 +110,7 @@ type Candidate = {
   installQueue: ApplicationVersion[];
 };
 
-const getAPIDeviceVersionIds = async (
-  deviceInfo: DeviceInfo
-): Promise<number[]> => {
+const getAPIDeviceVersionIds = async (deviceInfo: DeviceInfo): Promise<number[]> => {
   const targetId = String(deviceInfo.targetId);
   const { data } = await network({
     method: "GET",
@@ -141,45 +131,36 @@ const getAPIDeviceVersionIds = async (
 
 const compatibleAppVersion = (v, deviceVersionIds, deviceModel, deviceInfo) =>
   v.providers.includes(1) &&
-  deviceVersionIds.some((id) => v.device_versions.includes(id)) && // heuristic to see if app is compatible...
-  v.firmware.startsWith(
-    deviceModel.id.toLowerCase() + "/" + deviceInfo.version
-  );
+  deviceVersionIds.some(id => v.device_versions.includes(id)) && // heuristic to see if app is compatible...
+  v.firmware.startsWith(deviceModel.id.toLowerCase() + "/" + deviceInfo.version);
 
 const findCandidates = async (
   deviceModel,
   applications: Application[],
-  deviceInfo: DeviceInfo
+  deviceInfo: DeviceInfo,
 ): Promise<Candidate[]> => {
   console.log(deviceInfo);
   const deviceVersionIds = await getAPIDeviceVersionIds(deviceInfo);
-  if (!deviceVersionIds.length)
-    throw new Error("unknown device version plugged");
+  if (!deviceVersionIds.length) throw new Error("unknown device version plugged");
   const candidates = applications
-    .filter((a) => !blacklistApps.includes(a.name))
-    .flatMap((app) => {
+    .filter(a => !blacklistApps.includes(a.name))
+    .flatMap(app => {
       const deps = getDependencies(app.name);
       return app.application_versions
-        .filter((v) =>
-          compatibleAppVersion(v, deviceVersionIds, deviceModel, deviceInfo)
-        )
-        .map((version) => {
+        .filter(v => compatibleAppVersion(v, deviceVersionIds, deviceModel, deviceInfo))
+        .map(version => {
           return {
             app,
             version,
             installQueue: [
               ...deps
-                .map((name) => {
-                  const depApp = applications.find((a) => a.name === name);
+                .map(name => {
+                  const depApp = applications.find(a => a.name === name);
                   return depApp
                     ? depApp.application_versions.find(
-                        (v) =>
-                          compatibleAppVersion(
-                            v,
-                            deviceVersionIds,
-                            deviceModel,
-                            deviceInfo
-                          ) && v.version === version.version
+                        v =>
+                          compatibleAppVersion(v, deviceVersionIds, deviceModel, deviceInfo) &&
+                          v.version === version.version,
                       )
                     : null;
                 })
@@ -199,10 +180,10 @@ const findCandidates = async (
 
 const installCandidate = (t, deviceInfo: DeviceInfo, candidate: Candidate) =>
   concat(
-    ...candidate.installQueue.flatMap((app) => [
+    ...candidate.installQueue.flatMap(app => [
       defer(() => delay(getEnv("MANAGER_INSTALL_DELAY"))),
       defer(() => installApp(t, deviceInfo.targetId, app)),
-    ])
+    ]),
   );
 
 const uninstallCandidate = (t, deviceInfo: DeviceInfo, candidate: Candidate) =>
@@ -210,10 +191,10 @@ const uninstallCandidate = (t, deviceInfo: DeviceInfo, candidate: Candidate) =>
     ...candidate.installQueue
       .slice(0)
       .reverse()
-      .flatMap((app) => [
+      .flatMap(app => [
         defer(() => delay(getEnv("MANAGER_INSTALL_DELAY"))),
         defer(() => uninstallApp(t, deviceInfo.targetId, app)),
-      ])
+      ]),
   );
 
 const getCandidateName = (candidate: Candidate) => {
@@ -232,16 +213,14 @@ let lastResult;
 const checkInstalled = (installed, candidate: Candidate) => {
   const name = getCandidateName(candidate);
   const ins = installed.find(
-    (i) =>
-      i.name === candidate.version.name || i.hash === candidate.version.hash
+    i => i.name === candidate.version.name || i.hash === candidate.version.hash,
   );
   let result;
 
   if (!ins) {
     if (installed.length > 0) {
       const message =
-        " list apps don't find installed app? Found these: " +
-        JSON.stringify(installed);
+        " list apps don't find installed app? Found these: " + JSON.stringify(installed);
       result = {
         versionId: candidate.version.id,
         appPath: candidate.version.firmware,
@@ -249,11 +228,7 @@ const checkInstalled = (installed, candidate: Candidate) => {
         error: message,
       };
 
-      if (
-        lastResult &&
-        lastResult.versionId === result.versionId &&
-        lastResult.status === "KO"
-      ) {
+      if (lastResult && lastResult.versionId === result.versionId && lastResult.status === "KO") {
         result.error += " – " + lastResult.error;
       }
 
@@ -277,10 +252,8 @@ const checkInstalled = (installed, candidate: Candidate) => {
       const message =
         (hashMatches
           ? ""
-          : " have BAD HASH. API have " +
-            candidate.version.hash +
-            " but device have " +
-            ins.hash) + (hasBytes ? "" : " DOES NOT have bytes defined!");
+          : " have BAD HASH. API have " + candidate.version.hash + " but device have " + ins.hash) +
+        (hasBytes ? "" : " DOES NOT have bytes defined!");
       result = {
         versionId: candidate.version.id,
         appPath: candidate.version.firmware,
@@ -291,9 +264,7 @@ const checkInstalled = (installed, candidate: Candidate) => {
     }
   }
 
-  results = results
-    .filter((r) => r.versionId !== result.versionId)
-    .concat(result);
+  results = results.filter(r => r.versionId !== result.versionId).concat(result);
 
   if (memoFile) {
     return from(memoFile.writeResults(results)).pipe(ignoreElements());
@@ -304,9 +275,9 @@ const checkInstalled = (installed, candidate: Candidate) => {
 
 const wipeAll = (t, deviceInfo) =>
   listApps(t, deviceInfo).pipe(
-    filter((e) => e.type === "result"),
+    filter(e => e.type === "result"),
     map((e: any) => e.result),
-    mergeMap((listAppsResult) => {
+    mergeMap(listAppsResult => {
       const exec = execWithTransport(t);
       let s = initState(listAppsResult);
       s = reducer(s, {
@@ -318,7 +289,7 @@ const wipeAll = (t, deviceInfo) =>
       }
 
       return runAll(s, exec);
-    })
+    }),
   );
 
 export default {
@@ -339,17 +310,13 @@ export default {
     device: string;
     memo: string;
   }>) =>
-    withDevice(device || "")((t) => {
+    withDevice(device || "")(t => {
       return from(
         Promise.all([getDeviceInfo(t), ManagerAPI.listApps()]).then(
           async ([deviceInfo, applications]) => {
             const { deviceModel } = t;
             invariant(deviceModel, "device model mandatory");
-            const candidates = await findCandidates(
-              deviceModel,
-              applications,
-              deviceInfo
-            );
+            const candidates = await findCandidates(deviceModel, applications, deviceInfo);
             let candidatesErrors: Candidate[] = [];
             let candidatesNew = [...candidates];
 
@@ -358,10 +325,8 @@ export default {
               results = await memoFile.readResults();
               candidatesErrors = [];
               candidatesNew = [];
-              candidates.forEach((c) => {
-                const result = results.find(
-                  (r) => r.versionId === c.version.id
-                );
+              candidates.forEach(c => {
+                const result = results.find(r => r.versionId === c.version.id);
 
                 if (process.env.VERBOSE_CANDIDATE) {
                   console.log(
@@ -371,7 +336,7 @@ export default {
                       ? "result was " +
                           result.status +
                           (result.status === "KO" ? " " + result.error : "")
-                      : ""
+                      : "",
                   );
                 }
 
@@ -389,31 +354,30 @@ export default {
 
             if (candidates.length) {
               console.log(
-                (
-                  (100 * (candidates.length - candidatesNew.length)) /
-                  candidates.length
-                ).toFixed(0) +
+                ((100 * (candidates.length - candidatesNew.length)) / candidates.length).toFixed(
+                  0,
+                ) +
                   "% of apps versions tested. (" +
                   candidates.length +
                   " in total. " +
                   candidatesNew.length +
                   " new. " +
                   candidatesErrors.length +
-                  " errors)"
+                  " errors)",
               );
             } else {
               console.log("No apps candidate found");
             }
 
             return [deviceInfo, all];
-          }
-        )
+          },
+        ),
       ).pipe(
         mergeMap(([deviceInfo, candidates]) =>
           concat(
             wipeAll(t, deviceInfo).pipe(ignoreElements()),
-            of([deviceInfo, candidates] as [DeviceInfo, Candidate[]])
-          )
+            of([deviceInfo, candidates] as [DeviceInfo, Candidate[]]),
+          ),
         ),
         mergeMap(([deviceInfo, candidates]) =>
           candidates.reduce(
@@ -423,7 +387,7 @@ export default {
                 defer(() =>
                   installCandidate(t, deviceInfo, candidate).pipe(
                     ignoreElements(),
-                    catchError((e) => {
+                    catchError(e => {
                       const result = {
                         versionId: candidate.version.id,
                         appPath: candidate.version.firmware,
@@ -432,22 +396,17 @@ export default {
                       };
                       lastResult = result;
                       results = results
-                        .filter((r) => r.versionId !== result.versionId)
+                        .filter(r => r.versionId !== result.versionId)
                         .concat(result);
-                      console.error(
-                        "FAILED installing " + getCandidateName(candidate),
-                        e
-                      );
+                      console.error("FAILED installing " + getCandidateName(candidate), e);
 
                       if (memoFile) {
-                        return from(memoFile.writeResults(results)).pipe(
-                          ignoreElements()
-                        );
+                        return from(memoFile.writeResults(results)).pipe(ignoreElements());
                       }
 
                       return EMPTY;
-                    })
-                  )
+                    }),
+                  ),
                 ),
                 defer(() => delay(3000)).pipe(ignoreElements()),
                 defer(() =>
@@ -457,27 +416,27 @@ export default {
                         targetId: deviceInfo.targetId,
                         perso: "perso_11",
                       }).subscribe({
-                        next: (e) => {
+                        next: e => {
                           if (e.type === "result") {
                             resolve(e.payload);
                           }
                         },
                         error: reject,
                       });
-                    })
+                    }),
                   ).pipe(
-                    mergeMap((installed) =>
+                    mergeMap(installed =>
                       concat(
                         checkInstalled(installed, candidate),
-                        uninstallCandidate(t, deviceInfo, candidate)
-                      ).pipe(ignoreElements())
-                    )
-                  )
-                )
+                        uninstallCandidate(t, deviceInfo, candidate),
+                      ).pipe(ignoreElements()),
+                    ),
+                  ),
+                ),
               ),
-            EMPTY
-          )
-        )
+            EMPTY,
+          ),
+        ),
       );
     }),
 };

@@ -4,6 +4,7 @@ import { useTheme } from "@react-navigation/native";
 import type { NFTMetadataResponse, Operation } from "@ledgerhq/types-live";
 import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import type { BigNumber } from "bignumber.js";
+import { useTranslation } from "react-i18next";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import DoubleCounterValue from "../../components/DoubleCountervalue";
 import Skeleton from "../../components/Skeleton";
@@ -32,6 +33,7 @@ const Title = ({
   metadata,
   styles,
 }: Props) => {
+  const { t } = useTranslation();
   const { colors } = useTheme();
   const isNegative = amount.isNegative();
   const valueColor = isNegative ? colors.smoke : colors.green;
@@ -57,7 +59,7 @@ const Title = ({
             },
           ]}
         >
-          ID {operation.tokenId}
+          {t("common.patterns.id", { value: operation.tokenId })}
         </LText>
       </>
     );

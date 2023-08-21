@@ -25,7 +25,11 @@ export function Max({ swapTx }: { swapTx: SwapTransactionType }) {
           {t("transfer.swap2.form.amount.useMax")}
         </Text>
 
-        <Switch checked={swapTx.swap.isMaxEnabled} onChange={onToggle} />
+        <Switch
+          testID="exchange-send-max-toggle"
+          checked={swapTx.swap.isMaxEnabled}
+          onChange={onToggle}
+        />
       </Flex>
     </Flex>
   );

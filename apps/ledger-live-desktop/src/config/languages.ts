@@ -91,7 +91,7 @@ export const defaultLocaleForLanguage = {
   nl: "nl-NL",
   no: "no-NO",
   pl: "pl-PL",
-  pt: "pt-PT",
+  pt: "pt-BR",
   ru: "ru-RU",
   sr: "sr-SR",
   sv: "sv-SV",

@@ -1,22 +1,8 @@
 import React from "react";
-import Svg, {
-  Path,
-  Rect,
-  G,
-  Defs,
-  Stop,
-  ClipPath,
-  LinearGradient,
-} from "react-native-svg";
+import Svg, { Path, Rect, G, Defs, Stop, ClipPath, LinearGradient } from "react-native-svg";
 
 // a little bit of hack on the size but that's okay since this illustration is only temporary
-const Stax = ({
-  size = 90,
-  theme,
-}: {
-  size?: number;
-  theme: "light" | "dark";
-}) =>
+const Stax = ({ size = 90, theme }: { size?: number; theme: "light" | "dark" }) =>
   theme === "light" ? (
     <Svg width={size * 0.611} height={size} viewBox="0 0 55 90" fill="none">
       <Path
@@ -44,7 +30,7 @@ const Stax = ({
         >
           <Stop stop-color="#626060" />
           <Stop offset="0.18" stopColor="#888887" />
-          <Stop offset="0.4" stopColor="5E5D5E" />
+          <Stop offset="0.4" stopColor="#5E5D5E" />
           <Stop offset="0.59" stopColor="#616161" />
           <Stop offset="0.76" stopColor="#6C6B6C" />
           <Stop offset="0.86" stopColor="#767676" />
@@ -62,12 +48,7 @@ const Stax = ({
           <Stop offset="1" stopColor="#DADADA" />
         </LinearGradient>
         <ClipPath id="clip0_4868_98503">
-          <Rect
-            width="18.3799"
-            height="16"
-            fill="white"
-            transform="translate(18.1775 37.001)"
-          />
+          <Rect width="18.3799" height="16" fill="white" transform="translate(18.1775 37.001)" />
         </ClipPath>
       </Defs>
     </Svg>
@@ -116,12 +97,7 @@ const Stax = ({
           <Stop offset="1" stopColor="#353536" />
         </LinearGradient>
         <ClipPath id="clip0_4869_98513">
-          <Rect
-            width="18.3799"
-            height="16"
-            fill="white"
-            transform="translate(18.1777 37.0005)"
-          />
+          <Rect width="18.3799" height="16" fill="white" transform="translate(18.1777 37.0005)" />
         </ClipPath>
       </Defs>
     </Svg>

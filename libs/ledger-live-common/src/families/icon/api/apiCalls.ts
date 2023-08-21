@@ -1,4 +1,4 @@
-import network from "../../../network";
+import network from "@ledgerhq/live-network/network";
 import IconService from "icon-sdk-js";
 import { LIMIT } from "../constants";
 import { getRpcUrl } from "../logic";

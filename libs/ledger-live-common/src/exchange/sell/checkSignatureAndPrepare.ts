@@ -2,12 +2,11 @@ import Transport from "@ledgerhq/hw-transport";
 import { TransportStatusError } from "@ledgerhq/hw-transport";
 import { WrongDeviceForAccount } from "@ledgerhq/errors";
 import invariant from "invariant";
-import Exchange from "../hw-app-exchange/Exchange";
+import Exchange, { ExchangeTypes } from "@ledgerhq/hw-app-exchange";
 import { getAccountCurrency, getMainAccount } from "../../account";
 import { getCurrencyExchangeConfig } from "../";
 import perFamily from "../../generated/exchange";
 import type { SellRequestEvent } from "./types";
-import { ExchangeTypes } from "../hw-app-exchange/Exchange";
 import type { Transaction, TransactionStatus } from "../../generated/types";
 import { getProvider } from "./index";
 import { delay } from "../../promise";
@@ -22,18 +21,8 @@ type SellInput = {
   payloadSignature: string;
 };
 
-export default async (
-  transport: Transport,
-  input: SellInput
-): Promise<SellRequestEvent> => {
-  const {
-    binaryPayload,
-    account,
-    parentAccount,
-    status,
-    payloadSignature,
-    transaction,
-  } = input;
+export default async (transport: Transport, input: SellInput): Promise<SellRequestEvent> => {
+  const { binaryPayload, account, parentAccount, status, payloadSignature, transaction } = input;
   const exchange = new Exchange(transport, ExchangeTypes.Sell);
   const mainAccount = getMainAccount(account, parentAccount);
   const { estimatedFees } = status;
@@ -41,19 +30,11 @@ export default async (
 
   await exchange.setPartnerKey(provider.nameAndPubkey);
   await exchange.checkPartner(provider.signature);
-  await exchange.processTransaction(
-    Buffer.from(binaryPayload, "ascii"),
-    estimatedFees
-  );
-  await exchange.checkTransactionSignature(
-    Buffer.from(payloadSignature, "base64")
-  );
+  await exchange.processTransaction(Buffer.from(binaryPayload, "ascii"), estimatedFees);
+  await exchange.checkTransactionSignature(Buffer.from(payloadSignature, "base64"));
   const mainPayoutCurrency = getAccountCurrency(mainAccount);
   const payoutCurrency = getAccountCurrency(account);
-  invariant(
-    mainPayoutCurrency.type === "CryptoCurrency",
-    "This should be a cryptocurrency"
-  );
+  invariant(mainPayoutCurrency.type === "CryptoCurrency", "This should be a cryptocurrency");
   // FIXME: invariant not triggering typescriptp type guard
   if (mainPayoutCurrency.type !== "CryptoCurrency") {
     throw new Error("This should be a cryptocurrency");
@@ -63,18 +44,16 @@ export default async (
   ].getSerializedAddressParameters(
     mainAccount.freshAddressPath,
     mainAccount.derivationMode,
-    mainAccount.id
+    mainAccount.id,
   );
-  const {
-    config: payoutAddressConfig,
-    signature: payoutAddressConfigSignature,
-  } = getCurrencyExchangeConfig(payoutCurrency);
+  const { config: payoutAddressConfig, signature: payoutAddressConfigSignature } =
+    getCurrencyExchangeConfig(payoutCurrency);
 
   try {
     await exchange.checkPayoutAddress(
       payoutAddressConfig,
       payoutAddressConfigSignature,
-      payoutAddressParameters.addressParameters
+      payoutAddressParameters.addressParameters,
     );
   } catch (e) {
     // @ts-expect-error TransportStatusError to be typed on ledgerjs

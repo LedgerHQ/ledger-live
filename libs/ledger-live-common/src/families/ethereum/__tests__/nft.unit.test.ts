@@ -1,25 +1,16 @@
 import { findCryptoCurrencyByTicker } from "@ledgerhq/cryptoassets";
 import "../../../__tests__/test-helpers/setup";
 import BigNumber from "bignumber.js";
+import { nftsFromOperations } from "@ledgerhq/coin-framework/nft/helpers";
 import { encodeAccountId, toNFTRaw } from "../../../account";
 import { ProtoNFT, Operation } from "@ledgerhq/types-live";
 import { mergeNfts } from "../../../bridge/jsHelpers";
-import {
-  encodeNftId,
-  getNftCapabilities,
-  isNFTActive,
-  isNftTransaction,
-  nftsFromOperations,
-} from "../../../nft";
 import { Transaction } from "../types";
 import { encodeERC1155OperationId } from "../../../nft/nftOperationId";
+import { encodeNftId, getNftCapabilities, isNFTActive, isNftTransaction } from "../../../nft";
 
 describe("nft merging", () => {
-  const makeNFT = (
-    tokenId: string,
-    contract: string,
-    amount: number
-  ): ProtoNFT => ({
+  const makeNFT = (tokenId: string, contract: string, amount: number): ProtoNFT => ({
     id: encodeNftId("test", contract, tokenId, "ethereum"),
     tokenId,
     amount: new BigNumber(amount),
@@ -80,7 +71,7 @@ describe("nft merging", () => {
         makeNFT("1", "contract1", 10),
         makeNFT("2", "contract1", 1),
         makeNFT("3", "contract2", 6),
-      ].map(toNFTRaw)
+      ].map(toNFTRaw),
     );
     expect(oldNfts[0]).toBe(addToNft1[1]);
     expect(oldNfts[1]).toBe(addToNft1[2]);
@@ -91,10 +82,7 @@ describe("nft merging", () => {
 
 describe("OpenSea lazy minting bs", () => {
   test("should have a correct on-chain nft amount even with OpenSea lazy minting", () => {
-    const makeNftOperation = (
-      params: [Operation["type"], number],
-      index: number
-    ): Operation => {
+    const makeNftOperation = (params: [Operation["type"], number], index: number): Operation => {
       const [type, value] = params;
 
       if (!["NFT_IN", "NFT_OUT"].includes(type)) {
@@ -183,7 +171,7 @@ describe("nft helpers", () => {
     test("should return that it's not an NFT transaction", () => {
       const transaction: Transaction = {
         family: "ethereum",
-        mode: "compound.supply",
+        mode: "send",
         amount: new BigNumber(0),
         recipient: "",
         gasPrice: null,
@@ -235,7 +223,7 @@ describe("nft helpers", () => {
       expect(getNftCapabilities(nft)).toEqual(
         expect.objectContaining({
           hasQuantity: true,
-        })
+        }),
       );
     });
 
@@ -252,7 +240,7 @@ describe("nft helpers", () => {
       expect(getNftCapabilities(nft)).toEqual(
         expect.objectContaining({
           hasQuantity: false,
-        })
+        }),
       );
     });
 

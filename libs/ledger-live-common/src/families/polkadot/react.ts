@@ -4,26 +4,26 @@ import { useBridgeSync } from "../../bridge/react";
 import {
   getCurrentPolkadotPreloadData,
   getPolkadotPreloadDataUpdates,
-} from "./preload";
+} from "@ledgerhq/coin-polkadot/preload";
 import type {
   PolkadotValidator,
   PolkadotNomination,
   PolkadotSearchFilter,
   PolkadotAccount,
-} from "./types";
+} from "@ledgerhq/coin-polkadot/types";
 const SYNC_REFRESH_RATE = 6000; // 6s - block time
 
 export function usePolkadotPreloadData() {
   const [state, setState] = useState(getCurrentPolkadotPreloadData);
   useEffect(() => {
-    const sub = getPolkadotPreloadDataUpdates().subscribe((data) => {
+    const sub = getPolkadotPreloadDataUpdates().subscribe(data => {
       setState(data);
     });
     return () => sub.unsubscribe();
   }, []);
   return state;
 }
-export const searchFilter: PolkadotSearchFilter = (query) => (validator) => {
+export const searchFilter: PolkadotSearchFilter = query => validator => {
   const terms = `${validator?.identity ?? ""} ${validator?.address ?? ""}`;
   return terms.toLowerCase().includes(query.toLowerCase().trim());
 };
@@ -33,26 +33,19 @@ export function useSortedValidators(
   search: string,
   validators: PolkadotValidator[],
   nominations: PolkadotNomination[],
-  validatorSearchFilter: PolkadotSearchFilter = searchFilter
+  validatorSearchFilter: PolkadotSearchFilter = searchFilter,
 ): PolkadotValidator[] {
-  const initialVotes = useMemoOnce(() =>
-    nominations.map(({ address }) => address)
-  );
+  const initialVotes = useMemoOnce(() => nominations.map(({ address }) => address));
   const sortedVotes = useMemo(
     () =>
       validators
-        .filter((validator) => initialVotes.includes(validator.address))
-        .concat(
-          validators.filter(
-            (validator) => !initialVotes.includes(validator.address)
-          )
-        ),
-    [validators, initialVotes]
+        .filter(validator => initialVotes.includes(validator.address))
+        .concat(validators.filter(validator => !initialVotes.includes(validator.address))),
+    [validators, initialVotes],
   );
   const sr = useMemo(
-    () =>
-      search ? validators.filter(validatorSearchFilter(search)) : sortedVotes,
-    [search, validators, sortedVotes, validatorSearchFilter]
+    () => (search ? validators.filter(validatorSearchFilter(search)) : sortedVotes),
+    [search, validators, sortedVotes, validatorSearchFilter],
   );
   return sr;
 }

@@ -1,0 +1,73 @@
+diff --git a/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewManager.java b/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewManager.java
+index 9cfe821f29921b6007e4bdd5267bfb0330246863..b360dde882414c8d5375a2191f03f7199170dc15 100644
+--- a/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewManager.java
++++ b/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewManager.java
+@@ -935,6 +935,17 @@ public class RNCWebViewManager extends SimpleViewManager<WebView> {
+       }
+     }
+ 
++    @Override
++    public void doUpdateVisitedHistory(WebView webView, String url, boolean isReload) {
++      super.doUpdateVisitedHistory(webView, url, isReload);
++
++      if (!mLastLoadFailed) {
++        RNCWebView reactWebView = (RNCWebView) webView;
++
++        emitFinishEvent(webView, url);
++      }
++    }
++
+     @Override
+     public void onPageStarted(WebView webView, String url, Bitmap favicon) {
+       super.onPageStarted(webView, url, favicon);
+diff --git a/apple/RNCWebView.h b/apple/RNCWebView.h
+index 90c9d62abd249c2cab80fd248f4756801069bd5f..de8a0a9c96f9196f5b82cb4e4b5503c716774aab 100644
+--- a/apple/RNCWebView.h
++++ b/apple/RNCWebView.h
+@@ -58,6 +58,7 @@ shouldStartLoadForRequest:(NSMutableDictionary<NSString *, id> *_Nonnull)request
+ #endif
+ @property (nonatomic, assign) UIEdgeInsets contentInset;
+ @property (nonatomic, assign) BOOL automaticallyAdjustContentInsets;
++@property (nonatomic, assign) BOOL setSupportMultipleWindows;
+ @property (nonatomic, assign) BOOL keyboardDisplayRequiresUserAction;
+ @property (nonatomic, assign) BOOL hideKeyboardAccessoryView;
+ @property (nonatomic, assign) BOOL allowsBackForwardNavigationGestures;
+diff --git a/apple/RNCWebView.m b/apple/RNCWebView.m
+index 7570d8dc5456b4a48c72c0549099bec289f45578..9a42a06ceebe17b70a0f6efa997a508c609aad69 100644
+--- a/apple/RNCWebView.m
++++ b/apple/RNCWebView.m
+@@ -130,6 +130,7 @@ RCTAutoInsetsProtocol>
+     _showsVerticalScrollIndicator = YES;
+     _directionalLockEnabled = YES;
+     _automaticallyAdjustContentInsets = YES;
++    _setSupportMultipleWindows = YES;
+     _autoManageStatusBarEnabled = YES;
+     _contentInset = UIEdgeInsetsZero;
+     _savedKeyboardDisplayRequiresUserAction = YES;
+@@ -312,9 +313,13 @@ RCTAutoInsetsProtocol>
+  */
+ - (WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
+ {
+-  if (!navigationAction.targetFrame.isMainFrame) {
++  if (_setSupportMultipleWindows == NO && !navigationAction.targetFrame.isMainFrame) {
+     [webView loadRequest:navigationAction.request];
+   }
++  if (_setSupportMultipleWindows == YES) {
++    NSURL* url = [[NSURL alloc] initWithString: (navigationAction.request.URL).absoluteString];
++    [[UIApplication sharedApplication] openURL: url];
++  }
+   return nil;
+ }
+ 
+diff --git a/apple/RNCWebViewManager.m b/apple/RNCWebViewManager.m
+index 401e40e017ee7340881e85806d3927c93e056ba4..09fdfab7e6cb0209f281802eaff3aa4e4bd09163 100644
+--- a/apple/RNCWebViewManager.m
++++ b/apple/RNCWebViewManager.m
+@@ -78,6 +78,7 @@ RCT_EXPORT_VIEW_PROPERTY(dataDetectorTypes, WKDataDetectorTypes)
+ #endif
+ RCT_EXPORT_VIEW_PROPERTY(contentInset, UIEdgeInsets)
+ RCT_EXPORT_VIEW_PROPERTY(automaticallyAdjustContentInsets, BOOL)
++RCT_EXPORT_VIEW_PROPERTY(setSupportMultipleWindows, BOOL)
+ RCT_EXPORT_VIEW_PROPERTY(autoManageStatusBarEnabled, BOOL)
+ RCT_EXPORT_VIEW_PROPERTY(hideKeyboardAccessoryView, BOOL)
+ RCT_EXPORT_VIEW_PROPERTY(allowsBackForwardNavigationGestures, BOOL)

@@ -1,15 +1,12 @@
 import * as bech32 from "bech32";
 import { bech32m } from "../../bech32m";
+
 import * as utils from "../utils";
 import { Currency } from "../crypto/types";
 import cryptoFactory from "../crypto/factory";
 import { DerivationModes } from "../";
 
-function validateAddrs(
-  addresses: string[],
-  currency: Currency,
-  expectedValid: boolean
-) {
+function validateAddrs(addresses: string[], currency: Currency, expectedValid: boolean) {
   addresses.forEach((address: string) => {
     expect(utils.isValidAddress(address, currency)).toEqual(expectedValid);
   });
@@ -20,7 +17,7 @@ function toBech32(
   version: number,
   prefix: string,
   //bech32variant: BechLib // FIXME Restore this
-  bech32variant: any
+  bech32variant: any,
 ): string {
   const words = bech32.toWords(data);
   words.unshift(version);
@@ -29,40 +26,28 @@ function toBech32(
 }
 
 const v0addrEncodedWithBase32 = toBech32(
-  Buffer.from(
-    "7777777777777777777777777777777777777777777777777777777777777777",
-    "hex"
-  ),
+  Buffer.from("7777777777777777777777777777777777777777777777777777777777777777", "hex"),
   0,
   "bc",
-  bech32
+  bech32,
 );
 const v1addrEncodedWithBase32m = toBech32(
-  Buffer.from(
-    "7777777777777777777777777777777777777777777777777777777777777777",
-    "hex"
-  ),
+  Buffer.from("7777777777777777777777777777777777777777777777777777777777777777", "hex"),
   1,
   "bc",
-  bech32m
+  bech32m,
 );
 const v0addrEncodedWithBase32m = toBech32(
-  Buffer.from(
-    "7777777777777777777777777777777777777777777777777777777777777777",
-    "hex"
-  ),
+  Buffer.from("7777777777777777777777777777777777777777777777777777777777777777", "hex"),
   0,
   "bc",
-  bech32m
+  bech32m,
 );
 const v1addrEncodedWithBase32 = toBech32(
-  Buffer.from(
-    "7777777777777777777777777777777777777777777777777777777777777777",
-    "hex"
-  ),
+  Buffer.from("7777777777777777777777777777777777777777777777777777777777777777", "hex"),
   1,
   "bc",
-  bech32
+  bech32,
 );
 
 describe("Unit tests for various utils functions", () => {
@@ -119,14 +104,10 @@ describe("Unit tests for various utils functions", () => {
 
   it("isValidAddress should default old validation if currency not provided", () => {
     expect(
-      utils.isValidAddress(
-        "tb1qrp33g0q5c5txsp9arysrx4k6zdkfs4nce4xj0gdcccefvpysxf3q0sl5k7"
-      )
+      utils.isValidAddress("tb1qrp33g0q5c5txsp9arysrx4k6zdkfs4nce4xj0gdcccefvpysxf3q0sl5k7"),
     ).toBeTruthy();
     expect(
-      utils.isValidAddress(
-        "tb1qrp33g0q5c5txsp9arysrx4k6zdkfs4nce4xj0gdcccefvpysxf3q0sl5k8"
-      )
+      utils.isValidAddress("tb1qrp33g0q5c5txsp9arysrx4k6zdkfs4nce4xj0gdcccefvpysxf3q0sl5k8"),
     ).toBeFalsy();
   });
 
@@ -138,7 +119,7 @@ describe("Unit tests for various utils functions", () => {
         "bitcoincash:qqmyc72pkyx8c0ppgeuummq6clzverhxnsk3qh6jcf",
       ],
       "bitcoin_cash",
-      true
+      true,
     );
     validateAddrs(
       [
@@ -146,30 +127,18 @@ describe("Unit tests for various utils functions", () => {
         "1BpEi6DfDAUFd7GtittLSdBeYgvcoaVggu",
       ],
       "bitcoin_cash",
-      false
+      false,
     );
 
-    validateAddrs(
-      ["bitcoincash:qzl0x0982hy9xrh99wdnejx4eecdn02jv58as5p595"],
-      "bitcoin_cash",
-      true
-    );
-    validateAddrs(
-      ["ltc1q3e4eh3lldvx97zg6d74x4ns6v5a4j4hwwqycwv"],
-      "litecoin",
-      true
-    );
+    validateAddrs(["bitcoincash:qzl0x0982hy9xrh99wdnejx4eecdn02jv58as5p595"], "bitcoin_cash", true);
+    validateAddrs(["ltc1q3e4eh3lldvx97zg6d74x4ns6v5a4j4hwwqycwv"], "litecoin", true);
     validateAddrs(["Xh13o3cWixDBYJMGuJmFX17TZb9guXcBik"], "dash", true);
     validateAddrs(["MFYvHZcZ35typC4k2XyvRVooCDZxnoDS4B"], "qtum", true);
     validateAddrs(["t1b1Rbw2shhJkP6MCnCyxCPuyFedHrwKty8"], "zcash", true);
     validateAddrs(["t3PU1j7YW3fJ67jUbkGhSRto8qK2qXCUiW3"], "zcash", true);
     validateAddrs(["AYRf8r4SJhmfaEwmWvY8ujmrepbrWyenFr"], "bitcoin_gold", true);
     validateAddrs(["D8cMCRimfjwQ9E8jJvgUswt18WnZbCUAaW"], "dogecoin", true);
-    validateAddrs(
-      ["dgb1q7zjgqa23xzf602ljfrc94248a9u27xml08nhct"],
-      "digibyte",
-      true
-    );
+    validateAddrs(["dgb1q7zjgqa23xzf602ljfrc94248a9u27xml08nhct"], "digibyte", true);
     validateAddrs(["REnTkuvjsmfshAZ3vukYfuS3ZGvfUatqFc"], "komodo", true);
     validateAddrs(["DQ7F2iTQn6kUpyvietinaC3Cxje2m1ULjS"], "pivx", true);
     validateAddrs(["zndVnjbrzRxvhPGRea4jgsfSWE1hXFja1dc"], "zencash", true);
@@ -183,28 +152,16 @@ describe("Unit tests for various utils functions", () => {
     validateAddrs(
       ["bitcoincash:qzl0x0982hy9xrh99wdnejx4eecdn02jv58as5p599"],
       "bitcoin_cash",
-      false
+      false,
     );
-    validateAddrs(
-      ["ltc1q3e4eh3lldvx97zg6d74x4ns6v5a4j4hwwqycww"],
-      "litecoin",
-      false
-    );
+    validateAddrs(["ltc1q3e4eh3lldvx97zg6d74x4ns6v5a4j4hwwqycww"], "litecoin", false);
     validateAddrs(["Xh13o3cWixDBYJMGuJmFX17TZb9guXcBii"], "dash", false);
     validateAddrs(["MFYvHZcZ35typC4k2XyvRVooCDZxnoDS44"], "qtum", false);
     validateAddrs(["t1b1Rbw2shhJkP6MCnCyxCPuyFedHrwKtyy"], "zcash", false);
     validateAddrs(["t3PU1j7YW3fJ67jUbkGySRto8qK2qXCUiW3"], "zcash", false);
-    validateAddrs(
-      ["AYRf8r4SJhmfaEwmWvY8ujmrepbrWyenFF"],
-      "bitcoin_gold",
-      false
-    );
+    validateAddrs(["AYRf8r4SJhmfaEwmWvY8ujmrepbrWyenFF"], "bitcoin_gold", false);
     validateAddrs(["D8cMCRimfjwQ9E8jJvgUswt18WnZbCUAaa"], "dogecoin", false);
-    validateAddrs(
-      ["dgb1q7zjgqa23xzf602ljfrc94248a9u27xml08nhcc"],
-      "digibyte",
-      false
-    );
+    validateAddrs(["dgb1q7zjgqa23xzf602ljfrc94248a9u27xml08nhcc"], "digibyte", false);
     validateAddrs(["REnTkuvjsmfshAZ3vukYfuS3ZGvfUatqFF"], "komodo", false);
     validateAddrs(["DQ7F2iTQn6kUpyvietinaC3Cxje2m1ULjj"], "pivx", false);
     validateAddrs(["zndVnjbrzRxvhPGRea4jgsfSWE1hXFja1dd"], "zencash", false);
@@ -224,13 +181,7 @@ describe("Unit tests for maxTxSize", () => {
     expect(s).toEqual(10);
   });
   it("Empty tx segwit", () => {
-    const s = utils.maxTxSizeCeil(
-      0,
-      [],
-      false,
-      btc,
-      DerivationModes.NATIVE_SEGWIT
-    );
+    const s = utils.maxTxSizeCeil(0, [], false, btc, DerivationModes.NATIVE_SEGWIT);
     expect(s).toEqual(11);
   });
   it("1 p2wpkh input 1 p2wpkh output", () => {});
@@ -248,13 +199,13 @@ describe("Unit tests for maxTxSize", () => {
     // In 148 out 34
     [0, [], false, p2pkh, 10],
     [0, [], true, p2pkh, 44],
-    [0, [pkh], false, p2pkh, 44],
-    [0, [pkh], true, p2pkh, 78],
-    [1, [pkh], true, p2pkh, 226],
-    [2, [pkh], true, p2pkh, 374],
-    [1, [wpkh], true, p2pkh, 223],
-    [1, [sh], true, p2pkh, 224],
-    [1, [tr], true, p2pkh, 235],
+    [0, [btc.toOutputScript(pkh)], false, p2pkh, 44],
+    [0, [btc.toOutputScript(pkh)], true, p2pkh, 78],
+    [1, [btc.toOutputScript(pkh)], true, p2pkh, 226],
+    [2, [btc.toOutputScript(pkh)], true, p2pkh, 374],
+    [1, [btc.toOutputScript(wpkh)], true, p2pkh, 223],
+    [1, [btc.toOutputScript(sh)], true, p2pkh, 224],
+    [1, [btc.toOutputScript(tr)], true, p2pkh, 235],
 
     // In 68 out 31
     [0, [], false, p2wpkh, 11],
@@ -267,8 +218,8 @@ describe("Unit tests for maxTxSize", () => {
     [0, [], false, p2sh, 11],
     [0, [], true, p2sh, 43],
     [1, [], false, p2sh, 101],
-    [1, [sh], false, p2sh, 133],
-    [2, [sh], false, p2sh, 223],
+    [1, [btc.toOutputScript(sh)], false, p2sh, 133],
+    [2, [btc.toOutputScript(sh)], false, p2sh, 223],
 
     // Fixed 10.5 In 57.75 out 43
     [0, [], false, p2tr, 11],
@@ -286,36 +237,21 @@ describe("Unit tests for maxTxSize", () => {
     [252, [], true, p2tr, Math.ceil(53.5 + 57.75 * 252)],
     // 0xfd=253 inputs will add 2 bytes for >= 0xfd
     [253, [], true, p2tr, Math.ceil(53.5 + 57.75 * 253 + 2)],
-    [
-      256 * 256 - 1,
-      [],
-      true,
-      p2tr,
-      Math.ceil(53.5 + 57.75 * (256 * 256 - 1) + 2),
-    ],
+    [256 * 256 - 1, [], true, p2tr, Math.ceil(53.5 + 57.75 * (256 * 256 - 1) + 2)],
     // 0xffff inputs will add 4 bytes
     [256 * 256, [], true, p2tr, Math.ceil(53.5 + 57.75 * (256 * 256) + 4)],
 
     // test address with witness version 16 and witness program [0x01, 0x02] => tb1sqypqyuzpgh
     [
       2,
-      [tr, sh, pkh, wpkh, "tb1sqypqyuzpgh"],
+      [tr, sh, pkh, wpkh, "tb1sqypqyuzpgh"].map(addr => btc.toOutputScript(addr)),
       false,
       p2wpkh,
       Math.ceil(10.5 + 68 * 2 + 43 + 32 + 34 + 31 + 13),
     ],
-  ])(
-    "%i, %s, %s, %s => %i",
-    (inputCount, outputAddrs, useChange, derivationMode, exp) => {
-      const s = utils.maxTxSizeCeil(
-        inputCount,
-        outputAddrs,
-        useChange,
-        btc,
-        derivationMode
-      );
-      //const s = utils.estimateTxSize(inputCount, outputAddrs.length + (useChange ? 1 : 0), btc, derivationMode);
-      expect(s).toEqual(exp);
-    }
-  );
+  ])("%i, %s, %s, %s => %i", (inputCount, outputScripts, useChange, derivationMode, exp) => {
+    const s = utils.maxTxSizeCeil(inputCount, outputScripts, useChange, btc, derivationMode);
+
+    expect(s).toEqual(exp);
+  });
 });

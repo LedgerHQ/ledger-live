@@ -2,104 +2,63 @@ import { createCustomErrorClass } from "@ledgerhq/errors";
 // TODO we need to migrate in all errors that are in @ledgerhq/errors
 // but only make sense to live-common to not pollute ledgerjs
 export const ConnectAppTimeout = createCustomErrorClass("ConnectAppTimeout");
-export const ConnectManagerTimeout = createCustomErrorClass(
-  "ConnectManagerTimeout"
-);
+export const ConnectManagerTimeout = createCustomErrorClass("ConnectManagerTimeout");
 export const GetAppAndVersionUnsupportedFormat = createCustomErrorClass(
-  "GetAppAndVersionUnsupportedFormat"
+  "GetAppAndVersionUnsupportedFormat",
 );
 export const AccountNeedResync = createCustomErrorClass("AccountNeedResync");
 
 export const LatestFirmwareVersionRequired = createCustomErrorClass(
-  "LatestFirmwareVersionRequired"
+  "LatestFirmwareVersionRequired",
 );
 
-export const FeeEstimationFailed = createCustomErrorClass(
-  "FeeEstimationFailed"
-);
-export const LowerThanMinimumRelayFee = createCustomErrorClass(
-  "LowerThanMinimumRelayFee"
-);
-export const TransactionRefusedOnDevice = createCustomErrorClass(
-  "TransactionRefusedOnDevice"
-);
+export const FeeEstimationFailed = createCustomErrorClass("FeeEstimationFailed");
+export const LowerThanMinimumRelayFee = createCustomErrorClass("LowerThanMinimumRelayFee");
+export const TransactionRefusedOnDevice = createCustomErrorClass("TransactionRefusedOnDevice");
 
 export const LanguageInstallRefusedOnDevice = createCustomErrorClass(
-  "LanguageInstallRefusedOnDevice"
+  "LanguageInstallRefusedOnDevice",
 );
 
-export const ImageLoadRefusedOnDevice = createCustomErrorClass(
-  "ImageLoadRefusedOnDevice"
-);
+export const ImageLoadRefusedOnDevice = createCustomErrorClass("ImageLoadRefusedOnDevice");
 
-export const ImageDoesNotExistOnDevice = createCustomErrorClass(
-  "ImageDoesNotExistOnDevice"
-);
+export const ImageDoesNotExistOnDevice = createCustomErrorClass("ImageDoesNotExistOnDevice");
 
-export const ImageCommitRefusedOnDevice = createCustomErrorClass(
-  "ImageCommitRefusedOnDevice"
-);
+export const ImageCommitRefusedOnDevice = createCustomErrorClass("ImageCommitRefusedOnDevice");
 
-export const LanguageInstallTimeout = createCustomErrorClass(
-  "LanguageInstallTimeout"
-);
+export const LanguageInstallTimeout = createCustomErrorClass("LanguageInstallTimeout");
 
+export const DeviceOnboarded = createCustomErrorClass("DeviceOnboarded");
 export const DeviceNotOnboarded = createCustomErrorClass("DeviceNotOnboarded");
+export const DeviceAlreadySetup = createCustomErrorClass("DeviceAlreadySetup");
 export const InvalidAddressBecauseAlreadyDelegated = createCustomErrorClass(
-  "InvalidAddressBecauseAlreadyDelegated"
+  "InvalidAddressBecauseAlreadyDelegated",
 );
-export const TronNoFrozenForBandwidth = createCustomErrorClass(
-  "TronNoFrozenForBandwidth"
-);
-export const TronNoFrozenForEnergy = createCustomErrorClass(
-  "TronNoFrozenForEnergy"
-);
-export const TronUnfreezeNotExpired = createCustomErrorClass(
-  "TronUnfreezeNotExpired"
-);
+export const TronNoFrozenForBandwidth = createCustomErrorClass("TronNoFrozenForBandwidth");
+export const TronNoFrozenForEnergy = createCustomErrorClass("TronNoFrozenForEnergy");
+export const TronUnfreezeNotExpired = createCustomErrorClass("TronUnfreezeNotExpired");
 export const TronVoteRequired = createCustomErrorClass("TronVoteRequired");
-export const TronInvalidVoteCount = createCustomErrorClass(
-  "TronInvalidVoteCount"
-);
-export const TronRewardNotAvailable = createCustomErrorClass(
-  "TronRewardNotAvailable"
-);
+export const TronInvalidVoteCount = createCustomErrorClass("TronInvalidVoteCount");
+export const TronRewardNotAvailable = createCustomErrorClass("TronRewardNotAvailable");
 export const TronNoReward = createCustomErrorClass("TronNoReward");
-export const TronInvalidFreezeAmount = createCustomErrorClass(
-  "TronInvalidFreezeAmount"
-);
+export const TronInvalidFreezeAmount = createCustomErrorClass("TronInvalidFreezeAmount");
 export const TronSendTrc20ToNewAccountForbidden = createCustomErrorClass(
-  "TronSendTrc20ToNewAccountForbidden"
+  "TronSendTrc20ToNewAccountForbidden",
 );
 export const TronUnexpectedFees = createCustomErrorClass("TronUnexpectedFees");
-export const TronNotEnoughTronPower = createCustomErrorClass(
-  "TronNotEnoughTronPower"
-);
-export const TronTransactionExpired = createCustomErrorClass(
-  "TronTransactionExpired"
-);
-export const TronNotEnoughEnergy = createCustomErrorClass(
-  "TronNotEnoughEnergy"
-);
+export const TronNotEnoughTronPower = createCustomErrorClass("TronNotEnoughTronPower");
+export const TronTransactionExpired = createCustomErrorClass("TronTransactionExpired");
+export const TronNotEnoughEnergy = createCustomErrorClass("TronNotEnoughEnergy");
 export const AccountAwaitingSendPendingOperations = createCustomErrorClass(
-  "AccountAwaitingSendPendingOperations"
+  "AccountAwaitingSendPendingOperations",
 );
 export const SourceHasMultiSign = createCustomErrorClass("SourceHasMultiSign");
-export const CosmosRedelegationInProgress = createCustomErrorClass(
-  "CosmosRedelegationInProgress"
-);
-export const ClaimRewardsFeesWarning = createCustomErrorClass(
-  "ClaimRewardsFeesWarning"
-);
+export const CosmosRedelegationInProgress = createCustomErrorClass("CosmosRedelegationInProgress");
 export const CosmosDelegateAllFundsWarning = createCustomErrorClass(
-  "CosmosDelegateAllFundsWarning"
+  "CosmosDelegateAllFundsWarning",
 );
-export const CosmosTooManyValidators = createCustomErrorClass(
-  "CosmosTooManyValidators"
-);
-export const NotEnoughDelegationBalance = createCustomErrorClass(
-  "NotEnoughDelegationBalance"
-);
+export const CosmosTooManyValidators = createCustomErrorClass("CosmosTooManyValidators");
+export const NotEnoughDelegationBalance = createCustomErrorClass("NotEnoughDelegationBalance");
 export const RPCHostRequired = createCustomErrorClass("RPCHostRequired");
 export const RPCHostInvalid = createCustomErrorClass("RPCHostInvalid");
 export const RPCUserRequired = createCustomErrorClass("RPCUserRequired");
@@ -144,96 +103,55 @@ export const CosmosBroadcastError = {
   "35": createCustomErrorClass("CosmosBroadcastLogic"),
   "36": createCustomErrorClass("CosmosBroadcastConflict"),
 };
-export const SatStackVersionTooOld = createCustomErrorClass(
-  "SatStackVersionTooOld"
-);
+export const SatStackVersionTooOld = createCustomErrorClass("SatStackVersionTooOld");
 export const SatStackAccessDown = createCustomErrorClass("SatStackAccessDown");
-export const SatStackStillSyncing = createCustomErrorClass(
-  "SatStackStillSyncing"
-);
+export const SatStackStillSyncing = createCustomErrorClass("SatStackStillSyncing");
 export const SatStackDescriptorNotImported = createCustomErrorClass(
-  "SatStackDescriptorNotImported"
+  "SatStackDescriptorNotImported",
 );
-export const SwapNoAvailableProviders = createCustomErrorClass(
-  "SwapNoAvailableProviders"
-);
-export const NoSuchAppOnProvider = createCustomErrorClass(
-  "NoSuchAppOnProvider"
-);
-export const SwapExchangeRateAmountTooLow = createCustomErrorClass(
-  "SwapExchangeRateAmountTooLow"
-);
+export const SwapNoAvailableProviders = createCustomErrorClass("SwapNoAvailableProviders");
+export const NoSuchAppOnProvider = createCustomErrorClass("NoSuchAppOnProvider");
+export const SwapExchangeRateAmountTooLow = createCustomErrorClass("SwapExchangeRateAmountTooLow");
 export const SwapExchangeRateAmountTooHigh = createCustomErrorClass(
-  "SwapExchangeRateAmountTooHigh"
+  "SwapExchangeRateAmountTooHigh",
 );
 export const SwapExchangeRateAmountTooLowOrTooHigh = createCustomErrorClass(
-  "SwapExchangeRateAmountTooLowOrTooHigh"
-);
-export const SwapCheckKYCStatusFailed = createCustomErrorClass(
-  "SwapCheckKYCStatusFailed"
+  "SwapExchangeRateAmountTooLowOrTooHigh",
 );
 
-export const SwapSubmitKYCFailed = createCustomErrorClass(
-  "SwapSubmitKYCFailed"
-);
+export const SwapGenericAPIError = createCustomErrorClass("SwapGenericAPIError");
 
-export const SwapGenericAPIError = createCustomErrorClass(
-  "SwapGenericAPIError"
-);
-
-export const JSONRPCResponseError = createCustomErrorClass(
-  "JSONRPCResponseError"
-);
+export const JSONRPCResponseError = createCustomErrorClass("JSONRPCResponseError");
 export const JSONDecodeError = createCustomErrorClass("JSONDecodeError");
 export const NoIPHeaderError = createCustomErrorClass("NoIPHeaderError");
-export const CurrencyNotSupportedError = createCustomErrorClass(
-  "CurrencyNotSupportedError"
-);
-export const CurrencyDisabledError = createCustomErrorClass(
-  "CurrencyDisabledError"
-);
-export const CurrencyDisabledAsInputError = createCustomErrorClass(
-  "CurrencyDisabledAsInputError"
-);
+export const CurrencyNotSupportedError = createCustomErrorClass("CurrencyNotSupportedError");
+export const CurrencyDisabledError = createCustomErrorClass("CurrencyDisabledError");
+export const CurrencyDisabledAsInputError = createCustomErrorClass("CurrencyDisabledAsInputError");
 export const CurrencyDisabledAsOutputError = createCustomErrorClass(
-  "CurrencyDisabledAsOutputError"
+  "CurrencyDisabledAsOutputError",
 );
 export const CurrencyNotSupportedByProviderError = createCustomErrorClass(
-  "CurrencyNotSupportedByProviderError"
+  "CurrencyNotSupportedByProviderError",
 );
-export const TradeMethodNotSupportedError = createCustomErrorClass(
-  "TradeMethodNotSupportedError"
-);
+export const TradeMethodNotSupportedError = createCustomErrorClass("TradeMethodNotSupportedError");
 export const UnexpectedError = createCustomErrorClass("UnexpectedError");
-export const NotImplementedError = createCustomErrorClass(
-  "NotImplementedError"
-);
+export const NotImplementedError = createCustomErrorClass("NotImplementedError");
 export const ValidationError = createCustomErrorClass("ValidationError");
 export const AccessDeniedError = createCustomErrorClass("AccessDeniedError");
 
-export const AlgorandASANotOptInInRecipient = createCustomErrorClass(
-  "AlgorandASANotOptInInRecipient"
-);
-export const CompoundLowerAllowanceOfActiveAccountError =
-  createCustomErrorClass("CompoundLowerAllowanceOfActiveAccountError");
 export const OutdatedApp = createCustomErrorClass("OutdatedApp");
-export const FreshAddressIndexInvalid = createCustomErrorClass(
-  "FreshAddressIndexInvalid"
-);
 
-export const BluetoothNotSupportedError = createCustomErrorClass(
-  "FwUpdateBluetoothNotSupported"
-);
-
-export const UnsupportedDerivation = createCustomErrorClass(
-  "UnsupportedDerivation"
-);
+export const BluetoothNotSupportedError = createCustomErrorClass("FwUpdateBluetoothNotSupported");
 
 export const EConnResetError = createCustomErrorClass("EConnReset");
 
-export * from "./families/polkadot/errors";
+export { ClaimRewardsFeesWarning } from "@ledgerhq/errors";
+export * from "@ledgerhq/coin-framework/errors";
+export * from "@ledgerhq/coin-polkadot/errors";
+export * from "@ledgerhq/coin-algorand/errors";
 export * from "./families/stellar/errors";
 export * from "./families/solana/errors";
 export * from "./families/cardano/errors";
 export * from "./families/near/errors";
 export * from "./families/icon/errors";
+export * from "@ledgerhq/coin-evm/errors";

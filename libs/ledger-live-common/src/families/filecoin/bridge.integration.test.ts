@@ -1,17 +1,9 @@
 import "../../__tests__/test-helpers/setup";
 import { testBridge } from "../../__tests__/test-helpers/bridge";
 import { getAccountBridge } from "../../bridge";
-import {
-  decodeAccountId,
-  encodeAccountId,
-  fromAccountRaw,
-} from "../../account";
+import { decodeAccountId, encodeAccountId, fromAccountRaw } from "../../account";
 import { BigNumber } from "bignumber.js";
-import {
-  AmountRequired,
-  InvalidAddress,
-  NotEnoughBalance,
-} from "@ledgerhq/errors";
+import { AmountRequired, InvalidAddress, NotEnoughBalance } from "@ledgerhq/errors";
 
 import type { DatasetTest, CurrenciesData } from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
@@ -21,7 +13,6 @@ const SEED_IDENTIFIER = "f1p74d4mlmeyc4agflhjqsnvoyzyfdai7fmkyso2a";
 const ACCOUNT_1 = "f1p74d4mlmeyc4agflhjqsnvoyzyfdai7fmkyso2a";
 
 const filecoin: CurrenciesData<Transaction> = {
-  FIXME_ignoreAccountFields: [],
   scanAccounts: [
     {
       name: "filecoin seed 1",
@@ -51,7 +42,6 @@ const filecoin: CurrenciesData<Transaction> = {
   ],
   accounts: [
     {
-      FIXME_tests: ["balance is sum of ops"],
       raw: {
         id: `js:2:filecoin:${SEED_IDENTIFIER}:glif`,
         seedIdentifier: SEED_IDENTIFIER,

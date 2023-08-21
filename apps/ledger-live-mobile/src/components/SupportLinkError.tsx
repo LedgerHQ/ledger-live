@@ -11,15 +11,13 @@ type Props = {
 };
 
 const SupportLinkError = ({ error, type }: Props) => {
-  const maybeLink = error
-    ? urls.errors[error.name as keyof typeof urls.errors]
-    : null;
+  const maybeLink = error ? urls.errors[error.name as keyof typeof urls.errors] : null;
   const onOpen = useCallback(() => {
     maybeLink && Linking.openURL(maybeLink);
   }, [maybeLink]);
   if (!maybeLink) return null;
   return type === "alert" ? (
-    <LearnMoreLink color="alert" onPress={onOpen} />
+    <LearnMoreLink onPress={onOpen} />
   ) : (
     <ExternalLink
       onPress={onOpen}

@@ -1,7 +1,7 @@
 import React, { memo, Fragment } from "react";
 import styled from "styled-components";
 import { border, BorderProps, color, ColorProps, space, SpaceProps } from "styled-system";
-import { Icons } from "../../../../index";
+import { IconsLegacy } from "../../../../index";
 import Text from "../../../asorted/Text";
 import Flex, { FlexBoxProps } from "../../../layout/Flex";
 
@@ -61,8 +61,8 @@ export const Item = {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: ${(p) => p.theme.space[8]}px;
-    height: ${(p) => p.theme.space[8]}px;
+    width: ${p => p.theme.space[8]}px;
+    height: ${p => p.theme.space[8]}px;
     ${color}
     ${border}
     ${space}
@@ -83,20 +83,21 @@ export const Item = {
   Pending: styled.div.attrs({
     backgroundColor: "neutral.c70",
   })<ColorProps>`
-    width: ${(p) => p.theme.space[2]}px;
-    height: ${(p) => p.theme.space[2]}px;
-    border-radius: ${(p) => p.theme.space[2]}px;
+    width: ${p => p.theme.space[2]}px;
+    height: ${p => p.theme.space[2]}px;
+    border-radius: ${p => p.theme.space[2]}px;
     ${color}
   `,
-  Completed: (): JSX.Element => <Icons.CheckAloneMedium size={16} />,
-  Disabled: (): JSX.Element => <Icons.CloseMedium size={16} />,
-  Errored: (): JSX.Element => <Icons.CloseMedium size={16} />,
+  Completed: (): JSX.Element => <IconsLegacy.CheckAloneMedium size={16} />,
+  Disabled: (): JSX.Element => <IconsLegacy.CloseMedium size={16} />,
+  Errored: (): JSX.Element => <IconsLegacy.CloseMedium size={16} />,
 };
 
 export const StepText = styled(Text)<{ state: StepState }>`
-  color: ${(p) => {
+  text-align: center;
+  color: ${p => {
     if (p.state === "errored") {
-      return p.theme.colors.error.c100;
+      return p.theme.colors.error.c50;
     }
     if (p.state === "disabled") {
       return p.theme.colors.neutral.c50;
@@ -112,9 +113,9 @@ const BaseSeparator = styled.div<{ inactive?: boolean }>`
   flex: 1;
   position: relative;
   overflow-x: hidden;
-  background-color: ${(p) => p.theme.colors.neutral.c40};
+  background-color: ${p => p.theme.colors.neutral.c40};
   height: 1px;
-  top: ${(p) => p.theme.space[5]}px;
+  top: ${p => p.theme.space[5]}px;
 `;
 
 const Separator = {
@@ -139,7 +140,7 @@ const stepContentsByState = {
     </Item.Container>
   ),
   errored: (
-    <Item.Container color="error.c100" backgroundColor="warning.c30" borderRadius="8px">
+    <Item.Container color="error.c50" backgroundColor="warning.c30" borderRadius="8px">
       <Item.Errored />
     </Item.Container>
   ),
@@ -160,7 +161,7 @@ export const Step = memo(function Step({
   const nextInactive = state === "pending";
 
   return (
-    <Flex flexDirection="column" alignItems="center">
+    <Flex flexDirection="column" alignItems="center" flex={20}>
       <Item.Spacer mb={5}>
         {(!hideLeftSeparator && <Separator.Item inactive={inactive} position="left" />) || (
           <Flex flex="1" />

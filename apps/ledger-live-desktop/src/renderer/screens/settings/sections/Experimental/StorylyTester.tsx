@@ -8,7 +8,10 @@ import { openModal } from "~/renderer/actions/modals";
 const StorylyTester = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const onOpenModal = useCallback(() => dispatch(openModal("MODAL_STORYLY_DEBUGGER")), [dispatch]);
+  const onOpenModal = useCallback(
+    () => dispatch(openModal("MODAL_STORYLY_DEBUGGER", undefined)),
+    [dispatch],
+  );
 
   return (
     <SettingsSectionRow

@@ -1,15 +1,6 @@
 import BigNumber from "bignumber.js";
-import {
-  getAccountInfo,
-  getServerInfo,
-  getTransactions,
-} from "../../api/Ripple";
-import {
-  GetAccountShape,
-  makeScanAccounts,
-  makeSync,
-  mergeOps,
-} from "../../bridge/jsHelpers";
+import { getAccountInfo, getServerInfo, getTransactions } from "./api";
+import { GetAccountShape, makeScanAccounts, makeSync, mergeOps } from "../../bridge/jsHelpers";
 import { encodeOperationId } from "../../operation";
 import { Account, Operation } from "@ledgerhq/types-live";
 import { encodeAccountId } from "../../account";
@@ -20,16 +11,7 @@ const txToOperation =
   (accountId: string, address: string) =>
   ({
     meta: { delivered_amount },
-    tx: {
-      DestinationTag,
-      Fee,
-      hash,
-      inLedger,
-      date,
-      Account,
-      Destination,
-      Sequence,
-    },
+    tx: { DestinationTag, Fee, hash, inLedger, date, Account, Destination, Sequence },
   }: TxXRPL): Operation | null | undefined => {
     const type = Account === address ? "OUT" : "IN";
     let value =
@@ -70,24 +52,17 @@ const txToOperation =
     return op;
   };
 
-const filterOperations: any = (
-  transactions: TxXRPL[],
-  accountId: string,
-  address: string
-) => {
+const filterOperations: any = (transactions: TxXRPL[], accountId: string, address: string) => {
   return transactions
     .filter(
       (tx: TxXRPL) =>
-        tx.tx.TransactionType === "Payment" &&
-        typeof tx.meta.delivered_amount === "string"
+        tx.tx.TransactionType === "Payment" && typeof tx.meta.delivered_amount === "string",
     )
     .map(txToOperation(accountId, address))
     .filter(Boolean);
 };
 
-const getAccountShape: GetAccountShape = async (
-  info
-): Promise<Partial<Account>> => {
+const getAccountShape: GetAccountShape = async (info): Promise<Partial<Account>> => {
   const { address, initialAccount, currency, derivationMode } = info;
   const accountId = encodeAccountId({
     type: "js",
@@ -113,9 +88,7 @@ const getAccountShape: GetAccountShape = async (
   const serverInfo = await getServerInfo();
 
   const oldOperations = initialAccount?.operations || [];
-  const startAt = oldOperations.length
-    ? (oldOperations[0].blockHeight || 0) + 1
-    : 0;
+  const startAt = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 0;
 
   const ledgers = serverInfo.info.complete_ledgers.split("-");
   const minLedgerVersion = Number(ledgers[0]);
@@ -127,7 +100,7 @@ const getAccountShape: GetAccountShape = async (
     (await getTransactions(address, {
       ledger_index_min: Math.max(
         startAt, // if there is no ops, it might be after a clear and we prefer to pull from the oldest possible history
-        minLedgerVersion
+        minLedgerVersion,
       ),
       ledger_index_max: maxLedgerVersion,
     })) || [];

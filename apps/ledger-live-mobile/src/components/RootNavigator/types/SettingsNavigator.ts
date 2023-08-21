@@ -12,7 +12,6 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.HelpSettings]: undefined;
   [ScreenName.Resources]: undefined;
   [ScreenName.CryptoAssetsSettings]: undefined;
-  [ScreenName.HiddenNftCollections]: undefined;
   [ScreenName.CurrencySettings]: {
     currencyId: string;
     headerTitle?: string;
@@ -27,6 +26,7 @@ export type SettingsNavigatorStackParamList = {
     | undefined;
   [ScreenName.DebugFeatureFlags]: undefined;
   [ScreenName.DebugInformation]: undefined;
+  [ScreenName.DebugPerformance]: undefined;
   [ScreenName.DebugDebugging]: undefined;
   [ScreenName.DebugConfiguration]: undefined;
   [ScreenName.DebugFeatures]: undefined;
@@ -51,11 +51,20 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.DebugHttpTransport]: undefined;
   [ScreenName.DebugLogs]: undefined;
   [ScreenName.DebugLottie]: undefined;
+  [ScreenName.DebugPlayground]: undefined;
+  [ScreenName.DebugBluetoothAndLocationServices]: undefined;
   [ScreenName.DebugTermsOfUse]: undefined;
+  [ScreenName.DebugVideos]: undefined;
+  [ScreenName.DebugInstallSetOfApps]: undefined;
   [ScreenName.BenchmarkQRStream]: undefined;
   [ScreenName.OnboardingLanguage]: undefined;
   [ScreenName.PostOnboardingDebugScreen]: undefined;
+  [ScreenName.DebugSnackbars]: undefined;
+  [ScreenName.DebugTransactionsAlerts]: undefined;
   [ScreenName.DebugStoryly]: undefined;
   [ScreenName.DebugFetchCustomImage]: undefined;
+  [ScreenName.DebugFirmwareUpdate]: undefined;
   [ScreenName.DebugCustomImageGraphics]: undefined;
+  [ScreenName.DebugCameraPermissions]: undefined;
+  [ScreenName.DebugQueuedDrawers]: undefined;
 };

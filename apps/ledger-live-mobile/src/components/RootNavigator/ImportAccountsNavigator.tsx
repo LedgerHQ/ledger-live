@@ -6,19 +6,15 @@ import { useTheme } from "styled-components/native";
 import { ScreenName } from "../../const";
 import ScanAccounts from "../../screens/ImportAccounts/Scan";
 import DisplayResult from "../../screens/ImportAccounts/DisplayResult";
-import FallBackCameraScreen from "../../screens/ImportAccounts/FallBackCameraScreen";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import TransparentHeaderNavigationOptions from "../../navigation/TransparentHeaderNavigationOptions";
 import type { ImportAccountsNavigatorParamList } from "./types/ImportAccountsNavigator";
-import HeaderRightClose from "../HeaderRightClose";
+import { NavigationHeaderCloseButtonAdvanced } from "../NavigationHeaderCloseButton";
 
 export default function ImportAccountsNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const stackNavigationConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
-  );
+  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   return (
     <Stack.Navigator screenOptions={{ ...stackNavigationConfig }}>
       <Stack.Screen
@@ -32,7 +28,7 @@ export default function ImportAccountsNavigator() {
               {t("account.import.scan.title")}
             </Text>
           ),
-          headerRight: props => <HeaderRightClose {...props} color={"#fff"} />,
+          headerRight: props => <NavigationHeaderCloseButtonAdvanced {...props} color={"#fff"} />,
           headerLeft: () => null,
         }}
       />
@@ -41,13 +37,6 @@ export default function ImportAccountsNavigator() {
         component={DisplayResult}
         options={{
           title: t("account.import.result.title"),
-        }}
-      />
-      <Stack.Screen
-        name={ScreenName.FallBackCameraScreen}
-        component={FallBackCameraScreen}
-        options={{
-          headerTitle: "",
         }}
       />
     </Stack.Navigator>

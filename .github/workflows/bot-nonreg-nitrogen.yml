@@ -1,0 +1,36 @@
+name: "[Bot] non-reg on develop with 'Nitrogen'"
+on:
+  schedule:
+    - cron: "9 5 * * 3" # Wednesday – daily rotation of bots
+    - cron: "9 16 * * 1-5" # every working day at 4pm we will do a daily non reg on what was merged in
+
+concurrency:
+  group: bot-seed7
+
+jobs:
+  run-bot:
+    runs-on: [ledger-live-medium-linux]
+    steps:
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+      - uses: actions/checkout@v3
+      - name: Retrieving coin apps
+        uses: actions/checkout@v3
+        with:
+          ref: generated/ledger-live-bot
+          repository: LedgerHQ/coin-apps
+          token: ${{ steps.generate-token.outputs.token }}
+          path: coin-apps
+      - uses: ./tools/actions/composites/bot
+        id: bot
+        timeout-minutes: 120
+        with:
+          SHOW_LEGACY_NEW_ACCOUNT: "1"
+          SLACK_API_TOKEN: ${{secrets.SLACK_API_TOKEN}}
+          SLACK_ICON_EMOJI: ":bot-seed7:"
+          SEED: ${{ secrets.SEED7 }}
+          BOT_ENVIRONMENT: production

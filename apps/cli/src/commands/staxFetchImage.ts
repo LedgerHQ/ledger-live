@@ -12,13 +12,13 @@ type staxFetchImageJobOpts = ScanCommonOpts & {
 const exec = async (opts: staxFetchImageJobOpts) => {
   const { device: deviceId = "", fileOutput } = opts;
 
-  await new Promise<void>((p) =>
-    staxFetchImage({ deviceId }).subscribe(
-      (event) => {
+  await new Promise<void>(p =>
+    staxFetchImage({ deviceId, request: { allowedEmpty: false } }).subscribe(
+      event => {
         if (event.type === "imageFetched") {
           const { hexImage } = event;
           if (!fileOutput) {
-            console.log(hexImage)
+            console.log(hexImage);
           } else {
             fs.writeFileSync(fileOutput, hexImage);
             console.log(`${fileOutput} written`);
@@ -27,15 +27,15 @@ const exec = async (opts: staxFetchImageJobOpts) => {
           console.log(event);
         }
       },
-      (e) => {
+      e => {
         console.error(e);
         p();
       },
       () => {
         console.log(`Image fetched.`);
         p();
-      }
-    )
+      },
+    ),
   );
 };
 

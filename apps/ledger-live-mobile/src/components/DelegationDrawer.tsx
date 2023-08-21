@@ -3,10 +3,7 @@ import React from "react";
 import type { ComponentType } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
 import type { StyleProp, ViewStyle } from "react-native";
-import {
-  getAccountCurrency,
-  getAccountUnit,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import type { AccountLike } from "@ledgerhq/types-live";
 // TODO move to component
@@ -14,7 +11,7 @@ import { useTheme } from "@react-navigation/native";
 import DelegatingContainer from "../families/tezos/DelegatingContainer";
 import { rgba } from "../colors";
 import getWindowDimensions from "../logic/getWindowDimensions";
-import BottomModal from "./BottomModal";
+import QueuedDrawer from "./QueuedDrawer";
 import Circle from "./Circle";
 import Touchable from "./Touchable";
 import LText from "./LText";
@@ -56,17 +53,13 @@ export default function DelegationDrawer({
   const unit = getAccountUnit(account);
   const iconWidth = normalize(64);
   return (
-    <BottomModal style={styles.modal} isOpened={isOpen} onClose={onClose}>
+    <QueuedDrawer style={styles.modal} isRequestingToBeOpened={isOpen} onClose={onClose}>
       <View style={styles.root}>
         <DelegatingContainer
           left={
             icon || (
               <Circle size={iconWidth} bg={rgba(color, 0.2)}>
-                <CurrencyIcon
-                  size={iconWidth / 2}
-                  currency={currency}
-                  bg={"rgba(0,0,0,0)"}
-                />
+                <CurrencyIcon size={iconWidth / 2} currency={currency} bg={"rgba(0,0,0,0)"} />
               </Circle>
             )
           }
@@ -91,29 +84,22 @@ export default function DelegationDrawer({
           </LText>
         </View>
 
-        <ScrollView
-          style={styles.scrollSection}
-          showsVerticalScrollIndicator={true}
-        >
+        <ScrollView style={styles.scrollSection} showsVerticalScrollIndicator={true}>
           {data.map((field, i) => (
-            <DataField
-              {...field}
-              key={"data-" + i}
-              isLast={i === data.length - 1}
-            />
+            <DataField {...field} key={"data-" + i} isLast={i === data.length - 1} />
           ))}
         </ScrollView>
 
         <View style={[styles.row, styles.actionsRow]}>
-          {actions.map(props => (
-            <ActionButton {...props} />
+          {actions.map((props, i) => (
+            <ActionButton key={`actions-${i}`} {...props} />
           ))}
         </View>
       </View>
-    </BottomModal>
+    </QueuedDrawer>
   );
 }
-type FieldType = {
+export type FieldType = {
   label: React.ReactNode;
   Component: React.ReactNode;
 };
@@ -135,12 +121,7 @@ function DataField({ label, Component, isLast }: DataFieldProps) {
       ]}
     >
       <View>
-        <LText
-          numberOfLines={1}
-          semiBold
-          style={styles.labelText}
-          color="smoke"
-        >
+        <LText numberOfLines={1} semiBold style={styles.labelText} color="smoke">
           {label}
         </LText>
       </View>
@@ -150,7 +131,7 @@ function DataField({ label, Component, isLast }: DataFieldProps) {
   );
 }
 
-type Action = {
+export type Action = {
   label?: React.ReactNode;
   Icon: string | ComponentType<IconProps>;
   event?: string;
@@ -158,20 +139,14 @@ type Action = {
   disabled?: boolean;
   onPress?: () => void;
 };
+
 export type IconProps = {
   size: number;
   style: StyleProp<ViewStyle>;
   bg?: string;
 };
 
-function ActionButton({
-  label,
-  Icon,
-  event,
-  eventProperties,
-  onPress,
-  disabled,
-}: Action) {
+function ActionButton({ label, Icon, event, eventProperties, onPress, disabled }: Action) {
   return (
     <Touchable
       disabled={disabled}
@@ -181,11 +156,7 @@ function ActionButton({
       onPress={onPress}
     >
       <Icon size={48} style={styles.actionIcon} />
-      <LText
-        semiBold
-        style={[styles.actionText]}
-        color={disabled ? "grey" : "darkBlue"}
-      >
+      <LText semiBold style={[styles.actionText]} color={disabled ? "grey" : "darkBlue"}>
         {label}
       </LText>
     </Touchable>

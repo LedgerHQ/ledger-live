@@ -4,7 +4,7 @@ import styled from "styled-components";
 // @ts-expect-error Typings…
 import { useArgs } from "@storybook/client-api";
 import { Props as FlowStepperProps } from "./index";
-import { Divider, Flex, FlowStepper, Text, Button, Box, Link, Icons, Tag } from "../../..";
+import { Divider, Flex, FlowStepper, Text, Button, Box, Link, IconsLegacy, Tag } from "../../..";
 import type { Size as TagSize } from "../../Tag";
 import { lipsum, StoryTemplate } from "../../helpers";
 import { useState } from "react";
@@ -143,7 +143,7 @@ export default {
 };
 
 const NB_OF_STEPS = 5;
-export const Minimal: StoryTemplate<FlowStepperProps<unknown>> = (args) => {
+export const Minimal: StoryTemplate<FlowStepperProps<unknown>> = args => {
   const { activeIndex, ...rest } = args;
   const [, updateArgs] = useArgs();
 
@@ -158,7 +158,7 @@ export const Minimal: StoryTemplate<FlowStepperProps<unknown>> = (args) => {
       footer={() => (
         <Flex mt={6} flexDirection="column" rowGap={6} alignItems="flex-end">
           <Box alignSelf="stretch">
-            <Divider variant="light" />
+            <Divider />
           </Box>
           <Flex columnGap={6}>
             <Button
@@ -207,7 +207,7 @@ const Header = ({ activeIndex, onBack }: { activeIndex: number; onBack?: () => v
     <Box position="relative" my={6}>
       {onBack && (
         <Box position="absolute">
-          <Link onClick={onBack} Icon={Icons.ArrowLeftMedium} iconPosition="left">
+          <Link onClick={onBack} Icon={IconsLegacy.ArrowLeftMedium} iconPosition="left">
             Back
           </Link>
         </Box>
@@ -228,7 +228,7 @@ const Footer = ({
 }) => (
   <Flex mt={6} flexDirection="column" rowGap={6}>
     <Box alignSelf="stretch">
-      <Divider variant="light" />
+      <Divider />
     </Box>
     <Flex flexDirection="row" justifyContent="space-between" alignItems="center">
       {children || <Flex />}
@@ -288,7 +288,7 @@ const StepFooter = ({ label }: { label: string }) => (
   </Flex>
 );
 
-export const Demo: StoryTemplate<FlowStepperProps<unknown>> = (args) => {
+export const Demo: StoryTemplate<FlowStepperProps<unknown>> = args => {
   const [, updateArgs] = useArgs();
 
   return (
@@ -326,7 +326,7 @@ export const Demo: StoryTemplate<FlowStepperProps<unknown>> = (args) => {
         )}
         {...args}
       >
-        {steps.map((label) => (
+        {steps.map(label => (
           <CSSTransition
             key={label}
             label={label}
@@ -347,7 +347,7 @@ export const Demo: StoryTemplate<FlowStepperProps<unknown>> = (args) => {
 const StepWithNavigation = (props: { label: string; setActiveStep: (arg: string) => void }) => {
   const { label, setActiveStep } = props;
   const content = useMemo(() => {
-    return steps.map((step) => {
+    return steps.map(step => {
       return (
         <Button
           key={step}
@@ -375,7 +375,7 @@ const StepWithNavigation = (props: { label: string; setActiveStep: (arg: string)
   );
 };
 
-export const IndexedByKey: StoryTemplate<FlowStepperProps<unknown>> = (args) => {
+export const IndexedByKey: StoryTemplate<FlowStepperProps<unknown>> = args => {
   const [activeStep, setActiveStep] = useState(steps[0]);
   return (
     <Flex height="90vh">
@@ -408,7 +408,7 @@ export const IndexedByKey: StoryTemplate<FlowStepperProps<unknown>> = (args) => 
         extraStepperProps={{ maxWidth: "500px" }}
         {...args}
       >
-        {steps.map((label) => (
+        {steps.map(label => (
           <FlowStepper.Indexed.Step key={label} label={label} itemKey={label}>
             <StepWithNavigation label={label} setActiveStep={setActiveStep} />
           </FlowStepper.Indexed.Step>

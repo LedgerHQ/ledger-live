@@ -1,9 +1,6 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import {
-  getAccountCurrency,
-  getAccountUnit,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { useTheme } from "@react-navigation/native";
 import { TFunction } from "i18next";
 import { Account } from "@ledgerhq/types-live";
@@ -18,9 +15,7 @@ import CounterValue from "../../../components/CounterValue";
 import ExternalLink from "../../../icons/ExternalLink";
 import NominationDrawer from "../components/NominationDrawer";
 
-type NominationDrawerData = React.ComponentProps<
-  typeof NominationDrawer
->["data"];
+type NominationDrawerData = React.ComponentProps<typeof NominationDrawer>["data"];
 
 type Props = {
   t: TFunction;
@@ -50,12 +45,7 @@ export function getDrawerInfo({
           {
             label: t("delegation.validator"),
             Component: (
-              <LText
-                numberOfLines={1}
-                semiBold
-                ellipsizeMode="middle"
-                style={styles.valueText}
-              >
+              <LText numberOfLines={1} semiBold ellipsizeMode="middle" style={styles.valueText}>
                 {validator?.identity}
               </LText>
             ),
@@ -98,11 +88,7 @@ export function getDrawerInfo({
           ellipsizeMode="middle"
           style={[styles.valueText]}
           color={
-            !nomination.status
-              ? "orange"
-              : nomination.status === "active"
-              ? "success"
-              : "darkBlue"
+            !nomination.status ? "orange" : nomination.status === "active" ? "success" : "darkBlue"
           }
         >
           {t(`polkadot.nomination.${nomination.status || "notValidator"}`)}
@@ -114,12 +100,7 @@ export function getDrawerInfo({
           {
             label: t("polkadot.nomination.commission"),
             Component: (
-              <LText
-                numberOfLines={1}
-                semiBold
-                ellipsizeMode="middle"
-                style={styles.valueText}
-              >
+              <LText numberOfLines={1} semiBold ellipsizeMode="middle" style={styles.valueText}>
                 {formattedCommission}
               </LText>
             ),
@@ -151,23 +132,14 @@ export function getDrawerInfo({
           {
             label: t("polkadot.nomination.totalStake"),
             Component: (
-              <LText
-                numberOfLines={1}
-                semiBold
-                ellipsizeMode="middle"
-                style={styles.valueText}
-              >
+              <LText numberOfLines={1} semiBold ellipsizeMode="middle" style={styles.valueText}>
                 <View style={styles.column}>
                   <LText semiBold>
                     <CurrencyUnitValue value={totalStake} unit={unit} />
                   </LText>
                   {totalStake ? (
                     <LText style={styles.valueCounterValue} color="grey">
-                      <CounterValue
-                        currency={currency}
-                        value={totalStake}
-                        withPlaceholder
-                      />
+                      <CounterValue currency={currency} value={totalStake} withPlaceholder />
                     </LText>
                   ) : null}
                 </View>
@@ -177,22 +149,13 @@ export function getDrawerInfo({
           {
             label: t("polkadot.nomination.amount"),
             Component: (
-              <LText
-                numberOfLines={1}
-                semiBold
-                ellipsizeMode="middle"
-                style={styles.valueText}
-              >
+              <LText numberOfLines={1} semiBold ellipsizeMode="middle" style={styles.valueText}>
                 <View style={styles.column}>
                   <LText semiBold>
                     <CurrencyUnitValue value={amount} unit={unit} />
                   </LText>
                   <LText style={styles.valueCounterValue} color="grey">
-                    <CounterValue
-                      currency={currency}
-                      value={amount}
-                      withPlaceholder
-                    />
+                    <CounterValue currency={currency} value={amount} withPlaceholder />
                   </LText>
                 </View>
               </LText>

@@ -2,11 +2,12 @@ import React, { useCallback } from "react";
 import { Pressable } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { Theme } from "src/styles/theme";
-import styled from "styled-components/native";
+import styled, { useTheme } from "styled-components/native";
 
-import { Item, ItemStatus } from ".";
-import { Flex } from "../..";
-import { Text, Tag } from "../../..";
+import { Item, ItemStatus } from "../types";
+import Flex from "../../Flex";
+import Text from "../../../Text";
+import Tag from "../../../tags/Tag";
 import TimelineIndicator from "./TimelineIndicator";
 
 export type Props = {
@@ -16,36 +17,33 @@ export type Props = {
   isLastItem?: boolean;
   setActiveIndex?: (_: number) => void;
   index: number;
+  withExtraMarginOnActiveStep?: boolean;
 };
 
-const getContainerBackground = (theme: Theme, status: ItemStatus, isLastItem?: boolean) => {
-  if (isLastItem && status === "completed") {
-    return theme.colors.success.c30;
-  } else if (status === "completed") {
-    return theme.colors.primary.c20;
+const getContainerBackground = (theme: Theme, status: ItemStatus) => {
+  if (status === "completed") {
+    return "transparent";
   } else if (status === "active") {
-    return theme.colors.neutral.c20;
+    return theme.colors.opacityDefault.c05;
   }
-  return theme.colors.neutral.c30;
+  return "transparent";
 };
 
 const getContainerBorder = (theme: Theme, status: ItemStatus, isLastItem?: boolean) => {
-  if (isLastItem && status === "completed") {
-    return theme.colors.success.c30;
+  if (status === "completed") {
+    return "transparent";
   } else if (isLastItem && status === "active") {
-    return theme.colors.success.c100;
-  } else if (status === "completed") {
-    return theme.colors.primary.c20;
+    return theme.colors.success.c70;
   } else if (status === "active") {
-    return theme.colors.primary.c80;
+    return theme.colors.neutral.c40;
   }
-  return theme.colors.neutral.c30;
+  return "transparent";
 };
 
 const Container = styled(Flex)<{ status: ItemStatus; isLastItem?: boolean }>`
   flex: 1;
   border-radius: ${(p) => p.theme.radii[2]}px;
-  background: ${(p) => getContainerBackground(p.theme, p.status, p.isLastItem)};
+  background: ${(p) => getContainerBackground(p.theme, p.status)};
   border: 1px solid ${(p) => getContainerBorder(p.theme, p.status, p.isLastItem)};
   padding: 20px 16px;
 `;
@@ -57,7 +55,9 @@ export default function TimelineItem({
   isLastItem,
   setActiveIndex,
   index,
+  withExtraMarginOnActiveStep,
 }: Props) {
+  const theme = useTheme();
   /**
    * Having an initial value of null will prevent having "height: 0" before the
    * initial call of onLayout.
@@ -97,18 +97,29 @@ export default function TimelineItem({
           isFirstItem={isFirstItem}
           isLastItem={isLastItem}
           mr={4}
+          topHeight={
+            withExtraMarginOnActiveStep && !isFirstItem && item.status === "active"
+              ? TimelineIndicator.topSegmentDefaultHeight + theme.space[4]
+              : undefined
+          }
         />
-        <Container status={item.status} isLastItem={isLastItem} mb={4}>
+        <Container
+          status={item.status}
+          isLastItem={isLastItem}
+          mt={withExtraMarginOnActiveStep && !isFirstItem && item.status === "active" ? 4 : 0}
+          mb={withExtraMarginOnActiveStep && !isLastItem && item.status === "active" ? 4 : 0}
+        >
           <Flex flexDirection="row" justifyContent="space-between">
             <Text
               variant="body"
+              fontWeight={item.status === "active" ? "semiBold" : "medium"}
               flexShrink={1}
               color={
-                item.status === "inactive"
-                  ? "neutral.c80"
-                  : isLastItem
-                  ? "success.c100"
-                  : "primary.c90"
+                item.status === "completed" && isLastItem
+                  ? "success.c70"
+                  : item.status === "active"
+                  ? "primary.c80"
+                  : "neutral.c70"
               }
             >
               {item.status === "completed" ? item.doneTitle ?? item.title : item.title}

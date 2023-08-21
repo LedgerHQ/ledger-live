@@ -7,7 +7,7 @@ import {
   Button,
   Text,
   IconBoxList,
-  Icons,
+  IconsLegacy,
   Link as TextLink,
   ScrollListContainer,
 } from "@ledgerhq/native-ui";
@@ -30,7 +30,7 @@ const BluetoothConnection = () => {
   }, []);
 
   return (
-    <Flex flex={1} justifyContent="space-between" bg="background.main">
+    <Flex flex={1} justifyContent="space-between" bg="background.drawer">
       <ScrollListContainer contentContainerStyle={{ padding: 16 }}>
         <Flex>
           <Text variant="h1" color="neutral.c100" uppercase mb={6}>
@@ -48,13 +48,13 @@ const BluetoothConnection = () => {
                   </Trans>
                 </Text>
               ),
-              Icon: Icons.ChevronRightMedium,
+              Icon: IconsLegacy.ChevronRightMedium,
             }))}
           />
           <TextLink
             type="color"
             onPress={handlePress}
-            Icon={Icons.ExternalLinkMedium}
+            Icon={IconsLegacy.ExternalLinkMedium}
             style={{ justifyContent: "flex-start" }}
           >
             {t("onboarding.stepPairNew.infoModal.bullets.2.link")}

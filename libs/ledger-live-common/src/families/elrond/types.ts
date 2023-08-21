@@ -1,4 +1,4 @@
-import {
+import type {
   Account,
   AccountRaw,
   TransactionCommon,
@@ -6,27 +6,95 @@ import {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
-import type { BigNumber } from "bignumber.js";
-import { Range, RangeRaw } from "../../range";
+import BigNumber from "bignumber.js";
+
+export type ElrondAccount = Account & { elrondResources: ElrondResources };
+
+export type ElrondAccountRaw = AccountRaw & {
+  elrondResources: ElrondResourcesRaw;
+};
 
 export type ElrondResources = {
   nonce: number;
+  delegations: ElrondDelegation[];
+  isGuarded: boolean;
 };
 
-/**
- * Elrond account resources from raw JSON
- */
 export type ElrondResourcesRaw = {
   nonce: number;
+  delegations: ElrondDelegation[];
+  isGuarded: boolean;
+};
+
+export type ElrondDelegation = {
+  address: string;
+  contract: string;
+  userUnBondable: string;
+  userActiveStake: string;
+  claimableRewards: string;
+  userUndelegatedList: UserUndelegated[];
+};
+
+export type UserUndelegated = {
+  amount: string;
+  seconds: number;
 };
 
 /**
  * Elrond transaction
  */
 export type Transaction = TransactionCommon & {
-  mode: string;
   family: "elrond";
+  mode: ElrondTransactionMode;
   fees: BigNumber | null | undefined;
+  data?: string;
+  gasLimit: number;
+};
+
+export type TransactionRaw = TransactionCommonRaw & {
+  family: "elrond";
+  mode: ElrondTransactionMode;
+  fees: string | null | undefined;
+  data?: string;
+  gasLimit: number;
+};
+
+export type TransactionStatus = TransactionStatusCommon;
+
+export type TransactionStatusRaw = TransactionStatusCommonRaw;
+
+export type ElrondTransactionMode =
+  | "send"
+  | "delegate"
+  | "reDelegateRewards"
+  | "unDelegate"
+  | "claimRewards"
+  | "withdraw";
+
+/**
+ * Elrond transaction payload to sign
+ */
+export type ElrondProtocolTransaction = {
+  nonce: number;
+  value: string;
+  receiver: string;
+  sender: string;
+  gasPrice: number;
+  gasLimit: number;
+  chainID: string;
+  signature?: string;
+  data?: string; //for ESDT or stake transactions
+  version: number;
+  options: number;
+};
+
+/**
+ * Elrond transaction as received from explorer
+ */
+export type ElrondApiTransaction = {
+  mode: ElrondTransactionMode;
+  fees: BigNumber | null | undefined;
+  transfer?: ElrondTransferOptions;
   txHash?: string;
   sender?: string;
   receiver?: string;
@@ -35,53 +103,109 @@ export type Transaction = TransactionCommon & {
   blockHeight?: number;
   timestamp?: number;
   nonce?: number;
+  gasLimit: number;
   status?: string;
   fee?: BigNumber;
   round?: number;
   miniBlockHash?: string;
+  data?: string;
+  tokenIdentifier?: string;
+  tokenValue?: string;
+  action?: ElrondTransactionAction;
+  operations?: ElrondTransactionOperation[];
 };
 
-/**
- * Elrond transaction from a raw JSON
- */
-export type TransactionRaw = TransactionCommonRaw & {
-  family: "elrond";
-  mode: string;
-  fees: string | null | undefined;
-};
-export type ElrondValidator = {
-  bls: string;
-  identity: string;
-  owner: string;
-  provider: string;
+export enum ElrondTransferOptions {
+  egld = "egld",
+  esdt = "esdt",
+}
+
+export type ElrondTransactionOperation = {
+  action: string;
   type: string;
-  status: string;
-  nonce: number;
-  stake: BigNumber;
-  topUp: BigNumber;
-  locked: BigNumber;
-  online: boolean;
+  sender: string;
+  receiver: string;
+  value: string;
+};
+
+export type ElrondTransactionAction = {
+  category: string;
+  name: string;
+  arguments: ElrondTransactionActionArguments;
+};
+
+export type ElrondTransactionActionArguments = {
+  transfers: ElrondTransactionActionArgumentsTransfers[];
+};
+
+export type ElrondTransactionActionArgumentsTransfers = {
+  token: string;
+  value: string;
+};
+
+export type ESDTToken = {
+  identifier: string;
+  name: string;
+  balance: string;
 };
 
 export type NetworkInfo = {
-  family: "elrond";
-  gasPrice: Range;
+  family?: "elrond";
+  chainID: string;
+  denomination: number;
+  gasLimit: number;
+  gasPrice: number;
+  gasPerByte: number;
+  gasPriceModifier: string;
 };
+
 export type NetworkInfoRaw = {
-  family: "elrond";
-  gasPrice: RangeRaw;
+  family?: "elrond";
+  chainID: string;
+  denomination: number;
+  gasLimit: number;
+  gasPrice: number;
+  gasPerByte: number;
 };
 
 export type ElrondPreloadData = {
-  validators: Record<string, any>;
+  validators: ElrondProvider[];
 };
 
-export type ElrondAccount = Account & { elrondResources: ElrondResources };
-
-export type ElrondAccountRaw = AccountRaw & {
-  elrondResources: ElrondResourcesRaw;
+/**
+ * Elrond validator
+ */
+export type ElrondProvider = {
+  contract: string;
+  owner: string;
+  serviceFee: string;
+  maxDelegationCap: string;
+  initialOwnerFunds: string;
+  totalActiveStake: string;
+  totalUnstaked: string;
+  maxDelegateAmountAllowed: string;
+  apr: string;
+  explorerURL: string;
+  address: string;
+  aprValue: number;
+  automaticActivation: boolean;
+  changeableServiceFee: boolean;
+  checkCapOnRedelegate: boolean;
+  createdNonce: number;
+  featured: boolean;
+  numNodes: number;
+  numUsers: number;
+  ownerBelowRequiredBalanceThreshold: boolean;
+  unBondPeriod: number;
+  withDelegationCap: boolean;
+  disabled?: boolean;
+  identity: {
+    key: string;
+    name: string;
+    avatar: string;
+    description: string;
+    location?: string;
+    twitter: string;
+    url: string;
+  };
 };
-
-export type TransactionStatus = TransactionStatusCommon;
-
-export type TransactionStatusRaw = TransactionStatusCommonRaw;

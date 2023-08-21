@@ -94,9 +94,7 @@ const Placeholder = ({ accountId }: { accountId: string }) => {
       <Button
         event="AccountReceiveASA"
         type="primary"
-        IconLeft={() => (
-          <IconPlus size={16} color={disabled ? colors.grey : colors.live} />
-        )}
+        IconLeft={() => <IconPlus size={16} color={disabled ? colors.grey : colors.live} />}
         onPress={onReceiveClick}
         title={<Trans i18nKey="account.tokens.algorand.addAsa" />}
         disabled={disabled}

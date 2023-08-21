@@ -3,11 +3,19 @@ import { AxiosInstance } from "axios";
 import { DisconnectedDevice } from "@ledgerhq/errors";
 import Transport from "@ledgerhq/hw-transport";
 import { log } from "@ledgerhq/logs";
+import { Subject } from "rxjs";
 
 export type SpeculosHttpTransportOpts = {
-  baseURL?: string;
+  apiPort?: string;
   timeout?: number;
+  baseURL?: string;
 };
+
+enum SpeculosButton {
+  LEFT = "Ll",
+  RIGHT = "Rr",
+  BOTH = "LRlr",
+}
 
 /**
  * Speculos TCP transport implementation
@@ -21,6 +29,7 @@ export default class SpeculosHttpTransport extends Transport {
   instance: AxiosInstance;
   opts: SpeculosHttpTransportOpts;
   eventStream: any; // ReadStream?
+  automationEvents: Subject<Record<string, any>> = new Subject();
 
   constructor(instance: AxiosInstance, opts: SpeculosHttpTransportOpts) {
     super();
@@ -35,12 +44,18 @@ export default class SpeculosHttpTransport extends Transport {
     unsubscribe: () => {},
   });
 
-  static open = (
-    opts: SpeculosHttpTransportOpts
-  ): Promise<SpeculosHttpTransport> =>
+  buttonTable = {
+    [SpeculosButton.BOTH]: "both",
+    [SpeculosButton.RIGHT]: "right",
+    [SpeculosButton.LEFT]: "left",
+  };
+
+  static open = (opts: SpeculosHttpTransportOpts): Promise<SpeculosHttpTransport> =>
     new Promise((resolve, reject) => {
-      const instance = axios.create(opts);
-      instance.defaults.baseURL = "http://localhost:5000";
+      const instance = axios.create({
+        baseURL: `http://localhost:${opts.apiPort || "5000"}`,
+        timeout: opts.timeout,
+      });
 
       const transport = new SpeculosHttpTransport(instance, opts);
 
@@ -48,24 +63,22 @@ export default class SpeculosHttpTransport extends Transport {
         url: "/events?stream=true",
         responseType: "stream",
       })
-        .then((response) => {
-          response.data.on("data", (chunk) => {
+        .then(response => {
+          response.data.on("data", chunk => {
             log("speculos-event", chunk.toString());
-            // XXX: we could process display events here
-            // client side automation or UI tests/checks
+            const split = chunk.toString().replace("data: ", "");
+            const json = JSON.parse(split);
+            transport.automationEvents.next(json);
           });
           response.data.on("close", () => {
             log("speculos-event", "close");
-            transport.emit(
-              "disconnect",
-              new DisconnectedDevice("Speculos exited!")
-            );
+            transport.emit("disconnect", new DisconnectedDevice("Speculos exited!"));
           });
           transport.eventStream = response.data;
           // we are connected to speculos
           resolve(transport);
         })
-        .catch((error) => {
+        .catch(error => {
           reject(error);
         });
     });
@@ -77,14 +90,14 @@ export default class SpeculosHttpTransport extends Transport {
    */
   button = (but: string): Promise<void> =>
     new Promise((resolve, reject) => {
-      const action = { action: "press-and-release" };
-      log("speculos-button", "press-and-release", but);
+      const input = this.buttonTable[but] ?? but;
+      log("speculos-button", "press-and-release", input);
       this.instance
-        .post(`/button/${but}`, action)
-        .then((response) => {
+        .post(`/button/${input}`, { action: "press-and-release" })
+        .then(response => {
           resolve(response.data);
         })
-        .catch((e) => {
+        .catch(e => {
           reject(e);
         });
     });
@@ -92,7 +105,7 @@ export default class SpeculosHttpTransport extends Transport {
   async exchange(apdu: Buffer): Promise<any> {
     const hex = apdu.toString("hex");
     log("apdu", "=> " + hex);
-    return this.instance.post("/apdu", { data: hex }).then((r) => {
+    return this.instance.post("/apdu", { data: hex }).then(r => {
       // r.data is {"data": "hex value of response"}
       const data = r.data.data;
       log("apdu", "<= " + data);

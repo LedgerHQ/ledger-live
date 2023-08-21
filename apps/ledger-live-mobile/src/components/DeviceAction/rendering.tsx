@@ -1,51 +1,44 @@
 import React, { useEffect, useState } from "react";
 import { Platform, ScrollView, StyleSheet } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { LockedDeviceError, WrongDeviceForAccount } from "@ledgerhq/errors";
+import { LockedDeviceError, PeerRemovedPairing, WrongDeviceForAccount } from "@ledgerhq/errors";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import firmwareUpdateRepair from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
-import {
-  getProviderName,
-  getNoticeType,
-} from "@ledgerhq/live-common/exchange/swap/utils/index";
+import { getProviderName, getNoticeType } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import {
   InfiniteLoader,
   Text,
   Flex,
   Tag,
-  Icons,
+  IconsLegacy,
   BoxedIcon,
   Log,
+  Icons,
 } from "@ledgerhq/native-ui";
-import {
-  LockAltMedium,
-  DownloadMedium,
-} from "@ledgerhq/native-ui/assets/icons";
+import { DownloadMedium } from "@ledgerhq/native-ui/assets/icons";
 import BigNumber from "bignumber.js";
-import {
-  ExchangeRate,
-  Exchange,
-} from "@ledgerhq/live-common/exchange/swap/types";
+import { ExchangeRate, Exchange } from "@ledgerhq/live-common/exchange/swap/types";
 import {
   getAccountUnit,
   getMainAccount,
   getAccountName,
   getAccountCurrency,
+  getFeesCurrency,
+  getFeesUnit,
 } from "@ledgerhq/live-common/account/index";
 import { TFunction } from "react-i18next";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { DeviceModelInfo } from "@ledgerhq/types-live";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { ParamListBase } from "@react-navigation/native";
 import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwareUpdateVersionSupported";
+import ProviderIcon from "../ProviderIcon";
 import { lastSeenDeviceSelector } from "../../reducers/settings";
-import { setModalLock } from "../../actions/appstate";
 import { urls } from "../../config/urls";
 import Alert from "../Alert";
 import { lighten, Theme } from "../../colors";
@@ -57,47 +50,33 @@ import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
 import GenericErrorView from "../GenericErrorView";
 import Circle from "../Circle";
 import { MANAGER_TABS } from "../../const/manager";
-import { providerIcons } from "../../icons/swap/index";
 import ExternalLink from "../ExternalLink";
-import { track } from "../../analytics";
+import { TrackScreen, track } from "../../analytics";
 import CurrencyUnitValue from "../CurrencyUnitValue";
 import TermsFooter, { TermsProviders } from "../TermsFooter";
 import CurrencyIcon from "../CurrencyIcon";
-import {
-  FramedImageWithContext,
-  transferConfig,
-} from "../CustomImage/FramedImage";
+import { StaxFramedImageWithContext, transferConfig } from "../CustomImage/StaxFramedImage";
 import {
   Props as FramedImageWithLottieProps,
-  FramedImageWithLottieWithContext,
-} from "../CustomImage/FramedImageWithLottie";
+  StaxFramedLottieWithContext,
+} from "../CustomImage/StaxFramedLottie";
+import ModalLock from "../ModalLock";
+import confirmLockscreen from "../../animations/stax/customimage/confirmLockscreen.json";
+import allowConnection from "../../animations/stax/customimage/allowConnection.json";
 
-const confirmLockscreen = require("../animations/stax/customimage/confirmLockscreen.json"); // eslint-disable-line @typescript-eslint/no-var-requires, import/no-unresolved
-const allowConnection = require("../animations/stax/customimage/allowConnection.json"); // eslint-disable-line @typescript-eslint/no-var-requires, import/no-unresolved
-
-const Wrapper = styled(Flex).attrs({
+export const Wrapper = styled(Flex).attrs({
   flex: 1,
   alignItems: "center",
   justifyContent: "center",
   minHeight: "160px",
 })``;
 
-type AnimationContainerExtraProps = {
-  withConnectDeviceHeight?: boolean;
-  withVerifyAddressHeight?: boolean;
-};
-const AnimationContainer = styled(Flex).attrs(
-  (p: AnimationContainerExtraProps) => ({
-    alignSelf: "stretch",
-    alignItems: "center",
-    justifyContent: "center",
-    height: p.withConnectDeviceHeight
-      ? "100px"
-      : p.withVerifyAddressHeight
-      ? "72px"
-      : undefined,
-  }),
-)<AnimationContainerExtraProps>``;
+const AnimationContainer = styled(Flex).attrs({
+  alignSelf: "stretch",
+  alignItems: "center",
+  justifyContent: "center",
+  height: "150px",
+})``;
 
 const ActionContainer = styled(Flex).attrs({
   alignSelf: "stretch",
@@ -146,6 +125,9 @@ const ConnectDeviceExtraContentWrapper = styled(Flex).attrs({
   mb: 8,
 })``;
 
+const animationStyles = (modelId: DeviceModelId) =>
+  modelId === DeviceModelId.stax ? { height: 210 } : {};
+
 type RawProps = {
   t: (key: string, options?: { [key: string]: string | number }) => string;
   colors?: Theme["colors"];
@@ -164,6 +146,7 @@ export function renderRequestQuitApp({
       <AnimationContainer>
         <Animation
           source={getDeviceAnimation({ device, key: "quitApp", theme })}
+          style={animationStyles(device.modelId)}
         />
       </AnimationContainer>
       <CenteredText>{t("DeviceAction.quitApp")}</CenteredText>
@@ -221,9 +204,10 @@ export function renderVerifyAddress({
 }) {
   return (
     <Wrapper>
-      <AnimationContainer withVerifyAddressHeight={device.modelId !== "blue"}>
+      <AnimationContainer>
         <Animation
           source={getDeviceAnimation({ device, key: "verify", theme })}
+          style={animationStyles(device.modelId)}
         />
       </AnimationContainer>
       <TitleText>{t("DeviceAction.verifyAddress.title")}</TitleText>
@@ -266,24 +250,21 @@ export function renderConfirmSwap({
   amountExpectedTo?: string | null;
   estimatedFees?: string | null;
 }) {
-  const ProviderIcon = providerIcons[exchangeRate.provider.toLowerCase()];
   const providerName = getProviderName(exchangeRate.provider);
   const noticeType = getNoticeType(exchangeRate.provider);
-  const alertProperties = noticeType.learnMore
-    ? { learnMoreUrl: urls.swap.learnMore }
-    : {};
+  const alertProperties = noticeType.learnMore ? { learnMoreUrl: urls.swap.learnMore } : {};
   return (
     <ScrollView>
       <Wrapper width="100%">
         <Alert type="primary" {...alertProperties}>
-          {t(`DeviceAction.confirmSwap.alert.${noticeType.message}`)}
+          {t(`DeviceAction.confirmSwap.alert.${noticeType.message}`, {
+            providerName,
+          })}
         </Alert>
-        <AnimationContainer
-          marginTop="16px"
-          withVerifyAddressHeight={device.modelId !== "blue"}
-        >
+        <AnimationContainer marginTop="16px">
           <Animation
             source={getDeviceAnimation({ device, key: "sign", theme })}
+            style={animationStyles(device.modelId)}
           />
         </AnimationContainer>
         <TitleText>{t("DeviceAction.confirmSwap.title")}</TitleText>
@@ -304,11 +285,7 @@ export function renderConfirmSwap({
             <Text>
               <CurrencyUnitValue
                 unit={getAccountUnit(exchange.toAccount)}
-                value={
-                  amountExpectedTo
-                    ? new BigNumber(amountExpectedTo)
-                    : exchangeRate.toAmount
-                }
+                value={amountExpectedTo ? new BigNumber(amountExpectedTo) : exchangeRate.toAmount}
                 disableRounding
                 showCode
               />
@@ -318,7 +295,7 @@ export function renderConfirmSwap({
           <FieldItem title={t("DeviceAction.swap2.provider")}>
             <Flex flexDirection="row" alignItems="center">
               <Flex paddingRight={2}>
-                <ProviderIcon size={14} />
+                <ProviderIcon size="XXS" name={exchangeRate.provider} />
               </Flex>
 
               <Text>{providerName}</Text>
@@ -328,11 +305,8 @@ export function renderConfirmSwap({
           <FieldItem title={t("DeviceAction.swap2.fees")}>
             <Text>
               <CurrencyUnitValue
-                unit={getAccountUnit(
-                  getMainAccount(
-                    exchange.fromAccount,
-                    exchange.fromParentAccount,
-                  ),
+                unit={getFeesUnit(
+                  getFeesCurrency(getMainAccount(exchange.fromAccount, exchange.fromParentAccount)),
                 )}
                 value={new BigNumber(estimatedFees || 0)}
                 disableRounding
@@ -343,20 +317,14 @@ export function renderConfirmSwap({
 
           <FieldItem title={t("DeviceAction.swap2.sourceAccount")}>
             <Flex flexDirection="row" alignItems="center">
-              <CurrencyIcon
-                size={20}
-                currency={getAccountCurrency(exchange.fromAccount)}
-              />
+              <CurrencyIcon size={20} currency={getAccountCurrency(exchange.fromAccount)} />
               <Text marginLeft={2}>{getAccountName(exchange.fromAccount)}</Text>
             </Flex>
           </FieldItem>
 
           <FieldItem title={t("DeviceAction.swap2.targetAccount")}>
             <Flex flexDirection="row" alignItems="center">
-              <CurrencyIcon
-                size={20}
-                currency={getAccountCurrency(exchange.toAccount)}
-              />
+              <CurrencyIcon size={20} currency={getAccountCurrency(exchange.toAccount)} />
               <Text marginLeft={2}>{getAccountName(exchange.toAccount)}</Text>
             </Flex>
           </FieldItem>
@@ -368,13 +336,7 @@ export function renderConfirmSwap({
   );
 }
 
-function FieldItem({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
+function FieldItem({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <Flex flexDirection="row" justifyContent="space-between" paddingY={4}>
       <Text color="neutral.c70">{title}</Text>
@@ -397,11 +359,11 @@ export function renderConfirmSell({
       <Alert type="primary" learnMoreUrl={urls.swap.learnMore}>
         {t("DeviceAction.confirmSell.alert")}
       </Alert>
-      <AnimationContainer
-        marginTop="16px"
-        withVerifyAddressHeight={device.modelId !== "blue"}
-      >
-        <Animation source={getDeviceAnimation({ device, key: "sign" })} />
+      <AnimationContainer marginTop="16px">
+        <Animation
+          source={getDeviceAnimation({ device, key: "sign" })}
+          style={animationStyles(device.modelId)}
+        />
       </AnimationContainer>
       <TitleText>{t("DeviceAction.confirmSell.title")}</TitleText>
     </Wrapper>
@@ -431,6 +393,7 @@ export function renderAllowManager({
       <AnimationContainer>
         <Animation
           source={getDeviceAnimation({ device, key: "allowManager", theme })}
+          style={animationStyles(device.modelId)}
         />
       </AnimationContainer>
     </Wrapper>
@@ -441,23 +404,66 @@ export function renderAllowLanguageInstallation({
   t,
   device,
   theme,
+  fullScreen = true,
+  wording,
 }: RawProps & {
   device: Device;
+  fullScreen?: boolean;
+  wording?: string;
 }) {
   const deviceName = getDeviceModel(device.modelId).productName;
-  const key = device.modelId === "stax" ? "allowConnection" : "sign";
+  const key = device.modelId === "stax" ? "allowManager" : "sign";
+
+  return (
+    <Flex
+      flexDirection="column"
+      justifyContent="center"
+      alignItems="center"
+      alignSelf="stretch"
+      flex={fullScreen ? 1 : undefined}
+    >
+      <TrackScreen category="Allow language installation on Stax" refreshSource={false} />
+      <Text variant="h4" textAlign="center">
+        {wording ??
+          t("deviceLocalization.allowLanguageInstallation", {
+            deviceName,
+          })}
+      </Text>
+      <AnimationContainer my={8}>
+        <Animation
+          source={getDeviceAnimation({ device, key, theme })}
+          style={animationStyles(device.modelId)}
+        />
+      </AnimationContainer>
+    </Flex>
+  );
+}
+
+export const renderAllowRemoveCustomLockscreen = ({
+  t,
+  device,
+  theme,
+}: RawProps & {
+  device: Device;
+}) => {
+  const productName = getDeviceModel(device.modelId).productName;
+  const key = device.modelId === "stax" ? "allowManager" : "sign";
 
   return (
     <Wrapper>
+      <TrackScreen category={`Allow CLS removal on ${productName}`} />
       <Text variant="h4" textAlign="center">
-        {t("deviceLocalization.allowLanguageInstallation", { deviceName })}
+        {t("DeviceAction.allowRemoveCustomLockscreen", { productName })}
       </Text>
       <AnimationContainer>
-        <Animation source={getDeviceAnimation({ device, key, theme })} />
+        <Animation
+          source={getDeviceAnimation({ device, key, theme })}
+          style={animationStyles(device.modelId)}
+        />
       </AnimationContainer>
     </Wrapper>
   );
-}
+};
 
 const AllowOpeningApp = ({
   t,
@@ -487,7 +493,12 @@ const AllowOpeningApp = ({
     <Wrapper>
       <AnimationContainer>
         <Animation
-          source={getDeviceAnimation({ device, key: "openApp", theme })}
+          source={getDeviceAnimation({
+            device,
+            key: "openApp",
+            theme,
+          })}
+          style={animationStyles(device.modelId)}
         />
       </AnimationContainer>
       <TitleText>{t("DeviceAction.allowAppPermission", { wording })}</TitleText>
@@ -498,6 +509,7 @@ const AllowOpeningApp = ({
           })}
         </CenteredText>
       ) : null}
+      <ModalLock />
     </Wrapper>
   );
 };
@@ -560,29 +572,24 @@ export function renderLockedDeviceError({
   onRetry?: (() => void) | null;
   device?: Device;
 }) {
-  const productName = device
-    ? getDeviceModel(device.modelId).productName
-    : null;
+  const productName = device ? getDeviceModel(device.modelId).productName : null;
 
   return (
     <Wrapper>
       <Flex flexDirection="column" alignItems="center" alignSelf="stretch">
-        <Flex mb={5}>
+        <Flex mb={7}>
           <BoxedIcon
+            Icon={Icons.InformationFill}
+            backgroundColor={"opacityDefault.c05"}
             size={64}
-            Icon={LockAltMedium}
-            iconSize={24}
-            iconColor="neutral.c100"
+            variant="circle"
+            borderColor="transparent"
+            iconSize={"L"}
+            iconColor="primary.c80"
           />
         </Flex>
 
-        <Text
-          variant="h4"
-          fontWeight="semiBold"
-          textAlign="center"
-          numberOfLines={3}
-          mb={6}
-        >
+        <Text variant="h4" fontWeight="semiBold" textAlign="center" numberOfLines={3} mb={6}>
           {t("errors.LockedDeviceError.title")}
         </Text>
         <Text variant="paragraph" textAlign="center" numberOfLines={3} mb={6}>
@@ -617,6 +624,8 @@ export function renderError({
   Icon,
   iconColor,
   device,
+  hasExportLogButton,
+  renderedInType = "view",
 }: RawProps & {
   navigation?: StackNavigationProp<ParamListBase>;
   error: Error;
@@ -625,6 +634,14 @@ export function renderError({
   Icon?: React.ComponentProps<typeof GenericErrorView>["Icon"];
   iconColor?: string;
   device?: Device;
+  hasExportLogButton?: boolean;
+  /*
+   * Used when rendering a Bluetooth disabled error
+   *
+   * If "drawer", the component will be rendered as a content to be rendered in a drawer.
+   * If "view", the component will be rendered as a view. Defaults to "view".
+   */
+  renderedInType?: "drawer" | "view";
 }) {
   const onPress = () => {
     if (managerAppName && navigation) {
@@ -646,6 +663,13 @@ export function renderError({
     return renderLockedDeviceError({ t, onRetry, device });
   }
 
+  // TODO Once we have the aligned Error renderings, the CTA list should be determined
+  // by the error class, not patched like here.
+  let showRetryIfAvailable = true;
+  if ((error as unknown) instanceof PeerRemovedPairing) {
+    showRetryIfAvailable = false;
+  }
+
   return (
     <Wrapper>
       <GenericErrorView
@@ -654,18 +678,16 @@ export function renderError({
         withIcon
         Icon={Icon}
         iconColor={iconColor}
+        hasExportLogButton={hasExportLogButton}
+        renderedInType={renderedInType}
       >
-        {onRetry || managerAppName ? (
+        {showRetryIfAvailable && (onRetry || managerAppName) ? (
           <ActionContainer marginBottom={0} marginTop={32}>
             <StyledButton
               event="DeviceActionErrorRetry"
               type="main"
               outline={false}
-              title={
-                managerAppName
-                  ? t("DeviceAction.button.openManager")
-                  : t("common.retry")
-              }
+              title={managerAppName ? t("DeviceAction.button.openManager") : t("common.retry")}
               onPress={onPress}
             />
           </ActionContainer>
@@ -683,19 +705,12 @@ export function RequiredFirmwareUpdate({
   navigation: StackNavigationProp<ParamListBase>;
   device: Device;
 }) {
-  const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(
-    lastSeenDeviceSelector,
-  );
+  const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(lastSeenDeviceSelector);
 
-  const usbFwUpdateFeatureFlag = useFeature("llmUsbFirmwareUpdate");
   const isUsbFwVersionUpdateSupported =
-    lastSeenDevice &&
-    isFirmwareUpdateVersionSupported(lastSeenDevice.deviceInfo, device.modelId);
+    lastSeenDevice && isFirmwareUpdateVersionSupported(lastSeenDevice.deviceInfo, device.modelId);
 
-  const usbFwUpdateActivated =
-    usbFwUpdateFeatureFlag?.enabled &&
-    Platform.OS === "android" &&
-    isUsbFwVersionUpdateSupported;
+  const usbFwUpdateActivated = Platform.OS === "android" && isUsbFwVersionUpdateSupported;
 
   const deviceName = getDeviceModel(device.modelId).productName;
 
@@ -714,21 +729,10 @@ export function RequiredFirmwareUpdate({
     <Wrapper>
       <Flex flexDirection="column" alignItems="center" alignSelf="stretch">
         <Flex mb={5}>
-          <BoxedIcon
-            size={64}
-            Icon={DownloadMedium}
-            iconSize={24}
-            iconColor="neutral.c100"
-          />
+          <BoxedIcon size={64} Icon={DownloadMedium} iconSize={24} iconColor="neutral.c100" />
         </Flex>
 
-        <Text
-          variant="h4"
-          fontWeight="semiBold"
-          textAlign="center"
-          numberOfLines={3}
-          mb={6}
-        >
+        <Text variant="h4" fontWeight="semiBold" textAlign="center" numberOfLines={3} mb={6}>
           {usbFwUpdateActivated
             ? t("firmwareUpdateRequired.updateAvailableFromLLM.title", {
                 deviceName,
@@ -742,12 +746,9 @@ export function RequiredFirmwareUpdate({
             ? t("firmwareUpdateRequired.updateAvailableFromLLM.description", {
                 deviceName,
               })
-            : t(
-                "firmwareUpdateRequired.updateNotAvailableFromLLM.description",
-                {
-                  deviceName,
-                },
-              )}
+            : t("firmwareUpdateRequired.updateNotAvailableFromLLM.description", {
+                deviceName,
+              })}
         </Text>
         {usbFwUpdateActivated ? (
           <ActionContainer marginBottom={0} marginTop={32}>
@@ -805,7 +806,7 @@ export function renderDeviceNotOnboarded({
   return (
     <Wrapper>
       <Flex backgroundColor="neutral.c30" p={16} borderRadius={999}>
-        <Icons.InfoAltFillMedium color="primary.c80" size={28} />
+        <IconsLegacy.InfoAltFillMedium color="primary.c80" size={28} />
       </Flex>
       <Text variant="h4" textAlign="center" mt={6}>
         {t("DeviceAction.deviceNotOnboarded.title")}
@@ -813,13 +814,7 @@ export function renderDeviceNotOnboarded({
       <Text variant="body" color="neutral.c70" textAlign="center" mt={4} mx={4}>
         {t("DeviceAction.deviceNotOnboarded.description", { deviceName })}
       </Text>
-      <Button
-        type="main"
-        outline={false}
-        onPress={navigateToOnboarding}
-        mt={7}
-        alignSelf="stretch"
-      >
+      <Button type="main" outline={false} onPress={navigateToOnboarding} mt={7} alignSelf="stretch">
         {t("DeviceAction.button.openOnboarding")}
       </Button>
     </Wrapper>
@@ -833,30 +828,33 @@ export function renderConnectYourDevice({
   device,
   theme,
   onSelectDeviceLink,
+  fullScreen = true,
 }: RawProps & {
   unresponsive?: boolean | null;
   isLocked?: boolean;
   device: Device;
+  fullScreen?: boolean;
   onSelectDeviceLink?: () => void;
 }) {
   return (
-    <Wrapper>
-      <AnimationContainer
-        withConnectDeviceHeight={
-          ![DeviceModelId.blue, DeviceModelId.stax].includes(device.modelId)
-        }
-      >
+    <Flex
+      flexDirection="column"
+      justifyContent="center"
+      alignItems="center"
+      alignSelf="stretch"
+      flex={fullScreen ? 1 : undefined}
+    >
+      <AnimationContainer>
         <Animation
           source={getDeviceAnimation({
             device,
             key: isLocked || unresponsive ? "enterPinCode" : "plugAndPinCode",
             theme,
           })}
+          style={animationStyles(device.modelId)}
         />
       </AnimationContainer>
-      {device.deviceName && (
-        <ConnectDeviceNameText>{device.deviceName}</ConnectDeviceNameText>
-      )}
+      {device.deviceName && <ConnectDeviceNameText>{device.deviceName}</ConnectDeviceNameText>}
       <TitleText>
         {t(
           isLocked || unresponsive
@@ -870,27 +868,32 @@ export function renderConnectYourDevice({
         <ConnectDeviceExtraContentWrapper>
           <ExternalLink
             text={t("DeviceAction.useAnotherDevice")}
-            Icon={Icons.ArrowRightMedium}
+            Icon={IconsLegacy.ArrowRightMedium}
             onPress={onSelectDeviceLink}
           />
         </ConnectDeviceExtraContentWrapper>
       ) : null}
-    </Wrapper>
+    </Flex>
   );
 }
 
 export function renderLoading({
   t,
   description,
+  lockModal = false,
 }: RawProps & {
   description?: string;
+  lockModal?: boolean;
 }) {
   return (
     <Wrapper>
       <SpinnerContainer>
         <InfiniteLoader />
       </SpinnerContainer>
-      <CenteredText>{description ?? t("DeviceAction.loading")}</CenteredText>
+      <CenteredText testID="device-action-loading">
+        {description ?? t("DeviceAction.loading")}
+      </CenteredText>
+      {lockModal ? <ModalLock /> : null}
     </Wrapper>
   );
 }
@@ -934,6 +937,7 @@ export function renderSecureTransferDeviceConfirmation({
       <AnimationContainer>
         <Animation
           source={getDeviceAnimation({ device, key: "sign", theme })}
+          style={animationStyles(device.modelId)}
         />
       </AnimationContainer>
       <TitleText>{t(`DeviceAction.${exchangeTypeName}.title`)}</TitleText>
@@ -953,27 +957,14 @@ export function LoadingAppInstall({
   description?: string;
   request?: AppRequest;
 }) {
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    // Nb Blocks closing the modal while the install is happening.
-    // releases the block on onmount.
-    dispatch(setModalLock(true));
-    return () => {
-      dispatch(setModalLock(false));
-    };
-  }, [dispatch]);
-
   const currency = request?.currency || request?.account?.currency;
   const appName = request?.appName || currency?.managerAppName;
   useEffect(() => {
-    const trackingArgs = [
-      "In-line app install",
-      { appName, flow: analyticsPropertyFlow },
-    ] as const;
+    const trackingArgs = ["In-line app install", { appName, flow: analyticsPropertyFlow }] as const;
     track(...trackingArgs);
   }, [appName, analyticsPropertyFlow]);
-  return renderLoading(props);
+
+  return renderLoading({ ...props, lockModal: true });
 }
 
 type WarningOutdatedProps = RawProps & {
@@ -998,13 +989,11 @@ export function renderWarningOutdated({
     <Wrapper>
       <IconContainer>
         <Circle size={60} bg={lighten(colors.yellow, 0.4)}>
-          <Icons.WarningMedium size={28} color={colors.yellow} />
+          <IconsLegacy.WarningMedium size={28} color={colors.yellow} />
         </Circle>
       </IconContainer>
       <TitleText>{t("DeviceAction.outdated")}</TitleText>
-      <DescriptionText>
-        {t("DeviceAction.outdatedDesc", { appName })}
-      </DescriptionText>
+      <DescriptionText>{t("DeviceAction.outdatedDesc", { appName })}</DescriptionText>
       <ActionContainer>
         <StyledButton
           event="DeviceActionWarningOutdatedOpenManager"
@@ -1030,9 +1019,7 @@ export const renderBootloaderStep = ({
 }: RawProps & { onAutoRepair: () => void }) => (
   <Wrapper>
     <TitleText>{t("DeviceAction.deviceInBootloader.title")}</TitleText>
-    <DescriptionText>
-      {t("DeviceAction.deviceInBootloader.description")}
-    </DescriptionText>
+    <DescriptionText>{t("DeviceAction.deviceInBootloader.description")}</DescriptionText>
     <Button
       mt={4}
       type="color"
@@ -1100,44 +1087,33 @@ export const AutoRepair = ({
 
 const ImageLoadingGeneric: React.FC<{
   title: string;
+  fullScreen?: boolean;
   children?: React.ReactNode | undefined;
   progress?: number;
   lottieSource?: FramedImageWithLottieProps["lottieSource"];
-}> = ({ title, children, progress, lottieSource }) => {
+}> = ({ title, fullScreen = true, children, progress, lottieSource }) => {
   return (
     <Flex
       flexDirection="column"
       justifyContent="center"
       alignItems="center"
-      flex={1}
       alignSelf="stretch"
+      flex={fullScreen ? 1 : undefined}
     >
-      <Flex {...StyleSheet.absoluteFillObject}>
-        <Text
-          textAlign="center"
-          variant="h4"
-          fontWeight="semiBold"
-          mb={8}
-          alignSelf="stretch"
-        >
+      <Flex {...(fullScreen ? StyleSheet.absoluteFillObject : {})}>
+        <Text textAlign="center" variant="h4" fontWeight="semiBold" mb={8} alignSelf="stretch">
           {title}
         </Text>
       </Flex>
       <Flex flexDirection={"column"} alignItems="center" alignSelf="stretch">
         {lottieSource ? (
-          <FramedImageWithLottieWithContext
-            loadingProgress={progress}
-            lottieSource={lottieSource}
-          >
+          <StaxFramedLottieWithContext loadingProgress={progress} lottieSource={lottieSource}>
             {children}
-          </FramedImageWithLottieWithContext>
+          </StaxFramedLottieWithContext>
         ) : (
-          <FramedImageWithContext
-            loadingProgress={progress}
-            frameConfig={transferConfig}
-          >
+          <StaxFramedImageWithContext loadingProgress={progress} frameConfig={transferConfig}>
             {children}
-          </FramedImageWithContext>
+          </StaxFramedImageWithContext>
         )}
       </Flex>
     </Flex>
@@ -1147,13 +1123,18 @@ const ImageLoadingGeneric: React.FC<{
 export const renderImageLoadRequested = ({
   t,
   device,
-}: RawProps & { device: Device }) => {
+  fullScreen = true,
+  wording,
+}: RawProps & { device: Device; fullScreen?: boolean; wording?: string }) => {
   return (
     <ImageLoadingGeneric
-      title={t("customImage.allowPreview", {
-        productName:
-          device.deviceName || getDeviceModel(device.modelId)?.productName,
-      })}
+      fullScreen={fullScreen}
+      title={
+        wording ??
+        t("customImage.allowPreview", {
+          productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
+        })
+      }
       lottieSource={allowConnection}
       progress={0}
     />
@@ -1168,12 +1149,9 @@ export const renderLoadingImage = ({
   return (
     <ImageLoadingGeneric
       title={t(
-        progress > 0.9
-          ? "customImage.loadingPictureAlmostOver"
-          : "customImage.loadingPicture",
+        progress > 0.9 ? "customImage.loadingPictureAlmostOver" : "customImage.loadingPicture",
         {
-          productName:
-            device.deviceName || getDeviceModel(device.modelId)?.productName,
+          productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
         },
       )}
       progress={progress}
@@ -1184,13 +1162,18 @@ export const renderLoadingImage = ({
 export const renderImageCommitRequested = ({
   t,
   device,
-}: RawProps & { device: Device }) => {
+  fullScreen = true,
+  wording,
+}: RawProps & { device: Device; fullScreen?: boolean; wording?: string }) => {
   return (
     <ImageLoadingGeneric
-      title={t("customImage.commitRequested", {
-        productName:
-          device.deviceName || getDeviceModel(device.modelId)?.productName,
-      })}
+      fullScreen={fullScreen}
+      title={
+        wording ??
+        t("customImage.commitRequested", {
+          productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
+        })
+      }
       lottieSource={confirmLockscreen}
       progress={0.89} // hardcoded value to not have the image overflowing the "confirm button" in the lottie
     />

@@ -7,7 +7,7 @@ type Resolver = (
   currency: CryptoCurrency,
   transport: Transport,
   path: string,
-  transaction: any
+  transaction: any,
 ) => Promise<string>;
 const all = {
   ripple,

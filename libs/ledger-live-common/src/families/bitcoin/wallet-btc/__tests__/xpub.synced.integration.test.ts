@@ -1,5 +1,3 @@
-// import path from 'path';
-// import fs from 'fs';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import coininfo from "coininfo";
@@ -9,11 +7,11 @@ import BitcoinLikeStorage from "../storage";
 import BitcoinLikeExplorer from "../explorer";
 import Crypto from "../crypto/bitcoincash";
 import Xpub from "../xpub";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
 describe("synced xpub utilites functions", () => {
   const explorer = new BitcoinLikeExplorer({
-    explorerURI: "https://explorers.api.vault.ledger.com/blockchain/v3/bch",
-    explorerVersion: "v3",
+    cryptoCurrency: getCryptoCurrencyById("bitcoin_cash"),
   });
   const crypto = new Crypto({
     network: coininfo.bitcoincash.main.toBitcoinJS(),
@@ -45,13 +43,13 @@ describe("synced xpub utilites functions", () => {
       expect((await xpub.getXpubBalance()).toNumber()).toEqual(360615);
       expect((await xpub.getAccountBalance(0)).toNumber()).toEqual(10000);
       const addressesBalances = await Promise.all(
-        addresses.map((address) => xpub.getAddressBalance(address))
+        addresses.map(address => xpub.getAddressBalance(address)),
       );
       expect(
         zipObject(
-          addresses.map((address) => address.address),
-          addressesBalances.map((balance) => balance.toNumber())
-        )
+          addresses.map(address => address.address),
+          addressesBalances.map(balance => balance.toNumber()),
+        ),
       ).toEqual({
         "bitcoincash:qp2ujnlxjmkwtc299zwat3vt7j0jgltwls3q5avzsj": 0,
         "bitcoincash:qp62d8j6ng0jhenc97dnnyn6qev24vykev5pea7jd3": 0,

@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { BottomDrawer, Flex } from "@ledgerhq/native-ui";
+import { Flex } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useNavigation } from "@react-navigation/native";
@@ -13,6 +13,7 @@ import {
   StackNavigatorNavigation,
 } from "../../RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../../RootNavigator/types/BaseNavigator";
+import QueuedDrawer from "../../QueuedDrawer";
 
 function ZeroBalanceDisabledModalContent({
   account,
@@ -24,11 +25,7 @@ function ZeroBalanceDisabledModalContent({
 }: ModalOnDisabledClickComponentProps) {
   const { t } = useTranslation();
   const navigation =
-    useNavigation<
-      RootNavigationComposite<
-        StackNavigatorNavigation<BaseNavigatorStackParamList>
-      >
-    >();
+    useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
 
   const actionCurrency = account ? getAccountCurrency(account) : currency;
 
@@ -51,8 +48,7 @@ function ZeroBalanceDisabledModalContent({
           currency: actionCurrency,
           accountId: account?.id || "",
           parentId:
-            parentAccount?.id ||
-            (account?.type === "TokenAccount" ? account?.parentId : undefined),
+            parentAccount?.id || (account?.type === "TokenAccount" ? account?.parentId : undefined),
         },
       });
     } else {
@@ -67,8 +63,8 @@ function ZeroBalanceDisabledModalContent({
   }, [account, parentAccount?.id, actionCurrency, navigation, onClose]);
 
   return (
-    <BottomDrawer
-      isOpen={isOpen}
+    <QueuedDrawer
+      isRequestingToBeOpened={!!isOpen}
       onClose={onClose}
       title={t("account.modals.zeroBalanceDisabledAction.title", {
         currencyTicker: actionCurrency?.ticker,
@@ -77,32 +73,17 @@ function ZeroBalanceDisabledModalContent({
         currencyTicker: actionCurrency?.ticker,
         actionName: action.label,
       })}
-      Icon={
-        <ParentCurrencyIcon size={48} currency={actionCurrency as Currency} />
-      }
+      Icon={<ParentCurrencyIcon size={48} currency={actionCurrency as Currency} />}
     >
       <Flex mx={16} flexDirection={"row"}>
-        <Button
-          onPress={goToBuy}
-          type="main"
-          size={"large"}
-          outline
-          flex={1}
-          mr={3}
-        >
+        <Button onPress={goToBuy} type="main" size={"large"} outline flex={1} mr={3}>
           {t("account.buy")}
         </Button>
-        <Button
-          onPress={goToReceive}
-          type="main"
-          size={"large"}
-          outline
-          flex={1}
-        >
+        <Button onPress={goToReceive} type="main" size={"large"} outline flex={1}>
           {t("account.receive")}
         </Button>
       </Flex>
-    </BottomDrawer>
+    </QueuedDrawer>
   );
 }
 

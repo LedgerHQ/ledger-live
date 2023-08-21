@@ -12,10 +12,7 @@ const Stack = createStackNavigator<SyncOnboardingStackParamList>();
 
 export const SyncOnboardingNavigator = () => {
   const { colors } = useTheme();
-  const stackNavigatorConfig = useMemo(
-    () => getStackNavigatorConfig(colors),
-    [colors],
-  );
+  const stackNavigatorConfig = useMemo(() => getStackNavigatorConfig(colors), [colors]);
 
   return (
     <Stack.Navigator
@@ -24,14 +21,8 @@ export const SyncOnboardingNavigator = () => {
         headerShown: false,
       }}
     >
-      <Stack.Screen
-        name={ScreenName.SyncOnboardingCompanion}
-        component={SyncOnboarding}
-      />
-      <Stack.Screen
-        name={ScreenName.SyncOnboardingCompletion}
-        component={CompletionScreen}
-      />
+      <Stack.Screen name={ScreenName.SyncOnboardingCompanion} component={SyncOnboarding} />
+      <Stack.Screen name={ScreenName.SyncOnboardingCompletion} component={CompletionScreen} />
     </Stack.Navigator>
   );
 };

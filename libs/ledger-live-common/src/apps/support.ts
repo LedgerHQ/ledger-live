@@ -1,14 +1,9 @@
 import semver from "semver";
 import { shouldUseTrustedInputForSegwit } from "@ledgerhq/hw-app-btc/shouldUseTrustedInputForSegwit";
-import type { DeviceModelId } from "@ledgerhq/devices";
 import { getDependencies } from "./polyfill";
 import { getEnv } from "../env";
 
-export function shouldUpgrade(
-  deviceModel: DeviceModelId,
-  appName: string,
-  appVersion: string
-): boolean {
+export function shouldUpgrade(appName: string, appVersion: string): boolean {
   if (getEnv("DISABLE_APP_VERSION_REQUIREMENTS")) return false;
   const deps = getDependencies(appName);
 
@@ -21,8 +16,9 @@ export function shouldUpgrade(
     appName === "Bitcoin"
   ) {
     // https://donjon.ledger.com/lsb/010/
-    return !semver.satisfies(appVersion || "", ">= 1.4.0", {
-      includePrerelease: true, // this will allow pre-release tags that would otherwise return false. E.g. 1.0.0-dev
+    // the `-0` is here to allow for pre-release tags of the 1.4.0
+    return !semver.satisfies(appVersion || "", ">= 1.4.0-0", {
+      includePrerelease: true, // this will allow pre-release tags for higher versions (> 1.4.0)
     });
   }
 
@@ -31,26 +27,22 @@ export function shouldUpgrade(
 const appVersionsRequired = {
   Cosmos: ">= 2.34.4",
   Algorand: ">= 1.2.9",
-  Polkadot: ">= 15.9300.0",
-  Elrond: ">= 1.0.11",
-  Ethereum: ">= 1.10.1-0",
+  MultiversX: ">= 1.0.18",
+  Polkadot: ">= 24.9430.1",
+  Ethereum: ">= 1.10.3-0", // the `-0` is here to allow for pre-release tags of the same version (1.10.3)
   Solana: ">= 1.2.0",
   Celo: ">= 1.1.8",
   "Cardano ADA": ">= 4.1.0",
   Zcash: "> 2.0.6",
   NEAR: ">= 1.2.1",
 };
-export function mustUpgrade(
-  deviceModel: DeviceModelId,
-  appName: string,
-  appVersion: string
-): boolean {
+export function mustUpgrade(appName: string, appVersion: string): boolean {
   if (getEnv("DISABLE_APP_VERSION_REQUIREMENTS")) return false;
   const range = appVersionsRequired[appName];
 
   if (range) {
     return !semver.satisfies(appVersion || "", range, {
-      includePrerelease: true, // this will allow pre-release tags that would otherwise return false. E.g. 1.0.0-dev
+      includePrerelease: true, // this will allow pre-release tags for higher versions than the minimum one
     });
   }
 

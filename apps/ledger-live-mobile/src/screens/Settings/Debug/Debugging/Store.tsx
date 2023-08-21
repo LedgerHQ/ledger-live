@@ -14,7 +14,7 @@ import { dangerouslyOverrideState } from "../../../../actions/settings";
 import Button from "../../../../components/Button";
 import { SettingsActionTypes } from "../../../../actions/types";
 import { State } from "../../../../reducers/types";
-import BottomModal from "../../../../components/BottomModal";
+import QueuedDrawer from "../../../../components/QueuedDrawer";
 import TextInput from "../../../../components/FocusedTextInput";
 
 const Separator = styled(Flex).attrs({
@@ -129,10 +129,7 @@ export default function Store() {
       try {
         await Share.open(options);
       } catch (err) {
-        if (
-          (err as { error?: { code?: string } })?.error?.code !==
-          "ECANCELLED500"
-        ) {
+        if ((err as { error?: { code?: string } })?.error?.code !== "ECANCELLED500") {
           logger.critical(err as Error);
         }
       }
@@ -143,10 +140,7 @@ export default function Store() {
     <SafeAreaView>
       <Flex p={4}>
         {hasMadeChanges ? (
-          <Alert
-            type="warning"
-            title="Changes are not persisted until you confirm."
-          />
+          <Alert type="warning" title="Changes are not persisted until you confirm." />
         ) : (
           <Alert type="info" title="Read and modify the application state." />
         )}
@@ -167,26 +161,16 @@ export default function Store() {
           disabled={!hasMadeChanges}
           onPress={onRestore}
         />
-        <Button
-          ml={3}
-          type="shade"
-          iconName={"Share"}
-          onPress={onExportState}
-        />
+        <Button ml={3} type="shade" iconName={"Share"} onPress={onExportState} />
         {__DEV__ ? (
-          <Button
-            ml={3}
-            type="shade"
-            iconName={"Warning"}
-            onPress={onStoreDebug}
-          />
+          <Button ml={3} type="shade" iconName={"Warning"} onPress={onStoreDebug} />
         ) : null}
       </Flex>
       <Separator />
       <ScrollView contentContainerStyle={{ flex: 0, paddingBottom: 170 }}>
         <Node data={modifiedState} onEdit={onEdit} />
       </ScrollView>
-      <BottomModal isOpened={isModalOpen} onClose={onRestore}>
+      <QueuedDrawer isRequestingToBeOpened={isModalOpen} onClose={onRestore}>
         <Alert
           type="error"
           title="Setting an invalid value may corrupt your app state requiring a full app reinstall."
@@ -210,7 +194,7 @@ export default function Store() {
           disabled={!hasMadeChanges}
           onPress={onConfirm}
         />
-      </BottomModal>
+      </QueuedDrawer>
     </SafeAreaView>
   );
 }

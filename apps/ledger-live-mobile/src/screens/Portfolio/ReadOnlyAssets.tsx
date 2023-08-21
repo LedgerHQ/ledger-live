@@ -20,6 +20,7 @@ import TabBarSafeAreaView, {
 import AssetRow, { NavigationProp } from "../WalletCentricAsset/AssetRow";
 import AssetsNavigationHeader from "../Assets/AssetsNavigationHeader";
 import { Asset } from "../../types/asset";
+import { ScreenName } from "../../const";
 
 const maxReadOnlyCryptoCurrencies = 10;
 
@@ -38,13 +39,11 @@ function ReadOnlyAssets({ navigation }: { navigation: NavigationProp }) {
   const sortedCryptoCurrencies = useCurrenciesByMarketcap(cryptoCurrencies);
   const assets: Asset[] = useMemo(
     () =>
-      sortedCryptoCurrencies
-        .slice(0, maxReadOnlyCryptoCurrencies)
-        .map(currency => ({
-          amount: 0,
-          accounts: [],
-          currency,
-        })),
+      sortedCryptoCurrencies.slice(0, maxReadOnlyCryptoCurrencies).map(currency => ({
+        amount: 0,
+        accounts: [],
+        currency,
+      })),
     [sortedCryptoCurrencies],
   );
 
@@ -52,7 +51,7 @@ function ReadOnlyAssets({ navigation }: { navigation: NavigationProp }) {
 
   const renderItem = useCallback(
     ({ item }: { item: Asset }) => (
-      <AssetRow asset={item} navigation={navigation} />
+      <AssetRow asset={item} navigation={navigation} sourceScreenName={ScreenName.Portfolio} />
     ),
     [navigation],
   );
@@ -79,12 +78,7 @@ function ReadOnlyAssets({ navigation }: { navigation: NavigationProp }) {
           ListFooterComponent={
             <GradientContainer containerStyle={{ width: "100%" }}>
               <Flex p={6} alignItems="center" justifyContent="center">
-                <Text
-                  variant="large"
-                  fontWeight="semiBold"
-                  color="neutral.c100"
-                  textAlign="center"
-                >
+                <Text variant="large" fontWeight="semiBold" color="neutral.c100" textAlign="center">
                   {t("accounts.readOnly.moreCrypto.title")}
                 </Text>
                 <Text

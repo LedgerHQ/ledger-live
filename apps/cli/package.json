@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-cli",
-  "version": "22.5.1",
+  "version": "22.11.1",
   "description": "ledger-live CLI version",
   "repository": {
     "type": "git",
@@ -21,7 +21,10 @@
     "build": "tsc --project src/tsconfig.json",
     "prepublishOnly": "rm -rf lib && tsc --project src/tsconfig.json",
     "watch": "tsc --watch --project src/tsconfig.json",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src --cache",
+    "lint:fix": "pnpm lint --fix",
+    "test": "zx ./scripts/test.mjs"
   },
   "peerDependencies": {
     "@ledgerhq/hw-transport-node-ble": "workspace:^"
@@ -30,6 +33,7 @@
     "@ledgerhq/hw-transport-node-ble": "workspace:^"
   },
   "dependencies": {
+    "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-btc": "workspace:^",
@@ -38,12 +42,12 @@
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/hw-transport-node-hid": "workspace:^",
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
+    "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
-    "@ledgerhq/types-devices": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
-    "@walletconnect/client": "^1.7.1",
+    "@ledgerhq/types-devices": "workspace:^",
     "asciichart": "^1.5.25",
-    "bignumber.js": "^9.1.0",
+    "bignumber.js": "^9.1.1",
     "bip39": "^3.0.4",
     "body-parser": "^1.19.1",
     "command-line-args": "^5.2.1",
@@ -68,7 +72,6 @@
     "@types/lodash": "^4.14.177",
     "@types/node": "^17.0.15",
     "@types/pako": "^2.0.0",
-    "ts-node": "^10.4.0",
-    "typescript": "^4.8.3"
+    "ts-node": "^10.4.0"
   }
 }

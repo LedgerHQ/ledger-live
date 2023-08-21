@@ -106,9 +106,7 @@ export default function TezosAccountBodyHeader({
     return null;
   }
 
-  const name = delegation.baker
-    ? delegation.baker.name
-    : shortAddressPreview(delegation.address);
+  const name = delegation.baker ? delegation.baker.name : shortAddressPreview(delegation.address);
   const amount = account.balance;
   const currency = getAccountCurrency(account);
   const unit = getAccountUnit(account);
@@ -144,11 +142,7 @@ export default function TezosAccountBodyHeader({
             <View style={styles.row}>
               <LText style={styles.subtitle} color="grey">
                 {days ? (
-                  <Trans
-                    i18nKey="delegation.durationDays"
-                    count={days}
-                    values={{ count: days }}
-                  />
+                  <Trans i18nKey="delegation.durationDays" count={days} values={{ count: days }} />
                 ) : (
                   <Trans i18nKey="delegation.durationDays0" />
                 )}

@@ -3,13 +3,13 @@ import { Account, NFTStandard, ProtoNFT } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { genAccount } from "../mock/account";
 import {
-  getNFTByTokenId,
+  getNFT,
   getNftCollectionKey,
   getNftKey,
   groupByCurrency,
   orderByLastReceived,
 } from "./helpers";
-import { encodeNftId } from "./nftId";
+import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 
 const NFT_1 = {
   id: encodeNftId("js:2:0ddkdlsPmds", "contract", "nft.tokenId", "ethereum"),
@@ -20,12 +20,7 @@ const NFT_1 = {
   currencyId: "ethereum",
 };
 const NFT_2 = {
-  id: encodeNftId(
-    "js:2:0ddkdlzzZCF",
-    "contract-pol",
-    "nft.tokenId3",
-    "polygon"
-  ),
+  id: encodeNftId("js:2:0ddkdlzzZCF", "contract-pol", "nft.tokenId3", "polygon"),
   tokenId: "nft.tokenId3",
   amount: new BigNumber(0),
   contract: "contract-pol",
@@ -41,12 +36,7 @@ const NFT_3 = {
   currencyId: "polygon",
 };
 const NFT_4 = {
-  id: encodeNftId(
-    "js:2:0ddkdlzzAZ",
-    "contract-eth",
-    "nft.tokenId2",
-    "ethereum"
-  ),
+  id: encodeNftId("js:2:0ddkdlzzAZ", "contract-eth", "nft.tokenId2", "ethereum"),
   tokenId: "nft.tokenId2",
   amount: new BigNumber(0),
   contract: "contract-eth",
@@ -64,17 +54,13 @@ const accounts: Account[] = [
 
 describe("helpers", () => {
   it("getNftKey", () => {
-    expect(getNftKey("contract", "tokenId", "currencyId")).toEqual(
-      "currencyId-contract-tokenId"
-    );
+    expect(getNftKey("contract", "tokenId", "currencyId")).toEqual("currencyId-contract-tokenId");
   });
   it("getNftCollectionKey", () => {
-    expect(getNftCollectionKey("contract", "currencyId")).toEqual(
-      "currencyId-contract"
-    );
+    expect(getNftCollectionKey("contract", "currencyId")).toEqual("currencyId-contract");
   });
-  it("getNFTByTokenId", () => {
-    expect(getNFTByTokenId("nft.tokenId", NFTs)).toEqual(NFT_1);
+  it("getNFT", () => {
+    expect(getNFT("contract", "nft.tokenId", NFTs)).toEqual(NFT_1);
   });
 
   it("groupByCurrency", () => {
@@ -83,9 +69,7 @@ describe("helpers", () => {
 
   it("orderByLastReceived", () => {
     expect(orderByLastReceived(accounts, NFTs)).toHaveLength(0);
-    const NFTs_TEST = accounts.map((a) => a.nfts).flat() as ProtoNFT[];
-    expect(
-      orderByLastReceived(accounts, NFTs.concat(NFTs_TEST)).length
-    ).toBeGreaterThanOrEqual(1);
+    const NFTs_TEST = accounts.map(a => a.nfts).flat() as ProtoNFT[];
+    expect(orderByLastReceived(accounts, NFTs.concat(NFTs_TEST)).length).toBeGreaterThanOrEqual(1);
   });
 });

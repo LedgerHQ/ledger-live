@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { Trans } from "react-i18next";
-import { Icons, IconBox, Text, Flex, Log } from "@ledgerhq/native-ui";
+import { IconsLegacy, IconBox, Text, Flex, Log } from "@ledgerhq/native-ui";
 
 import { IconOrElementType } from "@ledgerhq/native-ui/components/Icon/type";
 import Alert from "./Alert";
@@ -28,8 +28,8 @@ function ValidateSuccess({
   description,
   primaryButton,
   secondaryButton,
-  icon = Icons.CheckAloneMedium,
-  iconColor = "success.c100",
+  icon = IconsLegacy.CheckAloneMedium,
+  iconColor = "success.c50",
   iconBoxSize = 64,
   iconSize = 24,
   info,
@@ -37,19 +37,9 @@ function ValidateSuccess({
 }: Props) {
   return (
     <Flex flex={1} p={6}>
-      <Flex
-        flex={1}
-        flexDirection="column"
-        justifyContent="center"
-        alignItems="center"
-      >
+      <Flex flex={1} flexDirection="column" justifyContent="center" alignItems="center">
         {icon ? (
-          <IconBox
-            Icon={icon}
-            color={iconColor}
-            boxSize={iconBoxSize}
-            iconSize={iconSize}
-          />
+          <IconBox Icon={icon} color={iconColor} boxSize={iconBoxSize} iconSize={iconSize} />
         ) : null}
         <Flex py={8}>
           <Log>{title || <Trans i18nKey="send.validation.sent" />}</Log>
@@ -86,6 +76,7 @@ function ValidateSuccess({
         {secondaryButton ||
           (onClose && (
             <Button
+              testID="success-close-button"
               event="SendSuccessClose"
               type={undefined}
               outline={false}

@@ -7,6 +7,7 @@ import { StyleProvider } from "../../../src/styles/StyleProvider";
 export const Main = styled.View`
   flex: 1;
   width: 100%;
+  padding: 5%;
   justify-content: center;
   align-items: center;
   background-color: ${(p) => p.theme.colors.background.main};
@@ -16,8 +17,8 @@ export const Main = styled.View`
 const ThemeButton = styled.TouchableOpacity`
   width: ${(p) => p.theme.space[10]}px;
   height: ${(p) => p.theme.space[10]}px;
-  border-top-left-radius: ${(p) => p.theme.space[10]};
-  border-bottom-left-radius: ${(p) => p.theme.space[10]};
+  border-top-left-radius: ${(p) => p.theme.space[10]}px;
+  border-bottom-left-radius: ${(p) => p.theme.space[10]}px;
   background-color: ${(p) => p.theme.colors.neutral.c100};
   justify-content: center;
   align-items: center;

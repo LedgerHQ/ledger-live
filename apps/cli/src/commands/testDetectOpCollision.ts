@@ -13,12 +13,12 @@ export default {
   job: (opts: ScanCommonOpts) =>
     scan(opts).pipe(
       reduce((all: Account[], a) => all.concat(a), []),
-      concatMap((accounts) => {
-        const allOps = flatMap(flattenAccounts(accounts), (a) => a.operations);
+      concatMap(accounts => {
+        const allOps = flatMap(flattenAccounts(accounts), a => a.operations);
         const operationIdCollisions = toPairs(groupBy(allOps, "id"))
           .filter(([_, coll]) => coll.length > 1)
           .map(([_, coll]) => coll);
         return from(operationIdCollisions);
-      })
+      }),
     ),
 };

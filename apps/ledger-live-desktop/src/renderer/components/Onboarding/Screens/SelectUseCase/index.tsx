@@ -2,29 +2,28 @@ import React, { useContext } from "react";
 import { useHistory } from "react-router-dom";
 import { useTranslation, Trans } from "react-i18next";
 import { Flex, Text } from "@ledgerhq/react-ui";
-
+import { DeviceModelId } from "@ledgerhq/devices";
+import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import { UseCaseOption } from "./UseCaseOption";
 import { ScrollArea } from "~/renderer/components/Onboarding/ScrollArea";
 import { Separator } from "./Separator";
-
 import { registerAssets } from "~/renderer/components/Onboarding/preloadAssets";
 import OnboardingNavHeader from "../../OnboardingNavHeader";
-
 import { track } from "~/renderer/analytics/segment";
-
 import { ScreenId } from "../Tutorial";
 import { OnboardingContext, UseCase } from "../../index";
-
 import connectNanoLight from "./assets/connectNanoLight.png";
 import restorePhraseLight from "./assets/restorePhraseLight.png";
 import setupNanoLight from "./assets/setupNanoLight.png";
-
 import connectNanoDark from "./assets/connectNanoDark.png";
 import restorePhraseDark from "./assets/restorePhraseDark.png";
 import setupNanoDark from "./assets/setupNanoDark.png";
+import restoreUsingRecoverDark from "./assets/restoreUsingRecoverDark.png";
 
 import Illustration from "~/renderer/components/Illustration";
+import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
+import { openModal } from "~/renderer/actions/modals";
 
 registerAssets([
   connectNanoLight,
@@ -33,6 +32,7 @@ registerAssets([
   connectNanoDark,
   restorePhraseDark,
   setupNanoDark,
+  restoreUsingRecoverDark,
 ]);
 
 const SelectUseCaseContainer = styled(Flex).attrs({
@@ -87,6 +87,7 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
   const { t } = useTranslation();
   const { deviceModelId } = useContext(OnboardingContext);
   const history = useHistory();
+  const dispatch = useDispatch();
 
   return (
     <ScrollArea withHint>
@@ -186,6 +187,34 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
                 );
               }}
             />
+            <FeatureToggle feature="protectServicesDesktop">
+              <UseCaseOption
+                dataTestId="v3-onboarding-restore-using-recover"
+                id="restore-device"
+                title={t("onboarding.screens.selectUseCase.options.4.title")}
+                description={
+                  <Trans i18nKey="onboarding.screens.selectUseCase.options.4.description" />
+                }
+                illustration={
+                  <Illustration
+                    lightSource={restoreUsingRecoverDark}
+                    darkSource={restoreUsingRecoverDark}
+                    size={220}
+                  />
+                }
+                onClick={() => {
+                  track("Onboarding - Restore With Recover");
+
+                  // An array is used here because we'll have to allow Stax later
+                  if (deviceModelId && [DeviceModelId.nanoX].includes(deviceModelId)) {
+                    setUseCase(UseCase.recover);
+                    history.push(`/onboarding/${UseCase.recover}/${ScreenId.pairMyNano}`);
+                  } else {
+                    dispatch(openModal("MODAL_PROTECT_DISCOVER", undefined));
+                  }
+                }}
+              />
+            </FeatureToggle>
           </RightColumn>
         </Row>
       </SelectUseCaseContainer>

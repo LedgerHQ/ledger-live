@@ -1,16 +1,22 @@
 import winston from "winston";
 import { listen } from "@ledgerhq/logs";
 import { setSupportedCurrencies } from "../../currencies";
-import { setPlatformVersion } from "../../platform/version";
 import { EnvName, setEnvUnsafe } from "../../env";
 import { setWalletAPIVersion } from "../../wallet-api/version";
 import { WALLET_API_VERSION } from "../../wallet-api/constants";
-import { PLATFORM_VERSION } from "../../platform/constants";
+import { setEnv } from "../../env";
 
-setPlatformVersion(PLATFORM_VERSION);
 setWalletAPIVersion(WALLET_API_VERSION);
-
 setSupportedCurrencies([
+  "avalanche_c_chain",
+  "axelar",
+  "stargaze",
+  "secret_network",
+  "umee",
+  "desmos",
+  "onomy",
+  "quicksilver",
+  "persistence",
   "bitcoin",
   "ethereum",
   "bsc",
@@ -44,7 +50,6 @@ setSupportedCurrencies([
   "bitcoin_testnet",
   "ethereum_ropsten",
   "ethereum_goerli",
-  "cosmos_testnet",
   "crypto_org_croeseid",
   "crypto_org",
   "filecoin",
@@ -62,7 +67,32 @@ setSupportedCurrencies([
   "flare",
   "near",
   "icon",
-  "icon_berlin_testnet"
+  "icon_berlin_testnet",
+  "optimism",
+  "optimism_goerli",
+  "arbitrum_goerli",
+  "rsk",
+  "bittorrent",
+  "kava_evm",
+  "evmos_evm",
+  "energy_web",
+  "astar",
+  "metis",
+  "boba",
+  "moonriver",
+  "velas_evm",
+  "syscoin",
+  "internet_computer",
+  "ethereum_as_evm_test_only",
+  "polygon_as_evm_test_only",
+  "klaytn",
+  "polygon_zk_evm",
+  "polygon_zk_evm_testnet",
+  "base",
+  "base_goerli",
+  "stacks",
+  "telos_evm",
+  "coreum",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);
@@ -82,7 +112,7 @@ if (VERBOSE_FILE) {
       format: winstonFormat,
       filename: VERBOSE_FILE,
       level: "debug",
-    })
+    }),
   );
 }
 
@@ -90,7 +120,7 @@ logger.add(
   new winston.transports.Console({
     format: winstonFormat,
     silent: !VERBOSE,
-  })
+  }),
 );
 // eslint-disable-next-line no-unused-vars
 listen(({ type, message, ...rest }) => {
@@ -100,3 +130,6 @@ listen(({ type, message, ...rest }) => {
     ...rest,
   });
 });
+
+const value = "ll-ci/0.0.0";
+setEnv("LEDGER_CLIENT_VERSION", value);

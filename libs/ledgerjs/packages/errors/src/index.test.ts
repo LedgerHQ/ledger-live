@@ -1,4 +1,4 @@
-import { AmountRequired, CurrencyNotSupported } from "./index";
+import { AmountRequired, CurrencyNotSupported, TransportStatusError, StatusCodes } from "./index";
 
 function functionA() {
   throw new AmountRequired();
@@ -20,7 +20,7 @@ describe("custom errors", () => {
       const i = e.stack.indexOf("functionA");
       expect(e.stack.slice(0, i + 9)).toEqual(
         `AmountRequired: AmountRequired
-    at functionA`
+    at functionA`,
       );
     }
   });
@@ -39,7 +39,7 @@ describe("custom errors", () => {
     } catch (e: any) {
       expect(
         // FIXME it's not yet the good type here
-        e instanceof CurrencyNotSupported && (e as any).currencyName
+        e instanceof CurrencyNotSupported && (e as any).currencyName,
       ).toEqual("foo");
     }
   });
@@ -65,13 +65,16 @@ describe("custom errors", () => {
   });
 
   test("promise error instanceof", () => {
-    expect(Promise.reject(new AmountRequired())).rejects.toBeInstanceOf(
-      AmountRequired
-    );
+    expect(Promise.reject(new AmountRequired())).rejects.toBeInstanceOf(AmountRequired);
   });
 
   test("error is instance of Error", () => {
     const error: Error = new AmountRequired();
     expect(error instanceof Error).toBeTruthy();
+  });
+
+  test("transport status error contains message", () => {
+    const error: Error = new TransportStatusError(StatusCodes.UNKNOWN_APDU);
+    expect(error.stack).toContain("Ledger device: UNKNOWN_APDU (0x6d02)");
   });
 });

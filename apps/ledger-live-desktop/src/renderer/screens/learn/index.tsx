@@ -10,7 +10,7 @@ export default function LearnScreen() {
   const { t, i18n } = useTranslation();
   const learn = useFeature("learn");
   const learnURL = learn?.params?.desktop?.url ? learn.params.desktop.url : DEFAULT_LEARN_URL;
-  const themeType: string = useTheme("colors.palette.type");
+  const themeType: string = useTheme().colors.palette.type;
 
   const uri = `${learnURL}?theme=${themeType}&lang=${i18n.languages[0]}`;
 

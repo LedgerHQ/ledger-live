@@ -1,5 +1,10 @@
-import { getElementById } from "../../helpers";
+import { getElementById, tapByElement } from "../../helpers";
 
 export default class NftViewerPage {
-  getMainScrollView = () => getElementById(`nft-viewer-page-scrollview`);
+  mainScrollView = () => getElementById("nft-viewer-page-scrollview");
+  backButton = () => getElementById("navigation-header-back-button");
+
+  async navigateToNftGallery() {
+    await tapByElement(this.backButton());
+  }
 }

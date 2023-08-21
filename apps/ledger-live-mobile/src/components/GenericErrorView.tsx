@@ -1,14 +1,14 @@
-import React, { memo, useEffect } from "react";
+import React, { memo } from "react";
 import { useTranslation } from "react-i18next";
 import styled, { useTheme } from "styled-components/native";
-import { Box, Flex, Icons, Link, Text } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy, Link, Text, BoxedIcon } from "@ledgerhq/native-ui";
 import { CloseMedium } from "@ledgerhq/native-ui/assets/icons";
 import { BluetoothRequired } from "@ledgerhq/errors";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
 import useExportLogs from "./useExportLogs";
 import TranslatedError from "./TranslatedError";
 import SupportLinkError from "./SupportLinkError";
-import { usePromptBluetoothCallback } from "../logic/usePromptBluetoothCallback";
+import BluetoothDisabled from "./RequiresBLE/BluetoothDisabled";
 
 type Props = {
   error: Error;
@@ -18,15 +18,25 @@ type Props = {
   outerError?: Error | null;
   withDescription?: boolean;
   withIcon?: boolean;
+  withHelp?: boolean;
   hasExportLogButton?: boolean;
   Icon?: IconType;
   iconColor?: string;
   children?: React.ReactNode;
+  footerComponent?: React.ReactNode;
+  exportLogIcon?: typeof IconsLegacy.DownloadMedium | typeof IconsLegacy.ImportMedium;
+  exportLogIconPosition?: "left" | "right";
+
+  /*
+   * Used when rendering a Bluetooth disabled error
+   *
+   * If "drawer", the component will be rendered as a content to be rendered in a drawer.
+   * If "view", the component will be rendered as a view. Defaults to "view".
+   */
+  renderedInType?: "drawer" | "view";
 };
 
-const StyledLink = styled(Link).attrs({
-  iconPosition: "left",
-})`
+const StyledLink = styled(Link)`
   margin-top: 32px;
   margin-bottom: 10px;
 `;
@@ -35,21 +45,17 @@ const GenericErrorView = ({
   error,
   outerError,
   withDescription = true,
+  withHelp = true,
   withIcon = true,
   hasExportLogButton = true,
   children,
   Icon = CloseMedium,
-  iconColor = "error.c100",
+  iconColor = "error.c60",
+  footerComponent,
+  exportLogIcon = IconsLegacy.DownloadMedium,
+  exportLogIconPosition = "left",
+  renderedInType = "view",
 }: Props) => {
-  const promptBluetooth = usePromptBluetoothCallback();
-  useEffect(() => {
-    if (error instanceof BluetoothRequired) {
-      promptBluetooth().catch(() => {
-        /* ignore */
-      });
-    }
-  }, [promptBluetooth, error]);
-
   const { t } = useTranslation();
 
   const onExport = useExportLogs();
@@ -57,35 +63,45 @@ const GenericErrorView = ({
   const titleError = outerError || error;
   const subtitleError = outerError ? error : null;
 
-  const { space } = useTheme();
+  const { colors } = useTheme();
+
+  // In case bluetooth was necessary but the `RequiresBle` component could not be used directly
+  if (error instanceof BluetoothRequired) {
+    return (
+      <>
+        <BluetoothDisabled componentType={renderedInType} />
+        {children}
+      </>
+    );
+  }
 
   return (
     <Flex flexDirection={"column"} alignItems={"center"} alignSelf="stretch">
       {withIcon ? (
-        <Box mb={7}>
-          <Flex
-            backgroundColor={iconColor}
-            height={space[11]}
-            width={space[11]}
-            borderRadius={999}
-            justifyContent="center"
-            alignItems="center"
-          >
-            <Icon size={24} color="neutral.c00" />
-          </Flex>
-        </Box>
+        <Flex height={100} justifyContent="center">
+          <BoxedIcon
+            Icon={Icon}
+            backgroundColor={colors.opacityDefault.c05}
+            size={64}
+            variant="circle"
+            borderColor="transparent"
+            iconSize={32}
+            iconColor={iconColor}
+          />
+        </Flex>
       ) : null}
       <Text
         variant={"h4"}
         fontWeight="semiBold"
         textAlign={"center"}
         numberOfLines={3}
-        mb={6}
+        mb={2}
+        mt={24}
       >
         <TranslatedError error={titleError} />
       </Text>
       {subtitleError ? (
-        <Text variant={"paragraph"} color="error.c80" numberOfLines={3} mb={6}>
+        <Text variant={"paragraph"} color="error.c40" numberOfLines={3} mb={6}>
           <TranslatedError error={subtitleError} />
         </Text>
       ) : null}
@@ -96,18 +112,20 @@ const GenericErrorView = ({
             color="neutral.c80"
             textAlign="center"
             numberOfLines={6}
+            mt={5}
           >
             <TranslatedError error={error} field="description" />
           </Text>
-          <SupportLinkError error={error} />
+          {withHelp ? <SupportLinkError error={error} /> : null}
         </>
       ) : null}
       {children}
       {hasExportLogButton ? (
-        <StyledLink Icon={Icons.DownloadMedium} onPress={onExport}>
+        <StyledLink Icon={exportLogIcon} onPress={onExport} iconPosition={exportLogIconPosition}>
           {t("common.saveLogs")}
         </StyledLink>
       ) : null}
+      {footerComponent}
     </Flex>
   );
 };

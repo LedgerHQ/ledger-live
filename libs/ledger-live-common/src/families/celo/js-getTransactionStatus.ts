@@ -20,7 +20,7 @@ const FEES_SAFETY_BUFFER = new BigNumber(5000000000000000);
 
 const getTransactionStatus = async (
   account: CeloAccount,
-  transaction: Transaction
+  transaction: Transaction,
 ): Promise<TransactionStatus> => {
   const errors: any = {};
   const warnings: any = {};
@@ -36,23 +36,19 @@ const getTransactionStatus = async (
 
   const pendingOperationAmounts = getPendingStakingOperationAmounts(account);
   const lockedGold = await kit.contracts.getLockedGold();
-  const nonvotingLockedGoldBalance =
-    await lockedGold.getAccountNonvotingLockedGold(account.freshAddress);
+  const nonvotingLockedGoldBalance = await lockedGold.getAccountNonvotingLockedGold(
+    account.freshAddress,
+  );
   // Deduct pending vote operations from the non-voting locked balance
   const totalNonVotingLockedBalance = nonvotingLockedGoldBalance.minus(
-    pendingOperationAmounts.vote
+    pendingOperationAmounts.vote,
   );
   // Deduct pending lock operations from the spendable balance
-  const totalSpendableBalance = account.spendableBalance.minus(
-    pendingOperationAmounts.lock
-  );
+  const totalSpendableBalance = account.spendableBalance.minus(pendingOperationAmounts.lock);
   const estimatedFees = transaction.fees || new BigNumber(0);
 
   let amount: BigNumber = new BigNumber(0);
-  if (
-    useAllAmount &&
-    (transaction.mode === "unlock" || transaction.mode === "vote")
-  ) {
+  if (useAllAmount && (transaction.mode === "unlock" || transaction.mode === "vote")) {
     amount = totalNonVotingLockedBalance ?? new BigNumber(0);
   } else if (useAllAmount && transaction.mode === "revoke") {
     const revoke = getVote(account, transaction.recipient, transaction.index);
@@ -66,18 +62,16 @@ const getTransactionStatus = async (
   if (amount.lt(0)) amount = new BigNumber(0);
 
   if (
-    !errors.amount &&
     (account.celoResources?.lockedBalance.gt(0) ||
       !!account.celoResources?.pendingWithdrawals?.length) &&
-    (transaction.useAllAmount ||
-      totalSpendableBalance.minus(amount).lt(FEES_SAFETY_BUFFER)) &&
+    (transaction.useAllAmount || totalSpendableBalance.minus(amount).lt(FEES_SAFETY_BUFFER)) &&
     ["send", "lock"].includes(transaction.mode)
   ) {
     warnings.amount = new CeloAllFundsWarning();
   }
 
   if (!["register", "withdraw", "activate"].includes(transaction.mode)) {
-    if (amount.lte(0) && !useAllAmount) {
+    if (!errors.amount && amount.lte(0) && !useAllAmount) {
       errors.amount = new AmountRequired();
     }
   }
@@ -85,15 +79,15 @@ const getTransactionStatus = async (
   const totalSpent = amount.plus(estimatedFees);
 
   if (transaction.mode === "unlock" || transaction.mode === "vote") {
-    if (totalNonVotingLockedBalance && amount.gt(totalNonVotingLockedBalance)) {
+    if (!errors.amount && totalNonVotingLockedBalance && amount.gt(totalNonVotingLockedBalance)) {
       errors.amount = new NotEnoughBalance();
     }
   } else if (transaction.mode === "revoke") {
     const revoke = getVote(account, transaction.recipient, transaction.index);
-    if (revoke?.amount && amount.gt(revoke.amount))
+    if (!errors.amount && revoke?.amount && amount.gt(revoke.amount))
       errors.amount = new NotEnoughBalance();
   } else {
-    if (totalSpent.gt(totalSpendableBalance)) {
+    if (!errors.amount && totalSpent.gt(totalSpendableBalance)) {
       errors.amount = new NotEnoughBalance();
     }
   }

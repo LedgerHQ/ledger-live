@@ -35,16 +35,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.ref || github.ref }}
+          ref: ${{ inputs.ref || github.ref }}
           fetch-depth: 0
-      - uses: pnpm/action-setup@v2
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
         with:
-          version: latest
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16
-          cache: pnpm
-          cache-dependency-path: "**/pnpm-lock.yaml"
+          upgrade_npm: ${{ matrix.os == 'windows-latest' }}
       - name: Install node-gyp globally
         if: runner.os == 'Windows'
         run: |
@@ -56,7 +52,7 @@ jobs:
       - name: Test
         shell: bash
         env:
-          FILTER: ${{ github.event.inputs.filter }}
+          FILTER: ${{ inputs.filter }}
           VERBOSE_FILE: logs.txt
         run: |
           pnpm common ci-test-integration $FILTER

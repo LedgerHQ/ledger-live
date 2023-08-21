@@ -10,23 +10,14 @@ import { TrackScreen } from "../../../analytics";
 import { ScreenName } from "../../../const";
 import PreventNativeBack from "../../../components/PreventNativeBack";
 import ValidateSuccess from "../../../components/ValidateSuccess";
-import {
-  BaseComposite,
-  BaseNavigation,
-} from "../../../components/RootNavigator/types/helpers";
+import { BaseComposite, BaseNavigation } from "../../../components/RootNavigator/types/helpers";
 import { PolkadotUnbondFlowParamList } from "./type";
 
 type NavigationProps = BaseComposite<
-  StackScreenProps<
-    PolkadotUnbondFlowParamList,
-    ScreenName.PolkadotUnbondValidationSuccess
-  >
+  StackScreenProps<PolkadotUnbondFlowParamList, ScreenName.PolkadotUnbondValidationSuccess>
 >;
 
-export default function ValidationSuccess({
-  navigation,
-  route,
-}: NavigationProps) {
+export default function ValidationSuccess({ navigation, route }: NavigationProps) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
@@ -51,17 +42,19 @@ export default function ValidationSuccess({
         },
       ]}
     >
-      <TrackScreen category="UnbondFlow" name="ValidationSuccess" />
+      <TrackScreen
+        category="UnbondFlow"
+        name="ValidationSuccess"
+        flow="stake"
+        action="withdraw_unbonded"
+        currency="dot"
+      />
       <PreventNativeBack />
       <ValidateSuccess
         onClose={onClose}
         onViewDetails={goToOperationDetails}
-        title={
-          <Trans i18nKey="polkadot.unbond.steps.validation.success.title" />
-        }
-        description={
-          <Trans i18nKey="polkadot.unbond.steps.validation.success.description" />
-        }
+        title={<Trans i18nKey="polkadot.unbond.steps.validation.success.title" />}
+        description={<Trans i18nKey="polkadot.unbond.steps.validation.success.description" />}
       />
     </View>
   );

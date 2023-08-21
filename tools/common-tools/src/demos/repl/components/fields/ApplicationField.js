@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Select from "react-select";
 import manager, { getProviderId } from "@ledgerhq/live-common/lib/manager";
-import ManagerAPI from "@ledgerhq/live-common/lib/api/Manager";
+import ManagerAPI from "@ledgerhq/live-common/lib/manager/api";
 import type {
   ApplicationVersion,
   DeviceInfo,

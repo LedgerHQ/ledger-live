@@ -21,18 +21,9 @@ import { BaseNavigatorStackParamList } from "../../../../components/RootNavigato
 import { AccountSettingsNavigatorParamList } from "../../../../components/RootNavigator/types/AccountSettingsNavigator";
 
 type NavigationProps =
-  | StackNavigatorProps<
-      SettingsNavigatorStackParamList,
-      ScreenName.CurrencySettings
-    >
-  | StackNavigatorProps<
-      AccountSettingsNavigatorParamList,
-      ScreenName.CurrencySettings
-    >
-  | StackNavigatorProps<
-      BaseNavigatorStackParamList,
-      ScreenName.CurrencySettings
-    >;
+  | StackNavigatorProps<SettingsNavigatorStackParamList, ScreenName.CurrencySettings>
+  | StackNavigatorProps<AccountSettingsNavigatorParamList, ScreenName.CurrencySettings>
+  | StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.CurrencySettings>;
 
 type Props = {
   confirmationsNb: number;
@@ -96,8 +87,11 @@ function EachCurrencySettings({
               value={value}
               onChange={(val: number) => setValue(val)}
               onTouchEnd={(val: number) =>
-                updateCurrencySettings(currency.ticker, {
-                  confirmationsNb: val,
+                updateCurrencySettings({
+                  ticker: currency.ticker,
+                  patch: {
+                    confirmationsNb: val,
+                  },
                 })
               }
             />
@@ -118,11 +112,7 @@ export default compose<React.ComponentType<NavigationProps>>(
   withTheme,
 )(EachCurrencySettings);
 
-export function CustomCurrencyHeader({
-  currency,
-}: {
-  currency: CryptoCurrency;
-}) {
+export function CustomCurrencyHeader({ currency }: { currency: CryptoCurrency }) {
   const { t } = useTranslation();
   return (
     <Flex flexDirection={"row"} alignItems={"center"} justifyContent={"center"}>

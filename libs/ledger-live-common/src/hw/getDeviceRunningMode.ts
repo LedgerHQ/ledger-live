@@ -48,10 +48,10 @@ export const getDeviceRunningMode = ({
   unresponsiveTimeoutMs = 5000,
   cantOpenDeviceRetryLimit = 3,
 }: CheckDeviceModeArgs): Observable<GetDeviceRunningModeResult> =>
-  new Observable<GetDeviceRunningModeResult>((o) => {
+  new Observable<GetDeviceRunningModeResult>(o => {
     let cantOpenDeviceRetryCount = 0;
 
-    withDevice(deviceId)((transport) => from(getDeviceInfo(transport)))
+    withDevice(deviceId)(transport => from(getDeviceInfo(transport)))
       .pipe(
         timeout(unresponsiveTimeoutMs),
         retryWhen(
@@ -72,8 +72,8 @@ export const getDeviceRunningMode = ({
 
             // Retries on any other kind of errors
             return true;
-          })
-        )
+          }),
+        ),
       )
       .subscribe({
         next: (deviceInfo: DeviceInfo) => {

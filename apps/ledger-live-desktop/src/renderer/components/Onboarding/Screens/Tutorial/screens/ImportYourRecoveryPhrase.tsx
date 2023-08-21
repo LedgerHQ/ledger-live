@@ -22,7 +22,6 @@ export function ImportYourRecoveryPhrase() {
 ImportYourRecoveryPhrase.Illustration = (
   <IllustrationContainer width="240px" height="245px" src={RestorePassPhrase} />
 );
-
 ImportYourRecoveryPhrase.continueLabel = (
   <Trans i18nKey="onboarding.screens.tutorial.screens.importYourRecoveryPhrase.buttons.next" />
 );

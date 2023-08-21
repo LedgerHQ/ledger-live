@@ -14,49 +14,47 @@ export type Props = {
   item: Item;
   isFirstItem?: boolean;
   isLastItem?: boolean;
+  onClick?: () => void;
 };
 
-const getContainerBackground = (theme: Theme, status: ItemStatus, isLastItem?: boolean) => {
-  if (isLastItem && status === "completed") {
-    return theme.colors.success.c30;
-  } else if (status === "completed") {
-    return theme.colors.primary.c20;
+const getContainerBackground = (theme: Theme, status: ItemStatus) => {
+  if (status === "completed") {
+    return "transparent";
   } else if (status === "active") {
     return theme.colors.neutral.c20;
   }
-  return theme.colors.neutral.c30;
+  return "transparent";
 };
 
 const getContainerBorder = (theme: Theme, status: ItemStatus, isLastItem?: boolean) => {
-  if (isLastItem && status === "completed") {
-    return theme.colors.success.c30;
+  if (status === "completed") {
+    return "transparent";
   } else if (isLastItem && status === "active") {
-    return theme.colors.success.c100;
-  } else if (status === "completed") {
-    return theme.colors.primary.c20;
+    return theme.colors.success.c50;
   } else if (status === "active") {
-    return theme.colors.primary.c80;
+    return theme.colors.neutral.c40;
   }
-  return theme.colors.neutral.c30;
+  return "transparent";
 };
 
 const Container = styled(Flex)<{ status: ItemStatus; isLastItem?: boolean }>`
   flex: 1;
-  border-radius: ${(p) => p.theme.radii[2]}px;
-  background: ${(p) => getContainerBackground(p.theme, p.status, p.isLastItem)};
-  border: 1px solid ${(p) => getContainerBorder(p.theme, p.status, p.isLastItem)};
+  border-radius: ${p => p.theme.radii[2]}px;
+  background: ${p => getContainerBackground(p.theme, p.status)};
+  border: 1px solid ${p => getContainerBorder(p.theme, p.status, p.isLastItem)};
   padding: 20px 16px;
 `;
 
 const TimelineIndicatorContentHeader = styled(Flex)`
   justify-content: space-between;
+  align-items: center;
 `;
 
-export default function TimelineItem({ item, isFirstItem, isLastItem }: Props) {
+function TimelineItem({ item, isFirstItem, isLastItem, onClick }: Props) {
   const { colors } = useTheme();
 
   return (
-    <Flex flexDirection="row">
+    <Flex flexDirection="row" onClick={onClick} flex={1}>
       <TimelineIndicator
         status={item.status}
         isFirstItem={isFirstItem}
@@ -64,15 +62,16 @@ export default function TimelineItem({ item, isFirstItem, isLastItem }: Props) {
         mr={4}
       />
       <Container status={item.status} isLastItem={isLastItem} mb={4} flexDirection="column">
-        <TimelineIndicatorContentHeader>
+        <TimelineIndicatorContentHeader height="20px">
           <Text
             variant="body"
+            fontWeight={item.status === "active" ? "semiBold" : "medium"}
             color={
-              item.status === "inactive"
-                ? "neutral.c80"
-                : isLastItem
-                ? "success.c100"
-                : "primary.c90"
+              item.status !== "inactive" && isLastItem
+                ? "success.c70"
+                : item.status === "active"
+                ? "primary.c80"
+                : "neutral.c70"
             }
           >
             {item.title}
@@ -96,3 +95,5 @@ export default function TimelineItem({ item, isFirstItem, isLastItem }: Props) {
     </Flex>
   );
 }
+
+export default React.memo(TimelineItem);

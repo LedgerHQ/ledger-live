@@ -1,9 +1,8 @@
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useContext, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Flex, Text, Link as TextLink } from "@ledgerhq/native-ui";
-import { ChevronBottomMedium } from "@ledgerhq/native-ui/assets/icons";
 import Video from "react-native-video";
 import { Linking, StyleSheet } from "react-native";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
@@ -12,10 +11,9 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { NavigatorName, ScreenName } from "../../../const";
 import StyledStatusBar from "../../../components/StyledStatusBar";
 import { urls } from "../../../config/urls";
-import { useTermsAccept } from "../../../logic/terms";
+import { TermsContext } from "../../../logic/terms";
 import { setAnalytics } from "../../../actions/settings";
 import useIsAppInBackground from "../../../components/useIsAppInBackground";
-import InvertTheme from "../../../components/theme/InvertTheme";
 import ForceTheme from "../../../components/theme/ForceTheme";
 import Button from "../../../components/wrappedUi/Button";
 import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
@@ -24,8 +22,8 @@ import {
   StackNavigatorProps,
 } from "../../../components/RootNavigator/types/helpers";
 
-const source = require("../../../../assets/videos/onboarding.mp4"); // eslint-disable-line @typescript-eslint/no-var-requires
-const sourceStax = require("../../../../assets/videos/onboardingStax.mp4"); // eslint-disable-line @typescript-eslint/no-var-requires
+import videoSources from "../../../../assets/videos";
+import LanguageSelect from "../../SyncOnboarding/LanguageSelect";
 
 const absoluteStyle = {
   position: "absolute" as const,
@@ -40,49 +38,42 @@ const SafeFlex = styled(SafeAreaView)`
 `;
 
 type NavigationProps = BaseComposite<
-  StackNavigatorProps<
-    OnboardingNavigatorParamList,
-    ScreenName.OnboardingWelcome
-  >
+  StackNavigatorProps<OnboardingNavigatorParamList, ScreenName.OnboardingWelcome>
 >;
 
 function OnboardingStepWelcome({ navigation }: NavigationProps) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const [, setAccepted] = useTermsAccept();
-
-  const onLanguageSelect = useCallback(
-    () => navigation.navigate(ScreenName.OnboardingLanguage),
-    [navigation],
-  );
+  const { accept: acceptTerms } = useContext(TermsContext);
 
   const {
     i18n: { language: locale },
   } = useTranslation();
 
   const onTermsLink = useCallback(
-    () =>
-      Linking.openURL(
-        (urls.terms as Record<string, string>)[locale] || urls.terms.en,
-      ),
+    () => Linking.openURL((urls.terms as Record<string, string>)[locale] || urls.terms.en),
     [locale],
   );
 
   const onPrivacyLink = useCallback(
     () =>
       Linking.openURL(
-        (urls.privacyPolicy as Record<string, string>)[locale] ||
-          urls.privacyPolicy.en,
+        (urls.privacyPolicy as Record<string, string>)[locale] || urls.privacyPolicy.en,
       ),
     [locale],
   );
 
   const next = useCallback(() => {
-    setAccepted();
+    acceptTerms();
     dispatch(setAnalytics(true));
 
-    navigation.navigate(ScreenName.OnboardingDoYouHaveALedgerDevice);
-  }, [setAccepted, dispatch, navigation]);
+    navigation.navigate({
+      name: ScreenName.OnboardingPostWelcomeSelection,
+      params: {
+        userHasDevice: true,
+      },
+    });
+  }, [acceptTerms, dispatch, navigation]);
 
   const videoMounted = !useIsAppInBackground();
 
@@ -120,8 +111,21 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
   }, []);
 
   const videoSource = useFeature("staxWelcomeScreen")?.enabled
-    ? sourceStax
-    : source;
+    ? videoSources.welcomeScreenStax
+    : videoSources.welcomeScreen;
+
+  const recoverFeature = useFeature("protectServicesMobile");
+
+  const recoverLogIn = useCallback(() => {
+    acceptTerms();
+    dispatch(setAnalytics(true));
+
+    const url = `${recoverFeature?.params?.account?.loginURI}&shouldBypassLLOnboarding=true`;
+
+    Linking.canOpenURL(url).then(canOpen => {
+      if (canOpen) Linking.openURL(url);
+    });
+  }, [acceptTerms, dispatch, recoverFeature?.params?.account?.loginURI]);
 
   return (
     <ForceTheme selectedPalette={"dark"}>
@@ -160,34 +164,14 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
               <Stop offset="100%" stopOpacity={0.8} stopColor="black" />
             </LinearGradient>
           </Defs>
-          <Rect
-            x="0"
-            y="0"
-            width="100%"
-            height="100%"
-            fill="url(#myGradient)"
-          />
+          <Rect x="0" y="0" width="100%" height="100%" fill="url(#myGradient)" />
         </Svg>
-        <Flex
-          justifyContent="center"
-          alignItems="center"
-          flex={1}
-          overflow="hidden"
-        >
+        <Flex justifyContent="center" alignItems="center" flex={1} overflow="hidden">
           {/* @ts-expect-error Bindings for SafeAreaView are not written properly. */}
           <SafeFlex position="absolute" top={0} right={0}>
-            <InvertTheme>
-              <Button
-                type={"main"}
-                size="small"
-                mr={4}
-                Icon={ChevronBottomMedium}
-                iconPosition="right"
-                onPress={onLanguageSelect}
-              >
-                {locale.toLocaleUpperCase()}
-              </Button>
-            </InvertTheme>
+            <Flex pr={4}>
+              <LanguageSelect />
+            </Flex>
           </SafeFlex>
         </Flex>
         <Flex px={6} py={10}>
@@ -216,13 +200,18 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
           <Button
             type="main"
             size="large"
-            event="Onboarding - Start"
             onPress={next}
             mt={0}
             mb={7}
+            testID="onboarding-getStarted-button"
           >
             {t("onboarding.stepWelcome.start")}
           </Button>
+          {recoverFeature?.enabled && recoverFeature?.params?.onboardingLogin ? (
+            <Button outline type="main" size="large" onPress={recoverLogIn} mt={0} mb={7}>
+              {t("onboarding.stepWelcome.recoverLogIn")}
+            </Button>
+          ) : null}
           <Text variant="small" textAlign="center" color="neutral.c100">
             {t("onboarding.stepWelcome.terms")}
           </Text>

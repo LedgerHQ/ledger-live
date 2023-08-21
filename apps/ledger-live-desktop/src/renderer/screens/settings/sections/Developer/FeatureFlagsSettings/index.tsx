@@ -14,7 +14,9 @@ import {
 import { Flex, SearchInput, Alert, Tag, Text, Switch } from "@ledgerhq/react-ui";
 import { SettingsSectionRow as Row } from "../../../SettingsSection";
 import { FeatureId } from "@ledgerhq/types-live";
-import { includes, lowerCase, trim } from "lodash";
+import includes from "lodash/includes";
+import lowerCase from "lodash/lowerCase";
+import trim from "lodash/trim";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import FeatureFlagDetails from "./FeatureFlagDetails";
 import GroupedFeatures from "./GroupedFeatures";
@@ -206,9 +208,10 @@ const FeatureFlagsSettings = () => {
   const [contentExpanded, setContentExpanded] = useState(false);
   const location = useLocation<{ shouldOpenFeatureFlags?: boolean }>();
 
-  useEffect(() => setContentExpanded(Boolean(location.state?.shouldOpenFeatureFlags)), [
-    location.state?.shouldOpenFeatureFlags,
-  ]);
+  useEffect(
+    () => setContentExpanded(Boolean(location.state?.shouldOpenFeatureFlags)),
+    [location.state?.shouldOpenFeatureFlags],
+  );
 
   const toggleContentVisibility = useCallback(() => {
     setContentExpanded(!contentExpanded);

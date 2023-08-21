@@ -1,4 +1,5 @@
-name: "[Test] Mobile App"
+name: "@Mobile • Test App"
+run-name: "@Mobile • Test App triggered by ${{ github.event_name == 'workflow_dispatch' && inputs.login || github.actor }} ${{ format('on ref {0}', github.ref_name) }}"
 
 on:
   push:
@@ -7,80 +8,134 @@ on:
       - develop
       - release
       - hotfix
-  pull_request:
   workflow_dispatch:
+    inputs:
+      ref:
+        description: the branch which triggered this workflow
+        required: false
+      login:
+        description: The GitHub username that triggered the workflow
+        required: true
+      base_ref:
+        description: The base branch to merge the head into when checking out the code
+        required: false
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.ref_name != 'develop' }}
+  group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
-  is-affected:
-    outputs:
-      is-mobile-affected: ${{ steps.affected.outputs.is-package-affected }}
-    runs-on: [ubuntu-latest]
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          ref: develop
-          fetch-depth: 0
-      - name: checkout branch (PR)
-        if: ${{ github.event_name == 'pull_request' }}
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh pr checkout ${{ github.event.pull_request.number }}
-      - name: checkout branch (not PR)
-        if: ${{ github.event_name != 'pull_request' }}
-        run: |
-          git checkout $GITHUB_SHA
-      - uses: ./tools/actions/turbo-affected
-        id: affected
-        with:
-          package: "live-mobile"
-          head-ref: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.event.pull_request.base.ref) || 'HEAD^' }}
-
-  # Run dummy jobs when not affected to pass the required status checks
-  dummy:
-    name: "Ledger Live Mobile CodeCheck"
-    needs: is-affected
-    if: ${{ needs.is-affected.outputs.is-mobile-affected != 'true' }}
-    runs-on: ubuntu-latest
-    steps:
-      - id: dummy
-        run: exit 0
-
   codecheck:
     name: "Ledger Live Mobile CodeCheck"
-    needs: is-affected
-    if: ${{ needs.is-affected.outputs.is-mobile-affected == 'true' }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
-
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
-          version: latest
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16
-          cache: pnpm
-          cache-dependency-path: "**/pnpm-lock.yaml"
+          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
+          base: ${{ inputs.base_ref }}
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.7
       - name: TurboRepo local caching server
         id: turborepo-cache-server
-        uses: ./tools/actions/turborepo-gh-cache
+        uses: ./tools/actions/turborepo-s3-cache
         with:
           server-token: "yolo"
           cleanup-cache-folder: "true"
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: Install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
       - name: Run linter
-        run: pnpm lint --filter="live-mobile" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+        run: |
+          pnpm lint --filter="live-mobile" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo" -- --format="json" -o="lint.json"
+          node -p "require('./node_modules/eslint/lib/cli-engine/formatters/stylish.js')(require('./apps/ledger-live-mobile/lint.json'))"
+      - name: check for dead code
+        run: cd apps/ledger-live-mobile && npx unimported
+        shell: bash
       - name: Run code checkers
         run: pnpm typecheck --filter="live-mobile" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+      - name: Run unit tests
+        run: pnpm mobile test
+      - uses: actions/upload-artifact@v3
+        name: upload eslint json output
+        if: always()
+        with:
+          name: lint
+          path: ${{ github.workspace }}/apps/ledger-live-mobile/lint.json
+
+  report:
+    needs: codecheck
+    if: always() && !cancelled() && github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: "download linter results"
+        uses: actions/download-artifact@v3
+        with:
+          name: lint
+      - uses: actions/github-script@v6
+        name: "format report"
+        if: always()
+        id: status
+        with:
+          script: |
+            const fs = require("fs");
+            const path = require("path");
+
+            const statuses = [
+              "${{ needs.codecheck.result }}"
+            ];
+            const isSuccess = Boolean(${{ needs.codecheck.result == 'success' }});
+            const isFailed = statuses.some(e => e === "failure");
+            const isCancelled = statuses.some(e => e === "cancelled");
+            let summary = `### Codechecks
+            ${ isSuccess ? "Everything is fine" : "Unfortunately some checks did not pass" }
+              - ${ isSuccess ? "✅" : "❌" } **Code checks** ended with status \`${{needs.codecheck.result}}\`
+            `;
+
+            // Store eslint results as annotations
+            let annotations = []
+            try {
+              const lintResult = require("./lint.json");
+              const LEVELS = {
+                0: "notice",
+                1: "warning",
+                2: "failure"
+              };
+              const withErrorOrWarning = lintResult.filter(r => r.errorCount > 0 || r.fatalErrorCount > 0 || r.warningCount > 0);
+              annotations = withErrorOrWarning.flatMap(({ filePath, messages }) =>
+                messages.map((m) => {
+                  const sameLine = m.line === m.endLine;
+                  return {
+                    path: path.relative(process.env.GITHUB_WORKSPACE, filePath),
+                    start_line: m.line,
+                    end_line: m.endLine,
+                    // Annotations only support start_column and end_column on the same line. Omit this parameter if start_line and end_line have different values.
+                    // https://docs.github.com/en/rest/reference/checks#create-a-check-run
+                    start_column: sameLine ? m.column : undefined,
+                    end_column: sameLine ? m.endColumn : undefined,
+                    annotation_level: LEVELS[m.severity],
+                    message: m.message,
+                    title: m.ruleId,
+                  }
+                })
+              );
+            } catch(error) {
+              console.error("Failed processing eslint annotations", error)
+            }
+
+            const data = {
+              summary,
+              annotations
+            };
+
+            fs.writeFileSync("summary.json", JSON.stringify(data), "utf8");
+      - uses: actions/upload-artifact@v3
+        with:
+          name: summary.json
+          path: ${{ github.workspace }}/summary.json

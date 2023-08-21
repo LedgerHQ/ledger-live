@@ -6,12 +6,22 @@ import { targetDisplayDimensions } from "~/renderer/components/CustomImage/share
 import StepFooter from "./StepFooter";
 import { useTranslation } from "react-i18next";
 import StepContainer from "./StepContainer";
+import { analyticsPageNames, analyticsFlowName } from "./shared";
+import TrackPage from "~/renderer/analytics/TrackPage";
 
 type Props = StepProps & {
   src?: ImageBase64Data;
   onResult: (res: ImageBase64Data) => void;
   initialCropParams?: CropParams;
   setCropParams: (_: CropParams) => void;
+};
+
+const previousButtonEventProperties = {
+  button: "Back",
+};
+
+const nextButtonEventProperties = {
+  button: "Confirm crop",
 };
 
 const StepAdjustImage: React.FC<Props> = props => {
@@ -29,11 +39,20 @@ const StepAdjustImage: React.FC<Props> = props => {
           nextLabel={t("common.continue")}
           nextLoading={loading}
           nextDisabled={loading}
+          previousTestId="custom-image-crop-previous-button"
           nextTestId="custom-image-crop-continue-button"
           setStep={setStep}
+          previousEventProperties={previousButtonEventProperties}
+          nextEventProperties={nextButtonEventProperties}
         />
       }
     >
+      <TrackPage
+        category={analyticsPageNames.preview}
+        type="drawer"
+        flow={analyticsFlowName}
+        refreshSource={false}
+      />
       {src ? (
         <ImageCropper
           {...src}

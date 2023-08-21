@@ -1,3 +1,5 @@
+// TODO: to remove once live-app-sdk is depreciated and removed from LL
+
 import { RippleTransaction as PlatformTransaction } from "@ledgerhq/live-app-sdk";
 import { Transaction } from "./types";
 
@@ -5,14 +7,12 @@ const CAN_EDIT_FEES = true;
 
 const areFeesProvided = (tx: PlatformTransaction): boolean => !!tx.fee;
 
-const convertToLiveTransaction = (
-  tx: PlatformTransaction
-): Partial<Transaction> => {
+const convertToLiveTransaction = (tx: PlatformTransaction): Partial<Transaction> => {
   return tx;
 };
 
 const getPlatformTransactionSignFlowInfos = (
-  tx: PlatformTransaction
+  tx: PlatformTransaction,
 ): {
   canEditFees: boolean;
   hasFeesProvided: boolean;

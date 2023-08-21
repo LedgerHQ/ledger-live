@@ -1,6 +1,6 @@
 import { bip32asBuffer } from "@ledgerhq/hw-app-btc/bip32";
-import type { DerivationMode } from "../../derivation";
-import { getAddressFormatDerivationMode } from "../../derivation";
+import type { DerivationMode } from "@ledgerhq/coin-framework/derivation";
+import { getAddressFormatDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import invariant from "invariant";
 const addressFormatMap = {
   legacy: 0,
@@ -13,7 +13,7 @@ const addressFormatMap = {
 const getSerializedAddressParameters = (
   path: string,
   derivationMode: DerivationMode,
-  addressFormat?: string
+  addressFormat?: string,
 ): {
   addressParameters: Buffer;
 } => {
@@ -21,16 +21,9 @@ const getSerializedAddressParameters = (
     addressFormat && addressFormat in addressFormatMap
       ? addressFormat
       : getAddressFormatDerivationMode(derivationMode);
-  invariant(
-    Object.keys(addressFormatMap).includes(format),
-    "unsupported format %s",
-    format
-  );
+  invariant(Object.keys(addressFormatMap).includes(format), "unsupported format %s", format);
   const buffer = bip32asBuffer(path);
-  const addressParameters = Buffer.concat([
-    Buffer.from([addressFormatMap[format]]),
-    buffer,
-  ]);
+  const addressParameters = Buffer.concat([Buffer.from([addressFormatMap[format]]), buffer]);
   return {
     addressParameters,
   };

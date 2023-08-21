@@ -14,18 +14,13 @@ import { ScreenName } from "../../../const";
 import type { CeloRegistrationFlowParamList } from "./types";
 
 type Props = BaseComposite<
-  StackNavigatorProps<
-    CeloRegistrationFlowParamList,
-    ScreenName.CeloRegistrationValidationError
-  >
+  StackNavigatorProps<CeloRegistrationFlowParamList, ScreenName.CeloRegistrationValidationError>
 >;
 
 export default function ValidationError({ navigation, route }: Props) {
   const { colors } = useTheme();
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
 
   const retry = useCallback(() => {
@@ -36,7 +31,13 @@ export default function ValidationError({ navigation, route }: Props) {
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="CeloRegistrationFlow" name="ValidationError" />
+      <TrackScreen
+        category="CeloRegistrationFlow"
+        name="ValidationError"
+        flow="stake"
+        action="registration"
+        currency="celo"
+      />
       <ValidateError error={error} onRetry={retry} onClose={onClose} />
     </SafeAreaView>
   );

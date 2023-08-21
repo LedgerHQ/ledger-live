@@ -8,17 +8,12 @@ import { blacklistedTokenIdsSelector } from "../reducers/settings";
 import { track } from "../analytics/segment";
 import { prepareCurrency, hydrateCurrency } from "./cache";
 
-export const BridgeSyncProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
+export const BridgeSyncProvider = ({ children }: { children: React.ReactNode }) => {
   const accounts = useSelector(accountsSelector);
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const dispatch = useDispatch();
   const updateAccount = useCallback(
-    (accountId, updater) =>
-      dispatch(updateAccountWithUpdater(accountId, updater)),
+    (accountId, updater) => dispatch(updateAccountWithUpdater({ accountId, updater })),
     [dispatch],
   );
   const recoverError = useCallback(error => {

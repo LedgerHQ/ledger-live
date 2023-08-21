@@ -1,10 +1,10 @@
-import { BigNumber } from "bignumber.js";
-import network from "../../../network";
-import { getEnv } from "../../../env";
+import network from "@ledgerhq/live-network/network";
 import { Operation, OperationType } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
+import { getEnv } from "../../../env";
 import { encodeOperationId } from "../../../operation";
-import { CeloValidatorGroup, FigmentIndexerTransaction } from "../types";
 import { isDefaultValidatorGroup } from "../logic";
+import { CeloValidatorGroup, FigmentIndexerTransaction } from "../types";
 import { celoKit } from "./sdk";
 
 const DEFAULT_TRANSACTIONS_LIMIT = 200;
@@ -14,7 +14,7 @@ const getUrl = (route): string => `${getEnv("API_CELO_INDEXER")}${route || ""}`;
 // Transactions are just limited, there's no block height offset
 const fetchAccountDetails = async (
   address: string,
-  transactionsLimit: number = DEFAULT_TRANSACTIONS_LIMIT
+  transactionsLimit: number = DEFAULT_TRANSACTIONS_LIMIT,
 ) => {
   const { data } = await network({
     method: "GET",
@@ -71,27 +71,18 @@ const getOperationType = (type: string): OperationType => {
 const transactionToOperation = (
   address: string,
   accountId: string,
-  transaction: FigmentIndexerTransaction
+  transaction: FigmentIndexerTransaction,
 ): Operation => {
   const type: OperationType = getOperationType(transaction.kind);
-  const hasFailed = transaction.data?.success
-    ? !transaction.data?.success
-    : false;
+  const hasFailed = transaction.data?.success ? !transaction.data?.success : false;
   const data = transaction.data;
   const sender = data?.Account || data?.from;
   const recipient = data?.Group || data?.to || data?.Raw?.address;
   const fee = new BigNumber(transaction.data?.gas_used || 0).times(
-    new BigNumber(transaction.data?.gas_price || 0)
+    new BigNumber(transaction.data?.gas_price || 0),
   );
 
-  const value = [
-    "LOCK",
-    "UNLOCK",
-    "ACTIVATE",
-    "VOTE",
-    "REVOKE",
-    "REGISTER",
-  ].includes(type)
+  const value = ["LOCK", "UNLOCK", "ACTIVATE", "VOTE", "REVOKE", "REGISTER"].includes(type)
     ? new BigNumber(fee)
     : new BigNumber(transaction.amount);
 
@@ -121,7 +112,7 @@ const transactionToOperation = (
 
 export const getAccountDetails = async (
   address: string,
-  accountId: string
+  accountId: string,
 ): Promise<{
   blockHeight: any;
   balance: BigNumber;
@@ -133,9 +124,7 @@ export const getAccountDetails = async (
   const accountDetails = await fetchAccountDetails(address);
   const spendableBalance = new BigNumber(accountDetails.gold_balance);
   const lockedBalance = new BigNumber(accountDetails.total_locked_gold);
-  const nonvotingLockedBalance = new BigNumber(
-    accountDetails.total_nonvoting_locked_gold
-  );
+  const nonvotingLockedBalance = new BigNumber(accountDetails.total_nonvoting_locked_gold);
   const balance = spendableBalance.plus(lockedBalance);
   const indexerStatus = await fetchStatus();
   const kit = celoKit();
@@ -143,15 +132,13 @@ export const getAccountDetails = async (
 
   const allTransactions = accountDetails.internal_transfers
     .filter(
-      (transfer) =>
-        transfer.data?.to != lockedGold.address &&
-        transfer.data?.from != lockedGold.address
+      transfer =>
+        transfer.data?.to != lockedGold.address && transfer.data?.from != lockedGold.address,
     )
     .concat(accountDetails.transactions);
 
-  const operations: Operation[] = allTransactions.map(
-    (transaction: FigmentIndexerTransaction) =>
-      transactionToOperation(address, accountId, transaction)
+  const operations: Operation[] = allTransactions.map((transaction: FigmentIndexerTransaction) =>
+    transactionToOperation(address, accountId, transaction),
   );
 
   return {
@@ -167,11 +154,11 @@ export const getAccountDetails = async (
 export const getValidatorGroups = async (): Promise<CeloValidatorGroup[]> => {
   const validatorGroups = await fetchValidatorGroups();
 
-  const result = validatorGroups.map((validatorGroup) => ({
+  const result = validatorGroups.map(validatorGroup => ({
     address: validatorGroup.address,
     name: validatorGroup.name || validatorGroup.address,
     votes: new BigNumber(validatorGroup.active_votes).plus(
-      new BigNumber(validatorGroup.pending_votes)
+      new BigNumber(validatorGroup.pending_votes),
     ),
   }));
   return customValidatorGroupsOrder(result);
@@ -182,7 +169,7 @@ const customValidatorGroupsOrder = (validatorGroups): CeloValidatorGroup[] => {
 
   const sortedValidatorGroups = [...validatorGroups]
     .sort((a, b) => b.votes.minus(a.votes))
-    .filter((group) => !isDefaultValidatorGroup(group));
+    .filter(group => !isDefaultValidatorGroup(group));
 
   return defaultValidatorGroup
     ? [defaultValidatorGroup, ...sortedValidatorGroups]

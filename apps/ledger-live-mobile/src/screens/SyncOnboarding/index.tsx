@@ -1,512 +1,328 @@
-import React, {
-  useEffect,
-  useState,
-  useCallback,
-  useMemo,
-  ReactNode,
-  useRef,
-} from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
 import type { StackScreenProps } from "@react-navigation/stack";
-import {
-  Flex,
-  ScrollContainer,
-  VerticalTimeline,
-  Text,
-} from "@ledgerhq/native-ui";
-import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
-import {
-  OnboardingStep as DeviceOnboardingStep,
-  fromSeedPhraseTypeToNbOfSeedWords,
-} from "@ledgerhq/live-common/hw/extractOnboardingState";
-import { useTranslation } from "react-i18next";
-import { getDeviceModel } from "@ledgerhq/devices";
-import { useDispatch } from "react-redux";
 import { CompositeScreenProps } from "@react-navigation/native";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-
-import { StorylyInstanceID } from "@ledgerhq/types-live";
-import { addKnownDevice } from "../../actions/ble";
-import { NavigatorName, ScreenName } from "../../const";
-import HelpDrawer from "./HelpDrawer";
-import DesyncDrawer from "./DesyncDrawer";
-import ResyncOverlay from "./ResyncOverlay";
-import LanguageSelect from "./LanguageSelect";
-import SoftwareChecksStep from "./SoftwareChecksStep";
-import {
-  completeOnboarding,
-  setHasOrderedNano,
-  setLastConnectedDevice,
-  setReadOnlyMode,
-} from "../../actions/settings";
-import DeviceSetupView from "../../components/DeviceSetupView";
-import {
-  BaseNavigatorStackParamList,
-  NavigateInput,
-} from "../../components/RootNavigator/types/BaseNavigator";
+import { InfiniteLoader, Flex } from "@ledgerhq/native-ui";
+import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
+import { OnboardingStep } from "@ledgerhq/live-common/hw/extractOnboardingState";
+import { useToggleOnboardingEarlyCheck } from "@ledgerhq/live-common/deviceSDK/hooks/useToggleOnboardingEarlyChecks";
+import { log } from "@ledgerhq/logs";
+import { getDeviceModel } from "@ledgerhq/devices";
+import { LockedDeviceError, UnexpectedBootloader } from "@ledgerhq/errors";
+import { ScreenName } from "../../const";
+import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import { RootStackParamList } from "../../components/RootNavigator/types/RootNavigator";
 import { SyncOnboardingStackParamList } from "../../components/RootNavigator/types/SyncOnboardingNavigator";
-import InstallSetOfApps from "../../components/DeviceAction/InstallSetOfApps";
-import Stories from "../../components/StorylyStories";
+import {
+  SyncOnboardingCompanion,
+  NORMAL_DESYNC_OVERLAY_DISPLAY_DELAY_MS,
+} from "./SyncOnboardingCompanion";
+import { EarlySecurityCheck } from "./EarlySecurityCheck";
+import DesyncDrawer from "./DesyncDrawer";
+import EarlySecurityCheckMandatoryDrawer from "./EarlySecurityCheckMandatoryDrawer";
+import { PlainOverlay } from "./DesyncOverlay";
+import { track } from "../../analytics";
+import { NavigationHeaderCloseButton } from "../../components/NavigationHeaderCloseButton";
+import UnlockDeviceDrawer from "./UnlockDeviceDrawer";
+import AutoRepairDrawer from "./AutoRepairDrawer";
 
-type StepStatus = "completed" | "active" | "inactive";
-
-type Step = {
-  key: CompanionStepKey;
-  status: StepStatus;
-  title: string;
-  doneTitle?: string;
-  estimatedTime?: number;
-  renderBody?: (isDisplayed?: boolean) => ReactNode;
-};
-
-export type SyncOnboardingCompanionProps = CompositeScreenProps<
-  StackScreenProps<
-    SyncOnboardingStackParamList,
-    ScreenName.SyncOnboardingCompanion
-  >,
+export type SyncOnboardingScreenProps = CompositeScreenProps<
+  StackScreenProps<SyncOnboardingStackParamList, ScreenName.SyncOnboardingCompanion>,
   CompositeScreenProps<
     StackScreenProps<BaseNavigatorStackParamList>,
     StackScreenProps<RootStackParamList>
   >
 >;
 
-const normalPollingPeriodMs = 1000;
-const shortPollingPeriodMs = 400;
-const normalDesyncTimeoutMs = 60000;
-const longDesyncTimeoutMs = 120000;
-const normalResyncOverlayDisplayDelayMs = 10000;
-const longResyncOverlayDisplayDelayMs = 60000;
-const readyRedirectDelayMs = 2500;
+const POLLING_PERIOD_MS = 1000;
+const DESYNC_TIMEOUT_MS = 20000;
 
-const fallbackDefaultAppsToInstall = ["Bitcoin", "Ethereum", "Polygon"];
-
-// Because of https://github.com/typescript-eslint/typescript-eslint/issues/1197
-enum CompanionStepKey {
-  Paired = 0,
-  Pin,
-  Seed,
-  SoftwareCheck,
-  Apps,
-  Ready,
-  Exit,
-}
-
-export const SyncOnboarding = ({
-  navigation,
-  route,
-}: SyncOnboardingCompanionProps) => {
-  const { t } = useTranslation();
-  const dispatchRedux = useDispatch();
-  const deviceInitialApps = useFeature("deviceInitialApps");
+/**
+ * Synchronous onboarding screen composed of the "early security/onboarding checks" step and the "synchronous companion" step
+ *
+ * This screen polls the state of the device to:
+ * - toggle the onboarding early checks (enter/exit) on the device if needed
+ * - know which steps it should display
+ */
+export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps) => {
   const { device } = route.params;
+  const [currentStep, setCurrentStep] = useState<"loading" | "early-security-check" | "companion">(
+    "loading",
+  );
+  const [isPollingOn, setIsPollingOn] = useState<boolean>(true);
+  const [toggleOnboardingEarlyCheckType, setToggleOnboardingEarlyCheckType] = useState<
+    null | "enter" | "exit"
+  >(null);
 
-  const productName =
-    getDeviceModel(device.modelId).productName || device.modelId;
-  const deviceName = device.deviceName || productName;
+  const [isDesyncDrawerOpen, setIsDesyncDrawerOpen] = useState<boolean>(false);
+  const [isAutoRepairOpen, setIsAutoRepairOpen] = useState<boolean>(false);
+  const [isESCMandatoryDrawerOpen, setIsESCMandatoryDrawerOpen] = useState<boolean>(false);
+  const [isLockedDeviceDrawerOpen, setLockedDeviceDrawerOpen] = useState<boolean>(false);
 
-  const initialAppsToInstall =
-    deviceInitialApps?.params?.apps || fallbackDefaultAppsToInstall;
+  // Used to know if a first genuine check already happened and to pass the information to the ESC
+  const [isAlreadyGenuine, setIsAlreadyGenuine] = useState<boolean>(false);
 
-  const [companionStepKey, setCompanionStepKey] = useState<CompanionStepKey>(
-    CompanionStepKey.Paired,
+  // States handling a UI trick to hide the header while the desync alert overlay
+  // is displayed from the companion
+  const [isHeaderOverlayOpen, setIsHeaderOverlayOpen] = useState<boolean>(false);
+  const [headerOverlayDelayMs, setHeaderOverlayDelayMs] = useState<number>(
+    NORMAL_DESYNC_OVERLAY_DISPLAY_DELAY_MS,
   );
 
-  const getNextStepKey = useCallback(
-    (step: CompanionStepKey) => {
-      if (step === CompanionStepKey.Exit) {
-        return CompanionStepKey.Exit;
-      }
-      let nextStep = step + 1; // by default, just increment the step
-      if (nextStep === CompanionStepKey.Apps && !deviceInitialApps?.enabled) {
-        nextStep += 1; // skip "Apps" step if flag is disabled
-      }
-      if (nextStep === CompanionStepKey.Ready) {
-        nextStep += 1; // always skip "Ready" step and go straight to "Exit" to have the "Ready" step as "completed" right away
-      }
-      return nextStep;
-    },
-    [deviceInitialApps?.enabled],
-  );
+  const productName = getDeviceModel(device.modelId).productName || device.modelId;
 
-  const handleSoftwareCheckComplete = useCallback(() => {
-    setCompanionStepKey(getNextStepKey(CompanionStepKey.SoftwareCheck));
-  }, [getNextStepKey]);
+  // Depending on the current step, the close button triggers different paths
+  const onCloseButtonPress = useCallback(() => {
+    if (currentStep === "early-security-check") {
+      setIsESCMandatoryDrawerOpen(true);
+    } else {
+      navigation.popToTop();
+    }
+  }, [currentStep, navigation]);
 
-  const handleInstallAppsComplete = useCallback(() => {
-    setCompanionStepKey(getNextStepKey(CompanionStepKey.Apps));
-  }, [getNextStepKey]);
-
-  const formatEstimatedTime = (estimatedTime: number) =>
-    t("syncOnboarding.estimatedTimeFormat", {
-      estimatedTime: estimatedTime / 60,
+  // Updates dynamically the screen header to handle a possible overlay
+  useEffect(() => {
+    navigation.setOptions({
+      headerShown: true,
+      header: () => (
+        <>
+          <SafeAreaView edges={["top", "left", "right"]}>
+            <Flex my={5} flexDirection="row" justifyContent="flex-end" alignItems="center">
+              <NavigationHeaderCloseButton onPress={onCloseButtonPress} />
+            </Flex>
+          </SafeAreaView>
+          <PlainOverlay isOpen={isHeaderOverlayOpen} delay={headerOverlayDelayMs} />
+        </>
+      ),
     });
-
-  const [stopPolling, setStopPolling] = useState<boolean>(false);
-  const [pollingPeriodMs, setPollingPeriodMs] = useState<number>(
-    normalPollingPeriodMs,
-  );
-
-  const [resyncOverlayDisplayDelayMs, setResyncOverlayDisplayDelayMs] =
-    useState<number>(normalResyncOverlayDisplayDelayMs);
-  const [desyncTimeoutMs, setDesyncTimeoutMs] = useState<number>(
-    normalDesyncTimeoutMs,
-  );
-
-  const desyncTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const readyRedirectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null,
-  );
-
-  const [isDesyncOverlayOpen, setIsDesyncOverlayOpen] =
-    useState<boolean>(false);
-  const [isDesyncDrawerOpen, setDesyncDrawerOpen] = useState<boolean>(false);
-  const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
-
-  const goBackToPairingFlow = useCallback(() => {
-    const navigateInput: NavigateInput<
-      RootStackParamList,
-      NavigatorName.BaseOnboarding
-    > = {
-      name: NavigatorName.BaseOnboarding,
-      params: {
-        screen: NavigatorName.SyncOnboarding,
-        params: {
-          screen: ScreenName.SyncOnboardingCompanion,
-          params: {
-            // @ts-expect-error BleDevicePairingFlow will set this param
-            device: null,
-          },
-        },
-      },
-    };
-
-    // On pairing success, navigate to the Sync Onboarding Companion
-    // Replace to avoid going back to this screen on return from the pairing flow
-    navigation.navigate(NavigatorName.Base, {
-      screen: ScreenName.BleDevicePairingFlow,
-      params: {
-        // TODO: For now, don't do that because stax shows up as nanoX
-        // filterByDeviceModelId: device.modelId,
-        areKnownDevicesDisplayed: true,
-        onSuccessAddToKnownDevices: false,
-        onSuccessNavigateToConfig: {
-          navigationType: "navigate",
-          navigateInput,
-          pathToDeviceParam: "params.params.params.device",
-        },
-      },
-    });
-  }, [navigation]);
+  }, [device, navigation, isHeaderOverlayOpen, headerOverlayDelayMs, onCloseButtonPress]);
 
   const {
-    onboardingState: deviceOnboardingState,
+    onboardingState,
     allowedError,
     fatalError,
+    resetStates: resetPollingStates,
+    lockedDevice,
   } = useOnboardingStatePolling({
     device,
-    pollingPeriodMs,
-    stopPolling,
+    pollingPeriodMs: POLLING_PERIOD_MS,
+    stopPolling: !isPollingOn,
   });
 
-  // Unmount cleanup to make sure the polling is stopped.
-  // The cleanup function triggered by the useEffect of useOnboardingStatePolling
-  // has been observed to be called after, and some apdu could still be exchanged with the device
-  useEffect(() => {
-    return () => {
-      setStopPolling(true);
-    };
+  const { state: toggleOnboardingEarlyCheckState } = useToggleOnboardingEarlyCheck({
+    deviceId: device.deviceId,
+    toggleType: toggleOnboardingEarlyCheckType,
+  });
+
+  // Called when the ESC is complete
+  const notifyOnboardingEarlyCheckEnded = useCallback(() => {
+    setToggleOnboardingEarlyCheckType("exit");
   }, []);
 
-  const handleClose = useCallback(() => {
-    goBackToPairingFlow();
-  }, [goBackToPairingFlow]);
+  // Called when the device seems not to be in the correct state anymore.
+  // Probably because the device restarted.
+  // If the caller knows that the device is already genuine, save this information.
+  const notifyEarlySecurityCheckShouldReset = useCallback(
+    ({ isAlreadyGenuine }: { isAlreadyGenuine: boolean } = { isAlreadyGenuine: false }) => {
+      setIsAlreadyGenuine(isAlreadyGenuine);
+      setCurrentStep("loading");
+      // Resets the polling state because it could return the same result object (and so no state has changed)
+      // but we want to re-trigger the useEffect handling the polling result
+      resetPollingStates();
+      setIsPollingOn(true);
+    },
+    [resetPollingStates],
+  );
 
-  const handleDesyncTimedOut = useCallback(() => {
-    setDesyncDrawerOpen(true);
+  // Called when the user taps on the "cancel" button in the mandatory drawer
+  const onCancelEarlySecurityCheck = useCallback(() => {
+    setIsESCMandatoryDrawerOpen(false);
+    navigation.popToTop();
+  }, [navigation]);
+
+  // Handles current step and toggling onboarding early check logics from polling information
+  useEffect(() => {
+    if (!onboardingState) {
+      return;
+    }
+
+    const { currentOnboardingStep, isOnboarded } = onboardingState;
+
+    if (
+      !isOnboarded &&
+      [
+        OnboardingStep.WelcomeScreen1,
+        OnboardingStep.WelcomeScreen2,
+        OnboardingStep.WelcomeScreen3,
+        OnboardingStep.WelcomeScreen4,
+        OnboardingStep.WelcomeScreenReminder,
+      ].includes(currentOnboardingStep)
+    ) {
+      setIsPollingOn(false);
+      setToggleOnboardingEarlyCheckType("enter");
+    } else if (!isOnboarded && currentOnboardingStep === OnboardingStep.OnboardingEarlyCheck) {
+      setIsPollingOn(false);
+      // Resets the `useToggleOnboardingEarlyCheck` hook. Avoids having a case where for ex
+      // check type == "exit" and toggle status still being == "success" from the previous toggle
+      setToggleOnboardingEarlyCheckType(null);
+      setCurrentStep("early-security-check");
+    } else {
+      setIsPollingOn(false);
+      setCurrentStep("companion");
+    }
+  }, [onboardingState]);
+
+  // A fatal error during polling triggers directly an error message (or the auto repair)
+  useEffect(() => {
+    if (fatalError) {
+      if ((fatalError as unknown) instanceof UnexpectedBootloader) {
+        log("SyncOnboardingIndex", "Device in bootloader mode. Trying to auto repair", {
+          fatalError,
+        });
+        setIsPollingOn(false);
+        setIsAutoRepairOpen(true);
+      } else {
+        log("SyncOnboardingIndex", "Fatal error during polling", { fatalError });
+        setIsPollingOn(false);
+        setIsDesyncDrawerOpen(true);
+      }
+    }
+  }, [fatalError]);
+
+  // An allowed error during polling (which makes the polling retry) only triggers an error message after a timeout
+  useEffect(() => {
+    let timeout: ReturnType<typeof setTimeout>;
+
+    if (allowedError && !(allowedError instanceof LockedDeviceError)) {
+      log("SyncOnboardingIndex", "Polling allowed error", { allowedError });
+
+      timeout = setTimeout(() => {
+        setIsPollingOn(false);
+        setIsDesyncDrawerOpen(true);
+      }, DESYNC_TIMEOUT_MS);
+    }
+
+    return () => {
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+    };
+  }, [allowedError]);
+
+  useEffect(() => {
+    if (lockedDevice) {
+      setLockedDeviceDrawerOpen(true);
+    }
+
+    return () => {
+      setLockedDeviceDrawerOpen(false);
+    };
+  }, [lockedDevice]);
+
+  // Handles onboarding early check toggle result
+  useEffect(() => {
+    if (toggleOnboardingEarlyCheckState.toggleStatus === "none") return;
+
+    if (toggleOnboardingEarlyCheckState.toggleStatus === "failure") {
+      // If an error occurred during the toggling the safe backup is to bring the device to the "companion" step
+      // This will happen for older firmware that does not handle this new action.
+      setToggleOnboardingEarlyCheckType(null);
+      setCurrentStep("companion");
+    }
+
+    // After a successful "enter" or "exit", the polling is restarted to know the device state
+    if (
+      toggleOnboardingEarlyCheckType !== null &&
+      toggleOnboardingEarlyCheckState.toggleStatus === "success"
+    ) {
+      // Resets the toggle hook
+      setToggleOnboardingEarlyCheckType(null);
+      setIsPollingOn(true);
+      // Not setting the `currentStep` to "loading" here to avoid UI flash
+    }
+  }, [toggleOnboardingEarlyCheckState, toggleOnboardingEarlyCheckType]);
+
+  const onLostDevice = useCallback(() => {
+    setIsDesyncDrawerOpen(true);
   }, []);
 
   const handleDesyncRetry = useCallback(() => {
-    // handleDesyncClose is then called
-    setDesyncDrawerOpen(false);
+    track("button_clicked", {
+      button: "Try again",
+      drawer: "Could not connect to Stax",
+    });
+    // handleDesyncClose is then called once the drawer is fully closed
+    setIsDesyncDrawerOpen(false);
   }, []);
 
   const handleDesyncClose = useCallback(() => {
-    setDesyncDrawerOpen(false);
-    goBackToPairingFlow();
-  }, [goBackToPairingFlow]);
+    setIsDesyncDrawerOpen(false);
+    navigation.goBack();
+  }, [navigation]);
 
-  const handleDeviceReady = useCallback(() => {
-    // Adds the device to the list of known devices
-    dispatchRedux(setReadOnlyMode(false));
-    dispatchRedux(setHasOrderedNano(false));
-    dispatchRedux(setLastConnectedDevice(device));
-    dispatchRedux(completeOnboarding());
-    dispatchRedux(
-      addKnownDevice({
-        id: device.deviceId,
-        name: device.deviceName ?? device.modelId,
-        modelId: device.modelId,
-      }),
-    );
+  const handleAutoRepairClose = useCallback(() => {
+    setIsAutoRepairOpen(false);
+    setIsPollingOn(true);
+  }, []);
 
-    navigation.navigate(ScreenName.SyncOnboardingCompletion, { device });
-  }, [device, dispatchRedux, navigation]);
-
-  useEffect(() => {
-    if (!fatalError) {
-      return;
-    }
-    setDesyncDrawerOpen(true);
-  }, [fatalError]);
-
-  // Reacts to allowedError from the polling to set or clean the desync timeout
-  useEffect(() => {
-    if (allowedError) {
-      desyncTimerRef.current = setTimeout(
-        handleDesyncTimedOut,
-        desyncTimeoutMs,
-      );
-      setIsDesyncOverlayOpen(true);
-      // Accelerates the polling to resync as fast as possible with the device
-      setPollingPeriodMs(shortPollingPeriodMs);
-    } else if (!allowedError) {
-      // desyncTimer is cleared in the useEffect cleanup function
-      setPollingPeriodMs(normalPollingPeriodMs);
-      setIsDesyncOverlayOpen(false);
-    }
-
-    return () => {
-      // allowedError needs to stay stable, and not change its reference
-      // if the error is the same to avoid resetting the timer
-      if (desyncTimerRef.current) {
-        clearTimeout(desyncTimerRef.current);
-        desyncTimerRef.current = null;
-      }
-    };
-  }, [allowedError, handleDesyncTimedOut, desyncTimeoutMs]);
-
-  useEffect(() => {
-    if (isDesyncDrawerOpen) {
-      setStopPolling(true);
-    }
-  }, [isDesyncDrawerOpen]);
-
-  useEffect(() => {
-    if (
-      deviceOnboardingState?.isOnboarded &&
-      deviceOnboardingState?.currentOnboardingStep ===
-        DeviceOnboardingStep.Ready
-    ) {
-      setCompanionStepKey(CompanionStepKey.SoftwareCheck);
-      return;
-    }
-
-    switch (deviceOnboardingState?.currentOnboardingStep) {
-      case DeviceOnboardingStep.SetupChoice:
-      case DeviceOnboardingStep.RestoreSeed:
-      case DeviceOnboardingStep.SafetyWarning:
-      case DeviceOnboardingStep.NewDevice:
-      case DeviceOnboardingStep.NewDeviceConfirming:
-        setCompanionStepKey(CompanionStepKey.Seed);
-        break;
-      case DeviceOnboardingStep.WelcomeScreen1:
-      case DeviceOnboardingStep.WelcomeScreen2:
-      case DeviceOnboardingStep.WelcomeScreen3:
-      case DeviceOnboardingStep.WelcomeScreen4:
-      case DeviceOnboardingStep.WelcomeScreenReminder:
-      case DeviceOnboardingStep.ChooseName:
-        setCompanionStepKey(CompanionStepKey.Paired);
-        break;
-      case DeviceOnboardingStep.Pin:
-        setCompanionStepKey(CompanionStepKey.Pin);
-        break;
-      default:
-        break;
-    }
-  }, [deviceOnboardingState]);
-
-  // When the user gets close to the seed generation step, sets the lost synchronization delay
-  // and timers to a higher value. It avoids having a warning message while the connection is lost
-  // because the device is generating the seed.
-  useEffect(() => {
-    if (
-      deviceOnboardingState?.seedPhraseType &&
-      [
-        DeviceOnboardingStep.NewDeviceConfirming,
-        DeviceOnboardingStep.RestoreSeed,
-      ].includes(deviceOnboardingState?.currentOnboardingStep)
-    ) {
-      const nbOfSeedWords = fromSeedPhraseTypeToNbOfSeedWords.get(
-        deviceOnboardingState.seedPhraseType,
-      );
-
-      if (
-        nbOfSeedWords &&
-        deviceOnboardingState?.currentSeedWordIndex >= nbOfSeedWords - 2
-      ) {
-        setResyncOverlayDisplayDelayMs(longResyncOverlayDisplayDelayMs);
-        setDesyncTimeoutMs(longDesyncTimeoutMs);
-      }
-    }
-  }, [deviceOnboardingState]);
-
-  useEffect(() => {
-    if (companionStepKey >= CompanionStepKey.SoftwareCheck) {
-      setStopPolling(true);
-    }
-
-    if (companionStepKey === CompanionStepKey.Exit) {
-      readyRedirectTimerRef.current = setTimeout(
-        handleDeviceReady,
-        readyRedirectDelayMs,
-      );
-    }
-
-    return () => {
-      if (readyRedirectTimerRef.current) {
-        clearTimeout(readyRedirectTimerRef.current);
-        readyRedirectTimerRef.current = null;
-      }
-    };
-  }, [companionStepKey, handleDeviceReady]);
-
-  const companionSteps: Step[] = useMemo(
-    () =>
-      [
-        {
-          key: CompanionStepKey.Paired,
-          title: t("syncOnboarding.pairingStep.title", { productName }),
-          renderBody: () => (
-            <Text variant="bodyLineHeight">
-              {t("syncOnboarding.pairingStep.description", { productName })}
-            </Text>
-          ),
-        },
-        {
-          key: CompanionStepKey.Pin,
-          title: t("syncOnboarding.pinStep.title"),
-          doneTitle: t("syncOnboarding.pinStep.doneTitle"),
-          estimatedTime: 120,
-          renderBody: () => (
-            <Flex>
-              <Text variant="bodyLineHeight">
-                {t("syncOnboarding.pinStep.description", { productName })}
-              </Text>
-            </Flex>
-          ),
-        },
-        {
-          key: CompanionStepKey.Seed,
-          title: t("syncOnboarding.seedStep.title"),
-          doneTitle: t("syncOnboarding.seedStep.doneTitle"),
-          estimatedTime: 300,
-          renderBody: () => (
-            <Flex pb={1}>
-              <Stories
-                instanceID={StorylyInstanceID.recoverySeed}
-                vertical
-                keepOriginalOrder
-              />
-            </Flex>
-          ),
-        },
-        {
-          key: CompanionStepKey.SoftwareCheck,
-          title: t("syncOnboarding.softwareChecksSteps.title"),
-          doneTitle: t("syncOnboarding.softwareChecksSteps.doneTitle", {
-            productName,
-          }),
-          renderBody: (isDisplayed?: boolean) => (
-            <SoftwareChecksStep
-              device={device}
-              isDisplayed={isDisplayed}
-              onComplete={handleSoftwareCheckComplete}
-            />
-          ),
-        },
-        ...(deviceInitialApps?.enabled
-          ? [
-              {
-                key: CompanionStepKey.Apps,
-                title: t("syncOnboarding.appsStep.title", { productName }),
-                estimatedTime: 60,
-                renderBody: () => (
-                  <InstallSetOfApps
-                    device={device}
-                    onResult={handleInstallAppsComplete}
-                    dependencies={initialAppsToInstall}
-                  />
-                ),
-              },
-            ]
-          : []),
-        {
-          key: CompanionStepKey.Ready,
-          title: t("syncOnboarding.readyStep.title"),
-          doneTitle: t("syncOnboarding.readyStep.doneTitle", { productName }),
-        },
-      ].map(step => ({
-        ...step,
-        status:
-          step.key > companionStepKey
-            ? "inactive"
-            : step.key < companionStepKey
-            ? "completed"
-            : "active",
-      })),
-    [
-      t,
-      productName,
-      deviceInitialApps?.enabled,
-      device,
-      handleSoftwareCheckComplete,
-      handleInstallAppsComplete,
-      initialAppsToInstall,
-      companionStepKey,
-    ],
+  let stepContent = (
+    <Flex height="100%" width="100%" justifyContent="center" alignItems="center">
+      <InfiniteLoader />
+    </Flex>
   );
 
-  return (
-    <DeviceSetupView
-      onClose={handleClose}
-      renderLeft={() => (
-        <LanguageSelect device={device} productName={productName} />
-      )}
-    >
-      <HelpDrawer
-        isOpen={isHelpDrawerOpen}
-        onClose={() => setHelpDrawerOpen(false)}
+  if (currentStep === "early-security-check") {
+    stepContent = (
+      <EarlySecurityCheck
+        device={device}
+        isAlreadyGenuine={isAlreadyGenuine}
+        notifyOnboardingEarlyCheckEnded={notifyOnboardingEarlyCheckEnded}
+        notifyEarlySecurityCheckShouldReset={notifyEarlySecurityCheckShouldReset}
+        onCancelOnboarding={onCancelEarlySecurityCheck}
       />
+    );
+  } else if (currentStep === "companion") {
+    stepContent = (
+      <SyncOnboardingCompanion
+        navigation={navigation}
+        device={device}
+        notifyEarlySecurityCheckShouldReset={notifyEarlySecurityCheckShouldReset}
+        onLostDevice={onLostDevice}
+        onShouldHeaderBeOverlaid={setIsHeaderOverlayOpen}
+        updateHeaderOverlayDelay={setHeaderOverlayDelayMs}
+      />
+    );
+  }
+
+  return (
+    <>
       <DesyncDrawer
         isOpen={isDesyncDrawerOpen}
         onClose={handleDesyncClose}
         onRetry={handleDesyncRetry}
         device={device}
       />
-      <Flex position="relative" flex={1}>
-        <ResyncOverlay
-          isOpen={isDesyncOverlayOpen}
-          delay={resyncOverlayDisplayDelayMs}
-          productName={productName}
-        />
-        <ScrollContainer px={6}>
-          <Flex mb={8} flexDirection="row" alignItems="center">
-            <Text variant="h4" fontWeight="semiBold">
-              {t("syncOnboarding.title", { deviceName })}
-            </Text>
-            {/* TODO: disabled for now but will be used in the future */}
-            {/* <Button
-                  ml={2}
-                  Icon={Question}
-                  onPress={() => setHelpDrawerOpen(true)}
-                /> */}
-          </Flex>
-          <VerticalTimeline
-            steps={companionSteps}
-            formatEstimatedTime={formatEstimatedTime}
-          />
-        </ScrollContainer>
-      </Flex>
-    </DeviceSetupView>
+      <AutoRepairDrawer isOpen={isAutoRepairOpen} onDone={handleAutoRepairClose} device={device} />
+      <EarlySecurityCheckMandatoryDrawer
+        productName={productName}
+        isOpen={isESCMandatoryDrawerOpen}
+        onResume={() => {
+          setIsESCMandatoryDrawerOpen(false);
+        }}
+        onCancel={onCancelEarlySecurityCheck}
+      />
+      <UnlockDeviceDrawer
+        isOpen={isLockedDeviceDrawerOpen}
+        onClose={() => {
+          // Closing because the user pressed on close button (the device is still locked)
+          if (lockedDevice) {
+            // Triggers the same close button behavior than closing the entire sync onboarding
+            onCloseButtonPress();
+          }
+        }}
+        device={device}
+      />
+      {stepContent}
+    </>
   );
 };

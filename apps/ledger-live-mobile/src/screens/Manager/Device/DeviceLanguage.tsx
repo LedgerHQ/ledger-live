@@ -1,17 +1,17 @@
 import { Icons, Text } from "@ledgerhq/native-ui";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Language, DeviceInfo } from "@ledgerhq/types-live";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import DeviceLanguageSelection from "./DeviceLanguageSelection";
-import BottomModal from "../../../components/BottomModal";
+import QueuedDrawer from "../../../components/QueuedDrawer";
 import ChangeDeviceLanguageActionModal from "../../../components/ChangeDeviceLanguageActionModal";
 import { track } from "../../../analytics";
 import DeviceOptionRow from "./DeviceOptionRow";
 
 type Props = {
-  pendingInstalls: boolean;
+  disabled: boolean;
   currentDeviceLanguage: Language;
   device: Device;
   deviceInfo: DeviceInfo;
@@ -19,7 +19,7 @@ type Props = {
 };
 
 const DeviceLanguage: React.FC<Props> = ({
-  pendingInstalls,
+  disabled,
   currentDeviceLanguage,
   device,
   deviceInfo,
@@ -28,23 +28,18 @@ const DeviceLanguage: React.FC<Props> = ({
   const { t } = useTranslation();
 
   const [isChangeLanguageOpen, setIsChangeLanguageOpen] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState<Language>(
-    currentDeviceLanguage,
-  );
+  const [selectedLanguage, setSelectedLanguage] = useState<Language>(currentDeviceLanguage);
 
   const { availableLanguages } = useAvailableLanguagesForDevice(deviceInfo);
 
-  const [shouldInstallLanguage, setShouldInstallLanguage] =
-    useState<boolean>(false);
-  const [deviceForActionModal, setDeviceForActionModal] =
-    useState<Device | null>(null);
+  const [shouldInstallLanguage, setShouldInstallLanguage] = useState<boolean>(false);
+  const [deviceForActionModal, setDeviceForActionModal] = useState<Device | null>(null);
 
   const closeChangeLanguageModal = useCallback(
     () => setIsChangeLanguageOpen(false),
     [setIsChangeLanguageOpen],
   );
   const openChangeLanguageModal = useCallback(() => {
-    track("Page Manager ChangeLanguageEntered");
     setIsChangeLanguageOpen(true);
   }, [setIsChangeLanguageOpen]);
 
@@ -68,27 +63,43 @@ const DeviceLanguage: React.FC<Props> = ({
   }, [setShouldInstallLanguage, setDeviceForActionModal]);
 
   const refreshDeviceLanguage = useCallback(() => {
-    track("Page Manager LanguageInstalled", { selectedLanguage });
     onLanguageChange();
-  }, [onLanguageChange, selectedLanguage]);
+  }, [onLanguageChange]);
+
+  const errorTracked = useRef(null);
+  const handleError = useCallback(
+    error => {
+      if (errorTracked.current !== error) {
+        track("Page Manager LanguageInstallError", { error, type: "drawer" });
+        errorTracked.current = error;
+      }
+      refreshDeviceLanguage();
+    },
+    [refreshDeviceLanguage],
+  );
+  const handleResult = useCallback(() => {
+    track("Page Manager LanguageInstalled", {
+      selectedLanguage,
+      type: "drawer",
+    });
+    refreshDeviceLanguage();
+  }, [refreshDeviceLanguage, selectedLanguage]);
 
   return (
     <>
       <DeviceOptionRow
-        Icon={Icons.LanguageMedium}
+        Icon={Icons.Language}
         label={t("deviceLocalization.language")}
-        onPress={pendingInstalls ? undefined : openChangeLanguageModal}
+        onPress={disabled ? undefined : openChangeLanguageModal}
         linkLabel={t(`deviceLocalization.languages.${currentDeviceLanguage}`)}
         right={
           availableLanguages.length ? undefined : (
-            <Text>
-              {t(`deviceLocalization.languages.${currentDeviceLanguage}`)}
-            </Text>
+            <Text>{t(`deviceLocalization.languages.${currentDeviceLanguage}`)}</Text>
           )
         }
       />
-      <BottomModal
-        isOpened={isChangeLanguageOpen}
+      <QueuedDrawer
+        isRequestingToBeOpened={isChangeLanguageOpen}
         onClose={closeChangeLanguageModal}
         onModalHide={openDeviceActionModal}
       >
@@ -100,16 +111,13 @@ const DeviceLanguage: React.FC<Props> = ({
           onConfirmInstall={confirmInstall}
           availableLanguages={availableLanguages}
         />
-      </BottomModal>
+      </QueuedDrawer>
       <ChangeDeviceLanguageActionModal
         onClose={closeDeviceActionModal}
         device={deviceForActionModal}
         language={selectedLanguage}
-        onError={error => {
-          track("Page Manager LanguageInstallError", { error });
-          refreshDeviceLanguage();
-        }}
-        onResult={refreshDeviceLanguage}
+        onError={handleError}
+        onResult={handleResult}
       />
     </>
   );

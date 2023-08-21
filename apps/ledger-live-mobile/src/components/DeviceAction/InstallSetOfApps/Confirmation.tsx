@@ -14,19 +14,16 @@ const Confirmation = ({ onConfirm, onReject, productName }: Props) => (
     <Flex alignItems="center" mb={7} mt={3}>
       <Illustration />
     </Flex>
-    <Text variant="h5" textAlign="center">
-      <Trans
-        i18nKey="installSetOfApps.landing.title"
-        values={{ productName }}
-      />
+    <Text variant="h5" fontWeight="semiBold" textAlign="center">
+      <Trans i18nKey="installSetOfApps.landing.title" values={{ productName }} />
     </Text>
     <Text variant="paragraph" color="neutral.c70" textAlign="center" mt={3}>
       <Trans i18nKey="installSetOfApps.landing.subtitle" />
     </Text>
-    <Button mb={3} mt={8} type="main" onPress={onConfirm}>
+    <Button mb={3} mt={6} size="small" type="main" onPress={onConfirm}>
       <Trans i18nKey="installSetOfApps.landing.installCTA" />
     </Button>
-    <Button onPress={onReject}>
+    <Button size="small" onPress={onReject}>
       <Trans i18nKey="installSetOfApps.landing.skipCTA" />
     </Button>
   </Flex>

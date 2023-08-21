@@ -1,13 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Flex,
-  Button,
-  List,
-  Icons,
-  Text,
-  ScrollListContainer,
-} from "@ledgerhq/native-ui";
+import { Flex, Button, List, IconsLegacy, Text, ScrollListContainer } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 
 const content = [
@@ -26,11 +19,7 @@ const OnboardingSetupDeviceInformation = () => {
   const navigation = useNavigation();
 
   return (
-    <Flex
-      flex={1}
-      justifyContent="space-between"
-      backgroundColor="background.main"
-    >
+    <Flex flex={1} justifyContent="space-between" backgroundColor="background.main">
       <ScrollListContainer contentContainerStyle={{ padding: 16 }}>
         <Text variant="h1" mb={6}>
           {t("onboarding.stepSetupDevice.pinCodeSetup.infoModal.title")}
@@ -38,14 +27,14 @@ const OnboardingSetupDeviceInformation = () => {
         <List
           items={[...content].slice(0, 4).map(item => ({
             title: t(item),
-            bullet: <Icons.CheckAloneMedium size={20} color="success.c100" />,
+            bullet: <IconsLegacy.CheckAloneMedium size={20} color="success.c50" />,
           }))}
         />
         <Flex my={8} borderBottomColor="neutral.c40" borderBottomWidth={1} />
         <List
           items={[...content].slice(4, 8).map(item => ({
             title: t(item),
-            bullet: <Icons.CloseMedium size={20} color="error.c100" />,
+            bullet: <IconsLegacy.CloseMedium size={20} color="error.c50" />,
           }))}
         />
       </ScrollListContainer>

@@ -1,0 +1,194 @@
+name: "@Libs • Regen Doc Files"
+run-name: "@Libs • Regen Doc Files triggered by ${{ inputs.login }} ${{ inputs.ref && format('on branch {0}', inputs.ref) || format('on PR {0}', inputs.number) }}"
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: The branch to generate pods for.
+        required: false
+      number:
+        description: The pull request number.
+        required: false
+      login:
+        description: The GitHub username that triggered the workflow
+        required: true
+      commentId:
+        description: comment id to update
+        required: false
+
+concurrency:
+  # See: https://github.com/orgs/community/discussions/35341
+  group: ${{ github.workflow }}-${{ github.event.inputs.ref || github.event.inputs.number }}
+  cancel-in-progress: true
+
+jobs:
+  regen-doc:
+    runs-on: ubuntu-latest
+    steps:
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+      - uses: actions/checkout@v3
+        if: ${{ inputs.ref != null }}
+        with:
+          ref: ${{ inputs.ref }}
+          token: ${{ steps.generate-token.outputs.token }}
+      - uses: actions/checkout@v3
+        if: ${{ !inputs.ref }}
+        with:
+          token: ${{ steps.generate-token.outputs.token }}
+      - name: Checkout PR
+        if: ${{ inputs.number != null }}
+        run: gh pr checkout ${{ inputs.number }}
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+      - name: set git user
+        run: |
+          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
+          git config user.name "live-github-bot[bot]"
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
+      - name: Install dependencies
+        run: pnpm i --filter="!./apps/**"
+      - name: run doc
+        run: pnpm doc:ljs
+      - name: status
+        id: check-status
+        run: echo "status=$(git status --porcelain | wc -l)" >> $GITHUB_OUTPUT
+      - name: commit and push changes
+        if: steps.check-status.outputs.status != 0
+        run: >
+          git add ./apps/ledger-live-mobile/ios &&
+          git commit -m 'chore(📙): regenerate documentation for ledgerjs' &&
+          git restore . &&
+          git pull --rebase &&
+          git push
+      - name: create summary (failure)
+        if: failure() && inputs.number != null
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ steps.generate-token.outputs.token }}
+          script: |
+            const fs = require("fs");
+            const body = `#### ❌ Documentation regeneration failed
+
+            @${{ inputs.login }}: you can check [the action logs](https://github.com/LedgerHQ/ledger-live/runs/${{ github.run_id }}) for more information.`;
+            fs.writeFileSync("summary.txt", body, "utf8");
+      - name: create summary (success)
+        if: inputs.number != null && steps.check-status.outputs.status != 0
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ steps.generate-token.outputs.token }}
+          script: |
+            const fs = require("fs");
+            const body = `#### 🚀 Documentation regenerated
+
+            @${{ inputs.login }}: the documentation has been regenerated and a commit has been pushed to your branch.`;
+            fs.writeFileSync("summary.txt", body, "utf8");
+      - name: create summary (no change)
+        if: inputs.number != null && steps.check-status.outputs.status == 0
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ steps.generate-token.outputs.token }}
+          script: |
+            const fs = require("fs");
+            const body = `#### ✨ No changes detected
+
+            @${{ inputs.login }}: the documentation is already up to date.`;
+            fs.writeFileSync("summary.txt", body, "utf8");
+      - uses: actions/upload-artifact@v3
+        if: always()
+        name: upload summary
+        with:
+          name: summary.txt
+          path: ${{ github.workspace }}/summary.txt
+
+  report-start:
+    name: Report start
+    runs-on: ubuntu-latest
+    if: inputs.commentId != ''
+    steps:
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+      - name: report start
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ steps.generate-token.outputs.token }}
+          result-encoding: string
+          retries: 3
+          script: |
+            const {repo: {owner, repo}, run_id} = context
+            const issue_number = ${{ inputs.number }}
+            const body = `\
+            @${{ inputs.login }}: triggered \`/regen-pods\`
+
+            [Regenerating Documentation: workflow started](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            `;
+
+            await github.rest.issues.updateComment({
+              owner,
+              repo,
+              comment_id: "${{ inputs.commentId }}",
+              body,
+            });
+
+  report-end:
+    name: Report end
+    needs: [regen-doc, report-start]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+      - uses: actions/download-artifact@v3
+        name: download summary
+        with:
+          name: summary.txt
+      - name: report job status
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ steps.generate-token.outputs.token }}
+          result-encoding: string
+          retries: 3
+          script: |
+            const fs = require("fs");
+            const {repo: {owner, repo}} = context;
+            const summary = fs.readFileSync("${{ github.workspace }}/summary.txt", "utf8");
+
+            const body = `\
+            ${summary}
+
+            [Regenerating Documentation: workflow ended](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            `;
+
+            const output = {
+              summary: body,
+            };
+
+            fs.writeFileSync("summary.json", JSON.stringify(output), "utf-8");
+
+            if(${{ inputs.commentId != '' }}) {
+              await github.rest.issues.updateComment({
+                owner,
+                repo,
+                comment_id: "${{ inputs.commentId }}",
+                body
+              });
+            }
+      - uses: actions/upload-artifact@v3
+        name: upload summary
+        with:
+          name: summary.json
+          path: ${{ github.workspace }}/summary.json

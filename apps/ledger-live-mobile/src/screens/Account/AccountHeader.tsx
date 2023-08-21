@@ -9,11 +9,7 @@ import {
   getAccountName,
 } from "@ledgerhq/live-common/account/index";
 import { Currency } from "@ledgerhq/types-cryptoassets";
-import {
-  AccountLike,
-  Account,
-  BalanceHistoryWithCountervalue,
-} from "@ledgerhq/types-live";
+import { AccountLike, Account, BalanceHistoryWithCountervalue } from "@ledgerhq/types-live";
 import Animated from "react-native-reanimated";
 import Touchable from "../../components/Touchable";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
@@ -67,7 +63,7 @@ function AccountHeader({
   const onBackButtonPress = useCallback(() => {
     track("button_clicked", {
       button: "Back",
-      screen: "Account",
+      page: "Account",
     });
     navigation.goBack();
   }, [navigation]);
@@ -87,14 +83,8 @@ function AccountHeader({
         <Flex flexDirection={"column"} alignItems={"center"}>
           {typeof items[1]?.value === "number" ? (
             <Flex flexDirection={"column"} alignItems={"center"}>
-              <Text
-                fontWeight={"semiBold"}
-                color={"neutral.c70"}
-                fontSize="11px"
-                numberOfLines={1}
-              >
-                {getAccountName(account) +
-                  (isToken ? ` - ${getAccountName(parentAccount)}` : "")}
+              <Text fontWeight={"semiBold"} color={"neutral.c70"} fontSize="11px" numberOfLines={1}>
+                {getAccountName(account) + (isToken ? ` - ${getAccountName(parentAccount)}` : "")}
               </Text>
               <Text
                 variant={"small"}

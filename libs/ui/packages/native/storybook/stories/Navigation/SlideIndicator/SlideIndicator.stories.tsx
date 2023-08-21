@@ -1,18 +1,28 @@
 import React, { useState } from "react";
-import { number } from "@storybook/addon-knobs";
-import { storiesOf } from "../../storiesOf";
+import { ComponentStory } from "@storybook/react-native";
 import SlideIndicator from "../../../../src/components/Navigation/SlideIndicator";
 
-const SideIndicatorSample = () => {
+export default {
+  title: "Navigation/SlideIndicator",
+  component: SlideIndicator,
+};
+
+export const SlideIndicatorSample: ComponentStory<typeof SlideIndicator> = (
+  args: typeof SlideIndicatorSampleArgs,
+) => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
   return (
     <SlideIndicator
-      slidesLength={number("slidesLength", 3, { min: 1 })}
-      activeIndex={activeIndex ?? number("activeIndex", 0, { min: 0 })}
+      slidesLength={args.slidesLength}
+      activeIndex={activeIndex ?? args.activeIndex}
       onChange={setActiveIndex}
     />
   );
 };
-
-storiesOf((story) => story("Navigation", module).add("SlideIndicator", SideIndicatorSample));
+SlideIndicatorSample.storyName = "SlideIndicator";
+const SlideIndicatorSampleArgs = {
+  slidesLength: 3,
+  activeIndex: 0,
+};
+SlideIndicatorSample.args = SlideIndicatorSampleArgs;

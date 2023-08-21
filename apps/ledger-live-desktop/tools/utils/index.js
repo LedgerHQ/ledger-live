@@ -1,24 +1,24 @@
 const childProcess = require("child_process");
 const { prerelease } = require("semver");
 const path = require("path");
-const { StripFlowPlugin, DotEnvPlugin, nodeExternals } = require("esbuild-utils");
-const { flowPlugin } = require("@bunchtogether/vite-plugin-flow");
+const { DotEnvPlugin, nodeExternals } = require("esbuild-utils");
 const electronPlugin = require("vite-plugin-electron/renderer");
 const reactPlugin = require("@vitejs/plugin-react");
 const { defineConfig } = require("vite");
 
-const SENTRY_URL = process.env?.SENTRY_URL;
+const SENTRY_URL = process.env.SENTRY_URL;
 const pkg = require("../../package.json");
 const lldRoot = path.resolve(__dirname, "..", "..");
 
-const GIT_REVISION = childProcess
-  .execSync("git rev-parse --short HEAD")
-  .toString("utf8")
-  .trim();
+let GIT_REVISION = process.env.GIT_REVISION;
+
+if (!GIT_REVISION) {
+  GIT_REVISION = childProcess.execSync("git rev-parse --short HEAD").toString("utf8").trim();
+}
 
 const parsed = prerelease(pkg.version);
 let PRERELEASE = false;
-let CHANNEL;
+let CHANNEL = null;
 if (parsed) {
   PRERELEASE = !!(parsed && parsed.length);
   CHANNEL = parsed[0];
@@ -41,7 +41,7 @@ const buildMainEnv = (mode, argv) => {
     __GIT_REVISION__: JSON.stringify(GIT_REVISION),
     __SENTRY_URL__: JSON.stringify(SENTRY_URL || null),
     // See: https://github.com/node-formidable/formidable/issues/337
-    "global.GENTLY": false,
+    "global.GENTLY": JSON.stringify(false),
     __PRERELEASE__: JSON.stringify(PRERELEASE),
     __CHANNEL__: JSON.stringify(CHANNEL),
   };
@@ -94,15 +94,15 @@ const buildViteConfig = argv =>
     optimizeDeps: {
       // The common.js dependencies and files need to be force-added below:
       include: ["@ledgerhq/hw-app-eth/erc20"],
+      exclude: ["@braze/web-sdk"],
       esbuildOptions: {
         target: ["es2020"],
         plugins: [
-          StripFlowPlugin(/.jsx?$/),
           {
             name: "Externalize Nodejs Standard Library",
             setup(build) {
               nodeExternals.forEach(external => {
-                build.onResolve({ filter: new RegExp(`^${external}$`) }, args => ({
+                build.onResolve({ filter: new RegExp(`^${external}$`) }, _args => ({
                   path: external,
                   external: true,
                 }));
@@ -129,7 +129,6 @@ const buildViteConfig = argv =>
       },
     },
     plugins: [
-      flowPlugin(),
       reactPlugin(),
       electronPlugin(),
       // {

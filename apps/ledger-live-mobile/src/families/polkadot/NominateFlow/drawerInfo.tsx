@@ -1,9 +1,6 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import {
-  getAccountCurrency,
-  getAccountUnit,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { useTheme } from "@react-navigation/native";
 import type { TFunction } from "i18next";
 import type { AccountLike } from "@ledgerhq/types-live";
@@ -16,9 +13,7 @@ import ExternalLink from "../../../icons/ExternalLink";
 import NominationDrawer from "../components/NominationDrawer";
 import { Unpacked } from "../../../types/helpers";
 
-type NominationDrawerData = React.ComponentProps<
-  typeof NominationDrawer
->["data"];
+type NominationDrawerData = React.ComponentProps<typeof NominationDrawer>["data"];
 type NominationDrawerDatum = Unpacked<NominationDrawerData>;
 
 type Props = {
@@ -90,12 +85,7 @@ export function getDrawerInfo({
   const delegationValidator: NominationDrawerDatum = {
     label: t("delegation.validator"),
     Component: (
-      <LText
-        numberOfLines={1}
-        semiBold
-        ellipsizeMode="middle"
-        style={styles.valueText}
-      >
+      <LText numberOfLines={1} semiBold ellipsizeMode="middle" style={styles.valueText}>
         {validator.identity}
       </LText>
     ),
@@ -104,12 +94,7 @@ export function getDrawerInfo({
   const nominationComission: NominationDrawerDatum = {
     label: t("polkadot.nomination.commission"),
     Component: (
-      <LText
-        numberOfLines={1}
-        semiBold
-        ellipsizeMode="middle"
-        style={styles.valueText}
-      >
+      <LText numberOfLines={1} semiBold ellipsizeMode="middle" style={styles.valueText}>
         {formattedCommission}
       </LText>
     ),
@@ -147,23 +132,14 @@ export function getDrawerInfo({
   const nominationTotalStake: NominationDrawerDatum = {
     label: t("polkadot.nomination.totalStake"),
     Component: (
-      <LText
-        numberOfLines={1}
-        semiBold
-        ellipsizeMode="middle"
-        style={styles.valueText}
-      >
+      <LText numberOfLines={1} semiBold ellipsizeMode="middle" style={styles.valueText}>
         <View style={styles.column}>
           <LText semiBold>
             <CurrencyUnitValue value={totalStake} unit={unit} />
           </LText>
           {totalStake ? (
             <LText style={styles.valueCounterValue} color="grey">
-              <CounterValue
-                currency={currency}
-                value={totalStake}
-                withPlaceholder
-              />
+              <CounterValue currency={currency} value={totalStake} withPlaceholder />
             </LText>
           ) : null}
         </View>
@@ -175,12 +151,8 @@ export function getDrawerInfo({
     ...drawerData,
     ...(validator.identity ? [delegationValidator] : []),
     // FIXME: what the heck is this status field?
-    ...((validator as unknown as { status: boolean }).status
-      ? [nominationComission]
-      : []),
-    ...(validator.isElected
-      ? [nominationNominators, nominationTotalStake]
-      : []),
+    ...((validator as unknown as { status: boolean }).status ? [nominationComission] : []),
+    ...(validator.isElected ? [nominationNominators, nominationTotalStake] : []),
   ];
 }
 

@@ -3,7 +3,7 @@ import { TouchableOpacity, StyleSheet } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import LText, { Opts as LTextProps } from "./LText";
-import BottomModal from "./BottomModal";
+import QueuedDrawer from "./QueuedDrawer";
 
 type Props = {
   label: React.ReactNode;
@@ -23,17 +23,13 @@ const TooltipLabel = ({ label, tooltip, color = "grey", style }: Props) => {
         <LText style={[styles.label, style]} color={color}>
           {label}
         </LText>
-        <Icon
-          size={13}
-          color={colors[color as keyof typeof colors]}
-          name={"info-circle"}
-        />
+        <Icon size={13} color={colors[color as keyof typeof colors]} name={"info-circle"} />
       </TouchableOpacity>
-      <BottomModal isOpened={isOpened} onClose={close} style={styles.modal}>
+      <QueuedDrawer isRequestingToBeOpened={isOpened} onClose={close} style={styles.modal}>
         <LText semiBold style={styles.tooltip}>
           {tooltip}
         </LText>
-      </BottomModal>
+      </QueuedDrawer>
     </>
   );
 };

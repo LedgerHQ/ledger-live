@@ -18,15 +18,9 @@ function NoAssociatedAccounts({ style }: Props) {
   const { colors } = useTheme();
   const c = colors.live;
   const fontSize = 13;
-  const onPress = useCallback(
-    () => Linking.openURL(urls.hedera.supportArticleLink),
-    [],
-  );
+  const onPress = useCallback(() => Linking.openURL(urls.hedera.supportArticleLink), []);
   return (
-    <Touchable
-      onPress={onPress}
-      style={[style?.paddingHorizontal, styles.root]}
-    >
+    <Touchable onPress={onPress} style={[style?.paddingHorizontal, styles.root]}>
       <Text>{i18next.t("hedera.createHederaAccountHelp.text")}</Text>
       <LText
         style={[

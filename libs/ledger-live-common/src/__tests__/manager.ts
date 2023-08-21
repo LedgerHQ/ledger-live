@@ -1,5 +1,5 @@
 import { FirmwareNotRecognized } from "@ledgerhq/errors";
-import Manager from "../api/Manager";
+import Manager from "../manager/api";
 import "./test-helpers/setup";
 describe("getDeviceVersion", () => {
   test("it works with a 1.5.5", async () => {
@@ -24,7 +24,7 @@ describe("getDeviceVersion", () => {
   test("it throw FirmwareNotRecognized with dumb data", async () => {
     const r = await Manager.getDeviceVersion(42, 1).then(
       () => null,
-      (e) => e
+      e => e,
     );
     expect(r).toBeDefined();
     expect(r).toBeInstanceOf(FirmwareNotRecognized);

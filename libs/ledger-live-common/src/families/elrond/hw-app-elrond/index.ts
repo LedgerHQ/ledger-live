@@ -7,6 +7,7 @@ const INS = {
   GET_VERSION: 0x02,
   GET_ADDRESS: 0x03,
   SET_ADDRESS: 0x05,
+  PROVIDE_ESDT_INFO: 0x08,
 };
 const SIGN_RAW_TX_INS = 0x04;
 const SIGN_HASH_TX_INS = 0x07;
@@ -27,8 +28,9 @@ export default class Elrond {
         "signTransaction",
         "signMessage",
         "getAppConfiguration",
+        "provideESDTInfo",
       ],
-      scrambleKey
+      scrambleKey,
     );
   }
 
@@ -41,12 +43,7 @@ export default class Elrond {
    * const { contractData, accountIndex, addressIndex, version } = result;
    */
   async getAppConfiguration(): Promise<any> {
-    const response = await this.transport.send(
-      CLA,
-      INS.GET_VERSION,
-      0x00,
-      0x00
-    );
+    const response = await this.transport.send(CLA, INS.GET_VERSION, 0x00, 0x00);
     return {
       contractData: response[0],
       accountIndex: response[1],
@@ -74,7 +71,7 @@ export default class Elrond {
    */
   async getAddress(
     path: string,
-    display?: boolean
+    display?: boolean,
   ): Promise<{
     address: string;
   }> {
@@ -86,7 +83,7 @@ export default class Elrond {
       display ? 0x01 : 0x00,
       0x00,
       data,
-      [SW_OK, SW_CANCEL]
+      [SW_OK, SW_CANCEL],
     );
     const addressLength = response[0];
     const address = response.slice(1, 1 + addressLength).toString("ascii");
@@ -108,21 +105,13 @@ export default class Elrond {
   async setAddress(path: string, display?: boolean) {
     const bipPath = BIPPath.fromString(path).toPathArray();
     const data = this.serializePath(bipPath);
-    await this.transport.send(
-      CLA,
-      INS.SET_ADDRESS,
-      display ? 0x01 : 0x00,
-      0x00,
-      data,
-      [SW_OK, SW_CANCEL]
-    );
+    await this.transport.send(CLA, INS.SET_ADDRESS, display ? 0x01 : 0x00, 0x00, data, [
+      SW_OK,
+      SW_CANCEL,
+    ]);
   }
 
-  async signTransaction(
-    path: string,
-    message: string,
-    usingHash: boolean
-  ): Promise<string> {
+  async signTransaction(path: string, message: string, usingHash: boolean): Promise<string> {
     const chunks: Buffer[] = [];
     const buffer: Buffer = Buffer.from(message);
 
@@ -136,9 +125,7 @@ export default class Elrond {
       chunks.push(buffer.slice(i, end));
     }
 
-    return usingHash
-      ? this.sign(chunks, SIGN_HASH_TX_INS)
-      : this.sign(chunks, SIGN_RAW_TX_INS);
+    return usingHash ? this.sign(chunks, SIGN_HASH_TX_INS) : this.sign(chunks, SIGN_RAW_TX_INS);
   }
 
   async signMessage(message: Buffer[]): Promise<string> {
@@ -164,13 +151,7 @@ export default class Elrond {
     let response: any = {};
 
     for (const apdu of apdus) {
-      response = await this.transport.send(
-        apdu.cla,
-        apdu.ins,
-        apdu.p1,
-        apdu.p2,
-        apdu.data
-      );
+      response = await this.transport.send(apdu.cla, apdu.ins, apdu.p1, apdu.p2, apdu.data);
     }
 
     if (response.length !== 67 || response[0] !== 64) {
@@ -179,5 +160,49 @@ export default class Elrond {
 
     const signature = response.slice(1, response.length - 2).toString("hex");
     return signature;
+  }
+
+  serializeESDTInfo(
+    ticker: string,
+    id: string,
+    decimals: number,
+    chainId: string,
+    signature: string,
+  ): Buffer {
+    const tickerLengthBuffer = Buffer.from([ticker.length]);
+    const tickerBuffer = Buffer.from(ticker);
+    const idLengthBuffer = Buffer.from([id.length]);
+    const idBuffer = Buffer.from(id);
+    const decimalsBuffer = Buffer.from([decimals]);
+    const chainIdLengthBuffer = Buffer.from([chainId.length]);
+    const chainIdBuffer = Buffer.from(chainId);
+    const signatureBuffer = Buffer.from(signature, "hex");
+    const infoBuffer = [
+      tickerLengthBuffer,
+      tickerBuffer,
+      idLengthBuffer,
+      idBuffer,
+      decimalsBuffer,
+      chainIdLengthBuffer,
+      chainIdBuffer,
+      signatureBuffer,
+    ];
+    return Buffer.concat(infoBuffer);
+  }
+
+  async provideESDTInfo(
+    ticker?: string,
+    id?: string,
+    decimals?: number,
+    chainId?: string,
+    signature?: string,
+  ): Promise<any> {
+    if (!ticker || !id || !decimals || !chainId || !signature) {
+      throw new Error("Invalid ESDT token credentials!");
+    }
+
+    const data = this.serializeESDTInfo(ticker, id, decimals, chainId, signature);
+
+    return await this.transport.send(CLA, INS.PROVIDE_ESDT_INFO, 0x00, 0x00, data);
   }
 }

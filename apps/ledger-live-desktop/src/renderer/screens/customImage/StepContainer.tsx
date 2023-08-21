@@ -9,8 +9,15 @@ type Props = {
 const StepContainer: React.FC<Props> = props => {
   const { footer, children } = props;
   return (
-    <Flex flexDirection="column" justifyContent="space-between" flex={1}>
-      <Flex flex={1} flexDirection="column" justifyContent="center" alignItems="stretch">
+    <Flex flex={1} flexDirection="column" justifyContent="space-between" overflowY="hidden">
+      <Flex
+        flex={1}
+        flexDirection="column"
+        justifyContent="center"
+        alignItems="stretch"
+        flexShrink={1}
+        overflowY="hidden"
+      >
         {children}
       </Flex>
       {footer}

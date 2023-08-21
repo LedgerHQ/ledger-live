@@ -14,33 +14,24 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  ********************************************************************************/
+/* eslint @typescript-eslint/no-duplicate-enum-values: 1 */
 // FIXME drop:
 import type Transport from "@ledgerhq/hw-transport";
 import { BigNumber } from "bignumber.js";
-import { decodeTxInfo, hexBuffer, maybeHexBuffer, splitPath } from "./utils";
 // NB: these are temporary import for the deprecated fallback mechanism
-import { LedgerEthTransactionResolution, LoadConfig } from "./services/types";
+import { LedgerEthTransactionResolution, LoadConfig, ResolutionConfig } from "./services/types";
+import { log } from "@ledgerhq/logs";
+import { decodeTxInfo, hexBuffer, intAsHexBytes, maybeHexBuffer, splitPath } from "./utils";
+import { domainResolutionFlow } from "./modules/Domains";
 import ledgerService from "./services/ledger";
-import {
-  EthAppNftNotSupported,
-  EthAppPleaseEnableContractData,
-} from "./errors";
-import {
-  signEIP712HashedMessage,
-  signEIP712Message,
-  EIP712Message,
-  isEIP712Message,
-  getFiltersForMessage,
-} from "./modules/EIP712";
+import { EthAppNftNotSupported, EthAppPleaseEnableContractData } from "./errors";
+import { signEIP712HashedMessage, signEIP712Message } from "./modules/EIP712";
+import { EIP712Message } from "@ledgerhq/types-live";
 
-export { ledgerService, isEIP712Message, getFiltersForMessage };
+export { ledgerService };
+export * from "./utils";
 
-export type StarkQuantizationType =
-  | "eth"
-  | "erc20"
-  | "erc721"
-  | "erc20mintable"
-  | "erc721mintable";
+export type StarkQuantizationType = "eth" | "erc20" | "erc721" | "erc20mintable" | "erc721mintable";
 const starkQuantizationTypeMap = {
   eth: 1,
   erc20: 2,
@@ -49,10 +40,10 @@ const starkQuantizationTypeMap = {
   erc721mintable: 5,
 };
 
-const remapTransactionRelatedErrors = (e) => {
+const remapTransactionRelatedErrors = e => {
   if (e && e.statusCode === 0x6a80) {
     return new EthAppPleaseEnableContractData(
-      "Please enable Blind signing or Contract data in the Ethereum app Settings"
+      "Please enable Blind signing or Contract data in the Ethereum app Settings",
     );
   }
 
@@ -75,18 +66,19 @@ export default class Eth {
     this.loadConfig = loadConfig;
   }
 
-  constructor(
-    transport: Transport,
-    scrambleKey = "w0w",
-    loadConfig: LoadConfig = {}
-  ) {
+  constructor(transport: Transport, scrambleKey = "w0w", loadConfig: LoadConfig = {}) {
     this.transport = transport;
     this.loadConfig = loadConfig;
     transport.decorateAppAPIMethods(
       this,
       [
+        // "getChallange",                  | ⚠️
+        // "provideERC20TokenInformation",  | Those methods are not decorated as they're
+        // "setExternalPlugin",             | being used inside of the `signTransaction` flow
+        // "setPlugin",                     | and shouldn't be locking the transport
+        // "provideDomainName",             | ⚠️
+        // "provideNFTInformation",         |
         "getAddress",
-        "provideERC20TokenInformation",
         "signTransaction",
         "signPersonalMessage",
         "getAppConfiguration",
@@ -102,12 +94,10 @@ export default class Eth {
         "starkUnsafeSign",
         "eth2GetPublicKey",
         "eth2SetWithdrawalIndex",
-        "setExternalPlugin",
-        "setPlugin",
         "getEIP1024PublicEncryptionKey",
         "getEIP1024SharedSecret",
       ],
-      scrambleKey
+      scrambleKey,
     );
   }
 
@@ -123,7 +113,7 @@ export default class Eth {
   getAddress(
     path: string,
     boolDisplay?: boolean,
-    boolChaincode?: boolean
+    boolChaincode?: boolean,
   ): Promise<{
     publicKey: string;
     address: string;
@@ -136,14 +126,8 @@ export default class Eth {
       buffer.writeUInt32BE(element, 1 + 4 * index);
     });
     return this.transport
-      .send(
-        0xe0,
-        0x02,
-        boolDisplay ? 0x01 : 0x00,
-        boolChaincode ? 0x01 : 0x00,
-        buffer
-      )
-      .then((response) => {
+      .send(0xe0, 0x02, boolDisplay ? 0x01 : 0x00, boolChaincode ? 0x01 : 0x00, buffer)
+      .then(response => {
         const publicKeyLength = response[0];
         const addressLength = response[1 + publicKeyLength];
 
@@ -152,16 +136,13 @@ export default class Eth {
           address:
             "0x" +
             response
-              .slice(
-                1 + publicKeyLength + 1,
-                1 + publicKeyLength + 1 + addressLength
-              )
+              .slice(1 + publicKeyLength + 1, 1 + publicKeyLength + 1 + addressLength)
               .toString("ascii"),
           chainCode: boolChaincode
             ? response
                 .slice(
                   1 + publicKeyLength + 1 + addressLength,
-                  1 + publicKeyLength + 1 + addressLength + 32
+                  1 + publicKeyLength + 1 + addressLength + 32,
                 )
                 .toString("hex")
             : undefined,
@@ -185,7 +166,7 @@ export default class Eth {
   async signTransaction(
     path: string,
     rawTxHex: string,
-    resolution?: LedgerEthTransactionResolution | null
+    resolution?: LedgerEthTransactionResolution | null,
   ): Promise<{
     s: string;
     v: string;
@@ -199,17 +180,16 @@ export default class Eth {
           "– the previous signature is deprecated and providing the 3rd 'resolution' parameter explicitly will become mandatory so you have the control on the resolution and the fallback mecanism (e.g. fallback to blind signing or not)." +
           "// Possible solution:\n" +
           " + import { ledgerService } from '@ledgerhq/hw-app-eth';\n" +
-          " + const resolution = await ledgerService.resolveTransaction(rawTxHex);"
+          " + const resolution = await ledgerService.resolveTransaction(rawTxHex);",
       );
       resolution = await ledgerService
         .resolveTransaction(rawTxHex, this.loadConfig, {
           externalPlugins: true,
           erc20: true,
         })
-        .catch((e) => {
+        .catch(e => {
           console.warn(
-            "an error occurred in resolveTransaction => fallback to blind signing: " +
-              String(e)
+            "an error occurred in resolveTransaction => fallback to blind signing: " + String(e),
           );
           return null;
         });
@@ -217,26 +197,35 @@ export default class Eth {
 
     // provide to the device resolved information to make it clear sign the signature
     if (resolution) {
+      for (const domainDescriptor of resolution.domains) {
+        await domainResolutionFlow(this, domainDescriptor).catch(e => {
+          // error during the domain flow shouldn't be blocking the signature in case of failure
+          log("error", "domainResolutionFlow failed", {
+            domainDescriptor,
+            error: e,
+          });
+        });
+      }
+
       for (const plugin of resolution.plugin) {
-        await setPlugin(this.transport, plugin);
+        await this.setPlugin(plugin);
       }
+
       for (const { payload, signature } of resolution.externalPlugin) {
-        await setExternalPlugin(this.transport, payload, signature);
+        await this.setExternalPlugin(payload, signature);
       }
+
       for (const nft of resolution.nfts) {
-        await provideNFTInformation(this.transport, Buffer.from(nft, "hex"));
+        await this.provideNFTInformation(nft);
       }
+
       for (const data of resolution.erc20Tokens) {
-        await provideERC20TokenInformation(
-          this.transport,
-          Buffer.from(data, "hex")
-        );
+        await this.provideERC20TokenInformation(data);
       }
     }
 
     const rawTx = Buffer.from(rawTxHex, "hex");
-    const { vrsOffset, txType, chainId, chainIdTruncated } =
-      decodeTxInfo(rawTx);
+    const { vrsOffset, txType, chainId, chainIdTruncated } = decodeTxInfo(rawTx);
 
     const paths = splitPath(path);
     let response;
@@ -244,19 +233,14 @@ export default class Eth {
     while (offset !== rawTx.length) {
       const first = offset === 0;
       const maxChunkSize = first ? 150 - 1 - paths.length * 4 : 150;
-      let chunkSize =
-        offset + maxChunkSize > rawTx.length
-          ? rawTx.length - offset
-          : maxChunkSize;
+      let chunkSize = offset + maxChunkSize > rawTx.length ? rawTx.length - offset : maxChunkSize;
 
       if (vrsOffset != 0 && offset + chunkSize >= vrsOffset) {
         // Make sure that the chunk doesn't end right on the EIP 155 marker if set
         chunkSize = rawTx.length - offset;
       }
 
-      const buffer = Buffer.alloc(
-        first ? 1 + paths.length * 4 + chunkSize : chunkSize
-      );
+      const buffer = Buffer.alloc(first ? 1 + paths.length * 4 + chunkSize : chunkSize);
 
       if (first) {
         buffer[0] = paths.length;
@@ -270,7 +254,7 @@ export default class Eth {
 
       response = await this.transport
         .send(0xe0, 0x04, first ? 0x00 : 0x80, 0x00, buffer)
-        .catch((e) => {
+        .catch(e => {
           throw remapTransactionRelatedErrors(e);
         });
 
@@ -307,6 +291,40 @@ export default class Eth {
   }
 
   /**
+   * Helper to get resolution and signature of a transaction in a single method
+   *
+   * @param path: the BIP32 path to sign the transaction on
+   * @param rawTxHex: the raw ethereum transaction in hexadecimal to sign
+   * @param resolutionConfig: configuration about what should be clear signed in the transaction
+   * @param throwOnError: optional parameter to determine if a failing resolution of the transaction should throw an error or not
+   * @example
+   const tx = "e8018504e3b292008252089428ee52a8f3d6e5d15f8b131996950d7f296c7952872bd72a2487400080"; // raw tx to sign
+   const result = eth.clearSignTransaction("44'/60'/0'/0/0", tx, { erc20: true, externalPlugins: true, nft: true});
+   console.log(result);
+   */
+  async clearSignTransaction(
+    path: string,
+    rawTxHex: string,
+    resolutionConfig: ResolutionConfig,
+    throwOnError = false,
+  ): Promise<{ r: string; s: string; v: string }> {
+    const resolution = await ledgerService
+      .resolveTransaction(rawTxHex, this.loadConfig, resolutionConfig)
+      .catch(e => {
+        console.warn(
+          "an error occurred in resolveTransaction => fallback to blind signing: " + String(e),
+        );
+
+        if (throwOnError) {
+          throw e;
+        }
+        return null;
+      });
+
+    return this.signTransaction(path, rawTxHex, resolution);
+  }
+
+  /**
    */
   getAppConfiguration(): Promise<{
     arbitraryDataEnabled: number;
@@ -315,7 +333,7 @@ export default class Eth {
     starkv2Supported: number;
     version: string;
   }> {
-    return this.transport.send(0xe0, 0x06, 0x00, 0x00).then((response) => {
+    return this.transport.send(0xe0, 0x06, 0x00, 0x00).then(response => {
       return {
         arbitraryDataEnabled: response[0] & 0x01,
         erc20ProvisioningNecessary: response[0] & 0x02,
@@ -340,7 +358,7 @@ export default class Eth {
    */
   async signPersonalMessage(
     path: string,
-    messageHex: string
+    messageHex: string,
   ): Promise<{
     v: number;
     s: string;
@@ -354,12 +372,8 @@ export default class Eth {
     while (offset !== message.length) {
       const maxChunkSize = offset === 0 ? 150 - 1 - paths.length * 4 - 4 : 150;
       const chunkSize =
-        offset + maxChunkSize > message.length
-          ? message.length - offset
-          : maxChunkSize;
-      const buffer = Buffer.alloc(
-        offset === 0 ? 1 + paths.length * 4 + 4 + chunkSize : chunkSize
-      );
+        offset + maxChunkSize > message.length ? message.length - offset : maxChunkSize;
+      const buffer = Buffer.alloc(offset === 0 ? 1 + paths.length * 4 + 4 + chunkSize : chunkSize);
 
       if (offset === 0) {
         buffer[0] = paths.length;
@@ -367,23 +381,12 @@ export default class Eth {
           buffer.writeUInt32BE(element, 1 + 4 * index);
         });
         buffer.writeUInt32BE(message.length, 1 + 4 * paths.length);
-        message.copy(
-          buffer,
-          1 + 4 * paths.length + 4,
-          offset,
-          offset + chunkSize
-        );
+        message.copy(buffer, 1 + 4 * paths.length + 4, offset, offset + chunkSize);
       } else {
         message.copy(buffer, 0, offset, offset + chunkSize);
       }
 
-      response = await this.transport.send(
-        0xe0,
-        0x08,
-        offset === 0 ? 0x00 : 0x80,
-        0x00,
-        buffer
-      );
+      response = await this.transport.send(0xe0, 0x08, offset === 0 ? 0x00 : 0x80, 0x00, buffer);
 
       offset += chunkSize;
     }
@@ -409,24 +412,19 @@ export default class Eth {
   signEIP712HashedMessage(
     path: string,
     domainSeparatorHex: string,
-    hashStructMessageHex: string
+    hashStructMessageHex: string,
   ): Promise<{
     v: number;
     s: string;
     r: string;
   }> {
-    return signEIP712HashedMessage(
-      this.transport,
-      path,
-      domainSeparatorHex,
-      hashStructMessageHex
-    );
+    return signEIP712HashedMessage(this.transport, path, domainSeparatorHex, hashStructMessageHex);
   }
 
   /**
    * Sign an EIP-721 formatted message following the specification here:
    * https://github.com/LedgerHQ/app-ethereum/blob/develop/doc/ethapp.asc#sign-eth-eip-712
-   * ⚠️ This method is not compatible with nano S (LNS). Make sure to use a try/catch to fallback on the signEIP712HashedMessage method ⚠️ 
+   * ⚠️ This method is not compatible with nano S (LNS). Make sure to use a try/catch to fallback on the signEIP712HashedMessage method ⚠️
    @example
    eth.signEIP721Message("44'/60'/0'/0/0", {
       domain: {
@@ -458,19 +456,46 @@ export default class Eth {
   async signEIP712Message(
     path: string,
     jsonMessage: EIP712Message,
-    fullImplem = false
+    fullImplem = false,
   ): Promise<{
     v: number;
     s: string;
     r: string;
   }> {
-    return signEIP712Message(
-      this.transport,
-      path,
-      jsonMessage,
-      fullImplem,
-      this.loadConfig
-    );
+    return signEIP712Message(this.transport, path, jsonMessage, fullImplem, this.loadConfig);
+  }
+
+  /**
+   * Method returning a 4 bytes TLV challenge as an hexa string
+   *
+   * @returns {Promise<string>}
+   */
+  async getChallenge(): Promise<string> {
+    enum APDU_FIELDS {
+      CLA = 0xe0,
+      INS = 0x20,
+      P1 = 0x00,
+      P2 = 0x00,
+      LC = 0x00,
+    }
+
+    return this.transport
+      .send(APDU_FIELDS.CLA, APDU_FIELDS.INS, APDU_FIELDS.P1, APDU_FIELDS.P2)
+      .then(res => {
+        const [, fourBytesChallenge, statusCode] =
+          new RegExp("(.*)(.{4}$)").exec(res.toString("hex")) || [];
+
+        if (statusCode !== "9000") {
+          throw new Error(
+            `An error happened while generating the challenge. Status code: ${statusCode}`,
+          );
+        }
+        return `0x${fourBytesChallenge}`;
+      })
+      .catch(e => {
+        log("error", "couldn't request a challenge", e);
+        throw e;
+      });
   }
 
   /**
@@ -488,7 +513,7 @@ export default class Eth {
     });
     return this.transport
       .send(0xf0, 0x02, boolDisplay ? 0x01 : 0x00, 0x00, buffer)
-      .then((response) => {
+      .then(response => {
         return response.slice(0, response.length - 2);
       });
   }
@@ -519,14 +544,14 @@ export default class Eth {
     amountSell: BigNumber,
     amountBuy: BigNumber,
     nonce: number,
-    timestamp: number
+    timestamp: number,
   ): Promise<Buffer | { r: string; s: string }> {
     const sourceTokenAddressHex = maybeHexBuffer(sourceTokenAddress);
     const destinationTokenAddressHex = maybeHexBuffer(destinationTokenAddress);
     const paths = splitPath(path);
     const buffer = Buffer.alloc(
       1 + paths.length * 4 + 20 + 32 + 20 + 32 + 4 + 4 + 8 + 8 + 4 + 4,
-      0
+      0,
     );
     let offset = 0;
     buffer[0] = paths.length;
@@ -540,10 +565,7 @@ export default class Eth {
     }
 
     offset += 20;
-    Buffer.from(sourceQuantization.toString(16).padStart(64, "0"), "hex").copy(
-      buffer,
-      offset
-    );
+    Buffer.from(sourceQuantization.toString(16).padStart(64, "0"), "hex").copy(buffer, offset);
     offset += 32;
 
     if (destinationTokenAddressHex) {
@@ -551,38 +573,27 @@ export default class Eth {
     }
 
     offset += 20;
-    Buffer.from(
-      destinationQuantization.toString(16).padStart(64, "0"),
-      "hex"
-    ).copy(buffer, offset);
+    Buffer.from(destinationQuantization.toString(16).padStart(64, "0"), "hex").copy(buffer, offset);
     offset += 32;
     buffer.writeUInt32BE(sourceVault, offset);
     offset += 4;
     buffer.writeUInt32BE(destinationVault, offset);
     offset += 4;
-    Buffer.from(amountSell.toString(16).padStart(16, "0"), "hex").copy(
-      buffer,
-      offset
-    );
+    Buffer.from(amountSell.toString(16).padStart(16, "0"), "hex").copy(buffer, offset);
     offset += 8;
-    Buffer.from(amountBuy.toString(16).padStart(16, "0"), "hex").copy(
-      buffer,
-      offset
-    );
+    Buffer.from(amountBuy.toString(16).padStart(16, "0"), "hex").copy(buffer, offset);
     offset += 8;
     buffer.writeUInt32BE(nonce, offset);
     offset += 4;
     buffer.writeUInt32BE(timestamp, offset);
-    return this.transport
-      .send(0xf0, 0x04, 0x01, 0x00, buffer)
-      .then((response) => {
-        const r = response.slice(1, 1 + 32).toString("hex");
-        const s = response.slice(1 + 32, 1 + 32 + 32).toString("hex");
-        return {
-          r,
-          s,
-        };
-      });
+    return this.transport.send(0xf0, 0x04, 0x01, 0x00, buffer).then(response => {
+      const r = response.slice(1, 1 + 32).toString("hex");
+      const s = response.slice(1 + 32, 1 + 32 + 32).toString("hex");
+      return {
+        r,
+        s,
+      };
+    });
   }
 
   /**
@@ -619,44 +630,27 @@ export default class Eth {
     amountSell: BigNumber,
     amountBuy: BigNumber,
     nonce: number,
-    timestamp: number
+    timestamp: number,
   ): Promise<Buffer | { r: string; s: string }> {
     const sourceTokenAddressHex = maybeHexBuffer(sourceTokenAddress);
     const destinationTokenAddressHex = maybeHexBuffer(destinationTokenAddress);
 
     if (!(sourceQuantizationType in starkQuantizationTypeMap)) {
       throw new Error(
-        "eth.starkSignOrderv2 invalid source quantization type=" +
-          sourceQuantizationType
+        "eth.starkSignOrderv2 invalid source quantization type=" + sourceQuantizationType,
       );
     }
 
     if (!(destinationQuantizationType in starkQuantizationTypeMap)) {
       throw new Error(
-        "eth.starkSignOrderv2 invalid destination quantization type=" +
-          destinationQuantizationType
+        "eth.starkSignOrderv2 invalid destination quantization type=" + destinationQuantizationType,
       );
     }
 
     const paths = splitPath(path);
     const buffer = Buffer.alloc(
-      1 +
-        paths.length * 4 +
-        1 +
-        20 +
-        32 +
-        32 +
-        1 +
-        20 +
-        32 +
-        32 +
-        4 +
-        4 +
-        8 +
-        8 +
-        4 +
-        4,
-      0
+      1 + paths.length * 4 + 1 + 20 + 32 + 32 + 1 + 20 + 32 + 32 + 4 + 4 + 8 + 8 + 4 + 4,
+      0,
     );
     let offset = 0;
     buffer[0] = paths.length;
@@ -674,19 +668,16 @@ export default class Eth {
     offset += 20;
 
     if (sourceQuantization) {
-      Buffer.from(
-        sourceQuantization.toString(16).padStart(64, "0"),
-        "hex"
-      ).copy(buffer, offset);
+      Buffer.from(sourceQuantization.toString(16).padStart(64, "0"), "hex").copy(buffer, offset);
     }
 
     offset += 32;
 
     if (sourceMintableBlobOrTokenId) {
-      Buffer.from(
-        sourceMintableBlobOrTokenId.toString(16).padStart(64, "0"),
-        "hex"
-      ).copy(buffer, offset);
+      Buffer.from(sourceMintableBlobOrTokenId.toString(16).padStart(64, "0"), "hex").copy(
+        buffer,
+        offset,
+      );
     }
 
     offset += 32;
@@ -700,19 +691,19 @@ export default class Eth {
     offset += 20;
 
     if (destinationQuantization) {
-      Buffer.from(
-        destinationQuantization.toString(16).padStart(64, "0"),
-        "hex"
-      ).copy(buffer, offset);
+      Buffer.from(destinationQuantization.toString(16).padStart(64, "0"), "hex").copy(
+        buffer,
+        offset,
+      );
     }
 
     offset += 32;
 
     if (destinationMintableBlobOrTokenId) {
-      Buffer.from(
-        destinationMintableBlobOrTokenId.toString(16).padStart(64, "0"),
-        "hex"
-      ).copy(buffer, offset);
+      Buffer.from(destinationMintableBlobOrTokenId.toString(16).padStart(64, "0"), "hex").copy(
+        buffer,
+        offset,
+      );
     }
 
     offset += 32;
@@ -720,29 +711,21 @@ export default class Eth {
     offset += 4;
     buffer.writeUInt32BE(destinationVault, offset);
     offset += 4;
-    Buffer.from(amountSell.toString(16).padStart(16, "0"), "hex").copy(
-      buffer,
-      offset
-    );
+    Buffer.from(amountSell.toString(16).padStart(16, "0"), "hex").copy(buffer, offset);
     offset += 8;
-    Buffer.from(amountBuy.toString(16).padStart(16, "0"), "hex").copy(
-      buffer,
-      offset
-    );
+    Buffer.from(amountBuy.toString(16).padStart(16, "0"), "hex").copy(buffer, offset);
     offset += 8;
     buffer.writeUInt32BE(nonce, offset);
     offset += 4;
     buffer.writeUInt32BE(timestamp, offset);
-    return this.transport
-      .send(0xf0, 0x04, 0x03, 0x00, buffer)
-      .then((response) => {
-        const r = response.slice(1, 1 + 32).toString("hex");
-        const s = response.slice(1 + 32, 1 + 32 + 32).toString("hex");
-        return {
-          r,
-          s,
-        };
-      });
+    return this.transport.send(0xf0, 0x04, 0x03, 0x00, buffer).then(response => {
+      const r = response.slice(1, 1 + 32).toString("hex");
+      const s = response.slice(1 + 32, 1 + 32 + 32).toString("hex");
+      return {
+        r,
+        s,
+      };
+    });
   }
 
   /**
@@ -767,15 +750,12 @@ export default class Eth {
     destinationVault: number,
     amountTransfer: BigNumber,
     nonce: number,
-    timestamp: number
+    timestamp: number,
   ): Promise<Buffer | { r: string; s: string }> {
     const transferTokenAddressHex = maybeHexBuffer(transferTokenAddress);
     const targetPublicKeyHex = hexBuffer(targetPublicKey);
     const paths = splitPath(path);
-    const buffer = Buffer.alloc(
-      1 + paths.length * 4 + 20 + 32 + 32 + 4 + 4 + 8 + 4 + 4,
-      0
-    );
+    const buffer = Buffer.alloc(1 + paths.length * 4 + 20 + 32 + 32 + 4 + 4 + 8 + 4 + 4, 0);
     let offset = 0;
     buffer[0] = paths.length;
     paths.forEach((element, index) => {
@@ -788,10 +768,7 @@ export default class Eth {
     }
 
     offset += 20;
-    Buffer.from(
-      transferQuantization.toString(16).padStart(64, "0"),
-      "hex"
-    ).copy(buffer, offset);
+    Buffer.from(transferQuantization.toString(16).padStart(64, "0"), "hex").copy(buffer, offset);
     offset += 32;
     targetPublicKeyHex.copy(buffer, offset);
     offset += 32;
@@ -799,24 +776,19 @@ export default class Eth {
     offset += 4;
     buffer.writeUInt32BE(destinationVault, offset);
     offset += 4;
-    Buffer.from(amountTransfer.toString(16).padStart(16, "0"), "hex").copy(
-      buffer,
-      offset
-    );
+    Buffer.from(amountTransfer.toString(16).padStart(16, "0"), "hex").copy(buffer, offset);
     offset += 8;
     buffer.writeUInt32BE(nonce, offset);
     offset += 4;
     buffer.writeUInt32BE(timestamp, offset);
-    return this.transport
-      .send(0xf0, 0x04, 0x02, 0x00, buffer)
-      .then((response) => {
-        const r = response.slice(1, 1 + 32).toString("hex");
-        const s = response.slice(1 + 32, 1 + 32 + 32).toString("hex");
-        return {
-          r,
-          s,
-        };
-      });
+    return this.transport.send(0xf0, 0x04, 0x02, 0x00, buffer).then(response => {
+      const r = response.slice(1, 1 + 32).toString("hex");
+      const s = response.slice(1 + 32, 1 + 32 + 32).toString("hex");
+      return {
+        r,
+        s,
+      };
+    });
   }
 
   /**
@@ -849,18 +821,15 @@ export default class Eth {
     nonce: number,
     timestamp: number,
     conditionalTransferAddress?: string,
-    conditionalTransferFact?: BigNumber
+    conditionalTransferFact?: BigNumber,
   ): Promise<Buffer | { r: string; s: string }> {
     const transferTokenAddressHex = maybeHexBuffer(transferTokenAddress);
     const targetPublicKeyHex = hexBuffer(targetPublicKey);
-    const conditionalTransferAddressHex = maybeHexBuffer(
-      conditionalTransferAddress
-    );
+    const conditionalTransferAddressHex = maybeHexBuffer(conditionalTransferAddress);
 
     if (!(transferQuantizationType in starkQuantizationTypeMap)) {
       throw new Error(
-        "eth.starkSignTransferv2 invalid quantization type=" +
-          transferQuantizationType
+        "eth.starkSignTransferv2 invalid quantization type=" + transferQuantizationType,
       );
     }
 
@@ -879,7 +848,7 @@ export default class Eth {
         4 +
         4 +
         (conditionalTransferAddressHex ? 32 + 20 : 0),
-      0
+      0,
     );
     let offset = 0;
     buffer[0] = paths.length;
@@ -897,19 +866,16 @@ export default class Eth {
     offset += 20;
 
     if (transferQuantization) {
-      Buffer.from(
-        transferQuantization.toString(16).padStart(64, "0"),
-        "hex"
-      ).copy(buffer, offset);
+      Buffer.from(transferQuantization.toString(16).padStart(64, "0"), "hex").copy(buffer, offset);
     }
 
     offset += 32;
 
     if (transferMintableBlobOrTokenId) {
-      Buffer.from(
-        transferMintableBlobOrTokenId.toString(16).padStart(64, "0"),
-        "hex"
-      ).copy(buffer, offset);
+      Buffer.from(transferMintableBlobOrTokenId.toString(16).padStart(64, "0"), "hex").copy(
+        buffer,
+        offset,
+      );
     }
 
     offset += 32;
@@ -919,10 +885,7 @@ export default class Eth {
     offset += 4;
     buffer.writeUInt32BE(destinationVault, offset);
     offset += 4;
-    Buffer.from(amountTransfer.toString(16).padStart(16, "0"), "hex").copy(
-      buffer,
-      offset
-    );
+    Buffer.from(amountTransfer.toString(16).padStart(16, "0"), "hex").copy(buffer, offset);
     offset += 8;
     buffer.writeUInt32BE(nonce, offset);
     offset += 4;
@@ -930,23 +893,17 @@ export default class Eth {
 
     if (conditionalTransferAddressHex && conditionalTransferFact) {
       offset += 4;
-      Buffer.from(
-        conditionalTransferFact.toString(16).padStart(64, "0"),
-        "hex"
-      ).copy(buffer, offset);
+      Buffer.from(conditionalTransferFact.toString(16).padStart(64, "0"), "hex").copy(
+        buffer,
+        offset,
+      );
       offset += 32;
       conditionalTransferAddressHex.copy(buffer, offset);
     }
 
     return this.transport
-      .send(
-        0xf0,
-        0x04,
-        conditionalTransferAddressHex ? 0x05 : 0x04,
-        0x00,
-        buffer
-      )
-      .then((response) => {
+      .send(0xf0, 0x04, conditionalTransferAddressHex ? 0x05 : 0x04, 0x00, buffer)
+      .then(response => {
         const r = response.slice(1, 1 + 32).toString("hex");
         const s = response.slice(1 + 32, 1 + 32 + 32).toString("hex");
         return {
@@ -966,7 +923,7 @@ export default class Eth {
    */
   starkProvideQuantum(
     operationContract: string | undefined,
-    operationQuantization: BigNumber
+    operationQuantization: BigNumber,
   ): Promise<boolean> {
     const operationContractHex = maybeHexBuffer(operationContract);
     const buffer = Buffer.alloc(20 + 32, 0);
@@ -975,20 +932,17 @@ export default class Eth {
       operationContractHex.copy(buffer, 0);
     }
 
-    Buffer.from(
-      operationQuantization.toString(16).padStart(64, "0"),
-      "hex"
-    ).copy(buffer, 20);
+    Buffer.from(operationQuantization.toString(16).padStart(64, "0"), "hex").copy(buffer, 20);
     return this.transport.send(0xf0, 0x08, 0x00, 0x00, buffer).then(
       () => true,
-      (e) => {
+      e => {
         if (e && e.statusCode === 0x6d00) {
           // this case happen for ETH application versions not supporting Stark extensions
           return false;
         }
 
         throw e;
-      }
+      },
     );
   }
 
@@ -1006,14 +960,13 @@ export default class Eth {
     operationContract: string | undefined,
     operationQuantizationType: StarkQuantizationType,
     operationQuantization?: BigNumber,
-    operationMintableBlobOrTokenId?: BigNumber
+    operationMintableBlobOrTokenId?: BigNumber,
   ): Promise<boolean> {
     const operationContractHex = maybeHexBuffer(operationContract);
 
     if (!(operationQuantizationType in starkQuantizationTypeMap)) {
       throw new Error(
-        "eth.starkProvideQuantumV2 invalid quantization type=" +
-          operationQuantizationType
+        "eth.starkProvideQuantumV2 invalid quantization type=" + operationQuantizationType,
       );
     }
 
@@ -1027,39 +980,30 @@ export default class Eth {
     offset += 20;
 
     if (operationQuantization) {
-      Buffer.from(
-        operationQuantization.toString(16).padStart(64, "0"),
-        "hex"
-      ).copy(buffer, offset);
+      Buffer.from(operationQuantization.toString(16).padStart(64, "0"), "hex").copy(buffer, offset);
     }
 
     offset += 32;
 
     if (operationMintableBlobOrTokenId) {
-      Buffer.from(
-        operationMintableBlobOrTokenId.toString(16).padStart(64, "0"),
-        "hex"
-      ).copy(buffer, offset);
+      Buffer.from(operationMintableBlobOrTokenId.toString(16).padStart(64, "0"), "hex").copy(
+        buffer,
+        offset,
+      );
     }
 
     return this.transport
-      .send(
-        0xf0,
-        0x08,
-        starkQuantizationTypeMap[operationQuantizationType],
-        0x00,
-        buffer
-      )
+      .send(0xf0, 0x08, starkQuantizationTypeMap[operationQuantizationType], 0x00, buffer)
       .then(
         () => true,
-        (e) => {
+        e => {
           if (e && e.statusCode === 0x6d00) {
             // this case happen for ETH application versions not supporting Stark extensions
             return false;
           }
 
           throw e;
-        }
+        },
       );
   }
 
@@ -1070,10 +1014,7 @@ export default class Eth {
    * @param hash hexadecimal hash to sign
    * @return the signature
    */
-  starkUnsafeSign(
-    path: string,
-    hash: string
-  ): Promise<Buffer | { r: string; s: string }> {
+  starkUnsafeSign(path: string, hash: string): Promise<Buffer | { r: string; s: string }> {
     const hashHex = hexBuffer(hash);
     const paths = splitPath(path);
     const buffer = Buffer.alloc(1 + paths.length * 4 + 32);
@@ -1084,16 +1025,14 @@ export default class Eth {
     });
     offset = 1 + 4 * paths.length;
     hashHex.copy(buffer, offset);
-    return this.transport
-      .send(0xf0, 0x0a, 0x00, 0x00, buffer)
-      .then((response) => {
-        const r = response.slice(1, 1 + 32).toString("hex");
-        const s = response.slice(1 + 32, 1 + 32 + 32).toString("hex");
-        return {
-          r,
-          s,
-        };
-      });
+    return this.transport.send(0xf0, 0x0a, 0x00, 0x00, buffer).then(response => {
+      const r = response.slice(1, 1 + 32).toString("hex");
+      const s = response.slice(1 + 32, 1 + 32 + 32).toString("hex");
+      return {
+        r,
+        s,
+      };
+    });
   }
 
   /**
@@ -1106,7 +1045,7 @@ export default class Eth {
    */
   eth2GetPublicKey(
     path: string,
-    boolDisplay?: boolean
+    boolDisplay?: boolean,
   ): Promise<{
     publicKey: string;
   }> {
@@ -1118,7 +1057,7 @@ export default class Eth {
     });
     return this.transport
       .send(0xe0, 0x0e, boolDisplay ? 0x01 : 0x00, 0x00, buffer)
-      .then((response) => {
+      .then(response => {
         return {
           publicKey: response.slice(0, -2).toString("hex"),
         };
@@ -1138,14 +1077,14 @@ export default class Eth {
     buffer.writeUInt32BE(withdrawalIndex, 0);
     return this.transport.send(0xe0, 0x10, 0x00, 0x00, buffer).then(
       () => true,
-      (e) => {
+      e => {
         if (e && e.statusCode === 0x6d00) {
           // this case happen for ETH application versions not supporting ETH 2
           return false;
         }
 
         throw e;
-      }
+      },
     );
   }
 
@@ -1159,7 +1098,7 @@ export default class Eth {
    */
   getEIP1024PublicEncryptionKey(
     path: string,
-    boolDisplay?: boolean
+    boolDisplay?: boolean,
   ): Promise<{
     publicKey: string;
   }> {
@@ -1171,7 +1110,7 @@ export default class Eth {
     });
     return this.transport
       .send(0xe0, 0x18, boolDisplay ? 0x01 : 0x00, 0x00, buffer)
-      .then((response) => {
+      .then(response => {
         return {
           publicKey: response.slice(0, -2).toString("hex"),
         };
@@ -1190,7 +1129,7 @@ export default class Eth {
   getEIP1024SharedSecret(
     path: string,
     remotePublicKeyHex: string,
-    boolDisplay?: boolean
+    boolDisplay?: boolean,
   ): Promise<{
     sharedSecret: string;
   }> {
@@ -1206,113 +1145,140 @@ export default class Eth {
     remotePublicKey.copy(buffer, offset);
     return this.transport
       .send(0xe0, 0x18, boolDisplay ? 0x01 : 0x00, 0x01, buffer)
-      .then((response) => {
+      .then(response => {
         return {
           sharedSecret: response.slice(0, -2).toString("hex"),
         };
       });
   }
 
-  provideERC20TokenInformation({ data }: { data: Buffer }): Promise<boolean> {
-    return provideERC20TokenInformation(this.transport, data);
-  }
-
-  setExternalPlugin(
-    pluginName: string,
-    contractAddress: string,
-    selector: string
-  ): Promise<boolean> {
-    console.warn(
-      "hw-app-eth: eth.setExternalPlugin is deprecated. signTransaction solves this for you when providing it in `resolution`."
+  /**
+   * provides a trusted description of an ERC 20 token to associate a contract address with a ticker and number of decimals.
+   *
+   * @param data stringified buffer of ERC20 signature
+   * @returns a boolean
+   */
+  provideERC20TokenInformation(data: string): Promise<boolean> {
+    const buffer = Buffer.from(data, "hex");
+    return this.transport.send(0xe0, 0x0a, 0x00, 0x00, buffer).then(
+      () => true,
+      e => {
+        if (e && e.statusCode === 0x6d00) {
+          // this case happen for older version of ETH app, since older app version had the ERC20 data hardcoded, it's fine to assume it worked.
+          // we return a flag to know if the call was effective or not
+          return false;
+        }
+        throw e;
+      },
     );
-    return setExternalPlugin(this.transport, pluginName, selector);
   }
 
+  /**
+   * provides the name of a trusted binding of a plugin with a contract address and a supported method selector. This plugin will be called to interpret contract data in the following transaction signing command.
+   *
+   * @param payload external plugin data
+   * @param signature signature for the plugin
+   * @returns a boolean
+   */
+  setExternalPlugin(payload: string, signature: string): Promise<boolean> {
+    const payloadBuffer = Buffer.from(payload, "hex");
+    const signatureBuffer = Buffer.from(signature, "hex");
+    const buffer = Buffer.concat([payloadBuffer, signatureBuffer]);
+    return this.transport.send(0xe0, 0x12, 0x00, 0x00, buffer).then(
+      () => true,
+      e => {
+        if (e && e.statusCode === 0x6a80) {
+          // this case happen when the plugin name is too short or too long
+          return false;
+        } else if (e && e.statusCode === 0x6984) {
+          // this case happen when the plugin requested is not installed on the device
+          return false;
+        } else if (e && e.statusCode === 0x6d00) {
+          // this case happen for older version of ETH app
+          return false;
+        }
+        throw e;
+      },
+    );
+  }
+
+  /**
+   * provides the name of a trusted binding of a plugin with a contract address and a supported method selector. This plugin will be called to interpret contract data in the following transaction signing command.
+   *
+   * @param data stringified buffer of plugin signature
+   * @returns a boolean
+   */
   setPlugin(data: string): Promise<boolean> {
-    console.warn(
-      "hw-app-eth: eth.setPlugin is deprecated. signTransaction solves this for you when providing it in `resolution`."
+    const buffer = Buffer.from(data, "hex");
+    return this.transport.send(0xe0, 0x16, 0x00, 0x00, buffer).then(
+      () => true,
+      e => {
+        if (e && e.statusCode === 0x6a80) {
+          // this case happen when the plugin name is too short or too long
+          return false;
+        } else if (e && e.statusCode === 0x6984) {
+          // this case happen when the plugin requested is not installed on the device
+          return false;
+        } else if (e && e.statusCode === 0x6d00) {
+          // this case happen for older version of ETH app
+          return false;
+        }
+        throw e;
+      },
     );
-    return setPlugin(this.transport, data);
   }
-}
 
-// internal helpers
+  /**
+   *  provides a trusted description of an NFT to associate a contract address with a collectionName.
+   *
+   * @param data stringified buffer of the NFT description
+   * @returns a boolean
+   */
+  provideNFTInformation(data: string): Promise<boolean> {
+    const buffer = Buffer.from(data, "hex");
+    return this.transport.send(0xe0, 0x14, 0x00, 0x00, buffer).then(
+      () => true,
+      e => {
+        if (e && e.statusCode === 0x6d00) {
+          // older version of ETH app => error because we don't allow blind sign when NFT is explicitly requested to be resolved.
+          throw new EthAppNftNotSupported();
+        }
+        throw e;
+      },
+    );
+  }
 
-function provideERC20TokenInformation(
-  transport: Transport,
-  data: Buffer
-): Promise<boolean> {
-  return transport.send(0xe0, 0x0a, 0x00, 0x00, data).then(
-    () => true,
-    (e) => {
-      if (e && e.statusCode === 0x6d00) {
-        // this case happen for older version of ETH app, since older app version had the ERC20 data hardcoded, it's fine to assume it worked.
-        // we return a flag to know if the call was effective or not
-        return false;
-      }
-      throw e;
+  /**
+   * provides a domain name (like ENS) to be displayed during transactions in place of the address it is associated to. It shall be run just before a transaction involving the associated address that would be displayed on the device.
+   *
+   * @param data an stringied buffer of some TLV encoded data to represent the domain
+   * @returns a boolean
+   */
+  async provideDomainName(data: string): Promise<boolean> {
+    enum APDU_FIELDS {
+      CLA = 0xe0,
+      INS = 0x22,
+      P1_FIRST_CHUNK = 0x01,
+      P1_FOLLOWING_CHUNK = 0x00,
+      P2 = 0x00,
     }
-  );
-}
+    const buffer = Buffer.from(data, "hex");
+    const payload = Buffer.concat([Buffer.from(intAsHexBytes(buffer.length, 2), "hex"), buffer]);
 
-function provideNFTInformation(
-  transport: Transport,
-  data: Buffer
-): Promise<boolean> {
-  return transport.send(0xe0, 0x14, 0x00, 0x00, data).then(
-    () => true,
-    (e) => {
-      if (e && e.statusCode === 0x6d00) {
-        // older version of ETH app => error because we don't allow blind sign when NFT is explicitly requested to be resolved.
-        throw new EthAppNftNotSupported();
-      }
-      throw e;
+    const bufferChunks = new Array(Math.ceil(payload.length / 256))
+      .fill(null)
+      .map((_, i) => payload.slice(i * 255, (i + 1) * 255));
+    for (const chunk of bufferChunks) {
+      const isFirstChunk = chunk === bufferChunks[0];
+      await this.transport.send(
+        APDU_FIELDS.CLA,
+        APDU_FIELDS.INS,
+        isFirstChunk ? APDU_FIELDS.P1_FIRST_CHUNK : APDU_FIELDS.P1_FOLLOWING_CHUNK,
+        APDU_FIELDS.P2,
+        chunk,
+      );
     }
-  );
-}
 
-function setExternalPlugin(
-  transport: Transport,
-  payload: string,
-  signature: string
-): Promise<boolean> {
-  const payloadBuffer = Buffer.from(payload, "hex");
-  const signatureBuffer = Buffer.from(signature, "hex");
-  const buffer = Buffer.concat([payloadBuffer, signatureBuffer]);
-  return transport.send(0xe0, 0x12, 0x00, 0x00, buffer).then(
-    () => true,
-    (e) => {
-      if (e && e.statusCode === 0x6a80) {
-        // this case happen when the plugin name is too short or too long
-        return false;
-      } else if (e && e.statusCode === 0x6984) {
-        // this case happen when the plugin requested is not installed on the device
-        return false;
-      } else if (e && e.statusCode === 0x6d00) {
-        // this case happen for older version of ETH app
-        return false;
-      }
-      throw e;
-    }
-  );
-}
-
-function setPlugin(transport: Transport, data: string): Promise<boolean> {
-  const buffer = Buffer.from(data, "hex");
-  return transport.send(0xe0, 0x16, 0x00, 0x00, buffer).then(
-    () => true,
-    (e) => {
-      if (e && e.statusCode === 0x6a80) {
-        // this case happen when the plugin name is too short or too long
-        return false;
-      } else if (e && e.statusCode === 0x6984) {
-        // this case happen when the plugin requested is not installed on the device
-        return false;
-      } else if (e && e.statusCode === 0x6d00) {
-        // this case happen for older version of ETH app
-        return false;
-      }
-      throw e;
-    }
-  );
+    return true;
+  }
 }

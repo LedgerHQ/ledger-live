@@ -33,13 +33,13 @@ export const INITIAL_STATE: ProtectState = {
 const handlers: ReducerMap<ProtectState, ProtectPayload> = {
   [ProtectActionTypes.UPDATE_PROTECT_STATUS]: (state, action) => ({
     ...state,
-    protectStatus: (action as Action<ProtectStatusPayload>).payload
-      .protectStatus,
+    protectStatus: (action as Action<ProtectStatusPayload>).payload,
   }),
   [ProtectActionTypes.UPDATE_DATA]: (state, action) => ({
     ...state,
-    data: (action as Action<ProtectDataPayload>).payload.data,
+    data: (action as Action<ProtectDataPayload>).payload,
   }),
+  [ProtectActionTypes.RESET_STATE]: () => INITIAL_STATE,
 };
 
 // Selectors
@@ -48,7 +48,4 @@ export const protectSelector = (s: State): ProtectState => {
   return s.protect;
 };
 
-export default handleActions<ProtectState, ProtectPayload>(
-  handlers,
-  INITIAL_STATE,
-);
+export default handleActions<ProtectState, ProtectPayload>(handlers, INITIAL_STATE);

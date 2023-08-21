@@ -23,9 +23,7 @@ type Props = BaseComposite<
 export default function ValidationError({ navigation, route }: Props) {
   const { colors } = useTheme();
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
   const retry = useCallback(() => {
     navigation.goBack();
@@ -40,7 +38,13 @@ export default function ValidationError({ navigation, route }: Props) {
         },
       ]}
     >
-      <TrackScreen category="AlgorandClaimRewards" name="ValidationError" />
+      <TrackScreen
+        category="AlgorandClaimRewards"
+        name="ValidationError"
+        flow="stake"
+        action="claim_rewards"
+        currency="algo"
+      />
       <ValidateError error={error} onRetry={retry} onClose={onClose} />
     </SafeAreaView>
   );

@@ -16,14 +16,15 @@ import {
   broadcast,
   sync,
   isInvalidRecipient,
+  makeAccountBridgeReceive,
 } from "../../../bridge/mockHelpers";
+import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getGasLimit } from "../transaction";
-import { makeAccountBridgeReceive } from "../../../bridge/mockHelpers";
 import { inferDynamicRange } from "../../../range";
+
 const receive = makeAccountBridgeReceive();
 
-const defaultGetFees = (a, t: any) =>
-  (t.gasPrice || new BigNumber(0)).times(getGasLimit(t));
+const defaultGetFees = (a, t: any) => (t.gasPrice || new BigNumber(0)).times(getGasLimit(t));
 
 const createTransaction = (): Transaction => ({
   family: "ethereum",
@@ -39,8 +40,6 @@ const createTransaction = (): Transaction => ({
   subAccountId: null,
 });
 
-const updateTransaction = (t, patch) => ({ ...t, ...patch });
-
 const estimateMaxSpendable = ({ account, parentAccount, transaction }) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const estimatedFees = parentAccount
@@ -48,9 +47,7 @@ const estimateMaxSpendable = ({ account, parentAccount, transaction }) => {
     : transaction
     ? defaultGetFees(mainAccount, transaction)
     : new BigNumber(1000000000000);
-  return Promise.resolve(
-    BigNumber.max(0, account.balance.minus(estimatedFees))
-  );
+  return Promise.resolve(BigNumber.max(0, account.balance.minus(estimatedFees)));
 };
 
 const getTransactionStatus = (a, t) => {
@@ -64,7 +61,7 @@ const getTransactionStatus = (a, t) => {
   } = {};
   const tokenAccount = !t.subAccountId
     ? null
-    : a.subAccounts && a.subAccounts.find((ta) => ta.id === t.subAccountId);
+    : a.subAccounts && a.subAccounts.find(ta => ta.id === t.subAccountId);
   const account = tokenAccount || a;
   const useAllAmount = !!t.useAllAmount;
   const estimatedFees = defaultGetFees(a, t);
@@ -83,11 +80,7 @@ const getTransactionStatus = (a, t) => {
     warnings.feeTooHigh = new FeeTooHigh();
   }
 
-  if (
-    t.userGasLimit &&
-    t.estimatedGasLimit &&
-    t.userGasLimit.lt(t.estimatedGasLimit)
-  ) {
+  if (t.userGasLimit && t.estimatedGasLimit && t.userGasLimit.lt(t.estimatedGasLimit)) {
     warnings.gasLimit = new GasLessThanEstimate();
   }
 
@@ -118,9 +111,7 @@ const prepareTransaction = async (a, t) => {
   if (!res.estimatedGasLimit) {
     res = {
       ...res,
-      estimatedGasLimit: t.subAccountId
-        ? new BigNumber("100000")
-        : new BigNumber("21000"),
+      estimatedGasLimit: t.subAccountId ? new BigNumber("100000") : new BigNumber("21000"),
     };
   }
 
@@ -139,7 +130,7 @@ const prepareTransaction = async (a, t) => {
 
 const accountBridge: AccountBridge<Transaction> = {
   createTransaction,
-  updateTransaction,
+  updateTransaction: defaultUpdateTransaction,
   getTransactionStatus,
   estimateMaxSpendable,
   prepareTransaction,

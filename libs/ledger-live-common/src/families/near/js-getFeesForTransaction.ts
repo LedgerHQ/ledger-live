@@ -4,9 +4,7 @@ import { getGasPrice } from "./api";
 import { isImplicitAccount, getStakingFees } from "./logic";
 import { Transaction } from "./types";
 
-const getEstimatedFees = async (
-  transaction: Transaction
-): Promise<BigNumber> => {
+const getEstimatedFees = async (transaction: Transaction): Promise<BigNumber> => {
   const rawGasPrice = await getGasPrice();
   const gasPrice = new BigNumber(rawGasPrice);
 
@@ -30,14 +28,10 @@ const getEstimatedFees = async (
 
   if (isImplicitAccount(transaction.recipient)) {
     sendFee = sendFee.plus(createAccountCostSend).plus(addKeyCostSend);
-    executionFee = executionFee
-      .plus(createAccountCostExecution)
-      .plus(addKeyCostExecution);
+    executionFee = executionFee.plus(createAccountCostExecution).plus(addKeyCostExecution);
   }
 
-  const fees = sendFee
-    .multipliedBy(gasPrice)
-    .plus(executionFee.multipliedBy(gasPrice));
+  const fees = sendFee.multipliedBy(gasPrice).plus(executionFee.multipliedBy(gasPrice));
 
   return fees;
 };

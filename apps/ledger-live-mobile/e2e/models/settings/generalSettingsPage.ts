@@ -1,20 +1,37 @@
-import { getElementById, getElementByText, tapByElement } from "../../helpers";
+import {
+  getElementById,
+  getElementByText,
+  tapByElement,
+  tapByText,
+  scrollToText,
+} from "../../helpers";
 
 export default class GeneralSettingsPage {
-  getPasswordSettingsSwitch = () => getElementById("password-settings-switch");
-  getPasswordTextInput = () => getElementById("password-text-input");
-  getPreferredCurrency = () => getElementByText("Preferred currency");
-  getConfirm = () => getElementByText("Confirm");
+  passwordSettingsSwitch = () => getElementById("password-settings-switch");
+  passwordTextInput = () => getElementById("password-text-input");
+  preferredCurrencyButton = () => getElementByText("Preferred currency");
+  confirmButton = () => getElementByText("Confirm");
+  enterLanguageMenuButton = () => getElementById("language-button");
+  isLocalized = (localization: string) => getElementByText(localization);
 
   async togglePassword() {
-    await this.getPasswordSettingsSwitch().atIndex(0).tap();
+    await this.passwordSettingsSwitch().tap();
   }
 
   async enterNewPassword(passwordText: string) {
-    await this.getPasswordTextInput().typeText(passwordText);
+    await this.passwordTextInput().typeText(passwordText);
   }
 
   async confirm() {
-    await tapByElement(this.getConfirm());
+    await tapByElement(this.confirmButton());
+  }
+
+  async navigateToLanguageSelect() {
+    await tapByElement(this.enterLanguageMenuButton());
+  }
+
+  async selectLanguage(lang: string) {
+    await scrollToText(lang, "scrollView-language-change");
+    await tapByText(lang);
   }
 }

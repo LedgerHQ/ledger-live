@@ -1,4 +1,5 @@
-name: Desktop App - Generate Screenshots
+name: "@Desktop • Generate Screenshots"
+run-name: "@Desktop • Generate Screenshots triggered by ${{ inputs.login }} ${{ inputs.ref && format('on branch {0}', inputs.ref) || format('on PR {0}', inputs.number) }}"
 
 on:
   workflow_dispatch:
@@ -12,163 +13,227 @@ on:
       login:
         description: The GitHub username that triggered the workflow
         required: true
+      commentId:
+        description: comment id to update
+        required: false
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.ref_name != 'develop' }}
-
-env:
-  comment_header: <!-- generate-screenshots-report:${{ github.run_id }} -->
+  # See: https://github.com/orgs/community/discussions/35341
+  group: ${{ github.workflow }}-${{ github.event.inputs.ref || github.event.inputs.number }}
+  cancel-in-progress: true
 
 jobs:
-  report-start:
-    name: Report start
-    runs-on: "ubuntu-latest"
-    steps:
-      - name: report start
-        uses: actions/github-script@v6
-        with:
-          result-encoding: string
-          retries: 3
-          script: |
-            const {repo: {owner, repo}, run_id} = context
-            const issue_number = ${{ github.event.inputs.number }}
-            const body = `\
-            ${{ env.comment_header }}
-            @${{ github.event.inputs.login }}
-
-            [Generating screenshots: workflow started](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
-            `
-            await github.rest.issues.createComment({
-              owner,
-              repo,
-              issue_number,
-              body,
-            })
-
-  pr-is-fork:
-    name: "Check if the PR is a fork"
-    uses: ledgerhq/ledger-live/.github/workflows/pr-is-fork.yml@develop
-    with:
-      non-pr-result: false
-    secrets:
-      token: ${{ secrets.COMMON_READ_ORG }}
-
-  generate-screenshots:
-    needs: [pr-is-fork]
-    if: ${{ !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
+  generate-screenshots-linux:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-          - ubuntu-latest
-          # - macos-latest
-          - windows-latest
-    runs-on: ${{ matrix.os }}
+    runs-on: [ledger-live-4xlarge-linux]
     steps:
-      - uses: actions/checkout@v3
-        if: ${{ github.event.inputs.ref != null }}
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
         with:
-          ref: ${{ github.event.inputs.ref }}
-          fetch-depth: 0
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - uses: actions/checkout@v3
-        if: ${{ !github.event.inputs.ref }}
+        if: ${{ inputs.ref != null }}
+        with:
+          ref: ${{ inputs.ref }}
+          fetch-depth: 0
+          token: ${{ steps.generate-token.outputs.token }}
+      - uses: actions/checkout@v3
+        if: ${{ !inputs.ref }}
         with:
           fetch-depth: 0
+          token: ${{ steps.generate-token.outputs.token }}
+      - name: Install gh
+        run: |
+          type -p curl >/dev/null || sudo apt install curl -y
+          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
+          && sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
+          && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+          && sudo apt update \
+          && sudo apt install gh -y
+      - name: Checkout PR
+        if: ${{ inputs.number != null && inputs.ref == null }}
+        run: gh pr checkout ${{ inputs.number }}
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+      - name: set git user
+        run: |
+          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
+          git config user.name "live-github-bot[bot]"
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
-      - name: Checkout PR
-        if: ${{ github.event.inputs.number != null && github.event.inputs.ref == null }}
-        run: gh pr checkout ${{ github.event.inputs.number }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Set git user
-        run: |
-          git config user.email "team-live@ledger.fr"
-          git config user.name "Team Live"
-      - name: TurboRepo local caching server
-        id: turborepo-cache-server
-        uses: ./tools/actions/turborepo-gh-cache
         with:
-          server-token: "yolo"
-          cleanup-cache-folder: "true"
+          skip_ruby: true
+          install_playwright: true
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - uses: ./tools/actions/composites/update-snapshots-desktop
         id: update-snapshots
         with:
-          os: ${{ matrix.os }}
-          turbo-server-port: ${{ steps.turborepo-cache-server.outputs.port }}
+          os: ubuntu-latest
 
-  generate-screenshots-mac-internal:
-    needs: [pr-is-fork]
-    if: ${{ !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
+  # REWORK WINDOWS FOR OWN RUNNERS ? WAITING FOR KUBERNETES SOLUTION FROM INFRA ?
+  generate-screenshots-windows:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-    runs-on: [ledger-live, macos]
+    runs-on: [ledger-live-4xlarge-windows-2022]
     steps:
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - uses: actions/checkout@v3
-        if: ${{ github.event.inputs.ref != null }}
+        if: ${{ inputs.ref != null }}
+        with:
+          ref: ${{ inputs.ref }}
+          fetch-depth: 0
+          token: ${{ steps.generate-token.outputs.token }}
+      - uses: actions/checkout@v3
+        if: ${{ !inputs.ref }}
         with:
           fetch-depth: 0
-      - uses: actions/checkout@v3
-        if: ${{ !github.event.inputs.ref }}
-        with:
-          fetch-depth: 0
+          token: ${{ steps.generate-token.outputs.token }}
+      - name: Checkout PR
+        if: ${{ inputs.number != null && inputs.ref == null }}
+        run: gh pr checkout ${{ inputs.number }}
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
           skip_python: true
           skip_ruby: true
-      - name: Checkout PR
-        if: ${{ github.event.inputs.number != null && github.event.inputs.ref == null }}
-        run: gh pr checkout ${{ github.event.inputs.number }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Set git user
+          install_playwright: true
+          upgrade_npm: true
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+      - name: set git user
         run: |
-          git config user.email "team-live@ledger.fr"
-          git config user.name "Team Live"
-      - name: TurboRepo local caching server
-        id: turborepo-cache-server
-        uses: ./tools/actions/turborepo-gh-cache
-        with:
-          server-token: "yolo"
-          cleanup-cache-folder: "true"
+          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
+          git config user.name "live-github-bot[bot]"
       - uses: ./tools/actions/composites/update-snapshots-desktop
         id: update-snapshots
         with:
-          os: "macos-latest"
-          turbo-server-port: ${{ steps.turborepo-cache-server.outputs.port }}
+          os: windows-latest
+
+  generate-screenshots-mac:
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      FORCE_COLOR: 3
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+    runs-on: [m1, ARM64]
+    steps:
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+      - uses: actions/checkout@v3
+        if: ${{ inputs.ref != null }}
+        with:
+          fetch-depth: 0
+          token: ${{ steps.generate-token.outputs.token }}
+      - uses: actions/checkout@v3
+        if: ${{ !inputs.ref }}
+        with:
+          fetch-depth: 0
+          token: ${{ steps.generate-token.outputs.token }}
+      - name: Checkout PR
+        if: ${{ inputs.number != null && inputs.ref == null }}
+        run: gh pr checkout ${{ inputs.number }}
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+      - uses: ./tools/actions/composites/setup-test-desktop
+        id: setup-test-desktop
+        with:
+          skip_python: true
+          skip_ruby: true
+          install_playwright: true
+          pnpm_dest: ${{ runner.temp }}/setup-pnpm
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+      - name: set git user
+        run: |
+          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
+          git config user.name "live-github-bot[bot]"
+      - uses: ./tools/actions/composites/update-snapshots-desktop
+        id: update-snapshots
+        with:
+          os: macos-latest
+
+  report-start:
+    name: Report start
+    runs-on: ubuntu-latest
+    if: inputs.commentId != ''
+    steps:
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+      - name: report start
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ steps.generate-token.outputs.token }}
+          result-encoding: string
+          retries: 3
+          script: |
+            const {repo: {owner, repo}, run_id} = context
+            const issue_number = ${{ inputs.number }}
+            const body = `\
+            @${{ inputs.login }}
+
+            [Generating screenshots: workflow started](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            `
+            await github.rest.issues.updateComment({
+              owner,
+              repo,
+              comment_id: "${{ inputs.commentId }}",
+              body,
+            });
 
   report-end:
     needs:
       [
-        "generate-screenshots",
-        "generate-screenshots-mac-internal",
+        "generate-screenshots-linux",
+        "generate-screenshots-windows",
+        "generate-screenshots-mac",
         "report-start",
       ]
     if: always()
     name: Report end
     runs-on: "ubuntu-latest"
     steps:
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - name: report jobs status
         uses: actions/github-script@v6
         with:
+          github-token: ${{ steps.generate-token.outputs.token }}
           result-encoding: string
           retries: 3
           script: |
-            const {repo: {owner, repo}} = context
+            const fs = require("fs");
+            const {repo: {owner, repo}} = context;
             const {data: {jobs}} = await github.rest.actions.listJobsForWorkflowRun({
               owner,
               repo,
               run_id: ${{ github.run_id }},
             });
-            console.log("jobs", jobs);
 
             const jobsStatusString = jobs
               .filter(job => job.name.startsWith("generate-screenshots"))
@@ -176,47 +241,30 @@ jobs:
               .join("\n")
 
             const body = `\
-            ${{ env.comment_header }}
-            @${{ github.event.inputs.login }}
+            @${{ inputs.login }}
 
-            [Generating screenshots: workflow ended:](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            [Generating screenshots: workflow ended](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
 
             **Jobs status:**
             ${jobsStatusString}
             `
 
-            const existingComment = await github.paginate(
-              github.rest.issues.listComments,
-              {
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: ${{ github.event.inputs.number }},
-              },
-              (response, done) => {
-                const comments = response.data
-                const existingComment = comments
-                  .find(comment =>
-                    comment.user.login === 'github-actions[bot]' &&
-                    comment.body.startsWith(`${{ env.comment_header }}`));
-                if (existingComment) {
-                  done()
-                  return existingComment;
-                };
-              }
-            ).then(resPerPage => resPerPage.find(res => !!res));
+            const output = {
+              summary: body,
+            };
 
-            if (existingComment) {
+            fs.writeFileSync("summary.json", JSON.stringify(output), "utf-8");
+
+            if(${{ inputs.commentId != '' }}) {
               await github.rest.issues.updateComment({
                 owner,
                 repo,
-                comment_id: existingComment?.id,
+                comment_id: "${{ inputs.commentId }}",
                 body
               });
-            } else {
-              await github.rest.issues.createComment({
-                owner,
-                repo,
-                issue_number: ${{ github.event.inputs.number }},
-                body,
-              })
             }
+      - uses: actions/upload-artifact@v3
+        name: upload summary
+        with:
+          name: summary.json
+          path: ${{ github.workspace }}/summary.json

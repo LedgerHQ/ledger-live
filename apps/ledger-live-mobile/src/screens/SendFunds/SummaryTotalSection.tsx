@@ -1,17 +1,14 @@
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import {
-  getAccountUnit,
-  getAccountCurrency,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountUnit, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { Trans } from "react-i18next";
 import BigNumber from "bignumber.js";
 import SummaryRow from "./SummaryRow";
 import CounterValue from "../../components/CounterValue";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import LText from "../../components/LText";
-import BottomModal from "../../components/BottomModal";
+import QueuedDrawer from "../../components/QueuedDrawer";
 import ModalBottomAction from "../../components/ModalBottomAction";
 import Button from "../../components/Button";
 import Circle from "../../components/Circle";
@@ -68,16 +65,11 @@ class SummaryTotalSection extends PureComponent<Props, State> {
               <CurrencyUnitValue unit={unit} value={amount} disableRounding />
             </LText>
             <LText style={styles.summaryCounterValueText} color="grey">
-              <CounterValue
-                value={amount}
-                currency={currency}
-                showCode
-                before="≈ "
-              />
+              <CounterValue value={amount} currency={currency} showCode before="≈ " />
             </LText>
           </View>
         </SummaryRow>
-        <BottomModal isOpened={isModalOpened} onClose={this.onRequestClose}>
+        <QueuedDrawer isRequestingToBeOpened={isModalOpened} onClose={this.onRequestClose}>
           <ModalBottomAction
             title={<Trans i18nKey="send.summary.infoTotalTitle" />}
             icon={
@@ -97,7 +89,7 @@ class SummaryTotalSection extends PureComponent<Props, State> {
               </View>
             }
           />
-        </BottomModal>
+        </QueuedDrawer>
       </>
     );
   }

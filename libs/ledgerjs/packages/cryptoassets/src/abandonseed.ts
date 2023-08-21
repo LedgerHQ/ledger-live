@@ -1,4 +1,5 @@
 import invariant from "invariant";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 /**
  * these are either "dead"/"burn" addresses OR "abandon" seed addresses.
@@ -6,10 +7,11 @@ import invariant from "invariant";
  * We use them for tests and also for dry-run estimations
  * DO NOT USE AS RECIPIENT OR SIGN TRANSACTIONS INTO THEM
  */
-const abandonSeedAddresses: Record<string, string> = {
+const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   algorand: "PSHLIWQKDEETIIBQEOTLGCT5IF7BTTOKCUULONOGVGF2HYDT2IHW3H4CCI",
+  // https://snowtrace.io/address/0x000000000000000000000000000000000000dead/tokens
+  avalanche_c_chain: "0x000000000000000000000000000000000000dEaD",
   cosmos: "cosmos19rl4cm2hmr8afy4kldpxz3fka4jguq0auqdal4",
-  cosmos_testnet: "cosmos19rl4cm2hmr8afy4kldpxz3fka4jguq0auqdal4",
   ripple: "rHsMGQEkVNJmpGWs8XUBoTBiAAbwxZN5v3",
   stellar: "GDYPMQMYW2JTLPWAUAHIDY3E4VHP5SGTFC5SMA45L7ZPOTHWQ2PHEW3E",
   tezos: "tz1VJitLYB31fEC82efFkLRU4AQUH9QgH3q6",
@@ -62,7 +64,41 @@ const abandonSeedAddresses: Record<string, string> = {
   moonbeam: "0x0000000000000000000000000000000000000000",
   songbird: "0x0000000000000000000000000000000000000000",
   flare: "0x0000000000000000000000000000000000000000",
+  optimism: "0x0000000000000000000000000000000000000000",
+  optimism_goerli: "0x0000000000000000000000000000000000000000",
+  arbitrum: "0x0000000000000000000000000000000000000000",
+  arbitrum_goerli: "0x0000000000000000000000000000000000000000",
+  rsk: "0x0000000000000000000000000000000000000000",
+  bittorrent: "0x0000000000000000000000000000000000000000",
+  kava_evm: "0x0000000000000000000000000000000000000000",
+  evmos_evm: "0x0000000000000000000000000000000000000000",
+  energy_web: "0x0000000000000000000000000000000000000000",
+  astar: "0x0000000000000000000000000000000000000000",
+  metis: "0x0000000000000000000000000000000000000000",
+  boba: "0x0000000000000000000000000000000000000000",
+  moonriver: "0x0000000000000000000000000000000000000000",
+  velas_evm: "0x0000000000000000000000000000000000000000",
+  syscoin: "0x0000000000000000000000000000000000000000",
   near: "4e7de0a21d8a20f970c86b6edf407906d7ba9e205979c3268270eef80a286e2d",
+  axelar: "cosmos19rl4cm2hmr8afy4kldpxz3fka4jguq0auqdal4",
+  onomy: "cosmos19rl4cm2hmr8afy4kldpxz3fka4jguq0auqdal4",
+  quicksilver: "cosmos19rl4cm2hmr8afy4kldpxz3fka4jguq0auqdal4",
+  persistence: "cosmos19rl4cm2hmr8afy4kldpxz3fka4jguq0auqdal4",
+  internet_computer: "454109defbdd79d7283cdde63b8dab4d48f590b8b2923574cca0356ab6958b2b",
+  ethereum_as_evm_test_only: "0x0000000000000000000000000000000000000000",
+  polygon_as_evm_test_only: "0x0000000000000000000000000000000000000000",
+  telos_evm: "0x0000000000000000000000000000000000000000",
+  klaytn: "0x0000000000000000000000000000000000000000",
+  polygon_zk_evm: "0x0000000000000000000000000000000000000000",
+  polygon_zk_evm_testnet: "0x0000000000000000000000000000000000000000",
+  base: "0x0000000000000000000000000000000000000000",
+  base_goerli: "0x0000000000000000000000000000000000000000",
+  stacks: "SP3KS7VMY2ZNE6SB88PHR4SKRK2EEPHS8N8MCCBR9",
+  secret_network: "cosmos19rl4cm2hmr8afy4kldpxz3fka4jguq0auqdal4",
+  stargaze: "cosmos19rl4cm2hmr8afy4kldpxz3fka4jguq0auqdal4",
+  desmos: "cosmos19rl4cm2hmr8afy4kldpxz3fka4jguq0auqdal4",
+  umee: "cosmos19rl4cm2hmr8afy4kldpxz3fka4jguq0auqdal4",
+  coreum: "core1fjxa5s8wz75rp7qgrs9lqvw0qr2gt0nny6sjz9",
 };
 
 /**
@@ -72,10 +108,12 @@ const abandonSeedAddresses: Record<string, string> = {
  * DO NOT USE AS RECIPIENT OR SIGN TRANSACTIONS INTO THEM
  * @param {*} currencyId
  */
+// TODO: signature should be getAbandonSeedAddress(currencyId: CryptoCurrencyId)
 export const getAbandonSeedAddress = (currencyId: string): string => {
   invariant(
     abandonSeedAddresses[currencyId] !== undefined,
-    `No abandonseed available for ${currencyId}`
+    `No abandonseed available for ${currencyId}`,
   );
-  return abandonSeedAddresses[currencyId];
+
+  return abandonSeedAddresses[currencyId]!;
 };

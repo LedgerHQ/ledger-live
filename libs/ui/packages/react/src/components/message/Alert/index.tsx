@@ -3,14 +3,14 @@ import styled, { useTheme, DefaultTheme } from "styled-components";
 import Text from "../../asorted/Text";
 import { TextVariants } from "../../../styles/theme";
 import Flex from "../../layout/Flex";
-import ShieldSecurityMedium from "@ledgerhq/icons-ui/react/ShieldSecurityMedium";
-import CircledCrossMedium from "@ledgerhq/icons-ui/react/CircledCrossMedium";
-import CircledAlertMedium from "@ledgerhq/icons-ui/react/CircledAlertMedium";
+import InfoAltFillMedium from "@ledgerhq/icons-ui/reactLegacy/InfoAltFillMedium";
+import CircledCheckSolidMedium from "@ledgerhq/icons-ui/reactLegacy/CircledCheckSolidMedium";
+import WarningSolidMedium from "@ledgerhq/icons-ui/reactLegacy/WarningSolidMedium";
+import CircledCrossSolidMedium from "@ledgerhq/icons-ui/reactLegacy/CircledCrossSolidMedium";
 
-type AlertType = "info" | "warning" | "error";
+type AlertType = "info" | "secondary" | "success" | "warning" | "error";
 
 type RenderProps = (props: {
-  color: string;
   textProps: { variant?: TextVariants; fontWeight?: string };
 }) => JSX.Element;
 
@@ -45,44 +45,66 @@ export interface AlertProps {
 }
 
 const StyledIconContainer = styled.div`
-  margin-right: 12px;
+  margin-right: 8px;
   display: flex;
   align-items: center;
 `;
 
 const icons = {
-  info: <ShieldSecurityMedium size={20} />,
-  warning: <CircledAlertMedium size={20} />,
-  error: <CircledCrossMedium size={20} />,
+  info: <InfoAltFillMedium size={24} />,
+  secondary: <InfoAltFillMedium size={24} />,
+  success: <CircledCheckSolidMedium size={24} />,
+  warning: <WarningSolidMedium size={24} />,
+  error: <CircledCrossSolidMedium size={24} />,
 };
 
 const getColors = ({ theme, type }: { theme: DefaultTheme; type?: AlertType }) => {
   switch (type) {
+    case "secondary":
+      return {
+        background: theme.colors.opacityDefault.c05,
+        iconColor: theme.colors.neutral.c80,
+      };
+    case "success":
+      return {
+        background: theme.colors.success.c10,
+        iconColor: theme.colors.success.c50,
+      };
     case "warning":
       return {
-        background: theme.colors.warning.c30,
-        color: theme.colors.warning.c100,
+        background: theme.colors.warning.c10,
+        iconColor: theme.colors.warning.c70,
       };
     case "error":
       return {
-        background: theme.colors.error.c30,
-        color: theme.colors.error.c100,
+        background: theme.colors.error.c10,
+        iconColor: theme.colors.error.c50,
       };
     case "info":
     default:
       return {
-        background: theme.colors.primary.c20,
-        color: theme.colors.primary.c90,
+        background: theme.colors.primary.c10,
+        iconColor: theme.colors.primary.c80,
       };
   }
 };
 
 const StyledAlertContainer = styled(Flex)<{ background?: string; color?: string }>`
-  border-radius: ${(p) => `${p.theme.radii[1]}px`};
-  align-items: center;
+  border-radius: ${p => `${p.theme.radii[2]}px`};
+  align-items: start;
 `;
 
-export default function Alert({
+const AlertBodyText = styled(Text).attrs({
+  flexShrink: 1,
+  variant: "bodyLineHeight",
+  fontWeight: "semiBold",
+})``;
+
+const AlertUnderlinedText = styled(AlertBodyText)`
+  text-decoration-line: underline;
+`;
+
+function Alert({
   type = "info",
   title,
   showIcon = true,
@@ -91,28 +113,38 @@ export default function Alert({
   containerProps,
 }: AlertProps): JSX.Element {
   const theme = useTheme();
-  const { color, background } = getColors({ theme, type });
+  const { iconColor, background } = getColors({ theme, type });
   const textProps: { variant?: TextVariants; fontWeight?: string } = {
-    variant: "paragraph",
-    fontWeight: "medium",
+    variant: "bodyLineHeight",
+    fontWeight: "semiBold",
   };
+  const textColor = "neutral.c100";
   return (
     <StyledAlertContainer
-      color={color}
+      color={textColor}
       backgroundColor={background}
       padding={6}
       {...containerProps}
     >
-      {showIcon && !!icons[type] && <StyledIconContainer>{icons[type]}</StyledIconContainer>}
+      {showIcon && !!icons[type] && (
+        <Flex color={iconColor}>
+          <StyledIconContainer>{icons[type]}</StyledIconContainer>
+        </Flex>
+      )}
       <Flex flexDirection="column" flex={1} alignItems="flex-start" rowGap="6px">
         {title && (
-          <Text {...textProps} color="inherit">
+          <Text {...textProps} color={textColor}>
             {title}
           </Text>
         )}
-        {renderContent && renderContent({ color, textProps })}
+        {renderContent && renderContent({ textProps })}
       </Flex>
-      <Flex>{renderRight && renderRight({ color, textProps })}</Flex>
+      <Flex alignSelf="center">{renderRight && renderRight({ textProps })}</Flex>
     </StyledAlertContainer>
   );
 }
+
+Alert.BodyText = AlertBodyText;
+Alert.UnderlinedText = AlertUnderlinedText;
+
+export default Alert;

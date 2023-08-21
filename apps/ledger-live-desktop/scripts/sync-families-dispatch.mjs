@@ -1,81 +1,48 @@
 #!/usr/bin/env zx
 import "zx/globals";
-import rimraf from "rimraf";
+import fs from "fs";
+import path from "path";
 
 const basePath = path.join(__dirname, "..");
-const rendererPath = path.join(basePath, "src", "renderer");
-const generatedPath = path.join(rendererPath, "generated");
+const familiesPath = path.join(basePath, "src", "renderer", "families");
+const generatedFile = path.join(familiesPath, "generated.ts");
 
-await new Promise((resolve, reject) => {
-  rimraf(generatedPath, e => {
-    if (e) {
-      echo(chalk.red(e));
-      return reject(e);
-    }
-    return resolve(fs.promises.mkdir(generatedPath));
-  });
-});
+async function gen() {
+  const families = (await fs.promises.readdir(familiesPath, { withFileTypes: true }))
+    .filter(d => d.isDirectory())
+    .map(dirent => dirent.name);
 
-const families = await fs.readdir(path.join(rendererPath, "families"));
-const targets = [
-  "operationDetails.jsx",
-  "accountActions.jsx",
-  "TransactionConfirmFields.jsx",
-  "AccountBodyHeader.js",
-  "AccountSubHeader.jsx",
-  "SendAmountFields.jsx",
-  "SendRecipientFields.jsx",
-  "SendWarning.jsx",
-  "ReceiveWarning.jsx",
-  "AccountBalanceSummaryFooter.jsx",
-  "TokenList.jsx",
-  "AccountHeaderManageActions.js",
-  "StepReceiveFunds.jsx",
-  "NoAssociatedAccounts.jsx",
-];
-
-async function genTarget(target) {
-  let imports = `// @flow`;
+  let imports = 'import { MakeModalsType } from "../modals/types";';
+  let modalsData = "";
+  let modals = "export const coinModals: MakeModalsType<CoinModalsData> = {\n";
   let exprts = `export default {`;
-  const outpath = path.join(generatedPath, target);
-  const [targetName, extension] = target.split(".");
-
   for (const family of families) {
-    try {
-      if (["jsx", "tsx"].includes(extension)) {
-        await Promise.any([
-          fs.promises.access(
-            path.join(rendererPath, "families", family, `${targetName}.jsx`),
-            fs.constants.R_OK,
-          ),
-          fs.promises.access(
-            path.join(rendererPath, "families", family, `${targetName}.tsx`),
-            fs.constants.R_OK,
-          ),
-        ]);
-      } else {
-        await fs.promises.access(
-          path.join(rendererPath, "families", family, target),
-          fs.constants.R_OK,
-        );
-      }
-
-      imports += `
-import ${family} from "../families/${family}/${targetName}";`;
-      exprts += `
+    await fs.promises.access(path.join(familiesPath, family, "index.ts"), fs.constants.R_OK);
+    imports += `
+import ${family} from "../families/${family}/index";`;
+    exprts += `
   ${family},`;
-    } catch (error) {}
-  }
 
-  exprts += `
-};
-`;
+    try {
+      await fs.promises.access(path.join(familiesPath, family, "modals.ts"), fs.constants.R_OK);
+      imports += `
+import ${family}Modals, { ModalsData as ${family}ModalsData } from "../families/${family}/modals";`;
+      modalsData += `${modalsData ? " &\n  " : ""}${family}ModalsData`;
+      modals += "  ..." + family + "Modals,\n";
+    } catch (e) {}
+  }
+  exprts += `\n};`;
+  modals += "};";
 
   const str = `${imports}
 
-${exprts}`;
+${exprts}
 
-  await fs.promises.writeFile(outpath, str, "utf8");
+export type CoinModalsData = ${modalsData};
+
+${modals}`;
+
+  await fs.promises.writeFile(generatedFile, str, "utf8");
 }
 
-targets.map(genTarget);
+gen();

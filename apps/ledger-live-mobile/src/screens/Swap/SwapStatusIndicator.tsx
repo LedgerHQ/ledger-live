@@ -9,11 +9,7 @@ import { StyleSheet, View } from "react-native";
 import { rgba, Theme } from "../../colors";
 import { SwapIcon } from "../../icons/swap/index";
 
-export const getStatusColor = (
-  status: string,
-  colors: Theme["colors"],
-  colorKey = false,
-) => {
+export const getStatusColor = (status: string, colors: Theme["colors"], colorKey = false) => {
   let key: keyof Theme["colors"] = "grey";
 
   if (isSwapOperationPending(status)) {
@@ -31,13 +27,7 @@ export const getStatusColor = (
   return colorKey ? key : colors[key];
 };
 
-export function SwapStatusIndicator({
-  status,
-  small,
-}: {
-  status: string;
-  small?: boolean;
-}) {
+export function SwapStatusIndicator({ status, small }: { status: string; small?: boolean }) {
   const { colors } = useTheme();
   const statusColor = getStatusColor(status, colors);
   const sizeDependantStyles = {

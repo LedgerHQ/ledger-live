@@ -1,38 +1,30 @@
-import BigNumber from "bignumber.js";
-import network from "../../../network";
-import URL from "url";
-import { getAccountBalance } from "./network";
-import { Operation, OperationType } from "@ledgerhq/types-live";
-import { encodeOperationId } from "../../../operation";
 import { AccountId } from "@hashgraph/sdk";
+import network from "@ledgerhq/live-network/network";
+import { Operation, OperationType } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import { getEnv } from "../../../env";
+import { encodeOperationId } from "../../../operation";
 import { base64ToUrlSafeBase64 } from "../utils";
+import { getAccountBalance } from "./network";
 
 const getMirrorApiUrl = (): string => getEnv("API_HEDERA_MIRROR");
 
-const fetch = (path, query = {}) =>
-  network({
+const fetch = path => {
+  return network({
     method: "GET",
-    url: URL.format({
-      pathname: `${getMirrorApiUrl()}/api/v1${path}`,
-      query,
-    }),
+    url: `${getMirrorApiUrl()}${path}`,
   });
+};
 
 export interface Account {
   accountId: AccountId;
   balance: BigNumber;
 }
 
-export async function getAccountsForPublicKey(
-  publicKey: string
-): Promise<Account[]> {
+export async function getAccountsForPublicKey(publicKey: string): Promise<Account[]> {
   let r;
   try {
-    r = await fetch("/accounts", {
-      "account.publicKey": publicKey,
-      balance: false,
-    });
+    r = await fetch(`/api/v1/accounts?account.publicKey=${publicKey}&balance=false`);
   } catch (e: any) {
     if (e.name === "LedgerAPI4xx") return [];
     throw e;
@@ -67,20 +59,23 @@ interface HederaMirrorTransfer {
 export async function getOperationsForAccount(
   ledgerAccountId: string,
   address: string,
-  latestOperationTimestamp: string
+  latestOperationTimestamp: string,
 ): Promise<Operation[]> {
   const operations: Operation[] = [];
-  const r = await fetch("/transactions", {
-    "account.id": address,
-    timestamp: `gt:${latestOperationTimestamp}`,
-  });
+  let r = await fetch(
+    `/api/v1/transactions?account.id=${address}&timestamp=gt:${latestOperationTimestamp}`,
+  );
   const rawOperations = r.data.transactions as HederaMirrorTransaction[];
+
+  while (r.data.links.next) {
+    r = await fetch(r.data.links.next);
+    const newOperations = r.data.transactions as HederaMirrorTransaction[];
+    rawOperations.push(...newOperations);
+  }
 
   for (const raw of rawOperations) {
     const { consensus_timestamp } = raw;
-    const timestamp = new Date(
-      parseInt(consensus_timestamp.split(".")[0], 10) * 1000
-    );
+    const timestamp = new Date(parseInt(consensus_timestamp.split(".")[0], 10) * 1000);
     const senders: string[] = [];
     const recipients: string[] = [];
     const fee = new BigNumber(raw.charged_tx_fee);

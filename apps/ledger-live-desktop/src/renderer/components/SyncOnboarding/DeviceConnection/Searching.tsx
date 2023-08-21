@@ -3,7 +3,6 @@ import { Flex, Link, Text } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { useHistory } from "react-router-dom";
-
 import DeviceIllustration from "../../DeviceIllustration";
 import OnboardingNavHeader from "../../Onboarding/OnboardingNavHeader";
 import { OnboardingContext } from "../../Onboarding";
@@ -22,7 +21,7 @@ const SyncOnboardingDeviceConnectionSearching = ({
 
   const handleConnectionTrouble = useCallback(() => {
     setDeviceModelId(deviceModelId);
-    history.push("/onboarding/select-use-case");
+    history.push("/USBTroubleshooting");
   }, [deviceModelId, history, setDeviceModelId]);
 
   return (

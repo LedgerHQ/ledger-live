@@ -14,30 +14,20 @@ import {
   listSupportedCurrencies,
   useCurrenciesByMarketcap,
 } from "@ledgerhq/live-common/currencies/index";
-import {
-  CryptoCurrency,
-  Currency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useRefreshAccountsOrdering } from "../../../actions/general";
-import {
-  counterValueCurrencySelector,
-  hasOrderedNanoSelector,
-} from "../../../reducers/settings";
-import { usePortfolio } from "../../../hooks/portfolio";
+import { counterValueCurrencySelector, hasOrderedNanoSelector } from "../../../reducers/settings";
+import { usePortfolioAllAccounts } from "../../../hooks/portfolio";
 
 import GraphCardContainer from "../GraphCardContainer";
 import TrackScreen from "../../../analytics/TrackScreen";
 import { NavigatorName, ScreenName } from "../../../const";
 import { useProviders } from "../../Swap/Form/index";
-import MigrateAccountsBanner from "../../MigrateAccounts/Banner";
 import CheckLanguageAvailability from "../../../components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "../../../components/CheckTermOfUseUpdate";
 import { TAB_BAR_SAFE_HEIGHT } from "../../../components/TabBar/TabBarSafeAreaView";
 import SetupDeviceBanner from "../../../components/SetupDeviceBanner";
-import BuyDeviceBanner, {
-  IMAGE_PROPS_BIG_NANO,
-} from "../../../components/BuyDeviceBanner";
+import BuyDeviceBanner, { IMAGE_PROPS_BIG_NANO } from "../../../components/BuyDeviceBanner";
 import Assets from "../Assets";
 import { AnalyticsContext } from "../../../analytics/AnalyticsContext";
 import {
@@ -47,6 +37,7 @@ import {
 import FirmwareUpdateBanner from "../../../components/FirmwareUpdateBanner";
 import CollapsibleHeaderFlatList from "../../../components/WalletTab/CollapsibleHeaderFlatList";
 import { WalletTabNavigatorStackParamList } from "../../../components/RootNavigator/types/WalletTabNavigator";
+import { UpdateStep } from "../../FirmwareUpdate";
 
 const maxAssetsToDisplay = 5;
 
@@ -56,10 +47,8 @@ type NavigationProps = BaseComposite<
 
 function ReadOnlyPortfolio({ navigation }: NavigationProps) {
   const { t } = useTranslation();
-  const counterValueCurrency: Currency = useSelector(
-    counterValueCurrencySelector,
-  );
-  const portfolio = usePortfolio();
+  const counterValueCurrency: Currency = useSelector(counterValueCurrencySelector);
+  const portfolio = usePortfolioAllAccounts();
   const { colors } = useTheme();
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
   useProviders();
@@ -109,7 +98,7 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
 
   const data = useMemo(
     () => [
-      <Box onLayout={onPortfolioCardLayout}>
+      <Box onLayout={onPortfolioCardLayout} key="GraphCardContainer">
         <GraphCardContainer
           counterValueCurrency={counterValueCurrency}
           portfolio={portfolio}
@@ -121,12 +110,12 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
       </Box>,
       ...(hasOrderedNano
         ? [
-            <Box mx={6} mt={7}>
+            <Box mx={6} mt={7} key="SetupDeviceBanner">
               <SetupDeviceBanner screen="Wallet" />
             </Box>,
           ]
         : []),
-      <Box background={colors.background.main} px={6} mt={6}>
+      <Box background={colors.background.main} px={6} mt={6} key="Assets">
         <Assets assets={assetsToDisplay} />
         <Button type="shade" size="large" outline mt={6} onPress={goToAssets}>
           {t("portfolio.seelAllAssets")}
@@ -149,6 +138,7 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
               }}
               screen="Wallet"
               {...IMAGE_PROPS_BIG_NANO}
+              key="BuyDeviceBanner"
             />,
           ]
         : []),
@@ -169,6 +159,13 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
 
   const { source, setSource, setScreen } = useContext(AnalyticsContext);
 
+  const onBackFromUpdate = useCallback(
+    (_updateState: UpdateStep) => {
+      navigation.goBack();
+    },
+    [navigation],
+  );
+
   useFocusEffect(
     useCallback(() => {
       setScreen && setScreen("Wallet");
@@ -182,7 +179,7 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
   return (
     <>
       <Flex px={6} py={4}>
-        <FirmwareUpdateBanner />
+        <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
       </Flex>
       <CheckLanguageAvailability />
       <CheckTermOfUseUpdate />
@@ -190,13 +187,11 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
       <CollapsibleHeaderFlatList<JSX.Element>
         data={data}
         contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
-        renderItem={({ item }: ListRenderItemInfo<unknown>) =>
-          item as JSX.Element
-        }
+        renderItem={({ item }: ListRenderItemInfo<unknown>) => item as JSX.Element}
         keyExtractor={(_: unknown, index: number) => String(index)}
         showsVerticalScrollIndicator={false}
+        testID="PortfolioReadOnlyList"
       />
-      <MigrateAccountsBanner />
     </>
   );
 }

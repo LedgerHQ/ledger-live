@@ -16,12 +16,7 @@ function ReadOnlyGraphCard({ counterValueCurrency, headerText }: Props) {
 
   return (
     <Flex bg={"neutral.c30"} borderRadius={2}>
-      <Flex
-        flexDirection={"row"}
-        justifyContent={"space-between"}
-        alignItems={"flex-start"}
-        p={6}
-      >
+      <Flex flexDirection={"row"} justifyContent={"space-between"} alignItems={"flex-start"} p={6}>
         <Flex>
           <Flex flexDirection={"row"} alignItems={"center"} mb={1}>
             <Text
@@ -45,11 +40,7 @@ function ReadOnlyGraphCard({ counterValueCurrency, headerText }: Props) {
                 numberOfLines={1}
                 adjustsFontSizeToFit
               >
-                <CurrencyUnitValue
-                  unit={counterValueUnit}
-                  value={0}
-                  joinFragmentsSeparator=" "
-                />
+                <CurrencyUnitValue unit={counterValueUnit} value={0} joinFragmentsSeparator=" " />
               </Text>
             </Flex>
           </>

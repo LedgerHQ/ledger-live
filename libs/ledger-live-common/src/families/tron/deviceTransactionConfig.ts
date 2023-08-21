@@ -32,8 +32,7 @@ function getDeviceTransactionConfig({
     fields.push({
       type: "tron.resource",
       label: "Resource",
-      value:
-        resource.slice(0, 1).toUpperCase() + resource.slice(1).toLowerCase(),
+      value: resource.slice(0, 1).toUpperCase() + resource.slice(1).toLowerCase(),
     });
   }
 

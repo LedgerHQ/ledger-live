@@ -1,4 +1,3 @@
-/* @flow */
 import { BigNumber } from "bignumber.js";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import React, { useCallback, useState, useEffect } from "react";
@@ -48,18 +47,17 @@ export default function VoteAmount({ navigation, route }: Props) {
 
   const bridge = getAccountBridge(account);
 
-  const { transaction, setTransaction, status, bridgePending } =
-    useBridgeTransaction(() => {
-      return {
-        account,
-        transaction: {
-          ...route.params.transaction,
-          amount: new BigNumber(route.params.amount ?? 0),
-          mode: "revoke",
-          index: route.params.vote?.index,
-        } as CeloTransaction,
-      };
-    });
+  const { transaction, setTransaction, status, bridgePending } = useBridgeTransaction(() => {
+    return {
+      account,
+      transaction: {
+        ...route.params.transaction,
+        amount: new BigNumber(route.params.amount ?? 0),
+        mode: "revoke",
+        index: route.params.vote?.index,
+      } as CeloTransaction,
+    };
+  });
 
   invariant(transaction, "transaction must be defined");
 
@@ -99,18 +97,19 @@ export default function VoteAmount({ navigation, route }: Props) {
   const { useAllAmount } = transaction;
   const { amount } = status;
   const unit = getAccountUnit(account);
-  const error =
-    amount.eq(0) || bridgePending
-      ? null
-      : getFirstStatusError(status, "errors");
+  const error = amount.eq(0) || bridgePending ? null : getFirstStatusError(status, "errors");
   const warning = getFirstStatusError(status, "warnings");
 
   return (
     <>
-      <TrackScreen category="CeloRevoke" name="Amount" />
-      <SafeAreaView
-        style={[styles.root, { backgroundColor: colors.background }]}
-      >
+      <TrackScreen
+        category="CeloRevoke"
+        name="Amount"
+        flow="stake"
+        action="revoke"
+        currency="celo"
+      />
+      <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
         <KeyboardView style={styles.container}>
           <TouchableWithoutFeedback onPress={blur}>
             <View style={[styles.root, { backgroundColor: colors.background }]}>
@@ -155,11 +154,7 @@ export default function VoteAmount({ navigation, route }: Props) {
                     </LText>
                     <LText semiBold>
                       {maxSpendable ? (
-                        <CurrencyUnitValue
-                          showCode
-                          unit={unit}
-                          value={maxSpendable}
-                        />
+                        <CurrencyUnitValue showCode unit={unit} value={maxSpendable} />
                       ) : (
                         "-"
                       )}
@@ -190,11 +185,7 @@ export default function VoteAmount({ navigation, route }: Props) {
                     type="primary"
                     title={
                       <Trans
-                        i18nKey={
-                          !bridgePending
-                            ? "common.continue"
-                            : "send.amount.loadingNetwork"
-                        }
+                        i18nKey={!bridgePending ? "common.continue" : "send.amount.loadingNetwork"}
                       />
                     }
                     onPress={onContinue}

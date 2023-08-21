@@ -1,6 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { BottomDrawer, Box, Text } from "@ledgerhq/native-ui";
+import { Box, Text } from "@ledgerhq/native-ui";
+import QueuedDrawer from "../QueuedDrawer";
 
 type Props = {
   isOpen: boolean;
@@ -9,16 +10,11 @@ type Props = {
   team: string;
 };
 
-export default function AccountSubHeaderDrawer({
-  isOpen,
-  onClose,
-  family,
-  team,
-}: Props) {
+export default function AccountSubHeaderDrawer({ isOpen, onClose, family, team }: Props) {
   const { t } = useTranslation();
   return (
-    <BottomDrawer
-      isOpen={isOpen}
+    <QueuedDrawer
+      isRequestingToBeOpened={isOpen}
       onClose={onClose}
       title={t("account.subHeader.drawer.title", { family })}
       description={t("account.subHeader.drawer.subTitle", { family, team })}
@@ -34,6 +30,6 @@ export default function AccountSubHeaderDrawer({
           {t("account.subHeader.drawer.description3", { team })}
         </Text>
       </Box>
-    </BottomDrawer>
+    </QueuedDrawer>
   );
 }

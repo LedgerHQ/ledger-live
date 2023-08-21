@@ -11,11 +11,12 @@ module.exports = {
       config: "e2e/jest.config.js",
     },
     jest: {
-      setupTimeout: 500000,
+      setupTimeout: 1000000,
     },
+    retries: 1,
   },
   logger: {
-    level: process.env.DEBUG_DETOX ? "trace" : "debug",
+    level: process.env.DEBUG_DETOX ? "trace" : "info",
   },
   behavior: {
     // NOTE: https://github.com/wix/Detox/blob/master/docs/APIRef.Configuration.md#behavior-configuration
@@ -29,28 +30,24 @@ module.exports = {
     "ios.debug": {
       type: "ios.app",
       build: `export ENVFILE=.env.mock && xcodebuild ARCHS=${iosArch} ONLY_ACTIVE_ARCH=no -workspace ios/ledgerlivemobile.xcworkspace -scheme ledgerlivemobile -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build`,
-      binaryPath:
-        "ios/build/Build/Products/Debug-iphonesimulator/ledgerlivemobile.app",
+      binaryPath: "ios/build/Build/Products/Debug-iphonesimulator/ledgerlivemobile.app",
     },
     "ios.staging": {
       type: "ios.app",
-      build: `export RCT_NO_LAUNCH_PACKAGER=true && export ENVFILE=.env.mock && xcodebuild ARCHS=${iosArch} ONLY_ACTIVE_ARCH=no -workspace ios/ledgerlivemobile.xcworkspace -scheme ledgerlivemobile -configuration Staging -sdk iphonesimulator -derivedDataPath ios/build`,
-      binaryPath:
-        "ios/build/Build/Products/Staging-iphonesimulator/ledgerlivemobile.app",
+      build: `export ENVFILE=.env.mock && xcodebuild ARCHS=${iosArch} ONLY_ACTIVE_ARCH=no -workspace ios/ledgerlivemobile.xcworkspace -scheme ledgerlivemobile -configuration Staging -sdk iphonesimulator -derivedDataPath ios/build`,
+      binaryPath: "ios/build/Build/Products/Staging-iphonesimulator/ledgerlivemobile.app",
     },
     "ios.release": {
       type: "ios.app",
-      build: `export RCT_NO_LAUNCH_PACKAGER=true && export ENVFILE=.env.mock && xcodebuild ARCHS=${iosArch} ONLY_ACTIVE_ARCH=no -workspace ios/ledgerlivemobile.xcworkspace -scheme ledgerlivemobile -configuration Release -sdk iphonesimulator -derivedDataPath ios/build`,
-      binaryPath:
-        "ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app",
+      build: `export ENVFILE=.env.mock && xcodebuild ARCHS=${iosArch} ONLY_ACTIVE_ARCH=no -workspace ios/ledgerlivemobile.xcworkspace -scheme ledgerlivemobile -configuration Release -sdk iphonesimulator -derivedDataPath ios/build`,
+      binaryPath: "ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app",
     },
     "android.debug": {
       type: "android.apk",
       build:
         "cd android && ENVFILE=.env.mock ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug && cd ..",
       binaryPath: `android/app/build/outputs/apk/debug/app-${androidArch}-debug.apk`,
-      testBinaryPath:
-        "android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk",
+      testBinaryPath: "android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk",
     },
     "android.release": {
       type: "android.apk",
@@ -65,7 +62,7 @@ module.exports = {
     simulator: {
       type: "ios.simulator",
       device: {
-        type: "iPhone 13",
+        type: "iPhone 14",
       },
     },
     emulator: {
@@ -73,6 +70,8 @@ module.exports = {
       device: {
         avdName: "Pixel_5_API_31",
       },
+      gpuMode: "swiftshader_indirect",
+      headless: process.env.CI ? true : false,
     },
   },
   configurations: {

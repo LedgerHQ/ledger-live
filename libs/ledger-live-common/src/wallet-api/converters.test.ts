@@ -1,3 +1,4 @@
+import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import "../__tests__/test-helpers/setup";
 
@@ -6,20 +7,22 @@ import type { Transaction } from "../generated/types";
 import type { WalletAPITransaction } from "./types";
 
 const ethBridge = jest.fn();
-jest.mock("../generated/platformAdapter", () => {
+jest.mock("../generated/walletApiAdapter", () => {
   return {
     ethereum: {
-      getPlatformTransactionSignFlowInfos: function () {
+      getWalletAPITransactionSignFlowInfos: function () {
         return ethBridge();
       },
     },
   };
 });
 
-describe("getPlatformTransactionSignFlowInfos", () => {
+describe("getWalletAPITransactionSignFlowInfos", () => {
   beforeEach(() => {
     ethBridge.mockClear();
   });
+
+  const dummyAccount = {} as Account;
 
   it("calls the bridge if the implementation exists", () => {
     // Given
@@ -30,7 +33,7 @@ describe("getPlatformTransactionSignFlowInfos", () => {
     };
 
     // When
-    getWalletAPITransactionSignFlowInfos(tx);
+    getWalletAPITransactionSignFlowInfos({ tx, account: dummyAccount });
 
     // Then
     expect(ethBridge).toBeCalledTimes(1);
@@ -53,8 +56,10 @@ describe("getPlatformTransactionSignFlowInfos", () => {
     };
 
     // When
-    const { canEditFees, hasFeesProvided, liveTx } =
-      getWalletAPITransactionSignFlowInfos(tx);
+    const { canEditFees, hasFeesProvided, liveTx } = getWalletAPITransactionSignFlowInfos({
+      tx,
+      account: dummyAccount,
+    });
 
     // Then
     expect(ethBridge).toBeCalledTimes(0);

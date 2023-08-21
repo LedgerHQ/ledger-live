@@ -106,11 +106,7 @@ const PasswordInput = ({
           style={styles.iconInput}
           onPress={toggleSecureTextEntry}
         >
-          <Icon
-            name="eye"
-            size={16}
-            color={inline ? colors.grey : colors.fog}
-          />
+          <Icon name="eye" size={16} color={inline ? colors.grey : colors.fog} />
         </Touchable>
       ) : (
         <Touchable
@@ -118,11 +114,7 @@ const PasswordInput = ({
           style={styles.iconInput}
           onPress={toggleSecureTextEntry}
         >
-          <Icon
-            name="eye-off"
-            size={16}
-            color={inline ? colors.grey : colors.fog}
-          />
+          <Icon name="eye-off" size={16} color={inline ? colors.grey : colors.fog} />
         </Touchable>
       )}
     </View>

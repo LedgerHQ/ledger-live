@@ -1,7 +1,7 @@
 import { bip32asBuffer } from "@ledgerhq/hw-app-btc/bip32";
 
 const getSerializedAddressParameters = (
-  path: string
+  path: string,
 ): {
   addressParameters: Buffer;
 } => {

@@ -24,43 +24,38 @@ test("erc20 are all consistent with those on ledgerjs side", () => {
 
   for (const token of delistedList) {
     if (token.delisted) {
-      expect(normalList.find((o) => o.id === token.id)).toBeUndefined();
+      expect(normalList.find(o => o.id === token.id)).toBeUndefined();
     }
 
     if (token.tokenType === "erc20") {
       const tokenData = byContractAddressAndChainId(
         token.contractAddress,
-        token.parentCurrency.ethereumLikeInfo?.chainId || 0
+        token.parentCurrency.ethereumLikeInfo?.chainId || 0,
       );
 
       if (!tokenData) {
         throw new Error(token.name + " not available in ledgerjs data");
       }
 
-      expect(token.ticker.toLowerCase()).toBe(tokenData.ticker.toLowerCase());
-      expect(token.contractAddress.toLowerCase()).toBe(
-        tokenData.contractAddress.toLowerCase()
-      );
+      // match crypto-assets convention for tickers: testnet tokens are prefixed with "t"
+      // https://github.com/LedgerHQ/crypto-assets/blob/d2fe1cf9a110614650191555b846a2e43eb67b8f/scripts/hsm/coin_parameters/coin_parameters.py#L163
+      const prefix = token.parentCurrency.isTestnetFor ? "t" : "";
+
+      expect(prefix + token.ticker.toLowerCase()).toBe(tokenData.ticker.toLowerCase());
+      expect(token.contractAddress.toLowerCase()).toBe(tokenData.contractAddress.toLowerCase());
       expect(token.units[0].magnitude).toBe(tokenData.decimals);
     }
   }
 });
 test("sort by marketcap", () => {
   const tokens = listTokens().filter(
-    (t) => t.ticker === "XST" || t.ticker === "ZRX" || t.ticker === "HOT"
+    t => t.ticker === "XST" || t.ticker === "ZRX" || t.ticker === "HOT",
   );
-  const currencies: (CryptoCurrency | TokenCurrency)[] =
-    listCryptoCurrencies().filter(
-      (c) => c.ticker === "BTC" || c.ticker === "XST" || c.id === "ethereum"
-    );
+  const currencies: (CryptoCurrency | TokenCurrency)[] = listCryptoCurrencies().filter(
+    c => c.ticker === "BTC" || c.ticker === "XST" || c.id === "ethereum",
+  );
   expect(
-    sortByMarketcap(currencies.concat(tokens), [
-      "BTC",
-      "ETH",
-      "ZRX",
-      "HOT",
-      "XST",
-    ]).map((c) => c.id)
+    sortByMarketcap(currencies.concat(tokens), ["BTC", "ETH", "ZRX", "HOT", "XST"]).map(c => c.id),
   ).toMatchObject([
     "bitcoin",
     "ethereum",
@@ -79,37 +74,33 @@ test("can format a currency unit", () => {
   expect(
     formatCurrencyUnit(btc, new BigNumber(1000000), {
       showCode: true,
-    })
+    }),
   ).toBe("0.01 BTC");
   expect(
     formatCurrencyUnit(btc, new BigNumber(100000000), {
       showCode: true,
-    })
+    }),
   ).toBe("1 BTC");
   expect(
     formatCurrencyUnit(btc, new BigNumber(100000000), {
       showCode: true,
       showAllDigits: true,
-    })
+    }),
   ).toBe("1.00000000 BTC");
   expect(
     formatCurrencyUnit(btc, new BigNumber(100000000), {
       showCode: true,
       showAllDigits: true,
       alwaysShowSign: true,
-    })
+    }),
   ).toBe("+1.00000000 BTC");
 });
 test("do not consider 'showAllDigits: undefined' as false", () => {
   expect(
-    formatCurrencyUnit(
-      getFiatCurrencyByTicker("USD").units[0],
-      new BigNumber(-1234500),
-      {
-        showCode: true,
-        showAllDigits: undefined,
-      }
-    )
+    formatCurrencyUnit(getFiatCurrencyByTicker("USD").units[0], new BigNumber(-1234500), {
+      showCode: true,
+      showAllDigits: undefined,
+    }),
   ).toBe("-$12,345.00");
 });
 test("can enable discreet mode", () => {
@@ -117,26 +108,26 @@ test("can enable discreet mode", () => {
   expect(
     formatCurrencyUnit(btc, new BigNumber(100000000), {
       discreet: true,
-    })
+    }),
   ).toBe("***");
   expect(
     formatCurrencyUnit(btc, new BigNumber(1000000), {
       discreet: true,
       showCode: true,
-    })
+    }),
   ).toBe("*** BTC");
   expect(
     formatCurrencyUnit(btc, new BigNumber(100000000), {
       discreet: true,
       showCode: true,
-    })
+    }),
   ).toBe("*** BTC");
   expect(
     formatCurrencyUnit(btc, new BigNumber(100000000), {
       discreet: true,
       showCode: true,
       showAllDigits: true,
-    })
+    }),
   ).toBe("*** BTC");
   expect(
     formatCurrencyUnit(btc, new BigNumber(100000000), {
@@ -144,108 +135,67 @@ test("can enable discreet mode", () => {
       showCode: true,
       showAllDigits: true,
       alwaysShowSign: true,
-    })
+    }),
   ).toBe("+*** BTC");
 });
 test("formatter will floor values by default", () => {
   expect(
-    formatCurrencyUnit(
-      getCryptoCurrencyById("bitcoin").units[0],
-      new BigNumber(1000001),
-      {}
-    )
+    formatCurrencyUnit(getCryptoCurrencyById("bitcoin").units[0], new BigNumber(1000001), {}),
   ).toBe("0.01");
   expect(
-    formatCurrencyUnit(
-      getCryptoCurrencyById("bitcoin").units[0],
-      new BigNumber(1000001)
-    )
+    formatCurrencyUnit(getCryptoCurrencyById("bitcoin").units[0], new BigNumber(1000001)),
   ).toBe("0.01");
   expect(
-    formatCurrencyUnit(
-      getCryptoCurrencyById("bitcoin").units[0],
-      new BigNumber(1000100)
-    )
+    formatCurrencyUnit(getCryptoCurrencyById("bitcoin").units[0], new BigNumber(1000100)),
   ).toBe("0.010001");
   expect(
-    formatCurrencyUnit(
-      getCryptoCurrencyById("bitcoin").units[0],
-      new BigNumber("999999999999")
-    )
+    formatCurrencyUnit(getCryptoCurrencyById("bitcoin").units[0], new BigNumber("999999999999")),
   ).toBe("9,999.99");
 });
 test("formatter rounding can be disabled", () => {
   expect(
-    formatCurrencyUnit(
-      getCryptoCurrencyById("bitcoin").units[0],
-      new BigNumber("999999999999"),
-      {
-        disableRounding: true,
-      }
-    )
+    formatCurrencyUnit(getCryptoCurrencyById("bitcoin").units[0], new BigNumber("999999999999"), {
+      disableRounding: true,
+    }),
   ).toBe("9,999.99999999");
 });
 test("sub magnitude", () => {
   expect(
-    formatCurrencyUnit(
-      getFiatCurrencyByTicker("USD").units[0],
-      new BigNumber(0.04),
-      {
-        subMagnitude: 2,
-      }
-    )
+    formatCurrencyUnit(getFiatCurrencyByTicker("USD").units[0], new BigNumber(0.04), {
+      subMagnitude: 2,
+    }),
   ).toBe("0.0004");
   // digits will be round after subMagnitude
   expect(
-    formatCurrencyUnit(
-      getFiatCurrencyByTicker("USD").units[0],
-      new BigNumber(0.03987654),
-      {
-        subMagnitude: 2,
-        showCode: true,
-      }
-    )
+    formatCurrencyUnit(getFiatCurrencyByTicker("USD").units[0], new BigNumber(0.03987654), {
+      subMagnitude: 2,
+      showCode: true,
+    }),
   ).toBe("$0.0003");
   expect(
-    formatCurrencyUnit(
-      getFiatCurrencyByTicker("USD").units[0],
-      new BigNumber(0.03987654),
-      {
-        subMagnitude: 2,
-        disableRounding: true,
-      }
-    )
+    formatCurrencyUnit(getFiatCurrencyByTicker("USD").units[0], new BigNumber(0.03987654), {
+      subMagnitude: 2,
+      disableRounding: true,
+    }),
   ).toBe("0.0003");
   expect(
-    formatCurrencyUnit(
-      getFiatCurrencyByTicker("USD").units[0],
-      new BigNumber(0.03987654),
-      {
-        subMagnitude: 5,
-        disableRounding: true,
-      }
-    )
+    formatCurrencyUnit(getFiatCurrencyByTicker("USD").units[0], new BigNumber(0.03987654), {
+      subMagnitude: 5,
+      disableRounding: true,
+    }),
   ).toBe("0.0003987");
   // even tho the USD unit showAllDigits, it does not force the sub magnitude digits to show
   expect(
-    formatCurrencyUnit(
-      getFiatCurrencyByTicker("USD").units[0],
-      new BigNumber(0.03),
-      {
-        subMagnitude: 5,
-        disableRounding: true,
-      }
-    )
+    formatCurrencyUnit(getFiatCurrencyByTicker("USD").units[0], new BigNumber(0.03), {
+      subMagnitude: 5,
+      disableRounding: true,
+    }),
   ).toBe("0.0003");
   expect(
-    formatCurrencyUnit(
-      getCryptoCurrencyById("bitcoin").units[0],
-      new BigNumber(9.123456),
-      {
-        subMagnitude: 2,
-        disableRounding: true,
-      }
-    )
+    formatCurrencyUnit(getCryptoCurrencyById("bitcoin").units[0], new BigNumber(9.123456), {
+      subMagnitude: 2,
+      disableRounding: true,
+    }),
   ).toBe("0.0000000912");
   expect(
     formatCurrencyUnit(
@@ -254,8 +204,8 @@ test("sub magnitude", () => {
       {
         disableRounding: true,
         subMagnitude: 2,
-      }
-    )
+      },
+    ),
   ).toBe("9,999.9999999912");
   expect(
     formatCurrencyUnit(
@@ -263,170 +213,109 @@ test("sub magnitude", () => {
       new BigNumber("999999999999.123456"),
       {
         subMagnitude: 2,
-      }
-    )
+      },
+    ),
   ).toBe("9,999.99");
 });
 test("parseCurrencyUnit", () => {
   expect(
-    parseCurrencyUnit(
-      getCryptoCurrencyById("bitcoin").units[0],
-      "9999.99999999"
-    ).toNumber()
+    parseCurrencyUnit(getCryptoCurrencyById("bitcoin").units[0], "9999.99999999").toNumber(),
   ).toBe(999999999999);
-  expect(
-    parseCurrencyUnit(
-      getCryptoCurrencyById("bitcoin").units[0],
-      ".987654"
-    ).toNumber()
-  ).toBe(98765400);
-  expect(
-    parseCurrencyUnit(
-      getCryptoCurrencyById("bitcoin").units[0],
-      "9999"
-    ).toNumber()
-  ).toBe(999900000000);
-  expect(
-    parseCurrencyUnit(getCryptoCurrencyById("bitcoin").units[0], "1").toNumber()
-  ).toBe(100000000);
+  expect(parseCurrencyUnit(getCryptoCurrencyById("bitcoin").units[0], ".987654").toNumber()).toBe(
+    98765400,
+  );
+  expect(parseCurrencyUnit(getCryptoCurrencyById("bitcoin").units[0], "9999").toNumber()).toBe(
+    999900000000,
+  );
+  expect(parseCurrencyUnit(getCryptoCurrencyById("bitcoin").units[0], "1").toNumber()).toBe(
+    100000000,
+  );
 
   /*expect(
     parseCurrencyUnit(getCryptoCurrencyById("bitcoin").units[0], "0x1").toNumber()
   ).toBe(0);*/
-  expect(
-    parseCurrencyUnit(
-      getCryptoCurrencyById("bitcoin").units[0],
-      "NOPE"
-    ).toNumber()
-  ).toBe(0);
+  expect(parseCurrencyUnit(getCryptoCurrencyById("bitcoin").units[0], "NOPE").toNumber()).toBe(0);
 });
 test("formatter works with fiats", () => {
   expect(
-    formatCurrencyUnit(
-      getFiatCurrencyByTicker("EUR").units[0],
-      new BigNumber(12345),
-      {
-        showCode: true,
-      }
-    )
+    formatCurrencyUnit(getFiatCurrencyByTicker("EUR").units[0], new BigNumber(12345), {
+      showCode: true,
+    }),
   ).toBe("€123.45");
   // by default, fiats always show the digits
-  expect(
-    formatCurrencyUnit(
-      getFiatCurrencyByTicker("EUR").units[0],
-      new BigNumber(12300)
-    )
-  ).toBe("123.00");
+  expect(formatCurrencyUnit(getFiatCurrencyByTicker("EUR").units[0], new BigNumber(12300))).toBe(
+    "123.00",
+  );
 });
 test("formatter useGrouping", () => {
   expect(
-    formatCurrencyUnit(
-      getFiatCurrencyByTicker("EUR").units[0],
-      new BigNumber(1234500),
-      {
-        useGrouping: true,
-      }
-    )
+    formatCurrencyUnit(getFiatCurrencyByTicker("EUR").units[0], new BigNumber(1234500), {
+      useGrouping: true,
+    }),
   ).toBe("12,345.00");
   expect(
-    formatCurrencyUnit(
-      getFiatCurrencyByTicker("EUR").units[0],
-      new BigNumber(1234500),
-      {
-        useGrouping: false,
-      }
-    )
+    formatCurrencyUnit(getFiatCurrencyByTicker("EUR").units[0], new BigNumber(1234500), {
+      useGrouping: false,
+    }),
   ).toBe("12345.00");
 });
 test("formatter can change locale", () => {
   expect(
-    formatCurrencyUnit(
-      getFiatCurrencyByTicker("USD").units[0],
-      new BigNumber(-1234567),
-      {
-        showCode: true,
-      }
-    )
+    formatCurrencyUnit(getFiatCurrencyByTicker("USD").units[0], new BigNumber(-1234567), {
+      showCode: true,
+    }),
   ).toBe("-$12,345.67");
 });
 test("formatter does not show very small value in rounding mode", () => {
-  expect(
-    formatCurrencyUnit(
-      getCryptoCurrencyById("ethereum").units[0],
-      new BigNumber(1)
-    )
-  ).toBe("0");
-  expect(
-    formatCurrencyUnit(
-      getCryptoCurrencyById("ethereum").units[0],
-      new BigNumber(1000)
-    )
-  ).toBe("0");
+  expect(formatCurrencyUnit(getCryptoCurrencyById("ethereum").units[0], new BigNumber(1))).toBe(
+    "0",
+  );
+  expect(formatCurrencyUnit(getCryptoCurrencyById("ethereum").units[0], new BigNumber(1000))).toBe(
+    "0",
+  );
 });
 test("formatShort", () => {
-  expect(
-    formatShort(
-      getFiatCurrencyByTicker("EUR").units[0],
-      new BigNumber(123456789)
-    )
-  ).toBe("1.2m");
-  expect(
-    formatShort(getFiatCurrencyByTicker("EUR").units[0], new BigNumber(123456))
-  ).toBe("1.2k");
-  expect(
-    formatShort(
-      getCryptoCurrencyById("ethereum").units[0],
-      new BigNumber(600000)
-    )
-  ).toBe("0");
+  expect(formatShort(getFiatCurrencyByTicker("EUR").units[0], new BigNumber(123456789))).toBe(
+    "1.2m",
+  );
+  expect(formatShort(getFiatCurrencyByTicker("EUR").units[0], new BigNumber(123456))).toBe("1.2k");
+  expect(formatShort(getCryptoCurrencyById("ethereum").units[0], new BigNumber(600000))).toBe("0");
 });
 test("chopCurrencyUnitDecimals", () => {
-  expect(
-    chopCurrencyUnitDecimals(getFiatCurrencyByTicker("EUR").units[0], "1")
-  ).toBe("1");
-  expect(
-    chopCurrencyUnitDecimals(getFiatCurrencyByTicker("EUR").units[0], "1234")
-  ).toBe("1234");
-  expect(
-    chopCurrencyUnitDecimals(getFiatCurrencyByTicker("EUR").units[0], "1234.56")
-  ).toBe("1234.56");
-  expect(
-    chopCurrencyUnitDecimals(
-      getFiatCurrencyByTicker("EUR").units[0],
-      "1234.5678"
-    )
-  ).toBe("1234.56");
-  expect(
-    chopCurrencyUnitDecimals(
-      getFiatCurrencyByTicker("EUR").units[0],
-      "1234.5678 EUR"
-    )
-  ).toBe("1234.56 EUR");
+  expect(chopCurrencyUnitDecimals(getFiatCurrencyByTicker("EUR").units[0], "1")).toBe("1");
+  expect(chopCurrencyUnitDecimals(getFiatCurrencyByTicker("EUR").units[0], "1234")).toBe("1234");
+  expect(chopCurrencyUnitDecimals(getFiatCurrencyByTicker("EUR").units[0], "1234.56")).toBe(
+    "1234.56",
+  );
+  expect(chopCurrencyUnitDecimals(getFiatCurrencyByTicker("EUR").units[0], "1234.5678")).toBe(
+    "1234.56",
+  );
+  expect(chopCurrencyUnitDecimals(getFiatCurrencyByTicker("EUR").units[0], "1234.5678 EUR")).toBe(
+    "1234.56 EUR",
+  );
 });
 test("encodeURIScheme", () => {
   expect(
     encodeURIScheme({
       currency: getCryptoCurrencyById("bitcoin"),
       address: "1gre1noAY9HiK2qxoW8FzSdjdFBcoZ5fV",
-    })
+    }),
   ).toBe("bitcoin:1gre1noAY9HiK2qxoW8FzSdjdFBcoZ5fV");
   expect(
     encodeURIScheme({
       currency: getCryptoCurrencyById("bitcoin"),
       address: "1gre1noAY9HiK2qxoW8FzSdjdFBcoZ5fV",
       amount: new BigNumber("1234567000000"),
-    })
+    }),
   ).toBe("bitcoin:1gre1noAY9HiK2qxoW8FzSdjdFBcoZ5fV?amount=12345.67");
 });
 test("decodeURIScheme", () => {
-  expect(
-    decodeURIScheme("bitcoin:1gre1noAY9HiK2qxoW8FzSdjdFBcoZ5fV")
-  ).toMatchObject({
+  expect(decodeURIScheme("bitcoin:1gre1noAY9HiK2qxoW8FzSdjdFBcoZ5fV")).toMatchObject({
     currency: getCryptoCurrencyById("bitcoin"),
     address: "1gre1noAY9HiK2qxoW8FzSdjdFBcoZ5fV",
   });
   expect(
-    decodeURIScheme("bitcoin:1gre1noAY9HiK2qxoW8FzSdjdFBcoZ5fV?amount=12345.67")
+    decodeURIScheme("bitcoin:1gre1noAY9HiK2qxoW8FzSdjdFBcoZ5fV?amount=12345.67"),
   ).toMatchObject({
     currency: getCryptoCurrencyById("bitcoin"),
     address: "1gre1noAY9HiK2qxoW8FzSdjdFBcoZ5fV",
@@ -434,9 +323,8 @@ test("decodeURIScheme", () => {
   });
   expect(
     decodeURIScheme(
-      "ethereum:0x931d387731bbbc988b312206c74f77d004d6b84b?gas=100&gasPrice=200&value=" +
-        10 ** 18
-    )
+      "ethereum:0x931d387731bbbc988b312206c74f77d004d6b84b?gas=100&gasPrice=200&value=" + 10 ** 18,
+    ),
   ).toMatchObject({
     currency: getCryptoCurrencyById("ethereum"),
     address: "0x931d387731bbbc988b312206c74f77d004d6b84b",
@@ -446,8 +334,8 @@ test("decodeURIScheme", () => {
   });
   expect(
     decodeURIScheme(
-      "ethereum:0x931d387731bbbc988b312206c74f77d004d6b84b?gas=-1&gasPrice=-1&value=-1"
-    )
+      "ethereum:0x931d387731bbbc988b312206c74f77d004d6b84b?gas=-1&gasPrice=-1&value=-1",
+    ),
   ).toMatchObject({
     currency: getCryptoCurrencyById("ethereum"),
     address: "0x931d387731bbbc988b312206c74f77d004d6b84b",
@@ -457,8 +345,8 @@ test("decodeURIScheme", () => {
   });
   expect(
     decodeURIScheme(
-      "ethereum:0x072b04a9b047C3c7a2A455FFF5264D785e6E55C9?amount=0.0647&gasPrice=77000000000"
-    )
+      "ethereum:0x072b04a9b047C3c7a2A455FFF5264D785e6E55C9?amount=0.0647&gasPrice=77000000000",
+    ),
   ).toMatchObject({
     currency: getCryptoCurrencyById("ethereum"),
     address: "0x072b04a9b047C3c7a2A455FFF5264D785e6E55C9",

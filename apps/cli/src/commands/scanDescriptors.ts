@@ -14,10 +14,10 @@ export default {
     opts: Partial<{
       device: string;
       currency: string;
-    }>
+    }>,
   ) =>
     scanDescriptors(
       opts.device || "",
-      requiredCurrency(findCryptoCurrencyByKeyword(opts.currency || "bitcoin"))
+      requiredCurrency(findCryptoCurrencyByKeyword(opts.currency || "bitcoin")),
     ),
 };

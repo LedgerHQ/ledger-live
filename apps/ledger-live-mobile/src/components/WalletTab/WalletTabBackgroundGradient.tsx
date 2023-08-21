@@ -1,13 +1,7 @@
 import React, { memo, useContext } from "react";
 import { Animated, ColorValue } from "react-native";
 import { MaterialTopTabBarProps } from "@react-navigation/material-top-tabs";
-import Svg, {
-  Path,
-  Defs,
-  LinearGradient,
-  Stop,
-  RadialGradient,
-} from "react-native-svg";
+import Svg, { Path, Defs, LinearGradient, Stop, RadialGradient } from "react-native-svg";
 import { useTheme } from "styled-components/native";
 import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManager";
 
@@ -75,11 +69,7 @@ function WalletTabBackgroundGradient({ color, scrollX }: Props) {
             gradientTransform="matrix(131.49984 186.99987 -218.94593 153.96457 172 252.5)"
           >
             <Stop stopColor={color || "#B7A6F5"} />
-            <Stop
-              offset={0.505208}
-              stopColor={color || "#B09BF1"}
-              stopOpacity={0.770833}
-            />
+            <Stop offset={0.505208} stopColor={color || "#B09BF1"} stopOpacity={0.770833} />
             <Stop offset={1} stopColor={color || "#9678E3"} stopOpacity={0} />
           </RadialGradient>
           <RadialGradient
@@ -92,11 +82,7 @@ function WalletTabBackgroundGradient({ color, scrollX }: Props) {
           >
             <Stop stopColor={color || "#8069D5"} />
             <Stop offset={0.576908} stopColor={color || "#AC91F8"} />
-            <Stop
-              offset={0.973958}
-              stopColor={color || "#BE9BFD"}
-              stopOpacity={0}
-            />
+            <Stop offset={0.973958} stopColor={color || "#BE9BFD"} stopOpacity={0} />
           </RadialGradient>
           <LinearGradient
             id="paint3_linear_9_2"
@@ -106,11 +92,7 @@ function WalletTabBackgroundGradient({ color, scrollX }: Props) {
             y2={454}
             gradientUnits="userSpaceOnUse"
           >
-            <Stop
-              offset={0.46223}
-              stopColor={colors.background.main}
-              stopOpacity={0.6}
-            />
+            <Stop offset={0.46223} stopColor={colors.background.main} stopOpacity={0.6} />
             <Stop offset={0.977251} stopColor={colors.background.main} />
           </LinearGradient>
         </Defs>

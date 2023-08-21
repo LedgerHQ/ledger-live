@@ -28,9 +28,7 @@ describe("solana/react", () => {
     it("should return validators", async () => {
       const { prepare, account } = setup();
       await prepare();
-      const { result } = renderHook(() =>
-        hooks.useValidators(account.currency)
-      );
+      const { result } = renderHook(() => hooks.useValidators(account.currency));
       const data = getCurrentSolanaPreloadData(account.currency);
 
       expect(result.current).toStrictEqual(data.validators);
@@ -39,14 +37,10 @@ describe("solana/react", () => {
     it("should return validators", async () => {
       const { prepare, account } = setup();
       await prepare();
-      const { result } = renderHook(() =>
-        hooks.useValidators(account.currency, "Ledger")
-      );
+      const { result } = renderHook(() => hooks.useValidators(account.currency, "Ledger"));
 
       expect(
-        result.current.some(
-          (validator) => validator.voteAccount === LEDGER_VALIDATOR_ADDRESS
-        )
+        result.current.some(validator => validator.voteAccount === LEDGER_VALIDATOR_ADDRESS),
       ).toBe(true);
     });
   });

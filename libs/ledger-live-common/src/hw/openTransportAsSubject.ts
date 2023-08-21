@@ -28,10 +28,10 @@ export default function openTransportAsSubject({
 }: OpenTransportAsSubjectRequest): Subject<BidirectionalEvent> {
   const subject = new Subject<BidirectionalEvent>();
 
-  withDevice(deviceId)((transport) => {
+  withDevice(deviceId)(transport => {
     // The input part of the bidirectional communication
     subject.subscribe({
-      next: (e) => {
+      next: e => {
         /**
          * Receiving an event from the ipc bridge allows us to pass a msg
          * into an ongoing withDevice job. Allowing to exchange messages with the
@@ -42,13 +42,13 @@ export default function openTransportAsSubject({
           // TODO important avoiding collisions, also types will be broken
           transport
             .exchange(Buffer.from(e.apduHex, "hex"))
-            .then((response) =>
+            .then(response =>
               subject.next({
                 type: "device-response",
                 data: response.toString("hex"),
-              })
+              }),
             )
-            .catch((error) => subject.next({ type: "error", error }));
+            .catch(error => subject.next({ type: "error", error }));
         }
       },
     });

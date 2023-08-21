@@ -57,29 +57,20 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
   });
   const { status } = bridgeTransaction;
   const transaction = bridgeTransaction.transaction as Transaction;
-  invariant(
-    transaction && transaction.sourceValidator,
-    "transaction src validator required",
-  );
+  invariant(transaction && transaction.sourceValidator, "transaction src validator required");
   const [searchQuery, setSearchQuery] = useState("");
   const validators = useLedgerFirstShuffledValidatorsCosmosFamily(
-    "cosmos",
+    mainAccount.currency.id,
     searchQuery,
   );
   const validatorSrc = useMemo(
     () =>
-      validators.find(
-        ({ validatorAddress }) =>
-          validatorAddress === transaction.sourceValidator,
-      ),
+      validators.find(({ validatorAddress }) => validatorAddress === transaction.sourceValidator),
     [validators, transaction.sourceValidator],
   );
   const srcDelegation = useMemo(
     () =>
-      delegations.find(
-        ({ validatorAddress }) =>
-          validatorAddress === transaction.sourceValidator,
-      ),
+      delegations.find(({ validatorAddress }) => validatorAddress === transaction.sourceValidator),
     [delegations, transaction.sourceValidator],
   );
   const max = srcDelegation?.amount;
@@ -88,12 +79,10 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
       validators
         .reduce(
           (data, validator) => {
-            if (validator.validatorAddress === transaction?.sourceValidator)
-              return data;
+            if (validator.validatorAddress === transaction?.sourceValidator) return data;
             if (
               delegations.some(
-                ({ validatorAddress }) =>
-                  validatorAddress === validator.validatorAddress,
+                ({ validatorAddress }) => validatorAddress === validator.validatorAddress,
               )
             )
               data[0].data.push(validator);
@@ -102,15 +91,11 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
           },
           [
             {
-              title: (
-                <Trans i18nKey="cosmos.redelegation.flow.steps.validator.myDelegations" />
-              ),
+              title: <Trans i18nKey="cosmos.redelegation.flow.steps.validator.myDelegations" />,
               data: [] as CosmosValidatorItem[],
             },
             {
-              title: (
-                <Trans i18nKey="cosmos.redelegation.flow.steps.validator.validators" />
-              ),
+              title: <Trans i18nKey="cosmos.redelegation.flow.steps.validator.validators" />,
               data: [] as CosmosValidatorItem[],
             },
           ],
@@ -159,17 +144,12 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
           </LText>
         </View>
       )}
-      <SelectValidatorSearchBox
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-      />
+      <SelectValidatorSearchBox searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
       <SectionList
         style={[styles.section]}
         sections={sections}
         // FIXME: an addition with an object?
-        keyExtractor={(item: CosmosValidatorItem, index: number) =>
-          item.toString() + index
-        }
+        keyExtractor={(item: CosmosValidatorItem, index: number) => item.toString() + index}
         renderItem={renderItem}
         renderSectionHeader={({ section: { title } }) => (
           <View style={[styles.header]}>

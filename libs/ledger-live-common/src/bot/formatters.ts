@@ -1,14 +1,10 @@
 import groupBy from "lodash/groupBy";
+import { formatError } from "@ledgerhq/coin-framework/bot/formatters";
 import { formatOperation, formatAccount } from "../account";
-import {
-  toSignedOperationRaw,
-  formatTransaction,
-  formatTransactionStatus,
-} from "../transaction";
+import { toSignedOperationRaw, formatTransaction, formatTransactionStatus } from "../transaction";
 import { formatCurrencyUnit } from "../currencies";
 import type { MutationReport, AppCandidate } from "./types";
 import type { Transaction } from "../generated/types";
-import { getContext } from "./bot-test-context";
 
 const formatTimeMinSec = (t: number) => {
   const totalsecs = Math.round(t / 1000);
@@ -17,6 +13,8 @@ const formatTimeMinSec = (t: number) => {
   if (!sec) return `${min}min`;
   return `${min}min ${sec}s`;
 };
+
+export { formatError };
 
 export const formatTime = (t: number): string =>
   !t
@@ -31,27 +29,6 @@ const formatDt = (from, to) => (from && to ? formatTime(to - from) : "?");
 
 export function formatAppCandidate(appCandidate: AppCandidate): string {
   return `${appCandidate.appName} ${appCandidate.appVersion} on ${appCandidate.model} ${appCandidate.firmware}`;
-}
-
-export function formatError(e: unknown, longform = false): string {
-  let out = "";
-  if (!e || typeof e !== "object") {
-    out = String(e);
-  } else if (e instanceof Error) {
-    const ctx = getContext(e);
-    if (ctx) out += `TEST ${ctx}\n`;
-    out += String(e);
-  } else {
-    try {
-      out = "raw object: " + JSON.stringify(e);
-    } catch (_e) {
-      out = String(e);
-    }
-  }
-  if (longform) {
-    return out.slice(0, 500);
-  }
-  return out.replace(/[`]/g, "").replace(/\n/g, " ").slice(0, 200);
 }
 
 export function formatReportForConsole<T extends Transaction>({
@@ -82,9 +59,7 @@ export function formatReportForConsole<T extends Transaction>({
   errorTime,
 }: MutationReport<T>): string {
   let str = "";
-  str += `necessary accounts resynced in ${formatTime(
-    resyncAccountsDuration
-  )}\n`;
+  str += `necessary accounts resynced in ${formatTime(resyncAccountsDuration)}\n`;
   str += `▬ ${formatAppCandidate(appCandidate)}\n`;
 
   if (account) {
@@ -129,45 +104,41 @@ export function formatReportForConsole<T extends Transaction>({
   }
 
   if (status && transaction && account) {
-    str += `STATUS (${formatDt(
-      mutationTime,
-      statusTime
-    )})${formatTransactionStatus(transaction, status, account)}\n`;
+    str += `STATUS (${formatDt(mutationTime, statusTime)})${formatTransactionStatus(
+      transaction,
+      status,
+      account,
+    )}\n`;
   }
 
   if (recoveredFromTransactionStatus && account) {
     str += `\n⚠️ recovered from transaction ${formatTransaction(
       recoveredFromTransactionStatus.transaction,
-      account
+      account,
     )}\nof status ${formatTransactionStatus(
       recoveredFromTransactionStatus.transaction,
       recoveredFromTransactionStatus.status,
-      account
+      account,
     )}\n\n`.replace(/\n/g, "\n  ");
   }
 
   if (signedOperation) {
     str += `✔️ has been signed! (${formatDt(statusTime, signedTime)}) ${
-      !optimisticOperation
-        ? JSON.stringify(toSignedOperationRaw(signedOperation))
-        : ""
+      !optimisticOperation ? JSON.stringify(toSignedOperationRaw(signedOperation)) : ""
     }\n`;
   }
 
   if (optimisticOperation) {
     str += `✔️ broadcasted! (${formatDt(
       signedTime,
-      broadcastedTime
-    )}) optimistic operation: ${formatOperation(account)(
-      optimisticOperation
-    )}\n`;
+      broadcastedTime,
+    )}) optimistic operation: ${formatOperation(account)(optimisticOperation)}\n`;
   }
 
   if (operation) {
-    str += `✔️ operation confirmed (${formatDt(
-      broadcastedTime,
-      confirmedTime
-    )}): ${formatOperation(finalAccount || account)(operation)}\n`;
+    str += `✔️ operation confirmed (${formatDt(broadcastedTime, confirmedTime)}): ${formatOperation(
+      finalAccount || account,
+    )(operation)}\n`;
   }
 
   if (finalAccount) {
@@ -180,7 +151,7 @@ export function formatReportForConsole<T extends Transaction>({
 
   if (finalDestination && finalDestinationOperation) {
     str += `✔️ destination operation ${formatOperation(finalDestination)(
-      finalDestinationOperation
+      finalDestinationOperation,
     )}\n`;
   }
 
@@ -192,7 +163,7 @@ export function formatReportForConsole<T extends Transaction>({
     str += `⚠️ ${formatError(error, true)}\n`;
     if (mutationTime && errorTime) {
       str += `(totally spent ${formatTime(
-        errorTime - mutationTime
+        errorTime - mutationTime,
       )} – ends at ${new Date().toISOString()})`;
     }
   }

@@ -32,12 +32,12 @@ export default {
 
 export const Overview = ((): JSX.Element => (
   <Flex flexDirection="column">
-    {sizes.map((size) => (
+    {sizes.map(size => (
       <Flex flexDirection="column" marginBottom={5}>
         <Text variant="h5" marginBottom={5}>
           size="{size}"
         </Text>
-        {types.map((type) => (
+        {types.map(type => (
           <Flex flexDirection="row" alignItems="center" mb={5}>
             <div style={{ width: "150px" }}>
               <Text variant="small" color="neutral.c70">
@@ -45,7 +45,7 @@ export const Overview = ((): JSX.Element => (
               </Text>
             </div>
             <Flex flexDirection="row" mt="5px" columnGap="16px">
-              {states.map((state) =>
+              {states.map(state =>
                 [true, false].map((active: boolean) => (
                   <Tag size={size} type={type} active={active} {...state}>
                     {active ? "Active" : "Inactive"}

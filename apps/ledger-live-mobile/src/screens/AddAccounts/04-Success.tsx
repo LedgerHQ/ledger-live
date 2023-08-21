@@ -4,7 +4,7 @@ import { StyleSheet, View } from "react-native";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/color";
-import { Icons } from "@ledgerhq/native-ui";
+import { IconsLegacy } from "@ledgerhq/native-ui";
 import { ScreenName, NavigatorName } from "../../const";
 import { rgba } from "../../colors";
 import { TrackScreen } from "../../analytics";
@@ -17,10 +17,7 @@ import type { AddAccountsNavigatorParamList } from "../../components/RootNavigat
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 
 type Props = CompositeScreenProps<
-  StackNavigatorProps<
-    AddAccountsNavigatorParamList,
-    ScreenName.AddAccountsSuccess
-  >,
+  StackNavigatorProps<AddAccountsNavigatorParamList, ScreenName.AddAccountsSuccess>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
 
@@ -48,17 +45,14 @@ export default function AddAccountsSuccess({ navigation, route }: Props) {
         },
       ]}
     >
-      <TrackScreen
-        category="AddAccounts"
-        name="Success"
-        currencyName={currency?.name}
-      />
+      <TrackScreen category="AddAccounts" name="Success" currencyName={currency?.name} />
       {currency ? <CurrencySuccess currency={currency} /> : null}
       <LText secondary semiBold style={styles.title}>
         <Trans i18nKey="addAccounts.imported" />
       </LText>
       <View style={styles.buttonsContainer}>
         <Button
+          testID="add-accounts-success-cta"
           event="AddAccountsDone"
           containerStyle={styles.button}
           type="primary"
@@ -69,7 +63,7 @@ export default function AddAccountsSuccess({ navigation, route }: Props) {
         <Button
           event="AddAccountsAgain"
           onPress={secondaryCTA}
-          IconLeft={Icons.WalletAddMedium}
+          IconLeft={IconsLegacy.WalletAddMedium}
           type="lightSecondary"
           title={<Trans i18nKey="addAccounts.success.secondaryCTA" />}
         />

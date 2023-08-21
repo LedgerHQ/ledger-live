@@ -1,7 +1,7 @@
 import React from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { BaseTextProps } from "@ledgerhq/native-ui/components/Text";
-import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
+import { BaseTextProps } from "@ledgerhq/native-ui/components/Text/index";
+import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex/index";
 import Touchable from "../../components/Touchable";
 
 const DiscoverCard = ({
@@ -40,7 +40,7 @@ const DiscoverCard = ({
       alignItems={"center"}
       bg="neutral.c30"
       borderRadius={8}
-      mb={8}
+      mb={6}
       mx={6}
       overflow="hidden"
       minHeight={130}
@@ -56,14 +56,10 @@ const DiscoverCard = ({
         alignItems="flex-start"
         flexDirection={subtitleFirst ? "column-reverse" : "column"}
       >
-        <Flex
-          flexDirection="row"
-          alignItems="center"
-          mb={subtitleFirst ? 0 : 6}
-        >
+        <Flex flexDirection="row" alignItems="center" mb={subtitleFirst ? 0 : 3}>
           <Text
             mt={2}
-            variant={"h2"}
+            variant={"h5"}
             fontWeight={"semiBold"}
             color={"neutral.c100"}
             {...titleProps}
@@ -74,9 +70,9 @@ const DiscoverCard = ({
         {subTitle && (
           <Text
             mb={subtitleFirst ? 2 : 0}
-            variant={"body"}
+            variant={"bodyLineHeight"}
             fontWeight={"medium"}
-            color={"neutral.c70"}
+            color={"neutral.c80"}
             {...subTitleProps}
           >
             {subTitle}

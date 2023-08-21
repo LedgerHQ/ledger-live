@@ -5,7 +5,7 @@ import { LedgerEthTransactionResolution } from "./services/types";
 export function splitPath(path: string): number[] {
   const result: number[] = [];
   const components = path.split("/");
-  components.forEach((element) => {
+  components.forEach(element => {
     let number = parseInt(element, 10);
     if (isNaN(number)) {
       return; // FIXME shouldn't it throws instead?
@@ -22,9 +22,7 @@ export function hexBuffer(str: string): Buffer {
   return Buffer.from(str.startsWith("0x") ? str.slice(2) : str, "hex");
 }
 
-export function maybeHexBuffer(
-  str: string | null | undefined
-): Buffer | null | undefined {
+export function maybeHexBuffer(str: string | null | undefined): Buffer | null | undefined {
   if (!str) return null;
   return hexBuffer(str);
 }
@@ -33,7 +31,7 @@ export const decodeTxInfo = (rawTx: Buffer) => {
   const VALID_TYPES = [1, 2];
   const txType = VALID_TYPES.includes(rawTx[0]) ? rawTx[0] : null;
   const rlpData = txType === null ? rawTx : rawTx.slice(1);
-  const rlpTx = decode(rlpData).map((hex) => Buffer.from(hex.slice(2), "hex"));
+  const rlpTx = decode(rlpData).map(hex => Buffer.from(hex.slice(2), "hex"));
   let chainIdTruncated = 0;
   const rlpDecoded = decode(rlpData);
 
@@ -151,23 +149,21 @@ export const nftSelectors = [
 ];
 
 export const mergeResolutions = (
-  oldResolution: Partial<LedgerEthTransactionResolution>,
-  newResolution: Partial<LedgerEthTransactionResolution>
+  resolutionsArray: Partial<LedgerEthTransactionResolution>[],
 ): LedgerEthTransactionResolution => {
-  const resolutions: LedgerEthTransactionResolution = {
+  const mergedResolutions: LedgerEthTransactionResolution = {
     nfts: [],
     erc20Tokens: [],
     externalPlugin: [],
     plugin: [],
+    domains: [],
   };
 
-  for (const key in oldResolution) {
-    resolutions[key].push(...oldResolution[key]);
+  for (const resolutions of resolutionsArray) {
+    for (const key in resolutions) {
+      mergedResolutions[key].push(...resolutions[key]);
+    }
   }
 
-  for (const key in newResolution) {
-    resolutions[key].push(...newResolution[key]);
-  }
-
-  return resolutions;
+  return mergedResolutions;
 };

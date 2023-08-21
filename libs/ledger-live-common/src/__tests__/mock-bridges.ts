@@ -8,8 +8,10 @@ import { setEnv } from "../env";
 import { getCryptoCurrencyById } from "../currencies";
 import { toAccountRaw, flattenAccounts } from "../account";
 import type { Account } from "@ledgerhq/types-live";
+import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 jest.setTimeout(120000);
-const mockedCoins = [
+
+const mockedCoins: CryptoCurrencyId[] = [
   "bitcoin",
   "zcash",
   "ethereum",
@@ -19,7 +21,8 @@ const mockedCoins = [
   "stellar",
   "cosmos",
 ];
-mockedCoins.map(getCryptoCurrencyById).forEach((currency) => {
+
+mockedCoins.map(getCryptoCurrencyById).forEach(currency => {
   describe("mock " + currency.id, () => {
     setEnv("MOCK", true);
     const bridge = getCurrencyBridge(currency);
@@ -34,19 +37,19 @@ mockedCoins.map(getCryptoCurrencyById).forEach((currency) => {
           },
         })
         .pipe(
-          filter((e) => e.type === "discovered"),
-          map((e) => e.account),
-          reduce((all, a) => all.concat(a), <Account[]>[])
+          filter(e => e.type === "discovered"),
+          map(e => e.account),
+          reduce((all, a) => all.concat(a), <Account[]>[]),
         )
         .toPromise();
       expect(accounts.length).toBeGreaterThan(0);
-      const allOps = flatMap(flattenAccounts(accounts), (a) => a.operations);
+      const allOps = flatMap(flattenAccounts(accounts), a => a.operations);
       const operationIdCollisions = toPairs(groupBy(allOps, "id"))
         .filter(([_, coll]) => coll.length > 1)
         .map(([id]) => id);
       expect(operationIdCollisions).toEqual([]);
       const [first, second] = await Promise.all(
-        accounts.map(async (a) => {
+        accounts.map(async a => {
           const bridge = getAccountBridge(a, null);
           const synced = await bridge
             .sync(a, {
@@ -59,7 +62,7 @@ mockedCoins.map(getCryptoCurrencyById).forEach((currency) => {
           delete m.blockHeight;
           expect(toAccountRaw(synced)).toMatchObject(m);
           return synced;
-        })
+        }),
       );
 
       if (first && second) {
@@ -84,8 +87,8 @@ mockedCoins.map(getCryptoCurrencyById).forEach((currency) => {
             deviceId: "",
           })
           .pipe(
-            filter((e) => e.type === "signed"),
-            map((e: any) => e.signedOperation)
+            filter(e => e.type === "signed"),
+            map((e: any) => e.signedOperation),
           )
           .toPromise();
         expect(signedOperation.operation).toBeDefined();
@@ -100,9 +103,7 @@ mockedCoins.map(getCryptoCurrencyById).forEach((currency) => {
           })
           .pipe(reduce((a, f) => f(a), first))
           .toPromise();
-        expect(firstResynced.operations.length).toBeGreaterThan(
-          first.operations.length
-        );
+        expect(firstResynced.operations.length).toBeGreaterThan(first.operations.length);
       }
     });
   });

@@ -2,12 +2,11 @@ import React, { useEffect, useMemo } from "react";
 
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Language } from "@ledgerhq/types-live";
-import { createAction } from "@ledgerhq/live-common/hw/actions/installLanguage";
-import installLanguage from "@ledgerhq/live-common/hw/installLanguage";
 import { useTranslation } from "react-i18next";
 import { Flex, Alert } from "@ledgerhq/native-ui";
 import DeviceAction from "./DeviceAction";
 import DeviceLanguageInstalled from "./DeviceLanguageInstalled";
+import { useInstallLanguageDeviceAction } from "../hooks/deviceActions";
 
 type Props = {
   device: Device;
@@ -16,6 +15,13 @@ type Props = {
   onStart?: () => void;
   onResult?: () => void;
   onError?: (err: Error) => void;
+  /*
+   * Defines in what type of component this action will be rendered.
+   *
+   * If "drawer", the component will be rendered as a content to be rendered in a drawer.
+   * If "view", the component will be rendered as a view. Defaults to "view".
+   */
+  renderedInType?: "drawer" | "view";
 };
 
 const ChangeDeviceLanguageAction: React.FC<Props> = ({
@@ -25,20 +31,12 @@ const ChangeDeviceLanguageAction: React.FC<Props> = ({
   onContinue,
   onResult,
   onError,
+  renderedInType,
 }) => {
+  const action = useInstallLanguageDeviceAction();
   const showAlert = !device?.wired;
   const { t } = useTranslation();
-
-  const action = useMemo(
-    () =>
-      createAction(() =>
-        installLanguage({
-          deviceId: device?.deviceId ?? "",
-          language,
-        }),
-      ),
-    [language, device?.deviceId],
-  );
+  const request = useMemo(() => ({ language }), [language]);
 
   useEffect(() => {
     if (onStart && device) {
@@ -51,8 +49,7 @@ const ChangeDeviceLanguageAction: React.FC<Props> = ({
       <Flex flexDirection="row" mb={showAlert ? "16px" : 0}>
         <DeviceAction
           action={action}
-          // FIXME: request should be a Language in theory :/
-          request={undefined}
+          request={request}
           device={device}
           onError={onError}
           renderOnResult={() => (
@@ -62,11 +59,10 @@ const ChangeDeviceLanguageAction: React.FC<Props> = ({
               installedLanguage={language}
             />
           )}
+          renderedInType={renderedInType}
         />
       </Flex>
-      {showAlert && (
-        <Alert type="info" title={t("DeviceAction.stayInTheAppPlz")} />
-      )}
+      {showAlert && <Alert type="info" title={t("DeviceAction.stayInTheAppPlz")} />}
     </>
   );
 };

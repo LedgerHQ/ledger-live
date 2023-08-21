@@ -6,9 +6,10 @@ interface RowProps {
   title: string;
   children: React.ReactNode;
   onEdit?: () => void;
+  testID?: string;
 }
 
-export function Item({ title, children, onEdit }: RowProps) {
+export function Item({ title, children, onEdit, testID }: RowProps) {
   return (
     <Flex flexDirection="row" justifyContent="space-between" paddingY={4}>
       <Text color="neutral.c70">{title}</Text>
@@ -17,14 +18,8 @@ export function Item({ title, children, onEdit }: RowProps) {
         {children}
 
         {onEdit && (
-          <TouchableOpacity onPress={onEdit}>
-            <Flex
-              marginLeft={2}
-              width={20}
-              height={20}
-              alignItems="center"
-              justifyContent="center"
-            >
+          <TouchableOpacity onPress={onEdit} testID={testID}>
+            <Flex marginLeft={2} width={20} height={20} alignItems="center" justifyContent="center">
               <Icon name="Pen" color="primary.c70" />
             </Flex>
           </TouchableOpacity>

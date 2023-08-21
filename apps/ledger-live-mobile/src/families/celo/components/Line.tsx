@@ -1,9 +1,7 @@
 import React, { ReactNode, memo } from "react";
 import { StyleSheet, View } from "react-native";
 
-const Line = ({ children }: { children: ReactNode }) => (
-  <View style={styles.line}>{children}</View>
-);
+const Line = ({ children }: { children: ReactNode }) => <View style={styles.line}>{children}</View>;
 
 const styles = StyleSheet.create({
   line: {

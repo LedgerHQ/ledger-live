@@ -6,8 +6,9 @@ import zipWith from "lodash/zipWith";
 import { BigNumber } from "bignumber.js";
 import { Transaction as CosmosTransaction } from "./types";
 import type { CosmosDelegationInfo } from "./types";
-import cosmosValidatorsManager from "./validators";
 import { AccountLike } from "@ledgerhq/types-live";
+import { getCryptoCurrencyById } from "../../currencies";
+import { CosmosValidatorsManager } from "./CosmosValidatorsManager";
 
 const options = [
   {
@@ -55,14 +56,12 @@ function inferTransactions(
     transaction: CosmosTransaction;
   }>,
   opts: Record<string, any>,
-  { inferAmount }: any
+  { inferAmount }: any,
 ): CosmosTransaction[] {
   return flatMap(transactions, ({ transaction, account }) => {
     invariant(transaction.family === "cosmos", "cosmos family");
     const validatorsAddresses: string[] = opts["cosmosValidator"] || [];
-    const validatorsAmounts: BigNumber[] = (
-      opts["cosmosAmountValidator"] || []
-    ).map((value) => {
+    const validatorsAmounts: BigNumber[] = (opts["cosmosAmountValidator"] || []).map(value => {
       return inferAmount(account, value);
     });
     const validators: CosmosDelegationInfo[] = zipWith(
@@ -71,7 +70,7 @@ function inferTransactions(
       (address, amount) => ({
         address,
         amount: amount || new BigNumber(0),
-      })
+      }),
     );
     return {
       ...transaction,
@@ -87,15 +86,16 @@ function inferTransactions(
 }
 
 const cosmosValidatorsFormatters = {
-  json: (list) => JSON.stringify(list),
-  default: (list) =>
+  json: list => JSON.stringify(list),
+  default: list =>
     list
       .map(
-        (v) =>
-          `${v.validatorAddress} "${v.name}" ${v.votingPower} ${v.commission} ${v.estimatedYearlyRewardsRate}`
+        v =>
+          `${v.validatorAddress} "${v.name}" ${v.votingPower} ${v.commission} ${v.estimatedYearlyRewardsRate}`,
       )
       .join("\n"),
 };
+const cosmosValidatorsManager = new CosmosValidatorsManager(getCryptoCurrencyById("cosmos"));
 const cosmosValidators = {
   args: [
     {
@@ -110,12 +110,11 @@ const cosmosValidators = {
     format: string;
   }>): Observable<string> =>
     from(cosmosValidatorsManager.getValidators()).pipe(
-      map((validators) => {
+      map(validators => {
         const f =
-          (format && cosmosValidatorsFormatters[format]) ||
-          cosmosValidatorsFormatters.default;
+          (format && cosmosValidatorsFormatters[format]) || cosmosValidatorsFormatters.default;
         return f(validators);
-      })
+      }),
     ),
 };
 export default {

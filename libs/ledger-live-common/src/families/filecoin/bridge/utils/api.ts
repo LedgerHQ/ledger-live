@@ -1,6 +1,9 @@
 import { log } from "@ledgerhq/logs";
 import { AxiosRequestConfig, AxiosResponse } from "axios";
 
+import network from "@ledgerhq/live-network/network";
+import { makeLRUCache } from "@ledgerhq/live-network/cache";
+import { getEnv } from "../../../../env";
 import {
   BalanceResponse,
   BroadcastTransactionRequest,
@@ -11,8 +14,6 @@ import {
   TransactionResponse,
   TransactionsResponse,
 } from "./types";
-import network from "../../../../network";
-import { getEnv } from "../../../../env";
 
 const getFilecoinURL = (path?: string): string => {
   const baseUrl = getEnv("API_FILECOIN_ENDPOINT");
@@ -62,33 +63,30 @@ export const fetchBalances = async (addr: string): Promise<BalanceResponse> => {
   return data; // TODO Validate if the response fits this interface
 };
 
-export const fetchEstimatedFees = async (
-  request: EstimatedFeesRequest
-): Promise<EstimatedFeesResponse> => {
-  const data = await send<EstimatedFeesResponse>(`/fees/estimate`, request);
-  return data; // TODO Validate if the response fits this interface
-};
+export const fetchEstimatedFees = makeLRUCache(
+  async (request: EstimatedFeesRequest): Promise<EstimatedFeesResponse> => {
+    const data = await send<EstimatedFeesResponse>(`/fees/estimate`, request);
+    return data; // TODO Validate if the response fits this interface
+  },
+  request => `${request.from}-${request.to}`,
+  {
+    ttl: 5 * 1000, // 5 seconds
+  },
+);
 
 export const fetchBlockHeight = async (): Promise<NetworkStatusResponse> => {
   const data = await fetch<NetworkStatusResponse>("/network/status");
   return data as NetworkStatusResponse; // TODO Validate if the response fits this interface
 };
 
-export const fetchTxs = async (
-  addr: string
-): Promise<TransactionResponse[]> => {
-  const response = await fetch<TransactionsResponse>(
-    `/addresses/${addr}/transactions`
-  );
+export const fetchTxs = async (addr: string): Promise<TransactionResponse[]> => {
+  const response = await fetch<TransactionsResponse>(`/addresses/${addr}/transactions`);
   return response.txs; // TODO Validate if the response fits this interface
 };
 
 export const broadcastTx = async (
-  message: BroadcastTransactionRequest
+  message: BroadcastTransactionRequest,
 ): Promise<BroadcastTransactionResponse> => {
-  const response = await send<BroadcastTransactionResponse>(
-    `/transaction/broadcast`,
-    message
-  );
+  const response = await send<BroadcastTransactionResponse>(`/transaction/broadcast`, message);
   return response; // TODO Validate if the response fits this interface
 };

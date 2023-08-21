@@ -17,12 +17,14 @@ public class NativeModulesPackage implements ReactPackage {
         return Collections.emptyList();
     }
 
+    // Returns a list of native modules to be registered by React Native.
     @Override
     public List<NativeModule> createNativeModules(
             ReactApplicationContext reactContext) {
         List<NativeModule> modules = new ArrayList<>();
         modules.add(new BluetoothHelperModule(reactContext));
         modules.add(new ImagePickerModule(reactContext));
+        modules.add(new LocationHelperModule(reactContext));
         return modules;
     }
 

@@ -1,11 +1,12 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { BottomDrawer, Text } from "@ledgerhq/native-ui";
+import { Text } from "@ledgerhq/native-ui";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { NavigatorName } from "../../const";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 
+import QueuedDrawer from "../../components/QueuedDrawer";
 import { track, TrackScreen } from "../../analytics";
 import AddAccountsModalCard from "./AddAccountsModalCard";
 import { BaseNavigation } from "../../components/RootNavigator/types/helpers";
@@ -22,12 +23,7 @@ type Props = {
   currency?: CryptoCurrency | TokenCurrency | null;
 };
 
-export default function AddAccountsModal({
-  navigation,
-  onClose,
-  isOpened,
-  currency,
-}: Props) {
+export default function AddAccountsModal({ navigation, onClose, isOpened, currency }: Props) {
   const { t } = useTranslation();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
 
@@ -67,18 +63,12 @@ export default function AddAccountsModal({
   }, [onClose]);
 
   return (
-    <BottomDrawer isOpen={isOpened} onClose={onPressClose}>
+    <QueuedDrawer isRequestingToBeOpened={isOpened} onClose={onPressClose}>
       <TrackScreen category="Add/Import accounts" type="drawer" />
       <Text variant="h4" fontWeight="semiBold" fontSize="24px" mb={2}>
         {t("addAccountsModal.title")}
       </Text>
-      <Text
-        variant="large"
-        fontWeight="medium"
-        fontSize="14px"
-        color="neutral.c70"
-        mb="32px"
-      >
+      <Text variant="large" fontWeight="medium" fontSize="14px" color="neutral.c70" mb="32px">
         {t("addAccountsModal.description")}
       </Text>
 
@@ -89,6 +79,7 @@ export default function AddAccountsModal({
           onPress={onClickAdd}
           imageSource={setupLedgerImg}
           hasMarginBottom
+          testID="add-accounts-modal-add-button"
         />
       )}
 
@@ -98,6 +89,6 @@ export default function AddAccountsModal({
         onPress={onClickImport}
         imageSource={syncCryptoImg}
       />
-    </BottomDrawer>
+    </QueuedDrawer>
   );
 }

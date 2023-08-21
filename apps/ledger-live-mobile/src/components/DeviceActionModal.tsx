@@ -5,7 +5,7 @@ import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components/native";
 import { PartialNullable } from "../types/helpers";
-import BottomModal from "./BottomModal";
+import QueuedDrawer from "./QueuedDrawer";
 import DeviceAction from "./DeviceAction";
 
 const DeviceActionContainer = styled(Flex).attrs({
@@ -45,7 +45,6 @@ export default function DeviceActionModal<Req, Stt, Res>({
     if (onModalHide) onModalHide();
     if (onResult && result) {
       onResult(result);
-      setResult(null);
     }
   }, [onModalHide, onResult, result]);
 
@@ -56,8 +55,8 @@ export default function DeviceActionModal<Req, Stt, Res>({
   }, [onClose, result]);
 
   return (
-    <BottomModal
-      isOpened={result ? false : !!device}
+    <QueuedDrawer
+      isRequestingToBeOpened={result ? false : !!device}
       onClose={handleClose}
       onModalHide={handleModalHide}
     >
@@ -67,9 +66,7 @@ export default function DeviceActionModal<Req, Stt, Res>({
             <Flex alignItems="center">
               <DeviceActionContainer marginBottom={showAlert ? "16px" : 0}>
                 <DeviceAction
-                  action={
-                    action as unknown as Action<Req, PartialNullable<Stt>, Res>
-                  }
+                  action={action as unknown as Action<Req, PartialNullable<Stt>, Res>}
                   device={device}
                   onError={onError}
                   request={request!}
@@ -79,12 +76,10 @@ export default function DeviceActionModal<Req, Stt, Res>({
                   analyticsPropertyFlow={analyticsPropertyFlow}
                 />
               </DeviceActionContainer>
-              {showAlert && (
-                <Alert type="info" title={t("DeviceAction.stayInTheAppPlz")} />
-              )}
+              {showAlert && <Alert type="info" title={t("DeviceAction.stayInTheAppPlz")} />}
             </Flex>
           )}
       {device && <SyncSkipUnderPriority priority={100} />}
-    </BottomModal>
+    </QueuedDrawer>
   );
 }

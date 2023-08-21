@@ -1,8 +1,6 @@
 #!/usr/bin/env node
-// @flow
 const SentryCli = require("@sentry/cli");
 const yargs = require("yargs");
-const execa = require("execa");
 const Listr = require("listr");
 const verboseRenderer = require("listr-verbose-renderer");
 const path = require("path");
@@ -13,6 +11,8 @@ const healthChecksTasks = require("./health-checks");
 
 require("dotenv").config();
 
+let execa;
+
 const releaseSentryDSN =
   "https://5729b6ee405f416a8998ae4d43c87d58@o118392.ingest.sentry.io/6488660";
 const prereleaseSentryDSN =
@@ -22,22 +22,22 @@ const rootFolder = "../../";
 let verbose = false;
 
 const exec = async (file, args, options = {}) => {
+  if (!execa) {
+    await import("execa").then(mod => {
+      execa = mod.execa;
+    });
+  }
   const opts = verbose ? { stdio: "inherit", ...options } : options;
 
   return execa(file, args, opts);
 };
 
-const rmDir = dir =>
-  new Promise((resolve, reject) => {
-    const fullPath = path.resolve(__dirname, rootFolder, dir);
+const rmDir = dir => {
+  const fullPath = path.resolve(__dirname, rootFolder, dir);
+  return rimraf(fullPath);
+};
 
-    rimraf(fullPath, error => {
-      if (error) return reject(error);
-      resolve();
-    });
-  });
-
-const cleaningTasks = args => [
+const cleaningTasks = _args => [
   {
     title: "Remove `node_modules/.cache` folder",
     task: () => rmDir("node_modules/.cache"),
@@ -258,7 +258,9 @@ yargs
   .command(
     "check",
     "Run health checks",
-    () => {},
+    () => {
+      // ignore
+    },
     args => runTasks(healthChecksTasks, args),
   )
   .command(

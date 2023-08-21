@@ -1,5 +1,5 @@
 import React, { useCallback, useRef, useState } from "react";
-import { Box, Flex, Icons, InfiniteLoader, Text } from "@ledgerhq/native-ui";
+import { Box, Flex, IconsLegacy, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { CropView } from "react-native-image-crop-tools";
 import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -9,22 +9,25 @@ import ImageCropper, {
 } from "../../components/CustomImage/ImageCropper";
 import { ImageDimensions } from "../../components/CustomImage/types";
 import { targetDisplayDimensions } from "./shared";
-import Button from "../../components/Button";
+import Button from "../../components/wrappedUi/Button";
 import { ScreenName } from "../../const";
 import BottomContainer from "../../components/CustomImage/BottomButtonsContainer";
 import Touchable from "../../components/Touchable";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
+import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { CustomImageNavigatorParamList } from "../../components/RootNavigator/types/CustomImageNavigator";
+import { TrackScreen } from "../../analytics";
 
 type NavigationProps = BaseComposite<
-  StackNavigatorProps<
-    CustomImageNavigatorParamList,
-    ScreenName.CustomImageStep1Crop
-  >
+  StackNavigatorProps<CustomImageNavigatorParamList, ScreenName.CustomImageStep1Crop>
 >;
+
+const analyticsScreenName = "Crop or rotate picture";
+const analyticsRotateEventProps = {
+  button: "Rotate",
+};
+const analyticsConfirmProps = {
+  button: "Confirm crop",
+};
 
 /**
  * UI component that loads the input image (from the route params) &
@@ -72,8 +75,7 @@ const Step1Cropping = ({ navigation, route }: NavigationProps) => {
     }
   }, [cropperRef, rotated, setRotated]);
 
-  const [containerDimensions, setContainerDimensions] =
-    useState<ImageDimensions | null>(null);
+  const [containerDimensions, setContainerDimensions] = useState<ImageDimensions | null>(null);
   const onContainerLayout = useCallback(({ nativeEvent: { layout } }) => {
     setContainerDimensions({ height: layout.height, width: layout.width });
   }, []);
@@ -92,6 +94,7 @@ const Step1Cropping = ({ navigation, route }: NavigationProps) => {
        */
       paddingBottom={bottom}
     >
+      <TrackScreen category={analyticsScreenName} />
       <Flex
         flex={1}
         onLayout={baseImageFile ? onContainerLayout : undefined}
@@ -124,7 +127,11 @@ const Step1Cropping = ({ navigation, route }: NavigationProps) => {
       {baseImageFile ? (
         <BottomContainer>
           <Box mb={7} alignSelf="center">
-            <Touchable onPress={handlePressRotateLeft}>
+            <Touchable
+              onPress={handlePressRotateLeft}
+              event="button_clicked"
+              eventProperties={analyticsRotateEventProps}
+            >
               <Flex
                 py={4}
                 px={6}
@@ -137,7 +144,7 @@ const Step1Cropping = ({ navigation, route }: NavigationProps) => {
                 <Text variant="paragraph" fontWeight="semiBold" mr={2} ml={2}>
                   {t("customImage.rotateImage")}
                 </Text>
-                <Icons.ReverseMedium size={16} />
+                <IconsLegacy.ReverseMedium size={16} />
               </Flex>
             </Touchable>
           </Box>
@@ -148,6 +155,8 @@ const Step1Cropping = ({ navigation, route }: NavigationProps) => {
               size="large"
               onPress={handlePressNext}
               outline={false}
+              event="button_clicked"
+              eventProperties={analyticsConfirmProps}
             >
               {t("customImage.confirmCrop")}
             </Button>

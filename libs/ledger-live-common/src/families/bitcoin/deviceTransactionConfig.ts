@@ -3,7 +3,7 @@ import type { DeviceTransactionField } from "../../transaction";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 
 function getDeviceTransactionConfig({
-  status: { amount, estimatedFees },
+  status: { amount, estimatedFees, opReturnData },
 }: {
   account: AccountLike;
   parentAccount: Account | null | undefined;
@@ -23,6 +23,13 @@ function getDeviceTransactionConfig({
     fields.push({
       type: "fees",
       label: "Fees",
+    });
+  }
+
+  if (opReturnData) {
+    fields.push({
+      type: "opReturnData",
+      label: "OP_RETURN",
     });
   }
 

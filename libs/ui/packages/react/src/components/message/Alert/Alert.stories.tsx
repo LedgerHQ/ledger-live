@@ -1,15 +1,15 @@
 import React from "react";
 import Alert, { AlertProps } from "./index";
 import Link from "../../cta/Link";
-import Text from "../../asorted/Text";
 import Button from "../../cta/Button";
-import { Icons } from "../../../../src/assets";
+import { IconsLegacy } from "../../../../src/assets";
+
 export default {
   title: "Messages/Alerts",
   component: Alert,
   argTypes: {
     type: {
-      options: ["info", "warning", "error"],
+      options: ["info", "secondary", "success", "warning", "error"],
       control: {
         type: "radio",
       },
@@ -38,20 +38,19 @@ export const WithContent = (args: AlertProps) => {
     <Alert
       {...args}
       containerProps={{ pr: 7 }}
-      renderContent={({ color, textProps }) => (
+      renderContent={({ textProps }) => (
         <>
-          <Text color="inherit" {...textProps}>
+          <Alert.BodyText>
             Your xpub is privacy-sensitive data. Use with caution, especially when disclosing to
             third parties.
-          </Text>
+          </Alert.BodyText>
           <Link
-            color={color}
             textProps={textProps}
             alwaysUnderline
-            size={"small" as any}
-            Icon={Icons.ExternalLinkMedium}
+            size={"small" as "small" | "medium" | "large"}
+            Icon={IconsLegacy.ExternalLinkMedium}
           >
-            And a learn more link
+            <Alert.UnderlinedText>Learn more</Alert.UnderlinedText>
           </Link>
         </>
       )}

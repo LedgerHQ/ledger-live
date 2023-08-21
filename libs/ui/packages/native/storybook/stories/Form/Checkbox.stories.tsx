@@ -1,10 +1,12 @@
 import React, { useState } from "react";
-import { storiesOf } from "../storiesOf";
-import { boolean, text } from "@storybook/addon-knobs";
-
 import Checkbox from "../../../src/components/Form/Checkbox";
 
-const CheckboxStory = () => {
+export default {
+  title: "Form/Checkbox",
+  component: Checkbox,
+};
+
+export const CheckboxStory = (args: typeof CheckboxStoryArgs) => {
   const [checked, setChecked] = useState(false);
 
   const handleChange = () => setChecked((prev) => !prev);
@@ -13,10 +15,14 @@ const CheckboxStory = () => {
     <Checkbox
       checked={checked}
       onChange={handleChange}
-      disabled={boolean("disabled", false)}
-      label={text("label", "Label")}
+      disabled={args.disabled}
+      label={args.label}
     />
   );
 };
-
-storiesOf((story) => story("Form", module).add("Checkbox", CheckboxStory));
+CheckboxStory.storyName = "Checkbox";
+const CheckboxStoryArgs = {
+  disabled: false,
+  label: "Label",
+};
+CheckboxStory.args = CheckboxStoryArgs;

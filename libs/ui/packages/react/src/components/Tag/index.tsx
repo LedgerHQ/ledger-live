@@ -8,6 +8,7 @@ export type Size = "large" | "medium" | "small";
 export type Type = "plain" | "opacity" | "outlined" | "outlinedOpacity";
 
 export type TagProps = BaseStyledProps &
+  React.HTMLAttributes<HTMLDivElement> &
   BorderProps &
   React.PropsWithChildren<{
     /**
@@ -84,7 +85,6 @@ function getTextProps({ size }: TagProps): {
       return {
         variant: "tiny",
         fontWeight: "semiBold",
-        uppercase: true,
       };
     case "large":
     default:
@@ -95,7 +95,7 @@ function getTextProps({ size }: TagProps): {
   }
 }
 
-const TagContainer = baseStyled.div.attrs<TagProps, TagProps>((props) => ({
+const TagContainer = baseStyled.div.attrs<TagProps, TagProps>(props => ({
   backgroundColor: props.bg || props.backgroundColor || getBgColor(props),
   color: props.color || getColor(props),
   borderColor: getBorderColor(props),
@@ -103,8 +103,8 @@ const TagContainer = baseStyled.div.attrs<TagProps, TagProps>((props) => ({
   display: inline-flex;
   justify-content: center;
   border: 1px solid transparent;
-  border-radius: ${(p) => `${p.theme.radii[1]}px`};
-  padding: ${(p) => getPadding(p)};
+  border-radius: ${p => `${p.theme.radii[1]}px`};
+  padding: ${p => getPadding(p)};
   ${border}
 `;
 

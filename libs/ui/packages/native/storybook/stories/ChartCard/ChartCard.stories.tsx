@@ -1,11 +1,14 @@
 import React, { useCallback, useState } from "react";
-import { storiesOf } from "../storiesOf";
-import { color, number, boolean } from "@storybook/addon-knobs";
 import { useTheme } from "styled-components/native";
 
 import ChartCard from "../../../src/components/ChartCard";
 import Flex from "../../../src/components/Layout/Flex";
 import type { Item } from "../../../src/components/chart/types";
+
+export default {
+  title: "ChartCard",
+  component: ChartCard,
+};
 
 function getRandomChartDate() {
   const fromTime = new Date("2020-09-01T01:57:45.271Z");
@@ -33,7 +36,7 @@ const ranges = [
   { label: "24H", value: "24h" },
 ];
 
-const ChartCardDefault = (): JSX.Element => {
+export const ChartCardDefault = (args: typeof ChartCardDefaultArgs): JSX.Element => {
   const theme = useTheme();
 
   const [rangeRequest, setRangeRequest] = useState("24h");
@@ -56,14 +59,24 @@ const ChartCardDefault = (): JSX.Element => {
         range={rangeRequest}
         ranges={ranges}
         refreshChart={refreshChart}
-        isLoading={boolean("isLoading", false)}
-        currencyColor={color("currencyColor", theme.colors.primary.c100)}
-        margin={number("margin", 0)}
+        isLoading={args.isLoading}
+        currencyColor={args.currencyColor ?? theme.colors.primary.c100}
+        margin={args.margin}
         yAxisFormatter={(v) => v.toString()}
         valueFormatter={(v) => v.toString()}
       />
     </Flex>
   );
 };
-
-storiesOf((story) => story("ChartCard", module).add("Default", () => <ChartCardDefault />));
+ChartCardDefault.storyName = "ChartCard";
+const ChartCardDefaultArgs = {
+  isLoading: false,
+  currencyColor: undefined,
+  margin: 0,
+};
+ChartCardDefault.args = ChartCardDefaultArgs;
+ChartCardDefault.argTypes = {
+  currencyColor: {
+    control: { type: "color" },
+  },
+};

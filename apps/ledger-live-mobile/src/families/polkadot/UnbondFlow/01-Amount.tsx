@@ -15,10 +15,7 @@ import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import type { Transaction as PolkadotTransaction } from "@ledgerhq/live-common/families/polkadot/types";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
-import {
-  getAccountUnit,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { ScreenName } from "../../../const";
@@ -35,10 +32,7 @@ import SendRowsFee from "../SendRowsFee";
 import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import { PolkadotUnbondFlowParamList } from "./type";
 
-type Props = StackNavigatorProps<
-  PolkadotUnbondFlowParamList,
-  ScreenName.PolkadotUnbondAmount
->;
+type Props = StackNavigatorProps<PolkadotUnbondFlowParamList, ScreenName.PolkadotUnbondAmount>;
 
 export default function PolkadotUnbondAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
@@ -47,8 +41,8 @@ export default function PolkadotUnbondAmount({ navigation, route }: Props) {
   const bridge = getAccountBridge(account, parentAccount);
   const mainAccount = getMainAccount(account, parentAccount);
   const [maxSpendable, setMaxSpendable] = useState<BigNumber | null>(null);
-  const { transaction, setTransaction, status, bridgePending, bridgeError } =
-    useBridgeTransaction(() => {
+  const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
+    () => {
       const t = bridge.createTransaction(mainAccount);
       const transaction = bridge.updateTransaction(t, {
         mode: "unbond",
@@ -57,7 +51,8 @@ export default function PolkadotUnbondAmount({ navigation, route }: Props) {
         account: mainAccount,
         transaction,
       };
-    });
+    },
+  );
   const debouncedTransaction = useDebounce(transaction, 500);
   useEffect(() => {
     if (!account) return;
@@ -111,15 +106,18 @@ export default function PolkadotUnbondAmount({ navigation, route }: Props) {
   const { useAllAmount } = transaction;
   const { amount } = status;
   const unit = getAccountUnit(account);
-  const error =
-    amount.eq(0) || bridgePending
-      ? null
-      : getFirstStatusError(status, "errors");
+  const error = amount.eq(0) || bridgePending ? null : getFirstStatusError(status, "errors");
   const warning = getFirstStatusError(status, "warnings");
   const hasErrors = hasStatusError(status);
   return (
     <>
-      <TrackScreen category="UnbondFlow" name="Amount" />
+      <TrackScreen
+        category="UnbondFlow"
+        name="Amount"
+        flow="stake"
+        action="withdraw_unbonded"
+        currency="dot"
+      />
       <SafeAreaView
         style={[
           styles.root,
@@ -176,11 +174,7 @@ export default function PolkadotUnbondAmount({ navigation, route }: Props) {
                     </LText>
                     <LText semiBold>
                       {maxSpendable ? (
-                        <CurrencyUnitValue
-                          showCode
-                          unit={unit}
-                          value={maxSpendable}
-                        />
+                        <CurrencyUnitValue showCode unit={unit} value={maxSpendable} />
                       ) : (
                         "-"
                       )}
@@ -199,21 +193,14 @@ export default function PolkadotUnbondAmount({ navigation, route }: Props) {
                     </View>
                   ) : null}
                 </View>
-                <SendRowsFee
-                  account={account}
-                  transaction={transaction as PolkadotTransaction}
-                />
+                <SendRowsFee account={account} transaction={transaction as PolkadotTransaction} />
                 <View style={styles.continueWrapper}>
                   <Button
                     event="PolkadotUnbondAmountContinue"
                     type="primary"
                     title={
                       <Trans
-                        i18nKey={
-                          !bridgePending
-                            ? "common.continue"
-                            : "send.amount.loadingNetwork"
-                        }
+                        i18nKey={!bridgePending ? "common.continue" : "send.amount.loadingNetwork"}
                       />
                     }
                     onPress={onContinue}

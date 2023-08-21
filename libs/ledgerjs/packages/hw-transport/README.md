@@ -22,31 +22,33 @@
 *   [Transport](#transport)
     *   [exchange](#exchange)
         *   [Parameters](#parameters)
-    *   [setScrambleKey](#setscramblekey)
+    *   [exchangeBulk](#exchangebulk)
         *   [Parameters](#parameters-1)
+    *   [setScrambleKey](#setscramblekey)
+        *   [Parameters](#parameters-2)
     *   [close](#close)
     *   [on](#on)
-        *   [Parameters](#parameters-2)
-    *   [off](#off)
         *   [Parameters](#parameters-3)
+    *   [off](#off)
+        *   [Parameters](#parameters-4)
     *   [setDebugMode](#setdebugmode)
     *   [setExchangeTimeout](#setexchangetimeout)
-        *   [Parameters](#parameters-4)
-    *   [setExchangeUnresponsiveTimeout](#setexchangeunresponsivetimeout)
         *   [Parameters](#parameters-5)
-    *   [send](#send)
+    *   [setExchangeUnresponsiveTimeout](#setexchangeunresponsivetimeout)
         *   [Parameters](#parameters-6)
+    *   [send](#send)
+        *   [Parameters](#parameters-7)
     *   [isSupported](#issupported)
     *   [list](#list)
         *   [Examples](#examples)
     *   [listen](#listen)
-        *   [Parameters](#parameters-7)
+        *   [Parameters](#parameters-8)
         *   [Examples](#examples-1)
     *   [open](#open)
-        *   [Parameters](#parameters-8)
+        *   [Parameters](#parameters-9)
         *   [Examples](#examples-2)
     *   [create](#create)
-        *   [Parameters](#parameters-9)
+        *   [Parameters](#parameters-10)
         *   [Examples](#examples-3)
 
 ### Subscription
@@ -63,6 +65,7 @@ Type: any
 
 ### DescriptorEvent
 
+A "descriptor" is a parameter that is specific to the implementation, and can be an ID, file path, or URL.
 type: add or remove event
 descriptor: a parameter that can be passed to open(descriptor)
 deviceModel: device info on the model (is it a nano s, nano x, ...)
@@ -76,49 +79,63 @@ Type: Readonly<{next: function (event: EventType): any, error: function (e: Even
 
 ### Transport
 
-Transport defines the generic interface to share between node/u2f impl
-A **Descriptor** is a parametric type that is up to be determined for the implementation.
-it can be for instance an ID, an file path, a URL,...
+The Transport class defines a generic interface for communicating with a Ledger hardware wallet.
+There are different kind of transports based on the technology (channels like U2F, HID, Bluetooth, Webusb) and environment (Node, Web,...).
+It is an abstract class that needs to be implemented.
 
 #### exchange
 
-low level api to communicate with the device
-This method is for implementations to implement but should not be directly called.
-Instead, the recommanded way is to use send() method
+Send data to the device using a low level API.
+It's recommended to use the "send" method for a higher level API.
 
 ##### Parameters
 
 *   `_apdu` **[Buffer](https://nodejs.org/api/buffer.html)** 
-*   `apdu`  the data to send
+*   `apdu` **[Buffer](https://nodejs.org/api/buffer.html)** The data to send.
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Buffer](https://nodejs.org/api/buffer.html)>** a Promise of response data
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Buffer](https://nodejs.org/api/buffer.html)>** A promise that resolves with the response data from the device.
+
+#### exchangeBulk
+
+Send apdus in batch to the device using a low level API.
+The default implementation is to call exchange for each apdu.
+
+##### Parameters
+
+*   `apdus` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Buffer](https://nodejs.org/api/buffer.html)>** array of apdus to send.
+*   `observer` **[Observer](#observer)<[Buffer](https://nodejs.org/api/buffer.html)>** an observer that will receive the response of each apdu.
+
+Returns **[Subscription](#subscription)** A Subscription object on which you can call ".unsubscribe()" to stop sending apdus.
 
 #### setScrambleKey
 
-set the "scramble key" for the next exchanges with the device.
-Each App can have a different scramble key and they internally will set it at instanciation.
+Set the "scramble key" for the next data exchanges with the device.
+Each app can have a different scramble key and it is set internally during instantiation.
 
 ##### Parameters
 
 *   `_key` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
-*   `key`  the scramble key
+*   `key` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** The scramble key to set.
+
+**Meta**
+
+*   **deprecated**: This method is no longer needed for modern transports and should be migrated away from.
 
 #### close
 
-close the exchange with the device.
+Close the connection with the device.
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<void>** a Promise that ends when the transport is closed.
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<void>** A promise that resolves when the transport is closed.
 
 #### on
 
-Listen to an event on an instance of transport.
-Transport implementation can have specific events. Here is the common events:
-
-*   `"disconnect"` : triggered if Transport is disconnected
+Listen for an event on the transport instance.
+Transport implementations may have specific events. Common events include:
+"disconnect" : triggered when the transport is disconnected.
 
 ##### Parameters
 
-*   `eventName` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+*   `eventName` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** The name of the event to listen for.
 *   `cb` **function (...args: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<any>): any** 
 
 Returns **void** 
@@ -160,28 +177,31 @@ Returns **void**
 
 #### send
 
-wrapper on top of exchange to simplify work of the implementation.
+Send data to the device using the higher level API.
 
 ##### Parameters
 
-*   `cla` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
-*   `ins` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
-*   `p1` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
-*   `p2` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
-*   `data` **[Buffer](https://nodejs.org/api/buffer.html)**  (optional, default `Buffer.alloc(0)`)
-*   `statusList` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)>** is a list of accepted status code (shorts). \[0x9000] by default (optional, default `[StatusCodes.OK]`)
+*   `cla` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** The instruction class for the command.
+*   `ins` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** The instruction code for the command.
+*   `p1` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** The first parameter for the instruction.
+*   `p2` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** The second parameter for the instruction.
+*   `data` **[Buffer](https://nodejs.org/api/buffer.html)** The data to be sent. Defaults to an empty buffer. (optional, default `Buffer.alloc(0)`)
+*   `statusList` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)>** A list of acceptable status codes for the response. Defaults to \[StatusCodes.OK]. (optional, default `[StatusCodes.OK]`)
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Buffer](https://nodejs.org/api/buffer.html)>** a Promise of response buffer
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Buffer](https://nodejs.org/api/buffer.html)>** A promise that resolves with the response data from the device.
 
 #### isSupported
 
-Statically check if a transport is supported on the user's platform/browser.
+Check if the transport is supported on the current platform/browser.
 
 Type: function (): [Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)>
 
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)>** A promise that resolves with a boolean indicating support.
+
 #### list
 
-List once all available descriptors. For a better granularity, checkout `listen()`.
+List all available descriptors for the transport.
+For a better granularity, checkout `listen()`.
 
 Type: function (): [Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<any>>
 
@@ -191,20 +211,19 @@ Type: function (): [Promise](https://developer.mozilla.org/docs/Web/JavaScript/R
 TransportFoo.list().then(descriptors => ...)
 ```
 
-Returns **any** a promise of descriptors
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<any>>** A promise that resolves with an array of descriptors.
 
 #### listen
 
-Listen all device events for a given Transport. The method takes an Obverver of DescriptorEvent and returns a Subscription (according to Observable paradigm https://github.com/tc39/proposal-observable )
-a DescriptorEvent is a `{ descriptor, type }` object. type can be `"add"` or `"remove"` and descriptor is a value you can pass to `open(descriptor)`.
-each listen() call will first emit all potential device already connected and then will emit events can come over times,
-for instance if you plug a USB device after listen() or a bluetooth device become discoverable.
+Listen for device events for the transport. The method takes an observer of DescriptorEvent and returns a Subscription.
+A DescriptorEvent is an object containing a "descriptor" and a "type" field. The "type" field can be "add" or "remove", and the "descriptor" field can be passed to the "open" method.
+The "listen" method will first emit all currently connected devices and then will emit events as they occur, such as when a USB device is plugged in or a Bluetooth device becomes discoverable.
 
 Type: function (observer: [Observer](#observer)<[DescriptorEvent](#descriptorevent)\<any>>): [Subscription](#subscription)
 
 ##### Parameters
 
-*   `observer`  is an object with a next, error and complete function (compatible with observer pattern)
+*   `observer` **[Observer](#observer)<[DescriptorEvent](#descriptorevent)\<any>>** An object with "next", "error", and "complete" functions, following the observer pattern.
 
 ##### Examples
 
@@ -222,18 +241,18 @@ complete: () => {}
 })
 ```
 
-Returns **any** a Subscription object on which you can `.unsubscribe()` to stop listening descriptors.
+Returns **[Subscription](#subscription)** A Subscription object on which you can call ".unsubscribe()" to stop listening to descriptors.
 
 #### open
 
-attempt to create a Transport instance with potentially a descriptor.
+Attempt to create a Transport instance with a specific descriptor.
 
 Type: function (descriptor: any, timeout: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)): [Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Transport](#transport)>
 
 ##### Parameters
 
-*   `descriptor`  : the descriptor to open the transport with.
-*   `timeout`  : an optional timeout
+*   `descriptor` **any** The descriptor to open the transport with.
+*   `timeout` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** An optional timeout for the transport connection.
 
 ##### Examples
 
@@ -241,7 +260,7 @@ Type: function (descriptor: any, timeout: [number](https://developer.mozilla.org
 TransportFoo.open(descriptor).then(transport => ...)
 ```
 
-Returns **any** a Promise of Transport instance
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Transport](#transport)>** A promise that resolves with a Transport instance.
 
 #### create
 

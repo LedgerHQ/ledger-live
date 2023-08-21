@@ -68,27 +68,27 @@ export const balance: { data: BalanceElement[]; columns: Column<BalanceElement>[
   columns: [
     Columns.text({
       header: () => <Header>Currency</Header>,
-      title: (elt) => elt.currency,
+      title: elt => elt.currency,
     }),
     Columns.text({
       header: () => <Header>Amount</Header>,
-      title: (elt) => elt.amount,
-      subtitle: (elt) => elt.counterValue,
+      title: elt => elt.amount,
+      subtitle: elt => elt.counterValue,
     }),
     Columns.text({
       header: () => <Header>Address</Header>,
-      subtitle: (elt) => elt.address,
+      subtitle: elt => elt.address,
     }),
     Columns.text({
       header: () => <Header>Evolution</Header>,
-      subtitle: (elt) => (elt.evolution > 0 ? "+" : "") + elt.evolution,
-      subtitleProps: (elt) => ({
-        color: elt.evolution < 0 ? "error.c100" : "success.c100",
+      subtitle: elt => (elt.evolution > 0 ? "+" : "") + elt.evolution,
+      subtitleProps: elt => ({
+        color: elt.evolution < 0 ? "error.c50" : "success.c50",
       }),
     }),
     Columns.icon({
       header: () => <Header>&nbsp;</Header>,
-      props: (elt) => ({
+      props: elt => ({
         name: "StarSolid",
         color: elt.starred ? "neutral.c100" : "neutral.c70",
       }),
@@ -175,32 +175,32 @@ export const accounts: { data: Account[]; columns: Column<Account>[] } = {
     },
     Columns.text({
       layout: "2fr",
-      title: (elt) => elt.name,
-      subtitle: (elt) => elt.currency.name,
+      title: elt => elt.name,
+      subtitle: elt => elt.currency.name,
     }),
     Columns.icon({
-      props: (elt) => ({
+      props: elt => ({
         name: elt.synchronized ? "CircledCheck" : "Clock",
-        color: elt.synchronized ? "success.c100" : "neutral.c80",
+        color: elt.synchronized ? "success.c50" : "neutral.c80",
       }),
     }),
     Columns.text({
       layout: "1fr",
-      subtitle: (elt) => elt.currency.abbrev,
+      subtitle: elt => elt.currency.abbrev,
     }),
     Columns.text({
       layout: "1fr",
-      title: (elt) => elt.amount,
+      title: elt => elt.amount,
     }),
     Columns.text({
       layout: "1fr",
-      subtitle: (elt) => (elt.evolution > 0 ? "+" : "") + elt.evolution,
-      subtitleProps: (elt) => ({
-        color: elt.evolution < 0 ? "error.c100" : "success.c100",
+      subtitle: elt => (elt.evolution > 0 ? "+" : "") + elt.evolution,
+      subtitleProps: elt => ({
+        color: elt.evolution < 0 ? "error.c50" : "success.c50",
       }),
     }),
     Columns.icon({
-      props: (elt) => ({
+      props: elt => ({
         name: "StarSolid",
         color: elt.starred ? "neutral.c100" : "neutral.c70",
       }),

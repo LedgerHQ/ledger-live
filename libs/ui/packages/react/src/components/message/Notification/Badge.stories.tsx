@@ -23,7 +23,7 @@ export const Badge = (args: Props): JSX.Element => {
     <FlexBox style={{ columnGap: "2em" }}>
       <BadgeComponent
         {...args}
-        color="warning.c100"
+        color="warning.c50"
         backgroundColor="warning.c10"
         icon={<Icon name="Warning" size={24} />}
       />

@@ -6,17 +6,10 @@ import { StyleSheet, View, FlatList } from "react-native";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { Account, SubAccount, TokenAccount } from "@ledgerhq/types-live";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
-import {
-  getAccountCurrency,
-  listSubAccounts,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, listSubAccounts } from "@ledgerhq/live-common/account/index";
 import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import {
-  DropdownMedium,
-  DropupMedium,
-  PlusMedium,
-} from "@ledgerhq/native-ui/assets/icons";
+import { DropdownMedium, DropupMedium, PlusMedium } from "@ledgerhq/native-ui/assets/icons";
 import { NavigatorName, ScreenName } from "../../const";
 import SubAccountRow from "../../components/SubAccountRow";
 import Touchable from "../../components/Touchable";
@@ -73,8 +66,7 @@ export default function SubAccountsList({
   });
 
   const family = parentAccount.currency.family;
-  const specific =
-    perFamilySubAccountList[family as keyof typeof perFamilySubAccountList];
+  const specific = perFamilySubAccountList[family as keyof typeof perFamilySubAccountList];
 
   const hasSpecificTokenWording = specific && specific.hasSpecificTokenWording;
 
@@ -124,10 +116,7 @@ export default function SubAccountsList({
       return Placeholder ? (
         <Placeholder accountId={accountId} />
       ) : (
-        <Touchable
-          event="AccountReceiveSubAccount"
-          onPress={navigateToReceiveConnectDevice}
-        >
+        <Touchable event="AccountReceiveSubAccount" onPress={navigateToReceiveConnectDevice}>
           <View
             style={[
               styles.footer,
@@ -140,16 +129,14 @@ export default function SubAccountsList({
             <View style={styles.footerText}>
               <Text variant={"large"}>
                 <Trans
-                  i18nKey={`account.tokens${
-                    hasSpecificTokenWording ? `.${family}` : ""
-                  }.howTo`}
+                  i18nKey={`account.tokens${hasSpecificTokenWording ? `.${family}` : ""}.howTo`}
                   values={{ currency: parentAccount.currency.family }}
                 >
                   <Text variant={"large"} fontWeight={"semiBold"}>
-                    text
+                    PLACEHOLDER_TEXT
                   </Text>
                   <Text variant={"large"} fontWeight={"semiBold"}>
-                    text
+                    PLACEHOLDER_TEXT
                   </Text>
                 </Trans>
               </Text>

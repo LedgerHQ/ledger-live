@@ -16,15 +16,11 @@ import { isDashboardName } from "./isDashboardName";
 import { DeviceNotOnboarded } from "../errors";
 import attemptToQuitApp, { AttemptToQuitAppEvent } from "./attemptToQuitApp";
 import { LockedDeviceEvent } from "./actions/types";
+import { ManagerRequest } from "./actions/manager";
 
 export type Input = {
-  devicePath: string;
-  managerRequest:
-    | {
-        autoQuitAppDisabled?: boolean;
-      }
-    | null
-    | undefined;
+  deviceId: string;
+  request: ManagerRequest | null | undefined;
 };
 
 export type ConnectManagerEvent =
@@ -44,22 +40,19 @@ export type ConnectManagerEvent =
   | ListAppsEvent
   | LockedDeviceEvent;
 
-const cmd = ({
-  devicePath,
-  managerRequest,
-}: Input): Observable<ConnectManagerEvent> =>
-  withDevice(devicePath)(
-    (transport) =>
-      new Observable((o) => {
+const cmd = ({ deviceId, request }: Input): Observable<ConnectManagerEvent> =>
+  withDevice(deviceId)(
+    transport =>
+      new Observable(o => {
         const timeoutSub = of({
           type: "unresponsiveDevice",
         } as ConnectManagerEvent)
           .pipe(delay(1000))
-          .subscribe((e) => o.next(e));
+          .subscribe(e => o.next(e));
 
         const sub = from(getDeviceInfo(transport))
           .pipe(
-            concatMap((deviceInfo) => {
+            concatMap(deviceInfo => {
               timeoutSub.unsubscribe();
 
               if (!deviceInfo.onboarded && !deviceInfo.isRecoveryMode) {
@@ -85,7 +78,7 @@ const cmd = ({
                   type: "listingApps",
                   deviceInfo,
                 } as ConnectManagerEvent),
-                listApps(transport, deviceInfo)
+                listApps(transport, deviceInfo),
               );
             }),
             catchError((e: unknown) => {
@@ -105,23 +98,22 @@ const cmd = ({
                     0x6d02, // No StatusCodes definition
                   ].includes(
                     // @ts-expect-error typescript not checking agains the instanceof
-                    e.statusCode
+                    e.statusCode,
                   ))
               ) {
                 return from(getAppAndVersion(transport)).pipe(
-                  concatMap((appAndVersion) => {
-                    return !managerRequest?.autoQuitAppDisabled &&
-                      !isDashboardName(appAndVersion.name)
+                  concatMap(appAndVersion => {
+                    return !request?.autoQuitAppDisabled && !isDashboardName(appAndVersion.name)
                       ? attemptToQuitApp(transport, appAndVersion)
                       : of({
                           type: "appDetected",
                         } as ConnectManagerEvent);
-                  })
+                  }),
                 );
               }
 
               return throwError(e);
-            })
+            }),
           )
           .subscribe(o);
 
@@ -129,7 +121,7 @@ const cmd = ({
           timeoutSub.unsubscribe();
           sub.unsubscribe();
         };
-      })
+      }),
   );
 
 export default cmd;

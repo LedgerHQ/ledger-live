@@ -1,87 +1,89 @@
 import {
-  getElementByText,
   tapByText,
   tapByElement,
   getElementById,
+  waitForElementById,
+  tapById,
+  isAndroid,
+  waitForElementByText,
 } from "../../helpers";
+import { device } from "detox";
 import * as bridge from "../../bridge/server";
 
 export default class OnboardingSteps {
-  getOnboardingGetStarted = () => getElementByText("Get started");
-  getYesIDo = () => getElementByText("Yes, I do");
-  getNotYet = () => getElementByText("Not yet");
-  getSetupMyLedger = () => getElementByText("Set up my Ledger");
-  getConnectYourNano = () => getElementByText("Connect your Nano");
-  getContinue = () => getElementByText("Continue");
-
-  // Yes it's a weird character, no do not replace it as it won't find the text
-  getPairNano = () => getElementByText("Let’s pair my Nano");
-
-  getPairDeviceButton = () => getElementById("pair-device");
-  getNanoDevice = (name = "") => getElementByText(`Nano X de ${name}`);
-  getPairWithBluetooth = () => getElementByText("Pair with bluetooth");
-  getMaybeLater = () => getElementById("Maybe later");
+  getStartedButtonId = "onboarding-getStarted-button";
+  devicePairedContinueButtonId = "onboarding-paired-continue";
+  exploreWithoutDeviceButtonId = "discoverLive-exploreWithoutADevice";
+  discoverLiveTitle = (index: number) => `onboarding-discoverLive-${index}-title`;
+  onboardingGetStartedButton = () => getElementById(this.getStartedButtonId);
+  accessWalletButton = () =>
+    getElementById("Onboarding PostWelcome - Selection|Access an existing wallet");
+  noLedgerYetButton = () => getElementById("onboarding-noLedgerYet");
+  exploreAppButton = () => getElementById("onboarding-noLedgerYetModal-explore");
+  exploreWithoutDeviceButton = () => getElementById(this.exploreWithoutDeviceButtonId);
+  connectLedgerButton = () => getElementById("Existing Wallet | Connect");
+  continueButton = () => getElementById(this.devicePairedContinueButtonId);
+  pairDeviceButton = () => getElementById("pair-device");
+  pairNanoButton = () => getElementById("Onboarding-PairNewNano");
+  deviceName = (name = "") => `Nano X de ${name}`;
+  maybeLaterButton = () => getElementById("notifications-prompt-later");
 
   async startOnboarding() {
-    await tapByElement(this.getOnboardingGetStarted());
+    await waitForElementById(this.getStartedButtonId);
+    await tapByElement(this.onboardingGetStartedButton());
   }
 
-  async DoIOwnDevice(answer = true) {
-    answer
-      ? await tapByElement(this.getYesIDo())
-      : await tapByElement(this.getNotYet());
+  async chooseToAccessYourWallet() {
+    await tapByElement(this.accessWalletButton());
   }
 
-  // change to tap by text
-  async chooseToSetupLedger() {
-    await tapByElement(this.getSetupMyLedger());
+  async chooseNoLedgerYet() {
+    await tapByElement(this.noLedgerYetButton());
+  }
+
+  async chooseToExploreApp() {
+    await device.disableSynchronization(); // Animations prevent click
+    await tapByElement(this.exploreAppButton());
+    // Fixme : Found a way to skip discover carousel first page on iOS
+    for (let i = isAndroid() ? 0 : 1; i < 4; i++) {
+      await waitForElementById(this.discoverLiveTitle(i));
+      await tapById(this.discoverLiveTitle(i));
+    }
+    await waitForElementById(this.exploreWithoutDeviceButtonId);
+    await tapById(this.exploreWithoutDeviceButtonId);
+    await device.enableSynchronization();
   }
 
   async selectYourDevice(device: string) {
     await tapByText(device);
   }
 
-  async chooseToConnectYourNano() {
-    await tapByElement(this.getConnectYourNano());
-  }
-
-  async verifyContentsOfBoxAreChecked() {
-    await tapByElement(this.getContinue());
+  async chooseToConnectYourLedger() {
+    await tapByElement(this.connectLedgerButton());
   }
 
   async chooseToPairMyNano() {
-    await tapByElement(this.getPairNano());
-  }
-
-  async selectPairWithBluetooth() {
-    // await tapByElement(this.getPairWithBluetooth());
-    await tapByElement(this.getPairDeviceButton());
-  }
-
-  bridgeAddDevices() {
-    bridge.addDevices();
+    await tapByElement(this.pairNanoButton());
   }
 
   async addDeviceViaBluetooth(name = "David") {
-    await tapByElement(this.getNanoDevice(name));
-
+    await device.disableSynchronization(); // Scanning animation prevents launching mocks
+    await tapByElement(this.pairDeviceButton());
+    bridge.addDevices();
+    await device.enableSynchronization();
+    await waitForElementByText(this.deviceName(name));
+    await tapByText(this.deviceName(name));
     bridge.setInstalledApps(); // tell LLM what apps the mock device has
-
-    bridge.open(); // open ledger manager
-
-    // Continue to welcome screen
-    // await waitFor(
-    // element(by.text("Device authentication check")),
-    // ).not.toBeVisible();
-    // issue here: the 'Pairing Successful' text is 'visible' before it actually is, so it's failing at the continue step as continue isn't actually visible
-    // await waitFor(element(by.text("Pairing Successful"))).toBeVisible();
+    bridge.open(); // Mocked action open ledger manager on the Nano
+    await waitForElementById("onboarding-paired-continue");
   }
 
   async openLedgerLive() {
-    await tapByElement(this.getContinue());
+    await waitForElementById(this.devicePairedContinueButtonId);
+    await tapByElement(this.continueButton());
   }
 
   async declineNotifications() {
-    await tapByElement(this.getMaybeLater());
+    await tapByElement(this.maybeLaterButton());
   }
 }

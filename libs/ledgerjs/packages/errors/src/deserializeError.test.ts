@@ -14,13 +14,10 @@ describe("resiliency of deserializeError", () => {
     {},
     { name: "foo" },
     { name: "foo", stack: "" },
-  ].forEach((value) => {
-    it(
-      "should never crashes whatever the value is " + JSON.stringify(value),
-      () => {
-        expect(() => deserializeError(value)).not.toThrow();
-      }
-    );
+  ].forEach(value => {
+    it("should never crashes whatever the value is " + JSON.stringify(value), () => {
+      expect(() => deserializeError(value)).not.toThrow();
+    });
   });
 });
 
@@ -38,12 +35,9 @@ describe("resiliency of serializeError", () => {
     {},
     { name: "foo" },
     { name: "foo", stack: "" },
-  ].forEach((value) => {
-    it(
-      "should never crashes whatever the value is " + JSON.stringify(value),
-      () => {
-        expect(() => serializeError(value as any)).not.toThrow();
-      }
-    );
+  ].forEach(value => {
+    it("should never crashes whatever the value is " + JSON.stringify(value), () => {
+      expect(() => serializeError(value as any)).not.toThrow();
+    });
   });
 });

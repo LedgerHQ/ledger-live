@@ -10,11 +10,7 @@ import {
   getNextAppOp,
 } from "./logic";
 import { /*runAll,*/ runOneAppOp } from "./runner";
-import {
-  deviceInfo155,
-  mockListAppsResult,
-  mockExecWithInstalledContext,
-} from "./mock";
+import { deviceInfo155, mockListAppsResult, mockExecWithInstalledContext } from "./mock";
 // import { prettyActionPlan, prettyInstalled } from "./formatting";
 import { setEnv } from "../env";
 import { Action } from "./types";
@@ -426,8 +422,8 @@ test("global progress", async () => {
     mockListAppsResult(
       "Bitcoin Legacy, XRP, Ethereum, Ethereum Classic, Dogecoin, Zcash",
       "Bitcoin Legacy (outdated), Ethereum (outdated)",
-      deviceInfo155
-    )
+      deviceInfo155,
+    ),
   );
   expect(updateAllProgress(state)).toBe(1);
   state = [
@@ -444,7 +440,7 @@ test("global progress", async () => {
     state = await runOneAppOp(
       state,
       next,
-      mockExecWithInstalledContext(state.installed)
+      mockExecWithInstalledContext(state.installed),
     ).toPromise();
     expect(updateAllProgress(state)).toBe(++i / total);
   }

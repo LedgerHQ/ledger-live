@@ -3,16 +3,9 @@ import React, { useState, useCallback } from "react";
 import { Linking } from "react-native";
 import { Trans } from "react-i18next";
 import { getDeviceModel, DeviceModelId } from "@ledgerhq/devices";
-import {
-  Text,
-  BottomDrawer,
-  Button,
-  Alert,
-  Flex,
-  IconBox,
-  Icons,
-} from "@ledgerhq/native-ui";
+import { Text, Button, Alert, Flex, IconBox, IconsLegacy } from "@ledgerhq/native-ui";
 import { urls } from "../../../config/urls";
+import QueuedDrawer from "../../../components/QueuedDrawer";
 
 const SeedWarning = ({ deviceModelId }: { deviceModelId: DeviceModelId }) => {
   const deviceName = getDeviceModel(deviceModelId).productName;
@@ -22,15 +15,14 @@ const SeedWarning = ({ deviceModelId }: { deviceModelId: DeviceModelId }) => {
     Linking.openURL(urls.contact);
   }, []);
 
+  const onClose = useCallback(() => {
+    setIsOpened(false);
+  }, []);
+
   return (
-    <BottomDrawer isOpen={isOpened} onClose={() => setIsOpened(false)}>
+    <QueuedDrawer isRequestingToBeOpened={isOpened} onClose={onClose}>
       <Flex alignItems="center">
-        <IconBox
-          Icon={Icons.WarningMedium}
-          color="warning.c100"
-          iconSize={24}
-          boxSize={64}
-        />
+        <IconBox Icon={IconsLegacy.WarningMedium} color="warning.c50" iconSize={24} boxSize={64} />
       </Flex>
 
       <Text variant="h2" mt={8} textAlign="center">
@@ -39,10 +31,7 @@ const SeedWarning = ({ deviceModelId }: { deviceModelId: DeviceModelId }) => {
       <Text variant="body" mb={8} textAlign="center">
         <Trans i18nKey="onboarding.warning.seed.desc" values={{ deviceName }} />
       </Text>
-      <Alert
-        type="info"
-        title={<Trans i18nKey="onboarding.warning.seed.warning" />}
-      />
+      <Alert type="info" title={<Trans i18nKey="onboarding.warning.seed.warning" />} />
       <Button
         type="main"
         testID={"Onboarding - Seed warning"}
@@ -55,7 +44,7 @@ const SeedWarning = ({ deviceModelId }: { deviceModelId: DeviceModelId }) => {
       <Button type="default" outline={false} onPress={onContactSupport}>
         <Trans i18nKey="onboarding.warning.seed.contactSupportCTA" />
       </Button>
-    </BottomDrawer>
+    </QueuedDrawer>
   );
 };
 

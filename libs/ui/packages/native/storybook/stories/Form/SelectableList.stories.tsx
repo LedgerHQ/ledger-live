@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import { storiesOf } from "../storiesOf";
-import { Flex, SelectableList } from "../../../src";
-import { Icons } from "../../../src/assets";
-import { TouchableOpacity } from "react-native";
 import { action } from "@storybook/addon-actions";
+import { Flex, SelectableList } from "../../../src/components";
+import { IconsLegacy } from "../../../src/assets";
+import { TouchableOpacity } from "react-native";
 
 const description = `
 ### A styled list of valued and selectable elements.
@@ -34,30 +33,43 @@ const [selectedValue, setSelectedValue] = React.useState()
 \`\`\`
 `;
 
-const Story = () => {
+export default {
+  title: "Form/SelectableList",
+  component: SelectableList,
+  parameters: {
+    docs: {
+      title: "Selectable List",
+      description: {
+        component: description,
+      },
+    },
+  },
+};
+
+export const Story = () => {
   const [selectedValue, setSelectedValue] = useState();
 
   return (
     <Flex alignSelf="stretch" p={4}>
       <SelectableList currentValue={selectedValue} onChange={setSelectedValue}>
-        <SelectableList.Element value="en" Icon={Icons.BedMedium}>
+        <SelectableList.Element value="en" Icon={IconsLegacy.BedMedium}>
           English
         </SelectableList.Element>
         <SelectableList.Element
           value="fr"
-          Icon={Icons.NanoXMedium}
+          Icon={IconsLegacy.NanoXMedium}
           renderRight={() => (
             <TouchableOpacity onPress={action("onMore")}>
-              <Icons.OthersMedium size={24} />
+              <IconsLegacy.OthersMedium size={24} />
             </TouchableOpacity>
           )}
         >
           French
         </SelectableList.Element>
-        <SelectableList.Element value="ru" Icon={Icons.NanoXFoldedMedium} disabled={true}>
+        <SelectableList.Element value="ru" Icon={IconsLegacy.NanoXFoldedMedium} disabled={true}>
           Russian
         </SelectableList.Element>
-        <SelectableList.Element value="cz" Icon={Icons.BlockchainMedium}>
+        <SelectableList.Element value="cz" Icon={IconsLegacy.BlockchainMedium}>
           Chinese
         </SelectableList.Element>
         <SelectableList.Element value="sp">Spanish</SelectableList.Element>
@@ -65,14 +77,4 @@ const Story = () => {
     </Flex>
   );
 };
-
-storiesOf((story) =>
-  story("Form/SelectableList", module).add("SelectableList", Story, {
-    docs: {
-      title: "Selectable List",
-      description: {
-        component: description,
-      },
-    },
-  }),
-);
+Story.storyName = "SelectableList";

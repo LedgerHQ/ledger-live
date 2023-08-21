@@ -1,4 +1,4 @@
-import { Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import React, { memo, useCallback, useEffect, useReducer } from "react";
 import { Trans } from "react-i18next";
 import { SectionList, SectionListData } from "react-native";
@@ -87,11 +87,7 @@ const SeparatorContainer = styled(Flex).attrs({
 
 const keyExtractor = (_item: FilterSectionData, index: number) => "" + index;
 
-const SectionHeader = ({
-  section: { title },
-}: {
-  section: SectionListData<FilterSectionData>;
-}) => (
+const SectionHeader = ({ section: { title } }: { section: SectionListData<FilterSectionData> }) => (
   <Flex alignItems="center" mb={4}>
     <Text variant="h2" fontWeight="medium" color="neutral.c100">
       <Trans i18nKey={title} />
@@ -103,8 +99,7 @@ const Separator = ({
   section: { footerSeparator },
 }: {
   section: SectionListData<FilterSectionData>;
-}) =>
-  footerSeparator ? <SeparatorContainer backgroundColor="neutral.c40" /> : null;
+}) => (footerSeparator ? <SeparatorContainer backgroundColor="neutral.c40" /> : null);
 
 type State = {
   filter: string | null;
@@ -181,9 +176,7 @@ const FilterModalComponent = ({
 
   const FilterItem = useCallback(
     ({ item: { label, value, isFilter } }) => {
-      const isSelected = isFilter
-        ? state.filter === value
-        : state.sort === value;
+      const isSelected = isFilter ? state.filter === value : state.sort === value;
 
       let orderValue: string;
       if (state.sort === value) {
@@ -220,29 +213,21 @@ const FilterModalComponent = ({
           {Boolean(isSelected) && Boolean(isFilter) && (
             <Flex alignItems="center" justifyContent="center">
               <ArrowIconContainer backgroundColor="primary.c80">
-                <Icons.CheckAloneMedium color="background.main" size={16} />
+                <IconsLegacy.CheckAloneMedium color="background.main" size={16} />
               </ArrowIconContainer>
             </Flex>
           )}
           {Boolean(isSelected) && !isFilter && (
-            <Flex
-              alignItems="center"
-              justifyContent="center"
-              flexDirection="row"
-            >
+            <Flex alignItems="center" justifyContent="center" flexDirection="row">
               <ArrowIconContainer
-                backgroundColor={
-                  state.order === "desc" ? "primary.c80" : "neutral.c60"
-                }
+                backgroundColor={state.order === "desc" ? "primary.c80" : "neutral.c60"}
               >
-                <Icons.ArrowBottomMedium color="background.main" size={16} />
+                <IconsLegacy.ArrowBottomMedium color="background.main" size={16} />
               </ArrowIconContainer>
               <ArrowIconContainer
-                backgroundColor={
-                  state.order !== "desc" ? "primary.c80" : "neutral.c60"
-                }
+                backgroundColor={state.order !== "desc" ? "primary.c80" : "neutral.c60"}
               >
-                <Icons.ArrowTopMedium color="background.main" size={16} />
+                <IconsLegacy.ArrowTopMedium color="background.main" size={16} />
               </ArrowIconContainer>
             </Flex>
           )}
@@ -263,11 +248,7 @@ const FilterModalComponent = ({
   ];
 
   return (
-    <ActionModal
-      isOpened={isOpened}
-      onClose={onFilter}
-      actions={onFilterActions}
-    >
+    <ActionModal isOpened={isOpened} onClose={onFilter} actions={onFilterActions}>
       <SectionList
         style={{ width: "100%" }}
         sections={filterSections}

@@ -1,19 +1,9 @@
 const path = require("path");
 const Buffer = require("buffer").Buffer;
-const { readFileJSON } = require("../utils");
+const { readFileJSON, asUint4be } = require("../utils");
 const {
   getCryptoCurrencyById,
 } = require("../../../packages/cryptoassets/lib/currencies");
-
-const inferChainId = (common, folder) =>
-  getCryptoCurrencyById(path.basename(path.dirname(folder))).ethereumLikeInfo
-    .chainId;
-
-const asUint4be = (n) => {
-  const b = Buffer.alloc(4);
-  b.writeUInt32BE(n);
-  return b;
-};
 
 module.exports = {
   paths: [
@@ -44,14 +34,19 @@ module.exports = {
       readFileJSON(path.join(folder, id, "common.json")),
       readFileJSON(path.join(signatureFolder, id, "ledger_signature.json")),
     ]).then(([common, ledgerSignature]) => {
+
+      const currency = getCryptoCurrencyById(path.basename(path.dirname(folder)));
+
+      // match crypto-assets convention for tickers: testnet tokens are prefixed with "t"
+      // https://github.com/LedgerHQ/crypto-assets/blob/d2fe1cf9a110614650191555b846a2e43eb67b8f/scripts/hsm/coin_parameters/coin_parameters.py#L163
+      const prefix = currency.isTestnetFor !== undefined ? 't': '';
+      const ticker = Buffer.from(prefix + common.ticker, "ascii");
+
       const decimals = asUint4be(common.decimals);
-      const contractAddress = Buffer.from(
-        common.contract_address.slice(2),
-        "hex"
-      );
-      const ticker = Buffer.from(common.ticker, "ascii");
-      const chainId = asUint4be(inferChainId(common, folder));
+      const chainId = asUint4be(currency.ethereumLikeInfo.chainId);
+      const contractAddress = Buffer.from(common.contract_address.slice(2), "hex");
       const signature = Buffer.from(ledgerSignature, "hex");
+
       return Buffer.concat([
         Buffer.from([ticker.length]),
         ticker,

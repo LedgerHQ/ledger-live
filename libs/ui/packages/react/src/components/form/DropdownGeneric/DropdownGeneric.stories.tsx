@@ -87,7 +87,7 @@ const DropdownStoryTemplate = (
 
 export const DropdownGeneric = (args: DropdownGenericProps): React.ReactNode => {
   const alignItemsPossibilities = ["flex-start", "center", "flex-end"];
-  const containerPropsPossibilities = alignItemsPossibilities.map((alignItems) => ({ alignItems }));
+  const containerPropsPossibilities = alignItemsPossibilities.map(alignItems => ({ alignItems }));
   return (
     <Flex flexDirection="column" rowGap={5}>
       {/**
@@ -95,22 +95,22 @@ export const DropdownGeneric = (args: DropdownGenericProps): React.ReactNode => 
        * the actual code in "show code" instead of an opaque "DropdownTemplate" component
        *  */}
       <Text variant="h5">Small content:</Text>
-      {containerPropsPossibilities.map((containerProps) =>
+      {containerPropsPossibilities.map(containerProps =>
         DropdownStoryTemplate({ ...args, containerProps }),
       )}
-      <Divider variant="light" />
+      <Divider />
       <Text variant="h5">Big content:</Text>
-      {containerPropsPossibilities.map((containerProps) =>
+      {containerPropsPossibilities.map(containerProps =>
         DropdownStoryTemplate({ ...args, big: true, containerProps }),
       )}
-      <Divider variant="light" />
+      <Divider />
       <Text variant="h5">Big content (max height on child)</Text>
       <Alert
         type="info"
         title="In the following examples, the component passed as a child has its own internal maxHeight
         setup"
       ></Alert>
-      {containerPropsPossibilities.map((containerProps) =>
+      {containerPropsPossibilities.map(containerProps =>
         DropdownStoryTemplate({ ...args, big: true, bigWithMaxHeight: true, containerProps }),
       )}
     </Flex>

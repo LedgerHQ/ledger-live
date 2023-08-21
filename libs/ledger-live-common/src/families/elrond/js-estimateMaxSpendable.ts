@@ -1,9 +1,9 @@
 import { BigNumber } from "bignumber.js";
-import type { AccountLike, Account } from "@ledgerhq/types-live";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { getMainAccount } from "../../account";
-import type { ElrondAccount, Transaction } from "./types";
+import type { Transaction } from "./types";
+import { getFees } from "./api";
 import { createTransaction } from "./js-transaction";
-import getEstimatedFees from "./js-getFeesForTransaction";
 
 /**
  * Returns the maximum possible amount for transaction
@@ -19,22 +19,30 @@ const estimateMaxSpendable = async ({
   parentAccount: Account | null | undefined;
   transaction: Transaction | null | undefined;
 }): Promise<BigNumber> => {
-  const a = getMainAccount(account, parentAccount) as ElrondAccount;
-  const t = {
+  const mainAccount = getMainAccount(account, parentAccount);
+  const tx: Transaction = {
     ...createTransaction(),
+    subAccountId: account.type === "Account" ? null : account.id,
     ...transaction,
-    amount: a.spendableBalance,
+    useAllAmount: true,
   };
-  const fees = await getEstimatedFees({
-    a,
-    t,
-  });
 
-  if (fees.gt(a.spendableBalance)) {
+  const tokenAccount =
+    tx.subAccountId &&
+    mainAccount.subAccounts &&
+    mainAccount.subAccounts.find(ta => ta.id === tx.subAccountId);
+
+  if (tokenAccount) {
+    return tokenAccount.balance;
+  }
+
+  const fees = await getFees(tx);
+
+  if (fees.gt(mainAccount.spendableBalance)) {
     return new BigNumber(0);
   }
 
-  return a.spendableBalance.minus(fees);
+  return mainAccount.spendableBalance.minus(fees);
 };
 
 export default estimateMaxSpendable;

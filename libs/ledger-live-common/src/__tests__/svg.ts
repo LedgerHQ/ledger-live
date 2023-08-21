@@ -31,7 +31,7 @@ expect.extend({
 });
 
 test("svg icons valid", async () => {
-  glob.sync(`${rootDir}/icons/svg/*.svg`).map((svgFileName) => {
+  glob.sync(`${rootDir}/icons/svg/*.svg`).map(svgFileName => {
     const buffer = fs.readFileSync(svgFileName);
     const fileContent = buffer.toString();
 
@@ -48,29 +48,26 @@ test("svg icons valid", async () => {
         const [, size] = m;
         expect(element.includes('height="' + size + '"')).toBeValidSvg(
           svgFileName,
-          "Must contain height of same width. " + element
+          "Must contain height of same width. " + element,
         );
-        expect(
-          element.includes('viewBox="0 0 ' + size + " " + size + '"')
-        ).toBeValidSvg(svgFileName, "Must contain correct viewport");
+        expect(element.includes('viewBox="0 0 ' + size + " " + size + '"')).toBeValidSvg(
+          svgFileName,
+          "Must contain correct viewport",
+        );
         expect(!/style=/.test(element)).toBeValidSvg(
           svgFileName,
-          "Must not contain style attrs. " + element
+          "Must not contain style attrs. " + element,
         );
       } else {
-        expect(
-          /svg|path|line|rect|ellipse|polyline|polygon|circle|g/.test(element)
-        ).toBeValidSvg(
+        expect(/svg|path|line|rect|ellipse|polyline|polygon|circle|g/.test(element)).toBeValidSvg(
           svgFileName,
-          "must only contain svg|path|line|rect|ellipse|polyline|polygon|circle|g"
+          "must only contain svg|path|line|rect|ellipse|polyline|polygon|circle|g",
         );
         expect(
-          !/style=|clipPath|mask|id=|class=|url\(|clip-path|data|defs/.test(
-            element
-          )
+          !/style=|clipPath|mask|id=|class=|url\(|clip-path|data|defs/.test(element),
         ).toBeValidSvg(
           svgFileName,
-          "must not contain style=|clipPath|mask|id|class|url|clip-path|data|defs"
+          "must not contain style=|clipPath|mask|id|class|url|clip-path|data|defs",
         );
       }
     });

@@ -7,7 +7,7 @@
       "outputs": ["dist/**", "lib/**", "lib-es/**", "build/**"]
     },
     "lint": {
-      "outputs": [],
+      "outputs": ["lint.json"],
       "env": ["CI_OS"]
     },
     "lint:fix": {
@@ -19,7 +19,7 @@
       "env": ["CI_OS"]
     },
     "test": {
-      "dependsOn": ["lint", "typecheck", "build"],
+      "dependsOn": ["build"],
       "env": ["CI_OS"],
       "outputs": []
     },
@@ -67,7 +67,7 @@
     },
     "@ledgerhq/icons-ui#build": {
       "dependsOn": ["^build"],
-      "outputs": ["react/**", "native/**", "index.js"]
+      "outputs": ["react/**", "native/**", "reactLegacy/**", "nativeLegacy/**", "index.js"]
     },
     "@ledgerhq/crypto-icons-ui#build": {
       "dependsOn": ["^build"],
@@ -92,7 +92,7 @@
     "live-mobile#lint": {
       "dependsOn": ["^build"],
       "env": ["CI_OS"],
-      "outputs": []
+      "outputs": ["lint.json"]
     },
     "ledger-live-desktop#lint": {
       "dependsOn": ["^build"],

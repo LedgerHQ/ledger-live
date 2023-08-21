@@ -18,10 +18,7 @@ const ReportErrorsRow = () => {
       title={t("settings.display.reportErrors")}
       desc={t("settings.display.reportErrorsDesc")}
     >
-      <Switch
-        checked={reportErrorsEnabled}
-        onChange={value => dispatch(setReportErrors(value))}
-      />
+      <Switch checked={reportErrorsEnabled} onChange={value => dispatch(setReportErrors(value))} />
     </SettingsRow>
   );
 };

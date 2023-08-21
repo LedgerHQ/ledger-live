@@ -40,8 +40,8 @@ const near: AppSpec<Transaction> = {
       test: ({ accountBeforeTransaction, operation, account }) => {
         botTest("account spendable balance decreased with operation", () =>
           expect(account.spendableBalance).toEqual(
-            accountBeforeTransaction.spendableBalance.minus(operation.value)
-          )
+            accountBeforeTransaction.spendableBalance.minus(operation.value),
+          ),
         );
       },
     },
@@ -59,7 +59,7 @@ const near: AppSpec<Transaction> = {
       },
       test: ({ account }) => {
         botTest("account spendable balance is zero", () =>
-          expect(account.spendableBalance.toString()).toBe("0")
+          expect(account.spendableBalance.toString()).toBe("0"),
         );
       },
     },
@@ -67,15 +67,9 @@ const near: AppSpec<Transaction> = {
       name: "Stake",
       maxRun: 1,
       transaction: ({ account, bridge, maxSpendable }) => {
-        invariant(
-          maxSpendable.gt(minimalAmount.plus(stakingFee)),
-          "balance is too low"
-        );
+        invariant(maxSpendable.gt(minimalAmount.plus(stakingFee)), "balance is too low");
 
-        const amount = minimalAmount
-          .times(10)
-          .times(Math.random())
-          .integerValue();
+        const amount = minimalAmount.times(10).times(Math.random()).integerValue();
 
         return {
           transaction: bridge.createTransaction(account),
@@ -91,15 +85,13 @@ const near: AppSpec<Transaction> = {
         botTest("account staked balance increased with operation", () => {
           expect(
             nearResources.stakedBalance.gte(
-              beforeTransactionNearResources.stakedBalance.plus(
-                operation.value.minus("1")
-              )
-            )
+              beforeTransactionNearResources.stakedBalance.plus(operation.value.minus("1")),
+            ),
           ).toBe(true);
           expect(
             nearResources.stakedBalance.lte(
-              beforeTransactionNearResources.stakedBalance.plus(operation.value)
-            )
+              beforeTransactionNearResources.stakedBalance.plus(operation.value),
+            ),
           ).toBe(true);
         });
       },
@@ -114,10 +106,7 @@ const near: AppSpec<Transaction> = {
 
         const staked = nearResources?.stakedBalance || new BigNumber(0);
 
-        invariant(
-          staked.gt(minimalAmount),
-          "staked balance is too low for unstaking"
-        );
+        invariant(staked.gt(minimalAmount), "staked balance is too low for unstaking");
 
         const halfStaked = staked.div(2);
 
@@ -137,10 +126,8 @@ const near: AppSpec<Transaction> = {
 
         botTest("account pending balance increased", () =>
           expect(
-            nearResources.pendingBalance.gt(
-              beforeTransactionNearResources.pendingBalance
-            )
-          ).toBe(true)
+            nearResources.pendingBalance.gt(beforeTransactionNearResources.pendingBalance),
+          ).toBe(true),
         );
       },
     },
@@ -154,10 +141,7 @@ const near: AppSpec<Transaction> = {
 
         const available = nearResources?.availableBalance || new BigNumber(0);
 
-        invariant(
-          available.gt(minimalAmount),
-          "available balance is too low for withdrawing"
-        );
+        invariant(available.gt(minimalAmount), "available balance is too low for withdrawing");
 
         const halfAvailable = available.div(2);
 
@@ -177,10 +161,8 @@ const near: AppSpec<Transaction> = {
 
         botTest("account withdrawable balance decreased", () =>
           expect(
-            nearResources.availableBalance.lt(
-              beforeTransactionNearResources.availableBalance
-            )
-          ).toBe(true)
+            nearResources.availableBalance.lt(beforeTransactionNearResources.availableBalance),
+          ).toBe(true),
         );
       },
     },

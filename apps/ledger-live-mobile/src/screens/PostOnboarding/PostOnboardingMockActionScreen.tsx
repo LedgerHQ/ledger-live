@@ -5,24 +5,14 @@ import { getPostOnboardingAction } from "../../logic/postOnboarding";
 import { NavigatorName, ScreenName } from "../../const";
 import { useNavigateToPostOnboardingHubCallback } from "../../logic/postOnboarding/useNavigateToPostOnboardingHubCallback";
 import { useCompleteActionCallback } from "../../logic/postOnboarding/useCompleteAction";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
+import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { PostOnboardingNavigatorParamList } from "../../components/RootNavigator/types/PostOnboardingNavigator";
-import DeviceSetupView from "../../components/DeviceSetupView";
 
 type NavigationProps = BaseComposite<
-  StackNavigatorProps<
-    PostOnboardingNavigatorParamList,
-    ScreenName.PostOnboardingMockActionScreen
-  >
+  StackNavigatorProps<PostOnboardingNavigatorParamList, ScreenName.PostOnboardingMockActionScreen>
 >;
 
-const PostOnboardingMockActionScreen = ({
-  navigation,
-  route,
-}: NavigationProps) => {
+const PostOnboardingMockActionScreen = ({ navigation, route }: NavigationProps) => {
   const { params } = route;
   const { id } = params;
   const navigateToHub = useNavigateToPostOnboardingHubCallback();
@@ -53,7 +43,7 @@ const PostOnboardingMockActionScreen = ({
   }, [complete, navigateToHub]);
 
   return (
-    <DeviceSetupView hasBackButton>
+    <>
       <Flex p={6}>
         <Text>
           This is a mock screen for the post onboarding action:{"\n"}
@@ -66,7 +56,7 @@ const PostOnboardingMockActionScreen = ({
           Complete action & go back to onboarding hub
         </Button>
       </Flex>
-    </DeviceSetupView>
+    </>
   );
 };
 

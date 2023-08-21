@@ -1,3 +1,5 @@
+// TODO: to remove once live-app-sdk is depreciated and removed from LL
+
 import { BitcoinTransaction as PlatformTransaction } from "@ledgerhq/live-app-sdk";
 import { Transaction } from "./types";
 
@@ -5,9 +7,7 @@ const CAN_EDIT_FEES = true;
 
 const areFeesProvided = (tx: PlatformTransaction): boolean => !!tx.feePerByte;
 
-const convertToLiveTransaction = (
-  tx: PlatformTransaction
-): Partial<Transaction> => {
+const convertToLiveTransaction = (tx: PlatformTransaction): Partial<Transaction> => {
   const hasFeesProvided = areFeesProvided(tx);
 
   const liveTx: Partial<Transaction> = {
@@ -21,7 +21,7 @@ const convertToLiveTransaction = (
 };
 
 const getPlatformTransactionSignFlowInfos = (
-  tx: PlatformTransaction
+  tx: PlatformTransaction,
 ): {
   canEditFees: boolean;
   hasFeesProvided: boolean;

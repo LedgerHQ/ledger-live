@@ -5,7 +5,7 @@ import { DeviceAction } from "../../models/DeviceAction";
 import { Layout } from "../../models/Layout";
 import { CustomImageDrawer } from "../../models/CustomImageDrawer";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { padStart } from "lodash";
+import padStart from "lodash/padStart";
 
 test.use({ userdata: "skip-onboarding", featureFlags: { customImage: { enabled: true } } });
 
@@ -41,6 +41,13 @@ test("Custom image", async ({ page }) => {
     await managerPage.openCustomImage();
     await container.waitFor({ state: "attached" });
     await expect(container).toHaveScreenshot(`${generateScreenshotPrefix()}drawer.png`);
+  });
+
+  await test.step("Import NFT", async () => {
+    await customImageDrawer.openNftGallery();
+    await customImageDrawer.importNftPreviousButton.waitFor({ state: "visible" });
+    await expect(container).toHaveScreenshot(`${generateScreenshotPrefix()}nft-gallery-empty.png`);
+    await customImageDrawer.importNftPreviousButton.click();
   });
 
   await test.step("Import image", async () => {

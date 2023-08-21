@@ -2,16 +2,15 @@ import { Observable, from, of, throwError } from "rxjs";
 import { catchError, concatMap, delay, mergeMap } from "rxjs/operators";
 import {
   DeviceOnDashboardExpected,
+  ManagerNotEnoughSpaceError,
+  StatusCodes,
   TransportError,
   TransportStatusError,
 } from "@ledgerhq/errors";
 
 import { withDevice } from "./deviceAccess";
 import getDeviceInfo from "./getDeviceInfo";
-import {
-  ImageLoadRefusedOnDevice,
-  ImageCommitRefusedOnDevice,
-} from "../errors";
+import { ImageLoadRefusedOnDevice, ImageCommitRefusedOnDevice } from "../errors";
 import getAppAndVersion from "./getAppAndVersion";
 import { isDashboardName } from "./isDashboardName";
 import attemptToQuitApp, { AttemptToQuitAppEvent } from "./attemptToQuitApp";
@@ -40,61 +39,64 @@ export type LoadImageEvent =
       imageHash: string;
     };
 
-export type LoadImageRequest = {
-  deviceId: string;
-  hexImage: string;
+export type LoadimageResult = {
+  imageHash: string;
+  imageSize: number;
 };
 
-export default function loadImage({
-  deviceId,
-  hexImage,
-}: LoadImageRequest): Observable<LoadImageEvent> {
+export type LoadImageRequest = {
+  hexImage: string; // When provided, will skip the backup if it matches the hash.
+  padImage?: boolean;
+};
+
+export type Input = {
+  deviceId: string;
+  request: LoadImageRequest;
+};
+
+export default function loadImage({ deviceId, request }: Input): Observable<LoadImageEvent> {
+  const { hexImage, padImage = true } = request;
+
   const sub = withDevice(deviceId)(
-    (transport) =>
-      new Observable((subscriber) => {
+    transport =>
+      new Observable(subscriber => {
         const timeoutSub = of<LoadImageEvent>({
           type: "unresponsiveDevice",
         })
           .pipe(delay(1000))
-          .subscribe((e) => subscriber.next(e));
+          .subscribe(e => subscriber.next(e));
 
         const sub = from(getDeviceInfo(transport))
           .pipe(
             mergeMap(async () => {
               timeoutSub.unsubscribe();
 
-              const imageData = await generateStaxImageFormat(hexImage, true);
+              const imageData = await generateStaxImageFormat(hexImage, true, !!padImage);
               const imageLength = imageData.length;
 
               const imageSize = Buffer.alloc(4);
               imageSize.writeUIntBE(imageLength, 0, 4);
 
               subscriber.next({ type: "loadImagePermissionRequested" });
-              const createImageResponse = await transport.send(
-                0xe0,
-                0x60,
-                0x00,
-                0x00,
-                imageSize,
-                [0x9000, 0x5501]
-              );
+              const createImageResponse = await transport.send(0xe0, 0x60, 0x00, 0x00, imageSize, [
+                StatusCodes.NOT_ENOUGH_SPACE,
+                StatusCodes.USER_REFUSED_ON_DEVICE,
+                StatusCodes.OK,
+              ]);
 
               const createImageStatus = createImageResponse.readUInt16BE(
-                createImageResponse.length - 2
+                createImageResponse.length - 2,
               );
               const createImageStatusStr = createImageStatus.toString(16);
               // reads last 2 bytes which correspond to the status
 
-              if (createImageStatus === 0x5501) {
+              if (createImageStatus === StatusCodes.USER_REFUSED_ON_DEVICE) {
+                return subscriber.error(new ImageLoadRefusedOnDevice(createImageStatusStr));
+              } else if (createImageStatus === StatusCodes.NOT_ENOUGH_SPACE) {
+                return subscriber.error(new ManagerNotEnoughSpaceError());
+              } else if (createImageStatus !== StatusCodes.OK) {
                 return subscriber.error(
-                  new ImageLoadRefusedOnDevice(createImageStatusStr)
-                );
-              } else if (createImageStatus !== 0x9000) {
-                return subscriber.error(
-                  new TransportError(
-                    "Unexpected device response",
-                    createImageStatusStr
-                  )
+                  new TransportError("Unexpected device response", createImageStatusStr),
                 );
               }
 
@@ -107,24 +109,15 @@ export default function loadImage({
                 });
 
                 // chunkSize in number of bytes
-                const chunkSize = Math.min(
-                  MAX_APDU_SIZE - 4,
-                  imageLength - currentOffset
-                );
+                const chunkSize = Math.min(MAX_APDU_SIZE - 4, imageLength - currentOffset);
                 // we subtract 4 because the first 4 bytes of the data part of the apdu are used for
                 // passing the offset of the chunk
 
-                const chunkDataBuffer = imageData.slice(
-                  currentOffset,
-                  currentOffset + chunkSize
-                );
+                const chunkDataBuffer = imageData.slice(currentOffset, currentOffset + chunkSize);
                 const chunkOffsetBuffer = Buffer.alloc(4);
                 chunkOffsetBuffer.writeUIntBE(currentOffset, 0, 4);
 
-                const apduData = Buffer.concat([
-                  chunkOffsetBuffer,
-                  chunkDataBuffer,
-                ]);
+                const apduData = Buffer.concat([chunkOffsetBuffer, chunkDataBuffer]);
                 await transport.send(0xe0, 0x61, 0x00, 0x00, apduData);
                 currentOffset += chunkSize;
               }
@@ -137,25 +130,18 @@ export default function loadImage({
                 0x00,
                 0x00,
                 Buffer.from([]),
-                [0x9000, 0x5501]
+                [0x9000, 0x5501],
               );
 
-              const commitStatus = commitResponse.readUInt16BE(
-                commitResponse.length - 2
-              );
+              const commitStatus = commitResponse.readUInt16BE(commitResponse.length - 2);
               const commitStatusStr = commitStatus.toString(16);
               // reads last 2 bytes which correspond to the status
 
               if (commitStatus === 0x5501) {
-                return subscriber.error(
-                  new ImageCommitRefusedOnDevice(commitStatusStr)
-                );
+                return subscriber.error(new ImageCommitRefusedOnDevice(commitStatusStr));
               } else if (commitStatus !== 0x9000) {
                 return subscriber.error(
-                  new TransportError(
-                    "Unexpected device response",
-                    commitStatusStr
-                  )
+                  new TransportError("Unexpected device response", commitStatusStr),
                 );
               }
 
@@ -180,21 +166,21 @@ export default function loadImage({
                   e instanceof TransportStatusError &&
                   [0x6e00, 0x6d00, 0x6e01, 0x6d01, 0x6d02].includes(
                     // @ts-expect-error typescript not checking against the instanceof
-                    e.statusCode
+                    e.statusCode,
                   ))
               ) {
                 return from(getAppAndVersion(transport)).pipe(
-                  concatMap((appAndVersion) => {
+                  concatMap(appAndVersion => {
                     return !isDashboardName(appAndVersion.name)
                       ? attemptToQuitApp(transport, appAndVersion)
                       : of<LoadImageEvent>({
                           type: "appDetected",
                         });
-                  })
+                  }),
                 );
               }
               return throwError(e);
-            })
+            }),
           )
           .subscribe(subscriber);
 
@@ -202,7 +188,7 @@ export default function loadImage({
           timeoutSub.unsubscribe();
           sub.unsubscribe();
         };
-      })
+      }),
   );
 
   return sub as Observable<LoadImageEvent>;
@@ -210,8 +196,9 @@ export default function loadImage({
 
 export const generateStaxImageFormat: (
   hexImage: string,
-  compressImage: boolean
-) => Promise<Buffer> = async (hexImage, compressImage) => {
+  compressImage: boolean,
+  padImage: boolean,
+) => Promise<Buffer> = async (hexImage, compressImage, padImage) => {
   const width = 400;
   const height = 672;
   const bpp = 2; // value for 4 bits per pixel
@@ -225,7 +212,7 @@ export const generateStaxImageFormat: (
 
   // Nb Display image data is missing 2 pixels from each column.
   // padding every 670 characters with two fillers, should do the trick.
-  const paddedHexImage = hexImage.replace(/(.{670})/g, "$100");
+  const paddedHexImage = padImage ? hexImage.replace(/(.{670})/g, "$100") : hexImage;
   const imgData = Buffer.from(paddedHexImage, "hex");
 
   if (!compressImage) {
@@ -244,14 +231,14 @@ export const generateStaxImageFormat: (
   }
 
   const compressedChunkedImgData = await Promise.all(
-    chunkedImgData.map(async (chunk) => {
+    chunkedImgData.map(async chunk => {
       const compressedChunk = await gzip(chunk);
 
       const compressedChunkSize = Buffer.alloc(2);
       compressedChunkSize.writeUInt16LE(compressedChunk.length);
 
       return Buffer.concat([compressedChunkSize, compressedChunk]);
-    })
+    }),
   );
 
   const compressedData = Buffer.concat(compressedChunkedImgData);

@@ -62,10 +62,7 @@ function toBech32(data: Buffer, version: number, prefix: string): string {
 
 // This function expects a valid base58check address or a valid
 // bech32/bech32m address.
-function toOutputScriptTemporary(
-  validAddress: string,
-  network: bjs.Network
-): Buffer {
+function toOutputScriptTemporary(validAddress: string, network: bjs.Network): Buffer {
   try {
     const decodeBase58 = bjs.address.fromBase58Check(validAddress);
     if (decodeBase58.version === network.pubKeyHash)
@@ -122,7 +119,7 @@ class Bitcoin extends Base {
     derivationMode: string,
     xpub: string,
     account: number,
-    index: number
+    index: number,
   ): Promise<string> {
     switch (derivationMode) {
       case DerivationModes.TAPROOT:
@@ -146,11 +143,7 @@ class Bitcoin extends Base {
       // Address has invalid data length
       return false;
     }
-    if (
-      result.version === 0 &&
-      result.data.length !== 20 &&
-      result.data.length !== 32
-    ) {
+    if (result.version === 0 && result.data.length !== 20 && result.data.length !== 32) {
       // Version 0 address uses an invalid witness program length
       return false;
     }
@@ -159,10 +152,7 @@ class Bitcoin extends Base {
 
   private tryBase58(address: string): boolean {
     const result = bjs.address.fromBase58Check(address);
-    if (
-      this.network.pubKeyHash === result.version ||
-      this.network.scriptHash === result.version
-    ) {
+    if (this.network.pubKeyHash === result.version || this.network.scriptHash === result.version) {
       return true;
     }
     return false;
@@ -175,11 +165,7 @@ class Bitcoin extends Base {
     return bjs.crypto.sha256(Buffer.concat([h, h, x]));
   }
 
-  private async getTaprootAddress(
-    xpub: string,
-    account: number,
-    index: number
-  ): Promise<string> {
+  private async getTaprootAddress(xpub: string, account: number, index: number): Promise<string> {
     const ecdsaPubkey = await this.getPubkeyAt(xpub, account, index);
     // A BIP32 derived key can be converted to a schnorr pubkey by dropping
     // the first byte, which represent the oddness/evenness. In schnorr all
@@ -187,15 +173,12 @@ class Bitcoin extends Base {
     // https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki#public-key-conversion
     const schnorrInternalPubkey = ecdsaPubkey.slice(1);
 
-    const evenEcdsaPubkey = Buffer.concat([
-      Buffer.from([0x02]),
-      schnorrInternalPubkey,
-    ]);
+    const evenEcdsaPubkey = Buffer.concat([Buffer.from([0x02]), schnorrInternalPubkey]);
     const tweak = this.hashTapTweak(schnorrInternalPubkey);
 
     // Q = P + int(hash_TapTweak(bytes(P)))G
     const outputEcdsaKey = Buffer.from(
-      await getSecp256k1Instance().publicKeyTweakAdd(evenEcdsaPubkey, tweak)
+      await getSecp256k1Instance().publicKeyTweakAdd(evenEcdsaPubkey, tweak),
     );
     // Convert to schnorr.
     const outputSchnorrKey = outputEcdsaKey.slice(1);

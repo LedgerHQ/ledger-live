@@ -5,7 +5,7 @@
     "url": "https://buy.moonpay.com/?apiKey=pk_live_j5CLt1qxbqGtYhkxUxyk6VQnSd5CBXI&ledgerlive",
     "homepageUrl": "https://www.moonpay.com/",
     "icon": "https://cdn.live.ledger.com/icons/platform/moonpay.png",
-    "platform": "all",
+    "platforms": ["ios", "android", "desktop"],
     "apiVersion": "^1.0.0 || ~0.0.1",
     "manifestVersion": "1",
     "branch": "stable",
@@ -32,7 +32,8 @@
       }
     },
     "permissions": [],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "ramp",
@@ -40,7 +41,7 @@
     "url": "https://integrations.ramp.network/ledger/",
     "homepageUrl": "https://ramp.network/buy",
     "icon": "https://cdn.live.ledger.com/icons/platform/ramp.png",
-    "platform": "all",
+    "platforms": ["ios", "android", "desktop"],
     "apiVersion": "^1.0.0 || ~0.0.1",
     "manifestVersion": "1",
     "branch": "stable",
@@ -68,7 +69,8 @@
       }
     },
     "permissions": [],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "paraswap",
@@ -99,7 +101,7 @@
     "homepageUrl": "https://paraswap.io",
     "supportUrl": "https://paraswap.io",
     "icon": "https://cdn.live.ledger.com/icons/platform/paraswap.png",
-    "platform": "all",
+    "platforms": ["ios", "android", "desktop"],
     "apiVersion": "^1.0.0 || ~0.0.1",
     "manifestVersion": "1",
     "branch": "stable",
@@ -136,7 +138,8 @@
         "method": "transaction.broadcast"
       }
     ],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "paraswap v5",
@@ -167,7 +170,7 @@
     "homepageUrl": "https://paraswap.io",
     "supportUrl": "https://paraswap.io",
     "icon": "https://cdn.live.ledger.com/icons/platform/paraswap.png",
-    "platform": "all",
+    "platforms": ["ios", "android", "desktop"],
     "apiVersion": "^1.0.0 || ~0.0.1",
     "manifestVersion": "1",
     "branch": "experimental",
@@ -204,7 +207,44 @@
         "method": "transaction.broadcast"
       }
     ],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
+  },
+  {
+    "id": "kiln",
+    "name": "Kiln",
+    "url": "https://dapp-browser.apps.ledger.com",
+    "params": {
+      "dappUrl": "https://ledger-live-eth-dapp.kiln.fi/",
+      "nanoApp": "Kiln",
+      "dappName": "Kiln",
+      "networks": [
+        {
+          "currency": "ethereum",
+          "chainID": 1,
+          "nodeURL": "https://eth-dapps.api.live.ledger.com"
+        }
+      ]
+    },
+    "homepageUrl": "https://kiln.fi",
+    "icon": "https://cdn.live.ledger.com/icons/platform/kiln.png",
+    "platforms": ["ios", "android", "desktop"],
+    "apiVersion": "^1.0.0 || ~0.0.1",
+    "manifestVersion": "1",
+    "branch": "stable",
+    "categories": ["staking/lending"],
+    "currencies": "*",
+    "content": {
+      "shortDescription": {
+        "en": "Kiln is Ledger’s native ETH staking partner. Stake ETH in a couple of clicks by becoming your own validator. Earn rewards for helping secure the Ethereum blockchain."
+      },
+      "description": {
+        "en": "Kiln is Ledger’s native ETH staking partner. Stake ETH in a couple of clicks by becoming your own validator. Earn rewards for helping secure the Ethereum blockchain."
+      }
+    },
+    "permissions": [],
+    "domains": ["http://", "https://"],
+    "visibility": "complete"
   },
   {
     "id": "lido",
@@ -224,7 +264,7 @@
     },
     "homepageUrl": "https://lido.fi/",
     "icon": "https://cdn.live.ledger.com/icons/platform/lido.png",
-    "platform": "all",
+    "platforms": ["ios", "android", "desktop"],
     "apiVersion": "^1.0.0 || ~0.0.1",
     "manifestVersion": "1",
     "branch": "stable",
@@ -239,7 +279,8 @@
       }
     },
     "permissions": [],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "1inch",
@@ -269,7 +310,7 @@
     },
     "homepageUrl": "https://1inch.io/",
     "icon": "https://cdn.live.ledger.com/icons/platform/1inch.png",
-    "platform": "all",
+    "platforms": ["ios", "android", "desktop"],
     "apiVersion": "^1.0.0 || ~0.0.1",
     "manifestVersion": "1",
     "branch": "stable",
@@ -284,7 +325,8 @@
       }
     },
     "permissions": [],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "btcdirect",
@@ -292,7 +334,7 @@
     "url": "https://ledger.btcdirect.eu/",
     "homepageUrl": "https://btcdirect.eu/",
     "icon": "https://cdn.live.ledger.com/icons/platform/btcdirect.png",
-    "platform": "all",
+    "platforms": ["ios", "android", "desktop"],
     "apiVersion": "^1.0.0 || ~0.0.1",
     "manifestVersion": "1",
     "branch": "stable",
@@ -307,7 +349,8 @@
       }
     },
     "permissions": [],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "banxa",
@@ -330,7 +373,8 @@
       }
     },
     "permissions": [],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "bitrefill",
@@ -353,7 +397,8 @@
       }
     },
     "permissions": [],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "mercuryo",
@@ -361,7 +406,7 @@
     "url": "https://exchange.mercuryo.io/?widget_id=13806834-fd92-460c-b8a4-14b58a09b2a6&fix_currency=true&ledger=true&type=buy&hide_address=true",
     "homepageUrl": "https://www.mercuryo.io/",
     "icon": "https://cdn.live.ledger.com/icons/platform/mercuryo.png",
-    "platform": "all",
+    "platforms": ["ios", "android", "desktop"],
     "apiVersion": "^1.0.0 || ~0.0.1",
     "manifestVersion": "1",
     "branch": "stable",
@@ -387,36 +432,6 @@
     "domains": []
   },
   {
-    "id": "wyre_buy",
-    "name": "Wyre",
-    "url": "https://platform.apps.ledger.com/app/wyre",
-    "homepageUrl": "https://www.sendwyre.com/",
-    "icon": "https://cdn.live.ledger.com/icons/platform/wyre.png",
-    "platform": "all",
-    "apiVersion": "^1.0.0 || ~0.0.1",
-    "manifestVersion": "1",
-    "branch": "stable",
-    "categories": ["exchange", "buy"],
-    "currencies": ["ethereum", "bitcoin", "algorand"],
-    "content": {
-      "shortDescription": {
-        "en": "Purchase Bitcoin, Ethereum and more crypto with Wyre, only available to our US customers."
-      },
-      "description": {
-        "en": "Purchase Bitcoin, Ethereum and more crypto with Wyre, only available to our US customers."
-      }
-    },
-    "permissions": [
-      {
-        "method": "account.request",
-        "params": {
-          "currencies": ["ethereum", "bitcoin", "algorand"]
-        }
-      }
-    ],
-    "domains": ["https://*"]
-  },
-  {
     "id": "zerion",
     "name": "Zerion",
     "url": "https://dapp-browser.apps.ledger.com/?params=%7B%22dappUrl%22%3A%22https%3A%2F%2Fapp.zerion.io%2F%3Fembed%3Dledgerdappbrowser%22%2C%22nanoApp%22%3A%22Paraswap%22%2C%22dappName%22%3A%22Zerion%22%2C%22networks%22%3A%5B%7B%22currency%22%3A%22ethereum%22%2C%22chainID%22%3A1%2C%22nodeURL%22%3A%22wss%3A%2F%2Feth-mainnet.ws.alchemyapi.io%2Fv2%2F0fyudoTG94QWC0tEtfJViM9v2ZXJuij2%22%7D%5D%7D",
@@ -434,7 +449,7 @@
     },
     "homepageUrl": "https://zerion.io/",
     "icon": "https://cdn.live.ledger.com/icons/platform/zerion.png",
-    "platform": "all",
+    "platforms": ["ios", "android", "desktop"],
     "apiVersion": "^1.0.0 || ~0.0.1",
     "manifestVersion": "1",
     "branch": "stable",
@@ -449,7 +464,8 @@
       }
     },
     "permissions": [],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "rainbow",
@@ -457,7 +473,7 @@
     "url": "https://platform.apps.ledger.com/app/web-browser?url=https%3A%2F%2Frainbow.me%2F%7Baccount.address%7D&currencies=ethereum&webAppName=Rainbow.me",
     "homepageUrl": "https://rainbow.me",
     "icon": "https://cdn.live.ledger.com/icons/platform/rainbow.png",
-    "platform": "all",
+    "platforms": ["ios", "android", "desktop"],
     "apiVersion": "^1.0.0 || ~0.0.1",
     "manifestVersion": "1",
     "branch": "stable",
@@ -472,7 +488,8 @@
       }
     },
     "permissions": [],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "poap",
@@ -480,7 +497,7 @@
     "url": "https://platform.apps.ledger.com/app/web-browser?url=https%3A%2F%2Fapp.poap.xyz%2Fscan%2F%7Baccount.address%7D&currencies=ethereum&webAppName=Poap",
     "homepageUrl": "https://app.poap.xyz/",
     "icon": "https://cdn.live.ledger.com/icons/platform/poap.png",
-    "platform": "all",
+    "platforms": ["ios", "android", "desktop"],
     "apiVersion": "^1.0.0 || ~0.0.1",
     "manifestVersion": "1",
     "branch": "stable",
@@ -495,7 +512,8 @@
       }
     },
     "permissions": [],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "aave",
@@ -503,7 +521,7 @@
     "url": "",
     "homepageUrl": "https://aave.com/",
     "icon": "https://cdn.live.ledger.com/icons/platform/aave.png",
-    "platform": "all",
+    "platforms": ["ios", "android", "desktop"],
     "apiVersion": "^1.0.0 || ~0.0.1",
     "manifestVersion": "1",
     "branch": "soon",
@@ -526,7 +544,7 @@
     "url": "",
     "homepageUrl": "https://compound.finance/",
     "icon": "https://cdn.live.ledger.com/icons/platform/compound.png",
-    "platform": "all",
+    "platforms": ["ios", "android", "desktop"],
     "apiVersion": "^1.0.0 || ~0.0.1",
     "manifestVersion": "1",
     "branch": "soon",
@@ -549,7 +567,7 @@
     "url": "",
     "homepageUrl": "https://alkemi.network/",
     "icon": "https://cdn.live.ledger.com/icons/platform/alkemi.png",
-    "platform": "all",
+    "platforms": ["ios", "android", "desktop"],
     "apiVersion": "^1.0.0 || ~0.0.1",
     "manifestVersion": "1",
     "branch": "soon",
@@ -572,7 +590,7 @@
     "url": "",
     "homepageUrl": "https://www.deversifi.com/",
     "icon": "https://cdn.live.ledger.com/icons/platform/deversifi.png",
-    "platform": "all",
+    "platforms": ["ios", "android", "desktop"],
     "apiVersion": "^1.0.0 || ~0.0.1",
     "manifestVersion": "1",
     "branch": "soon",
@@ -607,7 +625,7 @@
     },
     "homepageUrl": "https://beta.yearn.finance",
     "icon": "https://cdn.live.ledger.com/icons/platform/yearn.png",
-    "platform": "all",
+    "platforms": ["ios", "android", "desktop"],
     "apiVersion": "^1.0.0 || ~0.0.1",
     "manifestVersion": "1",
     "branch": "experimental",
@@ -622,7 +640,8 @@
       }
     },
     "permissions": [],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "changenow",
@@ -630,7 +649,7 @@
     "url": "https://changenow.io/ledger",
     "homepageUrl": "https://changenow.io/",
     "icon": "https://content-api.changenow.io/uploads/changenow_3fec68652e.png",
-    "platform": "all",
+    "platforms": ["ios", "android", "desktop"],
     "apiVersion": "^1.0.0 || ~0.0.1",
     "manifestVersion": "1",
     "branch": "experimental",
@@ -665,7 +684,8 @@
         "method": "*"
       }
     ],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "mercuryo",
@@ -673,7 +693,7 @@
     "url": "https://exchange.mercuryo.io/?widget_id=13806834-fd92-460c-b8a4-14b58a09b2a6&fix_currency=true&ledger=true&type=buy&hide_address=true",
     "homepageUrl": "https://www.mercuryo.io/",
     "icon": "https://inlnk.ru/84PnYo",
-    "platform": "all",
+    "platforms": ["ios", "android", "desktop"],
     "apiVersion": "^1.0.0 || ~0.0.1",
     "manifestVersion": "1",
     "branch": "experimental",
@@ -704,7 +724,7 @@
     "url": "https://global.transak.com?apiKey=e95c1914-e525-4d85-870e-0e7297baedf9&isFeeCalculationHidden=true",
     "homepageUrl": "https://transak.com",
     "icon": "https://d1wvnwyfte65eg.cloudfront.net/logo_main.png",
-    "platform": "all",
+    "platforms": ["ios", "android", "desktop"],
     "apiVersion": "^1.0.0 || ~0.0.1",
     "manifestVersion": "1",
     "branch": "experimental",
@@ -733,7 +753,8 @@
         "method": "*"
       }
     ],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "debug",
@@ -741,7 +762,7 @@
     "url": "https://debug.apps.ledger.com/",
     "homepageUrl": "https://developers.ledger.com/",
     "icon": "https://cdn.live.ledger.com/icons/platform/debugger.png",
-    "platform": "all",
+    "platforms": ["ios", "android", "desktop"],
     "apiVersion": "^1.0.0 || ~0.0.1",
     "manifestVersion": "1",
     "branch": "debug",
@@ -760,6 +781,7 @@
         "method": "*"
       }
     ],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   }
 ]

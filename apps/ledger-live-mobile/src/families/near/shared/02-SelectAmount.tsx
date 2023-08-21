@@ -34,19 +34,12 @@ import { NearWithdrawingFlowParamList } from "../WithdrawingFlow/types";
 
 type Props =
   | StackNavigatorProps<NearStakingFlowParamList, ScreenName.NearStakingAmount>
-  | StackNavigatorProps<
-      NearUnstakingFlowParamList,
-      ScreenName.NearUnstakingAmount
-    >
-  | StackNavigatorProps<
-      NearWithdrawingFlowParamList,
-      ScreenName.NearWithdrawingAmount
-    >;
+  | StackNavigatorProps<NearUnstakingFlowParamList, ScreenName.NearUnstakingAmount>
+  | StackNavigatorProps<NearWithdrawingFlowParamList, ScreenName.NearWithdrawingAmount>;
 
 function StakingAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const account = useSelector(accountScreenSelector(route))
-    .account as NearAccount;
+  const account = useSelector(accountScreenSelector(route)).account as NearAccount;
   const locale = useSelector(localeSelector);
   invariant(
     account && account.nearResources && route.params.transaction,
@@ -54,15 +47,11 @@ function StakingAmount({ navigation, route }: Props) {
   );
   const bridge = getAccountBridge(account, undefined);
   const unit = getAccountUnit(account);
-  const initialValue = useMemo(
-    () => route?.params?.value ?? new BigNumber(0),
-    [route],
-  );
+  const initialValue = useMemo(() => route?.params?.value ?? new BigNumber(0), [route]);
   const [value, setValue] = useState(() => initialValue);
   const max = useMemo(() => route?.params?.max ?? new BigNumber(0), [route]);
   const remaining = useMemo(() => max.minus(value), [max, value]);
-  const { transaction, updateTransaction, bridgePending, status } =
-    route.params;
+  const { transaction, updateTransaction, bridgePending, status } = route.params;
   const onNext = useCallback(() => {
     const tx = route.params.transaction;
 
@@ -93,9 +82,7 @@ function StakingAmount({ navigation, route }: Props) {
     })),
   );
   const error =
-    transaction.amount.eq(0) || bridgePending
-      ? null
-      : getFirstStatusError(status, "errors");
+    transaction.amount.eq(0) || bridgePending ? null : getFirstStatusError(status, "errors");
   const warning = getFirstStatusError(status, "warnings");
 
   let behaviorParam: KeyboardAvoidingViewProps["behavior"] | undefined;
@@ -153,9 +140,7 @@ function StakingAmount({ navigation, route }: Props) {
                   >
                     <LText
                       style={[styles.ratioLabel]}
-                      color={
-                        value.eq(v) ? colors.neutral.c100 : colors.neutral.c60
-                      }
+                      color={value.eq(v) ? colors.neutral.c100 : colors.neutral.c60}
                     >
                       {label}
                     </LText>
@@ -174,14 +159,9 @@ function StakingAmount({ navigation, route }: Props) {
             >
               {remaining.isZero() && (
                 <View style={styles.labelContainer}>
-                  <Check size={16} color={colors.success.c100} />
-                  <LText
-                    style={[styles.assetsRemaining]}
-                    color={colors.success.c100}
-                  >
-                    <Trans
-                      i18nKey={`near.staking.flow.steps.amount.allAssetsUsed`}
-                    />
+                  <Check size={16} color={colors.success.c50} />
+                  <LText style={[styles.assetsRemaining]} color={colors.success.c50}>
+                    <Trans i18nKey={`near.staking.flow.steps.amount.allAssetsUsed`} />
                   </LText>
                 </View>
               )}

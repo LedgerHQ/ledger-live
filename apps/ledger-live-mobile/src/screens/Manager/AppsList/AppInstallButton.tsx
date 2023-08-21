@@ -7,7 +7,7 @@ import type { App } from "@ledgerhq/types-live";
 import type { Action, State } from "@ledgerhq/live-common/apps/index";
 import { useAppInstallNeedsDeps } from "@ledgerhq/live-common/apps/react";
 import styled from "styled-components/native";
-import { Icons, Box } from "@ledgerhq/native-ui";
+import { IconsLegacy, Box } from "@ledgerhq/native-ui";
 import { hasInstalledAnyAppSelector } from "../../../reducers/settings";
 import { installAppFirstTime } from "../../../actions/settings";
 
@@ -39,7 +39,7 @@ export default function AppInstallButton({
 }: Props) {
   const dispatch = useDispatch();
   const hasInstalledAnyApp = useSelector(hasInstalledAnyAppSelector);
-  const canInstall = useMemo(() => manager.canHandleInstall(app), [app]);
+  const canBeInstalled = useMemo(() => manager.canHandleInstall(app), [app]);
 
   const { name } = app;
   const { updateAllQueue } = state;
@@ -47,8 +47,8 @@ export default function AppInstallButton({
   const needsDependencies = useAppInstallNeedsDeps(state, app);
 
   const disabled = useMemo(
-    () => !canInstall || updateAllQueue.length > 0,
-    [canInstall, updateAllQueue.length],
+    () => !canBeInstalled || updateAllQueue.length > 0,
+    [canBeInstalled, updateAllQueue.length],
   );
 
   const installApp = useCallback(() => {
@@ -80,7 +80,7 @@ export default function AppInstallButton({
   return (
     <TouchableOpacity onPress={installApp}>
       <ButtonContainer borderColor="neutral.c30">
-        <Icons.PlusMedium size={18} color="neutral.c100" />
+        {canBeInstalled ? <IconsLegacy.PlusMedium size={18} color="neutral.c100" /> : null}
       </ButtonContainer>
     </TouchableOpacity>
   );

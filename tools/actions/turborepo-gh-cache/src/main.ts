@@ -2,11 +2,7 @@ import { info, saveState, setOutput, getInput } from "@actions/core";
 import { spawn } from "child_process";
 import * as path from "path";
 import * as fs from "fs-extra";
-import {
-  absoluteCacheDirectory,
-  logFileName,
-  portFileName,
-} from "./utils/constants";
+import { absoluteCacheDirectory, logFileName, portFileName } from "./utils/constants";
 
 const cleanupCacheFolder = getInput("cleanup-cache-folder", {
   required: true,
@@ -33,11 +29,9 @@ saveState("cleanupCacheFolder", cleanupCacheFolder);
 
   try {
     await Promise.race<string | void>([
-      new Promise((resolve) => {
+      new Promise(resolve => {
         interval = setInterval(() => {
-          if (
-            fs.existsSync(path.resolve(absoluteCacheDirectory, portFileName))
-          ) {
+          if (fs.existsSync(path.resolve(absoluteCacheDirectory, portFileName))) {
             const port = fs
               .readFileSync(path.resolve(absoluteCacheDirectory, portFileName))
               .toString();

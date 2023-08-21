@@ -2,7 +2,7 @@ import React from "react";
 import { Platform, Pressable } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
-import type { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
+import type { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex/index";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { OnboardingNavigatorParamList } from "./RootNavigator/types/OnboardingNavigator";
 import { NavigatorName } from "../const";
@@ -61,10 +61,7 @@ export default function NavigationModalContainer({
         />
       </Flex>
 
-      <ScreenContainer
-        backgroundColor={backgroundColor}
-        {...contentContainerProps}
-      >
+      <ScreenContainer backgroundColor={backgroundColor} {...contentContainerProps}>
         <InnerContainer>{children}</InnerContainer>
       </ScreenContainer>
     </SafeContainer>

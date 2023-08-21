@@ -1,6 +1,6 @@
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { CosmosValidatorItem } from "@ledgerhq/live-common/families/cosmos/types";
-import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/cosmos/utils";
+import cosmosBase from "@ledgerhq/live-common/families/cosmos/chain/cosmosBase";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
 import React, { useCallback } from "react";
@@ -33,39 +33,23 @@ const ValidatorRow = ({
     >
       <View style={styles.validator}>
         <ValidatorImage
-          isLedger={LEDGER_VALIDATOR_ADDRESS === validator.validatorAddress}
+          isLedger={cosmosBase.COSMOS_FAMILY_LEDGER_VALIDATOR_ADDRESSES.includes(
+            validator.validatorAddress,
+          )}
           size={32}
           name={validator.name ?? validator.validatorAddress}
         />
         <View style={styles.validatorBody}>
-          <Text
-            numberOfLines={1}
-            fontWeight="semiBold"
-            style={styles.validatorName}
-          >
+          <Text numberOfLines={1} fontWeight="semiBold" style={styles.validatorName}>
             {validator.name || validator.validatorAddress}
           </Text>
-          <Text
-            fontWeight="semiBold"
-            numberOfLines={1}
-            style={styles.overdelegated}
-          >
-            <Trans i18nKey="cosmos.delegation.commission" />{" "}
-            {validator.commission * 100} %
+          <Text fontWeight="semiBold" numberOfLines={1} style={styles.overdelegated}>
+            <Trans i18nKey="cosmos.delegation.commission" /> {validator.commission * 100} %
           </Text>
         </View>
-        <Text
-          fontWeight="semiBold"
-          numberOfLines={1}
-          style={[styles.validatorYield]}
-          color="smoke"
-        >
+        <Text fontWeight="semiBold" numberOfLines={1} style={[styles.validatorYield]} color="smoke">
           <Text fontWeight="semiBold" numberOfLines={1}>
-            <CurrencyUnitValue
-              showCode
-              unit={getAccountUnit(account)}
-              value={validator.tokens}
-            />
+            <CurrencyUnitValue showCode unit={getAccountUnit(account)} value={validator.tokens} />
           </Text>
         </Text>
       </View>

@@ -43,8 +43,6 @@ Types should also be importable (but not from root because of name conflicts!).
 
 - If you are creating a new component you should write a related [storybook](https://https://storybook.js.org/) story.
 
-We use the [`storiesOf` legacy syntax](https://github.com/storybookjs/storybook/blob/next/lib/core/docs/storiesOf.md) and [knobs](https://storybook.js.org/addons/storybook-addon-knobs-color-options) because the native storybook is behind in terms of releases compared to the regular one.
-
 - Avoid installing new packages unless necessary.
 
 ## Maintenance

@@ -17,10 +17,7 @@ import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
 const totalSteps = "3";
 export default function SignMessageNavigator({
   route,
-}: StackNavigatorProps<
-  BaseNavigatorStackParamList,
-  NavigatorName.SignMessage
->) {
+}: StackNavigatorProps<BaseNavigatorStackParamList, NavigatorName.SignMessage>) {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const stackNavConfig = useMemo(

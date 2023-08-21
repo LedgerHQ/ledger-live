@@ -9,20 +9,13 @@ import {
   NearValidatorItem,
   NearAccount,
 } from "./types";
-import { createTransaction, updateTransaction } from "./js-transaction";
+import { createTransaction } from "./js-transaction";
+import { defaultUpdateTransaction as updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getCurrentNearPreloadData } from "./preload";
-
-export const FALLBACK_STORAGE_AMOUNT_PER_BYTE = "10000000000000000000";
-export const NEW_ACCOUNT_SIZE = 182;
-export const MIN_ACCOUNT_BALANCE_BUFFER = "50000000000000000000000";
-export const STAKING_GAS_BASE = "25000000000000";
-export const FIGMENT_NEAR_VALIDATOR_ADDRESS = "ledgerbyfigment.poolv1.near";
-export const FRACTIONAL_DIGITS = 5;
-export const YOCTO_THRESHOLD_VARIATION = "10";
+import { FRACTIONAL_DIGITS, STAKING_GAS_BASE, YOCTO_THRESHOLD_VARIATION } from "./constants";
 
 export const isValidAddress = (address: string): boolean => {
-  const readableAddressRegex =
-    /^(([a-z\d]+[-_])*[a-z\d]+\.)*([a-z\d]+[-_])*[a-z\d]+$/;
+  const readableAddressRegex = /^(([a-z\d]+[-_])*[a-z\d]+\.)*([a-z\d]+[-_])*[a-z\d]+$/;
   const hexAddressRegex = /^[a-f0-9]{64}$/;
 
   if (isImplicitAccount(address)) {
@@ -49,14 +42,10 @@ export const getStakingGas = (t?: Transaction, multiplier = 5): BigNumber => {
 /*
  * Get the max amount that can be spent, taking into account tx type and pending operations.
  */
-export const getMaxAmount = (
-  a: NearAccount,
-  t: Transaction,
-  fees?: BigNumber
-): BigNumber => {
+export const getMaxAmount = (a: NearAccount, t: Transaction, fees?: BigNumber): BigNumber => {
   let maxAmount;
   const selectedValidator = a.nearResources?.stakingPositions.find(
-    ({ validatorId }) => validatorId === t.recipient
+    ({ validatorId }) => validatorId === t.recipient,
   );
 
   let pendingUnstakingAmount = new BigNumber(0);
@@ -68,10 +57,7 @@ export const getMaxAmount = (
 
     if (type === "UNSTAKE" && recipient === selectedValidator?.validatorId) {
       pendingUnstakingAmount = pendingUnstakingAmount.plus(value);
-    } else if (
-      type === "WITHDRAW_UNSTAKED" &&
-      recipient === selectedValidator?.validatorId
-    ) {
+    } else if (type === "WITHDRAW_UNSTAKED" && recipient === selectedValidator?.validatorId) {
       pendingWithdrawingAmount = pendingWithdrawingAmount.plus(value);
     } else {
       pendingDefaultAmount = pendingDefaultAmount.plus(value);
@@ -100,11 +86,7 @@ export const getMaxAmount = (
   return maxAmount;
 };
 
-export const getTotalSpent = (
-  a: NearAccount,
-  t: Transaction,
-  fees: BigNumber
-): BigNumber => {
+export const getTotalSpent = (a: NearAccount, t: Transaction, fees: BigNumber): BigNumber => {
   if (["unstake", "withdraw"].includes(t.mode)) {
     return fees;
   }
@@ -119,12 +101,10 @@ export const getTotalSpent = (
 export const mapStakingPositions = (
   stakingPositions: NearStakingPosition[],
   validators: NearValidatorItem[],
-  unit: Unit
+  unit: Unit,
 ): NearMappedStakingPosition[] => {
-  return stakingPositions.map((sp) => {
-    const rank = validators.findIndex(
-      (v) => v.validatorAddress === sp.validatorId
-    );
+  return stakingPositions.map(sp => {
+    const rank = validators.findIndex(v => v.validatorAddress === sp.validatorId);
     const validator = validators[rank] ?? sp;
     const formatConfig = {
       disableRounding: false,
@@ -161,13 +141,13 @@ export const canStake = (a: NearAccount): boolean => {
 };
 
 export const canUnstake = (
-  stakingPosition: NearMappedStakingPosition | NearStakingPosition
+  stakingPosition: NearMappedStakingPosition | NearStakingPosition,
 ): boolean => {
   return stakingPosition.staked.gte(getYoctoThreshold());
 };
 
 export const canWithdraw = (
-  stakingPosition: NearMappedStakingPosition | NearStakingPosition
+  stakingPosition: NearMappedStakingPosition | NearStakingPosition,
 ): boolean => {
   return stakingPosition.available.gte(getYoctoThreshold());
 };
@@ -186,10 +166,7 @@ export const getYoctoThreshold = (): BigNumber => {
  * An estimation for the fee by using the staking gas and scaling accordingly.
  * Buffer added so that the transaction never fails - we'll always overestimate.
  */
-export const getStakingFees = (
-  t: Transaction,
-  gasPrice: BigNumber
-): BigNumber => {
+export const getStakingFees = (t: Transaction, gasPrice: BigNumber): BigNumber => {
   const stakingGas = getStakingGas(t);
 
   return stakingGas

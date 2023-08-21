@@ -1,6 +1,6 @@
 import type { LoadConfig } from "../types";
 
-const defaultLoadConfig = {
+const defaultLoadConfig: Required<LoadConfig> = {
   nftExplorerBaseURL: "https://nft.api.live.ledger.com/v1/ethereum",
   pluginBaseURL: "https://cdn.live.ledger.com",
   extraPlugins: null,

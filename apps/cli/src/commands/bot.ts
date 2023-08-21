@@ -25,7 +25,7 @@ export default {
           "here is a possible software seed you can use:\n" +
           "SEED='" +
           generateMnemonic(256) +
-          "'"
+          "'",
       );
       throw new Error("Please define a SEED env variable to run this bot.");
     }

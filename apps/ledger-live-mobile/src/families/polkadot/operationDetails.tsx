@@ -5,10 +5,7 @@ import startCase from "lodash/startCase";
 import { BigNumber } from "bignumber.js";
 
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import {
-  getDefaultExplorerView,
-  getAddressExplorer,
-} from "@ledgerhq/live-common/explorers";
+import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/react";
 import { Account, Operation, OperationType } from "@ledgerhq/types-live";
 import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
@@ -33,7 +30,11 @@ import OperationStatusWrapper from "../../icons/OperationStatusIcon/Wrapper";
 
 import NominationInfo from "./components/NominationInfo";
 
-function getURLWhatIsThis(op: Operation): string | undefined {
+function getURLWhatIsThis(
+  op: Operation,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  currencyId: string,
+): string | undefined {
   if (op.type !== "IN" && op.type !== "OUT") {
     return urls.polkadotStaking;
   }
@@ -60,11 +61,7 @@ type OperationDetailsExtraProps = {
   account: Account;
 };
 
-function OperationDetailsExtra({
-  extra,
-  type,
-  account,
-}: OperationDetailsExtraProps) {
+function OperationDetailsExtra({ extra, type, account }: OperationDetailsExtraProps) {
   const { t } = useTranslation();
   const discreet = useSelector(discreetModeSelector);
   const locale = useSelector(localeSelector);
@@ -72,23 +69,16 @@ function OperationDetailsExtra({
   switch (type) {
     case "OUT":
     case "IN": {
-      const value = formatCurrencyUnit(
-        account.unit,
-        BigNumber(extra.transferAmount),
-        {
-          showCode: true,
-          discreet,
-          disableRounding: true,
-          locale,
-        },
-      );
+      const value = formatCurrencyUnit(account.unit, BigNumber(extra.transferAmount), {
+        showCode: true,
+        discreet,
+        disableRounding: true,
+        locale,
+      });
       return (
         <>
           <OperationDetailsPalletMethod palletMethod={extra.palletMethod} />
-          <Section
-            title={t("operationDetails.extra.transferAmount")}
-            value={value}
-          />
+          <Section title={t("operationDetails.extra.transferAmount")} value={value} />
         </>
       );
     }
@@ -99,73 +89,49 @@ function OperationDetailsExtra({
       return (
         <>
           <OperationDetailsPalletMethod palletMethod={extra.palletMethod} />
-          <OperationDetailsValidators
-            validators={validators}
-            account={account}
-          />
+          <OperationDetailsValidators validators={validators} account={account} />
         </>
       );
     }
     case "BOND": {
-      const value = formatCurrencyUnit(
-        account.unit,
-        BigNumber(extra.bondedAmount),
-        {
-          showCode: true,
-          discreet,
-          disableRounding: true,
-          locale,
-        },
-      );
+      const value = formatCurrencyUnit(account.unit, BigNumber(extra.bondedAmount), {
+        showCode: true,
+        discreet,
+        disableRounding: true,
+        locale,
+      });
       return (
         <>
           <OperationDetailsPalletMethod palletMethod={extra.palletMethod} />
-          <Section
-            title={t("operationDetails.extra.bondedAmount")}
-            value={value}
-          />
+          <Section title={t("operationDetails.extra.bondedAmount")} value={value} />
         </>
       );
     }
     case "UNBOND": {
-      const value = formatCurrencyUnit(
-        account.unit,
-        BigNumber(extra.unbondedAmount),
-        {
-          showCode: true,
-          discreet,
-          disableRounding: true,
-          locale,
-        },
-      );
+      const value = formatCurrencyUnit(account.unit, BigNumber(extra.unbondedAmount), {
+        showCode: true,
+        discreet,
+        disableRounding: true,
+        locale,
+      });
       return (
         <>
           <OperationDetailsPalletMethod palletMethod={extra.palletMethod} />
-          <Section
-            title={t("operationDetails.extra.unbondedAmount")}
-            value={value}
-          />
+          <Section title={t("operationDetails.extra.unbondedAmount")} value={value} />
         </>
       );
     }
     case "WITHDRAW_UNBONDED": {
-      const value = formatCurrencyUnit(
-        account.unit,
-        BigNumber(extra.withdrawUnbondedAmount),
-        {
-          showCode: true,
-          discreet,
-          disableRounding: true,
-          locale,
-        },
-      );
+      const value = formatCurrencyUnit(account.unit, BigNumber(extra.withdrawUnbondedAmount), {
+        showCode: true,
+        discreet,
+        disableRounding: true,
+        locale,
+      });
       return (
         <>
           <OperationDetailsPalletMethod palletMethod={extra.palletMethod} />
-          <Section
-            title={t("operationDetails.extra.withdrawUnbondedAmount")}
-            value={value}
-          />
+          <Section title={t("operationDetails.extra.withdrawUnbondedAmount")} value={value} />
         </>
       );
     }
@@ -174,10 +140,7 @@ function OperationDetailsExtra({
         <>
           <OperationDetailsPalletMethod palletMethod={extra.palletMethod} />
           {extra.validatorStash ? (
-            <OperationDetailsRewardFrom
-              validatorStash={extra.validatorStash}
-              account={account}
-            />
+            <OperationDetailsRewardFrom validatorStash={extra.validatorStash} account={account} />
           ) : null}
         </>
       );
@@ -207,10 +170,7 @@ export const OperationDetailsRewardFrom = ({
 
   const redirectAddressCreator = useCallback(
     address => () => {
-      const url = getAddressExplorer(
-        getDefaultExplorerView(account.currency),
-        address,
-      );
+      const url = getAddressExplorer(getDefaultExplorerView(account.currency), address);
       if (url) Linking.openURL(url);
     },
     [account],
@@ -219,9 +179,7 @@ export const OperationDetailsRewardFrom = ({
   return (
     <Section
       title={t("operationDetails.extra.rewardFrom")}
-      value={
-        validator ? validator.identity ?? validator.address : validatorStash
-      }
+      value={validator ? validator.identity ?? validator.address : validatorStash}
       onPress={redirectAddressCreator(validatorStash)}
     />
   );
@@ -260,10 +218,7 @@ export function OperationDetailsValidators({
     () =>
       (validators || [])
         .map<PolkadotValidator>(
-          address =>
-            polkadotValidators.find(
-              v => v.address === address,
-            ) as PolkadotValidator,
+          address => polkadotValidators.find(v => v.address === address) as PolkadotValidator,
         )
         .filter(Boolean),
     [validators, polkadotValidators],
@@ -271,10 +226,7 @@ export function OperationDetailsValidators({
 
   const redirectAddressCreator = useCallback(
     address => () => {
-      const url = getAddressExplorer(
-        getDefaultExplorerView(account.currency),
-        address,
-      );
+      const url = getAddressExplorer(getDefaultExplorerView(account.currency), address);
       if (url) Linking.openURL(url);
     },
     [account],
@@ -305,26 +257,11 @@ type Props = {
   unit: Unit;
 };
 
-const AmountCell = ({
-  amount,
-  unit,
-  currency,
-  operation,
-}: Props & { amount: BigNumber }) =>
+const AmountCell = ({ amount, unit, currency, operation }: Props & { amount: BigNumber }) =>
   !amount.isZero() ? (
     <>
-      <Text
-        numberOfLines={1}
-        color={"neutral.c100"}
-        variant="body"
-        fontWeight="semiBold"
-      >
-        <CurrencyUnitValue
-          showCode
-          unit={unit}
-          value={amount}
-          alwaysShowSign={false}
-        />
+      <Text numberOfLines={1} color={"neutral.c100"} variant="body" fontWeight="semiBold">
+        <CurrencyUnitValue showCode unit={unit} value={amount} alwaysShowSign={false} />
       </Text>
 
       <Text variant="paragraph" fontWeight="medium" color="neutral.c70">
@@ -341,48 +278,21 @@ const AmountCell = ({
   ) : null;
 
 const BondAmountCell = ({ operation, currency, unit }: Props) => {
-  const amount = new BigNumber(
-    operation.extra ? operation.extra.bondedAmount : 0,
-  );
+  const amount = new BigNumber(operation.extra ? operation.extra.bondedAmount : 0);
 
-  return (
-    <AmountCell
-      amount={amount}
-      operation={operation}
-      currency={currency}
-      unit={unit}
-    />
-  );
+  return <AmountCell amount={amount} operation={operation} currency={currency} unit={unit} />;
 };
 
 const UnbondAmountCell = ({ operation, currency, unit }: Props) => {
-  const amount = new BigNumber(
-    operation.extra ? operation.extra.unbondedAmount : 0,
-  );
+  const amount = new BigNumber(operation.extra ? operation.extra.unbondedAmount : 0);
 
-  return (
-    <AmountCell
-      amount={amount}
-      operation={operation}
-      currency={currency}
-      unit={unit}
-    />
-  );
+  return <AmountCell amount={amount} operation={operation} currency={currency} unit={unit} />;
 };
 
 const WithdrawUnbondAmountCell = ({ operation, currency, unit }: Props) => {
-  const amount = new BigNumber(
-    operation.extra ? operation.extra.withdrawUnbondedAmount : 0,
-  );
+  const amount = new BigNumber(operation.extra ? operation.extra.withdrawUnbondedAmount : 0);
 
-  return (
-    <AmountCell
-      amount={amount}
-      operation={operation}
-      currency={currency}
-      unit={unit}
-    />
-  );
+  return <AmountCell amount={amount} operation={operation} currency={currency} unit={unit} />;
 };
 
 const NominateAmountCell = ({ operation }: Props) => {
@@ -390,10 +300,7 @@ const NominateAmountCell = ({ operation }: Props) => {
 
   return amount > 0 ? (
     <Text numberOfLines={1} variant={"paragraph"} fontWeight={"semiBold"}>
-      <Trans
-        i18nKey={"operationDetails.extra.validatorsCount"}
-        values={{ number: amount }}
-      />
+      <Trans i18nKey={"operationDetails.extra.validatorsCount"} values={{ number: amount }} />
     </Text>
   ) : null;
 };

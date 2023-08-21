@@ -2,13 +2,11 @@ import React, { useCallback, useMemo, memo } from "react";
 import { useRoute } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
 import { useDispatch } from "react-redux";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Linking } from "react-native";
+import { usePostOnboardingURI } from "@ledgerhq/live-common/hooks/recoverFeatueFlag";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { ScreenName } from "../../../const";
-import BaseStepperView, {
-  RestoreWithProtect,
-  PinCodeInstructions,
-} from "./setupDevice/scenes";
+import BaseStepperView, { RestoreWithProtect, PinCodeInstructions } from "./setupDevice/scenes";
 import { TrackScreen } from "../../../analytics";
 
 import StepLottieAnimation from "./setupDevice/scenes/StepLottieAnimation";
@@ -28,10 +26,7 @@ type Metadata = {
 };
 
 type NavigationProps = RootComposite<
-  StackNavigatorProps<
-    OnboardingNavigatorParamList,
-    ScreenName.OnboardingPairNew
-  >
+  StackNavigatorProps<OnboardingNavigatorParamList, ScreenName.OnboardingProtectFlow>
 >;
 
 const scenes = [RestoreWithProtect, PinCodeInstructions] as Step[];
@@ -40,10 +35,8 @@ function OnboardingStepProtectFlow() {
   const { theme } = useTheme();
   const route = useRoute<NavigationProps["route"]>();
 
-  const servicesConfig = useFeature("protectServicesMobile");
-
-  const postOnboardingURI =
-    servicesConfig?.params?.onboardingRestore?.postOnboardingURI;
+  const protectFeature = useFeature("protectServicesMobile");
+  const postOnboardingURI = usePostOnboardingURI(protectFeature);
 
   const dispatch = useDispatch();
   const { resetCurrentStep } = useNavigationInterceptor();
@@ -55,22 +48,14 @@ function OnboardingStepProtectFlow() {
       {
         id: RestoreWithProtect.id,
         illustration: (
-          <StepLottieAnimation
-            stepId="pinCode"
-            deviceModelId={deviceModelId}
-            theme={theme}
-          />
+          <StepLottieAnimation stepId="recover" deviceModelId={deviceModelId} theme={theme} />
         ),
         drawer: null,
       },
       {
         id: PinCodeInstructions.id,
         illustration: (
-          <StepLottieAnimation
-            stepId="pinCode"
-            deviceModelId={deviceModelId}
-            theme={theme}
-          />
+          <StepLottieAnimation stepId="pinCode" deviceModelId={deviceModelId} theme={theme} />
         ),
         drawer: {
           route: ScreenName.OnboardingSetupDeviceInformation,
@@ -86,9 +71,7 @@ function OnboardingStepProtectFlow() {
     resetCurrentStep();
 
     if (postOnboardingURI)
-      Linking.canOpenURL(postOnboardingURI).then(() =>
-        Linking.openURL(postOnboardingURI),
-      );
+      Linking.canOpenURL(postOnboardingURI).then(() => Linking.openURL(postOnboardingURI));
   }, [dispatch, postOnboardingURI, resetCurrentStep]);
 
   const nextPage = useCallback(() => {

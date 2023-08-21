@@ -5,6 +5,9 @@ import { Transaction } from "../types";
 import { modes } from "../modules";
 import { fail } from "assert";
 import BigNumber from "bignumber.js";
+import { setSupportedCurrencies } from "../../../currencies";
+
+setSupportedCurrencies(["ethereum", "bsc"]);
 
 const ethAccount = fromAccountRaw(ethereum1);
 const bscAccount = fromAccountRaw({
@@ -34,11 +37,7 @@ describe("Ethereum transaction tests", () => {
           };
           const txData = {};
 
-          mode.fillTransactionData(
-            ethAccountWithBalance,
-            sendMaxTransaction,
-            txData
-          );
+          mode.fillTransactionData(ethAccountWithBalance, sendMaxTransaction, txData);
 
           expect(txData).toEqual({
             value: "0xde0a39a35d9b000", // 999979000000000000 (1000000000000000000 - (21000 * 1000000000))
@@ -61,11 +60,7 @@ describe("Ethereum transaction tests", () => {
           };
           const txData = {};
 
-          mode.fillTransactionData(
-            bscAccountWithBalance,
-            sendMaxTransaction,
-            txData
-          );
+          mode.fillTransactionData(bscAccountWithBalance, sendMaxTransaction, txData);
 
           expect(txData).toEqual({
             value: "0xde0a39a35d9b000", // 999979000000000000 (1000000000000000000 - (21000 * 1000000000))

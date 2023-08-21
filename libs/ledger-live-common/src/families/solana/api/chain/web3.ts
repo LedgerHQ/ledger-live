@@ -26,11 +26,7 @@ import {
   TransferCommand,
 } from "../../types";
 import { drainSeqAsyncGen } from "../../utils";
-import {
-  parseTokenAccountInfo,
-  tryParseAsTokenAccount,
-  tryParseAsVoteAccount,
-} from "./account";
+import { parseTokenAccountInfo, tryParseAsTokenAccount, tryParseAsVoteAccount } from "./account";
 import { parseStakeAccountInfo } from "./account/parser";
 import { StakeAccountInfo } from "./account/stake";
 import { TokenAccountInfo } from "./account/token";
@@ -57,7 +53,7 @@ export type ParsedOnChainStakeAccountWithInfo = {
 };
 
 export function toTokenAccountWithInfo(
-  onChainAcc: ParsedOnChainTokenAccount
+  onChainAcc: ParsedOnChainTokenAccount,
 ): ParsedOnChainTokenAccountWithInfo {
   const parsedInfo = onChainAcc.account.data.parsed.info;
   const info = parseTokenAccountInfo(parsedInfo);
@@ -65,7 +61,7 @@ export function toTokenAccountWithInfo(
 }
 
 export function toStakeAccountWithInfo(
-  onChainAcc: ParsedOnChainStakeAccount
+  onChainAcc: ParsedOnChainStakeAccount,
 ): ParsedOnChainStakeAccountWithInfo | undefined {
   if ("parsed" in onChainAcc.account.data) {
     const parsedInfo = onChainAcc.account.data.parsed.info;
@@ -83,7 +79,7 @@ export type TransactionDescriptor = {
 async function* getTransactionsBatched(
   address: string,
   untilTxSignature: string | undefined,
-  api: ChainAPI
+  api: ChainAPI,
 ): AsyncGenerator<TransactionDescriptor[], void, unknown> {
   // as per Ledger team - last 100 operations is a sane limit to begin with
   const signatures = await api.getSignaturesForAddress(address, {
@@ -97,7 +93,7 @@ async function* getTransactionsBatched(
 
   for (const signaturesInfoBatch of chunk(signatures, batchSize)) {
     const transactions = await api.getParsedTransactions(
-      signaturesInfoBatch.map((tx) => tx.signature)
+      signaturesInfoBatch.map(tx => tx.signature),
     );
     const txsDetails = transactions.reduce((acc, tx, index) => {
       if (tx && !tx.meta?.err && tx.blockTime) {
@@ -116,13 +112,9 @@ async function* getTransactionsBatched(
 async function* getTransactionsGen(
   address: string,
   untilTxSignature: string | undefined,
-  api: ChainAPI
+  api: ChainAPI,
 ): AsyncGenerator<TransactionDescriptor, void, undefined> {
-  for await (const txDetailsBatch of getTransactionsBatched(
-    address,
-    untilTxSignature,
-    api
-  )) {
+  for await (const txDetailsBatch of getTransactionsBatched(address, untilTxSignature, api)) {
     yield* txDetailsBatch;
   }
 }
@@ -130,7 +122,7 @@ async function* getTransactionsGen(
 export function getTransactions(
   address: string,
   untilTxSignature: string | undefined,
-  api: ChainAPI
+  api: ChainAPI,
 ): Promise<TransactionDescriptor[]> {
   return drainSeqAsyncGen(getTransactionsGen(address, untilTxSignature, api));
 }
@@ -165,7 +157,7 @@ export const buildTransferInstructions = ({
 };
 
 export const buildTokenTransferInstructions = (
-  command: TokenTransferCommand
+  command: TokenTransferCommand,
 ): TransactionInstruction[] => {
   const {
     ownerAddress,
@@ -190,8 +182,8 @@ export const buildTokenTransferInstructions = (
         ownerPubkey,
         destinationPubkey,
         ownerPubkey,
-        mintPubkey
-      )
+        mintPubkey,
+      ),
     );
   }
 
@@ -202,8 +194,8 @@ export const buildTokenTransferInstructions = (
       destinationPubkey,
       ownerPubkey,
       amount,
-      mintDecimals
-    )
+      mintDecimals,
+    ),
   );
 
   if (memo) {
@@ -212,7 +204,7 @@ export const buildTokenTransferInstructions = (
         keys: [],
         programId: new PublicKey(MEMO_PROGRAM_ID),
         data: Buffer.from(memo),
-      })
+      }),
     );
   }
 
@@ -221,7 +213,7 @@ export const buildTokenTransferInstructions = (
 
 export async function findAssociatedTokenAccountPubkey(
   ownerAddress: string,
-  mintAddress: string
+  mintAddress: string,
 ): Promise<PublicKey> {
   const ownerPubKey = new PublicKey(ownerAddress);
   const mintPubkey = new PublicKey(mintAddress);
@@ -231,33 +223,36 @@ export async function findAssociatedTokenAccountPubkey(
 
 export const getMaybeTokenAccount = async (
   address: string,
-  api: ChainAPI
+  api: ChainAPI,
 ): Promise<TokenAccountInfo | undefined | Error> => {
   const accInfo = await api.getAccountInfo(address);
 
   const tokenAccount =
-    accInfo !== null && "parsed" in accInfo.data
-      ? tryParseAsTokenAccount(accInfo.data)
-      : undefined;
+    accInfo !== null && "parsed" in accInfo.data ? tryParseAsTokenAccount(accInfo.data) : undefined;
 
   return tokenAccount;
 };
 
 export async function getMaybeVoteAccount(
   address: string,
-  api: ChainAPI
+  api: ChainAPI,
 ): Promise<VoteAccountInfo | undefined | Error> {
   const accInfo = await api.getAccountInfo(address);
   const voteAccount =
-    accInfo !== null && "parsed" in accInfo.data
-      ? tryParseAsVoteAccount(accInfo.data)
-      : undefined;
+    accInfo !== null && "parsed" in accInfo.data ? tryParseAsVoteAccount(accInfo.data) : undefined;
 
   return voteAccount;
 }
 
 export function getStakeAccountMinimumBalanceForRentExemption(api: ChainAPI) {
   return api.getMinimumBalanceForRentExemption(StakeProgram.space);
+}
+
+export async function getAccountMinimumBalanceForRentExemption(api: ChainAPI, address: string) {
+  const accInfo = await api.getAccountInfo(address);
+  const accSpace = accInfo !== null && "parsed" in accInfo.data ? accInfo.data.space : 0;
+
+  return api.getMinimumBalanceForRentExemption(accSpace);
 }
 
 export async function getStakeAccountAddressWithSeed({
@@ -270,7 +265,7 @@ export async function getStakeAccountAddressWithSeed({
   const pubkey = await PublicKey.createWithSeed(
     new PublicKey(fromAddress),
     seed,
-    StakeProgram.programId
+    StakeProgram.programId,
   );
 
   return pubkey.toBase58();
@@ -290,7 +285,7 @@ export function buildCreateAssociatedTokenAccountInstruction({
       ownerPubKey,
       associatedTokenAccPubkey,
       ownerPubKey,
-      mintPubkey
+      mintPubkey,
     ),
   ];
 
@@ -397,7 +392,7 @@ export function buildStakeCreateAccountInstructions({
       authorizedPubkey: fromPubkey,
       stakePubkey,
       votePubkey: new PublicKey(delegate.voteAccAddress),
-    })
+    }),
   );
 
   return tx.instructions;

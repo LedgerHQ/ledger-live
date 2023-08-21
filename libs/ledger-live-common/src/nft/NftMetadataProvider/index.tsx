@@ -1,21 +1,20 @@
-import React, {
-  createContext,
-  useContext,
-  useMemo,
-  useState,
-  useEffect,
-} from "react";
+import type {
+  NFT,
+  NFTCollectionMetadataResponse,
+  NFTMetadataResponse,
+  ProtoNFT,
+} from "@ledgerhq/types-live";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import React, { createContext, useContext, useMemo, useState, useEffect } from "react";
 import { getNftCollectionKey, getNftKey } from "../helpers";
+import { getCurrencyBridge } from "../../bridge";
+import { isOutdated } from "./logic";
 import {
   NFTMetadataContextAPI,
   NFTMetadataContextState,
   NFTMetadataContextType,
   NFTResource,
 } from "./types";
-import { isOutdated } from "./logic";
-import { getCurrencyBridge } from "../../bridge";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import type { NFT, ProtoNFT } from "@ledgerhq/types-live";
 
 const NftMetadataContext = createContext<NFTMetadataContextType>({
   cache: {},
@@ -27,14 +26,11 @@ const NftMetadataContext = createContext<NFTMetadataContextType>({
 export function useNftMetadata(
   contract: string | undefined,
   tokenId: string | undefined,
-  currencyId: string | undefined
-): NFTResource {
+  currencyId: string | undefined,
+): NFTResource<NonNullable<NFTMetadataResponse["result"]>> {
   const { cache, loadNFTMetadata } = useContext(NftMetadataContext);
-  const key =
-    contract && tokenId && currencyId
-      ? getNftKey(contract, tokenId, currencyId)
-      : "";
-  const cachedData = cache[key];
+  const key = contract && tokenId && currencyId ? getNftKey(contract, tokenId, currencyId) : "";
+  const cachedData = cache[key] as NFTResource<NonNullable<NFTMetadataResponse["result"]>>;
 
   useEffect(() => {
     if (!contract || !tokenId || !currencyId) return;
@@ -54,13 +50,14 @@ export function useNftMetadata(
 
 export function useNftCollectionMetadata(
   contract: string | undefined,
-  currencyId: string | undefined
-): NFTResource {
+  currencyId: string | undefined,
+): NFTResource<NonNullable<NFTCollectionMetadataResponse["result"]>> {
   const { cache, loadCollectionMetadata } = useContext(NftMetadataContext);
-  const key =
-    contract && currencyId ? getNftCollectionKey(contract, currencyId) : "";
+  const key = contract && currencyId ? getNftCollectionKey(contract, currencyId) : "";
 
-  const cachedData = cache[key];
+  const cachedData = cache[key] as NFTResource<
+    NonNullable<NFTCollectionMetadataResponse["result"]>
+  >;
 
   useEffect(() => {
     if (!contract || !currencyId) return;
@@ -83,21 +80,14 @@ type UseNFTResponse =
   | { status: "loaded"; nft: NFT };
 
 export function useNft(protoNft: ProtoNFT): UseNFTResponse {
-  const data = useNftMetadata(
-    protoNft.contract,
-    protoNft.tokenId,
-    protoNft.currencyId
-  );
+  const data = useNftMetadata(protoNft.contract, protoNft.tokenId, protoNft.currencyId);
 
   const { status } = data;
-  const metadata = useMemo(
-    () => (status === "loaded" ? data.metadata : null),
-    [data, status]
-  );
+  const metadata = useMemo(() => (status === "loaded" ? data.metadata : null), [data, status]);
 
   const nft = useMemo(
     () => (status === "loaded" && metadata ? { ...protoNft, metadata } : null),
-    [protoNft, metadata, status]
+    [protoNft, metadata, status],
   ) as NFT | null;
 
   return status !== "loaded"
@@ -109,8 +99,7 @@ export function useNft(protoNft: ProtoNFT): UseNFTResponse {
 }
 
 export function useNftAPI(): NFTMetadataContextAPI {
-  const { clearCache, loadNFTMetadata, loadCollectionMetadata } =
-    useContext(NftMetadataContext);
+  const { clearCache, loadNFTMetadata, loadCollectionMetadata } = useContext(NftMetadataContext);
 
   return {
     clearCache,
@@ -123,20 +112,14 @@ type NFTMetadataProviderProps = {
   children: React.ReactNode;
 };
 
-export function NftMetadataProvider({
-  children,
-}: NFTMetadataProviderProps): React.ReactElement {
+export function NftMetadataProvider({ children }: NFTMetadataProviderProps): React.ReactElement {
   const [state, setState] = useState<NFTMetadataContextState>({
     cache: {},
   });
 
   const api: NFTMetadataContextAPI = useMemo(
     () => ({
-      loadNFTMetadata: async (
-        contract: string,
-        tokenId: string,
-        currencyId: string
-      ) => {
+      loadNFTMetadata: async (contract: string, tokenId: string, currencyId: string) => {
         const key = getNftKey(contract, tokenId, currencyId);
         const currency = getCryptoCurrencyById(currencyId);
         const currencyBridge = getCurrencyBridge(currency);
@@ -145,7 +128,7 @@ export function NftMetadataProvider({
           throw new Error("Currency doesn't support NFT metadata");
         }
 
-        setState((oldState) => ({
+        setState(oldState => ({
           ...oldState,
           cache: {
             ...oldState.cache,
@@ -156,18 +139,17 @@ export function NftMetadataProvider({
         }));
 
         try {
-          const { status, result } =
-            await currencyBridge.nftResolvers.nftMetadata({
-              contract,
-              tokenId,
-              currencyId: currency.id,
-            });
+          const { status, result } = await currencyBridge.nftResolvers.nftMetadata({
+            contract,
+            tokenId,
+            currencyId: currency.id,
+          });
 
           switch (status) {
             case 500:
               throw new Error("NFT Metadata Provider failed");
             case 404:
-              setState((oldState) => ({
+              setState(oldState => ({
                 ...oldState,
                 cache: {
                   ...oldState.cache,
@@ -180,7 +162,7 @@ export function NftMetadataProvider({
               }));
               break;
             case 200:
-              setState((oldState) => ({
+              setState(oldState => ({
                 ...oldState,
                 cache: {
                   ...oldState.cache,
@@ -188,15 +170,18 @@ export function NftMetadataProvider({
                     status: "loaded",
                     metadata: result,
                     updatedAt: Date.now(),
-                  },
+                  } as NFTResource<NonNullable<NFTMetadataResponse["result"]>>,
                 },
               }));
               break;
             default:
               break;
           }
-        } catch (error) {
-          setState((oldState) => ({
+        } catch (_error) {
+          // This shenanigan is here to avoid an Hermes bug https://github.com/pmndrs/zustand/discussions/1269
+          const error = new Error(_error ? (_error as Error).message : "Unknown Error");
+
+          setState(oldState => ({
             ...oldState,
             cache: {
               ...oldState.cache,
@@ -219,7 +204,7 @@ export function NftMetadataProvider({
           throw new Error("Currency doesn't support Collection Metadata");
         }
 
-        setState((oldState) => ({
+        setState(oldState => ({
           ...oldState,
           cache: {
             ...oldState.cache,
@@ -230,17 +215,16 @@ export function NftMetadataProvider({
         }));
 
         try {
-          const { status, result } =
-            await currencyBridge.nftResolvers.collectionMetadata({
-              contract,
-              currencyId: currency.id,
-            });
+          const { status, result } = await currencyBridge.nftResolvers.collectionMetadata({
+            contract,
+            currencyId: currency.id,
+          });
 
           switch (status) {
             case 500:
               throw new Error("NFT Metadata Provider failed");
             case 404:
-              setState((oldState) => ({
+              setState(oldState => ({
                 ...oldState,
                 cache: {
                   ...oldState.cache,
@@ -253,7 +237,7 @@ export function NftMetadataProvider({
               }));
               break;
             case 200:
-              setState((oldState) => ({
+              setState(oldState => ({
                 ...oldState,
                 cache: {
                   ...oldState.cache,
@@ -261,15 +245,18 @@ export function NftMetadataProvider({
                     status: "loaded",
                     metadata: result,
                     updatedAt: Date.now(),
-                  },
+                  } as NFTResource<NonNullable<NFTCollectionMetadataResponse["result"]>>,
                 },
               }));
               break;
             default:
               break;
           }
-        } catch (error) {
-          setState((oldState) => ({
+        } catch (_error) {
+          // This shenanigan is here to avoid an Hermes bug https://github.com/pmndrs/zustand/discussions/1269
+          const error = new Error(_error ? (_error as Error).message : "Unknown Error");
+
+          setState(oldState => ({
             ...oldState,
             cache: {
               ...oldState.cache,
@@ -283,20 +270,16 @@ export function NftMetadataProvider({
         }
       },
       clearCache: () => {
-        setState((oldState) => ({
+        setState(oldState => ({
           ...oldState,
           cache: {},
         }));
       },
     }),
-    []
+    [],
   );
 
   const value = { ...state, ...api };
 
-  return (
-    <NftMetadataContext.Provider value={value}>
-      {children}
-    </NftMetadataContext.Provider>
-  );
+  return <NftMetadataContext.Provider value={value}>{children}</NftMetadataContext.Provider>;
 }

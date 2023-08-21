@@ -25,48 +25,27 @@ export const INITIAL_STATE: NotificationsState = {
 const handlers: ReducerMap<NotificationsState, NotificationsPayload> = {
   [NotificationsActionTypes.NOTIFICATIONS_SET_MODAL_OPEN]: (state, action) => ({
     ...state,
-    isPushNotificationsModalOpen: (
-      action as Action<NotificationsSetModalOpenPayload>
-    ).payload.isPushNotificationsModalOpen,
+    isPushNotificationsModalOpen: (action as Action<NotificationsSetModalOpenPayload>).payload,
   }),
-  [NotificationsActionTypes.NOTIFICATIONS_SET_MODAL_LOCKED]: (
-    state,
-    action,
-  ) => ({
+  [NotificationsActionTypes.NOTIFICATIONS_SET_MODAL_LOCKED]: (state, action) => ({
     ...state,
-    isPushNotificationsModalLocked: (
-      action as Action<NotificationsSetModalLockedPayload>
-    ).payload.isPushNotificationsModalLocked,
+    isPushNotificationsModalLocked: (action as Action<NotificationsSetModalLockedPayload>).payload,
   }),
   [NotificationsActionTypes.NOTIFICATIONS_SET_MODAL_TYPE]: (state, action) => ({
     ...state,
-    notificationsModalType: (action as Action<NotificationsSetModalTypePayload>)
-      .payload.notificationsModalType,
+    notificationsModalType: (action as Action<NotificationsSetModalTypePayload>).payload,
   }),
-  [NotificationsActionTypes.NOTIFICATIONS_SET_CURRENT_ROUTE_NAME]: (
-    state,
-    action,
-  ) => ({
+  [NotificationsActionTypes.NOTIFICATIONS_SET_CURRENT_ROUTE_NAME]: (state, action) => ({
     ...state,
-    currentRouteName: (
-      action as Action<NotificationsSetCurrentRouteNamePayload>
-    ).payload.currentRouteName,
+    currentRouteName: (action as Action<NotificationsSetCurrentRouteNamePayload>).payload,
   }),
-  [NotificationsActionTypes.NOTIFICATIONS_SET_EVENT_TRIGGERED]: (
-    state,
-    action,
-  ) => ({
+  [NotificationsActionTypes.NOTIFICATIONS_SET_EVENT_TRIGGERED]: (state, action) => ({
     ...state,
-    eventTriggered: (action as Action<NotificationsSetEventTriggeredPayload>)
-      .payload.eventTriggered,
+    eventTriggered: (action as Action<NotificationsSetEventTriggeredPayload>).payload,
   }),
-  [NotificationsActionTypes.NOTIFICATIONS_SET_DATA_OF_USER]: (
-    state,
-    action,
-  ) => ({
+  [NotificationsActionTypes.NOTIFICATIONS_SET_DATA_OF_USER]: (state, action) => ({
     ...state,
-    dataOfUser: (action as Action<NotificationsSetDataOfUserPayload>).payload
-      .dataOfUser,
+    dataOfUser: (action as Action<NotificationsSetDataOfUserPayload>).payload,
   }),
 
   [NotificationsActionTypes.DANGEROUSLY_OVERRIDE_STATE]: (
@@ -74,8 +53,7 @@ const handlers: ReducerMap<NotificationsState, NotificationsPayload> = {
     action,
   ): NotificationsState => ({
     ...state,
-    ...(action as Action<DangerouslyOverrideStatePayload>).payload
-      .notifications,
+    ...(action as Action<DangerouslyOverrideStatePayload>).payload.notifications,
   }),
 };
 
@@ -86,19 +64,12 @@ export const notificationsModalOpenSelector = (s: State) =>
 export const notificationsModalLockedSelector = (s: State) =>
   s.notifications.isPushNotificationsModalLocked;
 
-export const notificationsModalTypeSelector = (s: State) =>
-  s.notifications.notificationsModalType;
+export const notificationsModalTypeSelector = (s: State) => s.notifications.notificationsModalType;
 
-export const notificationsCurrentRouteNameSelector = (s: State) =>
-  s.notifications.currentRouteName;
+export const notificationsCurrentRouteNameSelector = (s: State) => s.notifications.currentRouteName;
 
-export const notificationsEventTriggeredSelector = (s: State) =>
-  s.notifications.eventTriggered;
+export const notificationsEventTriggeredSelector = (s: State) => s.notifications.eventTriggered;
 
-export const notificationsDataOfUserSelector = (s: State) =>
-  s.notifications.dataOfUser;
+export const notificationsDataOfUserSelector = (s: State) => s.notifications.dataOfUser;
 
-export default handleActions<NotificationsState, NotificationsPayload>(
-  handlers,
-  INITIAL_STATE,
-);
+export default handleActions<NotificationsState, NotificationsPayload>(handlers, INITIAL_STATE);

@@ -8,7 +8,7 @@ export function getStyles<
   G extends GroupBase<O> = GroupBase<O>,
 >(theme: DefaultTheme): NonNullable<StylesConfig<O, M, G>["menuList"]> {
   const isLight = theme.colors.type === "light";
-  return (provided) => ({
+  return provided => ({
     ...provided,
     display: "flex",
     flexDirection: "column",

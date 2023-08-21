@@ -26,13 +26,8 @@ import {
   releaseSpeculosDevice,
   findAppCandidate,
 } from "../load/speculos";
-import type { AppCandidate } from "../load/speculos";
-import {
-  formatReportForConsole,
-  formatTime,
-  formatAppCandidate,
-  formatError,
-} from "./formatters";
+import type { AppCandidate } from "@ledgerhq/coin-framework/bot/types";
+import { formatReportForConsole, formatTime, formatAppCandidate, formatError } from "./formatters";
 import type {
   AppSpec,
   MutationSpec,
@@ -49,11 +44,14 @@ import { makeBridgeCacheSystem } from "../bridge/cache";
 import { accountDataToAccount, accountToAccountData } from "../cross";
 import type {
   Account,
+  AccountLike,
   Operation,
+  SignedOperation,
   SignOperationEvent,
+  TransactionCommon,
 } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "../generated/types";
-import { botTest } from "./bot-test-context";
+import { botTest } from "@ledgerhq/coin-framework/bot/bot-test-context";
 import { retryWithDelay } from "../rxjs/operators/retryWithDelay";
 
 let appCandidates;
@@ -72,8 +70,8 @@ const cache = makeBridgeCacheSystem({
 // simulate the export/inport of an account
 async function crossAccount(account: Account): Promise<Account> {
   const a = accountDataToAccount(accountToAccountData(account));
+  a.name += " cross";
   const synced = await syncAccount(a);
-  synced.name += " cross";
   return synced;
 }
 
@@ -82,7 +80,7 @@ const delayBetweenScanAccountRetries = 5000;
 
 export async function runWithAppSpec<T extends Transaction>(
   spec: AppSpec<T>,
-  reportLog: (arg0: string) => void
+  reportLog: (arg0: string) => void,
 ): Promise<SpecReport<T>> {
   log("engine", `spec ${spec.name}`);
   const seed = getEnv("SEED");
@@ -106,14 +104,9 @@ export async function runWithAppSpec<T extends Transaction>(
     appCandidate,
     "%s: no app found. Are you sure your COINAPPS is up to date?",
     spec.name,
-    coinapps
+    coinapps,
   );
-  log(
-    "engine",
-    `spec ${spec.name} will use ${formatAppCandidate(
-      appCandidate as AppCandidate
-    )}`
-  );
+  log("engine", `spec ${spec.name} will use ${formatAppCandidate(appCandidate as AppCandidate)}`);
   const deviceParams = {
     ...(appCandidate as AppCandidate),
     appName: spec.currency.managerAppName,
@@ -131,19 +124,15 @@ export async function runWithAppSpec<T extends Transaction>(
 
   // staticly check that all mutations declared a test too (if no generic spec test)
   if (!spec.test) {
-    const list = spec.mutations.filter((m) => !m.test);
+    const list = spec.mutations.filter(m => !m.test);
     if (list.length > 0) {
-      hintWarnings.push(
-        "mutations should define a test(): " +
-          list.map((m) => m.name).join(", ")
-      );
+      hintWarnings.push("mutations should define a test(): " + list.map(m => m.name).join(", "));
     }
   }
 
   // staticly assess if testDestination is necessary
   const mutationThatProducedDestinationsWithoutTests: MutationSpec<any>[] = [];
-  const mutationWithDestinationTestsWithoutDestination: MutationSpec<any>[] =
-    [];
+  const mutationWithDestinationTestsWithoutDestination: MutationSpec<any>[] = [];
 
   try {
     device = await createSpeculosDevice(deviceParams);
@@ -168,17 +157,15 @@ export async function runWithAppSpec<T extends Transaction>(
       .pipe(
         retryWithDelay(
           delayBetweenScanAccountRetries,
-          spec.scanAccountsRetries || defaultScanAccountsRetries
+          spec.scanAccountsRetries || defaultScanAccountsRetries,
         ),
-        filter((e) => e.type === "discovered"),
-        map((e) => e.account),
+        filter(e => e.type === "discovered"),
+        map(e => deepFreezeAccount(e.account)),
         reduce<Account, Account[]>((all, a) => all.concat(a), []),
         timeoutWith(
           getEnv("BOT_TIMEOUT_SCAN_ACCOUNTS"),
-          throwError(
-            new Error("scan accounts timeout for currency " + currency.name)
-          )
-        )
+          throwError(new Error("scan accounts timeout for currency " + currency.name)),
+        ),
       )
       .toPromise();
     appReport.scanDuration = now() - beforeScanTime;
@@ -188,51 +175,40 @@ export async function runWithAppSpec<T extends Transaction>(
       hintWarnings.push(
         "There are not enough accounts to cover all mutations. Please increase the account target to at least " +
           (spec.mutations.length + 1) +
-          " accounts"
+          " accounts",
       );
     }
 
     // "Migrate" the FIRST and every {crossAccountFrequency} account to simulate an export/import (same logic as export to mobile) – default to every 10
     // this is made a subset of the accounts to help identify problem that would be specific to the "cross" or not.
-    for (
-      let i = 0;
-      i < accounts.length;
-      i += spec.crossAccountFrequency || 10
-    ) {
+    for (let i = 0; i < accounts.length; i += spec.crossAccountFrequency || 10) {
       accounts[i] = await crossAccount(accounts[i]);
     }
     appReport.accountsBefore = accounts;
     if (!spec.allowEmptyAccounts) {
-      invariant(
-        accounts.length > 0,
-        "unexpected empty accounts for " + currency.name
-      );
+      invariant(accounts.length > 0, "unexpected empty accounts for " + currency.name);
     }
-    const preloadStats =
-      preloadDuration > 10 ? ` (preload: ${formatTime(preloadDuration)})` : "";
+    const preloadStats = preloadDuration > 10 ? ` (preload: ${formatTime(preloadDuration)})` : "";
     reportLog(
       `Spec ${spec.name} found ${accounts.length} ${
         currency.name
       } accounts${preloadStats}. Will use ${formatAppCandidate(
-        appCandidate as AppCandidate
-      )}\n${accounts.map((a) => formatAccount(a, "head")).join("\n")}\n`
+        appCandidate as AppCandidate,
+      )}\n${accounts.map(a => formatAccount(a, "head")).join("\n")}\n`,
     );
 
     if (accounts.every(isAccountEmpty)) {
       reportLog(
-        `This SEED does not have ${
-          currency.name
-        }. Please send funds to ${accounts
-          .map((a) => a.freshAddress)
-          .join(" or ")}\n`
+        `This SEED does not have ${currency.name}. Please send funds to ${accounts
+          .map(a => a.freshAddress)
+          .join(" or ")}\n`,
       );
       appReport.accountsAfter = accounts;
       return appReport;
     }
 
     const mutationsStartTime = now();
-    const skipMutationsTimeout =
-      spec.skipMutationsTimeout || getEnv("BOT_SPEC_DEFAULT_TIMEOUT");
+    const skipMutationsTimeout = spec.skipMutationsTimeout || getEnv("BOT_SPEC_DEFAULT_TIMEOUT");
     let mutationsCount = {};
     // we sequentially iterate on the initial account set to perform mutations
     const length = accounts.length;
@@ -247,16 +223,13 @@ export async function runWithAppSpec<T extends Transaction>(
           appReport.skipMutationsTimeoutReached = true;
           break;
         }
-        log(
-          "engine",
-          `spec ${spec.name} sync all accounts (try ${j} run ${i})`
-        );
+        log("engine", `spec ${spec.name} sync all accounts (try ${j} run ${i})`);
 
         // resync all accounts that needs to be resynced
         const resynced = await promiseAllBatched(
           getEnv("SYNC_MAX_CONCURRENT"),
-          accounts.filter((a) => accountIdsNeedResync.includes(a.id)),
-          syncAccount
+          accounts.filter(a => accountIdsNeedResync.includes(a.id)),
+          syncAccount,
         );
 
         accounts = accounts.map((a: Account) => {
@@ -283,21 +256,15 @@ export async function runWithAppSpec<T extends Transaction>(
         if (report.finalAccount) {
           // optim: no need to resync if all went well with finalAccount
           const finalAccount: Account = report.finalAccount;
-          accountIdsNeedResync = accountIdsNeedResync.filter(
-            (id) => id !== finalAccount.id
-          );
-          accounts = accounts.map((a: Account) =>
-            a.id === finalAccount.id ? finalAccount : a
-          );
+          accountIdsNeedResync = accountIdsNeedResync.filter(id => id !== finalAccount.id);
+          accounts = accounts.map((a: Account) => (a.id === finalAccount.id ? finalAccount : a));
         }
         if (report.finalDestination) {
           // optim: no need to resync if all went well with finalDestination
           const finalDestination: Account = report.finalDestination;
-          accountIdsNeedResync = accountIdsNeedResync.filter(
-            (id) => id !== finalDestination.id
-          );
+          accountIdsNeedResync = accountIdsNeedResync.filter(id => id !== finalDestination.id);
           accounts = accounts.map((a: Account) =>
-            a.id === finalDestination.id ? finalDestination : a
+            a.id === finalDestination.id ? finalDestination : a,
           );
         } else if (report.mutation) {
           const { mutation } = report;
@@ -325,12 +292,11 @@ export async function runWithAppSpec<T extends Transaction>(
         if (
           report.error ||
           (report.latestSignOperationEvent &&
-            report.latestSignOperationEvent.type ===
-              "device-signature-requested")
+            report.latestSignOperationEvent.type === "device-signature-requested")
         ) {
           log(
             "engine",
-            `spec ${spec.name} is recreating the device because deviceAction didn't finished`
+            `spec ${spec.name} is recreating the device because deviceAction didn't finished`,
           );
           await releaseSpeculosDevice(device.id);
           device = await createSpeculosDevice(deviceParams);
@@ -340,33 +306,29 @@ export async function runWithAppSpec<T extends Transaction>(
     }
 
     if (
-      mutationReports.every((r) => !r.mutation) &&
-      accounts.some((a) => a.spendableBalance.gt(spec.minViableAmount || 0))
+      mutationReports.every(r => !r.mutation) &&
+      accounts.some(a => a.spendableBalance.gt(spec.minViableAmount || 0))
     ) {
       hintWarnings.push(
-        "No mutation were found possible. Yet there are funds in the accounts, please investigate."
+        "No mutation were found possible. Yet there are funds in the accounts, please investigate.",
       );
     }
 
     if (mutationThatProducedDestinationsWithoutTests.length) {
       hintWarnings.push(
         "mutations should define a testDestination(): " +
-          mutationThatProducedDestinationsWithoutTests
-            .map((m) => m.name)
-            .join(", ")
+          mutationThatProducedDestinationsWithoutTests.map(m => m.name).join(", "),
       );
     }
     if (mutationWithDestinationTestsWithoutDestination.length) {
       hintWarnings.push(
         "mutations should NOT define a testDestination() because there are no 'destination' sibling account found: " +
-          mutationWithDestinationTestsWithoutDestination
-            .map((m) => m.name)
-            .join(", ")
+          mutationWithDestinationTestsWithoutDestination.map(m => m.name).join(", "),
       );
     }
 
-    mutationReports.forEach((m) => {
-      m.hintWarnings.forEach((h) => {
+    mutationReports.forEach(m => {
+      m.hintWarnings.forEach(h => {
         const txt = `mutation ${m.mutation?.name || "?"}: ${h}`;
         if (!hintWarnings.includes(txt)) {
           hintWarnings.push(txt);
@@ -427,12 +389,7 @@ export async function runOnAccount<T extends Transaction>({
       account,
     });
     report.maxSpendable = maxSpendable;
-    log(
-      "engine",
-      `spec ${spec.name}/${
-        account.name
-      } maxSpendable=${maxSpendable.toString()}`
-    );
+    log("engine", `spec ${spec.name}/${account.name} maxSpendable=${maxSpendable.toString()}`);
     const candidates: Array<{
       mutation: MutationSpec<T>;
       tx: T;
@@ -450,13 +407,13 @@ export async function runOnAccount<T extends Transaction>({
         invariant(
           count < (mutation.maxRun || Infinity),
           "maximum mutation run reached (%s)",
-          count
+          count,
         );
         const arg: TransactionArg<T> = {
           appCandidate,
           account,
           bridge: accountBridge,
-          siblings: accounts.filter((a) => a !== account),
+          siblings: accounts.filter(a => a !== account),
           maxSpendable,
           preloadedData,
         };
@@ -494,6 +451,7 @@ export async function runOnAccount<T extends Transaction>({
     let status;
     let errors = [];
     let transaction: T = await accountBridge.prepareTransaction(account, tx);
+    deepFreezeTransaction(transaction);
 
     for (const patch of updates) {
       if (patch) {
@@ -502,22 +460,21 @@ export async function runOnAccount<T extends Transaction>({
         report.transaction = transaction;
         transaction = await accountBridge.updateTransaction(transaction, patch);
         report.transaction = transaction;
-        transaction = await accountBridge.prepareTransaction(
-          account,
-          transaction
-        );
+        transaction = await accountBridge.prepareTransaction(account, transaction);
+        deepFreezeTransaction(transaction);
       }
     }
 
     report.transaction = transaction;
     const destination =
-      candidate.destination ||
-      accounts.find((a) => a.freshAddress === transaction.recipient);
+      candidate.destination || accounts.find(a => a.freshAddress === transaction.recipient);
     report.destination = destination;
     status = await accountBridge.getTransactionStatus(account, transaction);
+    errors = Object.values(status.errors);
+
+    deepFreezeStatus(status);
     report.status = status;
     report.statusTime = now();
-    errors = Object.values(status.errors);
     const warnings = Object.values(status.warnings);
 
     if (mutation.recoverBadTransactionStatus) {
@@ -531,15 +488,15 @@ export async function runOnAccount<T extends Transaction>({
         });
 
         if (recovered && recovered !== transaction) {
+          deepFreezeTransaction(recovered);
           report.recoveredFromTransactionStatus = {
             transaction,
             status,
           };
           report.transaction = transaction = recovered;
-          status = await accountBridge.getTransactionStatus(
-            account,
-            transaction
-          );
+          status = await accountBridge.getTransactionStatus(account, transaction);
+          errors = Object.values(status.errors);
+          deepFreezeStatus(status);
           report.status = status;
           report.statusTime = now();
         }
@@ -568,15 +525,15 @@ export async function runOnAccount<T extends Transaction>({
         });
       if (expected) {
         botTest("verify status.warnings expectations", () =>
-          expect(status.warnings).toEqual(expected)
+          expect(status.warnings).toEqual(expected),
         );
       } else {
         for (const k in status.warnings) {
           const e = status.warnings[k];
           hintWarnings.push(
             `unexpected status.warnings.${k} = ${String(
-              e
-            )} – Please implement expectStatusWarnings on the mutation if expected`
+              e,
+            )} – Please implement expectStatusWarnings on the mutation if expected`,
           );
         }
       }
@@ -592,7 +549,7 @@ export async function runOnAccount<T extends Transaction>({
         deviceId: device.id,
       })
       .pipe(
-        tap((e) => {
+        tap(e => {
           latestSignOperationEvent = e;
           log("engine", `spec ${spec.name}/${account.name}: ${e.type}`);
         }),
@@ -605,14 +562,11 @@ export async function runOnAccount<T extends Transaction>({
           status,
         }),
         first((e: any) => e.type === "signed"),
-        map(
-          (e) => (
-            invariant(e.type === "signed", "signed operation"),
-            e.signedOperation
-          )
-        )
+        map(e => (invariant(e.type === "signed", "signed operation"), e.signedOperation)),
       )
       .toPromise();
+    deepFreezeSignedOperation(signedOperation);
+
     report.signedOperation = signedOperation;
     report.signedTime = now();
 
@@ -632,34 +586,29 @@ export async function runOnAccount<T extends Transaction>({
             account,
             signedOperation,
           })
-          .catch((e) => {
+          .catch(e => {
             // wrap the error into some bot test context
             botTest("during broadcast", () => {
               throw e;
             });
           });
+
+    deepFreezeOperation(optimisticOperation);
     report.optimisticOperation = optimisticOperation;
     report.broadcastedTime = now();
-    log(
-      "engine",
-      `spec ${spec.name}/${account.name}/${optimisticOperation.hash} broadcasted`
-    );
+    log("engine", `spec ${spec.name}/${account.name}/${optimisticOperation.hash} broadcasted`);
 
     // wait the condition are good (operation confirmed)
     // test() is run over and over until either timeout is reach OR success
     const testBefore = now();
     const timeOut = mutation.testTimeout || spec.testTimeout || 5 * 60 * 1000;
-    const step = (account) => {
+    const step = account => {
       const timedOut = now() - testBefore > timeOut;
-      const operation = account.operations.find(
-        (o) => o.id === optimisticOperation.id
-      );
+      const operation = account.operations.find(o => o.id === optimisticOperation.id);
 
       if (timedOut && !operation) {
         botTest("waiting operation id to appear after broadcast", () => {
-          throw new Error(
-            "could not find optimisticOperation " + optimisticOperation.id
-          );
+          throw new Error("could not find optimisticOperation " + optimisticOperation.id);
         });
       }
 
@@ -703,10 +652,7 @@ export async function runOnAccount<T extends Transaction>({
     report.finalAccount = finalAccount;
     report.operation = operation;
     report.confirmedTime = now();
-    log(
-      "engine",
-      `spec ${spec.name}/${account.name}/${optimisticOperation.hash} confirmed`
-    );
+    log("engine", `spec ${spec.name}/${account.name}/${optimisticOperation.hash} confirmed`);
 
     const destinationBeforeTransaction = destination;
     if (destination && mutation.testDestination) {
@@ -714,28 +660,15 @@ export async function runOnAccount<T extends Transaction>({
       // test() is run over and over until either timeout is reach OR success
       const ntestBefore = now();
       const newTimeOut = Math.max(10000, timeOut - (ntestBefore - testBefore));
-      log(
-        "bot",
-        "remaining time to test destination: " +
-          (newTimeOut / 1000).toFixed(0) +
-          "s"
-      );
+      log("bot", "remaining time to test destination: " + (newTimeOut / 1000).toFixed(0) + "s");
       const sendingOperation = operation;
-      const step = (account) => {
+      const step = account => {
         const timedOut = now() - ntestBefore > newTimeOut;
         let operation;
         try {
-          operation = account.operations.find(
-            (op) => op.hash === sendingOperation.hash
-          );
-          botTest(
-            "destination account should receive an operation (by tx hash)",
-            () =>
-              invariant(
-                operation,
-                "no operation found with hash %s",
-                sendingOperation.hash
-              )
+          operation = account.operations.find(op => op.hash === sendingOperation.hash);
+          botTest("destination account should receive an operation (by tx hash)", () =>
+            invariant(operation, "no operation found with hash %s", sendingOperation.hash),
           );
           if (!operation) throw new Error();
           const arg: TransactionDestinationTestInput<T> = {
@@ -760,10 +693,7 @@ export async function runOnAccount<T extends Transaction>({
             report.testDestinationDuration = now() - ntestBefore;
             throw e;
           }
-          log(
-            "bot",
-            "failed destination confirm test. trying again. " + String(e)
-          );
+          log("bot", "failed destination confirm test. trying again. " + String(e));
           // We will try again
           return;
         }
@@ -797,11 +727,11 @@ async function syncAccount(initialAccount: Account): Promise<Account> {
       reduce((a, f: (arg0: Account) => Account) => f(a), initialAccount),
       timeoutWith(
         10 * 60 * 1000,
-        throwError(new Error("account sync timeout for " + initialAccount.name))
-      )
+        throwError(new Error("account sync timeout for " + initialAccount.name)),
+      ),
     )
     .toPromise();
-  return acc;
+  return deepFreezeAccount(acc);
 }
 
 export function autoSignTransaction<T extends Transaction>({
@@ -811,6 +741,7 @@ export function autoSignTransaction<T extends Transaction>({
   account,
   transaction,
   status,
+  disableStrictStepValueValidation,
 }: {
   transport: any;
   deviceAction: DeviceAction<T, any>;
@@ -818,18 +749,17 @@ export function autoSignTransaction<T extends Transaction>({
   account: Account;
   transaction: T;
   status: TransactionStatus;
+  disableStrictStepValueValidation?: boolean;
 }): OperatorFunction<SignOperationEvent, SignOperationEvent> {
   let sub;
   let observer;
   let state;
   const recentEvents: SignOperationEvent[] = [];
-  return mergeMap<SignOperationEvent, Observable<SignOperationEvent>>((e) => {
+  return mergeMap<SignOperationEvent, Observable<SignOperationEvent>>(e => {
     if (e.type === "device-signature-requested") {
-      return new Observable((o) => {
+      return new Observable(o => {
         if (observer) {
-          o.error(
-            new Error("device-signature-requested should not be called twice!")
-          );
+          o.error(new Error("device-signature-requested should not be called twice!"));
           return;
         }
 
@@ -839,19 +769,17 @@ export function autoSignTransaction<T extends Transaction>({
           o.error(
             new Error(
               "device action timeout. Recent events was:\n" +
-                recentEvents.map((e) => JSON.stringify(e)).join("\n")
-            )
+                recentEvents.map(e => JSON.stringify(e)).join("\n"),
+            ),
           );
         }, 60 * 1000);
         sub = transport.automationEvents
           .pipe(
             // deduplicate two successive identical text in events (that can sometimes occur with speculos)
-            distinctUntilChanged(
-              (a: DeviceActionEvent, b: DeviceActionEvent) => a.text === b.text
-            )
+            distinctUntilChanged((a: DeviceActionEvent, b: DeviceActionEvent) => a.text === b.text),
           )
           .subscribe({
-            next: (event) => {
+            next: event => {
               recentEvents.push(event);
 
               if (recentEvents.length > 5) {
@@ -867,6 +795,7 @@ export function autoSignTransaction<T extends Transaction>({
                   transport,
                   state,
                   status,
+                  disableStrictStepValueValidation,
                 });
               } catch (e) {
                 o.error(e);
@@ -875,7 +804,7 @@ export function autoSignTransaction<T extends Transaction>({
             complete: () => {
               o.complete();
             },
-            error: (e) => {
+            error: e => {
               o.error(e);
             },
           });
@@ -946,12 +875,8 @@ function transactionTest<T>({
   const dt = Date.now() - operation.date.getTime();
   const lowerThreshold = -60 * 1000; // -1mn accepted
   const upperThreshold = 30 * 60 * 1000; // 30mn up
-  botTest("operation.date must not be in future", () =>
-    expect(dt).toBeGreaterThan(lowerThreshold)
-  );
-  botTest("operation.date less than 30mn ago", () =>
-    expect(dt).toBeLessThan(upperThreshold)
-  );
+  botTest("operation.date must not be in future", () => expect(dt).toBeGreaterThan(lowerThreshold));
+  botTest("operation.date less than 30mn ago", () => expect(dt).toBeLessThan(upperThreshold));
   botTest("operation must not failed", () => {
     expect(!operation.hasFailed).toBe(true);
   });
@@ -966,29 +891,78 @@ function transactionTest<T>({
         expected <= expectedMax,
         "There are way too much operation confirmation for a small amount of time. %s < %s",
         expected,
-        expectedMax
-      )
+        expectedMax,
+      ),
     );
   }
 
   botTest("optimisticOperation.value must not be NaN", () =>
-    expect(!optimisticOperation.value.isNaN()).toBe(true)
+    expect(!optimisticOperation.value.isNaN()).toBe(true),
   );
   botTest("optimisticOperation.fee must not be NaN", () =>
-    expect(!optimisticOperation.fee.isNaN()).toBe(true)
+    expect(!optimisticOperation.fee.isNaN()).toBe(true),
   );
-  botTest("operation.value must not be NaN", () =>
-    expect(!operation.value.isNaN()).toBe(true)
-  );
-  botTest("operation.fee must not be NaN", () =>
-    expect(!operation.fee.isNaN()).toBe(true)
-  );
+  botTest("operation.value must not be NaN", () => expect(!operation.value.isNaN()).toBe(true));
+  botTest("operation.fee must not be NaN", () => expect(!operation.fee.isNaN()).toBe(true));
 
-  botTest(
-    "successful tx should increase by at least 1 the number of account.operations",
-    () =>
-      expect(account.operations.length).toBeGreaterThanOrEqual(
-        accountBeforeTransaction.operations.length + 1
-      )
+  botTest("successful tx should increase by at least 1 the number of account.operations", () =>
+    expect(account.operations.length).toBeGreaterThanOrEqual(
+      accountBeforeTransaction.operations.length + 1,
+    ),
   );
+}
+
+/*
+function deepFreeze(object, path: string[] = []) {
+  // Retrieve the property names defined on object
+  const propNames = Reflect.ownKeys(object);
+
+  // Freeze properties before freezing self
+  for (const name of propNames) {
+    const value = object[name];
+
+    if (value && typeof value === "object") {
+      deepFreeze(value, [...path, name.toString()]);
+    }
+  }
+
+  try {
+    return Object.freeze(object);
+  } catch (e) {
+    console.warn("Can't freeze at " + path.join("."));
+  }
+}
+*/
+
+// deepFreeze logic specialized to freeze an account (it's too problematic to deep freeze all objects of Account too deeply)
+function deepFreezeAccount<T extends AccountLike>(account: T): T {
+  Object.freeze(account);
+  if (account.type === "Account") {
+    account.subAccounts?.forEach(deepFreezeAccount);
+    account.nfts?.forEach(Object.freeze);
+  }
+  account.operations.forEach(deepFreezeOperation);
+  account.pendingOperations.forEach(deepFreezeOperation);
+  return account;
+}
+
+function deepFreezeOperation(operation: Operation): Operation {
+  Object.freeze(operation);
+  return operation;
+}
+
+function deepFreezeSignedOperation(signedOperation: SignedOperation): SignedOperation {
+  Object.freeze(signedOperation);
+  Object.freeze(signedOperation.operation);
+  return signedOperation;
+}
+
+function deepFreezeStatus(transactionStatus: TransactionStatus): TransactionStatus {
+  Object.freeze(transactionStatus);
+  return transactionStatus;
+}
+
+function deepFreezeTransaction<T extends TransactionCommon>(transaction: T): T {
+  Object.freeze(transaction);
+  return transaction;
 }

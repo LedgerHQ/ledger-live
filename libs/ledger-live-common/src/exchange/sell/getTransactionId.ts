@@ -1,7 +1,6 @@
 import Transport from "@ledgerhq/hw-transport";
-import Exchange from "../hw-app-exchange/Exchange";
+import Exchange, { ExchangeTypes } from "@ledgerhq/hw-app-exchange";
 import type { SellRequestEvent } from "./types";
-import { ExchangeTypes } from "../hw-app-exchange/Exchange";
 
 function base64EncodeUrl(str) {
   return str.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");

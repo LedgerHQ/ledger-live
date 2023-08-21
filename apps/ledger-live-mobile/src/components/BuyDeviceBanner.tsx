@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { Image, ImageStyle, StyleProp, ViewStyle } from "react-native";
-import { Flex, Text, Icons, Link } from "@ledgerhq/native-ui";
+import { Flex, Text, IconsLegacy, Link } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
@@ -11,10 +11,7 @@ import ForceTheme from "./theme/ForceTheme";
 import buyImgSource from "../images/illustration/Shared/_NanoXTop.png";
 import setupImgSource from "../images/illustration/Shared/_NanoXBoxTop.png";
 import { track } from "../analytics";
-import {
-  RootNavigationComposite,
-  StackNavigatorNavigation,
-} from "./RootNavigator/types/helpers";
+import { RootNavigationComposite, StackNavigatorNavigation } from "./RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "./RootNavigator/types/BaseNavigator";
 
 type Props = {
@@ -79,11 +76,7 @@ export default function BuyDeviceBanner({
 }: Props) {
   const { t } = useTranslation();
   const { navigate } =
-    useNavigation<
-      RootNavigationComposite<
-        StackNavigatorNavigation<BaseNavigatorStackParamList>
-      >
-    >();
+    useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
 
   const handleOnPress = useCallback(() => {
     navigate(NavigatorName.BuyDevice);
@@ -93,7 +86,10 @@ export default function BuyDeviceBanner({
     navigate(NavigatorName.BaseOnboarding, {
       screen: NavigatorName.Onboarding,
       params: {
-        screen: ScreenName.OnboardingDeviceSelection,
+        screen: ScreenName.OnboardingPostWelcomeSelection,
+        params: {
+          userHasDevice: true,
+        },
       },
     });
   }, [navigate]);
@@ -105,7 +101,7 @@ export default function BuyDeviceBanner({
       handleOnPress();
       track("button_clicked", {
         button: "Discover the Nano",
-        screen,
+        page: screen,
       });
     }
   }, [handleOnPress, handleSetupCtaOnPress, screen, variant]);
@@ -113,7 +109,7 @@ export default function BuyDeviceBanner({
   const pressMessage = useCallback(() => {
     track("message_clicked", {
       message: "I already have a device, set it up",
-      screen,
+      page: screen,
       currency: eventProperties?.currency,
     });
     handleSetupCtaOnPress();
@@ -125,20 +121,10 @@ export default function BuyDeviceBanner({
         <Flex flexDirection="column" alignItems="flex-start">
           {topLeft || (
             <Flex flexDirection="column" width="80%">
-              <Text
-                variant="h5"
-                fontWeight="semiBold"
-                color="constant.black"
-                mb={3}
-              >
+              <Text variant="h5" fontWeight="semiBold" color="constant.black" mb={3}>
                 {t("buyDevice.bannerTitle")}
               </Text>
-              <Text
-                variant="paragraph"
-                fontWeight="medium"
-                color="constant.black"
-                mb="20px"
-              >
+              <Text variant="paragraph" fontWeight="medium" color="constant.black" mb="20px">
                 {t("buyDevice.bannerSubtitle")}
               </Text>
             </Flex>
@@ -148,9 +134,7 @@ export default function BuyDeviceBanner({
               onPress={onPress}
               size={buttonSize}
               event={variant === "setup" ? undefined : event}
-              eventProperties={
-                variant === "setup" ? undefined : eventProperties
-              }
+              eventProperties={variant === "setup" ? undefined : eventProperties}
               type="main"
               flexShrink={0}
             >
@@ -179,7 +163,7 @@ export default function BuyDeviceBanner({
         <Flex alignItems="center" justifyContent="center" mt={24} mx="auto">
           <Link
             type="color"
-            Icon={Icons.ArrowRightMedium}
+            Icon={IconsLegacy.ArrowRightMedium}
             iconPosition="right"
             onPress={pressMessage}
           >

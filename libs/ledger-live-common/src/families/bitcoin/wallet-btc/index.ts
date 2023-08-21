@@ -1,11 +1,6 @@
 import { Currency } from "./crypto/types";
 import BitcoinLikeWallet from "./wallet";
-import {
-  DerivationModes,
-  InputInfo,
-  OutputInfo,
-  TransactionInfo,
-} from "./types";
+import { DerivationModes, InputInfo, OutputInfo, TransactionInfo } from "./types";
 import { Account, SerializedAccount } from "./account";
 import { TX, Input, Output } from "./storage/types";
 import { CoinSelect } from "./pickingstrategies/CoinSelect";
@@ -40,8 +35,7 @@ export {
 let wallet: BitcoinLikeWallet | null = null;
 
 export const getWalletAccount = (account: LiveAccount): WalletAccount => {
-  const walletAccount = (account as BitcoinAccount).bitcoinResources
-    ?.walletAccount;
+  const walletAccount = (account as BitcoinAccount).bitcoinResources?.walletAccount;
   if (account.id.startsWith("libcore") || !walletAccount) {
     throw new AccountNeedResync();
   }

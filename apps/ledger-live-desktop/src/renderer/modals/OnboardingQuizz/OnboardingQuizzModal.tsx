@@ -1,11 +1,9 @@
-import React, { useCallback } from "react";
-import { useDispatch } from "react-redux";
+import React from "react";
 import { useTranslation } from "react-i18next";
-import { closeModal } from "~/renderer/actions/modals";
 import ModalQuizz from "~/renderer/components/ModalQuizz/ModalQuizz";
 import { getQuizzSteps } from "./quizzSteps";
 import StartScreen from "./StartScreen";
-import { noop } from "lodash";
+import noop from "lodash/noop";
 
 type PopinProps = {
   isOpen: boolean;
@@ -20,7 +18,6 @@ export const QuizzPopin = ({ onWin, isOpen, onLose, onClose = noop }: PopinProps
   return (
     <ModalQuizz
       title={t("onboarding.quizz.heading")}
-      isOpen
       onClose={onClose}
       onWin={onWin}
       onLose={onLose}
@@ -29,11 +26,3 @@ export const QuizzPopin = ({ onWin, isOpen, onLose, onClose = noop }: PopinProps
     />
   );
 };
-
-export default function QuizzModal() {
-  const dispatch = useDispatch();
-  const onClose = useCallback(() => {
-    dispatch(closeModal("MODAL_ONBOARDING_QUIZZ"));
-  }, [dispatch]);
-  return <QuizzPopin isOpen onClose={onClose} onWin={noop} onLose={noop} />;
-}

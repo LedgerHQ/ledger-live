@@ -14,9 +14,11 @@ export default () => {
 
   const handleInitPostOnboardingHub = useCallback(
     (deviceId: DeviceModelId, mock: boolean) =>
-      startPostOnboarding(deviceId, mock, () =>
-        navigation.navigate(NavigatorName.Main),
-      ),
+      startPostOnboarding({
+        deviceModelId: deviceId,
+        mock,
+        fallbackIfNoAction: () => navigation.navigate(NavigatorName.Main),
+      }),
     [navigation, startPostOnboarding],
   );
 
@@ -38,10 +40,7 @@ export default () => {
         desc="Pressing this should not do anything. (no actions configured for this device)."
         onPress={() => handleInitPostOnboardingHub(DeviceModelId.nanoX, true)}
       />
-      <SettingsRow
-        title="Open post onboarding hub"
-        onPress={navigateToPostOnboardingHub}
-      />
+      <SettingsRow title="Open post onboarding hub" onPress={navigateToPostOnboardingHub} />
       <Flex m={6}>
         <PostOnboardingEntryPointCard />
       </Flex>

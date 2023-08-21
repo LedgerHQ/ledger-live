@@ -1,10 +1,12 @@
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { selectorStateDefaultValues } from ".";
 import { getAccountCurrency, getMainAccount } from "../../../account";
 import { Result as UseBridgeTransactionReturnType } from "../../../bridge/useBridgeTransaction";
 import { SwapSelectorStateType, SwapTransactionType } from "../types";
+import BigNumber from "bignumber.js";
+import { debounce } from "../utils/debounce";
 
 export const useFromState = ({
   accounts,
@@ -27,17 +29,14 @@ export const useFromState = ({
     ...selectorStateDefaultValues,
     currency: defaultCurrency ?? selectorStateDefaultValues.currency,
     account: defaultAccount ?? selectorStateDefaultValues.account,
-    parentAccount:
-      defaultParentAccount ?? selectorStateDefaultValues.parentAccount,
+    parentAccount: defaultParentAccount ?? selectorStateDefaultValues.parentAccount,
   });
 
   /* UPDATE from account */
   const setFromAccount: SwapTransactionType["setFromAccount"] = useCallback(
-    (account) => {
+    account => {
       const parentAccount =
-        account?.type !== "Account"
-          ? accounts?.find((a) => a.id === account?.parentId)
-          : undefined;
+        account?.type !== "Account" ? accounts?.find(a => a.id === account?.parentId) : undefined;
       const currency = getAccountCurrency(account as AccountLike);
 
       bridgeTransaction.setAccount(account as AccountLike, parentAccount);
@@ -52,25 +51,31 @@ export const useFromState = ({
       const mainAccount = getMainAccount(account as AccountLike, parentAccount);
       const mainCurrency = getAccountCurrency(mainAccount);
       const recipient = getAbandonSeedAddress(mainCurrency.id);
-      bridgeTransaction.updateTransaction((transaction) => ({
+      bridgeTransaction.updateTransaction(transaction => ({
         ...transaction,
         recipient,
       }));
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [accounts, bridgeTransaction.updateTransaction]
+    [accounts, bridgeTransaction.updateTransaction],
+  );
+
+  const debouncedSetFromAmount = useMemo(
+    () =>
+      debounce((amount: BigNumber) => {
+        bridgeTransaction.updateTransaction(transaction => ({
+          ...transaction,
+          amount,
+        }));
+        setFromState(previousState => ({ ...previousState, amount: amount }));
+      }, 400),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [bridgeTransaction.updateTransaction],
   );
 
   const setFromAmount: SwapTransactionType["setFromAmount"] = useCallback(
-    (amount) => {
-      bridgeTransaction.updateTransaction((transaction) => ({
-        ...transaction,
-        amount,
-      }));
-      setFromState((previousState) => ({ ...previousState, amount: amount }));
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [bridgeTransaction.updateTransaction]
+    amount => debouncedSetFromAmount(amount),
+    [debouncedSetFromAmount],
   );
 
   return {

@@ -1,6 +1,6 @@
 import React, { useMemo, memo } from "react";
 import { Text } from "@ledgerhq/native-ui";
-import { BaseTextProps } from "@ledgerhq/native-ui/components/Text";
+import { BaseTextProps } from "@ledgerhq/native-ui/components/Text/index";
 import { FontWeightTypes } from "@ledgerhq/native-ui/components/Text/getTextStyle";
 import getFontStyle from "./getFontStyle";
 
@@ -17,6 +17,7 @@ export type Opts = Omit<BaseTextProps, "children"> & {
   children?: React.ReactNode;
   variant?: string;
   fontFamily?: string;
+  textAlign?: string;
 };
 
 export type Res = {
@@ -35,10 +36,7 @@ export type Res = {
     | "900";
 };
 
-const inferFontWeight = ({
-  semiBold,
-  bold,
-}: Partial<Opts>): FontWeightTypes => {
+const inferFontWeight = ({ semiBold, bold }: Partial<Opts>): FontWeightTypes => {
   if (bold) {
     return "bold";
   }
@@ -55,10 +53,8 @@ const inferFontWeight = ({
  * @deprecated Please, prefer using the Text component from our design-system if possible.
  */
 function LText({ color, children, semiBold, bold, ...props }: Opts) {
-  const fontWeight = useMemo(
-    () => inferFontWeight({ semiBold, bold }),
-    [semiBold, bold],
-  );
+  const fontWeight = useMemo(() => inferFontWeight({ semiBold, bold }), [semiBold, bold]);
+
   return (
     <Text {...props} fontWeight={fontWeight} color={color}>
       {children}

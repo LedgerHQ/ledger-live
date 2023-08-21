@@ -8,18 +8,14 @@ import { usePostOnboardingEntryPointVisibleOnWallet } from "./usePostOnboardingE
 import { DeviceModelId } from "@ledgerhq/types-devices";
 
 jest.mock("react-redux", () => ({
-  useSelector: (fun) => fun(),
+  useSelector: fun => fun(),
 }));
 jest.mock("../reducer");
 jest.mock("./useAllPostOnboardingActionsCompleted");
 
 const mockedUseAllCompleted = jest.mocked(useAllPostOnboardingActionsCompleted);
-const mockedDismissedSelector = jest.mocked(
-  walletPostOnboardingEntryPointDismissedSelector
-);
-const mockedDeviceModelIdSelector = jest.mocked(
-  postOnboardingDeviceModelIdSelector
-);
+const mockedDismissedSelector = jest.mocked(walletPostOnboardingEntryPointDismissedSelector);
+const mockedDeviceModelIdSelector = jest.mocked(postOnboardingDeviceModelIdSelector);
 
 describe("usePostOnboardingEntryPointVisibleOnWallet", () => {
   beforeEach(() => {
@@ -33,9 +29,7 @@ describe("usePostOnboardingEntryPointVisibleOnWallet", () => {
     mockedDismissedSelector.mockReturnValue(false);
     mockedDeviceModelIdSelector.mockReturnValue(null);
 
-    const { result } = renderHook(() =>
-      usePostOnboardingEntryPointVisibleOnWallet()
-    );
+    const { result } = renderHook(() => usePostOnboardingEntryPointVisibleOnWallet());
 
     expect(result.current).toBe(false);
   });
@@ -45,15 +39,11 @@ describe("usePostOnboardingEntryPointVisibleOnWallet", () => {
     mockedDeviceModelIdSelector.mockReturnValue(DeviceModelId.nanoX);
 
     mockedUseAllCompleted.mockReturnValue(false);
-    const { result: res1 } = renderHook(() =>
-      usePostOnboardingEntryPointVisibleOnWallet()
-    );
+    const { result: res1 } = renderHook(() => usePostOnboardingEntryPointVisibleOnWallet());
     expect(res1.current).toBe(false);
 
     mockedUseAllCompleted.mockReturnValue(true);
-    const { result: res2 } = renderHook(() =>
-      usePostOnboardingEntryPointVisibleOnWallet()
-    );
+    const { result: res2 } = renderHook(() => usePostOnboardingEntryPointVisibleOnWallet());
     expect(res2.current).toBe(false);
   });
 
@@ -62,9 +52,7 @@ describe("usePostOnboardingEntryPointVisibleOnWallet", () => {
     mockedUseAllCompleted.mockReturnValue(true);
 
     mockedDeviceModelIdSelector.mockReturnValue(DeviceModelId.nanoX);
-    const { result } = renderHook(() =>
-      usePostOnboardingEntryPointVisibleOnWallet()
-    );
+    const { result } = renderHook(() => usePostOnboardingEntryPointVisibleOnWallet());
 
     expect(result.current).toBe(false);
   });
@@ -74,9 +62,7 @@ describe("usePostOnboardingEntryPointVisibleOnWallet", () => {
     mockedUseAllCompleted.mockReturnValue(false);
     mockedDeviceModelIdSelector.mockReturnValue(DeviceModelId.nanoX);
 
-    const { result } = renderHook(() =>
-      usePostOnboardingEntryPointVisibleOnWallet()
-    );
+    const { result } = renderHook(() => usePostOnboardingEntryPointVisibleOnWallet());
 
     expect(result.current).toBe(true);
   });

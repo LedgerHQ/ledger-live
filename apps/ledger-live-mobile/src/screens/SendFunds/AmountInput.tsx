@@ -19,6 +19,8 @@ type Props = {
   error?: Error | null | undefined;
   warning?: Error | null | undefined;
   editable?: boolean;
+  testID?: string;
+  fiatTestID?: string;
 };
 export default function AmountInput({
   onChange,
@@ -27,15 +29,16 @@ export default function AmountInput({
   error,
   warning,
   editable,
+  testID,
+  fiatTestID,
 }: Props) {
   const { t } = useTranslation();
   const fiatCurrency = useSelector(counterValueCurrencySelector);
-  const { cryptoUnit, fiatAmount, fiatUnit, calculateCryptoAmount } =
-    useSendAmount({
-      account,
-      fiatCurrency,
-      cryptoAmount,
-    });
+  const { cryptoUnit, fiatAmount, fiatUnit, calculateCryptoAmount } = useSendAmount({
+    account,
+    fiatCurrency,
+    cryptoAmount,
+  });
   const [active, setActive] = useState<"crypto" | "fiat" | "none">("none");
   const onChangeFiatAmount = useCallback(
     (fiatAmount: BigNumber) => {
@@ -57,6 +60,7 @@ export default function AmountInput({
     <View style={styles.container}>
       <View style={styles.wrapper}>
         <CurrencyInput
+          testID={testID}
           editable={editable}
           isActive={isCrypto}
           onFocus={onCryptoFieldFocus}
@@ -64,11 +68,7 @@ export default function AmountInput({
           unit={cryptoUnit}
           value={cryptoAmount}
           renderRight={
-            <LText
-              style={[styles.currency, isCrypto ? styles.active : null]}
-              semiBold
-              color="grey"
-            >
+            <LText style={[styles.currency, isCrypto ? styles.active : null]} semiBold color="grey">
               {cryptoUnit.code}
             </LText>
           }
@@ -86,14 +86,13 @@ export default function AmountInput({
       <CounterValuesSeparator />
       <View style={styles.wrapper}>
         <CurrencyInput
+          testID={fiatTestID}
           isActive={!isCrypto}
           onFocus={onFiatFieldFocus}
           onChange={onChangeFiatAmount}
           unit={fiatUnit}
           value={cryptoAmount ? fiatAmount : null}
-          placeholder={
-            !fiatAmount ? t("send.amount.noRateProvider") : undefined
-          }
+          placeholder={!fiatAmount ? t("send.amount.noRateProvider") : undefined}
           editable={!!fiatAmount && editable}
           showAllDigits
           renderRight={

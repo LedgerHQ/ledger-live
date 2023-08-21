@@ -11,9 +11,9 @@ const extraConfig = require("metro-extra-config");
 
 // Dependencies that are forcefully resolved from the LLM folder.
 const forcedDependencies = [
+  "react-redux",
   "react-native",
   "react-native-svg",
-  "react-native-reanimated",
   "styled-components",
 ];
 
@@ -22,7 +22,7 @@ const specificConfig = {
     extraNodeModules: {
       ...require("node-libs-react-native"),
       fs: require.resolve("react-native-level-fs"),
-      net: require.resolve("react-native-tcp"),
+      net: require.resolve("react-native-tcp-socket"),
     },
     // makeMetroConfig adds the "module" field, but we skip it here on purpose
     // because it makes the "react-native-url-polyfill" package consume the

@@ -1,6 +1,6 @@
 import React from "react";
 import { TouchableOpacity } from "react-native";
-import { Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useTranslation } from "react-i18next";
 import CurrencyIcon from "../../../../components/CurrencyIcon";
@@ -11,15 +11,10 @@ interface Props {
   subTitle: string;
   onPress: () => void;
   disabled?: boolean;
+  testID?: string;
 }
 
-export function Selector({
-  currency,
-  title,
-  subTitle,
-  onPress,
-  disabled = false,
-}: Props) {
+export function Selector({ currency, title, subTitle, onPress, disabled = false, testID }: Props) {
   const { t } = useTranslation();
 
   const Icon = currency ? (
@@ -35,13 +30,8 @@ export function Selector({
   );
 
   return (
-    <TouchableOpacity onPress={onPress} disabled={disabled}>
-      <Flex
-        flexDirection="row"
-        alignItems="center"
-        justifyContent="space-between"
-        width="100%"
-      >
+    <TouchableOpacity onPress={onPress} disabled={disabled} testID={testID}>
+      <Flex flexDirection="row" alignItems="center" justifyContent="space-between" width="100%">
         <Flex flexDirection="row" alignItems="center" flex={1}>
           <Flex alignItems="center" justifyContent="center" marginRight={2}>
             {Icon}
@@ -65,7 +55,7 @@ export function Selector({
         </Flex>
 
         <Flex>
-          <Icons.ChevronBottomRegular />
+          <IconsLegacy.ChevronBottomMedium />
         </Flex>
       </Flex>
     </TouchableOpacity>

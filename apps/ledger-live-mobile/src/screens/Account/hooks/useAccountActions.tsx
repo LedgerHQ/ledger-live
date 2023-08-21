@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import {
   getAccountCurrency,
@@ -7,8 +7,10 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { Icons } from "@ledgerhq/native-ui";
+import { useRoute } from "@react-navigation/native";
+import { IconsLegacy } from "@ledgerhq/native-ui";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { getAllSupportedCryptoCurrencyIds } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 import { DefaultTheme } from "styled-components/native";
 import { NavigatorName, ScreenName } from "../../../const";
@@ -17,9 +19,11 @@ import {
   swapSelectableCurrenciesSelector,
 } from "../../../reducers/settings";
 import perFamilyAccountActions from "../../../generated/accountActions";
-import WalletConnect from "../../../icons/WalletConnect";
+
 import ZeroBalanceDisabledModalContent from "../../../components/FabActions/modals/ZeroBalanceDisabledModalContent";
 import { ActionButtonEvent } from "../../../components/FabActions";
+import { useCanShowStake } from "./useCanShowStake";
+import { Toast } from "../../../components/Toast/Toast";
 
 type Props = {
   account: AccountLike;
@@ -27,22 +31,27 @@ type Props = {
   colors?: DefaultTheme["colors"];
 };
 
-const iconBuy = Icons.PlusMedium;
-const iconSell = Icons.MinusMedium;
-const iconSwap = Icons.BuyCryptoMedium;
+const iconBuy = IconsLegacy.PlusMedium;
+const iconSell = IconsLegacy.MinusMedium;
+const iconSwap = IconsLegacy.BuyCryptoMedium;
 
-export default function useAccountActions({
-  account,
-  parentAccount,
-  colors,
-}: Props): {
+export default function useAccountActions({ account, parentAccount, colors }: Props): {
   mainActions: ActionButtonEvent[];
   secondaryActions: ActionButtonEvent[];
 } {
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
+  const route = useRoute();
   const { t } = useTranslation();
 
+  const ptxServiceCtaScreens = useFeature("ptxServiceCtaScreens");
+
+  const isPtxServiceCtaScreensDisabled = useMemo(
+    () => !(ptxServiceCtaScreens?.enabled ?? true),
+    [ptxServiceCtaScreens],
+  );
+
   const currency = getAccountCurrency(account);
+  const canShowStake = useCanShowStake(currency);
 
   const balance = getAccountSpendableBalance(account);
   const isZeroBalance = !balance.gt(0);
@@ -50,10 +59,7 @@ export default function useAccountActions({
   // @ts-expect-error issue in typing
   const decorators = perFamilyAccountActions[mainAccount?.currency?.family];
 
-  const isEthereum = currency.id === "ethereum";
-  const isWalletConnectSupported = ["ethereum", "bsc", "polygon"].includes(
-    currency.id,
-  );
+  const isWalletConnectSupported = ["ethereum", "bsc", "polygon"].includes(currency.id);
 
   const rampCatalog = useRampCatalog();
 
@@ -62,9 +68,7 @@ export default function useAccountActions({
       return [false, false];
     }
 
-    const allBuyableCryptoCurrencyIds = getAllSupportedCryptoCurrencyIds(
-      rampCatalog.value.onRamp,
-    );
+    const allBuyableCryptoCurrencyIds = getAllSupportedCryptoCurrencyIds(rampCatalog.value.onRamp);
     const allSellableCryptoCurrencyIds = getAllSupportedCryptoCurrencyIds(
       rampCatalog.value.offRamp,
     );
@@ -75,9 +79,7 @@ export default function useAccountActions({
     ];
   }, [rampCatalog.value, currency]);
 
-  const swapSelectableCurrencies = useSelector(
-    swapSelectableCurrenciesSelector,
-  );
+  const swapSelectableCurrencies = useSelector(swapSelectableCurrenciesSelector);
   const availableOnSwap = swapSelectableCurrencies.includes(currency.id);
 
   const extraSendActionParams = useMemo(
@@ -110,9 +112,18 @@ export default function useAccountActions({
     ],
     label: t("transfer.swap.main.header", { currency: currency.name }),
     Icon: iconSwap,
-    disabled: isZeroBalance,
+    disabled: isPtxServiceCtaScreensDisabled || isZeroBalance,
     modalOnDisabledClick: {
-      component: ZeroBalanceDisabledModalContent,
+      component: isPtxServiceCtaScreensDisabled
+        ? () => (
+            <Toast
+              id="ptx-services"
+              title={t("notifications.ptxServices.toast.title")}
+              icon="info"
+              type="success"
+            />
+          )
+        : ZeroBalanceDisabledModalContent,
     },
     event: "Swap Crypto Account Button",
     eventProperties: { currencyName: currency.name },
@@ -120,6 +131,17 @@ export default function useAccountActions({
 
   const actionButtonBuy: ActionButtonEvent = {
     id: "buy",
+    disabled: isPtxServiceCtaScreensDisabled,
+    modalOnDisabledClick: {
+      component: () => (
+        <Toast
+          id="ptx-services"
+          type="success"
+          title={t("notifications.ptxServices.toast.title")}
+          icon="info"
+        />
+      ),
+    },
     navigationParams: [
       NavigatorName.Exchange,
       {
@@ -152,9 +174,18 @@ export default function useAccountActions({
     ],
     label: t("account.sell"),
     Icon: iconSell,
-    disabled: isZeroBalance,
+    disabled: isPtxServiceCtaScreensDisabled || isZeroBalance,
     modalOnDisabledClick: {
-      component: ZeroBalanceDisabledModalContent,
+      component: isPtxServiceCtaScreensDisabled
+        ? () => (
+            <Toast
+              id="ptx-services"
+              title={t("notifications.ptxServices.toast.title")}
+              icon="info"
+              type="success"
+            />
+          )
+        : ZeroBalanceDisabledModalContent,
     },
     event: "Sell Crypto Account Button",
     eventProperties: {
@@ -172,7 +203,7 @@ export default function useAccountActions({
     ],
     label: t("account.send"),
     event: "AccountSend",
-    Icon: Icons.ArrowTopMedium,
+    Icon: IconsLegacy.ArrowTopMedium,
     disabled: isZeroBalance,
     modalOnDisabledClick: {
       component: ZeroBalanceDisabledModalContent,
@@ -194,17 +225,18 @@ export default function useAccountActions({
     ],
     label: t("account.receive"),
     event: "AccountReceive",
-    Icon: Icons.ArrowBottomMedium,
+    Icon: IconsLegacy.ArrowBottomMedium,
     ...extraReceiveActionParams,
   };
 
-  const baseActions =
+  const familySpecificMainActions: Array<ActionButtonEvent> =
     (decorators &&
-      decorators.getActions &&
-      decorators.getActions({
+      decorators.getMainActions &&
+      decorators.getMainActions({
         account,
         parentAccount,
         colors,
+        parentRoute: route,
       })) ||
     [];
 
@@ -212,32 +244,26 @@ export default function useAccountActions({
     ...(availableOnSwap ? [actionButtonSwap] : []),
     ...(!readOnlyModeEnabled && canBeBought ? [actionButtonBuy] : []),
     ...(!readOnlyModeEnabled && canBeSold ? [actionButtonSell] : []),
+    ...(!readOnlyModeEnabled
+      ? familySpecificMainActions.filter(action => action.id !== "stake" || canShowStake)
+      : []),
     ...(!readOnlyModeEnabled ? [SendAction] : []),
     ReceiveAction,
   ];
+
+  const familySpecificSecondaryActions =
+    (decorators &&
+      decorators.getSecondaryActions &&
+      decorators.getSecondaryActions({
+        account,
+        parentAccount,
+        colors,
+        parentRoute: route,
+      })) ||
+    [];
+
   const secondaryActions = [
-    ...baseActions,
-    ...(isEthereum
-      ? [
-          {
-            id: "stake",
-            navigationParams: [
-              NavigatorName.Base,
-              {
-                screen: ScreenName.PlatformApp,
-                params: {
-                  platform: "lido",
-                  name: "Lido",
-                },
-              },
-            ],
-            label: t("account.stake"),
-            Icon: Icons.ClaimRewardsMedium,
-            event: "Stake Ethereum Account Button",
-            eventProperties: { currencyName: currency?.name },
-          },
-        ]
-      : []),
+    ...familySpecificSecondaryActions,
     ...(isWalletConnectSupported
       ? [
           {
@@ -247,15 +273,12 @@ export default function useAccountActions({
               {
                 screen: NavigatorName.WalletConnect,
                 params: {
-                  screen: ScreenName.WalletConnectScan,
-                  params: {
-                    accountId: account?.id,
-                  },
+                  screen: ScreenName.WalletConnectConnect,
                 },
               },
             ],
             label: t("account.walletconnect"),
-            Icon: WalletConnect,
+            Icon: IconsLegacy.WalletConnectMedium,
             event: "WalletConnect Account Button",
             eventProperties: { currencyName: currency?.name },
           },

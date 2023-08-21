@@ -10,18 +10,12 @@ export const createRevokeVoteMutation = (): MutationSpec<Transaction> => ({
   name: "Celo: RevokeVote",
   maxRun: 5,
   transaction: ({ account, bridge, maxSpendable }) => {
-    invariant(
-      maxSpendable.gt(minimalAmount),
-      "Celo:  Revoke Vote | balance is too low"
-    );
+    invariant(maxSpendable.gt(minimalAmount), "Celo:  Revoke Vote | balance is too low");
 
     const { celoResources } = account as CeloAccount;
-    invariant(
-      celoResources?.registrationStatus,
-      "Celo: RevokeVote | Account is not registered"
-    );
+    invariant(celoResources?.registrationStatus, "Celo: RevokeVote | Account is not registered");
 
-    const revokableVote = celoResources?.votes?.find((vote) => vote.revokable);
+    const revokableVote = celoResources?.votes?.find(vote => vote.revokable);
 
     invariant(!!revokableVote, "Celo: RevokeVote |  Revokable vote not found");
 

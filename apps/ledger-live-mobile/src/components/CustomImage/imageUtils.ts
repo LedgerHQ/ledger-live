@@ -38,8 +38,7 @@ export async function importImageFromPhoneGallery(): Promise<ImageFileUri | null
                 `ImagePicker.launchImageLibrary Error (error code: ${res.errorCode}): ${res.errorMessage}`,
               );
             const assets = res?.assets || [];
-            if (assets.length === 0 && !res.didCancel)
-              throw new Error("Assets length is 0");
+            if (assets.length === 0 && !res.didCancel) throw new Error("Assets length is 0");
             return {
               cancelled: res.didCancel,
               uri: assets[0]?.uri,
@@ -59,14 +58,14 @@ export async function importImageFromPhoneGallery(): Promise<ImageFileUri | null
   }
 }
 
-export function extractImageUrlFromNftMetadata(
-  nftMetadata?: NFTMetadata,
-): string | null {
+export function extractImageUrlFromNftMetadata(nftMetadata?: NFTMetadata): string | null {
+  if (nftMetadata?.staxImage) {
+    return nftMetadata?.staxImage;
+  }
+
   const nftMediaTypes = nftMetadata ? getMetadataMediaTypes(nftMetadata) : null;
   const nftMediaSize = nftMediaTypes
-    ? (["big", "preview"] as NFTMediaSize[]).find(
-        size => nftMediaTypes[size] === "image",
-      )
+    ? (["big", "preview"] as NFTMediaSize[]).find(size => nftMediaTypes[size] === "image")
     : null;
   const nftImageUri = nftMediaSize && nftMetadata?.medias?.[nftMediaSize]?.uri;
 
@@ -78,13 +77,8 @@ type CancellablePromise<T> = {
   resultPromise: Promise<T>;
 };
 
-export function downloadImageToFile({
-  imageUrl,
-}: ImageUrl): CancellablePromise<ImageFileUri> {
-  const downloadTask = RNFetchBlob.config({ fileCache: true }).fetch(
-    "GET",
-    imageUrl,
-  );
+export function downloadImageToFile({ imageUrl }: ImageUrl): CancellablePromise<ImageFileUri> {
+  const downloadTask = RNFetchBlob.config({ fileCache: true }).fetch("GET", imageUrl);
   return {
     resultPromise: downloadTask
       .then(res => ({ imageFileUri: "file://" + res.path() }))
@@ -118,9 +112,7 @@ export function downloadImageToFileWithDimensions(
   };
 }
 
-export async function loadImageSizeAsync(
-  url: string,
-): Promise<ImageDimensions> {
+export async function loadImageSizeAsync(url: string): Promise<ImageDimensions> {
   return new Promise((resolve, reject) => {
     Image.getSize(
       url,
@@ -150,8 +142,7 @@ export function fitImageContain(
 ): ImageDimensions {
   const { height: imageHeight, width: imageWidth } = imageDimensions;
   const { height: boxHeight, width: boxWidth } = boxDimensions;
-  if ([boxHeight, boxWidth, imageHeight, imageWidth].some(val => val === 0))
-    return boxDimensions;
+  if ([boxHeight, boxWidth, imageHeight, imageWidth].some(val => val === 0)) return boxDimensions;
   if (imageHeight <= boxHeight && imageWidth <= boxWidth)
     return {
       width: imageWidth,

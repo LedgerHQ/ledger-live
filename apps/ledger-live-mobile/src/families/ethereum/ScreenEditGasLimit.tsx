@@ -8,16 +8,10 @@ import Button from "../../components/Button";
 import KeyboardView from "../../components/KeyboardView";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import TextInput from "../../components/FocusedTextInput";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import { LendingEnableFlowParamsList } from "../../components/RootNavigator/types/LendingEnableFlowNavigator";
-import { LendingWithdrawFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingWithdrawFlowNavigator";
+import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
 import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
-import { LendingSupplyFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingSupplyFlowNavigator";
 import { ScreenName } from "../../const";
 
 const options = {
@@ -27,12 +21,7 @@ const options = {
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<
-    | LendingEnableFlowParamsList
-    | LendingSupplyFlowNavigatorParamList
-    | LendingWithdrawFlowNavigatorParamList
-    | SendFundsNavigatorStackParamList
-    | SignTransactionNavigatorParamList
-    | SwapNavigatorParamList,
+    SendFundsNavigatorStackParamList | SignTransactionNavigatorParamList | SwapNavigatorParamList,
     ScreenName.EthereumEditGasLimit
   >
 >;

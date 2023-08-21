@@ -1,11 +1,7 @@
 import { StyleSheet } from "react-native";
 import type { Opts, Res } from ".";
 
-const getFontStyle = ({
-  bold,
-  semiBold,
-  monospace,
-}: Partial<Opts> = {}): Res => {
+const getFontStyle = ({ bold, semiBold, monospace }: Partial<Opts> = {}): Res => {
   const fontFamily = monospace ? "Menlo" : "Inter";
   let fontWeight: Res["fontWeight"];
 

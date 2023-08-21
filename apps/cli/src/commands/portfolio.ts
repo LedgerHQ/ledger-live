@@ -3,23 +3,11 @@ import asciichart from "asciichart";
 import invariant from "invariant";
 import { from } from "rxjs";
 import { reduce, concatMap, map } from "rxjs/operators";
-import type {
-  Account,
-  PortfolioRange,
-} from "@ledgerhq/types-live";
-import type {
-  Currency
-} from "@ledgerhq/types-cryptoassets";
-import {
-  flattenAccounts,
-  getAccountName,
-} from "@ledgerhq/live-common/account/index";
-import { getPortfolio } from "@ledgerhq/live-common/portfolio/v2/index";
-import { getRanges } from "@ledgerhq/live-common/portfolio/v2/range";
-import {
-  formatCurrencyUnit,
-  findCurrencyByTicker,
-} from "@ledgerhq/live-common/currencies/index";
+import type { Account, PortfolioRange } from "@ledgerhq/types-live";
+import type { Currency } from "@ledgerhq/types-cryptoassets";
+import { flattenAccounts, getAccountName } from "@ledgerhq/live-common/account/index";
+import { getPortfolio, getRanges } from "@ledgerhq/live-common/portfolio/v2/index";
+import { formatCurrencyUnit, findCurrencyByTicker } from "@ledgerhq/live-common/currencies/index";
 import { scan, scanCommonOpts } from "../scan";
 import type { ScanCommonOpts } from "../scan";
 import {
@@ -30,11 +18,7 @@ import {
 
 function asPortfolioRange(period: string): PortfolioRange {
   const ranges = getRanges();
-  invariant(
-    ranges.includes(period),
-    "invalid period. valid values are %s",
-    ranges.join(" | ")
-  );
+  invariant(ranges.includes(period), "invalid period. valid values are %s", ranges.join(" | "));
   return period as PortfolioRange;
 }
 
@@ -67,40 +51,27 @@ export default {
         countervalue: string;
         period: string;
       }
-    >
+    >,
   ) => {
     const countervalue = findCurrencyByTicker(opts.countervalue || "USD");
-    invariant(
-      countervalue,
-      "currency not found with ticker=" + opts.countervalue
-    );
+    invariant(countervalue, "currency not found with ticker=" + opts.countervalue);
     return scan(opts).pipe(
       reduce((all, a) => all.concat(a), [] as Account[]),
-      concatMap((accounts) =>
+      concatMap(accounts =>
         from(
           loadCountervalues(initialState, {
-            trackingPairs: inferTrackingPairForAccounts(
-              accounts,
-              countervalue as Currency
-            ),
+            trackingPairs: inferTrackingPairForAccounts(accounts, countervalue as Currency),
             autofillGaps: !opts.disableAutofillGaps,
-          })
+          }),
         ).pipe(
-          map((state) => {
+          map(state => {
             const all = flattenAccounts(accounts);
             const period = asPortfolioRange(opts.period || "month");
             const unit = (countervalue as Currency).units[0];
 
             function render(title, accounts) {
-              const portfolio = getPortfolio(
-                accounts,
-                period,
-                state,
-                countervalue as Currency
-              );
-              const balance =
-                portfolio.balanceHistory[portfolio.balanceHistory.length - 1]
-                  .value;
+              const portfolio = getPortfolio(accounts, period, state, countervalue as Currency);
+              const balance = portfolio.balanceHistory[portfolio.balanceHistory.length - 1].value;
               return (
                 title +
                 " " +
@@ -113,58 +84,44 @@ export default {
                     "on a " +
                     period +
                     " period: " +
-                    Math.round(
-                      portfolio.countervalueChange.percentage * 100
-                    ).toString() +
+                    Math.round(portfolio.countervalueChange.percentage * 100).toString() +
                     "% (" +
-                    formatCurrencyUnit(
-                      unit,
-                      new BigNumber(portfolio.countervalueChange.value),
-                      {
-                        showCode: true,
-                      }
-                    ) +
+                    formatCurrencyUnit(unit, new BigNumber(portfolio.countervalueChange.value), {
+                      showCode: true,
+                    }) +
                     ")"
                   : "") +
                 "\n" +
                 asciichart.plot(
-                  portfolio.balanceHistory.map((h) =>
-                    new BigNumber(h.value)
-                      .div(new BigNumber(10).pow(unit.magnitude))
-                      .toNumber()
+                  portfolio.balanceHistory.map(h =>
+                    new BigNumber(h.value).div(new BigNumber(10).pow(unit.magnitude)).toNumber(),
                   ),
                   {
                     height: 10,
-                    format: (value) =>
+                    format: value =>
                       formatCurrencyUnit(
                         unit,
-                        new BigNumber(value).times(
-                          new BigNumber(10).pow(unit.magnitude)
-                        ),
+                        new BigNumber(value).times(new BigNumber(10).pow(unit.magnitude)),
                         {
                           showCode: true,
                           disableRounding: true,
-                        }
+                        },
                       ).padStart(20),
-                  }
+                  },
                 )
               );
             }
 
             let str = "";
-            accounts.forEach((top) => {
+            accounts.forEach(top => {
               str += render("Account " + getAccountName(top), [top]);
               str += "\n";
 
               if (top.subAccounts) {
-                top.subAccounts.forEach((sub) => {
-                  str += render(
-                    "Account " +
-                      getAccountName(top) +
-                      " > " +
-                      getAccountName(sub),
-                    [sub]
-                  ).replace(/\n/s, "  \n");
+                top.subAccounts.forEach(sub => {
+                  str += render("Account " + getAccountName(top) + " > " + getAccountName(sub), [
+                    sub,
+                  ]).replace(/\n/s, "  \n");
                   str += "\n";
                 });
               }
@@ -172,14 +129,11 @@ export default {
               str += "\n";
             });
             str += "\n";
-            str += render(
-              "SUMMARY OF PORTFOLIO: " + all.length + " accounts, total of ",
-              accounts
-            );
+            str += render("SUMMARY OF PORTFOLIO: " + all.length + " accounts, total of ", accounts);
             return str;
-          })
-        )
-      )
+          }),
+        ),
+      ),
     );
   },
 };

@@ -1,5 +1,195 @@
 # @ledgerhq/hw-app-btc
 
+## 10.0.8
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.28.8
+
+## 10.0.8-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.28.8-next.0
+
+## 10.0.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.28.7
+
+## 10.0.7-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.28.7-next.0
+
+## 10.0.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.28.6
+
+## 10.0.6-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.28.6-next.0
+
+## 10.0.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.28.5
+
+## 10.0.5-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.28.5-next.0
+
+## 10.0.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.28.4
+
+## 10.0.4-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.28.4-next.0
+
+## 10.0.3
+
+### Patch Changes
+
+- [#3131](https://github.com/LedgerHQ/ledger-live/pull/3131) [`fb1fcc47e4`](https://github.com/LedgerHQ/ledger-live/commit/fb1fcc47e444c35b0908d528b58e096d79d6f967) Thanks [@davidknezic](https://github.com/davidknezic)! - Fix sign message support for Bitcoin app 2.1.0+
+
+## 10.0.3-next.0
+
+### Patch Changes
+
+- [#3131](https://github.com/LedgerHQ/ledger-live/pull/3131) [`fb1fcc47e4`](https://github.com/LedgerHQ/ledger-live/commit/fb1fcc47e444c35b0908d528b58e096d79d6f967) Thanks [@davidknezic](https://github.com/davidknezic)! - Fix sign message support for Bitcoin app 2.1.0+
+
+## 10.0.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.28.3
+
+## 10.0.2-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.28.3-next.0
+
+## 10.0.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.28.2
+
+## 10.0.1-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.28.2-next.0
+
+## 10.0.0
+
+### Major Changes
+
+- [#1991](https://github.com/LedgerHQ/ledger-live/pull/1991) [`62af25493e`](https://github.com/LedgerHQ/ledger-live/commit/62af25493e2becf897d517af42542db208b971c7) Thanks [@valpinkman](https://github.com/valpinkman)! - Remove the support for imports ending with `/` mapping to the `index.js` file.
+
+  For instance:
+
+  ```js
+  import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/";
+  ```
+
+  Should be rewritten to:
+
+  ```js
+  import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+  ```
+
+  This trailing slash is poorly supported by some tools like `vite.js` and was meant as a transitional change.
+  Time has come to remove the support for thos shorthand.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.28.1
+
+## 10.0.0-next.0
+
+### Major Changes
+
+- [#1991](https://github.com/LedgerHQ/ledger-live/pull/1991) [`62af25493e`](https://github.com/LedgerHQ/ledger-live/commit/62af25493e2becf897d517af42542db208b971c7) Thanks [@valpinkman](https://github.com/valpinkman)! - Remove the support for imports ending with `/` mapping to the `index.js` file.
+
+  For instance:
+
+  ```js
+  import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/";
+  ```
+
+  Should be rewritten to:
+
+  ```js
+  import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+  ```
+
+  This trailing slash is poorly supported by some tools like `vite.js` and was meant as a transitional change.
+  Time has come to remove the support for thos shorthand.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.28.1-next.0
+
+## 9.1.3
+
+### Patch Changes
+
+- Updated dependencies [[`c2779b1cab`](https://github.com/LedgerHQ/ledger-live/commit/c2779b1cab18a1d5747ca955f5ceee86db920f57)]:
+  - @ledgerhq/hw-transport@6.28.0
+
+## 9.1.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`c2779b1cab`](https://github.com/LedgerHQ/ledger-live/commit/c2779b1cab18a1d5747ca955f5ceee86db920f57)]:
+  - @ledgerhq/hw-transport@6.28.0-next.0
+
+## 9.1.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.27.10
+
+## 9.1.2-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.27.10-next.0
+
 ## 9.1.1
 
 ### Patch Changes

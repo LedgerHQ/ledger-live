@@ -121,9 +121,7 @@ export class GetMerkleLeafProofCommand extends ClientCommand {
       tree_size = reqBuf.readVarInt();
       leaf_index = reqBuf.readVarInt();
     } catch (e: any) {
-      throw new Error(
-        "Invalid request, couldn't parse tree_size or leaf_index"
-      );
+      throw new Error("Invalid request, couldn't parse tree_size or leaf_index");
     }
 
     const mt = this.known_trees.get(hash_hex);
@@ -136,17 +134,12 @@ export class GetMerkleLeafProofCommand extends ClientCommand {
     }
 
     if (this.queue.length != 0) {
-      throw Error(
-        "This command should not execute when the queue is not empty."
-      );
+      throw Error("This command should not execute when the queue is not empty.");
     }
 
     const proof = mt.getProof(leaf_index);
 
-    const n_response_elements = Math.min(
-      Math.floor((255 - 32 - 1 - 1) / 32),
-      proof.length
-    );
+    const n_response_elements = Math.min(Math.floor((255 - 32 - 1 - 1) / 32), proof.length);
     const n_leftover_elements = proof.length - n_response_elements;
 
     // Add to the queue any proof elements that do not fit the response
@@ -196,9 +189,7 @@ export class GetMerkleLeafIndexCommand extends ClientCommand {
 
     const mt = this.known_trees.get(root_hash_hex);
     if (!mt) {
-      throw Error(
-        `Requested Merkle leaf index for unknown root: ${root_hash_hex}`
-      );
+      throw Error(`Requested Merkle leaf index for unknown root: ${root_hash_hex}`);
     }
 
     let leaf_index = 0;
@@ -235,9 +226,9 @@ export class GetMoreElementsCommand extends ClientCommand {
 
     // all elements should have the same length
     const element_len = this.queue[0].length;
-    if (this.queue.some((el) => el.length != element_len)) {
+    if (this.queue.some(el => el.length != element_len)) {
       throw new Error(
-        "The queue contains elements with different byte length, which is not expected"
+        "The queue contains elements with different byte length, which is not expected",
       );
     }
 
@@ -309,7 +300,7 @@ export class ClientCommandInterpreter {
       const preimage = Buffer.concat([Buffer.from([0]), el]);
       this.addKnownPreimage(preimage);
     }
-    const mt = new Merkle(elements.map((el) => hashLeaf(el)));
+    const mt = new Merkle(elements.map(el => hashLeaf(el)));
     this.roots.set(mt.getRoot().toString("hex"), mt);
   }
 

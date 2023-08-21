@@ -2,33 +2,30 @@ import eip55 from "eip55";
 import abi from "ethereumjs-abi";
 import invariant from "invariant";
 import BigNumber from "bignumber.js";
-import {
-  createCustomErrorClass,
-  NotEnoughBalanceInParentAccount,
-} from "@ledgerhq/errors";
+import { createCustomErrorClass, NotEnoughBalanceInParentAccount } from "@ledgerhq/errors";
 import type { ModeModule, Transaction } from "../types";
 import type { Account } from "@ledgerhq/types-live";
-import { apiForCurrency } from "../../../api/Ethereum";
+import { apiForCurrency } from "../api";
 
-const NotOwnedNft = createCustomErrorClass("NotOwnedNft");
+export const NotOwnedNft = createCustomErrorClass("NotOwnedNft");
 
 export type Modes = "erc721.transfer";
 
 export async function prepareTransaction(
   account: Account,
-  transaction: Transaction
+  transaction: Transaction,
 ): Promise<Transaction> {
   let t = transaction;
   const { collection, collectionName, tokenIds } = transaction;
   if (collection && tokenIds && typeof collectionName === "undefined") {
     const api = apiForCurrency(account.currency);
-    const [{ status, result }] = await api.getNFTCollectionMetadata(
+    const [{ status, result }] = await api.getNftCollectionMetadata(
       [
         {
           contract: collection,
         },
       ],
-      account.currency?.ethereumLikeInfo?.chainId?.toString() || "1"
+      { chainId: account.currency?.ethereumLikeInfo?.chainId ?? 1 },
     );
     let collectionName = ""; // default value fallback if issue
     if (status === 200) {
@@ -63,11 +60,7 @@ const erc721Transfer: ModeModule = {
         result.errors.amount = new NotEnoughBalanceInParentAccount();
       }
 
-      if (
-        !a.nfts?.find?.(
-          (n) => n.tokenId === t.tokenIds?.[0] && n.contract === t.collection
-        )
-      ) {
+      if (!a.nfts?.find?.(n => n.tokenId === t.tokenIds?.[0] && n.contract === t.collection)) {
         result.errors.amount = new NotOwnedNft();
       }
     }
@@ -133,7 +126,7 @@ const erc721Transfer: ModeModule = {
 
 function serializeTransactionData(
   account: Account,
-  transaction: Transaction
+  transaction: Transaction,
 ): Buffer | null | undefined {
   const from = eip55.encode(account.freshAddress);
   const to = eip55.encode(transaction.recipient);
@@ -143,7 +136,7 @@ function serializeTransactionData(
     from,
     to,
     transaction.tokenIds?.[0],
-    "0x00"
+    "0x00",
   );
 }
 

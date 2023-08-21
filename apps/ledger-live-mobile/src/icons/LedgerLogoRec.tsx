@@ -6,11 +6,7 @@ type Props = {
   height: number;
   color: string;
 };
-export default function LedgerLogoRec({
-  width = 68,
-  height = 17,
-  color,
-}: Props) {
+export default function LedgerLogoRec({ width = 68, height = 17, color }: Props) {
   return (
     <Svg width={width} height={height} viewBox="0 0 383 128" fill="none">
       <Path

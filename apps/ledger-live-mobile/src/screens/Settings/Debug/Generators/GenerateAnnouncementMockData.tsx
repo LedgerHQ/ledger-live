@@ -3,27 +3,20 @@ import { StyleSheet } from "react-native";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { useAnnouncements } from "@ledgerhq/live-common/notifications/AnnouncementProvider/index";
 import { useTheme } from "@react-navigation/native";
-import { Icons } from "@ledgerhq/native-ui";
+import { IconsLegacy } from "@ledgerhq/native-ui";
 import { addMockAnnouncement } from "../__mocks__/announcements";
 import SettingsRow from "../../../../components/SettingsRow";
-import BottomModal from "../../../../components/BottomModal";
+import QueuedDrawer from "../../../../components/QueuedDrawer";
 import TextInput from "../../../../components/TextInput";
 import Touchable from "../../../../components/Touchable";
 import LText from "../../../../components/LText";
 
 const formatInputValue = (inputValue: string): string[] | null | undefined => {
-  const val: string[] = inputValue
-    .replace(/\s/g, "")
-    .split(",")
-    .filter(Boolean);
+  const val: string[] = inputValue.replace(/\s/g, "").split(",").filter(Boolean);
   return val.length > 0 ? val : undefined;
 };
 
-export default function AddMockAnnouncementButton({
-  title,
-}: {
-  title: string;
-}) {
+export default function AddMockAnnouncementButton({ title }: { title: string }) {
   const { colors } = useTheme();
   const { updateCache } = useAnnouncements();
   const [open, setIsopen] = useState(false);
@@ -48,10 +41,7 @@ export default function AddMockAnnouncementButton({
     };
     const formattedParams = (Object.keys(params) as Array<keyof typeof params>)
       .filter(k => !!params[k] && params[k]!.length && params[k]!.length > 0)
-      .reduce<Partial<typeof params>>(
-        (sum, k) => ({ ...sum, [k]: params[k] }),
-        {},
-      );
+      .reduce<Partial<typeof params>>((sum, k) => ({ ...sum, [k]: params[k] }), {});
     const extra: Partial<{
       content: {
         [k: string]: {
@@ -108,10 +98,10 @@ export default function AddMockAnnouncementButton({
       <SettingsRow
         title={title}
         desc={"Create a custom announcement to show in the app"}
-        iconLeft={<Icons.NewsMedium size={24} color="black" />}
+        iconLeft={<IconsLegacy.NewsMedium size={24} color="black" />}
         onPress={onOpen}
       />
-      <BottomModal isOpened={open} onClose={onClose} style={styles.root}>
+      <QueuedDrawer isRequestingToBeOpened={open} onClose={onClose} style={styles.root}>
         <TextInput
           placeholder="platform separated by ','"
           value={notifPlatform}
@@ -157,11 +147,7 @@ export default function AddMockAnnouncementButton({
           onChangeText={setNotifLiveCommonVersions}
         />
 
-        <TextInput
-          placeholder="link"
-          value={announcementLink}
-          onChangeText={setAnnouncementLink}
-        />
+        <TextInput placeholder="link" value={announcementLink} onChangeText={setAnnouncementLink} />
         <Touchable
           onPress={onConfirm}
           style={[
@@ -173,7 +159,7 @@ export default function AddMockAnnouncementButton({
         >
           <LText color="white">Confirm</LText>
         </Touchable>
-      </BottomModal>
+      </QueuedDrawer>
     </>
   ) : null;
 }

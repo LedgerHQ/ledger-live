@@ -17,11 +17,7 @@ type Props = {
   account: Account;
 };
 
-type InfoName =
-  | "available"
-  | "lockedBalance"
-  | "nonvotingLockedBalance"
-  | "withdrawableBalance";
+type InfoName = "available" | "lockedBalance" | "nonvotingLockedBalance" | "withdrawableBalance";
 
 function AccountBalanceSummaryFooter({ account }: Props) {
   const { t } = useTranslation();
@@ -35,10 +31,7 @@ function AccountBalanceSummaryFooter({ account }: Props) {
   const onCloseModal = useCallback(() => {
     setInfoName(undefined);
   }, []);
-  const onPressInfoCreator = useCallback(
-    (infoName: InfoName) => () => setInfoName(infoName),
-    [],
-  );
+  const onPressInfoCreator = useCallback((infoName: InfoName) => () => setInfoName(infoName), []);
   return (
     <ScrollView
       horizontal
@@ -56,34 +49,18 @@ function AccountBalanceSummaryFooter({ account }: Props) {
       <InfoItem
         title={t("account.availableBalance")}
         onPress={onPressInfoCreator("available")}
-        value={
-          <CurrencyUnitValue
-            unit={unit}
-            value={spendableBalance}
-            disableRounding={false}
-          />
-        }
+        value={<CurrencyUnitValue unit={unit} value={spendableBalance} disableRounding={false} />}
       />
       <InfoItem
         title={t("celo.info.lockedBalance.title")}
         onPress={onPressInfoCreator("lockedBalance")}
-        value={
-          <CurrencyUnitValue
-            unit={unit}
-            value={lockedBalance}
-            disableRounding={false}
-          />
-        }
+        value={<CurrencyUnitValue unit={unit} value={lockedBalance} disableRounding={false} />}
       />
       <InfoItem
         title={t("celo.info.nonvotingLockedBalance.title")}
         onPress={onPressInfoCreator("nonvotingLockedBalance")}
         value={
-          <CurrencyUnitValue
-            unit={unit}
-            value={nonvotingLockedBalance}
-            disableRounding={false}
-          />
+          <CurrencyUnitValue unit={unit} value={nonvotingLockedBalance} disableRounding={false} />
         }
       />
       <InfoItem

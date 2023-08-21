@@ -2,13 +2,7 @@ import React from "react";
 import Svg, { Path, Polyline } from "react-native-svg";
 import { useTheme } from "@react-navigation/native";
 
-const Redelegate = ({
-  size = 24,
-  color,
-}: {
-  size?: number;
-  color?: string;
-}) => {
+const Redelegate = ({ size = 24, color }: { size?: number; color?: string }) => {
   const { colors } = useTheme();
   return (
     <Svg

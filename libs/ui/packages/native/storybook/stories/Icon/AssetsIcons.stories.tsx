@@ -1,16 +1,19 @@
-import { View } from "react-native";
-import { storiesOf } from "../storiesOf";
 import React from "react";
-import { Icons } from "../../../src/assets";
+import { View } from "react-native";
+import { IconsLegacy } from "../../../src/assets";
 import { Icon } from "../../../src/components/Icon";
 
-const IconSample = () => (
+export default {
+  title: "Icon/Assets",
+  component: Icon,
+};
+
+export const IconSample = () => (
   <View>
-    <Icons.BedMedium color={"blue"} />
-    <Icons.AppleMedium color={"blue"} />
+    <IconsLegacy.BedMedium color={"blue"} />
+    <IconsLegacy.AppleMedium color={"blue"} />
     <Icon name="Help" weight="Regular" color={"blue"} />
     <Icon name="Devices" color={"blue"} />
   </View>
 );
-
-storiesOf((story) => story("Icon", module).add("Assets Icons", IconSample));
+IconSample.storyName = "Assets Icons";

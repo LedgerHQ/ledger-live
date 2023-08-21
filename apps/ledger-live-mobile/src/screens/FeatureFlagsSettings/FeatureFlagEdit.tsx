@@ -5,7 +5,7 @@ import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
 import type { FeatureId, Feature } from "@ledgerhq/types-live";
 
 import { BaseInput, Text, Flex, Button, Switch } from "@ledgerhq/native-ui";
-import { InputRenderRightContainer } from "@ledgerhq/native-ui/components/Form/Input/BaseInput";
+import { InputRenderRightContainer } from "@ledgerhq/native-ui/components/Form/Input/BaseInput/index";
 import Alert from "../../components/Alert";
 
 const FeatureFlagEdit: React.FC<{

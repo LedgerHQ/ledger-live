@@ -1,18 +1,7 @@
 import React, { useCallback, useState, useMemo, useContext } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Flex,
-  Carousel,
-  Text,
-  Button,
-  StoriesIndicator,
-  Box,
-} from "@ledgerhq/native-ui";
-import {
-  useNavigation,
-  useFocusEffect,
-  CompositeNavigationProp,
-} from "@react-navigation/native";
+import { Flex, Carousel, Text, Button, StoriesIndicator, Box } from "@ledgerhq/native-ui";
+import { useNavigation, useFocusEffect, CompositeNavigationProp } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled, { useTheme } from "styled-components/native";
 import { useDispatch } from "react-redux";
@@ -44,13 +33,8 @@ const StyledSafeAreaView = styled(SafeAreaView)`
 `;
 
 type NavigationProp = CompositeNavigationProp<
-  StackNavigatorNavigation<
-    OnboardingNavigatorParamList,
-    ScreenName.OnboardingLanguage
-  >,
-  RootNavigationComposite<
-    StackNavigatorNavigation<BaseOnboardingNavigatorParamList>
-  >
+  StackNavigatorNavigation<OnboardingNavigatorParamList, ScreenName.OnboardingLanguage>,
+  RootNavigationComposite<StackNavigatorNavigation<BaseOnboardingNavigatorParamList>>
 >;
 
 const Item = ({
@@ -58,27 +42,26 @@ const Item = ({
   imageProps,
   displayNavigationButtons = false,
   currentIndex,
+  testID,
 }: {
   title: string;
   imageProps: ImageProps;
   displayNavigationButtons?: boolean;
   currentIndex?: number;
+  testID?: string;
 }) => {
   const dispatch = useDispatch();
   const navigation = useNavigation<NavigationProp>();
   const { colors } = useTheme();
   const { t } = useTranslation();
 
-  const screenName = useMemo(
-    () => `Reborn Story Step ${currentIndex}`,
-    [currentIndex],
-  );
+  const screenName = useMemo(() => `Reborn Story Step ${currentIndex}`, [currentIndex]);
 
   const onClick = useCallback(
     (value: string) => {
       track("button_clicked", {
         button: value,
-        screen: screenName,
+        page: screenName,
       });
     },
     [screenName],
@@ -125,11 +108,7 @@ const Item = ({
             gradientUnits="userSpaceOnUse"
           >
             <Stop offset="0%" stopOpacity={1} stopColor={colors.neutral.c00} />
-            <Stop
-              offset="100%"
-              stopOpacity={0}
-              stopColor={colors.neutral.c00}
-            />
+            <Stop offset="100%" stopOpacity={0} stopColor={colors.neutral.c00} />
           </LinearGradient>
         </Defs>
         <Rect x="0" y="0" width="100%" height="100%" fill="url(#myGradient)" />
@@ -140,24 +119,21 @@ const Item = ({
         mx={7}
         mt={3}
         mb={10}
+        testID={testID}
       >
         {title}
       </Text>
-      <Box
-        flex={1}
-        alignItems={"center"}
-        justifyContent={"flex-end"}
-        overflow={"hidden"}
-      >
-        <Image
-          resizeMode={"cover"}
-          style={{ flex: 1, width: "100%" }}
-          {...imageProps}
-        />
+      <Box flex={1} alignItems={"center"} justifyContent={"flex-end"} overflow={"hidden"}>
+        <Image resizeMode={"cover"} style={{ flex: 1, width: "100%" }} {...imageProps} />
       </Box>
       {displayNavigationButtons && (
         <Box position={"absolute"} bottom={0} width={"100%"} px={6} pb={10}>
-          <Button onPress={pressExplore} type={"main"} mb={6}>
+          <Button
+            onPress={pressExplore}
+            type={"main"}
+            mb={6}
+            testID="discoverLive-exploreWithoutADevice"
+          >
             {t("onboarding.discoverLive.exploreWithoutADevice")}
           </Button>
           <Button onPress={pressBuy} type={"shade"} outline={true}>
@@ -196,14 +172,8 @@ function DiscoverLiveInfo() {
     [source],
   );
 
-  const autoChange = useCallback(
-    (index: number) => onChange(index, false),
-    [onChange],
-  );
-  const manualChange = useCallback(
-    (index: number) => onChange(index, true),
-    [onChange],
-  );
+  const autoChange = useCallback((index: number) => onChange(index, false), [onChange]);
+  const manualChange = useCallback((index: number) => onChange(index, true), [onChange]);
 
   return (
     <StyledSafeAreaView>
@@ -233,6 +203,7 @@ function DiscoverLiveInfo() {
             }}
             displayNavigationButtons={slidesImages.length - 1 === index}
             currentIndex={currentIndex}
+            testID={`onboarding-discoverLive-${index}-title`}
           />
         ))}
       </Carousel>

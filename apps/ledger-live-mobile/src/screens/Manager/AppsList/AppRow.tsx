@@ -7,6 +7,7 @@ import { useNotEnoughMemoryToInstall } from "@ledgerhq/live-common/apps/react";
 import { Trans } from "react-i18next";
 import styled from "styled-components/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
+import manager from "@ledgerhq/live-common/manager/index";
 import AppIcon from "./AppIcon";
 
 import AppStateButton from "./AppStateButton";
@@ -22,13 +23,14 @@ type Props = {
   optimisticState: State;
 };
 
-const RowContainer = styled(Flex).attrs({
+const RowContainer = styled(Flex).attrs((p: { disabled?: boolean }) => ({
   flexDirection: "row",
   alignItems: "center",
   justifyContent: "flex-start",
   paddingVertical: 14,
   height: 64,
-})``;
+  opacity: p.disabled ? 0.2 : 1,
+}))<{ disabled?: boolean }>``;
 
 const LabelContainer = styled(Flex).attrs({
   flexGrow: 0,
@@ -61,45 +63,26 @@ const AppRow = ({
 }: Props) => {
   const { name, bytes, version: appVersion, displayName } = app;
   const { installed, deviceInfo } = state;
+  const canBeInstalled = useMemo(() => manager.canHandleInstall(app), [app]);
 
-  const isInstalled = useMemo(
-    () => installed.find(i => i.name === name),
-    [installed, name],
-  );
+  const isInstalled = useMemo(() => installed.find(i => i.name === name), [installed, name]);
 
   const version = (isInstalled && isInstalled.version) || appVersion;
-  const availableVersion =
-    (isInstalled && isInstalled.availableVersion) || appVersion;
+  const availableVersion = (isInstalled && isInstalled.availableVersion) || appVersion;
 
-  const notEnoughMemoryToInstall = useNotEnoughMemoryToInstall(
-    optimisticState,
-    name,
-  );
+  const notEnoughMemoryToInstall = useNotEnoughMemoryToInstall(optimisticState, name);
 
-  const onSizePress = useCallback(
-    () => setStorageWarning(name),
-    [setStorageWarning, name],
-  );
+  const onSizePress = useCallback(() => setStorageWarning(name), [setStorageWarning, name]);
 
   return (
-    <RowContainer>
+    <RowContainer disabled={!isInstalled && !canBeInstalled}>
       <AppIcon app={app} size={48} />
       <LabelContainer>
-        <Text
-          numberOfLines={1}
-          variant="body"
-          fontWeight="semiBold"
-          color="neutral.c100"
-        >
+        <Text numberOfLines={1} variant="body" fontWeight="semiBold" color="neutral.c100">
           {displayName}
         </Text>
         <VersionContainer borderColor="neutral.c40">
-          <Text
-            numberOfLines={1}
-            variant="tiny"
-            color="neutral.c80"
-            fontWeight="semiBold"
-          >
+          <Text numberOfLines={1} variant="tiny" color="neutral.c80" fontWeight="semiBold">
             <Trans i18nKey="ApplicationVersion" values={{ version }} />
             {isInstalled && !isInstalled.updated && (
               <>
@@ -107,10 +90,7 @@ const AppRow = ({
                 <Trans
                   i18nKey="manager.appList.versionNew"
                   values={{
-                    newVersion:
-                      availableVersion !== version
-                        ? ` ${availableVersion}`
-                        : "",
+                    newVersion: availableVersion !== version ? ` ${availableVersion}` : "",
                   }}
                 />
               </>

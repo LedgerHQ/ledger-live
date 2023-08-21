@@ -40,10 +40,7 @@ type Metadata = {
 };
 
 type NavigationProps = RootComposite<
-  StackNavigatorProps<
-    OnboardingNavigatorParamList,
-    ScreenName.OnboardingPairNew
-  >
+  StackNavigatorProps<OnboardingNavigatorParamList, ScreenName.OnboardingPairNew>
 >;
 
 const scenes = [PairNew, ConnectNano] as Step[];
@@ -54,11 +51,10 @@ function OnboardingStepPairNew() {
   const route = useRoute<NavigationProps["route"]>();
 
   const dispatch = useDispatch();
-  const { triggerJustFinishedOnboardingNewDevicePushNotificationModal } =
-    useNotifications();
+  const { triggerJustFinishedOnboardingNewDevicePushNotificationModal } = useNotifications();
   const { resetCurrentStep } = useNavigationInterceptor();
 
-  const { deviceModelId, showSeedWarning, next } = route.params;
+  const { deviceModelId, showSeedWarning, next, isProtectFlow } = route.params;
 
   const newDeviceSelectionFeatureFlag = useFeature("llmNewDeviceSelection");
 
@@ -87,21 +83,26 @@ function OnboardingStepPairNew() {
             theme={theme === "dark" ? "dark" : "light"}
           />
         ),
-        drawer: {
-          route: ScreenName.OnboardingBluetoothInformation,
-          screen: ScreenName.OnboardingBluetoothInformation,
-        },
+        drawer: isProtectFlow
+          ? {
+              route: ScreenName.OnboardingProtectionConnectionInformation,
+              screen: ScreenName.OnboardingProtectionConnectionInformation,
+            }
+          : {
+              route: ScreenName.OnboardingBluetoothInformation,
+              screen: ScreenName.OnboardingBluetoothInformation,
+            },
       },
     ],
-    [deviceModelId, theme, newDeviceSelectionFeatureFlag?.enabled],
+    [newDeviceSelectionFeatureFlag?.enabled, deviceModelId, theme, isProtectFlow],
   );
 
   const startPostOnboarding = useStartPostOnboardingCallback();
 
   const onFinish = useCallback(() => {
-    if (next) {
+    if (next && deviceModelId) {
       // only used for protect for now
-      navigation.navigate(next as ScreenName.OnboardingProtectFlow, {
+      navigation.navigate(next, {
         deviceModelId,
       });
       return;
@@ -111,24 +112,20 @@ function OnboardingStepPairNew() {
 
     const parentNav =
       navigation.getParent<
-        StackNavigatorNavigation<
-          BaseOnboardingNavigatorParamList,
-          NavigatorName.Onboarding
-        >
+        StackNavigatorNavigation<BaseOnboardingNavigatorParamList, NavigatorName.Onboarding>
       >();
     if (parentNav) {
       parentNav.popToTop();
     }
 
-    navigation.replace(NavigatorName.Base, {
-      screen: NavigatorName.Main,
+    startPostOnboarding({
+      deviceModelId: deviceModelId as DeviceModelId,
+      resetNavigationStack: true,
+      fallbackIfNoAction: () =>
+        navigation.replace(NavigatorName.Base, {
+          screen: NavigatorName.Main,
+        }),
     });
-
-    startPostOnboarding(deviceModelId as DeviceModelId, false, () =>
-      navigation.navigate(NavigatorName.Base, {
-        screen: NavigatorName.Main,
-      }),
-    );
 
     triggerJustFinishedOnboardingNewDevicePushNotificationModal();
   }, [
@@ -154,7 +151,7 @@ function OnboardingStepPairNew() {
         metadata={metadata}
         deviceModelId={deviceModelId}
       />
-      {showSeedWarning ? <SeedWarning deviceModelId={deviceModelId} /> : null}
+      {showSeedWarning && deviceModelId ? <SeedWarning deviceModelId={deviceModelId} /> : null}
     </>
   );
 }

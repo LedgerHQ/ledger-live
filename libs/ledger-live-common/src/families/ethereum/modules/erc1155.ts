@@ -2,20 +2,15 @@ import eip55 from "eip55";
 import abi from "ethereumjs-abi";
 import invariant from "invariant";
 import BigNumber from "bignumber.js";
-import {
-  createCustomErrorClass,
-  NotEnoughBalanceInParentAccount,
-} from "@ledgerhq/errors";
+import { createCustomErrorClass, NotEnoughBalanceInParentAccount } from "@ledgerhq/errors";
 import type { ModeModule, Transaction } from "../types";
 import type { Account } from "@ledgerhq/types-live";
 import { prepareTransaction } from "./erc721";
 
-const NotOwnedNft = createCustomErrorClass("NotOwnedNft");
-const NotEnoughNftOwned = createCustomErrorClass("NotEnoughNftOwned");
+export const NotOwnedNft = createCustomErrorClass("NotOwnedNft");
+export const NotEnoughNftOwned = createCustomErrorClass("NotEnoughNftOwned");
 const NotTokenIdsProvided = createCustomErrorClass("NotTokenIdsProvided");
-const QuantityNeedsToBePositive = createCustomErrorClass(
-  "QuantityNeedsToBePositive"
-);
+const QuantityNeedsToBePositive = createCustomErrorClass("QuantityNeedsToBePositive");
 
 export type Modes = "erc1155.transfer";
 
@@ -43,7 +38,7 @@ const erc1155Transfer: ModeModule = {
         result.errors.amount = new NotEnoughBalanceInParentAccount();
       }
 
-      t.quantities?.forEach((quantity) => {
+      t.quantities?.forEach(quantity => {
         if (!quantity || quantity.isLessThan(1)) {
           result.errors.amount = new QuantityNeedsToBePositive();
         }
@@ -55,7 +50,7 @@ const erc1155Transfer: ModeModule = {
             return acc;
           }
 
-          const nft = a.nfts?.find((n) => n.tokenId === tokenId);
+          const nft = a.nfts?.find(n => n.tokenId === tokenId);
           const transferQuantity = Number(t.quantities?.[index]);
 
           if (!nft) {
@@ -141,13 +136,12 @@ const erc1155Transfer: ModeModule = {
 
 function serializeTransactionData(
   account: Account,
-  transaction: Transaction
+  transaction: Transaction,
 ): Buffer | null | undefined {
   const from = eip55.encode(account.freshAddress);
   const to = eip55.encode(transaction.recipient);
   const tokenIds = transaction.tokenIds || [];
-  const quantities =
-    transaction.quantities?.map((q) => q?.toFixed() || "0") || [];
+  const quantities = transaction.quantities?.map(q => (q?.isFinite() ? q?.toFixed() : "0")) || [];
 
   return tokenIds?.length > 1
     ? abi.simpleEncode(
@@ -156,7 +150,7 @@ function serializeTransactionData(
         to,
         tokenIds,
         quantities,
-        "0x00"
+        "0x00",
       )
     : abi.simpleEncode(
         "safeTransferFrom(address,address,uint256,uint256,bytes)",
@@ -164,7 +158,7 @@ function serializeTransactionData(
         to,
         tokenIds[0],
         quantities[0],
-        "0x00"
+        "0x00",
       );
 }
 

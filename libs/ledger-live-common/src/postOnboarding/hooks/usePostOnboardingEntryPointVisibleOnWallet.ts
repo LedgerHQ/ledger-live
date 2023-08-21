@@ -9,13 +9,10 @@ import { useAllPostOnboardingActionsCompleted } from "./useAllPostOnboardingActi
  *
  * @returns a boolean representing whether the post onboarding entry point
  * should be visible on the wallet page.
- * TODO: unit test this
  */
 export function usePostOnboardingEntryPointVisibleOnWallet(): boolean {
   const deviceModelId = useSelector(postOnboardingDeviceModelIdSelector);
-  const dismissed = useSelector(
-    walletPostOnboardingEntryPointDismissedSelector
-  );
+  const dismissed = useSelector(walletPostOnboardingEntryPointDismissedSelector);
   const allCompleted = useAllPostOnboardingActionsCompleted();
 
   return !!deviceModelId && !(dismissed || allCompleted);

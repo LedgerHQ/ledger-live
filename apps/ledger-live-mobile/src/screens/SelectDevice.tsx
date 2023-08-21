@@ -21,18 +21,9 @@ import { ScreenName } from "../const";
 
 // TODO: FIX THE StackScreenProps<{ [key: string]: object }>
 type SelectDeviceNav =
-  | StackNavigatorProps<
-      AddAccountsNavigatorParamList,
-      ScreenName.AddAccountsSelectDevice
-    >
-  | StackNavigatorProps<
-      ReceiveFundsStackParamList,
-      ScreenName.ReceiveAddAccountSelectDevice
-    >
-  | StackNavigatorProps<
-      ReceiveFundsStackParamList,
-      ScreenName.ReceiveConnectDevice
-    >;
+  | StackNavigatorProps<AddAccountsNavigatorParamList, ScreenName.AddAccountsSelectDevice>
+  | StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveAddAccountSelectDevice>
+  | StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveConnectDevice>;
 
 // Called from a bunch of different navigators with different params…
 export default function SelectDevice({
@@ -63,6 +54,11 @@ export default function SelectDevice({
     },
     [dispatchRedux, onNavigate],
   );
+
+  // Does not react to an header update request: too many flows use this screen.
+  // Keeping the header from the original flow.
+  const requestToSetHeaderOptions = useCallback(() => undefined, []);
+
   return (
     <SafeAreaView
       style={[
@@ -72,17 +68,14 @@ export default function SelectDevice({
         },
       ]}
     >
-      <SkipSelectDevice
-        route={route as SelectDeviceNav["route"]}
-        onResult={onNavigate}
-      />
-      <TrackScreen
-        category={route.name.replace("SelectDevice", "")}
-        name="SelectDevice"
-      />
+      <SkipSelectDevice route={route as SelectDeviceNav["route"]} onResult={onNavigate} />
+      <TrackScreen category={route.name.replace("SelectDevice", "")} name="SelectDevice" />
       {newDeviceSelectionFeatureFlag?.enabled ? (
         <Flex px={16} pb={8} flex={1}>
-          <SelectDeviceComp2 onSelect={onSelect} />
+          <SelectDeviceComp2
+            onSelect={onSelect}
+            requestToSetHeaderOptions={requestToSetHeaderOptions}
+          />
         </Flex>
       ) : (
         <NavigationScrollView

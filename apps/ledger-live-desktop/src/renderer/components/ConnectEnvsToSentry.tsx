@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { ipcRenderer } from "electron";
 import { EnvName, getEnv } from "@ledgerhq/live-common/env";
 import { defaultFeatures, useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
@@ -6,7 +6,9 @@ import { FeatureId } from "@ledgerhq/types-live";
 import { enabledExperimentalFeatures } from "../experimental";
 import { setTags } from "../../sentry/renderer";
 
-function setSentryTagsEverywhere(tags: { [_: string]: any }) {
+type Tags = { [_: string]: boolean | number | string | undefined };
+
+function setSentryTagsEverywhere(tags: Tags) {
   ipcRenderer.invoke("set-sentry-tags", tags);
   setTags(tags);
 }
@@ -27,22 +29,24 @@ export const ConnectEnvsToSentry = () => {
   useEffect(() => {
     // This sync the Sentry tags to include the extra information in context of events
     const syncTheTags = () => {
-      const tags: { [_: string]: any } = {};
+      const tags: Tags = {};
       // if there are experimental on, we will add them in tags
       enabledExperimentalFeatures().forEach((key: EnvName) => {
         tags[safekey(key)] = getEnv(key);
       });
       // if there are features on, we will add them in tags
-      const features: { [key in FeatureId]: boolean } = {};
-      Object.keys(defaultFeatures).forEach(key => {
+      const features: { [key in FeatureId]?: boolean } = {};
+      Object.keys(defaultFeatures).forEach(k => {
+        const key = k as keyof typeof defaultFeatures;
         const value = featureFlags.getFeature(key);
-        if (value && value.enabled !== defaultFeatures[key].enabled) {
+        if (key && value && value.enabled !== defaultFeatures[key]!.enabled) {
           features[key] = value.enabled;
         }
       });
 
       Object.keys(features).forEach(key => {
-        tags[safekey(`f_${key}`)] = features[key];
+        const safeKey = safekey(`f_${key}`);
+        tags[safeKey] = features[key as keyof typeof features];
       });
 
       setSentryTagsEverywhere(tags);

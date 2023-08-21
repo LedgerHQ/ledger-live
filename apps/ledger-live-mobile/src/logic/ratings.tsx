@@ -1,10 +1,9 @@
 import { useCallback, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { add, isBefore, parseISO } from "date-fns";
-import type { Account } from "@ledgerhq/types-live";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { accountsSelector } from "../reducers/accounts";
+import { accountsWithPositiveBalanceCountSelector } from "../reducers/accounts";
 import {
   ratingsModalOpenSelector,
   ratingsModalLockedSelector,
@@ -56,20 +55,13 @@ export type RatingsDataOfUser = {
 const ratingsDataOfUserAsyncStorageKey = "ratingsDataOfUser";
 
 async function getRatingsDataOfUserFromStorage() {
-  const ratingsDataOfUser = await AsyncStorage.getItem(
-    ratingsDataOfUserAsyncStorageKey,
-  );
+  const ratingsDataOfUser = await AsyncStorage.getItem(ratingsDataOfUserAsyncStorageKey);
   if (!ratingsDataOfUser) return null;
   return JSON.parse(ratingsDataOfUser);
 }
 
-async function setRatingsDataOfUserInStorage(
-  ratingsDataOfUser: RatingsDataOfUser,
-) {
-  await AsyncStorage.setItem(
-    ratingsDataOfUserAsyncStorageKey,
-    JSON.stringify(ratingsDataOfUser),
-  );
+async function setRatingsDataOfUserInStorage(ratingsDataOfUser: RatingsDataOfUser) {
+  await AsyncStorage.setItem(ratingsDataOfUserAsyncStorageKey, JSON.stringify(ratingsDataOfUser));
 }
 
 const useRatings = () => {
@@ -80,12 +72,8 @@ const useRatings = () => {
   const ratingsOldRoute = useSelector(ratingsCurrentRouteNameSelector);
   const ratingsHappyMoment = useSelector(ratingsHappyMomentSelector);
   const ratingsDataOfUser = useSelector(ratingsDataOfUserSelector);
-  const accounts: Account[] = useSelector(accountsSelector);
 
-  const accountsWithAmountCount = useMemo(
-    () => accounts.filter(account => account.balance?.gt(0)).length,
-    [accounts],
-  );
+  const accountsWithAmountCount = useSelector(accountsWithPositiveBalanceCountSelector);
 
   const dispatch = useDispatch();
 
@@ -123,10 +111,7 @@ const useRatings = () => {
     // minimum accounts number criteria
     const minimumAccountsNumber: number =
       ratingsFeature?.params?.conditions?.minimum_accounts_number;
-    if (
-      minimumAccountsNumber &&
-      accountsWithAmountCount < minimumAccountsNumber
-    ) {
+    if (minimumAccountsNumber && accountsWithAmountCount < minimumAccountsNumber) {
       return false;
     }
 
@@ -142,17 +127,13 @@ const useRatings = () => {
 
     // duration since first app start long enough criteria
     const minimumDurationSinceAppFirstStart: Duration =
-      ratingsFeature?.params?.conditions
-        ?.minimum_duration_since_app_first_start;
+      ratingsFeature?.params?.conditions?.minimum_duration_since_app_first_start;
 
     if (
       ratingsDataOfUser.appFirstStartDate &&
       isBefore(
         Date.now(),
-        add(
-          ratingsDataOfUser.appFirstStartDate,
-          minimumDurationSinceAppFirstStart,
-        ),
+        add(ratingsDataOfUser.appFirstStartDate, minimumDurationSinceAppFirstStart),
       )
     ) {
       return false;
@@ -160,12 +141,10 @@ const useRatings = () => {
 
     // No crash in last session criteria
     const minimumNumberOfAppStartsSinceLastCrash: number =
-      ratingsFeature?.params?.conditions
-        ?.minimum_number_of_app_starts_since_last_crash;
+      ratingsFeature?.params?.conditions?.minimum_number_of_app_starts_since_last_crash;
     if (
       ratingsDataOfUser.numberOfAppStartsSinceLastCrash &&
-      ratingsDataOfUser.numberOfAppStartsSinceLastCrash <
-        minimumNumberOfAppStartsSinceLastCrash
+      ratingsDataOfUser.numberOfAppStartsSinceLastCrash < minimumNumberOfAppStartsSinceLastCrash
     ) {
       return false;
     }
@@ -177,16 +156,13 @@ const useRatings = () => {
     ratingsFeature?.params?.conditions?.minimum_accounts_number,
     ratingsFeature?.params?.conditions?.minimum_app_starts_number,
     ratingsFeature?.params?.conditions?.minimum_duration_since_app_first_start,
-    ratingsFeature?.params?.conditions
-      ?.minimum_number_of_app_starts_since_last_crash,
+    ratingsFeature?.params?.conditions?.minimum_number_of_app_starts_since_last_crash,
   ]);
 
   const isHappyMomentTriggered = useCallback(
     (happyMoment: RatingsHappyMoment, ratingsNewRoute?: string) =>
-      (happyMoment.type === "on_enter" &&
-        happyMoment.route_name === ratingsNewRoute) ||
-      (happyMoment.type === "on_leave" &&
-        happyMoment.route_name === ratingsOldRoute),
+      (happyMoment.type === "on_enter" && happyMoment.route_name === ratingsNewRoute) ||
+      (happyMoment.type === "on_leave" && happyMoment.route_name === ratingsOldRoute),
     [ratingsOldRoute],
   );
 
@@ -268,12 +244,7 @@ const useRatings = () => {
       params: ratingsFeature?.params,
     });
     setRatingsModalOpenCallback(true);
-  }, [
-    isRatingsModalLocked,
-    dispatch,
-    ratingsFeature?.params,
-    setRatingsModalOpenCallback,
-  ]);
+  }, [isRatingsModalLocked, dispatch, ratingsFeature?.params, setRatingsModalOpenCallback]);
 
   const handleRatingsSetDateOfNextAllowedRequest = useCallback(
     (delay, additionalParams = {}) => {
@@ -324,12 +295,9 @@ const useRatings = () => {
         doNotAskAgain: true,
       });
     } else {
-      handleRatingsSetDateOfNextAllowedRequest(
-        ratingsFeature?.params?.conditions?.not_now_delay,
-        {
-          alreadyClosedFromInitStep: true,
-        },
-      );
+      handleRatingsSetDateOfNextAllowedRequest(ratingsFeature?.params?.conditions?.not_now_delay, {
+        alreadyClosedFromInitStep: true,
+      });
     }
   }, [
     handleRatingsSetDateOfNextAllowedRequest,

@@ -16,6 +16,7 @@ on:
   workflow_run:
     workflows:
       - \[Release\] Prepare for releasing
+      - \[Release\](Hotfix) Prepare for releasing
     types:
       - "completed"
 
@@ -26,24 +27,23 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - uses: actions/checkout@v3
         with:
           ref: main
           fetch-depth: 2
-          token: ${{ secrets.GH_PAT }}
+          token: ${{ steps.generate-token.outputs.token }}
       - name: set git user
         run: |
-          git config user.email "team-live@ledger.fr"
-          git config user.name "Team Live"
-      - uses: pnpm/action-setup@v2
-        with:
-          version: latest
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16.x
-          cache: pnpm
-          cache-dependency-path: "**/pnpm-lock.yaml"
-          registry-url: "https://registry.npmjs.org"
+          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
+          git config user.name "live-github-bot[bot]"
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
       # - uses: ruby/setup-ruby@v1
       #   with:
       #     ruby-version: 3.1.2
@@ -56,7 +56,7 @@ jobs:
       #       ~/.cocoapods
       #     key: ${{ runner.os }}-pods-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock') }}
       - name: install dependencies
-        run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli" --frozen-lockfile
+        run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli"
       - name: build libs
         run: pnpm run build:libs
       - name: publish release
@@ -82,7 +82,7 @@ jobs:
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
       - name: generate desktop changelog
-        if: ${{ steps.desktop-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLD", "ALL"]'), github.event.inputs.app) }}
+        if: ${{ steps.desktop-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLD", "ALL"]'), inputs.app) }}
         uses: ./tools/actions/generate-release-message
         id: desktop-changelog
         with:
@@ -91,11 +91,11 @@ jobs:
           output-path: ${{ github.workspace }}
           name: desktop-changelog
       - name: tag desktop
-        if: ${{ steps.desktop-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLD", "ALL"]'), github.event.inputs.app) }}
+        if: ${{ steps.desktop-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLD", "ALL"]'), inputs.app) }}
         run: |
           git tag @ledgerhq/live-desktop@${{ steps.desktop-version.outputs.version }}
       - name: generate mobile changelog
-        if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), github.event.inputs.app) }}
+        if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), inputs.app) }}
         uses: ./tools/actions/generate-release-message
         id: mobile-changelog
         with:
@@ -104,14 +104,14 @@ jobs:
           output-path: ${{ github.workspace }}
           name: mobile-changelog
       - name: tag mobile
-        if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), github.event.inputs.app) }}
+        if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), inputs.app) }}
         run: |
           git tag @ledgerhq/live-mobile@${{ steps.mobile-version.outputs.version }}
       - name: push changes
         run: |
           git push origin main --tags
       - name: create desktop github release
-        if: ${{ steps.desktop-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLD", "ALL"]'), github.event.inputs.app) }}
+        if: ${{ steps.desktop-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLD", "ALL"]'), inputs.app) }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -119,14 +119,14 @@ jobs:
       - name: create mobile github release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), github.event.inputs.app) }}
+        if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), inputs.app) }}
         run: |
           gh release create @ledgerhq/live-mobile@${{ steps.mobile-version.outputs.version }} -F ${{ steps.mobile-changelog.outputs.path }}
       - uses: actions/github-script@v6
         name: trigger release build for desktop
-        if: ${{ steps.desktop-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLD", "ALL"]'), github.event.inputs.app) }}
+        if: ${{ steps.desktop-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLD", "ALL"]'), inputs.app) }}
         with:
-          github-token: ${{ secrets.GH_PAT }}
+          github-token: ${{ steps.generate-token.outputs.token }}
           script: |
             github.rest.actions.createWorkflowDispatch({
               owner: "ledgerhq",
@@ -139,9 +139,9 @@ jobs:
             });
       - uses: actions/github-script@v6
         name: trigger release build for mobile
-        if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), github.event.inputs.app) }}
+        if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), inputs.app) }}
         with:
-          github-token: ${{ secrets.GH_PAT }}
+          github-token: ${{ steps.generate-token.outputs.token }}
           script: |
             github.rest.actions.createWorkflowDispatch({
               owner: "ledgerhq",

@@ -72,9 +72,7 @@ const Placeholder = ({ accountId }: { accountId: string }) => {
       <Button
         event="AccountAddAsset"
         type="primary"
-        IconLeft={() => (
-          <IconPlus size={16} color={disabled ? colors.grey : colors.live} />
-        )}
+        IconLeft={() => <IconPlus size={16} color={disabled ? colors.grey : colors.live} />}
         onPress={onReceiveClick}
         title={<Trans i18nKey="account.tokens.stellar.addAsset" />}
         disabled={disabled}

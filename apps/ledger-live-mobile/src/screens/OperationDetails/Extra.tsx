@@ -10,10 +10,7 @@ export default function OperationDetailsExtra({ extra }: Props) {
   return (
     <>
       {Object.entries(extra).map(([key, value]) => (
-        <Section
-          title={t(`operationDetails.extra.${key}`)}
-          value={String(value)}
-        />
+        <Section title={t(`operationDetails.extra.${key}`)} value={String(value)} key={key} />
       ))}
     </>
   );

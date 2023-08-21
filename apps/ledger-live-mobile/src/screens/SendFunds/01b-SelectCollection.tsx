@@ -1,24 +1,12 @@
 import React, { useCallback, useMemo, useState, memo } from "react";
 
-import {
-  View,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-  Platform,
-} from "react-native";
+import { View, StyleSheet, FlatList, TouchableOpacity, Platform } from "react-native";
 import {
   nftsByCollections,
   useNftCollectionMetadata,
   useNftMetadata,
 } from "@ledgerhq/live-common/nft/index";
-import type { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
-import type {
-  Account,
-  NFTCollectionMetadataResponse,
-  NFTMetadataResponse,
-  ProtoNFT,
-} from "@ledgerhq/types-live";
+import type { Account, ProtoNFT } from "@ledgerhq/types-live";
 import { useSelector } from "react-redux";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -42,30 +30,19 @@ const CollectionRow = memo(
   ({ account, collection }: { account: Account; collection: ProtoNFT[] }) => {
     const navigation =
       useNavigation<
-        StackNavigatorNavigation<
-          SendFundsNavigatorStackParamList,
-          ScreenName.SendCollection
-        >
+        StackNavigatorNavigation<SendFundsNavigatorStackParamList, ScreenName.SendCollection>
       >();
     const { colors } = useTheme();
-    const nft: ProtoNFT | null = collection[0];
+    const nft: ProtoNFT | undefined = collection[0];
     const { status: nftStatus, metadata: nftMetadata } = useNftMetadata(
       nft?.contract,
       nft?.tokenId,
       nft?.currencyId,
-    ) as {
-      status: NFTResource["status"];
-      metadata?: NFTMetadataResponse["result"] &
-        NFTCollectionMetadataResponse["result"];
-    };
+    );
     const { metadata: collectionMetadata } = useNftCollectionMetadata(
       nft?.contract,
       nft?.currencyId,
-    ) as {
-      status: NFTResource["status"];
-      metadata?: NFTMetadataResponse["result"] &
-        NFTCollectionMetadataResponse["result"];
-    };
+    );
 
     const goToNftSelection = () => {
       navigation.navigate(ScreenName.SendNft, {
@@ -104,10 +81,7 @@ const CollectionRow = memo(
 
 const keyExtractor = (collection: ProtoNFT[]) => collection?.[0]?.contract;
 
-type Props = StackNavigatorProps<
-  SendFundsNavigatorStackParamList,
-  ScreenName.SendCollection
->;
+type Props = StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendCollection>;
 
 const SendFundsSelectCollection = ({ route }: Props) => {
   const { params } = route;
@@ -116,37 +90,26 @@ const SendFundsSelectCollection = ({ route }: Props) => {
 
   const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
 
-  const [collectionsCount, setCollectionsCount] = useState(
-    MAX_COLLECTIONS_FIRST_RENDER,
-  );
+  const [collectionsCount, setCollectionsCount] = useState(MAX_COLLECTIONS_FIRST_RENDER);
   const collections = useMemo(
     () =>
       Object.entries(nftsByCollections(account.nfts)).filter(
-        ([contract]) =>
-          !hiddenNftCollections.includes(`${account.id}|${contract}`),
+        ([contract]) => !hiddenNftCollections.includes(`${account.id}|${contract}`),
       ),
     [account.id, account.nfts, hiddenNftCollections],
   ) as [string, ProtoNFT[]][];
 
   const collectionsSlice: Array<ProtoNFT[]> = useMemo(
-    () =>
-      collections
-        .slice(0, collectionsCount)
-        .map(([, collection]) => collection),
+    () => collections.slice(0, collectionsCount).map(([, collection]) => collection),
     [collections, collectionsCount],
   );
   const onEndReached = useCallback(
-    () =>
-      setCollectionsCount(
-        collectionsCount + COLLECTIONS_TO_ADD_ON_LIST_END_REACHED,
-      ),
+    () => setCollectionsCount(collectionsCount + COLLECTIONS_TO_ADD_ON_LIST_END_REACHED),
     [collectionsCount, setCollectionsCount],
   );
 
   const renderItem = useCallback(
-    ({ item }: { item: ProtoNFT[] }) => (
-      <CollectionRow account={account} collection={item} />
-    ),
+    ({ item }: { item: ProtoNFT[] }) => <CollectionRow account={account} collection={item} />,
     [account],
   );
 
@@ -158,9 +121,7 @@ const SendFundsSelectCollection = ({ route }: Props) => {
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         onEndReached={onEndReached}
-        ListFooterComponent={
-          collectionsCount < collections.length ? <LoadingFooter /> : null
-        }
+        ListFooterComponent={collectionsCount < collections.length ? <LoadingFooter /> : null}
       />
     </SafeAreaView>
   );

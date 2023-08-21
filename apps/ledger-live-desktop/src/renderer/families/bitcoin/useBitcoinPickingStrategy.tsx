@@ -1,0 +1,34 @@
+import React, { useEffect, useState } from "react";
+import { Trans } from "react-i18next";
+import { bitcoinPickingStrategy } from "@ledgerhq/live-common/families/bitcoin/types";
+type Keys = keyof typeof bitcoinPickingStrategy;
+type Option = {
+  value: Keys;
+  label: React.ReactNode;
+};
+const keys = Object.keys(bitcoinPickingStrategy) as Keys[];
+
+const options: Array<Option> = keys.map(value => ({
+  value,
+  label: <Trans i18nKey={`bitcoin.pickingStrategyLabels.${value}`} />,
+}));
+type BitcoinStrategyResult = {
+  item: Option | undefined | null;
+  options: Array<Option>;
+};
+const useBitcoinPickingStrategy = (strategy: number): BitcoinStrategyResult => {
+  const [item, setItem] = useState(() => {
+    return options.find(o => bitcoinPickingStrategy[o.value] === strategy);
+  });
+  useEffect(() => {
+    const newItem = options.find(o => bitcoinPickingStrategy[o.value] === strategy);
+    if (newItem) {
+      setItem(newItem);
+    }
+  }, [strategy]);
+  return {
+    options,
+    item,
+  };
+};
+export default useBitcoinPickingStrategy;

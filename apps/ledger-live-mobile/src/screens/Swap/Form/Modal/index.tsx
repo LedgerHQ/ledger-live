@@ -1,14 +1,13 @@
 import React, { useMemo, useCallback, useState } from "react";
-import {
-  SwapTransactionType,
-  ExchangeRate,
-} from "@ledgerhq/live-common/exchange/swap/types";
+import { SwapTransactionType, ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
 import { postSwapCancelled } from "@ledgerhq/live-common/exchange/swap/index";
 import { useDispatch } from "react-redux";
 import GenericErrorBottomModal from "../../../../components/GenericErrorBottomModal";
 import { Confirmation, DeviceMeta } from "./Confirmation";
 import { Terms } from "./Terms";
 import { swapAcceptProvider } from "../../../../actions/settings";
+import { useAnalytics } from "../../../../analytics";
+import { sharedSwapTracking } from "../../utils";
 
 export function Modal({
   confirmed,
@@ -25,6 +24,7 @@ export function Modal({
   deviceMeta?: DeviceMeta;
   exchangeRate?: ExchangeRate;
 }) {
+  const { track } = useAnalytics();
   const dispatch = useDispatch();
   const [error, setError] = useState<Error>();
   const provider = exchangeRate?.provider;
@@ -46,15 +46,19 @@ export function Modal({
   }, [confirmed, termsAccepted, deviceMeta]);
 
   const onAcceptTerms = useCallback(() => {
-    if (!provider || provider === "ftx" || provider === "ftxus") {
-      return;
+    if (provider) {
+      dispatch(swapAcceptProvider(provider));
     }
-
-    dispatch(swapAcceptProvider(provider));
   }, [dispatch, provider]);
 
   const onError = useCallback(
     ({ error, swapId }) => {
+      track("error_message", {
+        ...sharedSwapTracking,
+        message: "drawer_error",
+        page: "Page Swap Drawer",
+        error: error?.name ?? "unknown",
+      });
       if (!exchangeRate) {
         return;
       }
@@ -63,7 +67,7 @@ export function Modal({
 
       setError(error);
     },
-    [exchangeRate],
+    [exchangeRate, track],
   );
 
   const resetError = useCallback(() => {
@@ -77,14 +81,12 @@ export function Modal({
 
   return (
     <>
-      {provider !== "ftx" && provider !== "ftxus" && (
-        <Terms
-          provider={provider}
-          onClose={onClose}
-          onCTA={onAcceptTerms}
-          isOpen={target === Target.Terms}
-        />
-      )}
+      <Terms
+        provider={provider}
+        onClose={onClose}
+        onCTA={onAcceptTerms}
+        isOpen={target === Target.Terms}
+      />
 
       {deviceMeta && confirmed && !error && (
         <Confirmation
@@ -97,9 +99,7 @@ export function Modal({
         />
       )}
 
-      {error && (
-        <GenericErrorBottomModal error={error} isOpened onClose={resetError} />
-      )}
+      {error && <GenericErrorBottomModal error={error} onClose={resetError} />}
     </>
   );
 }

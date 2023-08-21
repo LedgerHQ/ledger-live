@@ -2,7 +2,7 @@ import { Observable, from, of, EMPTY } from "rxjs";
 import { concatMap } from "rxjs/operators";
 import invariant from "invariant";
 import bs58 from "bs58";
-import type { DerivationMode } from "../../derivation";
+import type { DerivationMode, GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
 import type { Result } from "../../hw/getAddress/types";
 import { hash256, hash160 } from "../../crypto";
 import {
@@ -10,12 +10,12 @@ import {
   getDerivationModesForCurrency,
   runAccountDerivationScheme,
   getDerivationScheme,
-} from "../../derivation";
+} from "@ledgerhq/coin-framework/derivation";
 import { withDevice } from "../../hw/deviceAccess";
 import getAddress from "../../hw/getAddress";
 import type { Account } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { decodeAccountId } from "../../account/accountId";
+import { decodeAccountId } from "../../account/index";
 
 export type AccountDescriptor = {
   internal: string;
@@ -24,23 +24,17 @@ export type AccountDescriptor = {
 const perDerivation: Partial<
   Record<DerivationMode, ((arg0: string) => string) | null | undefined>
 > = {
-  "": (fragment) => `pkh(${fragment})`,
-  segwit: (fragment) => `sh(wpkh(${fragment}))`,
-  native_segwit: (fragment) => `wpkh(${fragment})`,
-  taproot: (fragment) => `tr(${fragment})`,
+  "": fragment => `pkh(${fragment})`,
+  segwit: fragment => `sh(wpkh(${fragment}))`,
+  native_segwit: fragment => `wpkh(${fragment})`,
+  taproot: fragment => `tr(${fragment})`,
 };
 
 function makeFingerprint(compressedPubKey) {
   return hash160(compressedPubKey).slice(0, 4);
 }
 
-function makeDescriptor({
-  currency,
-  index,
-  derivationMode,
-  fingerprint,
-  xpub,
-}) {
+function makeDescriptor({ currency, index, derivationMode, fingerprint, xpub }) {
   const tmpl = perDerivation[derivationMode];
   if (!tmpl || !xpub) return;
   const keyOrigin = fingerprint.toString("hex");
@@ -57,15 +51,11 @@ function makeDescriptor({
   };
 }
 
-export function inferDescriptorFromAccount(
-  account: Account
-): AccountDescriptor | null | undefined {
+export function inferDescriptorFromAccount(account: Account): AccountDescriptor | null | undefined {
   if (account.currency.family !== "bitcoin") return;
   const { id, derivationMode, seedIdentifier, currency, index } = account;
   const xpub = decodeAccountId(id).xpubOrAddress;
-  const fingerprint = makeFingerprint(
-    compressPublicKeySECP256(Buffer.from(seedIdentifier, "hex"))
-  );
+  const fingerprint = makeFingerprint(compressPublicKeySECP256(Buffer.from(seedIdentifier, "hex")));
   return makeDescriptor({
     derivationMode,
     currency,
@@ -82,19 +72,9 @@ function asBufferUInt32BE(n) {
 }
 
 const compressPublicKeySECP256 = (publicKey: Buffer) =>
-  Buffer.concat([
-    Buffer.from([0x02 + (publicKey[64] & 0x01)]),
-    publicKey.slice(1, 33),
-  ]);
+  Buffer.concat([Buffer.from([0x02 + (publicKey[64] & 0x01)]), publicKey.slice(1, 33)]);
 
-function makeXpub({
-  version,
-  depth,
-  parentFingerprint,
-  index,
-  chainCode,
-  pubKey,
-}) {
+function makeXpub({ version, depth, parentFingerprint, index, chainCode, pubKey }) {
   const indexBuffer = asBufferUInt32BE(index);
   indexBuffer[0] |= 0x80;
   const extendedKeyBytes = Buffer.concat([
@@ -134,7 +114,7 @@ export function inferDescriptorFromDeviceInfo({
   const { chainCode } = accountDerivation;
   invariant(chainCode, "chainCode is required");
   const fingerprint = makeFingerprint(
-    compressPublicKeySECP256(Buffer.from(parentDerivation.publicKey, "hex"))
+    compressPublicKeySECP256(Buffer.from(parentDerivation.publicKey, "hex")),
   );
   const xpub = makeXpub({
     version: XPUBVersion,
@@ -142,9 +122,7 @@ export function inferDescriptorFromDeviceInfo({
     parentFingerprint: fingerprint,
     index,
     chainCode: Buffer.from(chainCode as string, "hex"),
-    pubKey: compressPublicKeySECP256(
-      Buffer.from(accountDerivation.publicKey, "hex")
-    ),
+    pubKey: compressPublicKeySECP256(Buffer.from(accountDerivation.publicKey, "hex")),
   });
   return makeDescriptor({
     derivationMode,
@@ -157,17 +135,12 @@ export function inferDescriptorFromDeviceInfo({
 export function scanDescriptors(
   deviceId: string,
   currency: CryptoCurrency,
-  limit = 10
+  limit = 10,
 ): Observable<AccountDescriptor> {
-  const derivateAddress = (opts) =>
-    withDevice(deviceId)((transport) => from(getAddress(transport, opts)));
+  const derivateAddress = (opts: GetAddressOptions) =>
+    withDevice(deviceId)(transport => from(getAddress(transport, opts)));
 
-  function stepAddress({
-    index,
-    accountDerivation,
-    parentDerivation,
-    derivationMode,
-  }) {
+  function stepAddress({ index, accountDerivation, parentDerivation, derivationMode }) {
     const result = inferDescriptorFromDeviceInfo({
       derivationMode,
       currency,
@@ -184,14 +157,14 @@ export function scanDescriptors(
   }
 
   return from(getDerivationModesForCurrency(currency)).pipe(
-    concatMap((derivationMode) =>
+    concatMap(derivationMode =>
       walletDerivation({
         currency,
         derivationMode,
         derivateAddress,
         stepAddress,
         shouldDerivesOnAccount: true,
-      })
-    )
+      }),
+    ),
   );
 }

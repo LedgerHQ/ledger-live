@@ -11,7 +11,7 @@ export type SyncAction =
       type: "SYNC_ONE_ACCOUNT";
       accountId: string;
       priority: number;
-      reason: string;
+      reason?: string;
     }
   | {
       type: "SYNC_SOME_ACCOUNTS";

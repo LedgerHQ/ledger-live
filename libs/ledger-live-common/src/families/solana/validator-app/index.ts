@@ -1,8 +1,10 @@
+import network from "@ledgerhq/live-network/network";
 import { Cluster } from "@solana/web3.js";
 import { AxiosRequestConfig, AxiosResponse } from "axios";
 import { compact } from "lodash/fp";
 import { getEnv } from "../../../env";
-import network from "../../../network";
+
+const MAX_VALIDATORS_NB = 1000; // Max number of validators to fetch
 
 export type ValidatorsAppValidatorRaw = {
   active_stake?: number | null;
@@ -57,28 +59,26 @@ const URLS = {
   validatorList: (cluster: Extract<Cluster, "mainnet-beta" | "testnet">) => {
     const clusterSlug = cluster === "mainnet-beta" ? "mainnet" : cluster;
     const baseUrl = getEnv("SOLANA_VALIDATORS_APP_BASE_URL");
-    return `${baseUrl}/${clusterSlug}.json?order=score`;
+    return `${baseUrl}/${clusterSlug}.json?order=score&limit=${MAX_VALIDATORS_NB}`;
   },
 };
 
 export async function getValidators(
-  cluster: Extract<Cluster, "mainnet-beta" | "testnet">
+  cluster: Extract<Cluster, "mainnet-beta" | "testnet">,
 ): Promise<ValidatorsAppValidator[]> {
   const config: AxiosRequestConfig = {
     method: "GET",
     url: URLS.validatorList(cluster),
   };
 
-  const response: AxiosResponse<ValidatorsAppValidatorRaw[]> = await network(
-    config
-  );
+  const response: AxiosResponse<ValidatorsAppValidatorRaw[]> = await network(config);
 
   const allRawValidators = response.status === 200 ? response.data : [];
 
   // validators app data is not clean: random properties can randomly contain
   // data, null, undefined
   const tryFromRawValidator = (
-    v: ValidatorsAppValidatorRaw
+    v: ValidatorsAppValidatorRaw,
   ): ValidatorsAppValidator | undefined => {
     if (
       typeof v.active_stake === "number" &&

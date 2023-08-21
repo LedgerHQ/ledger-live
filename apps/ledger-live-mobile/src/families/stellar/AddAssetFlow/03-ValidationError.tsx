@@ -14,17 +14,12 @@ import { ScreenName } from "../../../const";
 import type { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
 
 type Props = BaseComposite<
-  StackNavigatorProps<
-    StellarAddAssetFlowParamList,
-    ScreenName.StellarAddAssetValidationError
-  >
+  StackNavigatorProps<StellarAddAssetFlowParamList, ScreenName.StellarAddAssetValidationError>
 >;
 export default function ValidationError({ navigation, route }: Props) {
   const { colors } = useTheme();
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
   const retry = useCallback(() => {
     navigation.goBack();

@@ -2,32 +2,23 @@ import React, { createContext, useCallback, useEffect, useRef } from "react";
 import { Animated, FlatList, ScrollView } from "react-native";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
-const tabBarHeight = 74;
+const tabBarHeight = 56;
 const headerHeight = 48;
 const headerHeightWithTabNavigatorDisabled = 64;
 
 type WalletTabNavigatorScrollContextData = {
   scrollY: Animated.Value;
-  scrollableRefArray: React.MutableRefObject<
-    { key: string; value: ScrollView | FlatList }[]
-  >;
+  scrollableRefArray: React.MutableRefObject<{ key: string; value: ScrollView | FlatList }[]>;
   scrollableOffsetMap: React.MutableRefObject<{ [key: string]: number }>;
-  onGetRef: ({
-    key,
-    value,
-  }: {
-    key: string;
-    value: ScrollView | FlatList;
-  }) => void;
+  onGetRef: ({ key, value }: { key: string; value: ScrollView | FlatList }) => void;
   syncScrollOffset: (key: string) => void;
   tabBarHeight: number;
   headerHeight: number;
 };
 
-export const WalletTabNavigatorScrollContext =
-  createContext<WalletTabNavigatorScrollContextData>(
-    {} as WalletTabNavigatorScrollContextData,
-  );
+export const WalletTabNavigatorScrollContext = createContext<WalletTabNavigatorScrollContextData>(
+  {} as WalletTabNavigatorScrollContextData,
+);
 
 // Partly based on https://github.com/JungHsuan/react-native-collapsible-tabview/blob/master/src/CollapsibleTabView.js
 export default function WalletTabNavigatorScrollManager({
@@ -39,9 +30,7 @@ export default function WalletTabNavigatorScrollManager({
 }) {
   const walletNftGalleryFeature = useFeature("walletNftGallery");
   const scrollY = useRef(new Animated.Value(0)).current;
-  const scrollableRefArray = useRef<
-    { key: string; value: ScrollView | FlatList }[]
-  >([]);
+  const scrollableRefArray = useRef<{ key: string; value: ScrollView | FlatList }[]>([]);
   const scrollableOffsetMap = useRef<{ [key: string]: number }>({});
 
   useEffect(() => {
@@ -66,7 +55,7 @@ export default function WalletTabNavigatorScrollManager({
           if (
             scrollYValue !== null &&
             item.value &&
-            ((scrollYValue < headerHeight && scrollYValue >= 0) ||
+            (scrollYValue < headerHeight ||
               (scrollYValue >= headerHeight &&
                 scrollableOffsetMap.current[item.key] < headerHeight))
           ) {
@@ -113,6 +102,11 @@ export default function WalletTabNavigatorScrollManager({
           if (currentRouteName) {
             setTimeout(() => syncScrollOffset(currentRouteName), 0);
           }
+        } else {
+          // NOTE: We must update the ref if it already exists
+          // otherwise no scrollTop or scrollToOffset calls work
+          // as it is called on the old ref and does nothing.
+          found.value = value;
         }
       }
     },

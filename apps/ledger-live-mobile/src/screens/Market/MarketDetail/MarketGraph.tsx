@@ -1,11 +1,6 @@
 import React, { useMemo, useCallback, memo } from "react";
 import { useTheme } from "styled-components/native";
-import {
-  Flex,
-  GraphTabs,
-  InfiniteLoader,
-  Transitions,
-} from "@ledgerhq/native-ui";
+import { Flex, GraphTabs, InfiniteLoader, Transitions } from "@ledgerhq/native-ui";
 import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
 import { useTranslation } from "react-i18next";
 import { SingleCoinProviderData } from "@ledgerhq/live-common/market/MarketDataProvider";

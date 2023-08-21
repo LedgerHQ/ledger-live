@@ -13,10 +13,7 @@ import { StackNavigatorProps } from "../../../components/RootNavigator/types/hel
 export { default as DeveloperCustomManifest } from "./CustomManifest";
 export default function DeveloperSettings({
   navigation,
-}: StackNavigatorProps<
-  SettingsNavigatorStackParamList,
-  ScreenName.DeveloperSettings
->) {
+}: StackNavigatorProps<SettingsNavigatorStackParamList, ScreenName.DeveloperSettings>) {
   const { t } = useTranslation();
   return (
     <ScrollView>
@@ -30,9 +27,7 @@ export default function DeveloperSettings({
       )}
 
       <SettingsRow
-        title={t(
-          "settings.experimental.developerFeatures.platformManifest.title",
-        )}
+        title={t("settings.experimental.developerFeatures.platformManifest.title")}
         onPress={() => navigation.navigate(ScreenName.DeveloperCustomManifest)}
       />
     </ScrollView>

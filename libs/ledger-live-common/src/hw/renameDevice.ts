@@ -15,39 +15,39 @@ export type RenameDeviceEvent =
       name: string;
     };
 
-export type RenameDeviceRequest = {
+export type RenameDeviceRequest = { name: string };
+export type Input = {
   deviceId: string;
-  name: string; // New device name
+  request: RenameDeviceRequest;
 };
 
-export default function renameDevice({
-  deviceId,
-  name,
-}: RenameDeviceRequest): Observable<RenameDeviceEvent> {
+export default function renameDevice({ deviceId, request }: Input): Observable<RenameDeviceEvent> {
+  const { name } = request;
+
   const sub = withDevice(deviceId)(
-    (transport) =>
-      new Observable((o) => {
+    transport =>
+      new Observable(o => {
         const sub = concat(
           of(<RenameDeviceEvent>{
             type: "permission-requested",
           }),
-          from(editDeviceName(transport, name))
+          from(editDeviceName(transport, name)),
         )
           .pipe(
-            map((e) => e || { type: "device-renamed", name }),
+            map(e => e || { type: "device-renamed", name }),
             catchError((error: Error) =>
               of({
                 type: "error",
                 error,
-              })
-            )
+              }),
+            ),
           )
-          .subscribe((e) => o.next(e));
+          .subscribe(e => o.next(e));
 
         return () => {
           sub.unsubscribe();
         };
-      })
+      }),
   );
 
   return sub as Observable<RenameDeviceEvent>;

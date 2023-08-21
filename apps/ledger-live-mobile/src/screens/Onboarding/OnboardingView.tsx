@@ -1,7 +1,7 @@
 import React from "react";
 import { View, TouchableOpacity } from "react-native";
 import { useNavigation, StackActions } from "@react-navigation/native";
-import { Icons } from "@ledgerhq/native-ui/assets";
+import { IconsLegacy } from "@ledgerhq/native-ui/assets/index";
 import { Flex, Text, ScrollListContainer } from "@ledgerhq/native-ui";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "styled-components/native";
@@ -54,33 +54,21 @@ function OnboardingView({
   };
 
   return (
-    <SafeAreaView
-      style={[{ flex: 1 }, { backgroundColor: colors.background.main }]}
-    >
+    <SafeAreaView style={[{ flex: 1 }, { backgroundColor: colors.background.main }]}>
       {/* HEADER */}
       <Flex mb={8} px={6} pt={8}>
-        <Flex
-          flexDirection="row"
-          justifyContent="space-between"
-          mb={subTitle ? 9 : 6}
-        >
+        <Flex flexDirection="row" justifyContent="space-between" mb={subTitle ? 9 : 6}>
           <View>
             {hasBackButton ? (
-              <TouchableOpacity
-                onPress={handlecustomBackAction}
-                hitSlop={hitSlop}
-              >
-                <Icons.ArrowLeftMedium size="24px" />
+              <TouchableOpacity onPress={handlecustomBackAction} hitSlop={hitSlop}>
+                <IconsLegacy.ArrowLeftMedium size="24px" />
               </TouchableOpacity>
             ) : null}
           </View>
           <View>
             {hasCloseButton ? (
-              <TouchableOpacity
-                onPress={handlecustomCloseAction}
-                hitSlop={hitSlop}
-              >
-                <Icons.CloseMedium size="24px" />
+              <TouchableOpacity onPress={handlecustomCloseAction} hitSlop={hitSlop}>
+                <IconsLegacy.CloseMedium size="24px" />
               </TouchableOpacity>
             ) : null}
           </View>

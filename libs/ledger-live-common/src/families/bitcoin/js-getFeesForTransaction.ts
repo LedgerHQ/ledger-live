@@ -13,7 +13,7 @@ const getFeesForTransaction = async ({
 }): Promise<{ fees: BigNumber; txInputs: any; txOutputs: any }> => {
   const walletTx = await buildTransaction(account, transaction);
   const fees = new BigNumber(walletTx.fee).integerValue();
-  let txInputs = walletTx.inputs.map((i) => {
+  let txInputs = walletTx.inputs.map(i => {
     return {
       address: i.address,
       value: new BigNumber(i.value),
@@ -21,7 +21,7 @@ const getFeesForTransaction = async ({
       previousOutputIndex: i.output_index,
     };
   });
-  let txOutputs = walletTx.outputs.map((o) => {
+  let txOutputs = walletTx.outputs.map(o => {
     return {
       outputIndex: walletTx.outputs.indexOf(o),
       address: o.address,
@@ -38,11 +38,11 @@ const getFeesForTransaction = async ({
     const { syncReplaceAddress } = perCoin;
 
     if (syncReplaceAddress) {
-      txInputs = txInputs.map((i) => ({
+      txInputs = txInputs.map(i => ({
         ...i,
         address: i.address && syncReplaceAddress(i.address),
       }));
-      txOutputs = txOutputs.map((o) => ({
+      txOutputs = txOutputs.map(o => ({
         ...o,
         address: o.address && syncReplaceAddress(o.address),
       }));

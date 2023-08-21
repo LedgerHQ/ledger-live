@@ -3,13 +3,7 @@ import shuffle from "lodash/shuffle";
 import priorityQueue from "async/priorityQueue";
 import { concat, from } from "rxjs";
 import { ignoreElements } from "rxjs/operators";
-import React, {
-  useEffect,
-  useCallback,
-  useState,
-  useRef,
-  useMemo,
-} from "react";
+import React, { useEffect, useCallback, useState, useRef, useMemo } from "react";
 import { getVotesCount, isUpToDateAccount } from "../../account";
 import { getAccountBridge } from "..";
 import { getAccountCurrency } from "../../account";
@@ -25,19 +19,12 @@ export type Props = {
   // you need to inject the accounts to sync on
   accounts: Account[];
   // provide a way to save the result of an account sync update
-  updateAccountWithUpdater: (
-    accountId: string,
-    updater: (arg0: Account) => Account
-  ) => void;
+  updateAccountWithUpdater: (accountId: string, updater: (arg0: Account) => Account) => void;
   // handles an error / log / do action with it
   // if the function returns falsy, the sync will ignore error, otherwise it's treated as error with the error you return (likely the same)
   recoverError: (arg0: Error) => Error | null | undefined | void;
   // track sync lifecycle for analytics
-  trackAnalytics: (
-    arg0: string,
-    arg1?: Record<string, any> | null,
-    mandatory?: boolean
-  ) => void;
+  trackAnalytics: (arg0: string, arg1?: Record<string, any> | null, mandatory?: boolean) => void;
   // load all data needed for a currency (it's calling currencyBridge prepare mechanism)
   prepareCurrency: (currency: CryptoCurrency) => Promise<any>;
   // provide an implementation of hydrate (it preload from a local storage impl the data cached from a previous prepare)
@@ -86,9 +73,7 @@ export const BridgeSync = ({
   });
   return (
     <BridgeSyncStateContext.Provider value={syncState}>
-      <BridgeSyncContext.Provider value={sync}>
-        {children}
-      </BridgeSyncContext.Provider>
+      <BridgeSyncContext.Provider value={sync}>{children}</BridgeSyncContext.Provider>
     </BridgeSyncStateContext.Provider>
   );
 };
@@ -127,10 +112,9 @@ function useSyncQueue({
   updateAccountWithUpdater,
   blacklistedTokenIds,
 }) {
-  const [bridgeSyncState, setBridgeSyncState]: [BridgeSyncState, any] =
-    useState({});
+  const [bridgeSyncState, setBridgeSyncState]: [BridgeSyncState, any] = useState({});
   const setAccountSyncState = useCallback((accountId: string, s: SyncState) => {
-    setBridgeSyncState((state) => ({ ...state, [accountId]: s }));
+    setBridgeSyncState(state => ({ ...state, [accountId]: s }));
   }, []);
   const synchronize = useCallback(
     ({ accountId, reason }: SyncJob, next: () => void) => {
@@ -141,7 +125,7 @@ function useSyncQueue({
         return;
       }
 
-      const account = accounts.find((a) => a.id === accountId);
+      const account = accounts.find(a => a.id === accountId);
 
       if (!account) {
         next();
@@ -158,58 +142,49 @@ function useSyncQueue({
         const startSyncTime = Date.now();
         const trackedRecently =
           lastTimeAnalyticsTrackPerAccountId[accountId] &&
-          startSyncTime - lastTimeAnalyticsTrackPerAccountId[accountId] <
-            90 * 1000;
+          startSyncTime - lastTimeAnalyticsTrackPerAccountId[accountId] < 90 * 1000;
 
         if (!trackedRecently) {
           lastTimeAnalyticsTrackPerAccountId[accountId] = startSyncTime;
         }
 
-        const trackEnd = (event) => {
+        const trackSyncSuccessEnd = () => {
           if (trackedRecently) return;
-          const account = accounts.find((a) => a.id === accountId);
+          const account = accounts.find(a => a.id === accountId);
           if (!account) return;
           const subAccounts: SubAccount[] = account.subAccounts || [];
 
-          if (event === "SyncSuccess") {
-            // Nb Only emit SyncSuccess/SyncSuccessToken event once per launch
-            if (lastTimeSuccessSyncPerAccountId[accountId]) {
-              return;
-            }
-            lastTimeSuccessSyncPerAccountId[accountId] = startSyncTime;
+          // Nb Only emit SyncSuccess/SyncSuccessToken event once per launch
+          if (lastTimeSuccessSyncPerAccountId[accountId]) {
+            return;
           }
+          lastTimeSuccessSyncPerAccountId[accountId] = startSyncTime;
 
-          trackAnalytics(event, {
+          trackAnalytics("SyncSuccess", {
             duration: (Date.now() - startSyncTime) / 1000,
             currencyName: account.currency.name,
             derivationMode: account.derivationMode,
             freshAddressPath: account.freshAddressPath,
             operationsLength: account.operationsCount,
-            accountsCountForCurrency: accounts.filter(
-              (a) => a.currency === account.currency
-            ).length,
+            accountsCountForCurrency: accounts.filter(a => a.currency === account.currency).length,
             tokensLength: subAccounts.length,
             votesCount: getVotesCount(account),
             reason,
           });
 
-          if (event === "SyncSuccess") {
-            subAccounts.forEach((a) => {
-              const tokenId =
-                a.type === "TokenAccount"
-                  ? getAccountCurrency(a).id
-                  : account.currency.name;
-              trackAnalytics("SyncSuccessToken", {
-                tokenId,
-                tokenTicker: getAccountCurrency(a).ticker,
-                operationsLength: a.operationsCount,
-                parentCurrencyName: account.currency.name,
-                parentDerivationMode: account.derivationMode,
-                votesCount: getVotesCount(a, account),
-                reason,
-              });
+          subAccounts.forEach(a => {
+            const tokenId =
+              a.type === "TokenAccount" ? getAccountCurrency(a).id : account.currency.name;
+            trackAnalytics("SyncSuccessToken", {
+              tokenId,
+              tokenTicker: getAccountCurrency(a).ticker,
+              operationsLength: a.operationsCount,
+              parentCurrencyName: account.currency.name,
+              parentDerivationMode: account.derivationMode,
+              votesCount: getVotesCount(a, account),
+              reason,
             });
-          }
+          });
         };
 
         const syncConfig = {
@@ -218,13 +193,13 @@ function useSyncQueue({
         };
         concat(
           from(prepareCurrency(account.currency)).pipe(ignoreElements()),
-          bridge.sync(account, syncConfig)
+          bridge.sync(account, syncConfig),
         ).subscribe({
-          next: (accountUpdater) => {
+          next: accountUpdater => {
             updateAccountWithUpdater(accountId, accountUpdater);
           },
           complete: () => {
-            trackEnd("SyncSuccess");
+            trackSyncSuccessEnd();
             setAccountSyncState(accountId, {
               pending: false,
               error: null,
@@ -242,10 +217,6 @@ function useSyncQueue({
               });
               next();
               return;
-            }
-
-            if (error && error.name !== "NetworkDown") {
-              trackEnd("SyncError");
             }
 
             setAccountSyncState(accountId, {
@@ -272,7 +243,7 @@ function useSyncQueue({
       trackAnalytics,
       updateAccountWithUpdater,
       blacklistedTokenIds,
-    ]
+    ],
   );
   const synchronizeRef = useRef(synchronize);
   useEffect(() => {
@@ -281,8 +252,8 @@ function useSyncQueue({
   const [syncQueue] = useState(() =>
     priorityQueue(
       (job: SyncJob, next: () => void) => synchronizeRef.current(job, next),
-      getEnv("SYNC_MAX_CONCURRENT")
-    )
+      getEnv("SYNC_MAX_CONCURRENT"),
+    ),
   );
   return [syncQueue, bridgeSyncState];
 }
@@ -295,19 +266,19 @@ function useSync({ syncQueue, accounts }) {
       if (priority < skipUnderPriority.current) return;
       // by convention we remove concurrent tasks with same priority
       // FIXME this is somehow a hack. ideally we should just dedup the account ids in the pending queue...
-      syncQueue.remove((o) => priority === o.priority);
+      syncQueue.remove(o => priority === o.priority);
       log("bridge", "schedule " + ids.join(", "));
       syncQueue.push(
-        ids.map((accountId) => ({
+        ids.map(accountId => ({
           accountId,
           reason,
         })),
-        -priority
+        -priority,
       );
     };
 
     // don't always sync in the same order to avoid potential "account never reached"
-    const shuffledAccountIds = () => shuffle(accounts.map((a) => a.id));
+    const shuffledAccountIds = () => shuffle(accounts.map(a => a.id));
 
     const handlers = {
       BACKGROUND_TICK: ({ reason }: { reason: string }) => {
@@ -325,13 +296,7 @@ function useSync({ syncQueue, accounts }) {
           schedule(shuffledAccountIds(), -1, "outdated");
         }
       },
-      SYNC_ALL_ACCOUNTS: ({
-        priority,
-        reason,
-      }: {
-        priority: number;
-        reason: string;
-      }) => {
+      SYNC_ALL_ACCOUNTS: ({ priority, reason }: { priority: number; reason: string }) => {
         schedule(shuffledAccountIds(), priority, reason);
       },
       SYNC_ONE_ACCOUNT: ({
@@ -378,7 +343,7 @@ function useSync({ syncQueue, accounts }) {
   useEffect(() => {
     ref.current = sync;
   }, [sync]);
-  const syncFn = useCallback((action) => ref.current(action), [ref]);
+  const syncFn = useCallback(action => ref.current(action), [ref]);
   return syncFn;
 }
 
@@ -392,11 +357,7 @@ function useSyncBackground({ sync }) {
         type: "BACKGROUND_TICK",
         reason,
       });
-      syncTimeout = setTimeout(
-        syncLoop,
-        getEnv("SYNC_ALL_INTERVAL"),
-        "background"
-      );
+      syncTimeout = setTimeout(syncLoop, getEnv("SYNC_ALL_INTERVAL"), "background");
     };
 
     syncTimeout = setTimeout(syncLoop, getEnv("SYNC_BOOT_DELAY"), "initial");
@@ -407,9 +368,8 @@ function useSyncBackground({ sync }) {
 // useSyncContinouslyPendingOperations: continously sync accounts with pending operations
 function useSyncContinouslyPendingOperations({ sync, accounts }) {
   const ids = useMemo(
-    () =>
-      accounts.filter((a) => a.pendingOperations.length > 0).map((a) => a.id),
-    [accounts]
+    () => accounts.filter(a => a.pendingOperations.length > 0).map(a => a.id),
+    [accounts],
   );
   const refIds = useRef(ids);
   useEffect(() => {

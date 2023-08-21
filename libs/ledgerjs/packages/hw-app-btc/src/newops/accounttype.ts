@@ -1,14 +1,7 @@
 import { crypto } from "bitcoinjs-lib";
 import { pointAddScalar } from "tiny-secp256k1";
 import { BufferWriter } from "../buffertools";
-import {
-  HASH_SIZE,
-  OP_CHECKSIG,
-  OP_DUP,
-  OP_EQUAL,
-  OP_EQUALVERIFY,
-  OP_HASH160,
-} from "../constants";
+import { HASH_SIZE, OP_CHECKSIG, OP_DUP, OP_EQUAL, OP_EQUALVERIFY, OP_HASH160 } from "../constants";
 import { hashPublicKey } from "../hashPublicKey";
 import { DefaultDescriptorTemplate } from "./policy";
 import { PsbtV2 } from "./psbtv2";
@@ -51,7 +44,7 @@ export interface AccountType {
     inputTx: Buffer | undefined,
     spentOutput: SpentOutput,
     pubkeys: Buffer[],
-    pathElems: number[][]
+    pathElems: number[][],
   ): void;
 
   /**
@@ -63,12 +56,7 @@ export interface AccountType {
    * @param pubkeys The 33 byte ecdsa compressed public keys involved in this output
    * @param paths The paths corresponding to the pubkeys, in same order.
    */
-  setOwnOutput(
-    i: number,
-    cond: SpendingCondition,
-    pubkeys: Buffer[],
-    paths: number[][]
-  ): void;
+  setOwnOutput(i: number, cond: SpendingCondition, pubkeys: Buffer[], paths: number[][]): void;
 
   /**
    * Returns the descriptor template for this account type. Currently only
@@ -105,7 +93,7 @@ abstract class SingleKeyAccount extends BaseAccount {
     inputTx: Buffer | undefined,
     spentOutput: SpentOutput,
     pubkeys: Buffer[],
-    pathElems: number[][]
+    pathElems: number[][],
   ) {
     if (pubkeys.length != 1) {
       throw new Error("Expected single key, got " + pubkeys.length);
@@ -120,15 +108,10 @@ abstract class SingleKeyAccount extends BaseAccount {
     inputTx: Buffer | undefined,
     spentOutput: SpentOutput,
     pubkey: Buffer,
-    path: number[]
+    path: number[],
   );
 
-  setOwnOutput(
-    i: number,
-    cond: SpendingCondition,
-    pubkeys: Buffer[],
-    paths: number[][]
-  ) {
+  setOwnOutput(i: number, cond: SpendingCondition, pubkeys: Buffer[], paths: number[][]) {
     if (pubkeys.length != 1) {
       throw new Error("Expected single key, got " + pubkeys.length);
     }
@@ -141,7 +124,7 @@ abstract class SingleKeyAccount extends BaseAccount {
     i: number,
     cond: SpendingCondition,
     pubkey: Buffer,
-    path: number[]
+    path: number[],
   );
 }
 
@@ -160,7 +143,7 @@ export class p2pkh extends SingleKeyAccount {
     inputTx: Buffer | undefined,
     _spentOutput: SpentOutput,
     pubkey: Buffer,
-    path: number[]
+    path: number[],
   ) {
     if (!inputTx) {
       throw new Error("Full input base transaction required");
@@ -169,12 +152,7 @@ export class p2pkh extends SingleKeyAccount {
     this.psbt.setInputBip32Derivation(i, pubkey, this.masterFp, path);
   }
 
-  setSingleKeyOutput(
-    i: number,
-    cond: SpendingCondition,
-    pubkey: Buffer,
-    path: number[]
-  ) {
+  setSingleKeyOutput(i: number, cond: SpendingCondition, pubkey: Buffer, path: number[]) {
     this.psbt.setOutputBip32Derivation(i, pubkey, this.masterFp, path);
   }
 
@@ -198,23 +176,14 @@ export class p2tr extends SingleKeyAccount {
     _inputTx: Buffer | undefined,
     spentOutput: SpentOutput,
     pubkey: Buffer,
-    path: number[]
+    path: number[],
   ) {
     const xonly = pubkey.slice(1);
     this.psbt.setInputTapBip32Derivation(i, xonly, [], this.masterFp, path);
-    this.psbt.setInputWitnessUtxo(
-      i,
-      spentOutput.amount,
-      spentOutput.cond.scriptPubKey
-    );
+    this.psbt.setInputWitnessUtxo(i, spentOutput.amount, spentOutput.cond.scriptPubKey);
   }
 
-  setSingleKeyOutput(
-    i: number,
-    cond: SpendingCondition,
-    pubkey: Buffer,
-    path: number[]
-  ) {
+  setSingleKeyOutput(i: number, cond: SpendingCondition, pubkey: Buffer, path: number[]) {
     const xonly = pubkey.slice(1);
     this.psbt.setOutputTapBip32Derivation(i, xonly, [], this.masterFp, path);
   }
@@ -251,10 +220,7 @@ export class p2tr extends SingleKeyAccount {
     // the first byte, which represent the oddness/evenness. In schnorr all
     // pubkeys are even.
     // https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki#public-key-conversion
-    const evenEcdsaPubkey = Buffer.concat([
-      Buffer.from([0x02]),
-      internalPubkey,
-    ]);
+    const evenEcdsaPubkey = Buffer.concat([Buffer.from([0x02]), internalPubkey]);
     const tweak = this.hashTapTweak(internalPubkey);
 
     // Q = P + int(hash_TapTweak(bytes(P)))G
@@ -282,7 +248,7 @@ export class p2wpkhWrapped extends SingleKeyAccount {
     inputTx: Buffer | undefined,
     spentOutput: SpentOutput,
     pubkey: Buffer,
-    path: number[]
+    path: number[],
   ) {
     if (!inputTx) {
       throw new Error("Full input base transaction required");
@@ -292,30 +258,18 @@ export class p2wpkhWrapped extends SingleKeyAccount {
 
     const userSuppliedRedeemScript = spentOutput.cond.redeemScript;
     const expectedRedeemScript = this.createRedeemScript(pubkey);
-    if (
-      userSuppliedRedeemScript &&
-      !expectedRedeemScript.equals(userSuppliedRedeemScript)
-    ) {
+    if (userSuppliedRedeemScript && !expectedRedeemScript.equals(userSuppliedRedeemScript)) {
       // At what point might a user set the redeemScript on its own?
       throw new Error(`User-supplied redeemScript ${userSuppliedRedeemScript.toString(
-        "hex"
+        "hex",
       )} doesn't
        match expected ${expectedRedeemScript.toString("hex")} for input ${i}`);
     }
     this.psbt.setInputRedeemScript(i, expectedRedeemScript);
-    this.psbt.setInputWitnessUtxo(
-      i,
-      spentOutput.amount,
-      spentOutput.cond.scriptPubKey
-    );
+    this.psbt.setInputWitnessUtxo(i, spentOutput.amount, spentOutput.cond.scriptPubKey);
   }
 
-  setSingleKeyOutput(
-    i: number,
-    cond: SpendingCondition,
-    pubkey: Buffer,
-    path: number[]
-  ) {
+  setSingleKeyOutput(i: number, cond: SpendingCondition, pubkey: Buffer, path: number[]) {
     this.psbt.setOutputRedeemScript(i, cond.redeemScript!);
     this.psbt.setOutputBip32Derivation(i, pubkey, this.masterFp, path);
   }
@@ -344,26 +298,17 @@ export class p2wpkh extends SingleKeyAccount {
     inputTx: Buffer | undefined,
     spentOutput: SpentOutput,
     pubkey: Buffer,
-    path: number[]
+    path: number[],
   ) {
     if (!inputTx) {
       throw new Error("Full input base transaction required");
     }
     this.psbt.setInputNonWitnessUtxo(i, inputTx);
     this.psbt.setInputBip32Derivation(i, pubkey, this.masterFp, path);
-    this.psbt.setInputWitnessUtxo(
-      i,
-      spentOutput.amount,
-      spentOutput.cond.scriptPubKey
-    );
+    this.psbt.setInputWitnessUtxo(i, spentOutput.amount, spentOutput.cond.scriptPubKey);
   }
 
-  setSingleKeyOutput(
-    i: number,
-    cond: SpendingCondition,
-    pubkey: Buffer,
-    path: number[]
-  ) {
+  setSingleKeyOutput(i: number, cond: SpendingCondition, pubkey: Buffer, path: number[]) {
     this.psbt.setOutputBip32Derivation(i, pubkey, this.masterFp, path);
   }
 

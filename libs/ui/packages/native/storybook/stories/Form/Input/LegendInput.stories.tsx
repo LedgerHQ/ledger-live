@@ -1,21 +1,27 @@
-import { storiesOf } from "../../storiesOf";
-import { text } from "@storybook/addon-knobs";
 import React from "react";
 import LegendInput from "../../../../src/components/Form/Input/LegendInput";
 
-const LegendInputStory = (): JSX.Element => {
+export default {
+  title: "Form/Input/LegendInput",
+  component: LegendInput,
+};
+
+export const LegendInputStory = (args: typeof LegendInputStoryArgs): JSX.Element => {
   const [value, setValue] = React.useState("");
 
   const onChange = (value: string) => setValue(value);
 
   return (
     <LegendInput
-      legend={text("label", "Ledger")}
+      legend={args.label}
       value={value}
       onChange={onChange}
       placeholder={"Placeholder"}
     />
   );
 };
-
-storiesOf((story) => story("Form/Input", module).add("LegendInput", LegendInputStory));
+LegendInputStory.storyName = "LegendInput";
+const LegendInputStoryArgs = {
+  label: "Ledger",
+};
+LegendInputStory.args = LegendInputStoryArgs;

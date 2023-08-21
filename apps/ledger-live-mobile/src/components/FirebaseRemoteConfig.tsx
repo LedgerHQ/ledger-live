@@ -4,8 +4,9 @@ import { defaultFeatures } from "@ledgerhq/live-common/featureFlags/index";
 import { reduce, snakeCase } from "lodash";
 import { DefaultFeatures } from "@ledgerhq/types-live";
 
-export const formatToFirebaseFeatureId = (id: string) =>
-  `feature_${snakeCase(id)}`;
+export const formatToFirebaseFeatureId = (id: string) => {
+  return `feature_${snakeCase(id)}`;
+};
 
 // Firebase SDK treat JSON values as strings
 const formatDefaultFeatures = (config: DefaultFeatures) =>
@@ -22,9 +23,7 @@ type Props = {
   children?: ReactNode;
 };
 
-export const FirebaseRemoteConfigProvider = ({
-  children,
-}: Props): JSX.Element | null => {
+export const FirebaseRemoteConfigProvider = ({ children }: Props): JSX.Element | null => {
   const [loaded, setLoaded] = useState<boolean>(false);
 
   useEffect(() => {
@@ -36,9 +35,9 @@ export const FirebaseRemoteConfigProvider = ({
         });
         await remoteConfig().fetchAndActivate();
       } catch (error) {
-        console.error(
-          `Failed to fetch Firebase remote config with error: ${error}`,
-        );
+        if (!unmounted) {
+          console.error(`Failed to fetch Firebase remote config with error: ${error}`);
+        }
       }
       if (!unmounted) {
         setLoaded(true);

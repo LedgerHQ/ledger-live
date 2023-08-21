@@ -17,10 +17,7 @@ type NavigationProps = StackNavigatorProps<
   ScreenName.EditAccountUnits
 >;
 
-export default function EditAccountUnits({
-  navigation,
-  route,
-}: NavigationProps) {
+export default function EditAccountUnits({ navigation, route }: NavigationProps) {
   const dispatch = useDispatch();
   const { account } = useSelector(accountScreenSelector(route));
   invariant(account?.type === "Account", "account must be a main account");
@@ -50,11 +47,7 @@ export default function EditAccountUnits({
                 onPressItem(item);
               }}
             >
-              <SettingsRow
-                title={item.code}
-                selected={account.unit.code === item.code}
-                compact
-              />
+              <SettingsRow title={item.code} selected={account.unit.code === item.code} compact />
             </Touchable>
           )}
         >

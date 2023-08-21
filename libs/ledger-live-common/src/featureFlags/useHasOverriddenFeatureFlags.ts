@@ -19,6 +19,6 @@ export function useHasLocallyOverriddenFeatureFlags(): boolean {
           return false;
         }
       }),
-    [getFeature]
+    [getFeature],
   );
 }

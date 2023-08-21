@@ -1,9 +1,7 @@
 # OSX
-#
 .DS_Store
 
 # Xcode
-#
 ios/Index/*
 build/
 *.pbxuser
@@ -22,27 +20,27 @@ DerivedData
 *.ipa
 *.dSYM.zip
 *.xcuserstate
+ios/.xcode.env.local
 
 # Android/IntelliJ
-#
 build/
 .idea
 .gradle
 local.properties
 *.iml
 *.hprof
+.cxx/
+*.keystore
+!debug.keystore
 
 # node.js
-#
 node_modules/
 npm-debug.log
 yarn-error.log
 
-# BUCK
-buck-out/
-\.buckd/
-*.keystore
-!debug.keystore
+# jest
+coverage/
+**/__snapshots__/
 
 # fastlane
 #
@@ -61,6 +59,7 @@ buck-out/
 **/fastlane/certs
 **/fastlane/**,
 **/fastlane/**}
+**/fastlane/test_output
 
 
 # Bundle artifact
@@ -68,6 +67,10 @@ buck-out/
 
 # VS Code
 *.vscode
+
+# jest
+coverage/
+**/__snapshots__/
 
 # misc
 .env
@@ -93,10 +96,20 @@ src/generated/
 /ios/Pods/
 /vendor/bundle/
 
+# jest
+coverage/
+**/__snapshots__/
+
 # Detox
 artifacts/
 allure-results/
 
-#CI
+# CI
 **/vendor/**
 **/*.jks
+
+# temp directory
+/temp
+
+# Temporary files created by Metro to check the health of the file watcher
+.metro-health-check*

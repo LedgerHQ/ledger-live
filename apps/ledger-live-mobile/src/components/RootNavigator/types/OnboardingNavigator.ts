@@ -18,6 +18,7 @@ export type OnboardingPreQuizModalNavigatorParamList = {
 export type OnboardingNavigatorParamList = {
   [ScreenName.OnboardingWelcome]: undefined;
   [ScreenName.OnboardingPostWelcomeSelection]: { userHasDevice: boolean };
+  [ScreenName.OnboardingWelcomeBack]: undefined;
   [ScreenName.GetDevice]: undefined;
   [ScreenName.OnboardingLanguage]: undefined;
   [ScreenName.OnboardingTermsOfUse]: undefined;
@@ -25,13 +26,13 @@ export type OnboardingNavigatorParamList = {
   [ScreenName.OnboardingUseCase]: { deviceModelId: DeviceModelId };
   [NavigatorName.OnboardingCarefulWarning]: NavigatorScreenParams<OnboardingCarefulWarningParamList>;
   [NavigatorName.OnboardingPreQuiz]: NavigatorScreenParams<OnboardingPreQuizModalNavigatorParamList>;
-  [ScreenName.OnboardingDoYouHaveALedgerDevice]: undefined;
   [ScreenName.OnboardingModalDiscoverLive]: undefined;
   [ScreenName.OnboardingModalSetupNewDevice]: { deviceModelId: DeviceModelId };
   [ScreenName.OnboardingSetupDeviceInformation]: undefined;
   [ScreenName.OnboardingModalSetupSecureRecovery]: undefined;
   [ScreenName.OnboardingGeneralInformation]: undefined;
   [ScreenName.OnboardingBluetoothInformation]: undefined;
+  [ScreenName.OnboardingProtectionConnectionInformation]: undefined;
   [ScreenName.OnboardingSetNewDevice]: { deviceModelId: DeviceModelId };
   [ScreenName.OnboardingRecoveryPhrase]: {
     deviceModelId: DeviceModelId;
@@ -41,9 +42,10 @@ export type OnboardingNavigatorParamList = {
     sceneInfoKey: string;
   };
   [ScreenName.OnboardingPairNew]: {
-    deviceModelId: DeviceModelId;
-    next?: string;
+    deviceModelId?: DeviceModelId;
+    next?: ScreenName.OnboardingProtectFlow;
     showSeedWarning?: boolean;
+    isProtectFlow?: boolean;
   };
   [ScreenName.OnboardingProtectFlow]: {
     deviceModelId: DeviceModelId;
@@ -53,7 +55,6 @@ export type OnboardingNavigatorParamList = {
         deviceModelId?: DeviceModelId;
       }
     | undefined;
-  [ScreenName.OnboardingFinish]: undefined;
   [NavigatorName.PasswordAddFlow]: undefined;
   [ScreenName.OnboardingQuiz]: {
     deviceModelId: DeviceModelId;

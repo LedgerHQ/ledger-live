@@ -1,8 +1,5 @@
 import { Action, handleActions, ReducerMap } from "redux-actions";
-import {
-  AvailableProviderV3,
-  Pair,
-} from "@ledgerhq/live-common/exchange/swap/types";
+import { AvailableProviderV3, Pair } from "@ledgerhq/live-common/exchange/swap/types";
 import { SwapStateType } from "./types";
 import {
   SwapActionTypes,
@@ -23,10 +20,10 @@ export const INITIAL_STATE: SwapStateType = {
 
 export const ratesExpirationThreshold = 30000;
 
-export const flattenPairs = (
-  acc: Array<Pair>,
-  value: AvailableProviderV3,
-): Pair[] => [...acc, ...value.pairs];
+export const flattenPairs = (acc: Array<Pair>, value: AvailableProviderV3): Pair[] => [
+  ...acc,
+  ...value.pairs,
+];
 
 export type UPDATE_PROVIDERS_TYPE = {
   payload: SwapStateType["providers"];
@@ -39,10 +36,13 @@ const handlers: ReducerMap<SwapStateType, SwapPayload> = {
 
     return { ...INITIAL_STATE, providers, pairs };
   },
-  [SwapActionTypes.UPDATE_TRANSACTION]: (state, action) => ({
-    ...state,
-    transaction: (action as Action<UpdateTransactionPayload>).payload,
-  }),
+  [SwapActionTypes.UPDATE_TRANSACTION]: (state, action) => {
+    const payload = (action as Action<UpdateTransactionPayload>).payload;
+    return {
+      ...state,
+      transaction: payload,
+    };
+  },
   [SwapActionTypes.UPDATE_RATE]: (state, action) => {
     const payload = (action as Action<UpdateRatePayload>).payload;
     return {
@@ -55,10 +55,7 @@ const handlers: ReducerMap<SwapStateType, SwapPayload> = {
     };
   },
 
-  [SwapActionTypes.DANGEROUSLY_OVERRIDE_STATE]: (
-    state,
-    action,
-  ): SwapStateType => ({
+  [SwapActionTypes.DANGEROUSLY_OVERRIDE_STATE]: (state, action): SwapStateType => ({
     ...state,
     ...(action as Action<DangerouslyOverrideStatePayload>).payload.swap,
   }),
@@ -68,8 +65,4 @@ const handlers: ReducerMap<SwapStateType, SwapPayload> = {
 
 const options = { prefix: "SWAP" };
 
-export default handleActions<SwapStateType, SwapPayload>(
-  handlers,
-  INITIAL_STATE,
-  options,
-);
+export default handleActions<SwapStateType, SwapPayload>(handlers, INITIAL_STATE, options);

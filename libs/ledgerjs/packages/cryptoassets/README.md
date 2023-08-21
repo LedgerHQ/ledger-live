@@ -49,22 +49,26 @@ There are two modes of usage of this library.
 *   [getFiatCurrencyByTicker](#getfiatcurrencybyticker)
     *   [Parameters](#parameters-13)
 *   [listFiatCurrencies](#listfiatcurrencies)
-*   [listTokens](#listtokens)
+*   [\__clearObject](#\__clearobject)
     *   [Parameters](#parameters-14)
-*   [listTokensForCryptoCurrency](#listtokensforcryptocurrency)
+*   [\__clearAllLists](#\__clearalllists)
+*   [listTokens](#listtokens)
     *   [Parameters](#parameters-15)
-*   [listTokenTypesForCryptoCurrency](#listtokentypesforcryptocurrency)
+*   [listTokensForCryptoCurrency](#listtokensforcryptocurrency)
     *   [Parameters](#parameters-16)
-*   [findTokenByTicker](#findtokenbyticker)
+*   [listTokenTypesForCryptoCurrency](#listtokentypesforcryptocurrency)
     *   [Parameters](#parameters-17)
-*   [findTokenById](#findtokenbyid)
+*   [findTokenByTicker](#findtokenbyticker)
     *   [Parameters](#parameters-18)
-*   [hasTokenId](#hastokenid)
+*   [findTokenById](#findtokenbyid)
     *   [Parameters](#parameters-19)
-*   [getTokenById](#gettokenbyid)
+*   [hasTokenId](#hastokenid)
     *   [Parameters](#parameters-20)
-*   [findCompoundToken](#findcompoundtoken)
+*   [getTokenById](#gettokenbyid)
     *   [Parameters](#parameters-21)
+*   [removeTokenFromAllLists](#removetokenfromalllists)
+    *   [Parameters](#parameters-22)
+*   [id](#id)
 
 ### abandonSeedAddresses
 
@@ -73,7 +77,7 @@ These addresses are PUBLIC addresses
 We use them for tests and also for dry-run estimations
 DO NOT USE AS RECIPIENT OR SIGN TRANSACTIONS INTO THEM
 
-Type: Record<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>
+Type: Partial\<Record\<any, [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>>
 
 ### getAbandonSeedAddress
 
@@ -88,12 +92,14 @@ DO NOT USE AS RECIPIENT OR SIGN TRANSACTIONS INTO THEM
 
 Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
 
+###
+
 ### registerCryptoCurrency
 
 #### Parameters
 
-*   `id` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
 *   `currency` **CryptoCurrency** 
+*   `id` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
 
 Returns **void** 
 
@@ -199,6 +205,22 @@ Returns **FiatCurrency**
 
 Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<FiatCurrency>** 
 
+### \__clearObject
+
+Only for jest purpose, clean object to be empty
+
+#### Parameters
+
+*   `obj` **Record<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), (TokenCurrency | [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<TokenCurrency>)>** 
+
+Returns **void** 
+
+### \__clearAllLists
+
+Only for jest purpose, clear all the init list
+
+Returns **void** 
+
 ### listTokens
 
 #### Parameters
@@ -256,15 +278,19 @@ Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 
 Returns **TokenCurrency** 
 
-### findCompoundToken
+### removeTokenFromAllLists
 
-if a given token account is a token that can be used in compound, give the associated compound token (cToken)
+Delete previous token entry to all array
 
 #### Parameters
 
-*   `token` **any** 
+*   `token` **TokenCurrency** 
 
-Returns **(TokenCurrency | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
+### id
+
+We clean all the reference of an existing token, if an hash doesn't  match.
+Like this we can update any change from a already added token coming from Dynamic CAL
+and maintain it up to date without having to release a new version of LLD or LLM
 
 ## Maintainance notes
 
@@ -277,7 +303,7 @@ Regenerate data:
     node script/crypto-assets-importer/index.js ~/dev/crypto-assets
     node script/crypto-assets-importer/tron/sync-trc10-tokens.js
 
-NB: currencies, trc20 and asa are currently manually maintained.
+NB: currencies asa, esdt, spl, stellar and trc20 are currently manually maintained.
 
 Update test and snapshots in the monorepo:
 

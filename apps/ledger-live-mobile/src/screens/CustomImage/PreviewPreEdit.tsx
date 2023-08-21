@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Button, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
+import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import {
   ImageMetadataLoadingError,
   ImagePreviewError,
@@ -17,11 +17,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
 import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import { NFTMetadata } from "@ledgerhq/types-live";
+import { Device } from "@ledgerhq/types-devices";
 
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
+import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { CustomImageNavigatorParamList } from "../../components/RootNavigator/types/CustomImageNavigator";
 import { NavigatorName, ScreenName } from "../../const";
 import {
@@ -31,9 +29,7 @@ import {
 } from "../../components/CustomImage/imageUtils";
 import { ImageFileUri } from "../../components/CustomImage/types";
 import { targetDisplayDimensions } from "./shared";
-import FramedImage, {
-  previewConfig,
-} from "../../components/CustomImage/FramedImage";
+import StaxFramedImage, { previewConfig } from "../../components/CustomImage/StaxFramedImage";
 import ImageProcessor, {
   Props as ImageProcessorProps,
   ProcessorPreviewResult,
@@ -43,21 +39,29 @@ import useCenteredImage, {
   Params as ImageCentererParams,
   CenteredResult,
 } from "../../components/CustomImage/useCenteredImage";
+import Button from "../../components/wrappedUi/Button";
+import { TrackScreen } from "../../analytics";
+import Link from "../../components/wrappedUi/Link";
 
 const DEFAULT_CONTRAST = 1;
 
 type NavigationProps = BaseComposite<
-  StackNavigatorProps<
-    CustomImageNavigatorParamList,
-    ScreenName.CustomImagePreviewPreEdit
-  >
+  StackNavigatorProps<CustomImageNavigatorParamList, ScreenName.CustomImagePreviewPreEdit>
 >;
+
+const analyticsScreenName = "Preview of the lockscreen picture";
+const analyticsSetLockScreenEventProps = {
+  button: "Set as lock screen",
+};
+const analyticsEditEventProps = {
+  button: "Edit",
+};
 
 const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
   const { t } = useTranslation();
   const [loadedImage, setLoadedImage] = useState<ImageFileUri | null>(null);
   const { params } = route;
-  const { isPictureFromGallery, device } = params;
+  const { isPictureFromGallery, device, isStaxEnabled } = params;
 
   const isNftMetadata = "nftMetadataParams" in params;
   const isImageUrl = "imageUrl" in params;
@@ -65,12 +69,21 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
 
   const nftMetadataParams = isNftMetadata ? params.nftMetadataParams : [];
 
+  const forceDefaultNavigationBehaviour = useRef(false);
+  const navigateToErrorScreen = useCallback(
+    (error: Error, device: Device) => {
+      forceDefaultNavigationBehaviour.current = true;
+      navigation.replace(ScreenName.CustomImageErrorScreen, { error, device });
+    },
+    [navigation],
+  );
+
   const handleError = useCallback(
     (error: Error) => {
       console.error(error);
-      navigation.replace(ScreenName.CustomImageErrorScreen, { error, device });
+      navigateToErrorScreen(error, device);
     },
-    [navigation, device],
+    [navigateToErrorScreen, device],
   );
 
   const [contract, tokenId, currencyId] = nftMetadataParams;
@@ -80,6 +93,13 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
     metadata: NFTMetadata;
   };
 
+  const isStaxEnabledImage = !!isStaxEnabled || !!metadata?.staxImage;
+  const imageType = isStaxEnabledImage
+    ? "staxEnabledImage"
+    : isNftMetadata
+    ? "originalNFTImage"
+    : "customImage";
+
   const nftImageUri = extractImageUrlFromNftMetadata(metadata);
 
   const imageFileUri = isImageFileUri ? params.imageFileUri : undefined;
@@ -88,12 +108,9 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
   useEffect(() => {
     if (isNftMetadata && ["nodata", "error"].includes(status)) {
       console.error("Nft metadata loading status", status);
-      navigation.replace(ScreenName.CustomImageErrorScreen, {
-        device,
-        error: new ImageMetadataLoadingError(status),
-      });
+      navigateToErrorScreen(new ImageMetadataLoadingError(status), device);
     }
-  }, [device, isNftMetadata, navigation, status]);
+  }, [device, isNftMetadata, navigateToErrorScreen, navigation, status]);
 
   /** LOAD SOURCE IMAGE FROM PARAMS */
   useEffect(() => {
@@ -126,17 +143,16 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
     };
   }, [handleError, imageFileUri, imageUrl, status, isNftMetadata]);
 
+  /** IMAGE RESIZING */
+
   const [croppedImage, setCroppedImage] = useState<CenteredResult | null>(null);
 
   const handleResizeError = useCallback(
     (error: Error) => {
-      console.error(error);
-      navigation.replace(ScreenName.CustomImageErrorScreen, { error, device });
+      navigateToErrorScreen(error, device);
     },
-    [navigation, device],
+    [navigateToErrorScreen, device],
   );
-
-  /** IMAGE RESIZING */
 
   const handleResizeResult: ImageCentererParams["onResult"] = useCallback(
     (res: CenteredResult) => {
@@ -147,7 +163,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
 
   useCenteredImage({
     targetDimensions: targetDisplayDimensions,
-    imageFileUri: loadedImage?.imageFileUri,
+    imageUri: imageUrl || loadedImage?.imageFileUri,
     onError: handleResizeError,
     onResult: handleResizeResult,
   });
@@ -155,19 +171,19 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
   /** RESULT IMAGE HANDLING */
 
   const [previewLoading, setPreviewLoading] = useState<boolean>(true);
-  const [processorPreviewImage, setProcessorPreviewImage] =
-    useState<ProcessorPreviewResult | null>(null);
+  const [processorPreviewImage, setProcessorPreviewImage] = useState<ProcessorPreviewResult | null>(
+    null,
+  );
   const [rawResultLoading, setRawResultLoading] = useState(false);
   const imageProcessorRef = useRef<ImageProcessor>(null);
 
-  const handlePreviewResult: ImageProcessorProps["onPreviewResult"] =
-    useCallback(
-      data => {
-        setProcessorPreviewImage(data);
-        setPreviewLoading(false);
-      },
-      [setProcessorPreviewImage],
-    );
+  const handlePreviewResult: ImageProcessorProps["onPreviewResult"] = useCallback(
+    data => {
+      setProcessorPreviewImage(data);
+      setPreviewLoading(false);
+    },
+    [setProcessorPreviewImage],
+  );
 
   const handleRawResult: ImageProcessorProps["onRawResult"] = useCallback(
     (data: ProcessorRawResult) => {
@@ -182,10 +198,11 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
         rawData: data,
         previewData: processorPreviewImage,
         device,
+        imageType,
       });
       setRawResultLoading(false);
     },
-    [navigation, setRawResultLoading, processorPreviewImage, device],
+    [navigation, setRawResultLoading, processorPreviewImage, device, imageType],
   );
 
   const handlePreviewImageError = useCallback(
@@ -201,15 +218,22 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
     setRawResultLoading(true);
   }, [imageProcessorRef, setRawResultLoading]);
 
+  /**
+   * Handling "back press/back gesture" navigation event so that in case
+   * the image was imported from the phone's gallery, we show the native image
+   * picker before navigating back to the previous screen.
+   * This ensures that the navigation flow is fully bidirectional so it feels
+   * natural to the user:
+   * screen with "import from gallery button" <-> gallery picker <-> this screen
+   * */
   useFocusEffect(
     useCallback(() => {
       let dead = false;
       const listener: EventListenerCallback<
-        StackNavigationEventMap &
-          EventMapCore<StackNavigationState<CustomImageNavigatorParamList>>,
+        StackNavigationEventMap & EventMapCore<StackNavigationState<CustomImageNavigatorParamList>>,
         "beforeRemove"
       > = e => {
-        if (!isPictureFromGallery) {
+        if (forceDefaultNavigationBehaviour.current || !isPictureFromGallery) {
           navigation.dispatch(e.data.action);
           return;
         }
@@ -254,9 +278,10 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
       params: {
         device,
         baseImageFile: loadedImage,
+        imageType,
       },
     });
-  }, [navigation, device, loadedImage]);
+  }, [navigation, device, loadedImage, imageType]);
 
   if (!loadedImage || !loadedImage.imageFileUri) {
     return (
@@ -268,6 +293,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
 
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
+      <TrackScreen category={analyticsScreenName} />
       {croppedImage?.imageBase64DataUri && (
         <ImageProcessor
           ref={imageProcessorRef}
@@ -288,13 +314,8 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
       ) : (
         <Flex flex={1}>
           <Flex flex={1}>
-            <Flex
-              flex={1}
-              flexDirection="column"
-              alignItems="center"
-              justifyContent="center"
-            >
-              <FramedImage
+            <Flex flex={1} flexDirection="column" alignItems="center" justifyContent="center">
+              <StaxFramedImage
                 onError={handlePreviewImageError}
                 fadeDuration={0}
                 source={{ uri: processorPreviewImage?.imageBase64DataUri }}
@@ -302,27 +323,30 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
               />
             </Flex>
           </Flex>
-          <Flex px={8}>
+          <Flex pb={8} px={8}>
             <Button
               type="main"
               size="large"
               outline
-              mb={4}
+              mb={7}
               disabled={previewLoading}
               pending={rawResultLoading}
               onPress={requestRawResult}
               displayContentWhenPending
+              event="button_clicked"
+              eventProperties={analyticsSetLockScreenEventProps}
             >
               {t("customImage.preview.setPicture")}
             </Button>
-            <Button
+            <Link
               size="large"
-              mb={8}
               onPress={handleEditPicture}
-              disabled={previewLoading}
+              disabled={!loadedImage || previewLoading || isStaxEnabledImage}
+              event="button_clicked"
+              eventProperties={analyticsEditEventProps}
             >
               {t("customImage.preview.editPicture")}
-            </Button>
+            </Link>
           </Flex>
         </Flex>
       )}

@@ -1,24 +1,18 @@
 import React, { useState, useCallback, useMemo } from "react";
 import { FlatList, LayoutChangeEvent, ListRenderItemInfo } from "react-native";
-import Animated, {
-  useAnimatedScrollHandler,
-  useSharedValue,
-} from "react-native-reanimated";
+import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { Flex } from "@ledgerhq/native-ui";
 import debounce from "lodash/debounce";
-import {
-  getAccountCapabilities,
-  makeCompoundSummaryForAccount,
-} from "@ledgerhq/live-common/compound/logic";
 import { useTranslation } from "react-i18next";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { ReactNavigationPerformanceView } from "@shopify/react-native-performance-navigation";
 import { switchCountervalueFirst } from "../../actions/settings";
 import { useBalanceHistoryWithCountervalue } from "../../hooks/portfolio";
 import {
@@ -57,12 +51,7 @@ const AnimatedFlatListWithRefreshControl = Animated.createAnimatedComponent(
 function AccountScreen({ route }: Props) {
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   if (!account) return null;
-  return (
-    <AccountScreenInner
-      account={account}
-      parentAccount={parentAccount || undefined}
-    />
-  );
+  return <AccountScreenInner account={account} parentAccount={parentAccount || undefined} />;
 }
 
 const AccountScreenInner = ({
@@ -74,8 +63,7 @@ const AccountScreenInner = ({
 }) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const navigation =
-    useNavigation<StackNavigationProp<AccountsNavigatorParamList>>();
+  const navigation = useNavigation<StackNavigationProp<AccountsNavigatorParamList>>();
   const dispatch = useDispatch();
   const range = useSelector(selectedTimeRangeSelector);
   const { countervalueAvailable, countervalueChange, cryptoChange, history } =
@@ -110,17 +98,6 @@ const AccountScreenInner = ({
     />
   );
 
-  const compoundCapabilities =
-    account.type === "TokenAccount" && !!account.compoundBalance
-      ? getAccountCapabilities(account)
-      : undefined;
-
-  const compoundSummary =
-    (compoundCapabilities?.status &&
-      account.type === "TokenAccount" &&
-      makeCompoundSummaryForAccount(account, parentAccount)) ||
-    undefined;
-
   const [graphCardEndPosition, setGraphCardEndPosition] = useState(100);
   const currentPositionY = useSharedValue(0);
   const handleScroll = useAnimatedScrollHandler(event => {
@@ -148,7 +125,6 @@ const AccountScreenInner = ({
         onAccountPress,
         counterValueCurrency,
         onSwitchAccountCurrency,
-        compoundSummary,
         onAccountCardLayout,
         colors,
         secondaryActions,
@@ -166,7 +142,6 @@ const AccountScreenInner = ({
       onAccountPress,
       counterValueCurrency,
       onSwitchAccountCurrency,
-      compoundSummary,
       onAccountCardLayout,
       colors,
       secondaryActions,
@@ -178,52 +153,52 @@ const AccountScreenInner = ({
     ...listHeaderComponents,
     ...(!isEmpty
       ? [
-          <SectionContainer px={6} isLast>
+          <SectionContainer key={"section-container-accounts"} px={6} isLast>
             <SectionTitle title={t("analytics.operations.title")} />
             <OperationsHistorySection accounts={[account]} />
           </SectionContainer>,
         ]
       : [
-          <Flex px={6}>
+          <Flex key={"section-container-empty"} px={6}>
             <EmptyAccountCard currencyTicker={currency.ticker} />
           </Flex>,
         ]),
   ];
 
   return (
-    <TabBarSafeAreaView edges={["bottom", "left", "right"]}>
-      {analytics}
-      <CurrencyBackgroundGradient
-        currentPositionY={currentPositionY}
-        graphCardEndPosition={graphCardEndPosition}
-        gradientColor={getCurrencyColor(currency) || colors.primary.c80}
-      />
-      <AnimatedFlatListWithRefreshControl
-        style={{ flex: 1 }}
-        contentContainerStyle={{
-          paddingBottom: TAB_BAR_SAFE_HEIGHT + 48,
-          marginTop: 92,
-        }}
-        data={data}
-        renderItem={({ item }: ListRenderItemInfo<unknown>) =>
-          item as JSX.Element
-        }
-        keyExtractor={(_: unknown, index: number) => String(index)}
-        showsVerticalScrollIndicator={false}
-        onScroll={handleScroll}
-      />
-      <AccountHeader
-        currentPositionY={currentPositionY}
-        graphCardEndPosition={graphCardEndPosition}
-        account={account}
-        useCounterValue={useCounterValue}
-        counterValueCurrency={counterValueCurrency}
-        history={history}
-        countervalueAvailable={countervalueAvailable}
-        parentAccount={parentAccount}
-      />
-    </TabBarSafeAreaView>
+    <ReactNavigationPerformanceView screenName={ScreenName.Account} interactive>
+      <TabBarSafeAreaView edges={["bottom", "left", "right"]}>
+        {analytics}
+        <CurrencyBackgroundGradient
+          currentPositionY={currentPositionY}
+          graphCardEndPosition={graphCardEndPosition}
+          gradientColor={getCurrencyColor(currency) || colors.primary.c80}
+        />
+        <AnimatedFlatListWithRefreshControl
+          style={{ flex: 1 }}
+          contentContainerStyle={{
+            paddingBottom: TAB_BAR_SAFE_HEIGHT + 48,
+            marginTop: 92,
+          }}
+          data={data}
+          renderItem={({ item }: ListRenderItemInfo<unknown>) => item as JSX.Element}
+          keyExtractor={(_: unknown, index: number) => String(index)}
+          showsVerticalScrollIndicator={false}
+          onScroll={handleScroll}
+        />
+        <AccountHeader
+          currentPositionY={currentPositionY}
+          graphCardEndPosition={graphCardEndPosition}
+          account={account}
+          useCounterValue={useCounterValue}
+          counterValueCurrency={counterValueCurrency}
+          history={history}
+          countervalueAvailable={countervalueAvailable}
+          parentAccount={parentAccount}
+        />
+      </TabBarSafeAreaView>
+    </ReactNavigationPerformanceView>
   );
 };
 
-export default withDiscreetMode(AccountScreen);
+export default React.memo(withDiscreetMode(AccountScreen));

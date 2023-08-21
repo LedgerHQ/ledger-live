@@ -1,8 +1,5 @@
 /* eslint-disable no-bitwise */
-import {
-  DeviceOnDashboardExpected,
-  TransportStatusError,
-} from "@ledgerhq/errors";
+import { DeviceOnDashboardExpected, TransportStatusError } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import Transport from "@ledgerhq/hw-transport";
 import getVersion from "./getVersion";
@@ -14,12 +11,10 @@ import { DeviceNotOnboarded } from "../errors";
 import type { DeviceInfo } from "@ledgerhq/types-live";
 const ManagerAllowedFlag = 0x08;
 const PinValidatedFlag = 0x80;
-export default async function getDeviceInfo(
-  transport: Transport
-): Promise<DeviceInfo> {
+export default async function getDeviceInfo(transport: Transport): Promise<DeviceInfo> {
   const probablyOnDashboard = await getAppAndVersion(transport)
     .then(({ name }) => isDashboardName(name))
-    .catch((e) => {
+    .catch(e => {
       if (e instanceof TransportStatusError) {
         // @ts-expect-error typescript not checking agains the instanceof
         if (e.statusCode === 0x6e00) {
@@ -39,7 +34,7 @@ export default async function getDeviceInfo(
     throw new DeviceOnDashboardExpected();
   }
 
-  const res = await getVersion(transport).catch((e) => {
+  const res = await getVersion(transport).catch(e => {
     if (e instanceof TransportStatusError) {
       // @ts-expect-error typescript not checking agains the instanceof
       if (e.statusCode === 0x6d06 || e.statusCode === 0x6d07) {
@@ -86,7 +81,7 @@ export default async function getDeviceInfo(
       version +
       " mcu@" +
       mcuVersion +
-      (isOSU ? " (osu)" : isBootloader ? " (bootloader)" : "")
+      (isOSU ? " (osu)" : isBootloader ? " (bootloader)" : ""),
   );
 
   const hasDevFirmware = isDevFirmware(seVersion);

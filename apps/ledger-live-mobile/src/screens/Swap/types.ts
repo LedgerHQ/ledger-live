@@ -31,21 +31,6 @@ export type SelectFeesParamList = BaseComposite<
   StackScreenProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>
 >;
 
-export type LoginParamList = StackScreenProps<
-  SwapNavigatorParamList,
-  ScreenName.SwapLogin
->;
-
-export type KYCParamList = StackScreenProps<
-  SwapNavigatorParamList,
-  ScreenName.SwapKYC
->;
-
-export type MFAParamList = StackScreenProps<
-  SwapNavigatorParamList,
-  ScreenName.SwapMFA
->;
-
 export type PendingOperationParamList = StackScreenProps<
   SwapNavigatorParamList,
   ScreenName.SwapPendingOperation

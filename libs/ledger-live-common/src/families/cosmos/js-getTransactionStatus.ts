@@ -14,12 +14,7 @@ import {
   CosmosTooManyValidators,
   NotEnoughDelegationBalance,
 } from "../../errors";
-import {
-  CosmosLikeTransaction,
-  StatusErrorMap,
-  CosmosAccount,
-  TransactionStatus,
-} from "./types";
+import { CosmosLikeTransaction, StatusErrorMap, CosmosAccount, TransactionStatus } from "./types";
 import { BigNumber } from "bignumber.js";
 import {
   COSMOS_MAX_DELEGATIONS,
@@ -28,29 +23,14 @@ import {
   getMaxEstimatedBalance,
 } from "./logic";
 import invariant from "invariant";
-import { CosmosAPI, defaultCosmosAPI } from "./api/Cosmos";
-import { OsmosisAPI } from "../osmosis/api/sdk";
+import * as bech32 from "bech32";
+import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import cryptoFactory from "./chain/chain";
 
 export class CosmosTransactionStatusManager {
-  protected _api: CosmosAPI = defaultCosmosAPI;
-  protected _validatorOperatorAddressPrefix = "cosmosvaloper";
-
-  constructor(options?: {
-    api?: CosmosAPI;
-    validatorOperatorAddressPrefix?: string;
-  }) {
-    if (options?.validatorOperatorAddressPrefix) {
-      this._validatorOperatorAddressPrefix =
-        options.validatorOperatorAddressPrefix;
-    }
-    if (options?.api) {
-      this._api = options.api;
-    }
-  }
-
   getTransactionStatus = async (
     a: CosmosAccount,
-    t: CosmosLikeTransaction
+    t: CosmosLikeTransaction,
   ): Promise<TransactionStatus> => {
     if (t.mode === "send") {
       // We isolate the send transaction that it's a little bit different from the rest
@@ -64,9 +44,7 @@ export class CosmosTransactionStatusManager {
     // here we only treat about all other mode than delegate and send
     if (
       t.validators.some(
-        (v) =>
-          !v.address ||
-          !v.address.includes(this._validatorOperatorAddressPrefix)
+        v => !v.address || !v.address.includes(cryptoFactory(a.currency.id).validatorPrefix),
       ) ||
       t.validators.length === 0
     )
@@ -83,17 +61,15 @@ export class CosmosTransactionStatusManager {
       }
     } else if (t.mode === "undelegate") {
       invariant(
-        a.cosmosResources &&
-          a.cosmosResources.unbondings.length < COSMOS_MAX_UNBONDINGS,
-        "unbondings should not have more than 6 entries"
+        a.cosmosResources && a.cosmosResources.unbondings.length < COSMOS_MAX_UNBONDINGS,
+        "unbondings should not have more than 6 entries",
       );
       if (t.validators.length === 0)
         errors.recipient = new InvalidAddress(undefined, {
           currencyName: a.currency.name,
         });
       const [first] = t.validators;
-      const unbondingError =
-        first && this.isDelegable(a, first.address, first.amount);
+      const unbondingError = first && this.isDelegable(a, first.address, first.amount);
 
       if (unbondingError) {
         errors.unbonding = unbondingError;
@@ -102,7 +78,7 @@ export class CosmosTransactionStatusManager {
 
     const validatorAmount = t.validators.reduce(
       (old, current) => old.plus(current.amount),
-      new BigNumber(0)
+      new BigNumber(0),
     );
 
     if (t.mode !== "claimReward" && validatorAmount.lte(0)) {
@@ -123,8 +99,7 @@ export class CosmosTransactionStatusManager {
       const claimReward =
         t.validators.length && cosmosResources
           ? cosmosResources.delegations.find(
-              (delegation) =>
-                delegation.validatorAddress === t.validators[0].address
+              delegation => delegation.validatorAddress === t.validators[0].address,
             )
           : null;
 
@@ -153,15 +128,13 @@ export class CosmosTransactionStatusManager {
 
   private getDelegateTransactionStatus = async (
     a: CosmosAccount,
-    t: CosmosLikeTransaction
+    t: CosmosLikeTransaction,
   ): Promise<TransactionStatus> => {
     const errors: StatusErrorMap = {};
     const warnings: StatusErrorMap = {};
     if (
       t.validators.some(
-        (v) =>
-          !v.address ||
-          !v.address.includes(this._validatorOperatorAddressPrefix)
+        v => !v.address || !v.address.includes(cryptoFactory(a.currency.id).validatorPrefix),
       ) ||
       t.validators.length === 0
     )
@@ -175,27 +148,10 @@ export class CosmosTransactionStatusManager {
 
     const estimatedFees = t.fees || new BigNumber(0);
 
-    if (this._api instanceof OsmosisAPI) {
-      if (!t.fees) {
-        errors.fees = new FeeNotLoaded();
-      }
-    } else {
-      if (!t.fees || !t.fees.gt(0)) {
-        errors.fees = new FeeNotLoaded();
-      }
+    if (!t.fees || !t.fees.gt(0)) {
+      errors.fees = new FeeNotLoaded();
     }
-    let amount;
-
-    // TODO, refactor this block. We should use cosmosResources for Osmosis
-    if (this._api instanceof OsmosisAPI) {
-      amount = t.useAllAmount
-        ? a.spendableBalance.minus(estimatedFees)
-        : new BigNumber(t.amount);
-    } else {
-      amount = t.useAllAmount
-        ? getMaxEstimatedBalance(a, estimatedFees)
-        : t.amount;
-    }
+    const amount = t.useAllAmount ? getMaxEstimatedBalance(a, estimatedFees) : t.amount;
     const totalSpent = amount.plus(estimatedFees);
 
     if (amount.eq(0)) {
@@ -225,7 +181,7 @@ export class CosmosTransactionStatusManager {
 
   private getSendTransactionStatus = async (
     a: CosmosAccount,
-    t: CosmosLikeTransaction
+    t: CosmosLikeTransaction,
   ): Promise<TransactionStatus> => {
     const errors: StatusErrorMap = {};
     const warnings: StatusErrorMap = {};
@@ -235,7 +191,19 @@ export class CosmosTransactionStatusManager {
     } else if (a.freshAddress === t.recipient) {
       errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
     } else {
-      if (!(await this._api.isValidRecipent(t.recipient))) {
+      let isValid = true;
+      try {
+        bech32.decode(t.recipient);
+      } catch (e) {
+        isValid = false;
+      }
+      const currency = findCryptoCurrencyById(a.currency.name.toLowerCase());
+      let prefix = "";
+      if (currency) {
+        prefix = cryptoFactory(currency.id as string).prefix;
+      }
+      isValid = isValid && t.recipient.startsWith(prefix);
+      if (!isValid) {
         errors.recipient = new InvalidAddress(undefined, {
           currencyName: a.currency.name,
         });
@@ -249,15 +217,8 @@ export class CosmosTransactionStatusManager {
     }
 
     const estimatedFees = t.fees || new BigNumber(0);
-
-    if (this._api instanceof OsmosisAPI) {
-      if (!t.fees) {
-        errors.fees = new FeeNotLoaded();
-      }
-    } else {
-      if (!t.fees || !t.fees.gt(0)) {
-        errors.fees = new FeeNotLoaded();
-      }
+    if (!t.fees || !t.fees.gt(0)) {
+      errors.fees = new FeeNotLoaded();
     }
 
     amount = t.useAllAmount ? getMaxEstimatedBalance(a, estimatedFees) : amount;
@@ -270,14 +231,9 @@ export class CosmosTransactionStatusManager {
       errors.amount = new NotEnoughBalance();
     }
 
-    if (
-      a.cosmosResources &&
-      a.cosmosResources.delegations.length > 0 &&
-      t.useAllAmount
-    ) {
+    if (a.cosmosResources && a.cosmosResources.delegations.length > 0 && t.useAllAmount) {
       warnings.amount = new RecommendUndelegation();
     }
-
     return Promise.resolve({
       errors,
       warnings,
@@ -287,24 +243,18 @@ export class CosmosTransactionStatusManager {
     });
   };
 
-  private redelegationStatusError = (
-    a: CosmosAccount,
-    t: CosmosLikeTransaction
-  ) => {
+  private redelegationStatusError = (a: CosmosAccount, t: CosmosLikeTransaction) => {
     if (a.cosmosResources) {
       const redelegations = a.cosmosResources.redelegations;
       invariant(
         redelegations.length < COSMOS_MAX_REDELEGATIONS,
-        "redelegation should not have more than 6 entries"
+        "redelegation should not have more than 6 entries",
       );
 
       if (
-        redelegations.some((redelegation) => {
+        redelegations.some(redelegation => {
           const dstValidator = redelegation.validatorDstAddress;
-          return (
-            dstValidator === t.sourceValidator &&
-            redelegation.completionDate > new Date()
-          );
+          return dstValidator === t.sourceValidator && redelegation.completionDate > new Date();
         })
       ) {
         return new CosmosRedelegationInProgress();
@@ -325,7 +275,7 @@ export class CosmosTransactionStatusManager {
   private isDelegable = (
     a: CosmosAccount,
     address: string | undefined | null,
-    amount: BigNumber
+    amount: BigNumber,
   ) => {
     const { cosmosResources } = a;
     invariant(cosmosResources, "cosmosResources should exist");
@@ -333,9 +283,7 @@ export class CosmosTransactionStatusManager {
     if (
       cosmosResources &&
       cosmosResources.delegations.some(
-        (delegation) =>
-          delegation.validatorAddress === address &&
-          delegation.amount.lt(amount)
+        delegation => delegation.validatorAddress === address && delegation.amount.lt(amount),
       )
     ) {
       return new NotEnoughDelegationBalance();

@@ -2,9 +2,7 @@ export type Maybe<T> = T | null | undefined;
 
 export type UnionToIntersection<T> =
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (T extends any ? (x: T) => any : never) extends (x: infer R) => any
-    ? R
-    : never;
+  (T extends any ? (x: T) => any : never) extends (x: infer R) => any ? R : never;
 
 export type Writeable<T> = { -readonly [P in keyof T]: T[P] };
 

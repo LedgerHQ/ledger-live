@@ -4,7 +4,7 @@ import { Dimensions, Image, Pressable } from "react-native";
 import Alert from "../Alert";
 import { ProcessorPreviewResult, ProcessorRawResult } from "./ImageProcessor";
 import { fitImageContain } from "./imageUtils";
-import ResultDataTester from "./ResultDataTester";
+import ImageHexProcessor from "./ImageHexProcessor";
 
 type Props = {
   rawData: ProcessorRawResult;
@@ -66,18 +66,11 @@ const TestImage: React.FC<Props> = props => {
   );
 
   const [showReconstructed, setShowReconstructed] = useState(true);
-  const handlePressIn = useCallback(
-    () => setShowReconstructed(false),
-    [setShowReconstructed],
-  );
-  const handlePressOut = useCallback(
-    () => setShowReconstructed(true),
-    [setShowReconstructed],
-  );
+  const handlePressIn = useCallback(() => setShowReconstructed(false), [setShowReconstructed]);
+  const handlePressOut = useCallback(() => setShowReconstructed(true), [setShowReconstructed]);
 
   const isDataMatching =
-    reconstructedPreviewResult?.imageBase64DataUri ===
-    previewData?.imageBase64DataUri;
+    reconstructedPreviewResult?.imageBase64DataUri === previewData?.imageBase64DataUri;
 
   return (
     <Flex flex={1} pt={6} flexDirection="column" alignItems="center">
@@ -97,7 +90,7 @@ const TestImage: React.FC<Props> = props => {
         Image reconstructed from raw data:
       </Text>
       {rawData && (
-        <ResultDataTester
+        <ImageHexProcessor
           {...rawData}
           onPreviewResult={handlePreviewResult}
           onError={handleError}

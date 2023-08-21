@@ -6,13 +6,11 @@ describe("Test isValidRecipient", () => {
   function t(address: string, currencyId: string, expectValid: boolean) {
     const currency = getCryptoCurrencyById(currencyId);
     if (expectValid) {
-      return expect(
-        isValidRecipient({ currency, recipient: address })
-      ).resolves.toBeNull();
+      return expect(isValidRecipient({ currency, recipient: address })).resolves.toBeNull();
     } else {
-      return expect(
-        isValidRecipient({ currency, recipient: address })
-      ).rejects.toBeInstanceOf(InvalidAddress);
+      return expect(isValidRecipient({ currency, recipient: address })).rejects.toBeInstanceOf(
+        InvalidAddress,
+      );
     }
   }
   test("Fail on non-existing currency", () =>

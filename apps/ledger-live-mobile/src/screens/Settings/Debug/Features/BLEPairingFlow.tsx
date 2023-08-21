@@ -1,14 +1,6 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useCallback, useState } from "react";
-import {
-  BottomDrawer,
-  Text,
-  Icons,
-  Button,
-  SelectableList,
-  Switch,
-  Flex,
-} from "@ledgerhq/native-ui";
+import { Text, IconsLegacy, Button, SelectableList, Switch, Flex } from "@ledgerhq/native-ui";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 
 import SettingsRow from "../../../../components/SettingsRow";
@@ -22,45 +14,29 @@ import {
   StackNavigatorNavigation,
   StackNavigatorRoute,
 } from "../../../../components/RootNavigator/types/helpers";
-import { usePromptBluetoothCallback } from "../../../../logic/usePromptBluetoothCallback";
+import QueuedDrawer from "../../../../components/QueuedDrawer";
 
-const availableDeviceModelFilter = [
-  "none",
-  DeviceModelId.nanoX,
-  DeviceModelId.stax,
-] as const;
-type AvailableDeviceModelFilter = typeof availableDeviceModelFilter[number];
+const availableDeviceModelFilter = ["none", DeviceModelId.nanoX, DeviceModelId.stax] as const;
+type AvailableDeviceModelFilter = (typeof availableDeviceModelFilter)[number];
 
 export default () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const [chosenDeviceModelFilter, setChosenDeviceModelFilter] =
     useState<AvailableDeviceModelFilter>("none");
-  const [areKnownDevicesDisplayed, setAreKnownDevicesDisplayed] =
-    useState<boolean>(false);
-  const [onSuccessAddToKnownDevices, setOnSuccessAddToKnownDevices] =
-    useState<boolean>(false);
+  const [areKnownDevicesDisplayed, setAreKnownDevicesDisplayed] = useState<boolean>(false);
+  const [onSuccessAddToKnownDevices, setOnSuccessAddToKnownDevices] = useState<boolean>(false);
   const navigation =
     useNavigation<
-      StackNavigatorNavigation<
-        BaseNavigatorStackParamList,
-        ScreenName.DebugSettings
-      >
+      StackNavigatorNavigation<BaseNavigatorStackParamList, ScreenName.DebugSettings>
     >();
 
   // Example using the route to get the current screen name and any params
   // But no current way to get the navigator name (even from the navigation state)
   const { name: screenName, params } =
-    useRoute<
-      StackNavigatorRoute<
-        SettingsNavigatorStackParamList,
-        ScreenName.DebugSettings
-      >
-    >();
+    useRoute<StackNavigatorRoute<SettingsNavigatorStackParamList, ScreenName.DebugSettings>>();
   const { pairedDevice } = params ?? {
     pairedDevice: null,
   };
-
-  const promptBluetooth = usePromptBluetoothCallback();
 
   const goToBlePairingFlow = useCallback(() => {
     setIsDrawerOpen(false);
@@ -71,42 +47,28 @@ export default () => {
     // @ts-expect-error react navigation does not like having undefined as possible params
     navigation.setParams(newParams);
 
-    // Prompts user to enable bluetooth before navigating to the screen.
-    // Not mandatory as BleDevicePairingFlow screen handles the ble requirement, but it smooths the transition
-    promptBluetooth()
-      .then(() => {
-        const navigateInput: NavigateInput<
-          BaseNavigatorStackParamList,
-          NavigatorName.Settings
-        > = {
-          name: NavigatorName.Settings,
-          params: {
-            screen: screenName,
-            params: {
-              ...newParams,
-            },
-          },
-        };
-        navigation.navigate(ScreenName.BleDevicePairingFlow, {
-          filterByDeviceModelId:
-            chosenDeviceModelFilter === "none"
-              ? undefined
-              : chosenDeviceModelFilter,
-          areKnownDevicesDisplayed,
-          onSuccessAddToKnownDevices,
-          onSuccessNavigateToConfig: {
-            navigateInput,
-            pathToDeviceParam: "params.params.pairedDevice",
-          },
-        });
-      })
-      .catch(() => {
-        // ignore
-      });
+    const navigateInput: NavigateInput<BaseNavigatorStackParamList, NavigatorName.Settings> = {
+      name: NavigatorName.Settings,
+      params: {
+        screen: screenName,
+        params: {
+          ...newParams,
+        },
+      },
+    };
+    navigation.navigate(ScreenName.BleDevicePairingFlow, {
+      filterByDeviceModelId:
+        chosenDeviceModelFilter === "none" ? undefined : chosenDeviceModelFilter,
+      areKnownDevicesDisplayed,
+      onSuccessAddToKnownDevices,
+      onSuccessNavigateToConfig: {
+        navigateInput,
+        pathToDeviceParam: "params.params.pairedDevice",
+      },
+    });
   }, [
     params,
     navigation,
-    promptBluetooth,
     screenName,
     chosenDeviceModelFilter,
     areKnownDevicesDisplayed,
@@ -121,12 +83,9 @@ export default () => {
     setIsDrawerOpen(false);
   }, []);
 
-  const onChangeDeviceModelFilter = useCallback(
-    (value: AvailableDeviceModelFilter) => {
-      setChosenDeviceModelFilter(value);
-    },
-    [],
-  );
+  const onChangeDeviceModelFilter = useCallback((value: AvailableDeviceModelFilter) => {
+    setChosenDeviceModelFilter(value);
+  }, []);
 
   const onChangeDisplayKnownDevices = useCallback((value: boolean) => {
     setAreKnownDevicesDisplayed(value);
@@ -139,13 +98,11 @@ export default () => {
   return (
     <SettingsRow
       title="BLE Pairing flow"
-      iconLeft={<Icons.BluetoothMedium size={32} color="black" />}
+      iconLeft={<IconsLegacy.BluetoothMedium size={32} color="black" />}
       onPress={onPress}
-      desc={`Paired device: ${
-        pairedDevice?.deviceName ?? pairedDevice?.deviceId ?? "no device"
-      }`}
+      desc={`Paired device: ${pairedDevice?.deviceName ?? pairedDevice?.deviceId ?? "no device"}`}
     >
-      <BottomDrawer isOpen={isDrawerOpen} onClose={onCloseDrawer}>
+      <QueuedDrawer isRequestingToBeOpened={isDrawerOpen} onClose={onCloseDrawer}>
         <Flex mb="8">
           <Text variant="body" mb="8">
             Choose which device model to filter on:
@@ -179,7 +136,7 @@ export default () => {
         <Button type="color" onPress={goToBlePairingFlow}>
           Go to pairing flow
         </Button>
-      </BottomDrawer>
+      </QueuedDrawer>
     </SettingsRow>
   );
 };

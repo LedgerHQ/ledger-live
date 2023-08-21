@@ -15,26 +15,25 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - name: Checkout Repo
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.ref }}
-          token: ${{ secrets.GH_PAT }}
+          ref: ${{ inputs.ref }}
+          token: ${{ steps.generate-token.outputs.token }}
 
       - name: set git user
         run: |
-          git config user.email "team-live@ledger.fr"
-          git config user.name "Team Live"
+          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
+          git config user.name "live-github-bot[bot]"
 
-      - uses: pnpm/action-setup@v2
-        with:
-          version: latest
-
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16.x
-          cache: pnpm
-          cache-dependency-path: "**/pnpm-lock.yaml"
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
 
       - name: install dependencies
         run: pnpm i -F "ledger-live"
@@ -47,36 +46,31 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm changeset version
 
-      - name: Update changeset config
-        uses: jossef/action-set-json-field@v2
-        with:
-          file: .changeset/config.json
-          field: ignore
-          value: "[]"
-          parse_json: true
-
       - name: commit
         run: |
           git add .
-          git commit -m ":rocket: prepare release [skip ci]"
+          git commit -m "chore(release): :rocket: prepare release [skip ci]"
 
       - name: push changes
         run: |
-          git push origin ${{ github.event.inputs.ref }}
+          git push origin ${{ inputs.ref }}
           git fetch origin
 
       - name: fetch develop and main
         run: |
           git fetch origin develop main
 
-      - name: merge into develop
-        run: |
-          git checkout develop
-          git merge ${{ github.event.inputs.ref }}
-          git push origin develop
-
       - name: merge into main
         run: |
           git checkout main
-          git merge ${{ github.event.inputs.ref }}
+          git merge ${{ inputs.ref }}
           git push origin main
+
+      - name: create PR to develop
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+        run: |
+          git checkout ${{ github.event.inputs.ref }}
+          git checkout -b support/release-merge-conflicts
+          git push origin support/release-merge-conflicts
+          gh pr create --title ":rotating_light: Release merge conflicts" -F .github/templates/release-conflicts.md --base develop --head support/release-merge-conflicts

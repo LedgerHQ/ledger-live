@@ -1,17 +1,14 @@
 import Transport from "@ledgerhq/hw-transport";
 import { bip32asBuffer } from "./bip32";
 import { MAX_SCRIPT_BLOCK } from "./constants";
-export function provideOutputFullChangePath(
-  transport: Transport,
-  path: string
-): Promise<Buffer> {
+export function provideOutputFullChangePath(transport: Transport, path: string): Promise<Buffer> {
   const buffer = bip32asBuffer(path);
   return transport.send(0xe0, 0x4a, 0xff, 0x00, buffer);
 }
 export async function hashOutputFull(
   transport: Transport,
   outputScript: Buffer,
-  additionals: Array<string> = []
+  additionals: Array<string> = [],
 ): Promise<Buffer | void> {
   let offset = 0;
   const p1 = Number(0x80);

@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
@@ -6,10 +6,6 @@ import { TrackScreen } from "../../analytics";
 import PreventNativeBack from "../../components/PreventNativeBack";
 import ValidateSuccess from "../../components/ValidateSuccess";
 
-import {
-  context as _wcContext,
-  setCurrentCallRequestResult,
-} from "../WalletConnect/Provider";
 import { ScreenName } from "../../const";
 import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import type { SignMessageNavigatorStackParamList } from "../../components/RootNavigator/types/SignMessageNavigator";
@@ -22,29 +18,20 @@ export default function ValidationSuccess({
   navigation,
   route,
 }: CompositeScreenProps<
-  StackNavigatorProps<
-    SignMessageNavigatorStackParamList,
-    ScreenName.SignValidationSuccess
-  >,
+  StackNavigatorProps<SignMessageNavigatorStackParamList, ScreenName.SignValidationSuccess>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { signature, onConfirmationHandler } = route.params;
-  const wcContext = useContext(_wcContext);
-  useEffect(() => {
-    if (wcContext.currentCallRequestId) {
-      setCurrentCallRequestResult(signature);
-    }
 
+  useEffect(() => {
     if (onConfirmationHandler && signature) {
       onConfirmationHandler(signature);
     }
-  }, [wcContext.currentCallRequestId, onConfirmationHandler, signature]);
+  }, [onConfirmationHandler, signature]);
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
   return (
     <View

@@ -5,7 +5,7 @@ import {
   Button,
   Divider,
   Flex,
-  Icons,
+  IconsLegacy,
   Link,
   Switch,
   Tag,
@@ -39,9 +39,7 @@ const DebugStoryly = () => {
   const [keepOriginalOrder, setKeepOriginalOrder] = useState(true);
   const [flagSettingsOpened, setFlagSettingsOpened] = useState(false);
   const navigation =
-    useNavigation<
-      StackNavigatorProps<SettingsNavigatorStackParamList>["navigation"]
-    >();
+    useNavigation<StackNavigatorProps<SettingsNavigatorStackParamList>["navigation"]>();
 
   const refreshAll = useCallback(() => {
     setNonce(nonce + 1);
@@ -51,10 +49,7 @@ const DebugStoryly = () => {
   const { resetFeature } = useFeatureFlags();
   const storylyFeature = useFeature("storyly");
 
-  const stringifiedFeature = useMemo(
-    () => JSON.stringify(storylyFeature),
-    [storylyFeature],
-  );
+  const stringifiedFeature = useMemo(() => JSON.stringify(storylyFeature), [storylyFeature]);
 
   return (
     <SafeAreaView edges={["bottom"]}>
@@ -73,38 +68,26 @@ const DebugStoryly = () => {
               <Flex flex={1} />
               <Link
                 type="color"
-                Icon={Icons.ChevronRightMedium}
-                onPress={() =>
-                  navigation.navigate(ScreenName.OnboardingLanguage)
-                }
+                Icon={IconsLegacy.ChevronRightMedium}
+                onPress={() => navigation.navigate(ScreenName.OnboardingLanguage)}
               >
                 {languages[locale]}
               </Link>
             </Flex>
-            <Alert
-              renderContent={({ textColor }) => (
-                <Flex flexShrink={1}>
-                  {appLanguageParagraphs.map((text, index, arr) => (
-                    <Text
-                      key={index}
-                      color={textColor}
-                      mb={index === arr.length - 1 ? 0 : 4}
-                    >
-                      {text}
-                    </Text>
-                  ))}
-                </Flex>
-              )}
-            />
+            <Alert>
+              <Flex flexShrink={1}>
+                {appLanguageParagraphs.map((text, index, arr) => (
+                  <Alert.BodyText key={index} mb={index === arr.length - 1 ? 0 : 4}>
+                    {text}
+                  </Alert.BodyText>
+                ))}
+              </Flex>
+            </Alert>
           </Flex>
           <Divider />
           <Text variant="h5">Stories options</Text>
           <Text mb={3}>Applies to this screen only</Text>
-          <Switch
-            label="Vertical layout"
-            checked={verticalLayout}
-            onChange={setVerticalLayout}
-          />
+          <Switch label="Vertical layout" checked={verticalLayout} onChange={setVerticalLayout} />
           <Flex height={4} />
           <Switch
             label="Keep stories of a group in their initial order"
@@ -114,21 +97,10 @@ const DebugStoryly = () => {
           <Divider />
           <Text variant="h4">Stories</Text>
           <Flex mb={3} flexDirection="row" alignItems="center">
-            <Button
-              mr={2}
-              size="small"
-              type="shade"
-              outline
-              onPress={refreshAll}
-            >
+            <Button mr={2} size="small" type="shade" outline onPress={refreshAll}>
               Refresh
             </Button>
-            <Button
-              size="small"
-              type="shade"
-              outline
-              onPress={() => resetFeature("storyly")}
-            >
+            <Button size="small" type="shade" outline onPress={() => resetFeature("storyly")}>
               Reset remote config
             </Button>
           </Flex>

@@ -8,9 +8,9 @@ import Text from "../../asorted/Text";
 import Flex from "../../layout/Flex";
 import Slide, { Props as SlideProps } from "./Slide";
 
-import IconLeft from "@ledgerhq/icons-ui/react/ArrowLeftMedium";
-import IconRight from "@ledgerhq/icons-ui/react/ArrowRightMedium";
-import IconClose from "@ledgerhq/icons-ui/react/CloseMedium";
+import IconLeft from "@ledgerhq/icons-ui/reactLegacy/ArrowLeftMedium";
+import IconRight from "@ledgerhq/icons-ui/reactLegacy/ArrowRightMedium";
+import IconClose from "@ledgerhq/icons-ui/reactLegacy/CloseMedium";
 
 const CarouselWrapper = styled.div`
   width: 100%;
@@ -20,16 +20,16 @@ const CarouselWrapper = styled.div`
   cursor: pointer;
   position: relative;
   flex: 1;
-  background: ${(p) => p.theme.colors.neutral.c100};
+  background: ${p => p.theme.colors.neutral.c100};
 `;
 
 const Controllers = styled(Flex)`
   position: absolute;
   flex-direction: row;
-  right: ${(p) => p.theme.space[5]}px;
-  bottom: ${(p) => p.theme.space[4]}px;
-  column-gap: ${(p) => p.theme.space[4]}px;
-  color: ${(p) => p.theme.colors.neutral.c00};
+  right: ${p => p.theme.space[5]}px;
+  bottom: ${p => p.theme.space[4]}px;
+  column-gap: ${p => p.theme.space[4]}px;
+  color: ${p => p.theme.colors.neutral.c00};
 
   > div {
     &:hover {
@@ -41,22 +41,22 @@ const Controllers = styled(Flex)`
 const Bullets = styled.div<{ active?: number }>`
   position: absolute;
   display: flex;
-  left: ${(p) => p.theme.space[10]}px;
-  bottom: ${(p) => p.theme.space[8]}px;
-  column-gap: ${(p) => p.theme.space[2]}px;
+  left: ${p => p.theme.space[10]}px;
+  bottom: ${p => p.theme.space[8]}px;
+  column-gap: ${p => p.theme.space[2]}px;
   flex-direction: row;
 
   > div {
     position: relative;
-    height: ${(p) => p.theme.space[1]}px;
-    width: ${(p) => p.theme.space[8]}px;
-    background: ${(p) => p.theme.colors.neutral.c00};
+    height: ${p => p.theme.space[1]}px;
+    width: ${p => p.theme.space[8]}px;
+    background: ${p => p.theme.colors.neutral.c00};
     opacity: 0.5;
     &:hover {
       opacity: 0.75;
     }
 
-    &:nth-child(${(p) => p.active}) {
+    &:nth-child(${p => p.active}) {
       opacity: 1;
       &:hover {
         opacity: 0.75;
@@ -66,8 +66,8 @@ const Bullets = styled.div<{ active?: number }>`
     ::after {
       content: "";
       position: absolute;
-      top: -${(p) => p.theme.space[4]}px;
-      height: ${(p) => p.theme.space[7]}px;
+      top: -${p => p.theme.space[4]}px;
+      height: ${p => p.theme.space[7]}px;
       width: 100%;
     }
   }
@@ -75,9 +75,9 @@ const Bullets = styled.div<{ active?: number }>`
 
 const Close = styled.div`
   position: absolute;
-  top: ${(p) => p.theme.space[7]}px;
-  right: ${(p) => p.theme.space[5]}px;
-  color: ${(p) => p.theme.colors.neutral.c00};
+  top: ${p => p.theme.space[7]}px;
+  right: ${p => p.theme.space[5]}px;
+  color: ${p => p.theme.colors.neutral.c00};
   &:hover {
     opacity: 0.5;
   }
@@ -89,8 +89,8 @@ const DismissWrapper = styled.div`
   justify-content: center;
   display: flex;
   flex-direction: column;
-  padding: ${(p) => p.theme.space[13]}px;
-  row-gap: ${(p) => p.theme.space[7]}px;
+  padding: ${p => p.theme.space[13]}px;
+  row-gap: ${p => p.theme.space[7]}px;
 `;
 
 export type Props = {
@@ -119,13 +119,10 @@ const Carousel = ({
   const [index, setIndex] = useState(0);
   const [wantToDismiss, setWantToDismiss] = useState(false);
   const [paused, setPaused] = useState(false);
-  const childFactory = useCallback(
-    (child) => React.cloneElement(child, { direction }),
-    [direction],
-  );
+  const childFactory = useCallback(child => React.cloneElement(child, { direction }), [direction]);
 
   const wrappedSetIndex = useCallback(
-    (newIndex) => {
+    newIndex => {
       setDirection(newIndex > index ? "left" : "right");
       setIndex(newIndex);
     },

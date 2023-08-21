@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useFloating, getScrollParents, shift, size, flip } from "@floating-ui/react-dom";
 import styled from "styled-components";
-import { Icons } from "../../../";
+import { IconsLegacy } from "../../../";
 import Flex from "../../layout/Flex";
 import Box from "../../layout/Flex";
 import Text from "../../asorted/Text";
@@ -12,11 +12,11 @@ const ButtonContainer = styled(Box).attrs({
   alignItems: "center",
   height: "36px",
 })<{ disabled?: boolean; opened: boolean }>`
-  cursor: ${(p) => !p.disabled && "pointer"};
+  cursor: ${p => !p.disabled && "pointer"};
   > :last-child {
     /* targeting the dropdown icon */
-    ${(p) => p.opened && "transform: rotate(180deg);"}
-    margin-left: ${(p) => p.theme.space[3]}px;
+    ${p => p.opened && "transform: rotate(180deg);"}
+    margin-left: ${p => p.theme.space[3]}px;
   }
 `;
 
@@ -33,11 +33,11 @@ const DropdownContainer = styled(Flex).attrs(({ theme }) => {
   };
 })`
   overflow-y: auto;
-  box-shadow: 0px 6px 12px rgba(0, 0, 0, ${(p) => (p.theme.colors.type === "light" ? 0.04 : 0.08)});
+  box-shadow: 0px 6px 12px rgba(0, 0, 0, ${p => (p.theme.colors.type === "light" ? 0.04 : 0.08)});
 `;
 
 export const placements = ["bottom-start", "bottom", "bottom-end"] as const;
-type Placement = typeof placements[number];
+type Placement = (typeof placements)[number];
 
 export type Props = {
   /**
@@ -128,12 +128,12 @@ const DropdownGeneric = ({
       ...getScrollParents(refs.reference.current),
       ...getScrollParents(refs.floating.current),
     ];
-    parents.forEach((parent) => {
+    parents.forEach(parent => {
       parent.addEventListener("scroll", handleResizeOrScroll);
       parent.addEventListener("resize", handleResizeOrScroll);
     });
     return () => {
-      parents.forEach((parent) => {
+      parents.forEach(parent => {
         parent.removeEventListener("scroll", handleResizeOrScroll);
         parent.removeEventListener("resize", handleResizeOrScroll);
       });
@@ -170,7 +170,7 @@ const DropdownGeneric = ({
         <Text variant="paragraph" fontWeight="medium" color={color}>
           {label}
         </Text>
-        <Icons.DropdownMedium size={20} color={color} />
+        <IconsLegacy.DropdownMedium size={20} color={color} />
       </ButtonContainer>
       {opened && !disabled && (
         <DropdownContainer

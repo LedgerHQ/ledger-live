@@ -77,3 +77,7 @@ _Every route is preceded by the protocol \*\*\_ledgerlive://_\*\*\_
 
         - *APP_ID* => the url param app id
         - *?params* => the url query params that will be transmitted to the app, you should refer to each apps documentation in order to use them.
+
+- **_market_** 🠒 Live Market Page
+
+  `ledgerlive://market` will redirect to market page

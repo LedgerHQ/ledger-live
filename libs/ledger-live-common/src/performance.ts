@@ -6,7 +6,7 @@ type Unsubscribe = () => void;
 export function connectLogsToSentry(Sentry: any): Unsubscribe {
   let apduSpan;
   const spans = {};
-  return listen((l) => {
+  return listen(l => {
     if (!l) return;
     if (l.type === "apdu") {
       if (l.message?.startsWith("=>")) {
@@ -40,7 +40,7 @@ export function startSpan(
   rest?: {
     tags?: any;
     data?: any;
-  }
+  },
 ): {
   finish: () => void;
 } {

@@ -6,12 +6,12 @@ import Text from "../../asorted/Text";
 import { RadioContext } from "./index";
 
 const Label = styled(Text)`
-  color: var(--ledger-ui-checkbox-color, ${(p) => p.theme.colors.neutral.c100});
+  color: var(--ledger-ui-checkbox-color, ${p => p.theme.colors.neutral.c100});
   width: 266px;
 `;
 
 const Input = styled.input`
-  --ledger-ui-checkbox-color: ${(p) => p.theme.colors.neutral.c50};
+  --ledger-ui-checkbox-color: ${p => p.theme.colors.neutral.c50};
   --ledger-ui-checkbox-size: 1.25rem;
 
   position: relative;
@@ -19,7 +19,7 @@ const Input = styled.input`
   width: var(--ledger-ui-checkbox-size);
   height: var(--ledger-ui-checkbox-size);
   flex-shrink: 0;
-  border-radius: ${(p) => `${p.theme.radii[1]}px`};
+  border-radius: ${p => `${p.theme.radii[1]}px`};
   border: 1px solid var(--ledger-ui-checkbox-color);
   cursor: pointer;
 
@@ -40,31 +40,31 @@ const Input = styled.input`
 
   &[data-variant="default"] {
     :hover {
-      --ledger-ui-checkbox-color: ${(p) => p.theme.colors.primary.c90};
+      --ledger-ui-checkbox-color: ${p => p.theme.colors.primary.c90};
     }
     :active {
-      --ledger-ui-checkbox-color: ${(p) => p.theme.colors.primary.c100};
+      --ledger-ui-checkbox-color: ${p => p.theme.colors.primary.c100};
     }
     :checked,
     :focus {
-      --ledger-ui-checkbox-color: ${(p) => p.theme.colors.primary.c80};
+      --ledger-ui-checkbox-color: ${p => p.theme.colors.primary.c80};
     }
     :focus {
-      box-shadow: 0px 0px 0px 4px ${(p) => rgba(p.theme.colors.primary.c60, 0.48)};
+      box-shadow: 0px 0px 0px 4px ${p => rgba(p.theme.colors.primary.c60, 0.48)};
     }
   }
 
   &[data-variant="main"] {
     :hover {
-      --ledger-ui-checkbox-color: ${(p) => p.theme.colors.neutral.c90};
+      --ledger-ui-checkbox-color: ${p => p.theme.colors.neutral.c90};
     }
     :active,
     :checked,
     :focus {
-      --ledger-ui-checkbox-color: ${(p) => p.theme.colors.neutral.c100};
+      --ledger-ui-checkbox-color: ${p => p.theme.colors.neutral.c100};
     }
     :focus {
-      box-shadow: 0px 0px 0px 4px ${(p) => rgba(p.theme.colors.neutral.c60, 0.48)};
+      box-shadow: 0px 0px 0px 4px ${p => rgba(p.theme.colors.neutral.c60, 0.48)};
     }
   }
 
@@ -72,10 +72,10 @@ const Input = styled.input`
     :hover,
     :checked:not([disabled]),
     :checked:not([disabled]) + ${Label}, :focus {
-      --ledger-ui-checkbox-color: ${(p) => p.theme.colors.success.c100};
+      --ledger-ui-checkbox-color: ${p => p.theme.colors.success.c50};
     }
     :focus {
-      box-shadow: 0px 0px 0px 4px ${(p) => rgba(p.theme.colors.success.c100, 0.48)};
+      box-shadow: 0px 0px 0px 4px ${p => rgba(p.theme.colors.success.c50, 0.48)};
     }
   }
 
@@ -83,66 +83,66 @@ const Input = styled.input`
     :hover,
     :checked:not([disabled]),
     :checked:not([disabled]) + ${Label}, :focus {
-      --ledger-ui-checkbox-color: ${(p) => p.theme.colors.error.c100};
+      --ledger-ui-checkbox-color: ${p => p.theme.colors.error.c50};
     }
     :focus {
-      box-shadow: 0px 0px 0px 4px ${(p) => rgba(p.theme.colors.error.c100, 0.48)};
+      box-shadow: 0px 0px 0px 4px ${p => rgba(p.theme.colors.error.c50, 0.48)};
     }
   }
 
   &[data-variant]:disabled {
-    --ledger-ui-checkbox-color: ${(p) => p.theme.colors.neutral.c40};
+    --ledger-ui-checkbox-color: ${p => p.theme.colors.neutral.c40};
     cursor: unset;
-    background-color: ${(p) => p.theme.colors.neutral.c30};
+    background-color: ${p => p.theme.colors.neutral.c30};
   }
 `;
 
 const outlinedCSS = css`
   padding: 20px;
-  border: 1px solid ${(p) => p.theme.colors.neutral.c50};
-  border-radius: ${(p) => p.theme.radii[2]}px;
+  border: 1px solid ${p => p.theme.colors.neutral.c50};
+  border-radius: ${p => p.theme.radii[2]}px;
   &[data-variant="default"] {
     :hover {
-      border-color: ${(p) => p.theme.colors.primary.c90};
+      border-color: ${p => p.theme.colors.primary.c90};
     }
     &[data-checked] :active {
-      border-color: ${(p) => p.theme.colors.primary.c100};
+      border-color: ${p => p.theme.colors.primary.c100};
     }
     :focus {
-      border-color: ${(p) => p.theme.colors.primary.c80};
+      border-color: ${p => p.theme.colors.primary.c80};
     }
   }
 
   &[data-variant="main"] {
     :hover {
-      border-color: ${(p) => p.theme.colors.neutral.c90};
+      border-color: ${p => p.theme.colors.neutral.c90};
     }
     &[data-checked],
     :active :focus {
-      border-color: ${(p) => p.theme.colors.neutral.c100};
+      border-color: ${p => p.theme.colors.neutral.c100};
     }
   }
 
   &[data-variant="success"] {
     &[data-checked]:not([disabled]) {
-      border-color: ${(p) => p.theme.colors.success.c100};
+      border-color: ${p => p.theme.colors.success.c50};
     }
     :hover {
-      border-color: ${(p) => p.theme.colors.success.c100};
+      border-color: ${p => p.theme.colors.success.c50};
     }
   }
 
   &[data-variant="error"] {
     &[data-checked]:not([disabled]) {
-      border-color: ${(p) => p.theme.colors.error.c100};
+      border-color: ${p => p.theme.colors.error.c50};
     }
     :hover {
-      border-color: ${(p) => p.theme.colors.error.c100};
+      border-color: ${p => p.theme.colors.error.c50};
     }
   }
 
   &[data-variant]:disabled {
-    border-color: ${(p) => p.theme.colors.neutral.c40};
+    border-color: ${p => p.theme.colors.neutral.c40};
     cursor: unset;
   }
 `;
@@ -157,7 +157,7 @@ const RadioElement = styled.label.attrs({ tabIndex: -1 })<{
   &[data-variant]:disabled {
     cursor: unset;
   }
-  ${(p) => p.outlined && outlinedCSS}
+  ${p => p.outlined && outlinedCSS}
 `;
 
 type InputAttributes = Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "onChange" | "name">;

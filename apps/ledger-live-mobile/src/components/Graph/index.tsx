@@ -81,12 +81,7 @@ function Graph({
         <DefGraph height={height} color={color} />
       </Defs>
       <Path d={area ?? undefined} fill={fill || "url(#grad)"} />
-      <Path
-        d={line ?? undefined}
-        stroke={color}
-        strokeWidth={STROKE_WIDTH}
-        fill="none"
-      />
+      <Path d={line ?? undefined} stroke={color} strokeWidth={STROKE_WIDTH} fill="none" />
     </Svg>
   );
   return isInteractive ? (

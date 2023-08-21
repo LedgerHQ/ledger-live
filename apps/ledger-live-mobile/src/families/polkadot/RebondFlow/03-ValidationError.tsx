@@ -5,24 +5,15 @@ import { useTheme } from "@react-navigation/native";
 import { StackScreenProps } from "@react-navigation/stack";
 import { TrackScreen } from "../../../analytics";
 import ValidateError from "../../../components/ValidateError";
-import {
-  BaseComposite,
-  BaseNavigation,
-} from "../../../components/RootNavigator/types/helpers";
+import { BaseComposite, BaseNavigation } from "../../../components/RootNavigator/types/helpers";
 import { PolkadotRebondFlowParamList } from "./type";
 import { ScreenName } from "../../../const";
 
 type NavigationProps = BaseComposite<
-  StackScreenProps<
-    PolkadotRebondFlowParamList,
-    ScreenName.PolkadotRebondValidationError
-  >
+  StackScreenProps<PolkadotRebondFlowParamList, ScreenName.PolkadotRebondValidationError>
 >;
 
-export default function ValidationError({
-  navigation,
-  route,
-}: NavigationProps) {
+export default function ValidationError({ navigation, route }: NavigationProps) {
   const { colors } = useTheme();
   const onClose = useCallback(() => {
     navigation.getParent<BaseNavigation>().pop();
@@ -39,12 +30,14 @@ export default function ValidationError({
         },
       ]}
     >
-      <TrackScreen category="RebondFlow" name="ValidationError" />
-      <ValidateError
-        error={route.params.error}
-        onRetry={retry}
-        onClose={onClose}
+      <TrackScreen
+        category="RebondFlow"
+        name="ValidationError"
+        flow="stake"
+        action="rebond"
+        currency="dot"
       />
+      <ValidateError error={route.params.error} onRetry={retry} onClose={onClose} />
     </SafeAreaView>
   );
 }

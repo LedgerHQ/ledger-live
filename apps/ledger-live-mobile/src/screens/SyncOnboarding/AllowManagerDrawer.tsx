@@ -1,41 +1,56 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { BottomDrawer, Flex } from "@ledgerhq/native-ui";
+import { Flex, Text } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTheme } from "styled-components/native";
-import { renderAllowManager as AllowManager } from "../../components/DeviceAction/rendering";
+import Animation from "../../components/Animation";
+import QueuedDrawer from "../../components/QueuedDrawer";
+import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
 
 export type Props = {
+  /**
+   * State to trigger the opening/closing of the drawer
+   */
   isOpen: boolean;
-  onPress?: () => void;
+
+  /**
+   * Callback when the drawer is closed
+   *
+   * As the drawer has no close button (`noCloseButton`), the drawer is closed only when `isOpen === false`
+   */
   onClose?: () => void;
+
+  /**
+   * A `Device` object
+   */
   device: Device;
 };
 
-const UnlockDeviceDrawer = ({ isOpen, device, onClose }: Props) => {
+/**
+ * Drawer displayed when a secure channel is needed during the early security check (probably genuine check)
+ */
+const AllowManagerDrawer = ({ isOpen, device, onClose }: Props) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const theme = colors.type as "dark" | "light";
 
   return (
-    <BottomDrawer
-      isOpen={isOpen}
+    <QueuedDrawer
+      isRequestingToBeOpened={isOpen}
       onClose={onClose}
       preventBackdropClick
       noCloseButton
     >
-      <Flex mb={260} pt={110}>
-        <AllowManager
-          t={t}
-          wording={t(
-            "syncOnboarding.softwareChecksSteps.allowManagerDrawer.wording",
-          )}
-          device={device}
-          theme={theme}
-        />
+      <Flex mt={8} alignItems="center" justifyContent="center">
+        <Text variant="h4" textAlign="center">
+          {t("earlySecurityCheck.allowManagerDrawer.title")}
+        </Text>
+        <Flex alignSelf="stretch" alignItems="center" justifyContent="center">
+          <Animation source={getDeviceAnimation({ device, key: "allowManager", theme })} />
+        </Flex>
       </Flex>
-    </BottomDrawer>
+    </QueuedDrawer>
   );
 };
 
-export default UnlockDeviceDrawer;
+export default AllowManagerDrawer;

@@ -1,15 +1,9 @@
-import {
-  getAccountUnit,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useValidatorGroups } from "@ledgerhq/live-common/families/celo/react";
-import type {
-  CeloValidatorGroup,
-  CeloAccount,
-} from "@ledgerhq/live-common/families/celo/types";
+import type { CeloValidatorGroup, CeloAccount } from "@ledgerhq/live-common/families/celo/types";
 import { revokableVotes } from "@ledgerhq/live-common/families/celo/logic";
 import { AccountLike } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
@@ -74,30 +68,24 @@ export default function RevokeSummary({ navigation, route }: Props) {
     return undefined;
   }, [vote, votes]);
 
-  const {
-    transaction,
-    updateTransaction,
-    setTransaction,
-    status,
-    bridgePending,
-    bridgeError,
-  } = useBridgeTransaction(() => {
-    const tx = route.params.transaction;
+  const { transaction, updateTransaction, setTransaction, status, bridgePending, bridgeError } =
+    useBridgeTransaction(() => {
+      const tx = route.params.transaction;
 
-    if (!tx) {
-      const t = bridge.createTransaction(mainAccount);
+      if (!tx) {
+        const t = bridge.createTransaction(mainAccount);
 
-      return {
-        account,
-        transaction: bridge.updateTransaction(t, {
-          mode: "revoke",
-          amount: route.params.amount ?? 0,
-        }),
-      };
-    }
+        return {
+          account,
+          transaction: bridge.updateTransaction(t, {
+            mode: "revoke",
+            amount: route.params.amount ?? 0,
+          }),
+        };
+      }
 
-    return { account, transaction: tx };
-  });
+      return { account, transaction: tx };
+    });
 
   invariant(transaction, "transaction must be defined");
   invariant(transaction.family === "celo", "transaction celo");
@@ -111,14 +99,7 @@ export default function RevokeSummary({ navigation, route }: Props) {
       }),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    route.params,
-    updateTransaction,
-    bridge,
-    setTransaction,
-    chosenValidator,
-    chosenVote,
-  ]);
+  }, [route.params, updateTransaction, bridge, setTransaction, chosenValidator, chosenVote]);
 
   const onChangeDelegator = useCallback(() => {
     navigation.navigate(ScreenName.CeloRevokeValidatorSelect, {
@@ -152,7 +133,13 @@ export default function RevokeSummary({ navigation, route }: Props) {
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="CeloRevoke" name="Summary" />
+      <TrackScreen
+        category="CeloRevoke"
+        name="Summary"
+        flow="stake"
+        action="revoke"
+        currency="celo"
+      />
 
       <View style={styles.body}>
         <View style={styles.summary}>

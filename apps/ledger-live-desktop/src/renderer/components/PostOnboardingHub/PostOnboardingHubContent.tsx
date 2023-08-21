@@ -1,29 +1,28 @@
-import React, { useCallback } from "react";
-import { useDispatch } from "react-redux";
-import { Flex, Link, Text } from "@ledgerhq/react-ui";
+import React, { useCallback, useEffect } from "react";
+import { Flex, Link } from "@ledgerhq/react-ui";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { clearPostOnboardingLastActionCompleted } from "@ledgerhq/live-common/postOnboarding/actions";
-
+import { useAllPostOnboardingActionsCompleted } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import PostOnboardingHub from ".";
-import { setDrawer } from "~/renderer/drawers/Provider";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
+import { track } from "~/renderer/analytics/segment";
 
 const PostOnboardingHubContent = () => {
   const { t } = useTranslation();
   const history = useHistory();
-  const dispatch = useDispatch();
-
-  const isInsidePostOnboardingScreen = history.location.pathname === "/post-onboarding";
-
-  const clearLastActionCompleted = useCallback(() => {
-    dispatch(clearPostOnboardingLastActionCompleted());
-    setDrawer();
-  }, [dispatch]);
+  const allDone = useAllPostOnboardingActionsCompleted();
 
   const handleSkipButton = useCallback(() => {
-    isInsidePostOnboardingScreen ? history.push("/") : clearLastActionCompleted();
-  }, [clearLastActionCompleted, history, isInsidePostOnboardingScreen]);
+    track("button_clicked", { button: "I'll do this later", flow: "post-onboarding" });
+    history.push("/");
+  }, [history]);
+
+  useEffect(() => {
+    if (allDone) {
+      const timeout = setTimeout(() => history.push("/"), 4000);
+      return () => clearTimeout(timeout);
+    }
+  }, [allDone, history]);
 
   return (
     <Flex
@@ -35,29 +34,12 @@ const PostOnboardingHubContent = () => {
       width="100%"
       maxWidth={450}
     >
-      {!isInsidePostOnboardingScreen && (
-        <Text variant="paragraph" fontSize={48} mb={8}>
-          {t("postOnboarding.postOnboardingContent.title")}
-        </Text>
-      )}
-      <Text variant="paragraph" fontSize={14} color="neutral.c70" mb={8}>
-        {t("postOnboarding.postOnboardingContent.description")}
-      </Text>
       <PostOnboardingHub />
-      <Link
-        onClick={handleSkipButton}
-        type="color"
-        width={isInsidePostOnboardingScreen ? "fit-content" : ""}
-        data-test-id={
-          isInsidePostOnboardingScreen
-            ? "postonboarding-hub-screen-skip-button"
-            : "postonboarding-hub-drawer-skip-button"
-        }
-      >
-        {isInsidePostOnboardingScreen
-          ? t("postOnboarding.postOnboardingContent.skipLinkInDrawer")
-          : t("postOnboarding.postOnboardingContent.skipLink")}
-      </Link>
+      {!allDone ? (
+        <Link onClick={handleSkipButton} data-test-id={"postonboarding-hub-skip-button"} mt={5}>
+          {t("postOnboarding.postOnboardingContent.skipLink")}
+        </Link>
+      ) : null}
     </Flex>
   );
 };

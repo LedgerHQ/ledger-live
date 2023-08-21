@@ -7,12 +7,7 @@ const dark = require("../images/illustration/Dark/_081.png");
 const light = require("../images/illustration/Light/_081.png");
 
 export default function Love(
-  props: Omit<
-    React.ComponentProps<typeof Illustration>,
-    "darkSource" | "lightSource"
-  >,
+  props: Omit<React.ComponentProps<typeof Illustration>, "darkSource" | "lightSource">,
 ) {
-  return (
-    <Illustration darkSource={dark} lightSource={light} size={140} {...props} />
-  );
+  return <Illustration darkSource={dark} lightSource={light} size={140} {...props} />;
 }

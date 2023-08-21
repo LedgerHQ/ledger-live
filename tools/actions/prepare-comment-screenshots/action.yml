@@ -4,6 +4,8 @@ author: valpinkman
 outputs:
   body:
     description: markdown formatted body for comment
+  failed:
+    description: boolean if any screenshots have failed
 inputs:
   images:
     description: array of images to include in body of comment
@@ -12,9 +14,13 @@ inputs:
     description: creator of the pull request
     required: false
     default: ${{ github.actor }}
+  no-actor:
+    description: wether or not to include actor
+    required: false
+    default: "false"
 runs:
   using: node16
-  main: build/index.js
+  main: build/main.js
 
 branding:
   icon: align-center

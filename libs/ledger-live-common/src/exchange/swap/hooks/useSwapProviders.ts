@@ -41,8 +41,7 @@ export const useSwapProviders = (): State => {
 
         if (isMounted) dispatch({ type: "SAVE_DATA", payload: providers });
       } catch (error) {
-        if (isMounted && error instanceof Error)
-          dispatch({ type: "SAVE_ERROR", payload: error });
+        if (isMounted && error instanceof Error) dispatch({ type: "SAVE_ERROR", payload: error });
       }
     };
 

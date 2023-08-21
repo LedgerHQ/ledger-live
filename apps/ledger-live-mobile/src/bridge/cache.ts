@@ -5,19 +5,21 @@ import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 export async function clearBridgeCache() {
   const keys = await AsyncStorage.getAllKeys();
-  await AsyncStorage.multiRemove(
-    keys.filter(k => k.startsWith("bridgeproxypreload")),
-  );
+  await AsyncStorage.multiRemove(keys.filter(k => k.startsWith("bridgeproxypreload")));
 }
 
 function currencyCacheId(currency: CryptoCurrency) {
   return `bridgeproxypreload_${currency.id}`;
 }
 
-export async function setCurrencyCache(
-  currency: CryptoCurrency,
-  data: unknown,
-) {
+export async function listCachedCurrencyIds() {
+  const keys = await AsyncStorage.getAllKeys();
+  return keys
+    .filter(k => k.startsWith("bridgeproxypreload"))
+    .map(k => k.replace("bridgeproxypreload_", ""));
+}
+
+export async function setCurrencyCache(currency: CryptoCurrency, data: unknown) {
   if (data) {
     const serialized = JSON.stringify(data);
 
@@ -26,9 +28,7 @@ export async function setCurrencyCache(
     }
   }
 }
-export async function getCurrencyCache(
-  currency: CryptoCurrency,
-): Promise<unknown> {
+export async function getCurrencyCache(currency: CryptoCurrency): Promise<unknown> {
   const res = await AsyncStorage.getItem(currencyCacheId(currency));
 
   if (res) {

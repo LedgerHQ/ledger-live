@@ -7,7 +7,7 @@ export function splitTransaction(
   isSegwitSupported: boolean | null | undefined = false,
   hasTimestamp = false,
   hasExtraData = false,
-  additionals: Array<string> = []
+  additionals: Array<string> = [],
 ): Transaction {
   const inputs: TransactionInput[] = [];
   const outputs: TransactionOutput[] = [];
@@ -27,8 +27,7 @@ export function splitTransaction(
     version.equals(Buffer.from([0x03, 0x00, 0x00, 0x80])) ||
     version.equals(Buffer.from([0x04, 0x00, 0x00, 0x80])) ||
     version.equals(Buffer.from([0x05, 0x00, 0x00, 0x80]));
-  const isZcashv5 =
-    isZcash && version.equals(Buffer.from([0x05, 0x00, 0x00, 0x80]));
+  const isZcashv5 = isZcash && version.equals(Buffer.from([0x05, 0x00, 0x00, 0x80]));
   offset += 4;
   if (
     !hasTimestamp &&
@@ -162,9 +161,6 @@ export function splitTransaction(
     nExpiryHeight,
     extraData,
   };
-  log(
-    "btc",
-    `splitTransaction ${transactionHex}:\n${formatTransactionDebug(t)}`
-  );
+  log("btc", `splitTransaction ${transactionHex}:\n${formatTransactionDebug(t)}`);
   return t;
 }

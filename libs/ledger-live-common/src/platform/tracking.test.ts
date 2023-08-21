@@ -1,5 +1,5 @@
 import trackingWrapper from "./tracking";
-import { AppManifest } from "./types";
+import { LiveAppManifest } from "./types";
 
 describe("trackingWrapper", () => {
   test.each([
@@ -124,19 +124,19 @@ describe("trackingWrapper", () => {
         {
           platform: appManifest.name,
         },
-        null
+        null,
       );
-    }
+    },
   );
 });
 
-function appManifestFixture(name = "live-app"): AppManifest {
+function appManifestFixture(name = "live-app"): LiveAppManifest {
   return {
     id: "12",
     name,
     url: "https://www.ledger.fr",
     homepageUrl: "https://www.ledger.fr",
-    platform: "all",
+    platforms: ["ios", "android", "desktop"],
     apiVersion: "1.0.0",
     manifestVersion: "1.0.0",
     branch: "debug",
@@ -152,5 +152,6 @@ function appManifestFixture(name = "live-app"): AppManifest {
     },
     permissions: [],
     domains: [],
+    visibility: "complete",
   };
 }

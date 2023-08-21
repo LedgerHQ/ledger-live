@@ -1,10 +1,13 @@
 import React, { useState } from "react";
-import { storiesOf } from "../../storiesOf";
-import { boolean, number } from "@storybook/addon-knobs";
 import Slider from "../../../../src/components/Form/Slider";
 import FlexBox from "../../../../src/components/Layout/Flex";
 
-const SliderStory = () => {
+export default {
+  title: "Form/Slider",
+  component: Slider,
+};
+
+export const SliderStory = (args: typeof SliderStoryArgs) => {
   const [value, setValue] = useState(35);
 
   const onChange = (value: number) => setValue(value);
@@ -14,13 +17,42 @@ const SliderStory = () => {
       <Slider
         value={value}
         onChange={onChange}
-        disabled={boolean("disabled", false)}
-        min={number("min", 0, { min: 0, max: 10000000 })}
-        max={number("max", 100, { min: 0, max: 10000000 })}
-        step={number("step", 1, { min: 0, max: 10000000 })}
+        disabled={args.disabled}
+        min={args.min}
+        max={args.max}
+        step={args.step}
       />
     </FlexBox>
   );
 };
-
-storiesOf((story) => story("Form", module).add("Slider", () => <SliderStory />));
+SliderStory.storyName = "Slider";
+const SliderStoryArgs = {
+  disabled: false,
+  min: 0,
+  max: 100,
+  step: 1,
+};
+SliderStory.args = SliderStoryArgs;
+SliderStory.argTypes = {
+  min: {
+    control: {
+      type: "number",
+      min: 0,
+      max: 10000000,
+    },
+  },
+  max: {
+    control: {
+      type: "number",
+      min: 0,
+      max: 10000000,
+    },
+  },
+  step: {
+    control: {
+      type: "number",
+      min: 0,
+      max: 10000000,
+    },
+  },
+};

@@ -1,11 +1,11 @@
 import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
-import { RenderTransitionProps } from "@ledgerhq/native-ui/components/Navigation/FlowStepper";
+import { RenderTransitionProps } from "@ledgerhq/native-ui/components/Navigation/FlowStepper/index";
 import {
   Flex,
   FlowStepper,
-  Icons,
+  IconsLegacy,
   Transitions,
   SlideIndicator,
   ScrollListContainer,
@@ -18,9 +18,7 @@ import Button from "../../../../../components/PreventDoubleClickButton";
 
 const transitionDuration = 500;
 
-const Scene = ({ children }: { children: React.ReactNode }) => (
-  <Flex flex={1}>{children}</Flex>
-);
+const Scene = ({ children }: { children: React.ReactNode }) => <Flex flex={1}>{children}</Flex>;
 
 export type Metadata = {
   id: string;
@@ -29,16 +27,13 @@ export type Metadata = {
 };
 
 const InfoButton = ({ target }: { target: Metadata["drawer"] }) => {
-  const navigation =
-    useNavigation<NavigationProp<{ [key: string]: object | undefined }>>();
+  const navigation = useNavigation<NavigationProp<{ [key: string]: object | undefined }>>();
 
   if (target)
     return (
       <Button
-        Icon={Icons.InfoRegular}
-        onPress={() =>
-          navigation.navigate(target.route, { screen: target.screen })
-        }
+        Icon={IconsLegacy.InfoMedium}
+        onPress={() => navigation.navigate(target.route, { screen: target.screen })}
       />
     );
 
@@ -69,10 +64,7 @@ const ImageHeader = ({
       width="100%"
       height={48}
     >
-      <Button
-        Icon={() => <Icons.ArrowLeftMedium size={24} />}
-        onPress={onBack}
-      />
+      <Button Icon={() => <IconsLegacy.ArrowLeftMedium size={24} />} onPress={onBack} />
       {metadata.length <= 1 ? null : (
         <SlideIndicator
           slidesLength={metadata.length}
@@ -159,26 +151,14 @@ export function BaseStepperView({
         {steps.map((Children, i) => (
           <Scene key={Children.id + i}>
             <ScrollListContainer contentContainerStyle={{ padding: 16 }}>
-              <Flex
-                mb={30}
-                mx={8}
-                justifyContent="center"
-                alignItems="flex-start"
-              >
+              <Flex mb={30} mx={8} justifyContent="center" alignItems="flex-start">
                 {metadata[i]?.illustration}
               </Flex>
-              <Children
-                onNext={nextPage}
-                deviceModelId={deviceModelId}
-                {...params}
-              />
+              <Children onNext={nextPage} deviceModelId={deviceModelId} {...params} />
             </ScrollListContainer>
             {Children.Next ? (
               <Flex p={6}>
-                <Children.Next
-                  onNext={nextPage}
-                  deviceModelId={deviceModelId}
-                />
+                <Children.Next onNext={nextPage} deviceModelId={deviceModelId} />
               </Flex>
             ) : null}
           </Scene>

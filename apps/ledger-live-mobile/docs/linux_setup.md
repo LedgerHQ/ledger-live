@@ -9,7 +9,7 @@ If you have authorization you can disable sentinelone with :
 ```
 
 ## Nano Support
-On Linux, you will have to setup some udev rules as explained here GitHub - LedgerHQ/udev-rules: udev rules to support Ledger devices on Linux 
+On Linux, you will have to setup some udev rules as explained here GitHub - LedgerHQ/udev-rules: udev rules to support Ledger devices on Linux
 
 
 ## node
@@ -44,7 +44,7 @@ npm install --global yarn
 ```bash
 ssh-keygen -t ed25519 -C "firstname.lastname@ledger.com"
 ssh-add ~/.ssh/id_ed25519
-cat ~/.ssh/id_ed25519.pub 
+cat ~/.ssh/id_ed25519.pub
 ```
 
 2 - GPG key
@@ -92,7 +92,7 @@ and add this to your settings.json file
 
 ## LLM
 
-#### 
+####
 sudo gem install bundler
 
 ## install JDK
@@ -167,12 +167,12 @@ export NODE_OPTIONS=--max-old-space-size=8192
 #### Dev on android
 
 You have to setup your device
-- activate developper mode depending on android version and device
+- activate developer mode depending on android version and device
 - accept debug through USB
-- plug your device to you computer
+- plug your device to your computer
 - set the link as a file transfer
 
-Then start you terminal:
+Then start your terminal:
 https://reactnative.dev/docs/running-on-device#method-1-using-adb-reverse-recommended-2
 ```bash
 adb devices

@@ -1,0 +1,197 @@
+name: "@Desktop • Build App (external)"
+run-name: "@Desktop • Build App (external) triggered by ${{ inputs.login }}  ${{ format('on ref {0}', github.ref_name) }}"
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: the branch which triggered this workflow
+        required: false
+      login:
+        description: The GitHub username that triggered the workflow
+        required: true
+      base_ref:
+        description: The base branch to merge the head into when checking out the code
+        required: false
+      draft:
+        description: true if the PR is in draft
+        required: false
+        default: "false"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  build-desktop-app:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    name: "Build Ledger Live Desktop"
+    runs-on: ${{ matrix.os }}
+    outputs:
+      linux: ${{ steps.save-result.outputs.ubuntu-latest }}
+      windows: ${{ steps.save-result.outputs.windows-latest }}
+      mac: ${{ steps.save-result.outputs.macos-latest }}
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+    steps:
+      - name: Format os name
+        id: os
+        uses: actions/github-script@v6
+        with:
+          result-encoding: string
+          script: |
+            if ("${{ matrix.os }}" === "ubuntu-latest") {
+              return "linux"
+            } else if ("${{ matrix.os }}" === "macos-latest") {
+              return "mac"
+            } else if ("${{ matrix.os }}" === "windows-latest") {
+              return "win"
+            }
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+        with:
+          ref: ${{ github.ref_name }}
+          base: ${{ inputs.base_ref }}
+      - name: Set git user
+        run: |
+          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
+          git config user.name "live-github-bot[bot]"
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.1.2
+          bundler-cache: true
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
+        with:
+          upgrade_npm: ${{ matrix.os == 'windows-latest' }}
+      - uses: ./tools/actions/composites/setup-build-desktop
+        id: build-desktop
+        with:
+          os: ${{ steps.os.outputs.result }}
+      - name: Build the app
+        id: build-app
+        run: pnpm build:lld --api="http://127.0.0.1:${{ steps.build-desktop.outputs.port }}" --token="yolo" --team="foo"
+      - name: Save result
+        id: save-result
+        shell: bash
+        if: always()
+        run: |
+          echo "${{matrix.os}}=${{steps.build-app.outcome}}" >> $GITHUB_OUTPUT
+      - name: Upload linux app
+        if: matrix.os == 'ubuntu-latest'
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
+          path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
+      - name: Upload macOS app
+        if: matrix.os == 'macos-latest'
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ steps.build-desktop.outputs.version }}-mac.dmg
+          path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-mac.dmg
+      - name: Upload windows
+        if: matrix.os == 'windows-latest'
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ steps.build-desktop.outputs.version }}-win-x64.exe
+          path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-win-x64.exe
+
+  report:
+    needs: build-desktop-app
+    runs-on: ubuntu-latest
+    if: always() && !cancelled() && github.event_name == 'workflow_dispatch'
+    steps:
+      - uses: actions/github-script@v6
+        name: Get statuses of runs
+        id: status
+        with:
+          script: |
+            const fs = require("fs");
+
+            const [ owner, repo ] = "${{ github.repository }}".split("/");
+
+            const jobs = await github.paginate(github.rest.actions.listJobsForWorkflowRunAttempt, {
+              owner,
+              repo,
+              run_id: "${{ github.run_id }}",
+              attempt_number: "${{ github.run_attempt }}",
+            });
+
+            const findJobUrl = os =>
+              jobs.find(job => job.name == `Build Ledger Live Desktop (${os})`)?.html_url;
+
+            const keys = {
+              mac: {
+                symbol: "🍏",
+                name: "macOS",
+                jobUrl: findJobUrl("macos-latest")
+              },
+              windows: {
+                symbol: "🪟",
+                name: "Windows",
+                jobUrl: findJobUrl("windows-latest")
+              },
+              linux: {
+                symbol: "🐧",
+                name: "Linux",
+                jobUrl: findJobUrl("ubuntu-latest")
+              },
+            };
+
+            const report = {
+              mac: {
+                pass: ${{ needs.build-desktop-app.outputs.mac == 'success' }},
+                status: "${{ needs.build-desktop-app.outputs.mac }}",
+              },
+              linux: {
+                pass: ${{ needs.build-desktop-app.outputs.linux == 'success' }},
+                status: "${{ needs.build-desktop-app.outputs.linux }}",
+              },
+              windows: {
+                pass: ${{ needs.build-desktop-app.outputs.windows == 'success' }},
+                status: "${{ needs.build-desktop-app.outputs.windows }}",
+              },
+            };
+
+            let summary = ``;
+
+            summary += `|`
+
+            const reportKeys = Object.keys(report);
+
+            reportKeys.forEach((k) => {
+              summary += ` [${keys[k].symbol} ${keys[k].name}](${keys[k].jobUrl}) |`;
+            });
+
+            summary += `
+            |`;
+
+            for (let i = 0; i < reportKeys.length; i++) {
+              summary += ` :--: |`;
+            }
+
+            summary += `
+            |`;
+
+            Object.entries(report).forEach(([os, values]) => {
+              summary += ` ${values.pass ? "✅" : "❌"} (${values.status}) |`;
+            });
+
+            summary += `
+
+            [⚙️ Summary](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${{ github.run_id }})
+            `;
+
+            const data = {
+              summary,
+            }
+            fs.writeFileSync("summary.json", JSON.stringify(data), "utf-8");
+      - uses: actions/upload-artifact@v3
+        name: Upload output
+        with:
+          path: ${{ github.workspace }}/summary.json
+          name: summary.json

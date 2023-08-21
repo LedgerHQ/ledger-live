@@ -1,10 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { AppState, AppStateStatus } from "react-native";
 import { useNetInfo } from "@react-native-community/netinfo";
-import {
-  Countervalues,
-  useCountervaluesPolling,
-} from "@ledgerhq/live-common/countervalues/react";
+import { Countervalues, useCountervaluesPolling } from "@ledgerhq/live-common/countervalues/react";
 import { CounterValuesStateRaw } from "@ledgerhq/live-common/countervalues/types";
 import { useUserSettings } from "../actions/general";
 
@@ -36,9 +33,7 @@ function usePollingManager() {
   useEffect(() => {
     function handleChange(nextAppState: AppStateStatus) {
       setIsActive(
-        (appState.current.match(/inactive|background/) &&
-          nextAppState === "active") ||
-          false,
+        (appState.current.match(/inactive|background/) && nextAppState === "active") || false,
       );
       appState.current = nextAppState;
     }

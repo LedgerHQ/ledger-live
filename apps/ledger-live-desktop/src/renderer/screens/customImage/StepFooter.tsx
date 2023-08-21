@@ -1,5 +1,6 @@
 import React, { useCallback } from "react";
-import { Flex, Button, InfiniteLoader, Divider } from "@ledgerhq/react-ui";
+import { Flex, InfiniteLoader, Divider } from "@ledgerhq/react-ui";
+import ButtonV3 from "~/renderer/components/ButtonV3";
 import { Step } from "./types";
 
 type Props = {
@@ -13,6 +14,7 @@ type Props = {
   previousLoading?: boolean;
   previousLabel?: string;
   previousTestId?: string;
+  previousEventProperties?: Record<string, unknown>;
   onClickPrevious?: () => void;
 
   nextHidden?: boolean;
@@ -20,6 +22,7 @@ type Props = {
   nextLoading?: boolean;
   nextLabel?: string;
   nextTestId?: string;
+  nextEventProperties?: Record<string, unknown>;
   onClickNext?: () => void;
 };
 
@@ -34,55 +37,68 @@ const StepFooter: React.FC<Props> = props => {
     previousLoading,
     previousLabel,
     previousTestId,
+    previousEventProperties,
     onClickPrevious,
     nextHidden,
     nextDisabled,
     nextLoading,
     nextLabel,
     nextTestId,
+    nextEventProperties,
     onClickNext,
   } = props;
 
   const handleNext = useCallback(() => {
     onClickNext ? onClickNext() : nextStep && setStep && setStep(nextStep);
-  }, [onClickNext, setStep, nextStep]);
+  }, [onClickNext, nextStep, setStep]);
 
   const handlePrevious = useCallback(() => {
     onClickPrevious ? onClickPrevious() : previousStep && setStep && setStep(previousStep);
-  }, [onClickPrevious, setStep, previousStep]);
+  }, [onClickPrevious, previousStep, setStep]);
 
   const showPrevious = !previousHidden && (previousStep || onClickPrevious);
   const showNext = !nextHidden && (nextStep || onClickNext);
 
   if (!showPrevious && !showNext) return null;
   return (
-    <Flex flexDirection="column" alignSelf="stretch" mx={-16} mb={-5}>
-      <Divider variant="light" />
-      <Flex alignSelf="stretch" flexDirection="row" justifyContent="space-between" px={16} py={4}>
+    <Flex flexDirection="column" alignSelf="stretch">
+      <Divider />
+      <Flex
+        px={12}
+        alignSelf="stretch"
+        flexDirection="row"
+        justifyContent="space-between"
+        pt={4}
+        pb={1}
+      >
         {showPrevious ? (
-          <Button
+          <ButtonV3
             variant="main"
             outline
             onClick={previousDisabled ? undefined : handlePrevious}
             disabled={previousDisabled}
             Icon={previousLoading ? InfiniteLoader : undefined}
-            data-test-id={previousTestId}
+            buttonTestId={previousTestId}
+            event="button_clicked"
+            eventProperties={previousEventProperties}
           >
             {previousLabel}
-          </Button>
+          </ButtonV3>
         ) : (
           <Flex flex={1} />
         )}
         {showNext ? (
-          <Button
+          <ButtonV3
             variant="main"
             onClick={nextDisabled ? undefined : handleNext}
             disabled={nextDisabled}
             Icon={nextLoading ? InfiniteLoader : undefined}
-            data-test-id={nextTestId}
+            buttonTestId={nextTestId}
+            event="button_clicked"
+            eventProperties={nextEventProperties}
           >
             {nextLabel}
-          </Button>
+          </ButtonV3>
         ) : null}
       </Flex>
     </Flex>

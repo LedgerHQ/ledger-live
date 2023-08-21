@@ -14,6 +14,6 @@ test("DeviceInOSUExpected", () => {
   expect(
     deserializeError({
       name: "DeviceInOSUExpected",
-    })
+    }),
   ).toBeInstanceOf(DeviceInOSUExpected);
 });

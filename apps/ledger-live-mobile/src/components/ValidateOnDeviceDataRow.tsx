@@ -65,11 +65,7 @@ export function DataRow({
       ]}
     >
       {label ? (
-        <LText
-          numberOfLines={numberOfLines ?? 1}
-          style={styles.dataRowLabel}
-          color="grey"
-        >
+        <LText numberOfLines={numberOfLines ?? 1} style={styles.dataRowLabel} color="grey">
           {label}
         </LText>
       ) : null}
@@ -96,11 +92,7 @@ export function TextValueField({
         },
       ]}
     >
-      <LText
-        numberOfLines={numberOfLines}
-        style={styles.dataRowLabel}
-        color="grey"
-      >
+      <LText numberOfLines={numberOfLines} style={styles.dataRowLabel} color="grey">
         {label}
       </LText>
       <LText numberOfLines={numberOfLines} style={styles.dataRowValue}>
@@ -172,11 +164,7 @@ export function DataColumn({
       ]}
     >
       {label ? (
-        <LText
-          numberOfLines={numberOfLines ?? 1}
-          style={styles.dataRowLabel}
-          color="grey"
-        >
+        <LText numberOfLines={numberOfLines ?? 1} style={styles.dataRowLabel} color="grey">
           {label}
         </LText>
       ) : null}

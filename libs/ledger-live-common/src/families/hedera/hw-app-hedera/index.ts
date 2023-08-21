@@ -40,13 +40,7 @@ export default class Hedera {
     const p1 = 0x01;
     const p2 = 0x00;
 
-    const response = await this.transport.send(
-      CLA,
-      INS.GET_PUBLIC_KEY,
-      p1,
-      p2,
-      serializedPath
-    );
+    const response = await this.transport.send(CLA, INS.GET_PUBLIC_KEY, p1, p2, serializedPath);
 
     const returnCodeBytes = response.slice(-2);
     const returnCode = (returnCodeBytes[0] << 8) | returnCodeBytes[1];
@@ -67,13 +61,7 @@ export default class Hedera {
     const p1 = 0x00;
     const p2 = 0x00;
 
-    const response = await this.transport.send(
-      CLA,
-      INS.SIGN_TRANSACTION,
-      p1,
-      p2,
-      payload
-    );
+    const response = await this.transport.send(CLA, INS.SIGN_TRANSACTION, p1, p2, payload);
 
     const returnCodeBytes = response.slice(-2);
     const returnCode = (returnCodeBytes[0] << 8) | returnCodeBytes[1];

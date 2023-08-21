@@ -2,13 +2,10 @@ import type { SwapOperation } from "./types";
 
 export default (
   existingSwapHistory: SwapOperation[] | null | undefined,
-  importedSwapHistory: SwapOperation[] | null | undefined
+  importedSwapHistory: SwapOperation[] | null | undefined,
 ): SwapOperation[] => {
   const usedSwapIds: string[] = [];
-  const dirtyJoin = [
-    ...(existingSwapHistory || []),
-    ...(importedSwapHistory || []),
-  ];
+  const dirtyJoin = [...(existingSwapHistory || []), ...(importedSwapHistory || [])];
   const cleanSwapHistory: SwapOperation[] = [];
 
   for (let i = dirtyJoin.length - 1; i >= 0; i--) {

@@ -10,7 +10,7 @@ import { Flex, Text, Button } from "@ledgerhq/native-ui";
 import AppTree from "../../../icons/AppTree";
 import AppIcon from "../AppsList/AppIcon";
 
-import BottomModal from "../../../components/BottomModal";
+import QueuedDrawer from "../../../components/QueuedDrawer";
 import CollapsibleList from "../../../components/CollapsibleList";
 import ListTreeLine from "../../../icons/ListTreeLine";
 
@@ -56,11 +56,7 @@ const ButtonsContainer = styled(Flex).attrs({
   width: "100%",
 })``;
 
-const UninstallDependenciesModal = ({
-  appUninstallWithDependencies,
-  dispatch,
-  onClose,
-}: Props) => {
+const UninstallDependenciesModal = ({ appUninstallWithDependencies, dispatch, onClose }: Props) => {
   const { colors } = useTheme() as DefaultTheme & Theme;
   const { app, dependents = [] } = appUninstallWithDependencies || {};
   const { name } = app || {};
@@ -91,7 +87,7 @@ const UninstallDependenciesModal = ({
     [colors.grey],
   );
   return (
-    <BottomModal isOpened={!!app} onClose={onClose}>
+    <QueuedDrawer isRequestingToBeOpened={!!app} onClose={onClose}>
       <Flex alignItems="center">
         {app && dependents.length && (
           <View style={{ width: "100%" }}>
@@ -100,16 +96,9 @@ const UninstallDependenciesModal = ({
             </ImageContainer>
             <TextContainer>
               <ModalText color="neutral.c100" fontWeight="medium" variant="h2">
-                <Trans
-                  i18nKey="AppAction.uninstall.dependency.title"
-                  values={{ app: name }}
-                />
+                <Trans i18nKey="AppAction.uninstall.dependency.title" values={{ app: name }} />
               </ModalText>
-              <ModalText
-                color="neutral.c70"
-                fontWeight="medium"
-                variant="bodyLineHeight"
-              >
+              <ModalText color="neutral.c70" fontWeight="medium" variant="bodyLineHeight">
                 <Trans
                   i18nKey="AppAction.uninstall.dependency.description_two"
                   values={{ app: name }}
@@ -122,22 +111,18 @@ const UninstallDependenciesModal = ({
               renderItem={renderDepLine}
               itemHeight={LINE_HEIGHT}
               containerStyle={{
-                maxHeight:
-                  LIST_HEIGHT - (LIST_HEIGHT % LINE_HEIGHT) - LINE_HEIGHT / 2, // max height available but still cutting the list mid items for UX
+                maxHeight: LIST_HEIGHT - (LIST_HEIGHT % LINE_HEIGHT) - LINE_HEIGHT / 2, // max height available but still cutting the list mid items for UX
               }}
             />
             <ButtonsContainer>
               <Button size="large" type="error" onPress={unInstallApp}>
-                <Trans
-                  i18nKey="AppAction.uninstall.continueUninstall"
-                  values={{ app: name }}
-                />
+                <Trans i18nKey="AppAction.uninstall.continueUninstall" values={{ app: name }} />
               </Button>
             </ButtonsContainer>
           </View>
         )}
       </Flex>
-    </BottomModal>
+    </QueuedDrawer>
   );
 };
 

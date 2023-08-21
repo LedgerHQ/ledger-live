@@ -8,7 +8,7 @@ export default function useExportLogs() {
   return useCallback(() => {
     const exportLogs = async () => {
       const logs = logReport.getLogs();
-      const base64 = Buffer.from(JSON.stringify(logs)).toString("base64");
+      const base64 = Buffer.from(JSON.stringify(logs, null, 2)).toString("base64");
       const version = getFullAppVersion(undefined, undefined, "-");
       const date = new Date().toISOString().split("T")[0];
 
@@ -25,10 +25,7 @@ export default function useExportLogs() {
       try {
         await Share.open(options);
       } catch (err) {
-        if (
-          (err as { error?: { code?: string } })?.error?.code !==
-          "ECANCELLED500"
-        ) {
+        if ((err as { error?: { code?: string } })?.error?.code !== "ECANCELLED500") {
           logger.critical(err as Error);
         }
       }

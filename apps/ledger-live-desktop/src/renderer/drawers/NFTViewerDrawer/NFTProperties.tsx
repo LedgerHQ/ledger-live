@@ -1,0 +1,80 @@
+import React, { useMemo } from "react";
+import styled from "styled-components";
+import Text from "~/renderer/components/Text";
+import Skeleton from "~/renderer/components/Nft/Skeleton";
+import { useTranslation } from "react-i18next";
+import { NFTMetadata } from "@ledgerhq/types-live";
+const NFTProperty = styled.div`
+  display: inline-flex;
+  flex-direction: column;
+  padding: 8px 12px;
+  background: rgba(138, 128, 219, 0.1);
+  border-radius: 4px;
+`;
+const NFTPropertiesContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  row-gap: 12px;
+  column-gap: 16px;
+`;
+const Separator = styled.div`
+  width: 100%;
+  height: 1px;
+  background-color: ${({ theme }) => theme.colors.palette.text.shade10};
+  margin: 24px 0px;
+`;
+type NFTPropertiesProps = {
+  metadata: NFTMetadata;
+  status: string;
+};
+export function NFTProperties({ metadata, status }: NFTPropertiesProps) {
+  const { t } = useTranslation();
+  const showSkeleton = useMemo(() => status === "loading", [status]);
+  if (!metadata?.properties?.length) return null;
+  return (
+    <React.Fragment>
+      <Text
+        mb="12px"
+        lineHeight="17px"
+        fontSize="14px"
+        color="palette.text.shade50"
+        ff="Inter|SemiBold"
+      >
+        {t("NFT.viewer.attributes.properties")}
+      </Text>
+      <NFTPropertiesContainer>
+        {metadata ? (
+          metadata.properties.map(({ key, value }) => (
+            <NFTProperty key={key + value}>
+              <Text
+                mb="2px"
+                lineHeight="12.1px"
+                fontSize={2}
+                color="rgba(138, 128, 219, 0.5);"
+                ff="Inter|SemiBold"
+                uppercase
+              >
+                {key}
+              </Text>
+              <Text mb="2px" lineHeight="16.94px" fontSize={4} color="#8a80db" ff="Inter|Regular">
+                {value}
+              </Text>
+            </NFTProperty>
+          ))
+        ) : (
+          <>
+            <Skeleton width={66} barHeight={50} show={showSkeleton} />
+            <Skeleton width={66} barHeight={50} show={showSkeleton} />
+            <Skeleton width={66} barHeight={50} show={showSkeleton} />
+            <Skeleton width={66} barHeight={50} show={showSkeleton} />
+            <Skeleton width={66} barHeight={50} show={showSkeleton} />
+            <Skeleton width={66} barHeight={50} show={showSkeleton} />
+            <Skeleton width={66} barHeight={50} show={showSkeleton} />
+          </>
+        )}
+      </NFTPropertiesContainer>
+      <Separator />
+    </React.Fragment>
+  );
+}

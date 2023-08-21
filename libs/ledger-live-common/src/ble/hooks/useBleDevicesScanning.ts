@@ -23,10 +23,7 @@ export type UseBleDevicesScanningResult = {
 
 export type UseBleDevicesScanningDependencies = {
   bleTransportListen: (
-    observer: TransportObserver<
-      DescriptorEvent<TransportBleDevice | null>,
-      HwTransportError
-    >
+    observer: TransportObserver<DescriptorEvent<TransportBleDevice | null>, HwTransportError>,
   ) => TransportSubscription;
 };
 
@@ -43,8 +40,22 @@ const DEFAULT_RESTART_SCANNING_TIMEOUT_MS = 4000;
 /**
  * Scans the BLE devices around the user
  *
- * Note: if a communication is started with a device, the scanning should be stopped
+ * Warning: if a communication is started with a device, the scanning should be stopped
  *
+ * Warning: handling of bluetooth (and location for Android) permissions and enabling bluetooth (and location) services are not handled here.
+ * They should be handled (with fallback logic) by the consumer of this hook.
+ *
+ * Reason: depending on the bleTransportListen function and the user's operating system, errors related to denied bluetooth (and location for Android) permissions
+ * or related to disabled bluetooth (and location) services might be different.
+ * For ex:
+ * - on Android, using the current Transport from react-native-hw-transport-ble, if the bluetooth is off,
+ *  a BluetoothScanStartFailed error is thrown, not an actual "BluetoothOff" or "BluetoothUnauthorized" error.
+ *  It is a problem because this BluetoothScanStartFailed error could happen for other reason than the BLE being off.
+ *  On the other side, if the location service (needed for Android) is off, an error "LocationServicesDisabled" is thrown.
+ *
+ * - on iOS, using the current Transport from react-native-hw-transport-ble, if the bluetooth is off, no error is thrown at all.
+ *
+ * @param bleTransportListen The listen function from an implementation of a BLE transport
  * @param filterByDeviceModelIds An array of device model ids to filter on
  * @param filterOutDevicesByDeviceIds An array of device ids to filter out
  * @param stopBleScanning Flag to stop or continue the scanning
@@ -63,8 +74,7 @@ export const useBleDevicesScanning = ({
   restartScanningTimeoutMs = DEFAULT_RESTART_SCANNING_TIMEOUT_MS,
 }: UseBleDevicesScanningDependencies &
   UseBleDevicesScanningOptions): UseBleDevicesScanningResult => {
-  const [scanningBleError, setScanningBleError] =
-    useState<ScanningBleError>(null);
+  const [scanningBleError, setScanningBleError] = useState<ScanningBleError>(null);
   const [scannedDevices, setScannedDevices] = useState<ScannedDevice[]>([]);
   // To check for duplicates. The ref will persist for the full lifetime of the component
   // in which the hook is called, and does not re-trigger the hook when being updated.
@@ -85,10 +95,7 @@ export const useBleDevicesScanning = ({
     const sub = of(bleScanningSource)
       .pipe(concatAll())
       .subscribe({
-        next: (event: {
-          type: DescriptorEventType;
-          descriptor: TransportBleDevice | null;
-        }) => {
+        next: (event: { type: DescriptorEventType; descriptor: TransportBleDevice | null }) => {
           setScanningBleError(null);
           const { type, descriptor } = event;
 
@@ -96,7 +103,7 @@ export const useBleDevicesScanning = ({
             const transportDevice = descriptor;
 
             const isScannedDeviceDuplicate = scannedDevicesRef.current.some(
-              (d) => d.deviceId === transportDevice.id
+              d => d.deviceId === transportDevice.id,
             );
 
             // Avoiding duplicates
@@ -104,22 +111,16 @@ export const useBleDevicesScanning = ({
               return;
             }
 
-            const shouldScannedDeviceBeFilteredOut =
-              filterOutDevicesByDeviceIds?.some(
-                (deviceId) => deviceId === transportDevice.id
-              );
+            const shouldScannedDeviceBeFilteredOut = filterOutDevicesByDeviceIds?.some(
+              deviceId => deviceId === transportDevice.id,
+            );
 
             if (shouldScannedDeviceBeFilteredOut) {
               return;
             }
 
-            if (
-              transportDevice.serviceUUIDs &&
-              transportDevice.serviceUUIDs.length > 0
-            ) {
-              const bleInfo = getInfosForServiceUuid(
-                transportDevice.serviceUUIDs[0]
-              );
+            if (transportDevice.serviceUUIDs && transportDevice.serviceUUIDs.length > 0) {
+              const bleInfo = getInfosForServiceUuid(transportDevice.serviceUUIDs[0]);
 
               if (!bleInfo) {
                 return;
@@ -136,17 +137,12 @@ export const useBleDevicesScanning = ({
               const newScannedDevice = {
                 deviceModel: bleInfo.deviceModel,
                 deviceName:
-                  transportDevice.localName ??
-                  transportDevice.name ??
-                  DEFAULT_DEVICE_NAME,
+                  transportDevice.localName ?? transportDevice.name ?? DEFAULT_DEVICE_NAME,
                 deviceId: transportDevice.id,
                 bleRssi: transportDevice.rssi,
               };
 
-              setScannedDevices((scannedDevices) => [
-                ...scannedDevices,
-                newScannedDevice,
-              ]);
+              setScannedDevices(scannedDevices => [...scannedDevices, newScannedDevice]);
               scannedDevicesRef.current.push(newScannedDevice);
             }
           }
@@ -156,7 +152,7 @@ export const useBleDevicesScanning = ({
 
           if (
             error instanceof HwTransportError &&
-            error.type === HwTransportErrorType.BleScanStartFailed
+            error.type === HwTransportErrorType.BluetoothScanStartFailed
           ) {
             setIsRestartNeeded(true);
           }
@@ -181,7 +177,7 @@ export const useBleDevicesScanning = ({
     let timer;
     if (isRestartNeeded && !stopBleScanning) {
       timer = setTimeout(() => {
-        setRestartScanningNonce((prev) => prev + 1);
+        setRestartScanningNonce(prev => prev + 1);
         setIsRestartNeeded(false);
       }, restartScanningTimeoutMs);
     }

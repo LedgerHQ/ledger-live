@@ -26,12 +26,15 @@ const estimateMaxSpendable = async ({
     const networkInfo = await getAccountNetworkInfo(mainAccount);
     feePerByte = networkInfo.feeItems.defaultFeePerByte;
   }
+
   const maxSpendable = await wallet.estimateAccountMaxSpendable(
     walletAccount,
     feePerByte.toNumber(), //!\ wallet-btc handles fees as JS number
     transaction?.utxoStrategy?.excludeUTXOs || [],
-    transaction ? [transaction.recipient] : []
+    transaction ? [transaction.recipient] : [],
+    transaction?.opReturnData,
   );
+
   return maxSpendable.lt(0) ? new BigNumber(0) : maxSpendable;
 };
 

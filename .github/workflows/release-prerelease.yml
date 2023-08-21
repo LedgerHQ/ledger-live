@@ -2,14 +2,19 @@ name: "[Release](Prerelease) Publish packages and apps"
 on:
   push:
     branches:
-      - "release"
-      - "releases/**"
-      - "hotfix"
+      - release
+      - hotfix
   workflow_dispatch:
     inputs:
       ref:
         description: the branch to prerelease from
         required: true
+      recover:
+        description: Recover Beta release track
+        required: false
+        type: boolean
+        default: false
+
 jobs:
   prerelease:
     name: Prerelease
@@ -17,53 +22,28 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
-      - uses: 8BitJonny/gh-get-current-pr@2.1.1
-        id: PR
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
         with:
-          github-token: ${{ github.token }}
-          # Verbose setting SHA when using Pull_Request event trigger to fix #16. (For push even trigger this is not necessary.)
-          sha: ${{ github.event.pull_request.head.sha }}
-          # Only return if PR is still open. (By default it returns PRs in any state.)
-          filterOutClosed: true
-          # Only return if PR is not in draft state. (By default it returns PRs in any state.)
-          filterOutDraft: true
-
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - uses: actions/checkout@v3
         if: ${{ github.event_name == 'push' }}
         with:
-          token: ${{ secrets.GH_PAT }}
+          token: ${{ steps.generate-token.outputs.token }}
       - uses: actions/checkout@v3
         if: ${{ github.event_name == 'workflow_dispatch' }}
         with:
-          ref: ${{ github.event.inputs.ref }}
-          token: ${{ secrets.GH_PAT }}
+          ref: ${{ inputs.ref }}
+          token: ${{ steps.generate-token.outputs.token }}
 
       - name: set git user
         run: |
-          git config user.email "team-live@ledger.fr"
-          git config user.name "Team Live"
-      - uses: pnpm/action-setup@v2
-        with:
-          version: latest
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16.x
-          cache: pnpm
-          cache-dependency-path: "**/pnpm-lock.yaml"
-          registry-url: "https://registry.npmjs.org"
-      # - uses: ruby/setup-ruby@v1
-      #   with:
-      #     ruby-version:
-      #       3.1.2 # Not needed with a .ruby-version file
-      #       # runs 'bundle install' and caches installed gems automatically
-      # - name: Cache LLM pods
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: |
-      #       apps/ledger-live-mobile/ios/Pods
-      #       ~/Library/Caches/CocoaPods
-      #       ~/.cocoapods
-      #     key: ${{ runner.os }}-pods-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock') }}
+          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
+          git config user.name "live-github-bot[bot]"
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
       - uses: ./tools/actions/get-package-infos
         id: desktop-version
         with:
@@ -73,29 +53,10 @@ jobs:
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
       - name: install dependencies
-        run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli" --frozen-lockfile
+        run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli"
       - name: build libs
         run: pnpm run build:libs
-      - name: Get changeset ignore value
-        id: get-ignore
-        uses: notiz-dev/github-action-json-property@release
-        with:
-          path: ".changeset/config.json"
-          prop_path: "ignore.0"
-      - name: versioning desktop
-        if: ${{ contains(steps.PR.outputs.pr_title, 'LLD') }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          [[ "${{ steps.get-ignore.outputs.prop }}" = "live-mobile" ]] && pnpm changeset version || pnpm changeset version --ignore live-mobile
-      - name: versioning mobile
-        if: ${{ contains(steps.PR.outputs.pr_title, 'LLM') }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          [[ "${{ steps.get-ignore.outputs.prop }}" = "ledger-live-desktop" ]] && pnpm changeset version || pnpm changeset version --ignore ledger-live-desktop
-      - name: versioning all
-        if: ${{ !contains(steps.PR.outputs.pr_title, 'LLD') && !contains(steps.PR.outputs.pr_title, 'LLM') }}
+      - name: versioning
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm changeset version
@@ -114,7 +75,7 @@ jobs:
           LLM: LLM(${{ steps.post-mobile-version.outputs.version }})
         run: |
           git add . &&
-          git commit -m ":rocket: release prerelease [${{ contains(steps.PR.outputs.pr_title, 'LLD') && env.LLD || env.LLM }}]" ||
+          git commit -m "chore(prerelease): :rocket: release prerelease [${{ env.LLD }}, ${{ env.LLM }}]" ||
           echo ""
       - name: commit (from hotfix branch)
         if: ${{ startsWith(github.ref_name, 'hotfix') }}
@@ -123,13 +84,13 @@ jobs:
           LLM: LLM(${{ steps.post-mobile-version.outputs.version }})
         run: |
           git add . &&
-          git commit -m ":fire: hotfix prerelease [${{ contains(steps.PR.outputs.pr_title, 'LLD') && env.LLD || env.LLM }}]" ||
+          git commit -m "chore(hotfix): :fire: hotfix prerelease [${{ env.LLD }}, ${{ env.LLM }}]" ||
           echo ""
-      - name: commit (from ${{ github.event.inputs.ref }} branch) workflow dispatch
+      - name: commit (from ${{ inputs.ref }} branch) workflow dispatch
         if: ${{ github.event_name == 'workflow_dispatch' }}
         run: |
           git add .
-          git commit -m ":rocket: ${{ github.event.inputs.ref }} prerelease [LLD(${{ steps.post-desktop-version.outputs.version }}), LLM(${{ steps.post-mobile-version.outputs.version }})]" ||
+          git commit -m "chore(prerelease): :rocket: ${{ inputs.ref }} prerelease [LLD(${{ steps.post-desktop-version.outputs.version }}), LLM(${{ steps.post-mobile-version.outputs.version }})]" ||
           echo ""
       - name: publish prerelease
         run: pnpm changeset publish
@@ -152,12 +113,12 @@ jobs:
         if: ${{ github.event_name == 'workflow_dispatch' }}
         run: |
           git pull --rebase
-          git push origin ${{ github.event.inputs.ref }} --follow-tags
+          git push origin ${{ inputs.ref }} --follow-tags
       - uses: actions/github-script@v6
         name: trigger prerelease build for desktop
         if: ${{ steps.desktop-version.outputs.version != steps.post-desktop-version.outputs.version }}
         with:
-          github-token: ${{ secrets.GH_PAT }}
+          github-token: ${{ steps.generate-token.outputs.token }}
           script: |
             github.rest.actions.createWorkflowDispatch({
               owner: "ledgerhq",
@@ -165,21 +126,21 @@ jobs:
               ref: "main",
               workflow_id: "pre-desktop.yml",
               inputs: {
-                ref: "${{ github.event_name == 'workflow_dispatch' && github.event.inputs.ref || github.ref_name }}",
+                ref: "${{ github.event_name == 'workflow_dispatch' && inputs.ref || github.ref_name }}",
               }
             });
       - uses: actions/github-script@v6
         name: trigger prerelease build of mobile
         if: ${{ steps.mobile-version.outputs.version != steps.post-mobile-version.outputs.version }}
         with:
-          github-token: ${{ secrets.GH_PAT }}
+          github-token: ${{ steps.generate-token.outputs.token }}
           script: |
             github.rest.actions.createWorkflowDispatch({
               owner: "ledgerhq",
               repo: "ledger-live-build",
               ref: "main",
-              workflow_id: "pre-mobile.yml",
+              workflow_id: "${{ inputs.recover && 'pre-mobile-recover.yml' || 'pre-mobile.yml' }}",
               inputs: {
-                ref: "${{ github.event_name == 'workflow_dispatch' && github.event.inputs.ref || github.ref_name }}",
+                ref: "${{ github.event_name == 'workflow_dispatch' && inputs.ref || github.ref_name }}",
               }
             });

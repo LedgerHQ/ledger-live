@@ -3,10 +3,7 @@ import invariant from "invariant";
 import React, { useCallback, useMemo } from "react";
 import { FlatList, StyleSheet, View, SafeAreaView } from "react-native";
 import { useSelector } from "react-redux";
-import {
-  CeloAccount,
-  CeloValidatorGroup,
-} from "@ledgerhq/live-common/families/celo/types";
+import { CeloAccount, CeloValidatorGroup } from "@ledgerhq/live-common/families/celo/types";
 import { useCeloPreloadData } from "@ledgerhq/live-common/families/celo/react";
 import {
   activatableVotes,
@@ -20,10 +17,7 @@ import ValidatorRow from "../ValidatorRow";
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import { CeloActivateFlowParamList } from "./types";
 
-type Props = StackNavigatorProps<
-  CeloActivateFlowParamList,
-  ScreenName.CeloActivateValidatorSelect
->;
+type Props = StackNavigatorProps<CeloActivateFlowParamList, ScreenName.CeloActivateValidatorSelect>;
 
 export default function SelectValidator({ navigation, route }: Props) {
   const { colors } = useTheme();
@@ -72,7 +66,13 @@ export default function SelectValidator({ navigation, route }: Props) {
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="ActivateFlow" name="SelectValidator" />
+      <TrackScreen
+        category="ActivateFlow"
+        name="SelectValidator"
+        flow="stake"
+        action="activate"
+        currency="celo"
+      />
       <View style={styles.header}>
         <ValidatorHead />
       </View>
@@ -98,8 +98,5 @@ const styles = StyleSheet.create({
   },
 });
 
-const keyExtractor = ({
-  validatorGroup,
-}: {
-  validatorGroup: CeloValidatorGroup;
-}) => validatorGroup.address;
+const keyExtractor = ({ validatorGroup }: { validatorGroup: CeloValidatorGroup }) =>
+  validatorGroup.address;

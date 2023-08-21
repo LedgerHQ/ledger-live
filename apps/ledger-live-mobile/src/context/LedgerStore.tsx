@@ -1,10 +1,11 @@
 import React, { Component } from "react";
 import { Provider } from "react-redux";
+import Config from "react-native-config";
 import thunk from "redux-thunk";
-import { createStore, applyMiddleware, compose } from "redux";
+import { createStore, applyMiddleware, compose, type Middleware } from "redux";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
 import { CounterValuesStateRaw } from "@ledgerhq/live-common/countervalues/types";
-import { initialState as postOnboardingState } from "@ledgerhq/live-common/postOnboarding/reducer";
+import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import {
   getAccounts,
   getCountervalues,
@@ -18,40 +19,18 @@ import { importSettings } from "../actions/settings";
 import { importStore as importAccounts } from "../actions/accounts";
 import { importBle } from "../actions/ble";
 import { updateProtectData, updateProtectStatus } from "../actions/protect";
-import {
-  INITIAL_STATE as settingsState,
-  supportedCountervalues,
-} from "../reducers/settings";
-import { INITIAL_STATE as accountsState } from "../reducers/accounts";
-import { INITIAL_STATE as appstateState } from "../reducers/appstate";
-import { INITIAL_STATE as bleState } from "../reducers/ble";
-import { INITIAL_STATE as notificationsState } from "../reducers/notifications";
-import { INITIAL_STATE as swapState } from "../reducers/swap";
-import { INITIAL_STATE as ratingsState } from "../reducers/ratings";
-import { INITIAL_STATE as walletconnectState } from "../reducers/walletconnect";
-import { INITIAL_STATE as dynamicContentState } from "../reducers/dynamicContent";
-import { INITIAL_STATE as protectState } from "../reducers/protect";
-import type { State } from "../reducers/types";
+import { INITIAL_STATE as settingsState, supportedCountervalues } from "../reducers/settings";
+import { listCachedCurrencyIds, hydrateCurrency } from "../bridge/cache";
 
-const INITIAL_STATE: State = {
-  accounts: accountsState,
-  appstate: appstateState,
-  ble: bleState,
-  notifications: notificationsState,
-  ratings: ratingsState,
-  settings: settingsState,
-  swap: swapState,
-  walletconnect: walletconnectState,
-  postOnboarding: postOnboardingState,
-  dynamicContent: dynamicContentState,
-  protect: protectState,
-};
+const middlewares: [Middleware] = [thunk];
 
-export const store = createStore(
-  reducers,
-  INITIAL_STATE,
-  compose(applyMiddleware(thunk)),
-);
+if (Config.DEBUG_RNDEBUGGER) {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const createDebugger = require("redux-flipper").default;
+  middlewares.push(createDebugger());
+}
+
+export const store = createStore(reducers, compose(applyMiddleware(...middlewares)));
 
 export type StoreType = typeof store;
 
@@ -88,12 +67,26 @@ export default class LedgerStoreProvider extends Component<
     store.dispatch(importBle(bleData));
     const settingsData = await getSettings();
 
+    const cachedCurrencyIds = await listCachedCurrencyIds();
+    // hydrate the store with the bridge/cache
+    // Promise.allSettled doesn't exist in RN
+    await Promise.all(
+      cachedCurrencyIds
+        .map(id => {
+          const currency = findCryptoCurrencyById?.(id);
+          return currency ? hydrateCurrency(currency) : Promise.reject();
+        })
+        .map(promise =>
+          promise
+            .then((value: unknown) => ({ status: "fulfilled", value }))
+            .catch((reason: unknown) => ({ status: "rejected", reason })),
+        ),
+    );
+
     if (
       settingsData &&
       settingsData.counterValue &&
-      !supportedCountervalues.find(
-        ({ ticker }) => ticker === settingsData.counterValue,
-      )
+      !supportedCountervalues.find(({ ticker }) => ticker === settingsData.counterValue)
     ) {
       settingsData.counterValue = settingsState.counterValue;
     }
@@ -104,9 +97,7 @@ export default class LedgerStoreProvider extends Component<
 
     const postOnboardingState = await getPostOnboardingState();
     if (postOnboardingState) {
-      store.dispatch(
-        importPostOnboardingState({ newState: postOnboardingState }),
-      );
+      store.dispatch(importPostOnboardingState({ newState: postOnboardingState }));
     }
 
     const protect = await getProtect();
@@ -130,10 +121,6 @@ export default class LedgerStoreProvider extends Component<
   render() {
     const { children } = this.props;
     const { ready, initialCountervalues } = this.state;
-    return (
-      <Provider store={store}>
-        {children(ready, store, initialCountervalues)}
-      </Provider>
-    );
+    return <Provider store={store}>{children(ready, store, initialCountervalues)}</Provider>;
   }
 }

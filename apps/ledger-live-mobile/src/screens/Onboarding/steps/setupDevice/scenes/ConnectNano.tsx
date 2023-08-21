@@ -1,14 +1,13 @@
 import React, { useCallback, useState } from "react";
+import { useDispatch } from "react-redux";
 import { Flex } from "@ledgerhq/native-ui";
-import { useDispatch, useSelector } from "react-redux";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import connectManager from "@ledgerhq/live-common/hw/connectManager";
-import { createAction, Result } from "@ledgerhq/live-common/hw/actions/manager";
+import { Result } from "@ledgerhq/live-common/hw/actions/manager";
 import DeviceActionModal from "../../../../../components/DeviceActionModal";
 import SelectDevice from "../../../../../components/SelectDevice";
 import SelectDevice2 from "../../../../../components/SelectDevice2";
-import { TrackScreen, updateIdentify } from "../../../../../analytics";
+import { TrackScreen } from "../../../../../analytics";
 import Button from "../../../../../components/PreventDoubleClickButton";
 
 import {
@@ -17,10 +16,7 @@ import {
   setLastConnectedDevice,
   setReadOnlyMode,
 } from "../../../../../actions/settings";
-import { updateUser } from "../../../../../user";
-import { readOnlyModeEnabledSelector } from "../../../../../reducers/settings";
-
-const action = createAction(connectManager);
+import { useManagerDeviceAction } from "../../../../../hooks/deviceActions";
 
 const ConnectNanoScene = ({
   onNext,
@@ -29,38 +25,34 @@ const ConnectNanoScene = ({
   onNext: () => void;
   deviceModelId: string;
 }) => {
+  const action = useManagerDeviceAction();
   const dispatch = useDispatch();
-  const readOnlyMode = useSelector(readOnlyModeEnabledSelector);
   const [device, setDevice] = useState<Device | undefined>();
 
   const newDeviceSelectionFeatureFlag = useFeature("llmNewDeviceSelection");
 
+  // Does not react to an header update request:
+  // Keeping the header (back arrow and information button) from the onboarding.
+  const requestToSetHeaderOptions = useCallback(() => undefined, []);
+
   const onSetDevice = useCallback(
     async (device: Device) => {
-      if (readOnlyMode) {
-        await updateUser();
-        await updateIdentify();
-      }
       dispatch(setLastConnectedDevice(device));
       setDevice(device);
       dispatch(setReadOnlyMode(false));
       dispatch(setHasOrderedNano(false));
     },
-    [dispatch, readOnlyMode],
+    [dispatch],
   );
 
   const directNext = useCallback(
     async device => {
-      if (readOnlyMode) {
-        await updateUser();
-        await updateIdentify();
-      }
       dispatch(setLastConnectedDevice(device));
       dispatch(setReadOnlyMode(false));
       dispatch(setHasOrderedNano(false));
       onNext();
     },
-    [dispatch, onNext, readOnlyMode],
+    [dispatch, onNext],
   );
 
   const onResult = useCallback(
@@ -90,7 +82,12 @@ const ConnectNanoScene = ({
       <TrackScreen category="Onboarding" name="PairNew" />
       <Flex flex={1}>
         {newDeviceSelectionFeatureFlag?.enabled ? (
-          <SelectDevice2 onSelect={onSetDevice} stopBleScanning={!!device} />
+          <SelectDevice2
+            onSelect={onSetDevice}
+            stopBleScanning={!!device}
+            requestToSetHeaderOptions={requestToSetHeaderOptions}
+            isChoiceDrawerDisplayedOnAddDevice={false}
+          />
         ) : (
           <SelectDevice
             withArrows
@@ -128,7 +125,7 @@ const Next = ({ onNext }: { onNext: () => void }) => {
         onNext();
       }}
     >
-      (DEV) skip this step
+      (DEV) SKIP THIS STEP
     </Button>
   ) : null;
 };

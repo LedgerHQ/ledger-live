@@ -1,13 +1,7 @@
 import React, { useCallback, useMemo, useState } from "react";
-import {
-  Flex,
-  FlowStepper,
-  Text,
-  Button,
-  Transitions,
-} from "@ledgerhq/native-ui";
+import { Flex, FlowStepper, Text, Button, Transitions } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
-import { RenderTransitionProps } from "@ledgerhq/native-ui/components/Navigation/FlowStepper";
+import { RenderTransitionProps } from "@ledgerhq/native-ui/components/Navigation/FlowStepper/index";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -54,11 +48,7 @@ const Header = ({ step }: { step: number }) => {
   }, [navigation]);
 
   return (
-    <Flex
-      justifyContent="space-between"
-      alignItems="center"
-      flexDirection="row"
-    >
+    <Flex justifyContent="space-between" alignItems="center" flexDirection="row">
       <Button iconName="ArrowLeft" size="large" onPress={onBack} />
       <Flex justifyContent="center" alignItems="center">
         <Text variant="small">
@@ -83,10 +73,7 @@ const Header = ({ step }: { step: number }) => {
   );
 };
 
-type Props = StackNavigatorProps<
-  OnboardingNavigatorParamList,
-  ScreenName.OnboardingQuiz
->;
+type Props = StackNavigatorProps<OnboardingNavigatorParamList, ScreenName.OnboardingQuiz>;
 
 function OnboardingQuiz({ navigation, route }: Props) {
   const { t } = useTranslation();

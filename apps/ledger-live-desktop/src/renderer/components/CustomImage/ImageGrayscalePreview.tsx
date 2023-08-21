@@ -1,11 +1,11 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Flex } from "@ledgerhq/react-ui";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Flex, Theme } from "@ledgerhq/react-ui";
 import { ImageProcessingError } from "@ledgerhq/live-common/customImage/errors";
-import { createCanvas, scaleDimensions } from "./imageUtils";
+import { createCanvas } from "./imageUtils";
 import { ImageBase64Data, ImageDimensions } from "./types";
-import { targetDisplayDimensions } from "./shared";
 import ContrastChoice from "./ContrastChoice";
 import FramedImage from "./FramedImage";
+import { useTheme } from "styled-components";
 
 export type ProcessorPreviewResult = ImageBase64Data & ImageDimensions;
 export type ProcessorRawResult = { hexData: string } & ImageDimensions;
@@ -15,14 +15,24 @@ export type ProcessorResult = {
   rawResult: ProcessorRawResult;
 };
 
-const contrasts = [
-  { val: 1, color: "neutral.c70" },
-  { val: 1.5, color: "neutral.c50" },
-  { val: 2, color: "neutral.c40" },
-  { val: 3, color: "neutral.c30" },
+const getContrasts = (theme: Theme) => [
+  {
+    val: 1,
+    color: { topLeft: theme.colors.neutral.c40, bottomRight: theme.colors.neutral.c30 },
+  },
+  {
+    val: 1.5,
+    color: { topLeft: theme.colors.neutral.c50, bottomRight: theme.colors.neutral.c30 },
+  },
+  {
+    val: 2,
+    color: { topLeft: theme.colors.neutral.c60, bottomRight: theme.colors.neutral.c30 },
+  },
+  {
+    val: 3,
+    color: { topLeft: theme.colors.neutral.c70, bottomRight: theme.colors.neutral.c30 },
+  },
 ];
-
-const imageDimensions = scaleDimensions(targetDisplayDimensions, 0.45);
 
 function clamp(val: number, min: number, max: number) {
   return Math.min(max, Math.max(min, val));
@@ -154,21 +164,29 @@ export type Props = ImageBase64Data & {
   onError: (_: Error) => void;
   onResult: (_: ProcessorResult) => void;
   setLoading: (_: boolean) => void;
+  onContrastChanged: (_: { index: number; value: number }) => void;
 };
 
 const ImageGrayscalePreview: React.FC<Props> = props => {
-  const { onError, imageBase64DataUri, onResult, setLoading } = props;
-  const [contrast, setContrast] = useState<number>(contrasts[0].val);
+  const { onError, imageBase64DataUri, onResult, setLoading, onContrastChanged } = props;
+  const [contrastIndex, setContrastIndex] = useState<number>(0);
   const [sourceUriLoaded, setSourceUriLoaded] = useState<string | null>(null);
   const [previewResult, setPreviewResult] = useState<ProcessorPreviewResult | null>(null);
   const sourceImageRef = useRef<HTMLImageElement | null>(null);
+
+  const theme = useTheme();
+  const contrasts = useMemo(() => getContrasts(theme), [theme]);
+
+  useEffect(() => {
+    onContrastChanged({ index: contrastIndex, value: contrasts[contrastIndex].val });
+  }, [contrastIndex, contrasts, onContrastChanged]);
 
   useEffect(() => {
     if (sourceImageRef.current && sourceUriLoaded && sourceUriLoaded === imageBase64DataUri) {
       try {
         const { previewResult, rawResult } = processImage({
           image: sourceImageRef.current,
-          contrast,
+          contrast: contrasts[contrastIndex].val,
         });
         setPreviewResult(previewResult);
         onResult({ previewResult, rawResult });
@@ -181,11 +199,12 @@ const ImageGrayscalePreview: React.FC<Props> = props => {
   }, [
     sourceUriLoaded,
     imageBase64DataUri,
-    contrast,
+    contrasts,
     onResult,
     sourceImageRef,
     setLoading,
     onError,
+    contrastIndex,
   ]);
 
   const handleSourceLoaded = useCallback(
@@ -203,16 +222,14 @@ const ImageGrayscalePreview: React.FC<Props> = props => {
         style={{ opacity: 0, position: "absolute", pointerEvents: "none" }}
         onLoad={handleSourceLoaded}
       />
-      {previewResult ? (
-        <FramedImage src={previewResult?.imageBase64DataUri} dimensions={imageDimensions} />
-      ) : null}
-      <Flex alignSelf="center" flexDirection="row" mt={8} columnGap={6}>
+      {previewResult ? <FramedImage source={previewResult?.imageBase64DataUri} /> : null}
+      <Flex alignSelf="center" flexDirection="row" mt={8} columnGap={2}>
         {contrasts.map(({ val, color }, index) => (
           <ContrastChoice
             key={val}
-            onClick={() => setContrast(val)}
+            onClick={() => setContrastIndex(index)}
             color={color}
-            selected={contrast === val}
+            selected={contrastIndex === index}
             index={index}
           />
         ))}
@@ -221,4 +238,4 @@ const ImageGrayscalePreview: React.FC<Props> = props => {
   );
 };
 
-export default ImageGrayscalePreview;
+export default React.memo(ImageGrayscalePreview);

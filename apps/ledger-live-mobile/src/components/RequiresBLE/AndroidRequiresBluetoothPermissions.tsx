@@ -1,118 +1,41 @@
-import { Button, Flex, Link, Text } from "@ledgerhq/native-ui";
-import React, { ReactNode, useCallback, useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { AppState, Linking, PermissionsAndroid } from "react-native";
-import { useIsMounted } from "../../helpers/useIsMounted";
-import BottomModal from "../BottomModal";
-import {
-  bluetoothPermissions,
-  checkBluetoothPermissions,
-  requestBluetoothPermissions,
-  RequestMultipleResult,
-} from "./androidBlePermissions";
-import BluetoothDisabled from "./BluetoothDisabled";
+import React, { ReactNode } from "react";
+import BluetoothPermissionsDenied from "./BluetoothPermissionsDenied";
+import { useAndroidBluetoothPermissions } from "./hooks/useAndroidBluetoothPermissions";
 
-const { RESULTS } = PermissionsAndroid;
+type Props = {
+  children?: ReactNode | undefined;
+  forceOpenSettingsOnErrorButton?: boolean;
+};
 
 /**
- * Renders an error if location is required & not available,
- * otherwise renders children
+ * Renders children if the permissions for the bluetooth are granted.
+ * Otherwise, tries to request the permissions. And if the user denies, renders an error.
+ *
+ * Should only be used for Android.
+ *
+ * @param children The children to render if bluetooth has its associated permissions granted
+ * @param forceOpenSettingsOnErrorButton Used mainly for debug purposes. If true, on a permission denied, pressing the button on
+ *   the error component will make the user go to the settings. Otherwise it will try to prompt the user to allow permission
+ *   if possible. Defaults to false.
  */
-const AndroidRequiresBluetoothPermissions: React.FC<{
-  children?: ReactNode | undefined;
-}> = ({ children }) => {
-  const { t } = useTranslation();
-  const isMounted = useIsMounted();
-  const [requestResult, setRequestResult] =
-    useState<RequestMultipleResult | null>(null);
-  const [checkResult, setCheckResult] = useState<boolean | null>(null);
-  const [modalOpened, setModalOpened] = useState(false);
+const AndroidRequiresBluetoothPermissions: React.FC<Props> = ({
+  children,
+  forceOpenSettingsOnErrorButton = false,
+}) => {
+  const { hasPermissions, neverAskAgain, requestForPermissionsAgain } =
+    useAndroidBluetoothPermissions();
 
-  const { allGranted, generalStatus } = requestResult || {};
+  if (hasPermissions === "unknown") return null; // Prevents blink
 
-  /** https://developer.android.com/about/versions/11/privacy/permissions#dialog-visibility */
-  const neverAskAgain = generalStatus === RESULTS.NEVER_ASK_AGAIN;
-
-  const requestPermission = useCallback(() => {
-    requestBluetoothPermissions().then(res => {
-      if (!isMounted()) return;
-      setRequestResult(res);
-      if (!res.allGranted) setModalOpened(true);
-    });
-  }, [isMounted]);
-
-  useEffect(() => {
-    requestPermission();
-  }, [requestPermission]);
-
-  useEffect(() => {
-    const subscription = AppState.addEventListener("change", state => {
-      if (state === "active") {
-        checkBluetoothPermissions().then(res => {
-          if (!isMounted()) return;
-          setCheckResult(res);
-        });
-      }
-    });
-    return () => {
-      subscription.remove();
-    };
-  }, [isMounted]);
-
-  const closeModal = useCallback(() => {
-    setModalOpened(false);
-  }, []);
-  const showModal = useCallback(() => {
-    setModalOpened(true);
-  }, []);
-
-  const handleRetry = useCallback(() => {
-    neverAskAgain ? Linking.openSettings() : requestPermission();
-  }, [neverAskAgain, requestPermission]);
-
-  if (bluetoothPermissions.length === 0) return <>{children}</>;
-
-  if (allGranted || checkResult) return <>{children}</>;
-  if (requestResult === null) return null; // suspense PLZ
-  return (
-    <>
-      <BluetoothDisabled onRetry={showModal} />
-      <BottomModal isOpen={modalOpened} onClose={closeModal} noCloseButton>
-        <Flex flexDirection="row">
-          <Flex
-            flexDirection="column"
-            alignItems="stretch"
-            alignSelf="stretch"
-            pb={6}
-            flexShrink={0}
-          >
-            <Text variant="h4" fontWeight="semiBold">
-              {t("permissions.bluetooth.modalTitle")}
-            </Text>
-            <Text mt={6} mb={9} variant="body">
-              {neverAskAgain
-                ? t("permissions.bluetooth.modalDescriptionSettingsVariant")
-                : t("permissions.bluetooth.modalDescriptionBase")}
-            </Text>
-            <Button
-              type="main"
-              size="large"
-              mb={8}
-              alignSelf="stretch"
-              onPress={handleRetry}
-            >
-              {neverAskAgain
-                ? t("permissions.bluetooth.modalButtonLabelSettingsVariant")
-                : t("permissions.bluetooth.modalButtonLabelBase")}
-            </Button>
-            <Link type="shade" onPress={closeModal}>
-              {t("permissions.bluetooth.dontPair")}
-            </Link>
-          </Flex>
-        </Flex>
-      </BottomModal>
-    </>
+  return hasPermissions === "granted" ? (
+    <>{children}</>
+  ) : (
+    <BluetoothPermissionsDenied
+      onRetry={requestForPermissionsAgain}
+      neverAskAgain={neverAskAgain}
+      forceOpenSettings={forceOpenSettingsOnErrorButton}
+    />
   );
 };
 
-export default AndroidRequiresBluetoothPermissions;
+export default React.memo(AndroidRequiresBluetoothPermissions);

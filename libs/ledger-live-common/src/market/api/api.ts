@@ -1,26 +1,22 @@
-import {
-  MarketListRequestParams,
-  MarketCurrencyChartDataRequestParams,
-  CurrencyData,
-  SupportedCoins,
-  MarketCoin,
-  SparklineSvgData,
-} from "../types";
-import {
-  listCryptoCurrencies,
-  listTokens,
-  listSupportedCurrencies,
-} from "../../currencies";
-import { rangeDataTable } from "../utils/rangeDataTable";
+import network from "@ledgerhq/live-network/network";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { listCryptoCurrencies, listSupportedCurrencies, listTokens } from "../../currencies";
 import { getEnv } from "../../env";
-import network from "../../network";
+import {
+  CurrencyData,
+  MarketCoin,
+  MarketCurrencyChartDataRequestParams,
+  MarketListRequestParams,
+  SparklineSvgData,
+  SupportedCoins,
+} from "../types";
+import { rangeDataTable } from "../utils/rangeDataTable";
 
 const cryptoCurrenciesList = [...listCryptoCurrencies(), ...listTokens()];
 
 const supportedCurrencies = listSupportedCurrencies();
 
-const liveCompatibleIds = supportedCurrencies
+const liveCompatibleIds: string[] = supportedCurrencies
   .map(({ id }: CryptoCurrency) => id)
   .filter(Boolean);
 
@@ -36,9 +32,9 @@ async function setSupportedCoinsList(): Promise<SupportedCoins> {
 
   SUPPORTED_COINS_LIST = data;
 
-  LIVE_COINS_LIST = SUPPORTED_COINS_LIST.filter(({ id }) =>
-    liveCompatibleIds.includes(id)
-  ).map(({ id }) => id);
+  LIVE_COINS_LIST = SUPPORTED_COINS_LIST.filter(({ id }) => liveCompatibleIds.includes(id)).map(
+    ({ id }) => id,
+  );
 
   return SUPPORTED_COINS_LIST;
 }
@@ -110,9 +106,7 @@ async function listPaginated({
     limit = 100;
   } else {
     if (search) {
-      ids = SUPPORTED_COINS_LIST.filter(matchSearch(search)).map(
-        ({ id }) => id
-      );
+      ids = SUPPORTED_COINS_LIST.filter(matchSearch(search)).map(({ id }) => id);
       if (!ids.length) {
         return [];
       }
@@ -120,7 +114,7 @@ async function listPaginated({
 
     if (liveCompatible) {
       if (ids.length > 0) {
-        ids = LIVE_COINS_LIST.filter((id) => ids.includes(id));
+        ids = LIVE_COINS_LIST.filter(id => ids.includes(id));
       } else {
         ids = ids.concat(LIVE_COINS_LIST);
       }
@@ -128,7 +122,7 @@ async function listPaginated({
 
     if (starred.length > 0) {
       if (ids.length > 0) {
-        ids = starred.filter((id) => ids.includes(id));
+        ids = starred.filter(id => ids.includes(id));
       } else {
         ids = ids.concat(starred);
       }
@@ -139,9 +133,7 @@ async function listPaginated({
 
   const url =
     `${ROOT_PATH}/coins/markets?vs_currency=${counterCurrency}&order=${orderBy}_${order}&per_page=${limit}` +
-    `&sparkline=${
-      sparkline ? "true" : "false"
-    }&price_change_percentage=${range}` +
+    `&sparkline=${sparkline ? "true" : "false"}&price_change_percentage=${range}` +
     `${ids.length > 0 ? `&page=1&&ids=${ids.toString()}` : `&page=${page}`}`;
 
   let { data } = await network({
@@ -152,7 +144,7 @@ async function listPaginated({
   if (top100) {
     // Perform a search by the user's input and order the result by change in percentage
     data = data
-      .filter((currency) => {
+      .filter(currency => {
         if (!search) return true;
         const match = `${currency.symbol}|${currency.name}`;
         return match.toLowerCase().includes(search.toLowerCase());
@@ -160,7 +152,7 @@ async function listPaginated({
       .sort(
         (a, b) =>
           b[`price_change_percentage_${range}_in_currency`] -
-          a[`price_change_percentage_${range}_in_currency`]
+          a[`price_change_percentage_${range}_in_currency`],
       );
   }
 
@@ -192,7 +184,7 @@ async function listPaginated({
       image: currency.image,
       isLiveSupported: LIVE_COINS_LIST.includes(currency.id),
       internalCurrency: cryptoCurrenciesList.find(
-        ({ ticker }) => ticker.toLowerCase() === currency.symbol
+        ({ ticker }) => ticker.toLowerCase() === currency.symbol,
       ),
       marketcap: currency.market_cap,
       marketcapRank: currency.market_cap_rank,
@@ -201,8 +193,7 @@ async function listPaginated({
       low24h: currency.low_24h,
       ticker: currency.symbol,
       price: currency.current_price,
-      priceChangePercentage:
-        currency[`price_change_percentage_${range}_in_currency`],
+      priceChangePercentage: currency[`price_change_percentage_${range}_in_currency`],
       marketCapChangePercentage24h: currency.market_cap_change_percentage_24h,
       circulatingSupply: currency.circulating_supply,
       totalSupply: currency.total_supply,
@@ -212,12 +203,10 @@ async function listPaginated({
       atl: currency.atl,
       atlDate: currency.atl_date,
       sparklineIn7d: currency?.sparkline_in_7d?.price
-        ? sparklineAsSvgData(
-            distributedCopy(currency.sparkline_in_7d.price, 6 * 7)
-          ) // keep 6 points per day
+        ? sparklineAsSvgData(distributedCopy(currency.sparkline_in_7d.price, 6 * 7)) // keep 6 points per day
         : null,
       chartData: [],
-    })
+    }),
   );
 }
 

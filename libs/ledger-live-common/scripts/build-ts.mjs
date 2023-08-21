@@ -4,22 +4,15 @@ import rimraf from "rimraf";
 
 cd(path.join(__dirname, ".."));
 
-const promisifiedRimraf = (path) => {
-  return new Promise((resolve, reject) =>
-    rimraf(path, (e) => {
-      if (e) {
-        echo(chalk.red(e));
-        return reject(e);
-      }
-      resolve();
-    })
-  );
-};
-
-await Promise.all([
-  promisifiedRimraf("lib"),
-  promisifiedRimraf("src/data/icons/react*"),
-]);
+if (!process.env.CI) {
+  await rimraf([
+    "lib",
+    "src/data/icons/react",
+    "src/data/icons/reactNative",
+    "src/data/flags/react",
+    "src/data/flags/reactNative",
+  ]);
+}
 
 await $`zx ./scripts/sync-families-dispatch.mjs`;
 

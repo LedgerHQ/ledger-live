@@ -3,14 +3,7 @@ import { Platform } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { capitalize } from "lodash/fp";
-import {
-  Box,
-  Switch,
-  Text,
-  Button,
-  Icons,
-  InfiniteLoader,
-} from "@ledgerhq/native-ui";
+import { Box, Switch, Text, Button, IconsLegacy, InfiniteLoader } from "@ledgerhq/native-ui";
 import SettingsNavigationScrollView from "../SettingsNavigationScrollView";
 import SettingsRow from "../../../components/SettingsRow";
 import { track, TrackScreen, updateIdentify } from "../../../analytics";
@@ -24,6 +17,8 @@ const notificationsMapping = {
   areNotificationsAllowed: "allowed",
   announcementsCategory: "announcements",
   recommendationsCategory: "recommendations",
+  largeMoverCategory: "largeMover",
+  transactionsAlertsCategory: "transactionsAlerts",
 };
 
 type NotificationRowProps = {
@@ -32,11 +27,7 @@ type NotificationRowProps = {
   label?: string;
 };
 
-function NotificationSettingsRow({
-  disabled,
-  notificationKey,
-  label,
-}: NotificationRowProps) {
+function NotificationSettingsRow({ disabled, notificationKey, label }: NotificationRowProps) {
   const dispatch = useDispatch();
   const notifications = useSelector(notificationsSelector);
 
@@ -53,9 +44,7 @@ function NotificationSettingsRow({
         }),
       );
       track("toggle_clicked", {
-        toggle: `Toggle_${
-          capitalizedKey === "Allowed" ? "Allow" : capitalizedKey
-        }`,
+        toggle: `Toggle_${capitalizedKey === "Allowed" ? "Allow" : capitalizedKey}`,
         enabled: value,
       });
     },
@@ -69,11 +58,7 @@ function NotificationSettingsRow({
       desc={t(`settings.notifications.${translationKey}.desc`)}
       label={label}
     >
-      <Switch
-        checked={notifications[notificationKey]}
-        disabled={disabled}
-        onChange={onChange}
-      />
+      <Switch checked={notifications[notificationKey]} disabled={disabled} onChange={onChange} />
     </SettingsRow>
   );
 }
@@ -85,10 +70,9 @@ function NotificationsSettings() {
     getIsNotifEnabled,
     handlePushNotificationsPermission,
     pushNotificationsOldRoute,
+    notificationsCategoriesHidden,
   } = useNotifications();
-  const [isNotifPermissionEnabled, setIsNotifPermissionEnabled] = useState<
-    boolean | undefined
-  >();
+  const [isNotifPermissionEnabled, setIsNotifPermissionEnabled] = useState<boolean | undefined>();
 
   const refreshNotifPermission = useCallback(() => {
     getIsNotifEnabled().then(isNotifPermissionEnabled => {
@@ -99,7 +83,7 @@ function NotificationsSettings() {
   const allowPushNotifications = useCallback(() => {
     track("button_clicked", {
       button: "Go to system settings",
-      screen: pushNotificationsOldRoute,
+      page: pushNotificationsOldRoute,
     });
     handlePushNotificationsPermission();
   }, [pushNotificationsOldRoute, handlePushNotificationsPermission]);
@@ -127,12 +111,12 @@ function NotificationsSettings() {
         ? {
             osName: "iOS",
             ctaTransKey: "turnOnNotif",
-            ctaIcon: Icons.NotificationsMedium,
+            ctaIcon: IconsLegacy.NotificationsMedium,
           }
         : {
             osName: "Android",
             ctaTransKey: "goToSettings",
-            ctaIcon: Icons.SettingsMedium,
+            ctaIcon: IconsLegacy.SettingsMedium,
           },
     [],
   );
@@ -140,19 +124,13 @@ function NotificationsSettings() {
   return (
     <SettingsNavigationScrollView>
       <TrackScreen category="Settings" name="Notifications" />
-      {isNotifPermissionEnabled === null ||
-      isNotifPermissionEnabled === undefined ? (
+      {isNotifPermissionEnabled === null || isNotifPermissionEnabled === undefined ? (
         <InfiniteLoader />
       ) : (
         <Box>
           {!isNotifPermissionEnabled ? (
             <Box p={6} bg={"neutral.c30"} mx={6} borderRadius={2}>
-              <Text
-                color={"neutral.c100"}
-                variant={"large"}
-                fontWeight={"semiBold"}
-                mb={2}
-              >
+              <Text color={"neutral.c100"} variant={"large"} fontWeight={"semiBold"} mb={2}>
                 {t(`settings.notifications.disabledNotifications.title`)}
               </Text>
               <Text color={"neutral.c70"} variant={"bodyLineHeight"}>
@@ -167,9 +145,7 @@ function NotificationsSettings() {
                 Icon={platformData.ctaIcon}
                 iconPosition={"left"}
               >
-                {t(
-                  `settings.notifications.disabledNotifications.${platformData.ctaTransKey}`,
-                )}
+                {t(`settings.notifications.disabledNotifications.${platformData.ctaTransKey}`)}
               </Button>
             </Box>
           ) : null}
@@ -180,28 +156,40 @@ function NotificationsSettings() {
             />
           </Box>
           <Box
-            opacity={
-              isNotifPermissionEnabled && notifications.areNotificationsAllowed
-                ? 1
-                : 0.2
-            }
+            opacity={isNotifPermissionEnabled && notifications.areNotificationsAllowed ? 1 : 0.2}
           >
-            <NotificationSettingsRow
-              notificationKey={"announcementsCategory"}
-              disabled={disableSubSettings}
-            />
-            <NotificationSettingsRow
-              notificationKey={"recommendationsCategory"}
-              disabled={disableSubSettings}
-            />
+            {!notificationsCategoriesHidden ||
+            !notificationsCategoriesHidden.includes("announcementsCategory") ? (
+              <NotificationSettingsRow
+                notificationKey={"announcementsCategory"}
+                disabled={disableSubSettings}
+              />
+            ) : null}
+            {!notificationsCategoriesHidden ||
+            !notificationsCategoriesHidden.includes("recommendationsCategory") ? (
+              <NotificationSettingsRow
+                notificationKey={"recommendationsCategory"}
+                disabled={disableSubSettings}
+              />
+            ) : null}
+            {!notificationsCategoriesHidden ||
+            !notificationsCategoriesHidden.includes("largeMoverCategory") ? (
+              <NotificationSettingsRow
+                notificationKey={"largeMoverCategory"}
+                disabled={disableSubSettings}
+              />
+            ) : null}
+            {!notificationsCategoriesHidden ||
+            !notificationsCategoriesHidden.includes("transactionsAlertsCategory") ? (
+              <NotificationSettingsRow
+                notificationKey={"transactionsAlertsCategory"}
+                disabled={disableSubSettings}
+              />
+            ) : null}
           </Box>
           <Box m={6}>
             <Text
-              color={
-                notifications.areNotificationsAllowed
-                  ? "neutral.c40"
-                  : "neutral.c70"
-              }
+              color={notifications.areNotificationsAllowed ? "neutral.c40" : "neutral.c70"}
               variant={"small"}
               textAlign="center"
             >

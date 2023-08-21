@@ -1,9 +1,10 @@
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
 import { act, renderHook } from "@testing-library/react-hooks";
 import BigNumber from "bignumber.js";
-import { checkAccountSupported } from "../../../account/support";
+import { checkAccountSupported } from "../../../account/index";
 import ethBridge from "../../../families/ethereum/bridge/mock";
-import { genAccount, genTokenAccount } from "../../../mock/account";
+import { genTokenAccount } from "@ledgerhq/coin-framework/mocks/account";
+import { genAccount } from "../../../mock/account";
 import { useUpdateMaxAmount, ZERO } from "./useUpdateMaxAmount";
 
 // Needs to be mocked since userSupportedCurrencies is initially empty.
@@ -11,10 +12,7 @@ jest.mock("../../../account/support");
 const mockedCheckAccount = jest.mocked(checkAccountSupported);
 // Mock to use a custom estimate value and test the result.
 jest.mock("../../../families/ethereum/bridge/mock");
-const mockedEstimateMaxSpendable = jest.mocked(
-  ethBridge.accountBridge.estimateMaxSpendable,
-  true
-);
+const mockedEstimateMaxSpendable = jest.mocked(ethBridge.accountBridge.estimateMaxSpendable, true);
 
 const ETH = getCryptoCurrencyById("ethereum");
 const USDT = getTokenById("ethereum/erc20/usd_tether__erc20_");
@@ -47,7 +45,7 @@ describe("updateAmountUsingMax", () => {
     setFromAmount.mockClear();
   });
 
-  const wait = () => new Promise((resolve) => setTimeout(resolve, 500));
+  const wait = () => new Promise(resolve => setTimeout(resolve, 500));
 
   it("should toggle the amount", async () => {
     const amount = new BigNumber(0.5);
@@ -75,33 +73,6 @@ describe("updateAmountUsingMax", () => {
 
     expect(setFromAmount).toBeCalledTimes(1);
     expect(setFromAmount.mock.calls[0][0]).toBe(ZERO);
-  });
-
-  it("should toggle setIsSendMaxLoading", async () => {
-    const setIsSendMaxLoading = jest.fn();
-
-    const amount = new BigNumber(0.5);
-    mockedEstimateMaxSpendable.mockResolvedValue(amount);
-    const { result } = renderHook(useUpdateMaxAmount, {
-      initialProps: { ...defaultProps, setIsSendMaxLoading },
-    });
-
-    act(() => result.current.toggleMax());
-    expect(setIsSendMaxLoading).toBeCalledTimes(1);
-    expect(setIsSendMaxLoading).toBeCalledWith(true);
-    setIsSendMaxLoading.mockClear();
-
-    // Lest resort solution, since waitFor and other helpers will not work here.
-    await wait();
-
-    expect(setIsSendMaxLoading).toBeCalledTimes(1);
-    expect(setIsSendMaxLoading).toBeCalledWith(false);
-    setIsSendMaxLoading.mockClear();
-
-    act(() => result.current.toggleMax());
-    expect(setIsSendMaxLoading).toBeCalledTimes(1);
-    expect(setIsSendMaxLoading).toBeCalledWith(false);
-    setIsSendMaxLoading.mockClear();
   });
 
   it("should update the max amount whenever the dependencies change", async () => {

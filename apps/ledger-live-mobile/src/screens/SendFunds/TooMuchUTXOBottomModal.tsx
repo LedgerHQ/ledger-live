@@ -2,7 +2,7 @@ import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
-import BottomModal from "../../components/BottomModal";
+import QueuedDrawer from "../../components/QueuedDrawer";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
 import Info from "../../icons/Info";
@@ -17,15 +17,13 @@ type Props = {
 function ConfirmationModal({ isOpened, onClose, onPress, ...rest }: Props) {
   const { colors } = useTheme();
   return (
-    <BottomModal
+    <QueuedDrawer
       {...rest}
-      isOpened={isOpened}
+      isRequestingToBeOpened={isOpened}
       onClose={onClose}
       style={styles.confirmationModal}
     >
-      {isOpened ? (
-        <TrackScreen category="LendingNoTokenAccountInfoModal" />
-      ) : null}
+      {isOpened ? <TrackScreen category="LendingNoTokenAccountInfoModal" /> : null}
       <View
         style={[
           styles.icon,
@@ -51,7 +49,7 @@ function ConfirmationModal({ isOpened, onClose, onPress, ...rest }: Props) {
           onPress={onPress}
         />
       </View>
-    </BottomModal>
+    </QueuedDrawer>
   );
 }
 

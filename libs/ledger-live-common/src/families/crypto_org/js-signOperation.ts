@@ -1,18 +1,11 @@
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
-import { utils } from "@crypto-com/chain-jslib";
+import { utils } from "@crypto-org-chain/chain-jslib";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import CryptoOrgApp from "@ledgerhq/hw-app-cosmos";
-import {
-  CryptoOrgWrongSignatureHeader,
-  CryptoOrgSignatureSize,
-} from "./errors";
+import { CryptoOrgWrongSignatureHeader, CryptoOrgSignatureSize } from "./errors";
 import type { Transaction } from "./types";
-import type {
-  Account,
-  Operation,
-  SignOperationEvent,
-} from "@ledgerhq/types-live";
+import type { Account, Operation, SignOperationEvent } from "@ledgerhq/types-live";
 import { encodeOperationId } from "../../operation";
 import { withDevice } from "../../hw/deviceAccess";
 import { buildTransaction } from "./js-buildTransaction";
@@ -21,7 +14,7 @@ import { isTestNet } from "./logic";
 const buildOptimisticOperation = (
   account: Account,
   transaction: Transaction,
-  fee: BigNumber
+  fee: BigNumber,
 ): Operation => {
   const type = "OUT";
   const value = new BigNumber(transaction.amount).plus(fee);
@@ -108,8 +101,8 @@ const signOperation = ({
   deviceId: any;
   transaction: Transaction;
 }): Observable<SignOperationEvent> =>
-  withDevice(deviceId)((transport) =>
-    Observable.create((o) => {
+  withDevice(deviceId)(transport =>
+    Observable.create(o => {
       async function main() {
         o.next({
           type: "device-signature-requested",
@@ -122,20 +115,12 @@ const signOperation = ({
         // Get the public key
         const hwApp = new CryptoOrgApp(transport);
         const cointype = isTestNet(account.currency.id) ? "tcro" : "cro";
-        const { publicKey } = await hwApp.getAddress(
-          account.freshAddressPath,
-          cointype,
-          false
-        );
-        const unsigned = await buildTransaction(
-          account,
-          transaction,
-          publicKey
-        );
+        const { publicKey } = await hwApp.getAddress(account.freshAddressPath, cointype, false);
+        const unsigned = await buildTransaction(account, transaction, publicKey);
         // Sign by device
         const { signature } = await hwApp.sign(
           account.freshAddressPath,
-          unsigned.toSignDocument(0).toUint8Array()
+          unsigned.toSignDocument(0).toUint8Array(),
         );
 
         // Ledger has encoded the sig in ASN1 DER format, but we need a 64-byte buffer of <r,s>
@@ -143,10 +128,7 @@ const signOperation = ({
         if (signature != null) {
           const base64Sig = convertASN1toBase64(signature);
           const signed = unsigned
-            .setSignature(
-              0,
-              utils.Bytes.fromUint8Array(new Uint8Array(base64Sig))
-            )
+            .setSignature(0, utils.Bytes.fromUint8Array(new Uint8Array(base64Sig)))
             .toSigned()
             .getHexEncoded();
           o.next({
@@ -155,7 +137,7 @@ const signOperation = ({
           const operation = buildOptimisticOperation(
             account,
             transaction,
-            transaction.fees ?? new BigNumber(0)
+            transaction.fees ?? new BigNumber(0),
           );
           o.next({
             type: "signed",
@@ -170,9 +152,9 @@ const signOperation = ({
 
       main().then(
         () => o.complete(),
-        (e) => o.error(e)
+        e => o.error(e),
       );
-    })
+    }),
   );
 
 export default signOperation;

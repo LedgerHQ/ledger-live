@@ -14,13 +14,7 @@ type Props = {
   liveQrCode?: boolean;
   instruction?: React.ReactNode | string;
 };
-export default function CameraScreen({
-  width,
-  height,
-  progress,
-  liveQrCode,
-  instruction,
-}: Props) {
+export default function CameraScreen({ width, height, progress, liveQrCode, instruction }: Props) {
   // Make the viewfinder borders 2/3 of the screen shortest border
   const viewFinderSize = (width > height ? height : width) * (2 / 3);
   const wrapperStyle =
@@ -48,11 +42,7 @@ export default function CameraScreen({
         <QRCodeTopLayer liveQrCode={liveQrCode} />
       </View>
       <QRCodeRectangleViewport viewFinderSize={viewFinderSize} />
-      <QRCodeBottomLayer
-        progress={progress}
-        liveQrCode={liveQrCode}
-        instruction={instruction}
-      />
+      <QRCodeBottomLayer progress={progress} liveQrCode={liveQrCode} instruction={instruction} />
       <LText style={styles.version}>{liveCommonPkg.version}</LText>
     </View>
   );

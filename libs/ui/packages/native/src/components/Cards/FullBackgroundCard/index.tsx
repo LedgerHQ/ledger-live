@@ -32,9 +32,9 @@ const FullBackgroundCard = ({
   const backgroundVariants = useMemo(
     () => ({
       purple: colors.primary.c80,
-      red: colors.error.c60,
+      red: colors.error.c30,
     }),
-    [colors.primary.c80, colors.error.c60],
+    [colors.primary.c80, colors.error.c30],
   );
 
   const backgroundVariantColor =
@@ -60,7 +60,7 @@ const FullBackgroundCard = ({
         )}
         <Flex p={6}>
           <Flex flexDirection="row" justifyContent="space-between" mb={3}>
-            <Flex bg="neutral.c100a01" borderRadius={6} px={3} py="6px" maxWidth="80%">
+            <Flex bg="opacityDefault.c10" borderRadius={6} px={3} py="6px" maxWidth="80%">
               <Text variant="small" fontWeight="semiBold" color="neutral.c90" numberOfLines={1}>
                 {tag}
               </Text>
@@ -77,8 +77,8 @@ const FullBackgroundCard = ({
               fontWeight="semiBold"
               color="neutral.c100"
               numberOfLines={3}
-              height="84px"
-              lineHeight="28px"
+              height="96px"
+              lineHeight="32.4px"
             >
               {highlight(description, "h4")}
             </Text>

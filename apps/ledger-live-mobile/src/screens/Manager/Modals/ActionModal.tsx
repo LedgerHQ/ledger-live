@@ -2,7 +2,7 @@ import React, { memo } from "react";
 import { StyleSheet, View } from "react-native";
 import type { BaseButtonProps } from "../../../components/Button";
 import Button from "../../../components/Button";
-import BottomModal from "../../../components/BottomModal";
+import QueuedDrawer from "../../../components/QueuedDrawer";
 import getWindowDimensions from "../../../logic/getWindowDimensions";
 
 const { height } = getWindowDimensions();
@@ -13,16 +13,10 @@ type Props = {
   actions: Array<BaseButtonProps>;
 };
 
-const ActionModal = ({
-  isOpened,
-  onClose,
-  children,
-  actions = [],
-  ...rest
-}: Props) => (
-  <BottomModal
+const ActionModal = ({ isOpened, onClose, children, actions = [], ...rest }: Props) => (
+  <QueuedDrawer
     {...rest}
-    isOpened={isOpened}
+    isRequestingToBeOpened={isOpened}
     onClose={onClose}
     preventBackdropClick={false}
     containerStyle={{
@@ -46,7 +40,7 @@ const ActionModal = ({
         </View>
       )}
     </View>
-  </BottomModal>
+  </QueuedDrawer>
 );
 
 const styles = StyleSheet.create({

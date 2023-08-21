@@ -14,38 +14,37 @@ type i18nJobOps = ScanCommonOpts & {
   date_last_modified: string;
 };
 
-
 const exec = async (opts: i18nJobOps) => {
   const { deviceId = "", uninstall = "", install = "" } = opts;
   const language = (uninstall || install) as Language;
 
   if (install) {
-    await new Promise<void>((p) =>
-      installLanguage({ deviceId, language}).subscribe(
-        (x) => console.log(x),
-        (e) => {
+    await new Promise<void>(p =>
+      installLanguage({ deviceId, request: { language } }).subscribe(
+        x => console.log(x),
+        e => {
           console.error(e);
           p();
         },
         () => {
           console.log(`${language} language pack installed.`);
           p();
-        }
-      )
+        },
+      ),
     );
   } else if (uninstall) {
-    await new Promise<void>((p) =>
-      uninstallLanguage({ deviceId, language}).subscribe(
-        (x) => console.log(x),
-        (e) => {
+    await new Promise<void>(p =>
+      uninstallLanguage({ deviceId, language }).subscribe(
+        x => console.log(x),
+        e => {
           console.error(e);
           p();
         },
         () => {
           console.log(`${language} language pack uninstalled.`);
           p();
-        }
-      )
+        },
+      ),
     );
   }
 };

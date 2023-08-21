@@ -15,7 +15,7 @@ function FabButtonBar({ data }: Props) {
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={{ paddingHorizontal: 16 }}
     >
-      {data.map(({ children, onPress, Icon, buttonProps, disabled }, index) => (
+      {data.map(({ children, onPress, Icon, buttonProps, disabled, testId }, index) => (
         <Button
           size={"small"}
           Icon={Icon}
@@ -26,6 +26,7 @@ function FabButtonBar({ data }: Props) {
           onPress={onPress}
           key={index}
           mr={3}
+          testID={testId}
         >
           {children}
         </Button>

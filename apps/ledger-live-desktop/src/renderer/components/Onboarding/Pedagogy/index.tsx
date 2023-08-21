@@ -2,7 +2,6 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import ModalStepper from "../../ModalStepper";
 import Illustration from "~/renderer/components/Illustration";
-
 import bitcoinBox from "./assets/bitcoinBox.png";
 import keyInABall from "./assets/keyInABall.png";
 import lnAndGlass from "./assets/lnAndGlass.png";

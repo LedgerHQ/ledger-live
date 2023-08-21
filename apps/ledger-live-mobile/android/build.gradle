@@ -2,27 +2,25 @@
 
 buildscript {
     ext {
-        buildToolsVersion = "30.0.3"
+        buildToolsVersion = "33.0.0"
         minSdkVersion = 24
         compileSdkVersion = 32
         targetSdkVersion = 32
         ndkVersion = "21.4.7075529"
-        kotlinVersion = "1.6.0"
-        androidXCore = "1.6.0"
-        if (System.properties['os.arch'] == "aarch64") {
-            // For M1 Users we need to use the NDK 24 which added support for aarch64
-            ndkVersion = "24.0.8215888"
-        } else {
-            // Otherwise we default to the side-by-side NDK version from AGP.
-            ndkVersion = "21.4.7075529"
-        }
+        kotlinVersion = "1.6.20"
+        androidXCore = "1.7.0"
+        androidXAnnotation = "1.2.0"
+        androidXBrowser = "1.3.0"
+       // We use NDK 23 which has both M1 support and is the side-by-side NDK version from AGP.
+        ndkVersion = "23.1.7779620"
     }
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:4.2.2")
+        classpath("com.android.tools.build:gradle:7.3.1")
+        classpath("com.facebook.react:react-native-gradle-plugin")
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
@@ -53,19 +51,6 @@ allprojects {
         }
         mavenLocal()
         maven {
-            // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
-            url("$rootDir/../node_modules/react-native/android")
-        }
-        mavenCentral {
-            // We don't want to fetch react-native from Maven Central as there are
-            // older versions over there.
-            content {
-                excludeGroup "com.facebook.react"
-            }
-        }
-        google()
-        maven { url 'https://jitpack.io' }
-        maven {
             url "$rootDir/../node_modules/detox/Detox-android"
         }
         maven {
@@ -77,7 +62,7 @@ allprojects {
     }
     configurations.all {
         resolutionStrategy {
-            force 'androidx.core:core:1.6.0'
+            force 'androidx.core:core:1.7.0'
 
             // Needed for flipper https://github.com/facebook/flipper/issues/3397
             // In the case of a detox build

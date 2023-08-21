@@ -1,11 +1,7 @@
 import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction, TransactionRaw } from "../types";
-import {
-  formatTransaction,
-  fromTransactionRaw,
-  toTransactionRaw,
-} from "../transaction";
+import { formatTransaction, fromTransactionRaw, toTransactionRaw } from "../transaction";
 
 const account: Account = {
   type: "Account",
@@ -25,7 +21,7 @@ const account: Account = {
   blockHeight: 0,
   currency: {
     type: "CryptoCurrency",
-    id: "",
+    id: "hedera",
     managerAppName: "",
     coinType: 0,
     scheme: "",

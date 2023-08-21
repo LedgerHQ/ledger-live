@@ -1,13 +1,9 @@
+import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { makeLRUCache } from "../cache";
 import { getCurrencyBridge } from "./";
 export type BridgeCacheSystem = {
-  hydrateCurrency: (
-    currency: CryptoCurrency
-  ) => Promise<unknown | null | undefined>;
-  prepareCurrency: (
-    currency: CryptoCurrency
-  ) => Promise<unknown | null | undefined>;
+  hydrateCurrency: (currency: CryptoCurrency) => Promise<unknown | null | undefined>;
+  prepareCurrency: (currency: CryptoCurrency) => Promise<unknown | null | undefined>;
 };
 const defaultCacheStrategy = {
   preloadMaxAge: 5 * 60 * 1000,
@@ -50,8 +46,8 @@ export function makeBridgeCacheSystem({
         },
         () => "",
         {
-          maxAge: preloadMaxAge,
-        }
+          ttl: preloadMaxAge,
+        },
       );
       lruCaches[currency.id] = cache;
     }

@@ -8,11 +8,7 @@ import { NavigatorName, ScreenName } from "../../../const";
 import BaseStepperView, { SyncDesktop, Metadata } from "./setupDevice/scenes";
 import { TrackScreen } from "../../../analytics";
 
-import {
-  completeOnboarding,
-  setHasOrderedNano,
-  setReadOnlyMode,
-} from "../../../actions/settings";
+import { completeOnboarding, setHasOrderedNano, setReadOnlyMode } from "../../../actions/settings";
 import { useNavigationInterceptor } from "../onboardingContext";
 import {
   RootComposite,
@@ -34,10 +30,7 @@ const images = {
 const scenes = [SyncDesktop, SyncDesktop] as Step[];
 
 type NavigationProps = RootComposite<
-  StackNavigatorProps<
-    OnboardingNavigatorParamList,
-    ScreenName.OnboardingImportAccounts
-  >
+  StackNavigatorProps<OnboardingNavigatorParamList, ScreenName.OnboardingImportAccounts>
 >;
 
 function OnboardingStepPairNew() {
@@ -54,11 +47,7 @@ function OnboardingStepPairNew() {
       id: SyncDesktop.id,
       // @TODO: Replace this placeholder with the correct illustration asap
       illustration: (
-        <Illustration
-          size={200}
-          darkSource={images.dark.Intro}
-          lightSource={images.light.Intro}
-        />
+        <Illustration size={200} darkSource={images.dark.Intro} lightSource={images.light.Intro} />
       ),
       drawer: null,
     },
@@ -70,8 +59,7 @@ function OnboardingStepPairNew() {
     dispatch(setHasOrderedNano(false));
     resetCurrentStep();
 
-    const parentNav =
-      navigation.getParent<StackNavigationProp<RootStackParamList>>();
+    const parentNav = navigation.getParent<StackNavigationProp<RootStackParamList>>();
     if (parentNav) {
       parentNav.popToTop();
     }

@@ -2,12 +2,12 @@ import { ignoreElements, catchError } from "rxjs/operators";
 import { Observable, throwError } from "rxjs";
 import { ManagerAppDepUninstallRequired } from "@ledgerhq/errors";
 import Transport from "@ledgerhq/hw-transport";
-import ManagerAPI from "../api/Manager";
+import ManagerAPI from "../manager/api";
 import type { App, ApplicationVersion } from "@ledgerhq/types-live";
 export default function uninstallApp(
   transport: Transport,
   targetId: string | number,
-  app: ApplicationVersion | App
+  app: ApplicationVersion | App,
 ): Observable<any> {
   return ManagerAPI.install(
     transport,
@@ -20,7 +20,7 @@ export default function uninstallApp(
       firmwareKey: app.delete_key,
       hash: app.hash,
     },
-    true
+    true,
   ).pipe(
     ignoreElements(),
     catchError((e: Error) => {
@@ -31,11 +31,11 @@ export default function uninstallApp(
         return throwError(
           new ManagerAppDepUninstallRequired("", {
             appName: app.name,
-          })
+          }),
         );
       }
 
       return throwError(e);
-    })
+    }),
   );
 }

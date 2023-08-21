@@ -14,7 +14,7 @@ import { NavigatorName, ScreenName } from "../../../const";
 
 import AppIcon from "../AppsList/AppIcon";
 
-import BottomModal from "../../../components/BottomModal";
+import QueuedDrawer from "../../../components/QueuedDrawer";
 import type {
   BaseComposite,
   StackNavigatorProps,
@@ -51,23 +51,12 @@ const ButtonsContainer = styled(Flex).attrs({
 
 const InstallSuccessBar = ({ state, navigation, disable }: Props) => {
   const [hasBeenShown, setHasBeenShown] = useState(disable);
-  const {
-    installQueue,
-    uninstallQueue,
-    recentlyInstalledApps,
-    appByName,
-    installed,
-  } = state;
+  const { installQueue, uninstallQueue, recentlyInstalledApps, appByName, installed } = state;
 
   const onAddAccount = useCallback(() => {
     navigation.navigate(NavigatorName.AddAccounts);
     setHasBeenShown(true);
   }, [navigation]);
-
-  const onSupportLink = useCallback(() => {
-    Linking.openURL(urls.appSupport);
-    setHasBeenShown(true);
-  }, []);
 
   const successInstalls = useMemo(
     () =>
@@ -92,16 +81,19 @@ const InstallSuccessBar = ({ state, navigation, disable }: Props) => {
   );
 
   const app: App | undefined = useMemo(
-    () =>
-      (successInstalls && successInstalls.length > 0 && successInstalls[0]) ||
-      undefined,
+    () => (successInstalls && successInstalls.length > 0 && successInstalls[0]) || undefined,
     [successInstalls],
   );
+
+  const onSupportLink = useCallback(() => {
+    Linking.openURL(app?.supportURL || urls.appSupport);
+    setHasBeenShown(true);
+  }, [app]);
 
   const onClose = useCallback(() => setHasBeenShown(true), []);
 
   return (
-    <BottomModal isOpened={successInstalls.length >= 1} onClose={onClose}>
+    <QueuedDrawer isRequestingToBeOpened={successInstalls.length >= 1} onClose={onClose}>
       <Flex alignItems="center">
         {app && <AppIcon app={app} size={48} radius={14} />}
         <TextContainer>
@@ -110,10 +102,7 @@ const InstallSuccessBar = ({ state, navigation, disable }: Props) => {
           </ModalText>
           <ModalText color="neutral.c70" fontWeight="medium" variant="body">
             {hasLiveSupported ? (
-              <Trans
-                i18nKey="AppAction.install.done.description"
-                values={{ app: app?.name }}
-              />
+              <Trans i18nKey="AppAction.install.done.description" values={{ app: app?.name }} />
             ) : (
               <Trans i18nKey="manager.installSuccess.notSupported" />
             )}
@@ -131,7 +120,7 @@ const InstallSuccessBar = ({ state, navigation, disable }: Props) => {
           )}
         </ButtonsContainer>
       </Flex>
-    </BottomModal>
+    </QueuedDrawer>
   );
 };
 

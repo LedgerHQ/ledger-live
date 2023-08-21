@@ -1,0 +1,97 @@
+name: "@PR • Lint Commits"
+run-name: "@PR • Lint Commits triggered by ${{ inputs.login }} ${{ format('on branch {0}', inputs.ref) }}"
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: The commit/branch to lint
+        required: true
+      from:
+        description: Lower end of the commit range to lint
+        required: true
+      login:
+        description: The GitHub username that triggered the workflow
+        required: true
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint-commits:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ inputs.ref }}
+          fetch-depth: 0
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
+      - name: Install dependencies
+        run: pnpm i --filter="ledger-live"
+      - name: Lint commits
+        run: |
+          set -o pipefail
+          pnpm commitlint --from ${{ inputs.from && format('origin/{0}', inputs.from) || 'HEAD^1' }} 2>&1 | tee commitlint.out
+      - uses: actions/upload-artifact@v3
+        name: upload commitlint output
+        if: always()
+        with:
+          name: commitlint
+          path: ${{ github.workspace }}/commitlint.out
+  report:
+    runs-on: ubuntu-latest
+    needs: [lint-commits]
+    if: always() && !cancelled()
+    steps:
+      - name: download commitlint output
+        uses: actions/download-artifact@v3
+        with:
+          name: commitlint
+      - uses: actions/github-script@v6
+        name: format summary
+        id: status
+        with:
+          script: |
+            const fs = require("fs");
+            const status = "${{ needs.lint-commits.result }}";
+            const linterOutput = fs.readFileSync("commitlint.out", "utf-8");
+
+            let summary = ``;
+
+            if(status === "success") {
+              summary += `### 📝 Commit messages are well formatted\n`;
+              summary += `\n`;
+              summary += `Everything looks good. Kudos! 👍\n`;
+            } else if(status === "failure")
+            {
+              summary += `### 🚨 Invalid commit message(s)\n`;
+              summary += `\n`;
+              summary += `One or more commits messages are not formatted correctly.\n`;
+              summary += `Please rewrite the git history and reword the commit messages in order to fix this issue. 🙏\n`;
+              summary += `\n`;
+              summary += `#### 💡 Tips:\n`;
+              summary += `\n`;
+              summary += `- Run \`pnpm commitlint --from <target branch>\` locally to test your branch.\n`;
+              summary += `- Run \`pnpm commit\` will run a prompt that can walk you through writing a correct commit message.\n`
+              summary += `- If you are not comfortable with git and \`git rebase --interactive\`, here is a [nice tutorial](https://thoughtbot.com/blog/git-interactive-rebase-squash-amend-rewriting-history).\n`;
+              summary += `\n`;
+              summary += `### Commitlint output\n`;
+              summary += `\n`;
+              summary += `\`\`\`\n${linterOutput}\n\`\`\`\n`;
+            } else {
+              summary += `⚠️ Unable to lint commits: ${status}`;
+            }
+
+            const output = {
+              summary
+            }
+
+            fs.writeFileSync("summary.json", JSON.stringify(output), "utf-8");
+      - uses: actions/upload-artifact@v3
+        name: upload output
+        with:
+          path: ${{ github.workspace }}/summary.json
+          name: summary.json

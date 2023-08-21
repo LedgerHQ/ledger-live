@@ -1,11 +1,5 @@
 import React, { useCallback } from "react";
-import {
-  StyleSheet,
-  ScrollView,
-  View,
-  Linking,
-  SafeAreaView,
-} from "react-native";
+import { StyleSheet, ScrollView, View, Linking, SafeAreaView } from "react-native";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
@@ -23,10 +17,7 @@ import Button from "../../../components/wrappedUi/Button";
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import { PolkadotBondFlowParamList } from "./types";
 
-type Props = StackNavigatorProps<
-  PolkadotBondFlowParamList,
-  ScreenName.PolkadotBondStarted
->;
+type Props = StackNavigatorProps<PolkadotBondFlowParamList, ScreenName.PolkadotBondStarted>;
 
 export default function PolkadotBondStarted({ navigation, route }: Props) {
   const { colors } = useTheme();
@@ -45,17 +36,10 @@ export default function PolkadotBondStarted({ navigation, route }: Props) {
         },
       ]}
     >
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContainer}
-      >
-        <TrackScreen category="BondFlow" name="Started" />
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
+        <TrackScreen category="BondFlow" name="Started" flow="stake" action="bond" currency="dot" />
         <Flex alignItems="center" mb={6}>
-          <Illustration
-            lightSource={EarnLight}
-            darkSource={EarnDark}
-            size={150}
-          />
+          <Illustration lightSource={EarnLight} darkSource={EarnDark} size={150} />
         </Flex>
         <LText secondary style={styles.description}>
           <Trans i18nKey="polkadot.bond.steps.starter.description" />
@@ -65,11 +49,11 @@ export default function PolkadotBondStarted({ navigation, route }: Props) {
           itemContainerStyle={styles.bulletItemContainer}
           Bullet={BulletGreenCheck}
           list={[
-            <Trans i18nKey="polkadot.bond.steps.starter.bullet.0" />,
-            <Trans i18nKey="polkadot.bond.steps.starter.bullet.1" />,
-            <Trans i18nKey="polkadot.bond.steps.starter.bullet.2" />,
+            <Trans i18nKey="polkadot.bond.steps.starter.bullet.0" key="BondingText1" />,
+            <Trans i18nKey="polkadot.bond.steps.starter.bullet.1" key="BondingText2" />,
+            <Trans i18nKey="polkadot.bond.steps.starter.bullet.2" key="BondingText2" />,
           ].map(wording => (
-            <LText secondary semiBold style={styles.bulletItem}>
+            <LText secondary semiBold style={styles.bulletItem} key={wording.key}>
               {wording}
             </LText>
           ))}
@@ -87,12 +71,7 @@ export default function PolkadotBondStarted({ navigation, route }: Props) {
         <Alert type="help">
           <Trans i18nKey="polkadot.bond.steps.starter.warning" />
         </Alert>
-        <Button
-          event="PolkadotBondStartedBtn"
-          onPress={onNext}
-          type="main"
-          mt={6}
-        >
+        <Button event="PolkadotBondStartedBtn" onPress={onNext} type="main" mt={6}>
           <Trans i18nKey="common.continue" />
         </Button>
       </View>

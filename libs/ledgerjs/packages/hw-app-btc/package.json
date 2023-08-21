@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-btc",
-  "version": "9.1.1",
+  "version": "10.0.8",
   "description": "Ledger Hardware Wallet Bitcoin Application API",
   "keywords": [
     "Ledger",
@@ -27,20 +27,11 @@
   "types": "lib/Btc.d.ts",
   "typesVersions": {
     "*": {
-      "lib/*/": [
-        "lib/*/index.d.ts"
-      ],
       "lib/*": [
         "lib/*"
       ],
-      "lib-es/*/": [
-        "lib-es/*/index.d.ts"
-      ],
       "lib-es/*": [
         "lib-es/*"
-      ],
-      "*/": [
-        "lib/*/index.d.ts"
       ],
       "*": [
         "lib/*",
@@ -49,15 +40,15 @@
     }
   },
   "exports": {
-    "./lib/*/": "./lib/*/index.js",
     "./lib/*": "./lib/*.js",
-    "./lib-es/*/": "./lib-es/*/index.js",
+    "./lib/*.js": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
-    "./*/": {
-      "require": "./lib/*/index.js",
-      "default": "./lib-es/*/index.js"
-    },
+    "./lib-es/*.js": "./lib-es/*.js",
     "./*": {
+      "require": "./lib/*.js",
+      "default": "./lib-es/*.js"
+    },
+    "./*.js": {
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
     },
@@ -85,7 +76,15 @@
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
-    "axios": "^0.25.0"
+    "@types/jest": "^29.5.0",
+    "@types/node": "^18.15.3",
+    "axios": "^0.25.0",
+    "documentation": "13.2.5",
+    "jest": "^28.1.1",
+    "rimraf": "^4.4.1",
+    "source-map-support": "^0.5.21",
+    "ts-jest": "^28.0.5",
+    "ts-node": "^10.4.0"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
@@ -93,7 +92,7 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
-    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "test": "jest"
   },

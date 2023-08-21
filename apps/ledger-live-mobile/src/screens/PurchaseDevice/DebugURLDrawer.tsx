@@ -1,7 +1,8 @@
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { BottomDrawer, Button } from "@ledgerhq/native-ui";
+import { Button } from "@ledgerhq/native-ui";
 
+import QueuedDrawer from "../../components/QueuedDrawer";
 import TextInput from "../../components/TextInput";
 
 export type Props = {
@@ -26,8 +27,8 @@ const DebugURLDrawer = ({ isOpen, value, onClose, onChange }: Props) => {
   }, [inputValue, onClose, onChange]);
 
   return (
-    <BottomDrawer
-      isOpen={isOpen}
+    <QueuedDrawer
+      isRequestingToBeOpened={isOpen}
       onClose={handleClose}
       title={t("purchaseDevice.debugDrawers.url.title")}
       subtitle={t("purchaseDevice.debugDrawers.url.subtitle")}
@@ -41,7 +42,7 @@ const DebugURLDrawer = ({ isOpen, value, onClose, onChange }: Props) => {
       <Button type="main" mt={4} onPress={handleSave}>
         {t("purchaseDevice.debugDrawers.url.cta")}
       </Button>
-    </BottomDrawer>
+    </QueuedDrawer>
   );
 };
 

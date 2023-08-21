@@ -1,20 +1,21 @@
 import {
-  Flex,
   Aside,
-  Logos,
   Button,
-  Icons,
-  ProgressBar,
   Drawer,
+  Flex,
+  IconsLegacy,
   InfiniteLoader,
+  Logos,
+  ProgressBar,
 } from "@ledgerhq/react-ui";
+import { Direction } from "@ledgerhq/react-ui/components/layout/Drawer/index";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
-import { Switch, Route, useHistory, useLocation } from "react-router-dom";
+import { Route, Switch, useHistory, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Device } from "@ledgerhq/types-devices";
 import { languageSelector } from "~/renderer/reducers/settings";
 import { ImportYourRecoveryPhrase } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/ImportYourRecoveryPhrase";
@@ -40,10 +41,16 @@ import { QuizSuccess } from "~/renderer/components/Onboarding/Screens/Tutorial/s
 import RecoveryWarning from "../../Help/RecoveryWarning";
 import { QuizzPopin } from "~/renderer/modals/OnboardingQuizz/OnboardingQuizzModal";
 import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/index";
-
+import { saveSettings } from "~/renderer/actions/settings";
 import { UseCase } from "../../index";
-
 import { track } from "~/renderer/analytics/segment";
+import { RecoverHowTo } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/RecoverHowTo";
+import { RecoverPinCodeHowTo } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/RecoverPinCodeHowTo";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import {
+  usePostOnboardingPath,
+  useUpsellPath,
+} from "@ledgerhq/live-common/hooks/recoverFeatueFlag";
 
 const FlowStepperContainer = styled(Flex)`
   width: 100%;
@@ -108,7 +115,7 @@ const FlowStepper: React.FC<FlowStepperProps> = ({
   const locale = useSelector(languageSelector) || "en";
 
   const handleHelp = useCallback(() => {
-    openURL(urls.faq[locale in urls.faq ? locale : "en"]);
+    openURL(urls.faq[locale in urls.faq ? (locale as keyof typeof urls.faq) : "en"]);
   }, [locale]);
 
   const { t } = useTranslation();
@@ -144,7 +151,7 @@ const FlowStepper: React.FC<FlowStepperProps> = ({
               disabled={disableBack}
               variant="main"
               outline
-              Icon={() => <Icons.ArrowLeftMedium size={18} />}
+              Icon={() => <IconsLegacy.ArrowLeftMedium size={18} />}
             >
               {backLabel || t("common.back")}
             </Button>
@@ -154,7 +161,7 @@ const FlowStepper: React.FC<FlowStepperProps> = ({
               disabled={continueLoading || continueDisabled}
               variant="main"
               iconSize={18}
-              Icon={continueLoading ? InfiniteLoader : Icons.ArrowRightMedium}
+              Icon={continueLoading ? InfiniteLoader : IconsLegacy.ArrowRightMedium}
             >
               {continueLabel || t("common.continue")}
             </Button>
@@ -183,6 +190,7 @@ export enum ScreenId {
   quizFailure = "quiz-failure",
   pairMyNano = "pair-my-nano",
   genuineCheck = "genuine-check",
+  recoverHowTo = "recover-how-to",
 }
 
 type ScreenComponent =
@@ -203,7 +211,7 @@ type ScreenComponent =
   | typeof QuizFailure
   | typeof PairMyNano
   | typeof GenuineCheck
-  | typeof Screen;
+  | typeof RecoverHowTo;
 
 interface IScreen {
   id: ScreenId;
@@ -224,6 +232,9 @@ export default function Tutorial({ useCase }: Props) {
   const [quizzOpen, setQuizOpen] = useState(false);
   const { t } = useTranslation();
   const { pathname } = useLocation();
+  const servicesConfig = useFeature("protectServicesDesktop");
+  const upsellPath = useUpsellPath(servicesConfig);
+  const postOnboardingPath = usePostOnboardingPath(servicesConfig);
 
   const [userUnderstandConsequences, setUserUnderstandConsequences] = useState(false);
   const [userChosePinCodeHimself, setUserChosePinCodeHimself] = useState(false);
@@ -241,6 +252,8 @@ export default function Tutorial({ useCase }: Props) {
   const urlSplit = useMemo(() => pathname.split("/"), [pathname]);
   const currentStep = useMemo(() => urlSplit[urlSplit.length - 1], [urlSplit]);
   const path = useMemo(() => urlSplit.slice(0, urlSplit.length - 1).join("/"), [urlSplit]);
+
+  const dispatch = useDispatch();
 
   const screens = useMemo<IScreen[]>(
     () => [
@@ -293,7 +306,7 @@ export default function Tutorial({ useCase }: Props) {
           },
           userChosePinCodeHimself,
         },
-        useCases: [UseCase.setupDevice, UseCase.recoveryPhrase],
+        useCases: [UseCase.setupDevice, UseCase.recoveryPhrase, UseCase.recover],
         canContinue: userChosePinCodeHimself,
         next: () => {
           if (useCase === UseCase.setupDevice) {
@@ -304,6 +317,8 @@ export default function Tutorial({ useCase }: Props) {
         previous: () => {
           if (useCase === UseCase.setupDevice) {
             history.push(`${path}/${ScreenId.deviceHowTo}`);
+          } else if (useCase === UseCase.recover) {
+            history.push(`${path}/${ScreenId.recoverHowTo}`);
           }
           // useCase === UseCase.recoveryPhrase
           else {
@@ -313,8 +328,8 @@ export default function Tutorial({ useCase }: Props) {
       },
       {
         id: ScreenId.pinCodeHowTo,
-        component: PinCodeHowTo,
-        useCases: [UseCase.setupDevice, UseCase.recoveryPhrase],
+        component: useCase === UseCase.recover ? RecoverPinCodeHowTo : PinCodeHowTo,
+        useCases: [UseCase.setupDevice, UseCase.recoveryPhrase, UseCase.recover],
         next: () => {
           if (useCase === UseCase.setupDevice) {
             track("Onboarding - Pin code step 2");
@@ -466,7 +481,7 @@ export default function Tutorial({ useCase }: Props) {
           history.push(`${path}/${ScreenId.genuineCheck}`);
         },
         previous: () => {
-          if (useCase === UseCase.connectDevice) {
+          if (useCase === UseCase.connectDevice || useCase === UseCase.recover) {
             history.push("/onboarding/select-use-case");
           } else if (useCase === UseCase.setupDevice) {
             history.push(`${path}/${ScreenId.hideRecoveryPhrase}`);
@@ -486,19 +501,39 @@ export default function Tutorial({ useCase }: Props) {
         },
         canContinue: !!connectedDevice,
         next: () => {
-          setOnboardingDone(true);
+          if (useCase === UseCase.recover) {
+            history.push(`${path}/${ScreenId.recoverHowTo}`);
+          } else {
+            if (upsellPath) {
+              history.push(upsellPath);
+            }
+            dispatch(saveSettings({ hasCompletedOnboarding: true }));
+            track("Onboarding - End");
+            setOnboardingDone(true);
+          }
         },
         previous: () => history.push(`${path}/${ScreenId.pairMyNano}`),
       },
+      {
+        id: ScreenId.recoverHowTo,
+        component: RecoverHowTo,
+        useCases: [UseCase.recover],
+        next: () => {
+          // TODO in next ticket
+          history.push(`${path}/${ScreenId.pinCode}`);
+        },
+        previous: () => history.push("/onboarding/select-use-case"),
+      },
     ],
     [
+      userChosePinCodeHimself,
+      useCase,
+      userUnderstandConsequences,
       connectedDevice,
       history,
       path,
-      useCase,
-      userChosePinCodeHimself,
-      userUnderstandConsequences,
-      setOnboardingDone,
+      upsellPath,
+      dispatch,
     ],
   );
 
@@ -513,7 +548,10 @@ export default function Tutorial({ useCase }: Props) {
        */
       const timeout: ReturnType<typeof setTimeout> = setTimeout(() => {
         if (history.location.pathname !== "/")
-          handleStartPostOnboarding(connectedDevice.modelId, true, () => history.push("/"));
+          handleStartPostOnboarding({
+            deviceModelId: connectedDevice.modelId,
+            fallbackIfNoAction: () => history.push("/"),
+          });
       }, 0);
       return () => {
         clearTimeout(timeout);
@@ -565,14 +603,18 @@ export default function Tutorial({ useCase }: Props) {
     return stepList;
   }, [useCase]);
 
-  const currentScreenIndex = useMemo(() => screens.findIndex(s => s.id === currentStep), [
-    currentStep,
-    screens,
-  ]);
-  const { component, canContinue, next, previous, id: currentScreenId } = screens[
-    currentScreenIndex
-  ];
-  const CurrentScreen = (component as unknown) as {
+  const currentScreenIndex = useMemo(
+    () => screens.findIndex(s => s.id === currentStep),
+    [currentStep, screens],
+  );
+  const {
+    component,
+    canContinue,
+    next,
+    previous,
+    id: currentScreenId,
+  } = screens[currentScreenIndex];
+  const CurrentScreen = component as unknown as {
     Illustration: JSX.Element;
     Footer: React.ElementType;
     continueLabel: string;
@@ -610,33 +652,42 @@ export default function Tutorial({ useCase }: Props) {
     history.push(`${path}/quiz-failure`);
   }, [history, path]);
 
-  function handleNextInDrawer(closeCurrentDrawer: any, targetPath: any) {
-    closeCurrentDrawer(false);
-    history.push(targetPath);
-  }
+  const handleNextInDrawer = useCallback(
+    (closeCurrentDrawer: (bool: boolean) => void, targetPath: string) => {
+      closeCurrentDrawer(false);
+      history.push(targetPath);
+    },
+    [history],
+  );
+
+  const handleNextPin = useCallback(() => {
+    let targetPath = `${path}/${ScreenId.existingRecoveryPhrase}`;
+
+    if (useCase === UseCase.recover && postOnboardingPath) {
+      targetPath = postOnboardingPath;
+      dispatch(saveSettings({ hasCompletedOnboarding: true }));
+    }
+
+    if (useCase === UseCase.setupDevice) {
+      targetPath = `${path}/${ScreenId.newRecoveryPhrase}`;
+    }
+
+    handleNextInDrawer(setHelpPinCode, targetPath);
+  }, [dispatch, handleNextInDrawer, path, postOnboardingPath, useCase]);
 
   return (
     <>
       <QuizzPopin isOpen={quizzOpen} onWin={quizSucceeds} onLose={quizFails} onClose={quizFails} />
-      <Drawer isOpen={helpPinCode} onClose={() => setHelpPinCode(false)} direction="left">
+      <Drawer isOpen={helpPinCode} onClose={() => setHelpPinCode(false)} direction={Direction.Left}>
         <Flex px={40} height="100%">
           `
-          <PinHelp
-            handleNextInDrawer={() =>
-              handleNextInDrawer(
-                setHelpPinCode,
-                useCase === UseCase.setupDevice
-                  ? `${path}/${ScreenId.newRecoveryPhrase}`
-                  : `${path}/${ScreenId.existingRecoveryPhrase}`,
-              )
-            }
-          />
+          <PinHelp handleNextInDrawer={handleNextPin} />
         </Flex>
       </Drawer>
       <Drawer
         isOpen={helpRecoveryPhrase}
         onClose={() => setHelpRecoveryPhrase(false)}
-        direction="left"
+        direction={Direction.Left}
       >
         <Flex px={40} height="100%">
           <RecoverySeed
@@ -654,7 +705,7 @@ export default function Tutorial({ useCase }: Props) {
       <Drawer
         isOpen={helpHideRecoveryPhrase}
         onClose={() => setHelpHideRecoveryPhrase(false)}
-        direction="left"
+        direction={Direction.Left}
       >
         <Flex px={40} height="100%">
           <HideRecoverySeed
@@ -671,7 +722,7 @@ export default function Tutorial({ useCase }: Props) {
       <Drawer
         isOpen={helpRecoveryPhraseWarning}
         onClose={() => setHelpRecoveryPhraseWarning(false)}
-        direction="left"
+        direction={Direction.Left}
       >
         <Flex px={40}>
           <RecoveryWarning />
@@ -683,7 +734,7 @@ export default function Tutorial({ useCase }: Props) {
         AsideFooter={CurrentScreen.Footer}
         continueDisabled={canContinue === false}
         ProgressBar={
-          useCase !== UseCase.connectDevice ? (
+          useCase !== UseCase.connectDevice && useCase !== UseCase.recover ? (
             <ProgressBar steps={progressSteps} currentIndex={screenStepIndex} />
           ) : (
             <></>
@@ -695,14 +746,15 @@ export default function Tutorial({ useCase }: Props) {
         handleBack={previous}
       >
         <Switch>
-          {useCaseScreens.map(({ component: Screen, id, props: screenProps = {} }) => {
+          {useCaseScreens.map(({ component, id, props: screenProps = {} }) => {
             return (
               <Route
                 key={id}
                 path={`${path}/${id}`}
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                render={props => <Screen {...{ ...props, ...screenProps }} />}
+                render={props => {
+                  const Screen: React.ElementType = component;
+                  return <Screen {...props} {...screenProps} />;
+                }}
               />
             );
           })}

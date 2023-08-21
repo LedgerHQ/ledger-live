@@ -1,13 +1,5 @@
 import React from "react";
-import Svg, {
-  G,
-  Path,
-  Rect,
-  Defs,
-  LinearGradient,
-  Stop,
-  ClipPath,
-} from "react-native-svg";
+import Svg, { G, Path, Rect, Defs, LinearGradient, Stop, ClipPath } from "react-native-svg";
 
 type Props = {
   style?: Record<string, unknown>;

@@ -19,22 +19,37 @@
 
 [**Ledger Live**](https://www.ledger.com/ledger-live) is our platform of apps and services integrated specifically to work with your Nano device. It functions as a secure gateway to the crypto ecosystem. This means accessing a variety of crypto, NFT and DeFi based services directly and seamlessly from your hardware wallet – a better, simpler user experience that bypasses a major security concern known as blind signing.
 
-Developers looking to integrate their blockchain in Ledger Live are invited to head to the [**Developer Portal**](https://developers.ledger.com) where they will find the section [**Blockchain Support**](https://developers.ledger.com/docs/coin/general-process). 
+Developers looking to integrate their blockchain in Ledger Live are invited to head to the [**Developer Portal**](https://developers.ledger.com) where they will find the section [**Blockchain Support**](https://developers.ledger.com/docs/coin/general-process).
 
 ## Installation
 
-In order to interact with any package contained in this repository you will need to install the following:
+> 💡 **This is only a minimal setup. You will need to perform additional installation steps depending on the package you want to work on, please refer to its nested readme file.**
 
-- [**Node.js@16.x.x**](https://nodejs.org/)
-- [**PnPm@7.4.x or newer**](https://pnpm.io/)
-
-**This is only a minimal setup. You will need to perform additional installation steps depending on the package you want to work on, please refer to its nested readme file.**
-
-Then, clone the repository and install the dependencies:
+### Cloning
 
 ```bash
 git clone git@github.com:LedgerHQ/ledger-live.git
 cd ledger-live
+```
+
+### Proto
+
+**⚠️ Important**: In order to use install the right version of the tools you will need to install the [`proto`](https://moonrepo.dev/proto) toolchain manager.
+Please follow the instructions on the [**proto**](https://moonrepo.dev/docs/proto/install) website to install it.
+
+Once you have installed `proto`, please run the following command:
+
+```bash
+# Will download and install the supported versions of nodejs, npm and pnpm.
+# Run it from the root or a subfolder of the repository.
+proto use
+```
+
+### Dependencies
+
+Use the [pnpm](https://pnpm.io/fr/) package manager to install the dependencies in the whole workspace:
+
+```bash
 pnpm i
 # Alternatively, if you want to bypass the postinstall scripts which can be long to run
 # pnpm i --ignore-scripts

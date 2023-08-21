@@ -1,11 +1,8 @@
 import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "../../../families/hedera/types";
-import {
-  createTransaction,
-  updateTransaction,
-  prepareTransaction,
-} from "../js-transaction";
+import { defaultUpdateTransaction as updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { createTransaction, prepareTransaction } from "../js-transaction";
 
 const account: Account = {
   type: "Account",
@@ -25,7 +22,7 @@ const account: Account = {
   blockHeight: 0,
   currency: {
     type: "CryptoCurrency",
-    id: "",
+    id: "hedera",
     managerAppName: "",
     coinType: 0,
     scheme: "",

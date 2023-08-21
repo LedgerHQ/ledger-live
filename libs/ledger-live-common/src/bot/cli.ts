@@ -1,3 +1,5 @@
+"use strict";
+
 import "../__tests__/test-helpers/environment";
 import { bot } from ".";
 

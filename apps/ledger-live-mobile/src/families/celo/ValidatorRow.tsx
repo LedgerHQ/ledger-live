@@ -5,10 +5,7 @@ import { Text } from "@ledgerhq/native-ui";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
-import {
-  CeloValidatorGroup,
-  CeloVote,
-} from "@ledgerhq/live-common/families/celo/types";
+import { CeloValidatorGroup, CeloVote } from "@ledgerhq/live-common/families/celo/types";
 import { useTheme } from "@react-navigation/native";
 import BigNumber from "bignumber.js";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
@@ -49,11 +46,7 @@ const ValidatorRow = ({
           name={validator.name ?? validator.address}
         />
         <View style={styles.validatorBody}>
-          <Text
-            numberOfLines={1}
-            fontWeight="semiBold"
-            style={styles.validatorName}
-          >
+          <Text numberOfLines={1} fontWeight="semiBold" style={styles.validatorName}>
             {validator.name || validator.address}
           </Text>
           {vote?.type ? (
@@ -73,18 +66,9 @@ const ValidatorRow = ({
             </Text>
           ) : null}
         </View>
-        <Text
-          fontWeight="semiBold"
-          numberOfLines={1}
-          style={[styles.validatorYield]}
-          color="smoke"
-        >
+        <Text fontWeight="semiBold" numberOfLines={1} style={[styles.validatorYield]} color="smoke">
           <Text fontWeight="semiBold" numberOfLines={1}>
-            <CurrencyUnitValue
-              showCode
-              unit={getAccountUnit(account)}
-              value={amount}
-            />
+            <CurrencyUnitValue showCode unit={getAccountUnit(account)} value={amount} />
           </Text>
         </Text>
       </View>

@@ -1,7 +1,7 @@
 import fetch from "isomorphic-unfetch";
 import * as core from "@actions/core";
 import * as fs from "fs";
-import * as FormData from "form-data";
+import FormData from "form-data";
 import * as path from "path";
 
 function handleErrors(response) {
@@ -11,13 +11,10 @@ function handleErrors(response) {
   return response;
 }
 
-const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 const clean = (str: string): string =>
-  str
-    .replace("-expected.png", "")
-    .replace("-actual.png", "")
-    .replace("-diff.png", "");
+  str.replace("-expected.png", "").replace("-actual.png", "").replace("-diff.png", "");
 
 const isDiff = (str): boolean => str.includes("diff");
 const isActual = (str): boolean => str.includes("actual");
@@ -58,15 +55,11 @@ const uploadImage = async () => {
     }
   };
 
-  const getAllFiles = (currentPath) => {
+  const getAllFiles = currentPath => {
     let results = [];
     const dirents = fs.readdirSync(currentPath, { withFileTypes: true });
-    dirents.forEach((dirent) => {
-      if (
-        dirent.name.toLocaleLowerCase().includes("retry") ||
-        dirent.name.endsWith(".zip")
-      )
-        return;
+    dirents.forEach(dirent => {
+      if (dirent.name.toLocaleLowerCase().includes("retry") || dirent.name.endsWith(".zip")) return;
       const newPath = path.resolve(currentPath, dirent.name);
       const stat = fs.statSync(newPath);
       if (stat && stat.isDirectory()) {
@@ -86,7 +79,7 @@ const uploadImage = async () => {
     return core.setOutput("images", []);
   }
 
-  const resultsP = files.map(async (file) => {
+  const resultsP = files.map(async file => {
     const img = fs.readFileSync(`${file}`);
     return upload(img);
   });
@@ -98,14 +91,9 @@ const uploadImage = async () => {
     const file = files[index];
     const key = clean(file);
 
-    if (!formatted[key])
-      formatted[key] = { actual: {}, diff: {}, expected: {} };
+    if (!formatted[key]) formatted[key] = { actual: {}, diff: {}, expected: {} };
 
-    const subKey = isActual(file)
-      ? "actual"
-      : isDiff(file)
-      ? "diff"
-      : "expected";
+    const subKey = isActual(file) ? "actual" : isDiff(file) ? "diff" : "expected";
     const name = path.parse(file).name;
 
     formatted[key][subKey] = {
@@ -122,6 +110,6 @@ const uploadImage = async () => {
   core.setOutput("images", final);
 };
 
-uploadImage().catch((err) => {
+uploadImage().catch(err => {
   core.setFailed(err);
 });

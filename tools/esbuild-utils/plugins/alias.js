@@ -8,7 +8,7 @@ module.exports = (mappings) => ({
         mappings = [mappings];
       }
 
-      const resolveCallback = async function (args) {
+      const resolveCallback = async function(args) {
         if (args.resolveDir === "") {
           return; // Ignore unresolvable paths
         }
@@ -27,12 +27,14 @@ module.exports = (mappings) => ({
             : `./${relativeMappedPath}`;
 
           let result = await build.resolve(mappedPath, {
+            kind: "import-statement",
             resolveDir: args.resolveDir,
           });
 
           if (result.errors.length > 0) {
             errors.push(...result.errors);
             result = await build.resolve(rawMappedPath, {
+              kind: "import-statement",
               resolveDir: args.resolveDir,
             });
 

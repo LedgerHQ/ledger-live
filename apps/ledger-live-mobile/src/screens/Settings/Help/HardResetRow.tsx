@@ -1,9 +1,9 @@
 import React, { useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
-import { BottomDrawer } from "@ledgerhq/native-ui";
 import { InfoMedium } from "@ledgerhq/native-ui/assets/icons";
 import SettingsRow from "../../../components/SettingsRow";
+import QueuedDrawer from "../../../components/QueuedDrawer";
 
 export default function HardResetRow() {
   const { colors } = useTheme();
@@ -24,16 +24,16 @@ export default function HardResetRow() {
       <SettingsRow
         event="HardResetRow"
         title={t("settings.help.hardReset")}
-        titleStyle={{ color: colors.error.c100 }}
+        titleStyle={{ color: colors.error.c50 }}
         desc={t("settings.help.hardResetDesc")}
         onPress={onPress}
         arrowRight
       />
-      <BottomDrawer
-        isOpen={isModalOpened}
+      <QueuedDrawer
+        isRequestingToBeOpened={isModalOpened}
         onClose={onRequestClose}
         Icon={InfoMedium}
-        iconColor={"error.c100"}
+        iconColor={"error.c50"}
         title={t("reset.title")}
         description={t("reset.description")}
       />

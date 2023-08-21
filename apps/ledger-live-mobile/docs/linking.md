@@ -13,7 +13,7 @@ They all are prefixed by **_ledgerlive://_**
 
   `ledgerlive://accounts` will redirect to accounts page
 
-  `ledgerlive://accounts?currency=ethereum&address={{eth_account_address}}` will open a given ethereum account if found, will falback to the currency page found and if not to the list of accounts
+  `ledgerlive://accounts?currency=ethereum&address={{eth_account_address}}` will open a given ethereum account if found, will fallback to the currency page found and if not to the list of accounts
 
   `?currency` param can be name or ticker of the currency targeted
   `?address` param requires currency to work, address of the account to select
@@ -22,7 +22,7 @@ They all are prefixed by **_ledgerlive://_**
 
   `ledgerlive://account` will redirect to accounts page
 
-  `ledgerlive://account?currency=ethereum&address={{eth_account_address}}` will open a given ethereum account if found, will falback to the currency page found and if not to the list of accounts
+  `ledgerlive://account?currency=ethereum&address={{eth_account_address}}` will open a given ethereum account if found, will fallback to the currency page found and if not to the list of accounts
 
   `?currency` param can be name or ticker of the currency targeted
   `?address` param requires currency to work, address of the account to select
@@ -72,7 +72,7 @@ They all are prefixed by **_ledgerlive://_**
 
 - **_discover/:APP_ID?params..._** 🠒 Live discover catalog
 
-  `ledgerlive://discover/paraswap?accountId=1` will redirect to the discover catalog page of paraswa with a pre-selected first account
+  `ledgerlive://discover/paraswap?accountId=1` will redirect to the discover catalog page of paraswap with a pre-selected first account
 
         - *APP_ID* => the url param app id
         - *?params* => the url query params that will be transmitted to the app, you should refer to each apps documentation in order to use them.
@@ -80,6 +80,16 @@ They all are prefixed by **_ledgerlive://_**
 - **_custom-image_** 🠒 Custom lock screen flow
 
   `ledgerlive://custom-image` will redirect to custom lock screen page
+
+- **_earn_** 🠒 Earn Dashboard
+
+  `ledgerlive://earn` will redirect to earn dashboard page
+
+  `ledgerlive://earn?action=stake` will open staking flow
+
+  `ledgerlive://earn?action=stake-account&accountId=1` will open staking flow with selected account prefilled
+
+  `ledgerlive://earn?action=get-funds&currencyId=ethereum` will open buy drawer with specified currency
 
 **_Testing on android_** in order to test in debug your link run using [**_adb_**](https://developer.android.com/training/app-links/deep-linking#testing-filters)
 

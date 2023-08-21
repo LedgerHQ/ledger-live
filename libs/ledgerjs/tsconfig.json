@@ -1,21 +1,14 @@
 {
+  "extends": "../../tsconfig.base",
   "compilerOptions": {
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true,
-    "strict": true,
+    "downlevelIteration": true,
     "noImplicitAny": false,
     "noImplicitThis": false,
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "node",
-    "downlevelIteration": true,
-    "resolveJsonModule": true,
-    "lib": [
-      "DOM",
-      "ES2017"
-    ]
+    "module": "commonjs",
+    "lib": ["DOM", "ES2017"],
+    "isolatedModules": false,
+    "target": "ES6"
   }
 }

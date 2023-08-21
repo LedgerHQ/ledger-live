@@ -18,10 +18,7 @@ import type { AlgorandOptInFlowParamList } from "./types";
 import type { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
 
 type Props = BaseComposite<
-  StackNavigatorProps<
-    AlgorandOptInFlowParamList,
-    ScreenName.AlgorandOptInValidationSuccess
-  >
+  StackNavigatorProps<AlgorandOptInFlowParamList, ScreenName.AlgorandOptInValidationSuccess>
 >;
 
 export default function ValidationSuccess({ navigation, route }: Props) {
@@ -29,9 +26,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   const { account } = useSelector(accountScreenSelector(route));
   const { transaction } = route.params;
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
   const goToOperationDetails = useCallback(() => {
     if (!account) return;
@@ -44,9 +39,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   }, [account, route.params, navigation]);
   const token = useMemo(() => {
     const options =
-      account && account.type === "Account"
-        ? listTokensForCryptoCurrency(account.currency)
-        : [];
+      account && account.type === "Account" ? listTokensForCryptoCurrency(account.currency) : [];
     return options.find(({ id }) => id === transaction.assetId);
   }, [account, transaction]);
   return (

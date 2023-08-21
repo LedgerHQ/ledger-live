@@ -1,43 +1,52 @@
-import { storiesOf } from "../storiesOf";
 import React from "react";
-import { select } from "@storybook/addon-knobs";
+import { ComponentStory } from "@storybook/react-native";
 
 import Flex from "../../../src/components/Layout/Flex";
 import Box from "../../../src/components/Layout/Box";
-import { Icons } from "../../../src/assets";
+import { IconsLegacy } from "../../../src/assets";
 import BoxedIcon from "../../../src/components/Icon/BoxedIcon";
 import Text from "../../../src/components/Text";
 
-const BoxedIconStory = () => {
-  const variant = select("variant", ["square", "circle"], "square");
+export default {
+  title: "Icon/BoxedIcon",
+  component: BoxedIcon,
+  argTypes: {
+    variant: {
+      options: ["square", "circle"],
+      control: { type: "select" },
+    },
+  },
+};
+
+export const BoxedIconStory: ComponentStory<typeof BoxedIcon> = (
+  args: typeof BoxedIconStoryArgs,
+) => {
+  const variant = args.variant;
   return (
     <Flex flexDirection="column" alignItems="center">
-      <BoxedIcon
-        Icon={Icons.HandshakeMedium}
-        variant={select("variant", ["square", "circle"], "square")}
-      />
+      <BoxedIcon Icon={IconsLegacy.HandshakeMedium} variant={variant} />
       <Box height={20} />
       <BoxedIcon
-        Icon={Icons.HandshakeMedium}
-        Badge={Icons.CircledCheckSolidMedium}
-        iconColor="success.c100"
+        Icon={IconsLegacy.HandshakeMedium}
+        Badge={IconsLegacy.CircledCheckSolidMedium}
+        iconColor="success.c50"
         borderColor="success.c40"
-        badgeColor="success.c100"
+        badgeColor="success.c50"
         variant={variant}
       />
       <Box height={20} />
       <BoxedIcon
-        Icon={Icons.HandshakeMedium}
-        Badge={Icons.CircledCrossSolidMedium}
-        iconColor="error.c100"
+        Icon={IconsLegacy.HandshakeMedium}
+        Badge={IconsLegacy.CircledCrossSolidMedium}
+        iconColor="error.c50"
         borderColor="error.c40"
-        badgeColor="error.c100"
+        badgeColor="error.c50"
         variant={variant}
       />
       <Box height={20} />
       <BoxedIcon
-        Icon={Icons.HandshakeMedium}
-        Badge={Icons.ClockSolidMedium}
+        Icon={IconsLegacy.HandshakeMedium}
+        Badge={IconsLegacy.ClockSolidMedium}
         iconColor="neutral.c50"
         badgeColor="neutral.c70"
         variant={variant}
@@ -55,5 +64,8 @@ const BoxedIconStory = () => {
     </Flex>
   );
 };
-
-storiesOf((story) => story("Icon", module).add("BoxedIcon", BoxedIconStory));
+BoxedIconStory.storyName = "BoxedIcon";
+const BoxedIconStoryArgs = {
+  variant: "square" as const,
+};
+BoxedIconStory.args = BoxedIconStoryArgs;

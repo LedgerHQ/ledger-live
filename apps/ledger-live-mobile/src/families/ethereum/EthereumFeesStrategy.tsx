@@ -1,18 +1,26 @@
 import React, { useCallback, useState, useMemo, useEffect } from "react";
-import type { Transaction as EthereumTransaction } from "@ledgerhq/live-common/families/ethereum/types";
+import type {
+  Transaction as EthereumTransaction,
+  TransactionRaw,
+} from "@ledgerhq/live-common/families/ethereum/types";
 import { useFeesStrategy } from "@ledgerhq/live-common/families/ethereum/react";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   EIP1559ShouldBeUsed,
+  fromTransactionRaw,
   getGasLimit,
 } from "@ledgerhq/live-common/families/ethereum/transaction";
 import { FeeStrategy } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import { isEditableOperation } from "@ledgerhq/coin-framework/operation";
+import { getEnv } from "@ledgerhq/live-env";
+
 import SelectFeesStrategy from "../../components/SelectFeesStrategy";
 import { SendRowsFeeProps as Props } from "./types";
 import { ScreenName } from "../../const";
+import { EthereumNetworkFeeInfo } from "./EthereumNetworkFeesInfo";
 
 const getCustomStrategy = (
   transaction: EthereumTransaction,
@@ -42,18 +50,70 @@ export default function EthereumFeesStrategy({
   ...props
 }: Props<EthereumTransaction>) {
   const { currency } = getMainAccount(account, parentAccount);
+  const { operation } = route.params;
 
-  const defaultStrategies = useFeesStrategy(transaction);
+  let ethereumTransaction = transaction;
+  const isEditable = operation && isEditableOperation(account, operation);
+  if (operation?.transactionRaw && isEditable) {
+    ethereumTransaction = fromTransactionRaw(operation.transactionRaw as TransactionRaw);
+  }
+
+  const defaultStrategies = useFeesStrategy(ethereumTransaction);
+
   const [customStrategy, setCustomStrategy] = useState(
-    getCustomStrategy(transaction, currency),
+    getCustomStrategy(ethereumTransaction, currency),
   );
+
   const strategies = useMemo(
     () =>
-      customStrategy
-        ? [...defaultStrategies, customStrategy]
-        : defaultStrategies,
-    [defaultStrategies, customStrategy],
+      customStrategy && !isEditable ? [...defaultStrategies, customStrategy] : defaultStrategies,
+    [defaultStrategies, customStrategy, isEditable],
   );
+
+  const disabledStrategies = useMemo(() => {
+    if (isEditable) {
+      return strategies
+        .filter(strategy => {
+          if (EIP1559ShouldBeUsed(currency)) {
+            const oldMaxPriorityFeePerGas = ethereumTransaction.maxPriorityFeePerGas;
+            const oldMaxFeePerGas = ethereumTransaction.maxFeePerGas;
+            const strategyMaxPriorityFeePerGas = strategy.extra?.maxPriorityFeePerGas;
+            const strategyMaxFeePerGas = strategy.extra?.maxFeePerGas;
+            const maxPriorityFeeGap: number = getEnv("EDIT_TX_EIP1559_FEE_GAP_SPEEDUP_FACTOR");
+            const feesGap: number = getEnv("EDIT_TX_EIP1559_FEE_GAP_SPEEDUP_FACTOR");
+
+            const disabled =
+              strategy.disabled ||
+              strategyMaxPriorityFeePerGas?.isLessThan(
+                BigNumber(oldMaxPriorityFeePerGas || 0).times(1 + maxPriorityFeeGap),
+              ) ||
+              strategyMaxFeePerGas?.isLessThan(BigNumber(oldMaxFeePerGas || 0).times(1 + feesGap));
+
+            return disabled;
+          }
+
+          const gaspriceGap: number = getEnv("EDIT_TX_NON_EIP1559_GASPRICE_GAP_SPEEDUP_FACTOR");
+
+          const oldGasPrice = ethereumTransaction.gasPrice;
+
+          const disabled =
+            strategy.disabled ||
+            strategy.amount.isLessThan(BigNumber(oldGasPrice || 0).times(1 + gaspriceGap));
+
+          return disabled;
+        })
+        .map(strategy => strategy.label);
+    }
+
+    return [];
+  }, [
+    currency,
+    strategies,
+    ethereumTransaction.gasPrice,
+    ethereumTransaction.maxFeePerGas,
+    ethereumTransaction.maxPriorityFeePerGas,
+    isEditable,
+  ]);
 
   useEffect(() => {
     const newCustomStrategy = getCustomStrategy(transaction, currency);
@@ -84,7 +144,8 @@ export default function EthereumFeesStrategy({
       ...route.params,
       accountId: account.id,
       parentId: parentAccount?.id,
-      transaction,
+      transaction: ethereumTransaction,
+      transactionRaw: operation?.transactionRaw as TransactionRaw,
       currentNavigation: ScreenName.SendSummary,
       nextNavigation: ScreenName.SendSelectDevice,
       setTransaction,
@@ -94,8 +155,9 @@ export default function EthereumFeesStrategy({
     route.params,
     account.id,
     parentAccount,
-    transaction,
+    ethereumTransaction,
     setTransaction,
+    operation?.transactionRaw,
   ]);
 
   return (
@@ -107,6 +169,8 @@ export default function EthereumFeesStrategy({
       account={account}
       parentAccount={parentAccount}
       transaction={transaction}
+      NetworkFeesInfoComponent={EthereumNetworkFeeInfo}
+      disabledStrategies={disabledStrategies}
     />
   );
 }

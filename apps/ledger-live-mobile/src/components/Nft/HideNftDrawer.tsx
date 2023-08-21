@@ -2,7 +2,7 @@ import React, { memo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 
-import { BottomDrawer, Button, Icons } from "@ledgerhq/native-ui";
+import { Button, IconsLegacy } from "@ledgerhq/native-ui";
 import { useDispatch, useSelector } from "react-redux";
 import { Account } from "@ledgerhq/types-live";
 import { decodeNftId } from "@ledgerhq/live-common/nft/index";
@@ -10,6 +10,7 @@ import { track, TrackScreen } from "../../analytics";
 import { hideNftCollection } from "../../actions/settings";
 import { accountSelector } from "../../reducers/accounts";
 import { State } from "../../reducers/types";
+import QueuedDrawer from "../QueuedDrawer";
 
 type Props = {
   nftId?: string;
@@ -18,13 +19,7 @@ type Props = {
   isOpened: boolean;
   onClose: () => void;
 };
-const HideNftDrawer = ({
-  nftId,
-  nftContract,
-  collection,
-  isOpened,
-  onClose,
-}: Props) => {
+const HideNftDrawer = ({ nftId, nftContract, collection, isOpened, onClose }: Props) => {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -61,41 +56,25 @@ const HideNftDrawer = ({
     onClose();
   }, [onClose]);
   return (
-    <BottomDrawer
-      isOpen={isOpened}
+    <QueuedDrawer
+      isRequestingToBeOpened={isOpened}
       onClose={onPressClose}
-      Icon={Icons.EyeNoneMedium}
+      Icon={IconsLegacy.EyeNoneMedium}
       title={t("wallet.nftGallery.hideNftModal.title")}
       description={t("wallet.nftGallery.hideNftModal.desc", {
         collectionName: collection,
       })}
     >
-      <TrackScreen
-        category="Hide NFT Confirmation"
-        type="drawer"
-        refreshSource={false}
-      />
+      <TrackScreen category="Hide NFT Confirmation" type="drawer" refreshSource={false} />
 
-      <Button
-        type="main"
-        size="large"
-        alignSelf="stretch"
-        onPress={onClickContinue}
-        mt={4}
-        mb={2}
-      >
+      <Button type="main" size="large" alignSelf="stretch" onPress={onClickContinue} mt={4} mb={2}>
         {t("wallet.nftGallery.hideNftModal.cta")}
       </Button>
 
-      <Button
-        type="default"
-        size="large"
-        alignSelf="stretch"
-        onPress={onPressCancel}
-      >
+      <Button type="default" size="large" alignSelf="stretch" onPress={onPressCancel}>
         {t("common.cancel")}
       </Button>
-    </BottomDrawer>
+    </QueuedDrawer>
   );
 };
 

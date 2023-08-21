@@ -25,10 +25,7 @@ function MockModeRow({ reboot }: Props) {
       title="Mock mode"
       desc="Toggle Mock mode for testing, relaunch to refresh"
     >
-      <Track
-        event={isMock ? "EnableReadOnlyMode" : "DisableReadOnlyMode"}
-        onUpdate
-      />
+      <Track event={isMock ? "EnableReadOnlyMode" : "DisableReadOnlyMode"} onUpdate />
       <Switch value={!!isMock} onValueChange={setReadOnlyModeAndReset} />
     </SettingsRow>
   );

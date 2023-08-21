@@ -1,14 +1,9 @@
 import Transport from "@ledgerhq/hw-transport"; // TODO make it observable style
+import { ListAppResponse } from "../apps/types";
 
 export default async (transport: Transport) => {
   const payload = await transport.send(0xe0, 0xde, 0, 0);
-  const apps: Array<{
-    name: string;
-    hash: string;
-    hashCodeData: string;
-    blocks: number;
-    flags: number;
-  }> = [];
+  const apps: ListAppResponse = [];
   let data = payload;
 
   // more than the status bytes
@@ -42,7 +37,7 @@ export default async (transport: Transport) => {
       apps.push({
         name,
         hash,
-        hashCodeData,
+        hash_code_data: hashCodeData,
         blocks,
         flags,
       });

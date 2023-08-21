@@ -11,18 +11,10 @@ export const createActivateVoteMutation = (): MutationSpec<Transaction> => ({
   maxRun: 5,
   transaction: ({ account, bridge, maxSpendable }) => {
     const { celoResources } = account as CeloAccount;
-    invariant(
-      celoResources?.registrationStatus,
-      "Celo: Activate Vote | Account is not registered"
-    );
-    invariant(
-      maxSpendable.gt(minimalAmount),
-      "Celo:  Activate Vote | balance is too low"
-    );
+    invariant(celoResources?.registrationStatus, "Celo: Activate Vote | Account is not registered");
+    invariant(maxSpendable.gt(minimalAmount), "Celo:  Activate Vote | balance is too low");
 
-    const activatableVote = celoResources?.votes?.find(
-      (vote) => vote.activatable
-    );
+    const activatableVote = celoResources?.votes?.find(vote => vote.activatable);
 
     invariant(!!activatableVote, "Celo: Activate Vote | No activatable votes");
 

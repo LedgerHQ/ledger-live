@@ -8,7 +8,12 @@ const config: PlaywrightTestConfig = {
   expect: {
     timeout: 30000,
     toHaveScreenshot: {
-      maxDiffPixelRatio: 0.01,
+      /**
+       * do not increase unless it makes most tests flaky
+       * if you need a less sensitive threshold for a given test,
+       * configure it for specific screenshots
+       * */
+      maxDiffPixelRatio: 0.005,
     },
     toMatchSnapshot: {
       maxDiffPixelRatio: 0.01,

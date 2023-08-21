@@ -5,13 +5,13 @@ export default async (
   currency: CryptoCurrency,
   transport: Transport,
   path: string,
-  txArg: Record<string, any>
+  txArg: Record<string, any>,
 ) => {
   const trx = new Trx(transport);
   const signature = await trx.signTransaction(
     path,
     txArg.rawDataHex,
-    txArg.tokenSignature ? [txArg.tokenSignature] : []
+    txArg.tokenSignature ? [txArg.tokenSignature] : [],
   );
   return signature;
 };

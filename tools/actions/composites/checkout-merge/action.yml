@@ -1,0 +1,37 @@
+name: "Checkout and merge"
+description: "Composite job to checkout base/head refs and produce a merge commit"
+inputs:
+  ref:
+    description: "The head ref that will get merged into base. If base is not provided, this ref will be checked out instead."
+    default: ""
+  base:
+    description: "The base ref to check out and merge the head into. If not provided, the head ref will be checked out instead."
+  # For the rest of the options, see: https://github.com/actions/checkout#usage
+  # Only the ones that are useful for this composite action are exposed
+  persist-credentials:
+    description: "Whether to configure the token or SSH key with the local git config."
+    default: "true"
+  fetch-depth:
+    description: "Number of commits to fetch. 0 indicates all history for all branches and tags."
+    default: "1"
+  token:
+    description: "Personal access token (PAT) used to fetch the repository."
+    default: ${{ github.token }}
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v3
+      with:
+        ref: ${{ inputs.base || inputs.ref }}
+        persist-credentials: ${{ fromJSON(inputs.persist-credentials) }}
+        fetch-depth: ${{ fromJSON(inputs.fetch-depth) }}
+        token: ${{ inputs.token }}
+    - name: "Merge head into base"
+      if: inputs.base && inputs.ref
+      shell: bash
+      run: |
+        git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
+        git config user.name "live-github-bot[bot]"
+        git fetch --prune --unshallow --no-tags || true
+        git checkout ${{ inputs.base }}
+        git merge origin/${{ inputs.ref }} --no-commit --no-ff

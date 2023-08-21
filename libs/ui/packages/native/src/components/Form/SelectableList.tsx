@@ -12,6 +12,7 @@ type BaseElementProps<V> = {
   value?: V;
   onPress?: ((event: GestureResponderEvent) => void) | undefined;
   Icon?: IconType;
+  testID?: string;
 };
 
 export type ElementProps<V> = React.PropsWithChildren<
@@ -38,9 +39,10 @@ function Element<V>(props: ElementProps<V>) {
     children,
     Icon,
     renderRight: RenderRight,
+    testID,
   } = props;
   return (
-    <TouchableOpacity onPress={onPress} disabled={disabled}>
+    <TouchableOpacity onPress={onPress} disabled={disabled} testID={testID}>
       <ElementContainer
         p={6}
         mt={first ? 0 : 4}
@@ -68,7 +70,12 @@ function Element<V>(props: ElementProps<V>) {
         </Text>
         {RenderRight && (
           <Flex pl={6} flexShrink={0}>
-            {React.isValidElement(RenderRight) ? RenderRight : <RenderRight {...props} />}
+            {React.isValidElement(RenderRight) ? (
+              RenderRight
+            ) : (
+              /* @ts-expect-error TS 5 can't seem to be able to prove this is a react comopnent here */
+              <RenderRight {...props} />
+            )}
           </Flex>
         )}
       </ElementContainer>

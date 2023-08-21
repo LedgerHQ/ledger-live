@@ -107,7 +107,7 @@ export interface Transport {
     p1: number,
     p2: number,
     data?: Buffer,
-    statusList?: Array<number>
+    statusList?: Array<number>,
   ) => Promise<Buffer>;
 
   /**
@@ -133,20 +133,18 @@ export interface Transport {
    */
   setExchangeUnresponsiveTimeout: (unresponsiveTimeout: number) => void;
 
-  exchangeAtomicImpl: (
-    f: () => Promise<Buffer | void>
-  ) => Promise<Buffer | void>;
+  exchangeAtomicImpl: (f: () => Promise<Buffer | void>) => Promise<Buffer | void>;
 
   decorateAppAPIMethods: (
     self: Record<string, any>,
     methods: Array<string>,
-    scrambleKey: string
+    scrambleKey: string,
   ) => void;
 
   decorateAppAPIMethod: <R, A extends any[]>(
     methodName: string,
     f: (...args: A) => Promise<R>,
     ctx: any,
-    scrambleKey: string
+    scrambleKey: string,
   ) => (...args: A) => Promise<R>;
 }

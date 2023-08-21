@@ -1,23 +1,22 @@
 import React, { memo, useCallback, useMemo, useContext } from "react";
 import { Linking, Platform, ScrollView } from "react-native";
-import styled from "styled-components/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Illustration from "../../images/illustration/Illustration";
 import { NavigatorName, ScreenName } from "../../const";
 import DiscoverCard from "./DiscoverCard";
 import { urls } from "../../config/urls";
 import { TrackScreen, track } from "../../analytics";
-import TabBarSafeAreaView, {
-  TAB_BAR_SAFE_HEIGHT,
-} from "../../components/TabBar/TabBarSafeAreaView";
+import { TAB_BAR_SAFE_HEIGHT } from "../../components/TabBar/TabBarSafeAreaView";
 import { AnalyticsContext } from "../../analytics/AnalyticsContext";
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import { MainNavigatorParamList } from "../../components/RootNavigator/types/MainNavigator";
 import useDynamicContent from "../../dynamicContent/dynamicContent";
+import { useIsNewsfeedAvailable } from "../../hooks/newsfeed/useIsNewsfeedAvailable";
 
 const images = {
   light: {
@@ -36,21 +35,15 @@ const images = {
   },
 };
 
-const StyledSafeAreaView = styled(TabBarSafeAreaView)`
-  background-color: ${({ theme }) => theme.colors.background.main};
-`;
-
 function Discover() {
   const { t } = useTranslation();
   const navigation =
-    useNavigation<
-      StackNavigationProp<BaseNavigatorStackParamList & MainNavigatorParamList>
-    >();
+    useNavigation<StackNavigationProp<BaseNavigatorStackParamList & MainNavigatorParamList>>();
 
   const learn = useFeature("brazeLearn");
+  const isNewsfeedAvailable = useIsNewsfeedAvailable();
   const referralProgramConfig = useFeature("referralProgramDiscoverCard");
-  const isNFTDisabled =
-    useFeature("disableNftLedgerMarket")?.enabled && Platform.OS === "ios";
+  const isNFTDisabled = useFeature("disableNftLedgerMarket")?.enabled && Platform.OS === "ios";
 
   const readOnlyTrack = useCallback((bannerName: string) => {
     track("banner_clicked", {
@@ -64,6 +57,7 @@ function Discover() {
   }, []);
 
   const { learnCards } = useDynamicContent();
+  const config = useFeature("discover");
 
   const featuresList: {
     title: string;
@@ -75,7 +69,27 @@ function Discover() {
   }[] = useMemo(
     () =>
       [
-        ...(Platform.OS !== "ios"
+        ...(config?.enabled && config?.params.version === "2"
+          ? [
+              {
+                title: t("discover.sections.browseWeb3.title"),
+                subTitle: t("discover.sections.browseWeb3.desc"),
+                onPress: () => {
+                  navigation.navigate(NavigatorName.Discover, {
+                    screen: ScreenName.PlatformCatalog,
+                  });
+                },
+                disabled: false,
+                Image: (
+                  <Illustration
+                    size={110}
+                    darkSource={images.dark.appsImg}
+                    lightSource={images.light.appsImg}
+                  />
+                ),
+              },
+            ]
+          : Platform.OS !== "ios"
           ? [
               {
                 title: t("discover.sections.ledgerApps.title"),
@@ -96,8 +110,7 @@ function Discover() {
               },
             ]
           : []),
-
-        ...(!learn?.enabled
+        ...(!learn?.enabled && !isNewsfeedAvailable
           ? [
               {
                 title: t("discover.sections.learn.title"),
@@ -119,14 +132,19 @@ function Discover() {
                 ),
               },
             ]
-          : learnCards.length > 0
+          : learnCards.length > 0 || isNewsfeedAvailable
           ? [
               {
-                title: t("discover.sections.learn.title"),
-                subTitle: t("discover.sections.learn.desc"),
+                title: t("discover.sections.news.title"),
+                subTitle: t("discover.sections.news.desc"),
                 onPress: () => {
-                  readOnlyTrack("Learn");
-                  navigation.navigate(ScreenName.Learn);
+                  // Fixme: Can't find a way to make TS happy ...
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore
+                  navigation.navigate(NavigatorName.ExploreTab);
+                  track("banner_clicked", {
+                    banner: "News",
+                  });
                 },
                 disabled: false,
                 Image: (
@@ -212,6 +230,8 @@ function Discover() {
       referralProgramConfig?.params.url,
       navigation,
       readOnlyTrack,
+      isNewsfeedAvailable,
+      config,
     ],
   );
 
@@ -227,43 +247,47 @@ function Discover() {
     }, [setSource, setScreen]),
   );
 
+  const insets = useSafeAreaInsets();
+
   return (
-    <StyledSafeAreaView>
+    <Flex
+      /**
+       * NB: not using SafeAreaView because it flickers during navigation
+       * https://github.com/th3rdwave/react-native-safe-area-context/issues/219
+       */
+      flex={1}
+      mt={insets.top}
+    >
       <TrackScreen category="Discover" />
-      <ScrollView
-        contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
-      >
-        <Flex p={8} mt={8} flexDirection="row">
-          <Flex flex={1} justifyContent="flex-start" alignItems="flex-start">
-            <Text variant="h1">{t("discover.title")}</Text>
-            <Text variant="body" mb={4} mt={4} color="neutral.c70">
-              {t("discover.desc")}
-            </Text>
-          </Flex>
+      <Flex px={6} pb={6} flexDirection="row">
+        <Flex flex={1} justifyContent="flex-start" alignItems="flex-start">
+          <Text my={3} variant="h4" fontWeight="semiBold">
+            {t("discover.title")}
+          </Text>
         </Flex>
-        {featuresList.map(
-          ({ title, subTitle, onPress, disabled, labelBadge, Image }, i) => (
-            <DiscoverCard
-              key={i}
-              title={title}
-              subTitle={subTitle}
-              onPress={onPress}
-              disabled={disabled}
-              labelBadge={labelBadge}
-              imageContainerProps={{
-                position: "relative",
-                height: "auto",
-                alignItems: "center",
-                justifyContent: "center",
-                flex: 1,
-                paddingRight: 4,
-              }}
-              Image={Image}
-            />
-          ),
-        )}
+      </Flex>
+      <ScrollView contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}>
+        {featuresList.map(({ title, subTitle, onPress, disabled, labelBadge, Image }, i) => (
+          <DiscoverCard
+            key={i}
+            title={title}
+            subTitle={subTitle}
+            onPress={onPress}
+            disabled={disabled}
+            labelBadge={labelBadge}
+            imageContainerProps={{
+              position: "relative",
+              height: "auto",
+              alignItems: "center",
+              justifyContent: "center",
+              flex: 1,
+              paddingRight: 4,
+            }}
+            Image={Image}
+          />
+        ))}
       </ScrollView>
-    </StyledSafeAreaView>
+    </Flex>
   );
 }
 

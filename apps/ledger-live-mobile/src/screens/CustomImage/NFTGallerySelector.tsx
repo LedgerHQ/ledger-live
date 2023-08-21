@@ -1,30 +1,23 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import { Flex } from "@ledgerhq/native-ui";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { decodeNftId } from "@ledgerhq/live-common/nft/nftId";
-import { orderByLastReceived } from "@ledgerhq/live-common/nft/helpers";
 import { useSelector } from "react-redux";
 import { ProtoNFT } from "@ledgerhq/types-live";
 import { FlatList } from "react-native";
+import { isEqual } from "lodash";
 
-import { accountsSelector } from "../../reducers/accounts";
-import { hiddenNftCollectionsSelector } from "../../reducers/settings";
-import NftListItem from "../../components/Nft/NftListItem";
+import { orderedVisibleNftsSelector } from "../../reducers/accounts";
+import NftListItem from "../../components/Nft/NftGallery/NftListItem";
 import NftGalleryEmptyState from "../Nft/NftGallery/NftGalleryEmptyState";
 import { NavigatorName, ScreenName } from "../../const";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
+import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { CustomImageNavigatorParamList } from "../../components/RootNavigator/types/CustomImageNavigator";
+import { TrackScreen } from "../../analytics";
 
 const NB_COLUMNS = 2;
 
 type NavigationProps = BaseComposite<
-  StackNavigatorProps<
-    CustomImageNavigatorParamList,
-    ScreenName.CustomImageNFTGallery
-  >
+  StackNavigatorProps<CustomImageNavigatorParamList, ScreenName.CustomImageNFTGallery>
 >;
 
 const keyExtractor = (item: ProtoNFT) => item.id;
@@ -33,20 +26,7 @@ const NFTGallerySelector = ({ navigation, route }: NavigationProps) => {
   const { params } = route;
   const { device } = params;
 
-  const accounts = useSelector(accountsSelector);
-  const nfts = accounts.map(a => a.nfts ?? []).flat();
-
-  const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
-
-  const nftsOrdered = useMemo(() => {
-    const visibleNfts = nfts.filter(
-      nft =>
-        !hiddenNftCollections.includes(
-          `${decodeNftId(nft.id).accountId}|${nft.contract}`,
-        ),
-    );
-    return orderByLastReceived(accounts, visibleNfts);
-  }, [accounts, hiddenNftCollections, nfts]);
+  const nftsOrdered = useSelector(orderedVisibleNftsSelector, isEqual);
 
   const hasNFTs = nftsOrdered.length > 0;
 
@@ -81,6 +61,7 @@ const NFTGallerySelector = ({ navigation, route }: NavigationProps) => {
   );
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
+      <TrackScreen category="Choose lockscreen from NFT gallery" />
       <Flex flex={1} px={6}>
         {hasNFTs ? (
           <FlatList

@@ -3,64 +3,42 @@ import { useNavigation } from "@react-navigation/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { Currency, FiatCurrency } from "@ledgerhq/types-cryptoassets";
 import { useSelector } from "react-redux";
-import {
-  ArrowLeftMedium,
-  SettingsMedium,
-} from "@ledgerhq/native-ui/assets/icons";
+import { ArrowLeftMedium, SettingsMedium } from "@ledgerhq/native-ui/assets/icons";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useTranslation } from "react-i18next";
-import { Portfolio } from "@ledgerhq/types-live";
 import Animated from "react-native-reanimated";
+import BigNumber from "bignumber.js";
 import Touchable from "../../components/Touchable";
 import { ScreenName } from "../../const";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
-import { readOnlyModeEnabledSelector } from "../../reducers/settings";
+import { countervalueFirstSelector, readOnlyModeEnabledSelector } from "../../reducers/settings";
 import { track } from "../../analytics";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import Placeholder from "../../components/Placeholder";
 import CurrencyHeaderLayout from "../../components/CurrencyHeaderLayout";
+import CounterValue from "../../components/CounterValue";
 
 function Header({
   currentPositionY,
   graphCardEndPosition,
   currency,
-  assetPortfolio,
-  counterValueCurrency,
-  useCounterValue,
   currencyBalance,
 }: {
   currentPositionY: Animated.SharedValue<number>;
   graphCardEndPosition: number;
   currency: Currency;
-  assetPortfolio: Portfolio;
-  counterValueCurrency: Currency;
-  useCounterValue?: boolean;
-  currencyBalance: number;
+  currencyBalance: BigNumber;
 }) {
   const navigation = useNavigation();
   const { t } = useTranslation();
-
-  const { balanceHistory } = assetPortfolio;
-  const item = balanceHistory[balanceHistory.length - 1];
-
-  const unit = counterValueCurrency.units[0];
-
-  const currencyUnitValueProps = useCounterValue
-    ? {
-        unit,
-        value: item?.value,
-      }
-    : {
-        unit: currency.units[0],
-        value: currencyBalance,
-      };
+  const shouldUseCounterValue = useSelector(countervalueFirstSelector);
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
 
   const onBackButtonPress = useCallback(() => {
     if (readOnlyModeEnabled) {
       track("button_clicked", {
         button: "Back",
-        screen: "Account",
+        page: "Account",
       });
     }
     navigation.goBack();
@@ -86,14 +64,19 @@ function Header({
       }
       centerBeforeScrollElement={
         <Flex flexDirection={"row"} alignItems={"center"}>
-          <Text variant={"large"} fontWeight={"semiBold"} numberOfLines={1}>
+          <Text
+            variant={"large"}
+            fontWeight={"semiBold"}
+            numberOfLines={1}
+            testID={`accounts-title-${currency.name}`}
+          >
             {t("asset.title", { assetName: currency.name })}
           </Text>
         </Flex>
       }
       centerAfterScrollElement={
         <Flex flexDirection={"column"} alignItems={"center"}>
-          {balanceHistory ? (
+          {currencyBalance ? (
             <>
               <Text
                 variant={"small"}
@@ -111,7 +94,11 @@ function Header({
                 fontSize="18px"
                 numberOfLines={1}
               >
-                <CurrencyUnitValue {...currencyUnitValueProps} />
+                {shouldUseCounterValue ? (
+                  <CounterValue currency={currency} value={currencyBalance} />
+                ) : (
+                  <CurrencyUnitValue showCode unit={currency.units[0]} value={currencyBalance} />
+                )}
               </Text>
             </>
           ) : (
@@ -134,4 +121,4 @@ function Header({
   );
 }
 
-export default withDiscreetMode(Header);
+export default React.memo(withDiscreetMode(Header));

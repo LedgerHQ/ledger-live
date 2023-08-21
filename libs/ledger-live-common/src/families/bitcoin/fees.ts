@@ -12,5 +12,4 @@ const minFees = {
   viacoin: 2000,
   peercoin: 2000,
 };
-export const getMinRelayFee = (currency: CryptoCurrency): number =>
-  minFees[currency.id] || 0;
+export const getMinRelayFee = (currency: CryptoCurrency): number => minFees[currency.id] || 0;

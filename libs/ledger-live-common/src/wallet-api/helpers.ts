@@ -7,22 +7,15 @@ import {
   WalletAPICryptoCurrency,
 } from "./types";
 import { WALLET_API_FAMILIES } from "./constants";
-
-// Small helper to avoid issues with includes and typescript
-// more infos: https://fettblog.eu/typescript-array-includes/
-function includes<T extends U, U>(
-  array: ReadonlyArray<T>,
-  element: U
-): element is T {
-  return array.includes(element as T);
-}
+import { includes } from "../helpers";
 
 export function isWalletAPISupportedCurrency(
-  currency: Currency
+  currency: Currency,
 ): currency is WalletAPISupportedCurrency {
   if (isCryptoCurrency(currency)) {
-    return includes(WALLET_API_FAMILIES, currency.family);
+    return includes([...WALLET_API_FAMILIES, "evm"], currency.family);
   }
+
   if (isTokenCurrency(currency)) {
     return includes(WALLET_API_FAMILIES, currency.parentCurrency.family);
   }
@@ -30,19 +23,44 @@ export function isWalletAPISupportedCurrency(
 }
 
 export function isWalletAPICryptoCurrency(
-  currency: WalletAPICurrency
+  currency: WalletAPICurrency,
 ): currency is WalletAPICryptoCurrency {
   return currency.type === "CryptoCurrency";
 }
 
 export function isWalletAPITokenCurrency(
-  currency: WalletAPICurrency
+  currency: WalletAPICurrency,
 ): currency is WalletAPIERC20TokenCurrency {
   return currency.type === "TokenCurrency";
 }
 
 export function isWalletAPIERC20TokenCurrency(
-  currency: WalletAPICurrency
+  currency: WalletAPICurrency,
 ): currency is WalletAPIERC20TokenCurrency {
   return (currency as WalletAPIERC20TokenCurrency).standard === "ERC20";
+}
+
+export function addParamsToURL(url: URL, inputs?: Record<string, string>): void {
+  if (inputs) {
+    const keys = Object.keys(inputs);
+
+    for (let i = 0; i < keys.length; i++) {
+      const key = keys[i];
+      const value = inputs[key];
+
+      url.searchParams.set(key, value);
+    }
+  }
+}
+
+type getHostHeadersParams = {
+  client: string;
+  theme: "light" | "dark";
+};
+
+export function getClientHeaders(params: getHostHeadersParams): Record<string, string> {
+  return {
+    "x-ledger-host": params.client,
+    "x-ledger-host-theme": params.theme,
+  };
 }

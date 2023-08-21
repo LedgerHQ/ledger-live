@@ -3,76 +3,30 @@ import {
   View,
   StyleSheet,
   Platform,
-  TouchableOpacity,
   FlatList,
   StyleProp,
   ViewStyle,
   TextStyle,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import {
-  useNavigation,
-  useTheme,
-  useIsFocused,
-} from "@react-navigation/native";
-import Animated from "react-native-reanimated";
+import { useIsFocused } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
+import Animated, {
+  interpolate,
+  Extrapolate,
+  useSharedValue,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+} from "react-native-reanimated";
 import * as Animatable from "react-native-animatable";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { space } from "@ledgerhq/native-ui/styles/theme";
 import Styles from "../navigation/styles";
 import LText from "./LText";
 import { width } from "../helpers/normalizeSize";
-import ArrowLeft from "../icons/ArrowLeft";
-import Close from "../icons/Close";
-import { Theme } from "../colors";
+import { NavigationHeaderBackButton } from "./NavigationHeaderBackButton";
+import { NavigationHeaderCloseButton } from "./NavigationHeaderCloseButton";
 
-type WildcardNavigation = StackNavigationProp<
-  Record<string, object | undefined>
->;
-
-const { interpolateNode, Extrapolate } = Animated;
 const AnimatedView = Animatable.View;
-const hitSlop = {
-  bottom: 10,
-  left: 24,
-  right: 24,
-  top: 10,
-};
-
-const BackButton = ({
-  colors,
-  navigation,
-  action,
-}: {
-  colors: Theme["colors"];
-  navigation: WildcardNavigation;
-  action?: () => void;
-}) => (
-  <TouchableOpacity
-    hitSlop={hitSlop}
-    style={styles.buttons}
-    onPress={() => (action ? action() : navigation.goBack())}
-  >
-    <ArrowLeft size={18} color={colors.darkBlue} />
-  </TouchableOpacity>
-);
-
-const CloseButton = ({
-  colors,
-  navigation,
-  action,
-}: {
-  colors: Theme["colors"];
-  navigation: WildcardNavigation;
-  action?: () => void;
-}) => (
-  <TouchableOpacity
-    hitSlop={hitSlop}
-    onPress={() => (action ? action() : navigation.popToTop())}
-    style={styles.buttons}
-  >
-    <Close size={18} color={colors.darkBlue} />
-  </TouchableOpacity>
-);
 
 type Props = {
   title: React.ReactNode;
@@ -99,51 +53,47 @@ export default function AnimatedHeaderView({
   titleStyle,
   edges,
 }: Props) {
-  const { colors } = useTheme();
-  const navigation = useNavigation<WildcardNavigation>();
+  const { colors, space } = useTheme();
   const [textHeight, setTextHeight] = useState(250);
   const [isReady, setReady] = useState(false);
   const onLayoutText = useCallback(event => {
     setTextHeight(event.nativeEvent.layout.height);
     setReady(true);
   }, []);
-  const [scrollY] = useState(new Animated.Value(0));
+  const scrollY = useSharedValue(0);
   const isFocused = useIsFocused();
-  const eventArgs = [
-    {
-      nativeEvent: {
-        contentOffset: {
-          y: scrollY,
-        },
+
+  const scrollHandler = useAnimatedScrollHandler(event => {
+    scrollY.value = event.contentOffset.y;
+  });
+
+  // Animated style moving and scaling the header title depending on the scroll y value
+  const transformStyle = useAnimatedStyle(() => ({
+    transform: [
+      {
+        translateY: interpolate(scrollY.value, [0, 76], [0, -45], Extrapolate.CLAMP),
       },
-    },
-    {
-      useNativeDriver: true,
-    },
-  ];
-  const event = Animated.event<typeof eventArgs>(eventArgs);
-  const translateY = interpolateNode(scrollY, {
-    inputRange: [0, 76],
-    outputRange: [0, -50],
-    extrapolate: Extrapolate.CLAMP,
-  });
-  const translateX = interpolateNode(scrollY, {
-    inputRange: [0, 76],
-    outputRange: [0, hasBackButton ? -5 : -40],
-    extrapolate: Extrapolate.CLAMP,
-  });
-  const scale = interpolateNode(scrollY, {
-    inputRange: [0, 76],
-    outputRange: [1, 0.8],
-    extrapolate: Extrapolate.CLAMP,
-  });
+      {
+        translateX: interpolate(
+          scrollY.value,
+          [0, 76],
+          [space[6], space[6] + (hasBackButton ? -5 : -40)],
+          Extrapolate.CLAMP,
+        ),
+      },
+      {
+        scale: interpolate(scrollY.value, [0, 76], [1, 0.8], Extrapolate.CLAMP),
+      },
+    ],
+  }));
+
   return (
     <SafeAreaView
       edges={edges}
       style={[
         styles.root,
         {
-          backgroundColor: colors.background,
+          backgroundColor: colors.background.main,
         },
         style,
       ]}
@@ -157,46 +107,13 @@ export default function AnimatedHeaderView({
         ]}
       >
         <View style={styles.topHeader}>
-          {hasBackButton && (
-            <BackButton
-              colors={colors}
-              navigation={navigation}
-              action={backAction}
-            />
-          )}
+          {hasBackButton && <NavigationHeaderBackButton onPress={backAction} />}
           <View style={styles.spacer} />
-          {hasCloseButton && (
-            <CloseButton
-              colors={colors}
-              navigation={navigation}
-              action={closeAction}
-            />
-          )}
+          {hasCloseButton && <NavigationHeaderCloseButton onPress={closeAction} />}
         </View>
 
-        <Animated.View
-          style={[
-            styles.titleContainer,
-            {
-              transform: [
-                {
-                  translateY,
-                  translateX,
-                },
-                {
-                  scale,
-                },
-              ],
-            },
-          ]}
-          onLayout={onLayoutText}
-        >
-          <LText
-            variant="h1"
-            bold
-            style={[styles.title, titleStyle]}
-            numberOfLines={4}
-          >
+        <Animated.View style={[styles.titleContainer, transformStyle]} onLayout={onLayoutText}>
+          <LText variant="h1" bold style={[styles.title, titleStyle]} numberOfLines={4}>
             {title}
           </LText>
         </Animated.View>
@@ -204,7 +121,7 @@ export default function AnimatedHeaderView({
       {children && isReady && (
         <AnimatedView animation="fadeInUp" delay={50} duration={300}>
           <AnimatedFlatList
-            onScroll={event}
+            onScroll={scrollHandler}
             scrollEventThrottle={10}
             contentContainerStyle={[styles.scrollArea]}
             testID={isFocused ? "ScrollView" : undefined}
@@ -236,7 +153,6 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === "ios" ? 0 : 40,
     flexDirection: "column",
     overflow: "visible",
-    paddingHorizontal: 24,
     marginBottom: 16,
   },
   titleContainer: {
@@ -250,7 +166,7 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
   },
   scrollArea: {
-    paddingHorizontal: 24,
+    paddingHorizontal: space[6],
     paddingTop: 50,
     paddingBottom: 116,
   },

@@ -1,7 +1,7 @@
 import React, { PureComponent } from "react";
 import { StyleSheet } from "react-native";
 import Clipboard from "@react-native-community/clipboard";
-import { Icons, Text } from "@ledgerhq/native-ui";
+import { IconsLegacy, Text } from "@ledgerhq/native-ui";
 import Touchable, { Props as TouchableProps } from "./Touchable";
 import { withTheme } from "../colors";
 
@@ -32,6 +32,11 @@ class CopyLink extends PureComponent<Props, State> {
 
   onPress = () => {
     const { string, onCopy } = this.props;
+    const { copied } = this.state;
+
+    if (copied) {
+      return;
+    }
 
     Clipboard.setString(string);
 
@@ -47,14 +52,11 @@ class CopyLink extends PureComponent<Props, State> {
     const { copied } = this.state;
     return (
       <Touchable style={[styles.linkContainer, style]} onPress={this.onPress}>
-        <Icons.CheckAloneMedium
-          size={16}
-          color={copied ? "success.c100" : "neutral.c30"}
-        />
+        <IconsLegacy.CheckAloneMedium size={16} color={copied ? "success.c50" : "neutral.c30"} />
         <Text
           variant="body"
           fontWeight="semiBold"
-          color={copied ? "success.c100" : "primary.c80"}
+          color={copied ? "success.c50" : "primary.c80"}
           ml={2}
         >
           {copied && replacement ? replacement : children}

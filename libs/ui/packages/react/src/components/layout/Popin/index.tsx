@@ -1,8 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import styled from "styled-components";
-import CloseIcon from "@ledgerhq/icons-ui/react/CloseRegular";
-import ArrowLeftIcon from "@ledgerhq/icons-ui/react/ArrowLeftRegular";
+import CloseIcon from "@ledgerhq/icons-ui/reactLegacy/CloseMedium";
+import ArrowLeftIcon from "@ledgerhq/icons-ui/reactLegacy/ArrowLeftMedium";
 
 import baseStyled, { BaseStyledProps } from "../../styled";
 import Flex from "../../layout/Flex";
@@ -11,7 +11,7 @@ import Button from "../../cta/Button";
 import TransitionInOut from "../../transitions/TransitionInOut";
 import TransitionScale from "../../transitions/TransitionScale";
 
-export interface PopinProps extends BaseStyledProps {
+export interface PopinProps extends FlexBoxProps {
   isOpen: boolean;
   children: React.ReactNode;
   menuPortalTarget?: Element | null;
@@ -25,7 +25,7 @@ export type PopinHeaderProps = BaseStyledProps & {
 
 const ICON_SIZE = 20;
 
-const Wrapper = styled(Flex).attrs<FlexBoxProps>((p) => ({
+const Wrapper = styled(Flex).attrs<FlexBoxProps>(p => ({
   flexDirection: "column",
   alignItems: "stretch",
   justifyContent: "space-between",
@@ -41,7 +41,7 @@ const Wrapper = styled(Flex).attrs<FlexBoxProps>((p) => ({
   backgroundColor: "background.main",
 }))``;
 
-const Overlay = styled(Flex).attrs((p) => ({
+const Overlay = styled(Flex).attrs(p => ({
   justifyContent: "center",
   alignItems: "center",
   width: "100vw",
@@ -116,7 +116,7 @@ const PopinWrapper = ({
 }: PopinProps): React.ReactElement => {
   const $root = React.useMemo(
     () =>
-      menuPortalTarget === undefined && typeof document !== undefined
+      menuPortalTarget === undefined && typeof document !== "undefined"
         ? document.querySelector("body")
         : menuPortalTarget,
     [menuPortalTarget],

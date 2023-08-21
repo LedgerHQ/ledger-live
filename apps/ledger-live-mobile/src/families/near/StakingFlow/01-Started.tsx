@@ -39,17 +39,16 @@ export default function StakingStarted({ navigation, route }: Props) {
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
-      <NavigationScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContainer}
-      >
-        <TrackScreen category="StakingFlow" name="Started" />
+      <NavigationScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
+        <TrackScreen
+          category="StakingFlow"
+          name="Started"
+          flow="stake"
+          action="staking"
+          currency="near"
+        />
         <Flex alignItems="center" mb={6}>
-          <Illustration
-            lightSource={EarnLight}
-            darkSource={EarnDark}
-            size={150}
-          />
+          <Illustration lightSource={EarnLight} darkSource={EarnDark} size={150} />
         </Flex>
         <Text fontWeight="semiBold" style={styles.description}>
           <Trans i18nKey="near.staking.flow.steps.starter.description" />
@@ -57,11 +56,13 @@ export default function StakingStarted({ navigation, route }: Props) {
         <BulletList
           Bullet={BulletGreenCheck}
           list={[
-            <Trans i18nKey="near.staking.flow.steps.starter.steps.0" />,
-            <Trans i18nKey="near.staking.flow.steps.starter.steps.1" />,
-            <Trans i18nKey="near.staking.flow.steps.starter.steps.2" />,
+            <Trans i18nKey="near.staking.flow.steps.starter.steps.0" key="StakingText0" />,
+            <Trans i18nKey="near.staking.flow.steps.starter.steps.1" key="StakingText1" />,
+            <Trans i18nKey="near.staking.flow.steps.starter.steps.2" key="StakingText2" />,
           ].map(wording => (
-            <LText semiBold>{wording}</LText>
+            <LText semiBold key={wording.key}>
+              {wording}
+            </LText>
           ))}
         />
         <View style={[styles.howStakingWorks]}>
@@ -74,10 +75,7 @@ export default function StakingStarted({ navigation, route }: Props) {
       </NavigationScrollView>
       <View style={[styles.footer]}>
         <View>
-          <Alert
-            type="info"
-            title={t("near.staking.flow.steps.starter.warning.description")}
-          />
+          <Alert type="info" title={t("near.staking.flow.steps.starter.warning.description")} />
         </View>
         <Button onPress={onNext} type="main" mt={6}>
           <Trans i18nKey="near.staking.flow.steps.starter.cta" />

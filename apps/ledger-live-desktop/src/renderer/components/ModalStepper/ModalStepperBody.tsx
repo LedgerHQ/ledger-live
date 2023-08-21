@@ -1,7 +1,7 @@
 import React from "react";
 import styled, { useTheme } from "styled-components";
 import { useTranslation } from "react-i18next";
-import { noop } from "lodash";
+import noop from "lodash/noop";
 import { Flex, InvertThemeV3 } from "@ledgerhq/react-ui";
 import ProgressBar from "./ProgressBar";
 import StepLeftSide, { StepLeftSideProps } from "./StepLeftSide";

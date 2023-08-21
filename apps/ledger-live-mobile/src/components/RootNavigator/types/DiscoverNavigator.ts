@@ -7,7 +7,7 @@ export type DiscoverNavigatorStackParamList = {
     | {
         defaultAccount?: AccountLike | null;
         defaultParentAccount?: Account | null;
-        platform?: string | null;
+        platform?: string;
       }
     | undefined;
 };

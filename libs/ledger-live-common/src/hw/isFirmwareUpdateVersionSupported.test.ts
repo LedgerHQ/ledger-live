@@ -17,7 +17,7 @@ const badDataset: { [key in DeviceModelId]?: string[] } = {
 };
 
 describe("Firmware update version availability checks", () => {
-  const getDeviceInfo = (version) => ({
+  const getDeviceInfo = version => ({
     version,
     mcuVersion: "0.0",
     majMin: "0.0",
@@ -34,16 +34,13 @@ describe("Firmware update version availability checks", () => {
       setEnv("DISABLE_FW_UPDATE_VERSION_CHECK", false);
     });
 
-    Object.keys(badDataset).forEach((deviceModelId) => {
-      badDataset[deviceModelId].forEach((version) => {
+    Object.keys(badDataset).forEach(deviceModelId => {
+      badDataset[deviceModelId].forEach(version => {
         const deviceInfo = getDeviceInfo(version);
         it(`testing ${version} for ${deviceModelId}`, () =>
-          expect(
-            isFirmwareUpdateVersionSupported(
-              deviceInfo,
-              deviceModelId as DeviceModelId
-            )
-          ).toBe(false));
+          expect(isFirmwareUpdateVersionSupported(deviceInfo, deviceModelId as DeviceModelId)).toBe(
+            false,
+          ));
       });
     });
   });
@@ -53,16 +50,13 @@ describe("Firmware update version availability checks", () => {
       setEnv("DISABLE_FW_UPDATE_VERSION_CHECK", false);
     });
 
-    Object.keys(goodDataset).forEach((deviceModelId) => {
-      goodDataset[deviceModelId].forEach((version) => {
+    Object.keys(goodDataset).forEach(deviceModelId => {
+      goodDataset[deviceModelId].forEach(version => {
         const deviceInfo = getDeviceInfo(version);
         it(`testing ${version} for ${deviceModelId}`, () =>
-          expect(
-            isFirmwareUpdateVersionSupported(
-              deviceInfo,
-              deviceModelId as DeviceModelId
-            )
-          ).toBe(true));
+          expect(isFirmwareUpdateVersionSupported(deviceInfo, deviceModelId as DeviceModelId)).toBe(
+            true,
+          ));
       });
     });
   });
@@ -72,16 +66,13 @@ describe("Firmware update version availability checks", () => {
       setEnv("DISABLE_FW_UPDATE_VERSION_CHECK", true);
     });
 
-    Object.keys(badDataset).forEach((deviceModelId) => {
-      badDataset[deviceModelId].forEach((version) => {
+    Object.keys(badDataset).forEach(deviceModelId => {
+      badDataset[deviceModelId].forEach(version => {
         const deviceInfo = getDeviceInfo(version);
         it(`testing ${version} for ${deviceModelId}`, () =>
-          expect(
-            isFirmwareUpdateVersionSupported(
-              deviceInfo,
-              deviceModelId as DeviceModelId
-            )
-          ).toBe(true));
+          expect(isFirmwareUpdateVersionSupported(deviceInfo, deviceModelId as DeviceModelId)).toBe(
+            true,
+          ));
       });
     });
   });

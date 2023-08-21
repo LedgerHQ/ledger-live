@@ -1,15 +1,15 @@
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
+import { toAccountRaw } from "./serialization";
 import {
-  toAccountRaw,
   getAccountCurrency,
   getAccountName,
   getAccountUnit,
-} from ".";
+} from "@ledgerhq/coin-framework/account/index";
 import { getOperationAmountNumberWithInternals } from "../operation";
 import { formatCurrencyUnit } from "../currencies";
 import { getOperationAmountNumber } from "../operation";
-import { getTagDerivationMode } from "../derivation";
+import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import byFamily from "../generated/account";
 import { nftsByCollections } from "../nft";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
@@ -23,12 +23,11 @@ const styling = {
   reverse: (str: string) => `\x1b[7m${str}\x1b[27m`,
 };
 
-const isSignificantAccount = (acc) =>
-  acc.balance.gt(10 ** (getAccountUnit(acc).magnitude - 6));
+const isSignificantAccount = acc => acc.balance.gt(10 ** (getAccountUnit(acc).magnitude - 6));
 
 const formatOp = (
   unitByAccountId: (arg0: string) => Unit | null | undefined,
-  familySpecific: (arg0: Operation, arg1: Unit | null | undefined) => string
+  familySpecific: (arg0: Operation, arg1: Unit | null | undefined) => string,
 ) => {
   const format = (op: Operation, level = 0) => {
     const unit = unitByAccountId(op.accountId);
@@ -44,20 +43,16 @@ const formatOp = (
       .fill(" ")
       .join("");
     let extra =
-      level > 0
-        ? ""
-        : `${op.hash} ${op.date
-            .toISOString()
-            .split(":")
-            .slice(0, 2)
-            .join(":")}`;
+      level > 0 ? "" : `${op.hash} ${op.date.toISOString().split(":").slice(0, 2).join(":")}`;
     extra += familySpecific(op, unit);
     const head = `${(spaces + amount).padEnd(20)} ${(
-      (op.hasFailed ? "❌" : "") + op.type
+      (op.hasFailed ? "❌" : "") +
+      op.type +
+      " "
     ).padEnd(11)}${extra}`;
     const sub = (op.subOperations || [])
       .concat(op.internalOperations || [])
-      .map((subop) => format(subop, level + 1))
+      .map(subop => format(subop, level + 1))
       .join("");
     return `\n${head}${sub}`;
   };
@@ -68,7 +63,7 @@ const formatOp = (
 function maybeDisplaySumOfOpsIssue(ops, balance, unit) {
   const sumOfOps = ops.reduce(
     (sum, op) => sum.plus(getOperationAmountNumber(op)),
-    new BigNumber(0)
+    new BigNumber(0),
   );
   if (sumOfOps.eq(balance)) return "";
   return (
@@ -82,16 +77,8 @@ function maybeDisplaySumOfOpsIssue(ops, balance, unit) {
 }
 
 const cliFormat = (account, level?: string) => {
-  const {
-    id,
-    name,
-    freshAddress,
-    freshAddressPath,
-    derivationMode,
-    index,
-    operations,
-    nfts,
-  } = account;
+  const { id, name, freshAddress, freshAddressPath, derivationMode, index, operations, nfts } =
+    account;
   const tag = getTagDerivationMode(account.currency, derivationMode);
   const balance = formatCurrencyUnit(account.unit, account.balance, {
     showCode: true,
@@ -103,11 +90,7 @@ const cliFormat = (account, level?: string) => {
     tag ? " [" + tag + "]" : ""
   }: ${balance} (${opsCount}) (${freshInfo}) ${derivationInfo} ${id || ""}`;
   if (level === "head") return str;
-  str += maybeDisplaySumOfOpsIssue(
-    operations,
-    account.balance,
-    getAccountUnit(account)
-  );
+  str += maybeDisplaySumOfOpsIssue(operations, account.balance, getAccountUnit(account));
   const family = byFamily[account.currency.family];
 
   if (family && family.formatAccountSpecifics) {
@@ -118,7 +101,7 @@ const cliFormat = (account, level?: string) => {
   const subAccounts = account.subAccounts || [];
   str += subAccounts
     .map(
-      (ta) =>
+      ta =>
         "  " +
         ta.type +
         " " +
@@ -131,7 +114,7 @@ const cliFormat = (account, level?: string) => {
         " (" +
         ta.operations.length +
         " ops)" +
-        maybeDisplaySumOfOpsIssue(ta.operations, ta.balance, getAccountUnit(ta))
+        maybeDisplaySumOfOpsIssue(ta.operations, ta.balance, getAccountUnit(ta)),
     )
     .join("\n");
 
@@ -148,16 +131,14 @@ const cliFormat = (account, level?: string) => {
         const { bold, magenta, cyan, reverse } = styling;
 
         return (
-          `${bold(tokenName ?? "Unknown Collection Name")} (${magenta(
-            contract
-          )}): ` +
+          `${bold(tokenName ?? "Unknown Collection Name")} (${magenta(contract)}): ` +
           nfts
-            .map((t) =>
+            .map(t =>
               t?.metadata?.nftName
-                ? `\n  ${t.amount}x ${reverse(
-                    ` ${t?.metadata?.nftName} `
-                  )} ${cyan("#" + t.tokenId)}`
-                : `\n  ${t.amount}x ${cyan("#" + t.tokenId)}`
+                ? `\n  ${t.amount}x ${reverse(` ${t?.metadata?.nftName} `)} ${cyan(
+                    "#" + t.tokenId,
+                  )}`
+                : `\n  ${t.amount}x ${cyan("#" + t.tokenId)}`,
             )
             .join()
         );
@@ -170,9 +151,9 @@ const cliFormat = (account, level?: string) => {
   str += operations
     .map(
       formatOp(
-        (id) => {
+        id => {
           if (account.id === id) return account.unit;
-          const ta = subAccounts.find((a) => a.id === id);
+          const ta = subAccounts.find(a => a.id === id);
           if (ta) return getAccountUnit(ta);
           console.error("unexpected missing token account " + id);
         },
@@ -182,18 +163,18 @@ const cliFormat = (account, level?: string) => {
           }
 
           return "";
-        }
-      )
+        },
+      ),
     )
     .join("");
   return str;
 };
 
-const stats = (account) => {
+const stats = account => {
   const { subAccounts, operations } = account;
   const sumOfAllOpsNumber = operations.reduce(
     (sum: BigNumber, op) => sum.plus(getOperationAmountNumberWithInternals(op)),
-    new BigNumber(0)
+    new BigNumber(0),
   );
   const sumOfAllOps = formatCurrencyUnit(account.unit, sumOfAllOpsNumber, {
     showCode: true,
@@ -210,49 +191,49 @@ const stats = (account) => {
 };
 
 // this is developped for debug purpose in order to compare with balance APIs
-const operationBalanceHistoryBackwards = (account) => {
+const operationBalanceHistoryBackwards = account => {
   let acc = account.balance;
   return JSON.stringify(
     account.operations
-      .map((op) => {
+      .map(op => {
         const { blockHeight } = op;
         const date = op.date.toISOString();
         const balance = acc.toNumber();
         acc = acc.minus(getOperationAmountNumberWithInternals(op));
         return { blockHeight, date, balance };
       })
-      .reverse()
+      .reverse(),
   );
 };
-const operationBalanceHistory = (account) => {
+const operationBalanceHistory = account => {
   let acc = new BigNumber(0);
   return JSON.stringify(
     account.operations
       .slice(0)
       .reverse()
-      .map((op) => {
+      .map(op => {
         acc = acc.plus(getOperationAmountNumberWithInternals(op));
         const { blockHeight } = op;
         const date = op.date.toISOString();
         const balance = acc.toNumber();
         return { blockHeight, date, balance };
-      })
+      }),
   );
 };
 
 export const accountFormatters: { [_: string]: (Account) => any } = {
   operationBalanceHistoryBackwards,
   operationBalanceHistory,
-  json: (account) => JSON.stringify(toAccountRaw(account)),
-  head: (account) => cliFormat(account, "head"),
-  default: (account) => cliFormat(account),
-  basic: (account) => cliFormat(account, "basic"),
-  full: (account) => cliFormat(account, "full"),
-  stats: (account) => stats(account),
-  significantTokenTickers: (account) =>
+  json: account => JSON.stringify(toAccountRaw(account)),
+  head: account => cliFormat(account, "head"),
+  default: account => cliFormat(account),
+  basic: account => cliFormat(account, "basic"),
+  full: account => cliFormat(account, "full"),
+  stats: account => stats(account),
+  significantTokenTickers: account =>
     (account.subAccounts || [])
       .filter(isSignificantAccount)
-      .map((ta) => getAccountCurrency(ta).ticker)
+      .map(ta => getAccountCurrency(ta).ticker)
       .join("\n"),
 };
 export function formatAccount(account: Account, format = "full"): string {
@@ -260,13 +241,11 @@ export function formatAccount(account: Account, format = "full"): string {
   invariant(f, "missing account formatter=" + format);
   return f(account);
 }
-export function formatOperation(
-  account: Account | null | undefined
-): (arg0: Operation) => string {
+export function formatOperation(account: Account | null | undefined): (arg0: Operation) => string {
   const unitByAccountId = (id: string) => {
     if (!account) return;
     if (account.id === id) return account.unit;
-    const ta = (account.subAccounts || []).find((a) => a.id === id);
+    const ta = (account.subAccounts || []).find(a => a.id === id);
     if (ta) return getAccountUnit(ta);
   };
 

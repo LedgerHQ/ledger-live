@@ -1,12 +1,6 @@
 import invariant from "invariant";
 import React, { useCallback, useState } from "react";
-import {
-  View,
-  StyleSheet,
-  SafeAreaView,
-  FlatList,
-  TouchableOpacity,
-} from "react-native";
+import { View, StyleSheet, SafeAreaView, FlatList, TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
@@ -26,9 +20,10 @@ import FirstLetterIcon from "../../../components/FirstLetterIcon";
 import KeyboardView from "../../../components/KeyboardView";
 import InfoIcon from "../../../components/InfoIcon";
 import Info from "../../../icons/Info";
-import BottomModal from "../../../components/BottomModal";
+import QueuedDrawer from "../../../components/QueuedDrawer";
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import { StellarAddAssetFlowParamList } from "./types";
+import { getEnv } from "@ledgerhq/live-common/env";
 
 const Row = ({
   item,
@@ -45,10 +40,7 @@ const Row = ({
   const tokenId = item.id.split("/")[2];
   const assetIssuer = tokenId.split(":")[1];
   return (
-    <TouchableOpacity
-      style={[styles.row]}
-      onPress={disabled ? onDisabledPress : onPress}
-    >
+    <TouchableOpacity style={[styles.row]} onPress={disabled ? onDisabledPress : onPress}>
       <FirstLetterIcon
         label={item.name}
         labelStyle={
@@ -75,12 +67,7 @@ const Row = ({
       <LText style={styles.ticker} color="grey">
         -
       </LText>
-      <LText
-        style={styles.assetId}
-        color="grey"
-        numberOfLines={1}
-        ellipsizeMode="middle"
-      >
+      <LText style={styles.assetId} color="grey" numberOfLines={1} ellipsizeMode="middle">
         {assetIssuer}
       </LText>
     </TouchableOpacity>
@@ -136,14 +123,8 @@ export default function DelegationStarted({ navigation, route }: Props) {
   );
   const options = listTokensForCryptoCurrency(mainAccount.currency);
   const [infoModalOpen, setInfoModalOpen] = useState(false);
-  const openModal = useCallback(
-    token => setInfoModalOpen(token),
-    [setInfoModalOpen],
-  );
-  const closeModal = useCallback(
-    () => setInfoModalOpen(false),
-    [setInfoModalOpen],
-  );
+  const openModal = useCallback(token => setInfoModalOpen(token), [setInfoModalOpen]);
+  const closeModal = useCallback(() => setInfoModalOpen(false), [setInfoModalOpen]);
   const renderList = useCallback(
     list => (
       <FlatList
@@ -153,9 +134,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
             item={item}
             disabled={(mainAccount.subAccounts || []).some(
               (sub: SubAccount) =>
-                sub.type === "TokenAccount" &&
-                sub.token &&
-                sub.token.id === item.id,
+                sub.type === "TokenAccount" && sub.token && sub.token.id === item.id,
             )}
             onPress={() => onNext(item.id)}
             onDisabledPress={() => openModal(item.name)}
@@ -182,12 +161,12 @@ export default function DelegationStarted({ navigation, route }: Props) {
             renderList={renderList}
             inputWrapperStyle={styles.filteredSearchInputWrapperStyle}
             renderEmptySearch={renderEmptyList}
-            keys={["name", "ticker"]}
+            keys={getEnv("CRYPTO_ASSET_SEARCH_KEYS")}
             list={options}
           />
         </View>
       </KeyboardView>
-      <BottomModal isOpened={!!infoModalOpen} onClose={closeModal}>
+      <QueuedDrawer isRequestingToBeOpened={!!infoModalOpen} onClose={closeModal}>
         <View style={styles.modal}>
           <View style={styles.infoIcon}>
             <InfoIcon bg={colors.lightLive}>
@@ -196,9 +175,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
           </View>
           <View style={styles.infoRow}>
             <LText style={[styles.warnText, styles.title]} semiBold>
-              <Trans
-                i18nKey={`stellar.addAsset.flow.steps.selectToken.warning.title`}
-              />
+              <Trans i18nKey={`stellar.addAsset.flow.steps.selectToken.warning.title`} />
             </LText>
             <LText style={styles.warnText} color="grey">
               <Trans
@@ -210,7 +187,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
             </LText>
           </View>
         </View>
-      </BottomModal>
+      </QueuedDrawer>
     </SafeAreaView>
   );
 }

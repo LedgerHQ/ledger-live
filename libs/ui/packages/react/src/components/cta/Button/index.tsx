@@ -5,8 +5,7 @@ import { fontSize, border, BordersProps, compose } from "styled-system";
 import fontFamily from "../../../styles/styled/fontFamily";
 import { fontSizes } from "../../../styles/theme";
 import { rgba } from "../../../styles/helpers";
-import ChevronBottom from "@ledgerhq/icons-ui/react/ChevronBottomRegular";
-import IconComponent from "../../asorted/Icon";
+import ChevronBottom from "@ledgerhq/icons-ui/reactLegacy/ChevronBottomMedium";
 
 export type ButtonVariants = "main" | "shade" | "error" | "color" | "neutral";
 export type IconPosition = "right" | "left";
@@ -25,7 +24,6 @@ interface BaseProps extends BaseStyledProps, BordersProps {
 }
 
 export interface ButtonProps extends BaseProps, React.RefAttributes<HTMLButtonElement> {
-  iconName?: string;
   Icon?: React.ComponentType<{ size: number; color?: string }>;
   children?: React.ReactNode;
   onClick?: (event: React.SyntheticEvent<HTMLButtonElement>) => void;
@@ -36,7 +34,7 @@ const IconContainer = styled.div<{
   iconPosition: IconPosition;
 }>`
   display: inline-block;
-  ${(p) => `${p.iconPosition === "left" ? "margin-right" : "margin-left"}: ${p.theme.space[4]}px;`}
+  ${p => `${p.iconPosition === "left" ? "margin-right" : "margin-left"}: ${p.theme.space[4]}px;`}
   padding-top: 0.2em;
 `;
 
@@ -78,21 +76,21 @@ const getVariantColors = (p: StyledProps<BaseProps>) => ({
     `,
   error: {
     outline: `
-      border-color: ${p.theme.colors.error.c100};
-      color: ${p.theme.colors.error.c100};
+      border-color: ${p.theme.colors.error.c50};
+      color: ${p.theme.colors.error.c50};
       background-color: transparent;
       &:hover {
-        background-color: ${rgba(p.theme.colors.error.c100, 0.02)};
+        background-color: ${rgba(p.theme.colors.error.c50, 0.02)};
       }
       &:active {
-        background-color: ${rgba(p.theme.colors.error.c100, 0.05)};
+        background-color: ${rgba(p.theme.colors.error.c50, 0.05)};
       }
     `,
     filled: `
       color: ${p.theme.colors.neutral.c00};
-      background-color: ${p.theme.colors.error.c100};
+      background-color: ${p.theme.colors.error.c50};
       &:hover {
-        background-color: ${p.theme.colors.error.c80};
+        background-color: ${p.theme.colors.error.c40};
       }
     `,
   },
@@ -128,10 +126,16 @@ const getVariantColors = (p: StyledProps<BaseProps>) => ({
         border-color: ${p.theme.colors.neutral.c50};
         color: ${p.theme.colors.neutral.c50};
         background-color: transparent;
+        &:focus, &:hover {
+          box-shadow: none;
+        }
       `,
     filled: `
         color: ${p.theme.colors.neutral.c50};
         background-color: ${p.theme.colors.neutral.c30};
+        &:focus, &:hover {
+          box-shadow: none;
+        }
       `,
   },
   default: `
@@ -158,31 +162,31 @@ export const Base = baseStyled.button.attrs((p: BaseProps) => ({
 }))<BaseProps>`
   background-color: transparent;
   border-color: transparent;
-  border-radius: ${(p) => p.theme.space[13]}px;
+  border-radius: ${p => p.theme.space[13]}px;
   border-style: solid;
-  border-width: ${(p) => (p.outline || p.variant === "shade" ? 1 : 0)}px;
+  border-width: ${p => (p.outline || p.variant === "shade" ? 1 : 0)}px;
   font-weight: 600;
   ${compose(fontFamily, fontSize, border)};
-  line-height: ${(p) => p.theme.fontSizes[p.fontSize]}px;
+  line-height: ${p => p.theme.fontSizes[p.fontSize]}px;
   text-align: center;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  ${(p) => buttonSizeStyle[p.size || "medium"]}
+  ${p => buttonSizeStyle[p.size || "medium"]}
   text-overflow: ellipsis;
-  white-space: ${(p) => (p.whiteSpace ? p.whiteSpace : "nowrap")};
+  white-space: ${p => (p.whiteSpace ? p.whiteSpace : "nowrap")};
   max-width: 100%;
   position: relative;
-  cursor: ${(p) => (p.disabled ? "default" : "pointer")};
+  cursor: ${p => (p.disabled ? "default" : "pointer")};
   &:active {
-    box-shadow: 0 0 0 4px ${(p) => rgba(p.theme.colors.primary.c60, 0.4)};
+    box-shadow: 0 0 0 4px ${p => rgba(p.theme.colors.primary.c60, 0.4)};
   }
   &:focus, &:hover {
-    box-shadow: 0 0 0 2px ${(p) => rgba(p.theme.colors.primary.c60, 0.4)};
+    box-shadow: 0 0 0 2px ${p => rgba(p.theme.colors.primary.c60, 0.4)};
   }
 
-  ${(p) => {
+  ${p => {
     const variants = getVariantColors(p);
     if (p.disabled) {
       return p.outline || p.variant === "shade"
@@ -212,7 +216,7 @@ export const Base = baseStyled.button.attrs((p: BaseProps) => ({
         return variants.default;
     }
   }}
-  ${(p) =>
+  ${p =>
     p.iconButton
       ? css`
           width: ${p.theme.space[12]}px;
@@ -222,30 +226,17 @@ export const Base = baseStyled.button.attrs((p: BaseProps) => ({
           }
         `
       : ""}
-  ${(p) => p.theme.transition(["background-color", "color", "border-color", "box-shadow"], "0.2s")}
+  ${p => p.theme.transition(["background-color", "color", "border-color", "box-shadow"], "0.2s")}
 `;
 
 const ContentContainer = styled.div``;
 
 const Button = (
-  {
-    Icon,
-    iconPosition = "right",
-    iconSize = 16,
-    children,
-    onClick,
-    iconName,
-    ...props
-  }: ButtonProps,
+  { Icon, iconPosition = "right", iconSize = 16, children, onClick, ...props }: ButtonProps,
   ref?: React.ForwardedRef<HTMLButtonElement>,
 ): React.ReactElement => {
   const iconNodeSize = iconSize || fontSizes[props.fontSize ?? 4];
-  const IconNode = useMemo(
-    () =>
-      (iconName && <IconComponent name={iconName} size={iconNodeSize} />) ||
-      (Icon && <Icon size={iconNodeSize} />),
-    [iconName, iconNodeSize, Icon],
-  );
+  const IconNode = useMemo(() => Icon && <Icon size={iconNodeSize} />, [iconNodeSize, Icon]);
 
   return (
     <Base {...props} ref={ref} iconButton={!(Icon == null) && !children} onClick={onClick}>
@@ -263,13 +254,13 @@ export type ButtonExpandProps = React.PropsWithChildren<
   }
 >;
 
-const StyledButtonExpand = styled(ButtonWithRef).attrs((props) => ({
+const StyledButtonExpand = styled(ButtonWithRef).attrs(props => ({
   Icon: props.Icon != null || ChevronBottom,
   iconPosition: props.iconPosition || "right",
 }))<{ expanded: boolean }>`
   ${IconContainer} {
     transition: transform 0.25s;
-    ${(p) => (p.expanded ? "transform: rotate(180deg)" : "")}
+    ${p => (p.expanded ? "transform: rotate(180deg)" : "")}
   }
 `;
 export function ButtonExpand(
@@ -283,7 +274,7 @@ export function ButtonExpand(
       ref={ref}
       expanded={expanded}
       onClick={(event: React.SyntheticEvent<HTMLButtonElement>) => {
-        setExpanded((expanded) => !expanded);
+        setExpanded(expanded => !expanded);
         onToggle != null && onToggle(!expanded);
         onClick != null && onClick(event);
       }}

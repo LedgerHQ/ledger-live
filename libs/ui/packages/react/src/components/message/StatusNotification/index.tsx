@@ -22,9 +22,9 @@ const Container = styled(FlexBox).attrs<ContainerProps>({
   flexDirection: "column",
 })<ContainerProps>`
   border-width: 1px;
-  border-style: ${(p) => (p.hasBorder ? "solid" : "none")};
+  border-style: ${p => (p.hasBorder ? "solid" : "none")};
   border-radius: 8px;
-  border-color: ${(p) => p.theme.colors.neutral.c40};
+  border-color: ${p => p.theme.colors.neutral.c40};
 `;
 
 function StatusNotification({

@@ -1,6 +1,13 @@
-import React, { useState, useCallback } from "react";
+import React, { useCallback } from "react";
 import { StyleSheet, TouchableOpacity, Platform } from "react-native";
-import Animated, { Extrapolate } from "react-native-reanimated";
+import Animated, {
+  Extrapolate,
+  interpolate,
+  useAnimatedReaction,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 import { Trans } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import Config from "react-native-config";
@@ -8,7 +15,6 @@ import { useHasLocallyOverriddenFeatureFlags } from "@ledgerhq/live-common/featu
 import { Flex } from "@ledgerhq/native-ui";
 import { useSelector } from "react-redux";
 import { useExperimental } from "../../../experimental";
-import { runCollapse } from "../../../components/CollapsibleList";
 import LText from "../../../components/LText";
 import ExperimentalIcon from "../../../icons/Experimental";
 import { rejections } from "../../../logic/debugReject";
@@ -16,50 +22,52 @@ import { NavigatorName, ScreenName } from "../../../const";
 import { BaseNavigation } from "../../../components/RootNavigator/types/helpers";
 import { featureFlagsBannerVisibleSelector } from "../../../reducers/settings";
 
-const { cond, set, Clock, Value, interpolateNode, eq } = Animated;
 export const HEIGHT = Platform.OS === "ios" ? 70 : 30;
 
-function ExperimentalHeader({
-  isExperimental,
-  areFeatureFlagsOverridden,
-}: {
-  isExperimental: boolean;
-  areFeatureFlagsOverridden: boolean;
-}) {
+function ExperimentalHeader() {
   const navigation = useNavigation<BaseNavigation>();
   const { colors } = useTheme();
-  const clock = new Clock();
-  // animation Open state
-  const [openState] = useState(new Value(Config.MOCK ? 1 : 0));
-  // animation opening anim node
-  const openingAnim = cond(
-    // @ts-expect-error Terrible bindings, the type is correct.
-    //
-    // > If conditionNode evaluates to "truthy" value (…)
-    // See: https://docs.swmansion.com/react-native-reanimated/docs/1.x.x/nodes/cond
-    !Config.MOCK,
-    cond(
-      // @ts-expect-error Same thing here…
-      eq(isExperimental || areFeatureFlagsOverridden, true),
-      [
-        // opening
-        set(openState, runCollapse(clock, openState, 1)),
-        openState,
-      ],
-      [
-        // closing
-        set(openState, runCollapse(clock, openState, 0)),
-        openState,
-      ],
-    ),
-    openState,
+
+  const isExperimental = useExperimental();
+  const hasLocallyOverriddenFlags = useHasLocallyOverriddenFeatureFlags();
+  const areFeatureFlagsOverridden =
+    useSelector(featureFlagsBannerVisibleSelector) && hasLocallyOverriddenFlags;
+
+  // Reanimated value representing the state of the header: 0: closed, 1: opened
+  const openState = useSharedValue(Config.MOCK ? 1 : 0);
+
+  // Reacts to a change on isExperimental and areFeatureFlagsOverridden
+  useAnimatedReaction(
+    () => {
+      return isExperimental || areFeatureFlagsOverridden;
+    },
+    checkResult => {
+      // If mocking the app, does not react to a change
+      if (Config.MOCK) return;
+
+      if (checkResult) {
+        // Opening the experimental header: 0 -> 1
+        openState.value = withTiming(1, {
+          duration: 200,
+        });
+      } else {
+        // Closing the experimental header: 1 -> 0
+        openState.value = withTiming(0, {
+          duration: 200,
+        });
+      }
+    },
   );
-  // interpolated height from opening anim state for list container
-  const height = interpolateNode(openingAnim, {
-    inputRange: [0, 1],
-    outputRange: [0, HEIGHT],
-    extrapolate: Extrapolate.CLAMP,
-  });
+
+  const opacityStyle = useAnimatedStyle(() => ({
+    opacity: openState.value,
+  }));
+
+  // Animated style updating the height depending on the opening animation state
+  const heightStyle = useAnimatedStyle(() => ({
+    height: interpolate(openState.value, [0, 1], [0, HEIGHT], Extrapolate.CLAMP),
+  }));
+
   const onPressMock = useCallback(() => {
     rejections.next();
   }, []);
@@ -82,23 +90,25 @@ function ExperimentalHeader({
     });
   }, [navigation]);
 
+  if (openState.value === 0) null;
+
   return (
     <Animated.View
       style={[
         styles.root,
         {
-          height,
           backgroundColor: colors.lightLiveBg,
         },
+        heightStyle,
       ]}
     >
       <Animated.View
         style={[
           styles.container,
           {
-            opacity: openingAnim,
             backgroundColor: colors.lightLiveBg,
           },
+          opacityStyle,
         ]}
       >
         {isExperimental && (
@@ -130,18 +140,8 @@ function ExperimentalHeader({
   );
 }
 
-export default function ExpHeader() {
-  const isExperimental = useExperimental();
-  const hasLocallyOverriddenFlags = useHasLocallyOverriddenFeatureFlags();
-  const featureFlagsBannerVisible =
-    useSelector(featureFlagsBannerVisibleSelector) && hasLocallyOverriddenFlags;
-  return isExperimental || featureFlagsBannerVisible ? (
-    <ExperimentalHeader
-      isExperimental={isExperimental}
-      areFeatureFlagsOverridden={featureFlagsBannerVisible}
-    />
-  ) : null;
-}
+export default ExperimentalHeader;
+
 const styles = StyleSheet.create({
   root: {
     width: "100%",

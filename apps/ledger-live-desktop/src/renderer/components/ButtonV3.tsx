@@ -1,7 +1,7 @@
 import React from "react";
 import { Button as BaseButton, InvertTheme } from "@ledgerhq/react-ui";
 import { ButtonProps as BaseButtonProps } from "@ledgerhq/react-ui/components/cta/Button";
-import { track } from "~/renderer/analytics/segment";
+import { useTrack } from "~/renderer/analytics/segment";
 import styled from "styled-components";
 
 export const Base = styled(BaseButton)<{ big?: boolean }>`
@@ -24,9 +24,10 @@ export type Props = BaseButtonProps & {
   isLoading?: boolean;
   event?: string;
   eventProperties?: Record<string, unknown>;
+  buttonTestId?: string;
 };
 
-export default function Button({
+function Button({
   onClick,
   inverted,
   disabled,
@@ -34,8 +35,10 @@ export default function Button({
   isLoading,
   event,
   eventProperties,
+  buttonTestId,
   ...rest
 }: Props) {
+  const track = useTrack();
   const isClickDisabled = disabled || isLoading;
   const onClickHandler = (e: React.SyntheticEvent<HTMLButtonElement, Event>) => {
     if (onClick) {
@@ -46,9 +49,16 @@ export default function Button({
     }
   };
   const inner = (
-    <Base {...rest} disabled={disabled} onClick={isClickDisabled ? undefined : onClickHandler}>
+    <Base
+      {...rest}
+      disabled={disabled}
+      onClick={isClickDisabled ? undefined : onClickHandler}
+      data-test-id={buttonTestId}
+    >
       {children}
     </Base>
   );
   return inverted ? <InvertTheme>{inner} </InvertTheme> : inner;
 }
+
+export default React.memo(Button);

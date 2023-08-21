@@ -28,10 +28,7 @@ function HideEmptyTokenAccountsRow({
       title={<Trans i18nKey="settings.display.hideEmptyTokenAccounts" />}
       desc={<Trans i18nKey="settings.display.hideEmptyTokenAccountsDesc" />}
     >
-      <Switch
-        checked={hideEmptyTokenAccountsEnabled}
-        onChange={setHideEmptyTokenAccounts}
-      />
+      <Switch checked={hideEmptyTokenAccountsEnabled} onChange={setHideEmptyTokenAccounts} />
     </SettingsRow>
   );
 }

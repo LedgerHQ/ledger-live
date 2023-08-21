@@ -1,5 +1,6 @@
 import React, { useMemo, memo, useCallback } from "react";
 import { Flex, Text, Bar } from "@ledgerhq/react-ui";
+import { TFunction } from "i18next";
 import { SwitchTransition, Transition } from "react-transition-group";
 import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
@@ -32,7 +33,9 @@ const transitionStyles = {
   exited: { opacity: 0 },
 };
 
-const FadeIn = styled.div.attrs<{ state: string }>(p => ({ style: transitionStyles[p.state] }))<{
+const FadeIn = styled.div.attrs<{ state: string }>(p => ({
+  style: transitionStyles[p.state as keyof typeof transitionStyles],
+}))<{
   state: string;
 }>`
   opacity: 0;
@@ -46,7 +49,7 @@ function Tooltip({
   counterCurrency,
   locale,
 }: {
-  data: any;
+  data: { date: Date; value: number };
   counterCurrency: string;
   locale: string;
 }) {
@@ -71,13 +74,13 @@ function Tooltip({
 }
 
 type Props = {
-  price: number;
-  priceChangePercentage: number;
-  chartData: Record<string, [number, number][]>;
-  chartRequestParams: any;
-  refreshChart: (params: any) => void;
+  price?: number;
+  priceChangePercentage?: number;
+  chartData?: Record<string, [number, number][]>;
+  chartRequestParams: { range?: string | undefined; counterCurrency?: string | undefined };
+  refreshChart: (params: { range: string }) => void;
   color?: string;
-  t: any;
+  t: TFunction;
   locale: string;
   loading: boolean;
   setCounterCurrency: (currency: string) => void;
@@ -98,10 +101,10 @@ function MarkeCoinChartComponent({
   supportedCounterCurrencies,
 }: Props) {
   const { range, counterCurrency } = chartRequestParams;
-  const { scale } = rangeDataTable[range];
-  const activeRangeIndex = ranges.indexOf(range);
-  const data = useMemo(() => {
-    return chartData?.[range]
+  const { scale } = (range && rangeDataTable[range]) || { scale: undefined };
+  const activeRangeIndex = (range && ranges.indexOf(range)) || -1;
+  const data: { date: Date; value: number }[] = useMemo(() => {
+    return range && chartData?.[range]
       ? chartData[range].map(([date, value]) => ({
           date: new Date(date),
           value,
@@ -123,8 +126,9 @@ function MarkeCoinChartComponent({
   const suggestedMax = Math.max(...valueArray);
 
   const renderTooltip = useCallback(
-    (data: any) =>
-      !loading && (
+    (data: { value: number; date: Date }) =>
+      !loading &&
+      counterCurrency && (
         <Tooltip data={data} counterCurrency={counterCurrency.toUpperCase()} locale={locale} />
       ),
     [counterCurrency, loading, locale],
@@ -197,15 +201,13 @@ function MarkeCoinChartComponent({
                   color={color}
                   data={data}
                   height={250}
-                  width="100%"
-                  loading={loading}
                   tickXScale={scale}
                   renderTickY={value =>
                     counterValueFormatter({
-                      value,
+                      value: typeof value === "string" ? parseInt(value) : value,
                       shorten: String(value).length > 7,
                       locale,
-                    })
+                    }) || ""
                   }
                   renderTooltip={renderTooltip}
                   suggestedMin={suggestedMin}

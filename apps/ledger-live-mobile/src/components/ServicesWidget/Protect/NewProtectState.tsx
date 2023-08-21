@@ -1,61 +1,57 @@
-import { IconBoxList, Icons, Tag, Divider } from "@ledgerhq/native-ui";
+import { Button, Tag, Text } from "@ledgerhq/native-ui";
 import React, { useCallback } from "react";
-import { useTranslation } from "react-i18next";
-import { Linking } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import Button from "../../Button";
-import { ScreenName } from "../../../const/navigation";
-import { StackNavigatorNavigation } from "../../RootNavigator/types/helpers";
-import { ManagerNavigatorStackParamList } from "../../RootNavigator/types/ManagerNavigator";
-
-const items = [
-  {
-    title: "servicesWidget.protect.status.new.0.title",
-    Icon: Icons.ShieldCheckMedium,
-  },
-  {
-    title: "servicesWidget.protect.status.new.1.title",
-    Icon: Icons.LockAltMedium,
-  },
-  {
-    title: "servicesWidget.protect.status.new.2.title",
-    Icon: Icons.MicrochipMedium,
-  },
-  {
-    title: "servicesWidget.protect.status.new.3.title",
-    Icon: Icons.ChartNetworkMedium,
-  },
-];
+import { Trans, useTranslation } from "react-i18next";
+import { GestureResponderEvent, Linking } from "react-native";
+import { urls } from "../../../config/urls";
 
 function NewProtectState({ params }: { params: Record<string, string> }) {
   const { t } = useTranslation();
-  const navigation =
-    useNavigation<StackNavigatorNavigation<ManagerNavigatorStackParamList>>();
-  const { learnMoreURI } = params || {};
+  const { learnMoreURI, alreadySubscribedURI } = params || {};
 
   const onLearnMore = useCallback(() => {
-    Linking.canOpenURL(learnMoreURI).then(() => Linking.openURL(learnMoreURI));
+    const url = `${learnMoreURI}&source=${urls.recoverSources.myLedger}`;
+    Linking.canOpenURL(url).then(() => Linking.openURL(url));
   }, [learnMoreURI]);
 
   const onAlreadySubscribe = useCallback(() => {
-    navigation.navigate(ScreenName.ProtectLogin);
-  }, [navigation]);
+    const url = `${alreadySubscribedURI}&source=${urls.recoverSources.myLedger}`;
+    Linking.canOpenURL(url).then(() => Linking.openURL(url));
+  }, [alreadySubscribedURI]);
+
+  const onPressInLearnMore = useCallback((e: GestureResponderEvent) => {
+    e.stopPropagation();
+  }, []);
 
   return (
     <>
-      <Divider my={8} />
-      <IconBoxList
-        items={items.map(item => ({
-          Icon: item.Icon,
-          title: t(item.title),
-        }))}
-      />
-      <Button type="main" outline={false} onPress={onLearnMore} mb={6}>
+      <Button
+        type="main"
+        outline={false}
+        size={"small"}
+        onPressIn={onPressInLearnMore}
+        onPress={onLearnMore}
+        mb={6}
+      >
         {t(`servicesWidget.protect.status.new.actions.learnMore`)}
       </Button>
-      <Button type="default" outline={false} onPress={onAlreadySubscribe}>
-        {t(`servicesWidget.protect.status.new.actions.alreadySubscribed`)}
-      </Button>
+      <Text variant="paragraph" fontWeight={"semiBold"} color="neutral.c100" textAlign={"center"}>
+        <Trans
+          i18nKey="servicesWidget.protect.status.new.actions.alreadySubscribed"
+          components={{
+            LinkAccount: (
+              <Text
+                variant="paragraph"
+                fontWeight="semiBold"
+                color="neutral.c100"
+                onPress={onAlreadySubscribe}
+                style={{ textDecorationLine: "underline" }}
+              >
+                {""}
+              </Text>
+            ),
+          }}
+        />
+      </Text>
     </>
   );
 }
@@ -65,10 +61,11 @@ const StateTag = () => {
 
   return (
     <Tag
-      color="primary.c80"
-      textColor="neutral.c00"
+      color="neutral.c40"
+      textColor="neutral.c90"
       ellipsizeMode="tail"
       size="medium"
+      uppercase={false}
     >
       {t(`servicesWidget.protect.status.new.title`)}
     </Tag>

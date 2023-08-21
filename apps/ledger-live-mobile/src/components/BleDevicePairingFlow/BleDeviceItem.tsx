@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import { ChevronRightMedium } from "@ledgerhq/native-ui/assets/icons";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useTranslation } from "react-i18next";
@@ -12,24 +12,25 @@ export type RenderedDevice = Device & {
 
 type Props = {
   deviceMeta: RenderedDevice;
+  areKnownDevicesPairable?: boolean;
   onSelect: () => void;
 };
 
-const BleDeviceItem = ({ deviceMeta, onSelect }: Props) => {
+const BleDeviceItem = ({ deviceMeta, onSelect, areKnownDevicesPairable }: Props) => {
   const { t } = useTranslation();
   const { deviceName, isAlreadyKnown } = deviceMeta;
 
   const deviceIcon = useMemo(() => {
     switch (deviceMeta.modelId) {
       case DeviceModelId.stax:
-        return <Icons.StaxRegular size={20} />;
+        return <IconsLegacy.StaxMedium size={20} />;
       case DeviceModelId.nanoX:
       default:
-        return <Icons.NanoXFoldedMedium size={20} />;
+        return <IconsLegacy.NanoXFoldedMedium size={20} />;
     }
   }, [deviceMeta.modelId]);
 
-  if (isAlreadyKnown) {
+  if (isAlreadyKnown && !areKnownDevicesPairable) {
     return (
       <Flex mb={3} opacity="0.5">
         <Flex

@@ -1,17 +1,15 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
+import { useNavigation } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
-import connectManager from "@ledgerhq/live-common/hw/connectManager";
-import { createAction } from "@ledgerhq/live-common/hw/actions/manager";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import SelectDevice from "../../../components/SelectDevice";
-import SelectDevice2 from "../../../components/SelectDevice2";
+import SelectDevice2, { SetHeaderOptionsRequest } from "../../../components/SelectDevice2";
 import DeviceActionModal from "../../../components/DeviceActionModal";
 import { TrackScreen } from "../../../analytics";
 import SkipSelectDevice from "../../SkipSelectDevice";
 import { DeviceMeta } from "./Modal/Confirmation";
-
-const action = createAction(connectManager);
+import { useManagerDeviceAction } from "../../../hooks/deviceActions";
 
 export function Connect({
   setResult,
@@ -20,6 +18,8 @@ export function Connect({
   setResult: (_: DeviceMeta) => void;
   provider?: string;
 }) {
+  const action = useManagerDeviceAction();
+
   const [device, setDevice] = useState<Device>();
   const [result] = useState();
 
@@ -33,17 +33,49 @@ export function Connect({
     }
   }, [result, setResult]);
 
+  const navigation = useNavigation();
+
+  // Only reacts on an update request for the left part of the header
+  // Keeping the rest of the header (exchange and history tab + close button) from the exchange screen.
+  const requestToSetHeaderOptions = useCallback(
+    (request: SetHeaderOptionsRequest) => {
+      if (request.type === "set") {
+        // SwapForm, rendering Connect, is wrapped in a Tab.Screen. To update the left header,
+        // we need to set the options of the parent.
+        navigation.getParent()?.setOptions({
+          headerLeft: request.options.headerLeft,
+        });
+      } else {
+        // Sets back the left part of the header to its initial values
+        navigation.getParent()?.setOptions({
+          headerLeft: () => null,
+        });
+      }
+    },
+    [navigation],
+  );
+
+  // Cleaning any updates to the parent's header from requestToSetHeaderOptions on unmount to be safe
+  useEffect(() => {
+    return () => {
+      // Sets back the left part of the header to its initial values
+      navigation.getParent()?.setOptions({
+        headerLeft: () => null,
+      });
+    };
+  }, [navigation]);
+
   return (
     <Flex padding={4}>
-      <TrackScreen
-        category="Swap Form"
-        name="ConnectDeviceListApps"
-        provider={provider}
-      />
+      <TrackScreen category="Swap Form" name="ConnectDeviceListApps" provider={provider} />
       <SkipSelectDevice onResult={setDevice} />
       {newDeviceSelectionFeatureFlag?.enabled ? (
-        <Flex px={16} py={8} flex={1}>
-          <SelectDevice2 onSelect={setDevice} stopBleScanning={!!device} />
+        <Flex height="100%" px={2} py={2}>
+          <SelectDevice2
+            onSelect={setDevice}
+            stopBleScanning={!!device}
+            requestToSetHeaderOptions={requestToSetHeaderOptions}
+          />
         </Flex>
       ) : (
         <SelectDevice onSelect={setDevice} autoSelectOnAdd />

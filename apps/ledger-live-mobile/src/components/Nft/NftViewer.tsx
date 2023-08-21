@@ -4,16 +4,18 @@ import React, {
   useCallback,
   useEffect,
   ReactNode,
+  useRef,
+  useContext,
 } from "react";
 
 import {
-  ScrollView,
   View,
   StyleSheet,
   Platform,
   TouchableOpacity,
   StyleProp,
   ViewStyle,
+  Animated,
 } from "react-native";
 import {
   useNftMetadata,
@@ -23,29 +25,21 @@ import {
   getFloorPrice,
 } from "@ledgerhq/live-common/nft/index";
 import { BigNumber } from "bignumber.js";
-import { useSelector } from "react-redux";
-import { Box, Button, Icons, Text, Flex } from "@ledgerhq/native-ui";
+import { useDispatch, useSelector } from "react-redux";
+import { Box, Button, IconsLegacy, Text, Flex } from "@ledgerhq/native-ui";
 import { useTranslation, Trans } from "react-i18next";
 import Clipboard from "@react-native-community/clipboard";
-import {
-  FloorPrice,
-  Account,
-  NFTMetadataResponse,
-  NFTCollectionMetadataResponse,
-} from "@ledgerhq/types-live";
-import {
-  FeatureToggle,
-  useFeature,
-} from "@ledgerhq/live-common/featureFlags/index";
+import { FloorPrice, Account } from "@ledgerhq/types-live";
+import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import {
   CompositeNavigationProp,
   CompositeScreenProps,
+  useIsFocused,
   useNavigation,
 } from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import styled from "styled-components/native";
-import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import { accountSelector } from "../../reducers/accounts";
 import { ScreenName, NavigatorName } from "../../const";
 import NftLinksPanel from "./NftLinksPanel";
@@ -56,15 +50,24 @@ import NftPropertiesList from "./NftPropertiesList";
 import CurrencyIcon from "../CurrencyIcon";
 import { State } from "../../reducers/types";
 import type { NftNavigatorParamList } from "../RootNavigator/types/NftNavigator";
-import type {
-  StackNavigatorNavigation,
-  StackNavigatorProps,
-} from "../RootNavigator/types/helpers";
+import type { StackNavigatorNavigation, StackNavigatorProps } from "../RootNavigator/types/helpers";
 import type { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { AccountsNavigatorParamList } from "../RootNavigator/types/AccountsNavigator";
 import InfoModal from "../../modals/Info";
 import { notAvailableModalInfo } from "../../screens/Nft/NftInfoNotAvailable";
 import { track, TrackScreen } from "../../analytics";
+import { DesignedForStaxDrawer, DesignedForStaxText } from "./DesignedForStax";
+import {
+  discreetModeSelector,
+  hasSeenStaxEnabledNftsPopupSelector,
+  knownDeviceModelIdsSelector,
+} from "../../reducers/settings";
+import { setHasSeenStaxEnabledNftsPopup } from "../../actions/settings";
+import { useHeaderHeight } from "@react-navigation/elements";
+import NftViewerBackground from "./NftViewerBackground";
+import NftViewerScreenHeader from "./NftViewerScreenHeader";
+import invariant from "invariant";
+import DiscreetModeContext, { withDiscreetMode } from "../../context/DiscreetModeContext";
 
 type Props = CompositeScreenProps<
   | StackNavigatorProps<NftNavigatorParamList, ScreenName.NftViewer>
@@ -104,9 +107,7 @@ const Section = ({
   copiedString?: string;
 }) => {
   const [copied, setCopied] = useState(false);
-  const [timeoutFunction, setTimeoutFunction] = useState<TimeoutReturn | null>(
-    null,
-  );
+  const [timeoutFunction, setTimeoutFunction] = useState<TimeoutReturn | null>(null);
   const copy = useCallback(() => {
     if (typeof value === "undefined") return null;
 
@@ -131,10 +132,7 @@ const Section = ({
         {copyAvailable ? (
           <View>
             <TouchableOpacity onPress={copy} style={{ marginLeft: 10 }}>
-              <Icons.CopyMedium
-                size={16}
-                color={copied ? "neutral.c80" : "primary.c80"}
-              />
+              <IconsLegacy.CopyMedium size={16} color={copied ? "neutral.c80" : "primary.c80"} />
             </TouchableOpacity>
             {copied ? (
               <Text variant={"body"} color="neutral.c80" marginLeft={3}>
@@ -152,25 +150,17 @@ const Section = ({
 const NftViewer = ({ route }: Props) => {
   const { params } = route;
   const { nft } = params;
+  const dispatch = useDispatch();
   const { status: nftStatus, metadata: nftMetadata } = useNftMetadata(
     nft?.contract,
     nft?.tokenId,
     nft?.currencyId,
-  ) as {
-    status: NFTResource["status"];
-    metadata?: NFTMetadataResponse["result"] &
-      NFTCollectionMetadataResponse["result"];
-  };
-  const currency = useMemo(
-    () => getCryptoCurrencyById(nft.currencyId),
-    [nft.currencyId],
   );
-  const { status: collectionStatus, metadata: collectionMetadata } =
-    useNftCollectionMetadata(nft?.contract, nft?.currencyId) as {
-      status: NFTResource["status"];
-      metadata?: NFTMetadataResponse["result"] &
-        NFTCollectionMetadataResponse["result"];
-    };
+  const currency = useMemo(() => getCryptoCurrencyById(nft.currencyId), [nft.currencyId]);
+  const { status: collectionStatus, metadata: collectionMetadata } = useNftCollectionMetadata(
+    nft?.contract,
+    nft?.currencyId,
+  );
   const { t } = useTranslation();
   const navigation =
     useNavigation<
@@ -181,10 +171,13 @@ const NftViewer = ({ route }: Props) => {
     >();
 
   const { accountId } = decodeNftId(nft?.id);
-  // FIXME: account could be undefined :/
   const account = useSelector<State, Account | undefined>(state =>
     accountSelector(state, { accountId }),
   )!;
+  invariant(account, "account required");
+
+  const knownDeviceModelIds = useSelector(knownDeviceModelIdsSelector);
+  const hasSeenStaxEnabledNftsPopup = useSelector(hasSeenStaxEnabledNftsPopupSelector);
 
   const [bottomModalOpen, setBottomModalOpen] = useState(false);
   const isLoading = nftStatus === "loading" || collectionStatus === "loading";
@@ -218,14 +211,27 @@ const NftViewer = ({ route }: Props) => {
   const goToRecipientSelection = useCallback(() => {
     const bridge = getAccountBridge(account);
 
-    let transaction = bridge.createTransaction(account);
-    transaction = bridge.updateTransaction(transaction, {
-      tokenIds: [nft?.tokenId],
-      // Quantity is set to null first to allow the user to change it on the amount page
-      quantities: [nftCapabilities.hasQuantity ? null : new BigNumber(1)],
-      collection: nft?.contract,
-      mode: `${nft?.standard?.toLowerCase()}.transfer`,
-    });
+    const defaultTransaction = bridge.createTransaction(account);
+    let transaction;
+    if (defaultTransaction.family === "evm") {
+      transaction = bridge.updateTransaction(defaultTransaction, {
+        mode: nft?.standard?.toLowerCase(),
+        nft: {
+          tokenId: nft?.tokenId,
+          // Quantity is set to Infinity first to allow the user to change it on the amount page
+          quantity: new BigNumber(nftCapabilities.hasQuantity ? Infinity : 1),
+          contract: nft?.contract,
+        },
+      });
+    } else if (defaultTransaction.family === "ethereum") {
+      transaction = bridge.updateTransaction(defaultTransaction, {
+        tokenIds: [nft?.tokenId],
+        // Quantity is set to Infinity first to allow the user to change it on the amount page
+        quantities: [new BigNumber(nftCapabilities.hasQuantity ? Infinity : 1)],
+        collection: nft?.contract,
+        mode: `${nft?.standard?.toLowerCase()}.transfer`,
+      });
+    }
 
     track("button_clicked", {
       button: "Send NFT",
@@ -235,9 +241,6 @@ const NftViewer = ({ route }: Props) => {
       screen: ScreenName.SendSelectRecipient,
       params: {
         accountId: account.id,
-        // FIXME: does the parentAccount field actually exist?
-        parentId: (account as { parentAccount?: { id: string } })?.parentAccount
-          ?.id,
         transaction,
       },
     });
@@ -247,26 +250,9 @@ const NftViewer = ({ route }: Props) => {
     if (isLoading && !nftMetadata?.properties?.length) {
       return (
         <Box flexDirection={"row"} px={6}>
-          <Skeleton
-            height={"54px"}
-            width={"120px"}
-            borderRadius={1}
-            mr={6}
-            loading={true}
-          />
-          <Skeleton
-            height={"54px"}
-            width={"120px"}
-            borderRadius={1}
-            mr={6}
-            loading={true}
-          />
-          <Skeleton
-            height={"54px"}
-            width={"120px"}
-            borderRadius={1}
-            loading={true}
-          />
+          <Skeleton height={"54px"} width={"120px"} borderRadius={1} mr={6} loading={true} />
+          <Skeleton height={"54px"} width={"120px"} borderRadius={1} mr={6} loading={true} />
+          <Skeleton height={"54px"} width={"120px"} borderRadius={1} loading={true} />
         </Box>
       );
     }
@@ -303,16 +289,40 @@ const NftViewer = ({ route }: Props) => {
 
   const NftComponent = useCallback(
     () => (
-      <NftMedia
-        resizeMode="contain"
-        style={styles.image}
-        metadata={nftMetadata}
-        mediaFormat={"big"}
-        status={nftStatus}
-      />
+      <>
+        <NftMedia
+          transparency={true}
+          resizeMode="contain"
+          style={styles.image}
+          metadata={nftMetadata}
+          mediaFormat={"big"}
+          status={nftStatus}
+        >
+          {knownDeviceModelIds.stax && !!nftMetadata?.staxImage ? (
+            <Flex zIndex={1000} position="absolute" bottom={0} width="100%">
+              <DesignedForStaxText size="medium" />
+            </Flex>
+          ) : null}
+        </NftMedia>
+      </>
     ),
-    [nftMetadata, nftStatus],
+    [knownDeviceModelIds, nftMetadata, nftStatus],
   );
+
+  const [isStaxDrawerOpen, setStaxDrawerOpen] = useState<boolean>(false);
+  const discreet = useSelector(discreetModeSelector);
+  const shouldApplyDiscreetMode = useContext(DiscreetModeContext);
+
+  const handleStaxModalClose = useCallback(() => {
+    setStaxDrawerOpen(false);
+    dispatch(setHasSeenStaxEnabledNftsPopup(true));
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (!hasSeenStaxEnabledNftsPopup && knownDeviceModelIds.stax && nftMetadata?.staxImage) {
+      setStaxDrawerOpen(true);
+    }
+  }, [hasSeenStaxEnabledNftsPopup, knownDeviceModelIds, nftMetadata]);
 
   const [isOpen, setOpen] = useState<boolean>(false);
   const onOpenModal = useCallback(() => {
@@ -324,24 +334,44 @@ const NftViewer = ({ route }: Props) => {
     });
     setOpen(false);
   }, []);
-  const isNFTDisabled =
-    useFeature("disableNftSend")?.enabled && Platform.OS === "ios";
+  const isNFTDisabled = useFeature("disableNftSend")?.enabled && Platform.OS === "ios";
 
+  const headerHeight = useHeaderHeight();
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const isFocused = useIsFocused();
   return (
     <>
       <TrackScreen category="NFT" />
       <InfoModal
         isOpened={isOpen}
         onClose={onCloseModal}
-        data={notAvailableModalInfo}
+        data={notAvailableModalInfo(onCloseModal)}
       />
-      <ScrollView
-        contentContainerStyle={styles.scrollView}
+      <DesignedForStaxDrawer isOpen={isStaxDrawerOpen} onClose={handleStaxModalClose} />
+      {nftMetadata ? (
+        <NftViewerBackground scrollY={scrollY} src={nftMetadata.medias.preview.uri} />
+      ) : null}
+      <Animated.ScrollView
+        onScroll={
+          isFocused
+            ? Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
+                useNativeDriver: true,
+              })
+            : undefined
+        }
+        contentContainerStyle={[
+          styles.scrollView,
+          {
+            paddingTop: headerHeight + 8,
+          },
+        ]}
         testID={"nft-viewer-page-scrollview"}
       >
         <Box mx={6}>
           <Flex flexDirection={"row"} alignItems={"center"}>
-            <CurrencyIcon currency={currency} size={20} />
+            <View style={styles.currencyIcon}>
+              <CurrencyIcon circle color="#fff" currency={currency} size={16} />
+            </View>
             <Skeleton
               height={"19px"}
               flex={1}
@@ -352,7 +382,7 @@ const NftViewer = ({ route }: Props) => {
             >
               <Text
                 variant={"large"}
-                color={"neutral.c80"}
+                color="opacityDefault.c60"
                 fontWeight={"semiBold"}
                 numberOfLines={3}
                 flexShrink={1}
@@ -403,21 +433,11 @@ const NftViewer = ({ route }: Props) => {
             )}
           </Box>
 
-          <Box
-            mb={8}
-            flexWrap={"nowrap"}
-            flexDirection={"row"}
-            justifyContent={"center"}
-          >
-            <Box
-              flexGrow={1}
-              flexShrink={1}
-              mr={6}
-              style={styles.sendButtonContainer}
-            >
+          <Box mb={8} flexWrap={"nowrap"} flexDirection={"row"} justifyContent={"center"}>
+            <Box flexGrow={1} flexShrink={1} mr={6} style={styles.sendButtonContainer}>
               <Button
                 type="main"
-                Icon={Icons.ArrowFromBottomMedium}
+                Icon={IconsLegacy.ArrowFromBottomMedium}
                 iconPosition="left"
                 onPress={isNFTDisabled ? onOpenModal : goToRecipientSelection}
               >
@@ -425,14 +445,10 @@ const NftViewer = ({ route }: Props) => {
               </Button>
             </Box>
             {nftMetadata?.links && (
-              <Box
-                style={styles.ellipsisButtonContainer}
-                flexShrink={0}
-                width={"48px"}
-              >
+              <Box style={styles.ellipsisButtonContainer} flexShrink={0} width={"48px"}>
                 <Button
                   type="main"
-                  Icon={Icons.OthersMedium}
+                  Icon={IconsLegacy.OthersMedium}
                   onPress={() => {
                     track("button_clicked", {
                       button: "NFT Settings",
@@ -445,6 +461,15 @@ const NftViewer = ({ route }: Props) => {
           </Box>
         </Box>
 
+        <FeatureToggle feature="counterValue">
+          {!floorPriceLoading && floorPrice ? (
+            <Section
+              title={t("nft.viewer.attributes.floorPrice")}
+              value={`${shouldApplyDiscreetMode && discreet ? "***" : floorPrice} ${ticker}`}
+            />
+          ) : null}
+        </FeatureToggle>
+
         {/* This weird thing is because we want a full width scrollView withtout the paddings */}
         {properties && (
           <SectionContainer px={0}>
@@ -453,9 +478,7 @@ const NftViewer = ({ route }: Props) => {
           </SectionContainer>
         )}
 
-        {description && (
-          <Section title={t("nft.viewer.description")}>{description}</Section>
-        )}
+        {description && <Section title={t("nft.viewer.description")}>{description}</Section>}
 
         <Section
           title={t("nft.viewer.tokenContract")}
@@ -474,22 +497,11 @@ const NftViewer = ({ route }: Props) => {
         {nft?.standard === "ERC1155" && (
           <>
             <TouchableOpacity onPress={closeModal}>
-              <Section
-                title={t("nft.viewer.quantity")}
-                value={nft?.amount?.toFixed()}
-              />
+              <Section title={t("nft.viewer.quantity")} value={nft?.amount?.toFixed()} />
             </TouchableOpacity>
           </>
         )}
-        <FeatureToggle feature="counterValue">
-          {!floorPriceLoading && floorPrice ? (
-            <Section
-              title={t("nft.viewer.attributes.floorPrice")}
-              value={`${floorPrice} ${ticker}`}
-            />
-          ) : null}
-        </FeatureToggle>
-      </ScrollView>
+      </Animated.ScrollView>
       <NftLinksPanel
         nftMetadata={nftMetadata || undefined}
         links={nftMetadata?.links}
@@ -498,20 +510,20 @@ const NftViewer = ({ route }: Props) => {
         nftContract={nft.contract}
         nftId={nft.id}
       />
+      <NftViewerScreenHeader title={nftMetadata?.nftName || undefined} scrollY={scrollY} />
     </>
   );
 };
 
 const styles = StyleSheet.create({
   scrollView: {
-    paddingTop: 8,
     paddingBottom: 64,
+  },
+  currencyIcon: {
+    marginRight: 5,
   },
   imageContainer: {
     ...Platform.select({
-      android: {
-        elevation: 1,
-      },
       ios: {
         shadowOpacity: 0.2,
         shadowRadius: 14,
@@ -565,4 +577,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default NftViewer;
+export default withDiscreetMode(NftViewer);

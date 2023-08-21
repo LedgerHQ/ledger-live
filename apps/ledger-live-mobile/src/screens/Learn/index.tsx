@@ -3,13 +3,13 @@ import { TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
 import styled, { useTheme } from "styled-components/native";
 
-import { Flex, InfiniteLoader, Text, Icons } from "@ledgerhq/native-ui";
+import { Flex, InfiniteLoader, Text, IconsLegacy } from "@ledgerhq/native-ui";
 
 import { useNavigation } from "@react-navigation/native";
 import WebViewScreen from "../../components/WebViewScreen";
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { ScreenName } from "../../const/navigation";
+import { NavigatorName, ScreenName } from "../../const/navigation";
 
 export type NavigationProps = StackNavigatorProps<
   BaseNavigatorStackParamList,
@@ -28,6 +28,7 @@ function LearnWebView({ route }: NavigationProps) {
   const params = new URLSearchParams({
     theme: themeType,
     lang: i18n.languages[0],
+    apptracking: "false",
   });
 
   const uri = `${uriFromRoute}?${params.toString()}`;
@@ -42,7 +43,9 @@ function LearnWebView({ route }: NavigationProps) {
   );
 
   const goBack = useCallback(() => {
-    navigation.navigate(ScreenName.Learn);
+    navigation.navigate(NavigatorName.ExploreTab, {
+      screen: ScreenName.Learn,
+    });
   }, [navigation]);
 
   return (
@@ -62,20 +65,9 @@ function LearnWebView({ route }: NavigationProps) {
           zIndex={1}
         >
           <Flex width="20%" />
-          <Flex
-            width="60%"
-            alignItems="center"
-            justifyContent="center"
-            flexDirection="row"
-          >
-            <Icons.LockMedium size={16} color="neutral.c70" />
-            <Text
-              textAlign="center"
-              variant="small"
-              fontWeight="medium"
-              color="neutral.c70"
-              ml={2}
-            >
+          <Flex width="60%" alignItems="center" justifyContent="center" flexDirection="row">
+            <IconsLegacy.LockMedium size={16} color="neutral.c70" />
+            <Text textAlign="center" variant="small" fontWeight="medium" color="neutral.c70" ml={2}>
               ledger.com/academy
             </Text>
           </Flex>

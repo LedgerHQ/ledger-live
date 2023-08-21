@@ -1,8 +1,4 @@
-import {
-  InvalidAddress,
-  ETHAddressNonEIP,
-  RecipientRequired,
-} from "@ledgerhq/errors";
+import { InvalidAddress, ETHAddressNonEIP, RecipientRequired } from "@ledgerhq/errors";
 import {
   FeeNotLoaded,
   FeeRequired,
@@ -42,7 +38,7 @@ const isRecipientValid = (
   currency: CryptoCurrency,
   recipient: string,
   isFullLower: boolean,
-  isFullUpper: boolean
+  isFullUpper: boolean,
 ): boolean => {
   if (!isEthereumAddress(recipient)) return false;
   // To handle non-eip55 addresses we stop validation here if we detect
@@ -60,7 +56,7 @@ const isRecipientValid = (
 const validateRecipient = (
   currency: CryptoCurrency,
   recipient: string,
-  { errors, warnings }: TransactionStatus
+  { errors, warnings }: TransactionStatus,
 ): void => {
   const slice = recipient.substr(2);
   const isFullLower = slice === slice.toLowerCase();
@@ -81,7 +77,7 @@ const validateRecipient = (
 const validateLegacyGas = (
   currency: CryptoCurrency,
   tx: Transaction,
-  { errors }: TransactionStatus
+  { errors }: TransactionStatus,
 ): void => {
   if (!tx.gasPrice) {
     errors.gasPrice = new FeeNotLoaded();
@@ -91,11 +87,11 @@ const validateLegacyGas = (
 const validateEIP1559Gas = (
   currency: CryptoCurrency,
   tx: Transaction,
-  { errors, warnings }: TransactionStatus
+  { errors, warnings }: TransactionStatus,
 ): void => {
   // Minimal estimation is next base fee + the minimal priority fee
   const networkMinimumGasEstimation = tx.networkInfo?.nextBaseFeePerGas?.plus(
-    tx.networkInfo?.maxPriorityFeePerGas?.min || 0
+    tx.networkInfo?.maxPriorityFeePerGas?.min || 0,
   );
 
   if (!tx.maxFeePerGas) {
@@ -108,7 +104,7 @@ const validateEIP1559Gas = (
 
   const shouldGateMinimumPriorityFee = getEnv("EIP1559_MINIMUM_FEES_GATE");
   const minimunPriorityFee = tx?.networkInfo?.maxPriorityFeePerGas?.min?.times(
-    getEnv("EIP1559_PRIORITY_FEE_LOWER_GATE")
+    getEnv("EIP1559_PRIORITY_FEE_LOWER_GATE"),
   );
   const maximalPriorityFee = tx?.networkInfo?.maxPriorityFeePerGas?.max;
 
@@ -119,10 +115,7 @@ const validateEIP1559Gas = (
   } else if (tx.maxPriorityFeePerGas?.isGreaterThan(tx.maxFeePerGas || 0)) {
     // priority fee is more than max fee (total fee for the transaction) which doesn't make sense
     errors.maxPriorityFee = new PriorityFeeHigherThanMaxFee();
-  } else if (
-    shouldGateMinimumPriorityFee &&
-    tx.maxPriorityFeePerGas.lt(minimunPriorityFee || 0)
-  ) {
+  } else if (shouldGateMinimumPriorityFee && tx.maxPriorityFeePerGas.lt(minimunPriorityFee || 0)) {
     // Don't send a transaction with a priority fee more than X % (default is 15%) inferior to network conditions
     // With a low enough priority fee, your transaction might get stuck forever since you can't cancel or boost tx in the live
     errors.maxPriorityFee = new PriorityFeeTooLow();
@@ -131,54 +124,51 @@ const validateEIP1559Gas = (
   }
 };
 
-export const getTransactionStatus: AccountBridge<Transaction>["getTransactionStatus"] =
-  (account, tx) => {
-    const gasLimit = getGasLimit(tx);
-    const estimatedGasPrice = (() => {
-      if (EIP1559ShouldBeUsed(account.currency)) {
-        return tx.maxFeePerGas || new BigNumber(0);
-      }
-      return tx.gasPrice;
-    })();
-    const estimatedFees = (estimatedGasPrice || new BigNumber(0)).times(
-      gasLimit
-    );
+export const getTransactionStatus: AccountBridge<Transaction>["getTransactionStatus"] = (
+  account,
+  tx,
+) => {
+  const gasLimit = getGasLimit(tx);
+  const estimatedGasPrice = EIP1559ShouldBeUsed(account.currency)
+    ? tx.maxFeePerGas || new BigNumber(0)
+    : tx.gasPrice;
+  const estimatedFees = (estimatedGasPrice || new BigNumber(0)).times(gasLimit);
 
-    const errors: TransactionErrors = {};
-    const warnings: TransactionWarnings = {};
-    const status: TransactionStatusCommon = {
-      errors,
-      warnings,
-      estimatedFees,
-      amount: new BigNumber(0),
-      totalSpent: new BigNumber(0),
-    };
-
-    validateRecipient(account.currency, tx.recipient, status);
-
-    const mode = modes[tx.mode];
-    invariant(mode, "missing module for mode=" + tx.mode);
-    mode.fillTransactionStatus(account, tx, status);
-
-    if (EIP1559ShouldBeUsed(account.currency)) {
-      validateEIP1559Gas(account.currency, tx, status);
-    } else {
-      validateLegacyGas(account.currency, tx, status);
-    }
-
-    if (gasLimit.eq(0)) {
-      errors.gasLimit = new FeeRequired();
-    } else if (!errors.recipient) {
-      if (estimatedFees.gt(account.balance)) {
-        errors.gasPrice = new NotEnoughGas();
-      }
-    }
-
-    if (tx.estimatedGasLimit && gasLimit.lt(tx.estimatedGasLimit)) {
-      warnings.gasLimit = new GasLessThanEstimate();
-    }
-
-    return Promise.resolve(status);
+  const errors: TransactionErrors = {};
+  const warnings: TransactionWarnings = {};
+  const status: TransactionStatusCommon = {
+    errors,
+    warnings,
+    estimatedFees,
+    amount: new BigNumber(0),
+    totalSpent: new BigNumber(0),
   };
+
+  validateRecipient(account.currency, tx.recipient, status);
+
+  const mode = modes[tx.mode];
+  invariant(mode, "missing module for mode=" + tx.mode);
+  mode.fillTransactionStatus(account, tx, status);
+
+  if (EIP1559ShouldBeUsed(account.currency)) {
+    validateEIP1559Gas(account.currency, tx, status);
+  } else {
+    validateLegacyGas(account.currency, tx, status);
+  }
+
+  if (gasLimit.eq(0)) {
+    errors.gasLimit = new FeeRequired();
+  } else if (!errors.recipient) {
+    if (estimatedFees.gt(account.balance)) {
+      errors.gasPrice = new NotEnoughGas();
+    }
+  }
+
+  if (tx.estimatedGasLimit && gasLimit.lt(tx.estimatedGasLimit)) {
+    warnings.gasLimit = new GasLessThanEstimate();
+  }
+
+  return Promise.resolve(status);
+};
 
 export default getTransactionStatus;

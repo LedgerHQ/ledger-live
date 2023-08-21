@@ -12,7 +12,7 @@ import { NotificationCard, Box, Flex, Text } from "@ledgerhq/native-ui";
 
 import styled, { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Swipeable } from "react-native-gesture-handler";
 import { TrashMedium } from "@ledgerhq/native-ui/assets/icons";
 
@@ -22,9 +22,6 @@ import { NotificationContentCard } from "../../dynamicContent/types";
 import { getTime } from "./helper";
 import { setDynamicContentNotificationCards } from "../../actions/dynamicContent";
 import { useDynamicContentLogic } from "../../dynamicContent/useDynamicContentLogic";
-import StatusCenter from "./Status";
-import { statusCenterSelector } from "../../reducers/settings";
-import { setStatusCenter } from "../../actions/settings";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 
 const { height } = getWindowDimensions();
@@ -54,18 +51,35 @@ export default function NotificationCenter() {
   } = useDynamicContent();
   const { fetchData, refreshDynamicContent } = useDynamicContentLogic();
   const [isDynamicContentLoading, setIsDynamicContentLoading] = useState(false);
-  const displayStatusCenter = useSelector(statusCenterSelector);
+
+  const logCardsImpression = useCallback(() => {
+    // TODO: REWORK like in the Carousel maybe? For Log impression only when it's clearly visible
+    orderedNotificationsCards.forEach(item => {
+      logImpressionCard(item.id);
+    });
+
+    const cards = orderedNotificationsCards.map(n => ({
+      ...n,
+      viewed: true,
+    }));
+
+    dispatch(setDynamicContentNotificationCards(cards));
+  }, [orderedNotificationsCards, dispatch, logImpressionCard]);
 
   const refreshNotifications = useCallback(async () => {
     setIsDynamicContentLoading(true);
     refreshDynamicContent();
     await fetchData();
     setIsDynamicContentLoading(false);
-  }, [refreshDynamicContent, fetchData]);
+
+    logCardsImpression();
+  }, [refreshDynamicContent, fetchData, logCardsImpression]);
 
   useEffect(() => {
-    refreshNotifications();
+    logCardsImpression();
     // Need to refresh just one time when coming in the Page
+    refreshNotifications();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -104,49 +118,25 @@ export default function NotificationCenter() {
       });
 
       dispatch(
-        setDynamicContentNotificationCards(
-          orderedNotificationsCards.filter(n => n.id !== item.id),
-        ),
+        setDynamicContentNotificationCards(orderedNotificationsCards.filter(n => n.id !== item.id)),
       );
     },
-    [
-      dispatch,
-      logDismissCard,
-      orderedNotificationsCards,
-      trackContentCardEvent,
-    ],
+    [dispatch, logDismissCard, orderedNotificationsCards, trackContentCardEvent],
   );
 
   const onClickCard = useCallback(
     (item: NotificationContentCard) => {
-      // TODO: REWORK like in the Carousel maybe? For Log impression only when it's clearly visible
-      logImpressionCard(item.id);
-
-      const cards = orderedNotificationsCards.map(n =>
-        n.id === item.id
-          ? {
-              ...n,
-              viewed: true,
-            }
-          : n,
-      );
-
-      dispatch(setDynamicContentNotificationCards(cards));
       onPress(item);
     },
-    [dispatch, logImpressionCard, onPress, orderedNotificationsCards],
+    [onPress],
   );
-
-  const onCloseStatusCenter = useCallback(() => {
-    dispatch(setStatusCenter(false));
-  }, [dispatch]);
 
   // ---------------
 
   // ----- Render functions --------
   const renderRightActions = (
-    _progress: Animated.AnimatedInterpolation,
-    dragX: Animated.AnimatedInterpolation,
+    _progress: Animated.AnimatedInterpolation<string | number>,
+    dragX: Animated.AnimatedInterpolation<string | number>,
     item: NotificationContentCard,
   ) => {
     const scale = dragX.interpolate({
@@ -155,10 +145,7 @@ export default function NotificationCenter() {
       extrapolate: "clamp",
     });
     return (
-      <RemoveContainer
-        onPress={() => deleteNotification(item)}
-        underlayColor={colors.primary.c20}
-      >
+      <RemoveContainer onPress={() => deleteNotification(item)} underlayColor={colors.primary.c20}>
         <AnimatedView style={{ transform: [{ scale }] }}>
           <TrashMedium color="neutral.c100" size={20} />
         </AnimatedView>
@@ -173,9 +160,7 @@ export default function NotificationCenter() {
     return (
       <Swipeable
         key={item.id}
-        renderRightActions={(_progress, dragX) =>
-          renderRightActions(_progress, dragX, item)
-        }
+        renderRightActions={(_progress, dragX) => renderRightActions(_progress, dragX, item)}
         ref={ref => {
           if (ref && !rowRefs.get(item.id)) {
             rowRefs.set(item.id, ref);
@@ -204,56 +189,38 @@ export default function NotificationCenter() {
   // -------------------------------
 
   return (
-    <>
-      <Container
-        refreshControl={
-          <RefreshControl
-            refreshing={isDynamicContentLoading}
-            colors={[colors.primary.c80]}
-            tintColor={colors.primary.c80}
-            onRefresh={refreshNotifications}
-          />
-        }
-      >
-        <FlatList<NotificationContentCard>
-          data={orderedNotificationsCards}
-          keyExtractor={(card: NotificationContentCard) => card.id}
-          renderItem={elem => ListItem(elem.item)}
-          ItemSeparatorComponent={() => (
-            <Box height={1} width="100%" backgroundColor="neutral.c30" />
-          )}
-          ListEmptyComponent={
-            <Flex
-              alignItems="center"
-              justifyContent="center"
-              height={height * 0.7}
-              px={6}
-            >
-              <Text
-                variant="large"
-                fontWeight="semiBold"
-                color="neutral.c100"
-                mb={3}
-                textAlign="center"
-              >
-                {t("notificationCenter.news.emptyState.title")} 💤
-              </Text>
-              <Text
-                variant="paragraph"
-                fontWeight="medium"
-                color="neutral.c70"
-                textAlign="center"
-              >
-                {t("notificationCenter.news.emptyState.desc")}
-              </Text>
-            </Flex>
-          }
+    <Container
+      refreshControl={
+        <RefreshControl
+          refreshing={isDynamicContentLoading}
+          colors={[colors.primary.c80]}
+          tintColor={colors.primary.c80}
+          onRefresh={refreshNotifications}
         />
-      </Container>
-      <StatusCenter
-        isOpened={displayStatusCenter}
-        onClose={onCloseStatusCenter}
+      }
+    >
+      <FlatList<NotificationContentCard>
+        data={orderedNotificationsCards}
+        keyExtractor={(card: NotificationContentCard) => card.id}
+        renderItem={elem => ListItem(elem.item)}
+        ItemSeparatorComponent={() => <Box height={1} width="100%" backgroundColor="neutral.c30" />}
+        ListEmptyComponent={
+          <Flex alignItems="center" justifyContent="center" height={height * 0.7} px={6}>
+            <Text
+              variant="large"
+              fontWeight="semiBold"
+              color="neutral.c100"
+              mb={3}
+              textAlign="center"
+            >
+              {t("notificationCenter.news.emptyState.title")}
+            </Text>
+            <Text variant="paragraph" fontWeight="medium" color="neutral.c70" textAlign="center">
+              {t("notificationCenter.news.emptyState.desc")}
+            </Text>
+          </Flex>
+        }
       />
-    </>
+    </Container>
   );
 }

@@ -9,6 +9,7 @@ type Props = {
   onPress: () => void;
   imageSource: ImageSourcePropType;
   hasMarginBottom?: boolean;
+  testID?: string;
 };
 export default function AddAccountsModalCard({
   title,
@@ -16,6 +17,7 @@ export default function AddAccountsModalCard({
   onPress,
   imageSource,
   hasMarginBottom = false,
+  testID,
 }: Props) {
   return (
     <DiscoverCard
@@ -28,13 +30,8 @@ export default function AddAccountsModalCard({
         mx: 0,
         mb: hasMarginBottom ? "16px" : 0,
       }}
-      Image={
-        <Illustration
-          size={130}
-          darkSource={imageSource}
-          lightSource={imageSource}
-        />
-      }
+      Image={<Illustration size={130} darkSource={imageSource} lightSource={imageSource} />}
+      testID={testID}
     />
   );
 }

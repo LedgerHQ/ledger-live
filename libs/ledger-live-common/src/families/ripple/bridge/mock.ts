@@ -10,11 +10,7 @@ import {
   AmountRequired,
 } from "@ledgerhq/errors";
 import type { Transaction } from "../types";
-import type {
-  Account,
-  AccountBridge,
-  CurrencyBridge,
-} from "@ledgerhq/types-live";
+import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { getMainAccount } from "../../../account";
 import {
   scanAccounts,
@@ -23,10 +19,13 @@ import {
   sync,
   isInvalidRecipient,
 } from "../../../bridge/mockHelpers";
+import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { formatCurrencyUnit } from "../../../currencies";
 import { makeAccountBridgeReceive } from "../../../bridge/mockHelpers";
+
 const receive = makeAccountBridgeReceive();
 const notCreatedAddresses: string[] = [];
+
 export function addNotCreatedRippleMockAddress(addr: string) {
   notCreatedAddresses.push(addr);
 }
@@ -44,16 +43,10 @@ const createTransaction = (): Transaction => ({
   useAllAmount: false,
 });
 
-const updateTransaction = (t, patch) => ({ ...t, ...patch });
-
 const estimateMaxSpendable = ({ account, parentAccount, transaction }) => {
   const mainAccount = getMainAccount(account, parentAccount);
-  const estimatedFees = transaction
-    ? defaultGetFees(mainAccount, transaction)
-    : new BigNumber(10);
-  return Promise.resolve(
-    BigNumber.max(0, account.balance.minus(estimatedFees))
-  );
+  const estimatedFees = transaction ? defaultGetFees(mainAccount, transaction) : new BigNumber(10);
+  return Promise.resolve(BigNumber.max(0, account.balance.minus(estimatedFees)));
 };
 
 const getTransactionStatus = (a, t) => {
@@ -67,12 +60,8 @@ const getTransactionStatus = (a, t) => {
   } = {};
   const useAllAmount = !!t.useAllAmount;
   const estimatedFees = defaultGetFees(a, t);
-  const totalSpent = useAllAmount
-    ? a.balance
-    : new BigNumber(t.amount).plus(estimatedFees);
-  const amount = useAllAmount
-    ? a.balance.minus(estimatedFees)
-    : new BigNumber(t.amount);
+  const totalSpent = useAllAmount ? a.balance : new BigNumber(t.amount).plus(estimatedFees);
+  const amount = useAllAmount ? a.balance.minus(estimatedFees) : new BigNumber(t.amount);
 
   if (amount.gt(0) && estimatedFees.times(10).gt(amount)) {
     warnings.feeTooHigh = new FeeTooHigh();
@@ -80,35 +69,23 @@ const getTransactionStatus = (a, t) => {
 
   if (totalSpent.gt(a.balance)) {
     errors.amount = new NotEnoughSpendableBalance("", {
-      minimumAmount: formatCurrencyUnit(
-        a.currency.units[0],
-        new BigNumber(minimalBaseAmount),
-        {
-          disableRounding: true,
-          useGrouping: false,
-          showCode: true,
-        }
-      ),
+      minimumAmount: formatCurrencyUnit(a.currency.units[0], new BigNumber(minimalBaseAmount), {
+        disableRounding: true,
+        useGrouping: false,
+        showCode: true,
+      }),
     });
-  } else if (
-    minimalBaseAmount &&
-    a.balance.minus(totalSpent).lt(minimalBaseAmount)
-  ) {
+  } else if (minimalBaseAmount && a.balance.minus(totalSpent).lt(minimalBaseAmount)) {
     errors.amount = new NotEnoughSpendableBalance("", {
-      minimumAmount: formatCurrencyUnit(
-        a.currency.units[0],
-        new BigNumber(minimalBaseAmount),
-        {
-          disableRounding: true,
-          useGrouping: false,
-          showCode: true,
-        }
-      ),
+      minimumAmount: formatCurrencyUnit(a.currency.units[0], new BigNumber(minimalBaseAmount), {
+        disableRounding: true,
+        useGrouping: false,
+        showCode: true,
+      }),
     });
   } else if (
     minimalBaseAmount &&
-    (t.recipient.includes("new") ||
-      notCreatedAddresses.includes(t.recipient)) &&
+    (t.recipient.includes("new") || notCreatedAddresses.includes(t.recipient)) &&
     amount.lt(minimalBaseAmount)
   ) {
     // mimic XRP base minimal for new addresses
@@ -156,7 +133,7 @@ const prepareTransaction = async (a, t) => {
 
 const accountBridge: AccountBridge<Transaction> = {
   createTransaction,
-  updateTransaction,
+  updateTransaction: defaultUpdateTransaction,
   getTransactionStatus,
   estimateMaxSpendable,
   prepareTransaction,

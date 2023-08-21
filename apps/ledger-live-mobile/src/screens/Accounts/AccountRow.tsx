@@ -6,11 +6,10 @@ import {
   getAccountUnit,
 } from "@ledgerhq/live-common/account/index";
 import { TokenAccount, AccountLike, ChildAccount } from "@ledgerhq/types-live";
-import {
-  DerivationMode,
-  getTagDerivationMode,
-} from "@ledgerhq/live-common/derivation";
+import { DerivationMode, getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { useSelector } from "react-redux";
+import { GestureResponderEvent } from "react-native";
+import { useStartProfiler } from "@shopify/react-native-performance";
 import { NavigatorName, ScreenName } from "../../const";
 import { useBalanceHistoryWithCountervalue } from "../../hooks/portfolio";
 import AccountRowLayout from "../../components/AccountRowLayout";
@@ -18,17 +17,11 @@ import { parentAccountSelector } from "../../reducers/accounts";
 import { track } from "../../analytics";
 import { State } from "../../reducers/types";
 import { AccountsNavigatorParamList } from "../../components/RootNavigator/types/AccountsNavigator";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
+import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { MarketNavigatorStackParamList } from "../../components/RootNavigator/types/MarketNavigator";
 
 type Navigation = BaseComposite<
-  | StackNavigatorProps<
-      AccountsNavigatorParamList,
-      ScreenName.Asset | ScreenName.Accounts
-    >
+  | StackNavigatorProps<AccountsNavigatorParamList, ScreenName.Asset | ScreenName.Accounts>
   | StackNavigatorProps<MarketNavigatorStackParamList, ScreenName.MarketDetail>
 >;
 
@@ -42,6 +35,7 @@ type Props = {
   hideDelta?: boolean;
   topLink?: boolean;
   bottomLink?: boolean;
+  sourceScreenName: ScreenName;
 };
 
 const AccountRow = ({
@@ -53,7 +47,9 @@ const AccountRow = ({
   topLink,
   bottomLink,
   isLast,
+  sourceScreenName,
 }: Props) => {
+  const startNavigationTTITimer = useStartProfiler();
   // makes it refresh if this changes
   useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
   const currency = getAccountCurrency(account);
@@ -78,37 +74,45 @@ const AccountRow = ({
     range: "day",
   });
 
-  const onAccountPress = useCallback(() => {
-    track("account_clicked", {
-      currency: currency.name,
-    });
-    if (navigationParams) {
-      // @ts-expect-error navigagtion spread, ask your mom about it
-      navigation.navigate(...navigationParams);
-    } else if (account.type === "Account") {
-      navigation.navigate(ScreenName.Account, {
-        accountId,
+  const onAccountPress = useCallback(
+    (uiEvent: GestureResponderEvent) => {
+      track("account_clicked", {
+        currency: currency.name,
       });
-    } else if (account.type === "TokenAccount") {
-      navigation.navigate(NavigatorName.Accounts, {
-        screen: ScreenName.Account,
-        params: {
-          currencyId: currency.id,
-          parentId,
-          accountId: account.id,
-        },
-      });
-    }
-  }, [
-    account.id,
-    account.type,
-    accountId,
-    currency.id,
-    currency.name,
-    navigation,
-    navigationParams,
-    parentId,
-  ]);
+      if (navigationParams) {
+        startNavigationTTITimer({ source: sourceScreenName, uiEvent });
+        // @ts-expect-error navigagtion spread, ask your mom about it
+        navigation.navigate(...navigationParams);
+      } else if (account.type === "Account") {
+        startNavigationTTITimer({ source: sourceScreenName, uiEvent });
+        navigation.navigate(ScreenName.Account, {
+          accountId,
+        });
+      } else if (account.type === "TokenAccount") {
+        startNavigationTTITimer({ source: sourceScreenName, uiEvent });
+        navigation.navigate(NavigatorName.Accounts, {
+          screen: ScreenName.Account,
+          params: {
+            currencyId: currency.id,
+            parentId,
+            accountId: account.id,
+          },
+        });
+      }
+    },
+    [
+      account.id,
+      account.type,
+      accountId,
+      currency.id,
+      currency.name,
+      navigation,
+      navigationParams,
+      parentId,
+      sourceScreenName,
+      startNavigationTTITimer,
+    ],
+  );
 
   return (
     <AccountRowLayout

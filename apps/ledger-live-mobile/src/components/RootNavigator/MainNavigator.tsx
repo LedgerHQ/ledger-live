@@ -1,11 +1,8 @@
 import React, { useCallback, useMemo } from "react";
 import { useTheme } from "styled-components/native";
-import { Icons } from "@ledgerhq/native-ui";
+import { IconsLegacy } from "@ledgerhq/native-ui";
 
-import {
-  BottomTabBarProps,
-  createBottomTabNavigator,
-} from "@react-navigation/bottom-tabs";
+import { BottomTabBarProps, createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useSelector } from "react-redux";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useManagerNavLockCallback } from "./CustomBlockRouterNavigator";
@@ -15,16 +12,14 @@ import Transfer, { TransferTabIcon } from "../TabBar/Transfer";
 import TabIcon from "../TabIcon";
 import MarketNavigator from "./MarketNavigator";
 import PortfolioNavigator from "./PortfolioNavigator";
-import {
-  hasOrderedNanoSelector,
-  readOnlyModeEnabledSelector,
-} from "../../reducers/settings";
+import { hasOrderedNanoSelector, readOnlyModeEnabledSelector } from "../../reducers/settings";
 import ManagerNavigator, { ManagerTabIcon } from "./ManagerNavigator";
 import DiscoverNavigator from "./DiscoverNavigator";
 import customTabBar from "../TabBar/CustomTabBar";
-import { StackNavigatorProps } from "./types/helpers";
 import { MainNavigatorParamList } from "./types/MainNavigator";
-import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
+import { isMainNavigatorVisibleSelector } from "../../reducers/appstate";
+import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const Tab = createBottomTabNavigator<MainNavigatorParamList>();
 
@@ -33,34 +28,36 @@ const Tab = createBottomTabNavigator<MainNavigatorParamList>();
 // override the navigation from tabs.
 // https://github.com/react-navigation/react-navigation/issues/6674#issuecomment-562813152
 
-export default function MainNavigator({
-  route: { params },
-}: StackNavigatorProps<BaseNavigatorStackParamList, NavigatorName.Main>) {
+export default function MainNavigator() {
   const { colors } = useTheme();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
-
-  const { hideTabNavigation } = params || {};
+  const isMainNavigatorVisible = useSelector(isMainNavigatorVisibleSelector);
   const managerNavLockCallback = useManagerNavLockCallback();
 
   const insets = useSafeAreaInsets();
   const tabBar = useMemo(
     () =>
       ({ ...props }: BottomTabBarProps): JSX.Element =>
-        customTabBar({ ...props, colors, insets }),
-    [insets, colors],
+        customTabBar({
+          ...props,
+          colors,
+          insets,
+          hideTabBar: !isMainNavigatorVisible,
+        }),
+    [colors, insets, isMainNavigatorVisible],
   );
 
   const managerLockAwareCallback = useCallback(
     callback => {
       // NB This is conditionally going to show the confirmation modal from the manager
       // in the event of having ongoing installs/uninstalls.
-      managerNavLockCallback
-        ? managerNavLockCallback(() => callback)
-        : callback();
+      managerNavLockCallback ? managerNavLockCallback(() => callback) : callback();
     },
     [managerNavLockCallback],
   );
+
+  const ptxEarnFeature = useFeature("ptxEarn");
 
   return (
     <Tab.Navigator
@@ -73,9 +70,8 @@ export default function MainNavigator({
             borderTopWidth: 1,
             elevation: 5,
             shadowColor: colors.neutral.c30,
-            backgroundColor: colors.background.main,
+            backgroundColor: colors.opacityDefault.c10,
           },
-          hideTabNavigation ? { display: "none" } : {},
         ],
         unmountOnBlur: true, // Nb prevents ghost device interactions
         tabBarShowLabel: false,
@@ -104,31 +100,61 @@ export default function MainNavigator({
           },
         })}
       />
-      <Tab.Screen
-        name={NavigatorName.Market}
-        component={MarketNavigator}
-        options={{
-          headerShown: false,
-          unmountOnBlur: true,
-          tabBarIcon: props => (
-            <TabIcon
-              Icon={Icons.GraphGrowMedium}
-              i18nKey="tabs.market"
-              {...props}
-            />
-          ),
-        }}
-        listeners={({ navigation }) => ({
-          tabPress: e => {
-            e.preventDefault();
-            managerLockAwareCallback(() => {
-              navigation.navigate(NavigatorName.Market, {
-                screen: ScreenName.MarketList,
+      {ptxEarnFeature?.enabled ? (
+        <Tab.Screen
+          name={NavigatorName.Earn}
+          component={EarnLiveAppNavigator}
+          options={{
+            headerShown: false,
+            unmountOnBlur: true,
+            tabBarIcon: props => (
+              <TabIcon
+                Icon={IconsLegacy.LendMedium}
+                i18nKey="tabs.earn"
+                testID="tab-bar-earn"
+                {...props}
+              />
+            ),
+          }}
+          listeners={({ navigation }) => ({
+            tabPress: e => {
+              e.preventDefault();
+              managerLockAwareCallback(() => {
+                navigation.navigate(NavigatorName.Earn, {
+                  screen: ScreenName.Earn,
+                });
               });
-            });
-          },
-        })}
-      />
+            },
+          })}
+        />
+      ) : (
+        <Tab.Screen
+          name={NavigatorName.Market}
+          component={MarketNavigator}
+          options={{
+            headerShown: false,
+            unmountOnBlur: true,
+            tabBarIcon: props => (
+              <TabIcon
+                Icon={IconsLegacy.GraphGrowMedium}
+                i18nKey="tabs.market"
+                testID="tab-bar-market"
+                {...props}
+              />
+            ),
+          }}
+          listeners={({ navigation }) => ({
+            tabPress: e => {
+              e.preventDefault();
+              managerLockAwareCallback(() => {
+                navigation.navigate(NavigatorName.Market, {
+                  screen: ScreenName.MarketList,
+                });
+              });
+            },
+          })}
+        />
+      )}
 
       <Tab.Screen
         name={ScreenName.Transfer}
@@ -144,11 +170,7 @@ export default function MainNavigator({
         options={{
           headerShown: false,
           tabBarIcon: props => (
-            <TabIcon
-              Icon={Icons.PlanetMedium}
-              i18nKey="tabs.discover"
-              {...props}
-            />
+            <TabIcon Icon={IconsLegacy.PlanetMedium} i18nKey="tabs.discover" {...props} />
           ),
         }}
         listeners={({ navigation }) => ({
@@ -174,9 +196,7 @@ export default function MainNavigator({
             e.preventDefault();
             managerLockAwareCallback(() => {
               if (readOnlyModeEnabled && hasOrderedNano) {
-                navigation.navigate(
-                  ScreenName.PostBuyDeviceSetupNanoWallScreen,
-                );
+                navigation.navigate(ScreenName.PostBuyDeviceSetupNanoWallScreen);
               } else if (readOnlyModeEnabled) {
                 navigation.navigate(NavigatorName.BuyDevice);
               } else {

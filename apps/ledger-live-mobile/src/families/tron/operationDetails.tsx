@@ -3,10 +3,7 @@ import { StyleSheet, Linking } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import {
-  getDefaultExplorerView,
-  getAddressExplorer,
-} from "@ledgerhq/live-common/explorers";
+import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 import {
   formatVotes,
   useTronSuperRepresentatives,
@@ -24,7 +21,11 @@ import { discreetModeSelector, localeSelector } from "../../reducers/settings";
 
 const helpURL = "https://support.ledger.com/hc/en-us/articles/360013062139";
 
-function getURLWhatIsThis(op: Operation): string | null | undefined {
+function getURLWhatIsThis(
+  op: Operation,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  currencyId: string,
+): string | null | undefined {
   if (op.type !== "IN" && op.type !== "OUT") {
     return helpURL;
   }
@@ -42,11 +43,7 @@ type OperationDetailsExtraProps = {
   account: Account;
 };
 
-function OperationDetailsExtra({
-  extra,
-  type,
-  account,
-}: OperationDetailsExtraProps) {
+function OperationDetailsExtra({ extra, type, account }: OperationDetailsExtraProps) {
   const { t } = useTranslation();
   const discreet = useSelector(discreetModeSelector);
   const locale = useSelector(localeSelector);
@@ -59,39 +56,21 @@ function OperationDetailsExtra({
     }
 
     case "FREEZE": {
-      const value = formatCurrencyUnit(
-        account.unit,
-        new BigNumber(extra.frozenAmount),
-        {
-          showCode: true,
-          discreet,
-          locale,
-        },
-      );
-      return (
-        <Section
-          title={t("operationDetails.extra.frozenAmount")}
-          value={value}
-        />
-      );
+      const value = formatCurrencyUnit(account.unit, new BigNumber(extra.frozenAmount), {
+        showCode: true,
+        discreet,
+        locale,
+      });
+      return <Section title={t("operationDetails.extra.frozenAmount")} value={value} />;
     }
 
     case "UNFREEZE": {
-      const value = formatCurrencyUnit(
-        account.unit,
-        new BigNumber(extra.unfreezeAmount),
-        {
-          showCode: true,
-          discreet,
-          locale,
-        },
-      );
-      return (
-        <Section
-          title={t("operationDetails.extra.unfreezeAmount")}
-          value={value}
-        />
-      );
+      const value = formatCurrencyUnit(account.unit, new BigNumber(extra.unfreezeAmount), {
+        showCode: true,
+        discreet,
+        locale,
+      });
+      return <Section title={t("operationDetails.extra.unfreezeAmount")} value={value} />;
     }
 
     default:
@@ -104,20 +83,14 @@ type OperationsDetailsVotesProps = {
   account: Account;
 };
 
-function OperationDetailsVotes({
-  votes,
-  account,
-}: OperationsDetailsVotesProps) {
+function OperationDetailsVotes({ votes, account }: OperationsDetailsVotesProps) {
   const { t } = useTranslation();
   const sp = useTronSuperRepresentatives();
   const locale = useSelector(localeSelector);
   const formattedVotes = formatVotes(votes, sp);
   const redirectAddressCreator = useCallback(
     address => () => {
-      const url = getAddressExplorer(
-        getDefaultExplorerView(account.currency),
-        address,
-      );
+      const url = getAddressExplorer(getDefaultExplorerView(account.currency), address);
       if (url) Linking.openURL(url);
     },
     [account],
@@ -159,12 +132,7 @@ const AmountCell = ({
   !amount.isZero() ? (
     <>
       <LText semiBold numberOfLines={1} style={styles.topText}>
-        <CurrencyUnitValue
-          showCode
-          unit={unit}
-          value={amount}
-          alwaysShowSign={false}
-        />
+        <CurrencyUnitValue showCode unit={unit} value={amount} alwaysShowSign={false} />
       </LText>
 
       <LText numberOfLines={1} style={styles.amountText} color="grey">
@@ -181,40 +149,19 @@ const AmountCell = ({
   ) : null;
 
 const FreezeAmountCell = ({ operation, currency, unit }: Props) => {
-  const amount = new BigNumber(
-    operation.extra ? operation.extra.frozenAmount : 0,
-  );
-  return (
-    <AmountCell
-      amount={amount}
-      operation={operation}
-      currency={currency}
-      unit={unit}
-    />
-  );
+  const amount = new BigNumber(operation.extra ? operation.extra.frozenAmount : 0);
+  return <AmountCell amount={amount} operation={operation} currency={currency} unit={unit} />;
 };
 
 const UnfreezeAmountCell = ({ operation, currency, unit }: Props) => {
-  const amount = new BigNumber(
-    operation.extra ? operation.extra.unfreezeAmount : 0,
-  );
-  return (
-    <AmountCell
-      amount={amount}
-      operation={operation}
-      currency={currency}
-      unit={unit}
-    />
-  );
+  const amount = new BigNumber(operation.extra ? operation.extra.unfreezeAmount : 0);
+  return <AmountCell amount={amount} operation={operation} currency={currency} unit={unit} />;
 };
 
 const VoteAmountCell = ({ operation }: Props) => {
   const amount =
     operation.extra && operation.extra.votes
-      ? (operation.extra.votes as Vote[]).reduce(
-          (sum, { voteCount }) => sum + voteCount,
-          0,
-        )
+      ? (operation.extra.votes as Vote[]).reduce((sum, { voteCount }) => sum + voteCount, 0)
       : 0;
   return amount > 0 ? (
     <LText numberOfLines={1} semiBold style={[styles.topText, styles.voteText]}>

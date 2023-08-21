@@ -32,50 +32,36 @@ const searchFilter =
     // Nb allow for multiple comma separated search terms
     const queries = query
       .split(",")
-      .map((t) => t.toLowerCase().trim())
+      .map(t => t.toLowerCase().trim())
       .filter(Boolean);
     const currency = currencyId ? getCryptoCurrencyById(currencyId) : null;
-    const terms = `${name} ${
-      currency ? `${currency.name} ${currency.ticker}` : ""
-    }`;
-    return queries.some((query) => terms.toLowerCase().includes(query));
+    const terms = `${name} ${currency ? `${currency.name} ${currency.ticker}` : ""}`;
+    return queries.some(query => terms.toLowerCase().includes(query));
   };
 
 const typeFilter =
   (
     filters: AppType[] = ["all"],
     updateAwareInstalledApps: UpdateAwareInstalledApps,
-    installQueue: string[] = []
+    installQueue: string[] = [],
   ) =>
-  (app) =>
-    filters.every((filter) => {
+  app =>
+    filters.every(filter => {
       switch (filter) {
         case "installed":
-          return (
-            installQueue.includes(app.name) ||
-            app.name in updateAwareInstalledApps
-          );
+          return installQueue.includes(app.name) || app.name in updateAwareInstalledApps;
 
         case "not_installed":
           return !(app.name in updateAwareInstalledApps);
 
         case "updatable":
-          return (
-            app.name in updateAwareInstalledApps &&
-            !updateAwareInstalledApps[app.name]
-          );
+          return app.name in updateAwareInstalledApps && !updateAwareInstalledApps[app.name];
 
         case "supported":
-          return (
-            app.currencyId &&
-            isCurrencySupported(getCryptoCurrencyById(app.currencyId))
-          );
+          return app.currencyId && isCurrencySupported(getCryptoCurrencyById(app.currencyId));
 
         case "not_supported":
-          return !(
-            app.currencyId &&
-            isCurrencySupported(getCryptoCurrencyById(app.currencyId))
-          );
+          return !(app.currencyId && isCurrencySupported(getCryptoCurrencyById(app.currencyId)));
 
         default:
           return true;
@@ -114,7 +100,7 @@ export const filterApps = (apps: App[], _options: FilterOptions): App[] => {
 export const sortFilterApps = (
   apps: App[],
   _filterOptions: FilterOptions,
-  _sortOptions: SortOptions
+  _sortOptions: SortOptions,
 ): App[] => {
   return sortApps(filterApps(apps, _filterOptions), _sortOptions);
 };
@@ -122,14 +108,9 @@ export const sortFilterApps = (
 export const useSortedFilteredApps = (
   apps: App[],
   _filterOptions: FilterOptions,
-  _sortOptions: SortOptions
+  _sortOptions: SortOptions,
 ): App[] => {
-  const {
-    query,
-    installedApps,
-    type: filterType,
-    installQueue,
-  } = _filterOptions;
+  const { query, installedApps, type: filterType, installQueue } = _filterOptions;
   const { type: sortType, order } = _sortOptions;
   return useMemo(
     () =>
@@ -144,8 +125,8 @@ export const useSortedFilteredApps = (
         {
           type: sortType,
           order,
-        }
+        },
       ),
-    [apps, query, installedApps, filterType, installQueue, sortType, order]
+    [apps, query, installedApps, filterType, installQueue, sortType, order],
   );
 };

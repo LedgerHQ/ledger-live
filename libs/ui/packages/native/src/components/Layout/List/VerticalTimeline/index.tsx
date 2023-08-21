@@ -1,50 +1,88 @@
-import React, { ReactNode } from "react";
+import React, { useRef, useCallback } from "react";
+import {
+  LayoutChangeEvent,
+  ScrollView,
+  LayoutRectangle,
+  View,
+  StyleProp,
+  ViewStyle,
+} from "react-native";
 
 import TimelineItem from "./TimelineItem";
-import { Flex } from "../..";
+import Flex from "../../Flex";
+import Text, { BaseTextProps } from "../../../Text";
 import { BaseStyledProps } from "src/components/styled";
-
-export enum ItemStatus {
-  inactive = "inactive",
-  active = "active",
-  completed = "completed",
-}
-
-export type Item = {
-  status: ItemStatus;
-  title: string;
-  doneTitle?: string;
-  estimatedTime?: number;
-  renderBody?: (isDisplayed?: boolean) => ReactNode;
-};
+import { Item, ItemStatus } from "../types";
 
 export type Props = BaseStyledProps & {
   steps?: Item[];
   formatEstimatedTime?: (_: number) => string;
   setActiveIndex?: (arg0: number) => void;
+  header?: React.ReactNode;
+  /**
+   * Should the scroll view automatically scroll to the active step.
+   * Defaults to true.
+   * */
+  autoScroll?: boolean;
+  contentContainerStyle?: StyleProp<ViewStyle>;
 };
 
 export default function VerticalTimeline({
   steps,
   formatEstimatedTime,
   setActiveIndex,
+  header,
+  autoScroll = true,
+  contentContainerStyle,
   ...props
 }: Props) {
+  const scrollViewRef = useRef<ScrollView | null>(null);
+
+  const stepsContainerLayout = useRef<LayoutRectangle>();
+  const onStepsContainerLayout = useCallback((evt: LayoutChangeEvent) => {
+    stepsContainerLayout.current = evt.nativeEvent.layout;
+  }, []);
+
+  const onActiveStepLayout = useCallback((evt: LayoutChangeEvent) => {
+    if (!stepsContainerLayout.current || !scrollViewRef.current) return;
+    const { layout } = evt.nativeEvent;
+    scrollViewRef.current.scrollTo({ x: 0, y: stepsContainerLayout.current.y + layout.y });
+  }, []);
+
   return (
-    <Flex {...props} flexDirection="column">
-      {steps?.map((step, index) => (
-        <TimelineItem
-          key={step.title}
-          item={step}
-          formatEstimatedTime={formatEstimatedTime}
-          isFirstItem={index === 0}
-          isLastItem={index === steps.length - 1}
-          setActiveIndex={setActiveIndex}
-          index={index}
-        />
-      ))}
-    </Flex>
+    <ScrollView
+      ref={scrollViewRef}
+      onLayout={onStepsContainerLayout}
+      contentContainerStyle={contentContainerStyle}
+    >
+      {header}
+      <Flex {...props} onLayout={onStepsContainerLayout} flexDirection="column">
+        {steps?.map((step, index) => (
+          <View onLayout={autoScroll && step.status === "active" ? onActiveStepLayout : undefined}>
+            <TimelineItem
+              key={step.title}
+              item={step}
+              formatEstimatedTime={formatEstimatedTime}
+              isFirstItem={index === 0}
+              isLastItem={index === steps.length - 1}
+              setActiveIndex={setActiveIndex}
+              index={index}
+            />
+          </View>
+        ))}
+      </Flex>
+    </ScrollView>
   );
 }
 
+const SubtitleText: React.FC<BaseTextProps> = (props) => (
+  <Text variant="body" fontWeight="semiBold" color="neutral.c100" mb={3} {...props} />
+);
+
+const BodyText: React.FC<BaseTextProps> = (props) => (
+  <Text variant="bodyLineHeight" fontWeight="medium" color="neutral.c80" {...props} />
+);
+
+VerticalTimeline.BodyText = BodyText;
+VerticalTimeline.SubtitleText = SubtitleText;
 VerticalTimeline.ItemStatus = ItemStatus;

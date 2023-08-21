@@ -9,16 +9,11 @@ import type {
   UtxoStrategy,
 } from "./types";
 import { $Shape } from "utility-types";
-import type {
-  TX,
-  Input as WalletInput,
-  Output as WalletOutput,
-} from "./wallet-btc";
+import type { TX, Input as WalletInput, Output as WalletOutput } from "./wallet-btc";
 import { BigNumber } from "bignumber.js";
 import { encodeOperationId } from "../../operation";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
-import type { CryptoCurrencyIds } from "@ledgerhq/cryptoassets";
 
 // correspond ~ to min relay fees but determined empirically for a tx to be accepted by network
 const minFees = {
@@ -32,16 +27,10 @@ const minFees = {
   viacoin: 2000,
   peercoin: 2000,
 };
-export const getMinRelayFee = (currency: CryptoCurrency): number =>
-  minFees[currency.id] || 0;
-export const inferFeePerByte = (
-  t: Transaction,
-  networkInfo: NetworkInfo
-): BigNumber => {
+export const getMinRelayFee = (currency: CryptoCurrency): number => minFees[currency.id] || 0;
+export const inferFeePerByte = (t: Transaction, networkInfo: NetworkInfo): BigNumber => {
   if (t.feesStrategy) {
-    const speed = networkInfo.feeItems.items.find(
-      (item) => t.feesStrategy === item.speed
-    );
+    const speed = networkInfo.feeItems.items.find(item => t.feesStrategy === item.speed);
 
     if (!speed) {
       return networkInfo.feeItems.defaultFeePerByte;
@@ -72,7 +61,7 @@ export const isValidRecipient = async (params: {
     return Promise.reject(
       new InvalidAddress("", {
         currencyName: params.currency.name,
-      })
+      }),
     );
   }
   return Promise.resolve(null);
@@ -85,10 +74,7 @@ type UTXOStatus =
   | {
       excluded: false;
     };
-export const getUTXOStatus = (
-  utxo: BitcoinOutput,
-  utxoStrategy: UtxoStrategy
-): UTXOStatus => {
+export const getUTXOStatus = (utxo: BitcoinOutput, utxoStrategy: UtxoStrategy): UTXOStatus => {
   if (!utxo.blockHeight && !utxo.isChange) {
     // exclude pending and not change utxo
     return {
@@ -97,9 +83,7 @@ export const getUTXOStatus = (
     };
   }
   if (
-    utxoStrategy.excludeUTXOs.some(
-      (u) => u.hash === utxo.hash && u.outputIndex === utxo.outputIndex
-    )
+    utxoStrategy.excludeUTXOs.some(u => u.hash === utxo.hash && u.outputIndex === utxo.outputIndex)
   ) {
     return {
       excluded: true,
@@ -131,10 +115,7 @@ type CoinLogic = {
   getAdditionals?: (arg0: { transaction: Transaction }) => string[];
   asExplicitTransactionRecipient?: (arg0: string) => string;
   onScreenTransactionRecipient?: (arg0: string) => string;
-  postBuildBitcoinResources?: (
-    arg0: Account,
-    arg1?: BitcoinResources
-  ) => BitcoinResources;
+  postBuildBitcoinResources?: (arg0: Account, arg1?: BitcoinResources) => BitcoinResources;
   syncReplaceAddress?: (addr: string) => string;
   injectGetAddressParams?: (arg0: Account) => any;
 };
@@ -142,10 +123,7 @@ type CoinLogic = {
 export const bchToCashaddrAddressWithoutPrefix = (recipient): string =>
   recipient ? recipient.substring(recipient.indexOf(":") + 1) : recipient;
 
-export const perCoinLogic: Record<
-  CryptoCurrencyIds,
-  CoinLogic | null | undefined
-> = {
+export const perCoinLogic: Partial<Record<CryptoCurrencyId, CoinLogic>> = {
   zencash: {
     hasExtraData: true, // FIXME (legacy) investigate why we need this here and drop
   },
@@ -182,7 +160,7 @@ export const perCoinLogic: Record<
       const prefix = "bitcoincash:";
       return str.startsWith(prefix) ? str.slice(prefix.length) : str;
     },
-    syncReplaceAddress: (addr) => bchToCashaddrAddressWithoutPrefix(addr),
+    syncReplaceAddress: addr => bchToCashaddrAddressWithoutPrefix(addr),
     injectGetAddressParams: () => ({
       forceFormat: "cashaddr",
     }),
@@ -194,7 +172,7 @@ export const mapTxToOperations = (
   currencyId: string,
   accountId: string,
   accountAddresses: Set<string>,
-  changeAddresses: Set<string>
+  changeAddresses: Set<string>,
 ): $Shape<Operation[]> => {
   const operations: Operation[] = [];
   const txId = tx.id;
@@ -213,9 +191,7 @@ export const mapTxToOperations = (
 
   for (const input of tx.inputs) {
     if (input.address) {
-      senders.add(
-        syncReplaceAddress ? syncReplaceAddress(input.address) : input.address
-      );
+      senders.add(syncReplaceAddress ? syncReplaceAddress(input.address) : input.address);
 
       if (input.value) {
         if (accountAddresses.has(input.address)) {
@@ -237,10 +213,11 @@ export const mapTxToOperations = (
   const changeOutputIndex =
     tx.outputs.length === 0
       ? 0
-      : tx.outputs.map((o) => o.output_index).reduce((p, c) => (p > c ? p : c));
+      : tx.outputs.map(o => o.output_index).reduce((p, c) => (p > c ? p : c));
 
   for (const output of tx.outputs) {
-    if (output.address) {
+    // ledger explorer returns "unknown" as recipient for OP_RETURN outputs, we don't want to display it in our UI
+    if (output.address && !output.address.includes("unknown")) {
       if (!accountAddresses.has(output.address)) {
         // The output doesn't belong to this account
         if (
@@ -248,11 +225,7 @@ export const mapTxToOperations = (
           (tx.outputs.length === 1 || // The transaction has only 1 output
             output.output_index < changeOutputIndex) // The output isn't the change output
         ) {
-          recipients.push(
-            syncReplaceAddress
-              ? syncReplaceAddress(output.address)
-              : output.address
-          );
+          recipients.push(syncReplaceAddress ? syncReplaceAddress(output.address) : output.address);
         }
       } else {
         // The output belongs to this account
@@ -260,23 +233,16 @@ export const mapTxToOperations = (
 
         if (!changeAddresses.has(output.address)) {
           // The output isn't a change output of this account
-          recipients.push(
-            syncReplaceAddress
-              ? syncReplaceAddress(output.address)
-              : output.address
-          );
+          recipients.push(syncReplaceAddress ? syncReplaceAddress(output.address) : output.address);
         } else {
           // The output is a change output of this account,
           // we count it as a recipient only in some special cases
           if (
-            (recipients.length === 0 &&
-              output.output_index >= changeOutputIndex) ||
+            (recipients.length === 0 && output.output_index >= changeOutputIndex) ||
             hasSpentNothing
           ) {
             recipients.push(
-              syncReplaceAddress
-                ? syncReplaceAddress(output.address)
-                : output.address
+              syncReplaceAddress ? syncReplaceAddress(output.address) : output.address,
             );
           }
         }

@@ -1,9 +1,10 @@
 import React, { useCallback } from "react";
 import { Linking } from "react-native";
-import { BottomDrawer, Button, Icons, Link } from "@ledgerhq/native-ui";
+import { Button, IconsLegacy, Link } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { urls } from "../../../../config/urls";
+import QueuedDrawer from "../../../../components/QueuedDrawer";
 
 export function Terms({
   provider,
@@ -24,25 +25,31 @@ export function Terms({
   }, [provider]);
 
   return (
-    <BottomDrawer
-      isOpen={isOpen}
+    <QueuedDrawer
+      isRequestingToBeOpened={isOpen}
       noCloseButton
-      Icon={Icons.InfoMedium}
-      iconColor="warning.c100"
+      Icon={IconsLegacy.InfoMedium}
+      iconColor="warning.c50"
       title={t("transfer.swap2.form.disclaimer.title")}
       description={t("transfer.swap2.form.disclaimer.desc", {
         providerName: getProviderName(provider),
       })}
     >
-      <Link type="color" Icon={Icons.ExternalLinkMedium} onPress={onPressLink}>
+      <Link type="color" Icon={IconsLegacy.ExternalLinkMedium} onPress={onPressLink}>
         {t("transfer.swap2.form.disclaimer.tos")}
       </Link>
-      <Button type="main" onPress={onCTA} marginTop={8} marginBottom={4}>
+      <Button
+        type="main"
+        onPress={onCTA}
+        marginTop={8}
+        marginBottom={4}
+        testID="terms-accept-button"
+      >
         {t("transfer.swap2.form.disclaimer.accept")}
       </Button>
-      <Button type="main" onPress={onClose} outline>
+      <Button type="main" onPress={onClose} outline testID="terms-close-button">
         {t("common.close")}
       </Button>
-    </BottomDrawer>
+    </QueuedDrawer>
   );
 }
