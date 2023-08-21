@@ -6,7 +6,7 @@ import remoteConfig from "@react-native-firebase/remote-config";
 import VersionNumber from "react-native-version-number";
 import { FeatureFlagsProvider, defaultFeatures } from "@ledgerhq/live-common/featureFlags/index";
 import { FeatureId, Feature } from "@ledgerhq/types-live";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 
 import { formatToFirebaseFeatureId } from "./FirebaseRemoteConfig";
 import { languageSelector, overriddenFeatureFlagsSelector } from "../reducers/settings";

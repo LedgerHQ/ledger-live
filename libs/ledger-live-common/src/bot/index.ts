@@ -7,7 +7,7 @@ import groupBy from "lodash/groupBy";
 import { log } from "@ledgerhq/logs";
 import invariant from "invariant";
 import flatMap from "lodash/flatMap";
-import { getEnv } from "../env";
+import { getEnv } from "@ledgerhq/live-env";
 import allSpecs from "../generated/specs";
 import type {
   AppSpec,

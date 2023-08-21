@@ -18,7 +18,7 @@ import { getCurrencyBridge, getAccountBridge } from "../bridge";
 import { promiseAllBatched } from "../promise";
 import { isAccountEmpty, formatAccount } from "../account";
 import { getOperationConfirmationNumber } from "../operation";
-import { getEnv } from "../env";
+import { getEnv } from "@ledgerhq/live-env";
 import { delay } from "../promise";
 import {
   listAppCandidates,

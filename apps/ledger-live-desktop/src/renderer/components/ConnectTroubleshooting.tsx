@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Trans } from "react-i18next";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";

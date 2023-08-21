@@ -23,7 +23,7 @@ import { getMainAccount } from "../../../account";
 import type { TezosAccount, Transaction, TransactionStatus } from "../types";
 import { getAccountShape } from "../synchronisation";
 import { fetchAllBakers, hydrateBakers, isAccountDelegating } from "../bakers";
-import { getEnv } from "../../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import { signOperation } from "../signOperation";
 import { patchOperationWithHash } from "../../../operation";
 import { log } from "@ledgerhq/logs";

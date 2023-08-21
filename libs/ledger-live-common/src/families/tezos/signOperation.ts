@@ -6,7 +6,7 @@ import { TezosToolkit } from "@taquito/taquito";
 import type { Transaction } from "./types";
 import type { Account, SignOperationEvent } from "@ledgerhq/types-live";
 import { withDevice } from "../../hw/deviceAccess";
-import { getEnv } from "../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import { upperModulo } from "../../modulo";
 import BigNumber from "bignumber.js";
