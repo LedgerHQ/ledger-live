@@ -14,7 +14,6 @@ import Track from "~/renderer/analytics/Track";
 import { track } from "~/renderer/analytics/segment";
 import Select from "~/renderer/components/Select";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import useEnv from "~/renderer/hooks/useEnv";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import {
   getInitialLanguageAndLocale,
@@ -52,8 +51,6 @@ const LanguageSelect: React.FC<Props> = ({ disableLanguagePrompt }) => {
         });
     }
   }, [currentDevice, lastSeenDevice?.deviceInfo, dispatch]);
-
-  const debugLanguage = useEnv("EXPERIMENTAL_LANGUAGES");
 
   const languages = useMemo(
     () =>

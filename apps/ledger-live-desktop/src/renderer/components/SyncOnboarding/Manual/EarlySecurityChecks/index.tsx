@@ -10,10 +10,7 @@ import SoftwareCheckAllowSecureChannelDrawer, {
 } from "./SoftwareCheckAllowSecureChannelDrawer";
 import { Status as SoftwareCheckStatus } from "../types";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { useSelector } from "react-redux";
-import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
-import { localeSelector } from "~/renderer/reducers/settings";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import UpdateFirmwareModal, {
   Props as UpdateFirmwareModalProps,
