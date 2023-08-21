@@ -67,7 +67,7 @@ const getTransactionStatus = async (
   let totalSpent = transaction.amount.plus(estimatedFees);
   const networkParams = getNetworkParameters(account.currency.id);
 
-  const useAllAmount = !!transaction.useAllAmount;
+  const useAllAmount = Boolean(transaction.useAllAmount);
 
   let tokensToSend: Array<Token> = [];
 
