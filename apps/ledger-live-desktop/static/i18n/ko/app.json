@@ -5366,12 +5366,6 @@
       "title" : "죄송하지만, 연결에 실패했습니다",
       "description" : "장치가 발견했지만 연결에 실패했습니다. 문제가 지속되면 다시 시도하거나 Ledger 지원 부서에 연락하세요."
     },
-    "CasperInvalidTransferId": {
-      "title": "전송 ID는 18446744073709551615보다 작은 양수여야 합니다."
-    },
-    "InvalidMinimumAmount": {
-      "title": "최소 이체 금액은 2.5 CSPR입니다."
-    },
     "ETHAddressNonEIP" : {
       "title" : "자동 확인을 사용할 수 없습니다: 주소를 신중하게 확인해주세요",
       "description" : null

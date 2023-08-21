@@ -4437,12 +4437,6 @@
       "title" : "Desculpe, falha de conexão",
       "description" : "Dispositivo detectado mas a conexão falhou. Se o problema persistir, tente novamente ou contate o Suporte Ledger."
     },
-    "CasperInvalidTransferId": {
-      "title": "O ID da transferência deve ser um número positivo menor que 18446744073709551615"
-    },
-    "InvalidMinimumAmount": {
-      "title": "O valor mínimo para transferência é de 2,5 CSPR"
-    },
     "ETHAddressNonEIP" : {
       "title" : "Verificação automática indisponível: verificar o endereço com cuidado.",
       "description" : null
