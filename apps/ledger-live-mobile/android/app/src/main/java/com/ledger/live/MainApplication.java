@@ -3,27 +3,25 @@ package com.ledger.live;
 import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Build;
 
+import com.braze.BrazeActivityLifecycleCallbackListener;
 import com.brentvatne.react.ReactVideoPackage;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
-import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.facebook.react.defaults.DefaultReactNativeHost;
 import com.facebook.soloader.SoLoader;
-import com.braze.BrazeActivityLifecycleCallbackListener;
-
-import expo.modules.ApplicationLifecycleDispatcher;
-import expo.modules.ReactNativeHostWrapper;
+import com.shopify.reactnativeperformance.ReactNativePerformance;
 
 import java.util.List;
 
-import com.shopify.reactnativeperformance.ReactNativePerformance;
+import expo.modules.ApplicationLifecycleDispatcher;
+import expo.modules.ExpoModulesPackage;
+import expo.modules.ReactNativeHostWrapper;
 
 public class MainApplication extends Application implements ReactApplication {
   public static String LO_NOTIFICATION_CHANNEL = "lo-llm";
@@ -60,6 +58,7 @@ public class MainApplication extends Application implements ReactApplication {
           packages.add(new NativeModulesPackage());
           packages.add(new ReactVideoPackage());
           packages.add(new BackgroundRunnerPackager());
+          packages.add(new ExpoModulesPackage());
           return packages;
         }
 
