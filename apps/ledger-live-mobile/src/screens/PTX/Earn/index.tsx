@@ -18,7 +18,8 @@ import {
   languageSelector,
 } from "../../../reducers/settings";
 import { useSelector } from "react-redux";
-import { TAB_BAR_HEIGHT } from "../../../components/TabBar/shared";
+import { MAIN_BUTTON_SIZE } from "../../../components/TabBar/shared";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export type Props = StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenName.Earn>;
 
@@ -39,7 +40,9 @@ export function EarnScreen({ route }: Props) {
   const localManifest = useLocalLiveAppManifest(DEFAULT_EARN_APP_ID);
   const remoteManifest = useRemoteLiveAppManifest(DEFAULT_EARN_APP_ID);
   const { state: remoteLiveAppState } = useRemoteLiveAppContext();
-  const manifest = localManifest || remoteManifest;
+  const manifest = localManifest || remoteManifest; //
+
+  const insets = useSafeAreaInsets();
 
   return manifest ? (
     <Flex
@@ -48,7 +51,8 @@ export function EarnScreen({ route }: Props) {
        * https://github.com/th3rdwave/react-native-safe-area-context/issues/219
        */
       flex={1}
-      mb={TAB_BAR_HEIGHT}
+      pt={insets.top}
+      pb={MAIN_BUTTON_SIZE} // Avoid nav button at the bottom
     >
       <TrackScreen category="EarnDashboard" name="Earn" />
       <WebPTXPlayer
