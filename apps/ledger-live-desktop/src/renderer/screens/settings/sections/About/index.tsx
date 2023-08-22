@@ -14,7 +14,7 @@ import { useDynamicUrl } from "~/renderer/terms";
 const SectionHelp = () => {
   const { t } = useTranslation();
   const privacyPolicyUrl = useDynamicUrl("privacyPolicy");
-  const termsUrl = useDynamicUrl("terms");
+  const urlTerms = useDynamicUrl("terms");
   const devMode = useSelector(developerModeSelector);
   const dispatch = useDispatch();
   const { pushToast } = useToasts();
@@ -53,7 +53,7 @@ const SectionHelp = () => {
         <RowItem
           title={t("settings.help.terms")}
           desc={t("settings.help.termsDesc")}
-          url={termsUrl}
+          url={urlTerms}
         />
 
         <RowItem

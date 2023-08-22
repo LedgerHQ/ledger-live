@@ -20,8 +20,7 @@ import {
 } from "@ledgerhq/live-common/hw/extractOnboardingState";
 import { FirmwareInfo } from "@ledgerhq/types-live";
 import { renderError } from "../DeviceAction/rendering";
-import { urls } from "~/config/urls";
-import { languageSelector } from "~/renderer/reducers/settings";
+import { useDynamicUrl } from "~/renderer/terms";
 
 const RecoverRestore = () => {
   const { t } = useTranslation();
@@ -30,7 +29,7 @@ const RecoverRestore = () => {
   const [state, setState] = useState<OnboardingState>();
   const [error, setError] = useState<Error>();
   const { setDeviceModelId } = useContext(OnboardingContext);
-  const locale = useSelector(languageSelector) || "en";
+  const buyNew = useDynamicUrl("buyNew");
   const sub = useRef<Subscription>();
 
   const getOnboardingState = useCallback((device: Device) => {
@@ -113,10 +112,7 @@ const RecoverRestore = () => {
           {renderError({
             t,
             error: new DeviceAlreadySetup("", { device: currentDevice?.modelId ?? "device" }),
-            buyLedger:
-              urls.noDevice.buyNew[
-                locale in urls.terms ? (locale as keyof typeof urls.noDevice.buyNew) : "en"
-              ],
+            buyLedger: buyNew,
           })}
         </Flex>
       </Flex>

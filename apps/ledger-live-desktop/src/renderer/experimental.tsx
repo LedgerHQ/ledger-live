@@ -48,14 +48,6 @@ export const experimentalFeatures: Feature[] = [
     : []) as Feature[]),
   {
     type: "toggle",
-    name: "EXPERIMENTAL_LANGUAGES",
-    title: <Trans i18nKey="settings.experimental.features.experimentalLanguages.title" />,
-    description: (
-      <Trans i18nKey="settings.experimental.features.experimentalLanguages.description" />
-    ),
-  },
-  {
-    type: "toggle",
     name: "MANAGER_DEV_MODE",
     title: <Trans i18nKey="settings.experimental.features.managerDevMode.title" />,
     description: <Trans i18nKey="settings.experimental.features.managerDevMode.description" />,

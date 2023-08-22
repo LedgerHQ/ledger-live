@@ -1,14 +1,12 @@
-import React, { useCallback } from "react";
-import { useTranslation } from "react-i18next";
 import { Text } from "@ledgerhq/react-ui";
+import React from "react";
+import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { useSelector } from "react-redux";
-import { languageSelector } from "~/renderer/reducers/settings";
-import { ScrollArea } from "~/renderer/components/Onboarding/ScrollArea";
 import FakeLink from "~/renderer/components/FakeLink";
-import { openURL } from "~/renderer/linking";
-import { urls } from "~/config/urls";
+import { ScrollArea } from "~/renderer/components/Onboarding/ScrollArea";
 import TriangleWarning from "~/renderer/icons/TriangleWarning";
+import { openURL } from "~/renderer/linking";
+import { useDynamicUrl } from "~/renderer/terms";
 
 const PinHelpContainer = styled.div`
   display: flex;
@@ -18,12 +16,10 @@ const PinHelpContainer = styled.div`
 
 export default function RecoveryWarning() {
   const { t } = useTranslation();
-  const locale = useSelector(languageSelector) || "en";
 
-  const onClickLink = useCallback(
-    () => openURL(urls.faq[locale in urls.faq ? (locale as keyof typeof urls.faq) : "en"]),
-    [locale],
-  );
+  const urlFaq = useDynamicUrl("faq");
+
+  const onClickLink = () => openURL(urlFaq);
 
   return (
     <ScrollArea isInsideDrawer>

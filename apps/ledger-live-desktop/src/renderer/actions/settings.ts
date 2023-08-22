@@ -21,6 +21,7 @@ import {
   VaultSigner,
 } from "~/renderer/reducers/settings";
 import { useRefreshAccountsOrdering } from "~/renderer/actions/general";
+import { Language, Locale } from "~/config/languages";
 export type SaveSettings = (a: Partial<Settings>) => {
   type: string;
   payload: Partial<Settings>;
@@ -104,7 +105,7 @@ export const setCounterValue = (counterValue: string) =>
     counterValue,
     pairExchanges: {},
   });
-export const setLanguage = (language?: string | null) =>
+export const setLanguage = (language?: Language | null) =>
   saveSettings({
     language,
   });
@@ -112,7 +113,7 @@ export const setTheme = (theme?: string | null) =>
   saveSettings({
     theme,
   });
-export const setLocale = (locale: string) =>
+export const setLocale = (locale: Locale) =>
   saveSettings({
     locale,
   });

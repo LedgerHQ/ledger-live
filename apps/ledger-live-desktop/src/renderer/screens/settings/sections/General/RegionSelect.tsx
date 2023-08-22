@@ -7,6 +7,7 @@ import { languageSelector, localeSelector } from "~/renderer/reducers/settings";
 import Select from "~/renderer/components/Select";
 import Track from "~/renderer/analytics/Track";
 import regionsByKey from "./regions.json";
+import { DEFAULT_LANGUAGE } from "~/config/languages";
 
 type RegionSelectOption = {
   value: string;
@@ -52,7 +53,7 @@ const RegionSelect = () => {
   const handleChangeRegion = useCallback(
     (region?: RegionSelectOption) => {
       moment.locale(region?.locale);
-      dispatch(setLocale(region?.locale ?? "en"));
+      dispatch(setLocale(region?.locale ?? DEFAULT_LANGUAGE.locales.default));
     },
     [dispatch],
   );

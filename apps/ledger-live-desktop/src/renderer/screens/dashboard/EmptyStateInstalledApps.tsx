@@ -1,8 +1,6 @@
 import React, { useCallback } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { languageSelector } from "~/renderer/reducers/settings";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import Image from "~/renderer/components/Image";
@@ -11,12 +9,14 @@ import Text from "~/renderer/components/Text";
 import LinkHelp from "~/renderer/components/LinkHelp";
 import { openURL } from "~/renderer/linking";
 import { DefaultTheme, withTheme } from "styled-components";
-import { urls } from "~/config/urls";
+import { useDynamicUrl } from "~/renderer/terms";
 
 const EmptyStateInstalledApps = ({ theme }: { theme: DefaultTheme }) => {
   const { push } = useHistory();
   const { t } = useTranslation();
-  const locale = useSelector(languageSelector) || "en";
+
+  const urlFaq = useDynamicUrl("faq");
+
   const handleInstallApp = useCallback(() => {
     push("/manager");
   }, [push]);
@@ -66,9 +66,7 @@ const EmptyStateInstalledApps = ({ theme }: { theme: DefaultTheme }) => {
             }}
             iconSize={14}
             label={<Trans i18nKey="emptyState.dashboard.buttons.help" />}
-            onClick={() =>
-              openURL(urls.faq[locale in urls.faq ? (locale as keyof typeof urls.faq) : "en"])
-            }
+            onClick={() => openURL(urlFaq)}
           />
         </Box>
       </Box>
