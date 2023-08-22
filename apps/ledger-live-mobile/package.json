@@ -139,7 +139,7 @@
     "react-native-appboy-sdk": "^1.39.0",
     "react-native-biometrics": "^3.0.1",
     "react-native-ble-plx": "2.0.3",
-    "react-native-config": "1.4.12",
+    "react-native-config": "1.5.1",
     "react-native-easy-markdown": "^2.0.0",
     "react-native-extra-dimensions-android": "^1.2.5",
     "react-native-fast-crypto": "^2.2.0",

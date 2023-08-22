@@ -951,8 +951,8 @@ importers:
         specifier: 2.0.3
         version: 2.0.3
       react-native-config:
-        specifier: 1.4.12
-        version: 1.4.12
+        specifier: 1.5.1
+        version: 1.5.1
       react-native-easy-markdown:
         specifier: ^2.0.0
         version: 2.0.0(prop-types@15.8.1)(react-native@0.71.6)
@@ -52746,8 +52746,8 @@ packages:
       - '@babel/preset-env'
       - supports-color
 
-  /react-native-config@1.4.12:
-    resolution: {integrity: sha512-/KN5Vh3dtef0hTa/fV6cM91lLLwf0E4WRZBPQZCdH4VbYOqi88k0pF7nDAcN2NnDiu/3SabdmCP7vwB+rlJtuQ==}
+  /react-native-config@1.5.1:
+    resolution: {integrity: sha512-g1xNgt1tV95FCX+iWz6YJonxXkQX0GdD3fB8xQtR1GUBEqweB9zMROW77gi2TygmYmUkBI7LU4pES+zcTyK4HA==}
     peerDependencies:
       react-native-windows: '>=0.61'
     peerDependenciesMeta:
