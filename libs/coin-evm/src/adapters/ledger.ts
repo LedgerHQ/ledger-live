@@ -1,3 +1,4 @@
+import { log } from "@ledgerhq/logs";
 import eip55 from "eip55";
 import BigNumber from "bignumber.js";
 import {
@@ -17,6 +18,39 @@ import {
 } from "../types";
 
 /**
+ * Some addresses returned by Ledger explorers are not 40 characters hex addresses
+ * For example the explorers may return "0x0" as an address (for example for
+ * some events or contract interactions, like a contract creation transaction)
+ *
+ * This is not a valid EIP55 address and thus will fail when trying to encode it
+ * with a "Bad address" error.
+ * cf:
+ * https://github.com/cryptocoinjs/eip55/blob/v2.1.1/index.js#L5-L6
+ * https://github.com/cryptocoinjs/eip55/blob/v2.1.1/index.js#L63-L65
+ *
+ * Since we can't control what the explorer returns, and we don't want the app to crash
+ * in these cases, we simply ignore the address and return an empty string.
+ *
+ * For now this has only been observed on the from or to fields of an operation
+ * so we only use this function for these fields.
+ */
+const safeEncodeEIP55 = (addr: string): string => {
+  if (!addr || addr === "0x" || addr === "0x0") {
+    return "";
+  }
+
+  try {
+    return eip55.encode(addr);
+  } catch (e) {
+    log("EVM Family - adapters/ledger", "Failed to eip55 encode address", {
+      address: addr,
+      error: e,
+    });
+    return "";
+  }
+};
+
+/**
  * Adapter to convert a Ledger Explorer operation
  * into Ledger Live Operations
  */
@@ -26,8 +60,8 @@ export const ledgerOperationToOperations = (
 ): Operation[] => {
   const { xpubOrAddress: address } = decodeAccountId(accountId);
   const checksummedAddress = eip55.encode(address);
-  const from = eip55.encode(ledgerOp.from);
-  const to = eip55.encode(ledgerOp.to);
+  const from = safeEncodeEIP55(ledgerOp.from);
+  const to = safeEncodeEIP55(ledgerOp.to);
   const value = new BigNumber(ledgerOp.value);
   const fee = new BigNumber(ledgerOp.gas_used).times(new BigNumber(ledgerOp.gas_price));
   const hasFailed = !ledgerOp.status;
@@ -83,8 +117,8 @@ export const ledgerERC20EventToOperations = (
   if (!tokenCurrency) return [];
 
   const tokenAccountId = encodeTokenAccountId(accountId, tokenCurrency);
-  const from = eip55.encode(event.from);
-  const to = eip55.encode(event.to);
+  const from = safeEncodeEIP55(event.from);
+  const to = safeEncodeEIP55(event.to);
   const checksummedAddress = eip55.encode(address);
   const value = new BigNumber(event.count);
   const types: OperationType[] = [];
@@ -131,8 +165,8 @@ export const ledgerERC721EventToOperations = (
   const { xpubOrAddress: address, currencyId } = decodeAccountId(accountId);
   const { token_id: tokenId } = event;
 
-  const from = eip55.encode(event.sender);
-  const to = eip55.encode(event.receiver);
+  const from = safeEncodeEIP55(event.sender);
+  const to = safeEncodeEIP55(event.receiver);
   const checksummedAddress = eip55.encode(address);
   const value = new BigNumber(1); // value is representing the number of NFT transfered. ERC721 are always sending 1 NFT per transaction
   const contract = eip55.encode(event.contract);
@@ -181,8 +215,8 @@ export const ledgerERC1155EventToOperations = (
   const { hash, fee, blockHeight, blockHash, transactionSequenceNumber, date, accountId } =
     coinOperation;
   const { xpubOrAddress: address, currencyId } = decodeAccountId(accountId);
-  const from = eip55.encode(event.sender);
-  const to = eip55.encode(event.receiver);
+  const from = safeEncodeEIP55(event.sender);
+  const to = safeEncodeEIP55(event.receiver);
   const checksummedAddress = eip55.encode(address);
   const contract = eip55.encode(event.contract);
   const types: OperationType[] = [];
