@@ -1002,8 +1002,8 @@ importers:
         specifier: ^6.0.1
         version: 6.1.0(react-native@0.71.6)(react@18.0.0)
       react-native-qrcode-svg:
-        specifier: 6.1.1
-        version: 6.1.1(react-native-svg@13.11.0)(react-native@0.71.6)(react@18.0.0)
+        specifier: 6.2.0
+        version: 6.2.0(react-native-svg@13.11.0)(react-native@0.71.6)(react@18.0.0)
       react-native-randombytes:
         specifier: ^3.6.1
         version: 3.6.1
@@ -30169,7 +30169,6 @@ packages:
       string-width: 4.2.3
       strip-ansi: 6.0.1
       wrap-ansi: 7.0.0
-    dev: true
 
   /clone-buffer@1.0.0:
     resolution: {integrity: sha512-KLLTJWrvwIP+OPfMn0x2PheDEP20RPUcGXj/ERegTgdmPEZylALQldygiqrPPu8P45uNuPs7ckmReLY6v/iA5g==}
@@ -40194,7 +40193,7 @@ packages:
       jest-util: 28.1.3
       jest-validate: 28.1.3
       prompts: 2.4.2
-      yargs: 17.5.1
+      yargs: 17.7.2
     transitivePeerDependencies:
       - '@types/node'
       - metro
@@ -40223,7 +40222,7 @@ packages:
       jest-util: 28.1.3
       jest-validate: 28.1.3
       prompts: 2.4.2
-      yargs: 17.5.1
+      yargs: 17.7.2
     transitivePeerDependencies:
       - '@types/node'
       - metro
@@ -40252,7 +40251,7 @@ packages:
       jest-util: 28.1.3
       jest-validate: 28.1.3
       prompts: 2.4.2
-      yargs: 17.5.1
+      yargs: 17.7.2
     transitivePeerDependencies:
       - '@types/node'
       - metro
@@ -40281,7 +40280,7 @@ packages:
       jest-util: 28.1.3
       jest-validate: 28.1.3
       prompts: 2.4.2
-      yargs: 17.5.1
+      yargs: 17.7.2
     transitivePeerDependencies:
       - '@types/node'
       - metro
@@ -40310,7 +40309,7 @@ packages:
       jest-util: 28.1.3
       jest-validate: 28.1.3
       prompts: 2.4.2
-      yargs: 17.5.1
+      yargs: 17.7.2
     transitivePeerDependencies:
       - '@types/node'
       - metro
@@ -40339,7 +40338,7 @@ packages:
       jest-util: 28.1.3
       jest-validate: 28.1.3
       prompts: 2.4.2
-      yargs: 17.5.1
+      yargs: 17.7.2
     transitivePeerDependencies:
       - '@types/node'
       - metro
@@ -40368,7 +40367,7 @@ packages:
       jest-util: 28.1.3
       jest-validate: 28.1.3
       prompts: 2.4.2
-      yargs: 17.5.1
+      yargs: 17.7.2
     transitivePeerDependencies:
       - '@types/node'
       - metro
@@ -40397,7 +40396,7 @@ packages:
       jest-util: 28.1.3
       jest-validate: 28.1.3
       prompts: 2.4.2
-      yargs: 17.5.1
+      yargs: 17.7.2
     transitivePeerDependencies:
       - '@types/node'
       - metro
@@ -40426,7 +40425,7 @@ packages:
       jest-util: 28.1.3
       jest-validate: 28.1.3
       prompts: 2.4.2
-      yargs: 17.5.1
+      yargs: 17.7.2
     transitivePeerDependencies:
       - '@types/node'
       - metro
@@ -40455,7 +40454,7 @@ packages:
       jest-util: 29.6.2
       jest-validate: 29.6.2
       prompts: 2.4.2
-      yargs: 17.5.1
+      yargs: 17.7.2
     transitivePeerDependencies:
       - '@types/node'
       - babel-plugin-macros
@@ -46145,7 +46144,7 @@ packages:
       connect: 3.7.0
       debug: 2.6.9
       ws: 7.5.7
-      yargs: 17.5.1
+      yargs: 17.7.2
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -46160,7 +46159,7 @@ packages:
       debug: 2.6.9
       node-fetch: 2.6.9
       ws: 7.5.7
-      yargs: 17.5.1
+      yargs: 17.7.2
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -46977,7 +46976,7 @@ packages:
       temp: 0.8.3
       throat: 5.0.0
       ws: 7.5.7
-      yargs: 17.5.1
+      yargs: 17.7.2
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -52004,6 +52003,17 @@ packages:
       yargs: 15.4.1
     dev: false
 
+  /qrcode@1.5.3:
+    resolution: {integrity: sha512-puyri6ApkEHYiVl4CFzo1tDkAZ+ATcnbJrJ6RiBM1Fhctdn/ix9MTE3hRph33omisEbC/2fcfemsseiKgBPKZg==}
+    engines: {node: '>=10.13.0'}
+    hasBin: true
+    dependencies:
+      dijkstrajs: 1.0.2
+      encode-utf8: 1.0.3
+      pngjs: 5.0.0
+      yargs: 15.4.1
+    dev: false
+
   /qrloop@1.2.0:
     resolution: {integrity: sha512-DybxnuUe5gQNZnanbkUiK3lotHOiJ6MNOn/uGIEIpXLBFv2RuWbN1noy6LaGLxDmQRmRVkvpKJRxeM7+rHymMQ==}
     dependencies:
@@ -53015,15 +53025,15 @@ packages:
       react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: true
 
-  /react-native-qrcode-svg@6.1.1(react-native-svg@13.11.0)(react-native@0.71.6)(react@18.0.0):
-    resolution: {integrity: sha512-98cc8fkl61g2V5cesmxjlMr1WaJZcB6dyeN8T9d/shIWtJxU8KRCinNCZNBlIvO9fxbIpo5SgK+pqSItK0+vow==}
+  /react-native-qrcode-svg@6.2.0(react-native-svg@13.11.0)(react-native@0.71.6)(react@18.0.0):
+    resolution: {integrity: sha512-rb2PgUwT8QpQyReVYNvzRY84AHsMh81354Tnkfp6MfqRbcdJURhnBWLBOO11pLMS6eXiwlq4SkcQxy88hRq+Dw==}
     peerDependencies:
       react: '*'
       react-native: '>=0.63.4'
-      react-native-svg: ^12.1.0
+      react-native-svg: ^13.2.0
     dependencies:
       prop-types: 15.8.1
-      qrcode: 1.5.0
+      qrcode: 1.5.3
       react: 18.0.0
       react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       react-native-svg: 13.11.0(react-native@0.71.6)(react@18.0.0)
@@ -59124,7 +59134,7 @@ packages:
       smartwrap: 2.0.2
       strip-ansi: 6.0.1
       wcwidth: 1.0.1
-      yargs: 17.5.1
+      yargs: 17.7.2
     dev: true
 
   /tunnel-agent@0.6.0:
@@ -63231,7 +63241,6 @@ packages:
       string-width: 4.2.3
       y18n: 5.0.8
       yargs-parser: 21.1.1
-    dev: true
 
   /yarn-add-no-save@1.0.3:
     resolution: {integrity: sha512-ngmmxwYOogvYPjFDXGjoj35r/DteDzfiyoq5BI+kKSCCXW/I2gJA3KAgbm/7yFmcDE9CGSaORpNbYfglGYuxtA==}
