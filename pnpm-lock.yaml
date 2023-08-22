@@ -4440,8 +4440,8 @@ importers:
         specifier: ^13.11.0
         version: 13.11.0(react-native@0.71.6)(react@18.0.0)
       rn-range-slider:
-        specifier: 2.1.1
-        version: 2.1.1(prop-types@15.8.1)(react-native@0.71.6)(react@18.0.0)
+        specifier: 2.2.2
+        version: 2.2.2(prop-types@15.8.1)(react-native@0.71.6)(react@18.0.0)
       styled-system:
         specifier: ^5.1.5
         version: 5.1.5
@@ -55151,8 +55151,8 @@ packages:
     dev: false
     patched: true
 
-  /rn-range-slider@2.1.1(prop-types@15.8.1)(react-native@0.71.6)(react@18.0.0):
-    resolution: {integrity: sha512-tDfH8G4e/k+waGMMd+HaYTlpOqyh1dd3aWdDmqKo0WGh1BfHB+NXy0X2REyr1ZJDvsrq7WEeFZ+PBTdD6cisbw==}
+  /rn-range-slider@2.2.2(prop-types@15.8.1)(react-native@0.71.6)(react@18.0.0):
+    resolution: {integrity: sha512-34qdWz0oPEa6Wa9+B0+IihxolfydGPfzKvIyjieCyz4+YzVuSizalwpwRufxAnojfFPxqX1Kt/CTBckt8K7eEQ==}
     peerDependencies:
       prop-types: '*'
       react: '*'
