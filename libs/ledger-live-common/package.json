@@ -123,7 +123,7 @@
     "@cosmjs/amino": "^0.28.4",
     "@cosmjs/crypto": "^0.26.5",
     "@cosmjs/launchpad": "^0.26.5",
-    "@cosmjs/ledger-amino": "^0.26.5",
+    "@cosmjs/ledger-amino": "^0.31.0",
     "@cosmjs/proto-signing": "^0.26.5",
     "@cosmjs/stargate": "^0.26.5",
     "@crypto-org-chain/chain-jslib": "1.1.2",
