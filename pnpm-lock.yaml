@@ -1074,8 +1074,8 @@ importers:
         specifier: 2.3.0
         version: 2.3.0(redux@4.2.0)
       reselect:
-        specifier: 4.0.0
-        version: 4.0.0
+        specifier: 4.1.8
+        version: 4.1.8
       rn-fetch-blob:
         specifier: ^0.12.0
         version: 0.12.0(patch_hash=n5yzdsrxz654upecs5xliebtmm)
@@ -27920,7 +27920,7 @@ packages:
       find-babel-config: 1.2.0
       glob: 7.2.0
       pkg-up: 3.1.0
-      reselect: 4.1.5
+      reselect: 4.1.8
       resolve: 1.22.0
 
   /babel-plugin-named-asset-import@0.3.8(@babel/core@7.22.8):
@@ -54836,12 +54836,12 @@ packages:
   /requires-port@1.0.0:
     resolution: {integrity: sha512-KigOCHcocU3XODJxsu8i/j8T9tzT4adHiecwORRQ0ZZFcp7ahwXuRU1m+yuO90C5ZUyGeGfocHDI14M3L3yDAQ==}
 
-  /reselect@4.0.0:
-    resolution: {integrity: sha512-qUgANli03jjAyGlnbYVAV5vvnOmJnODyABz51RdBN7M4WaVu8mecZWgyQNkG8Yqe3KRGRt0l4K4B3XVEULC4CA==}
-    dev: false
-
   /reselect@4.1.5:
     resolution: {integrity: sha512-uVdlz8J7OO+ASpBYoz1Zypgx0KasCY20H+N8JD13oUMtPvSHQuscrHop4KbXrbsBcdB9Ds7lVK7eRkBIfO43vQ==}
+    dev: false
+
+  /reselect@4.1.8:
+    resolution: {integrity: sha512-ab9EmR80F/zQTMNeneUr4cv+jSwPJgIlvEmVwLerwrWVbpLlBuls9XHzIeTFy4cegU2NHBp3va0LKOzU5qFEYQ==}
 
   /resolve-alpn@1.2.1:
     resolution: {integrity: sha512-0a1F4l73/ZFZOakJnQ3FvkJ2+gSTQWz/r2KE5OdDY0TxPm5h4GkqkWWfM47T7HsbnOtcJVEF4epCVy6u7Q3K+g==}
