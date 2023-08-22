@@ -185,7 +185,7 @@ export const getLastERC721Operations = async (
 };
 
 /**
- * Get all the last ERC71155 transactions
+ * Get all the last ERC1155 transactions
  */
 export const getLastERC1155Operations = async (
   currency: CryptoCurrency,
