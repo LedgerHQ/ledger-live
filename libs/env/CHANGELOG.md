@@ -1,5 +1,11 @@
 # @ledgerhq/live-env
 
+## 0.5.0-nightly.0
+
+### Minor Changes
+
+- [#4391](https://github.com/LedgerHQ/ledger-live/pull/4391) [`fde2fe79f1`](https://github.com/LedgerHQ/ledger-live/commit/fde2fe79f1df69fffe80763cd6d9792fe9de1262) Thanks [@valpinkman](https://github.com/valpinkman)! - Rework some env typings
+
 ## 0.4.2
 
 ### Patch Changes

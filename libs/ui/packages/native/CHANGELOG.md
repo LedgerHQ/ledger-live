@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.20.7-nightly.1
+
+### Patch Changes
+
+- [#4385](https://github.com/LedgerHQ/ledger-live/pull/4385) [`87cbec4062`](https://github.com/LedgerHQ/ledger-live/commit/87cbec4062f95d2348d7dd134cb4f13f071425d5) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Upgrade "react-native-svg" to 13.11.0
+
 ## 0.20.7-nightly.0
 
 ### Patch Changes

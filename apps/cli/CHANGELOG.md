@@ -1,5 +1,17 @@
 # @ledgerhq/live-cli
 
+## 22.11.2-nightly.2
+
+### Patch Changes
+
+- [#4391](https://github.com/LedgerHQ/ledger-live/pull/4391) [`fde2fe79f1`](https://github.com/LedgerHQ/ledger-live/commit/fde2fe79f1df69fffe80763cd6d9792fe9de1262) Thanks [@valpinkman](https://github.com/valpinkman)! - Rework some env typings
+
+- Updated dependencies [[`fde2fe79f1`](https://github.com/LedgerHQ/ledger-live/commit/fde2fe79f1df69fffe80763cd6d9792fe9de1262), [`f3f4745b20`](https://github.com/LedgerHQ/ledger-live/commit/f3f4745b20261b877a938a897b5ad24291fca8aa), [`1b4321f363`](https://github.com/LedgerHQ/ledger-live/commit/1b4321f363b1e2c93e2406dd327cd4d1def7b458)]:
+  - @ledgerhq/live-env@0.5.0-nightly.0
+  - @ledgerhq/live-common@31.6.0-nightly.2
+  - @ledgerhq/coin-framework@0.5.2-nightly.0
+  - @ledgerhq/live-network@1.1.6-nightly.0
+
 ## 22.11.2-nightly.1
 
 ### Patch Changes

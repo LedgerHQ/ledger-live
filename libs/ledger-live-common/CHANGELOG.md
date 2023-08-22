@@ -1,5 +1,27 @@
 # @ledgerhq/live-common
 
+## 31.6.0-nightly.2
+
+### Minor Changes
+
+- [#4207](https://github.com/LedgerHQ/ledger-live/pull/4207) [`f3f4745b20`](https://github.com/LedgerHQ/ledger-live/commit/f3f4745b20261b877a938a897b5ad24291fca8aa) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Filter on currency and disabled currencies on bot runs
+
+### Patch Changes
+
+- [#4391](https://github.com/LedgerHQ/ledger-live/pull/4391) [`fde2fe79f1`](https://github.com/LedgerHQ/ledger-live/commit/fde2fe79f1df69fffe80763cd6d9792fe9de1262) Thanks [@valpinkman](https://github.com/valpinkman)! - Rework some env typings
+
+- [#4391](https://github.com/LedgerHQ/ledger-live/pull/4391) [`1b4321f363`](https://github.com/LedgerHQ/ledger-live/commit/1b4321f363b1e2c93e2406dd327cd4d1def7b458) Thanks [@valpinkman](https://github.com/valpinkman)! - remove env.ts and it's refence in favor of @ledgerhq/live-env
+
+- Updated dependencies [[`fde2fe79f1`](https://github.com/LedgerHQ/ledger-live/commit/fde2fe79f1df69fffe80763cd6d9792fe9de1262)]:
+  - @ledgerhq/live-env@0.5.0-nightly.0
+  - @ledgerhq/coin-framework@0.5.2-nightly.0
+  - @ledgerhq/coin-evm@0.5.2-nightly.0
+  - @ledgerhq/coin-algorand@0.2.7-nightly.0
+  - @ledgerhq/coin-polkadot@0.3.4-nightly.0
+  - @ledgerhq/evm-tools@1.0.5-nightly.0
+  - @ledgerhq/live-network@1.1.6-nightly.0
+  - @ledgerhq/hw-app-eth@6.34.4-nightly.0
+
 ## 31.6.0-nightly.1
 
 ### Minor Changes

@@ -1,5 +1,31 @@
 # live-mobile
 
+## 3.30.0-nightly.2
+
+### Patch Changes
+
+- [#4397](https://github.com/LedgerHQ/ledger-live/pull/4397) [`2cdbc483fa`](https://github.com/LedgerHQ/ledger-live/commit/2cdbc483fa1df4aa1dae4c93c83cf06bb0676927) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Notifications get re-enabled when updating the app
+
+- [#4391](https://github.com/LedgerHQ/ledger-live/pull/4391) [`fde2fe79f1`](https://github.com/LedgerHQ/ledger-live/commit/fde2fe79f1df69fffe80763cd6d9792fe9de1262) Thanks [@valpinkman](https://github.com/valpinkman)! - Rework some env typings
+
+- [#4385](https://github.com/LedgerHQ/ledger-live/pull/4385) [`87cbec4062`](https://github.com/LedgerHQ/ledger-live/commit/87cbec4062f95d2348d7dd134cb4f13f071425d5) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Upgrade dependencies:
+  - Android:
+    - compileSdkVersion and targetSdkVersion to 33
+    - androidX core libs to 1.8.0
+  - JS:
+    - replace outdated "@react-native-community/clipboard" by "@react-native-clipboard/clipboard": "^1.11.2"
+    - "@react-native-async-storage/async-storage": "^1.19.2"
+    - "lottie-react-native": "^6.2.0"
+    - "react-native-image-picker": "^5.6.1"
+    - "react-native-svg": "^13.11.0"
+- Updated dependencies [[`fde2fe79f1`](https://github.com/LedgerHQ/ledger-live/commit/fde2fe79f1df69fffe80763cd6d9792fe9de1262), [`87cbec4062`](https://github.com/LedgerHQ/ledger-live/commit/87cbec4062f95d2348d7dd134cb4f13f071425d5), [`f3f4745b20`](https://github.com/LedgerHQ/ledger-live/commit/f3f4745b20261b877a938a897b5ad24291fca8aa), [`1b4321f363`](https://github.com/LedgerHQ/ledger-live/commit/1b4321f363b1e2c93e2406dd327cd4d1def7b458)]:
+  - @ledgerhq/live-env@0.5.0-nightly.0
+  - @ledgerhq/live-common@31.6.0-nightly.2
+  - @ledgerhq/coin-framework@0.5.2-nightly.0
+  - @ledgerhq/coin-evm@0.5.2-nightly.0
+  - @ledgerhq/native-ui@0.20.7-nightly.1
+  - @ledgerhq/evm-tools@1.0.5-nightly.0
+
 ## 3.30.0-nightly.1
 
 ### Minor Changes
