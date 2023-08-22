@@ -9,7 +9,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 
 import type { EarnLiveAppNavigatorParamList } from "./types/EarnLiveAppNavigator";
-import type { StackNavigatorNavigation, StackNavigatorProps } from "./types/helpers";
+import type { StackNavigatorProps } from "./types/helpers";
 import { EarnScreen } from "../../screens/PTX/Earn";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
@@ -18,32 +18,28 @@ import { EarnInfoDrawer } from "../../screens/PTX/Earn/EarnInfoDrawer";
 
 const Stack = createStackNavigator<EarnLiveAppNavigatorParamList>();
 
-const Earn = (_props: StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenName.Earn>) => {
+const Earn = (props: StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenName.Earn>) => {
   // Earn dashboard feature flag
   const ptxEarn = useFeature("ptxEarn");
-  const paramAction = _props.route.params?.action;
-  const navigation = useNavigation<StackNavigationProp<{ [key: string]: object | undefined }>>();
+  const paramAction = props.route.params?.action;
+  const navigation = useNavigation<StackNavigationProp<BaseNavigatorStackParamList>>();
   const accounts = useSelector(accountsSelector);
   const route = useRoute();
 
   useEffect(() => {
     if (!ptxEarn?.enabled) {
-      return (navigation as StackNavigatorNavigation<BaseNavigatorStackParamList>).pop();
+      return navigation.pop();
     }
     if (!paramAction) {
       return;
     }
 
-    async function deeplinkRouting() {
-      // Params from deeplink route
-      const action = paramAction;
-      const currencyId = _props.route.params?.currencyId;
-      const accountId = _props.route.params?.accountId;
-
-      // Reset params so that it will retrigger actions if a new deeplink is used
+    // Reset params so that it will retrigger actions if a new deeplink is used
+    const clearDeepLink = () =>
       navigation.setParams({ action: null, accountId: null, currencyId: null });
 
-      switch (action) {
+    async function deeplinkRouting() {
+      switch (paramAction) {
         case "stake":
           navigation.navigate(NavigatorName.StakeFlow, {
             screen: ScreenName.Stake,
@@ -53,47 +49,67 @@ const Earn = (_props: StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenN
           });
           break;
         case "stake-account": {
-          if (accountId) {
-            const id = getAccountIdFromWalletAccountId(accountId);
-            const account = accounts.find(acc => acc.id === id);
-            if (account) {
-              navigation.navigate(NavigatorName.StakeFlow, {
-                screen: ScreenName.Stake,
-                params: {
-                  account,
-                  parentRoute: route,
-                },
-              });
-            } else {
-              // eslint-disable-next-line no-console
-              console.log("not account found in earn dashboard deeplink");
-            }
+          const walletId = props.route.params?.accountId;
+
+          if (!walletId) {
+            // eslint-disable-next-line no-console
+            console.log("accountId required for 'stake-account' action.");
+            return;
+          }
+
+          const accountId = getAccountIdFromWalletAccountId(walletId);
+          const account = accounts.find(acc => acc.id === accountId);
+          if (account) {
+            navigation.navigate(NavigatorName.StakeFlow, {
+              screen: ScreenName.Stake,
+              params: {
+                account,
+                parentRoute: route,
+              },
+            });
           } else {
             // eslint-disable-next-line no-console
-            console.log("accountId query is missing for earn dashboard deeplink");
+            console.log("no matching account found for given id.");
           }
           break;
         }
         case "get-funds": {
-          if (currencyId) {
+          const currencyId = props.route.params?.currencyId;
+
+          if (!currencyId) {
+            // eslint-disable-next-line no-console
+            console.log('currencyId required for "get-funds" action.');
+          } else {
             navigation.navigate(NavigatorName.StakeFlow, {
               screen: ScreenName.Stake,
-              params: { currencies: [currencyId], alwaysShowNoFunds: true },
+              params: {
+                currencies: [currencyId],
+                parentRoute: route,
+                // Stake flow will get CryptoCurrency and Account, and navigate to NoFunds flow:
+                alwaysShowNoFunds: true, // Navigate to NoFunds even if some funds available.
+              },
             });
           }
           break;
         }
+        default: {
+          // eslint-disable-next-line no-console
+          console.log(`EarnLiveAppNavigator: No route for action "${paramAction}"`);
+        }
       }
     }
+
     deeplinkRouting();
-  }, [paramAction, ptxEarn?.enabled, _props.route.params, accounts, navigation, route]);
+
+    return clearDeepLink();
+  }, [paramAction, ptxEarn?.enabled, props.route.params, accounts, navigation, route]);
 
   return (
     <>
       <EarnScreen
-        {..._props}
+        navigation={props.navigation}
         route={{
-          ..._props.route,
+          ...props.route,
           params: {
             platform: ptxEarn?.params?.liveAppId || "earn",
           },
@@ -104,7 +120,7 @@ const Earn = (_props: StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenN
   );
 };
 
-export default function EarnLiveAppNavigator(_props?: Record<string, unknown>) {
+export default function EarnLiveAppNavigator() {
   const { colors } = useTheme();
 
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
@@ -116,9 +132,8 @@ export default function EarnLiveAppNavigator(_props?: Record<string, unknown>) {
         options={{
           headerShown: false,
         }}
-      >
-        {props => <Earn {...props} />}
-      </Stack.Screen>
+        component={Earn} // route props are passed automatically
+      />
     </Stack.Navigator>
   );
 }

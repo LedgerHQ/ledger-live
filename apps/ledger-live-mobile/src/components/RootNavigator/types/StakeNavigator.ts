@@ -6,7 +6,7 @@ export type StakeNavigatorParamList = {
   [ScreenName.Stake]: {
     currencies?: string[];
     parentRoute?: RouteProp<ParamListBase>;
-    account?: Account;
-    alwaysShowNoFunds?: boolean;
+    account?: Account; // NB: not serialisable
+    alwaysShowNoFunds?: boolean; // Navigates to NoFunds to get more funds, even if there are funds
   };
 };

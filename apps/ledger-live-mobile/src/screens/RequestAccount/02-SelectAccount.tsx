@@ -22,6 +22,7 @@ import type {
 } from "../../components/RootNavigator/types/helpers";
 import { RequestAccountNavigatorParamList } from "../../components/RootNavigator/types/RequestAccountNavigator";
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
+import { Flex } from "@ledgerhq/native-ui";
 
 const SEARCH_KEYS = [
   "account.name",
@@ -55,6 +56,7 @@ const Item = ({
     () => onSelect(account, parentAccount),
     [account, onSelect, parentAccount],
   );
+
   return (
     <View>
       <AccountCard
@@ -79,7 +81,7 @@ const List = ({
 }) => {
   const formatedList = useMemo(() => formatSearchResultsTuples(items), [items]);
   return (
-    <>
+    <Flex>
       <FlatList
         data={formatedList}
         renderItem={renderItem}
@@ -88,7 +90,7 @@ const List = ({
         keyboardDismissMode="on-drag"
         ListFooterComponent={renderFooter}
       />
-    </>
+    </Flex>
   );
 };
 
@@ -109,10 +111,12 @@ function SelectAccount({ navigation, route }: Props) {
     },
     [navigation, onSuccess],
   );
+
   const renderItem = useCallback(
     ({ item }) => <Item item={item} onSelect={onSelect} />,
     [onSelect],
   );
+
   const onAddAccount = useCallback(() => {
     navigation.navigate(NavigatorName.RequestAccountsAddAccounts, {
       screen: ScreenName.AddAccountsSelectDevice,
@@ -127,6 +131,7 @@ function SelectAccount({ navigation, route }: Props) {
       },
     });
   }, [currency, navigation, onError, route.params]);
+
   const renderFooter = useCallback(
     () =>
       allowAddAccount ? (
@@ -149,10 +154,12 @@ function SelectAccount({ navigation, route }: Props) {
       ) : null,
     [allowAddAccount, currency.name, onAddAccount],
   );
+
   const renderList = useCallback(
     items => <List items={items} renderItem={renderItem} renderFooter={renderFooter} />,
     [renderFooter, renderItem],
   );
+
   const renderEmptySearch = useCallback(
     () => (
       <View style={styles.emptyResults}>
@@ -163,6 +170,7 @@ function SelectAccount({ navigation, route }: Props) {
     ),
     [],
   );
+
   return (
     <SafeAreaView
       style={[
@@ -173,7 +181,7 @@ function SelectAccount({ navigation, route }: Props) {
       ]}
     >
       <TrackScreen category="RequestAccount" name="SelectAccount" />
-      <KeyboardView>
+      <KeyboardView style={styles.root}>
         <View style={styles.searchContainer}>
           {accounts.length > 0 ? (
             <FilteredSearchBar
@@ -193,12 +201,6 @@ function SelectAccount({ navigation, route }: Props) {
 }
 
 const styles = StyleSheet.create({
-  addAccountButton: {
-    flex: 1,
-    flexDirection: "row",
-    paddingVertical: 16,
-    alignItems: "center",
-  },
   root: {
     flex: 1,
   },
