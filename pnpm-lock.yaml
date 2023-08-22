@@ -1821,8 +1821,8 @@ importers:
         specifier: ^0.28.4
         version: 0.28.4
       '@cosmjs/crypto':
-        specifier: ^0.26.5
-        version: 0.26.6
+        specifier: ^0.31.0
+        version: 0.31.0
       '@cosmjs/launchpad':
         specifier: ^0.26.5
         version: 0.26.6
@@ -11425,6 +11425,18 @@ packages:
       libsodium-wrappers: 0.7.10
     dev: false
 
+  /@cosmjs/crypto@0.31.0:
+    resolution: {integrity: sha512-UaqCe6Tgh0pe1QlZ66E13t6FlIF86QrnBXXq+EN7Xe1Rouza3fJ1ojGlPleJZkBoq3tAyYVIOOqdZIxtVj/sIQ==}
+    dependencies:
+      '@cosmjs/encoding': 0.31.1
+      '@cosmjs/math': 0.31.1
+      '@cosmjs/utils': 0.31.1
+      '@noble/hashes': 1.3.1
+      bn.js: 5.2.1
+      elliptic: 6.5.4
+      libsodium-wrappers-sumo: 0.7.11
+    dev: false
+
   /@cosmjs/encoding@0.23.1:
     resolution: {integrity: sha512-rP5O3vYo0k6W329J+u5uKqJNrhmR4QTngLgsDvP/qsRRBfEiirhk+TQC8gjUlgnzoiCKCtWsiOyFP1z9Me9HIw==}
     dependencies:
@@ -11459,6 +11471,14 @@ packages:
 
   /@cosmjs/encoding@0.28.4:
     resolution: {integrity: sha512-N6Qnjs4dd8KwjW5m9t3L+rWYYGW2wyS+iLtJJ9DD8DiTTxpW9h7/AmUVO/dsRe5H2tV8/DzH/B9pFfpsgro22A==}
+    dependencies:
+      base64-js: 1.5.1
+      bech32: 1.1.4
+      readonly-date: 1.0.0
+    dev: false
+
+  /@cosmjs/encoding@0.31.1:
+    resolution: {integrity: sha512-IuxP6ewwX6vg9sUJ8ocJD92pkerI4lyG8J5ynAM3NaX3q+n+uMoPRSQXNeL9bnlrv01FF1kIm8if/f5F7ZPtkA==}
     dependencies:
       base64-js: 1.5.1
       bech32: 1.1.4
@@ -11540,6 +11560,12 @@ packages:
 
   /@cosmjs/math@0.28.4:
     resolution: {integrity: sha512-wsWjbxFXvk46Dsx8jQ5vsBZOIQuiUIyaaZbUvxsgIhAMpuuBnV5O/drK87+B+4cL+umTelFqTbWnkqueVCIFxQ==}
+    dependencies:
+      bn.js: 5.2.1
+    dev: false
+
+  /@cosmjs/math@0.31.1:
+    resolution: {integrity: sha512-kiuHV6m6DSB8/4UV1qpFhlc4ul8SgLXTGRlYkYiIIP4l0YNeJ+OpPYaOlEgx4Unk2mW3/O2FWYj7Jc93+BWXng==}
     dependencies:
       bn.js: 5.2.1
     dev: false
@@ -11709,6 +11735,10 @@ packages:
 
   /@cosmjs/utils@0.28.4:
     resolution: {integrity: sha512-lb3TU6833arPoPZF8HTeG9V418CpurvqH5Aa/ls0I0wYdPDEMO6622+PQNQhQ8Vw8Az2MXoSyc8jsqrgawT84Q==}
+    dev: false
+
+  /@cosmjs/utils@0.31.1:
+    resolution: {integrity: sha512-n4Se1wu4GnKwztQHNFfJvUeWcpvx3o8cWhSbNs9JQShEuB3nv3R5lqFBtDCgHZF/emFQAP+ZjF8bTfCs9UBGhA==}
     dev: false
 
   /@craftamap/esbuild-plugin-html@0.6.1(esbuild@0.18.0):
@@ -44359,6 +44389,16 @@ packages:
     dependencies:
       prelude-ls: 1.2.1
       type-check: 0.4.0
+
+  /libsodium-sumo@0.7.11:
+    resolution: {integrity: sha512-bY+7ph7xpk51Ez2GbE10lXAQ5sJma6NghcIDaSPbM/G9elfrjLa0COHl/7P6Wb/JizQzl5UQontOOP1z0VwbLA==}
+    dev: false
+
+  /libsodium-wrappers-sumo@0.7.11:
+    resolution: {integrity: sha512-DGypHOmJbB1nZn89KIfGOAkDgfv5N6SBGC3Qvmy/On0P0WD1JQvNRS/e3UL3aFF+xC0m+MYz5M+MnRnK2HMrKQ==}
+    dependencies:
+      libsodium-sumo: 0.7.11
+    dev: false
 
   /libsodium-wrappers@0.7.10:
     resolution: {integrity: sha512-pO3F1Q9NPLB/MWIhehim42b/Fwb30JNScCNh8TcQ/kIc+qGLQch8ag8wb0keK3EP5kbGakk1H8Wwo7v+36rNQg==}
