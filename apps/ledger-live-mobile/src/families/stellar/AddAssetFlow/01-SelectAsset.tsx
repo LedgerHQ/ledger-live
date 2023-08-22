@@ -23,7 +23,7 @@ import Info from "../../../icons/Info";
 import QueuedDrawer from "../../../components/QueuedDrawer";
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import { StellarAddAssetFlowParamList } from "./types";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 
 const Row = ({
   item,

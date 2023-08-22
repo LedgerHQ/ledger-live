@@ -7,7 +7,7 @@ import React, { useEffect, useCallback, useState, useRef, useMemo } from "react"
 import { getVotesCount, isUpToDateAccount } from "../../account";
 import { getAccountBridge } from "..";
 import { getAccountCurrency } from "../../account";
-import { getEnv } from "../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import type { SyncAction, SyncState, BridgeSyncState } from "./types";
 import { BridgeSyncContext, BridgeSyncStateContext } from "./context";
 import type { Account, SubAccount } from "@ledgerhq/types-live";

@@ -2,7 +2,7 @@ import { CacheRes, makeLRUCache } from "@ledgerhq/live-network/cache";
 import { log } from "@ledgerhq/logs";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { getEnv } from "../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import { CosmosAPI } from "./api/Cosmos";
 import cryptoFactory from "./chain/chain";
 import {

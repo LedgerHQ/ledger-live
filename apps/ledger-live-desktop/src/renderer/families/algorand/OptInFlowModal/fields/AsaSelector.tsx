@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from "react";
-import { TFunction, Trans } from "react-i18next";
+import { TFunction } from "i18next";
+import { Trans } from "react-i18next";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { listTokensForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import { extractTokenId } from "@ledgerhq/live-common/families/algorand/tokens";

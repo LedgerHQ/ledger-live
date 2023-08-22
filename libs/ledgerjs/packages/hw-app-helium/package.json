@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-helium",
-  "version": "6.29.12",
+  "version": "6.29.14",
   "description": "Ledger Hardware Wallet Helium Application API",
   "keywords": [
     "Ledger",
@@ -33,7 +33,7 @@
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
-    "bignumber.js": "^9.1.0",
+    "bignumber.js": "^9.1.1",
     "bip32-path": "^0.4.2",
     "long": "^5.2.0"
   },

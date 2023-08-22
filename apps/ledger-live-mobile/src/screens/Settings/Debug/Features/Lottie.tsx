@@ -4,7 +4,7 @@ import { Edge, SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
 import Config from "react-native-config";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { Flex, Icons } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy } from "@ledgerhq/native-ui";
 import Button from "../../../../components/Button";
 import LText from "../../../../components/LText";
 import Animation from "../../../../components/Animation";
@@ -163,7 +163,7 @@ const DebugLottie = () => {
             setKey(allKeys[Math.max(keyIndex - 1, 0)]);
           }}
           type="primary"
-          Icon={Icons.ChevronLeftMedium}
+          Icon={IconsLegacy.ChevronLeftMedium}
         />
         <Flex mx={3} flex={1}>
           <Button type="primary" title="Animation key" onPress={() => setKeyModalVisible(true)} />
@@ -174,7 +174,7 @@ const DebugLottie = () => {
             setKey(allKeys[Math.min(keyIndex + 1, allKeys.length - 1)]);
           }}
           type="primary"
-          Icon={Icons.ChevronRightMedium}
+          Icon={IconsLegacy.ChevronRightMedium}
         />
       </Flex>
       <QueuedDrawer

@@ -1,5 +1,61 @@
 # @ledgerhq/hw-transport-node-hid
 
+## 6.27.21
+
+### Patch Changes
+
+- Updated dependencies [[`a61a43fc47`](https://github.com/LedgerHQ/ledger-live/commit/a61a43fc47399e969fa68539de6af51bfa41e921), [`3455944496`](https://github.com/LedgerHQ/ledger-live/commit/34559444969ce1571ff4c54f33feb7f3fb59a33a)]:
+  - @ledgerhq/errors@6.14.0
+  - @ledgerhq/devices@8.0.7
+  - @ledgerhq/hw-transport@6.28.8
+  - @ledgerhq/hw-transport-node-hid-noevents@6.27.19
+
+## 6.27.21-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`a61a43fc47`](https://github.com/LedgerHQ/ledger-live/commit/a61a43fc47399e969fa68539de6af51bfa41e921), [`3455944496`](https://github.com/LedgerHQ/ledger-live/commit/34559444969ce1571ff4c54f33feb7f3fb59a33a)]:
+  - @ledgerhq/errors@6.14.0-next.0
+  - @ledgerhq/devices@8.0.7-next.0
+  - @ledgerhq/hw-transport@6.28.8-next.0
+  - @ledgerhq/hw-transport-node-hid-noevents@6.27.19-next.0
+
+## 6.27.20
+
+### Patch Changes
+
+- Updated dependencies [[`c7c484acf0`](https://github.com/LedgerHQ/ledger-live/commit/c7c484acf01e9db8dc5a5507b62ffcb863c77ca4)]:
+  - @ledgerhq/errors@6.13.1
+  - @ledgerhq/devices@8.0.6
+  - @ledgerhq/hw-transport@6.28.7
+  - @ledgerhq/hw-transport-node-hid-noevents@6.27.18
+
+## 6.27.20-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`c7c484acf0`](https://github.com/LedgerHQ/ledger-live/commit/c7c484acf01e9db8dc5a5507b62ffcb863c77ca4)]:
+  - @ledgerhq/errors@6.13.1-next.0
+  - @ledgerhq/devices@8.0.6-next.0
+  - @ledgerhq/hw-transport@6.28.7-next.0
+  - @ledgerhq/hw-transport-node-hid-noevents@6.27.18-next.0
+
+## 6.27.19
+
+### Patch Changes
+
+- [#4105](https://github.com/LedgerHQ/ledger-live/pull/4105) [`b5a63bb0bc`](https://github.com/LedgerHQ/ledger-live/commit/b5a63bb0bc8cc067961a3b912b0817ee54498a49) Thanks [@alexandremgo](https://github.com/alexandremgo)! - fix: patch delay on USB hotplug for Windows
+
+  Patches the node-usb package
+
+## 6.27.19-hotfix.0
+
+### Patch Changes
+
+- [#4105](https://github.com/LedgerHQ/ledger-live/pull/4105) [`b5a63bb0bc`](https://github.com/LedgerHQ/ledger-live/commit/b5a63bb0bc8cc067961a3b912b0817ee54498a49) Thanks [@alexandremgo](https://github.com/alexandremgo)! - fix: patch delay on USB hotplug for Windows
+
+  Patches the node-usb package
+
 ## 6.27.18
 
 ### Patch Changes

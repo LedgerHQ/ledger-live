@@ -1,9 +1,9 @@
 import React, { useCallback, useState } from "react";
 import { StyleSheet } from "react-native";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { useAnnouncements } from "@ledgerhq/live-common/notifications/AnnouncementProvider/index";
 import { useTheme } from "@react-navigation/native";
-import { Icons } from "@ledgerhq/native-ui";
+import { IconsLegacy } from "@ledgerhq/native-ui";
 import { addMockAnnouncement } from "../__mocks__/announcements";
 import SettingsRow from "../../../../components/SettingsRow";
 import QueuedDrawer from "../../../../components/QueuedDrawer";
@@ -98,7 +98,7 @@ export default function AddMockAnnouncementButton({ title }: { title: string }) 
       <SettingsRow
         title={title}
         desc={"Create a custom announcement to show in the app"}
-        iconLeft={<Icons.NewsMedium size={24} color="black" />}
+        iconLeft={<IconsLegacy.NewsMedium size={24} color="black" />}
         onPress={onOpen}
       />
       <QueuedDrawer isRequestingToBeOpened={open} onClose={onClose} style={styles.root}>

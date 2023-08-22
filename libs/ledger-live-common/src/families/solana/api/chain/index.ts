@@ -12,7 +12,7 @@ import {
   SignaturesForAddressOptions,
   StakeProgram,
 } from "@solana/web3.js";
-import { getEnv } from "../../../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import { Awaited } from "../../logic";
 import { NetworkDown } from "@ledgerhq/errors";
 

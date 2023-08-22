@@ -16,8 +16,8 @@
     "changelog": "changeset add",
     "prerelease": "pnpm run build:libs",
     "release": "changeset publish",
-    "build:libs": "pnpm turbo build --no-daemon --filter=\"./libs/**\"",
-    "build:libs:force": "pnpm -r --filter=\"./libs/**\" build",
+    "build:libs": "pnpm turbo build --no-daemon --filter=\"./libs/**\" --filter=\"!./libs/ui/examples/**\"",
+    "build:libs:force": "pnpm -r --filter=\"./libs/**\" --filter=\"!./libs/ui/examples/**\" build",
     "build:actions": "pnpm turbo build --filter=@actions/*",
     "build:cli": "pnpm turbo build --no-daemon --filter=live-cli",
     "build:coin": "pnpm turbo build --no-daemon --filter=\"./libs/coin-**\"",
@@ -56,6 +56,7 @@
     "coin:polkadot": "pnpm --filter coin-polkadot",
     "coin:evm": "pnpm --filter coin-evm",
     "domain": "pnpm --filter domain-service",
+    "doc": "pnpm --filter docs",
     "mobile": "pnpm --filter live-mobile",
     "common": "pnpm --filter live-common",
     "common-tools": "pnpm --filter live-common-tools",
@@ -108,6 +109,8 @@
     "ui:icons": "pnpm --filter icons-ui",
     "ui:crypto-icons": "pnpm --filter crypto-icons-ui",
     "ui:shared": "pnpm --filter ui-shared",
+    "ui:example:next": "pnpm  --filter=\"next.js-example\"",
+    "ui:example:webpack": "pnpm  --filter=\"webpack.js-example\"",
     "actions": "pnpm --filter @actions/*"
   },
   "devDependencies": {
@@ -116,8 +119,8 @@
     "@commitlint/cli": "^17.4.2",
     "@commitlint/config-conventional": "^17.6.5",
     "@commitlint/prompt-cli": "^17.4.2",
-    "@typescript-eslint/eslint-plugin": "^5.59.6",
-    "@typescript-eslint/parser": "^5.60.0",
+    "@typescript-eslint/eslint-plugin": "^6.2.0",
+    "@typescript-eslint/parser": "^6.2.0",
     "create-release-hash": "workspace:*",
     "eslint": "^8.41.0",
     "eslint-config-prettier": "^8.8.0",
@@ -143,7 +146,16 @@
       "rn-fetch-blob@0.12.0": "patches/rn-fetch-blob@0.12.0.patch",
       "react-native-image-crop-tools@1.6.4": "patches/react-native-image-crop-tools@1.6.4.patch",
       "react-native-webview@11.26.1": "patches/react-native-webview@11.26.1.patch",
-      "asyncstorage-down@4.2.0": "patches/asyncstorage-down@4.2.0.patch"
+      "asyncstorage-down@4.2.0": "patches/asyncstorage-down@4.2.0.patch",
+      "detox@20.11.0": "patches/detox@20.11.0.patch",
+      "usb@2.9.0": "patches/usb@2.9.0.patch"
+    },
+    "packageExtensions": {
+      "eslint-config-next@*": {
+        "dependencies": {
+          "next": "*"
+        }
+      }
     }
   }
 }

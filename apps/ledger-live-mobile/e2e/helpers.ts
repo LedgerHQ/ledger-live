@@ -1,4 +1,4 @@
-import { by, device, element, waitFor } from "detox";
+import { by, element, waitFor, device } from "detox";
 import { Direction } from "react-native-modal";
 
 const DEFAULT_TIMEOUT = 60000;
@@ -44,11 +44,16 @@ export async function typeTextById(id: string, text: string, focus = true) {
   return getElementById(id).typeText(text);
 }
 
-export async function typeTextByElement(elem: Detox.NativeElement, text: string, focus = true) {
+export async function typeTextByElement(
+  elem: Detox.NativeElement,
+  text: string,
+  closeKeyboard = true,
+  focus = true,
+) {
   if (focus) {
     await tapByElement(elem);
   }
-  await elem.typeText(text);
+  await elem.typeText(text + (closeKeyboard ? "\n" : "")); // ' \n' close keyboard if open
 }
 
 export async function clearTextByElement(elem: Detox.NativeElement) {
@@ -58,11 +63,10 @@ export async function clearTextByElement(elem: Detox.NativeElement) {
 export async function scrollToText(
   text: string,
   scrollViewId: string,
-  index = 0,
   pixels = 100,
   direction: Direction = "down",
 ) {
-  await waitFor(getElementByText(text, index))
+  await waitFor(element(by.text(text)))
     .toBeVisible()
     .whileElement(by.id(scrollViewId))
     .scroll(pixels, direction);
@@ -99,8 +103,8 @@ export async function delay(ms: number) {
   });
 }
 
-export async function openDeeplink(link?: string) {
-  await device.openURL({ url: BASE_DEEPLINK + link });
+export function openDeeplink(link?: string) {
+  return device.openURL({ url: BASE_DEEPLINK + link });
 }
 
 export function isAndroid() {

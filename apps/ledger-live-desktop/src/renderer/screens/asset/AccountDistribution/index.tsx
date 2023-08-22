@@ -1,7 +1,7 @@
 import React, { useLayoutEffect, useRef, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import Text from "~/renderer/components/Text";
 import Card from "~/renderer/components/Box/Card";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";

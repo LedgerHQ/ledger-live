@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import winston from "winston";
-import { EnvName, setEnv, setEnvUnsafe } from "@ledgerhq/live-common/env";
+import { EnvName, setEnv, setEnvUnsafe } from "@ledgerhq/live-env";
 import simple from "@ledgerhq/live-common/logs/simple";
 import { listen } from "@ledgerhq/logs";
 import { setSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
@@ -81,8 +81,14 @@ setSupportedCurrencies([
   "internet_computer",
   "ethereum_as_evm_test_only",
   "polygon_as_evm_test_only",
+  "klaytn",
+  "polygon_zk_evm",
+  "polygon_zk_evm_testnet",
+  "base",
+  "base_goerli",
   "stacks",
   "telos_evm",
+  "coreum",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);

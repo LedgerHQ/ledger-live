@@ -10,7 +10,7 @@ import { UserRefusedAllowManager } from "@ledgerhq/errors";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import AppInstallItem, { ItemState } from "./AppInstallItem";
 import AllowManagerModal from "./AllowManagerModal";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
 

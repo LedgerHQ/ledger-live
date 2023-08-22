@@ -11,6 +11,7 @@ type Props = {
   tag?: string;
   Icon: IconType;
   onPress?: (() => void) | null;
+  onDisabledPress?: () => void;
   disabled?: boolean;
   event?: string;
   eventProperties?: Parameters<typeof track>[1];
@@ -25,6 +26,7 @@ export default function TransferButton({
   tag,
   Icon,
   onPress,
+  onDisabledPress,
   disabled,
   event = "button_clicked",
   eventProperties,
@@ -33,12 +35,16 @@ export default function TransferButton({
   testID,
 }: Props) {
   const handlePress = useCallback(() => {
+    if (disabled) {
+      onDisabledPress?.();
+      return;
+    }
     if (onPress) onPress();
     if (event) track(event, eventProperties ?? null);
-  }, [onPress, event, eventProperties]);
+  }, [onPress, event, eventProperties, disabled, onDisabledPress]);
 
   return (
-    <TouchableOpacity disabled={disabled} onPress={handlePress} style={[style]} testID={testID}>
+    <TouchableOpacity onPress={handlePress} style={[style]} testID={testID}>
       <Flex flexDirection="row" justifyContent="flex-start" alignItems="center">
         <BoxedIcon
           Icon={Icon}

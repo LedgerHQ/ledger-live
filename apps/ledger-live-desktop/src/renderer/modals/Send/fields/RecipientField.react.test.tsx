@@ -1,46 +1,36 @@
 import React from "react";
 import axios from "axios";
-import "@testing-library/jest-dom";
+import { jest, describe, beforeAll, beforeEach, it, expect } from "@jest/globals";
 import BigNumber from "bignumber.js";
+import { render, screen, waitFor } from "tests/testUtils";
+
 import {
   getCryptoCurrencyById,
   setSupportedCurrencies,
 } from "@ledgerhq/live-common/currencies/index";
 import { Account } from "@ledgerhq/types-live";
 import { InvalidAddress } from "@ledgerhq/errors";
-import { ThemeProvider } from "styled-components";
-import userEvent from "@testing-library/user-event";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { act, render, screen, waitFor } from "@testing-library/react";
 import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/lib/generated/types";
-import defaultTheme from "~/renderer/styles/theme";
-import palettes from "~/renderer/styles/palettes";
 import RecipientField from "./RecipientField";
-
-// LinkWithExternalIcon imports a svg that is not supported by jest
-jest.mock("../../../components/LinkWithExternalIcon", () => {
-  const mockDiv = () => <div />;
-  return mockDiv;
-});
+import { TFunction } from "i18next";
 
 // Temp mock to prevent error on sentry init
 jest.mock("../../../../sentry/install", () => ({
   init: () => null,
 }));
-// Alert component have many problems and many import that make the test break so
-// I have to remove it
-jest.mock("../../../components/Alert", () => {
-  const mockDiv = () => {
-    return <div />;
-  };
-  return mockDiv;
-});
 
 jest.mock("axios");
-jest.mock("@ledgerhq/live-common/featureFlags/index");
+
 const mockedAxios = jest.mocked(axios);
+
+jest.mock("@ledgerhq/live-common/featureFlags/index", () => ({
+  useFeature: jest.fn(),
+}));
+
 const mockedUseFeature = jest.mocked(useFeature);
+
 const mockedOnChangeTransaction = jest.fn().mockImplementation(t => t);
 
 const eth = getCryptoCurrencyById("ethereum");
@@ -155,26 +145,24 @@ const baseMockStatus: TransactionStatus = {
   totalSpent: new BigNumber("0"),
 };
 
+const mockTFunction: jest.Mock<TFunction> = jest.fn(key => key) as unknown as jest.Mock<TFunction>;
+
 const setup = (
   mockStatus: Partial<TransactionStatus> | null = {},
   mockTransaction: Partial<Transaction> | null = {},
   account = ethMockAccount,
 ) => {
   return render(
-    <ThemeProvider
-      // @ts-expect-error let's assume that the theme is correct
-      theme={{ ...defaultTheme, colors: { ...defaultTheme.colors, palette: palettes.dark } }}
-    >
-      <DomainServiceProvider>
-        <RecipientField
-          account={account}
-          transaction={{ ...baseMockTransaction, ...mockTransaction } as Transaction}
-          t={any => any.toString()}
-          onChangeTransaction={mockedOnChangeTransaction}
-          status={{ ...baseMockStatus, ...mockStatus }}
-        />
-      </DomainServiceProvider>
-    </ThemeProvider>,
+    <DomainServiceProvider>
+      <RecipientField
+        account={account}
+        transaction={{ ...baseMockTransaction, ...mockTransaction } as Transaction}
+        // tslint:disable-next-line
+        t={mockTFunction as unknown as TFunction}
+        onChangeTransaction={mockedOnChangeTransaction}
+        status={{ ...baseMockStatus, ...mockStatus }}
+      />
+    </DomainServiceProvider>,
   );
 };
 
@@ -204,14 +192,15 @@ describe("RecipientField", () => {
   describe("Rendering", () => {
     it("should render without problem with minimum config", async () => {
       setup();
+      // NB: Document is not available in test dom so use truthy instead of .toBeInTheDocument()
       expect(screen.queryByRole("textbox")).toBeTruthy();
     });
 
     it("should test change input should trigger change transaction", async () => {
-      setup();
+      const { user } = setup();
       const input = screen.getByRole("textbox");
       expect(mockedOnChangeTransaction).toHaveBeenCalledTimes(0);
-      await userEvent.type(input, "mockrecipient");
+      await user.type(input, "mockrecipient");
       expect(mockedOnChangeTransaction).toHaveLastReturnedWith({
         ...baseMockTransaction,
         recipient: "mockrecipient",
@@ -234,10 +223,10 @@ describe("RecipientField", () => {
       });
 
       it("should change domain in transaction", async () => {
-        setup();
+        const { user } = setup();
         const input = screen.getByRole("textbox");
 
-        await act(() => userEvent.type(input, "vitalik.eth"));
+        await user.type(input, "vitalik.eth");
         await waitFor(() =>
           expect(mockedOnChangeTransaction).toHaveLastReturnedWith({
             ...baseMockTransaction,
@@ -253,9 +242,9 @@ describe("RecipientField", () => {
       });
 
       it("should reverse addr to domain name in transaction", async () => {
-        setup();
+        const { user } = setup();
         const input = screen.getByRole("textbox");
-        await act(() => userEvent.type(input, "0x16bb635bc5c398b63a0fbb38dac84da709eb3e86"));
+        await user.type(input, "0x16bb635bc5c398b63a0fbb38dac84da709eb3e86");
         await waitFor(() =>
           expect(mockedOnChangeTransaction).toHaveLastReturnedWith({
             ...baseMockTransaction,
@@ -271,10 +260,10 @@ describe("RecipientField", () => {
       });
 
       it("should not change domain because invalid recipient name", async () => {
-        setup();
+        const { user } = setup();
         const input = screen.getByRole("textbox");
 
-        await act(() => userEvent.type(input, "vitalik.notadomainservice"));
+        await user.type(input, "vitalik.notadomainservice");
         await waitFor(() =>
           expect(mockedOnChangeTransaction).toHaveLastReturnedWith({
             ...baseMockTransaction,
@@ -285,39 +274,42 @@ describe("RecipientField", () => {
       });
 
       it("should not change domain if domain is invalid", async () => {
-        setup();
+        const { user } = setup();
         const input = screen.getByRole("textbox");
 
-        await act(() => userEvent.type(input, "vitalik👋.eth"));
+        await user.type(input, "vitalik👋.eth");
         await waitFor(() => {
           expect(mockedOnChangeTransaction).toHaveLastReturnedWith({
             ...baseMockTransaction,
             recipient: "vitalik👋.eth",
             recipientDomain: undefined,
           });
-          // @ts-expect-error unclear why this is not working (@testing-library/jest-dom)
-          expect(screen.getByTestId("domain-error-invalid-domain")).toBeInTheDocument();
         });
+
+        expect(screen.getByTestId("domain-error-invalid-domain")).toBeTruthy();
       });
 
       it("should not change domain if domain has no resolution", async () => {
-        setup();
+        const { user } = setup();
         const input = screen.getByRole("textbox");
 
-        await act(() => userEvent.type(input, "anything-not-existing.eth"));
+        await user.type(input, "anything-not-existing.eth");
         await waitFor(() => {
           expect(mockedOnChangeTransaction).toHaveLastReturnedWith({
             ...baseMockTransaction,
             recipient: "anything-not-existing.eth",
             recipientDomain: undefined,
           });
-          // @ts-expect-error unclear why this is not working (@testing-library/jest-dom)
-          expect(screen.getByTestId("domain-error-no-resolution")).toBeInTheDocument();
         });
+        expect(
+          screen.getByText("send.steps.recipient.domainService.noResolution.title"),
+        ).toBeTruthy();
+
+        expect(screen.getByTestId("domain-error-no-resolution")).toBeTruthy();
       });
 
       it("should remove domain on input change", async () => {
-        setup(
+        const { user } = setup(
           {},
           {
             recipient: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
@@ -331,7 +323,7 @@ describe("RecipientField", () => {
         );
         const input = screen.getByRole("textbox");
 
-        await act(() => userEvent.type(input, "{Backspace}"));
+        await user.type(input, "{Backspace}");
         await waitFor(() =>
           expect(mockedOnChangeTransaction).toHaveLastReturnedWith({
             ...baseMockTransaction,
@@ -342,12 +334,11 @@ describe("RecipientField", () => {
       });
 
       it("should add then remove domain on input change", async () => {
-        const user = userEvent.setup();
-        setup();
+        const { user } = setup();
 
         const input = screen.getByRole("textbox");
 
-        await act(() => user.type(input, "vitalik.eth"));
+        await user.type(input, "vitalik.eth");
         await waitFor(() =>
           expect(mockedOnChangeTransaction).toHaveLastReturnedWith({
             ...baseMockTransaction,
@@ -361,7 +352,7 @@ describe("RecipientField", () => {
           }),
         );
 
-        await act(() => user.type(input, "{Backspace}"));
+        await user.type(input, "{Backspace}");
         await waitFor(() =>
           expect(mockedOnChangeTransaction).toHaveLastReturnedWith({
             ...baseMockTransaction,
@@ -372,9 +363,9 @@ describe("RecipientField", () => {
       });
 
       it("should not change domain because currency not supported", async () => {
-        setup(null, null, polygonMockAccount);
+        const { user } = setup(null, null, polygonMockAccount);
         const input = screen.getByRole("textbox");
-        await act(() => userEvent.type(input, "0x16bb635bc5c398b63a0fbb38dac84da709eb3e86"));
+        await user.type(input, "0x16bb635bc5c398b63a0fbb38dac84da709eb3e86");
         await waitFor(() =>
           expect(mockedOnChangeTransaction).toHaveLastReturnedWith({
             ...baseMockTransaction,
@@ -392,9 +383,9 @@ describe("RecipientField", () => {
       });
 
       it("should not change domain", async () => {
-        setup();
+        const { user } = setup();
         const input = screen.getByRole("textbox");
-        await act(() => userEvent.type(input, "vitalik.eth"));
+        await user.type(input, "vitalik.eth");
         await waitFor(() =>
           expect(mockedOnChangeTransaction).toHaveLastReturnedWith({
             ...baseMockTransaction,

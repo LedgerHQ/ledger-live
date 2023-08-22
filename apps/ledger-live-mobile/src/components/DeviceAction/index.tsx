@@ -14,7 +14,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { ParamListBase, useNavigation, useTheme } from "@react-navigation/native";
 import { useTheme as useThemeFromStyledComponents } from "styled-components/native";
-import { Flex, Text, Icons } from "@ledgerhq/native-ui";
+import { Flex, Text, IconsLegacy } from "@ledgerhq/native-ui";
 import type { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import type { InitSellResult } from "@ledgerhq/live-common/exchange/sell/types";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -125,12 +125,19 @@ type Props<H extends Status, P> = {
   payload?: P | null;
   onSelectDeviceLink?: () => void;
   analyticsPropertyFlow?: string;
+  /*
+   * Defines in what type of component this action will be rendered in.
+   *
+   * Used to adapt the UI to either a drawer or a view.
+   */
+  renderedInType?: "drawer" | "view";
 };
 
 export default function DeviceAction<R, H extends Status, P>({
   action,
   request,
   device: selectedDevice,
+  renderedInType = "view",
   ...props
 }: Omit<Props<H, P>, "status"> & {
   action: Action<R, H, P>;
@@ -145,6 +152,7 @@ export default function DeviceAction<R, H extends Status, P>({
       status={status}
       request={request}
       payload={payload}
+      renderedInType={renderedInType}
       {...props}
     />
   );
@@ -160,6 +168,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   status,
   request,
   payload,
+  renderedInType,
 }: Props<H, P> & {
   request?: R;
 }): JSX.Element | null {
@@ -270,8 +279,10 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   if (installingLanguage) {
     return (
       <Flex>
-        <DeviceActionProgress progress={progress} />
-        <Flex mt={5}>
+        <Flex my={7}>
+          <DeviceActionProgress progress={progress} />
+        </Flex>
+        <Flex mb={5}>
           <Text variant="h4">{t("deviceLocalization.installingLanguage")}</Text>
         </Flex>
         <ModalLock />
@@ -343,8 +354,9 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
           theme,
           hasExportLogButton: false,
           iconColor: palette.neutral.c20,
-          Icon: () => <Icons.InfoAltFillMedium size={28} color={palette.primary.c80} />,
+          Icon: () => <IconsLegacy.InfoAltFillMedium size={28} color={palette.primary.c80} />,
           device: device ?? undefined,
+          renderedInType,
         });
       }
     } else {
@@ -466,8 +478,9 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
         colors,
         theme,
         iconColor: palette.opacityDefault.c10,
-        Icon: () => <Icons.WarningSolidMedium size={28} color={colors.warning} />,
+        Icon: () => <IconsLegacy.WarningSolidMedium size={28} color={colors.warning} />,
         device: device ?? undefined,
+        renderedInType,
       });
     }
 
@@ -483,6 +496,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
       colors,
       theme,
       device: device ?? undefined,
+      renderedInType,
     });
   }
 

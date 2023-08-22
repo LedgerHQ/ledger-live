@@ -3,6 +3,7 @@ import { Trans } from "react-i18next";
 import { StyleSheet, View, FlatList, SafeAreaView } from "react-native";
 import type {
   CryptoCurrency,
+  CryptoCurrencyId,
   CryptoOrTokenCurrency,
   TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
@@ -22,7 +23,8 @@ import CurrencyRow from "../../components/CurrencyRow";
 import LText from "../../components/LText";
 import { AddAccountsNavigatorParamList } from "../../components/RootNavigator/types/AddAccountsNavigator";
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
+import { Feature } from "@ledgerhq/types-live";
 
 const SEARCH_KEYS = getEnv("CRYPTO_ASSET_SEARCH_KEYS");
 
@@ -79,14 +81,20 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const syscoin = useFeature("currencySyscoin");
   const internetComputer = useFeature("currencyInternetComputer");
   const telosEvm = useFeature("currencyTelosEvm");
+  const coreum = useFeature("currencyCoreum");
+  const polygonZkEvm = useFeature("currencyPolygonZkEvm");
+  const polygonZkEvmTestnet = useFeature("currencyPolygonZkEvmTestnet");
+  const base = useFeature("currencyBase");
+  const baseGoerli = useFeature("currencyBaseGoerli");
+  const klaytn = useFeature("currencyKlaytn");
 
   const featureFlaggedCurrencies = useMemo(
-    () => ({
+    (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
       axelar,
       stargaze,
       umee,
       desmos,
-      secretNetwork,
+      secret_network: secretNetwork,
       onomy,
       quicksilver,
       persistence,
@@ -108,9 +116,23 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       velas_evm: velasEvm,
       syscoin,
       internet_computer: internetComputer,
-      telos: telosEvm,
+      telos_evm: telosEvm,
+      coreum,
+      polygon_zk_evm: polygonZkEvm,
+      polygon_zk_evm_testnet: polygonZkEvmTestnet,
+      base,
+      base_goerli: baseGoerli,
+      klaytn,
     }),
     [
+      axelar,
+      stargaze,
+      umee,
+      desmos,
+      secretNetwork,
+      onomy,
+      quicksilver,
+      persistence,
       avaxCChain,
       stacks,
       optimism,
@@ -128,16 +150,14 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       moonriver,
       velasEvm,
       syscoin,
-      axelar,
-      stargaze,
-      umee,
-      desmos,
-      secretNetwork,
-      onomy,
-      persistence,
-      quicksilver,
       internetComputer,
       telosEvm,
+      coreum,
+      polygonZkEvm,
+      polygonZkEvmTestnet,
+      base,
+      baseGoerli,
+      klaytn,
     ],
   );
 

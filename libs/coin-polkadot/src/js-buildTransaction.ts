@@ -26,7 +26,7 @@ const getExtrinsicParams = (a: PolkadotAccount, t: Transaction): ExtrinsicParams
           dest: t.recipient,
           value: t.amount.toString(),
         },
-        name: t.useAllAmount ? "transfer" : "transferKeepAlive",
+        name: t.useAllAmount ? "transferAllowDeath" : "transferKeepAlive",
         pallet: "balances",
       };
 

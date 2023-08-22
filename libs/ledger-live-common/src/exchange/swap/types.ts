@@ -4,26 +4,6 @@ import { Account, AccountLike, AccountRaw, AccountRawLike, Operation } from "@le
 import { Transaction, TransactionRaw } from "../../generated/types";
 import { Result as UseBridgeTransactionResult } from "../../bridge/useBridgeTransaction";
 
-/// v3 changes here, move me to another folder soon
-export type ValidKYCStatus = "open" | "pending" | "approved" | "closed";
-export type KYCStatus = { id: string; status: ValidKYCStatus | "rejected" };
-export type GetKYCStatus = (arg0: string, arg1: string) => Promise<KYCStatus>;
-export type SubmitKYC = (str: string, data: KYCData) => Promise<KYCStatus | { error: Error }>;
-
-export type KYCData = {
-  firstName: string;
-  lastName: string;
-  residenceAddress: {
-    street1: string;
-    street2: string;
-    city: string;
-    state: string;
-    country: string;
-    postalCode: string;
-  };
-};
-///
-
 export type Exchange = {
   fromParentAccount: Account | null | undefined;
   fromAccount: AccountLike;
@@ -97,57 +77,30 @@ export type ProvidersResponseV4 = {
   providers: { [providerName: string]: TradeMethodGroup[] };
 };
 
-type CheckQuoteOkStatus = {
-  codeName: "RATE_VALID";
-};
-
-export type ValidCheckQuoteErrorCodes =
-  | "UNKNOW_USER"
-  | "KYC_UNDEFINED"
-  | "KYC_PENDING"
-  | "KYC_FAILED"
-  | "KYC_UPGRADE_REQUIRED"
-  | "OVER_TRADE_LIMIT"
-  | "UNKNOWN_ERROR"
-  | "WITHDRAWALS_BLOCKED"
-  | "MFA_REQUIRED"
-  | "UNAUTHENTICATED_USER"
-  | "RATE_NOT_FOUND";
-
-type CheckQuoteErrorStatus = {
-  codeName: ValidCheckQuoteErrorCodes;
-  error: string;
-  description: string;
-};
-
-export type CheckQuoteStatus = CheckQuoteOkStatus | CheckQuoteErrorStatus;
-
-export type CheckQuote = ({
-  provider,
-  quoteId,
-  bearerToken,
-}: {
-  provider: string;
-  quoteId?: string;
-  bearerToken: string;
-}) => Promise<CheckQuoteStatus>;
 export type AvailableProvider = AvailableProviderV3;
+
+export type ExchangeObject = {
+  exchange: Exchange;
+  transaction: Transaction;
+  currencyTo?: TokenCurrency | CryptoCurrency | undefined | null;
+  providers?: AvailableProviderV3[];
+  timeout?: number;
+  timeoutErrorMessage?: string;
+};
+
 export type GetExchangeRates = (
-  arg0: Exchange,
-  arg1: Transaction,
-  wyreUserId?: string,
-  currencyTo?: TokenCurrency | CryptoCurrency | undefined | null,
-  providers?: AvailableProviderV3[],
-  timeout?: number,
-  timeoutErrorMessage?: string,
-) => Promise<ExchangeRate[]>;
+  exchangeObject: ExchangeObject,
+) => Promise<(ExchangeRate & { expirationDate?: Date })[]>;
+
 export type GetProviders = () => Promise<AvailableProvider[]>;
+
 export type InitSwapResult = {
   transaction: Transaction;
   swapId: string;
 };
 
 type ValidSwapStatus = "pending" | "onhold" | "expired" | "finished" | "refunded";
+
 export type SwapStatusRequest = {
   provider: string;
   swapId: string;
@@ -260,7 +213,6 @@ export type InitSwapInput = {
   exchangeRate: ExchangeRate;
   transaction: SwapTransaction;
   deviceId: string;
-  userId?: string; // Nb for kyc purposes
 };
 
 export type InitSwapInputRaw = {
@@ -268,7 +220,6 @@ export type InitSwapInputRaw = {
   exchangeRate: ExchangeRateRaw;
   transaction: TransactionRaw;
   deviceId: string;
-  userId?: string;
 };
 
 export interface CustomMinOrMaxError extends Error {
@@ -321,16 +272,5 @@ export type SwapTransactionType = UseBridgeTransactionResult & {
   toggleMax: () => void;
   reverseSwap: () => void;
   fromAmountError?: Error;
+  fromAmountWarning?: Error;
 };
-
-export enum ActionRequired {
-  Login = "Login",
-  KYC = "KYC",
-  MFA = "MFA",
-  None = "None",
-}
-
-export type Message =
-  | { type: "navigation" }
-  | { type: "setToken"; token: string }
-  | { type: "closeWidget" };

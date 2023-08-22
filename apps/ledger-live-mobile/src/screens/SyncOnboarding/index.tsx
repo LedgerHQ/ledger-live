@@ -6,19 +6,25 @@ import { InfiniteLoader, Flex } from "@ledgerhq/native-ui";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import { OnboardingStep } from "@ledgerhq/live-common/hw/extractOnboardingState";
 import { useToggleOnboardingEarlyCheck } from "@ledgerhq/live-common/deviceSDK/hooks/useToggleOnboardingEarlyChecks";
+import { log } from "@ledgerhq/logs";
+import { getDeviceModel } from "@ledgerhq/devices";
+import { LockedDeviceError, UnexpectedBootloader } from "@ledgerhq/errors";
 import { ScreenName } from "../../const";
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import { RootStackParamList } from "../../components/RootNavigator/types/RootNavigator";
 import { SyncOnboardingStackParamList } from "../../components/RootNavigator/types/SyncOnboardingNavigator";
 import {
   SyncOnboardingCompanion,
-  NORMAL_RESYNC_OVERLAY_DISPLAY_DELAY_MS,
+  NORMAL_DESYNC_OVERLAY_DISPLAY_DELAY_MS,
 } from "./SyncOnboardingCompanion";
 import { EarlySecurityCheck } from "./EarlySecurityCheck";
 import DesyncDrawer from "./DesyncDrawer";
-import { PlainOverlay } from "./ResyncOverlay";
+import EarlySecurityCheckMandatoryDrawer from "./EarlySecurityCheckMandatoryDrawer";
+import { PlainOverlay } from "./DesyncOverlay";
 import { track } from "../../analytics";
 import { NavigationHeaderCloseButton } from "../../components/NavigationHeaderCloseButton";
+import UnlockDeviceDrawer from "./UnlockDeviceDrawer";
+import AutoRepairDrawer from "./AutoRepairDrawer";
 
 export type SyncOnboardingScreenProps = CompositeScreenProps<
   StackScreenProps<SyncOnboardingStackParamList, ScreenName.SyncOnboardingCompanion>,
@@ -48,14 +54,31 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
     null | "enter" | "exit"
   >(null);
 
-  const [isDesyncDrawerOpen, setDesyncDrawerOpen] = useState<boolean>(false);
+  const [isDesyncDrawerOpen, setIsDesyncDrawerOpen] = useState<boolean>(false);
+  const [isAutoRepairOpen, setIsAutoRepairOpen] = useState<boolean>(false);
+  const [isESCMandatoryDrawerOpen, setIsESCMandatoryDrawerOpen] = useState<boolean>(false);
+  const [isLockedDeviceDrawerOpen, setLockedDeviceDrawerOpen] = useState<boolean>(false);
 
-  // States handling a UI trick to hide the header while the resync alert overlay
+  // Used to know if a first genuine check already happened and to pass the information to the ESC
+  const [isAlreadyGenuine, setIsAlreadyGenuine] = useState<boolean>(false);
+
+  // States handling a UI trick to hide the header while the desync alert overlay
   // is displayed from the companion
   const [isHeaderOverlayOpen, setIsHeaderOverlayOpen] = useState<boolean>(false);
   const [headerOverlayDelayMs, setHeaderOverlayDelayMs] = useState<number>(
-    NORMAL_RESYNC_OVERLAY_DISPLAY_DELAY_MS,
+    NORMAL_DESYNC_OVERLAY_DISPLAY_DELAY_MS,
   );
+
+  const productName = getDeviceModel(device.modelId).productName || device.modelId;
+
+  // Depending on the current step, the close button triggers different paths
+  const onCloseButtonPress = useCallback(() => {
+    if (currentStep === "early-security-check") {
+      setIsESCMandatoryDrawerOpen(true);
+    } else {
+      navigation.popToTop();
+    }
+  }, [currentStep, navigation]);
 
   // Updates dynamically the screen header to handle a possible overlay
   useEffect(() => {
@@ -65,16 +88,22 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
         <>
           <SafeAreaView edges={["top", "left", "right"]}>
             <Flex my={5} flexDirection="row" justifyContent="flex-end" alignItems="center">
-              <NavigationHeaderCloseButton />
+              <NavigationHeaderCloseButton onPress={onCloseButtonPress} />
             </Flex>
           </SafeAreaView>
           <PlainOverlay isOpen={isHeaderOverlayOpen} delay={headerOverlayDelayMs} />
         </>
       ),
     });
-  }, [device, navigation, isHeaderOverlayOpen, headerOverlayDelayMs]);
+  }, [device, navigation, isHeaderOverlayOpen, headerOverlayDelayMs, onCloseButtonPress]);
 
-  const { onboardingState, allowedError, fatalError } = useOnboardingStatePolling({
+  const {
+    onboardingState,
+    allowedError,
+    fatalError,
+    resetStates: resetPollingStates,
+    lockedDevice,
+  } = useOnboardingStatePolling({
     device,
     pollingPeriodMs: POLLING_PERIOD_MS,
     stopPolling: !isPollingOn,
@@ -90,16 +119,33 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
     setToggleOnboardingEarlyCheckType("exit");
   }, []);
 
-  // Called when the companion component thinks the device is not in a correct state anymore
-  const notifySyncOnboardingShouldReset = useCallback(() => {
-    setIsPollingOn(true);
-  }, []);
+  // Called when the device seems not to be in the correct state anymore.
+  // Probably because the device restarted.
+  // If the caller knows that the device is already genuine, save this information.
+  const notifyEarlySecurityCheckShouldReset = useCallback(
+    ({ isAlreadyGenuine }: { isAlreadyGenuine: boolean } = { isAlreadyGenuine: false }) => {
+      setIsAlreadyGenuine(isAlreadyGenuine);
+      setCurrentStep("loading");
+      // Resets the polling state because it could return the same result object (and so no state has changed)
+      // but we want to re-trigger the useEffect handling the polling result
+      resetPollingStates();
+      setIsPollingOn(true);
+    },
+    [resetPollingStates],
+  );
 
-  // Handles current step and toggling onboarding early check logics
+  // Called when the user taps on the "cancel" button in the mandatory drawer
+  const onCancelEarlySecurityCheck = useCallback(() => {
+    setIsESCMandatoryDrawerOpen(false);
+    navigation.popToTop();
+  }, [navigation]);
+
+  // Handles current step and toggling onboarding early check logics from polling information
   useEffect(() => {
     if (!onboardingState) {
       return;
     }
+
     const { currentOnboardingStep, isOnboarded } = onboardingState;
 
     if (
@@ -126,11 +172,20 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
     }
   }, [onboardingState]);
 
-  // A fatal error during polling triggers directly an error message
+  // A fatal error during polling triggers directly an error message (or the auto repair)
   useEffect(() => {
     if (fatalError) {
-      setIsPollingOn(false);
-      setDesyncDrawerOpen(true);
+      if ((fatalError as unknown) instanceof UnexpectedBootloader) {
+        log("SyncOnboardingIndex", "Device in bootloader mode. Trying to auto repair", {
+          fatalError,
+        });
+        setIsPollingOn(false);
+        setIsAutoRepairOpen(true);
+      } else {
+        log("SyncOnboardingIndex", "Fatal error during polling", { fatalError });
+        setIsPollingOn(false);
+        setIsDesyncDrawerOpen(true);
+      }
     }
   }, [fatalError]);
 
@@ -138,10 +193,12 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
   useEffect(() => {
     let timeout: ReturnType<typeof setTimeout>;
 
-    if (allowedError) {
+    if (allowedError && !(allowedError instanceof LockedDeviceError)) {
+      log("SyncOnboardingIndex", "Polling allowed error", { allowedError });
+
       timeout = setTimeout(() => {
         setIsPollingOn(false);
-        setDesyncDrawerOpen(true);
+        setIsDesyncDrawerOpen(true);
       }, DESYNC_TIMEOUT_MS);
     }
 
@@ -151,6 +208,16 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
       }
     };
   }, [allowedError]);
+
+  useEffect(() => {
+    if (lockedDevice) {
+      setLockedDeviceDrawerOpen(true);
+    }
+
+    return () => {
+      setLockedDeviceDrawerOpen(false);
+    };
+  }, [lockedDevice]);
 
   // Handles onboarding early check toggle result
   useEffect(() => {
@@ -176,7 +243,7 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
   }, [toggleOnboardingEarlyCheckState, toggleOnboardingEarlyCheckType]);
 
   const onLostDevice = useCallback(() => {
-    setDesyncDrawerOpen(true);
+    setIsDesyncDrawerOpen(true);
   }, []);
 
   const handleDesyncRetry = useCallback(() => {
@@ -185,13 +252,18 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
       drawer: "Could not connect to Stax",
     });
     // handleDesyncClose is then called once the drawer is fully closed
-    setDesyncDrawerOpen(false);
+    setIsDesyncDrawerOpen(false);
   }, []);
 
   const handleDesyncClose = useCallback(() => {
-    setDesyncDrawerOpen(false);
+    setIsDesyncDrawerOpen(false);
     navigation.goBack();
   }, [navigation]);
+
+  const handleAutoRepairClose = useCallback(() => {
+    setIsAutoRepairOpen(false);
+    setIsPollingOn(true);
+  }, []);
 
   let stepContent = (
     <Flex height="100%" width="100%" justifyContent="center" alignItems="center">
@@ -203,7 +275,10 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
     stepContent = (
       <EarlySecurityCheck
         device={device}
+        isAlreadyGenuine={isAlreadyGenuine}
         notifyOnboardingEarlyCheckEnded={notifyOnboardingEarlyCheckEnded}
+        notifyEarlySecurityCheckShouldReset={notifyEarlySecurityCheckShouldReset}
+        onCancelOnboarding={onCancelEarlySecurityCheck}
       />
     );
   } else if (currentStep === "companion") {
@@ -211,7 +286,7 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
       <SyncOnboardingCompanion
         navigation={navigation}
         device={device}
-        notifySyncOnboardingShouldReset={notifySyncOnboardingShouldReset}
+        notifyEarlySecurityCheckShouldReset={notifyEarlySecurityCheckShouldReset}
         onLostDevice={onLostDevice}
         onShouldHeaderBeOverlaid={setIsHeaderOverlayOpen}
         updateHeaderOverlayDelay={setHeaderOverlayDelayMs}
@@ -225,6 +300,26 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
         isOpen={isDesyncDrawerOpen}
         onClose={handleDesyncClose}
         onRetry={handleDesyncRetry}
+        device={device}
+      />
+      <AutoRepairDrawer isOpen={isAutoRepairOpen} onDone={handleAutoRepairClose} device={device} />
+      <EarlySecurityCheckMandatoryDrawer
+        productName={productName}
+        isOpen={isESCMandatoryDrawerOpen}
+        onResume={() => {
+          setIsESCMandatoryDrawerOpen(false);
+        }}
+        onCancel={onCancelEarlySecurityCheck}
+      />
+      <UnlockDeviceDrawer
+        isOpen={isLockedDeviceDrawerOpen}
+        onClose={() => {
+          // Closing because the user pressed on close button (the device is still locked)
+          if (lockedDevice) {
+            // Triggers the same close button behavior than closing the entire sync onboarding
+            onCloseButtonPress();
+          }
+        }}
         device={device}
       />
       {stepContent}

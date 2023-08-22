@@ -100,6 +100,7 @@ export const urls = {
     "https://support.ledger.com/hc/en-us/articles/360020499920-Celo-CELO-?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=celo&docs=true",
   cosmosStaking:
     "https://www.ledger.com/staking-cosmos?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=cosmos",
+  cardanoStaking: "https://support.ledger.com/hc/articles/7880073204253?docs=true",
   algorandStaking:
     "https://support.ledger.com/hc/en-us/articles/360015897740?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=algorand",
   polkadotStaking:
@@ -120,20 +121,6 @@ export const urls = {
         main: "https://criptointercambio.com/",
         support: "https://criptointercambio.com/en/about",
         tos: "https://criptointercambio.com/terms-of-use",
-      },
-      wyre: {
-        main: "https://support.sendwyre.com/hc/en-us/requests/new",
-        tos: "https://www.sendwyre.com/user-agreement/",
-      },
-      ftx: {
-        main: "https://ftx.com",
-        support: "https://ftx.com/support",
-        tos: null,
-      },
-      ftxus: {
-        main: "https://ftx.us/",
-        support: "https://help.ftx.us/hc/en-us",
-        tos: null,
       },
     },
   },
@@ -233,5 +220,9 @@ export const urls = {
   domainService: "https://support.ledger.com/hc/articles/9710787581469?docs=true",
   editEthTx: {
     learnMore: "https://support.ledger.com/hc/articles/9756122596765?support=true",
+  },
+  genuineCheck: {
+    learnMore:
+      "https://support.ledger.com/hc/en-us/articles/4404389367057-Is-my-Ledger-device-genuine-?docs=true",
   },
 };

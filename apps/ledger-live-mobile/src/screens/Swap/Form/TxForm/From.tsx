@@ -6,6 +6,7 @@ import { getAccountName, getAccountUnit } from "@ledgerhq/live-common/account/in
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { usePickDefaultAccount } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
+import { WarningSolidMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useSelector } from "react-redux";
 import { Selector } from "./Selector";
 import { AmountInput } from "./AmountInput";
@@ -21,10 +22,11 @@ interface Props {
   provider?: string;
   swapTx: SwapTransactionType;
   swapError?: Error;
+  swapWarning?: Error;
   isSendMaxLoading: boolean;
 }
 
-export function From({ swapTx, provider, swapError, isSendMaxLoading }: Props) {
+export function From({ swapTx, provider, swapError, swapWarning, isSendMaxLoading }: Props) {
   const { track } = useAnalytics();
   const { t } = useTranslation();
   const navigation = useNavigation<SwapFormParamList>();
@@ -104,14 +106,27 @@ export function From({ swapTx, provider, swapError, isSendMaxLoading }: Props) {
               onChange={swapTx.setFromAmount}
               onFocus={onFocus}
               error={swapError}
+              warning={swapWarning}
               testID="swap-source-amount-textbox"
             />
           </Flex>
         </Flex>
 
-        <Text color="error.c50" textAlign="right" variant="tiny">
-          {swapError ? <TranslatedError error={swapError} /> : ""}
-        </Text>
+        {swapError || swapWarning ? (
+          <Flex flexDirection="row" columnGap={8} alignItems="center">
+            <WarningSolidMedium size={20} color={swapError ? "error.c50" : "orange"} />
+            <Text
+              marginY={4}
+              color={swapError ? "error.c50" : "orange"}
+              textAlign="left"
+              fontWeight="medium"
+              lineHeight="20.4px"
+              variant="small"
+            >
+              <TranslatedError error={swapError || swapWarning} />
+            </Text>
+          </Flex>
+        ) : null}
       </Flex>
     </Flex>
   );

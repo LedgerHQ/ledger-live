@@ -17,7 +17,7 @@ import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
 import { NearAccount } from "@ledgerhq/live-common/families/near/types";
 import { isEditableOperation } from "@ledgerhq/coin-framework/operation";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 
 import Header from "./Header";
 import AccountGraphCard from "../../components/AccountGraphCard";
@@ -126,7 +126,7 @@ export function getListHeaderComponents({
 
   return {
     listHeaderComponents: [
-      <Box mt={6} onLayout={onAccountCardLayout}>
+      <Box mt={6} onLayout={onAccountCardLayout} key="AccountGraphCard">
         <AccountGraphCard
           account={account}
           range={range}
@@ -139,9 +139,9 @@ export function getListHeaderComponents({
           parentAccount={parentAccount}
         />
       </Box>,
-      <Header />,
+      <Header key="Header" />,
       !!AccountSubHeader && (
-        <Box bg={colors.background.main}>
+        <Box bg={colors.background.main} key="AccountSubHeader">
           <AccountSubHeader />
         </Box>
       ),
@@ -151,16 +151,17 @@ export function getListHeaderComponents({
           isOperationStuck={isOperationStuck}
           account={account}
           parentAccount={parentAccount}
+          key="EditOperationCard"
         />
       ) : null,
-      <SectionContainer px={6} bg={colors.background.main}>
+      <SectionContainer px={6} bg={colors.background.main} key="FabAccountMainActions">
         <SectionTitle title={t("account.quickActions")} containerProps={{ mb: 6 }} />
         <FabAccountMainActions account={account} parentAccount={parentAccount} />
       </SectionContainer>,
       ...(!empty &&
       (AccountHeaderRendered || AccountBalanceSummaryFooterRendered || secondaryActions.length > 0)
         ? [
-            <SectionContainer>
+            <SectionContainer key="AccountHeader">
               <SectionTitle title={t("account.earn")} containerProps={{ mx: 6, mb: 6 }} />
               <Box>
                 {AccountHeaderRendered && (
@@ -177,11 +178,11 @@ export function getListHeaderComponents({
           ]
         : []),
       ...(!empty && AccountBodyHeaderRendered
-        ? [<SectionContainer>{AccountBodyHeaderRendered}</SectionContainer>]
+        ? [<SectionContainer key="AccountBody">{AccountBodyHeaderRendered}</SectionContainer>]
         : []),
       ...(!empty && account.type === "Account" && account.subAccounts
         ? [
-            <SectionContainer px={6}>
+            <SectionContainer px={6} key="SubAccountsList">
               <SubAccountsList
                 accountId={account.id}
                 onAccountPress={onAccountPress}
@@ -193,7 +194,7 @@ export function getListHeaderComponents({
         : []),
       ...(!empty && account.type === "Account" && isNFTActive(account.currency)
         ? [
-            <SectionContainer px={6}>
+            <SectionContainer px={6} key="NftCollectionsList">
               <NftCollectionsList account={account} />
             </SectionContainer>,
           ]

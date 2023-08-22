@@ -9,7 +9,7 @@ import StellarSdk, {
   NotFoundError,
 } from "stellar-sdk";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../../currencies";
-import { getEnv } from "../../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import {
   getAccountSpendableBalance,
   getReservedBalance,

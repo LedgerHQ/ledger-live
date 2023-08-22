@@ -16,22 +16,40 @@ export default class PortfolioPage {
   portfolioSettingsButton = () => getElementById("settings-icon");
   transferButton = () => getElementById("transfer-button");
   swapTransferMenuButton = () => getElementById("swap-transfer-button");
+  sendTransferMenuButton = () => getElementById("transfer-send-button");
+  sendMenuButton = () => getElementById("send-button");
   marketTabButton = () => getElementById("tab-bar-market");
+  earnButton = () => getElementById("tab-bar-earn");
 
-  async navigateToSettings() {
-    await tapByElement(this.portfolioSettingsButton());
+  navigateToSettings() {
+    return tapByElement(this.portfolioSettingsButton());
   }
 
-  async openTransferMenu() {
-    await tapByElement(this.transferButton());
+  openTransferMenu() {
+    return tapByElement(this.transferButton());
   }
 
-  async navigateToSwapFromTransferMenu() {
-    await tapByElement(this.swapTransferMenuButton());
+  navigateToSwapFromTransferMenu() {
+    // await scrollToText("Exchange crypto to crypto.", "transfer-scroll-list"); // FIXME: scroll not working
+    return tapByElement(this.swapTransferMenuButton());
   }
 
-  async waitForPortfolioPageToLoad() {
-    await waitForElementById("settings-icon");
+  waitForPortfolioPageToLoad() {
+    return waitForElementById("settings-icon", 120000);
+  }
+
+  async navigateToSendFromTransferMenu() {
+    await tapByElement(this.sendTransferMenuButton());
+  }
+
+  async openAddAccount() {
+    const element = getElementById("add-account-button");
+    await element.tap();
+  }
+
+  async receive() {
+    const element = getElementById("receive-button");
+    await element.tap();
   }
 
   async waitForPortfolioReadOnly() {
@@ -41,11 +59,19 @@ export default class PortfolioPage {
       expect(await getTextOfElement(this.assetBalanceId, index)).toBe(this.zeroBalance);
   }
 
-  async openViaDeeplink() {
-    await openDeeplink(baseLink);
+  openViaDeeplink() {
+    return openDeeplink(baseLink);
   }
 
   openMarketPage() {
     return tapByElement(this.marketTabButton());
+  }
+
+  openMyLedger() {
+    return tapByElement(getElementById("TabBarManager"));
+  }
+
+  openEarnApp() {
+    return tapByElement(this.earnButton());
   }
 }

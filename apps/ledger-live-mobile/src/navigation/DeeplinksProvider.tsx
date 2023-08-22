@@ -7,10 +7,10 @@ import { useFlipper } from "@react-navigation/devtools";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import Braze from "react-native-appboy-sdk";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 import * as Sentry from "@sentry/react-native";
 import { hasCompletedOnboardingSelector } from "../reducers/settings";
-import { context as _wcContext } from "../screens/WalletConnect/Provider";
 import { navigationRef, isReadyRef } from "../rootnavigation";
 import { ScreenName, NavigatorName } from "../const";
 import { setWallectConnectUri } from "../actions/walletconnect";
@@ -18,6 +18,8 @@ import { TermsContext } from "../logic/terms";
 import { Writeable } from "../types/helpers";
 import { lightTheme, darkTheme, Theme } from "../colors";
 import { track } from "../analytics";
+import { Feature } from "@ledgerhq/types-live/lib/feature";
+import { setEarnInfoModal } from "../actions/earn";
 
 const routingInstrumentation = new Sentry.ReactNavigationInstrumentation();
 
@@ -81,10 +83,20 @@ function getProxyURL(url: string) {
     return `ledgerlive://wc?uri=${encodeURIComponent(url)}`;
   }
 
+  // This is to handle links set in the useFromAmountStatusMessage in LLC.
+  // Also handles a difference in paths between LLD on LLD /platform/:app_id
+  // but on LLM /discover/:app_id
+  if (hostname === "platform" && ["multibuy"].includes(platform)) {
+    return url.replace("://platform", "://discover");
+  }
+
   return url;
 }
+
+type FeatureFlags = Record<string, Feature<undefined> | null>;
+
 // DeepLinking
-const linkingOptions = {
+const linkingOptions = (featureFlags: FeatureFlags) => ({
   async getInitialURL() {
     const url = await Linking.getInitialURL();
     if (url) {
@@ -142,7 +154,7 @@ const linkingOptions = {
                * @params ?uri: string
                * ie: "ledgerlive://wc?uri=wc:00e46b69-d0cc-4b3e-b6a2-cee442f97188@1?bridge=https%3A%2F%2Fbridge.walletconnect.org&key=91303dedf64285cbbaf9120f6e9d160a5c8aa3deb67017a3874cd272323f48ae
                */
-              [ScreenName.WalletConnectDeeplinkingSelectAccount]: "wc",
+              [ScreenName.WalletConnectConnect]: "wc",
             },
           },
 
@@ -158,6 +170,8 @@ const linkingOptions = {
               /**
                * @params ?completed: boolean
                * ie: "ledgerlive://post-onboarding/nft-claimed?completed=true" will open the post onboarding hub and complete the Nft claim action
+               * * @params ?allCompleted: boolean
+               * ie: "ledgerlive://post-onboarding/nft-claimed?allCompleted=true" will open the post onboarding hub with all steps completed
                */
               [ScreenName.PostOnboardingHub]: "post-onboarding/nft-claimed",
             },
@@ -199,16 +213,48 @@ const linkingOptions = {
                           [ScreenName.Accounts]: "account",
                         },
                       },
+                      ...(featureFlags.ptxEarnFeature?.enabled && {
+                        [NavigatorName.Market]: {
+                          screens: {
+                            /**
+                             * ie: "ledgerlive://market" will open the market screen
+                             */
+                            [ScreenName.MarketList]: "market",
+                          },
+                        },
+                      }),
                     },
                   },
                 },
               },
-              [NavigatorName.Market]: {
+              ...(!featureFlags.ptxEarnFeature?.enabled && {
+                [NavigatorName.Market]: {
+                  screens: {
+                    /**
+                     * ie: "ledgerlive://market" will open the market screen
+                     */
+                    [ScreenName.MarketList]: "market",
+                  },
+                },
+              }),
+              [NavigatorName.Earn]: {
                 screens: {
                   /**
-                   * ie: "ledgerlive://market" will open the market screen
+                   * ie: "ledgerlive://earn" will open earn dashboard page
+                   *
+                   * @params ?action: string
+                   * ie: "ledgerlive://earn?action=stake" will open staking flow
+                   *
+                   * * @params ?action: string
+                   * * @params &accountId: string
+                   * ie: "ledgerlive://earn?action=stake-account&accountId=XXXX" will open staking flow with specific account
+                   *
+                   * * @params ?action: string
+                   * * @params ?currencyId: string
+                   * ie: "ledgerlive://earn?action=get-funds&currencyId=ethereum" will open buy drawer with currency
+                   *
                    */
-                  [ScreenName.MarketList]: "market",
+                  [ScreenName.Earn]: "earn",
                 },
               },
               [NavigatorName.Discover]: {
@@ -248,26 +294,6 @@ const linkingOptions = {
            * ie: "ledgerlive://swap" -> will redirect to the main swap page
            */
           [NavigatorName.Swap]: "swap",
-          [NavigatorName.Earn]: {
-            screens: {
-              /**
-               * ie: "ledgerlive://earn" will open earn dashboard page
-               *
-               * @params ?action: string
-               * ie: "ledgerlive://earn?action=stake" will open staking flow
-               *
-               * * @params ?action: string
-               * * @params &accountId: string
-               * ie: "ledgerlive://earn?action=stake-account&accountId=XXXX" will open staking flow with specific account
-               *
-               * * @params ?action: string
-               * * @params ?currencyId: string
-               * ie: "ledgerlive://earn?action=get-funds&currencyId=ethereum" will open buy drawer with currency
-               *
-               */
-              [ScreenName.Earn]: "earn",
-            },
-          },
 
           [NavigatorName.SendFunds]: {
             screens: {
@@ -360,10 +386,10 @@ const linkingOptions = {
       },
     },
   },
-};
+});
 
-const getOnboardingLinkingOptions = (acceptedTermsOfUse: boolean) => ({
-  ...linkingOptions,
+const getOnboardingLinkingOptions = (acceptedTermsOfUse: boolean, featureFlags: FeatureFlags) => ({
+  ...linkingOptions(featureFlags),
   config: {
     initialRouteName: NavigatorName.BaseOnboarding,
     screens: !acceptedTermsOfUse
@@ -397,7 +423,9 @@ export const DeeplinksProvider = ({
 }) => {
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
-  const wcContext = useContext(_wcContext);
+  const ptxEarnFeature = useFeature("ptxEarn");
+  const features = useMemo(() => ({ ptxEarnFeature }), [ptxEarnFeature]);
+
   const { state } = useRemoteLiveAppContext();
   const liveAppProviderInitialized = !!state.value || !!state.error;
   const manifests = state?.value?.liveAppByIndex || emptyObject;
@@ -408,9 +436,8 @@ export const DeeplinksProvider = ({
     () =>
       ({
         ...(hasCompletedOnboarding
-          ? linkingOptions
-          : getOnboardingLinkingOptions(!!userAcceptedTerms)),
-        enabled: wcContext.initDone && !wcContext.session.session,
+          ? linkingOptions(features)
+          : getOnboardingLinkingOptions(!!userAcceptedTerms, features)),
         subscribe(listener) {
           const sub = Linking.addEventListener("url", ({ url }) => {
             // Prevent default deeplink if invalid wallet connect link
@@ -423,11 +450,7 @@ export const DeeplinksProvider = ({
             if (
               isWalletConnectLink(url) &&
               route &&
-              [
-                ScreenName.WalletConnectScan,
-                ScreenName.WalletConnectDeeplinkingSelectAccount,
-                ScreenName.WalletConnectConnect,
-              ].includes(route.name as ScreenName)
+              (route.name as ScreenName) === ScreenName.WalletConnectConnect
             ) {
               const uri = isWalletConnectUrl(url)
                 ? url
@@ -449,6 +472,21 @@ export const DeeplinksProvider = ({
           const { hostname, pathname } = url;
           const platform = pathname.split("/")[1];
 
+          if (hostname === "earn") {
+            const searchParams = url.searchParams;
+            if (searchParams.get("action") === "info-modal") {
+              const message = searchParams.get("message") || "";
+              const messageTitle = searchParams.get("messageTitle") || "";
+
+              dispatch(
+                setEarnInfoModal({
+                  message,
+                  messageTitle,
+                }),
+              );
+              return;
+            }
+          }
           if ((hostname === "discover" || hostname === "recover") && platform) {
             const whitelistLiveAppsAccessibleInNonOnboardedLL: LiveAppManifest["id"][] =
               recoverManifests;
@@ -488,21 +526,19 @@ export const DeeplinksProvider = ({
       } as LinkingOptions<ReactNavigation.RootParamList>),
     [
       hasCompletedOnboarding,
-      wcContext.initDone,
-      wcContext.session.session,
       dispatch,
       liveAppProviderInitialized,
       manifests,
       userAcceptedTerms,
+      features,
     ],
   );
   const [isReady, setIsReady] = React.useState(false);
 
   useEffect(() => {
-    if (!wcContext.initDone) return;
     if (userAcceptedTerms === null) return;
     setIsReady(true);
-  }, [wcContext.initDone, userAcceptedTerms]);
+  }, [userAcceptedTerms]);
 
   React.useEffect(
     () => () => {

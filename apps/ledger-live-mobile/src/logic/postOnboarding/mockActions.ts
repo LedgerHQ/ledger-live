@@ -5,7 +5,7 @@ import { NavigatorName, ScreenName } from "../../const";
 
 export const claimMock: PostOnboardingAction = {
   id: PostOnboardingActionId.claimMock,
-  Icon: Icons.GiftCardMedium,
+  Icon: Icons.Gift,
   title: "Claim my NFT",
   titleCompleted: "NFT Claimed",
   description: "A special NFT for you.",
@@ -25,7 +25,7 @@ export const claimMock: PostOnboardingAction = {
 
 export const personalizeMock: PostOnboardingAction = {
   id: PostOnboardingActionId.personalizeMock,
-  Icon: Icons.PhotographMedium,
+  Icon: Icons.PictureImage,
   featureFlagId: "customImage",
   title: `Personalize my ${getDeviceModel(DeviceModelId.stax).productName}`,
   titleCompleted: `Device personalized`,
@@ -45,7 +45,7 @@ export const personalizeMock: PostOnboardingAction = {
 
 export const migrateAssetsMock: PostOnboardingAction = {
   id: PostOnboardingActionId.migrateAssetsMock,
-  Icon: Icons.TransferMedium,
+  Icon: Icons.ArrowDown,
   title: "Transfer assets to my Ledger",
   titleCompleted: "Assets transfered",
   description: "Easily secure assets from coinbase or another exchange.",

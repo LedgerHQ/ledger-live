@@ -56,11 +56,13 @@ export default function StakingStarted({ navigation, route }: Props) {
         <BulletList
           Bullet={BulletGreenCheck}
           list={[
-            <Trans i18nKey="near.staking.flow.steps.starter.steps.0" />,
-            <Trans i18nKey="near.staking.flow.steps.starter.steps.1" />,
-            <Trans i18nKey="near.staking.flow.steps.starter.steps.2" />,
+            <Trans i18nKey="near.staking.flow.steps.starter.steps.0" key="StakingText0" />,
+            <Trans i18nKey="near.staking.flow.steps.starter.steps.1" key="StakingText1" />,
+            <Trans i18nKey="near.staking.flow.steps.starter.steps.2" key="StakingText2" />,
           ].map(wording => (
-            <LText semiBold>{wording}</LText>
+            <LText semiBold key={wording.key}>
+              {wording}
+            </LText>
           ))}
         />
         <View style={[styles.howStakingWorks]}>

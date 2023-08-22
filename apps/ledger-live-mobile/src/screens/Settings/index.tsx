@@ -2,7 +2,7 @@ import React, { useRef, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { View, TouchableWithoutFeedback } from "react-native";
-import { Icons } from "@ledgerhq/native-ui";
+import { IconsLegacy } from "@ledgerhq/native-ui";
 import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import Config from "react-native-config";
 import { ScreenName } from "../../const";
@@ -13,6 +13,7 @@ import { TrackScreen } from "../../analytics";
 import timer from "../../timer";
 import SettingsNavigationScrollView from "./SettingsNavigationScrollView";
 import useRatings from "../../logic/ratings";
+import useNpsRatings from "../../logic/npsRatings";
 import { SettingsNavigatorStackParamList } from "../../components/RootNavigator/types/SettingsNavigator";
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { openDebugMenu } from "../../actions/appstate";
@@ -24,7 +25,8 @@ export default function Settings({
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const hasNoAccounts = useSelector(hasNoAccountsSelector);
-  const { handleSettingsRateApp } = useRatings();
+  const { handleSettingsRateApp: handleLegacyRatingsRateApp } = useRatings();
+  const { handleSettingsRateApp: handleNpsRatingsRateApp } = useNpsRatings();
 
   const debugVisible = useSelector(isDebugMenuVisible) || Config.FORCE_DEBUG_VISIBLE;
   const count = useRef(0);
@@ -53,7 +55,7 @@ export default function Settings({
       <SettingsCard
         title={t("settings.display.title")}
         desc={t("settings.display.desc")}
-        Icon={Icons.MobileMedium}
+        Icon={IconsLegacy.MobileMedium}
         onClick={() => navigation.navigate(ScreenName.GeneralSettings)}
         arrowRight
         settingsCardTestId="general-settings-card"
@@ -62,7 +64,7 @@ export default function Settings({
         <SettingsCard
           title={t("settings.accounts.title")}
           desc={t("settings.accounts.desc")}
-          Icon={Icons.WalletMedium}
+          Icon={IconsLegacy.WalletMedium}
           onClick={() => navigation.navigate(ScreenName.AccountsSettings)}
           arrowRight
         />
@@ -70,7 +72,7 @@ export default function Settings({
       <SettingsCard
         title={t("settings.about.title")}
         desc={t("settings.about.desc")}
-        Icon={Icons.BracketsMedium}
+        Icon={IconsLegacy.BracketsMedium}
         onClick={() => navigation.navigate(ScreenName.AboutSettings)}
         arrowRight
       />
@@ -78,7 +80,7 @@ export default function Settings({
         <SettingsCard
           title={t("settings.notifications.title")}
           desc={t("settings.notifications.desc")}
-          Icon={Icons.NotificationsMedium}
+          Icon={IconsLegacy.NotificationsMedium}
           onClick={() => navigation.navigate(ScreenName.NotificationsSettings)}
           arrowRight
         />
@@ -86,14 +88,14 @@ export default function Settings({
       <SettingsCard
         title={t("settings.help.title")}
         desc={t("settings.help.desc")}
-        Icon={Icons.LifeRingMedium}
+        Icon={IconsLegacy.LifeRingMedium}
         onClick={() => navigation.navigate(ScreenName.HelpSettings)}
         arrowRight
       />
       <SettingsCard
         title={t("settings.experimental.title")}
         desc={t("settings.experimental.desc")}
-        Icon={Icons.ChartNetworkMedium}
+        Icon={IconsLegacy.ChartNetworkMedium}
         onClick={() => navigation.navigate(ScreenName.ExperimentalSettings)}
         arrowRight
       />
@@ -101,21 +103,29 @@ export default function Settings({
         <SettingsCard
           title={t("settings.about.liveReview.title")}
           desc={t("settings.about.liveReview.desc")}
-          Icon={Icons.StarMedium}
-          onClick={handleSettingsRateApp}
+          Icon={IconsLegacy.StarMedium}
+          onClick={handleLegacyRatingsRateApp}
+        />
+      </FeatureToggle>
+      <FeatureToggle feature="npsRatingsPrompt">
+        <SettingsCard
+          title={t("settings.about.liveReview.title")}
+          desc={t("settings.about.liveReview.desc")}
+          Icon={IconsLegacy.StarMedium}
+          onClick={handleNpsRatingsRateApp}
         />
       </FeatureToggle>
       <SettingsCard
         title={t("settings.developer.title")}
         desc={t("settings.developer.desc")}
-        Icon={Icons.ToolMedium}
+        Icon={IconsLegacy.ToolMedium}
         onClick={() => navigation.navigate(ScreenName.DeveloperSettings)}
       />
       {debugVisible || __DEV__ ? (
         <SettingsCard
           title="Debug"
           desc="Use at your own risk – Developer tools"
-          Icon={Icons.ToolsMedium}
+          Icon={IconsLegacy.ToolsMedium}
           onClick={() => navigation.navigate(ScreenName.DebugSettings)}
           arrowRight
         />

@@ -121,6 +121,7 @@ export enum ScreenName {
   ReceiveConnectDevice = "ReceiveConnectDevice",
   ReceiveSelectAccount = "ReceiveSelectAccount",
   ReceiveSelectCrypto = "ReceiveSelectCrypto",
+  DepositSelectNetwork = "DepositSelectNetwork",
   ReceiveVerificationConfirmation = "ReceiveVerificationConfirmation",
   ReceiveVerifyAddress = "ReceiveVerifyAddress",
   Recover = "Recover",
@@ -158,10 +159,6 @@ export enum ScreenName {
   SwapFormSelectCrypto = "SwapFormSelectCrypto",
   SwapFormSelectProviderRate = "SwapFormSelectProviderRate",
   SwapHistory = "SwapHistory",
-  SwapKYC = "KYC",
-  SwapKYCStates = "SwapKYCStates",
-  SwapLogin = "Login",
-  SwapMFA = "MFA",
   SwapOperationDetails = "SwapOperationDetails",
   SwapPendingOperation = "PendingOperation",
   SwapSelectAccount = "SelectAccount",
@@ -340,6 +337,10 @@ export enum ScreenName {
   EthereumEditGasLimit = "EthereumEditGasLimit",
   EthereumEditTransactionSummary = "EthereumEditTransactionSummary",
 
+  // Evm
+  EvmEditGasLimit = "EvmEditGasLimit",
+  EvmCustomFees = "EvmCustomFees",
+
   // Polkadot
   PolkadotBondStarted = "PolkadotBondStarted",
   PolkadotBondAmount = "PolkadotBondAmount",
@@ -422,9 +423,7 @@ export enum ScreenName {
   PlatformApp = "PlatformApp",
   PlatformStartExchange = "PlatformStartExchange",
   PlatformCompleteExchange = "PlatformCompleteExchange",
-  WalletConnectScan = "WalletConnectScan",
   WalletConnectConnect = "WalletConnectConnect",
-  WalletConnectDeeplinkingSelectAccount = "WalletConnectDeeplinkingSelectAccount",
   NotificationCenter = "NotificationCenter",
   NotificationCenterStatus = "NotificationCenterStatus",
   SignTransactionSummary = "SignTransactionSummary",
@@ -451,6 +450,20 @@ export enum ScreenName {
   LearnWebView = "LearnWebView",
   // cardano
   CardanoEditMemo = "CardanoEditMemo",
+  CardanoDelegationStarted = "CardanoDelegationStarted",
+  CardanoDelegationSummary = "CardanoDelegationSummary",
+  CardanoDelegationPoolSelect = "CardanoDelegationPoolSelect",
+  CardanoDelegationAmount = "CardanoDelegationAmount",
+  CardanoDelegationSelectDevice = "CardanoDelegationSelectDevice",
+  CardanoDelegationConnectDevice = "CardanoDelegationConnectDevice",
+  CardanoDelegationValidationError = "CardanoDelegationValidationError",
+  CardanoDelegationValidationSuccess = "CardanoDelegationValidationSuccess",
+  CardanoUndelegationSummary = "CardanoUndelegationSummary",
+  CardanoUndelegationSelectDevice = "CardanoUndelegationSelectDevice",
+  CardanoUndelegationConnectDevice = "CardanoUndelegationConnectDevice",
+  CardanoUndelegationValidationError = "CardanoUndelegationValidationError",
+  CardanoUndelegationValidationSuccess = "CardanoUndelegationValidationSuccess",
+
   // stacks
   StacksEditMemo = "StacksEditMemo",
   // hedera
@@ -581,6 +594,10 @@ export enum NavigatorName {
   CeloActivateFlow = "CeloActivateFlow",
   CeloRevokeFlow = "CeloRevokeFlow",
   CeloWithdrawFlow = "CeloWithdrawFlow",
+  // Cardano
+  CardanoEditMemo = "CardanoEditMemo",
+  CardanoDelegationFlow = "CardanoDelegationFlow",
+  CardanoUndelegationFlow = "CardanoUndelegationFlow",
   // NEAR
   NearStakingFlow = "NearStakingFlow",
   NearUnstakingFlow = "NearUnstakingFlow",

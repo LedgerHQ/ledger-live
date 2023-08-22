@@ -1,4 +1,4 @@
-import { TFunction } from "react-i18next";
+import { TFunction } from "i18next";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Operation } from "@ledgerhq/types-live";
 import { Step } from "~/renderer/components/Stepper";
@@ -10,7 +10,7 @@ import {
   TransactionStatus,
 } from "@ledgerhq/live-common/families/elrond/types";
 import { OpenModal } from "~/renderer/actions/modals";
-export type StepId = "claimRewards" | "connectDevice" | "confirmation" | "withdraw";
+export type StepId = "connectDevice" | "confirmation" | "withdraw";
 export type StepProps = {
   t: TFunction;
   transitionTo: (param: string) => void;

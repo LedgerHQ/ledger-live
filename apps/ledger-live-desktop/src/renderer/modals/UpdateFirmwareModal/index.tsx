@@ -44,11 +44,17 @@ export type StepProps = {
   nonce: number;
   setNonce: (arg0: number) => void;
   setFirmwareUpdateCompleted: (arg0: boolean) => void;
+
+  finalStepSuccessDescription?: string;
+  finalStepSuccessButtonLabel?: string;
+  finalStepSuccessButtonOnClick?: () => void;
+  shouldReloadManagerOnCloseIfUpdateRefused?: boolean;
+  deviceHasPin?: boolean;
 };
 
 export type StepId = "idCheck" | "updateMCU" | "updating" | "finish" | "resetDevice" | "restore";
 
-type Props = {
+export type Props = {
   withResetStep: boolean;
   withAppsToReinstall: boolean;
   onDrawerClose: (reinstall?: boolean) => void;

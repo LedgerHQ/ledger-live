@@ -8,8 +8,8 @@
     "@ledgerhq/native-ui": "workspace:^",
     "@ledgerhq/react-ui": "workspace:^",
     "@ledgerhq/ui-shared": "workspace:^",
-    "@playwright/test": "~1.17.0",
-    "concurrently": "^6.4.0",
+    "@playwright/test": "~1.37.0",
+    "concurrently": "^8.0.0",
     "json": "^11.0.0",
     "lint-staged": "^11.2.6"
   },

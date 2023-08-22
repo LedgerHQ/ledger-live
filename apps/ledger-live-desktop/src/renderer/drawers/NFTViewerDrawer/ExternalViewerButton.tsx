@@ -8,7 +8,7 @@ import IconExternal from "~/renderer/icons/ExternalLink";
 import useNftLinks from "~/renderer/hooks/useNftLinks";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { Account, ProtoNFT, NFTMetadata } from "@ledgerhq/types-live";
-import { Icons } from "@ledgerhq/react-ui";
+import { IconsLegacy } from "@ledgerhq/react-ui";
 
 const Separator = styled.div`
   background-color: ${p => p.theme.colors.palette.divider};
@@ -80,7 +80,7 @@ const ExternalViewerButton = ({ nft, account, metadata }: ExternalViewerButtonPr
               height: 40,
             }}
           >
-            <Icons.OthersMedium size={14} color={theme.colors.palette.text.shade50} />
+            <IconsLegacy.OthersMedium size={14} color={theme.colors.palette.text.shade50} />
           </Button>
         </Box>
       )}

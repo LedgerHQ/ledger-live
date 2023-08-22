@@ -2,7 +2,7 @@ import React from "react";
 import Alert, { AlertProps } from "./index";
 import Link from "../../cta/Link";
 import Button from "../../cta/Button";
-import { Icons } from "../../../../src/assets";
+import { IconsLegacy } from "../../../../src/assets";
 
 export default {
   title: "Messages/Alerts",
@@ -48,7 +48,7 @@ export const WithContent = (args: AlertProps) => {
             textProps={textProps}
             alwaysUnderline
             size={"small" as "small" | "medium" | "large"}
-            Icon={Icons.ExternalLinkMedium}
+            Icon={IconsLegacy.ExternalLinkMedium}
           >
             <Alert.UnderlinedText>Learn more</Alert.UnderlinedText>
           </Link>

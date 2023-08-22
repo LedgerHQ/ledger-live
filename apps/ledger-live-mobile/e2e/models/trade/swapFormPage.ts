@@ -16,32 +16,34 @@ export default class SwapFormPage {
   swapDestinationSelector = () => getElementById("swap-destination-selector");
   swapSourceInputTextbox = () => getElementById("swap-source-amount-textbox");
   exchangeButton = () => getElementById("exchange-button");
+  exchangeScrollView = () => getElementById("exchange-scrollView");
+  chooseProviderButton = () => getElementById("choose-provider-button");
   sendMaxToggle = () => getElementById("exchange-send-max-toggle");
   termsAcceptButton = () => getElementById("terms-accept-button");
   termsCloseButton = () => getElementById("terms-close-button");
 
-  async openViaDeeplink() {
-    await openDeeplink(baseLink);
+  openViaDeeplink() {
+    return openDeeplink(baseLink);
   }
 
-  async navigateToSwapForm() {
-    await tapByElement(this.swapFormTab());
+  navigateToSwapForm() {
+    return tapByElement(this.swapFormTab());
   }
 
-  async navigateToSwapHistory() {
-    await tapByElement(this.swapHistoryTab());
+  navigateToSwapHistory() {
+    return tapByElement(this.swapHistoryTab());
   }
 
-  async openSourceAccountSelector() {
-    await tapByElement(this.swapSourceSelector());
+  openSourceAccountSelector() {
+    return tapByElement(this.swapSourceSelector());
   }
 
-  async openDestinationAccountSelector() {
-    await tapByElement(this.swapDestinationSelector());
+  openDestinationAccountSelector() {
+    return tapByElement(this.swapDestinationSelector());
   }
 
-  async selectAccount(accountText: string) {
-    await tapByText(accountText);
+  selectAccount(accountText: string) {
+    return tapByText(accountText);
   }
 
   async enterSourceAmount(amount: string) {
@@ -49,11 +51,20 @@ export default class SwapFormPage {
     await typeTextByElement(this.swapSourceInputTextbox(), amount);
   }
 
-  async sendMax() {
-    await tapByElement(this.sendMaxToggle());
+  goToProviderSelection() {
+    return tapByElement(this.chooseProviderButton());
+  }
+
+  chooseProvider(providerName: string) {
+    return tapByText(providerName);
+  }
+
+  sendMax() {
+    return tapByElement(this.sendMaxToggle());
   }
 
   async startExchange() {
-    await tapByElement(this.exchangeButton());
+    await this.exchangeScrollView().scrollTo("bottom");
+    return await tapByElement(this.exchangeButton());
   }
 }

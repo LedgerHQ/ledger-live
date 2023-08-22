@@ -1,56 +1,55 @@
-import {
-  Aside,
-  Button,
-  Drawer,
-  Flex,
-  Icons,
-  InfiniteLoader,
-  Logos,
-  ProgressBar,
-} from "@ledgerhq/react-ui";
-import { Direction } from "@ledgerhq/react-ui/components/layout/Drawer/index";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { openURL } from "~/renderer/linking";
-import { urls } from "~/config/urls";
-import { Route, Switch, useHistory, useLocation } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import styled from "styled-components";
-import { useDispatch, useSelector } from "react-redux";
-import { Device } from "@ledgerhq/types-devices";
-import { languageSelector } from "~/renderer/reducers/settings";
-import { ImportYourRecoveryPhrase } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/ImportYourRecoveryPhrase";
-import { DeviceHowTo } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/DeviceHowTo";
-import { DeviceHowTo2 } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/DeviceHowTo2";
-import { PinCode } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/PinCode";
-import { PinCodeHowTo } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/PinCodeHowTo";
-import { ExistingRecoveryPhrase } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/ExistingRecoveryPhrase";
-import { RecoveryHowTo3 } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/RecoveryHowTo3";
-import { RecoveryHowTo2 } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/RecoveryHowTo2";
-import { RecoveryHowTo1 } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/RecoveryHowTo1";
-import { PairMyNano } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/PairMyNano";
-import { PinHelp } from "~/renderer/components/Onboarding/Help/PinHelp";
-import { HideRecoverySeed } from "~/renderer/components/Onboarding/Help/HideRecoverySeed";
-import { RecoverySeed } from "~/renderer/components/Onboarding/Help/RecoverySeed";
-import { HideRecoveryPhrase } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/HideRecoveryPhrase";
-import { HowToGetStarted } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/HowToGetStarted";
-import { NewRecoveryPhrase } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/NewRecoveryPhrase";
-import { GenuineCheck } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/GenuineCheck";
-import { UseRecoverySheet } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/UseRecoverySheet";
-import { QuizFailure } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/QuizFailure";
-import { QuizSuccess } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/QuizSuccess";
-import RecoveryWarning from "../../Help/RecoveryWarning";
-import { QuizzPopin } from "~/renderer/modals/OnboardingQuizz/OnboardingQuizzModal";
-import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/index";
-import { saveSettings } from "~/renderer/actions/settings";
-import { UseCase } from "../../index";
-import { track } from "~/renderer/analytics/segment";
-import { RecoverHowTo } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/RecoverHowTo";
-import { RecoverPinCodeHowTo } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/RecoverPinCodeHowTo";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import {
   usePostOnboardingPath,
   useUpsellPath,
 } from "@ledgerhq/live-common/hooks/recoverFeatueFlag";
+import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/index";
+import {
+  Aside,
+  Button,
+  Drawer,
+  Flex,
+  IconsLegacy,
+  InfiniteLoader,
+  Logos,
+  ProgressBar,
+} from "@ledgerhq/react-ui";
+import { Direction } from "@ledgerhq/react-ui/components/layout/Drawer/index";
+import { Device } from "@ledgerhq/types-devices";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useDispatch } from "react-redux";
+import { Route, Switch, useHistory, useLocation } from "react-router-dom";
+import styled from "styled-components";
+import { saveSettings } from "~/renderer/actions/settings";
+import { track } from "~/renderer/analytics/segment";
+import { HideRecoverySeed } from "~/renderer/components/Onboarding/Help/HideRecoverySeed";
+import { PinHelp } from "~/renderer/components/Onboarding/Help/PinHelp";
+import { RecoverySeed } from "~/renderer/components/Onboarding/Help/RecoverySeed";
+import { DeviceHowTo } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/DeviceHowTo";
+import { DeviceHowTo2 } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/DeviceHowTo2";
+import { ExistingRecoveryPhrase } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/ExistingRecoveryPhrase";
+import { GenuineCheck } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/GenuineCheck";
+import { HideRecoveryPhrase } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/HideRecoveryPhrase";
+import { HowToGetStarted } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/HowToGetStarted";
+import { ImportYourRecoveryPhrase } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/ImportYourRecoveryPhrase";
+import { NewRecoveryPhrase } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/NewRecoveryPhrase";
+import { PairMyNano } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/PairMyNano";
+import { PinCode } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/PinCode";
+import { PinCodeHowTo } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/PinCodeHowTo";
+import { QuizFailure } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/QuizFailure";
+import { QuizSuccess } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/QuizSuccess";
+import { RecoverHowTo } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/RecoverHowTo";
+import { RecoverPinCodeHowTo } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/RecoverPinCodeHowTo";
+import { RecoveryHowTo1 } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/RecoveryHowTo1";
+import { RecoveryHowTo2 } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/RecoveryHowTo2";
+import { RecoveryHowTo3 } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/RecoveryHowTo3";
+import { UseRecoverySheet } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/UseRecoverySheet";
+import { openURL } from "~/renderer/linking";
+import { QuizzPopin } from "~/renderer/modals/OnboardingQuizz/OnboardingQuizzModal";
+import { useDynamicUrl } from "~/renderer/terms";
+import RecoveryWarning from "../../Help/RecoveryWarning";
+import { UseCase } from "../../index";
 
 const FlowStepperContainer = styled(Flex)`
   width: 100%;
@@ -112,11 +111,9 @@ const FlowStepper: React.FC<FlowStepperProps> = ({
   handleBack,
   handleContinue,
 }) => {
-  const locale = useSelector(languageSelector) || "en";
+  const urlFaq = useDynamicUrl("faq");
 
-  const handleHelp = useCallback(() => {
-    openURL(urls.faq[locale in urls.faq ? (locale as keyof typeof urls.faq) : "en"]);
-  }, [locale]);
+  const handleHelp = () => openURL(urlFaq);
 
   const { t } = useTranslation();
 
@@ -151,7 +148,7 @@ const FlowStepper: React.FC<FlowStepperProps> = ({
               disabled={disableBack}
               variant="main"
               outline
-              Icon={() => <Icons.ArrowLeftMedium size={18} />}
+              Icon={() => <IconsLegacy.ArrowLeftMedium size={18} />}
             >
               {backLabel || t("common.back")}
             </Button>
@@ -161,7 +158,7 @@ const FlowStepper: React.FC<FlowStepperProps> = ({
               disabled={continueLoading || continueDisabled}
               variant="main"
               iconSize={18}
-              Icon={continueLoading ? InfiniteLoader : Icons.ArrowRightMedium}
+              Icon={continueLoading ? InfiniteLoader : IconsLegacy.ArrowRightMedium}
             >
               {continueLabel || t("common.continue")}
             </Button>

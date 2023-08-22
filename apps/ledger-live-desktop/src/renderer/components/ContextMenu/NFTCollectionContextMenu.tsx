@@ -6,7 +6,7 @@ import { openModal } from "~/renderer/actions/modals";
 import ContextMenuItem from "./ContextMenuItem";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { Account } from "@ledgerhq/types-live";
-import { Icons } from "@ledgerhq/react-ui";
+import { IconsLegacy } from "@ledgerhq/react-ui";
 type Props = {
   account: Account;
   collectionAddress: string;
@@ -30,7 +30,7 @@ export default function NFTCollectionContextMenu({
     {
       key: "hide",
       label: t("hideNftCollection.hideCTA"),
-      Icon: Icons.NoneMedium,
+      Icon: IconsLegacy.NoneMedium,
       callback: () =>
         dispatch(
           openModal("MODAL_HIDE_NFT_COLLECTION", {

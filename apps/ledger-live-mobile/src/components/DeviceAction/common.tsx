@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { Text, Flex, Icons, IconBadge } from "@ledgerhq/native-ui";
+import { Text, Flex, IconsLegacy, IconBadge } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { TFunction } from "react-i18next";
 import Button from "../wrappedUi/Button";
@@ -110,7 +110,7 @@ export const FirmwareUpdateDenied = ({
   return (
     <Flex alignItems="center" justifyContent="center" px={1}>
       <TrackScreen category={drawerName} type="drawer" refreshSource={false} />
-      <IconBadge iconColor="primary.c100" iconSize={32} Icon={Icons.InfoAltFillMedium} />
+      <IconBadge iconColor="primary.c100" iconSize={32} Icon={IconsLegacy.InfoAltFillMedium} />
       <Text fontSize={7} fontWeight="semiBold" textAlign="center" mt={6}>
         {t("FirmwareUpdate.updateCancelled", {
           deviceName: getDeviceModel(device.modelId).productName,
@@ -127,7 +127,7 @@ export const FirmwareUpdateDenied = ({
         event="button_clicked"
         eventProperties={{
           button: "Restart OS update",
-          screen: "Firmware update",
+          page: "Firmware update",
           drawer: drawerName,
         }}
         outline={false}
@@ -142,7 +142,7 @@ export const FirmwareUpdateDenied = ({
         event="button_clicked"
         eventProperties={{
           button: "Exit update",
-          screen: "Firmware update",
+          page: "Firmware update",
           drawer: drawerName,
         }}
         onPress={onPressQuit}
@@ -208,7 +208,7 @@ export const DeviceActionError = ({
 
   return (
     <Flex alignItems="center" justifyContent="center" px={1}>
-      <IconBadge iconColor="warning.c100" iconSize={32} Icon={Icons.WarningSolidMedium} />
+      <IconBadge iconColor="warning.c100" iconSize={32} Icon={IconsLegacy.WarningSolidMedium} />
       <Text fontSize={7} fontWeight="semiBold" textAlign="center" mt={6}>
         {errorTitle}
       </Text>

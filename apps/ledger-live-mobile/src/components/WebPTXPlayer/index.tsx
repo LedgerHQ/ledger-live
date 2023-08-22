@@ -92,9 +92,10 @@ function HeaderRight({ onClose }: { onClose?: () => void }) {
 type Props = {
   manifest: LiveAppManifest;
   inputs?: Record<string, string>;
+  disableHeader?: boolean;
 };
 
-export const WebPTXPlayer = ({ manifest, inputs }: Props) => {
+export const WebPTXPlayer = ({ manifest, inputs, disableHeader }: Props) => {
   const lastMatchingURL = useRef<string | null>(null);
 
   const webviewAPIRef = useRef<WebviewAPI>(null);
@@ -142,11 +143,11 @@ export const WebPTXPlayer = ({ manifest, inputs }: Props) => {
     }
   }, [handleHardwareBackPress]);
 
-  const onClose = () => {
+  const onClose = useCallback(() => {
     navigation.navigate(NavigatorName.Base, {
       screen: NavigatorName.Main,
     });
-  };
+  }, [navigation]);
 
   useEffect(() => {
     const handler = (e: { preventDefault: () => void }) => {
@@ -164,19 +165,21 @@ export const WebPTXPlayer = ({ manifest, inputs }: Props) => {
   }, [webviewState.canGoBack, navigation]);
 
   useEffect(() => {
-    navigation.setOptions({
-      headerRight: () => <HeaderRight onClose={onClose} />,
-      headerLeft: () =>
-        isWhitelistedDomain ? null : (
-          <BackToWhitelistedDomain
-            manifest={manifest}
-            webviewURL={webviewState.url}
-            lastMatchingURL={lastMatchingURL.current}
-          />
-        ),
-      headerTitle: () => null,
-    });
-  }, [manifest, navigation, webviewState, isWhitelistedDomain]);
+    if (!disableHeader) {
+      navigation.setOptions({
+        headerRight: () => <HeaderRight onClose={onClose} />,
+        headerLeft: () =>
+          isWhitelistedDomain ? null : (
+            <BackToWhitelistedDomain
+              manifest={manifest}
+              webviewURL={webviewState.url}
+              lastMatchingURL={lastMatchingURL.current}
+            />
+          ),
+        headerTitle: () => null,
+      });
+    }
+  }, [manifest, navigation, webviewState, isWhitelistedDomain, disableHeader, onClose]);
 
   return (
     <SafeAreaView style={[styles.root]}>

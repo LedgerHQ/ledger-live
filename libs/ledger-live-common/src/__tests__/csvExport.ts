@@ -1,5 +1,5 @@
 import "./test-helpers/staticTime";
-import { setEnv } from "../env";
+import { setEnv } from "@ledgerhq/live-env";
 import { genAccount } from "../mock/account";
 import { getCryptoCurrencyById } from "../currencies";
 import { accountsOpToCSV } from "../csvExport";

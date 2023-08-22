@@ -69,7 +69,6 @@ import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWa
 import PostBuyDeviceSetupNanoWallScreen from "../../screens/PostBuyDeviceSetupNanoWallScreen";
 import MarketDetail from "../../screens/Market/MarketDetail";
 import CurrencySettings from "../../screens/Settings/CryptoAssets/Currencies/CurrencySettings";
-import WalletConnectNavigator from "./WalletConnectNavigator";
 import WalletConnectLiveAppNavigator from "./WalletConnectLiveAppNavigator";
 import CustomImageNavigator from "./CustomImageNavigator";
 import ClaimNftNavigator from "./ClaimNftNavigator";
@@ -89,8 +88,9 @@ import {
   NavigationHeaderCloseButtonAdvanced,
 } from "../NavigationHeaderCloseButton";
 import { RedirectToRecoverStaxFlowScreen } from "../../screens/Protect/RedirectToRecoverStaxFlow";
-import { RootDrawer, RootDrawerProps } from "../RootDrawer";
+import { RootDrawer } from "../RootDrawer/RootDrawer";
 import EditTransactionNavigator from "../../families/ethereum/EditTransactionFlow/EditTransactionNavigator";
+import { DrawerProps } from "../RootDrawer/types";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
@@ -99,7 +99,7 @@ export default function BaseNavigator() {
   const route = useRoute<
     RouteProp<{
       params: {
-        drawer?: RootDrawerProps;
+        drawer?: DrawerProps;
       };
     }>
   >();
@@ -470,16 +470,17 @@ export default function BaseNavigator() {
             headerLeft: () => null,
           }}
         />
-        <Stack.Screen
-          name={NavigatorName.WalletConnect}
-          component={
-            walletConnectLiveApp?.enabled ? WalletConnectLiveAppNavigator : WalletConnectNavigator
-          }
-          options={{
-            headerShown: false,
-          }}
-          {...noNanoBuyNanoWallScreenOptions}
-        />
+        {walletConnectLiveApp?.enabled && (
+          <Stack.Screen
+            name={NavigatorName.WalletConnect}
+            component={WalletConnectLiveAppNavigator}
+            options={{
+              headerShown: false,
+            }}
+            {...noNanoBuyNanoWallScreenOptions}
+          />
+        )}
+
         <Stack.Screen
           name={NavigatorName.NotificationCenter}
           component={NotificationCenterNavigator}

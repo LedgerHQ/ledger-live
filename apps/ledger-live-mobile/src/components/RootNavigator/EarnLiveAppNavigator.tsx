@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo } from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createStackNavigator, StackNavigationProp } from "@react-navigation/stack";
+
 import { useTheme } from "styled-components/native";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { ScreenName, NavigatorName } from "../../const";
@@ -7,22 +8,21 @@ import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 
-import styles from "../../navigation/styles";
 import type { EarnLiveAppNavigatorParamList } from "./types/EarnLiveAppNavigator";
 import type { StackNavigatorNavigation, StackNavigatorProps } from "./types/helpers";
 import { EarnScreen } from "../../screens/PTX/Earn";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 import { accountsSelector } from "../../reducers/accounts";
+import { EarnInfoDrawer } from "../../screens/PTX/Earn/EarnInfoDrawer";
 
 const Stack = createStackNavigator<EarnLiveAppNavigatorParamList>();
 
 const Earn = (_props: StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenName.Earn>) => {
   // Earn dashboard feature flag
-  // TODO: update to use specific mobile feature flag
   const ptxEarn = useFeature("ptxEarn");
   const paramAction = _props.route.params?.action;
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<{ [key: string]: object | undefined }>>();
   const accounts = useSelector(accountsSelector);
   const route = useRoute();
 
@@ -86,18 +86,21 @@ const Earn = (_props: StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenN
       }
     }
     deeplinkRouting();
-  }, [paramAction, ptxEarn?.enabled]);
+  }, [paramAction, ptxEarn?.enabled, _props.route.params, accounts, navigation, route]);
 
   return (
-    <EarnScreen
-      {..._props}
-      route={{
-        ..._props.route,
-        params: {
-          platform: ptxEarn?.params?.liveAppId || "earn",
-        },
-      }}
-    />
+    <>
+      <EarnScreen
+        {..._props}
+        route={{
+          ..._props.route,
+          params: {
+            platform: ptxEarn?.params?.liveAppId || "earn",
+          },
+        }}
+      />
+      <EarnInfoDrawer />
+    </>
   );
 };
 
@@ -111,7 +114,7 @@ export default function EarnLiveAppNavigator(_props?: Record<string, unknown>) {
       <Stack.Screen
         name={ScreenName.Earn}
         options={{
-          headerStyle: styles.headerNoShadow,
+          headerShown: false,
         }}
       >
         {props => <Earn {...props} />}

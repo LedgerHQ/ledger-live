@@ -22,7 +22,8 @@ import WalletTabNavigatorScrollManager from "../WalletTab/WalletTabNavigatorScro
 import WalletTabHeader from "../WalletTab/WalletTabHeader";
 import WalletTabNavigatorTabBarDisabled from "../WalletTab/WalletTabNavigatorTabBarDisabled";
 import { WalletTabNavigatorStackParamList } from "./types/WalletTabNavigator";
-import { ScreenName } from "../../const/navigation";
+import { ScreenName, NavigatorName } from "../../const/navigation";
+import MarketNavigator from "./MarketNavigator";
 
 const WalletTab = createMaterialTopTabNavigator<WalletTabNavigatorStackParamList>();
 
@@ -34,6 +35,8 @@ const tabBarDisabledOptions = (props: MaterialTopTabBarProps) => (
 
 export default function WalletTabNavigator() {
   const walletNftGalleryFeature = useFeature("walletNftGallery");
+  const ptxEarnFeature = useFeature("ptxEarn");
+
   const dispatch = useDispatch();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const hasNoAccounts = useSelector(hasNoAccountsSelector);
@@ -84,6 +87,15 @@ export default function WalletTabNavigator() {
               component={WalletNftGallery}
               options={{
                 title: t("wallet.tabs.nft"),
+              }}
+            />
+          )}
+          {ptxEarnFeature?.enabled && (
+            <WalletTab.Screen
+              name={NavigatorName.Market}
+              component={MarketNavigator}
+              options={{
+                title: t("wallet.tabs.market"),
               }}
             />
           )}

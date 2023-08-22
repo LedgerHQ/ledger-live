@@ -1,32 +1,42 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo } from "react";
 import { FlatList, ListRenderItemInfo } from "react-native";
 import { useSelector } from "react-redux";
 
-import { Flex } from "@ledgerhq/native-ui";
+import { Button, Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { Account, AccountLike, SubAccount, TokenAccount } from "@ledgerhq/types-live";
 import { makeEmptyTokenAccount } from "@ledgerhq/live-common/account/index";
 import { flattenAccountsByCryptoCurrencyScreenSelector } from "../../reducers/accounts";
-import { ScreenName } from "../../const";
+import { NavigatorName, ScreenName } from "../../const";
 import { track, TrackScreen } from "../../analytics";
-import AccountCard from "../../components/AccountCard";
-import LText from "../../components/LText";
+
 import { ReceiveFundsStackParamList } from "../../components/RootNavigator/types/ReceiveFundsNavigator";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import AccountCard from "../../components/AccountCard";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { AccountsNavigatorParamList } from "../../components/RootNavigator/types/AccountsNavigator";
+import { useNavigation } from "@react-navigation/core";
 
 type SubAccountEnhanced = SubAccount & {
   parentAccount: Account;
   triggerCreateAccount: boolean;
 };
 
+type NavigationProps = BaseComposite<
+  StackNavigatorProps<AccountsNavigatorParamList, ScreenName.ReceiveSelectAccount>
+>;
+
 function ReceiveSelectAccount({
   navigation,
   route,
-}: StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveSelectAccount>) {
+}: StackNavigatorProps<
+  ReceiveFundsStackParamList & AccountsNavigatorParamList,
+  ScreenName.ReceiveSelectAccount
+>) {
   const currency = route?.params?.currency;
   const { t } = useTranslation();
-  const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
-
+  const navigationAccount = useNavigation<NavigationProps["navigation"]>();
+  const insets = useSafeAreaInsets();
   const accounts = useSelector(
     currency && currency.type === "CryptoCurrency"
       ? flattenAccountsByCryptoCurrencyScreenSelector(currency)
@@ -70,10 +80,10 @@ function ReceiveSelectAccount({
 
   const selectAccount = useCallback(
     (account: AccountLike) => {
-      if (!selectedAccount && currency) {
-        setSelectedAccount(account.id);
+      if (currency) {
         track("account_clicked", {
-          currency: currency.name,
+          asset: currency.name,
+          page: "Select account to deposit to",
         });
         navigation.navigate(ScreenName.ReceiveConfirmation, {
           ...route.params,
@@ -82,7 +92,7 @@ function ReceiveSelectAccount({
         });
       }
     },
-    [currency, navigation, route.params, selectedAccount],
+    [currency, navigation, route.params],
   );
 
   const renderItem = useCallback(
@@ -93,14 +103,14 @@ function ReceiveSelectAccount({
           AccountSubTitle={
             (item as SubAccountEnhanced).parentAccount ||
             (item as TokenAccount).token?.parentCurrency ? (
-              <LText color="neutral.c70">
+              <Text color="neutral.c80">
                 {
                   (
                     ((item as SubAccountEnhanced).parentAccount as Account) ||
                     (item as TokenAccount).token.parentCurrency
                   ).name
                 }
-              </LText>
+              </Text>
             ) : null
           }
           onPress={() => selectAccount(item)}
@@ -110,25 +120,46 @@ function ReceiveSelectAccount({
     [selectAccount],
   );
 
+  const createNewAccount = useCallback(() => {
+    track("button_clicked", {
+      button: "Create a new account",
+      page: "Select account to deposit to",
+    });
+    if (currency && currency.type === "TokenCurrency") {
+      navigationAccount.navigate(NavigatorName.AddAccounts, {
+        screen: undefined,
+        params: {
+          token: currency,
+        },
+      });
+    } else {
+      navigationAccount.navigate(NavigatorName.AddAccounts, {
+        screen: undefined,
+        currency,
+      });
+    }
+  }, [currency, navigationAccount]);
+
   const keyExtractor = useCallback(item => item?.id, []);
 
-  return currency && aggregatedAccounts && aggregatedAccounts.length > 1 ? (
+  return currency && aggregatedAccounts && aggregatedAccounts.length > 0 ? (
     <>
-      <TrackScreen category="ReceiveFunds" name="Receive Account Select" currency={currency.name} />
+      <TrackScreen category="Deposit" name="Select account to deposit to" asset={currency.name} />
       <Flex p={6}>
-        <LText
-          fontSize="32px"
-          fontFamily="InterMedium"
-          semiBold
+        <Text
+          variant="h4"
           testID="receive-header-step2-title"
+          fontSize="24px"
+          color="neutral.c100"
+          mb={2}
         >
           {t("transfer.receive.selectAccount.title")}
-        </LText>
-        <LText variant="body" color="neutral.c70">
+        </Text>
+        <Text variant="bodyLineHeight" color="neutral.c80">
           {t("transfer.receive.selectAccount.subtitle", {
             currencyTicker: currency.ticker,
           })}
-        </LText>
+        </Text>
       </Flex>
       <FlatList
         testID="receive-header-step2-accounts"
@@ -137,6 +168,12 @@ function ReceiveSelectAccount({
         keyExtractor={keyExtractor}
         showsVerticalScrollIndicator={false}
       />
+
+      <Flex mb={insets.bottom + 2} px={6}>
+        <Button type="shade" size="large" outline onPress={createNewAccount}>
+          {t("transfer.receive.selectAccount.cta")}
+        </Button>
+      </Flex>
     </>
   ) : null;
 }

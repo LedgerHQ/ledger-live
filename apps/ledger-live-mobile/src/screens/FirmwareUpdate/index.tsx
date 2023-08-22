@@ -1,4 +1,4 @@
-import { Image, Linking } from "react-native";
+import { Image } from "react-native";
 import { getDeviceModel } from "@ledgerhq/devices";
 import {
   updateFirmwareActionArgs,
@@ -9,7 +9,7 @@ import {
   Alert,
   Flex,
   IconBadge,
-  Icons,
+  IconsLegacy,
   Text,
   VerticalStepper,
   ItemStatus,
@@ -40,8 +40,10 @@ import {
   renderImageCommitRequested,
   renderImageLoadRequested,
 } from "../../components/DeviceAction/rendering";
-import { useUpdateFirmwareAndRestoreSettings } from "./useUpdateFirmwareAndRestoreSettings";
-import { urls } from "../../config/urls";
+import {
+  UpdateStep,
+  useUpdateFirmwareAndRestoreSettings,
+} from "./useUpdateFirmwareAndRestoreSettings";
 import { TrackScreen } from "../../analytics";
 import ImageHexProcessor from "../../components/CustomImage/ImageHexProcessor";
 import { targetDataDimensions } from "../CustomImage/shared";
@@ -50,12 +52,34 @@ import { ImageSourceContext } from "../../components/CustomImage/StaxFramedImage
 import Button from "../../components/wrappedUi/Button";
 import Link from "../../components/wrappedUi/Link";
 import { RestoreStepDenied } from "./RestoreStepDenied";
+import UpdateReleaseNotes from "./UpdateReleaseNotes";
 
-type FirmwareUpdateProps = {
+// Screens/components navigating to this screen shouldn't know the implementation fw update
+// -> re-exporting useful types.
+export type { UpdateStep };
+
+export type FirmwareUpdateProps = {
   device: Device;
   deviceInfo: DeviceInfo;
   firmwareUpdateContext: FirmwareUpdateContext;
-  onBackFromUpdate?: () => void;
+
+  /**
+   * To adapt the firmware update in case the device is starting its onboarding and it's normal it is not yet seeded.
+   * If set to true, short-circuit some steps that are unnecessary
+   */
+  isBeforeOnboarding?: boolean;
+
+  /**
+   * Called when the user leaves the firmware update screen
+   *
+   * Two possible reasons:
+   * - the update has completed
+   * - the user quits before the completion of the update
+   *
+   * @param updateState The current state of the update when the user leaves the screen
+   */
+  onBackFromUpdate?: (updateState: UpdateStep) => void;
+
   updateFirmwareAction?: (args: updateFirmwareActionArgs) => Observable<UpdateFirmwareActionState>;
 };
 
@@ -81,7 +105,7 @@ const CloseWarning = ({
   return (
     <Flex alignItems="center" justifyContent="center" px={1} mt={7}>
       <TrackScreen category="Error: update not complete yet" type="drawer" refreshSource={false} />
-      <IconBadge iconColor="warning.c100" iconSize={32} Icon={Icons.WarningSolidMedium} />
+      <IconBadge iconColor="warning.c100" iconSize={32} Icon={IconsLegacy.WarningSolidMedium} />
       <Text fontSize={24} fontWeight="semiBold" textAlign="center" mt={6}>
         {t("FirmwareUpdate.updateNotYetComplete")}
       </Text>
@@ -92,7 +116,7 @@ const CloseWarning = ({
         event="button_clicked"
         eventProperties={{
           button: "Continue update",
-          screen: "Firmware update",
+          page: "Firmware update",
           drawer: "Error: update not complete yet",
         }}
         type="main"
@@ -107,7 +131,7 @@ const CloseWarning = ({
         event="button_clicked"
         eventProperties={{
           button: "Exit update",
-          screen: "Firmware update",
+          page: "Firmware update",
           drawer: "Error: update not complete yet",
         }}
         type="default"
@@ -128,6 +152,7 @@ export const FirmwareUpdate = ({
   firmwareUpdateContext,
   onBackFromUpdate,
   updateFirmwareAction,
+  isBeforeOnboarding = false,
 }: FirmwareUpdateProps) => {
   const navigation = useNavigation();
   const { t } = useTranslation();
@@ -135,23 +160,12 @@ export const FirmwareUpdate = ({
   const theme: "dark" | "light" = dark ? "dark" : "light";
   const dispatch = useDispatch();
 
-  const quitUpdate = useCallback(() => {
-    if (onBackFromUpdate) {
-      onBackFromUpdate();
-    } else {
-      navigation.goBack();
-    }
-  }, [navigation, onBackFromUpdate]);
-
-  const onOpenReleaseNotes = useCallback(() => {
-    Linking.openURL(urls.fwUpdateReleaseNotes[device.modelId]);
-  }, [device.modelId]);
-
   const productName = getDeviceModel(device.modelId).productName;
 
   const [fullUpdateComplete, setFullUpdateComplete] = useState(false);
 
   const {
+    startUpdate,
     connectManagerState,
     updateActionState,
     updateStep,
@@ -162,13 +176,15 @@ export const FirmwareUpdate = ({
     restoreAppsState,
     noOfAppsToReinstall,
     deviceLockedOrUnresponsive,
-    hasReconnectErrors,
     restoreStepDeniedError,
+    hasReconnectErrors,
+    userSolvableError,
     skipCurrentRestoreStep,
   } = useUpdateFirmwareAndRestoreSettings({
     updateFirmwareAction,
     device,
     deviceInfo,
+    isBeforeOnboarding,
   });
 
   const [staxImageSource, setStaxImageSource] =
@@ -182,6 +198,14 @@ export const FirmwareUpdate = ({
     }),
     [staxImageSource],
   );
+
+  const quitUpdate = useCallback(() => {
+    if (onBackFromUpdate) {
+      onBackFromUpdate(updateStep);
+    } else {
+      navigation.goBack();
+    }
+  }, [navigation, onBackFromUpdate, updateStep]);
 
   useEffect(() => {
     if (updateStep === "completed") {
@@ -277,16 +301,22 @@ export const FirmwareUpdate = ({
     () => ({
       prepareUpdate: {
         status: ItemStatus.inactive,
-        title: t("FirmwareUpdate.steps.prepareUpdate.titleBackingUp"),
+        title: isBeforeOnboarding
+          ? t("FirmwareUpdate.steps.prepareUpdate.earlySecurityCheck.titlePreparingUpdate")
+          : t("FirmwareUpdate.steps.prepareUpdate.titleBackingUp"),
         renderBody: () => (
           <>
             <TrackScreen
               category={`Update ${productName} - Step 1: preparing updates for install`}
             />
             <Text color="neutral.c80">
-              {t("FirmwareUpdate.steps.prepareUpdate.description", {
-                deviceName: productName,
-              })}
+              {isBeforeOnboarding
+                ? t("FirmwareUpdate.steps.prepareUpdate.earlySecurityCheck.description", {
+                    deviceName: productName,
+                  })
+                : t("FirmwareUpdate.steps.prepareUpdate.description", {
+                    deviceName: productName,
+                  })}
             </Text>
           </>
         ),
@@ -310,17 +340,23 @@ export const FirmwareUpdate = ({
       },
       restoreAppsAndSettings: {
         status: ItemStatus.inactive,
-        title: t("FirmwareUpdate.steps.restoreSettings.titleInactive"),
+        title: isBeforeOnboarding
+          ? t("FirmwareUpdate.steps.restoreSettings.earlySecurityCheck.titleInactive")
+          : t("FirmwareUpdate.steps.restoreSettings.titleInactive"),
         renderBody: () => (
           <Flex>
             <TrackScreen category={`Update ${productName} - Step 3: restore apps and settings`} />
-            <Text color="neutral.c80">{t("FirmwareUpdate.steps.restoreSettings.description")}</Text>
+            <Text color="neutral.c80">
+              {isBeforeOnboarding
+                ? t("FirmwareUpdate.steps.restoreSettings.earlySecurityCheck.description")
+                : t("FirmwareUpdate.steps.restoreSettings.description")}
+            </Text>
             {restoreSteps.length > 0 && <VerticalStepper nested steps={restoreSteps} />}
           </Flex>
         ),
       },
     }),
-    [t, productName, restoreSteps],
+    [t, isBeforeOnboarding, productName, restoreSteps],
   );
 
   useEffect(() => {
@@ -357,7 +393,7 @@ export const FirmwareUpdate = ({
               setIsCloseWarningOpen(true);
             }
           }}
-          Icon={Icons.CloseMedium}
+          Icon={IconsLegacy.CloseMedium}
         />
       ),
     });
@@ -457,94 +493,6 @@ export const FirmwareUpdate = ({
   ]);
 
   const deviceInteractionDisplay = useMemo(() => {
-    const error = updateActionState.error;
-
-    // a TransportRaceCondition error is to be expected since we chain multiple
-    // device actions that use different transport acquisition paradigms
-    // the action should, however, retry to execute and resolve the error by itself
-    // no need to present the error to the user
-    if (
-      error &&
-      !["TransportRaceCondition", "LockedDeviceError", "UnresponsiveDeviceError"].includes(
-        error.name,
-      )
-    ) {
-      return (
-        <DeviceActionError
-          device={device}
-          t={t}
-          errorName={error.name}
-          translationContext="FirmwareUpdate"
-        >
-          <TrackScreen category={`Error: ${error.name}`} refreshSource={false} type="drawer" />
-          <Button
-            event="button_clicked"
-            eventProperties={{
-              button: "Retry flow",
-              screen: "Firmware update",
-              drawer: `Error: ${error.name}`,
-            }}
-            type="main"
-            outline={false}
-            onPress={retryCurrentStep}
-            my={6}
-            alignSelf="stretch"
-          >
-            {t("common.retry")}
-          </Button>
-          <Flex mt={7} alignSelf="stretch">
-            <Link
-              event="button_clicked"
-              eventProperties={{
-                button: "Quit flow",
-                screen: "Firmware update",
-                drawer: `Error: ${error.name}`,
-              }}
-              type="main"
-              onPress={quitUpdate}
-            >
-              {t("FirmwareUpdate.quitUpdate")}
-            </Link>
-          </Flex>
-        </DeviceActionError>
-      );
-    }
-
-    switch (updateActionState.step) {
-      case "allowSecureChannelRequested":
-        return <AllowManager device={device} wording={t("DeviceAction.allowSecureConnection")} />;
-      case "installOsuDevicePermissionRequested":
-        return (
-          <ConfirmFirmwareUpdate
-            device={device}
-            newFirmwareVersion={firmwareUpdateContext.final.name}
-            t={t}
-          />
-        );
-      case "installOsuDevicePermissionDenied":
-        return (
-          <FirmwareUpdateDenied
-            device={device}
-            newFirmwareVersion={firmwareUpdateContext.final.name}
-            onPressRestart={retryCurrentStep}
-            onPressQuit={quitUpdate}
-            t={t}
-          />
-        );
-      case "installOsuDevicePermissionGranted":
-        if (!firmwareUpdateContext.shouldFlashMCU) {
-          return <FinishFirmwareUpdate device={device} t={t} />;
-        }
-        break;
-      case "flashingMcu":
-        if (updateActionState.progress === 1) {
-          return <FinishFirmwareUpdate device={device} t={t} />;
-        }
-        break;
-      default:
-        break;
-    }
-
     if (deviceLockedOrUnresponsive || hasReconnectErrors) {
       return (
         <Flex>
@@ -625,11 +573,91 @@ export const FirmwareUpdate = ({
       );
     }
 
+    if (userSolvableError) {
+      return (
+        <DeviceActionError
+          device={device}
+          t={t}
+          errorName={userSolvableError.name}
+          translationContext="FirmwareUpdate"
+        >
+          <TrackScreen
+            category={`Error: ${userSolvableError.name}`}
+            refreshSource={false}
+            type="drawer"
+          />
+          <Button
+            event="button_clicked"
+            eventProperties={{
+              button: "Retry flow",
+              page: "Firmware update",
+              drawer: `Error: ${userSolvableError.name}`,
+            }}
+            type="main"
+            outline={false}
+            onPress={retryCurrentStep}
+            my={6}
+            alignSelf="stretch"
+          >
+            {t("common.retry")}
+          </Button>
+          <Flex mt={7} alignSelf="stretch">
+            <Link
+              event="button_clicked"
+              eventProperties={{
+                button: "Quit flow",
+                page: "Firmware update",
+                drawer: `Error: ${userSolvableError.name}`,
+              }}
+              type="main"
+              onPress={quitUpdate}
+            >
+              {t("FirmwareUpdate.quitUpdate")}
+            </Link>
+          </Flex>
+        </DeviceActionError>
+      );
+    }
+
+    switch (updateActionState.step) {
+      case "allowSecureChannelRequested":
+        return <AllowManager device={device} wording={t("DeviceAction.allowSecureConnection")} />;
+      case "installOsuDevicePermissionRequested":
+        return (
+          <ConfirmFirmwareUpdate
+            device={device}
+            newFirmwareVersion={firmwareUpdateContext.final.name}
+            t={t}
+          />
+        );
+      case "installOsuDevicePermissionDenied":
+        return (
+          <FirmwareUpdateDenied
+            device={device}
+            newFirmwareVersion={firmwareUpdateContext.final.name}
+            onPressRestart={retryCurrentStep}
+            onPressQuit={quitUpdate}
+            t={t}
+          />
+        );
+      case "installOsuDevicePermissionGranted":
+        // If the device is not yet onboarded, there is no PIN code: no need to display this content
+        if (!firmwareUpdateContext.shouldFlashMCU && !isBeforeOnboarding) {
+          return <FinishFirmwareUpdate device={device} t={t} />;
+        }
+        break;
+      case "flashingMcu":
+        // If the device is not yet onboarded, there is no PIN code: no need to display this content
+        if (updateActionState.progress === 1 && !isBeforeOnboarding) {
+          return <FinishFirmwareUpdate device={device} t={t} />;
+        }
+        break;
+      default:
+        break;
+    }
+
     return undefined;
   }, [
-    updateActionState.error,
-    updateActionState.step,
-    updateActionState.progress,
     deviceLockedOrUnresponsive,
     hasReconnectErrors,
     staxLoadImageState.imageLoadRequested,
@@ -638,26 +666,35 @@ export const FirmwareUpdate = ({
     connectManagerState.allowManagerRequestedWording,
     installLanguageState.languageInstallationRequested,
     restoreStepDeniedError,
-    device,
+    userSolvableError,
+    updateActionState.step,
+    updateActionState.progress,
     t,
+    device,
+    theme,
     retryCurrentStep,
     quitUpdate,
-    firmwareUpdateContext.final.name,
-    firmwareUpdateContext.shouldFlashMCU,
-    theme,
     productName,
     skipCurrentRestoreStep,
+    firmwareUpdateContext.final.name,
+    firmwareUpdateContext.shouldFlashMCU,
+    isBeforeOnboarding,
   ]);
 
   return (
     <>
-      {fullUpdateComplete ? (
+      {updateStep === "start" ? (
+        <UpdateReleaseNotes
+          onContinue={startUpdate}
+          firmwareNotes={firmwareUpdateContext.osu?.notes}
+        />
+      ) : fullUpdateComplete ? (
         <Flex flex={1} px={7} pb={7}>
           <TrackScreen category={`${productName} OS successfully updated`} />
           <Flex flex={1} justifyContent="center" alignItems="center">
             <Flex mb={7}>
               <IconBadge
-                Icon={Icons.CheckAloneMedium}
+                Icon={IconsLegacy.CheckAloneMedium}
                 iconColor="success.c50"
                 iconSize={32}
                 backgroundColor="neutral.c20"
@@ -675,9 +712,6 @@ export const FirmwareUpdate = ({
           <Flex>
             <Button type="main" outline={false} onPress={quitUpdate}>
               {t("FirmwareUpdate.finishUpdateCTA")}
-            </Button>
-            <Button type="default" mt={5} mb={9} outline={false} onPress={onOpenReleaseNotes}>
-              {t("FirmwareUpdate.viewUpdateChangelog")}
             </Button>
           </Flex>
         </Flex>
@@ -747,6 +781,7 @@ const FirmwareUpdateScreen = () => {
         device={params.device}
         firmwareUpdateContext={params.firmwareUpdateContext}
         onBackFromUpdate={params.onBackFromUpdate}
+        isBeforeOnboarding={params.isBeforeOnboarding}
       />
     </Flex>
   );

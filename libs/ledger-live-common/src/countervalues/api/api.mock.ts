@@ -1,5 +1,5 @@
 import type { CounterValuesAPI } from "../types";
-import { getEnv } from "../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import { getBTCValues, BTCtoUSD, referenceSnapshotDate } from "../mock";
 import { formatPerGranularity } from "../helpers";
 import Prando from "prando";

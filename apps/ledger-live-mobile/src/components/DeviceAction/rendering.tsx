@@ -10,8 +10,17 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import firmwareUpdateRepair from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
 import { getProviderName, getNoticeType } from "@ledgerhq/live-common/exchange/swap/utils/index";
-import { InfiniteLoader, Text, Flex, Tag, Icons, BoxedIcon, Log } from "@ledgerhq/native-ui";
-import { LockAltMedium, DownloadMedium } from "@ledgerhq/native-ui/assets/icons";
+import {
+  InfiniteLoader,
+  Text,
+  Flex,
+  Tag,
+  IconsLegacy,
+  BoxedIcon,
+  Log,
+  Icons,
+} from "@ledgerhq/native-ui";
+import { DownloadMedium } from "@ledgerhq/native-ui/assets/icons";
 import BigNumber from "bignumber.js";
 import { ExchangeRate, Exchange } from "@ledgerhq/live-common/exchange/swap/types";
 import {
@@ -420,7 +429,7 @@ export function renderAllowLanguageInstallation({
             deviceName,
           })}
       </Text>
-      <AnimationContainer>
+      <AnimationContainer my={8}>
         <Animation
           source={getDeviceAnimation({ device, key, theme })}
           style={animationStyles(device.modelId)}
@@ -568,8 +577,16 @@ export function renderLockedDeviceError({
   return (
     <Wrapper>
       <Flex flexDirection="column" alignItems="center" alignSelf="stretch">
-        <Flex mb={5}>
-          <BoxedIcon size={64} Icon={LockAltMedium} iconSize={24} iconColor="neutral.c100" />
+        <Flex mb={7}>
+          <BoxedIcon
+            Icon={Icons.InformationFill}
+            backgroundColor={"opacityDefault.c05"}
+            size={64}
+            variant="circle"
+            borderColor="transparent"
+            iconSize={"L"}
+            iconColor="primary.c80"
+          />
         </Flex>
 
         <Text variant="h4" fontWeight="semiBold" textAlign="center" numberOfLines={3} mb={6}>
@@ -608,6 +625,7 @@ export function renderError({
   iconColor,
   device,
   hasExportLogButton,
+  renderedInType = "view",
 }: RawProps & {
   navigation?: StackNavigationProp<ParamListBase>;
   error: Error;
@@ -617,6 +635,13 @@ export function renderError({
   iconColor?: string;
   device?: Device;
   hasExportLogButton?: boolean;
+  /*
+   * Used when rendering a Bluetooth disabled error
+   *
+   * If "drawer", the component will be rendered as a content to be rendered in a drawer.
+   * If "view", the component will be rendered as a view. Defaults to "view".
+   */
+  renderedInType?: "drawer" | "view";
 }) {
   const onPress = () => {
     if (managerAppName && navigation) {
@@ -654,6 +679,7 @@ export function renderError({
         Icon={Icon}
         iconColor={iconColor}
         hasExportLogButton={hasExportLogButton}
+        renderedInType={renderedInType}
       >
         {showRetryIfAvailable && (onRetry || managerAppName) ? (
           <ActionContainer marginBottom={0} marginTop={32}>
@@ -780,7 +806,7 @@ export function renderDeviceNotOnboarded({
   return (
     <Wrapper>
       <Flex backgroundColor="neutral.c30" p={16} borderRadius={999}>
-        <Icons.InfoAltFillMedium color="primary.c80" size={28} />
+        <IconsLegacy.InfoAltFillMedium color="primary.c80" size={28} />
       </Flex>
       <Text variant="h4" textAlign="center" mt={6}>
         {t("DeviceAction.deviceNotOnboarded.title")}
@@ -842,7 +868,7 @@ export function renderConnectYourDevice({
         <ConnectDeviceExtraContentWrapper>
           <ExternalLink
             text={t("DeviceAction.useAnotherDevice")}
-            Icon={Icons.ArrowRightMedium}
+            Icon={IconsLegacy.ArrowRightMedium}
             onPress={onSelectDeviceLink}
           />
         </ConnectDeviceExtraContentWrapper>
@@ -864,7 +890,9 @@ export function renderLoading({
       <SpinnerContainer>
         <InfiniteLoader />
       </SpinnerContainer>
-      <CenteredText>{description ?? t("DeviceAction.loading")}</CenteredText>
+      <CenteredText testID="device-action-loading">
+        {description ?? t("DeviceAction.loading")}
+      </CenteredText>
       {lockModal ? <ModalLock /> : null}
     </Wrapper>
   );
@@ -961,7 +989,7 @@ export function renderWarningOutdated({
     <Wrapper>
       <IconContainer>
         <Circle size={60} bg={lighten(colors.yellow, 0.4)}>
-          <Icons.WarningMedium size={28} color={colors.yellow} />
+          <IconsLegacy.WarningMedium size={28} color={colors.yellow} />
         </Circle>
       </IconContainer>
       <TitleText>{t("DeviceAction.outdated")}</TitleText>

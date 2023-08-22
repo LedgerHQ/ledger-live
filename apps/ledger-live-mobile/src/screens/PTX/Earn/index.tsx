@@ -8,13 +8,17 @@ import { useTheme } from "styled-components/native";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import TrackScreen from "../../../analytics/TrackScreen";
 import GenericErrorView from "../../../components/GenericErrorView";
-import { useLocale } from "../../../context/Locale";
 import { WebPTXPlayer } from "../../../components/WebPTXPlayer";
 import { EarnLiveAppNavigatorParamList } from "../../../components/RootNavigator/types/EarnLiveAppNavigator";
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import { ScreenName } from "../../../const";
-import { counterValueCurrencySelector, discreetModeSelector } from "../../../reducers/settings";
+import {
+  counterValueCurrencySelector,
+  discreetModeSelector,
+  languageSelector,
+} from "../../../reducers/settings";
 import { useSelector } from "react-redux";
+import { TAB_BAR_HEIGHT } from "../../../components/TabBar/shared";
 
 export type Props = StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenName.Earn>;
 
@@ -23,7 +27,7 @@ const DEFAULT_EARN_APP_ID = "earn";
 
 export function EarnScreen({ route }: Props) {
   const { theme } = useTheme();
-  const { locale } = useLocale();
+  const language = useSelector(languageSelector);
   const { ticker: currencyTicker } = useSelector(counterValueCurrencySelector);
   const discreet = useSelector(discreetModeSelector);
 
@@ -38,20 +42,29 @@ export function EarnScreen({ route }: Props) {
   const manifest = localManifest || remoteManifest;
 
   return manifest ? (
-    <>
+    <Flex
+      /**
+       * NB: not using SafeAreaView because it flickers during navigation
+       * https://github.com/th3rdwave/react-native-safe-area-context/issues/219
+       */
+      flex={1}
+      mb={TAB_BAR_HEIGHT}
+    >
       <TrackScreen category="EarnDashboard" name="Earn" />
       <WebPTXPlayer
         manifest={manifest}
+        disableHeader
         inputs={{
           theme,
-          lang: locale,
+          lang: language,
+          locale: language, // LLM doesn't support different locales. By doing this we don't have to have specific LLM/LLD logic in earn, and in future if LLM supports locales we will change this from `language` to `locale`
           currencyTicker,
           discreetMode: discreet ? "true" : "false",
           ...params,
           ...Object.fromEntries(searchParams.entries()),
         }}
       />
-    </>
+    </Flex>
   ) : (
     <Flex flex={1} p={10} justifyContent="center" alignItems="center">
       {remoteLiveAppState.isLoading ? (

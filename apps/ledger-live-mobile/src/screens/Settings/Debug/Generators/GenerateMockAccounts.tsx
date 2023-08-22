@@ -1,7 +1,7 @@
 import React from "react";
 import sample from "lodash/sample";
 import { Alert } from "react-native";
-import { Icons } from "@ledgerhq/native-ui";
+import { IconsLegacy } from "@ledgerhq/native-ui";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
 import { listSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 import SettingsRow from "../../../../components/SettingsRow";
@@ -37,7 +37,7 @@ export default function GenerateMockAccountsButton({
     <SettingsRow
       title={title}
       desc={desc}
-      iconLeft={<Icons.LayersMedium size={24} color="black" />}
+      iconLeft={<IconsLegacy.LayersMedium size={24} color="black" />}
       onPress={() => {
         Alert.alert(
           "This will erase existing accounts",

@@ -30,6 +30,7 @@ export const LanguageInstallTimeout = createCustomErrorClass("LanguageInstallTim
 
 export const DeviceOnboarded = createCustomErrorClass("DeviceOnboarded");
 export const DeviceNotOnboarded = createCustomErrorClass("DeviceNotOnboarded");
+export const DeviceAlreadySetup = createCustomErrorClass("DeviceAlreadySetup");
 export const InvalidAddressBecauseAlreadyDelegated = createCustomErrorClass(
   "InvalidAddressBecauseAlreadyDelegated",
 );
@@ -117,9 +118,6 @@ export const SwapExchangeRateAmountTooHigh = createCustomErrorClass(
 export const SwapExchangeRateAmountTooLowOrTooHigh = createCustomErrorClass(
   "SwapExchangeRateAmountTooLowOrTooHigh",
 );
-export const SwapCheckKYCStatusFailed = createCustomErrorClass("SwapCheckKYCStatusFailed");
-
-export const SwapSubmitKYCFailed = createCustomErrorClass("SwapSubmitKYCFailed");
 
 export const SwapGenericAPIError = createCustomErrorClass("SwapGenericAPIError");
 

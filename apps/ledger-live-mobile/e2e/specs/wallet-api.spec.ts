@@ -1,14 +1,14 @@
-import { by, device, web } from "detox"; // this is because we need to use both the jest expect and the detox.expect version, which has some different assertions
+import { by, web } from "detox"; // this is because we need to use both the jest expect and the detox.expect version, which has some different assertions
 import { loadConfig } from "../bridge/server";
 import { isAndroid } from "../helpers";
 import PortfolioPage from "../models/wallet/portfolioPage";
-import DiscoveryPage from "../models/discovery/discoveryPage";
+import DiscoverPage from "../models/discover/discoverPage";
 import LiveAppWebview from "../models/liveApps/liveAppWebview";
 import CryptoDrawer from "../models/liveApps/cryptoDrawer";
 import { stopDummyServer } from "@ledgerhq/test-utils";
 
 let portfolioPage: PortfolioPage;
-let discoverPage: DiscoveryPage;
+let discoverPage: DiscoverPage;
 let liveAppWebview: LiveAppWebview;
 let cryptoDrawer: CryptoDrawer;
 
@@ -17,13 +17,11 @@ let continueTest: boolean;
 describe("Wallet API methods", () => {
   beforeAll(async () => {
     portfolioPage = new PortfolioPage();
-    discoverPage = new DiscoveryPage();
+    discoverPage = new DiscoverPage();
     liveAppWebview = new LiveAppWebview();
     cryptoDrawer = new CryptoDrawer();
 
-    await device.reverseTcpPort(52619); // To allow the android emulator to access the dummy app
     // Check that dummy app in tests/utils/dummy-app-build has been started successfully
-
     continueTest = await liveAppWebview.startLiveApp("dummy-wallet-app", 52619);
 
     if (!continueTest || !isAndroid()) {

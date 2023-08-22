@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-exchange",
-  "version": "0.2.1",
+  "version": "0.2.3",
   "description": "Ledger Hardware Wallet Cosmos Application API",
   "keywords": [
     "Ledger",
@@ -27,7 +27,7 @@
   "dependencies": {
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
-    "bignumber.js": "^9.1.0",
+    "bignumber.js": "^9.1.1",
     "invariant": "^2.2.2"
   },
   "devDependencies": {

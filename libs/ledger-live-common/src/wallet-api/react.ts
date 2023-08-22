@@ -40,7 +40,7 @@ import {
   signTransactionLogic,
 } from "./logic";
 import { getAccountBridge } from "../bridge";
-import { getEnv } from "../env";
+import { getEnv } from "@ledgerhq/live-env";
 import openTransportAsSubject, { BidirectionalEvent } from "../hw/openTransportAsSubject";
 import { AppResult } from "../hw/actions/app";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
@@ -151,6 +151,11 @@ export interface UiHook {
     optimisticOperation: Operation,
   ) => void;
   "device.transport": (params: {
+    appName: string | undefined;
+    onSuccess: (result: AppResult) => void;
+    onCancel: () => void;
+  }) => void;
+  "device.select": (params: {
     appName: string | undefined;
     onSuccess: (result: AppResult) => void;
     onCancel: () => void;
@@ -275,6 +280,7 @@ export function useWalletAPIServer({
     "transaction.sign": uiTxSign,
     "transaction.broadcast": uiTxBroadcast,
     "device.transport": uiDeviceTransport,
+    "device.select": uiDeviceSelect,
     "exchange.start": uiExchangeStart,
     "exchange.complete": uiExchangeComplete,
   },
@@ -408,7 +414,7 @@ export function useWalletAPIServer({
               },
               onCancel: () => {
                 tracking.signMessageFail(manifest);
-                reject(UserRefusedOnDevice());
+                reject(new UserRefusedOnDevice());
               },
               onError: error => {
                 tracking.signMessageFail(manifest);
@@ -585,6 +591,64 @@ export function useWalletAPIServer({
         }),
     );
   }, [device, manifest, server, tracking, uiDeviceTransport]);
+
+  useEffect(() => {
+    if (!uiDeviceSelect) return;
+
+    server.setHandler(
+      "device.select",
+      ({ appName, appVersionRange, devices }) =>
+        new Promise((resolve, reject) => {
+          if (device.ref.current) {
+            return reject(new Error("Device already opened"));
+          }
+
+          tracking.deviceSelectRequested(manifest);
+
+          return uiDeviceSelect({
+            appName,
+            onSuccess: ({ device: deviceParam, appAndVersion }) => {
+              tracking.deviceSelectSuccess(manifest);
+
+              if (!deviceParam) {
+                reject(new Error("No device"));
+                return;
+              }
+              if (devices && !devices.includes(deviceParam.modelId)) {
+                reject(new Error("Device not in the devices list"));
+                return;
+              }
+              if (
+                appVersionRange &&
+                appAndVersion &&
+                semver.satisfies(appAndVersion.version, appVersionRange)
+              ) {
+                reject(new Error("App version doesn't satisfies the range"));
+                return;
+              }
+              resolve(deviceParam.deviceId);
+            },
+            onCancel: () => {
+              tracking.deviceSelectFail(manifest);
+              reject(new Error("User cancelled"));
+            },
+          });
+        }),
+    );
+  }, [device.ref, manifest, server, tracking, uiDeviceSelect]);
+
+  useEffect(() => {
+    server.setHandler("device.open", params => {
+      if (device.ref.current) {
+        return Promise.reject(new Error("Device already opened"));
+      }
+
+      tracking.deviceOpenRequested(manifest);
+
+      device.subscribe(params.deviceId);
+      return "1";
+    });
+  }, [device, manifest, server, tracking]);
 
   useEffect(() => {
     server.setHandler("device.exchange", params => {

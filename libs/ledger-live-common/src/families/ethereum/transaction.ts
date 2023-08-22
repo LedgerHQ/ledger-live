@@ -19,7 +19,7 @@ import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
-import { getEnv } from "../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import { ModeModule, modes } from "./modules";
 import { fromRangeRaw, toRangeRaw } from "../../range";
 import { getDefaultFeeUnit } from "./logic";

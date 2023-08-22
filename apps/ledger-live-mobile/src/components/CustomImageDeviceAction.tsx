@@ -1,12 +1,10 @@
 import React, { ComponentProps, useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Image } from "react-native";
-import { Flex, Icons } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import withRemountableWrapper from "@ledgerhq/live-common/hoc/withRemountableWrapper";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { createAction } from "@ledgerhq/live-common/hw/actions/staxLoadImage";
-import loadImage from "@ledgerhq/live-common/hw/staxLoadImage";
 import { ImageLoadRefusedOnDevice, ImageCommitRefusedOnDevice } from "@ledgerhq/live-common/errors";
 import { setLastSeenCustomImage, clearLastSeenCustomImage } from "../actions/settings";
 import { DeviceActionDefaultRendering } from "./DeviceAction";
@@ -16,6 +14,7 @@ import CustomImageBottomModal from "./CustomImage/CustomImageBottomModal";
 import Button from "./wrappedUi/Button";
 import Link from "./wrappedUi/Link";
 import { screen, TrackScreen } from "../analytics";
+import { useStaxLoadImageDeviceAction } from "../hooks/deviceActions";
 
 type Props = {
   device: Device;
@@ -36,7 +35,6 @@ const analyticsRefusedOnStaxDoThisLaterEventProps = {
 const analyticsErrorTryAgainEventProps = {
   button: "Try again",
 };
-const action = createAction(loadImage);
 
 const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
   device,
@@ -47,6 +45,7 @@ const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
   source,
   remountMe,
 }) => {
+  const action = useStaxLoadImageDeviceAction();
   const commandRequest = useMemo(() => ({ hexImage }), [hexImage]);
 
   const { t } = useTranslation();
@@ -115,7 +114,7 @@ const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
               error,
               device,
               ...(isRefusedOnStaxError
-                ? { Icon: Icons.CircledAlertMedium, iconColor: "warning.c50" }
+                ? { Icon: IconsLegacy.CircledAlertMedium, iconColor: "warning.c50" }
                 : {}),
             })}
             {}

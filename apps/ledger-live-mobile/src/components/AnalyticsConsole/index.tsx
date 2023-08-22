@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { StyleSheet, Pressable } from "react-native";
-import { Flex, Switch, Icons, Divider, Alert, Text } from "@ledgerhq/native-ui";
+import { Flex, Switch, IconsLegacy, Divider, Alert, Text } from "@ledgerhq/native-ui";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
@@ -96,7 +96,7 @@ const AnalyticsConsole = () => {
                     label="Extra props"
                   />
                   <Pressable onPress={handleClose}>
-                    <Icons.CloseMedium size={25} color="black" />
+                    <IconsLegacy.CloseMedium size={25} color="black" />
                   </Pressable>
                 </Flex>
                 <Flex>
@@ -122,7 +122,11 @@ const AnalyticsConsole = () => {
             ) : null}
           </AnimatedFlex>
           <AnimatedFlex flexShrink={1} layout={Layout}>
-            <EventList showExtraProps={showExtraProps} hideSyncEvents={hideSyncEvents} />
+            <EventList
+              hidden={visibility === Visibility.hidden}
+              showExtraProps={showExtraProps}
+              hideSyncEvents={hideSyncEvents}
+            />
           </AnimatedFlex>
         </SafeAreaView>
       </Flex>
@@ -138,7 +142,7 @@ const AnalyticsConsole = () => {
       >
         <Alert showIcon={false} title={`Analytics console: ${visibility}`} />
       </AnimatedFlex>
-      <FloatingDebugButton onPress={onPressDebugButton} Icon={Icons.ActivityMedium} />
+      <FloatingDebugButton onPress={onPressDebugButton} Icon={IconsLegacy.ActivityMedium} />
     </>
   );
 };
