@@ -2166,8 +2166,8 @@ importers:
         specifier: ^5.1.0
         version: 5.1.0
       near-api-js:
-        specifier: ^0.44.2
-        version: 0.44.2
+        specifier: ^0.45.0
+        version: 0.45.0
       numeral:
         specifier: ^2.0.6
         version: 2.0.6
@@ -2875,8 +2875,8 @@ importers:
         specifier: workspace:^
         version: link:../hw-transport
       near-api-js:
-        specifier: ^0.44.2
-        version: 0.44.2
+        specifier: ^0.45.0
+        version: 0.45.0
     devDependencies:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
@@ -28972,14 +28972,6 @@ packages:
       readable-stream: 3.6.2
     dev: false
 
-  /borsh@0.6.0:
-    resolution: {integrity: sha512-sl5k89ViqsThXQpYa9XDtz1sBl3l1lI313cFUY1HKr+wvMILnb+58xpkqTNrYbelh99dY7K8usxoCusQmqix9Q==}
-    dependencies:
-      bn.js: 5.2.1
-      bs58: 4.0.1
-      text-encoding-utf-8: 1.0.2
-    dev: false
-
   /borsh@0.7.0:
     resolution: {integrity: sha512-CLCsZGIBCFnPtkNnieW/a8wmreDmfUtjU2m9yHrzPXIlNbqVs0AQrSatSG6vdNYUqdc83tkQi2eHfF98ubzQLA==}
     dependencies:
@@ -48066,11 +48058,11 @@ packages:
     requiresBuild: true
     optional: true
 
-  /near-api-js@0.44.2:
-    resolution: {integrity: sha512-eMnc4V+geggapEUa3nU2p8HSHn/njtloI4P2mceHQWO8vDE1NGpnAw8FuTBrLmXSgIv9m6oocgFc9t3VNf5zwg==}
+  /near-api-js@0.45.0:
+    resolution: {integrity: sha512-70mUYc7inh2mgRO1FGVE/gcDtsm3Vh0O2xCpg4+hyXZ9ETGwe5DBwfbhSYBbQoRqG4HVuTGioEyaSyRxnZvFgg==}
     dependencies:
       bn.js: 5.2.0
-      borsh: 0.6.0
+      borsh: 0.7.0
       bs58: 4.0.1
       depd: 2.0.0
       error-polyfill: 0.1.3

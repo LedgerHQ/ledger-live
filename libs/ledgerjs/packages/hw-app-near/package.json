@@ -29,7 +29,7 @@
   "dependencies": {
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
-    "near-api-js": "^0.44.2"
+    "near-api-js": "^0.45.0"
   },
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "workspace:^",
