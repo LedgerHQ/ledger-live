@@ -33,5 +33,5 @@ jobs:
           SEED: ${{ secrets.SEED3 }}
           SLACK_ICON_EMOJI: ":bot-seed3:"
           SLACK_CHANNEL: ci-$COIN-ll
-          BOT_FILTER_FAMILY: $COIN
+          BOT_FILTER_FAMILIES: $COIN
           BOT_ENVIRONMENT: testing

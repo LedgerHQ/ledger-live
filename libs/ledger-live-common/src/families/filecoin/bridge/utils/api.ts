@@ -3,7 +3,7 @@ import { AxiosRequestConfig, AxiosResponse } from "axios";
 
 import network from "@ledgerhq/live-network/network";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
-import { getEnv } from "../../../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import {
   BalanceResponse,
   BroadcastTransactionRequest,

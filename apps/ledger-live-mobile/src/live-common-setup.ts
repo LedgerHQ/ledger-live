@@ -5,7 +5,7 @@ import { listen } from "@ledgerhq/logs";
 import HIDTransport from "@ledgerhq/react-native-hid";
 import withStaticURLs from "@ledgerhq/hw-transport-http";
 import { retry } from "@ledgerhq/live-common/promise";
-import { setEnv } from "@ledgerhq/live-common/env";
+import { setEnv } from "@ledgerhq/live-env";
 import {
   getCryptoCurrencyById,
   setSupportedCurrencies,
@@ -124,7 +124,8 @@ if (Config.VERBOSE) {
 }
 
 if (Config.BLE_LOG_LEVEL) BluetoothTransport.setLogLevel(Config.BLE_LOG_LEVEL);
-if (Config.FORCE_PROVIDER) setEnv("FORCE_PROVIDER", Config.FORCE_PROVIDER);
+if (Config.FORCE_PROVIDER && !isNaN(parseInt(Config.FORCE_PROVIDER, 10)))
+  setEnv("FORCE_PROVIDER", parseInt(Config.FORCE_PROVIDER, 10));
 // Add support of HID (experimental until we stabilize it)
 registerTransportModule({
   id: "hid",

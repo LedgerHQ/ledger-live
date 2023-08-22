@@ -1,5 +1,5 @@
 import React from "react";
-import { isEnvDefault, changes, EnvName } from "@ledgerhq/live-common/env";
+import { isEnvDefault, changes, EnvName } from "@ledgerhq/live-env";
 import { Trans } from "react-i18next";
 import { setEnvOnAllThreads } from "./../helpers/env";
 export type FeatureCommon = {
@@ -32,7 +32,7 @@ export type Feature = FeatureCommon & FeatureToggle;
 // const experimentalCurrencies = "solana,cardano";
 const experimentalCurrencies = "";
 export const experimentalFeatures: Feature[] = [
-  ...(experimentalCurrencies.length
+  ...((experimentalCurrencies.length
     ? [
         {
           type: "toggle" as const,
@@ -45,7 +45,7 @@ export const experimentalFeatures: Feature[] = [
           valueOff: "",
         },
       ]
-    : []),
+    : []) as Feature[]),
   {
     type: "toggle",
     name: "EXPERIMENTAL_LANGUAGES",

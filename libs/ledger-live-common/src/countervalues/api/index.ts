@@ -1,4 +1,4 @@
-import { getEnv } from "../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import type { CounterValuesAPI } from "../types";
 import prodAPI from "./api";
 import mockAPI from "./api.mock";

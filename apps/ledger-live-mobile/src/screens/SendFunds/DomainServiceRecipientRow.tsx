@@ -6,7 +6,7 @@ import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { useDomain } from "@ledgerhq/domain-service/hooks/index";
 import { Platform, StyleSheet, View } from "react-native";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import Clipboard from "@react-native-community/clipboard";
+import Clipboard from "@react-native-clipboard/clipboard";
 import { InvalidDomain, NoResolution } from "@ledgerhq/domain-service/errors/index";
 import { Trans } from "react-i18next";
 import { BasicErrorsView, DomainErrorsView } from "./DomainErrorHandlers";

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { changes, getEnv, EnvValue } from "@ledgerhq/live-common/env";
-const useEnv = <Name extends string>(type: Name): EnvValue<Name> => {
+import { changes, getEnv, EnvValue, EnvName } from "@ledgerhq/live-env";
+const useEnv = (type: EnvName): EnvValue<EnvName> => {
   const [env, setEnv] = useState(() => getEnv(type));
   useEffect(() => {
     const sub = changes.subscribe(({ name, value }) => {

@@ -1,7 +1,19 @@
-name: "[Bot] non-reg on develop with 'Silicium'"
+name: "[Bot] Testing with 'Silicium'"
+run-name: Test with 🤖 Silicium by @${{github.actor}} ${{inputs.families &&  format('families={0}',inputs.families) || ''}} ${{inputs.currencies && format('currencies={0}',inputs.currencies) || ''}}
 on:
-  schedule:
-    - cron: "9 5 * * 5" # Friday – daily rotation of bots
+  workflow_dispatch:
+    inputs:
+      families:
+        description: coin families to test, separated with commas (,)
+        required: false
+      currencies:
+        description: currency ids to test, separated with commas (,)
+        required: false
+      speculos_websocket:
+        description: check to use speculos with Websocket
+        type: boolean
+        required: false
+        default: false
 
 concurrency:
   group: bot-seed3
@@ -32,4 +44,7 @@ jobs:
           SLACK_API_TOKEN: ${{secrets.SLACK_API_TOKEN}}
           SLACK_ICON_EMOJI: ":bot-seed3:"
           SEED: ${{ secrets.SEED3 }}
-          BOT_ENVIRONMENT: production
+          BOT_ENVIRONMENT: testing
+          BOT_FILTER_FAMILIES: ${{github.event.inputs.families}}
+          BOT_FILTER_CURRENCIES: ${{github.event.inputs.currencies}}
+          SPECULOS_USE_WEBSOCKET: ${{inputs.speculos_websocket}}

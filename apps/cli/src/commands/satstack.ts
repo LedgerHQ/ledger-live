@@ -2,7 +2,7 @@ import fs from "fs";
 import invariant from "invariant";
 import { from, of, forkJoin } from "rxjs";
 import { map, reduce, first, catchError } from "rxjs/operators";
-import { setEnv } from "@ledgerhq/live-common/env";
+import { setEnv } from "@ledgerhq/live-env";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import {
   AccountDescriptor,

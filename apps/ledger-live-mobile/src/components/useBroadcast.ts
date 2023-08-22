@@ -5,7 +5,7 @@ import { getMainAccount, formatOperation } from "@ledgerhq/live-common/account/i
 import type { SignedOperation, Operation, AccountLike, Account } from "@ledgerhq/types-live";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { execAndWaitAtLeast } from "@ledgerhq/live-common/promise";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 
 type SignTransactionArgs = {
   account?: AccountLike | null;

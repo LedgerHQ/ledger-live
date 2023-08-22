@@ -186,6 +186,7 @@ jobs:
         with:
           api-level: 31
           arch: x86_64
+          profile: pixel_5
           target: google_apis
           avd-name: "Pixel_5_API_31"
           force-avd-creation: true

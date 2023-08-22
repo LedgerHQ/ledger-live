@@ -14,7 +14,7 @@ import {
   TransactionsResponse,
 } from "./api.types";
 import network from "@ledgerhq/live-network/network";
-import { getEnv } from "../../../../env";
+import { getEnv } from "@ledgerhq/live-env";
 
 const getStacksURL = (path?: string): string => {
   const baseUrl = getEnv("API_STACKS_ENDPOINT");

@@ -37,7 +37,7 @@ import semver from "semver";
 import URL from "url";
 import { version as livecommonversion } from "../../package.json";
 import { mapApplicationV2ToApp } from "../apps/polyfill";
-import { getEnv } from "../env";
+import { getEnv } from "@ledgerhq/live-env";
 import { createDeviceSocket } from "../socket";
 import {
   bulkSocketMock,

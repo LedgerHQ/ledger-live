@@ -23,7 +23,7 @@ import CurrencyRow from "../../components/CurrencyRow";
 import LText from "../../components/LText";
 import { AddAccountsNavigatorParamList } from "../../components/RootNavigator/types/AddAccountsNavigator";
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { Feature } from "@ledgerhq/types-live";
 
 const SEARCH_KEYS = getEnv("CRYPTO_ASSET_SEARCH_KEYS");
