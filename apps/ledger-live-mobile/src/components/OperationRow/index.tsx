@@ -15,12 +15,8 @@ import { Box, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { WarningMedium } from "@ledgerhq/native-ui/assets/icons";
 import debounce from "lodash/debounce";
 import { isEqual } from "lodash";
-<<<<<<< HEAD
 import { useSelector } from "react-redux";
-import { getEnv } from "@ledgerhq/live-common/env";
-=======
 import { getEnv } from "@ledgerhq/live-env";
->>>>>>> d90f58c7b65a67f829627ec2678b96eca7f5934c
 import { isEditableOperation } from "@ledgerhq/coin-framework/operation";
 
 import CurrencyUnitValue from "../CurrencyUnitValue";
