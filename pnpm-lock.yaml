@@ -931,7 +931,7 @@ importers:
         version: 18.1.0
       react-native:
         specifier: 0.71.6
-        version: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+        version: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       react-native-adjust:
         specifier: ^4.33.0
         version: 4.33.0
@@ -1148,7 +1148,7 @@ importers:
         version: link:../../libs/test-utils
       '@react-native-community/cli':
         specifier: ^7.0.1
-        version: 7.0.4(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react-native@0.71.6)
+        version: 7.0.4(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react-native@0.71.6)
       '@react-native-community/cli-platform-android':
         specifier: ^7.0.1
         version: 7.0.1
@@ -1294,8 +1294,8 @@ importers:
         specifier: ^0.76.0
         version: 0.76.0(@babel/core@7.22.8)
       metro-resolver:
-        specifier: ^0.76.0
-        version: 0.76.0
+        specifier: ^0.78.0
+        version: 0.78.0
       metro-transform-worker:
         specifier: ^0.76.0
         version: 0.76.0
@@ -4651,8 +4651,8 @@ importers:
         specifier: ^0.76.0
         version: 0.76.0(@babel/core@7.22.8)
       metro-resolver:
-        specifier: ^0.76.0
-        version: 0.76.0
+        specifier: ^0.78.0
+        version: 0.78.0
       metro-runtime:
         specifier: ^0.76.0
         version: 0.76.0
@@ -4679,7 +4679,7 @@ importers:
         version: 18.1.0
       react-native:
         specifier: 0.71.6
-        version: 0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+        version: 0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       react-native-reanimated:
         specifier: ^3.1.0
         version: 3.1.0(@babel/core@7.22.8)(@babel/plugin-proposal-nullish-coalescing-operator@7.18.6)(@babel/plugin-proposal-optional-chaining@7.21.0)(@babel/plugin-transform-arrow-functions@7.20.7)(@babel/plugin-transform-shorthand-properties@7.18.6)(@babel/plugin-transform-template-literals@7.18.9)(react-native@0.71.6)(react@18.0.0)
@@ -5297,8 +5297,8 @@ importers:
         specifier: ^0.76.0
         version: 0.76.0
       metro-resolver:
-        specifier: ^0.76.0
-        version: 0.76.0
+        specifier: ^0.78.0
+        version: 0.78.0
 
   tools/migrate-branch:
     dependencies:
@@ -12362,7 +12362,7 @@ packages:
       react-native: '>=0.14.0 <1'
     dependencies:
       '@emotion/primitives-core': 10.0.27(@emotion/core@10.3.1)(react@18.0.0)
-      react-native: 0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     transitivePeerDependencies:
       - '@emotion/core'
       - react
@@ -16731,7 +16731,7 @@ packages:
       react-native-reanimated: '>=2.x.x'
     dependencies:
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       react-native-gesture-handler: 2.9.0(react-native@0.71.6)(react@18.0.0)
       react-native-reanimated: 3.1.0(@babel/core@7.22.8)(@babel/plugin-proposal-nullish-coalescing-operator@7.18.6)(@babel/plugin-proposal-optional-chaining@7.21.0)(@babel/plugin-transform-arrow-functions@7.20.7)(@babel/plugin-transform-shorthand-properties@7.18.6)(@babel/plugin-transform-template-literals@7.18.9)(react-native@0.71.6)(react@18.0.0)
     dev: false
@@ -17777,7 +17777,7 @@ packages:
       '@polkadot/util': 10.4.2
       '@polkadot/util-crypto': 10.4.2
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       react-native-svg: 12.5.1(react-native@0.71.6)(react@18.0.0)
     dev: false
 
@@ -18233,7 +18233,7 @@ packages:
       react-native: ^0.0.0-0 || 0.60 - 0.71 || 1000.0.0
     dependencies:
       merge-options: 3.0.4
-      react-native: 0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: true
 
   /@react-native-async-storage/async-storage@1.19.2(react-native@0.71.6):
@@ -18242,7 +18242,7 @@ packages:
       react-native: ^0.0.0-0 || 0.60 - 0.72 || 1000.0.0
     dependencies:
       merge-options: 3.0.4
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /@react-native-clipboard/clipboard@1.11.2(react-native@0.71.6)(react@18.0.0):
@@ -18252,7 +18252,7 @@ packages:
       react-native: '>=0.57.0'
     dependencies:
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /@react-native-community/cli-clean@10.1.1:
@@ -18640,7 +18640,7 @@ packages:
       - supports-color
       - utf-8-validate
 
-  /@react-native-community/cli@10.2.2(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0):
+  /@react-native-community/cli@10.2.2(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0):
     resolution: {integrity: sha512-aZVcVIqj+OG6CrliR/Yn8wHxrvyzbFBY9cj7n0MvRw/P54QUru2nNqUTSSbqv0Qaa297yHJbe6kFDojDMSTM8Q==}
     engines: {node: '>=14'}
     hasBin: true
@@ -18665,7 +18665,7 @@ packages:
       find-up: 4.1.0
       fs-extra: 8.1.0
       graceful-fs: 4.2.11
-      metro-resolver: 0.76.0
+      metro-resolver: 0.78.0
       prompts: 2.4.2
       semver: 6.3.1
     transitivePeerDependencies:
@@ -18676,7 +18676,7 @@ packages:
       - supports-color
       - utf-8-validate
 
-  /@react-native-community/cli@7.0.4(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react-native@0.71.6):
+  /@react-native-community/cli@7.0.4(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react-native@0.71.6):
     resolution: {integrity: sha512-W9nACtHWaLJZIP48cQmhQOnl5/7maoWE1Aji67MrLeIoB+ScNTJxaHfV4fMcklD6B6XEhaKokPACRZWm36zAog==}
     engines: {node: '>=12'}
     hasBin: true
@@ -18708,13 +18708,13 @@ packages:
       joi: 17.6.0
       leven: 3.1.0
       lodash: 4.17.21
-      metro-resolver: 0.76.0
+      metro-resolver: 0.78.0
       minimist: 1.2.6
       node-stream-zip: 1.15.0
       ora: 3.4.0
       pretty-format: 26.6.2
       prompts: 2.4.2
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       semver: 6.3.0
       serve-static: 1.15.0
       strip-ansi: 5.2.0
@@ -18741,7 +18741,7 @@ packages:
     peerDependencies:
       react-native: '>=0.59'
     dependencies:
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /@react-native-community/slider@4.4.2:
@@ -18757,7 +18757,7 @@ packages:
       '@expo/config-plugins': 4.1.5
       opencollective-postinstall: 2.0.3
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       superstruct: 0.6.2
     transitivePeerDependencies:
       - supports-color
@@ -18787,7 +18787,7 @@ packages:
       react-native: '>=0.57'
     dependencies:
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /@react-native/assets@1.0.0:
@@ -18812,7 +18812,7 @@ packages:
       '@react-navigation/native': 6.0.13(react-native@0.71.6)(react@18.0.0)
       color: 4.2.3
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       react-native-safe-area-context: 4.5.0(react-native@0.71.6)(react@18.0.0)
       react-native-screens: 3.20.0(react-native@0.71.6)(react@18.0.0)
       warn-once: 0.1.0
@@ -18867,7 +18867,7 @@ packages:
     dependencies:
       '@react-navigation/native': 6.0.13(react-native@0.71.6)(react@18.0.0)
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       react-native-safe-area-context: 4.5.0(react-native@0.71.6)(react@18.0.0)
     dev: false
 
@@ -18883,7 +18883,7 @@ packages:
       '@react-navigation/native': 6.0.13(react-native@0.71.6)(react@18.0.0)
       color: 4.2.3
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       react-native-pager-view: 6.1.0(react-native@0.71.6)(react@18.0.0)
       react-native-tab-view: 3.3.0(react-native-pager-view@6.1.0)(react-native@0.71.6)(react@18.0.0)
       warn-once: 0.1.0
@@ -18900,7 +18900,7 @@ packages:
       fast-deep-equal: 3.1.3
       nanoid: 3.3.4
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /@react-navigation/native@6.1.7(react-native@0.71.6)(react@18.0.0):
@@ -18914,7 +18914,7 @@ packages:
       fast-deep-equal: 3.1.3
       nanoid: 3.3.4
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: true
 
   /@react-navigation/routers@6.1.6:
@@ -18943,7 +18943,7 @@ packages:
       '@react-navigation/native': 6.0.13(react-native@0.71.6)(react@18.0.0)
       color: 4.2.3
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       react-native-gesture-handler: 2.9.0(react-native@0.71.6)(react@18.0.0)
       react-native-safe-area-context: 4.5.0(react-native@0.71.6)(react@18.0.0)
       react-native-screens: 3.20.0(react-native@0.71.6)(react@18.0.0)
@@ -19132,7 +19132,7 @@ packages:
       js-base64: 3.7.2
       promise.allsettled: 1.0.6
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /@segment/loosely-validate-event@2.0.0:
@@ -19151,7 +19151,7 @@ packages:
       ansi-regex: 5.0.1
       deepmerge: 4.3.0
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       shell-quote: 1.7.3
     dev: false
 
@@ -19366,7 +19366,7 @@ packages:
       '@sentry/utils': 7.45.0
       promise: 8.2.0
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       tslib: 2.5.0
     transitivePeerDependencies:
       - encoding
@@ -19484,7 +19484,7 @@ packages:
       '@shopify/react-native-performance': 4.1.2(@babel/runtime@7.17.9)(react-native@0.71.6)(react@18.0.0)
       lodash.isequal: 4.5.0
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       tslib: 2.5.0
     dev: false
 
@@ -19497,7 +19497,7 @@ packages:
     dependencies:
       '@babel/runtime': 7.17.9
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       tslib: 2.5.0
     dev: false
 
@@ -20760,7 +20760,7 @@ packages:
       '@storybook/core-events': 6.5.16
       fast-deep-equal: 2.0.1
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     transitivePeerDependencies:
       - react-dom
     dev: true
@@ -20783,7 +20783,7 @@ packages:
       core-js: 3.22.5
       prop-types: 15.8.1
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     transitivePeerDependencies:
       - react-dom
     dev: true
@@ -20808,7 +20808,7 @@ packages:
       deep-equal: 1.1.1
       prop-types: 15.8.1
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       react-native-modal-datetime-picker: 14.0.1(@react-native-community/datetimepicker@6.7.5)(react-native@0.71.6)
       react-native-modal-selector: 2.1.2
       tinycolor2: 1.4.2
@@ -20831,7 +20831,7 @@ packages:
       core-js: 3.22.5
       prop-types: 15.8.1
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       simple-markdown: 0.7.3(@types/react@17.0.53)
     transitivePeerDependencies:
       - '@types/react'
@@ -22847,7 +22847,7 @@ packages:
       react-native: '>=0.57.0'
     dependencies:
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: true
 
   /@storybook/react-native@6.5.6(@react-native-async-storage/async-storage@1.17.12)(react-dom@18.0.0)(react-native-safe-area-context@4.5.0)(react-native@0.71.6)(react@18.0.0)(typescript@5.1.3)(webpack@5.76.1):
@@ -22878,7 +22878,7 @@ packages:
       jotai: 2.0.3(react@18.0.0)
       prettier: 2.8.3
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       react-native-safe-area-context: 4.5.0(react-native@0.71.6)(react@18.0.0)
       react-native-swipe-gestures: 1.0.5
       util: 0.12.5
@@ -23916,7 +23916,7 @@ packages:
       jest-matcher-utils: 29.5.0
       pretty-format: 29.5.0
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       react-test-renderer: 18.0.0(react@18.0.0)
       redent: 3.0.0
     dev: true
@@ -23969,7 +23969,7 @@ packages:
       jest: 28.1.3(metro@0.76.0)(ts-node@10.9.1)
       pretty-format: 29.5.0
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       react-native-safe-area-context: 4.6.3(react-native@0.71.6)(react@18.0.0)
       react-native-screens: 3.20.0(react-native@0.71.6)(react@18.0.0)
       react-test-renderer: 18.0.0(react@18.0.0)
@@ -35361,7 +35361,7 @@ packages:
       expo-constants: 14.2.1(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
       expo-modules-core: 1.2.6(expo-constants@14.2.1)(react-native@0.71.6)(react@18.0.0)
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
 
   /expo-asset@8.9.1(expo-constants@14.2.1)(expo-modules-core@1.2.2)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0):
     resolution: {integrity: sha512-ugavxA7Scn96TBdeTYQA6xtHktnk0o/0xk7nFkxJKoH/t2cZDFSB05X0BI2/LDZY4iE6xTPOYw4C4mmourWfuA==}
@@ -35390,7 +35390,7 @@ packages:
       md5-file: 3.2.3
       path-browserify: 1.0.1
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       url-parse: 1.5.10
     transitivePeerDependencies:
       - expo
@@ -35423,7 +35423,7 @@ packages:
       md5-file: 3.2.3
       path-browserify: 1.0.1
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       url-parse: 1.5.10
     transitivePeerDependencies:
       - expo
@@ -35450,7 +35450,7 @@ packages:
       expo-image-loader: 4.1.1(expo-modules-core@1.2.2)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
       expo-modules-core: 1.2.2(react-native@0.71.6)(react@18.0.0)
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /expo-camera@13.2.1(expo-modules-core@1.2.2)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0):
@@ -35476,7 +35476,7 @@ packages:
       expo-modules-core: 1.2.2(react-native@0.71.6)(react@18.0.0)
       invariant: 2.2.4
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /expo-constants@14.2.1(expo-modules-core@1.2.2)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0):
@@ -35502,7 +35502,7 @@ packages:
       expo-constants: 14.2.1(expo-modules-core@1.2.2)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
       expo-modules-core: 1.2.2(expo-constants@14.2.1)(react-native@0.71.6)(react@18.0.0)
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       uuid: 3.4.0
     transitivePeerDependencies:
       - supports-color
@@ -35531,7 +35531,7 @@ packages:
       expo-constants: 14.2.1(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
       expo-modules-core: 1.2.6(expo-constants@14.2.1)(react-native@0.71.6)(react@18.0.0)
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       uuid: 3.4.0
     transitivePeerDependencies:
       - supports-color
@@ -35580,7 +35580,7 @@ packages:
       expo-constants: 14.2.1(expo-modules-core@1.2.2)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
       expo-modules-core: 1.2.2(expo-constants@14.2.1)(react-native@0.71.6)(react@18.0.0)
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       uuid: 3.4.0
     dev: true
 
@@ -35606,7 +35606,7 @@ packages:
       expo-constants: 14.2.1(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
       expo-modules-core: 1.2.6(expo-constants@14.2.1)(react-native@0.71.6)(react@18.0.0)
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       uuid: 3.4.0
 
   /expo-file-system@15.2.2(expo-modules-core@1.2.2)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0):
@@ -35630,7 +35630,7 @@ packages:
       expo: 48.0.9(@babel/core@7.22.8)(metro@0.76.0)(react-native@0.71.6)(react@18.0.0)
       expo-modules-core: 1.2.2(react-native@0.71.6)(react@18.0.0)
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       uuid: 3.4.0
     dev: false
 
@@ -35661,7 +35661,7 @@ packages:
       expo-modules-core: 1.2.2(expo-constants@14.2.1)(react-native@0.71.6)(react@18.0.0)
       fontfaceobserver: 2.1.0
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: true
 
   /expo-font@11.1.1(expo-asset@8.9.1)(expo-constants@14.2.1)(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0):
@@ -35691,7 +35691,7 @@ packages:
       expo-modules-core: 1.2.6(expo-constants@14.2.1)(react-native@0.71.6)(react@18.0.0)
       fontfaceobserver: 2.1.0
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
 
   /expo-image-loader@4.1.1(expo-modules-core@1.2.2)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0):
     resolution: {integrity: sha512-ciEHVokU0f6w0eTxdRxLCio6tskMsjxWIoV92+/ZD37qePUJYMfEphPhu1sruyvMBNR8/j5iyOvPFVGTfO8oxA==}
@@ -35714,7 +35714,7 @@ packages:
       expo: 48.0.9(@babel/core@7.22.8)(metro@0.76.0)(react-native@0.71.6)(react@18.0.0)
       expo-modules-core: 1.2.2(react-native@0.71.6)(react@18.0.0)
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /expo-image-manipulator@11.1.1(expo-modules-core@1.2.2)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0):
@@ -35739,7 +35739,7 @@ packages:
       expo-image-loader: 4.1.1(expo-modules-core@1.2.2)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
       expo-modules-core: 1.2.2(react-native@0.71.6)(react@18.0.0)
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /expo-keep-awake@12.0.1(expo-constants@14.2.1)(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0):
@@ -35764,7 +35764,7 @@ packages:
       expo-constants: 14.2.1(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
       expo-modules-core: 1.2.6(expo-constants@14.2.1)(react-native@0.71.6)(react@18.0.0)
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
 
   /expo-modules-autolinking@1.1.2(expo-constants@14.2.1)(expo-modules-core@1.2.6)(react-native@0.71.6)(react@18.0.0):
     resolution: {integrity: sha512-oOlkAccVnHwwR5ccvF/F/x4Omj9HWzSimMUlIVz0SVGdNBEqTPyn0L/d4uIufhyQbEWvrarqL8o5Yz11wEI0SQ==}
@@ -35792,7 +35792,7 @@ packages:
       find-up: 5.0.0
       fs-extra: 9.1.0
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
 
   /expo-modules-autolinking@1.1.2(expo-modules-core@1.2.2)(react-native@0.71.6)(react@18.0.0):
     resolution: {integrity: sha512-oOlkAccVnHwwR5ccvF/F/x4Omj9HWzSimMUlIVz0SVGdNBEqTPyn0L/d4uIufhyQbEWvrarqL8o5Yz11wEI0SQ==}
@@ -35819,7 +35819,7 @@ packages:
       find-up: 5.0.0
       fs-extra: 9.1.0
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /expo-modules-core@1.2.2(expo-constants@14.2.1)(react-native@0.71.6)(react@18.0.0):
@@ -35844,7 +35844,7 @@ packages:
       expo-modules-core: 1.2.2(expo-constants@14.2.1)(react-native@0.71.6)(react@18.0.0)
       invariant: 2.2.4
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: true
 
   /expo-modules-core@1.2.2(react-native@0.71.6)(react@18.0.0):
@@ -35868,7 +35868,7 @@ packages:
       expo-modules-core: 1.2.2(react-native@0.71.6)(react@18.0.0)
       invariant: 2.2.4
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /expo-modules-core@1.2.6(expo-constants@14.2.1)(react-native@0.71.6)(react@18.0.0):
@@ -35893,7 +35893,7 @@ packages:
       expo-modules-core: 1.2.6(expo-constants@14.2.1)(react-native@0.71.6)(react@18.0.0)
       invariant: 2.2.4
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
 
   /expo-pwa@0.0.124(expo-constants@14.2.1)(expo-modules-core@1.2.2)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0):
     resolution: {integrity: sha512-hYvQQhxATNTivWSRc9nrd1WVYJJnBG8P/SVrJ4PPu0pmsS7ZIvWt981IXYG461y9UWnTbXdZEG4UOt0Thak1Gg==}
@@ -35922,7 +35922,7 @@ packages:
       expo-constants: 14.2.1(expo-modules-core@1.2.2)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
       expo-modules-core: 1.2.2(expo-constants@14.2.1)(react-native@0.71.6)(react@18.0.0)
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       update-check: 1.5.3
     transitivePeerDependencies:
       - encoding
@@ -35986,7 +35986,7 @@ packages:
       node-fetch: 2.6.9
       pretty-format: 26.6.2
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       uuid: 3.4.0
     transitivePeerDependencies:
       - '@babel/core'
@@ -36033,7 +36033,7 @@ packages:
       node-fetch: 2.6.9
       pretty-format: 26.6.2
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       uuid: 3.4.0
     transitivePeerDependencies:
       - '@babel/core'
@@ -44917,7 +44917,7 @@ packages:
         optional: true
     dependencies:
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /lottie-web@5.9.4:
@@ -46608,6 +46608,10 @@ packages:
     resolution: {integrity: sha512-h3rvDWD25cZ/5Iin6mPjSQQe8KtWPAHZnA6AnAj2yadzltkyytPjmHal6JhTPsVHWMKorkC03MUpEgGusuvTww==}
     engines: {node: '>=18'}
     dev: true
+
+  /metro-resolver@0.78.0:
+    resolution: {integrity: sha512-V8ajy9UfP4d2OIsD6vMr4ZWvA1xAORPgDBq1ir06hALUyZGLj/hOsxAUCSSjAN1XL32Nw9OZrLYDMZdw1exaow==}
+    engines: {node: '>=18'}
 
   /metro-runtime@0.67.0:
     resolution: {integrity: sha512-IFtSL0JUt1xK3t9IoLflTDft82bjieSzdIJWLzrRzBMlesz8ox5bVmnpQbVQEwfYUpEOxbM3VOZauVbdCmXA7g==}
@@ -52673,7 +52677,7 @@ packages:
     peerDependencies:
       react-native: '>= 0.56.0'
     dependencies:
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /react-native-animatable@1.3.3(react-native@0.71.6)(react@18.0.0):
@@ -52689,7 +52693,7 @@ packages:
     dependencies:
       prop-types: 15.8.1
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /react-native-appboy-sdk@1.40.0:
@@ -52701,7 +52705,7 @@ packages:
     peerDependencies:
       react-native: '>=0.60.0'
     dependencies:
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /react-native-ble-plx@2.0.3:
@@ -52793,7 +52797,7 @@ packages:
         optional: true
     dependencies:
       prop-types: 15.8.1
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       simple-markdown: 0.4.4
     dev: false
 
@@ -52807,7 +52811,7 @@ packages:
       react-native: '>=0.47.0 <1.0.0'
     dependencies:
       buffer: 5.7.1
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       rfc4648: 1.5.1
     dev: false
     patched: true
@@ -52819,7 +52823,7 @@ packages:
       react-native: '>=0.60.0'
     dependencies:
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /react-native-flipper-performance-plugin@0.4.0:
@@ -52833,7 +52837,7 @@ packages:
       react-native: '>0.62.0'
     dependencies:
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
 
   /react-native-gesture-handler@2.9.0(react-native@0.71.6)(react@18.0.0):
     resolution: {integrity: sha512-a0BcH3Qb1tgVqUutc6d3VuWQkI1AM3+fJx8dkxzZs9t06qA27QgURYFoklpabuWpsUTzuKRpxleykp25E8m7tg==}
@@ -52847,7 +52851,7 @@ packages:
       lodash: 4.17.21
       prop-types: 15.8.1
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /react-native-get-random-values@1.8.0:
@@ -52870,7 +52874,7 @@ packages:
     peerDependencies:
       react-native: '>=0.60.0'
     dependencies:
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /react-native-image-crop-tools@1.6.4(patch_hash=p6wzwon3gzjcspjalwhmuroog4)(react-native@0.71.6)(react@18.0.0):
@@ -52880,7 +52884,7 @@ packages:
       react-native: '>=0.59.0-rc.0 <1.0.x'
     dependencies:
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
     patched: true
 
@@ -52891,7 +52895,7 @@ packages:
       react-native: '*'
     dependencies:
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /react-native-inappbrowser-reborn@3.7.0(react-native@0.71.6):
@@ -52902,7 +52906,7 @@ packages:
     dependencies:
       invariant: 2.2.4
       opencollective-postinstall: 2.0.3
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /react-native-iphone-x-helper@1.3.1(react-native@0.71.6):
@@ -52910,7 +52914,7 @@ packages:
     peerDependencies:
       react-native: '>=0.42.0'
     dependencies:
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /react-native-keyboard-aware-scroll-view@0.9.5(react-native@0.71.6):
@@ -52919,7 +52923,7 @@ packages:
       react-native: '>=0.48.4'
     dependencies:
       prop-types: 15.8.1
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       react-native-iphone-x-helper: 1.3.1(react-native@0.71.6)
     dev: false
 
@@ -52951,7 +52955,7 @@ packages:
         optional: true
     dependencies:
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /react-native-modal-datetime-picker@14.0.1(@react-native-community/datetimepicker@6.7.5)(react-native@0.71.6):
@@ -52962,7 +52966,7 @@ packages:
     dependencies:
       '@react-native-community/datetimepicker': 6.7.5
       prop-types: 15.8.1
-      react-native: 0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: true
 
   /react-native-modal-selector@2.1.2:
@@ -52979,7 +52983,7 @@ packages:
     dependencies:
       prop-types: 15.8.1
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       react-native-animatable: 1.3.3(react-native@0.71.6)(react@18.0.0)
     dev: false
 
@@ -52994,7 +52998,7 @@ packages:
       react-native: '*'
     dependencies:
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /react-native-performance-flipper-reporter@3.0.0(react-native-flipper@0.164.0)(react-native-performance@3.1.2):
@@ -53012,7 +53016,7 @@ packages:
     peerDependencies:
       react-native: '*'
     dependencies:
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: true
 
   /react-native-qrcode-svg@6.1.1(react-native-svg@13.11.0)(react-native@0.71.6)(react@18.0.0):
@@ -53025,7 +53029,7 @@ packages:
       prop-types: 15.8.1
       qrcode: 1.5.0
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       react-native-svg: 13.11.0(react-native@0.71.6)(react@18.0.0)
     dev: false
 
@@ -53059,7 +53063,7 @@ packages:
       convert-source-map: 2.0.0
       invariant: 2.2.4
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -53070,7 +53074,7 @@ packages:
       react-native: '*'
     dependencies:
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /react-native-safe-area-context@4.5.0(react-native@0.71.6)(react@18.0.0):
@@ -53080,7 +53084,7 @@ packages:
       react-native: '*'
     dependencies:
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
 
   /react-native-safe-area-context@4.6.3(react-native@0.71.6)(react@18.0.0):
     resolution: {integrity: sha512-3CeZM9HFXkuqiU9HqhOQp1yxhXw6q99axPWrT+VJkITd67gnPSU03+U27Xk2/cr9XrLUnakM07kj7H0hdPnFiQ==}
@@ -53089,7 +53093,7 @@ packages:
       react-native: '*'
     dependencies:
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: true
 
   /react-native-screens@3.20.0(react-native@0.71.6)(react@18.0.0):
@@ -53100,7 +53104,7 @@ packages:
     dependencies:
       react: 18.0.0
       react-freeze: 1.0.0(react@18.0.0)
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       warn-once: 0.1.0
 
   /react-native-share@7.9.0:
@@ -53118,7 +53122,7 @@ packages:
     peerDependencies:
       react-native: '>=0.57.0'
     dependencies:
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /react-native-startup-time@2.0.1(react-native@0.71.6)(react@18.0.0):
@@ -53128,7 +53132,7 @@ packages:
       react-native: '>=0.59.0'
     dependencies:
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /react-native-svg@12.5.1(react-native@0.71.6)(react@18.0.0):
@@ -53140,7 +53144,7 @@ packages:
       css-select: 5.1.0
       css-tree: 1.1.3
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /react-native-svg@13.11.0(react-native@0.71.6)(react@18.0.0):
@@ -53152,7 +53156,7 @@ packages:
       css-select: 5.1.0
       css-tree: 1.1.3
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /react-native-svg@13.4.0(react-native@0.71.6)(react@17.0.2):
@@ -53190,7 +53194,7 @@ packages:
       react-native-pager-view: '*'
     dependencies:
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       react-native-pager-view: 6.1.0(react-native@0.71.6)(react@18.0.0)
       use-latest-callback: 0.1.5(react@18.0.0)
     dev: false
@@ -53202,7 +53206,7 @@ packages:
     dependencies:
       buffer: 5.7.1
       eventemitter3: 4.0.7
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /react-native-udp@4.1.5:
@@ -53217,7 +53221,7 @@ packages:
     peerDependencies:
       react-native: '*'
     dependencies:
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       whatwg-url-without-unicode: 8.0.0-3
     dev: false
 
@@ -53269,11 +53273,11 @@ packages:
       escape-string-regexp: 2.0.0
       invariant: 2.2.4
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
     patched: true
 
-  /react-native@0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0):
+  /react-native@0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0):
     resolution: {integrity: sha512-gHrDj7qaAaiE41JwaFCh3AtvOqOLuRgZtHKzNiwxakG/wvPAYmG73ECfWHGxjxIx/QT17Hp37Da3ipCei/CayQ==}
     engines: {node: '>=14'}
     hasBin: true
@@ -53281,7 +53285,7 @@ packages:
       react: 18.2.0
     dependencies:
       '@jest/create-cache-key-function': 29.5.0
-      '@react-native-community/cli': 10.2.2(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)
+      '@react-native-community/cli': 10.2.2(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)
       '@react-native-community/cli-platform-android': 10.2.0
       '@react-native-community/cli-platform-ios': 10.2.1
       '@react-native/assets': 1.0.0
@@ -53326,7 +53330,7 @@ packages:
       - supports-color
       - utf-8-validate
 
-  /react-native@0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0):
+  /react-native@0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0):
     resolution: {integrity: sha512-gHrDj7qaAaiE41JwaFCh3AtvOqOLuRgZtHKzNiwxakG/wvPAYmG73ECfWHGxjxIx/QT17Hp37Da3ipCei/CayQ==}
     engines: {node: '>=14'}
     hasBin: true
@@ -53334,7 +53338,7 @@ packages:
       react: 18.2.0
     dependencies:
       '@jest/create-cache-key-function': 29.5.0
-      '@react-native-community/cli': 10.2.2(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)
+      '@react-native-community/cli': 10.2.2(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)
       '@react-native-community/cli-platform-android': 10.2.0
       '@react-native-community/cli-platform-ios': 10.2.1
       '@react-native/assets': 1.0.0
@@ -54333,7 +54337,7 @@ packages:
     dependencies:
       cycle: 1.0.3
       dayjs: 1.11.2
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       react-native-flipper: 0.164.0(react-native@0.71.6)(react@18.0.0)
       redux: 4.2.0
     dev: false
@@ -55167,7 +55171,7 @@ packages:
     dependencies:
       prop-types: 15.8.1
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /roarr@2.15.4:
@@ -56660,7 +56664,7 @@ packages:
     dependencies:
       prop-types: 15.8.1
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.78.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /stream-array@1.1.2:
