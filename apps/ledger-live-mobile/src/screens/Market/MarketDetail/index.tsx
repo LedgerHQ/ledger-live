@@ -79,6 +79,12 @@ function MarketDetail({ navigation, route }: NavigationProps) {
   const { name, image, price, priceChangePercentage, internalCurrency, chartData } = currency || {};
 
   useEffect(() => {
+    if (currency === undefined) {
+      selectCurrency(currencyId);
+    }
+  }, [currency, selectCurrency, currencyId]);
+
+  useEffect(() => {
     const resetState = () => {
       // selectCurrency();
     };
