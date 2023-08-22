@@ -4,7 +4,7 @@ import cloneDeep from "lodash/cloneDeep";
 import get from "lodash/get";
 import set from "lodash/set";
 import fs from "fs/promises";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { NoDBPathGiven, DBWrongPassword } from "@ledgerhq/errors";
 import { encryptData, decryptData } from "~/main/db/crypto";
 import { readFile, writeFile } from "~/main/db/fsHelper";

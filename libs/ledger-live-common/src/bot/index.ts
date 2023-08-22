@@ -7,7 +7,7 @@ import groupBy from "lodash/groupBy";
 import { log } from "@ledgerhq/logs";
 import invariant from "invariant";
 import flatMap from "lodash/flatMap";
-import { getEnv } from "../env";
+import { getEnv } from "@ledgerhq/live-env";
 import allSpecs from "../generated/specs";
 import type {
   AppSpec,
@@ -18,12 +18,7 @@ import type {
   SpecReport,
 } from "./types";
 import { promiseAllBatched } from "../promise";
-import {
-  findCryptoCurrencyByKeyword,
-  isCurrencySupported,
-  formatCurrencyUnit,
-  getFiatCurrencyByTicker,
-} from "../currencies";
+import { isCurrencySupported, formatCurrencyUnit, getFiatCurrencyByTicker } from "../currencies";
 import { formatAccount, isAccountEmpty, toAccountRaw } from "../account";
 import { runWithAppSpec } from "./engine";
 import { formatReportForConsole, formatError, formatTime } from "./formatters";
@@ -39,9 +34,8 @@ import { Transaction } from "../generated/types";
 import { sha256 } from "../crypto";
 
 type Arg = Partial<{
-  currency: string;
-  family: string;
-  mutation: string;
+  filter: Partial<{ currencies: string[]; families: string[]; mutation: string }>;
+  disabled: Partial<{ currencies: string[]; families: string[] }>;
 }>;
 const usd = getFiatCurrencyByTicker("USD");
 
@@ -105,39 +99,72 @@ function makeAppJSON(accounts: Account[]) {
   return JSON.stringify(jsondata);
 }
 
-export async function bot({ currency, family, mutation }: Arg = {}): Promise<void> {
-  const SEED = getEnv("SEED");
-  invariant(SEED, "SEED required");
+export function getSpecs({ disabled, filter }) {
   const specs: any[] = [];
-  const specsLogs: string[][] = [];
-  const maybeCurrency = currency ? findCryptoCurrencyByKeyword(currency) : undefined;
-  const maybeFilterOnlyFamily = family;
+  const filteredCurrencies = filter?.currencies || [];
+  const filteredFamilies = filter?.families || [];
+  const filteredMutation = filter?.mutation;
+  let disabledCurrencies = disabled?.currencies || [];
+  let disabledFamilies = disabled?.families || [];
+
+  if (filteredFamilies.length > 0) {
+    // We want to ignore disabled families when user filters on a family
+    disabledFamilies = [];
+  }
+
+  if (filteredCurrencies.length > 0) {
+    // We want to ignore disabled currencies when user filters on a currency
+    disabledCurrencies = [];
+  }
 
   for (const family in allSpecs) {
-    const familySpecs = allSpecs[family];
-    if (maybeFilterOnlyFamily && maybeFilterOnlyFamily !== family) {
+    if (filteredFamilies.length > 0 && !filteredFamilies.includes(family)) {
+      // We only want to test specific families when we use a filter
       continue;
     }
 
+    if (disabledFamilies.includes(family)) {
+      // We don't want to test disabled families
+      continue;
+    }
+
+    const familySpecs = allSpecs[family];
+
     for (const key in familySpecs) {
       let spec: AppSpec<any> = familySpecs[key];
-
-      if (!isCurrencySupported(spec.currency) || spec.disabled) {
+      if (filteredCurrencies.length > 0 && !filteredCurrencies.includes(spec.currency.id)) {
+        // We only want to test specific currencies when we use a filter
         continue;
       }
 
-      if (!maybeCurrency || maybeCurrency === spec.currency) {
-        if (mutation) {
-          spec = {
-            ...spec,
-            mutations: spec.mutations.filter(m => new RegExp(mutation).test(m.name)),
-          };
-        }
-
-        specs.push(spec);
+      if (disabledCurrencies.includes(spec.currency.id)) {
+        // We don't want to test disabled currencies
+        continue;
       }
+
+      if (!isCurrencySupported(spec.currency) || spec.disabled) {
+        // We do not want to add the spec if currency isn't supported or is disabled
+        continue;
+      }
+
+      if (filteredMutation) {
+        spec = {
+          ...spec,
+          mutations: spec.mutations.filter(m => new RegExp(filteredMutation).test(m.name)),
+        };
+      }
+
+      specs.push(spec);
     }
   }
+  return specs;
+}
+
+export async function bot({ disabled, filter }: Arg = {}): Promise<void> {
+  const SEED = getEnv("SEED");
+  invariant(SEED, "SEED required");
+  const specsLogs: string[][] = [];
+  const specs = getSpecs({ disabled, filter });
 
   const timeBefore = Date.now();
   const results: Array<SpecReport<any>> = await promiseAllBatched(

@@ -1,5 +1,5 @@
 import { handleActions } from "redux-actions";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { Handlers } from "./types";

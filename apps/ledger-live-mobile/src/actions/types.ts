@@ -29,6 +29,7 @@ import type {
   State,
   WalletConnectState,
   SwapStateType,
+  EarnState,
   DynamicContentState,
   ProtectState,
   NftState,
@@ -449,6 +450,15 @@ export type UpdateRatePayload = ExchangeRate | undefined;
 
 export type SwapPayload = UpdateProvidersPayload | UpdateTransactionPayload | UpdateRatePayload;
 
+// === EARN ACTIONS ==
+export enum EarnActionTypes {
+  EARN_INFO_MODAL = "EARN_INFO_MODAL",
+}
+
+export type EarnSetInfoModalPayload = EarnState["infoModal"] | undefined;
+
+export type EarnPayload = EarnSetInfoModalPayload;
+
 // === PROTECT ACTIONS ===
 export enum ProtectActionTypes {
   UPDATE_DATA = "UPDATE_DATA",
@@ -472,7 +482,8 @@ export type ActionsPayload =
   | Action<WalletConnectPayload>
   | Action<PostOnboardingPayload>
   | Action<SwapPayload>
-  | Action<ProtectPayload>;
+  | Action<ProtectPayload>
+  | Action<EarnPayload>;
 
 // === NFT ACTIONS ===
 export enum NftStateActionTypes {

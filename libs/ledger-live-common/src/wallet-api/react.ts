@@ -40,7 +40,7 @@ import {
   signTransactionLogic,
 } from "./logic";
 import { getAccountBridge } from "../bridge";
-import { getEnv } from "../env";
+import { getEnv } from "@ledgerhq/live-env";
 import openTransportAsSubject, { BidirectionalEvent } from "../hw/openTransportAsSubject";
 import { AppResult } from "../hw/actions/app";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
@@ -414,7 +414,7 @@ export function useWalletAPIServer({
               },
               onCancel: () => {
                 tracking.signMessageFail(manifest);
-                reject(UserRefusedOnDevice());
+                reject(new UserRefusedOnDevice());
               },
               onError: error => {
                 tracking.signMessageFail(manifest);

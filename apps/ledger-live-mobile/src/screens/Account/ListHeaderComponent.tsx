@@ -17,7 +17,7 @@ import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
 import { NearAccount } from "@ledgerhq/live-common/families/near/types";
 import { isEditableOperation } from "@ledgerhq/coin-framework/operation";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 
 import Header from "./Header";
 import AccountGraphCard from "../../components/AccountGraphCard";

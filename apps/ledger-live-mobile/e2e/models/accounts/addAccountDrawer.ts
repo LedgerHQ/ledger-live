@@ -22,6 +22,7 @@ export default class AddAccountDrawer {
   }
 
   async finishAccountsDiscovery() {
+    await waitForElementById("add-accounts-continue-button");
     await tapById("add-accounts-continue-button");
   }
 

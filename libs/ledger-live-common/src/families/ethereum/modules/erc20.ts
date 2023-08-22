@@ -13,7 +13,7 @@ import { getAccountCurrency } from "../../../account";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { addTokens } from "../../../currencies";
 import { DeviceTransactionField } from "../../../transaction";
-import { getEnv } from "../../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import { log } from "@ledgerhq/logs";
 import { findERC20SignaturesInfo } from "@ledgerhq/hw-app-eth/erc20";
 import { LoadConfig } from "@ledgerhq/hw-app-eth/lib/services/types";

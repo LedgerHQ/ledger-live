@@ -1,5 +1,5 @@
 import { createExchangeProviderNameAndSignature, SwapProviderConfig } from "../";
-import { getEnv } from "../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import {
   AccessDeniedError,
   CurrencyDisabledAsInputError,

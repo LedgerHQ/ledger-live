@@ -12,7 +12,7 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { decodeNftId } from "@ledgerhq/live-common/nft/index";
 import { orderByLastReceived } from "@ledgerhq/live-common/nft/helpers";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import isEqual from "lodash/isEqual";
 import logger from "../logger";
 import { State } from ".";

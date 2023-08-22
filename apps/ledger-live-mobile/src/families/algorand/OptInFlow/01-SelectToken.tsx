@@ -24,7 +24,7 @@ import Info from "../../../icons/Info";
 import QueuedDrawer from "../../../components/QueuedDrawer";
 import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import type { AlgorandOptInFlowParamList } from "./types";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 
 const Row = ({
   item,

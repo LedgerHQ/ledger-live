@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { withDevicePolling } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";

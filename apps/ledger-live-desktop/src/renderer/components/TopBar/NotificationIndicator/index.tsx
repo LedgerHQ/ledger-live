@@ -10,7 +10,7 @@ import { openInformationCenter, closeInformationCenter } from "~/renderer/action
 import { notificationsContentCardSelector } from "~/renderer/reducers/dynamicContent";
 import { track } from "~/renderer/analytics/segment";
 import { useHistory } from "react-router";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 
 export function NotificationIndicator() {
   const { t } = useTranslation();

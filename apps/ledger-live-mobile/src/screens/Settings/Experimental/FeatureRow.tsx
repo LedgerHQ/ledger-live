@@ -1,5 +1,5 @@
 import React from "react";
-import { setEnvUnsafe, isEnvDefault, getEnv } from "@ledgerhq/live-common/env";
+import { setEnvUnsafe, isEnvDefault, getEnv } from "@ledgerhq/live-env";
 
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { FeatureId } from "@ledgerhq/types-live";
@@ -44,7 +44,7 @@ const FeatureRow = ({ feature }: Props) => {
         onChange={setEnvUnsafe}
         isDefault={isEnvDefault(feature.name) || getEnv(feature.name) === undefined}
         {...rest}
-        value={getEnv(feature.name)}
+        value={getEnv(feature.name) as number}
       />
     </SettingsRow>
   );

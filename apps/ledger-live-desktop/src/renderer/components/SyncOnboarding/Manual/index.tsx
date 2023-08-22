@@ -21,7 +21,7 @@ import connectManager from "@ledgerhq/live-common/hw/connectManager";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { from } from "rxjs";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import ExitChecksDrawer, {
   Props as ExitChecksDrawerProps,
 } from "./EarlySecurityChecks/ExitChecksDrawer";

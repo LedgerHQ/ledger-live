@@ -19,7 +19,7 @@ import {
 import { useNftCollectionMetadata, useNftMetadata } from "@ledgerhq/live-common/nft/index";
 import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { isEditableOperation } from "@ledgerhq/coin-framework/operation";
 
 import { NavigatorName, ScreenName } from "../../const";

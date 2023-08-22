@@ -1,5 +1,33 @@
 # @ledgerhq/react-ui
 
+## 0.14.7
+
+### Patch Changes
+
+- Updated dependencies [[`27e4a76f6c`](https://github.com/LedgerHQ/ledger-live/commit/27e4a76f6cc66aa6a7480f48329db04d33200c65)]:
+  - @ledgerhq/icons-ui@0.5.0
+
+## 0.14.7-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`27e4a76f6c`](https://github.com/LedgerHQ/ledger-live/commit/27e4a76f6cc66aa6a7480f48329db04d33200c65)]:
+  - @ledgerhq/icons-ui@0.5.0-hotfix.0
+
+## 0.14.6
+
+### Patch Changes
+
+- Updated dependencies [[`5bbcea12f9`](https://github.com/LedgerHQ/ledger-live/commit/5bbcea12f93e3cda41705a4d61d50845628a6de6)]:
+  - @ledgerhq/icons-ui@0.4.4
+
+## 0.14.6-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`5bbcea12f9`](https://github.com/LedgerHQ/ledger-live/commit/5bbcea12f93e3cda41705a4d61d50845628a6de6)]:
+  - @ledgerhq/icons-ui@0.4.4-next.0
+
 ## 0.14.5
 
 ### Patch Changes
