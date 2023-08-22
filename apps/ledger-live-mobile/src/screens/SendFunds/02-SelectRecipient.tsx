@@ -9,8 +9,12 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import { Operation } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
-import { getStuckAccountAndOperation } from "@ledgerhq/coin-framework/operation";
+import {
+  getStuckAccountAndOperation,
+  isConfirmedOperation,
+} from "@ledgerhq/coin-framework/operation";
 import invariant from "invariant";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
@@ -34,6 +38,8 @@ import { accountScreenSelector } from "../../reducers/accounts";
 import DomainServiceRecipientRow from "./DomainServiceRecipientRow";
 import RecipientRow from "./RecipientRow";
 import { EditOperationCard } from "../../components/EditOperationCard";
+import { currencySettingsForAccountSelector } from "../../reducers/settings";
+import type { State } from "../../reducers/types";
 
 const withoutHiddenError = (error: Error): Error | null =>
   error instanceof RecipientRequired ? null : error;
@@ -50,6 +56,11 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
   invariant(account, "account is missing");
 
   const mainAccount = getMainAccount(account, parentAccount);
+  const currencySettings = useSelector((s: State) =>
+    currencySettingsForAccountSelector(s, {
+      account: mainAccount,
+    }),
+  );
   const { enabled: isDomainResolutionEnabled, params } =
     useFeature<{
       supportedCurrencyIds: CryptoCurrencyId[];
@@ -168,6 +179,11 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
 
   const error = withoutHiddenError(status.errors.recipient);
   const warning = status.warnings.recipient;
+  const isSomeIncomingTxPending = account.operations?.some(
+    (op: Operation) =>
+      (op.type === "IN" || op.type === "NFT_IN") &&
+      !isConfirmedOperation(op, mainAccount, currencySettings.confirmationsNb),
+  );
 
   const stuckAccountAndOperation = getStuckAccountAndOperation(account, mainAccount);
 
@@ -259,6 +275,11 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
             )}
           </NavigationScrollView>
           <View style={styles.container}>
+            {isSomeIncomingTxPending ? (
+              <View style={styles.infoBox}>
+                <Alert type="warning">{t("send.pendingTxWarning")}</Alert>
+              </View>
+            ) : null}
             {(!isDomainResolutionEnabled || !isCurrencySupported) &&
             transaction.recipient &&
             !(error || warning) ? (
