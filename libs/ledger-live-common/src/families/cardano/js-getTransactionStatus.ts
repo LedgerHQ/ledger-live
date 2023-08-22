@@ -80,7 +80,9 @@ async function getSendTransactionStatus(
   if (!t.recipient) {
     errors.recipient = new RecipientRequired();
   } else if (!isValidAddress(t.recipient, networkParams.networkId)) {
-    errors.recipient = new InvalidAddress();
+    errors.recipient = new InvalidAddress("", {
+      currencyName: a.currency.name,
+    });
   }
 
   if (!amount.gt(0)) {

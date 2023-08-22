@@ -106,7 +106,7 @@ const getTransactionStatus = async (
   if (!transaction.recipient) {
     errors.recipient = new RecipientRequired();
   } else if (!isValidAddress(transaction.recipient, networkParams.networkId)) {
-    errors.recipient = new InvalidAddress();
+    errors.recipient = new InvalidAddress("");
   }
 
   if (!amount.gt(0)) {
