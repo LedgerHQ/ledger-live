@@ -194,6 +194,7 @@ export default function Content({
 
         <Title
           hasFailed={!!hasFailed}
+          isConfirmed={isConfirmed}
           amount={amount}
           operation={operation}
           currency={currency}

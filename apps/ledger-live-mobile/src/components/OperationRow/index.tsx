@@ -3,7 +3,7 @@ import { TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
 import styled, { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
-import { getOperationAmountNumber } from "@ledgerhq/live-common/operation";
+import { getOperationAmountNumber, isConfirmedOperation } from "@ledgerhq/live-common/operation";
 import {
   getMainAccount,
   getAccountCurrency,
@@ -15,6 +15,7 @@ import { Box, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { WarningMedium } from "@ledgerhq/native-ui/assets/icons";
 import debounce from "lodash/debounce";
 import { isEqual } from "lodash";
+import { useSelector } from "react-redux";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { isEditableOperation } from "@ledgerhq/coin-framework/operation";
 
@@ -28,6 +29,8 @@ import perFamilyOperationDetails from "../../generated/operationDetails";
 import { track } from "../../analytics";
 import { UnionToIntersection } from "../../types/helpers";
 import { BaseNavigation } from "../RootNavigator/types/helpers";
+import { currencySettingsForAccountSelector } from "../../reducers/settings";
+import type { State } from "../../reducers/types";
 
 type FamilyOperationDetailsIntersection = UnionToIntersection<
   (typeof perFamilyOperationDetails)[keyof typeof perFamilyOperationDetails]
@@ -141,8 +144,24 @@ function OperationRow({
 
   const { colors } = useTheme();
   const amount = getOperationAmountNumber(operation);
-  const valueColor = amount.isNegative() ? colors.neutral.c100 : colors.success.c50;
   const currency = getAccountCurrency(account);
+  const mainAccount = getMainAccount(account, parentAccount);
+  const currencySettings = useSelector((s: State) =>
+    currencySettingsForAccountSelector(s, {
+      account: mainAccount,
+    }),
+  );
+  const isConfirmed = isConfirmedOperation(
+    operation,
+    mainAccount,
+    currencySettings.confirmationsNb,
+  );
+  const valueColor = amount.isNegative()
+    ? colors.neutral.c100
+    : isConfirmed
+    ? colors.success.c50
+    : colors.warning.c50;
+
   const unit = getAccountUnit(account);
   const text = <Trans i18nKey={`operations.types.${operation.type}`} />;
   const isOptimistic = operation.blockHeight === null;
