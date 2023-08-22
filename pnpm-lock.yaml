@@ -1026,8 +1026,8 @@ importers:
         specifier: ^0.11.0
         version: 0.11.0
       react-native-splash-screen:
-        specifier: 3.2.0
-        version: 3.2.0(react-native@0.71.6)
+        specifier: 3.3.0
+        version: 3.3.0(react-native@0.71.6)
       react-native-startup-time:
         specifier: ^2.0.1
         version: 2.0.1(react-native@0.71.6)(react@18.0.0)
@@ -53113,8 +53113,8 @@ packages:
       prop-types: 15.8.1
     dev: false
 
-  /react-native-splash-screen@3.2.0(react-native@0.71.6):
-    resolution: {integrity: sha512-Ls9qiNZzW/OLFoI25wfjjAcrf2DZ975hn2vr6U9gyuxi2nooVbzQeFoQS5vQcbCt9QX5NY8ASEEAtlLdIa6KVg==}
+  /react-native-splash-screen@3.3.0(react-native@0.71.6):
+    resolution: {integrity: sha512-rGjt6HkoSXxMqH4SQUJ1gnPQlPJV8+J47+4yhgTIan4bVvAwJhEeJH7wWt9hXSdH4+VfwTS0GTaflj1Tw83IhA==}
     peerDependencies:
       react-native: '>=0.57.0'
     dependencies:
