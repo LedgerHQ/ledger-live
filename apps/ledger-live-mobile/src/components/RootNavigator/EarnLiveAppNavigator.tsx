@@ -53,7 +53,7 @@ const Earn = (props: StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenNa
 
           if (!walletId) {
             // eslint-disable-next-line no-console
-            console.log("accountId required for 'stake-account' action.");
+            console.log("Wallet accountId required for 'stake-account' action.");
             return;
           }
 
