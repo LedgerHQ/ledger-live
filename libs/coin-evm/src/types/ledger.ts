@@ -48,8 +48,8 @@ export type LedgerExplorerOperation = {
   value: string;
   gas: string;
   gas_price: string;
-  max_fee_per_gas: string;
-  max_priority_fee_per_gas: string;
+  max_fee_per_gas: string | null;
+  max_priority_fee_per_gas: string | null;
   from: string;
   to: string;
   transfer_events: LedgerExplorerERC20TransferEvent[];
