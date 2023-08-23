@@ -176,6 +176,31 @@ const StepSummary = (props: StepProps) => {
             </Ellipsis>
           </Box>
         )}
+        <Box horizontal justifyContent="space-between" mb={2}>
+          <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
+            <Trans i18nKey="send.steps.details.amount" />
+          </Text>
+          <Box>
+            <FormattedVal
+              color={"palette.text.shade80"}
+              disableRounding
+              unit={unit}
+              val={amount}
+              fontSize={4}
+              inline
+              showCode
+            />
+            <Box textAlign="right">
+              <CounterValue
+                color="palette.text.shade60"
+                fontSize={3}
+                currency={currency}
+                value={amount}
+                alwaysShowSign={false}
+              />
+            </Box>
+          </Box>
+        </Box>
         {SpecificSummaryNetworkFeesRow ? (
           <SpecificSummaryNetworkFeesRow
             feeTooHigh={feeTooHigh}
