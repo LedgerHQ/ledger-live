@@ -14,7 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import { useMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
-import { FlatList, RefreshControl, TouchableOpacity, Platform } from "react-native";
+import { FlatList, RefreshControl, TouchableOpacity } from "react-native";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
 import { useRoute, useFocusEffect } from "@react-navigation/native";
 import { useNetInfo } from "@react-native-community/netinfo";
@@ -428,7 +428,7 @@ export default function Market({ navigation }: NavigationProps) {
   const MarketHeader = useCallback(
     () =>
       ptxEarnFeature?.enabled ? (
-        <Flex px={6} marginTop={Platform.OS === "ios" ? "20px" : "40px"}>
+        <Flex px={6} pt={6}>
           <SearchHeader search={search} refresh={refresh} />
           <BottomSection navigation={navigation} />
         </Flex>
