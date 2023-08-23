@@ -239,6 +239,8 @@ const StepReceiveFunds = (props: StepProps) => {
     onClose,
     receiveStakingFlowConfig?.enabled,
     receiveStakingFlowConfig?.params,
+    receiveNFTMode,
+    receiveTokenMode,
     transitionTo,
   ]);
 
