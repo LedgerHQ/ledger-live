@@ -68,7 +68,7 @@ import NavBarColorHandler from "./components/NavBarColorHandler";
 import { FirebaseRemoteConfigProvider } from "./components/FirebaseRemoteConfig";
 import { FirebaseFeatureFlagsProvider } from "./components/FirebaseFeatureFlags";
 import MarketDataProvider from "./screens/Market/MarketDataProviderWrapper";
-import AdjustProvider from "./components/AdjustProvider";
+import AdjustSetup from "./components/AdjustSetup";
 import PostOnboardingProviderWrapped from "./logic/postOnboarding/PostOnboardingProviderWrapped";
 import { GeneralTermsContextProvider } from "./logic/terms";
 import HookDynamicContentCards from "./dynamicContent/useContentCards";
@@ -269,7 +269,7 @@ export default class Root extends Component {
               <>
                 <SetEnvsFromSettings />
                 <HookSentry />
-                <AdjustProvider />
+                <AdjustSetup />
                 <AnalyticsProvider store={store}>
                   <HookNotifications />
                   <HookDynamicContentCards />
