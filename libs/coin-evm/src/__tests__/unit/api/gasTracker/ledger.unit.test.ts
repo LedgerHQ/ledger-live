@@ -5,11 +5,7 @@ import network from "@ledgerhq/live-network/network";
 import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { getGasOptions } from "../../../../api/gasTracker/ledger";
 import { GasOptions } from "../../../../types";
-import {
-  GasTrackerDoesNotSupportEIP1559,
-  LedgerGasTrackerUsedIncorrectly,
-  NoGasTrackerFound,
-} from "../../../../errors";
+import { LedgerGasTrackerUsedIncorrectly, NoGasTrackerFound } from "../../../../errors";
 
 jest.mock("@ledgerhq/live-network/network");
 
@@ -121,6 +117,38 @@ describe("EVM Family", () => {
         expect(gasOptions).toEqual(expectedGasOptions);
       });
 
+      it("should return legacy gas options when EIP-1559 not supported by currency", async () => {
+        const gasOptions: GasOptions = await getGasOptions({
+          currency: {
+            ethereumLikeInfo: { gasTracker: { type: "ledger", explorerId: "etc" } },
+          },
+          options: { useEIP1559: true },
+        } as any);
+
+        const expectedGasOptions: GasOptions = {
+          slow: {
+            maxFeePerGas: null,
+            maxPriorityFeePerGas: null,
+            gasPrice: new BigNumber(1),
+            nextBaseFee: null,
+          },
+          medium: {
+            maxFeePerGas: null,
+            maxPriorityFeePerGas: null,
+            gasPrice: new BigNumber(2),
+            nextBaseFee: null,
+          },
+          fast: {
+            maxFeePerGas: null,
+            maxPriorityFeePerGas: null,
+            gasPrice: new BigNumber(3),
+            nextBaseFee: null,
+          },
+        };
+
+        expect(gasOptions).toEqual(expectedGasOptions);
+      });
+
       it("should throw if the gas tracker type isn't ledger", async () => {
         try {
           await getGasOptions({
@@ -148,23 +176,6 @@ describe("EVM Family", () => {
             throw e;
           }
           expect(e).toBeInstanceOf(NoGasTrackerFound);
-        }
-      });
-
-      it("should throw if the gas tracker tries to use EIP1559 when not supported", async () => {
-        try {
-          await getGasOptions({
-            currency: {
-              ethereumLikeInfo: { gasTracker: { type: "ledger", explorerId: "etc" } },
-            },
-            options: { useEIP1559: true },
-          } as any);
-          fail("Promise should have been rejected");
-        } catch (e) {
-          if (e instanceof AssertionError) {
-            throw e;
-          }
-          expect(e).toBeInstanceOf(GasTrackerDoesNotSupportEIP1559);
         }
       });
     });
