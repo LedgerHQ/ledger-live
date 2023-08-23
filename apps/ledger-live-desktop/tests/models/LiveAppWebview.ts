@@ -87,8 +87,12 @@ export class LiveAppWebview {
     await this.clickWebviewElement("[data-test-id=list-currencies-button]");
   }
 
-  async signTransaction() {
-    await this.clickWebviewElement("[data-test-id=sign-transaction-button]");
+  async signBitcoinTransaction() {
+    await this.clickWebviewElement("[data-test-id=sign-bitcoin-transaction-button]");
+  }
+
+  async signEthereumTransaction() {
+    await this.clickWebviewElement("[data-test-id=sign-ethereum-transaction-button]");
   }
 
   async clickWebviewElement(elementName: string) {
