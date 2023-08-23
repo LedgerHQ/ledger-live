@@ -4873,11 +4873,6 @@
     "cta" : "続行"
   },
   "families" : {
-    "casper": {
-      "transferIdPlaceholder": "オプション",
-      "transferId": "引き継ぎID",
-      "transferIdWarningText": "転送 ID は、18446744073709551615 より小さい正の数である必要があります"
-    },
     "cardano" : {
       "memoPlaceholder" : "任意",
       "memo" : "メモ"

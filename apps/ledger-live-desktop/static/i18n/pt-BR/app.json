@@ -4873,11 +4873,6 @@
     "cta" : "Continuar"
   },
   "families" : {
-    "casper": {
-      "transferIdPlaceholder": "Opcional",
-      "transferId": "ID de transferência",
-      "transferIdWarningText": "O ID da transferência deve ser um número positivo menor que 18446744073709551615"
-    },
     "cardano" : {
       "memoPlaceholder" : "Opcional",
       "memo" : "Memo"

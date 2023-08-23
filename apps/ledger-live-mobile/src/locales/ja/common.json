@@ -2289,7 +2289,6 @@
     },
     "details" : "{{ currency }} 詳細",
     "extra" : {
-      "transferId": "引き継ぎID",
       "resource" : "リソース",
       "frozenAmount" : "凍結額",
       "unfreezeAmount" : "凍結解除額",
@@ -3482,8 +3481,6 @@
       "maxEstimatedFee" : "最大推定手数料",
       "validateFees" : "手数料の確認",
       "customizeFees" : "手数料のカスタマイズ",
-      "transferId": "引き継ぎID",
-      "validateTransferId": "ID の検証",
       "memo" : {
         "title" : "メモ",
         "type" : "メモの種類",

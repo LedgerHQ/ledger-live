@@ -4873,11 +4873,6 @@
     "cta" : "Devam"
   },
   "families" : {
-    "casper": {
-      "transferIdPlaceholder": "Tercihe",
-      "transferId": "geçiş kimliği",
-      "transferIdWarningText": "Aktarım Kimliği, 18446744073709551615'ten küçük pozitif bir sayı olmalıdır"
-    },
     "cardano" : {
       "memoPlaceholder" : "Tercihe bağlı",
       "memo" : "Memo"

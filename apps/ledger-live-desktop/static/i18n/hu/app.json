@@ -3694,11 +3694,6 @@
     "cta": "Enter Ledger app"
   },
   "families": {
-    "casper": {
-      "transferIdPlaceholder": "Választható",
-      "transferId": "Átigazolási azonosító",
-      "transferIdWarningText": "Az átutalás azonosítójának pozitív számnak kell lennie, amely kisebb, mint 18446744073709551615"
-    },
     "stellar": {
       "memo": "Memo",
       "memoType": {
