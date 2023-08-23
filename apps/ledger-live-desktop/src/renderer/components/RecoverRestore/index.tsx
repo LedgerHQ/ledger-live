@@ -78,10 +78,18 @@ const RecoverRestore = () => {
       switch (currentDevice?.modelId) {
         case DeviceModelId.nanoX:
           setDeviceModelId(currentDevice.modelId);
-          history.push(`/onboarding/${UseCase.recover}/${ScreenId.pairMyNano}`);
+          history.push({
+            pathname: `/onboarding/${UseCase.recover}/${ScreenId.pairMyNano}`,
+            state: {
+              fromRecover: true,
+            },
+          });
           break;
         case DeviceModelId.stax:
-          history.push(`/onboarding/sync/${currentDevice.modelId}`);
+          history.push({
+            pathname: `/onboarding/sync/${currentDevice.modelId}`,
+            state: { fromRecover: true },
+          });
           break;
         default:
           break;
