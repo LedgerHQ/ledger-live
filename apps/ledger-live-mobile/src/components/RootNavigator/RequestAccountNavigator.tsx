@@ -10,7 +10,7 @@ import AddAccountsNavigator from "./AddAccountsNavigator";
 import StepHeader from "../StepHeader";
 import type { RequestAccountNavigatorParamList } from "./types/RequestAccountNavigator";
 
-const totalSteps = "3"; // FIXME: no. of steps varies depending on the flow and whether e.g. you have an account.
+const totalSteps = "2";
 export default function RequestAccountNavigator() {
   const { colors } = useTheme();
   const { t } = useTranslation();
