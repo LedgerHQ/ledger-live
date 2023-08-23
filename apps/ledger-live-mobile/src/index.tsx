@@ -39,7 +39,7 @@ import { exportSelector as accountsExportSelector } from "./reducers/accounts";
 import { exportSelector as bleSelector } from "./reducers/ble";
 import LocaleProvider, { i18n } from "./context/Locale";
 import RebootProvider from "./context/Reboot";
-import ButtonUseTouchable from "./context/ButtonUseTouchable";
+import ButtonUseTouchableContext from "./context/ButtonUseTouchableContext";
 import AuthPass from "./context/AuthPass";
 import LedgerStoreProvider from "./context/LedgerStore";
 import LoadingApp from "./components/LoadingApp";
@@ -286,7 +286,7 @@ export default class Root extends Component {
                                 <LocaleProvider>
                                   <BridgeSyncProvider>
                                     <CounterValuesProvider initialState={initialCountervalues}>
-                                      <ButtonUseTouchable.Provider value={true}>
+                                      <ButtonUseTouchableContext.Provider value={true}>
                                         <OnboardingContextProvider>
                                           <PostOnboardingProviderWrapped>
                                             <ToastProvider>
@@ -301,7 +301,7 @@ export default class Root extends Component {
                                             </ToastProvider>
                                           </PostOnboardingProviderWrapped>
                                         </OnboardingContextProvider>
-                                      </ButtonUseTouchable.Provider>
+                                      </ButtonUseTouchableContext.Provider>
                                     </CounterValuesProvider>
                                   </BridgeSyncProvider>
                                 </LocaleProvider>
