@@ -4873,11 +4873,6 @@
     "cta" : "계속"
   },
   "families" : {
-    "casper": {
-      "transferIdPlaceholder": "선택 과목",
-      "transferId": "전송 ID",
-      "transferIdWarningText": "전송 ID는 18446744073709551615보다 작은 양수여야 합니다."
-    },
     "cardano" : {
       "memoPlaceholder" : "선택 사항",
       "memo" : "메모"

@@ -3694,11 +3694,6 @@
     "cta": "Enter Ledger app"
   },
   "families": {
-    "casper": {
-      "transferIdPlaceholder": "Optional",
-      "transferId": "Transfer ID",
-      "transferIdWarningText": "Transfer ID should be a positive number smaller than 18446744073709551615"
-    },
     "stellar": {
       "memo": "Memo",
       "memoType": {
