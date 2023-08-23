@@ -26,7 +26,9 @@ export const dataset: DatasetTest<Transaction> = {
                 mode: "send",
                 recipient: "0x17733CAb76d9A2112576443F21735789733B1ca3",
                 amount: (1e19).toString(), // 10 ETH
-                gasPrice: "0",
+                type: 2, // EIP1559
+                maxFeePerGas: "27774666566",
+                maxPriorityFeePerGas: "716307827",
                 gasLimit: "21000",
                 chainId: 1,
                 nonce: 0,
@@ -52,7 +54,9 @@ export const dataset: DatasetTest<Transaction> = {
                 mode: "send",
                 recipient: "0x17733CAb76d9A2112576443F21735789733B1ca3",
                 amount: "1",
-                gasPrice: "100000000",
+                type: 2, // EIP1559
+                maxFeePerGas: "27774666566",
+                maxPriorityFeePerGas: "716307827",
                 gasLimit: "21000",
                 chainId: 1,
                 nonce: 0,
