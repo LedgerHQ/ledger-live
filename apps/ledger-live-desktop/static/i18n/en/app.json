@@ -5401,13 +5401,13 @@
       "description": "Device detected but connection failed. Please try again or contact Ledger Support if the problem persists."
     },
     "CasperInvalidTransferId": {
-      "title": "Transfer ID should be a positive number smaller than 18446744073709551615"
+      "title": "Transfer ID should be a positive number smaller than {{maxTransferId}}"
     },
     "InvalidMinimumAmount": {
-      "title": "Minimum amount to transfer is 2.5 CSPR"
+      "title": "Minimum amount to transfer is {{minAmount}}"
     },
     "MayBlockAccount": {
-      "title": "Your account will be left with less than the 2.6 CSPR required to perform a send"
+      "title": "Your account will be left with less than the {{minAmount}} required to perform a send"
     },
     "ETHAddressNonEIP": {
       "title": "Auto-verification not available: carefully verify the address",

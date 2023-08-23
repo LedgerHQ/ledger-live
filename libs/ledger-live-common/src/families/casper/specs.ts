@@ -7,10 +7,10 @@ import { getCryptoCurrencyById } from "../../currencies";
 import { genericTestDestination, pickSiblings, botTest } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { acceptTransaction } from "./speculos-deviceActions";
-import { CASPER_MINIMUM_VALID_AMOUNT } from "./consts";
+import { CASPER_MINIMUM_VALID_AMOUNT_MOTES } from "./consts";
 import { getRandomTransferID } from "./msc-utils";
 
-const MIN_SAFE = new BigNumber(CASPER_MINIMUM_VALID_AMOUNT);
+const MIN_SAFE = new BigNumber(CASPER_MINIMUM_VALID_AMOUNT_MOTES);
 const maxAccount = 6;
 
 const casperSpecs: AppSpec<Transaction> = {

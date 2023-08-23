@@ -1,14 +1,9 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import Section from "../../screens/OperationDetails/Section";
+import { CasperOperation } from "@ledgerhq/live-common/families/casper/types";
 
-type Props = {
-  extra: {
-    transferId?: string;
-  };
-};
-
-function OperationDetailsExtra({ extra }: Props) {
+function OperationDetailsExtra({ extra }: CasperOperation["extra"]) {
   const { t } = useTranslation();
   return (
     <>

@@ -1,29 +1,32 @@
 import type {
   Account,
   AccountBridge,
-  Operation,
   SignOperationEvent,
   BroadcastFnSignature,
   SignOperationFnSignature,
   AccountLike,
 } from "@ledgerhq/types-live";
-import type { Transaction, TransactionStatus } from "../types";
+import type { CasperOperation, Transaction, TransactionStatus } from "../types";
 import { makeAccountBridgeReceive, makeSync } from "../../../bridge/jsHelpers";
 
 import { getPath, isError } from "../msc-utils";
 import { CLPublicKey, DeployUtil } from "casper-js-sdk";
 import BigNumber from "bignumber.js";
-import { CASPER_MINIMUM_VALID_AMOUNT } from "../consts";
+import {
+  CASPER_MINIMUM_VALID_AMOUNT_MOTES,
+  CASPER_MAX_TRANSFER_ID,
+  CASPER_MINIMUM_VALID_AMOUNT_CSPR,
+  CASPER_FEES_CSPR,
+} from "../consts";
 import {
   getAddress,
   getPubKeySignature,
   getPublicKeyFromCasperAddress,
-  validateAddress,
+  isAddressValid,
 } from "./bridgeHelpers/addresses";
 import { log } from "@ledgerhq/logs";
 import { Observable } from "rxjs";
 import { withDevice } from "../../../hw/deviceAccess";
-import { close } from "../../../hw";
 import { encodeOperationId } from "../../../operation";
 import CasperApp from "@zondax/ledger-casper";
 import {
@@ -34,12 +37,12 @@ import {
   RecipientRequired,
 } from "@ledgerhq/errors";
 import { CasperInvalidTransferId, MayBlockAccount, InvalidMinimumAmount } from "../errors";
-import { broadcastTx } from "./bridgeHelpers/network";
+import { broadcastTx } from "./bridgeHelpers/api";
 import { getMainAccount } from "../../../account/helpers";
 import { createNewDeploy, deployHashToString } from "./bridgeHelpers/txn";
 import { getAccountShape } from "./bridgeHelpers/accountShape";
 import { getEstimatedFees } from "./bridgeHelpers/fee";
-import { validateTransferId } from "./bridgeHelpers/transferId";
+import { isTransferIdValid } from "./bridgeHelpers/transferId";
 import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 
 const receive = makeAccountBridgeReceive();
@@ -60,20 +63,14 @@ const prepareTransaction = async (a: Account, t: Transaction): Promise<Transacti
   // log("debug", "[prepareTransaction] start fn");
 
   const { address } = getAddress(a);
-  const { recipient, transferId } = t;
+  const { recipient } = t;
 
   if (recipient && address) {
     // log("debug", "[prepareTransaction] fetching estimated fees");
 
-    if (
-      validateAddress(recipient).isValid &&
-      validateAddress(address).isValid &&
-      validateTransferId(transferId).isValid
-    ) {
-      if (t.useAllAmount) {
-        const amount = a.spendableBalance.minus(t.fees);
-        return { ...t, amount };
-      }
+    if (t.useAllAmount) {
+      const amount = a.spendableBalance.minus(t.fees);
+      return { ...t, amount };
     }
   }
 
@@ -92,19 +89,21 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
   let { amount } = t;
 
   if (!recipient) errors.recipient = new RecipientRequired();
-  else if (!validateAddress(recipient).isValid)
+  else if (!isAddressValid(recipient))
     errors.recipient = new InvalidAddress("", {
       currencyName: a.currency.name,
     });
   else if (recipient.toLowerCase() === address.toLowerCase())
     errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
 
-  if (!validateAddress(address).isValid)
+  if (!isAddressValid(address))
     errors.sender = new InvalidAddress("", {
       currencyName: a.currency.name,
     });
-  else if (!validateTransferId(t.transferId).isValid) {
-    errors.sender = new CasperInvalidTransferId();
+  else if (!isTransferIdValid(t.transferId)) {
+    errors.sender = new CasperInvalidTransferId("", {
+      maxTransferId: CASPER_MAX_TRANSFER_ID,
+    });
   }
 
   // This is the worst case scenario (the tx won't cost more than this value)
@@ -131,11 +130,15 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
     }
   }
 
-  if (amount.lt(CASPER_MINIMUM_VALID_AMOUNT) && !errors.amount)
-    errors.amount = new InvalidMinimumAmount();
+  if (amount.lt(CASPER_MINIMUM_VALID_AMOUNT_MOTES) && !errors.amount)
+    errors.amount = new InvalidMinimumAmount("", {
+      minAmount: `${CASPER_MINIMUM_VALID_AMOUNT_CSPR} CSPR`,
+    });
 
-  if (spendableBalance.minus(totalSpent).minus(estimatedFees).lt(CASPER_MINIMUM_VALID_AMOUNT))
-    warnings.amount = new MayBlockAccount();
+  if (spendableBalance.minus(totalSpent).minus(estimatedFees).lt(CASPER_MINIMUM_VALID_AMOUNT_MOTES))
+    warnings.amount = new MayBlockAccount("", {
+      minAmount: `${CASPER_MINIMUM_VALID_AMOUNT_CSPR + CASPER_FEES_CSPR} CSPR`,
+    });
 
   // log("debug", "[getTransactionStatus] finish fn");
 
@@ -184,85 +187,75 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
         async function main() {
           // log("debug", "[signOperation] start fn");
 
-          const { recipient, useAllAmount } = transaction;
-          let { amount } = transaction;
-          const { id: accountId, balance } = account;
+          const { recipient, amount } = transaction;
+          const { id: accountId } = account;
           const { address, derivationPath } = getAddress(account);
 
           const casper = new CasperApp(transport);
 
-          try {
-            const fee = transaction.fees;
-            if (useAllAmount) amount = balance.minus(fee);
+          const fee = transaction.fees;
 
-            transaction = { ...transaction, amount };
+          const deploy = createNewDeploy(
+            address,
+            recipient,
+            transaction.amount,
+            transaction.fees,
+            transaction.transferId,
+          );
+          // Serialize tx
+          const deployBytes = DeployUtil.deployToBytes(deploy);
 
-            const deploy = createNewDeploy(
-              address,
-              recipient,
-              transaction.amount,
-              transaction.fees,
-              transaction.transferId,
-            );
-            // Serialize tx
-            const deployBytes = DeployUtil.deployToBytes(deploy);
+          log("debug", `[signOperation] serialized deploy: [${deployBytes.toString()}]`);
 
-            log("debug", `[signOperation] serialized deploy: [${deployBytes.toString()}]`);
+          o.next({
+            type: "device-signature-requested",
+          });
 
-            o.next({
-              type: "device-signature-requested",
-            });
+          // Sign by device
+          const result = await casper.sign(getPath(derivationPath), Buffer.from(deployBytes));
+          isError(result);
 
-            // Sign by device
-            const result = await casper.sign(getPath(derivationPath), Buffer.from(deployBytes));
-            isError(result);
+          o.next({
+            type: "device-signature-granted",
+          });
 
-            o.next({
-              type: "device-signature-granted",
-            });
+          // signature verification
+          const deployHash = deployHashToString(deploy.hash, true);
+          const signature = result.signatureRS;
 
-            // signature verification
-            const deployHash = deployHashToString(deploy.hash, true);
-            const signature = result.signatureRS;
+          const pkBuffer = Buffer.from(getPublicKeyFromCasperAddress(address), "hex");
+          // sign deploy object
+          const signedDeploy = DeployUtil.setSignature(
+            deploy,
+            signature,
+            new CLPublicKey(pkBuffer, getPubKeySignature(address)),
+          );
 
-            const pkBuffer = Buffer.from(getPublicKeyFromCasperAddress(address), "hex");
-            // sign deploy object
-            const signedDeploy = DeployUtil.setSignature(
-              deploy,
-              signature,
-              new CLPublicKey(pkBuffer, getPubKeySignature(address)),
-            );
+          const operation: CasperOperation = {
+            id: encodeOperationId(accountId, deployHash, "OUT"),
+            hash: deployHash,
+            type: "OUT",
+            senders: [address],
+            recipients: [recipient],
+            accountId,
+            value: amount.plus(fee),
+            fee,
+            blockHash: null,
+            blockHeight: null,
+            date: new Date(),
+            extra: {
+              transferId: transaction.transferId,
+            },
+          };
 
-            const operation: Operation = {
-              id: encodeOperationId(accountId, deployHash, "OUT"),
-              hash: deployHash,
-              type: "OUT",
-              senders: [address],
-              recipients: [recipient],
-              accountId,
-              value: amount.plus(fee),
-              fee,
-              blockHash: null,
-              blockHeight: null,
-              date: new Date(),
-              extra: {
-                transferId: transaction.transferId,
-              },
-            };
-
-            o.next({
-              type: "signed",
-              signedOperation: {
-                operation,
-                signature: JSON.stringify(DeployUtil.deployToJson(signedDeploy)),
-                expirationDate: null,
-              },
-            });
-          } finally {
-            close(transport, deviceId);
-
-            // log("debug", "[signOperation] finish fn");
-          }
+          o.next({
+            type: "signed",
+            signedOperation: {
+              operation,
+              signature: JSON.stringify(DeployUtil.deployToJson(signedDeploy)),
+              expirationDate: null,
+            },
+          });
         }
 
         main().then(

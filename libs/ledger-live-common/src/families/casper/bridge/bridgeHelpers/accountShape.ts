@@ -5,9 +5,9 @@ import { Account } from "@ledgerhq/types-live";
 import { encodeAccountId } from "../../../../account";
 
 import { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { fetchBalances, fetchBlockHeight, fetchTxs, getAccountStateInfo } from "./network";
+import { fetchBalances, fetchNetworkStatus, fetchTxs, getAccountStateInfo } from "./api";
 import { mapTxToOps } from "./txn";
-import { NAccountBalance, LTxnHistoryData } from "./types";
+import { NAccountBalance, ITxnHistoryData } from "./api/types";
 
 export const getAccountShape: GetAccountShape = async info => {
   const { address, currency, derivationMode } = info;
@@ -24,9 +24,9 @@ export const getAccountShape: GetAccountShape = async info => {
 
   const { purseUref, accountHash } = await getAccountStateInfo(address);
 
-  const blockHeight = await fetchBlockHeight();
+  const blockHeight = await fetchNetworkStatus();
 
-  let balance: NAccountBalance, txs: LTxnHistoryData[];
+  let balance: NAccountBalance, txs: ITxnHistoryData[];
   if (purseUref) {
     balance = await fetchBalances(purseUref);
     txs = await fetchTxs(address);
