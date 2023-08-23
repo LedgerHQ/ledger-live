@@ -15,8 +15,6 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
-import { isValidAddress } from "../logic";
-import { getNetworkParameters } from "../networks";
 import { CardanoMinAmountError, CardanoNotEnoughFunds } from "../errors";
 import { buildTransaction } from "../js-buildTransaction";
 import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
@@ -44,6 +42,10 @@ const estimateMaxSpendable = ({ account }) => {
   return account.balance;
 };
 
+const isValidAddress = (address: string) => {
+  return address.length > 0;
+};
+
 const getTransactionStatus = async (
   account: CardanoAccount,
   transaction: CardanoTransaction,
@@ -65,7 +67,6 @@ const getTransactionStatus = async (
     : transaction.amount;
 
   let totalSpent = transaction.amount.plus(estimatedFees);
-  const networkParams = getNetworkParameters(account.currency.id);
 
   const useAllAmount = Boolean(transaction.useAllAmount);
 
@@ -105,8 +106,10 @@ const getTransactionStatus = async (
 
   if (!transaction.recipient) {
     errors.recipient = new RecipientRequired();
-  } else if (!isValidAddress(transaction.recipient, networkParams.networkId)) {
-    errors.recipient = new InvalidAddress("");
+  } else if (!isValidAddress(transaction.recipient)) {
+    errors.recipient = new InvalidAddress("", {
+      currencyName: account.currency.name,
+    });
   }
 
   if (!amount.gt(0)) {
@@ -126,8 +129,6 @@ const getTransactionStatus = async (
         e.message.toLowerCase() === "not enough tokens"
       ) {
         errors.amount = new CardanoNotEnoughFunds();
-      } else {
-        throw e;
       }
     }
   }
