@@ -94,7 +94,7 @@ export const fetchBlockHeight = async (): Promise<NetworkStatusResponse> => {
 
 export const fetchTxs = async (addr: string, offset = 0): Promise<TransactionsResponse> => {
   const response = await fetch<TransactionsResponse>(
-    `/extended/v1/address/${addr}/transactions_with_transfers?offset=${offset}`,
+    `/extended/v1/address/${addr}/transactions_with_transfers?offset=${offset}&limit=50`,
   );
   return response; // TODO Validate if the response fits this interface
 };
