@@ -6,6 +6,7 @@ import {
 } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useTheme } from "styled-components/native";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import TrackScreen from "../../../analytics/TrackScreen";
 import GenericErrorView from "../../../components/GenericErrorView";
 import { WebPTXPlayer } from "../../../components/WebPTXPlayer";
@@ -30,6 +31,7 @@ export function EarnScreen({ route }: Props) {
   const language = useSelector(languageSelector);
   const { ticker: currencyTicker } = useSelector(counterValueCurrencySelector);
   const discreet = useSelector(discreetModeSelector);
+  const insets = useSafeAreaInsets();
 
   const { platform: appId, ...params } = route.params || {};
   const searchParams = route.path
@@ -49,6 +51,7 @@ export function EarnScreen({ route }: Props) {
        */
       flex={1}
       mb={TAB_BAR_HEIGHT}
+      mt={insets.top}
     >
       <TrackScreen category="EarnDashboard" name="Earn" />
       <WebPTXPlayer

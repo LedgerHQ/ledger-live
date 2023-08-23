@@ -775,9 +775,13 @@
       "title": "Image download failed",
       "description": "Please try again with another image"
     },
-    "ImageMetadataLoadingError": {
-      "title": "Image metadata loading failed",
-      "description": "Please try again with another image"
+    "NFTMetadataLoadingError": {
+      "title": "NFT metadata loading issue",
+      "description": "Try again with a different NFT."
+    },
+    "ImageSizeLoadingError": {
+      "title": "Failed to retrieve picture dimensions",
+      "description": "Try again with a different picture."
     },
     "ImageTooLargeError": {
       "title": "Image too large",
