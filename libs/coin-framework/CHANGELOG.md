@@ -1,5 +1,11 @@
 # @ledgerhq/coin-framework
 
+## 0.5.2-nightly.1
+
+### Patch Changes
+
+- [#4353](https://github.com/LedgerHQ/ledger-live/pull/4353) [`0d9ad3599b`](https://github.com/LedgerHQ/ledger-live/commit/0d9ad3599bce8872fde97d27c977ab24445afc3a) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - add evm mock test
+
 ## 0.5.2-nightly.0
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # @ledgerhq/coin-polkadot
 
+## 0.3.4-nightly.1
+
+### Patch Changes
+
+- Updated dependencies [[`0d9ad3599b`](https://github.com/LedgerHQ/ledger-live/commit/0d9ad3599bce8872fde97d27c977ab24445afc3a)]:
+  - @ledgerhq/coin-framework@0.5.2-nightly.1
+
 ## 0.3.4-nightly.0
 
 ### Patch Changes

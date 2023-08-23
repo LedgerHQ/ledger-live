@@ -1,5 +1,21 @@
 # @ledgerhq/live-common
 
+## 31.6.0-nightly.3
+
+### Patch Changes
+
+- [#4429](https://github.com/LedgerHQ/ledger-live/pull/4429) [`7002c6c8f9`](https://github.com/LedgerHQ/ledger-live/commit/7002c6c8f9bcbc5c2387cb064f218c5e27c70315) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - update coreum staking doc url
+
+- [#4426](https://github.com/LedgerHQ/ledger-live/pull/4426) [`2bec4b7f08`](https://github.com/LedgerHQ/ledger-live/commit/2bec4b7f080d6dc9a6b22805c0fa317ff55c7202) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Custom lockscreen errors: replace ImageMetadataLoadingError by 2 errors: ImageSizeLoadingError, NFTMetadataLoadingError
+
+- [#4353](https://github.com/LedgerHQ/ledger-live/pull/4353) [`0d9ad3599b`](https://github.com/LedgerHQ/ledger-live/commit/0d9ad3599bce8872fde97d27c977ab24445afc3a) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - add evm mock test
+
+- Updated dependencies [[`0d9ad3599b`](https://github.com/LedgerHQ/ledger-live/commit/0d9ad3599bce8872fde97d27c977ab24445afc3a)]:
+  - @ledgerhq/coin-framework@0.5.2-nightly.1
+  - @ledgerhq/coin-algorand@0.2.7-nightly.1
+  - @ledgerhq/coin-evm@0.5.2-nightly.1
+  - @ledgerhq/coin-polkadot@0.3.4-nightly.1
+
 ## 31.6.0-nightly.2
 
 ### Minor Changes
