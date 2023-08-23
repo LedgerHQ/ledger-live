@@ -476,13 +476,7 @@ export const DeeplinksProvider = ({
             }
           }
           if ((hostname === "discover" || hostname === "recover") && platform) {
-            const whitelistLiveAppsAccessibleInNonOnboardedLL: LiveAppManifest["id"][] =
-              recoverManifests;
-            if (
-              !hasCompletedOnboarding &&
-              !whitelistLiveAppsAccessibleInNonOnboardedLL.includes(platform)
-            )
-              return undefined;
+            if (!hasCompletedOnboarding && !platform.startsWith("protect")) return undefined;
             /**
              * Upstream validation of "ledgerlive://discover/:platform":
              *  - checking that a manifest exists
