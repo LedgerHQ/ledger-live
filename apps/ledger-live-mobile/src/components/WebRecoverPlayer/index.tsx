@@ -23,7 +23,13 @@ type Props = {
   inputs?: Record<string, string | undefined>;
 };
 
-const headerShownIds = ["protect-local", "protect-local-dev", "protect-simu", "protect-staging"];
+const headerShownIds = [
+  "protect-local",
+  "protect-local-dev",
+  "protect-simu",
+  "protect-staging",
+  "protect-staging-v2",
+];
 
 const WebRecoverPlayer = ({ manifest, inputs }: Props) => {
   const webviewAPIRef = useRef<WebviewAPI>(null);

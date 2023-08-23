@@ -60,24 +60,12 @@ function isInvalidWalletConnectLink(url: string) {
   return true;
 }
 
-const recoverManifests = [
-  "protect",
-  "protect-local",
-  "protect-local-dev",
-  "protect-simu",
-  "protect-staging",
-  "protect-preprod",
-  "protect-prod",
-  "protect-sec",
-  "protect-sit",
-];
-
 function getProxyURL(url: string) {
   const uri = new URL(url);
   const { hostname, pathname } = uri;
   const platform = pathname.split("/")[1];
 
-  if (hostname === "discover" && platform && recoverManifests.includes(platform)) {
+  if (hostname === "discover" && platform && platform.startsWith("protect")) {
     return url.replace("://discover", "://recover");
   }
 
