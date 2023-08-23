@@ -231,6 +231,9 @@ export default function Tutorial({ useCase }: Props) {
   const recoverFF = useFeature("protectServicesDesktop");
   const upsellPath = useUpsellPath(recoverFF);
   const postOnboardingPath = usePostOnboardingPath(recoverFF);
+  const recoverDiscoverPath = useMemo(() => {
+    return `/recover/${recoverFF?.params?.protectId}?redirectTo=disclaimerRestore`;
+  }, [recoverFF?.params?.protectId]);
 
   const [userUnderstandConsequences, setUserUnderstandConsequences] = useState(false);
   const [userChosePinCodeHimself, setUserChosePinCodeHimself] = useState(false);
@@ -491,7 +494,7 @@ export default function Tutorial({ useCase }: Props) {
         },
         previous: () => {
           if (useCase === UseCase.recover && fromRecover) {
-            history.push(`/recover/${recoverFF?.params?.protectId}?redirectTo=disclaimer`);
+            history.push(recoverDiscoverPath);
           } else if (useCase === UseCase.connectDevice || useCase === UseCase.recover) {
             history.push("/onboarding/select-use-case");
           } else if (useCase === UseCase.setupDevice) {
@@ -531,7 +534,7 @@ export default function Tutorial({ useCase }: Props) {
         },
         previous: () =>
           fromRecover
-            ? history.push(`/recover/${recoverFF?.params?.protectId}?redirectTo=disclaimer`)
+            ? history.push(recoverDiscoverPath)
             : history.push("/onboarding/select-use-case"),
       },
     ],
@@ -543,7 +546,7 @@ export default function Tutorial({ useCase }: Props) {
       history,
       path,
       fromRecover,
-      recoverFF?.params?.protectId,
+      recoverDiscoverPath,
       upsellPath,
       dispatch,
     ],
