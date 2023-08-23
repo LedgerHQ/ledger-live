@@ -52,7 +52,7 @@ import useAppStateListener from "./components/useAppStateListener";
 import SyncNewAccounts from "./bridge/SyncNewAccounts";
 import { OnboardingContextProvider } from "./screens/Onboarding/onboardingContext";
 
-import AnalyticsProvider from "./analytics/AnalyticsProvider";
+import SegmentSetup from "./analytics/SegmentSetup";
 import HookSentry from "./components/HookSentry";
 import HookNotifications from "./notifications/HookNotifications";
 import RootNavigator from "./components/RootNavigator";
@@ -264,57 +264,55 @@ export default class Root extends Component {
     return (
       <RebootProvider onRebootStart={this.onRebootStart}>
         <LedgerStoreProvider onInitFinished={this.onInitFinished}>
-          {(ready, store, initialCountervalues) =>
+          {(ready, initialCountervalues) =>
             ready ? (
               <>
                 <SetEnvsFromSettings />
                 <HookSentry />
                 <AdjustSetup />
-                <AnalyticsProvider store={store}>
-                  <HookNotifications />
-                  <HookDynamicContentCards />
-
-                  <PlatformAppProviderWrapper>
-                    <FirebaseRemoteConfigProvider>
-                      <FirebaseFeatureFlagsProvider>
-                        <SafeAreaProvider>
-                          <PerformanceProvider>
-                            <StylesProvider>
-                              <StyledStatusBar />
-                              <NavBarColorHandler />
-                              <AuthPass>
-                                <I18nextProvider i18n={i18n}>
-                                  <LocaleProvider>
-                                    <BridgeSyncProvider>
-                                      <CounterValuesProvider initialState={initialCountervalues}>
-                                        <ButtonUseTouchable.Provider value={true}>
-                                          <OnboardingContextProvider>
-                                            <PostOnboardingProviderWrapped>
-                                              <ToastProvider>
-                                                <NotificationsProvider>
-                                                  <SnackbarContainer />
-                                                  <NftMetadataProvider>
-                                                    <MarketDataProvider>
-                                                      <App />
-                                                    </MarketDataProvider>
-                                                  </NftMetadataProvider>
-                                                </NotificationsProvider>
-                                              </ToastProvider>
-                                            </PostOnboardingProviderWrapped>
-                                          </OnboardingContextProvider>
-                                        </ButtonUseTouchable.Provider>
-                                      </CounterValuesProvider>
-                                    </BridgeSyncProvider>
-                                  </LocaleProvider>
-                                </I18nextProvider>
-                              </AuthPass>
-                            </StylesProvider>
-                          </PerformanceProvider>
-                        </SafeAreaProvider>
-                      </FirebaseFeatureFlagsProvider>
-                    </FirebaseRemoteConfigProvider>
-                  </PlatformAppProviderWrapper>
-                </AnalyticsProvider>
+                <SegmentSetup />
+                <HookNotifications />
+                <HookDynamicContentCards />
+                <PlatformAppProviderWrapper>
+                  <FirebaseRemoteConfigProvider>
+                    <FirebaseFeatureFlagsProvider>
+                      <SafeAreaProvider>
+                        <PerformanceProvider>
+                          <StylesProvider>
+                            <StyledStatusBar />
+                            <NavBarColorHandler />
+                            <AuthPass>
+                              <I18nextProvider i18n={i18n}>
+                                <LocaleProvider>
+                                  <BridgeSyncProvider>
+                                    <CounterValuesProvider initialState={initialCountervalues}>
+                                      <ButtonUseTouchable.Provider value={true}>
+                                        <OnboardingContextProvider>
+                                          <PostOnboardingProviderWrapped>
+                                            <ToastProvider>
+                                              <NotificationsProvider>
+                                                <SnackbarContainer />
+                                                <NftMetadataProvider>
+                                                  <MarketDataProvider>
+                                                    <App />
+                                                  </MarketDataProvider>
+                                                </NftMetadataProvider>
+                                              </NotificationsProvider>
+                                            </ToastProvider>
+                                          </PostOnboardingProviderWrapped>
+                                        </OnboardingContextProvider>
+                                      </ButtonUseTouchable.Provider>
+                                    </CounterValuesProvider>
+                                  </BridgeSyncProvider>
+                                </LocaleProvider>
+                              </I18nextProvider>
+                            </AuthPass>
+                          </StylesProvider>
+                        </PerformanceProvider>
+                      </SafeAreaProvider>
+                    </FirebaseFeatureFlagsProvider>
+                  </FirebaseRemoteConfigProvider>
+                </PlatformAppProviderWrapper>
               </>
             ) : (
               <LoadingApp />
