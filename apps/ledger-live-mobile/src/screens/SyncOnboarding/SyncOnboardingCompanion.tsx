@@ -464,6 +464,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
         device,
         platform: servicesConfig.params?.protectId,
         redirectTo: "restore",
+        date: new Date().toISOString(), // adding a date to reload the page in case of same device restored again
       });
     }
   }, [

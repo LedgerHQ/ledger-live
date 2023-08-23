@@ -62,6 +62,8 @@ function isInvalidWalletConnectLink(url: string) {
 
 const recoverManifests = [
   "protect",
+  "protect-local",
+  "protect-local-dev",
   "protect-simu",
   "protect-staging",
   "protect-preprod",
@@ -163,8 +165,6 @@ const linkingOptions = (featureFlags: FeatureFlags) => ({
           [ScreenName.BleDevicePairingFlow]: "sync-onboarding",
 
           [ScreenName.RedirectToOnboardingRecoverFlow]: "recover-restore-flow",
-          [ScreenName.RedirectToRecoverStaxFlow]: "recover-restore-stax-flow",
-
           [NavigatorName.PostOnboarding]: {
             screens: {
               /**
@@ -405,7 +405,7 @@ const getOnboardingLinkingOptions = (acceptedTermsOfUse: boolean, featureFlags: 
                */
               [ScreenName.PlatformApp]: "discover/:platform",
               [ScreenName.Recover]: "recover/:platform",
-              [ScreenName.RedirectToRecoverStaxFlow]: "recover-restore-stax-flow",
+              [ScreenName.RedirectToOnboardingRecoverFlow]: "recover-restore-flow",
             },
           },
         },

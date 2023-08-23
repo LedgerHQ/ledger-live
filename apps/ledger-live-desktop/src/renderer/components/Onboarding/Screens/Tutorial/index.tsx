@@ -15,7 +15,6 @@ import {
   ProgressBar,
 } from "@ledgerhq/react-ui";
 import { Direction } from "@ledgerhq/react-ui/components/layout/Drawer/index";
-import { Device } from "@ledgerhq/types-devices";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
@@ -225,18 +224,18 @@ type Props = {
 };
 
 export default function Tutorial({ useCase }: Props) {
-  const history = useHistory();
+  const history = useHistory<{ fromRecover: boolean } | undefined>();
   const [quizzOpen, setQuizOpen] = useState(false);
   const { t } = useTranslation();
   const { pathname } = useLocation();
-  const servicesConfig = useFeature("protectServicesDesktop");
-  const upsellPath = useUpsellPath(servicesConfig);
-  const postOnboardingPath = usePostOnboardingPath(servicesConfig);
+  const recoverFF = useFeature("protectServicesDesktop");
+  const upsellPath = useUpsellPath(recoverFF);
+  const postOnboardingPath = usePostOnboardingPath(recoverFF);
 
   const [userUnderstandConsequences, setUserUnderstandConsequences] = useState(false);
   const [userChosePinCodeHimself, setUserChosePinCodeHimself] = useState(false);
 
-  const [connectedDevice, setConnectedDevice] = useState<Device | null>(null);
+  const [connectedDevice, setConnectedDevice] = useState<Device>();
 
   const [onboardingDone, setOnboardingDone] = useState(false);
   const handleStartPostOnboarding = useStartPostOnboardingCallback();
@@ -251,6 +250,15 @@ export default function Tutorial({ useCase }: Props) {
   const path = useMemo(() => urlSplit.slice(0, urlSplit.length - 1).join("/"), [urlSplit]);
 
   const dispatch = useDispatch();
+
+  // Keep the state coming from react-router in a local state
+  // as location.state will be undefined when navigating to other steps
+  const [fromRecover, setFromRecover] = useState(false);
+  useEffect(() => {
+    if (history.location.state) {
+      setFromRecover(history.location.state.fromRecover);
+    }
+  }, [history.location.state]);
 
   const screens = useMemo<IScreen[]>(
     () => [
@@ -475,10 +483,16 @@ export default function Tutorial({ useCase }: Props) {
           if (useCase === UseCase.setupDevice) {
             track("Onboarding - Genuine Check");
           }
+          if (useCase === UseCase.recover) {
+            history.push(`${path}/${ScreenId.recoverHowTo}`);
+            return;
+          }
           history.push(`${path}/${ScreenId.genuineCheck}`);
         },
         previous: () => {
-          if (useCase === UseCase.connectDevice || useCase === UseCase.recover) {
+          if (useCase === UseCase.recover && fromRecover) {
+            history.push(`/recover/${recoverFF?.params?.protectId}?redirectTo=disclaimer`);
+          } else if (useCase === UseCase.connectDevice || useCase === UseCase.recover) {
             history.push("/onboarding/select-use-case");
           } else if (useCase === UseCase.setupDevice) {
             history.push(`${path}/${ScreenId.hideRecoveryPhrase}`);
@@ -498,16 +512,12 @@ export default function Tutorial({ useCase }: Props) {
         },
         canContinue: !!connectedDevice,
         next: () => {
-          if (useCase === UseCase.recover) {
-            history.push(`${path}/${ScreenId.recoverHowTo}`);
-          } else {
-            if (upsellPath) {
-              history.push(upsellPath);
-            }
-            dispatch(saveSettings({ hasCompletedOnboarding: true }));
-            track("Onboarding - End");
-            setOnboardingDone(true);
+          if (upsellPath) {
+            history.push(upsellPath);
           }
+          dispatch(saveSettings({ hasCompletedOnboarding: true }));
+          track("Onboarding - End");
+          setOnboardingDone(true);
         },
         previous: () => history.push(`${path}/${ScreenId.pairMyNano}`),
       },
@@ -519,7 +529,10 @@ export default function Tutorial({ useCase }: Props) {
           // TODO in next ticket
           history.push(`${path}/${ScreenId.pinCode}`);
         },
-        previous: () => history.push("/onboarding/select-use-case"),
+        previous: () =>
+          fromRecover
+            ? history.push(`/recover/${recoverFF?.params?.protectId}?redirectTo=disclaimer`)
+            : history.push("/onboarding/select-use-case"),
       },
     ],
     [
@@ -529,13 +542,15 @@ export default function Tutorial({ useCase }: Props) {
       connectedDevice,
       history,
       path,
+      fromRecover,
+      recoverFF?.params?.protectId,
       upsellPath,
       dispatch,
     ],
   );
 
   useEffect(() => {
-    if (onboardingDone) {
+    if (onboardingDone && connectedDevice) {
       /**
        * There is a lag if we call history.push("/") directly.
        * To improve the UX in that situation, we have to first commit a "loading"
@@ -554,7 +569,7 @@ export default function Tutorial({ useCase }: Props) {
         clearTimeout(timeout);
       };
     }
-  }, [connectedDevice?.modelId, handleStartPostOnboarding, history, onboardingDone]);
+  }, [connectedDevice, handleStartPostOnboarding, history, onboardingDone]);
 
   const steps = useMemo(() => {
     const stepList = [
@@ -650,7 +665,7 @@ export default function Tutorial({ useCase }: Props) {
   }, [history, path]);
 
   const handleNextInDrawer = useCallback(
-    (closeCurrentDrawer: (bool: boolean) => void, targetPath: string) => {
+    (closeCurrentDrawer: (bool: boolean) => void, targetPath: string | object) => {
       closeCurrentDrawer(false);
       history.push(targetPath);
     },
@@ -658,10 +673,15 @@ export default function Tutorial({ useCase }: Props) {
   );
 
   const handleNextPin = useCallback(() => {
-    let targetPath = `${path}/${ScreenId.existingRecoveryPhrase}`;
+    let targetPath: string | object = `${path}/${ScreenId.existingRecoveryPhrase}`;
 
     if (useCase === UseCase.recover && postOnboardingPath) {
-      targetPath = postOnboardingPath;
+      const [pathname, search] = postOnboardingPath.split("?");
+      targetPath = {
+        pathname,
+        search: search ? `?${search}` : undefined,
+        state: { deviceId: connectedDevice?.deviceId },
+      };
       dispatch(saveSettings({ hasCompletedOnboarding: true }));
     }
 
@@ -670,7 +690,7 @@ export default function Tutorial({ useCase }: Props) {
     }
 
     handleNextInDrawer(setHelpPinCode, targetPath);
-  }, [dispatch, handleNextInDrawer, path, postOnboardingPath, useCase]);
+  }, [connectedDevice?.deviceId, dispatch, handleNextInDrawer, path, postOnboardingPath, useCase]);
 
   return (
     <>

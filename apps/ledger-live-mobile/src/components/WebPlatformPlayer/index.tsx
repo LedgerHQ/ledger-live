@@ -18,7 +18,7 @@ import { InfoPanel } from "./InfoPanel";
 
 type Props = {
   manifest: LiveAppManifest;
-  inputs?: Record<string, string>;
+  inputs?: Record<string, string | undefined>;
 };
 
 const WebPlatformPlayer = ({ manifest, inputs }: Props) => {

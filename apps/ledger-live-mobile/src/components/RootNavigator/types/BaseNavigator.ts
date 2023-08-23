@@ -115,6 +115,7 @@ export type BaseNavigatorStackParamList = {
     source?: string;
     redirectTo?: string;
     callback?: string;
+    date?: string; // used to reload the webview in case of multiple restore in a row
   };
   [ScreenName.LearnWebView]: {
     uri?: string;
@@ -314,5 +315,4 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.StakeFlow]: NavigatorScreenParams<StakeNavigatorParamList>;
 
   [ScreenName.RedirectToOnboardingRecoverFlow]: undefined;
-  [ScreenName.RedirectToRecoverStaxFlow]: Record<string, unknown>;
 };

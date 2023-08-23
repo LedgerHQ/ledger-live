@@ -780,7 +780,7 @@ DEPENDENCIES:
   - "react-native-udp (from `../../../node_modules/.pnpm/react-native-udp@4.1.5/node_modules/react-native-udp`)"
   - "react-native-version-number (from `../../../node_modules/.pnpm/react-native-version-number@0.3.6/node_modules/react-native-version-number`)"
   - "react-native-video (from `../../../node_modules/.pnpm/react-native-video@5.2.0_patch_hash=sg53wxh6aay5ebqtsg3y2x6c6m/node_modules/react-native-video`)"
-  - "react-native-webview (from `../../../node_modules/.pnpm/react-native-webview@11.26.1_patch_hash=no3vzt46yoww4w2wn7ciytbsoy_react-native@0.71.6_react@18.0.0/node_modules/react-native-webview`)"
+  - "react-native-webview (from `../../../node_modules/.pnpm/react-native-webview@11.26.1_patch_hash=dcex23p4rtl66gnhzv43mcucta_react-native@0.71.6_react@18.0.0/node_modules/react-native-webview`)"
   - "React-perflogger (from `../../../node_modules/.pnpm/react-native@0.71.6_@babel+core@7.22.8_metro-resolver@0.76.0_metro-transform-worker@0.76.0_react@18.0.0/node_modules/react-native/ReactCommon/reactperflogger`)"
   - "React-RCTActionSheet (from `../../../node_modules/.pnpm/react-native@0.71.6_@babel+core@7.22.8_metro-resolver@0.76.0_metro-transform-worker@0.76.0_react@18.0.0/node_modules/react-native/Libraries/ActionSheetIOS`)"
   - "React-RCTAnimation (from `../../../node_modules/.pnpm/react-native@0.71.6_@babel+core@7.22.8_metro-resolver@0.76.0_metro-transform-worker@0.76.0_react@18.0.0/node_modules/react-native/Libraries/NativeAnimation`)"
@@ -964,7 +964,7 @@ EXTERNAL SOURCES:
   react-native-video:
     :path: "../../../node_modules/.pnpm/react-native-video@5.2.0_patch_hash=sg53wxh6aay5ebqtsg3y2x6c6m/node_modules/react-native-video"
   react-native-webview:
-    :path: "../../../node_modules/.pnpm/react-native-webview@11.26.1_patch_hash=no3vzt46yoww4w2wn7ciytbsoy_react-native@0.71.6_react@18.0.0/node_modules/react-native-webview"
+    :path: "../../../node_modules/.pnpm/react-native-webview@11.26.1_patch_hash=dcex23p4rtl66gnhzv43mcucta_react-native@0.71.6_react@18.0.0/node_modules/react-native-webview"
   React-perflogger:
     :path: "../../../node_modules/.pnpm/react-native@0.71.6_@babel+core@7.22.8_metro-resolver@0.76.0_metro-transform-worker@0.76.0_react@18.0.0/node_modules/react-native/ReactCommon/reactperflogger"
   React-RCTActionSheet:
@@ -1169,6 +1169,6 @@ SPEC CHECKSUMS:
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
   ZXingObjC: fdbb269f25dd2032da343e06f10224d62f537bdb
 
-PODFILE CHECKSUM: 12eee42be2cfe0561b48065e83e13d850b38f486
+PODFILE CHECKSUM: a97a349caa64230ab12c31a78619a81e78e52705
 
 COCOAPODS: 1.12.1
