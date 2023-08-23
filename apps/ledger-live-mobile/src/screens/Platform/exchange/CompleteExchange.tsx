@@ -67,30 +67,31 @@ const PlatformCompleteExchange: React.FC<Props> = ({
     }
   }, []);
 
-  const signRequest = useMemo(
-    () => ({
-      tokenCurrency,
-      parentAccount,
-      account,
-      transaction,
-      appName: "Exchange",
-    }),
-    [account, parentAccount, tokenCurrency, transaction],
-  );
+  const signRequest = useMemo(() => {
+    if (transaction) {
+      return {
+        tokenCurrency,
+        parentAccount,
+        account,
+        transaction,
+        appName: "Exchange",
+      };
+    }
+    return null;
+  }, [account, parentAccount, tokenCurrency, transaction]);
 
   const sendAction = useTransactionDeviceAction();
   const exchangeAction = useCompleteExchangeDeviceAction();
 
   return (
     <SafeAreaView style={styles.root}>
-      {!transaction ? (
+      {!signRequest ? (
         <DeviceActionModal
           key="completeExchange"
           device={device}
           action={exchangeAction}
           onClose={onClose}
           onResult={onCompleteExchange}
-          // @ts-expect-error Wrong types?
           request={request}
         />
       ) : (
@@ -100,7 +101,6 @@ const PlatformCompleteExchange: React.FC<Props> = ({
           action={sendAction}
           onClose={onClose}
           onResult={onSign}
-          // @ts-expect-error Wrong types?
           request={signRequest}
         />
       )}
