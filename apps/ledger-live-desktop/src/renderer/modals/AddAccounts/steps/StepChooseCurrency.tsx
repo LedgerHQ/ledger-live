@@ -147,11 +147,10 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
     );
 
     const deactivatedCurrencies = mock
-      ? []
+      ? [] // mock mode: all currencies are available for playwrigth tests
       : Object.entries(featureFlaggedCurrencies)
           .filter(([, feature]) => !feature?.enabled)
           .map(([name]) => name);
-
     return currencies.filter(c => !deactivatedCurrencies.includes(c.id));
   }, [featureFlaggedCurrencies, mock]);
 
@@ -271,9 +270,7 @@ export const StepChooseCurrencyFooter = ({
         <Button
           primary
           disabled={!currency || fullNodeNotReady || !navigator.onLine}
-          onClick={() => {
-            transitionTo("connectDevice");
-          }}
+          onClick={() => transitionTo("connectDevice")}
           data-test-id="modal-continue-button"
         >
           {t("common.continue")}
