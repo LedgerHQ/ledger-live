@@ -299,6 +299,16 @@ export type LLDCoinFamily<
     account: A;
   }>;
 
+  /**
+   * Component for custom explorer url postfix
+   */
+  ExplorerLink?: React.ComponentType<{
+    account: A;
+    url: string;
+    currencyName: string;
+    operation: Operation
+  }>;
+
   nft?: {
     injectNftIntoTransaction: (
       transaction: T,
