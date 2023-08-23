@@ -1,6 +1,6 @@
 import React from "react";
 import type { Account } from "@ledgerhq/types-live";
-import { Icons } from "@ledgerhq/native-ui";
+import { IconsLegacy } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
@@ -67,7 +67,7 @@ const getMainActions = ({ account, parentAccount, parentRoute }: Props) => {
         id: "stake",
         navigationParams,
         label: <Trans i18nKey="account.stake" />,
-        Icon: Icons.Dollar,
+        Icon: IconsLegacy.ClaimRewardsMedium,
         event: "button_clicked",
         eventProperties: {
           button: "stake",
