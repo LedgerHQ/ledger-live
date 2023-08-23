@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Exchange } from "@ledgerhq/live-common/exchange/swap/types";
+import { Exchange } from "@ledgerhq/live-common/exchange/platform/types";
 import { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";

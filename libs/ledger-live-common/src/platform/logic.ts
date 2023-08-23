@@ -11,7 +11,7 @@ import { isTokenAccount, getMainAccount, isAccount } from "../account/index";
 import { getAccountBridge } from "../bridge/index";
 import { Transaction } from "../generated/types";
 import { prepareMessageToSign } from "../hw/signMessage/index";
-import { Exchange } from "../exchange/swap/types";
+import { Exchange } from "../exchange/platform/types";
 
 export function translateContent(content: string | TranslatableString, locale = "en"): string {
   if (!content || typeof content === "string") return content;
@@ -178,10 +178,6 @@ export function completeExchangeLogic(
   const toAccount = accounts.find(a => a.id === toAccountId);
 
   if (!fromAccount) {
-    return Promise.reject();
-  }
-
-  if (!toAccount) {
     return Promise.reject();
   }
 
