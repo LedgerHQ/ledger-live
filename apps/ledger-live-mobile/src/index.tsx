@@ -69,7 +69,6 @@ import { FirebaseRemoteConfigProvider } from "./components/FirebaseRemoteConfig"
 import { FirebaseFeatureFlagsProvider } from "./components/FirebaseFeatureFlags";
 import MarketDataProvider from "./screens/Market/MarketDataProviderWrapper";
 import AdjustProvider from "./components/AdjustProvider";
-import DelayedTrackingProvider from "./components/DelayedTrackingProvider";
 import PostOnboardingProviderWrapped from "./logic/postOnboarding/PostOnboardingProviderWrapped";
 import { GeneralTermsContextProvider } from "./logic/terms";
 import HookDynamicContentCards from "./dynamicContent/useContentCards";
@@ -271,7 +270,6 @@ export default class Root extends Component {
                 <SetEnvsFromSettings />
                 <HookSentry />
                 <AdjustProvider />
-                <DelayedTrackingProvider />
                 <AnalyticsProvider store={store}>
                   <HookNotifications />
                   <HookDynamicContentCards />
