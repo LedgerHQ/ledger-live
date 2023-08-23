@@ -4,8 +4,6 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { Operation } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
-import type { Transaction as EthereumTransaction } from "@ledgerhq/live-common/families/ethereum/types";
-import type { Transaction as CasperTransaction } from "@ledgerhq/live-common/families/casper/types";
 import type {
   CardanoAccount,
   Transaction as CardanoTransaction,
@@ -36,6 +34,7 @@ import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/fam
 import type { Transaction as ICPTransaction } from "@ledgerhq/live-common/families/internet_computer/types";
 import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
 import type { Transaction as StacksTransaction } from "@ledgerhq/live-common/families/stacks/types";
+import type { Transaction as CasperTransaction } from "@ledgerhq/live-common/families/casper/types";
 import BigNumber from "bignumber.js";
 import { Result } from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { ScreenName } from "../../../const";
@@ -183,21 +182,7 @@ export type SendFundsNavigatorStackParamList = {
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
-  [ScreenName.CasperEditTransferId]: {
-    accountId: string;
-    account: Account;
-    parentId?: string;
-    transaction: CasperTransaction;
-    currentNavigation:
-      | ScreenName.SignTransactionSummary
-      | ScreenName.SendSummary
-      | ScreenName.SwapForm;
-    nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.SendSelectDevice
-      | ScreenName.SwapForm;
-  };
-  [ScreenName.EthereumEditGasLimit]: {
+  [ScreenName.EvmEditGasLimit]: {
     accountId: string;
     setGasLimit: (_: BigNumber) => void;
     gasLimit?: BigNumber | null;
@@ -336,6 +321,20 @@ export type SendFundsNavigatorStackParamList = {
     account: Account;
     transaction: StacksTransaction;
     memoType?: string;
+    currentNavigation:
+      | ScreenName.SignTransactionSummary
+      | ScreenName.SendSummary
+      | ScreenName.SwapForm;
+    nextNavigation:
+      | ScreenName.SignTransactionSelectDevice
+      | ScreenName.SendSelectDevice
+      | ScreenName.SwapForm;
+  };
+  [ScreenName.CasperEditTransferId]: {
+    accountId: string;
+    account: Account;
+    parentId?: string;
+    transaction: CasperTransaction;
     currentNavigation:
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
