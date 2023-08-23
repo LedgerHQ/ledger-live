@@ -14,8 +14,8 @@ import {
 } from "./types";
 
 import network from "@ledgerhq/live-network/network";
-import { getEnv } from "../../../../../env";
 import { AccessRights, CLURef, DeployUtil } from "casper-js-sdk";
+import { getEnv } from "@ledgerhq/live-env";
 
 const getCasperIndexerURL = (path: string): string => {
   const baseUrl = getEnv("API_CASPER_INDEXER_ENDPOINT");
