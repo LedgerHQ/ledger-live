@@ -4,11 +4,7 @@ import network from "@ledgerhq/live-network/network";
 import { CryptoCurrency, LedgerExplorerId } from "@ledgerhq/types-cryptoassets";
 import { GasTrackerApi, isLedgerGasTracker } from "./types";
 import { GasOptions } from "../../types";
-import {
-  GasTrackerDoesNotSupportEIP1559,
-  LedgerGasTrackerUsedIncorrectly,
-  NoGasTrackerFound,
-} from "../../errors";
+import { LedgerGasTrackerUsedIncorrectly, NoGasTrackerFound } from "../../errors";
 
 type GasTracker = {
   compatibilty: {
@@ -49,13 +45,8 @@ export const getGasOptions = async ({
     throw new NoGasTrackerFound(`No gas tracker found for ${currency.id}`);
   }
 
-  const { useEIP1559 = false } = options || /* istanbul ignore next */ {};
-
-  if (useEIP1559 && !gasTrackerConfig.compatibilty.eip1559) {
-    throw new GasTrackerDoesNotSupportEIP1559(
-      `Gas tracker does not support EIP1559 for ${currency.id}`,
-    );
-  }
+  // We use the eip1559 display parameter only if requested AND the currency supports it
+  const useEIP1559 = options?.useEIP1559 && gasTrackerConfig.compatibilty.eip1559;
 
   const { low, medium, high, next_base } = await network({
     method: "GET",
