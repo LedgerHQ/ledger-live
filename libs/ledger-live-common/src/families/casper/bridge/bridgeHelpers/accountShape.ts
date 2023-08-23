@@ -5,7 +5,7 @@ import { Account } from "@ledgerhq/types-live";
 import { encodeAccountId } from "../../../../account";
 
 import { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { fetchBalances, fetchNetworkStatus, fetchTxs, getAccountStateInfo } from "./api";
+import { fetchBalances, fetchNetworkStatus, fetchTxs, getAccountStateInfo } from "./api/index";
 import { mapTxToOps } from "./txn";
 import { NAccountBalance, ITxnHistoryData } from "./api/types";
 
