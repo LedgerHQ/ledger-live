@@ -4,11 +4,12 @@ import type { DeviceTransactionField } from "../../transaction";
 import { Transaction, TransactionStatus } from "./types";
 import { methodToString } from "./msc-utils";
 import { casperPubKeyToAccountHash } from "./bridge/bridgeHelpers/addresses";
+import BigNumber from "bignumber.js";
 
 export type ExtraDeviceTransactionField = {
   type: "casper.extendedAmount";
   label: string;
-  value: string;
+  value: number | BigNumber;
 };
 
 function getDeviceTransactionConfig({
@@ -28,7 +29,7 @@ function getDeviceTransactionConfig({
   fields.push({
     type: "casper.extendedAmount",
     label: "Fees",
-    value: transaction.fees.toFixed(),
+    value: transaction.fees,
   });
   fields.push({
     type: "text",
@@ -38,7 +39,7 @@ function getDeviceTransactionConfig({
   fields.push({
     type: "casper.extendedAmount",
     label: "Amount",
-    value: transaction.amount.toFixed(),
+    value: transaction.amount,
   });
 
   log("debug", `Transaction config ${JSON.stringify(fields)}`);

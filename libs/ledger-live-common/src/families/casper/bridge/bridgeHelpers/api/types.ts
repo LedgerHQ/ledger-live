@@ -10,14 +10,14 @@ export interface NodeRPCPayload {
   id: 1;
 }
 
-export interface LiveResponseRoot<T> {
+export interface IndexerResponseRoot<T> {
   data: T[];
   pageCount: number;
   itemCount: number;
   pages: { number: number; url: string }[];
 }
 
-export interface LTxnHistoryData {
+export interface ITxnHistoryData {
   deploy_hash: string;
   block_hash: string;
   caller_public_key: string;

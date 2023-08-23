@@ -32,8 +32,6 @@ const TranferIdField = ({
     [onChange, transaction, bridge],
   );
 
-  // We use transaction as an error here.
-  // on the ledger-live mobile
   return (
     <Input
       warning={status.warnings.transaction}

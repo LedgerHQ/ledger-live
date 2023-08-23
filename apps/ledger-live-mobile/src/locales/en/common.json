@@ -280,13 +280,13 @@
       "description": "Ledger Live could not connect to your device. Please try it again."
     },
     "CasperInvalidTransferId": {
-      "title": "Transfer ID should be a positive number smaller than 18446744073709551615"
+      "title": "Transfer ID should be a positive number smaller than {{maxTransferId}}"
     },
     "MayBlockAccount": {
-      "title": "Your account will be left with less than the 2.6 CSPR required to perform a send"
+      "title": "Your account will be left with less than the {{minAmount}} required to perform a send"
     },
     "InvalidMinimumAmount": {
-      "title": "Minimum amount to transfer is 2.5 CSPR"
+      "title": "Minimum amount to transfer is {{minAmount}}"
     },
     "ETHAddressNonEIP": {
       "title": "Auto-verification not available: carefully verify the address.",

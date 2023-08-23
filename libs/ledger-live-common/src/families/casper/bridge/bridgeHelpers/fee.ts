@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
-import { CASPER_FEES } from "../../consts";
+import { CASPER_FEES_MOTES } from "../../consts";
 
 export function getEstimatedFees(): BigNumber {
-  return new BigNumber(CASPER_FEES);
+  return new BigNumber(CASPER_FEES_MOTES);
 }

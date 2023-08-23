@@ -1,5 +1,6 @@
 import {
   Account,
+  Operation,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
@@ -16,6 +17,14 @@ export type Transaction = TransactionCommon & {
   fees: BigNumber;
   transferId?: string;
 };
+
+export type CasperOperation = Operation & {
+  extra: CasperOperationExtra;
+};
+
+interface CasperOperationExtra {
+  transferId: string | undefined;
+}
 
 export type TransactionRaw = TransactionCommonRaw & {
   family: FamilyType;

@@ -88,14 +88,14 @@ function casperAddressDecode(inputString: string): string {
   return inputString;
 }
 
-export function validateAddress(address: string): { isValid: boolean } {
+export function isAddressValid(address: string): boolean {
   try {
     const pubKey = getPublicKeyFromCasperAddress(address);
     new CLPublicKey(Buffer.from(pubKey, "hex"), getPubKeySignature(address));
     casperAddressDecode(pubKey);
-    return { isValid: true };
+    return true;
   } catch (err) {
-    return { isValid: false };
+    return false;
   }
 }
 

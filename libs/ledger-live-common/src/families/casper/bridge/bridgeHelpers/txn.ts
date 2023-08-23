@@ -2,7 +2,6 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { InvalidAddress } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { Unit } from "@ledgerhq/types-cryptoassets";
-import { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { CLPublicKey, DeployUtil } from "casper-js-sdk";
 import { encodeOperationId } from "../../../../operation";
@@ -12,16 +11,21 @@ import {
   casperPubKeyToAccountHash,
   getPubKeySignature,
   getPublicKeyFromCasperAddress,
-  validateAddress,
+  isAddressValid,
 } from "./addresses";
-import { LTxnHistoryData } from "./types";
+import { ITxnHistoryData } from "./api/types";
 import { getEstimatedFees } from "./fee";
+import { CasperOperation } from "../../types";
 
 export const getUnit = (): Unit => getCryptoCurrencyById("casper").units[0];
 
-export function mapTxToOps(accountId: string, addressHash: string, fees = getEstimatedFees()) {
-  return (tx: LTxnHistoryData): Operation[] => {
-    const ops: Operation[] = [];
+export function mapTxToOps(
+  accountId: string,
+  addressHash: string,
+  fees = getEstimatedFees(),
+): (tx: ITxnHistoryData) => CasperOperation[] {
+  return (tx: ITxnHistoryData): CasperOperation[] => {
+    const ops: CasperOperation[] = [];
     const { timestamp, caller_public_key, args: txArgs, deploy_hash, error_message } = tx;
     const fromAccount = casperPubKeyToAccountHash(caller_public_key);
     const toAccount = txArgs.target.parsed;
@@ -48,7 +52,7 @@ export function mapTxToOps(accountId: string, addressHash: string, fees = getEst
         recipients: [toAccount],
         date,
         extra: {
-          transferId: txArgs.id.parsed,
+          transferId: txArgs.id.parsed?.toString(),
         },
       });
     }
@@ -68,7 +72,7 @@ export function mapTxToOps(accountId: string, addressHash: string, fees = getEst
         recipients: [toAccount],
         date,
         extra: {
-          transferId: txArgs.id.parsed,
+          transferId: txArgs.id.parsed?.toString(),
         },
       });
     }
@@ -87,7 +91,7 @@ export const createNewDeploy = (
 ): DeployUtil.Deploy => {
   log("debug", `Creating new Deploy: ${sender}, ${recipient}, ${network}`);
 
-  if (recipient && !validateAddress(recipient).isValid) {
+  if (recipient && !isAddressValid(recipient)) {
     throw InvalidAddress(`Invalid recipient Address ${recipient}`);
   }
 

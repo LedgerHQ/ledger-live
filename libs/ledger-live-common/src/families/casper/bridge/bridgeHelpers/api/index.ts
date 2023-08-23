@@ -3,8 +3,8 @@ import { AxiosRequestConfig, AxiosResponse } from "axios";
 
 import {
   NDeployMessagePutResponse,
-  LiveResponseRoot,
-  LTxnHistoryData,
+  IndexerResponseRoot,
+  ITxnHistoryData,
   NAccountBalance,
   NAccountInfo,
   NNetworkStatusResponse,
@@ -14,10 +14,10 @@ import {
 } from "./types";
 
 import network from "@ledgerhq/live-network/network";
-import { getEnv } from "../../../../env";
+import { getEnv } from "../../../../../env";
 import { AccessRights, CLURef, DeployUtil } from "casper-js-sdk";
 
-const getCasperLiveURL = (path: string): string => {
+const getCasperIndexerURL = (path: string): string => {
   const baseUrl = getEnv("API_CASPER_INDEXER_ENDPOINT");
   if (!baseUrl) throw new Error("API base URL not available");
 
@@ -31,9 +31,9 @@ const getCasperNodeURL = (): string => {
   return baseUrl;
 };
 
-const casperLiveWrapper = async <T>(path: string) => {
-  const url = getCasperLiveURL(path);
-  const fetch = async (page: number) => {
+const casperIndexerWrapper = async <T>(path: string) => {
+  const url = getCasperIndexerURL(path);
+  const getResponse = async (page: number) => {
     // We force data to this way as network func is not using the correct param type. Changing that func will generate errors in other implementations
     const opts: AxiosRequestConfig = {
       method: "GET",
@@ -42,7 +42,7 @@ const casperLiveWrapper = async <T>(path: string) => {
 
     const rawResponse = await network(opts);
     // We force data to this way as network func is not using the correct param type. Changing that func will generate errors in other implementations
-    const { data } = rawResponse as AxiosResponse<LiveResponseRoot<T>>;
+    const { data } = rawResponse as AxiosResponse<IndexerResponseRoot<T>>;
 
     return data;
   };
@@ -50,13 +50,13 @@ const casperLiveWrapper = async <T>(path: string) => {
   let page = 1;
   const res: T[] = [];
 
-  const data = await fetch(page);
+  const data = await getResponse(page);
   const { pageCount } = data;
   res.push(...data.data);
 
   while (page <= pageCount) {
     page++;
-    const data = await fetch(page);
+    const data = await getResponse(page);
     res.push(...data.data);
   }
 
@@ -130,10 +130,10 @@ export const fetchBalances = async (purseUref: CLURef): Promise<NAccountBalance>
     id: 1,
   });
 
-  return accountBalance; // TODO Validate if the response fits this interface
+  return accountBalance;
 };
 
-export const fetchBlockHeight = async (): Promise<NNetworkStatusResponse> => {
+export const fetchNetworkStatus = async (): Promise<NNetworkStatusResponse> => {
   const payload: NodeRPCPayload = {
     id: 1,
     jsonrpc: "2.0",
@@ -142,12 +142,14 @@ export const fetchBlockHeight = async (): Promise<NNetworkStatusResponse> => {
   };
   const data = await casperNodeWrapper<NNetworkStatusResponse>(payload);
 
-  return data; // TODO Validate if the response fits this interface
+  return data;
 };
 
-export const fetchTxs = async (addr: string): Promise<LTxnHistoryData[]> => {
-  const response = await casperLiveWrapper<LTxnHistoryData>(`/accounts/${addr}/ledgerlive-deploys`);
-  return response; // TODO Validate if the response fits this interface
+export const fetchTxs = async (addr: string): Promise<ITxnHistoryData[]> => {
+  const response = await casperIndexerWrapper<ITxnHistoryData>(
+    `/accounts/${addr}/ledgerlive-deploys`,
+  );
+  return response;
 };
 
 export const broadcastTx = async (
@@ -160,5 +162,5 @@ export const broadcastTx = async (
     params: DeployUtil.deployToJson(deploy),
   });
 
-  return response; // TODO Validate if the response fits this interface
+  return response;
 };

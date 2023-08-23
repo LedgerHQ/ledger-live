@@ -1,6 +1,6 @@
-export function validateTransferId(id?: string): { isValid: boolean } {
-  if (!id || !id.length) return { isValid: true };
-  if (/^\d+$/.test(id)) return { isValid: true };
+export function isTransferIdValid(id?: string): boolean {
+  if (!id || !id.length) return true;
+  if (/^\d+$/.test(id)) return false;
 
-  return { isValid: false };
+  return false;
 }
