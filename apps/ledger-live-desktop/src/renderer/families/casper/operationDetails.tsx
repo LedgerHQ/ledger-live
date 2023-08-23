@@ -8,9 +8,9 @@ import {
 import Ellipsis from "~/renderer/components/Ellipsis";
 import type { OperationDetailsExtraProps } from "../types";
 
-import { CasperOperation } from "@ledgerhq/live-common/families/casper/types";
+import { CasperAccount } from "@ledgerhq/live-common/families/casper/types";
 
-const OperationDetailsExtra = ({ extra }: OperationDetailsExtraProps<CasperOperation>) => {
+const OperationDetailsExtra = ({ extra }: OperationDetailsExtraProps<CasperAccount>) => {
   return (
     <>
       {Object.keys(extra).map(key => {

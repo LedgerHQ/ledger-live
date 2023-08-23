@@ -2,20 +2,22 @@ import invariant from "invariant";
 import React from "react";
 import TransactionConfirmField from "~/renderer/components/TransactionConfirm/TransactionConfirmField";
 import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
-import type { FieldComponentProps } from "~/renderer/components/TransactionConfirm";
 import Box from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
+import { CasperFieldComponentProps } from "./types";
+import { ExtraDeviceTransactionField } from "@ledgerhq/live-common/families/casper/deviceTransactionConfig";
 
 const CasperExtendedAmountField = ({
   account,
   status: { amount },
   transaction,
   field,
-}: FieldComponentProps) => {
+}: CasperFieldComponentProps) => {
   invariant(transaction.family === "casper", "casper transaction");
   const currency = getAccountCurrency(account);
   const unit = getAccountUnit(account);
-  const specifiedAmount = field.value != null ? field.value : null;
+  const specifiedAmount = (field as ExtraDeviceTransactionField).value;
+
   return (
     <TransactionConfirmField label={field.label}>
       <Box textAlign="right">

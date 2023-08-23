@@ -1,6 +1,7 @@
 import React from "react";
 import type { Account } from "@ledgerhq/types-live";
-import { Transaction } from "@ledgerhq/live-common/families/casper/types";
+import { Transaction as CasperTransaction } from "@ledgerhq/live-common/families/casper/types";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import SendRowTransferId from "./SendRowTransferId";
 import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
@@ -22,7 +23,7 @@ export default function CasperSendRowsCustom(props: Props) {
   const { transaction, ...rest } = props;
   return (
     <>
-      <SendRowTransferId {...rest} transaction={transaction} />
+      <SendRowTransferId {...rest} transaction={transaction as CasperTransaction} />
     </>
   );
 }

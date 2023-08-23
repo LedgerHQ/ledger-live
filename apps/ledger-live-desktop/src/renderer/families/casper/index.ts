@@ -2,7 +2,7 @@ import {
   CasperAccount,
   Transaction,
   TransactionStatus,
-} from "@ledgerhq/live-common/families/capser/types";
+} from "@ledgerhq/live-common/families/casper/types";
 import { LLDCoinFamily } from "../types";
 import operationDetails from "./operationDetails";
 import AccountSubHeader from "./AccountSubHeader";
