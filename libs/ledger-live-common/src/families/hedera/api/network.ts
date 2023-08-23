@@ -59,7 +59,7 @@ function getClient(): hedera.Client {
     "https://hedera-nomura.coin.ledger.com:443": new AccountId(7),
     "https://hedera-ubisoft.coin.ledger.com:443": new AccountId(28),
   }
-  _hederaClient ??= hedera.Client.forMainnet();
+  _hederaClient ??= hedera.Client.forMainnet().setMaxNodesPerTransaction(1);
   _hederaClient.setNetwork(nodes);
 
   return _hederaClient;
