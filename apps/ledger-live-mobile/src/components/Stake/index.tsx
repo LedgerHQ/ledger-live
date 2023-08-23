@@ -86,6 +86,7 @@ const StakeFlow = ({ route }: Props) => {
         params: {
           currency: cryptoCurrencies[0],
           onSuccess: goToAccount,
+          allowAddAccount: true, // if no account, need to be able to add one to get funds.
         },
       });
     } else {
