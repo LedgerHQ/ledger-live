@@ -18,6 +18,7 @@ export default function MarketNavigator() {
         headerShown: true,
         title: "",
         headerRight: undefined,
+        headerLeft: () => null,
       }
     : {
         headerShown: false,
