@@ -106,7 +106,6 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
     });
   }
 
-  // This is the worst case scenario (the tx won't cost more than this value)
   const estimatedFees = t.fees;
 
   let totalSpent = BigNumber(0);
