@@ -273,13 +273,13 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
                 error={error}
               />
             )}
-          </NavigationScrollView>
-          <View style={styles.container}>
             {isSomeIncomingTxPending ? (
-              <View style={styles.infoBox}>
+              <View style={styles.pendingIncomingTxWarning}>
                 <Alert type="warning">{t("send.pendingTxWarning")}</Alert>
               </View>
             ) : null}
+          </NavigationScrollView>
+          <View style={styles.container}>
             {(!isDomainResolutionEnabled || !isCurrencySupported) &&
             transaction.recipient &&
             !(error || warning) ? (
@@ -333,6 +333,10 @@ const styles = StyleSheet.create({
   },
   infoBox: {
     marginBottom: 24,
+  },
+  pendingIncomingTxWarning: {
+    marginBottom: 8,
+    marginTop: 8,
   },
   separatorContainer: {
     marginTop: 32,
