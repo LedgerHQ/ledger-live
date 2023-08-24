@@ -1075,7 +1075,7 @@
       }
     },
     "enjoy": {
-      "title": "You're great too",
+      "title": "Thanks for the feedback!",
       "description": "We'd be grateful if you could take a moment to write us a review. Your support helps us reach more people and motivates us to release new app features.",
       "cta": {
         "rate": "Give us 5 stars",
@@ -2751,7 +2751,7 @@
         "desc": "You'll be notified of important price movements for BTC and ETH"
       },
       "transactionsAlerts": {
-        "title": "Transaction Alerts",
+        "title": "Transaction Alerts (Beta)",
         "desc": "Be notified on your transactions for Ethereum, Polygon, Binance Smart Chain, Avalanche and Ethereum Classic"
       },
       "price": {
