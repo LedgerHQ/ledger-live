@@ -98,6 +98,7 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   umee: "cosmos19rl4cm2hmr8afy4kldpxz3fka4jguq0auqdal4",
   coreum: "core1fjxa5s8wz75rp7qgrs9lqvw0qr2gt0nny6sjz9",
   injective: "inj1d2kmwygyqh2vf658yns8ytqdffhsr54urpuesj",
+  casper: "02030d18d5bed9f5015824D89367EF448041E912F358655184412E48557491aAdB85",
 };
 
 /**
