@@ -26,7 +26,7 @@ const getProviders: GetProviders = async () => {
 
   return Object.entries(responseV4.providers).flatMap(([provider, groups]) => {
     return {
-      provider: provider,
+      provider,
       pairs: groups.flatMap(group =>
         group.methods.flatMap(tradeMethod =>
           Object.entries(group.pairs).flatMap(([from, toArray]) =>
