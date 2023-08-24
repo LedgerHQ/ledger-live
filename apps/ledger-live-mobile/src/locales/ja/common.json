@@ -461,6 +461,9 @@
       "title" : "ネットワーク手数料に必要なETHが不足しています",
       "description" : "アカウントに、ERC20トークンのトランザクションに十分なETHを送金してください。"
     },
+    "NotEnoughGasSwap" : {
+      "title" : "{{cryptoName}}ネットワークを使用しているため、スワップするにはネットワーク手数料{{fees}}{{ticker}}が必要です。<link0>{{ticker}}を購入する</link0>"
+    },
     "NotEnoughBalanceToDelegate" : {
       "title" : "デリゲートに必要な残高が不足しています。"
     },
@@ -623,10 +626,6 @@
     "UnavailableTezosOriginatedAccountSend" : {
       "title" : "まだサブアカウントから送金することはできません。",
       "description" : "この機能は、最近のBabylonアップデートで導入された変更のため、後から追加される予定です。"
-    },
-    "AccessDeniedError" : {
-      "title" : "Ledger Liveのアップデートが必要です。",
-      "description" : "Wyreでスワップを実行するには、Ledger Liveを最新バージョンにアップデートし、本人確認を再度行ってください"
     },
     "RecommendUndelegation" : {
       "title" : "アカウントを空にする前に、デリゲートを解除してください。"
@@ -2330,7 +2329,7 @@
       "seeLess" : "サブアカウントの表示を減らす"
     },
     "send" : "送付",
-    "receive" : "受け取る",
+    "receive" : "入金",
     "buy" : "購入",
     "walletconnect" : "WalletConnect",
     "stake" : "ステーキング",
@@ -2344,7 +2343,7 @@
       "descWithBuy" : "<1><0>{{managerAppName}}</0></1> アプリがインストールされていることを確認してから、<3><0>{{currencyTicker}}</0></3>を受け取りまたは購入してください。",
       "descToken" : "<1><0>{{managerAppName}}</0></1>アプリがインストールされていることを確認して、<3><0>{{currencyTicker}}</0></3>と<5><0>{{tokenType}}</0>トークン</5>を受け取りましょう。",
       "buttons" : {
-        "receiveFunds" : "受け取る",
+        "receiveFunds" : "入金",
         "buyCrypto" : "購入"
       },
       "addAccountCta" : "アカウントを追加"
@@ -2720,10 +2719,6 @@
       "clearCacheButton" : "クリア",
       "exportLogs" : "ログを保存",
       "exportLogsDesc" : "トラブルを解決するために、Ledger Liveログの保存が必要になる場合があります。",
-      "resetThirdPartyData" : "サードパーティーのデータをリセット",
-      "resetThirdPartyDataDesc" : "サードパーティーのトランザクションプロバイダーへのアクセスに使用される、ローカルのサードパーティーのデータをすべて削除します。",
-      "resetThirdPartyDataModal" : "ローカルのサードパーティーのデータを削除",
-      "resetThirdPartyDataModalDesc" : "ローカルのサードパーティーのデータを削除します。弊社のパートナーが提供するサービスにアクセスするには、KYC(本人確認手続き)の再提出やログインが必要になる場合があります。",
       "hardReset" : "Ledger Liveをリセット",
       "hardResetDesc" : "これは、あなたの資産には影響しません。アカウントデータ、トランザクション履歴、設定など、Ledger Live上のすべてのデータを消去します。Ledgerデバイスを使って、初期化されたLedger Liveに暗号資産を再び読み込んで管理できます。",
       "repairDevice" : "Ledgerデバイスを修理する",
@@ -2843,8 +2838,8 @@
       "title" : "手数料を編集"
     },
     "receive" : {
-      "title" : "受け取る",
-      "description" : "暗号資産を別のウォレットから受け取る。",
+      "title" : "入金",
+      "description" : "暗号資産を別のウォレットから入金する。",
       "titleReadOnly" : "未確認のアドレス",
       "headerTitle" : "暗号資産",
       "titleDevice" : "デバイスを接続",
@@ -2854,26 +2849,35 @@
       "verifyAgain" : "もう一度確認",
       "noAccount" : "アカウントが見つかりません",
       "address" : "アカウントのアドレス",
-      "copyAddress" : "コピー",
+      "copyAddress" : "アドレスをコピー",
       "shareAddress" : "アドレスを共有",
-      "addressCopied" : "コピー済み",
+      "addressCopied" : "アドレスがクリップボードにコピーされました",
       "taprootWarning" : "送付元がtaprootに対応しているか確認してください",
       "selectCrypto" : {
-        "title" : "暗号資産を選択"
+        "title" : "受け取りたい暗号資産を選択"
+      },
+      "selectNetwork" : {
+        "title" : "選択した暗号資産のネットワークを選択",
+        "account" : "{{count}}アカウント",
+        "account_plural" : "{{count}}アカウント",
+        "subtitle" : "選択されたネットワークは、暗号資産を引き出したり送付したりするネットワークと一致する必要があります。",
+        "bannerTitle" : "必ず正しいネットワークを選択してください。手順を学びましょう。"
       },
       "stepperHeader" : {
         "range" : "ステップ{{currentStep}}/{{totalSteps}}",
         "connectDevice" : "デバイスを接続"
       },
       "selectAccount" : {
-        "title" : "アカウントを選択",
-        "subtitle" : "{{currencyTicker}}はこの口座に入金されます。"
+        "title" : "新しいアカウントを選択または作成",
+        "subtitle" : "{{currencyTicker}}はこの口座に入金されます。",
+        "cta" : "新しいアカウントを作成する"
       },
       "addAccount" : {
-        "title" : "ブロックチェーンを検索",
-        "subtitle" : "{{currencyTicker}}アカウントを所有しているか確認します。",
+        "title" : "アカウントを確認しています...",
+        "subtitle" : "ブロックチェーン上に、お客様の{{currencyName}}のアカウントがすでにあるかどうかを確認しています。",
         "foundAccounts" : "{{count}}件のアカウントが見つかりました",
-        "stopSynchronization" : "同期の停止"
+        "stopSynchronization" : "同期の停止",
+        "addingAccount" : "アカウントが見つかりませんでした。{{currencyName}}の新しいアカウントを作成しています..."
       },
       "verifyAddress" : {
         "title" : "アドレスの認証",
@@ -2886,42 +2890,41 @@
       },
       "receiveConfirmation" : {
         "title" : "{{currencyTicker}}を受け取る",
+        "onCurrencyName" : "（{{currencyName}}で）",
+        "copyAdress" : "アドレスをコピー",
+        "addressCopied" : "アドレスをコピーしました！",
         "addressVerified" : "認証済みアドレス",
-        "verifyAddress" : "タップしてアドレスを認証",
+        "verifyAddress" : "アドレスを認証する",
         "adviceVerify" : "当社では常にLedgerデバイスでアドレス認証することを推奨しています",
-        "sendWarning" : "このアドレスには、 {{currencyName}} ({{currencyTicker}}) のみを送信します。その他の暗号資産を送信すると、資金が永久に失われる可能性があります。",
-        "dashStakingWarning" : "このアドレスは、ステーキング報酬の受け取りに使用しないでください。"
+        "sendWarning" : "このアドレスには、 {{currencyName}} ({{currencyTicker}}) のみを送付します。このアドレスに他の暗号資産を送付すると、暗号資産が失われる可能性があります。",
+        "dashStakingWarning" : "このアドレスは、ステーキング報酬の受け取りに使用しないでください。",
+        "bannerTitle" : "取引所から引き出す方法を学ぶ"
       },
       "securityVerify" : {
-        "title" : "安全上の理由から、当社ではLedgerデバイスでこのアドレスの認証を推奨しています。",
-        "subtitle1" : "アドレスを認証することで安全にご利用いただけます。Ledgerデバイスに表示されるアドレスが情報漏洩することはありません。",
-        "subtitle2" : "アドレスを認証することで、デバイスに表示されているアドレスがLedger Liveに表示されているアドレスと同一であることを確認できます。",
+        "title" : "このトランザクションを保護するにはアドレス認証が重要です",
+        "subtitle1" : "貼り付けたアドレス（Ledger Liveからコピー後）と、Ledgerの信頼できるディスプレイ（Ledgerデバイス画面）に表示されるアドレスのみを比較してください。それらは両方とも同じでなければなりません。",
+        "subtitle2" : "この認証は、アドレス置換攻撃を阻止するのに役立ちます。",
         "verifyCta" : "アドレスを認証",
         "dontVerifyCta" : "認証せずにアドレスを提示"
       },
       "securityDontVerify" : {
-        "title" : "本当によろしいですか？",
-        "subtitle" : "Ledger Liveに表示されているアドレスは認証されません。",
+        "title" : "認証しなくてもよろしいですか？",
+        "subtitle" : "認証しない場合、資産を間違ったアドレスに送付したり、詐欺被害に遭う可能性が高まります。",
         "doNotRemindAgain" : "今後、このメッセージを表示しない",
-        "no" : "いいえ",
-        "yes" : "はい"
+        "no" : "認証する",
+        "yes" : "認証しない"
       },
       "toastMessages" : {
         "accountImported" : "{{currencyTicker}}アカウントをインポートしました。 ",
         "why" : "その理由とは。",
         "addressVerified" : "アドレスが認証されました"
       },
-      "additionalInfoModal" : {
-        "title" : "アカウントをインポートした理由は？",
-        "subtitle" : "シードに以前の{{currencyTicker}}アカウントがあることが検出されました。このアカウントをインポートしました。",
-        "closeCta" : "了解"
-      },
       "notSynced" : {
         "text" : "同期中",
         "desc" : "トランザクションの数が多い場合やインターネット接続が遅い場合、しばらく時間がかかることがあります。"
       },
       "readOnly" : {
-        "title" : "受け取る",
+        "title" : "入金",
         "text" : "注意してください",
         "desc" : "認証されていないアドレスを表示しようとしています。安全のため、デバイス上でアドレスを認証してください。",
         "verify" : "{{accountType}}のアドレスが認証されませんでした。安全のため、デバイス上でアドレスを認証してください。"
@@ -2956,66 +2959,8 @@
         "whatIsSwap" : "スワップとは？",
         "disclaimer" : "Ledgerデバイスから暗号資産を直接取引できます。このサービスは、米国を含む一部の国ではご利用いただけません。"
       },
-      "unauthorizedRates" : {
-        "cta" : "認証をリセット",
-        "banner" : "Wyreでスワップを行うには、KYCをリセットしてLedger Liveをアップデートする必要があります。",
-        "bannerCTA" : "KYC（本人確認）をリセット"
-      },
       "main" : {
         "header" : "スワップ"
-      },
-      "kyc" : {
-        "disclaimer" : "位置情報データが、コンプライアンスの目的で第三者団体と共有されることに同意します。",
-        "cta" : "続行",
-        "wyre" : {
-          "title" : "KYC（本人確認）を完了する",
-          "subtitle" : "個人情報はKYC用にLedgerによって収集された後、WYREに転送されます。詳しくはプライバシーポリシーをご確認ください。",
-          "pending" : {
-            "cta" : "続行",
-            "title" : "KYC（本人確認）が提出されました。",
-            "subtitle" : "KYC（本人確認）が提出され、承認待ちの状態です。",
-            "link" : "KYC（本人確認）についての詳細"
-          },
-          "approved" : {
-            "cta" : "続行",
-            "title" : "KYC（本人確認）が承認されました！",
-            "subtitle" : "KYC（本人確認）が提出され、承認されました。",
-            "link" : "KYC（本人確認）についての詳細"
-          },
-          "closed" : {
-            "cta" : "KYC（本人確認）をリセット",
-            "title" : "KYC（本人確認）の申請却下",
-            "subtitle" : "KYC（本人確認）用に提出したデータがWyreによって却下されました。",
-            "link" : "KYC（本人確認）についての詳細"
-          },
-          "form" : {
-            "firstName" : "名前（名）",
-            "lastName" : "名前（姓）",
-            "street1" : "住所1",
-            "street2" : "住所2",
-            "city" : "市区町村",
-            "state" : "都道府県",
-            "country" : "国",
-            "postalCode" : "郵便番号",
-            "dateOfBirth" : "生年月日",
-            "firstNamePlaceholder" : "名前（名）を入力",
-            "lastNamePlaceholder" : "名前（姓）を入力",
-            "street1Placeholder" : "Eg. 13, Maple street",
-            "street2Placeholder" : "Eg. 13, Maple street",
-            "cityPlaceholder" : "Eg. San José",
-            "postalCodePlaceholder" : "5桁の郵便番号を入力",
-            "statePlaceholder" : "州を選択",
-            "dateOfBirthPlaceholder" : "YYYY-MM-DD",
-            "firstNameError" : "名前（名）を入力して続行",
-            "lastNameError" : "名前（姓）を入力して続行",
-            "street1Error" : "住所を入力",
-            "cityError" : "米国の州を入力",
-            "stateError" : "州を選択して続行",
-            "postalCodeError" : "有効な米国の郵便番号を入力してください。",
-            "dateOfBirthError" : "生年月日を入力"
-          }
-        },
-        "states" : "州を選択"
       },
       "notAvailable" : {
         "title" : "サービスが一時的に利用できない状態であるか、お住まいの国では利用できません。"
@@ -3190,34 +3135,6 @@
           }
         },
         "providers" : {
-          "kyc" : {
-            "title" : "KYC(本人確認手続き)",
-            "required" : "KYCを完了する必要があります",
-            "complete" : "KYCを完了",
-            "update" : "KYCを更新",
-            "rejected" : "KYCが却下されたため、承認申請をやり直す必要があります。",
-            "rejectedContactProviderSupport" : "KYCが拒否されました。{{providerName}}サポートにお問い合わせください。",
-            "updateRequired" : "KYCを完了または更新する",
-            "status" : {
-              "pending" : "KYC申請中",
-              "approved" : "KYC承認済み",
-              "closed" : "KYC却下",
-              "upgradeRequired" : "KYC未完了"
-            }
-          },
-          "login" : {
-            "title" : "ログイン",
-            "required" : "このプロバイダーでログインする必要があります",
-            "complete" : "ログイン"
-          },
-          "mfa" : {
-            "title" : "MFA",
-            "required" : "このプロバイダーでMFA(多要素認証)を設定する必要があります",
-            "complete" : "MFAを設定"
-          },
-          "withdrawalsBlockedError" : {
-            "message" : "お客様の引き出しは {{providerName}}によってブロックされています。\n\n詳細については、サポートにお問い合わせください。"
-          },
           "noProviders" : "結果が見つかりません。現在の設定で利用できる見積もりはありません。"
         }
       }
@@ -3432,6 +3349,7 @@
     "loading" : "デバイスを検索中…"
   },
   "send" : {
+    "pendingTxWarning" : "保留中の受信トランザクションがあります。保留中のトランザクションは取り消される可能性がありますので、ご注意ください。",
     "tooMuchUTXOBottomModal" : {
       "cta" : "続行",
       "description" : "アカウントに大量のコインがあるため、このトランザクションの承認と署名には時間がかかる場合があります。",
@@ -4145,7 +4063,9 @@
   },
   "FirmwareUpdate" : {
     "title" : "ファームウェアをアップデート",
+    "beginUpdate" : "アップデートを開始",
     "updateDevice" : "{{deviceName}}OSアップデート",
+    "releaseNotesTitle" : "OSアップデートの内容は？",
     "updateDone" : "完了です！お客様の{{deviceName}}は、最新の状態です",
     "updateDoneDescription" : "新しいOSバージョン：{{firmwareVersion}}",
     "preparing" : "ファームウェアアップデートの準備中はデバイスをスリープ状態にせず、接続を維持してください。進捗状況をお知らせします",
@@ -4411,6 +4331,86 @@
     "info" : {
       "balanceDoesNotIncludeRewards" : {
         "title" : "合計残高にはステーキング報酬は含まれません"
+      },
+      "delegationUnavailable" : {
+        "title" : "デリゲート不可",
+        "description" : "アカウントの利用可能残高が不足しているため、新たなデリゲートを開始できません。"
+      }
+    },
+    "undelegation" : {
+      "undelegate" : "デリゲート解除",
+      "undelegationMessage" : "デリゲートを解除すると、現在および今後のエポックを対象とした報酬を受け取ることができなくなります",
+      "verificationSuccessTitle" : "資産のデリゲートを正常に解除しました。"
+    },
+    "delegation" : {
+      "pool" : "プール",
+      "poolId" : "プールID",
+      "selectPool" : "プールを選択",
+      "pools" : "プール",
+      "delegationEarn" : "資産をデリゲートすることで、ADA報酬を獲得できます。",
+      "delegatingFrom" : "デリゲート元：",
+      "delegatingTo" : "デリゲート先：",
+      "info" : "デリゲートの仕組み",
+      "header" : "デリゲート",
+      "delegate" : "デリゲート",
+      "redelegate" : "再デリゲート",
+      "estYield" : "推定利回り",
+      "totalStake" : "合計ステーキング量",
+      "commission" : "コミッション",
+      "cost" : "費用",
+      "select" : "選択",
+      "change" : "変更",
+      "networkFees" : "ネットワーク手数料",
+      "stakeKeyRegistrationDeposit" : "ステーキングキー登録デポジット",
+      "stakeKeyRegistrationDepositRefund" : "ステーキング登録デポジットの払い戻し",
+      "stepperHeader" : {
+        "starter" : "報酬を獲得する",
+        "validator" : "資産をデリゲートする",
+        "summary" : "概要",
+        "verification" : "認証",
+        "selectDevice" : "デバイスを選択",
+        "connectDevice" : "デバイスを接続",
+        "stepRange" : "ステップ{{currentStep}}/{{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "ADAをプールにデリゲートして報酬を獲得できます。",
+            "steps" : {
+              "0" : "デリゲートされた資産の所有権を保持する",
+              "1" : "Ledgerデバイスを使ってデリゲートしましょう",
+              "2" : "資産は別のプールに再デリゲートすることも、いつでもデリゲート解除を選択することもできます。"
+            },
+            "cta" : "続行"
+          },
+          "validator" : {
+            "validators" : "バリデーター",
+            "myDelegations" : "デリゲート",
+            "cta" : "続行",
+            "estYield" : "推定利回り：{{amount}}",
+            "totalAvailable" : "合計利用可能額：<0>{{amount}}</0>",
+            "allAssetsUsed" : "全ての資産を使用中",
+            "noResultsFound" : "<0>{{search}}</0>のバリデーターが見つかりませんでした。"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "資産が正常にデリゲートされました。",
+              "text" : "ネットワークによるトランザクションの承認後、アカウントの残高が更新されます。",
+              "cta" : "詳細を表示"
+            },
+            "pending" : {
+              "title" : "トランザクションをブロードキャスト中…"
+            },
+            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+          }
+        }
+      },
+      "drawer" : {
+        "status" : "ステータス",
+        "rewards" : "報酬",
+        "active" : "アクティブ",
+        "inactive" : "停止中",
+        "redelegatedFrom" : "再デリゲート元"
       }
     }
   },
@@ -6214,7 +6214,7 @@
       "title" : "次に、{{productName}}を使用して...",
       "allDoneTitle" : "はい、終わりぃ！",
       "skip" : "これは後でやります",
-      "done" : "将来を安全に保護しました"
+      "viewWallet" : "View my wallet"
     },
     "entryPointCard" : {
       "title" : "{{productName}}の次のステップは何ですか？",
@@ -6356,7 +6356,7 @@
           "body" : "安全に別の暗号資産へ交換"
         },
         "receive" : {
-          "title" : "受け取る",
+          "title" : "入金",
           "body" : "ウォレットで暗号資産を受け取る"
         }
       }
