@@ -8,7 +8,7 @@ import {
   formatCurrencyUnit,
 } from "@ledgerhq/coin-framework/currencies/index";
 import { SidecarValidatorsParamAddresses, SidecarValidatorsParamStatus } from "./api/sidecar.types";
-import { AccountLike } from "@ledgerhq/types-live";
+import { Account, AccountLike, AccountLikeArray } from "@ledgerhq/types-live";
 import { PolkadotAccount, PolkadotValidator, Transaction } from "./types";
 import { PolkadotAPI } from "./api";
 import { NetworkRequestCall } from "@ledgerhq/coin-framework/network";
@@ -166,7 +166,29 @@ function inferTransactions(
   );
 }
 
-export default function makeCliTools(network: NetworkRequestCall, cache: LRUCacheFn) {
+type CliOption = {
+  name: string;
+  type: StringConstructor;
+  multiple?: boolean;
+  desc: string;
+};
+type CliInferAccounts = (mainAccount: Account, opts: Record<string, string>) => AccountLikeArray;
+type CliInferTransactions = (
+  transactions: Array<{
+    account: AccountLike;
+    transaction: Transaction;
+  }>,
+  opts: Record<string, any>,
+  { inferAmount }: any,
+) => Transaction[];
+export type CliFunctions = {
+  options: Array<CliOption>;
+  inferAccounts?: CliInferAccounts;
+  inferTransactions: CliInferTransactions;
+  commands?: Record<string, any>;
+};
+
+export default function makeCliTools(network: NetworkRequestCall, cache: LRUCacheFn): CliFunctions {
   const polkadotAPI = new PolkadotAPI(network, cache);
   return {
     options,

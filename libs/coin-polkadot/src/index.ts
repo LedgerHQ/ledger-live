@@ -15,19 +15,19 @@ import type {
   Operation,
   SignedOperation,
 } from "@ledgerhq/types-live";
-import { PolkadotAPI } from "../api";
-import resolver from "../hw-getAddress";
-import createTransaction from "../js-createTransaction";
-import estimateMaxSpendable from "../js-estimateMaxSpendable";
-import getTransactionStatus from "../js-getTransactionStatus";
-import prepareTransaction from "../js-prepareTransaction";
-import buildSignOperation from "../js-signOperation";
-import { makeGetAccountShape } from "../js-synchronisation";
-import { loadPolkadotCrypto } from "../polkadot-crypto";
-import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
-import { getPreloadStrategy, hydrate, preload } from "../preload";
-import type { Transaction } from "../types";
-import { PolkadotAddress, PolkadotSignature, PolkadotSigner } from "../signer";
+import { PolkadotAPI } from "./api";
+import resolver from "./bridge/hw-getAddress";
+import createTransaction from "./bridge/createTransaction";
+import estimateMaxSpendable from "./bridge/estimateMaxSpendable";
+import getTransactionStatus from "./bridge/getTransactionStatus";
+import prepareTransaction from "./bridge/prepareTransaction";
+import buildSignOperation from "./bridge/signOperation";
+import { makeGetAccountShape } from "./bridge/synchronisation";
+import { loadPolkadotCrypto } from "./bridge/polkadot-crypto";
+import { assignFromAccountRaw, assignToAccountRaw } from "./bridge/serialization";
+import { getPreloadStrategy, hydrate, preload } from "./bridge/preload";
+import type { Transaction } from "./types";
+import { PolkadotAddress, PolkadotSignature, PolkadotSigner } from "./types/signer";
 
 /**
  * Broadcast the signed transaction
