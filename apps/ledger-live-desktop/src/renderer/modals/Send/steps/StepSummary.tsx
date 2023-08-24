@@ -69,7 +69,7 @@ const StepSummary = (props: StepProps) => {
 
   const { estimatedFees, amount, totalSpent, warnings } = status;
   const txInputs = "txInputs" in status ? status.txInputs : undefined;
-  const feeTooHigh = warnings.feeTooHigh;
+  const { feeTooHigh } = warnings;
   const currency = getAccountCurrency(account);
   const feesCurrency = getFeesCurrency(mainAccount);
   const feesUnit = getFeesUnit(feesCurrency);
