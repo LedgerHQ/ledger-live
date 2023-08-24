@@ -290,11 +290,6 @@ export default function BaseNavigator() {
           {...noNanoBuyNanoWallScreenOptions}
         />
         <Stack.Screen
-          name={NavigatorName.Earn}
-          component={EarnLiveAppNavigator}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
           name={NavigatorName.PlatformExchange}
           component={PlatformExchangeNavigator}
           options={{ headerShown: false }}
@@ -515,6 +510,11 @@ export default function BaseNavigator() {
           name={ScreenName.RedirectToOnboardingRecoverFlow}
           options={{ ...TransparentHeaderNavigationOptions, title: "" }}
           component={RedirectToOnboardingRecoverFlowScreen}
+        />
+        <Stack.Screen
+          name={NavigatorName.Earn}
+          component={EarnLiveAppNavigator}
+          options={{ headerShown: false }}
         />
         <Stack.Screen
           name={NavigatorName.NoFundsFlow}
