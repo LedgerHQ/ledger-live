@@ -74,7 +74,10 @@ export function useGeneralTermsAccepted(): boolean {
 export const TermsAndConditionMigrateLegacyData = (): null => {
   const dispatch = useDispatch();
   useEffect(() => {
-    // migration of the "accepted version" data from legacy storage key to redux
+    /**
+     * migration of the "accepted version" data from legacy storage key to redux
+     * store (where it's stored as part of the settings)
+     * */
     loadLegacyStorageAcceptedTermsVersion().then(res => {
       if (res) {
         dispatch(setGeneralTermsVersionAccepted(res));
