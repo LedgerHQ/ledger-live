@@ -91,7 +91,7 @@ function HeaderRight({ onClose }: { onClose?: () => void }) {
 
 type Props = {
   manifest: LiveAppManifest;
-  inputs?: Record<string, string>;
+  inputs?: Record<string, string | undefined>;
   disableHeader?: boolean;
 };
 
