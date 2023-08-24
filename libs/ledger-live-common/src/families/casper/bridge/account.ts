@@ -252,7 +252,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
             signedOperation: {
               operation,
               signature: JSON.stringify(DeployUtil.deployToJson(signedDeploy)),
-              expirationDate: null,
+              expirationDate: undefined,
             },
           });
         }
