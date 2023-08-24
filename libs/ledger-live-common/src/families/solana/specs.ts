@@ -9,7 +9,7 @@ import {
   pickSiblings,
 } from "../../bot/specs";
 import { AppSpec, TransactionTestInput } from "../../bot/types";
-import { SolanaAccount, Transaction } from "./types";
+import { SolanaAccount, SolanaOperation, Transaction } from "./types";
 import {
   acceptStakeCreateAccountTransaction,
   acceptStakeDelegateTransaction,
@@ -483,7 +483,9 @@ function expectCorrectMemo(input: TransactionTestInput<Transaction>) {
     case "transfer":
     case "token.transfer": {
       const memo = transaction.model.uiState.memo;
-      botTest("memo matches in op extra", () => expect(operation.extra.memo).toBe(memo));
+      botTest("memo matches in op extra", () =>
+        expect((operation as SolanaOperation).extra.memo).toBe(memo),
+      );
       break;
     }
     case "token.createATA":

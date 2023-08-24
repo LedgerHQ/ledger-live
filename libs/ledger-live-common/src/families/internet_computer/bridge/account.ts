@@ -5,11 +5,9 @@ import {
   AccountBridge,
   AccountLike,
   BroadcastFnSignature,
-  Operation,
-  SignOperationEvent,
   SignOperationFnSignature,
 } from "@ledgerhq/types-live";
-import { Transaction, TransactionStatus } from "../types";
+import { InternetComputerOperation, Transaction, TransactionStatus } from "../types";
 import { getAccountShape } from "./bridgeHelpers/account";
 import BigNumber from "bignumber.js";
 import { getEstimatedFees } from "./bridgeHelpers/fee";
@@ -144,11 +142,7 @@ const estimateMaxSpendable = async ({
   return maxSpendable;
 };
 
-const signOperation: SignOperationFnSignature<Transaction> = ({
-  account,
-  deviceId,
-  transaction,
-}): Observable<SignOperationEvent> =>
+const signOperation: SignOperationFnSignature<Transaction> = ({ account, deviceId, transaction }) =>
   withDevice(deviceId)(
     transport =>
       new Observable(o => {
@@ -180,7 +174,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
             type: "device-signature-granted",
           });
 
-          const operation: Operation = {
+          const operation: InternetComputerOperation = {
             id: encodeOperationId(accountId, hash, "OUT"),
             hash,
             type: "OUT",

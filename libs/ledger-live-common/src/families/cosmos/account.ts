@@ -3,7 +3,12 @@ import { BigNumber } from "bignumber.js";
 import { getCurrentCosmosPreloadData } from "./preloadedData";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
-import { CosmosOperation, CosmosExtraTxInfo, CosmosAccount } from "./types";
+import {
+  CosmosOperation,
+  CosmosOperationExtra,
+  CosmosOperationExtraRaw,
+  CosmosAccount,
+} from "./types";
 import { mapDelegations, mapUnbondings, mapRedelegations } from "./logic";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 
@@ -113,37 +118,69 @@ export function formatAccountSpecifics(account: CosmosAccount): string {
   return str;
 }
 
-export function fromOperationExtraRaw(
-  extra: Record<string, any> | null | undefined,
-): CosmosExtraTxInfo | Record<string, any> | null | undefined {
-  let e = {};
-  if (extra && extra.validators) {
-    e = {
-      ...extra,
-      validators: extra.validators.map(o => ({
-        ...o,
-        amount: new BigNumber(o.amount),
-      })),
+export function fromOperationExtraRaw(extraRaw: CosmosOperationExtraRaw): CosmosOperationExtra {
+  const extra: CosmosOperationExtra = {};
+  if (extraRaw.validator) {
+    extra.validator = {
+      address: extraRaw.validator.address,
+      amount: new BigNumber(extraRaw.validator.amount),
     };
   }
-  return e;
-}
-export function toOperationExtraRaw(
-  extra: Record<string, any> | null | undefined,
-): CosmosExtraTxInfo | Record<string, any> | null | undefined {
-  let e = {};
 
-  if (extra && extra.validators) {
-    e = {
-      ...extra,
-      validators: extra.validators.map(o => ({
-        ...o,
-        amount: o.amount.toString(),
-      })),
+  if (extraRaw.validators) {
+    extra.validators = extraRaw.validators.map(validator => ({
+      address: validator.address,
+      amount: new BigNumber(validator.amount),
+    }));
+  }
+
+  if (extraRaw.sourceValidator) {
+    extra.sourceValidator = extraRaw.sourceValidator;
+  }
+
+  if (extraRaw.autoClaimedRewards) {
+    extra.autoClaimedRewards = extraRaw.autoClaimedRewards;
+  }
+
+  if (extraRaw.memo) {
+    extra.memo = extraRaw.memo;
+  }
+
+  return extra;
+}
+
+export function toOperationExtraRaw(extra: CosmosOperationExtra): CosmosOperationExtraRaw {
+  const extraRaw: CosmosOperationExtraRaw = {};
+
+  if (extra.validator) {
+    extraRaw.validator = {
+      address: extra.validator.address,
+      amount: extra.validator.amount.toString(),
     };
   }
-  return e;
+
+  if (extra.validators) {
+    extraRaw.validators = extra.validators.map(validator => ({
+      address: validator.address,
+      amount: validator.amount.toString(),
+    }));
+  }
+
+  if (extraRaw.sourceValidator) {
+    extra.sourceValidator = extraRaw.sourceValidator;
+  }
+
+  if (extraRaw.autoClaimedRewards) {
+    extra.autoClaimedRewards = extraRaw.autoClaimedRewards;
+  }
+
+  if (extraRaw.memo) {
+    extra.memo = extraRaw.memo;
+  }
+
+  return extraRaw;
 }
+
 export default {
   formatAccountSpecifics,
   formatOperationSpecifics,

@@ -1,6 +1,6 @@
 import expect from "expect";
 import type { AppSpec } from "../../bot/types";
-import type { CardanoAccount, CardanoResources, Transaction } from "./types";
+import type { CardanoAccount, CardanoOperationExtra, CardanoResources, Transaction } from "./types";
 import { botTest, genericTestDestination, pickSiblings } from "../../bot/specs";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { DeviceModelId } from "@ledgerhq/devices";
@@ -60,12 +60,12 @@ const cardano: AppSpec<Transaction> = {
         const cardanoResources = (accountBeforeTransaction as CardanoAccount)
           .cardanoResources as CardanoResources;
 
-        const extra = {
+        const extra: CardanoOperationExtra = {
           memo: transaction.memo,
         };
 
         if (cardanoResources.delegation?.rewards.gt(0)) {
-          extra["rewards"] = formatCurrencyUnit(
+          extra.rewards = formatCurrencyUnit(
             accountBeforeTransaction.currency.units[0],
             new BigNumber(cardanoResources.delegation.rewards),
             {

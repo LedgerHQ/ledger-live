@@ -16,7 +16,7 @@ export const PRELOAD_MAX_AGE = 15 * 60 * 1000; // 15min
 export async function preloadWithAPI(
   currency: CryptoCurrency,
   getAPI: () => Promise<ChainAPI>,
-): Promise<Record<string, any>> {
+): Promise<SolanaPreloadDataV1> {
   const api = await getAPI();
 
   const cluster = clusterByCurrencyId(currency.id);

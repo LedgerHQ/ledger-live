@@ -20,21 +20,21 @@ import { StepProps as SendStepProps } from "../modals/Send/types";
 import { StepProps as ReceiveStepProps } from "../modals/Receive/Body";
 import { StepProps as AddAccountsStepProps } from "../modals/AddAccounts";
 
-export type AmountCellExtraProps = {
-  operation: Operation;
+export type AmountCellExtraProps<O extends Operation> = {
+  operation: O;
   unit: Unit;
   currency: CryptoCurrency;
 };
 
-export type AmountCellProps = {
+export type AmountCellProps<O extends Operation> = {
   amount: BigNumber;
-  operation: Operation;
+  operation: O;
   unit: Unit;
   currency: CryptoCurrency;
 };
 
-export type ConfirmationCellProps = {
-  operation: Operation;
+export type ConfirmationCellProps<O extends Operation> = {
+  operation: O;
   type?: OperationType;
   isConfirmed: boolean;
   marketColor: string;
@@ -44,18 +44,16 @@ export type ConfirmationCellProps = {
   style?: React.CSSProperties;
 };
 
-export type AmountTooltipProps = {
-  operation: Operation;
+export type AmountTooltipProps<O extends Operation> = {
+  operation: O;
   unit: Unit;
   amount: BigNumber;
 };
 
-export type OperationDetailsExtraProps<A> = {
-  operation: Operation;
+export type OperationDetailsExtraProps<A extends Account, O extends Operation> = {
+  operation: O;
   account: A;
   type: OperationType;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  extra: Record<string, any>; // TODO check if we can use unknown instead of any
 };
 
 export type SummaryNetworkFeesRowProps = {
@@ -70,48 +68,51 @@ export type SummaryNetworkFeesRowProps = {
  * @template A is the account type of the family. you can set it to Account if there is no customisation of that type among the family.
  * @template T is the transaction type of the family.
  * @template TS is the transaction status type of the family.
- * @template FamilyModalsData is an object typing all the modals data. See GlobalModalData type in ../modals/types.ts for more details.
+ * @template O is the operation type of the family.
  */
 export type LLDCoinFamily<
   A extends Account,
   T extends TransactionCommon,
   TS extends TransactionStatus,
+  O extends Operation,
 > = {
   operationDetails?: {
     /**
      * Cell amount before the amount cell in operation row
      */
-    amountCellExtra?: Partial<Record<OperationType, React.ComponentType<AmountCellExtraProps>>>;
+    amountCellExtra?: Partial<Record<OperationType, React.ComponentType<AmountCellExtraProps<O>>>>;
 
     /**
      * Replace amount cell
      */
-    amountCell?: Partial<Record<OperationType, React.ComponentType<AmountCellProps>>>;
+    amountCell?: Partial<Record<OperationType, React.ComponentType<AmountCellProps<O>>>>;
 
     /**
      * Change operation first cell (mostly icons)
      */
-    confirmationCell?: Partial<Record<OperationType, React.ComponentType<ConfirmationCellProps>>>;
+    confirmationCell?: Partial<
+      Record<OperationType, React.ComponentType<ConfirmationCellProps<O>>>
+    >;
 
     /**
      * Tooltip on amount in operation details drawer (upper part of screen)
      */
-    amountTooltip?: Partial<Record<OperationType, React.ComponentType<AmountTooltipProps>>>;
+    amountTooltip?: Partial<Record<OperationType, React.ComponentType<AmountTooltipProps<O>>>>;
 
     /**
      * Open external url on operation type with an icon info
      */
-    getURLWhatIsThis?: (_: { op: Operation; currencyId: string }) => string | null | undefined;
+    getURLWhatIsThis?: (_: { op: O; currencyId: string }) => string | null | undefined;
 
     /**
      * Open external url on operation fees with an icon info
      */
-    getURLFeesInfo?: (_: { op: Operation; currencyId: string }) => string | null | undefined;
+    getURLFeesInfo?: (_: { op: O; currencyId: string }) => string | null | undefined;
 
     /**
      * Add extra info
      */
-    OperationDetailsExtra?: React.ComponentType<OperationDetailsExtraProps<A>>;
+    OperationDetailsExtra?: React.ComponentType<OperationDetailsExtraProps<A, O>>;
   };
 
   accountActions?: {

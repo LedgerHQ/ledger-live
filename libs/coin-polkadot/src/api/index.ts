@@ -36,7 +36,6 @@ import {
   submitExtrinsic as sidecarSubmitExtrinsic,
   verifyValidatorAddresses as sidecarVerifyValidatorAddresses,
 } from "./sidecar";
-import { Operation } from "@ledgerhq/types-live";
 import type { CacheRes, LRUCacheFn } from "@ledgerhq/coin-framework/cache";
 import {
   SidecarPaymentInfo,
@@ -47,6 +46,7 @@ import BigNumber from "bignumber.js";
 import {
   PolkadotAccount,
   PolkadotNomination,
+  PolkadotOperation,
   PolkadotStakingProgress,
   PolkadotUnlocking,
   PolkadotValidator,
@@ -65,7 +65,7 @@ type Registry = {
   extrinsics: Extrinsics;
 };
 type PolkadotAPIAccount = {
-  blockHeight: number | null;
+  blockHeight: number;
   balance: BigNumber;
   spendableBalance: BigNumber;
   nonce: number;
@@ -108,7 +108,7 @@ export class PolkadotAPI {
     return sidecardGetAccount(this.network, this.cache)(address);
   }
 
-  async getOperations(accountId: string, addr: string, startA = 0): Promise<Operation[]> {
+  async getOperations(accountId: string, addr: string, startA = 0): Promise<PolkadotOperation[]> {
     return bisonGetOperations(this.network)(accountId, addr, startA);
   }
 

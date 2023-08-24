@@ -644,7 +644,6 @@ function createSignedOperation(): SignedOperation {
   return {
     operation,
     signature: "Signature",
-    expirationDate: null,
   };
 }
 
@@ -666,7 +665,6 @@ function createSignedOperationRaw(): SignedOperationRaw {
   return {
     operation: rawOperation,
     signature: "Signature",
-    expirationDate: null,
   };
 }
 
