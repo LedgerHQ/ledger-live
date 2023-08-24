@@ -258,7 +258,7 @@
     "simple-cbor": "^0.4.1",
     "source-map-support": "^0.5.21",
     "stellar-sdk": "^10.1.1",
-    "superstruct": "0.14.2",
+    "superstruct": "0.16.7",
     "tiny-secp256k1": "^1.1.6",
     "triple-beam": "^1.3.0",
     "tronweb": "^5.2.0",
