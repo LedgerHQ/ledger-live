@@ -143,7 +143,10 @@ const getTransactionStatus = async (
 };
 
 const prepareTransaction = async (account: Account, transaction: CardanoTransaction) => {
-  transaction.fees = new BigNumber(100);
+  if (!transaction.fees) {
+    transaction.fees = new BigNumber(100);
+  }
+
   return transaction;
 };
 
