@@ -1,5 +1,22 @@
 # ledger-live-desktop
 
+## 2.67.0-nightly.4
+
+### Patch Changes
+
+- [#4423](https://github.com/LedgerHQ/ledger-live/pull/4423) [`5049231835`](https://github.com/LedgerHQ/ledger-live/commit/5049231835eb2eb6777dea5ee9a8813b95ed1ccb) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Remove stake banner from nft receive flow
+
+- [#4417](https://github.com/LedgerHQ/ledger-live/pull/4417) [`5b87074232`](https://github.com/LedgerHQ/ledger-live/commit/5b87074232b96d838eacdbc3d7fe1687a53f68d5) Thanks [@chabroA](https://github.com/chabroA)! - Change network fees label to max network fees for eth in SignTransaction flow
+
+- [#4445](https://github.com/LedgerHQ/ledger-live/pull/4445) [`36a6802a0d`](https://github.com/LedgerHQ/ledger-live/commit/36a6802a0d2e185c761b46cad1be66e900a06e73) Thanks [@KVNLS](https://github.com/KVNLS)! - Fix close cta when a NFT is displayed in fullscreen
+
+- Updated dependencies [[`032b68731f`](https://github.com/LedgerHQ/ledger-live/commit/032b68731f29a4faad2c84a51bda588507ccf45d)]:
+  - @ledgerhq/live-common@31.6.0-nightly.4
+  - @ledgerhq/coin-evm@0.5.2-nightly.2
+  - @ledgerhq/coin-framework@0.5.2-nightly.2
+  - @ledgerhq/domain-service@1.1.9-nightly.0
+  - @ledgerhq/evm-tools@1.0.5-nightly.1
+
 ## 2.67.0-nightly.3
 
 ### Patch Changes

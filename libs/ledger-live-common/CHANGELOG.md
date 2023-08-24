@@ -1,5 +1,21 @@
 # @ledgerhq/live-common
 
+## 31.6.0-nightly.4
+
+### Patch Changes
+
+- [#4402](https://github.com/LedgerHQ/ledger-live/pull/4402) [`032b68731f`](https://github.com/LedgerHQ/ledger-live/commit/032b68731f29a4faad2c84a51bda588507ccf45d) Thanks [@lawRathod](https://github.com/lawRathod)! - Fix unknown txn on stacks
+
+- Updated dependencies [[`6375c250a9`](https://github.com/LedgerHQ/ledger-live/commit/6375c250a9a58b33e3dd1d6c96a96c7e46150298)]:
+  - @ledgerhq/cryptoassets@9.12.0-nightly.0
+  - @ledgerhq/coin-algorand@0.2.7-nightly.2
+  - @ledgerhq/coin-evm@0.5.2-nightly.2
+  - @ledgerhq/coin-framework@0.5.2-nightly.2
+  - @ledgerhq/coin-polkadot@0.3.4-nightly.2
+  - @ledgerhq/domain-service@1.1.9-nightly.0
+  - @ledgerhq/evm-tools@1.0.5-nightly.1
+  - @ledgerhq/hw-app-eth@6.34.4-nightly.1
+
 ## 31.6.0-nightly.3
 
 ### Patch Changes

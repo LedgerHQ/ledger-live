@@ -1,5 +1,25 @@
 # live-mobile
 
+## 3.30.0-nightly.4
+
+### Patch Changes
+
+- [#4421](https://github.com/LedgerHQ/ledger-live/pull/4421) [`00c1159356`](https://github.com/LedgerHQ/ledger-live/commit/00c11593565ac8b370df77af13dc3f1d8de90914) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Allow passing of onPressWhenDisabled prop to native ui button
+
+- [#4423](https://github.com/LedgerHQ/ledger-live/pull/4423) [`5049231835`](https://github.com/LedgerHQ/ledger-live/commit/5049231835eb2eb6777dea5ee9a8813b95ed1ccb) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - fix back arrow on market detail when ptxEarn feature enabled
+
+- [#4407](https://github.com/LedgerHQ/ledger-live/pull/4407) [`d6c1984620`](https://github.com/LedgerHQ/ledger-live/commit/d6c1984620b1d7d8289cf73f5b782217f241c2e6) Thanks [@beths-ledger](https://github.com/beths-ledger)! - fix deep link to buy coins to display no funds flow with option to add account if none available. Remove excess padding above market list and fix overlap of main nav button over earn screen.
+
+- [#4432](https://github.com/LedgerHQ/ledger-live/pull/4432) [`213b66a80f`](https://github.com/LedgerHQ/ledger-live/commit/213b66a80f3751e4be7bcbab5bb9de3bc8db366a) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - fix broken ui on market tab switching
+
+- Updated dependencies [[`032b68731f`](https://github.com/LedgerHQ/ledger-live/commit/032b68731f29a4faad2c84a51bda588507ccf45d), [`00c1159356`](https://github.com/LedgerHQ/ledger-live/commit/00c11593565ac8b370df77af13dc3f1d8de90914)]:
+  - @ledgerhq/live-common@31.6.0-nightly.4
+  - @ledgerhq/native-ui@0.21.0-nightly.2
+  - @ledgerhq/coin-evm@0.5.2-nightly.2
+  - @ledgerhq/coin-framework@0.5.2-nightly.2
+  - @ledgerhq/domain-service@1.1.9-nightly.0
+  - @ledgerhq/evm-tools@1.0.5-nightly.1
+
 ## 3.30.0-nightly.3
 
 ### Patch Changes

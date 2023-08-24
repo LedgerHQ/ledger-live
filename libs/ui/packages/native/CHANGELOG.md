@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.21.0-nightly.2
+
+### Minor Changes
+
+- [#4421](https://github.com/LedgerHQ/ledger-live/pull/4421) [`00c1159356`](https://github.com/LedgerHQ/ledger-live/commit/00c11593565ac8b370df77af13dc3f1d8de90914) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Allow passing of onPressWhenDisabled prop to native ui button
+
 ## 0.20.7-nightly.1
 
 ### Patch Changes
