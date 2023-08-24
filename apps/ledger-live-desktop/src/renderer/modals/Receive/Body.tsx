@@ -27,6 +27,7 @@ export type Data = {
   parentAccount?: Account | undefined | null;
   startWithWarning?: boolean;
   receiveTokenMode?: boolean;
+  receiveNFTMode?: boolean;
   eventType?: string;
 };
 
@@ -55,6 +56,7 @@ export type StepProps = {
   parentAccount: Account | undefined | null;
   token: TokenCurrency | undefined | null;
   receiveTokenMode: boolean;
+  receiveNFTMode: boolean;
   closeModal: () => void;
   isAddressVerified: boolean | undefined | null;
   verifyAddressError: Error | undefined | null;
@@ -198,6 +200,7 @@ const Body = ({
     errorSteps,
     disabledSteps,
     receiveTokenMode: !!params.receiveTokenMode,
+    receiveNFTMode: !!params.receiveNFTMode,
     hideBreadcrumb,
     token,
     isAddressVerified,
