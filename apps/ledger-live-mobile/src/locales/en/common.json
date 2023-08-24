@@ -2751,7 +2751,7 @@
         "desc": "You'll be notified of important price movements for BTC and ETH"
       },
       "transactionsAlerts": {
-        "title": "Transaction Alerts",
+        "title": "Transaction Alerts (Beta)",
         "desc": "Be notified on your transactions for Ethereum, Polygon, Binance Smart Chain, Avalanche and Ethereum Classic"
       },
       "price": {
