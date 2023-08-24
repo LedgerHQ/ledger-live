@@ -1071,8 +1071,8 @@ importers:
         specifier: ^2.0.2
         version: 2.0.2(react-native-flipper@0.164.0)(react-native@0.71.6)(redux@4.2.0)
       redux-thunk:
-        specifier: 2.3.0
-        version: 2.3.0(redux@4.2.0)
+        specifier: 2.4.2
+        version: 2.4.2(redux@4.2.0)
       reselect:
         specifier: 4.0.0
         version: 4.0.0
@@ -54338,16 +54338,16 @@ packages:
       redux: 4.2.0
     dev: false
 
-  /redux-thunk@2.3.0(redux@4.2.0):
-    resolution: {integrity: sha512-km6dclyFnmcvxhAcrQV2AkZmPQjzPDjgVlQtR0EQjxZPyJ0BnMf3in1ryuR8A2qU0HldVRfxYXbFSKlI3N7Slw==}
+  /redux-thunk@2.4.1(redux@4.2.0):
+    resolution: {integrity: sha512-OOYGNY5Jy2TWvTL1KgAlVy6dcx3siPJ1wTq741EPyUKfn6W6nChdICjZwCd0p8AZBs5kWpZlbkXW2nE/zjUa+Q==}
     peerDependencies:
-      redux: ^4.0.0
+      redux: ^4
     dependencies:
       redux: 4.2.0
     dev: false
 
-  /redux-thunk@2.4.1(redux@4.2.0):
-    resolution: {integrity: sha512-OOYGNY5Jy2TWvTL1KgAlVy6dcx3siPJ1wTq741EPyUKfn6W6nChdICjZwCd0p8AZBs5kWpZlbkXW2nE/zjUa+Q==}
+  /redux-thunk@2.4.2(redux@4.2.0):
+    resolution: {integrity: sha512-+P3TjtnP0k/FEjcBL5FZpoovtvrTNT/UXd4/sluaSyrURlSlhLSzEdfsTBW7WsKB6yPvgd7q/iZPICFjW4o57Q==}
     peerDependencies:
       redux: ^4
     dependencies:
