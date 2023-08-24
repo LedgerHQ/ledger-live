@@ -40,7 +40,7 @@ export function isWalletAPIERC20TokenCurrency(
   return (currency as WalletAPIERC20TokenCurrency).standard === "ERC20";
 }
 
-export function addParamsToURL(url: URL, inputs?: Record<string, string>): void {
+export function addParamsToURL(url: URL, inputs?: Record<string, string | undefined>): void {
   if (inputs) {
     const keys = Object.keys(inputs);
 
@@ -48,7 +48,9 @@ export function addParamsToURL(url: URL, inputs?: Record<string, string>): void 
       const key = keys[i];
       const value = inputs[key];
 
-      url.searchParams.set(key, value);
+      if (value !== undefined) {
+        url.searchParams.set(key, value);
+      }
     }
   }
 }

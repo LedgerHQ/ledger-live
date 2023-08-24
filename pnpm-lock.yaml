@@ -28,7 +28,7 @@ patchedDependencies:
     hash: sg53wxh6aay5ebqtsg3y2x6c6m
     path: patches/react-native-video@5.2.0.patch
   react-native-webview@11.26.1:
-    hash: no3vzt46yoww4w2wn7ciytbsoy
+    hash: dcex23p4rtl66gnhzv43mcucta
     path: patches/react-native-webview@11.26.1.patch
   rn-fetch-blob@0.12.0:
     hash: n5yzdsrxz654upecs5xliebtmm
@@ -1057,7 +1057,7 @@ importers:
         version: 5.2.0(patch_hash=sg53wxh6aay5ebqtsg3y2x6c6m)
       react-native-webview:
         specifier: ^11.26.1
-        version: 11.26.1(patch_hash=no3vzt46yoww4w2wn7ciytbsoy)(react-native@0.71.6)(react@18.0.0)
+        version: 11.26.1(patch_hash=dcex23p4rtl66gnhzv43mcucta)(react-native@0.71.6)(react@18.0.0)
       react-redux:
         specifier: ^7.2.9
         version: 7.2.9(@types/react@17.0.53)(react@18.0.0)
@@ -1071,8 +1071,8 @@ importers:
         specifier: ^2.0.2
         version: 2.0.2(react-native-flipper@0.164.0)(react-native@0.71.6)(redux@4.2.0)
       redux-thunk:
-        specifier: 2.3.0
-        version: 2.3.0(redux@4.2.0)
+        specifier: 2.4.2
+        version: 2.4.2(redux@4.2.0)
       reselect:
         specifier: 4.0.0
         version: 4.0.0
@@ -1980,11 +1980,11 @@ importers:
         specifier: workspace:^
         version: link:../ledgerjs/packages/logs
       '@ledgerhq/wallet-api-core':
-        specifier: ^1.0.1
-        version: 1.0.1
+        specifier: ^1.0.2
+        version: 1.0.2
       '@ledgerhq/wallet-api-server':
-        specifier: ^1.0.1
-        version: 1.0.1(react@17.0.2)
+        specifier: ^1.1.1
+        version: 1.1.1(react@17.0.2)
       '@solana/spl-token':
         specifier: ^0.3.7
         version: 0.3.8(@solana/web3.js@1.77.3)
@@ -4162,11 +4162,11 @@ importers:
         specifier: workspace:*
         version: link:../../ledger-live-common
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.0.1
-        version: 1.0.1
+        specifier: ^1.0.2
+        version: 1.0.2
       '@ledgerhq/wallet-api-simulator':
-        specifier: ^1.0.1
-        version: 1.0.1(react@17.0.2)
+        specifier: ^1.0.3
+        version: 1.0.3(react@17.0.2)
       bignumber.js:
         specifier: ^9.1.1
         version: 9.1.1
@@ -16671,16 +16671,16 @@ packages:
     resolution: {integrity: sha512-K3SETlNUJAjU/bN6dNJf56gfpxOhGldmClezIU5puw1PcGDvNf4y8vmEouVz5Htc2a/0vetklf0eIQD8Wk3Hww==}
     dev: false
 
-  /@ledgerhq/wallet-api-client@1.0.1:
-    resolution: {integrity: sha512-oeea7So1KXbLgN6uJjOMWscUGb9CaakxVr9Bg60gNn0vjHZbumLt/97Idl/HqTjkkD7u0loIu1gez2os0ZFcqg==}
+  /@ledgerhq/wallet-api-client@1.0.2:
+    resolution: {integrity: sha512-ClFmYqK+ySpaORHP7UodlBfph19jpEPkfGjUqic2MIyomyQEVO/BNS6s2jcRztyfCauBRyh7u+egJNRALVVLKg==}
     dependencies:
       '@ledgerhq/hw-transport': 6.28.5
-      '@ledgerhq/wallet-api-core': 1.0.1
+      '@ledgerhq/wallet-api-core': 1.0.2
       bignumber.js: 9.1.1
     dev: false
 
-  /@ledgerhq/wallet-api-core@1.0.1:
-    resolution: {integrity: sha512-ydhYjDkjiUxTCjFBoju+98cwFN0pt8PStJEcXH4GwJEAmC+rlZIL5fnd6UzwIyXhpP1N5W/98kirdypI0j8w/Q==}
+  /@ledgerhq/wallet-api-core@1.0.2:
+    resolution: {integrity: sha512-xlpoJAC75R0OtqHj26WYQJ9xeNWhT1erb8eAWAfmMCQH2qIca4pxNWnXVousEX+o1EQQTEmmMjlv/JdvSo/43g==}
     dependencies:
       '@ledgerhq/errors': 6.12.7
       bignumber.js: 9.1.1
@@ -16688,29 +16688,29 @@ packages:
       zod: 3.21.4
     dev: false
 
-  /@ledgerhq/wallet-api-server@1.0.1(react@17.0.2):
-    resolution: {integrity: sha512-DVmUSq5XXreNKRPMqk1bJUUPQRNui4dz5wDQmCsEXjWUw7VdMVP/x2iIEstBuFgoggdE6er0RmqYP75VGiyvYg==}
+  /@ledgerhq/wallet-api-server@1.1.1(react@17.0.2):
+    resolution: {integrity: sha512-jS1KNy2vvG/AFzCamh2DNy0rxD/PHBzXHGwcyI+U/vhi7HzIYqAhBBgjZRehJlsJqEplWTl4EpDGgO2anRaWzA==}
     peerDependencies:
       react: ^17.x || ^18.x
     peerDependenciesMeta:
       react:
         optional: true
     dependencies:
-      '@ledgerhq/wallet-api-core': 1.0.1
+      '@ledgerhq/wallet-api-core': 1.0.2
       bignumber.js: 9.1.1
       picomatch: 2.3.1
       react: 17.0.2
       rxjs: 7.8.1
     dev: false
 
-  /@ledgerhq/wallet-api-simulator@1.0.1(react@17.0.2):
-    resolution: {integrity: sha512-3C5JesQ1oen2Yh8ZTbU5nqeaHs10OYhaicnHmQGJMWG4zqT/Q1aW01EuFM0ymATT98kehsiXZdAM02TM+7Xq5g==}
+  /@ledgerhq/wallet-api-simulator@1.0.3(react@17.0.2):
+    resolution: {integrity: sha512-AWl5/DDjRFvVrqfzNu0xzDsgkS1JWQxbHkmaZSS5U1Fg7HTUcW0DRWQneTQ5pQ06aEcmpZuDYLpcdiYztTqung==}
     dependencies:
       '@ledgerhq/hw-transport': 6.28.5
       '@ledgerhq/hw-transport-http': 6.27.16
-      '@ledgerhq/wallet-api-client': 1.0.1
-      '@ledgerhq/wallet-api-core': 1.0.1
-      '@ledgerhq/wallet-api-server': 1.0.1(react@17.0.2)
+      '@ledgerhq/wallet-api-client': 1.0.2
+      '@ledgerhq/wallet-api-core': 1.0.2
+      '@ledgerhq/wallet-api-server': 1.1.1(react@17.0.2)
       rxjs: 7.8.1
       ws: 8.13.0
     transitivePeerDependencies:
@@ -53260,7 +53260,7 @@ packages:
       - encoding
     dev: true
 
-  /react-native-webview@11.26.1(patch_hash=no3vzt46yoww4w2wn7ciytbsoy)(react-native@0.71.6)(react@18.0.0):
+  /react-native-webview@11.26.1(patch_hash=dcex23p4rtl66gnhzv43mcucta)(react-native@0.71.6)(react@18.0.0):
     resolution: {integrity: sha512-hC7BkxOpf+z0UKhxFSFTPAM4shQzYmZHoELa6/8a/MspcjEP7ukYKpuSUTLDywQditT8yI9idfcKvfZDKQExGw==}
     peerDependencies:
       react: '*'
@@ -54338,16 +54338,16 @@ packages:
       redux: 4.2.0
     dev: false
 
-  /redux-thunk@2.3.0(redux@4.2.0):
-    resolution: {integrity: sha512-km6dclyFnmcvxhAcrQV2AkZmPQjzPDjgVlQtR0EQjxZPyJ0BnMf3in1ryuR8A2qU0HldVRfxYXbFSKlI3N7Slw==}
+  /redux-thunk@2.4.1(redux@4.2.0):
+    resolution: {integrity: sha512-OOYGNY5Jy2TWvTL1KgAlVy6dcx3siPJ1wTq741EPyUKfn6W6nChdICjZwCd0p8AZBs5kWpZlbkXW2nE/zjUa+Q==}
     peerDependencies:
-      redux: ^4.0.0
+      redux: ^4
     dependencies:
       redux: 4.2.0
     dev: false
 
-  /redux-thunk@2.4.1(redux@4.2.0):
-    resolution: {integrity: sha512-OOYGNY5Jy2TWvTL1KgAlVy6dcx3siPJ1wTq741EPyUKfn6W6nChdICjZwCd0p8AZBs5kWpZlbkXW2nE/zjUa+Q==}
+  /redux-thunk@2.4.2(redux@4.2.0):
+    resolution: {integrity: sha512-+P3TjtnP0k/FEjcBL5FZpoovtvrTNT/UXd4/sluaSyrURlSlhLSzEdfsTBW7WsKB6yPvgd7q/iZPICFjW4o57Q==}
     peerDependencies:
       redux: ^4
     dependencies:
