@@ -26,9 +26,7 @@ const getBlankOperation = (tx, fees, id): CosmosOperation => ({
   recipients: [] as string[],
   accountId: id,
   date: new Date(tx.timestamp),
-  extra: {
-    validators: [] as CosmosDelegationInfo[],
-  },
+  extra: {},
   transactionSequenceNumber: parseInt(tx.tx.auth_info.signer_infos[0].sequence),
 });
 

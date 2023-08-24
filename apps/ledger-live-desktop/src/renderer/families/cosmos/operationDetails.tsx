@@ -184,7 +184,11 @@ const OperationDetailsExtra = ({
         if (!validators || !validators.length) return <>{OpDetails}</>;
         const validator = validators[0];
         const formattedValidator = getValidatorName(validator.address);
-        const formattedAmount = formatCurrencyUnit(unit, BigNumber(validator.amount), formatConfig);
+        const formattedAmount = formatCurrencyUnit(
+          unit,
+          new BigNumber(validator.amount),
+          formatConfig,
+        );
         ret = (
           <>
             <B />
@@ -215,7 +219,11 @@ const OperationDetailsExtra = ({
         const validator = validators[0];
         const formattedValidator = getValidatorName(validator.address);
         const formattedSourceValidator = getValidatorName(sourceValidator);
-        const formattedAmount = formatCurrencyUnit(unit, BigNumber(validator.amount), formatConfig);
+        const formattedAmount = formatCurrencyUnit(
+          unit,
+          new BigNumber(validator.amount),
+          formatConfig,
+        );
         ret = (
           <>
             <B />
@@ -300,9 +308,9 @@ const RedelegateAmountCell = ({
   currency,
   unit,
 }: AmountCellExtraProps<CosmosOperation>) => {
-  const amount = operation.extra.validators
-    ? BigNumber(operation.extra.validators[0].amount)
-    : BigNumber(0);
+  const amount = operation.extra.validators?.length
+    ? new BigNumber(operation.extra.validators[0].amount)
+    : new BigNumber(0);
   return !amount.isZero() ? (
     <>
       <FormattedVal val={amount} unit={unit} showCode fontSize={4} color={"palette.text.shade80"} />
@@ -322,9 +330,9 @@ const UndelegateAmountCell = ({
   currency,
   unit,
 }: AmountCellExtraProps<CosmosOperation>) => {
-  const amount = operation.extra.validators
-    ? BigNumber(operation.extra.validators[0].amount)
-    : BigNumber(0);
+  const amount = operation.extra.validators?.length
+    ? new BigNumber(operation.extra.validators[0].amount)
+    : new BigNumber(0);
   return !amount.isZero() ? (
     <>
       <FormattedVal val={amount} unit={unit} showCode fontSize={4} color={"palette.text.shade80"} />
