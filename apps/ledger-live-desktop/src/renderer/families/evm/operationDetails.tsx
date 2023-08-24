@@ -1,43 +1,12 @@
 import React, { useMemo } from "react";
 import styled from "styled-components";
-import toPairs from "lodash/toPairs";
-import { Trans } from "react-i18next";
-import { AccountLike, NFTMetadataResponse, Operation } from "@ledgerhq/types-live";
+import { NFTMetadataResponse, Operation } from "@ledgerhq/types-live";
 import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
 import { decodeAccountId } from "@ledgerhq/live-common/account/index";
 import { centerEllipsis } from "~/renderer/styles/helpers";
 import Box from "~/renderer/components/Box";
 import Skeleton from "~/renderer/components/Nft/Skeleton";
 import Text from "~/renderer/components/Text";
-import {
-  OpDetailsTitle,
-  OpDetailsData,
-  OpDetailsSection,
-} from "~/renderer/drawers/OperationDetails/styledComponents";
-import Ellipsis from "~/renderer/components/Ellipsis";
-
-type OperationDetailsExtraProps = {
-  extra: {
-    [key: string]: string;
-  };
-  type: string;
-  account: AccountLike | undefined | null;
-};
-
-const OperationDetailsExtra = ({ extra }: OperationDetailsExtraProps) => {
-  const entries = toPairs(extra);
-  const jsx = entries.map(([key, value]) => (
-    <OpDetailsSection key={key}>
-      <OpDetailsTitle>
-        <Trans i18nKey={`operationDetails.extra.${key}`} defaults={key} />
-      </OpDetailsTitle>
-      <OpDetailsData>
-        <Ellipsis>{value}</Ellipsis>
-      </OpDetailsData>
-    </OpDetailsSection>
-  ));
-  return <>{jsx}</>;
-};
 
 const Cell = styled(Box).attrs(() => ({
   horizontal: false,
@@ -79,6 +48,5 @@ const amountCell = {
 };
 
 export default {
-  OperationDetailsExtra,
   amountCell,
 };
