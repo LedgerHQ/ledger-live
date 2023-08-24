@@ -148,6 +148,8 @@ const StepReceiveFunds = (props: StepProps) => {
     onClose,
     eventType,
     currencyName,
+    receiveTokenMode,
+    receiveNFTMode,
   } = props;
   const dispatch = useDispatch();
   const receiveStakingFlowConfig = useFeature("receiveStakingFlowConfigDesktop");
@@ -198,6 +200,8 @@ const StepReceiveFunds = (props: StepProps) => {
     const dismissModal = global.localStorage.getItem(`${LOCAL_STORAGE_KEY_PREFIX}${id}`) === "true";
     if (
       !dismissModal &&
+      !receiveNFTMode &&
+      !receiveTokenMode &&
       receiveStakingFlowConfig?.enabled &&
       receiveStakingFlowConfig?.params[id]?.enabled
     ) {
@@ -235,6 +239,8 @@ const StepReceiveFunds = (props: StepProps) => {
     onClose,
     receiveStakingFlowConfig?.enabled,
     receiveStakingFlowConfig?.params,
+    receiveNFTMode,
+    receiveTokenMode,
     transitionTo,
   ]);
 

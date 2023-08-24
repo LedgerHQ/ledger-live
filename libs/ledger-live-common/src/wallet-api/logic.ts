@@ -10,7 +10,7 @@ import { isTokenAccount, isAccount, getMainAccount } from "../account/index";
 import { Transaction } from "../generated/types";
 import { prepareMessageToSign } from "../hw/signMessage/index";
 import { getAccountBridge } from "../bridge";
-import { Exchange } from "../exchange/platform/types";
+import { Exchange } from "../exchange/swap/types";
 
 export function translateContent(content: string | TranslatableString, locale = "en"): string {
   if (!content || typeof content === "string") return content;
