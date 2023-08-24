@@ -13,6 +13,7 @@ export const dataset: DatasetTest<Transaction> = {
   implementations: ["mock", "js"],
   currencies: {
     ethereum_as_evm_test_only: {
+      IgnorePrepareTransactionFields: ["maxFeePerGas", "maxPriorityFeePerGas"],
       accounts: [
         {
           FIXME_tests: ["balance is sum of ops"],
@@ -26,9 +27,7 @@ export const dataset: DatasetTest<Transaction> = {
                 mode: "send",
                 recipient: "0x17733CAb76d9A2112576443F21735789733B1ca3",
                 amount: (1e19).toString(), // 10 ETH
-                type: 2, // EIP1559
-                maxFeePerGas: "27774666566",
-                maxPriorityFeePerGas: "716307827",
+                gasPrice: "0",
                 gasLimit: "21000",
                 chainId: 1,
                 nonce: 0,
@@ -54,9 +53,7 @@ export const dataset: DatasetTest<Transaction> = {
                 mode: "send",
                 recipient: "0x17733CAb76d9A2112576443F21735789733B1ca3",
                 amount: "1",
-                type: 2, // EIP1559
-                maxFeePerGas: "27774666566",
-                maxPriorityFeePerGas: "716307827",
+                gasPrice: "100000000",
                 gasLimit: "21000",
                 chainId: 1,
                 nonce: 0,
