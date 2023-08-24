@@ -2,8 +2,8 @@ import React, { useCallback, useState } from "react";
 import { Flex, Text, Button, Divider } from "@ledgerhq/react-ui";
 import ChangeDeviceLanguageAction from "~/renderer/components/ChangeDeviceLanguageAction";
 
-import { Locale, localeIdToDeviceLanguage } from "~/config/languages";
-import { DeviceModelInfo, Language } from "@ledgerhq/types-live";
+import { DEFAULT_LANGUAGE, Language, Languages } from "~/config/languages";
+import { DeviceModelInfo } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 import { track } from "~/renderer/analytics/segment";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
@@ -13,7 +13,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { setDrawer } from "~/renderer/drawers/Provider";
 
 type Props = {
-  currentLanguage: Locale;
+  currentLanguage: Language;
   analyticsContext: string;
   deviceModelInfo?: DeviceModelInfo;
   onClose?: () => void;
@@ -46,7 +46,7 @@ const ChangeDeviceLanguagePromptDrawer: React.FC<Props> = ({
   const handleSuccess = useCallback(() => {
     if (onSuccess) onSuccess();
     track(`${analyticsContext} LanguageInstalled`, {
-      selectedLanguage: localeIdToDeviceLanguage[currentLanguage],
+      selectedLanguage: Languages[currentLanguage].deviceSupport?.label,
     });
     setLanguageInstalled(true);
   }, [onSuccess, analyticsContext, currentLanguage]);
@@ -76,8 +76,8 @@ const ChangeDeviceLanguagePromptDrawer: React.FC<Props> = ({
         <>
           <ChangeDeviceLanguageAction
             language={
-              localeIdToDeviceLanguage[currentLanguage as keyof typeof localeIdToDeviceLanguage] ??
-              (localeIdToDeviceLanguage.en as Language)
+              Languages[currentLanguage].deviceSupport?.label ??
+              DEFAULT_LANGUAGE.deviceSupport.label
             }
             onSuccess={handleSuccess}
             onError={handleError}
@@ -103,19 +103,19 @@ const ChangeDeviceLanguagePromptDrawer: React.FC<Props> = ({
           onSkip={onCloseDrawer}
           onConfirm={() => {
             track(`${analyticsContext} LanguageInstallTriggered`, {
-              selectedLanguage: localeIdToDeviceLanguage[currentLanguage],
+              selectedLanguage: Languages[currentLanguage].deviceSupport?.label,
             });
             setInstallingLanguage(true);
           }}
           titleWording={t("deviceLocalization.changeDeviceLanguagePrompt.title", {
             language: t(
-              `deviceLocalization.languages.${localeIdToDeviceLanguage[currentLanguage]}`,
+              `deviceLocalization.languages.${Languages[currentLanguage].deviceSupport?.label}`,
             ),
             deviceName,
           })}
           descriptionWording={t("deviceLocalization.changeDeviceLanguagePrompt.description", {
             language: t(
-              `deviceLocalization.languages.${localeIdToDeviceLanguage[currentLanguage]}`,
+              `deviceLocalization.languages.${Languages[currentLanguage].deviceSupport?.label}`,
             ),
           })}
         />

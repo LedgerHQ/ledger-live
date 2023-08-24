@@ -63,7 +63,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const base = useFeature("currencyBase");
   const baseGoerli = useFeature("currencyBaseGoerli");
   const klaytn = useFeature("currencyKlaytn");
-
+  const mock = useEnv("MOCK");
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
       axelar,
@@ -140,11 +140,13 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
     const currencies = (listSupportedCurrencies() as CryptoOrTokenCurrency[]).concat(
       listSupportedTokens(),
     );
-    const deactivatedCurrencies = Object.entries(featureFlaggedCurrencies)
-      .filter(([, feature]) => !feature?.enabled)
-      .map(([name]) => name);
+    const deactivatedCurrencies = mock
+      ? [] // mock mode: all currencies are available for playwrigth tests
+      : Object.entries(featureFlaggedCurrencies)
+          .filter(([, feature]) => !feature?.enabled)
+          .map(([name]) => name);
     return currencies.filter(c => !deactivatedCurrencies.includes(c.id));
-  }, [featureFlaggedCurrencies]);
+  }, [featureFlaggedCurrencies, mock]);
   const url =
     currency && currency.type === "TokenCurrency"
       ? supportLinkByTokenType[currency.tokenType as keyof typeof supportLinkByTokenType]

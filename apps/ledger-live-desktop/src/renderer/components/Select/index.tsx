@@ -115,8 +115,7 @@ class MenuList<
     const initialOffset = options.indexOf(value) * rowHeight;
     const minHeight = Math.min(...[maxHeight, rowHeight * children.length]);
     if (!children.length && noOptionsMessage) {
-      // @ts-expect-error ts says innerProps is missing but I'm not sure adding it is a good idea
-      return <components.NoOptionsMessage {...this.props} />;
+      return <components.NoOptionsMessage {...this.props} innerProps={{}} />;
     }
     children.length &&
       children.map(key => {

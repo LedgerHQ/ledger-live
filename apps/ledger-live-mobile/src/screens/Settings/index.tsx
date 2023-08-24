@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { View, TouchableWithoutFeedback } from "react-native";
 import { IconsLegacy } from "@ledgerhq/native-ui";
-import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
+import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import Config from "react-native-config";
 import { ScreenName } from "../../const";
 import { hasNoAccountsSelector } from "../../reducers/accounts";
@@ -25,6 +25,7 @@ export default function Settings({
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const hasNoAccounts = useSelector(hasNoAccountsSelector);
+  const npsRatingsPrompt = useFeature("npsRatingsPrompt");
   const { handleSettingsRateApp: handleLegacyRatingsRateApp } = useRatings();
   const { handleSettingsRateApp: handleNpsRatingsRateApp } = useNpsRatings();
 
@@ -99,22 +100,23 @@ export default function Settings({
         onClick={() => navigation.navigate(ScreenName.ExperimentalSettings)}
         arrowRight
       />
-      <FeatureToggle feature="ratingsPrompt">
-        <SettingsCard
-          title={t("settings.about.liveReview.title")}
-          desc={t("settings.about.liveReview.desc")}
-          Icon={IconsLegacy.StarMedium}
-          onClick={handleLegacyRatingsRateApp}
-        />
-      </FeatureToggle>
-      <FeatureToggle feature="npsRatingsPrompt">
+      {npsRatingsPrompt?.enabled ? (
         <SettingsCard
           title={t("settings.about.liveReview.title")}
           desc={t("settings.about.liveReview.desc")}
           Icon={IconsLegacy.StarMedium}
           onClick={handleNpsRatingsRateApp}
         />
-      </FeatureToggle>
+      ) : (
+        <FeatureToggle feature="ratingsPrompt">
+          <SettingsCard
+            title={t("settings.about.liveReview.title")}
+            desc={t("settings.about.liveReview.desc")}
+            Icon={IconsLegacy.StarMedium}
+            onClick={handleLegacyRatingsRateApp}
+          />
+        </FeatureToggle>
+      )}
       <SettingsCard
         title={t("settings.developer.title")}
         desc={t("settings.developer.desc")}

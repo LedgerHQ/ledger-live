@@ -66,9 +66,16 @@ export const getAddress = (a: Account): Address =>
 export const mapTxToOps =
   (accountID, { address }: AccountShapeInfo) =>
   (tx: TransactionResponse): StacksOperation[] => {
-    const { sender, recipient, amount } = tx.stx_transfers[0];
-    const { tx_id, fee_rate, nonce, block_height, burn_block_time, token_transfer } = tx.tx;
-    const { memo: memoHex } = token_transfer;
+    const {
+      sender_address: sender,
+      tx_id,
+      fee_rate,
+      nonce,
+      block_height,
+      burn_block_time,
+      token_transfer,
+    } = tx.tx;
+    const { memo: memoHex, amount, recipient_address: recipient } = token_transfer;
 
     const ops: StacksOperation[] = [];
 
