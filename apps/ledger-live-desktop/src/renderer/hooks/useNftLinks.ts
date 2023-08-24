@@ -147,11 +147,15 @@ export default (
               isFromNFTEntryPoint: true,
               reopenPreviousDrawer: isInsideDrawer
                 ? () =>
-                    setDrawer(NFTViewerDrawer, {
-                      account,
-                      nftId: nft.id,
-                      isOpen: true,
-                    })
+                    setDrawer(
+                      NFTViewerDrawer,
+                      {
+                        account,
+                        nftId: nft.id,
+                        isOpen: true,
+                      },
+                      { forceDisableFocusTrap: true },
+                    )
                 : undefined,
             },
             { forceDisableFocusTrap: true },

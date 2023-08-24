@@ -92,14 +92,18 @@ test("Live App SDK methods @smoke", async ({ page }) => {
     await liveAppWebview.waitForCorrectTextInWebview("1xey");
   });
 
-  await test.step("Sign Transaction - info modal", async () => {
-    await liveAppWebview.signTransaction();
-    await expect.soft(page).toHaveScreenshot("live-app-sign-transaction-info.png", {
+  /**
+   * START OF SIGN BITCOIN TRANSACTION TESTS
+   */
+
+  await test.step("Sign bitcoin Transaction - info modal", async () => {
+    await liveAppWebview.signBitcoinTransaction();
+    await expect.soft(page).toHaveScreenshot("live-app-sign-bitcoin-transaction-info.png", {
       timeout: 20000,
     });
   });
 
-  await test.step("Sign Transaction - confirmation modal", async () => {
+  await test.step("Sign bitcoin Transaction - confirmation modal", async () => {
     await modal.continueToSignTransaction();
     await layout.waitForLoadingSpinnerToHaveDisappeared();
     await modal.waitForConfirmationScreenToBeDisplayed();
@@ -109,8 +113,43 @@ test("Live App SDK methods @smoke", async ({ page }) => {
     // await expect.soft(page).toHaveScreenshot("live-app-sign-transaction-confirm.png");
   });
 
-  await test.step("Sign Transaction - signature output", async () => {
+  await test.step("Sign bitcoin Transaction - signature output", async () => {
     await modal.waitForModalToDisappear();
     await liveAppWebview.waitForCorrectTextInWebview("mock_op_100_mock:1:bitcoin:true_bitcoin_0:");
   });
+
+  /**
+   * END OF SIGN BITCOIN TRANSACTION TESTS
+   */
+
+  /**
+   * START OF SIGN ETHEREUM TRANSACTION TESTS
+   */
+
+  await test.step("Sign ethereum Transaction - info modal", async () => {
+    await liveAppWebview.signEthereumTransaction();
+    await expect.soft(page).toHaveScreenshot("live-app-sign-ethereum-transaction-info.png", {
+      timeout: 20000,
+    });
+  });
+
+  await test.step("Sign ethereum Transaction - confirmation modal", async () => {
+    await modal.continueToSignTransaction();
+    await layout.waitForLoadingSpinnerToHaveDisappeared();
+    await modal.waitForConfirmationScreenToBeDisplayed();
+    await expect(page.locator("text=0.00000000000000123")).toBeVisible();
+    // This screenshot is flaky as the loading spinner appears again after this confirm modal, and on slow CI runners the screenshot can take a picture of this instead of the confirm.
+    // await expect.soft(page).toHaveScreenshot("live-app-sign-transaction-confirm.png");
+  });
+
+  await test.step("Sign ethereum Transaction - signature output", async () => {
+    await modal.waitForModalToDisappear();
+    await liveAppWebview.waitForCorrectTextInWebview(
+      "mock_op_100_mock:1:ethereum:true_ethereum_0:",
+    );
+  });
+
+  /**
+   * END OF SIGN ETHEREUM TRANSACTION TESTS
+   */
 });
