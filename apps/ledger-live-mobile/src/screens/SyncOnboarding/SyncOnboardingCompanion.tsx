@@ -23,7 +23,7 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { SeedPhraseType, StorylyInstanceID } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { addKnownDevice } from "../../actions/ble";
-import { ScreenName } from "../../const";
+import { NavigatorName, ScreenName } from "../../const";
 import HelpDrawer from "./HelpDrawer";
 import DesyncOverlay from "./DesyncOverlay";
 import {
@@ -459,12 +459,15 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
 
   useEffect(() => {
     if (seedPathStatus === "recover_seed" && servicesConfig?.enabled) {
-      navigation.navigate(ScreenName.Recover, {
-        fromOnboarding: true,
-        device,
-        platform: servicesConfig.params?.protectId,
-        redirectTo: "restore",
-        date: new Date().toISOString(), // adding a date to reload the page in case of same device restored again
+      navigation.navigate(NavigatorName.Base, {
+        screen: ScreenName.Recover,
+        params: {
+          fromOnboarding: true,
+          device,
+          platform: servicesConfig.params?.protectId,
+          redirectTo: "restore",
+          date: new Date().toISOString(), // adding a date to reload the page in case of same device restored again
+        },
       });
     }
   }, [
