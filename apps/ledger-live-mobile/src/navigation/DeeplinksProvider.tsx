@@ -457,11 +457,33 @@ export const DeeplinksProvider = ({
         },
         getStateFromPath: (path, config) => {
           const url = new URL(`ledgerlive://${path}`);
-          const { hostname, pathname } = url;
+          const { hostname, pathname, searchParams, search, href } = url;
+          const query = Object.fromEntries(searchParams);
+
+          const {
+            ajs_prop_campaign: ajsPropCampaign,
+            ajs_prop_track_data: ajsPropTrackData,
+            ajs_prop_source: ajsPropSource,
+            currency,
+            installApp,
+            appName,
+          } = query;
+
+          // Track deeplink only when ajsPropSource attribute exists.
+          if (ajsPropSource) {
+            track("deeplink_clicked", {
+              deeplinkSource: ajsPropSource,
+              deeplinkCampaign: ajsPropCampaign,
+              url: hostname,
+              currency,
+              installApp,
+              appName,
+              ...(ajsPropTrackData ? JSON.parse(decodeURI(ajsPropTrackData)) : {}),
+            });
+          }
           const platform = pathname.split("/")[1];
 
           if (hostname === "earn") {
-            const searchParams = url.searchParams;
             if (searchParams.get("action") === "info-modal") {
               const message = searchParams.get("message") || "";
               const messageTitle = searchParams.get("messageTitle") || "";
@@ -495,9 +517,9 @@ export const DeeplinksProvider = ({
 
             const manifest = manifests.find(m => m.id.toLowerCase() === platform.toLowerCase());
             if (!manifest) return undefined;
-            url.pathname = `/${manifest.id}`;
-            url.searchParams.set("name", manifest.name);
-            return getStateFromPath(url.href?.split("://")[1], config);
+            pathname = `/${manifest.id}`;
+            searchParams.set("name", manifest.name);
+            return getStateFromPath(href?.split("://")[1], config);
           }
           if (path === "linkdrop-nft-claim/qr-scanning") {
             track("deeplink", { action: "Claim NFT scan QR code again" });
