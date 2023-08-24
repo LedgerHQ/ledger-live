@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, memo } from "react";
 import { useTheme } from "styled-components/native";
 import { useDispatch, useSelector } from "react-redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { ScreenName } from "../../../const";
+import { NavigatorName, ScreenName } from "../../../const";
 import BaseStepperView, { RestoreWithProtect, PinCodeInstructions } from "./setupDevice/scenes";
 import { TrackScreen } from "../../../analytics";
 
@@ -68,11 +68,14 @@ function OnboardingStepProtectFlow({ navigation, route }: NavigationProps) {
     resetCurrentStep();
 
     if (protectFeature?.enabled && lastConnectedDevice) {
-      navigation.navigate(ScreenName.Recover, {
-        device: lastConnectedDevice,
-        platform: protectFeature.params?.protectId,
-        redirectTo: "restore",
-        date: new Date().toISOString(), // adding a date to reload the page in case of same device restored again
+      navigation.navigate(NavigatorName.Base, {
+        screen: ScreenName.Recover,
+        params: {
+          device: lastConnectedDevice,
+          platform: protectFeature.params?.protectId,
+          redirectTo: "restore",
+          date: new Date().toISOString(), // adding a date to reload the page in case of same device restored again
+        },
       });
     }
   }, [
