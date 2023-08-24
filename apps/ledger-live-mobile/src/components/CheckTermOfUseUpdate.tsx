@@ -1,10 +1,14 @@
-import React, { ReactNode, useCallback, useContext } from "react";
+import React, { ReactNode, useCallback } from "react";
 import { Linking, ScrollView } from "react-native";
 import { useTranslation } from "react-i18next";
 import { Flex, IconsLegacy, Link, Text, Divider } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
 
-import { TermsContext, useLocalizedTermsUrl } from "../logic/terms";
+import {
+  useAcceptGeneralTerms,
+  useGeneralTermsAccepted,
+  useLocalizedTermsUrl,
+} from "../logic/terms";
 import Button from "./Button";
 import Alert from "./Alert";
 import QueuedDrawer from "./QueuedDrawer";
@@ -22,7 +26,8 @@ const Update = ({ children }: { children: ReactNode }) => (
 
 const CheckTermOfUseUpdateModal = () => {
   const { t } = useTranslation();
-  const { accepted, accept } = useContext(TermsContext);
+  const accepted = useGeneralTermsAccepted();
+  const accept = useAcceptGeneralTerms();
   const termsUrl = useLocalizedTermsUrl();
 
   const handleLink = useCallback(() => {

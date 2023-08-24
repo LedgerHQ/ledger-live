@@ -1,18 +1,18 @@
-import React, { useEffect, useMemo } from "react";
-import { useSelector } from "react-redux";
+import { useCallback, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { useLocale } from "../context/Locale";
 import { urls } from "../config/urls";
-import { store } from "../context/LedgerStore";
 import { generalTermsVersionAcceptedSelector } from "../reducers/settings";
 import { setGeneralTermsVersionAccepted } from "../actions/settings";
+import { StoreType } from "../context/LedgerStore";
 
 const generalTermsVersionRequired = "2022-05-10";
 
 /**
  * Legacy storage data: we used to save the accepted version directly in
- * AsyncStorage. Now we use the state.settings part of Redux.
+ * AsyncStorage. Now we use the state.settings part of the Redux store.
  * Do not write anything new at this storage key.
  * The migration of that data is done in the `GeneralTermsContextProvider`
  * component below.
@@ -45,58 +45,44 @@ function isAcceptedVersionUpToDate({
   }
 }
 
-async function unacceptGeneralTerms() {
-  store.dispatch(setGeneralTermsVersionAccepted(undefined));
+export function acceptGeneralTerms(store: StoreType) {
+  store.dispatch(setGeneralTermsVersionAccepted(generalTermsVersionRequired));
 }
 
-async function setGeneralTermsAcceptedVersion(acceptedVersion: string) {
-  store.dispatch(setGeneralTermsVersionAccepted(acceptedVersion));
+export function useUnacceptGeneralTerms() {
+  const dispatch = useDispatch();
+  return useCallback(() => {
+    dispatch(setGeneralTermsVersionAccepted(undefined));
+  }, [dispatch]);
 }
 
-export async function acceptGeneralTermsLastVersion() {
-  setGeneralTermsAcceptedVersion(generalTermsVersionRequired);
+export function useAcceptGeneralTerms() {
+  const dispatch = useDispatch();
+  return useCallback(() => {
+    dispatch(setGeneralTermsVersionAccepted(generalTermsVersionRequired));
+  }, [dispatch]);
 }
 
-type TermsContextValue = {
-  accepted: boolean;
-  accept: () => void;
-  unAccept: () => void;
-};
-
-export const TermsContext = React.createContext<TermsContextValue>({
-  accepted: false,
-  accept: acceptGeneralTermsLastVersion,
-  unAccept: unacceptGeneralTerms,
-});
-
-export const GeneralTermsContextProvider: React.FC<{
-  children?: React.ReactNode | null | undefined;
-}> = ({ children }) => {
+export function useGeneralTermsAccepted(): boolean {
   const generalTermsVersionAccepted = useSelector(generalTermsVersionAcceptedSelector);
+  return isAcceptedVersionUpToDate({
+    acceptedVersion: generalTermsVersionAccepted,
+    requiredVersion: generalTermsVersionRequired,
+  });
+}
 
+export const TermsAndConditionMigrateLegacyData = (): null => {
+  const dispatch = useDispatch();
   useEffect(() => {
     // migration of the "accepted version" data from legacy storage key to redux
     loadLegacyStorageAcceptedTermsVersion().then(res => {
       if (res) {
-        setGeneralTermsAcceptedVersion(res);
+        dispatch(setGeneralTermsVersionAccepted(res));
         eraseLegacyStorageAcceptedTermsVersion();
       }
     });
-  }, []);
-
-  const value = useMemo(
-    () => ({
-      accepted: isAcceptedVersionUpToDate({
-        acceptedVersion: generalTermsVersionAccepted,
-        requiredVersion: generalTermsVersionRequired,
-      }),
-      accept: acceptGeneralTermsLastVersion,
-      unAccept: unacceptGeneralTerms,
-    }),
-    [generalTermsVersionAccepted],
-  );
-
-  return <TermsContext.Provider value={value}>{children}</TermsContext.Provider>;
+  }, [dispatch]);
+  return null;
 };
 
 export function useLocalizedTermsUrl() {

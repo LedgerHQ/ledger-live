@@ -70,7 +70,7 @@ import { FirebaseFeatureFlagsProvider } from "./components/FirebaseFeatureFlags"
 import MarketDataProvider from "./screens/Market/MarketDataProviderWrapper";
 import AdjustSetup from "./components/AdjustSetup";
 import PostOnboardingProviderWrapped from "./logic/postOnboarding/PostOnboardingProviderWrapped";
-import { GeneralTermsContextProvider } from "./logic/terms";
+import { TermsAndConditionMigrateLegacyData } from "./logic/terms";
 import HookDynamicContentCards from "./dynamicContent/useContentCards";
 import PlatformAppProviderWrapper from "./PlatformAppProviderWrapper";
 import PerformanceConsole from "./components/PerformanceConsole";
@@ -230,9 +230,7 @@ const StylesProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <StyleProvider selectedPalette={resolvedTheme}>
-      <GeneralTermsContextProvider>
-        <DeeplinksProvider resolvedTheme={resolvedTheme}>{children}</DeeplinksProvider>
-      </GeneralTermsContextProvider>
+      <DeeplinksProvider resolvedTheme={resolvedTheme}>{children}</DeeplinksProvider>
     </StyleProvider>
   );
 };
@@ -273,6 +271,7 @@ export default class Root extends Component {
                 <SegmentSetup />
                 <HookNotifications />
                 <HookDynamicContentCards />
+                <TermsAndConditionMigrateLegacyData />
                 <PlatformAppProviderWrapper>
                   <FirebaseRemoteConfigProvider>
                     <FirebaseFeatureFlagsProvider>
