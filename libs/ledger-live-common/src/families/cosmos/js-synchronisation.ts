@@ -9,7 +9,7 @@ import {
 import { encodeAccountId } from "../../account";
 import { CosmosAPI } from "./api/Cosmos";
 import { encodeOperationId } from "../../operation";
-import { CosmosOperation, CosmosDelegationInfo, CosmosMessage, CosmosTx } from "./types";
+import { CosmosOperation, CosmosMessage, CosmosTx } from "./types";
 import type { OperationType } from "@ledgerhq/types-live";
 import { getMainMessage } from "./helpers";
 import { parseAmountStringToNumber } from "./logic";
