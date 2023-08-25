@@ -1092,8 +1092,8 @@ importers:
         specifier: ^7.3.7
         version: 7.3.7
       storyly-react-native:
-        specifier: 2.0.1
-        version: 2.0.1(prop-types@15.8.1)(react-native@0.71.6)(react@18.0.0)
+        specifier: 2.2.1
+        version: 2.2.1(prop-types@15.8.1)(react-native@0.71.6)(react@18.0.0)
       styled-components:
         specifier: ^5.3.3
         version: 5.3.5(react-is@18.1.0)(react@18.0.0)
@@ -56648,8 +56648,8 @@ packages:
     resolution: {integrity: sha512-eO9xlzDpXLiMr9W1nQ3Nfp9EzZieIQc10zPPMP5jsVV7bLOziSFFBP0XoDXACEIFtdI+rIz0NwWVA/QVJ8zJtw==}
     dev: false
 
-  /storyly-react-native@2.0.1(prop-types@15.8.1)(react-native@0.71.6)(react@18.0.0):
-    resolution: {integrity: sha512-UFJBNjrpcrOyC2lpDv/+Bz48PjST10AlnlZbqrN7TrPf2bDpKQ3LwWYU3QiGBXa6yoFXMEuR6NSc/vg1rKynRg==}
+  /storyly-react-native@2.2.1(prop-types@15.8.1)(react-native@0.71.6)(react@18.0.0):
+    resolution: {integrity: sha512-ukP1QcheecTqlSARlF1PSVk1apiGfYneCahcBMiWWR8aAw99ABSS2Mg25tT+8l6Ih87Nd6C5cllaAvXNbFCyRQ==}
     peerDependencies:
       prop-types: '*'
       react: ^18.0.0
