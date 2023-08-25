@@ -1,5 +1,25 @@
 # dummy-wallet-app
 
+## 0.1.21-nightly.5
+
+### Patch Changes
+
+- [#4451](https://github.com/LedgerHQ/ledger-live/pull/4451) [`87a0a8b0dc`](https://github.com/LedgerHQ/ledger-live/commit/87a0a8b0dce2d36a34541f890697b4ffba258382) Thanks [@Justkant](https://github.com/Justkant)! - fix: recover restore and onboarding issues
+
+  Fix desktop LNX onboarding back when coming from recover
+  Skip genuine check when coming from recover to restore the device (it would be better to allow unseeded device on the genuine check screen instead)
+  Send the deviceId to the recover app in order to avoid multiple device selection during the restore process
+  Update the podfile to config the build settings with ccache support (You might need to check https://stackoverflow.com/a/70189990 for ccache to work correctly when building with xcode)
+  Cleanup old RecoverStaxFlow screen
+  Patch react-native-webview to add support for `allowsUnsecureHttps`
+  Added `IGNORE_CERTIFICATE_ERRORS=1` to use `allowsUnsecureHttps` in the webview in dev same as for LLD
+  Added `protect-local` & `protect-local-dev` manifest support in dev
+  Update wallet-api dependencies
+
+- Updated dependencies [[`8e9df43a0c`](https://github.com/LedgerHQ/ledger-live/commit/8e9df43a0cd00a2065b494439f300f96724b8eb8), [`b238109174`](https://github.com/LedgerHQ/ledger-live/commit/b238109174ab3cad39f9531639b32bf3778abc72), [`87a0a8b0dc`](https://github.com/LedgerHQ/ledger-live/commit/87a0a8b0dce2d36a34541f890697b4ffba258382)]:
+  - @ledgerhq/live-common@31.6.0-nightly.5
+  - @ledgerhq/hw-app-eth@6.34.4-nightly.2
+
 ## 0.1.21-nightly.4
 
 ### Patch Changes
