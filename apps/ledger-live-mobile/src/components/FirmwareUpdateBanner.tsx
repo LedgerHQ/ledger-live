@@ -185,12 +185,6 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
 
   const deviceName = lastConnectedDevice?.deviceName;
 
-  /**
-   * TODO: what about loading state ? seems like in the new design there's none
-   * because we just navigate to the changelog and then only we do the battery
-   * check etc. So this button would just do a plain navigation ?
-   * */
-
   return showBanner && hasCompletedOnboarding && hasConnectedDevice ? (
     <>
       {newFwUpdateUxFeatureFlag?.enabled ? (
