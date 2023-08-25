@@ -19,12 +19,12 @@ export type Props = {
   /**
    * Callback when the user wants to retry the genuine check and presses on the retry button
    */
-  onRetry?: () => void;
+  onRetry: () => void;
 
   /**
    * Callback when the user wants to cancel the genuine check step and presses on the cancel button
    */
-  onCancel?: () => void;
+  onCancel: () => void;
 
   /**
    * Callback when the drawer is closed
@@ -68,7 +68,7 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
   const onGoToSettings = useCallback(() => {
     track("button_clicked", {
       button: "Go to settings",
-      screen: "Error: Ledger Stax OS version not recognized",
+      page: "Error: Ledger Stax OS version not recognized",
     });
     navigation.navigate(NavigatorName.Base, {
       screen: NavigatorName.Settings,
@@ -80,11 +80,32 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
 
   let content;
 
+  const screenName = isNotFoundEntity
+    ? "Error: Device OS version not recognized"
+    : error
+    ? "`Error: ${(error as unknown as Error).name}`"
+    : "Error: unknown error";
+
+  const handleRetry = () => {
+    track("button_clicked", {
+      button: "Try again",
+      page: screenName,
+    });
+    onRetry();
+  };
+
+  const handleCancel = () => {
+    track("button_clicked", {
+      button: "Cancel",
+      page: screenName,
+    });
+    onCancel();
+  };
+
   // Special case for the genuine check during the ESC
   if (isNotFoundEntity) {
     content = (
       <>
-        <TrackScreen name="Error: Ledger Stax OS version not recognized" refreshSource={false} />
         <Flex justifyContent="center" alignItems="center" flex={1} mt={9} mb={6}>
           <BoxedIcon
             Icon={<CircledCrossSolidMedium color="error.c60" size={32} />}
@@ -105,7 +126,7 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
         <Button type="main" mb={4} onPress={onGoToSettings}>
           {t("earlySecurityCheck.genuineCheckErrorDrawer.notFoundEntity.settingsCta")}
         </Button>
-        <Button onPress={onCancel}>
+        <Button onPress={handleCancel}>
           {t("earlySecurityCheck.genuineCheckErrorDrawer.cancelCta")}
         </Button>
       </>
@@ -115,7 +136,6 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
   else if (error) {
     content = (
       <>
-        <TrackScreen name={`Error: ${(error as unknown as Error).name}`} refreshSource={false} />
         <GenericErrorView
           error={error}
           Icon={WarningSolidMedium}
@@ -123,10 +143,10 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
           hasExportLogButton={false}
           renderedInType="drawer"
         />
-        <Button type="main" mt={4} onPress={onRetry}>
+        <Button type="main" mt={4} onPress={handleRetry}>
           {t("earlySecurityCheck.genuineCheckErrorDrawer.retryCta")}
         </Button>
-        <Button onPress={onCancel}>
+        <Button onPress={handleCancel}>
           {t("earlySecurityCheck.genuineCheckErrorDrawer.cancelCta")}
         </Button>
       </>
@@ -136,7 +156,6 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
   else {
     content = (
       <>
-        <TrackScreen name={`Error: unknown error`} refreshSource={false} />
         <Flex justifyContent="center" alignItems="center" flex={1} mt={9} mb={6}>
           <BoxedIcon
             Icon={<WarningSolidMedium color="warning.c70" size={32} />}
@@ -154,10 +173,10 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
             productName,
           })}
         </Text>
-        <Button type="main" mb={4} onPress={onRetry}>
+        <Button type="main" mb={4} onPress={handleRetry}>
           {t("earlySecurityCheck.genuineCheckErrorDrawer.retryCta")}
         </Button>
-        <Button onPress={onCancel}>
+        <Button onPress={handleCancel}>
           {t("earlySecurityCheck.genuineCheckErrorDrawer.cancelCta")}
         </Button>
       </>
@@ -171,7 +190,7 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
       preventBackdropClick
       noCloseButton
     >
-      <TrackScreen category="Error during genuine check" type="drawer" refreshSource={false} />
+      <TrackScreen name={screenName} type="drawer" refreshSource={false} />
       {content}
     </QueuedDrawer>
   );
