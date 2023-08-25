@@ -5,15 +5,7 @@ import InputCurrency from "~/renderer/components/InputCurrency";
 import SelectCurrency from "~/renderer/components/SelectCurrency";
 import { amountInputContainerProps, renderCurrencyValue, selectRowStylesMap } from "./utils";
 import { FormLabel } from "./FormLabel";
-import {
-  usePickDefaultCurrency,
-  useSelectableCurrencies,
-} from "@ledgerhq/live-common/exchange/swap/hooks/index";
-import {
-  SwapSelectorStateType,
-  SwapTransactionType,
-  SwapDataType,
-} from "@ledgerhq/live-common/exchange/swap/types";
+import { SwapSelectorStateType, SwapDataType } from "@ledgerhq/live-common/exchange/swap/types";
 import {
   Container as InputContainer,
   BaseContainer as BaseInputContainer,
@@ -23,17 +15,15 @@ import CounterValue from "~/renderer/components/CounterValue";
 import { track } from "~/renderer/analytics/segment";
 import { useGetSwapTrackingProperties } from "../../utils/index";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { useSwapContext } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 
 type Props = {
   fromAccount: SwapSelectorStateType["account"];
   toAccount: SwapSelectorStateType["account"];
-  toCurrency: SwapSelectorStateType["currency"];
-  setToCurrency: SwapTransactionType["setToCurrency"];
   toAmount: SwapSelectorStateType["amount"];
   provider: string | undefined | null;
   loadingRates: boolean;
   updateSelectedRate: SwapDataType["updateSelectedRate"];
-  toCurrencies: SwapTransactionType["toCurrencies"];
 };
 
 const InputCurrencyContainer = styled(Box)`
@@ -50,21 +40,11 @@ const InputCurrencyContainer = styled(Box)`
   }
 `;
 
-function ToRow({
-  toCurrency,
-  setToCurrency,
-  toAmount,
-  fromAccount,
-  loadingRates,
-  updateSelectedRate,
-  toCurrencies,
-}: Props) {
+function ToRow({ toAmount, fromAccount, loadingRates, updateSelectedRate }: Props) {
+  const { toCurrencies, setToCurrency, toCurrency } = useSwapContext();
   const swapDefaultTrack = useGetSwapTrackingProperties();
-  const currencies = useSelectableCurrencies({
-    allCurrencies: toCurrencies.data ?? [],
-  });
+
   const unit = toCurrency?.units[0];
-  usePickDefaultCurrency(currencies, toCurrency, setToCurrency);
   const trackEditCurrency = () =>
     track("button_clicked", {
       button: "Edit target currency",
@@ -82,6 +62,8 @@ function ToRow({
     setToCurrency(currency || undefined);
   };
 
+  console.log("%cToRow.tsx line:65 toCurrency", "color: #007acc;", toCurrency);
+
   return (
     <>
       <Box horizontal color={"palette.text.shade40"} fontSize={3} mb={1}>
@@ -92,11 +74,11 @@ function ToRow({
       <Box horizontal>
         <Box flex="1" data-test-id="destination-currency-dropdown">
           <SelectCurrency
-            currencies={currencies}
+            currencies={toCurrencies}
             onChange={setCurrencyAndTrack}
             value={toCurrency}
             stylesMap={selectRowStylesMap}
-            isDisabled={!fromAccount || toCurrencies.isLoading || !!toCurrencies.error}
+            isDisabled={!fromAccount}
             renderValueOverride={renderCurrencyValue}
             onMenuOpen={trackEditCurrency}
           />

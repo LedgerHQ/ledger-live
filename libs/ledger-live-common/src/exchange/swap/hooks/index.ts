@@ -8,3 +8,4 @@ export * from "./useProviderRates";
 export * from "./useFromState";
 export * from "./useToState";
 export * from "./usePageState";
+export * from "./v5/useSwapContext";

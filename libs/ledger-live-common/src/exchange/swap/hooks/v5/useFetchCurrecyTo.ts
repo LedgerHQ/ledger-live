@@ -1,19 +1,25 @@
+import { AccountLike } from "@ledgerhq/types-live";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
+
+import { fetchCurrencyTo } from "../../api/v5";
 import { getAvailableProviders } from "../..";
 import { useAPI } from "../common/useAPI";
-import { fetchCurrencyTo } from "../../api/v5";
 
 type Props = {
-  currencyFrom: string;
+  accountFrom: AccountLike | undefined;
   additionalCoinsFlag?: boolean;
 };
 
-export function useFetchCurrencyTo({ currencyFrom, additionalCoinsFlag }: Props) {
+export function useFetchCurrencyTo({ accountFrom, additionalCoinsFlag }: Props) {
+  const currencyFromId = accountFrom ? getAccountCurrency(accountFrom).id : undefined;
   return useAPI({
     queryFn: fetchCurrencyTo,
     queryProps: {
       providers: getAvailableProviders(),
-      currencyFrom,
+      currencyFromId,
       additionalCoinsFlag,
     },
+    // assume a currency list for the given props won't change during a users session.
+    staleTimeout: Infinity,
   });
 }

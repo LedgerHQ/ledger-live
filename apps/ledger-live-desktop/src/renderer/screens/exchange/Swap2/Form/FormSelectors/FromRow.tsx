@@ -1,12 +1,8 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import {
-  getAccountUnit,
-  getAccountCurrency,
-  getAccountName,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountUnit, getAccountName } from "@ledgerhq/live-common/account/index";
 import Box from "~/renderer/components/Box";
 import { fromSelector } from "~/renderer/actions/swap";
 import InputCurrency from "~/renderer/components/InputCurrency";
@@ -24,12 +20,11 @@ import {
 } from "@ledgerhq/live-common/exchange/swap/types";
 import { track } from "~/renderer/analytics/segment";
 import { useGetSwapTrackingProperties } from "../../utils/index";
-import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/sortByMarketcap";
 import { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { TranslatedError } from "~/renderer/components/TranslatedError/TranslatedError";
 import { WarningSolidMedium } from "@ledgerhq/react-ui/assets/icons";
-import { useSelectableCurrencies } from "@ledgerhq/live-common/exchange/swap/hooks/useSelectableCurrencies";
+import { useSwapContext } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 
 const SwapStatusContainer = styled.div<{ isError: boolean }>(
   ({ theme: { space, colors }, isError }) => `
@@ -51,40 +46,6 @@ const SwapStatusText = styled(Text)(
 `,
 );
 
-// Pick a default source account if none are selected.
-// TODO use live-common once its ready
-const usePickDefaultAccount = (
-  accounts: AccountLike[],
-  fromAccount: AccountLike | undefined,
-  setFromAccount: (acc?: AccountLike) => void,
-  fromCurrencies: SwapTransactionType["fromCurrencies"],
-): void => {
-  const currencies = useSelectableCurrencies({
-    allCurrencies: fromCurrencies.data ?? [],
-  });
-  const allCurrencies = useCurrenciesByMarketcap(currencies);
-  useEffect(() => {
-    if (!fromAccount && allCurrencies.length > 0) {
-      allCurrencies.some(({ id }) => {
-        const filteredAcc = accounts.filter(
-          acc =>
-            getAccountCurrency(acc)?.id === id &&
-            acc.balance.gt(0) &&
-            (!("disabled" in acc) || !acc.disabled),
-        );
-        if (filteredAcc.length > 0) {
-          const defaultAccount = filteredAcc
-            .sort((a, b) => b.balance.minus(a.balance).toNumber())
-            .find(Boolean);
-          setFromAccount(defaultAccount);
-          return true;
-        }
-        return false;
-      });
-    }
-  }, [accounts, allCurrencies, fromAccount, setFromAccount]);
-};
-
 type Props = {
   fromAccount: SwapSelectorStateType["account"];
   setFromAccount: SwapTransactionType["setFromAccount"];
@@ -97,7 +58,6 @@ type Props = {
   provider: string | undefined | null;
   isSendMaxLoading: boolean;
   updateSelectedRate: SwapDataType["updateSelectedRate"];
-  fromCurrencies: SwapTransactionType["fromCurrencies"];
 };
 
 /* @dev: Yeah, Im sorry if you read this, design asked us to
@@ -115,8 +75,6 @@ const InputSection = styled(Box)`
 `;
 
 function FromRow({
-  fromAmount,
-  setFromAmount,
   fromAccount,
   setFromAccount,
   isMaxEnabled,
@@ -125,13 +83,12 @@ function FromRow({
   fromAmountWarning,
   isSendMaxLoading,
   updateSelectedRate,
-  fromCurrencies,
 }: Props) {
+  const { setFromCurrencyAmount, fromCurrencyAmount, fromCurrencyAccount } = useSwapContext();
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const accounts = useSelector(fromSelector)(useSelector(shallowAccountsSelector));
-  const unit = fromAccount && getAccountUnit(fromAccount);
+  const unit = fromCurrencyAccount && getAccountUnit(fromCurrencyAccount);
   const { t } = useTranslation();
-  usePickDefaultAccount(accounts, fromAccount, setFromAccount, fromCurrencies);
   const trackEditAccount = () =>
     track("button_clicked", {
       button: "Edit source account",
@@ -157,7 +114,7 @@ function FromRow({
       amount: null,
     });
     updateSelectedRate();
-    setFromAmount(fromAmount);
+    setFromCurrencyAmount(fromAmount);
   };
   const toggleMaxAndTrack = (state: unknown) => {
     track("button_clicked", {
@@ -211,11 +168,9 @@ function FromRow({
         <InputSection width="50%">
           <InputCurrency
             loading={isSendMaxLoading}
-            value={fromAmount}
+            value={fromCurrencyAmount}
             onChange={setValue}
-            disabled={
-              !fromAccount || isMaxEnabled || fromCurrencies.isLoading || !!fromCurrencies.error
-            }
+            disabled={!fromAccount || isMaxEnabled}
             placeholder="0"
             textAlign="right"
             fontWeight={600}

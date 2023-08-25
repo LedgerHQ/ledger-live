@@ -2,15 +2,14 @@ import network from "@ledgerhq/live-network/network";
 import { DEFAULT_SWAP_TIMEOUT_MS } from "../../const/timeout";
 import axios from "axios";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
-import BigNumber from "bignumber.js";
 import { areAllItemsDefined } from "../../utils/areAllItemsDefined";
 import { getEnv } from "@ledgerhq/live-env";
 
 type Props = {
   providers: Array<string>;
   currencyFrom?: string;
-  currencyTo?: string;
-  amountFrom?: BigNumber;
+  toCurrencyId?: string;
+  fromCurrencyAmount: string;
 };
 
 type ProviderType = "DEX" | "CEX" | "DISABLED";
@@ -42,17 +41,22 @@ type FixedRate = CommonProperties & {
 
 type ResponseDataRaw = Array<FloatRate | FixedRate>;
 
-export async function fetchRates({ providers, currencyFrom, currencyTo, amountFrom }: Props) {
+export async function fetchRates({
+  providers,
+  currencyFrom,
+  toCurrencyId,
+  fromCurrencyAmount,
+}: Props) {
   // if (isIntegrationTestEnv()) return Promise.resolve(fetchCurrencyAllMock);
-  if (!areAllItemsDefined(providers, currencyFrom, currencyTo, amountFrom)) {
+  if (!areAllItemsDefined(providers, currencyFrom, toCurrencyId)) {
     return Promise.resolve([]);
   }
 
   const url = new URL(`${getEnv("SWAP_API_BASE_V5")}/rate`);
   const requestBody = {
     from: currencyFrom,
-    to: currencyTo,
-    amountFrom: amountFrom!.toString(), // not sure why amountFrom thinks it can be undefined here
+    to: toCurrencyId,
+    amountFrom: fromCurrencyAmount, // not sure why amountFrom thinks it can be undefined here
     providers,
   };
 
@@ -63,7 +67,7 @@ export async function fetchRates({ providers, currencyFrom, currencyTo, amountFr
       timeout: DEFAULT_SWAP_TIMEOUT_MS,
       data: requestBody,
     });
-    return data;
+    return data.filter(d => d.status === "success");
   } catch (e: unknown) {
     if (axios.isAxiosError(e)) {
       if (e.code === "ECONNABORTED") {

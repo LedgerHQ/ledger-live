@@ -18,7 +18,7 @@ describe("fetchCurrencyFrom", () => {
 
     const result = await fetchCurrencyTo({
       providers: ["changelly", "cic", "oneinch"],
-      currencyFrom: "bitcoin",
+      currencyFromId: "bitcoin",
     });
 
     expect(result).toStrictEqual(flattenV5CurrenciesToAndFrom(fetchCurrencyToMock));
@@ -35,7 +35,7 @@ describe("fetchCurrencyFrom", () => {
     try {
       await fetchCurrencyTo({
         providers: ["changelly", "cic", "oneinch"],
-        currencyFrom: "bitcoin",
+        currencyFromId: "bitcoin",
       });
     } catch (e) {
       expect(e).toBeInstanceOf(LedgerAPI4xx);
