@@ -101,7 +101,7 @@ export function useDeepLinkHandler() {
       const query = Object.fromEntries(searchParams);
       const fullUrl = pathname.replace(/(^\/+|\/+$)/g, "");
       const [url, path] = fullUrl.split("/");
-      
+
       const {
         ajs_prop_source: ajsPropSource,
         ajs_prop_campaign: ajsPropCampaign,

@@ -457,7 +457,8 @@ export const DeeplinksProvider = ({
         },
         getStateFromPath: (path, config) => {
           const url = new URL(`ledgerlive://${path}`);
-          const { hostname, pathname, searchParams, search, href } = url;
+          const { hostname, searchParams, href } = url;
+          let { pathname } = url;
           const query = Object.fromEntries(searchParams);
 
           const {
