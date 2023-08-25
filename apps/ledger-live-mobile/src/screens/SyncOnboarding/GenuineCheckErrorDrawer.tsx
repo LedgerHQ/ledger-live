@@ -3,7 +3,7 @@ import { BoxedIcon, Button, Flex, Text } from "@ledgerhq/native-ui";
 import { CircledCrossSolidMedium, WarningSolidMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useTranslation } from "react-i18next";
 import QueuedDrawer from "../../components/QueuedDrawer";
-import { TrackScreen } from "../../analytics";
+import { TrackScreen, track } from "../../analytics";
 import GenericErrorView from "../../components/GenericErrorView";
 import { FirmwareNotRecognized } from "@ledgerhq/errors";
 import { useNavigation } from "@react-navigation/native";
@@ -66,6 +66,10 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
     (error instanceof FirmwareNotRecognized || (error as Error).message === "not found entity");
 
   const onGoToSettings = useCallback(() => {
+    track("button_clicked", {
+      button: "Go to settings",
+      screen: "Error: Ledger Stax OS version not recognized",
+    });
     navigation.navigate(NavigatorName.Base, {
       screen: NavigatorName.Settings,
       params: {
@@ -80,6 +84,7 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
   if (isNotFoundEntity) {
     content = (
       <>
+        <TrackScreen name="Error: Ledger Stax OS version not recognized" refreshSource={false} />
         <Flex justifyContent="center" alignItems="center" flex={1} mt={9} mb={6}>
           <BoxedIcon
             Icon={<CircledCrossSolidMedium color="error.c60" size={32} />}
@@ -110,6 +115,7 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
   else if (error) {
     content = (
       <>
+        <TrackScreen name={`Error: ${(error as unknown as Error).name}`} refreshSource={false} />
         <GenericErrorView
           error={error}
           Icon={WarningSolidMedium}
@@ -130,6 +136,7 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
   else {
     content = (
       <>
+        <TrackScreen name={`Error: unknown error`} refreshSource={false} />
         <Flex justifyContent="center" alignItems="center" flex={1} mt={9} mb={6}>
           <BoxedIcon
             Icon={<WarningSolidMedium color="warning.c70" size={32} />}

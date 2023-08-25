@@ -1954,7 +1954,7 @@
       },
       "refused": {
         "title": "Genuine Check declined",
-        "description": "You cannot setup your Ledger Stax without allowing this Check.",
+        "description": "You cannot setup your {{productName}} without allowing this Check.",
         "cta": "Resume Check"
       },
       "error": {
