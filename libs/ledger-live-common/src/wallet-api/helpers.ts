@@ -66,3 +66,51 @@ export function getClientHeaders(params: getHostHeadersParams): Record<string, s
     "x-ledger-host-theme": params.theme,
   };
 }
+
+const isWhitelistedDomain = (url: string, whitelistedDomains: string[]): boolean => {
+  const isValid: boolean = whitelistedDomains.reduce(
+    (acc: boolean, whitelistedDomain: string) =>
+      acc ? acc : new RegExp(whitelistedDomain).test(url),
+    false,
+  );
+
+  if (!isValid) {
+    console.error("#isWhitelistedDomain:: invalid URL: url is not whitelisted");
+  }
+
+  return isValid;
+};
+
+export const getInitialURL = (inputs, manifest) => {
+  try {
+    if (inputs?.goToURL) {
+      const url = decodeURIComponent(inputs.goToURL);
+
+      if (isWhitelistedDomain(url, manifest.domains)) {
+        return url;
+      }
+    }
+
+    const url = new URL(manifest.url);
+
+    addParamsToURL(url, inputs);
+
+    if (manifest.params) {
+      url.searchParams.set("params", JSON.stringify(manifest.params));
+    }
+
+    return url.toString();
+  } catch (e) {
+    if (e instanceof Error) console.error(e.message);
+
+    return manifest.url.toString();
+  }
+};
+
+export const safeUrl = (url: string) => {
+  try {
+    return new URL(url);
+  } catch {
+    return null;
+  }
+};

@@ -35,6 +35,7 @@ import {
 } from "@ledgerhq/live-common/platform/react";
 import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
 import BigNumber from "bignumber.js";
+import { DEFAULT_MULTIBUY_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
 import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 import { NavigatorName, ScreenName } from "../../const";
 import { broadcastSignedTx } from "../../logic/screenTransactionHooks";
@@ -497,7 +498,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
 
     // See https://ledgerhq.atlassian.net/browse/LIVE-7646 : (temporary ?) workaround for binance buy integration
     const javaScriptCanOpenWindowsAutomatically =
-      manifest.id === "binancecnt" || manifest.id === "multibuy";
+      manifest.id === "binancecnt" || manifest.id === DEFAULT_MULTIBUY_APP_ID;
 
     return (
       <RNWebView

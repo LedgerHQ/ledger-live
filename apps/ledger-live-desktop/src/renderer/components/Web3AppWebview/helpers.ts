@@ -7,9 +7,9 @@ import {
   useRef,
   useState,
 } from "react";
-import { addParamsToURL } from "@ledgerhq/live-common/wallet-api/helpers";
+import { getInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
 import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
-import { LiveAppManifest } from "~/../../../libs/ledger-live-common/lib/platform/types";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { WebviewAPI, WebviewState, WebviewTag } from "./types";
 import { track } from "~/renderer/analytics/segment";
 
@@ -42,35 +42,8 @@ export function useWebviewState(
 ): UseWebviewStateReturn {
   const webviewRef = useRef<WebviewTag>(null);
   const { manifest, inputs } = params;
-
-  const initialURL = useMemo(() => {
-    try {
-      const url = new URL(manifest.url);
-      addParamsToURL(url, inputs);
-      if (manifest.params) {
-        url.searchParams.set("params", JSON.stringify(manifest.params));
-      }
-
-      return url.toString();
-    } catch (e) {
-      if (e instanceof Error) console.error(e.message);
-      return manifest.url.toString();
-    }
-  }, [manifest, inputs]);
-
+  const initialURL = useMemo(() => getInitialURL(inputs, manifest), [manifest, inputs]);
   const [state, setState] = useState<WebviewState>(initialWebviewState);
-
-  /*
-  TODO: find a way to send custom headers
-  const { theme } = useTheme();
-
-  const headers = useMemo(() => {
-    return getClientHeaders({
-      client: "ledger-live-desktop",
-      theme,
-    });
-  }, [theme]);
-  */
 
   useImperativeHandle(
     webviewAPIRef,

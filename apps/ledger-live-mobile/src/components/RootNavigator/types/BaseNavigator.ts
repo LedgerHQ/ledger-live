@@ -25,7 +25,6 @@ import type { SwapNavigatorParamList } from "./SwapNavigator";
 import type { EarnLiveAppNavigatorParamList } from "./EarnLiveAppNavigator";
 import type { PlatformExchangeNavigatorParamList } from "./PlatformExchangeNavigator";
 import type { ExchangeStackNavigatorParamList } from "./ExchangeStackNavigator";
-import type { ExchangeNavigatorParamList } from "./ExchangeNavigator";
 import type { ExchangeLiveAppNavigatorParamList } from "./ExchangeLiveAppNavigator";
 import type { RequestAccountNavigatorParamList } from "./RequestAccountNavigator";
 import type { AddAccountsNavigatorParamList } from "./AddAccountsNavigator";
@@ -229,10 +228,7 @@ export type BaseNavigatorStackParamList = {
     onError?: (_: Error) => void;
     error?: Error;
   };
-  [NavigatorName.Exchange]:
-    | NavigatorScreenParams<ExchangeLiveAppNavigatorParamList>
-    | NavigatorScreenParams<ExchangeNavigatorParamList>
-    | undefined;
+  [NavigatorName.Exchange]: NavigatorScreenParams<ExchangeLiveAppNavigatorParamList> | undefined;
   [NavigatorName.ExchangeStack]: NavigatorScreenParams<ExchangeStackNavigatorParamList> & {
     mode?: "buy" | "sell";
   };
