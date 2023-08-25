@@ -53,7 +53,7 @@ export const validateRecipient = (
 
     if (!isRecipientMatchingEthFormat) {
       errors.recipient = new InvalidAddress("", {
-        currency: account.currency,
+        currencyName: account.currency.name,
       });
     } else {
       // Check if address is respecting EIP-55

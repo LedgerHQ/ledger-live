@@ -1,6 +1,7 @@
 import React, { forwardRef } from "react";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { WebView as RNWebView } from "react-native-webview";
+import Config from "react-native-config";
 import { WebviewAPI, WebviewProps } from "./types";
 import { useWebView } from "./helpers";
 import { NetworkError } from "./NetworkError";
@@ -36,6 +37,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         style={styles.webview}
         renderError={() => <NetworkError handleTryAgain={() => webviewRef.current?.reload()} />}
         testID="wallet-api-webview"
+        allowsUnsecureHttps={__DEV__ && !!Config.IGNORE_CERTIFICATE_ERRORS}
         {...webviewProps}
       />
     );

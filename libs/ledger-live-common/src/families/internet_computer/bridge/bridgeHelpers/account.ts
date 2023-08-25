@@ -3,16 +3,19 @@ import { decodeAccountId, encodeAccountId } from "../../../../account";
 import { log } from "@ledgerhq/logs";
 import { fetchBalances, fetchBlockHeight, fetchTxns } from "./api";
 import { flatMap } from "lodash";
-import { Account, Operation } from "@ledgerhq/types-live";
+import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { ICPRosettaGetTxnsHistoryResponse } from "./icpRosetta/types";
 import { ICP_FEES } from "../../consts";
 import { encodeOperationId } from "../../../../operation";
 import { normalizeEpochTimestamp } from "../../utils";
+import { InternetComputerOperation } from "../../types";
 
 const mapTxToOps = (accountId: string, address: string, fee = ICP_FEES) => {
-  return (txInfo: ICPRosettaGetTxnsHistoryResponse["transactions"][0]): Operation[] => {
-    const ops: Operation[] = [];
+  return (
+    txInfo: ICPRosettaGetTxnsHistoryResponse["transactions"][0],
+  ): InternetComputerOperation[] => {
+    const ops: InternetComputerOperation[] = [];
     const ownerOperation = txInfo.transaction.operations.find(
       cur => cur.account.address === address,
     );

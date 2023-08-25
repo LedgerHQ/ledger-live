@@ -54,6 +54,7 @@ const Collections = ({ account }: Props) => {
       dispatch(
         openModal("MODAL_RECEIVE", {
           account,
+          receiveNFTMode: true,
         }),
       ),
     [account, dispatch],

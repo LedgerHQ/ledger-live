@@ -4,7 +4,6 @@ import { Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { getEnv } from "@ledgerhq/live-env";
 import { encodeOperationId } from "../../../operation";
-import { base64ToUrlSafeBase64 } from "../utils";
 import { getAccountBalance } from "./network";
 
 const getMirrorApiUrl = (): string => getEnv("API_HEDERA_MIRROR");
@@ -122,7 +121,8 @@ export async function getOperationsForAccount(
     recipients.reverse();
     senders.reverse();
 
-    const hash = base64ToUrlSafeBase64(raw.transaction_hash);
+    const buffer = Buffer.from(raw.transaction_hash, "base64");
+    const hash = buffer.toString("hex");
 
     operations.push({
       value,

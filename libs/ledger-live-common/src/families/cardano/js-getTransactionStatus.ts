@@ -30,7 +30,7 @@ async function getSendTransactionStatus(
   const warnings: Record<string, Error> = {};
   const useAllAmount = !!t.useAllAmount;
 
-  const cardanoResources = a.cardanoResources as CardanoResources;
+  const cardanoResources = a.cardanoResources;
   const networkParams = getNetworkParameters(a.currency.id);
 
   const estimatedFees = t.fees || new BigNumber(0);
@@ -80,7 +80,9 @@ async function getSendTransactionStatus(
   if (!t.recipient) {
     errors.recipient = new RecipientRequired();
   } else if (!isValidAddress(t.recipient, networkParams.networkId)) {
-    errors.recipient = new InvalidAddress();
+    errors.recipient = new InvalidAddress("", {
+      currencyName: a.currency.name,
+    });
   }
 
   if (!amount.gt(0)) {

@@ -20,11 +20,12 @@ import {
 import { StacksNetwork, TransactionResponse } from "./api.types";
 import { getCryptoCurrencyById } from "../../../../currencies";
 import { encodeOperationId } from "../../../../operation";
+import { StacksOperation } from "../../types";
 
 export const getTxToBroadcast = async (
-  operation: Operation,
+  operation: StacksOperation,
   signature: string,
-  signatureRaw: Record<string, any>,
+  rawData: Record<string, any>,
 ): Promise<Buffer> => {
   const {
     value,
@@ -33,7 +34,7 @@ export const getTxToBroadcast = async (
     extra: { memo },
   } = operation;
 
-  const { anchorMode, network, xpub } = signatureRaw;
+  const { anchorMode, network, xpub } = rawData;
 
   const options: UnsignedTokenTransferOptions = {
     amount: new BN(BigNumber(value).minus(fee).toFixed()),
@@ -64,7 +65,7 @@ export const getAddress = (a: Account): Address =>
 
 export const mapTxToOps =
   (accountID, { address }: AccountShapeInfo) =>
-  (tx: TransactionResponse): Operation[] => {
+  (tx: TransactionResponse): StacksOperation[] => {
     const {
       sender_address: sender,
       tx_id,
@@ -76,7 +77,7 @@ export const mapTxToOps =
     } = tx.tx;
     const { memo: memoHex, amount, recipient_address: recipient } = token_transfer;
 
-    const ops: Operation[] = [];
+    const ops: StacksOperation[] = [];
 
     const date = new Date(burn_block_time * 1000);
     const value = new BigNumber(amount || "0");

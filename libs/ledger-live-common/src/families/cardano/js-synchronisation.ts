@@ -5,7 +5,7 @@ import {
   mergeOps,
 } from "../../bridge/jsHelpers";
 import { makeSync } from "../../bridge/jsHelpers";
-import { encodeAccountId, inferSubOperations } from "../../account";
+import { encodeAccountId, inferSubOperations } from "@ledgerhq/coin-framework/account/index";
 
 import BigNumber from "bignumber.js";
 import Ada, { ExtendedPublicKey } from "@cardano-foundation/ledgerjs-hw-app-cardano";
@@ -14,6 +14,8 @@ import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import { APITransaction, HashType } from "./api/api-types";
 import {
   CardanoAccount,
+  CardanoOperation,
+  CardanoOperationExtra,
   CardanoOutput,
   PaymentCredential,
   ProtocolParams,
@@ -56,14 +58,14 @@ function mapTxToAccountOperation(
   subAccounts: Array<TokenAccount>,
   accountShapeInfo: AccountShapeInfo,
   protocolParams: ProtocolParams,
-): Operation {
+): CardanoOperation {
   const accountChange = getAccountChange(tx, accountCredentialsMap);
 
   const subOperations = inferSubOperations(tx.hash, subAccounts);
   const memo = getMemoFromTx(tx);
-  const extra = {};
+  const extra: CardanoOperationExtra = {};
   if (memo) {
-    extra["memo"] = memo;
+    extra.memo = memo;
   }
 
   let operationValue = accountChange.ada;
@@ -75,7 +77,7 @@ function mapTxToAccountOperation(
         c.stakeCredential.key === stakeCredential.key,
     );
     if (walletRegistration) {
-      extra["deposit"] = formatCurrencyUnit(
+      extra.deposit = formatCurrencyUnit(
         accountShapeInfo.currency.units[0],
         new BigNumber(protocolParams.stakeKeyDeposit),
         {
@@ -94,7 +96,7 @@ function mapTxToAccountOperation(
     );
     if (walletDeRegistration) {
       operationValue = operationValue.minus(protocolParams.stakeKeyDeposit);
-      extra["refund"] = formatCurrencyUnit(
+      extra.refund = formatCurrencyUnit(
         accountShapeInfo.currency.units[0],
         new BigNumber(protocolParams.stakeKeyDeposit),
         {
@@ -113,7 +115,7 @@ function mapTxToAccountOperation(
     );
     if (walletWithdraw) {
       operationValue = operationValue.minus(walletWithdraw.amount);
-      extra["rewards"] = formatCurrencyUnit(
+      extra.rewards = formatCurrencyUnit(
         accountShapeInfo.currency.units[0],
         new BigNumber(walletWithdraw.amount),
         {

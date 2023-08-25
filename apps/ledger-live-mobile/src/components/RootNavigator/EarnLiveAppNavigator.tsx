@@ -1,28 +1,31 @@
 import React, { useEffect, useMemo } from "react";
-import { createStackNavigator, StackNavigationProp } from "@react-navigation/stack";
+import { createStackNavigator } from "@react-navigation/stack";
 
 import { useTheme } from "styled-components/native";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { ScreenName, NavigatorName } from "../../const";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useRoute } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 
 import type { EarnLiveAppNavigatorParamList } from "./types/EarnLiveAppNavigator";
-import type { StackNavigatorProps } from "./types/helpers";
+import type { BaseComposite, StackNavigatorProps } from "./types/helpers";
 import { EarnScreen } from "../../screens/PTX/Earn";
-import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 import { accountsSelector } from "../../reducers/accounts";
 import { EarnInfoDrawer } from "../../screens/PTX/Earn/EarnInfoDrawer";
 
 const Stack = createStackNavigator<EarnLiveAppNavigatorParamList>();
 
-const Earn = (props: StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenName.Earn>) => {
+type NavigationProps = BaseComposite<
+  StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenName.Earn>
+>;
+
+const Earn = (props: NavigationProps) => {
   // Earn dashboard feature flag
   const ptxEarn = useFeature("ptxEarn");
   const paramAction = props.route.params?.action;
-  const navigation = useNavigation<StackNavigationProp<BaseNavigatorStackParamList>>();
+  const navigation = props.navigation;
   const accounts = useSelector(accountsSelector);
   const route = useRoute();
 
@@ -36,7 +39,7 @@ const Earn = (props: StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenNa
 
     // Reset params so that it will retrigger actions if a new deeplink is used
     const clearDeepLink = () =>
-      navigation.setParams({ action: null, accountId: null, currencyId: null });
+      navigation.setParams({ action: undefined, accountId: undefined, currencyId: undefined });
 
     async function deeplinkRouting() {
       switch (paramAction) {

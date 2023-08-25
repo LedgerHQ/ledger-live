@@ -56,8 +56,10 @@ export const sync: AccountBridge<any>["sync"] = initialAccount =>
       syncTimeouts[accountId] = null;
     };
   });
+
 export const broadcast: AccountBridge<any>["broadcast"] = ({ signedOperation }) =>
   Promise.resolve(signedOperation.operation);
+
 export const signOperation: AccountBridge<any>["signOperation"] = ({ account, transaction }) =>
   new Observable(o => {
     let cancelled = false;
@@ -101,7 +103,6 @@ export const signOperation: AccountBridge<any>["signOperation"] = ({ account, tr
         type: "signed",
         signedOperation: {
           operation: { ...op },
-          expirationDate: null,
           signature: "",
         },
       });
@@ -175,6 +176,7 @@ export const scanAccounts: CurrencyBridge["scanAccounts"] = ({ currency }) =>
       unsubscribed = true;
     };
   });
+
 export const makeAccountBridgeReceive: () => (
   account: Account,
   arg1: {

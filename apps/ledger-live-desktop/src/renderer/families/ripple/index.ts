@@ -2,9 +2,9 @@ import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/r
 import { LLDCoinFamily } from "../types";
 import sendAmountFields from "./SendAmountFields";
 import sendRecipientFields from "./SendRecipientFields";
-import { Account } from "@ledgerhq/types-live";
+import { Account, Operation } from "@ledgerhq/types-live";
 
-const family: LLDCoinFamily<Account, Transaction, TransactionStatus> = {
+const family: LLDCoinFamily<Account, Transaction, TransactionStatus, Operation> = {
   sendAmountFields,
   sendRecipientFields,
 };

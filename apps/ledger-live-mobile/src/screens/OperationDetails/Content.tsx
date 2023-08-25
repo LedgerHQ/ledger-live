@@ -123,7 +123,7 @@ export default function Content({
   const confirmationsString = getOperationConfirmationDisplayableNumber(operation, mainAccount);
   const uniqueSenders = uniq<(typeof operation.senders)[0]>(operation.senders);
   const uniqueRecipients = uniq<(typeof operation.recipients)[0]>(operation.recipients);
-  const { extra, type, hasFailed } = operation;
+  const { type, hasFailed } = operation;
   const subOperations = operation.subOperations || [];
   const internalOperations = operation.internalOperations || [];
   const shouldDisplayTo = uniqueRecipients.length > 0 && !!uniqueRecipients[0];
@@ -160,7 +160,6 @@ export default function Content({
               type: typeof type;
               account: AccountLike;
               operation: Operation;
-              extra: Record<string, unknown>;
             }>;
           }
         ).OperationDetailsExtra
@@ -433,7 +432,7 @@ export default function Content({
         </View>
       ) : null}
 
-      <Extra operation={operation} extra={extra} type={type} account={account} />
+      <Extra operation={operation} type={type} account={account} />
 
       <Modal isOpened={isModalOpened} onClose={onModalClose} currency={currency} />
     </>

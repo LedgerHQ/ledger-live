@@ -20,10 +20,16 @@ import { completeOnboarding, setHasOrderedNano, setReadOnlyMode } from "../../ac
 
 type Props = {
   manifest: LiveAppManifest;
-  inputs?: Record<string, string>;
+  inputs?: Record<string, string | undefined>;
 };
 
-const headerShownIds = ["protect-staging", "protect-simu"];
+const headerShownIds = [
+  "protect-local",
+  "protect-local-dev",
+  "protect-simu",
+  "protect-staging",
+  "protect-staging-v2",
+];
 
 const WebRecoverPlayer = ({ manifest, inputs }: Props) => {
   const webviewAPIRef = useRef<WebviewAPI>(null);

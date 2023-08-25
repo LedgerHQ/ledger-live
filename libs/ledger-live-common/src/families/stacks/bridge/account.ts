@@ -4,6 +4,7 @@ import { StacksMainnet } from "@stacks/network";
 import { BigNumber } from "bignumber.js";
 import BN from "bn.js";
 import { Observable } from "rxjs";
+import invariant from "invariant";
 import {
   AmountRequired,
   FeeNotLoaded,
@@ -31,13 +32,12 @@ import {
   AccountBridge,
   AccountLike,
   BroadcastFnSignature,
-  Operation,
   SignOperationEvent,
   SignOperationFnSignature,
 } from "@ledgerhq/types-live";
 
 import { StacksNetwork } from "./utils/api.types";
-import { Transaction, TransactionStatus } from "../types";
+import { StacksOperation, Transaction, TransactionStatus } from "../types";
 import { findNextNonce, getAccountShape, getTxToBroadcast } from "./utils/misc";
 import { broadcastTx } from "./utils/api";
 import { getAddress } from "../../filecoin/bridge/utils/utils";
@@ -63,9 +63,10 @@ const createTransaction = (): Transaction => {
 const sync = makeSync({ getAccountShape });
 
 const broadcast: BroadcastFnSignature = async ({
-  signedOperation: { operation, signature, signatureRaw },
+  signedOperation: { operation, signature, rawData },
 }) => {
-  const tx = await getTxToBroadcast(operation, signature, signatureRaw ?? {});
+  invariant(operation as StacksOperation, "StacksOperation expected");
+  const tx = await getTxToBroadcast(operation as StacksOperation, signature, rawData ?? {});
 
   const hash = await broadcastTx(tx);
   const result = patchOperationWithHash(operation, hash);
@@ -252,7 +253,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
           // build signature on the correct format
           const signature = `${result.signatureVRS.toString("hex")}`;
 
-          const operation: Operation = {
+          const operation: StacksOperation = {
             id: encodeOperationId(accountId, txHash, "OUT"),
             hash: txHash,
             type: "OUT",
@@ -275,12 +276,11 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
             signedOperation: {
               operation,
               signature,
-              signatureRaw: {
+              rawData: {
                 xpub,
                 network,
                 anchorMode,
               },
-              expirationDate: null,
             },
           });
         }

@@ -14,7 +14,6 @@ import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelp
 import { getGasLimit } from "@ledgerhq/coin-evm/logic";
 import { getTypedTransaction } from "@ledgerhq/coin-evm/transaction";
 const receive = makeAccountBridgeReceive();
-
 const defaultGetFees = (_a, t: any) => (t.gasPrice || new BigNumber(0)).times(getGasLimit(t));
 
 const createTransaction = (): Transaction => ({

@@ -87,7 +87,6 @@ import {
   NavigationHeaderCloseButton,
   NavigationHeaderCloseButtonAdvanced,
 } from "../NavigationHeaderCloseButton";
-import { RedirectToRecoverStaxFlowScreen } from "../../screens/Protect/RedirectToRecoverStaxFlow";
 import { RootDrawer } from "../RootDrawer/RootDrawer";
 import EditTransactionNavigator from "../../families/ethereum/EditTransactionFlow/EditTransactionNavigator";
 import { DrawerProps } from "../RootDrawer/types";
@@ -553,11 +552,6 @@ export default function BaseNavigator() {
           name={ScreenName.RedirectToOnboardingRecoverFlow}
           options={{ ...TransparentHeaderNavigationOptions, title: "" }}
           component={RedirectToOnboardingRecoverFlowScreen}
-        />
-        <Stack.Screen
-          name={ScreenName.RedirectToRecoverStaxFlow}
-          options={{ headerShown: false }}
-          component={RedirectToRecoverStaxFlowScreen}
         />
         <Stack.Screen
           name={NavigatorName.NoFundsFlow}

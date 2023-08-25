@@ -60,22 +60,12 @@ function isInvalidWalletConnectLink(url: string) {
   return true;
 }
 
-const recoverManifests = [
-  "protect",
-  "protect-simu",
-  "protect-staging",
-  "protect-preprod",
-  "protect-prod",
-  "protect-sec",
-  "protect-sit",
-];
-
 function getProxyURL(url: string) {
   const uri = new URL(url);
   const { hostname, pathname } = uri;
   const platform = pathname.split("/")[1];
 
-  if (hostname === "discover" && platform && recoverManifests.includes(platform)) {
+  if (hostname === "discover" && platform && platform.startsWith("protect")) {
     return url.replace("://discover", "://recover");
   }
 
@@ -163,8 +153,6 @@ const linkingOptions = (featureFlags: FeatureFlags) => ({
           [ScreenName.BleDevicePairingFlow]: "sync-onboarding",
 
           [ScreenName.RedirectToOnboardingRecoverFlow]: "recover-restore-flow",
-          [ScreenName.RedirectToRecoverStaxFlow]: "recover-restore-stax-flow",
-
           [NavigatorName.PostOnboarding]: {
             screens: {
               /**
@@ -405,7 +393,7 @@ const getOnboardingLinkingOptions = (acceptedTermsOfUse: boolean, featureFlags: 
                */
               [ScreenName.PlatformApp]: "discover/:platform",
               [ScreenName.Recover]: "recover/:platform",
-              [ScreenName.RedirectToRecoverStaxFlow]: "recover-restore-stax-flow",
+              [ScreenName.RedirectToOnboardingRecoverFlow]: "recover-restore-flow",
             },
           },
         },
@@ -488,13 +476,7 @@ export const DeeplinksProvider = ({
             }
           }
           if ((hostname === "discover" || hostname === "recover") && platform) {
-            const whitelistLiveAppsAccessibleInNonOnboardedLL: LiveAppManifest["id"][] =
-              recoverManifests;
-            if (
-              !hasCompletedOnboarding &&
-              !whitelistLiveAppsAccessibleInNonOnboardedLL.includes(platform)
-            )
-              return undefined;
+            if (!hasCompletedOnboarding && !platform.startsWith("protect")) return undefined;
             /**
              * Upstream validation of "ledgerlive://discover/:platform":
              *  - checking that a manifest exists

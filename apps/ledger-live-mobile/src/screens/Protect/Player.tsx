@@ -80,7 +80,7 @@ export function RecoverPlayer({ navigation, route }: Props) {
         inputs={{
           theme,
           lang: locale,
-          deviceId: device?.deviceId || "",
+          deviceId: device?.deviceId,
           ...params,
         }}
       />

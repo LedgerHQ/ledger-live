@@ -76,7 +76,6 @@ describe("EVM Family", () => {
           signedOperation: {
             operation: optimisticCoinOperation,
             signature: "0xS1gn4tUR3",
-            expirationDate: null,
           },
         });
 
@@ -128,7 +127,6 @@ describe("EVM Family", () => {
           signedOperation: {
             operation: optimisticTokenOperation,
             signature: "0xS1gn4tUR3",
-            expirationDate: null,
           },
         });
 
@@ -204,7 +202,6 @@ describe("EVM Family", () => {
           signedOperation: {
             operation: optimisticErc721Operation,
             signature: "0xS1gn4tUR3",
-            expirationDate: null,
           },
         });
         const nftId = encodeNftId(account.id, nft.contract, nft.tokenId, account.currency.id);
@@ -283,7 +280,6 @@ describe("EVM Family", () => {
           signedOperation: {
             operation: optimisticErc721Operation,
             signature: "0xS1gn4tUR3",
-            expirationDate: null,
           },
         });
         const nftId = encodeNftId(account.id, nft.contract, nft.tokenId, account.currency.id);
