@@ -12,6 +12,7 @@ import {
   PriorityFeeHigherThanMaxFee,
   MaxFeeTooLow,
   NotEnoughBalanceInParentAccount,
+  FeeTooHigh,
 } from "@ledgerhq/errors";
 import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
@@ -32,7 +33,8 @@ type ValidatedTransactionFields =
   | "gasPrice"
   | "amount"
   | "maxPriorityFee"
-  | "maxFee";
+  | "maxFee"
+  | "feeTooHigh";
 type ValidationIssues = Partial<Record<ValidatedTransactionFields, Error>>;
 
 // This regex will not work with Starknet since addresses are 65 caracters long after the 0x
@@ -197,6 +199,30 @@ const validateNft = (
 };
 
 /**
+ * Validate business logic related to the fee ratio of a transaction:
+ * - if sending ETH, warn if fees are more than 10% of the amount
+ */
+const validateFeeRatio = (
+  account: Account | SubAccount,
+  tx: EvmTransaction,
+  estimatedFees: BigNumber,
+): Array<ValidationIssues> => {
+  const errors: ValidationIssues = {};
+  const warnings: ValidationIssues = {};
+
+  const isTokenTransaction = account?.type === "TokenAccount";
+
+  // If sending ETH (ie.: no tokens, no nft, no smart contract interactions)
+  if (!tx.nft && !tx.data && !isTokenTransaction) {
+    if (tx.amount.gt(0) && estimatedFees.times(10).gt(tx.amount)) {
+      warnings.feeTooHigh = new FeeTooHigh();
+    }
+  }
+
+  return [errors, warnings];
+};
+
+/**
  * Validate a transaction and get all possibles errors and warnings about it
  */
 export const getTransactionStatus: AccountBridge<EvmTransaction>["getTransactionStatus"] = async (
@@ -216,19 +242,24 @@ export const getTransactionStatus: AccountBridge<EvmTransaction>["getTransaction
   const [amountErr, amountWarn] = validateAmount(subAccount || account, tx, totalSpent);
   // Gas related errors and warnings
   const [gasErr, gasWarn] = validateGas(account, tx, totalFees, gasLimit, customGasLimit);
+  // NFT related errors and warnings
   const [nftErr, nftWarn] = validateNft(account, tx, totalFees);
+  // Fee ratio related errors and warnings
+  const [feeRatioErr, feeRatioWarn] = validateFeeRatio(subAccount || account, tx, estimatedFees);
 
   const errors: ValidationIssues = {
     ...recipientErr,
     ...gasErr,
     ...amountErr,
     ...nftErr,
+    ...feeRatioErr,
   };
   const warnings: ValidationIssues = {
     ...recipientWarn,
     ...gasWarn,
     ...amountWarn,
     ...nftWarn,
+    ...feeRatioWarn,
   };
 
   return {
