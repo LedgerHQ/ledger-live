@@ -457,8 +457,7 @@ export const DeeplinksProvider = ({
         },
         getStateFromPath: (path, config) => {
           const url = new URL(`ledgerlive://${path}`);
-          const { hostname, searchParams, href } = url;
-          let { pathname } = url;
+          const { hostname, searchParams, pathname } = url;
           const query = Object.fromEntries(searchParams);
 
           const {
@@ -518,9 +517,9 @@ export const DeeplinksProvider = ({
 
             const manifest = manifests.find(m => m.id.toLowerCase() === platform.toLowerCase());
             if (!manifest) return undefined;
-            pathname = `/${manifest.id}`;
-            searchParams.set("name", manifest.name);
-            return getStateFromPath(href?.split("://")[1], config);
+            url.pathname = `/${manifest.id}`;
+            url.searchParams.set("name", manifest.name);
+            return getStateFromPath(url.href?.split("://")[1], config);
           }
           if (path === "linkdrop-nft-claim/qr-scanning") {
             track("deeplink", { action: "Claim NFT scan QR code again" });
