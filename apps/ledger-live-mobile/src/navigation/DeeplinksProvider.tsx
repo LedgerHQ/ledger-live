@@ -479,7 +479,7 @@ export const DeeplinksProvider = ({
               currency,
               installApp,
               appName,
-              ...(ajsPropTrackData ? JSON.parse(decodeURI(ajsPropTrackData)) : {}),
+              ...(ajsPropTrackData ? JSON.parse(ajsPropTrackData) : {}),
             });
           }
           const platform = pathname.split("/")[1];
