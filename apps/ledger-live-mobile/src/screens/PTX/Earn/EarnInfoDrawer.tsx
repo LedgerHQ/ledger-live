@@ -27,10 +27,10 @@ export function EarnInfoDrawer() {
 
   return (
     <QueuedDrawer isRequestingToBeOpened={modalOpened} onClose={closeModal}>
-      <Flex rowGap={52}>
+      <Flex rowGap={"52px"}>
         <Track onMount event="Earn Info Modal" />
-        <Flex rowGap={56}>
-          <Flex rowGap={16}>
+        <Flex rowGap={"56px"}>
+          <Flex rowGap={6}>
             <Text variant="h4" fontFamily="Inter" textAlign="center" fontWeight="bold">
               {messageTitle}
             </Text>

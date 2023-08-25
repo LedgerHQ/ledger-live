@@ -78,15 +78,15 @@ export function EthereumStakingDrawerBody({
   );
 
   return (
-    <Flex rowGap={56}>
-      <Flex rowGap={16}>
+    <Flex rowGap={"56px"}>
+      <Flex rowGap={6}>
         <Text variant="h4">{t("stake.ethereum.title")}</Text>
         <Text variant="body" lineHeight="21px" color="neutral.c70">
           {t("stake.ethereum.subTitle")}
         </Text>
       </Flex>
 
-      <Flex rowGap={52}>
+      <Flex rowGap={"52px"}>
         {providers.map(provider => (
           <EthereumStakingDrawerProvider
             key={provider.id}

@@ -56,8 +56,8 @@ export function PTXServicesAppleWarning() {
 
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={_onClose} onModalHide={onModalHide}>
-      <Flex rowGap={24}>
-        <Flex rowGap={24} alignItems="center">
+      <Flex rowGap={7}>
+        <Flex rowGap={7} alignItems="center">
           <Text
             maxWidth={295}
             textAlign="center"

@@ -20,6 +20,7 @@ import {
   BackgroundProps,
 } from "styled-system";
 import { InterpolationFunction } from "styled-components";
+import gaps from "src/styles/system/gaps";
 
 export type BaseStyledProps = SpaceProps &
   FlexboxProps &
@@ -45,6 +46,7 @@ export const baseStyles: InterpolationFunction<unknown> = compose(
   layout,
   overflow,
   border,
+  gaps,
   background,
 );
 

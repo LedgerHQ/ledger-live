@@ -94,7 +94,7 @@ const DesyncOverlay: React.FC<Props> = ({ isOpen, delay = 0, productName }) => {
             p={6}
             flexDirection="row"
             alignItems="center"
-            rowGap={4}
+            rowGap={2}
           >
             <Flex mr={4}>
               <IconsLegacy.WarningSolidMedium color="warning.c40" size={20} />

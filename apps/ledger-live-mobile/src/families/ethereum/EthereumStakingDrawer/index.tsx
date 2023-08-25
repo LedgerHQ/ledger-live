@@ -27,7 +27,7 @@ export function EthereumStakingDrawer() {
 
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose} onModalHide={onModalHide}>
-      <Flex rowGap={52}>
+      <Flex rowGap={"52px"}>
         <Track onMount event="ETH Stake Modal" />
         <EthereumStakingDrawerBody
           onClose={onClose}

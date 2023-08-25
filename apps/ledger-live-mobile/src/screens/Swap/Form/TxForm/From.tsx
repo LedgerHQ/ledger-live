@@ -113,7 +113,7 @@ export function From({ swapTx, provider, swapError, swapWarning, isSendMaxLoadin
         </Flex>
 
         {swapError || swapWarning ? (
-          <Flex flexDirection="row" columnGap={8} alignItems="center">
+          <Flex flexDirection="row" columnGap={3} alignItems="center">
             <WarningSolidMedium size={20} color={swapError ? "error.c50" : "orange"} />
             <Text
               marginY={4}

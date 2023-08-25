@@ -191,7 +191,7 @@ export default function DebugFirmwareUpdate() {
             <Text variant="h5" mb={2}>
               Step:
             </Text>
-            <Flex flexDirection="row" flexWrap={"wrap"} rowGap={2}>
+            <Flex flexDirection="row" flexWrap={"wrap"} rowGap={1}>
               <ChangeStepButton step="installingOsu" />
               <ChangeStepButton step="flashingBootloader" />
               <ChangeStepButton step="flashingMcu" />
@@ -219,7 +219,7 @@ export default function DebugFirmwareUpdate() {
             <Text variant="h5" mb={2} mt={4}>
               Error:
             </Text>
-            <Flex flexDirection="row" flexWrap={"wrap"} rowGap={2}>
+            <Flex flexDirection="row" flexWrap={"wrap"} rowGap={1}>
               <ChangeErrorButton
                 errorType="UpdateFirmwareError"
                 error="DeviceOnBootloaderExpected"

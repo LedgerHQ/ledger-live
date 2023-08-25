@@ -56,16 +56,16 @@ export function EthereumStakingDrawerProvider({
 
   return (
     <TouchableOpacity onPress={providerPress}>
-      <Flex flexDirection="row" columnGap={16}>
+      <Flex flexDirection="row" columnGap={6}>
         <EthereumStakingDrawerProviderIcon icon={provider.icon} />
-        <Flex rowGap={2} alignItems="flex-start" flex={1}>
-          <Flex flexDirection="row" columnGap={8} rowGap={8} mb={2}>
+        <Flex rowGap={1} alignItems="flex-start" flex={1}>
+          <Flex flexDirection="row" columnGap={3} rowGap={3} mb={2}>
             <Text variant="body" fontWeight="semiBold">
               {t(`stake.ethereum.providers.${provider.id}.title`)}
             </Text>
             {hasTag && <Tag type="color">{t(`stake.ethereum.providers.${provider.id}.tag`)}</Tag>}
           </Flex>
-          <Flex rowGap={12}>
+          <Flex rowGap={4}>
             <Text variant="paragraph" lineHeight="20px" color="neutral.c70">
               {t(`stake.ethereum.providers.${provider.id}.description`)}
             </Text>
