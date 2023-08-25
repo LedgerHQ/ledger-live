@@ -199,7 +199,7 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
           >
             <Flex flexDirection="row" alignItems="center" mb={5} mr={4}>
               {loading ? (
-                <InfiniteLoader size={24} />
+                <InfiniteLoader size={24} color="primary.c80" />
               ) : lastConnectedDevice?.modelId === DeviceModelId.stax ? (
                 <Icons.Stax color="primary.c80" size="M" />
               ) : (
