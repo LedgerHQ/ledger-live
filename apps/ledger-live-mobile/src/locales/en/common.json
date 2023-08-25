@@ -3405,6 +3405,7 @@
     "loading": "Searching devices..."
   },
   "send": {
+    "pendingTxWarning": "You have incoming transactions pending. Please beware, pending transactions can be reversed.",
     "tooMuchUTXOBottomModal": {
       "cta": "Continue",
       "description": "This transaction may take long to verify and sign because the account has a significant number of coins.",
