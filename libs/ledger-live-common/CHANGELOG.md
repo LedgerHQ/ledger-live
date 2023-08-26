@@ -1,5 +1,12 @@
 # @ledgerhq/live-common
 
+## 31.6.0-nightly.6
+
+### Minor Changes
+
+- [#4212](https://github.com/LedgerHQ/ledger-live/pull/4212) [`9154178962`](https://github.com/LedgerHQ/ledger-live/commit/9154178962b68ef974831ebff36d39d2e27d15e2) Thanks [@cksanders](https://github.com/cksanders)! - - Update WebPTXPlayer to load correct manifest
+  - Remove unused LL BUY/SELL in favour of BUY/SELL Live App
+
 ## 31.6.0-nightly.5
 
 ### Minor Changes

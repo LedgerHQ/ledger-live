@@ -1,5 +1,19 @@
 # ledger-live-desktop
 
+## 2.67.0-nightly.6
+
+### Minor Changes
+
+- [#4212](https://github.com/LedgerHQ/ledger-live/pull/4212) [`9154178962`](https://github.com/LedgerHQ/ledger-live/commit/9154178962b68ef974831ebff36d39d2e27d15e2) Thanks [@cksanders](https://github.com/cksanders)! - - Update WebPTXPlayer to load correct manifest
+  - Remove unused LL BUY/SELL in favour of BUY/SELL Live App
+
+### Patch Changes
+
+- [#4466](https://github.com/LedgerHQ/ledger-live/pull/4466) [`cd9579816d`](https://github.com/LedgerHQ/ledger-live/commit/cd9579816d92807c8e1645b96ff9978fa7f9fc09) Thanks [@sarneijim](https://github.com/sarneijim)! - Add deeplink_clicked track to LLM and improve deeplink_clicked track to LLD
+
+- Updated dependencies [[`9154178962`](https://github.com/LedgerHQ/ledger-live/commit/9154178962b68ef974831ebff36d39d2e27d15e2)]:
+  - @ledgerhq/live-common@31.6.0-nightly.6
+
 ## 2.67.0-nightly.5
 
 ### Minor Changes
