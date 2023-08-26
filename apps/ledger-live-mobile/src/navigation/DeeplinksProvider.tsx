@@ -457,11 +457,33 @@ export const DeeplinksProvider = ({
         },
         getStateFromPath: (path, config) => {
           const url = new URL(`ledgerlive://${path}`);
-          const { hostname, pathname } = url;
+          const { hostname, searchParams, pathname } = url;
+          const query = Object.fromEntries(searchParams);
+
+          const {
+            ajs_prop_campaign: ajsPropCampaign,
+            ajs_prop_track_data: ajsPropTrackData,
+            ajs_prop_source: ajsPropSource,
+            currency,
+            installApp,
+            appName,
+          } = query;
+
+          // Track deeplink only when ajsPropSource attribute exists.
+          if (ajsPropSource) {
+            track("deeplink_clicked", {
+              deeplinkSource: ajsPropSource,
+              deeplinkCampaign: ajsPropCampaign,
+              url: hostname,
+              currency,
+              installApp,
+              appName,
+              ...(ajsPropTrackData ? JSON.parse(ajsPropTrackData) : {}),
+            });
+          }
           const platform = pathname.split("/")[1];
 
           if (hostname === "earn") {
-            const searchParams = url.searchParams;
             if (searchParams.get("action") === "info-modal") {
               const message = searchParams.get("message") || "";
               const messageTitle = searchParams.get("messageTitle") || "";

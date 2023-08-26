@@ -1,7 +1,6 @@
 import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "styled-components/native";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
 import { ScreenName } from "../../const";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
@@ -16,20 +15,21 @@ const Stack = createStackNavigator<ExchangeLiveAppNavigatorParamList>();
 const ExchangeBuy = (
   _props: StackNavigatorProps<ExchangeLiveAppNavigatorParamList, ScreenName.ExchangeBuy>,
 ) => {
-  // PTX smart routing feature flag - buy sell live app flag
-  const ptxSmartRoutingMobile = useFeature("ptxSmartRoutingMobile");
   return (
     <BuyAndSellScreen
       {..._props}
       route={{
         ..._props.route,
         params: {
-          platform: ptxSmartRoutingMobile?.params?.liveAppId || "multibuy",
-          mode: "buy",
+          account: _props.route.params?.defaultAccountId,
           currency: _props.route.params?.currency
             ? findCryptoCurrencyByKeyword(_props.route.params?.currency)?.id
             : _props.route.params?.defaultCurrencyId,
-          account: _props.route.params?.defaultAccountId,
+          goToURL: _props.route.params?.goToURL,
+          lastScreen: _props.route.params?.lastScreen,
+          mode: "buy",
+          platform: _props.route.params?.platform || "multibuy",
+          referrer: _props.route.params?.referrer,
         },
       }}
     />
@@ -39,21 +39,21 @@ const ExchangeBuy = (
 const ExchangeSell = (
   _props: StackNavigatorProps<ExchangeLiveAppNavigatorParamList, ScreenName.ExchangeSell>,
 ) => {
-  // PTX smart routing feature flag - buy sell live app flag
-  const ptxSmartRoutingMobile = useFeature("ptxSmartRoutingMobile");
-
   return (
     <BuyAndSellScreen
       {..._props}
       route={{
         ..._props.route,
         params: {
-          platform: ptxSmartRoutingMobile?.params?.liveAppId || "multibuy",
-          mode: "sell",
+          account: _props.route.params?.defaultAccountId,
           currency: _props.route.params?.currency
             ? findCryptoCurrencyByKeyword(_props.route.params?.currency)?.id
             : _props.route.params?.defaultCurrencyId,
-          account: _props.route.params?.defaultAccountId,
+          goToURL: _props.route.params?.goToURL,
+          lastScreen: _props.route.params?.lastScreen,
+          mode: "sell",
+          platform: _props.route.params?.platform || "multibuy",
+          referrer: _props.route.params?.referrer,
         },
       }}
     />

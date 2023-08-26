@@ -23,3 +23,7 @@ export const DAPP_DISCLAIMER_ID = "PlatformAppDisclaimer";
 export const DISCOVER_STORE_KEY = "discover";
 
 export const DISCOVER_INITIAL_CATEGORY = "all";
+
+export const DEFAULT_MULTIBUY_APP_ID = "multibuy";
+
+export const INTERNAL_APP_IDS = [DEFAULT_MULTIBUY_APP_ID];

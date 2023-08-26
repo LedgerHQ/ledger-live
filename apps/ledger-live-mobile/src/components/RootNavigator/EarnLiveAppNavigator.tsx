@@ -14,6 +14,7 @@ import { EarnScreen } from "../../screens/PTX/Earn";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 import { accountsSelector } from "../../reducers/accounts";
 import { EarnInfoDrawer } from "../../screens/PTX/Earn/EarnInfoDrawer";
+import { useStakingDrawer } from "../Stake/useStakingDrawer";
 
 const Stack = createStackNavigator<EarnLiveAppNavigatorParamList>();
 
@@ -28,6 +29,12 @@ const Earn = (props: NavigationProps) => {
   const navigation = props.navigation;
   const accounts = useSelector(accountsSelector);
   const route = useRoute();
+
+  const openStakingDrawer = useStakingDrawer({
+    navigation,
+    parentRoute: route,
+    alwaysShowNoFunds: false,
+  });
 
   useEffect(() => {
     if (!ptxEarn?.enabled) {
@@ -63,13 +70,7 @@ const Earn = (props: NavigationProps) => {
           const accountId = getAccountIdFromWalletAccountId(walletId);
           const account = accounts.find(acc => acc.id === accountId);
           if (account) {
-            navigation.navigate(NavigatorName.StakeFlow, {
-              screen: ScreenName.Stake,
-              params: {
-                account,
-                parentRoute: route,
-              },
-            });
+            openStakingDrawer(account);
           } else {
             // eslint-disable-next-line no-console
             console.log("no matching account found for given id.");
@@ -88,7 +89,7 @@ const Earn = (props: NavigationProps) => {
               params: {
                 currencies: [currencyId],
                 parentRoute: route,
-                // Stake flow will get CryptoCurrency and Account, and navigate to NoFunds flow:
+                // Stake flow will skip step 1 (select CryptoCurrency) and step 2 (select Account), and navigate straight to NoFunds flow:
                 alwaysShowNoFunds: true, // Navigate to NoFunds even if some funds available.
               },
             });
@@ -105,7 +106,15 @@ const Earn = (props: NavigationProps) => {
     deeplinkRouting();
 
     return clearDeepLink();
-  }, [paramAction, ptxEarn?.enabled, props.route.params, accounts, navigation, route]);
+  }, [
+    paramAction,
+    ptxEarn?.enabled,
+    props.route.params,
+    accounts,
+    navigation,
+    route,
+    openStakingDrawer,
+  ]);
 
   return (
     <>

@@ -56,6 +56,9 @@ type DatabaseValues = {
     localStorage?: Record<string, string>;
   };
   discover: DiscoverDB;
+  ptx: {
+    lastScreen: string;
+  };
 };
 
 // Infers the type seen from the user side (non-raw).
