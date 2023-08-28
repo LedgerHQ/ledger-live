@@ -8,7 +8,7 @@ import {
   formatVotes,
   useTronSuperRepresentatives,
 } from "@ledgerhq/live-common/families/tron/react";
-import type { Vote } from "@ledgerhq/live-common/families/tron/types";
+import type { TronOperation, Vote } from "@ledgerhq/live-common/families/tron/types";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { useSelector } from "react-redux";
@@ -34,29 +34,27 @@ function getURLWhatIsThis(
 }
 
 type OperationDetailsExtraProps = {
-  extra: {
-    votes: Array<Vote>;
-    frozenAmount: BigNumber;
-    unfreezeAmount: BigNumber;
-  };
+  operation: TronOperation;
   type: string;
   account: Account;
 };
 
-function OperationDetailsExtra({ extra, type, account }: OperationDetailsExtraProps) {
+function OperationDetailsExtra({ operation, type, account }: OperationDetailsExtraProps) {
   const { t } = useTranslation();
   const discreet = useSelector(discreetModeSelector);
   const locale = useSelector(localeSelector);
+  const {
+    extra: { votes, frozenAmount, unfreezeAmount },
+  } = operation;
 
   switch (type) {
     case "VOTE": {
-      const { votes } = extra;
       if (!votes || !votes.length) return null;
       return <OperationDetailsVotes votes={votes} account={account} />;
     }
 
     case "FREEZE": {
-      const value = formatCurrencyUnit(account.unit, new BigNumber(extra.frozenAmount), {
+      const value = formatCurrencyUnit(account.unit, frozenAmount || new BigNumber(0), {
         showCode: true,
         discreet,
         locale,
@@ -65,7 +63,7 @@ function OperationDetailsExtra({ extra, type, account }: OperationDetailsExtraPr
     }
 
     case "UNFREEZE": {
-      const value = formatCurrencyUnit(account.unit, new BigNumber(extra.unfreezeAmount), {
+      const value = formatCurrencyUnit(account.unit, unfreezeAmount || new BigNumber(0), {
         showCode: true,
         discreet,
         locale,
@@ -149,21 +147,20 @@ const AmountCell = ({
   ) : null;
 
 const FreezeAmountCell = ({ operation, currency, unit }: Props) => {
-  const amount = new BigNumber(operation.extra ? operation.extra.frozenAmount : 0);
+  const amount = (operation as TronOperation).extra.frozenAmount || new BigNumber(0);
   return <AmountCell amount={amount} operation={operation} currency={currency} unit={unit} />;
 };
 
 const UnfreezeAmountCell = ({ operation, currency, unit }: Props) => {
-  const amount = new BigNumber(operation.extra ? operation.extra.unfreezeAmount : 0);
+  const amount = (operation as TronOperation).extra.unfreezeAmount || new BigNumber(0);
   return <AmountCell amount={amount} operation={operation} currency={currency} unit={unit} />;
 };
 
 const VoteAmountCell = ({ operation }: Props) => {
-  const amount =
-    operation.extra && operation.extra.votes
-      ? (operation.extra.votes as Vote[]).reduce((sum, { voteCount }) => sum + voteCount, 0)
-      : 0;
-  return amount > 0 ? (
+  const amount = (operation as TronOperation).extra.votes
+    ? (operation as TronOperation).extra.votes?.reduce((sum, { voteCount }) => sum + voteCount, 0)
+    : 0;
+  return amount && amount > 0 ? (
     <LText numberOfLines={1} semiBold style={[styles.topText, styles.voteText]}>
       <Trans
         i18nKey={"operationDetails.extra.votes"}

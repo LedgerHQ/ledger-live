@@ -1,7 +1,7 @@
 import network from "@ledgerhq/live-network/network";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { listCryptoCurrencies, listSupportedCurrencies, listTokens } from "../../currencies";
-import { getEnv } from "../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import {
   CurrencyData,
   MarketCoin,

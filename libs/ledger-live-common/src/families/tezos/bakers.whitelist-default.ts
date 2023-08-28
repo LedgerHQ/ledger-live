@@ -22,8 +22,7 @@ tz1V3yg82mcrPJbegqVCPn6bC8w1CSTRp3f8
 tz1aRoaRhSpRYvFdyvgWLL6TGyRoGF51wDjM
 tz1MQJPGNMijnXnVoBENFz9rUhaPt3S7rWoz
 tz1dRKU4FQ9QRRQPdaH4zCR6gmCmXfcvcgtB
-tz1aDiEJf9ztRrAJEXZfcG3CKimoKsGhwVAi
-tz1axcnVN9tZnCe4sQQhC6f3tfSEXdjPaXPY`.split("\n");
+tz1aDiEJf9ztRrAJEXZfcG3CKimoKsGhwVAi`.split("\n");
 
 // we give no ordering preference. it's settled at module load time
 whitelist.sort(() => Math.random() - 0.5);

@@ -256,7 +256,7 @@ export default function Default() {
                             />
                             <Route path="/platform/:appId?" component={LiveApp} />
                             <Route path="/earn" component={Earn} />
-                            <Route path="/exchange" component={Exchange} />
+                            <Route exact path="/exchange/:appId?" component={Exchange} />
                             <Route
                               exact
                               path="/account/:id/nft-collection"

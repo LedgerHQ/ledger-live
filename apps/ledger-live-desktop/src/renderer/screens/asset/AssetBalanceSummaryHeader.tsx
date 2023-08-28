@@ -48,8 +48,6 @@ export default function AssetBalanceSummaryHeader({
   const { t } = useTranslation();
   const history = useHistory();
 
-  // PTX smart routing feature flag - buy sell live app flag
-  const ptxSmartRouting = useFeature("ptxSmartRouting");
   const cvUnit = counterValue.units[0];
   const data = useMemo(
     () => [
@@ -90,21 +88,18 @@ export default function AssetBalanceSummaryHeader({
   const availableOnSwap = providers?.concat(storedProviders ?? []).some(({ pairs }) => {
     return pairs && pairs.find(({ from, to }) => [from, to].includes(currency.id));
   });
+
   const onBuy = useCallback(() => {
     setTrackingSource("asset header actions");
     history.push({
       pathname: "/exchange",
-      state: ptxSmartRouting?.enabled
-        ? {
-            currency: currency?.id,
-            mode: "buy", // buy or sell
-          }
-        : {
-            mode: "onRamp",
-            currencyId: currency.id,
-          },
+      state: {
+        currency: currency?.id,
+        mode: "buy", // buy or sell
+      },
     });
-  }, [currency.id, history, ptxSmartRouting]);
+  }, [currency.id, history]);
+
   const onSwap = useCallback(() => {
     track("button_clicked", {
       button: "swap",
@@ -120,6 +115,7 @@ export default function AssetBalanceSummaryHeader({
       },
     });
   }, [currency, history, swapDefaultTrack]);
+
   const onStake = useCallback(() => {
     track("button_clicked", {
       button: "stake",
@@ -132,6 +128,7 @@ export default function AssetBalanceSummaryHeader({
       currencies: currency ? [currency.id] : undefined,
     });
   }, [currency, startStakeFlow]);
+
   return (
     <Box flow={5}>
       <Box horizontal>

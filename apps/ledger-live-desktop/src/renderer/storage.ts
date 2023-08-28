@@ -1,5 +1,5 @@
 import { ipcRenderer } from "electron";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { useDBRaw } from "@ledgerhq/live-common/hooks/useDBRaw";
 import { DiscoverDB } from "@ledgerhq/live-common/wallet-api/types";
 import accountModel from "~/helpers/accountModel";
@@ -56,6 +56,9 @@ type DatabaseValues = {
     localStorage?: Record<string, string>;
   };
   discover: DiscoverDB;
+  ptx: {
+    lastScreen: string;
+  };
 };
 
 // Infers the type seen from the user side (non-raw).

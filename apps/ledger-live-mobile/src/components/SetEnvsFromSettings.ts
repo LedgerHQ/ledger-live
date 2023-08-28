@@ -1,7 +1,7 @@
 import { PureComponent } from "react";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
-import { setEnvUnsafe } from "@ledgerhq/live-common/env";
+import { setEnvUnsafe } from "@ledgerhq/live-env";
 import {
   hideEmptyTokenAccountsEnabledSelector,
   filterTokenOperationsZeroAmountEnabledSelector,

@@ -25,7 +25,6 @@ import type { SwapNavigatorParamList } from "./SwapNavigator";
 import type { EarnLiveAppNavigatorParamList } from "./EarnLiveAppNavigator";
 import type { PlatformExchangeNavigatorParamList } from "./PlatformExchangeNavigator";
 import type { ExchangeStackNavigatorParamList } from "./ExchangeStackNavigator";
-import type { ExchangeNavigatorParamList } from "./ExchangeNavigator";
 import type { ExchangeLiveAppNavigatorParamList } from "./ExchangeLiveAppNavigator";
 import type { RequestAccountNavigatorParamList } from "./RequestAccountNavigator";
 import type { AddAccountsNavigatorParamList } from "./AddAccountsNavigator";
@@ -115,6 +114,7 @@ export type BaseNavigatorStackParamList = {
     source?: string;
     redirectTo?: string;
     callback?: string;
+    date?: string; // used to reload the webview in case of multiple restore in a row
   };
   [ScreenName.LearnWebView]: {
     uri?: string;
@@ -228,10 +228,7 @@ export type BaseNavigatorStackParamList = {
     onError?: (_: Error) => void;
     error?: Error;
   };
-  [NavigatorName.Exchange]:
-    | NavigatorScreenParams<ExchangeLiveAppNavigatorParamList>
-    | NavigatorScreenParams<ExchangeNavigatorParamList>
-    | undefined;
+  [NavigatorName.Exchange]: NavigatorScreenParams<ExchangeLiveAppNavigatorParamList> | undefined;
   [NavigatorName.ExchangeStack]: NavigatorScreenParams<ExchangeStackNavigatorParamList> & {
     mode?: "buy" | "sell";
   };
@@ -314,5 +311,4 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.StakeFlow]: NavigatorScreenParams<StakeNavigatorParamList>;
 
   [ScreenName.RedirectToOnboardingRecoverFlow]: undefined;
-  [ScreenName.RedirectToRecoverStaxFlow]: Record<string, unknown>;
 };

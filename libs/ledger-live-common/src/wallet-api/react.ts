@@ -40,7 +40,7 @@ import {
   signTransactionLogic,
 } from "./logic";
 import { getAccountBridge } from "../bridge";
-import { getEnv } from "../env";
+import { getEnv } from "@ledgerhq/live-env";
 import openTransportAsSubject, { BidirectionalEvent } from "../hw/openTransportAsSubject";
 import { AppResult } from "../hw/actions/app";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";

@@ -15,8 +15,15 @@ import {
   FirmwareUpdateContext,
 } from "@ledgerhq/types-live";
 import { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
-import { getEnv } from "@ledgerhq/live-common/env";
-import { getLanguages, defaultLocaleForLanguage, Locale } from "~/config/languages";
+import { getEnv } from "@ledgerhq/live-env";
+import {
+  LanguageIds,
+  Languages,
+  Language,
+  Locale,
+  DEFAULT_LANGUAGE,
+  Locales,
+} from "~/config/languages";
 import { State } from ".";
 import regionsByKey from "~/renderer/screens/settings/sections/General/regions.json";
 import { getSystemLocale } from "~/helpers/systemLocale";
@@ -33,7 +40,7 @@ export type VaultSigner = {
 
 export type SettingsState = {
   loaded: boolean;
-  // is the settings loaded from db (it not we don't save them)
+  // is the settings loaded from db (if not we don't save them)
   hasCompletedOnboarding: boolean;
   counterValue: string;
   preferredDeviceModel: DeviceModelId;
@@ -41,11 +48,11 @@ export type SettingsState = {
   lastSeenDevice: DeviceModelInfo | undefined | null;
   devicesModelList: DeviceModelId[];
   latestFirmware: FirmwareUpdateContext | null;
-  language: string | undefined | null;
   theme: string | undefined | null;
+  language: Language | undefined | null;
+  locale: Locale | undefined | null;
   /** DEPRECATED, use field `locale` instead */
   region: string | undefined | null;
-  locale: string | undefined | null;
   orderAccounts: string;
   countervalueFirst: boolean;
   autoLockTimeout: number;
@@ -100,27 +107,35 @@ export type SettingsState = {
   vaultSigner: VaultSigner;
 };
 
-const DEFAULT_LANGUAGE_LOCALE = "en";
-export const getInitialLanguageLocale = (fallbackLocale: string = DEFAULT_LANGUAGE_LOCALE) => {
-  const detectedLanguage = getSystemLocale() || fallbackLocale;
-  return getLanguages().find(lang => detectedLanguage.startsWith(lang)) || fallbackLocale;
-};
-const DEFAULT_LOCALE = "en-US";
-export const getInitialLocale = () => {
-  const initialLanguageLocale = getInitialLanguageLocale();
-  return (
-    defaultLocaleForLanguage[initialLanguageLocale as keyof typeof defaultLocaleForLanguage] ||
-    DEFAULT_LOCALE
-  );
+export const getInitialLanguageAndLocale = (): { language: Language; locale: Locale } => {
+  const systemLocal = getSystemLocale();
+
+  // Find language from system locale (i.e., en, fr, es ...)
+  const languageId = LanguageIds.find(lang => systemLocal.startsWith(lang));
+
+  // If language found, try to find corresponding locale
+  if (languageId) {
+    // const localeId = Languages[languageId].locales.find(lang => systemLocal.startsWith(lang));
+    // TODO Hack because the typing on the commented line above doesn't work
+    const languageLocales = Languages[languageId].locales as Locales;
+
+    const localeId = languageLocales.find(lang => systemLocal.startsWith(lang));
+
+    // If locale matched returns it, if not returns the default locale of the language
+    if (localeId) return { language: languageId, locale: localeId };
+    return { language: languageId, locale: Languages[languageId].locales.default };
+  }
+
+  // If nothing found returns default language and locale
+  return { language: DEFAULT_LANGUAGE.id, locale: DEFAULT_LANGUAGE.locales.default };
 };
 
 const INITIAL_STATE: SettingsState = {
   hasCompletedOnboarding: false,
   counterValue: "USD",
-  language: getInitialLanguageLocale(),
+  ...getInitialLanguageAndLocale(),
   theme: null,
   region: null,
-  locale: getInitialLocale(),
   orderAccounts: "balance|desc",
   countervalueFirst: false,
   autoLockTimeout: 10,
@@ -484,20 +499,20 @@ export const userThemeSelector = (state: State): "dark" | "light" | undefined | 
 };
 
 type LanguageAndUseSystemLanguage = {
-  language: string;
+  language: Language;
   useSystemLanguage: boolean;
 };
 
 const languageAndUseSystemLangSelector = (state: State): LanguageAndUseSystemLanguage => {
   const { language } = state.settings;
-  if (language && getLanguages().includes(language as Locale)) {
+  if (language && LanguageIds.includes(language)) {
     return {
       language,
       useSystemLanguage: false,
     };
   } else {
     return {
-      language: getInitialLanguageLocale(),
+      language: getInitialLanguageAndLocale().language,
       useSystemLanguage: true,
     };
   }
@@ -535,14 +550,14 @@ const localeFallbackToLanguageSelector = (
       locale,
     };
   return {
-    locale: language || DEFAULT_LOCALE,
+    locale: language || DEFAULT_LANGUAGE.locales.default,
   };
 };
 
 /** Use this for number and dates formatting. */
 export const localeSelector = createSelector(
   localeFallbackToLanguageSelector,
-  o => o.locale || getInitialLocale(),
+  o => o.locale || getInitialLanguageAndLocale().locale,
 );
 export const getOrderAccounts = (state: State) => state.settings.orderAccounts;
 export const areSettingsLoaded = (state: State) => state.settings.loaded;

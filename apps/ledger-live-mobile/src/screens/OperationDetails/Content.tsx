@@ -19,7 +19,7 @@ import {
 import { useNftCollectionMetadata, useNftMetadata } from "@ledgerhq/live-common/nft/index";
 import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { isEditableOperation } from "@ledgerhq/coin-framework/operation";
 
 import { NavigatorName, ScreenName } from "../../const";
@@ -123,7 +123,7 @@ export default function Content({
   const confirmationsString = getOperationConfirmationDisplayableNumber(operation, mainAccount);
   const uniqueSenders = uniq<(typeof operation.senders)[0]>(operation.senders);
   const uniqueRecipients = uniq<(typeof operation.recipients)[0]>(operation.recipients);
-  const { extra, type, hasFailed } = operation;
+  const { type, hasFailed } = operation;
   const subOperations = operation.subOperations || [];
   const internalOperations = operation.internalOperations || [];
   const shouldDisplayTo = uniqueRecipients.length > 0 && !!uniqueRecipients[0];
@@ -160,7 +160,6 @@ export default function Content({
               type: typeof type;
               account: AccountLike;
               operation: Operation;
-              extra: Record<string, unknown>;
             }>;
           }
         ).OperationDetailsExtra
@@ -194,6 +193,7 @@ export default function Content({
 
         <Title
           hasFailed={!!hasFailed}
+          isConfirmed={isConfirmed}
           amount={amount}
           operation={operation}
           currency={currency}
@@ -433,7 +433,7 @@ export default function Content({
         </View>
       ) : null}
 
-      <Extra operation={operation} extra={extra} type={type} account={account} />
+      <Extra operation={operation} type={type} account={account} />
 
       <Modal isOpened={isModalOpened} onClose={onModalClose} currency={currency} />
     </>

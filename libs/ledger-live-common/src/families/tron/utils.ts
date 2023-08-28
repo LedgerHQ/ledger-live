@@ -9,8 +9,10 @@ import type {
   TrongridTxInfo,
   TrongridExtraTxInfo,
   TronResources,
+  TronOperation,
 } from "./types";
-import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
+import type { Account, OperationType } from "@ledgerhq/types-live";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 
 export const decode58Check = (base58: string): string =>
   Buffer.from(bs58check.decode(base58)).toString("hex");
@@ -247,7 +249,7 @@ export const txInfoToOperation = (
   id: string,
   address: string,
   tx: TrongridTxInfo,
-): Operation | null | undefined => {
+): TronOperation | null | undefined => {
   const {
     txID,
     date,
@@ -265,7 +267,7 @@ export const txInfoToOperation = (
 
   if (operationType) {
     return {
-      id: `${id}-${hash}-${operationType}`,
+      id: encodeOperationId(id, hash, operationType),
       hash,
       type: operationType,
       value: operationType === "OUT" && type === "TransferContract" ? value.plus(fee) : value,

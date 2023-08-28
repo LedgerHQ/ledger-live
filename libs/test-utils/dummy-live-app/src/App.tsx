@@ -50,7 +50,7 @@ const App = () => {
     setOutput(action);
   };
 
-  const signTransaction = async () => {
+  const signBitcoinTransaction = async () => {
     if (!api.current) {
       return;
     }
@@ -65,6 +65,29 @@ const App = () => {
 
     const action = await api.current.signTransaction(
       "mock:1:bitcoin:true_bitcoin_0:",
+      transaction,
+      params,
+    );
+    setOutput(action);
+  };
+
+  const signEthereumTransaction = async () => {
+    if (!api.current) {
+      return;
+    }
+
+    const transaction: any = {
+      amount: 1230,
+      recipient: "0x789d2f10826BF8f3a56Ec524359bBA4e738Af5bF",
+      family: "ethereum",
+      gasPrice: 10000,
+      gasLimit: 200000,
+    };
+
+    const params: any = { useApp: null };
+
+    const action = await api.current.signTransaction(
+      "mock:1:ethereum:true_ethereum_0:",
       transaction,
       params,
     );
@@ -115,8 +138,11 @@ const App = () => {
           <button onClick={verifyAddress} data-test-id="verify-address-button">
             Verify Address
           </button>
-          <button onClick={signTransaction} data-test-id="sign-transaction-button">
-            Sign Transaction
+          <button onClick={signBitcoinTransaction} data-test-id="sign-bitcoin-transaction-button">
+            Sign bitcoin Transaction
+          </button>
+          <button onClick={signEthereumTransaction} data-test-id="sign-ethereum-transaction-button">
+            Sign ethereum Transaction
           </button>
           <button onClick={broadcastTransaction} data-test-id="broadcast-transaction-button">
             Broadcast Transaction (Not yet implemented)

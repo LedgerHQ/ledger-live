@@ -22,13 +22,13 @@ import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelp
 import { formatCurrencyUnit } from "../../../currencies";
 import signTransaction from "../../../hw/signTransaction";
 import { withDevice } from "../../../hw/deviceAccess";
-import { patchOperationWithHash } from "../../../operation";
+import { encodeOperationId, patchOperationWithHash } from "../../../operation";
 import type {
   Account,
   AccountBridge,
   CurrencyBridge,
   Operation,
-  SignOperationEvent,
+  SignOperationFnSignature,
 } from "@ledgerhq/types-live";
 
 import { scanAccounts, sync } from "../js-synchronization";
@@ -52,15 +52,15 @@ const getNextValidSequence = async (account: Account) => {
   return accInfo.account_data.Sequence;
 };
 
-const signOperation = ({ account, transaction, deviceId }): Observable<SignOperationEvent> =>
+const signOperation: SignOperationFnSignature<Transaction> = ({ account, transaction, deviceId }) =>
   withDevice(deviceId)(
     transport =>
       new Observable(o => {
         delete cacheRecipientsNew[transaction.recipient];
-        const { fee } = transaction;
-        if (!fee) throw new FeeNotLoaded();
 
         async function main() {
+          const { fee } = transaction;
+          if (!fee) throw new FeeNotLoaded();
           try {
             const tag = transaction.tag ? transaction.tag : undefined;
             const nextSequenceNumber = await getNextValidSequence(account);
@@ -98,7 +98,7 @@ const signOperation = ({ account, transaction, deviceId }): Observable<SignOpera
 
             const hash = "";
             const operation: Operation = {
-              id: `${account.id}-${hash}-OUT`,
+              id: encodeOperationId(account.id, hash, "OUT"),
               hash,
               accountId: account.id,
               type: "OUT",
@@ -110,7 +110,7 @@ const signOperation = ({ account, transaction, deviceId }): Observable<SignOpera
               recipients: [transaction.recipient],
               date: new Date(),
               transactionSequenceNumber: nextSequenceNumber,
-              extra: {} as any,
+              extra: {},
             };
 
             o.next({
@@ -118,7 +118,6 @@ const signOperation = ({ account, transaction, deviceId }): Observable<SignOpera
               signedOperation: {
                 operation,
                 signature,
-                expirationDate: null,
               },
             });
           } catch (e: any) {

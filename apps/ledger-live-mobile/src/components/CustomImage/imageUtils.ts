@@ -4,7 +4,7 @@ import * as ImagePicker from "react-native-image-picker";
 import {
   ImageDownloadError,
   ImageLoadFromGalleryError,
-  ImageMetadataLoadingError,
+  ImageSizeLoadingError,
   ImageTooLargeError,
 } from "@ledgerhq/live-common/customImage/errors";
 import { NFTMediaSize, NFTMetadata } from "@ledgerhq/types-live";
@@ -124,7 +124,7 @@ export async function loadImageSizeAsync(url: string): Promise<ImageDimensions> 
         if (error?.message?.startsWith("Pool hard cap violation? ")) {
           reject(new ImageTooLargeError());
         } else {
-          reject(new ImageMetadataLoadingError());
+          reject(new ImageSizeLoadingError());
         }
       },
     );

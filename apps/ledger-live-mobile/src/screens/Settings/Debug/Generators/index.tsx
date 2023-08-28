@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import config from "react-native-config";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { Alert as Confirmation } from "react-native";
 import { Alert, Flex, IconsLegacy } from "@ledgerhq/native-ui";
 import { useDispatch } from "react-redux";

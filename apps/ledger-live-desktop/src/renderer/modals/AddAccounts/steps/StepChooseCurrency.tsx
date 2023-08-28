@@ -28,7 +28,10 @@ import { NetworkDown } from "@ledgerhq/errors";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import { CryptoCurrencyId, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Feature } from "@ledgerhq/types-live";
-const listSupportedTokens = () => listTokens().filter(t => isCurrencySupported(t.parentCurrency));
+
+const listSupportedTokens = () =>
+  listTokens().filter(token => isCurrencySupported(token.parentCurrency));
+
 const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const axelar = useFeature("currencyAxelar");
   const stargaze = useFeature("currencyStargaze");
@@ -63,6 +66,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const base = useFeature("currencyBase");
   const baseGoerli = useFeature("currencyBaseGoerli");
   const klaytn = useFeature("currencyKlaytn");
+  const mock = useEnv("MOCK");
 
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
@@ -136,19 +140,25 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       klaytn,
     ],
   );
+
   const currencies = useMemo(() => {
     const currencies = (listSupportedCurrencies() as CryptoOrTokenCurrency[]).concat(
       listSupportedTokens(),
     );
-    const deactivatedCurrencies = Object.entries(featureFlaggedCurrencies)
-      .filter(([, feature]) => !feature?.enabled)
-      .map(([name]) => name);
+
+    const deactivatedCurrencies = mock
+      ? [] // mock mode: all currencies are available for playwrigth tests
+      : Object.entries(featureFlaggedCurrencies)
+          .filter(([, feature]) => !feature?.enabled)
+          .map(([name]) => name);
     return currencies.filter(c => !deactivatedCurrencies.includes(c.id));
-  }, [featureFlaggedCurrencies]);
+  }, [featureFlaggedCurrencies, mock]);
+
   const url =
     currency && currency.type === "TokenCurrency"
       ? supportLinkByTokenType[currency.tokenType as keyof typeof supportLinkByTokenType]
       : null;
+
   return (
     <>
       {!navigator.onLine ? (
@@ -179,6 +189,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
     </>
   );
 };
+
 export const StepChooseCurrencyFooter = ({
   transitionTo,
   currency,
@@ -238,6 +249,7 @@ export const StepChooseCurrencyFooter = ({
     tokenAccount,
     transitionTo,
   ]);
+
   return (
     <>
       <TrackPage category="AddAccounts" name="Step1" />
@@ -267,4 +279,5 @@ export const StepChooseCurrencyFooter = ({
     </>
   );
 };
+
 export default StepChooseCurrency;

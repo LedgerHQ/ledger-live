@@ -43,7 +43,7 @@ export type ExchangeSellRaw = {
 };
 
 interface CompleteExchangeInputCommon {
-  rateType: RateTypes;
+  rateType?: RateTypes;
   deviceId?: string;
   provider: string;
   binaryPayload: string;

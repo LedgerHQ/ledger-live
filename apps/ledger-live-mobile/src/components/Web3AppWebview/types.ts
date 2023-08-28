@@ -3,7 +3,7 @@ import WebView from "react-native-webview";
 
 export type WebviewProps = {
   manifest: LiveAppManifest;
-  inputs?: Record<string, string>;
+  inputs?: Record<string, string | undefined>;
   onStateChange?: (webviewState: WebviewState) => void;
   allowsBackForwardNavigationGestures?: boolean;
 };

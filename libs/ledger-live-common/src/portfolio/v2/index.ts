@@ -1,7 +1,7 @@
 import type { CounterValuesState } from "../../countervalues/types";
 import { calculate, calculateMany } from "../../countervalues/logic";
 import { flattenAccounts, getAccountCurrency, getAccountHistoryBalances } from "../../account";
-import { getEnv } from "../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import type {
   Account,
   AccountLike,

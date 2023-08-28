@@ -44,11 +44,16 @@ export async function typeTextById(id: string, text: string, focus = true) {
   return getElementById(id).typeText(text);
 }
 
-export async function typeTextByElement(elem: Detox.NativeElement, text: string, focus = true) {
+export async function typeTextByElement(
+  elem: Detox.NativeElement,
+  text: string,
+  closeKeyboard = true,
+  focus = true,
+) {
   if (focus) {
     await tapByElement(elem);
   }
-  await elem.typeText(text);
+  await elem.typeText(text + (closeKeyboard ? "\n" : "")); // ' \n' close keyboard if open
 }
 
 export async function clearTextByElement(elem: Detox.NativeElement) {

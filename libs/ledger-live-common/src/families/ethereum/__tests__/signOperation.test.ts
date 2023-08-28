@@ -6,7 +6,7 @@ import createTransaction from "../createTransaction";
 import { fromAccountRaw } from "../../../account";
 import { ethereum1 } from "../datasets/ethereum1";
 import { signOperation } from "../signOperation";
-import { setEnv } from "../../../env";
+import { setEnv } from "@ledgerhq/live-env";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { setSupportedCurrencies } from "../../../currencies";
 

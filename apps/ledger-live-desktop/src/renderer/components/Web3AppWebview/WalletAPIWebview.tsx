@@ -295,7 +295,7 @@ function useWebView({ manifest }: Pick<Props, "manifest">, webviewRef: RefObject
 
 interface Props {
   manifest: AppManifest;
-  inputs?: Record<string, string>;
+  inputs?: Record<string, string | undefined>;
 }
 
 export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(

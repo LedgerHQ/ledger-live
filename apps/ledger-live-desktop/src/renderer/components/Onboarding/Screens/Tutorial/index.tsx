@@ -1,3 +1,9 @@
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import {
+  usePostOnboardingPath,
+  useUpsellPath,
+} from "@ledgerhq/live-common/hooks/recoverFeatueFlag";
+import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import {
   Aside,
   Button,
@@ -10,47 +16,39 @@ import {
 } from "@ledgerhq/react-ui";
 import { Direction } from "@ledgerhq/react-ui/components/layout/Drawer/index";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { openURL } from "~/renderer/linking";
-import { urls } from "~/config/urls";
-import { Route, Switch, useHistory, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useDispatch } from "react-redux";
+import { Route, Switch, useHistory, useLocation } from "react-router-dom";
 import styled from "styled-components";
-import { useDispatch, useSelector } from "react-redux";
-import { Device } from "@ledgerhq/types-devices";
-import { languageSelector } from "~/renderer/reducers/settings";
-import { ImportYourRecoveryPhrase } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/ImportYourRecoveryPhrase";
+import { saveSettings } from "~/renderer/actions/settings";
+import { track } from "~/renderer/analytics/segment";
+import { HideRecoverySeed } from "~/renderer/components/Onboarding/Help/HideRecoverySeed";
+import { PinHelp } from "~/renderer/components/Onboarding/Help/PinHelp";
+import { RecoverySeed } from "~/renderer/components/Onboarding/Help/RecoverySeed";
 import { DeviceHowTo } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/DeviceHowTo";
 import { DeviceHowTo2 } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/DeviceHowTo2";
-import { PinCode } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/PinCode";
-import { PinCodeHowTo } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/PinCodeHowTo";
 import { ExistingRecoveryPhrase } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/ExistingRecoveryPhrase";
-import { RecoveryHowTo3 } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/RecoveryHowTo3";
-import { RecoveryHowTo2 } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/RecoveryHowTo2";
-import { RecoveryHowTo1 } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/RecoveryHowTo1";
-import { PairMyNano } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/PairMyNano";
-import { PinHelp } from "~/renderer/components/Onboarding/Help/PinHelp";
-import { HideRecoverySeed } from "~/renderer/components/Onboarding/Help/HideRecoverySeed";
-import { RecoverySeed } from "~/renderer/components/Onboarding/Help/RecoverySeed";
+import { GenuineCheck } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/GenuineCheck";
 import { HideRecoveryPhrase } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/HideRecoveryPhrase";
 import { HowToGetStarted } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/HowToGetStarted";
+import { ImportYourRecoveryPhrase } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/ImportYourRecoveryPhrase";
 import { NewRecoveryPhrase } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/NewRecoveryPhrase";
-import { GenuineCheck } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/GenuineCheck";
-import { UseRecoverySheet } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/UseRecoverySheet";
+import { PairMyNano } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/PairMyNano";
+import { PinCode } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/PinCode";
+import { PinCodeHowTo } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/PinCodeHowTo";
 import { QuizFailure } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/QuizFailure";
 import { QuizSuccess } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/QuizSuccess";
-import RecoveryWarning from "../../Help/RecoveryWarning";
-import { QuizzPopin } from "~/renderer/modals/OnboardingQuizz/OnboardingQuizzModal";
-import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/index";
-import { saveSettings } from "~/renderer/actions/settings";
-import { UseCase } from "../../index";
-import { track } from "~/renderer/analytics/segment";
 import { RecoverHowTo } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/RecoverHowTo";
 import { RecoverPinCodeHowTo } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/RecoverPinCodeHowTo";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import {
-  usePostOnboardingPath,
-  useUpsellPath,
-} from "@ledgerhq/live-common/hooks/recoverFeatueFlag";
+import { RecoveryHowTo1 } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/RecoveryHowTo1";
+import { RecoveryHowTo2 } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/RecoveryHowTo2";
+import { RecoveryHowTo3 } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/RecoveryHowTo3";
+import { UseRecoverySheet } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/UseRecoverySheet";
+import { openURL } from "~/renderer/linking";
+import { QuizzPopin } from "~/renderer/modals/OnboardingQuizz/OnboardingQuizzModal";
+import { useDynamicUrl } from "~/renderer/terms";
+import RecoveryWarning from "../../Help/RecoveryWarning";
+import { UseCase } from "../../index";
 
 const FlowStepperContainer = styled(Flex)`
   width: 100%;
@@ -112,11 +110,9 @@ const FlowStepper: React.FC<FlowStepperProps> = ({
   handleBack,
   handleContinue,
 }) => {
-  const locale = useSelector(languageSelector) || "en";
+  const urlFaq = useDynamicUrl("faq");
 
-  const handleHelp = useCallback(() => {
-    openURL(urls.faq[locale in urls.faq ? (locale as keyof typeof urls.faq) : "en"]);
-  }, [locale]);
+  const handleHelp = () => openURL(urlFaq);
 
   const { t } = useTranslation();
 
@@ -228,18 +224,21 @@ type Props = {
 };
 
 export default function Tutorial({ useCase }: Props) {
-  const history = useHistory();
+  const history = useHistory<{ fromRecover: boolean } | undefined>();
   const [quizzOpen, setQuizOpen] = useState(false);
   const { t } = useTranslation();
   const { pathname } = useLocation();
-  const servicesConfig = useFeature("protectServicesDesktop");
-  const upsellPath = useUpsellPath(servicesConfig);
-  const postOnboardingPath = usePostOnboardingPath(servicesConfig);
+  const recoverFF = useFeature("protectServicesDesktop");
+  const upsellPath = useUpsellPath(recoverFF);
+  const postOnboardingPath = usePostOnboardingPath(recoverFF);
+  const recoverDiscoverPath = useMemo(() => {
+    return `/recover/${recoverFF?.params?.protectId}?redirectTo=disclaimerRestore`;
+  }, [recoverFF?.params?.protectId]);
 
   const [userUnderstandConsequences, setUserUnderstandConsequences] = useState(false);
   const [userChosePinCodeHimself, setUserChosePinCodeHimself] = useState(false);
 
-  const [connectedDevice, setConnectedDevice] = useState<Device | null>(null);
+  const [connectedDevice, setConnectedDevice] = useState<Device>();
 
   const [onboardingDone, setOnboardingDone] = useState(false);
   const handleStartPostOnboarding = useStartPostOnboardingCallback();
@@ -254,6 +253,15 @@ export default function Tutorial({ useCase }: Props) {
   const path = useMemo(() => urlSplit.slice(0, urlSplit.length - 1).join("/"), [urlSplit]);
 
   const dispatch = useDispatch();
+
+  // Keep the state coming from react-router in a local state
+  // as location.state will be undefined when navigating to other steps
+  const [fromRecover, setFromRecover] = useState(false);
+  useEffect(() => {
+    if (history.location.state) {
+      setFromRecover(history.location.state.fromRecover);
+    }
+  }, [history.location.state]);
 
   const screens = useMemo<IScreen[]>(
     () => [
@@ -478,10 +486,16 @@ export default function Tutorial({ useCase }: Props) {
           if (useCase === UseCase.setupDevice) {
             track("Onboarding - Genuine Check");
           }
+          if (useCase === UseCase.recover) {
+            history.push(`${path}/${ScreenId.recoverHowTo}`);
+            return;
+          }
           history.push(`${path}/${ScreenId.genuineCheck}`);
         },
         previous: () => {
-          if (useCase === UseCase.connectDevice || useCase === UseCase.recover) {
+          if (useCase === UseCase.recover && fromRecover) {
+            history.push(recoverDiscoverPath);
+          } else if (useCase === UseCase.connectDevice || useCase === UseCase.recover) {
             history.push("/onboarding/select-use-case");
           } else if (useCase === UseCase.setupDevice) {
             history.push(`${path}/${ScreenId.hideRecoveryPhrase}`);
@@ -501,16 +515,12 @@ export default function Tutorial({ useCase }: Props) {
         },
         canContinue: !!connectedDevice,
         next: () => {
-          if (useCase === UseCase.recover) {
-            history.push(`${path}/${ScreenId.recoverHowTo}`);
-          } else {
-            if (upsellPath) {
-              history.push(upsellPath);
-            }
-            dispatch(saveSettings({ hasCompletedOnboarding: true }));
-            track("Onboarding - End");
-            setOnboardingDone(true);
+          if (upsellPath) {
+            history.push(upsellPath);
           }
+          dispatch(saveSettings({ hasCompletedOnboarding: true }));
+          track("Onboarding - End");
+          setOnboardingDone(true);
         },
         previous: () => history.push(`${path}/${ScreenId.pairMyNano}`),
       },
@@ -522,7 +532,10 @@ export default function Tutorial({ useCase }: Props) {
           // TODO in next ticket
           history.push(`${path}/${ScreenId.pinCode}`);
         },
-        previous: () => history.push("/onboarding/select-use-case"),
+        previous: () =>
+          fromRecover
+            ? history.push(recoverDiscoverPath)
+            : history.push("/onboarding/select-use-case"),
       },
     ],
     [
@@ -532,13 +545,15 @@ export default function Tutorial({ useCase }: Props) {
       connectedDevice,
       history,
       path,
+      fromRecover,
+      recoverDiscoverPath,
       upsellPath,
       dispatch,
     ],
   );
 
   useEffect(() => {
-    if (onboardingDone) {
+    if (onboardingDone && connectedDevice) {
       /**
        * There is a lag if we call history.push("/") directly.
        * To improve the UX in that situation, we have to first commit a "loading"
@@ -557,7 +572,7 @@ export default function Tutorial({ useCase }: Props) {
         clearTimeout(timeout);
       };
     }
-  }, [connectedDevice?.modelId, handleStartPostOnboarding, history, onboardingDone]);
+  }, [connectedDevice, handleStartPostOnboarding, history, onboardingDone]);
 
   const steps = useMemo(() => {
     const stepList = [
@@ -653,7 +668,7 @@ export default function Tutorial({ useCase }: Props) {
   }, [history, path]);
 
   const handleNextInDrawer = useCallback(
-    (closeCurrentDrawer: (bool: boolean) => void, targetPath: string) => {
+    (closeCurrentDrawer: (bool: boolean) => void, targetPath: string | object) => {
       closeCurrentDrawer(false);
       history.push(targetPath);
     },
@@ -661,10 +676,15 @@ export default function Tutorial({ useCase }: Props) {
   );
 
   const handleNextPin = useCallback(() => {
-    let targetPath = `${path}/${ScreenId.existingRecoveryPhrase}`;
+    let targetPath: string | object = `${path}/${ScreenId.existingRecoveryPhrase}`;
 
     if (useCase === UseCase.recover && postOnboardingPath) {
-      targetPath = postOnboardingPath;
+      const [pathname, search] = postOnboardingPath.split("?");
+      targetPath = {
+        pathname,
+        search: search ? `?${search}` : undefined,
+        state: { deviceId: connectedDevice?.deviceId },
+      };
       dispatch(saveSettings({ hasCompletedOnboarding: true }));
     }
 
@@ -673,7 +693,7 @@ export default function Tutorial({ useCase }: Props) {
     }
 
     handleNextInDrawer(setHelpPinCode, targetPath);
-  }, [dispatch, handleNextInDrawer, path, postOnboardingPath, useCase]);
+  }, [connectedDevice?.deviceId, dispatch, handleNextInDrawer, path, postOnboardingPath, useCase]);
 
   return (
     <>

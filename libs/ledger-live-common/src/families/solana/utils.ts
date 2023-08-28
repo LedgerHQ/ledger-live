@@ -1,6 +1,6 @@
 import { Cluster, clusterApiUrl } from "@solana/web3.js";
 import { partition } from "lodash/fp";
-import { getEnv } from "../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import { ValidatorsAppValidator } from "./validator-app";
 
 export const LEDGER_VALIDATOR_ADDRESS = "26pV97Ce83ZQ6Kz9XT4td8tdoUFPTng8Fb8gPyc53dJx";

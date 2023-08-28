@@ -12,10 +12,6 @@ import { LiveAppWebview } from "../../models/LiveAppWebview";
 test.use({
   userdata: "1AccountBTC1AccountETH",
   featureFlags: {
-    ptxSmartRouting: {
-      enabled: true,
-      params: { liveAppId: "multibuy" },
-    },
     portfolioExchangeBanner: { enabled: true },
   },
 });

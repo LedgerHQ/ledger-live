@@ -1,6 +1,6 @@
 import { app, ipcMain } from "electron";
 import path from "path";
-import { setEnvUnsafe, getAllEnvs } from "@ledgerhq/live-common/env";
+import { setEnvUnsafe, getAllEnvs } from "@ledgerhq/live-env";
 import { isRestartNeeded } from "~/helpers/env";
 import { setTags } from "~/sentry/main";
 import InternalProcess, { InternalMessage as FromInternalMessage } from "./InternalProcess";

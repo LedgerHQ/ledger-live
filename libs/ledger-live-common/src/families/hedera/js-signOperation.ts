@@ -1,21 +1,14 @@
 import { Observable } from "rxjs";
 import { PublicKey } from "@hashgraph/sdk";
-import { Account, DeviceId, Operation, SignOperationEvent } from "@ledgerhq/types-live";
+import { Account, Operation, SignOperationFnSignature } from "@ledgerhq/types-live";
 import { withDevice } from "../../hw/deviceAccess";
 import { Transaction } from "./types";
 import { buildUnsignedTransaction } from "./api/network";
 import { getEstimatedFees } from "./utils";
 import Hedera from "./hw-app-hedera";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 
-const signOperation = ({
-  account,
-  transaction,
-  deviceId,
-}: {
-  account: Account;
-  transaction: Transaction;
-  deviceId: DeviceId;
-}): Observable<SignOperationEvent> =>
+const signOperation: SignOperationFnSignature<Transaction> = ({ account, transaction, deviceId }) =>
   withDevice(deviceId)(transport => {
     return new Observable(o => {
       void (async function () {
@@ -50,7 +43,6 @@ const signOperation = ({
               operation,
               // NOTE: this needs to match the inverse operation in js-broadcast
               signature: Buffer.from(hederaTransaction.toBytes()).toString("base64"),
-              expirationDate: null,
             },
           });
 
@@ -70,7 +62,7 @@ async function buildOptimisticOperation({
   transaction: Transaction;
 }): Promise<Operation> {
   const operation: Operation = {
-    id: `${account.id}--OUT`,
+    id: encodeOperationId(account.id, "", "OUT"),
     hash: "",
     type: "OUT",
     value: transaction.amount,

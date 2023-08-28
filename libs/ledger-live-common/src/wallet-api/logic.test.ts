@@ -543,7 +543,6 @@ function createSignedOperation(): SignedOperation {
   return {
     operation,
     signature: "Signature",
-    expirationDate: null,
   };
 }
 

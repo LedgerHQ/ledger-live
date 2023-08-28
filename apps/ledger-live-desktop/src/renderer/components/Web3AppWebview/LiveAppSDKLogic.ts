@@ -3,7 +3,7 @@ import { TFunction } from "i18next";
 import { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { ToastData } from "@ledgerhq/live-common/notifications/ToastProvider/types";
 import { accountToPlatformAccount } from "@ledgerhq/live-common/platform/converters";
 import { broadcastTransactionLogic as broadcastTransactionCommonLogic } from "@ledgerhq/live-common/platform/logic";

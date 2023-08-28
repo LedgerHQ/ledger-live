@@ -5,7 +5,7 @@ import {
 } from "@ethereumjs/tx";
 import eip55 from "eip55";
 import { encode } from "rlp";
-import type { Operation, Account, SignOperationEvent } from "@ledgerhq/types-live";
+import type { Operation, SignOperationEvent, SignOperationFnSignature } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import { log } from "@ledgerhq/logs";
 import Eth, { ledgerService as ethLedgerServices } from "@ledgerhq/hw-app-eth";
@@ -18,20 +18,16 @@ import { apiForCurrency } from "./api";
 import { withDevice } from "../../hw/deviceAccess";
 import type { Transaction } from "./types";
 import { isNFTActive } from "../../nft";
-import { getEnv } from "../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import { modes } from "./modules";
 import { getGasLimit, buildEthereumTx, EIP1559ShouldBeUsed, toTransactionRaw } from "./transaction";
 import { padHexString } from "./logic";
 
-export const signOperation = ({
+export const signOperation: SignOperationFnSignature<Transaction> = ({
   account,
   deviceId,
   transaction,
-}: {
-  account: Account;
-  deviceId: any;
-  transaction: Transaction;
-}): Observable<SignOperationEvent> =>
+}) =>
   from(
     transaction.nonce !== undefined
       ? of(transaction.nonce)
@@ -180,7 +176,6 @@ export const signOperation = ({
                 signedOperation: {
                   operation,
                   signature,
-                  expirationDate: null,
                 },
               });
             }

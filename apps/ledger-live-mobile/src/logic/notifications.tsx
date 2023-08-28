@@ -250,7 +250,7 @@ const useNotifications = () => {
     } else {
       const newNotificationsState = { ...notifications };
       for (const [key, value] of Object.entries(settingsInitialState.notifications)) {
-        if (!notifications[key as keyof NotificationsSettings]) {
+        if (notifications[key as keyof NotificationsSettings] === undefined) {
           newNotificationsState[key as keyof NotificationsSettings] = value;
         }
       }

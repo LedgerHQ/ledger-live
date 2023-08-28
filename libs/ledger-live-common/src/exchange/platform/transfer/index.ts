@@ -1,5 +1,5 @@
 import { createExchangeProviderNameAndSignature, ExchangeProviderNameAndSignature } from "../..";
-import { getEnv } from "../../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import { ExchangeTypes } from "@ledgerhq/hw-app-exchange";
 // FIXME: to be move in this file alongide 'fundProviders' once 'src/exchange/sell/' is deprecated
 import { sellProviders } from "../../sell";

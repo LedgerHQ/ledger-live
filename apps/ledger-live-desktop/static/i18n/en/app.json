@@ -5693,10 +5693,6 @@
       "title": "Image download failed",
       "description": "Please try again with another image"
     },
-    "ImageMetadataLoadingError": {
-      "title": "Image metadata loading failed",
-      "description": "Please try again with another image"
-    },
     "ImageTooLargeError": {
       "title": "Image too large",
       "description": "Please try with a smaller image"

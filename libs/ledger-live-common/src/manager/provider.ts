@@ -1,5 +1,5 @@
 import type { DeviceInfo } from "@ledgerhq/types-live";
-import { getEnv } from "../env";
+import { getEnv } from "@ledgerhq/live-env";
 export const PROVIDERS: Record<string, number> = {
   das: 2,
   club: 3,

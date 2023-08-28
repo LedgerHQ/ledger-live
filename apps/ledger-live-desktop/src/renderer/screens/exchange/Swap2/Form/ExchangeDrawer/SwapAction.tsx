@@ -1,4 +1,4 @@
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import {
   Exchange,
   ExchangeRate,

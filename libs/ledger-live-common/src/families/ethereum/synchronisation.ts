@@ -13,7 +13,7 @@ import {
   areAllOperationsLoaded,
   inferSubOperations,
   emptyHistoryCache,
-} from "../../account";
+} from "@ledgerhq/coin-framework/account/index";
 import { listTokensForCryptoCurrency } from "../../currencies";
 import { encodeAccountId } from "../../account";
 import type { Operation, TokenAccount, SubAccount, Account } from "@ledgerhq/types-live";

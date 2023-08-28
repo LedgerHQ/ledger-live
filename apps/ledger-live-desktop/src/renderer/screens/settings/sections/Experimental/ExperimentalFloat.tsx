@@ -1,15 +1,15 @@
 import React, { useCallback, useState, useEffect } from "react";
-import { getEnvDefault } from "@ledgerhq/live-common/env";
+import { EnvName, getEnvDefault } from "@ledgerhq/live-env";
 import Track from "~/renderer/analytics/Track";
 import Switch from "~/renderer/components/Switch";
 import Input from "~/renderer/components/Input";
 import Box from "~/renderer/components/Box";
 
 type Props = {
-  name: string;
+  name: EnvName;
   isDefault: boolean;
   readOnly: boolean;
-  onChange: (name: string, val: unknown) => void;
+  onChange: (name: EnvName, val: unknown) => void;
   value: number;
   minValue?: number;
   maxValue?: number;

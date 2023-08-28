@@ -1,5 +1,5 @@
 import { listen, Log } from "@ledgerhq/logs";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 
 const logs: Log[] = [];
 export default {

@@ -1,16 +1,15 @@
-import { useCallback, useEffect, useState } from "react";
-
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
-import { DeviceInfo, DeviceModelInfo, idsToLanguage } from "@ledgerhq/types-live";
-import { from } from "rxjs";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
-import { isEqual } from "lodash";
-import { useSelector } from "react-redux";
-import { languageSelector } from "~/renderer/reducers/settings";
-import { Locale, localeIdToDeviceLanguage } from "~/config/languages";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
+import { DeviceInfo, DeviceModelInfo, idsToLanguage } from "@ledgerhq/types-live";
+import { isEqual } from "lodash";
+import { useCallback, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { from } from "rxjs";
+import { Languages } from "~/config/languages";
 import { setDrawer } from "~/renderer/drawers/Provider";
+import { languageSelector } from "~/renderer/reducers/settings";
 import ChangeDeviceLanguagePromptDrawer from "~/renderer/screens/settings/sections/General/ChangeDeviceLanguagePromptDrawer";
 
 type useChangeLanguagePromptParams = {
@@ -30,7 +29,7 @@ export const useChangeLanguagePrompt = ({ device }: useChangeLanguagePromptParam
       });
   }, [device, deviceModelInfo?.deviceInfo]);
 
-  const currentLanguage = useSelector(languageSelector) as Locale;
+  const currentLanguage = useSelector(languageSelector);
 
   useEffect(() => {
     if (!deviceModelInfo) refreshDeviceInfo();
@@ -45,8 +44,7 @@ export const useChangeLanguagePrompt = ({ device }: useChangeLanguagePromptParam
   useEffect(() => {
     if (loaded && deviceModelInfo?.deviceInfo) {
       const deviceLanguageId = deviceModelInfo?.deviceInfo.languageId;
-      const potentialDeviceLanguage =
-        localeIdToDeviceLanguage[currentLanguage as keyof typeof localeIdToDeviceLanguage];
+      const potentialDeviceLanguage = Languages[currentLanguage].deviceSupport?.label;
       const langAvailableOnDevice =
         potentialDeviceLanguage !== undefined &&
         availableDeviceLanguages.includes(potentialDeviceLanguage);
