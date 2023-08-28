@@ -1405,6 +1405,7 @@ Array [
   "umee",
   "internet_computer",
   "injective",
+  "casper",
   "arbitrum",
   "cronos",
   "flare",
@@ -7828,5 +7829,6 @@ Array [
   "cardano/native/a2944573e99d2ed3055b808eaa264f0bf119e01fc6b18863067c63e44d454c44",
   "stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
   "icp/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
+  "casper/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
 ]
 `;
