@@ -11,6 +11,7 @@ declare module "*.svg";
 declare module "*.png";
 declare module "*.jpg";
 declare module "*.webm";
+declare module "*.mp4";
 
 type Store = import("redux").Store;
 type Device = import("@ledgerhq/live-common/hw/actions/types").Device;
