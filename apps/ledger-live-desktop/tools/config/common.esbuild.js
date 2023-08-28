@@ -27,6 +27,7 @@ module.exports = {
     ".ttf": "file",
     ".otf": "file",
     ".webm": "file",
+    ".mp4": "file",
     ".png": "dataurl",
     ".jpg": "dataurl",
     ".jpeg": "dataurl",

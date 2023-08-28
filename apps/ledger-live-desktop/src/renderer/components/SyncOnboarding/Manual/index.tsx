@@ -259,6 +259,16 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
     }
   }, [history, isEarlySecurityChecks]);
 
+  const [contentScroll, setContentScroll] = useState(0);
+
+  const onContentScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const { currentTarget } = e;
+    if (currentTarget instanceof HTMLDivElement) {
+      const scrollTop = currentTarget.scrollTop;
+      setContentScroll(scrollTop);
+    }
+  };
+
   let stepContent = (
     <Flex height="100%" width="100%" justifyContent="center" alignItems="center">
       <InfiniteLoader />
@@ -302,7 +312,14 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
   }, []);
 
   return (
-    <Flex width="100%" height="100%" flexDirection="column" justifyContent="flex-start">
+    <Flex
+      width="100%"
+      height="100%"
+      overflow="scroll"
+      flexDirection="column"
+      justifyContent="flex-start"
+      onScroll={onContentScroll}
+    >
       {isBootloader && mustRecoverIfBootloader ? (
         /**
          * In case a firmware update gets interrupted and the device is in
@@ -312,8 +329,12 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
         <DeviceAction onResult={onDeviceActionResult} action={action} request={null} />
       ) : (
         <>
+          <Header
+            device={lastSeenDevice}
+            onClose={handleClose}
+            displayTitle={currentStep === "companion" && lastSeenDevice && contentScroll > 30}
+          />
           {stepContent}
-          <Header onClose={handleClose} />
         </>
       )}
     </Flex>
