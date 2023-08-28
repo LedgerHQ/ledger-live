@@ -1,5 +1,6 @@
 import {
   CasperAccount,
+  CasperOperation,
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/casper/types";
@@ -9,7 +10,7 @@ import AccountSubHeader from "./AccountSubHeader";
 import sendAmountFields from "./SendAmountFields";
 import transactionConfirmFields from "./TransactionConfirmFields";
 
-const family: LLDCoinFamily<CasperAccount, Transaction, TransactionStatus> = {
+const family: LLDCoinFamily<CasperAccount, Transaction, TransactionStatus, CasperOperation> = {
   operationDetails,
   AccountSubHeader,
   sendAmountFields,
