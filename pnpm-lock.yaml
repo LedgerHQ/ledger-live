@@ -4312,10 +4312,10 @@ importers:
     devDependencies:
       '@svgr/core':
         specifier: ^5.5.0
-        version: 5.5.0(@svgr/plugin-svgo@5.5.0)
+        version: 5.5.0(@svgr/plugin-svgo@8.1.0)
       '@svgr/plugin-svgo':
-        specifier: ^5.5.0
-        version: 5.5.0
+        specifier: ^8.0.0
+        version: 8.1.0(@svgr/core@5.5.0)
       '@types/react':
         specifier: ^17.0.53
         version: 17.0.53
@@ -4360,10 +4360,10 @@ importers:
     devDependencies:
       '@svgr/core':
         specifier: ^5.5.0
-        version: 5.5.0(@svgr/plugin-svgo@5.5.0)
+        version: 5.5.0(@svgr/plugin-svgo@8.1.0)
       '@svgr/plugin-svgo':
-        specifier: ^5.5.0
-        version: 5.5.0
+        specifier: ^8.0.0
+        version: 8.1.0(@svgr/core@5.5.0)
       '@types/react':
         specifier: ^17.0.53
         version: 17.0.53
@@ -4550,13 +4550,13 @@ importers:
         version: 6.5.6(@react-native-async-storage/async-storage@1.17.12)(react-dom@18.0.0)(react-native-safe-area-context@4.5.0)(react-native@0.71.6)(react@18.0.0)(typescript@5.1.3)(webpack@5.76.1)
       '@svgr/core':
         specifier: ^5.5.0
-        version: 5.5.0(@svgr/plugin-svgo@5.5.0)
+        version: 5.5.0(@svgr/plugin-svgo@8.1.0)
       '@svgr/plugin-jsx':
         specifier: ^5.5.0
         version: 5.5.0
       '@svgr/plugin-svgo':
-        specifier: ^5.5.0
-        version: 5.5.0
+        specifier: ^8.0.0
+        version: 8.1.0(@svgr/core@5.5.0)
       '@types/hoist-non-react-statics':
         specifier: ^3.3.1
         version: 3.3.1(@types/react@17.0.53)
@@ -23671,6 +23671,7 @@ packages:
       cosmiconfig: 7.0.1
     transitivePeerDependencies:
       - supports-color
+    dev: false
 
   /@svgr/core@5.5.0(@svgr/plugin-svgo@6.2.0):
     resolution: {integrity: sha512-q52VOcsJPvV3jO1wkPtzTuKlvX7Y3xIcWRpCMtBF3MrteZJtBfQw/+u0B1BHy5ColpQc1/YVTrPEtSYIMNZlrQ==}
@@ -23683,6 +23684,23 @@ packages:
     dependencies:
       '@svgr/plugin-jsx': 5.5.0
       '@svgr/plugin-svgo': 6.2.0(@svgr/core@5.5.0)
+      camelcase: 6.3.0
+      cosmiconfig: 7.0.1
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
+  /@svgr/core@5.5.0(@svgr/plugin-svgo@8.1.0):
+    resolution: {integrity: sha512-q52VOcsJPvV3jO1wkPtzTuKlvX7Y3xIcWRpCMtBF3MrteZJtBfQw/+u0B1BHy5ColpQc1/YVTrPEtSYIMNZlrQ==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      '@svgr/plugin-svgo': '*'
+    peerDependenciesMeta:
+      '@svgr/plugin-svgo':
+        optional: true
+    dependencies:
+      '@svgr/plugin-jsx': 5.5.0
+      '@svgr/plugin-svgo': 8.1.0(@svgr/core@5.5.0)
       camelcase: 6.3.0
       cosmiconfig: 7.0.1
     transitivePeerDependencies:
@@ -23738,6 +23756,7 @@ packages:
       cosmiconfig: 7.0.1
       deepmerge: 4.3.0
       svgo: 1.3.2
+    dev: false
 
   /@svgr/plugin-svgo@6.2.0(@svgr/core@5.5.0):
     resolution: {integrity: sha512-oDdMQONKOJEbuKwuy4Np6VdV6qoaLLvoY86hjvQEgU82Vx1MSWRyYms6Sl0f+NtqxLI/rDVufATbP/ev996k3Q==}
@@ -23749,6 +23768,18 @@ packages:
       cosmiconfig: 7.0.1
       deepmerge: 4.2.2
       svgo: 2.8.0
+    dev: true
+
+  /@svgr/plugin-svgo@8.1.0(@svgr/core@5.5.0):
+    resolution: {integrity: sha512-Ywtl837OGO9pTLIN/onoWLmDQ4zFUycI1g76vuKGEz6evR/ZTJlJuz3G/fIkb6OVBJ2g0o6CGJzaEjfmEo3AHA==}
+    engines: {node: '>=14'}
+    peerDependencies:
+      '@svgr/core': '*'
+    dependencies:
+      '@svgr/core': 5.5.0(@svgr/plugin-svgo@8.1.0)
+      cosmiconfig: 8.2.0
+      deepmerge: 4.3.1
+      svgo: 3.0.2
     dev: true
 
   /@svgr/webpack@4.3.3:
@@ -31070,6 +31101,16 @@ packages:
       path-type: 4.0.0
     dev: true
 
+  /cosmiconfig@8.2.0:
+    resolution: {integrity: sha512-3rTMnFJA1tCOPwRxtgF4wd7Ab2qvDbL8jX+3smjIbS4HlZBagTlpERbdN7iAbWlrfxE3M8c27kTwTawQ7st+OQ==}
+    engines: {node: '>=14'}
+    dependencies:
+      import-fresh: 3.3.0
+      js-yaml: 4.1.0
+      parse-json: 5.2.0
+      path-type: 4.0.0
+    dev: true
+
   /cosmjs-types@0.2.1:
     resolution: {integrity: sha512-EUG6TgdWkYHBzXjo5tZ82L+0QLijTu/rZGNIbJ/n07ST30GmptYkPmO+REX7qF4YUtli//Rfy0rrNzH9IMrMmw==}
     dependencies:
@@ -31578,6 +31619,22 @@ packages:
       mdn-data: 2.0.14
       source-map: 0.6.1
 
+  /css-tree@2.2.1:
+    resolution: {integrity: sha512-OA0mILzGc1kCOCSJerOeqDxDQ4HOh+G8NbOJFOTgOCzpw7fCBubk0fEyxp8AgOL/jvLgYA/uV0cMbe43ElF1JA==}
+    engines: {node: ^10 || ^12.20.0 || ^14.13.0 || >=15.0.0, npm: '>=7.0.0'}
+    dependencies:
+      mdn-data: 2.0.28
+      source-map-js: 1.0.2
+    dev: true
+
+  /css-tree@2.3.1:
+    resolution: {integrity: sha512-6Fv1DV/TYw//QF5IzQdqsNDjx/wc8TrMBZsqjL9eW01tWb7R7k/mq+/VXfJCl7SoD5emsJop9cOByJZfs8hYIw==}
+    engines: {node: ^10 || ^12.20.0 || ^14.13.0 || >=15.0.0}
+    dependencies:
+      mdn-data: 2.0.30
+      source-map-js: 1.0.2
+    dev: true
+
   /css-what@3.4.2:
     resolution: {integrity: sha512-ACUm3L0/jiZTqfzRM3Hi9Q8eZqd6IK37mMWPLz9PJxkLWllYeRf+EHUSHYEtFop2Eqytaq1FizFVh7XfBnXCDQ==}
     engines: {node: '>= 6'}
@@ -31741,6 +31798,13 @@ packages:
     engines: {node: '>=8.0.0'}
     dependencies:
       css-tree: 1.1.3
+
+  /csso@5.0.5:
+    resolution: {integrity: sha512-0LrrStPOdJj+SPCCrGhzryycLjwcgUSHBtxNA8aIDxf0GLsRh1cKYhB00Gd1lDOS4yGH69+SNn13+TWbVHETFQ==}
+    engines: {node: ^10 || ^12.20.0 || ^14.13.0 || >=15.0.0, npm: '>=7.0.0'}
+    dependencies:
+      css-tree: 2.2.1
+    dev: true
 
   /cssom@0.3.8:
     resolution: {integrity: sha512-b0tGHbfegbhPJpxpiBPU2sCkigAqtM9O121le6bbOlgyV+NyGyCmVfJ6QW9eRjz8CpNfWEOYBIMIGRYkLwsIYg==}
@@ -32514,6 +32578,11 @@ packages:
   /deepmerge@4.3.0:
     resolution: {integrity: sha512-z2wJZXrmeHdvYJp/Ux55wIjqo81G5Bp4c+oELTW+7ar6SogWHajt5a9gO3s3IDaGSAXjDk0vlQKN3rms8ab3og==}
     engines: {node: '>=0.10.0'}
+
+  /deepmerge@4.3.1:
+    resolution: {integrity: sha512-3sUqbMEc77XqpdNO7FRyRog+eW3ph+GYCbj+rK+uYyRMuwsVy0rMiVtPn+QJlKFvWP/1PYpapqYn0Me2knFn+A==}
+    engines: {node: '>=0.10.0'}
+    dev: true
 
   /default-browser-id@1.0.4:
     resolution: {integrity: sha512-qPy925qewwul9Hifs+3sx1ZYn14obHxpkX+mPD369w4Rzg+YkJBgi3SOvwUq81nWSjqGUegIgEPwD8u+HUnxlw==}
@@ -45682,6 +45751,14 @@ packages:
   /mdn-data@2.0.14:
     resolution: {integrity: sha512-dn6wd0uw5GsdswPFfsgMp5NSB0/aDe6fK94YJV/AJDYXL6HVLWBsxeq7js7Ad+mU2K9LAlwpk6kN2D5mwCPVow==}
 
+  /mdn-data@2.0.28:
+    resolution: {integrity: sha512-aylIc7Z9y4yzHYAJNuESG3hfhC+0Ibp/MAMiaOZgNv4pmEdFyfZhhhny4MNiAfWdBQ1RQ2mfDWmM1x8SvGyp8g==}
+    dev: true
+
+  /mdn-data@2.0.30:
+    resolution: {integrity: sha512-GaqWWShW4kv/G9IEucWScBx9G1/vsFZZJUO+tD26M8J8z3Kw5RDQjaoZe03YAClgeS/SWPOcb4nkFBTEi5DUEA==}
+    dev: true
+
   /mdn-data@2.0.4:
     resolution: {integrity: sha512-iV3XNKw06j5Q7mi6h+9vbx23Tv7JkjEVgKHW4pimwyDGWm0OIQntJJ+u1C6mg6mK1EaTv42XQ7w76yuzH7M2cA==}
 
@@ -57627,6 +57704,19 @@ packages:
       csso: 4.2.0
       picocolors: 1.0.0
       stable: 0.1.8
+
+  /svgo@3.0.2:
+    resolution: {integrity: sha512-Z706C1U2pb1+JGP48fbazf3KxHrWOsLme6Rv7imFBn5EnuanDW1GPaA/P1/dvObE670JDePC3mnj0k0B7P0jjQ==}
+    engines: {node: '>=14.0.0'}
+    hasBin: true
+    dependencies:
+      '@trysound/sax': 0.2.0
+      commander: 7.2.0
+      css-select: 5.1.0
+      css-tree: 2.3.1
+      csso: 5.0.5
+      picocolors: 1.0.0
+    dev: true
 
   /swarm-js@0.1.40:
     resolution: {integrity: sha512-yqiOCEoA4/IShXkY3WKwP5PvZhmoOOD8clsKA7EEcRILMkTEYHCQ21HDCAcVpmIxZq4LyZvWeRJ6quIyHk1caA==}

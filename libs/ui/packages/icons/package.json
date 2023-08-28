@@ -59,7 +59,7 @@
   },
   "devDependencies": {
     "@svgr/core": "^5.5.0",
-    "@svgr/plugin-svgo": "^5.5.0",
+    "@svgr/plugin-svgo": "^8.0.0",
     "@types/react": "^17.0.53",
     "@types/react-dom": "^17.0.11",
     "@types/react-native": "^0.65.27",
