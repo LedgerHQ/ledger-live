@@ -96,7 +96,7 @@
     "@storybook/addon-essentials": "^6.3.6",
     "@storybook/addon-links": "^6.3.6",
     "@storybook/react": "^6.3.6",
-    "@svgr/core": "^5.5.0",
+    "@svgr/core": "^8.0.0",
     "@svgr/plugin-svgo": "*",
     "@types/hoist-non-react-statics": "^3.3.1",
     "@types/react-is": "^17.0.3",

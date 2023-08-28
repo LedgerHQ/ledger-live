@@ -271,7 +271,7 @@
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "@svgr/core": "^5.5.0",
+    "@svgr/core": "^8.0.0",
     "@testing-library/react": "12",
     "@testing-library/react-hooks": "^4.0.1",
     "@types/bn.js": "^5.1.1",
