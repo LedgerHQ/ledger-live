@@ -375,7 +375,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
               textAlign="center"
             >
               {t("transfer.receive.receiveConfirmation.sendWarning", {
-                network: network || currency.name
+                network: network || currency.name,
               })}
             </Text>
           </Flex>
