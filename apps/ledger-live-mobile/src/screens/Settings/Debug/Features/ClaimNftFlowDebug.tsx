@@ -14,7 +14,7 @@ export default function ClaimNftFlowDebug() {
   }, [navigation]);
 
   return (
-    <FeatureToggle feature="postOnboardingClaimNft" fallback={null}>
+    <FeatureToggle featureId="postOnboardingClaimNft" fallback={null}>
       <SettingsRow
         title="Claim NFT flow"
         desc="Convenient access to the flow"

@@ -380,7 +380,7 @@ const MainSideBar = () => {
                   isActive={location.pathname === "/market"}
                   collapsed={secondAnim}
                 />
-                <FeatureToggle feature="learn">
+                <FeatureToggle featureId="learn">
                   <SideBarListItem
                     id="learn"
                     label={t("sidebar.learn")}
@@ -433,7 +433,7 @@ const MainSideBar = () => {
                   disabled={noAccounts || navigationLocked}
                   collapsed={secondAnim}
                 />
-                <FeatureToggle feature="ptxEarn">
+                <FeatureToggle featureId="ptxEarn">
                   <SideBarListItem
                     id={"earn"}
                     label={t("sidebar.earn")}
@@ -474,7 +474,7 @@ const MainSideBar = () => {
                   disabled={noAccounts}
                   collapsed={secondAnim}
                 />
-                <FeatureToggle feature="referralProgramDesktopSidebar">
+                <FeatureToggle featureId="referralProgramDesktopSidebar">
                   <SideBarListItem
                     id={"refer"}
                     label={t("sidebar.refer")}
@@ -508,7 +508,7 @@ const MainSideBar = () => {
                   collapsed={secondAnim}
                   disabled={isCardDisabled}
                 />
-                <FeatureToggle feature="protectServicesDesktop">
+                <FeatureToggle featureId="protectServicesDesktop">
                   <SideBarListItem
                     id={"recover"}
                     label={t("sidebar.recover")}

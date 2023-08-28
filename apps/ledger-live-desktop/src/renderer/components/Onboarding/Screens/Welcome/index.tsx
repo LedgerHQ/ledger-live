@@ -179,7 +179,7 @@ export function Welcome() {
           >
             {t("onboarding.screens.welcome.nextButton")}
           </Button>
-          <FeatureToggle feature="protectServicesDesktop">
+          <FeatureToggle featureId="protectServicesDesktop">
             <Button
               iconPosition="right"
               variant="main"
