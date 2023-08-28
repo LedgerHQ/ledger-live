@@ -9,7 +9,7 @@ import {
 import { Flex, InfiniteLoader, Text, Link, BoxedIcon } from "@ledgerhq/native-ui";
 import { UiCheckStatus } from "./EarlySecurityCheck";
 
-export type CheckCardProps = FlexBoxProps & {
+export type CheckCardProps = {
   title: string;
   description?: string | null;
   learnMore?: string | null;
@@ -25,7 +25,6 @@ const CheckCard: React.FC<CheckCardProps> = ({
   onLearnMore,
   index,
   status,
-  ...props
 }) => {
   let checkIcon;
   switch (status) {
@@ -48,24 +47,22 @@ const CheckCard: React.FC<CheckCardProps> = ({
   }
 
   return (
-    <Flex flexDirection="row" alignItems="flex-start" {...props}>
+    <Flex flexDirection="row" alignItems="flex-start">
       <BoxedIcon
-        backgroundColor="neutral.c30"
-        borderColor="neutral.c30"
+        backgroundColor="opacityDefault.c10"
+        borderColor="opacityDefault.c10"
         variant="circle"
         Icon={checkIcon}
       />
-      <Flex flexDirection="column" flex={1} justifyContent="flex-end">
-        <Text ml={4} variant="large">
-          {title}
-        </Text>
+      <Flex ml={6} flexDirection="column" flex={1} justifyContent="flex-end">
+        <Text variant="largeLineHeight">{title}</Text>
         {description ? (
-          <Text ml={4} mt={2} mb={4} variant="body" color="neutral.c70">
+          <Text mt={1} variant="body" color="neutral.c70">
             {description}
           </Text>
         ) : null}
         {learnMore && onLearnMore ? (
-          <Flex ml={4} mb={4}>
+          <Flex mt={3}>
             <Link
               Icon={ExternalLinkMedium}
               onPress={onLearnMore}

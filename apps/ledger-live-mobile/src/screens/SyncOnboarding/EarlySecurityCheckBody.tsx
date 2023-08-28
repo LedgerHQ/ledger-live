@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import Button from "../../components/wrappedUi/Button";
 import type { Step, UiCheckStatus } from "./EarlySecurityCheck";
 import CheckCard from "./CheckCard";
+import { useTheme } from "styled-components/native";
 
 export type Props = {
   productName: string;
@@ -187,6 +188,8 @@ const EarlySecurityCheckBody: React.FC<Props> = ({
     );
   }
 
+  const { space } = useTheme();
+
   return (
     <ScrollView
       style={{
@@ -200,16 +203,17 @@ const EarlySecurityCheckBody: React.FC<Props> = ({
     >
       <Flex
         flex={1}
-        mt="5"
         flexDirection="column"
         alignItems="stretch"
         justifyContent="space-between"
+        px={6}
+        pb={7}
       >
-        <Flex paddingX="4">
-          <Text variant="h4" mb="4">
+        <Flex>
+          <Text variant="h4" fontWeight="semiBold" mb={3}>
             {t("earlySecurityCheck.title")}
           </Text>
-          <Flex width="100%" mt="4">
+          <Flex width="100%" mt={7} rowGap={space[7]}>
             <CheckCard
               title={genuineCheckStepTitle}
               description={genuineCheckStepDescription}
@@ -217,7 +221,6 @@ const EarlySecurityCheckBody: React.FC<Props> = ({
               learnMore={genuineCheckStepLearnMore}
               onLearnMore={genuineCheckOnLearnMore}
               index={1}
-              mb={6}
             />
             <CheckCard
               title={firmwareUpdateCheckStepTitle}
@@ -227,7 +230,7 @@ const EarlySecurityCheckBody: React.FC<Props> = ({
             />
           </Flex>
         </Flex>
-        <Flex mx="5" mb="4">
+        <Flex>
           {primaryBottomCta}
           {secondaryBottomCta}
         </Flex>
