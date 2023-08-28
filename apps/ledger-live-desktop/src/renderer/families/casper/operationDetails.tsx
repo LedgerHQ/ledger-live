@@ -8,20 +8,22 @@ import {
 import Ellipsis from "~/renderer/components/Ellipsis";
 import type { OperationDetailsExtraProps } from "../types";
 
-import { CasperAccount } from "@ledgerhq/live-common/families/casper/types";
+import { CasperAccount, CasperOperation } from "@ledgerhq/live-common/families/casper/types";
 
-const OperationDetailsExtra = ({ extra }: OperationDetailsExtraProps<CasperAccount>) => {
+const OperationDetailsExtra = ({
+  operation: o,
+}: OperationDetailsExtraProps<CasperAccount, CasperOperation>) => {
   return (
     <>
-      {Object.keys(extra).map(key => {
-        if (["transferId"].includes(key)) {
+      {Object.keys(o.extra).map(key => {
+        if (o.extra.transferId) {
           return (
             <OpDetailsSection key={key}>
               <OpDetailsTitle>
                 <Trans i18nKey={`families.casper.${key}`} defaults={key} />
               </OpDetailsTitle>
               <OpDetailsData>
-                <Ellipsis>{extra[key] ?? "-"}</Ellipsis>
+                <Ellipsis>{o.extra.transferId ?? "-"}</Ellipsis>
               </OpDetailsData>
             </OpDetailsSection>
           );
