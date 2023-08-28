@@ -1,5 +1,22 @@
 # @ledgerhq/native-ui
 
+## 0.21.0-next.0
+
+### Minor Changes
+
+- [#4421](https://github.com/LedgerHQ/ledger-live/pull/4421) [`00c1159356`](https://github.com/LedgerHQ/ledger-live/commit/00c11593565ac8b370df77af13dc3f1d8de90914) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Allow passing of onPressWhenDisabled prop to native ui button
+
+### Patch Changes
+
+- [#4385](https://github.com/LedgerHQ/ledger-live/pull/4385) [`87cbec4062`](https://github.com/LedgerHQ/ledger-live/commit/87cbec4062f95d2348d7dd134cb4f13f071425d5) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Upgrade "react-native-svg" to 13.11.0
+
+- [#3928](https://github.com/LedgerHQ/ledger-live/pull/3928) [`5b2247695c`](https://github.com/LedgerHQ/ledger-live/commit/5b2247695c80af26d8c3187df1cb53c95e3317b1) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add new type of Card in DS
+
+- [#4169](https://github.com/LedgerHQ/ledger-live/pull/4169) [`75ef6eb224`](https://github.com/LedgerHQ/ledger-live/commit/75ef6eb2240901a049fb11724760642b891c333a) Thanks [@gre](https://github.com/gre)! - Introduce testID prop on Form/SelectableList
+
+- Updated dependencies [[`5fb60bc6bb`](https://github.com/LedgerHQ/ledger-live/commit/5fb60bc6bb0bc6a9452d580cdace16ca87e478ff)]:
+  - @ledgerhq/icons-ui@0.6.0-next.0
+
 ## 0.20.6
 
 ### Patch Changes

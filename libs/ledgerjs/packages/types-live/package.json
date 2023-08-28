@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/types-live",
-  "version": "6.38.1",
+  "version": "6.39.0-next.0",
   "description": "Ledger Live main types.",
   "keywords": [
     "Ledger"
