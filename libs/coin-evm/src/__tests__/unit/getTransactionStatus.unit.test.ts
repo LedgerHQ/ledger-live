@@ -216,232 +216,177 @@ describe("EVM Family", () => {
     });
 
     describe("Gas", () => {
-      it("should detect missing fees in a 1559 tx and have an error", async () => {
-        const tx = { ...eip1559Tx, maxFeePerGas: undefined };
-        const res = await getTransactionStatus(account, tx as any);
+      describe("Common", () => {
+        describe.each([
+          { type: "Legacy", defaultTx: legacyTx },
+          { type: "EIP1559", defaultTx: eip1559Tx },
+        ])("Transaction Type: $type", ({ defaultTx }: { defaultTx: Transaction }) => {
+          it("should detect missing fees and have an error", async () => {
+            const tx = { ...defaultTx, gasPrice: undefined, maxFeePerGas: undefined };
+            const res = await getTransactionStatus(account, tx as any);
 
-        expect(res.errors).toEqual(
-          expect.objectContaining({
-            gasPrice: new FeeNotLoaded(),
-          }),
-        );
-      });
+            expect(res.errors).toEqual(
+              expect.objectContaining({
+                gasPrice: new FeeNotLoaded(),
+              }),
+            );
+          });
 
-      it("should detect missing fees in a legacy tx and have an error", async () => {
-        const tx = { ...legacyTx, gasPrice: undefined };
-        const res = await getTransactionStatus(account, tx as any);
+          it("should detect a gasLimit = 0 and have an error", async () => {
+            const tx: Transaction = { ...defaultTx, gasLimit: new BigNumber(0) };
+            const res = await getTransactionStatus(account, tx);
 
-        expect(res.errors).toEqual(
-          expect.objectContaining({
-            gasPrice: new FeeNotLoaded(),
-          }),
-        );
-      });
+            expect(res.errors).toEqual(
+              expect.objectContaining({
+                gasLimit: new FeeNotLoaded(),
+              }),
+            );
+          });
 
-      it("should detect a gasLimit = 0 in a 1559 tx and have an error", async () => {
-        const tx = { ...eip1559Tx, gasLimit: new BigNumber(0) };
-        const res = await getTransactionStatus(account, tx as any);
+          it("should detect gas being too high for the account balance and have an error", async () => {
+            const notEnoughBalanceResponse = await getTransactionStatus(
+              { ...account, balance: new BigNumber(2099999) },
+              defaultTx,
+            );
+            const enoughBalanceResponse = await getTransactionStatus(
+              { ...account, balance: new BigNumber(2100001) },
+              defaultTx,
+            );
 
-        expect(res.errors).toEqual(
-          expect.objectContaining({
-            gasLimit: new FeeNotLoaded(),
-          }),
-        );
-      });
+            expect(notEnoughBalanceResponse.errors).toEqual(
+              expect.objectContaining({
+                gasPrice: new NotEnoughGas(),
+              }),
+            );
+            expect(enoughBalanceResponse.errors).not.toEqual(
+              expect.objectContaining({
+                gasPrice: new NotEnoughGas(),
+              }),
+            );
+          });
 
-      it("should detect a gasLimit = 0 in a legacy tx and have an error", async () => {
-        const tx = { ...legacyTx, gasLimit: new BigNumber(0) };
-        const res = await getTransactionStatus(account, tx as any);
+          it("should not detect gas being too high when there is no recipient and have an error", async () => {
+            const notEnoughBalanceResponse = await getTransactionStatus(
+              { ...account, balance: new BigNumber(2099999) },
+              { ...defaultTx, recipient: "" },
+            );
+            const enoughhBalanceResponse = await getTransactionStatus(
+              { ...account, balance: new BigNumber(2100001) },
+              { ...defaultTx, recipient: "" },
+            );
 
-        expect(res.errors).toEqual(
-          expect.objectContaining({
-            gasLimit: new FeeNotLoaded(),
-          }),
-        );
-      });
+            expect(notEnoughBalanceResponse.errors).not.toEqual(
+              expect.objectContaining({
+                gasPrice: new NotEnoughGas(),
+              }),
+            );
+            expect(enoughhBalanceResponse.errors).not.toEqual(
+              expect.objectContaining({
+                gasPrice: new NotEnoughGas(),
+              }),
+            );
+          });
 
-      it("should detect gas limit being too low in a tx and have an error", async () => {
-        const tx = { ...eip1559Tx, gasLimit: new BigNumber(20000) }; // min should be 21000
-        const res = await getTransactionStatus(account, tx);
+          it("should detect gas limit being too low in a tx and have an error", async () => {
+            const tx: Transaction = { ...defaultTx, gasLimit: new BigNumber(20000) }; // min should be 21000
+            const res = await getTransactionStatus(account, tx);
 
-        expect(res.errors).toEqual(
-          expect.objectContaining({
-            gasLimit: new GasLessThanEstimate(),
-          }),
-        );
-      });
-
-      it("should detect gas being too high in a 1559 tx for the account balance and have an error", async () => {
-        const notEnoughBalanceResponse = await getTransactionStatus(
-          { ...account, balance: new BigNumber(2099999) },
-          eip1559Tx,
-        );
-        const enoughhBalanceResponse = await getTransactionStatus(
-          { ...account, balance: new BigNumber(2100000) },
-          eip1559Tx,
-        );
-
-        expect(notEnoughBalanceResponse.errors).toEqual(
-          expect.objectContaining({
-            gasPrice: new NotEnoughGas(),
-          }),
-        );
-        expect(enoughhBalanceResponse.errors).not.toEqual(
-          expect.objectContaining({
-            gasPrice: new NotEnoughGas(),
-          }),
-        );
-      });
-
-      it("should detect a maxPriorityFee = 0 in a 1559 tx and have an error", async () => {
-        const res = await getTransactionStatus(
-          { ...account, balance: new BigNumber(2100000) },
-          {
-            ...eip1559Tx,
-            maxPriorityFeePerGas: new BigNumber(0),
-          },
-        );
-
-        expect(res.errors).toEqual(
-          expect.objectContaining({
-            maxPriorityFee: new PriorityFeeTooLow(),
-          }),
-        );
-      });
-
-      it("should detect gas being too high in a legacy tx for the account balance and have an error", async () => {
-        const notEnoughBalanceResponse = await getTransactionStatus(
-          { ...account, balance: new BigNumber(2099999) },
-          legacyTx,
-        );
-        const enoughhBalanceResponse = await getTransactionStatus(
-          { ...account, balance: new BigNumber(2100001) },
-          legacyTx,
-        );
-
-        expect(notEnoughBalanceResponse.errors).toEqual(
-          expect.objectContaining({
-            gasPrice: new NotEnoughGas(),
-          }),
-        );
-        expect(enoughhBalanceResponse.errors).not.toEqual(
-          expect.objectContaining({
-            gasPrice: new NotEnoughGas(),
-          }),
-        );
-      });
-
-      it("should not detect gas being too high in a 1559 tx when there is no recipient and have an error", async () => {
-        const notEnoughBalanceResponse = await getTransactionStatus(
-          { ...account, balance: new BigNumber(2099999) },
-          { ...eip1559Tx, recipient: "" },
-        );
-        const enoughhBalanceResponse = await getTransactionStatus(
-          { ...account, balance: new BigNumber(2100000) },
-          { ...eip1559Tx, recipient: "" },
-        );
-
-        expect(notEnoughBalanceResponse.errors).not.toEqual(
-          expect.objectContaining({
-            gasPrice: new NotEnoughGas(),
-          }),
-        );
-        expect(enoughhBalanceResponse.errors).not.toEqual(
-          expect.objectContaining({
-            gasPrice: new NotEnoughGas(),
-          }),
-        );
-      });
-
-      it("should not detect gas being too high in a legacy tx when there is no recipient and have an error", async () => {
-        const notEnoughBalanceResponse = await getTransactionStatus(
-          { ...account, balance: new BigNumber(2099999) },
-          { ...legacyTx, recipient: "" },
-        );
-        const enoughhBalanceResponse = await getTransactionStatus(
-          { ...account, balance: new BigNumber(2100001) },
-          { ...legacyTx, recipient: "" },
-        );
-
-        expect(notEnoughBalanceResponse.errors).not.toEqual(
-          expect.objectContaining({
-            gasPrice: new NotEnoughGas(),
-          }),
-        );
-        expect(enoughhBalanceResponse.errors).not.toEqual(
-          expect.objectContaining({
-            gasPrice: new NotEnoughGas(),
-          }),
-        );
-      });
-
-      it("should detect maxFeePerGas being greater than max gasOptions maxFeePerGas and error", async () => {
-        const response = await getTransactionStatus(account, {
-          ...eip1559Tx,
-          gasOptions,
-          maxFeePerGas: new BigNumber(5),
+            expect(res.errors).toEqual(
+              expect.objectContaining({
+                gasLimit: new GasLessThanEstimate(),
+              }),
+            );
+          });
         });
-
-        expect(response.errors).toEqual(
-          expect.objectContaining({
-            maxPriorityFee: new PriorityFeeHigherThanMaxFee(),
-          }),
-        );
       });
 
-      it("should detect customGasLimit being lower than gasLimit and warn", async () => {
-        const response = await getTransactionStatus(account, {
-          ...eip1559Tx,
-          customGasLimit: eip1559Tx.gasLimit.minus(1),
+      describe("Specific", () => {
+        describe("Transaction Type: EIP1559", () => {
+          it("should detect a maxPriorityFee = 0 and have an error", async () => {
+            const res = await getTransactionStatus(
+              { ...account, balance: new BigNumber(2100000) },
+              {
+                ...eip1559Tx,
+                maxPriorityFeePerGas: new BigNumber(0),
+              },
+            );
+
+            expect(res.errors).toEqual(
+              expect.objectContaining({
+                maxPriorityFee: new PriorityFeeTooLow(),
+              }),
+            );
+          });
+
+          it("should detect maxFeePerGas being greater than max gasOptions maxFeePerGas and error", async () => {
+            const response = await getTransactionStatus(account, {
+              ...eip1559Tx,
+              gasOptions,
+              maxFeePerGas: new BigNumber(5),
+            });
+
+            expect(response.errors).toEqual(
+              expect.objectContaining({
+                maxPriorityFee: new PriorityFeeHigherThanMaxFee(),
+              }),
+            );
+          });
+
+          it("should detect customGasLimit being lower than gasLimit and warn", async () => {
+            const response = await getTransactionStatus(account, {
+              ...eip1559Tx,
+              customGasLimit: eip1559Tx.gasLimit.minus(1),
+            });
+
+            expect(response.warnings).toEqual(
+              expect.objectContaining({
+                gasLimit: new GasLessThanEstimate(),
+              }),
+            );
+          });
+
+          it("should detect maxPriorityFeePerGas being greater than max gasOptions maxPriorityFeePerGas and warn", async () => {
+            const response = await getTransactionStatus(account, {
+              ...eip1559Tx,
+              gasOptions,
+              maxPriorityFeePerGas: new BigNumber(4),
+            });
+
+            expect(response.warnings).toEqual(
+              expect.objectContaining({
+                maxPriorityFee: new PriorityFeeTooHigh(),
+              }),
+            );
+          });
+
+          it("should detect maxPriorityFeePerGas being lower than min gasOptions maxPriorityFeePerGas and warn", async () => {
+            const response = await getTransactionStatus(account, {
+              ...eip1559Tx,
+              gasOptions,
+              maxPriorityFeePerGas: new BigNumber(0.5),
+            });
+
+            expect(response.warnings).toEqual(
+              expect.objectContaining({
+                maxPriorityFee: new PriorityFeeTooLow(),
+              }),
+            );
+          });
+
+          it("should detect maxFeePerGas being lower than recommanded next base fee and warn", async () => {
+            const response = await getTransactionStatus(account, {
+              ...eip1559Tx,
+              gasOptions,
+              maxFeePerGas: new BigNumber(1),
+            });
+
+            expect(response.warnings).toEqual(
+              expect.objectContaining({
+                maxFee: new MaxFeeTooLow(),
+              }),
+            );
+          });
         });
-
-        expect(response.warnings).toEqual(
-          expect.objectContaining({
-            gasLimit: new GasLessThanEstimate(),
-          }),
-        );
-      });
-
-      it("should detect maxPriorityFeePerGas being greater than max gasOptions maxPriorityFeePerGas and warn", async () => {
-        const response = await getTransactionStatus(account, {
-          ...eip1559Tx,
-          gasOptions,
-          maxPriorityFeePerGas: new BigNumber(4),
-        });
-
-        expect(response.warnings).toEqual(
-          expect.objectContaining({
-            maxPriorityFee: new PriorityFeeTooHigh(),
-          }),
-        );
-      });
-
-      it("should detect maxPriorityFeePerGas being lower than min gasOptions maxPriorityFeePerGas and warn", async () => {
-        const response = await getTransactionStatus(account, {
-          ...eip1559Tx,
-          gasOptions,
-          maxPriorityFeePerGas: new BigNumber(0.5),
-        });
-
-        expect(response.warnings).toEqual(
-          expect.objectContaining({
-            maxPriorityFee: new PriorityFeeTooLow(),
-          }),
-        );
-      });
-
-      it("should detect maxFeePerGas being lower than recommanded next base fee and warn", async () => {
-        const response = await getTransactionStatus(account, {
-          ...eip1559Tx,
-          gasOptions,
-          maxFeePerGas: new BigNumber(1),
-        });
-
-        expect(response.warnings).toEqual(
-          expect.objectContaining({
-            maxFee: new MaxFeeTooLow(),
-          }),
-        );
       });
     });
 
