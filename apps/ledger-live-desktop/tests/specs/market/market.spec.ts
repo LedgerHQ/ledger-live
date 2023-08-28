@@ -60,6 +60,7 @@ test("Market", async ({ page }) => {
 
   await test.step("buy bitcoin from market page", async () => {
     await marketPage.openBuyPage("btc");
+    await marketPage.waitForLoading();
     await expect.soft(page).toHaveScreenshot("market-btc-buy-page.png");
     await layout.goToMarket();
   });
