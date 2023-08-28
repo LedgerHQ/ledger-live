@@ -1150,8 +1150,8 @@ importers:
         specifier: ^7.0.1
         version: 7.0.4(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react-native@0.71.6)
       '@react-native-community/cli-platform-android':
-        specifier: ^7.0.1
-        version: 7.0.1
+        specifier: ^11.0.0
+        version: 11.3.7
       '@react-native-community/cli-platform-ios':
         specifier: ^7.0.1
         version: 7.0.1
@@ -18348,27 +18348,22 @@ packages:
     transitivePeerDependencies:
       - encoding
 
-  /@react-native-community/cli-platform-android@6.3.1:
-    resolution: {integrity: sha512-n5A64RI1ty4ScZCel/3JYY9Anl857dPsUZ86Dwc1GxrbflSB5/+hcCMg5DCNcnJRa4Hdv95SAR5pMmtAjOXApA==}
+  /@react-native-community/cli-platform-android@11.3.7:
+    resolution: {integrity: sha512-WGtXI/Rm178UQb8bu1TAeFC/RJvYGnbHpULXvE20GkmeJ1HIrMjkagyk6kkY3Ej25JAP2R878gv+TJ/XiRhaEg==}
     dependencies:
-      '@react-native-community/cli-tools': 6.2.1
+      '@react-native-community/cli-tools': 11.3.7
       chalk: 4.1.2
-      execa: 1.0.0
-      fs-extra: 8.1.0
+      execa: 5.1.1
       glob: 7.2.3
-      jetifier: 1.6.8
-      lodash: 4.17.21
       logkitty: 0.7.1
-      slash: 3.0.0
-      xmldoc: 1.1.2
     transitivePeerDependencies:
       - encoding
     dev: true
 
-  /@react-native-community/cli-platform-android@7.0.1:
-    resolution: {integrity: sha512-nOr0aMkxAymCnbtsQwXBlyoRN2Y+IzC7Qz5T+/zyWwEbTY8SKQI8uV+8+qttUvzSvuXa2PeXsTWluuliOS8KCw==}
+  /@react-native-community/cli-platform-android@6.3.1:
+    resolution: {integrity: sha512-n5A64RI1ty4ScZCel/3JYY9Anl857dPsUZ86Dwc1GxrbflSB5/+hcCMg5DCNcnJRa4Hdv95SAR5pMmtAjOXApA==}
     dependencies:
-      '@react-native-community/cli-tools': 7.0.1
+      '@react-native-community/cli-tools': 6.2.1
       chalk: 4.1.2
       execa: 1.0.0
       fs-extra: 8.1.0
@@ -18544,9 +18539,25 @@ packages:
       open: 6.4.0
       ora: 5.4.1
       semver: 6.3.1
-      shell-quote: 1.7.3
+      shell-quote: 1.8.1
     transitivePeerDependencies:
       - encoding
+
+  /@react-native-community/cli-tools@11.3.7:
+    resolution: {integrity: sha512-peyhP4TV6Ps1hk+MBHTFaIR1eI3u+OfGBvr5r0wPwo3FAJvldRinMgcB/TcCcOBXVORu7ba1XYjkubPeYcqAyA==}
+    dependencies:
+      appdirsjs: 1.2.6
+      chalk: 4.1.2
+      find-up: 5.0.0
+      mime: 2.6.0
+      node-fetch: 2.6.9
+      open: 6.4.0
+      ora: 5.4.1
+      semver: 7.5.4
+      shell-quote: 1.8.1
+    transitivePeerDependencies:
+      - encoding
+    dev: true
 
   /@react-native-community/cli-tools@6.2.0:
     resolution: {integrity: sha512-08ssz4GMEnRxC/1FgTTN/Ud7mExQi5xMphItPjfHiTxpZPhrFn+IMx6mya0ncFEhhxQ207wYlJMRLPRRdBZ8oA==}
@@ -18573,7 +18584,7 @@ packages:
       node-fetch: 2.6.9
       open: 6.4.0
       semver: 6.3.1
-      shell-quote: 1.7.3
+      shell-quote: 1.8.1
     transitivePeerDependencies:
       - encoding
     dev: true
@@ -18589,7 +18600,7 @@ packages:
       open: 6.4.0
       ora: 5.4.1
       semver: 6.3.1
-      shell-quote: 1.7.3
+      shell-quote: 1.8.1
     transitivePeerDependencies:
       - encoding
     dev: true
@@ -30169,7 +30180,6 @@ packages:
       string-width: 4.2.3
       strip-ansi: 6.0.1
       wrap-ansi: 7.0.0
-    dev: true
 
   /clone-buffer@1.0.0:
     resolution: {integrity: sha512-KLLTJWrvwIP+OPfMn0x2PheDEP20RPUcGXj/ERegTgdmPEZylALQldygiqrPPu8P45uNuPs7ckmReLY6v/iA5g==}
@@ -32232,10 +32242,10 @@ packages:
 
   /dayjs@1.11.2:
     resolution: {integrity: sha512-F4LXf1OeU9hrSYRPTTj/6FbO4HTjPKXvEIC1P2kcnFurViINCVk3ZV0xAS3XVx9MkMsXbbqlK6hjseaYbgKEHw==}
+    dev: false
 
   /dayjs@1.11.9:
     resolution: {integrity: sha512-QvzAURSbQ0pKdIye2txOzNaHmxtUBXerpY0FJsFXUMKbIZeFm5ht1LS/jFsrncjnmtv8HsG0W2g6c0zUjZWmpA==}
-    dev: false
 
   /de-indent@1.0.2:
     resolution: {integrity: sha512-e/1zu3xH5MQryN2zdVaF0OrdNLUbvWxzMbi+iNA6Bky7l1RoP8a2fIbRocyHclXt/arDrrR6lL3TqFD9pMQTsg==}
@@ -40194,7 +40204,7 @@ packages:
       jest-util: 28.1.3
       jest-validate: 28.1.3
       prompts: 2.4.2
-      yargs: 17.5.1
+      yargs: 17.7.2
     transitivePeerDependencies:
       - '@types/node'
       - metro
@@ -40223,7 +40233,7 @@ packages:
       jest-util: 28.1.3
       jest-validate: 28.1.3
       prompts: 2.4.2
-      yargs: 17.5.1
+      yargs: 17.7.2
     transitivePeerDependencies:
       - '@types/node'
       - metro
@@ -40252,7 +40262,7 @@ packages:
       jest-util: 28.1.3
       jest-validate: 28.1.3
       prompts: 2.4.2
-      yargs: 17.5.1
+      yargs: 17.7.2
     transitivePeerDependencies:
       - '@types/node'
       - metro
@@ -40281,7 +40291,7 @@ packages:
       jest-util: 28.1.3
       jest-validate: 28.1.3
       prompts: 2.4.2
-      yargs: 17.5.1
+      yargs: 17.7.2
     transitivePeerDependencies:
       - '@types/node'
       - metro
@@ -40310,7 +40320,7 @@ packages:
       jest-util: 28.1.3
       jest-validate: 28.1.3
       prompts: 2.4.2
-      yargs: 17.5.1
+      yargs: 17.7.2
     transitivePeerDependencies:
       - '@types/node'
       - metro
@@ -40339,7 +40349,7 @@ packages:
       jest-util: 28.1.3
       jest-validate: 28.1.3
       prompts: 2.4.2
-      yargs: 17.5.1
+      yargs: 17.7.2
     transitivePeerDependencies:
       - '@types/node'
       - metro
@@ -40368,7 +40378,7 @@ packages:
       jest-util: 28.1.3
       jest-validate: 28.1.3
       prompts: 2.4.2
-      yargs: 17.5.1
+      yargs: 17.7.2
     transitivePeerDependencies:
       - '@types/node'
       - metro
@@ -40397,7 +40407,7 @@ packages:
       jest-util: 28.1.3
       jest-validate: 28.1.3
       prompts: 2.4.2
-      yargs: 17.5.1
+      yargs: 17.7.2
     transitivePeerDependencies:
       - '@types/node'
       - metro
@@ -40426,7 +40436,7 @@ packages:
       jest-util: 28.1.3
       jest-validate: 28.1.3
       prompts: 2.4.2
-      yargs: 17.5.1
+      yargs: 17.7.2
     transitivePeerDependencies:
       - '@types/node'
       - metro
@@ -40455,7 +40465,7 @@ packages:
       jest-util: 29.6.2
       jest-validate: 29.6.2
       prompts: 2.4.2
-      yargs: 17.5.1
+      yargs: 17.7.2
     transitivePeerDependencies:
       - '@types/node'
       - babel-plugin-macros
@@ -44200,7 +44210,7 @@ packages:
     resolution: {integrity: sha512-JpDCcQnyAAzZZaZ7vEiSqL690w7dAEyLao+KC96zBplnYbJS7TYNjvM3M7y3dGz+v7aIsJk3hllWuc0kWAjyRQ==}
     dependencies:
       picocolors: 1.0.0
-      shell-quote: 1.7.3
+      shell-quote: 1.8.1
 
   /layout-base@1.0.2:
     resolution: {integrity: sha512-8h2oVEZNktL4BH2JCOI90iD1yXwL6iNW7KcCKT2QZgQJR2vbqDsldCTPRU9NifTCqHZci57XvQQ15YTu+sTYPg==}
@@ -44873,7 +44883,7 @@ packages:
     hasBin: true
     dependencies:
       ansi-fragments: 0.2.1
-      dayjs: 1.11.2
+      dayjs: 1.11.9
       yargs: 15.4.1
 
   /loglevel@1.8.0:
@@ -46145,7 +46155,7 @@ packages:
       connect: 3.7.0
       debug: 2.6.9
       ws: 7.5.7
-      yargs: 17.5.1
+      yargs: 17.7.2
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -46160,7 +46170,7 @@ packages:
       debug: 2.6.9
       node-fetch: 2.6.9
       ws: 7.5.7
-      yargs: 17.5.1
+      yargs: 17.7.2
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -46977,7 +46987,7 @@ packages:
       temp: 0.8.3
       throat: 5.0.0
       ws: 7.5.7
-      yargs: 17.5.1
+      yargs: 17.7.2
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -52331,7 +52341,7 @@ packages:
       prompts: 2.4.2
       react-error-overlay: 6.0.11
       recursive-readdir: 2.2.2
-      shell-quote: 1.7.3
+      shell-quote: 1.8.1
       strip-ansi: 6.0.1
       text-table: 0.2.0
       typescript: 5.1.3
@@ -52345,7 +52355,7 @@ packages:
   /react-devtools-core@4.27.4:
     resolution: {integrity: sha512-dvZjrAJjahd6NNl7dDwEk5TyHsWJxDpYL7VnD9jdEr98EEEsVhw9G8JDX54Nrb3XIIOBlJDpjo3AuBuychX9zg==}
     dependencies:
-      shell-quote: 1.7.3
+      shell-quote: 1.8.1
       ws: 7.5.7
     transitivePeerDependencies:
       - bufferutil
@@ -55966,7 +55976,6 @@ packages:
 
   /shell-quote@1.8.1:
     resolution: {integrity: sha512-6j1W9l1iAs/4xYBI1SYOVZyFcCis9b4KCLQ8fgAGG07QvzaRLVVRQvAy85yNmmZSjYjg4MWh4gNvlPujU/5LpA==}
-    dev: true
 
   /shellwords@0.1.1:
     resolution: {integrity: sha512-vFwSUfQvqybiICwZY5+DAWIPLKsWO31Q91JSKl3UYv+K5c2QRPzn0qzec6QPu1Qc9eHYItiP3NdJqNVqetYAww==}
@@ -59132,7 +59141,7 @@ packages:
       smartwrap: 2.0.2
       strip-ansi: 6.0.1
       wcwidth: 1.0.1
-      yargs: 17.5.1
+      yargs: 17.7.2
     dev: true
 
   /tunnel-agent@0.6.0:
@@ -63239,7 +63248,6 @@ packages:
       string-width: 4.2.3
       y18n: 5.0.8
       yargs-parser: 21.1.1
-    dev: true
 
   /yarn-add-no-save@1.0.3:
     resolution: {integrity: sha512-ngmmxwYOogvYPjFDXGjoj35r/DteDzfiyoq5BI+kKSCCXW/I2gJA3KAgbm/7yFmcDE9CGSaORpNbYfglGYuxtA==}
