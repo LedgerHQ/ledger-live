@@ -6,8 +6,9 @@ import { casperPubKeyToAccountHash } from "./bridge/bridgeHelpers/addresses";
 export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
   steps: [
     {
-      title: "Review",
+      title: "Please",
       button: SpeculosButton.RIGHT,
+      expectedValue: () => "review",
     },
     {
       title: "Txn hash",
@@ -19,7 +20,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
       expectedValue: () => "Token transfer",
     },
     {
-      title: "Chain ID",
+      title: "Chain lD",
       button: SpeculosButton.RIGHT,
       expectedValue: () => "casper",
     },

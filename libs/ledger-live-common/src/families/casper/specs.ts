@@ -1,6 +1,7 @@
 import invariant from "invariant";
 import { DeviceModelId } from "@ledgerhq/devices";
 import BigNumber from "bignumber.js";
+import expect from "expect";
 
 import type { Transaction } from "../../families/casper/types";
 import { getCryptoCurrencyById } from "../../currencies";
@@ -17,8 +18,8 @@ const casperSpecs: AppSpec<Transaction> = {
   name: "Casper",
   currency: getCryptoCurrencyById("casper"),
   appQuery: {
-    model: DeviceModelId.nanoS,
-    appName: "casper",
+    model: DeviceModelId.nanoSP,
+    appName: "Casper",
   },
   genericDeviceAction: acceptTransaction,
   testTimeout: 6 * 60 * 1000,
@@ -65,7 +66,7 @@ const casperSpecs: AppSpec<Transaction> = {
         );
 
         if (transaction.transferId) {
-          botTest("operation memo", () =>
+          botTest("operation transferId", () =>
             expect(operation.extra).toMatchObject({
               transferId: transaction.transferId,
             }),
@@ -103,9 +104,9 @@ const casperSpecs: AppSpec<Transaction> = {
         );
 
         if (transaction.transferId) {
-          botTest("operation memo", () =>
+          botTest("operation transferId", () =>
             expect(operation.extra).toMatchObject({
-              tranferId: transaction.transferId,
+              transferId: transaction.transferId,
             }),
           );
         }
