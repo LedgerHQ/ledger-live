@@ -208,7 +208,7 @@
     "@ledgerhq/test-utils": "workspace:^",
     "@react-native-community/cli": "^7.0.1",
     "@react-native-community/cli-platform-android": "^7.0.1",
-    "@react-native-community/cli-platform-ios": "^7.0.1",
+    "@react-native-community/cli-platform-ios": "^11.0.0",
     "@sentry/cli": "^2.5.2",
     "@testing-library/jest-native": "^5.4.2",
     "@testing-library/react-native": "^12.1.0",
