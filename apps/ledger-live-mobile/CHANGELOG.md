@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.30.0-nightly.7
+
+### Patch Changes
+
+- [#4471](https://github.com/LedgerHQ/ledger-live/pull/4471) [`f55c6e4f90`](https://github.com/LedgerHQ/ledger-live/commit/f55c6e4f9027e8277553af44334026a70ee3bdaa) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - New firmware update flow: redesign of fw update available banner
+
 ## 3.30.0-nightly.6
 
 ### Minor Changes

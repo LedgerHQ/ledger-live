@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.67.0-nightly.7
+
+### Patch Changes
+
+- [#4310](https://github.com/LedgerHQ/ledger-live/pull/4310) [`a51494ccfa`](https://github.com/LedgerHQ/ledger-live/commit/a51494ccfa4aa0eca08c51f9c3687b2831b0eccf) Thanks [@mle-gall](https://github.com/mle-gall)! - Pixel polishing Sync Onboarding for Stax
+
 ## 2.67.0-nightly.6
 
 ### Minor Changes
