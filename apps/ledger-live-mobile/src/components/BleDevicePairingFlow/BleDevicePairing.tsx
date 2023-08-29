@@ -19,7 +19,7 @@ import { LockedDeviceError, PeerRemovedPairing } from "@ledgerhq/errors";
 import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
 import Animation from "../Animation";
 import { TrackScreen } from "../../analytics";
-import GenericErrorView from "../GenericErrorView";
+import GenericErrorView, { ErrorBody } from "../GenericErrorView";
 import { urls } from "../../config/urls";
 
 export type BleDevicePairingProps = {
@@ -146,23 +146,7 @@ const BleDevicePairing = ({ deviceToPair, onPaired, onRetry }: BleDevicePairingP
       <Flex flex={1}>
         <TrackScreen category="BT failed to pair" />
         <Flex flex={1} alignItems="center" justifyContent="center">
-          <Flex height={100} justifyContent="center">
-            <BoxedIcon
-              Icon={Icons.Close}
-              backgroundColor={"opacityDefault.c05"}
-              size={72}
-              variant="circle"
-              borderColor="transparent"
-              iconSize={"L"}
-              iconColor="error.c60"
-            />
-          </Flex>
-          <Text mt={4} mb={2} textAlign="center" variant="h4" fontWeight="semiBold">
-            {title}
-          </Text>
-          <Text variant="body" mb={8} color="neutral.c80" textAlign="center">
-            {subtitle}
-          </Text>
+          <ErrorBody title={title} description={subtitle} />
         </Flex>
         <Button type="main" onPress={onRetry} mb={8}>
           {t("blePairingFlow.pairing.error.retryCta")}
