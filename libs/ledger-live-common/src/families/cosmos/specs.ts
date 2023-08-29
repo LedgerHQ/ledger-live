@@ -74,6 +74,7 @@ const cosmosLikeTest: ({
   delete opExpected.blockHeight;
   delete opExpected.extra;
   delete opExpected.transactionSequenceNumber;
+  delete opExpected.nftOperations;
 
   const op: Partial<CosmosOperationRaw> = toOperationRaw(operation) as CosmosOperationRaw;
   const opExtra: CosmosOperationExtraRaw = op.extra || {};
