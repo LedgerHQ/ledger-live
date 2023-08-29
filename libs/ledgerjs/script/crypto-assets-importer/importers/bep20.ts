@@ -31,9 +31,6 @@ export const importBEP20 = async (baseURL: string, outputDir: string) => {
     log("import BEP 20 tokens...");
     const bep20 = await fetchBEP20(baseURL);
 
-    // TODO: we could decide to add so validators to remove duplicates, tokens that are not valid
-    // the json file in the CDN should always be valid and checked so we need to decide if we want to double check here
-
     fs.writeFileSync(`${outputDir}/bep20.json`, JSON.stringify(bep20));
 
     const BEP20TokenTypeStringified = `export type BEP20Token = [
