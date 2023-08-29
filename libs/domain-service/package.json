@@ -74,7 +74,7 @@
   },
   "devDependencies": {
     "@ledgerhq/types-cryptoassets": "workspace:^",
-    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/jest-dom": "^6.0.0",
     "@testing-library/react": "12",
     "@testing-library/react-hooks": "^4.0.1",
     "@types/jest": "^28.1.3",
