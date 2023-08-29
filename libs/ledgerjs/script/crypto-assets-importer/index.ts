@@ -6,6 +6,7 @@ import { importERC20 } from "./importers/erc20";
 import { importBEP20Exchange } from "./exchange/bep20";
 import { importERC20Signatures } from "./importers/erc20-signature";
 import { importCoinsExchange } from "./exchange/coins";
+import { importBEP20 } from "./importers/bep20";
 
 log("Starting importing cryptoassets from CDN...");
 
@@ -15,6 +16,7 @@ const outputFolder = path.join(__dirname, "../../packages/cryptoassets/src/data"
 const importTokens = async () => {
   await importEIP712(CRYPTO_ASSETS_BASE_URL, outputFolder);
   await importERC20(CRYPTO_ASSETS_BASE_URL, outputFolder);
+  await importBEP20(CRYPTO_ASSETS_BASE_URL, outputFolder);
 };
 
 const importExchangeTokens = async () => {

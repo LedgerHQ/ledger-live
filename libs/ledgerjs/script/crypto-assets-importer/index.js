@@ -13,7 +13,7 @@ const globalImporters = [
   require("./importers/polygontokensfull"),
   require("./importers/currenciesExchange"),
 ];
-const evmByChainImporter = require("./evm");
+const evmByChainImporter = require("./evm/index.ts");
 
 const outputFolder = path.join(__dirname, "../../packages/cryptoassets/src");
 const inputFolder = process.argv[2];
