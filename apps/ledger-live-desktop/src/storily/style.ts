@@ -1,6 +1,10 @@
 import { useTheme } from "styled-components";
 
 // https://docs.storyly.io/docs/web-set-up-storyly-bar#story-bar-customizations
+
+/**
+ * Storyly Style's props.
+ */
 export type StorylyStyleProps = {
   storyGroupTextColor?: string;
   storyGroupTextSeenColor?: string;
@@ -8,6 +12,11 @@ export type StorylyStyleProps = {
   storyGroupIconBorderColorSeen?: [string, string];
 };
 
+/**
+ * Hook that handle the Storily Style's props set up.
+ *
+ * @returns Storily Style's props.
+ */
 export const useStorylyDefaultStyleProps = (): StorylyStyleProps => {
   const theme = useTheme();
 

@@ -6,6 +6,9 @@ import { useSelector } from "react-redux";
 import { languageSelector } from "~/renderer/reducers/settings";
 import { Language } from "~/config/languages";
 
+/**
+ * Storyly Options
+ */
 type StorylyOptions = {
   token: string;
 
@@ -21,6 +24,13 @@ type StorylyRef = {
   init: (options: StorylyOptions) => void;
 };
 
+/**
+ * Hook to use Storily
+ *
+ * @param instanceId
+ *
+ * @returns a ref to be used to manage the Storyly's instance associated with it.
+ */
 export const useStoryly = (instanceId: StorylyInstanceID) => {
   const ref = useRef<StorylyRef>();
   const props = useStorylyDefaultStyleProps();
