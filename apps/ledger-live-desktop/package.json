@@ -176,7 +176,7 @@
     "@types/uuid": "^8.3.4",
     "@types/write-file-atomic": "^4.0.0",
     "@types/zxcvbn": "^4.4.1",
-    "@vitejs/plugin-react": "^3.1.0",
+    "@vitejs/plugin-react": "^4.0.0",
     "allure-playwright": "^2.0.0-beta.20",
     "axios": "^1.3.4",
     "chalk": "^4.1.2",
