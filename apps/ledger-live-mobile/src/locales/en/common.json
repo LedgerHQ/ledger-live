@@ -1989,10 +1989,11 @@
       }
     },
     "firmwareUpdateAvailableDrawer": {
-      "title": "OS update available",
+      "title": "{{productName}} OS update available",
       "description": "Update your {{productName}} to benefit from the latest security and functionality.",
       "descriptionVersion": "Version {{firmwareVersion}}",
-      "updateCta": "Update now"
+      "updateCta": "Update now",
+      "seeWhatsInUpdateCta": "See what's in the update"
     }
   },
   "syncOnboarding": {

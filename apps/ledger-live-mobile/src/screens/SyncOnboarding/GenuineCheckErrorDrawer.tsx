@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { BoxedIcon, Button, Flex, Text } from "@ledgerhq/native-ui";
+import { BoxedIcon, Button, Flex, Icons, Link, Text } from "@ledgerhq/native-ui";
 import { CircledCrossSolidMedium, WarningSolidMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useTranslation } from "react-i18next";
 import QueuedDrawer from "../../components/QueuedDrawer";
@@ -106,29 +106,30 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
   if (isNotFoundEntity) {
     content = (
       <>
-        <Flex justifyContent="center" alignItems="center" flex={1} mt={9} mb={6}>
+        <Flex justifyContent="center" alignItems="center" mt={10} mb={7}>
           <BoxedIcon
-            Icon={<CircledCrossSolidMedium color="error.c60" size={32} />}
+            Icon={<Icons.DeleteCircleFill color="error.c60" size="L" />}
             variant="circle"
-            backgroundColor="neutral.c30"
+            backgroundColor="opacityDefault.c05"
             borderColor="transparent"
-            size={64}
+            size={72}
           />
         </Flex>
-        <Text textAlign="center" variant="h4" fontWeight="semiBold" mb={4} mt={8}>
+        <Text textAlign="center" variant="h4" fontWeight="semiBold">
           {t("earlySecurityCheck.genuineCheckErrorDrawer.notFoundEntity.title")}
         </Text>
-        <Text textAlign="center" variant="bodyLineHeight" mb={8} color="neutral.c80">
+        <Text mt={6} textAlign="center" variant="bodyLineHeight" color="neutral.c80">
           {t("earlySecurityCheck.genuineCheckErrorDrawer.notFoundEntity.description", {
             productName,
           })}
         </Text>
-        <Button type="main" mb={4} onPress={onGoToSettings}>
+        <Button type="main" mt={8} mb={7} size={"large"} onPress={onGoToSettings}>
           {t("earlySecurityCheck.genuineCheckErrorDrawer.notFoundEntity.settingsCta")}
         </Button>
-        <Button onPress={handleCancel}>
+        <Link onPress={handleCancel} size={"large"}>
           {t("earlySecurityCheck.genuineCheckErrorDrawer.cancelCta")}
-        </Button>
+        </Link>
+        <Flex height={7} />
       </>
     );
   }
@@ -138,17 +139,18 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
       <>
         <GenericErrorView
           error={error}
-          Icon={WarningSolidMedium}
+          Icon={() => <Icons.WarningFill color="warning.c60" size="L" />}
           iconColor="warning.c70"
           hasExportLogButton={false}
           renderedInType="drawer"
         />
-        <Button type="main" mt={4} onPress={handleRetry}>
+        <Button type="main" mt={8} mb={7} size={"large"} onPress={handleRetry}>
           {t("earlySecurityCheck.genuineCheckErrorDrawer.retryCta")}
         </Button>
-        <Button onPress={handleCancel}>
+        <Link onPress={handleCancel} size="large">
           {t("earlySecurityCheck.genuineCheckErrorDrawer.cancelCta")}
-        </Button>
+        </Link>
+        <Flex height={7} />
       </>
     );
   }
@@ -156,29 +158,30 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
   else {
     content = (
       <>
-        <Flex justifyContent="center" alignItems="center" flex={1} mt={9} mb={6}>
+        <Flex justifyContent="center" alignItems="center" mt={10} mb={7}>
           <BoxedIcon
-            Icon={<WarningSolidMedium color="warning.c70" size={32} />}
+            Icon={<Icons.WarningFill color="warning.c60" size="L" />}
             variant="circle"
             backgroundColor="neutral.c30"
             borderColor="transparent"
-            size={64}
+            size={72}
           />
         </Flex>
-        <Text textAlign="center" variant="h4" fontWeight="semiBold" mb={4} mt={8}>
+        <Text textAlign="center" variant="h4" fontWeight="semiBold">
           {t("earlySecurityCheck.genuineCheckErrorDrawer.title")}
         </Text>
-        <Text textAlign="center" variant="bodyLineHeight" mb={8} color="neutral.c80">
+        <Text mt={6} textAlign="center" variant="bodyLineHeight" color="neutral.c80">
           {t("earlySecurityCheck.genuineCheckErrorDrawer.description", {
             productName,
           })}
         </Text>
-        <Button type="main" mb={4} onPress={handleRetry}>
+        <Button type="main" mt={8} mb={7} size={"large"} onPress={handleRetry}>
           {t("earlySecurityCheck.genuineCheckErrorDrawer.retryCta")}
         </Button>
-        <Button onPress={handleCancel}>
+        <Link onPress={handleCancel} size="large">
           {t("earlySecurityCheck.genuineCheckErrorDrawer.cancelCta")}
-        </Button>
+        </Link>
+        <Flex height={7} />
       </>
     );
   }

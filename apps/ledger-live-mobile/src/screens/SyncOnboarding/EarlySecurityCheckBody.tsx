@@ -1,6 +1,6 @@
 import React from "react";
 import { ScrollView } from "react-native";
-import { Flex, Text } from "@ledgerhq/native-ui";
+import { Flex, Link, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import Button from "../../components/wrappedUi/Button";
 import type { Step, UiCheckStatus } from "./EarlySecurityCheck";
@@ -80,7 +80,7 @@ const EarlySecurityCheckBody: React.FC<Props> = ({
         productName,
       });
       primaryBottomCta = (
-        <Button type="main" onPress={onRetryGenuineCheck}>
+        <Button type="main" size="large" onPress={onRetryGenuineCheck}>
           {t("earlySecurityCheck.genuineCheckStep.refused.cta")}
         </Button>
       );
@@ -120,7 +120,7 @@ const EarlySecurityCheckBody: React.FC<Props> = ({
       );
 
       primaryBottomCta = (
-        <Button type="main" onPress={notifyOnboardingEarlyCheckEnded}>
+        <Button type="main" size="large" onPress={notifyOnboardingEarlyCheckEnded}>
           {t("earlySecurityCheck.completed.continueCta")}
         </Button>
       );
@@ -130,9 +130,9 @@ const EarlySecurityCheckBody: React.FC<Props> = ({
 
       // So the user can continue the onboarding in case of failure
       primaryBottomCta = (
-        <Button type="main" onPress={onSkipFirmwareUpdate} mt="2">
+        <Link size="large" onPress={onSkipFirmwareUpdate}>
           {t("earlySecurityCheck.firmwareUpdateCheckStep.error.skipCta")}
-        </Button>
+        </Link>
       );
       break;
     case "firmwareUpdateRefused":
@@ -149,7 +149,7 @@ const EarlySecurityCheckBody: React.FC<Props> = ({
         );
 
         primaryBottomCta = (
-          <Button type="main" onPress={onUpdateFirmware} mt="2">
+          <Button type="main" size="large" onPress={onUpdateFirmware}>
             {t("earlySecurityCheck.firmwareUpdateCheckStep.refused.updateCta")}
           </Button>
         );
@@ -162,9 +162,9 @@ const EarlySecurityCheckBody: React.FC<Props> = ({
       }
 
       secondaryBottomCta = (
-        <Button type="default" onPress={onSkipFirmwareUpdate}>
+        <Link size="large" onPress={onSkipFirmwareUpdate}>
           {t("earlySecurityCheck.firmwareUpdateCheckStep.refused.skipCta")}
-        </Button>
+        </Link>
       );
 
       break;
@@ -182,7 +182,7 @@ const EarlySecurityCheckBody: React.FC<Props> = ({
 
   if (currentStep === "idle") {
     primaryBottomCta = (
-      <Button type="main" onPress={onStartChecks}>
+      <Button type="main" size="large" onPress={onStartChecks}>
         {t("earlySecurityCheck.idle.checkCta")}
       </Button>
     );
@@ -230,7 +230,7 @@ const EarlySecurityCheckBody: React.FC<Props> = ({
             />
           </Flex>
         </Flex>
-        <Flex>
+        <Flex rowGap={space[7]}>
           {primaryBottomCta}
           {secondaryBottomCta}
         </Flex>

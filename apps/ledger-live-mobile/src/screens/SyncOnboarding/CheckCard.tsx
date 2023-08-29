@@ -1,12 +1,6 @@
 import React from "react";
-import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
-import {
-  CheckTickMedium,
-  ExternalLinkMedium,
-  WarningSolidMedium,
-  InfoAltFillMedium,
-} from "@ledgerhq/native-ui/assets/icons";
-import { Flex, InfiniteLoader, Text, Link, BoxedIcon } from "@ledgerhq/native-ui";
+import { ExternalLinkMedium } from "@ledgerhq/native-ui/assets/icons";
+import { Flex, Icons, InfiniteLoader, Text, Link, BoxedIcon } from "@ledgerhq/native-ui";
 import { UiCheckStatus } from "./EarlySecurityCheck";
 
 export type CheckCardProps = {
@@ -32,14 +26,14 @@ const CheckCard: React.FC<CheckCardProps> = ({
       checkIcon = <InfiniteLoader color="primary.c80" size={20} />;
       break;
     case "completed":
-      checkIcon = <CheckTickMedium color="success.c50" size={20} />;
+      checkIcon = <Icons.CheckmarkCircleFill color="success.c60" size="S" />;
       break;
     case "error":
     case "genuineCheckRefused":
-      checkIcon = <WarningSolidMedium color="warning.c60" size={20} />;
+      checkIcon = <Icons.WarningFill color="warning.c70" size="S" />;
       break;
     case "firmwareUpdateRefused":
-      checkIcon = <InfoAltFillMedium color="primary.c80" size={20} />;
+      checkIcon = <Icons.InformationFill color="primary.c80" size="S" />;
       break;
     case "inactive":
     default:

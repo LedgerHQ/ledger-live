@@ -1,5 +1,5 @@
 import React from "react";
-import { BoxedIcon, Button, Flex, Text } from "@ledgerhq/native-ui";
+import { BoxedIcon, Button, Flex, Icons, IconsLegacy, Link, Text } from "@ledgerhq/native-ui";
 import { NanoFirmwareUpdateMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useTranslation } from "react-i18next";
 import QueuedDrawer from "../../components/QueuedDrawer";
@@ -33,29 +33,32 @@ const FirmwareUpdateAvailableDrawer: React.FC<Props> = ({
 
   return (
     <QueuedDrawer onClose={onClose} isRequestingToBeOpened={isOpen} preventBackdropClick>
-      <Flex justifyContent="center" alignItems="center">
+      <Flex justifyContent="center" alignItems="center" mb={7}>
         <BoxedIcon
-          Icon={<NanoFirmwareUpdateMedium color="primary.c90" size={24} />}
+          Icon={<Icons.InformationFill color="primary.c80" size={"L"} />}
           variant="circle"
-          backgroundColor="primary.c30"
+          backgroundColor="opacityDefault.c05"
           borderColor="transparent"
-          size={48}
+          size={72}
         />
       </Flex>
-      <Text textAlign="center" variant="h4" fontWeight="semiBold" mb={4} mt={8}>
-        {t("earlySecurityCheck.firmwareUpdateAvailableDrawer.title")}
+      <Text textAlign="center" variant="h4" fontWeight="semiBold">
+        {t("earlySecurityCheck.firmwareUpdateAvailableDrawer.title", { productName })}
       </Text>
-      <Text textAlign="center" variant="bodyLineHeight" mb={1} color="neutral.c80">
+      <Text mt={6} textAlign="center" variant="bodyLineHeight" color="neutral.c80">
         {t("earlySecurityCheck.firmwareUpdateAvailableDrawer.descriptionVersion", {
           firmwareVersion,
         })}
-      </Text>
-      <Text textAlign="center" variant="bodyLineHeight" mb={8} color="neutral.c80">
+        {"\n"}
         {t("earlySecurityCheck.firmwareUpdateAvailableDrawer.description", { productName })}
       </Text>
-      <Button type="main" mb={6} onPress={onUpdate}>
+      <Button mt={8} mb={7} type="main" onPress={onUpdate} size={"large"}>
         {t("earlySecurityCheck.firmwareUpdateAvailableDrawer.updateCta")}
       </Button>
+      <Link onPress={onUpdate} size={"large"} Icon={IconsLegacy.ExternalLinkMedium}>
+        {t("earlySecurityCheck.firmwareUpdateAvailableDrawer.seeWhatsInUpdateCta")}
+      </Link>
+      <Flex height={7} />
     </QueuedDrawer>
   );
 };
