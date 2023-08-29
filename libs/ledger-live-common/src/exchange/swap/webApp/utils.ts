@@ -32,10 +32,10 @@ export const getCustomFeesPerFamily = transaction => {
   }
 };
 
-export const convertToNonAtomicUnit =  (amount, account) => {
+export const convertToNonAtomicUnit = (amount, account) => {
   const fromMagnitude =
     account.type === "TokenAccount"
       ? account.token.units[0].magnitude || 0
       : account.currency?.units[0].magnitude || 0;
   return amount.shiftedBy(-fromMagnitude);
-}
+};
