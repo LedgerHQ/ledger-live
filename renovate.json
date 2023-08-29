@@ -24,7 +24,7 @@
     },
     {
       "description": "Electron linked updates",
-      "matchPackagePatterns": ["electron"],
+      "matchPackagePatterns": ["electron", "^@electron"],
       "excludePackageNames": [
         "@sentry/electron",
         "electron-context-menu",
