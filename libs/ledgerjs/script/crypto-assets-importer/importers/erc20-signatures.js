@@ -1,9 +1,7 @@
 const path = require("path");
 const Buffer = require("buffer").Buffer;
 const { readFileJSON, asUint4be } = require("../utils");
-const {
-  getCryptoCurrencyById,
-} = require("../../../packages/cryptoassets/lib/currencies");
+const { getCryptoCurrencyById } = require("../../../packages/cryptoassets/lib/currencies");
 
 module.exports = {
   paths: [
@@ -16,13 +14,10 @@ module.exports = {
     "tokens/polygon/erc20",
   ],
   id: "erc20",
-  output: (toJSON) => `data/erc20-signatures.${toJSON ? "json" : "ts"}`,
+  output: toJSON => `data/erc20-signatures.${toJSON ? "json" : "ts"}`,
 
-  join: (buffers) =>
-    buffers.reduce(
-      (acc, b) => Buffer.concat([acc, asUint4be(b.length), b]),
-      Buffer.alloc(0)
-    ),
+  join: buffers =>
+    buffers.reduce((acc, b) => Buffer.concat([acc, asUint4be(b.length), b]), Buffer.alloc(0)),
 
   outputTemplate: (data, toJSON) =>
     toJSON
@@ -34,12 +29,11 @@ module.exports = {
       readFileJSON(path.join(folder, id, "common.json")),
       readFileJSON(path.join(signatureFolder, id, "ledger_signature.json")),
     ]).then(([common, ledgerSignature]) => {
-
       const currency = getCryptoCurrencyById(path.basename(path.dirname(folder)));
 
       // match crypto-assets convention for tickers: testnet tokens are prefixed with "t"
       // https://github.com/LedgerHQ/crypto-assets/blob/d2fe1cf9a110614650191555b846a2e43eb67b8f/scripts/hsm/coin_parameters/coin_parameters.py#L163
-      const prefix = currency.isTestnetFor !== undefined ? 't': '';
+      const prefix = currency.isTestnetFor !== undefined ? "t" : "";
       const ticker = Buffer.from(prefix + common.ticker, "ascii");
 
       const decimals = asUint4be(common.decimals);

@@ -1,17 +1,13 @@
 const invariant = require("invariant");
 const path = require("path");
 const { readFileJSON } = require("../utils");
-const {
-  findFiatCurrencyByTicker,
-} = require("../../../packages/cryptoassets/lib/fiats");
-const {
-  getCryptoCurrencyById,
-} = require("../../../packages/cryptoassets/lib/currencies");
+const { findFiatCurrencyByTicker } = require("../../../packages/cryptoassets/lib/fiats");
+const { getCryptoCurrencyById } = require("../../../packages/cryptoassets/lib/currencies");
 
 const inferParentCurrency = (common, folder) =>
   getCryptoCurrencyById(path.basename(path.dirname(folder))).id;
 
-const withoutExtraComma = (str) => {
+const withoutExtraComma = str => {
   const m = str.match(/,+$/);
   if (!m) return str;
   return str.slice(0, str.length - m[0].length);
@@ -19,7 +15,7 @@ const withoutExtraComma = (str) => {
 
 const WARN_IF_COUNTERVALUES = true;
 
-const lenseTicker = (a) => a[9] || a[2];
+const lenseTicker = a => a[9] || a[2];
 
 module.exports = {
   paths: [
@@ -29,7 +25,7 @@ module.exports = {
     "tokens/ethereum_ropsten/erc20",
     "tokens/ethereum_sepolia/erc20",
   ],
-  output: (toJSON) => `data/erc20.${toJSON ? "json" : "ts"}`,
+  output: toJSON => `data/erc20.${toJSON ? "json" : "ts"}`,
 
   validate: (everything, countervaluesTickers) =>
     [
@@ -38,63 +34,58 @@ module.exports = {
       "ethereum_rinkeby",
       "ethereum_ropsten",
       "ethereum_sepolia",
-    ].flatMap((cid) => {
-      const all = everything.filter((a) => a[0] === cid);
+    ].flatMap(cid => {
+      const all = everything.filter(a => a[0] === cid);
       const fiatCollisions = all.filter(
-        (a) =>
+        a =>
           findFiatCurrencyByTicker(lenseTicker(a)) &&
           !a[7] &&
-          (WARN_IF_COUNTERVALUES
-            ? countervaluesTickers.includes(lenseTicker(a))
-            : true)
+          (WARN_IF_COUNTERVALUES ? countervaluesTickers.includes(lenseTicker(a)) : true),
       );
       const contractGroup = {};
-      all.forEach((a) => {
-        const matches = all.filter((b) => a[6] && b[6] && a[6] === b[6]);
+      all.forEach(a => {
+        const matches = all.filter(b => a[6] && b[6] && a[6] === b[6]);
         if (matches.length > 1 && !contractGroup[a[6]]) {
           contractGroup[a[6]] = matches;
         }
       });
       const groups = {};
-      all.forEach((a) => {
+      all.forEach(a => {
         if (a[7]) return;
         groups[lenseTicker(a)] = (groups[lenseTicker(a)] || []).concat([a]);
       });
       const dupTickers = Object.keys(groups).filter(
-        (a) =>
-          groups[a].length > 1 &&
-          (WARN_IF_COUNTERVALUES ? countervaluesTickers.includes(a) : true)
+        a =>
+          groups[a].length > 1 && (WARN_IF_COUNTERVALUES ? countervaluesTickers.includes(a) : true),
       );
 
       if (Object.keys(contractGroup).length > 0) {
-        Object.keys(contractGroup).forEach((key) => {
+        Object.keys(contractGroup).forEach(key => {
           console.warn(
             key +
               " contract used in erc20: " +
-              contractGroup[key].map((a) => lenseTicker(a)).join(", ")
+              contractGroup[key].map(a => lenseTicker(a)).join(", "),
           );
         });
       }
 
       if (fiatCollisions.length > 0) {
         console.warn("\nERC20 THAT COLLIDES WITH FIAT TICKERS:\n");
-        fiatCollisions.forEach((t) => {
+        fiatCollisions.forEach(t => {
           console.warn(lenseTicker(t) + " ticker used by erc20: " + t[1]);
         });
       }
 
       if (dupTickers.length > 0) {
         console.warn("\nERC20 TICKER COLLISIONS:\n");
-        dupTickers.forEach((ticker) => {
+        dupTickers.forEach(ticker => {
           console.warn(
-            ticker +
-              " ticker is used by erc20: " +
-              groups[ticker].map((a) => a[1]).join(", ")
+            ticker + " ticker is used by erc20: " + groups[ticker].map(a => a[1]).join(", "),
           );
         });
       }
 
-      return all.filter((a) => !contractGroup[a[6]]);
+      return all.filter(a => !contractGroup[a[6]]);
     }),
   outputTemplate: (data, toJSON) =>
     toJSON
@@ -115,14 +106,12 @@ module.exports = {
 const tokens: ERC20Token[] = [
 ${data
   .map(
-    (item) =>
+    item =>
       "[" +
       withoutExtraComma(
-        item
-          .map((value) => (value === undefined ? "" : JSON.stringify(value)))
-          .join(",")
+        item.map(value => (value === undefined ? "" : JSON.stringify(value))).join(","),
       ) +
-      "]"
+      "]",
   )
   .join(",\n")}
 ];
@@ -146,41 +135,39 @@ export default tokens;
       try {
         invariant(
           typeof parentCurrency === "string" && parentCurrency,
-          "parentCurrency is required"
+          "parentCurrency is required",
         );
         invariant(typeof name === "string" && name, "name is required");
         invariant(typeof name === "string" && name, "name is required");
         invariant(typeof id === "string" && id, "id is required");
         invariant(
           typeof ledgerSignature === "string" && ledgerSignature,
-          "ledgerSignature is required"
+          "ledgerSignature is required",
         );
         invariant(
-          ledgerSignature.length % 2 === 0 &&
-            ledgerSignature.match(/^[0-9a-fA-F]+$/g),
-          "ledgerSignature is hexa"
+          ledgerSignature.length % 2 === 0 && ledgerSignature.match(/^[0-9a-fA-F]+$/g),
+          "ledgerSignature is hexa",
         );
         invariant(
           typeof contractAddress === "string" && contractAddress,
-          "contractAddress is required"
+          "contractAddress is required",
         );
         invariant(
-          contractAddress.length === 42 &&
-            contractAddress.match(/^0x[0-9a-fA-F]+$/g),
-          "contractAddress is not eth address"
+          contractAddress.length === 42 && contractAddress.match(/^0x[0-9a-fA-F]+$/g),
+          "contractAddress is not eth address",
         );
         invariant(typeof ticker === "string" && ticker, "ticker is required");
         invariant(
           ticker.match(/^[0-9A-Z+_\-*$]+$/g),
           "ticker '%s' alphanum uppercase expected",
-          ticker
+          ticker,
         );
         invariant(
           typeof magnitude === "number" &&
             Number.isFinite(magnitude) &&
             magnitude >= 0 &&
             magnitude % 1 === 0,
-          "magnitude expected positive integer"
+          "magnitude expected positive integer",
         );
       } catch (e) {
         console.error("erc20 " + id + ": " + e);

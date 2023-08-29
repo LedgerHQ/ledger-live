@@ -18,9 +18,7 @@ const evmByChainImporter = require("./evm");
 const outputFolder = path.join(__dirname, "../../packages/cryptoassets/src");
 const inputFolder = process.argv[2];
 if (!inputFolder) {
-  console.error(
-    "The folder of ledger's crypto-assets is required in parameter"
-  );
+  console.error("The folder of ledger's crypto-assets is required in parameter");
   process.exit(1);
 }
 const toJSON = process.argv[3] === "true";
@@ -28,38 +26,34 @@ const toJSON = process.argv[3] === "true";
 axios
   .get("https://countervalues.live.ledger.com/v2/tickers")
   .then(({ data: countervaluesTickers }) => {
-    globalImporters.forEach((imp) => {
+    globalImporters.forEach(imp => {
       const outputJS = path.join(
         outputFolder,
-        imp.output ? imp.output(toJSON) : imp.path + toJSON ? ".json" : ".ts"
+        imp.output ? imp.output(toJSON) : imp.path + toJSON ? ".json" : ".ts",
       );
       Promise.all(
-        imp.paths.map((p) => {
+        imp.paths.map(p => {
           const folder = path.join(inputFolder, "assets", p);
           const signatureFolder = path.join(inputFolder, "signatures/prod/", p);
           const items = fs
             .readdirSync(folder, { withFileTypes: true })
-            .filter((dirent) => dirent.isDirectory())
-            .map((dir) => dir.name);
-          const shouldLoad = (id) =>
-            imp.shouldLoad
-              ? imp.shouldLoad({ folder, id })
-              : !id.endsWith(".json");
-          return promiseAllBatched(50, items.sort().filter(shouldLoad), (id) =>
+            .filter(dirent => dirent.isDirectory())
+            .map(dir => dir.name);
+          const shouldLoad = id =>
+            imp.shouldLoad ? imp.shouldLoad({ folder, id }) : !id.endsWith(".json");
+          return promiseAllBatched(50, items.sort().filter(shouldLoad), id =>
             Promise.resolve()
               .then(() => imp.loader({ signatureFolder, folder, id }))
-              .catch((e) => {
+              .catch(e => {
                 console.log("FAILED " + id + " " + e);
-              })
+              }),
           );
-        })
+        }),
       )
-        .then((all) => all.flat())
-        .then((all) => all.filter(Boolean))
-        .then((all) =>
-          imp.validate ? imp.validate(all, countervaluesTickers) : all
-        )
-        .then((all) => {
+        .then(all => all.flat())
+        .then(all => all.filter(Boolean))
+        .then(all => (imp.validate ? imp.validate(all, countervaluesTickers) : all))
+        .then(all => {
           const data = imp.join ? imp.join(all) : all;
           fs.writeFileSync(outputJS, imp.outputTemplate(data, toJSON), "utf-8");
         });
@@ -88,7 +82,7 @@ async function promiseAllBatched(batch, items, fn) {
   await Promise.all(
     Array(Math.min(batch, items.length))
       .fill(() => undefined)
-      .map(step)
+      .map(step),
   );
   return data;
 }

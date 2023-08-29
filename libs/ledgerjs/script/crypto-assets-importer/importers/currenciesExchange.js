@@ -7,13 +7,13 @@ const idFromFolderAndFile = (folder, id) =>
 
 module.exports = {
   paths: ["coins"],
-  output: (toJSON) => `data/exchange/coins.${toJSON ? "json" : "ts"}`,
+  output: toJSON => `data/exchange/coins.${toJSON ? "json" : "ts"}`,
   outputTemplate: (data, toJSON) =>
     toJSON
       ? JSON.stringify(data)
       : `export type Exchange = [string, string, string];
 const exchanges: Exchange[] = [
-  ${data.map((item) => JSON.stringify(item)).join(",\n\t")}
+  ${data.map(item => JSON.stringify(item)).join(",\n\t")}
 ];
 
 export default exchanges;
@@ -22,7 +22,7 @@ export default exchanges;
     const filePath = path.join(signatureFolder, id, "exchange_signature.json");
     if (!fs.existsSync(filePath)) return;
 
-    return readFileJSON(filePath).then((exchange) => [
+    return readFileJSON(filePath).then(exchange => [
       idFromFolderAndFile(folder, id),
       exchange.serialized_config,
       exchange.signature,
