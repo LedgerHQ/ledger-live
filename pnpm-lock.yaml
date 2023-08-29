@@ -215,14 +215,14 @@ importers:
         specifier: ^4.14.177
         version: 4.14.182
       '@types/node':
-        specifier: ^17.0.15
-        version: 17.0.32
+        specifier: ^18.0.0
+        version: 18.16.19
       '@types/pako':
         specifier: ^2.0.0
         version: 2.0.0
       ts-node:
         specifier: ^10.4.0
-        version: 10.7.0(@types/node@17.0.32)(typescript@5.1.3)
+        version: 10.7.0(@types/node@18.16.19)(typescript@5.1.3)
 
   apps/ledger-live-desktop:
     dependencies:
@@ -4138,8 +4138,8 @@ importers:
         specifier: ^27.0.1
         version: 27.5.1
       '@types/node':
-        specifier: ^16.7.13
-        version: 16.11.12
+        specifier: ^18.0.0
+        version: 18.16.19
       '@types/react':
         specifier: ^17.0.53
         version: 17.0.53
@@ -4187,8 +4187,8 @@ importers:
         specifier: ^27.0.1
         version: 27.5.1
       '@types/node':
-        specifier: ^16.7.13
-        version: 16.11.12
+        specifier: ^18.0.0
+        version: 18.16.19
       '@types/react':
         specifier: ^17.0.53
         version: 17.0.53
@@ -4561,8 +4561,8 @@ importers:
         specifier: ^3.3.1
         version: 3.3.1(@types/react@17.0.53)
       '@types/node':
-        specifier: ^17.0.31
-        version: 17.0.32
+        specifier: ^18.0.0
+        version: 18.16.19
       '@types/prop-types':
         specifier: ^15.7.5
         version: 15.7.5
@@ -5267,11 +5267,11 @@ importers:
         specifier: ^27.5.1
         version: 27.5.1
       '@types/node':
-        specifier: ^14.14.19
-        version: 14.18.17
+        specifier: ^18.0.0
+        version: 18.16.19
       jest:
         specifier: ^28.1.0
-        version: 28.1.0(@types/node@14.18.17)
+        version: 28.1.0(@types/node@18.16.19)
       nock:
         specifier: ^13.0.5
         version: 13.2.4
@@ -24648,24 +24648,12 @@ packages:
     resolution: {integrity: sha512-s3nugnZumCC//n4moGGe6tkNMyYEdaDBitVjwPxXmR5lnMG5dHePinH2EdxkG3Rh1ghFHHixAG4NJhpJW1rthQ==}
     dev: false
 
-  /@types/node@14.18.17:
-    resolution: {integrity: sha512-oajWz4kOajqpKJMPgnCvBajPq8QAvl2xIWoFjlAJPKGu6n7pjov5SxGE45a+0RxHDoo4ycOMoZw1SCOWtDERbw==}
-    dev: true
-
   /@types/node@14.18.38:
     resolution: {integrity: sha512-zMRIidN2Huikv/+/U7gRPFYsXDR/7IGqFZzTLnCEj5+gkrQjsowfamaxEnyvArct5hxGA3bTxMXlYhH78V6Cew==}
     dev: true
 
-  /@types/node@16.11.12:
-    resolution: {integrity: sha512-+2Iggwg7PxoO5Kyhvsq9VarmPbIelXP070HMImEpbtGCoyWNINQj4wzjbQCXzdHTRXnqufutJb5KAURZANNBAw==}
-    dev: true
-
   /@types/node@16.18.16:
     resolution: {integrity: sha512-ZOzvDRWp8dCVBmgnkIqYCArgdFOO9YzocZp8Ra25N/RStKiWvMOXHMz+GjSeVNe5TstaTmTWPucGJkDw0XXJWA==}
-    dev: true
-
-  /@types/node@17.0.32:
-    resolution: {integrity: sha512-eAIcfAvhf/BkHcf4pkLJ7ECpBAhh9kcxRBpip9cTiO+hf+aJrsxYxBeS6OXvOd9WqNAJmavXVpZvY1rBjNsXmw==}
     dev: true
 
   /@types/node@18.15.11:
@@ -40212,7 +40200,7 @@ packages:
       - utf-8-validate
     dev: false
 
-  /jest-cli@28.1.0(@types/node@14.18.17):
+  /jest-cli@28.1.0(@types/node@18.16.19):
     resolution: {integrity: sha512-fDJRt6WPRriHrBsvvgb93OxgajHHsJbk4jZxiPqmZbMDRcHskfJBBfTyjFko0jjfprP544hOktdSi9HVgl4VUQ==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
     hasBin: true
@@ -40229,7 +40217,7 @@ packages:
       exit: 0.1.2
       graceful-fs: 4.2.11
       import-local: 3.1.0
-      jest-config: 28.1.3(@types/node@14.18.17)
+      jest-config: 28.1.3(@types/node@18.16.19)
       jest-util: 28.1.3
       jest-validate: 28.1.3
       prompts: 2.4.2
@@ -40586,46 +40574,6 @@ packages:
       '@babel/core': 7.22.9
       '@jest/test-sequencer': 28.1.3
       '@jest/types': 28.1.3
-      babel-jest: 28.1.3(@babel/core@7.22.9)
-      chalk: 4.1.2
-      ci-info: 3.3.2
-      deepmerge: 4.3.0
-      glob: 7.2.3
-      graceful-fs: 4.2.11
-      jest-circus: 28.1.3
-      jest-environment-node: 28.1.3
-      jest-get-type: 28.0.2
-      jest-regex-util: 28.0.2
-      jest-resolve: 28.1.3
-      jest-runner: 28.1.3
-      jest-util: 28.1.3
-      jest-validate: 28.1.3
-      micromatch: 4.0.5
-      parse-json: 5.2.0
-      pretty-format: 28.1.3
-      slash: 3.0.0
-      strip-json-comments: 3.1.1
-    transitivePeerDependencies:
-      - metro
-      - supports-color
-    dev: true
-
-  /jest-config@28.1.3(@types/node@14.18.17):
-    resolution: {integrity: sha512-MG3INjByJ0J4AsNBm7T3hsuxKQqFIiRo/AUqb1q9LRKI5UU6Aar9JHbr9Ivn1TVwfUD9KirRoM/T6u8XlcQPHQ==}
-    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
-    peerDependencies:
-      '@types/node': '*'
-      ts-node: '>=9.0.0'
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-      ts-node:
-        optional: true
-    dependencies:
-      '@babel/core': 7.22.9
-      '@jest/test-sequencer': 28.1.3
-      '@jest/types': 28.1.3
-      '@types/node': 14.18.17
       babel-jest: 28.1.3(@babel/core@7.22.9)
       chalk: 4.1.2
       ci-info: 3.3.2
@@ -43062,7 +43010,7 @@ packages:
       - utf-8-validate
     dev: false
 
-  /jest@28.1.0(@types/node@14.18.17):
+  /jest@28.1.0(@types/node@18.16.19):
     resolution: {integrity: sha512-TZR+tHxopPhzw3c3560IJXZWLNHgpcz1Zh0w5A65vynLGNcg/5pZ+VildAd7+XGOu6jd58XMY/HNn0IkZIXVXg==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
     hasBin: true
@@ -43074,7 +43022,7 @@ packages:
     dependencies:
       '@jest/core': 28.1.0
       import-local: 3.1.0
-      jest-cli: 28.1.0(@types/node@14.18.17)
+      jest-cli: 28.1.0(@types/node@18.16.19)
     transitivePeerDependencies:
       - '@types/node'
       - metro
@@ -58675,7 +58623,7 @@ packages:
     dependencies:
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
-      jest: 28.1.0(@types/node@14.18.17)
+      jest: 28.1.0(@types/node@18.16.19)
       jest-util: 28.1.3
       json5: 2.2.1
       lodash.memoize: 4.1.2
@@ -58819,39 +58767,6 @@ packages:
       yargs-parser: 21.1.1
     dev: true
 
-  /ts-node@10.7.0(@types/node@17.0.32)(typescript@5.1.3):
-    resolution: {integrity: sha512-TbIGS4xgJoX2i3do417KSaep1uRAW/Lu+WAL2doDHC0D6ummjirVOXU5/7aiZotbQ5p1Zp9tP7U6cYhA0O7M8A==}
-    hasBin: true
-    peerDependencies:
-      '@swc/core': '>=1.2.50'
-      '@swc/wasm': '>=1.2.50'
-      '@types/node': '*'
-      typescript: '>=2.7'
-    peerDependenciesMeta:
-      '@swc/core':
-        optional: true
-      '@swc/wasm':
-        optional: true
-    dependencies:
-      '@cspotcode/source-map-support': 0.7.0
-      '@tsconfig/node10': 1.0.8
-      '@tsconfig/node12': 1.0.9
-      '@tsconfig/node14': 1.0.1
-      '@tsconfig/node16': 1.0.2
-      '@types/node': 17.0.32
-      acorn: 8.8.2
-      acorn-walk: 8.2.0
-      arg: 4.1.3
-      create-require: 1.1.1
-      diff: 4.0.2
-      make-error: 1.3.6
-      typescript: 5.1.3
-      v8-compile-cache-lib: 3.0.1
-      yn: 3.1.1
-    transitivePeerDependencies:
-      - source-map-support
-    dev: true
-
   /ts-node@10.7.0(@types/node@18.15.11)(source-map-support@0.5.21)(typescript@5.1.3):
     resolution: {integrity: sha512-TbIGS4xgJoX2i3do417KSaep1uRAW/Lu+WAL2doDHC0D6ummjirVOXU5/7aiZotbQ5p1Zp9tP7U6cYhA0O7M8A==}
     hasBin: true
@@ -58905,6 +58820,39 @@ packages:
       '@tsconfig/node14': 1.0.1
       '@tsconfig/node16': 1.0.2
       '@types/node': 18.15.3
+      acorn: 8.8.2
+      acorn-walk: 8.2.0
+      arg: 4.1.3
+      create-require: 1.1.1
+      diff: 4.0.2
+      make-error: 1.3.6
+      typescript: 5.1.3
+      v8-compile-cache-lib: 3.0.1
+      yn: 3.1.1
+    transitivePeerDependencies:
+      - source-map-support
+    dev: true
+
+  /ts-node@10.7.0(@types/node@18.16.19)(typescript@5.1.3):
+    resolution: {integrity: sha512-TbIGS4xgJoX2i3do417KSaep1uRAW/Lu+WAL2doDHC0D6ummjirVOXU5/7aiZotbQ5p1Zp9tP7U6cYhA0O7M8A==}
+    hasBin: true
+    peerDependencies:
+      '@swc/core': '>=1.2.50'
+      '@swc/wasm': '>=1.2.50'
+      '@types/node': '*'
+      typescript: '>=2.7'
+    peerDependenciesMeta:
+      '@swc/core':
+        optional: true
+      '@swc/wasm':
+        optional: true
+    dependencies:
+      '@cspotcode/source-map-support': 0.7.0
+      '@tsconfig/node10': 1.0.8
+      '@tsconfig/node12': 1.0.9
+      '@tsconfig/node14': 1.0.1
+      '@tsconfig/node16': 1.0.2
+      '@types/node': 18.16.19
       acorn: 8.8.2
       acorn-walk: 8.2.0
       arg: 4.1.3
