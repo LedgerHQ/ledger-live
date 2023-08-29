@@ -129,6 +129,7 @@ export default function MarketCoinScreen() {
   const listFlag = stakeProgramsFeatureFlag?.params?.list ?? [];
   const stakeProgramsEnabled = stakeProgramsFeatureFlag?.enabled ?? false;
   const availableOnStake =
+    // @ts-expect-error TYPINGS
     stakeProgramsEnabled && currency && listFlag.includes(currency?.internalCurrency?.id);
   const startStakeFlow = useStakeFlow();
 

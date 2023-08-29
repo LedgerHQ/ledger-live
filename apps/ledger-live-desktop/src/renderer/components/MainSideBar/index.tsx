@@ -294,7 +294,7 @@ const MainSideBar = () => {
     trackEntry("swap");
   }, [push, trackEntry]);
   const handleClickRefer = useCallback(() => {
-    if (referralProgramConfig?.enabled && referralProgramConfig?.params.path) {
+    if (referralProgramConfig?.enabled && referralProgramConfig?.params?.path) {
       push(referralProgramConfig?.params.path);
       trackEntry("refer-a-friend", referralProgramConfig?.params.isNew);
     }
@@ -482,14 +482,17 @@ const MainSideBar = () => {
                     iconSize={20}
                     iconActiveColor="wallet"
                     onClick={handleClickRefer}
-                    isActive={location.pathname.startsWith(referralProgramConfig?.params.path)}
+                    isActive={
+                      referralProgramConfig?.params &&
+                      location.pathname.startsWith(referralProgramConfig.params.path)
+                    }
                     collapsed={secondAnim}
                     NotifComponent={
-                      referralProgramConfig?.params.amount ? (
+                      referralProgramConfig?.params?.amount ? (
                         <CustomTag active type="plain" size="small">
                           {referralProgramConfig?.params.amount}
                         </CustomTag>
-                      ) : referralProgramConfig?.params.isNew ? (
+                      ) : referralProgramConfig?.params?.isNew ? (
                         <CustomTag active type="plain" size="small">
                           {t("common.new")}
                         </CustomTag>

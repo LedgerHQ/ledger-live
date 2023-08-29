@@ -43,6 +43,7 @@ const StepReceiveStakingFlow = (props: StepProps) => {
   const { account, parentAccount } = props;
 
   const id = account && "currency" in account ? account.currency?.id : undefined;
+  // @ts-expect-error TYPINGS
   const supportLink = id ? receiveStakingFlowConfig?.params[id]?.supportLink : undefined;
 
   const manage =
@@ -88,6 +89,7 @@ const StepReceiveStakingFlow = (props: StepProps) => {
       ...getTrackProperties(),
       link: supportLink,
     });
+    // @ts-expect-error TYPINGS
     openURL(supportLink, "OpenURL", getTrackProperties());
   }, [getTrackProperties, supportLink]);
 

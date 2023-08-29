@@ -1,7 +1,6 @@
 import React from "react";
 import { Account } from "@ledgerhq/types-live";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { EthStakingProviders } from "~/types/featureFlags";
 import Modal, { ModalBody } from "~/renderer/components/Modal";
 import { Flex } from "@ledgerhq/react-ui";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -14,7 +13,7 @@ type Props = {
   hasCheckbox?: boolean;
 };
 const DelegationModal = ({ account, hasCheckbox, singleProviderRedirectMode, source }: Props) => {
-  const ethStakingProviders = useFeature<EthStakingProviders>("ethStakingProviders");
+  const ethStakingProviders = useFeature("ethStakingProviders");
 
   if (!ethStakingProviders?.enabled) return null;
 
