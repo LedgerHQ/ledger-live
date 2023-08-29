@@ -1,10 +1,10 @@
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { StorylyInstanceID } from "@ledgerhq/types-live";
 import { useLayoutEffect, useRef } from "react";
-import { StorylyStyleProps, useStorylyDefaultStyleProps } from "./style";
 import { useSelector } from "react-redux";
-import { languageSelector } from "~/renderer/reducers/settings";
 import { Language } from "~/config/languages";
+import { languageSelector } from "~/renderer/reducers/settings";
+import { StorylyStyleProps, useStorylyDefaultStyleProps } from "./style";
 
 /**
  * Storyly Options
@@ -20,8 +20,12 @@ type StorylyOptions = {
   props?: StorylyStyleProps;
 };
 
+/**
+ * Storyly Ref
+ */
 type StorylyRef = {
   init: (options: StorylyOptions) => void;
+  setSegments: (options: StorylyOptions["segments"]) => void;
 };
 
 /**

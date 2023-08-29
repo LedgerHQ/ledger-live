@@ -6,6 +6,7 @@ import Alert from "~/renderer/components/Alert";
 import Modal, { ModalBody } from "~/renderer/components/Modal";
 import { ScrollArea } from "~/renderer/components/Onboarding/ScrollArea";
 import LanguageSelect from "~/renderer/screens/settings/sections/General/LanguageSelect";
+import { StorilyBase } from "~/storily";
 
 const StorylyDebugger = () => {
   return (
@@ -27,9 +28,10 @@ const StorylyDebugger = () => {
                   }
                 </Alert>
                 <LanguageSelect disableLanguagePrompt />
-                {Object.entries(StorylyInstanceID).map(([key]) => (
+                {Object.entries(StorylyInstanceID).map(([key, instanceId]) => (
                   <Box key={key}>
                     <Text variant="paragraph">{key}</Text>
+                    <StorilyBase {...{ instanceId }} />
                   </Box>
                 ))}
               </Flex>
