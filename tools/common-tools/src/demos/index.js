@@ -5,6 +5,7 @@ import ethtxtools from "./eth-tx-tools";
 import sync from "./sync";
 import networkTroubleshoot from "./networkTroubleshooting";
 import domainTLV from "./domainTLV";
+import svgIcons from "./svgIcons";
 
 export default {
   LogsViewer,
@@ -13,5 +14,6 @@ export default {
   ethtxtools,
   sync,
   networkTroubleshoot,
-  domainTLV
+  domainTLV,
+  svgIcons,
 };
