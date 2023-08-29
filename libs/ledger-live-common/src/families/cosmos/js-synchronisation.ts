@@ -229,7 +229,7 @@ export const getAccountShape: GetAccountShape = async info => {
       pendingRewardsBalance,
       unbondingBalance,
       withdrawAddress,
-      sequence: accountInfo.sequence,
+      sequence: accountInfo?.sequence ?? 0,
     },
   };
 
