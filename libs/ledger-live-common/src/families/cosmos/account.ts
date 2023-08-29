@@ -166,16 +166,16 @@ export function toOperationExtraRaw(extra: CosmosOperationExtra): CosmosOperatio
     }));
   }
 
-  if (extraRaw.sourceValidator) {
-    extra.sourceValidator = extraRaw.sourceValidator;
+  if (extra.sourceValidator) {
+    extraRaw.sourceValidator = extra.sourceValidator;
   }
 
-  if (extraRaw.autoClaimedRewards) {
-    extra.autoClaimedRewards = extraRaw.autoClaimedRewards;
+  if (extra.autoClaimedRewards) {
+    extraRaw.autoClaimedRewards = extra.autoClaimedRewards;
   }
 
-  if (extraRaw.memo) {
-    extra.memo = extraRaw.memo;
+  if (extra.memo) {
+    extraRaw.memo = extra.memo;
   }
 
   return extraRaw;
