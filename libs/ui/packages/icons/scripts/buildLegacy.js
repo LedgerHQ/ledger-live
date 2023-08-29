@@ -9,7 +9,6 @@ const svgr = require("@svgr/core").default;
 const rootDir = path.join(__dirname, "..", "src");
 const reactDir = path.join(rootDir, "reactLegacy");
 const nativeDir = path.join(rootDir, "nativeLegacy");
-const additionalIconsDir = path.join(__dirname, "..", "src", "additionalIcons");
 
 // Create folders if needed
 if (!fs.existsSync(reactDir)) {
@@ -65,31 +64,6 @@ function reactTemplate({ template }, _, { imports, interfaces, componentName, __
     }
     ${exports}
   `;
-}
-
-// Additional Icons component template
-function reactAdditionalTemplate(
-  { template },
-  _,
-  { imports, interfaces, componentName, __, jsx, exports },
-) {
-  const plugins = ["typescript"];
-  const tpl = template.smart({ plugins });
-
-  return tpl.ast`
-      ${imports}
-      import Svg from "../StyledSvg"
-  
-      type Props = { size?: number | string; width?: number | string; height?: number | string; };
-  
-      ${interfaces}
-  
-      function ${componentName} ({ size, width, height }: Props): JSX.Element {
-        return ${jsx};
-      }
-  
-      ${exports}
-    `;
 }
 
 // Component template
@@ -232,54 +206,5 @@ glob(`${rootDir}/svg-legacy/**/*.svg`, (err, icons) => {
         `${nativeDir}/${name}.tsx`,
       );
     }
-  });
-});
-//====== create additional icons =====
-
-// get subfolders
-const folders = fs.readdirSync(additionalIconsDir);
-
-folders.forEach(folder => {
-  // Create target folders
-  const folderName = `${folder}`;
-  if (!fs.existsSync(`${reactDir}/${folderName}`)) {
-    fs.mkdirSync(`${reactDir}/${folderName}`);
-  }
-
-  fs.writeFileSync(`${reactDir}/${folderName}/index.ts`, "", {
-    flag: "w",
-    encoding: "utf-8",
-  });
-
-  glob(`${additionalIconsDir}/${folder}/*.svg`, (err, icons) => {
-    icons.forEach(icon => {
-      let name = camelcase(path.basename(icon, ".svg"), { pascalCase: true });
-      if (!isNaN(name.charAt(0))) name = `_${name}`; // fix variable name leading with a numerical value
-
-      const exportString = `export { default as ${name} } from "./${name}";\n`;
-      fs.appendFileSync(`${reactDir}/${folderName}/index.ts`, exportString, "utf-8");
-
-      const svg = fs.readFileSync(icon, "utf-8");
-
-      const options = {
-        plugins: ["@svgr/plugin-svgo", "@svgr/plugin-jsx"],
-        expandProps: false,
-        componentName: name,
-        svgProps: {
-          height: "{height || size}",
-          width: "{width || size}",
-        },
-        svgoConfig: {
-          plugins: [{ removeXMLNS: true, removeViewBox: false }],
-        },
-      };
-      convert(
-        svg,
-        { ...options, template: reactAdditionalTemplate },
-        { componentName: name },
-        `${reactDir}/${folderName}/${name}.tsx`,
-        true,
-      );
-    });
   });
 });
