@@ -27,6 +27,13 @@ type StorylyRef = {
 /**
  * Hook to use Storily
  *
+ * @remarks
+ *
+ * As of now, we are reinitializing the Storyly instance everytime
+ * [instanceId, lanaguage, props or stories] changes.
+ * Ideally, we would want a granular way to do that but it's
+ * currently not supported by `storyly-web`.
+ *
  * @param instanceId
  *
  * @returns a ref to be used to manage the Storyly's instance associated with it.
