@@ -61,7 +61,7 @@
     "axios": "0.26.1",
     "bignumber.js": "^9.1.1",
     "eip55": "^2.1.1",
-    "ethers": "5.7.2",
+    "ethers": "6.7.1",
     "expect": "^27.4.6",
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",

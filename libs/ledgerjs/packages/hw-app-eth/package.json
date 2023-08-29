@@ -55,7 +55,7 @@
     "@types/jest": "^29.5.0",
     "@types/node": "^18.15.3",
     "documentation": "13.2.5",
-    "ethers": "5.6.9",
+    "ethers": "6.7.1",
     "jest": "^28.1.1",
     "nock": "^13.0.5",
     "rimraf": "^4.4.1",

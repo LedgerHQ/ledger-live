@@ -49,7 +49,7 @@
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "crypto-js": "4.1.1",
-    "ethers": "5.7.2"
+    "ethers": "6.7.1"
   },
   "devDependencies": {
     "@ledgerhq/types-live": "workspace:^",
