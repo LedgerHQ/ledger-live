@@ -30,7 +30,7 @@ test.describe("Delegate flow", async () => {
       expect(defaultprovider).toEqual("Ledger");
     });
 
-    await test.step("Toggle max amount to be filled in the ammount field", async () => {
+    await test.step("Toggle max amount to be filled in the amount field", async () => {
       await modalPage.continueDelegate();
       await modalPage.toggleMaxAmount();
       const availableMaxAmount = await modalPage.getSpendableBannerValue();
