@@ -48,10 +48,9 @@ export const importBEP20 = async (baseURL: string, outputDir: string) => {
   boolean, // delisted
   string?, // legacy
   string?, // legacy
-];
-`;
+];`;
 
-    const tokensStringified = `const tokens: BEP20Token[] = ${JSON.stringify(bep20, null, 2)}`;
+    const tokensStringified = `const tokens: BEP20Token[] = ${JSON.stringify(bep20, null, 2)};`;
     const exportStringified = `export default tokens;`;
 
     fs.writeFileSync(
