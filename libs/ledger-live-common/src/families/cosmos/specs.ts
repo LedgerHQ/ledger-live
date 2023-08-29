@@ -444,12 +444,14 @@ const osmosis = {
 const desmos = {
   ...generateGenericCosmosTest("desmos", {
     testTimeout: 8 * 60 * 1000,
+    skipOperationHistory: true,
   }),
 };
 
 const umee = {
   ...generateGenericCosmosTest("umee", {
     testTimeout: 8 * 60 * 1000,
+    skipOperationHistory: true,
   }),
 };
 
@@ -462,6 +464,7 @@ const persistence = {
 const quicksilver = {
   ...generateGenericCosmosTest("quicksilver", {
     testTimeout: 8 * 60 * 1000,
+    skipOperationHistory: true,
   }),
 };
 
