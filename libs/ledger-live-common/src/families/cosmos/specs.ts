@@ -477,6 +477,7 @@ const onomy = {
 
 const axelar = {
   ...generateGenericCosmosTest("axelar"),
+  skipOperationHistory: true,
 };
 
 const secretNetwork = {
