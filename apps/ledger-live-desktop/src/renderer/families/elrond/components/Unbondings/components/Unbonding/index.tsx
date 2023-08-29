@@ -60,7 +60,7 @@ const Unbonding = (
     return moment.utc(moment.duration(counter, "seconds").asMilliseconds()).format(format);
   }, [counter]);
   const handleCounter = () => {
-    const interval = setInterval(() => setCounter(timer => timer - 1), 1000);
+    const interval = window.setInterval(() => setCounter(timer => timer - 1), 1000);
     return () => {
       clearInterval(interval);
       setCounter(seconds);

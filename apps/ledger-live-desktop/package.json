@@ -45,7 +45,7 @@
   },
   "dependencies": {
     "@braze/web-sdk": "^4.6.3",
-    "@electron/remote": "^2",
+    "@electron/remote": "^2.0.11",
     "@ledgerhq/coin-evm": "workspace:^",
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/devices": "workspace:^",
@@ -79,7 +79,7 @@
     "dotenv": "^16.0.3",
     "electron-context-menu": "^3.6.0",
     "electron-store": "^8.1.0",
-    "electron-updater": "^5.3.0",
+    "electron-updater": "^6.1.4",
     "firebase": "^9.6.6",
     "focus-trap": "^6.6.1",
     "fuse.js": "^6.6.2",
@@ -136,7 +136,7 @@
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
-    "@electron/notarize": "^2.0.0",
+    "@electron/notarize": "^2.1.0",
     "@jest/globals": "^29.6.2",
     "@ledgerhq/react-devtools": "workspace:^",
     "@ledgerhq/test-utils": "workspace:^",
@@ -181,8 +181,8 @@
     "chalk": "^4.1.2",
     "cross-env": "^7.0.3",
     "debug": "^4.3.4",
-    "electron": "^25.1.1",
-    "electron-builder": "^23.6.0",
+    "electron": "^26.2.0",
+    "electron-builder": "^24.6.4",
     "electron-devtools-installer": "^3.2.0",
     "esbuild-utils": "workspace:*",
     "eslint-plugin-jest": "^27.2.1",

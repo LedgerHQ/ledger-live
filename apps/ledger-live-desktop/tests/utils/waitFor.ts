@@ -16,7 +16,7 @@ export async function waitFor(
         clearTimeout(interval);
         resolve(true);
       }
-    }, intervalMs);
+    }, intervalMs) as unknown as number;
 
     setTimeout(() => {
       clearTimeout(interval);
