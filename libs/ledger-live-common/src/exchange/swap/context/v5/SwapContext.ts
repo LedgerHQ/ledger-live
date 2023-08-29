@@ -8,28 +8,30 @@ import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 
 type SwapContextType = {
-  fromCurrencyAmount: BigNumber;
-  setFromCurrencyAmount(newFromCurrencyAmount: BigNumber): void;
   fromCurrencies: ReturnType<typeof useFetchCurrencyFrom>["data"];
-  fromCurrencyAccount: AccountLike | undefined;
   fromCurrency: CryptoOrTokenCurrency | undefined;
+  fromCurrencyAccount: AccountLike | undefined;
+  fromCurrencyAmount: BigNumber;
   rates: ReturnType<typeof useFetchRates>["data"];
-  toCurrencies: ReturnType<typeof useFetchCurrencyTo>["data"];
-  toCurrencyAccount: AccountLike | undefined;
-  toCurrency: CryptoOrTokenCurrency | undefined;
+  setFromCurrencyAccount(newFromCurrencyAccount: AccountLike): void;
+  setFromCurrencyAmount(newFromCurrencyAmount: BigNumber): void;
   setToCurrency(newToCurrency: CryptoOrTokenCurrency | undefined): void;
+  toCurrencies: ReturnType<typeof useFetchCurrencyTo>["data"];
+  toCurrency: CryptoOrTokenCurrency | undefined;
+  toCurrencyAccount: AccountLike | undefined;
 } & ReturnType<typeof useReverseSwap>;
 
 export const SwapContext = createContext<SwapContextType>({
   canReverse: false,
-  fromCurrencyAmount: BigNumber(0),
-  setFromCurrencyAmount: () => undefined,
   fromCurrencies: [],
-  fromCurrencyAccount: undefined,
   fromCurrency: undefined,
+  fromCurrencyAccount: undefined,
+  fromCurrencyAmount: BigNumber(0),
   rates: [],
-  toCurrencies: [],
-  toCurrencyAccount: undefined,
-  toCurrency: undefined,
+  setFromCurrencyAccount: () => undefined,
+  setFromCurrencyAmount: () => undefined,
   setToCurrency: () => undefined,
+  toCurrencies: [],
+  toCurrency: undefined,
+  toCurrencyAccount: undefined,
 });

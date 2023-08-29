@@ -40,8 +40,8 @@ const InputCurrencyContainer = styled(Box)`
   }
 `;
 
-function ToRow({ toAmount, fromAccount, loadingRates, updateSelectedRate }: Props) {
-  const { toCurrencies, setToCurrency, toCurrency } = useSwapContext();
+function ToRow({ toAmount, loadingRates, updateSelectedRate }: Props) {
+  const { toCurrencies, setToCurrency, toCurrency, fromCurrencyAccount } = useSwapContext();
   const swapDefaultTrack = useGetSwapTrackingProperties();
 
   const unit = toCurrency?.units[0];
@@ -61,9 +61,7 @@ function ToRow({ toAmount, fromAccount, loadingRates, updateSelectedRate }: Prop
     });
     setToCurrency(currency || undefined);
   };
-
-  console.log("%cToRow.tsx line:65 toCurrency", "color: #007acc;", toCurrency);
-
+  console.log("%cToRow.tsx line:64 toCurrency", "color: #007acc;", toCurrency);
   return (
     <>
       <Box horizontal color={"palette.text.shade40"} fontSize={3} mb={1}>
@@ -74,11 +72,11 @@ function ToRow({ toAmount, fromAccount, loadingRates, updateSelectedRate }: Prop
       <Box horizontal>
         <Box flex="1" data-test-id="destination-currency-dropdown">
           <SelectCurrency
-            currencies={toCurrencies}
+            currencies={toCurrencies ?? []}
             onChange={setCurrencyAndTrack}
             value={toCurrency}
             stylesMap={selectRowStylesMap}
-            isDisabled={!fromAccount}
+            isDisabled={!fromCurrencyAccount}
             renderValueOverride={renderCurrencyValue}
             onMenuOpen={trackEditCurrency}
           />

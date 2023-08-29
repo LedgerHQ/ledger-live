@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, useEffect, useState } from "react";
+import React, { PropsWithChildren, useCallback, useEffect, useState } from "react";
 
 import { AccountLike } from "@ledgerhq/types-live";
 import { useFetchCurrencyTo } from "../../hooks/v5/useFetchCurrecyTo";
@@ -7,6 +7,7 @@ import { useFetchCurrencyFrom } from "../../hooks/v5/useFetchCurrencyFrom";
 import { useFetchRates } from "../../hooks/v5/useFetchRates";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
 import { useDebounce } from "../../hooks/common/useDebounce";
 
 type Props = {
@@ -18,22 +19,52 @@ type Props = {
 export function SwapProvider({
   children,
   accountFrom,
+  accounts,
   rateRefetchInterval = 20000,
 }: PropsWithChildren<Props>) {
-  const [toCurrency, setToCurrency] = useState<CryptoOrTokenCurrency | undefined>();
+  const [toCurrency, _setToCurrency] = useState<CryptoOrTokenCurrency | undefined>();
+  const [toCurrencyAccount, setToCurrencyAccount] = useState<AccountLike | undefined>();
+  const [fromCurrencyAccount, _setFromCurrencyAccount] = useState(accountFrom);
   const [fromCurrencyAmount, setFromCurrencyAmount] = useState(BigNumber(0));
 
-  // get a debounced state so rates won't be immediately called on change.
+  const debouncedFromCurrencyAccount = useDebounce(fromCurrencyAccount, 500);
+  const debouncedToCurrency = useDebounce(toCurrency, 500);
   const debouncedFromCurrencyAmount = useDebounce(fromCurrencyAmount, 500);
 
-  const toCurrencies = useFetchCurrencyTo({ accountFrom });
+  const toCurrencies = useFetchCurrencyTo({ fromCurrencyAccount: debouncedFromCurrencyAccount });
   const fromCurrencies = useFetchCurrencyFrom({});
 
   const { refetch: rateRefetch, ...rates } = useFetchRates({
-    accountFrom,
-    toCurrency,
+    fromCurrencyAccount: debouncedFromCurrencyAccount,
+    toCurrency: debouncedToCurrency,
     fromCurrencyAmount: debouncedFromCurrencyAmount,
   });
+
+  const setToCurrency = useCallback(
+    (newToCurrency: CryptoOrTokenCurrency | undefined) => {
+      _setToCurrency(newToCurrency);
+      const accountWithCurrency = accounts.find(account => {
+        const currency = getAccountCurrency(account);
+        return currency.id === newToCurrency?.id;
+      });
+      setToCurrencyAccount(accountWithCurrency);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [_setToCurrency, setToCurrencyAccount, JSON.stringify(accounts)],
+  );
+
+  const setFromCurrencyAccount = useCallback(
+    (newFromCurrencyAccount: AccountLike | undefined) => {
+      _setFromCurrencyAccount(newFromCurrencyAccount);
+      setToCurrency(undefined);
+      console.log(
+        '%cSwapProvider.tsx line:60 "set to undefined"',
+        "color: #007acc;",
+        newFromCurrencyAccount,
+      );
+    },
+    [_setFromCurrencyAccount, setToCurrency],
+  );
 
   // Setup an interval on any rates we have.
   useEffect(() => {
@@ -47,24 +78,31 @@ export function SwapProvider({
     if (!toCurrency && toCurrencies.data && toCurrencies.data.length > 0) {
       // set the to currency to the first returned value
       // of the to currencies endpoint.
+      console.log(
+        '%cSwapProvider.tsx line:81 "setting toCurreny to", toCurrencies.data[0]',
+        "color: #007acc;",
+        "setting toCurreny to",
+        toCurrencies.data[0],
+      );
       setToCurrency(toCurrencies.data[0]);
     }
-  }, [toCurrencies, toCurrency]);
+  }, [toCurrency, toCurrencies, setToCurrency]);
 
   return (
     <SwapContext.Provider
       value={{
         canReverse: false,
         fromCurrencies: fromCurrencies.data ?? [],
-        fromCurrency: undefined,
-        fromCurrencyAccount: accountFrom,
+        fromCurrency: fromCurrencyAccount ? getAccountCurrency(fromCurrencyAccount) : undefined,
+        fromCurrencyAccount,
         fromCurrencyAmount,
         rates: rates.data ?? [],
+        setFromCurrencyAccount,
         setFromCurrencyAmount,
         setToCurrency,
         toCurrencies: toCurrencies.data ?? [],
         toCurrency,
-        toCurrencyAccount: undefined,
+        toCurrencyAccount,
       }}
     >
       {children}

@@ -3,11 +3,11 @@ import { useFetchCurrencyFrom } from "./useFetchCurrencyFrom";
 import { AccountLike } from "@ledgerhq/types-live";
 
 type Props = {
-  accountTo?: AccountLike;
+  toCurrencyAccount: AccountLike | undefined;
   additionalCoinsFlag?: boolean;
 };
 
-type Ret =
+type ReverseSwap =
   | {
       reverse(): void;
       canReverse: true;
@@ -16,8 +16,8 @@ type Ret =
       canReverse: false;
     };
 
-export function useReverseSwap({ accountTo, additionalCoinsFlag }: Props): Ret {
-  const currencyTo = accountTo ? getAccountCurrency(accountTo).id : undefined;
+export function useReverseSwap({ toCurrencyAccount, additionalCoinsFlag }: Props): ReverseSwap {
+  const currencyTo = toCurrencyAccount ? getAccountCurrency(toCurrencyAccount).id : undefined;
   const currenciesFrom = useFetchCurrencyFrom({
     currencyTo,
     additionalCoinsFlag,

@@ -75,8 +75,6 @@ const InputSection = styled(Box)`
 `;
 
 function FromRow({
-  fromAccount,
-  setFromAccount,
   isMaxEnabled,
   toggleMax,
   fromAmountError,
@@ -84,7 +82,8 @@ function FromRow({
   isSendMaxLoading,
   updateSelectedRate,
 }: Props) {
-  const { setFromCurrencyAmount, fromCurrencyAmount, fromCurrencyAccount } = useSwapContext();
+  const { setFromCurrencyAmount, fromCurrencyAmount, fromCurrencyAccount, setFromCurrencyAccount } =
+    useSwapContext();
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const accounts = useSelector(fromSelector)(useSelector(shallowAccountsSelector));
   const unit = fromCurrencyAccount && getAccountUnit(fromCurrencyAccount);
@@ -104,7 +103,7 @@ function FromRow({
       ...swapDefaultTrack,
       account: name,
     });
-    setFromAccount(account);
+    setFromCurrencyAccount(account);
   };
   const setValue = (fromAmount: BigNumber) => {
     track("button_clicked", {
@@ -145,7 +144,7 @@ function FromRow({
             small
             isChecked={isMaxEnabled}
             onChange={toggleMaxAndTrack}
-            disabled={!fromAccount}
+            disabled={!fromCurrencyAccount}
             data-test-id="swap-max-spendable-toggle"
           />
         </Box>
@@ -154,7 +153,7 @@ function FromRow({
         <Box width="50%">
           <SelectAccount
             accounts={accounts}
-            value={fromAccount}
+            value={fromCurrencyAccount}
             onChange={setAccountAndTrack}
             stylesMap={selectRowStylesMap}
             placeholder={t("swap2.form.from.accountPlaceholder")}
@@ -170,7 +169,7 @@ function FromRow({
             loading={isSendMaxLoading}
             value={fromCurrencyAmount}
             onChange={setValue}
-            disabled={!fromAccount || isMaxEnabled}
+            disabled={!fromCurrencyAccount || isMaxEnabled}
             placeholder="0"
             textAlign="right"
             fontWeight={600}

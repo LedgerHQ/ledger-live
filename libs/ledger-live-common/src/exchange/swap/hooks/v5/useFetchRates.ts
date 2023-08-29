@@ -9,14 +9,14 @@ import BigNumber from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 
 type Props = {
-  accountFrom: AccountLike | undefined;
+  fromCurrencyAccount: AccountLike | undefined;
   toCurrency: CryptoOrTokenCurrency | undefined;
   fromCurrencyAmount: BigNumber;
 };
 
-export function useFetchRates({ accountFrom, toCurrency, fromCurrencyAmount }: Props) {
-  const currencyFrom = accountFrom ? getAccountCurrency(accountFrom).id : undefined;
-  const unit = accountFrom ? getAccountUnit(accountFrom) : undefined;
+export function useFetchRates({ fromCurrencyAccount, toCurrency, fromCurrencyAmount }: Props) {
+  const currencyFrom = fromCurrencyAccount ? getAccountCurrency(fromCurrencyAccount).id : undefined;
+  const unit = fromCurrencyAccount ? getAccountUnit(fromCurrencyAccount) : undefined;
 
   const formattedCurrencyAmount = (unit && formatCurrencyUnit(unit, fromCurrencyAmount)) ?? "0";
 

@@ -35,6 +35,7 @@ export const renderAccountValue = ({ data }: { data: SelectAccountOption }) =>
   ) : null;
 
 export const renderCurrencyValue = ({ data: currency }: { data: CryptoOrTokenCurrency }) => {
+  console.log("%cutils.tsx line:38 currency", "color: #007acc;", currency);
   return currency ? (
     <CurrencyOption currency={currency} singleLineLayout={false} tagVariant="thin" />
   ) : null;

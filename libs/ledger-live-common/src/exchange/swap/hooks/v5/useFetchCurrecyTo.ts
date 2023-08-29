@@ -6,12 +6,14 @@ import { getAvailableProviders } from "../..";
 import { useAPI } from "../common/useAPI";
 
 type Props = {
-  accountFrom: AccountLike | undefined;
+  fromCurrencyAccount: AccountLike | undefined;
   additionalCoinsFlag?: boolean;
 };
 
-export function useFetchCurrencyTo({ accountFrom, additionalCoinsFlag }: Props) {
-  const currencyFromId = accountFrom ? getAccountCurrency(accountFrom).id : undefined;
+export function useFetchCurrencyTo({ fromCurrencyAccount, additionalCoinsFlag }: Props) {
+  const currencyFromId = fromCurrencyAccount
+    ? getAccountCurrency(fromCurrencyAccount).id
+    : undefined;
   return useAPI({
     queryFn: fetchCurrencyTo,
     queryProps: {

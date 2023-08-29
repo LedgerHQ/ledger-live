@@ -2,6 +2,8 @@ import React, { useMemo } from "react";
 import styled from "styled-components";
 import SectionRate from "./SectionRate";
 import { SwapDataType } from "@ledgerhq/live-common/exchange/swap/types";
+import { useSwapContext } from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 
 const Form = styled.section`
   display: grid;
@@ -15,13 +17,10 @@ type SwapFormProvidersProps = {
   countdown: boolean;
 };
 
-const SwapFormProviders = ({ swap, provider, refreshTime, countdown }: SwapFormProvidersProps) => {
-  const { currency: fromCurrency } = swap.from;
-  const { currency: toCurrency } = swap.to;
+const SwapFormProviders = ({ provider, refreshTime, countdown }: SwapFormProvidersProps) => {
+  const { fromCurrencyAccount, toCurrency, rates } = useSwapContext();
 
-  const updatedRatesState = useMemo(() => {
-    return swap.rates;
-  }, [swap.rates]);
+  const fromCurrency = fromCurrencyAccount ? getAccountCurrency(fromCurrencyAccount) : undefined;
 
   return (
     <Form>
@@ -29,7 +28,7 @@ const SwapFormProviders = ({ swap, provider, refreshTime, countdown }: SwapFormP
         provider={provider}
         fromCurrency={fromCurrency}
         toCurrency={toCurrency}
-        ratesState={updatedRatesState}
+        ratesState={rates}
         refreshTime={refreshTime}
         countdown={countdown}
       />
