@@ -34,7 +34,7 @@
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@types/jest": "^29.5.0",
     "@types/node": "^18.15.3",
-    "documentation": "13.2.5",
+    "documentation": "14.0.2",
     "jest": "^28.1.1",
     "ts-jest": "^28.0.5",
     "ts-node": "^10.4.0"
