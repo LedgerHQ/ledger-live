@@ -107,7 +107,7 @@
     "@types/react-window": "^1.8.5",
     "@types/styled-components": "^5.1.14",
     "@types/styled-system": "^5.1.12",
-    "babel-loader": "^8.0.0",
+    "babel-loader": "^9.0.0",
     "csstype": "^3.0.11",
     "esbuild": "^0.18.0",
     "eslint-plugin-react": "^7.32.2",
