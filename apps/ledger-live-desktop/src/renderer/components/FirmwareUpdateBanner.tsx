@@ -2,13 +2,11 @@ import React, { useContext } from "react";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useLocation, useHistory } from "react-router-dom";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { latestFirmwareSelector } from "~/renderer/reducers/settings";
 import TopBanner, { FakeLink } from "~/renderer/components/TopBanner";
 import getCleanVersion from "~/renderer/screens/manager/FirmwareUpdate/getCleanVersion";
 import { UpdaterContext } from "~/renderer/components/Updater/UpdaterContext";
-import { shouldUpdateYet } from "~/helpers/user";
-import { useRemoteConfig } from "~/renderer/components/RemoteConfig";
 import { VISIBLE_STATUS } from "./Updater/Banner";
 import { IconsLegacy } from "@ledgerhq/react-ui";
 const FirmwareUpdateBanner = ({ old, right }: { old?: boolean; right?: React.ReactNode }) => {
@@ -66,13 +64,7 @@ const FirmwareUpdateBanner = ({ old, right }: { old?: boolean; right?: React.Rea
 };
 const FirmwareUpdateBannerEntry = ({ old, right }: { old?: boolean; right?: React.ReactNode }) => {
   const context = useContext(UpdaterContext);
-  const remoteConfig = useRemoteConfig();
-  if (
-    context &&
-    remoteConfig.lastUpdatedAt &&
-    context.version &&
-    shouldUpdateYet(context.version, remoteConfig)
-  ) {
+  if (context && context.version) {
     const { status } = context;
     if (VISIBLE_STATUS.includes(status)) return null;
   }

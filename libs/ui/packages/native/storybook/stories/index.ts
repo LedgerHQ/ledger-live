@@ -56,6 +56,7 @@ export * as FullBackgroundCardStory from "./Cards/FullBackground.stories";
 export * as SideImageCardStory from "./Cards/SideImage.stories";
 export * as NotificationCardStory from "./Cards/Notification.stories";
 export * as InformativeCardStory from "./Cards/Informative.stories";
+export * as BannerCardStory from "./Cards/Banner.stories";
 export * as QuickActionButtonStory from "./Cta/QuickAction/QuickActionButton.stories";
 export * as QuickActionListStory from "./Cta/QuickAction/QuickActionList.stories";
 export * as DividerStory from "./Layout/Divider.stories";

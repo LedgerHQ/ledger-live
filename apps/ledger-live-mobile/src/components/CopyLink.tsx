@@ -1,6 +1,6 @@
 import React, { PureComponent } from "react";
 import { StyleSheet } from "react-native";
-import Clipboard from "@react-native-community/clipboard";
+import Clipboard from "@react-native-clipboard/clipboard";
 import { IconsLegacy, Text } from "@ledgerhq/native-ui";
 import Touchable, { Props as TouchableProps } from "./Touchable";
 import { withTheme } from "../colors";
@@ -32,6 +32,11 @@ class CopyLink extends PureComponent<Props, State> {
 
   onPress = () => {
     const { string, onCopy } = this.props;
+    const { copied } = this.state;
+
+    if (copied) {
+      return;
+    }
 
     Clipboard.setString(string);
 

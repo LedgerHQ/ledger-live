@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { StepProps } from "../..";
-import { idsToLanguage, Language as LanguageType, languageIds } from "@ledgerhq/types-live";
+import { idsToLanguage, Language as DeviceLanguages, languageIds } from "@ledgerhq/types-live";
 import { Flex } from "@ledgerhq/react-ui";
 import { useSelector } from "react-redux";
 import { languageSelector } from "~/renderer/reducers/settings";
-import { Locale, localeIdToDeviceLanguage } from "~/config/languages";
+import { DEFAULT_LANGUAGE, Languages } from "~/config/languages";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
 import { track } from "~/renderer/analytics/segment";
 import ChangeDeviceLanguageAction from "~/renderer/components/ChangeDeviceLanguageAction";
@@ -25,11 +25,14 @@ const Language = ({
   isLanguagePromptOpen,
   confirmedPrompt,
 }: Props) => {
-  const [languageToInstall, setLanguageToInstall] = useState<LanguageType>("english");
+  const [languageToInstall, setLanguageToInstall] = useState<DeviceLanguages>(
+    DEFAULT_LANGUAGE.deviceSupport.label,
+  );
+
   const [installingLanguage, setInstallingLanguage] = useState(false);
   const { t } = useTranslation();
 
-  const currentLocale = useSelector(languageSelector) as Locale;
+  const currentLocale = useSelector(languageSelector);
 
   const { availableLanguages: newAvailableLanguages, loaded: newLanguagesLoaded } =
     useAvailableLanguagesForDevice(updatedDeviceInfo);
@@ -37,7 +40,7 @@ const Language = ({
   const { availableLanguages: oldAvailableLanguages, loaded: oldLanguagesLoaded } =
     useAvailableLanguagesForDevice(oldDeviceInfo);
 
-  const installLanguage = useCallback((language: LanguageType) => {
+  const installLanguage = useCallback((language: DeviceLanguages) => {
     setLanguageToInstall(language);
     setInstallingLanguage(true);
   }, []);
@@ -45,12 +48,12 @@ const Language = ({
   useEffect(() => {
     if (newLanguagesLoaded && oldLanguagesLoaded) {
       const deviceLanguageId = updatedDeviceInfo?.languageId;
-      const potentialDeviceLanguage = localeIdToDeviceLanguage[currentLocale];
+      const potentialDeviceLanguage = Languages[currentLocale];
 
       const langAvailableForTheFirstTime =
-        potentialDeviceLanguage !== undefined &&
-        !oldAvailableLanguages.includes(potentialDeviceLanguage) &&
-        newAvailableLanguages.includes(potentialDeviceLanguage);
+        potentialDeviceLanguage.deviceSupport &&
+        !oldAvailableLanguages.includes(potentialDeviceLanguage.deviceSupport.label) &&
+        newAvailableLanguages.includes(potentialDeviceLanguage.deviceSupport.label);
 
       // firmware version verification is not really needed here, the presence of a language id
       // indicates that we are in a firmware that supports localization
@@ -58,14 +61,19 @@ const Language = ({
         !confirmedPrompt &&
         langAvailableForTheFirstTime &&
         deviceLanguageId !== undefined &&
-        idsToLanguage[deviceLanguageId] !== potentialDeviceLanguage &&
+        potentialDeviceLanguage.deviceSupport &&
+        idsToLanguage[deviceLanguageId] !== potentialDeviceLanguage.deviceSupport.label &&
         setIsLanguagePromptOpen
       ) {
         setIsLanguagePromptOpen(true);
-      } else if (potentialDeviceLanguage && confirmedPrompt && setIsLanguagePromptOpen) {
+      } else if (
+        potentialDeviceLanguage.deviceSupport &&
+        confirmedPrompt &&
+        setIsLanguagePromptOpen
+      ) {
         track("Page Manager FwUpdatePromptLanguageToMatchLive");
         setIsLanguagePromptOpen(false);
-        installLanguage(potentialDeviceLanguage);
+        installLanguage(potentialDeviceLanguage.deviceSupport.label);
       } else if (
         oldDeviceInfo?.languageId !== undefined &&
         oldDeviceInfo?.languageId !== languageIds.english
@@ -98,7 +106,9 @@ const Language = ({
       {isLanguagePromptOpen && !confirmedPrompt ? (
         <ChangeDeviceLanguagePrompt
           descriptionWording={t("deviceLocalization.firmwareUpdatePrompt.description", {
-            language: t(`deviceLocalization.languages.${localeIdToDeviceLanguage[currentLocale]}`),
+            language: t(
+              `deviceLocalization.languages.${Languages[currentLocale].deviceSupport?.label}`,
+            ),
             deviceName,
           })}
           deviceModelId={modelId}

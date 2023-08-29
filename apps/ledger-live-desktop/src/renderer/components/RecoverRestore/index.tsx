@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -13,15 +13,14 @@ import { ScreenId } from "../Onboarding/Screens/Tutorial";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getVersion from "@ledgerhq/live-common/hw/getVersion";
 import { first } from "rxjs/operators";
-import { from } from "rxjs";
+import { Subscription, from } from "rxjs";
 import {
   OnboardingState,
   extractOnboardingState,
 } from "@ledgerhq/live-common/hw/extractOnboardingState";
 import { FirmwareInfo } from "@ledgerhq/types-live";
 import { renderError } from "../DeviceAction/rendering";
-import { urls } from "~/config/urls";
-import { languageSelector } from "~/renderer/reducers/settings";
+import { useDynamicUrl } from "~/renderer/terms";
 
 const RecoverRestore = () => {
   const { t } = useTranslation();
@@ -30,45 +29,67 @@ const RecoverRestore = () => {
   const [state, setState] = useState<OnboardingState>();
   const [error, setError] = useState<Error>();
   const { setDeviceModelId } = useContext(OnboardingContext);
-  const locale = useSelector(languageSelector) || "en";
+  const buyNew = useDynamicUrl("buyNew");
+  const sub = useRef<Subscription>();
+
+  const getOnboardingState = useCallback((device: Device) => {
+    sub.current?.unsubscribe();
+
+    const requestObservable = withDevice(device.deviceId)(t => from(getVersion(t))).pipe(first());
+
+    sub.current = requestObservable.subscribe({
+      next: (firmware: FirmwareInfo) => {
+        try {
+          setState(extractOnboardingState(firmware.flags));
+        } catch (error: unknown) {
+          if (error instanceof Error) {
+            setError(error);
+          }
+        }
+      },
+      error: (error: Error) => {
+        setError(error);
+      },
+    });
+  }, []);
 
   // check if device is seeded when selected
   useEffect(() => {
     if (currentDevice) {
-      const requestObservable = withDevice(currentDevice.deviceId)(t => from(getVersion(t))).pipe(
-        first(),
-      );
-
-      const sub = requestObservable.subscribe({
-        next: (firmware: FirmwareInfo) => {
-          try {
-            setState(extractOnboardingState(firmware.flags));
-          } catch (error: unknown) {
-            if (error instanceof Error) {
-              setError(error);
-            }
-          }
-        },
-        error: (error: Error) => {
-          setError(error);
-        },
-      });
+      getOnboardingState(currentDevice);
 
       return () => {
-        sub.unsubscribe();
+        sub.current?.unsubscribe();
+        sub.current = undefined;
       };
     }
-  }, [currentDevice]);
+  }, [currentDevice, getOnboardingState]);
+
+  // cleanup subscription in case of retry and component unmount
+  useEffect(() => {
+    return () => {
+      sub.current?.unsubscribe();
+      sub.current = undefined;
+    };
+  }, []);
 
   useEffect(() => {
     if (state && !state.isOnboarded) {
       switch (currentDevice?.modelId) {
         case DeviceModelId.nanoX:
           setDeviceModelId(currentDevice.modelId);
-          history.push(`/onboarding/${UseCase.recover}/${ScreenId.pairMyNano}`);
+          history.push({
+            pathname: `/onboarding/${UseCase.recover}/${ScreenId.pairMyNano}`,
+            state: {
+              fromRecover: true,
+            },
+          });
           break;
         case DeviceModelId.stax:
-          history.push(`/onboarding/sync/${currentDevice.modelId}`);
+          history.push({
+            pathname: `/onboarding/sync/${currentDevice.modelId}`,
+            state: { fromRecover: true },
+          });
           break;
         default:
           break;
@@ -76,11 +97,18 @@ const RecoverRestore = () => {
     }
   }, [currentDevice?.modelId, history, setDeviceModelId, state]);
 
+  const onRetry = useCallback(() => {
+    setState(undefined);
+    setError(undefined);
+    if (currentDevice) getOnboardingState(currentDevice);
+  }, [currentDevice, getOnboardingState]);
+
   if (error) {
     return renderError({
       t,
       error,
       device: currentDevice,
+      onRetry,
     });
   }
 
@@ -92,10 +120,7 @@ const RecoverRestore = () => {
           {renderError({
             t,
             error: new DeviceAlreadySetup("", { device: currentDevice?.modelId ?? "device" }),
-            buyLedger:
-              urls.noDevice.buyNew[
-                locale in urls.terms ? (locale as keyof typeof urls.noDevice.buyNew) : "en"
-              ],
+            buyLedger: buyNew,
           })}
         </Flex>
       </Flex>

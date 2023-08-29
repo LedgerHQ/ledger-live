@@ -27,7 +27,11 @@ const Title = styled(Box).attrs(() => ({
   font-weight: 500;
 `;
 
-const StepConfirmation = ({ error, appsToBeReinstalled }: StepProps) => {
+const StepConfirmation = ({
+  error,
+  appsToBeReinstalled,
+  finalStepSuccessDescription,
+}: StepProps) => {
   const { t } = useTranslation();
 
   useEffect(() => () => log("firmware-record-end"), []);
@@ -55,7 +59,9 @@ const StepConfirmation = ({ error, appsToBeReinstalled }: StepProps) => {
       <Title mt={9}>{t("manager.modal.successTitle")}</Title>
       <Box mt={2} mb={5}>
         <Text ff="Inter|Regular" fontSize={4} color="palette.text.shade80" textAlign="center">
-          {appsToBeReinstalled
+          {finalStepSuccessDescription
+            ? finalStepSuccessDescription
+            : appsToBeReinstalled
             ? t("manager.modal.successTextApps")
             : t("manager.modal.successTextNoApps")}
         </Text>
@@ -70,6 +76,9 @@ export const StepConfirmFooter = ({
   error,
   appsToBeReinstalled,
   onRetry,
+  finalStepSuccessButtonLabel,
+  finalStepSuccessButtonOnClick,
+  shouldReloadManagerOnCloseIfUpdateRefused,
 }: StepProps) => {
   const { t } = useTranslation();
   const history = useHistory();
@@ -77,11 +86,11 @@ export const StepConfirmFooter = ({
 
   const onCloseReload = useCallback(() => {
     onDrawerClose();
-    if (error instanceof UserRefusedFirmwareUpdate) {
+    if (error instanceof UserRefusedFirmwareUpdate && shouldReloadManagerOnCloseIfUpdateRefused) {
       history.push("/manager/reload");
       setDrawer();
     }
-  }, [error, history, onDrawerClose, setDrawer]);
+  }, [error, history, onDrawerClose, setDrawer, shouldReloadManagerOnCloseIfUpdateRefused]);
 
   if (error) {
     const isUserRefusedFirmwareUpdate = error instanceof UserRefusedFirmwareUpdate;
@@ -102,8 +111,17 @@ export const StepConfirmFooter = ({
   return (
     <>
       <Track event={"FirmwareUpdatedClose"} onUnmount />
-      <Button variant="main" onClick={() => onDrawerClose(appsToBeReinstalled)}>
-        {appsToBeReinstalled
+      <Button
+        variant="main"
+        onClick={
+          finalStepSuccessButtonOnClick
+            ? finalStepSuccessButtonOnClick
+            : () => onDrawerClose(appsToBeReinstalled)
+        }
+      >
+        {finalStepSuccessButtonLabel
+          ? finalStepSuccessButtonLabel
+          : appsToBeReinstalled
           ? t("manager.modal.sucessCTAApps")
           : t("manager.modal.SuccessCTANoApps")}
       </Button>

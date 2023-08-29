@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import {
-  ImageMetadataLoadingError,
+  NFTMetadataLoadingError,
   ImagePreviewError,
 } from "@ledgerhq/live-common/customImage/errors";
 import { NativeSyntheticEvent, ImageErrorEventData } from "react-native";
@@ -108,7 +108,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
   useEffect(() => {
     if (isNftMetadata && ["nodata", "error"].includes(status)) {
       console.error("Nft metadata loading status", status);
-      navigateToErrorScreen(new ImageMetadataLoadingError(status), device);
+      navigateToErrorScreen(new NFTMetadataLoadingError(status), device);
     }
   }, [device, isNftMetadata, navigateToErrorScreen, navigation, status]);
 

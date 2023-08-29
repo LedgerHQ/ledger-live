@@ -1,4 +1,3 @@
-import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   StyleSheet,
@@ -8,52 +7,76 @@ import {
   View,
   TouchableOpacity,
 } from "react-native";
-import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
+import { useTranslation } from "react-i18next";
 
-import { useNavigation } from "@react-navigation/native";
-import { useTheme } from "styled-components/native";
 import { Flex, Icon, Text } from "@ledgerhq/native-ui";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
-import { useTranslation } from "react-i18next";
-import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
+import {
+  DEFAULT_MULTIBUY_APP_ID,
+  INTERNAL_APP_IDS,
+} from "@ledgerhq/live-common/wallet-api/constants";
+import { safeUrl } from "@ledgerhq/live-common/wallet-api/helpers";
 
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
+
+import { useTheme } from "styled-components/native";
+
+import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
 import { Web3AppWebview } from "../Web3AppWebview";
 import { RootNavigationComposite, StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { initialWebviewState } from "../Web3AppWebview/helpers";
 import { track } from "../../analytics";
 import { NavigationHeaderCloseButtonAdvanced } from "../NavigationHeaderCloseButton";
-import { NavigatorName } from "../../const";
+import { NavigatorName, ScreenName } from "../../const";
 import { Loading } from "../Loading";
 
-type BackToWhitelistedDomainProps = {
+type BackToInternalDomainProps = {
   manifest: AppManifest;
-  webviewURL: string;
-  lastMatchingURL: string | null;
+  webviewURL?: string;
+  lastMatchingURL?: string | null;
 };
 
-function BackToWhitelistedDomain({
+function BackToInternalDomain({
   manifest,
   webviewURL,
   lastMatchingURL,
-}: BackToWhitelistedDomainProps) {
+}: BackToInternalDomainProps) {
   const { t } = useTranslation();
   const navigation =
     useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
+  const [buttonText, setButtonText] = useState("");
 
-  const getButtonLabel = () => {
-    if (manifest.id === "multibuy" && lastMatchingURL) {
-      const url = new URL(lastMatchingURL);
-      const urlParams = new URLSearchParams(url.searchParams);
-      const flowName = urlParams.get("liveAppFlow");
-      if (flowName === "compare_providers") return "Quote";
-    }
+  useEffect(() => {
+    (async () => {
+      const lastScreen = (await AsyncStorage.getItem("last-screen")) || "";
+      setButtonText(lastScreen === "compare_providers" ? "Quote" : manifest.name);
+    })();
+  }, [manifest.id, manifest.name]);
 
-    return manifest.name;
-  };
+  const handleBackClick = async () => {
+    const manifestId = (await AsyncStorage.getItem("manifest-id")) || "";
 
-  const handleBackClick = () => {
-    if (manifest.id === "multibuy" && lastMatchingURL) {
+    if (manifestId) {
+      const lastScreen = (await AsyncStorage.getItem("last-screen")) || "";
+      const flowName = (await AsyncStorage.getItem("flow-name")) || "";
+
+      track("button_clicked", {
+        button: lastScreen === "compare_providers" ? "back to quote" : "back to liveapp",
+        provider: manifestId,
+        flow: flowName,
+      });
+
+      navigation.navigate(NavigatorName.Exchange, {
+        screen: flowName === "buy" ? ScreenName.ExchangeBuy : ScreenName.ExchangeSell,
+        params: {
+          referrer: "isExternal",
+        },
+      });
+    } else if (manifest.id === DEFAULT_MULTIBUY_APP_ID && lastMatchingURL && webviewURL) {
       const currentHostname = new URL(webviewURL).hostname;
       const url = new URL(lastMatchingURL);
       const urlParams = new URLSearchParams(url.searchParams);
@@ -64,9 +87,9 @@ function BackToWhitelistedDomain({
         provider: currentHostname,
         flow: flowName,
       });
-    }
 
-    navigation.goBack();
+      navigation.goBack();
+    }
   };
 
   return (
@@ -75,7 +98,7 @@ function BackToWhitelistedDomain({
         <Flex alignItems="center" flexDirection="row" height={40}>
           <Icon name="ChevronLeft" color="neutral.c100" size={30} />
           <Text fontWeight="semiBold" fontSize={16} color="neutral.c100">
-            {t("common.backTo", { to: getButtonLabel() })}
+            {t("common.backTo", { to: buttonText })}
           </Text>
         </Flex>
       </TouchableOpacity>
@@ -91,17 +114,20 @@ function HeaderRight({ onClose }: { onClose?: () => void }) {
 
 type Props = {
   manifest: LiveAppManifest;
-  inputs?: Record<string, string>;
+  inputs?: Record<string, string | undefined>;
   disableHeader?: boolean;
 };
 
 export const WebPTXPlayer = ({ manifest, inputs, disableHeader }: Props) => {
   const lastMatchingURL = useRef<string | null>(null);
-
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
 
-  const isWhitelistedDomain = useMemo(() => {
+  const isInternalApp = useMemo(() => {
+    if (!INTERNAL_APP_IDS.includes(manifest.id)) {
+      return false;
+    }
+
     if (!lastMatchingURL || !webviewState.url) {
       return true;
     }
@@ -110,16 +136,43 @@ export const WebPTXPlayer = ({ manifest, inputs, disableHeader }: Props) => {
     const currentHostname = new URL(webviewState.url).hostname;
 
     return manifestHostname === currentHostname;
-  }, [manifest.url, webviewState.url]);
-
-  useEffect(() => {
-    if (isWhitelistedDomain) {
-      lastMatchingURL.current = webviewState.url;
-    }
-  }, [isWhitelistedDomain, webviewState.url]);
+  }, [manifest.id, manifest.url, webviewState.url]);
 
   const navigation =
     useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
+
+  useEffect(() => {
+    if (isInternalApp && webviewState.url) {
+      const url = safeUrl(webviewState.url);
+
+      if (url) {
+        const goToURL = url.searchParams.get("goToURL") || "";
+        const manifestId = url.searchParams.get("goToManifest");
+
+        if (manifestId && goToURL) {
+          const flowName = url.searchParams.get("flowName") || "buy";
+
+          AsyncStorage.setItem("manifest-id", manifestId);
+          AsyncStorage.setItem("flow-name", flowName);
+          AsyncStorage.setItem("last-screen", url.searchParams.get("lastScreen") || "");
+
+          navigation.navigate(NavigatorName.Exchange, {
+            screen: flowName === "buy" ? ScreenName.ExchangeBuy : ScreenName.ExchangeSell,
+            params: {
+              platform: manifestId,
+              goToURL,
+            },
+          });
+
+          return void 0;
+        }
+      }
+    }
+
+    if (isInternalApp && lastMatchingURL) {
+      lastMatchingURL.current = webviewState.url;
+    }
+  }, [isInternalApp, navigation, webviewState.url]);
 
   const handleHardwareBackPress = useCallback(() => {
     const webview = safeGetRefValue(webviewAPIRef);
@@ -169,17 +222,17 @@ export const WebPTXPlayer = ({ manifest, inputs, disableHeader }: Props) => {
       navigation.setOptions({
         headerRight: () => <HeaderRight onClose={onClose} />,
         headerLeft: () =>
-          isWhitelistedDomain ? null : (
-            <BackToWhitelistedDomain
+          isInternalApp ? null : (
+            <BackToInternalDomain
               manifest={manifest}
-              webviewURL={webviewState.url}
-              lastMatchingURL={lastMatchingURL.current}
+              webviewURL={webviewState?.url}
+              lastMatchingURL={lastMatchingURL?.current}
             />
           ),
         headerTitle: () => null,
       });
     }
-  }, [manifest, navigation, webviewState, isWhitelistedDomain, disableHeader, onClose]);
+  }, [manifest, navigation, webviewState, isInternalApp, disableHeader, onClose]);
 
   return (
     <SafeAreaView style={[styles.root]}>

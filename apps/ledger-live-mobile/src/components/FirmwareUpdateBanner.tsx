@@ -1,10 +1,18 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { Platform, Linking } from "react-native";
+import { Platform, Pressable } from "react-native";
 import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
 import { DeviceModelInfo } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { Alert, Text, Flex, IconsLegacy, IconBadge, ProgressLoader } from "@ledgerhq/native-ui";
+import {
+  Alert,
+  Text,
+  Flex,
+  IconsLegacy,
+  IconBadge,
+  Icons,
+  InfiniteLoader,
+} from "@ledgerhq/native-ui";
 import { DownloadMedium, UsbMedium } from "@ledgerhq/native-ui/assets/icons";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -24,13 +32,12 @@ import {
 import { hasConnectedDeviceSelector } from "../reducers/appstate";
 import Button from "./Button";
 import QueuedDrawer from "./QueuedDrawer";
-import InvertTheme from "./theme/InvertTheme";
-import { urls } from "../config/urls";
 import { renderConnectYourDevice } from "./DeviceAction/rendering";
 import { DeviceActionError } from "./DeviceAction/common";
+import { UpdateStep } from "../screens/FirmwareUpdate";
 
-type FirmwareUpdateBannerProps = {
-  onBackFromUpdate?: () => void;
+export type FirmwareUpdateBannerProps = {
+  onBackFromUpdate: (updateState: UpdateStep) => void;
 };
 
 const requiredBatteryStatuses = [
@@ -47,7 +54,7 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
 
   const { dark } = useTheme();
   const theme: "dark" | "light" = dark ? "dark" : "light";
-  const [disableUpdateButton, setDisableUpdateButton] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [showBatteryWarningDrawer, setShowBatteryWarningDrawer] = useState<boolean>(false);
 
   const [showUnsupportedUpdateDrawer, setShowUnsupportedUpdateDrawer] = useState<boolean>(false);
@@ -61,6 +68,16 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
 
   const latestFirmware = useLatestFirmware(lastSeenDevice?.deviceInfo);
 
+  const {
+    requestCompleted: batteryRequestCompleted,
+    batteryStatusesState,
+    triggerRequest: triggerBatteryCheck,
+    cancelRequest: cancelBatteryCheck,
+  } = useBatteryStatuses({
+    deviceId: lastConnectedDevice?.deviceId,
+    statuses: requiredBatteryStatuses,
+  });
+
   const onExperimentalFirmwareUpdate = useCallback(() => {
     if (newFwUpdateUxFeatureFlag?.enabled) {
       navigation.navigate(NavigatorName.Manager, {
@@ -69,7 +86,10 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
           device: lastConnectedDevice,
           deviceInfo: lastSeenDevice?.deviceInfo,
           firmwareUpdateContext: latestFirmware,
-          onBackFromUpdate,
+          onBackFromUpdate: (updateState: UpdateStep) => {
+            cancelBatteryCheck();
+            if (onBackFromUpdate) onBackFromUpdate(updateState);
+          },
         },
       });
       return;
@@ -93,18 +113,9 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
     lastConnectedDevice,
     lastSeenDevice?.deviceInfo,
     latestFirmware,
+    cancelBatteryCheck,
     onBackFromUpdate,
   ]);
-
-  const {
-    requestCompleted: batteryRequestCompleted,
-    batteryStatusesState,
-    triggerRequest: triggerBatteryCheck,
-    cancelRequest: cancelBatteryCheck,
-  } = useBatteryStatuses({
-    deviceId: lastConnectedDevice?.deviceId,
-    statuses: requiredBatteryStatuses,
-  });
 
   // Effect that will check the battery of stax before triggering the update and display a warning preventing the update
   // in case the battery is too low and the device is not charging
@@ -119,7 +130,7 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
         ? setShowBatteryWarningDrawer(true)
         : onExperimentalFirmwareUpdate();
 
-      setDisableUpdateButton(false);
+      setLoading(false);
     }
   }, [
     batteryRequestCompleted,
@@ -134,12 +145,6 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
   const onCloseUsbWarningDrawer = useCallback(() => {
     setShowUnsupportedUpdateDrawer(false);
   }, []);
-
-  const onOpenReleaseNotes = useCallback(() => {
-    if (lastConnectedDevice) {
-      Linking.openURL(urls.fwUpdateReleaseNotes[lastConnectedDevice?.modelId]);
-    }
-  }, [lastConnectedDevice]);
 
   const isUsbFwVersionUpdateSupported =
     lastSeenDevice &&
@@ -156,7 +161,7 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
     if (lastConnectedDevice?.modelId === DeviceModelId.stax && newFwUpdateUxFeatureFlag?.enabled) {
       // This leads to a check on the battery before triggering update, it is only necessary for Stax and on the new UX
       // (because it's the only type of update that can happen via BLE)
-      setDisableUpdateButton(true);
+      setLoading(true);
       triggerBatteryCheck();
     }
     // Path with any device model, wired and on android
@@ -174,50 +179,51 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
     onExperimentalFirmwareUpdate,
   ]);
 
-  const deviceName = lastConnectedDevice
+  const productName = lastConnectedDevice
     ? getDeviceModel(lastConnectedDevice.modelId).productName
-    : "";
+    : undefined;
+
+  const deviceName = lastConnectedDevice?.deviceName;
 
   return showBanner && hasCompletedOnboarding && hasConnectedDevice ? (
     <>
       {newFwUpdateUxFeatureFlag?.enabled ? (
-        <Flex backgroundColor="neutral.c100" borderRadius={8} px={5} py={6}>
-          <Flex flexDirection="row" alignItems="center" mb={5}>
-            <IconsLegacy.CloudDownloadMedium color="neutral.c00" size={32} />
-            <Text ml={5} flexShrink={1} flexGrow={1} color="neutral.c00" fontWeight="semiBold">
-              {t("FirmwareUpdate.newVersion", {
-                version,
-                deviceName,
-              })}
-            </Text>
-          </Flex>
-          <InvertTheme>
-            <Flex flexDirection="row">
-              <Button
-                flex={1}
-                outline
-                event="button_clicked"
-                eventProperties={{ button: "Learn more" }}
-                type="main"
-                title={t("common.learnMore")}
-                onPress={onOpenReleaseNotes}
-              />
-              <Button
-                ml={3}
-                flex={1}
-                event="button_clicked"
-                eventProperties={{ button: "Update" }}
-                disabled={disableUpdateButton}
-                type="main"
-                title={!disableUpdateButton ? t("FirmwareUpdate.update") : null}
-                onPress={onClickUpdate}
-                outline={false}
-              >
-                {disableUpdateButton && <ProgressLoader infinite radius={10} strokeWidth={2} />}
-              </Button>
+        <Pressable onPress={onClickUpdate} disabled={loading}>
+          <Flex
+            flexDirection="row"
+            alignItems="flex-start"
+            backgroundColor="opacityDefault.c05"
+            borderRadius={12}
+            p={7}
+            pl={5}
+          >
+            <Flex flexDirection="row" alignItems="center" mb={5} mr={4}>
+              {loading ? (
+                <InfiniteLoader size={24} color="primary.c80" />
+              ) : lastConnectedDevice?.modelId === DeviceModelId.stax ? (
+                <Icons.Stax color="primary.c80" size="M" />
+              ) : (
+                <Icons.Nano color="primary.c80" size="M" />
+              )}
             </Flex>
-          </InvertTheme>
-        </Flex>
+            <Flex flexDirection="column" alignItems={"flex-start"} flexShrink={1}>
+              <Text variant="h5" fontWeight="semiBold" pb={4}>
+                {t("FirmwareUpdate.banner.title")}
+              </Text>
+              <Text variant="paragraph" fontWeight="medium" color="opacityDefault.c70">
+                {deviceName
+                  ? t("FirmwareUpdate.banner.descriptionDeviceName", {
+                      deviceName,
+                      firmwareVersion: version,
+                    })
+                  : t("FirmwareUpdate.banner.descriptionProductName", {
+                      productName,
+                      firmwareVersion: version,
+                    })}
+              </Text>
+            </Flex>
+          </Flex>
+        </Pressable>
       ) : (
         <Flex mt={5}>
           <Alert type="info" showIcon={false}>
@@ -289,7 +295,7 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
         }
         onClose={() => {
           cancelBatteryCheck();
-          setDisableUpdateButton(false);
+          setLoading(false);
         }}
       >
         {lastConnectedDevice && (

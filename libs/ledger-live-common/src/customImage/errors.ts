@@ -12,7 +12,9 @@ export const ImageDownloadError = createCustomErrorClass("ImageDownloadError");
 
 export const ImageTooLargeError = createCustomErrorClass("ImageTooLargeError");
 
-export const ImageMetadataLoadingError = createCustomErrorClass("ImageMetadataLoadingError");
+export const NFTMetadataLoadingError = createCustomErrorClass("NFTMetadataLoadingError");
+
+export const ImageSizeLoadingError = createCustomErrorClass("ImageSizeLoadingError");
 
 export const ImageCropError = createCustomErrorClass("ImageCropError");
 

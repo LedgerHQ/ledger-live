@@ -26,8 +26,12 @@ import { SatStackStatus } from "@ledgerhq/live-common/families/bitcoin/satstack"
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { NetworkDown } from "@ledgerhq/errors";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-const listSupportedTokens = () => listTokens().filter(t => isCurrencySupported(t.parentCurrency));
+import { CryptoCurrencyId, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { Feature } from "@ledgerhq/types-live";
+
+const listSupportedTokens = () =>
+  listTokens().filter(token => isCurrencySupported(token.parentCurrency));
+
 const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const axelar = useFeature("currencyAxelar");
   const stargaze = useFeature("currencyStargaze");
@@ -62,14 +66,13 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const base = useFeature("currencyBase");
   const baseGoerli = useFeature("currencyBaseGoerli");
   const klaytn = useFeature("currencyKlaytn");
+  const mock = useEnv("MOCK");
 
   const featureFlaggedCurrencies = useMemo(
-    () => ({
-      // Keys in this list must match an existing currency.id
-      // Pay attention to the case!
+    (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
       axelar,
       stargaze,
-      secretNetwork,
+      secret_network: secretNetwork,
       umee,
       desmos,
       onomy,
@@ -93,7 +96,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       velas_evm: velasEvm,
       syscoin,
       internet_computer: internetComputer,
-      telos: telosEvm,
+      telos_evm: telosEvm,
       coreum,
       polygon_zk_evm: polygonZkEvm,
       polygon_zk_evm_testnet: polygonZkEvmTestnet,
@@ -137,19 +140,25 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       klaytn,
     ],
   );
+
   const currencies = useMemo(() => {
     const currencies = (listSupportedCurrencies() as CryptoOrTokenCurrency[]).concat(
       listSupportedTokens(),
     );
-    const deactivatedCurrencies = Object.entries(featureFlaggedCurrencies)
-      .filter(([, feature]) => !feature?.enabled)
-      .map(([name]) => name);
+
+    const deactivatedCurrencies = mock
+      ? [] // mock mode: all currencies are available for playwrigth tests
+      : Object.entries(featureFlaggedCurrencies)
+          .filter(([, feature]) => !feature?.enabled)
+          .map(([name]) => name);
     return currencies.filter(c => !deactivatedCurrencies.includes(c.id));
-  }, [featureFlaggedCurrencies]);
+  }, [featureFlaggedCurrencies, mock]);
+
   const url =
     currency && currency.type === "TokenCurrency"
       ? supportLinkByTokenType[currency.tokenType as keyof typeof supportLinkByTokenType]
       : null;
+
   return (
     <>
       {!navigator.onLine ? (
@@ -180,6 +189,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
     </>
   );
 };
+
 export const StepChooseCurrencyFooter = ({
   transitionTo,
   currency,
@@ -239,6 +249,7 @@ export const StepChooseCurrencyFooter = ({
     tokenAccount,
     transitionTo,
   ]);
+
   return (
     <>
       <TrackPage category="AddAccounts" name="Step1" />
@@ -268,4 +279,5 @@ export const StepChooseCurrencyFooter = ({
     </>
   );
 };
+
 export default StepChooseCurrency;

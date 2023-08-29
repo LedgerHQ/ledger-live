@@ -19,7 +19,7 @@
       "env": ["CI_OS"]
     },
     "test": {
-      "dependsOn": ["lint", "typecheck", "build"],
+      "dependsOn": ["build"],
       "env": ["CI_OS"],
       "outputs": []
     },

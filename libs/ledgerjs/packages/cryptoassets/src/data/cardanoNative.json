@@ -203,8 +203,8 @@
     "cardano",
     "6ac8ef33b510ec004fe11585f7c5a9f0c07f0c23428ab4f29c1d7d10",
     "4d454c44",
-    "MELD",
-    "MELD",
+    "MELD (old)",
+    "MELD_",
     6,
     false,
     false
@@ -1025,6 +1025,16 @@
     "69555344",
     "iUSD",
     "iUSD",
+    6,
+    false,
+    false
+  ],
+  [
+    "cardano",
+    "a2944573e99d2ed3055b808eaa264f0bf119e01fc6b18863067c63e4",
+    "4d454c44",
+    "MELD",
+    "MELD",
     6,
     false,
     false

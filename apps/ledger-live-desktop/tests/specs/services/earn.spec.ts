@@ -52,6 +52,10 @@ test("Earn @smoke", async ({ page }) => {
     await layout.goToEarn();
     await expect(await liveAppWebview.waitForCorrectTextInWebview("theme: dark")).toBe(true);
     await expect(await liveAppWebview.waitForCorrectTextInWebview("lang: en")).toBe(true);
+    await expect(await liveAppWebview.waitForCorrectTextInWebview("locale: en-US")).toBe(true);
+    await expect(await liveAppWebview.waitForCorrectTextInWebview("discreetMode: false")).toBe(
+      true,
+    );
     await expect(await liveAppWebview.waitForCorrectTextInWebview("currencyTicker: USD")).toBe(
       true,
     );

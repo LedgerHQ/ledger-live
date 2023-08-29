@@ -1,5 +1,6 @@
 import {
   PolkadotAccount,
+  PolkadotOperation,
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/polkadot/types";
@@ -10,7 +11,7 @@ import transactionConfirmFields from "./TransactionConfirmFields";
 import AccountBodyHeader from "./AccountBodyHeader";
 import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
 
-const family: LLDCoinFamily<PolkadotAccount, Transaction, TransactionStatus> = {
+const family: LLDCoinFamily<PolkadotAccount, Transaction, TransactionStatus, PolkadotOperation> = {
   operationDetails,
   accountHeaderManageActions,
   transactionConfirmFields,

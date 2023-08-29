@@ -4,7 +4,7 @@ import BigNumber from "bignumber.js";
 import { AccountShapeInfo } from "../../bridge/jsHelpers";
 import { CosmosAPI } from "./api/Cosmos";
 import { getAccountShape } from "./js-synchronisation";
-import { CosmosAccount, CosmosTx } from "./types";
+import { CosmosAccount, CosmosOperation, CosmosTx } from "./types";
 import * as jsHelpers from "../../bridge/jsHelpers";
 
 jest.mock("./api/Cosmos");
@@ -229,7 +229,7 @@ describe("getAccountShape", () => {
       ],
     });
     const account = await getAccountShape(infoMock, syncConfig);
-    expect((account.operations as Operation[])[0].extra.memo).toEqual(memo);
+    expect((account.operations as CosmosOperation[])[0].extra.memo).toEqual(memo);
   });
 
   it("should list claim reward operations correctly with one delegation", async () => {
@@ -262,8 +262,8 @@ describe("getAccountShape", () => {
     });
 
     const account = await getAccountShape(infoMock, syncConfig);
-    expect((account.operations as Operation[])[0].value).toEqual(new BigNumber(3));
-    expect((account.operations as Operation[])[0].extra.validators).toEqual([
+    expect((account.operations as CosmosOperation[])[0].value).toEqual(new BigNumber(3));
+    expect((account.operations as CosmosOperation[])[0].extra.validators).toEqual([
       {
         address: "validatorAddressNumeroUno",
         amount: new BigNumber(3),
@@ -305,6 +305,20 @@ describe("getAccountShape", () => {
                     },
                   ],
                 },
+                {
+                  type: "withdraw_rewards",
+                  attributes: [
+                    {
+                      key: "amount",
+                      value:
+                        "56ibc/0025F8A87464A471E66B234C4F93AEC5B4DA3D42D7986451A059273426290DD5,512ibc/6B8A3F5C2AD51CD6171FA41A7E8C35AD594AB69226438DB94450436EA57B3A89,7uatom",
+                    },
+                    {
+                      key: "validator",
+                      value: "validatorAddressThree",
+                    },
+                  ],
+                },
               ],
               attributes: [],
             },
@@ -314,8 +328,8 @@ describe("getAccountShape", () => {
     });
 
     const account = await getAccountShape(infoMock, syncConfig);
-    expect((account.operations as Operation[])[0].value).toEqual(new BigNumber(15));
-    expect((account.operations as Operation[])[0].extra.validators).toEqual([
+    expect((account.operations as CosmosOperation[])[0].value).toEqual(new BigNumber(22));
+    expect((account.operations as CosmosOperation[])[0].extra.validators).toEqual([
       {
         address: "validatorAddressHehe",
         amount: new BigNumber(10),
@@ -323,6 +337,10 @@ describe("getAccountShape", () => {
       {
         address: "validatorAddressTwo",
         amount: new BigNumber(5),
+      },
+      {
+        address: "validatorAddressThree",
+        amount: new BigNumber(7),
       },
     ]);
   });
@@ -378,8 +396,8 @@ describe("getAccountShape", () => {
     });
 
     const account = await getAccountShape(infoMock, syncConfig);
-    expect((account.operations as Operation[])[0].value).toEqual(new BigNumber(11));
-    expect((account.operations as Operation[])[0].type).toEqual("IN");
+    expect((account.operations as CosmosOperation[])[0].value).toEqual(new BigNumber(11));
+    expect((account.operations as CosmosOperation[])[0].type).toEqual("IN");
   });
 
   it("should parse an operation correctly with multiple transfers(sent operations)", async () => {
@@ -437,8 +455,8 @@ describe("getAccountShape", () => {
     });
 
     const account = await getAccountShape(infoMock, syncConfig);
-    expect((account.operations as Operation[])[0].value).toEqual(new BigNumber(12)); // 1+ 5 + 6
-    expect((account.operations as Operation[])[0].type).toEqual("OUT");
+    expect((account.operations as CosmosOperation[])[0].value).toEqual(new BigNumber(12)); // 1+ 5 + 6
+    expect((account.operations as CosmosOperation[])[0].type).toEqual("OUT");
   });
 
   it("should parse an operation correctly with multiple delegations", async () => {
@@ -487,9 +505,9 @@ describe("getAccountShape", () => {
       ],
     });
     const account = await getAccountShape(infoMock, syncConfig);
-    expect((account.operations as Operation[])[0].value).toEqual(new BigNumber(1)); // fees
-    expect((account.operations as Operation[])[0].type).toEqual("DELEGATE");
-    expect((account.operations as Operation[])[0].extra.validators).toEqual([
+    expect((account.operations as CosmosOperation[])[0].value).toEqual(new BigNumber(1)); // fees
+    expect((account.operations as CosmosOperation[])[0].type).toEqual("DELEGATE");
+    expect((account.operations as CosmosOperation[])[0].extra.validators).toEqual([
       {
         address: "address",
         amount: new BigNumber(5),
@@ -555,10 +573,12 @@ describe("getAccountShape", () => {
       ],
     });
     const account = await getAccountShape(infoMock, syncConfig);
-    expect((account.operations as Operation[])[0].value).toEqual(new BigNumber(1)); // fees
-    expect((account.operations as Operation[])[0].type).toEqual("REDELEGATE");
-    expect((account.operations as Operation[])[0].extra.sourceValidator).toEqual("address_src");
-    expect((account.operations as Operation[])[0].extra.validators).toEqual([
+    expect((account.operations as CosmosOperation[])[0].value).toEqual(new BigNumber(1)); // fees
+    expect((account.operations as CosmosOperation[])[0].type).toEqual("REDELEGATE");
+    expect((account.operations as CosmosOperation[])[0].extra.sourceValidator).toEqual(
+      "address_src",
+    );
+    expect((account.operations as CosmosOperation[])[0].extra.validators).toEqual([
       {
         address: "address1",
         amount: new BigNumber(5),
@@ -616,9 +636,9 @@ describe("getAccountShape", () => {
       ],
     });
     const account = await getAccountShape(infoMock, syncConfig);
-    expect((account.operations as Operation[])[0].value).toEqual(new BigNumber(1)); // fees
-    expect((account.operations as Operation[])[0].type).toEqual("UNDELEGATE");
-    expect((account.operations as Operation[])[0].extra.validators).toEqual([
+    expect((account.operations as CosmosOperation[])[0].value).toEqual(new BigNumber(1)); // fees
+    expect((account.operations as CosmosOperation[])[0].type).toEqual("UNDELEGATE");
+    expect((account.operations as CosmosOperation[])[0].extra.validators).toEqual([
       {
         address: "address1",
         amount: new BigNumber(5),

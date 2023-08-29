@@ -5,9 +5,6 @@ import { Text, Flex, Button } from "@ledgerhq/native-ui";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useSelector, useDispatch } from "react-redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { createAction } from "@ledgerhq/live-common/hw/actions/staxFetchImage";
-import staxFetchImage from "@ledgerhq/live-common/hw/staxFetchImage";
-
 import { targetDisplayDimensions } from "../../../CustomImage/shared";
 import { customImageBackupSelector } from "../../../../reducers/settings";
 import { setCustomImageBackup } from "../../../../actions/settings";
@@ -22,6 +19,7 @@ import StaxFramedImage, {
 } from "../../../../components/CustomImage/StaxFramedImage";
 import { NavigationHeaderBackButton } from "../../../../components/NavigationHeaderBackButton";
 import { ReactNavigationHeaderOptions } from "../../../../components/RootNavigator/types/helpers";
+import { useStaxFetchImageDeviceAction } from "../../../../hooks/deviceActions";
 
 // Defines here some of the header options for this screen to be able to reset back to them.
 export const debugFetchCustomImageHeaderOptions: ReactNavigationHeaderOptions = {
@@ -31,9 +29,8 @@ export const debugFetchCustomImageHeaderOptions: ReactNavigationHeaderOptions = 
   headerLeft: () => <NavigationHeaderBackButton />,
 };
 
-const deviceAction = createAction(staxFetchImage);
-
 export default function DebugFetchCustomImage() {
+  const deviceAction = useStaxFetchImageDeviceAction();
   const { colors } = useTheme();
   const navigation = useNavigation();
 

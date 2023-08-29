@@ -230,6 +230,11 @@ export type SettingsState = {
   dateFormat: string;
   hasBeenUpsoldProtect: boolean;
   generalTermsVersionAccepted?: string;
+  depositFlow: {
+    hasClosedNetworkBanner: boolean;
+    hasClosedWithdrawBanner: boolean;
+  };
+  userNps: number | null;
 };
 
 export type NotificationsSettings = {
@@ -254,6 +259,15 @@ export type SwapStateType = {
   transaction?: Transaction;
   exchangeRate?: ExchangeRate;
   exchangeRateExpiration?: Date;
+};
+
+// === EARN STATE ===
+
+export type EarnState = {
+  infoModal: {
+    message?: string;
+    messageTitle?: string;
+  };
 };
 
 // === PROTECT STATE ===
@@ -303,6 +317,7 @@ export type State = {
   dynamicContent: DynamicContentState;
   notifications: NotificationsState;
   swap: SwapStateType;
+  earn: EarnState;
   walletconnect: WalletConnectState;
   postOnboarding: PostOnboardingState;
   protect: ProtectState;

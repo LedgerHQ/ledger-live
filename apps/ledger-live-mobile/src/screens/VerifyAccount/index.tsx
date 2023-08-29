@@ -5,10 +5,8 @@ import { useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
 import { getMainAccount, getReceiveFlowError } from "@ledgerhq/live-common/account/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Flex } from "@ledgerhq/native-ui";
-import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
 import SelectDevice from "../../components/SelectDevice";
@@ -27,14 +25,14 @@ import {
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import { ScreenName } from "../../const";
 import { RootStackParamList } from "../../components/RootNavigator/types/RootNavigator";
-
-const action = createAction(connectApp);
+import { useAppDeviceAction } from "../../hooks/deviceActions";
 
 type NavigationProps = RootComposite<
   StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.VerifyAccount>
 >;
 
 export default function VerifyAccount({ navigation, route }: NavigationProps) {
+  const action = useAppDeviceAction();
   const { colors } = useTheme();
   const { parentAccount } = useSelector(accountScreenSelector(route));
   const [device, setDevice] = useState<Device | null | undefined>();
@@ -51,7 +49,22 @@ export default function VerifyAccount({ navigation, route }: NavigationProps) {
   const onDone = useCallback(() => {
     const n = navigation.getParent<StackNavigatorNavigation<RootStackParamList>>();
 
-    if (n) {
+    // get the route at the given index on navigation
+    const { index, routes } = navigation.getState();
+    const { name, params } = routes[index];
+
+    const screenName = params && "screen" in params ? (params.screen as ScreenName) : undefined;
+
+    // if this route is a live app we do not want to pop
+    // as doing so would take the user out of the live app.
+    // an example of this is the BTCDirect app.
+    const isRouteAtIndexALiveApp = [ScreenName.ExchangeBuy, ScreenName.PlatformApp].includes(
+      (screenName ?? name) as ScreenName,
+    );
+
+    // if we have n ( parent route ) and the route is not a live app then
+    // pop the navigation as normal
+    if (!isRouteAtIndexALiveApp && n) {
       n.pop();
     }
   }, [navigation]);

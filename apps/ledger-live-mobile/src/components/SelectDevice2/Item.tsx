@@ -40,7 +40,7 @@ const Item = ({ device, onPress }: Props) => {
   }, [device.modelId]);
 
   return (
-    <Touchable event="something" onPress={() => onPress(device)}>
+    <Touchable onPress={() => onPress(device)} touchableTestID={"device-item-" + device.deviceId}>
       <Flex
         backgroundColor="neutral.c30"
         borderRadius={2}

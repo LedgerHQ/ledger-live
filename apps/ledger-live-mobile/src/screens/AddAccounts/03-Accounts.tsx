@@ -546,6 +546,7 @@ class Footer extends PureComponent<{
           />
         ) : (
           <Button
+            testID="add-accounts-continue-button"
             event="AddAccountsSelected"
             type="primary"
             title={<Trans i18nKey="addAccounts.finalCta" />}

@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import Config from "react-native-config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { concatMap } from "rxjs/operators";
-import { setEnvUnsafe, isEnvDefault, changes } from "@ledgerhq/live-common/env";
-import type { EnvName } from "@ledgerhq/live-common/env";
+import { setEnvUnsafe, isEnvDefault, changes } from "@ledgerhq/live-env";
+import type { EnvName } from "@ledgerhq/live-env";
 
 import { FeatureId } from "@ledgerhq/types-live";
 

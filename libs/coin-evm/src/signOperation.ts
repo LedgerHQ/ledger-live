@@ -115,7 +115,6 @@ export const buildSignOperation =
           signedOperation: {
             operation,
             signature,
-            expirationDate: null,
           },
         });
       }

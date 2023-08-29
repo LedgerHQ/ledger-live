@@ -40,15 +40,16 @@ export default class ElrondApi {
 
   async getAccountDetails(addr: string) {
     const {
-      data: { balance, nonce },
+      data: { balance, nonce, isGuarded },
     } = await network({
       method: "GET",
-      url: `${this.API_URL}/accounts/${addr}`,
+      url: `${this.API_URL}/accounts/${addr}?withGuardianInfo=true`,
     });
 
     return {
       balance,
       nonce,
+      isGuarded,
     };
   }
 
@@ -92,7 +93,7 @@ export default class ElrondApi {
 
   async submit(signedOperation: SignedOperation): Promise<string> {
     const transaction = {
-      ...signedOperation.signatureRaw,
+      ...signedOperation.rawData,
       signature: signedOperation.signature,
     };
 

@@ -185,7 +185,15 @@ export default function Default() {
               <DisableTransactionBroadcastWarning />
             ) : null}
             <Switch>
-              <Route path="/onboarding" component={Onboarding} />
+              <Route
+                path="/onboarding"
+                render={() => (
+                  <>
+                    <Onboarding />
+                    <Drawer />
+                  </>
+                )}
+              />
               <Route path="/sync-onboarding" component={SyncOnboarding} />
               <Route
                 path="/post-onboarding"
@@ -248,7 +256,7 @@ export default function Default() {
                             />
                             <Route path="/platform/:appId?" component={LiveApp} />
                             <Route path="/earn" component={Earn} />
-                            <Route path="/exchange" component={Exchange} />
+                            <Route exact path="/exchange/:appId?" component={Exchange} />
                             <Route
                               exact
                               path="/account/:id/nft-collection"

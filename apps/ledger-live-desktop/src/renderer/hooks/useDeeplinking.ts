@@ -101,16 +101,26 @@ export function useDeepLinkHandler() {
       const query = Object.fromEntries(searchParams);
       const fullUrl = pathname.replace(/(^\/+|\/+$)/g, "");
       const [url, path] = fullUrl.split("/");
+
+      const {
+        ajs_prop_source: ajsPropSource,
+        ajs_prop_campaign: ajsPropCampaign,
+        ajs_prop_track_data: ajsPropTrackData,
+        currency,
+        installApp,
+        appName,
+      } = query;
+
       // Track deeplink only when ajsPropSource attribute exists.
-      const ajsPropSource = searchParams.get("ajs_prop_source");
       if (ajsPropSource) {
-        const { currency, installApp, appName } = query;
         track("deeplink_clicked", {
           deeplinkSource: ajsPropSource,
+          deeplinkCampaign: ajsPropCampaign,
           url,
           currency,
           installApp,
           appName,
+          ...(ajsPropTrackData ? JSON.parse(ajsPropTrackData) : {}),
         });
       }
       switch (url) {

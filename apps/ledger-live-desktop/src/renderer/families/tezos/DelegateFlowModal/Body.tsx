@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { bindActionCreators } from "redux";
 import { useDispatch, useSelector } from "react-redux";
-import { TFunction, Trans, useTranslation } from "react-i18next";
+import { TFunction } from "i18next";
+import { Trans, useTranslation } from "react-i18next";
 import invariant from "invariant";
 import { Account, AccountLike, Operation, SubAccount } from "@ledgerhq/types-live";
 import { useBakers, useRandomBaker } from "@ledgerhq/live-common/families/tezos/bakers";

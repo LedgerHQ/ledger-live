@@ -1,6 +1,6 @@
 import React, { useMemo, memo, useCallback } from "react";
 import { Flex, Text, Bar } from "@ledgerhq/react-ui";
-import { TFunction } from "react-i18next";
+import { TFunction } from "i18next";
 import { SwitchTransition, Transition } from "react-transition-group";
 import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";

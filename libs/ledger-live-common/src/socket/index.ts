@@ -12,7 +12,7 @@ import {
   StatusCodes,
 } from "@ledgerhq/errors";
 import { cancelDeviceAction } from "../hw/deviceAccess";
-import { getEnv } from "../env";
+import { getEnv } from "@ledgerhq/live-env";
 import type { SocketEvent } from "@ledgerhq/types-live";
 const warningsSubject = new Subject<string>();
 export const warnings: Observable<string> = warningsSubject.asObservable();

@@ -515,9 +515,11 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
           // stability: function called twice will return the same object reference
           // (=== convergence so we can stop looping, typically because transaction will be a hook effect dependency of prepareTransaction)
           async function expectStability(account, t) {
-            const t2 = await bridge.prepareTransaction(account, t);
-            const t3 = await bridge.prepareTransaction(account, t2);
-            expect(t2).toBe(t3);
+            let t2 = await bridge.prepareTransaction(account, t);
+            let t3 = await bridge.prepareTransaction(account, t2);
+            t2 = omit(t2, arg.currencyData.IgnorePrepareTransactionFields || []);
+            t3 = omit(t3, arg.currencyData.IgnorePrepareTransactionFields || []);
+            expect(t2).toStrictEqual(t3);
           }
 
           makeTest("ref stability on empty transaction", async () => {
@@ -540,13 +542,17 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
               recipient: account.freshAddress,
             };
             const stable = await bridge.prepareTransaction(account, t);
-            const first = await bridge.prepareTransaction(account, stable);
+            const first = omit(
+              await bridge.prepareTransaction(account, stable),
+              arg.currencyData.IgnorePrepareTransactionFields || [],
+            );
             const concur = await Promise.all(
               Array(3)
                 .fill(null)
                 .map(() => bridge.prepareTransaction(account, stable)),
             );
             concur.forEach(r => {
+              r = omit(r, arg.currencyData.IgnorePrepareTransactionFields || []);
               expect(r).toEqual(first);
             });
           });

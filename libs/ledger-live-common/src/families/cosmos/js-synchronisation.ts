@@ -9,11 +9,12 @@ import {
 import { encodeAccountId } from "../../account";
 import { CosmosAPI } from "./api/Cosmos";
 import { encodeOperationId } from "../../operation";
-import { CosmosDelegationInfo, CosmosMessage, CosmosTx } from "./types";
-import type { Operation, OperationType } from "@ledgerhq/types-live";
+import { CosmosOperation, CosmosMessage, CosmosTx } from "./types";
+import type { OperationType } from "@ledgerhq/types-live";
 import { getMainMessage } from "./helpers";
+import { parseAmountStringToNumber } from "./logic";
 
-const getBlankOperation = (tx, fees, id) => ({
+const getBlankOperation = (tx, fees, id): CosmosOperation => ({
   id: "",
   hash: tx.txhash,
   type: "" as OperationType,
@@ -25,16 +26,14 @@ const getBlankOperation = (tx, fees, id) => ({
   recipients: [] as string[],
   accountId: id,
   date: new Date(tx.timestamp),
-  extra: {
-    validators: [] as CosmosDelegationInfo[],
-  },
+  extra: {},
   transactionSequenceNumber: parseInt(tx.tx.auth_info.signer_infos[0].sequence),
 });
 
-const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): Operation[] => {
+const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): CosmosOperation[] => {
   const { address, currency } = info;
   const unitCode = currency.units[1].code;
-  const ops: Operation[] = [];
+  const ops: CosmosOperation[] = [];
   for (const tx of txs) {
     let fees = new BigNumber(0);
 
@@ -42,7 +41,7 @@ const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): Op
       if (elem.denom === unitCode) fees = fees.plus(elem.amount);
     });
 
-    const op: Operation = getBlankOperation(tx, fees, accountId);
+    const op: CosmosOperation = getBlankOperation(tx, fees, accountId);
 
     const messages: CosmosMessage[] = tx.logs.map(log => log.events).flat(1);
 
@@ -65,7 +64,7 @@ const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): Op
           if (amount && sender && recipient && amount.endsWith(unitCode)) {
             if (op.senders.indexOf(sender) === -1) op.senders.push(sender);
             if (op.recipients.indexOf(recipient) === -1) op.recipients.push(recipient);
-            op.value = op.value.plus(amount.replace(unitCode, ""));
+            op.value = op.value.plus(parseAmountStringToNumber(amount, unitCode));
             if (sender === address) {
               op.type = "OUT";
             } else if (recipient === address) {
@@ -86,11 +85,12 @@ const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): Op
           const validator = message.attributes.find(attr => attr.key === "validator")?.value;
           const amount = message.attributes.find(attr => attr.key === "amount")?.value;
           if (validator && amount && amount.endsWith(unitCode)) {
+            const amountString = parseAmountStringToNumber(amount, unitCode);
             rewardShards.push({
-              amount: new BigNumber(amount.replace(unitCode, "")),
+              amount: new BigNumber(amountString),
               address: validator,
             });
-            txRewardValue = txRewardValue.plus(amount.replace(unitCode, ""));
+            txRewardValue = txRewardValue.plus(amountString);
           }
         }
         op.value = txRewardValue;
@@ -106,7 +106,7 @@ const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): Op
           const validator = message.attributes.find(attr => attr.key === "validator")?.value;
           if (amount && validator && amount.endsWith(unitCode)) {
             delegateShards.push({
-              amount: new BigNumber(amount.replace(unitCode, "")),
+              amount: new BigNumber(parseAmountStringToNumber(amount, unitCode)),
               address: validator,
             });
           }
@@ -129,7 +129,7 @@ const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): Op
           if (amount && validatorDst && validatorSrc && amount.endsWith(unitCode)) {
             op.extra.sourceValidator = validatorSrc;
             redelegateShards.push({
-              amount: new BigNumber(amount.replace(unitCode, "")),
+              amount: new BigNumber(parseAmountStringToNumber(amount, unitCode)),
               address: validatorDst,
             });
           }
@@ -146,7 +146,7 @@ const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): Op
           const validator = message.attributes.find(attr => attr.key === "validator")?.value;
           if (amount && validator && amount.endsWith(unitCode)) {
             unbondShards.push({
-              amount: new BigNumber(amount.replace(unitCode, "")),
+              amount: new BigNumber(parseAmountStringToNumber(amount, unitCode)),
               address: validator,
             });
           }

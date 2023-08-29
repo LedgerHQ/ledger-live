@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "31.3.1",
+  "version": "31.5.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -175,7 +175,7 @@
     "@ledgerhq/live-promise": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/wallet-api-core": "^1.0.2",
-    "@ledgerhq/wallet-api-server": "^1.1.0",
+    "@ledgerhq/wallet-api-server": "^1.1.1",
     "@solana/spl-token": "^0.3.7",
     "@solana/web3.js": "1.77.3",
     "@stacks/network": "1.2.2",
@@ -190,7 +190,6 @@
     "@types/pako": "^2.0.0",
     "@types/qs": "^6.9.7",
     "@types/redux-actions": "^2.6.2",
-    "@walletconnect/client": "1.7.8",
     "@xstate/react": "^1.6.3",
     "@zondax/cbor": "v8.1.0-zondax-no-bigint",
     "@zondax/izari-filecoin": "^1.2.0",

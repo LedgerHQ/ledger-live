@@ -1,4 +1,5 @@
 import React from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import {
   useRemoteLiveAppContext,
@@ -13,6 +14,7 @@ import { WebPTXPlayer } from "../../../components/WebPTXPlayer";
 import { ExchangeNavigatorParamList } from "../../../components/RootNavigator/types/ExchangeNavigator";
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import { ScreenName } from "../../../const";
+import { INTERNAL_APP_IDS } from "@ledgerhq/live-common/wallet-api/constants";
 
 export type Props = StackNavigatorProps<
   ExchangeNavigatorParamList,
@@ -23,15 +25,26 @@ const appManifestNotFoundError = new Error("App not found"); // FIXME move this 
 
 export function BuyAndSellScreen({ route }: Props) {
   const { theme } = useTheme();
-  const { platform: appId, ...params } = route.params || {};
+  const { platform, ...params } = route.params || {};
   const searchParams = route.path
     ? new URL("ledgerlive://" + route.path).searchParams
     : new URLSearchParams();
-  const localManifest = useLocalLiveAppManifest(appId);
-  const remoteManifest = useRemoteLiveAppManifest(appId);
+  const localManifest = useLocalLiveAppManifest(platform);
+  const remoteManifest = useRemoteLiveAppManifest(platform);
   const { state: remoteLiveAppState } = useRemoteLiveAppContext();
   const { locale } = useLocale();
   const manifest = localManifest || remoteManifest;
+
+  /**
+   * Given the user is on an internal app (webview url is owned by LL) we must reset the session
+   * to ensure the context is reset. last-screen is used to give an external app's webview context
+   * of the last screen the user was on before navigating to the external app screen.
+   */
+  if (manifest?.id && INTERNAL_APP_IDS.includes(manifest.id)) {
+    AsyncStorage.removeItem("last-screen");
+    AsyncStorage.removeItem("manifest-id");
+    AsyncStorage.removeItem("flow-name");
+  }
 
   return manifest ? (
     <>

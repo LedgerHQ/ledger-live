@@ -138,4 +138,5 @@ export class StepRecipientFooter extends PureComponent<StepProps> {
     );
   }
 }
+
 export default StepRecipient;

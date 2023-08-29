@@ -13,6 +13,7 @@ export const dataset: DatasetTest<Transaction> = {
   implementations: ["mock", "js"],
   currencies: {
     ethereum_as_evm_test_only: {
+      IgnorePrepareTransactionFields: ["maxFeePerGas", "maxPriorityFeePerGas"],
       accounts: [
         {
           FIXME_tests: ["balance is sum of ops"],

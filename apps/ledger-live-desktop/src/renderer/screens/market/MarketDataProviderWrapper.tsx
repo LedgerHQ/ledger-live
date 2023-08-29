@@ -1,6 +1,6 @@
 import React, { ReactElement } from "react";
 import { useSelector } from "react-redux";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { MarketDataProvider } from "@ledgerhq/live-common/market/MarketDataProvider";
 import apiMock from "@ledgerhq/live-common/market/api/api.mock";

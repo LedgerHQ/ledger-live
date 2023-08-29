@@ -79,6 +79,7 @@ export default function AddAccountsModal({ navigation, onClose, isOpened, curren
           onPress={onClickAdd}
           imageSource={setupLedgerImg}
           hasMarginBottom
+          testID="add-accounts-modal-add-button"
         />
       )}
 

@@ -1,4 +1,4 @@
-import { TFunction } from "react-i18next";
+import { TFunction } from "i18next";
 import { Account, AnyMessage } from "@ledgerhq/types-live";
 import { Step } from "~/renderer/components/Stepper";
 

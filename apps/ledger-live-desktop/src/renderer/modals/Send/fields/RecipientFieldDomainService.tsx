@@ -5,7 +5,7 @@ import { getRegistriesForDomain } from "@ledgerhq/domain-service/registries/inde
 import { isLoaded, isError } from "@ledgerhq/domain-service/hooks/logic";
 import { useDomain } from "@ledgerhq/domain-service/hooks/index";
 import { Account, AccountBridge } from "@ledgerhq/types-live";
-import { TFunction } from "react-i18next";
+import { TFunction } from "i18next";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import { DomainErrorsView } from "./DomainErrorHandlers";
 import RecipientFieldBase from "./RecipientFieldBase";

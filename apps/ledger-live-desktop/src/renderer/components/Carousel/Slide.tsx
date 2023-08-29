@@ -123,7 +123,7 @@ const Slide = ({ id, url, path, title, description, image, imgs, onClickOnSlide 
       )}
       {image && (
         <Box mr={8}>
-          <Image resource={image} alt="" width={180} height={180} />
+          <Image resource={image} alt="" width={180} height={100} />
         </Box>
       )}
     </Wrapper>

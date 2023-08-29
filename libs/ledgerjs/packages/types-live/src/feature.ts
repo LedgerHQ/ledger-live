@@ -6,10 +6,10 @@ export type FeatureId =
   | "llmNewDeviceSelection"
   | "llmNewFirmwareUpdateUx"
   | "ratingsPrompt"
+  | "npsRatingsPrompt"
   | "counterValue"
   | "deviceInitialApps"
   | "buyDeviceFromLive"
-  | "ptxSmartRouting"
   | "ptxEarn"
   | "currencyAvalancheCChain"
   | "currencyStacks"
@@ -37,6 +37,8 @@ export type FeatureId =
   | "currencyPersistence"
   | "currencyQuicksilver"
   | "currencyInternetComputer"
+  | "depositNetworkBannerMobile"
+  | "depositWithdrawBannerMobile"
   | "currencyTelosEvm"
   | "currencyCoreum"
   | "currencyPolygonZkEvm"
@@ -44,7 +46,6 @@ export type FeatureId =
   | "currencyBase"
   | "currencyBaseGoerli"
   | "currencyKlaytn"
-  | "ptxSmartRoutingMobile"
   | "mockFeature"
   | "multibuyNavigation"
   | "syncOnboarding"
@@ -80,10 +81,8 @@ export type FeatureId =
   | "domainInputResolution"
   | "discover"
   | "protectServicesDiscoverDesktop"
-  | "protectServicesDesktop"
   | "transactionsAlerts"
-  | "listAppsV2"
-  | "editEthTx";
+  | "listAppsV2";
 
 /**  We use objects instead of direct booleans for potential future improvements
 like feature versioning etc */

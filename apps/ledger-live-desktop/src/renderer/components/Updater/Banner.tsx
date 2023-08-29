@@ -8,8 +8,7 @@ import IconWarning from "~/renderer/icons/TriangleWarning";
 import Spinner from "~/renderer/components/Spinner";
 import TopBanner, { FakeLink, Content } from "~/renderer/components/TopBanner";
 import { UpdaterContext } from "./UpdaterContext";
-import { shouldUpdateYet } from "~/helpers/user";
-import { useRemoteConfig } from "~/renderer/components/RemoteConfig";
+
 export const VISIBLE_STATUS = [
   "download-progress",
   "checking",
@@ -84,16 +83,10 @@ const CONTENT_BY_STATUS = (
 });
 const UpdaterTopBanner = () => {
   const context = useContext(UpdaterContext);
-  const remoteConfig = useRemoteConfig();
   const reDownload = useCallback(() => {
     openURL(urls.liveHome);
   }, []);
-  if (
-    context &&
-    remoteConfig.lastUpdatedAt &&
-    context.version &&
-    shouldUpdateYet(context.version, remoteConfig)
-  ) {
+  if (context && context.version) {
     const { status, quitAndInstall, downloadProgress, version, downloadUpdate } = context;
     if (!VISIBLE_STATUS.includes(status)) return null;
     const content: Content | undefined | null = CONTENT_BY_STATUS(

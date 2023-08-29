@@ -12,16 +12,12 @@ import {
   SwapTransactionType,
 } from "@ledgerhq/live-common/exchange/swap/types";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
-import { createAction } from "@ledgerhq/live-common/hw/actions/transaction";
-import { createAction as initSwapCreateAction } from "@ledgerhq/live-common/hw/actions/initSwap";
-import initSwap from "@ledgerhq/live-common/exchange/swap/initSwap";
-import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import addToSwapHistory from "@ledgerhq/live-common/exchange/swap/addToSwapHistory";
 import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { AccountLike, DeviceInfo, SignedOperation } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { postSwapAccepted, postSwapCancelled } from "@ledgerhq/live-common/exchange/swap/index";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { InstalledItem } from "@ledgerhq/live-common/apps/types";
 import { renderLoading } from "../../../../components/DeviceAction/rendering";
 import { updateAccountWithUpdater } from "../../../../actions/accounts";
@@ -33,9 +29,10 @@ import { UnionToIntersection } from "../../../../types/helpers";
 import type { StackNavigatorNavigation } from "../../../../components/RootNavigator/types/helpers";
 import { ScreenName } from "../../../../const";
 import type { SwapNavigatorParamList } from "../../../../components/RootNavigator/types/SwapNavigator";
-
-const silentSigningAction = createAction(connectApp);
-const swapAction = initSwapCreateAction(connectApp, initSwap);
+import {
+  useInitSwapDeviceAction,
+  useTransactionDeviceAction,
+} from "../../../../hooks/deviceActions";
 
 export type DeviceMeta = {
   result: { installed: InstalledItem[] } | null | undefined;
@@ -176,6 +173,9 @@ export function Confirmation({
       );
     }
   }, [broadcast, onComplete, onError, signedOperation, swapData]);
+
+  const silentSigningAction = useTransactionDeviceAction();
+  const swapAction = useInitSwapDeviceAction();
 
   const { t } = useTranslation();
 

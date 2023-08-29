@@ -8,9 +8,8 @@ import {
 } from "@ledgerhq/live-common/families/elrond/constants";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 import { useElrondPreloadData } from "@ledgerhq/live-common/families/elrond/react";
-import { ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
+import { ElrondProvider, ElrondOperation } from "@ledgerhq/live-common/families/elrond/types";
 import { Account, Operation } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
 import React, { Fragment } from "react";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
@@ -30,7 +29,8 @@ import {
 } from "~/renderer/drawers/OperationDetails/styledComponents";
 import { openURL } from "~/renderer/linking";
 import { localeSelector } from "~/renderer/reducers/settings";
-import { AmountCellExtraProps } from "../types";
+import { AmountCellExtraProps, OperationDetailsExtraProps } from "../types";
+
 const getURLFeesInfo = ({ op }: { op: Operation; currencyId: string }): string | undefined => {
   if (op.fee.gt(200000)) {
     return urls.elrondStaking;
@@ -53,7 +53,7 @@ const redirectAddress = (address: string) => () => {
 type OperationDetailsDelegationProps = {
   account: Account;
   isTransactionField?: boolean;
-  operation: Operation;
+  operation: ElrondOperation;
 };
 const OperationDetailsDelegation = (props: OperationDetailsDelegationProps) => {
   const { isTransactionField, account, operation } = props;
@@ -78,7 +78,7 @@ const OperationDetailsDelegation = (props: OperationDetailsDelegationProps) => {
                   i18nKey="operationDetails.extra.votesAddress"
                   values={{
                     votes: `${denominate({
-                      input: operation.extra.amount,
+                      input: operation.extra.amount?.toString() ?? "",
                       decimals: 4,
                     })} ${getAccountUnit(account).code}`,
                     name: formattedValidator?.identity.name || operation.contract,
@@ -98,15 +98,8 @@ const OperationDetailsDelegation = (props: OperationDetailsDelegationProps) => {
     </OpDetailsSection>
   );
 };
-type OperationDetailsExtraProps = {
-  extra: {
-    [key: string]: string;
-  };
-  type: string;
-  account: Account;
-  operation: Operation;
-};
-const OperationDetailsExtra = (props: OperationDetailsExtraProps) => {
+
+const OperationDetailsExtra = (props: OperationDetailsExtraProps<Account, ElrondOperation>) => {
   const { type, account, operation } = props;
   const unit = getAccountUnit(account);
   const discreet = useDiscreetMode();
@@ -126,11 +119,9 @@ const OperationDetailsExtra = (props: OperationDetailsExtraProps) => {
     }
     case "UNDELEGATE": {
       const formattedValidator = validators.find(v => v.contract === operation.contract);
-      const formattedAmount = formatCurrencyUnit(
-        unit,
-        BigNumber(operation.extra.amount),
-        formatConfig,
-      );
+      const formattedAmount = !operation.extra.amount
+        ? ""
+        : formatCurrencyUnit(unit, operation.extra.amount, formatConfig);
       ret = (
         <Fragment>
           <OpDetailsSection>
@@ -164,11 +155,9 @@ const OperationDetailsExtra = (props: OperationDetailsExtraProps) => {
     }
     case "WITHDRAW_UNBONDED": {
       const formattedValidator = validators.find(v => v.contract === operation.contract);
-      const formattedAmount = formatCurrencyUnit(
-        unit,
-        BigNumber(operation.extra.amount),
-        formatConfig,
-      );
+      const formattedAmount = !operation.extra.amount
+        ? ""
+        : formatCurrencyUnit(unit, operation.extra.amount, formatConfig);
       ret = (
         <Fragment>
           <OpDetailsSection>
@@ -229,12 +218,15 @@ const OperationDetailsExtra = (props: OperationDetailsExtraProps) => {
   return ret;
 };
 
-const UndelegateAmountCell = ({ operation, currency, unit }: AmountCellExtraProps) => {
-  const amount: BigNumber = BigNumber(operation.extra.amount);
-  return !amount.isZero() ? (
+const UndelegateAmountCell = ({
+  operation,
+  currency,
+  unit,
+}: AmountCellExtraProps<ElrondOperation>) => {
+  return !operation.extra.amount || operation.extra.amount?.isZero() ? null : (
     <Fragment>
       <FormattedVal
-        val={amount}
+        val={operation.extra.amount}
         unit={unit}
         showCode={true}
         fontSize={4}
@@ -246,10 +238,10 @@ const UndelegateAmountCell = ({ operation, currency, unit }: AmountCellExtraProp
         fontSize={3}
         date={operation.date}
         currency={currency}
-        value={amount}
+        value={operation.extra.amount}
       />
     </Fragment>
-  ) : null;
+  );
 };
 const amountCellExtra = {
   UNDELEGATE: UndelegateAmountCell,

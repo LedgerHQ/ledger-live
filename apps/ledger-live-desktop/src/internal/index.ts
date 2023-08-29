@@ -1,6 +1,6 @@
 import { captureException, getSentryIfAvailable } from "../sentry/internal";
 import { unsubscribeSetup } from "./live-common-setup";
-import { setEnvUnsafe } from "@ledgerhq/live-common/env";
+import { setEnvUnsafe } from "@ledgerhq/live-env";
 import { serializeError } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import sentry, { setTags } from "~/sentry/internal";

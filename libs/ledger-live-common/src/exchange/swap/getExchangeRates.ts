@@ -3,7 +3,6 @@ import type { Unit } from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";
 import { getAccountCurrency, getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
-import { getEnv } from "../../env";
 import {
   SwapExchangeRateAmountTooHigh,
   SwapExchangeRateAmountTooLow,
@@ -12,6 +11,7 @@ import {
 import { getProviderConfig, getSwapAPIBaseURL, getSwapAPIError } from "./";
 import { mockGetExchangeRates } from "./mock";
 import type { CustomMinOrMaxError, GetExchangeRates } from "./types";
+import { isIntegrationTestEnv } from "./utils/isIntegrationTestEnv";
 
 const getExchangeRates: GetExchangeRates = async ({
   exchange,
@@ -21,8 +21,7 @@ const getExchangeRates: GetExchangeRates = async ({
   timeout,
   timeoutErrorMessage,
 }) => {
-  if (getEnv("MOCK") && !getEnv("PLAYWRIGHT_RUN"))
-    return mockGetExchangeRates(exchange, transaction, currencyTo);
+  if (isIntegrationTestEnv()) return mockGetExchangeRates(exchange, transaction, currencyTo);
 
   const from = getAccountCurrency(exchange.fromAccount).id;
   const unitFrom = getAccountUnit(exchange.fromAccount);

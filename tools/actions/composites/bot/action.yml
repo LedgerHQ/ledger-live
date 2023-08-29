@@ -4,8 +4,17 @@ inputs:
   SEED:
     description: "seed to use"
     required: true
-  BOT_FILTER_FAMILY:
-    description: "family to filter on"
+  BOT_FILTER_FAMILIES:
+    description: "families to filter on"
+    required: false
+  BOT_FILTER_CURRENCIES:
+    description: "currencies to filter on"
+    required: false
+  BOT_DISABLED_FAMILIES:
+    description: "disabled families"
+    required: false
+  BOT_DISABLED_CURRENCIES:
+    description: "disabled currencies"
     required: false
   SLACK_CHANNEL:
     description: "slack channel to report on"
@@ -63,7 +72,10 @@ runs:
         VERBOSE_FILE: botreport/logs.txt
         GITHUB_RUN_ID: ${{ github.run_id }}
         GITHUB_WORKFLOW: ${{ github.workflow }}
-        BOT_FILTER_FAMILY: ${{ inputs.BOT_FILTER_FAMILY }}
+        BOT_FILTER_FAMILIES: ${{ inputs.BOT_FILTER_FAMILIES }}
+        BOT_FILTER_CURRENCIES: ${{ inputs.BOT_FILTER_CURRENCIES }}
+        BOT_DISABLED_FAMILIES: ${{ inputs.BOT_DISABLED_FAMILIES }}
+        BOT_DISABLED_CURRENCIES: ${{ inputs.BOT_DISABLED_CURRENCIES }}
         SHOW_LEGACY_NEW_ACCOUNT: ${{ inputs.SHOW_LEGACY_NEW_ACCOUNT }}
         BOT_ENVIRONMENT: ${{ inputs.BOT_ENVIRONMENT }}
         explorerinput: ${{ inputs.EXPLORER }}

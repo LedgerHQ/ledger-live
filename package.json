@@ -16,8 +16,8 @@
     "changelog": "changeset add",
     "prerelease": "pnpm run build:libs",
     "release": "changeset publish",
-    "build:libs": "pnpm turbo build --no-daemon --filter=\"./libs/**\"",
-    "build:libs:force": "pnpm -r --filter=\"./libs/**\" build",
+    "build:libs": "pnpm turbo build --no-daemon --filter=\"./libs/**\" --filter=\"!./libs/ui/examples/**\"",
+    "build:libs:force": "pnpm -r --filter=\"./libs/**\" --filter=\"!./libs/ui/examples/**\" build",
     "build:actions": "pnpm turbo build --filter=@actions/*",
     "build:cli": "pnpm turbo build --no-daemon --filter=live-cli",
     "build:coin": "pnpm turbo build --no-daemon --filter=\"./libs/coin-**\"",
@@ -109,6 +109,8 @@
     "ui:icons": "pnpm --filter icons-ui",
     "ui:crypto-icons": "pnpm --filter crypto-icons-ui",
     "ui:shared": "pnpm --filter ui-shared",
+    "ui:example:next": "pnpm  --filter=\"next.js-example\"",
+    "ui:example:webpack": "pnpm  --filter=\"webpack.js-example\"",
     "actions": "pnpm --filter @actions/*"
   },
   "devDependencies": {

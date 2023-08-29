@@ -7,7 +7,7 @@ import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { EIP1559ShouldBeUsed } from "../transaction";
 import { blockchainBaseURL } from "../../../explorer";
 import { FeeEstimationFailed } from "../../../errors";
-import { getEnv } from "../../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import { NFTCollectionMetadataResponse, NFTMetadataResponse } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 

@@ -1,4 +1,9 @@
-import type { ElrondAccount, Transaction } from "../../families/elrond/types";
+import type {
+  ElrondAccount,
+  ElrondOperation,
+  ElrondOperationRaw,
+  Transaction,
+} from "../../families/elrond/types";
 import invariant from "invariant";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { botTest, pickSiblings, genericTestDestination } from "../../bot/specs";
@@ -59,9 +64,9 @@ function expectCorrectEsdtBalanceChange(input: TransactionTestInput<Transaction>
 function expectCorrectOptimisticOperation(input: TransactionTestInput<Transaction>) {
   const { operation, optimisticOperation, transaction } = input;
 
-  const opExpected: Record<string, any> = toOperationRaw({
+  const opExpected: Partial<ElrondOperationRaw> = toOperationRaw({
     ...optimisticOperation,
-  });
+  }) as ElrondOperationRaw;
   delete opExpected.value;
   delete opExpected.fee;
   delete opExpected.date;
@@ -123,12 +128,15 @@ function expectCorrectOptimisticOperation(input: TransactionTestInput<Transactio
 }
 
 function expectCorrectSpendableBalanceChange(input: TransactionTestInput<Transaction>) {
-  const { account, operation, accountBeforeTransaction } = input;
+  const { account, accountBeforeTransaction } = input;
+  const operation = input.operation as ElrondOperation;
   let value = operation.value;
-  if (operation.type === "DELEGATE") {
-    value = value.plus(new BigNumber(operation.extra.amount));
-  } else if (operation.type === "WITHDRAW_UNBONDED") {
-    value = value.minus(new BigNumber(operation.extra.amount));
+  if (operation.extra.amount) {
+    if (operation.type === "DELEGATE") {
+      value = value.plus(operation.extra.amount);
+    } else if (operation.type === "WITHDRAW_UNBONDED") {
+      value = value.minus(operation.extra.amount);
+    }
   }
 
   botTest("EGLD spendable balance change is correct", () =>

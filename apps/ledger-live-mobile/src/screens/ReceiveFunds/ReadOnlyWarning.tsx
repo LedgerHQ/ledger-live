@@ -22,7 +22,7 @@ function ReadOnlyWarning({ continue: onContinue }: Props) {
         },
       ]}
     >
-      <TrackScreen category="Manager" name="ReadOnlyNanoX" />
+      <TrackScreen category="Deposit" name="ReadOnlyNanoX" />
       <View style={styles.alert}>
         <AlertTriangle size={32} color={colors.live} />
       </View>

@@ -14,6 +14,7 @@ import { Props as ErrorProps } from "./ErrorModal";
 import { UserProps as AddAccountProps } from "./AddAccounts";
 import { ModalStartStakeProps } from "./StartStake";
 import { CoinModalsData } from "../families/generated";
+import { Language } from "~/config/languages";
 
 /**
  * the modals data type are all defined by a key value map,
@@ -38,8 +39,8 @@ export type GlobalModalData = {
   MODAL_PROTECT_DISCOVER: undefined;
   MODAL_RELEASE_NOTES: undefined;
   MODAL_SYSTEM_LANGUAGE_AVAILABLE: {
-    osLanguage: string;
-    currentLanguage: string;
+    osLanguage: Language;
+    currentLanguage: Language;
   };
   MODAL_TERM_OF_USE_UPDATE: {
     acceptTerms: () => void;

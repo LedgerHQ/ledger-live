@@ -2,7 +2,7 @@ import network from "@ledgerhq/live-network/network";
 import { Cluster } from "@solana/web3.js";
 import { AxiosRequestConfig, AxiosResponse } from "axios";
 import { compact } from "lodash/fp";
-import { getEnv } from "../../../env";
+import { getEnv } from "@ledgerhq/live-env";
 
 const MAX_VALIDATORS_NB = 1000; // Max number of validators to fetch
 
