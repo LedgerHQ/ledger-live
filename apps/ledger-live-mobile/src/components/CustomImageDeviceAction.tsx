@@ -1,7 +1,7 @@
 import React, { ComponentProps, useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Image } from "react-native";
-import { Flex, IconsLegacy } from "@ledgerhq/native-ui";
+import { Flex, Icons } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import withRemountableWrapper from "@ledgerhq/live-common/hoc/withRemountableWrapper";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -113,9 +113,7 @@ const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
               t,
               error,
               device,
-              ...(isRefusedOnStaxError
-                ? { Icon: IconsLegacy.CircledAlertMedium, iconColor: "warning.c50" }
-                : {}),
+              ...(isRefusedOnStaxError ? { Icon: Icons.Warning, iconColor: "warning.c60" } : {}),
             })}
             {}
             <Button

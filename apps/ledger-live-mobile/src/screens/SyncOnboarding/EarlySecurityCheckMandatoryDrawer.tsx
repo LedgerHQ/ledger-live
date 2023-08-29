@@ -1,8 +1,9 @@
 import React from "react";
-import { Icons, BoxedIcon, Button, Flex, Text, Link } from "@ledgerhq/native-ui";
+import { Icons, Button, Flex, Link } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import QueuedDrawer from "../../components/QueuedDrawer";
 import { TrackScreen } from "../../analytics";
+import { ErrorBody } from "../../components/GenericErrorView";
 
 export type Props = {
   /**
@@ -57,23 +58,16 @@ const EarlySecurityCheckMandatoryDrawer: React.FC<Props> = ({
         type="drawer"
         refreshSource={false}
       />
-      <Flex justifyContent="center" alignItems="center" mt={10} mb={7}>
-        <BoxedIcon
-          Icon={<Icons.WarningFill color="warning.c70" size="L" />}
-          variant="circle"
-          backgroundColor="opacityDefault.c05"
-          borderColor="transparent"
-          size={72}
+      <Flex flexDirection="column" alignItems={"center"} mt={10}>
+        <ErrorBody
+          title={t("earlySecurityCheck.earlySecurityCheckMandatoryDrawer.title")}
+          description={t("earlySecurityCheck.earlySecurityCheckMandatoryDrawer.description", {
+            productName,
+          })}
+          Icon={Icons.WarningFill}
+          iconColor="warning.c70"
         />
       </Flex>
-      <Text textAlign="center" variant="h4" fontWeight="semiBold">
-        {t("earlySecurityCheck.earlySecurityCheckMandatoryDrawer.title")}
-      </Text>
-      <Text mt={6} textAlign="center" variant="bodyLineHeight" color="neutral.c80">
-        {t("earlySecurityCheck.earlySecurityCheckMandatoryDrawer.description", {
-          productName,
-        })}
-      </Text>
       <Button mt={8} mb={7} type="main" onPress={onResume} size={"large"}>
         {t("earlySecurityCheck.earlySecurityCheckMandatoryDrawer.resumeCta")}
       </Button>

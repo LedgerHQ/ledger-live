@@ -675,7 +675,6 @@ export function renderError({
       <GenericErrorView
         error={error}
         withDescription
-        withIcon
         Icon={Icon}
         iconColor={iconColor}
         hasExportLogButton={hasExportLogButton}

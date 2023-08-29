@@ -66,7 +66,7 @@ const BleDevicePairing = ({ deviceToPair, onPaired, onRetry }: BleDevicePairingP
     content = (
       <Flex flex={1} alignItems="center">
         <TrackScreen category="BT pairing successful" />
-        <Flex width="100%" py={16} alignItems="center">
+        <Flex width="100%" py={6} alignItems="center">
           <Flex height={100} justifyContent="center" mb={7}>
             <BoxedIcon
               Icon={IconsLegacy.CheckTickMedium}
@@ -106,7 +106,6 @@ const BleDevicePairing = ({ deviceToPair, onPaired, onRetry }: BleDevicePairingP
             error={pairingError}
             withDescription
             hasExportLogButton={false}
-            withIcon
             withHelp={false}
           />
         </Flex>
@@ -149,13 +148,13 @@ const BleDevicePairing = ({ deviceToPair, onPaired, onRetry }: BleDevicePairingP
         <Flex flex={1} alignItems="center" justifyContent="center">
           <Flex height={100} justifyContent="center">
             <BoxedIcon
-              Icon={Icons.InformationFill}
+              Icon={Icons.Close}
               backgroundColor={"opacityDefault.c05"}
-              size={64}
+              size={72}
               variant="circle"
               borderColor="transparent"
               iconSize={"L"}
-              iconColor="primary.c80"
+              iconColor="error.c60"
             />
           </Flex>
           <Text mt={4} mb={2} textAlign="center" variant="h4" fontWeight="semiBold">
