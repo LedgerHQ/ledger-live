@@ -49,8 +49,7 @@ const EarlySecurityCheckBody: React.FC<Props> = ({
   // Updates the genuine check UI step
   let genuineCheckStepTitle;
   let genuineCheckStepDescription: string | null = null;
-  // Always displays the learn more section on the genuine check
-  const genuineCheckStepLearnMore = t("earlySecurityCheck.genuineCheckStep.learnMore");
+  let genuineCheckStepLearnMore: string | null = t("earlySecurityCheck.genuineCheckStep.learnMore");
   const genuineCheckOnLearnMore = onGenuineCheckLearnMore;
 
   switch (genuineCheckUiStepStatus) {
@@ -64,9 +63,7 @@ const EarlySecurityCheckBody: React.FC<Props> = ({
       genuineCheckStepTitle = t("earlySecurityCheck.genuineCheckStep.completed.title", {
         productName,
       });
-      genuineCheckStepDescription = t("earlySecurityCheck.genuineCheckStep.completed.description", {
-        productName,
-      });
+      genuineCheckStepLearnMore = null;
       break;
     case "error":
       genuineCheckStepTitle = t("earlySecurityCheck.genuineCheckStep.error.title");
@@ -111,12 +108,6 @@ const EarlySecurityCheckBody: React.FC<Props> = ({
       firmwareUpdateCheckStepTitle = t(
         "earlySecurityCheck.firmwareUpdateCheckStep.completed.noUpdateAvailable.title",
         { productName },
-      );
-      firmwareUpdateCheckStepDescription = t(
-        "earlySecurityCheck.firmwareUpdateCheckStep.completed.noUpdateAvailable.description",
-        {
-          productName,
-        },
       );
 
       primaryBottomCta = (

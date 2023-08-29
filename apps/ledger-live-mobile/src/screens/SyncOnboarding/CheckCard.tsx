@@ -41,7 +41,10 @@ const CheckCard: React.FC<CheckCardProps> = ({
   }
 
   return (
-    <Flex flexDirection="row" alignItems="flex-start">
+    <Flex
+      flexDirection="row"
+      alignItems={description || (learnMore && onLearnMore) ? "flex-start" : "center"}
+    >
       <BoxedIcon
         backgroundColor="opacityDefault.c10"
         borderColor="opacityDefault.c10"

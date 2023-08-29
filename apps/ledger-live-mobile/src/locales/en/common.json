@@ -1969,8 +1969,7 @@
       },
       "completed": {
         "noUpdateAvailable": {
-          "title": "OS update check",
-          "description": "OS update check makes sure {{productName}} Operating System is up to date."
+          "title": "{{productName}} OS is up to date"
         }
       },
       "error": {
