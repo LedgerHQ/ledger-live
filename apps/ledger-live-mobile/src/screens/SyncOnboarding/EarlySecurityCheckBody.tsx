@@ -75,7 +75,9 @@ const EarlySecurityCheckBody: React.FC<Props> = ({
       break;
     case "genuineCheckRefused":
       genuineCheckStepTitle = t("earlySecurityCheck.genuineCheckStep.refused.title");
-      genuineCheckStepDescription = t("earlySecurityCheck.genuineCheckStep.refused.description");
+      genuineCheckStepDescription = t("earlySecurityCheck.genuineCheckStep.refused.description", {
+        productName,
+      });
       primaryBottomCta = (
         <Button type="main" onPress={onRetryGenuineCheck}>
           {t("earlySecurityCheck.genuineCheckStep.refused.cta")}

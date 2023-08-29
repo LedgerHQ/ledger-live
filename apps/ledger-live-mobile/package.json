@@ -131,7 +131,7 @@
     "prop-types": "^15.8.1",
     "qrloop": "^1.4.1",
     "react": "^18",
-    "react-i18next": "11.12.0",
+    "react-i18next": "11.18.6",
     "react-is": "^18",
     "react-native": "0.71.6",
     "react-native-adjust": "^4.33.0",
