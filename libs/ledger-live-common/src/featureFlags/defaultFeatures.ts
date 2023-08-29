@@ -1,160 +1,172 @@
-import type { DefaultFeatures } from "@ledgerhq/types-live";
+import {
+  BasicFeature,
+  BrazePushNotifications,
+  EthStakingProviders,
+  Feature,
+  FeatureMap,
+  Learn,
+  ReceiveStakingFlowConfigDesktop,
+  StakePrograms,
+  SwapWalletApiPartnerList,
+  TransactionsAlerts,
+  WalletConnectLiveApp,
+  WalletNftGallery,
+  PtxEarn,
+  Storyly,
+  NewsfeedPage,
+  ProtectServicesMobile,
+  ProtectServicesDesktop,
+} from "@ledgerhq/types-live";
 
-export const defaultFeatures = {
-  learn: {
-    enabled: false,
-  },
-  brazePushNotifications: {
-    enabled: false,
-  },
-  brazeLearn: {
-    enabled: false,
-  },
-  buyDeviceFromLive: {
-    enabled: false,
-    params: {
-      url: null,
-      debug: false,
-    },
-  },
-  currencyAvalancheCChain: {
-    enabled: false,
-  },
-  currencyStacks: {
-    enabled: false,
-  },
-  currencyOptimism: {
-    enabled: false,
-  },
-  currencyOptimismGoerli: {
-    enabled: false,
-  },
-  currencyArbitrum: {
-    enabled: false,
-  },
-  currencyArbitrumGoerli: {
-    enabled: false,
-  },
-  currencyRsk: {
-    enabled: false,
-  },
-  currencyBittorrent: {
-    enabled: false,
-  },
-  currencyKavaEvm: {
-    enabled: false,
-  },
-  currencyEvmosEvm: {
-    enabled: false,
-  },
-  currencyEnergyWeb: {
-    enabled: false,
-  },
-  currencyAstar: {
-    enabled: false,
-  },
-  currencyMetis: {
-    enabled: false,
-  },
-  currencyBoba: {
-    enabled: false,
-  },
-  currencyMoonriver: {
-    enabled: false,
-  },
-  currencyVelasEvm: {
-    enabled: false,
-  },
-  currencySyscoin: {
-    enabled: false,
-  },
-  currencyAxelar: {
-    enabled: false,
-  },
-  currencyOnomy: {
-    enabled: false,
-  },
-  currencyQuicksilver: {
-    enabled: false,
-  },
-  currencyPersistence: {
-    enabled: false,
-  },
-  currencyInternetComputer: {
-    enabled: false,
-  },
-  currencySecretNetwork: {
-    enabled: false,
-  },
-  currencyStargaze: {
-    enabled: false,
-  },
-  currencyUmee: {
-    enabled: false,
-  },
-  currencyDesmos: {
-    enabled: false,
-  },
-  depositNetworkBannerMobile: {
+const BASIC_FEATURE: Feature<unknown> = {
+  enabled: false,
+};
+
+export const createDefaultFeature = <T = BasicFeature>(opts?: Feature<T>) => {
+  const feature = opts ?? BASIC_FEATURE;
+  return feature as Feature<T>;
+};
+
+export const DEFAULT_FEATURES = {
+  /**
+   * @TODO
+   */
+  currencyArbitrum: BASIC_FEATURE,
+  currencyArbitrumGoerli: BASIC_FEATURE,
+  currencyAstar: BASIC_FEATURE,
+  currencyAvalancheCChain: BASIC_FEATURE,
+  currencyAxelar: BASIC_FEATURE,
+  currencyBase: BASIC_FEATURE,
+  currencyBaseGoerli: BASIC_FEATURE,
+  currencyBittorrent: BASIC_FEATURE,
+  currencyBoba: BASIC_FEATURE,
+  currencyCoreum: BASIC_FEATURE,
+  currencyDesmos: BASIC_FEATURE,
+  currencyEnergyWeb: BASIC_FEATURE,
+  currencyEvmosEvm: BASIC_FEATURE,
+  currencyInternetComputer: BASIC_FEATURE,
+  currencyKavaEvm: BASIC_FEATURE,
+  currencyKlaytn: BASIC_FEATURE,
+  currencyMetis: BASIC_FEATURE,
+  currencyMoonriver: BASIC_FEATURE,
+  currencyOnomy: BASIC_FEATURE,
+  currencyOptimism: BASIC_FEATURE,
+  currencyOptimismGoerli: BASIC_FEATURE,
+  currencyPersistence: BASIC_FEATURE,
+  currencyPolygonZkEvm: BASIC_FEATURE,
+  currencyPolygonZkEvmTestnet: BASIC_FEATURE,
+  currencyQuicksilver: BASIC_FEATURE,
+  currencyRsk: BASIC_FEATURE,
+  currencySecretNetwork: BASIC_FEATURE,
+  currencyStacks: BASIC_FEATURE,
+  currencyStargaze: BASIC_FEATURE,
+  currencySyscoin: BASIC_FEATURE,
+  currencyTelosEvm: BASIC_FEATURE,
+  currencyUmee: BASIC_FEATURE,
+  currencyVelasEvm: BASIC_FEATURE,
+
+  /**
+   * Basic features
+   */
+  brazeLearn: BASIC_FEATURE,
+  objkt: BASIC_FEATURE,
+  portfolioExchangeBanner: BASIC_FEATURE,
+  postOnboardingAssetsTransfer: BASIC_FEATURE,
+  postOnboardingClaimNft: BASIC_FEATURE,
+  syncOnboarding: BASIC_FEATURE,
+  walletConnectEntryPoint: BASIC_FEATURE,
+  counterValue: BASIC_FEATURE,
+  listAppsV2: BASIC_FEATURE,
+  llmNewDeviceSelection: BASIC_FEATURE,
+  llmNewFirmwareUpdateUx: BASIC_FEATURE,
+  mockFeature: BASIC_FEATURE,
+  multibuyNavigation: BASIC_FEATURE,
+  ptxServiceCtaExchangeDrawer: BASIC_FEATURE,
+  ptxServiceCtaScreens: BASIC_FEATURE,
+  customImage: BASIC_FEATURE,
+  referralProgramDesktopBanner: BASIC_FEATURE,
+  editEthTx: BASIC_FEATURE,
+  disableNftLedgerMarket: BASIC_FEATURE,
+  disableNftRaribleOpensea: BASIC_FEATURE,
+  disableNftSend: BASIC_FEATURE,
+  referralProgramDiscoverCard: BASIC_FEATURE,
+  stakeAccountBanner: BASIC_FEATURE,
+  staxWelcomeScreen: BASIC_FEATURE,
+  protectServicesDiscoverDesktop: BASIC_FEATURE,
+
+  /**
+   * Features
+   */
+  newsfeedPage: createDefaultFeature<NewsfeedPage>(),
+  ptxEarn: createDefaultFeature<PtxEarn>(),
+  swapWalletApiPartnerList: createDefaultFeature<SwapWalletApiPartnerList>(),
+  stakePrograms: createDefaultFeature<StakePrograms>(),
+  learn: createDefaultFeature<Learn>(),
+  receiveStakingFlowConfigDesktop: createDefaultFeature<ReceiveStakingFlowConfigDesktop>(),
+  brazePushNotifications: createDefaultFeature<BrazePushNotifications>(),
+  depositNetworkBannerMobile: createDefaultFeature({
     enabled: false,
     params: {
       url: "https://www.ledger.com/ledger-live",
     },
-  },
-  depositWithdrawBannerMobile: {
+  }),
+  depositWithdrawBannerMobile: createDefaultFeature({
     enabled: false,
     params: {
       url: "https://www.ledger.com/ledger-live",
     },
-  },
-  currencyTelosEvm: {
-    enabled: false,
-  },
-  currencyCoreum: {
-    enabled: false,
-  },
-  currencyPolygonZkEvm: {
-    enabled: false,
-  },
-  currencyPolygonZkEvmTestnet: {
-    enabled: false,
-  },
-  currencyBase: {
-    enabled: false,
-  },
-  currencyBaseGoerli: {
-    enabled: false,
-  },
-  currencyKlaytn: {
-    enabled: false,
-  },
-  deviceInitialApps: {
+  }),
+  deviceInitialApps: createDefaultFeature({
     enabled: false,
     params: {
       apps: ["Bitcoin", "Ethereum"],
     },
-  },
-  disableNftSend: {
+  }),
+
+  discover: createDefaultFeature({
     enabled: false,
-  },
-  disableNftLedgerMarket: {
-    enabled: false,
-  },
-  disableNftRaribleOpensea: {
-    enabled: false,
-  },
-  domainInputResolution: {
+    params: {
+      version: "1",
+    },
+  }),
+  domainInputResolution: createDefaultFeature({
     enabled: false,
     params: {
       supportedCurrencyIds: ["ethereum"],
     },
-  },
-  editEthTx: {
+  }),
+  ethStakingProviders: createDefaultFeature<EthStakingProviders>({
     enabled: false,
-  },
-  npsRatingsPrompt: {
+  }),
+  firebaseEnvironmentReadOnly: createDefaultFeature({
     enabled: false,
     params: {
+      comment:
+        "Do not modify this configuration. This is just a read-only helper to display the targeted Firebase environment in Ledger Live. The value of this flag has NO functional impact.",
+      project: "n/a (Firebase project could not be reached)",
+    },
+  }),
+
+  npsRatingsPrompt: createDefaultFeature({
+    enabled: false,
+    params: {
+      conditions: {
+        disappointed_delay: {
+          seconds: 60,
+        },
+        minimum_accounts_number: 1,
+        minimum_app_starts_number: 0,
+        minimum_duration_since_app_first_start: {
+          seconds: 0,
+        },
+        minimum_number_of_app_starts_since_last_crash: 0,
+        not_now_delay: {
+          seconds: 30,
+        },
+        satisfied_then_not_now_delay: {
+          seconds: 90,
+        },
+      },
       happy_moments: [
         {
           route_name: "ReceiveVerificationConfirmation",
@@ -187,31 +199,85 @@ export const defaultFeatures = {
           type: "on_enter",
         },
       ],
-      conditions: {
-        not_now_delay: {
-          seconds: 30,
-        },
-        disappointed_delay: {
-          seconds: 60,
-        },
-        satisfied_then_not_now_delay: {
-          seconds: 90,
-        },
-        minimum_accounts_number: 1,
-        minimum_app_starts_number: 0,
-        minimum_duration_since_app_first_start: {
-          seconds: 0,
-        },
-        minimum_number_of_app_starts_since_last_crash: 0,
-      },
+      support_email: "support@ledger.com",
       typeform_url:
         "https://ledger.typeform.com/to/UsbZ0RBk?typeform-medium=embed-sdk&typeform-medium-version=next&typeform-embed=popup-blank&dev=1",
-      support_email: "support@ledger.com",
     },
-  },
-  ratingsPrompt: {
+  }),
+
+  protectServicesDesktop: createDefaultFeature<ProtectServicesDesktop>({
     enabled: false,
     params: {
+      availableOnDesktop: false,
+      account: {
+        homeURI: "ledgerlive://recover/protect-simu?redirectTo=account",
+        loginURI: "ledgerlive://recover/protect-simu?redirectTo=login",
+      },
+      discoverTheBenefitsLink: "https://www.ledger.com/recover",
+      onboardingCompleted: {
+        alreadySubscribedURI: "ledgerlive://recover/protect-simu?redirectTo=login",
+        upsellURI: "ledgerlive://recover/protect-simu?redirectTo=upsell",
+      },
+      onboardingRestore: {
+        postOnboardingURI: "ledgerlive://recover/protect-simu?redirectTo=restore",
+        restoreInfoDrawer: {
+          enabled: true,
+          manualStepsURI:
+            "https://support.ledger.com/hc/en-us/articles/360013349800-Update-Ledger-Nano-X-firmware?docs=true",
+          supportLinkURI: "https://support.ledger.com",
+        },
+      },
+      openRecoverFromSidebar: true,
+      protectId: "protect-simu",
+    },
+  }),
+  protectServicesMobile: createDefaultFeature<ProtectServicesMobile>({
+    enabled: false,
+    params: {
+      deeplink: "",
+      login: {
+        loginURI: "ledgerlive://recover/protect-simu?redirectTo=login",
+      },
+      managerStatesData: {
+        NEW: {
+          alreadySubscribedURI: `ledgerlive://recover/protect-simu?redirectTo=login`,
+          learnMoreURI: `ledgerlive://recover/protect-simu?redirectTo=upsell`,
+        },
+      },
+      onboardingRestore: {
+        postOnboardingURI: `ledgerlive://recover/protect-simu?redirectTo=restore`,
+        restoreInfoDrawer: {
+          enabled: true,
+          manualStepsURI:
+            "https://support.ledger.com/hc/en-us/articles/360013349800-Update-Ledger-Nano-X-firmware?docs=true",
+          supportLinkURI:
+            "http://chat.abhishekpriyam.com/sprinklrlivechatv2.php?appId=63453067138a3f453db323b4_app_300078397&env=prod3",
+        },
+      },
+      protectId: "protect-simu",
+    },
+  }),
+
+  ratingsPrompt: createDefaultFeature({
+    enabled: false,
+    params: {
+      conditions: {
+        disappointed_delay: {
+          days: 90,
+        },
+        minimum_accounts_number: 3,
+        minimum_app_starts_number: 3,
+        minimum_duration_since_app_first_start: {
+          days: 3,
+        },
+        minimum_number_of_app_starts_since_last_crash: 2,
+        not_now_delay: {
+          days: 15,
+        },
+        satisfied_then_not_now_delay: {
+          days: 3,
+        },
+      },
       happy_moments: [
         {
           route_name: "ReceiveConfirmation",
@@ -234,44 +300,28 @@ export const defaultFeatures = {
           type: "on_enter",
         },
       ],
-      conditions: {
-        not_now_delay: {
-          days: 15,
-        },
-        disappointed_delay: {
-          days: 90,
-        },
-        satisfied_then_not_now_delay: {
-          days: 3,
-        },
-        minimum_accounts_number: 3,
-        minimum_app_starts_number: 3,
-        minimum_duration_since_app_first_start: {
-          days: 3,
-        },
-        minimum_number_of_app_starts_since_last_crash: 2,
-      },
+      support_email: "support@ledger.com",
       typeform_url:
         "https://form.typeform.com/to/Jo7gqcB4?typeform-medium=embed-sdk&typeform-medium-version=next&typeform-embed=popup-blank",
-      support_email: "support@ledger.com",
     },
-  },
-  counterValue: {
+  }),
+
+  referralProgramDesktopSidebar: createDefaultFeature({
     enabled: false,
-  },
-  llmNewDeviceSelection: {
+    params: {
+      amount: "$20",
+      isNew: true,
+      path: "/discover/refer-a-friend",
+    },
+  }),
+  referralProgramMobile: createDefaultFeature({
     enabled: false,
-  },
-  llmNewFirmwareUpdateUx: {
-    enabled: false,
-  },
-  syncOnboarding: {
-    enabled: false,
-  },
-  mockFeature: {
-    enabled: false,
-  },
-  storyly: {
+    params: {
+      path: "/discover/refer-a-friend",
+    },
+  }),
+
+  storyly: createDefaultFeature<Storyly>({
     enabled: true,
     params: {
       stories: {
@@ -280,128 +330,40 @@ export const defaultFeatures = {
           token:
             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NfaWQiOjY5NDgsImFwcF9pZCI6MTE0MjIsImluc19pZCI6MTQ4Mjl9.iak4gUnizDdPrEXJEV3wszzJ2YkYX-RIWDXv31aJkiE",
         },
-        testStory: {
-          testingEnabled: false,
-          token:
-            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2NfaWQiOjY5NDgsImFwcF9pZCI6MTE0MjIsImluc19pZCI6MTIxOTh9.XqNitheri5VPDqebtA4JFu1VucVOHYlryki2TqCb1DQ",
-        },
         storylyExample: {
           testingEnabled: false,
           token:
             "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2NfaWQiOjc2MCwiYXBwX2lkIjo0MDUsImluc19pZCI6NDA0fQ.1AkqOy_lsiownTBNhVOUKc91uc9fDcAxfQZtpm3nj40",
         },
-      },
-    },
-  },
-  firebaseEnvironmentReadOnly: {
-    enabled: false,
-    params: {
-      project: "n/a (Firebase project could not be reached)",
-      comment:
-        "Do not modify this configuration. This is just a read-only helper to display the targeted Firebase environment in Ledger Live. The value of this flag has NO functional impact.",
-    },
-  },
-  walletNftGallery: {
-    enabled: false,
-  },
-  walletConnectEntryPoint: {
-    enabled: false,
-  },
-  staxWelcomeScreen: {
-    enabled: false,
-  },
-  customImage: {
-    enabled: false,
-  },
-  postOnboardingClaimNft: {
-    enabled: false,
-  },
-  postOnboardingAssetsTransfer: {
-    enabled: false,
-  },
-  objkt: {
-    enabled: false,
-  },
-  protectServicesMobile: {
-    enabled: false,
-    params: {
-      onboardingRestore: {
-        restoreInfoDrawer: {
-          enabled: true,
-          manualStepsURI:
-            "https://support.ledger.com/hc/en-us/articles/360013349800-Update-Ledger-Nano-X-firmware?docs=true",
-          supportLinkURI:
-            "http://chat.abhishekpriyam.com/sprinklrlivechatv2.php?appId=63453067138a3f453db323b4_app_300078397&env=prod3",
-        },
-        postOnboardingURI: `ledgerlive://recover/protect-simu?redirectTo=restore`,
-      },
-      managerStatesData: {
-        NEW: {
-          learnMoreURI: `ledgerlive://recover/protect-simu?redirectTo=upsell`,
-          alreadySubscribedURI: `ledgerlive://recover/protect-simu?redirectTo=login`,
+        testStory: {
+          testingEnabled: false,
+          token:
+            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2NfaWQiOjY5NDgsImFwcF9pZCI6MTE0MjIsImluc19pZCI6MTIxOTh9.XqNitheri5VPDqebtA4JFu1VucVOHYlryki2TqCb1DQ",
         },
       },
-      account: {
-        loginURI: "ledgerlive://recover/protect-simu?redirectTo=login",
-      },
-      protectId: "protect-simu",
     },
-  },
-  newsfeedPage: {
-    enabled: false,
-  },
-  discover: {
-    enabled: false,
-    params: {
-      version: "1",
-    },
-  },
-  protectServicesDesktop: {
-    enabled: false,
-    params: {
-      openRecoverFromSidebar: true,
-      discoverTheBenefitsLink: "https://www.ledger.com/recover",
-      onboardingRestore: {
-        restoreInfoDrawer: {
-          enabled: true,
-          manualStepsURI:
-            "https://support.ledger.com/hc/en-us/articles/360013349800-Update-Ledger-Nano-X-firmware?docs=true",
-          supportLinkURI: "https://support.ledger.com",
-        },
-        postOnboardingURI: "ledgerlive://recover/protect-simu?redirectTo=restore",
-      },
-      onboardingCompleted: {
-        upsellURI: "ledgerlive://recover/protect-simu?redirectTo=upsell",
-        alreadySubscribedURI: "ledgerlive://recover/protect-simu?redirectTo=login",
-      },
-      account: {
-        loginURI: "ledgerlive://recover/protect-simu?redirectTo=login",
-      },
-      protectId: "protect-simu",
-    },
-  },
-  referralProgramDesktopSidebar: {
-    enabled: false,
-    params: {
-      path: "/discover/refer-a-friend",
-      isNew: true,
-      amount: "$20",
-    },
-  },
-  referralProgramMobile: {
-    enabled: false,
-    params: {
-      path: "/discover/refer-a-friend",
-    },
-  },
-  transactionsAlerts: {
+  }),
+
+  transactionsAlerts: createDefaultFeature<TransactionsAlerts>({
     enabled: false,
     params: {
       chainwatchBaseUrl: "https://chainwatch.aws.stg.ldg-tech.com/v0",
-      networks: [{ ledgerLiveId: "ethereum", chainwatchId: "eth", nbConfirmations: 1 }],
+      networks: [
+        {
+          chainwatchId: "eth",
+          ledgerLiveId: "ethereum",
+          nbConfirmations: 1,
+        },
+      ],
     },
-  },
-  listAppsV2: {
+  }),
+  buyDeviceFromLive: createDefaultFeature({
     enabled: false,
-  },
-} as const satisfies DefaultFeatures;
+    params: {
+      debug: false,
+      url: null,
+    },
+  }),
+  walletConnectLiveApp: createDefaultFeature<WalletConnectLiveApp>(),
+  walletNftGallery: createDefaultFeature<WalletNftGallery>(),
+} as const satisfies FeatureMap;

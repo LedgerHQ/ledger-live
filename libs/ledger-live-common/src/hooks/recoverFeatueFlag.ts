@@ -1,9 +1,9 @@
 import { useMemo } from "react";
 import { Feature } from "@ledgerhq/types-live";
-import { defaultFeatures } from "../featureFlags";
+import { DEFAULT_FEATURES } from "../featureFlags";
 
-type DesktopFeature = (typeof defaultFeatures)["protectServicesDesktop"]["params"];
-type MobileFeature = (typeof defaultFeatures)["protectServicesMobile"]["params"];
+type DesktopFeature = (typeof DEFAULT_FEATURES)["protectServicesDesktop"]["params"];
+type MobileFeature = (typeof DEFAULT_FEATURES)["protectServicesMobile"]["params"];
 
 export function useReplacedURI(uri?: string, id?: string): string | undefined {
   return useMemo(() => {
@@ -63,9 +63,7 @@ export function useUpsellPath(servicesConfig: Feature<DesktopFeature> | null): s
   return usePath(servicesConfig, uri);
 }
 
-export function useLoginURI(
-  servicesConfig: Feature<MobileFeature | DesktopFeature> | null,
-): string | undefined {
+export function useLoginURI(servicesConfig: Feature<DesktopFeature> | null): string | undefined {
   const uri = servicesConfig?.params?.account?.loginURI;
   const id = servicesConfig?.params?.protectId;
 
