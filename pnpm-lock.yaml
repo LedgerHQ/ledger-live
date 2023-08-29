@@ -711,11 +711,11 @@ importers:
         specifier: ^1.0.2
         version: 1.0.2
       '@formatjs/intl-locale':
-        specifier: ^2.4.46
-        version: 2.4.47
+        specifier: ^3.0.0
+        version: 3.3.2
       '@formatjs/intl-pluralrules':
-        specifier: ^4.3.2
-        version: 4.3.3
+        specifier: ^5.0.0
+        version: 5.2.4
       '@formatjs/intl-relativetimeformat':
         specifier: ^11.1.8
         version: 11.1.8
@@ -14909,13 +14909,6 @@ packages:
       - '@types/react'
     dev: false
 
-  /@formatjs/ecma402-abstract@1.11.4:
-    resolution: {integrity: sha512-EBikYFp2JCdIfGEb5G9dyCkTGDmC57KSHhRQOC3aYxoPWVZvfWCDjZwkGYHN7Lis/fmuWl906bnNTJifDQ3sXw==}
-    dependencies:
-      '@formatjs/intl-localematcher': 0.2.25
-      tslib: 2.6.1
-    dev: false
-
   /@formatjs/ecma402-abstract@1.14.3:
     resolution: {integrity: sha512-SlsbRC/RX+/zg4AApWIFNDdkLtFbkq3LNoZWXZCE/nHVKqoIJyaoQyge/I0Y38vLxowUn9KTtXgusLD91+orbg==}
     dependencies:
@@ -14923,23 +14916,31 @@ packages:
       tslib: 2.6.1
     dev: false
 
-  /@formatjs/intl-getcanonicallocales@1.9.2:
-    resolution: {integrity: sha512-69WTStIJI2ikErOU1Il4NQKLVV8f2x6awr7+/dZz0uihuI7uQRcZtI6k/BBt4EtYaEl6w65YjUF93VuE015C0w==}
+  /@formatjs/ecma402-abstract@1.17.0:
+    resolution: {integrity: sha512-6ueQTeJZtwKjmh23bdkq/DMqH4l4bmfvtQH98blOSbiXv/OUiyijSW6jU22IT8BNM1ujCaEvJfTtyCYVH38EMQ==}
+    dependencies:
+      '@formatjs/intl-localematcher': 0.4.0
+      tslib: 2.6.1
+    dev: false
+
+  /@formatjs/intl-enumerator@1.3.2:
+    resolution: {integrity: sha512-bG0XyG0rCTdmoZRJJXe0oF0PTK7PzJjlLM6PmRlnZs6K5DQYHk4D9TNCwtK2e6OxvBI5EFW4Iy3dhQf/UToxPQ==}
     dependencies:
       tslib: 2.6.1
     dev: false
 
-  /@formatjs/intl-locale@2.4.47:
-    resolution: {integrity: sha512-yEpjx6RgVVG3pPsxb/jydhnq/A02KmjMste5U/wWxscRK0sny8LPIoBwgkOQycRoMRLNlLemJaQB7VbHZJ9OVg==}
+  /@formatjs/intl-getcanonicallocales@2.2.1:
+    resolution: {integrity: sha512-KooqmyY+Mhq3ioASPzoU6p6Cy9Mx+cWSVQSP6lF+vEW2tiaN90ti08cp82p1dzFschenduOYgPKrNcBpsDi6+g==}
     dependencies:
-      '@formatjs/ecma402-abstract': 1.11.4
-      '@formatjs/intl-getcanonicallocales': 1.9.2
-      tslib: 2.5.0
+      tslib: 2.6.1
     dev: false
 
-  /@formatjs/intl-localematcher@0.2.25:
-    resolution: {integrity: sha512-YmLcX70BxoSopLFdLr1Ds99NdlTI2oWoLbaUW2M406lxOIPzE1KQhRz2fPUkq34xVZQaihCoU29h0KK7An3bhA==}
+  /@formatjs/intl-locale@3.3.2:
+    resolution: {integrity: sha512-RnL5Bzb1J3ggIOFEeVRAgBUjILHOkP5DX6iH4ALDywhJmT6fArTskPc+b0GreOQtqL6zOb8mU7HxbgRV+P2S5w==}
     dependencies:
+      '@formatjs/ecma402-abstract': 1.17.0
+      '@formatjs/intl-enumerator': 1.3.2
+      '@formatjs/intl-getcanonicallocales': 2.2.1
       tslib: 2.6.1
     dev: false
 
@@ -14949,12 +14950,18 @@ packages:
       tslib: 2.6.1
     dev: false
 
-  /@formatjs/intl-pluralrules@4.3.3:
-    resolution: {integrity: sha512-NLZN8gf2qLpCuc0m565IbKLNUarEGOzk0mkdTkE4XTuNCofzoQTurW6lL3fmDlneAoYl2FiTdHa5q4o2vZF50g==}
+  /@formatjs/intl-localematcher@0.4.0:
+    resolution: {integrity: sha512-bRTd+rKomvfdS4QDlVJ6TA/Jx1F2h/TBVO5LjvhQ7QPPHp19oPNMIum7W2CMEReq/zPxpmCeB31F9+5gl/qtvw==}
     dependencies:
-      '@formatjs/ecma402-abstract': 1.11.4
-      '@formatjs/intl-localematcher': 0.2.25
-      tslib: 2.5.0
+      tslib: 2.6.1
+    dev: false
+
+  /@formatjs/intl-pluralrules@5.2.4:
+    resolution: {integrity: sha512-6meo376d8I4zikRFSUxATLnqzGwezmc57SmToP4z1/NQwTHXGe0yIG/ABPbO3QMx7IUkofH/ROP3A4DhtPTpnA==}
+    dependencies:
+      '@formatjs/ecma402-abstract': 1.17.0
+      '@formatjs/intl-localematcher': 0.4.0
+      tslib: 2.6.1
     dev: false
 
   /@formatjs/intl-relativetimeformat@11.1.8:
