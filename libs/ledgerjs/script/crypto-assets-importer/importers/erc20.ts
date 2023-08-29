@@ -35,7 +35,7 @@ export const importERC20 = async (baseURL: string, outputDir: string) => {
     const erc20 = await fetchERC20(baseURL);
     fs.writeFileSync(`${outputDir}/erc20.json`, JSON.stringify(erc20));
 
-    const erc20TokenType = `export type ERC20Token = [
+    const erc20TokenTypeStringified = `export type ERC20Token = [
   string, // parent currecncy id
   string, // token
   string, // ticker
@@ -47,10 +47,19 @@ export const importERC20 = async (baseURL: string, outputDir: string) => {
   boolean, // delisted
   string?, // countervalue_ticker (legacy)
   string?, // coumpound_for (legacy)
-];
+];`;
+
+    const tokensStringified = `const tokens = ${JSON.stringify(erc20, null, 2)}`;
+    const exportStringified = `export default tokens;`;
+
+    const erc20TsFile = `${erc20TokenTypeStringified}
+
+${tokensStringified}
+
+${exportStringified}
 `;
 
-    fs.writeFileSync(`${outputDir}/erc20.ts`, erc20TokenType);
+    fs.writeFileSync(`${outputDir}/erc20.ts`, erc20TsFile);
 
     log("importing ERC20 tokens: success");
   } catch (err) {

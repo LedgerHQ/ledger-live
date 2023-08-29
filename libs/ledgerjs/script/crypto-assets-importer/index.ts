@@ -3,6 +3,7 @@ import path from "path";
 
 import { importEIP712 } from "./importers/eip712";
 import { importERC20 } from "./importers/erc20";
+import { importBEP20Exchange } from "./exchange/bep20";
 
 log("Starting importing cryptoassets from CDN...");
 
@@ -14,8 +15,13 @@ const importTokens = async () => {
   await importERC20(CRYPTO_ASSETS_BASE_URL, outputFolder);
 };
 
+const importExchangeTokens = async () => {
+  await importBEP20Exchange(CRYPTO_ASSETS_BASE_URL, outputFolder);
+};
+
 const main = async () => {
   await importTokens();
+  await importExchangeTokens();
 };
 
 main();
