@@ -99,7 +99,7 @@
     "@svgr/core": "^5.5.0",
     "@svgr/plugin-svgo": "*",
     "@types/hoist-non-react-statics": "^3.3.1",
-    "@types/react-is": "^17.0.3",
+    "@types/react-is": "^18.0.0",
     "@types/color": "^3.0.2",
     "@types/react": "~17.0.53",
     "@types/react-dom": "^17.0.11",

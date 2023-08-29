@@ -4805,8 +4805,8 @@ importers:
         specifier: ^17.0.11
         version: 17.0.16(@types/react@17.0.53)
       '@types/react-is':
-        specifier: ^17.0.3
-        version: 17.0.3(@types/react@17.0.53)
+        specifier: ^18.0.0
+        version: 18.2.1(@types/react@17.0.53)
       '@types/react-transition-group':
         specifier: ^4.4.2
         version: 4.4.4(@types/react@17.0.53)
@@ -24821,8 +24821,8 @@ packages:
       '@types/react': 17.0.53
     dev: true
 
-  /@types/react-is@17.0.3(@types/react@17.0.53):
-    resolution: {integrity: sha512-aBTIWg1emtu95bLTLx0cpkxwGW3ueZv71nE2YFBpL8k/z5czEW8yYpOo8Dp+UUAFAtKwNaOsh/ioSeQnWlZcfw==}
+  /@types/react-is@18.2.1(@types/react@17.0.53):
+    resolution: {integrity: sha512-wyUkmaaSZEzFZivD8F2ftSyAfk6L+DfFliVj/mYdOXbVjRcS87fQJLTnhk6dRZPuJjI+9g6RZJO4PNCngUrmyw==}
     peerDependencies:
       '@types/react': '*'
     peerDependenciesMeta:
