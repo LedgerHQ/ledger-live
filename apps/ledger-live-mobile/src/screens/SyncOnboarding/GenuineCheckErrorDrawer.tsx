@@ -3,7 +3,7 @@ import { BoxedIcon, Button, Flex, Text } from "@ledgerhq/native-ui";
 import { CircledCrossSolidMedium, WarningSolidMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useTranslation } from "react-i18next";
 import QueuedDrawer from "../../components/QueuedDrawer";
-import { TrackScreen } from "../../analytics";
+import { TrackScreen, track } from "../../analytics";
 import GenericErrorView from "../../components/GenericErrorView";
 import { FirmwareNotRecognized } from "@ledgerhq/errors";
 import { useNavigation } from "@react-navigation/native";
@@ -19,12 +19,12 @@ export type Props = {
   /**
    * Callback when the user wants to retry the genuine check and presses on the retry button
    */
-  onRetry?: () => void;
+  onRetry: () => void;
 
   /**
    * Callback when the user wants to cancel the genuine check step and presses on the cancel button
    */
-  onCancel?: () => void;
+  onCancel: () => void;
 
   /**
    * Callback when the drawer is closed
@@ -66,6 +66,10 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
     (error instanceof FirmwareNotRecognized || (error as Error).message === "not found entity");
 
   const onGoToSettings = useCallback(() => {
+    track("button_clicked", {
+      button: "Go to settings",
+      page: "Error: Ledger Stax OS version not recognized",
+    });
     navigation.navigate(NavigatorName.Base, {
       screen: NavigatorName.Settings,
       params: {
@@ -75,6 +79,28 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
   }, [navigation]);
 
   let content;
+
+  const screenName = isNotFoundEntity
+    ? "Error: Device OS version not recognized"
+    : error
+    ? "`Error: ${(error as unknown as Error).name}`"
+    : "Error: unknown error";
+
+  const handleRetry = () => {
+    track("button_clicked", {
+      button: "Try again",
+      page: screenName,
+    });
+    onRetry();
+  };
+
+  const handleCancel = () => {
+    track("button_clicked", {
+      button: "Cancel",
+      page: screenName,
+    });
+    onCancel();
+  };
 
   // Special case for the genuine check during the ESC
   if (isNotFoundEntity) {
@@ -100,7 +126,7 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
         <Button type="main" mb={4} onPress={onGoToSettings}>
           {t("earlySecurityCheck.genuineCheckErrorDrawer.notFoundEntity.settingsCta")}
         </Button>
-        <Button onPress={onCancel}>
+        <Button onPress={handleCancel}>
           {t("earlySecurityCheck.genuineCheckErrorDrawer.cancelCta")}
         </Button>
       </>
@@ -117,10 +143,10 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
           hasExportLogButton={false}
           renderedInType="drawer"
         />
-        <Button type="main" mt={4} onPress={onRetry}>
+        <Button type="main" mt={4} onPress={handleRetry}>
           {t("earlySecurityCheck.genuineCheckErrorDrawer.retryCta")}
         </Button>
-        <Button onPress={onCancel}>
+        <Button onPress={handleCancel}>
           {t("earlySecurityCheck.genuineCheckErrorDrawer.cancelCta")}
         </Button>
       </>
@@ -147,10 +173,10 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
             productName,
           })}
         </Text>
-        <Button type="main" mb={4} onPress={onRetry}>
+        <Button type="main" mb={4} onPress={handleRetry}>
           {t("earlySecurityCheck.genuineCheckErrorDrawer.retryCta")}
         </Button>
-        <Button onPress={onCancel}>
+        <Button onPress={handleCancel}>
           {t("earlySecurityCheck.genuineCheckErrorDrawer.cancelCta")}
         </Button>
       </>
@@ -164,7 +190,7 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
       preventBackdropClick
       noCloseButton
     >
-      <TrackScreen category="Error during genuine check" type="drawer" refreshSource={false} />
+      <TrackScreen name={screenName} type="drawer" refreshSource={false} />
       {content}
     </QueuedDrawer>
   );

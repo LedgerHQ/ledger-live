@@ -259,11 +259,6 @@ const AppsScreen = ({
         data={items}
         ListHeaderComponent={
           <Flex mt={4}>
-            {showFwUpdateBanner && newFwUpdateUxFeatureFlag?.enabled ? (
-              <Flex mb={5}>
-                <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
-              </Flex>
-            ) : null}
             <DeviceCard
               distribution={distribution}
               state={state}
@@ -277,7 +272,13 @@ const AppsScreen = ({
               device={device}
               appList={deviceApps}
               onLanguageChange={onLanguageChange}
-            />
+            >
+              {showFwUpdateBanner && newFwUpdateUxFeatureFlag?.enabled ? (
+                <Flex p={6} pb={0}>
+                  <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
+                </Flex>
+              ) : null}
+            </DeviceCard>
             <ProviderWarning />
             <Benchmarking state={state} />
             {showFwUpdateBanner && !newFwUpdateUxFeatureFlag?.enabled ? (

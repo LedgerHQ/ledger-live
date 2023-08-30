@@ -29,7 +29,6 @@ import FreezeNavigator from "./FreezeNavigator";
 import UnfreezeNavigator from "./UnfreezeNavigator";
 import ClaimRewardsNavigator from "./ClaimRewardsNavigator";
 import AddAccountsNavigator from "./AddAccountsNavigator";
-import ExchangeNavigator from "./ExchangeNavigator";
 import ExchangeLiveAppNavigator from "./ExchangeLiveAppNavigator";
 import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
 import PlatformExchangeNavigator from "./PlatformExchangeNavigator";
@@ -57,11 +56,7 @@ import MarketCurrencySelect from "../../screens/Market/MarketCurrencySelect";
 import {
   BleDevicePairingFlow,
   bleDevicePairingFlowHeaderOptions,
-} from "../../screens/BleDevicePairingFlow/index";
-import ProviderList from "../../screens/Exchange/ProviderList";
-import ProviderView from "../../screens/Exchange/ProviderView";
-import ScreenHeader from "../../screens/Exchange/ScreenHeader";
-import ExchangeStackNavigator from "./ExchangeStackNavigator";
+} from "../../screens/BleDevicePairingFlow";
 
 import PostBuyDeviceScreen from "../../screens/PostBuyDeviceScreen";
 import LearnWebView from "../../screens/Learn/index";
@@ -104,8 +99,6 @@ export default function BaseNavigator() {
   >();
   const { colors } = useTheme();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
-  // PTX smart routing feature flag - buy sell live app flag
-  const ptxSmartRoutingMobile = useFeature("ptxSmartRoutingMobile");
   const walletConnectLiveApp = useFeature("walletConnectLiveApp");
   const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
   const isAccountsEmpty = useSelector(hasNoAccountsSelector);
@@ -292,42 +285,7 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={NavigatorName.Exchange}
-          component={ptxSmartRoutingMobile?.enabled ? ExchangeLiveAppNavigator : ExchangeNavigator}
-          options={
-            ptxSmartRoutingMobile?.enabled
-              ? { headerShown: false }
-              : { headerStyle: styles.headerNoShadow, headerLeft: () => null }
-          }
-          {...noNanoBuyNanoWallScreenOptions}
-        />
-        <Stack.Screen
-          name={NavigatorName.Earn}
-          component={EarnLiveAppNavigator}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name={ScreenName.ProviderList}
-          component={ProviderList}
-          options={({ route }) => ({
-            headerStyle: styles.headerNoShadow,
-            title:
-              route.params.type === "onRamp"
-                ? t("exchange.buy.screenTitle")
-                : t("exchange.sell.screenTitle"),
-          })}
-        />
-        <Stack.Screen
-          name={ScreenName.ProviderView}
-          component={ProviderView}
-          options={({ route }) => ({
-            headerTitle: () => <ScreenHeader icon={route.params.icon} name={route.params.name} />,
-            headerStyle: styles.headerNoShadow,
-          })}
-        />
-        <Stack.Screen
-          name={NavigatorName.ExchangeStack}
-          component={ExchangeStackNavigator}
-          initialParams={{ mode: "buy" }}
+          component={ExchangeLiveAppNavigator}
           options={{ headerShown: false }}
           {...noNanoBuyNanoWallScreenOptions}
         />
@@ -552,6 +510,11 @@ export default function BaseNavigator() {
           name={ScreenName.RedirectToOnboardingRecoverFlow}
           options={{ ...TransparentHeaderNavigationOptions, title: "" }}
           component={RedirectToOnboardingRecoverFlowScreen}
+        />
+        <Stack.Screen
+          name={NavigatorName.Earn}
+          component={EarnLiveAppNavigator}
+          options={{ headerShown: false }}
         />
         <Stack.Screen
           name={NavigatorName.NoFundsFlow}

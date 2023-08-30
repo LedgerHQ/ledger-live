@@ -1,4 +1,12 @@
-import React, { useRef, useEffect, memo, useCallback, useMemo, useState } from "react";
+import React, {
+  useRef,
+  useEffect,
+  memo,
+  useCallback,
+  useMemo,
+  useState,
+  PropsWithChildren,
+} from "react";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 
@@ -33,7 +41,7 @@ const illustrations = {
   stax: Stax,
 };
 
-type Props = {
+type Props = PropsWithChildren<{
   distribution: AppsDistribution;
   state: State;
   result: ListAppsResult;
@@ -46,12 +54,12 @@ type Props = {
   dispatch: (action: Action) => void;
   appList: App[];
   onLanguageChange: () => void;
-};
+}>;
 
 const BorderCard = styled.View`
   flex-direction: column;
   border: 1px solid ${p => p.theme.colors.neutral.c40};
-  border-radius: 4px;
+  border-radius: 8px;
 `;
 
 const DeviceCard = ({
@@ -65,6 +73,7 @@ const DeviceCard = ({
   dispatch,
   appList,
   onLanguageChange,
+  children,
 }: Props) => {
   const { colors, theme } = useTheme();
   const lastSeenCustomImage = useSelector(lastSeenCustomImageSelector);
@@ -110,6 +119,7 @@ const DeviceCard = ({
 
   return (
     <BorderCard>
+      {children}
       <Flex flexDirection={"row"} mt={20} mx={4} mb={8} alignItems="center">
         {illustration}
         <Flex

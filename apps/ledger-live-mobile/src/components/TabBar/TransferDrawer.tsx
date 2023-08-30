@@ -111,10 +111,12 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       screen: ScreenName.SwapForm,
     });
   }, [onNavigate, page, track]);
+
   const onBuy = useCallback(
     () => onNavigate(NavigatorName.Exchange, { screen: ScreenName.ExchangeBuy }),
     [onNavigate],
   );
+
   const onSell = useCallback(
     () => onNavigate(NavigatorName.Exchange, { screen: ScreenName.ExchangeSell }),
     [onNavigate],

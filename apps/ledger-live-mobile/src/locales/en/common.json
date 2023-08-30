@@ -1954,7 +1954,7 @@
       },
       "refused": {
         "title": "Genuine Check declined",
-        "description": "You cannot setup your Ledger Stax without allowing this Check.",
+        "description": "You cannot setup your {{productName}} without allowing this Check.",
         "cta": "Resume Check"
       },
       "error": {
@@ -2913,10 +2913,10 @@
         "title": "Choose a crypto you want to receive"
       },
       "selectNetwork": {
-        "title": "Select network for the chosen crypto",
+        "title": "Select the network for the chosen crypto",
         "account": "{{count}} account",
         "account_plural": "{{count}} accounts",
-        "subtitle": "Selected network must match the network from where you withdraw or get crypto sent.",
+        "subtitle": "This must match the network chosen on the wallet or exchange transferring the crypto.",
         "bannerTitle": "Make sure to select the right network. Learn how."
       },
       "stepperHeader": {
@@ -2952,7 +2952,7 @@
         "addressVerified": "Address verified",
         "verifyAddress": "Verify your address",
         "adviceVerify": "We always recommend verifying your address with your Ledger device",
-        "sendWarning": "Send only {{currencyName}} ({{currencyTicker}}) to this address. Sending any other crypto to this address may result in the loss of your crypto.",
+        "sendWarning": "Send only tokens from {{network}} network. Sending from another network may result in permanent loss of your tokens.",
         "dashStakingWarning": "Please make sure you don't use this address for receiving staking rewards",
         "bannerTitle": "Learn how to withdraw from an exchange"
       },
@@ -3405,6 +3405,7 @@
     "loading": "Searching devices..."
   },
   "send": {
+    "pendingTxWarning": "You have incoming transactions pending. Please beware, pending transactions can be reversed.",
     "tooMuchUTXOBottomModal": {
       "cta": "Continue",
       "description": "This transaction may take long to verify and sign because the account has a significant number of coins.",
@@ -4115,6 +4116,11 @@
     "action": "Update"
   },
   "FirmwareUpdate": {
+    "banner": {
+      "title": "OS update available",
+      "descriptionDeviceName": "Tap to update “{{deviceName}}” to OS version {{firmwareVersion}}.",
+      "descriptionProductName": "Tap to update your {{productName}} to OS version {{firmwareVersion}}."
+    },
     "title": "Update firmware",
     "beginUpdate": "Begin update",
     "updateDevice": "{{deviceName}} OS Update",
@@ -6351,10 +6357,10 @@
       "status": {
         "new": {
           "title": "New",
-          "desc": "Stop worrying about getting locked out of your wallet.",
+          "desc": "Recover access to your wallet without your Secret Recovery Phrase.",
           "actions": {
             "learnMore": "Get to know Ledger Recover",
-            "alreadySubscribed": "I already have a log in <LinkAccount>View my subscription</LinkAccount>"
+            "alreadySubscribed": "Already subscribed? <LinkAccount>View subscription</LinkAccount>"
           }
         }
       }
