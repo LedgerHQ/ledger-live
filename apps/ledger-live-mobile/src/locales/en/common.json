@@ -6357,10 +6357,10 @@
       "status": {
         "new": {
           "title": "New",
-          "desc": "Stop worrying about getting locked out of your wallet.",
+          "desc": "Recover access to your wallet without your Secret Recovery Phrase.",
           "actions": {
             "learnMore": "Get to know Ledger Recover",
-            "alreadySubscribed": "I already have a log in <LinkAccount>View my subscription</LinkAccount>"
+            "alreadySubscribed": "Already subscribed? <LinkAccount>View subscription</LinkAccount>"
           }
         }
       }
