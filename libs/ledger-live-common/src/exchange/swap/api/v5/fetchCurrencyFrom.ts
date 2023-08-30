@@ -27,7 +27,7 @@ export async function fetchCurrencyFrom({
   url.searchParams.append("providers-whitelist", providers.join(","));
   url.searchParams.append("additional-coins-flag", additionalCoinsFlag.toString());
   if (currencyTo) {
-    url.searchParams.append("currencyTo", currencyTo);
+    url.searchParams.append("currency-to", currencyTo);
   }
 
   try {

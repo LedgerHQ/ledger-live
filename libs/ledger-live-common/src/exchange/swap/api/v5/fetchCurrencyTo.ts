@@ -7,7 +7,7 @@ import axios from "axios";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
 
 type Props = {
-  currencyFrom: string;
+  currencyFromId?: string;
   providers: string[];
   additionalCoinsFlag?: boolean;
 };
@@ -21,7 +21,7 @@ type CurrencyGroup = {
 };
 
 export async function fetchCurrencyTo({
-  currencyFrom,
+  currencyFromId,
   providers,
   additionalCoinsFlag = false,
 }: Props) {
@@ -31,7 +31,7 @@ export async function fetchCurrencyTo({
 
   url.searchParams.append("providers-whitelist", providers.join(","));
   url.searchParams.append("additional-coins-flag", additionalCoinsFlag.toString());
-  url.searchParams.append("currencyFrom", currencyFrom);
+  url.searchParams.append("currency-from", currencyFromId!);
 
   try {
     const { data } = await network<ResponseData>({
