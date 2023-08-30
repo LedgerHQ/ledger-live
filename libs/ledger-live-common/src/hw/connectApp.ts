@@ -171,7 +171,7 @@ export const openAppFromDashboard = (
                     }) as Observable<ConnectAppEvent>;
                   case StatusCodes.CONDITIONS_OF_USE_NOT_SATISFIED:
                   case 0x5501: // No StatusCodes definition
-                    return throwError(new UserRefusedOnDevice());
+                    throw new UserRefusedOnDevice();
                 }
               } else if (e instanceof LockedDeviceError) {
                 // openAppFromDashboard is exported, so LockedDeviceError should be handled here too
@@ -180,7 +180,7 @@ export const openAppFromDashboard = (
                 } as ConnectAppEvent);
               }
 
-              return throwError(e);
+              throw e;
             }),
           ),
         ),
@@ -197,7 +197,9 @@ const attemptToQuitApp = (transport, appAndVersion?: AppAndVersion): Observable<
             expected: true,
           }),
         ),
-        catchError(e => throwError(e)),
+        catchError(e => {
+          throw e;
+        }),
       )
     : of({
         type: "ask-quit-app",
@@ -231,7 +233,9 @@ const derivationLogic = (
       },
     })),
     catchError(e => {
-      if (!e) return throwError(e);
+      // NOTE: THIS SEEMS BROKEN 😱
+      // if (!e) return throwError(e);
+      if (!e) throw e;
 
       if (e instanceof BtcUnmatchedApp) {
         return of<ConnectAppEvent>({
@@ -270,7 +274,7 @@ const derivationLogic = (
         } as ConnectAppEvent);
       }
 
-      return throwError(e);
+      throw e;
     }),
   );
 
@@ -322,18 +326,20 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
                               mergeMap(isAvailable =>
                                 isAvailable
                                   ? throwError(
-                                      new UpdateYourApp(undefined, {
-                                        managerAppName: outdatedApp.name,
-                                      }),
+                                      () => () =>
+                                        new UpdateYourApp(undefined, {
+                                          managerAppName: outdatedApp.name,
+                                        }),
                                     )
                                   : throwError(
-                                      new LatestFirmwareVersionRequired(
-                                        "LatestFirmwareVersionRequired",
-                                        {
-                                          latest: latest?.final.version,
-                                          current: deviceInfo.version,
-                                        },
-                                      ),
+                                      () => () =>
+                                        new LatestFirmwareVersionRequired(
+                                          "LatestFirmwareVersionRequired",
+                                          {
+                                            latest: latest?.final.version,
+                                            current: deviceInfo.version,
+                                          },
+                                        ),
                                     ),
                               ),
                             );
@@ -348,11 +354,12 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
                               // requireLatestFirmware // Resolved!.
                             });
                           } else {
-                            return throwError(
-                              new LatestFirmwareVersionRequired("LatestFirmwareVersionRequired", {
+                            throw new LatestFirmwareVersionRequired(
+                              "LatestFirmwareVersionRequired",
+                              {
                                 latest: latest.final.version,
                                 current: deviceInfo.version,
-                              }),
+                              },
                             );
                           }
                         }),
@@ -444,7 +451,7 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
                     // fallback on "old way" because device does not support getAppAndVersion
                     if (!requiresDerivation) {
                       // if there is no derivation, there is nothing we can do to check an app (e.g. requiring non coin app)
-                      return throwError(new FirmwareOrAppUpdateRequired());
+                      throw new FirmwareOrAppUpdateRequired();
                     }
 
                     return derivationLogic(transport, {
@@ -458,7 +465,7 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
                 } as ConnectAppEvent);
               }
 
-              return throwError(e);
+              throw e;
             }),
           );
 

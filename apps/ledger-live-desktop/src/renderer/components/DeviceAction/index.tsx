@@ -222,6 +222,8 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   const preferredDeviceModel = useSelector(preferredDeviceModelSelector);
   const swapDefaultTrack = useGetSwapTrackingProperties();
 
+  console.log("DeviceAction", { payload, Result, onResult });
+
   const type = useTheme().colors.palette.type;
 
   const modelId = device ? device.modelId : overridesPreferredDeviceModel || preferredDeviceModel;

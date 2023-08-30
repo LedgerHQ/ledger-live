@@ -1,4 +1,4 @@
-import { Observable, throwError } from "rxjs";
+import { Observable } from "rxjs";
 import { throttleTime, filter, map, catchError } from "rxjs/operators";
 import { ManagerAppDepInstallRequired } from "@ledgerhq/errors";
 import Transport from "@ledgerhq/hw-transport";
@@ -32,19 +32,19 @@ export default function installApp(
       progress: e.progress,
     })), // extract a stream of progress percentage
     catchError((e: Error) => {
-      if (!e || !e.message) return throwError(e);
+      if (!e || !e.message) {
+        throw e;
+      }
       const status = e.message.slice(e.message.length - 4);
       if (status === "6a83" || status === "6811") {
         const dependencies = getDependencies(app.name);
-        return throwError(
-          new ManagerAppDepInstallRequired("", {
-            appName: app.name,
-            dependency: dependencies.join(", "),
-          }),
-        );
+        throw new ManagerAppDepInstallRequired("", {
+          appName: app.name,
+          dependency: dependencies.join(", "),
+        });
       }
 
-      return throwError(e);
+      throw e;
     }),
   );
 }

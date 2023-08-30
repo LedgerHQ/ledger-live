@@ -1,4 +1,4 @@
-import { from, Observable, of, throwError } from "rxjs";
+import { from, Observable, of } from "rxjs";
 import { catchError, concatMap } from "rxjs/operators";
 import appSupportsQuitApp from "../appSupportsQuitApp";
 import type { AppAndVersion } from "./connectApp";
@@ -23,7 +23,9 @@ const attemptToQuitApp = (
             type: "unresponsiveDevice",
           }),
         ),
-        catchError(e => throwError(e)),
+        catchError(e => {
+          throw e;
+        }),
       )
     : of({
         type: "appDetected",

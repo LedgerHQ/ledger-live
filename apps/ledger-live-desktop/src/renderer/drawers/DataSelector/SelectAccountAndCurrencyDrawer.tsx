@@ -11,7 +11,7 @@ import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import Text from "~/renderer/components/Text";
 import { CurrencyList } from "./CurrencyList";
 import SelectAccountDrawer from "./SelectAccountDrawer";
-import { Observable } from "rxjs7";
+import { Observable } from "rxjs";
 import { getEnv } from "@ledgerhq/live-env";
 
 const options = {

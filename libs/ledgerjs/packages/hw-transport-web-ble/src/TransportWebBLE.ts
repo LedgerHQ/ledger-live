@@ -6,7 +6,7 @@ import type { DeviceModel } from "@ledgerhq/devices";
 import { sendAPDU } from "@ledgerhq/devices/ble/sendAPDU";
 import { receiveAPDU } from "@ledgerhq/devices/ble/receiveAPDU";
 import { log } from "@ledgerhq/logs";
-import { Observable, Subscription, defer, merge, from } from "rxjs";
+import { Observable, Subscription, defer, merge, from, lastValueFrom } from "rxjs";
 import { share, ignoreElements, first, map, tap } from "rxjs/operators";
 import type { Device, Characteristic } from "./types";
 import { monitorCharacteristic } from "./monitorCharacteristic";
@@ -23,7 +23,7 @@ const requiresBluetooth = () => {
 };
 
 const availability = (): Observable<boolean> =>
-  Observable.create(observer => {
+  new Observable(observer => {
     const bluetooth = requiresBluetooth();
 
     const onAvailabilityChanged = e => {
@@ -242,13 +242,15 @@ export default class BluetoothTransport extends Transport {
     await this.exchangeAtomicImpl(async () => {
       try {
         mtu =
-          (await merge(
-            this.notifyObservable.pipe(
-              first(buffer => buffer.readUInt8(0) === 0x08),
-              map(buffer => buffer.readUInt8(5)),
+          (await lastValueFrom(
+            merge(
+              this.notifyObservable.pipe(
+                first(buffer => buffer.readUInt8(0) === 0x08),
+                map(buffer => buffer.readUInt8(5)),
+              ),
+              defer(() => from(this.write(Buffer.from([0x08, 0, 0, 0, 0])))).pipe(ignoreElements()),
             ),
-            defer(() => from(this.write(Buffer.from([0x08, 0, 0, 0, 0])))).pipe(ignoreElements()),
-          ).toPromise()) + 3;
+          )) + 3;
       } catch (e) {
         log("ble-error", "inferMTU got " + String(e));
         this.device.gatt.disconnect();
@@ -275,10 +277,9 @@ export default class BluetoothTransport extends Transport {
       try {
         const msgIn = apdu.toString("hex");
         log("apdu", `=> ${msgIn}`);
-        const data = await merge(
-          this.notifyObservable.pipe(receiveAPDU),
-          sendAPDU(this.write, apdu, this.mtuSize),
-        ).toPromise();
+        const data = await lastValueFrom(
+          merge(this.notifyObservable.pipe(receiveAPDU), sendAPDU(this.write, apdu, this.mtuSize)),
+        );
         const msgOut = data.toString("hex");
         log("apdu", `<= ${msgOut}`);
         return data;

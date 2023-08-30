@@ -1,17 +1,9 @@
-import { of, throwError } from "rxjs";
+import { of } from "rxjs";
 import { retryOnErrorsCommandWrapper, sharedLogicTaskWrapper } from "./core";
 import { DisconnectedDevice, LockedDeviceError } from "@ledgerhq/errors";
 import { concatMap } from "rxjs/operators";
 import { TransportRef } from "../transports/core";
 import { aTransportRefBuilder } from "../mocks/aTransportRef";
-
-// Fakes the timer to accelerate the test
-// For this tests suite, easier than jest.useFakeTimers() + jest.advanceTimersByTime() etc.
-jest.mock("rxjs", () => {
-  const lib = jest.requireActual("rxjs");
-  lib.timer = jest.fn(() => of(1));
-  return lib;
-});
 
 describe("sharedLogicTaskWrapper", () => {
   const task = jest.fn();
@@ -40,7 +32,7 @@ describe("sharedLogicTaskWrapper", () => {
 
   describe("When the task emits an error that is not handled by the shared logic", () => {
     it("should not retry the task and emits the error", done => {
-      task.mockReturnValue(throwError(new Error("Unhandled error")));
+      task.mockReturnValue(new Error("Unhandled error"));
 
       wrappedTask().subscribe({
         next: event => {
@@ -67,7 +59,7 @@ describe("sharedLogicTaskWrapper", () => {
         of({ type: "data" }).pipe(
           concatMap(event => {
             if (counter < 3) {
-              return throwError(new LockedDeviceError("Handled error"));
+              throw new LockedDeviceError("Handled error");
             }
 
             return of(event);
@@ -146,7 +138,7 @@ describe("retryOnErrorsCommandWrapper", () => {
 
   describe("When the command emits an error that is not set to be handled by the wrapper", () => {
     it("should not retry the command and throw the error", done => {
-      command.mockReturnValue(throwError(new Error("Unhandled error")));
+      command.mockReturnValue(new Error("Unhandled error"));
 
       wrappedCommand(transportRef).subscribe({
         error: error => {
@@ -174,9 +166,7 @@ describe("retryOnErrorsCommandWrapper", () => {
 
             // Throws an error until before the limit is reached
             if (counter < disconnectedDeviceMaxRetries) {
-              return throwError(
-                new DisconnectedDevice(`Handled error max ${disconnectedDeviceMaxRetries}`),
-              );
+              throw new DisconnectedDevice(`Handled error max ${disconnectedDeviceMaxRetries}`);
             }
 
             return of(event);
@@ -209,9 +199,7 @@ describe("retryOnErrorsCommandWrapper", () => {
             counter++;
 
             // Throws an error even after the limit is reached
-            return throwError(
-              new DisconnectedDevice(`Handled error max ${disconnectedDeviceMaxRetries}`),
-            );
+            throw new DisconnectedDevice(`Handled error max ${disconnectedDeviceMaxRetries}`);
           }),
         ),
       );
@@ -243,21 +231,17 @@ describe("retryOnErrorsCommandWrapper", () => {
 
               // Throws an error until just before the limit is reached
               if (counter < disconnectedDeviceMaxRetries) {
-                return throwError(
-                  new DisconnectedDevice(`Handled error max ${disconnectedDeviceMaxRetries}`),
-                );
+                throw new DisconnectedDevice(`Handled error max ${disconnectedDeviceMaxRetries}`);
               }
               // Then throws a different handled error
               else if (counter < disconnectedDeviceMaxRetries + 1) {
-                return throwError(new LockedDeviceError("Handled error"));
+                throw new LockedDeviceError("Handled error");
               }
               // Finally throws again the first limited handled error
               // It should retry again until disconnctedDeviceMaxRetries is again reached
               // Which is counter == disconnectedDeviceMaxRetries * 2 + 1
               else {
-                return throwError(
-                  new DisconnectedDevice(`Handled error max ${disconnectedDeviceMaxRetries}`),
-                );
+                throw new DisconnectedDevice(`Handled error max ${disconnectedDeviceMaxRetries}`);
               }
             }),
           ),
@@ -295,10 +279,8 @@ describe("retryOnErrorsCommandWrapper", () => {
 
             // Throws an error until a random number of times
             if (counter < randomNumberOfRetries) {
-              return throwError(
-                new LockedDeviceError(
-                  `Handled infinite retries error that should be thrown ${randomNumberOfRetries} times`,
-                ),
+              throw new LockedDeviceError(
+                `Handled infinite retries error that should be thrown ${randomNumberOfRetries} times`,
               );
             }
 

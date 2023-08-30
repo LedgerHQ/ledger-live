@@ -6,6 +6,7 @@ import type { Account, SubAccount } from "@ledgerhq/types-live";
 import { getAccountBridge } from "../../bridge";
 import { makeBridgeCacheSystem } from "../../bridge/cache";
 import { elrond1 } from "./datasets/elrond1";
+import { lastValueFrom } from "rxjs";
 
 describe("ESDT tokens sync functionality", () => {
   const account = fromAccountRaw(elrond1);
@@ -26,12 +27,13 @@ describe("ESDT tokens sync functionality", () => {
   });
   test("sync finds tokens", async () => {
     const bridge = getAccountBridge(account);
-    const synced = await bridge
-      .sync(account, {
-        paginationConfig: {},
-      })
-      .pipe(reduce((a, f: (arg0: Account) => Account) => f(a), account))
-      .toPromise();
+    const synced = await lastValueFrom(
+      bridge
+        .sync(account, {
+          paginationConfig: {},
+        })
+        .pipe(reduce((a, f: (arg0: Account) => Account) => f(a), account)),
+    );
     // Contains token accounts
     expect(synced.subAccounts?.length).toBeTruthy();
     // Contains a known token

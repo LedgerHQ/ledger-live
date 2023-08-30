@@ -1,5 +1,5 @@
-import { from, defer, throwError } from "rxjs";
-import { catchError, filter, map, mergeAll, timeoutWith } from "rxjs/operators";
+import { from, defer } from "rxjs";
+import { catchError, filter, map, mergeAll, timeout } from "rxjs/operators";
 import { listSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { accountFormatters } from "@ledgerhq/live-common/account/index";
@@ -29,7 +29,12 @@ export default {
               },
             })
             .pipe(
-              timeoutWith(200 * 1000, throwError(new Error("scan account timeout"))),
+              timeout({
+                each: 200 * 1000,
+                with: () => {
+                  throw new Error("scan account timeout");
+                },
+              }),
               catchError(e => {
                 console.error("scan accounts failed for " + currency.id, e);
                 return from([]);

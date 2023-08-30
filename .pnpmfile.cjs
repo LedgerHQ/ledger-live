@@ -41,12 +41,13 @@ function readPackage(pkg, context) {
         Because we're still using rxjs v6 everywhere
         We only added rxjs v7 as an alias on rxjs7
       */
-      addDependencies("@ledgerhq/wallet-api-server", {
-        rxjs: pkg.peerDependencies?.rxjs ?? "*",
-      }),
-      removeDependencies("@ledgerhq/wallet-api-server", ["rxjs"], {
-        kind: "peerDependencies",
-      }),
+      // addDependencies("@ledgerhq/wallet-api-server", {
+      //   rxjs: pkg.peerDependencies?.rxjs ?? "*",
+      // }),
+      // removeDependencies("@ledgerhq/wallet-api-server", ["rxjs"], {
+      //   kind: "peerDependencies",
+      // }),
+
       /*
         The following packages are broken and do not declare their dependencies properly.
         So we are going to patch these until the maintainers fix their own stuff…
@@ -189,9 +190,9 @@ function readPackage(pkg, context) {
       addPeerDependencies("any-observable", {
         rxjs: "*",
       }),
-      addPeerDependencies("rxjs-compat", {
-        rxjs: "*",
-      }),
+      // addPeerDependencies("rxjs-compat", {
+      //   rxjs: "*",
+      // }),
       addPeerDependencies("@cspotcode/source-map-support", {
         "source-map-support": "*",
       }),

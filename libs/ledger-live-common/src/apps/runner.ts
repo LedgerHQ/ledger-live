@@ -68,7 +68,7 @@ export const runAppOp = (
             };
 
           default:
-            throw new Error("invalid notification of kind=" + n.kind);
+            throw new Error("invalid notification: " + JSON.stringify(n));
         }
       }),
     ),

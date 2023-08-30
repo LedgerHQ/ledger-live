@@ -3,7 +3,7 @@ import type { Characteristic } from "./types";
 import { log } from "@ledgerhq/logs";
 
 export const monitorCharacteristic = (characteristic: Characteristic): Observable<Buffer> =>
-  Observable.create(o => {
+  new Observable(o => {
     log("ble-verbose", "start monitor " + characteristic.uuid);
 
     function onCharacteristicValueChanged(event) {

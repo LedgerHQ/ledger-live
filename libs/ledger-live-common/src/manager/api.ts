@@ -31,7 +31,7 @@ import {
   SocketEvent,
 } from "@ledgerhq/types-live";
 import invariant from "invariant";
-import { Observable, throwError } from "rxjs";
+import { Observable } from "rxjs";
 import { catchError, map } from "rxjs/operators";
 import semver from "semver";
 import URL from "url";
@@ -58,11 +58,13 @@ declare global {
 
 const remapSocketError = (context?: string) =>
   catchError((e: Error) => {
-    if (!e || !e.message) return throwError(e);
+    if (!e || !e.message) {
+      throw e;
+    }
 
     if (e.message.startsWith("invalid literal")) {
       // hack to detect the case you're not in good condition (not in dashboard)
-      return throwError(new DeviceOnDashboardExpected());
+      throw new DeviceOnDashboardExpected();
     }
 
     const status =
@@ -77,38 +79,38 @@ const remapSocketError = (context?: string) =>
       case "6a81":
       case "6a8e":
       case "6a8f":
-        return throwError(new ManagerAppAlreadyInstalledError());
+        throw new ManagerAppAlreadyInstalledError();
 
       case "6982":
       case "5303":
-        return throwError(new ManagerDeviceLockedError());
+        throw new ManagerDeviceLockedError();
 
       case "6a84":
       case "5103":
         if (context === "firmware" || context === "mcu") {
-          return throwError(new ManagerFirmwareNotEnoughSpaceError());
+          throw new ManagerFirmwareNotEnoughSpaceError();
         }
 
-        return throwError(new ManagerNotEnoughSpaceError());
+        throw new ManagerNotEnoughSpaceError();
 
       case "6a85":
       case "5102":
         if (context === "firmware" || context === "mcu") {
-          return throwError(new UserRefusedFirmwareUpdate());
+          throw new UserRefusedFirmwareUpdate();
         }
 
-        return throwError(new ManagerNotEnoughSpaceError());
+        throw new ManagerNotEnoughSpaceError();
 
       case "6985":
       case "5501":
         if (context === "firmware" || context === "mcu") {
-          return throwError(new UserRefusedFirmwareUpdate());
+          throw new UserRefusedFirmwareUpdate();
         }
 
-        return throwError(new ManagerNotEnoughSpaceError());
+        throw new ManagerNotEnoughSpaceError();
 
       default:
-        return throwError(e);
+        throw e;
     }
   });
 

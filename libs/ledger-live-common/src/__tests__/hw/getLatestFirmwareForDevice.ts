@@ -2,6 +2,7 @@ import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocke
 import getDeviceInfo from "../../hw/getDeviceInfo";
 import manager from "../../manager";
 import { fetchNextFirmware } from "../../hw/installFinalFirmware";
+import { lastValueFrom } from "rxjs";
 jest.setTimeout(20000);
 
 /*
@@ -135,7 +136,7 @@ test("OSU 1.4.2", async () => {
     `),
   );
   const deviceInfo = await getDeviceInfo(t);
-  const next = await fetchNextFirmware(deviceInfo).toPromise();
+  const next = await lastValueFrom(fetchNextFirmware(deviceInfo));
   expect(next).toBeDefined();
   expect(next.firmware).toBeTruthy();
 });
@@ -149,7 +150,7 @@ test("OSU 1.5.5", async () => {
     `),
   );
   const deviceInfo = await getDeviceInfo(t);
-  const next = await fetchNextFirmware(deviceInfo).toPromise();
+  const next = await lastValueFrom(fetchNextFirmware(deviceInfo));
   expect(next).toBeDefined();
   expect(next.firmware).toBeTruthy();
 });

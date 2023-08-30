@@ -1,4 +1,4 @@
-import { Observable, from, of, throwError, EMPTY } from "rxjs";
+import { Observable, from, of, EMPTY } from "rxjs";
 import { catchError, concatMap, delay, mergeMap } from "rxjs/operators";
 import { DeviceOnDashboardExpected, TransportStatusError } from "@ledgerhq/errors";
 
@@ -33,7 +33,9 @@ const attemptToQuitApp = (
             type: "unresponsiveDevice",
           }),
         ),
-        catchError(e => throwError(e)),
+        catchError(e => {
+          throw e;
+        }),
       )
     : of({
         type: "appDetected",
@@ -99,10 +101,10 @@ export default function unistallLanguage({
                   }),
                 );
 
-                quitAppObservable.subscribe(
-                  event => subscriber.next(event),
-                  error => subscriber.error(error),
-                );
+                quitAppObservable.subscribe({
+                  next: event => subscriber.next(event),
+                  error: error => subscriber.error(error),
+                });
               }
 
               subscriber.error(e);

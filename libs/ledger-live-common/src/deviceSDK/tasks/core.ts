@@ -60,7 +60,11 @@ export function sharedLogicTaskWrapper<TaskArgsType, TaskEventsType>(
                   acceptedError = true;
                 }
 
-                return acceptedError ? timer(RETRY_ON_ERROR_DELAY_MS) : throwError(error);
+                if (!acceptedError) {
+                  throw error;
+                }
+
+                return timer(RETRY_ON_ERROR_DELAY_MS);
               }),
             ),
           ),

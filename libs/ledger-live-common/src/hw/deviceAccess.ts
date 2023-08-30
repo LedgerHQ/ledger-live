@@ -21,17 +21,18 @@ import { open, close, setAllowAutoDisconnect } from ".";
 
 const initialErrorRemapping = error =>
   throwError(
-    error &&
+    () => () =>
+      error &&
       error instanceof TransportStatusError &&
       // @ts-expect-error typescript not checking agains the instanceof
       error.statusCode === 0x6faa
-      ? new DeviceHalted(error.message)
-      : error.statusCode === 0x6b00
-      ? new FirmwareOrAppUpdateRequired(error.message)
-      : error,
+        ? new DeviceHalted(error.message)
+        : error.statusCode === 0x6b00
+        ? new FirmwareOrAppUpdateRequired(error.message)
+        : error,
   );
 
-let errorRemapping = e => throwError(e);
+let errorRemapping = e => throwError(() => () => e);
 
 export const setErrorRemapping = (f: (arg0: Error) => Observable<never>): void => {
   errorRemapping = f;
@@ -41,7 +42,7 @@ const never = new Promise(() => {});
 const transportFinally =
   (cleanup: () => Promise<void>) =>
   <T>(observable: Observable<T>): Observable<T> =>
-    Observable.create(o => {
+    new Observable(o => {
       let done = false;
 
       const finalize = () => {

@@ -1,5 +1,5 @@
 import { ignoreElements, catchError } from "rxjs/operators";
-import { Observable, throwError } from "rxjs";
+import { Observable } from "rxjs";
 import { ManagerAppDepUninstallRequired } from "@ledgerhq/errors";
 import Transport from "@ledgerhq/hw-transport";
 import ManagerAPI from "../manager/api";
@@ -24,18 +24,18 @@ export default function uninstallApp(
   ).pipe(
     ignoreElements(),
     catchError((e: Error) => {
-      if (!e || !e.message) return throwError(e);
+      if (!e || !e.message) {
+        throw e;
+      }
       const status = e.message.slice(e.message.length - 4);
 
       if (status === "6a83") {
-        return throwError(
-          new ManagerAppDepUninstallRequired("", {
-            appName: app.name,
-          }),
-        );
+        throw new ManagerAppDepUninstallRequired("", {
+          appName: app.name,
+        });
       }
 
-      return throwError(e);
+      throw e;
     }),
   );
 }

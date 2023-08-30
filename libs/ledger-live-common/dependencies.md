@@ -104,7 +104,6 @@ yarn upgrade-interactive -i --latest
 | ripple-lib                                  | XRP coin integration                                              | monthly                                                              |
 | rlp                                         | Ethereum coin integration                                         | monthly                                                              |
 | rxjs                                        | generic helper                                                    | BLOCKED by issue revealed when trying to upgrade. **ticket missing** |
-| rxjs-compat                                 | generic helper                                                    | BLOCKED by issue revealed when trying to upgrade. **ticket missing** |
 | secp256k1                                   | Bitcoin coin integration                                          | monthly                                                              |
 | semver                                      | generic helper                                                    | monthly                                                              |
 | sha.js                                      | generic helper for crypto                                         | monthly                                                              |

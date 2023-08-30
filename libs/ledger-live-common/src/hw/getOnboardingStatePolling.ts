@@ -1,4 +1,4 @@
-import { from, of, throwError, Observable, TimeoutError } from "rxjs";
+import { from, of, Observable, TimeoutError } from "rxjs";
 import { map, catchError, first, timeout, repeatWhen, delay } from "rxjs/operators";
 import getVersion from "./getVersion";
 import { withDevice } from "./deviceAccess";
@@ -54,7 +54,7 @@ export const getOnboardingStatePolling = ({
           return of(error as Error);
         }
 
-        return throwError(error);
+        throw error;
       }),
       map((event: FirmwareInfo | Error) => {
         if ("flags" in event) {

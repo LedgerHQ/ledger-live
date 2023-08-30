@@ -2,7 +2,10 @@ import { renderHook, act } from "@testing-library/react-hooks";
 import { of, throwError } from "rxjs";
 import { UserRefusedAllowManager, DisconnectedDeviceDuringOperation } from "@ledgerhq/errors";
 import { useGenuineCheck } from "./useGenuineCheck";
-import { getGenuineCheckFromDeviceId } from "../getGenuineCheckFromDeviceId";
+import {
+  GetGenuineCheckFromDeviceIdResult,
+  getGenuineCheckFromDeviceId,
+} from "../getGenuineCheckFromDeviceId";
 
 jest.mock("../getGenuineCheckFromDeviceId");
 jest.useFakeTimers();
@@ -155,16 +158,17 @@ describe("useGenuineCheck", () => {
   describe("When the hook consumer requests to reset the genuine check state", () => {
     it("should reset the device permission and genuine states", async () => {
       // In the case of an unsuccessful genuine check
+
       mockedGetGenuineCheckFromDeviceId.mockReturnValue(
         of(
           {
             socketEvent: { type: "device-permission-granted" },
             lockedDevice: false,
-          },
+          } as GetGenuineCheckFromDeviceIdResult,
           {
             socketEvent: { type: "result", payload: "1111" },
             lockedDevice: false,
-          },
+          } as GetGenuineCheckFromDeviceIdResult,
         ),
       );
 

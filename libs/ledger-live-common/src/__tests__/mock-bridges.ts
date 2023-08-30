@@ -9,6 +9,7 @@ import { getCryptoCurrencyById } from "../currencies";
 import { toAccountRaw, flattenAccounts } from "../account";
 import type { Account } from "@ledgerhq/types-live";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import { lastValueFrom } from "rxjs";
 jest.setTimeout(120000);
 
 const mockedCoins: CryptoCurrencyId[] = [
@@ -28,20 +29,21 @@ mockedCoins.map(getCryptoCurrencyById).forEach(currency => {
     const bridge = getCurrencyBridge(currency);
     setEnv("MOCK", "false");
     test("scanAccounts", async () => {
-      const accounts = await bridge
-        .scanAccounts({
-          currency,
-          deviceId: "",
-          syncConfig: {
-            paginationConfig: {},
-          },
-        })
-        .pipe(
-          filter(e => e.type === "discovered"),
-          map(e => e.account),
-          reduce((all, a) => all.concat(a), <Account[]>[]),
-        )
-        .toPromise();
+      const accounts = await lastValueFrom(
+        bridge
+          .scanAccounts({
+            currency,
+            deviceId: "",
+            syncConfig: {
+              paginationConfig: {},
+            },
+          })
+          .pipe(
+            filter(e => e.type === "discovered"),
+            map(e => e.account),
+            reduce((all, a) => all.concat(a), <Account[]>[]),
+          ),
+      );
       expect(accounts.length).toBeGreaterThan(0);
       const allOps = flatMap(flattenAccounts(accounts), a => a.operations);
       const operationIdCollisions = toPairs(groupBy(allOps, "id"))
@@ -51,12 +53,13 @@ mockedCoins.map(getCryptoCurrencyById).forEach(currency => {
       const [first, second] = await Promise.all(
         accounts.map(async a => {
           const bridge = getAccountBridge(a, null);
-          const synced = await bridge
-            .sync(a, {
-              paginationConfig: {},
-            })
-            .pipe(reduce((a, f) => f(a), a))
-            .toPromise();
+          const synced = await lastValueFrom(
+            bridge
+              .sync(a, {
+                paginationConfig: {},
+              })
+              .pipe(reduce((a, f) => f(a), a)),
+          );
           const m: Record<string, any> = toAccountRaw(a);
           delete m.lastSyncDate;
           delete m.blockHeight;
@@ -97,12 +100,13 @@ mockedCoins.map(getCryptoCurrencyById).forEach(currency => {
           signedOperation,
         });
         expect(operation.hash).toBeTruthy();
-        const firstResynced = await bridge
-          .sync(first, {
-            paginationConfig: {},
-          })
-          .pipe(reduce((a, f) => f(a), first))
-          .toPromise();
+        const firstResynced = await lastValueFrom(
+          bridge
+            .sync(first, {
+              paginationConfig: {},
+            })
+            .pipe(reduce((a, f) => f(a), first)),
+        );
         expect(firstResynced.operations.length).toBeGreaterThan(first.operations.length);
       }
     });

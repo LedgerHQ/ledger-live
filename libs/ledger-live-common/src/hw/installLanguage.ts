@@ -6,7 +6,7 @@ import {
   TransportError,
   TransportStatusError,
 } from "@ledgerhq/errors";
-import { Observable, from, of, throwError } from "rxjs";
+import { Observable, from, of } from "rxjs";
 import { catchError, concatMap, delay, mergeMap } from "rxjs/operators";
 
 import Transport from "@ledgerhq/hw-transport";
@@ -145,7 +145,7 @@ export default function installLanguage({
                   }),
                 );
               }
-              return throwError(e);
+              throw e;
             }),
           )
           .subscribe(subscriber);

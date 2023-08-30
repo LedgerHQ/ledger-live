@@ -33,7 +33,7 @@ import {
 } from "@ledgerhq/devices";
 import type { DeviceModel } from "@ledgerhq/devices";
 import { log } from "@ledgerhq/logs";
-import { Observable, defer, merge, from, of, throwError, Observer } from "rxjs";
+import { Observable, defer, merge, from, of, throwError, Observer, lastValueFrom } from "rxjs";
 import { share, ignoreElements, first, map, tap, catchError } from "rxjs/operators";
 import {
   CantOpenDevice,
@@ -525,10 +525,9 @@ export default class BleTransport extends Transport {
         const msgIn = apdu.toString("hex");
         log("apdu", `=> ${msgIn}`);
 
-        const data = await merge(
-          this.notifyObservable.pipe(receiveAPDU),
-          sendAPDU(this.write, apdu, this.mtuSize),
-        ).toPromise();
+        const data = await lastValueFrom(
+          merge(this.notifyObservable.pipe(receiveAPDU), sendAPDU(this.write, apdu, this.mtuSize)),
+        );
 
         const msgOut = data.toString("hex");
         log("apdu", `<= ${msgOut}`);

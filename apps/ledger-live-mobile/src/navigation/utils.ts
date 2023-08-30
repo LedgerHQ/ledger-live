@@ -73,5 +73,5 @@ function scrollSectionListToTop(compRef: SectionList | Animated<SectionList>): v
 }
 
 export function scrollToTop(): void {
-  scrollSubject.next();
+  scrollSubject.next(undefined);
 }

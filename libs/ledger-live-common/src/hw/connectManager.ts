@@ -1,4 +1,4 @@
-import { Observable, concat, from, of, throwError } from "rxjs";
+import { Observable, concat, from, of } from "rxjs";
 import { concatMap, catchError, delay } from "rxjs/operators";
 import {
   TransportStatusError,
@@ -112,7 +112,7 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectManagerEvent> =>
                 );
               }
 
-              return throwError(e);
+              throw e;
             }),
           )
           .subscribe(o);

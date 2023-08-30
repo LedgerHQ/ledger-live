@@ -2,13 +2,13 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
-import { DeviceInfo, idsToLanguage } from "@ledgerhq/types-live";
+import { idsToLanguage } from "@ledgerhq/types-live";
 import isEqual from "lodash/isEqual";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { Languages, Language } from "~/config/languages";
-import { from } from "rxjs";
+import { from, lastValueFrom } from "rxjs";
 import { setLanguage, setLastSeenDevice } from "~/renderer/actions/settings";
 import Track from "~/renderer/analytics/Track";
 import { track } from "~/renderer/analytics/segment";
@@ -41,14 +41,14 @@ const LanguageSelect: React.FC<Props> = ({ disableLanguagePrompt }) => {
   );
 
   const currentDevice = useSelector(getCurrentDevice);
-  const refreshDeviceInfo = useCallback(() => {
+  const refreshDeviceInfo = useCallback(async () => {
     if (currentDevice) {
-      withDevice(currentDevice.deviceId)(transport => from(getDeviceInfo(transport)))
-        .toPromise()
-        .then((deviceInfo: DeviceInfo) => {
-          if (!isEqual(deviceInfo, lastSeenDevice?.deviceInfo))
-            dispatch(setLastSeenDevice({ deviceInfo }));
-        });
+      const deviceInfo = await lastValueFrom(
+        withDevice(currentDevice.deviceId)(transport => from(getDeviceInfo(transport))),
+      );
+      if (!isEqual(deviceInfo, lastSeenDevice?.deviceInfo)) {
+        dispatch(setLastSeenDevice({ deviceInfo }));
+      }
     }
   }, [currentDevice, lastSeenDevice?.deviceInfo, dispatch]);
 

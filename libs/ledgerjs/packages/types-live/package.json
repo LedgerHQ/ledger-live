@@ -22,7 +22,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "bignumber.js": "^9.1.1",
-    "rxjs": "6"
+    "rxjs": "^7.8.1"
   },
   "devDependencies": {
     "@ledgerhq/types-cryptoassets": "workspace:^",

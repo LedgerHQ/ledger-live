@@ -14,6 +14,7 @@ import { deviceInfo155, mockListAppsResult, mockExecWithInstalledContext } from 
 // import { prettyActionPlan, prettyInstalled } from "./formatting";
 import { setEnv } from "@ledgerhq/live-env";
 import { Action } from "./types";
+import { lastValueFrom } from "rxjs";
 
 setEnv("MANAGER_INSTALL_DELAY", 0);
 // TODO reactivate this test after bitcoin 2.1.0 nano app
@@ -437,11 +438,9 @@ test("global progress", async () => {
   const total = 4;
 
   while ((next = getNextAppOp(state))) {
-    state = await runOneAppOp(
-      state,
-      next,
-      mockExecWithInstalledContext(state.installed),
-    ).toPromise();
+    state = await lastValueFrom(
+      runOneAppOp(state, next, mockExecWithInstalledContext(state.installed)),
+    );
     expect(updateAllProgress(state)).toBe(++i / total);
   }
 

@@ -1,4 +1,4 @@
-import { Observable, from, of, throwError } from "rxjs";
+import { Observable, from, of } from "rxjs";
 import { catchError, concatMap, delay, mergeMap } from "rxjs/operators";
 import {
   DeviceOnDashboardExpected,
@@ -162,7 +162,7 @@ export default function fetchImage({ deviceId, request }: Input): Observable<Fet
                   }),
                 );
               }
-              return throwError(e);
+              throw e;
             }),
           )
           .subscribe(subscriber);

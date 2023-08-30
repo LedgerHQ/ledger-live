@@ -9,6 +9,7 @@ import { ethereum1 } from "../datasets/ethereum1";
 import { ethereum2 } from "../datasets/ethereum2";
 import { encodeOperationId } from "../../../operation";
 import { getCryptoCurrencyById, listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets";
+import { lastValueFrom } from "rxjs";
 
 describe("blacklistedTokenIds functionality", () => {
   const account = fromAccountRaw(ethereum1);
@@ -30,13 +31,14 @@ describe("blacklistedTokenIds functionality", () => {
   test("sync finds tokens, but not blacklisted ones", async () => {
     const bridge = getAccountBridge(account);
     const blacklistedTokenIds = ["ethereum/erc20/weth"];
-    const synced = await bridge
-      .sync(account, {
-        paginationConfig: {},
-        blacklistedTokenIds,
-      })
-      .pipe(reduce((a, f: (arg0: Account) => Account) => f(a), account))
-      .toPromise();
+    const synced = await lastValueFrom(
+      bridge
+        .sync(account, {
+          paginationConfig: {},
+          blacklistedTokenIds,
+        })
+        .pipe(reduce((a, f: (arg0: Account) => Account) => f(a), account)),
+    );
     // Contains token accounts
     expect(synced.subAccounts?.length).toBeTruthy();
     // Contains a known token
@@ -55,13 +57,14 @@ describe("blacklistedTokenIds functionality", () => {
   test("account resyncs tokens if no longer blacklisted", async () => {
     const bridge = getAccountBridge(account);
     const blacklistedTokenIds = ["ethereum/erc20/weth"];
-    const syncedWithoutWeth = await bridge
-      .sync(account, {
-        paginationConfig: {},
-        blacklistedTokenIds,
-      })
-      .pipe(reduce((a, f: (arg0: Account) => Account) => f(a), account))
-      .toPromise();
+    const syncedWithoutWeth = await lastValueFrom(
+      bridge
+        .sync(account, {
+          paginationConfig: {},
+          blacklistedTokenIds,
+        })
+        .pipe(reduce((a, f: (arg0: Account) => Account) => f(a), account)),
+    );
     // Contains token accounts
     expect(syncedWithoutWeth.subAccounts?.length).toBeTruthy();
     // Does not contain a blacklisted token
@@ -71,13 +74,14 @@ describe("blacklistedTokenIds functionality", () => {
       ),
     ).toBe(undefined);
     //Sync again with `syncedWithoutWeth` as a base but without it being blacklisted
-    const synced = await bridge
-      .sync(account, {
-        paginationConfig: {},
-        blacklistedTokenIds: ["ethereum/erc20/somethingElse"],
-      })
-      .pipe(reduce((a, f: (arg0: Account) => Account) => f(a), account))
-      .toPromise();
+    const synced = await lastValueFrom(
+      bridge
+        .sync(account, {
+          paginationConfig: {},
+          blacklistedTokenIds: ["ethereum/erc20/somethingElse"],
+        })
+        .pipe(reduce((a, f: (arg0: Account) => Account) => f(a), account)),
+    );
     // Does not contain a blacklisted token
     expect(
       (synced.subAccounts as SubAccount[]).find(
@@ -126,13 +130,14 @@ describe("sync on reorg", () => {
       operationsCount: 1,
     });
     const bridge = getAccountBridge(account);
-    const syncPromise = await bridge
-      .sync(account, {
-        paginationConfig: {},
-        blacklistedTokenIds: [],
-      })
-      .pipe(reduce((a, f: (arg0: Account) => Account) => f(a), account))
-      .toPromise();
+    const syncPromise = await lastValueFrom(
+      bridge
+        .sync(account, {
+          paginationConfig: {},
+          blacklistedTokenIds: [],
+        })
+        .pipe(reduce((a, f: (arg0: Account) => Account) => f(a), account)),
+    );
     // expect not to throw ok if you reach this point
     // + expect operations to be from full sync instead of incremental
     // so the fake op should be removed

@@ -3,7 +3,7 @@ import { Result, createAction } from "@ledgerhq/live-common/hw/actions/manager";
 import Dashboard from "~/renderer/screens/manager/Dashboard";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import DeviceAction from "~/renderer/components/DeviceAction";
-import { from } from "rxjs";
+import { from, lastValueFrom } from "rxjs";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import connectManager from "@ledgerhq/live-common/hw/connectManager";
@@ -30,21 +30,20 @@ const Manager = () => {
     [setDrawer],
   );
   const dispatch = useDispatch();
-  const refreshDeviceInfo = useCallback(() => {
+  const refreshDeviceInfo = useCallback(async () => {
     if (result?.device) {
-      withDevice(result.device.deviceId)(transport => from(getDeviceInfo(transport)))
-        .toPromise()
-        .then(deviceInfo => {
-          setResult({
-            ...result,
-            deviceInfo,
-          });
-          dispatch(
-            setLastSeenDevice({
-              deviceInfo,
-            }),
-          );
-        });
+      const deviceInfo = await lastValueFrom(
+        withDevice(result.device.deviceId)(transport => from(getDeviceInfo(transport))),
+      );
+      setResult({
+        ...result,
+        deviceInfo,
+      });
+      dispatch(
+        setLastSeenDevice({
+          deviceInfo,
+        }),
+      );
     }
   }, [result, dispatch]);
   const onResult = useCallback(result => setResult(result), []);

@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import { Observable, defer, of, range, empty } from "rxjs";
+import { Observable, defer, of, range, EMPTY } from "rxjs";
 import { catchError, switchMap, concatMap, takeWhile, map } from "rxjs/operators";
 import { log } from "@ledgerhq/logs";
 import { TransportStatusError, UserRefusedAddress } from "@ledgerhq/errors";
@@ -499,7 +499,7 @@ export function walletDerivation<R>({
           log("scanAccounts", "ignore derivationMode=" + derivationMode);
         }
 
-        return empty();
+        return EMPTY;
       }),
     ),
   ).pipe(
@@ -517,7 +517,7 @@ export function walletDerivation<R>({
         // derivate addresses/xpubs
         concatMap(index => {
           if (!derivationModeSupportsIndex(derivationMode, index)) {
-            return empty();
+            return EMPTY;
           }
 
           const path = shouldDerivesOnAccount
@@ -551,7 +551,7 @@ export function walletDerivation<R>({
         ), // take until the list is complete (based on criteria defined by stepAddress)
         // $FlowFixMe
         takeWhile(r => !r.complete, true), // emit just the results
-        concatMap(({ result }) => (result ? of(result) : empty())),
+        concatMap(({ result }) => (result ? of(result) : EMPTY)),
       );
     }),
   );

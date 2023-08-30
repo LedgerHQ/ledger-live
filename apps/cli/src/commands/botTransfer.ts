@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
-import { from, of, throwError } from "rxjs";
-import { catchError, filter, first, map, timeoutWith, tap } from "rxjs/operators";
+import { from, of } from "rxjs";
+import { catchError, filter, first, map, timeout, tap } from "rxjs/operators";
 import {
   listSupportedCurrencies,
   getFiatCurrencyByTicker,
@@ -89,10 +89,12 @@ export default {
             .pipe(
               filter(e => e.type === "discovered"),
               first(),
-              timeoutWith(
-                getEnv("BOT_TIMEOUT_SCAN_ACCOUNTS"),
-                throwError(new Error("scan account timeout")),
-              ),
+              timeout({
+                each: getEnv("BOT_TIMEOUT_SCAN_ACCOUNTS"),
+                with: () => {
+                  throw new Error("scan account timeout");
+                },
+              }),
               map(e => e.account.freshAddress),
               catchError(err => {
                 console.error("couldn't infer address for a " + currency.id + " account", err);
@@ -130,10 +132,12 @@ export default {
               },
             })
             .pipe(
-              timeoutWith(
-                getEnv("BOT_TIMEOUT_SCAN_ACCOUNTS"),
-                throwError(new Error("scan account timeout")),
-              ),
+              timeout({
+                each: getEnv("BOT_TIMEOUT_SCAN_ACCOUNTS"),
+                with: () => {
+                  throw new Error("scan account timeout");
+                },
+              }),
               catchError(e => {
                 console.error("scan accounts failed for " + currency.id, e);
                 return from([]);

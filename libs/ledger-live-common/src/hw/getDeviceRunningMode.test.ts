@@ -1,4 +1,4 @@
-import { from, Observable, of, timer } from "rxjs";
+import { from, lastValueFrom, Observable, of, timer } from "rxjs";
 import { delay } from "rxjs/operators";
 import Transport from "@ledgerhq/hw-transport";
 import { CantOpenDevice, DisconnectedDevice, LockedDeviceError } from "@ledgerhq/errors";
@@ -39,6 +39,9 @@ const A_DEVICE_ID = "";
 
 describe("getDeviceRunningMode", () => {
   beforeEach(() => {
+    // @ts-expect-error the mocked function expects an Observable<0>
+    // while we give it an Observable<1>, timer has multiple signatures and I can't figure
+    // out why it doesn't understand the correct one
     mockedTimer.mockReturnValue(of(1));
   });
 
@@ -150,9 +153,7 @@ describe("getDeviceRunningMode", () => {
         // leading to an "unresponsive device"
         const aDeviceInfo = aDeviceInfoBuilder({ isBootloader: false });
         mockedGetDeviceInfo.mockResolvedValue(
-          of(aDeviceInfo)
-            .pipe(delay(unresponsiveTimeoutMs + 1000))
-            .toPromise(),
+          lastValueFrom(of(aDeviceInfo).pipe(delay(unresponsiveTimeoutMs + 1000))),
         );
 
         getDeviceRunningMode({

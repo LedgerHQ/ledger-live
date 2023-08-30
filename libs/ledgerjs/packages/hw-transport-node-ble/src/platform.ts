@@ -9,7 +9,7 @@ noble.on("warning", message => {
 
 const POWERED_ON = "poweredOn";
 
-export const availability: Observable<boolean> = Observable.create(observer => {
+export const availability: Observable<boolean> = new Observable(observer => {
   const onAvailabilityChanged = e => {
     observer.next(e === POWERED_ON);
   };

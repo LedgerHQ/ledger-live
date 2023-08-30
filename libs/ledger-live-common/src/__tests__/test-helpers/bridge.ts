@@ -31,6 +31,7 @@ import type {
   TransactionStatusCommon,
 } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { lastValueFrom } from "rxjs";
 
 const warnDev = process.env.CI ? (..._args) => {} : (...msg) => console.warn(...msg);
 // FIXME move out into DatasetTest to be defined in
@@ -54,10 +55,11 @@ export function syncAccount<T extends TransactionCommon>(
   account: Account,
   syncConfig: SyncConfig = defaultSyncConfig,
 ): Promise<Account> {
-  return bridge
-    .sync(account, syncConfig)
-    .pipe(reduce((a, f: (arg0: Account) => Account) => f(a), account))
-    .toPromise();
+  return lastValueFrom(
+    bridge
+      .sync(account, syncConfig)
+      .pipe(reduce((a, f: (arg0: Account) => Account) => f(a), account)),
+  );
 }
 
 export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): void {
@@ -113,18 +115,19 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
     const scanAccounts = async apdus => {
       const deviceId = await mockDeviceWithAPDUs(apdus, currencyData.mockDeviceOptions);
       try {
-        const accounts = await bridge
-          .scanAccounts({
-            currency,
-            deviceId,
-            syncConfig: defaultSyncConfig,
-          })
-          .pipe(
-            filter(e => e.type === "discovered"),
-            map(e => e.account),
-            reduce((all, a) => all.concat(a), [] as Account[]),
-          )
-          .toPromise();
+        const accounts = await lastValueFrom(
+          bridge
+            .scanAccounts({
+              currency,
+              deviceId,
+              syncConfig: defaultSyncConfig,
+            })
+            .pipe(
+              filter(e => e.type === "discovered"),
+              map(e => e.account),
+              reduce((all, a) => all.concat(a), [] as Account[]),
+            ),
+        );
         return implicitMigration(accounts);
       } catch (e: any) {
         console.error(e.message);

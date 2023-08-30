@@ -6,7 +6,7 @@ import {
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
 import { getAbandonSeedAddress, findTokenById } from "@ledgerhq/cryptoassets";
-import { from } from "rxjs";
+import { from, lastValueFrom } from "rxjs";
 import { BigNumber } from "bignumber.js";
 import commandLineArgs from "command-line-args";
 import { delay } from "@ledgerhq/live-common/promise";
@@ -105,9 +105,9 @@ const exec = async (opts: SwapJobOpts) => {
   console.log("• Open the destination currency app");
   await delay(8000);
   let toParentAccount: Account | null = null;
-  let toAccount: Account | SubAccount | undefined = await scan(secondAccountOpts)
-    .pipe(take(1))
-    .toPromise();
+  let toAccount: Account | SubAccount | undefined = await lastValueFrom(
+    scan(secondAccountOpts).pipe(take(1)),
+  );
   invariant(toAccount, `✖ No account found`);
   const { tokenId: tokenId2 } = secondAccountOpts;
 

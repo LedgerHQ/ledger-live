@@ -2,6 +2,7 @@ import Transport from "@ledgerhq/hw-transport";
 import { ChargingModes } from "@ledgerhq/types-devices";
 import { BatteryStatusTypes } from "../../hw/getBatteryStatus";
 import { getBatteryStatus } from "./getBatteryStatus";
+import { lastValueFrom } from "rxjs";
 
 const mockTransportGenerator = out =>
   ({
@@ -16,10 +17,12 @@ describe("getBatteryStatus", () => {
     const statusType = BatteryStatusTypes.BATTERY_PERCENTAGE;
     const transport = mockTransportGenerator(Buffer.from("639000", "hex"));
 
-    const response = await getBatteryStatus({
-      transport,
-      statusType,
-    }).toPromise();
+    const response = await lastValueFrom(
+      getBatteryStatus({
+        transport,
+        statusType,
+      }),
+    );
 
     if (response.type === "data") {
       expect(response.batteryStatus).toEqual(99);
@@ -32,10 +35,12 @@ describe("getBatteryStatus", () => {
     const statusType = BatteryStatusTypes.BATTERY_PERCENTAGE;
     const transport = mockTransportGenerator(Buffer.from("FF9000", "hex"));
 
-    const response = await getBatteryStatus({
-      transport,
-      statusType,
-    }).toPromise();
+    const response = await lastValueFrom(
+      getBatteryStatus({
+        transport,
+        statusType,
+      }),
+    );
     if (response.type === "data") {
       expect(response.batteryStatus).toEqual(-1);
     } else {
@@ -47,10 +52,12 @@ describe("getBatteryStatus", () => {
     const statusType = BatteryStatusTypes.BATTERY_VOLTAGE;
     const transport = mockTransportGenerator(Buffer.from("0FFF9000", "hex"));
 
-    const response = await getBatteryStatus({
-      transport,
-      statusType,
-    }).toPromise();
+    const response = await lastValueFrom(
+      getBatteryStatus({
+        transport,
+        statusType,
+      }),
+    );
     if (response.type === "data") {
       expect(response.batteryStatus).toEqual(4095);
     } else {
@@ -62,10 +69,12 @@ describe("getBatteryStatus", () => {
     const statusType = BatteryStatusTypes.BATTERY_TEMPERATURE;
     const transport = mockTransportGenerator(Buffer.from("109000", "hex"));
 
-    const response = await getBatteryStatus({
-      transport,
-      statusType,
-    }).toPromise();
+    const response = await lastValueFrom(
+      getBatteryStatus({
+        transport,
+        statusType,
+      }),
+    );
     if (response.type === "data") {
       expect(response.batteryStatus).toEqual(16);
     } else {
@@ -77,10 +86,12 @@ describe("getBatteryStatus", () => {
     const statusType = BatteryStatusTypes.BATTERY_TEMPERATURE;
     const transport = mockTransportGenerator(Buffer.from("FD9000", "hex"));
 
-    const response = await getBatteryStatus({
-      transport,
-      statusType,
-    }).toPromise();
+    const response = await lastValueFrom(
+      getBatteryStatus({
+        transport,
+        statusType,
+      }),
+    );
     if (response.type === "data") {
       expect(response.batteryStatus).toEqual(-3);
     } else {
@@ -92,10 +103,12 @@ describe("getBatteryStatus", () => {
     const statusType = BatteryStatusTypes.BATTERY_CURRENT;
     const transport = mockTransportGenerator(Buffer.from("109000", "hex"));
 
-    const response = await getBatteryStatus({
-      transport,
-      statusType,
-    }).toPromise();
+    const response = await lastValueFrom(
+      getBatteryStatus({
+        transport,
+        statusType,
+      }),
+    );
     if (response.type === "data") {
       expect(response.batteryStatus).toEqual(16);
     } else {
@@ -107,10 +120,12 @@ describe("getBatteryStatus", () => {
     const statusType = BatteryStatusTypes.BATTERY_CURRENT;
     const transport = mockTransportGenerator(Buffer.from("FD9000", "hex"));
 
-    const response = await getBatteryStatus({
-      transport,
-      statusType,
-    }).toPromise();
+    const response = await lastValueFrom(
+      getBatteryStatus({
+        transport,
+        statusType,
+      }),
+    );
     if (response.type === "data") {
       expect(response.batteryStatus).toEqual(-3);
     } else {
@@ -122,10 +137,12 @@ describe("getBatteryStatus", () => {
     const statusType = BatteryStatusTypes.BATTERY_FLAGS;
     const transport = mockTransportGenerator(Buffer.from("0000000F9000", "hex"));
 
-    const response = await getBatteryStatus({
-      transport,
-      statusType,
-    }).toPromise();
+    const response = await lastValueFrom(
+      getBatteryStatus({
+        transport,
+        statusType,
+      }),
+    );
     if (response.type === "data") {
       expect(response.batteryStatus).toEqual({
         charging: ChargingModes.USB,
@@ -142,10 +159,12 @@ describe("getBatteryStatus", () => {
     const statusType = BatteryStatusTypes.BATTERY_FLAGS;
     const transport = mockTransportGenerator(Buffer.from("000000069000", "hex"));
 
-    const response = await getBatteryStatus({
-      transport,
-      statusType,
-    }).toPromise();
+    const response = await lastValueFrom(
+      getBatteryStatus({
+        transport,
+        statusType,
+      }),
+    );
     if (response.type === "data") {
       expect(response.batteryStatus).toEqual({
         charging: ChargingModes.NONE,
@@ -162,10 +181,12 @@ describe("getBatteryStatus", () => {
     const statusType = BatteryStatusTypes.BATTERY_FLAGS;
     const transport = mockTransportGenerator(Buffer.from("000000079000", "hex"));
 
-    const response = await getBatteryStatus({
-      transport,
-      statusType,
-    }).toPromise();
+    const response = await lastValueFrom(
+      getBatteryStatus({
+        transport,
+        statusType,
+      }),
+    );
     if (response.type === "data") {
       expect(response.batteryStatus).toEqual({
         charging: ChargingModes.QI,

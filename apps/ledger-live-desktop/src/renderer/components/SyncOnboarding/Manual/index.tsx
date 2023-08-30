@@ -16,10 +16,9 @@ import SyncOnboardingCompanion from "./SyncOnboardingCompanion";
 import EarlySecurityChecks from "./EarlySecurityChecks";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
-import { DeviceInfo } from "@ledgerhq/types-live";
 import connectManager from "@ledgerhq/live-common/hw/connectManager";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
-import { from } from "rxjs";
+import { from, lastValueFrom } from "rxjs";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import { getEnv } from "@ledgerhq/live-env";
 import ExitChecksDrawer, {
@@ -100,13 +99,12 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
     toggleType: toggleOnboardingEarlyCheckType,
   });
 
-  const refreshIsBootloaderMode = useCallback(() => {
+  const refreshIsBootloaderMode = useCallback(async () => {
     if (!device) return;
-    withDevice(device.deviceId)(transport => from(getDeviceInfo(transport)))
-      .toPromise()
-      .then((deviceInfo: DeviceInfo) => {
-        setIsBootloader(deviceInfo?.isBootloader);
-      });
+    const deviceInfo = await lastValueFrom(
+      withDevice(device.deviceId)(transport => from(getDeviceInfo(transport))),
+    );
+    setIsBootloader(deviceInfo?.isBootloader);
   }, [device]);
 
   useEffect(() => {

@@ -2,11 +2,11 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
-import { DeviceInfo, DeviceModelInfo, idsToLanguage } from "@ledgerhq/types-live";
+import { DeviceModelInfo, idsToLanguage } from "@ledgerhq/types-live";
 import { isEqual } from "lodash";
 import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { from } from "rxjs";
+import { from, lastValueFrom } from "rxjs";
 import { Languages } from "~/config/languages";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { languageSelector } from "~/renderer/reducers/settings";
@@ -19,14 +19,15 @@ type useChangeLanguagePromptParams = {
 export const useChangeLanguagePrompt = ({ device }: useChangeLanguagePromptParams) => {
   const [deviceModelInfo, setDeviceModelInfo] = useState<DeviceModelInfo | null | undefined>();
 
-  const refreshDeviceInfo = useCallback(() => {
+  const refreshDeviceInfo = useCallback(async () => {
     if (!device) return;
-    withDevice(device.deviceId)(transport => from(getDeviceInfo(transport)))
-      .toPromise()
-      .then((deviceInfo: DeviceInfo) => {
-        if (!isEqual(deviceInfo, deviceModelInfo?.deviceInfo))
-          setDeviceModelInfo({ deviceInfo, modelId: device.modelId, apps: [] });
-      });
+    const deviceInfo = await lastValueFrom(
+      withDevice(device.deviceId)(transport => from(getDeviceInfo(transport))),
+    );
+
+    if (!isEqual(deviceInfo, deviceModelInfo?.deviceInfo)) {
+      setDeviceModelInfo({ deviceInfo, modelId: device.modelId, apps: [] });
+    }
   }, [device, deviceModelInfo?.deviceInfo]);
 
   const currentLanguage = useSelector(languageSelector);
