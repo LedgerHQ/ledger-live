@@ -2,7 +2,7 @@ import React from "react";
 import { Button, Flex, Icons, IconsLegacy, Link } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import QueuedDrawer from "../../components/QueuedDrawer";
-import { ErrorBody } from "../../components/GenericErrorView";
+import { GenericInformationBody } from "../../components/GenericInformationBody";
 
 export type Props = {
   isOpen: boolean;
@@ -34,7 +34,7 @@ const FirmwareUpdateAvailableDrawer: React.FC<Props> = ({
   return (
     <QueuedDrawer onClose={onClose} isRequestingToBeOpened={isOpen} preventBackdropClick>
       <Flex justifyContent="center" alignItems="center">
-        <ErrorBody
+        <GenericInformationBody
           Icon={Icons.InformationFill}
           iconColor="primary.c80"
           title={t("earlySecurityCheck.firmwareUpdateAvailableDrawer.title", { productName })}

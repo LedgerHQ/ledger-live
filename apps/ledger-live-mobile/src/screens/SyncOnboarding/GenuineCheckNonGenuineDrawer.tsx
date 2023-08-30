@@ -7,7 +7,7 @@ import { TrackScreen, track } from "../../analytics";
 import { Linking } from "react-native";
 import { urls } from "../../config/urls";
 import { useLocale } from "../../context/Locale";
-import { ErrorBody } from "../../components/GenericErrorView";
+import { GenericInformationBody } from "../../components/GenericInformationBody";
 
 export type Props = {
   /**
@@ -47,7 +47,7 @@ const GenuineCheckNonGenuineDrawer: React.FC<Props> = ({ isOpen, onClose, produc
     <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose} preventBackdropClick>
       <TrackScreen category="Device not genuine" type="drawer" refreshSource={false} />
       <Flex justifyContent="center" alignItems="center" mt={7}>
-        <ErrorBody
+        <GenericInformationBody
           title={t("earlySecurityCheck.genuineCheckNonGenuineDrawer.title")}
           description={t("earlySecurityCheck.genuineCheckNonGenuineDrawer.description", {
             productName,

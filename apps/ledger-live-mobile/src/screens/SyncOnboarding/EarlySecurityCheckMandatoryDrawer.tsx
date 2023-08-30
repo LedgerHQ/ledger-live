@@ -3,7 +3,7 @@ import { Icons, Button, Flex, Link } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import QueuedDrawer from "../../components/QueuedDrawer";
 import { TrackScreen } from "../../analytics";
-import { ErrorBody } from "../../components/GenericErrorView";
+import { GenericInformationBody } from "../../components/GenericInformationBody";
 
 export type Props = {
   /**
@@ -59,7 +59,7 @@ const EarlySecurityCheckMandatoryDrawer: React.FC<Props> = ({
         refreshSource={false}
       />
       <Flex flexDirection="column" alignItems={"center"} mt={10}>
-        <ErrorBody
+        <GenericInformationBody
           title={t("earlySecurityCheck.earlySecurityCheckMandatoryDrawer.title")}
           description={t("earlySecurityCheck.earlySecurityCheckMandatoryDrawer.description", {
             productName,

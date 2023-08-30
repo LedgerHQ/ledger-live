@@ -1,13 +1,14 @@
 import React, { memo } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components/native";
-import { Flex, IconsLegacy, Link, Text, BoxedIcon, Icons } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy, Link } from "@ledgerhq/native-ui";
 import { BluetoothRequired } from "@ledgerhq/errors";
 import { NewIconType } from "@ledgerhq/native-ui/components/Icon/type";
 import useExportLogs from "./useExportLogs";
 import TranslatedError from "./TranslatedError";
 import SupportLinkError from "./SupportLinkError";
 import BluetoothDisabled from "./RequiresBLE/BluetoothDisabled";
+import { GenericInformationBody } from "./GenericInformationBody";
 
 type Props = {
   error: Error;
@@ -38,49 +39,6 @@ const StyledLink = styled(Link)`
   margin-top: ${p => p.theme.space[8]};
   margin-bottom: ${p => p.theme.space[4]};
 `;
-
-export const ErrorBody: React.FC<{
-  Icon?: NewIconType;
-  iconColor?: string;
-  title: string | React.ReactNode;
-  subtitle?: string | React.ReactNode;
-  description?: string | React.ReactNode;
-}> = ({ Icon = Icons.DeleteCircleFill, iconColor = "error.c60", title, subtitle, description }) => {
-  return (
-    <>
-      <Flex justifyContent="center">
-        <BoxedIcon
-          Icon={Icon}
-          backgroundColor={"opacityDefault.c05"}
-          variant="circle"
-          borderColor="transparent"
-          iconSize={"L"}
-          size={72}
-          iconColor={iconColor}
-        />
-      </Flex>
-      <Text variant={"h4"} fontWeight="semiBold" textAlign={"center"} numberOfLines={3} mt={7}>
-        {title}
-      </Text>
-      {subtitle ? (
-        <Text variant={"paragraph"} color="error.c40" numberOfLines={3} mt={6}>
-          {subtitle}
-        </Text>
-      ) : null}
-      {description ? (
-        <Text
-          variant={"bodyLineHeight"}
-          color="neutral.c80"
-          textAlign="center"
-          numberOfLines={6}
-          mt={6}
-        >
-          {description}
-        </Text>
-      ) : null}
-    </>
-  );
-};
 
 const GenericErrorView = ({
   error,
@@ -115,7 +73,7 @@ const GenericErrorView = ({
 
   return (
     <Flex flexDirection={"column"} alignItems={"center"} alignSelf="stretch" mt={7}>
-      <ErrorBody
+      <GenericInformationBody
         Icon={Icon}
         iconColor={iconColor}
         title={<TranslatedError error={titleError} />}

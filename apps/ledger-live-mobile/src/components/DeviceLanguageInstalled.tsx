@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { Flex, Text, Button, Icons, BoxedIcon } from "@ledgerhq/native-ui";
 import { useDispatch } from "react-redux";
 import { setLastSeenDeviceLanguageId } from "../actions/settings";
-import { ErrorBody } from "./GenericErrorView";
+import { GenericInformationBody } from "./GenericInformationBody";
 
 const DeviceLanguageInstalled: React.FC<{
   onContinue?: () => void;
@@ -27,7 +27,7 @@ const DeviceLanguageInstalled: React.FC<{
 
   return (
     <Flex pt={10} alignItems={"center"}>
-      <ErrorBody
+      <GenericInformationBody
         Icon={Icons.CheckmarkCircleFill}
         iconColor="success.c60"
         title={t("deviceLocalization.languageInstalled", {

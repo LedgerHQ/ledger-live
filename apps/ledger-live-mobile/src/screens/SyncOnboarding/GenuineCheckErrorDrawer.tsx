@@ -3,7 +3,8 @@ import { Button, Flex, Icons, Link } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import QueuedDrawer from "../../components/QueuedDrawer";
 import { TrackScreen, track } from "../../analytics";
-import GenericErrorView, { ErrorBody } from "../../components/GenericErrorView";
+import GenericErrorView from "../../components/GenericErrorView";
+import { GenericInformationBody } from "../../components/GenericInformationBody";
 import { FirmwareNotRecognized } from "@ledgerhq/errors";
 import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "../../const";
@@ -106,7 +107,7 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
     content = (
       <>
         <Flex justifyContent="center" alignItems="center" mt={10}>
-          <ErrorBody
+          <GenericInformationBody
             title={t("earlySecurityCheck.genuineCheckErrorDrawer.notFoundEntity.title")}
             description={t(
               "earlySecurityCheck.genuineCheckErrorDrawer.notFoundEntity.description",
@@ -152,7 +153,7 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
     content = (
       <>
         <Flex justifyContent="center" alignItems="center" mt={10}>
-          <ErrorBody
+          <GenericInformationBody
             title={t("earlySecurityCheck.genuineCheckErrorDrawer.title")}
             description={t("earlySecurityCheck.genuineCheckErrorDrawer.description", {
               productName,
