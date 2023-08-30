@@ -1,4 +1,4 @@
-import { Observable, of, throwError } from "rxjs";
+import { Observable, of } from "rxjs";
 import URL from "url";
 import Transport, { TransportStatusError } from "@ledgerhq/hw-transport";
 import type { FinalFirmware, OsuFirmware } from "@ledgerhq/types-live";
@@ -120,15 +120,17 @@ const remapSocketUnresponsiveError: (
     return of({ type: "unresponsive" });
   }
 
-  return throwError(e);
+  throw e;
 };
 
 const remapSocketFirmwareError: (e: Error) => Observable<never> = (e: Error) => {
-  if (!e || !e.message) return throwError(e);
+  if (!e || !e.message) {
+    throw e;
+  }
 
   if (e.message.startsWith("invalid literal")) {
     // hack to detect the case you're not in good condition (not in dashboard)
-    return throwError(new DeviceOnDashboardExpected());
+    throw new DeviceOnDashboardExpected();
   }
 
   const status =
@@ -140,17 +142,17 @@ const remapSocketFirmwareError: (e: Error) => Observable<never> = (e: Error) => 
   switch (status) {
     case "6a84":
     case "5103":
-      return throwError(new ManagerFirmwareNotEnoughSpaceError());
+      throw new ManagerFirmwareNotEnoughSpaceError();
 
     case "6a85":
     case "5102":
-      return throwError(new UserRefusedFirmwareUpdate());
+      throw new UserRefusedFirmwareUpdate();
 
     case "6985":
     case "5501":
-      return throwError(new UserRefusedFirmwareUpdate());
+      throw new UserRefusedFirmwareUpdate();
 
     default:
-      return throwError(e);
+      throw e;
   }
 };

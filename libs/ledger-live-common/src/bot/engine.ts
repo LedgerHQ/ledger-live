@@ -2,7 +2,7 @@ import expect from "expect";
 import invariant from "invariant";
 import now from "performance-now";
 import sample from "lodash/sample";
-import { throwError, of, Observable, OperatorFunction, lastValueFrom } from "rxjs";
+import { of, Observable, OperatorFunction, lastValueFrom } from "rxjs";
 import {
   first,
   filter,
@@ -165,10 +165,9 @@ export async function runWithAppSpec<T extends Transaction>(
           reduce<Account, Account[]>((all, a) => all.concat(a), []),
           timeout({
             each: getEnv("BOT_TIMEOUT_SCAN_ACCOUNTS"),
-            with: () =>
-              throwError(
-                () => () => new Error("scan accounts timeout for currency " + currency.name),
-              ),
+            with: () => {
+              throw new Error("scan accounts timeout for currency " + currency.name);
+            },
           }),
         ),
     );
@@ -732,8 +731,9 @@ async function syncAccount(initialAccount: Account): Promise<Account> {
         reduce((a, f: (arg0: Account) => Account) => f(a), initialAccount),
         timeout({
           each: 10 * 60 * 1000,
-          with: () =>
-            throwError(() => () => new Error("account sync timeout for " + initialAccount.name)),
+          with: () => {
+            throw new Error("account sync timeout for " + initialAccount.name);
+          },
         }),
       ),
   );

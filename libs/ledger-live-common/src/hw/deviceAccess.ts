@@ -197,7 +197,7 @@ export const retryWhileErrors =
     attempts.pipe(
       mergeMap(error => {
         if (!acceptError(error)) {
-          return throwError(error);
+          throw error;
         }
 
         return timer(getEnv("WITH_DEVICE_POLLING_DELAY"));

@@ -6,7 +6,7 @@ import {
   UnresponsiveDeviceError,
   createCustomErrorClass,
 } from "@ledgerhq/errors";
-import { Observable, from, of, throwError, timer } from "rxjs";
+import { Observable, from, of, timer } from "rxjs";
 import { catchError, concatMap, retryWhen, switchMap, timeout } from "rxjs/operators";
 import { Transport, TransportRef } from "../transports/core";
 
@@ -170,7 +170,7 @@ export function retryOnErrorsCommandWrapper<CommandArgsWithoutTransportType, Com
             }
 
             // If the error is not part of the allowed errors, it is thrown
-            return throwError(error);
+            throw error;
           }),
         ),
       ),

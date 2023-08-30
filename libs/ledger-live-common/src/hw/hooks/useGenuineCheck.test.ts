@@ -66,7 +66,9 @@ describe("useGenuineCheck", () => {
     });
 
     it("should notify the hook consumer if the device permission is refused", async () => {
-      mockedGetGenuineCheckFromDeviceId.mockReturnValue(throwError(new UserRefusedAllowManager()));
+      mockedGetGenuineCheckFromDeviceId.mockReturnValue(
+        throwError(() => () => new UserRefusedAllowManager()),
+      );
       const { result } = renderHook(() =>
         useGenuineCheck({
           getGenuineCheckFromDeviceId: mockedGetGenuineCheckFromDeviceId,
@@ -87,7 +89,7 @@ describe("useGenuineCheck", () => {
   describe("When an error occurred during the genuine check", () => {
     it("should notify the hook consumer that an error occurred", async () => {
       mockedGetGenuineCheckFromDeviceId.mockReturnValue(
-        throwError(new DisconnectedDeviceDuringOperation()),
+        throwError(() => () => new DisconnectedDeviceDuringOperation()),
       );
       const { result } = renderHook(() =>
         useGenuineCheck({

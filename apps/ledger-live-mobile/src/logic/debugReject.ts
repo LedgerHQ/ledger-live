@@ -1,6 +1,6 @@
 import { Subject, Observable, throwError, PartialObserver } from "rxjs";
 import Config from "react-native-config";
-import { flatMap } from "rxjs/operators";
+import { mergeMap } from "rxjs/operators";
 
 export const rejections: Subject<void> = new Subject();
 
@@ -12,9 +12,9 @@ export const rejectionOp =
   <T>(observable: Observable<T>): Observable<T> =>
     !Config.MOCK
       ? observable
-      : Observable.create((o: PartialObserver<T>) => {
+      : new Observable((o: PartialObserver<T>) => {
           const s = observable.subscribe(o);
-          const s2 = rejections.pipe(flatMap(() => throwError(createError()))).subscribe(o);
+          const s2 = rejections.pipe(mergeMap(() => throwError(() => createError()))).subscribe(o);
           return () => {
             s.unsubscribe();
             s2.unsubscribe();

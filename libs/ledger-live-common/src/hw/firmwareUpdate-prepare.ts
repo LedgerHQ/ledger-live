@@ -25,7 +25,7 @@ const checkId = (
         deviceInfo, // if in bootloader or OSU we'll directly jump to MCU step
       ) =>
         deviceInfo.isBootloader || deviceInfo.isOSU
-          ? throwError(new DeviceOnDashboardExpected())
+          ? throwError(() => () => new DeviceOnDashboardExpected())
           : concat(
               withDevice(deviceId)(transport =>
                 installOsuFirmware(transport, deviceInfo.targetId, osu),

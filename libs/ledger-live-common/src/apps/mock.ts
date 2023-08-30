@@ -1,4 +1,4 @@
-import { of, throwError } from "rxjs";
+import { of } from "rxjs";
 import { ManagerAppDepInstallRequired, ManagerAppDepUninstallRequired } from "@ledgerhq/errors";
 import { getDependencies, getDependents, whitelistDependencies } from "./polyfill";
 import { findCryptoCurrency } from "../currencies";
@@ -198,7 +198,7 @@ export const mockExecWithInstalledContext = (installedInitial: InstalledItem[]):
     }
 
     if (getDependents(app.name).some(dep => installed.some(i => i.name === dep))) {
-      return throwError(new ManagerAppDepUninstallRequired(""));
+      throw new ManagerAppDepUninstallRequired("");
     }
 
     if (appOp.type === "install") {
@@ -207,7 +207,7 @@ export const mockExecWithInstalledContext = (installedInitial: InstalledItem[]):
         const depInstalled = installed.find(i => i.name === dep);
 
         if (!depInstalled || !depInstalled.updated) {
-          return throwError(new ManagerAppDepInstallRequired(""));
+          throw new ManagerAppDepInstallRequired("");
         }
       });
     }

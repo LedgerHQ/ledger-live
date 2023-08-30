@@ -16,7 +16,7 @@ import { makeBridgeCacheSystem } from "../../bridge/cache";
 import { getCurrencyBridge } from "../../bridge";
 import { filter, map, reduce, timeout } from "rxjs/operators";
 import { getEnv } from "@ledgerhq/live-env";
-import { throwError, lastValueFrom } from "rxjs";
+import { lastValueFrom } from "rxjs";
 import { Report } from "./types";
 import { toAccountRaw } from "../../account";
 import { Audit } from "./audits";
@@ -108,10 +108,9 @@ async function main(): Promise<Report> {
           reduce<Account, Account[]>((all, a) => all.concat(a), []),
           timeout({
             each: getEnv("BOT_TIMEOUT_SCAN_ACCOUNTS"),
-            with: () =>
-              throwError(
-                () => () => new Error("scan accounts timeout for currency " + currency.name),
-              ),
+            with: () => {
+              throw new Error("scan accounts timeout for currency " + currency.name);
+            },
           }),
         ),
     );

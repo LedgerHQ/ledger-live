@@ -10,5 +10,5 @@ export default (transport: Transport, deviceInfo: DeviceInfo): Observable<Socket
         payload: "0000",
       })
     : deviceInfo.isBootloader
-    ? throwError(new UnexpectedBootloader())
+    ? throwError(() => () => new UnexpectedBootloader())
     : genuineCheck(transport, deviceInfo);

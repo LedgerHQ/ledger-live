@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import { Observable, from, defer, of, throwError, concat } from "rxjs";
+import { Observable, from, defer, of, concat } from "rxjs";
 import { skip, take, reduce, mergeMap, map, filter, concatMap } from "rxjs/operators";
 import type { Account, SyncConfig } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -208,7 +208,7 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
         };
 
     if (typeof appjsondata.data.accounts === "string") {
-      return throwError(new Error("encrypted ledger live data is not supported"));
+      throw new Error("encrypted ledger live data is not supported");
     }
 
     return from(appjsondata.data.accounts.map(a => fromAccountRaw(a.data))).pipe(

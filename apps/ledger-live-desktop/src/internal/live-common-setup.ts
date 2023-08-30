@@ -1,5 +1,4 @@
 import "~/live-common-setup-base";
-import { throwError } from "rxjs";
 import { registerTransportModule } from "@ledgerhq/live-common/hw/index";
 import { setErrorRemapping } from "@ledgerhq/live-common/hw/deviceAccess";
 import { setEnvUnsafe, getEnv } from "@ledgerhq/live-env";
@@ -17,9 +16,9 @@ for (const k in process.env) {
 setErrorRemapping(e => {
   // NB ideally we should solve it in ledgerjs
   if (e && e.message && e.message.indexOf("HID") >= 0) {
-    return throwError(new DisconnectedDevice(e.message));
+    throw new DisconnectedDevice(e.message);
   }
-  return throwError(e);
+  throw e;
 });
 if (getEnv("DEVICE_PROXY_URL")) {
   const Tr = TransportHttp(getEnv("DEVICE_PROXY_URL").split("|"));

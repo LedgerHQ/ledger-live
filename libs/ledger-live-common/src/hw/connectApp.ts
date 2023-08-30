@@ -233,9 +233,9 @@ const derivationLogic = (
       },
     })),
     catchError(e => {
-      // NOTE: THIS SEEMS BROKEN 😱
-      // if (!e) return throwError(e);
-      if (!e) throw e;
+      if (!e || !e.message) {
+        throw e;
+      }
 
       if (e instanceof BtcUnmatchedApp) {
         return of<ConnectAppEvent>({

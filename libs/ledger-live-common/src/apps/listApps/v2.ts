@@ -1,7 +1,7 @@
 import Transport from "@ledgerhq/hw-transport";
 import { DeviceModelId, getDeviceModel, identifyTargetId } from "@ledgerhq/devices";
 import { UnexpectedBootloader } from "@ledgerhq/errors";
-import { Observable, throwError, Subscription } from "rxjs";
+import { Observable, Subscription } from "rxjs";
 import { App, DeviceInfo } from "@ledgerhq/types-live";
 import { log } from "@ledgerhq/logs";
 import type { ListAppsEvent, ListAppsResult, ListAppResponse } from "../types";
@@ -29,7 +29,7 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
   log("list-apps", "using new version");
 
   if (deviceInfo.isOSU || deviceInfo.isBootloader) {
-    return throwError(new UnexpectedBootloader(""));
+    throw new UnexpectedBootloader("");
   }
 
   const deviceModelId =

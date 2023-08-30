@@ -1,6 +1,6 @@
 import { log } from "@ledgerhq/logs";
 import { MCUNotGenuineToDashboard } from "@ledgerhq/errors";
-import { Observable, from, of, EMPTY, concat, throwError } from "rxjs";
+import { Observable, from, of, EMPTY, concat } from "rxjs";
 import type { DeviceVersion, FinalFirmware } from "@ledgerhq/types-live";
 import { concatMap, delay, filter, map, mergeMap, throttleTime } from "rxjs/operators";
 import semver from "semver";
@@ -91,7 +91,7 @@ const repair = (
             (deviceInfo.majMin === "0.6" || deviceInfo.majMin === "0.7")
           ) {
             // finish earlier
-            return throwError(new MCUNotGenuineToDashboard());
+            throw new MCUNotGenuineToDashboard();
           }
 
           if (forceMCU) {

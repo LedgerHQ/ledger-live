@@ -1,4 +1,4 @@
-import { of, throwError } from "rxjs";
+import { of } from "rxjs";
 import { reduce, mergeMap } from "rxjs/operators";
 import fs from "fs";
 import { scan, scanCommonOpts } from "../scan";
@@ -41,7 +41,7 @@ export default {
             };
 
         if (typeof appjsondata.data.accounts === "string") {
-          return throwError(new Error("encrypted ledger live data is not supported"));
+          throw new Error("encrypted ledger live data is not supported");
         }
 
         const existingIds = appjsondata.data.accounts.map(a => a.data.id);

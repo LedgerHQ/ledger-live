@@ -219,17 +219,13 @@ const transportFinally =
     });
 
 const initialErrorRemapping = error => {
-  return throwError(
-    () => () =>
-      error &&
-      error instanceof TransportStatusError &&
-      // @ts-expect-error typescript not checking agains the instanceof
-      error.statusCode === 0x6faa
-        ? new DeviceHalted(error.message)
-        : error.statusCode === 0x6b00
-        ? new FirmwareOrAppUpdateRequired(error.message)
-        : error,
-  );
+  // @ts-expect-error typescript not checking agains the instanceof
+  if (error && error instanceof TransportStatusError && error.statusCode === 0x6faa) {
+    throw new DeviceHalted(error.message);
+  } else if (error.statusCode === 0x6b00) {
+    throw new FirmwareOrAppUpdateRequired(error.message);
+  }
+  throw error;
 };
 
 let errorRemapping = e => throwError(() => () => e);

@@ -276,7 +276,9 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
     catchError(e => {
       // LL-9033 fw 2.0.2 introduced this case, we silence the inner unhandled error.
       const msg = String(e);
-      return msg.includes("notify change failed") ? of(new PairingFailed(msg)) : throwError(e);
+      return msg.includes("notify change failed")
+        ? of(new PairingFailed(msg))
+        : throwError(() => () => e);
     }),
     tap(value => {
       if (value instanceof PairingFailed) return;

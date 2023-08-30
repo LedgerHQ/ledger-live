@@ -74,7 +74,7 @@ const main = (
     : withDeviceInfo.pipe(
         concatMap(deviceInfo =>
           !deviceInfo.isOSU
-            ? throwError(new DeviceInOSUExpected())
+            ? throwError(() => () => new DeviceInOSUExpected())
             : withDeviceInstall(installFinalFirmware),
         ),
       );
