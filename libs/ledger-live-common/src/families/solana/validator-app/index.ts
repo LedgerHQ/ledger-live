@@ -3,6 +3,7 @@ import { Cluster } from "@solana/web3.js";
 import { AxiosRequestConfig, AxiosResponse } from "axios";
 import { compact } from "lodash/fp";
 import { getEnv } from "@ledgerhq/live-env";
+import { LEDGER_VALIDATOR } from "../utils";
 
 const MAX_VALIDATORS_NB = 1000; // Max number of validators to fetch
 
@@ -100,7 +101,6 @@ export async function getValidators(
     return undefined;
   };
 
-  // FIXME Ordering of validators must be always the same, for this test to be stable:
-  // https://github.com/LedgerHQ/ledger-live-common/blob/develop/src/__tests__/test-helpers/bridge.ts#L171-L188
-  return compact(allRawValidators.map(tryFromRawValidator));
+  // Make sure the Ledger validator is always first in the list
+  return [LEDGER_VALIDATOR].concat(compact(allRawValidators.map(tryFromRawValidator)));
 }

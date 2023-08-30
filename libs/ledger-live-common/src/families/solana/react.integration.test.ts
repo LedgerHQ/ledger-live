@@ -7,7 +7,7 @@ import { genAccount, genAddingOperationsInAccount } from "../../mock/account";
 import type { Account, CurrencyBridge } from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
 import { getCurrentSolanaPreloadData } from "./js-preload-data";
-import { LEDGER_VALIDATOR_ADDRESS } from "./utils";
+import { LEDGER_VALIDATOR } from "./utils";
 import * as hooks from "./react";
 
 jest.setTimeout(2 * 60 * 1000);
@@ -40,7 +40,7 @@ describe("solana/react", () => {
       const { result } = renderHook(() => hooks.useValidators(account.currency, "Ledger"));
 
       expect(
-        result.current.some(validator => validator.voteAccount === LEDGER_VALIDATOR_ADDRESS),
+        result.current.some(validator => validator.voteAccount === LEDGER_VALIDATOR.voteAccount),
       ).toBe(true);
     });
   });
