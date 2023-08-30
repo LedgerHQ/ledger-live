@@ -170,6 +170,7 @@ Array [
       "blockHeight": "13919987",
       "contract": undefined,
       "extra": Object {
+        "memo": "Ledger Live",
         "validators": Array [
           Object {
             "address": "cosmosvaloper1v5y0tg0jllvxf5c3afml8s3awue0ymju89frut",
@@ -195,6 +196,7 @@ Array [
       "blockHeight": "13918102",
       "contract": undefined,
       "extra": Object {
+        "memo": "Ledger Live",
         "validators": Array [
           Object {
             "address": "cosmosvaloper1v5y0tg0jllvxf5c3afml8s3awue0ymju89frut",
@@ -242,6 +244,8 @@ Array [
       "blockHeight": "12871038",
       "contract": undefined,
       "extra": Object {
+        "memo": "Ledger Live",
+        "sourceValidator": "cosmosvaloper1sd4tl9aljmmezzudugs7zlaya7pg2895ws8tfs",
         "validators": Array [
           Object {
             "address": "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm",
@@ -267,6 +271,7 @@ Array [
       "blockHeight": "15065083",
       "contract": undefined,
       "extra": Object {
+        "memo": "Ledger Live",
         "validators": Array [
           Object {
             "address": "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm",
@@ -314,6 +319,7 @@ Array [
       "blockHeight": "15121257",
       "contract": undefined,
       "extra": Object {
+        "memo": "Ledger Live",
         "validators": Array [
           Object {
             "address": "cosmosvaloper156gqf9837u7d4c4678yt3rl4ls9c5vuursrrzf",
@@ -339,6 +345,7 @@ Array [
       "blockHeight": "13640390",
       "contract": undefined,
       "extra": Object {
+        "memo": "Ledger Live",
         "validators": Array [
           Object {
             "address": "cosmosvaloper196ax4vc0lwpxndu9dyhvca7jhxp70rmcvrj90c",
@@ -408,6 +415,7 @@ Array [
       "blockHeight": "11769051",
       "contract": undefined,
       "extra": Object {
+        "memo": "Ledger Live",
         "validators": Array [
           Object {
             "address": "cosmosvaloper1vf44d85es37hwl9f4h9gv0e064m0lla60j9luj",
@@ -433,6 +441,7 @@ Array [
       "blockHeight": "11765450",
       "contract": undefined,
       "extra": Object {
+        "memo": "Ledger Live",
         "validators": Array [
           Object {
             "address": "cosmosvaloper1sjllsnramtg3ewxqwwrwjxfgc4n4ef9u2lcnj0",
@@ -480,6 +489,8 @@ Array [
       "blockHeight": "12870340",
       "contract": undefined,
       "extra": Object {
+        "memo": "Ledger Live",
+        "sourceValidator": "cosmosvaloper1grgelyng2v6v3t8z87wu3sxgt9m5s03xfytvz7",
         "validators": Array [
           Object {
             "address": "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm",
@@ -526,7 +537,9 @@ Array [
       "blockHash": null,
       "blockHeight": "15063652",
       "contract": undefined,
-      "extra": Object {},
+      "extra": Object {
+        "memo": "Test memo ATOM",
+      },
       "fee": "2136",
       "hash": "2E37AD7695EB9CC649BD24BFF71171D83A11D7BED5599158FF1B8BDBFCB5CB8B",
       "id": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:-2E37AD7695EB9CC649BD24BFF71171D83A11D7BED5599158FF1B8BDBFCB5CB8B-OUT",
@@ -615,6 +628,7 @@ Array [
       "blockHeight": "16428196",
       "contract": undefined,
       "extra": Object {
+        "memo": "Ledger Live",
         "validators": Array [
           Object {
             "address": "cosmosvaloper1sjllsnramtg3ewxqwwrwjxfgc4n4ef9u2lcnj0",
@@ -661,7 +675,9 @@ Array [
       "blockHash": null,
       "blockHeight": "9956697",
       "contract": undefined,
-      "extra": Object {},
+      "extra": Object {
+        "memo": "it works",
+      },
       "fee": "3080",
       "hash": "3A82D9A362C56863D589CD860AD0F8C12E90AD8C3BFAAC2236317220C4C282A6",
       "id": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:-3A82D9A362C56863D589CD860AD0F8C12E90AD8C3BFAAC2236317220C4C282A6-OUT",
@@ -750,6 +766,7 @@ Array [
       "blockHeight": "9610331",
       "contract": undefined,
       "extra": Object {
+        "memo": "Ledger Live",
         "validators": Array [
           Object {
             "address": "cosmosvaloper1qwl879nx9t6kef4supyazayf7vjhennyh568ys",
@@ -775,6 +792,7 @@ Array [
       "blockHeight": "9956265",
       "contract": undefined,
       "extra": Object {
+        "memo": "Ledger Live",
         "validators": Array [
           Object {
             "address": "cosmosvaloper1qwl879nx9t6kef4supyazayf7vjhennyh568ys",
@@ -866,6 +884,7 @@ Array [
       "blockHeight": "11768983",
       "contract": undefined,
       "extra": Object {
+        "memo": "Ledger Live",
         "validators": Array [
           Object {
             "address": "cosmosvaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpfdn6m9d",
@@ -891,6 +910,8 @@ Array [
       "blockHeight": "12870879",
       "contract": undefined,
       "extra": Object {
+        "memo": "Ledger Live",
+        "sourceValidator": "cosmosvaloper1vf44d85es37hwl9f4h9gv0e064m0lla60j9luj",
         "validators": Array [
           Object {
             "address": "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm",
@@ -982,6 +1003,7 @@ Array [
       "blockHeight": "15078715",
       "contract": undefined,
       "extra": Object {
+        "memo": "Ledger Live",
         "validators": Array [
           Object {
             "address": "cosmosvaloper1sjllsnramtg3ewxqwwrwjxfgc4n4ef9u2lcnj0",
@@ -1007,6 +1029,7 @@ Array [
       "blockHeight": "14489118",
       "contract": undefined,
       "extra": Object {
+        "memo": "Ledger Live",
         "validators": Array [
           Object {
             "address": "cosmosvaloper196ax4vc0lwpxndu9dyhvca7jhxp70rmcvrj90c",
@@ -1031,7 +1054,9 @@ Array [
       "blockHash": null,
       "blockHeight": "9692513",
       "contract": undefined,
-      "extra": Object {},
+      "extra": Object {
+        "memo": "Ledger test",
+      },
       "fee": "3077",
       "hash": "82C002E20CD52761C43126FCED13C6934E390508DB89605784CEE7CF5E625297",
       "id": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:-82C002E20CD52761C43126FCED13C6934E390508DB89605784CEE7CF5E625297-OUT",
@@ -1076,6 +1101,7 @@ Array [
       "blockHeight": "11768998",
       "contract": undefined,
       "extra": Object {
+        "memo": "Ledger Live",
         "validators": Array [
           Object {
             "address": "cosmosvaloper1grgelyng2v6v3t8z87wu3sxgt9m5s03xfytvz7",
@@ -1123,6 +1149,7 @@ Array [
       "blockHeight": "5297866",
       "contract": undefined,
       "extra": Object {
+        "memo": "Ledger Live",
         "validators": Array [
           Object {
             "address": "cosmosvaloper1crqm3598z6qmyn2kkcl9dz7uqs4qdqnr6s8jdn",
@@ -1148,6 +1175,7 @@ Array [
       "blockHeight": "13604648",
       "contract": undefined,
       "extra": Object {
+        "memo": "Ledger Live",
         "validators": Array [
           Object {
             "address": "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm",
@@ -1327,6 +1355,7 @@ Array [
       "blockHeight": "11765278",
       "contract": undefined,
       "extra": Object {
+        "memo": "Ledger Live",
         "validators": Array [
           Object {
             "address": "cosmosvaloper1kn3wugetjuy4zetlq6wadchfhvu3x740ae6z6x",
@@ -1352,6 +1381,8 @@ Array [
       "blockHeight": "12879931",
       "contract": undefined,
       "extra": Object {
+        "memo": "Ledger Live",
+        "sourceValidator": "cosmosvaloper1clpqr4nrk4khgkxj78fcwwh6dl3uw4epsluffn",
         "validators": Array [
           Object {
             "address": "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm",
@@ -1399,6 +1430,7 @@ Array [
       "blockHeight": "13354886",
       "contract": undefined,
       "extra": Object {
+        "memo": "Ledger Live",
         "validators": Array [
           Object {
             "address": "cosmosvaloper1kn3wugetjuy4zetlq6wadchfhvu3x740ae6z6x",
@@ -1467,7 +1499,9 @@ Array [
       "blockHash": null,
       "blockHeight": "12791618",
       "contract": undefined,
-      "extra": Object {},
+      "extra": Object {
+        "memo": "1",
+      },
       "fee": "3345",
       "hash": "AB58059120F320D36DF4D261125D43B96AEFCF567F875147E2A71F543F71FF7C",
       "id": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:-AB58059120F320D36DF4D261125D43B96AEFCF567F875147E2A71F543F71FF7C-OUT",
@@ -1490,6 +1524,7 @@ Array [
       "blockHeight": "11765235",
       "contract": undefined,
       "extra": Object {
+        "memo": "Ledger Live",
         "validators": Array [
           Object {
             "address": "cosmosvaloper156gqf9837u7d4c4678yt3rl4ls9c5vuursrrzf",
@@ -1515,6 +1550,7 @@ Array [
       "blockHeight": "14103956",
       "contract": undefined,
       "extra": Object {
+        "memo": "Ledger Live",
         "validators": Array [
           Object {
             "address": "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm",
@@ -1562,6 +1598,7 @@ Array [
       "blockHeight": "11602123",
       "contract": undefined,
       "extra": Object {
+        "memo": "Ledger Live",
         "validators": Array [
           Object {
             "address": "cosmosvaloper1crqm3598z6qmyn2kkcl9dz7uqs4qdqnr6s8jdn",
@@ -1609,6 +1646,7 @@ Array [
       "blockHeight": "16428204",
       "contract": undefined,
       "extra": Object {
+        "memo": "Ledger Live",
         "validators": Array [
           Object {
             "address": "cosmosvaloper156gqf9837u7d4c4678yt3rl4ls9c5vuursrrzf",
@@ -1744,6 +1782,7 @@ Array [
       "blockHeight": "15065133",
       "contract": undefined,
       "extra": Object {
+        "memo": "Ledger Live",
         "validators": Array [
           Object {
             "address": "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm",
@@ -1812,7 +1851,9 @@ Array [
       "blockHash": null,
       "blockHeight": "16089872",
       "contract": undefined,
-      "extra": Object {},
+      "extra": Object {
+        "memo": "relayed by CryptoCrew Validators | hermes 1.5.1+6583d697-dirty (https://hermes.informal.systems)",
+      },
       "fee": "1478",
       "hash": "CBE8055695C55EF75E3E3D502967D043BB4231871DBB8A21765D98F8A582C961",
       "id": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:-CBE8055695C55EF75E3E3D502967D043BB4231871DBB8A21765D98F8A582C961-IN",
@@ -1835,6 +1876,7 @@ Array [
       "blockHeight": "8779134",
       "contract": undefined,
       "extra": Object {
+        "memo": "Ledger Live",
         "validators": Array [
           Object {
             "address": "cosmosvaloper1qwl879nx9t6kef4supyazayf7vjhennyh568ys",
@@ -1882,6 +1924,8 @@ Array [
       "blockHeight": "15121237",
       "contract": undefined,
       "extra": Object {
+        "memo": "Ledger Live",
+        "sourceValidator": "cosmosvaloper196ax4vc0lwpxndu9dyhvca7jhxp70rmcvrj90c",
         "validators": Array [
           Object {
             "address": "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm",
@@ -1907,6 +1951,7 @@ Array [
       "blockHeight": "11602114",
       "contract": undefined,
       "extra": Object {
+        "memo": "Ledger Live",
         "validators": Array [
           Object {
             "address": "cosmosvaloper1grgelyng2v6v3t8z87wu3sxgt9m5s03xfytvz7",
@@ -1931,7 +1976,9 @@ Array [
       "blockHash": null,
       "blockHeight": "15076962",
       "contract": undefined,
-      "extra": Object {},
+      "extra": Object {
+        "memo": "Cosmemo",
+      },
       "fee": "2132",
       "hash": "D72B73E3D70A33AC5A2DED23D7BB29C87EA6D11BEBF1755064F43554A895766B",
       "id": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:-D72B73E3D70A33AC5A2DED23D7BB29C87EA6D11BEBF1755064F43554A895766B-IN",
@@ -1976,6 +2023,8 @@ Array [
       "blockHeight": "12870863",
       "contract": undefined,
       "extra": Object {
+        "memo": "Ledger Live",
+        "sourceValidator": "cosmosvaloper1grgelyng2v6v3t8z87wu3sxgt9m5s03xfytvz7",
         "validators": Array [
           Object {
             "address": "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm",
@@ -2045,6 +2094,7 @@ Array [
       "blockHeight": "11765140",
       "contract": undefined,
       "extra": Object {
+        "memo": "Ledger Live",
         "validators": Array [
           Object {
             "address": "cosmosvaloper1vf44d85es37hwl9f4h9gv0e064m0lla60j9luj",
@@ -2072,6 +2122,7 @@ Array [
       "blockHeight": "10450819",
       "contract": undefined,
       "extra": Object {
+        "memo": "Ledger Live",
         "validators": Array [
           Object {
             "address": "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm",
@@ -2141,6 +2192,8 @@ Array [
       "blockHeight": "10450729",
       "contract": undefined,
       "extra": Object {
+        "memo": "Ledger Live",
+        "sourceValidator": "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm",
         "validators": Array [
           Object {
             "address": "cosmosvaloper1sjllsnramtg3ewxqwwrwjxfgc4n4ef9u2lcnj0",
@@ -2166,6 +2219,8 @@ Array [
       "blockHeight": "10549023",
       "contract": undefined,
       "extra": Object {
+        "memo": "Ledger Live",
+        "sourceValidator": "cosmosvaloper156gqf9837u7d4c4678yt3rl4ls9c5vuursrrzf",
         "validators": Array [
           Object {
             "address": "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm",
@@ -2235,6 +2290,7 @@ Array [
       "blockHeight": "10549011",
       "contract": undefined,
       "extra": Object {
+        "memo": "Ledger Live",
         "validators": Array [
           Object {
             "address": "cosmosvaloper156gqf9837u7d4c4678yt3rl4ls9c5vuursrrzf",
@@ -2458,6 +2514,7 @@ Array [
       "blockHeight": "10449344",
       "contract": undefined,
       "extra": Object {
+        "memo": "Ledger Live",
         "validators": Array [
           Object {
             "address": "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm",
@@ -2659,6 +2716,7 @@ Array [
       "blockHeight": "10548998",
       "contract": undefined,
       "extra": Object {
+        "memo": "Ledger Live",
         "validators": Array [
           Object {
             "address": "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm",
@@ -2773,7 +2831,9 @@ Array [
       "blockHash": null,
       "blockHeight": "15063652",
       "contract": undefined,
-      "extra": Object {},
+      "extra": Object {
+        "memo": "Test memo ATOM",
+      },
       "fee": "2136",
       "hash": "2E37AD7695EB9CC649BD24BFF71171D83A11D7BED5599158FF1B8BDBFCB5CB8B",
       "id": "js:2:cosmos:cosmos1cgc696ay2pg6d4gcejek2y8la66j7e5y3c7kyw:-2E37AD7695EB9CC649BD24BFF71171D83A11D7BED5599158FF1B8BDBFCB5CB8B-IN",
@@ -2839,7 +2899,9 @@ Array [
       "blockHash": null,
       "blockHeight": "9956697",
       "contract": undefined,
-      "extra": Object {},
+      "extra": Object {
+        "memo": "it works",
+      },
       "fee": "3080",
       "hash": "3A82D9A362C56863D589CD860AD0F8C12E90AD8C3BFAAC2236317220C4C282A6",
       "id": "js:2:cosmos:cosmos1cgc696ay2pg6d4gcejek2y8la66j7e5y3c7kyw:-3A82D9A362C56863D589CD860AD0F8C12E90AD8C3BFAAC2236317220C4C282A6-IN",
@@ -2862,6 +2924,7 @@ Array [
       "blockHeight": "14103945",
       "contract": undefined,
       "extra": Object {
+        "memo": "Ledger Live",
         "validators": Array [
           Object {
             "address": "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm",
@@ -2909,6 +2972,7 @@ Array [
       "blockHeight": "9956741",
       "contract": undefined,
       "extra": Object {
+        "memo": "Ledger Live",
         "validators": Array [
           Object {
             "address": "cosmosvaloper1sjllsnramtg3ewxqwwrwjxfgc4n4ef9u2lcnj0",
@@ -2955,7 +3019,9 @@ Array [
       "blockHash": null,
       "blockHeight": "9692513",
       "contract": undefined,
-      "extra": Object {},
+      "extra": Object {
+        "memo": "Ledger test",
+      },
       "fee": "3077",
       "hash": "82C002E20CD52761C43126FCED13C6934E390508DB89605784CEE7CF5E625297",
       "id": "js:2:cosmos:cosmos1cgc696ay2pg6d4gcejek2y8la66j7e5y3c7kyw:-82C002E20CD52761C43126FCED13C6934E390508DB89605784CEE7CF5E625297-IN",
@@ -3087,7 +3153,9 @@ Array [
       "blockHash": null,
       "blockHeight": "12791618",
       "contract": undefined,
-      "extra": Object {},
+      "extra": Object {
+        "memo": "1",
+      },
       "fee": "3345",
       "hash": "AB58059120F320D36DF4D261125D43B96AEFCF567F875147E2A71F543F71FF7C",
       "id": "js:2:cosmos:cosmos1cgc696ay2pg6d4gcejek2y8la66j7e5y3c7kyw:-AB58059120F320D36DF4D261125D43B96AEFCF567F875147E2A71F543F71FF7C-IN",
@@ -3110,6 +3178,7 @@ Array [
       "blockHeight": "13354901",
       "contract": undefined,
       "extra": Object {
+        "memo": "Ledger Live",
         "validators": Array [
           Object {
             "address": "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm",
@@ -3200,7 +3269,9 @@ Array [
       "blockHash": null,
       "blockHeight": "15076962",
       "contract": undefined,
-      "extra": Object {},
+      "extra": Object {
+        "memo": "Cosmemo",
+      },
       "fee": "2132",
       "hash": "D72B73E3D70A33AC5A2DED23D7BB29C87EA6D11BEBF1755064F43554A895766B",
       "id": "js:2:cosmos:cosmos1cgc696ay2pg6d4gcejek2y8la66j7e5y3c7kyw:-D72B73E3D70A33AC5A2DED23D7BB29C87EA6D11BEBF1755064F43554A895766B-OUT",
@@ -3245,6 +3316,7 @@ Array [
       "blockHeight": "10337853",
       "contract": undefined,
       "extra": Object {
+        "memo": "Ledger Live",
         "validators": Array [
           Object {
             "address": "cosmosvaloper17zcpywlhgcpk7ff505vr8mnc4wwpv5fcta6enz",
@@ -3270,6 +3342,7 @@ Array [
       "blockHeight": "9692529",
       "contract": undefined,
       "extra": Object {
+        "memo": "Ledger Live",
         "validators": Array [
           Object {
             "address": "cosmosvaloper17zcpywlhgcpk7ff505vr8mnc4wwpv5fcta6enz",
