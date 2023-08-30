@@ -4284,6 +4284,7 @@
     "yesChangeLanguage": "Yes, change language",
     "allowLanguageInstallation": "Approve language installation on {{deviceName}}",
     "languageInstalled": "Language changed to {{language}}",
+    "languageInstalledDesc": "Your device is now in the language you chose",
     "firmwareUpdatePrompt": {
       "title": "Set your {{deviceName}} in {{language}}?",
       "description": "{{language}} is now available for your {{deviceName}}. You can set it now, or change your device language at any time from My Ledger."
