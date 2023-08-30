@@ -18,7 +18,7 @@ export async function buildUnsignedTransaction({
   account: Account;
   transaction: Transaction;
 }): Promise<hedera.TransferTransaction> {
-  const hbarAmount = hedera.Hbar.fromTinybars(transaction.amount);
+  const hbarAmount = hedera.Hbar.fromTinybars(transaction.amount.integerValue());
   const accountId = account.freshAddress;
 
   return new hedera.TransferTransaction()
