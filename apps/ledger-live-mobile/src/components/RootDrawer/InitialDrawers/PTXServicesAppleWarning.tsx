@@ -21,8 +21,8 @@ const CheckboxContainer = styled(View)(
 export function PTXServicesAppleWarning() {
   const { t } = useTranslation();
   const [persistentHide, setPersistentHide] = useState(false);
-  const exchangeDrawer = useFeature<{ enabled: boolean }>("ptxServiceCtaExchangeDrawer");
-  const ctaScreens = useFeature<{ enabled: boolean }>("ptxServiceCtaScreens");
+  const exchangeDrawer = useFeature("ptxServiceCtaExchangeDrawer");
+  const ctaScreens = useFeature("ptxServiceCtaScreens");
 
   const exchangeDrawerEnabled = useMemo(
     () => exchangeDrawer?.enabled ?? true,

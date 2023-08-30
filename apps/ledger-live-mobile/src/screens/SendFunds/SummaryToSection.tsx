@@ -7,7 +7,7 @@ import { isLoaded } from "@ledgerhq/domain-service/hooks/logic";
 import { useDomain } from "@ledgerhq/domain-service/hooks/index";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 import SummaryRowCustom from "./SummaryRowCustom";
 import Circle from "../../components/Circle";
@@ -69,12 +69,10 @@ function SummaryToSection({ transaction, currency }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
 
-  const { enabled: isDomainResolutionEnabled, params } =
-    useFeature<{ supportedCurrencyIds: CryptoCurrencyId[] }>("domainInputResolution") || {};
-  const isCurrencySupported =
-    params?.supportedCurrencyIds?.includes(currency.id as CryptoCurrencyId) || false;
+  const { enabled: isDomainResolutionEnabled, params } = useFeature("domainInputResolution");
+  const isCurrencySupported = params?.supportedCurrencyIds?.includes(currency.id) || false;
 
-  const shouldTryResolvingDomain = useMemo<boolean>(() => {
+  const shouldTryResolvingDomain = useMemo(() => {
     if (transaction.recipientDomain) {
       return false;
     }

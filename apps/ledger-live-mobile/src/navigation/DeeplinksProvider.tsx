@@ -18,7 +18,7 @@ import { useGeneralTermsAccepted } from "../logic/terms";
 import { Writeable } from "../types/helpers";
 import { lightTheme, darkTheme, Theme } from "../colors";
 import { track } from "../analytics";
-import { Feature } from "@ledgerhq/types-live/lib/feature";
+import { Feature, PtxEarn } from "@ledgerhq/types-live/lib/feature";
 import { setEarnInfoModal } from "../actions/earn";
 
 const routingInstrumentation = new Sentry.ReactNavigationInstrumentation();
@@ -83,10 +83,8 @@ function getProxyURL(url: string) {
   return url;
 }
 
-type FeatureFlags = Record<string, Feature<undefined> | null>;
-
 // DeepLinking
-const linkingOptions = (featureFlags: FeatureFlags) => ({
+const linkingOptions = (featureFlags: Feature<PtxEarn>) => ({
   async getInitialURL() {
     const url = await Linking.getInitialURL();
     if (url) {
@@ -201,7 +199,7 @@ const linkingOptions = (featureFlags: FeatureFlags) => ({
                           [ScreenName.Accounts]: "account",
                         },
                       },
-                      ...(featureFlags.ptxEarnFeature?.enabled && {
+                      ...(featureFlags?.enabled && {
                         [NavigatorName.Market]: {
                           screens: {
                             /**
@@ -215,7 +213,7 @@ const linkingOptions = (featureFlags: FeatureFlags) => ({
                   },
                 },
               },
-              ...(!featureFlags.ptxEarnFeature?.enabled && {
+              ...(!featureFlags?.enabled && {
                 [NavigatorName.Market]: {
                   screens: {
                     /**
@@ -376,7 +374,10 @@ const linkingOptions = (featureFlags: FeatureFlags) => ({
   },
 });
 
-const getOnboardingLinkingOptions = (acceptedTermsOfUse: boolean, featureFlags: FeatureFlags) => ({
+const getOnboardingLinkingOptions = (
+  acceptedTermsOfUse: boolean,
+  featureFlags: Feature<PtxEarn>,
+) => ({
   ...linkingOptions(featureFlags),
   config: {
     initialRouteName: NavigatorName.BaseOnboarding,
@@ -412,7 +413,6 @@ export const DeeplinksProvider = ({
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const ptxEarnFeature = useFeature("ptxEarn");
-  const features = useMemo(() => ({ ptxEarnFeature }), [ptxEarnFeature]);
 
   const { state } = useRemoteLiveAppContext();
   const liveAppProviderInitialized = !!state.value || !!state.error;
@@ -424,8 +424,10 @@ export const DeeplinksProvider = ({
     () =>
       ({
         ...(hasCompletedOnboarding
-          ? linkingOptions(features)
-          : getOnboardingLinkingOptions(!!userAcceptedTerms, features)),
+          ? // @ts-expect-error TYPINGS
+            linkingOptions(ptxEarnFeature)
+          : // @ts-expect-error TYPINGS
+            getOnboardingLinkingOptions(!!userAcceptedTerms, ptxEarnFeature)),
         subscribe(listener) {
           const sub = Linking.addEventListener("url", ({ url }) => {
             // Prevent default deeplink if invalid wallet connect link
@@ -534,7 +536,7 @@ export const DeeplinksProvider = ({
       liveAppProviderInitialized,
       manifests,
       userAcceptedTerms,
-      features,
+      ptxEarnFeature,
     ],
   );
   const [isReady, setIsReady] = React.useState(false);
