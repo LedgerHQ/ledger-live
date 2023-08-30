@@ -125,7 +125,7 @@ export class Modal {
   async getSpendableBannerValue() {
     const amountValue = await this.spendableBanner.textContent();
     // removing non numerical values
-    return parseInt(amountValue.replace(/[^0-9.]/g, ""));
+    return parseInt(amountValue!.replace(/[^0-9.]/g, ""));
   }
 
   async toggleMaxAmount() {
