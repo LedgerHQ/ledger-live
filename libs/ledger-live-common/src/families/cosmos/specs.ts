@@ -101,6 +101,10 @@ function cosmosLikeMutations(currency: string): MutationSpec<Transaction>[] {
         );
       },
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
+        invariant(
+          maxSpendable.gt(cryptoFactory(account.currency.id).minimalTransactionAmount),
+          "balance is too low for send",
+        );
         const amount = maxSpendable.times(0.3 + 0.4 * Math.random()).integerValue();
         invariant(amount.gt(0), "random amount to be positive");
         return {
@@ -125,7 +129,11 @@ function cosmosLikeMutations(currency: string): MutationSpec<Transaction>[] {
       name: "send max",
       maxRun: 1,
       testDestination: genericTestDestination,
-      transaction: ({ account, siblings, bridge }) => {
+      transaction: ({ account, siblings, bridge, maxSpendable }) => {
+        invariant(
+          maxSpendable.gt(cryptoFactory(account.currency.id).minimalTransactionAmount),
+          "balance is too low for send max",
+        );
         return {
           transaction: bridge.createTransaction(account),
           updates: [
@@ -220,10 +228,14 @@ function cosmosLikeMutations(currency: string): MutationSpec<Transaction>[] {
     {
       name: "undelegate",
       maxRun: 5,
-      transaction: ({ account, bridge }) => {
+      transaction: ({ account, bridge, maxSpendable }) => {
         invariant(canUndelegate(account as CosmosAccount), "can undelegate");
         const { cosmosResources } = account as CosmosAccount;
         invariant(cosmosResources, "cosmos");
+        invariant(
+          maxSpendable.gt(cryptoFactory(account.currency.id).minimalTransactionAmount.times(2)),
+          "balance is too low",
+        );
         invariant(
           (cosmosResources as CosmosResources).delegations.length > 0,
           "already enough delegations",
@@ -289,9 +301,13 @@ function cosmosLikeMutations(currency: string): MutationSpec<Transaction>[] {
     {
       name: "redelegate",
       maxRun: 1,
-      transaction: ({ account, bridge }) => {
+      transaction: ({ account, bridge, maxSpendable }) => {
         const { cosmosResources } = account as CosmosAccount;
         invariant(cosmosResources, "cosmos");
+        invariant(
+          maxSpendable.gt(cryptoFactory(account.currency.id).minimalTransactionAmount.times(3)),
+          "balance is too low for redelegate",
+        );
         const sourceDelegation = sample(
           (cosmosResources as CosmosResources).delegations.filter(d =>
             canRedelegate(account as CosmosAccount, d),
@@ -366,9 +382,13 @@ function cosmosLikeMutations(currency: string): MutationSpec<Transaction>[] {
     {
       name: "claim rewards",
       maxRun: 1,
-      transaction: ({ account, bridge }) => {
+      transaction: ({ account, bridge, maxSpendable }) => {
         const { cosmosResources } = account as CosmosAccount;
         invariant(cosmosResources, "cosmos");
+        invariant(
+          maxSpendable.gt(cryptoFactory(account.currency.id).minimalTransactionAmount.times(2)),
+          "balance is too low for claim rewards",
+        );
         const delegation = sample(
           (cosmosResources as CosmosResources).delegations.filter(d => d.pendingRewards.gt(1000)),
         ) as CosmosDelegation;
@@ -422,12 +442,6 @@ const generateGenericCosmosTest = (currencyId: string, config?: Partial<AppSpec<
     genericDeviceAction: acceptTransaction,
     testTimeout: 2 * 60 * 1000,
     minViableAmount: cryptoFactory(currencyId).minimalTransactionAmount,
-    transactionCheck: ({ maxSpendable }) => {
-      invariant(
-        maxSpendable.gt(cryptoFactory(currencyId).minimalTransactionAmount),
-        "balance is too low",
-      );
-    },
     test: cosmosLikeTest,
     mutations: cosmosLikeMutations(currencyId),
     ...config,

@@ -1,4 +1,5 @@
 import CosmosBase from "./cosmosBase";
+import { BigNumber } from "bignumber.js";
 
 class Umee extends CosmosBase {
   lcd!: string;
@@ -14,6 +15,7 @@ class Umee extends CosmosBase {
     this.unbondingPeriod = 28;
     this.prefix = "umee";
     this.validatorPrefix = `${this.prefix}valoper`;
+    this.minimalTransactionAmount = new BigNumber(15000);
   }
 }
 
