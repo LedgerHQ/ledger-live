@@ -1,7 +1,7 @@
-import axios, { AxiosError } from "axios";
 import { log } from "console";
 import fs from "fs";
 import path from "path";
+import { fetchTokens } from "../fetch";
 
 type EIP712 = {
   [key: string]: {
@@ -11,21 +11,18 @@ type EIP712 = {
   };
 };
 
-const writeFiles = (outputDir: string, content: string) => {
-  const filePath = path.join(outputDir, "eip712");
-  const tsContent = `export default ${content};`;
-  fs.writeFileSync(`${filePath}.json`, content, "utf-8");
-  fs.writeFileSync(`${filePath}.ts`, tsContent, "utf-8");
-};
-
-export const importEIP712 = async (baseURL: string, outputDir: string) => {
+export const importEIP712 = async (outputDir: string) => {
   log("importing ERC712 tokens....");
   try {
-    const { data } = await axios.get<EIP712>(`${baseURL}/eip712.json`);
-    writeFiles(outputDir, JSON.stringify(data));
-    log("importing ERC712 tokens sucess");
+    const eip712 = await fetchTokens<EIP712>("eip712.json");
+    if (eip712) {
+      const filePath = path.join(outputDir, "eip712");
+      const tsContent = `export default ${JSON.stringify(eip712)};`;
+      fs.writeFileSync(`${filePath}.json`, JSON.stringify(eip712), "utf-8");
+      fs.writeFileSync(`${filePath}.ts`, tsContent, "utf-8");
+      log("importing ERC712 tokens sucess");
+    }
   } catch (err) {
-    const error = err as AxiosError;
-    console.error(error.message);
+    console.error(err);
   }
 };

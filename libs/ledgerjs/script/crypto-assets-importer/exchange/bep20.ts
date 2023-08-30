@@ -1,30 +1,29 @@
-import axios from "axios";
 import { log } from "console";
 import fs from "fs";
+import { fetchTokens } from "../fetch";
 
 type BEP20Exchange = [string, string, string];
 
-const fetchBEP20Exchange = async (baseURL: string): Promise<BEP20Exchange[]> => {
-  const { data } = await axios.get<BEP20Exchange[]>(`${baseURL}/exchange/bep20.json`);
-  return data;
-};
-
-export const importBEP20Exchange = async (baseURL: string, outputDir: string) => {
+export const importBEP20Exchange = async (outputDir: string) => {
   log("importing bep 20 exchange tokens...");
-  const bep20Exchange = await fetchBEP20Exchange(baseURL);
-  fs.writeFileSync(`${outputDir}/exchange/bep20.json`, JSON.stringify(bep20Exchange));
-  const bep20ExchangeTypeStringified = `export type BEP20Exchange = [string, string, string];`;
+  try {
+    const bep20Exchange = await fetchTokens<BEP20Exchange>("exchange/bep20.json");
+    fs.writeFileSync(`${outputDir}/exchange/bep20.json`, JSON.stringify(bep20Exchange));
+    const bep20ExchangeTypeStringified = `export type BEP20Exchange = [string, string, string];`;
 
-  const tokensStringified = `const tokens = ${JSON.stringify(bep20Exchange, null, 2)}`;
-  const exportstringified = `export default tokens;`;
+    const tokensStringified = `const tokens = ${JSON.stringify(bep20Exchange)}`;
+    const exportstringified = `export default tokens;`;
 
-  const tsFile = `${bep20ExchangeTypeStringified}
+    const tsFile = `${bep20ExchangeTypeStringified}
+    
+    ${tokensStringified}
+    
+    ${exportstringified}
+    `;
 
-${tokensStringified}
-
-${exportstringified}
-`;
-
-  fs.writeFileSync(`${outputDir}/exchange/bep20.ts`, tsFile);
-  log("importing bep 20 exchange tokens success");
+    fs.writeFileSync(`${outputDir}/exchange/bep20.ts`, tsFile);
+    log("importing bep 20 exchange tokens success");
+  } catch (err) {
+    console.error(err);
+  }
 };

@@ -1,6 +1,6 @@
-import axios, { AxiosError } from "axios";
 import { log } from "console";
 import fs from "fs";
+import { fetchTokens } from "../fetch";
 
 export type BEP20Token = [
   string, // parent currency id
@@ -15,25 +15,14 @@ export type BEP20Token = [
   string?, // legacy
 ];
 
-const fetchBEP20 = async (baseURL: string): Promise<BEP20Token[]> => {
-  try {
-    const { data } = await axios.get<BEP20Token[]>(`${baseURL}/bep20.json`);
-    return data;
-  } catch (err) {
-    const error = err as AxiosError;
-    console.error(error.message);
-    return [];
-  }
-};
-
-export const importBEP20 = async (baseURL: string, outputDir: string) => {
+export const importBEP20 = async (outputDir: string) => {
   try {
     log("import BEP 20 tokens...");
-    const bep20 = await fetchBEP20(baseURL);
+    const bep20 = await fetchTokens<BEP20Token[]>("bep20.json");
+    if (bep20) {
+      fs.writeFileSync(`${outputDir}/bep20.json`, JSON.stringify(bep20));
 
-    fs.writeFileSync(`${outputDir}/bep20.json`, JSON.stringify(bep20));
-
-    const BEP20TokenTypeStringified = `export type BEP20Token = [
+      const BEP20TokenTypeStringified = `export type BEP20Token = [
   string, // parent currency id
   string, // token
   string, // ticker
@@ -47,20 +36,21 @@ export const importBEP20 = async (baseURL: string, outputDir: string) => {
   string?, // legacy
 ];`;
 
-    const tokensStringified = `const tokens: BEP20Token[] = ${JSON.stringify(bep20, null, 2)};`;
-    const exportStringified = `export default tokens;`;
+      const tokensStringified = `const tokens: BEP20Token[] = ${JSON.stringify(bep20)};`;
+      const exportStringified = `export default tokens;`;
 
-    fs.writeFileSync(
-      `${outputDir}/bep20.ts`,
-      `${BEP20TokenTypeStringified}
-
+      fs.writeFileSync(
+        `${outputDir}/bep20.ts`,
+        `${BEP20TokenTypeStringified}
+        
 ${tokensStringified}
-            
+        
 ${exportStringified}
 `,
-    );
+      );
 
-    log("import BEP 20 tokens success");
+      log("import BEP 20 tokens success");
+    }
   } catch (err) {
     console.error(err);
   }

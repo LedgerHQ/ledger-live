@@ -10788,14 +10788,8 @@ const tokens: BEP20Token[] = [
     "0x5D07eDAbA2151a3C6802B28636eCC23082398EdB",
     false,
     false,
-<<<<<<< HEAD
+    null,
   ],
 ];
 
-=======
-    null
-  ]
-];
-            
->>>>>>> 06b5c9e3d9 (erc20 exchange importer)
 export default tokens;

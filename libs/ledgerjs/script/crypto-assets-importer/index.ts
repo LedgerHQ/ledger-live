@@ -9,23 +9,22 @@ import { importCoinsExchange } from "./exchange/coins";
 import { importBEP20 } from "./importers/bep20";
 import { importERC20Exchange } from "./exchange/erc20";
 
-const CRYPTO_ASSETS_BASE_URL = "https://cdn.live.ledger.com/cryptoassets";
 const outputFolder = path.join(__dirname, "../../packages/cryptoassets/src/data");
 
 const importTokens = async () => {
-  await importEIP712(CRYPTO_ASSETS_BASE_URL, outputFolder);
-  await importERC20(CRYPTO_ASSETS_BASE_URL, outputFolder);
-  await importBEP20(CRYPTO_ASSETS_BASE_URL, outputFolder);
+  await importEIP712(outputFolder);
+  await importERC20(outputFolder);
+  await importBEP20(outputFolder);
 };
 
 const importExchangeTokens = async () => {
-  await importBEP20Exchange(CRYPTO_ASSETS_BASE_URL, outputFolder);
-  await importCoinsExchange(CRYPTO_ASSETS_BASE_URL, outputFolder);
-  await importERC20Exchange(CRYPTO_ASSETS_BASE_URL, outputFolder);
+  await importBEP20Exchange(outputFolder);
+  await importCoinsExchange(outputFolder);
+  await importERC20Exchange(outputFolder);
 };
 
 const importSignatures = async () => {
-  await importERC20Signatures(CRYPTO_ASSETS_BASE_URL, outputFolder);
+  await importERC20Signatures(outputFolder);
 };
 
 const main = async () => {
