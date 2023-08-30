@@ -1,6 +1,6 @@
 {
   "name": "live-common-tools",
-  "version": "0.6.4-nightly.6",
+  "version": "0.6.4-nightly.7",
   "private": true,
   "dependencies": {
     "@ledgerhq/coin-framework": "workspace:^",

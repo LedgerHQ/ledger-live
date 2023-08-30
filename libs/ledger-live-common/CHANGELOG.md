@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 31.6.0-nightly.7
+
+### Patch Changes
+
+- [#4174](https://github.com/LedgerHQ/ledger-live/pull/4174) [`5d20c326a0`](https://github.com/LedgerHQ/ledger-live/commit/5d20c326a038a430a38f28815ba65af71152118b) Thanks [@sarneijim](https://github.com/sarneijim)! - Support customFees in swap web app mode
+
 ## 31.6.0-nightly.6
 
 ### Minor Changes
