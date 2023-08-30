@@ -3,7 +3,15 @@ import { partition } from "lodash/fp";
 import { getEnv } from "@ledgerhq/live-env";
 import { ValidatorsAppValidator } from "./validator-app";
 
-export const LEDGER_VALIDATOR_ADDRESS = "26pV97Ce83ZQ6Kz9XT4td8tdoUFPTng8Fb8gPyc53dJx";
+// FIXME Hardcoding the Ledger validator info, as validators.app doesn't return it anymore
+// Hopefully temporary if we find a different provider, or if we abandon validator details
+export const LEDGER_VALIDATOR: ValidatorsAppValidator = {
+  voteAccount: "26pV97Ce83ZQ6Kz9XT4td8tdoUFPTng8Fb8gPyc53dJx",
+  name: "Ledger by Figment",
+  activeStake: 4784119000000000,
+  commission: 7,
+  totalScore: 6,
+};
 
 export const assertUnreachable = (_: never): never => {
   throw new Error("unreachable assertion failed");
@@ -61,7 +69,7 @@ export function clusterByCurrencyId(currencyId: string): Cluster {
 
 export function defaultVoteAccAddrByCurrencyId(currencyId: string): string | undefined {
   const voteAccAddrs: Record<string, string | undefined> = {
-    solana: LEDGER_VALIDATOR_ADDRESS,
+    solana: LEDGER_VALIDATOR.voteAccount,
     solana_devnet: undefined,
     solana_testnet: undefined,
   };
@@ -132,17 +140,6 @@ export type Functions<T> = keyof {
   /* eslint-disable-next-line @typescript-eslint/ban-types*/
   [K in keyof T as T[K] extends Function ? K : never]: T[K];
 };
-
-// move Ledger validator to the first position
-export function ledgerFirstValidators(
-  validators: ValidatorsAppValidator[],
-): ValidatorsAppValidator[] {
-  const [ledgerValidator, restValidators] = partition(
-    v => v.voteAccount === LEDGER_VALIDATOR_ADDRESS,
-    validators,
-  );
-  return ledgerValidator.concat(restValidators);
-}
 
 export function profitableValidators(validators: ValidatorsAppValidator[]) {
   return validators.filter(v => v.commission < 100);
