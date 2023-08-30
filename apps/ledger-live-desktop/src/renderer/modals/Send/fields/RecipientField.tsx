@@ -37,7 +37,7 @@ const RecipientField = <T extends Transaction, TS extends TransactionStatus>({
     initValue || transaction?.recipientDomain?.domain || transaction.recipient || "",
   );
 
-  const { enabled: isDomainResolutionEnabled, params } = useFeature("domainInputResolution");
+  const { enabled: isDomainResolutionEnabled, params } = useFeature("domainInputResolution") || {};
   const isCurrencySupported =
     params?.supportedCurrencyIds?.includes(account.currency.id as CryptoCurrencyId) || false;
 
