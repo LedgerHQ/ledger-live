@@ -28,13 +28,15 @@ import cryptoFactory from "./chain/chain";
 import { canDelegate, canRedelegate, canUndelegate, getMaxDelegationAvailable } from "./logic";
 import { acceptTransaction } from "./speculos-deviceActions";
 import { Operation } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
 
 const maxAccounts = 16;
 
 // amounts of delegation are not exact so we are applying an approximation
 function approximateValue(value): string {
-  return "~" + new BigNumber(value).div(100).integerValue().times(100).toString();
+  const firstThreeDigits = parseInt(value.toString().slice(0, 3), 10);
+  const firstTwoDigits = Math.round(firstThreeDigits / 10).toString();
+  const tailZeroCount = value.toString().length - 2;
+  return "~" + firstTwoDigits + "0".repeat(tailZeroCount);
 }
 
 function approximateExtra(extra: CosmosOperationExtraRaw) {
