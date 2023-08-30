@@ -127,7 +127,7 @@ export function fromOperationExtraRaw(extraRaw: CosmosOperationExtraRaw): Cosmos
     };
   }
 
-  if (extraRaw.validators) {
+  if (extraRaw.validators && extraRaw.validators.length > 0) {
     extra.validators = extraRaw.validators.map(validator => ({
       address: validator.address,
       amount: new BigNumber(validator.amount),
@@ -159,7 +159,7 @@ export function toOperationExtraRaw(extra: CosmosOperationExtra): CosmosOperatio
     };
   }
 
-  if (extra.validators) {
+  if (extra.validators && extra.validators.length > 0) {
     extraRaw.validators = extra.validators.map(validator => ({
       address: validator.address,
       amount: validator.amount.toString(),
