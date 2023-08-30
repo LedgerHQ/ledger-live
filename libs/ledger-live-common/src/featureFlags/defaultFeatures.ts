@@ -16,6 +16,7 @@ import {
   NewsfeedPage,
   ProtectServicesMobile,
   ProtectServicesDesktop,
+  ReferralProgramDiscoverCard,
 } from "@ledgerhq/types-live";
 
 const BASIC_FEATURE: Feature<unknown> = {
@@ -89,7 +90,6 @@ export const DEFAULT_FEATURES = {
   disableNftLedgerMarket: BASIC_FEATURE,
   disableNftRaribleOpensea: BASIC_FEATURE,
   disableNftSend: BASIC_FEATURE,
-  referralProgramDiscoverCard: BASIC_FEATURE,
   stakeAccountBanner: BASIC_FEATURE,
   staxWelcomeScreen: BASIC_FEATURE,
   protectServicesDiscoverDesktop: BASIC_FEATURE,
@@ -97,6 +97,7 @@ export const DEFAULT_FEATURES = {
   /**
    * Features
    */
+  referralProgramDiscoverCard: createDefaultFeature<ReferralProgramDiscoverCard>(),
   newsfeedPage: createDefaultFeature<NewsfeedPage>(),
   ptxEarn: createDefaultFeature<PtxEarn>(),
   swapWalletApiPartnerList: createDefaultFeature<SwapWalletApiPartnerList>(),
