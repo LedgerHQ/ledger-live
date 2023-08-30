@@ -40,13 +40,13 @@ export const importERC20 = async (outputDir: string) => {
   string?, // coumpound_for (legacy)
 ];`;
 
-      const tokensStringified = `const tokens: ERC20Token[] = ${JSON.stringify(erc20)}`;
+      const tokensStringified = `const tokens: ERC20Token[] = ${JSON.stringify(erc20, null, 2)}`;
       const exportStringified = `export default tokens;`;
 
       const erc20TsFile = `${erc20TokenTypeStringified}
-      
+
 ${tokensStringified}
-      
+
 ${exportStringified}
 `;
 

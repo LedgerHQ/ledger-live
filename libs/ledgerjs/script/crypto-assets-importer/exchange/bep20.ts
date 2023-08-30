@@ -11,15 +11,15 @@ export const importBEP20Exchange = async (outputDir: string) => {
     fs.writeFileSync(`${outputDir}/exchange/bep20.json`, JSON.stringify(bep20Exchange));
     const bep20ExchangeTypeStringified = `export type BEP20Exchange = [string, string, string];`;
 
-    const tokensStringified = `const tokens = ${JSON.stringify(bep20Exchange)}`;
+    const tokensStringified = `const tokens = ${JSON.stringify(bep20Exchange, null, 2)}`;
     const exportstringified = `export default tokens;`;
 
     const tsFile = `${bep20ExchangeTypeStringified}
-    
-    ${tokensStringified}
-    
-    ${exportstringified}
-    `;
+
+${tokensStringified}
+
+${exportstringified}
+`;
 
     fs.writeFileSync(`${outputDir}/exchange/bep20.ts`, tsFile);
     log("importing bep 20 exchange tokens success");

@@ -17,7 +17,7 @@ export const importEIP712 = async (outputDir: string) => {
     const eip712 = await fetchTokens<EIP712>("eip712.json");
     if (eip712) {
       const filePath = path.join(outputDir, "eip712");
-      const tsContent = `export default ${JSON.stringify(eip712)};`;
+      const tsContent = `export default ${JSON.stringify(eip712, null, 2)};`;
       fs.writeFileSync(`${filePath}.json`, JSON.stringify(eip712), "utf-8");
       fs.writeFileSync(`${filePath}.ts`, tsContent, "utf-8");
       log("importing ERC712 tokens sucess");

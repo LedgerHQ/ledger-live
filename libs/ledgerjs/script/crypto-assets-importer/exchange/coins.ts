@@ -11,17 +11,21 @@ export const importCoinsExchange = async (outputDir: string) => {
     fs.writeFileSync(`${outputDir}/exchange/coins.json`, JSON.stringify(coinsExchange));
 
     const coinExchangeTypeStringified = `export type Exchange = [string, string, string];`;
-    const exchangesStringified = `const exchanges: Exchange[] = ${JSON.stringify(coinsExchange)};`;
+    const exchangesStringified = `const exchanges: Exchange[] = ${JSON.stringify(
+      coinsExchange,
+      null,
+      2,
+    )};`;
     const exportStringified = `export default exchanges;`;
 
     fs.writeFileSync(
       `${outputDir}/exchange/coins.ts`,
       `${coinExchangeTypeStringified}
-         
-         ${exchangesStringified}
-         
-         ${exportStringified}
-         `,
+
+${exchangesStringified}
+
+${exportStringified}
+`,
     );
     log("importing coins exchange success");
   } catch (err) {

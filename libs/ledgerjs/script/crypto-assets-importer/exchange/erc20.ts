@@ -13,6 +13,8 @@ export const importERC20Exchange = async (outputDir: string) => {
     const erc20typeStringified = `export type ERC20Exchange = [string, string, string];`;
     const tokensStringified = `const exchanges: ERC20Exchange[] = ${JSON.stringify(
       erc20Exchange,
+      null,
+      2,
     )};`;
     const exportStringified = `export default exchanges;`;
 

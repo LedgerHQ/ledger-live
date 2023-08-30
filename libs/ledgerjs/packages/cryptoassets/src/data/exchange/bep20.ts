@@ -1,5 +1,6 @@
 export type BEP20Exchange = [string, string, string];
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 const exchanges: BEP20Exchange[] = [
@@ -983,6 +984,9 @@ const exchanges: BEP20Exchange[] = [
 	["bsc/bep20/zuna","045a756e611342696e616e636520536d61727420436861696e06045a756e6109","304402205526817e814404ea81ba83a73e14a8c6cd7f016753794de94bd341ee1aebd18d022019067190f1d6da6d81359b24246e03b039564604def18fd7dbdd814717e392d5"]
 ];
 =======
+=======
+
+>>>>>>> 4bd69b55eb (formatting)
 const tokens = [
   [
     "bsc/bep20/(del)",
@@ -5745,6 +5749,7 @@ const tokens = [
     "304402205526817e814404ea81ba83a73e14a8c6cd7f016753794de94bd341ee1aebd18d022019067190f1d6da6d81359b24246e03b039564604def18fd7dbdd814717e392d5"
   ]
 ]
+<<<<<<< HEAD
 >>>>>>> dcec8194c3 (bep20 exchange token)
 
 export default tokens;
@@ -5755,3 +5760,7 @@ export default tokens;
     export default tokens;
     
 >>>>>>> 7a831a0bfa (fetcher)
+=======
+
+export default tokens;
+>>>>>>> 4bd69b55eb (formatting)
