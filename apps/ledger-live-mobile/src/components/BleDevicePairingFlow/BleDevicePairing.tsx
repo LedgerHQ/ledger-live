@@ -5,15 +5,7 @@ import { useBleDevicePairing } from "@ledgerhq/live-common/ble/hooks/useBleDevic
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Trans, useTranslation } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
-import {
-  Flex,
-  InfiniteLoader,
-  Text,
-  Button,
-  IconsLegacy,
-  Icons,
-  BoxedIcon,
-} from "@ledgerhq/native-ui";
+import { Flex, InfiniteLoader, Text, Button, IconsLegacy, BoxedIcon } from "@ledgerhq/native-ui";
 
 import { LockedDeviceError, PeerRemovedPairing } from "@ledgerhq/errors";
 import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";

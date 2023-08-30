@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 
 import { Language, languageIds } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
-import { Flex, Text, Button, Icons, BoxedIcon } from "@ledgerhq/native-ui";
+import { Flex, Button, Icons } from "@ledgerhq/native-ui";
 import { useDispatch } from "react-redux";
 import { setLastSeenDeviceLanguageId } from "../actions/settings";
 import { GenericInformationBody } from "./GenericInformationBody";
