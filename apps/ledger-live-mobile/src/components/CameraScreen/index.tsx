@@ -16,8 +16,7 @@ type Props = {
   liveQrCode?: boolean;
   instruction?: React.ReactNode | string;
 };
-export default function CameraScreen({ width, height, liveQrCode, instruction }: Props) {
-  const progress = undefined;
+export default function CameraScreen({ width, height, progress, liveQrCode, instruction }: Props) {
   const { colors } = useTheme();
   const { goBack } = useNavigation();
 
