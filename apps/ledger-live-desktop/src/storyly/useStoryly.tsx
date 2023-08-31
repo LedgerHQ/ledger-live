@@ -10,7 +10,7 @@ import { StorylyStyleProps, useStorylyDefaultStyleProps } from "./style";
  * Storyly Options
  */
 type StorylyOptions = {
-  layout: string;
+  layout: "classic" | "modern";
 
   token: string;
 
@@ -59,7 +59,7 @@ export const useStoryly = (instanceId: StorylyInstanceID) => {
       //
       props,
     });
-  }, []);
+  });
 
   /**
    * Change `lang` and `segments` based on the app language
