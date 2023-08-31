@@ -1,5 +1,4 @@
 import CosmosBase from "./cosmosBase";
-import { BigNumber } from "bignumber.js";
 
 class Persistence extends CosmosBase {
   stakingDocUrl: string;
@@ -15,7 +14,6 @@ class Persistence extends CosmosBase {
     this.unbondingPeriod = 21;
     this.prefix = "persistence";
     this.validatorPrefix = `${this.prefix}valoper`;
-    this.minimalTransactionAmount = new BigNumber(5000);
   }
 }
 

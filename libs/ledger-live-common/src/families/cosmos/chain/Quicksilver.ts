@@ -1,5 +1,4 @@
 import CosmosBase from "./cosmosBase";
-import { BigNumber } from "bignumber.js";
 
 class Quicksilver extends CosmosBase {
   lcd!: string;
@@ -15,7 +14,6 @@ class Quicksilver extends CosmosBase {
     this.unbondingPeriod = 21;
     this.prefix = "quick";
     this.validatorPrefix = `${this.prefix}valoper`;
-    this.minimalTransactionAmount = new BigNumber(600);
   }
 }
 

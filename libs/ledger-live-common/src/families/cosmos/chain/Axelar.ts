@@ -1,5 +1,4 @@
 import CosmosBase from "./cosmosBase";
-import { BigNumber } from "bignumber.js";
 
 class Axelar extends CosmosBase {
   stakingDocUrl: string;
@@ -15,7 +14,6 @@ class Axelar extends CosmosBase {
     this.unbondingPeriod = 7;
     this.prefix = "axelar";
     this.validatorPrefix = `${this.prefix}valoper`;
-    this.minimalTransactionAmount = new BigNumber(10000);
   }
 }
 

@@ -24,6 +24,7 @@ const baseAccountInfoMock = {
   delegations: [],
   unbondings: [],
   balances: new BigNumber(0),
+  accountInfo: { sequence: 0, accountNumber: 0 },
 };
 
 const baseTxMock = {

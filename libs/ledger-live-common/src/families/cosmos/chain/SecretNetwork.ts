@@ -1,5 +1,4 @@
 import CosmosBase from "./cosmosBase";
-import { BigNumber } from "bignumber.js";
 
 class SecretNetwork extends CosmosBase {
   lcd!: string;
@@ -15,7 +14,6 @@ class SecretNetwork extends CosmosBase {
     this.unbondingPeriod = 28;
     this.prefix = "secret";
     this.validatorPrefix = `${this.prefix}valoper`;
-    this.minimalTransactionAmount = new BigNumber(60000);
   }
 }
 

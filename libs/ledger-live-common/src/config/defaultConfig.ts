@@ -32,7 +32,7 @@ const defaultConfig = {
         minGasPrice: 0.025,
       },
       persistence: {
-        lcd: "https://rest-persistence.architectnodes.com",
+        lcd: "https://rest.core.persistence.one",
         minGasPrice: 0.025,
         ledgerValidator: "persistencevaloper1fgklp9hemczlwtqp9jqzq3xahh38hznxatty38",
       },

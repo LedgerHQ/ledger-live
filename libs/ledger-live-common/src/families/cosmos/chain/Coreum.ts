@@ -1,5 +1,4 @@
 import CosmosBase from "./cosmosBase";
-import { BigNumber } from "bignumber.js";
 
 class Coreum extends CosmosBase {
   stakingDocUrl: string;
@@ -15,7 +14,6 @@ class Coreum extends CosmosBase {
     this.unbondingPeriod = 7;
     this.prefix = "core";
     this.validatorPrefix = `${this.prefix}valoper`;
-    this.minimalTransactionAmount = new BigNumber(20000);
   }
 }
 
