@@ -24,33 +24,25 @@ import { getEstimatedFees } from "./logic";
 
 const testTimeout = 10 * 60 * 1000;
 
-// FIXME: remove hardcoded units, use currency.units[0]
-const ETH_UNIT = { code: "ETH", name: "ETH", magnitude: 18 };
-const MBTC_UNIT = { name: "mBTC", code: "mBTC", magnitude: 5 };
-const AVAX_UNIT = { name: "AVAX", code: "AVAX", magnitude: 18 };
-const BSC_UNIT = { name: "BNB", code: "BNB", magnitude: 18 };
-const MATIC_UNIT = { name: "MATIC", code: "MATIC", magnitude: 18 };
-const ETC_UNIT = { name: "ETC", code: "ETC", magnitude: 18 };
-
-const minBalancePerCurrencyId: Partial<Record<CryptoCurrency["id"], BigNumber>> = {
-  arbitrum: parseCurrencyUnit(ETH_UNIT, "0.001"),
-  arbitrum_goerli: parseCurrencyUnit(ETH_UNIT, "0.001"),
-  optimism: parseCurrencyUnit(ETH_UNIT, "0.001"),
-  optimism_goerli: parseCurrencyUnit(ETH_UNIT, "0.001"),
-  boba: parseCurrencyUnit(ETH_UNIT, "0.001"),
-  metis: parseCurrencyUnit(ETH_UNIT, "0.01"),
-  moonriver: parseCurrencyUnit(ETH_UNIT, "0.1"),
-  rsk: parseCurrencyUnit(MBTC_UNIT, "0.05"),
-  polygon_zk_evm: parseCurrencyUnit(ETH_UNIT, "0.001"),
-  polygon_zk_evm_testnet: parseCurrencyUnit(ETH_UNIT, "0.001"),
-  base: parseCurrencyUnit(ETH_UNIT, "0.001"),
-  base_goerli: parseCurrencyUnit(ETH_UNIT, "0.001"),
-  avalanche_c_chain: parseCurrencyUnit(AVAX_UNIT, "0.001"),
-  bsc: parseCurrencyUnit(BSC_UNIT, "0.005"),
-  polygon: parseCurrencyUnit(MATIC_UNIT, "0.005"),
-  ethereum: parseCurrencyUnit(ETH_UNIT, "0.001"),
-  ethereum_goerli: parseCurrencyUnit(ETH_UNIT, "0.001"),
-  ethereum_classic: parseCurrencyUnit(ETC_UNIT, "0.05"),
+const minBalancePerCurrencyId: Partial<Record<CryptoCurrency["id"], number>> = {
+  arbitrum: 0.001,
+  arbitrum_goerli: 0.001,
+  optimism: 0.001,
+  optimism_goerli: 0.001,
+  boba: 0.001,
+  metis: 0.01,
+  moonriver: 0.1,
+  rsk: 0.05,
+  polygon_zk_evm: 0.001,
+  polygon_zk_evm_testnet: 0.001,
+  base: 0.001,
+  base_goerli: 0.001,
+  avalanche_c_chain: 0.001,
+  bsc: 0.005,
+  polygon: 0.005,
+  ethereum: 0.001,
+  ethereum_goerli: 0.001,
+  ethereum_classic: 0.05,
 };
 
 /**
@@ -159,12 +151,13 @@ const transactionCheck =
   (currencyId: string) =>
   ({ maxSpendable }: { maxSpendable: BigNumber }): void => {
     const currency = getCryptoCurrencyById(currencyId);
-    invariant(
-      maxSpendable.gt(
-        minBalancePerCurrencyId[currency.id] || parseCurrencyUnit(currency.units[0], "1"),
-      ),
-      `${currencyId} balance is too low`,
+
+    const minBalance = parseCurrencyUnit(
+      currency.units[0],
+      `${minBalancePerCurrencyId[currency.id] || 1}`,
     );
+
+    invariant(maxSpendable.gt(minBalance), `${currencyId} balance is too low`);
   };
 
 const evmBasicMutations: ({
