@@ -44,7 +44,13 @@ export default function ValidationSuccess({ navigation, route }: Props) {
         },
       ]}
     >
-      <TrackScreen category="NearUnstaking" name="ValidationSuccess" />
+      <TrackScreen
+        category="NearUnstaking"
+        name="ValidationSuccess"
+        flow="stake"
+        action="unstaking"
+        currency="near"
+      />
       <PreventNativeBack />
       <ValidateSuccess
         onClose={onClose}

@@ -151,7 +151,7 @@ const BleDevicesScanning = ({
           <Flex height={100} alignItems="center" justifyContent="center" mb={24}>
             <Animation style={{ width: 250 }} source={lottie} />
           </Flex>
-          <Text mb={1} textAlign="center" variant="h4" fontWeight="semiBold" fontSize={24}>
+          <Text mb={3} textAlign="center" variant="h4" fontWeight="semiBold" fontSize={24}>
             {productName
               ? t("blePairingFlow.scanning.withProductName.title", {
                   productName,

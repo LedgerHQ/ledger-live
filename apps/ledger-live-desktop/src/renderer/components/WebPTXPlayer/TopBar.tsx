@@ -1,4 +1,5 @@
-import React, { RefObject, useCallback, useEffect, useRef, useMemo } from "react";
+import React, { RefObject, useCallback, useEffect, useMemo, useRef } from "react";
+import { useHistory, useRouteMatch } from "react-router";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
@@ -14,6 +15,8 @@ import { WebviewState, WebviewAPI } from "../Web3AppWebview/types";
 import Spinner from "../Spinner";
 import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 import { track } from "~/renderer/analytics/segment";
+import { INTERNAL_APP_IDS } from "@ledgerhq/live-common/wallet-api/constants";
+import { safeUrl } from "@ledgerhq/live-common/wallet-api/helpers";
 
 const Container = styled(Box).attrs(() => ({
   horizontal: true,
@@ -98,8 +101,15 @@ export type Props = {
 
 export const TopBar = ({ manifest, webviewAPIRef, webviewState }: Props) => {
   const lastMatchingURL = useRef<string | null>(null);
+  const history = useHistory();
+  const match = useRouteMatch();
+  const { localStorage } = window;
 
-  const isWhitelistedDomain = useMemo(() => {
+  const isInternalApp = useMemo(() => {
+    if (!INTERNAL_APP_IDS.includes(manifest.id)) {
+      return false;
+    }
+
     if (!lastMatchingURL || !webviewState.url) {
       return true;
     }
@@ -108,9 +118,10 @@ export const TopBar = ({ manifest, webviewAPIRef, webviewState }: Props) => {
     const currentHostname = new URL(webviewState.url).hostname;
 
     return manifestHostname === currentHostname;
-  }, [manifest.url, webviewState.url]);
+  }, [manifest.id, manifest.url, webviewState.url]);
 
   const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);
+
   const onOpenDevTools = useCallback(() => {
     const webview = safeGetRefValue(webviewAPIRef);
 
@@ -118,33 +129,48 @@ export const TopBar = ({ manifest, webviewAPIRef, webviewState }: Props) => {
   }, [webviewAPIRef]);
 
   const onBackToMatchingURL = useCallback(async () => {
-    const currentHostname = new URL(webviewState.url).hostname;
-    const webview = safeGetRefValue(webviewAPIRef);
-    const safeUrl = safeGetRefValue(lastMatchingURL);
-    const url = new URL(safeUrl);
-    const urlParams = new URLSearchParams(url.searchParams);
-    const flowName = urlParams.get("liveAppFlow");
+    const manifestId = localStorage.getItem("manifest-id") || "";
 
-    track("button_clicked", {
-      button: flowName === "compare_providers" ? "back to quote" : "back to liveapp",
-      provider: currentHostname,
-      flow: flowName,
-    });
+    if (manifestId) {
+      const flowName = localStorage.getItem("flow-name") || "";
 
-    await webview.loadURL(safeUrl);
-    webview.clearHistory();
-  }, [webviewAPIRef, webviewState.url]);
+      track("button_clicked", {
+        button: ["buy", "sell"].includes(flowName) ? "back to quote" : "back to liveapp",
+        provider: manifestId,
+        flow: flowName,
+      });
 
-  const getButtonLabel = useCallback(() => {
-    if (manifest.id === "multibuy") {
+      history.replace({
+        pathname: "/exchange",
+        search: `?referrer=isExternal`,
+        state: {
+          mode: flowName,
+        },
+      });
+    } else {
+      const currentHostname = new URL(webviewState.url).hostname;
+      const webview = safeGetRefValue(webviewAPIRef);
       const safeUrl = safeGetRefValue(lastMatchingURL);
       const url = new URL(safeUrl);
       const urlParams = new URLSearchParams(url.searchParams);
       const flowName = urlParams.get("liveAppFlow");
-      if (flowName === "compare_providers") return "Quote";
+
+      track("button_clicked", {
+        button: flowName === "compare_providers" ? "back to quote" : "back to liveapp",
+        provider: currentHostname,
+        flow: flowName,
+      });
+
+      await webview.loadURL(safeUrl);
+      webview.clearHistory();
     }
-    return manifest.name;
-  }, [manifest, lastMatchingURL]);
+  }, [localStorage, history, webviewAPIRef, webviewState.url]);
+
+  const getButtonLabel = useCallback(() => {
+    const lastScreen = localStorage.getItem("last-screen") || "";
+
+    return lastScreen === "compare_providers" ? "Quote" : manifest.name;
+  }, [localStorage, manifest]);
 
   const handleReload = useCallback(() => {
     const webview = safeGetRefValue(webviewAPIRef);
@@ -153,16 +179,31 @@ export const TopBar = ({ manifest, webviewAPIRef, webviewState }: Props) => {
   }, [webviewAPIRef]);
 
   useEffect(() => {
-    if (isWhitelistedDomain) {
-      lastMatchingURL.current = webviewState.url;
+    if (isInternalApp) {
+      const url = safeUrl(webviewState.url);
+      const manifestId = url ? url.searchParams.get("goToManifest") : undefined;
+
+      if (url && manifestId) {
+        const goToURL = url.searchParams.get("goToURL");
+
+        if (goToURL) {
+          localStorage.setItem("manifest-id", manifestId);
+          localStorage.setItem("flow-name", url.searchParams.get("flowName") || "buy");
+          localStorage.setItem("last-screen", url.searchParams.get("lastScreen") || "");
+
+          history.replace(`${match.url}/${manifestId}?goToURL=${goToURL}`);
+        }
+      } else {
+        lastMatchingURL.current = webviewState.url;
+      }
     }
-  }, [isWhitelistedDomain, webviewState.url]);
+  }, [localStorage, history, isInternalApp, match.url, webviewState.url]);
 
   const isLoading = useDebounce(webviewState.loading, 100);
 
   return (
     <Container>
-      {!isWhitelistedDomain ? (
+      {!isInternalApp ? (
         <ItemContainer isInteractive onClick={onBackToMatchingURL}>
           <ArrowRight flipped size={16} />
           <ItemContent>

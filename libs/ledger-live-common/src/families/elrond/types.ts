@@ -1,6 +1,8 @@
 import type {
   Account,
   AccountRaw,
+  Operation,
+  OperationRaw,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
@@ -17,11 +19,13 @@ export type ElrondAccountRaw = AccountRaw & {
 export type ElrondResources = {
   nonce: number;
   delegations: ElrondDelegation[];
+  isGuarded: boolean;
 };
 
 export type ElrondResourcesRaw = {
   nonce: number;
   delegations: ElrondDelegation[];
+  isGuarded: boolean;
 };
 
 export type ElrondDelegation = {
@@ -206,4 +210,14 @@ export type ElrondProvider = {
     twitter: string;
     url: string;
   };
+};
+
+export type ElrondOperation = Operation<ElrondOperationExtra>;
+export type ElrondOperationRaw = OperationRaw<ElrondOperationExtraRaw>;
+
+export type ElrondOperationExtra = {
+  amount?: BigNumber;
+};
+export type ElrondOperationExtraRaw = {
+  amount?: string;
 };

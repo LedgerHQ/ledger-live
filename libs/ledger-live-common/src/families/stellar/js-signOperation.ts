@@ -2,23 +2,24 @@ import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import Stellar from "@ledgerhq/hw-app-str";
 import { FeeNotLoaded } from "@ledgerhq/errors";
-import type { Account, Operation, SignOperationEvent } from "@ledgerhq/types-live";
+import type { Account, SignOperationFnSignature } from "@ledgerhq/types-live";
 import { withDevice } from "../../hw/deviceAccess";
-import type { Transaction } from "./types";
+import type { StellarOperation, Transaction } from "./types";
 import { buildTransaction } from "./js-buildTransaction";
 import { fetchSequence } from "./api";
 import { getAmountValue } from "./logic";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 
 const buildOptimisticOperation = async (
   account: Account,
   transaction: Transaction,
-): Promise<Operation> => {
+): Promise<StellarOperation> => {
   const transactionSequenceNumber = await fetchSequence(account);
   const fees = transaction.fees ?? new BigNumber(0);
   const type = transaction.mode === "changeTrust" ? "OPT_IN" : "OUT";
 
-  const operation: Operation = {
-    id: `${account.id}--${type}`,
+  const operation: StellarOperation = {
+    id: encodeOperationId(account.id, "", type),
     hash: "",
     type,
     value: transaction.subAccountId ? fees : getAmountValue(account, transaction, fees),
@@ -31,7 +32,9 @@ const buildOptimisticOperation = async (
     date: new Date(),
     // FIXME: Javascript number may be not precise enough
     transactionSequenceNumber: transactionSequenceNumber?.plus(1).toNumber(),
-    extra: {},
+    extra: {
+      ledgerOpType: type,
+    },
   };
 
   const { subAccountId } = transaction;
@@ -55,7 +58,9 @@ const buildOptimisticOperation = async (
         recipients: [transaction.recipient],
         accountId: subAccountId,
         date: new Date(),
-        extra: {},
+        extra: {
+          ledgerOpType: type,
+        },
       },
     ];
   }
@@ -66,55 +71,47 @@ const buildOptimisticOperation = async (
 /**
  * Sign Transaction with Ledger hardware
  */
-const signOperation = ({
-  account,
-  deviceId,
-  transaction,
-}: {
-  account: Account;
-  deviceId: any;
-  transaction: Transaction;
-}): Observable<SignOperationEvent> =>
-  withDevice(deviceId)(transport =>
-    Observable.create(o => {
-      async function main() {
-        o.next({
-          type: "device-signature-requested",
-        });
+const signOperation: SignOperationFnSignature<Transaction> = ({ account, deviceId, transaction }) =>
+  withDevice(deviceId)(
+    transport =>
+      new Observable(o => {
+        async function main() {
+          o.next({
+            type: "device-signature-requested",
+          });
 
-        // Fees are loaded during prepareTransaction
-        if (!transaction.fees) {
-          throw new FeeNotLoaded();
+          // Fees are loaded during prepareTransaction
+          if (!transaction.fees) {
+            throw new FeeNotLoaded();
+          }
+
+          const unsigned = await buildTransaction(account, transaction);
+          const unsignedPayload = unsigned.signatureBase();
+          // Sign by device
+          const hwApp = new Stellar(transport);
+          const { signature } = await hwApp.signTransaction(
+            account.freshAddressPath,
+            unsignedPayload,
+          );
+          unsigned.addSignature(account.freshAddress, signature.toString("base64"));
+          o.next({
+            type: "device-signature-granted",
+          });
+          const operation = await buildOptimisticOperation(account, transaction);
+          o.next({
+            type: "signed",
+            signedOperation: {
+              operation,
+              signature: unsigned.toXDR(),
+            },
+          });
         }
 
-        const unsigned = await buildTransaction(account, transaction);
-        const unsignedPayload = unsigned.signatureBase();
-        // Sign by device
-        const hwApp = new Stellar(transport);
-        const { signature } = await hwApp.signTransaction(
-          account.freshAddressPath,
-          unsignedPayload,
+        main().then(
+          () => o.complete(),
+          e => o.error(e),
         );
-        unsigned.addSignature(account.freshAddress, signature.toString("base64"));
-        o.next({
-          type: "device-signature-granted",
-        });
-        const operation = await buildOptimisticOperation(account, transaction);
-        o.next({
-          type: "signed",
-          signedOperation: {
-            operation,
-            signature: unsigned.toXDR(),
-            expirationDate: null,
-          },
-        });
-      }
-
-      main().then(
-        () => o.complete(),
-        e => o.error(e),
-      );
-    }),
+      }),
   );
 
 export default signOperation;

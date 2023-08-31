@@ -9,9 +9,14 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import { Operation } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
+import {
+  getStuckAccountAndOperation,
+  isConfirmedOperation,
+} from "@ledgerhq/coin-framework/operation";
 import invariant from "invariant";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -32,6 +37,9 @@ import { ScreenName } from "../../const";
 import { accountScreenSelector } from "../../reducers/accounts";
 import DomainServiceRecipientRow from "./DomainServiceRecipientRow";
 import RecipientRow from "./RecipientRow";
+import { EditOperationCard } from "../../components/EditOperationCard";
+import { currencySettingsForAccountSelector } from "../../reducers/settings";
+import type { State } from "../../reducers/types";
 
 const withoutHiddenError = (error: Error): Error | null =>
   error instanceof RecipientRequired ? null : error;
@@ -48,6 +56,11 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
   invariant(account, "account is missing");
 
   const mainAccount = getMainAccount(account, parentAccount);
+  const currencySettings = useSelector((s: State) =>
+    currencySettingsForAccountSelector(s, {
+      account: mainAccount,
+    }),
+  );
   const { enabled: isDomainResolutionEnabled, params } =
     useFeature<{
       supportedCurrencyIds: CryptoCurrencyId[];
@@ -61,11 +74,19 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
       parentAccount,
     }),
   );
-  const shouldSkipAmount =
-    transaction?.family === "ethereum" && transaction?.mode === "erc721.transfer";
   const [value, setValue] = useState<string>("");
 
+  const shouldSkipAmount = useMemo(() => {
+    if (transaction?.family === "evm") {
+      return transaction.mode === "erc721";
+    } else if (transaction?.family === "ethereum") {
+      return transaction.mode === "erc721.transfer";
+    }
+
+    return false;
+  }, [transaction]);
   const isNftSend = isNftTransaction(transaction);
+
   // handle changes from camera qr code
   const initialTransaction = useRef(transaction);
   const navigationTransaction = route.params?.transaction;
@@ -99,6 +120,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
     },
     [account, parentAccount, setTransaction, transaction, setValue],
   );
+
   // FIXME: PROP IS NOT USED. REMOVE ?
   // const clear = useCallback(() => onChangeText(""), [onChangeText]);
   const [bridgeErr, setBridgeErr] = useState(bridgeError);
@@ -152,9 +174,19 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
     parentAccount?.id,
     route.params,
   ]);
+
   if (!account || !transaction) return null;
+
   const error = withoutHiddenError(status.errors.recipient);
   const warning = status.warnings.recipient;
+  const isSomeIncomingTxPending = account.operations?.some(
+    (op: Operation) =>
+      (op.type === "IN" || op.type === "NFT_IN") &&
+      !isConfirmedOperation(op, mainAccount, currencySettings.confirmationsNb),
+  );
+
+  const stuckAccountAndOperation = getStuckAccountAndOperation(account, mainAccount);
+
   return (
     <>
       <SafeAreaView
@@ -177,6 +209,14 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
             flex: 1,
           }}
         >
+          {stuckAccountAndOperation?.operation ? (
+            <EditOperationCard
+              isOperationStuck
+              oldestEditableOperation={stuckAccountAndOperation.operation}
+              account={stuckAccountAndOperation.account}
+              parentAccount={stuckAccountAndOperation.parentAccount}
+            />
+          ) : null}
           <NavigationScrollView
             style={[
               styles.container,
@@ -233,6 +273,11 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
                 error={error}
               />
             )}
+            {isSomeIncomingTxPending ? (
+              <View style={styles.pendingIncomingTxWarning}>
+                <Alert type="warning">{t("send.pendingTxWarning")}</Alert>
+              </View>
+            ) : null}
           </NavigationScrollView>
           <View style={styles.container}>
             {(!isDomainResolutionEnabled || !isCurrencySupported) &&
@@ -243,6 +288,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
               </View>
             ) : null}
             <Button
+              testID="recipient-continue-button"
               event="SendRecipientContinue"
               type="primary"
               title={<Trans i18nKey="common.continue" />}
@@ -287,6 +333,10 @@ const styles = StyleSheet.create({
   },
   infoBox: {
     marginBottom: 24,
+  },
+  pendingIncomingTxWarning: {
+    marginBottom: 8,
+    marginTop: 8,
   },
   separatorContainer: {
     marginTop: 32,

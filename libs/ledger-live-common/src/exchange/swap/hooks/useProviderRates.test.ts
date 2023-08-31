@@ -382,4 +382,40 @@ describe("useProviderRates", () => {
     expect(result.current.rates.status).toBe("success");
     expect(onNoRates).toHaveBeenCalledTimes(1);
   });
+
+  it("should call onBeforeTransaction before new swap transaction begins", async () => {
+    mockedGetExchangeRates.mockResolvedValue(mockedRatesPromise);
+    const setExchangeRate = jest.fn();
+    const onBeforeTransaction = jest.fn();
+
+    const { result, waitForNextUpdate } = renderHook(useProviderRates, {
+      initialProps: {
+        ...baseInitalProps,
+        setExchangeRate,
+        onBeforeTransaction,
+      },
+    });
+    expect(onBeforeTransaction).toBeCalledTimes(1);
+    expect(result.current.rates.status).toBe("loading");
+
+    await waitForNextUpdate({ timeout: 1000 });
+    expect(onBeforeTransaction).toBeCalledTimes(1);
+  });
+
+  it("should call onBeforeTransaction callback before onNoRates if there are no rates", async () => {
+    const onNoRates = jest.fn();
+    const onBeforeTransaction = jest.fn();
+
+    mockedGetExchangeRates.mockResolvedValue([]);
+
+    const { result, waitForNextUpdate } = renderHook(useProviderRates, {
+      initialProps: { ...baseInitalProps, onNoRates, onBeforeTransaction },
+    });
+    expect(onBeforeTransaction).toHaveBeenCalledTimes(1);
+    expect(onNoRates).toHaveBeenCalledTimes(0);
+    await waitForNextUpdate({ timeout: 1000 });
+    expect(result.current.rates.value).toMatchObject([]);
+    expect(result.current.rates.status).toBe("success");
+    expect(onNoRates).toHaveBeenCalledTimes(1);
+  });
 });

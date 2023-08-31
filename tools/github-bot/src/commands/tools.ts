@@ -27,6 +27,8 @@ export const commands = (
     const { payload, octokit } = context;
     const isPR = (issue: any) => issue.pull_request !== undefined;
 
+    context.log.info(`[⚙️ Commands](issue_comment.created) PR #${payload.issue.number}`);
+
     const issue = payload.issue;
     const comment = payload.comment;
     const command = comment.body.match(matcher);

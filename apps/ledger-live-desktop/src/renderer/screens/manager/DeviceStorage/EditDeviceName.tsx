@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo } from "react";
-import { Button, Flex, Divider, Text, Input, Icons, BoxedIcon } from "@ledgerhq/react-ui";
+import { Button, Flex, Divider, Text, Input, IconsLegacy, BoxedIcon } from "@ledgerhq/react-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTranslation } from "react-i18next";
 import { DeviceNameInvalid } from "@ledgerhq/errors";
@@ -131,7 +131,7 @@ const EditDeviceName: React.FC<Props> = ({
             data-test-id="device-renamed"
           >
             <BoxedIcon
-              Icon={Icons.CheckAloneMedium}
+              Icon={IconsLegacy.CheckAloneMedium}
               iconColor="success.c60"
               size={64}
               iconSize={24}

@@ -22,9 +22,9 @@ import type { SettingsNavigatorStackParamList } from "./SettingsNavigator";
 import type { SignMessageNavigatorStackParamList } from "./SignMessageNavigator";
 import type { SignTransactionNavigatorParamList } from "./SignTransactionNavigator";
 import type { SwapNavigatorParamList } from "./SwapNavigator";
+import type { EarnLiveAppNavigatorParamList } from "./EarnLiveAppNavigator";
 import type { PlatformExchangeNavigatorParamList } from "./PlatformExchangeNavigator";
 import type { ExchangeStackNavigatorParamList } from "./ExchangeStackNavigator";
-import type { ExchangeNavigatorParamList } from "./ExchangeNavigator";
 import type { ExchangeLiveAppNavigatorParamList } from "./ExchangeLiveAppNavigator";
 import type { RequestAccountNavigatorParamList } from "./RequestAccountNavigator";
 import type { AddAccountsNavigatorParamList } from "./AddAccountsNavigator";
@@ -33,7 +33,6 @@ import type { UnfreezeNavigatorParamList } from "./UnfreezeNavigator";
 import type { FreezeNavigatorParamList } from "./FreezeNavigator";
 import type { BuyDeviceNavigatorParamList } from "./BuyDeviceNavigator";
 import type { MainNavigatorParamList } from "./MainNavigator";
-import type { WalletConnectNavigatorParamList } from "./WalletConnectNavigator";
 import type { WalletConnectLiveAppNavigatorParamList } from "./WalletConnectLiveAppNavigator";
 import type { PostOnboardingNavigatorParamList } from "./PostOnboardingNavigator";
 import type { CustomImageNavigatorParamList } from "./CustomImageNavigator";
@@ -59,6 +58,7 @@ import type { CosmosClaimRewardsFlowParamList } from "../../../families/cosmos/C
 import type { SolanaDelegationFlowParamList } from "../../../families/solana/DelegationFlow/types";
 import type { StellarAddAssetFlowParamList } from "../../../families/stellar/AddAssetFlow/types";
 import type { TezosDelegationFlowParamList } from "../../../families/tezos/DelegationFlow/types";
+import type { EditTransactionParamList } from "../../../families/ethereum/EditTransactionFlow/EditTransactionParamList";
 import type { TronVoteFlowParamList } from "../../../families/tron/VoteFlow/types";
 import type { NoFundsNavigatorParamList } from "./NoFundsNavigator";
 import type { StakeNavigatorParamList } from "./StakeNavigator";
@@ -108,10 +108,13 @@ export type BaseNavigatorStackParamList = {
   };
   [ScreenName.Recover]: {
     platform?: string;
+    device?: Device;
+    fromOnboarding?: boolean;
     name?: string;
     source?: string;
     redirectTo?: string;
     callback?: string;
+    date?: string; // used to reload the webview in case of multiple restore in a row
   };
   [ScreenName.LearnWebView]: {
     uri?: string;
@@ -207,6 +210,7 @@ export type BaseNavigatorStackParamList = {
   };
   [NavigatorName.SignTransaction]: NavigatorScreenParams<SignTransactionNavigatorParamList>;
   [NavigatorName.Swap]: NavigatorScreenParams<SwapNavigatorParamList> | undefined;
+  [NavigatorName.Earn]: NavigatorScreenParams<EarnLiveAppNavigatorParamList> | undefined;
   [NavigatorName.Freeze]: NavigatorScreenParams<FreezeNavigatorParamList>;
   [NavigatorName.Unfreeze]: NavigatorScreenParams<UnfreezeNavigatorParamList>;
   [NavigatorName.ClaimRewards]: NavigatorScreenParams<ClaimRewardsNavigatorParamList>;
@@ -224,10 +228,7 @@ export type BaseNavigatorStackParamList = {
     onError?: (_: Error) => void;
     error?: Error;
   };
-  [NavigatorName.Exchange]:
-    | NavigatorScreenParams<ExchangeLiveAppNavigatorParamList>
-    | NavigatorScreenParams<ExchangeNavigatorParamList>
-    | undefined;
+  [NavigatorName.Exchange]: NavigatorScreenParams<ExchangeLiveAppNavigatorParamList> | undefined;
   [NavigatorName.ExchangeStack]: NavigatorScreenParams<ExchangeStackNavigatorParamList> & {
     mode?: "buy" | "sell";
   };
@@ -243,9 +244,7 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.NotificationCenter]: NavigatorScreenParams<NotificationCenterNavigatorParamList>;
   [NavigatorName.NftNavigator]: NavigatorScreenParams<NftNavigatorParamList>;
   [NavigatorName.Accounts]: NavigatorScreenParams<AccountsNavigatorParamList>;
-  [NavigatorName.WalletConnect]: NavigatorScreenParams<
-    WalletConnectNavigatorParamList | WalletConnectLiveAppNavigatorParamList
-  >;
+  [NavigatorName.WalletConnect]: NavigatorScreenParams<WalletConnectLiveAppNavigatorParamList>;
   [NavigatorName.CustomImage]: NavigatorScreenParams<CustomImageNavigatorParamList>;
   [NavigatorName.ClaimNft]: NavigatorScreenParams<ClaimNftNavigatorParamList>;
   [NavigatorName.PostOnboarding]: NavigatorScreenParams<PostOnboardingNavigatorParamList>;
@@ -286,6 +285,9 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.CosmosUndelegationFlow]: NavigatorScreenParams<CosmosUndelegationFlowParamList>;
   [NavigatorName.CosmosClaimRewardsFlow]: NavigatorScreenParams<CosmosClaimRewardsFlowParamList>;
 
+  // Ethereum
+  [NavigatorName.EditTransaction]: NavigatorScreenParams<EditTransactionParamList>;
+
   // Solana
   [NavigatorName.SolanaDelegationFlow]: NavigatorScreenParams<SolanaDelegationFlowParamList>;
 
@@ -309,5 +311,4 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.StakeFlow]: NavigatorScreenParams<StakeNavigatorParamList>;
 
   [ScreenName.RedirectToOnboardingRecoverFlow]: undefined;
-  [ScreenName.RedirectToRecoverStaxFlow]: Record<string, unknown>;
 };

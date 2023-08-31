@@ -1,69 +1,52 @@
-import { DeviceAppVerifyNotSupported, UserRefusedAddress } from "@ledgerhq/errors";
+import { UserRefusedAddress } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import invariant from "invariant";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { from, Observable } from "rxjs";
 import perFamily from "../../generated/hw-signMessage";
-import { Account } from "@ledgerhq/types-live";
+import { Account, AnyMessage } from "@ledgerhq/types-live";
 import type { AppRequest, AppState } from "../actions/app";
 import { createAction as createAppAction } from "../actions/app";
 import type { Device } from "../actions/types";
 import type { ConnectAppEvent, Input as ConnectAppInput } from "../connectApp";
 import { withDevice } from "../deviceAccess";
-import type { MessageData, SignMessage, Result } from "./types";
-import { DerivationMode } from "@ledgerhq/coin-framework/derivation";
-import { TypedMessageData } from "../../families/ethereum/types";
+import type { SignMessage, Result } from "./types";
 
-export const prepareMessageToSign = (
-  account: Account,
-  message: string,
-): MessageData | TypedMessageData => {
-  const { currency, freshAddressPath, derivationMode } = account;
+export const prepareMessageToSign = (account: Account, message: string): AnyMessage => {
+  const utf8Message = Buffer.from(message, "hex").toString();
 
-  if (!perFamily[currency.family]) {
+  if (!perFamily[account.currency.family]) {
     throw new Error("Crypto does not support signMessage");
   }
 
-  if ("prepareMessageToSign" in perFamily[currency.family]) {
-    return perFamily[currency.family].prepareMessageToSign(
-      currency,
-      freshAddressPath,
-      derivationMode,
-      message,
-    );
+  if ("prepareMessageToSign" in perFamily[account.currency.family]) {
+    return perFamily[account.currency.family].prepareMessageToSign({
+      account,
+      message: utf8Message,
+    });
   }
 
   // Default implementation
-  return {
-    currency: currency,
-    path: freshAddressPath,
-    derivationMode: derivationMode as DerivationMode,
-    message: Buffer.from(message, "hex").toString(),
-    rawMessage: "0x" + message,
-  };
+  return { message: utf8Message };
 };
 
-const signMessage: SignMessage = (transport, opts) => {
-  const { currency, verify } = opts;
+const signMessage: SignMessage = (transport, account, opts) => {
+  const { currency } = account;
   const signMessage = perFamily[currency.family].signMessage;
   invariant(signMessage, `signMessage is not implemented for ${currency.id}`);
-  return signMessage(transport, opts)
+  return signMessage(transport, account, opts)
     .then(result => {
       log(
         "hw",
-        `signMessage ${currency.id} on ${opts.path} with message [${opts.message}]`,
+        `signMessage ${currency.id} on ${account.freshAddressPath} with message [${opts.message}]`,
         result,
       );
       return result;
     })
     .catch(e => {
-      log("hw", `signMessage ${currency.id} on ${opts.path} FAILED ${String(e)}`);
+      log("hw", `signMessage ${currency.id} on ${account.freshAddressPath} FAILED ${String(e)}`);
 
       if (e && e.name === "TransportStatusError") {
-        if (e.statusCode === 0x6b00 && verify) {
-          throw new DeviceAppVerifyNotSupported();
-        }
-
         if (e.statusCode === 0x6985 || e.statusCode === 0x5501) {
           throw new UserRefusedAddress();
         }
@@ -74,14 +57,14 @@ const signMessage: SignMessage = (transport, opts) => {
 };
 
 type BaseState = {
-  signMessageRequested: MessageData | TypedMessageData | null | undefined;
+  signMessageRequested: AnyMessage | null | undefined;
   signMessageError: Error | null | undefined;
   signMessageResult: string | null | undefined;
 };
 
 export type State = AppState & BaseState;
 export type Request = AppRequest & {
-  message: MessageData | TypedMessageData;
+  message: AnyMessage;
 };
 
 export type Input = {
@@ -90,8 +73,12 @@ export type Input = {
 };
 
 export const signMessageExec = ({ request, deviceId }: Input): Observable<Result> => {
+  if (!request.account) {
+    throw new Error("account is required");
+  }
+
   const result: Observable<Result> = withDevice(deviceId)(transport =>
-    from(signMessage(transport, request.message)),
+    from(signMessage(transport, request.account!, request.message)),
   );
   return result;
 };

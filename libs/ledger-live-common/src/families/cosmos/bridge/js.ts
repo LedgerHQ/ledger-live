@@ -45,12 +45,12 @@ const currencyBridge: CurrencyBridge = {
     currency: CryptoCurrency,
   ) => {
     if (!data || typeof data !== "object") return;
-    const { validators } = data;
-    if (!validators || typeof validators !== "object" || !Array.isArray(validators)) return;
     const relatedImpl = cryptoFactory(currency.id);
     relatedImpl.lcd = data.config.lcd;
     relatedImpl.minGasPrice = data.config.minGasPrice;
     relatedImpl.ledgerValidator = data.config.ledgerValidator;
+    const { validators } = data;
+    if (!validators || typeof validators !== "object" || !Array.isArray(validators)) return;
     const cosmosValidatorsManager = new CosmosValidatorsManager(getCryptoCurrencyById(currency.id));
     cosmosValidatorsManager.hydrateValidators(validators);
     setCosmosPreloadData(currency.id, asSafeCosmosPreloadData(data));

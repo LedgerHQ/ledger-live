@@ -9,6 +9,7 @@ import broadcast from "../js-broadcast";
 import { calculateFees } from "./../cache";
 import { perCoinLogic } from "../logic";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
+import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
 import { withDevice } from "../../../hw/deviceAccess";
@@ -26,8 +27,8 @@ const receive = makeAccountBridgeReceive({
   },
 });
 
-const updateTransaction = (t, patch): any => {
-  const updatedT = { ...t, ...patch };
+const updateTransaction = (tx, patch): any => {
+  const updatedT = defaultUpdateTransaction(tx, patch);
 
   // We accept case-insensitive addresses as input from user,
   // but segwit addresses need to be converted to lowercase to be valid

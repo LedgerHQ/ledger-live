@@ -13,7 +13,6 @@ const SEED_IDENTIFIER = "f1p74d4mlmeyc4agflhjqsnvoyzyfdai7fmkyso2a";
 const ACCOUNT_1 = "f1p74d4mlmeyc4agflhjqsnvoyzyfdai7fmkyso2a";
 
 const filecoin: CurrenciesData<Transaction> = {
-  FIXME_ignoreAccountFields: [],
   scanAccounts: [
     {
       name: "filecoin seed 1",
@@ -43,7 +42,6 @@ const filecoin: CurrenciesData<Transaction> = {
   ],
   accounts: [
     {
-      FIXME_tests: ["balance is sum of ops"],
       raw: {
         id: `js:2:filecoin:${SEED_IDENTIFIER}:glif`,
         seedIdentifier: SEED_IDENTIFIER,

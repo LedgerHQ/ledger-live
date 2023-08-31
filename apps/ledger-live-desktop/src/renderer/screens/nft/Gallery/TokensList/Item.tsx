@@ -14,7 +14,7 @@ import NFTContextMenu from "~/renderer/components/ContextMenu/NFTContextMenu";
 import NFTViewerDrawer from "~/renderer/drawers/NFTViewerDrawer";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { State } from "~/renderer/reducers";
-import { Icons } from "@ledgerhq/react-ui";
+import { IconsLegacy } from "@ledgerhq/react-ui";
 const Wrapper = styled(Card)`
   &.disabled {
     pointer-events: none;
@@ -67,11 +67,15 @@ const NftCard = ({ id, mode, account, withContextMenu = false, onHideCollection 
   const show = useMemo(() => status === "loading", [status]);
   const isGrid = mode === "grid";
   const onItemClick = useCallback(() => {
-    setDrawer(NFTViewerDrawer, {
-      account,
-      nftId: id,
-      isOpen: true,
-    });
+    setDrawer(
+      NFTViewerDrawer,
+      {
+        account,
+        nftId: id,
+        isOpen: true,
+      },
+      { forceDisableFocusTrap: true },
+    );
   }, [id, account]);
   const MaybeContext = ({ children }: { children: React.ReactNode }) =>
     withContextMenu && nft && metadata ? (
@@ -145,7 +149,7 @@ const NftCard = ({ id, mode, account, withContextMenu = false, onHideCollection 
                 onHideCollection={onHideCollection}
               >
                 <Dots>
-                  <Icons.OthersMedium size={20} />
+                  <IconsLegacy.OthersMedium size={20} />
                 </Dots>
               </NFTContextMenu>
             )}

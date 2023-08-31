@@ -1,5 +1,592 @@
 # @ledgerhq/live-common
 
+## 31.5.0
+
+### Minor Changes
+
+- [#4148](https://github.com/LedgerHQ/ledger-live/pull/4148) [`dfea8a7a0c`](https://github.com/LedgerHQ/ledger-live/commit/dfea8a7a0c24e85b45863a314d010bb7e2bcd878) Thanks [@Justkant](https://github.com/Justkant)! - feat: update wallet-api
+
+  Add `device.select` and `device.open` support
+  Bump `bignumber.js` to latest because of mismatch between wallet-api version and ours
+
+- [#4154](https://github.com/LedgerHQ/ledger-live/pull/4154) [`3455944496`](https://github.com/LedgerHQ/ledger-live/commit/34559444969ce1571ff4c54f33feb7f3fb59a33a) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Added NotEnoughGasSwap to errors, will return amountFromWarning from useSwapTransaction and display and interpolate NotEnoughGasSwap in LLD
+
+### Patch Changes
+
+- [#4145](https://github.com/LedgerHQ/ledger-live/pull/4145) [`95088eab45`](https://github.com/LedgerHQ/ledger-live/commit/95088eab45f6af919e347a605cefefb6d7705808) Thanks [@ggilchrist-ledger](https://github.com/ggilchrist-ledger)! - Removing FTX and Wyre related code from LLD, LLM and LLC
+
+- [#4170](https://github.com/LedgerHQ/ledger-live/pull/4170) [`d5d0e399ce`](https://github.com/LedgerHQ/ledger-live/commit/d5d0e399ce3cf3a49802bc8a5563eedd8a590094) Thanks [@alexandremgo](https://github.com/alexandremgo)! - feat: handle device in bootloader as a fatal error in the polling mechanism
+
+- [#4209](https://github.com/LedgerHQ/ledger-live/pull/4209) [`90d7c237a4`](https://github.com/LedgerHQ/ledger-live/commit/90d7c237a4380ad91134f24d0c39c10079896725) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Add account as query param to multibuy redirect on NotEnoughGasSwap link click
+
+- [#4186](https://github.com/LedgerHQ/ledger-live/pull/4186) [`a61a43fc47`](https://github.com/LedgerHQ/ledger-live/commit/a61a43fc47399e969fa68539de6af51bfa41e921) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Add linked errors to LLM
+
+- [#4270](https://github.com/LedgerHQ/ledger-live/pull/4270) [`9fa642e428`](https://github.com/LedgerHQ/ledger-live/commit/9fa642e428dc88f88dcd3e6e439c3ee40337dbaf) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLC - added an amount property to the feature_referral_program_desktop_sidebar feature flag
+
+- [#4053](https://github.com/LedgerHQ/ledger-live/pull/4053) [`229cf62304`](https://github.com/LedgerHQ/ledger-live/commit/229cf623043b29eefed3e8e37a102325fa6e0387) Thanks [@mle-gall](https://github.com/mle-gall)! - New NPS ratings flow
+
+- Updated dependencies [[`95088eab45`](https://github.com/LedgerHQ/ledger-live/commit/95088eab45f6af919e347a605cefefb6d7705808), [`a61a43fc47`](https://github.com/LedgerHQ/ledger-live/commit/a61a43fc47399e969fa68539de6af51bfa41e921), [`4c2539a1d5`](https://github.com/LedgerHQ/ledger-live/commit/4c2539a1d5c9c01c0f9fa7cd1daf5a5a63c02996), [`3455944496`](https://github.com/LedgerHQ/ledger-live/commit/34559444969ce1571ff4c54f33feb7f3fb59a33a)]:
+  - @ledgerhq/live-env@0.4.2
+  - @ledgerhq/errors@6.14.0
+  - @ledgerhq/cryptoassets@9.11.1
+  - @ledgerhq/coin-algorand@0.2.6
+  - @ledgerhq/coin-evm@0.5.1
+  - @ledgerhq/coin-framework@0.5.1
+  - @ledgerhq/coin-polkadot@0.3.3
+  - @ledgerhq/domain-service@1.1.8
+  - @ledgerhq/evm-tools@1.0.4
+  - @ledgerhq/hw-app-eth@6.34.3
+  - @ledgerhq/live-network@1.1.5
+  - @ledgerhq/devices@8.0.7
+  - @ledgerhq/hw-app-algorand@6.27.19
+  - @ledgerhq/hw-app-cosmos@6.28.5
+  - @ledgerhq/hw-app-exchange@0.2.3
+  - @ledgerhq/hw-app-near@6.27.14
+  - @ledgerhq/hw-app-polkadot@6.27.19
+  - @ledgerhq/hw-app-solana@7.0.13
+  - @ledgerhq/hw-app-trx@6.27.19
+  - @ledgerhq/hw-transport@6.28.8
+  - @ledgerhq/hw-transport-node-speculos@6.27.19
+  - @ledgerhq/hw-transport-node-speculos-http@6.27.19
+  - @ledgerhq/hw-app-btc@10.0.8
+  - @ledgerhq/hw-app-str@6.27.19
+  - @ledgerhq/hw-app-tezos@6.27.19
+  - @ledgerhq/hw-app-xrp@6.27.19
+  - @ledgerhq/hw-transport-mocker@6.27.19
+
+## 31.5.0-next.1
+
+### Patch Changes
+
+- [#4270](https://github.com/LedgerHQ/ledger-live/pull/4270) [`9fa642e428`](https://github.com/LedgerHQ/ledger-live/commit/9fa642e428dc88f88dcd3e6e439c3ee40337dbaf) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLC - added an amount property to the feature_referral_program_desktop_sidebar feature flag
+
+## 31.5.0-next.0
+
+### Minor Changes
+
+- [#4148](https://github.com/LedgerHQ/ledger-live/pull/4148) [`dfea8a7a0c`](https://github.com/LedgerHQ/ledger-live/commit/dfea8a7a0c24e85b45863a314d010bb7e2bcd878) Thanks [@Justkant](https://github.com/Justkant)! - feat: update wallet-api
+
+  Add `device.select` and `device.open` support
+  Bump `bignumber.js` to latest because of mismatch between wallet-api version and ours
+
+- [#4154](https://github.com/LedgerHQ/ledger-live/pull/4154) [`3455944496`](https://github.com/LedgerHQ/ledger-live/commit/34559444969ce1571ff4c54f33feb7f3fb59a33a) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Added NotEnoughGasSwap to errors, will return amountFromWarning from useSwapTransaction and display and interpolate NotEnoughGasSwap in LLD
+
+### Patch Changes
+
+- [#4145](https://github.com/LedgerHQ/ledger-live/pull/4145) [`95088eab45`](https://github.com/LedgerHQ/ledger-live/commit/95088eab45f6af919e347a605cefefb6d7705808) Thanks [@ggilchrist-ledger](https://github.com/ggilchrist-ledger)! - Removing FTX and Wyre related code from LLD, LLM and LLC
+
+- [#4170](https://github.com/LedgerHQ/ledger-live/pull/4170) [`d5d0e399ce`](https://github.com/LedgerHQ/ledger-live/commit/d5d0e399ce3cf3a49802bc8a5563eedd8a590094) Thanks [@alexandremgo](https://github.com/alexandremgo)! - feat: handle device in bootloader as a fatal error in the polling mechanism
+
+- [#4209](https://github.com/LedgerHQ/ledger-live/pull/4209) [`90d7c237a4`](https://github.com/LedgerHQ/ledger-live/commit/90d7c237a4380ad91134f24d0c39c10079896725) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Add account as query param to multibuy redirect on NotEnoughGasSwap link click
+
+- [#4186](https://github.com/LedgerHQ/ledger-live/pull/4186) [`a61a43fc47`](https://github.com/LedgerHQ/ledger-live/commit/a61a43fc47399e969fa68539de6af51bfa41e921) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Add linked errors to LLM
+
+- [#4053](https://github.com/LedgerHQ/ledger-live/pull/4053) [`229cf62304`](https://github.com/LedgerHQ/ledger-live/commit/229cf623043b29eefed3e8e37a102325fa6e0387) Thanks [@mle-gall](https://github.com/mle-gall)! - New NPS ratings flow
+
+- Updated dependencies [[`95088eab45`](https://github.com/LedgerHQ/ledger-live/commit/95088eab45f6af919e347a605cefefb6d7705808), [`a61a43fc47`](https://github.com/LedgerHQ/ledger-live/commit/a61a43fc47399e969fa68539de6af51bfa41e921), [`4c2539a1d5`](https://github.com/LedgerHQ/ledger-live/commit/4c2539a1d5c9c01c0f9fa7cd1daf5a5a63c02996), [`3455944496`](https://github.com/LedgerHQ/ledger-live/commit/34559444969ce1571ff4c54f33feb7f3fb59a33a)]:
+  - @ledgerhq/live-env@0.4.2-next.0
+  - @ledgerhq/errors@6.14.0-next.0
+  - @ledgerhq/cryptoassets@9.11.1-next.0
+  - @ledgerhq/coin-algorand@0.2.6-next.0
+  - @ledgerhq/coin-evm@0.5.1-next.0
+  - @ledgerhq/coin-framework@0.5.1-next.0
+  - @ledgerhq/coin-polkadot@0.3.3-next.0
+  - @ledgerhq/domain-service@1.1.8-next.0
+  - @ledgerhq/evm-tools@1.0.4-next.0
+  - @ledgerhq/hw-app-eth@6.34.3-next.0
+  - @ledgerhq/live-network@1.1.5-next.0
+  - @ledgerhq/devices@8.0.7-next.0
+  - @ledgerhq/hw-app-algorand@6.27.19-next.0
+  - @ledgerhq/hw-app-cosmos@6.28.5-next.0
+  - @ledgerhq/hw-app-exchange@0.2.3-next.0
+  - @ledgerhq/hw-app-near@6.27.14-next.0
+  - @ledgerhq/hw-app-polkadot@6.27.19-next.0
+  - @ledgerhq/hw-app-solana@7.0.13-next.0
+  - @ledgerhq/hw-app-trx@6.27.19-next.0
+  - @ledgerhq/hw-transport@6.28.8-next.0
+  - @ledgerhq/hw-transport-node-speculos@6.27.19-next.0
+  - @ledgerhq/hw-transport-node-speculos-http@6.27.19-next.0
+  - @ledgerhq/hw-app-btc@10.0.8-next.0
+  - @ledgerhq/hw-app-str@6.27.19-next.0
+  - @ledgerhq/hw-app-tezos@6.27.19-next.0
+  - @ledgerhq/hw-app-xrp@6.27.19-next.0
+  - @ledgerhq/hw-transport-mocker@6.27.19-next.0
+
+## 31.4.0
+
+### Minor Changes
+
+- [#4061](https://github.com/LedgerHQ/ledger-live/pull/4061) [`a690f9802f`](https://github.com/LedgerHQ/ledger-live/commit/a690f9802f81643ac047d6626f691353953adca1) Thanks [@cng-ledger](https://github.com/cng-ledger)! - adding tron exchange support to ledger live common
+
+- [#4139](https://github.com/LedgerHQ/ledger-live/pull/4139) [`28068a5333`](https://github.com/LedgerHQ/ledger-live/commit/28068a53336eb51936c529e0a06605b64ece24ec) Thanks [@stephane-lieumont-ledger](https://github.com/stephane-lieumont-ledger)! - add generic error and add error screen recover device already seeded
+
+- [#3926](https://github.com/LedgerHQ/ledger-live/pull/3926) [`7901608c80`](https://github.com/LedgerHQ/ledger-live/commit/7901608c80343abb271cce495fce673c544e6330) Thanks [@Justkant](https://github.com/Justkant)! - feat(recover): restore check seeded [PROTECT-1711]
+
+- [#4021](https://github.com/LedgerHQ/ledger-live/pull/4021) [`e5f9cc46d6`](https://github.com/LedgerHQ/ledger-live/commit/e5f9cc46d69b82ad7267296b350e9d97a47f9e86) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add telos evm currency
+
+- [#3827](https://github.com/LedgerHQ/ledger-live/pull/3827) [`6a88b7f8a6`](https://github.com/LedgerHQ/ledger-live/commit/6a88b7f8a6b7c732be0c945131b6c1d9b3937cc1) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update `Batcher` to be more agnostic
+
+- [#3704](https://github.com/LedgerHQ/ledger-live/pull/3704) [`b6e50932af`](https://github.com/LedgerHQ/ledger-live/commit/b6e50932afac6acc2d2f9fa9ed10b77a62378e03) Thanks [@chabroA](https://github.com/chabroA)! - Create EVM send flow
+
+- [#4015](https://github.com/LedgerHQ/ledger-live/pull/4015) [`374e339c27`](https://github.com/LedgerHQ/ledger-live/commit/374e339c27e317656d01463a822898ad3a60df85) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Polygon zkEVM, Base Goerli, Klaytn
+
+### Patch Changes
+
+- [#4065](https://github.com/LedgerHQ/ledger-live/pull/4065) [`12c6004c2c`](https://github.com/LedgerHQ/ledger-live/commit/12c6004c2cbc97df13cd465e1a9a09e6114df2be) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix osmo naming error
+
+- [#4113](https://github.com/LedgerHQ/ledger-live/pull/4113) [`4e47969867`](https://github.com/LedgerHQ/ledger-live/commit/4e4796986724579c8a9e405add44db6280878508) Thanks [@grsoares21](https://github.com/grsoares21)! - Add automatic retry mechanism for app installation operations
+
+- [#4000](https://github.com/LedgerHQ/ledger-live/pull/4000) [`e775c83ab7`](https://github.com/LedgerHQ/ledger-live/commit/e775c83ab7fa28b395c149d03679cdd93535b14a) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Cosmos tx2op multiple event fix
+
+- [#4086](https://github.com/LedgerHQ/ledger-live/pull/4086) [`2e5e37af96`](https://github.com/LedgerHQ/ledger-live/commit/2e5e37af96120b58fb56386cf77b6478cf06eed8) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Sync onboarding: remove Polygon from default list of apps installed on device as it is no longer needed for full setup of Stax (because we are dropping the claim NFT feature in the post onboarding)
+
+- [#4003](https://github.com/LedgerHQ/ledger-live/pull/4003) [`3de79a2927`](https://github.com/LedgerHQ/ledger-live/commit/3de79a2927a1679ce4571f2c298cd404877cc49a) Thanks [@sarneijim](https://github.com/sarneijim)! - Remove extra refresh effect when configuration change in swap llm
+
+- [#3983](https://github.com/LedgerHQ/ledger-live/pull/3983) [`5dba98a39d`](https://github.com/LedgerHQ/ledger-live/commit/5dba98a39de6765539f76446613f1a90ddb743d5) Thanks [@cng-ledger](https://github.com/cng-ledger)! - added ProviderIcon component to LLD & LLM which loads svg icons from CDN
+
+- [#4096](https://github.com/LedgerHQ/ledger-live/pull/4096) [`03896700ca`](https://github.com/LedgerHQ/ledger-live/commit/03896700ca019b5a0b6a2d68b49abb80e47d3d02) Thanks [@lawRathod](https://github.com/lawRathod)! - Update scanAccount and snapshot for icp bridge integration tests.
+
+- [#4130](https://github.com/LedgerHQ/ledger-live/pull/4130) [`cfbff52724`](https://github.com/LedgerHQ/ledger-live/commit/cfbff527241534aba69bff3d86733b50a14eb4ce) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - coreum integration
+
+- [#4090](https://github.com/LedgerHQ/ledger-live/pull/4090) [`7675787398`](https://github.com/LedgerHQ/ledger-live/commit/767578739822597768f877f94fd8f7f35441395a) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix building & bundling of `evm-tools` & `domain-service` libs due to .gitignore(s)
+
+- [#4020](https://github.com/LedgerHQ/ledger-live/pull/4020) [`37c4e845c3`](https://github.com/LedgerHQ/ledger-live/commit/37c4e845c3f821760a67c56bdbfa09f45f736c78) Thanks [@chabroA](https://github.com/chabroA)! - remove unnecessary check on tx networkInfo
+
+- [#4153](https://github.com/LedgerHQ/ledger-live/pull/4153) [`cd00fe93c5`](https://github.com/LedgerHQ/ledger-live/commit/cd00fe93c599dfd8d71c49adf538c0c8fd2e4280) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix cosmos operation detail fields names destination_validator and source_validator
+
+- [#4042](https://github.com/LedgerHQ/ledger-live/pull/4042) [`c7c484acf0`](https://github.com/LedgerHQ/ledger-live/commit/c7c484acf01e9db8dc5a5507b62ffcb863c77ca4) Thanks [@alexandremgo](https://github.com/alexandremgo)! - feat: new get latest available firmware action and hook
+
+  Created a getLatestAvailableFirmwareAction and a React adapter with a hook: useGetLatestAvailableFirmware
+  The need came from having a version of a "get latest available firmware" function that is resilient
+  to Transport race conditions (by catching and retrying).
+
+  Implemented using the new device SDK paradigm.
+
+  Also now propagating the following informations:
+
+  - does the current error that occurred in a task triggered an attempt to retry the task ?
+  - what kind of locked device error occurred: 0x5515 (LockedDeviceError) or device "unresponsive"
+
+- Updated dependencies [[`1263b7a9c1`](https://github.com/LedgerHQ/ledger-live/commit/1263b7a9c1916da81ad55bb2ca1e804cff5f89e2), [`770842cdbe`](https://github.com/LedgerHQ/ledger-live/commit/770842cdbe94c629b6844f93d1b5d94d381931b1), [`a59028f761`](https://github.com/LedgerHQ/ledger-live/commit/a59028f761c84d257eca72be7668af5fbc981c3a), [`e5f9cc46d6`](https://github.com/LedgerHQ/ledger-live/commit/e5f9cc46d69b82ad7267296b350e9d97a47f9e86), [`6a88b7f8a6`](https://github.com/LedgerHQ/ledger-live/commit/6a88b7f8a6b7c732be0c945131b6c1d9b3937cc1), [`cfbff52724`](https://github.com/LedgerHQ/ledger-live/commit/cfbff527241534aba69bff3d86733b50a14eb4ce), [`b6e50932af`](https://github.com/LedgerHQ/ledger-live/commit/b6e50932afac6acc2d2f9fa9ed10b77a62378e03), [`b6e50932af`](https://github.com/LedgerHQ/ledger-live/commit/b6e50932afac6acc2d2f9fa9ed10b77a62378e03), [`6a88b7f8a6`](https://github.com/LedgerHQ/ledger-live/commit/6a88b7f8a6b7c732be0c945131b6c1d9b3937cc1), [`6a88b7f8a6`](https://github.com/LedgerHQ/ledger-live/commit/6a88b7f8a6b7c732be0c945131b6c1d9b3937cc1), [`7675787398`](https://github.com/LedgerHQ/ledger-live/commit/767578739822597768f877f94fd8f7f35441395a), [`c7c484acf0`](https://github.com/LedgerHQ/ledger-live/commit/c7c484acf01e9db8dc5a5507b62ffcb863c77ca4), [`374e339c27`](https://github.com/LedgerHQ/ledger-live/commit/374e339c27e317656d01463a822898ad3a60df85), [`c2fd7e2e3d`](https://github.com/LedgerHQ/ledger-live/commit/c2fd7e2e3d684da831a7eafe6b22b5e2c96a3722), [`66769a98e6`](https://github.com/LedgerHQ/ledger-live/commit/66769a98e69f2b8156417e464e90d9162272b470)]:
+  - @ledgerhq/cryptoassets@9.11.0
+  - @ledgerhq/live-env@0.4.1
+  - @ledgerhq/coin-polkadot@0.3.2
+  - @ledgerhq/coin-evm@0.5.0
+  - @ledgerhq/coin-framework@0.5.0
+  - @ledgerhq/evm-tools@1.0.3
+  - @ledgerhq/hw-app-eth@6.34.2
+  - @ledgerhq/errors@6.13.1
+  - @ledgerhq/coin-algorand@0.2.5
+  - @ledgerhq/domain-service@1.1.7
+  - @ledgerhq/live-network@1.1.4
+  - @ledgerhq/devices@8.0.6
+  - @ledgerhq/hw-app-algorand@6.27.18
+  - @ledgerhq/hw-app-cosmos@6.28.4
+  - @ledgerhq/hw-app-exchange@0.2.2
+  - @ledgerhq/hw-app-near@6.27.13
+  - @ledgerhq/hw-app-polkadot@6.27.18
+  - @ledgerhq/hw-app-solana@7.0.12
+  - @ledgerhq/hw-app-trx@6.27.18
+  - @ledgerhq/hw-transport@6.28.7
+  - @ledgerhq/hw-transport-node-speculos@6.27.18
+  - @ledgerhq/hw-transport-node-speculos-http@6.27.18
+  - @ledgerhq/hw-app-btc@10.0.7
+  - @ledgerhq/hw-app-str@6.27.18
+  - @ledgerhq/hw-app-tezos@6.27.18
+  - @ledgerhq/hw-app-xrp@6.27.18
+  - @ledgerhq/hw-transport-mocker@6.27.18
+
+## 31.4.0-next.0
+
+### Minor Changes
+
+- [#4061](https://github.com/LedgerHQ/ledger-live/pull/4061) [`a690f9802f`](https://github.com/LedgerHQ/ledger-live/commit/a690f9802f81643ac047d6626f691353953adca1) Thanks [@cng-ledger](https://github.com/cng-ledger)! - adding tron exchange support to ledger live common
+
+- [#4139](https://github.com/LedgerHQ/ledger-live/pull/4139) [`28068a5333`](https://github.com/LedgerHQ/ledger-live/commit/28068a53336eb51936c529e0a06605b64ece24ec) Thanks [@stephane-lieumont-ledger](https://github.com/stephane-lieumont-ledger)! - add generic error and add error screen recover device already seeded
+
+- [#3926](https://github.com/LedgerHQ/ledger-live/pull/3926) [`7901608c80`](https://github.com/LedgerHQ/ledger-live/commit/7901608c80343abb271cce495fce673c544e6330) Thanks [@Justkant](https://github.com/Justkant)! - feat(recover): restore check seeded [PROTECT-1711]
+
+- [#4021](https://github.com/LedgerHQ/ledger-live/pull/4021) [`e5f9cc46d6`](https://github.com/LedgerHQ/ledger-live/commit/e5f9cc46d69b82ad7267296b350e9d97a47f9e86) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add telos evm currency
+
+- [#3827](https://github.com/LedgerHQ/ledger-live/pull/3827) [`6a88b7f8a6`](https://github.com/LedgerHQ/ledger-live/commit/6a88b7f8a6b7c732be0c945131b6c1d9b3937cc1) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update `Batcher` to be more agnostic
+
+- [#3704](https://github.com/LedgerHQ/ledger-live/pull/3704) [`b6e50932af`](https://github.com/LedgerHQ/ledger-live/commit/b6e50932afac6acc2d2f9fa9ed10b77a62378e03) Thanks [@chabroA](https://github.com/chabroA)! - Create EVM send flow
+
+- [#4015](https://github.com/LedgerHQ/ledger-live/pull/4015) [`374e339c27`](https://github.com/LedgerHQ/ledger-live/commit/374e339c27e317656d01463a822898ad3a60df85) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Polygon zkEVM, Base Goerli, Klaytn
+
+### Patch Changes
+
+- [#4065](https://github.com/LedgerHQ/ledger-live/pull/4065) [`12c6004c2c`](https://github.com/LedgerHQ/ledger-live/commit/12c6004c2cbc97df13cd465e1a9a09e6114df2be) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix osmo naming error
+
+- [#4113](https://github.com/LedgerHQ/ledger-live/pull/4113) [`4e47969867`](https://github.com/LedgerHQ/ledger-live/commit/4e4796986724579c8a9e405add44db6280878508) Thanks [@grsoares21](https://github.com/grsoares21)! - Add automatic retry mechanism for app installation operations
+
+- [#4000](https://github.com/LedgerHQ/ledger-live/pull/4000) [`e775c83ab7`](https://github.com/LedgerHQ/ledger-live/commit/e775c83ab7fa28b395c149d03679cdd93535b14a) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Cosmos tx2op multiple event fix
+
+- [#4086](https://github.com/LedgerHQ/ledger-live/pull/4086) [`2e5e37af96`](https://github.com/LedgerHQ/ledger-live/commit/2e5e37af96120b58fb56386cf77b6478cf06eed8) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Sync onboarding: remove Polygon from default list of apps installed on device as it is no longer needed for full setup of Stax (because we are dropping the claim NFT feature in the post onboarding)
+
+- [#4003](https://github.com/LedgerHQ/ledger-live/pull/4003) [`3de79a2927`](https://github.com/LedgerHQ/ledger-live/commit/3de79a2927a1679ce4571f2c298cd404877cc49a) Thanks [@sarneijim](https://github.com/sarneijim)! - Remove extra refresh effect when configuration change in swap llm
+
+- [#3983](https://github.com/LedgerHQ/ledger-live/pull/3983) [`5dba98a39d`](https://github.com/LedgerHQ/ledger-live/commit/5dba98a39de6765539f76446613f1a90ddb743d5) Thanks [@cng-ledger](https://github.com/cng-ledger)! - added ProviderIcon component to LLD & LLM which loads svg icons from CDN
+
+- [#4096](https://github.com/LedgerHQ/ledger-live/pull/4096) [`03896700ca`](https://github.com/LedgerHQ/ledger-live/commit/03896700ca019b5a0b6a2d68b49abb80e47d3d02) Thanks [@lawRathod](https://github.com/lawRathod)! - Update scanAccount and snapshot for icp bridge integration tests.
+
+- [#4130](https://github.com/LedgerHQ/ledger-live/pull/4130) [`cfbff52724`](https://github.com/LedgerHQ/ledger-live/commit/cfbff527241534aba69bff3d86733b50a14eb4ce) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - coreum integration
+
+- [#4090](https://github.com/LedgerHQ/ledger-live/pull/4090) [`7675787398`](https://github.com/LedgerHQ/ledger-live/commit/767578739822597768f877f94fd8f7f35441395a) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix building & bundling of `evm-tools` & `domain-service` libs due to .gitignore(s)
+
+- [#4020](https://github.com/LedgerHQ/ledger-live/pull/4020) [`37c4e845c3`](https://github.com/LedgerHQ/ledger-live/commit/37c4e845c3f821760a67c56bdbfa09f45f736c78) Thanks [@chabroA](https://github.com/chabroA)! - remove unnecessary check on tx networkInfo
+
+- [#4153](https://github.com/LedgerHQ/ledger-live/pull/4153) [`cd00fe93c5`](https://github.com/LedgerHQ/ledger-live/commit/cd00fe93c599dfd8d71c49adf538c0c8fd2e4280) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix cosmos operation detail fields names destination_validator and source_validator
+
+- [#4042](https://github.com/LedgerHQ/ledger-live/pull/4042) [`c7c484acf0`](https://github.com/LedgerHQ/ledger-live/commit/c7c484acf01e9db8dc5a5507b62ffcb863c77ca4) Thanks [@alexandremgo](https://github.com/alexandremgo)! - feat: new get latest available firmware action and hook
+
+  Created a getLatestAvailableFirmwareAction and a React adapter with a hook: useGetLatestAvailableFirmware
+  The need came from having a version of a "get latest available firmware" function that is resilient
+  to Transport race conditions (by catching and retrying).
+
+  Implemented using the new device SDK paradigm.
+
+  Also now propagating the following informations:
+
+  - does the current error that occurred in a task triggered an attempt to retry the task ?
+  - what kind of locked device error occurred: 0x5515 (LockedDeviceError) or device "unresponsive"
+
+- Updated dependencies [[`1263b7a9c1`](https://github.com/LedgerHQ/ledger-live/commit/1263b7a9c1916da81ad55bb2ca1e804cff5f89e2), [`770842cdbe`](https://github.com/LedgerHQ/ledger-live/commit/770842cdbe94c629b6844f93d1b5d94d381931b1), [`a59028f761`](https://github.com/LedgerHQ/ledger-live/commit/a59028f761c84d257eca72be7668af5fbc981c3a), [`e5f9cc46d6`](https://github.com/LedgerHQ/ledger-live/commit/e5f9cc46d69b82ad7267296b350e9d97a47f9e86), [`6a88b7f8a6`](https://github.com/LedgerHQ/ledger-live/commit/6a88b7f8a6b7c732be0c945131b6c1d9b3937cc1), [`cfbff52724`](https://github.com/LedgerHQ/ledger-live/commit/cfbff527241534aba69bff3d86733b50a14eb4ce), [`b6e50932af`](https://github.com/LedgerHQ/ledger-live/commit/b6e50932afac6acc2d2f9fa9ed10b77a62378e03), [`b6e50932af`](https://github.com/LedgerHQ/ledger-live/commit/b6e50932afac6acc2d2f9fa9ed10b77a62378e03), [`6a88b7f8a6`](https://github.com/LedgerHQ/ledger-live/commit/6a88b7f8a6b7c732be0c945131b6c1d9b3937cc1), [`6a88b7f8a6`](https://github.com/LedgerHQ/ledger-live/commit/6a88b7f8a6b7c732be0c945131b6c1d9b3937cc1), [`7675787398`](https://github.com/LedgerHQ/ledger-live/commit/767578739822597768f877f94fd8f7f35441395a), [`c7c484acf0`](https://github.com/LedgerHQ/ledger-live/commit/c7c484acf01e9db8dc5a5507b62ffcb863c77ca4), [`374e339c27`](https://github.com/LedgerHQ/ledger-live/commit/374e339c27e317656d01463a822898ad3a60df85), [`c2fd7e2e3d`](https://github.com/LedgerHQ/ledger-live/commit/c2fd7e2e3d684da831a7eafe6b22b5e2c96a3722), [`66769a98e6`](https://github.com/LedgerHQ/ledger-live/commit/66769a98e69f2b8156417e464e90d9162272b470)]:
+  - @ledgerhq/cryptoassets@9.11.0-next.0
+  - @ledgerhq/live-env@0.4.1-next.0
+  - @ledgerhq/coin-polkadot@0.3.2-next.0
+  - @ledgerhq/coin-evm@0.5.0-next.0
+  - @ledgerhq/coin-framework@0.5.0-next.0
+  - @ledgerhq/evm-tools@1.0.3-next.0
+  - @ledgerhq/hw-app-eth@6.34.2-next.0
+  - @ledgerhq/errors@6.13.1-next.0
+  - @ledgerhq/coin-algorand@0.2.5-next.0
+  - @ledgerhq/domain-service@1.1.7-next.0
+  - @ledgerhq/live-network@1.1.4-next.0
+  - @ledgerhq/devices@8.0.6-next.0
+  - @ledgerhq/hw-app-algorand@6.27.18-next.0
+  - @ledgerhq/hw-app-cosmos@6.28.4-next.0
+  - @ledgerhq/hw-app-exchange@0.2.2-next.0
+  - @ledgerhq/hw-app-near@6.27.13-next.0
+  - @ledgerhq/hw-app-polkadot@6.27.18-next.0
+  - @ledgerhq/hw-app-solana@7.0.12-next.0
+  - @ledgerhq/hw-app-trx@6.27.18-next.0
+  - @ledgerhq/hw-transport@6.28.7-next.0
+  - @ledgerhq/hw-transport-node-speculos@6.27.18-next.0
+  - @ledgerhq/hw-transport-node-speculos-http@6.27.18-next.0
+  - @ledgerhq/hw-app-btc@10.0.7-next.0
+  - @ledgerhq/hw-app-str@6.27.18-next.0
+  - @ledgerhq/hw-app-tezos@6.27.18-next.0
+  - @ledgerhq/hw-app-xrp@6.27.18-next.0
+  - @ledgerhq/hw-transport-mocker@6.27.18-next.0
+
+## 31.3.1
+
+### Patch Changes
+
+- [#4103](https://github.com/LedgerHQ/ledger-live/pull/4103) [`2317fccb67`](https://github.com/LedgerHQ/ledger-live/commit/2317fccb6776a077eaca8828da8371d402323be4) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix building & bundling of `evm-tools` & `domain-service` libs due to .gitignore(s)
+
+- Updated dependencies [[`2317fccb67`](https://github.com/LedgerHQ/ledger-live/commit/2317fccb6776a077eaca8828da8371d402323be4)]:
+  - @ledgerhq/coin-evm@0.4.1
+  - @ledgerhq/evm-tools@1.0.2
+  - @ledgerhq/hw-app-eth@6.34.1
+
+## 31.3.1-hotfix.0
+
+### Patch Changes
+
+- [#4103](https://github.com/LedgerHQ/ledger-live/pull/4103) [`2317fccb67`](https://github.com/LedgerHQ/ledger-live/commit/2317fccb6776a077eaca8828da8371d402323be4) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix building & bundling of `evm-tools` & `domain-service` libs due to .gitignore(s)
+
+- Updated dependencies [[`2317fccb67`](https://github.com/LedgerHQ/ledger-live/commit/2317fccb6776a077eaca8828da8371d402323be4)]:
+  - @ledgerhq/coin-evm@0.4.1-hotfix.0
+  - @ledgerhq/evm-tools@1.0.2-hotfix.0
+  - @ledgerhq/hw-app-eth@6.34.1-hotfix.0
+
+## 31.3.0
+
+### Minor Changes
+
+- [#3864](https://github.com/LedgerHQ/ledger-live/pull/3864) [`d0cfcbc6d7`](https://github.com/LedgerHQ/ledger-live/commit/d0cfcbc6d7ca4693bd9db9f3958d4fbbdd947865) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Increase ttl coinc config
+
+- [#3714](https://github.com/LedgerHQ/ledger-live/pull/3714) [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add NFT support to EVM family synchronization
+
+- [#3843](https://github.com/LedgerHQ/ledger-live/pull/3843) [`96322128d8`](https://github.com/LedgerHQ/ledger-live/commit/96322128d8e4fffd0eea384e4f787c9e26e9fbac) Thanks [@Justkant](https://github.com/Justkant)! - feat: recover llm stax
+
+- [#3714](https://github.com/LedgerHQ/ledger-live/pull/3714) [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Moving NFT related files from live-common to coin-framework with retrocompatibility
+
+- [#3714](https://github.com/LedgerHQ/ledger-live/pull/3714) [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update NftMetadataProvider types
+
+- [#3459](https://github.com/LedgerHQ/ledger-live/pull/3459) [`49182846de`](https://github.com/LedgerHQ/ledger-live/commit/49182846dee35ae9b3535c0c120e17d0eaecde70) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - add support to stacks blockchain
+
+- [#3924](https://github.com/LedgerHQ/ledger-live/pull/3924) [`14cce73003`](https://github.com/LedgerHQ/ledger-live/commit/14cce7300333c51cbcdbd5a7e290ddc600c9f3a1) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update SignMessage logic to be simpler, with improved typing.
+
+- [#3815](https://github.com/LedgerHQ/ledger-live/pull/3815) [`0f4293e9bf`](https://github.com/LedgerHQ/ledger-live/commit/0f4293e9bf9cac4c2a195efeb0831aab3d51933d) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Support for Internet Computer blockchain
+
+- [#3949](https://github.com/LedgerHQ/ledger-live/pull/3949) [`16d29e18ee`](https://github.com/LedgerHQ/ledger-live/commit/16d29e18eef21009ba384f15f495c92b2028b4c4) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Add timeout and timeoutErrorMessage params to useSwapTransaction
+
+- [#3841](https://github.com/LedgerHQ/ledger-live/pull/3841) [`bae3b64dd2`](https://github.com/LedgerHQ/ledger-live/commit/bae3b64dd2710a3743552600166be986e93d9099) Thanks [@Justkant](https://github.com/Justkant)! - feat: recover on LLD
+
+  Handle the recover deeplink
+  Add a screen to redirect to the correct device onboarding automatically
+  Rework of the recover feature flags
+  Add upsell screen for recover after onboarding
+
+- [#3825](https://github.com/LedgerHQ/ledger-live/pull/3825) [`9692adc2a6`](https://github.com/LedgerHQ/ledger-live/commit/9692adc2a6774feb4424fc7a984810918c946b1b) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Cosmos chains : stargaze, desmos, umee, secret network
+
+### Patch Changes
+
+- [#3918](https://github.com/LedgerHQ/ledger-live/pull/3918) [`9676e157b3`](https://github.com/LedgerHQ/ledger-live/commit/9676e157b3471ce43c9a283417c718ee11978ee4) Thanks [@alexandremgo](https://github.com/alexandremgo)! - feat: return device info from hook to get latest available firmware update
+
+  - return device info from getLatestAvailableFirmwareFromDeviceId
+  - return device info from hook useGetLatestAvailableFirmware
+
+- [#3865](https://github.com/LedgerHQ/ledger-live/pull/3865) [`d2c1b9ed8d`](https://github.com/LedgerHQ/ledger-live/commit/d2c1b9ed8d7dc3bacfc9c5020a4612693cd62272) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Remove condition of terminated coin for Nano app installation
+
+- [#3709](https://github.com/LedgerHQ/ledger-live/pull/3709) [`f474bc5631`](https://github.com/LedgerHQ/ledger-live/commit/f474bc56314a32b8b81453bf2c3c43959d42c3bd) Thanks [@grsoares21](https://github.com/grsoares21)! - Small fix on the state handling of the firmware update device action
+
+- [#3859](https://github.com/LedgerHQ/ledger-live/pull/3859) [`2292a285e0`](https://github.com/LedgerHQ/ledger-live/commit/2292a285e03d34951b57d778b0c3626e9b4aff17) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix bitcoin family bot
+
+- [#3883](https://github.com/LedgerHQ/ledger-live/pull/3883) [`194acaf3d7`](https://github.com/LedgerHQ/ledger-live/commit/194acaf3d7389727ace87206a45a39fd3a5e1f98) Thanks [@grsoares21](https://github.com/grsoares21)! - Fix a device action implementation issue that was causing the UI to flicker during device actions
+
+- [#3881](https://github.com/LedgerHQ/ledger-live/pull/3881) [`b68120562b`](https://github.com/LedgerHQ/ledger-live/commit/b68120562b99d6a19ffc4c9cc13ac49979bef3e8) Thanks [@aboissiere-ledger](https://github.com/aboissiere-ledger)! - Fix jest config to generate coverage report and include untested files
+
+- [#3831](https://github.com/LedgerHQ/ledger-live/pull/3831) [`04f63f0776`](https://github.com/LedgerHQ/ledger-live/commit/04f63f077647f9d77fe2c80ec62f872547ed332a) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Fix no funds swap result
+
+- [#3692](https://github.com/LedgerHQ/ledger-live/pull/3692) [`be437fa19f`](https://github.com/LedgerHQ/ledger-live/commit/be437fa19ff8c0557fe426fc8a174445fbee0f7a) Thanks [@cksanders](https://github.com/cksanders)! - Move swap dex utils to common and remove DEX feature flag.
+
+- [#4011](https://github.com/LedgerHQ/ledger-live/pull/4011) [`23f26c0f80`](https://github.com/LedgerHQ/ledger-live/commit/23f26c0f8005f7accbbdd96909b858fbfc4719a0) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Disable default derivation scheme for ICP, to use only the custom one
+
+- [#3892](https://github.com/LedgerHQ/ledger-live/pull/3892) [`ae9f327cc7`](https://github.com/LedgerHQ/ledger-live/commit/ae9f327cc7414d7f769704dd1cc83128c876d185) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix missing pending transaction bug
+
+- [#3917](https://github.com/LedgerHQ/ledger-live/pull/3917) [`989707f00c`](https://github.com/LedgerHQ/ledger-live/commit/989707f00c76145cef924f3e5417894ee117080e) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - debounce setFromAmount in LLC by 400ms
+
+- Updated dependencies [[`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec), [`49182846de`](https://github.com/LedgerHQ/ledger-live/commit/49182846dee35ae9b3535c0c120e17d0eaecde70), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec), [`c660c4e389`](https://github.com/LedgerHQ/ledger-live/commit/c660c4e389ac200ef308cbc3882930d392375de3), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec), [`11e62b1e1e`](https://github.com/LedgerHQ/ledger-live/commit/11e62b1e1e3773eeaad748453973e0b3bcd3e3bf), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec), [`2c28d5aab3`](https://github.com/LedgerHQ/ledger-live/commit/2c28d5aab36b8b0cf2cb2a50e02eac4c5a588e41), [`14cce73003`](https://github.com/LedgerHQ/ledger-live/commit/14cce7300333c51cbcdbd5a7e290ddc600c9f3a1), [`0f4293e9bf`](https://github.com/LedgerHQ/ledger-live/commit/0f4293e9bf9cac4c2a195efeb0831aab3d51933d), [`14cce73003`](https://github.com/LedgerHQ/ledger-live/commit/14cce7300333c51cbcdbd5a7e290ddc600c9f3a1), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec), [`bae3b64dd2`](https://github.com/LedgerHQ/ledger-live/commit/bae3b64dd2710a3743552600166be986e93d9099), [`9692adc2a6`](https://github.com/LedgerHQ/ledger-live/commit/9692adc2a6774feb4424fc7a984810918c946b1b), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec)]:
+  - @ledgerhq/live-env@0.4.0
+  - @ledgerhq/coin-evm@0.4.0
+  - @ledgerhq/coin-framework@0.4.0
+  - @ledgerhq/cryptoassets@9.10.0
+  - @ledgerhq/errors@6.13.0
+  - @ledgerhq/hw-app-eth@6.34.0
+  - @ledgerhq/coin-algorand@0.2.4
+  - @ledgerhq/coin-polkadot@0.3.1
+  - @ledgerhq/evm-tools@1.0.1
+  - @ledgerhq/live-network@1.1.3
+  - @ledgerhq/domain-service@1.1.6
+  - @ledgerhq/devices@8.0.5
+  - @ledgerhq/hw-app-algorand@6.27.17
+  - @ledgerhq/hw-app-cosmos@6.28.3
+  - @ledgerhq/hw-app-exchange@0.2.1
+  - @ledgerhq/hw-app-near@6.27.12
+  - @ledgerhq/hw-app-polkadot@6.27.17
+  - @ledgerhq/hw-app-solana@7.0.11
+  - @ledgerhq/hw-app-trx@6.27.17
+  - @ledgerhq/hw-transport@6.28.6
+  - @ledgerhq/hw-transport-node-speculos@6.27.17
+  - @ledgerhq/hw-transport-node-speculos-http@6.27.17
+  - @ledgerhq/hw-app-btc@10.0.6
+  - @ledgerhq/hw-app-str@6.27.17
+  - @ledgerhq/hw-app-tezos@6.27.17
+  - @ledgerhq/hw-app-xrp@6.27.17
+  - @ledgerhq/hw-transport-mocker@6.27.17
+
+## 31.3.0-next.1
+
+### Patch Changes
+
+- [#4011](https://github.com/LedgerHQ/ledger-live/pull/4011) [`23f26c0f80`](https://github.com/LedgerHQ/ledger-live/commit/23f26c0f8005f7accbbdd96909b858fbfc4719a0) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Disable default derivation scheme for ICP, to use only the custom one
+
+## 31.3.0-next.0
+
+### Minor Changes
+
+- [#3864](https://github.com/LedgerHQ/ledger-live/pull/3864) [`d0cfcbc6d7`](https://github.com/LedgerHQ/ledger-live/commit/d0cfcbc6d7ca4693bd9db9f3958d4fbbdd947865) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Increase ttl coinc config
+
+- [#3714](https://github.com/LedgerHQ/ledger-live/pull/3714) [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add NFT support to EVM family synchronization
+
+- [#3843](https://github.com/LedgerHQ/ledger-live/pull/3843) [`96322128d8`](https://github.com/LedgerHQ/ledger-live/commit/96322128d8e4fffd0eea384e4f787c9e26e9fbac) Thanks [@Justkant](https://github.com/Justkant)! - feat: recover llm stax
+
+- [#3714](https://github.com/LedgerHQ/ledger-live/pull/3714) [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Moving NFT related files from live-common to coin-framework with retrocompatibility
+
+- [#3714](https://github.com/LedgerHQ/ledger-live/pull/3714) [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update NftMetadataProvider types
+
+- [#3459](https://github.com/LedgerHQ/ledger-live/pull/3459) [`49182846de`](https://github.com/LedgerHQ/ledger-live/commit/49182846dee35ae9b3535c0c120e17d0eaecde70) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - add support to stacks blockchain
+
+- [#3924](https://github.com/LedgerHQ/ledger-live/pull/3924) [`14cce73003`](https://github.com/LedgerHQ/ledger-live/commit/14cce7300333c51cbcdbd5a7e290ddc600c9f3a1) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update SignMessage logic to be simpler, with improved typing.
+
+- [#3815](https://github.com/LedgerHQ/ledger-live/pull/3815) [`0f4293e9bf`](https://github.com/LedgerHQ/ledger-live/commit/0f4293e9bf9cac4c2a195efeb0831aab3d51933d) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Support for Internet Computer blockchain
+
+- [#3949](https://github.com/LedgerHQ/ledger-live/pull/3949) [`16d29e18ee`](https://github.com/LedgerHQ/ledger-live/commit/16d29e18eef21009ba384f15f495c92b2028b4c4) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Add timeout and timeoutErrorMessage params to useSwapTransaction
+
+- [#3841](https://github.com/LedgerHQ/ledger-live/pull/3841) [`bae3b64dd2`](https://github.com/LedgerHQ/ledger-live/commit/bae3b64dd2710a3743552600166be986e93d9099) Thanks [@Justkant](https://github.com/Justkant)! - feat: recover on LLD
+
+  Handle the recover deeplink
+  Add a screen to redirect to the correct device onboarding automatically
+  Rework of the recover feature flags
+  Add upsell screen for recover after onboarding
+
+- [#3825](https://github.com/LedgerHQ/ledger-live/pull/3825) [`9692adc2a6`](https://github.com/LedgerHQ/ledger-live/commit/9692adc2a6774feb4424fc7a984810918c946b1b) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Cosmos chains : stargaze, desmos, umee, secret network
+
+### Patch Changes
+
+- [#3918](https://github.com/LedgerHQ/ledger-live/pull/3918) [`9676e157b3`](https://github.com/LedgerHQ/ledger-live/commit/9676e157b3471ce43c9a283417c718ee11978ee4) Thanks [@alexandremgo](https://github.com/alexandremgo)! - feat: return device info from hook to get latest available firmware update
+
+  - return device info from getLatestAvailableFirmwareFromDeviceId
+  - return device info from hook useGetLatestAvailableFirmware
+
+- [#3865](https://github.com/LedgerHQ/ledger-live/pull/3865) [`d2c1b9ed8d`](https://github.com/LedgerHQ/ledger-live/commit/d2c1b9ed8d7dc3bacfc9c5020a4612693cd62272) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Remove condition of terminated coin for Nano app installation
+
+- [#3709](https://github.com/LedgerHQ/ledger-live/pull/3709) [`f474bc5631`](https://github.com/LedgerHQ/ledger-live/commit/f474bc56314a32b8b81453bf2c3c43959d42c3bd) Thanks [@grsoares21](https://github.com/grsoares21)! - Small fix on the state handling of the firmware update device action
+
+- [#3859](https://github.com/LedgerHQ/ledger-live/pull/3859) [`2292a285e0`](https://github.com/LedgerHQ/ledger-live/commit/2292a285e03d34951b57d778b0c3626e9b4aff17) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix bitcoin family bot
+
+- [#3883](https://github.com/LedgerHQ/ledger-live/pull/3883) [`194acaf3d7`](https://github.com/LedgerHQ/ledger-live/commit/194acaf3d7389727ace87206a45a39fd3a5e1f98) Thanks [@grsoares21](https://github.com/grsoares21)! - Fix a device action implementation issue that was causing the UI to flicker during device actions
+
+- [#3881](https://github.com/LedgerHQ/ledger-live/pull/3881) [`b68120562b`](https://github.com/LedgerHQ/ledger-live/commit/b68120562b99d6a19ffc4c9cc13ac49979bef3e8) Thanks [@aboissiere-ledger](https://github.com/aboissiere-ledger)! - Fix jest config to generate coverage report and include untested files
+
+- [#3831](https://github.com/LedgerHQ/ledger-live/pull/3831) [`04f63f0776`](https://github.com/LedgerHQ/ledger-live/commit/04f63f077647f9d77fe2c80ec62f872547ed332a) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Fix no funds swap result
+
+- [#3692](https://github.com/LedgerHQ/ledger-live/pull/3692) [`be437fa19f`](https://github.com/LedgerHQ/ledger-live/commit/be437fa19ff8c0557fe426fc8a174445fbee0f7a) Thanks [@cksanders](https://github.com/cksanders)! - Move swap dex utils to common and remove DEX feature flag.
+
+- [#3892](https://github.com/LedgerHQ/ledger-live/pull/3892) [`ae9f327cc7`](https://github.com/LedgerHQ/ledger-live/commit/ae9f327cc7414d7f769704dd1cc83128c876d185) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix missing pending transaction bug
+
+- [#3917](https://github.com/LedgerHQ/ledger-live/pull/3917) [`989707f00c`](https://github.com/LedgerHQ/ledger-live/commit/989707f00c76145cef924f3e5417894ee117080e) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - debounce setFromAmount in LLC by 400ms
+
+- Updated dependencies [[`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec), [`49182846de`](https://github.com/LedgerHQ/ledger-live/commit/49182846dee35ae9b3535c0c120e17d0eaecde70), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec), [`c660c4e389`](https://github.com/LedgerHQ/ledger-live/commit/c660c4e389ac200ef308cbc3882930d392375de3), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec), [`11e62b1e1e`](https://github.com/LedgerHQ/ledger-live/commit/11e62b1e1e3773eeaad748453973e0b3bcd3e3bf), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec), [`2c28d5aab3`](https://github.com/LedgerHQ/ledger-live/commit/2c28d5aab36b8b0cf2cb2a50e02eac4c5a588e41), [`14cce73003`](https://github.com/LedgerHQ/ledger-live/commit/14cce7300333c51cbcdbd5a7e290ddc600c9f3a1), [`0f4293e9bf`](https://github.com/LedgerHQ/ledger-live/commit/0f4293e9bf9cac4c2a195efeb0831aab3d51933d), [`14cce73003`](https://github.com/LedgerHQ/ledger-live/commit/14cce7300333c51cbcdbd5a7e290ddc600c9f3a1), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec), [`bae3b64dd2`](https://github.com/LedgerHQ/ledger-live/commit/bae3b64dd2710a3743552600166be986e93d9099), [`9692adc2a6`](https://github.com/LedgerHQ/ledger-live/commit/9692adc2a6774feb4424fc7a984810918c946b1b), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec)]:
+  - @ledgerhq/live-env@0.4.0-next.0
+  - @ledgerhq/coin-evm@0.4.0-next.0
+  - @ledgerhq/coin-framework@0.4.0-next.0
+  - @ledgerhq/cryptoassets@9.10.0-next.0
+  - @ledgerhq/errors@6.13.0-next.0
+  - @ledgerhq/hw-app-eth@6.34.0-next.0
+  - @ledgerhq/coin-algorand@0.2.4-next.0
+  - @ledgerhq/coin-polkadot@0.3.1-next.0
+  - @ledgerhq/evm-tools@1.0.1-next.0
+  - @ledgerhq/live-network@1.1.3-next.0
+  - @ledgerhq/domain-service@1.1.6-next.0
+  - @ledgerhq/devices@8.0.5-next.0
+  - @ledgerhq/hw-app-algorand@6.27.17-next.0
+  - @ledgerhq/hw-app-cosmos@6.28.3-next.0
+  - @ledgerhq/hw-app-exchange@0.2.1-next.0
+  - @ledgerhq/hw-app-near@6.27.12-next.0
+  - @ledgerhq/hw-app-polkadot@6.27.17-next.0
+  - @ledgerhq/hw-app-solana@7.0.11-next.0
+  - @ledgerhq/hw-app-trx@6.27.17-next.0
+  - @ledgerhq/hw-transport@6.28.6-next.0
+  - @ledgerhq/hw-transport-node-speculos@6.27.17-next.0
+  - @ledgerhq/hw-transport-node-speculos-http@6.27.17-next.0
+  - @ledgerhq/hw-app-btc@10.0.6-next.0
+  - @ledgerhq/hw-app-str@6.27.17-next.0
+  - @ledgerhq/hw-app-tezos@6.27.17-next.0
+  - @ledgerhq/hw-app-xrp@6.27.17-next.0
+  - @ledgerhq/hw-transport-mocker@6.27.17-next.0
+
+## 31.2.0
+
+### Minor Changes
+
+- [#2441](https://github.com/LedgerHQ/ledger-live/pull/2441) [`44192f2ab2`](https://github.com/LedgerHQ/ledger-live/commit/44192f2ab2857cbae2ef4a81ee9608d395dcd2b9) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - edit eth transaction feature for LLD
+
+- [#3611](https://github.com/LedgerHQ/ledger-live/pull/3611) [`092cb8d317`](https://github.com/LedgerHQ/ledger-live/commit/092cb8d317fa7971e0f790b77f900ae3864d96c2) Thanks [@chabroA](https://github.com/chabroA)! - Create GasTracker abstraction for evm familly
+
+- [#3686](https://github.com/LedgerHQ/ledger-live/pull/3686) [`e4bd3297cf`](https://github.com/LedgerHQ/ledger-live/commit/e4bd3297cf1064faa04935c2e35455e06ed88e9e) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add pagination support for transaction history retrieved from cosmos nodes
+
+- [#3389](https://github.com/LedgerHQ/ledger-live/pull/3389) [`f2bfff7234`](https://github.com/LedgerHQ/ledger-live/commit/f2bfff7234a4eaa41e039aec09c5dfb68c5cba39) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - add support to address type 4 and general improvements
+
+- [#3389](https://github.com/LedgerHQ/ledger-live/pull/3389) [`f2bfff7234`](https://github.com/LedgerHQ/ledger-live/commit/f2bfff7234a4eaa41e039aec09c5dfb68c5cba39) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - change tag values for alternative derivation schemes on filecoin
+
+- [#3742](https://github.com/LedgerHQ/ledger-live/pull/3742) [`cc31fc9213`](https://github.com/LedgerHQ/ledger-live/commit/cc31fc9213dc2e3e751b63a7722207dc711bbe3d) Thanks [@sarneijim](https://github.com/sarneijim)! - fix errors in exchangeComplete
+
+### Patch Changes
+
+- [#3741](https://github.com/LedgerHQ/ledger-live/pull/3741) [`6194db3178`](https://github.com/LedgerHQ/ledger-live/commit/6194db3178cf90b26f4f6c7f049b7eafafdf7bfc) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update eip55 dependency
+
+- [#3828](https://github.com/LedgerHQ/ledger-live/pull/3828) [`32e3d60144`](https://github.com/LedgerHQ/ledger-live/commit/32e3d60144d3e6afebcffd87400c6cb1c10aeb67) Thanks [@JunichiSugiura](https://github.com/JunichiSugiura)! - Fix discover catalog visibility and ordering
+
+- [#3875](https://github.com/LedgerHQ/ledger-live/pull/3875) [`8df4c0a0dc`](https://github.com/LedgerHQ/ledger-live/commit/8df4c0a0dcf1e2ff51dc49403f3a3c377ae272a8) Thanks [@grsoares21](https://github.com/grsoares21)! - Fix a device action implementation issue that was causing the UI to flicker during device actions
+
+- [#3752](https://github.com/LedgerHQ/ledger-live/pull/3752) [`e8b94aab79`](https://github.com/LedgerHQ/ledger-live/commit/e8b94aab79736d1ca4e81005ae9a8978e23cf0d5) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Add support for "Fido U2F", "Security Key" on v2 listApps as well as maintaining the order of installation in the storage bar
+
+- [#3696](https://github.com/LedgerHQ/ledger-live/pull/3696) [`5af41b6fa1`](https://github.com/LedgerHQ/ledger-live/commit/5af41b6fa1e43037ccdb2df279c82e12ef3d2b1a) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Allow to enable listAppsV2 via feature flags instead of experimental settings
+
+- [#3741](https://github.com/LedgerHQ/ledger-live/pull/3741) [`6194db3178`](https://github.com/LedgerHQ/ledger-live/commit/6194db3178cf90b26f4f6c7f049b7eafafdf7bfc) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update eip55 dependency to 2.1.1 fixing browser context usage
+
+- [#3661](https://github.com/LedgerHQ/ledger-live/pull/3661) [`ea8e24732f`](https://github.com/LedgerHQ/ledger-live/commit/ea8e24732f44a9315eb5a27077cd9d34b6c408b4) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Logic implementation of the bulk uninstall apdu with test
+
+- [#3628](https://github.com/LedgerHQ/ledger-live/pull/3628) [`42d99e6c65`](https://github.com/LedgerHQ/ledger-live/commit/42d99e6c659845b4893173af2ccbad4b098e2c15) Thanks [@grsoares21](https://github.com/grsoares21)! - Debounce device change events for longer than polling frequency on connect manager device action
+
+- [#3657](https://github.com/LedgerHQ/ledger-live/pull/3657) [`88063df9d6`](https://github.com/LedgerHQ/ledger-live/commit/88063df9d6046c78c32258ea95cd527cda9214d5) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Sanitize the bulk exchange payload from HSM before exchanging it with the device
+
+- Updated dependencies [[`6194db3178`](https://github.com/LedgerHQ/ledger-live/commit/6194db3178cf90b26f4f6c7f049b7eafafdf7bfc), [`cb95f72c24`](https://github.com/LedgerHQ/ledger-live/commit/cb95f72c2415876ef88ca83fd2c4363a57669b92), [`be5f56b233`](https://github.com/LedgerHQ/ledger-live/commit/be5f56b2330c166323914b79fef37a3c05e0e13a), [`092cb8d317`](https://github.com/LedgerHQ/ledger-live/commit/092cb8d317fa7971e0f790b77f900ae3864d96c2), [`5af41b6fa1`](https://github.com/LedgerHQ/ledger-live/commit/5af41b6fa1e43037ccdb2df279c82e12ef3d2b1a), [`cc31fc9213`](https://github.com/LedgerHQ/ledger-live/commit/cc31fc9213dc2e3e751b63a7722207dc711bbe3d), [`6194db3178`](https://github.com/LedgerHQ/ledger-live/commit/6194db3178cf90b26f4f6c7f049b7eafafdf7bfc), [`d1d1578ab5`](https://github.com/LedgerHQ/ledger-live/commit/d1d1578ab5b351544c98d56b67c68f18640f2d20), [`abd673dc7c`](https://github.com/LedgerHQ/ledger-live/commit/abd673dc7c994ad7efc8dd3199995a99add677c6)]:
+  - @ledgerhq/domain-service@1.1.5
+  - @ledgerhq/coin-evm@0.3.0
+  - @ledgerhq/cryptoassets@9.9.0
+  - @ledgerhq/live-env@0.3.1
+  - @ledgerhq/hw-app-exchange@0.2.0
+  - @ledgerhq/coin-polkadot@0.3.0
+  - @ledgerhq/hw-app-eth@6.33.7
+  - @ledgerhq/coin-algorand@0.2.3
+  - @ledgerhq/coin-framework@0.3.7
+  - @ledgerhq/live-network@1.1.2
+
+## 31.2.0-next.2
+
+### Patch Changes
+
+- [#3875](https://github.com/LedgerHQ/ledger-live/pull/3875) [`8df4c0a0dc`](https://github.com/LedgerHQ/ledger-live/commit/8df4c0a0dcf1e2ff51dc49403f3a3c377ae272a8) Thanks [@grsoares21](https://github.com/grsoares21)! - Fix a device action implementation issue that was causing the UI to flicker during device actions
+
+## 31.2.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`d1d1578ab5`](https://github.com/LedgerHQ/ledger-live/commit/d1d1578ab5b351544c98d56b67c68f18640f2d20)]:
+  - @ledgerhq/coin-evm@0.3.0-next.1
+
+## 31.2.0-next.0
+
+### Minor Changes
+
+- [#2441](https://github.com/LedgerHQ/ledger-live/pull/2441) [`44192f2ab2`](https://github.com/LedgerHQ/ledger-live/commit/44192f2ab2857cbae2ef4a81ee9608d395dcd2b9) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - edit eth transaction feature for LLD
+
+- [#3611](https://github.com/LedgerHQ/ledger-live/pull/3611) [`092cb8d317`](https://github.com/LedgerHQ/ledger-live/commit/092cb8d317fa7971e0f790b77f900ae3864d96c2) Thanks [@chabroA](https://github.com/chabroA)! - Create GasTracker abstraction for evm familly
+
+- [#3686](https://github.com/LedgerHQ/ledger-live/pull/3686) [`e4bd3297cf`](https://github.com/LedgerHQ/ledger-live/commit/e4bd3297cf1064faa04935c2e35455e06ed88e9e) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add pagination support for transaction history retrieved from cosmos nodes
+
+- [#3389](https://github.com/LedgerHQ/ledger-live/pull/3389) [`f2bfff7234`](https://github.com/LedgerHQ/ledger-live/commit/f2bfff7234a4eaa41e039aec09c5dfb68c5cba39) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - add support to address type 4 and general improvements
+
+- [#3389](https://github.com/LedgerHQ/ledger-live/pull/3389) [`f2bfff7234`](https://github.com/LedgerHQ/ledger-live/commit/f2bfff7234a4eaa41e039aec09c5dfb68c5cba39) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - change tag values for alternative derivation schemes on filecoin
+
+- [#3742](https://github.com/LedgerHQ/ledger-live/pull/3742) [`cc31fc9213`](https://github.com/LedgerHQ/ledger-live/commit/cc31fc9213dc2e3e751b63a7722207dc711bbe3d) Thanks [@sarneijim](https://github.com/sarneijim)! - fix errors in exchangeComplete
+
+### Patch Changes
+
+- [#3741](https://github.com/LedgerHQ/ledger-live/pull/3741) [`6194db3178`](https://github.com/LedgerHQ/ledger-live/commit/6194db3178cf90b26f4f6c7f049b7eafafdf7bfc) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update eip55 dependency
+
+- [#3828](https://github.com/LedgerHQ/ledger-live/pull/3828) [`32e3d60144`](https://github.com/LedgerHQ/ledger-live/commit/32e3d60144d3e6afebcffd87400c6cb1c10aeb67) Thanks [@JunichiSugiura](https://github.com/JunichiSugiura)! - Fix discover catalog visibility and ordering
+
+- [#3752](https://github.com/LedgerHQ/ledger-live/pull/3752) [`e8b94aab79`](https://github.com/LedgerHQ/ledger-live/commit/e8b94aab79736d1ca4e81005ae9a8978e23cf0d5) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Add support for "Fido U2F", "Security Key" on v2 listApps as well as maintaining the order of installation in the storage bar
+
+- [#3696](https://github.com/LedgerHQ/ledger-live/pull/3696) [`5af41b6fa1`](https://github.com/LedgerHQ/ledger-live/commit/5af41b6fa1e43037ccdb2df279c82e12ef3d2b1a) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Allow to enable listAppsV2 via feature flags instead of experimental settings
+
+- [#3741](https://github.com/LedgerHQ/ledger-live/pull/3741) [`6194db3178`](https://github.com/LedgerHQ/ledger-live/commit/6194db3178cf90b26f4f6c7f049b7eafafdf7bfc) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update eip55 dependency to 2.1.1 fixing browser context usage
+
+- [#3661](https://github.com/LedgerHQ/ledger-live/pull/3661) [`ea8e24732f`](https://github.com/LedgerHQ/ledger-live/commit/ea8e24732f44a9315eb5a27077cd9d34b6c408b4) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Logic implementation of the bulk uninstall apdu with test
+
+- [#3628](https://github.com/LedgerHQ/ledger-live/pull/3628) [`42d99e6c65`](https://github.com/LedgerHQ/ledger-live/commit/42d99e6c659845b4893173af2ccbad4b098e2c15) Thanks [@grsoares21](https://github.com/grsoares21)! - Debounce device change events for longer than polling frequency on connect manager device action
+
+- [#3657](https://github.com/LedgerHQ/ledger-live/pull/3657) [`88063df9d6`](https://github.com/LedgerHQ/ledger-live/commit/88063df9d6046c78c32258ea95cd527cda9214d5) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Sanitize the bulk exchange payload from HSM before exchanging it with the device
+
+- Updated dependencies [[`6194db3178`](https://github.com/LedgerHQ/ledger-live/commit/6194db3178cf90b26f4f6c7f049b7eafafdf7bfc), [`cb95f72c24`](https://github.com/LedgerHQ/ledger-live/commit/cb95f72c2415876ef88ca83fd2c4363a57669b92), [`be5f56b233`](https://github.com/LedgerHQ/ledger-live/commit/be5f56b2330c166323914b79fef37a3c05e0e13a), [`092cb8d317`](https://github.com/LedgerHQ/ledger-live/commit/092cb8d317fa7971e0f790b77f900ae3864d96c2), [`5af41b6fa1`](https://github.com/LedgerHQ/ledger-live/commit/5af41b6fa1e43037ccdb2df279c82e12ef3d2b1a), [`cc31fc9213`](https://github.com/LedgerHQ/ledger-live/commit/cc31fc9213dc2e3e751b63a7722207dc711bbe3d), [`6194db3178`](https://github.com/LedgerHQ/ledger-live/commit/6194db3178cf90b26f4f6c7f049b7eafafdf7bfc), [`abd673dc7c`](https://github.com/LedgerHQ/ledger-live/commit/abd673dc7c994ad7efc8dd3199995a99add677c6)]:
+  - @ledgerhq/domain-service@1.1.5-next.0
+  - @ledgerhq/coin-evm@0.3.0-next.0
+  - @ledgerhq/cryptoassets@9.9.0-next.0
+  - @ledgerhq/live-env@0.3.1-next.0
+  - @ledgerhq/hw-app-exchange@0.2.0-next.0
+  - @ledgerhq/coin-polkadot@0.3.0-next.0
+  - @ledgerhq/hw-app-eth@6.33.7-next.0
+  - @ledgerhq/coin-algorand@0.2.3-next.0
+  - @ledgerhq/coin-framework@0.3.7-next.0
+  - @ledgerhq/live-network@1.1.2-next.0
+
 ## 31.1.0
 
 ### Minor Changes

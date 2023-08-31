@@ -4,17 +4,19 @@ import { getElementByText, isAndroid } from "../helpers";
 import AccountPage from "../models/accounts/accountPage";
 import AccountsPage from "../models/accounts/accountsPage";
 import CustomLockscreenPage from "../models/stax/customLockscreenPage";
-import DiscoveryPage from "../models/discovery/discoveryPage";
+import DiscoverPage from "../models/discover/discoverPage";
 import ManagerPage from "../models/manager/managerPage";
 import PortfolioPage from "../models/wallet/portfolioPage";
 import SendPage from "../models/trade/sendPage";
 import SwapFormPage from "../models/trade/swapFormPage";
 import ReceivePage from "../models/trade/receivePage";
+import OnboardingSteps from "../models/onboarding/onboardingSteps";
 
 let accountPage: AccountPage;
+let onboardingSteps: OnboardingSteps;
 let accountsPage: AccountsPage;
 let customLockscreenPage: CustomLockscreenPage;
-let discoveryPage: DiscoveryPage;
+let discoverPage: DiscoverPage;
 let managerPage: ManagerPage;
 let portfolioPage: PortfolioPage;
 let sendPage: SendPage;
@@ -23,8 +25,9 @@ let receivePage: ReceivePage;
 
 const ethereumLong = "Ethereum";
 const bitcoinLong = "Bitcoin";
+const arbitrumLong = "Arbitrum";
+const bobaLong = "Boba";
 
-const deviceName = "Nano X de David";
 const mercuryoDL = { name: "Mercuryo", url: " https://www.mercuryo.io/" };
 const discoverApps = [
   { name: "MoonPay", url: " https://www.moonpay.com/" },
@@ -35,7 +38,6 @@ const discoverApps = [
   { name: "BTCDirect", url: " https://btcdirect.eu/" },
   { name: "Banxa", url: " https://banxa.com/" },
   { name: "Bitrefill", url: " https://bitrefill.com" },
-  { name: "Wyre_buy", url: " https://www.sendwyre.com/" },
   { name: "Zerion", url: " https://zerion.io/" },
   { name: "Rainbow", url: " https://rainbow.me" },
   { name: "POAP", url: " https://app.poap.xyz/" },
@@ -46,7 +48,7 @@ const discoverApps = [
 
 const openNCheckApp = (l10n: { name: string; url: string }) => {
   it(`should open discovery to ${l10n.name}`, async () => {
-    await discoveryPage.openViaDeeplink(l10n.name);
+    await discoverPage.openViaDeeplink(l10n.name);
     await expect(getElementByText(l10n.url)).toBeVisible();
   });
 };
@@ -56,9 +58,10 @@ describe("DeepLinks Tests", () => {
     loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
 
     accountPage = new AccountPage();
+    onboardingSteps = new OnboardingSteps();
     accountsPage = new AccountsPage();
     customLockscreenPage = new CustomLockscreenPage();
-    discoveryPage = new DiscoveryPage();
+    discoverPage = new DiscoverPage();
     managerPage = new ManagerPage();
     portfolioPage = new PortfolioPage();
     sendPage = new SendPage();
@@ -72,16 +75,14 @@ describe("DeepLinks Tests", () => {
 
   it("should open My Ledger page and add a device", async () => {
     await managerPage.openViaDeeplink();
-    await managerPage.expectManagerPage();
-    await managerPage.addDevice(deviceName);
-    await portfolioPage.openViaDeeplink();
+    await expect(managerPage.managerTitle()).toBeVisible();
+    await onboardingSteps.addDeviceViaBluetooth("David");
   });
 
   it("should open Custom Lock Screen page", async () => {
     await customLockscreenPage.openViaDeeplink();
     await customLockscreenPage.expectCustomLockscreenPage();
     await expect(customLockscreenPage.welcomeChoosePictureButton()).toBeVisible();
-    await portfolioPage.openViaDeeplink();
   });
 
   it("should open Accounts page", async () => {
@@ -96,12 +97,15 @@ describe("DeepLinks Tests", () => {
     await accountPage.waitForAccountPageToLoad(bitcoinLong);
   });
 
-  it("should open Discover page and Mercuryo", async () => {
-    if (!(await isAndroid())) return;
-    await discoveryPage.openViaDeeplink();
-    await discoveryPage.expectDiscoveryPage();
-    await discoveryPage.openViaDeeplink(mercuryoDL.name);
-    await discoveryPage.waitForSelectCrypto();
+  it("should open the Discover page", async () => {
+    await discoverPage.openViaDeeplink();
+    await expect(getElementByText("Discover")).toBeVisible();
+  });
+
+  it("should open a live app and be able to navigate to and from crypto select screen", async () => {
+    if (!isAndroid()) return;
+    await discoverPage.openViaDeeplink(mercuryoDL.name);
+    await discoverPage.waitForSelectCrypto();
     await device.pressBack();
     await expect(getElementByText(mercuryoDL.url)).toBeVisible();
   });
@@ -122,7 +126,6 @@ describe("DeepLinks Tests", () => {
     await sendPage.sendViaDeeplink(ethereumLong);
     await expect(sendPage.getStep1HeaderTitle()).toBeVisible();
     await expect(sendPage.getSearchField()).toHaveText(ethereumLong);
-    await portfolioPage.openViaDeeplink();
   });
 
   it("should open Receive pages", async () => {
@@ -131,11 +134,9 @@ describe("DeepLinks Tests", () => {
     await portfolioPage.openViaDeeplink();
     await receivePage.receiveViaDeeplink(ethereumLong);
     await expect(receivePage.getStep2HeaderTitle()).toBeVisible();
-    await expect(receivePage.getStep2Accounts()).toBeVisible();
-    await expect(getElementByText(ethereumLong + " 1"));
-    await expect(getElementByText(ethereumLong + " 2"));
-    await expect(getElementByText(ethereumLong + " 3"));
-
-    await portfolioPage.openViaDeeplink();
+    await expect(receivePage.getStep2Networks()).toBeVisible();
+    await expect(getElementByText(ethereumLong)).toBeVisible();
+    await expect(getElementByText(arbitrumLong)).toBeVisible();
+    await expect(getElementByText(bobaLong)).toBeVisible();
   });
 });

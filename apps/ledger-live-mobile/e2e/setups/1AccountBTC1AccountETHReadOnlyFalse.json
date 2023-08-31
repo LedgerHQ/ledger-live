@@ -33,7 +33,6 @@
       "hasInstalledApps": true,
       "carouselVisibility": {},
       "dismissedDynamicCards": [],
-      "hasAcceptedSwapKYC": false,
       "lastSeenDevice": null,
       "readOnlyModeEnabled": false,
       "blacklistedTokenIds": [],
@@ -43,7 +42,11 @@
       "swapProviders": [],
       "showClearCacheBanner": false,
       "starredAccountIds": [],
-      "hasPassword": false
+      "hasPassword": false,
+      "overriddenFeatureFlags": {
+        "ptxServiceCtaScreens": { "enabled": true },
+        "ptxServiceCtaExchangeDrawer": { "enabled": true }
+      }
     },
     "user": {
       "id": "08cf3393-c5eb-4ea7-92de-0deea22e3971"

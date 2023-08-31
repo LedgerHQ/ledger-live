@@ -23,8 +23,9 @@ export const fetchERC20Tokens: (
     });
   if (dynamicTokens) return dynamicTokens;
 
-  // @ts-expect-error FIXME: fix typings
-  const tokens = tokensByChainId[ethereumLikeInfo?.chainId || ""];
+  const tokens = tokensByChainId[
+    ethereumLikeInfo?.chainId as keyof typeof tokensByChainId
+  ] as ERC20Token[];
   if (tokens) return tokens;
 
   log("warning", `EVM Family: No tokens found in CAL for currency: ${currency.id}`, currency);
@@ -33,7 +34,12 @@ export const fetchERC20Tokens: (
 
 export async function preload(currency: CryptoCurrency): Promise<ERC20Token[]> {
   const erc20 = await fetchERC20Tokens(currency);
-  addTokens(erc20.map(convertERC20));
+  // This weird thing is here to help the "clone" currencies like
+  // ethereum_as_evm_test_only & polygon_as_evm_test_only
+  // to get tokens despite the different currency_id
+  // registered in the CAL for those chain ids
+  // We should remove this after the merge
+  addTokens(erc20.map(([, ...tokenRest]) => convertERC20([currency.id, ...tokenRest])));
   return erc20;
 }
 

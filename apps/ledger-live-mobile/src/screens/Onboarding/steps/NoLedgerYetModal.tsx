@@ -81,7 +81,7 @@ export function NoLedgerYetModal({ onClose, isOpen }: Props) {
       CustomHeader={CustomHeader}
     >
       <TrackScreen category="Onboard" name="Start Upsell" drawer="Get Started Upsell" />
-      <Flex alignItems="center" mt={7}>
+      <Flex alignItems="flex-start" mt={7}>
         <Text variant="h4" fontWeight="semiBold" color="neutral.c100">
           {t("onboarding.postWelcomeStep.noLedgerYetModal.title")}
         </Text>
@@ -94,9 +94,16 @@ export function NoLedgerYetModal({ onClose, isOpen }: Props) {
           {t("onboarding.postWelcomeStep.noLedgerYetModal.buy")}
         </Button>
       </Flex>
-      <Flex mx={16} flexDirection={"row"} mt={7}>
-        <Button onPress={exploreLedger} type="default" size={"large"} flex={1}>
-          {t("onboarding.postWelcomeStep.noLedgerYetModal.explore")}
+      <Flex mx={16} flexDirection={"row"} mt={24}>
+        <Button
+          onPress={exploreLedger}
+          type="default"
+          flex={1}
+          testID="onboarding-noLedgerYetModal-explore"
+        >
+          <Text variant="large" fontWeight="semiBold">
+            {t("onboarding.postWelcomeStep.noLedgerYetModal.explore")}
+          </Text>
         </Button>
       </Flex>
     </QueuedDrawer>

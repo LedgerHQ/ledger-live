@@ -2,7 +2,7 @@
 
 import styled from "styled-components";
 import React, { useCallback, useEffect, useState } from "react";
-import { changes, setEnvUnsafe } from "@ledgerhq/live-common/lib/env";
+import { changes, setEnvUnsafe } from "@ledgerhq/live-env";
 import { setDefaultEnv, updateEnv, getEnv } from "../helpers/env";
 import { Resizable } from "re-resizable";
 import { map, get } from "lodash";
@@ -11,7 +11,7 @@ import { SmallButton } from "./Smallbutton";
 
 import "react-table/react-table.css";
 
-const convertEnvData = (envData) =>
+const convertEnvData = envData =>
   map(envData, (value, key) => {
     return {
       name: key,
@@ -29,8 +29,7 @@ const typeColor = {
 const EditableCell = styled.div`
   text-align: center;
   cursor: pointer;
-  ${({ theme, type }) =>
-    typeColor[type] && `color: ${get(theme.palette, typeColor[type])}`}
+  ${({ theme, type }) => typeColor[type] && `color: ${get(theme.palette, typeColor[type])}`}
 `;
 
 const EditorContainer = styled.div`
@@ -44,7 +43,7 @@ const saveObjectToStorage = (key, data) => {
   localStorage.setItem(key, JSON.stringify(data));
 };
 
-const loadObjectFromStorage = (key) => JSON.parse(localStorage.getItem(key));
+const loadObjectFromStorage = key => JSON.parse(localStorage.getItem(key));
 
 const loadEnv = () => {
   const savedData = loadObjectFromStorage("env_settings");
@@ -57,19 +56,19 @@ function LiveEnvEditor() {
 
   useEffect(() => {
     const sub = changes.subscribe(({ name, value }) => {
-      setState((prevState) => ({ ...prevState, [name]: value }));
+      setState(prevState => ({ ...prevState, [name]: value }));
     });
     return () => sub.unsubscribe();
   }, [state]);
 
   const renderEditableCell = useCallback(
-    (cellInfo) => {
+    cellInfo => {
       return (
         <EditableCell
           contentEditable
           suppressContentEditableWarning
           type={cellInfo.original.type}
-          onBlur={(e) => {
+          onBlur={e => {
             try {
               const value = JSON.parse(e.target.innerText);
 
@@ -93,7 +92,7 @@ function LiveEnvEditor() {
       );
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [state]
+    [state],
   );
 
   const columns = [

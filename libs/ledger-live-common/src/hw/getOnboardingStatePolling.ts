@@ -10,6 +10,7 @@ import {
   CantOpenDevice,
   TransportRaceCondition,
   LockedDeviceError,
+  UnexpectedBootloader,
 } from "@ledgerhq/errors";
 import { FirmwareInfo } from "@ledgerhq/types-live";
 import { extractOnboardingState, OnboardingState } from "./extractOnboardingState";
@@ -47,10 +48,10 @@ export const getOnboardingStatePolling = ({
     return withDevice(deviceId)(t => from(getVersion(t))).pipe(
       timeout(fetchingTimeoutMs), // Throws a TimeoutError
       first(),
-      catchError((error: any) => {
+      catchError((error: unknown) => {
         if (isAllowedOnboardingStatePollingError(error)) {
           // Pushes the error to the next step to be processed (no retry from the beginning)
-          return of(error);
+          return of(error as Error);
         }
 
         return throwError(error);
@@ -59,6 +60,11 @@ export const getOnboardingStatePolling = ({
         if ("flags" in event) {
           const firmwareInfo = event as FirmwareInfo;
           let onboardingState: OnboardingState | null = null;
+
+          if (firmwareInfo.isBootloader) {
+            // Throws so it will be considered a fatal error
+            throw new UnexpectedBootloader("Device in bootloader during the polling");
+          }
 
           try {
             onboardingState = extractOnboardingState(firmwareInfo.flags);
@@ -87,7 +93,7 @@ export const getOnboardingStatePolling = ({
             lockedDevice: false,
           };
         } else {
-          // If an error is catched previously, and this error is "allowed",
+          // If an error is caught previously, and this error is "allowed",
           // the value from the observable is not a FirmwareInfo but an Error
           const allowedError = event as Error;
           return {

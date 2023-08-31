@@ -43,6 +43,7 @@ type Props = {
   parentAccount?: Account | null;
   transaction: Transaction;
 };
+
 export default function RippleFeeRow({ account, transaction, parentAccount }: Props) {
   const { colors } = useTheme();
   const navigation = useNavigation<Navigation>();
@@ -103,6 +104,7 @@ export default function RippleFeeRow({ account, transaction, parentAccount }: Pr
     </SummaryRow>
   );
 }
+
 const styles = StyleSheet.create({
   accountContainer: {
     flex: 1,

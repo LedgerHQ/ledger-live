@@ -3,7 +3,7 @@ import { Button } from "react-native";
 import { action } from "@storybook/addon-actions";
 import { ComponentStory } from "@storybook/react-native";
 import { Alert, BaseModal, IconBox } from "../../../../src/components";
-import { Icons } from "../../../../src/assets";
+import { IconsLegacy } from "../../../../src/assets";
 
 export default {
   title: "Layout/Modal",
@@ -30,7 +30,7 @@ const Template = (args: typeof BaseStoryArgs & typeof WithoutHeaderStoryArgs) =>
           ? {}
           : {
               ...args,
-              Icon: <IconBox Icon={Icons.TrashMedium} />,
+              Icon: <IconBox Icon={IconsLegacy.TrashMedium} />,
             })}
         noCloseButton={args.noCloseButton}
       >

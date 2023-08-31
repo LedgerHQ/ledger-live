@@ -141,7 +141,7 @@ function serializeTransactionData(
   const from = eip55.encode(account.freshAddress);
   const to = eip55.encode(transaction.recipient);
   const tokenIds = transaction.tokenIds || [];
-  const quantities = transaction.quantities?.map(q => q?.toFixed() || "0") || [];
+  const quantities = transaction.quantities?.map(q => (q?.isFinite() ? q?.toFixed() : "0")) || [];
 
   return tokenIds?.length > 1
     ? abi.simpleEncode(

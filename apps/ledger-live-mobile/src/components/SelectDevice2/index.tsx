@@ -4,10 +4,11 @@ import { Trans, useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { discoverDevices } from "@ledgerhq/live-common/hw/index";
 import { CompositeScreenProps, useNavigation, useIsFocused } from "@react-navigation/native";
-import { Text, Flex, Icons, Box, ScrollContainer } from "@ledgerhq/native-ui";
+import { Text, Flex, IconsLegacy, Box, ScrollContainer } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
 import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-common/postOnboarding/hooks/usePostOnboardingEntryPointVisibleOnWallet";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 
 import TransportBLE from "../../react-native-hw-transport-ble";
 import { TrackScreen, track } from "../../analytics";
@@ -56,6 +57,7 @@ type Props = {
 
   isChoiceDrawerDisplayedOnAddDevice?: boolean;
   withMyLedgerTracking?: boolean;
+  filterByDeviceModelId?: DeviceModelId;
 };
 
 export default function SelectDevice({
@@ -65,6 +67,7 @@ export default function SelectDevice({
   requestToSetHeaderOptions,
   isChoiceDrawerDisplayedOnAddDevice = true,
   withMyLedgerTracking,
+  filterByDeviceModelId,
 }: Props) {
   const [USBDevice, setUSBDevice] = useState<Device | undefined>();
   const [ProxyDevice, setProxyDevice] = useState<Device | undefined>();
@@ -210,8 +213,10 @@ export default function SelectDevice({
       devices.push(ProxyDevice);
     }
 
-    return devices;
-  }, [knownDevices, scannedDevices, USBDevice, ProxyDevice]);
+    return filterByDeviceModelId
+      ? devices.filter(d => d.modelId === filterByDeviceModelId)
+      : devices;
+  }, [knownDevices, scannedDevices, USBDevice, ProxyDevice, filterByDeviceModelId]);
 
   // update device name on store when needed
   useEffect(() => {
@@ -310,166 +315,163 @@ export default function SelectDevice({
         retryRequestOnIssue={retryRequestOnIssue}
         cannotRetryRequest={cannotRetryRequest}
       />
-      <Flex flex={1}>
-        {isPairingDevices ? (
-          <BleDevicePairingFlow
-            onPairingSuccess={handleOnSelect}
-            onGoBackFromScanning={closeBlePairingFlow}
-            onPairingSuccessAddToKnownDevices
-            requestToSetHeaderOptions={requestToSetHeaderOptions}
-          />
-        ) : (
-          <>
-            {postOnboardingVisible && (
-              <Box mb={8}>
-                <PostOnboardingEntryPointCard />
-              </Box>
-            )}
-            <Flex flexDirection="row" justifyContent="space-between" alignItems="center" mb={1}>
-              <Text variant="h5" fontWeight="semiBold">
-                <Trans i18nKey="manager.selectDevice.title" />
-              </Text>
-              {deviceList.length > 0 && (
-                <Touchable onPress={onAddNewPress} {...addNewButtonEventProps}>
-                  <Flex flexDirection="row" alignItems="center">
-                    <Text color="primary.c90" mr={3} fontWeight="semiBold">
-                      <Trans
-                        i18nKey={`manager.selectDevice.${
-                          Platform.OS === "android" ? "addWithBluetooth" : "addNewCTA"
-                        }`}
-                      />
-                    </Text>
-                    <Icons.PlusMedium color="primary.c90" size={15} />
-                  </Flex>
-                </Touchable>
-              )}
-            </Flex>
-            <ScrollContainer my={4}>
-              {deviceList.length > 0 ? (
-                deviceList.map(device => (
-                  <Item key={device.deviceId} device={device as Device} onPress={handleOnSelect} />
-                ))
-              ) : (
-                <Touchable
-                  onPress={isChoiceDrawerDisplayedOnAddDevice ? onAddNewPress : openBlePairingFlow}
-                  {...addNewButtonEventProps}
-                >
-                  <Flex
-                    p={5}
-                    mb={4}
-                    borderRadius={5}
-                    flexDirection="row"
-                    alignItems="center"
-                    borderColor="neutral.c40"
-                    borderStyle="dashed"
-                    borderWidth="1px"
-                  >
-                    <Icons.PlusMedium color="neutral.c90" size={20} />
-                    <Text variant="large" fontWeight="semiBold" ml={5}>
-                      {t(
-                        `manager.selectDevice.${
-                          Platform.OS === "android" ? "addWithBluetooth" : "addALedger"
-                        }`,
-                      )}
-                    </Text>
-                  </Flex>
-                </Touchable>
-              )}
-              {Platform.OS === "android" &&
-                USBDevice === undefined &&
-                ProxyDevice === undefined && (
-                  <Text
-                    color="neutral.c100"
-                    variant="large"
-                    fontWeight="semiBold"
-                    fontSize={4}
-                    lineHeight="21px"
-                  >
-                    <Trans i18nKey="manager.selectDevice.otgBanner" />
+
+      {isPairingDevices ? (
+        <BleDevicePairingFlow
+          onPairingSuccess={handleOnSelect}
+          onGoBackFromScanning={closeBlePairingFlow}
+          onPairingSuccessAddToKnownDevices
+          requestToSetHeaderOptions={requestToSetHeaderOptions}
+          filterByDeviceModelId={filterByDeviceModelId}
+        />
+      ) : (
+        <Flex flex={1}>
+          {postOnboardingVisible && (
+            <Box mb={8}>
+              <PostOnboardingEntryPointCard />
+            </Box>
+          )}
+          <Flex flexDirection="row" justifyContent="space-between" alignItems="center" mb={1}>
+            <Text variant="h5" fontWeight="semiBold">
+              <Trans i18nKey="manager.selectDevice.title" />
+            </Text>
+            {deviceList.length > 0 && (
+              <Touchable
+                onPress={isChoiceDrawerDisplayedOnAddDevice ? onAddNewPress : openBlePairingFlow}
+                {...addNewButtonEventProps}
+              >
+                <Flex flexDirection="row" alignItems="center">
+                  <Text color="primary.c90" mr={3} fontWeight="semiBold">
+                    <Trans
+                      i18nKey={`manager.selectDevice.${
+                        Platform.OS === "android" ? "addWithBluetooth" : "addNewCTA"
+                      }`}
+                    />
                   </Text>
-                )}
-              {displayServicesWidget && <ServicesWidget />}
-            </ScrollContainer>
-            <Flex alignItems="center" mt={5}>
-              <BuyDeviceCTA />
+                  <IconsLegacy.PlusMedium color="primary.c90" size={15} />
+                </Flex>
+              </Touchable>
+            )}
+          </Flex>
+          <ScrollContainer my={4}>
+            {deviceList.length > 0 ? (
+              deviceList.map(device => (
+                <Item key={device.deviceId} device={device as Device} onPress={handleOnSelect} />
+              ))
+            ) : (
+              <Touchable
+                onPress={isChoiceDrawerDisplayedOnAddDevice ? onAddNewPress : openBlePairingFlow}
+                {...addNewButtonEventProps}
+              >
+                <Flex
+                  p={5}
+                  mb={4}
+                  borderRadius={5}
+                  flexDirection="row"
+                  alignItems="center"
+                  borderColor="neutral.c40"
+                  borderStyle="dashed"
+                  borderWidth="1px"
+                >
+                  <IconsLegacy.PlusMedium color="neutral.c90" size={20} />
+                  <Text variant="large" fontWeight="semiBold" ml={5}>
+                    {t(
+                      `manager.selectDevice.${
+                        Platform.OS === "android" ? "addWithBluetooth" : "addALedger"
+                      }`,
+                    )}
+                  </Text>
+                </Flex>
+              </Touchable>
+            )}
+            {Platform.OS === "android" && USBDevice === undefined && ProxyDevice === undefined && (
+              <Text
+                color="neutral.c100"
+                variant="large"
+                fontWeight="semiBold"
+                fontSize={4}
+                lineHeight="21px"
+              >
+                <Trans i18nKey="manager.selectDevice.otgBanner" />
+              </Text>
+            )}
+            {displayServicesWidget && <ServicesWidget />}
+          </ScrollContainer>
+          <Flex alignItems="center" mt={5}>
+            <BuyDeviceCTA />
+          </Flex>
+          <QueuedDrawer
+            isRequestingToBeOpened={isAddNewDrawerOpen}
+            onClose={() => setIsAddNewDrawerOpen(false)}
+          >
+            <Flex>
+              {withMyLedgerTracking ? (
+                <TrackScreen category={"Add a Ledger device"} type="drawer" refreshSource={false} />
+              ) : null}
+              <Touchable
+                onPress={onSetUpNewDevice}
+                {...(withMyLedgerTracking
+                  ? {
+                      event: "button_clicked",
+                      eventProperties: {
+                        button: "Set up a new Ledger",
+                        drawer: "Add a Ledger device",
+                      },
+                    }
+                  : {})}
+              >
+                <Flex backgroundColor="neutral.c30" mb={4} px={6} py={7} borderRadius={8}>
+                  <Flex flexDirection="row" justifyContent="space-between">
+                    <Flex flexShrink={1}>
+                      <Text variant="large" fontWeight="semiBold" mb={3}>
+                        {t("manager.selectDevice.setUpNewLedger")}
+                      </Text>
+                      <Text variant="paragraph" color="neutral.c80">
+                        {t("manager.selectDevice.setUpNewLedgerDescription")}
+                      </Text>
+                    </Flex>
+                    <Flex justifyContent="center" alignItems="center" ml={5} mr={2}>
+                      <Flex borderRadius="9999px" backgroundColor="neutral.c40" p={4}>
+                        <IconsLegacy.PlusMedium color="primary.c80" size={24} />
+                      </Flex>
+                    </Flex>
+                  </Flex>
+                </Flex>
+              </Touchable>
+              <Touchable
+                onPress={openBlePairingFlow}
+                {...(withMyLedgerTracking
+                  ? {
+                      event: "button_clicked",
+                      eventProperties: {
+                        button: "Connect with Bluetooth",
+                        drawer: "Add a Ledger device",
+                      },
+                    }
+                  : {})}
+              >
+                <Flex backgroundColor="neutral.c30" px={6} py={7} borderRadius={8}>
+                  <Flex flexDirection="row" justifyContent="space-between">
+                    <Flex flexShrink={1}>
+                      <Text variant="large" fontWeight="semiBold" mb={3}>
+                        {t("manager.selectDevice.connectExistingLedger")}
+                      </Text>
+                      <Text variant="paragraph" color="neutral.c80">
+                        {t("manager.selectDevice.connectExistingLedgerDescription")}
+                      </Text>
+                    </Flex>
+                    <Flex justifyContent="center" alignItems="center" ml={5} mr={2}>
+                      <Flex borderRadius="9999px" backgroundColor="neutral.c40" p={4}>
+                        <IconsLegacy.BluetoothMedium color="primary.c80" size={24} />
+                      </Flex>
+                    </Flex>
+                  </Flex>
+                </Flex>
+              </Touchable>
             </Flex>
-            <QueuedDrawer
-              isRequestingToBeOpened={isAddNewDrawerOpen}
-              onClose={() => setIsAddNewDrawerOpen(false)}
-            >
-              <Flex>
-                {withMyLedgerTracking ? (
-                  <TrackScreen
-                    category={"Add a Ledger device"}
-                    type="drawer"
-                    refreshSource={false}
-                  />
-                ) : null}
-                <Touchable
-                  onPress={onSetUpNewDevice}
-                  {...(withMyLedgerTracking
-                    ? {
-                        event: "button_clicked",
-                        eventProperties: {
-                          button: "Set up a new Ledger",
-                          drawer: "Add a Ledger device",
-                        },
-                      }
-                    : {})}
-                >
-                  <Flex backgroundColor="neutral.c30" mb={4} px={6} py={7} borderRadius={8}>
-                    <Flex flexDirection="row" justifyContent="space-between">
-                      <Flex flexShrink={1}>
-                        <Text variant="large" fontWeight="semiBold" mb={3}>
-                          {t("manager.selectDevice.setUpNewLedger")}
-                        </Text>
-                        <Text variant="paragraph" color="neutral.c80">
-                          {t("manager.selectDevice.setUpNewLedgerDescription")}
-                        </Text>
-                      </Flex>
-                      <Flex justifyContent="center" alignItems="center" ml={5} mr={2}>
-                        <Flex borderRadius="9999px" backgroundColor="neutral.c40" p={4}>
-                          <Icons.PlusMedium color="primary.c80" size={24} />
-                        </Flex>
-                      </Flex>
-                    </Flex>
-                  </Flex>
-                </Touchable>
-                <Touchable
-                  onPress={openBlePairingFlow}
-                  {...(withMyLedgerTracking
-                    ? {
-                        event: "button_clicked",
-                        eventProperties: {
-                          button: "Connect with Bluetooth",
-                          drawer: "Add a Ledger device",
-                        },
-                      }
-                    : {})}
-                >
-                  <Flex backgroundColor="neutral.c30" px={6} py={7} borderRadius={8}>
-                    <Flex flexDirection="row" justifyContent="space-between">
-                      <Flex flexShrink={1}>
-                        <Text variant="large" fontWeight="semiBold" mb={3}>
-                          {t("manager.selectDevice.connectExistingLedger")}
-                        </Text>
-                        <Text variant="paragraph" color="neutral.c80">
-                          {t("manager.selectDevice.connectExistingLedgerDescription")}
-                        </Text>
-                      </Flex>
-                      <Flex justifyContent="center" alignItems="center" ml={5} mr={2}>
-                        <Flex borderRadius="9999px" backgroundColor="neutral.c40" p={4}>
-                          <Icons.BluetoothMedium color="primary.c80" size={24} />
-                        </Flex>
-                      </Flex>
-                    </Flex>
-                  </Flex>
-                </Touchable>
-              </Flex>
-            </QueuedDrawer>
-          </>
-        )}
-      </Flex>
+          </QueuedDrawer>
+        </Flex>
+      )}
     </>
   );
 }

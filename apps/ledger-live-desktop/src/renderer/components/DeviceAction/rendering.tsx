@@ -1,11 +1,13 @@
 import React, { useCallback, useContext, useEffect } from "react";
 import { BigNumber } from "bignumber.js";
 import map from "lodash/map";
-import { TFunction, Trans } from "react-i18next";
+import { TFunction } from "i18next";
+import { Trans } from "react-i18next";
 import { connect, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import ProviderIcon from "~/renderer/components/ProviderIcon";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { ExchangeRate, Exchange } from "@ledgerhq/live-common/exchange/swap/types";
 import { getProviderName, getNoticeType } from "@ledgerhq/live-common/exchange/swap/utils/index";
@@ -38,7 +40,6 @@ import TrackPage, { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { Rotating } from "~/renderer/components/Spinner";
 import ProgressCircle from "~/renderer/components/ProgressCircle";
 import CrossCircle from "~/renderer/icons/CrossCircle";
-import { getProviderIcon } from "~/renderer/screens/exchange/Swap2/utils";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { context } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
@@ -57,6 +58,8 @@ import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import DeviceIllustration from "~/renderer/components/DeviceIllustration";
 import FramedImage from "../CustomImage/FramedImage";
 import { Account } from "@ledgerhq/types-live";
+import LinkWithExternalIcon from "../LinkWithExternalIcon";
+import { openURL } from "~/renderer/linking";
 
 export const AnimationWrapper = styled.div`
   width: 600px;
@@ -135,6 +138,13 @@ export const Title = styled(Text).attrs({
   white-space: pre-line;
 `;
 
+const BulletText = styled(Text).attrs({
+  variant: "body",
+  fontWeight: "medium",
+  textAlign: "start",
+  whiteSpace: "pre-line",
+})``;
+
 export const SubTitle = styled(Text).attrs({
   variant: "paragraph",
   color: "palette.text.shade100",
@@ -161,6 +171,7 @@ const ErrorDescription = styled(Text).attrs({
   color: "palette.text.shade60",
   textAlign: "center",
   fontSize: 4,
+  whiteSpace: "pre-wrap",
 })`
   user-select: text;
 `;
@@ -617,6 +628,23 @@ export const RenderDeviceNotOnboardedError = ({ t, device }: { t: TFunction; dev
   );
 };
 
+/** Renders an error icon, title and description */
+export const ErrorBody: React.FC<{
+  Icon: (props: { color?: string | undefined; size?: number | undefined }) => JSX.Element;
+  title: string | React.ReactNode;
+  description: string | React.ReactNode;
+  list?: string | React.ReactNode;
+}> = ({ Icon, title, description, list }) => {
+  return (
+    <>
+      <BoxedIcon Icon={Icon} size={64} iconSize={24} />
+      <ErrorTitle>{title}</ErrorTitle>
+      <ErrorDescription>{description}</ErrorDescription>
+      {list ? <ErrorDescription>{list}</ErrorDescription> : null}
+    </>
+  );
+};
+
 export const renderError = ({
   error,
   t,
@@ -625,6 +653,7 @@ export const renderError = ({
   withExportLogs,
   list,
   supportLink,
+  buyLedger,
   warning,
   info,
   managerAppName,
@@ -632,6 +661,7 @@ export const renderError = ({
   withOnboardingCTA,
   device,
   inlineRetry = true,
+  Icon,
 }: {
   error: Error | ErrorConstructor;
   t: TFunction;
@@ -640,6 +670,7 @@ export const renderError = ({
   withExportLogs?: boolean;
   list?: boolean;
   supportLink?: string;
+  buyLedger?: string;
   warning?: boolean;
   info?: boolean;
   managerAppName?: string;
@@ -647,6 +678,7 @@ export const renderError = ({
   withOnboardingCTA?: boolean;
   device?: Device;
   inlineRetry?: boolean;
+  Icon?: (props: { color?: string | undefined; size?: number | undefined }) => JSX.Element;
 }) => {
   // Redirects from renderError and not from DeviceActionDefaultRendering because renderError
   // can be used directly by other component
@@ -658,27 +690,26 @@ export const renderError = ({
 
   return (
     <Wrapper id={`error-${error.name}`}>
-      <BoxedIcon
-        Icon={() => (
-          <Logo info={info} warning={warning}>
-            <ErrorIcon size={24} error={error} />
-          </Logo>
-        )}
-        size={64}
+      <ErrorBody
+        Icon={
+          Icon
+            ? Icon
+            : () => (
+                <Logo info={info} warning={warning}>
+                  <ErrorIcon size={24} error={error} />
+                </Logo>
+              )
+        }
+        title={<TranslatedError error={error as unknown as Error} noLink />}
+        description={<TranslatedError error={error as unknown as Error} field="description" />}
+        list={
+          list ? (
+            <ol style={{ textAlign: "justify" }}>
+              <TranslatedError error={error as unknown as Error} field="list" />
+            </ol>
+          ) : undefined
+        }
       />
-      <ErrorTitle>
-        <TranslatedError error={error as unknown as Error} noLink />
-      </ErrorTitle>
-      <ErrorDescription>
-        <TranslatedError error={error as unknown as Error} field="description" />
-      </ErrorDescription>
-      {list ? (
-        <ErrorDescription>
-          <ol style={{ textAlign: "justify" }}>
-            <TranslatedError error={error as unknown as Error} field="list" />
-          </ol>
-        </ErrorDescription>
-      ) : null}
       <ButtonContainer>
         {managerAppName || requireFirmwareUpdate ? (
           <OpenManagerButton
@@ -708,6 +739,12 @@ export const renderError = ({
               </Button>
             ) : null}
             {withOnboardingCTA ? <OpenOnboardingBtn /> : null}
+            {buyLedger ? (
+              <LinkWithExternalIcon
+                label={t("common.buyLedger")}
+                onClick={() => openURL(buyLedger)}
+              />
+            ) : null}
           </>
         )}
       </ButtonContainer>
@@ -775,47 +812,57 @@ export const renderConnectYourDevice = ({
 const renderFirmwareUpdatingBase = ({
   modelId,
   type,
+  deviceHasPin = true,
 }: {
   modelId: DeviceModelId;
   type: Theme["theme"];
-}) => (
-  <Wrapper>
-    <Header />
-    <Box mb={8}>
-      <Animation animation={getDeviceAnimation(modelId, type, "firmwareUpdating")} />
-    </Box>
-    <Footer>
-      <Flex alignItems="flex-start" flexDirection="column">
-        <Flex alignItems="center">
-          <Circle mr={6}>
-            <Text color="palette.text.shade100" variant="body">
-              {"1"}
-            </Text>
-          </Circle>
-          <Title flex={1}>
-            <Trans
-              i18nKey="DeviceAction.unlockDeviceAfterFirmwareUpdateStep1"
-              values={{ productName: getDeviceModel(modelId).productName }}
-            />
-          </Title>
+  deviceHasPin?: boolean;
+}) =>
+  deviceHasPin ? (
+    <Wrapper>
+      <Header />
+      <Box mb={8}>
+        <Animation animation={getDeviceAnimation(modelId, type, "firmwareUpdating")} />
+      </Box>
+      <Footer>
+        <Flex alignItems="flex-start" flexDirection="column">
+          <Flex alignItems="center">
+            <Circle mr={6}>
+              <Text color="palette.text.shade100" variant="body">
+                {"1"}
+              </Text>
+            </Circle>
+            <BulletText flex={1}>
+              <Trans
+                i18nKey="DeviceAction.unlockDeviceAfterFirmwareUpdateStep1"
+                values={{ productName: getDeviceModel(modelId).productName }}
+              />
+            </BulletText>
+          </Flex>
+          <Flex alignItems="center" mt={6}>
+            <Circle mr={6}>
+              <Text color="palette.text.shade100" variant="body">
+                {"2"}
+              </Text>
+            </Circle>
+            <BulletText flex={1}>
+              <Trans
+                i18nKey="DeviceAction.unlockDeviceAfterFirmwareUpdateStep2"
+                values={{ productName: getDeviceModel(modelId).productName }}
+              />
+            </BulletText>
+          </Flex>
         </Flex>
-        <Flex alignItems="center" mt={6}>
-          <Circle mr={6}>
-            <Text color="palette.text.shade100" variant="body">
-              {"2"}
-            </Text>
-          </Circle>
-          <Title flex={1}>
-            <Trans
-              i18nKey="DeviceAction.unlockDeviceAfterFirmwareUpdateStep2"
-              values={{ productName: getDeviceModel(modelId).productName }}
-            />
-          </Title>
-        </Flex>
-      </Flex>
-    </Footer>
-  </Wrapper>
-);
+      </Footer>
+    </Wrapper>
+  ) : (
+    <BulletText flex={1}>
+      <Trans
+        i18nKey="DeviceAction.unlockDeviceAfterFirmwareUpdateStep1"
+        values={{ productName: getDeviceModel(modelId).productName }}
+      />
+    </BulletText>
+  );
 
 export const renderFirmwareUpdating = withV3StyleProvider(renderFirmwareUpdatingBase);
 
@@ -838,7 +885,6 @@ export const renderSwapDeviceConfirmation = ({
   estimatedFees?: string;
   swapDefaultTrack: Record<string, string | boolean>;
 }) => {
-  const ProviderIcon = getProviderIcon(exchangeRate);
   const [sourceAccountName, sourceAccountCurrency] = [
     getAccountName(exchange.fromAccount),
     getAccountCurrency(exchange.fromAccount),
@@ -890,7 +936,7 @@ export const renderSwapDeviceConfirmation = ({
               ),
               provider: (
                 <Box horizontal alignItems="center" style={{ gap: "6px" }}>
-                  <ProviderIcon size={18} />
+                  <ProviderIcon size="XXS" name={exchangeRate.provider} />
                   <Text>{providerName}</Text>
                 </Box>
               ),

@@ -1,7 +1,6 @@
 import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
-import { Polkadot as PolkadotIdenticon } from "@polkadot/reactnative-identicon/icons";
 
 import {
   PolkadotNomination,
@@ -16,6 +15,7 @@ import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import CounterValue from "../../../components/CounterValue";
 import LText from "../../../components/LText";
 import ArrowRight from "../../../icons/ArrowRight";
+import Identicon from "@polkadot/reactnative-identicon";
 
 type Props = {
   nomination: PolkadotNomination;
@@ -41,9 +41,7 @@ export default function NominationRow({ nomination, validator, account, onPress 
     <TouchableOpacity onPress={() => onPress(nomination)}>
       <Flex flexDirection={"row"} alignItems={"center"} py={5}>
         <View style={styles.icon}>
-          {/* FIXME: I HAD TO ADD publicKey IN HERE. I LOOKED INTO THE LIB AND IT
-            SEEMS THAT THE DEFAULT VALUE FOR publicKey IS "0x" */}
-          <PolkadotIdenticon publicKey="0x" address={address} size={32} />
+          <Identicon theme="polkadot" value={address} size={32} />
         </View>
 
         <View style={styles.nameWrapper}>

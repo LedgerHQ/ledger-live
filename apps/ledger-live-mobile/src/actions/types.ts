@@ -29,10 +29,13 @@ import type {
   State,
   WalletConnectState,
   SwapStateType,
+  EarnState,
   DynamicContentState,
   ProtectState,
+  NftState,
 } from "../reducers/types";
 import type { Unpacked } from "../types/helpers";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 
 //  === ACCOUNTS ACTIONS ===
 
@@ -241,11 +244,11 @@ export enum SettingsActionTypes {
   SETTINGS_SET_LOCALE = "SETTINGS_SET_LOCALE",
   SETTINGS_SET_DATE_FORMAT = "SETTINGS_SET_DATE_FORMAT",
   SET_SWAP_SELECTABLE_CURRENCIES = "SET_SWAP_SELECTABLE_CURRENCIES",
-  SET_SWAP_KYC = "SET_SWAP_KYC",
   ACCEPT_SWAP_PROVIDER = "ACCEPT_SWAP_PROVIDER",
   LAST_SEEN_DEVICE = "LAST_SEEN_DEVICE",
   LAST_SEEN_DEVICE_INFO = "LAST_SEEN_DEVICE_INFO",
   LAST_SEEN_DEVICE_LANGUAGE_ID = "LAST_SEEN_DEVICE_LANGUAGE_ID",
+  SET_KNOWN_DEVICE_MODEL_IDS = "SET_KNOWN_DEVICE_MODEL_IDS",
   SET_HAS_SEEN_STAX_ENABLED_NFTS_POPUP = "SET_HAS_SEEN_STAX_ENABLED_NFTS_POPUP",
   SET_LAST_SEEN_CUSTOM_IMAGE = "SET_LAST_SEEN_CUSTOM_IMAGE",
   ADD_STARRED_MARKET_COINS = "ADD_STARRED_MARKET_COINS",
@@ -260,7 +263,6 @@ export enum SettingsActionTypes {
   SET_SENSITIVE_ANALYTICS = "SET_SENSITIVE_ANALYTICS",
   SET_ONBOARDING_HAS_DEVICE = "SET_ONBOARDING_HAS_DEVICE",
   SET_NOTIFICATIONS = "SET_NOTIFICATIONS",
-  RESET_SWAP_LOGIN_AND_KYC_DATA = "RESET_SWAP_LOGIN_AND_KYC_DATA",
   WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB = "WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB",
   SET_STATUS_CENTER = "SET_STATUS_CENTER",
   SET_OVERRIDDEN_FEATURE_FLAG = "SET_OVERRIDDEN_FEATURE_FLAG",
@@ -270,6 +272,9 @@ export enum SettingsActionTypes {
   SET_HAS_BEEN_UPSOLD_PROTECT = "SET_HAS_BEEN_UPSOLD_PROTECT",
   SET_GENERAL_TERMS_VERSION_ACCEPTED = "SET_GENERAL_TERMS_VERSION_ACCEPTED",
   SET_ONBOARDING_TYPE = "SET_ONBOARDING_TYPE",
+  SET_CLOSED_NETWORK_BANNER = "SET_CLOSED_NETWORK_BANNER",
+  SET_CLOSED_WITHDRAW_BANNER = "SET_CLOSED_WITHDRAW_BANNER",
+  SET_USER_NPS = "SET_USER_NPS",
 }
 
 export type SettingsImportPayload = Partial<SettingsState>;
@@ -308,11 +313,6 @@ export type SettingsSetLanguagePayload = SettingsState["language"];
 export type SettingsSetLocalePayload = SettingsState["locale"];
 export type SettingsSetSwapSelectableCurrenciesPayload =
   SettingsState["swap"]["selectableCurrencies"];
-export type SettingsSetSwapKycPayload = {
-  provider?: string;
-  id?: string;
-  status?: string | null;
-};
 export type SettingsAcceptSwapProviderPayload = Unpacked<
   SettingsState["swap"]["acceptedProviders"]
 >;
@@ -325,6 +325,7 @@ export type SettingsLastSeenDevicePayload = NonNullable<
 >["deviceInfo"];
 export type SettingsLastSeenDeviceInfoPayload = DeviceModelInfo;
 export type SettingsLastSeenDeviceLanguagePayload = DeviceInfo["languageId"];
+export type SettingsSetKnownDeviceModelIdsPayload = { [key in DeviceModelId]?: boolean };
 export type SettingsAddStarredMarketcoinsPayload = Unpacked<SettingsState["starredMarketCoins"]>;
 export type SettingsRemoveStarredMarketcoinsPayload = Unpacked<SettingsState["starredMarketCoins"]>;
 export type SettingsSetLastConnectedDevicePayload = Device;
@@ -347,6 +348,9 @@ export type SettingsSetOnboardingHasDevicePayload = SettingsState["onboardingHas
 
 export type SettingsSetOnboardingTypePayload = SettingsState["onboardingType"];
 
+export type SettingsSetClosedNetworkBannerPayload = boolean;
+export type SettingsSetClosedWithdrawBannerPayload = boolean;
+
 export type SettingsSetNotificationsPayload = Partial<SettingsState["notifications"]>;
 export type SettingsSetWalletTabNavigatorLastVisitedTabPayload =
   SettingsState["walletTabNavigatorLastVisitedTab"];
@@ -367,6 +371,7 @@ export type SettingsSetHasBeenUpsoldProtectPayload = SettingsState["hasBeenUpsol
 
 export type SettingsCompleteOnboardingPayload = void | SettingsState["hasCompletedOnboarding"];
 export type SettingsSetGeneralTermsVersionAccepted = SettingsState["generalTermsVersionAccepted"];
+export type SettingsSetUserNps = number;
 
 export type SettingsPayload =
   | SettingsImportPayload
@@ -395,7 +400,6 @@ export type SettingsPayload =
   | SettingsSetLanguagePayload
   | SettingsSetLocalePayload
   | SettingsSetSwapSelectableCurrenciesPayload
-  | SettingsSetSwapKycPayload
   | SettingsAcceptSwapProviderPayload
   | SettingsLastSeenDevicePayload
   | SettingsLastSeenDeviceLanguagePayload
@@ -420,7 +424,9 @@ export type SettingsPayload =
   | SettingsSetDebugAppLevelDrawerOpenedPayload
   | SettingsSetGeneralTermsVersionAccepted
   | SettingsSetHasBeenUpsoldProtectPayload
-  | SettingsSetOnboardingTypePayload;
+  | SettingsSetOnboardingTypePayload
+  | SettingsSetClosedNetworkBannerPayload
+  | SettingsSetUserNps;
 
 // === WALLET CONNECT ACTIONS ===
 export enum WalletConnectActionTypes {
@@ -443,6 +449,15 @@ export type UpdateTransactionPayload = Transaction | undefined;
 export type UpdateRatePayload = ExchangeRate | undefined;
 
 export type SwapPayload = UpdateProvidersPayload | UpdateTransactionPayload | UpdateRatePayload;
+
+// === EARN ACTIONS ==
+export enum EarnActionTypes {
+  EARN_INFO_MODAL = "EARN_INFO_MODAL",
+}
+
+export type EarnSetInfoModalPayload = EarnState["infoModal"] | undefined;
+
+export type EarnPayload = EarnSetInfoModalPayload;
 
 // === PROTECT ACTIONS ===
 export enum ProtectActionTypes {
@@ -467,4 +482,18 @@ export type ActionsPayload =
   | Action<WalletConnectPayload>
   | Action<PostOnboardingPayload>
   | Action<SwapPayload>
-  | Action<ProtectPayload>;
+  | Action<ProtectPayload>
+  | Action<EarnPayload>;
+
+// === NFT ACTIONS ===
+export enum NftStateActionTypes {
+  SET_GALLERY_CHAIN_FILTER = "SET_GALLERY_CHAIN_FILTER",
+  SET_GALLERY_FILTER_DRAWER_VISIBLE = "SET_GALLERY_FILTER_DRAWER_VISIBLE",
+}
+
+export type NftStateGalleryChainFiltersPayload = [keyof NftState["galleryChainFilters"], boolean];
+export type NftStateGalleryFilterDrawerVisiblePayload = NftState["filterDrawerVisible"];
+
+export type NftStatePayload =
+  | NftStateGalleryChainFiltersPayload
+  | NftStateGalleryFilterDrawerVisiblePayload;

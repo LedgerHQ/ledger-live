@@ -1,18 +1,13 @@
 import { findCryptoCurrencyByTicker } from "@ledgerhq/cryptoassets";
 import "../../../__tests__/test-helpers/setup";
 import BigNumber from "bignumber.js";
+import { nftsFromOperations } from "@ledgerhq/coin-framework/nft/helpers";
 import { encodeAccountId, toNFTRaw } from "../../../account";
 import { ProtoNFT, Operation } from "@ledgerhq/types-live";
 import { mergeNfts } from "../../../bridge/jsHelpers";
-import {
-  encodeNftId,
-  getNftCapabilities,
-  isNFTActive,
-  isNftTransaction,
-  nftsFromOperations,
-} from "../../../nft";
 import { Transaction } from "../types";
 import { encodeERC1155OperationId } from "../../../nft/nftOperationId";
+import { encodeNftId, getNftCapabilities, isNFTActive, isNftTransaction } from "../../../nft";
 
 describe("nft merging", () => {
   const makeNFT = (tokenId: string, contract: string, amount: number): ProtoNFT => ({

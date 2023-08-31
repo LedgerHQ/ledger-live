@@ -1,7 +1,7 @@
 import React from "react";
 import { action } from "@storybook/addon-actions";
 import Link from "../../../src/components/cta/Link";
-import { InfoMedium } from "@ledgerhq/icons-ui/native";
+import { InfoMedium } from "@ledgerhq/icons-ui/nativeLegacy";
 
 export default {
   title: "Link",

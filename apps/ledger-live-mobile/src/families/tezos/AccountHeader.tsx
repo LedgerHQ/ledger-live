@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, ParamListBase, RouteProp } from "@react-navigation/native";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
@@ -41,9 +41,10 @@ const styles = StyleSheet.create({
 type Props = {
   account: AccountLike;
   parentAccount?: Account;
+  parentRoute?: RouteProp<ParamListBase, ScreenName>;
 };
 
-export default function TezosAccountHeader({ account, parentAccount }: Props) {
+export default function TezosAccountHeader({ account, parentAccount, parentRoute }: Props) {
   const navigation = useNavigation<Navigation["navigation"]>();
 
   const onEarnRewards = useCallback(() => {
@@ -52,9 +53,10 @@ export default function TezosAccountHeader({ account, parentAccount }: Props) {
       params: {
         accountId: account.id,
         parentId: parentAccount ? parentAccount.id : undefined,
+        source: parentRoute,
       },
     });
-  }, [navigation, account, parentAccount]);
+  }, [navigation, account.id, parentAccount, parentRoute]);
 
   const mainAccount = getMainAccount(account, parentAccount);
   const backgroundColor = getCurrencyColor(mainAccount.currency);

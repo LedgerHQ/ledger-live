@@ -1,21 +1,8 @@
-import { CacheRes } from "@ledgerhq/live-network/cache";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Operation } from "@ledgerhq/types-live";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { UnknownExplorer } from "../../errors";
 import etherscanLikeApi from "./etherscan";
-
-type ExplorerApi = {
-  getLastCoinOperations: CacheRes<
-    [currency: CryptoCurrency, address: string, accountId: string, fromBlock: number],
-    Operation[]
-  >;
-  getLastTokenOperations: CacheRes<
-    [currency: CryptoCurrency, address: string, accountId: string, fromBlock: number],
-    {
-      tokenCurrency: TokenCurrency;
-      operation: Operation;
-    }[]
-  >;
-};
+import ledgerExplorerApi from "./ledger";
+import { ExplorerApi } from "./types";
 
 /**
  * Switch to select one of the compatible explorer
@@ -26,9 +13,13 @@ export const getExplorerApi = (currency: CryptoCurrency): ExplorerApi => {
   switch (apiType) {
     case "etherscan":
     case "blockscout":
+    case "teloscan":
+    case "klaytnfinder":
       return etherscanLikeApi;
+    case "ledger":
+      return ledgerExplorerApi;
 
     default:
-      throw new Error(`No explorer found for currency "${currency.id}"`);
+      throw new UnknownExplorer(`Unknown explorer for currency: ${currency.id}`);
   }
 };

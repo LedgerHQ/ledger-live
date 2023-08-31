@@ -2,7 +2,7 @@ import { test as base, Page, ElectronApplication, _electron as electron } from "
 import * as fs from "fs";
 import * as path from "path";
 import * as crypto from "crypto";
-import { Feature, FeatureId } from "@ledgerhq/types-live";
+import { DefaultFeatures } from "@ledgerhq/types-live";
 import { responseLogfilePath } from "../utils/networkResponseLogger";
 
 export function generateUUID(): string {
@@ -15,10 +15,11 @@ type TestFixtures = {
   userdata: string;
   userdataDestinationPath: string;
   userdataOriginalFile: string;
-  userdataFile: any;
-  env: Record<string, any>;
+  userdataFile: string;
+  env: Record<string, string>;
+  electronApp: ElectronApplication;
   page: Page;
-  featureFlags: { [key in FeatureId]?: Feature };
+  featureFlags: DefaultFeatures;
   recordTestNamesForApiResponseLogging: void;
 };
 
@@ -40,17 +41,9 @@ const test = base.extend<TestFixtures>({
     const fullFilePath = path.join(userdataDestinationPath, "app.json");
     use(fullFilePath);
   },
-  page: async (
-    {
-      lang,
-      theme,
-      userdata,
-      userdataDestinationPath,
-      userdataOriginalFile,
-      env,
-      featureFlags,
-    }: TestFixtures,
-    use: (page: Page) => void,
+  electronApp: async (
+    { lang, theme, userdata, userdataDestinationPath, userdataOriginalFile, env, featureFlags },
+    use,
   ) => {
     // create userdata path
     fs.mkdirSync(userdataDestinationPath, { recursive: true });
@@ -101,6 +94,12 @@ const test = base.extend<TestFixtures>({
       timeout: 120000,
     });
 
+    await use(electronApp);
+
+    // close app
+    await electronApp.close();
+  },
+  page: async ({ electronApp }, use) => {
     // app is ready
     const page = await electronApp.firstWindow();
 
@@ -136,8 +135,7 @@ const test = base.extend<TestFixtures>({
     // use page in the test
     await use(page);
 
-    // close app
-    await electronApp.close();
+    console.log(`Video for test recorded at: ${await page.video()?.path()}\n`);
   },
   // below is used for the logging file at `artifacts/networkResponses.log`
   recordTestNamesForApiResponseLogging: [

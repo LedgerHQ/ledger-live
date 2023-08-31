@@ -19,13 +19,13 @@ export async function prepareTransaction(
   const { collection, collectionName, tokenIds } = transaction;
   if (collection && tokenIds && typeof collectionName === "undefined") {
     const api = apiForCurrency(account.currency);
-    const [{ status, result }] = await api.getNFTCollectionMetadata(
+    const [{ status, result }] = await api.getNftCollectionMetadata(
       [
         {
           contract: collection,
         },
       ],
-      account.currency?.ethereumLikeInfo?.chainId?.toString() || "1",
+      { chainId: account.currency?.ethereumLikeInfo?.chainId ?? 1 },
     );
     let collectionName = ""; // default value fallback if issue
     if (status === 200) {

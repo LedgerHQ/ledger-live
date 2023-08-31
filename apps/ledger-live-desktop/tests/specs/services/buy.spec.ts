@@ -1,82 +1,59 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import * as server from "../../utils/serve-dummy-app";
 import { Layout } from "../../models/Layout";
-import { DiscoverPage } from "../../models/DiscoverPage";
 import { PortfolioPage } from "../../models/PortfolioPage";
 import { AssetPage } from "../../models/AssetPage";
 import { AccountsPage } from "../../models/AccountsPage";
 import { AccountPage } from "../../models/AccountPage";
 import { SettingsPage } from "../../models/SettingsPage";
 import { MarketPage } from "../../models/MarketPage";
+import { LiveAppWebview } from "../../models/LiveAppWebview";
 
 test.use({
   userdata: "1AccountBTC1AccountETH",
   featureFlags: {
-    ptxSmartRouting: {
-      enabled: true,
-      params: { liveAppId: "multibuy" },
-    },
     portfolioExchangeBanner: { enabled: true },
   },
 });
 
-let continueTest = false;
+let testServerIsRunning = false;
 
-test.beforeAll(async ({ request }) => {
-  // Check that dummy app in tests/utils/dummy-ptx-app has been started successfully
-  try {
-    const port = await server.start("dummy-ptx-app/public");
-    const url = `http://localhost:${port}`;
-    const response = await request.get(url);
-    if (response.ok() && port) {
-      continueTest = true;
-      console.info(`========> Dummy test app successfully running on port ${port}! <=========`);
-      process.env.MOCK_REMOTE_LIVE_MANIFEST = JSON.stringify(
-        server.liveAppManifest({
-          id: "multibuy",
-          url,
-          name: "Dummy Buy / Sell App",
-          content: {
-            shortDescription: {
-              en: "Dummy app for testing the Buy app is accessed correctly",
-            },
-            description: {
-              en: "Dummy app for testing the Buy app is accessed correctly",
-            },
-          },
-          permissions: [
-            {
-              method: "account.request",
-              params: {
-                currencies: ["ethereum", "bitcoin", "algorand"],
-              },
-            },
-          ],
-        }),
-      );
-    } else {
-      throw new Error("Ping response != 200, got: " + response.status);
-    }
-  } catch (error) {
-    console.warn(`========> Dummy test app not running! <=========`);
-    console.error(error);
+test.beforeAll(async () => {
+  // Check that dummy app in libs/test-utils/dummy-ptx-app has been started successfully
+  testServerIsRunning = await LiveAppWebview.startLiveApp("dummy-ptx-app/public", {
+    name: "Buy App",
+    id: "multibuy",
+    permissions: [
+      {
+        method: "account.request",
+        params: {
+          currencies: ["ethereum", "bitcoin", "algorand"],
+        },
+      },
+    ],
+  });
+
+  if (!testServerIsRunning) {
+    console.warn("Stopping Buy/Sell test setup");
+    return;
   }
 });
 
-test.afterAll(() => {
-  server.stop();
-  console.info(`========> Dummy test app stopped <=========`);
-  delete process.env.MOCK_REMOTE_LIVE_MANIFEST;
+test.afterAll(async () => {
+  if (testServerIsRunning) {
+    await LiveAppWebview.stopLiveApp();
+  }
 });
 
-test("Buy / Sell", async ({ page }) => {
-  // Don't run test if server is not running
-  if (!continueTest) return;
+test("Buy / Sell @smoke", async ({ page }) => {
+  if (!testServerIsRunning) {
+    console.warn("Test server not running - Cancelling Buy/Sell E2E test");
+    return;
+  }
 
   const layout = new Layout(page);
-  const liveApp = new DiscoverPage(page);
   const portfolioPage = new PortfolioPage(page);
+  const liveAppWebview = new LiveAppWebview(page);
   const assetPage = new AssetPage(page);
   const accountPage = new AccountPage(page);
   const accountsPage = new AccountsPage(page);
@@ -85,20 +62,24 @@ test("Buy / Sell", async ({ page }) => {
 
   await test.step("Navigate to Buy app from portfolio banner", async () => {
     await portfolioPage.startBuyFlow();
-    await expect(await liveApp.waitForCorrectTextInWebview("theme: dark")).toBe(true);
-    await expect(await liveApp.waitForCorrectTextInWebview("lang: en")).toBe(true);
-    await expect.soft(page).toHaveScreenshot("buy-app-opened.png");
+    await expect(await liveAppWebview.waitForCorrectTextInWebview("theme: dark")).toBe(true);
+    await expect(await liveAppWebview.waitForCorrectTextInWebview("lang: en")).toBe(true);
+    await expect
+      .soft(page)
+      .toHaveScreenshot("buy-app-opened.png", { mask: [page.locator("webview")] });
   });
 
   await test.step("Navigate to Buy app from market", async () => {
     await layout.goToMarket();
     await marketPage.openBuyPage("usdt");
-    await expect(await liveApp.waitForCorrectTextInWebview("theme: dark")).toBe(true);
+    await expect(await liveAppWebview.waitForCorrectTextInWebview("theme: dark")).toBe(true);
     await expect(
-      await liveApp.waitForCorrectTextInWebview("currency: ethereum/erc20/usd_tether__erc20_"),
+      await liveAppWebview.waitForCorrectTextInWebview(
+        "currency: ethereum/erc20/usd_tether__erc20_",
+      ),
     ).toBe(true);
-    await expect(await liveApp.waitForCorrectTextInWebview("mode: buy")).toBe(true);
-    await expect(await liveApp.waitForCorrectTextInWebview("lang: en")).toBe(true);
+    await expect(await liveAppWebview.waitForCorrectTextInWebview("mode: buy")).toBe(true);
+    await expect(await liveAppWebview.waitForCorrectTextInWebview("lang: en")).toBe(true);
   });
 
   await test.step("Navigate to Buy app from asset", async () => {
@@ -106,10 +87,10 @@ test("Buy / Sell", async ({ page }) => {
     await portfolioPage.navigateToAsset("ethereum");
     await assetPage.startBuyFlow();
 
-    await expect(await liveApp.waitForCorrectTextInWebview("theme: dark")).toBe(true);
-    await expect(await liveApp.waitForCorrectTextInWebview("lang: en")).toBe(true);
-    await expect(await liveApp.waitForCorrectTextInWebview("currency: ethereum")).toBe(true);
-    await expect(await liveApp.waitForCorrectTextInWebview("mode: buy")).toBe(true);
+    await expect(await liveAppWebview.waitForCorrectTextInWebview("theme: dark")).toBe(true);
+    await expect(await liveAppWebview.waitForCorrectTextInWebview("lang: en")).toBe(true);
+    await expect(await liveAppWebview.waitForCorrectTextInWebview("currency: ethereum")).toBe(true);
+    await expect(await liveAppWebview.waitForCorrectTextInWebview("mode: buy")).toBe(true);
   });
 
   await test.step("Navigate to Buy app from account", async () => {
@@ -117,13 +98,13 @@ test("Buy / Sell", async ({ page }) => {
     await accountsPage.navigateToAccountByName("Bitcoin 1 (legacy)");
     await accountPage.navigateToBuy();
 
-    await expect(await liveApp.waitForCorrectTextInWebview("theme: dark")).toBe(true);
-    await expect(await liveApp.waitForCorrectTextInWebview("currency: bitcoin")).toBe(true);
+    await expect(await liveAppWebview.waitForCorrectTextInWebview("theme: dark")).toBe(true);
+    await expect(await liveAppWebview.waitForCorrectTextInWebview("currency: bitcoin")).toBe(true);
     await expect(
-      await liveApp.waitForCorrectTextInWebview("account: mock:1:bitcoin:true_bitcoin_0:"),
+      await liveAppWebview.waitForCorrectTextInWebview("account: mock:1:bitcoin:true_bitcoin_0:"),
     ).toBe(true);
-    await expect(await liveApp.waitForCorrectTextInWebview("lang: en")).toBe(true);
-    await expect(await liveApp.waitForCorrectTextInWebview("mode: buy")).toBe(true);
+    await expect(await liveAppWebview.waitForCorrectTextInWebview("lang: en")).toBe(true);
+    await expect(await liveAppWebview.waitForCorrectTextInWebview("mode: buy")).toBe(true);
   });
 
   await test.step("Navigate to Buy app from account", async () => {
@@ -131,13 +112,13 @@ test("Buy / Sell", async ({ page }) => {
     await accountsPage.navigateToAccountByName("Bitcoin 1 (legacy)");
     await accountPage.navigateToSell();
 
-    await expect(await liveApp.waitForCorrectTextInWebview("theme: dark")).toBe(true);
-    await expect(await liveApp.waitForCorrectTextInWebview("currency: bitcoin")).toBe(true);
+    await expect(await liveAppWebview.waitForCorrectTextInWebview("theme: dark")).toBe(true);
+    await expect(await liveAppWebview.waitForCorrectTextInWebview("currency: bitcoin")).toBe(true);
     await expect(
-      await liveApp.waitForCorrectTextInWebview("account: mock:1:bitcoin:true_bitcoin_0:"),
+      await liveAppWebview.waitForCorrectTextInWebview("account: mock:1:bitcoin:true_bitcoin_0:"),
     ).toBe(true);
-    await expect(await liveApp.waitForCorrectTextInWebview("lang: en")).toBe(true);
-    await expect(await liveApp.waitForCorrectTextInWebview("mode: sell")).toBe(true);
+    await expect(await liveAppWebview.waitForCorrectTextInWebview("lang: en")).toBe(true);
+    await expect(await liveAppWebview.waitForCorrectTextInWebview("mode: sell")).toBe(true);
   });
 
   await test.step("Navigate to Buy app from sidebar with light theme and French Language", async () => {
@@ -146,7 +127,7 @@ test("Buy / Sell", async ({ page }) => {
     await settingsPage.changeTheme();
     await await layout.goToBuyCrypto();
 
-    await expect(await liveApp.waitForCorrectTextInWebview("theme: light")).toBe(true);
-    await expect(await liveApp.waitForCorrectTextInWebview("lang: fr")).toBe(true);
+    await expect(await liveAppWebview.waitForCorrectTextInWebview("theme: light")).toBe(true);
+    await expect(await liveAppWebview.waitForCorrectTextInWebview("lang: fr")).toBe(true);
   });
 });

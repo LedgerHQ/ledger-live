@@ -23,10 +23,9 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { SeedPhraseType, StorylyInstanceID } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { addKnownDevice } from "../../actions/ble";
-import { ScreenName } from "../../const";
+import { NavigatorName, ScreenName } from "../../const";
 import HelpDrawer from "./HelpDrawer";
-import ResyncOverlay from "./ResyncOverlay";
-import SoftwareChecksStep from "./SoftwareChecksStep";
+import DesyncOverlay from "./DesyncOverlay";
 import {
   completeOnboarding,
   setHasOrderedNano,
@@ -81,7 +80,7 @@ export type SyncOnboardingCompanionProps = {
   /**
    * Called by the companion component to force a reset of the entire sync onboarding because the device is not in a correct state anymore
    */
-  notifySyncOnboardingShouldReset: () => void;
+  notifyEarlySecurityCheckShouldReset: () => void;
 };
 
 const POLLING_PERIOD_MS = 1000;
@@ -89,8 +88,8 @@ const POLLING_PERIOD_MS = 1000;
 const NORMAL_DESYNC_TIMEOUT_MS = 60000;
 const LONG_DESYNC_TIMEOUT_MS = 120000;
 
-export const NORMAL_RESYNC_OVERLAY_DISPLAY_DELAY_MS = 10000;
-const LONG_RESYNC_OVERLAY_DISPLAY_DELAY_MS = 60000;
+export const NORMAL_DESYNC_OVERLAY_DISPLAY_DELAY_MS = 10000;
+const LONG_DESYNC_OVERLAY_DISPLAY_DELAY_MS = 60000;
 const READY_REDIRECT_DELAY_MS = 2500;
 
 const fallbackDefaultAppsToInstall = ["Bitcoin", "Ethereum", "Polygon"];
@@ -103,10 +102,9 @@ const fromSeedPhraseTypeToAnalyticsPropertyString = new Map<SeedPhraseType, stri
 
 // Because of https://github.com/typescript-eslint/typescript-eslint/issues/1197
 enum CompanionStepKey {
-  Paired = 0,
+  EarlySecurityCheckCompleted = 0,
   Pin,
   Seed,
-  SoftwareCheck,
   Apps,
   Ready,
   Exit,
@@ -125,7 +123,7 @@ const ContinueOnDeviceWithAnim: React.FC<{
  * Component representing the synchronous companion step, which polls the current device state
  * to display correctly information about the onboarding to the user
  *
- * The resync alert message overlay is rendered from this component to better handle relative position
+ * The desync alert message overlay is rendered from this component to better handle relative position
  * with the vertical timeline.
  */
 export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
@@ -134,7 +132,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
   updateHeaderOverlayDelay,
   onShouldHeaderBeOverlaid,
   onLostDevice,
-  notifySyncOnboardingShouldReset,
+  notifyEarlySecurityCheckShouldReset,
 }) => {
   const { t } = useTranslation();
   const dispatchRedux = useDispatch();
@@ -146,7 +144,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
   const initialAppsToInstall = deviceInitialApps?.params?.apps || fallbackDefaultAppsToInstall;
 
   const [companionStepKey, setCompanionStepKey] = useState<CompanionStepKey>(
-    CompanionStepKey.Paired,
+    CompanionStepKey.EarlySecurityCheckCompleted,
   );
   const lastCompanionStepKey = useRef<CompanionStepKey>();
   const [seedPathStatus, setSeedPathStatus] = useState<
@@ -156,6 +154,8 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
     | "restore_seed"
     | "recover_seed"
   >("choice_new_or_restore");
+
+  const servicesConfig = useFeature("protectServicesMobile");
 
   const getNextStepKey = useCallback(
     (step: CompanionStepKey) => {
@@ -174,10 +174,6 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
     [deviceInitialApps?.enabled],
   );
 
-  const handleSoftwareCheckComplete = useCallback(() => {
-    setCompanionStepKey(getNextStepKey(CompanionStepKey.SoftwareCheck));
-  }, [getNextStepKey]);
-
   const handleInstallAppsComplete = useCallback(() => {
     setCompanionStepKey(getNextStepKey(CompanionStepKey.Apps));
   }, [getNextStepKey]);
@@ -189,9 +185,9 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
 
   const [isPollingOn, setIsPollingOn] = useState<boolean>(true);
 
-  const [isResyncOverlayOpen, setIsResyncOverlayOpen] = useState<boolean>(false);
-  const [resyncOverlayDisplayDelayMs, setResyncOverlayDisplayDelayMs] = useState<number>(
-    NORMAL_RESYNC_OVERLAY_DISPLAY_DELAY_MS,
+  const [isDesyncOverlayOpen, setIsDesyncOverlayOpen] = useState<boolean>(false);
+  const [desyncOverlayDisplayDelayMs, setDesyncOverlayDisplayDelayMs] = useState<number>(
+    NORMAL_DESYNC_OVERLAY_DISPLAY_DELAY_MS,
   );
 
   const [desyncTimeoutMs, setDesyncTimeoutMs] = useState<number>(NORMAL_DESYNC_TIMEOUT_MS);
@@ -225,7 +221,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
     setIsPollingOn(false);
 
     onShouldHeaderBeOverlaid(false);
-    setIsResyncOverlayOpen(false);
+    setIsDesyncOverlayOpen(false);
 
     onLostDevice();
   }, [onShouldHeaderBeOverlaid, onLostDevice]);
@@ -261,11 +257,11 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
       desyncTimerRef.current = setTimeout(handleDesyncTimedOut, desyncTimeoutMs);
 
       // Displays an overlay to alert the user. This overlay should also hide the screen header
-      setIsResyncOverlayOpen(true);
+      setIsDesyncOverlayOpen(true);
       onShouldHeaderBeOverlaid(true);
     } else if (!allowedError) {
       // desyncTimer is cleared in the useEffect cleanup function
-      setIsResyncOverlayOpen(false);
+      setIsDesyncOverlayOpen(false);
       onShouldHeaderBeOverlaid(false);
     }
 
@@ -343,7 +339,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
   }, [companionStepKey, productName]);
 
   useEffect(() => {
-    // When the device is seeded, there are 2 cases before triggering the software check step:
+    // When the device is seeded, there are 2 cases before triggering the applications install step:
     // - the user came to the sync onboarding with an non-seeded device and did a full onboarding: onboarding flag `Ready`
     // - the user came to the sync onboarding with an already seeded device: onboarding flag `WelcomeScreen1`
     if (
@@ -352,7 +348,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
         deviceOnboardingState?.currentOnboardingStep,
       )
     ) {
-      setCompanionStepKey(CompanionStepKey.SoftwareCheck);
+      setCompanionStepKey(CompanionStepKey.Apps);
       return;
     }
 
@@ -365,11 +361,11 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
       case DeviceOnboardingStep.WelcomeScreen4:
       case DeviceOnboardingStep.WelcomeScreenReminder:
       case DeviceOnboardingStep.OnboardingEarlyCheck:
-        notifySyncOnboardingShouldReset();
+        notifyEarlySecurityCheckShouldReset();
         break;
 
       case DeviceOnboardingStep.ChooseName:
-        setCompanionStepKey(CompanionStepKey.Paired);
+        setCompanionStepKey(CompanionStepKey.EarlySecurityCheckCompleted);
         break;
       case DeviceOnboardingStep.Pin:
         setCompanionStepKey(CompanionStepKey.Pin);
@@ -404,7 +400,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
       default:
         break;
     }
-  }, [deviceOnboardingState, notifySyncOnboardingShouldReset, shouldRestoreApps]);
+  }, [deviceOnboardingState, notifyEarlySecurityCheckShouldReset, shouldRestoreApps]);
 
   // When the user gets close to the seed generation step, sets the lost synchronization delay
   // and timers to a higher value. It avoids having a warning message while the connection is lost
@@ -421,8 +417,8 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
       );
 
       if (nbOfSeedWords && deviceOnboardingState?.currentSeedWordIndex >= nbOfSeedWords - 2) {
-        setResyncOverlayDisplayDelayMs(LONG_RESYNC_OVERLAY_DISPLAY_DELAY_MS);
-        updateHeaderOverlayDelay(LONG_RESYNC_OVERLAY_DISPLAY_DELAY_MS);
+        setDesyncOverlayDisplayDelayMs(LONG_DESYNC_OVERLAY_DISPLAY_DELAY_MS);
+        updateHeaderOverlayDelay(LONG_DESYNC_OVERLAY_DISPLAY_DELAY_MS);
         setDesyncTimeoutMs(LONG_DESYNC_TIMEOUT_MS);
       }
     }
@@ -431,7 +427,8 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
   const preventNavigation = useRef(false);
 
   useEffect(() => {
-    if (companionStepKey >= CompanionStepKey.SoftwareCheck) {
+    // Stops the polling once the installation apps step is reached
+    if (companionStepKey >= CompanionStepKey.Apps) {
       setIsPollingOn(false);
     }
 
@@ -460,21 +457,44 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
     [navigation],
   );
 
+  useEffect(() => {
+    if (seedPathStatus === "recover_seed" && servicesConfig?.enabled) {
+      navigation.navigate(NavigatorName.Base, {
+        screen: ScreenName.Recover,
+        params: {
+          fromOnboarding: true,
+          device,
+          platform: servicesConfig.params?.protectId,
+          redirectTo: "restore",
+          date: new Date().toISOString(), // adding a date to reload the page in case of same device restored again
+        },
+      });
+    }
+  }, [
+    device,
+    navigation,
+    seedPathStatus,
+    servicesConfig?.enabled,
+    servicesConfig?.params?.protectId,
+  ]);
+
   const companionSteps: Step[] = useMemo(
     () =>
       [
         {
-          key: CompanionStepKey.Paired,
-          title: t("syncOnboarding.pairingStep.title", { productName }),
+          key: CompanionStepKey.EarlySecurityCheckCompleted,
+          title: t("syncOnboarding.earlySecurityCheckCompletedStep.title", { productName }),
           renderBody: () => (
             <>
-              <TrackScreen category={`Set up ${productName}: Step 1 device paired`} />
-              <BodyText>{t("syncOnboarding.pairingStep.description", { productName })}</BodyText>
+              <TrackScreen
+                category={`Set up ${productName}: Step 1 early security check completed`}
+              />
               <ContinueOnDeviceWithAnim
                 deviceModelId={device.modelId}
-                text={t("syncOnboarding.pairingStep.continueOnDevice", {
+                text={t("syncOnboarding.earlySecurityCheckCompletedStep.description", {
                   productName,
                 })}
+                withTopDivider={false}
               />
             </>
           ),
@@ -558,20 +578,6 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
             </Flex>
           ),
         },
-        {
-          key: CompanionStepKey.SoftwareCheck,
-          title: t("syncOnboarding.softwareChecksSteps.title"),
-          doneTitle: t("syncOnboarding.softwareChecksSteps.doneTitle", {
-            productName,
-          }),
-          renderBody: (isDisplayed?: boolean) => (
-            <SoftwareChecksStep
-              device={device}
-              isDisplayed={isDisplayed}
-              onComplete={handleSoftwareCheckComplete}
-            />
-          ),
-        },
         ...(deviceInitialApps?.enabled
           ? [
               {
@@ -608,7 +614,6 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
       seedPathStatus,
       deviceInitialApps?.enabled,
       device,
-      handleSoftwareCheckComplete,
       handleInstallAppsComplete,
       initialAppsToInstall,
       companionStepKey,
@@ -622,9 +627,9 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
     <>
       <HelpDrawer isOpen={isHelpDrawerOpen} onClose={() => setHelpDrawerOpen(false)} />
       <Flex position="relative" flex={1} px={6}>
-        <ResyncOverlay
-          isOpen={isResyncOverlayOpen}
-          delay={resyncOverlayDisplayDelayMs}
+        <DesyncOverlay
+          isOpen={isDesyncOverlayOpen}
+          delay={desyncOverlayDisplayDelayMs}
           productName={productName}
         />
         <Flex>

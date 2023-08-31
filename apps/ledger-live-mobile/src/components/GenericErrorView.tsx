@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { useTranslation } from "react-i18next";
 import styled, { useTheme } from "styled-components/native";
-import { Flex, Icons, Link, Text, BoxedIcon } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy, Link, Text, BoxedIcon } from "@ledgerhq/native-ui";
 import { CloseMedium } from "@ledgerhq/native-ui/assets/icons";
 import { BluetoothRequired } from "@ledgerhq/errors";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
@@ -24,8 +24,16 @@ type Props = {
   iconColor?: string;
   children?: React.ReactNode;
   footerComponent?: React.ReactNode;
-  exportLogIcon?: typeof Icons.DownloadMedium | typeof Icons.ImportMedium;
+  exportLogIcon?: typeof IconsLegacy.DownloadMedium | typeof IconsLegacy.ImportMedium;
   exportLogIconPosition?: "left" | "right";
+
+  /*
+   * Used when rendering a Bluetooth disabled error
+   *
+   * If "drawer", the component will be rendered as a content to be rendered in a drawer.
+   * If "view", the component will be rendered as a view. Defaults to "view".
+   */
+  renderedInType?: "drawer" | "view";
 };
 
 const StyledLink = styled(Link)`
@@ -44,8 +52,9 @@ const GenericErrorView = ({
   Icon = CloseMedium,
   iconColor = "error.c60",
   footerComponent,
-  exportLogIcon = Icons.DownloadMedium,
+  exportLogIcon = IconsLegacy.DownloadMedium,
   exportLogIconPosition = "left",
+  renderedInType = "view",
 }: Props) => {
   const { t } = useTranslation();
 
@@ -56,9 +65,14 @@ const GenericErrorView = ({
 
   const { colors } = useTheme();
 
-  // To avoid regression, but this case should not happen if RequiresBle component is correctly used.
+  // In case bluetooth was necessary but the `RequiresBle` component could not be used directly
   if (error instanceof BluetoothRequired) {
-    return <BluetoothDisabled />;
+    return (
+      <>
+        <BluetoothDisabled componentType={renderedInType} />
+        {children}
+      </>
+    );
   }
 
   return (

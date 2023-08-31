@@ -1,12 +1,12 @@
 import React, { useMemo } from "react";
 import installLanguage from "@ledgerhq/live-common/hw/installLanguage";
 import { createAction } from "@ledgerhq/live-common/hw/actions/installLanguage";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import DeviceAction from "./DeviceAction";
 import { Language } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
-import { BoxedIcon, Flex, Icons, Text } from "@ledgerhq/react-ui";
+import { BoxedIcon, Flex, IconsLegacy, Text } from "@ledgerhq/react-ui";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : installLanguage);
@@ -22,7 +22,12 @@ const DeviceLanguageInstalled = ({ language }: { language: Language }) => {
       justifyContent="center"
       data-test-id="language-installed"
     >
-      <BoxedIcon Icon={Icons.CheckAloneMedium} iconColor="success.c60" size={64} iconSize={24} />
+      <BoxedIcon
+        Icon={IconsLegacy.CheckAloneMedium}
+        iconColor="success.c60"
+        size={64}
+        iconSize={24}
+      />
       <Text variant="large" alignSelf="stretch" mt={9} textAlign="center">
         {t("deviceLocalization.languageInstalled", {
           language: t(`deviceLocalization.languages.${language}`),

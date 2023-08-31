@@ -2,7 +2,7 @@ import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import network from "@ledgerhq/live-network/network";
 import { log } from "@ledgerhq/logs";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { EnvName, EnvValue } from "../../env";
+import { EnvName, EnvValue } from "@ledgerhq/live-env";
 import cryptoFactory from "./chain/chain";
 import cosmosBase from "./chain/cosmosBase";
 import type { CosmosValidatorItem } from "./types";

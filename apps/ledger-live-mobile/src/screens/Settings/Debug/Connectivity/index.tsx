@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { Box, Icons, Alert, Flex } from "@ledgerhq/native-ui";
+import { Box, IconsLegacy, Alert, Flex } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import SettingsRow from "../../../../components/SettingsRow";
 import { ScreenName } from "../../../../const";
@@ -45,7 +45,7 @@ export default function Connectivity() {
       <SettingsRow
         title="HTTP Transport"
         desc="Configure how LLM sees a proxy device"
-        iconLeft={<Icons.DevicesAltMedium size={32} color="black" />}
+        iconLeft={<IconsLegacy.DevicesAltMedium size={32} color="black" />}
         onPress={() => navigation.navigate(ScreenName.DebugHttpTransport)}
       />
       {!device ? (
@@ -62,7 +62,7 @@ export default function Connectivity() {
           <SettingsRow
             title="Ble tool"
             desc={`Debugging tool using ${device.deviceName || device.deviceId}`}
-            iconLeft={<Icons.BluetoothMedium size={32} color="black" />}
+            iconLeft={<IconsLegacy.BluetoothMedium size={32} color="black" />}
             onPress={() =>
               navigation.navigate(ScreenName.DebugBLE, {
                 deviceId: device.deviceId,
@@ -72,7 +72,7 @@ export default function Connectivity() {
           <SettingsRow
             title="Command sender"
             desc={"Send commands to the device and get a response"}
-            iconLeft={<Icons.ToolboxMedium size={32} color="black" />}
+            iconLeft={<IconsLegacy.ToolboxMedium size={32} color="black" />}
             onPress={() =>
               navigation.navigate(ScreenName.DebugCommandSender, {
                 deviceId: device.deviceId,

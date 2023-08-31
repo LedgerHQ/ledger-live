@@ -14,10 +14,11 @@ import {
   makeScanAccounts as makeScanHelper,
   makeSync as makeSyncHelper,
 } from "../../../bridge/jsHelpers";
+import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { ChainAPI, Config } from "../api";
 import { minutes } from "../api/cached";
 import { broadcastWithAPI } from "../js-broadcast";
-import createTransaction, { updateTransaction } from "../js-createTransaction";
+import createTransaction from "../js-createTransaction";
 import estimateMaxSpendableWithAPI from "../js-estimateMaxSpendable";
 import getTransactionStatus from "../js-getTransactionStatus";
 import { PRELOAD_MAX_AGE, hydrate, preloadWithAPI } from "../js-preload";
@@ -25,7 +26,7 @@ import { prepareTransaction as prepareTransactionWithAPI } from "../js-prepareTr
 import { signOperationWithAPI } from "../js-signOperation";
 import { getAccountShapeWithAPI } from "../js-synchronization";
 import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
-import type { SolanaAccount, Transaction } from "../types";
+import type { SolanaAccount, SolanaPreloadDataV1, Transaction } from "../types";
 import { endpointByCurrencyId } from "../utils";
 
 function makePrepare(getChainAPI: (config: Config) => Promise<ChainAPI>) {
@@ -121,7 +122,7 @@ function makeSign(
 function makePreload(
   getChainAPI: (config: Config) => Promise<ChainAPI>,
 ): CurrencyBridge["preload"] {
-  const preload = (currency: CryptoCurrency): Promise<Record<string, any>> => {
+  const preload = (currency: CryptoCurrency): Promise<SolanaPreloadDataV1> => {
     const config: Config = {
       endpoint: endpointByCurrencyId(currency.id),
     };
@@ -153,7 +154,7 @@ export function makeBridges({
 
   const accountBridge: AccountBridge<Transaction> = {
     createTransaction,
-    updateTransaction,
+    updateTransaction: defaultUpdateTransaction,
     estimateMaxSpendable: makeEstimateMaxSpendable(getQueuedAndCachedAPI),
     getTransactionStatus,
     sync,

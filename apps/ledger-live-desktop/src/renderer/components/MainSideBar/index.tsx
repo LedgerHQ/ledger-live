@@ -7,7 +7,7 @@ import styled from "styled-components";
 import { useManagerBlueDot } from "@ledgerhq/live-common/manager/hooks";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { Icons, Tag as TagComponent } from "@ledgerhq/react-ui";
+import { IconsLegacy, Tag as TagComponent } from "@ledgerhq/react-ui";
 import { accountsSelector, starredAccountsSelector } from "~/renderer/reducers/accounts";
 import {
   sidebarCollapsedSelector,
@@ -205,7 +205,7 @@ const TagContainerFeatureFlags = ({ collapsed }: { collapsed: boolean }) => {
       }}
       onClick={() => setTrackingSource("sidebar")}
     >
-      <Icons.ChartNetworkMedium size={16} />
+      <IconsLegacy.ChartNetworkMedium size={16} />
       <TagText collapsed={collapsed}>{t("common.featureFlags")}</TagText>
     </Tag>
   ) : null;
@@ -227,6 +227,7 @@ const MainSideBar = () => {
   const displayBlueDot = useManagerBlueDot(lastSeenDevice);
 
   const referralProgramConfig = useFeature("referralProgramDesktopSidebar");
+  const recoverFeature = useFeature("protectServicesDesktop");
   const handleCollapse = useCallback(() => {
     dispatch(setSidebarCollapsed(!collapsed));
   }, [dispatch, collapsed]);
@@ -310,11 +311,25 @@ const MainSideBar = () => {
   }, [dispatch, maybeRedirectToAccounts]);
 
   const handleClickRecover = useCallback(() => {
+    const enabled = recoverFeature?.enabled;
+    const openRecoverFromSidebar = recoverFeature?.params?.openRecoverFromSidebar;
+    const liveAppId = recoverFeature?.params?.protectId;
+
+    if (enabled && openRecoverFromSidebar && liveAppId) {
+      push(`/recover/${liveAppId}`);
+    } else if (enabled) {
+      dispatch(openModal("MODAL_PROTECT_DISCOVER", undefined));
+    }
     track("button_clicked", {
       button: "Protect",
     });
-    dispatch(openModal("MODAL_PROTECT_DISCOVER", undefined));
-  }, [dispatch]);
+  }, [
+    recoverFeature?.enabled,
+    recoverFeature?.params?.openRecoverFromSidebar,
+    recoverFeature?.params?.protectId,
+    push,
+    dispatch,
+  ]);
 
   return (
     <Transition
@@ -346,7 +361,7 @@ const MainSideBar = () => {
                 <SideBarListItem
                   id={"dashboard"}
                   label={t("dashboard.title")}
-                  icon={Icons.HouseMedium}
+                  icon={IconsLegacy.HouseMedium}
                   iconSize={20}
                   iconActiveColor="wallet"
                   onClick={handleClickDashboard}
@@ -357,7 +372,7 @@ const MainSideBar = () => {
                 <SideBarListItem
                   id={"market"}
                   label={t("sidebar.market")}
-                  icon={Icons.GraphGrowMedium}
+                  icon={IconsLegacy.GraphGrowMedium}
                   iconSize={20}
                   iconActiveColor="wallet"
                   onClick={handleClickMarket}
@@ -368,7 +383,7 @@ const MainSideBar = () => {
                   <SideBarListItem
                     id="learn"
                     label={t("sidebar.learn")}
-                    icon={Icons.NewsMedium}
+                    icon={IconsLegacy.NewsMedium}
                     iconSize={20}
                     iconActiveColor="wallet"
                     isActive={location.pathname.startsWith("/learn")}
@@ -379,7 +394,7 @@ const MainSideBar = () => {
                 <SideBarListItem
                   id={"accounts"}
                   label={t("sidebar.accounts")}
-                  icon={Icons.WalletMedium}
+                  icon={IconsLegacy.WalletMedium}
                   iconSize={20}
                   iconActiveColor="wallet"
                   isActive={location.pathname.startsWith("/account")}
@@ -390,7 +405,7 @@ const MainSideBar = () => {
                 <SideBarListItem
                   id={"catalog"}
                   label={t("sidebar.catalog")}
-                  icon={Icons.PlanetMedium}
+                  icon={IconsLegacy.PlanetMedium}
                   iconSize={20}
                   iconActiveColor="wallet"
                   isActive={location.pathname.startsWith("/platform")}
@@ -400,7 +415,7 @@ const MainSideBar = () => {
                 <SideBarListItem
                   id={"send"}
                   label={t("send.title")}
-                  icon={Icons.ArrowFromBottomMedium}
+                  icon={IconsLegacy.ArrowFromBottomMedium}
                   iconSize={20}
                   iconActiveColor="wallet"
                   onClick={handleOpenSendModal}
@@ -410,7 +425,7 @@ const MainSideBar = () => {
                 <SideBarListItem
                   id={"receive"}
                   label={t("receive.title")}
-                  icon={Icons.ArrowToBottomMedium}
+                  icon={IconsLegacy.ArrowToBottomMedium}
                   iconSize={20}
                   iconActiveColor="wallet"
                   onClick={handleOpenReceiveModal}
@@ -421,7 +436,7 @@ const MainSideBar = () => {
                   <SideBarListItem
                     id={"earn"}
                     label={t("sidebar.earn")}
-                    icon={Icons.LendMedium}
+                    icon={IconsLegacy.LendMedium}
                     iconSize={20}
                     iconActiveColor="wallet"
                     onClick={handleClickEarn}
@@ -432,7 +447,7 @@ const MainSideBar = () => {
                 <SideBarListItem
                   id={"exchange"}
                   label={t("sidebar.exchange")}
-                  icon={Icons.BuyCryptoAltMedium}
+                  icon={IconsLegacy.BuyCryptoAltMedium}
                   iconSize={20}
                   iconActiveColor="wallet"
                   onClick={handleClickExchange}
@@ -443,7 +458,7 @@ const MainSideBar = () => {
                 <SideBarListItem
                   id={"swap"}
                   label={t("sidebar.swap")}
-                  icon={Icons.BuyCryptoMedium}
+                  icon={IconsLegacy.BuyCryptoMedium}
                   iconSize={20}
                   iconActiveColor="wallet"
                   onClick={handleClickSwap}
@@ -455,14 +470,18 @@ const MainSideBar = () => {
                   <SideBarListItem
                     id={"refer"}
                     label={t("sidebar.refer")}
-                    icon={Icons.GiftCardMedium}
+                    icon={IconsLegacy.GiftCardMedium}
                     iconSize={20}
                     iconActiveColor="wallet"
                     onClick={handleClickRefer}
                     isActive={location.pathname.startsWith(referralProgramConfig?.params.path)}
                     collapsed={secondAnim}
                     NotifComponent={
-                      referralProgramConfig?.params.isNew ? (
+                      referralProgramConfig?.params.amount ? (
+                        <CustomTag active type="plain" size="small">
+                          {referralProgramConfig?.params.amount}
+                        </CustomTag>
+                      ) : referralProgramConfig?.params.isNew ? (
                         <CustomTag active type="plain" size="small">
                           {t("common.new")}
                         </CustomTag>
@@ -473,7 +492,7 @@ const MainSideBar = () => {
                 <SideBarListItem
                   id={"card"}
                   label={t("sidebar.card")}
-                  icon={Icons.CardMedium}
+                  icon={IconsLegacy.CardMedium}
                   iconSize={20}
                   iconActiveColor="wallet"
                   isActive={location.pathname === "/card"}
@@ -485,7 +504,7 @@ const MainSideBar = () => {
                   <SideBarListItem
                     id={"recover"}
                     label={t("sidebar.recover")}
-                    icon={Icons.ShieldCheckMedium}
+                    icon={IconsLegacy.ShieldCheckMedium}
                     iconSize={20}
                     iconActiveColor="wallet"
                     onClick={handleClickRecover}
@@ -495,7 +514,7 @@ const MainSideBar = () => {
                 <SideBarListItem
                   id={"manager"}
                   label={t("sidebar.manager")}
-                  icon={Icons.NanoXFoldedMedium}
+                  icon={IconsLegacy.NanoXFoldedMedium}
                   iconSize={20}
                   iconActiveColor="wallet"
                   onClick={handleClickManager}

@@ -35,7 +35,7 @@ jobs:
       - name: commit
         run: |
           git add .
-          git commit -m ":rocket: entering hotfix mode"
+          git commit -m "chore(hotfix) :rocket: entering hotfix mode"
       - name: Get date
         id: date
         run: |

@@ -11,8 +11,8 @@ on:
   merge_group:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.ref_name != 'develop' }}
+  group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -84,50 +84,3 @@ jobs:
         with:
           name: pr_metadata.json
           path: pr_metadata.json
-
-  # setup-dependabot:
-  #   if: ${{ github.actor == 'dependabot[bot]' }}
-  #   runs-on: ubuntu-latest
-  #   name: "Setup Dependabot"
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #       with:
-  #         fetch-depth: 0
-  #     - name: Set git user
-  #       run: |
-  #         git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
-  #         git config user.name "live-github-bot[bot]"
-
-  #     - uses: actions/github-script@v6
-  #       id: clean-refs
-  #       with:
-  #         script: |
-  #           const head_branch = "${{ env.head_branch }}";
-  #           const base_branch = "${{ env.base_branch }}";
-
-  #           const newHeadBranch = head_branch.replace("refs/heads/", "");
-  #           const newBaseBranch = base_branch.replace("refs/heads/", "");
-
-  #           core.exportVariable("head_branch", newHeadBranch);
-  #           core.exportVariable("base_branch", newBaseBranch);
-  #     - name: Setup the toolchain
-  #       uses: ./tools/actions/composites/setup-toolchain
-  #     - name: checkout PR
-  #       if: ${{ github.event_name == 'pull_request' }}
-  #       run: |
-  #         gh pr checkout ${{ env.number }}
-  #       env:
-  #         GH_TOKEN: ${{ github.token }}
-  #     - name: Install dependencies
-  #       run: pnpm i --no-frozen-lockfile
-  #     - name: status
-  #       id: check-status
-  #       run: echo "status=$(git status --porcelain | wc -l)" >> $GITHUB_OUTPUT
-  #     - name: Git commit
-  #       if: steps.check-status.outputs.status != 0
-  #       run: |
-  #         git status
-  #         git add .
-  #         git commit -m "chore(lockfile) update lockfile for dependabot"
-  #         git pull --rebase
-  #         git push

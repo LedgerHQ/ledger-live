@@ -43,7 +43,13 @@ const StepWithdraw = (props: StepProps) => {
   );
   return (
     <Box flow={1}>
-      <TrackPage category="ClaimRewards Flow" name="Step 1" />
+      <TrackPage
+        category="ClaimRewards Flow"
+        name="Step 1"
+        flow="stake"
+        action="withdraw"
+        currency="egld"
+      />
       {warning && !error ? <ErrorBanner error={warning} warning={true} /> : null}
       {error ? <ErrorBanner error={error} /> : null}
 

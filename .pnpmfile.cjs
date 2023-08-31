@@ -19,19 +19,13 @@ const {
 } = require("./tools/pnpm-utils");
 
 function readPackage(pkg, context) {
-  const major = parseInt(
-    pkg.version?.replace(/(\^|~|>=|>|<=|<)/g, "").split(".")[0] || "0"
-  );
+  const major = parseInt(pkg.version?.replace(/(\^|~|>=|>|<=|<)/g, "").split(".")[0] || "0");
 
   /*
     Fix packages using wrong @types/react versions by making it a peer dependency.
     So ultimately it uses our types package instead of their own which can conflict.
   */
-  if (
-    !!pkg.dependencies["@types/react"] &&
-    !pkg.name.startsWith("@ledgerhq") &&
-    !pkg.private
-  ) {
+  if (!!pkg.dependencies["@types/react"] && !pkg.name.startsWith("@ledgerhq") && !pkg.private) {
     delete pkg.dependencies["@types/react"];
     pkg.peerDependencies["@types/react"] = "*";
     pkg.peerDependenciesMeta = {
@@ -62,7 +56,7 @@ function readPackage(pkg, context) {
         Remove react-native/react-dom from react-redux optional peer dependencies.
         Without this, using react-redux code in LLM from LLC will fail because the package will get duplicated.
       */
-      removeDependencies("react-redux", ["react-native", "react-dom"], {
+      removeDependencies("react-redux", ["react-native"], {
         kind: "peerDependencies",
       }),
       /* Storybook packages */
@@ -99,13 +93,6 @@ function readPackage(pkg, context) {
       }),
       addDependencies("@cosmjs/tendermint-rpc", {
         "@cosmjs/utils": pkg.version,
-      }),
-      /* @walletconnect/* packages */
-      addDependencies("@walletconnect/iso-crypto", {
-        "@walletconnect/encoding": "*",
-      }),
-      addDependencies(/^@walletconnect\/.*/, {
-        tslib: "*",
       }),
       /* React Native and Metro bundler packages */
       // Crashes ios build if removed /!\
@@ -258,9 +245,30 @@ function readPackage(pkg, context) {
       addPeerDependencies("asyncstorage-down", {
         "@react-native-async-storage/async-storage": "*",
       }),
+      addDependencies("documentation", {
+        micromark: "*",
+      }),
+      addDependencies("@dfinity/candid", {
+        "@dfinity/principal": "*",
+      }),
+      addDependencies("@dfinity/agent", {
+        buffer: "*",
+      }),
+      // TODO:
+      // Tron missing deps
+      // They are also added to live-common dependencies
+      // Is there another way without adding them explicitly ?
+      addDependencies("tronweb", {
+        "@ethersproject/bytes": "*",
+        "@ethersproject/bignumber": "*",
+        "@ethersproject/keccak256": "*",
+        "@ethersproject/properties": "*",
+        "@ethersproject/strings": "*",
+        "@ethersproject/logger": "*",
+      }),
     ],
     pkg,
-    context
+    context,
   );
 
   return pkg;

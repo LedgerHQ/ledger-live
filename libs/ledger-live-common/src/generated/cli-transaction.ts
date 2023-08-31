@@ -10,6 +10,7 @@ import hedera from "../families/hedera/cli-transaction";
 import near from "../families/near/cli-transaction";
 import ripple from "../families/ripple/cli-transaction";
 import solana from "../families/solana/cli-transaction";
+import stacks from "../families/stacks/cli-transaction";
 import stellar from "../families/stellar/cli-transaction";
 import tezos from "../families/tezos/cli-transaction";
 import tron from "../families/tron/cli-transaction";
@@ -30,6 +31,7 @@ export default {
   near,
   ripple,
   solana,
+  stacks,
   stellar,
   tezos,
   tron,

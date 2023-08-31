@@ -12,20 +12,26 @@ import type {
   AccountsUpdateAccountWithUpdaterPayload,
 } from "./types";
 import { AccountsActionTypes } from "./types";
+import logger from "../logger";
 
 const version = 0; // FIXME this needs to come from user data
 
 const importStoreAction = createAction<AccountsImportStorePayload>(
   AccountsActionTypes.ACCOUNTS_IMPORT,
 );
-export const importStore = (rawAccounts: { active: { data: AccountRaw }[] }) =>
-  importStoreAction(
-    rawAccounts && Array.isArray(rawAccounts.active)
-      ? implicitMigration(
-          rawAccounts.active.map(({ data }) => accountModel.decode({ data, version })),
-        )
-      : [],
-  );
+export const importStore = (rawAccounts: { active: { data: AccountRaw }[] }) => {
+  const accounts = [];
+  if (rawAccounts && Array.isArray(rawAccounts.active)) {
+    for (const { data } of rawAccounts.active) {
+      try {
+        accounts.push(accountModel.decode({ data, version }));
+      } catch (e) {
+        if (e instanceof Error) logger.critical(e);
+      }
+    }
+  }
+  return importStoreAction(implicitMigration(accounts));
+};
 export const reorderAccounts = createAction<AccountsReorderPayload>(
   AccountsActionTypes.REORDER_ACCOUNTS,
 );

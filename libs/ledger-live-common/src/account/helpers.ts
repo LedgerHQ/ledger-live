@@ -63,9 +63,9 @@ export {
 };
 
 export const isAccountEmpty = (a: AccountLike): boolean => {
+  // FIXME LIVE-5966 why do we need this? also this shouldn't be implemented here / this part must be removed back to the coin specifics
   if (a.type === "Account" && a.currency.family === "tron") {
     const tronAcc = a as TronAccount;
-    // FIXME: here we compared a BigNumber to a number, would always return false
     return tronAcc.tronResources && tronAcc.tronResources.bandwidth.freeLimit.eq(0);
   }
 
@@ -76,6 +76,7 @@ export const isAccountEmpty = (a: AccountLike): boolean => {
 // clear account to a bare minimal version that can be restored via sync
 // will preserve the balance to avoid user panic
 export function clearAccount<T extends AccountLike>(account: T): T {
+  // FIXME add in the coins bridge a way for a coin to define extra clean up functions to modularize this.
   return commonClearAccount(account, (account: Account) => {
     if (account.currency.family === "tron") {
       const tronAcc = account as TronAccount;
@@ -96,7 +97,7 @@ export const getVotesCount = (
 ): number => {
   const mainAccount = getMainAccount(account, parentAccount);
 
-  // FIXME find a way to make it per family?
+  // FIXME add this back in the coin bridge.
   switch (mainAccount.currency.family) {
     case "tezos":
       return isAccountDelegating(account) ? 1 : 0;
@@ -116,6 +117,7 @@ export const getVotesCount = (
     case "binance_beacon_chain":
     case "osmosis":
     case "cosmos":
+    case "coreum":
       return (mainAccount as CosmosAccount)?.cosmosResources?.delegations.length || 0;
     default:
       return 0;

@@ -9,7 +9,8 @@ import {
   NearValidatorItem,
   NearAccount,
 } from "./types";
-import { createTransaction, updateTransaction } from "./js-transaction";
+import { createTransaction } from "./js-transaction";
+import { defaultUpdateTransaction as updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getCurrentNearPreloadData } from "./preload";
 import { FRACTIONAL_DIGITS, STAKING_GAS_BASE, YOCTO_THRESHOLD_VARIATION } from "./constants";
 

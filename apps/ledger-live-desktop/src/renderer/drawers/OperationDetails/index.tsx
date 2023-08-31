@@ -1,10 +1,11 @@
 import React, { useMemo, Component, useCallback } from "react";
 import { connect, useDispatch } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
-import { Trans, TFunction, useTranslation } from "react-i18next";
+import { TFunction } from "i18next";
+import { Trans, useTranslation } from "react-i18next";
 import styled from "styled-components";
 import uniq from "lodash/uniq";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { colors } from "~/renderer/styles/theme";
 import Alert from "~/renderer/components/Alert";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -136,17 +137,7 @@ const OperationD = (props: Props) => {
   const history = useHistory();
   const location = useLocation();
   const mainAccount = getMainAccount(account, parentAccount);
-  const {
-    extra,
-    hash,
-    date,
-    senders,
-    type,
-    fee,
-    recipients: _recipients,
-    contract,
-    tokenId,
-  } = operation;
+  const { hash, date, senders, type, fee, recipients: _recipients, contract, tokenId } = operation;
   const recipients = _recipients.filter(Boolean);
   const { name } = mainAccount;
   const isNftOperation = ["NFT_IN", "NFT_OUT"].includes(operation.type);
@@ -679,12 +670,7 @@ const OperationD = (props: Props) => {
         </OpDetailsSection>
       ) : null}
       {OpDetailsExtra && (
-        <OpDetailsExtra
-          operation={operation}
-          extra={extra}
-          type={type}
-          account={account as Account}
-        />
+        <OpDetailsExtra operation={operation} type={type} account={account as Account} />
       )}
       <B />
     </Box>
@@ -709,24 +695,27 @@ type OperationDetailsExtraProps = {
   operation: Operation;
   account: Account;
   type: OperationType;
-  extra: {
-    [key: string]: string;
-  };
 };
-const OperationDetailsExtra = ({ extra }: OperationDetailsExtraProps) => {
-  const jsx = Object.entries(extra).map(([key, value]) => {
-    if (typeof value === "object" || typeof value === "function") return null;
-    return (
-      <OpDetailsSection key={key}>
-        <OpDetailsTitle>
-          <Trans i18nKey={`operationDetails.extra.${key}`} defaults={key} />
-        </OpDetailsTitle>
-        <OpDetailsData>
-          <Ellipsis>{value}</Ellipsis>
-        </OpDetailsData>
-      </OpDetailsSection>
-    );
-  });
+const OperationDetailsExtra = ({ operation }: OperationDetailsExtraProps) => {
+  let jsx = null;
+
+  // Safety type checks
+  if (operation.extra && typeof operation.extra === "object" && !Array.isArray(operation.extra)) {
+    jsx = Object.entries(operation.extra as Object).map(([key, value]) => {
+      if (typeof value === "object" || typeof value === "function") return null;
+      return (
+        <OpDetailsSection key={key}>
+          <OpDetailsTitle>
+            <Trans i18nKey={`operationDetails.extra.${key}`} defaults={key} />
+          </OpDetailsTitle>
+          <OpDetailsData>
+            <Ellipsis>{value}</Ellipsis>
+          </OpDetailsData>
+        </OpDetailsSection>
+      );
+    });
+  }
+
   return <>{jsx}</>;
 };
 const More = styled(Text).attrs<TextProps>(p => ({

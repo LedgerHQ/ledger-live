@@ -7,7 +7,8 @@ import {
 } from "@ledgerhq/live-common/families/cosmos/types";
 import { Account } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo, useState } from "react";
-import { TFunction, Trans } from "react-i18next";
+import { TFunction } from "i18next";
+import { Trans } from "react-i18next";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
 import ValidatorSearchInput from "~/renderer/components/Delegation/ValidatorSearchInput";

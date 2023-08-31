@@ -34,11 +34,13 @@ module.exports = function override(webpackConfig) {
   webpackConfig.resolve.alias["@ledgerhq/coin-polkadot"] = "@ledgerhq/coin-polkadot/lib-es";
   webpackConfig.resolve.alias["@ledgerhq/coin-algorand"] = "@ledgerhq/coin-algorand/lib-es";
   webpackConfig.resolve.alias["@ledgerhq/coin-evm"] = "@ledgerhq/coin-evm/lib-es";
+  webpackConfig.resolve.alias["@ledgerhq/evm-tools"] = "@ledgerhq/evm-tools/lib-es";
   webpackConfig.resolve.alias["@ledgerhq/domain-service"] = "@ledgerhq/domain-service/lib-es";
   webpackConfig.resolve.alias["@ledgerhq/live-network"] = "@ledgerhq/live-network/lib-es";
+  webpackConfig.resolve.alias["@dfinity/agent"] = "@dfinity/agent/lib/cjs";
+  webpackConfig.resolve.alias["@dfinity/candid"] = "@dfinity/candid/lib/cjs";
 
-  webpackConfig.resolve.alias["@zondax/izari-filecoin"] =
-    "@zondax/izari-filecoin/dist/cjs";
+  webpackConfig.resolve.alias["@zondax/izari-filecoin"] = "@zondax/izari-filecoin/dist/cjs";
 
   return webpackConfig;
 };

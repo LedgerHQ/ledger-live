@@ -14,7 +14,7 @@ export type Props = Merge<
 export default function HeaderTitle(props: Props) {
   return (
     <TouchableWithoutFeedback onPress={scrollToTop}>
-      <Text {...(props as BaseTextProps)} variant={"h5"} mx={5} mt={1} />
+      <Text {...(props as BaseTextProps)} variant={"h5"} mx={5} mt={1} testID="live-app-title" />
     </TouchableWithoutFeedback>
   );
 }

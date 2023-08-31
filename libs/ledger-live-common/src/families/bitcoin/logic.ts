@@ -216,7 +216,8 @@ export const mapTxToOperations = (
       : tx.outputs.map(o => o.output_index).reduce((p, c) => (p > c ? p : c));
 
   for (const output of tx.outputs) {
-    if (output.address) {
+    // ledger explorer returns "unknown" as recipient for OP_RETURN outputs, we don't want to display it in our UI
+    if (output.address && !output.address.includes("unknown")) {
       if (!accountAddresses.has(output.address)) {
         // The output doesn't belong to this account
         if (

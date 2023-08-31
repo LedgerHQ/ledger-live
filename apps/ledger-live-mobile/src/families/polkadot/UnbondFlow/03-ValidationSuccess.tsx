@@ -42,7 +42,13 @@ export default function ValidationSuccess({ navigation, route }: NavigationProps
         },
       ]}
     >
-      <TrackScreen category="UnbondFlow" name="ValidationSuccess" />
+      <TrackScreen
+        category="UnbondFlow"
+        name="ValidationSuccess"
+        flow="stake"
+        action="withdraw_unbonded"
+        currency="dot"
+      />
       <PreventNativeBack />
       <ValidateSuccess
         onClose={onClose}

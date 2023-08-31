@@ -1,4 +1,4 @@
-import { Flex, Icons } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import Touchable from "./Touchable";
@@ -13,7 +13,7 @@ type Props = {
 
 export const NavigationHeaderBackImage = () => (
   <Flex p={6}>
-    <Icons.ArrowLeftMedium size={24} />
+    <IconsLegacy.ArrowLeftMedium size={24} />
   </Flex>
 );
 

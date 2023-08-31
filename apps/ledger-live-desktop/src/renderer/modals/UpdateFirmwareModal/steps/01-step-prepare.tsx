@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { Flex, ProgressLoader, Icons } from "@ledgerhq/react-ui";
+import { Flex, ProgressLoader, IconsLegacy } from "@ledgerhq/react-ui";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { FirmwareUpdateContext, DeviceInfo } from "@ledgerhq/types-live";
 import { hasFinalFirmware } from "@ledgerhq/live-common/hw/hasFinalFirmware";
 import staxFetchImage, { FetchImageEvent } from "@ledgerhq/live-common/hw/staxFetchImage";
 import firmwareUpdatePrepare from "@ledgerhq/live-common/hw/firmwareUpdate-prepare";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { UnexpectedBootloader } from "@ledgerhq/errors";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -125,7 +125,7 @@ const Body = ({
           <Flex flexDirection="row" alignItems="center" my={2}>
             <>
               <HighlightVersion>{`V ${from}`}</HighlightVersion>
-              <Icons.ArrowRightMedium size={14} />
+              <IconsLegacy.ArrowRightMedium size={14} />
               <HighlightVersion>{`V ${to}`}</HighlightVersion>
             </>
           </Flex>
@@ -189,7 +189,7 @@ const StepPrepare = ({
     // but only for stax.
     const deviceId = device ? device.deviceId : "";
     const maybeCLSBackup =
-      deviceModelId === DeviceModelId.stax
+      deviceInfo.onboarded && deviceModelId === DeviceModelId.stax
         ? staxFetchImage({ deviceId, request: { allowedEmpty: true } })
         : EMPTY;
 

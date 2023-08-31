@@ -1,8 +1,4 @@
-import {
-  getAllEnvs,
-  setEnvUnsafe,
-  getEnvDefault,
-} from "@ledgerhq/live-common/lib/env";
+import { getAllEnvs, setEnvUnsafe, getEnvDefault } from "@ledgerhq/live-env";
 import { each, reduce, pick } from "lodash";
 
 const whitelist = [
@@ -13,7 +9,7 @@ const whitelist = [
   "MANAGER_DEV_MODE",
 ];
 
-const getWhitelisted = (data) => pick(data, whitelist);
+const getWhitelisted = data => pick(data, whitelist);
 
 export const getEnv = () => {
   return getWhitelisted(getAllEnvs());
@@ -28,7 +24,7 @@ export const getDefaultEnv = () => {
       result[name] = getEnvDefault(name);
       return result;
     },
-    {}
+    {},
   );
 };
 
@@ -36,7 +32,7 @@ export const setDefaultEnv = () => {
   return updateEnv(getDefaultEnv());
 };
 
-export const updateEnv = (data) => {
+export const updateEnv = data => {
   each(data, (value, key) => {
     setEnvUnsafe(key, value);
   });

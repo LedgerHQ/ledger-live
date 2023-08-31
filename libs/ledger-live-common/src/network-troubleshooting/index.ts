@@ -2,7 +2,7 @@ import { WebsocketConnectionError } from "@ledgerhq/errors";
 import axios from "axios";
 import WS from "isomorphic-ws";
 import { Observable } from "rxjs";
-import { getEnv } from "../env";
+import { getEnv } from "@ledgerhq/live-env";
 import announcementsApi from "../notifications/AnnouncementProvider/api/api";
 import serviceStatusApi from "../notifications/ServiceStatusProvider/api/api";
 

@@ -21,6 +21,7 @@ import {
   VaultSigner,
 } from "~/renderer/reducers/settings";
 import { useRefreshAccountsOrdering } from "~/renderer/actions/general";
+import { Language, Locale } from "~/config/languages";
 export type SaveSettings = (a: Partial<Settings>) => {
   type: string;
   payload: Partial<Settings>;
@@ -104,7 +105,7 @@ export const setCounterValue = (counterValue: string) =>
     counterValue,
     pairExchanges: {},
   });
-export const setLanguage = (language?: string | null) =>
+export const setLanguage = (language?: Language | null) =>
   saveSettings({
     language,
   });
@@ -112,7 +113,7 @@ export const setTheme = (theme?: string | null) =>
   saveSettings({
     theme,
   });
-export const setLocale = (locale: string) =>
+export const setLocale = (locale: Locale) =>
   saveSettings({
     locale,
   });
@@ -302,17 +303,6 @@ export const setSwapSelectableCurrencies = (selectableCurrencies: string[]) => (
 export const setSwapHasAcceptedIPSharing = (hasAcceptedIPSharing: boolean) => ({
   type: "SET_SWAP_ACCEPTED_IP_SHARING",
   payload: hasAcceptedIPSharing,
-});
-export const setSwapKYCStatus = (payload: {
-  provider: string;
-  id?: string;
-  status?: string | null;
-}) => ({
-  type: "SET_SWAP_KYC",
-  payload,
-});
-export const resetSwapLoginAndKYCData = () => ({
-  type: "RESET_SWAP_LOGIN_AND_KYC_DATA",
 });
 export const addStarredMarketCoins = (payload: string) => ({
   type: "ADD_STARRED_MARKET_COINS",

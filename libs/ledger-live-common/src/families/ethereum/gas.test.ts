@@ -11,7 +11,7 @@ const api = {
 const MULTIPLIER = 2.2;
 
 import type { API } from "./api";
-import { setEnv } from "../../env";
+import { setEnv } from "@ledgerhq/live-env";
 
 describe("estimateGasLimit", () => {
   const accountMock = {

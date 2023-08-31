@@ -142,7 +142,13 @@ export default function StepValidators({
   const crypto = cryptoFactory(account.currency.id);
   return (
     <Container>
-      <TrackPage category="Redelegation Flow" name="Step 1" />
+      <TrackPage
+        category="Redelegation Flow"
+        name="Step 1"
+        flow="stake"
+        action="redelegation"
+        currency={account.currency.id}
+      />
       {error && <ErrorBanner error={error} />}
       <RedelegationSelectorField
         transaction={transaction}

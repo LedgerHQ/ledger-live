@@ -1,10 +1,8 @@
 import BigNumber from "bignumber.js";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, AnyMessage } from "@ledgerhq/types-live";
 import { createFixtureCryptoCurrency } from "../../mock/fixtures/cryptoCurrencies";
-import { TypedMessageData } from "../../families/ethereum/types";
 import { prepareMessageToSign } from "./index";
-import { MessageData } from "./types";
 
 const signResult = {
   message: "Sign results",
@@ -32,7 +30,7 @@ describe("prepareMessageToSign", () => {
     const message = "whatever";
 
     // When
-    let result: MessageData | TypedMessageData | undefined;
+    let result: AnyMessage | undefined;
     let error: unknown = null;
     try {
       result = prepareMessageToSign(account, message);
@@ -51,19 +49,13 @@ describe("prepareMessageToSign", () => {
     const currency = createFixtureCryptoCurrency("bitcoin");
     const account = createAccount(currency);
     const message = "4d6573736167652064652074657374";
-    const expectedPath = "44'/60'/0'/0/0";
-    const expectedRawMessage = "0x4d6573736167652064652074657374";
 
     // // When
     const result = prepareMessageToSign(account, message);
 
     // // Then
     expect(result).toEqual({
-      currency,
-      path: expectedPath,
-      derivationMode: account.derivationMode,
       message: "Message de test",
-      rawMessage: expectedRawMessage,
     });
   });
 
@@ -74,7 +66,7 @@ describe("prepareMessageToSign", () => {
     const message = "whatever";
 
     // When
-    let result: MessageData | TypedMessageData | undefined;
+    let result: AnyMessage | undefined;
     let error: Error | null = null;
     try {
       result = prepareMessageToSign(account, message);

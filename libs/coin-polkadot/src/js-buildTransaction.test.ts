@@ -181,7 +181,7 @@ function createTransaction(mode: PolkadotOperationMode = "send"): Transaction {
     mode: mode,
     family: "polkadot",
     fees: null,
-    validators: null,
+    validators: undefined,
     era: null,
     rewardDestination: null,
     numSlashingSpans: null,

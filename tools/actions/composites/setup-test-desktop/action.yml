@@ -25,6 +25,12 @@ inputs:
   install_dotnet:
     description: "install dotnet on Windows"
     required: false
+  aws-access-key:
+    description: "aws access key"
+    required: false
+  aws-secret-key:
+    description: "aws secret key"
+    required: false
 
 runs:
   using: "composite"
@@ -51,18 +57,21 @@ runs:
     - name: Install dependencies
       env:
         LANG: en_US.UTF-8
-      run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --filter="dummy-live-app" --filter="dummy-wallet-app" --unsafe-perm
+      run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --filter="dummy-*" --unsafe-perm
       shell: bash
     - name: Install playwright dependencies
       if: ${{ inputs.install_playwright }}
       run: pnpm desktop test:playwright:setup
       shell: bash
     - name: TurboRepo local caching server
+      if: inputs.aws-access-key != '' && inputs.aws-secret-key != ''
       id: turborepo-cache-server
-      uses: ./tools/actions/turborepo-gh-cache
+      uses: ./tools/actions/turborepo-s3-cache
       with:
         server-token: "yolo"
         cleanup-cache-folder: "true"
+        aws-access-key: ${{ inputs.aws-access-key }}
+        aws-secret-key: ${{ inputs.aws-secret-key }}
     - name: Build dependencies
       run: |
         pnpm build:lld:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
@@ -76,5 +85,6 @@ runs:
       shell: bash
     - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
       if: ${{ !inputs.skip_builds }}
-      run: pnpm desktop build:dummy-apps
+      run: |
+        pnpm --filter="dummy-*" build
       shell: bash

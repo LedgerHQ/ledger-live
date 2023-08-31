@@ -124,7 +124,7 @@ export default function LockAmount({ navigation, route }: Props) {
 
   return (
     <>
-      <TrackScreen category="LockFlow" name="Amount" />
+      <TrackScreen category="LockFlow" name="Amount" flow="stake" action="lock" currency="celo" />
       <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
         <KeyboardView style={styles.container}>
           <TouchableWithoutFeedback onPress={blur}>

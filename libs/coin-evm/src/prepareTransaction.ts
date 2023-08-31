@@ -1,11 +1,13 @@
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
-import { Account, TokenAccount } from "@ledgerhq/types-live";
+import { isEqual } from "lodash";
 import BigNumber from "bignumber.js";
-import { getFeesEstimation, getGasEstimation, getTransactionCount } from "./api/rpc";
-import { validateRecipient } from "./getTransactionStatus";
-import { getAdditionalLayer2Fees, getEstimatedFees } from "./logic";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
+import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
+import { getAdditionalLayer2Fees, getEstimatedFees, isNftTransaction } from "./logic";
+import { EvmNftTransaction, Transaction as EvmTransaction, FeeData, GasOptions } from "./types";
 import { getTransactionData, getTypedTransaction } from "./transaction";
-import { Transaction as EvmTransaction } from "./types";
+import { validateRecipient } from "./getTransactionStatus";
+import { getNftCollectionMetadata } from "./api/nft";
+import { getNodeApi } from "./api/node/index";
 
 /**
  * Prepare basic coin transactions or smart contract interactions (other than live ERC20 transfers)
@@ -16,6 +18,7 @@ export const prepareCoinTransaction = async (
   account: Account,
   typedTransaction: EvmTransaction,
 ): Promise<EvmTransaction> => {
+  const nodeApi = getNodeApi(account.currency);
   // A `useAllAmount` transaction is a specific case of the live, and because we're in the
   // context of a coinTransaction, no smart contract should be involed
   if (typedTransaction.useAllAmount) {
@@ -23,10 +26,12 @@ export const prepareCoinTransaction = async (
     // we should put in the simulation.
     // But as a coin transaction (no smart contract) should always consumme the same amount of gas, no matter
     // the amount of coin transfered, we can infer the gasLimit with any amount.
-    const gasLimit = await getGasEstimation(account, {
-      ...typedTransaction,
-      amount: new BigNumber(0),
-    });
+    const gasLimit = await nodeApi
+      .getGasEstimation(account, {
+        ...typedTransaction,
+        amount: new BigNumber(0),
+      })
+      .catch(() => new BigNumber(0)); // this catch returning 0 should be handled by the `getTransactionStatus` method
     const draftTransaction = {
       ...typedTransaction,
       gasLimit,
@@ -45,7 +50,7 @@ export const prepareCoinTransaction = async (
     };
   }
 
-  const gasLimit = await getGasEstimation(account, typedTransaction).catch(
+  const gasLimit = await nodeApi.getGasEstimation(account, typedTransaction).catch(
     // in case of a smart contract interaction, the gas estimation
     // (which is transaction simulation by the node) can fail.
     // E.g. A DApp is creating an invalid transaction, swaping more Tokens than the user actually have -> fail
@@ -74,20 +79,24 @@ export const prepareTokenTransaction = async (
   tokenAccount: TokenAccount,
   typedTransaction: EvmTransaction,
 ): Promise<EvmTransaction> => {
+  const nodeApi = getNodeApi(account.currency);
   const [recipientErrors] = validateRecipient(account, typedTransaction);
   const amount = typedTransaction.useAllAmount ? tokenAccount.balance : typedTransaction.amount;
+
   const data = !Object.keys(recipientErrors).length
-    ? getTransactionData({ ...typedTransaction, amount })
+    ? getTransactionData(account, { ...typedTransaction, amount })
     : undefined;
   // As we're interacting with a smart contract,
   // it's going to be the real recipient for the tx
   const gasLimit = data
-    ? await getGasEstimation(account, {
-        ...typedTransaction,
-        amount: new BigNumber(0), // amount set to 0 as we're interacting with a smart contract
-        recipient: tokenAccount.token.contractAddress, // recipient is then the token smart contract
-        data, // buffer containing the calldata bytecode
-      }).catch(() => new BigNumber(0)) // this catch returning 0 should be handled by the `getTransactionStatus` method
+    ? await nodeApi
+        .getGasEstimation(account, {
+          ...typedTransaction,
+          amount: new BigNumber(0), // amount set to 0 as we're interacting with a smart contract
+          recipient: tokenAccount.token.contractAddress, // recipient is then the token smart contract
+          data, // buffer containing the calldata bytecode
+        })
+        .catch(() => new BigNumber(0)) // this catch returning 0 should be handled by the `getTransactionStatus` method
     : new BigNumber(0);
   const additionalFees = await getAdditionalLayer2Fees(account.currency, {
     ...typedTransaction,
@@ -99,12 +108,71 @@ export const prepareTokenTransaction = async (
 
   // Recipient isn't changed here as it would change on the UI end as well
   // The change will be handled by the `prepareForSignOperation` method
+  // right before the device signature by the signOperation step
   return {
     ...typedTransaction,
     amount,
     data,
     gasLimit,
     additionalFees,
+  };
+};
+
+/**
+ * Prepare ERC721/ERC1155 transactions.
+ * Handling addition of NFT safeTransferFrom data and gas limit
+ */
+export const prepareNftTransaction = async (
+  account: Account,
+  typedTransaction: EvmNftTransaction & EvmTransaction,
+): Promise<EvmTransaction> => {
+  const { currency } = account;
+  const nodeApi = getNodeApi(currency);
+  const [recipientErrors] = validateRecipient(account, typedTransaction);
+
+  const data = !Object.keys(recipientErrors).length
+    ? getTransactionData(account, typedTransaction)
+    : undefined;
+  // As we're interacting with a smart contract,
+  // it's going to be the real recipient for the tx
+  const gasLimit = data
+    ? await nodeApi
+        .getGasEstimation(account, {
+          ...typedTransaction,
+          amount: new BigNumber(0), // amount set to 0 as we're interacting with a smart contract
+          recipient: typedTransaction.nft.contract, // recipient is then the nft smart contract
+          data, // buffer containing the calldata bytecode
+        })
+        .catch(() => new BigNumber(0)) // this catch returning 0 should be handled by the `getTransactionStatus` method
+    : new BigNumber(0);
+  const additionalFees = await getAdditionalLayer2Fees(account.currency, {
+    ...typedTransaction,
+    amount: new BigNumber(0), // amount set to 0 as we're interacting with a smart contract
+    recipient: typedTransaction.nft.contract, // recipient is then the token smart contract
+    data, // buffer containing the calldata bytecode
+    gasLimit,
+  });
+
+  // Providing the collection name to the transaction for the
+  // deviceTransactionConfig step (so purely UI)
+  const [collectionMetadata] = await getNftCollectionMetadata(
+    [{ contract: typedTransaction.nft.contract }],
+    { chainId: currency?.ethereumLikeInfo?.chainId || 0 },
+  );
+  const nft = {
+    ...typedTransaction.nft,
+    collectionName: collectionMetadata.result?.tokenName || "",
+  };
+
+  // Recipient isn't changed here as it would change on the UI end as well
+  // The change will be handled by the `prepareForSignOperation` method
+  // right before the device signature by the signOperation step
+  return {
+    ...typedTransaction,
+    data,
+    gasLimit,
+    additionalFees,
+    nft,
   };
 };
 
@@ -117,32 +185,37 @@ export const prepareTransaction = async (
   transaction: EvmTransaction,
 ): Promise<EvmTransaction> => {
   const { currency } = account;
+  const nodeApi = getNodeApi(currency);
   // Get the current network status fees
-  const feeData = await (async () => {
+  const feeData: FeeData = await (async () => {
     if (transaction.feesStrategy === "custom") {
       return {
         gasPrice: transaction.gasPrice ?? null,
         maxFeePerGas: transaction.maxFeePerGas ?? null,
         maxPriorityFeePerGas: transaction.maxPriorityFeePerGas ?? null,
+        nextBaseFee: transaction.gasOptions?.medium?.nextBaseFee ?? null,
       };
     }
 
-    if (!transaction.feesStrategy) {
-      return getFeesEstimation(currency);
-    }
-
-    const gasOption = transaction.gasOptions?.[transaction.feesStrategy];
-
-    return gasOption ?? getFeesEstimation(currency);
+    const gasOption = transaction.gasOptions?.[transaction.feesStrategy as keyof GasOptions];
+    return gasOption || nodeApi.getFeeData(currency, transaction);
   })();
 
   const subAccount = findSubAccountById(account, transaction.subAccountId || "");
-  const isTokenTransaction = subAccount?.type === "TokenAccount";
   const typedTransaction = getTypedTransaction(transaction, feeData);
 
-  return isTokenTransaction
-    ? await prepareTokenTransaction(account, subAccount, typedTransaction)
-    : await prepareCoinTransaction(account, typedTransaction);
+  const newTransaction = await (() => {
+    if (isNftTransaction(typedTransaction)) {
+      return prepareNftTransaction(account, typedTransaction);
+    }
+    const isTokenTransaction = subAccount?.type === "TokenAccount";
+    return isTokenTransaction
+      ? prepareTokenTransaction(account, subAccount, typedTransaction)
+      : prepareCoinTransaction(account, typedTransaction);
+  })();
+
+  // maintaining reference if the transaction hasn't change
+  return isEqual(transaction, newTransaction) ? transaction : newTransaction;
 };
 
 /**
@@ -155,21 +228,33 @@ export const prepareForSignOperation = async (
   account: Account,
   transaction: EvmTransaction,
 ): Promise<EvmTransaction> => {
-  const nonce = await getTransactionCount(account.currency, account.freshAddress);
+  const nodeApi = getNodeApi(account.currency);
+  const nonce = await nodeApi.getTransactionCount(account.currency, account.freshAddress);
 
-  const subAccount = findSubAccountById(account, transaction.subAccountId || "");
+  if (isNftTransaction(transaction)) {
+    return {
+      ...transaction,
+      amount: new BigNumber(0), // amount set to 0 as we're interacting with a smart contract
+      recipient: transaction.nft.contract, // recipient is then the NFT smart contract
+      // data as already been added by the `prepareTokenTransaction` method
+      nonce,
+    };
+  }
+
+  const subAccount = findSubAccountById(account, transaction.subAccountId ?? "");
   const isTokenTransaction = subAccount?.type === "TokenAccount";
+  if (isTokenTransaction) {
+    return {
+      ...transaction,
+      amount: new BigNumber(0), // amount set to 0 as we're interacting with a smart contract
+      recipient: subAccount.token.contractAddress, // recipient is then the token smart contract
+      // data as already been added by the `prepareTokenTransaction` method
+      nonce,
+    };
+  }
 
-  return isTokenTransaction
-    ? {
-        ...transaction,
-        amount: new BigNumber(0), // amount set to 0 as we're interacting with a smart contract
-        recipient: subAccount.token.contractAddress, // recipient is then the token smart contract
-        // data as already been added by the `prepareTokenTransaction` method
-        nonce,
-      }
-    : {
-        ...transaction,
-        nonce,
-      };
+  return {
+    ...transaction,
+    nonce,
+  };
 };

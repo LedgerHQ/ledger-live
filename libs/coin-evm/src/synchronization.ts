@@ -1,23 +1,31 @@
+import { log } from "@ledgerhq/logs";
 import {
   decodeAccountId,
+  decodeTokenAccountId,
   emptyHistoryCache,
   encodeAccountId,
   encodeTokenAccountId,
-  shouldRetainPendingOperation,
 } from "@ledgerhq/coin-framework/account/index";
 import {
   AccountShapeInfo,
   GetAccountShape,
   makeSync,
   mergeOps,
+  mergeNfts,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { log } from "@ledgerhq/logs";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, Operation, SubAccount } from "@ledgerhq/types-live";
-
-import { getBalanceAndBlock, getBlock, getTokenBalance, getTransaction } from "./api/rpc";
-import { getSyncHash, mergeSubAccounts } from "./logic";
+import { decodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { nftsFromOperations } from "@ledgerhq/coin-framework/nft/helpers";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { attachOperations, getSyncHash, mergeSubAccounts } from "./logic";
 import { getExplorerApi } from "./api/explorer";
+import { getNodeApi } from "./api/node/index";
+
+/**
+ * Number of blocks that are considered "unsafe" due to a potential reorg.
+ * Everything older than this number, should be considered immutable.
+ */
+export const SAFE_REORG_THRESHOLD = 80;
 
 /**
  * Main synchronization process
@@ -25,7 +33,12 @@ import { getExplorerApi } from "./api/explorer";
  */
 export const getAccountShape: GetAccountShape = async infos => {
   const { initialAccount, address, derivationMode, currency } = infos;
-  const { blockHeight, balance } = await getBalanceAndBlock(currency, address);
+  const nodeApi = getNodeApi(currency);
+  const [latestBlock, balance] = await Promise.all([
+    nodeApi.getBlockByHeight(currency, "latest"),
+    nodeApi.getCoinBalance(currency, address),
+  ]);
+  const blockHeight = latestBlock.height;
   const accountId = encodeAccountId({
     type: "js",
     version: "2",
@@ -47,15 +60,17 @@ export const getAccountShape: GetAccountShape = async infos => {
         return (acc?.blockHeight || 0) > (curr?.blockHeight || 0) ? acc : curr;
       }, null);
 
-  // This method could not be working if the integration doesn't have an API to retreive the operations
-  const lastCoinOperations = await (async () => {
+  const { lastCoinOperations, lastTokenOperations, lastNftOperations } = await (async () => {
     try {
-      const { getLastCoinOperations } = getExplorerApi(currency);
-      return await getLastCoinOperations(
+      const { getLastOperations } = getExplorerApi(currency);
+      return await getLastOperations(
         currency,
         address,
         accountId,
-        latestSyncedOperation?.blockHeight || 0,
+        latestSyncedOperation?.blockHeight
+          ? Math.max(latestSyncedOperation.blockHeight - SAFE_REORG_THRESHOLD, 0)
+          : 0,
+        blockHeight,
       );
     } catch (e) {
       log("EVM Family", "Failed to get latest transactions", {
@@ -67,9 +82,8 @@ export const getAccountShape: GetAccountShape = async infos => {
     }
   })();
 
-  const newSubAccounts = await getSubAccounts(infos, accountId, shouldSyncFromScratch);
-  // Merging potential new subAccouns while preserving the reference (returned value will be initialAccount.subAccounts)
-  const subAccounts = mergeSubAccounts(initialAccount, newSubAccounts);
+  const newSubAccounts = await getSubAccounts(infos, accountId, lastTokenOperations);
+  const subAccounts = mergeSubAccounts(initialAccount, newSubAccounts); // Merging potential new subAccouns while preserving the references
 
   // Trying to confirm pending operations that we are sure of
   // because they were made in the live
@@ -79,9 +93,27 @@ export const getAccountShape: GetAccountShape = async infos => {
   const confirmedOperations = await Promise.all(confirmPendingOperations).then(ops =>
     ops.filter((op): op is Operation => !!op),
   );
-  const newOperations = [...confirmedOperations, ...lastCoinOperations];
+
+  // Coin operations with children ops like token & nft ops attached to it
+  const lastCoinOperationsWithAttachements = attachOperations(
+    lastCoinOperations,
+    lastTokenOperations,
+    lastNftOperations,
+  );
+  const newOperations = [...confirmedOperations, ...lastCoinOperationsWithAttachements];
   const operations = mergeOps(initialAccount?.operations || [], newOperations);
-  const lastSyncDate = new Date();
+  const operationsWithPendings = mergeOps(operations, initialAccount?.pendingOperations || []);
+
+  // Merging potential new nfts while preserving the references.
+  //
+  // ⚠️ NFTs are aggregated manually to get the account "balance" for each of them.
+  // Because of that, we're not creating NFTs in an incremental way,
+  // but always creating them based on *all* operations.
+  const nfts = mergeNfts(
+    initialAccount?.nfts || [],
+    // Adding pendings ops to this to temporarly remove an NFT from an account if actively being transfered
+    nftsFromOperations(operationsWithPendings),
+  ).filter(nft => nft.amount.gt(0));
 
   return {
     type: "Account",
@@ -93,7 +125,8 @@ export const getAccountShape: GetAccountShape = async infos => {
     operations,
     operationsCount: operations.length,
     subAccounts,
-    lastSyncDate,
+    nfts,
+    lastSyncDate: new Date(),
   } as Partial<Account>;
 };
 
@@ -103,55 +136,26 @@ export const getAccountShape: GetAccountShape = async infos => {
 export const getSubAccounts = async (
   infos: AccountShapeInfo,
   accountId: string,
-  shouldSyncFromScratch = false,
+  lastTokenOperations: Operation[],
 ): Promise<Partial<SubAccount>[]> => {
-  const { initialAccount, address, currency } = infos;
-
-  // Get the latest operation from all subaccounts
-  const latestSyncedOperation = shouldSyncFromScratch
-    ? null
-    : initialAccount?.subAccounts
-        ?.flatMap(({ operations }) => operations)
-        .reduce<Operation | null>((acc, curr) => {
-          if (!acc) {
-            return curr;
-          }
-          return (acc?.blockHeight || 0) > (curr?.blockHeight || 0) ? acc : curr;
-        }, null);
-
-  // This method could not be working if the integration doesn't have an API to retreive the operations
-  const lastERC20OperationsAndCurrencies = await (async () => {
-    try {
-      const { getLastTokenOperations } = getExplorerApi(currency);
-      return await getLastTokenOperations(
-        currency,
-        address,
-        accountId,
-        latestSyncedOperation?.blockHeight || 0,
-      );
-    } catch (e) {
-      log("EVM Family", "Failed to get latest ERC20 transactions", {
-        address,
-        currency,
-        error: e,
-      });
-      throw e;
-    }
-  })();
+  const { currency } = infos;
 
   // Creating a Map of Operations by TokenCurrencies in order to know which TokenAccounts should be synced as well
-  const erc20OperationsByToken = lastERC20OperationsAndCurrencies.reduce<
-    Map<TokenCurrency, Operation[]>
-  >((acc, { tokenCurrency, operation }) => {
-    if (!tokenCurrency) return acc;
+  const erc20OperationsByToken = lastTokenOperations.reduce<Map<TokenCurrency, Operation[]>>(
+    (acc, operation) => {
+      const { accountId } = decodeOperationId(operation.id);
+      const { token } = decodeTokenAccountId(accountId);
+      if (!token) return acc;
 
-    if (!acc.has(tokenCurrency)) {
-      acc.set(tokenCurrency, []);
-    }
-    acc.get(tokenCurrency)?.push(operation);
+      if (!acc.has(token)) {
+        acc.set(token, []);
+      }
+      acc.get(token)?.push(operation);
 
-    return acc;
-  }, new Map<TokenCurrency, Operation[]>());
+      return acc;
+    },
+    new Map<TokenCurrency, Operation[]>(),
+  );
 
   // Fetching all TokenAccounts possible and providing already filtered operations
   const subAccountsPromises: Promise<Partial<SubAccount>>[] = [];
@@ -171,9 +175,10 @@ export const getSubAccountShape = async (
   token: TokenCurrency,
   operations: Operation[],
 ): Promise<Partial<SubAccount>> => {
+  const nodeApi = getNodeApi(currency);
   const { xpubOrAddress: address } = decodeAccountId(parentId);
   const tokenAccountId = encodeTokenAccountId(parentId, token);
-  const balance = await getTokenBalance(currency, address, token.contractAddress);
+  const balance = await nodeApi.getTokenBalance(currency, address, token.contractAddress);
 
   return {
     type: "TokenAccount",
@@ -199,27 +204,15 @@ export const getOperationStatus = async (
   op: Operation,
 ): Promise<Operation | null> => {
   try {
-    const {
-      blockNumber: blockHeight,
-      blockHash,
-      timestamp,
-      nonce,
-    } = await getTransaction(currency, op.hash);
+    const nodeApi = getNodeApi(currency);
+    const { blockHeight, blockHash, nonce } = await nodeApi.getTransaction(currency, op.hash);
 
     if (!blockHeight) {
       throw new Error("getOperationStatus: Transaction has no block");
     }
 
-    const date = await (async () => {
-      // timestamp can be missing depending on the node
-      if (timestamp) {
-        return new Date(timestamp * 1000);
-      }
-
-      // Without timestamp, we directly look for the block
-      const { timestamp: blockTimestamp } = await getBlock(currency, blockHeight);
-      return new Date(blockTimestamp * 1000);
-    })();
+    const { timestamp } = await nodeApi.getBlockByHeight(currency, blockHeight);
+    const date = new Date(timestamp * 1000);
 
     return {
       ...op,
@@ -227,6 +220,20 @@ export const getOperationStatus = async (
       blockHash,
       blockHeight,
       date,
+      subOperations: op.subOperations?.map(subOp => ({
+        ...subOp,
+        transactionSequenceNumber: nonce,
+        blockHash,
+        blockHeight,
+        date,
+      })),
+      nftOperations: op.nftOperations?.map(nftOp => ({
+        ...nftOp,
+        transactionSequenceNumber: nonce,
+        blockHash,
+        blockHeight,
+        date,
+      })),
     } as Operation;
   } catch (e) {
     return null;
@@ -238,19 +245,30 @@ export const getOperationStatus = async (
  * inside of subAccounts.
  */
 export const postSync = (initial: Account, synced: Account): Account => {
-  // Set of hashes from the pending operations of the main account
-  const coinPendingOperationsHashes = new Set();
-  for (const coinPendingOperation of synced.pendingOperations) {
-    coinPendingOperationsHashes.add(coinPendingOperation.hash);
-  }
+  // Get the latest nonce from the synced account
+  const lastOperation = synced.operations.find(op => ["OUT", "FEES", "NFT_OUT"].includes(op.type));
+  const latestNonce = lastOperation?.transactionSequenceNumber || -1;
   // Set of ids from the already existing subAccount from previous sync
   const initialSubAccountsIds = new Set();
   for (const subAccount of initial.subAccounts || []) {
     initialSubAccountsIds.add(subAccount.id);
   }
-
+  const initialPendingOperations = initial.pendingOperations || [];
+  const { operations } = synced;
+  const pendingOperations = initialPendingOperations.filter(
+    op =>
+      !operations.some(o => o.hash === op.hash) &&
+      op.transactionSequenceNumber !== undefined &&
+      op.transactionSequenceNumber > latestNonce,
+  );
+  // Set of hashes from the pending operations of the main account
+  const coinPendingOperationsHashes = new Set();
+  for (const op of pendingOperations) {
+    coinPendingOperationsHashes.add(op.hash);
+  }
   return {
     ...synced,
+    pendingOperations,
     subAccounts: synced.subAccounts?.map(subAccount => {
       // If the subAccount is new, just return the freshly synced subAccount
       if (!initialSubAccountsIds.has(subAccount.id)) return subAccount;
@@ -263,8 +281,9 @@ export const postSync = (initial: Account, synced: Account): Account => {
             coinPendingOperationsHashes.has(tokenPendingOperation.hash) &&
             // if the transaction has been confirmed, remove it
             !subAccount.operations.some(op => op.hash === tokenPendingOperation.hash) &&
-            // common rule for pending operations retention in the live
-            shouldRetainPendingOperation(synced, tokenPendingOperation),
+            // if the nonce is still lower than the last one in operations, keep it
+            tokenPendingOperation.transactionSequenceNumber !== undefined &&
+            tokenPendingOperation.transactionSequenceNumber > latestNonce,
         ),
       };
     }),

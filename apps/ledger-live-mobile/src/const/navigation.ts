@@ -75,8 +75,7 @@ export enum ScreenName {
   EditAccountName = "EditAccountName",
   EditAccountUnits = "EditAccountUnits",
   EditDeviceName = "EditDeviceName",
-  EthereumCustomFees = "EthereumCustomFees",
-  EthereumEditGasLimit = "EthereumEditGasLimit",
+  EditTransactionMethodSelection = "EditTransactionMethodSelection",
   Exchange = "Exchange",
   ExchangeBuy = "ExchangeBuy",
   ExchangeHistory = "ExchangeHistory",
@@ -122,6 +121,7 @@ export enum ScreenName {
   ReceiveConnectDevice = "ReceiveConnectDevice",
   ReceiveSelectAccount = "ReceiveSelectAccount",
   ReceiveSelectCrypto = "ReceiveSelectCrypto",
+  DepositSelectNetwork = "DepositSelectNetwork",
   ReceiveVerificationConfirmation = "ReceiveVerificationConfirmation",
   ReceiveVerifyAddress = "ReceiveVerifyAddress",
   Recover = "Recover",
@@ -142,6 +142,7 @@ export enum ScreenName {
   SendSelectRecipient = "SendSelectRecipient",
   SendSummary = "SendSummary",
   SendValidationError = "SendValidationError",
+  TransactionAlreadyValidatedError = "TransactionAlreadyValidatedError",
   SendValidationSuccess = "SendValidationSuccess",
   SettingsScreen = "SettingsScreen",
   SignConnectDevice = "SignConnectDevice",
@@ -158,10 +159,6 @@ export enum ScreenName {
   SwapFormSelectCrypto = "SwapFormSelectCrypto",
   SwapFormSelectProviderRate = "SwapFormSelectProviderRate",
   SwapHistory = "SwapHistory",
-  SwapKYC = "KYC",
-  SwapKYCStates = "SwapKYCStates",
-  SwapLogin = "Login",
-  SwapMFA = "MFA",
   SwapOperationDetails = "SwapOperationDetails",
   SwapPendingOperation = "PendingOperation",
   SwapSelectAccount = "SelectAccount",
@@ -169,6 +166,7 @@ export enum ScreenName {
   SwapSelectFees = "SelectFees",
   SwapSelectProvider = "SelectProvider",
   SwapTab = "SwapTab",
+  Earn = "Earn",
   TezosDelegationFlow = "TezosDelegationFlow",
   Transfer = "Transfer",
   UnfreezeAmount = "UnfreezeAmount",
@@ -285,6 +283,7 @@ export enum ScreenName {
   ElrondWithdrawValidationError = "ElrondWithdrawValidationError",
   ElrondWithdrawValidationSuccess = "ElrondWithdrawValidationSuccess",
 
+  // Osmosis
   OsmosisDelegationStarted = "OsmosisDelegationStarted",
   OsmosisDelegationValidator = "OsmosisDelegationValidator",
   OsmosisDelegationValidatorSelect = "OsmosisDelegationValidatorSelect",
@@ -311,8 +310,13 @@ export enum ScreenName {
   OsmosisRedelegationValidationError = "OsmosisRedelegationValidationError",
   OsmosisRedelegationValidationSuccess = "OsmosisRedelegationValidationSuccess",
 
+  // internet_computer
+  InternetComputerEditMemo = "InternetComputerEditMemo",
+
   // crypto_org
   CryptoOrgEditMemo = "CryptoOrgEditMemo",
+
+  // Algorand
   AlgorandEditMemo = "AlgorandEditMemo",
   AlgorandClaimRewardsInfo = "AlgorandClaimRewardsInfo",
   AlgorandClaimRewardsStarted = "AlgorandClaimRewardsStarted",
@@ -327,6 +331,16 @@ export enum ScreenName {
   AlgorandOptInSummary = "AlgorandOptInValidation",
   AlgorandOptInValidationError = "AlgorandOptInValidationError",
   AlgorandOptInValidationSuccess = "AlgorandOptInValidationSuccess",
+
+  // Ethereum
+  EthereumCustomFees = "EthereumCustomFees",
+  EthereumEditGasLimit = "EthereumEditGasLimit",
+  EthereumEditTransactionSummary = "EthereumEditTransactionSummary",
+
+  // Evm
+  EvmEditGasLimit = "EvmEditGasLimit",
+  EvmCustomFees = "EvmCustomFees",
+
   // Polkadot
   PolkadotBondStarted = "PolkadotBondStarted",
   PolkadotBondAmount = "PolkadotBondAmount",
@@ -409,9 +423,7 @@ export enum ScreenName {
   PlatformApp = "PlatformApp",
   PlatformStartExchange = "PlatformStartExchange",
   PlatformCompleteExchange = "PlatformCompleteExchange",
-  WalletConnectScan = "WalletConnectScan",
   WalletConnectConnect = "WalletConnectConnect",
-  WalletConnectDeeplinkingSelectAccount = "WalletConnectDeeplinkingSelectAccount",
   NotificationCenter = "NotificationCenter",
   NotificationCenterStatus = "NotificationCenterStatus",
   SignTransactionSummary = "SignTransactionSummary",
@@ -438,6 +450,22 @@ export enum ScreenName {
   LearnWebView = "LearnWebView",
   // cardano
   CardanoEditMemo = "CardanoEditMemo",
+  CardanoDelegationStarted = "CardanoDelegationStarted",
+  CardanoDelegationSummary = "CardanoDelegationSummary",
+  CardanoDelegationPoolSelect = "CardanoDelegationPoolSelect",
+  CardanoDelegationAmount = "CardanoDelegationAmount",
+  CardanoDelegationSelectDevice = "CardanoDelegationSelectDevice",
+  CardanoDelegationConnectDevice = "CardanoDelegationConnectDevice",
+  CardanoDelegationValidationError = "CardanoDelegationValidationError",
+  CardanoDelegationValidationSuccess = "CardanoDelegationValidationSuccess",
+  CardanoUndelegationSummary = "CardanoUndelegationSummary",
+  CardanoUndelegationSelectDevice = "CardanoUndelegationSelectDevice",
+  CardanoUndelegationConnectDevice = "CardanoUndelegationConnectDevice",
+  CardanoUndelegationValidationError = "CardanoUndelegationValidationError",
+  CardanoUndelegationValidationSuccess = "CardanoUndelegationValidationSuccess",
+
+  // stacks
+  StacksEditMemo = "StacksEditMemo",
   // hedera
   HederaEditMemo = "HederaEditMemo",
   // near
@@ -482,8 +510,8 @@ export enum ScreenName {
   Stake = "Stake",
 
   RedirectToOnboardingRecoverFlow = "RedirectToOnboardingRecoverFlow",
-  RedirectToRecoverStaxFlow = "RedirectToRecoverStaxFlow",
 }
+
 export enum NavigatorName {
   // Stack
   // add "Navigator" postfix to distinguish this from ScreenName.Accounts
@@ -530,6 +558,7 @@ export enum NavigatorName {
   Settings = "Settings",
   SignMessage = "SignMessage",
   Swap = "SwapNavigator",
+  Earn = "EarnNavigator",
   TezosDelegationFlow = "TezosDelegationFlow",
   TronVoteFlow = "TronVoteFlow",
   Unfreeze = "Unfreeze",
@@ -539,6 +568,10 @@ export enum NavigatorName {
   SignTransaction = "SignTransaction",
   RequestAccount = "RequestAccount",
   RequestAccountsAddAccounts = "RequestAccountsAddAccounts",
+
+  // Edit transaction
+  EditTransaction = "EditTransaction",
+
   // Polkadot
   PolkadotBondFlow = "PolkadotBondFlow",
   PolkadotUnbondFlow = "PolkadotUnbondFlow",
@@ -560,6 +593,10 @@ export enum NavigatorName {
   CeloActivateFlow = "CeloActivateFlow",
   CeloRevokeFlow = "CeloRevokeFlow",
   CeloWithdrawFlow = "CeloWithdrawFlow",
+  // Cardano
+  CardanoEditMemo = "CardanoEditMemo",
+  CardanoDelegationFlow = "CardanoDelegationFlow",
+  CardanoUndelegationFlow = "CardanoUndelegationFlow",
   // NEAR
   NearStakingFlow = "NearStakingFlow",
   NearUnstakingFlow = "NearUnstakingFlow",

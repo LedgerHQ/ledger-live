@@ -1,3 +1,30 @@
+# 2.66.0
+
+### 🚀 Features
+
+Starting today, you can stake Cardano (ADA) through Ledger Live and earn rewards. 
+
+When swapping crypto assets, a warning message will alert you if you don’t have enough funds to pay the network fees.
+
+### 🐛 Fixes
+
+Optimism is now Op Mainnet. We’ve made the name change in Ledger Live. 
+
+# 2.64.2
+
+Some users reported issues when adding accounts and trying to swap crypto. We've patched this up, and everything is running smoothly again.
+
+# 2.64.1
+
+### 🚀 Features
+
+- Navigating the Discover section just got easier. A nifty search bar and categories will help you quickly find dApps and services you're looking for.
+- Ledger Live now supports an f4/t4 address format that allows you to directly transfer your FIL to an Ethereum-style (0x) address.
+
+### 🌷 Improvements
+
+When the latest version of the Ledger Live desktop app is available, it will now be automatically downloaded, same as the current experience on your Ledger Live mobile app, so the update will not interrupt you while using the app. You can revert to the previous setting by using older versions of the Ledger Live desktop app.
+
 # 2.62.2
 
 ### 🚀 Features

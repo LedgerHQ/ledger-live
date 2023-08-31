@@ -1,25 +1,32 @@
+/* istanbul ignore file: don't test the test. */
+
 import expect from "expect";
 import invariant from "invariant";
 import sample from "lodash/sample";
 import BigNumber from "bignumber.js";
-import { MutationSpec, TransactionDestinationTestInput } from "@ledgerhq/coin-framework/bot/types";
+import {
+  AppSpec,
+  MutationSpec,
+  TransactionDestinationTestInput,
+} from "@ledgerhq/coin-framework/bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { CryptoCurrencyIds } from "@ledgerhq/types-live";
-import { cryptocurrenciesById } from "@ledgerhq/cryptoassets/currencies";
-import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
 import {
   getCryptoCurrencyById,
   parseCurrencyUnit,
 } from "@ledgerhq/coin-framework/currencies/index";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { cryptocurrenciesById } from "@ledgerhq/cryptoassets/currencies";
+import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
 import { acceptTransaction } from "./speculos-deviceActions";
 import { Transaction as EvmTransaction } from "./types";
+import { getEstimatedFees } from "./logic";
 
 const testTimeout = 10 * 60 * 1000;
 
 const ETH_UNIT = { code: "ETH", name: "ETH", magnitude: 18 };
 const MBTC_UNIT = { name: "mBTC", code: "mBTC", magnitude: 5 };
 
-const minBalancePerCurrencyId: Record<CryptoCurrencyIds, BigNumber> = {
+const minBalancePerCurrencyId: Partial<Record<CryptoCurrency["id"], BigNumber>> = {
   arbitrum: parseCurrencyUnit(ETH_UNIT, "0.001"),
   arbitrum_goerli: parseCurrencyUnit(ETH_UNIT, "0.001"),
   optimism: parseCurrencyUnit(ETH_UNIT, "0.001"),
@@ -28,6 +35,10 @@ const minBalancePerCurrencyId: Record<CryptoCurrencyIds, BigNumber> = {
   metis: parseCurrencyUnit(ETH_UNIT, "0.01"),
   moonriver: parseCurrencyUnit(ETH_UNIT, "0.1"),
   rsk: parseCurrencyUnit(MBTC_UNIT, "0.05"),
+  polygon_zk_evm: parseCurrencyUnit(ETH_UNIT, "0.001"),
+  polygon_zk_evm_testnet: parseCurrencyUnit(ETH_UNIT, "0.001"),
+  base: parseCurrencyUnit(ETH_UNIT, "0.001"),
+  base_goerli: parseCurrencyUnit(ETH_UNIT, "0.001"),
 };
 
 /**
@@ -72,8 +83,12 @@ const testCoinBalance: MutationSpec<EvmTransaction>["test"] = ({
   // effectively used gas but the "bid"/proposition of gas of the transaction
   // resulting in inconsistencies regarding the cumulated value of a tx.
   // value + gasLimit * gasPrice <-- gasPrice can be wrong here.
-  const underValuedFeesCurrencies = ["optimism", "optimism_goerli"];
-  const overValuedFeesCurrencies = ["arbitrum", "arbitrum_goerli"];
+  //
+  // Klaytn is not providing the right gasPrice either at the moment
+  // and their explorers are using the transaction gasPrice
+  // instead of the effectiveGasPrice from the receipt
+  const underValuedFeesCurrencies = ["optimism", "optimism_goerli", "base", "base_goerli"];
+  const overValuedFeesCurrencies = ["arbitrum", "arbitrum_goerli", "klaytn"];
   const currenciesWithFlakyBehaviour = [...underValuedFeesCurrencies, ...overValuedFeesCurrencies];
 
   // Classic test verifying exactly the balance
@@ -171,14 +186,7 @@ const evmBasicMutations: ({
       status,
       optimisticOperation,
     }) => {
-      // workaround for buggy explorer behavior (nodes desync)
-      invariant(
-        Date.now() - operation.date.getTime() > 60000,
-        "operation time to be older than 60s",
-      );
-      const estimatedGas = transaction.gasLimit.times(
-        transaction.gasPrice || transaction.maxFeePerGas || 0,
-      );
+      const estimatedGas = getEstimatedFees(transaction);
       botTest("operation fee is not exceeding estimated gas", () =>
         expect(operation.fee.toNumber()).toBeLessThanOrEqual(estimatedGas.toNumber()),
       );
@@ -221,14 +229,7 @@ const evmBasicMutations: ({
       status,
       optimisticOperation,
     }) => {
-      // workaround for buggy explorer behavior (nodes desync)
-      invariant(
-        Date.now() - operation.date.getTime() > 60000,
-        "operation time to be older than 60s",
-      );
-      const estimatedGas = transaction.gasLimit.times(
-        transaction.gasPrice || transaction.maxFeePerGas || 0,
-      );
+      const estimatedGas = getEstimatedFees(transaction);
       botTest("operation fee is not exceeding estimated gas", () =>
         expect(operation.fee.toNumber()).toBeLessThanOrEqual(estimatedGas.toNumber()),
       );
@@ -268,12 +269,7 @@ const evmBasicMutations: ({
         ],
       };
     },
-    test: ({ accountBeforeTransaction, account, transaction, operation }) => {
-      // workaround for buggy explorer behavior (nodes desync)
-      invariant(
-        Date.now() - operation.date.getTime() > 60000,
-        "operation time to be older than 60s",
-      );
+    test: ({ accountBeforeTransaction, account, transaction }) => {
       invariant(accountBeforeTransaction.subAccounts, "sub accounts before");
       const erc20accountBefore = accountBeforeTransaction.subAccounts?.find(
         s => s.id === transaction.subAccountId,
@@ -298,15 +294,14 @@ const evmBasicMutations: ({
 
 export default Object.values(cryptocurrenciesById)
   .filter(currency => currency.family === "evm")
-  .reduce((acc, currency) => {
-    // @ts-expect-error FIXME: fix typings
+  .reduce<Partial<Record<CryptoCurrency["id"], AppSpec<EvmTransaction>>>>((acc, currency) => {
     acc[currency.id] = {
       name: currency.name,
       currency,
       appQuery: {
         model: DeviceModelId.nanoS,
         appName: "Ethereum",
-        appVersion: "1.10.2",
+        appVersion: "1.10.3",
       },
       testTimeout,
       transactionCheck: transactionCheck(currency.id),

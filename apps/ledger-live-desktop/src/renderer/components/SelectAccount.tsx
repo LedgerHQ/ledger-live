@@ -5,7 +5,8 @@ import {
   getAccountName,
   listSubAccounts,
 } from "@ledgerhq/live-common/account/index";
-import { TFunction, withTranslation, Trans } from "react-i18next";
+import { TFunction } from "i18next";
+import { Trans, withTranslation } from "react-i18next";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import styled from "styled-components";
 import React, { useCallback, useState, useMemo } from "react";

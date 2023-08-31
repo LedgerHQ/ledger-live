@@ -1,12 +1,12 @@
 import React, { memo, useCallback, useMemo } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
-import { Polkadot as PolkadotIdenticon } from "@polkadot/reactnative-identicon/icons";
 import type { PolkadotValidator } from "@ledgerhq/live-common/families/polkadot/types";
 import { useTheme } from "styled-components/native";
 import CheckBox from "../../../components/CheckBox";
 import LText from "../../../components/LText";
 import Touchable from "../../../components/Touchable";
+import Identicon from "@polkadot/reactnative-identicon";
 
 type Props = {
   item: PolkadotValidator;
@@ -43,9 +43,7 @@ function Item({ item, selected, disabled, onSelect, onClick }: Props) {
         onPress={() => onClick(address)}
         event="PolkadotNominateSelectValidatorsOpenExplorer"
       >
-        {/* FIXME: I HAD TO ADD publicKey IN HERE. I LOOKED INTO THE LIB AND IT
-            SEEMS THAT THE DEFAULT VALUE FOR publicKey IS "0x" */}
-        <PolkadotIdenticon publicKey="0x" address={address} size={32} />
+        <Identicon theme="polkadot" value={address} size={32} />
       </Touchable>
 
       <View style={styles.nameWrapper}>

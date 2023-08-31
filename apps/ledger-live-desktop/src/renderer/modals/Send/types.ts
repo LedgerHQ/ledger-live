@@ -1,4 +1,4 @@
-import { TFunction } from "react-i18next";
+import { TFunction } from "i18next";
 import { BigNumber } from "bignumber.js";
 import { Account, AccountLike, NFT, Operation, ProtoNFT } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
@@ -40,5 +40,6 @@ export type StepProps = {
   maybeNFTCollection?: string;
   onChangeQuantities: (a: string) => void;
   onChangeNFT: (a: ProtoNFT | NFT) => void;
+  shouldSkipAmount: boolean;
 };
 export type St = Step<StepId, StepProps>;

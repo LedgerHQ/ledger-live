@@ -1,28 +1,24 @@
-import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
+/* istanbul ignore file: pure exports, bridge tested by live-common with bridge.integration.test.ts */
 import {
+  defaultUpdateTransaction,
   makeAccountBridgeReceive,
   makeScanAccounts,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import { broadcast } from "../broadcast";
-import { createTransaction } from "../createTransaction";
+import type { AccountBridge, Bridge, CurrencyBridge } from "@ledgerhq/types-live";
+import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
+import type { Transaction as EvmTransaction } from "../types/index";
+import { EvmAddress, EvmSignature, EvmSigner } from "../signer";
 import { estimateMaxSpendable } from "../estimateMaxSpendable";
 import { getTransactionStatus } from "../getTransactionStatus";
-import resolver from "../hw-getAddress";
-import { hydrate, preload } from "../preload";
-import { prepareTransaction } from "../prepareTransaction";
-import { buildSignOperation } from "../signOperation";
 import { getAccountShape, sync } from "../synchronization";
-import { EvmAddress, EvmSignature, EvmSigner } from "../signer";
-import type { Transaction as EvmTransaction, Transaction } from "../types";
-
-const updateTransaction: AccountBridge<EvmTransaction>["updateTransaction"] = (
-  transaction,
-  patch,
-) => {
-  return { ...transaction, ...patch } as EvmTransaction;
-};
+import { prepareTransaction } from "../prepareTransaction";
+import { createTransaction } from "../createTransaction";
+import { buildSignOperation } from "../signOperation";
+import { hydrate, preload } from "../preload";
+import nftResolvers from "../nftResolvers";
+import { broadcast } from "../broadcast";
+import resolver from "../hw-getAddress";
 
 export function buildCurrencyBridge(
   signerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature>,
@@ -38,12 +34,13 @@ export function buildCurrencyBridge(
     preload,
     hydrate,
     scanAccounts,
+    nftResolvers,
   };
 }
 
 export function buildAccountBridge(
   signerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature>,
-): AccountBridge<Transaction> {
+): AccountBridge<EvmTransaction> {
   const getAddress = resolver(signerContext);
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
@@ -51,7 +48,7 @@ export function buildAccountBridge(
 
   return {
     createTransaction,
-    updateTransaction,
+    updateTransaction: defaultUpdateTransaction<EvmTransaction>,
     prepareTransaction,
     getTransactionStatus,
     sync,
@@ -62,7 +59,9 @@ export function buildAccountBridge(
   };
 }
 
-export function createBridges(signerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature>) {
+export function createBridges(
+  signerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature>,
+): Bridge<EvmTransaction> {
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),

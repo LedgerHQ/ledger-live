@@ -10,6 +10,7 @@ export const isValidUser = (user: string): boolean =>
     "github-actions[bot]",
     "dependabot[bot]",
     "renovate[bot]",
+    "ldg-smartling-sa",
   ].includes(user);
 
 export const isValidBody = (body: string | null): boolean => {

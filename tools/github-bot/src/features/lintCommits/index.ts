@@ -49,5 +49,9 @@ export function lintCommits(app: Probot) {
       from: payload.check_run.pull_requests[0]?.base.ref,
       login: payload.sender.login,
     }),
+    getConclusion: conclusion => {
+      if (conclusion == "failure") return "neutral";
+      return conclusion;
+    },
   });
 }

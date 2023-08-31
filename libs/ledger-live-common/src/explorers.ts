@@ -22,3 +22,8 @@ export const getAccountContractExplorer = (
   explorerView.token
     .replace("$contractAddress", account.token.contractAddress)
     .replace("$address", parentAccount.freshAddress);
+export const getStakePoolExplorer = (
+  explorerView: ExplorerView | null | undefined,
+  poolId: string,
+): string | null | undefined =>
+  explorerView && explorerView.stakePool && explorerView.stakePool.replace("$poolId", poolId);

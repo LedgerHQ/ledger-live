@@ -1,4 +1,5 @@
 import React, { PureComponent } from "react";
+import { getStuckAccountAndOperation } from "@ledgerhq/live-common/operation";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -14,7 +15,6 @@ import { StepProps } from "../types";
 import StepRecipientSeparator from "~/renderer/components/StepRecipientSeparator";
 import { Account } from "@ledgerhq/types-live";
 import EditOperationPanel from "~/renderer/components/OperationsList/EditOperationPanel";
-import { getStuckAccountAndOperation } from "@ledgerhq/live-common/operation";
 
 const StepRecipient = ({
   t,
@@ -107,8 +107,12 @@ const StepRecipient = ({
 };
 export class StepRecipientFooter extends PureComponent<StepProps> {
   onNext = async () => {
-    const { transitionTo } = this.props;
-    transitionTo("amount");
+    const { transitionTo, shouldSkipAmount } = this.props;
+    if (shouldSkipAmount) {
+      transitionTo("summary");
+    } else {
+      transitionTo("amount");
+    }
   };
 
   render() {
@@ -134,4 +138,5 @@ export class StepRecipientFooter extends PureComponent<StepProps> {
     );
   }
 }
+
 export default StepRecipient;

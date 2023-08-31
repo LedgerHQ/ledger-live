@@ -165,9 +165,6 @@ const reducer = <T extends Transaction = Transaction>(
     }
 
     case "onStatus":
-      // if (a.transaction === s.transaction && !s.errorStatus) {
-      //   return s;
-      // }
       return {
         ...state,
         errorStatus: null,

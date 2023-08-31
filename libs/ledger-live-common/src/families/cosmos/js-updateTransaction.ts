@@ -1,15 +1,15 @@
 import { Transaction } from "./types";
+import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 
-const updateTransaction = (t: Transaction, patch: Partial<Transaction>): Transaction => {
-  if ("mode" in patch && patch.mode !== t.mode) {
-    return { ...t, ...patch, gas: null, fees: null };
+const updateTransaction = (tx: Transaction, patch: Partial<Transaction>): Transaction => {
+  if (
+    ("mode" in patch && patch.mode !== tx.mode) ||
+    ("validators" in patch && patch.validators?.length !== tx.validators.length)
+  ) {
+    patch = { ...patch, gas: null, fees: null };
   }
 
-  if ("validators" in patch && patch.validators?.length !== t.validators.length) {
-    return { ...t, ...patch, gas: null, fees: null };
-  }
-
-  return { ...t, ...patch };
+  return defaultUpdateTransaction(tx, patch);
 };
 
 export default updateTransaction;

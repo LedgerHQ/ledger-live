@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-evm",
-  "version": "0.2.1",
+  "version": "0.5.1",
   "description": "Ledger EVM Coin integration",
   "keywords": [
     "Ledger",
@@ -50,6 +50,7 @@
     "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/domain-service": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/evm-tools": "workspace:^",
     "@ledgerhq/hw-app-eth": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
@@ -58,9 +59,9 @@
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "axios": "0.26.1",
-    "bignumber.js": "^9.1.0",
+    "bignumber.js": "^9.1.1",
     "eip55": "^2.1.1",
-    "ethers": "^5.6.9",
+    "ethers": "5.7.2",
     "expect": "^27.4.6",
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",

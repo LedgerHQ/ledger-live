@@ -113,7 +113,7 @@ const AccountSyncStatusIndicator = ({ accountId, account, isUpToDateAccount }: P
   const timeout = useRef<ReturnType<typeof setTimeout>>();
   const satStackAlreadyConfigured = useEnv("SATSTACK");
   const currency = getAccountCurrency(account);
-  const showSatStackIcon = satStackAlreadyConfigured && currency.id === "bitcoin";
+  const showSatStackIcon = !!satStackAlreadyConfigured && currency.id === "bitcoin";
   const onClick = useCallback(
     e => {
       e.stopPropagation();

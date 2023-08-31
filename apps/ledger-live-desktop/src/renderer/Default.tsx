@@ -52,6 +52,7 @@ import Drawer from "~/renderer/drawers/Drawer";
 import UpdateBanner from "~/renderer/components/Updater/Banner";
 import FirmwareUpdateBanner from "~/renderer/components/FirmwareUpdateBanner";
 import VaultSignerBanner from "~/renderer/components/VaultSignerBanner";
+import RecoverRestore from "~/renderer/components/RecoverRestore";
 import Onboarding from "~/renderer/components/Onboarding";
 import PostOnboardingScreen from "~/renderer/components/PostOnboardingScreen";
 import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
@@ -184,7 +185,15 @@ export default function Default() {
               <DisableTransactionBroadcastWarning />
             ) : null}
             <Switch>
-              <Route path="/onboarding" component={Onboarding} />
+              <Route
+                path="/onboarding"
+                render={() => (
+                  <>
+                    <Onboarding />
+                    <Drawer />
+                  </>
+                )}
+              />
               <Route path="/sync-onboarding" component={SyncOnboarding} />
               <Route
                 path="/post-onboarding"
@@ -195,6 +204,7 @@ export default function Default() {
                   </>
                 )}
               />
+              <Route path="/recover-restore" component={RecoverRestore} />
 
               <Route path="/USBTroubleshooting">
                 <USBTroubleshooting onboarding={!hasCompletedOnboarding} />
@@ -246,7 +256,7 @@ export default function Default() {
                             />
                             <Route path="/platform/:appId?" component={LiveApp} />
                             <Route path="/earn" component={Earn} />
-                            <Route path="/exchange" component={Exchange} />
+                            <Route exact path="/exchange/:appId?" component={Exchange} />
                             <Route
                               exact
                               path="/account/:id/nft-collection"

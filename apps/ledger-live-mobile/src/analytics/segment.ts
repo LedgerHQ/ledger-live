@@ -16,7 +16,7 @@ import {
 } from "@react-navigation/native";
 import { snakeCase } from "lodash";
 import React, { MutableRefObject, useCallback } from "react";
-import { idsToLanguage } from "@ledgerhq/types-live";
+import { Feature, FeatureId, idsToLanguage } from "@ledgerhq/types-live";
 import {
   hasNftInAccounts,
   GENESIS_PASS_COLLECTION_CONTRACT,
@@ -34,6 +34,7 @@ import {
   notificationsSelector,
   knownDeviceModelIdsSelector,
   customImageTypeSelector,
+  userNpsSelector,
 } from "../reducers/settings";
 import { knownDevicesSelector } from "../reducers/ble";
 import { DeviceLike, State } from "../reducers/types";
@@ -51,6 +52,29 @@ import { aggregateData, getUniqueModelIdList } from "../logic/modelIdList";
 let sessionId = uuid();
 const appVersion = `${VersionNumber.appVersion || ""} (${VersionNumber.buildVersion || ""})`;
 const { ANALYTICS_LOGS, ANALYTICS_TOKEN } = Config;
+
+type MaybeAppStore = Maybe<AppStore>;
+
+let storeInstance: MaybeAppStore; // is the redux store. it's also used as a flag to know if analytics is on or off.
+let segmentClient: SegmentClient | undefined;
+let analyticsFeatureFlagMethod: null | ((key: FeatureId) => Feature | null);
+
+export function setAnalyticsFeatureFlagMethod(method: typeof analyticsFeatureFlagMethod): void {
+  analyticsFeatureFlagMethod = method;
+}
+
+const getFeatureFlagProperties = (): Record<string, boolean | string> => {
+  try {
+    if (!analyticsFeatureFlagMethod) return {};
+    const ptxEarnFeatureFlag = analyticsFeatureFlagMethod("ptxEarn");
+
+    return {
+      ptxEarnEnabled: !!ptxEarnFeatureFlag?.enabled,
+    };
+  } catch (e) {
+    return {};
+  }
+};
 
 export const updateSessionId = () => (sessionId = uuid());
 
@@ -102,6 +126,7 @@ const extraProperties = async (store: AppStore) => {
     : [];
   const hasGenesisPass = hasNftInAccounts(GENESIS_PASS_COLLECTION_CONTRACT, accounts);
   const hasInfinityPass = hasNftInAccounts(INFINITY_PASS_COLLECTION_CONTRACT, accounts);
+  const nps = userNpsSelector(state);
 
   return {
     appVersion,
@@ -136,13 +161,10 @@ const extraProperties = async (store: AppStore) => {
     appTimeToInteractiveMilliseconds: appStartupTime,
     staxDeviceUser: knownDeviceModelIds.stax,
     staxLockscreen: customImageType || "none",
+    ...getFeatureFlagProperties(),
+    nps,
   };
 };
-
-type MaybeAppStore = Maybe<AppStore>;
-
-let storeInstance: MaybeAppStore; // is the redux store. it's also used as a flag to know if analytics is on or off.
-let segmentClient: SegmentClient | undefined;
 
 const token = ANALYTICS_TOKEN;
 export const start = async (store: AppStore): Promise<SegmentClient | undefined> => {
@@ -241,11 +263,11 @@ export const track = async (
     return;
   }
 
-  const screen = currentRouteNameRef.current;
+  const page = currentRouteNameRef.current;
 
   const userExtraProperties = await extraProperties(storeInstance as AppStore);
   const propertiesWithoutExtra = {
-    screen,
+    page,
     ...eventProperties,
   };
   const allProperties = {
@@ -345,7 +367,7 @@ export const screen = async (
    */
   avoidDuplicates?: boolean,
 ) => {
-  const fullScreenName = category + (name ? ` ${name}` : "");
+  const fullScreenName = (category || "") + (category && name ? " " : "") + (name || "");
   const eventName = `Page ${fullScreenName}`;
   if (avoidDuplicates && eventName === lastScreenEventName.current) return;
   lastScreenEventName.current = eventName;

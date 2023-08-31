@@ -3,11 +3,15 @@ import { Observable } from "rxjs";
 import { TypeRegistry } from "@polkadot/types";
 import { u8aConcat } from "@polkadot/util";
 import { FeeNotLoaded } from "@ledgerhq/errors";
-import type { PolkadotAccount, Transaction } from "./types";
+import type {
+  PolkadotAccount,
+  PolkadotOperation,
+  PolkadotOperationExtra,
+  Transaction,
+} from "./types";
 import type {
   Account,
   DeviceId,
-  Operation,
   OperationType,
   SignOperationEvent,
   SignOperationFnSignature,
@@ -33,7 +37,7 @@ const MODE_TO_TYPE = {
 };
 const MODE_TO_PALLET_METHOD = {
   send: "balances.transferKeepAlive",
-  sendMax: "balances.transfer",
+  sendMax: "balances.transferAllowDeath",
   bond: "staking.bond",
   bondExtra: "staking.bondExtra",
   unbond: "staking.unbond",
@@ -45,8 +49,12 @@ const MODE_TO_PALLET_METHOD = {
   claimReward: "staking.payoutStakers",
 };
 
-const getExtra = (type: string, account: PolkadotAccount, transaction: Transaction) => {
-  const extra = {
+const getExtra = (
+  type: string,
+  account: PolkadotAccount,
+  transaction: Transaction,
+): PolkadotOperationExtra => {
+  const extra: PolkadotOperationExtra = {
     palletMethod: MODE_TO_PALLET_METHOD[transaction.mode],
   };
 
@@ -83,11 +91,11 @@ const buildOptimisticOperation = (
   account: PolkadotAccount,
   transaction: Transaction,
   fee: BigNumber,
-): Operation => {
+): PolkadotOperation => {
   const type = (MODE_TO_TYPE[transaction.mode] ?? MODE_TO_TYPE.default) as OperationType;
   const value = type === "OUT" ? new BigNumber(transaction.amount).plus(fee) : new BigNumber(fee);
   const extra = getExtra(type, account, transaction);
-  const operation: Operation = {
+  const operation: PolkadotOperation = {
     id: encodeOperationId(account.id, "", type),
     hash: "",
     type,
@@ -207,7 +215,6 @@ const buildSignOperation =
           signedOperation: {
             operation,
             signature: signed,
-            expirationDate: null,
           },
         });
       }

@@ -3,6 +3,7 @@ import { Trans, useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { Flex } from "@ledgerhq/react-ui";
 
+import { vaultSigner } from "~/config/urls";
 import Label from "~/renderer/components/Label";
 import Alert from "~/renderer/components/Alert";
 import { vaultSignerSelector } from "~/renderer/reducers/settings";
@@ -54,7 +55,7 @@ const VaultSigner = () => {
                   <ExternalLink
                     label={t("vaultSigner.modal.info_link")}
                     isInternal={false}
-                    onClick={() => openURL("https://help.vault.ledger.com")}
+                    onClick={() => openURL(vaultSigner.help)}
                   />
                 </Flex>
               </Alert>

@@ -30,7 +30,13 @@ export default function ValidationError({ navigation, route }: Props) {
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="CeloUnlock" name="ValidationError" />
+      <TrackScreen
+        category="CeloUnlock"
+        name="ValidationError"
+        flow="stake"
+        action="unlock"
+        currency="celo"
+      />
       <ValidateError error={error} onRetry={retry} onClose={onClose} />
     </SafeAreaView>
   );

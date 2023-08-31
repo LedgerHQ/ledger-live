@@ -250,7 +250,7 @@ const useNotifications = () => {
     } else {
       const newNotificationsState = { ...notifications };
       for (const [key, value] of Object.entries(settingsInitialState.notifications)) {
-        if (!notifications[key as keyof NotificationsSettings]) {
+        if (notifications[key as keyof NotificationsSettings] === undefined) {
           newNotificationsState[key as keyof NotificationsSettings] = value;
         }
       }
@@ -331,7 +331,7 @@ const useNotifications = () => {
   const modalAllowNotifications = useCallback(() => {
     track("button_clicked", {
       button: "Allow",
-      screen: pushNotificationsOldRoute,
+      page: pushNotificationsOldRoute,
       drawer: "Notif",
     });
     setPushNotificationsModalOpenCallback(false);
@@ -352,7 +352,7 @@ const useNotifications = () => {
   const modalDelayLater = useCallback(() => {
     track("button_clicked", {
       button: "Maybe Later",
-      screen: pushNotificationsOldRoute,
+      page: pushNotificationsOldRoute,
       drawer: "Notif",
     });
     setPushNotificationsModalOpenCallback(false);

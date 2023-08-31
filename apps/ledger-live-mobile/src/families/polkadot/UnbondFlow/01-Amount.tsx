@@ -111,7 +111,13 @@ export default function PolkadotUnbondAmount({ navigation, route }: Props) {
   const hasErrors = hasStatusError(status);
   return (
     <>
-      <TrackScreen category="UnbondFlow" name="Amount" />
+      <TrackScreen
+        category="UnbondFlow"
+        name="Amount"
+        flow="stake"
+        action="withdraw_unbonded"
+        currency="dot"
+      />
       <SafeAreaView
         style={[
           styles.root,

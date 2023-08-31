@@ -9,7 +9,7 @@ import manager from "../../manager";
 import type { Input as ConnectManagerInput, ConnectManagerEvent } from "../connectManager";
 import type { Action, Device } from "./types";
 import { currentMode } from "./app";
-import { defaultConfig, getImplementation } from "./implementations";
+import { getImplementation } from "./implementations";
 
 type State = {
   isLoading: boolean;
@@ -193,13 +193,7 @@ export const createAction = (
       const sub = impl
         .pipe(
           tap((e: any) => log("actions-manager-event", e.type, e)),
-          debounce((e: Event) =>
-            "replaceable" in e && e.replaceable
-              ? e.type === "deviceChange" && currentMode === "polling"
-                ? interval(defaultConfig.pollingFrequency + 50)
-                : interval(100)
-              : EMPTY,
-          ),
+          debounce((e: Event) => ("replaceable" in e && e.replaceable ? interval(100) : EMPTY)),
           scan(reducer, getInitialState()),
         )
         .subscribe(setState);

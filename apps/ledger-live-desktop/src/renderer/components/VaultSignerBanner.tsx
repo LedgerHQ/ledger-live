@@ -1,6 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
+import { vaultSigner } from "~/config/urls";
 
 import ExclamationCircleThin from "~/renderer/icons/ExclamationCircleThin";
 import { vaultSignerSelector } from "~/renderer/reducers/settings";
@@ -21,7 +22,7 @@ const VaultSignerBanner = () => {
         right: (
           <ExternalLink
             isInternal={false}
-            onClick={() => openURL("https://help.vault.ledger.com")}
+            onClick={() => openURL(vaultSigner.help)}
             label={t("banners.vaultSigner.link")}
           />
         ),

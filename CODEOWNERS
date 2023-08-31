@@ -1,32 +1,32 @@
 # Live DX Team
-
 .github/              @ledgerhq/live-eng-core
 scripts/              @ledgerhq/live-eng-core
 tools/                @ledgerhq/live-eng-core
 fastlane/             @ledgerhq/live-eng-core
 
 # Live Blockchain Support Team
+apps/**/families/                                                    @ledgerhq/live-blockchain-support
+apps/ledger-live-desktop/src/live-common-set-supported-currencies.*  @ledgerhq/live-blockchain-support
+apps/ledger-live-mobile/src/live-common-setup.*                      @ledgerhq/live-blockchain-support
+libs/ledger-live-common/src/families                                 @ledgerhq/live-blockchain-support
+libs/ledgerjs/packages/cryptoassets                                  @ledgerhq/live-blockchain-support
+libs/ledgerjs/packages/types-cryptoassets                            @ledgerhq/live-blockchain-support
+libs/ledgerjs/packages/hw-app-*                                      @ledgerhq/live-blockchain-support
+libs/coin-*                                                          @ledgerhq/live-blockchain-support
+libs/domain-service                                                  @ledgerhq/live-blockchain-support
+ledgerjs/packages/evm-tools                                          @ledgerhq/live-blockchain-support
+docs                                                                 @ledgerhq/live-blockchain-support
 
-apps/**/families/                                               @ledgerhq/live-blockchain-support
-ledger-live-desktop/src/live-common-set-supported-currencies.*  @ledgerhq/live-blockchain-support
-ledger-live-mobile/src/live-common-setup.*                      @ledgerhq/live-blockchain-support
-ledger-live-common/src/families                                 @ledgerhq/live-blockchain-support
-ledgerjs/packages/cryptoassets                                  @ledgerhq/live-blockchain-support
-ledgerjs/packages/types-cryptoassets                            @ledgerhq/live-blockchain-support
-ledgerjs/packages/hw-app-*                                      @ledgerhq/live-blockchain-support
 
 # PTX
-
 ledger-live-desktop/src/renderer/screens/exchange/  @ledgerhq/ptx
 ledger-live-mobile/src/screens/Exchange/            @LedgerHQ/ptx
 ledger-live-common/src/exchange/                    @LedgerHQ/ptx
 
 # Wallet API
-
 ledger-live-common/src/platform/                    @LedgerHQ/wallet-api
 
 # Live Devices Team
-
 apps/**/components/DeviceAction/        @ledgerhq/live-devices
 ledger-live-mobile/src/screens/Manager/ @ledgerhq/live-devices
 ledger-live-common/src/hw/              @ledgerhq/live-devices

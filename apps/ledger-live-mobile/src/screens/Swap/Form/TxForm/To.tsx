@@ -15,6 +15,8 @@ import { toSelector } from "../../../../actions/swap";
 import { ScreenName } from "../../../../const";
 import { useAnalytics } from "../../../../analytics";
 import { sharedSwapTracking } from "../../utils";
+import { SwapNavigatorParamList } from "../../../../components/RootNavigator/types/SwapNavigator";
+import { StackNavigatorNavigation } from "../../../../components/RootNavigator/types/helpers";
 
 interface Props {
   swapTx: SwapTransactionType;
@@ -25,7 +27,7 @@ interface Props {
 export function To({ swapTx, provider, exchangeRate }: Props) {
   const { track } = useAnalytics();
   const { t } = useTranslation();
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigatorNavigation<SwapNavigatorParamList>>();
 
   const fromCurrencyId = swapTx.swap.from.account
     ? getAccountCurrency(swapTx.swap.from.account).id
@@ -41,7 +43,6 @@ export function To({ swapTx, provider, exchangeRate }: Props) {
       ...sharedSwapTracking,
       button: "edit target account",
     });
-    // @ts-expect-error navigation type is only partially declared
     navigation.navigate(ScreenName.SwapSelectCurrency, {
       currencies,
       provider,

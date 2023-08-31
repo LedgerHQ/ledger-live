@@ -1,15 +1,20 @@
+import type {
+  NFT,
+  NFTCollectionMetadataResponse,
+  NFTMetadataResponse,
+  ProtoNFT,
+} from "@ledgerhq/types-live";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import React, { createContext, useContext, useMemo, useState, useEffect } from "react";
 import { getNftCollectionKey, getNftKey } from "../helpers";
+import { getCurrencyBridge } from "../../bridge";
+import { isOutdated } from "./logic";
 import {
   NFTMetadataContextAPI,
   NFTMetadataContextState,
   NFTMetadataContextType,
   NFTResource,
 } from "./types";
-import { isOutdated } from "./logic";
-import { getCurrencyBridge } from "../../bridge";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import type { NFT, ProtoNFT } from "@ledgerhq/types-live";
 
 const NftMetadataContext = createContext<NFTMetadataContextType>({
   cache: {},
@@ -22,10 +27,10 @@ export function useNftMetadata(
   contract: string | undefined,
   tokenId: string | undefined,
   currencyId: string | undefined,
-): NFTResource {
+): NFTResource<NonNullable<NFTMetadataResponse["result"]>> {
   const { cache, loadNFTMetadata } = useContext(NftMetadataContext);
   const key = contract && tokenId && currencyId ? getNftKey(contract, tokenId, currencyId) : "";
-  const cachedData = cache[key];
+  const cachedData = cache[key] as NFTResource<NonNullable<NFTMetadataResponse["result"]>>;
 
   useEffect(() => {
     if (!contract || !tokenId || !currencyId) return;
@@ -46,11 +51,13 @@ export function useNftMetadata(
 export function useNftCollectionMetadata(
   contract: string | undefined,
   currencyId: string | undefined,
-): NFTResource {
+): NFTResource<NonNullable<NFTCollectionMetadataResponse["result"]>> {
   const { cache, loadCollectionMetadata } = useContext(NftMetadataContext);
   const key = contract && currencyId ? getNftCollectionKey(contract, currencyId) : "";
 
-  const cachedData = cache[key];
+  const cachedData = cache[key] as NFTResource<
+    NonNullable<NFTCollectionMetadataResponse["result"]>
+  >;
 
   useEffect(() => {
     if (!contract || !currencyId) return;
@@ -163,14 +170,17 @@ export function NftMetadataProvider({ children }: NFTMetadataProviderProps): Rea
                     status: "loaded",
                     metadata: result,
                     updatedAt: Date.now(),
-                  },
+                  } as NFTResource<NonNullable<NFTMetadataResponse["result"]>>,
                 },
               }));
               break;
             default:
               break;
           }
-        } catch (error) {
+        } catch (_error) {
+          // This shenanigan is here to avoid an Hermes bug https://github.com/pmndrs/zustand/discussions/1269
+          const error = new Error(_error ? (_error as Error).message : "Unknown Error");
+
           setState(oldState => ({
             ...oldState,
             cache: {
@@ -235,14 +245,17 @@ export function NftMetadataProvider({ children }: NFTMetadataProviderProps): Rea
                     status: "loaded",
                     metadata: result,
                     updatedAt: Date.now(),
-                  },
+                  } as NFTResource<NonNullable<NFTCollectionMetadataResponse["result"]>>,
                 },
               }));
               break;
             default:
               break;
           }
-        } catch (error) {
+        } catch (_error) {
+          // This shenanigan is here to avoid an Hermes bug https://github.com/pmndrs/zustand/discussions/1269
+          const error = new Error(_error ? (_error as Error).message : "Unknown Error");
+
           setState(oldState => ({
             ...oldState,
             cache: {

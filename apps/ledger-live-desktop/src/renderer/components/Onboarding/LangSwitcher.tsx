@@ -4,14 +4,14 @@ import { setLanguage } from "~/renderer/actions/settings";
 import { languageSelector } from "~/renderer/reducers/settings";
 import { useDispatch, useSelector } from "react-redux";
 import { Dropdown } from "@ledgerhq/react-ui";
-import { languageLabels } from "~/renderer/screens/settings/sections/General/LanguageSelect";
-import { prodStableLanguages } from "~/config/languages";
+import { Languages } from "~/config/languages";
 
-const options = prodStableLanguages.map(value => ({
-  value,
-  support: ["en", "fr"].includes(value) ? "full" : "partial",
-  label: languageLabels[value],
-}));
+const options = (Object.keys(Languages) as Array<keyof typeof Languages>).map(language => {
+  return {
+    value: language,
+    label: Languages[language].label,
+  };
+});
 
 const styles = {
   // TODO: implement this behavior in the @ledger/ui lib, here we are just overriding the style from the design system lib to have the MENU right aligned

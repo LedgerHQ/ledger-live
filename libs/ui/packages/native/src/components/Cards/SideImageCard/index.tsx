@@ -1,5 +1,5 @@
 import React from "react";
-import { ArrowRightMedium, CloseMedium } from "@ledgerhq/icons-ui/native";
+import { ArrowRightMedium, CloseMedium } from "@ledgerhq/icons-ui/nativeLegacy";
 import { TouchableOpacityProps, TouchableOpacity, Image } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 

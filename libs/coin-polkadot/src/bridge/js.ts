@@ -1,5 +1,6 @@
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import {
+  defaultUpdateTransaction,
   makeAccountBridgeReceive,
   makeScanAccounts,
   makeSync,
@@ -27,11 +28,6 @@ import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
 import { getPreloadStrategy, hydrate, preload } from "../preload";
 import type { Transaction } from "../types";
 import { PolkadotAddress, PolkadotSignature, PolkadotSigner } from "../signer";
-
-const updateTransaction = (t: Transaction, patch: Partial<Transaction>) => ({
-  ...t,
-  ...patch,
-});
 
 /**
  * Broadcast the signed transaction
@@ -87,7 +83,7 @@ export function buildAccountBridge(
   return {
     estimateMaxSpendable: estimateMaxSpendable(polkadotAPI),
     createTransaction,
-    updateTransaction,
+    updateTransaction: defaultUpdateTransaction,
     getTransactionStatus: getTransactionStatus(polkadotAPI),
     prepareTransaction: prepareTransaction(polkadotAPI),
     sync,

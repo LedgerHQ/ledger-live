@@ -3,7 +3,7 @@ import { Platform } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { capitalize } from "lodash/fp";
-import { Box, Switch, Text, Button, Icons, InfiniteLoader } from "@ledgerhq/native-ui";
+import { Box, Switch, Text, Button, IconsLegacy, InfiniteLoader } from "@ledgerhq/native-ui";
 import SettingsNavigationScrollView from "../SettingsNavigationScrollView";
 import SettingsRow from "../../../components/SettingsRow";
 import { track, TrackScreen, updateIdentify } from "../../../analytics";
@@ -83,7 +83,7 @@ function NotificationsSettings() {
   const allowPushNotifications = useCallback(() => {
     track("button_clicked", {
       button: "Go to system settings",
-      screen: pushNotificationsOldRoute,
+      page: pushNotificationsOldRoute,
     });
     handlePushNotificationsPermission();
   }, [pushNotificationsOldRoute, handlePushNotificationsPermission]);
@@ -111,12 +111,12 @@ function NotificationsSettings() {
         ? {
             osName: "iOS",
             ctaTransKey: "turnOnNotif",
-            ctaIcon: Icons.NotificationsMedium,
+            ctaIcon: IconsLegacy.NotificationsMedium,
           }
         : {
             osName: "Android",
             ctaTransKey: "goToSettings",
-            ctaIcon: Icons.SettingsMedium,
+            ctaIcon: IconsLegacy.SettingsMedium,
           },
     [],
   );

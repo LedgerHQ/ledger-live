@@ -4,7 +4,6 @@ import React, { useCallback, useState, useMemo } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
-import { Polkadot as PolkadotIdenticon } from "@polkadot/reactnative-identicon/icons";
 
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
@@ -44,6 +43,7 @@ import {
 import Illustration from "../../../images/illustration/Illustration";
 import EarnLight from "../../../images/illustration/Light/_003.png";
 import EarnDark from "../../../images/illustration/Dark/_003.png";
+import Identicon from "@polkadot/reactnative-identicon";
 
 type Props = {
   account: AccountLike;
@@ -317,12 +317,7 @@ export default function Nominations(props: Props) {
         account={account}
         ValidatorImage={({ size }) =>
           mappedNomination?.nomination.address ? (
-            <PolkadotIdenticon
-              address={mappedNomination?.nomination.address}
-              size={size}
-              // publicKey is not really needed, ts is wrong here but well…
-              publicKey=""
-            />
+            <Identicon theme="polkadot" value={mappedNomination?.nomination.address} size={size} />
           ) : null
         }
         data={drawerInfo}

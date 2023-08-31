@@ -2,7 +2,7 @@ import "~/live-common-setup-base";
 import { throwError } from "rxjs";
 import { registerTransportModule } from "@ledgerhq/live-common/hw/index";
 import { setErrorRemapping } from "@ledgerhq/live-common/hw/deviceAccess";
-import { setEnvUnsafe, getEnv } from "@ledgerhq/live-common/env";
+import { setEnvUnsafe, getEnv } from "@ledgerhq/live-env";
 import { retry } from "@ledgerhq/live-common/promise";
 import TransportNodeHidSingleton from "@ledgerhq/hw-transport-node-hid-singleton";
 import TransportHttp from "@ledgerhq/hw-transport-http";

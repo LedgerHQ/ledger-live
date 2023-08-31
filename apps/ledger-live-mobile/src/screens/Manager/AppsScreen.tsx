@@ -46,6 +46,7 @@ import { ManagerNavigatorStackParamList } from "../../components/RootNavigator/t
 import { ScreenName } from "../../const";
 import { lastSeenDeviceSelector } from "../../reducers/settings";
 import ProviderWarning from "./ProviderWarning";
+import { UpdateStep } from "../FirmwareUpdate";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<ManagerNavigatorStackParamList, ScreenName.ManagerMain>
@@ -69,7 +70,7 @@ type Props = {
   optimisticState: State;
   result: ListAppsResult;
   onLanguageChange: () => void;
-  onBackFromUpdate: () => void;
+  onBackFromUpdate: (updateState: UpdateStep) => void;
 };
 
 const AppsScreen = ({
@@ -258,11 +259,6 @@ const AppsScreen = ({
         data={items}
         ListHeaderComponent={
           <Flex mt={4}>
-            {showFwUpdateBanner && newFwUpdateUxFeatureFlag?.enabled ? (
-              <Flex mb={5}>
-                <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
-              </Flex>
-            ) : null}
             <DeviceCard
               distribution={distribution}
               state={state}
@@ -276,7 +272,13 @@ const AppsScreen = ({
               device={device}
               appList={deviceApps}
               onLanguageChange={onLanguageChange}
-            />
+            >
+              {showFwUpdateBanner && newFwUpdateUxFeatureFlag?.enabled ? (
+                <Flex p={6} pb={0}>
+                  <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
+                </Flex>
+              ) : null}
+            </DeviceCard>
             <ProviderWarning />
             <Benchmarking state={state} />
             {showFwUpdateBanner && !newFwUpdateUxFeatureFlag?.enabled ? (

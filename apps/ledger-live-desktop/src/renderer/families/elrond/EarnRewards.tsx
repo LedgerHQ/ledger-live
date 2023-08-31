@@ -5,6 +5,8 @@ import styled from "styled-components";
 import { BigNumber } from "bignumber.js";
 import { useElrondRandomizedValidators } from "@ledgerhq/live-common/families/elrond/react";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
+import { hasMinimumDelegableBalance } from "@ledgerhq/live-common/families/elrond/helpers/hasMinimumDelegableBalance";
+
 import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
 import Box from "~/renderer/components/Box";
@@ -40,17 +42,10 @@ const Delegation = (props: DelegationPropsType) => {
   const [delegationResources, setDelegationResources] = useState<DelegationType[]>(
     account.elrondResources ? account.elrondResources.delegations : [],
   );
+
   const dispatch = useDispatch();
-  const delegationEnabled = useMemo(
-    (): boolean =>
-      BigNumber(
-        denominate({
-          input: account.spendableBalance.toString(),
-          showLastNonZeroDecimal: true,
-        }),
-      ).gte(1),
-    [account.spendableBalance],
-  );
+  const delegationEnabled = hasMinimumDelegableBalance(account);
+
   const findValidator = useCallback(
     (validator: string) => validators.find(item => item.contract === validator),
     [validators],

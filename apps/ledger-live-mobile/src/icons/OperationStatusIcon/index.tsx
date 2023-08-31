@@ -1,6 +1,6 @@
 import React from "react";
 import { OperationType } from "@ledgerhq/types-live";
-import { Icons, BoxedIcon } from "@ledgerhq/native-ui";
+import { IconsLegacy, BoxedIcon } from "@ledgerhq/native-ui";
 import {
   DEFAULT_BOX_SIZE,
   DEFAULT_ICON_SIZE,
@@ -8,41 +8,41 @@ import {
 } from "@ledgerhq/native-ui/components/Icon/BoxedIcon";
 
 const iconsComponent = {
-  OUT: Icons.ArrowTopMedium,
-  IN: Icons.ArrowBottomMedium,
-  DELEGATE: Icons.HandshakeMedium,
-  REDELEGATE: Icons.DelegateMedium,
-  UNDELEGATE: Icons.UndelegateMedium,
-  REVEAL: Icons.EyeMedium,
-  CREATE: Icons.PlusMedium,
-  NONE: Icons.ArrowFromBottomMedium,
-  FREEZE: Icons.FreezeMedium,
-  UNFREEZE: Icons.UnfreezeMedium,
-  VOTE: Icons.VoteMedium,
-  REWARD: Icons.StarMedium,
-  FEES: Icons.FeesMedium,
-  OPT_IN: Icons.PlusMedium,
-  OPT_OUT: Icons.TrashMedium,
-  CLOSE_ACCOUNT: Icons.TrashMedium,
-  APPROVE: Icons.PlusMedium,
-  BOND: Icons.LinkMedium,
-  UNBOND: Icons.LinkNoneMedium,
-  WITHDRAW_UNBONDED: Icons.CoinsMedium,
-  SLASH: Icons.TrashMedium,
-  NOMINATE: Icons.VoteMedium,
-  CHILL: Icons.VoteMedium,
-  REWARD_PAYOUT: Icons.ClaimRewardsMedium,
-  SET_CONTROLLER: Icons.ArrowFromBottomMedium,
-  NFT_IN: Icons.ArrowBottomMedium,
-  NFT_OUT: Icons.ArrowTopMedium,
-  ACTIVATE: Icons.ShieldCheckMedium,
-  LOCK: Icons.LockMedium,
-  UNLOCK: Icons.UnlockMedium,
-  REVOKE: Icons.VoteNoneMedium,
-  REGISTER: Icons.PlusMedium,
-  STAKE: Icons.HandshakeMedium,
-  UNSTAKE: Icons.UndelegateMedium,
-  WITHDRAW_UNSTAKED: Icons.CoinsMedium,
+  OUT: IconsLegacy.ArrowTopMedium,
+  IN: IconsLegacy.ArrowBottomMedium,
+  DELEGATE: IconsLegacy.HandshakeMedium,
+  REDELEGATE: IconsLegacy.DelegateMedium,
+  UNDELEGATE: IconsLegacy.UndelegateMedium,
+  REVEAL: IconsLegacy.EyeMedium,
+  CREATE: IconsLegacy.PlusMedium,
+  NONE: IconsLegacy.ArrowFromBottomMedium,
+  FREEZE: IconsLegacy.FreezeMedium,
+  UNFREEZE: IconsLegacy.UnfreezeMedium,
+  VOTE: IconsLegacy.VoteMedium,
+  REWARD: IconsLegacy.StarMedium,
+  FEES: IconsLegacy.FeesMedium,
+  OPT_IN: IconsLegacy.PlusMedium,
+  OPT_OUT: IconsLegacy.TrashMedium,
+  CLOSE_ACCOUNT: IconsLegacy.TrashMedium,
+  APPROVE: IconsLegacy.PlusMedium,
+  BOND: IconsLegacy.LinkMedium,
+  UNBOND: IconsLegacy.LinkNoneMedium,
+  WITHDRAW_UNBONDED: IconsLegacy.CoinsMedium,
+  SLASH: IconsLegacy.TrashMedium,
+  NOMINATE: IconsLegacy.VoteMedium,
+  CHILL: IconsLegacy.VoteMedium,
+  REWARD_PAYOUT: IconsLegacy.ClaimRewardsMedium,
+  SET_CONTROLLER: IconsLegacy.ArrowFromBottomMedium,
+  NFT_IN: IconsLegacy.ArrowBottomMedium,
+  NFT_OUT: IconsLegacy.ArrowTopMedium,
+  ACTIVATE: IconsLegacy.ShieldCheckMedium,
+  LOCK: IconsLegacy.LockMedium,
+  UNLOCK: IconsLegacy.UnlockMedium,
+  REVOKE: IconsLegacy.VoteNoneMedium,
+  REGISTER: IconsLegacy.PlusMedium,
+  STAKE: IconsLegacy.HandshakeMedium,
+  UNSTAKE: IconsLegacy.UndelegateMedium,
+  WITHDRAW_UNSTAKED: IconsLegacy.CoinsMedium,
 };
 
 const OperationStatusIcon = ({
@@ -60,9 +60,14 @@ const OperationStatusIcon = ({
 }) => {
   const Icon = iconsComponent[type as keyof typeof iconsComponent] || iconsComponent.NONE;
   const BadgeIcon =
-    Badge || (failed ? Icons.CircledCrossSolidMedium : confirmed ? undefined : Icons.HistoryMedium);
-  const borderColor = failed ? "error.c40" : "neutral.c40";
-  const iconColor = failed ? "error.c50" : confirmed ? "neutral.c100" : "neutral.c50";
+    Badge ||
+    (failed
+      ? IconsLegacy.CircledCrossSolidMedium
+      : confirmed
+      ? undefined
+      : IconsLegacy.HistoryMedium);
+  const borderColor = failed ? "error.c40" : confirmed ? "neutral.c40" : "warning.c40";
+  const iconColor = failed ? "error.c50" : confirmed ? "neutral.c100" : "warning.c50";
   const badgeColor = failed ? "error.c50" : "neutral.c70";
   return (
     <BoxedIcon

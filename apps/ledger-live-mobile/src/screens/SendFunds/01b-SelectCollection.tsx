@@ -6,13 +6,7 @@ import {
   useNftCollectionMetadata,
   useNftMetadata,
 } from "@ledgerhq/live-common/nft/index";
-import type { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
-import type {
-  Account,
-  NFTCollectionMetadataResponse,
-  NFTMetadataResponse,
-  ProtoNFT,
-} from "@ledgerhq/types-live";
+import type { Account, ProtoNFT } from "@ledgerhq/types-live";
 import { useSelector } from "react-redux";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -39,22 +33,16 @@ const CollectionRow = memo(
         StackNavigatorNavigation<SendFundsNavigatorStackParamList, ScreenName.SendCollection>
       >();
     const { colors } = useTheme();
-    const nft: ProtoNFT | null = collection[0];
+    const nft: ProtoNFT | undefined = collection[0];
     const { status: nftStatus, metadata: nftMetadata } = useNftMetadata(
       nft?.contract,
       nft?.tokenId,
       nft?.currencyId,
-    ) as {
-      status: NFTResource["status"];
-      metadata?: NFTMetadataResponse["result"] & NFTCollectionMetadataResponse["result"];
-    };
+    );
     const { metadata: collectionMetadata } = useNftCollectionMetadata(
       nft?.contract,
       nft?.currencyId,
-    ) as {
-      status: NFTResource["status"];
-      metadata?: NFTMetadataResponse["result"] & NFTCollectionMetadataResponse["result"];
-    };
+    );
 
     const goToNftSelection = () => {
       navigation.navigate(ScreenName.SendNft, {

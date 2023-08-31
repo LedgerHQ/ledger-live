@@ -402,7 +402,6 @@ const send: ModeModule = {
       }
     }
   },
-
   fillTransactionData(a, t, tx) {
     const subAccount = inferTokenAccount(a, t);
 
@@ -479,7 +478,6 @@ const send: ModeModule = {
           },
     );
   },
-
   fillOptimisticOperation(a, t, op) {
     const subAccount = inferTokenAccount(a, t);
 
@@ -506,7 +504,6 @@ const send: ModeModule = {
       ];
     }
   },
-
   // This is resolution config is necessary for plugins like Lido and stuff cause they use the send mode
   getResolutionConfig: () => ({
     erc20: true,
