@@ -1,37 +1,27 @@
-import {
-  BasicFeature,
-  BrazePushNotifications,
-  EthStakingProviders,
-  Feature,
-  FeatureMap,
-  Learn,
-  ReceiveStakingFlowConfigDesktop,
-  StakePrograms,
-  SwapWalletApiPartnerList,
-  TransactionsAlerts,
-  WalletConnectLiveApp,
-  WalletNftGallery,
-  PtxEarn,
-  Storyly,
-  NewsfeedPage,
-  ProtectServicesMobile,
-  ProtectServicesDesktop,
-  ReferralProgramDiscoverCard,
-} from "@ledgerhq/types-live";
+import { DefaultFeature, Feature, Features } from "@ledgerhq/types-live";
 
-export const DEFAULT_FEATURE: Feature<unknown> = {
+/**
+ * Default feature.
+ */
+export const DEFAULT_FEATURE: DefaultFeature = {
   enabled: false,
 };
 
-export const createDefaultFeature = <T = BasicFeature>(opts?: Feature<T>) => {
+/**
+ * Util function that create a default feature and type its return.
+ *
+ * @param opts
+ * @returns typed `opts` parameter or the default feature.
+ */
+export const initFeature = <T>(opts?: Feature<T>) => {
   const feature = opts ?? DEFAULT_FEATURE;
   return feature as Feature<T>;
 };
 
-export const DEFAULT_FEATURES = {
-  /**
-   * @TODO
-   */
+/**
+ * Currency Features.
+ */
+export const CURRENCY_DEFAULT_FEATURES = {
   currencyArbitrum: DEFAULT_FEATURE,
   currencyArbitrumGoerli: DEFAULT_FEATURE,
   currencyAstar: DEFAULT_FEATURE,
@@ -65,81 +55,155 @@ export const DEFAULT_FEATURES = {
   currencyTelosEvm: DEFAULT_FEATURE,
   currencyUmee: DEFAULT_FEATURE,
   currencyVelasEvm: DEFAULT_FEATURE,
+};
 
-  /**
-   * Basic features
-   */
-  brazeLearn: DEFAULT_FEATURE,
-  objkt: DEFAULT_FEATURE,
-  portfolioExchangeBanner: DEFAULT_FEATURE,
-  postOnboardingAssetsTransfer: DEFAULT_FEATURE,
-  postOnboardingClaimNft: DEFAULT_FEATURE,
-  syncOnboarding: DEFAULT_FEATURE,
-  walletConnectEntryPoint: DEFAULT_FEATURE,
-  counterValue: DEFAULT_FEATURE,
-  listAppsV2: DEFAULT_FEATURE,
-  llmNewDeviceSelection: DEFAULT_FEATURE,
-  llmNewFirmwareUpdateUx: DEFAULT_FEATURE,
-  mockFeature: DEFAULT_FEATURE,
-  multibuyNavigation: DEFAULT_FEATURE,
-  ptxServiceCtaExchangeDrawer: DEFAULT_FEATURE,
-  ptxServiceCtaScreens: DEFAULT_FEATURE,
-  customImage: DEFAULT_FEATURE,
-  referralProgramDesktopBanner: DEFAULT_FEATURE,
-  editEthTx: DEFAULT_FEATURE,
-  disableNftLedgerMarket: DEFAULT_FEATURE,
-  disableNftRaribleOpensea: DEFAULT_FEATURE,
-  disableNftSend: DEFAULT_FEATURE,
-  stakeAccountBanner: DEFAULT_FEATURE,
-  staxWelcomeScreen: DEFAULT_FEATURE,
-  protectServicesDiscoverDesktop: DEFAULT_FEATURE,
+/**
+ * Default Features.
+ */
+export const DEFAULT_FEATURES = {
+  ...CURRENCY_DEFAULT_FEATURES,
 
-  /**
-   * Features
-   */
-  referralProgramDiscoverCard: createDefaultFeature<ReferralProgramDiscoverCard>(),
-  newsfeedPage: createDefaultFeature<NewsfeedPage>(),
-  ptxEarn: createDefaultFeature<PtxEarn>(),
-  swapWalletApiPartnerList: createDefaultFeature<SwapWalletApiPartnerList>(),
-  stakePrograms: createDefaultFeature<StakePrograms>(),
-  learn: createDefaultFeature<Learn>(),
-  receiveStakingFlowConfigDesktop: createDefaultFeature<ReceiveStakingFlowConfigDesktop>(),
-  brazePushNotifications: createDefaultFeature<BrazePushNotifications>(),
-  depositNetworkBannerMobile: createDefaultFeature({
+  brazeLearn: initFeature(),
+  objkt: initFeature(),
+  portfolioExchangeBanner: initFeature(),
+  postOnboardingAssetsTransfer: initFeature(),
+  postOnboardingClaimNft: initFeature(),
+  syncOnboarding: initFeature(),
+  walletConnectEntryPoint: initFeature(),
+  counterValue: initFeature(),
+  listAppsV2: initFeature(),
+  llmNewDeviceSelection: initFeature(),
+  llmNewFirmwareUpdateUx: initFeature(),
+  mockFeature: initFeature(),
+  multibuyNavigation: initFeature(),
+  ptxServiceCtaExchangeDrawer: initFeature(),
+  ptxServiceCtaScreens: initFeature(),
+  customImage: initFeature(),
+  referralProgramDesktopBanner: initFeature(),
+  editEthTx: initFeature(),
+  disableNftLedgerMarket: initFeature(),
+  disableNftRaribleOpensea: initFeature(),
+  disableNftSend: initFeature(),
+  ethStakingProviders: initFeature(),
+  staxWelcomeScreen: initFeature(),
+  protectServicesDiscoverDesktop: initFeature(),
+  referralProgramDiscoverCard: initFeature(),
+  newsfeedPage: initFeature(),
+  ptxEarn: initFeature(),
+  swapWalletApiPartnerList: initFeature(),
+  stakePrograms: initFeature(),
+  learn: initFeature(),
+  receiveStakingFlowConfigDesktop: initFeature(),
+  brazePushNotifications: initFeature(),
+  walletConnectLiveApp: initFeature(),
+  walletNftGallery: initFeature(),
+  stakeAccountBanner: initFeature(),
+
+  buyDeviceFromLive: {
+    enabled: false,
+    params: { debug: false, url: null },
+  },
+
+  depositNetworkBannerMobile: {
+    enabled: false,
+    params: { url: "https://www.ledger.com/ledger-live" },
+  },
+
+  depositWithdrawBannerMobile: {
+    enabled: false,
+    params: { url: "https://www.ledger.com/ledger-live" },
+  },
+
+  deviceInitialApps: {
+    enabled: false,
+    params: { apps: ["Bitcoin", "Ethereum"] },
+  },
+
+  discover: {
+    enabled: false,
+    params: { version: "1" },
+  },
+
+  domainInputResolution: {
+    enabled: false,
+    params: { supportedCurrencyIds: ["ethereum"] },
+  },
+
+  referralProgramDesktopSidebar: {
+    enabled: false,
+    params: { amount: "$20", isNew: true, path: "/discover/refer-a-friend" },
+  },
+
+  referralProgramMobile: {
+    enabled: false,
+    params: { path: "/discover/refer-a-friend" },
+  },
+
+  protectServicesDesktop: initFeature({
     enabled: false,
     params: {
-      url: "https://www.ledger.com/ledger-live",
-    },
-  }),
-  depositWithdrawBannerMobile: createDefaultFeature({
-    enabled: false,
-    params: {
-      url: "https://www.ledger.com/ledger-live",
-    },
-  }),
-  deviceInitialApps: createDefaultFeature({
-    enabled: false,
-    params: {
-      apps: ["Bitcoin", "Ethereum"],
+      availableOnDesktop: false,
+      account: {
+        homeURI: "ledgerlive://recover/protect-simu?redirectTo=account",
+        loginURI: "ledgerlive://recover/protect-simu?redirectTo=login",
+      },
+      discoverTheBenefitsLink: "https://www.ledger.com/recover",
+      onboardingCompleted: {
+        alreadySubscribedURI: "ledgerlive://recover/protect-simu?redirectTo=login",
+        upsellURI: "ledgerlive://recover/protect-simu?redirectTo=upsell",
+      },
+      onboardingRestore: {
+        postOnboardingURI: "ledgerlive://recover/protect-simu?redirectTo=restore",
+        restoreInfoDrawer: {
+          enabled: true,
+          manualStepsURI:
+            "https://support.ledger.com/hc/en-us/articles/360013349800-Update-Ledger-Nano-X-firmware?docs=true",
+          supportLinkURI: "https://support.ledger.com",
+        },
+      },
+      openRecoverFromSidebar: true,
+      protectId: "protect-simu",
     },
   }),
 
-  discover: createDefaultFeature({
-    enabled: false,
+  storyly: initFeature({
+    enabled: true,
     params: {
-      version: "1",
+      stories: {
+        recoverySeed: {
+          testingEnabled: false,
+          token:
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NfaWQiOjY5NDgsImFwcF9pZCI6MTE0MjIsImluc19pZCI6MTQ4Mjl9.iak4gUnizDdPrEXJEV3wszzJ2YkYX-RIWDXv31aJkiE",
+        },
+        storylyExample: {
+          testingEnabled: false,
+          token:
+            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2NfaWQiOjc2MCwiYXBwX2lkIjo0MDUsImluc19pZCI6NDA0fQ.1AkqOy_lsiownTBNhVOUKc91uc9fDcAxfQZtpm3nj40",
+        },
+        testStory: {
+          testingEnabled: false,
+          token:
+            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2NfaWQiOjY5NDgsImFwcF9pZCI6MTE0MjIsImluc19pZCI6MTIxOTh9.XqNitheri5VPDqebtA4JFu1VucVOHYlryki2TqCb1DQ",
+        },
+      },
     },
   }),
-  domainInputResolution: createDefaultFeature({
+
+  transactionsAlerts: initFeature({
     enabled: false,
     params: {
-      supportedCurrencyIds: ["ethereum"],
+      chainwatchBaseUrl: "https://chainwatch.aws.stg.ldg-tech.com/v0",
+      networks: [
+        {
+          chainwatchId: "eth",
+          ledgerLiveId: "ethereum",
+          nbConfirmations: 1,
+        },
+      ],
     },
   }),
-  ethStakingProviders: createDefaultFeature<EthStakingProviders>({
-    enabled: false,
-  }),
-  firebaseEnvironmentReadOnly: createDefaultFeature({
+
+  firebaseEnvironmentReadOnly: initFeature({
     enabled: false,
     params: {
       comment:
@@ -148,7 +212,7 @@ export const DEFAULT_FEATURES = {
     },
   }),
 
-  npsRatingsPrompt: createDefaultFeature({
+  npsRatingsPrompt: {
     enabled: false,
     params: {
       conditions: {
@@ -204,35 +268,9 @@ export const DEFAULT_FEATURES = {
       typeform_url:
         "https://ledger.typeform.com/to/UsbZ0RBk?typeform-medium=embed-sdk&typeform-medium-version=next&typeform-embed=popup-blank&dev=1",
     },
-  }),
+  },
 
-  protectServicesDesktop: createDefaultFeature<ProtectServicesDesktop>({
-    enabled: false,
-    params: {
-      availableOnDesktop: false,
-      account: {
-        homeURI: "ledgerlive://recover/protect-simu?redirectTo=account",
-        loginURI: "ledgerlive://recover/protect-simu?redirectTo=login",
-      },
-      discoverTheBenefitsLink: "https://www.ledger.com/recover",
-      onboardingCompleted: {
-        alreadySubscribedURI: "ledgerlive://recover/protect-simu?redirectTo=login",
-        upsellURI: "ledgerlive://recover/protect-simu?redirectTo=upsell",
-      },
-      onboardingRestore: {
-        postOnboardingURI: "ledgerlive://recover/protect-simu?redirectTo=restore",
-        restoreInfoDrawer: {
-          enabled: true,
-          manualStepsURI:
-            "https://support.ledger.com/hc/en-us/articles/360013349800-Update-Ledger-Nano-X-firmware?docs=true",
-          supportLinkURI: "https://support.ledger.com",
-        },
-      },
-      openRecoverFromSidebar: true,
-      protectId: "protect-simu",
-    },
-  }),
-  protectServicesMobile: createDefaultFeature<ProtectServicesMobile>({
+  protectServicesMobile: initFeature({
     enabled: false,
     params: {
       deeplink: "",
@@ -259,7 +297,7 @@ export const DEFAULT_FEATURES = {
     },
   }),
 
-  ratingsPrompt: createDefaultFeature({
+  ratingsPrompt: initFeature({
     enabled: false,
     params: {
       conditions: {
@@ -306,65 +344,4 @@ export const DEFAULT_FEATURES = {
         "https://form.typeform.com/to/Jo7gqcB4?typeform-medium=embed-sdk&typeform-medium-version=next&typeform-embed=popup-blank",
     },
   }),
-
-  referralProgramDesktopSidebar: createDefaultFeature({
-    enabled: false,
-    params: {
-      amount: "$20",
-      isNew: true,
-      path: "/discover/refer-a-friend",
-    },
-  }),
-  referralProgramMobile: createDefaultFeature({
-    enabled: false,
-    params: {
-      path: "/discover/refer-a-friend",
-    },
-  }),
-
-  storyly: createDefaultFeature<Storyly>({
-    enabled: true,
-    params: {
-      stories: {
-        recoverySeed: {
-          testingEnabled: false,
-          token:
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NfaWQiOjY5NDgsImFwcF9pZCI6MTE0MjIsImluc19pZCI6MTQ4Mjl9.iak4gUnizDdPrEXJEV3wszzJ2YkYX-RIWDXv31aJkiE",
-        },
-        storylyExample: {
-          testingEnabled: false,
-          token:
-            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2NfaWQiOjc2MCwiYXBwX2lkIjo0MDUsImluc19pZCI6NDA0fQ.1AkqOy_lsiownTBNhVOUKc91uc9fDcAxfQZtpm3nj40",
-        },
-        testStory: {
-          testingEnabled: false,
-          token:
-            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2NfaWQiOjY5NDgsImFwcF9pZCI6MTE0MjIsImluc19pZCI6MTIxOTh9.XqNitheri5VPDqebtA4JFu1VucVOHYlryki2TqCb1DQ",
-        },
-      },
-    },
-  }),
-
-  transactionsAlerts: createDefaultFeature<TransactionsAlerts>({
-    enabled: false,
-    params: {
-      chainwatchBaseUrl: "https://chainwatch.aws.stg.ldg-tech.com/v0",
-      networks: [
-        {
-          chainwatchId: "eth",
-          ledgerLiveId: "ethereum",
-          nbConfirmations: 1,
-        },
-      ],
-    },
-  }),
-  buyDeviceFromLive: createDefaultFeature({
-    enabled: false,
-    params: {
-      debug: false,
-      url: null,
-    },
-  }),
-  walletConnectLiveApp: createDefaultFeature<WalletConnectLiveApp>(),
-  walletNftGallery: createDefaultFeature<WalletNftGallery>(),
-} as const satisfies FeatureMap;
+} as Features;

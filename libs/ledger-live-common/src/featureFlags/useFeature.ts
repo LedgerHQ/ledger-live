@@ -4,7 +4,7 @@ import { FeatureId, Feature } from "@ledgerhq/types-live";
 import { DEFAULT_FEATURES, DEFAULT_FEATURE } from "./defaultFeatures";
 
 /**
- * Hook that returns feature information based on its `featureId`.
+ * Hook that returns a feature information based on its `featureId`.
  *
  * @dev If the value returned by `featureFlags.getFeature` is undefined
  * or null it will return `DEFAULT_FEATURE` instead.
@@ -15,7 +15,7 @@ import { DEFAULT_FEATURES, DEFAULT_FEATURE } from "./defaultFeatures";
 const useFeature = <T extends FeatureId>(featureId: T) => {
   const featureFlags = useFeatureFlags();
   const value = useMemo(() => featureFlags.getFeature(featureId), [featureFlags, featureId]);
-  return (value || DEFAULT_FEATURE) as Feature<(typeof DEFAULT_FEATURES)[T]["params"]>;
+  return (value ?? DEFAULT_FEATURE) as Feature<(typeof DEFAULT_FEATURES)[T]["params"]>;
 };
 
 export default useFeature;
