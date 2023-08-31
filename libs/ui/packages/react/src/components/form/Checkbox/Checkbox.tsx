@@ -111,7 +111,6 @@ const Checkbox = ({
       checked={isChecked}
       disabled={isDisabled}
       onChange={() => onChange(!isChecked)}
-      readOnly
     />
     {label ? (
       <Label as="label" htmlFor={name}>
