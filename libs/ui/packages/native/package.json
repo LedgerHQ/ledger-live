@@ -133,7 +133,7 @@
     "csstype": "^3.0.11",
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "expo": "~48.0.9",
+    "expo": "~49.0.0",
     "expo-asset": "^8.9.1",
     "expo-constants": "^14.2.1",
     "expo-font": "^11.1.1",
