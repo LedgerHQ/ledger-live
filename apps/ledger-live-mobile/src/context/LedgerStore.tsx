@@ -37,11 +37,7 @@ export type StoreType = typeof store;
 export default class LedgerStoreProvider extends Component<
   {
     onInitFinished: () => void;
-    children: (
-      ready: boolean,
-      store: StoreType,
-      initialCountervalues?: CounterValuesStateRaw,
-    ) => JSX.Element;
+    children: (ready: boolean, initialCountervalues?: CounterValuesStateRaw) => JSX.Element;
   },
   {
     ready: boolean;
@@ -121,6 +117,6 @@ export default class LedgerStoreProvider extends Component<
   render() {
     const { children } = this.props;
     const { ready, initialCountervalues } = this.state;
-    return <Provider store={store}>{children(ready, store, initialCountervalues)}</Provider>;
+    return <Provider store={store}>{children(ready, initialCountervalues)}</Provider>;
   }
 }

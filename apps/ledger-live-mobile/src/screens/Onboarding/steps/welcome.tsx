@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components/native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -11,7 +11,7 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { NavigatorName, ScreenName } from "../../../const";
 import StyledStatusBar from "../../../components/StyledStatusBar";
 import { urls } from "../../../config/urls";
-import { TermsContext } from "../../../logic/terms";
+import { useAcceptGeneralTerms } from "../../../logic/terms";
 import { setAnalytics } from "../../../actions/settings";
 import useIsAppInBackground from "../../../components/useIsAppInBackground";
 import ForceTheme from "../../../components/theme/ForceTheme";
@@ -44,7 +44,7 @@ type NavigationProps = BaseComposite<
 function OnboardingStepWelcome({ navigation }: NavigationProps) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const { accept: acceptTerms } = useContext(TermsContext);
+  const acceptTerms = useAcceptGeneralTerms();
 
   const {
     i18n: { language: locale },
