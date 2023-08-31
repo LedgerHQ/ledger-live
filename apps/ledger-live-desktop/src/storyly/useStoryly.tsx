@@ -10,6 +10,8 @@ import { StorylyStyleProps, useStorylyDefaultStyleProps } from "./style";
  * Storyly Options
  */
 type StorylyOptions = {
+  layout: string;
+
   token: string;
 
   // Internationalization
@@ -49,6 +51,7 @@ export const useStoryly = (instanceId: StorylyInstanceID) => {
 
   useLayoutEffect(() => {
     ref.current?.init({
+      layout: "classic",
       token: stories[instanceId].token,
       //
       lang: language,
