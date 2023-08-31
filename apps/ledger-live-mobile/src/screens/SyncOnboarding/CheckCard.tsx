@@ -47,7 +47,7 @@ const CheckCard: React.FC<CheckCardProps> = ({
     >
       <BoxedIcon
         backgroundColor="opacityDefault.c10"
-        borderColor="opacityDefault.c10"
+        borderColor="transparent"
         variant="circle"
         Icon={checkIcon}
       />

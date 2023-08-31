@@ -5,7 +5,15 @@ import { useBleDevicePairing } from "@ledgerhq/live-common/ble/hooks/useBleDevic
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Trans, useTranslation } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { Flex, InfiniteLoader, Text, Button, IconsLegacy, BoxedIcon } from "@ledgerhq/native-ui";
+import {
+  Flex,
+  InfiniteLoader,
+  Text,
+  Button,
+  IconsLegacy,
+  BoxedIcon,
+  Icons,
+} from "@ledgerhq/native-ui";
 
 import { LockedDeviceError, PeerRemovedPairing } from "@ledgerhq/errors";
 import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
@@ -62,12 +70,12 @@ const BleDevicePairing = ({ deviceToPair, onPaired, onRetry }: BleDevicePairingP
         <Flex width="100%" py={6} alignItems="center">
           <Flex height={100} justifyContent="center" mb={7}>
             <BoxedIcon
-              Icon={IconsLegacy.CheckTickMedium}
+              Icon={Icons.CheckmarkCircleFill}
               backgroundColor={colors.opacityDefault.c05}
               size={64}
               variant="circle"
-              borderColor={colors.opacityDefault.c05}
-              iconSize={32}
+              borderColor="transparent"
+              iconSize={"L"}
               iconColor={colors.success.c50}
             />
           </Flex>
@@ -157,7 +165,7 @@ const BleDevicePairing = ({ deviceToPair, onPaired, onRetry }: BleDevicePairingP
               backgroundColor={colors.opacityDefault.c05}
               size={64}
               variant="circle"
-              borderColor={colors.opacityDefault.c05}
+              borderColor={"transparent"}
               iconSize={32}
               iconColor={colors.success.c50}
             />
