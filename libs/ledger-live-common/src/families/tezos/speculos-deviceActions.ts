@@ -39,6 +39,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
       expectedValue: ({ account, transaction }) =>
         formatDeviceAmount(account.currency, transaction.amount, {
           hideCode: false,
+          postfixCode: true,
         }),
     },
     {
