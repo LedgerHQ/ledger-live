@@ -33,7 +33,7 @@ import {
 } from "@ledgerhq/devices";
 import type { DeviceModel } from "@ledgerhq/devices";
 import { trace, LocalTracer, TraceContext } from "@ledgerhq/logs";
-import { Observable, defer, merge, from, of, throwError, Observer } from "rxjs";
+import { Observable, defer, merge, from, of, throwError, Observer, firstValueFrom } from "rxjs";
 import { share, ignoreElements, first, map, tap, catchError } from "rxjs/operators";
 import {
   CantOpenDevice,
@@ -308,7 +308,9 @@ async function open(
     catchError(e => {
       // LL-9033 fw 2.0.2 introduced this case, we silence the inner unhandled error.
       const msg = String(e);
-      return msg.includes("notify change failed") ? of(new PairingFailed(msg)) : throwError(e);
+      return msg.includes("notify change failed")
+        ? of(new PairingFailed(msg))
+        : throwError(() => e);
     }),
     tap(value => {
       if (value instanceof PairingFailed) return;
@@ -591,10 +593,9 @@ export default class BleTransport extends Transport {
         const msgIn = apdu.toString("hex");
         tracer.withType("apdu").trace(`=> ${msgIn}`);
 
-        const data = await merge(
-          this.notifyObservable.pipe(receiveAPDU),
-          sendAPDU(this.write, apdu, this.mtuSize),
-        ).toPromise();
+        const data = await firstValueFrom(
+          merge(this.notifyObservable.pipe(receiveAPDU), sendAPDU(this.write, apdu, this.mtuSize)),
+        );
 
         const msgOut = data.toString("hex");
         tracer.withType("apdu").trace(`<= ${msgOut}`);
@@ -629,16 +630,18 @@ export default class BleTransport extends Transport {
 
     await this.exchangeAtomicImpl(async () => {
       try {
-        mtu = await merge(
-          this.notifyObservable.pipe(
-            tap(maybeError => {
-              if (maybeError instanceof Error) throw maybeError;
-            }),
-            first(buffer => buffer.readUInt8(0) === 0x08),
-            map(buffer => buffer.readUInt8(5)),
+        mtu = await firstValueFrom(
+          merge(
+            this.notifyObservable.pipe(
+              tap(maybeError => {
+                if (maybeError instanceof Error) throw maybeError;
+              }),
+              first(buffer => buffer.readUInt8(0) === 0x08),
+              map(buffer => buffer.readUInt8(5)),
+            ),
+            defer(() => from(this.write(Buffer.from([0x08, 0, 0, 0, 0])))).pipe(ignoreElements()),
           ),
-          defer(() => from(this.write(Buffer.from([0x08, 0, 0, 0, 0])))).pipe(ignoreElements()),
-        ).toPromise();
+        );
       } catch (error: any) {
         this.tracer.withType("ble-error").trace("Error while inferring MTU", { mtu });
 

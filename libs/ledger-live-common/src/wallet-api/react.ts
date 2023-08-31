@@ -15,8 +15,7 @@ import {
   Permission,
 } from "@ledgerhq/wallet-api-core";
 import { StateDB } from "../hooks/useDBRaw";
-import { Subject } from "rxjs";
-import { Observable, firstValueFrom } from "rxjs7";
+import { Observable, firstValueFrom, Subject } from "rxjs";
 import { first } from "rxjs/operators";
 import {
   accountToWalletAPIAccount,

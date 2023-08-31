@@ -58,11 +58,11 @@ declare global {
 
 const remapSocketError = (context?: string) =>
   catchError((e: Error) => {
-    if (!e || !e.message) return throwError(e);
+    if (!e || !e.message) return throwError(() => e);
 
     if (e.message.startsWith("invalid literal")) {
       // hack to detect the case you're not in good condition (not in dashboard)
-      return throwError(new DeviceOnDashboardExpected());
+      return throwError(() => new DeviceOnDashboardExpected());
     }
 
     const status =
@@ -77,38 +77,38 @@ const remapSocketError = (context?: string) =>
       case "6a81":
       case "6a8e":
       case "6a8f":
-        return throwError(new ManagerAppAlreadyInstalledError());
+        return throwError(() => new ManagerAppAlreadyInstalledError());
 
       case "6982":
       case "5303":
-        return throwError(new ManagerDeviceLockedError());
+        return throwError(() => new ManagerDeviceLockedError());
 
       case "6a84":
       case "5103":
         if (context === "firmware" || context === "mcu") {
-          return throwError(new ManagerFirmwareNotEnoughSpaceError());
+          return throwError(() => new ManagerFirmwareNotEnoughSpaceError());
         }
 
-        return throwError(new ManagerNotEnoughSpaceError());
+        return throwError(() => new ManagerNotEnoughSpaceError());
 
       case "6a85":
       case "5102":
         if (context === "firmware" || context === "mcu") {
-          return throwError(new UserRefusedFirmwareUpdate());
+          return throwError(() => new UserRefusedFirmwareUpdate());
         }
 
-        return throwError(new ManagerNotEnoughSpaceError());
+        return throwError(() => new ManagerNotEnoughSpaceError());
 
       case "6985":
       case "5501":
         if (context === "firmware" || context === "mcu") {
-          return throwError(new UserRefusedFirmwareUpdate());
+          return throwError(() => new UserRefusedFirmwareUpdate());
         }
 
-        return throwError(new ManagerNotEnoughSpaceError());
+        return throwError(() => new ManagerNotEnoughSpaceError());
 
       default:
-        return throwError(e);
+        return throwError(() => e);
     }
   });
 

@@ -1,9 +1,5 @@
 lockfileVersion: '6.0'
 
-settings:
-  autoInstallPeers: false
-  excludeLinksFromLockfile: false
-
 overrides:
   stellar-base>sodium-native: ^3.2.1
   remove-flow-types-loader>flow-remove-types: ^2
@@ -189,8 +185,8 @@ importers:
         specifier: ^17.0.2
         version: 17.0.2(react@17.0.2)
       rxjs:
-        specifier: ^6.6.7
-        version: 6.6.7
+        specifier: ^7.8.1
+        version: 7.8.1
       winston:
         specifier: ^3.5.1
         version: 3.7.2
@@ -449,11 +445,8 @@ importers:
         specifier: ^4.4.1
         version: 4.4.1
       rxjs:
-        specifier: ^6.6.7
-        version: 6.6.7
-      rxjs7:
-        specifier: npm:rxjs@7.8.1
-        version: /rxjs@7.8.1
+        specifier: ^7.8.1
+        version: 7.8.1
       secp256k1:
         specifier: ^4.0.2
         version: 4.0.3
@@ -1077,14 +1070,8 @@ importers:
         specifier: ^0.12.0
         version: 0.12.0(patch_hash=n5yzdsrxz654upecs5xliebtmm)
       rxjs:
-        specifier: ^6.6.6
-        version: 6.6.7
-      rxjs-compat:
-        specifier: ^6.6.6
-        version: 6.6.7(rxjs@6.6.7)
-      rxjs7:
-        specifier: npm:rxjs@7.8.1
-        version: /rxjs@7.8.1
+        specifier: ^7.8.1
+        version: 7.8.1
       semver:
         specifier: ^7.3.7
         version: 7.3.7
@@ -1432,8 +1419,8 @@ importers:
         specifier: ^6.11.4
         version: 6.11.5(@types/react@18.2.0)(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0)
       rxjs:
-        specifier: '6'
-        version: 6.6.7
+        specifier: ^7.8.1
+        version: 7.8.1
       semver:
         specifier: ^7.5.4
         version: 7.5.4
@@ -1548,8 +1535,8 @@ importers:
         specifier: ^6.0.1
         version: 6.0.1
       rxjs:
-        specifier: ^6.6.7
-        version: 6.6.7
+        specifier: ^7.8.1
+        version: 7.8.1
     devDependencies:
       '@types/invariant':
         specifier: ^2.2.2
@@ -1636,8 +1623,8 @@ importers:
         specifier: ^1.8.0
         version: 1.8.0
       rxjs:
-        specifier: ^6.6.7
-        version: 6.6.7
+        specifier: ^7.8.1
+        version: 7.8.1
     devDependencies:
       '@types/invariant':
         specifier: ^2.2.2
@@ -1712,8 +1699,8 @@ importers:
         specifier: ^6.0.1
         version: 6.0.1
       rxjs:
-        specifier: ^6.6.7
-        version: 6.6.7
+        specifier: ^7.8.1
+        version: 7.8.1
     devDependencies:
       '@ledgerhq/hw-transport-node-speculos':
         specifier: workspace:^
@@ -1800,8 +1787,8 @@ importers:
         specifier: ^4.17.21
         version: 4.17.21
       rxjs:
-        specifier: ^6.6.7
-        version: 6.6.7
+        specifier: ^7.8.1
+        version: 7.8.1
     devDependencies:
       '@types/invariant':
         specifier: ^2.2.2
@@ -1889,8 +1876,8 @@ importers:
   libs/env:
     dependencies:
       rxjs:
-        specifier: ^6.6.7
-        version: 6.6.7
+        specifier: ^7.8.1
+        version: 7.8.1
       utility-types:
         specifier: ^3.10.0
         version: 3.10.0
@@ -2117,7 +2104,7 @@ importers:
         version: 1.2.0
       '@ledgerhq/wallet-api-server':
         specifier: ^1.2.0
-        version: 1.2.0(react@17.0.2)
+        version: 1.2.0(react@17.0.2)(rxjs@7.8.1)
       '@solana/spl-token':
         specifier: ^0.3.7
         version: 0.3.8(@solana/web3.js@1.77.3)
@@ -2341,14 +2328,8 @@ importers:
         specifier: ^3.0.0
         version: 3.0.0
       rxjs:
-        specifier: '6'
-        version: 6.6.7
-      rxjs-compat:
-        specifier: ^6.6.7
-        version: 6.6.7(rxjs@6.6.7)
-      rxjs7:
-        specifier: npm:rxjs@7.8.1
-        version: /rxjs@7.8.1
+        specifier: ^7.8.1
+        version: 7.8.1
       secp256k1:
         specifier: ^4.0.3
         version: 4.0.3
@@ -2608,8 +2589,8 @@ importers:
         specifier: workspace:^
         version: link:../logs
       rxjs:
-        specifier: '6'
-        version: 6.6.7
+        specifier: ^7.8.1
+        version: 7.8.1
       semver:
         specifier: ^7.3.5
         version: 7.3.7
@@ -3429,8 +3410,8 @@ importers:
         specifier: ^2.2.4
         version: 2.2.4
       rxjs:
-        specifier: '6'
-        version: 6.6.7
+        specifier: ^7.8.1
+        version: 7.8.1
     devDependencies:
       '@types/jest':
         specifier: ^29.5.0
@@ -3619,8 +3600,8 @@ importers:
         specifier: workspace:^
         version: link:../logs
       rxjs:
-        specifier: '6'
-        version: 6.6.7
+        specifier: ^7.8.1
+        version: 7.8.1
     devDependencies:
       '@types/jest':
         specifier: ^29.5.0
@@ -3662,8 +3643,8 @@ importers:
         specifier: ^0.26.1
         version: 0.26.1
       rxjs:
-        specifier: '6'
-        version: 6.6.7
+        specifier: ^7.8.1
+        version: 7.8.1
     devDependencies:
       '@types/jest':
         specifier: ^29.5.0
@@ -3751,8 +3732,8 @@ importers:
         specifier: workspace:^
         version: link:../logs
       rxjs:
-        specifier: '6'
-        version: 6.6.7
+        specifier: ^7.8.1
+        version: 7.8.1
     devDependencies:
       '@types/jest':
         specifier: ^29.5.0
@@ -3910,8 +3891,8 @@ importers:
         specifier: workspace:^
         version: link:../logs
       rxjs:
-        specifier: '6'
-        version: 6.6.7
+        specifier: ^7.8.1
+        version: 7.8.1
     devDependencies:
       '@types/jest':
         specifier: ^29.5.0
@@ -3965,8 +3946,8 @@ importers:
         specifier: 2.0.3
         version: 2.0.3
       rxjs:
-        specifier: '6'
-        version: 6.6.7
+        specifier: ^7.8.1
+        version: 7.8.1
       uuid:
         specifier: ^3.4.0
         version: 3.4.0
@@ -4155,8 +4136,8 @@ importers:
         specifier: ^9.1.2
         version: 9.1.2
       rxjs:
-        specifier: '6'
-        version: 6.6.7
+        specifier: ^7.8.1
+        version: 7.8.1
     devDependencies:
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
@@ -17202,10 +17183,11 @@ packages:
       zod: 3.22.2
     dev: false
 
-  /@ledgerhq/wallet-api-server@1.2.0(react@17.0.2):
+  /@ledgerhq/wallet-api-server@1.2.0(react@17.0.2)(rxjs@7.8.1):
     resolution: {integrity: sha512-9a/29uzUJc1qOZuBY+n/p06BIafo0WAja0tW+cQEASvnbAYJnTSaryTPaQt2uhal9TV6wX2OsZOM7IX1pJlhzA==}
     peerDependencies:
       react: ^17.x || ^18.x
+      rxjs: ^7.x
     peerDependenciesMeta:
       react:
         optional: true
@@ -17224,7 +17206,7 @@ packages:
       '@ledgerhq/hw-transport-http': 6.28.3
       '@ledgerhq/wallet-api-client': 1.1.0
       '@ledgerhq/wallet-api-core': 1.2.0
-      '@ledgerhq/wallet-api-server': 1.2.0(react@17.0.2)
+      '@ledgerhq/wallet-api-server': 1.2.0(react@17.0.2)(rxjs@7.8.1)
       rxjs: 7.8.1
       ws: 8.14.1
     transitivePeerDependencies:
@@ -55189,17 +55171,6 @@ packages:
     resolution: {integrity: sha512-PdhdWy89SiZogBLaw42zdeqtRJ//zFd2PgQavcICDUgJT5oW10QCRKbJ6bg4r0/UY2M6BWd5tkxuGFRvCkgfHQ==}
     dev: false
 
-  /rxjs-compat@6.6.7(rxjs@6.6.7):
-    resolution: {integrity: sha512-szN4fK+TqBPOFBcBcsR0g2cmTTUF/vaFEOZNuSdfU8/pGFnNmmn2u8SystYXG1QMrjOPBc6XTKHMVfENDf6hHw==}
-    peerDependencies:
-      rxjs: '*'
-    peerDependenciesMeta:
-      rxjs:
-        optional: true
-    dependencies:
-      rxjs: 6.6.7
-    dev: false
-
   /rxjs@6.6.7:
     resolution: {integrity: sha512-hTdwr+7yYNIT5n4AMYp85KA6yw2Va0FLa3Rguvbpa4W3I5xynaBZo41cM3XM+4Q6fRMj3sBYIR1VAmZMXYJvRQ==}
     engines: {npm: '>=2.0.0'}
@@ -59156,7 +59127,7 @@ packages:
   /typed-emitter@2.1.0:
     resolution: {integrity: sha512-g/KzbYKbH5C2vPkaXGu8DJlHrGKHLsM25Zg9WuC9pMGfuvT+X25tZQWo5fK1BjBm8+UrVE9LDCvaY0CQk+fXDA==}
     optionalDependencies:
-      rxjs: 6.6.7
+      rxjs: 7.8.1
     dev: false
 
   /typedarray-to-buffer@3.1.5:
@@ -63143,6 +63114,7 @@ packages:
     resolution: {directory: libs/ui/packages/crypto-icons, type: directory}
     id: file:libs/ui/packages/crypto-icons
     name: '@ledgerhq/crypto-icons-ui'
+    version: 0.5.1
     peerDependencies:
       '@types/react': '*'
       react: '*'
@@ -63162,6 +63134,7 @@ packages:
     resolution: {directory: libs/ui/packages/icons, type: directory}
     id: file:libs/ui/packages/icons
     name: '@ledgerhq/icons-ui'
+    version: 0.6.1
     peerDependencies:
       '@types/react': '*'
       react: '*'
@@ -63185,3 +63158,7 @@ packages:
     dependencies:
       commander: 2.20.3
     dev: false
+
+settings:
+  autoInstallPeers: false
+  excludeLinksFromLockfile: false

@@ -7,7 +7,7 @@ import { DeviceInfo, DeviceModelInfo, idsToLanguage } from "@ledgerhq/types-live
 import { isEqual } from "lodash";
 import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { from } from "rxjs";
+import { firstValueFrom, from } from "rxjs";
 import { Languages } from "~/config/languages";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { languageSelector } from "~/renderer/reducers/settings";
@@ -24,13 +24,13 @@ export const useChangeLanguagePrompt = ({ device }: UseChangeLanguagePromptParam
 
   const refreshDeviceInfo = useCallback(() => {
     if (!device) return;
-    withDevice(device.deviceId)(transport => from(getDeviceInfo(transport)))
-      .toPromise()
-      .then((deviceInfo: DeviceInfo) => {
+    firstValueFrom(withDevice(device.deviceId)(transport => from(getDeviceInfo(transport)))).then(
+      (deviceInfo: DeviceInfo) => {
         if (!isMounted()) return;
         if (!isEqual(deviceInfo, deviceModelInfo?.deviceInfo))
           setDeviceModelInfo({ deviceInfo, modelId: device.modelId, apps: [] });
-      });
+      },
+    );
   }, [device, deviceModelInfo?.deviceInfo, isMounted]);
 
   const currentLanguage = useSelector(languageSelector);
