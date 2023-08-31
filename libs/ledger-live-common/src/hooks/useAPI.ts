@@ -37,7 +37,7 @@ export function useAPI<T, P extends Record<PropertyKey, unknown> | undefined>({
 
   const cacheKey = queryFn.name + JSON.stringify(queryProps);
 
-  const fetch = async () => {
+  const fetch = useCallback(async () => {
     setIsLoading(true);
     setData(undefined);
     setError(undefined);
@@ -56,7 +56,7 @@ export function useAPI<T, P extends Record<PropertyKey, unknown> | undefined>({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [cacheKey, onError, onSuccess, queryFn, queryProps]);
 
   const execute = useCallback(() => {
     if (enabled) {
@@ -71,8 +71,7 @@ export function useAPI<T, P extends Record<PropertyKey, unknown> | undefined>({
         fetch();
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cacheKey, staleTimeout, enabled]);
+  }, [cacheKey, staleTimeout, enabled, fetch, onSuccess]);
 
   useEffect(() => {
     execute();
