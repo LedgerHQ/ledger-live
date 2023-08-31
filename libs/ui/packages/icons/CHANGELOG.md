@@ -1,5 +1,11 @@
 # @ledgerhq/icons-ui
 
+## 0.6.0-nightly.1
+
+### Patch Changes
+
+- [#4518](https://github.com/LedgerHQ/ledger-live/pull/4518) [`41a38e953b`](https://github.com/LedgerHQ/ledger-live/commit/41a38e953b17075b5ab7bec307c147d8f74b7501) Thanks [@mle-gall](https://github.com/mle-gall)! - Removal of ProviderIcons from UILib
+
 ## 0.6.0-nightly.0
 
 ### Minor Changes

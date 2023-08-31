@@ -1,5 +1,15 @@
 # ledger-live-desktop
 
+## 2.67.0-nightly.9
+
+### Patch Changes
+
+- Update broken readme environment variable link.
+
+- Updated dependencies [[`1c6deb2336`](https://github.com/LedgerHQ/ledger-live/commit/1c6deb2336a8b76517cc4d367f76dca24f9228dc), [`41a38e953b`](https://github.com/LedgerHQ/ledger-live/commit/41a38e953b17075b5ab7bec307c147d8f74b7501)]:
+  - @ledgerhq/live-common@31.6.0-nightly.8
+  - @ledgerhq/react-ui@0.14.8-nightly.1
+
 ## 2.67.0-nightly.8
 
 ### Patch Changes

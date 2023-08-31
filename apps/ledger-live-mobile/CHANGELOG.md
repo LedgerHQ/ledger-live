@@ -1,5 +1,15 @@
 # live-mobile
 
+## 3.30.0-nightly.9
+
+### Patch Changes
+
+- Update broken readme environment variable link.
+
+- Updated dependencies [[`1c6deb2336`](https://github.com/LedgerHQ/ledger-live/commit/1c6deb2336a8b76517cc4d367f76dca24f9228dc)]:
+  - @ledgerhq/live-common@31.6.0-nightly.8
+  - @ledgerhq/native-ui@0.21.0-nightly.3
+
 ## 3.30.0-nightly.8
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 31.6.0-nightly.8
+
+### Patch Changes
+
+- [#4528](https://github.com/LedgerHQ/ledger-live/pull/4528) [`1c6deb2336`](https://github.com/LedgerHQ/ledger-live/commit/1c6deb2336a8b76517cc4d367f76dca24f9228dc) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Fix regression when serializing cosmos operation extra
+
 ## 31.6.0-nightly.7
 
 ### Patch Changes
