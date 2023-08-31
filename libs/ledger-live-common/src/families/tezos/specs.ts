@@ -28,8 +28,9 @@ const tezos: AppSpec<Transaction> = {
   name: "Tezos",
   currency: getCryptoCurrencyById("tezos"),
   appQuery: {
-    model: DeviceModelId.nanoS,
+    model: DeviceModelId.nanoSP,
     appName: "TezosWallet",
+    appVersion: "2.4.2",
   },
   genericDeviceAction: acceptTransaction,
   testTimeout: 2 * 60 * 1000,
