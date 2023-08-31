@@ -163,6 +163,7 @@ function rng() {
 var import_crypto, rnds8Pool, poolPtr;
 var init_rng = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/rng.js"() {
+    "use strict";
     import_crypto = __toESM(require("crypto"));
     rnds8Pool = new Uint8Array(256);
     poolPtr = rnds8Pool.length;
@@ -173,6 +174,7 @@ var init_rng = __esm({
 var regex_default;
 var init_regex = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/regex.js"() {
+    "use strict";
     regex_default = /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000)$/i;
   }
 });
@@ -184,6 +186,7 @@ function validate(uuid) {
 var validate_default;
 var init_validate = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/validate.js"() {
+    "use strict";
     init_regex();
     validate_default = validate;
   }
@@ -200,6 +203,7 @@ function stringify(arr, offset = 0) {
 var byteToHex, stringify_default;
 var init_stringify = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/stringify.js"() {
+    "use strict";
     init_validate();
     byteToHex = [];
     for (let i = 0; i < 256; ++i) {
@@ -261,6 +265,7 @@ function v1(options, buf, offset) {
 var _nodeId, _clockseq, _lastMSecs, _lastNSecs, v1_default;
 var init_v1 = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/v1.js"() {
+    "use strict";
     init_rng();
     init_stringify();
     _lastMSecs = 0;
@@ -297,6 +302,7 @@ function parse(uuid) {
 var parse_default;
 var init_parse = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/parse.js"() {
+    "use strict";
     init_validate();
     parse_default = parse;
   }
@@ -348,6 +354,7 @@ function v35_default(name, version2, hashfunc) {
 var DNS, URL2;
 var init_v35 = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/v35.js"() {
+    "use strict";
     init_stringify();
     init_parse();
     DNS = "6ba7b810-9dad-11d1-80b4-00c04fd430c8";
@@ -367,6 +374,7 @@ function md5(bytes) {
 var import_crypto2, md5_default;
 var init_md5 = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/md5.js"() {
+    "use strict";
     import_crypto2 = __toESM(require("crypto"));
     md5_default = md5;
   }
@@ -376,6 +384,7 @@ var init_md5 = __esm({
 var v3, v3_default;
 var init_v3 = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/v3.js"() {
+    "use strict";
     init_v35();
     init_md5();
     v3 = v35_default("v3", 48, md5_default);
@@ -401,6 +410,7 @@ function v4(options, buf, offset) {
 var v4_default;
 var init_v4 = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/v4.js"() {
+    "use strict";
     init_rng();
     init_stringify();
     v4_default = v4;
@@ -419,6 +429,7 @@ function sha1(bytes) {
 var import_crypto3, sha1_default;
 var init_sha1 = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/sha1.js"() {
+    "use strict";
     import_crypto3 = __toESM(require("crypto"));
     sha1_default = sha1;
   }
@@ -428,6 +439,7 @@ var init_sha1 = __esm({
 var v5, v5_default;
 var init_v5 = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/v5.js"() {
+    "use strict";
     init_v35();
     init_sha1();
     v5 = v35_default("v5", 80, sha1_default);
@@ -439,6 +451,7 @@ var init_v5 = __esm({
 var nil_default;
 var init_nil = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/nil.js"() {
+    "use strict";
     nil_default = "00000000-0000-0000-0000-000000000000";
   }
 });
@@ -453,6 +466,7 @@ function version(uuid) {
 var version_default;
 var init_version = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/version.js"() {
+    "use strict";
     init_validate();
     version_default = version;
   }
@@ -473,6 +487,7 @@ __export(esm_node_exports, {
 });
 var init_esm_node = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/index.js"() {
+    "use strict";
     init_v1();
     init_v3();
     init_v4();
@@ -840,6 +855,7 @@ var require_tunnel = __commonJS({
 // ../../../node_modules/.pnpm/tunnel@0.0.6/node_modules/tunnel/index.js
 var require_tunnel2 = __commonJS({
   "../../../node_modules/.pnpm/tunnel@0.0.6/node_modules/tunnel/index.js"(exports, module2) {
+    "use strict";
     module2.exports = require_tunnel();
   }
 });
@@ -968,12 +984,12 @@ var require_lib = __commonJS({
     var RetryableHttpVerbs = ["OPTIONS", "GET", "DELETE", "HEAD"];
     var ExponentialBackoffCeiling = 10;
     var ExponentialBackoffTimeSlice = 5;
-    var HttpClientError = class extends Error {
+    var HttpClientError = class _HttpClientError extends Error {
       constructor(message, statusCode) {
         super(message);
         this.name = "HttpClientError";
         this.statusCode = statusCode;
-        Object.setPrototypeOf(this, HttpClientError.prototype);
+        Object.setPrototypeOf(this, _HttpClientError.prototype);
       }
     };
     exports.HttpClientError = HttpClientError;
@@ -1564,13 +1580,13 @@ var require_oidc_utils = __commonJS({
     var http_client_1 = require_lib();
     var auth_1 = require_auth();
     var core_1 = require_core();
-    var OidcClient = class {
+    var OidcClient = class _OidcClient {
       static createHttpClient(allowRetry = true, maxRetry = 10) {
         const requestOptions = {
           allowRetries: allowRetry,
           maxRetries: maxRetry
         };
-        return new http_client_1.HttpClient("actions/oidc-client", [new auth_1.BearerCredentialHandler(OidcClient.getRequestToken())], requestOptions);
+        return new http_client_1.HttpClient("actions/oidc-client", [new auth_1.BearerCredentialHandler(_OidcClient.getRequestToken())], requestOptions);
       }
       static getRequestToken() {
         const token = process.env["ACTIONS_ID_TOKEN_REQUEST_TOKEN"];
@@ -1589,7 +1605,7 @@ var require_oidc_utils = __commonJS({
       static getCall(id_token_url) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
-          const httpclient = OidcClient.createHttpClient();
+          const httpclient = _OidcClient.createHttpClient();
           const res = yield httpclient.getJson(id_token_url).catch((error) => {
             throw new Error(`Failed to get ID Token. 
  
@@ -1607,13 +1623,13 @@ var require_oidc_utils = __commonJS({
       static getIDToken(audience) {
         return __awaiter(this, void 0, void 0, function* () {
           try {
-            let id_token_url = OidcClient.getIDTokenUrl();
+            let id_token_url = _OidcClient.getIDTokenUrl();
             if (audience) {
               const encodedAudience = encodeURIComponent(audience);
               id_token_url = `${id_token_url}&audience=${encodedAudience}`;
             }
             core_1.debug(`ID token url is ${id_token_url}`);
-            const id_token = yield OidcClient.getCall(id_token_url);
+            const id_token = yield _OidcClient.getCall(id_token_url);
             core_1.setSecret(id_token);
             return id_token;
           } catch (error) {
