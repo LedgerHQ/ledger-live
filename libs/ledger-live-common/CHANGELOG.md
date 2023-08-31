@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 31.6.0-next.1
+
+### Patch Changes
+
+- [#4548](https://github.com/LedgerHQ/ledger-live/pull/4548) [`de641a013f`](https://github.com/LedgerHQ/ledger-live/commit/de641a013fc8c4bb6897624d306f2a34339691d0) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Hardcode Ledger validator details for Solana
+
 ## 31.6.0-next.0
 
 ### Minor Changes
