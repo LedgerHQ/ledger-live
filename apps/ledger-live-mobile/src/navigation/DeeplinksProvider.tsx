@@ -18,8 +18,8 @@ import { useGeneralTermsAccepted } from "../logic/terms";
 import { Writeable } from "../types/helpers";
 import { lightTheme, darkTheme, Theme } from "../colors";
 import { track } from "../analytics";
-import { Feature, PtxEarn } from "@ledgerhq/types-live/lib/feature";
 import { setEarnInfoModal } from "../actions/earn";
+import { Feature_PtxEarn } from "@ledgerhq/types-live";
 
 const routingInstrumentation = new Sentry.ReactNavigationInstrumentation();
 
@@ -84,7 +84,7 @@ function getProxyURL(url: string) {
 }
 
 // DeepLinking
-const linkingOptions = (featureFlags: Feature<PtxEarn>) => ({
+const linkingOptions = (featureFlags: Feature_PtxEarn) => ({
   async getInitialURL() {
     const url = await Linking.getInitialURL();
     if (url) {
@@ -376,7 +376,7 @@ const linkingOptions = (featureFlags: Feature<PtxEarn>) => ({
 
 const getOnboardingLinkingOptions = (
   acceptedTermsOfUse: boolean,
-  featureFlags: Feature<PtxEarn>,
+  featureFlags: Feature_PtxEarn,
 ) => ({
   ...linkingOptions(featureFlags),
   config: {
@@ -424,10 +424,8 @@ export const DeeplinksProvider = ({
     () =>
       ({
         ...(hasCompletedOnboarding
-          ? // @ts-expect-error TYPINGS
-            linkingOptions(ptxEarnFeature)
-          : // @ts-expect-error TYPINGS
-            getOnboardingLinkingOptions(!!userAcceptedTerms, ptxEarnFeature)),
+          ? linkingOptions(ptxEarnFeature)
+          : getOnboardingLinkingOptions(!!userAcceptedTerms, ptxEarnFeature)),
         subscribe(listener) {
           const sub = Linking.addEventListener("url", ({ url }) => {
             // Prevent default deeplink if invalid wallet connect link
