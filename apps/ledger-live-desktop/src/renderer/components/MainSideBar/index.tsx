@@ -227,6 +227,7 @@ const MainSideBar = () => {
   const displayBlueDot = useManagerBlueDot(lastSeenDevice);
 
   const referralProgramConfig = useFeature("referralProgramDesktopSidebar");
+  const ptxEarnConfig = useFeature("ptxEarn");
   const recoverFeature = useFeature("protectServicesDesktop");
   const handleCollapse = useCallback(() => {
     dispatch(setSidebarCollapsed(!collapsed));
@@ -442,6 +443,13 @@ const MainSideBar = () => {
                     onClick={handleClickEarn}
                     isActive={location.pathname === "/earn"}
                     collapsed={secondAnim}
+                    NotifComponent={
+                      ptxEarnConfig?.params?.isNew ? (
+                        <CustomTag active type="plain" size="small">
+                          {t("common.new")}
+                        </CustomTag>
+                      ) : null
+                    }
                   />
                 </FeatureToggle>
                 <SideBarListItem
