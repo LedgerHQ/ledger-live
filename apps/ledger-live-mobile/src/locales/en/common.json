@@ -2945,7 +2945,7 @@
         }
       },
       "receiveConfirmation": {
-        "title": "Receive {{currencyTicker}}",
+        "title": "Deposit {{currencyTicker}}",
         "onCurrencyName": "On {{currencyName}}",
         "copyAdress": "Copy address",
         "addressCopied": "Address copied!",
