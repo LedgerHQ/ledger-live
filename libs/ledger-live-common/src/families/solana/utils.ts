@@ -1,5 +1,4 @@
 import { Cluster, clusterApiUrl } from "@solana/web3.js";
-import { partition } from "lodash/fp";
 import { getEnv } from "@ledgerhq/live-env";
 import { ValidatorsAppValidator } from "./validator-app";
 
