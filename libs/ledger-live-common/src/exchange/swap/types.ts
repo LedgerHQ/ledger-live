@@ -27,18 +27,18 @@ export type ExchangeRate = {
   // There's a delta somewhere between from times rate and the api.
   rateId?: string;
   provider: string;
-  providerType: "CEX" | "DEX";
+  providerType: ExchangeProviderType;
   tradeMethod: "fixed" | "float";
   error?: Error;
   providerURL?: string;
   expirationTime?: number;
 };
 
-type ExchangeRateV5ProviderType = "DEX" | "CEX" | "DISABLED";
+type ExchangeProviderType = "CEX" | "DEX";
 
-type ExchangeRateV5CommonProperties = {
+type ExchangeRateV5CommonPropertiesRaw = {
   provider: string;
-  providerType: ExchangeRateV5ProviderType;
+  providerType: ExchangeProviderType;
   from: string;
   to: string;
   amountFrom: string;
@@ -48,20 +48,21 @@ type ExchangeRateV5CommonProperties = {
   providerURL?: string;
 };
 
-type ExchangeRateV5FloatRate = ExchangeRateV5CommonProperties & {
+type ExchangeRateV5FloatRateRaw = ExchangeRateV5CommonPropertiesRaw & {
   tradeMethod: "float";
   rateId?: string;
   minAmountFrom: string;
   maxAmountFrom?: string;
 };
 
-type ExchangeRateV5FixedRate = ExchangeRateV5CommonProperties & {
+type ExchangeRateV5FixedRateRaw = ExchangeRateV5CommonPropertiesRaw & {
   tradeMethod: "fixed";
   rateId: string;
   expirationTime: string;
+  rate: string;
 };
 
-export type ExchangeRateV5Response = ExchangeRateV5FloatRate | ExchangeRateV5FixedRate;
+export type ExchangeRateV5ResponseRaw = ExchangeRateV5FloatRateRaw | ExchangeRateV5FixedRateRaw;
 
 export type TradeMethod = "fixed" | "float";
 
@@ -267,7 +268,7 @@ export type OnNoRatesCallback = (arg: {
   toState: SwapSelectorStateType;
 }) => void;
 
-export type OnBeforeTransaction = () => void;
+export type OnBeforeFetchRates = () => void;
 
 export type RatesReducerState = {
   status?: string | null;

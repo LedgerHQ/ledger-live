@@ -124,8 +124,6 @@ export function SwapForm({
     onNoRates,
     excludeFixedRates: true,
     providers,
-    timeout: 10000,
-    timeoutErrorMessage: t("errors.SwapTimeoutError.title"),
   });
 
   const exchangeRatesState = swapTransaction.swap?.rates;

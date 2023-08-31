@@ -1,16 +1,15 @@
 import { AmountRequired, NotEnoughGas, NotEnoughGasSwap } from "@ledgerhq/errors";
 import { useMemo } from "react";
 import {
-  ExchangeRate,
   SwapSelectorStateType,
   OnNoRatesCallback,
   SwapTransactionType,
   AvailableProviderV3,
-  OnBeforeTransaction,
+  OnBeforeFetchRates,
+  ExchangeRate,
 } from "../types";
 import useBridgeTransaction, { Result } from "../../../bridge/useBridgeTransaction";
 import { useFromState } from "./useFromState";
-import { useProviderRates } from "./useProviderRates";
 import { useToState } from "./useToState";
 import { useReverseAccounts } from "./useReverseAccounts";
 import { Account } from "@ledgerhq/types-live";
@@ -18,6 +17,7 @@ import { useUpdateMaxAmount } from "./useUpdateMaxAmount";
 import { Transaction } from "../../../generated/types";
 import { getAccountCurrency, getFeesUnit } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { useProviderRates } from "./v5/useProviderRates";
 
 export const selectorStateDefaultValues = {
   currency: undefined,
@@ -86,11 +86,8 @@ export const useSwapTransaction = ({
   defaultAccount = selectorStateDefaultValues.account,
   defaultParentAccount = selectorStateDefaultValues.parentAccount,
   onNoRates,
-  onBeforeTransaction,
+  onBeforeFetchRates,
   excludeFixedRates,
-  providers,
-  timeout,
-  timeoutErrorMessage,
 }: {
   accounts?: Account[];
   setExchangeRate?: SetExchangeRateCallback;
@@ -98,7 +95,7 @@ export const useSwapTransaction = ({
   defaultAccount?: SwapSelectorStateType["account"];
   defaultParentAccount?: SwapSelectorStateType["parentAccount"];
   onNoRates?: OnNoRatesCallback;
-  onBeforeTransaction?: OnBeforeTransaction;
+  onBeforeFetchRates?: OnBeforeFetchRates;
   excludeFixedRates?: boolean;
   providers?: AvailableProviderV3[];
   timeout?: number;
@@ -155,13 +152,9 @@ export const useSwapTransaction = ({
   const { rates, refetchRates, updateSelectedRate } = useProviderRates({
     fromState,
     toState,
-    transaction,
-    onBeforeTransaction,
     onNoRates,
     setExchangeRate,
-    providers,
-    timeout,
-    timeoutErrorMessage,
+    onBeforeFetchRates,
   });
 
   return {
