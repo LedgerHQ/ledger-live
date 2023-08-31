@@ -1,21 +1,12 @@
-import { useEffect, useCallback } from "react";
-
-import { start } from "./segment";
-import type { AppStore } from "../reducers";
+import { useEffect } from "react";
 import { useStore } from "react-redux";
+import { start } from "./segment";
 
 const SegmentSetup = (): null => {
   const store = useStore();
-  const loadSegment = useCallback(async (store: AppStore) => {
-    try {
-      await start(store);
-    } catch (error) {
-      console.error(`Failed to initialize Segment with error: ${error}`);
-    }
-  }, []);
 
   useEffect(() => {
-    loadSegment(store);
+    start(store).catch(error => console.error(`Failed to initialize Segment with error: ${error}`));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
