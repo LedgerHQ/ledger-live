@@ -1,12 +1,16 @@
 import { Cluster, clusterApiUrl } from "@solana/web3.js";
+import { partition } from "lodash/fp";
 import { getEnv } from "@ledgerhq/live-env";
 import { ValidatorsAppValidator } from "./validator-app";
 
-// FIXME Hardcoding the Ledger validator info, as validators.app doesn't return it anymore
-// Hopefully temporary if we find a different provider, or if we abandon validator details
+// Hardcoding the Ledger validator info as backup,
+// because backend is flaky and sometimes doesn't return it anymore
 export const LEDGER_VALIDATOR: ValidatorsAppValidator = {
   voteAccount: "26pV97Ce83ZQ6Kz9XT4td8tdoUFPTng8Fb8gPyc53dJx",
   name: "Ledger by Figment",
+  avatarUrl:
+    "https://s3.amazonaws.com/keybase_processed_uploads/3c47b62f3d28ecfd821536f69be82905_360_360.jpg",
+  wwwUrl: "https://www.ledger.com/staking",
   activeStake: 4784119000000000,
   commission: 7,
   totalScore: 6,
@@ -139,6 +143,19 @@ export type Functions<T> = keyof {
   /* eslint-disable-next-line @typescript-eslint/ban-types*/
   [K in keyof T as T[K] extends Function ? K : never]: T[K];
 };
+
+// move Ledger validator to the first position
+export function ledgerFirstValidators(
+  validators: ValidatorsAppValidator[],
+): ValidatorsAppValidator[] {
+  const [ledgerValidator, restValidators] = partition(
+    v => v.voteAccount === LEDGER_VALIDATOR.voteAccount,
+    validators,
+  );
+  return ledgerValidator.length
+    ? ledgerValidator.concat(restValidators)
+    : [LEDGER_VALIDATOR].concat(restValidators);
+}
 
 export function profitableValidators(validators: ValidatorsAppValidator[]) {
   return validators.filter(v => v.commission < 100);

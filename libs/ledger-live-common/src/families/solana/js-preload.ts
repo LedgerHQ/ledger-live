@@ -3,7 +3,12 @@ import { flow } from "lodash/fp";
 import { ChainAPI } from "./api";
 import { setSolanaPreloadData as setPreloadData } from "./js-preload-data";
 import { SolanaPreloadData, SolanaPreloadDataV1 } from "./types";
-import { assertUnreachable, clusterByCurrencyId, profitableValidators } from "./utils";
+import {
+  assertUnreachable,
+  clusterByCurrencyId,
+  profitableValidators,
+  ledgerFirstValidators,
+} from "./utils";
 import { getValidators, ValidatorsAppValidator } from "./validator-app";
 
 export const PRELOAD_MAX_AGE = 15 * 60 * 1000; // 15min
@@ -33,7 +38,7 @@ export async function preloadWithAPI(
 function preprocessMainnetValidators(
   validators: ValidatorsAppValidator[],
 ): ValidatorsAppValidator[] {
-  return flow(() => validators, profitableValidators)();
+  return flow(() => validators, profitableValidators, ledgerFirstValidators)();
 }
 
 async function loadDevnetValidators(api: ChainAPI) {
