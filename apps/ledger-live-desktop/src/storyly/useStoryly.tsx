@@ -26,17 +26,13 @@ type StorylyOptions = {
 type StorylyRef = {
   init: (options: StorylyOptions) => void;
   setSegments: (options: StorylyOptions["segments"]) => void;
+  setLang: (options: { language: StorylyOptions["lang"] }) => void;
 };
 
 /**
- * Hook to use Storily
+ * Hook to use Storyly
  *
  * @remarks
- *
- * As of now, we are reinitializing the Storyly instance everytime
- * [instanceId, lanaguage, props or stories] changes.
- * Ideally, we would want a granular way to do that but it's
- * currently not supported by `storyly-web`.
  *
  * @param instanceId
  *
@@ -60,7 +56,15 @@ export const useStoryly = (instanceId: StorylyInstanceID) => {
       //
       props,
     });
-  }, [instanceId, language, props, stories]);
+  }, []);
+
+  /**
+   * Change `lang` and `segments` based on the app language
+   */
+  useLayoutEffect(() => {
+    ref.current?.setLang({ language: language });
+    ref.current?.setSegments([`lang_${language}`]);
+  }, [language]);
 
   return { ref };
 };

@@ -464,8 +464,8 @@ importers:
         specifier: ^7.1.3
         version: 7.3.7
       storyly-web:
-        specifier: ^1.4.0
-        version: 1.4.0
+        specifier: ^1.4.1
+        version: 1.4.1
       styled-components:
         specifier: ^5.3.3
         version: 5.3.5(react-dom@17.0.2)(react-is@17.0.2)(react@17.0.2)
@@ -56728,8 +56728,8 @@ packages:
       react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
-  /storyly-web@1.4.0:
-    resolution: {integrity: sha512-V8gooEGCITHesCi+gb4Qsg0mNfg2tK9N3NMOuXla0jrx4REIQeMf1RKrP7Vn2LtoTh+ZF4cXwj9If9EXmVn4+A==}
+  /storyly-web@1.4.1:
+    resolution: {integrity: sha512-U99WLCAiBw5cjbV9y0Q6Yb1pgUcWDdpp8au5+gBm+zoyCTBO38aFFlY3mHasisJy8VPzPwG14lzzYaiJ8TLVdQ==}
     dependencies:
       '@babel/runtime': 7.22.10
       '@sentry/browser': 7.45.0

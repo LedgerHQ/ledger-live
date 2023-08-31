@@ -1,23 +1,23 @@
 import { StorylyInstanceID } from "@ledgerhq/types-live";
 import React from "react";
-import { useStoryly } from "../useStorily";
+import { useStoryly } from "../useStoryly";
 
 /**
  * Storyly Base Component's props.
  */
-type StorilyBaseProps = {
+type StorylyBaseProps = {
   instanceId: StorylyInstanceID;
 };
 
 /**
- * Base Component for Storily.
+ * Base Component for Storyly.
  *
  * @param instanceId
  *
  * @example
- * <StorilyBase instanceId=StorylyInstanceID.testStory />
+ * <StorylyBase instanceId=StorylyInstanceID.testStory />
  */
-const StorilyBase = ({ instanceId }: StorilyBaseProps) => {
+const StorylyBase = ({ instanceId }: StorylyBaseProps) => {
   const { ref } = useStoryly(instanceId);
 
   return (
@@ -28,4 +28,4 @@ const StorilyBase = ({ instanceId }: StorilyBaseProps) => {
   );
 };
 
-export default StorilyBase;
+export default StorylyBase;

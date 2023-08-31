@@ -6,7 +6,7 @@ import Alert from "~/renderer/components/Alert";
 import Modal, { ModalBody } from "~/renderer/components/Modal";
 import { ScrollArea } from "~/renderer/components/Onboarding/ScrollArea";
 import LanguageSelect from "~/renderer/screens/settings/sections/General/LanguageSelect";
-import { StorilyBase } from "~/storily";
+import { StorylyBase } from "~/storyly";
 
 const StorylyDebugger = () => {
   return (
@@ -31,7 +31,7 @@ const StorylyDebugger = () => {
                 {Object.entries(StorylyInstanceID).map(([key, instanceId]) => (
                   <Box key={key}>
                     <Text variant="paragraph">{key}</Text>
-                    <StorilyBase {...{ instanceId }} />
+                    <StorylyBase {...{ instanceId }} />
                   </Box>
                 ))}
               </Flex>

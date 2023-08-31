@@ -13,9 +13,9 @@ export type StorylyStyleProps = {
 };
 
 /**
- * Hook that handle the Storily Style's props set up.
+ * Hook that handle the Storyly Style's props set up.
  *
- * @returns Storily Style's props.
+ * @returns Storyly Style's props.
  */
 export const useStorylyDefaultStyleProps = (): StorylyStyleProps => {
   const theme = useTheme();
