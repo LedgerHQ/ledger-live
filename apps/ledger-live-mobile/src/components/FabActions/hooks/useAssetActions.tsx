@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { AccountLikeArray } from "@ledgerhq/types-live";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -16,7 +16,7 @@ import {
 import { ActionButtonEvent } from "..";
 import ZeroBalanceDisabledModalContent from "../modals/ZeroBalanceDisabledModalContent";
 import { sharedSwapTracking } from "../../../screens/Swap/utils";
-import { Toast } from "../../Toast/Toast";
+import { PtxToast } from "../../Toast/PtxToast";
 
 type useAssetActionsProps = {
   currency?: CryptoCurrency | TokenCurrency;
@@ -85,14 +85,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
               Icon: iconBuy,
               disabled: isPtxServiceCtaScreensDisabled,
               modalOnDisabledClick: {
-                component: () => (
-                  <Toast
-                    id="ptx-services"
-                    type="success"
-                    title={t("notifications.ptxServices.toast.title")}
-                    icon="info"
-                  />
-                ),
+                component: PtxToast,
               },
               testId: "market-buy-btn",
               navigationParams: [
@@ -125,14 +118,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
               disabled: isPtxServiceCtaScreensDisabled || areAccountsBalanceEmpty,
               modalOnDisabledClick: {
                 component: isPtxServiceCtaScreensDisabled
-                  ? () => (
-                      <Toast
-                        id="ptx-services"
-                        type="success"
-                        title={t("notifications.ptxServices.toast.title")}
-                        icon="info"
-                      />
-                    )
+                  ? PtxToast
                   : ZeroBalanceDisabledModalContent,
               },
             },
@@ -160,14 +146,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
                     disabled: isPtxServiceCtaScreensDisabled || areAccountsBalanceEmpty,
                     modalOnDisabledClick: {
                       component: isPtxServiceCtaScreensDisabled
-                        ? () => (
-                            <Toast
-                              id="ptx-services"
-                              type="success"
-                              title={t("notifications.ptxServices.toast.title")}
-                              icon="info"
-                            />
-                          )
+                        ? PtxToast
                         : ZeroBalanceDisabledModalContent,
                     },
                   },
