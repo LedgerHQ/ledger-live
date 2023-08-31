@@ -13,7 +13,7 @@ export function isWalletAPISupportedCurrency(
   currency: Currency,
 ): currency is WalletAPISupportedCurrency {
   if (isCryptoCurrency(currency)) {
-    return includes([...WALLET_API_FAMILIES, "evm"], currency.family);
+    return includes(WALLET_API_FAMILIES, currency.family);
   }
 
   if (isTokenCurrency(currency)) {
