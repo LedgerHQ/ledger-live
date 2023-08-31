@@ -18,14 +18,19 @@ import {
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { cryptocurrenciesById } from "@ledgerhq/cryptoassets/currencies";
 import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
-import { acceptTransaction } from "./speculos-deviceActions";
+import { acceptTransaction, avalancheSpeculosDeviceAction } from "./speculos-deviceActions";
 import { Transaction as EvmTransaction } from "./types";
 import { getEstimatedFees } from "./logic";
 
 const testTimeout = 10 * 60 * 1000;
 
+// FIXME: remove hardcoded units, use currency.units[0]
 const ETH_UNIT = { code: "ETH", name: "ETH", magnitude: 18 };
 const MBTC_UNIT = { name: "mBTC", code: "mBTC", magnitude: 5 };
+const AVAX_UNIT = { name: "AVAX", code: "AVAX", magnitude: 18 };
+const BSC_UNIT = { name: "BNB", code: "BNB", magnitude: 18 };
+const MATIC_UNIT = { name: "MATIC", code: "MATIC", magnitude: 18 };
+const ETC_UNIT = { name: "ETC", code: "ETC", magnitude: 18 };
 
 const minBalancePerCurrencyId: Partial<Record<CryptoCurrency["id"], BigNumber>> = {
   arbitrum: parseCurrencyUnit(ETH_UNIT, "0.001"),
@@ -40,6 +45,12 @@ const minBalancePerCurrencyId: Partial<Record<CryptoCurrency["id"], BigNumber>> 
   polygon_zk_evm_testnet: parseCurrencyUnit(ETH_UNIT, "0.001"),
   base: parseCurrencyUnit(ETH_UNIT, "0.001"),
   base_goerli: parseCurrencyUnit(ETH_UNIT, "0.001"),
+  avalanche_c_chain: parseCurrencyUnit(AVAX_UNIT, "0.001"),
+  bsc: parseCurrencyUnit(BSC_UNIT, "0.005"),
+  polygon: parseCurrencyUnit(MATIC_UNIT, "0.005"),
+  ethereum: parseCurrencyUnit(ETH_UNIT, "0.001"),
+  ethereum_goerli: parseCurrencyUnit(ETH_UNIT, "0.001"),
+  ethereum_classic: parseCurrencyUnit(ETC_UNIT, "0.05"),
 };
 
 /**
@@ -245,56 +256,66 @@ const evmBasicMutations: ({
       });
     },
   },
-  {
-    name: "move some ERC20",
-    maxRun: 1,
-    transaction: ({ account, siblings, bridge }): TransactionRes<EvmTransaction> => {
-      const erc20Account = sample((account.subAccounts || []).filter(a => a.balance.gt(0)));
-      invariant(erc20Account, "no erc20 account");
-      const sibling = pickSiblings(siblings, 3);
-      const recipient = sibling.freshAddress;
-      return {
-        transaction: bridge.createTransaction(account),
-        updates: [
-          {
-            recipient,
-            subAccountId: erc20Account!.id,
-          },
-          Math.random() < 0.5
-            ? {
-                useAllAmount: true,
-              }
-            : {
-                amount: erc20Account!.balance.times(Math.random()).integerValue(),
-              },
-        ],
-      };
-    },
-    test: ({ accountBeforeTransaction, account, transaction }): void => {
-      invariant(accountBeforeTransaction.subAccounts, "sub accounts before");
-      const erc20accountBefore = accountBeforeTransaction.subAccounts?.find(
-        s => s.id === transaction.subAccountId,
-      );
-      invariant(erc20accountBefore, "erc20 acc was here before");
-      invariant(account.subAccounts, "sub accounts");
-      const erc20account = account.subAccounts!.find(s => s.id === transaction.subAccountId);
-      invariant(erc20account, "erc20 acc is still here");
-
-      if (transaction.useAllAmount) {
-        botTest("erc20 account is empty", () => expect(erc20account!.balance.toString()).toBe("0"));
-      } else {
-        botTest("account balance moved with tx amount", () =>
-          expect(erc20account!.balance.toString()).toBe(
-            erc20accountBefore!.balance.minus(transaction.amount).toString(),
-          ),
-        );
-      }
-    },
-  },
 ];
 
-export default Object.values(cryptocurrenciesById)
-  .filter(currency => currency.family === "evm")
+const moveErc20Mutation: MutationSpec<EvmTransaction> = {
+  name: "move some ERC20 like (ERC20, BEP20, etc...)",
+  maxRun: 1,
+  transaction: ({ account, siblings, bridge }): TransactionRes<EvmTransaction> => {
+    const erc20Account = sample((account.subAccounts || []).filter(a => a.balance.gt(0)));
+    invariant(erc20Account, "no erc20 account");
+    const sibling = pickSiblings(siblings, 3);
+    const recipient = sibling.freshAddress;
+    return {
+      transaction: bridge.createTransaction(account),
+      updates: [
+        {
+          recipient,
+          subAccountId: erc20Account!.id,
+        },
+        Math.random() < 0.5
+          ? {
+              useAllAmount: true,
+            }
+          : {
+              amount: erc20Account!.balance.times(Math.random()).integerValue(),
+            },
+      ],
+    };
+  },
+  test: ({ accountBeforeTransaction, account, transaction }): void => {
+    invariant(accountBeforeTransaction.subAccounts, "sub accounts before");
+    const erc20accountBefore = accountBeforeTransaction.subAccounts?.find(
+      s => s.id === transaction.subAccountId,
+    );
+    invariant(erc20accountBefore, "erc20 acc was here before");
+    invariant(account.subAccounts, "sub accounts");
+    const erc20account = account.subAccounts!.find(s => s.id === transaction.subAccountId);
+    invariant(erc20account, "erc20 acc is still here");
+
+    if (transaction.useAllAmount) {
+      botTest("erc20 account is empty", () => expect(erc20account!.balance.toString()).toBe("0"));
+    } else {
+      botTest("account balance moved with tx amount", () =>
+        expect(erc20account!.balance.toString()).toBe(
+          erc20accountBefore!.balance.minus(transaction.amount).toString(),
+        ),
+      );
+    }
+  },
+};
+
+const SPECIFIC_EVM_CURRENCIES_ID: Partial<Array<CryptoCurrency["id"]>> = [
+  "avalanche_c_chain",
+  "bsc",
+  "polygon",
+  "ethereum_classic",
+];
+
+const standardEvmSpecs = Object.values(cryptocurrenciesById)
+  .filter(
+    currency => currency.family === "evm" && !SPECIFIC_EVM_CURRENCIES_ID.includes(currency.id),
+  )
   .reduce<Partial<Record<CryptoCurrency["id"], AppSpec<EvmTransaction>>>>((acc, currency) => {
     acc[currency.id] = {
       name: currency.name,
@@ -308,8 +329,74 @@ export default Object.values(cryptocurrenciesById)
       transactionCheck: transactionCheck(currency.id),
       mutations: evmBasicMutations({
         maxAccount: 3,
-      }),
+      }).concat(moveErc20Mutation),
       genericDeviceAction: acceptTransaction,
     };
     return acc;
   }, {});
+
+const avalanche_c_chain: AppSpec<EvmTransaction> = {
+  name: "Avalanche C-Chain",
+  currency: getCryptoCurrencyById("avalanche_c_chain"),
+  appQuery: {
+    model: DeviceModelId.nanoS,
+    appName: "Avalanche",
+  },
+  dependency: "Ethereum",
+  testTimeout,
+  transactionCheck: transactionCheck("avalanche_c_chain"),
+  mutations: evmBasicMutations({ maxAccount: 8 }),
+  genericDeviceAction: avalancheSpeculosDeviceAction,
+};
+
+const bsc: AppSpec<EvmTransaction> = {
+  name: "BSC",
+  currency: getCryptoCurrencyById("bsc"),
+  appQuery: {
+    model: DeviceModelId.nanoS,
+    appName: "Binance Smart Chain",
+  },
+  dependency: "Ethereum",
+  testTimeout,
+  transactionCheck: transactionCheck("bsc"),
+  mutations: evmBasicMutations({ maxAccount: 8 }).concat(moveErc20Mutation),
+  genericDeviceAction: acceptTransaction,
+};
+
+const polygon: AppSpec<EvmTransaction> = {
+  name: "Polygon",
+  currency: getCryptoCurrencyById("polygon"),
+  appQuery: {
+    model: DeviceModelId.nanoS,
+    appName: "Polygon",
+  },
+  dependency: "Ethereum",
+  testTimeout,
+  transactionCheck: transactionCheck("polygon"),
+  mutations: evmBasicMutations({ maxAccount: 8 }).concat(moveErc20Mutation),
+  genericDeviceAction: acceptTransaction,
+};
+
+const ethereumClassic: AppSpec<EvmTransaction> = {
+  name: "Ethereum Classic",
+  currency: getCryptoCurrencyById("ethereum_classic"),
+  appQuery: {
+    model: DeviceModelId.nanoS,
+    appName: "Ethereum Classic",
+  },
+  dependency: "Ethereum",
+  testTimeout,
+  transactionCheck: transactionCheck("ethereum_classic"),
+  mutations: evmBasicMutations({
+    maxAccount: 4,
+  }),
+  genericDeviceAction: acceptTransaction,
+};
+
+export default {
+  ...standardEvmSpecs,
+  avalanche_c_chain,
+  bsc,
+  polygon,
+  ethereumClassic,
+};

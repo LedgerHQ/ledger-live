@@ -76,6 +76,51 @@ export const acceptTransaction: DeviceAction<Transaction, State<Transaction>> = 
   ],
 });
 
-export default {
-  acceptTransaction,
-};
+export const avalancheSpeculosDeviceAction: DeviceAction<
+  Transaction,
+  State<Transaction>
+> = deviceActionFlow({
+  steps: [
+    {
+      title: "Review",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Type",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Transfer",
+      button: SpeculosButton.RIGHT,
+      expectedValue: ({ account, transaction, status }): string => {
+        const amount = transaction.useAllAmount ? status.amount : transaction.amount;
+
+        return formatDeviceAmount(account.currency, amount);
+      },
+    },
+    {
+      title: "Contract",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Network",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Fee(GWEI)",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "To",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Accept",
+      button: SpeculosButton.BOTH,
+    },
+    {
+      title: "APPROVE",
+      button: SpeculosButton.BOTH,
+    },
+  ],
+});
