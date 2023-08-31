@@ -187,7 +187,7 @@ export const prepareTransaction = async (
   const { currency } = account;
   const nodeApi = getNodeApi(currency);
   // Get the current network status fees
-  const feeData: FeeData = await (async () => {
+  const feeData: FeeData = await (async (): Promise<FeeData> => {
     if (transaction.feesStrategy === "custom") {
       return {
         gasPrice: transaction.gasPrice ?? null,
@@ -204,7 +204,7 @@ export const prepareTransaction = async (
   const subAccount = findSubAccountById(account, transaction.subAccountId || "");
   const typedTransaction = getTypedTransaction(transaction, feeData);
 
-  const newTransaction = await (() => {
+  const newTransaction = await ((): Promise<EvmTransaction> => {
     if (isNftTransaction(typedTransaction)) {
       return prepareNftTransaction(account, typedTransaction);
     }

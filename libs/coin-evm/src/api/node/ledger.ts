@@ -313,7 +313,7 @@ export const getOptimismAdditionalFees: NodeApi["getOptimismAdditionalFees"] = a
   }
 
   // Fake signature is added to get the best approximation possible for the gas on L1
-  const serializedTransaction = (() => {
+  const serializedTransaction = ((): string | null => {
     try {
       return getSerializedTransaction(transaction, {
         r: "0xffffffffffffffffffffffffffffffffffffffff",
