@@ -104,7 +104,14 @@ const Checkbox = ({
   onChange,
 }: CheckboxProps): JSX.Element => (
   <Container data-variant={variant} data-disabled={isDisabled} onClick={() => onChange(!isChecked)}>
-    <Input type="checkbox" name={name} id={name} checked={isChecked} disabled={isDisabled} readOnly />
+    <Input
+      type="checkbox"
+      name={name}
+      id={name}
+      checked={isChecked}
+      disabled={isDisabled}
+      readOnly
+    />
     {label ? (
       <Label as="label" htmlFor={name}>
         {label}
