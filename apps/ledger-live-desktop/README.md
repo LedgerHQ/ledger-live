@@ -144,7 +144,7 @@ NO_DEBUG_DEVICE=1
 NO_DEBUG_COUNTERVALUES=1
 ```
 
-other envs can be seen in [live-common:src/env.ts](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/ledger-live-common/src/env.ts)
+other envs can be seen in [libs/src/env.ts](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/env/src/env.ts)
 
 ### Run tests
 
