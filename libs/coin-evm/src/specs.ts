@@ -8,6 +8,7 @@ import {
   AppSpec,
   MutationSpec,
   TransactionDestinationTestInput,
+  TransactionRes,
 } from "@ledgerhq/coin-framework/bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import {
@@ -47,7 +48,7 @@ const minBalancePerCurrencyId: Partial<Record<CryptoCurrency["id"], BigNumber>> 
  *
  * ⚠️ Some blockchains specific rules are included
  */
-const testCoinDestination = (args: TransactionDestinationTestInput<EvmTransaction>) => {
+const testCoinDestination = (args: TransactionDestinationTestInput<EvmTransaction>): void => {
   const { sendingAccount } = args;
   const { currency } = sendingAccount;
 
@@ -145,7 +146,7 @@ const testCoinBalance: MutationSpec<EvmTransaction>["test"] = ({
 
 const transactionCheck =
   (currencyId: string) =>
-  ({ maxSpendable }: { maxSpendable: BigNumber }) => {
+  ({ maxSpendable }: { maxSpendable: BigNumber }): void => {
     const currency = getCryptoCurrencyById(currencyId);
     invariant(
       maxSpendable.gt(
@@ -164,7 +165,7 @@ const evmBasicMutations: ({
     name: "move 50%",
     maxRun: 2,
     testDestination: testCoinDestination,
-    transaction: ({ account, siblings, bridge, maxSpendable }) => {
+    transaction: ({ account, siblings, bridge, maxSpendable }): TransactionRes<EvmTransaction> => {
       const sibling = pickSiblings(siblings, maxAccount);
       const recipient = sibling.freshAddress;
       const amount = maxSpendable.div(2).integerValue();
@@ -185,7 +186,7 @@ const evmBasicMutations: ({
       transaction,
       status,
       optimisticOperation,
-    }) => {
+    }): void => {
       const estimatedGas = getEstimatedFees(transaction);
       botTest("operation fee is not exceeding estimated gas", () =>
         expect(operation.fee.toNumber()).toBeLessThanOrEqual(estimatedGas.toNumber()),
@@ -205,7 +206,7 @@ const evmBasicMutations: ({
     name: "send max",
     maxRun: 1,
     testDestination: testCoinDestination,
-    transaction: ({ account, siblings, bridge }) => {
+    transaction: ({ account, siblings, bridge }): TransactionRes<EvmTransaction> => {
       const sibling = pickSiblings(siblings, maxAccount);
       const recipient = sibling.freshAddress;
 
@@ -228,7 +229,7 @@ const evmBasicMutations: ({
       transaction,
       status,
       optimisticOperation,
-    }) => {
+    }): void => {
       const estimatedGas = getEstimatedFees(transaction);
       botTest("operation fee is not exceeding estimated gas", () =>
         expect(operation.fee.toNumber()).toBeLessThanOrEqual(estimatedGas.toNumber()),
@@ -247,7 +248,7 @@ const evmBasicMutations: ({
   {
     name: "move some ERC20",
     maxRun: 1,
-    transaction: ({ account, siblings, bridge }) => {
+    transaction: ({ account, siblings, bridge }): TransactionRes<EvmTransaction> => {
       const erc20Account = sample((account.subAccounts || []).filter(a => a.balance.gt(0)));
       invariant(erc20Account, "no erc20 account");
       const sibling = pickSiblings(siblings, 3);
@@ -269,7 +270,7 @@ const evmBasicMutations: ({
         ],
       };
     },
-    test: ({ accountBeforeTransaction, account, transaction }) => {
+    test: ({ accountBeforeTransaction, account, transaction }): void => {
       invariant(accountBeforeTransaction.subAccounts, "sub accounts before");
       const erc20accountBefore = accountBeforeTransaction.subAccounts?.find(
         s => s.id === transaction.subAccountId,
