@@ -298,98 +298,78 @@ const moveErc20Mutation: MutationSpec<EvmTransaction> = {
   },
 };
 
-const SPECIFIC_EVM_CURRENCIES_ID: Partial<Array<CryptoCurrency["id"]>> = [
-  "avalanche_c_chain",
-  "bsc",
-  "polygon",
-  "ethereum_classic",
-];
+const getAppQuery = (currencyId: CryptoCurrency["id"]): AppSpec<EvmTransaction>["appQuery"] => {
+  switch (currencyId) {
+    case "avalanche_c_chain":
+      return { model: DeviceModelId.nanoS, appName: "Avalanche" };
+    case "polygon":
+      return { model: DeviceModelId.nanoS, appName: "Polygon" };
+    case "bsc":
+      return { model: DeviceModelId.nanoS, appName: "Binance Smart Chain" };
+    case "ethereum_classic":
+      return { model: DeviceModelId.nanoS, appName: "Ethereum Classic" };
+    default:
+      return {
+        model: DeviceModelId.nanoS,
+        appName: "Ethereum",
+        appVersion: "1.10.3",
+      };
+  }
+};
 
-const standardEvmSpecs = Object.values(cryptocurrenciesById)
-  .filter(
-    currency => currency.family === "evm" && !SPECIFIC_EVM_CURRENCIES_ID.includes(currency.id),
-  )
+const getGenericDeviceAction = (
+  currencyId: CryptoCurrency["id"],
+): AppSpec<EvmTransaction>["genericDeviceAction"] => {
+  if (currencyId === "avalanche_c_chain") {
+    return avalancheSpeculosDeviceAction;
+  }
+
+  return acceptTransaction;
+};
+
+const getDependency = (currencyId: CryptoCurrency["id"]): AppSpec<EvmTransaction>["dependency"] => {
+  switch (currencyId) {
+    case "bsc":
+    case "polygon":
+    case "ethereum_classic":
+      return "Ethereum";
+    default:
+      return undefined;
+  }
+};
+
+const getMutations = (currencyId: CryptoCurrency["id"]): AppSpec<EvmTransaction>["mutations"] => {
+  switch (currencyId) {
+    case "avalanche_c_chain":
+      return evmBasicMutations({ maxAccount: 8 });
+    case "polygon":
+    case "bsc":
+      return evmBasicMutations({ maxAccount: 8 }).concat(moveErc20Mutation);
+    case "ethereum_classic":
+      return evmBasicMutations({ maxAccount: 4 });
+    case "ethereum":
+      return evmBasicMutations({ maxAccount: 7 }).concat(moveErc20Mutation);
+    case "telos_evm":
+    case "polygon_zk_evm":
+    case "polygon_zk_evm_testnet":
+      return evmBasicMutations({ maxAccount: 3 });
+    default:
+      return evmBasicMutations({ maxAccount: 3 }).concat(moveErc20Mutation);
+  }
+};
+
+export default Object.values(cryptocurrenciesById)
+  .filter(currency => currency.family === "evm")
   .reduce<Partial<Record<CryptoCurrency["id"], AppSpec<EvmTransaction>>>>((acc, currency) => {
     acc[currency.id] = {
       name: currency.name,
       currency,
-      appQuery: {
-        model: DeviceModelId.nanoS,
-        appName: "Ethereum",
-        appVersion: "1.10.3",
-      },
+      appQuery: getAppQuery(currency.id),
+      dependency: getDependency(currency.id),
       testTimeout,
       transactionCheck: transactionCheck(currency.id),
-      mutations: evmBasicMutations({
-        maxAccount: 3,
-      }).concat(moveErc20Mutation),
-      genericDeviceAction: acceptTransaction,
+      mutations: getMutations(currency.id),
+      genericDeviceAction: getGenericDeviceAction(currency.id),
     };
     return acc;
   }, {});
-
-const avalanche_c_chain: AppSpec<EvmTransaction> = {
-  name: "Avalanche C-Chain",
-  currency: getCryptoCurrencyById("avalanche_c_chain"),
-  appQuery: {
-    model: DeviceModelId.nanoS,
-    appName: "Avalanche",
-  },
-  dependency: "Ethereum",
-  testTimeout,
-  transactionCheck: transactionCheck("avalanche_c_chain"),
-  mutations: evmBasicMutations({ maxAccount: 8 }),
-  genericDeviceAction: avalancheSpeculosDeviceAction,
-};
-
-const bsc: AppSpec<EvmTransaction> = {
-  name: "BSC",
-  currency: getCryptoCurrencyById("bsc"),
-  appQuery: {
-    model: DeviceModelId.nanoS,
-    appName: "Binance Smart Chain",
-  },
-  dependency: "Ethereum",
-  testTimeout,
-  transactionCheck: transactionCheck("bsc"),
-  mutations: evmBasicMutations({ maxAccount: 8 }).concat(moveErc20Mutation),
-  genericDeviceAction: acceptTransaction,
-};
-
-const polygon: AppSpec<EvmTransaction> = {
-  name: "Polygon",
-  currency: getCryptoCurrencyById("polygon"),
-  appQuery: {
-    model: DeviceModelId.nanoS,
-    appName: "Polygon",
-  },
-  dependency: "Ethereum",
-  testTimeout,
-  transactionCheck: transactionCheck("polygon"),
-  mutations: evmBasicMutations({ maxAccount: 8 }).concat(moveErc20Mutation),
-  genericDeviceAction: acceptTransaction,
-};
-
-const ethereumClassic: AppSpec<EvmTransaction> = {
-  name: "Ethereum Classic",
-  currency: getCryptoCurrencyById("ethereum_classic"),
-  appQuery: {
-    model: DeviceModelId.nanoS,
-    appName: "Ethereum Classic",
-  },
-  dependency: "Ethereum",
-  testTimeout,
-  transactionCheck: transactionCheck("ethereum_classic"),
-  mutations: evmBasicMutations({
-    maxAccount: 4,
-  }),
-  genericDeviceAction: acceptTransaction,
-};
-
-export default {
-  ...standardEvmSpecs,
-  avalanche_c_chain,
-  bsc,
-  polygon,
-  ethereumClassic,
-};
