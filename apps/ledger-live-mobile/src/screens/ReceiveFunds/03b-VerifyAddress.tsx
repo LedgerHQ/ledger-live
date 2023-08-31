@@ -76,7 +76,7 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
         complete: () => {
           if (onSuccess) onSuccess(mainAccount.freshAddress);
           else
-            navigation.navigate(ScreenName.ReceiveVerificationConfirmation, {
+            navigation.navigate(ScreenName.ReceiveConfirmation, {
               ...route.params,
               verified: true,
               createTokenAccount: false,
