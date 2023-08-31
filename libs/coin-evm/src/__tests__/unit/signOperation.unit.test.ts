@@ -65,7 +65,12 @@ const mockSignerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature> = (
 jest.mock("@ledgerhq/hw-app-eth", () => ({
   __esModule: true,
   ledgerService: {
-    resolveTransaction: () =>
+    resolveTransaction: (): Promise<{
+      erc20Tokens: never[];
+      nfts: never[];
+      externalPlugin: never[];
+      plugin: never[];
+    }> =>
       Promise.resolve({
         erc20Tokens: [],
         nfts: [],
