@@ -124,8 +124,6 @@ export function SwapForm({
     onNoRates,
     excludeFixedRates: true,
     providers,
-    timeout: 10000,
-    timeoutErrorMessage: t("errors.SwapTimeoutError.title"),
   });
 
   // @TODO: Try to check if we can directly have the right state from `useSwapTransaction`

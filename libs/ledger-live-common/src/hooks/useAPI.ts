@@ -14,6 +14,7 @@ export type ApiOptions<T> = {
   staleTimeout?: number;
   onSuccess?(data: T): void;
   onError?(error: unknown): void;
+  onBeforeFetch?(): void;
 };
 
 type Props<T, P> = ApiOptions<T> & {
@@ -30,6 +31,7 @@ export function useAPI<T, P extends Record<PropertyKey, unknown> | undefined>({
   staleTimeout = 5000,
   onSuccess,
   onError,
+  onBeforeFetch,
 }: Props<T, P>): UseAsyncReturn<T> {
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState<T | undefined>(undefined);
@@ -37,7 +39,10 @@ export function useAPI<T, P extends Record<PropertyKey, unknown> | undefined>({
 
   const cacheKey = queryFn.name + JSON.stringify(queryProps);
 
-  const fetch = useCallback(async () => {
+  const fetch = async () => {
+    // do any cleanup on the application side before fetching.
+    onBeforeFetch?.();
+
     setIsLoading(true);
     setData(undefined);
     setError(undefined);
@@ -56,7 +61,7 @@ export function useAPI<T, P extends Record<PropertyKey, unknown> | undefined>({
     } finally {
       setIsLoading(false);
     }
-  }, [cacheKey, onError, onSuccess, queryFn, queryProps]);
+  };
 
   const execute = useCallback(() => {
     if (enabled) {
@@ -71,7 +76,7 @@ export function useAPI<T, P extends Record<PropertyKey, unknown> | undefined>({
         fetch();
       }
     }
-  }, [cacheKey, staleTimeout, enabled, fetch, onSuccess]);
+  }, [cacheKey, staleTimeout, enabled]);
 
   useEffect(() => {
     execute();
