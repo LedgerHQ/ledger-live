@@ -1,9 +1,8 @@
-import fetch from "isomorphic-unfetch";
 import * as core from "@actions/core";
 import * as fs from "fs";
 import * as path from "path";
 
-function handleErrors(response) {
+function handleErrors(response: Response) {
   if (!response.ok) {
     throw Error(response.statusText);
   }
