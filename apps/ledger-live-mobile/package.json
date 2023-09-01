@@ -59,8 +59,8 @@
   },
   "dependencies": {
     "@azure/core-asynciterator-polyfill": "^1.0.2",
-    "@formatjs/intl-locale": "^2.4.46",
-    "@formatjs/intl-pluralrules": "^4.3.2",
+    "@formatjs/intl-locale": "^3.0.0",
+    "@formatjs/intl-pluralrules": "^5.0.0",
     "@formatjs/intl-relativetimeformat": "^11.1.8",
     "@ledgerhq/coin-evm": "workspace:^",
     "@ledgerhq/coin-framework": "workspace:^",

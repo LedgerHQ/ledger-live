@@ -6,8 +6,8 @@ import { SolanaPreloadData, SolanaPreloadDataV1 } from "./types";
 import {
   assertUnreachable,
   clusterByCurrencyId,
-  ledgerFirstValidators,
   profitableValidators,
+  ledgerFirstValidators,
 } from "./utils";
 import { getValidators, ValidatorsAppValidator } from "./validator-app";
 

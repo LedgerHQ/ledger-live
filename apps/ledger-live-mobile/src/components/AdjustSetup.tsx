@@ -10,7 +10,7 @@ import Config from "react-native-config";
 import { useSelector } from "react-redux";
 import { analyticsEnabledSelector } from "../reducers/settings";
 
-export default function AdjustProvider() {
+export default function AdjustSetup() {
   const analyticsEnabled: boolean = useSelector(analyticsEnabledSelector);
 
   useEffect(() => {
