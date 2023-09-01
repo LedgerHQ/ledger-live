@@ -1,8 +1,9 @@
 import { useMemo } from "react";
-import { AccountLikeArray, TokenAccount } from "@ledgerhq/types-live";
+import { AccountLikeArray } from "@ledgerhq/types-live";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { IconsLegacy } from "@ledgerhq/native-ui";
+import { getParentAccount, isTokenAccount } from "@ledgerhq/live-common/account/index";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import { filterRampCatalogEntries } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -73,9 +74,10 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
   const stakeFlagEnabled = featureFlag?.enabled;
   const listFlag = featureFlag?.params?.list;
   const canBeStaken = stakeFlagEnabled && listFlag.includes(currency?.id);
-  const parentId = (defaultAccount as TokenAccount)?.parentId;
   const totalAccounts = useSelector(accountsSelector);
-  const parentAccount = totalAccounts.find(a => a.id === parentId);
+  const parentAccount = isTokenAccount(defaultAccount)
+    ? getParentAccount(defaultAccount, totalAccounts)
+    : undefined;
 
   const actions = useMemo<ActionButtonEvent[]>(() => {
     const isPtxServiceCtaScreensDisabled = !(ptxServiceCtaScreens?.enabled ?? true);
