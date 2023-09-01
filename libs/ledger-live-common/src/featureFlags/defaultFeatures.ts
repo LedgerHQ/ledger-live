@@ -1,21 +1,10 @@
-import { DefaultFeature, Feature, Features } from "@ledgerhq/types-live";
+import { DefaultFeature, Features } from "@ledgerhq/types-live";
 
 /**
  * Default feature.
  */
 export const DEFAULT_FEATURE: DefaultFeature = {
   enabled: false,
-};
-
-/**
- * Util function that create a default feature and type its return.
- *
- * @param opts
- * @returns typed `opts` parameter or the default feature.
- */
-export const initFeature = <T>(opts?: Feature<T>) => {
-  const feature = opts ?? DEFAULT_FEATURE;
-  return feature as Feature<T>;
 };
 
 /**
@@ -63,41 +52,41 @@ export const CURRENCY_DEFAULT_FEATURES = {
 export const DEFAULT_FEATURES = {
   ...CURRENCY_DEFAULT_FEATURES,
 
-  brazeLearn: initFeature(),
-  objkt: initFeature(),
-  portfolioExchangeBanner: initFeature(),
-  postOnboardingAssetsTransfer: initFeature(),
-  postOnboardingClaimNft: initFeature(),
-  syncOnboarding: initFeature(),
-  walletConnectEntryPoint: initFeature(),
-  counterValue: initFeature(),
-  listAppsV2: initFeature(),
-  llmNewDeviceSelection: initFeature(),
-  llmNewFirmwareUpdateUx: initFeature(),
-  mockFeature: initFeature(),
-  multibuyNavigation: initFeature(),
-  ptxServiceCtaExchangeDrawer: initFeature(),
-  ptxServiceCtaScreens: initFeature(),
-  customImage: initFeature(),
-  referralProgramDesktopBanner: initFeature(),
-  editEthTx: initFeature(),
-  disableNftLedgerMarket: initFeature(),
-  disableNftRaribleOpensea: initFeature(),
-  disableNftSend: initFeature(),
-  ethStakingProviders: initFeature(),
-  staxWelcomeScreen: initFeature(),
-  protectServicesDiscoverDesktop: initFeature(),
-  referralProgramDiscoverCard: initFeature(),
-  newsfeedPage: initFeature(),
-  ptxEarn: initFeature(),
-  swapWalletApiPartnerList: initFeature(),
-  stakePrograms: initFeature(),
-  learn: initFeature(),
-  receiveStakingFlowConfigDesktop: initFeature(),
-  brazePushNotifications: initFeature(),
-  walletConnectLiveApp: initFeature(),
-  walletNftGallery: initFeature(),
-  stakeAccountBanner: initFeature(),
+  brazeLearn: DEFAULT_FEATURE,
+  objkt: DEFAULT_FEATURE,
+  portfolioExchangeBanner: DEFAULT_FEATURE,
+  postOnboardingAssetsTransfer: DEFAULT_FEATURE,
+  postOnboardingClaimNft: DEFAULT_FEATURE,
+  syncOnboarding: DEFAULT_FEATURE,
+  walletConnectEntryPoint: DEFAULT_FEATURE,
+  counterValue: DEFAULT_FEATURE,
+  listAppsV2: DEFAULT_FEATURE,
+  llmNewDeviceSelection: DEFAULT_FEATURE,
+  llmNewFirmwareUpdateUx: DEFAULT_FEATURE,
+  mockFeature: DEFAULT_FEATURE,
+  multibuyNavigation: DEFAULT_FEATURE,
+  ptxServiceCtaExchangeDrawer: DEFAULT_FEATURE,
+  ptxServiceCtaScreens: DEFAULT_FEATURE,
+  customImage: DEFAULT_FEATURE,
+  referralProgramDesktopBanner: DEFAULT_FEATURE,
+  editEthTx: DEFAULT_FEATURE,
+  disableNftLedgerMarket: DEFAULT_FEATURE,
+  disableNftRaribleOpensea: DEFAULT_FEATURE,
+  disableNftSend: DEFAULT_FEATURE,
+  ethStakingProviders: DEFAULT_FEATURE,
+  staxWelcomeScreen: DEFAULT_FEATURE,
+  protectServicesDiscoverDesktop: DEFAULT_FEATURE,
+  referralProgramDiscoverCard: DEFAULT_FEATURE,
+  newsfeedPage: DEFAULT_FEATURE,
+  ptxEarn: DEFAULT_FEATURE,
+  swapWalletApiPartnerList: DEFAULT_FEATURE,
+  stakePrograms: DEFAULT_FEATURE,
+  learn: DEFAULT_FEATURE,
+  receiveStakingFlowConfigDesktop: DEFAULT_FEATURE,
+  brazePushNotifications: DEFAULT_FEATURE,
+  walletConnectLiveApp: DEFAULT_FEATURE,
+  walletNftGallery: DEFAULT_FEATURE,
+  stakeAccountBanner: DEFAULT_FEATURE,
 
   buyDeviceFromLive: {
     enabled: false,
@@ -139,7 +128,7 @@ export const DEFAULT_FEATURES = {
     params: { path: "/discover/refer-a-friend" },
   },
 
-  protectServicesDesktop: initFeature({
+  protectServicesDesktop: {
     enabled: false,
     params: {
       availableOnDesktop: false,
@@ -164,9 +153,9 @@ export const DEFAULT_FEATURES = {
       openRecoverFromSidebar: true,
       protectId: "protect-simu",
     },
-  }),
+  },
 
-  storyly: initFeature({
+  storyly: {
     enabled: true,
     params: {
       stories: {
@@ -187,9 +176,9 @@ export const DEFAULT_FEATURES = {
         },
       },
     },
-  }),
+  },
 
-  transactionsAlerts: initFeature({
+  transactionsAlerts: {
     enabled: false,
     params: {
       chainwatchBaseUrl: "https://chainwatch.aws.stg.ldg-tech.com/v0",
@@ -201,16 +190,16 @@ export const DEFAULT_FEATURES = {
         },
       ],
     },
-  }),
+  },
 
-  firebaseEnvironmentReadOnly: initFeature({
+  firebaseEnvironmentReadOnly: {
     enabled: false,
     params: {
       comment:
         "Do not modify this configuration. This is just a read-only helper to display the targeted Firebase environment in Ledger Live. The value of this flag has NO functional impact.",
       project: "n/a (Firebase project could not be reached)",
     },
-  }),
+  },
 
   npsRatingsPrompt: {
     enabled: false,
@@ -270,7 +259,7 @@ export const DEFAULT_FEATURES = {
     },
   },
 
-  protectServicesMobile: initFeature({
+  protectServicesMobile: {
     enabled: false,
     params: {
       deeplink: "",
@@ -295,9 +284,9 @@ export const DEFAULT_FEATURES = {
       },
       protectId: "protect-simu",
     },
-  }),
+  },
 
-  ratingsPrompt: initFeature({
+  ratingsPrompt: {
     enabled: false,
     params: {
       conditions: {
@@ -343,5 +332,5 @@ export const DEFAULT_FEATURES = {
       typeform_url:
         "https://form.typeform.com/to/Jo7gqcB4?typeform-medium=embed-sdk&typeform-medium-version=next&typeform-embed=popup-blank",
     },
-  }),
+  },
 } as Features;

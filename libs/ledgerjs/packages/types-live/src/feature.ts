@@ -387,19 +387,19 @@ export type NpsRatingsPrompt = Feature<{
 export type RatingsPrompt = Feature<{
   conditions: {
     disappointed_delay: {
-      seconds: number;
+      days: number;
     };
     minimum_accounts_number: number;
     minimum_app_starts_number: number;
     minimum_duration_since_app_first_start: {
-      seconds: number;
+      days: number;
     };
     minimum_number_of_app_starts_since_last_crash: number;
     not_now_delay: {
-      seconds: number;
+      days: number;
     };
     satisfied_then_not_now_delay: {
-      seconds: number;
+      days: number;
     };
   };
   happy_moments: {
