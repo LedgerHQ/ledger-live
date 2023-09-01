@@ -2,7 +2,6 @@ import * as core from "@actions/core";
 import * as fs from "fs";
 import FormData from "form-data";
 import * as path from "path";
-import fetch from "node-fetch";
 
 function handleErrors(response: Response) {
   if (!response.ok) {
