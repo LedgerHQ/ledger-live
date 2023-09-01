@@ -3,3 +3,4 @@
 ---
 
 VerticalStepper: pixel polish
+VerticalTimeline: fix aspect of lines
