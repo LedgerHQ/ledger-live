@@ -3,7 +3,18 @@ import { partition } from "lodash/fp";
 import { getEnv } from "@ledgerhq/live-env";
 import { ValidatorsAppValidator } from "./validator-app";
 
-export const LEDGER_VALIDATOR_ADDRESS = "26pV97Ce83ZQ6Kz9XT4td8tdoUFPTng8Fb8gPyc53dJx";
+// Hardcoding the Ledger validator info as backup,
+// because backend is flaky and sometimes doesn't return it anymore
+export const LEDGER_VALIDATOR: ValidatorsAppValidator = {
+  voteAccount: "26pV97Ce83ZQ6Kz9XT4td8tdoUFPTng8Fb8gPyc53dJx",
+  name: "Ledger by Figment",
+  avatarUrl:
+    "https://s3.amazonaws.com/keybase_processed_uploads/3c47b62f3d28ecfd821536f69be82905_360_360.jpg",
+  wwwUrl: "https://www.ledger.com/staking",
+  activeStake: 4784119000000000,
+  commission: 7,
+  totalScore: 6,
+};
 
 export const assertUnreachable = (_: never): never => {
   throw new Error("unreachable assertion failed");
@@ -61,7 +72,7 @@ export function clusterByCurrencyId(currencyId: string): Cluster {
 
 export function defaultVoteAccAddrByCurrencyId(currencyId: string): string | undefined {
   const voteAccAddrs: Record<string, string | undefined> = {
-    solana: LEDGER_VALIDATOR_ADDRESS,
+    solana: LEDGER_VALIDATOR.voteAccount,
     solana_devnet: undefined,
     solana_testnet: undefined,
   };
@@ -138,10 +149,12 @@ export function ledgerFirstValidators(
   validators: ValidatorsAppValidator[],
 ): ValidatorsAppValidator[] {
   const [ledgerValidator, restValidators] = partition(
-    v => v.voteAccount === LEDGER_VALIDATOR_ADDRESS,
+    v => v.voteAccount === LEDGER_VALIDATOR.voteAccount,
     validators,
   );
-  return ledgerValidator.concat(restValidators);
+  return ledgerValidator.length
+    ? ledgerValidator.concat(restValidators)
+    : [LEDGER_VALIDATOR].concat(restValidators);
 }
 
 export function profitableValidators(validators: ValidatorsAppValidator[]) {
