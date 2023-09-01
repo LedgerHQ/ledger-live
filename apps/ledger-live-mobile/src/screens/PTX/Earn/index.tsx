@@ -5,7 +5,7 @@ import {
   useRemoteLiveAppManifest,
 } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useTheme } from "styled-components/native";
-import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
+import { Flex, Text } from "@ledgerhq/native-ui";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import TrackScreen from "../../../analytics/TrackScreen";
 import GenericErrorView from "../../../components/GenericErrorView";
@@ -82,7 +82,10 @@ export function EarnScreen({ route }: Props) {
   ) : (
     <Flex flex={1} p={10} justifyContent="center" alignItems="center">
       {remoteLiveAppState.isLoading ? (
-        <InfiniteLoader />
+        <>
+          <Text>{JSON.stringify(remoteLiveAppState.isLoading)}</Text>
+          <Text>{JSON.stringify(manifest)}</Text>
+        </>
       ) : (
         <GenericErrorView error={appManifestNotFoundError} />
       )}
