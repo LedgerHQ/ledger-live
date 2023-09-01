@@ -30523,7 +30523,7 @@ var require_public_api = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/node-fetch@2.7.0/node_modules/node-fetch/lib/index.mjs
+// ../../../node_modules/.pnpm/node-fetch@2.6.9/node_modules/node-fetch/lib/index.mjs
 function FetchError(message, type3, systemError) {
   Error.call(this, message);
   this.message = message;
@@ -30875,6 +30875,9 @@ function getNodeRequestOptions(request) {
   if (typeof agent === "function") {
     agent = agent(parsedURL);
   }
+  if (!headers.has("Connection") && !agent) {
+    headers.set("Connection", "close");
+  }
   return Object.assign({}, parsedURL, {
     method: request.method,
     headers: exportNodeCompatibleHeaders(headers),
@@ -31102,7 +31105,7 @@ function fixResponseChunkedTransferBadEnding(request, errorCallback) {
     const headers = response.headers;
     if (headers["transfer-encoding"] === "chunked" && !headers["content-length"]) {
       response.once("close", function(hadError) {
-        const hasDataListener = socket && socket.listenerCount("data") > 0;
+        const hasDataListener = socket.listenerCount("data") > 0;
         if (hasDataListener && !hadError) {
           const err = new Error("Premature close");
           err.code = "ERR_STREAM_PREMATURE_CLOSE";
@@ -31122,7 +31125,7 @@ function destroyStream(stream, err) {
 }
 var import_stream, import_http, import_url3, import_whatwg_url, import_https, import_zlib, Readable, BUFFER, TYPE, Blob2, convert, INTERNALS, PassThrough, invalidTokenRegex, invalidHeaderCharRegex, MAP, Headers, INTERNAL, HeadersIteratorPrototype, INTERNALS$1, STATUS_CODES, Response, INTERNALS$2, URL3, parse_url, format_url, streamDestructionSupported, Request, URL$1, PassThrough$1, isDomainOrSubdomain, isSameProtocol, lib_default;
 var init_lib = __esm({
-  "../../../node_modules/.pnpm/node-fetch@2.7.0/node_modules/node-fetch/lib/index.mjs"() {
+  "../../../node_modules/.pnpm/node-fetch@2.6.9/node_modules/node-fetch/lib/index.mjs"() {
     "use strict";
     import_stream = __toESM(require("stream"), 1);
     import_http = __toESM(require("http"), 1);
@@ -32059,7 +32062,7 @@ var init_httpPipelineLogLevel = __esm({
   }
 });
 
-// ../../../node_modules/.pnpm/tslib@2.6.2/node_modules/tslib/tslib.es6.mjs
+// ../../../node_modules/.pnpm/tslib@2.6.1/node_modules/tslib/tslib.es6.mjs
 function __rest(s, e) {
   var t = {};
   for (var p in s)
@@ -32159,7 +32162,7 @@ function __asyncValues(o) {
   }
 }
 var init_tslib_es6 = __esm({
-  "../../../node_modules/.pnpm/tslib@2.6.2/node_modules/tslib/tslib.es6.mjs"() {
+  "../../../node_modules/.pnpm/tslib@2.6.1/node_modules/tslib/tslib.es6.mjs"() {
     "use strict";
   }
 });
