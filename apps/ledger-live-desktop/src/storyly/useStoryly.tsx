@@ -45,14 +45,13 @@ export const useStoryly = (instanceId: StorylyInstanceID) => {
   const props = useStorylyDefaultStyleProps();
   const language = useSelector(languageSelector);
 
-  const {
-    params: { stories },
-  } = useFeature("storyly") || {};
+  const storyly = useFeature("storyly");
 
   useLayoutEffect(() => {
     ref.current?.init({
       layout: "classic",
-      token: stories[instanceId].token,
+      // @ts-expect-error TYPINGS
+      token: storyly.params?.stories[instanceId].token,
       //
       lang: language,
       segments: [`lang_${language}`],
