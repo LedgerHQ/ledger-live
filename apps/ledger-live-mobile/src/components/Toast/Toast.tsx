@@ -26,6 +26,7 @@ export function Toast({ onClose, ...props }: Props) {
       dismissToast(props.id);
       onClose();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.id]);
 
   return null;
