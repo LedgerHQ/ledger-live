@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { AccountLikeArray } from "@ledgerhq/types-live";
+import { AccountLikeArray, TokenAccount } from "@ledgerhq/types-live";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { IconsLegacy } from "@ledgerhq/native-ui";
@@ -9,6 +9,7 @@ import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useRoute } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "../../../const";
+import { accountsSelector } from "../../../reducers/accounts";
 import {
   readOnlyModeEnabledSelector,
   swapSelectableCurrenciesSelector,
@@ -72,6 +73,9 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
   const stakeFlagEnabled = featureFlag?.enabled;
   const listFlag = featureFlag?.params?.list;
   const canBeStaken = stakeFlagEnabled && listFlag.includes(currency?.id);
+  const parentId = (defaultAccount as TokenAccount)?.parentId;
+  const totalAccounts = useSelector(accountsSelector);
+  const parentAccount = totalAccounts.find(a => a.id === parentId);
 
   const actions = useMemo<ActionButtonEvent[]>(() => {
     const isPtxServiceCtaScreensDisabled = !(ptxServiceCtaScreens?.enabled ?? true);
@@ -154,7 +158,11 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
                       NavigatorName.Swap,
                       {
                         screen: ScreenName.Swap,
-                        params: { currencyId: currency?.id, defaultAccount },
+                        params: {
+                          defaultAccount,
+                          defaultCurrency: currency,
+                          defaultParentAccount: parentAccount,
+                        },
                       },
                     ] as const,
                     disabled: isPtxServiceCtaScreensDisabled || areAccountsBalanceEmpty,
@@ -271,6 +279,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
     currency,
     defaultAccount,
     hasAccounts,
+    parentAccount,
     readOnlyModeEnabled,
     t,
     route,

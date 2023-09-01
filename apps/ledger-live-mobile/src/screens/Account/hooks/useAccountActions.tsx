@@ -106,6 +106,7 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
         screen: ScreenName.Swap,
         params: {
           defaultAccount: account,
+          defaultCurrency: currency,
           defaultParentAccount: parentAccount,
         },
       },
