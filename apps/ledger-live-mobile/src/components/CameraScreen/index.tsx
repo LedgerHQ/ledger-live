@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { View } from "react-native";
 import { rgba } from "../../colors";
 import QRCodeBottomLayer from "./QRCodeBottomLayer";
-import { Box, Flex, Icons } from "@ledgerhq/native-ui";
+import { Box, Flex, IconsLegacy } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import ScanTargetSvg from "./ScanTargetSvg";
 import { TouchableOpacity } from "react-native";
@@ -57,7 +57,7 @@ export default function CameraScreen({ width, height, progress, liveQrCode, inst
             justifyContent={"center"}
             borderRadius={32}
           >
-            <Icons.CloseMedium size={20} color={"neutral.c00"} />
+            <IconsLegacy.CloseMedium size={20} color={"neutral.c00"} />
           </Flex>
         </TouchableOpacity>
       </Flex>
