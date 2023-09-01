@@ -11,7 +11,6 @@ import type { AppSpec, TransactionTestInput } from "../../bot/types";
 import { toOperationRaw } from "../../account";
 import { DeviceModelId } from "@ledgerhq/devices";
 import expect from "expect";
-import { log } from "@ledgerhq/logs";
 import {
   acceptDelegateTransaction,
   acceptEsdtTransferTransaction,
