@@ -93,7 +93,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
             title={t("cosmos.delegation.flow.steps.starter.warning.description")}
           />
         </View>
-        <Button onPress={onNext} type="main" mt={6}>
+        <Button onPress={onNext} type="main" mt={6} testID="cosmos-delegation-start-button">
           <Trans i18nKey="cosmos.delegation.flow.steps.starter.cta" />
         </Button>
       </View>

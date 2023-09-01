@@ -168,6 +168,7 @@ function DelegationAmount({ navigation, route }: Props) {
                     <LText
                       style={[styles.ratioLabel]}
                       color={value.eq(v) ? colors.neutral.c100 : colors.neutral.c60}
+                      testID={"delegate-ratio-" + label}
                     >
                       {label}
                     </LText>
@@ -217,14 +218,18 @@ function DelegationAmount({ navigation, route }: Props) {
               {max.isZero() && (
                 <View style={styles.labelContainer}>
                   <Check size={16} color={colors.success.c50} />
-                  <LText style={[styles.assetsRemaining]} color={colors.success.c50}>
+                  <LText
+                    style={[styles.assetsRemaining]}
+                    color={colors.success.c50}
+                    testID="cosmos-all-assets-used-text"
+                  >
                     <Trans i18nKey={`cosmos.${mode}.flow.steps.amount.allAssetsUsed`} />
                   </LText>
                 </View>
               )}
               {max.gt(0) && !isAmountOutOfRange && !isNotEnoughBalance && (
                 <View style={styles.labelContainer}>
-                  <LText style={styles.assetsRemaining}>
+                  <LText style={styles.assetsRemaining} testID="cosmos-assets-remaining">
                     <Trans
                       i18nKey="cosmos.delegation.flow.steps.amount.assetsRemaining"
                       values={{
@@ -263,6 +268,7 @@ function DelegationAmount({ navigation, route }: Props) {
                 onPress={onNext}
                 title={<Trans i18nKey="cosmos.delegation.flow.steps.amount.cta" />}
                 type="primary"
+                testID="cosmos-delegation-amount-continue"
               />
             </View>
           </View>

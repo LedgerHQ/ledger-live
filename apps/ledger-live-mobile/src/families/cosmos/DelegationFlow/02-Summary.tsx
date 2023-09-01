@@ -251,6 +251,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
           onPress={onContinue}
           disabled={bridgePending || !!bridgeError || hasErrors}
           pending={bridgePending}
+          testID="cosmos-summary-continue-button"
         />
       </View>
     </SafeAreaView>
@@ -364,7 +365,7 @@ function SummaryWords({
           <Trans i18nKey={`cosmos.delegation.iDelegate`} />
         </Words>
         <Touchable onPress={onChangeAmount}>
-          <Selectable name={formattedAmount} />
+          <Selectable name={formattedAmount} testID="cosmos-delegation-summary-amount" />
         </Touchable>
       </Line>
       <Line>
@@ -372,7 +373,10 @@ function SummaryWords({
           <Trans i18nKey="delegation.to" />
         </Words>
         <Touchable onPress={onChangeValidator}>
-          <Selectable name={validator?.name ?? validator?.validatorAddress ?? "-"} />
+          <Selectable
+            name={validator?.name ?? validator?.validatorAddress ?? "-"}
+            testID="cosmos-delegation-summary-validator"
+          />
         </Touchable>
       </Line>
     </>
@@ -428,7 +432,7 @@ const Words = ({
   </Text>
 );
 
-const Selectable = ({ name }: { name: string; readOnly?: boolean }) => {
+const Selectable = ({ name, testID }: { name: string; readOnly?: boolean; testID?: string }) => {
   const { colors } = useTheme();
   return (
     <View style={[styles.validatorSelection, { backgroundColor: rgba(colors.primary, 0.2) }]}>
@@ -437,6 +441,7 @@ const Selectable = ({ name }: { name: string; readOnly?: boolean }) => {
         numberOfLines={1}
         style={styles.validatorSelectionText}
         color={colors.primary}
+        testID={testID}
       >
         {name}
       </Text>
