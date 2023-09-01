@@ -17,7 +17,7 @@
     "isomorphic-unfetch": "^4.0.0",
     "lodash": "4.17.21",
     "stream-json": "1.8.0",
-    "tsup": "^7.0.0",
+    "tsup": "^6.2.2",
     "unzipper": "0.10.14"
   },
   "peerDependencies": {
