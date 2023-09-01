@@ -25,14 +25,6 @@ type Props = {
   footerComponent?: React.ReactNode;
   exportLogIcon?: typeof IconsLegacy.DownloadMedium | typeof IconsLegacy.ImportMedium;
   exportLogIconPosition?: "left" | "right";
-
-  /*
-   * Used when rendering a Bluetooth disabled error
-   *
-   * If "drawer", the component will be rendered as a content to be rendered in a drawer.
-   * If "view", the component will be rendered as a view. Defaults to "view".
-   */
-  renderedInType?: "drawer" | "view";
 };
 
 const StyledLink = styled(Link)`
@@ -52,7 +44,6 @@ const GenericErrorView = ({
   footerComponent,
   exportLogIcon = IconsLegacy.DownloadMedium,
   exportLogIconPosition = "left",
-  renderedInType = "view",
 }: Props) => {
   const { t } = useTranslation();
 
@@ -65,7 +56,7 @@ const GenericErrorView = ({
   if (error instanceof BluetoothRequired) {
     return (
       <>
-        <BluetoothDisabled componentType={renderedInType} />
+        <BluetoothDisabled />
         {children}
       </>
     );

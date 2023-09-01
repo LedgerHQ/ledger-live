@@ -6,6 +6,7 @@ import type { BaseModalProps } from "@ledgerhq/native-ui/components/Layout/Modal
 import { useSelector } from "react-redux";
 import { isModalLockedSelector } from "../reducers/appstate";
 import { Merge } from "../types/helpers";
+import IsInDrawerContext from "../context/DrawerContext";
 
 // Purposefully removes isOpen prop so consumers can't use it directly
 export type Props = Merge<
@@ -199,7 +200,9 @@ const QueuedDrawer = ({
       isOpen={isDisplayed}
       {...rest}
     >
-      {children}
+      <IsInDrawerContext.Provider value={{ isInDrawer: true }}>
+        {children}
+      </IsInDrawerContext.Provider>
     </BottomDrawer>
   );
 };

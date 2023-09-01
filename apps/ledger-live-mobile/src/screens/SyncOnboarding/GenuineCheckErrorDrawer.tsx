@@ -136,7 +136,6 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
           Icon={Icons.WarningFill}
           iconColor="warning.c70"
           hasExportLogButton={false}
-          renderedInType="drawer"
         />
         <Button type="main" mt={8} mb={7} size={"large"} onPress={handleRetry}>
           {t("earlySecurityCheck.genuineCheckErrorDrawer.retryCta")}
