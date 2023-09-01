@@ -5,7 +5,7 @@ import { locationPermission } from "./hooks/useAndroidLocationPermission";
 import NoLocationImage from "../../icons/NoLocationImage";
 import GenericInformationalDrawerContent from "../GenericInformationalDrawerContent";
 import GenericInformationalView from "../GenericInformationalView";
-import IsInDrawerContext from "../../context/DrawerContext";
+import IsInDrawerContext from "../../context/IsInDrawerContext";
 
 type Props = {
   onRetry?: (() => void) | null;
