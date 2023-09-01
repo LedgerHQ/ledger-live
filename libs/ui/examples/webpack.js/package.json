@@ -1,7 +1,7 @@
 {
   "name": "webpack.js-example",
   "private": true,
-  "version": "0.0.5-nightly.1",
+  "version": "0.0.5-nightly.2",
   "license": "MIT",
   "scripts": {
     "build": "webpack --node-env=production",

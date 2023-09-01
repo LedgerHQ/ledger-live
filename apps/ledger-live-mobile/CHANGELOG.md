@@ -1,5 +1,14 @@
 # live-mobile
 
+## 3.30.0-nightly.10
+
+### Patch Changes
+
+- [#4453](https://github.com/LedgerHQ/ledger-live/pull/4453) [`efd119dc7c`](https://github.com/LedgerHQ/ledger-live/commit/efd119dc7c320715fff2feeffedbaaf1e78b7583) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Cleanup dead code, kill unused react contexts
+
+- Updated dependencies [[`3ec5739f8a`](https://github.com/LedgerHQ/ledger-live/commit/3ec5739f8a4e3ff81da468cd91036b7b271dfd06), [`bfd4fef405`](https://github.com/LedgerHQ/ledger-live/commit/bfd4fef405f832489cc5258330e6483260c896d2)]:
+  - @ledgerhq/live-common@31.6.0-nightly.9
+
 ## 3.30.0-nightly.9
 
 ### Patch Changes

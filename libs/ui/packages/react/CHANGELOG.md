@@ -1,5 +1,13 @@
 # @ledgerhq/react-ui
 
+## 0.14.8-nightly.2
+
+### Patch Changes
+
+- [#4543](https://github.com/LedgerHQ/ledger-live/pull/4543) [`916d6975e5`](https://github.com/LedgerHQ/ledger-live/commit/916d6975e52f4f83291a9ce1a3e7e60dbccb5b20) Thanks [@stephane-lieumont-ledger](https://github.com/stephane-lieumont-ledger)! - fix issue on checkbox missing props readOnly input checkbox
+
+- [#4543](https://github.com/LedgerHQ/ledger-live/pull/4543) [`916d6975e5`](https://github.com/LedgerHQ/ledger-live/commit/916d6975e52f4f83291a9ce1a3e7e60dbccb5b20) Thanks [@stephane-lieumont-ledger](https://github.com/stephane-lieumont-ledger)! - fix error console on checkbox components with readOnly props
+
 ## 0.14.8-nightly.1
 
 ### Patch Changes

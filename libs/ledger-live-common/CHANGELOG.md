@@ -1,5 +1,13 @@
 # @ledgerhq/live-common
 
+## 31.6.0-nightly.9
+
+### Patch Changes
+
+- [#4534](https://github.com/LedgerHQ/ledger-live/pull/4534) [`3ec5739f8a`](https://github.com/LedgerHQ/ledger-live/commit/3ec5739f8a4e3ff81da468cd91036b7b271dfd06) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Add useAPI hook and useFetch hooks for swap v5
+
+- [#4540](https://github.com/LedgerHQ/ledger-live/pull/4540) [`bfd4fef405`](https://github.com/LedgerHQ/ledger-live/commit/bfd4fef405f832489cc5258330e6483260c896d2) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Hardcode Ledger validator details for Solana
+
 ## 31.6.0-nightly.8
 
 ### Patch Changes
