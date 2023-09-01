@@ -1,22 +1,23 @@
+import fetch from "isomorphic-unfetch";
 import * as core from "@actions/core";
 import * as fs from "fs";
 import FormData from "form-data";
 import * as path from "path";
 
-function handleErrors(response: Response) {
+function handleErrors(response) {
   if (!response.ok) {
     throw Error(response.statusText);
   }
   return response;
 }
 
-const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 const clean = (str: string): string =>
   str.replace("-expected.png", "").replace("-actual.png", "").replace("-diff.png", "");
 
-const isDiff = (str: string): boolean => str.includes("diff");
-const isActual = (str: string): boolean => str.includes("actual");
+const isDiff = (str): boolean => str.includes("diff");
+const isActual = (str): boolean => str.includes("actual");
 
 const uploadImage = async () => {
   const p = core.getInput("path");
@@ -24,7 +25,7 @@ const uploadImage = async () => {
   const workspace = core.getInput("workspace");
   const fullPath = path.resolve(p);
 
-  const upload = async (file: any, i = 0): Promise<string> => {
+  const upload = async (file, i = 0) => {
     if (i > 2) {
       return "error";
     }
@@ -54,8 +55,8 @@ const uploadImage = async () => {
     }
   };
 
-  const getAllFiles = (currentPath: string): string[] => {
-    let results: string[] = [];
+  const getAllFiles = currentPath => {
+    let results = [];
     const dirents = fs.readdirSync(currentPath, { withFileTypes: true });
     dirents.forEach(dirent => {
       if (dirent.name.toLocaleLowerCase().includes("retry") || dirent.name.endsWith(".zip")) return;
@@ -70,7 +71,7 @@ const uploadImage = async () => {
     return results;
   };
 
-  let files: any[];
+  let files;
   try {
     files = getAllFiles(fullPath);
   } catch {
@@ -85,7 +86,7 @@ const uploadImage = async () => {
 
   const results = await Promise.all(resultsP);
 
-  const formatted: Record<string, any> = {};
+  const formatted = {};
   results.forEach((link, index) => {
     const file = files[index];
     const key = clean(file);

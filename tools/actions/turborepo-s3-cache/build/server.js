@@ -163,7 +163,6 @@ function rng() {
 var import_crypto, rnds8Pool, poolPtr;
 var init_rng = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/rng.js"() {
-    "use strict";
     import_crypto = __toESM(require("crypto"));
     rnds8Pool = new Uint8Array(256);
     poolPtr = rnds8Pool.length;
@@ -174,7 +173,6 @@ var init_rng = __esm({
 var regex_default;
 var init_regex = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/regex.js"() {
-    "use strict";
     regex_default = /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000)$/i;
   }
 });
@@ -186,7 +184,6 @@ function validate(uuid) {
 var validate_default;
 var init_validate = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/validate.js"() {
-    "use strict";
     init_regex();
     validate_default = validate;
   }
@@ -203,7 +200,6 @@ function stringify(arr, offset = 0) {
 var byteToHex, stringify_default;
 var init_stringify = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/stringify.js"() {
-    "use strict";
     init_validate();
     byteToHex = [];
     for (let i5 = 0; i5 < 256; ++i5) {
@@ -265,7 +261,6 @@ function v1(options, buf, offset) {
 var _nodeId, _clockseq, _lastMSecs, _lastNSecs, v1_default;
 var init_v1 = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/v1.js"() {
-    "use strict";
     init_rng();
     init_stringify();
     _lastMSecs = 0;
@@ -302,7 +297,6 @@ function parse(uuid) {
 var parse_default;
 var init_parse = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/parse.js"() {
-    "use strict";
     init_validate();
     parse_default = parse;
   }
@@ -354,7 +348,6 @@ function v35_default(name, version2, hashfunc) {
 var DNS, URL2;
 var init_v35 = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/v35.js"() {
-    "use strict";
     init_stringify();
     init_parse();
     DNS = "6ba7b810-9dad-11d1-80b4-00c04fd430c8";
@@ -374,7 +367,6 @@ function md5(bytes) {
 var import_crypto2, md5_default;
 var init_md5 = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/md5.js"() {
-    "use strict";
     import_crypto2 = __toESM(require("crypto"));
     md5_default = md5;
   }
@@ -384,7 +376,6 @@ var init_md5 = __esm({
 var v3, v3_default;
 var init_v3 = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/v3.js"() {
-    "use strict";
     init_v35();
     init_md5();
     v3 = v35_default("v3", 48, md5_default);
@@ -410,7 +401,6 @@ function v4(options, buf, offset) {
 var v4_default;
 var init_v4 = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/v4.js"() {
-    "use strict";
     init_rng();
     init_stringify();
     v4_default = v4;
@@ -429,7 +419,6 @@ function sha1(bytes) {
 var import_crypto3, sha1_default;
 var init_sha1 = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/sha1.js"() {
-    "use strict";
     import_crypto3 = __toESM(require("crypto"));
     sha1_default = sha1;
   }
@@ -439,7 +428,6 @@ var init_sha1 = __esm({
 var v5, v5_default;
 var init_v5 = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/v5.js"() {
-    "use strict";
     init_v35();
     init_sha1();
     v5 = v35_default("v5", 80, sha1_default);
@@ -451,7 +439,6 @@ var init_v5 = __esm({
 var nil_default;
 var init_nil = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/nil.js"() {
-    "use strict";
     nil_default = "00000000-0000-0000-0000-000000000000";
   }
 });
@@ -466,7 +453,6 @@ function version(uuid) {
 var version_default;
 var init_version = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/version.js"() {
-    "use strict";
     init_validate();
     version_default = version;
   }
@@ -487,7 +473,6 @@ __export(esm_node_exports, {
 });
 var init_esm_node = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/index.js"() {
-    "use strict";
     init_v1();
     init_v3();
     init_v4();
@@ -855,7 +840,6 @@ var require_tunnel = __commonJS({
 // ../../../node_modules/.pnpm/tunnel@0.0.6/node_modules/tunnel/index.js
 var require_tunnel2 = __commonJS({
   "../../../node_modules/.pnpm/tunnel@0.0.6/node_modules/tunnel/index.js"(exports, module2) {
-    "use strict";
     module2.exports = require_tunnel();
   }
 });
@@ -984,12 +968,12 @@ var require_lib = __commonJS({
     var RetryableHttpVerbs = ["OPTIONS", "GET", "DELETE", "HEAD"];
     var ExponentialBackoffCeiling = 10;
     var ExponentialBackoffTimeSlice = 5;
-    var HttpClientError = class _HttpClientError extends Error {
+    var HttpClientError = class extends Error {
       constructor(message, statusCode) {
         super(message);
         this.name = "HttpClientError";
         this.statusCode = statusCode;
-        Object.setPrototypeOf(this, _HttpClientError.prototype);
+        Object.setPrototypeOf(this, HttpClientError.prototype);
       }
     };
     exports.HttpClientError = HttpClientError;
@@ -1580,13 +1564,13 @@ var require_oidc_utils = __commonJS({
     var http_client_1 = require_lib();
     var auth_1 = require_auth();
     var core_1 = require_core();
-    var OidcClient = class _OidcClient {
+    var OidcClient = class {
       static createHttpClient(allowRetry = true, maxRetry = 10) {
         const requestOptions = {
           allowRetries: allowRetry,
           maxRetries: maxRetry
         };
-        return new http_client_1.HttpClient("actions/oidc-client", [new auth_1.BearerCredentialHandler(_OidcClient.getRequestToken())], requestOptions);
+        return new http_client_1.HttpClient("actions/oidc-client", [new auth_1.BearerCredentialHandler(OidcClient.getRequestToken())], requestOptions);
       }
       static getRequestToken() {
         const token = process.env["ACTIONS_ID_TOKEN_REQUEST_TOKEN"];
@@ -1605,7 +1589,7 @@ var require_oidc_utils = __commonJS({
       static getCall(id_token_url) {
         var _a;
         return __awaiter2(this, void 0, void 0, function* () {
-          const httpclient = _OidcClient.createHttpClient();
+          const httpclient = OidcClient.createHttpClient();
           const res = yield httpclient.getJson(id_token_url).catch((error) => {
             throw new Error(`Failed to get ID Token. 
  
@@ -1623,13 +1607,13 @@ var require_oidc_utils = __commonJS({
       static getIDToken(audience) {
         return __awaiter2(this, void 0, void 0, function* () {
           try {
-            let id_token_url = _OidcClient.getIDTokenUrl();
+            let id_token_url = OidcClient.getIDTokenUrl();
             if (audience) {
               const encodedAudience = encodeURIComponent(audience);
               id_token_url = `${id_token_url}&audience=${encodedAudience}`;
             }
             core_1.debug(`ID token url is ${id_token_url}`);
-            const id_token = yield _OidcClient.getCall(id_token_url);
+            const id_token = yield OidcClient.getCall(id_token_url);
             core_1.setSecret(id_token);
             return id_token;
           } catch (error) {
@@ -2552,7 +2536,6 @@ function __classPrivateFieldSet(receiver, privateMap, value) {
 var extendStatics, __assign;
 var init_tslib_es6 = __esm({
   "../../../node_modules/.pnpm/tslib@1.14.1/node_modules/tslib/tslib.es6.js"() {
-    "use strict";
     extendStatics = function(d5, b5) {
       extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d6, b6) {
         d6.__proto__ = b6;
@@ -2582,7 +2565,6 @@ var init_tslib_es6 = __esm({
 var fromUtf8, toUtf8;
 var init_pureJs = __esm({
   "../../../node_modules/.pnpm/@aws-sdk+util-utf8-browser@3.259.0/node_modules/@aws-sdk/util-utf8-browser/dist-es/pureJs.js"() {
-    "use strict";
     fromUtf8 = (input) => {
       const bytes = [];
       for (let i5 = 0, len = input.length; i5 < len; i5++) {
@@ -2631,7 +2613,6 @@ function toUtf82(input) {
 }
 var init_whatwgEncodingApi = __esm({
   "../../../node_modules/.pnpm/@aws-sdk+util-utf8-browser@3.259.0/node_modules/@aws-sdk/util-utf8-browser/dist-es/whatwgEncodingApi.js"() {
-    "use strict";
   }
 });
 
@@ -2644,7 +2625,6 @@ __export(dist_es_exports, {
 var fromUtf83, toUtf83;
 var init_dist_es = __esm({
   "../../../node_modules/.pnpm/@aws-sdk+util-utf8-browser@3.259.0/node_modules/@aws-sdk/util-utf8-browser/dist-es/index.js"() {
-    "use strict";
     init_pureJs();
     init_whatwgEncodingApi();
     fromUtf83 = (input) => typeof TextEncoder === "function" ? fromUtf82(input) : fromUtf8(input);
@@ -3480,7 +3460,6 @@ var require_validator = __commonJS({
 // ../../../node_modules/.pnpm/fast-xml-parser@4.2.5/node_modules/fast-xml-parser/src/xmlparser/OptionsBuilder.js
 var require_OptionsBuilder = __commonJS({
   "../../../node_modules/.pnpm/fast-xml-parser@4.2.5/node_modules/fast-xml-parser/src/xmlparser/OptionsBuilder.js"(exports) {
-    "use strict";
     var defaultOptions = {
       preserveOrder: false,
       attributeNamePrefix: "@_",
@@ -3565,7 +3544,6 @@ var require_xmlNode = __commonJS({
 // ../../../node_modules/.pnpm/fast-xml-parser@4.2.5/node_modules/fast-xml-parser/src/xmlparser/DocTypeReader.js
 var require_DocTypeReader = __commonJS({
   "../../../node_modules/.pnpm/fast-xml-parser@4.2.5/node_modules/fast-xml-parser/src/xmlparser/DocTypeReader.js"(exports, module2) {
-    "use strict";
     var util = require_util();
     function readDocType(xmlData, i5) {
       const entities = {};
@@ -3675,7 +3653,6 @@ var require_DocTypeReader = __commonJS({
 // ../../../node_modules/.pnpm/strnum@1.0.5/node_modules/strnum/strnum.js
 var require_strnum = __commonJS({
   "../../../node_modules/.pnpm/strnum@1.0.5/node_modules/strnum/strnum.js"(exports, module2) {
-    "use strict";
     var hexRegex = /^[-+]?0x[a-fA-F0-9]+$/;
     var numRegex = /^([\-\+])?(0*)(\.[0-9]+([eE]\-?[0-9]+)?|[0-9]+(\.[0-9]+([eE]\-?[0-9]+)?)?)$/;
     if (!Number.parseInt && window.parseInt) {
@@ -4359,7 +4336,6 @@ var require_node2json = __commonJS({
 // ../../../node_modules/.pnpm/fast-xml-parser@4.2.5/node_modules/fast-xml-parser/src/xmlparser/XMLParser.js
 var require_XMLParser = __commonJS({
   "../../../node_modules/.pnpm/fast-xml-parser@4.2.5/node_modules/fast-xml-parser/src/xmlparser/XMLParser.js"(exports, module2) {
-    "use strict";
     var { buildOptions } = require_OptionsBuilder();
     var OrderedObjParser = require_OrderedObjParser();
     var { prettify } = require_node2json();
@@ -4421,7 +4397,6 @@ var require_XMLParser = __commonJS({
 // ../../../node_modules/.pnpm/fast-xml-parser@4.2.5/node_modules/fast-xml-parser/src/xmlbuilder/orderedJs2Xml.js
 var require_orderedJs2Xml = __commonJS({
   "../../../node_modules/.pnpm/fast-xml-parser@4.2.5/node_modules/fast-xml-parser/src/xmlbuilder/orderedJs2Xml.js"(exports, module2) {
-    "use strict";
     var EOL = "\n";
     function toXml(jArray, options) {
       let indentation = "";
@@ -5141,7 +5116,6 @@ var require_build3 = __commonJS({
 // ../../../node_modules/.pnpm/depd@2.0.0/node_modules/depd/index.js
 var require_depd = __commonJS({
   "../../../node_modules/.pnpm/depd@2.0.0/node_modules/depd/index.js"(exports, module2) {
-    "use strict";
     var relative = require("path").relative;
     module2.exports = depd;
     var basePath = process.cwd();
@@ -5803,7 +5777,6 @@ var require_statuses = __commonJS({
 // ../../../node_modules/.pnpm/inherits@2.0.4/node_modules/inherits/inherits_browser.js
 var require_inherits_browser = __commonJS({
   "../../../node_modules/.pnpm/inherits@2.0.4/node_modules/inherits/inherits_browser.js"(exports, module2) {
-    "use strict";
     if (typeof Object.create === "function") {
       module2.exports = function inherits(ctor, superCtor) {
         if (superCtor) {
@@ -5836,7 +5809,6 @@ var require_inherits_browser = __commonJS({
 // ../../../node_modules/.pnpm/inherits@2.0.4/node_modules/inherits/inherits.js
 var require_inherits = __commonJS({
   "../../../node_modules/.pnpm/inherits@2.0.4/node_modules/inherits/inherits.js"(exports, module2) {
-    "use strict";
     try {
       util = require("util");
       if (typeof util.inherits !== "function")
@@ -6029,7 +6001,6 @@ var require_http_errors = __commonJS({
 // ../../../node_modules/.pnpm/ms@2.0.0/node_modules/ms/index.js
 var require_ms = __commonJS({
   "../../../node_modules/.pnpm/ms@2.0.0/node_modules/ms/index.js"(exports, module2) {
-    "use strict";
     var s5 = 1e3;
     var m5 = s5 * 60;
     var h5 = m5 * 60;
@@ -6132,7 +6103,6 @@ var require_ms = __commonJS({
 // ../../../node_modules/.pnpm/debug@2.6.9/node_modules/debug/src/debug.js
 var require_debug = __commonJS({
   "../../../node_modules/.pnpm/debug@2.6.9/node_modules/debug/src/debug.js"(exports, module2) {
-    "use strict";
     exports = module2.exports = createDebug.debug = createDebug["default"] = createDebug;
     exports.coerce = coerce;
     exports.disable = disable;
@@ -6242,7 +6212,6 @@ var require_debug = __commonJS({
 // ../../../node_modules/.pnpm/debug@2.6.9/node_modules/debug/src/browser.js
 var require_browser = __commonJS({
   "../../../node_modules/.pnpm/debug@2.6.9/node_modules/debug/src/browser.js"(exports, module2) {
-    "use strict";
     exports = module2.exports = require_debug();
     exports.log = log;
     exports.formatArgs = formatArgs;
@@ -6331,7 +6300,6 @@ var require_browser = __commonJS({
 // ../../../node_modules/.pnpm/debug@2.6.9/node_modules/debug/src/node.js
 var require_node = __commonJS({
   "../../../node_modules/.pnpm/debug@2.6.9/node_modules/debug/src/node.js"(exports, module2) {
-    "use strict";
     var tty = require("tty");
     var util = require("util");
     exports = module2.exports = require_debug();
@@ -6456,7 +6424,6 @@ var require_node = __commonJS({
 // ../../../node_modules/.pnpm/debug@2.6.9/node_modules/debug/src/index.js
 var require_src = __commonJS({
   "../../../node_modules/.pnpm/debug@2.6.9/node_modules/debug/src/index.js"(exports, module2) {
-    "use strict";
     if (typeof process !== "undefined" && process.type === "renderer") {
       module2.exports = require_browser();
     } else {
@@ -10525,7 +10492,6 @@ var require_read = __commonJS({
 // ../../../node_modules/.pnpm/media-typer@0.3.0/node_modules/media-typer/index.js
 var require_media_typer = __commonJS({
   "../../../node_modules/.pnpm/media-typer@0.3.0/node_modules/media-typer/index.js"(exports) {
-    "use strict";
     var paramRegExp = /; *([!#$%&'\*\+\-\.0-9A-Z\^_`a-z\|~]+) *= *("(?:[ !\u0023-\u005b\u005d-\u007e\u0080-\u00ff]|\\[\u0020-\u007e])*"|[!#$%&'\*\+\-\.0-9A-Z\^_`a-z\|~]+) */g;
     var textRegExp = /^[\u0020-\u007e\u0080-\u00ff]+$/;
     var tokenRegExp = /^[!#$%&'\*\+\-\.0-9A-Z\^_`a-z\|~]+$/;
@@ -19175,7 +19141,6 @@ var require_db = __commonJS({
 // ../../../node_modules/.pnpm/mime-db@1.52.0/node_modules/mime-db/index.js
 var require_mime_db = __commonJS({
   "../../../node_modules/.pnpm/mime-db@1.52.0/node_modules/mime-db/index.js"(exports, module2) {
-    "use strict";
     module2.exports = require_db();
   }
 });
@@ -20134,7 +20099,6 @@ var require_callBound = __commonJS({
 // ../../../node_modules/.pnpm/object-inspect@1.12.3/node_modules/object-inspect/util.inspect.js
 var require_util_inspect = __commonJS({
   "../../../node_modules/.pnpm/object-inspect@1.12.3/node_modules/object-inspect/util.inspect.js"(exports, module2) {
-    "use strict";
     module2.exports = require("util").inspect;
   }
 });
@@ -20142,7 +20106,6 @@ var require_util_inspect = __commonJS({
 // ../../../node_modules/.pnpm/object-inspect@1.12.3/node_modules/object-inspect/index.js
 var require_object_inspect = __commonJS({
   "../../../node_modules/.pnpm/object-inspect@1.12.3/node_modules/object-inspect/index.js"(exports, module2) {
-    "use strict";
     var hasMap = typeof Map === "function" && Map.prototype;
     var mapSizeDescriptor = Object.getOwnPropertyDescriptor && hasMap ? Object.getOwnPropertyDescriptor(Map.prototype, "size") : null;
     var mapSize = hasMap && mapSizeDescriptor && typeof mapSizeDescriptor.get === "function" ? mapSizeDescriptor.get : null;
@@ -22046,7 +22009,6 @@ var require_array_flatten = __commonJS({
 // ../../../node_modules/.pnpm/path-to-regexp@0.1.7/node_modules/path-to-regexp/index.js
 var require_path_to_regexp = __commonJS({
   "../../../node_modules/.pnpm/path-to-regexp@0.1.7/node_modules/path-to-regexp/index.js"(exports, module2) {
-    "use strict";
     module2.exports = pathtoRegexp;
     var MATCHING_GROUP_REGEXP = /\((?!\?)/g;
     function pathtoRegexp(path3, keys, options) {
@@ -22376,7 +22338,6 @@ var require_route = __commonJS({
 // ../../../node_modules/.pnpm/utils-merge@1.0.1/node_modules/utils-merge/index.js
 var require_utils_merge = __commonJS({
   "../../../node_modules/.pnpm/utils-merge@1.0.1/node_modules/utils-merge/index.js"(exports, module2) {
-    "use strict";
     exports = module2.exports = function(a5, b5) {
       if (a5 && b5) {
         for (var key in b5) {
@@ -22906,7 +22867,6 @@ var require_view = __commonJS({
 // ../../../node_modules/.pnpm/safe-buffer@5.2.1/node_modules/safe-buffer/index.js
 var require_safe_buffer = __commonJS({
   "../../../node_modules/.pnpm/safe-buffer@5.2.1/node_modules/safe-buffer/index.js"(exports, module2) {
-    "use strict";
     var buffer = require("buffer");
     var Buffer6 = buffer.Buffer;
     function copyProps(src, dst) {
@@ -23250,7 +23210,6 @@ var require_types = __commonJS({
 // ../../../node_modules/.pnpm/mime@1.6.0/node_modules/mime/mime.js
 var require_mime = __commonJS({
   "../../../node_modules/.pnpm/mime@1.6.0/node_modules/mime/mime.js"(exports, module2) {
-    "use strict";
     var path3 = require("path");
     var fs2 = require("fs");
     function Mime() {
@@ -23305,7 +23264,6 @@ var require_mime = __commonJS({
 // ../../../node_modules/.pnpm/ms@2.1.3/node_modules/ms/index.js
 var require_ms2 = __commonJS({
   "../../../node_modules/.pnpm/ms@2.1.3/node_modules/ms/index.js"(exports, module2) {
-    "use strict";
     var s5 = 1e3;
     var m5 = s5 * 60;
     var h5 = m5 * 60;
@@ -24104,7 +24062,6 @@ var require_forwarded = __commonJS({
 // ../../../node_modules/.pnpm/ipaddr.js@1.9.1/node_modules/ipaddr.js/lib/ipaddr.js
 var require_ipaddr = __commonJS({
   "../../../node_modules/.pnpm/ipaddr.js@1.9.1/node_modules/ipaddr.js/lib/ipaddr.js"(exports, module2) {
-    "use strict";
     (function() {
       var expandIPv6, ipaddr, ipv4Part, ipv4Regexes, ipv6Part, ipv6Regexes, matchCIDR, root, zoneIndex;
       ipaddr = {};
@@ -26063,7 +26020,6 @@ var require_request = __commonJS({
 // ../../../node_modules/.pnpm/cookie-signature@1.0.6/node_modules/cookie-signature/index.js
 var require_cookie_signature = __commonJS({
   "../../../node_modules/.pnpm/cookie-signature@1.0.6/node_modules/cookie-signature/index.js"(exports) {
-    "use strict";
     var crypto4 = require("crypto");
     exports.sign = function(val2, secret) {
       if ("string" != typeof val2)
@@ -27061,7 +27017,7 @@ var RequestHandlerProtocol;
 })(RequestHandlerProtocol || (RequestHandlerProtocol = {}));
 
 // ../../../node_modules/.pnpm/@smithy+protocol-http@1.1.1/node_modules/@smithy/protocol-http/dist-es/httpRequest.js
-var HttpRequest = class _HttpRequest {
+var HttpRequest = class {
   constructor(options) {
     this.method = options.method || "GET";
     this.hostname = options.hostname || "localhost";
@@ -27082,7 +27038,7 @@ var HttpRequest = class _HttpRequest {
     return "method" in req && "protocol" in req && "hostname" in req && "path" in req && typeof req["query"] === "object" && typeof req["headers"] === "object";
   }
   clone() {
-    const cloned = new _HttpRequest({
+    const cloned = new HttpRequest({
       ...this,
       headers: { ...this.headers }
     });
@@ -27322,12 +27278,12 @@ var getValidateBucketNamePlugin = (unused) => ({
 });
 
 // ../../../node_modules/.pnpm/@smithy+property-provider@1.0.2/node_modules/@smithy/property-provider/dist-es/ProviderError.js
-var ProviderError = class _ProviderError extends Error {
+var ProviderError = class extends Error {
   constructor(message, tryNextLink = true) {
     super(message);
     this.tryNextLink = tryNextLink;
     this.name = "ProviderError";
-    Object.setPrototypeOf(this, _ProviderError.prototype);
+    Object.setPrototypeOf(this, ProviderError.prototype);
   }
   static from(error, tryNextLink = true) {
     return Object.assign(new this(error.message, tryNextLink), error);
@@ -27335,22 +27291,22 @@ var ProviderError = class _ProviderError extends Error {
 };
 
 // ../../../node_modules/.pnpm/@smithy+property-provider@1.0.2/node_modules/@smithy/property-provider/dist-es/CredentialsProviderError.js
-var CredentialsProviderError = class _CredentialsProviderError extends ProviderError {
+var CredentialsProviderError = class extends ProviderError {
   constructor(message, tryNextLink = true) {
     super(message, tryNextLink);
     this.tryNextLink = tryNextLink;
     this.name = "CredentialsProviderError";
-    Object.setPrototypeOf(this, _CredentialsProviderError.prototype);
+    Object.setPrototypeOf(this, CredentialsProviderError.prototype);
   }
 };
 
 // ../../../node_modules/.pnpm/@smithy+property-provider@1.0.2/node_modules/@smithy/property-provider/dist-es/TokenProviderError.js
-var TokenProviderError = class _TokenProviderError extends ProviderError {
+var TokenProviderError = class extends ProviderError {
   constructor(message, tryNextLink = true) {
     super(message, tryNextLink);
     this.tryNextLink = tryNextLink;
     this.name = "TokenProviderError";
-    Object.setPrototypeOf(this, _TokenProviderError.prototype);
+    Object.setPrototypeOf(this, TokenProviderError.prototype);
   }
 };
 
@@ -27457,7 +27413,7 @@ function toHex(bytes) {
 }
 
 // ../../../node_modules/.pnpm/@smithy+eventstream-codec@1.0.2/node_modules/@smithy/eventstream-codec/dist-es/Int64.js
-var Int64 = class _Int64 {
+var Int64 = class {
   constructor(bytes) {
     this.bytes = bytes;
     if (bytes.byteLength !== 8) {
@@ -27475,7 +27431,7 @@ var Int64 = class _Int64 {
     if (number < 0) {
       negate(bytes);
     }
-    return new _Int64(bytes);
+    return new Int64(bytes);
   }
   valueOf() {
     const bytes = this.bytes.slice(0);
@@ -30288,7 +30244,7 @@ function transformFromString(str, encoding) {
 }
 
 // ../../../node_modules/.pnpm/@smithy+util-stream@1.0.2/node_modules/@smithy/util-stream/dist-es/blob/Uint8ArrayBlobAdapter.js
-var Uint8ArrayBlobAdapter = class _Uint8ArrayBlobAdapter extends Uint8Array {
+var Uint8ArrayBlobAdapter = class extends Uint8Array {
   static fromString(source, encoding = "utf-8") {
     switch (typeof source) {
       case "string":
@@ -30298,7 +30254,7 @@ var Uint8ArrayBlobAdapter = class _Uint8ArrayBlobAdapter extends Uint8Array {
     }
   }
   static mutate(source) {
-    Object.setPrototypeOf(source, _Uint8ArrayBlobAdapter.prototype);
+    Object.setPrototypeOf(source, Uint8ArrayBlobAdapter.prototype);
     return source;
   }
   transformToString(encoding = "utf-8") {
@@ -30995,10 +30951,10 @@ var stripLeadingZeroes = (value) => {
 };
 
 // ../../../node_modules/.pnpm/@smithy+smithy-client@1.0.4/node_modules/@smithy/smithy-client/dist-es/exceptions.js
-var ServiceException = class _ServiceException extends Error {
+var ServiceException = class extends Error {
   constructor(options) {
     super(options.message);
-    Object.setPrototypeOf(this, _ServiceException.prototype);
+    Object.setPrototypeOf(this, ServiceException.prototype);
     this.name = options.name;
     this.$fault = options.$fault;
     this.$metadata = options.$metadata;
@@ -31488,15 +31444,15 @@ var package_default2 = {
 };
 
 // ../../../node_modules/.pnpm/@aws-sdk+client-sts@3.370.0/node_modules/@aws-sdk/client-sts/dist-es/models/STSServiceException.js
-var STSServiceException = class _STSServiceException extends ServiceException {
+var STSServiceException = class extends ServiceException {
   constructor(options) {
     super(options);
-    Object.setPrototypeOf(this, _STSServiceException.prototype);
+    Object.setPrototypeOf(this, STSServiceException.prototype);
   }
 };
 
 // ../../../node_modules/.pnpm/@aws-sdk+client-sts@3.370.0/node_modules/@aws-sdk/client-sts/dist-es/models/models_0.js
-var ExpiredTokenException = class _ExpiredTokenException extends STSServiceException {
+var ExpiredTokenException = class extends STSServiceException {
   constructor(opts) {
     super({
       name: "ExpiredTokenException",
@@ -31505,10 +31461,10 @@ var ExpiredTokenException = class _ExpiredTokenException extends STSServiceExcep
     });
     this.name = "ExpiredTokenException";
     this.$fault = "client";
-    Object.setPrototypeOf(this, _ExpiredTokenException.prototype);
+    Object.setPrototypeOf(this, ExpiredTokenException.prototype);
   }
 };
-var MalformedPolicyDocumentException = class _MalformedPolicyDocumentException extends STSServiceException {
+var MalformedPolicyDocumentException = class extends STSServiceException {
   constructor(opts) {
     super({
       name: "MalformedPolicyDocumentException",
@@ -31517,10 +31473,10 @@ var MalformedPolicyDocumentException = class _MalformedPolicyDocumentException e
     });
     this.name = "MalformedPolicyDocumentException";
     this.$fault = "client";
-    Object.setPrototypeOf(this, _MalformedPolicyDocumentException.prototype);
+    Object.setPrototypeOf(this, MalformedPolicyDocumentException.prototype);
   }
 };
-var PackedPolicyTooLargeException = class _PackedPolicyTooLargeException extends STSServiceException {
+var PackedPolicyTooLargeException = class extends STSServiceException {
   constructor(opts) {
     super({
       name: "PackedPolicyTooLargeException",
@@ -31529,10 +31485,10 @@ var PackedPolicyTooLargeException = class _PackedPolicyTooLargeException extends
     });
     this.name = "PackedPolicyTooLargeException";
     this.$fault = "client";
-    Object.setPrototypeOf(this, _PackedPolicyTooLargeException.prototype);
+    Object.setPrototypeOf(this, PackedPolicyTooLargeException.prototype);
   }
 };
-var RegionDisabledException = class _RegionDisabledException extends STSServiceException {
+var RegionDisabledException = class extends STSServiceException {
   constructor(opts) {
     super({
       name: "RegionDisabledException",
@@ -31541,10 +31497,10 @@ var RegionDisabledException = class _RegionDisabledException extends STSServiceE
     });
     this.name = "RegionDisabledException";
     this.$fault = "client";
-    Object.setPrototypeOf(this, _RegionDisabledException.prototype);
+    Object.setPrototypeOf(this, RegionDisabledException.prototype);
   }
 };
-var IDPRejectedClaimException = class _IDPRejectedClaimException extends STSServiceException {
+var IDPRejectedClaimException = class extends STSServiceException {
   constructor(opts) {
     super({
       name: "IDPRejectedClaimException",
@@ -31553,10 +31509,10 @@ var IDPRejectedClaimException = class _IDPRejectedClaimException extends STSServ
     });
     this.name = "IDPRejectedClaimException";
     this.$fault = "client";
-    Object.setPrototypeOf(this, _IDPRejectedClaimException.prototype);
+    Object.setPrototypeOf(this, IDPRejectedClaimException.prototype);
   }
 };
-var InvalidIdentityTokenException = class _InvalidIdentityTokenException extends STSServiceException {
+var InvalidIdentityTokenException = class extends STSServiceException {
   constructor(opts) {
     super({
       name: "InvalidIdentityTokenException",
@@ -31565,10 +31521,10 @@ var InvalidIdentityTokenException = class _InvalidIdentityTokenException extends
     });
     this.name = "InvalidIdentityTokenException";
     this.$fault = "client";
-    Object.setPrototypeOf(this, _InvalidIdentityTokenException.prototype);
+    Object.setPrototypeOf(this, InvalidIdentityTokenException.prototype);
   }
 };
-var IDPCommunicationErrorException = class _IDPCommunicationErrorException extends STSServiceException {
+var IDPCommunicationErrorException = class extends STSServiceException {
   constructor(opts) {
     super({
       name: "IDPCommunicationErrorException",
@@ -31577,7 +31533,7 @@ var IDPCommunicationErrorException = class _IDPCommunicationErrorException exten
     });
     this.name = "IDPCommunicationErrorException";
     this.$fault = "client";
-    Object.setPrototypeOf(this, _IDPCommunicationErrorException.prototype);
+    Object.setPrototypeOf(this, IDPCommunicationErrorException.prototype);
   }
 };
 var CredentialsFilterSensitiveLog = (obj) => ({
@@ -32113,7 +32069,7 @@ var loadQueryErrorCode = (output, data) => {
 };
 
 // ../../../node_modules/.pnpm/@aws-sdk+client-sts@3.370.0/node_modules/@aws-sdk/client-sts/dist-es/commands/AssumeRoleCommand.js
-var AssumeRoleCommand = class _AssumeRoleCommand extends Command {
+var AssumeRoleCommand = class extends Command {
   static getEndpointParameterInstructions() {
     return {
       UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
@@ -32129,7 +32085,7 @@ var AssumeRoleCommand = class _AssumeRoleCommand extends Command {
   }
   resolveMiddleware(clientStack, configuration, options) {
     this.middlewareStack.use(getSerdePlugin(configuration, this.serialize, this.deserialize));
-    this.middlewareStack.use(getEndpointPlugin(configuration, _AssumeRoleCommand.getEndpointParameterInstructions()));
+    this.middlewareStack.use(getEndpointPlugin(configuration, AssumeRoleCommand.getEndpointParameterInstructions()));
     this.middlewareStack.use(getAwsAuthPlugin(configuration));
     const stack = clientStack.concat(this.middlewareStack);
     const { logger: logger2 } = configuration;
@@ -32154,7 +32110,7 @@ var AssumeRoleCommand = class _AssumeRoleCommand extends Command {
 };
 
 // ../../../node_modules/.pnpm/@aws-sdk+client-sts@3.370.0/node_modules/@aws-sdk/client-sts/dist-es/commands/AssumeRoleWithWebIdentityCommand.js
-var AssumeRoleWithWebIdentityCommand = class _AssumeRoleWithWebIdentityCommand extends Command {
+var AssumeRoleWithWebIdentityCommand = class extends Command {
   static getEndpointParameterInstructions() {
     return {
       UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
@@ -32170,7 +32126,7 @@ var AssumeRoleWithWebIdentityCommand = class _AssumeRoleWithWebIdentityCommand e
   }
   resolveMiddleware(clientStack, configuration, options) {
     this.middlewareStack.use(getSerdePlugin(configuration, this.serialize, this.deserialize));
-    this.middlewareStack.use(getEndpointPlugin(configuration, _AssumeRoleWithWebIdentityCommand.getEndpointParameterInstructions()));
+    this.middlewareStack.use(getEndpointPlugin(configuration, AssumeRoleWithWebIdentityCommand.getEndpointParameterInstructions()));
     const stack = clientStack.concat(this.middlewareStack);
     const { logger: logger2 } = configuration;
     const clientName = "STSClient";
@@ -33249,15 +33205,15 @@ var SSOClient = class extends Client {
 };
 
 // ../../../node_modules/.pnpm/@aws-sdk+client-sso@3.370.0/node_modules/@aws-sdk/client-sso/dist-es/models/SSOServiceException.js
-var SSOServiceException = class _SSOServiceException extends ServiceException {
+var SSOServiceException = class extends ServiceException {
   constructor(options) {
     super(options);
-    Object.setPrototypeOf(this, _SSOServiceException.prototype);
+    Object.setPrototypeOf(this, SSOServiceException.prototype);
   }
 };
 
 // ../../../node_modules/.pnpm/@aws-sdk+client-sso@3.370.0/node_modules/@aws-sdk/client-sso/dist-es/models/models_0.js
-var InvalidRequestException = class _InvalidRequestException extends SSOServiceException {
+var InvalidRequestException = class extends SSOServiceException {
   constructor(opts) {
     super({
       name: "InvalidRequestException",
@@ -33266,10 +33222,10 @@ var InvalidRequestException = class _InvalidRequestException extends SSOServiceE
     });
     this.name = "InvalidRequestException";
     this.$fault = "client";
-    Object.setPrototypeOf(this, _InvalidRequestException.prototype);
+    Object.setPrototypeOf(this, InvalidRequestException.prototype);
   }
 };
-var ResourceNotFoundException = class _ResourceNotFoundException extends SSOServiceException {
+var ResourceNotFoundException = class extends SSOServiceException {
   constructor(opts) {
     super({
       name: "ResourceNotFoundException",
@@ -33278,10 +33234,10 @@ var ResourceNotFoundException = class _ResourceNotFoundException extends SSOServ
     });
     this.name = "ResourceNotFoundException";
     this.$fault = "client";
-    Object.setPrototypeOf(this, _ResourceNotFoundException.prototype);
+    Object.setPrototypeOf(this, ResourceNotFoundException.prototype);
   }
 };
-var TooManyRequestsException = class _TooManyRequestsException extends SSOServiceException {
+var TooManyRequestsException = class extends SSOServiceException {
   constructor(opts) {
     super({
       name: "TooManyRequestsException",
@@ -33290,10 +33246,10 @@ var TooManyRequestsException = class _TooManyRequestsException extends SSOServic
     });
     this.name = "TooManyRequestsException";
     this.$fault = "client";
-    Object.setPrototypeOf(this, _TooManyRequestsException.prototype);
+    Object.setPrototypeOf(this, TooManyRequestsException.prototype);
   }
 };
-var UnauthorizedException = class _UnauthorizedException extends SSOServiceException {
+var UnauthorizedException = class extends SSOServiceException {
   constructor(opts) {
     super({
       name: "UnauthorizedException",
@@ -33302,7 +33258,7 @@ var UnauthorizedException = class _UnauthorizedException extends SSOServiceExcep
     });
     this.name = "UnauthorizedException";
     this.$fault = "client";
-    Object.setPrototypeOf(this, _UnauthorizedException.prototype);
+    Object.setPrototypeOf(this, UnauthorizedException.prototype);
   }
 };
 var GetRoleCredentialsRequestFilterSensitiveLog = (obj) => ({
@@ -33487,7 +33443,7 @@ var loadRestJsonErrorCode = (output, data) => {
 };
 
 // ../../../node_modules/.pnpm/@aws-sdk+client-sso@3.370.0/node_modules/@aws-sdk/client-sso/dist-es/commands/GetRoleCredentialsCommand.js
-var GetRoleCredentialsCommand = class _GetRoleCredentialsCommand extends Command {
+var GetRoleCredentialsCommand = class extends Command {
   static getEndpointParameterInstructions() {
     return {
       UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
@@ -33502,7 +33458,7 @@ var GetRoleCredentialsCommand = class _GetRoleCredentialsCommand extends Command
   }
   resolveMiddleware(clientStack, configuration, options) {
     this.middlewareStack.use(getSerdePlugin(configuration, this.serialize, this.deserialize));
-    this.middlewareStack.use(getEndpointPlugin(configuration, _GetRoleCredentialsCommand.getEndpointParameterInstructions()));
+    this.middlewareStack.use(getEndpointPlugin(configuration, GetRoleCredentialsCommand.getEndpointParameterInstructions()));
     const stack = clientStack.concat(this.middlewareStack);
     const { logger: logger2 } = configuration;
     const clientName = "SSOClient";
@@ -33734,15 +33690,15 @@ var SSOOIDCClient = class extends Client {
 };
 
 // ../../../node_modules/.pnpm/@aws-sdk+client-sso-oidc@3.370.0/node_modules/@aws-sdk/client-sso-oidc/dist-es/models/SSOOIDCServiceException.js
-var SSOOIDCServiceException = class _SSOOIDCServiceException extends ServiceException {
+var SSOOIDCServiceException = class extends ServiceException {
   constructor(options) {
     super(options);
-    Object.setPrototypeOf(this, _SSOOIDCServiceException.prototype);
+    Object.setPrototypeOf(this, SSOOIDCServiceException.prototype);
   }
 };
 
 // ../../../node_modules/.pnpm/@aws-sdk+client-sso-oidc@3.370.0/node_modules/@aws-sdk/client-sso-oidc/dist-es/models/models_0.js
-var AccessDeniedException = class _AccessDeniedException extends SSOOIDCServiceException {
+var AccessDeniedException = class extends SSOOIDCServiceException {
   constructor(opts) {
     super({
       name: "AccessDeniedException",
@@ -33751,12 +33707,12 @@ var AccessDeniedException = class _AccessDeniedException extends SSOOIDCServiceE
     });
     this.name = "AccessDeniedException";
     this.$fault = "client";
-    Object.setPrototypeOf(this, _AccessDeniedException.prototype);
+    Object.setPrototypeOf(this, AccessDeniedException.prototype);
     this.error = opts.error;
     this.error_description = opts.error_description;
   }
 };
-var AuthorizationPendingException = class _AuthorizationPendingException extends SSOOIDCServiceException {
+var AuthorizationPendingException = class extends SSOOIDCServiceException {
   constructor(opts) {
     super({
       name: "AuthorizationPendingException",
@@ -33765,12 +33721,12 @@ var AuthorizationPendingException = class _AuthorizationPendingException extends
     });
     this.name = "AuthorizationPendingException";
     this.$fault = "client";
-    Object.setPrototypeOf(this, _AuthorizationPendingException.prototype);
+    Object.setPrototypeOf(this, AuthorizationPendingException.prototype);
     this.error = opts.error;
     this.error_description = opts.error_description;
   }
 };
-var ExpiredTokenException2 = class _ExpiredTokenException extends SSOOIDCServiceException {
+var ExpiredTokenException2 = class extends SSOOIDCServiceException {
   constructor(opts) {
     super({
       name: "ExpiredTokenException",
@@ -33779,12 +33735,12 @@ var ExpiredTokenException2 = class _ExpiredTokenException extends SSOOIDCService
     });
     this.name = "ExpiredTokenException";
     this.$fault = "client";
-    Object.setPrototypeOf(this, _ExpiredTokenException.prototype);
+    Object.setPrototypeOf(this, ExpiredTokenException2.prototype);
     this.error = opts.error;
     this.error_description = opts.error_description;
   }
 };
-var InternalServerException = class _InternalServerException extends SSOOIDCServiceException {
+var InternalServerException = class extends SSOOIDCServiceException {
   constructor(opts) {
     super({
       name: "InternalServerException",
@@ -33793,12 +33749,12 @@ var InternalServerException = class _InternalServerException extends SSOOIDCServ
     });
     this.name = "InternalServerException";
     this.$fault = "server";
-    Object.setPrototypeOf(this, _InternalServerException.prototype);
+    Object.setPrototypeOf(this, InternalServerException.prototype);
     this.error = opts.error;
     this.error_description = opts.error_description;
   }
 };
-var InvalidClientException = class _InvalidClientException extends SSOOIDCServiceException {
+var InvalidClientException = class extends SSOOIDCServiceException {
   constructor(opts) {
     super({
       name: "InvalidClientException",
@@ -33807,12 +33763,12 @@ var InvalidClientException = class _InvalidClientException extends SSOOIDCServic
     });
     this.name = "InvalidClientException";
     this.$fault = "client";
-    Object.setPrototypeOf(this, _InvalidClientException.prototype);
+    Object.setPrototypeOf(this, InvalidClientException.prototype);
     this.error = opts.error;
     this.error_description = opts.error_description;
   }
 };
-var InvalidGrantException = class _InvalidGrantException extends SSOOIDCServiceException {
+var InvalidGrantException = class extends SSOOIDCServiceException {
   constructor(opts) {
     super({
       name: "InvalidGrantException",
@@ -33821,12 +33777,12 @@ var InvalidGrantException = class _InvalidGrantException extends SSOOIDCServiceE
     });
     this.name = "InvalidGrantException";
     this.$fault = "client";
-    Object.setPrototypeOf(this, _InvalidGrantException.prototype);
+    Object.setPrototypeOf(this, InvalidGrantException.prototype);
     this.error = opts.error;
     this.error_description = opts.error_description;
   }
 };
-var InvalidRequestException2 = class _InvalidRequestException extends SSOOIDCServiceException {
+var InvalidRequestException2 = class extends SSOOIDCServiceException {
   constructor(opts) {
     super({
       name: "InvalidRequestException",
@@ -33835,12 +33791,12 @@ var InvalidRequestException2 = class _InvalidRequestException extends SSOOIDCSer
     });
     this.name = "InvalidRequestException";
     this.$fault = "client";
-    Object.setPrototypeOf(this, _InvalidRequestException.prototype);
+    Object.setPrototypeOf(this, InvalidRequestException2.prototype);
     this.error = opts.error;
     this.error_description = opts.error_description;
   }
 };
-var InvalidScopeException = class _InvalidScopeException extends SSOOIDCServiceException {
+var InvalidScopeException = class extends SSOOIDCServiceException {
   constructor(opts) {
     super({
       name: "InvalidScopeException",
@@ -33849,12 +33805,12 @@ var InvalidScopeException = class _InvalidScopeException extends SSOOIDCServiceE
     });
     this.name = "InvalidScopeException";
     this.$fault = "client";
-    Object.setPrototypeOf(this, _InvalidScopeException.prototype);
+    Object.setPrototypeOf(this, InvalidScopeException.prototype);
     this.error = opts.error;
     this.error_description = opts.error_description;
   }
 };
-var SlowDownException = class _SlowDownException extends SSOOIDCServiceException {
+var SlowDownException = class extends SSOOIDCServiceException {
   constructor(opts) {
     super({
       name: "SlowDownException",
@@ -33863,12 +33819,12 @@ var SlowDownException = class _SlowDownException extends SSOOIDCServiceException
     });
     this.name = "SlowDownException";
     this.$fault = "client";
-    Object.setPrototypeOf(this, _SlowDownException.prototype);
+    Object.setPrototypeOf(this, SlowDownException.prototype);
     this.error = opts.error;
     this.error_description = opts.error_description;
   }
 };
-var UnauthorizedClientException = class _UnauthorizedClientException extends SSOOIDCServiceException {
+var UnauthorizedClientException = class extends SSOOIDCServiceException {
   constructor(opts) {
     super({
       name: "UnauthorizedClientException",
@@ -33877,12 +33833,12 @@ var UnauthorizedClientException = class _UnauthorizedClientException extends SSO
     });
     this.name = "UnauthorizedClientException";
     this.$fault = "client";
-    Object.setPrototypeOf(this, _UnauthorizedClientException.prototype);
+    Object.setPrototypeOf(this, UnauthorizedClientException.prototype);
     this.error = opts.error;
     this.error_description = opts.error_description;
   }
 };
-var UnsupportedGrantTypeException = class _UnsupportedGrantTypeException extends SSOOIDCServiceException {
+var UnsupportedGrantTypeException = class extends SSOOIDCServiceException {
   constructor(opts) {
     super({
       name: "UnsupportedGrantTypeException",
@@ -33891,7 +33847,7 @@ var UnsupportedGrantTypeException = class _UnsupportedGrantTypeException extends
     });
     this.name = "UnsupportedGrantTypeException";
     this.$fault = "client";
-    Object.setPrototypeOf(this, _UnsupportedGrantTypeException.prototype);
+    Object.setPrototypeOf(this, UnsupportedGrantTypeException.prototype);
     this.error = opts.error;
     this.error_description = opts.error_description;
   }
@@ -34196,7 +34152,7 @@ var loadRestJsonErrorCode2 = (output, data) => {
 };
 
 // ../../../node_modules/.pnpm/@aws-sdk+client-sso-oidc@3.370.0/node_modules/@aws-sdk/client-sso-oidc/dist-es/commands/CreateTokenCommand.js
-var CreateTokenCommand = class _CreateTokenCommand extends Command {
+var CreateTokenCommand = class extends Command {
   static getEndpointParameterInstructions() {
     return {
       UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
@@ -34211,7 +34167,7 @@ var CreateTokenCommand = class _CreateTokenCommand extends Command {
   }
   resolveMiddleware(clientStack, configuration, options) {
     this.middlewareStack.use(getSerdePlugin(configuration, this.serialize, this.deserialize));
-    this.middlewareStack.use(getEndpointPlugin(configuration, _CreateTokenCommand.getEndpointParameterInstructions()));
+    this.middlewareStack.use(getEndpointPlugin(configuration, CreateTokenCommand.getEndpointParameterInstructions()));
     const stack = clientStack.concat(this.middlewareStack);
     const { logger: logger2 } = configuration;
     const clientName = "SSOOIDCClient";
@@ -34662,7 +34618,7 @@ var getRuntimeConfig6 = (config) => {
 };
 
 // ../../../node_modules/.pnpm/@aws-sdk+client-sts@3.370.0/node_modules/@aws-sdk/client-sts/dist-es/STSClient.js
-var STSClient = class _STSClient extends Client {
+var STSClient = class extends Client {
   constructor(configuration) {
     const _config_0 = getRuntimeConfig6(configuration);
     const _config_1 = resolveClientEndpointParameters2(_config_0);
@@ -34670,7 +34626,7 @@ var STSClient = class _STSClient extends Client {
     const _config_3 = resolveEndpointConfig(_config_2);
     const _config_4 = resolveRetryConfig(_config_3);
     const _config_5 = resolveHostHeaderConfig(_config_4);
-    const _config_6 = resolveStsAuthConfig(_config_5, { stsClientCtor: _STSClient });
+    const _config_6 = resolveStsAuthConfig(_config_5, { stsClientCtor: STSClient });
     const _config_7 = resolveUserAgentConfig(_config_6);
     super(_config_7);
     this.config = _config_7;
@@ -35259,10 +35215,10 @@ var S3Client = class extends Client {
 var import_fast_xml_parser2 = __toESM(require_fxp());
 
 // ../../../node_modules/.pnpm/@aws-sdk+client-s3@3.370.0/node_modules/@aws-sdk/client-s3/dist-es/models/S3ServiceException.js
-var S3ServiceException = class _S3ServiceException extends ServiceException {
+var S3ServiceException = class extends ServiceException {
   constructor(options) {
     super(options);
-    Object.setPrototypeOf(this, _S3ServiceException.prototype);
+    Object.setPrototypeOf(this, S3ServiceException.prototype);
   }
 };
 
@@ -35321,7 +35277,7 @@ var ReplicationRuleFilter;
     return visitor._(value.$unknown[0], value.$unknown[1]);
   };
 })(ReplicationRuleFilter || (ReplicationRuleFilter = {}));
-var InvalidObjectState = class _InvalidObjectState extends S3ServiceException {
+var InvalidObjectState = class extends S3ServiceException {
   constructor(opts) {
     super({
       name: "InvalidObjectState",
@@ -35330,12 +35286,12 @@ var InvalidObjectState = class _InvalidObjectState extends S3ServiceException {
     });
     this.name = "InvalidObjectState";
     this.$fault = "client";
-    Object.setPrototypeOf(this, _InvalidObjectState.prototype);
+    Object.setPrototypeOf(this, InvalidObjectState.prototype);
     this.StorageClass = opts.StorageClass;
     this.AccessTier = opts.AccessTier;
   }
 };
-var NoSuchKey = class _NoSuchKey extends S3ServiceException {
+var NoSuchKey = class extends S3ServiceException {
   constructor(opts) {
     super({
       name: "NoSuchKey",
@@ -35344,7 +35300,7 @@ var NoSuchKey = class _NoSuchKey extends S3ServiceException {
     });
     this.name = "NoSuchKey";
     this.$fault = "client";
-    Object.setPrototypeOf(this, _NoSuchKey.prototype);
+    Object.setPrototypeOf(this, NoSuchKey.prototype);
   }
 };
 var GetObjectOutputFilterSensitiveLog = (obj) => ({
@@ -35942,7 +35898,7 @@ var getFlexibleChecksumsPlugin = (config, middlewareConfig) => ({
 });
 
 // ../../../node_modules/.pnpm/@aws-sdk+client-s3@3.370.0/node_modules/@aws-sdk/client-s3/dist-es/commands/GetObjectCommand.js
-var GetObjectCommand = class _GetObjectCommand extends Command {
+var GetObjectCommand = class extends Command {
   static getEndpointParameterInstructions() {
     return {
       Bucket: { type: "contextParams", name: "Bucket" },
@@ -35963,7 +35919,7 @@ var GetObjectCommand = class _GetObjectCommand extends Command {
   }
   resolveMiddleware(clientStack, configuration, options) {
     this.middlewareStack.use(getSerdePlugin(configuration, this.serialize, this.deserialize));
-    this.middlewareStack.use(getEndpointPlugin(configuration, _GetObjectCommand.getEndpointParameterInstructions()));
+    this.middlewareStack.use(getEndpointPlugin(configuration, GetObjectCommand.getEndpointParameterInstructions()));
     this.middlewareStack.use(getSsecPlugin(configuration));
     this.middlewareStack.use(getFlexibleChecksumsPlugin(configuration, {
       input: this.input,
@@ -35994,7 +35950,7 @@ var GetObjectCommand = class _GetObjectCommand extends Command {
 };
 
 // ../../../node_modules/.pnpm/@aws-sdk+client-s3@3.370.0/node_modules/@aws-sdk/client-s3/dist-es/commands/PutObjectCommand.js
-var PutObjectCommand = class _PutObjectCommand extends Command {
+var PutObjectCommand = class extends Command {
   static getEndpointParameterInstructions() {
     return {
       Bucket: { type: "contextParams", name: "Bucket" },
@@ -36015,7 +35971,7 @@ var PutObjectCommand = class _PutObjectCommand extends Command {
   }
   resolveMiddleware(clientStack, configuration, options) {
     this.middlewareStack.use(getSerdePlugin(configuration, this.serialize, this.deserialize));
-    this.middlewareStack.use(getEndpointPlugin(configuration, _PutObjectCommand.getEndpointParameterInstructions()));
+    this.middlewareStack.use(getEndpointPlugin(configuration, PutObjectCommand.getEndpointParameterInstructions()));
     this.middlewareStack.use(getCheckContentLengthHeaderPlugin(configuration));
     this.middlewareStack.use(getSsecPlugin(configuration));
     this.middlewareStack.use(getFlexibleChecksumsPlugin(configuration, {

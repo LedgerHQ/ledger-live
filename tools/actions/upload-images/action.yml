@@ -15,7 +15,7 @@ outputs:
   images:
     description: "string[] of images uploaded to imgur"
 runs:
-  using: node20
+  using: node16
   main: build/main.js
 
 branding:

@@ -163,7 +163,6 @@ function rng() {
 var import_crypto, rnds8Pool, poolPtr;
 var init_rng = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/rng.js"() {
-    "use strict";
     import_crypto = __toESM(require("crypto"));
     rnds8Pool = new Uint8Array(256);
     poolPtr = rnds8Pool.length;
@@ -174,7 +173,6 @@ var init_rng = __esm({
 var regex_default;
 var init_regex = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/regex.js"() {
-    "use strict";
     regex_default = /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000)$/i;
   }
 });
@@ -186,7 +184,6 @@ function validate(uuid) {
 var validate_default;
 var init_validate = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/validate.js"() {
-    "use strict";
     init_regex();
     validate_default = validate;
   }
@@ -203,7 +200,6 @@ function stringify(arr, offset = 0) {
 var byteToHex, stringify_default;
 var init_stringify = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/stringify.js"() {
-    "use strict";
     init_validate();
     byteToHex = [];
     for (let i = 0; i < 256; ++i) {
@@ -265,7 +261,6 @@ function v1(options, buf, offset) {
 var _nodeId, _clockseq, _lastMSecs, _lastNSecs, v1_default;
 var init_v1 = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/v1.js"() {
-    "use strict";
     init_rng();
     init_stringify();
     _lastMSecs = 0;
@@ -302,7 +297,6 @@ function parse(uuid) {
 var parse_default;
 var init_parse = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/parse.js"() {
-    "use strict";
     init_validate();
     parse_default = parse;
   }
@@ -354,7 +348,6 @@ function v35_default(name, version2, hashfunc) {
 var DNS, URL2;
 var init_v35 = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/v35.js"() {
-    "use strict";
     init_stringify();
     init_parse();
     DNS = "6ba7b810-9dad-11d1-80b4-00c04fd430c8";
@@ -374,7 +367,6 @@ function md5(bytes) {
 var import_crypto2, md5_default;
 var init_md5 = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/md5.js"() {
-    "use strict";
     import_crypto2 = __toESM(require("crypto"));
     md5_default = md5;
   }
@@ -384,7 +376,6 @@ var init_md5 = __esm({
 var v3, v3_default;
 var init_v3 = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/v3.js"() {
-    "use strict";
     init_v35();
     init_md5();
     v3 = v35_default("v3", 48, md5_default);
@@ -410,7 +401,6 @@ function v4(options, buf, offset) {
 var v4_default;
 var init_v4 = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/v4.js"() {
-    "use strict";
     init_rng();
     init_stringify();
     v4_default = v4;
@@ -429,7 +419,6 @@ function sha1(bytes) {
 var import_crypto3, sha1_default;
 var init_sha1 = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/sha1.js"() {
-    "use strict";
     import_crypto3 = __toESM(require("crypto"));
     sha1_default = sha1;
   }
@@ -439,7 +428,6 @@ var init_sha1 = __esm({
 var v5, v5_default;
 var init_v5 = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/v5.js"() {
-    "use strict";
     init_v35();
     init_sha1();
     v5 = v35_default("v5", 80, sha1_default);
@@ -451,7 +439,6 @@ var init_v5 = __esm({
 var nil_default;
 var init_nil = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/nil.js"() {
-    "use strict";
     nil_default = "00000000-0000-0000-0000-000000000000";
   }
 });
@@ -466,7 +453,6 @@ function version(uuid) {
 var version_default;
 var init_version = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/version.js"() {
-    "use strict";
     init_validate();
     version_default = version;
   }
@@ -487,7 +473,6 @@ __export(esm_node_exports, {
 });
 var init_esm_node = __esm({
   "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/index.js"() {
-    "use strict";
     init_v1();
     init_v3();
     init_v4();
@@ -855,7 +840,6 @@ var require_tunnel = __commonJS({
 // ../../../node_modules/.pnpm/tunnel@0.0.6/node_modules/tunnel/index.js
 var require_tunnel2 = __commonJS({
   "../../../node_modules/.pnpm/tunnel@0.0.6/node_modules/tunnel/index.js"(exports, module2) {
-    "use strict";
     module2.exports = require_tunnel();
   }
 });
@@ -984,12 +968,12 @@ var require_lib = __commonJS({
     var RetryableHttpVerbs = ["OPTIONS", "GET", "DELETE", "HEAD"];
     var ExponentialBackoffCeiling = 10;
     var ExponentialBackoffTimeSlice = 5;
-    var HttpClientError = class _HttpClientError extends Error {
+    var HttpClientError = class extends Error {
       constructor(message, statusCode) {
         super(message);
         this.name = "HttpClientError";
         this.statusCode = statusCode;
-        Object.setPrototypeOf(this, _HttpClientError.prototype);
+        Object.setPrototypeOf(this, HttpClientError.prototype);
       }
     };
     exports.HttpClientError = HttpClientError;
@@ -1580,13 +1564,13 @@ var require_oidc_utils = __commonJS({
     var http_client_1 = require_lib();
     var auth_1 = require_auth();
     var core_1 = require_core();
-    var OidcClient = class _OidcClient {
+    var OidcClient = class {
       static createHttpClient(allowRetry = true, maxRetry = 10) {
         const requestOptions = {
           allowRetries: allowRetry,
           maxRetries: maxRetry
         };
-        return new http_client_1.HttpClient("actions/oidc-client", [new auth_1.BearerCredentialHandler(_OidcClient.getRequestToken())], requestOptions);
+        return new http_client_1.HttpClient("actions/oidc-client", [new auth_1.BearerCredentialHandler(OidcClient.getRequestToken())], requestOptions);
       }
       static getRequestToken() {
         const token = process.env["ACTIONS_ID_TOKEN_REQUEST_TOKEN"];
@@ -1605,7 +1589,7 @@ var require_oidc_utils = __commonJS({
       static getCall(id_token_url) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
-          const httpclient = _OidcClient.createHttpClient();
+          const httpclient = OidcClient.createHttpClient();
           const res = yield httpclient.getJson(id_token_url).catch((error) => {
             throw new Error(`Failed to get ID Token. 
  
@@ -1623,13 +1607,13 @@ var require_oidc_utils = __commonJS({
       static getIDToken(audience) {
         return __awaiter(this, void 0, void 0, function* () {
           try {
-            let id_token_url = _OidcClient.getIDTokenUrl();
+            let id_token_url = OidcClient.getIDTokenUrl();
             if (audience) {
               const encodedAudience = encodeURIComponent(audience);
               id_token_url = `${id_token_url}&audience=${encodedAudience}`;
             }
             core_1.debug(`ID token url is ${id_token_url}`);
-            const id_token = yield _OidcClient.getCall(id_token_url);
+            const id_token = yield OidcClient.getCall(id_token_url);
             core_1.setSecret(id_token);
             return id_token;
           } catch (error) {
@@ -2341,14 +2325,12 @@ function getUserAgent() {
 }
 var init_dist_web = __esm({
   "../../../node_modules/.pnpm/universal-user-agent@6.0.0/node_modules/universal-user-agent/dist-web/index.js"() {
-    "use strict";
   }
 });
 
 // ../../../node_modules/.pnpm/before-after-hook@2.2.2/node_modules/before-after-hook/lib/register.js
 var require_register = __commonJS({
   "../../../node_modules/.pnpm/before-after-hook@2.2.2/node_modules/before-after-hook/lib/register.js"(exports, module2) {
-    "use strict";
     module2.exports = register;
     function register(state, name, method, options) {
       if (typeof method !== "function") {
@@ -2377,7 +2359,6 @@ var require_register = __commonJS({
 // ../../../node_modules/.pnpm/before-after-hook@2.2.2/node_modules/before-after-hook/lib/add.js
 var require_add = __commonJS({
   "../../../node_modules/.pnpm/before-after-hook@2.2.2/node_modules/before-after-hook/lib/add.js"(exports, module2) {
-    "use strict";
     module2.exports = addHook;
     function addHook(state, kind, name, hook2) {
       var orig = hook2;
@@ -2418,7 +2399,6 @@ var require_add = __commonJS({
 // ../../../node_modules/.pnpm/before-after-hook@2.2.2/node_modules/before-after-hook/lib/remove.js
 var require_remove = __commonJS({
   "../../../node_modules/.pnpm/before-after-hook@2.2.2/node_modules/before-after-hook/lib/remove.js"(exports, module2) {
-    "use strict";
     module2.exports = removeHook;
     function removeHook(state, name, method) {
       if (!state.registry[name]) {
@@ -2438,7 +2418,6 @@ var require_remove = __commonJS({
 // ../../../node_modules/.pnpm/before-after-hook@2.2.2/node_modules/before-after-hook/index.js
 var require_before_after_hook = __commonJS({
   "../../../node_modules/.pnpm/before-after-hook@2.2.2/node_modules/before-after-hook/index.js"(exports, module2) {
-    "use strict";
     var register = require_register();
     var addHook = require_add();
     var removeHook = require_remove();
@@ -2508,7 +2487,6 @@ function isPlainObject(o) {
 }
 var init_is_plain_object = __esm({
   "../../../node_modules/.pnpm/is-plain-object@5.0.0/node_modules/is-plain-object/dist/is-plain-object.mjs"() {
-    "use strict";
   }
 });
 
@@ -2778,7 +2756,6 @@ function withDefaults(oldDefaults, newDefaults) {
 var urlVariableRegex, VERSION, userAgent, DEFAULTS, endpoint;
 var init_dist_web2 = __esm({
   "../../../node_modules/.pnpm/@octokit+endpoint@6.0.12/node_modules/@octokit/endpoint/dist-web/index.js"() {
-    "use strict";
     init_is_plain_object();
     init_dist_web();
     urlVariableRegex = /\{[^}]+\}/g;
@@ -4575,7 +4552,7 @@ var require_public_api = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/node-fetch@2.7.0/node_modules/node-fetch/lib/index.mjs
+// ../../../node_modules/.pnpm/node-fetch@2.6.9/node_modules/node-fetch/lib/index.mjs
 function FetchError(message, type, systemError) {
   Error.call(this, message);
   this.message = message;
@@ -4927,6 +4904,9 @@ function getNodeRequestOptions(request2) {
   if (typeof agent === "function") {
     agent = agent(parsedURL);
   }
+  if (!headers.has("Connection") && !agent) {
+    headers.set("Connection", "close");
+  }
   return Object.assign({}, parsedURL, {
     method: request2.method,
     headers: exportNodeCompatibleHeaders(headers),
@@ -5154,7 +5134,7 @@ function fixResponseChunkedTransferBadEnding(request2, errorCallback) {
     const headers = response.headers;
     if (headers["transfer-encoding"] === "chunked" && !headers["content-length"]) {
       response.once("close", function(hadError) {
-        const hasDataListener = socket && socket.listenerCount("data") > 0;
+        const hasDataListener = socket.listenerCount("data") > 0;
         if (hasDataListener && !hadError) {
           const err = new Error("Premature close");
           err.code = "ERR_STREAM_PREMATURE_CLOSE";
@@ -5174,8 +5154,7 @@ function destroyStream(stream, err) {
 }
 var import_stream, import_http, import_url, import_whatwg_url, import_https, import_zlib, Readable, BUFFER, TYPE, Blob, convert, INTERNALS, PassThrough, invalidTokenRegex, invalidHeaderCharRegex, MAP, Headers, INTERNAL, HeadersIteratorPrototype, INTERNALS$1, STATUS_CODES, Response, INTERNALS$2, URL3, parse_url, format_url, streamDestructionSupported, Request, URL$1, PassThrough$1, isDomainOrSubdomain, isSameProtocol, lib_default;
 var init_lib = __esm({
-  "../../../node_modules/.pnpm/node-fetch@2.7.0/node_modules/node-fetch/lib/index.mjs"() {
-    "use strict";
+  "../../../node_modules/.pnpm/node-fetch@2.6.9/node_modules/node-fetch/lib/index.mjs"() {
     import_stream = __toESM(require("stream"), 1);
     import_http = __toESM(require("http"), 1);
     import_url = __toESM(require("url"), 1);
@@ -5185,7 +5164,7 @@ var init_lib = __esm({
     Readable = import_stream.default.Readable;
     BUFFER = Symbol("buffer");
     TYPE = Symbol("type");
-    Blob = class _Blob {
+    Blob = class {
       constructor() {
         this[TYPE] = "";
         const blobParts = arguments[0];
@@ -5204,7 +5183,7 @@ var init_lib = __esm({
               buffer = Buffer.from(element.buffer, element.byteOffset, element.byteLength);
             } else if (element instanceof ArrayBuffer) {
               buffer = Buffer.from(element);
-            } else if (element instanceof _Blob) {
+            } else if (element instanceof Blob) {
               buffer = element[BUFFER];
             } else {
               buffer = Buffer.from(typeof element === "string" ? element : String(element));
@@ -5266,7 +5245,7 @@ var init_lib = __esm({
         const span = Math.max(relativeEnd - relativeStart, 0);
         const buffer = this[BUFFER];
         const slicedBuffer = buffer.slice(relativeStart, relativeStart + span);
-        const blob = new _Blob([], { type: arguments[2] });
+        const blob = new Blob([], { type: arguments[2] });
         blob[BUFFER] = slicedBuffer;
         return blob;
       }
@@ -5393,7 +5372,7 @@ var init_lib = __esm({
     invalidTokenRegex = /[^\^_`a-zA-Z\-0-9!#$%&'*+.|~]/;
     invalidHeaderCharRegex = /[^\t\x20-\x7e\x80-\xff]/;
     MAP = Symbol("map");
-    Headers = class _Headers {
+    Headers = class {
       /**
        * Headers class
        *
@@ -5403,7 +5382,7 @@ var init_lib = __esm({
       constructor() {
         let init = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : void 0;
         this[MAP] = /* @__PURE__ */ Object.create(null);
-        if (init instanceof _Headers) {
+        if (init instanceof Headers) {
           const rawHeaders = init.raw();
           const headerNames = Object.keys(rawHeaders);
           for (const headerName of headerNames) {
@@ -5621,7 +5600,7 @@ var init_lib = __esm({
     });
     INTERNALS$1 = Symbol("Response internals");
     STATUS_CODES = import_http.default.STATUS_CODES;
-    Response = class _Response {
+    Response = class {
       constructor() {
         let body = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : null;
         let opts = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
@@ -5669,7 +5648,7 @@ var init_lib = __esm({
        * @return  Response
        */
       clone() {
-        return new _Response(clone(this), {
+        return new Response(clone(this), {
           url: this.url,
           status: this.status,
           statusText: this.statusText,
@@ -5700,7 +5679,7 @@ var init_lib = __esm({
     parse_url = import_url.default.parse;
     format_url = import_url.default.format;
     streamDestructionSupported = "destroy" in import_stream.default.Readable.prototype;
-    Request = class _Request {
+    Request = class {
       constructor(input) {
         let init = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
         let parsedURL;
@@ -5770,7 +5749,7 @@ var init_lib = __esm({
        * @return  Request
        */
       clone() {
-        return new _Request(this);
+        return new Request(this);
       }
     };
     Body.mixIn(Request.prototype);
@@ -5815,7 +5794,6 @@ var init_lib = __esm({
 var Deprecation;
 var init_dist_web3 = __esm({
   "../../../node_modules/.pnpm/deprecation@2.3.1/node_modules/deprecation/dist-web/index.js"() {
-    "use strict";
     Deprecation = class extends Error {
       constructor(message) {
         super(message);
@@ -5831,7 +5809,6 @@ var init_dist_web3 = __esm({
 // ../../../node_modules/.pnpm/wrappy@1.0.2/node_modules/wrappy/wrappy.js
 var require_wrappy = __commonJS({
   "../../../node_modules/.pnpm/wrappy@1.0.2/node_modules/wrappy/wrappy.js"(exports, module2) {
-    "use strict";
     module2.exports = wrappy;
     function wrappy(fn, cb) {
       if (fn && cb)
@@ -5863,7 +5840,6 @@ var require_wrappy = __commonJS({
 // ../../../node_modules/.pnpm/once@1.4.0/node_modules/once/once.js
 var require_once = __commonJS({
   "../../../node_modules/.pnpm/once@1.4.0/node_modules/once/once.js"(exports, module2) {
-    "use strict";
     var wrappy = require_wrappy();
     module2.exports = wrappy(once2);
     module2.exports.strict = wrappy(onceStrict);
@@ -5910,7 +5886,6 @@ var require_once = __commonJS({
 var import_once, logOnceCode, logOnceHeaders, RequestError;
 var init_dist_web4 = __esm({
   "../../../node_modules/.pnpm/@octokit+request-error@2.1.0/node_modules/@octokit/request-error/dist-web/index.js"() {
-    "use strict";
     init_dist_web3();
     import_once = __toESM(require_once());
     logOnceCode = (0, import_once.default)((deprecation) => console.warn(deprecation));
@@ -6092,7 +6067,6 @@ function withDefaults2(oldEndpoint, newDefaults) {
 var VERSION2, request;
 var init_dist_web5 = __esm({
   "../../../node_modules/.pnpm/@octokit+request@5.6.3/node_modules/@octokit/request/dist-web/index.js"() {
-    "use strict";
     init_dist_web2();
     init_dist_web();
     init_is_plain_object();
@@ -6169,7 +6143,6 @@ function withCustomRequest(customRequest) {
 var VERSION3, GraphqlResponseError, NON_VARIABLE_OPTIONS, FORBIDDEN_VARIABLE_OPTIONS, GHES_V3_SUFFIX_REGEX, graphql$1;
 var init_dist_web6 = __esm({
   "../../../node_modules/.pnpm/@octokit+graphql@4.8.0/node_modules/@octokit/graphql/dist-web/index.js"() {
-    "use strict";
     init_dist_web5();
     init_dist_web();
     VERSION3 = "4.8.0";
@@ -6234,7 +6207,6 @@ async function hook(token, request2, route, parameters) {
 var REGEX_IS_INSTALLATION_LEGACY, REGEX_IS_INSTALLATION, REGEX_IS_USER_TO_SERVER, createTokenAuth;
 var init_dist_web7 = __esm({
   "../../../node_modules/.pnpm/@octokit+auth-token@2.5.0/node_modules/@octokit/auth-token/dist-web/index.js"() {
-    "use strict";
     REGEX_IS_INSTALLATION_LEGACY = /^v1\./;
     REGEX_IS_INSTALLATION = /^ghs_/;
     REGEX_IS_USER_TO_SERVER = /^ghu_/;
@@ -6261,7 +6233,6 @@ __export(dist_web_exports, {
 var import_before_after_hook, VERSION4, Octokit;
 var init_dist_web8 = __esm({
   "../../../node_modules/.pnpm/@octokit+core@3.6.0/node_modules/@octokit/core/dist-web/index.js"() {
-    "use strict";
     init_dist_web();
     import_before_after_hook = __toESM(require_before_after_hook());
     init_dist_web5();
@@ -6449,7 +6420,6 @@ function legacyRestEndpointMethods(octokit) {
 var Endpoints, VERSION5;
 var init_dist_web9 = __esm({
   "../../../node_modules/.pnpm/@octokit+plugin-rest-endpoint-methods@5.13.0_@octokit+core@3.6.0/node_modules/@octokit/plugin-rest-endpoint-methods/dist-web/index.js"() {
-    "use strict";
     Endpoints = {
       actions: {
         addSelectedRepoToOrgSecret: [
@@ -7997,7 +7967,6 @@ function paginateRest(octokit) {
 var VERSION6, composePaginateRest, paginatingEndpoints;
 var init_dist_web10 = __esm({
   "../../../node_modules/.pnpm/@octokit+plugin-paginate-rest@2.17.0_@octokit+core@3.6.0/node_modules/@octokit/plugin-paginate-rest/dist-web/index.js"() {
-    "use strict";
     VERSION6 = "2.17.0";
     composePaginateRest = Object.assign(paginate, {
       iterator
