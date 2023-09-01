@@ -1,13 +1,13 @@
 import React from "react";
-import { Flex, Text, Icon } from "@ledgerhq/native-ui";
+import { Flex } from "@ledgerhq/native-ui";
 import Button from "./Button";
+import { GenericInformationBody } from "./GenericInformationBody";
 
 export type InformationaIconType = "error" | "success" | "warning" | "info";
 
 type Props = {
   title: string;
-  icon?: React.ReactNode;
-  iconType?: InformationaIconType;
+  icon: React.ReactElement;
   description: string;
   primaryButtonLabel?: string;
   onPrimaryButtonPress?: () => void;
@@ -28,71 +28,19 @@ type Props = {
 function GenericInformationalDrawerContent({
   title,
   icon,
-  iconType,
   description,
   primaryButtonLabel,
   onPrimaryButtonPress,
   primaryButtonEvent,
 }: Props) {
-  let renderedIcon = null;
-
-  if (icon) {
-    renderedIcon = icon;
-  } else if (iconType) {
-    let iconName = "";
-    let iconColor = "";
-
-    switch (iconType) {
-      case "error":
-        iconName = "Close";
-        iconColor = "red";
-        break;
-      case "success":
-        iconName = "CheckAlone";
-        iconColor = "green";
-        break;
-      case "warning":
-        iconName = "Warning";
-        iconColor = "yellow";
-        break;
-      case "info":
-        iconName = "Info";
-        break;
-      default:
-        break;
-    }
-
-    if (iconName) {
-      renderedIcon = <Icon name={iconName} color={iconColor} size={40} weight="Medium" />;
-    }
-  }
-
   return (
-    <Flex minHeight="280px" paddingX="20px" alignItems="center">
-      {renderedIcon ? (
-        <Flex
-          backgroundColor={"opacityDefault.c05"}
-          height={64}
-          width={64}
-          borderRadius={999}
-          justifyContent="center"
-          alignItems="center"
-          mb={4}
-        >
-          {renderedIcon}
-        </Flex>
-      ) : (
-        <Flex height={16} />
-      )}
-
-      <Text variant="h4" textAlign="center" color="neutral.c100" mb={4}>
-        {title}
-      </Text>
-      <Text mb={10} variant={"body"} fontWeight={"medium"} textAlign="center" color={"neutral.c80"}>
-        {description}
-      </Text>
+    <Flex alignItems="center">
+      <GenericInformationBody Icon={() => icon} title={title} description={description} />
       {primaryButtonLabel ? (
         <Button
+          mt={8}
+          alignSelf="stretch"
+          size="large"
           type="main"
           onPress={onPrimaryButtonPress}
           outline
