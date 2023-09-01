@@ -77,7 +77,7 @@ function formatOperationSpecifics(op: Operation, unit: Unit | null | undefined):
 
 export function fromOperationExtraRaw(extraRaw: ElrondOperationExtraRaw) {
   const extra: ElrondOperationExtra = {};
-  if (extraRaw.amount != null) {
+  if (extraRaw.amount) {
     extra.amount = new BigNumber(extraRaw.amount);
   }
   return extra;
@@ -85,7 +85,7 @@ export function fromOperationExtraRaw(extraRaw: ElrondOperationExtraRaw) {
 
 export function toOperationExtraRaw(extra: ElrondOperationExtra) {
   const extraRaw: ElrondOperationExtraRaw = {};
-  if (extra.amount != null) {
+  if (extra.amount) {
     extraRaw.amount = extra.amount.toString();
   }
   return extraRaw;
