@@ -67,8 +67,7 @@ const OnboardingStepUseCaseSelection = () => {
     if (deviceModelId === "nanoX") {
       const deeplink = servicesConfig?.params?.deeplink;
 
-      if (deeplink !== null) {
-        // @ts-expect-error TYPINGS
+      if (deeplink) {
         Linking.openURL(deeplink);
       } else {
         navigation.navigate(ScreenName.OnboardingPairNew, {

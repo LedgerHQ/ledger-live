@@ -43,8 +43,7 @@ const StepReceiveStakingFlow = (props: StepProps) => {
   const { account, parentAccount } = props;
 
   const id = account && "currency" in account ? account.currency?.id : undefined;
-  // @ts-expect-error TYPINGS
-  const supportLink = id ? receiveStakingFlowConfig?.params[id]?.supportLink : undefined;
+  const supportLink = id ? receiveStakingFlowConfig?.params?.[id]?.supportLink : undefined;
 
   const manage =
     account && account.type === "Account"

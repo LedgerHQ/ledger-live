@@ -203,8 +203,7 @@ const StepReceiveFunds = (props: StepProps) => {
       !receiveNFTMode &&
       !receiveTokenMode &&
       receiveStakingFlowConfig?.enabled &&
-      // @ts-expect-error TYPINGS
-      receiveStakingFlowConfig?.params[id]?.enabled
+      receiveStakingFlowConfig?.params?.[id]?.enabled
     ) {
       track("button_clicked", {
         button: "continue",
