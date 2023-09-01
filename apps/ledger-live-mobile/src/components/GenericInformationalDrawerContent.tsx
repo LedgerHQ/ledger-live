@@ -34,7 +34,7 @@ function GenericInformationalDrawerContent({
   primaryButtonEvent,
 }: Props) {
   return (
-    <Flex alignItems="center">
+    <Flex alignItems="center" alignSelf={"stretch"}>
       <GenericInformationBody Icon={() => icon} title={title} description={description} />
       {primaryButtonLabel ? (
         <Button
