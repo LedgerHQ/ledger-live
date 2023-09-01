@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.30.0-next.2
+
+### Minor Changes
+
+- [#4558](https://github.com/LedgerHQ/ledger-live/pull/4558) [`7dc9d2bfa8`](https://github.com/LedgerHQ/ledger-live/commit/7dc9d2bfa869c467657483d635c38073beda03d1) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Fixed the following issue : User cannot select device on device selection screen when verifying address a second time
+
 ## 3.30.0-next.1
 
 ### Patch Changes
