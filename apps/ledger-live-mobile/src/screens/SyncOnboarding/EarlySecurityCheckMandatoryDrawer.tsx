@@ -74,7 +74,6 @@ const EarlySecurityCheckMandatoryDrawer: React.FC<Props> = ({
       <Link onPress={onCancel} size={"large"}>
         {t("earlySecurityCheck.earlySecurityCheckMandatoryDrawer.cancelCta")}
       </Link>
-      <Flex height={7} />
     </QueuedDrawer>
   );
 };

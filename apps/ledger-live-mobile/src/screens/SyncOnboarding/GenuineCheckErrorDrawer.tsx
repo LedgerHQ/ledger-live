@@ -5,7 +5,7 @@ import QueuedDrawer from "../../components/QueuedDrawer";
 import { TrackScreen, track } from "../../analytics";
 import GenericErrorView from "../../components/GenericErrorView";
 import { GenericInformationBody } from "../../components/GenericInformationBody";
-import { FirmwareNotRecognized } from "@ledgerhq/errors";
+import { BluetoothRequired, FirmwareNotRecognized } from "@ledgerhq/errors";
 import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "../../const";
 import type { SyncOnboardingScreenProps } from ".";
@@ -123,7 +123,6 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
         <Link onPress={handleCancel} size={"large"}>
           {t("earlySecurityCheck.genuineCheckErrorDrawer.cancelCta")}
         </Link>
-        <Flex height={7} />
       </>
     );
   }
@@ -137,13 +136,18 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
           iconColor="warning.c70"
           hasExportLogButton={false}
         />
-        <Button type="main" mt={8} mb={7} size={"large"} onPress={handleRetry}>
+        <Button
+          type="main"
+          mt={(error as unknown as Error) instanceof BluetoothRequired ? 6 : 8}
+          mb={7}
+          size={"large"}
+          onPress={handleRetry}
+        >
           {t("earlySecurityCheck.genuineCheckErrorDrawer.retryCta")}
         </Button>
         <Link onPress={handleCancel} size="large">
           {t("earlySecurityCheck.genuineCheckErrorDrawer.cancelCta")}
         </Link>
-        <Flex height={7} />
       </Flex>
     );
   }
@@ -167,7 +171,6 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
         <Link onPress={handleCancel} size="large">
           {t("earlySecurityCheck.genuineCheckErrorDrawer.cancelCta")}
         </Link>
-        <Flex height={7} />
       </>
     );
   }

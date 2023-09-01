@@ -55,7 +55,6 @@ const FirmwareUpdateAvailableDrawer: React.FC<Props> = ({
       <Link onPress={onUpdate} size={"large"} Icon={IconsLegacy.ExternalLinkMedium}>
         {t("earlySecurityCheck.firmwareUpdateAvailableDrawer.seeWhatsInUpdateCta")}
       </Link>
-      <Flex height={7} />
     </QueuedDrawer>
   );
 };

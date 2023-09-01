@@ -65,7 +65,7 @@ const ChangeDeviceLanguagePrompt: React.FC<Props> = ({
           </Link>
         </Flex>
       )}
-      <Flex my={7}>
+      <Flex mt={7}>
         <Link
           onPress={() => Linking.openURL(urls.deviceLocalization.learnMore)}
           Icon={IconsLegacy.ExternalLinkMedium}
