@@ -1,6 +1,7 @@
 import * as core from "@actions/core";
 import * as fs from "fs";
 import * as path from "path";
+import fetch, { Response } from "node-fetch";
 
 function handleErrors(response: Response) {
   if (!response.ok) {
@@ -75,6 +76,7 @@ async function main() {
   // optionally send to slack
   if (slackApiToken && githubComment) {
     const slackCommentTemplate = await slackCommentTemplateP;
+    // @ts-expect-error githubComment.html_url not working
     const text = slackCommentTemplate.replace("{{url}}", githubComment.html_url);
     await fetch("https://slack.com/api/chat.postMessage", {
       method: "POST",
