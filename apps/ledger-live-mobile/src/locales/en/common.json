@@ -2446,7 +2446,7 @@
     },
     "import": {
       "scan": {
-        "title": "Import from desktop",
+        "title": "Import from desktop"
       },
       "newScan": {
         "title": "Scan and import your accounts from Ledger Live desktop",
