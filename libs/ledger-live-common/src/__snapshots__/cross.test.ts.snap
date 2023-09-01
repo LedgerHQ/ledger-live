@@ -37,6 +37,8 @@ Object {
   "meta": Object {
     "exporterName": "test",
     "exporterVersion": "0.0.0",
+    "modelId": undefined,
+    "modelIdList": undefined,
   },
   "settings": Object {
     "blacklistedTokenIds": Array [
