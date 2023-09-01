@@ -11,6 +11,7 @@ import type { AppSpec, TransactionTestInput } from "../../bot/types";
 import { toOperationRaw } from "../../account";
 import { DeviceModelId } from "@ledgerhq/devices";
 import expect from "expect";
+import { log } from "@ledgerhq/logs";
 import {
   acceptDelegateTransaction,
   acceptEsdtTransferTransaction,
@@ -121,10 +122,13 @@ function expectCorrectOptimisticOperation(input: TransactionTestInput<Transactio
       optimisticOperation.transactionSequenceNumber,
     ),
   );
-
-  botTest("raw optimistic operation matches", () =>
-    expect(toOperationRaw(operation)).toMatchObject(opExpected),
-  );
+  const ggg = toOperationRaw(operation);
+  log("bot", "GGGGGGGGG");
+  log("bot", JSON.stringify(operation));
+  log("bot", JSON.stringify(ggg));
+  log("bot", JSON.stringify(opExpected));
+  log("bot", "FFFFFFFFF");
+  botTest("raw optimistic operation matches", () => expect(ggg).toMatchObject(opExpected));
 }
 
 function expectCorrectSpendableBalanceChange(input: TransactionTestInput<Transaction>) {
