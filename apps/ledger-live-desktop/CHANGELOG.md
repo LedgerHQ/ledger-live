@@ -1,5 +1,22 @@
 # ledger-live-desktop
 
+## 2.67.0-nightly.11
+
+### Minor Changes
+
+- [#4476](https://github.com/LedgerHQ/ledger-live/pull/4476) [`b2e8c1053e`](https://github.com/LedgerHQ/ledger-live/commit/b2e8c1053e57c763575c9c4d77d1daca8ef566fe) Thanks [@KVNLS](https://github.com/KVNLS)! - Add modelId and modelIdList in meta object when we do an export with the qrcode
+
+### Patch Changes
+
+- [#4552](https://github.com/LedgerHQ/ledger-live/pull/4552) [`ca8d064bab`](https://github.com/LedgerHQ/ledger-live/commit/ca8d064babf4df3babbdd4ba03f4be742d805edb) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - add new tag to earn in main side bar
+
+- [#4509](https://github.com/LedgerHQ/ledger-live/pull/4509) [`a35135437b`](https://github.com/LedgerHQ/ledger-live/commit/a35135437bef6fcd44925a240f0f4894eeb565da) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Added Storyly SDK along with its base hook and component
+
+- [#4562](https://github.com/LedgerHQ/ledger-live/pull/4562) [`61b1f38193`](https://github.com/LedgerHQ/ledger-live/commit/61b1f38193dc53824e35e3cf2d683330846d9f91) Thanks [@mle-gall](https://github.com/mle-gall)! - Final Stax pixel polished on LLD
+
+- Updated dependencies [[`b2e8c1053e`](https://github.com/LedgerHQ/ledger-live/commit/b2e8c1053e57c763575c9c4d77d1daca8ef566fe)]:
+  - @ledgerhq/live-common@31.6.0-nightly.10
+
 ## 2.67.0-nightly.10
 
 ### Patch Changes

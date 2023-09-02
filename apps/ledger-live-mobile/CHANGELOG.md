@@ -1,5 +1,20 @@
 # live-mobile
 
+## 3.30.0-nightly.11
+
+### Minor Changes
+
+- [#4557](https://github.com/LedgerHQ/ledger-live/pull/4557) [`6c5a27ac02`](https://github.com/LedgerHQ/ledger-live/commit/6c5a27ac029d473b97e1ba93e7f1842b4aa4ea7c) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Fixed the following issue : User cannot select device on device selection screen when verifying address a second time
+
+### Patch Changes
+
+- [#4556](https://github.com/LedgerHQ/ledger-live/pull/4556) [`04206a2939`](https://github.com/LedgerHQ/ledger-live/commit/04206a2939bb8bb807a9f57a175f054c613e3d57) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix sync onboarding: if the sync onboarding is aborted after the device has been seeded, the device should appear in the list of known devices
+
+- [#4569](https://github.com/LedgerHQ/ledger-live/pull/4569) [`8f99e87e43`](https://github.com/LedgerHQ/ledger-live/commit/8f99e87e43da87ac9cc768eddfb183ebc88cebb2) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - cache live app manifest to prevent infinite reload
+
+- Updated dependencies [[`b2e8c1053e`](https://github.com/LedgerHQ/ledger-live/commit/b2e8c1053e57c763575c9c4d77d1daca8ef566fe)]:
+  - @ledgerhq/live-common@31.6.0-nightly.10
+
 ## 3.30.0-nightly.10
 
 ### Patch Changes

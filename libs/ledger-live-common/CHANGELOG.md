@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 31.6.0-nightly.10
+
+### Minor Changes
+
+- [#4476](https://github.com/LedgerHQ/ledger-live/pull/4476) [`b2e8c1053e`](https://github.com/LedgerHQ/ledger-live/commit/b2e8c1053e57c763575c9c4d77d1daca8ef566fe) Thanks [@KVNLS](https://github.com/KVNLS)! - Add modelId and modelIdList in meta object when we do an export with the qrcode
+
 ## 31.6.0-nightly.9
 
 ### Patch Changes
