@@ -135,6 +135,10 @@ import STAX_signTransaction from "~/renderer/animations/stax/signTransaction.jso
 import STAX_allowConnection from "~/renderer/animations/stax/allowConnection.json";
 // @ts-ignore
 import STAX_confirmLockscreen from "~/renderer/animations/stax/confirmLockscreen.json";
+// @ts-ignore
+import STAX_USB_connection_success from "~/renderer/animations/stax/USBConnectionSuccess.json";
+// @ts-ignore
+import STAX_plug_and_pin from "~/renderer/animations/stax/USBConnectionAndPin.json";
 
 /* eslint-enable camelcase */
 type ThemedAnimation = Record<Theme["theme"], Record<string, unknown>>;
@@ -149,7 +153,8 @@ export type AnimationKey =
   | "firmwareUpdating"
   | "installLoading"
   | "confirmLockscreen"
-  | "recoverWithProtect";
+  | "recoverWithProtect"
+  | "connectionSuccess";
 type DeviceAnimations = { [key in AnimationKey]: ThemedAnimation };
 
 const nanoS: DeviceAnimations = {
@@ -196,6 +201,10 @@ const nanoS: DeviceAnimations = {
   recoverWithProtect: {
     light: NANO_X_LIGHT_recoverWithProtect,
     dark: NANO_X_DARK_recoverWithProtect,
+  },
+  connectionSuccess: {
+    light: STAX_USB_connection_success,
+    dark: STAX_USB_connection_success,
   },
 };
 
@@ -244,6 +253,10 @@ const nanoX: DeviceAnimations = {
     light: NANO_X_LIGHT_recoverWithProtect,
     dark: NANO_X_DARK_recoverWithProtect,
   },
+  connectionSuccess: {
+    light: STAX_USB_connection_success,
+    dark: STAX_USB_connection_success,
+  },
 };
 
 const nanoSP: DeviceAnimations = {
@@ -291,12 +304,16 @@ const nanoSP: DeviceAnimations = {
     light: NANO_X_LIGHT_recoverWithProtect,
     dark: NANO_X_DARK_recoverWithProtect,
   },
+  connectionSuccess: {
+    light: STAX_USB_connection_success,
+    dark: STAX_USB_connection_success,
+  },
 };
 
 const stax: DeviceAnimations = {
   plugAndPinCode: {
-    light: STAX_enterPin,
-    dark: STAX_enterPin,
+    light: STAX_plug_and_pin,
+    dark: STAX_plug_and_pin,
   },
   enterPinCode: {
     light: STAX_enterPin,
@@ -337,6 +354,10 @@ const stax: DeviceAnimations = {
   recoverWithProtect: {
     light: NANO_X_LIGHT_recoverWithProtect,
     dark: NANO_X_DARK_recoverWithProtect,
+  },
+  connectionSuccess: {
+    light: STAX_USB_connection_success,
+    dark: STAX_USB_connection_success,
   },
 };
 
@@ -385,6 +406,10 @@ const blue: DeviceAnimations = {
   recoverWithProtect: {
     light: NANO_X_LIGHT_recoverWithProtect,
     dark: NANO_X_DARK_recoverWithProtect,
+  },
+  connectionSuccess: {
+    light: STAX_USB_connection_success,
+    dark: STAX_USB_connection_success,
   },
 };
 

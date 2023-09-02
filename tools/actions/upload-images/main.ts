@@ -2,6 +2,7 @@ import * as core from "@actions/core";
 import * as fs from "fs";
 import FormData from "form-data";
 import * as path from "path";
+import fetch, { Response } from "node-fetch";
 
 function handleErrors(response: Response) {
   if (!response.ok) {
@@ -39,11 +40,10 @@ const uploadImage = async () => {
           Accept: "application/json",
           Authorization: `Client-ID 11eb8a62f4c7927`,
         },
-        // @ts-expect-error correct types are not found. FormData are acceptable
         body,
       }).then(handleErrors);
 
-      const link = (await res.json()).data.link;
+      const link = ((await res.json()) as { data: { link: string } }).data.link;
       if (!link) {
         throw new Error("no link");
       }

@@ -42,10 +42,7 @@ import * as Animatable from "react-native-animatable";
 const AnimatedView = Animatable.View;
 
 type ScreenProps = BaseComposite<
-  StackNavigatorProps<
-    ReceiveFundsStackParamList,
-    ScreenName.ReceiveConfirmation | ScreenName.ReceiveVerificationConfirmation
-  >
+  StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveConfirmation>
 >;
 
 type Props = {
