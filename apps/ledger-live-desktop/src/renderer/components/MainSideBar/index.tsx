@@ -444,6 +444,7 @@ const MainSideBar = () => {
                     isActive={location.pathname === "/earn"}
                     collapsed={secondAnim}
                     NotifComponent={
+                      // @ts-expect-error TODO doesn't exist yet in our types
                       ptxEarnConfig?.params?.isNew ? (
                         <CustomTag active type="plain" size="small">
                           {t("common.new")}
