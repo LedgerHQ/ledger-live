@@ -42,9 +42,12 @@ type ExchangeRateV5CommonPropertiesRaw = {
   from: string;
   to: string;
   amountFrom: string;
+  amountRequested?: string;
   amountTo: string;
   payoutNetworkFees: string;
-  status: string;
+  status: "success";
+  errorCode?: number;
+  errorMessage?: string;
   providerURL?: string;
 };
 
@@ -62,7 +65,32 @@ type ExchangeRateV5FixedRateRaw = ExchangeRateV5CommonPropertiesRaw & {
   rate: string;
 };
 
-export type ExchangeRateV5ResponseRaw = ExchangeRateV5FloatRateRaw | ExchangeRateV5FixedRateRaw;
+type ExchangeRateV5ErrorCommon = {
+  status: "error";
+  tradeMethod: TradeMethod;
+  from: string;
+  to: string;
+  providerType: ExchangeProviderType;
+  provider: string;
+};
+
+type ExchangeRateV5ErrorDefault = ExchangeRateV5ErrorCommon & {
+  errorCode: number;
+  errorMessage: string;
+};
+
+type ExchangeRateV5ErrorMinMaxAmount = ExchangeRateV5ErrorCommon & {
+  amountRequested: string;
+  minAmountFrom: string;
+  maxAmountFrom: string;
+};
+
+export type ExchangeRateV5Errors = ExchangeRateV5ErrorDefault | ExchangeRateV5ErrorMinMaxAmount;
+
+export type ExchangeRateV5ResponseRaw =
+  | ExchangeRateV5FloatRateRaw
+  | ExchangeRateV5FixedRateRaw
+  | ExchangeRateV5Errors;
 
 export type TradeMethod = "fixed" | "float";
 
