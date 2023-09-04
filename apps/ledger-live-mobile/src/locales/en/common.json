@@ -1969,8 +1969,7 @@
       },
       "completed": {
         "noUpdateAvailable": {
-          "title": "OS update check",
-          "description": "OS update check makes sure {{productName}} Operating System is up to date."
+          "title": "{{productName}} OS is up to date"
         }
       },
       "error": {
@@ -1989,10 +1988,11 @@
       }
     },
     "firmwareUpdateAvailableDrawer": {
-      "title": "OS update available",
+      "title": "{{productName}} OS update available",
       "description": "Update your {{productName}} to benefit from the latest security and functionality.",
       "descriptionVersion": "Version {{firmwareVersion}}",
-      "updateCta": "Update now"
+      "updateCta": "Update now",
+      "seeWhatsInUpdateCta": "See what's in the update"
     }
   },
   "syncOnboarding": {
@@ -4289,6 +4289,7 @@
     "yesChangeLanguage": "Yes, change language",
     "allowLanguageInstallation": "Approve language installation on {{deviceName}}",
     "languageInstalled": "Language changed to {{language}}",
+    "languageInstalledDesc": "Your device is now in the language you chose",
     "firmwareUpdatePrompt": {
       "title": "Set your {{deviceName}} in {{language}}?",
       "description": "{{language}} is now available for your {{deviceName}}. You can set it now, or change your device language at any time from My Ledger."
