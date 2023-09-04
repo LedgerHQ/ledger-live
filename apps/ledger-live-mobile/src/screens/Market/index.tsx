@@ -31,7 +31,6 @@ import SearchHeader from "./SearchHeader";
 import { ScreenName } from "../../const";
 import { track } from "../../analytics";
 import TrackScreen from "../../analytics/TrackScreen";
-import { useProviders } from "../Swap/Form/index";
 import Illustration from "../../images/illustration/Illustration";
 import { TAB_BAR_SAFE_HEIGHT } from "../../components/TabBar/TabBarSafeAreaView";
 import { setMarketFilterByStarredAccounts, setMarketRequestParams } from "../../actions/settings";
@@ -39,6 +38,7 @@ import { AnalyticsContext } from "../../analytics/AnalyticsContext";
 import EmptyStarredCoins from "./EmptyStarredCoins";
 import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { MarketNavigatorStackParamList } from "../../components/RootNavigator/types/MarketNavigator";
+import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 
 const noResultIllustration = {
   dark: require("../../images/illustration/Dark/_051.png"),
@@ -267,7 +267,7 @@ export default function Market({ navigation }: NavigationProps) {
   const filterByStarredAccount: boolean = useSelector(marketFilterByStarredAccountsSelector);
   const ptxEarnFeature = useFeature("ptxEarn");
 
-  useProviders();
+  useFetchCurrencyAll();
 
   const {
     requestParams,

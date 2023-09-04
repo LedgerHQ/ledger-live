@@ -41,6 +41,7 @@ export function useFetchRates({
       toCurrencyId,
       fromCurrencyAmount: formattedCurrencyAmount,
     },
+    staleTimeout: 50000,
     enabled: !!toCurrencyId && !!currencyFrom && fromCurrencyAmount.gt(0) && !!unitFrom && !!unitTo,
     onSuccess,
     onBeforeFetch,

@@ -8,12 +8,12 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
 import { StyleProp, ViewStyle } from "react-native";
 import CoinsIcon from "./CoinsIcon";
-import { useProviders } from "../../screens/Swap/Form";
 import TransferButton from "../TransferButton";
 import { NavigatorName, ScreenName } from "../../const";
 import { TrackScreen, useAnalytics, track } from "../../analytics";
 import type { NoFundsNavigatorParamList } from "../RootNavigator/types/NoFundsNavigator";
 import { StackNavigatorProps } from "../RootNavigator/types/helpers";
+import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 
 type Props = StackNavigatorProps<NoFundsNavigatorParamList, ScreenName.NoFunds>;
 
@@ -32,9 +32,9 @@ type ButtonItem = {
 
 export default function NoFunds({ route }: Props) {
   const { t } = useTranslation();
+  const { data: currenciesAll } = useFetchCurrencyAll();
   const { account, parentAccount } = route?.params;
   const rampCatalog = useRampCatalog();
-  const { providers } = useProviders();
   const navigation = useNavigation();
   const onRampAvailableTickers = useMemo(() => {
     if (!rampCatalog.value) {
@@ -43,17 +43,7 @@ export default function NoFunds({ route }: Props) {
     return getAllSupportedCryptoCurrencyTickers(rampCatalog.value.onRamp);
   }, [rampCatalog.value]);
 
-  const swapAvailableIds = useMemo(() => {
-    return providers
-      ? providers
-          .map(provider => {
-            return provider.pairs.map(({ from, to }) => {
-              return [from, to];
-            });
-          })
-          .flat(2)
-      : [];
-  }, [providers]);
+  const swapAvailableIds = useMemo(() => currenciesAll ?? [], [currenciesAll]);
 
   const currency = parentAccount?.currency || account?.currency;
   const availableOnReceive = true;

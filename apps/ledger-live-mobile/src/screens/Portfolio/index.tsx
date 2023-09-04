@@ -23,7 +23,6 @@ import { ScreenName } from "../../const";
 import FirmwareUpdateBanner from "../../components/FirmwareUpdateBanner";
 import CheckLanguageAvailability from "../../components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "../../components/CheckTermOfUseUpdate";
-import { useProviders } from "../Swap/Form/index";
 import PortfolioEmptyState from "./PortfolioEmptyState";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import SectionContainer from "../WalletCentricSections/SectionContainer";
@@ -49,6 +48,7 @@ import {
 import PortfolioAssets from "./PortfolioAssets";
 import { internetReachable } from "../../logic/internetReachable";
 import { UpdateStep } from "../FirmwareUpdate";
+import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -106,7 +106,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
     });
     setAddModalOpened(true);
   }, [setAddModalOpened]);
-  useProviders();
+  useFetchCurrencyAll();
 
   const closeAddModal = useCallback(() => setAddModalOpened(false), [setAddModalOpened]);
   const refreshAccountsOrdering = useRefreshAccountsOrdering();

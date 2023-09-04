@@ -14,16 +14,14 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { getAllSupportedCryptoCurrencyIds } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 import { DefaultTheme } from "styled-components/native";
 import { NavigatorName, ScreenName } from "../../../const";
-import {
-  readOnlyModeEnabledSelector,
-  swapSelectableCurrenciesSelector,
-} from "../../../reducers/settings";
+import { readOnlyModeEnabledSelector } from "../../../reducers/settings";
 import perFamilyAccountActions from "../../../generated/accountActions";
 
 import ZeroBalanceDisabledModalContent from "../../../components/FabActions/modals/ZeroBalanceDisabledModalContent";
 import { ActionButtonEvent } from "../../../components/FabActions";
 import { useCanShowStake } from "./useCanShowStake";
 import { PtxToast } from "../../../components/Toast/PtxToast";
+import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 
 type Props = {
   account: AccountLike;
@@ -79,8 +77,8 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
     ];
   }, [rampCatalog.value, currency]);
 
-  const swapSelectableCurrencies = useSelector(swapSelectableCurrenciesSelector);
-  const availableOnSwap = swapSelectableCurrencies.includes(currency.id);
+  const { data: currenciesAll } = useFetchCurrencyAll();
+  const availableOnSwap = currency && (currenciesAll ?? []).includes(currency.id);
 
   const extraSendActionParams = useMemo(
     () =>
