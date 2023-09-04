@@ -3,16 +3,12 @@ import { DEFAULT_SWAP_TIMEOUT_MS } from "../../const/timeout";
 import axios from "axios";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
 import { getEnv } from "@ledgerhq/live-env";
-import BigNumber from "bignumber.js";
-import { ExchangeRate, ExchangeRateV5Errors, ExchangeRateV5ResponseRaw } from "../../types";
+import { ExchangeRate, ExchangeRateV5ResponseRaw } from "../../types";
 import { Unit } from "@ledgerhq/live-app-sdk";
-import { getSwapAPIError } from "../..";
-import {
-  SwapExchangeRateAmountTooHigh,
-  SwapExchangeRateAmountTooLow,
-  SwapGenericAPIError,
-} from "../../../../errors";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { SwapGenericAPIError } from "../../../../errors";
+import { enrichRatesResponse } from "../../utils/enrichRatesResponse";
+import { isIntegrationTestEnv } from "../../utils/isIntegrationTestEnv";
+import { fetchRatesMock } from "./__mocks__/fetchRates.mocks";
 
 type Props = {
   providers: Array<string>;
@@ -31,6 +27,10 @@ export async function fetchRates({
   unitFrom,
   fromCurrencyAmount,
 }: Props): Promise<ExchangeRate[]> {
+  if (isIntegrationTestEnv()) {
+    return Promise.resolve(enrichRatesResponse(fetchRatesMock, unitTo, unitFrom));
+  }
+
   const url = new URL(`${getEnv("SWAP_API_BASE_V5")}/rate`);
   const requestBody = {
     from: currencyFrom,
@@ -46,51 +46,7 @@ export async function fetchRates({
       timeout: DEFAULT_SWAP_TIMEOUT_MS,
       data: requestBody,
     });
-    const enrichedResponse = data.map<ExchangeRate>(r => {
-      if (r.status === "success") {
-        const rate =
-          r.tradeMethod === "fixed"
-            ? BigNumber(r.rate)
-            : BigNumber(r.amountTo).minus(r.payoutNetworkFees).div(r.amountFrom);
-
-        const magnitudeAwareToAmount = BigNumber(r.amountTo)
-          .minus(r.payoutNetworkFees)
-          .times(new BigNumber(10).pow(unitTo.magnitude));
-
-        const magnitudeAwarePayoutNetworkFees = BigNumber(r.payoutNetworkFees).times(
-          new BigNumber(10).pow(unitTo.magnitude),
-        );
-
-        const magnitudeAwareRate = rate.div(
-          new BigNumber(10).pow(unitFrom.magnitude - unitTo.magnitude),
-        );
-
-        return {
-          ...(r.tradeMethod === "fixed" ? { expirationTime: Number(r.expirationTime) } : {}),
-          magnitudeAwareRate,
-          payoutNetworkFees: magnitudeAwarePayoutNetworkFees,
-          provider: r.provider,
-          providerType: r.providerType,
-          providerURL: r.providerURL,
-          rate,
-          rateId: r.rateId,
-          toAmount: magnitudeAwareToAmount,
-          tradeMethod: r.tradeMethod,
-        };
-      }
-
-      const error = r.status === "error" ? inferError(r, unitFrom) : undefined;
-      return {
-        magnitudeAwareRate: BigNumber(0),
-        payoutNetworkFees: BigNumber(0),
-        provider: r.provider,
-        providerType: r.providerType,
-        rate: undefined,
-        toAmount: BigNumber(0),
-        tradeMethod: r.tradeMethod,
-        error,
-      };
-    });
+    const enrichedResponse = enrichRatesResponse(data, unitTo, unitFrom);
 
     const allErrored = enrichedResponse.every(res => !!res.error);
 
@@ -134,50 +90,3 @@ export async function fetchRates({
     throw e;
   }
 }
-
-const inferError = (response: ExchangeRateV5Errors, unitFrom: Unit): Error | undefined => {
-  const isAMinMaxError =
-    "minAmountFrom" in response &&
-    "maxAmountFrom" in response &&
-    "amountRequested" in response &&
-    !!response.minAmountFrom &&
-    !!response.maxAmountFrom &&
-    !!response.amountRequested;
-
-  const isAnErrorCodeMessageError = "errorCode" in response && "errorMessage" in response;
-
-  if (isAMinMaxError) {
-    const isTooSmall = BigNumber(response.amountRequested).lt(response.minAmountFrom);
-
-    const minOrMaxError = isTooSmall
-      ? {
-          error: SwapExchangeRateAmountTooLow,
-          amount: response.minAmountFrom,
-          key: "minAmountFromFormatted",
-        }
-      : {
-          error: SwapExchangeRateAmountTooHigh,
-          amount: response.maxAmountFrom!,
-          key: "maxAmountFromFormatted",
-        };
-
-    return new minOrMaxError.error(undefined, {
-      [minOrMaxError.key]: formatCurrencyUnit(
-        unitFrom,
-        new BigNumber(minOrMaxError?.amount).times(BigNumber(10).pow(unitFrom.magnitude)),
-        {
-          alwaysShowSign: false,
-          disableRounding: true,
-          showCode: true,
-        },
-      ),
-      amount: new BigNumber(minOrMaxError.amount),
-    });
-  }
-
-  if (isAnErrorCodeMessageError) {
-    return getSwapAPIError(response.errorCode, response.errorMessage);
-  }
-
-  return new SwapGenericAPIError();
-};

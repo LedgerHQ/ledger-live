@@ -97,7 +97,6 @@ export const useSwapTransaction = ({
   onNoRates?: OnNoRatesCallback;
   onBeforeFetchRates?: OnBeforeFetchRates;
   excludeFixedRates?: boolean;
-  providers?: AvailableProviderV3[];
   timeout?: number;
   timeoutErrorMessage?: string;
 } = {}): SwapTransactionType => {

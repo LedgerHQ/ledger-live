@@ -1,7 +1,5 @@
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { flattenAccounts } from "@ledgerhq/live-common/account/helpers";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { Account, TokenAccount } from "@ledgerhq/types-live";
+import { Account } from "@ledgerhq/types-live";
 import memoize from "lodash/memoize";
 import { createAction } from "redux-actions";
 import { createSelector } from "reselect";
@@ -37,20 +35,7 @@ export const filterAvailableToAssets = (pairs: Pair[] | null | undefined, fromId
   }
   return toAssets;
 };
-const filterAvailableFromAssets = (
-  pairs: Pair[] | undefined | null,
-  allAccounts: Account[],
-): (Account & { disabled: boolean })[] => {
-  if (pairs === null || pairs === undefined) return [];
-  return flattenAccounts(allAccounts).map(account => {
-    const id = getAccountCurrency(account).id;
-    const isAccountAvailable = !!pairs.find(pair => pair.from === id);
-    return {
-      ...account,
-      disabled: !isAccountAvailable,
-    };
-  }) as (Account & { disabled: boolean })[];
-};
+
 export const toSelector = createSelector(
   (state: State) => state.swap.pairs,
   pairs =>
@@ -59,14 +44,6 @@ export const toSelector = createSelector(
       const uniqueAssetList = [...new Set(filteredAssets)];
       return uniqueAssetList;
     }),
-);
-export const fromSelector = createSelector(
-  (state: State) => state.swap.pairs,
-  pairs =>
-    memoize(
-      (allAccounts: Array<Account>): Array<Account | TokenAccount> =>
-        sortAccountsByStatus(filterAvailableFromAssets(pairs, allAccounts)),
-    ),
 );
 
 // Put disabled accounts and subaccounts at the bottom of the list while preserving the parent/children position.
