@@ -440,3 +440,4 @@ export type LlmNewDeviceSelection = DefaultFeature;
  */
 export type FeatureMap<T = Feature> = { [key in FeatureId]: T };
 export type OptionalFeatureMap<T = Feature> = { [key in FeatureId]?: T };
+export type FeatureParam<T extends FeatureId> = Features[T]["params"];
