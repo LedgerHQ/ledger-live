@@ -15,8 +15,15 @@ import {
   FirmwareUpdateContext,
 } from "@ledgerhq/types-live";
 import { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
-import { getEnv } from "@ledgerhq/live-common/env";
-import { getLanguages, defaultLocaleForLanguage, Locale } from "~/config/languages";
+import { getEnv } from "@ledgerhq/live-env";
+import {
+  LanguageIds,
+  Languages,
+  Language,
+  Locale,
+  DEFAULT_LANGUAGE,
+  Locales,
+} from "~/config/languages";
 import { State } from ".";
 import regionsByKey from "~/renderer/screens/settings/sections/General/regions.json";
 import { getSystemLocale } from "~/helpers/systemLocale";
@@ -24,21 +31,28 @@ import { Handlers } from "./types";
 
 /* Initial state */
 
+export type VaultSigner = {
+  enabled: boolean;
+  host: string;
+  workspace: string;
+  token: string;
+};
+
 export type SettingsState = {
   loaded: boolean;
-  // is the settings loaded from db (it not we don't save them)
+  // is the settings loaded from db (if not we don't save them)
   hasCompletedOnboarding: boolean;
   counterValue: string;
   preferredDeviceModel: DeviceModelId;
   hasInstalledApps: boolean;
   lastSeenDevice: DeviceModelInfo | undefined | null;
-  seenDevices: DeviceModelInfo[];
+  devicesModelList: DeviceModelId[];
   latestFirmware: FirmwareUpdateContext | null;
-  language: string | undefined | null;
   theme: string | undefined | null;
+  language: Language | undefined | null;
+  locale: Locale | undefined | null;
   /** DEPRECATED, use field `locale` instead */
   region: string | undefined | null;
-  locale: string | undefined | null;
   orderAccounts: string;
   countervalueFirst: boolean;
   autoLockTimeout: number;
@@ -84,41 +98,44 @@ export type SettingsState = {
     hasAcceptedIPSharing: boolean;
     selectableCurrencies: string[];
     acceptedProviders: string[];
-    KYC: {
-      [x: string]: {
-        id: string;
-        status: string;
-      };
-    };
   };
   starredMarketCoins: string[];
   overriddenFeatureFlags: {
     [key in FeatureId]: Feature;
   };
   featureFlagsButtonVisible: boolean;
+  vaultSigner: VaultSigner;
 };
 
-const DEFAULT_LANGUAGE_LOCALE = "en";
-export const getInitialLanguageLocale = (fallbackLocale: string = DEFAULT_LANGUAGE_LOCALE) => {
-  const detectedLanguage = getSystemLocale() || fallbackLocale;
-  return getLanguages().find(lang => detectedLanguage.startsWith(lang)) || fallbackLocale;
-};
-const DEFAULT_LOCALE = "en-US";
-export const getInitialLocale = () => {
-  const initialLanguageLocale = getInitialLanguageLocale();
-  return (
-    defaultLocaleForLanguage[initialLanguageLocale as keyof typeof defaultLocaleForLanguage] ||
-    DEFAULT_LOCALE
-  );
+export const getInitialLanguageAndLocale = (): { language: Language; locale: Locale } => {
+  const systemLocal = getSystemLocale();
+
+  // Find language from system locale (i.e., en, fr, es ...)
+  const languageId = LanguageIds.find(lang => systemLocal.startsWith(lang));
+
+  // If language found, try to find corresponding locale
+  if (languageId) {
+    // const localeId = Languages[languageId].locales.find(lang => systemLocal.startsWith(lang));
+    // TODO Hack because the typing on the commented line above doesn't work
+    const languageLocales = Languages[languageId].locales as Locales;
+
+    const localeId = languageLocales.find(lang => systemLocal.startsWith(lang));
+
+    // If locale matched returns it, if not returns the default locale of the language
+    if (localeId) return { language: languageId, locale: localeId };
+    return { language: languageId, locale: Languages[languageId].locales.default };
+  }
+
+  // If nothing found returns default language and locale
+  return { language: DEFAULT_LANGUAGE.id, locale: DEFAULT_LANGUAGE.locales.default };
 };
 
 const INITIAL_STATE: SettingsState = {
   hasCompletedOnboarding: false,
   counterValue: "USD",
-  language: getInitialLanguageLocale(),
+  ...getInitialLanguageAndLocale(),
   theme: null,
   region: null,
-  locale: getInitialLocale(),
   orderAccounts: "balance|desc",
   countervalueFirst: false,
   autoLockTimeout: 10,
@@ -142,7 +159,7 @@ const INITIAL_STATE: SettingsState = {
   hasInstalledApps: true,
   carouselVisibility: 0,
   lastSeenDevice: null,
-  seenDevices: [],
+  devicesModelList: [],
   lastSeenCustomImage: {
     size: 0,
     hash: "",
@@ -165,11 +182,13 @@ const INITIAL_STATE: SettingsState = {
     hasAcceptedIPSharing: false,
     acceptedProviders: [],
     selectableCurrencies: [],
-    KYC: {},
   },
   starredMarketCoins: [],
   overriddenFeatureFlags: {} as Record<FeatureId, Feature>,
   featureFlagsButtonVisible: false,
+
+  // Vault
+  vaultSigner: { enabled: false, host: "", token: "", workspace: "" },
 };
 
 /* Handlers */
@@ -192,21 +211,15 @@ type HandlersPayloads = {
     latestFirmware: FirmwareUpdateContext;
   };
   LAST_SEEN_DEVICE: DeviceModelInfo;
-  ADD_SEEN_DEVICE: DeviceModelInfo;
+  ADD_NEW_DEVICE_MODEL: DeviceModelId;
   SET_DEEPLINK_URL: string | null | undefined;
   SET_FIRST_TIME_LEND: never;
   SET_SWAP_SELECTABLE_CURRENCIES: string[];
-  SET_SWAP_KYC: {
-    provider: string;
-    id?: string;
-    status?: string;
-  };
   SET_SWAP_ACCEPTED_IP_SHARING: boolean;
   ACCEPT_SWAP_PROVIDER: string;
   DEBUG_TICK: never;
   ADD_STARRED_MARKET_COINS: string;
   REMOVE_STARRED_MARKET_COINS: string;
-  RESET_SWAP_LOGIN_AND_KYC_DATA: never;
   SET_LAST_SEEN_CUSTOM_IMAGE: {
     imageSize: number;
     imageHash: string;
@@ -223,6 +236,7 @@ type HandlersPayloads = {
   SET_FEATURE_FLAGS_BUTTON_VISIBLE: {
     featureFlagsButtonVisible: boolean;
   };
+  SET_VAULT_SIGNER: VaultSigner;
 };
 type SettingsHandlers<PreciseKey = true> = Handlers<SettingsState, HandlersPayloads, PreciseKey>;
 
@@ -310,10 +324,11 @@ const handlers: SettingsHandlers = {
       : undefined,
   }),
 
-  ADD_SEEN_DEVICE: (state, { payload }) => ({
+  ADD_NEW_DEVICE_MODEL: (state, { payload }) => ({
     ...state,
-    seenDevices: Array.from(new Set(state.seenDevices.concat(payload))),
+    devicesModelList: [...new Set(state.devicesModelList.concat(payload))],
   }),
+
   SET_DEEPLINK_URL: (state, { payload: deepLinkUrl }) => ({
     ...state,
     deepLinkUrl,
@@ -329,29 +344,6 @@ const handlers: SettingsHandlers = {
       selectableCurrencies: payload,
     },
   }),
-  SET_SWAP_KYC: (state, { payload }) => {
-    const { provider, id, status } = payload;
-    const KYC = {
-      ...state.swap.KYC,
-    };
-
-    // If we have an id but a "null" KYC status, this means user is logged in to provider but has not gone through KYC yet
-    if (id && typeof status !== "undefined") {
-      KYC[provider] = {
-        id,
-        status,
-      };
-    } else {
-      delete KYC[provider];
-    }
-    return {
-      ...state,
-      swap: {
-        ...state.swap,
-        KYC,
-      },
-    };
-  },
   SET_SWAP_ACCEPTED_IP_SHARING: (state: SettingsState, { payload }) => ({
     ...state,
     swap: {
@@ -378,13 +370,6 @@ const handlers: SettingsHandlers = {
     ...state,
     starredMarketCoins: state.starredMarketCoins.filter(id => id !== payload),
   }),
-  RESET_SWAP_LOGIN_AND_KYC_DATA: (state: SettingsState) => ({
-    ...state,
-    swap: {
-      ...state.swap,
-      KYC: {},
-    },
-  }),
   SET_LAST_SEEN_CUSTOM_IMAGE: (state: SettingsState, { payload }) => ({
     ...state,
     lastSeenCustomImage: {
@@ -407,6 +392,10 @@ const handlers: SettingsHandlers = {
     ...state,
     featureFlagsButtonVisible: payload.featureFlagsButtonVisible,
   }),
+  SET_VAULT_SIGNER: (state: SettingsState, { payload }) => ({
+    ...state,
+    vaultSigner: payload,
+  }),
 };
 export default handleActions<SettingsState, HandlersPayloads[keyof HandlersPayloads]>(
   handlers as unknown as SettingsHandlers<false>,
@@ -420,9 +409,7 @@ const pairHash = (from: Currency, to: Currency) => `${from.ticker}_${to.ticker}`
 export type CurrencySettings = {
   confirmationsNb: number;
 };
-export type CurrenciesSettings = {
-  [id: string]: CurrencySettings;
-};
+
 type ConfirmationDefaults = {
   confirmationsNb:
     | {
@@ -512,20 +499,20 @@ export const userThemeSelector = (state: State): "dark" | "light" | undefined | 
 };
 
 type LanguageAndUseSystemLanguage = {
-  language: string;
+  language: Language;
   useSystemLanguage: boolean;
 };
 
 const languageAndUseSystemLangSelector = (state: State): LanguageAndUseSystemLanguage => {
   const { language } = state.settings;
-  if (language && getLanguages().includes(language as Locale)) {
+  if (language && LanguageIds.includes(language)) {
     return {
       language,
       useSystemLanguage: false,
     };
   } else {
     return {
-      language: getInitialLanguageLocale(),
+      language: getInitialLanguageAndLocale().language,
       useSystemLanguage: true,
     };
   }
@@ -563,14 +550,14 @@ const localeFallbackToLanguageSelector = (
       locale,
     };
   return {
-    locale: language || DEFAULT_LOCALE,
+    locale: language || DEFAULT_LANGUAGE.locales.default,
   };
 };
 
 /** Use this for number and dates formatting. */
 export const localeSelector = createSelector(
   localeFallbackToLanguageSelector,
-  o => o.locale || getInitialLocale(),
+  o => o.locale || getInitialLanguageAndLocale().locale,
 );
 export const getOrderAccounts = (state: State) => state.settings.orderAccounts;
 export const areSettingsLoaded = (state: State) => state.settings.loaded;
@@ -668,7 +655,8 @@ export const lastSeenDeviceSelector = (state: State): DeviceModelInfo | null | u
   }
   return state.settings.lastSeenDevice;
 };
-export const seenDevicesSelector = (state: State): DeviceModelInfo[] => state.settings.seenDevices;
+export const devicesModelListSelector = (state: State): DeviceModelId[] =>
+  state.settings.devicesModelList;
 export const latestFirmwareSelector = (state: State) => state.settings.latestFirmware;
 export const swapHasAcceptedIPSharingSelector = (state: State) =>
   state.settings.swap.hasAcceptedIPSharing;
@@ -676,7 +664,6 @@ export const swapSelectableCurrenciesSelector = (state: State) =>
   state.settings.swap.selectableCurrencies;
 export const swapAcceptedProvidersSelector = (state: State) =>
   state.settings.swap.acceptedProviders;
-export const swapKYCSelector = (state: State) => state.settings.swap.KYC;
 export const showClearCacheBannerSelector = (state: State) => state.settings.showClearCacheBanner;
 export const exportSettingsSelector = createSelector(
   counterValueCurrencySelector,
@@ -703,3 +690,4 @@ export const overriddenFeatureFlagsSelector = (state: State) =>
   state.settings.overriddenFeatureFlags;
 export const featureFlagsButtonVisibleSelector = (state: State) =>
   state.settings.featureFlagsButtonVisible;
+export const vaultSignerSelector = (state: State) => state.settings.vaultSigner;

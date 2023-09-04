@@ -7,7 +7,7 @@ import type {
   SubAccount,
 } from "@ledgerhq/types-live";
 import { getOperationAmountNumberWithInternals } from "../operation";
-import { granularities } from "@ledgerhq/live-portfolio";
+
 export const emptyHistoryCache = {
   HOUR: {
     latestDate: null,
@@ -20,6 +20,39 @@ export const emptyHistoryCache = {
   WEEK: {
     latestDate: null,
     balances: [],
+  },
+};
+
+const hourIncrement = 60 * 60 * 1000;
+const dayIncrement = 24 * hourIncrement;
+const weekIncrement = 7 * dayIncrement;
+
+export function startOfHour(t: Date): Date {
+  return new Date(t.getFullYear(), t.getMonth(), t.getDate(), t.getHours());
+}
+export function startOfDay(t: Date): Date {
+  return new Date(t.getFullYear(), t.getMonth(), t.getDate());
+}
+export function startOfWeek(t: Date): Date {
+  const d = startOfDay(t);
+  return new Date(d.getTime() - d.getDay() * dayIncrement);
+}
+
+const granularities = {
+  WEEK: {
+    increment: weekIncrement,
+    startOf: startOfWeek,
+    maxDatapoints: 1000, // (essentially no limit)
+  },
+  DAY: {
+    increment: dayIncrement,
+    startOf: startOfDay,
+    maxDatapoints: 400, // we only need a year
+  },
+  HOUR: {
+    increment: hourIncrement,
+    startOf: startOfHour,
+    maxDatapoints: 8 * 24, // we only need a week
   },
 };
 

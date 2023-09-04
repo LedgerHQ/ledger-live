@@ -1,5 +1,96 @@
 # @ledgerhq/react-ui
 
+## 0.14.7
+
+### Patch Changes
+
+- Updated dependencies [[`27e4a76f6c`](https://github.com/LedgerHQ/ledger-live/commit/27e4a76f6cc66aa6a7480f48329db04d33200c65)]:
+  - @ledgerhq/icons-ui@0.5.0
+
+## 0.14.7-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`27e4a76f6c`](https://github.com/LedgerHQ/ledger-live/commit/27e4a76f6cc66aa6a7480f48329db04d33200c65)]:
+  - @ledgerhq/icons-ui@0.5.0-hotfix.0
+
+## 0.14.6
+
+### Patch Changes
+
+- Updated dependencies [[`5bbcea12f9`](https://github.com/LedgerHQ/ledger-live/commit/5bbcea12f93e3cda41705a4d61d50845628a6de6)]:
+  - @ledgerhq/icons-ui@0.4.4
+
+## 0.14.6-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`5bbcea12f9`](https://github.com/LedgerHQ/ledger-live/commit/5bbcea12f93e3cda41705a4d61d50845628a6de6)]:
+  - @ledgerhq/icons-ui@0.4.4-next.0
+
+## 0.14.5
+
+### Patch Changes
+
+- [#4259](https://github.com/LedgerHQ/ledger-live/pull/4259) [`5696f24b93`](https://github.com/LedgerHQ/ledger-live/commit/5696f24b93151bc0ee063d1cb88cef1e2d052f9e) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - publish ui libraries with fixed tests
+
+- Updated dependencies [[`5696f24b93`](https://github.com/LedgerHQ/ledger-live/commit/5696f24b93151bc0ee063d1cb88cef1e2d052f9e)]:
+  - @ledgerhq/crypto-icons-ui@0.5.1
+  - @ledgerhq/icons-ui@0.4.3
+  - @ledgerhq/ui-shared@0.2.1
+
+## 0.14.4
+
+### Patch Changes
+
+- [#4091](https://github.com/LedgerHQ/ledger-live/pull/4091) [`eeab77fba0`](https://github.com/LedgerHQ/ledger-live/commit/eeab77fba08eedc09dc28780f1a4d270d90569e7) Thanks [@mle-gall](https://github.com/mle-gall)! - UILib - New icons + renamed old icon set to Legacy (should not be used anymore by consumers eg LLD and LLM)
+
+- Updated dependencies [[`eeab77fba0`](https://github.com/LedgerHQ/ledger-live/commit/eeab77fba08eedc09dc28780f1a4d270d90569e7), [`e5f9cc46d6`](https://github.com/LedgerHQ/ledger-live/commit/e5f9cc46d69b82ad7267296b350e9d97a47f9e86), [`5840cdbb4f`](https://github.com/LedgerHQ/ledger-live/commit/5840cdbb4fad09865d672a009f98b4fea3cffebe), [`cfbff52724`](https://github.com/LedgerHQ/ledger-live/commit/cfbff527241534aba69bff3d86733b50a14eb4ce)]:
+  - @ledgerhq/icons-ui@0.4.2
+  - @ledgerhq/crypto-icons-ui@0.5.0
+
+## 0.14.4-next.0
+
+### Patch Changes
+
+- [#4091](https://github.com/LedgerHQ/ledger-live/pull/4091) [`eeab77fba0`](https://github.com/LedgerHQ/ledger-live/commit/eeab77fba08eedc09dc28780f1a4d270d90569e7) Thanks [@mle-gall](https://github.com/mle-gall)! - UILib - New icons + renamed old icon set to Legacy (should not be used anymore by consumers eg LLD and LLM)
+
+- Updated dependencies [[`eeab77fba0`](https://github.com/LedgerHQ/ledger-live/commit/eeab77fba08eedc09dc28780f1a4d270d90569e7), [`e5f9cc46d6`](https://github.com/LedgerHQ/ledger-live/commit/e5f9cc46d69b82ad7267296b350e9d97a47f9e86), [`5840cdbb4f`](https://github.com/LedgerHQ/ledger-live/commit/5840cdbb4fad09865d672a009f98b4fea3cffebe), [`cfbff52724`](https://github.com/LedgerHQ/ledger-live/commit/cfbff527241534aba69bff3d86733b50a14eb4ce)]:
+  - @ledgerhq/icons-ui@0.4.2-next.0
+  - @ledgerhq/crypto-icons-ui@0.5.0-next.0
+
+## 0.14.3
+
+### Patch Changes
+
+- Updated dependencies [[`9692adc2a6`](https://github.com/LedgerHQ/ledger-live/commit/9692adc2a6774feb4424fc7a984810918c946b1b)]:
+  - @ledgerhq/crypto-icons-ui@0.4.0
+
+## 0.14.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`9692adc2a6`](https://github.com/LedgerHQ/ledger-live/commit/9692adc2a6774feb4424fc7a984810918c946b1b)]:
+  - @ledgerhq/crypto-icons-ui@0.4.0-next.0
+
+## 0.14.2
+
+### Patch Changes
+
+- [#3613](https://github.com/LedgerHQ/ledger-live/pull/3613) [`6b3b5e6e71`](https://github.com/LedgerHQ/ledger-live/commit/6b3b5e6e718c48f9a98c12ba8f803db8d31e68ba) Thanks [@juan-cortes](https://github.com/juan-cortes)! - ui text wraps on stepper + fw update restore polishes
+
+- Updated dependencies [[`7ae4766e09`](https://github.com/LedgerHQ/ledger-live/commit/7ae4766e094d928f58e820319a33900b88a67502)]:
+  - @ledgerhq/icons-ui@0.4.1
+
+## 0.14.2-next.0
+
+### Patch Changes
+
+- [#3613](https://github.com/LedgerHQ/ledger-live/pull/3613) [`6b3b5e6e71`](https://github.com/LedgerHQ/ledger-live/commit/6b3b5e6e718c48f9a98c12ba8f803db8d31e68ba) Thanks [@juan-cortes](https://github.com/juan-cortes)! - ui text wraps on stepper + fw update restore polishes
+
+- Updated dependencies [[`7ae4766e09`](https://github.com/LedgerHQ/ledger-live/commit/7ae4766e094d928f58e820319a33900b88a67502)]:
+  - @ledgerhq/icons-ui@0.4.1-next.0
+
 ## 0.14.1
 
 ### Patch Changes

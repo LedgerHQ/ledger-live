@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { Pressable } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import styled from "styled-components/native";
-import { CheckAloneMedium } from "@ledgerhq/icons-ui/native";
+import { CheckAloneMedium } from "@ledgerhq/icons-ui/nativeLegacy";
 
 import { Item, ItemStatus } from "../types";
 import Flex from "../../Flex";
@@ -86,9 +86,9 @@ export default function StepperItem({
               )}
             </Flex>
             <Flex flex={1} ml={nested ? 0 : 4} mr={nested ? 0 : 2}>
-              <Flex pb={item.status === "active" && item.renderBody ? 4 : undefined}>
+              <Flex pb={item.status === "active" && item.renderBody ? 3 : undefined}>
                 <Text
-                  variant="body"
+                  {...(nested ? { variant: "body" } : { variant: "large", fontWeight: "semiBold" })}
                   color={item.status === "active" || nested ? "neutral.c100" : "neutral.c80"}
                 >
                   {item.status === "completed" ? item.doneTitle ?? item.title : item.title}

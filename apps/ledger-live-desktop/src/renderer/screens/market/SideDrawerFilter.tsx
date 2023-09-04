@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { TFunction } from "react-i18next";
+import { TFunction } from "i18next";
 import Dropdown from "./DropDown";
 
 export default function SideDrawerFilter({

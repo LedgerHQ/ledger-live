@@ -29,26 +29,26 @@ import { useDebouncedRequireBluetooth } from "../RequiresBLE/hooks/useRequireBlu
 import RequiresBluetoothDrawer from "../RequiresBLE/RequiresBluetoothDrawer";
 
 type Props = {
-  onBluetoothDeviceAction?: (_: Device) => void;
-  onSelect: (_: Device) => void;
-  onWithoutDevice?: () => void;
   withArrows?: boolean;
   usbOnly?: boolean;
   autoSelectOnAdd?: boolean;
   hideAnimation?: boolean;
   /** If defined, only show devices that have a device model id in this array */
   deviceModelIds?: DeviceModelId[];
+  onBluetoothDeviceAction?: (_: Device) => void;
+  onSelect: (_: Device) => void;
+  onWithoutDevice?: () => void;
 };
 
 export default function SelectDevice({
   usbOnly,
   withArrows,
-  onSelect,
-  onWithoutDevice,
-  onBluetoothDeviceAction,
   autoSelectOnAdd,
   hideAnimation,
   deviceModelIds,
+  onSelect,
+  onWithoutDevice,
+  onBluetoothDeviceAction,
 }: Props) {
   const { colors } = useTheme();
   const navigation = useNavigation();
@@ -176,7 +176,7 @@ export default function SelectDevice({
   const onPairNewDevice = useCallback(() => {
     track("button_clicked", {
       button: "Pair with bluetooth",
-      screen: route.name,
+      page: route.name,
     });
 
     // We should not pass non-serializable param like onDone when navigating.

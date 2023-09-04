@@ -7,7 +7,7 @@ import CustomImage from "~/renderer/screens/customImage";
 
 const claimMock: PostOnboardingAction = {
   id: PostOnboardingActionId.claimMock,
-  Icon: Icons.GiftCardMedium,
+  Icon: Icons.Gift,
   title: "Claim my NFT",
   titleCompleted: "Claim my NFT",
   description: "A special NFT for you.",
@@ -18,7 +18,7 @@ const claimMock: PostOnboardingAction = {
 
 const personalizeMock: PostOnboardingAction = {
   id: PostOnboardingActionId.personalizeMock,
-  Icon: Icons.BracketsMedium,
+  Icon: Icons.PictureImage,
   featureFlagId: "customImage",
   title: `Personalize my ${getDeviceModel(DeviceModelId.stax).productName}`,
   titleCompleted: `Personalize my ${getDeviceModel(DeviceModelId.stax).productName}`,
@@ -30,7 +30,7 @@ const personalizeMock: PostOnboardingAction = {
 
 const migrateAssetsMock: PostOnboardingAction = {
   id: PostOnboardingActionId.migrateAssetsMock,
-  Icon: Icons.TransferMedium,
+  Icon: Icons.ArrowDown,
   title: "Transfer assets to my Ledger",
   titleCompleted: "Transfer assets to my Ledger",
   description: "Easily secure assets from coinbase or another exchange.",
@@ -41,7 +41,7 @@ const migrateAssetsMock: PostOnboardingAction = {
 
 const customImage: PostOnboardingAction = {
   id: PostOnboardingActionId.customImage,
-  Icon: Icons.BracketsMedium,
+  Icon: Icons.PictureImage,
   featureFlagId: "customImage",
   title: "customImage.postOnboarding.title",
   titleCompleted: "customImage.postOnboarding.title",

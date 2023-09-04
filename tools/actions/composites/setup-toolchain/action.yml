@@ -7,23 +7,30 @@ inputs:
   upgrade_npm:
     description: "should update npm (windows support)"
     required: false
+  install_dotnet:
+    description: "dotnet setup for Windows"
+    required: false
 
 runs:
   using: "composite"
   steps:
     # ⚠️ We have issues with the runners and proto,
     # so for the moment we're not using it at all in the CI.
+    - uses: actions/setup-dotnet@v2
+      if: inputs.install_dotnet != ''
+      with:
+        dotnet-version: 2.1.816
     - uses: pnpm/action-setup@v2
       if: inputs.pnpm_dest != ''
       # if: ${{ runner.os == 'Windows' }}
       with:
-        version: 8.1
+        version: 8.7
         dest: ${{ inputs.pnpm_dest }}
     - uses: pnpm/action-setup@v2
       if: inputs.pnpm_dest == ''
       # if: ${{ runner.os == 'Windows' }}
       with:
-        version: 8.1
+        version: 8.7
     - uses: actions/setup-node@v3
       # if: ${{ runner.os == 'Windows' }}
       with:
@@ -36,7 +43,7 @@ runs:
       run: |
         npm i -g npm
       shell: bash
-      
+
     # Using the proto toolchain manager:
     # - name: Setup proto
     #   if: ${{ runner.os != 'Windows' }}

@@ -8,7 +8,7 @@ import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAle
 import BuyButton from "~/renderer/components/BuyButton";
 import { NotEnoughGas } from "@ledgerhq/errors";
 import Alert from "~/renderer/components/Alert";
-import TranslatedError from "~/renderer/components//TranslatedError";
+import TranslatedError from "~/renderer/components/TranslatedError";
 import AccountFooter from "../AccountFooter";
 import SendAmountFields from "../SendAmountFields";
 import { StepProps } from "../types";

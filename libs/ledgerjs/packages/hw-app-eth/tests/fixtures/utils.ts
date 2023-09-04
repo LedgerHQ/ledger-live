@@ -21,20 +21,11 @@ export const transactionContracts = {
 
 export const transactionData = {
   erc20: {
-    approve: ERC20Interface.encodeFunctionData("approve", [
-      transactionContracts.random,
-      1,
-    ]),
-    transfer: ERC20Interface.encodeFunctionData("transfer", [
-      transactionContracts.random,
-      1,
-    ]),
+    approve: ERC20Interface.encodeFunctionData("approve", [transactionContracts.random, 1]),
+    transfer: ERC20Interface.encodeFunctionData("transfer", [transactionContracts.random, 1]),
   },
   erc721: {
-    approve: ERC721Interface.encodeFunctionData("approve", [
-      transactionContracts.random,
-      1,
-    ]),
+    approve: ERC721Interface.encodeFunctionData("approve", [transactionContracts.random, 1]),
     setApprovalForAll: ERC721Interface.encodeFunctionData("setApprovalForAll", [
       transactionContracts.random,
       true,
@@ -46,18 +37,18 @@ export const transactionData = {
     ]),
     safeTransferFrom: ERC721Interface.encodeFunctionData(
       "safeTransferFrom(address, address, uint256)",
-      [transactionContracts.random, transactionContracts.random2, 1]
+      [transactionContracts.random, transactionContracts.random2, 1],
     ),
     safeTransferFromWithData: ERC721Interface.encodeFunctionData(
       "safeTransferFrom(address, address, uint256, bytes)",
-      [transactionContracts.random, transactionContracts.random2, 1, "0x00"]
+      [transactionContracts.random, transactionContracts.random2, 1, "0x00"],
     ),
   },
   erc1155: {
-    setApprovalForAll: ERC1155Interface.encodeFunctionData(
-      "setApprovalForAll",
-      [transactionContracts.random, true]
-    ),
+    setApprovalForAll: ERC1155Interface.encodeFunctionData("setApprovalForAll", [
+      transactionContracts.random,
+      true,
+    ]),
     safeTransferFrom: ERC1155Interface.encodeFunctionData("safeTransferFrom", [
       transactionContracts.random,
       transactionContracts.random2,
@@ -65,16 +56,13 @@ export const transactionData = {
       1,
       "0x00",
     ]),
-    safeBatchTransferFrom: ERC1155Interface.encodeFunctionData(
-      "safeBatchTransferFrom",
-      [
-        transactionContracts.random,
-        transactionContracts.random2,
-        [1],
-        [1],
-        "0x00",
-      ]
-    ),
+    safeBatchTransferFrom: ERC1155Interface.encodeFunctionData("safeBatchTransferFrom", [
+      transactionContracts.random,
+      transactionContracts.random2,
+      [1],
+      [1],
+      "0x00",
+    ]),
   },
   paraswap: {
     simpleSwap: PARASWAPInterface.encodeFunctionData("simpleSwap", [
@@ -96,16 +84,13 @@ export const transactionData = {
         "0xda03875dad634e49b94b93aff3d28c4a",
       ],
     ]),
-    swapOnUniswapV2Fork: PARASWAPInterface.encodeFunctionData(
-      "swapOnUniswapV2Fork",
-      [
-        "7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0",
-        "0x0de0b6b3a7640000",
-        "0x12ba8fbb209c3a65",
-        "0000000000000000000000000000000000000000",
-        ["0x4de55ce50407b614daff085522d476c5ec5e93a00afb"],
-      ]
-    ),
+    swapOnUniswapV2Fork: PARASWAPInterface.encodeFunctionData("swapOnUniswapV2Fork", [
+      "7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0",
+      "0x0de0b6b3a7640000",
+      "0x12ba8fbb209c3a65",
+      "0000000000000000000000000000000000000000",
+      ["0x4de55ce50407b614daff085522d476c5ec5e93a00afb"],
+    ]),
   },
 };
 

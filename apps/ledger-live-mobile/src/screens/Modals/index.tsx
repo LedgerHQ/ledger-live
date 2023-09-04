@@ -3,9 +3,11 @@ import { NavigationState, useNavigation } from "@react-navigation/native";
 import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import PushNotificationsModal from "../PushNotificationsModal";
 import RatingsModal from "../RatingsModal";
+import NpsRatingsModal from "../NpsRatingsModal";
 import useRatings from "../../logic/ratings";
 import useNotifications from "../../logic/notifications";
 import DebugAppLevelDrawer from "../../components/DebugAppLevelDrawer";
+import useNpsRatings from "../../logic/npsRatings";
 
 const getCurrentRouteName = (
   state: NavigationState | Required<NavigationState["routes"][0]>["state"],
@@ -27,7 +29,15 @@ const Modals = () => {
   const { onPushNotificationsRouteChange } = useNotifications();
 
   const ratingsFeature = useFeature("ratingsPrompt");
+  const npsRatingsFeature = useFeature("npsRatingsPrompt");
   const { onRatingsRouteChange } = useRatings();
+  const { onRatingsRouteChange: npsOnRatingsRouteChange } = useNpsRatings();
+
+  const activeRatings = npsRatingsFeature?.enabled
+    ? "nps"
+    : ratingsFeature?.enabled
+    ? "no-nps"
+    : "none";
 
   const onRouteChange = useCallback(
     e => {
@@ -38,16 +48,20 @@ const Modals = () => {
         if (pushNotificationsFeature?.enabled) {
           isModalOpened = onPushNotificationsRouteChange(currentRouteName, isModalOpened);
         }
-        if (ratingsFeature?.enabled) {
+        if (activeRatings === "nps") {
+          npsOnRatingsRouteChange(currentRouteName, isModalOpened);
+        }
+        if (activeRatings === "no-nps") {
           onRatingsRouteChange(currentRouteName, isModalOpened);
         }
       }
     },
     [
+      activeRatings,
+      npsOnRatingsRouteChange,
       onPushNotificationsRouteChange,
       onRatingsRouteChange,
       pushNotificationsFeature?.enabled,
-      ratingsFeature?.enabled,
     ],
   );
 
@@ -65,9 +79,8 @@ const Modals = () => {
       <FeatureToggle feature="brazePushNotifications">
         <PushNotificationsModal />
       </FeatureToggle>
-      <FeatureToggle feature="ratingsPrompt">
-        <RatingsModal />
-      </FeatureToggle>
+      {activeRatings === "no-nps" && <RatingsModal />}
+      {activeRatings === "nps" && <NpsRatingsModal />}
       <DebugAppLevelDrawer />
     </>
   );

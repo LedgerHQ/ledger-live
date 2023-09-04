@@ -40,7 +40,6 @@ import OnboardingSyncDesktopInformation from "../../screens/Onboarding/steps/set
 import OnboardingRecoveryPhraseWarning from "../../screens/Onboarding/steps/setupDevice/drawers/RecoveryPhraseWarning";
 import PostWelcomeSelection from "../../screens/Onboarding/steps/postWelcomeSelection";
 import GetDeviceScreen from "../../screens/GetDeviceScreen";
-import OnboardingStepDoYouHaveALedgerDevice from "../../screens/Onboarding/steps/doYouHaveALedger";
 import OnboardingProtectFlow from "../../screens/Onboarding/steps/protectFlow";
 
 import {
@@ -51,6 +50,7 @@ import {
 import { StackNavigatorProps } from "./types/helpers";
 import ProtectConnectionInformationModal from "../../screens/Onboarding/steps/setupDevice/drawers/ProtectConnectionInformationModal";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
+import AccessExistingWallet from "../../screens/Onboarding/steps/accessExistingWallet";
 
 const Stack = createStackNavigator<OnboardingNavigatorParamList>();
 const OnboardingCarefulWarningStack = createStackNavigator<OnboardingCarefulWarningParamList>();
@@ -169,16 +169,16 @@ export default function OnboardingNavigator() {
     >
       <Stack.Screen name={ScreenName.OnboardingWelcome} component={OnboardingWelcome} />
       <Stack.Screen
-        name={ScreenName.OnboardingDoYouHaveALedgerDevice}
-        component={OnboardingStepDoYouHaveALedgerDevice}
+        name={ScreenName.OnboardingPostWelcomeSelection}
+        component={PostWelcomeSelection}
         options={{
           headerShown: true,
           headerLeft: () => <NavigationHeaderBackButton />,
         }}
       />
       <Stack.Screen
-        name={ScreenName.OnboardingPostWelcomeSelection}
-        component={PostWelcomeSelection}
+        name={ScreenName.OnboardingWelcomeBack}
+        component={AccessExistingWallet}
         options={{
           headerShown: true,
           headerLeft: () => <NavigationHeaderBackButton />,
@@ -206,7 +206,14 @@ export default function OnboardingNavigator() {
           headerLeft: () => <NavigationHeaderBackButton />,
         }}
       />
-      <Stack.Screen name={ScreenName.OnboardingUseCase} component={OnboardingUseCase} />
+      <Stack.Screen
+        name={ScreenName.OnboardingUseCase}
+        component={OnboardingUseCase}
+        options={{
+          headerShown: true,
+          headerLeft: () => <NavigationHeaderBackButton />,
+        }}
+      />
       <Stack.Screen
         name={NavigatorName.OnboardingCarefulWarning}
         component={OnboardingCarefulWarning}

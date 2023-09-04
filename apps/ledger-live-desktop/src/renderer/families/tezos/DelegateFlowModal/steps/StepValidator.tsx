@@ -104,6 +104,9 @@ const StepValidator = ({
       <TrackPage
         category={`Delegation Flow${eventType ? ` (${eventType})` : ""}`}
         name="Step Validator"
+        flow="stake"
+        action="delegation"
+        currency="xtz"
       />
       <Box>
         <Text ff="Inter|Regular" color="palette.text.shade80" fontSize={4} textAlign="center">

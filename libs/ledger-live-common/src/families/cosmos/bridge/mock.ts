@@ -7,11 +7,12 @@ import {
   broadcast,
   sync,
   isInvalidRecipient,
+  makeAccountBridgeReceive,
 } from "../../../bridge/mockHelpers";
+import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { setCosmosPreloadData, asSafeCosmosPreloadData } from "../preloadedData";
 import { getMainAccount } from "../../../account";
 import mockPreloadedData from "../preloadedData.mock";
-import { makeAccountBridgeReceive } from "../../../bridge/mockHelpers";
 import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 const receive = makeAccountBridgeReceive();
 
@@ -30,8 +31,6 @@ const createTransaction = (): Transaction => ({
   networkInfo: null,
   useAllAmount: false,
 });
-
-const updateTransaction = (t, patch) => ({ ...t, ...patch });
 
 const estimateMaxSpendable = ({ account, parentAccount, transaction }) => {
   const mainAccount = getMainAccount(account, parentAccount);
@@ -93,7 +92,7 @@ const prepareTransaction = async (a: CosmosAccount, t: Transaction): Promise<Tra
 const accountBridge: AccountBridge<Transaction> = {
   estimateMaxSpendable,
   createTransaction,
-  updateTransaction,
+  updateTransaction: defaultUpdateTransaction,
   getTransactionStatus,
   prepareTransaction,
   sync,

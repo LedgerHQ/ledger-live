@@ -13,6 +13,7 @@ import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 import { BigNumber } from "bignumber.js";
 import type { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
+import { getMaxEstimatedBalance } from "@ledgerhq/live-common/families/cosmos/logic";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
@@ -106,7 +107,12 @@ function DelegationAmount({ navigation, route }: Props) {
       value: initialMax.plus(initialValue).multipliedBy(ratio).integerValue(),
     })),
   );
-  const error = useMemo(
+  // not enough available balance to pay fees for the delegate/undelegate/redelegate transaction
+  const isNotEnoughBalance: boolean = useMemo(
+    () => getMaxEstimatedBalance(account as CosmosAccount, tx.fees || new BigNumber(0)).isZero(),
+    [account, tx.fees],
+  );
+  const isAmountOutOfRange: boolean = useMemo(
     () =>
       max.lt(0) ||
       value.lt(min) ||
@@ -138,7 +144,7 @@ function DelegationAmount({ navigation, route }: Props) {
                 value={value}
                 onChange={setValue}
                 inputStyle={styles.inputStyle}
-                hasError={error}
+                hasError={isAmountOutOfRange || isNotEnoughBalance}
               />
               <View style={styles.ratioButtonContainer}>
                 {ratioButtons.map(({ label, value: v }) => (
@@ -178,13 +184,15 @@ function DelegationAmount({ navigation, route }: Props) {
                 },
               ]}
             >
-              {error && !value.eq(0) && (
+              {(isNotEnoughBalance || (isAmountOutOfRange && !value.eq(0))) && (
                 <View style={styles.labelContainer}>
                   <Warning size={16} color={colors.error.c50} />
                   <LText style={[styles.assetsRemaining]} color={colors.error.c50}>
                     <Trans
                       i18nKey={
-                        value.gte(min)
+                        isNotEnoughBalance
+                          ? "errors.NotEnoughBalance.title"
+                          : value.gte(min)
                           ? "cosmos.delegation.flow.steps.amount.minAmount"
                           : "cosmos.delegation.flow.steps.amount.incorrectAmount"
                       }
@@ -214,7 +222,7 @@ function DelegationAmount({ navigation, route }: Props) {
                   </LText>
                 </View>
               )}
-              {max.gt(0) && !error && (
+              {max.gt(0) && !isAmountOutOfRange && !isNotEnoughBalance && (
                 <View style={styles.labelContainer}>
                   <LText style={styles.assetsRemaining}>
                     <Trans
@@ -231,7 +239,7 @@ function DelegationAmount({ navigation, route }: Props) {
                   </LText>
                 </View>
               )}
-              {!error && redelegatedBalance.gt(0) && (
+              {!isAmountOutOfRange && !isNotEnoughBalance && redelegatedBalance.gt(0) && (
                 <View style={[styles.labelContainer, styles.labelSmall]}>
                   <LText style={[styles.assetsRemaining, styles.small]}>
                     <Trans
@@ -250,7 +258,7 @@ function DelegationAmount({ navigation, route }: Props) {
                 </View>
               )}
               <Button
-                disabled={error}
+                disabled={isAmountOutOfRange || isNotEnoughBalance}
                 event="Cosmos DelegationAmountContinueBtn"
                 onPress={onNext}
                 title={<Trans i18nKey="cosmos.delegation.flow.steps.amount.cta" />}

@@ -6,7 +6,7 @@ import Animated, {
   Easing,
 } from "react-native-reanimated";
 import Link, { LinkProps } from "../../../cta/Link";
-import { ChevronBottomMedium, ChevronTopMedium } from "@ledgerhq/icons-ui/native";
+import { ChevronBottomMedium, ChevronTopMedium } from "@ledgerhq/icons-ui/nativeLegacy";
 import { View } from "react-native";
 
 type AccordionProps = {

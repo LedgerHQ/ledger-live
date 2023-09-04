@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-transport-webusb",
-  "version": "6.27.15",
+  "version": "6.27.19",
   "description": "Ledger Hardware Wallet WebUSB implementation of the communication layer",
   "keywords": [
     "Ledger",
@@ -35,7 +35,7 @@
     "@types/jest": "^29.5.0",
     "@types/node": "^18.15.3",
     "@types/w3c-web-usb": "^1.0.5",
-    "documentation": "13.2.4",
+    "documentation": "13.2.5",
     "jest": "^28.1.1",
     "rimraf": "^4.4.1",
     "source-map-support": "^0.5.21",

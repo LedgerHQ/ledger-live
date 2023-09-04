@@ -4,9 +4,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { TFunction, useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { AppResult, createAction } from "@ledgerhq/live-common/hw/actions/app";
+import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { Flex } from "@ledgerhq/native-ui";
 import { TrackScreen } from "../../analytics";
 import SelectDevice2, { SetHeaderOptionsRequest } from "../../components/SelectDevice2";
@@ -22,8 +21,7 @@ import {
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import { ScreenName } from "../../const";
 import { NavigationHeaderBackButton } from "../../components/NavigationHeaderBackButton";
-
-const action = createAction(connectApp);
+import { useAppDeviceAction } from "../../hooks/deviceActions";
 
 type NavigationProps = RootComposite<
   StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.DeviceConnect>
@@ -96,6 +94,8 @@ export default function DeviceConnect({ navigation, route }: NavigationProps) {
     }),
     [appName],
   );
+
+  const action = useAppDeviceAction();
 
   return (
     <SafeAreaView

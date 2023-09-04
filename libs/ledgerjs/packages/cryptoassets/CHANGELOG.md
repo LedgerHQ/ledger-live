@@ -1,5 +1,137 @@
 # @ledgerhq/cryptoassets
 
+## 9.11.1
+
+### Patch Changes
+
+- [#4193](https://github.com/LedgerHQ/ledger-live/pull/4193) [`4c2539a1d5`](https://github.com/LedgerHQ/ledger-live/commit/4c2539a1d5c9c01c0f9fa7cd1daf5a5a63c02996) Thanks [@lawRathod](https://github.com/lawRathod)! - Update explorer view url for internet_computer
+
+## 9.11.1-next.0
+
+### Patch Changes
+
+- [#4193](https://github.com/LedgerHQ/ledger-live/pull/4193) [`4c2539a1d5`](https://github.com/LedgerHQ/ledger-live/commit/4c2539a1d5c9c01c0f9fa7cd1daf5a5a63c02996) Thanks [@lawRathod](https://github.com/lawRathod)! - Update explorer view url for internet_computer
+
+## 9.11.0
+
+### Minor Changes
+
+- [#3984](https://github.com/LedgerHQ/ledger-live/pull/3984) [`1263b7a9c1`](https://github.com/LedgerHQ/ledger-live/commit/1263b7a9c1916da81ad55bb2ca1e804cff5f89e2) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - update CAL
+
+- [#4021](https://github.com/LedgerHQ/ledger-live/pull/4021) [`e5f9cc46d6`](https://github.com/LedgerHQ/ledger-live/commit/e5f9cc46d69b82ad7267296b350e9d97a47f9e86) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add telos evm currency
+
+- [#3827](https://github.com/LedgerHQ/ledger-live/pull/3827) [`6a88b7f8a6`](https://github.com/LedgerHQ/ledger-live/commit/6a88b7f8a6b7c732be0c945131b6c1d9b3937cc1) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Updating EthereumLikeInfo configurations & typing
+
+- [#4015](https://github.com/LedgerHQ/ledger-live/pull/4015) [`374e339c27`](https://github.com/LedgerHQ/ledger-live/commit/374e339c27e317656d01463a822898ad3a60df85) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Polygon zkEVM, Base Goerli, Klaytn
+
+### Patch Changes
+
+- [#3964](https://github.com/LedgerHQ/ledger-live/pull/3964) [`770842cdbe`](https://github.com/LedgerHQ/ledger-live/commit/770842cdbe94c629b6844f93d1b5d94d381931b1) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - rename optimism to op mainnet
+
+- [#4130](https://github.com/LedgerHQ/ledger-live/pull/4130) [`cfbff52724`](https://github.com/LedgerHQ/ledger-live/commit/cfbff527241534aba69bff3d86733b50a14eb4ce) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - coreum integration
+
+- [#3704](https://github.com/LedgerHQ/ledger-live/pull/3704) [`b6e50932af`](https://github.com/LedgerHQ/ledger-live/commit/b6e50932afac6acc2d2f9fa9ed10b77a62378e03) Thanks [@chabroA](https://github.com/chabroA)! - Add ethereum and polygon as evm familly for test
+
+- [#4074](https://github.com/LedgerHQ/ledger-live/pull/4074) [`66769a98e6`](https://github.com/LedgerHQ/ledger-live/commit/66769a98e69f2b8156417e464e90d9162272b470) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - Disable dynamic CAL CDN workflows, now handled in CAL repository
+
+## 9.11.0-next.0
+
+### Minor Changes
+
+- [#3984](https://github.com/LedgerHQ/ledger-live/pull/3984) [`1263b7a9c1`](https://github.com/LedgerHQ/ledger-live/commit/1263b7a9c1916da81ad55bb2ca1e804cff5f89e2) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - update CAL
+
+- [#4021](https://github.com/LedgerHQ/ledger-live/pull/4021) [`e5f9cc46d6`](https://github.com/LedgerHQ/ledger-live/commit/e5f9cc46d69b82ad7267296b350e9d97a47f9e86) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add telos evm currency
+
+- [#3827](https://github.com/LedgerHQ/ledger-live/pull/3827) [`6a88b7f8a6`](https://github.com/LedgerHQ/ledger-live/commit/6a88b7f8a6b7c732be0c945131b6c1d9b3937cc1) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Updating EthereumLikeInfo configurations & typing
+
+- [#4015](https://github.com/LedgerHQ/ledger-live/pull/4015) [`374e339c27`](https://github.com/LedgerHQ/ledger-live/commit/374e339c27e317656d01463a822898ad3a60df85) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Polygon zkEVM, Base Goerli, Klaytn
+
+### Patch Changes
+
+- [#3964](https://github.com/LedgerHQ/ledger-live/pull/3964) [`770842cdbe`](https://github.com/LedgerHQ/ledger-live/commit/770842cdbe94c629b6844f93d1b5d94d381931b1) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - rename optimism to op mainnet
+
+- [#4130](https://github.com/LedgerHQ/ledger-live/pull/4130) [`cfbff52724`](https://github.com/LedgerHQ/ledger-live/commit/cfbff527241534aba69bff3d86733b50a14eb4ce) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - coreum integration
+
+- [#3704](https://github.com/LedgerHQ/ledger-live/pull/3704) [`b6e50932af`](https://github.com/LedgerHQ/ledger-live/commit/b6e50932afac6acc2d2f9fa9ed10b77a62378e03) Thanks [@chabroA](https://github.com/chabroA)! - Add ethereum and polygon as evm familly for test
+
+- [#4074](https://github.com/LedgerHQ/ledger-live/pull/4074) [`66769a98e6`](https://github.com/LedgerHQ/ledger-live/commit/66769a98e69f2b8156417e464e90d9162272b470) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - Disable dynamic CAL CDN workflows, now handled in CAL repository
+
+## 9.10.0
+
+### Minor Changes
+
+- [#3459](https://github.com/LedgerHQ/ledger-live/pull/3459) [`49182846de`](https://github.com/LedgerHQ/ledger-live/commit/49182846dee35ae9b3535c0c120e17d0eaecde70) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - add support to stacks blockchain
+
+- [#3815](https://github.com/LedgerHQ/ledger-live/pull/3815) [`0f4293e9bf`](https://github.com/LedgerHQ/ledger-live/commit/0f4293e9bf9cac4c2a195efeb0831aab3d51933d) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Support for Internet Computer blockchain
+
+- [#3825](https://github.com/LedgerHQ/ledger-live/pull/3825) [`9692adc2a6`](https://github.com/LedgerHQ/ledger-live/commit/9692adc2a6774feb4424fc7a984810918c946b1b) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Cosmos chains : stargaze, desmos, umee, secret network
+
+### Patch Changes
+
+- [#3714](https://github.com/LedgerHQ/ledger-live/pull/3714) [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Changing the polygon evm clone manager app
+
+- [#3714](https://github.com/LedgerHQ/ledger-live/pull/3714) [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Adding clone currencies of ethereum & polygon with the evm family for test purposes
+
+## 9.10.0-next.0
+
+### Minor Changes
+
+- [#3459](https://github.com/LedgerHQ/ledger-live/pull/3459) [`49182846de`](https://github.com/LedgerHQ/ledger-live/commit/49182846dee35ae9b3535c0c120e17d0eaecde70) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - add support to stacks blockchain
+
+- [#3815](https://github.com/LedgerHQ/ledger-live/pull/3815) [`0f4293e9bf`](https://github.com/LedgerHQ/ledger-live/commit/0f4293e9bf9cac4c2a195efeb0831aab3d51933d) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Support for Internet Computer blockchain
+
+- [#3825](https://github.com/LedgerHQ/ledger-live/pull/3825) [`9692adc2a6`](https://github.com/LedgerHQ/ledger-live/commit/9692adc2a6774feb4424fc7a984810918c946b1b) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Cosmos chains : stargaze, desmos, umee, secret network
+
+### Patch Changes
+
+- [#3714](https://github.com/LedgerHQ/ledger-live/pull/3714) [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Changing the polygon evm clone manager app
+
+- [#3714](https://github.com/LedgerHQ/ledger-live/pull/3714) [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Adding clone currencies of ethereum & polygon with the evm family for test purposes
+
+## 9.9.0
+
+### Minor Changes
+
+- [#3676](https://github.com/LedgerHQ/ledger-live/pull/3676) [`be5f56b233`](https://github.com/LedgerHQ/ledger-live/commit/be5f56b2330c166323914b79fef37a3c05e0e13a) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - update CAL
+
+### Patch Changes
+
+- [#3701](https://github.com/LedgerHQ/ledger-live/pull/3701) [`cb95f72c24`](https://github.com/LedgerHQ/ledger-live/commit/cb95f72c2415876ef88ca83fd2c4363a57669b92) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - fixed exchange app signatures for BSC coin and tokens
+
+## 9.9.0-next.0
+
+### Minor Changes
+
+- [#3676](https://github.com/LedgerHQ/ledger-live/pull/3676) [`be5f56b233`](https://github.com/LedgerHQ/ledger-live/commit/be5f56b2330c166323914b79fef37a3c05e0e13a) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - update CAL
+
+### Patch Changes
+
+- [#3701](https://github.com/LedgerHQ/ledger-live/pull/3701) [`cb95f72c24`](https://github.com/LedgerHQ/ledger-live/commit/cb95f72c2415876ef88ca83fd2c4363a57669b92) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - fixed exchange app signatures for BSC coin and tokens
+
+## 9.8.0
+
+### Minor Changes
+
+- [#3626](https://github.com/LedgerHQ/ledger-live/pull/3626) [`d1aa522db7`](https://github.com/LedgerHQ/ledger-live/commit/d1aa522db75f7ea850efe412abaa4dc7d37af6b7) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Allow addtoken to replace existing token
+
+- [#3632](https://github.com/LedgerHQ/ledger-live/pull/3632) [`ebe5b07afe`](https://github.com/LedgerHQ/ledger-live/commit/ebe5b07afec441ea3e2d9103da9e1175972add47) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - CAL update
+
+### Patch Changes
+
+- [#3483](https://github.com/LedgerHQ/ledger-live/pull/3483) [`4a1454beb3`](https://github.com/LedgerHQ/ledger-live/commit/4a1454beb3f86405ba2686e07879c12a7d35ad8e) Thanks [@gre](https://github.com/gre)! - use ledger currency id on Countervalues API usage.
+
+## 9.8.0-next.0
+
+### Minor Changes
+
+- [#3626](https://github.com/LedgerHQ/ledger-live/pull/3626) [`d1aa522db7`](https://github.com/LedgerHQ/ledger-live/commit/d1aa522db75f7ea850efe412abaa4dc7d37af6b7) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Allow addtoken to replace existing token
+
+- [#3632](https://github.com/LedgerHQ/ledger-live/pull/3632) [`ebe5b07afe`](https://github.com/LedgerHQ/ledger-live/commit/ebe5b07afec441ea3e2d9103da9e1175972add47) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - CAL update
+
+### Patch Changes
+
+- [#3483](https://github.com/LedgerHQ/ledger-live/pull/3483) [`4a1454beb3`](https://github.com/LedgerHQ/ledger-live/commit/4a1454beb3f86405ba2686e07879c12a7d35ad8e) Thanks [@gre](https://github.com/gre)! - use ledger currency id on Countervalues API usage.
+
 ## 9.7.0
 
 ### Minor Changes

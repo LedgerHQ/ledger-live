@@ -1,5 +1,97 @@
 # @ledgerhq/types-live
 
+## 6.38.1
+
+### Patch Changes
+
+- [#4214](https://github.com/LedgerHQ/ledger-live/pull/4214) [`5bbcea12f9`](https://github.com/LedgerHQ/ledger-live/commit/5bbcea12f93e3cda41705a4d61d50845628a6de6) Thanks [@mle-gall](https://github.com/mle-gall)! - Pixel polishing for stax (LLM) : Error states, My Ledger, CLS, Post Onboarding, Device Selection
+
+- [#4053](https://github.com/LedgerHQ/ledger-live/pull/4053) [`229cf62304`](https://github.com/LedgerHQ/ledger-live/commit/229cf623043b29eefed3e8e37a102325fa6e0387) Thanks [@mle-gall](https://github.com/mle-gall)! - New NPS ratings flow
+
+## 6.38.1-next.0
+
+### Patch Changes
+
+- [#4214](https://github.com/LedgerHQ/ledger-live/pull/4214) [`5bbcea12f9`](https://github.com/LedgerHQ/ledger-live/commit/5bbcea12f93e3cda41705a4d61d50845628a6de6) Thanks [@mle-gall](https://github.com/mle-gall)! - Pixel polishing for stax (LLM) : Error states, My Ledger, CLS, Post Onboarding, Device Selection
+
+- [#4053](https://github.com/LedgerHQ/ledger-live/pull/4053) [`229cf62304`](https://github.com/LedgerHQ/ledger-live/commit/229cf623043b29eefed3e8e37a102325fa6e0387) Thanks [@mle-gall](https://github.com/mle-gall)! - New NPS ratings flow
+
+## 6.38.0
+
+### Minor Changes
+
+- [#4021](https://github.com/LedgerHQ/ledger-live/pull/4021) [`e5f9cc46d6`](https://github.com/LedgerHQ/ledger-live/commit/e5f9cc46d69b82ad7267296b350e9d97a47f9e86) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add telos evm currency
+
+- [#4040](https://github.com/LedgerHQ/ledger-live/pull/4040) [`95ac67a5e0`](https://github.com/LedgerHQ/ledger-live/commit/95ac67a5e0359b03c7d82c34fd1f2f3b6eb7df22) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - add feature flags around ptx services in llm
+
+- [#4015](https://github.com/LedgerHQ/ledger-live/pull/4015) [`374e339c27`](https://github.com/LedgerHQ/ledger-live/commit/374e339c27e317656d01463a822898ad3a60df85) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Polygon zkEVM, Base Goerli, Klaytn
+
+### Patch Changes
+
+- [#4130](https://github.com/LedgerHQ/ledger-live/pull/4130) [`cfbff52724`](https://github.com/LedgerHQ/ledger-live/commit/cfbff527241534aba69bff3d86733b50a14eb4ce) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - coreum integration
+
+## 6.38.0-next.0
+
+### Minor Changes
+
+- [#4021](https://github.com/LedgerHQ/ledger-live/pull/4021) [`e5f9cc46d6`](https://github.com/LedgerHQ/ledger-live/commit/e5f9cc46d69b82ad7267296b350e9d97a47f9e86) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add telos evm currency
+
+- [#4040](https://github.com/LedgerHQ/ledger-live/pull/4040) [`95ac67a5e0`](https://github.com/LedgerHQ/ledger-live/commit/95ac67a5e0359b03c7d82c34fd1f2f3b6eb7df22) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - add feature flags around ptx services in llm
+
+- [#4015](https://github.com/LedgerHQ/ledger-live/pull/4015) [`374e339c27`](https://github.com/LedgerHQ/ledger-live/commit/374e339c27e317656d01463a822898ad3a60df85) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Polygon zkEVM, Base Goerli, Klaytn
+
+### Patch Changes
+
+- [#4130](https://github.com/LedgerHQ/ledger-live/pull/4130) [`cfbff52724`](https://github.com/LedgerHQ/ledger-live/commit/cfbff527241534aba69bff3d86733b50a14eb4ce) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - coreum integration
+
+## 6.37.0
+
+### Minor Changes
+
+- [#3924](https://github.com/LedgerHQ/ledger-live/pull/3924) [`14cce73003`](https://github.com/LedgerHQ/ledger-live/commit/14cce7300333c51cbcdbd5a7e290ddc600c9f3a1) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add EVM messages types
+
+- [#3825](https://github.com/LedgerHQ/ledger-live/pull/3825) [`9692adc2a6`](https://github.com/LedgerHQ/ledger-live/commit/9692adc2a6774feb4424fc7a984810918c946b1b) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Cosmos chains : stargaze, desmos, umee, secret network
+
+## 6.37.0-next.0
+
+### Minor Changes
+
+- [#3924](https://github.com/LedgerHQ/ledger-live/pull/3924) [`14cce73003`](https://github.com/LedgerHQ/ledger-live/commit/14cce7300333c51cbcdbd5a7e290ddc600c9f3a1) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add EVM messages types
+
+- [#3825](https://github.com/LedgerHQ/ledger-live/pull/3825) [`9692adc2a6`](https://github.com/LedgerHQ/ledger-live/commit/9692adc2a6774feb4424fc7a984810918c946b1b) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Cosmos chains : stargaze, desmos, umee, secret network
+
+## 6.36.0
+
+### Minor Changes
+
+- [#2441](https://github.com/LedgerHQ/ledger-live/pull/2441) [`44192f2ab2`](https://github.com/LedgerHQ/ledger-live/commit/44192f2ab2857cbae2ef4a81ee9608d395dcd2b9) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - edit eth transaction feature for LLD
+
+### Patch Changes
+
+- [#3696](https://github.com/LedgerHQ/ledger-live/pull/3696) [`5af41b6fa1`](https://github.com/LedgerHQ/ledger-live/commit/5af41b6fa1e43037ccdb2df279c82e12ef3d2b1a) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Allow to enable listAppsV2 via feature flags instead of experimental settings
+
+## 6.36.0-next.0
+
+### Minor Changes
+
+- [#2441](https://github.com/LedgerHQ/ledger-live/pull/2441) [`44192f2ab2`](https://github.com/LedgerHQ/ledger-live/commit/44192f2ab2857cbae2ef4a81ee9608d395dcd2b9) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - edit eth transaction feature for LLD
+
+### Patch Changes
+
+- [#3696](https://github.com/LedgerHQ/ledger-live/pull/3696) [`5af41b6fa1`](https://github.com/LedgerHQ/ledger-live/commit/5af41b6fa1e43037ccdb2df279c82e12ef3d2b1a) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Allow to enable listAppsV2 via feature flags instead of experimental settings
+
+## 6.35.1
+
+### Patch Changes
+
+- [#3591](https://github.com/LedgerHQ/ledger-live/pull/3591) [`809065c571`](https://github.com/LedgerHQ/ledger-live/commit/809065c57198646a49adea112b9d799e35a57d25) Thanks [@sarneijim](https://github.com/sarneijim)! - Add swapWalletApiPartnerList Feature Flag
+
+## 6.35.1-next.0
+
+### Patch Changes
+
+- [#3591](https://github.com/LedgerHQ/ledger-live/pull/3591) [`809065c571`](https://github.com/LedgerHQ/ledger-live/commit/809065c57198646a49adea112b9d799e35a57d25) Thanks [@sarneijim](https://github.com/sarneijim)! - Add swapWalletApiPartnerList Feature Flag
+
 ## 6.35.0
 
 ### Minor Changes

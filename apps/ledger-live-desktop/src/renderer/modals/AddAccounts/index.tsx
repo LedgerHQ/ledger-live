@@ -1,5 +1,6 @@
 import React, { PureComponent } from "react";
-import { Trans, withTranslation, TFunction } from "react-i18next";
+import { Trans, withTranslation } from "react-i18next";
+import { TFunction } from "i18next";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { createStructuredSelector } from "reselect";

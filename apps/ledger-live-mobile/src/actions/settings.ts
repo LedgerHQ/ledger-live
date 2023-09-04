@@ -23,7 +23,7 @@ import {
   SettingsSetLastSeenCustomImagePayload,
   SettingsSetCountervaluePayload,
   SettingsSetDiscreetModePayload,
-  SettingsSetFirstConnectionHasDevicePayload,
+  SettingsSetOnboardingHasDevicePayload,
   SettingsSetHasOrderedNanoPayload,
   SettingsSetLanguagePayload,
   SettingsSetLastConnectedDevicePayload,
@@ -41,7 +41,6 @@ import {
   SettingsSetReportErrorsPayload,
   SettingsSetSelectedTimeRangePayload,
   SettingsSetSensitiveAnalyticsPayload,
-  SettingsSetSwapKycPayload,
   SettingsSetSwapSelectableCurrenciesPayload,
   SettingsSetThemePayload,
   SettingsShowTokenPayload,
@@ -62,6 +61,11 @@ import {
   SettingsSetHasSeenStaxEnabledNftsPopupPayload,
   SettingsSetCustomImageTypePayload,
   SettingsSetGeneralTermsVersionAccepted,
+  SettingsSetOnboardingTypePayload,
+  SettingsSetKnownDeviceModelIdsPayload,
+  SettingsSetClosedNetworkBannerPayload,
+  SettingsSetClosedWithdrawBannerPayload,
+  SettingsSetUserNps,
 } from "./types";
 import { ImageType } from "../components/CustomImage/types";
 
@@ -161,12 +165,6 @@ export const setLocale = createAction<SettingsSetLocalePayload>(
 export const setSwapSelectableCurrencies = createAction<SettingsSetSwapSelectableCurrenciesPayload>(
   SettingsActionTypes.SET_SWAP_SELECTABLE_CURRENCIES,
 );
-export const setSwapKYCStatus = createAction<SettingsSetSwapKycPayload>(
-  SettingsActionTypes.SET_SWAP_KYC,
-);
-export const resetSwapLoginAndKYCData = createAction(
-  SettingsActionTypes.RESET_SWAP_LOGIN_AND_KYC_DATA,
-);
 export const swapAcceptProvider = createAction<SettingsAcceptSwapProviderPayload>(
   SettingsActionTypes.ACCEPT_SWAP_PROVIDER,
 );
@@ -178,6 +176,14 @@ export const setLastSeenDeviceInfo = createAction<SettingsLastSeenDeviceInfoPayl
 );
 export const setLastSeenDeviceLanguageId = createAction<SettingsLastSeenDeviceLanguagePayload>(
   SettingsActionTypes.LAST_SEEN_DEVICE_LANGUAGE_ID,
+);
+/**
+ * Do not use this for purposes other than debugging. The reducers for other
+ * actions like setLastSeenDevice, setLastSeenDeviceInfo,
+ * setLastSeenDeviceLanguageId already update that part of the state.
+ * */
+export const unsafe_setKnownDeviceModelIds = createAction<SettingsSetKnownDeviceModelIdsPayload>(
+  SettingsActionTypes.SET_KNOWN_DEVICE_MODEL_IDS,
 );
 const setHasSeenStaxEnabledNftsPopupAction =
   createAction<SettingsSetHasSeenStaxEnabledNftsPopupPayload>(
@@ -218,11 +224,20 @@ export const setMarketFilterByStarredAccounts =
 export const setSensitiveAnalytics = createAction<SettingsSetSensitiveAnalyticsPayload>(
   SettingsActionTypes.SET_SENSITIVE_ANALYTICS,
 );
-export const setFirstConnectionHasDevice = createAction<SettingsSetFirstConnectionHasDevicePayload>(
-  SettingsActionTypes.SET_FIRST_CONNECTION_HAS_DEVICE,
+export const setOnboardingHasDevice = createAction<SettingsSetOnboardingHasDevicePayload>(
+  SettingsActionTypes.SET_ONBOARDING_HAS_DEVICE,
+);
+export const setOnboardingType = createAction<SettingsSetOnboardingTypePayload>(
+  SettingsActionTypes.SET_ONBOARDING_TYPE,
 );
 export const setNotifications = createAction<SettingsSetNotificationsPayload>(
   SettingsActionTypes.SET_NOTIFICATIONS,
+);
+export const setCloseNetworkBanner = createAction<SettingsSetClosedWithdrawBannerPayload>(
+  SettingsActionTypes.SET_CLOSED_NETWORK_BANNER,
+);
+export const setCloseWithdrawBanner = createAction<SettingsSetClosedNetworkBannerPayload>(
+  SettingsActionTypes.SET_CLOSED_WITHDRAW_BANNER,
 );
 export const setWalletTabNavigatorLastVisitedTab =
   createAction<SettingsSetWalletTabNavigatorLastVisitedTabPayload>(
@@ -256,6 +271,8 @@ export const setHasBeenUpsoldProtect = createAction<SettingsSetHasBeenUpsoldProt
 export const setGeneralTermsVersionAccepted = createAction<SettingsSetGeneralTermsVersionAccepted>(
   SettingsActionTypes.SET_GENERAL_TERMS_VERSION_ACCEPTED,
 );
+
+export const setUserNps = createAction<SettingsSetUserNps>(SettingsActionTypes.SET_USER_NPS);
 
 type PortfolioRangeOption = {
   key: PortfolioRange;

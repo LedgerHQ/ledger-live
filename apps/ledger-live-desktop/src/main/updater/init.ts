@@ -1,5 +1,5 @@
 import { app, BrowserWindow } from "electron";
-import { autoUpdater, UpdateDownloadedEvent } from "@ledgerhq/electron-updater";
+import { autoUpdater, UpdateDownloadedEvent } from "electron-updater";
 import { getMainWindow } from "~/main/window-lifecycle";
 import createElectronAppUpdater from "./createElectronAppUpdater";
 
@@ -55,8 +55,8 @@ const init = () => {
   autoUpdater.on("error", err => {
     console.error(err);
   });
-  autoUpdater.autoInstallOnAppQuit = false;
-  autoUpdater.autoDownload = false;
+  autoUpdater.autoInstallOnAppQuit = true;
+  autoUpdater.autoDownload = true;
   autoUpdater.checkForUpdates();
   if (__PRERELEASE__ && __CHANNEL__ && !__CHANNEL__.includes("sha")) {
     autoUpdater.channel = __CHANNEL__;

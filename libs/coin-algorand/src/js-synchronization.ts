@@ -24,13 +24,8 @@ import type {
 import { AlgoTransactionType } from "./api";
 
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import type {
-  Account,
-  Operation,
-  OperationType,
-  SyncConfig,
-  TokenAccount,
-} from "@ledgerhq/types-live";
+import type { SyncConfig, Account, TokenAccount, OperationType } from "@ledgerhq/types-live";
+import { AlgorandOperation } from "./types";
 import { computeAlgoMaxSpendable } from "./logic";
 import { addPrefixToken, extractTokenId } from "./tokens";
 
@@ -165,7 +160,7 @@ const mapTransactionToOperation = (
   accountId: string,
   accountAddress: string,
   subAccounts?: TokenAccount[],
-): Partial<Operation> => {
+): AlgorandOperation => {
   const hash = tx.id;
   const blockHeight = tx.round;
   const date = new Date(parseInt(tx.timestamp) * 1000);
@@ -189,6 +184,7 @@ const mapTransactionToOperation = (
     senders,
     recipients,
     blockHeight,
+    blockHash: null,
     accountId,
     subOperations,
     extra: {
@@ -203,7 +199,7 @@ const mapTransactionToASAOperation = (
   tx: AlgoTransaction,
   accountId: string,
   accountAddress: string,
-): Partial<Operation> => {
+): AlgorandOperation => {
   const hash = tx.id;
   const blockHeight = tx.round;
   const date = new Date(parseInt(tx.timestamp) * 1000);
@@ -223,6 +219,7 @@ const mapTransactionToASAOperation = (
     senders,
     recipients,
     blockHeight,
+    blockHash: null,
     accountId,
     extra: {},
   };
@@ -271,7 +268,7 @@ export function makeGetAccountShape(algorandAPI: AlgorandAPI): GetAccountShape {
       mapTransactionToOperation(tx, accountId, address, subAccounts),
     );
 
-    const operations = mergeOps(oldOperations, newOperations as Operation[]);
+    const operations = mergeOps(oldOperations, newOperations);
 
     const shape = {
       id: accountId,
@@ -320,7 +317,7 @@ async function buildSubAccount({
     .filter(tx => getOperationType(tx, parentAccountAddress) != "OPT_IN")
     .map(tx => mapTransactionToASAOperation(tx, tokenAccountId, parentAccountAddress));
 
-  const operations = mergeOps(oldOperations, newOperations as Operation[]);
+  const operations = mergeOps(oldOperations, newOperations);
 
   const tokenAccount: TokenAccount = {
     type: "TokenAccount",

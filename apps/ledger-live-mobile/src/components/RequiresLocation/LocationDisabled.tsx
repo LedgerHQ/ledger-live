@@ -1,16 +1,15 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useTranslation } from "react-i18next";
-// import { Icons } from "@ledgerhq/native-ui";
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
 
 import NoLocationImage from "../../icons/NoLocationImage";
 import GenericInformationalDrawerContent from "../GenericInformationalDrawerContent";
 import GenericInformationalView from "../GenericInformationalView";
+import IsInDrawerContext from "../../context/IsInDrawerContext";
 
 type Props = {
   onRetry?: (() => void) | null;
   forceOpenSettings?: boolean;
-  componentType?: "drawer" | "view";
 };
 
 /**
@@ -23,15 +22,10 @@ type Props = {
  * @param onRetry A callback for the user to retry enabling the service. If undefined or if forceOpenSettings is true,
  *   the user will be prompted to open the native settings.
  * @param forceOpenSettings Used mainly for debug purposes. If true pressing the button will make the user go to the settings. Defaults to false.
- * @param componentType If "drawer", the component will be rendered as a content to be rendered in a drawer.
- *   If "view", the component will be rendered as a view. Defaults to "view".
  */
-const LocationDisabled: React.FC<Props> = ({
-  onRetry,
-  forceOpenSettings = false,
-  componentType = "view",
-}) => {
+const LocationDisabled: React.FC<Props> = ({ onRetry, forceOpenSettings = false }) => {
   const { t } = useTranslation();
+  const { isInDrawer } = useContext(IsInDrawerContext);
 
   // Only handles android
   const openNativeLocationServicesSetting = () => {
@@ -60,7 +54,7 @@ const LocationDisabled: React.FC<Props> = ({
     buttonEvent = "LocationServicesDisabledRetryAuthorize";
   }
 
-  if (componentType === "drawer") {
+  if (isInDrawer) {
     return (
       <GenericInformationalDrawerContent
         icon={<NoLocationImage viewBox="0 0 113 114" height="60" width="60" />}

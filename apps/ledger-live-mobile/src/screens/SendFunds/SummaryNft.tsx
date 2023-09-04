@@ -1,14 +1,11 @@
-import React, { memo } from "react";
+import React, { memo, useMemo } from "react";
 
 import { useTranslation } from "react-i18next";
 import { View, StyleSheet } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
-import type { NFTMetadataResponse } from "@ledgerhq/types-live";
-import type { NFTResourceLoaded } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { Transaction as EthereumTransaction } from "@ledgerhq/live-common/families/ethereum/types";
 import LText from "../../components/LText";
 import SummaryRow from "./SummaryRow";
 
@@ -20,21 +17,37 @@ type Props = {
 const SummaryNft = ({ transaction, currencyId }: Props) => {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const tokenId = (transaction as EthereumTransaction)?.tokenIds?.[0];
-  const quantity = (transaction as EthereumTransaction)?.quantities?.[0];
-  const data = useNftMetadata(
-    (transaction as EthereumTransaction)?.collection,
-    tokenId,
-    currencyId,
-  );
-  const metadata = (data as NFTResourceLoaded)?.metadata;
+  const tokenId = useMemo(() => {
+    if (transaction?.family === "evm") {
+      return transaction.nft?.tokenId;
+    } else if (transaction?.family === "ethereum") {
+      return transaction.tokenIds?.[0];
+    }
+  }, [transaction]);
+  const quantity = useMemo(() => {
+    if (transaction?.family === "evm") {
+      return transaction.nft?.quantity;
+    } else if (transaction?.family === "ethereum") {
+      return transaction.quantities?.[0];
+    }
+  }, [transaction]);
+  const collection = useMemo(() => {
+    if (transaction?.family === "evm") {
+      return transaction.nft?.contract;
+    } else if (transaction?.family === "ethereum") {
+      return transaction.collection;
+    }
+  }, [transaction]);
+  const shouldDisplayQuantity =
+    "mode" in transaction && ["erc1155", "erc1155.transfer"].includes(transaction.mode);
+  const { metadata } = useNftMetadata(collection, tokenId, currencyId);
 
   return (
     <>
       <SummaryRow title="NFT">
         <View style={styles.metadata}>
           <LText style={[styles.textAlignRight]} semiBold>
-            {(metadata as NFTMetadataResponse["result"])?.nftName || "-"}
+            {metadata?.nftName || "-"}
           </LText>
           <LText
             style={[
@@ -50,7 +63,7 @@ const SummaryNft = ({ transaction, currencyId }: Props) => {
           </LText>
         </View>
       </SummaryRow>
-      {(transaction as EthereumTransaction)?.mode === "erc1155.transfer" && (
+      {shouldDisplayQuantity && (
         <SummaryRow title={t("send.summary.quantity")}>
           <LText semiBold>{quantity?.toFixed()}</LText>
         </SummaryRow>

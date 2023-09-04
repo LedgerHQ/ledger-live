@@ -1,8 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import styled from "styled-components";
-import CloseIcon from "@ledgerhq/icons-ui/react/CloseMedium";
-import ArrowLeftIcon from "@ledgerhq/icons-ui/react/ArrowLeftMedium";
+import CloseIcon from "@ledgerhq/icons-ui/reactLegacy/CloseMedium";
+import ArrowLeftIcon from "@ledgerhq/icons-ui/reactLegacy/ArrowLeftMedium";
 
 import baseStyled, { BaseStyledProps } from "../../styled";
 import Flex from "../../layout/Flex";
@@ -116,7 +116,7 @@ const PopinWrapper = ({
 }: PopinProps): React.ReactElement => {
   const $root = React.useMemo(
     () =>
-      menuPortalTarget === undefined && typeof document !== undefined
+      menuPortalTarget === undefined && typeof document !== "undefined"
         ? document.querySelector("body")
         : menuPortalTarget,
     [menuPortalTarget],

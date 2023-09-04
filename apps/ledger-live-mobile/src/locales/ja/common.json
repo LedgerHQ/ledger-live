@@ -17,6 +17,7 @@
     "sortBy" : "並び替え",
     "signOut" : "サインアウト",
     "search" : "検索",
+    "searchProvider" : "プロバイダーを検索...",
     "contactUs" : "Ledgerサポートへのお問い合わせ",
     "device" : "デバイス",
     "cryptoAsset" : "暗号資産",
@@ -55,6 +56,7 @@
     "forgetDevice" : "デバイスの削除",
     "help" : "ヘルプ",
     "saveLogs" : "ログを保存",
+    "scrollToTop" : "上部にスクロール",
     "sync" : {
       "ago" : "{{time}}に同期済み"
     },
@@ -159,11 +161,11 @@
       "description" : ""
     },
     "CosmosBroadcastCodeInternal" : {
-      "title" : "問題が発生しました (Error #1)",
+      "title" : "問題が発生しました（エラー#1）",
       "description" : "以下のボタンを使ってログを保存し、Ledgerサポートに提供してください。"
     },
     "CosmosBroadcastCodeTxDecode" : {
-      "title" : "問題が発生しました (Error #2)）",
+      "title" : "問題が発生しました（エラー#2）",
       "description" : "以下のボタンを使ってログを保存し、Ledgerサポートに提供してください。"
     },
     "CosmosBroadcastCodeInvalidSequence" : {
@@ -179,7 +181,7 @@
       "description" : "アカウントに十分な資金があることを確認してください。"
     },
     "CosmosBroadcastCodeUnknownRequest" : {
-      "title" : "問題が発生しました (Error #6)",
+      "title" : "問題が発生しました（エラー#6）",
       "description" : "以下のボタンを使ってログを保存し、Ledgerサポートに提供してください。"
     },
     "CosmosBroadcastCodeInvalidAddress" : {
@@ -211,11 +213,11 @@
       "description" : "メモテキストのサイズを小さくして、もう一度お試しください。"
     },
     "CosmosBroadcastCodeInsufficientFee" : {
-      "title" : "問題が発生しました(Error #14)",
+      "title" : "問題が発生しました（エラー#14）",
       "description" : "以下のボタンを使ってログを保存し、Ledgerサポートに提供してください。"
     },
     "CosmosBroadcastCodeTooManySignatures" : {
-      "title" : "問題が発生しました(Error #15)",
+      "title" : "問題が発生しました（エラー#15）",
       "description" : "以下のボタンを使ってログを保存し、Ledgerサポートに提供してください。"
     },
     "CosmosBroadcastCodeGasOverflow" : {
@@ -223,7 +225,7 @@
       "description" : "以下のボタンを使ってログを保存し、Ledgerサポートに提供してください。"
     },
     "CosmosBroadcastCodeNoSignatures" : {
-      "title" : "問題が発生しました(Error #17)",
+      "title" : "問題が発生しました（エラー#17）",
       "description" : "以下のボタンを使ってログを保存し、Ledgerサポートに提供してください。"
     },
     "DeviceAppVerifyNotSupported" : {
@@ -237,6 +239,10 @@
     "DeviceHalted" : {
       "title" : "Ledgerデバイスを再起動し、もう一度やり直してください。",
       "description" : "予期しないエラーが発生しました。もう一度お試しください。"
+    },
+    "DeviceAlreadySetup" : {
+      "title" : "お客様の{{device}}はすでに、シークレットリカバリーフレーズを使用して設定されています",
+      "description" : "設定されていないLedgerを接続してください。"
     },
     "DeviceNotGenuine" : {
       "title" : "デバイスが正規品でない可能性があります。",
@@ -325,8 +331,15 @@
       "description" : "この画像が正しくない場合は、別の画像で再度お試しいただけます。",
       "primaryCTA" : "別の写真をアップロード"
     },
+    "ImageDoesNotExistOnDevice" : {
+      "title" : "お持ちのLedger Staxには削除するロック画面の画像がありません",
+      "description" : "カスタマイズされたロック画面の画像は既に削除済みです。"
+    },
     "InvalidAddress" : {
       "title" : "これは有効な{{currencyName}} アドレスではありません。"
+    },
+    "InvalidNonce" : {
+      "title" : "ナンスは必須です"
     },
     "InvalidAddressBecauseAlreadyDelegated" : {
       "title" : "アカウントは既にバリデーターへデリゲート済みです"
@@ -407,6 +420,9 @@
     },
     "MaxFeeLow" : {
       "title" : "最大手数料が低すぎます。トランザクションがしばらく保留状態になる場合があります"
+    },
+    "MaxPriorityFeeLowerThanInitial" : {
+      "title" : "優先手数料が低すぎるため、最初の取引の優先手数料の値以上の金額を入力してください"
     },
     "NetworkDown" : {
       "title" : "インターネットがダウンしているようです。",
@@ -489,8 +505,11 @@
       "description" : "もう一度お試しください。"
     },
     "TimeoutTagged" : {
-      "title" : "サーバーからの応答時間が長すぎます。({{tag}})",
+      "title" : "サーバーからの応答時間が長すぎます。（{{tag}}）",
       "description" : "タイムアウトが発生しました。"
+    },
+    "TransactionAlreadyValidated" : {
+      "title" : "トランザクション検証済み"
     },
     "TransactionRefusedOnDevice" : {
       "title" : "トランザクションがデバイス上で拒否されました",
@@ -637,6 +656,9 @@
       "title" : "問題が発生しました。",
       "description" : "トランザクションが成立しませんでした。もう一度お試しいただくか、サポートまでご連絡ください。"
     },
+    "SwapTimeoutError" : {
+      "title" : "技術的な問題により、見積もりを作成できませんでした。しばらくしてから再度スワップをお試しください。"
+    },
     "PolkadotElectionClosed" : {
       "title" : "バリデータの選出を終了しなければなりません。"
     },
@@ -704,6 +726,9 @@
     },
     "CardanoNotEnoughFunds" : {
       "title" : "お支払いに十分な資金があることをご確認ください"
+    },
+    "StacksMemoTooLong" : {
+      "title" : "メモの長さが長すぎます"
     },
     "StellarWrongMemoFormat" : {
       "title" : "メモのフォーマットに誤りがあります。"
@@ -812,7 +837,7 @@
       "title" : "最大手数料が推奨手数料より低額です"
     },
     "PriorityFeeHigherThanMaxFee" : {
-      "title" : "最大優先料金は、最大料金より高くすることはできません"
+      "title" : "最大優先手数料は、最大手数料より高くすることはできません"
     },
     "LockedDeviceError" : {
       "title" : "デバイスがロックされています。",
@@ -825,6 +850,9 @@
     },
     "GasEstimationError" : {
       "title" : "ガスの見積もりに失敗しました"
+    },
+    "InvalidMemoICP" : {
+      "title" : "メモは数字で記入してください"
     }
   },
   "crash" : {
@@ -1110,7 +1138,7 @@
       "url" : {
         "title" : "iframe URLをアップデート",
         "subtitle" : "デバッグ設定",
-        "cta" : "お得"
+        "cta" : "保存"
       },
       "message" : {
         "successTitle" : "トランザクション完了",
@@ -1131,7 +1159,7 @@
   },
   "discover" : {
     "title" : "Discover",
-    "desc" : "Web3の世界を安全に探索",
+    "desc" : "Web3の世界を安全に楽しむ",
     "link" : "さらに詳しく",
     "sections" : {
       "learn" : {
@@ -1160,7 +1188,7 @@
       },
       "referralProgram" : {
         "title" : "ご友人紹介",
-        "desc" : "ご友人がLedgerを購入すると、お客様とご友人の両方が10ドル分のBTCを獲得します。"
+        "desc" : "ご友人がLedgerを購入すると、お客様とご友人の両方が20ドル分のBTCを獲得可能です。"
       }
     },
     "comingSoon" : "近日公開",
@@ -1194,30 +1222,32 @@
       "start" : "はじめに",
       "noDevice" : "デバイスをお持ちでない場合",
       "buy" : "{{fullDeviceName}}を購入",
-      "terms" : "「はじめる」をタップすることで、お客様が同意したことになります。",
-      "termsLink" : "サービス利用規約",
+      "terms" : "By continuing, you agree to Ledger's",
+      "termsLink" : "Terms & Conditions",
       "privacyLink" : "プライバシーポリシー",
       "and" : "そして",
       "recoverLogIn" : "Ledger Recoverにログイン"
     },
-    "stepDoYouHaveALedgerDevice" : {
-      "title" : "Ledgerデバイスをお持ちですか？",
-      "subtitle" : "はじめに",
-      "yes" : "はい。",
-      "no" : "いいえ。"
-    },
     "postWelcomeStep" : {
-      "title" : "始めましょう！",
-      "subtitle_yes" : "Ledgerを設定するか、最初にアプリを見てみましょう。",
-      "subtitle_no" : "アプリをチェック、またはNano Xデバイスを購入することが可能です",
-      "noLedgerLink" : "Ledgerをまだ持っておらず、購入を検討中",
+      "title" : "セットアップ",
+      "noLedgerYet" : "Ledgerを持っていません",
+      "noLedgerYetModal" : {
+        "title" : "数百万人ものユーザー。ハッキングは0。",
+        "desc" : "Ledgerで暗号資産を保護することで得られる安心感をご体験ください。",
+        "buy" : "Ledgerを購入する",
+        "explore" : "このアプリを詳しく見る"
+      },
       "setupLedger" : {
-        "title" : "Ledgerをセットアップ",
-        "subtitle" : "暗号資産とNFTを保護するための手順を解説"
+        "title" : "Ledgerを設定する",
+        "subtitle" : "Ledgerが新品またはリセット済みの場合に選択してください。"
+      },
+      "accessWallet" : {
+        "title" : "ウォレットにアクセスする",
+        "subtitle" : "Ledgerを既に設定済みの場合に選択してください。"
       },
       "buyNano" : {
         "title" : "Ledger Nano Xを購入する",
-        "subtitle" : "ハードウェアウォレットは、資産を安全に保管するための唯一の方法です "
+        "subtitle" : "ハードウェアウォレットは、資産を安全に保管するための唯一の方法です。 "
       },
       "discoverLedger" : {
         "title" : "Ledger Liveを詳しく見る",
@@ -1228,17 +1258,23 @@
         "subtitle" : "Ledger Liveデスクトップの資産をモバイルと同期"
       }
     },
+    "welcomeBackStep" : {
+      "title" : "おかえりなさい",
+      "subtitle" : "ウォレットへのアクセス方法を選択する：",
+      "connect" : "Ledgerを接続する",
+      "sync" : "Ledger Live Desktopと同期する"
+    },
     "discoverLive" : {
       "exploreWithoutADevice" : "デバイスなしで探索する",
       "buyALedgerNow" : "今すぐLedgerを購入する",
       "0" : {
-        "title" : "すべての暗号資産を安全に保護します。"
+        "title" : "すべての暗号資産を安全に保護。"
       },
       "1" : {
         "title" : "常にマーケットをチェック。"
       },
       "2" : {
-        "title" : "様々なアプリを見つけて、Web3について学びます。"
+        "title" : "様々なアプリとWeb3について学ぶ。"
       },
       "3" : {
         "title" : "暗号資産とNFTを安全に保管。"
@@ -1272,16 +1308,22 @@
       "title" : "こんにちは！",
       "or" : "または",
       "firstUse" : {
-        "title" : "Nanoの使用は初めてですか？",
-        "subTitle" : "新しいNanoをセットアップ",
+        "section" : "お持ちのLedger {{model}}を設定する",
+        "title" : "新しいウォレットを作成する",
+        "subTitle" : "これにより、新しい秘密のリカバリーフレーズが生成されます。",
         "desc" : "デバイスを起動してセットアップしましょう！",
         "label" : "30分"
       },
       "devicePairing" : {
-        "title" : "リカバリーフレーズをすでにお持ちですか？",
+        "title" : "秘密のリカバリーフレーズを入手しましたか？",
         "label" : "デバイスのペアリング",
         "subTitle" : "Nanoを接続する",
         "desc" : "デバイスをセットアップ済みですか？アプリと接続しましょう！"
+      },
+      "newDevice" : {
+        "label" : "新しいデバイス",
+        "title" : "新規として設定",
+        "subTitle" : "初めてLedgerを設定する場合はこれを選択してください"
       },
       "desktopSync" : {
         "title" : "リカバリーフレーズをすでにお持ちですか？",
@@ -1291,12 +1333,14 @@
       },
       "restoreDevice" : {
         "label" : "デバイスの復元",
-        "subTitle" : "新しいデバイスでリカバリーフレーズを復元",
+        "title" : "秘密のリカバリーフレーズで復元する",
+        "subTitle" : "秘密のリカバリフレーズにアクセスする必要があります。",
         "desc" : "既存のリカバリーフレーズを使って、新しいNanoに秘密鍵を復元できます。"
       },
       "recovery" : "リカバリーフレーズをすでにお持ちですか？",
       "protect" : {
-        "subTitle" : "Ledger Recoverを使用して復元",
+        "title" : "Ledger Recoverを使用して復元",
+        "subTitle" : "Ledger Recoverのサブスクリプションが必要です。",
         "drawer" : {
           "title" : "Ledger Nano Xを使用する",
           "desc" : "Ledgerの復元ソフトローンチ（限定公開）はLedger Nano X専用です",
@@ -1325,7 +1369,7 @@
       "3" : {
         "label" : "ベーシック",
         "title" : "トランザクションを検証する",
-        "desc" : "Nanoは、「コールドストレージ」のウォレットとして機能します。つまり、アプリを使用しても秘密鍵がオンラインで公開されることは絶対にありません。"
+        "desc" : "Nanoは、「コールドストレージ」として機能します。アプリを使用しても秘密鍵がオンラインで公開されることは絶対にありません。"
       },
       "4" : {
         "label" : "ベーシック",
@@ -1399,7 +1443,7 @@
           "0" : {
             "title" : "PINコードを選択",
             "label" : "左ボタンまたは右ボタンを押して、数字を変更します。数字を確定するには、両方のボタンを同時に押します。<1></1>を選択するとPINコードが確定されます。数字を消去したいときは<2></2>を選択してください。",
-            "desc" : "左ボタンまたは右ボタンを押して、数字を変更。両方のボタンを同時に押して、数字を確定する。<validIcon></validIcon>を選択してPINコードを確定。<cancelIcon></cancelIcon>を選択して数字を削除する。"
+            "desc" : "左ボタンまたは右ボタンを押して、数字を変更。数字を確定するには、両方のボタンを同時に押します。<validIcon></validIcon>を選択するとPINコードが確定されます。数字を消去する場合は、<cancelIcon></cancelIcon>を選択してください。"
           },
           "1" : {
             "title" : "PINコードを確認",
@@ -1439,11 +1483,11 @@
         "cta" : "次のステップ"
       },
       "recoveryPhrase" : {
-        "title" : "リカバリーフレーズ",
-        "desc" : "リカバリーフレーズは、秘密鍵をバックアップするための、24個の英単語の組み合わせです。",
-        "desc_1" : "Nanoによって唯一無二のリカバリーフレーズが生成されます。Ledger社はお客様のリカバリーフレーズを保存しません。",
+        "title" : "シークレットリカバリーフレーズ",
+        "desc" : "シークレットリカバリーフレーズは、秘密鍵をバックアップする24単語のリストです。",
+        "desc_1" : "Ledger Nanoは、一意のシークレットリカバリーフレーズを生成します。Ledgerにはフレーズは知らされません。",
         "cta" : "次のステップ",
-        "checkboxDesc" : "このリカバリーフレーズを紛失すると、Nanoにアクセスできなくなった場合に、ウォレット内の暗号資産が永久に失われてしまうことを理解しました。"
+        "checkboxDesc" : "他者が私のシークレットリカバリーフレーズを入手した場合、資産が危険にさらされることを理解しています。"
       },
       "recoveryPhraseSetup" : {
         "infoModal" : {
@@ -1543,7 +1587,8 @@
         "title" : "Ledger Nano XのOSをアップデートする必要があります",
         "desc" : "OSをアップデートしてみるか、Ledgerサポートにご連絡ください。",
         "cta" : "アップデート方法を確認",
-        "supportLink" : "Ledgerサポートへのお問い合わせ"
+        "supportLink" : "Ledgerサポートへのお問い合わせ",
+        "buyLedger" : "Ledgerを購入する"
       }
     },
     "stepRecoveryPhrase" : {
@@ -1617,6 +1662,11 @@
       }
     },
     "stepPairNew" : {
+      "generic" : {
+        "title" : "Nanoをペアリングする",
+        "desc" : "このスマートフォンで初めてNanoをセットアップします。デバイスを早速ペアリングしましょう。",
+        "cta" : "Nanoをペアリングする"
+      },
       "nanoX" : {
         "title" : "Nanoをペアリングする",
         "desc" : "このスマートフォンで初めてNanoをセットアップします。デバイスを早速ペアリングしましょう。",
@@ -1762,7 +1812,7 @@
         "title" : "Ledgerユーザーの暗号資産が保管される場所は？",
         "answers" : {
           "correct" : "ブロックチェーン",
-          "wrong" : "Nanoデバイス"
+          "wrong" : "Ledger Nanoについて"
         },
         "modal" : {
           "text" : "あなたの暗号資産は、常にブロックチェーンに保存されています。ハードウェアウォレットに保存されているのは、暗号資産へのアクセスを可能にする秘密鍵だけです。",
@@ -1770,10 +1820,10 @@
         }
       },
       "recoveryPhrase" : {
-        "title" : "リカバリーフレーズを誰かに知られてしまうと...",
+        "title" : "誰かが私のシークレットリカバリーフレーズにアクセスしたら...",
         "answers" : {
-          "correct" : "暗号資産が危険にさらされるため、別の安全な場所に移さなければならない",
-          "wrong" : "Ledgerに確認すれば教えてもらえるので問題ない"
+          "correct" : "資産が危険にさらされ、第三者が私の資産にアクセスする可能性がある",
+          "wrong" : "私がそのフレーズを忘れない限り問題はない"
         },
         "modal" : {
           "text" : "リカバリーフレーズを他人に知られてしまうと、簡単に暗号資産を盗まれてしまいます。\n紛失した場合は、すぐに暗号資産を安全な場所に移さなければなりません。",
@@ -1781,7 +1831,7 @@
         }
       },
       "privateKey" : {
-        "title" : "NanoをLedgerアプリに接続すると、私の秘密鍵は...",
+        "title" : "Ledger NanoをLedger Liveアプリに接続すると、私の秘密鍵は...",
         "answers" : {
           "correct" : "オフライン状態のまま",
           "wrong" : "短時間だけオンライン状態になる"
@@ -1834,7 +1884,7 @@
       },
       "loading" : {
         "title" : "{{deviceName}}とペアリング中...",
-        "subtitle" : "{{productName}}のコードを確認してください"
+        "subtitle" : "必要に応じて、{{productName}}のコードを確認してください"
       },
       "error" : {
         "generic" : {
@@ -1854,9 +1904,14 @@
     "title" : "{{deviceName}}をセットアップ",
     "estimatedTimeFormat" : "{{estimatedTime}}分",
     "deviceSelection" : {
-      "title" : "設定するLedgerを選択：",
+      "title" : "設定したいLedgerを選択：",
       "brand" : "Ledger",
-      "setupTime" : "{{time}}分"
+      "setupTime" : "{{time}}分",
+      "notCompatible" : "iPhoneとの互換性はありません",
+      "modal" : {
+        "title" : "Ledger Nano SとLedger Nano S Plusは、iOSデバイスではサポートされていません",
+        "desc" : "お使いのコンピューター上のLedger Liveで、Ledger Nano SかLedger Nano S Plusを使用します。"
+      }
     },
     "scanning" : {
       "title" : "{{productName}}を検出中",
@@ -1868,7 +1923,7 @@
       },
       "loading" : {
         "title" : "{{deviceName}}とペアリング中",
-        "subtitle" : "{{productName}}のコードを確認してください"
+        "subtitle" : "必要に応じて、{{productName}}のコードを確認してください"
       },
       "error" : {
         "title" : "ペアリング失敗",
@@ -2003,6 +2058,7 @@
     "discover" : "Discover",
     "nanoX" : "Nano X",
     "market" : "Market",
+    "earn" : "報酬獲得",
     "learn" : "ラーニング"
   },
   "learn" : {
@@ -2396,7 +2452,7 @@
     },
     "earn" : "報酬獲得",
     "quickActions" : "クイックアクション",
-    "referralProgram" : "ご友人を紹介し、$10相当のBitcoinを獲得しましょう",
+    "referralProgram" : "ご友人を紹介し、20ドル分のBitcoinを獲得しましょう",
     "banner" : {
       "redelegation" : {
         "description" : "ご存知でしたか？Ledgerのバリデーターは、現在お使いのバリデーターよりも低額の手数料でステーキングを行います。",
@@ -2580,8 +2636,6 @@
         "confirm" : "トークンを非表示"
       },
       "hideNFTCollectionCTA" : "コレクションを非表示",
-      "hiddenNFTCollections" : "非表示のNFTコレクション",
-      "hiddenNFTCollectionsDesc" : "NFTを非表示にするには、アカウントで該当するコレクションを長押して「コレクションを非表示」を選択してください。",
       "hideNFTCollectionModal" : {
         "title" : "コレクションを非表示にしますか?",
         "desc" : "設定オプションでコレクションの非表示を解除することができます。"
@@ -2602,7 +2656,7 @@
       "privacyPolicy" : "プライバシーポリシー",
       "privacyPolicyDesc" : "どのような個人情報が収集され、どのような理由で、どのように使用されるのかをご確認いただけます。",
       "liveReview" : {
-        "title" : "フィードバック",
+        "title" : "Feedback",
         "desc" : "当アプリに関するご意見やご感想をお聞かせください",
         "ios" : "App Storeでレビュー",
         "android" : "Google Playストアでレビュー"
@@ -2640,6 +2694,10 @@
       "largeMover" : {
         "title" : "変動",
         "desc" : "BTCとETHで重要な値動きがあった場合に通知されます"
+      },
+      "transactionsAlerts" : {
+        "title" : "トランザクション警告",
+        "desc" : "Ethereum、Polygon、Binance Smart Chain、Avalanche、Ethereum Classicのトランザクションに関する通知を受け取る"
       },
       "price" : {
         "title" : "価格アラート",
@@ -2700,10 +2758,6 @@
           "title" : "My Ledger用アプリの試験的リスト",
           "description" : "My Ledgerアクセスとインラインフローのパフォーマンスの向上。"
         },
-        "experimentalCountervalues" : {
-          "title" : "試験的なカウンターバリューAPI",
-          "description" : "これにより、アカウントに表示されるカウンター値が不正確になる可能性があります。"
-        },
         "experimentalSwap" : {
           "title" : "新しいスワップインタフェース",
           "description" : "新しい試験的スワップインタフェースを使用する"
@@ -2762,6 +2816,18 @@
       "desc" : "Ledger Live、Ledger製品、マーケット、おすすめに関する最新情報を入手しましょう。設定でいつでも購読解除できます",
       "allow" : "通知を許可",
       "later" : "後で"
+    },
+    "ptxServices" : {
+      "toast" : {
+        "title" : "AppleのApp Storeにおける最新のアップデートに準拠するため、この機能は一時的に利用不可となっております。デスクトップのLedger Liveでは、引き続きご利用いただけます。"
+      },
+      "drawer" : {
+        "title" : "購入・スワップ・売却の無効化",
+        "description" : "AppleのApp Storeにおける最新のアップデートに準拠するため、これらの機能はiOSでは一時的に無効化となっております。<emphasized>デスクトップのLedger Liveでは、引き続きご利用いただけます。</emphasized>",
+        "checkboxLabel" : "今後、このメッセージを表示しない",
+        "cta" : "了解",
+        "link" : "詳細はこちら"
+      }
     }
   },
   "transfer" : {
@@ -3151,7 +3217,8 @@
           },
           "withdrawalsBlockedError" : {
             "message" : "お客様の引き出しは {{providerName}}によってブロックされています。\n\n詳細については、サポートにお問い合わせください。"
-          }
+          },
+          "noProviders" : "結果が見つかりません。現在の設定で利用できる見積もりはありません。"
         }
       }
     },
@@ -3461,6 +3528,7 @@
     },
     "fees" : {
       "title" : "ネットワーク手数料",
+      "titleMaxFees" : "最大ネットワーク手数料",
       "validate" : "確認",
       "required" : "手数料がかかります。",
       "chooseGas" : "ガス代を選択する",
@@ -3468,7 +3536,8 @@
       "edit" : {
         "title" : "単位を選択"
       },
-      "networkInfo" : "トランザクションに含めるネットワーク手数料を選択してください。手数料の額は、トランザクションの処理速度に影響します。"
+      "networkInfo" : "トランザクションに含めるネットワーク手数料を選択してください。手数料の額は、トランザクションの処理速度に影響します。",
+      "networkInfoMaxFees" : "これは、このトランザクションに対して請求される可能性のある最大金額です。最大ネットワーク手数料と実際の手数料の差額は返金されます。"
     },
     "verification" : {
       "streaming" : {
@@ -3480,6 +3549,39 @@
       "maxSpendable" : {
         "title" : "最大利用可能額",
         "description" : "最大利用可能額は、1回のトランザクションで送金できる、1つのアカウントの合計残高です。"
+      }
+    }
+  },
+  "editTransaction" : {
+    "cta" : "速度を上げる、またはキャンセルする",
+    "header" : "トランザクションを編集",
+    "learnMore" : "詳細が知りたいです",
+    "panel" : {
+      "stuckMessage" : "最も古い「送信」トランザクションが滞っています。より高いネットワーク手数料でトランザクションを高速化するか、キャンセルしてください。",
+      "speedupMessage" : "お客様のトランザクションは進行中です。より高いネットワーク手数料で速度を上げるか、キャンセルが可能です。"
+    },
+    "previousFeesInfo" : {
+      "pendingTransactionFeesInfo" : "保留中のトランザクション手数料情報： ",
+      "networkfee" : "ネットワーク手数料 = {{amount}} {{unit}}",
+      "maxFee" : "最大手数料 = {{amount}} Gwei",
+      "maxPriorityFee" : "最大優先手数料 = {{amount}} Gwei",
+      "gasPrice" : "ガス代 = {{amount}} Gwei"
+    },
+    "speedUp" : {
+      "title" : "スピードアップ",
+      "description" : "より高いネットワーク手数料でトランザクションを再送信します。"
+    },
+    "cancel" : {
+      "title" : "キャンセル",
+      "description" : "0{{ticker}}をお客様自身のアドレスに送信中です。キャンセルを確定するには、ネットワーク手数料はキャンセルされるトランザクション手数料よりも30%高くなります。"
+    },
+    "error" : {
+      "notEnoughFundsToCancel" : "アカウントに十分な資金がないため、トランザクションをキャンセルすることはできません。",
+      "notEnoughFundsToSpeedup" : "アカウントに十分な資金がないため、トランザクションの高速化は利用できません。",
+      "notlowestNonceToSpeedup" : "高速化機能は利用できません。以前のトランザクションが滞っているため、お客様のトランザクションは保留中です。承認されるのを待って、高速化してキャンセルすることができます。",
+      "TransactionHasBeenValidatedError" : {
+        "title" : "速度を上げる、またはキャンセルすることはできません",
+        "description" : "このトランザクションはすでに検証済みです"
       }
     }
   },
@@ -3694,6 +3796,7 @@
     "loading" : "読み込み中...",
     "turnOnAndUnlockDevice" : "デバイスの電源をオンにしてロックを解除する",
     "connectAndUnlockDevice" : "デバイスを接続してロックを解除する",
+    "connectAnotherDevice" : "別のLedgerを接続する",
     "unlockDevice" : "デバイスのロックを解除する",
     "outdated" : "アプリのバージョンが最新ではありません。",
     "outdatedDesc" : "お使いのデバイス上の{{appName}}アプリに重要なアップデートがあります。「管理」からアップデートしてください。",
@@ -4042,7 +4145,7 @@
   },
   "FirmwareUpdate" : {
     "title" : "ファームウェアをアップデート",
-    "updateDevice" : "{{deviceName}}をアップデートする",
+    "updateDevice" : "{{deviceName}}OSアップデート",
     "updateDone" : "完了です！お客様の{{deviceName}}は、最新の状態です",
     "updateDoneDescription" : "新しいOSバージョン：{{firmwareVersion}}",
     "preparing" : "ファームウェアアップデートの準備中はデバイスをスリープ状態にせず、接続を維持してください。進捗状況をお知らせします",
@@ -4075,7 +4178,7 @@
     "currentVersionNumber" : "現在のバージョン",
     "newVersionNumber" : "新しいバージョン",
     "success" : "ファームウェアのアップデート完了",
-    "update" : "更新",
+    "update" : "アップデート",
     "Notifications" : {
       "confirmOnDevice" : "デバイスでの承認が必要です",
       "preparingUpdate" : "アップデートの転送が完了したら、完了時に通知します",
@@ -4093,7 +4196,8 @@
       "preparing" : "アップデートを準備しています",
       "firmware" : "アップデートをダウンロードしています",
       "prepareUpdate" : {
-        "titleActive" : "インストール用のアップデートを準備しています",
+        "titleBackingUp" : "アプリと設定のバックアップ",
+        "titleTransferring" : "アップデートの転送",
         "description" : "構成をバックアップし、アップデートを{{deviceName}}に転送します。"
       },
       "installUpdate" : {
@@ -4106,7 +4210,18 @@
         "description" : "設定とブロックチェーンアプリが復元されます。",
         "restoreLockScreenPicture" : "ロック画面の画像を復元",
         "restoreLanguage" : "言語を復元",
-        "installingApps" : "アプリをインストール"
+        "imageLoadRequested" : "{{deviceName}}でロック画面の画像の復元を許可する",
+        "imageCommitRequested" : "{{deviceName}}の画像を確定する",
+        "allowLanguageInstallation" : "{{deviceName}}で言語の復元を許可する",
+        "allowAppsRestoration" : "{{deviceName}}でアプリの復元を許可する",
+        "errors" : {
+          "description" : "それが間違いであった場合は、復元を再試行できます。または、この手順をスキップすることもできます。",
+          "LanguageInstallRefusedOnDevice" : "{{deviceName}}で言語の変更がキャンセルされました",
+          "ImageLoadRefusedOnDevice" : "{{deviceName}}でロック画面の画像の復元がキャンセルされました",
+          "ImageCommitRefusedOnDevice" : "{{deviceName}}でロック画面の画像の復元がキャンセルされました",
+          "UserRefusedAllowManager" : "{{deviceName}}でアプリの復元がキャンセルされました"
+        },
+        "installingApps" : "アプリの復元"
       }
     },
     "newVersion" : "お使いの{{deviceName}}で{{version}}のアップデートが利用可能です",
@@ -4116,10 +4231,26 @@
       "pleaseConnectUsbTitle" : "USBケーブルが必要です",
       "pleaseConnectUsbDescription" : "ファームウェアのアップデートを開始するには、 {{deviceName}}をUSBケーブルでスマートフォンに接続します。"
     },
+    "batteryStatusErrors" : {
+      "errors" : {
+        "TimeoutError" : {
+          "title" : "デバイスが切断されました",
+          "description" : "{{deviceName}}への接続が失われたため、アップデートを開始できませんでした"
+        },
+        "BatteryStatusNotRetrieved" : {
+          "title" : "バッテリーの状態を取得できません",
+          "description" : "{{deviceName}}のバッテリーの状態を取得できなかったため、アップデートを開始できませんでした"
+        }
+      }
+    },
     "errors" : {
       "TimeoutError" : {
         "title" : "アップデートタイムアウト",
         "description" : "{{deviceName}}への接続が失われたため、アップデートを完了できませんでした"
+      },
+      "CantOpenDevice" : {
+        "title" : "接続に失敗しました",
+        "description" : "{{deviceName}}への接続が失われたため、アップデートを完了できませんでした。"
       }
     }
   },
@@ -4148,7 +4279,7 @@
       "newSupport" : "嬉しいお知らせです！Ledger Liveが{{language}}対応を開始しました。",
       "advice" : "表示言語は後からいつでも変更可能です。"
     },
-    "switchButton" : "{{language}} に切り替える",
+    "switchButton" : "{{language}}に切り替える",
     "no" : "希望しない",
     "languages" : {
       "en" : "英語",
@@ -4615,7 +4746,7 @@
               "2" : "Ledgerデバイスを使って安全にデリゲートできます。"
             },
             "warning" : {
-              "description" : "バリデーターは慎重に選択してください。良くないバリデーターに資産を預けると、資産の一部がペナルティによって失われてしまう危険があります。"
+              "description" : "バリデーターは慎重に選択してください。不適切なバリデーターに資産を預けると、資産の一部がペナルティによって失われてしまう危険があります。"
             },
             "cta" : "続行"
           },
@@ -5197,7 +5328,7 @@
       "elected" : "選出済み",
       "electedInfo" : "このバリデータは選出済みで、ノミネーターに対する報酬を獲得中です。",
       "nominators" : "ノミネーター",
-      "nominatorsCount" : "{{nominatorsCount}}名のノミネーター",
+      "nominatorsCount" : "{{nominatorsCount}}ノミネーター",
       "nominatorsInfo" : "現在、このバリデーターは{{count}}名のノミネーターにより選出されています。",
       "oversubscribed" : "ノミネーター超過（{{nominatorsCount}}）名",
       "oversubscribedInfo" : "報酬獲得量上位{{maxNominatorRewardedPerValidator}}名のノミネーターだけが報酬を獲得できます。",
@@ -5207,7 +5338,7 @@
       "showInactiveNominations" : "すべてのノミネートを表示（{{count}}）",
       "hideInactiveNominations" : "アクティブなノミネートのみを表示",
       "noActiveNominations" : "アクティブなノミネートはありません。",
-      "showAllUnlockings" : "ボンド解除中の数量をすべて表示（{{count}}）",
+      "showAllUnlockings" : "全てのボンド解除中の数量を表示 ({{count}})",
       "hideAllUnlockings" : "ボンド解除中の数量を非表示"
     },
     "unlockings" : {
@@ -5792,7 +5923,7 @@
   },
   "browseWeb3" : {
     "catalog" : {
-      "title" : "Web3を閲覧",
+      "title" : "チェック",
       "subtitle" : "Ledgerと完全に統合されたWeb3を探索する",
       "section" : {
         "recentlyUsed" : "最近使用されたもの",
@@ -5819,6 +5950,11 @@
       "developerCTA" : {
         "title" : "開発者向け",
         "description" : "Ledger Liveでのアプリケーション管理に必要な全ての情報。"
+      },
+      "warnings" : {
+        "notFound" : "検索結果が見つかりません",
+        "retrySearchKeyword" : "別のキーワードで検索を再試行してください。",
+        "retrySearchKeywordAndUrl" : "別のキーワードで検索をやり直すか、Ledger Liveの外で<Link>{{search}}</Link>を開いてください。"
       }
     },
     "disclaimer" : {
@@ -5934,13 +6070,10 @@
       "reload" : "再読み込み",
       "noCryptosFound" : "コインが見つかりません",
       "noCurrencyFound" : "通貨が見つかりません",
-      "noAppFound" : "アプリが見つかりません",
-      "notFound" : "検索結果が見つかりません",
       "noSearchResultsFor" : "申し訳ありませんが、 <0>{{search}}</0>のコインが見つかりませんでした。別のキーワードで検索を再試行してください。",
       "noCurrencySearchResultsFor" : "申し訳ありませんが、 <0>{{search}}</0>の暗号資産が見つかりませんでした。別のキーワードで検索を再試行してください。",
       "noSearchResults" : "申し訳ありませんが、検索結果が見つかりませんでした。",
       "retrySearchKeyword" : "別のキーワードで検索を再試行してください。",
-      "retrySearchKeywordAndUrl" : "別のキーワードで検索をやり直すか、Ledger Liveの外で<Link>{{search}}</Link>を開いてください。",
       "retrySearchParams" : "別のパラメータで再度検索してください。",
       "trackFavAssets" : "お気に入りを追跡する",
       "clickOnStarIcon" : "資産の横にある星アイコンをクリックすると、お気に入りに追加されます。",
@@ -6113,15 +6246,25 @@
   "wallet" : {
     "tabs" : {
       "crypto" : "暗号資産",
-      "nft" : "NFT"
+      "nft" : "NFT",
+      "market" : "マーケット"
     },
     "nftGallery" : {
       "filters" : {
+        "select" : "選択",
+        "filter" : "フィルター",
+        "blockchain" : "ブロックチェーン",
+        "seeAll" : "すべて表示",
         "selectAndHide" : "選択して非表示",
         "hide" : "{{count}}個のコレクションを非表示",
+        "hiddenCollections" : "非表示のNFTコレクション",
         "hide_plural" : "{{count}}個のコレクションを非表示",
-        "alertHide" : "1件のコレクションが非表示です。「設定」の「アカウント」セクションに移動して、いつでも表示・非表示を選択できます。",
-        "alertHide_plural" : "{{count}}件のコレクションが非表示です。「設定」の「アカウント」セクションから、いつでも表示・非表示を選択できます。"
+        "alertHide" : "1件のコレクションが非表示です。ギャラリーフィルターから、いつでも再表示可能です。",
+        "alertHide_plural" : "{{count}}件のコレクションが非表示です。ギャラリーフィルターから、いつでも再表示可能です。"
+      },
+      "emptyFiltered" : {
+        "title" : "条件に合うNFTはありません",
+        "button" : "フィルターをリセットする"
       },
       "empty" : {
         "title" : "表示できるNFTがありません",
@@ -6140,14 +6283,14 @@
       },
       "hideNftModal" : {
         "title" : "NFTコレクションを非表示",
-        "desc" : "この操作により、すべての{{collectionName}}コレクションが非表示になります。アプリ設定から再度表示が可能です。",
+        "desc" : "この操作により、すべてのNFTが{{collectionName}}個のコレクションから非表示になります。ギャラリーフィルターから再表示できます。",
         "cta" : "このNFTを非表示にする"
       },
       "media" : {
         "tag" : "{{count}}NFT"
       }
     },
-    "referralProgram" : "$10"
+    "referralProgram" : "20ドル"
   },
   "servicesWidget" : {
     "title" : "サービス",
@@ -6156,10 +6299,10 @@
       "status" : {
         "new" : {
           "title" : "新商品",
-          "desc" : "秘密のリカバリーフレーズなしでウォレットへのアクセスを復元します。",
+          "desc" : "ウォレットへのアクセス権を失う不安を解消しましょう。",
           "actions" : {
-            "learnMore" : "どのようなメリットがあるのでしょうか？",
-            "alreadySubscribed" : "ログイン済みですか？<LinkAccount>サブスクリプションを見る</LinkAccount>"
+            "learnMore" : "Ledger Recoverの詳細を確認",
+            "alreadySubscribed" : "すでにログイン済みの場合<LinkAccount>サブスクリプションを表示</LinkAccount>"
           }
         }
       }
@@ -6174,6 +6317,30 @@
     "title" : "デバイスを接続"
   },
   "stake" : {
+    "ethereum" : {
+      "title" : "所有するETHを運用",
+      "subTitle" : "ETHをステーキングし、日々の報酬をLedger Liveで直接獲得して資産を増やしましょう。",
+      "close" : "閉じる",
+      "providers" : {
+        "lido" : {
+          "title" : "Lidoで報酬を稼ぐ",
+          "description" : "LidoでEthereumをステーキングして、毎日報酬を獲得しましょう。ETHの必要最低額の設定なし。ロックアップ（凍結）期間なし。",
+          "supportLink" : "Lidoの詳細を確認"
+        },
+        "kiln" : {
+          "title" : "Kiln専用ステーキング",
+          "tag" : "32ETHが必要",
+          "description" : "専用のバリデーターでステーキングできます。32ETHの倍数が必要です。報酬は手動で請求されます。いつでも終了できます。",
+          "supportLink" : "Kilnバリデーターの詳細を確認"
+        },
+        "kiln_pooling" : {
+          "title" : "Kilnステーキングプール",
+          "description" : "ステーキングプールに参加できます。ETHの必要最低額はありません。報酬は自動的に複利で計算されます。いつでも終了可能です。",
+          "supportLink" : "Kilnプールの詳細を確認",
+          "tag" : "最小数量なし"
+        }
+      }
+    },
     "noFundsModal" : {
       "title" : "購入、スワップ、受け取り",
       "text" : "ステーキングに十分な{{coin}}がありません",

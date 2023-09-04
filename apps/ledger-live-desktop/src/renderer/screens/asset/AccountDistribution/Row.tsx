@@ -15,11 +15,11 @@ import ParentCryptoCurrencyIcon from "~/renderer/components/ParentCryptoCurrency
 import Box from "~/renderer/components/Box";
 import AccountContextMenu from "~/renderer/components/ContextMenu/AccountContextMenu";
 import { accountsSelector } from "~/renderer/reducers/accounts";
-import IconDots from "~/renderer/icons/Dots";
 import Bar from "~/renderer/screens/dashboard/AssetDistribution/Bar";
 import ToolTip from "~/renderer/components/Tooltip";
 import useTheme from "~/renderer/hooks/useTheme";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { IconsLegacy } from "@ledgerhq/react-ui";
 export type AccountDistributionItem = {
   account: AccountLike;
   distribution: number;
@@ -115,7 +115,7 @@ export default function Row({
         </Value>
         <Dots>
           <AccountContextMenu leftClick account={account} parentAccount={parentAccount} withStar>
-            <IconDots size={16} />
+            <IconsLegacy.OthersMedium size={16} />
           </AccountContextMenu>
         </Dots>
       </Wrapper>
@@ -176,8 +176,8 @@ const Dots = styled.div`
   width: 5%;
   justify-content: flex-end;
   cursor: pointer;
-  color: ${p => p.theme.colors.palette.divider};
+  color: ${p => p.theme.colors.palette.text.shade50};
   &:hover {
-    color: ${p => p.theme.colors.palette.text.shade60};
+    color: ${p => p.theme.colors.palette.text.shade80};
   }
 `;

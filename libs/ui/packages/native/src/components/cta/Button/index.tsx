@@ -12,6 +12,7 @@ import { IconType } from "../../Icon/type";
 export type ButtonProps = TouchableOpacityProps &
   BaseStyledProps & {
     Icon?: IconType;
+    onPressWhenDisabled?: TouchableOpacityProps["onPress"];
     iconName?: string;
     type?: "main" | "shade" | "error" | "color" | "default";
     size?: "small" | "medium" | "large";
@@ -22,6 +23,7 @@ export type ButtonProps = TouchableOpacityProps &
     children?: React.ReactNode;
     pending?: boolean;
     displayContentWhenPending?: boolean;
+    buttonTestId?: string;
   };
 
 const IconContainer = styled.View<{
@@ -32,12 +34,21 @@ const IconContainer = styled.View<{
     p.iconButton ? "" : p.iconPosition === "left" ? `margin-right: 10px;` : `margin-left: 10px;`}
 `;
 
-export const Base = baseStyled(TouchableOpacity).attrs<ButtonProps>((p) => ({
-  ...getButtonColorStyle(p.theme.colors, p).button,
-  // Avoid conflict with styled-system's size property by nulling size and renaming it
-  size: undefined,
-  sizeVariant: p.size,
-}))<
+export const Base = baseStyled(TouchableOpacity).attrs<ButtonProps>((p) => {
+  // if onPressWhenDisabled prop exists then the button will look
+  // disabled but will still be press-able.
+  const disabled = !p.onPressWhenDisabled && p.disabled;
+  const visuallyDisabled = p.onPressWhenDisabled && p.disabled;
+  const onPress = visuallyDisabled ? p.onPressWhenDisabled : p.onPress;
+  return {
+    ...getButtonColorStyle(p.theme.colors, p).button,
+    // Avoid conflict with styled-system's size property by nulling size and renaming it
+    size: undefined,
+    sizeVariant: p.size,
+    disabled,
+    onPress,
+  };
+})<
   {
     iconButton?: boolean;
     sizeVariant?: ButtonProps["size"];
@@ -93,6 +104,7 @@ const ButtonContainer = (props: ButtonProps & { hide?: boolean }): React.ReactEl
     iconName,
     pending,
     displayContentWhenPending,
+    buttonTestId,
   } = props;
   const theme = useTheme();
   const { text } = getButtonColorStyle(theme.colors, props);
@@ -112,7 +124,12 @@ const ButtonContainer = (props: ButtonProps & { hide?: boolean }): React.ReactEl
   return (
     <Container hide={hide}>
       {iconPosition === "right" && children ? (
-        <Text variant={ctaTextType[size]} fontWeight={"semiBold"} color={textColor}>
+        <Text
+          testID={buttonTestId}
+          variant={ctaTextType[size]}
+          fontWeight={"semiBold"}
+          color={textColor}
+        >
           {children}
         </Text>
       ) : null}
@@ -145,6 +162,7 @@ const Button = (props: ButtonProps): React.ReactElement => {
     disabled = false,
     pending = false,
     displayContentWhenPending = false,
+    testID,
   } = props;
   const theme = useTheme();
 
@@ -155,6 +173,7 @@ const Button = (props: ButtonProps): React.ReactElement => {
       iconButton={(!!Icon || !!iconName) && !children}
       activeOpacity={1}
       disabled={disabled || pending}
+      testID={testID}
     >
       <View>
         <ButtonContainer {...props} type={type} hide={pending && !displayContentWhenPending} />

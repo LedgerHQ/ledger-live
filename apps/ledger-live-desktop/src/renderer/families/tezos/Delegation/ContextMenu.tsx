@@ -1,5 +1,5 @@
 import React from "react";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { Trans } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { useDelegation } from "@ledgerhq/live-common/families/tezos/bakers";
@@ -10,8 +10,9 @@ import DropDownSelector, { DropDownItem } from "~/renderer/components/DropDownSe
 import UserEdit from "~/renderer/icons/UserEdit";
 import ArrowDown from "~/renderer/icons/ArrowDown";
 import StopCircle from "~/renderer/icons/StopCircle";
-import IconDots from "~/renderer/icons/Dots";
 import { TezosAccount } from "@ledgerhq/live-common/families/tezos/types";
+import { IconsLegacy } from "@ledgerhq/react-ui";
+
 const Container = styled.div`
   display: flex;
   justify-content: center;
@@ -32,6 +33,7 @@ type Props = {
 const ContextMenu = ({ account }: Props) => {
   const dispatch = useDispatch();
   const delegation = useDelegation(account);
+  const theme = useTheme();
   const receiveShouldWarnDelegation = delegation
     ? delegation.receiveShouldWarnDelegation
     : undefined;
@@ -111,7 +113,7 @@ const ContextMenu = ({ account }: Props) => {
           }}
         >
           <Box horizontal flow={1} alignItems="center" justifyContent="center">
-            <IconDots size={14} />
+            <IconsLegacy.OthersMedium size={14} color={theme.colors.palette.text.shade50} />
           </Box>
         </Container>
       )}

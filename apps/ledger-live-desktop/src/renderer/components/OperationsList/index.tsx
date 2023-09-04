@@ -2,7 +2,8 @@ import React, { PureComponent } from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import { withTranslation, TFunction } from "react-i18next";
+import { withTranslation } from "react-i18next";
+import { TFunction } from "i18next";
 import { Operation, Account, AccountLike } from "@ledgerhq/types-live";
 import keyBy from "lodash/keyBy";
 import {
@@ -23,6 +24,8 @@ import OperationC from "./Operation";
 import TableContainer, { TableHeader } from "../TableContainer";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
+import { isEditableOperation } from "@ledgerhq/live-common/operation";
+
 const ShowMore = styled(Box).attrs(() => ({
   horizontal: true,
   flow: 1,
@@ -127,7 +130,7 @@ export class OperationsList extends PureComponent<Props, State> {
           )}
           {groupedOperations?.sections.map(group => (
             <Box key={group.day.toISOString()}>
-              <SectionTitle day={group.day} />
+              <SectionTitle date={group.day} />
               <Box p={0}>
                 {group.data.map(operation => {
                   const account = accountsMap[operation.accountId];
@@ -157,6 +160,7 @@ export class OperationsList extends PureComponent<Props, State> {
                       onOperationClick={this.handleClickOperation}
                       t={t}
                       withAccount={withAccount}
+                      editable={account && isEditableOperation(account, operation)}
                     />
                   );
                 })}

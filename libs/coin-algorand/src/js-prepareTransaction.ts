@@ -1,3 +1,4 @@
+import { isEqual } from "lodash";
 import { BigNumber } from "bignumber.js";
 import { AlgorandAPI } from "./api";
 import { estimateMaxSpendable } from "./js-estimateMaxSpendable";
@@ -28,7 +29,8 @@ const prepareTransaction =
 
     const fees = await getEstimatedFees(algorandAPI)(account, transaction);
 
-    return { ...transaction, fees, amount, recipient };
+    const newTx = { ...transaction, fees, amount, recipient };
+    return isEqual(transaction, newTx) ? transaction : newTx;
   };
 
 export default prepareTransaction;

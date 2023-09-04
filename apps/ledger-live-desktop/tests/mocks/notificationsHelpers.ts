@@ -1,5 +1,5 @@
 import Prando from "prando";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import {
   AnnouncementsApi,
   RawAnnouncement,
@@ -96,7 +96,7 @@ export const addAnnouncementFromPool = () => {
  * addMockAnnouncement
  * generate a new announcement
  */
-export const addMockAnnouncement = (params?: any) => {
+export const addMockAnnouncement = (params?: Partial<RawAnnouncement>) => {
   const now = new Date();
   const expiryDate = new Date(now.getTime() + 2 * 60 * 1000);
   const newAnnouncement = {

@@ -34,17 +34,18 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   const delegation = getTrackingDelegationType({
     type: route.params.result.type,
   });
-  const currency = getAccountCurrency(account);
+  const { ticker } = getAccountCurrency(account);
 
   useEffect(() => {
     if (delegation)
       track("staking_completed", {
-        currency,
+        currency: ticker,
         validator,
         source,
         delegation,
+        flow: "stake",
       });
-  }, [source, validator, delegation, currency, account]);
+  }, [source, validator, delegation, ticker, account]);
 
   const goToOperationDetails = useCallback(() => {
     if (!account) return;
@@ -64,7 +65,13 @@ export default function ValidationSuccess({ navigation, route }: Props) {
         },
       ]}
     >
-      <TrackScreen category="CosmosDelegation" name="ValidationSuccess" />
+      <TrackScreen
+        category="CosmosDelegation"
+        name="ValidationSuccess"
+        flow="stake"
+        action="delegation"
+        currency={ticker}
+      />
       <PreventNativeBack />
       <ValidateSuccess
         onClose={onClose}

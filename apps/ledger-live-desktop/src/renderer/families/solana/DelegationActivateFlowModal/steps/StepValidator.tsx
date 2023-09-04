@@ -38,7 +38,13 @@ export default function StepValidator({
 
   return (
     <Box flow={1}>
-      <TrackPage category="Solana Delegation" name="Step Validator" />
+      <TrackPage
+        category="Solana Delegation"
+        name="Step Validator"
+        flow="stake"
+        action="activate"
+        currency="sol"
+      />
       {error && <ErrorBanner error={error} />}
       {status.errors.fee && <ErrorDisplay error={status.errors.fee} />}
       {status ? (

@@ -37,6 +37,7 @@ const RecipientInput = ({ ref, onPaste, placeholderTranslationKey, ...props }: P
   return (
     <TextInput
       ref={ref}
+      testID="recipient-input"
       placeholder={t(placeholderTranslationKey)}
       renderRight={
         <Flex alignItems="center" justifyContent="center" pr={2}>

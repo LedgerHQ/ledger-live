@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { useTheme } from "styled-components/native";
-import { Icons } from "@ledgerhq/native-ui";
-import { RouteProp, useRoute } from "@react-navigation/core";
+import { IconsLegacy } from "@ledgerhq/native-ui";
 
 import { BottomTabBarProps, createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useSelector } from "react-redux";
@@ -19,8 +18,8 @@ import DiscoverNavigator from "./DiscoverNavigator";
 import customTabBar from "../TabBar/CustomTabBar";
 import { MainNavigatorParamList } from "./types/MainNavigator";
 import { isMainNavigatorVisibleSelector } from "../../reducers/appstate";
-import { EthereumStakingDrawer } from "../../families/ethereum/EthereumStakingDrawer";
-import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
+import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const Tab = createBottomTabNavigator<MainNavigatorParamList>();
 
@@ -30,7 +29,6 @@ const Tab = createBottomTabNavigator<MainNavigatorParamList>();
 // https://github.com/react-navigation/react-navigation/issues/6674#issuecomment-562813152
 
 export default function MainNavigator() {
-  const route = useRoute<RouteProp<BaseNavigatorStackParamList, NavigatorName.Main>>();
   const { colors } = useTheme();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
@@ -59,49 +57,77 @@ export default function MainNavigator() {
     [managerNavLockCallback],
   );
 
+  const ptxEarnFeature = useFeature("ptxEarn");
+
   return (
-    <>
-      <EthereumStakingDrawer drawer={route.params?.drawer} />
-      <Tab.Navigator
-        tabBar={tabBar}
-        screenOptions={{
-          tabBarStyle: [
-            {
-              height: 300,
-              borderTopColor: colors.neutral.c30,
-              borderTopWidth: 1,
-              elevation: 5,
-              shadowColor: colors.neutral.c30,
-              backgroundColor: colors.opacityDefault.c10,
-            },
-          ],
-          unmountOnBlur: true, // Nb prevents ghost device interactions
-          tabBarShowLabel: false,
-          tabBarActiveTintColor: colors.palette.primary.c80,
-          tabBarInactiveTintColor: colors.palette.neutral.c70,
+    <Tab.Navigator
+      tabBar={tabBar}
+      screenOptions={{
+        tabBarStyle: [
+          {
+            height: 300,
+            borderTopColor: colors.neutral.c30,
+            borderTopWidth: 1,
+            elevation: 5,
+            shadowColor: colors.neutral.c30,
+            backgroundColor: colors.opacityDefault.c10,
+          },
+        ],
+        unmountOnBlur: true, // Nb prevents ghost device interactions
+        tabBarShowLabel: false,
+        tabBarActiveTintColor: colors.palette.primary.c80,
+        tabBarInactiveTintColor: colors.palette.neutral.c70,
+        headerShown: false,
+      }}
+      sceneContainerStyle={[{ backgroundColor: colors.background.main }]}
+    >
+      <Tab.Screen
+        name={NavigatorName.Portfolio}
+        component={PortfolioNavigator}
+        options={{
           headerShown: false,
+          unmountOnBlur: true,
+          tabBarIcon: props => <PortfolioTabIcon {...props} />,
         }}
-        sceneContainerStyle={[{ backgroundColor: colors.background.main }]}
-      >
+        listeners={({ navigation }) => ({
+          tabPress: e => {
+            e.preventDefault();
+            managerLockAwareCallback(() => {
+              navigation.navigate(NavigatorName.Portfolio, {
+                screen: ScreenName.Portfolio,
+              });
+            });
+          },
+        })}
+      />
+      {ptxEarnFeature?.enabled ? (
         <Tab.Screen
-          name={NavigatorName.Portfolio}
-          component={PortfolioNavigator}
+          name={NavigatorName.Earn}
+          component={EarnLiveAppNavigator}
           options={{
             headerShown: false,
             unmountOnBlur: true,
-            tabBarIcon: props => <PortfolioTabIcon {...props} />,
+            tabBarIcon: props => (
+              <TabIcon
+                Icon={IconsLegacy.LendMedium}
+                i18nKey="tabs.earn"
+                testID="tab-bar-earn"
+                {...props}
+              />
+            ),
           }}
           listeners={({ navigation }) => ({
             tabPress: e => {
               e.preventDefault();
               managerLockAwareCallback(() => {
-                navigation.navigate(NavigatorName.Portfolio, {
-                  screen: ScreenName.Portfolio,
+                navigation.navigate(NavigatorName.Earn, {
+                  screen: ScreenName.Earn,
                 });
               });
             },
           })}
         />
+      ) : (
         <Tab.Screen
           name={NavigatorName.Market}
           component={MarketNavigator}
@@ -109,7 +135,12 @@ export default function MainNavigator() {
             headerShown: false,
             unmountOnBlur: true,
             tabBarIcon: props => (
-              <TabIcon Icon={Icons.GraphGrowMedium} i18nKey="tabs.market" {...props} />
+              <TabIcon
+                Icon={IconsLegacy.GraphGrowMedium}
+                i18nKey="tabs.market"
+                testID="tab-bar-market"
+                {...props}
+              />
             ),
           }}
           listeners={({ navigation }) => ({
@@ -123,65 +154,65 @@ export default function MainNavigator() {
             },
           })}
         />
+      )}
 
-        <Tab.Screen
-          name={ScreenName.Transfer}
-          component={Transfer}
-          options={{
-            headerShown: false,
-            tabBarIcon: () => <TransferTabIcon />,
-          }}
-        />
-        <Tab.Screen
-          name={NavigatorName.Discover}
-          component={DiscoverNavigator}
-          options={{
-            headerShown: false,
-            tabBarIcon: props => (
-              <TabIcon Icon={Icons.PlanetMedium} i18nKey="tabs.discover" {...props} />
-            ),
-          }}
-          listeners={({ navigation }) => ({
-            tabPress: e => {
-              e.preventDefault();
-              managerLockAwareCallback(() => {
-                navigation.navigate(NavigatorName.Discover, {
-                  screen: ScreenName.DiscoverScreen,
+      <Tab.Screen
+        name={ScreenName.Transfer}
+        component={Transfer}
+        options={{
+          headerShown: false,
+          tabBarIcon: () => <TransferTabIcon />,
+        }}
+      />
+      <Tab.Screen
+        name={NavigatorName.Discover}
+        component={DiscoverNavigator}
+        options={{
+          headerShown: false,
+          tabBarIcon: props => (
+            <TabIcon Icon={IconsLegacy.PlanetMedium} i18nKey="tabs.discover" {...props} />
+          ),
+        }}
+        listeners={({ navigation }) => ({
+          tabPress: e => {
+            e.preventDefault();
+            managerLockAwareCallback(() => {
+              navigation.navigate(NavigatorName.Discover, {
+                screen: ScreenName.DiscoverScreen,
+              });
+            });
+          },
+        })}
+      />
+      <Tab.Screen
+        name={NavigatorName.Manager}
+        component={ManagerNavigator}
+        options={{
+          tabBarIcon: props => <ManagerTabIcon {...props} />,
+          tabBarTestID: "TabBarManager",
+        }}
+        listeners={({ navigation }) => ({
+          tabPress: e => {
+            e.preventDefault();
+            managerLockAwareCallback(() => {
+              if (readOnlyModeEnabled && hasOrderedNano) {
+                navigation.navigate(ScreenName.PostBuyDeviceSetupNanoWallScreen);
+              } else if (readOnlyModeEnabled) {
+                navigation.navigate(NavigatorName.BuyDevice);
+              } else {
+                navigation.navigate(NavigatorName.Manager, {
+                  screen: ScreenName.Manager,
+                  params: {
+                    tab: undefined,
+                    searchQuery: undefined,
+                    updateModalOpened: undefined,
+                  },
                 });
-              });
-            },
-          })}
-        />
-        <Tab.Screen
-          name={NavigatorName.Manager}
-          component={ManagerNavigator}
-          options={{
-            tabBarIcon: props => <ManagerTabIcon {...props} />,
-            tabBarTestID: "TabBarManager",
-          }}
-          listeners={({ navigation }) => ({
-            tabPress: e => {
-              e.preventDefault();
-              managerLockAwareCallback(() => {
-                if (readOnlyModeEnabled && hasOrderedNano) {
-                  navigation.navigate(ScreenName.PostBuyDeviceSetupNanoWallScreen);
-                } else if (readOnlyModeEnabled) {
-                  navigation.navigate(NavigatorName.BuyDevice);
-                } else {
-                  navigation.navigate(NavigatorName.Manager, {
-                    screen: ScreenName.Manager,
-                    params: {
-                      tab: undefined,
-                      searchQuery: undefined,
-                      updateModalOpened: undefined,
-                    },
-                  });
-                }
-              });
-            },
-          })}
-        />
-      </Tab.Navigator>
-    </>
+              }
+            });
+          },
+        })}
+      />
+    </Tab.Navigator>
   );
 }

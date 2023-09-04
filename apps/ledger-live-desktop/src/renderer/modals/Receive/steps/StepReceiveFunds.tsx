@@ -27,7 +27,7 @@ import Modal from "~/renderer/components/Modal";
 import Alert from "~/renderer/components/Alert";
 import ModalBody from "~/renderer/components/Modal/ModalBody";
 import QRCode from "~/renderer/components/QRCode";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { LOCAL_STORAGE_KEY_PREFIX } from "./StepReceiveStakingFlow";
@@ -148,6 +148,8 @@ const StepReceiveFunds = (props: StepProps) => {
     onClose,
     eventType,
     currencyName,
+    receiveTokenMode,
+    receiveNFTMode,
   } = props;
   const dispatch = useDispatch();
   const receiveStakingFlowConfig = useFeature("receiveStakingFlowConfigDesktop");
@@ -198,6 +200,8 @@ const StepReceiveFunds = (props: StepProps) => {
     const dismissModal = global.localStorage.getItem(`${LOCAL_STORAGE_KEY_PREFIX}${id}`) === "true";
     if (
       !dismissModal &&
+      !receiveNFTMode &&
+      !receiveTokenMode &&
       receiveStakingFlowConfig?.enabled &&
       receiveStakingFlowConfig?.params[id]?.enabled
     ) {
@@ -215,7 +219,7 @@ const StepReceiveFunds = (props: StepProps) => {
         dispatch(
           openModal("MODAL_ETH_STAKE", {
             account: mainAccount,
-            checkbox: true,
+            hasCheckbox: true,
             singleProviderRedirectMode: false,
             source: "receive",
           }),
@@ -235,6 +239,8 @@ const StepReceiveFunds = (props: StepProps) => {
     onClose,
     receiveStakingFlowConfig?.enabled,
     receiveStakingFlowConfig?.params,
+    receiveNFTMode,
+    receiveTokenMode,
     transitionTo,
   ]);
 

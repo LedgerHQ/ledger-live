@@ -47,11 +47,6 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ steps.generate-token.outputs.token }}
-      - uses: ./tools/actions/composites/setup-test-desktop
-        id: setup-test-desktop
-        with:
-          skip_ruby: true
-          install_playwright: true
       - name: Install gh
         run: |
           type -p curl >/dev/null || sudo apt install curl -y
@@ -69,6 +64,13 @@ jobs:
         run: |
           git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
           git config user.name "live-github-bot[bot]"
+      - uses: ./tools/actions/composites/setup-test-desktop
+        id: setup-test-desktop
+        with:
+          skip_ruby: true
+          install_playwright: true
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - uses: ./tools/actions/composites/update-snapshots-desktop
         id: update-snapshots
         with:
@@ -80,7 +82,7 @@ jobs:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-    runs-on: windows-latest
+    runs-on: [ledger-live-4xlarge-windows-2022]
     steps:
       - name: generate token
         id: generate-token
@@ -99,17 +101,20 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ steps.generate-token.outputs.token }}
-      - uses: ./tools/actions/composites/setup-test-desktop
-        id: setup-test-desktop
-        with:
-          install_playwright: true
-          install_node_gyp: true
-          upgrade_npm: true
       - name: Checkout PR
         if: ${{ inputs.number != null && inputs.ref == null }}
         run: gh pr checkout ${{ inputs.number }}
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+      - uses: ./tools/actions/composites/setup-test-desktop
+        id: setup-test-desktop
+        with:
+          skip_python: true
+          skip_ruby: true
+          install_playwright: true
+          upgrade_npm: true
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: set git user
         run: |
           git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
@@ -142,6 +147,11 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ steps.generate-token.outputs.token }}
+      - name: Checkout PR
+        if: ${{ inputs.number != null && inputs.ref == null }}
+        run: gh pr checkout ${{ inputs.number }}
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
@@ -149,11 +159,8 @@ jobs:
           skip_ruby: true
           install_playwright: true
           pnpm_dest: ${{ runner.temp }}/setup-pnpm
-      - name: Checkout PR
-        if: ${{ inputs.number != null && inputs.ref == null }}
-        run: gh pr checkout ${{ inputs.number }}
-        env:
-          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: set git user
         run: |
           git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"

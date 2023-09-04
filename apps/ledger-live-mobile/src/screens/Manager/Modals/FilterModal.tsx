@@ -1,4 +1,4 @@
-import { Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import React, { memo, useCallback, useEffect, useReducer } from "react";
 import { Trans } from "react-i18next";
 import { SectionList, SectionListData } from "react-native";
@@ -213,7 +213,7 @@ const FilterModalComponent = ({
           {Boolean(isSelected) && Boolean(isFilter) && (
             <Flex alignItems="center" justifyContent="center">
               <ArrowIconContainer backgroundColor="primary.c80">
-                <Icons.CheckAloneMedium color="background.main" size={16} />
+                <IconsLegacy.CheckAloneMedium color="background.main" size={16} />
               </ArrowIconContainer>
             </Flex>
           )}
@@ -222,12 +222,12 @@ const FilterModalComponent = ({
               <ArrowIconContainer
                 backgroundColor={state.order === "desc" ? "primary.c80" : "neutral.c60"}
               >
-                <Icons.ArrowBottomMedium color="background.main" size={16} />
+                <IconsLegacy.ArrowBottomMedium color="background.main" size={16} />
               </ArrowIconContainer>
               <ArrowIconContainer
                 backgroundColor={state.order !== "desc" ? "primary.c80" : "neutral.c60"}
               >
-                <Icons.ArrowTopMedium color="background.main" size={16} />
+                <IconsLegacy.ArrowTopMedium color="background.main" size={16} />
               </ArrowIconContainer>
             </Flex>
           )}

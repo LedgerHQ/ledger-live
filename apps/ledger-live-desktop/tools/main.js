@@ -16,7 +16,8 @@ const { createServer } = require("vite");
 const { buildMainEnv, buildRendererEnv, buildViteConfig, lldRoot } = require("./utils");
 
 const startDev = async argv => {
-  const electron = new Electron("./.webpack/main.bundle.js");
+  let execa = await import("execa").then(mod => mod.execa);
+  const electron = new Electron("./.webpack/main.bundle.js", execa);
 
   const OnRebuildPlugin = {
     name: "onRebuild",
@@ -54,15 +55,6 @@ const startDev = async argv => {
     plugins: [...(require("./config/webviewPreloader.esbuild").plugins || []), OnRebuildPlugin],
     minify: false,
   };
-  const swapConnectWebviewPreloaderConfig = {
-    ...require("./config/swapConnectWebviewPreloader.esbuild"),
-    define: buildMainEnv("development", argv),
-    plugins: [
-      ...(require("./config/swapConnectWebviewPreloader.esbuild").plugins || []),
-      OnRebuildPlugin,
-    ],
-    minify: false,
-  };
 
   try {
     await processReleaseNotes();
@@ -76,7 +68,6 @@ const startDev = async argv => {
     esbuild.context(mainConfig),
     esbuild.context(preloaderConfig),
     esbuild.context(webviewPreloaderConfig),
-    esbuild.context(swapConnectWebviewPreloaderConfig),
   ]);
 
   await rendererServer.listen();
@@ -128,10 +119,6 @@ const build = async argv => {
       define: buildMainEnv("production", argv),
     }),
     esbuild.build({
-      ...require("./config/swapConnectWebviewPreloader.esbuild"),
-      define: buildMainEnv("production", argv),
-    }),
-    esbuild.build({
       ...require("./config/renderer.esbuild"),
       define: buildRendererEnv("production"),
     }),
@@ -161,7 +148,6 @@ const build = async argv => {
   fs.writeFileSync("metafile.preloader.json", JSON.stringify(results[1].metafile), "utf-8");
   fs.writeFileSync("metafile.webviewPreloader.json", JSON.stringify(results[2].metafile), "utf-8");
   fs.writeFileSync(
-    "metafile.swapConnectWebviewPreloader.json",
     JSON.stringify(results[3].metafile),
     "utf-8",
   );

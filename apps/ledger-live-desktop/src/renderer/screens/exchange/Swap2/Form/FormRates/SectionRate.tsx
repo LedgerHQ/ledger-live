@@ -5,6 +5,7 @@ import {
 import React from "react";
 import Rates from "../Rates";
 import ProvidersSection from "./ProvidersSection";
+
 export type SectionRateProps = {
   provider?: string;
   ratesState: RatesReducerState;
@@ -13,6 +14,7 @@ export type SectionRateProps = {
   refreshTime: number;
   countdown: boolean;
 };
+
 const SectionRate = ({
   provider,
   fromCurrency,
@@ -22,6 +24,7 @@ const SectionRate = ({
   countdown,
 }: SectionRateProps) => {
   const rates = ratesState.value;
+
   return (
     <ProvidersSection>
       <Rates

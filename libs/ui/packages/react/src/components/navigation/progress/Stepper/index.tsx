@@ -1,7 +1,7 @@
 import React, { memo, Fragment } from "react";
 import styled from "styled-components";
 import { border, BorderProps, color, ColorProps, space, SpaceProps } from "styled-system";
-import { Icons } from "../../../../index";
+import { IconsLegacy } from "../../../../index";
 import Text from "../../../asorted/Text";
 import Flex, { FlexBoxProps } from "../../../layout/Flex";
 
@@ -88,12 +88,13 @@ export const Item = {
     border-radius: ${p => p.theme.space[2]}px;
     ${color}
   `,
-  Completed: (): JSX.Element => <Icons.CheckAloneMedium size={16} />,
-  Disabled: (): JSX.Element => <Icons.CloseMedium size={16} />,
-  Errored: (): JSX.Element => <Icons.CloseMedium size={16} />,
+  Completed: (): JSX.Element => <IconsLegacy.CheckAloneMedium size={16} />,
+  Disabled: (): JSX.Element => <IconsLegacy.CloseMedium size={16} />,
+  Errored: (): JSX.Element => <IconsLegacy.CloseMedium size={16} />,
 };
 
 export const StepText = styled(Text)<{ state: StepState }>`
+  text-align: center;
   color: ${p => {
     if (p.state === "errored") {
       return p.theme.colors.error.c50;
@@ -160,7 +161,7 @@ export const Step = memo(function Step({
   const nextInactive = state === "pending";
 
   return (
-    <Flex flexDirection="column" alignItems="center">
+    <Flex flexDirection="column" alignItems="center" flex={20}>
       <Item.Spacer mb={5}>
         {(!hideLeftSeparator && <Separator.Item inactive={inactive} position="left" />) || (
           <Flex flex="1" />

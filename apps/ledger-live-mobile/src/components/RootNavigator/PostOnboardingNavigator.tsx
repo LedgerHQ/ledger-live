@@ -10,6 +10,7 @@ import PostOnboardingHub from "../../screens/PostOnboarding/PostOnboardingHub";
 import PostOnboardingMockActionScreen from "../../screens/PostOnboarding/PostOnboardingMockActionScreen";
 import { PostOnboardingNavigatorParamList } from "./types/PostOnboardingNavigator";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
+import { NavigationHeaderCloseButton } from "../NavigationHeaderCloseButton";
 
 const Stack = createStackNavigator<PostOnboardingNavigatorParamList>();
 
@@ -29,9 +30,9 @@ const PostOnboardingNavigator = () => {
         component={PostOnboardingHub}
         options={{
           headerShown: true,
-          headerLeft: () => <NavigationHeaderBackButton />,
+          headerLeft: () => null,
           headerTitle: () => null,
-          headerRight: () => null,
+          headerRight: () => <NavigationHeaderCloseButton />,
         }}
       />
       <Stack.Screen

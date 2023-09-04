@@ -1,21 +1,15 @@
 import React, { useCallback, useState } from "react";
-import { AccountLike } from "@ledgerhq/types-live";
+import { AccountLike, AnyMessage } from "@ledgerhq/types-live";
 import Track from "~/renderer/analytics/Track";
 import { Trans, useTranslation } from "react-i18next";
 import StepSummary, { StepSummaryFooter } from "./steps/StepSummary";
 import StepSign from "./steps/StepSign";
 import { St, StepProps } from "./types";
 import Stepper from "~/renderer/components/Stepper";
-// TODO move the specific parts to each family!
-// eslint-disable-next-line no-restricted-imports
-import { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/types";
-// TODO move the specific parts to each family!
-// eslint-disable-next-line no-restricted-imports
-import { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
 
 export type Data = {
   account: AccountLike;
-  message: MessageData | TypedMessageData;
+  message: AnyMessage;
   onConfirmationHandler: Function;
   onFailHandler: Function;
   onClose: () => void;

@@ -1,4 +1,4 @@
-import { TFunction } from "react-i18next";
+import { TFunction } from "i18next";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Step } from "~/renderer/components/Stepper";
 import { Operation } from "@ledgerhq/types-live";
@@ -29,5 +29,6 @@ export type StepProps = {
   onOperationBroadcasted: (a: Operation) => void;
   setSigned: (a: boolean) => void;
   bridgePending: boolean;
+  source?: string;
 };
 export type St = Step<StepId, StepProps>;

@@ -220,7 +220,7 @@ export default function FirmwareUpdate({
               error! instanceof DisconnectedDeviceDuringOperation
             }
             hasExportLogButton={!(error instanceof BluetoothNotSupportedError)}
-            Icon={error instanceof BluetoothNotSupportedError ? Icons.UsbMedium : undefined}
+            Icon={error instanceof BluetoothNotSupportedError ? Icons.Usb : undefined}
             iconColor={error instanceof BluetoothNotSupportedError ? "neutral.c100" : undefined}
           />
           {!(

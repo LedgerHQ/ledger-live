@@ -42,8 +42,8 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
             },
           })}
     >
-      <Flex flexDirection="row" alignItems="center" flexShrink={1}>
-        <Icon size={24} color={completed ? "neutral.c70" : "primary.c80"} />
+      <Flex flexDirection="row" alignItems="flex-start" flexShrink={1}>
+        <Icon size="M" color={completed ? "neutral.c60" : "primary.c80"} />
         <Flex ml={6} flexDirection="column" justifyContent="center" flex={1}>
           <Text
             variant="largeLineHeight"
@@ -73,9 +73,9 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
           </Tag>
         ) : null}
         {completed ? (
-          <Icons.CheckAloneMedium color="success.c50" size={16} />
+          <Icons.Check color="success.c70" size={"M"} />
         ) : (
-          <Icons.ChevronRightMedium color="neutral.c100" size={16} />
+          <Icons.ChevronRight color="neutral.c100" size={"M"} />
         )}
       </Flex>
     </ActionRowWrapper>

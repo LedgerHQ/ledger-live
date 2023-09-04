@@ -10,7 +10,7 @@ import Label from "~/renderer/components/Label";
 import Select from "~/renderer/components/Select";
 import Text from "~/renderer/components/Text";
 import CosmosFamilyLedgerValidatorIcon from "~/renderer/families/cosmos/shared/components/CosmosFamilyLedgerValidatorIcon";
-import { TFunction } from "react-i18next";
+import { TFunction } from "i18next";
 const renderItem = ({
   data: { validatorAddress, validator, formattedPendingRewards },
 }: {

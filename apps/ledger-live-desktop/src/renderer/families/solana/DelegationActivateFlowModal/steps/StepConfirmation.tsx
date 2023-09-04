@@ -26,7 +26,13 @@ function StepConfirmation({ t, optimisticOperation, error, signed }: StepProps) 
   if (optimisticOperation) {
     return (
       <Container>
-        <TrackPage category="Solana Delegation" name="Step Confirmation" />
+        <TrackPage
+          category="Solana Delegation"
+          name="Step Confirmation"
+          flow="stake"
+          action="activate"
+          currency="sol"
+        />
         <SyncOneAccountOnMount
           reason="transaction-flow-confirmation"
           priority={10}
@@ -44,7 +50,13 @@ function StepConfirmation({ t, optimisticOperation, error, signed }: StepProps) 
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage category="Solana Delegation" name="Step Confirmation Error" />
+        <TrackPage
+          category="Solana Delegation"
+          name="Step Confirmation Error"
+          flow="stake"
+          action="activate"
+          currency="sol"
+        />
         {signed ? (
           <BroadcastErrorDisclaimer title={<Trans i18nKey="solana.common.broadcastError" />} />
         ) : null}

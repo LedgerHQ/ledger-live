@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import {
-  ImageMetadataLoadingError,
+  NFTMetadataLoadingError,
   ImagePreviewError,
 } from "@ledgerhq/live-common/customImage/errors";
 import { NativeSyntheticEvent, ImageErrorEventData } from "react-native";
@@ -108,7 +108,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
   useEffect(() => {
     if (isNftMetadata && ["nodata", "error"].includes(status)) {
       console.error("Nft metadata loading status", status);
-      navigateToErrorScreen(new ImageMetadataLoadingError(status), device);
+      navigateToErrorScreen(new NFTMetadataLoadingError(status), device);
     }
   }, [device, isNftMetadata, navigateToErrorScreen, navigation, status]);
 
@@ -163,7 +163,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
 
   useCenteredImage({
     targetDimensions: targetDisplayDimensions,
-    imageFileUri: loadedImage?.imageFileUri,
+    imageUri: imageUrl || loadedImage?.imageFileUri,
     onError: handleResizeError,
     onResult: handleResizeResult,
   });
@@ -341,7 +341,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
             <Link
               size="large"
               onPress={handleEditPicture}
-              disabled={previewLoading || isStaxEnabledImage}
+              disabled={!loadedImage || previewLoading || isStaxEnabledImage}
               event="button_clicked"
               eventProperties={analyticsEditEventProps}
             >

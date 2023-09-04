@@ -37,14 +37,24 @@ export type StepProps = {
   setCompletedRestoreSteps: (arg0: string[]) => void;
   currentRestoreStep: string;
   setCurrentRestoreStep: (arg0: string) => void;
+  isLanguagePromptOpen: boolean;
+  setIsLanguagePromptOpen: (arg0: boolean) => void;
+  confirmedPrompt: boolean;
+  setConfirmedPrompt: (arg0: boolean) => void;
   nonce: number;
   setNonce: (arg0: number) => void;
   setFirmwareUpdateCompleted: (arg0: boolean) => void;
+
+  finalStepSuccessDescription?: string;
+  finalStepSuccessButtonLabel?: string;
+  finalStepSuccessButtonOnClick?: () => void;
+  shouldReloadManagerOnCloseIfUpdateRefused?: boolean;
+  deviceHasPin?: boolean;
 };
 
 export type StepId = "idCheck" | "updateMCU" | "updating" | "finish" | "resetDevice" | "restore";
 
-type Props = {
+export type Props = {
   withResetStep: boolean;
   withAppsToReinstall: boolean;
   onDrawerClose: (reinstall?: boolean) => void;
@@ -80,6 +90,8 @@ const UpdateModal = ({
   const { t } = useTranslation();
   const [stateStepId, setStateStepId] = useState<StepId>(stepId);
   const [completedRestoreSteps, setCompletedRestoreSteps] = useState<string[]>([]);
+  const [isLanguagePromptOpen, setIsLanguagePromptOpen] = useState<boolean>(false);
+  const [confirmedPrompt, setConfirmedPrompt] = useState<boolean>(false);
   const [currentRestoreStep, setCurrentRestoreStep] = useState<string>("");
   const [nonce, setNonce] = useState(0);
   const [showDisclaimer, setShowDisclaimer] = useState(true);
@@ -201,6 +213,10 @@ const UpdateModal = ({
     nonce,
     setNonce,
     setFirmwareUpdateCompleted,
+    isLanguagePromptOpen,
+    setIsLanguagePromptOpen,
+    confirmedPrompt,
+    setConfirmedPrompt,
   };
 
   const deviceModel = getDeviceModel(deviceModelId);

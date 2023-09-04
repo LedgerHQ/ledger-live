@@ -1,16 +1,16 @@
-import React, { useCallback, useContext, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Linking } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import { Flex, Text, Button, Checkbox } from "@ledgerhq/native-ui";
-import { Icons } from "@ledgerhq/native-ui/assets/index";
+import { IconsLegacy } from "@ledgerhq/native-ui/assets/index";
 
 import Touchable from "../../../components/Touchable";
 import { TrackScreen } from "../../../analytics";
 import { ScreenName } from "../../../const";
 import { setAnalytics } from "../../../actions/settings";
-import { TermsContext } from "../../../logic/terms";
+import { useAcceptGeneralTerms } from "../../../logic/terms";
 import { useLocale } from "../../../context/Locale";
 import { urls } from "../../../config/urls";
 import OnboardingView from "../OnboardingView";
@@ -39,7 +39,7 @@ const LinkBox = React.memo(({ text, url, event, mb = 0 }: LinkBoxProps) => (
       <Text color="palette.primary.c80" variant="body" fontSize="14px" fontWeight="semiBold" mr={3}>
         {text}
       </Text>
-      <Icons.ExternalLinkMedium color="palette.primary.c80" size="18px" />
+      <IconsLegacy.ExternalLinkMedium color="palette.primary.c80" size="18px" />
     </Flex>
   </Touchable>
 ));
@@ -52,7 +52,7 @@ type NavigationProp = StackNavigatorNavigation<
 function OnboardingStepTerms() {
   const { locale = "en" } = useLocale();
   const dispatch = useDispatch();
-  const { accept: setAccepted } = useContext(TermsContext);
+  const setAccepted = useAcceptGeneralTerms();
   const [toggle, setToggle] = useState(false);
   const navigation = useNavigation<NavigationProp>();
   const { t } = useTranslation();

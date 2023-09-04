@@ -1,14 +1,21 @@
-import Transport from "@ledgerhq/hw-transport";
+/* eslint @typescript-eslint/no-duplicate-enum-values: 1 */
 import {
+  FilteringInfoContractName,
+  FilteringInfoShowField,
+  StructImplemData,
+  StructDefData,
+} from "./types";
+import type {
   EIP712Message,
   EIP712MessageTypes,
   EIP712MessageTypesEntry,
-  FilteringInfoContractName,
-  FilteringInfoShowField,
-  MessageFilters,
-  StructDefData,
-  StructImplemData,
-} from "./EIP712.types";
+} from "@ledgerhq/types-live";
+import Transport from "@ledgerhq/hw-transport";
+import {
+  getFiltersForMessage,
+  sortObjectAlphabetically,
+} from "@ledgerhq/evm-tools/message/EIP712/index";
+import { MessageFilters } from "@ledgerhq/evm-tools/message/EIP712/types";
 import { hexBuffer, intAsHexBytes, splitPath } from "../../utils";
 import { getLoadConfig } from "../../services/ledger/loadConfig";
 import { LoadConfig } from "../../services/types";
@@ -16,10 +23,8 @@ import {
   destructTypeFromString,
   EIP712_TYPE_ENCODERS,
   EIP712_TYPE_PROPERTIES,
-  getFiltersForMessage,
   makeTypeEntryStructBuffer,
-  sortObjectAlphabetically,
-} from "./EIP712.utils";
+} from "./utils";
 
 /**
  * @ignore for the README
@@ -514,6 +519,3 @@ export const signEIP712HashedMessage = (
     };
   });
 };
-
-export type { EIP712Message } from "./EIP712.types";
-export { isEIP712Message, getFiltersForMessage } from "./EIP712.utils";

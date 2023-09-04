@@ -1,5 +1,6 @@
-import { getAccountUnit } from "@ledgerhq/coin-framework/account/index";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { ethers } from "ethers";
+import { BigNumber } from "bignumber.js";
+import type { Account } from "@ledgerhq/types-live";
 import {
   formatTransactionStatusCommon as formatTransactionStatus,
   fromTransactionCommonRaw,
@@ -7,11 +8,12 @@ import {
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/coin-framework/transaction/common";
-import type { Account } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
-import { ethers } from "ethers";
-import ERC20ABI from "./abis/erc20.abi.json";
+import { getAccountUnit } from "@ledgerhq/coin-framework/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { transactionToEthersTransaction } from "./adapters";
+import ERC1155ABI from "./abis/erc1155.abi.json";
+import ERC721ABI from "./abis/erc721.abi.json";
+import ERC20ABI from "./abis/erc20.abi.json";
 import type {
   Transaction as EvmTransaction,
   EvmTransactionEIP1559,
@@ -22,6 +24,7 @@ import type {
 
 export const DEFAULT_GAS_LIMIT = new BigNumber(21000);
 
+/* istanbul ignore next: don't test CLI text helpers */
 /**
  * Format the transaction for the CLI
  */
@@ -78,6 +81,19 @@ export const fromTransactionRaw = (rawTx: EvmTransactionRaw): EvmTransaction => 
     tx.additionalFees = new BigNumber(rawTx.additionalFees);
   }
 
+  if (rawTx.nft) {
+    tx.nft = {
+      tokenId: rawTx.nft.tokenId,
+      contract: rawTx.nft.contract,
+      quantity: new BigNumber(rawTx.nft.quantity),
+      collectionName: rawTx.nft.collectionName,
+    };
+  }
+
+  if (rawTx.customGasLimit) {
+    tx.customGasLimit = new BigNumber(rawTx.customGasLimit);
+  }
+
   return tx as EvmTransaction;
 };
 
@@ -117,6 +133,19 @@ export const toTransactionRaw = (tx: EvmTransaction): EvmTransactionRaw => {
     txRaw.additionalFees = tx.additionalFees.toFixed();
   }
 
+  if (tx.nft) {
+    txRaw.nft = {
+      tokenId: tx.nft.tokenId,
+      contract: tx.nft.contract,
+      quantity: tx.nft.quantity.toFixed(),
+      collectionName: tx.nft.collectionName,
+    };
+  }
+
+  if (tx.customGasLimit) {
+    txRaw.customGasLimit = tx.customGasLimit.toFixed();
+  }
+
   return txRaw as EvmTransactionRaw;
 };
 
@@ -124,14 +153,47 @@ export const toTransactionRaw = (tx: EvmTransaction): EvmTransactionRaw => {
  * Returns the data necessary to execute smart contracts.
  * As of now, only used to create ERC20 transfers' data
  */
-export const getTransactionData = (transaction: EvmTransaction): Buffer | undefined => {
-  const contract = new ethers.utils.Interface(ERC20ABI);
-  const data = contract.encodeFunctionData("transfer", [
-    transaction.recipient,
-    transaction.amount.toFixed(),
-  ]);
+export const getTransactionData = (
+  account: Account,
+  transaction: EvmTransaction,
+): Buffer | undefined => {
+  switch (transaction.mode) {
+    case "send": {
+      const contract = new ethers.utils.Interface(ERC20ABI);
+      const data = contract.encodeFunctionData("transfer", [
+        transaction.recipient,
+        transaction.amount.toFixed(),
+      ]);
 
-  return data ? Buffer.from(data.slice(2), "hex") : undefined;
+      // removing 0x prefix
+      return Buffer.from(data.slice(2), "hex");
+    }
+    case "erc721": {
+      const contract = new ethers.utils.Interface(ERC721ABI);
+      const data = contract.encodeFunctionData("safeTransferFrom(address,address,uint256,bytes)", [
+        account.freshAddress,
+        transaction.recipient,
+        transaction.nft.tokenId,
+        "0x",
+      ]);
+
+      // removing 0x prefix
+      return Buffer.from(data.slice(2), "hex");
+    }
+    case "erc1155": {
+      const contract = new ethers.utils.Interface(ERC1155ABI);
+      const data = contract.encodeFunctionData("safeTransferFrom", [
+        account.freshAddress,
+        transaction.recipient,
+        transaction.nft.tokenId,
+        transaction.nft.quantity.isFinite() ? transaction.nft.quantity.toFixed() : 0,
+        "0x",
+      ]);
+
+      // removing 0x prefix
+      return Buffer.from(data.slice(2), "hex");
+    }
+  }
 };
 
 /**
@@ -139,9 +201,11 @@ export const getTransactionData = (transaction: EvmTransaction): Buffer | undefi
  * on the network compatiblity.
  */
 export const getTypedTransaction = (
-  transaction: EvmTransaction,
+  _transaction: EvmTransaction,
   feeData: FeeData,
 ): EvmTransaction => {
+  // Preventing mutation from the original transaction
+  const transaction = { ..._transaction };
   // If the blockchain is supporting EIP-1559, use maxFeePerGas & maxPriorityFeePerGas
   if (feeData.maxFeePerGas && feeData.maxPriorityFeePerGas) {
     delete transaction.gasPrice;
@@ -185,5 +249,4 @@ export default {
   toTransactionStatusRaw,
   formatTransactionStatus,
   fromTransactionStatusRaw,
-  getSerializedTransaction,
 };

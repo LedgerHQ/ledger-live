@@ -38,7 +38,13 @@ export default function StepValidator({ account, transaction, status, error }: S
   }
   return (
     <Box flow={1}>
-      <TrackPage category="Solana Delegation Reactivate" name="Step Validator" />
+      <TrackPage
+        category="Solana Delegation Reactivate"
+        name="Step Validator"
+        flow="stake"
+        action="reactivate"
+        currency="sol"
+      />
       {error && <ErrorBanner error={error} />}
       <ValidatorRow
         disableHover

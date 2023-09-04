@@ -39,6 +39,13 @@ export type FieldComponentProps = {
 
 export type FieldComponent = React.ComponentType<FieldComponentProps>;
 
+const AnimationContainer = styled(Flex).attrs({
+  alignSelf: "stretch",
+  alignItems: "center",
+  justifyContent: "center",
+  height: "150px",
+})``;
+
 function AmountField({ account, parentAccount, status, field }: FieldComponentProps) {
   let unit;
   if (account.type === "TokenAccount") {
@@ -161,8 +168,6 @@ export default function ValidateOnDevice({
       ? transTitleWording
       : t("ValidateOnDevice.title.send", getDeviceModel(device.modelId));
 
-  const isBigLottie = device.modelId === DeviceModelId.stax;
-
   return (
     <Flex flex={1}>
       <ScrollView
@@ -172,9 +177,12 @@ export default function ValidateOnDevice({
         }}
       >
         <Flex alignItems="center">
-          <Flex marginBottom={isBigLottie ? 0 : 8}>
-            <Animation source={getDeviceAnimation({ device, key: "sign", theme })} />
-          </Flex>
+          <AnimationContainer>
+            <Animation
+              source={getDeviceAnimation({ device, key: "sign", theme })}
+              style={device.modelId === DeviceModelId.stax ? { height: 210 } : {}}
+            />
+          </AnimationContainer>
           {Title ? (
             <Title
               account={account}

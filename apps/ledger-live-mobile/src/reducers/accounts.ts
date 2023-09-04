@@ -39,6 +39,7 @@ import type {
 import { AccountsActionTypes } from "../actions/types";
 import accountModel from "../logic/accountModel";
 import { blacklistedTokenIdsSelector, hiddenNftCollectionsSelector } from "./settings";
+import { galleryChainFiltersSelector } from "./nft";
 
 export const INITIAL_STATE: AccountsState = {
   active: [],
@@ -439,6 +440,16 @@ export const nonTokenAccountsWithPositiveBalanceCountSelector =
 export const hasNonTokenAccountsWithPositiveBalanceSelector =
   makeHasAccountsWithPositiveBalanceSelector(nonTokenAccountsSelector);
 
+export const nftsSelector = createSelector(accountsSelector, accounts =>
+  accounts.map(a => a.nfts ?? []).flat(),
+);
+
+export const orderedNftsSelector = createSelector(
+  accountsSelector,
+  nftsSelector,
+  (accounts, nfts) => orderByLastReceived(accounts, nfts),
+);
+
 /**
  * Returns the list of all the NFTs from non hidden collections accross all
  * accounts, ordered by last received.
@@ -454,14 +465,26 @@ export const hasNonTokenAccountsWithPositiveBalanceSelector =
  * ```
  * */
 export const orderedVisibleNftsSelector = createSelector(
-  accountsSelector,
+  orderedNftsSelector,
   hiddenNftCollectionsSelector,
-  (accounts, hiddenNftCollections) => {
-    const nfts = accounts.map(a => a.nfts ?? []).flat();
-    const visibleNfts = nfts.filter(
+  (nfts, hiddenNftCollections) =>
+    nfts.filter(
       nft => !hiddenNftCollections.includes(`${decodeNftId(nft.id).accountId}|${nft.contract}`),
-    );
-    return orderByLastReceived(accounts, visibleNfts);
+    ),
+);
+
+export const hasNftsSelector = createSelector(nftsSelector, nfts => {
+  return !!nfts.length;
+});
+
+export const filteredNftsSelector = createSelector(
+  galleryChainFiltersSelector,
+  orderedVisibleNftsSelector,
+  (galleryFilters, orderedNfts) => {
+    const activeFilters = Object.entries(galleryFilters)
+      .filter(([_, value]) => value)
+      .map(([key, _]) => key);
+    return orderedNfts.filter(nft => activeFilters.includes(nft.currencyId));
   },
 );
 

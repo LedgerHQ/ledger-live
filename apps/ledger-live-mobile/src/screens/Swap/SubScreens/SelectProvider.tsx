@@ -7,23 +7,21 @@ import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { useTranslation } from "react-i18next";
 import { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
-import { providerIcons } from "../../../icons/swap/index";
+import ProviderIcon from "../../../components/ProviderIcon";
 import { SelectProviderParamList } from "../types";
 import CounterValue from "../../../components/CounterValue";
 import { TrackScreen, useAnalytics } from "../../../analytics";
 import { ScreenName } from "../../../const";
 import { sharedSwapTracking, SWAP_VERSION } from "../utils";
 
-export function SelectProvider({
-  navigation,
-  route: {
+export function SelectProvider({ navigation, route }: SelectProviderParamList) {
+  const {
     params: {
       provider,
       swap: { from, to, rates },
       selectedRate,
     },
-  },
-}: SelectProviderParamList) {
+  } = route;
   const { track } = useAnalytics();
   const { t } = useTranslation();
   const fromUnit = useMemo(() => from.account && getAccountUnit(from.account), [from.account]);
@@ -38,9 +36,12 @@ export function SelectProvider({
         totalPartners: rates.value?.length ?? "missing",
       });
       // @ts-expect-error navigation type is only partially declared
-      navigation.navigate(ScreenName.SwapForm, { rate });
+      navigation.navigate(ScreenName.SwapForm, {
+        rate,
+        merge: true,
+      });
     },
-    [navigation, track, selectedRate, rates],
+    [track, selectedRate?.provider, rates.value?.length, navigation],
   );
 
   if (!rates.value || !fromUnit || !to.currency) {
@@ -72,7 +73,6 @@ export function SelectProvider({
 
       <Flex>
         {rates.value.map(rate => {
-          const ProviderIcon = providerIcons[rate.provider.toLowerCase()];
           const isSelected = selectedRate === rate;
 
           return (
@@ -92,7 +92,7 @@ export function SelectProvider({
                 borderColor={isSelected ? "primary.c70" : "neutral.c30"}
               >
                 <Flex flexDirection="row" alignItems="center">
-                  <ProviderIcon size={24} />
+                  <ProviderIcon size="XS" name={rate.provider} />
                   <Flex marginLeft={4}>
                     <Text variant="large" paddingBottom={2}>
                       {getProviderName(rate.provider)}

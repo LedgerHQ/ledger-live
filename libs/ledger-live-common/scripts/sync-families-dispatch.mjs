@@ -3,7 +3,6 @@ import "zx/globals";
 import rimraf from "rimraf";
 
 const targets = [
-  "customAddressValidation.ts",
   "hw-getAddress.ts",
   "hw-signMessage.ts",
   "transaction.ts",
@@ -21,21 +20,19 @@ const targets = [
 ];
 
 // Coins using coin-framework
-const familiesWPackage = ["polkadot", "algorand", "evm"];
+const familiesWPackage = ["algorand", "evm", "polkadot"];
 
 cd(path.join(__dirname, "..", "src"));
 await rimraf("generated");
 await fs.promises.mkdir("generated");
 await fs.promises.mkdir("generated/bridge");
 
-const families = (
-  await fs.promises.readdir("families", { withFileTypes: true })
-)
-  .filter((dirent) => dirent.isDirectory())
-  .map((dirent) => dirent.name);
+const families = (await fs.promises.readdir("families", { withFileTypes: true }))
+  .filter(dirent => dirent.isDirectory())
+  .map(dirent => dirent.name);
 
 async function genTarget(targets, families) {
-  targets.forEach(async (target) => {
+  targets.forEach(async target => {
     const imprtTarget = target.replace(".ts", "");
     const outpath = path.join("generated", target);
     let imports = ``;
@@ -77,41 +74,34 @@ function genCoinFrameworkTarget(targetFile) {
   let imports = "";
   let exprts = "";
 
-  // In case of cli-transaction, add special import
-  if (targetFile === "cli-transaction.ts") {
-    imports += `import { makeLRUCache } from "@ledgerhq/live-network/cache";\n`;
-    imports += `import network from "@ledgerhq/live-network/network";\n`;
-  }
-  if (targetFile === "bridge/js.ts") {
-    imports += `import { makeLRUCache } from "@ledgerhq/live-network/cache";\n`;
-    imports += `import network from "@ledgerhq/live-network/network";\n`;
-    imports += `import { withDevice } from "../../hw/deviceAccess";\n`;
-  }
-
   // Behavior for coin family with their own package
   const libsDir = path.join(__dirname, "../..");
   for (const family of familiesWPackage) {
     const targetImportPath = `@ledgerhq/coin-${family}/${targetName}`;
 
-    // We still use bridge/js file inside "families" directory
-    if (
-      targetFile !== "bridge/js.ts" &&
-      targetFile !== "cli-transaction.ts" &&
-      fs.existsSync(path.join(libsDir, `coin-${family}/src`, targetFile))
-    ) {
-      imports += `import ${family} from "${targetImportPath}";\n`;
+    switch (targetFile) {
+      case "bridge/js.ts":
+        imports += `import { bridge as ${family} } from "../../families/${family}/setup";\n`;
+        break;
+      case "cli-transaction.ts":
+        imports += `import { cliTools as ${family} } from "../families/${family}/setup";\n`;
+        break;
+      case "hw-getAddress.ts":
+        imports += `import { resolver as ${family} } from "../families/${family}/setup";\n`;
+        break;
+      case "hw-signMessage.ts":
+        if (fs.existsSync(path.join(libsDir, `coin-${family}/src`, targetFile))) {
+          imports += `import { messageSigner as ${family} } from "../families/${family}/setup";\n`;
+        }
+        break;
+      // We still use bridge/js file inside "families" directory
+      default:
+        if (fs.existsSync(path.join(libsDir, `coin-${family}/src`, targetFile))) {
+          imports += `import ${family} from "${targetImportPath}";\n`;
+        }
+    }
+    if (fs.existsSync(path.join(libsDir, `coin-${family}/src`, targetFile))) {
       exprts += `\n  ${family},`;
-    }
-
-    if (targetFile === "bridge/js.ts") {
-      const bridgeFn = family + "CreateBridges";
-      imports += `import { createBridges as ${bridgeFn} } from "${targetImportPath}";\n`;
-      exprts += `\n  ${family}: ${bridgeFn}(withDevice, network, makeLRUCache),`;
-    }
-    if (targetFile === "cli-transaction.ts") {
-      const cliToolsFn = family + "CreateCliTools";
-      imports += `import ${cliToolsFn} from "${targetImportPath}";\n`;
-      exprts += `\n  ${family}: ${cliToolsFn}(network, makeLRUCache),`;
     }
   }
 
@@ -129,9 +119,7 @@ async function getDeviceTransactionConfig(families) {
     const p = path.join("families", family, "deviceTransactionConfig.ts");
     if (fs.existsSync(p)) {
       const file = await fs.promises.readFile(p, "utf8");
-      const hasExports = file.includes(
-        "export type ExtraDeviceTransactionField"
-      );
+      const hasExports = file.includes("export type ExtraDeviceTransactionField");
       if (hasExports) {
         imports += `import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_${family} } from "../families/${family}/deviceTransactionConfig";
 `;
@@ -157,6 +145,7 @@ ${exprts};
 }
 
 async function genTypesFile(families) {
+  const libsDir = path.join(__dirname, "../..");
   const outpath = path.join("generated", "types.ts");
   let imprts = ``;
   let exprtsT = `export type Transaction =`;
@@ -164,14 +153,20 @@ async function genTypesFile(families) {
   let exprtsStatus = `export type TransactionStatus =`;
   let exprtsStatusRaw = `export type TransactionStatusRaw =`;
   for (const family of families) {
-    const importPath = familiesWPackage.includes(family)
-      ? "@ledgerhq/coin-"
-      : "../families/";
+    const importPath = familiesWPackage.includes(family) ? "@ledgerhq/coin-" : "../families/";
+    const typesAsFolder = (() => {
+      if (!familiesWPackage.includes(family)) {
+        return "";
+      }
 
-    imprts += `import { Transaction as ${family}Transaction } from "${importPath}${family}/types";
-import { TransactionRaw as ${family}TransactionRaw } from "${importPath}${family}/types";
-import { TransactionStatus as ${family}TransactionStatus } from "${importPath}${family}/types";
-import { TransactionStatusRaw as ${family}TransactionStatusRaw } from "${importPath}${family}/types";
+      if (fs.existsSync(path.join(libsDir, `coin-${family}/src/types/index.ts`))) return "/index";
+
+      return "";
+    })();
+    imprts += `import { Transaction as ${family}Transaction } from "${importPath}${family}/types${typesAsFolder}";
+import { TransactionRaw as ${family}TransactionRaw } from "${importPath}${family}/types${typesAsFolder}";
+import { TransactionStatus as ${family}TransactionStatus } from "${importPath}${family}/types${typesAsFolder}";
+import { TransactionStatusRaw as ${family}TransactionStatusRaw } from "${importPath}${family}/types${typesAsFolder}";
 `;
     exprtsT += `
   | ${family}Transaction`;

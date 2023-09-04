@@ -3,8 +3,8 @@ import ReactDOM from "react-dom";
 import styled from "styled-components";
 import FlexBox, { FlexBoxProps } from "../Flex";
 import Divider, { Props as DividerProps } from "../../asorted/Divider";
-import Close from "@ledgerhq/icons-ui/react/CloseMedium";
-import ArrowLeft from "@ledgerhq/icons-ui/react/ArrowLeftMedium";
+import Close from "@ledgerhq/icons-ui/reactLegacy/CloseMedium";
+import ArrowLeft from "@ledgerhq/icons-ui/reactLegacy/ArrowLeftMedium";
 
 import TransitionSlide from "../../transitions/TransitionSlide";
 import TransitionInOut from "../../transitions/TransitionInOut";
@@ -203,7 +203,7 @@ const Drawer = (
 ): React.ReactElement => {
   const $root = React.useMemo(
     () =>
-      menuPortalTarget === undefined && typeof document !== undefined
+      menuPortalTarget === undefined && typeof document !== "undefined"
         ? document.querySelector("body")
         : menuPortalTarget,
     [menuPortalTarget],

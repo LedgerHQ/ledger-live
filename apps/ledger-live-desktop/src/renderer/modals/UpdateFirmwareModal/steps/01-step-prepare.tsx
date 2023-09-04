@@ -2,14 +2,14 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { Flex, ProgressLoader, Icons } from "@ledgerhq/react-ui";
+import { Flex, ProgressLoader, IconsLegacy } from "@ledgerhq/react-ui";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { FirmwareUpdateContext, DeviceInfo } from "@ledgerhq/types-live";
 import { hasFinalFirmware } from "@ledgerhq/live-common/hw/hasFinalFirmware";
 import staxFetchImage, { FetchImageEvent } from "@ledgerhq/live-common/hw/staxFetchImage";
 import firmwareUpdatePrepare from "@ledgerhq/live-common/hw/firmwareUpdate-prepare";
-import { getEnv } from "@ledgerhq/live-common/env";
-
+import { getEnv } from "@ledgerhq/live-env";
+import { UnexpectedBootloader } from "@ledgerhq/errors";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Track from "~/renderer/analytics/Track";
@@ -22,7 +22,7 @@ import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animation
 import { AnimationWrapper, Title } from "~/renderer/components/DeviceAction/rendering";
 import useTheme from "~/renderer/hooks/useTheme";
 import { EMPTY, concat } from "rxjs";
-import { map, tap } from "rxjs/operators";
+import { catchError, map, tap } from "rxjs/operators";
 import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker";
 import { StepProps } from "..";
 import manager from "@ledgerhq/live-common/manager/index";
@@ -125,7 +125,7 @@ const Body = ({
           <Flex flexDirection="row" alignItems="center" my={2}>
             <>
               <HighlightVersion>{`V ${from}`}</HighlightVersion>
-              <Icons.ArrowRightMedium size={14} />
+              <IconsLegacy.ArrowRightMedium size={14} />
               <HighlightVersion>{`V ${to}`}</HighlightVersion>
             </>
           </Flex>
@@ -189,13 +189,21 @@ const StepPrepare = ({
     // but only for stax.
     const deviceId = device ? device.deviceId : "";
     const maybeCLSBackup =
-      deviceModelId === DeviceModelId.stax
+      deviceInfo.onboarded && deviceModelId === DeviceModelId.stax
         ? staxFetchImage({ deviceId, request: { allowedEmpty: true } })
         : EMPTY;
 
     // Allow for multiple preparation flows in this paradigm.
     const task = concat(
       maybeCLSBackup.pipe(
+        catchError(e => {
+          if (e instanceof UnexpectedBootloader) {
+            // CLS checks fail when in recovery mode, preventing an update of an
+            // unseeded device. This bypasses that check.
+            return EMPTY;
+          }
+          throw e;
+        }),
         tap((e: FetchImageEvent) => {
           // bubble up this image to the main component and keep it in memory
           if (e.type === "imageFetched") {

@@ -4,7 +4,7 @@ import { AsideFooter, Bullet, Column, IllustrationContainer } from "../shared";
 import connectNano from "../assets/connectNano.png";
 import connectManager from "@ledgerhq/live-common/hw/connectManager";
 import { createAction } from "@ledgerhq/live-common/hw/actions/manager";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { useSelector } from "react-redux";

@@ -15,8 +15,8 @@ import {
   useRoute,
 } from "@react-navigation/native";
 import { snakeCase } from "lodash";
-import { useCallback } from "react";
-import { idsToLanguage } from "@ledgerhq/types-live";
+import React, { MutableRefObject, useCallback } from "react";
+import { Feature, FeatureId, idsToLanguage } from "@ledgerhq/types-live";
 import {
   hasNftInAccounts,
   GENESIS_PASS_COLLECTION_CONTRACT,
@@ -30,13 +30,11 @@ import {
   localeSelector,
   lastSeenDeviceSelector,
   sensitiveAnalyticsSelector,
-  firstConnectionHasDeviceSelector,
-  firstConnectHasDeviceUpdatedSelector,
-  readOnlyModeEnabledSelector,
-  hasOrderedNanoSelector,
+  onboardingHasDeviceSelector,
   notificationsSelector,
   knownDeviceModelIdsSelector,
   customImageTypeSelector,
+  userNpsSelector,
 } from "../reducers/settings";
 import { knownDevicesSelector } from "../reducers/ble";
 import { DeviceLike, State } from "../reducers/types";
@@ -49,10 +47,34 @@ import { AnonymousIpPlugin } from "./AnonymousIpPlugin";
 import { UserIdPlugin } from "./UserIdPlugin";
 import { Maybe } from "../types/helpers";
 import { appStartupTime } from "../StartupTimeMarker";
+import { aggregateData, getUniqueModelIdList } from "../logic/modelIdList";
 
 let sessionId = uuid();
 const appVersion = `${VersionNumber.appVersion || ""} (${VersionNumber.buildVersion || ""})`;
 const { ANALYTICS_LOGS, ANALYTICS_TOKEN } = Config;
+
+type MaybeAppStore = Maybe<AppStore>;
+
+let storeInstance: MaybeAppStore; // is the redux store. it's also used as a flag to know if analytics is on or off.
+let segmentClient: SegmentClient | undefined;
+let analyticsFeatureFlagMethod: null | ((key: FeatureId) => Feature | null);
+
+export function setAnalyticsFeatureFlagMethod(method: typeof analyticsFeatureFlagMethod): void {
+  analyticsFeatureFlagMethod = method;
+}
+
+const getFeatureFlagProperties = (): Record<string, boolean | string> => {
+  try {
+    if (!analyticsFeatureFlagMethod) return {};
+    const ptxEarnFeatureFlag = analyticsFeatureFlagMethod("ptxEarn");
+
+    return {
+      ptxEarnEnabled: !!ptxEarnFeatureFlag?.enabled,
+    };
+  } catch (e) {
+    return {};
+  }
+};
 
 export const updateSessionId = () => (sessionId = uuid());
 
@@ -79,13 +101,12 @@ const extraProperties = async (store: AppStore) => {
         modelId: lastDevice.modelId,
       }
     : {};
-  const firstConnectionHasDevice = firstConnectionHasDeviceSelector(state);
+  const onboardingHasDevice = onboardingHasDeviceSelector(state);
   const notifications = notificationsSelector(state);
   const notificationsAllowed = notifications.areNotificationsAllowed;
   const notificationsBlacklisted = Object.entries(notifications)
     .filter(([key, value]) => key !== "areNotificationsAllowed" && value === false)
     .map(([key]) => key);
-  const firstConnectHasDeviceUpdated = firstConnectHasDeviceUpdatedSelector(state);
   const { user } = await getOrCreateUser();
   const accountsWithFunds = accounts
     ? [
@@ -105,6 +126,7 @@ const extraProperties = async (store: AppStore) => {
     : [];
   const hasGenesisPass = hasNftInAccounts(GENESIS_PASS_COLLECTION_CONTRACT, accounts);
   const hasInfinityPass = hasNftInAccounts(INFINITY_PASS_COLLECTION_CONTRACT, accounts);
+  const nps = userNpsSelector(state);
 
   return {
     appVersion,
@@ -119,8 +141,9 @@ const extraProperties = async (store: AppStore) => {
     platformVersion: Platform.Version,
     sessionId,
     devicesCount: devices.length,
-    firstConnectionHasDevice,
-    firstConnectHasDeviceUpdated,
+    modelIdQtyList: aggregateData(devices),
+    modelIdList: getUniqueModelIdList(devices),
+    onboardingHasDevice,
     ...(satisfaction
       ? {
           satisfaction,
@@ -138,13 +161,10 @@ const extraProperties = async (store: AppStore) => {
     appTimeToInteractiveMilliseconds: appStartupTime,
     staxDeviceUser: knownDeviceModelIds.stax,
     staxLockscreen: customImageType || "none",
+    ...getFeatureFlagProperties(),
+    nps,
   };
 };
-
-type MaybeAppStore = Maybe<AppStore>;
-
-let storeInstance: MaybeAppStore; // is the redux store. it's also used as a flag to know if analytics is on or off.
-let segmentClient: SegmentClient | undefined;
 
 const token = ANALYTICS_TOKEN;
 export const start = async (store: AppStore): Promise<SegmentClient | undefined> => {
@@ -212,14 +232,8 @@ export function getIsTracking(
   mandatory?: boolean | null | undefined,
 ): { enabled: true } | { enabled: false; reason?: string } {
   if (!state) return { enabled: false, reason: "store not initialised" };
-  const readOnlyMode = state && readOnlyModeEnabledSelector(state);
-  const hasOrderedNano = state && hasOrderedNanoSelector(state);
   const analyticsEnabled = state && analyticsEnabledSelector(state);
-  if (readOnlyMode && hasOrderedNano)
-    return {
-      enabled: false,
-      reason: "not tracking anything in the reborn state post purchase pre device setup",
-    };
+
   if (!mandatory && !analyticsEnabled) {
     return {
       enabled: false,
@@ -249,11 +263,11 @@ export const track = async (
     return;
   }
 
-  const screen = currentRouteNameRef.current;
+  const page = currentRouteNameRef.current;
 
   const userExtraProperties = await extraProperties(storeInstance as AppStore);
   const propertiesWithoutExtra = {
-    screen,
+    page,
     ...eventProperties,
   };
   const allProperties = {
@@ -309,6 +323,8 @@ export const useAnalytics = () => {
   };
 };
 
+const lastScreenEventName: MutableRefObject<string | null | undefined> = React.createRef();
+
 /**
  * Track an event which will have the name `Page ${category}${name ? " " + name : ""}`.
  * Extra logic to update the route names used in "screen" and "source"
@@ -344,15 +360,23 @@ export const screen = async (
    * any effect.
    */
   refreshSource?: boolean,
+  /**
+   * When true, event will not be emitted if it's a duplicate (if the last
+   * screen event emitted was the same screen event).
+   * This is practical in case a TrackScreen component gets remounted.
+   */
+  avoidDuplicates?: boolean,
 ) => {
-  const fullScreenName = category + (name ? ` ${name}` : "");
+  const fullScreenName = (category || "") + (category && name ? " " : "") + (name || "");
+  const eventName = `Page ${fullScreenName}`;
+  if (avoidDuplicates && eventName === lastScreenEventName.current) return;
+  lastScreenEventName.current = eventName;
   if (updateRoutes) {
     previousRouteNameRef.current = currentRouteNameRef.current;
     if (refreshSource) {
       currentRouteNameRef.current = fullScreenName;
     }
   }
-  const eventName = `Page ${fullScreenName}`;
   Sentry.addBreadcrumb({
     message: eventName,
     category: "screen",

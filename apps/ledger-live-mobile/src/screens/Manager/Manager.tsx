@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, memo, useMemo } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { from } from "rxjs";
 import type { App } from "@ledgerhq/types-live";
 import { predictOptimisticState } from "@ledgerhq/live-common/apps/index";
@@ -23,6 +23,8 @@ import { ScreenName } from "../../const";
 import FirmwareUpdateScreen from "../../components/FirmwareUpdate";
 import { ManagerNavigatorStackParamList } from "../../components/RootNavigator/types/ManagerNavigator";
 import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import { lastConnectedDeviceSelector } from "../../reducers/settings";
+import { UpdateStep } from "../FirmwareUpdate";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<ManagerNavigatorStackParamList, ScreenName.ManagerMain>
@@ -43,6 +45,16 @@ const Manager = ({ navigation, route }: NavigationProps) => {
   const { deviceId, deviceName, modelId } = device;
   const [state, dispatch] = useApps(result, deviceId, appsToRestore);
   const reduxDispatch = useDispatch();
+
+  const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
+  useEffect(() => {
+    // refresh the manager if an USB device gets plugged while we're on a bluetooth connection
+    if (lastConnectedDevice?.deviceId.startsWith("usb|") && !device.deviceId.startsWith("usb|")) {
+      navigation.replace(ScreenName.Manager, {
+        device: lastConnectedDevice,
+      });
+    }
+  }, [device.deviceId, lastConnectedDevice, navigation]);
 
   const refreshDeviceInfo = useCallback(() => {
     withDevice(deviceId)(transport => from(getDeviceInfo(transport)))
@@ -168,11 +180,23 @@ const Manager = ({ navigation, route }: NavigationProps) => {
     [device, installedApps, navigation, refreshDeviceInfo],
   );
 
-  const onBackFromNewUpdateUx = useCallback(() => {
-    navigation.replace(ScreenName.Manager, {
-      device,
-    });
-  }, [device, navigation]);
+  const onBackFromNewUpdateUx = useCallback(
+    (updateState: UpdateStep) => {
+      // If the fw update was completed or not yet started, we know the device in a correct state
+      if (["start", "completed"].includes(updateState)) {
+        navigation.replace(ScreenName.Manager, {
+          device,
+        });
+        return;
+      }
+
+      // Otherwise navigating back to the main manager screen without settings a device
+      // so it does not try to automatically connect to the device while it
+      // might still be on an unknown state because the fw update was just stopped
+      navigation.replace(ScreenName.Manager);
+    },
+    [device, navigation],
+  );
 
   return (
     <>

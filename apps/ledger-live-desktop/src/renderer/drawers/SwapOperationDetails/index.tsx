@@ -43,6 +43,7 @@ import { openURL } from "~/renderer/linking";
 import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import { getStatusColor } from "~/renderer/screens/exchange/Swap2/History/OperationRow";
 import { rgba } from "~/renderer/styles/helpers";
+
 const Value = styled(Box).attrs(() => ({
   fontSize: 4,
   color: "palette.text.shade50",
@@ -100,6 +101,7 @@ const SelectableTextWrapper = styled(Box).attrs(p => ({
   }
 }
 `;
+
 const SwapOperationDetails = ({
   mappedSwapOperation,
   onClose,
@@ -122,6 +124,7 @@ const SwapOperationDetails = ({
   const url =
     fromCurrency.type === "CryptoCurrency" &&
     getTransactionExplorer(getDefaultExplorerView(fromCurrency), operation.hash);
+
   const openAccount = useCallback(
     account => {
       const parentAccount =
@@ -145,6 +148,7 @@ const SwapOperationDetails = ({
       ? fromCurrency.parentCurrency.name
       : fromCurrency.name
     : undefined;
+
   return (
     <Box flow={3} px={20} mt={20}>
       <Status status={status}>
@@ -168,6 +172,7 @@ const SwapOperationDetails = ({
             val={normalisedFromAmount}
             fontSize={6}
             disableRounding
+            data-test-id="swap-amount-from"
           />
         </Box>
         <Box my={1} color={"palette.text.shade50"}>
@@ -183,6 +188,7 @@ const SwapOperationDetails = ({
             fontSize={6}
             disableRounding
             color={statusColor}
+            data-test-id="swap-amount-to"
           />
         </Box>
       </Box>
@@ -280,7 +286,7 @@ const SwapOperationDetails = ({
             <Box mr={1} alignItems={"center"}>
               <CryptoCurrencyIcon size={16} currency={fromCurrency} />
             </Box>
-            <Box flex={1} color={"palette.text.shade100"}>
+            <Box flex={1} color={"palette.text.shade100"} data-test-id="swap-account-from">
               <Ellipsis>
                 <Link onClick={() => openAccount(fromAccount)}>{getAccountName(fromAccount)}</Link>
               </Ellipsis>
@@ -322,7 +328,7 @@ const SwapOperationDetails = ({
             <Box mr={1} alignItems={"center"}>
               <CryptoCurrencyIcon size={16} currency={toCurrency} />
             </Box>
-            <Box flex={1} color={"palette.text.shade100"}>
+            <Box flex={1} color={"palette.text.shade100"} data-test-id="swap-account-to">
               <Ellipsis>
                 <Link onClick={() => openAccount(toAccount)}>{getAccountName(toAccount)}</Link>
               </Ellipsis>
@@ -358,4 +364,5 @@ const SwapOperationDetails = ({
     </Box>
   );
 };
+
 export default SwapOperationDetails;

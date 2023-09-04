@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { withTranslation, TFunction } from "react-i18next";
+import { TFunction } from "i18next";
+import { withTranslation } from "react-i18next";
 import { Account } from "@ledgerhq/types-live";
 import Box from "~/renderer/components/Box";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";

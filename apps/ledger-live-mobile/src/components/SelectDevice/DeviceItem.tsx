@@ -54,6 +54,7 @@ function DeviceItem({
       Icon={CustomIcon || NanoFoldedMedium}
       renderRight={onMore ? renderOnMore : undefined}
       disabled={disabled}
+      testID={"device-item-" + deviceMeta.deviceId}
     >
       {deviceMeta.deviceName}
       {description && (

@@ -1,11 +1,14 @@
 import React, { useMemo, Component, useCallback } from "react";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
-import { Trans, TFunction, useTranslation } from "react-i18next";
+import { TFunction } from "i18next";
+import { Trans, useTranslation } from "react-i18next";
 import styled from "styled-components";
 import uniq from "lodash/uniq";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { colors } from "~/renderer/styles/theme";
+import Alert from "~/renderer/components/Alert";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import {
   findSubAccountById,
   getAccountCurrency,
@@ -21,6 +24,7 @@ import {
   getOperationAmountNumber,
   getOperationConfirmationDisplayableNumber,
   isConfirmedOperation,
+  isEditableOperation,
 } from "@ledgerhq/live-common/operation";
 import { Account, AccountLike, NFTMetadata, Operation, OperationType } from "@ledgerhq/types-live";
 import { useNftMetadata } from "@ledgerhq/live-common/nft/NftMetadataProvider/index";
@@ -67,6 +71,7 @@ import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import AmountDetails from "./AmountDetails";
 import NFTOperationDetails from "./NFTOperationDetails";
 import { State } from "~/renderer/reducers";
+import { openModal } from "~/renderer/actions/modals";
 import { getLLDCoinFamily } from "~/renderer/families";
 
 const mapStateToProps = (
@@ -132,17 +137,7 @@ const OperationD = (props: Props) => {
   const history = useHistory();
   const location = useLocation();
   const mainAccount = getMainAccount(account, parentAccount);
-  const {
-    extra,
-    hash,
-    date,
-    senders,
-    type,
-    fee,
-    recipients: _recipients,
-    contract,
-    tokenId,
-  } = operation;
+  const { hash, date, senders, type, fee, recipients: _recipients, contract, tokenId } = operation;
   const recipients = _recipients.filter(Boolean);
   const { name } = mainAccount;
   const isNftOperation = ["NFT_IN", "NFT_OUT"].includes(operation.type);
@@ -177,7 +172,10 @@ const OperationD = (props: Props) => {
   const uniqueSenders = uniq(senders);
   const OpDetailsExtra = specific?.operationDetails?.OperationDetailsExtra || OperationDetailsExtra;
   const { hasFailed } = operation;
-  const subOperations = operation.subOperations || [];
+  const subOperations: Operation[] = useMemo(
+    () => operation.subOperations || [],
+    [operation.subOperations],
+  );
   const internalOperations = operation.internalOperations || [];
   const isToken = listTokenTypesForCryptoCurrency(mainAccount.currency).length > 0;
   const openOperation = useCallback(
@@ -235,7 +233,39 @@ const OperationD = (props: Props) => {
       ? currency.parentCurrency.name
       : currency.name
     : undefined;
-
+  const editEthTx = useFeature("editEthTx");
+  const editable = editEthTx?.enabled && isEditableOperation(mainAccount, operation);
+  const dispatch = useDispatch();
+  const handleOpenEditModal = useCallback(
+    (account, parentAccount, transactionRaw, transactionHash) => {
+      setDrawer(undefined);
+      if (subOperations.length > 0 && isToken) {
+        // if the operation is a token operation,(ERC-20 send), in order to speedup/cancel we need to find the subAccount
+        const opAccount = findSubAccountById(account, subOperations[0].accountId);
+        dispatch(
+          openModal("MODAL_EDIT_TRANSACTION", {
+            account: opAccount,
+            parentAccount: account,
+            transactionRaw,
+            transactionHash,
+          }),
+        );
+      } else {
+        dispatch(
+          openModal("MODAL_EDIT_TRANSACTION", {
+            account,
+            parentAccount,
+            transactionRaw,
+            transactionHash,
+          }),
+        );
+      }
+    },
+    [dispatch, isToken, subOperations],
+  );
+  // pending transactions that exceeds 5 minutes are considered as stuck transactions
+  const isStuck =
+    new Date().getTime() - operation.date.getTime() > getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT");
   const feesCurrency = useMemo(() => getFeesCurrency(mainAccount), [mainAccount]);
   const feesUnit = useMemo(() => getFeesUnit(feesCurrency), [feesCurrency]);
 
@@ -284,7 +314,7 @@ const OperationD = (props: Props) => {
         mt={0}
         mb={1}
       >
-        <Trans i18nKey={`operation.type.${operation.type}`} />
+        <Trans i18nKey={`operation.type.${editable ? "SENDING" : operation.type}`} />
       </Text>
       {/* TODO clean up these conditional components into currency specific blocks */}
       {!isNftOperation ? (
@@ -349,6 +379,28 @@ const OperationD = (props: Props) => {
             label={t("operationDetails.viewOperation")}
           />
         </Box>
+      ) : null}
+      {editable ? (
+        <Alert type={isStuck ? "warning" : "primary"}>
+          <Trans
+            i18nKey={isStuck ? "operation.edit.stuckDescription" : "operation.edit.description"}
+          />
+          <div>
+            <Link
+              style={{ textDecoration: "underline", fontSize: "13px" }}
+              onClick={() => {
+                handleOpenEditModal(
+                  account,
+                  parentAccount,
+                  operation.transactionRaw,
+                  operation.hash,
+                );
+              }}
+            >
+              <Trans i18nKey="operation.edit.title" />
+            </Link>
+          </div>
+        </Alert>
       ) : null}
       {!isNftOperation ? (
         <OpDetailsSection>
@@ -618,12 +670,7 @@ const OperationD = (props: Props) => {
         </OpDetailsSection>
       ) : null}
       {OpDetailsExtra && (
-        <OpDetailsExtra
-          operation={operation}
-          extra={extra}
-          type={type}
-          account={account as Account}
-        />
+        <OpDetailsExtra operation={operation} type={type} account={account as Account} />
       )}
       <B />
     </Box>
@@ -648,24 +695,27 @@ type OperationDetailsExtraProps = {
   operation: Operation;
   account: Account;
   type: OperationType;
-  extra: {
-    [key: string]: string;
-  };
 };
-const OperationDetailsExtra = ({ extra }: OperationDetailsExtraProps) => {
-  const jsx = Object.entries(extra).map(([key, value]) => {
-    if (typeof value === "object" || typeof value === "function") return null;
-    return (
-      <OpDetailsSection key={key}>
-        <OpDetailsTitle>
-          <Trans i18nKey={`operationDetails.extra.${key}`} defaults={key} />
-        </OpDetailsTitle>
-        <OpDetailsData>
-          <Ellipsis>{value}</Ellipsis>
-        </OpDetailsData>
-      </OpDetailsSection>
-    );
-  });
+const OperationDetailsExtra = ({ operation }: OperationDetailsExtraProps) => {
+  let jsx = null;
+
+  // Safety type checks
+  if (operation.extra && typeof operation.extra === "object" && !Array.isArray(operation.extra)) {
+    jsx = Object.entries(operation.extra as Object).map(([key, value]) => {
+      if (typeof value === "object" || typeof value === "function") return null;
+      return (
+        <OpDetailsSection key={key}>
+          <OpDetailsTitle>
+            <Trans i18nKey={`operationDetails.extra.${key}`} defaults={key} />
+          </OpDetailsTitle>
+          <OpDetailsData>
+            <Ellipsis>{value}</Ellipsis>
+          </OpDetailsData>
+        </OpDetailsSection>
+      );
+    });
+  }
+
   return <>{jsx}</>;
 };
 const More = styled(Text).attrs<TextProps>(p => ({

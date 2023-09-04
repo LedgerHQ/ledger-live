@@ -9,7 +9,7 @@ import {
   HwTransportErrorType,
   PeerRemovedPairing,
 } from "@ledgerhq/errors";
-import { Flex, Button, Icons } from "@ledgerhq/native-ui";
+import { Flex, Button, IconsLegacy } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../../analytics";
 import Touchable from "../../components/Touchable";
@@ -87,7 +87,6 @@ function RenderError({ error, status, onBypassGenuine, onRetry }: Props) {
           outerError={outerError}
           withDescription
           withHelp={!isBrokenPairing}
-          withIcon
           hasExportLogButton={!isBrokenPairing}
         />
         {isBrokenPairing ? (
@@ -95,7 +94,7 @@ function RenderError({ error, status, onBypassGenuine, onRetry }: Props) {
             <Button
               type="main"
               iconPosition="right"
-              Icon={Icons.ExternalLinkMedium}
+              Icon={IconsLegacy.ExternalLinkMedium}
               onPress={onOpenHelp}
               mb={0}
             >
@@ -111,7 +110,7 @@ function RenderError({ error, status, onBypassGenuine, onRetry }: Props) {
               <Button
                 flex={1}
                 iconPosition="left"
-                Icon={Icons.ExternalLinkMedium}
+                Icon={IconsLegacy.ExternalLinkMedium}
                 type="main"
                 onPress={onRetry}
               >

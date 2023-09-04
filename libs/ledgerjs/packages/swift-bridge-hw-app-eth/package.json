@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/swift-bridge-hw-app-eth",
-  "version": "1.0.8",
+  "version": "1.0.14",
   "description": "Package to facilitate bundling hw-app-eth in the EthWrapper Swift package",
   "keywords": [
     "Ledger",
@@ -44,7 +44,7 @@
   "devDependencies": {
     "@types/jest": "^29.5.0",
     "@types/node": "^18.15.3",
-    "documentation": "13.2.4",
+    "documentation": "13.2.5",
     "jest": "^28.1.1",
     "rimraf": "^4.4.1",
     "source-map-support": "^0.5.21",

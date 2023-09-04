@@ -1,6 +1,4 @@
 import { DeviceModelId } from "@ledgerhq/devices";
-import { Account, Operation } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
 import expect from "expect";
 import invariant from "invariant";
 import sample from "lodash/sample";
@@ -18,30 +16,30 @@ import { getCurrentCosmosPreloadData } from "../../families/cosmos/preloadedData
 import type {
   CosmosAccount,
   CosmosDelegation,
+  CosmosOperationExtraRaw,
+  CosmosDelegationInfoRaw,
   CosmosRedelegation,
   CosmosResources,
   CosmosUnbonding,
   Transaction,
+  CosmosOperationRaw,
 } from "../../families/cosmos/types";
 import cryptoFactory from "./chain/chain";
 import { canDelegate, canRedelegate, canUndelegate, getMaxDelegationAvailable } from "./logic";
 import { acceptTransaction } from "./speculos-deviceActions";
+import { Operation } from "@ledgerhq/types-live";
 
 const maxAccounts = 16;
 
 // amounts of delegation are not exact so we are applying an approximation
-function approximateValue(value) {
+function approximateValue(value): string {
   return "~" + value.div(100).integerValue().times(100).toString();
 }
 
-function approximateExtra(extra) {
-  extra = { ...extra };
+function approximateExtra(extra: CosmosOperationExtraRaw) {
   if (extra.validators && Array.isArray(extra.validators)) {
-    extra.validators = extra.validators.map(v => {
-      if (!v) return v;
-      const { amount, ...rest } = v;
-      if (!amount || typeof amount !== "string") return v;
-      return { ...rest, amount: approximateValue(new BigNumber(amount)) };
+    extra.validators = extra.validators.map((validator: CosmosDelegationInfoRaw) => {
+      return { ...validator, amount: approximateValue(validator.amount) };
     });
   }
   return extra;
@@ -52,7 +50,7 @@ const cosmosLikeTest: ({
   operation,
   optimisticOperation,
 }: {
-  account: Account;
+  account: CosmosAccount;
   operation: Operation;
   optimisticOperation: Operation;
 }) => void = ({ account, operation, optimisticOperation }) => {
@@ -65,21 +63,25 @@ const cosmosLikeTest: ({
       allOperationsMatchingId: [operation],
     }),
   );
-  const opExpected: Record<string, any> = toOperationRaw({
+  const opExpected: Partial<CosmosOperationRaw> = toOperationRaw({
     ...optimisticOperation,
-  });
+  }) as CosmosOperationRaw;
+  const expectedExtra: CosmosOperationExtraRaw = opExpected.extra || {};
   delete opExpected.value;
   delete opExpected.fee;
   delete opExpected.date;
   delete opExpected.blockHash;
   delete opExpected.blockHeight;
-  const extra = opExpected.extra;
   delete opExpected.extra;
   delete opExpected.transactionSequenceNumber;
-  const op = toOperationRaw(operation);
+
+  const op: Partial<CosmosOperationRaw> = toOperationRaw(operation) as CosmosOperationRaw;
+  const opExtra: CosmosOperationExtraRaw = op.extra || {};
+  delete op.extra;
+
   botTest("optimistic operation matches op", () => expect(op).toMatchObject(opExpected));
   botTest("operation extra matches", () =>
-    expect(approximateExtra(op.extra)).toMatchObject(approximateExtra(extra)),
+    expect(approximateExtra(opExtra)).toMatchObject(approximateExtra(expectedExtra)),
   );
 };
 
@@ -472,6 +474,18 @@ const axelar = {
   ...generateGenericCosmosTest("axelar"),
 };
 
+const secretNetwork = {
+  ...generateGenericCosmosTest("secret_network"),
+};
+
+const stargaze = {
+  ...generateGenericCosmosTest("stargaze"),
+};
+
+const coreum = {
+  ...generateGenericCosmosTest("coreum"),
+};
+
 export default {
   axelar,
   cosmos,
@@ -481,4 +495,7 @@ export default {
   persistence,
   quicksilver,
   onomy,
+  secretNetwork,
+  stargaze,
+  coreum,
 };

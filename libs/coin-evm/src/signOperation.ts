@@ -1,12 +1,20 @@
+import {
+  Account,
+  SignOperationFnSignature,
+  SignOperationEvent,
+  DeviceId,
+} from "@ledgerhq/types-live";
 import { Observable } from "rxjs";
-import Eth, { ledgerService } from "@ledgerhq/hw-app-eth";
-import { Account, SignOperationFnSignature, SignOperationEvent } from "@ledgerhq/types-live";
-import { ResolutionConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
+import { getEnv } from "@ledgerhq/live-env";
+import { ledgerService } from "@ledgerhq/hw-app-eth";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
+import { LoadConfig, ResolutionConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
+import { EvmAddress, EvmSignature, EvmSigner } from "./signer";
 import { prepareForSignOperation } from "./prepareTransaction";
 import { getSerializedTransaction } from "./transaction";
 import { Transaction } from "./types";
-import { DeviceCommunication } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 
 /**
  * Transforms the ECDSA signature paremeter v hexadecimal string received
@@ -38,77 +46,82 @@ export const applyEIP155 = (vAsHex: string, chainId: number): number => {
  * Sign Transaction with Ledger hardware
  */
 export const buildSignOperation =
-  (withDevice: DeviceCommunication): SignOperationFnSignature<Transaction> =>
+  (
+    signerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature>,
+  ): SignOperationFnSignature<Transaction> =>
   ({
     account,
     deviceId,
     transaction,
   }: {
     account: Account;
-    deviceId: any;
+    deviceId: DeviceId;
     transaction: Transaction;
   }): Observable<SignOperationEvent> =>
-    withDevice(deviceId)(
-      transport =>
-        new Observable(o => {
-          async function main() {
-            const preparedTransaction = await prepareForSignOperation(account, transaction);
-            const serializedTxHexString = getSerializedTransaction(preparedTransaction).slice(2); // Remove 0x prefix
+    new Observable(o => {
+      async function main() {
+        const preparedTransaction = await prepareForSignOperation(account, transaction);
+        const serializedTxHexString = getSerializedTransaction(preparedTransaction).slice(2); // Remove 0x prefix
 
-            // Configure type of resolutions necessary for the clear signing
-            const resolutionConfig: ResolutionConfig = {
-              externalPlugins: true,
-              erc20: true,
-              domains: transaction.recipientDomain ? [transaction.recipientDomain] : [],
-            };
-            // Look for resolutions for external plugins and ERC20
-            const resolution = await ledgerService.resolveTransaction(
-              serializedTxHexString,
-              {},
-              resolutionConfig,
-            );
+        // Configure type of resolutions necessary for the clear signing
+        const resolutionConfig: ResolutionConfig = {
+          externalPlugins: true,
+          erc20: true,
+          nft: isNFTActive(account.currency),
+          domains: transaction.recipientDomain ? [transaction.recipientDomain] : [],
+        };
+        const loadConfig: LoadConfig = {
+          cryptoassetsBaseURL: getEnv("DYNAMIC_CAL_BASE_URL"),
+          nftExplorerBaseURL: getEnv("NFT_ETH_METADATA_SERVICE") + "/v1/ethereum",
+        };
+        // Look for resolutions for external plugins and ERC20
+        const resolution = await ledgerService.resolveTransaction(
+          serializedTxHexString,
+          loadConfig,
+          resolutionConfig,
+        );
 
-            o.next({
-              type: "device-signature-requested",
-            });
+        o.next({
+          type: "device-signature-requested",
+        });
 
-            // Instanciate Eth app bindings
-            const eth = new Eth(transport);
-            // Request signature on the nano
-            const sig = await eth.signTransaction(
-              account.freshAddressPath,
-              serializedTxHexString,
-              resolution,
-            );
-
-            o.next({ type: "device-signature-granted" }); // Signature is done
-
-            const { chainId = 0 } = account.currency.ethereumLikeInfo || {};
-            // Create a new serialized tx with the signature now
-            const signature = await getSerializedTransaction(preparedTransaction, {
-              r: "0x" + sig.r,
-              s: "0x" + sig.s,
-              v: applyEIP155(sig.v, chainId),
-            });
-
-            const operation = buildOptimisticOperation(account, {
-              ...transaction,
-              nonce: preparedTransaction.nonce,
-            });
-
-            o.next({
-              type: "signed",
-              signedOperation: {
-                operation,
-                signature,
-                expirationDate: null,
-              },
-            });
-          }
-
-          main().then(
-            () => o.complete(),
-            e => o.error(e),
+        const sig = (await signerContext(deviceId, signer => {
+          signer.setLoadConfig(loadConfig);
+          // Request signature on the nano
+          return signer.signTransaction(
+            account.freshAddressPath,
+            serializedTxHexString,
+            resolution,
           );
-        }),
-    );
+        })) as EvmSignature;
+
+        o.next({ type: "device-signature-granted" }); // Signature is done
+
+        const { chainId = 0 } = account.currency.ethereumLikeInfo || /* istanbul ignore next */ {};
+        // Create a new serialized tx with the signature now
+        const signature = await getSerializedTransaction(preparedTransaction, {
+          r: "0x" + sig.r,
+          s: "0x" + sig.s,
+          v: applyEIP155(typeof sig.v === "number" ? sig.v.toString(16) : sig.v, chainId),
+        });
+
+        const operation = buildOptimisticOperation(account, {
+          ...transaction,
+          nonce: preparedTransaction.nonce,
+        });
+
+        o.next({
+          type: "signed",
+          signedOperation: {
+            operation,
+            signature,
+          },
+        });
+      }
+
+      main().then(
+        () => o.complete(),
+        /* istanbul ignore next: don't test throwing an error */
+        e => o.error(e),
+      );
+    });

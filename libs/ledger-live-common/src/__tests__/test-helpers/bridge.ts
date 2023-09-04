@@ -175,7 +175,7 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
       });
 
       if (scanAccounts) {
-        if (FIXME_ignoreOperationFields) {
+        if (FIXME_ignoreOperationFields && FIXME_ignoreOperationFields.length) {
           warnDev(
             currency.id +
               " is ignoring operation fields: " +
@@ -183,7 +183,7 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
           );
         }
 
-        if (FIXME_ignoreAccountFields) {
+        if (FIXME_ignoreAccountFields && FIXME_ignoreAccountFields.length) {
           warnDev(
             currency.id + " is ignoring account fields: " + FIXME_ignoreAccountFields.join(", "),
           );
@@ -486,11 +486,39 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
           });
         });
 
+        describe("updateTransaction", () => {
+          // stability: function called twice will return the same object reference
+          // (=== convergence so we can stop looping, typically because transaction will be a hook effect dependency of prepareTransaction)
+          function expectStability(t, patch) {
+            const t2 = bridge.updateTransaction(t, patch);
+            const t3 = bridge.updateTransaction(t2, patch);
+            expect(t2).toBe(t3);
+          }
+
+          makeTest("ref stability on empty transaction", async () => {
+            const account = await getSynced();
+            const tx = bridge.createTransaction(account);
+            expectStability(tx, {});
+          });
+
+          makeTest("ref stability on self transaction", async () => {
+            const account = await getSynced();
+            const tx = bridge.createTransaction(account);
+            expectStability(tx, {
+              amount: new BigNumber(1000),
+              recipient: account.freshAddress,
+            });
+          });
+        });
+
         describe("prepareTransaction", () => {
-          // stability: function called twice will return the same object reference (=== convergence so we can stop looping, typically because transaction will be a hook effect dependency of prepareTransaction)
+          // stability: function called twice will return the same object reference
+          // (=== convergence so we can stop looping, typically because transaction will be a hook effect dependency of prepareTransaction)
           async function expectStability(account, t) {
-            const t2 = await bridge.prepareTransaction(account, t);
-            const t3 = await bridge.prepareTransaction(account, t2);
+            let t2 = await bridge.prepareTransaction(account, t);
+            let t3 = await bridge.prepareTransaction(account, t2);
+            t2 = omit(t2, arg.currencyData.IgnorePrepareTransactionFields || []);
+            t3 = omit(t3, arg.currencyData.IgnorePrepareTransactionFields || []);
             expect(t2).toStrictEqual(t3);
           }
 
@@ -514,13 +542,17 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
               recipient: account.freshAddress,
             };
             const stable = await bridge.prepareTransaction(account, t);
-            const first = await bridge.prepareTransaction(account, stable);
+            const first = omit(
+              await bridge.prepareTransaction(account, stable),
+              arg.currencyData.IgnorePrepareTransactionFields || [],
+            );
             const concur = await Promise.all(
               Array(3)
                 .fill(null)
                 .map(() => bridge.prepareTransaction(account, stable)),
             );
             concur.forEach(r => {
+              r = omit(r, arg.currencyData.IgnorePrepareTransactionFields || []);
               expect(r).toEqual(first);
             });
           });

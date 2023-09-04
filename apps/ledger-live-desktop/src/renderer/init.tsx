@@ -1,6 +1,6 @@
 import React from "react";
 import Transport from "@ledgerhq/hw-transport";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { implicitMigration } from "@ledgerhq/live-common/migrations/accounts";
 import { log } from "@ledgerhq/logs";
@@ -43,6 +43,8 @@ import {
 import ReactRoot from "~/renderer/ReactRoot";
 import AppError from "~/renderer/AppError";
 import { expectOperatingSystemSupportStatus } from "~/support/os";
+import { addDevice, removeDevice, resetDevices } from "~/renderer/actions/devices";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { listCachedCurrencyIds } from "./bridge/cache";
 if (process.env.VERBOSE) {
   enableDebugLogger();
@@ -87,6 +89,10 @@ async function init() {
     }
   });
   let deepLinkUrl; // Nb In some cases `fetchSettings` runs after this, voiding the deep link.
+  if (process.env.LEDGER_LIVE_DEEPLINK) {
+    deepLinkUrl = process.env.LEDGER_LIVE_DEEPLINK;
+    store.dispatch(setDeepLinkUrl(deepLinkUrl));
+  }
   ipcRenderer.once("deep-linking", (_, url: string) => {
     store.dispatch(setDeepLinkUrl(url));
     deepLinkUrl = url;
@@ -205,6 +211,15 @@ async function init() {
   // expose stuff in Windows for DEBUG purpose
   window.ledger = {
     store,
+    addDevice: (device: Device) => {
+      store.dispatch(addDevice(device));
+    },
+    removeDevice: (device: Device) => {
+      store.dispatch(removeDevice(device));
+    },
+    resetDevices: () => {
+      store.dispatch(resetDevices());
+    },
   };
 }
 function r(Comp: JSX.Element) {

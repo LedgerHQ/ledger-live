@@ -13,7 +13,7 @@ export function NoResult({ input }: Pick<Search, "input">) {
   }, [input]);
 
   return (
-    <Flex flexDirection="column" alignItems="center" padding={4}>
+    <Flex height={400} flexDirection="column" alignItems="center" justifyContent="center">
       <Text>{t("platform.catalog.warnings.notFound")}</Text>
       <Text>
         {input.match(HTTP_REGEX) ? (

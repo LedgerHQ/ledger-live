@@ -62,7 +62,6 @@ const getTransactionStatus = async (
   if (amount.lt(0)) amount = new BigNumber(0);
 
   if (
-    !errors.amount &&
     (account.celoResources?.lockedBalance.gt(0) ||
       !!account.celoResources?.pendingWithdrawals?.length) &&
     (transaction.useAllAmount || totalSpendableBalance.minus(amount).lt(FEES_SAFETY_BUFFER)) &&
@@ -72,7 +71,7 @@ const getTransactionStatus = async (
   }
 
   if (!["register", "withdraw", "activate"].includes(transaction.mode)) {
-    if (amount.lte(0) && !useAllAmount) {
+    if (!errors.amount && amount.lte(0) && !useAllAmount) {
       errors.amount = new AmountRequired();
     }
   }
@@ -80,14 +79,15 @@ const getTransactionStatus = async (
   const totalSpent = amount.plus(estimatedFees);
 
   if (transaction.mode === "unlock" || transaction.mode === "vote") {
-    if (totalNonVotingLockedBalance && amount.gt(totalNonVotingLockedBalance)) {
+    if (!errors.amount && totalNonVotingLockedBalance && amount.gt(totalNonVotingLockedBalance)) {
       errors.amount = new NotEnoughBalance();
     }
   } else if (transaction.mode === "revoke") {
     const revoke = getVote(account, transaction.recipient, transaction.index);
-    if (revoke?.amount && amount.gt(revoke.amount)) errors.amount = new NotEnoughBalance();
+    if (!errors.amount && revoke?.amount && amount.gt(revoke.amount))
+      errors.amount = new NotEnoughBalance();
   } else {
-    if (totalSpent.gt(totalSpendableBalance)) {
+    if (!errors.amount && totalSpent.gt(totalSpendableBalance)) {
       errors.amount = new NotEnoughBalance();
     }
   }

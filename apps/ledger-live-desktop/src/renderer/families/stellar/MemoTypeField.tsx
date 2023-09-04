@@ -33,18 +33,20 @@ const MemoTypeField = ({
     [onChange, bridge, transaction],
   );
   return (
-    <Select
-      isSearchable={false}
-      onChange={onMemoTypeChange}
-      value={selectedMemoType}
-      options={options}
-      renderOption={({ data: { label } }) => (
-        <Trans i18nKey={`families.stellar.memoType.${label}`} />
-      )}
-      renderValue={({ data: { label } }) => (
-        <Trans i18nKey={`families.stellar.memoType.${label}`} />
-      )}
-    />
+    <div style={{ width: "156px" }}>
+      <Select
+        isSearchable={false}
+        onChange={onMemoTypeChange}
+        value={selectedMemoType}
+        options={options}
+        renderOption={({ data: { label } }) => (
+          <Trans i18nKey={`families.stellar.memoType.${label}`} />
+        )}
+        renderValue={({ data: { label } }) => (
+          <Trans i18nKey={`families.stellar.memoType.${label}`} />
+        )}
+      />
+    </div>
   );
 };
 export default MemoTypeField;

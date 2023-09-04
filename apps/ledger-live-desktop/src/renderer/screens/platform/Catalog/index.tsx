@@ -53,7 +53,6 @@ export function Catalog() {
   const handleClick = useCallback(
     manifest => {
       const openApp = () => history.push(`/platform/${manifest.id}`);
-      console.log("!!!", isDismissed);
       if (!isDismissed && manifest.author !== "ledger") {
         dispatch(
           openPlatformAppDisclaimerDrawer({

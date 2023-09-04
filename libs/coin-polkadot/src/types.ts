@@ -5,6 +5,8 @@ import type {
   TransactionCommonRaw,
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
+  Operation,
+  OperationRaw,
 } from "@ledgerhq/types-live";
 import type { BigNumber } from "bignumber.js";
 
@@ -64,7 +66,7 @@ export type Transaction = TransactionCommon & {
   mode: PolkadotOperationMode;
   family: "polkadot";
   fees: BigNumber | null | undefined;
-  validators: string[] | null | undefined;
+  validators: string[] | undefined;
   era: string | null | undefined;
   rewardDestination: string | null | undefined;
   numSlashingSpans: number | null | undefined;
@@ -73,7 +75,7 @@ export type TransactionRaw = TransactionCommonRaw & {
   family: "polkadot";
   mode: PolkadotOperationMode;
   fees: string | null | undefined;
-  validators: string[] | null | undefined;
+  validators: string[] | undefined;
   era: string | null | undefined;
   rewardDestination: string | null | undefined;
   numSlashingSpans: number | null | undefined;
@@ -110,3 +112,25 @@ export type PolkadotAccountRaw = AccountRaw & {
 };
 export type TransactionStatus = TransactionStatusCommon;
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
+
+export type PolkadotOperation = Operation<PolkadotOperationExtra>;
+export type PolkadotOperationRaw = OperationRaw<PolkadotOperationExtraRaw>;
+
+export type PolkadotOperationExtra = {
+  transferAmount?: BigNumber;
+  palletMethod: string;
+  bondedAmount?: BigNumber;
+  unbondedAmount?: BigNumber;
+  withdrawUnbondedAmount?: BigNumber;
+  validatorStash?: string;
+  validators?: string[];
+};
+export type PolkadotOperationExtraRaw = {
+  transferAmount?: string;
+  palletMethod: string;
+  bondedAmount?: string;
+  unbondedAmount?: string;
+  withdrawUnbondedAmount?: string;
+  validatorStash?: string;
+  validators?: string[];
+};

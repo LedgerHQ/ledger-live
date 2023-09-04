@@ -9,7 +9,7 @@ import type {
   BitcoinAccount,
 } from "./types";
 import { bitcoinPickingStrategy } from "./types";
-import { getEnv } from "../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import {
   formatTransactionStatusCommon,
   fromTransactionCommonRaw,

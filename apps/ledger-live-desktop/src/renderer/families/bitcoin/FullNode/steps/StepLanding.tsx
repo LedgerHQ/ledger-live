@@ -13,7 +13,8 @@ const Illustration = styled.div`
   margin-bottom: 24px;
   width: 193px;
   height: 130px;
-  background: url("${fullnodeIllustration}");
+  // prettier-ignore
+  background: url('${fullnodeIllustration}');
   background-size: contain;
   align-self: center;
 `;

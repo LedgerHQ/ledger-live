@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from "react";
-import { Flex, Icons, Text, Box } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy, Text, Box } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
@@ -8,7 +8,6 @@ import { useDispatch } from "react-redux";
 import Button from "../components/wrappedUi/Button";
 import { NavigatorName, ScreenName } from "../const";
 import { setHasOrderedNano, setSensitiveAnalytics } from "../actions/settings";
-import { TrackScreen } from "../analytics";
 import {
   RootNavigationComposite,
   StackNavigatorNavigation,
@@ -43,7 +42,6 @@ export default function PostBuyDeviceScreen() {
   return (
     <StyledSafeAreaView>
       <Flex flex={1} justifyContent="center" alignItems="center" mx={6} my={6}>
-        <TrackScreen category="Congratulations" source="Ledger Website" />
         <Flex justifyContent="center" alignItems="center">
           <Box bg={"success.c30"} p={6} mb={7} borderRadius={999}>
             <Box bg={"success.c20"} p={6} borderRadius={999}>
@@ -55,7 +53,7 @@ export default function PostBuyDeviceScreen() {
                 bg={"success.c40"}
                 borderRadius={999}
               >
-                <Icons.CheckAloneMedium size="48px" />
+                <IconsLegacy.CheckAloneMedium size="48px" />
               </Box>
             </Box>
           </Box>
@@ -67,19 +65,7 @@ export default function PostBuyDeviceScreen() {
           </Text>
         </Flex>
       </Flex>
-      <Button
-        mx={6}
-        mb={8}
-        type="main"
-        outline={false}
-        onPress={onClose}
-        size="large"
-        event="button_clicked"
-        eventProperties={{
-          button: "Close",
-          screen: "Congratulations",
-        }}
-      >
+      <Button mx={6} mb={8} type="main" outline={false} onPress={onClose} size="large">
         {t("common.close")}
       </Button>
     </StyledSafeAreaView>

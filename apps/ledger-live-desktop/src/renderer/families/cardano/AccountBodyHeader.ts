@@ -1,2 +1,3 @@
-import StakingRewardsBanner from "./StakingRewardsBanner";
-export default StakingRewardsBanner;
+import Delegation from "./Delegation";
+
+export default Delegation;

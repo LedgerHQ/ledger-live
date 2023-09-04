@@ -19,13 +19,14 @@ type WorkflowDescriptor = {
   description?: string;
   summaryFile?: string;
   getInputs: (payload: GetInputsPayload) => Record<string, any>;
+  getConclusion?: (conclusion: string) => string;
 };
 export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
   /**
    * When a workflow is requested for the first time:
    *  - Create the related check run
    */
-  app.on("workflow_run.requested", async (context) => {
+  app.on("workflow_run.requested", async context => {
     const { payload, octokit } = context;
 
     const { owner, repo } = context.repo();
@@ -33,18 +34,14 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
 
     if (workflowFile !== workflow.file) return;
 
-    context.log.info(
-      `[Monitoring Workflow](workflow_run.requested) ${payload.workflow_run.name}`
-    );
+    context.log.info(`[Monitoring Workflow](workflow_run.requested) ${payload.workflow_run.name}`);
     const { data: checkSuite } = await octokit.checks.getSuite({
       owner,
       repo,
       check_suite_id: payload.workflow_run.check_suite_id,
     });
     const workflowUrl = payload.workflow_run.html_url;
-    const summaryPrefix = workflow.description
-      ? `#### ${workflow.description}\n\n`
-      : "";
+    const summaryPrefix = workflow.description ? `#### ${workflow.description}\n\n` : "";
 
     // Will trigger the check_run.created event
     await octokit.checks.create({
@@ -56,9 +53,7 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
       started_at: new Date().toISOString(),
       output: {
         title: "⏱️ Queued",
-        summary:
-          summaryPrefix +
-          `The **[workflow](${workflowUrl})** is currently queued.`,
+        summary: summaryPrefix + `The **[workflow](${workflowUrl})** is currently queued.`,
         details_url: workflowUrl,
       },
     });
@@ -68,7 +63,7 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
    * When a workflow is completed:
    * - update the associated check run with the conclusion
    */
-  app.on("workflow_run.completed", async (context) => {
+  app.on("workflow_run.completed", async context => {
     const { payload, octokit } = context;
 
     const { owner, repo } = context.repo();
@@ -103,21 +98,14 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
         octokit,
         owner,
         repo,
-        payload.workflow_run.id
+        payload.workflow_run.id,
       );
 
-      const artifactId = artifacts.find(
-        (artifact) => artifact.name === workflow.summaryFile
-      )?.id;
+      const artifactId = artifacts.find(artifact => artifact.name === workflow.summaryFile)?.id;
 
       if (artifactId) {
         try {
-          const rawSummary = await downloadArtifact(
-            octokit,
-            owner,
-            repo,
-            artifactId
-          );
+          const rawSummary = await downloadArtifact(octokit, owner, repo, artifactId);
           const newSummary = JSON.parse(rawSummary.toString());
           if (newSummary.summary) {
             summary = newSummary?.summary;
@@ -127,7 +115,7 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
           annotations = newSummary?.annotations;
         } catch (e) {
           context.log.error(
-            `[Monitoring Workflow](downloadArtifact) Error while downloading / parsing artifact: ${workflow.summaryFile} @ artifactId: ${artifactId} & workflow_run.id: ${payload.workflow_run.id}`
+            `[Monitoring Workflow](downloadArtifact) Error while downloading / parsing artifact: ${workflow.summaryFile} @ artifactId: ${artifactId} & workflow_run.id: ${payload.workflow_run.id}`,
           );
           context.log.error(e as Error);
         }
@@ -136,9 +124,7 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
 
     const summaryPrefix = workflow.description
       ? `#### ${workflow.description}${
-          !defaultSummary
-            ? `\n##### [🔗 Workflow run](${payload.workflow_run.html_url})`
-            : ""
+          !defaultSummary ? `\n##### [🔗 Workflow run](${payload.workflow_run.html_url})` : ""
         }\n\n`
       : "";
     summary = summaryPrefix + summary;
@@ -157,12 +143,19 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
       // ignore error, file is not found
     }
 
+    let conclusion: string;
+    if (workflow.getConclusion) {
+      conclusion = workflow.getConclusion(payload.workflow_run.conclusion);
+    } else {
+      conclusion = payload.workflow_run.conclusion;
+    }
+
     await octokit.checks.update({
       owner,
       repo,
       check_run_id: checkRun.id,
       status: "completed",
-      conclusion: payload.workflow_run.conclusion,
+      conclusion,
       output: {
         ...output,
         text: tips,
@@ -196,11 +189,11 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
    * - Re-create the check run (unfortunately rerequested does not reset the status to "queued")
    * - Update the fields to reflect the fact that the run is in progress and link the workflow
    */
-  app.on("workflow_run", async (context) => {
+  app.on("workflow_run", async context => {
     const { payload, octokit } = context;
 
     context.log.debug(
-      `[Monitoring Workflow](workflow_run.${payload.action}) ${payload.workflow_run.name}`
+      `[Monitoring Workflow](workflow_run.${payload.action}) ${payload.workflow_run.name}`,
     );
 
     // @ts-expect-error Expected because probot does not declare this webhook event even though it exists.
@@ -212,7 +205,7 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
     if (workflow.file !== workflowFile) return;
 
     context.log.info(
-      `[Monitoring Workflow](workflow_run.in_progress) ${payload.workflow_run.name}`
+      `[Monitoring Workflow](workflow_run.in_progress) ${payload.workflow_run.name}`,
     );
 
     // Ensure that the latest workflow run status is "in progress"
@@ -225,7 +218,7 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
 
     if (workflowRun.data.status !== "in_progress") {
       context.log.info(
-        `[Monitoring Workflow](workflow_run.in_progress) The workflow run seems to be completed already, skipping…`
+        `[Monitoring Workflow](workflow_run.in_progress) The workflow run seems to be completed already, skipping…`,
       );
       // Oops, the workflow is not in progress anymore, we should not update the check run
       return;
@@ -238,9 +231,7 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
     });
 
     const workflowUrl = `https://github.com/${owner}/${repo}/actions/runs/${payload.workflow_run.id}`;
-    const summaryPrefix = workflow.description
-      ? `#### ${workflow.description}\n\n`
-      : "";
+    const summaryPrefix = workflow.description ? `#### ${workflow.description}\n\n` : "";
     // Will trigger the check_run.created event
     await createRunByName({
       octokit,
@@ -252,9 +243,7 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
         details_url: workflowUrl,
         output: {
           title: "⚙️ Running",
-          summary:
-            summaryPrefix +
-            `The **[workflow](${workflowUrl})** is currently running.`,
+          summary: summaryPrefix + `The **[workflow](${workflowUrl})** is currently running.`,
         },
       },
     });
@@ -264,7 +253,7 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
    * When a check run is rerequested:
    * - trigger the related workflow
    */
-  app.on(["check_run.rerequested"], async (context) => {
+  app.on(["check_run.rerequested"], async context => {
     const { payload, octokit } = context;
 
     const { owner, repo } = context.repo();

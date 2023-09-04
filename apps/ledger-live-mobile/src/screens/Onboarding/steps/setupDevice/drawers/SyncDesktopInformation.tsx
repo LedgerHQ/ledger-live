@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Flex, Button, Icons, ScrollContainer } from "@ledgerhq/native-ui";
+import { Flex, Button, IconsLegacy, ScrollContainer } from "@ledgerhq/native-ui";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { ModalHeader } from "@ledgerhq/native-ui/components/Layout/Modals/BaseModal/index";
 import { StackNavigatorProps } from "../../../../../components/RootNavigator/types/helpers";
@@ -26,7 +26,7 @@ const OnboardingSyncDesktopInformation = () => {
     <Flex flex={1} backgroundColor="background.main">
       <ScrollContainer flex={1}>
         <ModalHeader
-          Icon={Icons.DevicesAltMedium}
+          Icon={IconsLegacy.DevicesAltMedium}
           iconColor={"neutral.c100"}
           title={t("onboarding.stepImportAccounts.warning.title")}
           description={t("onboarding.stepImportAccounts.warning.desc")}

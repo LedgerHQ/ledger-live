@@ -3,7 +3,7 @@ import React from "react";
 import { WebView } from "react-native-webview";
 import { WebViewErrorEvent, WebViewMessageEvent } from "react-native-webview/lib/WebViewTypes";
 import { ImageProcessingError } from "@ledgerhq/live-common/customImage/errors";
-import { injectedCode } from "./injectedCode/imageProcessing";
+import { injectedCode } from "./injectedCode/imageBase64ToHexProcessing";
 import { InjectedCodeDebugger } from "./InjectedCodeDebugger";
 import { ImageBase64Data, ImageDimensions } from "./types";
 
@@ -145,7 +145,11 @@ export default class ImageProcessor extends React.Component<Props> {
     const { debug = false } = this.props;
     return (
       <>
-        <InjectedCodeDebugger debug={debug} injectedCode={injectedCode} />
+        <InjectedCodeDebugger
+          debug={debug}
+          injectedCode={injectedCode}
+          filename="imageBase64ToHexProcessing.ts"
+        />
         <Flex flex={0}>
           <WebView
             ref={c => (this.webViewRef = c)}

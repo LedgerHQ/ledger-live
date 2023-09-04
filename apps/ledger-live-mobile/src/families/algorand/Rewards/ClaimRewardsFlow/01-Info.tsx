@@ -45,7 +45,13 @@ export default function ClaimRewardsStarted({ navigation, route }: Props) {
       ]}
     >
       <NavigationScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
-        <TrackScreen category="ClaimRewardsFlow" name="Started" />
+        <TrackScreen
+          category="ClaimRewardsFlow"
+          name="Started"
+          flow="stake"
+          action="claim_rewards"
+          currency="algo"
+        />
         <Flex alignItems="center" justifyContent="center" mb={6}>
           <Illustration
             size={200}
@@ -59,11 +65,20 @@ export default function ClaimRewardsStarted({ navigation, route }: Props) {
         <BulletList
           Bullet={BulletGreenCheck}
           list={[
-            <Trans i18nKey="algorand.claimRewards.flow.steps.info.steps.0" />,
-            <Trans i18nKey="algorand.claimRewards.flow.steps.info.steps.1" />,
-            <Trans i18nKey="algorand.claimRewards.flow.steps.info.steps.2" />,
+            <Trans
+              i18nKey="algorand.claimRewards.flow.steps.info.steps.0"
+              key="claimRewardsText1"
+            />,
+            <Trans
+              i18nKey="algorand.claimRewards.flow.steps.info.steps.1"
+              key="claimRewardsText2"
+            />,
+            <Trans
+              i18nKey="algorand.claimRewards.flow.steps.info.steps.2"
+              key="claimRewardsText3"
+            />,
           ].map(wording => (
-            <LText semiBold style={styles.bulletItem} color="black">
+            <LText semiBold style={styles.bulletItem} color="black" key={wording.key}>
               {wording}
             </LText>
           ))}

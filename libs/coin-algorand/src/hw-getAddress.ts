@@ -1,13 +1,20 @@
-import type { Resolver } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import Algorand from "@ledgerhq/hw-app-algorand";
+import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
+import { AlgorandAddress, AlgorandSignature, AlgorandSigner } from "./signer";
 
-const resolver: Resolver = async (transport, { path, verify }) => {
-  const algorand = new Algorand(transport);
-  const r = await algorand.getAddress(path, verify || false);
-  return {
-    address: r.address,
-    publicKey: r.publicKey,
-    path,
+const resolver = (
+  signerContext: SignerContext<AlgorandSigner, AlgorandAddress | AlgorandSignature>,
+): GetAddressFn => {
+  return async (deviceId: string, { path, verify }: GetAddressOptions) => {
+    const r = (await signerContext(deviceId, signer =>
+      signer.getAddress(path, verify || false),
+    )) as AlgorandAddress;
+    return {
+      address: r.address,
+      publicKey: r.publicKey,
+      path,
+    };
   };
 };
 

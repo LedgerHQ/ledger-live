@@ -65,7 +65,13 @@ export default function StepAmount({
   const amount = useMemo(() => (validator ? validator.amount : new BigNumber(0)), [validator]);
   return (
     <Box flow={1}>
-      <TrackPage category="Unstaking Flow" name="Step 1" />
+      <TrackPage
+        category="Unstaking Flow"
+        name="Step 1"
+        flow="stake"
+        action="unstaking"
+        currency="near"
+      />
       {error && <ErrorBanner error={error} />}
       <Box horizontal justifyContent="center" mb={2}>
         <Text ff="Inter|Medium" fontSize={4}>

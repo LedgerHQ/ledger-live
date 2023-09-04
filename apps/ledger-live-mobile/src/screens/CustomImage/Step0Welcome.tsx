@@ -49,32 +49,33 @@ const Step0Welcome: React.FC<
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
       <TrackScreen category={analyticsScreenName} />
-      <Flex flex={1} mt={8}>
-        <Video
-          disableFocus
-          source={
-            theme.dark
-              ? videoSources.customLockScreenBannerDark
-              : videoSources.customLockScreenBannerLight
-          }
-          style={{
-            width: screenWidth,
-            height: (videoDimensions.height / videoDimensions.width) * screenWidth,
-          }}
-          muted
-          repeat
-          resizeMode={"contain"}
-        />
-        <Flex px={7}>
-          <Text
-            variant="h4"
-            fontWeight="semiBold"
-            mt={8}
-            textAlign="center"
-            testID="custom-image-welcome-title"
-          >
-            {t("customImage.landingPage.title")}
-          </Text>
+      <Flex flex={1} mt={8} justifyContent={"space-between"}>
+        <Flex>
+          <Video
+            disableFocus
+            source={
+              theme.dark
+                ? videoSources.customLockScreenBannerDark
+                : videoSources.customLockScreenBannerLight
+            }
+            style={{
+              width: screenWidth,
+              height: (videoDimensions.height / videoDimensions.width) * screenWidth,
+            }}
+            muted
+            repeat
+            resizeMode={"contain"}
+          />
+          <Flex px={7} mt={11}>
+            <Text
+              variant="h4"
+              fontWeight="semiBold"
+              textAlign="center"
+              testID="custom-image-welcome-title"
+            >
+              {t("customImage.landingPage.title")}
+            </Text>
+          </Flex>
         </Flex>
         <BottomButtonsContainer>
           <Button

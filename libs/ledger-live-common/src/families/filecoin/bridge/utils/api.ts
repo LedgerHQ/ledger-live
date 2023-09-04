@@ -2,7 +2,8 @@ import { log } from "@ledgerhq/logs";
 import { AxiosRequestConfig, AxiosResponse } from "axios";
 
 import network from "@ledgerhq/live-network/network";
-import { getEnv } from "../../../../env";
+import { makeLRUCache } from "@ledgerhq/live-network/cache";
+import { getEnv } from "@ledgerhq/live-env";
 import {
   BalanceResponse,
   BroadcastTransactionRequest,
@@ -62,12 +63,16 @@ export const fetchBalances = async (addr: string): Promise<BalanceResponse> => {
   return data; // TODO Validate if the response fits this interface
 };
 
-export const fetchEstimatedFees = async (
-  request: EstimatedFeesRequest,
-): Promise<EstimatedFeesResponse> => {
-  const data = await send<EstimatedFeesResponse>(`/fees/estimate`, request);
-  return data; // TODO Validate if the response fits this interface
-};
+export const fetchEstimatedFees = makeLRUCache(
+  async (request: EstimatedFeesRequest): Promise<EstimatedFeesResponse> => {
+    const data = await send<EstimatedFeesResponse>(`/fees/estimate`, request);
+    return data; // TODO Validate if the response fits this interface
+  },
+  request => `${request.from}-${request.to}`,
+  {
+    ttl: 5 * 1000, // 5 seconds
+  },
+);
 
 export const fetchBlockHeight = async (): Promise<NetworkStatusResponse> => {
   const data = await fetch<NetworkStatusResponse>("/network/status");

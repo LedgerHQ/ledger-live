@@ -7,9 +7,11 @@ import ble from "./ble";
 import ratings from "./ratings";
 import notifications from "./notifications";
 import swap from "./swap";
+import earn from "./earn";
 import dynamicContent from "./dynamicContent";
 import walletconnect from "./walletconnect";
 import protect from "./protect";
+import nft from "./nft";
 import { State } from "./types";
 import { ActionsPayload } from "../actions/types";
 
@@ -24,9 +26,11 @@ const appReducer = combineReducers({
   dynamicContent,
   notifications,
   swap,
+  earn,
   walletconnect,
   postOnboarding,
   protect,
+  nft,
 });
 
 // TODO: EXPORT ALL POSSIBLE ACTION TYPES AND USE ACTION<TYPES>

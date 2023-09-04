@@ -30,6 +30,7 @@ type Props = {
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
+
 export default function AlgorandFeeRow({ account, parentAccount, transaction }: Props) {
   const { colors } = useTheme();
   const extraInfoFees = useCallback(() => {
@@ -39,6 +40,7 @@ export default function AlgorandFeeRow({ account, parentAccount, transaction }: 
   const mainAccount = getMainAccount(account, parentAccount);
   const unit = getAccountUnit(mainAccount);
   const currency = getAccountCurrency(account);
+
   return (
     <SummaryRow
       onPress={extraInfoFees}

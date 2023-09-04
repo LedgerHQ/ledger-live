@@ -2,28 +2,31 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Linking } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { ParamListBase, useNavigation } from "@react-navigation/native";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { appendQueryParamsToDappURL } from "@ledgerhq/live-common/platform/utils/appendQueryParamsToDappURL";
 
 import { ListProvider } from "./types";
 import { EthereumStakingDrawerProvider } from "./EthereumStakingDrawerProvider";
 import { useAnalytics } from "../../../analytics";
-import { ScreenName } from "../../../const";
+import { NavigatorName, ScreenName } from "../../../const";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 type Props = {
   providers: ListProvider[];
   singleProviderRedirectMode: boolean;
   accountId: string;
+  onClose(callback: () => void): void;
 };
 
 export function EthereumStakingDrawerBody({
   providers,
   singleProviderRedirectMode,
   accountId,
+  onClose,
 }: Props) {
   const { t } = useTranslation();
-  const { navigate } = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<ParamListBase, string, NavigatorName>>();
 
   const { track, page } = useAnalytics();
 
@@ -37,15 +40,17 @@ export function EthereumStakingDrawerBody({
           button: provider.id,
           page,
         });
-        navigate(ScreenName.PlatformApp, {
-          platform: manifest.id,
-          name: manifest.name,
-          accountId,
-          ...(customDappURL ? { customDappURL } : {}),
+        onClose(() => {
+          navigation.navigate(ScreenName.PlatformApp, {
+            platform: manifest.id,
+            name: manifest.name,
+            accountId,
+            ...(customDappURL ? { customDappURL } : {}),
+          });
         });
       }
     },
-    [track, page, navigate, accountId],
+    [track, page, navigation, accountId, onClose],
   );
 
   const onSupportLinkPress = useCallback(

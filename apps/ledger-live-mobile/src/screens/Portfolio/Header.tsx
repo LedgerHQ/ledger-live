@@ -22,7 +22,7 @@ const NotificationsButton = () => {
   const onNotificationButtonPress = useCallback(() => {
     track("button_clicked", {
       button: "notification bell",
-      screen: ScreenName.Portfolio,
+      page: ScreenName.Portfolio,
     });
     navigation.navigate(NavigatorName.NotificationCenter, {
       screen: ScreenName.NotificationCenter,
@@ -103,6 +103,18 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
         {!hidePortfolio && <DiscreetModeButton size={20} />}
       </Flex>
       <Flex flexDirection="row">
+        <Flex mr={7}>
+          <Touchable
+            onPress={onSideImageCardButtonPress}
+            event="button_clicked"
+            eventProperties={{
+              button: "card",
+              page: ScreenName.Portfolio,
+            }}
+          >
+            <CardMedium size={24} color={"neutral.c100"} />
+          </Touchable>
+        </Flex>
         {!!walletConnectEntryPoint?.enabled && (
           <Flex mr={7}>
             <Touchable
@@ -110,25 +122,13 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
               event="button_clicked"
               eventProperties={{
                 button: "Wallet Connect",
-                screen: ScreenName.WalletConnectConnect,
+                page: ScreenName.WalletConnectConnect,
               }}
             >
               <WalletConnectMedium size={24} color={"neutral.c100"} />
             </Touchable>
           </Flex>
         )}
-        <Flex mr={7}>
-          <Touchable
-            onPress={onSideImageCardButtonPress}
-            event="button_clicked"
-            eventProperties={{
-              button: "card",
-              screen: ScreenName.Portfolio,
-            }}
-          >
-            <CardMedium size={24} color={"neutral.c100"} />
-          </Touchable>
-        </Flex>
         <Flex mr={7}>
           <NotificationsButton />
         </Flex>

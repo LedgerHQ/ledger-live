@@ -60,6 +60,7 @@ const handlers: SwapHandlers = {
 const options = {
   prefix: "SWAP",
 };
+
 export default handleActions<SwapStateType, HandlersPayloads[keyof HandlersPayloads]>(
   handlers as unknown as SwapHandlers<false>,
   initialState,

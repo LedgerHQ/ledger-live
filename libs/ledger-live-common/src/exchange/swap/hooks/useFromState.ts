@@ -1,10 +1,12 @@
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { selectorStateDefaultValues } from ".";
 import { getAccountCurrency, getMainAccount } from "../../../account";
 import { Result as UseBridgeTransactionReturnType } from "../../../bridge/useBridgeTransaction";
 import { SwapSelectorStateType, SwapTransactionType } from "../types";
+import BigNumber from "bignumber.js";
+import { debounce } from "../utils/debounce";
 
 export const useFromState = ({
   accounts,
@@ -58,16 +60,22 @@ export const useFromState = ({
     [accounts, bridgeTransaction.updateTransaction],
   );
 
-  const setFromAmount: SwapTransactionType["setFromAmount"] = useCallback(
-    amount => {
-      bridgeTransaction.updateTransaction(transaction => ({
-        ...transaction,
-        amount,
-      }));
-      setFromState(previousState => ({ ...previousState, amount: amount }));
-    },
+  const debouncedSetFromAmount = useMemo(
+    () =>
+      debounce((amount: BigNumber) => {
+        bridgeTransaction.updateTransaction(transaction => ({
+          ...transaction,
+          amount,
+        }));
+        setFromState(previousState => ({ ...previousState, amount: amount }));
+      }, 400),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [bridgeTransaction.updateTransaction],
+  );
+
+  const setFromAmount: SwapTransactionType["setFromAmount"] = useCallback(
+    amount => debouncedSetFromAmount(amount),
+    [debouncedSetFromAmount],
   );
 
   return {

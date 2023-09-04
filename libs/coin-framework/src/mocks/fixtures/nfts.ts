@@ -303,12 +303,12 @@ export const NFTs = [
 // Ethereum NFTs with the special "staxImage" metadata designed to fit the Ledger Stax screen
 export const NFTs_ETHEREUM_STAX_METADATA = [
   {
-    id: "js:2:ethereum:0xB98d10d9f6d07bA283bFD21B2dFEc050f9Ae282A:+0xf4ac11a8967bc88c9ce5acf886bce605c9db9d6e+8482",
-    tokenId: "8482",
+    id: "js:2:ethereum:0xB98d10d9f6d07bA283bFD21B2dFEc050f9Ae282A:+0x0b51eb9d0e54c562fedc07ceba453f05b70c4b79+1",
+    tokenId: "1",
     amount: "1",
     collection: {
-      contract: "0xf4ac11a8967bc88c9ce5acf886bce605c9db9d6e",
-      standard: "ERC721",
+      contract: "0x0b51eb9d0e54c562fedc07ceba453f05b70c4b79",
+      standard: "ERC1155",
     },
   },
 ];

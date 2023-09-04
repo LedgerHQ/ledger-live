@@ -4,6 +4,7 @@ import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Flex } from "@ledgerhq/native-ui";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
 import BigNumber from "bignumber.js";
@@ -45,6 +46,7 @@ const currencyBalanceBigNumber = BigNumber(0);
 const accounts: AccountLike[] = [];
 
 const ReadOnlyAssetScreen = ({ route }: NavigationProps) => {
+  const featureReferralProgramMobile = useFeature("referralProgramMobile");
   const { t } = useTranslation();
   const currency = route?.params?.currency;
   const { colors } = useTheme();
@@ -63,7 +65,7 @@ const ReadOnlyAssetScreen = ({ route }: NavigationProps) => {
 
   const data = useMemo(
     () => [
-      <Flex mt={6} onLayout={onAssetCardLayout}>
+      <Flex mt={6} onLayout={onAssetCardLayout} key="AssetGraph">
         <AssetGraph
           currentPositionY={currentPositionY}
           graphCardEndPosition={graphCardEndPosition}
@@ -73,16 +75,20 @@ const ReadOnlyAssetScreen = ({ route }: NavigationProps) => {
           accountsAreEmpty
         />
       </Flex>,
-      currency.ticker === "BTC" ? <ReferralProgram /> : null,
-      <SectionContainer px={6} isFirst>
+      featureReferralProgramMobile?.enabled &&
+      featureReferralProgramMobile?.params?.path &&
+      currency.ticker === "BTC" ? (
+        <ReferralProgram key="ReferralProgram" />
+      ) : null,
+      <SectionContainer px={6} isFirst key="EmptyAccountCard">
         <SectionTitle title={t("account.quickActions")} containerProps={{ mb: 6 }} />
         <FabAssetActions currency={currency} />
         <Flex minHeight={220}>
           <EmptyAccountCard currencyTicker={currency.ticker} />
         </Flex>
       </SectionContainer>,
-      <AssetMarketSection currency={currency} />,
-      <SectionContainer mx={6}>
+      <AssetMarketSection currency={currency} key="AssetMarketSection" />,
+      <SectionContainer mx={6} key="BuyDeviceBanner">
         {hasOrderedNano ? (
           <SetupDeviceBanner screen="Assets" />
         ) : (
@@ -97,7 +103,7 @@ const ReadOnlyAssetScreen = ({ route }: NavigationProps) => {
             event="button_clicked"
             eventProperties={{
               button: "Discover the Nano",
-              screen: "Account",
+              page: "Account",
               currency: currency.name,
             }}
             screen="Account"
@@ -106,7 +112,16 @@ const ReadOnlyAssetScreen = ({ route }: NavigationProps) => {
         )}
       </SectionContainer>,
     ],
-    [onAssetCardLayout, currentPositionY, graphCardEndPosition, currency, t, hasOrderedNano],
+    [
+      onAssetCardLayout,
+      currentPositionY,
+      graphCardEndPosition,
+      currency,
+      t,
+      hasOrderedNano,
+      featureReferralProgramMobile?.enabled,
+      featureReferralProgramMobile?.params?.path,
+    ],
   );
 
   return (
