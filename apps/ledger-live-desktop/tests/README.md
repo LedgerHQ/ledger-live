@@ -70,7 +70,9 @@ pnpm desktop build:testing
 > It must generate bundles in `apps/ledger-live-desktop/.webpack/` directory.
 
 ## Run tests
-
+Please do the setup command if not done yet
+```pnpm desktop test:playwright:setup
+```
 Run a single test
 ```
 pnpm desktop test:playwright playwright/specs/<testname>.spec.ts
