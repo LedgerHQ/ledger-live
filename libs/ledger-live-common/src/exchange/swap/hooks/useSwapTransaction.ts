@@ -114,6 +114,7 @@ export const useSwapTransaction = ({
   });
   const { toState, setToAccount, setToAmount, setToCurrency, targetAccounts } = useToState({
     accounts,
+    fromCurrencyAccount: fromState.account,
   });
   const {
     account: fromAccount,
