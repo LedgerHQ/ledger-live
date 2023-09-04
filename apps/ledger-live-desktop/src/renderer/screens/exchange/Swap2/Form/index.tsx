@@ -63,6 +63,8 @@ const SwapForm = () => {
 
   const storedProviders = getAvailableProviders();
 
+  const storedProviders = getAvailableProviders();
+
   const setExchangeRate = useCallback(
     rate => {
       dispatch(updateRateAction(rate));
