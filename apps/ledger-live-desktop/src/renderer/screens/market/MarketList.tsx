@@ -13,7 +13,6 @@ import { Button } from ".";
 import { useSelector, useDispatch } from "react-redux";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { addStarredMarketCoins, removeStarredMarketCoins } from "~/renderer/actions/settings";
-import { useProviders } from "../exchange/Swap2/Form";
 import Track from "~/renderer/analytics/Track";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import { getAllSupportedCryptoCurrencyTickers } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
@@ -23,6 +22,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { FlexProps } from "styled-system";
 import { CurrencyData, MarketListRequestParams } from "@ledgerhq/live-common/market/types";
 import TrackPage from "~/renderer/analytics/TrackPage";
+import { useFetchCurrencyFrom } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 
 export const TableCellBase: StyledComponent<"div", DefaultTheme, FlexProps> = styled(Flex).attrs({
   alignItems: "center",
@@ -279,8 +279,8 @@ function MarketList({
 }) {
   const { t } = useTranslation();
   const locale = useSelector(localeSelector);
-  const { providers, storedProviders } = useProviders();
   const rampCatalog = useRampCatalog();
+  const { data: fromCurrencies } = useFetchCurrencyFrom();
 
   const onRampAvailableTickers = useMemo(() => {
     if (!rampCatalog.value) {
@@ -288,13 +288,6 @@ function MarketList({
     }
     return getAllSupportedCryptoCurrencyTickers(rampCatalog.value.onRamp);
   }, [rampCatalog.value]);
-
-  const swapAvailableIds =
-    providers || storedProviders
-      ? (providers || storedProviders)!
-          .map(({ pairs }) => pairs.map(({ from, to }) => [from, to]))
-          .flat(2)
-      : [];
 
   const {
     marketData = [],
@@ -396,7 +389,7 @@ function MarketList({
                         selectCurrency={selectCurrency}
                         starredMarketCoins={starredMarketCoins}
                         locale={locale}
-                        swapAvailableIds={swapAvailableIds}
+                        swapAvailableIds={fromCurrencies ?? []}
                         onRampAvailableTickers={onRampAvailableTickers}
                         range={range}
                       />
@@ -436,7 +429,7 @@ function MarketList({
                             selectCurrency={selectCurrency}
                             starredMarketCoins={starredMarketCoins}
                             locale={locale}
-                            swapAvailableIds={swapAvailableIds}
+                            swapAvailableIds={fromCurrencies ?? []}
                             onRampAvailableTickers={onRampAvailableTickers}
                             range={range}
                           />

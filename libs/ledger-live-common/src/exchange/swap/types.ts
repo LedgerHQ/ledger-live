@@ -150,8 +150,6 @@ export type GetExchangeRates = (
   exchangeObject: ExchangeObject,
 ) => Promise<(ExchangeRate & { expirationDate?: Date })[]>;
 
-export type GetProviders = () => Promise<AvailableProvider[]>;
-
 export type InitSwapResult = {
   transaction: Transaction;
   swapId: string;
