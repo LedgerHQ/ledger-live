@@ -161,6 +161,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
             displayServicesWidget
             requestToSetHeaderOptions={requestToSetHeaderOptions}
             withMyLedgerTracking
+            hasPostOnboardingEntryPointCard
           />
         </Flex>
       ) : (
