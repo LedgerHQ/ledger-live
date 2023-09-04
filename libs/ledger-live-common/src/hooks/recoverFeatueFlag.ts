@@ -1,9 +1,9 @@
 import { useMemo } from "react";
-import { Feature } from "@ledgerhq/types-live";
-import { DEFAULT_FEATURES } from "../featureFlags";
-
-type DesktopFeature = (typeof DEFAULT_FEATURES)["protectServicesDesktop"]["params"];
-type MobileFeature = (typeof DEFAULT_FEATURES)["protectServicesMobile"]["params"];
+import {
+  Feature,
+  Feature_ProtectServicesDesktop,
+  Feature_ProtectServicesMobile,
+} from "@ledgerhq/types-live";
 
 export function useReplacedURI(uri?: string, id?: string): string | undefined {
   return useMemo(() => {
@@ -18,7 +18,7 @@ function usePath(servicesConfig: Feature<unknown> | null, uri?: string) {
 }
 
 export function usePostOnboardingURI(
-  servicesConfig: Feature<MobileFeature | DesktopFeature> | null,
+  servicesConfig: Feature_ProtectServicesDesktop | Feature_ProtectServicesMobile | null,
 ): string | undefined {
   const uri = servicesConfig?.params?.onboardingRestore?.postOnboardingURI;
   const id = servicesConfig?.params?.protectId;
@@ -27,14 +27,16 @@ export function usePostOnboardingURI(
 }
 
 export function usePostOnboardingPath(
-  servicesConfig: Feature<DesktopFeature> | null,
+  servicesConfig: Feature_ProtectServicesDesktop | Feature_ProtectServicesMobile | null,
 ): string | undefined {
   const uri = usePostOnboardingURI(servicesConfig);
 
   return usePath(servicesConfig, uri);
 }
 
-export function useLearnMoreURI(servicesConfig: Feature<MobileFeature> | null): string | undefined {
+export function useLearnMoreURI(
+  servicesConfig: Feature_ProtectServicesMobile | null,
+): string | undefined {
   const uri = servicesConfig?.params?.managerStatesData?.NEW?.learnMoreURI;
   const id = servicesConfig?.params?.protectId;
 
@@ -42,7 +44,7 @@ export function useLearnMoreURI(servicesConfig: Feature<MobileFeature> | null): 
 }
 
 export function useAlreadySubscribedURI(
-  servicesConfig: Feature<MobileFeature> | null,
+  servicesConfig: Feature_ProtectServicesMobile | null,
 ): string | undefined {
   const uri = servicesConfig?.params?.managerStatesData?.NEW?.alreadySubscribedURI;
   const id = servicesConfig?.params?.protectId;
@@ -50,27 +52,35 @@ export function useAlreadySubscribedURI(
   return useReplacedURI(uri, id);
 }
 
-export function useUpsellURI(servicesConfig: Feature<DesktopFeature> | null): string | undefined {
+export function useUpsellURI(
+  servicesConfig: Feature_ProtectServicesDesktop | null,
+): string | undefined {
   const uri = servicesConfig?.params?.onboardingCompleted?.upsellURI;
   const id = servicesConfig?.params?.protectId;
 
   return useReplacedURI(uri, id);
 }
 
-export function useUpsellPath(servicesConfig: Feature<DesktopFeature> | null): string | undefined {
+export function useUpsellPath(
+  servicesConfig: Feature_ProtectServicesDesktop | null,
+): string | undefined {
   const uri = useUpsellURI(servicesConfig);
 
   return usePath(servicesConfig, uri);
 }
 
-export function useLoginURI(servicesConfig: Feature<DesktopFeature> | null): string | undefined {
+export function useLoginURI(
+  servicesConfig: Feature_ProtectServicesDesktop | null,
+): string | undefined {
   const uri = servicesConfig?.params?.account?.loginURI;
   const id = servicesConfig?.params?.protectId;
 
   return useReplacedURI(uri, id);
 }
 
-export function useLoginPath(servicesConfig: Feature<DesktopFeature> | null): string | undefined {
+export function useLoginPath(
+  servicesConfig: Feature_ProtectServicesDesktop | null,
+): string | undefined {
   const uri = useLoginURI(servicesConfig);
 
   return usePath(servicesConfig, uri);
