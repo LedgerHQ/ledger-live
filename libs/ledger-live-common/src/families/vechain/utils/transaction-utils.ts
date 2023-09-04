@@ -1,4 +1,3 @@
-import { getEnv } from "../../../env";
 import network from "@ledgerhq/live-network/network";
 import { HEX_PREFIX } from "../constants";
 import crypto from "crypto";
@@ -9,6 +8,7 @@ import { BASE_GAS_PRICE_KEY, PARAMS_ADDRESS } from "../contracts/constants";
 import { Query } from "../api/types";
 import { query } from "../api/sdk";
 import { Transaction } from "../types";
+import { getEnv } from "@ledgerhq/live-env";
 
 const BASE_URL = getEnv("API_VECHAIN_THOREST");
 const GAS_COEFFICIENT = 15000;
@@ -84,11 +84,7 @@ const getBaseGasPrice = async (): Promise<string> => {
  */
 export const calculateFee = async (gas: BigNumber, gasPriceCoef: number): Promise<BigNumber> => {
   const baseGasPrice = await getBaseGasPrice();
-  return new BigNumber(baseGasPrice)
-    .times(gasPriceCoef)
-    .idiv(255)
-    .plus(baseGasPrice)
-    .times(gas);
+  return new BigNumber(baseGasPrice).times(gasPriceCoef).idiv(255).plus(baseGasPrice).times(gas);
 };
 
 /**
