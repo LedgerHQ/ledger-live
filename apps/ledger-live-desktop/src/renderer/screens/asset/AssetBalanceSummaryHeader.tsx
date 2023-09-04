@@ -18,11 +18,11 @@ import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import { getAllSupportedCryptoCurrencyIds } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
-import { useProviders } from "../exchange/Swap2/Form";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import useStakeFlow from "~/renderer/screens/stake";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import { BalanceHistoryWithCountervalue, ValueChange } from "@ledgerhq/types-live";
+import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 type Props = {
   isAvailable: boolean;
   cryptoChange: ValueChange;
@@ -43,6 +43,7 @@ export default function AssetBalanceSummaryHeader({
   currency,
   unit,
 }: Props) {
+  const { data: currenciesAll } = useFetchCurrencyAll();
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -79,15 +80,12 @@ export default function AssetBalanceSummaryHeader({
     const allBuyableCryptoCurrencyIds = getAllSupportedCryptoCurrencyIds(rampCatalog.value.onRamp);
     return allBuyableCryptoCurrencyIds.includes(currency.id);
   }, [rampCatalog.value, currency.id]);
-  const { providers, storedProviders } = useProviders();
   const startStakeFlow = useStakeFlow();
   const stakeProgramsFeatureFlag = useFeature("stakePrograms");
   const listFlag = stakeProgramsFeatureFlag?.params?.list ?? [];
   const stakeProgramsEnabled = stakeProgramsFeatureFlag?.enabled ?? false;
   const availableOnStake = stakeProgramsEnabled && currency && listFlag.includes(currency?.id);
-  const availableOnSwap = providers?.concat(storedProviders ?? []).some(({ pairs }) => {
-    return pairs && pairs.find(({ from, to }) => [from, to].includes(currency.id));
-  });
+  const availableOnSwap = (currenciesAll ?? []).includes(currency.id);
 
   const onBuy = useCallback(() => {
     setTrackingSource("asset header actions");

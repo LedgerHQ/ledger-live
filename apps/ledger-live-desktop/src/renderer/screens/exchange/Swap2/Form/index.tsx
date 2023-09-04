@@ -1,8 +1,4 @@
-import {
-  useSwapProviders,
-  useSwapTransaction,
-  usePageState,
-} from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import { useSwapTransaction, usePageState } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import {
   getCustomFeesPerFamily,
   convertToNonAtomicUnit,
@@ -14,14 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { getParentAccount, isTokenAccount } from "@ledgerhq/live-common/account/index";
-import {
-  providersSelector,
-  rateSelector,
-  resetSwapAction,
-  updateProvidersAction,
-  updateRateAction,
-  updateTransactionAction,
-} from "~/renderer/actions/swap";
+import { rateSelector, updateRateAction, updateTransactionAction } from "~/renderer/actions/swap";
 import { track } from "~/renderer/analytics/segment";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -31,7 +20,6 @@ import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import { trackSwapError, useGetSwapTrackingProperties } from "../utils/index";
 import ExchangeDrawer from "./ExchangeDrawer/index";
 import FormLoading from "./FormLoading";
-import FormNotAvailable from "./FormNotAvailable";
 import SwapFormSelectors from "./FormSelectors";
 import SwapFormSummary from "./FormSummary";
 import SwapFormRates from "./FormRates";
@@ -44,6 +32,7 @@ import { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { SWAP_RATES_TIMEOUT } from "../../config";
+import { getAvailableProviders } from "@ledgerhq/live-common/exchange/swap/index";
 
 const Wrapper = styled(Box).attrs({
   p: 20,
@@ -63,27 +52,6 @@ const Button = styled(ButtonBase)`
   justify-content: center;
 `;
 
-export const useProviders = () => {
-  const dispatch = useDispatch();
-  const { providers, error: providersError } = useSwapProviders();
-  const storedProviders = useSelector(providersSelector);
-  useEffect(() => {
-    if (providers) dispatch(updateProvidersAction(providers));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [providers]);
-
-  useEffect(() => {
-    if (providersError) dispatch(resetSwapAction());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [providersError]);
-
-  return {
-    storedProviders,
-    providers,
-    providersError,
-  };
-};
-
 const SwapForm = () => {
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const [idleState, setIdleState] = useState(false);
@@ -92,9 +60,10 @@ const SwapForm = () => {
   const { state: locationState } = useLocation();
   const history = useHistory();
   const accounts = useSelector(shallowAccountsSelector);
-  const { storedProviders, providersError } = useProviders();
   const exchangeRate = useSelector(rateSelector);
   const walletApiPartnerList = useFeature("swapWalletApiPartnerList");
+
+  const storedProviders = getAvailableProviders();
 
   const setExchangeRate = useCallback(
     rate => {
@@ -120,7 +89,6 @@ const SwapForm = () => {
     setExchangeRate,
     onNoRates,
     ...(locationState as object),
-    providers: storedProviders || undefined,
     timeout: SWAP_RATES_TIMEOUT,
     timeoutErrorMessage: t("swap2.form.timeout.message"),
   });
@@ -233,7 +201,6 @@ const SwapForm = () => {
     !swapTransaction.bridgePending &&
     exchangeRatesState.status !== "loading" &&
     swapTransaction.transaction &&
-    !providersError &&
     !swapError &&
     exchangeRate &&
     swapTransaction.swap.to.account &&
@@ -323,8 +290,6 @@ const SwapForm = () => {
 
   useEffect(() => {
     if (!exchangeRate) {
-      // @ts-expect-error This seems like a mistake? updateSelectedRate expects an ExchangeRate
-      swapTransaction.swap.updateSelectedRate({});
       return;
     }
     swapTransaction.swap.updateSelectedRate(exchangeRate);
@@ -401,14 +366,6 @@ const SwapForm = () => {
     );
   }
 
-  // TODO: ensure that the error is catch by Sentry in this case
-  if (storedProviders?.length === 0 || providersError) {
-    return (
-      <>
-        <FormNotAvailable />
-      </>
-    );
-  }
   return <FormLoading />;
 };
 

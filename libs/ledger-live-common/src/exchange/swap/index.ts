@@ -17,8 +17,6 @@ import {
   ValidationError,
 } from "../../errors";
 import getCompleteSwapHistory from "./getCompleteSwapHistory";
-import getExchangeRates from "./getExchangeRates";
-import getProviders from "./getProviders";
 import initSwap from "./initSwap";
 import { postSwapAccepted, postSwapCancelled } from "./postSwapState";
 
@@ -185,8 +183,6 @@ export {
   getSwapAPIBaseURL,
   getSwapAPIVersion,
   getProviderConfig,
-  getProviders,
-  getExchangeRates,
   getCompleteSwapHistory,
   postSwapAccepted,
   postSwapCancelled,
