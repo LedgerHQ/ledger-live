@@ -2,6 +2,7 @@ import { Parse } from "unzipper";
 import { parser } from "stream-json";
 import { streamValues } from "stream-json/streamers/StreamValues";
 import { delay, retry, promiseAllBatched } from "./promise";
+import fetch from "node-fetch";
 import groupBy from "lodash/groupBy";
 
 type AppCandidate = {

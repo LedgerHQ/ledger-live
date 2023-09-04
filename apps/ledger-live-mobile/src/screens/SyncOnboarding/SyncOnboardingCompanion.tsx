@@ -226,12 +226,11 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
     onLostDevice();
   }, [onShouldHeaderBeOverlaid, onLostDevice]);
 
-  const handleDeviceReady = useCallback(() => {
-    // Adds the device to the list of known devices
-    dispatchRedux(setReadOnlyMode(false));
-    dispatchRedux(setHasOrderedNano(false));
+  /**
+   * Adds the device to the list of known devices
+   */
+  const addToKnownDevices = useCallback(() => {
     dispatchRedux(setLastConnectedDevice(device));
-    dispatchRedux(completeOnboarding());
     dispatchRedux(
       addKnownDevice({
         id: device.deviceId,
@@ -239,7 +238,15 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
         modelId: device.modelId,
       }),
     );
+  }, [device, dispatchRedux]);
 
+  /**
+   * Triggers the end of the onboarding
+   */
+  const handleOnboardingDone = useCallback(() => {
+    dispatchRedux(setReadOnlyMode(false));
+    dispatchRedux(setHasOrderedNano(false));
+    dispatchRedux(completeOnboarding());
     navigation.navigate(ScreenName.SyncOnboardingCompletion, { device });
   }, [device, dispatchRedux, navigation]);
 
@@ -426,17 +433,24 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
 
   const preventNavigation = useRef(false);
 
+  const addedToKnownDevices = useRef(false);
   useEffect(() => {
-    // Stops the polling once the installation apps step is reached
     if (companionStepKey >= CompanionStepKey.Apps) {
+      // Stops the polling once the installation apps step is reached
       setIsPollingOn(false);
+      // At this step, device has been successfully setup so it can be saved in
+      // the list of known devices
+      if (!addedToKnownDevices.current) {
+        addedToKnownDevices.current = true;
+        addToKnownDevices();
+      }
     }
 
     if (companionStepKey === CompanionStepKey.Exit) {
       preventNavigation.current = true;
       readyRedirectTimerRef.current = setTimeout(() => {
         preventNavigation.current = false;
-        handleDeviceReady();
+        handleOnboardingDone();
       }, READY_REDIRECT_DELAY_MS);
     }
 
@@ -447,7 +461,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
         readyRedirectTimerRef.current = null;
       }
     };
-  }, [companionStepKey, handleDeviceReady]);
+  }, [companionStepKey, addToKnownDevices, handleOnboardingDone]);
 
   useEffect(
     () =>
