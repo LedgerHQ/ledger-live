@@ -22,7 +22,6 @@ import { usePortfolioAllAccounts } from "../../../hooks/portfolio";
 import GraphCardContainer from "../GraphCardContainer";
 import TrackScreen from "../../../analytics/TrackScreen";
 import { NavigatorName, ScreenName } from "../../../const";
-import { useProviders } from "../../Swap/Form/index";
 import CheckLanguageAvailability from "../../../components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "../../../components/CheckTermOfUseUpdate";
 import { TAB_BAR_SAFE_HEIGHT } from "../../../components/TabBar/TabBarSafeAreaView";
@@ -38,6 +37,7 @@ import FirmwareUpdateBanner from "../../../components/FirmwareUpdateBanner";
 import CollapsibleHeaderFlatList from "../../../components/WalletTab/CollapsibleHeaderFlatList";
 import { WalletTabNavigatorStackParamList } from "../../../components/RootNavigator/types/WalletTabNavigator";
 import { UpdateStep } from "../../FirmwareUpdate";
+import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 
 const maxAssetsToDisplay = 5;
 
@@ -51,7 +51,7 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
   const portfolio = usePortfolioAllAccounts();
   const { colors } = useTheme();
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
-  useProviders();
+  useFetchCurrencyAll();
 
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
   useFocusEffect(refreshAccountsOrdering);

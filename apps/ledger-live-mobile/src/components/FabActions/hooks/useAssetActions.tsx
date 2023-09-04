@@ -10,15 +10,12 @@ import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useRoute } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "../../../const";
-import { accountsSelector } from "../../../reducers/accounts";
-import {
-  readOnlyModeEnabledSelector,
-  swapSelectableCurrenciesSelector,
-} from "../../../reducers/settings";
+import { readOnlyModeEnabledSelector } from "../../../reducers/settings";
 import { ActionButtonEvent } from "..";
 import ZeroBalanceDisabledModalContent from "../modals/ZeroBalanceDisabledModalContent";
 import { sharedSwapTracking } from "../../../screens/Swap/utils";
-import { PtxToast } from "../../Toast/PtxToast";
+import { Toast } from "../../Toast/Toast";
+import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 
 type useAssetActionsProps = {
   currency?: CryptoCurrency | TokenCurrency;
@@ -37,6 +34,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
   mainActions: ActionButtonEvent[];
 } {
   const route = useRoute();
+  const { data: currenciesAll } = useFetchCurrencyAll();
 
   const ptxServiceCtaScreens = useFeature("ptxServiceCtaScreens");
 
@@ -51,8 +49,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
     () => (accounts && accounts.length === 1 ? accounts[0] : undefined),
     [accounts],
   );
-  const swapSelectableCurrencies = useSelector(swapSelectableCurrenciesSelector);
-  const availableOnSwap = currency && swapSelectableCurrencies.includes(currency.id);
+  const availableOnSwap = currency && (currenciesAll ?? []).includes(currency.id);
 
   const rampCatalog = useRampCatalog();
   const [canBeBought, canBeSold] = useMemo(() => {
