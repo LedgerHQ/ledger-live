@@ -34,7 +34,7 @@ export function From({ swapTx, provider, swapError, swapWarning, isSendMaxLoadin
   const { data: currenciesFrom } = useFetchCurrencyFrom();
 
   const accounts = useSwapableAccounts();
-  const { name, balance, unit, account } = useMemo(() => {
+  const { name, balance, unit } = useMemo(() => {
     const { currency, account } = swapTx.swap.from;
 
     return {
