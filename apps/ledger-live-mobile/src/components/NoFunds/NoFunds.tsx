@@ -8,13 +8,13 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
 import { StyleProp, ViewStyle } from "react-native";
 import CoinsIcon from "./CoinsIcon";
-import { useProviders } from "../../screens/Swap/Form";
 import TransferButton from "../TransferButton";
 import { NavigatorName, ScreenName } from "../../const";
 import { TrackScreen, useAnalytics, track } from "../../analytics";
 import type { NoFundsNavigatorParamList } from "../RootNavigator/types/NoFundsNavigator";
 import { StackNavigatorProps } from "../RootNavigator/types/helpers";
 import { Currency } from "@ledgerhq/types-cryptoassets";
+import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 
 const useText = (entryPoint: "noFunds" | "getFunds", currency: Currency) => {
   const { t } = useTranslation();
@@ -51,9 +51,9 @@ type ButtonItem = {
 /** Entry point is either "stake" button but user has insufficient funds in account, or "Get <ticker>" button on Earn dashboard, so text differs accordingly.  */
 export default function NoFunds({ route }: Props) {
   const { t } = useTranslation();
+  const { data: currenciesAll } = useFetchCurrencyAll();
   const { account, parentAccount, entryPoint } = route?.params;
   const rampCatalog = useRampCatalog();
-  const { providers } = useProviders();
   const navigation = useNavigation();
 
   const text = useText(entryPoint === "get-funds" ? "getFunds" : "noFunds", account.currency);
@@ -65,17 +65,7 @@ export default function NoFunds({ route }: Props) {
     return getAllSupportedCryptoCurrencyTickers(rampCatalog.value.onRamp);
   }, [rampCatalog.value]);
 
-  const swapAvailableIds = useMemo(() => {
-    return providers
-      ? providers
-          .map(provider => {
-            return provider.pairs.map(({ from, to }) => {
-              return [from, to];
-            });
-          })
-          .flat(2)
-      : [];
-  }, [providers]);
+  const swapAvailableIds = useMemo(() => currenciesAll ?? [], [currenciesAll]);
 
   const currency = parentAccount?.currency || account?.currency;
   const availableOnReceive = true;
