@@ -117,54 +117,54 @@ export type CurrencyFeatures = {
 export type Features = CurrencyFeatures & {
   learn: Feature_Learn;
   brazePushNotifications: Feature_BrazePushNotifications;
-  brazeLearn: BrazeLearn;
-  llmNewDeviceSelection: LlmNewDeviceSelection;
-  llmNewFirmwareUpdateUx: LlmNewFirmwareUpdateUx;
-  ratingsPrompt: RatingsPrompt;
-  npsRatingsPrompt: NpsRatingsPrompt;
-  counterValue: CounterValue;
-  deviceInitialApps: DeviceInitialApps;
-  buyDeviceFromLive: BuyDeviceFromLive;
+  brazeLearn: Feature_BrazeLearn;
+  llmNewDeviceSelection: Feature_LlmNewDeviceSelection;
+  llmNewFirmwareUpdateUx: Feature_LlmNewFirmwareUpdateUx;
+  ratingsPrompt: Feature_RatingsPrompt;
+  npsRatingsPrompt: Feature_NpsRatingsPrompt;
+  counterValue: Feature_CounterValue;
+  deviceInitialApps: Feature_DeviceInitialApps;
+  buyDeviceFromLive: Feature_BuyDeviceFromLive;
   ptxEarn: Feature_PtxEarn;
-  depositNetworkBannerMobile: DepositNetworkBannerMobile;
-  depositWithdrawBannerMobile: DepositWithdrawBannerMobile;
-  mockFeature: MockFeature;
-  multibuyNavigation: MultibuyNavigation;
-  syncOnboarding: SyncOnboarding;
+  depositNetworkBannerMobile: Feature_DepositNetworkBannerMobile;
+  depositWithdrawBannerMobile: Feature_DepositWithdrawBannerMobile;
+  mockFeature: Feature_MockFeature;
+  multibuyNavigation: Feature_MultibuyNavigation;
+  syncOnboarding: Feature_SyncOnboarding;
   walletConnectLiveApp: Feature_WalletConnectLiveApp;
-  walletConnectEntryPoint: WalletConnectEntryPoint;
-  customImage: CustomImage;
+  walletConnectEntryPoint: Feature_WalletConnectEntryPoint;
+  customImage: Feature_CustomImage;
   referralProgramDiscoverCard: Feature_ReferralProgramDiscoverCard;
-  referralProgramDesktopBanner: ReferralProgramDesktopBanner;
+  referralProgramDesktopBanner: Feature_ReferralProgramDesktopBanner;
   referralProgramDesktopSidebar: Feature_ReferralProgramDesktopSidebar;
   referralProgramMobile: Feature_ReferralProgramMobile;
-  disableNftSend: DisableNftSend;
-  disableNftLedgerMarket: DisableNftLedgerMarket;
-  disableNftRaribleOpensea: DisableNftRaribleOpensea;
+  disableNftSend: Feature_DisableNftSend;
+  disableNftLedgerMarket: Feature_DisableNftLedgerMarket;
+  disableNftRaribleOpensea: Feature_DisableNftRaribleOpensea;
   walletNftGallery: Feature_WalletNftGallery;
   receiveStakingFlowConfigDesktop: Feature_ReceiveStakingFlowConfigDesktop;
   ethStakingProviders: Feature_EthStakingProviders;
   storyly: Feature_Storyly;
-  staxWelcomeScreen: StaxWelcomeScreen;
-  postOnboardingClaimNft: PostOnboardingClaimNft;
-  postOnboardingAssetsTransfer: PostOnboardingAssetsTransfer;
-  firebaseEnvironmentReadOnly: FirebaseEnvironmentReadOnly;
+  staxWelcomeScreen: Feature_StaxWelcomeScreen;
+  postOnboardingClaimNft: Feature_PostOnboardingClaimNft;
+  postOnboardingAssetsTransfer: Feature_PostOnboardingAssetsTransfer;
+  firebaseEnvironmentReadOnly: Feature_FirebaseEnvironmentReadOnly;
   protectServicesMobile: Feature_ProtectServicesMobile;
   protectServicesDesktop: Feature_ProtectServicesDesktop;
-  ptxServiceCtaExchangeDrawer: PtxServiceCtaExchangeDrawer;
-  ptxServiceCtaScreens: PtxServiceCtaScreens;
+  ptxServiceCtaExchangeDrawer: Feature_PtxServiceCtaExchangeDrawer;
+  ptxServiceCtaScreens: Feature_PtxServiceCtaScreens;
   swapWalletApiPartnerList: Feature_SwapWalletApiPartnerList;
   stakePrograms: Feature_StakePrograms;
-  portfolioExchangeBanner: PortfolioExchangeBanner;
-  objkt: Objkt;
-  editEthTx: EditEthTx;
+  portfolioExchangeBanner: Feature_PortfolioExchangeBanner;
+  objkt: Feature_Objkt;
+  editEthTx: Feature_EditEthTx;
   stakeAccountBanner: Feature_StakeAccountBanner;
   newsfeedPage: Feature_NewsfeedPage;
-  domainInputResolution: DomainInputResolution;
-  discover: Discover;
-  protectServicesDiscoverDesktop: ProtectServicesDiscoverDesktop;
+  domainInputResolution: Feature_DomainInputResolution;
+  discover: Feature_Discover;
+  protectServicesDiscoverDesktop: Feature_ProtectServicesDiscoverDesktop;
   transactionsAlerts: Feature_TransactionsAlerts;
-  listAppsV2: ListAppsV2;
+  listAppsV2: Feature_ListAppsV2;
 };
 
 /**
@@ -327,37 +327,37 @@ export type Feature_ProtectServicesDesktop = Feature<{
   protectId: string;
 }>;
 
-export type DeviceInitialApps = Feature<{
+export type Feature_DeviceInitialApps = Feature<{
   apps: string[];
 }>;
 
-export type BuyDeviceFromLive = Feature<{
+export type Feature_BuyDeviceFromLive = Feature<{
   debug: boolean;
   url: string | null;
 }>;
 
-export type DepositNetworkBannerMobile = Feature<{
+export type Feature_DepositNetworkBannerMobile = Feature<{
   url: string;
 }>;
 
-export type DepositWithdrawBannerMobile = Feature<{
+export type Feature_DepositWithdrawBannerMobile = Feature<{
   url: string;
 }>;
 
-export type Discover = Feature<{
+export type Feature_Discover = Feature<{
   version: string;
 }>;
 
-export type DomainInputResolution = Feature<{
+export type Feature_DomainInputResolution = Feature<{
   supportedCurrencyIds: string[];
 }>;
 
-export type FirebaseEnvironmentReadOnly = Feature<{
+export type Feature_FirebaseEnvironmentReadOnly = Feature<{
   comment: string;
   project: string;
 }>;
 
-export type NpsRatingsPrompt = Feature<{
+export type Feature_NpsRatingsPrompt = Feature<{
   conditions: {
     disappointed_delay: {
       seconds: number;
@@ -384,7 +384,7 @@ export type NpsRatingsPrompt = Feature<{
   typeform_url: string;
 }>;
 
-export type RatingsPrompt = Feature<{
+export type Feature_RatingsPrompt = Feature<{
   conditions: {
     disappointed_delay: {
       days: number;
@@ -411,29 +411,29 @@ export type RatingsPrompt = Feature<{
   typeform_url: string;
 }>;
 
-export type LlmNewFirmwareUpdateUx = DefaultFeature;
-export type CounterValue = DefaultFeature;
-export type MockFeature = DefaultFeature;
-export type MultibuyNavigation = DefaultFeature;
-export type SyncOnboarding = DefaultFeature;
-export type WalletConnectEntryPoint = DefaultFeature;
-export type CustomImage = DefaultFeature;
-export type ReferralProgramDesktopBanner = DefaultFeature;
-export type DisableNftSend = DefaultFeature;
-export type DisableNftLedgerMarket = DefaultFeature;
-export type DisableNftRaribleOpensea = DefaultFeature;
-export type StaxWelcomeScreen = DefaultFeature;
-export type PostOnboardingClaimNft = DefaultFeature;
-export type PostOnboardingAssetsTransfer = DefaultFeature;
-export type PtxServiceCtaExchangeDrawer = DefaultFeature;
-export type PtxServiceCtaScreens = DefaultFeature;
-export type PortfolioExchangeBanner = DefaultFeature;
-export type Objkt = DefaultFeature;
-export type EditEthTx = DefaultFeature;
-export type ProtectServicesDiscoverDesktop = DefaultFeature;
-export type ListAppsV2 = DefaultFeature;
-export type BrazeLearn = DefaultFeature;
-export type LlmNewDeviceSelection = DefaultFeature;
+export type Feature_LlmNewFirmwareUpdateUx = DefaultFeature;
+export type Feature_CounterValue = DefaultFeature;
+export type Feature_MockFeature = DefaultFeature;
+export type Feature_MultibuyNavigation = DefaultFeature;
+export type Feature_SyncOnboarding = DefaultFeature;
+export type Feature_WalletConnectEntryPoint = DefaultFeature;
+export type Feature_CustomImage = DefaultFeature;
+export type Feature_ReferralProgramDesktopBanner = DefaultFeature;
+export type Feature_DisableNftSend = DefaultFeature;
+export type Feature_DisableNftLedgerMarket = DefaultFeature;
+export type Feature_DisableNftRaribleOpensea = DefaultFeature;
+export type Feature_StaxWelcomeScreen = DefaultFeature;
+export type Feature_PostOnboardingClaimNft = DefaultFeature;
+export type Feature_PostOnboardingAssetsTransfer = DefaultFeature;
+export type Feature_PtxServiceCtaExchangeDrawer = DefaultFeature;
+export type Feature_PtxServiceCtaScreens = DefaultFeature;
+export type Feature_PortfolioExchangeBanner = DefaultFeature;
+export type Feature_Objkt = DefaultFeature;
+export type Feature_EditEthTx = DefaultFeature;
+export type Feature_ProtectServicesDiscoverDesktop = DefaultFeature;
+export type Feature_ListAppsV2 = DefaultFeature;
+export type Feature_BrazeLearn = DefaultFeature;
+export type Feature_LlmNewDeviceSelection = DefaultFeature;
 
 /**
  * Utils types.
