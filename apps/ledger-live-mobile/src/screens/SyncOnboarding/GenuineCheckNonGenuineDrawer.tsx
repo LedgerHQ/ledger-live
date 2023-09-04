@@ -1,12 +1,13 @@
 import React, { useCallback } from "react";
-import { BoxedIcon, Button, Flex, Text } from "@ledgerhq/native-ui";
-import { CircledCrossSolidMedium, ExternalLinkMedium } from "@ledgerhq/native-ui/assets/icons";
+import { Button, Flex } from "@ledgerhq/native-ui";
+import { ExternalLinkMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useTranslation } from "react-i18next";
 import QueuedDrawer from "../../components/QueuedDrawer";
 import { TrackScreen, track } from "../../analytics";
 import { Linking } from "react-native";
 import { urls } from "../../config/urls";
 import { useLocale } from "../../context/Locale";
+import { GenericInformationBody } from "../../components/GenericInformationBody";
 
 export type Props = {
   /**
@@ -45,28 +46,18 @@ const GenuineCheckNonGenuineDrawer: React.FC<Props> = ({ isOpen, onClose, produc
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose} preventBackdropClick>
       <TrackScreen category="Device not genuine" type="drawer" refreshSource={false} />
-      <Flex justifyContent="center" alignItems="center" flex={1} mt={9} mb={6}>
-        <BoxedIcon
-          Icon={<CircledCrossSolidMedium color="error.c60" size={32} />}
-          variant="circle"
-          backgroundColor="neutral.c30"
-          borderColor="transparent"
-          size={64}
+      <Flex justifyContent="center" alignItems="center" mt={7}>
+        <GenericInformationBody
+          title={t("earlySecurityCheck.genuineCheckNonGenuineDrawer.title")}
+          description={t("earlySecurityCheck.genuineCheckNonGenuineDrawer.description", {
+            productName,
+          })}
         />
       </Flex>
-      <Text textAlign="center" variant="h4" fontWeight="semiBold" mb={4} mt={8}>
-        {t("earlySecurityCheck.genuineCheckNonGenuineDrawer.title")}
-      </Text>
-      <Text textAlign="center" variant="bodyLineHeight" mb={8} color="neutral.c80">
-        {t("earlySecurityCheck.genuineCheckNonGenuineDrawer.description", {
-          productName,
-        })}
-      </Text>
-
-      <Flex ml={4} mb={4}>
+      <Flex mt={8} mb={7}>
         <Button
           type="main"
-          mb={4}
+          size="large"
           onPress={onContactSupport}
           Icon={ExternalLinkMedium}
           iconPosition="right"
