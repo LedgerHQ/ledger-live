@@ -8,7 +8,7 @@ import { useTheme } from "styled-components/native";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { ReactNavigationPerformanceView } from "@shopify/react-native-performance-navigation";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { useLearnMoreURI } from "@ledgerhq/live-common/hooks/recoverFeatueFlag";
+import { useLearnMoreURI } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { useRefreshAccountsOrdering } from "../../actions/general";
 import {
   // TODO: discreetMode is never used 😱 is it safe to remove
