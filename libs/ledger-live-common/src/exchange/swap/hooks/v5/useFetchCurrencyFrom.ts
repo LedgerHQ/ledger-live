@@ -8,7 +8,7 @@ type Props = {
   enabled?: boolean;
 };
 
-export function useFetchCurrencyFrom({ currencyTo, additionalCoinsFlag, enabled }: Props) {
+export function useFetchCurrencyFrom({ currencyTo, additionalCoinsFlag, enabled }: Props = {}) {
   return useAPI({
     queryFn: fetchCurrencyFrom,
     queryProps: {

@@ -38,7 +38,7 @@ export function useProviderRates({
     },
   });
 
-  if (fromState.amount?.lte(0)) {
+  if (!fromState.amount || fromState.amount.lte(0)) {
     return {
       rates: {
         status: "idle",
