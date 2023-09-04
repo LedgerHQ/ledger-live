@@ -37,5 +37,5 @@ jobs:
           SLACK_API_TOKEN: ${{secrets.SLACK_API_TOKEN}}
           SLACK_ICON_EMOJI: ":bot-seed2:"
           SLACK_CHANNEL: explorer-bot-stg
-          BOT_FILTER_FAMILIES: evm
+          BOT_FILTER_CURRENCIES: avalanche_c_chain,bsc,polygon,ethereum,ethereum_classic,ethereum_goerli
           BOT_ENVIRONMENT: staging
