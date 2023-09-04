@@ -7,7 +7,6 @@ import type {
   Exchange,
   ExchangeRate,
   GetMultipleStatus,
-  GetProviders,
   PostSwapAccepted,
   PostSwapCancelled,
   SwapRequestEvent,
@@ -121,85 +120,6 @@ export const mockInitSwap = (
     },
   });
 };
-
-// Need to understand how and why this gets used
-export const mockGetProviders: GetProviders = async () => {
-  //Fake delay to show loading UI
-  await new Promise(r => setTimeout(r, 800));
-
-  return [
-    {
-      provider: "changelly",
-      pairs: [
-        { from: "bitcoin", to: "ethereum", tradeMethod: "float" },
-        { from: "bitcoin", to: "ethereum", tradeMethod: "fixed" },
-        { from: "bitcoin", to: "dogecoin", tradeMethod: "float" },
-        { from: "bitcoin", to: "dogecoin", tradeMethod: "fixed" },
-        { from: "ethereum", to: "bitcoin", tradeMethod: "float" },
-        { from: "ethereum", to: "bitcoin", tradeMethod: "fixed" },
-        { from: "ethereum", to: "ethereum/erc20/usd_tether__erc20_", tradeMethod: "float" },
-      ],
-    },
-    {
-      provider: "cic",
-      pairs: [
-        { from: "bitcoin", to: "ethereum", tradeMethod: "float" },
-        { from: "bitcoin", to: "ethereum", tradeMethod: "fixed" },
-        { from: "ethereum", to: "bitcoin", tradeMethod: "float" },
-        { from: "ethereum", to: "bitcoin", tradeMethod: "fixed" },
-      ],
-    },
-  ];
-};
-
-// Providers using V5 schema. For some reason it doesn't work though (still requires V4)
-// return {
-//   currencies: {
-//     7: "ethereum/erc20/usd_tether__erc20_",
-//     8: "bitcoin",
-//     149: "ethereum",
-//   },
-//   providers: {
-//     changelly: [
-//       {
-//         methods: ["fixed", "float"],
-//         pairs: {
-//           7: [8, 149],
-//           8: [7, 149],
-//           149: [7, 8],
-//         },
-//       },
-//     ],
-//     cic: [
-//       {
-//         methods: ["fixed", "float"],
-//         pairs: {
-//           7: [8, 149],
-//           8: [7, 149],
-//           149: [7, 8],
-//         },
-//       },
-//     ],
-//     oneinch: [
-//       {
-//         methods: ["float"],
-//         pairs: {
-//           7: [149],
-//           149: [7],
-//         },
-//       },
-//     ],
-//     paraswap: [
-//       {
-//         methods: ["float"],
-//         pairs: {
-//           7: [149],
-//           149: [7],
-//         },
-//       },
-//     ],
-//   },
-// };
 
 export const mockGetStatus: GetMultipleStatus = async statusList => {
   //Fake delay to show loading UI
