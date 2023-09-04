@@ -51,8 +51,8 @@ type ButtonItem = {
 /** Entry point is either "stake" button but user has insufficient funds in account, or "Get <ticker>" button on Earn dashboard, so text differs accordingly.  */
 export default function NoFunds({ route }: Props) {
   const { t } = useTranslation();
-  const { account, parentAccount, entryPoint } = route?.params;
   const { data: currenciesAll } = useFetchCurrencyAll();
+  const { account, parentAccount, entryPoint } = route?.params;
   const rampCatalog = useRampCatalog();
   const navigation = useNavigation();
 

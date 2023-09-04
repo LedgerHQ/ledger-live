@@ -36,6 +36,7 @@ export function useProviderRates({
   });
 
   if (!fromState.amount || fromState.amount.lte(0)) {
+    setExchangeRate?.(undefined);
     return {
       rates: {
         status: "idle",
