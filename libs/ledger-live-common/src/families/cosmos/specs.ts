@@ -28,21 +28,33 @@ import { canDelegate, canRedelegate, canUndelegate, getMaxDelegationAvailable } 
 import { acceptTransaction } from "./speculos-deviceActions";
 import { Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
+import { log } from "@ledgerhq/logs";
 
 const maxAccounts = 16;
 
 // amounts of delegation are not exact so we are applying an approximation
-function approximateValue(value): string {
-  const firstThreeDigits = parseInt(value.toString().slice(0, 3), 10);
-  const firstTwoDigits = Math.round(firstThreeDigits / 10).toString();
-  const tailZeroCount = value.toString().length - 2;
-  return "~" + firstTwoDigits + "0".repeat(tailZeroCount);
+function checkAmountsCloseEnough(amount1: BigNumber | string, amount2: BigNumber | string) {
+  amount1 = new BigNumber(amount1);
+  amount2 = new BigNumber(amount2);
+  expect(amount1.isNegative()).toBe(false);
+  expect(amount2.isNegative()).toBe(false);
+  const difference = amount1.minus(amount2).absoluteValue();
+  const onePercentOfLargerNumber = BigNumber.max(amount1, amount2).multipliedBy(0.01);
+  const isCloseEnough = difference.isLessThan(onePercentOfLargerNumber);
+  if (!isCloseEnough) {
+    log(
+      "bot",
+      "delegation amounts do not match",
+      `Amount1: ${amount1.toString()} , Amount2: ${amount2.toString()}`,
+    );
+  }
+  expect(isCloseEnough).toBe(true);
 }
 
-function approximateExtra(extra: CosmosOperationExtraRaw) {
+function extraWithoutAmount(extra: CosmosOperationExtraRaw) {
   if (extra.validators && Array.isArray(extra.validators)) {
     extra.validators = extra.validators.map((validator: CosmosDelegationInfoRaw) => {
-      return { ...validator, amount: approximateValue(validator.amount) };
+      return { ...validator, amount: "" };
     });
   }
   return extra;
@@ -84,9 +96,20 @@ const cosmosLikeTest: ({
   delete op.extra;
 
   botTest("optimistic operation matches op", () => expect(op).toMatchObject(opExpected));
-  botTest("operation extra matches", () =>
-    expect(approximateExtra(opExtra)).toMatchObject(approximateExtra(expectedExtra)),
-  );
+  botTest("operation extra matches", () => {
+    // compare the validators amount firstly
+    if (
+      expectedExtra.validators &&
+      Array.isArray(expectedExtra.validators) &&
+      expectedExtra.validators.length > 0
+    ) {
+      for (let i = 0; i < expectedExtra.validators.length; i++) {
+        checkAmountsCloseEnough(opExtra.validators![i].amount, expectedExtra.validators[i].amount);
+      }
+    }
+    // compare the rest of the extra, except the amount
+    expect(extraWithoutAmount(opExtra)).toMatchObject(extraWithoutAmount(expectedExtra));
+  });
 };
 
 function cosmosLikeMutations(minimalTransactionAmount: BigNumber): MutationSpec<Transaction>[] {
@@ -207,15 +230,10 @@ function cosmosLikeMutations(minimalTransactionAmount: BigNumber): MutationSpec<
             d => d.validatorAddress === v.address,
           );
           invariant(d, "delegated %s must be found in account", v.address);
-          botTest("delegator have planned address and amount", () =>
-            expect({
-              address: v.address,
-              amount: approximateValue(v.amount),
-            }).toMatchObject({
-              address: (d as CosmosDelegation).validatorAddress,
-              amount: approximateValue((d as CosmosDelegation).amount),
-            }),
-          );
+          botTest("delegator have planned address and amount", () => {
+            expect(v.address).toBe((d as CosmosDelegation).validatorAddress);
+            checkAmountsCloseEnough(v.amount, (d as CosmosDelegation).amount);
+          });
         });
       },
     },
@@ -277,15 +295,10 @@ function cosmosLikeMutations(minimalTransactionAmount: BigNumber): MutationSpec<
             d => d.validatorAddress === v.address,
           );
           invariant(d, "undelegated %s must be found in account", v.address);
-          botTest("validator have planned address and amount", () =>
-            expect({
-              address: v.address,
-              amount: approximateValue(v.amount),
-            }).toMatchObject({
-              address: (d as CosmosUnbonding).validatorAddress,
-              amount: approximateValue((d as CosmosUnbonding).amount),
-            }),
-          );
+          botTest("validator have planned address and amount", () => {
+            expect(v.address).toBe((d as CosmosUnbonding).validatorAddress);
+            checkAmountsCloseEnough(v.amount, (d as CosmosUnbonding).amount);
+          });
         });
       },
     },
@@ -357,15 +370,10 @@ function cosmosLikeMutations(minimalTransactionAmount: BigNumber): MutationSpec<
                   d.validatorSrcAddress === transaction.sourceValidator,
               );
             invariant(d, "redelegated %s must be found in account", v.address);
-            botTest("validator have planned address and amount", () =>
-              expect({
-                address: v.address,
-                amount: approximateValue(v.amount),
-              }).toMatchObject({
-                address: (d as CosmosRedelegation).validatorDstAddress,
-                amount: approximateValue((d as CosmosRedelegation).amount),
-              }),
-            );
+            botTest("validator have planned address and amount", () => {
+              expect(v.address).toBe((d as CosmosRedelegation).validatorDstAddress);
+              checkAmountsCloseEnough(v.amount, (d as CosmosRedelegation).amount);
+            });
           }
         });
       },
