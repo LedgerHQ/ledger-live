@@ -32,7 +32,6 @@ import { initialWebviewState } from "../Web3AppWebview/helpers";
 import { track } from "../../analytics";
 import { NavigationHeaderCloseButtonAdvanced } from "../NavigationHeaderCloseButton";
 import { NavigatorName, ScreenName } from "../../const";
-import { Loading } from "../Loading";
 
 type BackToInternalDomainProps = {
   manifest: AppManifest;
@@ -242,7 +241,7 @@ export const WebPTXPlayer = ({ manifest, inputs, disableHeader }: Props) => {
         inputs={inputs}
         onStateChange={setWebviewState}
       />
-      {webviewState.loading ? <Loading /> : null}
+      {webviewState.loading ? <Text>{"Loading Web3AppWebview"}</Text> : null}
     </SafeAreaView>
   );
 };
