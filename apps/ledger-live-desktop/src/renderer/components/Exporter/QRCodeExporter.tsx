@@ -1,18 +1,27 @@
 import React, { PureComponent } from "react";
 import { Buffer } from "buffer";
+import { DeviceModelId } from "@ledgerhq/devices";
+import { DeviceModelInfo } from "@ledgerhq/types-live";
 import { createStructuredSelector } from "reselect";
 import { connect } from "react-redux";
 import styled from "styled-components";
 import { dataToFrames } from "qrloop";
 import { Settings, encode } from "@ledgerhq/live-common/cross";
 import { activeAccountsSelector } from "~/renderer/reducers/accounts";
-import { exportSettingsSelector } from "~/renderer/reducers/settings";
+import {
+  exportSettingsSelector,
+  lastSeenDeviceSelector,
+  devicesModelListSelector,
+} from "~/renderer/reducers/settings";
+
 import QRCode from "~/renderer/components/QRCode";
 import { Account } from "@ledgerhq/types-live";
 
 const mapStateToProps = createStructuredSelector({
   accounts: (state, props) => props.accounts || activeAccountsSelector(state),
   settings: exportSettingsSelector,
+  device: state => lastSeenDeviceSelector(state) || null,
+  devices: state => devicesModelListSelector(state) || [],
 });
 
 const QRCodeContainer = styled.div`
@@ -30,6 +39,8 @@ type OwnProps = {
 type Props = OwnProps & {
   accounts: Account[];
   settings: Settings;
+  devices: DeviceModelId[];
+  device: DeviceModelInfo | null;
 };
 class QRCodeExporter extends PureComponent<
   Props,
@@ -45,10 +56,12 @@ class QRCodeExporter extends PureComponent<
 
   constructor(props: Props) {
     super(props);
-    const { accounts, settings } = props;
+    const { accounts, settings, device, devices } = props;
     const data = encode({
       accounts,
       settings,
+      modelId: device?.modelId,
+      modelIdList: devices,
       exporterName: "desktop",
       exporterVersion: __APP_VERSION__,
     });

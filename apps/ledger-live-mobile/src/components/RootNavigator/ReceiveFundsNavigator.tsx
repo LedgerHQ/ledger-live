@@ -75,7 +75,7 @@ export default function ReceiveFundsNavigator() {
   const onVerificationConfirmationClose = useCallback(() => {
     track("button_clicked", {
       button: "HeaderRight Close",
-      page: ScreenName.ReceiveVerificationConfirmation,
+      page: "ReceiveVerificationConfirmation",
     });
   }, []);
 
@@ -185,7 +185,7 @@ export default function ReceiveFundsNavigator() {
       <Stack.Screen
         name={ScreenName.ReceiveConfirmation}
         component={ReceiveConfirmation}
-        options={{
+        options={({ route }) => ({
           // Nice to know: headerTitle is manually set in a useEffect of ReceiveConfirmation
           headerTitle: "",
           headerLeft: () => <NavigationHeaderBackButton />,
@@ -198,31 +198,14 @@ export default function ReceiveFundsNavigator() {
                   eventButton="How to withdraw from exchange"
                 />
               )}
-              <NavigationHeaderCloseButtonAdvanced onClose={onConfirmationClose} />
+              <NavigationHeaderCloseButtonAdvanced
+                onClose={
+                  route.params.verified ? onVerificationConfirmationClose : onConfirmationClose
+                }
+              />
             </Flex>
           ),
-        }}
-      />
-      {/* Receive Address Device Verification */}
-      <Stack.Screen
-        name={ScreenName.ReceiveVerificationConfirmation}
-        component={ReceiveConfirmation}
-        options={{
-          headerTitle: "",
-          headerLeft: () => <NavigationHeaderBackButton />,
-          headerRight: () => (
-            <Flex alignItems="center" justifyContent="center" flexDirection="row">
-              {hasClosedWithdrawBanner && (
-                <HelpButton
-                  url={depositWithdrawBannerMobile?.params.url}
-                  enabled={depositWithdrawBannerMobile?.enabled ?? false}
-                  eventButton="How to withdraw from exchange"
-                />
-              )}
-              <NavigationHeaderCloseButtonAdvanced onClose={onVerificationConfirmationClose} />
-            </Flex>
-          ),
-        }}
+        })}
       />
     </Stack.Navigator>
   );
