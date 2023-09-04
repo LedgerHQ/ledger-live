@@ -89,7 +89,7 @@ const signOperation = ({
             signedOperation: {
               operation,
               signature: signature.toString("hex"),
-              expirationDate: null,
+              expirationDate: undefined,
             },
           });
         }

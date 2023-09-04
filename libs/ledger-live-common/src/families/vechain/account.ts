@@ -2,6 +2,7 @@ import type { Account, Operation } from "@ledgerhq/types-live";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 import { Unit } from "@ledgerhq/types-cryptoassets";
+import BigNumber from "bignumber.js";
 
 function formatAccountSpecifics(account: Account): string {
   const unit = getAccountUnit(account);
@@ -19,7 +20,7 @@ function formatAccountSpecifics(account: Account): string {
 }
 
 function formatOperationSpecifics(op: Operation, unit: Unit): string {
-  const { additionalField } = op.extra;
+  const { additionalField } = op.extra as { additionalField: BigNumber };
 
   let str = " ";
 
