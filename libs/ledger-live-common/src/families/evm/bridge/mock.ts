@@ -101,6 +101,7 @@ const prepareTransaction = async (_a, t) => {
     gasPrice: new BigNumber(50),
     maxFeePerGas: new BigNumber(50),
     maxPriorityFeePerGas: new BigNumber(50),
+    nextBaseFee: new BigNumber(50),
   });
   return typedTransaction;
 };
