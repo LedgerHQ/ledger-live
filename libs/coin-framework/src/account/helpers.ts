@@ -107,7 +107,7 @@ export const getAccountSpendableBalance = (account: AccountLike): BigNumber => {
 
 export const isAccountEmpty = (a: AccountLike): boolean => {
   if (a.type == "Account" && a.currency.family == "vechain") {
-    const checkSubAccounts = a.subAccounts && a.subAccounts[0].balance.toString() == "0" ? 0 : 1;
+    const checkSubAccounts = a.subAccounts && !a.subAccounts[0].balance.isZero();
     return a.operationsCount === 0 && a.balance.isZero() && !checkSubAccounts;
   }
   const hasSubAccounts = a.type === "Account" && a.subAccounts && a.subAccounts.length;

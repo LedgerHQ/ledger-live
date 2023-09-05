@@ -1,6 +1,5 @@
 import {
   AmountRequired,
-  createCustomErrorClass,
   FeeNotLoaded,
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
@@ -13,11 +12,8 @@ import { Account } from "@ledgerhq/types-live";
 import { calculateTotalSpent, calculateTransactionInfo } from "./utils/calculateTransactionInfo";
 import { isValid } from "./utils/address-utils";
 import BigNumber from "bignumber.js";
+import { NotEnoughVTHO } from "./errors";
 
-const NotEnoughVTHO = createCustomErrorClass("NotEnoughVTHO");
-
-// NOTE: seems like the spendableBalance is not updated correctly:
-// use balance.minus(estimatedFees) instead
 const getTransactionStatus = async (
   account: Account,
   transaction: Transaction,
@@ -32,7 +28,7 @@ const getTransactionStatus = async (
   );
 
   if (!body || !body.gas) {
-    errors["body"] = new FeeNotLoaded();
+    errors.fees = new FeeNotLoaded();
   }
 
   if (!recipient) {
