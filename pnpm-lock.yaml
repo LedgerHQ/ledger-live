@@ -4912,8 +4912,8 @@ importers:
         specifier: ^5.1.1
         version: 5.1.1
       '@types/unzipper':
-        specifier: 0.10.6
-        version: 0.10.6
+        specifier: 0.10.7
+        version: 0.10.7
       lodash:
         specifier: 4.17.21
         version: 4.17.21
@@ -25287,8 +25287,8 @@ packages:
     resolution: {integrity: sha512-MFETx3tbTjE7Uk6vvnWINA/1iJ7LuMdO4fcq8UfF0pRbj01aGLduVvQcRyswuACJdpnHgg8E3rQLhaRdNEJS0w==}
     dev: false
 
-  /@types/unzipper@0.10.6:
-    resolution: {integrity: sha512-zcBj329AHgKLQyz209N/S9R0GZqXSkUQO4tJSYE3x02qg4JuDFpgKMj50r82Erk1natCWQDIvSccDddt7jPzjA==}
+  /@types/unzipper@0.10.7:
+    resolution: {integrity: sha512-1yZanW3LWgY4wA6x0MyIkyI5rGILLHjXWAvvuz+xF2JzqBLG26ySL+VrSgjz9EWIYLv+icqv5RPW6FN4BJmsHw==}
     dependencies:
       '@types/node': 18.16.19
     dev: true
