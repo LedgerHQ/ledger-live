@@ -12,7 +12,8 @@ const broadcast = async ({
 }: {
   signedOperation: SignedOperation;
 }): Promise<Operation> => {
-  const transaction = new Transaction(operation.extra.transaction.body);
+  const extra = operation.extra as { transaction: Transaction };
+  const transaction = new Transaction(extra.transaction.body);
   transaction.signature = Buffer.from(signature, "hex");
   const hash = await submit(transaction);
 

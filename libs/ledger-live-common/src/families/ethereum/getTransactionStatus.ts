@@ -17,7 +17,7 @@ import { AccountBridge, TransactionStatusCommon } from "@ledgerhq/types-live";
 import { EIP1559ShouldBeUsed, getGasLimit } from "./transaction";
 import { Transaction, TransactionStatus } from "./types";
 import { isEthereumAddress } from "./logic";
-import { getEnv } from "../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import { modes } from "./modules";
 
 type TransactionErrors = {

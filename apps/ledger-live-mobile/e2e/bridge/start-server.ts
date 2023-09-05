@@ -26,9 +26,7 @@ access(fullFilePath, constants.F_OK, err => {
     // starts the server
     serverBridge.init(undefined, () => {
       // this is run when the server receives a connection - in this case when the app finishes loading and calls the bridge client `init` function
-      serverBridge
-        .loadConfig(filePath, true)
-        .then(() => console.log("Config loaded"));
+      serverBridge.loadConfig(filePath, true);
     });
   }
 });

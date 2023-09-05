@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import Config from "react-native-config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { concatMap } from "rxjs/operators";
-import { setEnvUnsafe, isEnvDefault, changes } from "@ledgerhq/live-common/env";
-import type { EnvName } from "@ledgerhq/live-common/env";
+import { setEnvUnsafe, isEnvDefault, changes } from "@ledgerhq/live-env";
+import type { EnvName } from "@ledgerhq/live-env";
 
 import { FeatureId } from "@ledgerhq/types-live";
 
@@ -66,12 +66,6 @@ export const experimentalFeatures: Feature[] = [
     name: "MANAGER_DEV_MODE",
     title: i18n.t(i18nKey("developerMode", "title")),
     description: i18n.t(i18nKey("developerMode", "description")),
-  },
-  {
-    type: "toggle",
-    name: "LIST_APPS_V2",
-    title: i18n.t(i18nKey("experimentalListAppsV2", "title")),
-    description: i18n.t(i18nKey("experimentalListAppsV2", "description")),
   },
   {
     type: "integer",

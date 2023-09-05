@@ -1,137 +1,82 @@
-import React, { useState } from "react";
+import React from "react";
+import { Story, Meta } from "@storybook/react";
+import * as Icons from "@ledgerhq/icons-ui/react";
 import styled from "styled-components";
-import Icon, { iconNames, Props as IconProps } from "./Icon";
+import { Flex, Text } from "../../..";
 import { useTheme } from "styled-components";
-import { Text, SearchInput, Flex, Grid } from "../../..";
 
-const ScrollArea = styled(Grid)`
-  flex: 1;
-  height: auto;
-  ${p => p.theme.overflow.y};
-`;
+interface SizeData {
+  size: number;
+  stroke: number;
+}
 
-const Container = styled(Flex).attrs({
-  flex: 1,
-  flexDirection: "column",
-  p: 4,
-})`
-  overflow: hidden;
-  height: calc(100vh - 4em);
-`;
+interface AvailableSizes {
+  XS: SizeData;
+  S: SizeData;
+  M: SizeData;
+  L: SizeData;
+  XL: SizeData;
+}
+
+export default {
+  title: "asorted/Icons",
+  component: null, // Since we're rendering multiple icons, we don't have a single component to import
+} as Meta;
+
+interface IconProps {
+  size?: keyof AvailableSizes;
+  color?: string;
+  style?: React.CSSProperties;
+}
 
 const IconContainer = styled(Flex).attrs<{ active?: boolean }>({
   flexDirection: "column",
   justifyContent: "flex-end",
   alignItems: "center",
   p: 4,
+  fill: "black",
 })<{ active?: boolean }>`
   ${p => (p.active ? `background-color: ${p.theme.colors.neutral.c20};` : ``)}
   border-radius: 4px;
   height: 100px;
 `;
 
-const Bold = styled.b`
-  color: ${p => p.theme.colors.primary.c80};
-`;
+const IconGridTemplate: React.FC<IconProps> = ({ size, color, style }) => {
+  const iconNames = Object.keys(Icons) as (keyof typeof Icons)[];
 
-const Story = {
-  title: "Asorted/Icons",
-  argTypes: {
-    weight: {
-      type: "enum",
-      description: "Weight (Deprecated)",
-      defaultValue: "Medium",
-      control: {
-        options: ["Medium"],
-        control: {
-          type: "select",
-        },
-      },
-    },
-    size: {
-      type: "number",
-      description: "Icon size for preview",
-      defaultValue: 32,
-    },
-    color: {
-      type: "string",
-      description: "Color",
-      control: { control: "color" },
-    },
-    name: {
-      type: "enum",
-      defaultValue: "Activity",
-      description: "[Only for single icon], Icon name",
-      control: {
-        options: iconNames,
-        control: {
-          type: "select",
-        },
-      },
-    },
-  },
-};
-export default Story;
-
-const ListTemplate = (args: IconProps) => {
   const theme = useTheme();
-  const color = args.color || theme.colors.neutral.c100;
-  const [search, setSearch] = useState("");
-  const s = search.toLowerCase();
-  const regexp = new RegExp(s, "i");
+  const selectedColor = color || theme.colors.neutral.c100;
 
   return (
-    <Container>
-      <SearchInput value={search} onChange={setSearch} />
-      <ScrollArea
-        gridTemplateColumns="repeat(auto-fill, 100px);"
-        gridTemplateRows="repeat(auto-fill, 100px);"
-        gridGap={4}
-        mt={4}
-      >
-        {iconNames
-          .sort((a: string, b: string) => {
-            return s ? b.toLowerCase().indexOf(s) - a.toLowerCase().indexOf(s) : a.localeCompare(b);
-          })
-          .map(name => {
-            const match = name.match(regexp);
-            const active = s && match;
-            const index = match?.index ?? 0;
-            return (
-              <IconContainer active={!!active}>
-                <Flex flex={1} justifyContent="center" alignItems="center">
-                  <Icon
-                    key={name}
-                    name={name}
-                    weight={args.weight}
-                    size={args.size}
-                    color={color}
-                  />
-                </Flex>
-                <Text variant="extraSmall">
-                  {active ? (
-                    <>
-                      {name.substr(0, index)}
-                      <Bold>{name.substr(index, s.length)}</Bold>
-                      {name.substr(index + s.length)}
-                    </>
-                  ) : (
-                    name
-                  )}
-                </Text>
-              </IconContainer>
-            );
-          })}
-      </ScrollArea>
-    </Container>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "10px" }}>
+      {iconNames.map(iconName => {
+        const IconComponent = Icons[iconName];
+        return (
+          <IconContainer key={iconName}>
+            <IconComponent size={size} color={selectedColor} style={style} />
+            <Text pt={6}>{iconName}</Text>
+          </IconContainer>
+        );
+      })}
+    </div>
   );
 };
-const IconTemplate = (args: IconProps) => {
-  const theme = useTheme();
-  const color = args.color || theme.colors.neutral.c100;
 
-  return <Icon {...args} color={color} />;
+export const IconGrid: Story<IconProps> = (args: IconProps) => <IconGridTemplate {...args} />;
+
+IconGrid.args = {
+  size: "M",
+  color: "",
+  style: {},
 };
 
-export const List = ListTemplate.bind({});
-export const SingleIcon = IconTemplate.bind({});
+IconGrid.argTypes = {
+  size: {
+    control: {
+      type: "select",
+      options: ["XS", "S", "M", "L", "XL"],
+    },
+  },
+  color: { control: "color" },
+  style: { control: "object" },
+};

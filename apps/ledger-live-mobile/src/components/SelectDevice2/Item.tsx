@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Trans } from "react-i18next";
-import { Text, Flex, Icons } from "@ledgerhq/native-ui";
+import { Text, Flex, IconsLegacy } from "@ledgerhq/native-ui";
 import { OthersMedium } from "@ledgerhq/native-ui/assets/icons";
 import { DeviceModelId } from "@ledgerhq/devices";
 
@@ -30,17 +30,17 @@ const Item = ({ device, onPress }: Props) => {
     switch (device.modelId) {
       case DeviceModelId.nanoS:
       case DeviceModelId.nanoSP:
-        return <Icons.NanoSFoldedMedium size={24} />;
+        return <IconsLegacy.NanoSFoldedMedium size={24} />;
       case DeviceModelId.stax:
-        return <Icons.StaxMedium size={24} />;
+        return <IconsLegacy.StaxMedium size={24} />;
       case DeviceModelId.nanoX:
       default:
-        return <Icons.NanoXFoldedMedium size={24} />;
+        return <IconsLegacy.NanoXFoldedMedium size={24} />;
     }
   }, [device.modelId]);
 
   return (
-    <Touchable event="something" onPress={() => onPress(device)}>
+    <Touchable onPress={() => onPress(device)} touchableTestID={"device-item-" + device.deviceId}>
       <Flex
         backgroundColor="neutral.c30"
         borderRadius={2}

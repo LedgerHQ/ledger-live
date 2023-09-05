@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Flex, Button as BaseButton, Text } from "@ledgerhq/react-ui";
 import styled, { BaseStyledProps } from "@ledgerhq/react-ui/components/styled";
@@ -21,18 +21,19 @@ const StyledImgLink = styled("a")<BaseStyledProps>`
   cursor: pointer;
 `;
 
+const onAppStoreClick = () => openURL(urls.ledgerLiveMobile.appStore);
+const onPlayStoreClick = () => openURL(urls.ledgerLiveMobile.playStore);
+
 const ProtectDiscoverBody = ({ onClose }: Props) => {
   const { t } = useTranslation();
-  const protectServicesDiscoverDesktopFeature = useFeature("protectServicesDiscoverDesktop");
+  const protectServicesDesktopFeature = useFeature("protectServicesDesktop");
 
-  const onAppStoreClick = () => openURL(urls.ledgerLiveMobile.appStore);
-  const onPlayStoreClick = () => openURL(urls.ledgerLiveMobile.playStore);
-  const onDiscoverClick = () => {
+  const onDiscoverClick = useCallback(() => {
     track("button_clicked", {
       button: "Discover the benefits",
     });
-    openURL(protectServicesDiscoverDesktopFeature?.params?.discoverTheBenefitsLink);
-  };
+    openURL(protectServicesDesktopFeature?.params?.discoverTheBenefitsLink);
+  }, [protectServicesDesktopFeature?.params?.discoverTheBenefitsLink]);
 
   return (
     <ModalBody

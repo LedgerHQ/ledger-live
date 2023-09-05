@@ -2,7 +2,7 @@ import Transport from "@ledgerhq/hw-transport";
 import { DeviceModelId, getDeviceModel, identifyTargetId } from "@ledgerhq/devices";
 import { UnexpectedBootloader } from "@ledgerhq/errors";
 import { Observable, throwError, Subscription } from "rxjs";
-import { DeviceInfo } from "@ledgerhq/types-live";
+import { App, DeviceInfo } from "@ledgerhq/types-live";
 import { log } from "@ledgerhq/logs";
 import type { ListAppsEvent, ListAppsResult, ListAppResponse } from "../types";
 import manager, { getProviderId } from "../../manager";
@@ -14,7 +14,7 @@ import {
   findCryptoCurrencyById,
 } from "../../currencies";
 import ManagerAPI from "../../manager/api";
-import { getEnv } from "../../env";
+import { getEnv } from "@ledgerhq/live-env";
 
 import getDeviceName from "../../hw/getDeviceName";
 
@@ -35,7 +35,7 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
   const deviceModelId =
     (transport.deviceModel && transport.deviceModel.id) ||
     (deviceInfo && identifyTargetId(deviceInfo.targetId as number))?.id ||
-    getEnv("DEVICE_PROXY_MODEL");
+    (getEnv("DEVICE_PROXY_MODEL") as DeviceModelId);
 
   return new Observable(o => {
     let sub: Subscription;
@@ -45,18 +45,18 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
       const deviceModel = getDeviceModel(deviceModelId);
       const bytesPerBlock = deviceModel.getBlockSize(deviceInfo.version);
 
-      let installedAppHashesPromise: Promise<ListAppResponse>;
+      let listAppsResponsePromise: Promise<ListAppResponse>;
 
       if (deviceInfo.managerAllowed) {
         // If the user has already allowed a secure channel during this session we can directly
         // ask the device for the installed applications instead of going through a scriptrunner,
         // this is a performance optimization, part of a larger rework with Manager API v2.
-        log("hw", "using direct apdu listapps");
-        installedAppHashesPromise = hwListApps(transport);
+        log("list-apps", "using direct apdu listapps");
+        listAppsResponsePromise = hwListApps(transport);
       } else {
         // Fallback to original web-socket list apps
-        log("hw", "using scriptrunner listapps");
-        installedAppHashesPromise = new Promise<ListAppResponse>((resolve, reject) => {
+        log("list-apps", "using scriptrunner listapps");
+        listAppsResponsePromise = new Promise<ListAppResponse>((resolve, reject) => {
           sub = ManagerAPI.listInstalledApps(transport, {
             targetId: deviceInfo.targetId,
             perso: "perso_11",
@@ -104,24 +104,47 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
         listCryptoCurrencies(isDevMode, true),
       );
 
-      const installedAppsPromise = installedAppHashesPromise.then(hashes => {
+      const filteredListAppsPromise = listAppsResponsePromise.then(result => {
         // Empty HashData can come from apps that are not real apps (such as langauge packs)
         // or custom applications that have been sideloaded.
-        const filteredHashes = hashes
+        return result
           .filter(({ hash_code_data }) => hash_code_data !== emptyHashData)
-          .map(({ hash }) => hash);
-
-        return filteredHashes.length ? ManagerAPI.getAppsByHash(filteredHashes) : [];
+          .map(({ hash, name }) => ({ hash, name }));
       });
 
-      const [installedList, catalogForDevice, firmware, sortedCryptoCurrencies] = await Promise.all(
-        [
-          installedAppsPromise,
+      const listAppsAndMatchesPromise = filteredListAppsPromise.then(result => {
+        const hashes = result.map(({ hash }) => hash);
+        const matches = result.length ? ManagerAPI.getAppsByHash(hashes) : [];
+        return Promise.all([result, matches]);
+      });
+
+      const [[listApps, matches], catalogForDevice, firmware, sortedCryptoCurrencies] =
+        await Promise.all([
+          listAppsAndMatchesPromise,
           catalogForDevicesPromise,
           latestFirmwarePromise,
           sortedCryptoCurrenciesPromise,
-        ],
-      );
+        ]);
+
+      const installedList: App[] = [];
+
+      // Nb We can't reliably get the ordered result from the backend because of apps with
+      // inconsistent hashes. An iteration of the backend would be to return a key-value result
+      // instead of an unordered array but I think that's a needless optimization.
+      listApps.forEach(({ name: localName, hash: localHash }) => {
+        const matchFromHash = matches.find(({ hash }) => hash === localHash);
+        if (matchFromHash) {
+          installedList.push(matchFromHash);
+          return;
+        }
+
+        // If the hash is not static (ex: Fido app) we need to find the app by its name using the catalog
+        const matchFromCatalog = catalogForDevice.find(({ name }) => name === localName);
+        log("list-apps", `falling back to catalog for ${localName}`);
+        if (matchFromCatalog) {
+          installedList.push(matchFromCatalog);
+        }
+      });
 
       catalogForDevice.forEach(app => {
         const crypto = app.currencyId && findCryptoCurrencyById(app.currencyId);

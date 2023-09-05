@@ -2,7 +2,13 @@ import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 
-import type { CardanoAccount, CardanoResources, Transaction } from "./types";
+import type {
+  CardanoAccount,
+  CardanoOperation,
+  CardanoOperationExtra,
+  CardanoResources,
+  Transaction,
+} from "./types";
 
 import { withDevice } from "../../hw/deviceAccess";
 import { encodeOperationId } from "../../operation";
@@ -10,6 +16,7 @@ import { encodeOperationId } from "../../operation";
 import { buildTransaction } from "./js-buildTransaction";
 
 import Ada, {
+  CertificateType,
   Networks,
   SignTransactionRequest,
   TransactionSigningMode,
@@ -18,28 +25,35 @@ import Ada, {
 } from "@cardano-foundation/ledgerjs-hw-app-cardano";
 import { types as TyphonTypes, Transaction as TyphonTransaction } from "@stricahq/typhonjs";
 import { Bip32PublicKey } from "@stricahq/bip32ed25519";
-import {
-  getExtendedPublicKeyFromHex,
-  getOperationType,
-  prepareLedgerInput,
-  prepareLedgerOutput,
-} from "./logic";
+import { getAccountStakeCredential, getExtendedPublicKeyFromHex, getOperationType } from "./logic";
 import ShelleyTypeAddress from "@stricahq/typhonjs/dist/address/ShelleyTypeAddress";
 import { getNetworkParameters } from "./networks";
 import { MEMO_LABEL } from "./constants";
-import { Account, Operation, SignedOperation, SignOperationEvent } from "@ledgerhq/types-live";
+import {
+  prepareStakeDelegationCertificate,
+  prepareLedgerInput,
+  prepareLedgerOutput,
+  prepareStakeRegistrationCertificate,
+  prepareStakeDeRegistrationCertificate,
+  prepareWithdrawal,
+} from "./tx-helpers";
+import { OperationType, SignOperationFnSignature } from "@ledgerhq/types-live";
+import { formatCurrencyUnit } from "../../currencies";
+import { HashType } from "@stricahq/typhonjs/dist/types";
 
 const buildOptimisticOperation = (
   account: CardanoAccount,
   transaction: TyphonTransaction,
   t: Transaction,
-): Operation => {
+): CardanoOperation => {
   const cardanoResources = account.cardanoResources as CardanoResources;
   const accountCreds = new Set(
     [...cardanoResources.externalCredentials, ...cardanoResources.internalCredentials].map(
       cred => cred.key,
     ),
   );
+  const stakeCredential = getAccountStakeCredential(account.xpub as string, account.index);
+  const protocolParams = account.cardanoResources.protocolParams;
 
   const accountInput = transaction
     .getInputs()
@@ -60,33 +74,102 @@ const buildOptimisticOperation = (
       new BigNumber(0),
     );
 
-  const accountChange = accountOutput.minus(accountInput);
-  const opType = getOperationType({
-    valueChange: accountChange,
-    fees: transaction.getFee(),
-  });
+  const txCertificates = transaction.getCertificates();
+  const stakeRegistrationCertificates = txCertificates.filter(
+    c => c.certType === TyphonTypes.CertificateType.STAKE_REGISTRATION,
+  );
+  const stakeDeRegistrationCertificates = txCertificates.filter(
+    c => c.certType === TyphonTypes.CertificateType.STAKE_DE_REGISTRATION,
+  );
+  const txWithdrawals = transaction.getWithdrawals();
+
   const transactionHash = transaction.getTransactionHash().toString("hex");
   const auxiliaryData = transaction.getAuxiliaryData();
-  let memo;
+  const extra: CardanoOperationExtra = {};
   if (auxiliaryData) {
     const memoMetadata = auxiliaryData.metadata.find(m => m.label === MEMO_LABEL);
     if (memoMetadata && memoMetadata.data instanceof Map) {
       const msg = memoMetadata.data.get("msg");
       if (Array.isArray(msg) && msg.length) {
-        memo = msg.join(", ");
+        extra.memo = msg.join(", ");
       }
     }
   }
 
-  const extra = {};
-  if (memo) {
-    extra["memo"] = memo;
+  let operationValue = accountOutput.minus(accountInput);
+
+  if (stakeRegistrationCertificates.length) {
+    const walletRegistration = stakeRegistrationCertificates.find(
+      c =>
+        c.stakeCredential.type === HashType.ADDRESS &&
+        c.stakeCredential.hash === stakeCredential.key,
+    );
+    if (walletRegistration) {
+      extra.deposit = formatCurrencyUnit(
+        account.currency.units[0],
+        new BigNumber(protocolParams.stakeKeyDeposit),
+        {
+          showCode: true,
+          disableRounding: true,
+        },
+      );
+    }
   }
-  const op: Operation = {
+
+  if (stakeDeRegistrationCertificates.length) {
+    const walletDeRegistration = stakeDeRegistrationCertificates.find(
+      c =>
+        c.stakeCredential.type === HashType.ADDRESS &&
+        c.stakeCredential.hash === stakeCredential.key,
+    );
+    if (walletDeRegistration) {
+      operationValue = operationValue.minus(protocolParams.stakeKeyDeposit);
+      extra.refund = formatCurrencyUnit(
+        account.currency.units[0],
+        new BigNumber(protocolParams.stakeKeyDeposit),
+        {
+          showCode: true,
+          disableRounding: true,
+        },
+      );
+    }
+  }
+
+  if (txWithdrawals && txWithdrawals.length) {
+    const walletWithdraw = txWithdrawals.find(
+      w =>
+        w.rewardAccount.stakeCredential.type === HashType.ADDRESS &&
+        w.rewardAccount.stakeCredential.hash === stakeCredential.key,
+    );
+    if (walletWithdraw) {
+      operationValue = operationValue.minus(walletWithdraw.amount);
+      extra.rewards = formatCurrencyUnit(
+        account.currency.units[0],
+        new BigNumber(walletWithdraw.amount),
+        {
+          showCode: true,
+          disableRounding: true,
+        },
+      );
+    }
+  }
+
+  const opType: OperationType = txCertificates.find(
+    c => c.certType === TyphonTypes.CertificateType.STAKE_DELEGATION,
+  )
+    ? "DELEGATE"
+    : txCertificates.find(c => c.certType === TyphonTypes.CertificateType.STAKE_DE_REGISTRATION)
+    ? "UNDELEGATE"
+    : getOperationType({
+        valueChange: operationValue,
+        fees: transaction.getFee(),
+      });
+
+  const op: CardanoOperation = {
     id: encodeOperationId(account.id, transactionHash, opType),
     hash: transactionHash,
     type: opType,
-    value: accountChange.absoluteValue(),
+    value: operationValue.absoluteValue(),
     fee: transaction.getFee(),
     blockHash: undefined,
     blockHeight: null,
@@ -94,7 +177,7 @@ const buildOptimisticOperation = (
     recipients: transaction.getOutputs().map(o => o.address.getBech32()),
     accountId: account.id,
     date: new Date(),
-    extra: extra,
+    extra,
   };
 
   const tokenAccount = t.subAccountId
@@ -147,15 +230,7 @@ const signTx = (
 /**
  * Sign Transaction with Ledger hardware
  */
-const signOperation = ({
-  account,
-  deviceId,
-  transaction,
-}: {
-  account: Account;
-  deviceId: string;
-  transaction: Transaction;
-}): Observable<SignOperationEvent> =>
+const signOperation: SignOperationFnSignature<Transaction> = ({ account, deviceId, transaction }) =>
   withDevice(deviceId)(
     transport =>
       new Observable(o => {
@@ -179,6 +254,28 @@ const signOperation = ({
           const rawOutptus = unsignedTransaction.getOutputs();
           const ledgerAppOutputs = rawOutptus.map(o => prepareLedgerOutput(o, account.index));
 
+          const rawCertificates = unsignedTransaction.getCertificates();
+          const ledgerCertificates = rawCertificates.map(rcert => {
+            if (rcert.certType === (CertificateType.STAKE_REGISTRATION as number)) {
+              return prepareStakeRegistrationCertificate(
+                rcert as TyphonTypes.StakeRegistrationCertificate,
+              );
+            } else if (rcert.certType === (CertificateType.STAKE_DELEGATION as number)) {
+              return prepareStakeDelegationCertificate(
+                rcert as TyphonTypes.StakeDelegationCertificate,
+              );
+            } else if (rcert.certType === (CertificateType.STAKE_DEREGISTRATION as number)) {
+              return prepareStakeDeRegistrationCertificate(
+                rcert as TyphonTypes.StakeDeRegistrationCertificate,
+              );
+            } else {
+              throw new Error("Invalid Certificate type");
+            }
+          });
+
+          const rawWithdrawals = unsignedTransaction.getWithdrawals();
+          const ledgerWithdrawals = rawWithdrawals.map(prepareWithdrawal);
+
           const auxiliaryDataHashHex = unsignedTransaction.getAuxiliaryDataHashHex();
 
           const networkParams = getNetworkParameters(account.currency.id);
@@ -193,8 +290,8 @@ const signOperation = ({
               network,
               inputs: ledgerAppInputs,
               outputs: ledgerAppOutputs,
-              certificates: [],
-              withdrawals: [],
+              certificates: ledgerCertificates,
+              withdrawals: ledgerWithdrawals,
               fee: unsignedTransaction.getFee().toString(),
               ttl: unsignedTransaction.getTTL()?.toString(),
               validityIntervalStart: null,
@@ -228,8 +325,7 @@ const signOperation = ({
             signedOperation: {
               operation,
               signature: signed.payload,
-              expirationDate: null,
-            } as SignedOperation,
+            },
           });
         }
         main().then(

@@ -1,6 +1,6 @@
-import { $Shape } from "utility-types";
 import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
+import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import type { Transaction } from "./types";
 import getEstimatedFees from "./js-getFeesForTransaction";
 import estimateMaxSpendable from "./js-estimateMaxSpendable";
@@ -14,11 +14,6 @@ export const createTransaction = (): Transaction => ({
   fees: new BigNumber(0),
 });
 
-export const updateTransaction = (t: Transaction, patch: $Shape<Transaction>): Transaction => ({
-  ...t,
-  ...patch,
-});
-
 export const prepareTransaction = async (a: Account, t: Transaction): Promise<Transaction> => {
   const fees = await getEstimatedFees(t);
 
@@ -30,5 +25,5 @@ export const prepareTransaction = async (a: Account, t: Transaction): Promise<Tr
       })
     : t.amount;
 
-  return { ...t, fees, amount };
+  return defaultUpdateTransaction(t, { fees, amount });
 };

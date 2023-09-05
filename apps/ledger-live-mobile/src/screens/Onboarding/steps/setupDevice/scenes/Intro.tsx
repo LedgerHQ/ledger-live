@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Text, IconBoxList, Icons } from "@ledgerhq/native-ui";
+import { Text, IconBoxList, IconsLegacy } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "../../../../../const";
 import Button from "../../../../../components/PreventDoubleClickButton";
@@ -10,15 +10,15 @@ import { OnboardingNavigatorParamList } from "../../../../../components/RootNavi
 const items = [
   {
     title: "onboarding.stepSetupDevice.start.bullets.0.label",
-    Icon: Icons.ClockMedium,
+    Icon: IconsLegacy.ClockMedium,
   },
   {
     title: "onboarding.stepSetupDevice.start.bullets.1.label",
-    Icon: Icons.PenMedium,
+    Icon: IconsLegacy.PenMedium,
   },
   {
     title: "onboarding.stepSetupDevice.start.bullets.2.label",
-    Icon: Icons.CoffeeMedium,
+    Icon: IconsLegacy.CoffeeMedium,
   },
 ];
 

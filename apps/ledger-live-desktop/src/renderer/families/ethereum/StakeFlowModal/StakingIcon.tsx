@@ -1,5 +1,6 @@
 import React from "react";
-import { CryptoIcon, Icon, ProviderIcon } from "@ledgerhq/react-ui";
+import { CryptoIcon, Icon } from "@ledgerhq/react-ui";
+import ProviderIcon from "~/renderer/components/ProviderIcon";
 import styled from "styled-components";
 
 type Props = {
@@ -45,7 +46,7 @@ export function StakingIcon({ icon }: Props) {
   if (iconType === "provider") {
     return (
       <ProviderIconContainer>
-        <ProviderIcon name={iconName} size="S" boxed={true} />
+        <ProviderIcon name={iconName} size="S" />
       </ProviderIconContainer>
     );
   }

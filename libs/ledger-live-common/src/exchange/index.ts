@@ -1,7 +1,7 @@
 import { valid, gte } from "semver";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { findExchangeCurrencyConfig as findProdExchangeCurrencyConfig } from "@ledgerhq/cryptoassets";
-import { getEnv } from "../env";
+import { getEnv } from "@ledgerhq/live-env";
 import { findTestExchangeCurrencyConfig } from "./testCurrencyConfig";
 // Minimum version of a currency app which has exchange capabilities, meaning it can be used
 // for sell/swap, and do silent signing.
@@ -20,6 +20,7 @@ const exchangeSupportAppVersions = {
   stellar: "3.3.0",
   stratis: "1.5.0",
   tezos: "2.2.13",
+  tron: "0.4.100",
   zcash: "1.5.0",
   zencash: "1.5.0",
 };

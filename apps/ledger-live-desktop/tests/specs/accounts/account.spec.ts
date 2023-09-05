@@ -4,18 +4,24 @@ import { PortfolioPage } from "../../models/PortfolioPage";
 import { AddAccountModal } from "../../models/AddAccountModal";
 import { DeviceAction } from "../../models/DeviceAction";
 import { Layout } from "../../models/Layout";
+import { AccountPage } from "../../models/AccountPage";
+import { AccountsPage } from "../../models/AccountsPage";
 
 test.use({ userdata: "skip-onboarding" });
 
-const currencies = ["BTC", "LTC", "ETH", "ATOM", "XTZ", "XRP"];
+const currencies = ["BTC", "LTC", "ETH", "ATOM", "XTZ", "XRP", "Tron", "kava evm", "ADA", "DOT"];
 
-test.describe.parallel("Accounts", () => {
+test.describe.parallel("Accounts @smoke", () => {
   for (const currency of currencies) {
+    let firstAccountName = "NO ACCOUNT NAME YET";
+
     test(`[${currency}] Add account`, async ({ page }) => {
       const portfolioPage = new PortfolioPage(page);
       const addAccountModal = new AddAccountModal(page);
       const deviceAction = new DeviceAction(page);
       const layout = new Layout(page);
+      const accountsPage = new AccountsPage(page);
+      const accountPage = new AccountPage(page);
 
       await test.step(`[${currency}] Open modal`, async () => {
         await portfolioPage.openAddAccountModal();
@@ -32,6 +38,10 @@ test.describe.parallel("Accounts", () => {
       await test.step(`[${currency}] Open device app`, async () => {
         await deviceAction.openApp();
         await addAccountModal.waitForSync();
+        const name = await addAccountModal.getFirstAccountName();
+        if (typeof name === "string") {
+          firstAccountName = name;
+        }
         await expect
           .soft(addAccountModal.container)
           .toHaveScreenshot(`${currency}-accounts-list.png`);
@@ -45,9 +55,27 @@ test.describe.parallel("Accounts", () => {
       await test.step(`[${currency}] Done`, async () => {
         await addAccountModal.done();
         await layout.totalBalance.waitFor({ state: "visible" });
-        await expect
-          .soft(page)
-          .toHaveScreenshot(`${currency}-complete.png`, { mask: [page.locator("canvas")] });
+      });
+
+      await test.step(`Navigate to first account`, async () => {
+        await layout.goToAccounts();
+        await accountsPage.navigateToAccountByName(firstAccountName);
+        await expect.soft(page).toHaveScreenshot(`${currency}-firstAccountPage.png`);
+      });
+
+      await test.step(`scroll to operations`, async () => {
+        await accountPage.scrollToOperations();
+        await expect.soft(page).toHaveScreenshot(`${currency}-firstAccountPage-operations.png`);
+      });
+
+      await test.step(`Delete current account`, async () => {
+        await accountPage.deleteAccount();
+        await expect.soft(page).toHaveScreenshot(`${currency}-deleteAccount.png`);
+      });
+
+      await test.step(`Delete first account from list`, async () => {
+        await accountsPage.deleteFirstAccount();
+        await expect.soft(page).toHaveScreenshot(`${currency}-deleteAccountFromAccountsList.png`);
       });
     });
   }

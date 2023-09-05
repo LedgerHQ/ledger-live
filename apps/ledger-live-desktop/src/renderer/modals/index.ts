@@ -18,7 +18,6 @@ import MODAL_SYSTEM_LANGUAGE_AVAILABLE from "./SystemLanguageAvailable";
 import MODAL_START_STAKE from "./StartStake";
 import MODAL_TERM_OF_USE_UPDATE from "./TermOfUseUpdate";
 import MODAL_EXCHANGE_CRYPTO_DEVICE from "./ExchangeDeviceConfirm";
-import MODAL_SWAP_RESET_KYC from "./Swap/ResetKYC";
 import MODAL_PLATFORM_EXCHANGE_START from "./Platform/Exchange/StartExchange";
 import MODAL_PLATFORM_EXCHANGE_COMPLETE from "./Platform/Exchange/CompleteExchange";
 import MODAL_CONNECT_DEVICE from "./ConnectDevice";
@@ -29,6 +28,7 @@ import MODAL_HIDE_NFT_COLLECTION from "./HideNftCollection";
 import MODAL_PROTECT_DISCOVER from "./ProtectDiscover";
 import MODAL_CONFIRM from "./ConfirmModal";
 import MODAL_ERROR from "./ErrorModal";
+import MODAL_VAULT_SIGNER from "./VaultSigner";
 
 type GlobalModals = MakeModalsType<GlobalModalData>;
 
@@ -56,12 +56,13 @@ const globalModals: GlobalModals = {
   MODAL_STORYLY_DEBUGGER,
   MODAL_START_STAKE,
   MODAL_PROTECT_DISCOVER,
-  // Swap
-  MODAL_SWAP_RESET_KYC,
   // Platform
   MODAL_PLATFORM_EXCHANGE_START,
   MODAL_PLATFORM_EXCHANGE_COMPLETE,
   MODAL_CONNECT_DEVICE,
+
+  // Vault,
+  MODAL_VAULT_SIGNER,
 
   // NB We have dettached modals such as the repair modal,
   // in the meantime, we can rely on this to add the backdrop

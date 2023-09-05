@@ -74,6 +74,19 @@ export type SignOperationFnSignature<T> = (
 
 export type BroadcastFnSignature = (arg0: BroadcastArg0) => Promise<Operation>;
 
+export type Bridge<T extends TransactionCommon> = {
+  currencyBridge: CurrencyBridge;
+  accountBridge: AccountBridge<T>;
+};
+
+export type ScanInfo = {
+  currency: CryptoCurrency;
+  deviceId: DeviceId;
+  scheme?: DerivationMode | null | undefined;
+  syncConfig: SyncConfig;
+  preferredNewAccountScheme?: DerivationMode;
+};
+
 /**
  * Abstraction related to a currency
  */
@@ -87,13 +100,7 @@ export interface CurrencyBridge {
   // method need to treat the data object as unsafe and validate all fields / be backward compatible.
   hydrate(data: unknown, currency: CryptoCurrency): void;
   // Scan all available accounts with a device
-  scanAccounts(arg0: {
-    currency: CryptoCurrency;
-    deviceId: DeviceId;
-    scheme?: DerivationMode | null | undefined;
-    syncConfig: SyncConfig;
-    preferredNewAccountScheme?: DerivationMode;
-  }): Observable<ScanAccountEvent>;
+  scanAccounts(info: ScanInfo): Observable<ScanAccountEvent>;
   getPreloadStrategy?: (currency: CryptoCurrency) => PreloadStrategy;
   nftResolvers?: {
     nftMetadata: (arg: {
@@ -136,10 +143,14 @@ export interface AccountBridge<T extends TransactionCommon> {
   // There are a bunch of edit and get functions to edit and extract information out ot this black box.
   // it needs to be a serializable JS object
   createTransaction(account: AccountLike): T;
+  // NOTE: because of a dependency to React at the moment, if updateTransaction doesn't modify the transaction
+  // it must return the unmodified input transaction object (reference stability)
   updateTransaction(t: T, patch: Partial<T>): T;
   // prepare the remaining missing part of a transaction typically from network (e.g. fees)
   // and fulfill it in a new transaction object that is returned (async)
   // It can fails if the the network is down.
+  // NOTE: because of a dependency to React at the moment, if prepareTransaction doesn't modify the transaction
+  // it must return the unmodified input transaction object (reference stability)
   prepareTransaction(account: Account, transaction: T): Promise<T>;
   // calculate derived state of the Transaction, useful to display summary / errors / warnings. tells if the transaction is ready.
   getTransactionStatus(account: Account, transaction: T): Promise<TransactionStatusCommon>;
@@ -218,6 +229,7 @@ export type CurrenciesData<T extends TransactionCommon> = {
   FIXME_ignoreAccountFields?: string[];
   FIXME_ignoreOperationFields?: string[];
   FIXME_ignorePreloadFields?: string[];
+  IgnorePrepareTransactionFields?: string[];
   mockDeviceOptions?: any;
   scanAccounts?: Array<{
     name: string;

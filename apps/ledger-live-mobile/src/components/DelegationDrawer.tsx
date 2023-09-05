@@ -91,8 +91,8 @@ export default function DelegationDrawer({
         </ScrollView>
 
         <View style={[styles.row, styles.actionsRow]}>
-          {actions.map(props => (
-            <ActionButton {...props} />
+          {actions.map((props, i) => (
+            <ActionButton key={`actions-${i}`} {...props} />
           ))}
         </View>
       </View>

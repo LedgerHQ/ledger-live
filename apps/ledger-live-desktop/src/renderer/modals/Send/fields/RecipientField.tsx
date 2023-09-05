@@ -2,7 +2,7 @@ import React, { memo, useCallback, useEffect, useState } from "react";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { Account } from "@ledgerhq/types-live";
-import { TFunction } from "react-i18next";
+import type { TFunction } from "i18next";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import RecipientFieldBase from "./RecipientFieldBase";
 import RecipientFieldDomainService from "./RecipientFieldDomainService";

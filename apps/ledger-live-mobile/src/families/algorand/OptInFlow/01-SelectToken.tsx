@@ -24,6 +24,7 @@ import Info from "../../../icons/Info";
 import QueuedDrawer from "../../../components/QueuedDrawer";
 import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import type { AlgorandOptInFlowParamList } from "./types";
+import { getEnv } from "@ledgerhq/live-env";
 
 const Row = ({
   item,
@@ -151,7 +152,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
             renderList={renderList}
             inputWrapperStyle={styles.filteredSearchInputWrapperStyle}
             renderEmptySearch={renderEmptyList}
-            keys={["name", "ticker"]}
+            keys={getEnv("CRYPTO_ASSET_SEARCH_KEYS")}
             list={options}
           />
         </View>

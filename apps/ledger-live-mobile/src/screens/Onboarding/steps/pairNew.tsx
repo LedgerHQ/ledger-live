@@ -100,7 +100,7 @@ function OnboardingStepPairNew() {
   const startPostOnboarding = useStartPostOnboardingCallback();
 
   const onFinish = useCallback(() => {
-    if (next) {
+    if (next && deviceModelId) {
       // only used for protect for now
       navigation.navigate(next, {
         deviceModelId,
@@ -151,7 +151,7 @@ function OnboardingStepPairNew() {
         metadata={metadata}
         deviceModelId={deviceModelId}
       />
-      {showSeedWarning ? <SeedWarning deviceModelId={deviceModelId} /> : null}
+      {showSeedWarning && deviceModelId ? <SeedWarning deviceModelId={deviceModelId} /> : null}
     </>
   );
 }

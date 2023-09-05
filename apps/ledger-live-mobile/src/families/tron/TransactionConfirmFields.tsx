@@ -78,11 +78,12 @@ function TronVotesField({ transaction }: { transaction: Transaction }) {
     <>
       <HeaderRow label={t("ValidateOnDevice.name")} value={t("ValidateOnDevice.votes")} />
 
-      {formattedVotes.map(({ address, voteCount, validator }) => (
+      {formattedVotes.map(({ address, voteCount, validator }, i) => (
         <ValidatorField
           address={address}
           name={validator?.name ?? address}
           amount={voteCount.toLocaleString(locale)}
+          key={`${address}-${i}`}
         />
       ))}
     </>

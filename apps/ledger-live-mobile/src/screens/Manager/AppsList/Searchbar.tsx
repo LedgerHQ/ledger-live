@@ -2,7 +2,7 @@ import React, { useCallback, useRef } from "react";
 import { Platform, TouchableOpacity, TextInput } from "react-native";
 import { useTranslation } from "react-i18next";
 import styled, { useTheme } from "styled-components/native";
-import { Flex, Icons } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy } from "@ledgerhq/native-ui";
 
 type Props = {
   searchQuery?: string;
@@ -34,7 +34,7 @@ export default ({ searchQuery, onQueryUpdate }: Props) => {
 
   return (
     <SearchbarContainer borderColor="neutral.c40">
-      <Icons.SearchMedium size={17} color="neutral.c70" />
+      <IconsLegacy.SearchMedium size={17} color="neutral.c70" />
       <SearchbarTextInput
         ref={textInput}
         returnKeyType="search"
@@ -49,7 +49,7 @@ export default ({ searchQuery, onQueryUpdate }: Props) => {
       />
       {searchQuery && searchQuery.length > 0 ? (
         <TouchableOpacity onPress={clear}>
-          <Icons.CircledCrossSolidMedium size={20} color="neutral.c60" />
+          <IconsLegacy.CircledCrossSolidMedium size={20} color="neutral.c60" />
         </TouchableOpacity>
       ) : null}
     </SearchbarContainer>

@@ -36,27 +36,32 @@ function StepConfirmation({
   account,
 }: StepProps) {
   const voteAccAddress = transaction?.validators[0]?.address;
-  const currencyName = account.currency.name.toLowerCase();
-  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyName);
+  const currencyId = account.currency.id;
+  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyId);
 
   useEffect(() => {
     if (optimisticOperation && voteAccAddress && validators) {
       const chosenValidator = validators.find(v => v.validatorAddress === voteAccAddress);
-      const currency = account?.currency?.id?.toUpperCase();
       track("staking_completed", {
-        currency,
+        currency: currencyId.toUpperCase(),
         validator: chosenValidator?.name || voteAccAddress,
         source,
         delegation: "redelegation",
         flow: "stake",
       });
     }
-  }, [optimisticOperation, validators, account?.currency?.id, voteAccAddress, source]);
+  }, [currencyId, optimisticOperation, validators, voteAccAddress, source]);
 
   if (optimisticOperation) {
     return (
       <Container>
-        <TrackPage category="Redelegation Cosmos Flow" name="Step Confirmed" />
+        <TrackPage
+          category="Redelegation Cosmos Flow"
+          name="Step Confirmed"
+          flow="stake"
+          action="redelegation"
+          currency={currencyId}
+        />
         <SyncOneAccountOnMount
           reason="transaction-flow-confirmation"
           priority={10}
@@ -72,7 +77,13 @@ function StepConfirmation({
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage category="Redelegation Cosmos Flow" name="Step Confirmation Error" />
+        <TrackPage
+          category="Redelegation Cosmos Flow"
+          name="Step Confirmation Error"
+          flow="stake"
+          action="redelegation"
+          currency={currencyId}
+        />
         {signed ? (
           <BroadcastErrorDisclaimer
             title={<Trans i18nKey="cosmos.redelegation.flow.steps.confirmation.broadcastError" />}

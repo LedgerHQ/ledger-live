@@ -37,6 +37,17 @@ export function groupAccountsOperationsByDay(
   // Track indexes of account.pendingOperations[] for each account
   const indexesPending: number[] = Array(accounts.length).fill(0);
 
+  // Retruns true if operation 1 is later than operation 2
+  function compareOps(op1: Operation, op2: Operation) {
+    return (
+      op1.date > op2.date ||
+      (op1.date === op2.date &&
+        op1.transactionSequenceNumber !== undefined &&
+        op2.transactionSequenceNumber !== undefined &&
+        op1.transactionSequenceNumber > op2.transactionSequenceNumber)
+    );
+  }
+
   // Returns the next most recent operation from the account with current indexes
   function getNext():
     | {
@@ -63,7 +74,7 @@ export function groupAccountsOperationsByDay(
         }
       }
 
-      if (op && (!bestOp || op.date > bestOp.date)) {
+      if (op && (!bestOp || compareOps(op, bestOp))) {
         bestOp = op;
         bestOpInfo = {
           accountI: i,
@@ -82,7 +93,7 @@ export function groupAccountsOperationsByDay(
         opP = account.pendingOperations[++indexesPending[i]];
       }
 
-      if (opP && (!bestOp || opP.date > bestOp.date)) {
+      if (opP && (!bestOp || compareOps(opP, bestOp))) {
         bestOp = opP;
         bestOpInfo = {
           accountI: i,

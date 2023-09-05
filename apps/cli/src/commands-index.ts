@@ -16,6 +16,7 @@ import devDeviceAppsScenario from "./commands/devDeviceAppsScenario";
 import deviceAppVersion from "./commands/deviceAppVersion";
 import deviceInfo from "./commands/deviceInfo";
 import deviceSDKFirmwareUpdate from "./commands/deviceSDKFirmwareUpdate";
+import deviceSDKGetBatteryStatuses from "./commands/deviceSDKGetBatteryStatuses";
 import deviceSDKGetDeviceInfo from "./commands/deviceSDKGetDeviceInfo";
 import deviceSDKToggleOnboardingEarlyCheck from "./commands/deviceSDKToggleOnboardingEarlyCheck";
 import deviceVersion from "./commands/deviceVersion";
@@ -57,7 +58,6 @@ import testDetectOpCollision from "./commands/testDetectOpCollision";
 import testGetTrustedInputFromTxHash from "./commands/testGetTrustedInputFromTxHash";
 import user from "./commands/user";
 import version from "./commands/version";
-import walletconnect from "./commands/walletconnect";
 
 export default {
   app,
@@ -78,6 +78,7 @@ export default {
   deviceAppVersion,
   deviceInfo,
   deviceSDKFirmwareUpdate,
+  deviceSDKGetBatteryStatuses,
   deviceSDKGetDeviceInfo,
   deviceSDKToggleOnboardingEarlyCheck,
   deviceVersion,
@@ -119,5 +120,4 @@ export default {
   testGetTrustedInputFromTxHash,
   user,
   version,
-  walletconnect,
 };

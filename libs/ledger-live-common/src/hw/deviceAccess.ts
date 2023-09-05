@@ -16,7 +16,7 @@ import {
   PairingFailed,
 } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
-import { getEnv } from "../env";
+import { getEnv } from "@ledgerhq/live-env";
 import { open, close, setAllowAutoDisconnect } from ".";
 
 const initialErrorRemapping = error =>

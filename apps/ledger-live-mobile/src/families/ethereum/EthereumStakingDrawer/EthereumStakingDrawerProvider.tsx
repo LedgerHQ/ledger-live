@@ -2,7 +2,7 @@ import React, { useCallback, useEffect } from "react";
 import { TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
 
-import { Flex, Icon, Text, Link, Icons, Tag } from "@ledgerhq/native-ui";
+import { Flex, Icon, Text, Link, IconsLegacy, Tag } from "@ledgerhq/native-ui";
 import { useManifest } from "@ledgerhq/live-common/platform/hooks/useManifest";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
@@ -69,16 +69,16 @@ export function EthereumStakingDrawerProvider({
             <Text variant="paragraph" lineHeight="20px" color="neutral.c70">
               {t(`stake.ethereum.providers.${provider.id}.description`)}
             </Text>
-            <Link
-              size="medium"
-              type="color"
-              iconPosition="right"
-              onPress={supportLinkPress}
-              Icon={Icons.ExternalLinkMedium}
-            >
-              {t(`stake.ethereum.providers.${provider.id}.supportLink`)}
-            </Link>
           </Flex>
+          <Link
+            size="medium"
+            type="color"
+            iconPosition="right"
+            onPress={supportLinkPress}
+            Icon={IconsLegacy.ExternalLinkMedium}
+          >
+            {t(`stake.ethereum.providers.${provider.id}.supportLink`)}
+          </Link>
         </Flex>
         <Flex alignSelf="center">
           <Icon name="ChevronRight" size={32} color="neutral.c100" />

@@ -84,6 +84,11 @@ const SetDelegation = (props: SetDelegationPropsType) => {
     [transaction, validators],
   );
 
+  const chosenValidatorName = useMemo(
+    () => (chosenValidator ? chosenValidator.identity.name || chosenValidator.contract : ""),
+    [chosenValidator],
+  );
+
   /*
    * Handle the possible errors of the transaction status and return the first one.
    */
@@ -137,8 +142,10 @@ const SetDelegation = (props: SetDelegationPropsType) => {
       accountId: account.id,
       transaction,
       status,
+      validators: validators,
+      source: route.params.source,
     });
-  }, [status, account, navigation, transaction]);
+  }, [status, account, navigation, transaction, route.params.source, validators]);
 
   /*
    * Callback function to be called when wanting to change the transaction amount.
@@ -150,12 +157,10 @@ const SetDelegation = (props: SetDelegationPropsType) => {
         account,
         validators,
         transaction,
-        validatorName: chosenValidator
-          ? chosenValidator.identity.name || chosenValidator.contract
-          : "",
+        validatorName: chosenValidatorName,
       });
     }
-  }, [transaction, account, chosenValidator, validators, navigation]);
+  }, [transaction, account, validators, navigation, chosenValidatorName]);
 
   /*
    * Callback function to be called when wanting to change the validator.
@@ -227,7 +232,13 @@ const SetDelegation = (props: SetDelegationPropsType) => {
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="DelegationFlow" name="Summary" />
+      <TrackScreen
+        category="DelegationFlow"
+        name="Summary"
+        flow="stake"
+        action="delegate"
+        currency="egld"
+      />
 
       <View style={styles.body}>
         <View style={styles.header}>

@@ -26,6 +26,8 @@ import Alert from "~/renderer/components/Alert";
 import NFTSummary from "~/renderer/screens/nft/Send/Summary";
 import { StepProps } from "../types";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
+import { getLLDCoinFamily } from "~/renderer/families";
+
 const FromToWrapper = styled.div``;
 const Circle = styled.div`
   height: 32px;
@@ -68,6 +70,9 @@ export default class StepSummary extends PureComponent<StepProps> {
     const hasNonEmptySubAccounts =
       account.type === "Account" &&
       (account.subAccounts || []).some(subAccount => subAccount.balance.gt(0));
+
+    const specific = currency ? getLLDCoinFamily(mainAccount.currency.family) : null;
+    const SpecificSummaryNetworkFeesRow = specific?.StepSummaryNetworkFeesRow;
 
     const memo = "memo" in transaction ? transaction.memo : undefined;
     return (
@@ -193,49 +198,60 @@ export default class StepSummary extends PureComponent<StepProps> {
               </Box>
             </Box>
           ) : (
-            <NFTSummary transaction={transaction} />
+            <NFTSummary transaction={transaction} currency={mainAccount.currency} />
           )}
-          <Box horizontal justifyContent="space-between">
-            <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
-              <Trans i18nKey="send.steps.details.fees" />
-            </Text>
-            <Box>
-              <FormattedVal
-                color={feeTooHigh ? "warning" : "palette.text.shade80"}
-                disableRounding
-                unit={feesUnit}
-                alwaysShowValue
-                val={estimatedFees}
-                fontSize={4}
-                inline
-                showCode
-              />
-              <Box textAlign="right">
-                <CounterValue
-                  color={feeTooHigh ? "warning" : "palette.text.shade60"}
-                  fontSize={3}
-                  currency={feesCurrency}
-                  value={estimatedFees}
-                  alwaysShowSign={false}
-                  alwaysShowValue
-                />
+          {SpecificSummaryNetworkFeesRow ? (
+            <SpecificSummaryNetworkFeesRow
+              feeTooHigh={feeTooHigh}
+              feesUnit={feesUnit}
+              estimatedFees={estimatedFees}
+              feesCurrency={feesCurrency}
+            />
+          ) : (
+            <>
+              <Box horizontal justifyContent="space-between">
+                <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
+                  <Trans i18nKey="send.steps.details.fees" />
+                </Text>
+                <Box>
+                  <FormattedVal
+                    color={feeTooHigh ? "warning" : "palette.text.shade80"}
+                    disableRounding
+                    unit={feesUnit}
+                    alwaysShowValue
+                    val={estimatedFees}
+                    fontSize={4}
+                    inline
+                    showCode
+                  />
+                  <Box textAlign="right">
+                    <CounterValue
+                      color={feeTooHigh ? "warning" : "palette.text.shade60"}
+                      fontSize={3}
+                      currency={feesCurrency}
+                      value={estimatedFees}
+                      alwaysShowSign={false}
+                      alwaysShowValue
+                    />
+                  </Box>
+                </Box>
               </Box>
-            </Box>
-          </Box>
-          {feeTooHigh ? (
-            <Box horizontal justifyContent="flex-end" alignItems="center" color="warning">
-              <IconExclamationCircle size={10} />
-              <Text
-                ff="Inter|Medium"
-                fontSize={2}
-                style={{
-                  marginLeft: "5px",
-                }}
-              >
-                <TranslatedError error={feeTooHigh} />
-              </Text>
-            </Box>
-          ) : null}
+              {feeTooHigh ? (
+                <Box horizontal justifyContent="flex-end" alignItems="center" color="warning">
+                  <IconExclamationCircle size={10} />
+                  <Text
+                    ff="Inter|Medium"
+                    fontSize={2}
+                    style={{
+                      marginLeft: "5px",
+                    }}
+                  >
+                    <TranslatedError error={feeTooHigh} />
+                  </Text>
+                </Box>
+              ) : null}
+            </>
+          )}
 
           {!totalSpent.eq(amount) ? (
             <>

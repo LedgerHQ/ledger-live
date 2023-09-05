@@ -3,7 +3,7 @@ import URL from "url";
 import Transport from "@ledgerhq/hw-transport";
 import type { DeviceInfo, SocketEvent } from "@ledgerhq/types-live";
 import { version as livecommonversion } from "../../../package.json";
-import { getEnv } from "../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import { createMockSocket, resultMock, secureChannelMock } from "../../socket/socket.mock";
 import { log } from "@ledgerhq/logs";
 import { createDeviceSocket } from "../../socket";

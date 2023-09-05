@@ -35,6 +35,7 @@ import DebugPlayground from "../../screens/Settings/Debug/Playground";
 import DebugBluetoothAndLocationServices from "../../screens/Settings/Debug/Debugging/BluetoothAndLocationServices";
 import DebugSettings from "../../screens/Settings/Debug";
 import DebugSnackbars from "../../screens/Settings/Debug/Features/Snackbars";
+import DebugTransactionsAlerts from "../../screens/Settings/Debug/Features/TransactionsAlerts";
 import DebugStore from "../../screens/Settings/Debug/Debugging/Store";
 import DebugStoryly from "../../screens/Settings/Debug/Features/Storyly";
 import DebugSwap from "../../screens/Settings/Debug/Features/Swap";
@@ -58,7 +59,6 @@ import Button from "../Button";
 import HelpButton from "../../screens/Settings/HelpButton";
 import OnboardingStepLanguage from "../../screens/Onboarding/steps/language";
 import { GenerateMockAccountSelectScreen } from "../../screens/Settings/Debug/Generators/GenerateMockAccountsSelect";
-import HiddenNftCollections from "../../screens/Settings/Accounts/HiddenNftCollections";
 import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
 import PostOnboardingDebugScreen from "../../screens/PostOnboarding/PostOnboardingDebugScreen";
 import { SettingsNavigatorStackParamList } from "./types/SettingsNavigator";
@@ -143,11 +143,6 @@ export default function SettingsNavigator() {
         name={ScreenName.CryptoAssetsSettings}
         component={CurrenciesList}
         options={{ title: t("settings.accounts.cryptoAssets.header") }}
-      />
-      <Stack.Screen
-        name={ScreenName.HiddenNftCollections}
-        component={HiddenNftCollections}
-        options={{ title: t("settings.accounts.hiddenNFTCollections") }}
       />
       <Stack.Screen
         name={ScreenName.CurrencySettings}
@@ -392,6 +387,13 @@ export default function SettingsNavigator() {
         component={DebugSnackbars}
         options={{
           title: "Debug snackbars",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugTransactionsAlerts}
+        component={DebugTransactionsAlerts}
+        options={{
+          title: "Debug transactions alerts",
         }}
       />
       <Stack.Screen

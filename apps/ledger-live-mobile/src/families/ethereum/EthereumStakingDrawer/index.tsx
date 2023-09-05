@@ -1,54 +1,41 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { Button, Flex } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 
-import QueuedDrawer from "../../../components/QueuedDrawer";
 import { EthStakingProviders } from "./types";
 import { EthereumStakingDrawerBody } from "./EthereumStakingDrawerBody";
 import { Track } from "../../../analytics";
+import QueuedDrawer from "../../../components/QueuedDrawer";
+import { useRootDrawerContext } from "../../../context/RootDrawerContext";
 
-type Props = {
-  drawer?: {
-    id: string;
-    props: {
-      accountId: string;
-      singleProviderRedirectMode?: boolean;
-    };
-  };
-};
-
-export function EthereumStakingDrawer({ drawer }: Props) {
+export function EthereumStakingDrawer() {
   const { t } = useTranslation();
-  const [isOpen, setIsOpen] = useState(false);
+  const { isOpen, onModalHide, openDrawer, onClose, drawer } = useRootDrawerContext();
   const ethStakingProviders = useFeature<EthStakingProviders>("ethStakingProviders");
 
-  const onClose = useCallback(() => {
-    setIsOpen(false);
-  }, [setIsOpen]);
-
   useEffect(() => {
-    setIsOpen(drawer?.id === "EthStakingDrawer");
-  }, [drawer]);
+    if (
+      ethStakingProviders?.enabled ||
+      (ethStakingProviders?.params?.listProvider ?? []).length > 0
+    ) {
+      openDrawer();
+    }
+  }, [ethStakingProviders, openDrawer]);
 
-  if (
-    !drawer ||
-    !ethStakingProviders?.enabled ||
-    (ethStakingProviders.params?.listProvider ?? []).length < 1
-  ) {
-    return null;
-  }
+  if (!ethStakingProviders || drawer.id !== "EthStakingDrawer") return null;
 
   return (
-    <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose}>
+    <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose} onModalHide={onModalHide}>
       <Flex rowGap={52}>
         <Track onMount event="ETH Stake Modal" />
         <EthereumStakingDrawerBody
+          onClose={onClose}
           singleProviderRedirectMode={drawer.props.singleProviderRedirectMode ?? true}
           accountId={drawer.props.accountId}
           providers={ethStakingProviders.params!.listProvider}
         />
-        <Button onPress={onClose} type="main">
+        <Button onPress={() => onClose()} type="main">
           {t("stake.ethereum.close")}
         </Button>
       </Flex>

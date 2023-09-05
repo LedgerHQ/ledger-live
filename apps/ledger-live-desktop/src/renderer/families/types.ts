@@ -1,37 +1,40 @@
 import BigNumber from "bignumber.js";
 import React from "react";
-import { TFunction } from "react-i18next";
+import { TFunction } from "i18next";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { DeviceTransactionField } from "@ledgerhq/live-common/transaction/index";
 import { Unit, CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   Account,
+  AnyMessage,
   FeeStrategy,
+  NFTStandard,
   Operation,
   OperationType,
   SubAccount,
   TransactionCommon,
+  TransactionCommonRaw,
 } from "@ledgerhq/types-live";
 // FIXME: ideally we need to have <A,T,TS> parametric version of StepProps
 import { StepProps as SendStepProps } from "../modals/Send/types";
 import { StepProps as ReceiveStepProps } from "../modals/Receive/Body";
 import { StepProps as AddAccountsStepProps } from "../modals/AddAccounts";
 
-export type AmountCellExtraProps = {
-  operation: Operation;
+export type AmountCellExtraProps<O extends Operation> = {
+  operation: O;
   unit: Unit;
   currency: CryptoCurrency;
 };
 
-export type AmountCellProps = {
+export type AmountCellProps<O extends Operation> = {
   amount: BigNumber;
-  operation: Operation;
+  operation: O;
   unit: Unit;
   currency: CryptoCurrency;
 };
 
-export type ConfirmationCellProps = {
-  operation: Operation;
+export type ConfirmationCellProps<O extends Operation> = {
+  operation: O;
   type?: OperationType;
   isConfirmed: boolean;
   marketColor: string;
@@ -41,18 +44,23 @@ export type ConfirmationCellProps = {
   style?: React.CSSProperties;
 };
 
-export type AmountTooltipProps = {
-  operation: Operation;
+export type AmountTooltipProps<O extends Operation> = {
+  operation: O;
   unit: Unit;
   amount: BigNumber;
 };
 
-export type OperationDetailsExtraProps<A> = {
-  operation: Operation;
+export type OperationDetailsExtraProps<A extends Account, O extends Operation> = {
+  operation: O;
   account: A;
   type: OperationType;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  extra: Record<string, any>; // TODO check if we can use unknown instead of any
+};
+
+export type SummaryNetworkFeesRowProps = {
+  feeTooHigh: Error;
+  feesUnit: Unit;
+  estimatedFees: BigNumber;
+  feesCurrency: TokenCurrency | CryptoCurrency;
 };
 
 /**
@@ -60,48 +68,51 @@ export type OperationDetailsExtraProps<A> = {
  * @template A is the account type of the family. you can set it to Account if there is no customisation of that type among the family.
  * @template T is the transaction type of the family.
  * @template TS is the transaction status type of the family.
- * @template FamilyModalsData is an object typing all the modals data. See GlobalModalData type in ../modals/types.ts for more details.
+ * @template O is the operation type of the family.
  */
 export type LLDCoinFamily<
   A extends Account,
   T extends TransactionCommon,
   TS extends TransactionStatus,
+  O extends Operation,
 > = {
   operationDetails?: {
     /**
      * Cell amount before the amount cell in operation row
      */
-    amountCellExtra?: Partial<Record<OperationType, React.ComponentType<AmountCellExtraProps>>>;
+    amountCellExtra?: Partial<Record<OperationType, React.ComponentType<AmountCellExtraProps<O>>>>;
 
     /**
      * Replace amount cell
      */
-    amountCell?: Partial<Record<OperationType, React.ComponentType<AmountCellProps>>>;
+    amountCell?: Partial<Record<OperationType, React.ComponentType<AmountCellProps<O>>>>;
 
     /**
      * Change operation first cell (mostly icons)
      */
-    confirmationCell?: Partial<Record<OperationType, React.ComponentType<ConfirmationCellProps>>>;
+    confirmationCell?: Partial<
+      Record<OperationType, React.ComponentType<ConfirmationCellProps<O>>>
+    >;
 
     /**
      * Tooltip on amount in operation details drawer (upper part of screen)
      */
-    amountTooltip?: Partial<Record<OperationType, React.ComponentType<AmountTooltipProps>>>;
+    amountTooltip?: Partial<Record<OperationType, React.ComponentType<AmountTooltipProps<O>>>>;
 
     /**
      * Open external url on operation type with an icon info
      */
-    getURLWhatIsThis?: (_: { op: Operation; currencyId: string }) => string | null | undefined;
+    getURLWhatIsThis?: (_: { op: O; currencyId: string }) => string | null | undefined;
 
     /**
      * Open external url on operation fees with an icon info
      */
-    getURLFeesInfo?: (_: { op: Operation; currencyId: string }) => string | null | undefined;
+    getURLFeesInfo?: (_: { op: O; currencyId: string }) => string | null | undefined;
 
     /**
      * Add extra info
      */
-    OperationDetailsExtra?: React.ComponentType<OperationDetailsExtraProps<A>>;
+    OperationDetailsExtra?: React.ComponentType<OperationDetailsExtraProps<A, O>>;
   };
 
   accountActions?: {
@@ -175,6 +186,12 @@ export type LLDCoinFamily<
     parentAccount: A | null | undefined;
   }>;
 
+  AccountFooter?: React.ComponentType<{
+    account: A | SubAccount;
+    parentAccount?: A | undefined | null;
+    status: TS;
+  }>;
+
   /**
    * Replace amount field on send modal
    */
@@ -192,6 +209,7 @@ export type LLDCoinFamily<
       mapStrategies?: (a: FeeStrategy) => FeeStrategy;
       bridgePending?: boolean;
       trackProperties?: Record<string, unknown>;
+      transactionRaw?: TransactionCommonRaw;
     }>;
     fields?: string[];
   };
@@ -264,6 +282,11 @@ export type LLDCoinFamily<
   StepReceiveFundsPostAlert?: React.ComponentType<ReceiveStepProps>;
 
   /**
+   * Replace Networkfees row on Summary Step
+   */
+  StepSummaryNetworkFeesRow?: React.ComponentType<SummaryNetworkFeesRowProps>;
+
+  /**
    * It was for Hedera specifc, when we do not find any account it show a specific component
    */
   NoAssociatedAccounts?: React.ComponentType<AddAccountsStepProps>;
@@ -274,6 +297,19 @@ export type LLDCoinFamily<
   StakeBanner?: React.ComponentType<{
     account: A;
   }>;
+
+  nft?: {
+    injectNftIntoTransaction: (
+      transaction: T,
+      nftProperties: Partial<NftProperties>,
+      standard?: NFTStandard,
+    ) => T;
+    getNftTransactionProperties: (transaction: T) => NftProperties;
+  };
+
+  message?: {
+    getMessageProperties: (account: A, message: AnyMessage) => Promise<MessageProperties | null>;
+  };
 };
 
 export type FieldComponentProps<
@@ -305,3 +341,14 @@ export type ManageAction = {
   tooltip?: string;
   accountActionsTestId?: string;
 };
+
+export type NftProperties = {
+  tokenId: string | null;
+  contract: string | null;
+  quantity: BigNumber | null;
+};
+
+export type MessageProperties = {
+  label: string;
+  value: string | string[];
+}[];

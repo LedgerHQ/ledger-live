@@ -1,5 +1,4 @@
 import { BigNumber } from "bignumber.js";
-import Transport from "@ledgerhq/hw-transport";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import {
   Account,
@@ -48,7 +47,7 @@ export type DeviceActionArg<T extends TransactionCommon, S> = {
   account: Account;
   transaction: T;
   status: TransactionStatusCommon;
-  transport: Transport & {
+  transport: {
     button: (arg0: string) => void;
   };
   event: DeviceActionEvent;

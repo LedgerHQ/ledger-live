@@ -4,7 +4,7 @@ import groupBy from "lodash/groupBy";
 import { reduce, filter, map } from "rxjs/operators";
 import "./test-helpers/setup";
 import { getAccountBridge, getCurrencyBridge } from "../bridge";
-import { setEnv } from "../env";
+import { setEnv } from "@ledgerhq/live-env";
 import { getCryptoCurrencyById } from "../currencies";
 import { toAccountRaw, flattenAccounts } from "../account";
 import type { Account } from "@ledgerhq/types-live";
@@ -24,9 +24,9 @@ const mockedCoins: CryptoCurrencyId[] = [
 
 mockedCoins.map(getCryptoCurrencyById).forEach(currency => {
   describe("mock " + currency.id, () => {
-    setEnv("MOCK", true);
+    setEnv("MOCK", "true");
     const bridge = getCurrencyBridge(currency);
-    setEnv("MOCK", false);
+    setEnv("MOCK", "false");
     test("scanAccounts", async () => {
       const accounts = await bridge
         .scanAccounts({

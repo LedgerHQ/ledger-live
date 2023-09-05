@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-framework",
-  "version": "0.3.5",
+  "version": "0.5.1",
   "description": "Ledger framework for Coin integration",
   "keywords": [
     "Ledger",
@@ -47,6 +47,34 @@
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
     },
+    "./account/*": {
+      "require": "./lib/account/*.js",
+      "default": "./lib-es/account/*.js"
+    },
+    "./batcher/*": {
+      "require": "./lib/batcher/*.js",
+      "default": "./lib-es/batcher/*.js"
+    },
+    "./bot/*": {
+      "require": "./lib/bot/*.js",
+      "default": "./lib-es/bot/*.js"
+    },
+    "./bridge/*": {
+      "require": "./lib/bridge/*.js",
+      "default": "./lib-es/bridge/*.js"
+    },
+    "./currencies/*": {
+      "require": "./lib/currencies/*.js",
+      "default": "./lib-es/currencies/*.js"
+    },
+    "./nft/*": {
+      "require": "./lib/nft/*.js",
+      "default": "./lib-es/nft/*.js"
+    },
+    "./transaction/*": {
+      "require": "./lib/transaction/*.js",
+      "default": "./lib-es/transaction/*.js"
+    },
     "./package.json": "./package.json"
   },
   "license": "Apache-2.0",
@@ -55,22 +83,19 @@
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
-    "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
-    "@ledgerhq/live-portfolio": "workspace:^",
-    "@ledgerhq/live-promise": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "bignumber.js": "^9.1.0",
+    "bignumber.js": "^9.1.1",
+    "eip55": "^2.1.0",
     "expect": "^27.4.6",
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
     "lru-cache": "^7.14.1",
     "numeral": "^2.0.6",
     "prando": "^6.0.1",
-    "rxjs": "^6.6.7",
-    "rxjs-compat": "^6.6.7"
+    "rxjs": "^6.6.7"
   },
   "devDependencies": {
     "@types/invariant": "^2.2.2",

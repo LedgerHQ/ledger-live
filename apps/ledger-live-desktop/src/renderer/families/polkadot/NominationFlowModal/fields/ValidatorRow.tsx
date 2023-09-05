@@ -2,7 +2,6 @@ import { BigNumber } from "bignumber.js";
 import React, { useCallback, useMemo, memo } from "react";
 import styled, { css } from "styled-components";
 import { Trans } from "react-i18next";
-import { Polkadot as PolkadotIdenticon } from "@polkadot/react-identicon/icons";
 import { Unit } from "@ledgerhq/types-cryptoassets";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { PolkadotValidator } from "@ledgerhq/live-common/families/polkadot/types";
@@ -11,6 +10,8 @@ import Text from "~/renderer/components/Text";
 import CheckBox from "~/renderer/components/CheckBox";
 import Tooltip from "~/renderer/components/Tooltip";
 import ExternalLink from "~/renderer/icons/ExternalLink";
+import Identicon from "@polkadot/react-identicon";
+
 const IconContainer = styled.div`
   display: flex;
   align-items: center;
@@ -188,8 +189,7 @@ const ValidatorRow = ({
   return (
     <Row style={style} disabled={!!disabled} active={!!isSelected}>
       <IconContainer>
-        {/* @ts-expect-error there is a TS error from polkadot lib that it expects a mandatory publicKey where it actually doesn't */}
-        <PolkadotIdenticon address={address} size={24} />
+        <Identicon value={address} size={24} theme="polkadot" />
       </IconContainer>
       <InfoContainer>
         <Tooltip content={identity ? address : null}>

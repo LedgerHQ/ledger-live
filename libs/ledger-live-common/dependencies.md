@@ -1,4 +1,4 @@
-This document allows to track, explain and maintain the dependencies we have defined in package.json.
+This document allows to track, explain and maintain the dependencies we have defined in package.json
 
 You can see at any point in time what libraries are upgradable using:
 
@@ -48,18 +48,22 @@ yarn upgrade-interactive -i --latest
 | @polkadot/wasm-crypto                       | Polkadot coin integration                                         | **BLOCKED BY LLM (ticket missing)**                                  |
 | @solana/spl-token                           | Solana coin integration                                           | monthly                                                              |
 | @solana/web3.js                             | Solana coin integration                                           | **BLOCKED BY LLM because of BigInt in RN (ticket missing)**          |
+| @stacks/network                             | Stacks coin integration                                           | monthly                                                              |
+| @stacks/transactions                        | Stacks coin integration                                           | monthly                                                              |
 | @taquito/ledger-signer                      | Tezos coin integration                                            | monthly                                                              |
 | @taquito/taquito                            | Tezos coin integration                                            | monthly                                                              |
 | @taquito/utils                              | Tezos coin integration                                            | monthly                                                              |
 | @types/bchaddrjs                            | Bitcoin coin integration                                          | monthly                                                              |
 | @types/bs58check                            | Bitcoin coin integration                                          | monthly                                                              |
-| @walletconnect/client                       | Wallet connect feature                                            | monthly                                                              |
-| @xstate/react                               | used for some components                                          | TBD DEPRECATE?                                                       |
+| @xstate/react                               | used for some components                                          |
+| TBD DEPRECATE?                              |
+| algosdk                                     | Algorand coin integration                                         | monthly                                                              |
 | @zondax/ledger-filecoin                     | Filecoin coin integration                                         | monthly                                                              |
+| @zondax/izari-filecoin                      | Filecoin coin integration                                         | monthly                                                              |
+| @zondax/ledger-stacks                       | Stacks coin integration                                           | monthly                                                              |
 | async                                       | ???                                                               | UNCLEAR IF USED                                                      |
 | axios                                       | network                                                           | monthly                                                              |
 | axios-retry                                 | network                                                           | monthly                                                              |
-| base32-decode                               | Filecoin coin integration                                         | monthly                                                              |
 | bchaddrjs                                   | Bitcoin coin integration                                          | monthly                                                              |
 | bech32                                      | Bitcoin coin integration                                          | BLOCKED? TBD                                                         |
 | bignumber.js                                | many parts involving amounts                                      | monthly                                                              |
@@ -68,6 +72,7 @@ yarn upgrade-interactive -i --latest
 | bip39                                       | needed for bot                                                    | monthly                                                              |
 | bitcoinjs-lib                               | Bitcoin coin integration                                          | **ticket missing**: apparently blocking LLM                          |
 | blake-hash                                  | Bitcoin coin integration                                          | monthly                                                              |
+| bn.js                                       | Stacks coin integration                                           | monthly                                                              |
 | bs58                                        | Bitcoin coin integration                                          | monthly                                                              |
 | bs58check                                   | Bitcoin coin integration                                          | monthly                                                              |
 | buffer                                      | many parts for bytes ops                                          | monthly                                                              |
@@ -75,6 +80,7 @@ yarn upgrade-interactive -i --latest
 | cbor                                        | Filecoin coin integration                                         | monthly                                                              |
 | coininfo                                    | Bitcoin coin integration                                          | monthly                                                              |
 | crypto-js                                   | NEO coin integration                                              | monthly                                                              |
+| c32check                                    | Stacks coin integration                                           | monthly                                                              |
 | eip55                                       | Ethereum coin integration                                         | monthly                                                              |
 | eth-sig-util                                | Ethereum coin integration                                         | monthly                                                              |
 | ethereumjs-abi                              | Ethereum coin integration                                         | monthly                                                              |
@@ -84,7 +90,6 @@ yarn upgrade-interactive -i --latest
 | invariant                                   | generic helper                                                    | monthly                                                              |
 | isomorphic-ws                               | WebSocket helper                                                  | monthly                                                              |
 | json-rpc-2.0                                | Ethereum coin integration                                         | monthly                                                              |
-| leb128                                      | Filecoin coin integration                                         | monthly                                                              |
 | lodash                                      | generic helper                                                    | monthly                                                              |
 | long                                        | Osmosis coin integration                                          | monthly                                                              |
 | numeral                                     | for very concise amount display (on graph)                        | monthly – **TBD if can be dropped**                                  |

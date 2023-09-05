@@ -1,15 +1,13 @@
-import type { BigNumber } from "bignumber.js";
-import { EIP712Message } from "@ledgerhq/hw-app-eth/lib/modules/EIP712/EIP712.types";
-import type { Unit } from "@ledgerhq/types-cryptoassets";
-import type { TransactionMode, ModeModule } from "./modules";
-import type { Range, RangeRaw } from "../../range";
 import type {
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
-import type { MessageData } from "../../hw/signMessage/types";
+import type { BigNumber } from "bignumber.js";
+import type { Unit } from "@ledgerhq/types-cryptoassets";
+import type { TransactionMode, ModeModule } from "./modules";
+import type { Range, RangeRaw } from "../../range";
 
 export type NetworkInfo = {
   family: "ethereum";
@@ -63,15 +61,6 @@ export type TransactionRaw = TransactionCommonRaw & {
   collection?: string;
   collectionName?: string;
   quantities?: string[];
-};
-
-export type TypedMessageData = Omit<MessageData, "message"> & {
-  message: EIP712Message;
-  hashes: {
-    stringHash: string;
-    domainHash: string;
-    messageHash: string;
-  };
 };
 
 export type TransactionStatus = TransactionStatusCommon;

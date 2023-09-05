@@ -18,6 +18,9 @@ export default function StepConnectDevice({
       <TrackPage
         category={`Delegation Flow${eventType ? ` (${eventType})` : ""}`}
         name="Step ConnectDevice"
+        flow="stake"
+        action="delegation"
+        currency="xtz"
       />
       <GenericStepConnectDevice
         account={account}

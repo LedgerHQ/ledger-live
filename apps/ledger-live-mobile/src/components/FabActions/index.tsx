@@ -2,7 +2,7 @@ import React, { ComponentType, ReactElement, ReactNode, useCallback, useState } 
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Box } from "@ledgerhq/native-ui";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { ParamListBase, useNavigation } from "@react-navigation/native";
 import { Linking, TouchableOpacityProps } from "react-native";
 import { ButtonProps } from "@ledgerhq/native-ui/components/cta/Button/index";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
@@ -10,6 +10,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import InfoModal from "../InfoModal";
 import { useAnalytics } from "../../analytics";
 import { WrappedButtonProps } from "../wrappedUi/Button";
+import { NavigatorName } from "../../const";
 
 export type ModalOnDisabledClickComponentProps = {
   account?: AccountLike;
@@ -54,6 +55,7 @@ export type ActionButtonEvent = ActionButtonEventProps & {
   Component?: ComponentType;
   buttonProps?: ButtonProps;
   disabled?: boolean;
+  testId?: string;
 };
 
 export type ActionButtonProps = {
@@ -63,6 +65,7 @@ export type ActionButtonProps = {
   onPress?: TouchableOpacityProps["onPress"];
   children: React.ReactNode;
   buttonProps?: ButtonProps;
+  testId?: string;
 };
 
 export const FabButtonBarProvider = ({
@@ -88,18 +91,15 @@ export const FabButtonBarProvider = ({
   );
   const [isModalInfoOpened, setIsModalInfoOpened] = useState<boolean>();
 
-  const navigation = useNavigation();
-  const route = useRoute();
+  const navigation = useNavigation<StackNavigationProp<ParamListBase, string, NavigatorName>>();
 
   const onNavigate = useCallback(
     (name: string, options?: object) => {
-      if (options && "screen" in options && route.name === options.screen) {
-        // if current route is equal to the screen we want to go to then just update the params.
-        navigation.setParams({
-          ...(options ? (options as { screen: string; params: object }).params : {}),
-          ...navigationProps,
-        });
-        return;
+      const parent = navigation.getParent(NavigatorName.RootNavigator);
+      if (options && "drawer" in options) {
+        return parent
+          ? parent.setParams({ drawer: options.drawer })
+          : navigation.navigate(NavigatorName.Base, options);
       }
       (
         navigation as StackNavigationProp<{
@@ -113,7 +113,7 @@ export const FabButtonBarProvider = ({
         },
       });
     },
-    [navigation, navigationProps, route],
+    [navigation, navigationProps],
   );
 
   const onPress = useCallback(
@@ -165,6 +165,7 @@ export const FabButtonBarProvider = ({
         ? () => onPressWhenDisabled(action)
         : undefined,
       buttonProps: action.buttonProps,
+      testId: action.testId,
     }))
     .sort(a => (a.disabled ? 0 : -1));
 

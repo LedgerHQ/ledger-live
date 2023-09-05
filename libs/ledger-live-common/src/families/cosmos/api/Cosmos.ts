@@ -39,7 +39,7 @@ export class CosmosAPI {
         await Promise.all([
           this.getAllBalances(address, currency),
           this.getHeight(),
-          this.getTransactions(address),
+          this.getTransactions(address, 100),
           this.getDelegations(address, currency),
           this.getRedelegations(address),
           this.getUnbondings(address),
@@ -229,49 +229,98 @@ export class CosmosAPI {
     return data.withdraw_address;
   };
 
-  getTransactions = async (address: string): Promise<CosmosTx[]> => {
-    let receive;
-    let send;
+  getTransactions = async (address: string, paginationSize: number): Promise<CosmosTx[]> => {
+    const senderTxs = await this.fetchAllTransactions(address, "message.sender", paginationSize);
+    const recipientTxs = await this.fetchAllTransactions(
+      address,
+      "transfer.recipient",
+      paginationSize,
+    );
 
-    try {
-      send = await this.getSendingTransactions(address, "ORDER_BY_DESC");
-      receive = await this.getReceivingTransactions(address, "ORDER_BY_DESC");
-    } catch (e) {
-      // FIXME: remove and always orderBy once pagination is implemented or every nodes are upgraded to 0.47
-      // See https://github.com/cosmos/cosmos-sdk/issues/15437
-      if ((e as Error).message.includes("ORDER_BY_DESC")) {
-        send = await this.getSendingTransactions(address);
-        receive = await this.getReceivingTransactions(address);
-      }
-    }
-
-    return [...receive.data.tx_responses, ...send.data.tx_responses];
+    return [...senderTxs, ...recipientTxs];
   };
 
-  private async getReceivingTransactions(
+  private async fetchAllTransactions(
     address: string,
-    orderBy?: "ORDER_BY_DESC" | "ORDER_BY_ASC",
+    filterOn: "message.sender" | "transfer.recipient",
+    paginationSize: number,
   ) {
-    return await network({
-      method: "GET",
-      url:
-        `${this.defaultEndpoint}/cosmos/tx/${this.version}/txs?events=` +
-        encodeURI(`transfer.recipient='${address}'`) +
-        (orderBy ? `&order_by=${orderBy}` : ""),
-    });
+    let txs: CosmosTx[] = [];
+    try {
+      let total: number;
+      let previousTxCall: CosmosTx[] | null = null;
+      let paginationOffset = 0;
+
+      do {
+        const response: {
+          txs: CosmosTx[];
+          nextPageToken: string | undefined;
+          total: number;
+        } = await this.fetchTransactions(this.defaultEndpoint, filterOn, address, {
+          "pagination.limit": paginationSize,
+          "pagination.offset": paginationOffset,
+          "pagination.reverse": true,
+        });
+
+        if (
+          previousTxCall &&
+          previousTxCall.length === txs.length &&
+          response.txs[0] &&
+          previousTxCall[0].txhash === response.txs[0].txhash
+        ) {
+          // Means we are getting the same thing... prevents an infinite loop
+          break;
+        }
+
+        paginationOffset += paginationSize;
+        total = response.total;
+        previousTxCall = response.txs;
+        txs = [...txs, ...response.txs];
+      } while (txs.length < total);
+      // The right condition should be nextPageToken != null but next_key isn't returned by the node for some reason
+    } catch (e) {
+      // Tx fetching failed, we return an empty array
+      return [];
+    }
+    return txs;
   }
 
-  private async getSendingTransactions(
+  private async fetchTransactions(
+    nodeUrl: string,
+    filterOn: "message.sender" | "transfer.recipient",
     address: string,
-    orderBy?: "ORDER_BY_DESC" | "ORDER_BY_ASC",
-  ) {
-    return await network({
+    options: {
+      "pagination.limit"?: number;
+      "pagination.offset"?: number;
+      "pagination.reverse"?: boolean;
+    },
+  ): Promise<{
+    txs: CosmosTx[];
+    nextPageToken: string | undefined;
+    total: number;
+  }> {
+    let serializedOptions = "";
+    for (const key of Object.keys(options)) {
+      serializedOptions += options[key] != null ? `&${key}=${options[key]}` : "";
+    }
+    const response: {
+      data: {
+        tx_responses: CosmosTx[];
+        pagination: { total: number; next_key: string | undefined };
+      };
+    } = await network({
       method: "GET",
       url:
-        `${this.defaultEndpoint}/cosmos/tx/${this.version}/txs?events=` +
-        encodeURI(`message.sender='${address}'`) +
-        (orderBy ? `&order_by=${orderBy}` : ""),
+        `${nodeUrl}/cosmos/tx/${this.version}/txs?events=` +
+        encodeURI(`${filterOn}='${address}'`) +
+        serializedOptions,
     });
+
+    return {
+      txs: response.data.tx_responses,
+      nextPageToken: response.data.pagination.next_key,
+      total: response.data.pagination.total,
+    };
   }
 
   broadcast = async ({ signedOperation: { operation, signature } }): Promise<Operation> => {

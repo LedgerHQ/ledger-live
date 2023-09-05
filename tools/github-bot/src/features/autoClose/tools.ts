@@ -1,7 +1,7 @@
 export const isValidBranchName = (branch: string): boolean =>
   /^(feat|support|bugfix|releases)\/.+/.test(branch) ||
   /^revert-[0-9]+-(feat|support|bugfix|releases)\/.+/.test(branch) ||
-  ["release", "hotfix"].includes(branch);
+  ["release", "hotfix", "renovate"].includes(branch);
 
 export const isValidUser = (user: string): boolean =>
   ![
@@ -9,6 +9,8 @@ export const isValidUser = (user: string): boolean =>
     "live-github-bot[bot]",
     "github-actions[bot]",
     "dependabot[bot]",
+    "renovate[bot]",
+    "ldg-smartling-sa",
   ].includes(user);
 
 export const isValidBody = (body: string | null): boolean => {
@@ -34,9 +36,7 @@ export const isValidBody = (body: string | null): boolean => {
         };
       }
 
-      const headingIndex = requiredHeadings.findIndex((heading) =>
-        line.startsWith(heading)
-      );
+      const headingIndex = requiredHeadings.findIndex(heading => line.startsWith(heading));
       // Template required heading is still in the body.
       if (headingIndex > -1) {
         acc.matchHeadings[headingIndex] = true;
@@ -48,7 +48,7 @@ export const isValidBody = (body: string | null): boolean => {
     {
       dummyDescription: false,
       matchHeadings: requiredHeadings.map(() => false),
-    }
+    },
   );
 
   return !results.dummyDescription && results.matchHeadings.every(Boolean);

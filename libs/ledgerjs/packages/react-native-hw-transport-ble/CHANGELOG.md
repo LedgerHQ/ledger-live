@@ -1,5 +1,89 @@
 # @ledgerhq/react-native-hw-transport-ble
 
+## 6.29.5
+
+### Patch Changes
+
+- Updated dependencies [[`a61a43fc47`](https://github.com/LedgerHQ/ledger-live/commit/a61a43fc47399e969fa68539de6af51bfa41e921), [`3455944496`](https://github.com/LedgerHQ/ledger-live/commit/34559444969ce1571ff4c54f33feb7f3fb59a33a)]:
+  - @ledgerhq/errors@6.14.0
+  - @ledgerhq/devices@8.0.7
+  - @ledgerhq/hw-transport@6.28.8
+
+## 6.29.5-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`a61a43fc47`](https://github.com/LedgerHQ/ledger-live/commit/a61a43fc47399e969fa68539de6af51bfa41e921), [`3455944496`](https://github.com/LedgerHQ/ledger-live/commit/34559444969ce1571ff4c54f33feb7f3fb59a33a)]:
+  - @ledgerhq/errors@6.14.0-next.0
+  - @ledgerhq/devices@8.0.7-next.0
+  - @ledgerhq/hw-transport@6.28.8-next.0
+
+## 6.29.4
+
+### Patch Changes
+
+- Updated dependencies [[`c7c484acf0`](https://github.com/LedgerHQ/ledger-live/commit/c7c484acf01e9db8dc5a5507b62ffcb863c77ca4)]:
+  - @ledgerhq/errors@6.13.1
+  - @ledgerhq/devices@8.0.6
+  - @ledgerhq/hw-transport@6.28.7
+
+## 6.29.4-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`c7c484acf0`](https://github.com/LedgerHQ/ledger-live/commit/c7c484acf01e9db8dc5a5507b62ffcb863c77ca4)]:
+  - @ledgerhq/errors@6.13.1-next.0
+  - @ledgerhq/devices@8.0.6-next.0
+  - @ledgerhq/hw-transport@6.28.7-next.0
+
+## 6.29.3
+
+### Patch Changes
+
+- Updated dependencies [[`0f4293e9bf`](https://github.com/LedgerHQ/ledger-live/commit/0f4293e9bf9cac4c2a195efeb0831aab3d51933d)]:
+  - @ledgerhq/errors@6.13.0
+  - @ledgerhq/devices@8.0.5
+  - @ledgerhq/hw-transport@6.28.6
+
+## 6.29.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`0f4293e9bf`](https://github.com/LedgerHQ/ledger-live/commit/0f4293e9bf9cac4c2a195efeb0831aab3d51933d)]:
+  - @ledgerhq/errors@6.13.0-next.0
+  - @ledgerhq/devices@8.0.5-next.0
+  - @ledgerhq/hw-transport@6.28.6-next.0
+
+## 6.29.2
+
+### Patch Changes
+
+- [#3790](https://github.com/LedgerHQ/ledger-live/pull/3790) [`7719cbf508`](https://github.com/LedgerHQ/ledger-live/commit/7719cbf5087a44aefa3fc66e7a28c69ba7687bcc) Thanks [@juan-cortes](https://github.com/juan-cortes)! - BleTransport optimization in pairing flows for Stax
+
+## 6.29.2-next.0
+
+### Patch Changes
+
+- [#3790](https://github.com/LedgerHQ/ledger-live/pull/3790) [`7719cbf508`](https://github.com/LedgerHQ/ledger-live/commit/7719cbf5087a44aefa3fc66e7a28c69ba7687bcc) Thanks [@juan-cortes](https://github.com/juan-cortes)! - BleTransport optimization in pairing flows for Stax
+
+## 6.29.1
+
+### Patch Changes
+
+- Updated dependencies [[`9adc1862dd`](https://github.com/LedgerHQ/ledger-live/commit/9adc1862dda605a722d19f3b6895bd324834c914)]:
+  - @ledgerhq/errors@6.12.7
+  - @ledgerhq/devices@8.0.4
+  - @ledgerhq/hw-transport@6.28.5
+
+## 6.29.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`9adc1862dd`](https://github.com/LedgerHQ/ledger-live/commit/9adc1862dda605a722d19f3b6895bd324834c914)]:
+  - @ledgerhq/errors@6.12.7-next.0
+  - @ledgerhq/devices@8.0.4-next.0
+  - @ledgerhq/hw-transport@6.28.5-next.0
+
 ## 6.29.0
 
 ### Minor Changes

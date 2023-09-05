@@ -1,8 +1,9 @@
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import WebView from "react-native-webview";
 
 export type WebviewProps = {
   manifest: LiveAppManifest;
-  inputs?: Record<string, string>;
+  inputs?: Record<string, string | undefined>;
   onStateChange?: (webviewState: WebviewState) => void;
   allowsBackForwardNavigationGestures?: boolean;
 };
@@ -15,9 +16,6 @@ export type WebviewState = {
   loading: boolean;
 };
 
-export type WebviewAPI = {
-  reload: () => void;
-  goBack: () => void;
-  goForward: () => void;
+export type WebviewAPI = Pick<WebView, "reload" | "goBack" | "goForward"> & {
   loadURL: (url: string) => void;
 };

@@ -535,7 +535,6 @@ Usage: ledger-live swap       # Perform an arbitrary swap between two currencies
  -m, --mock                   : Whether or not to use the real backend or a mocked version
  -a, --amount <Number>        : Amount in satoshi units to send
  -u, --useAllAmount           : Attempt to send all using the emulated max amount calculation
- -w, --wyreUserId <String>    : If provided, will attempt to use Wyre provider with given userId
  -t, --tokenId <String>       : Use a token account children of the account
  -f, --useFloat               : Use first floating rate returned. Defaults to false.
  -d, --device <String>        : provide a specific HID path of a device
@@ -587,21 +586,6 @@ Usage: ledger-live user
 
 Usage: ledger-live version
 
-Usage: ledger-live walletconnect # Create a walletconnect session
- -d, --device <String>        : provide a specific HID path of a device
-     --xpub <String>          : use an xpub (alternatively to --device) [DEPRECATED: prefer use of id]
-     --id <String>            : restore an account id (or a partial version of an id) (alternatively to --device)
-     --file <filename>        : use a JSON account file or '-' for stdin (alternatively to --device)
-     --appjsonFile <filename> : use a desktop app.json (alternatively to --device)
- -c, --currency <String>      : Currency name or ticker. If not provided, it will be inferred from the device.
- -s, --scheme <String>        : if provided, filter the derivation path that are scanned by a given sceme. Providing '' empty string will only use the default standard derivation scheme.
- -i, --index <Number>         : select the account by index
- -l, --length <Number>        : set the number of accounts after the index. Defaults to 1 if index was provided, Infinity otherwise.
-     --paginateOperations <Number>: if defined, will paginate operations
-     --walletConnectURI <String>: WallecConnect URI to use.
-     --walletConnectSession <String>: WallecConnect Session to use.
- -v, --verbose                : verbose mode
-     --silent                 : do not output the proxy logs
 
 
                 ````

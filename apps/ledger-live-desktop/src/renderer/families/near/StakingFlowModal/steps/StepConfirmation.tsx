@@ -48,7 +48,13 @@ function StepConfirmation({
   if (optimisticOperation) {
     return (
       <Container>
-        <TrackPage category="Stake NEAR" name="Step Confirmed" />
+        <TrackPage
+          category="Stake NEAR"
+          name="Step Confirmed"
+          flow="stake"
+          action="staking"
+          currency="near"
+        />
         <SyncOneAccountOnMount priority={10} accountId={optimisticOperation.accountId} />
         <SuccessDisplay
           title={<Trans i18nKey="near.stake.flow.steps.confirmation.success.title" />}
@@ -60,7 +66,13 @@ function StepConfirmation({
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage category="Stake NEAR" name="Step Confirmation Error" />
+        <TrackPage
+          category="Stake NEAR"
+          name="Step Confirmation Error"
+          flow="stake"
+          action="staking"
+          currency="near"
+        />
         {signed ? (
           <BroadcastErrorDisclaimer
             title={<Trans i18nKey="near.stake.flow.steps.confirmation.broadcastError" />}

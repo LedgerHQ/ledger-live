@@ -2,6 +2,7 @@ import React from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { multiline } from "~/renderer/styles/helpers";
 import Box from "~/renderer/components/Box";
@@ -13,6 +14,8 @@ import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDiscla
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { StepProps } from "../types";
+import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
+
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   grow: true,
@@ -31,6 +34,8 @@ function StepConfirmation({
   isNFTSend,
   signed,
   currencyName,
+  account,
+  parentAccount,
 }: StepProps) {
   if (optimisticOperation) {
     return (
@@ -54,6 +59,13 @@ function StepConfirmation({
     );
   }
   if (error) {
+    // Edit ethereum transaction nonce error because transaction has been validated
+    if (error.name === "LedgerAPI4xx" && error.message.includes("nonce too low")) {
+      const mainAccount = account ? getMainAccount(account, parentAccount) : null;
+      if (mainAccount?.currency?.family === "ethereum") {
+        error = new TransactionHasBeenValidatedError();
+      }
+    }
     return (
       <Container shouldSpace={signed}>
         <TrackPage

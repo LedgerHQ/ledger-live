@@ -13,8 +13,7 @@ import { CompositeScreenProps, useNavigation, useRoute } from "@react-navigation
 import { useSelector } from "react-redux";
 import { useCalculate } from "@ledgerhq/live-common/countervalues/react";
 import CurrencyUnitValue from "../../../../components/CurrencyUnitValue";
-import { providerIcons } from "../../../../icons/swap/index";
-import { StatusTag } from "./StatusTag";
+import ProviderIcon from "../../../../components/ProviderIcon";
 import { Item } from "./Item";
 import { Banner } from "../Banner";
 import { NavigatorName, ScreenName } from "../../../../const";
@@ -35,7 +34,6 @@ import { sharedSwapTracking } from "../../utils";
 interface Props {
   provider?: string;
   swapTx: SwapTransactionType;
-  kyc?: string;
 }
 
 type Navigation = CompositeScreenProps<
@@ -43,7 +41,7 @@ type Navigation = CompositeScreenProps<
   BaseComposite<MaterialTopTabNavigatorProps<SwapFormNavigatorParamList>>
 >;
 
-export function Summary({ provider, swapTx: { swap, status, transaction }, kyc }: Props) {
+export function Summary({ provider, swapTx: { swap, status, transaction } }: Props) {
   const { track } = useAnalytics();
   const navigation = useNavigation<Navigation["navigation"]>();
   const route = useRoute<Navigation["route"]>();
@@ -54,8 +52,6 @@ export function Summary({ provider, swapTx: { swap, status, transaction }, kyc }
   const rawCounterValueCurrency = useSelector(counterValueCurrencySelector);
 
   const name = useMemo(() => provider && getProviderName(provider), [provider]);
-
-  const ProviderIcon = useMemo(() => provider && providerIcons[provider.toLowerCase()], [provider]);
 
   const { from, to } = swap;
 
@@ -166,7 +162,6 @@ export function Summary({ provider, swapTx: { swap, status, transaction }, kyc }
     !mainAccountUnit ||
     !to.currency ||
     !estimatedFees ||
-    !ProviderIcon ||
     !exchangeRate
   ) {
     return null;
@@ -174,11 +169,14 @@ export function Summary({ provider, swapTx: { swap, status, transaction }, kyc }
 
   return (
     <Flex>
-      <Item title={t("transfer.swap2.form.details.label.provider")} onEdit={onEditProvider}>
+      <Item
+        title={t("transfer.swap2.form.details.label.provider")}
+        onEdit={onEditProvider}
+        testID="choose-provider-button"
+      >
         <Flex flexDirection="row" alignItems="center">
-          <StatusTag kyc={kyc} />
           <Flex paddingRight={2}>
-            <ProviderIcon size={14} />
+            <ProviderIcon size="XXS" name={provider} />
           </Flex>
 
           <Text>{name}</Text>

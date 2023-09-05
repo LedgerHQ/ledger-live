@@ -46,6 +46,7 @@ const Separator = styled.div`
   align-self: center;
   margin-left: 2px;
 `;
+
 type Props = {
   transaction: SwapTransactionType["transaction"];
   account: SwapSelectorStateType["account"];
@@ -57,6 +58,7 @@ type Props = {
   provider: string | undefined | null;
   hasRates: boolean;
 };
+
 const SectionFees = ({
   transaction,
   account,
@@ -78,15 +80,9 @@ const SectionFees = ({
   const family = mainFromAccount?.currency.family;
   const sendAmountSpecific = account && family && getLLDCoinFamily(family)?.sendAmountFields;
   const canEdit =
-    hasRates &&
-    showSummaryValue &&
-    transaction &&
-    "networkInfo" in transaction &&
-    transaction.networkInfo &&
-    account &&
-    family &&
-    sendAmountSpecific;
+    hasRates && showSummaryValue && transaction && account && family && sendAmountSpecific;
   const swapDefaultTrack = useGetSwapTrackingProperties();
+
   const StrategyIcon = useMemo(
     () =>
       (transaction?.feesStrategy &&
@@ -108,6 +104,7 @@ const SectionFees = ({
     // eslint-disable-next-line
     [transaction?.feesStrategy, exchangeRate?.tradeMethod, updateTransaction],
   );
+
   const handleChange = useMemo(
     () =>
       (canEdit &&
@@ -149,6 +146,7 @@ const SectionFees = ({
       provider,
     ],
   );
+
   const summaryValue = canEdit ? (
     <>
       <IconSection>
@@ -171,6 +169,7 @@ const SectionFees = ({
   ) : (
     <NoValuePlaceholder />
   );
+
   return (
     <SummarySection>
       <SummaryLabel label={t("swap2.form.details.label.fees")} />
@@ -178,4 +177,5 @@ const SectionFees = ({
     </SummarySection>
   );
 };
+
 export default React.memo<Props>(SectionFees);

@@ -1,7 +1,7 @@
 import type { ElrondAccount, ElrondProvider } from "./types";
 import { ElrondDelegation, ElrondPreloadData } from "./types";
 import { ELROND_LEDGER_VALIDATOR_ADDRESS } from "./constants";
-import { areEarnRewardsEnabled } from "./helpers/areEarnRewardsEnabled";
+import { hasMinimumDelegableBalance } from "./helpers/hasMinimumDelegableBalance";
 
 interface AccountBannerHiddenState {
   bannerType: "hidden";
@@ -76,7 +76,7 @@ export function getAccountBannerState(
     }
   }
 
-  if (areEarnRewardsEnabled(account)) {
+  if (hasMinimumDelegableBalance(account)) {
     return {
       bannerType: "delegate",
     };

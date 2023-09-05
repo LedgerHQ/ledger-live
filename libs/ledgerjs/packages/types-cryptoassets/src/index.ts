@@ -23,6 +23,7 @@ export type CryptoCurrencyId =
   | "cardano_testnet"
   | "celo"
   | "clubcoin"
+  | "coreum"
   | "cosmos"
   | "cosmos_testnet"
   | "dash"
@@ -53,7 +54,6 @@ export type CryptoCurrencyId =
   | "hpb"
   | "hycon"
   | "icon"
-  | "icp"
   | "iota"
   | "iov"
   | "kin"
@@ -129,6 +129,8 @@ export type CryptoCurrencyId =
   | "solana_testnet"
   | "solana_devnet"
   | "filecoin"
+  | "ethereum_as_evm_test_only"
+  | "polygon_as_evm_test_only"
   | "arbitrum"
   | "arbitrum_goerli"
   | "cronos"
@@ -149,7 +151,46 @@ export type CryptoCurrencyId =
   | "boba"
   | "moonriver"
   | "velas_evm"
-  | "syscoin";
+  | "syscoin"
+  | "internet_computer"
+  | "telos_evm"
+  | "klaytn"
+  | "polygon_zk_evm"
+  | "polygon_zk_evm_testnet"
+  | "base"
+  | "base_goerli";
+
+export type LedgerExplorerId =
+  | "btc"
+  | "btc_testnet"
+  | "bch"
+  | "btg"
+  | "club"
+  | "dash"
+  | "dcr"
+  | "dgb"
+  | "doge"
+  | "hsr"
+  | "kmd"
+  | "ltc"
+  | "ppc"
+  | "pivx"
+  | "posw"
+  | "qtum"
+  | "xsn"
+  | "strat"
+  | "xst"
+  | "vtc"
+  | "via"
+  | "zec"
+  | "zen"
+  | "avax"
+  | "eth"
+  | "eth_ropsten"
+  | "eth_goerli"
+  | "etc"
+  | "matic"
+  | "bnb";
 
 /**
  *
@@ -215,6 +256,47 @@ export type ExplorerView = {
   tx?: string;
   address?: string;
   token?: string;
+  stakePool?: string;
+};
+
+export type EthereumLikeInfo = {
+  chainId: number;
+  networkId?: number; // FIXME To remove after the EVM merge (only used by legacy ethereum family)
+  baseChain?: "mainnet" | "goerli" | "ropsten"; // FIXME To remove after the EVM merge
+  hardfork?: string; // FIXME To remove after the EVM merge
+  // used by evm coin integration
+  node?: // FIXME Should not be optional after the EVM merge
+  | {
+        type: "external";
+        uri: string;
+      }
+    | {
+        type: "ledger";
+        explorerId: LedgerExplorerId;
+      };
+  // used by evm coin integration
+  explorer?:
+    | {
+        type: "etherscan" | "blockscout" | "teloscan" | "klaytnfinder";
+        uri: string;
+      }
+    | {
+        type: "ledger";
+        explorerId: LedgerExplorerId;
+      };
+  // used by evm coin integration
+  gasTracker?: {
+    type: "ledger";
+    explorerId: LedgerExplorerId;
+  };
+};
+
+export type BitcoinLikeInfo = {
+  P2PKH: number;
+  P2SH: number;
+  XPUBVersion?: number;
+  // FIXME optional as we miss some data to fill
+  hasTimestamp?: boolean;
 };
 
 /**
@@ -237,40 +319,22 @@ export type CryptoCurrency = CurrencyCommon & {
   // used for UI
   color: string;
   family: string;
+  // the average time between 2 blocks, in seconds
   blockAvgTime?: number;
-  // in seconds
   supportsSegwit?: boolean;
   supportsNativeSegwit?: boolean;
   // if defined this coin is a testnet for another crypto (id)};
   isTestnetFor?: string;
   // TODO later we could express union of types with mandatory bitcoinLikeInfo for "bitcoin" family...
-  bitcoinLikeInfo?: {
-    P2PKH: number;
-    P2SH: number;
-    XPUBVersion?: number;
-    // FIXME optional as we miss some data to fill
-    hasTimestamp?: boolean;
-  };
-  ethereumLikeInfo?: {
-    chainId: number;
-    networkId?: number;
-    baseChain?: "mainnet" | "goerli" | "ropsten";
-    hardfork?: string;
-    // used by evm light integration
-    rpc?: string;
-    // used by evm light integration
-    explorer?: {
-      uri: string;
-      type: "etherscan" | "blockscout";
-    };
-  };
+  bitcoinLikeInfo?: BitcoinLikeInfo;
+  ethereumLikeInfo?: EthereumLikeInfo;
   explorerViews: ExplorerView[];
   terminated?: {
     link: string;
   };
   deviceTicker?: string;
   // Used to connect to the right endpoint url since it is different from currencyId and ticker
-  explorerId?: string;
+  explorerId?: LedgerExplorerId;
 };
 
 /**

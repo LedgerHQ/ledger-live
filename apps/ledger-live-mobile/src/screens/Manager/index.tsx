@@ -4,9 +4,7 @@ import { useIsFocused, useNavigation, useRoute } from "@react-navigation/native"
 import { Trans } from "react-i18next";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { BluetoothRequired } from "@ledgerhq/errors";
-
-import connectManager from "@ledgerhq/live-common/hw/connectManager";
-import { createAction, Result } from "@ledgerhq/live-common/hw/actions/manager";
+import { Result } from "@ledgerhq/live-common/hw/actions/manager";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Flex, Text } from "@ledgerhq/native-ui";
 
@@ -31,8 +29,7 @@ import { TAB_BAR_SAFE_HEIGHT } from "../../components/TabBar/shared";
 
 import { useExperimental } from "../../experimental";
 import { HEIGHT as ExperimentalHeaderHeight } from "../Settings/Experimental/ExperimentalHeader";
-
-const action = createAction(connectManager);
+import { useManagerDeviceAction } from "../../hooks/deviceActions";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<ManagerNavigatorStackParamList, ScreenName.Manager>
@@ -50,6 +47,7 @@ type ChooseDeviceProps = Props & {
 };
 
 const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
+  const action = useManagerDeviceAction();
   const [device, setDevice] = useState<Device | null>();
 
   const [chosenDevice, setChosenDevice] = useState<Device | null>();
@@ -82,10 +80,11 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
 
     if (result && "result" in result) {
       // FIXME: nullable stuff not taken into account here?
+      // `result` overrides values from `params` (prop `device` for ex)
       // @ts-expect-error Result has nullable fields
       navigation.navigate(ScreenName.ManagerMain, {
-        ...result,
         ...params,
+        ...result,
         searchQuery: params?.searchQuery || params?.installApp,
       });
     }
@@ -161,6 +160,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
             stopBleScanning={!!device}
             displayServicesWidget
             requestToSetHeaderOptions={requestToSetHeaderOptions}
+            withMyLedgerTracking
           />
         </Flex>
       ) : (

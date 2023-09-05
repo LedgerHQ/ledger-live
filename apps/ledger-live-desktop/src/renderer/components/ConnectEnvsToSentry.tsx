@@ -1,12 +1,13 @@
 import { useEffect } from "react";
 import { ipcRenderer } from "electron";
-import { EnvName, getEnv } from "@ledgerhq/live-common/env";
+import { EnvName, getEnv } from "@ledgerhq/live-env";
 import { defaultFeatures, useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
 import { FeatureId } from "@ledgerhq/types-live";
 import { enabledExperimentalFeatures } from "../experimental";
 import { setTags } from "../../sentry/renderer";
+import { Primitive } from "@sentry/types";
 
-type Tags = { [_: string]: boolean | number | string | undefined };
+type Tags = { [key: string]: Primitive };
 
 function setSentryTagsEverywhere(tags: Tags) {
   ipcRenderer.invoke("set-sentry-tags", tags);
@@ -31,15 +32,16 @@ export const ConnectEnvsToSentry = () => {
     const syncTheTags = () => {
       const tags: Tags = {};
       // if there are experimental on, we will add them in tags
-      enabledExperimentalFeatures().forEach((key: EnvName) => {
-        tags[safekey(key)] = getEnv(key);
+      enabledExperimentalFeatures().forEach(key => {
+        tags[safekey(key)] = getEnv(key as EnvName) as Primitive;
       });
       // if there are features on, we will add them in tags
       const features: { [key in FeatureId]?: boolean } = {};
-      Object.keys(defaultFeatures).forEach(key => {
-        const value = featureFlags.getFeature(key as keyof typeof defaultFeatures);
-        if (key && value && value.enabled !== defaultFeatures[key as FeatureId]!.enabled) {
-          features[key as FeatureId] = value.enabled;
+      Object.keys(defaultFeatures).forEach(k => {
+        const key = k as keyof typeof defaultFeatures;
+        const value = featureFlags.getFeature(key);
+        if (key && value && value.enabled !== defaultFeatures[key]!.enabled) {
+          features[key] = value.enabled;
         }
       });
 

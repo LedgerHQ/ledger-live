@@ -3,7 +3,7 @@ import { TouchableOpacity } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useSelector } from "react-redux";
-import { Box, Icons, Flex, Button } from "@ledgerhq/native-ui";
+import { Box, IconsLegacy, Flex, Button } from "@ledgerhq/native-ui";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { ScreenName } from "../../const";
 import { hasAvailableUpdateSelector, lastSeenDeviceSelector } from "../../reducers/settings";
@@ -54,7 +54,7 @@ export default function ManagerNavigator() {
           gestureEnabled: false,
           headerTitle: () => null,
           headerLeft: () => null,
-          headerRight: () => <Button Icon={Icons.CloseMedium} />,
+          headerRight: () => <Button Icon={IconsLegacy.CloseMedium} />,
         }}
       />
       <Stack.Screen
@@ -80,14 +80,14 @@ const DeviceIcon = ({ color, size = 16 }: { color?: string; size?: number }) => 
   switch (lastSeenDevice?.modelId) {
     case DeviceModelId.nanoS:
     case DeviceModelId.nanoSP:
-      icon = <Icons.NanoSFoldedMedium size={size} color={color} />;
+      icon = <IconsLegacy.NanoSFoldedMedium size={size} color={color} />;
       break;
     case DeviceModelId.stax:
-      icon = <Icons.StaxMedium size={size} color={color} />;
+      icon = <IconsLegacy.StaxMedium size={size} color={color} />;
       break;
     case DeviceModelId.nanoX:
     default:
-      icon = <Icons.NanoXFoldedMedium size={size} color={color} />;
+      icon = <IconsLegacy.NanoXFoldedMedium size={size} color={color} />;
       break;
   }
 

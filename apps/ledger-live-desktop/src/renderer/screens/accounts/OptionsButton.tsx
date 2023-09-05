@@ -11,11 +11,11 @@ import DropDownSelector, {
 } from "~/renderer/components/DropDownSelector";
 import Switch from "~/renderer/components/Switch";
 import Tooltip from "~/renderer/components/Tooltip";
-import IconDots from "~/renderer/icons/Dots";
 import IconDownloadCloud from "~/renderer/icons/DownloadCloud";
 import IconSend from "~/renderer/icons/Send";
 import { openModal } from "~/renderer/actions/modals";
 import { useHideEmptyTokenAccounts } from "~/renderer/actions/settings";
+import { IconsLegacy } from "@ledgerhq/react-ui";
 
 const Separator = styled.div`
   background-color: ${p => p.theme.colors.palette.divider};
@@ -121,7 +121,7 @@ const OptionsButton = () => {
               }}
             >
               <Box alignItems="center">
-                <IconDots size={14} />
+                <IconsLegacy.OthersMedium size={14} />
               </Box>
             </Button>
           </Tooltip>

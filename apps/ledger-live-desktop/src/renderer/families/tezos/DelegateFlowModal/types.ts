@@ -1,4 +1,4 @@
-import { TFunction } from "react-i18next";
+import { TFunction } from "i18next";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/tezos/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -36,5 +36,6 @@ export type StepProps = {
   signed: boolean;
   isRandomChoice: boolean;
   openedWithAccount: boolean;
+  source?: string;
 };
 export type St = Step<StepId, StepProps>;

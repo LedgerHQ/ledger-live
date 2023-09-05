@@ -8,22 +8,26 @@ import { Transaction } from "@ledgerhq/live-common/generated/types";
 import Media from "~/renderer/components/Nft/Media";
 import Skeleton from "~/renderer/components/Nft/Skeleton";
 import { useNftMetadata } from "@ledgerhq/live-common/nft/NftMetadataProvider/index";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { centerEllipsis } from "~/renderer/styles/helpers";
-import { NFTMetadata } from "@ledgerhq/types-live";
+import { NFTMetadata, ProtoNFT } from "@ledgerhq/types-live";
+import { getNFT } from "@ledgerhq/live-common/nft/index";
+import { getLLDCoinFamily } from "~/renderer/families";
+
 type Props = {
   transaction: Transaction;
+  currency: CryptoCurrency;
 };
 const Summary = ({ transaction }: Props) => {
-  const allNfts = useSelector(getAllNFTs);
-  // @ts-expect-error error from type in families
-  const [tokenId] = transaction.tokenIds;
-  // @ts-expect-error error from type in families
-  const [quantity] = transaction.quantities;
-  // @ts-expect-error error from type in families
-  const contract = transaction.collection;
-  const nft = allNfts.find(nft => nft?.tokenId === tokenId && nft?.contract === contract);
+  const allNfts = useSelector(getAllNFTs) as ProtoNFT[];
+  const specific = getLLDCoinFamily(transaction.family);
+  const { contract, tokenId, quantity } = useMemo(
+    () => specific?.nft?.getNftTransactionProperties(transaction) || ({} as Record<string, never>),
+    [specific?.nft, transaction],
+  );
+  const nft = useMemo(() => getNFT(contract, tokenId, allNfts), [allNfts, contract, tokenId]);
   const { status, metadata } = useNftMetadata(nft?.contract, nft?.tokenId, nft?.currencyId);
-  const { nftName } = (metadata as NFTMetadata) || {};
+  const { nftName } = status === "loaded" ? metadata : ({} as Record<string, unknown>);
   const show = useMemo(() => status === "loading", [status]);
   return (
     <>
@@ -48,7 +52,7 @@ const Summary = ({ transaction }: Props) => {
           <Skeleton width={48} minHeight={48} show={show}>
             <Media
               metadata={metadata as NFTMetadata}
-              tokenId={tokenId}
+              tokenId={tokenId || ""}
               size={48}
               mediaFormat="preview"
             />
@@ -62,7 +66,7 @@ const Summary = ({ transaction }: Props) => {
           </Text>
           <Box>
             <Text ff="Inter|Regular" color="palette.text.shade60" fontSize={3}>
-              {quantity.toFixed()}
+              {quantity?.toFixed()}
             </Text>
           </Box>
         </Box>

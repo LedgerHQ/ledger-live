@@ -1,4 +1,4 @@
-import { getElementById, openDeeplink, waitForElementByID } from "../../helpers";
+import { getElementById, openDeeplink, waitForElementById } from "../../helpers";
 
 const baseLink = "accounts";
 
@@ -9,6 +9,9 @@ export default class accountsPage {
     await openDeeplink(baseLink);
   }
   async waitForAccountsPageToLoad() {
-    await waitForElementByID("accounts-list-title");
+    await waitForElementById("accounts-list-title");
+  }
+  async waitForAccountsCoinPageToLoad(coin: string) {
+    await waitForElementById(`accounts-title-${coin}`);
   }
 }

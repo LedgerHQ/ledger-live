@@ -15,7 +15,7 @@ import OpenUserDataDirectoryBtn from "~/renderer/components/OpenUserDataDirector
 import { Trans } from "react-i18next";
 import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { FullNodeSteps, ConnectionStatus, CheckWrapper, connectionStatus } from "..";
 import IconCheck from "~/renderer/icons/Check";

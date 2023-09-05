@@ -11,10 +11,9 @@ import type {
   RawPlatformSignedTransaction,
   RawPlatformAccount,
 } from "@ledgerhq/live-common/platform/rawTypes";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { isTokenAccount } from "@ledgerhq/live-common/account/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import {
@@ -36,6 +35,7 @@ import {
 } from "@ledgerhq/live-common/platform/react";
 import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
 import BigNumber from "bignumber.js";
+import { DEFAULT_MULTIBUY_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
 import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 import { NavigatorName, ScreenName } from "../../const";
 import { broadcastSignedTx } from "../../logic/screenTransactionHooks";
@@ -58,19 +58,14 @@ function renderLoading() {
 }
 export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
   ({ manifest, inputs = {}, onStateChange }, ref) => {
-    const { webviewProps, webviewState, webviewRef } = useWebviewState(
+    const { webviewProps, webviewRef } = useWebviewState(
       {
         manifest,
         inputs,
       },
       ref,
+      onStateChange,
     );
-
-    useEffect(() => {
-      if (onStateChange) {
-        onStateChange(webviewState);
-      }
-    }, [webviewState, onStateChange]);
 
     const accounts = useSelector(flattenAccountsSelector);
     const navigation =
@@ -146,7 +141,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
 
           // if single currency available redirect to select account directly
           if (currenciesDiff.length === 1) {
-            const currency = findCryptoCurrencyById(currenciesDiff[0]);
+            const currency = allCurrencies.find(c => c.id === currenciesDiff[0]);
 
             if (!currency) {
               tracking.platformRequestAccountFail(manifest);
@@ -503,7 +498,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
 
     // See https://ledgerhq.atlassian.net/browse/LIVE-7646 : (temporary ?) workaround for binance buy integration
     const javaScriptCanOpenWindowsAutomatically =
-      manifest.id === "binancecnt" || manifest.id === "multibuy";
+      manifest.id === "binancecnt" || manifest.id === DEFAULT_MULTIBUY_APP_ID;
 
     return (
       <RNWebView

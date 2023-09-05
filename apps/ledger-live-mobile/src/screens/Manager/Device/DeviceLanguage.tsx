@@ -88,7 +88,7 @@ const DeviceLanguage: React.FC<Props> = ({
   return (
     <>
       <DeviceOptionRow
-        Icon={Icons.LanguageMedium}
+        Icon={Icons.Language}
         label={t("deviceLocalization.language")}
         onPress={disabled ? undefined : openChangeLanguageModal}
         linkLabel={t(`deviceLocalization.languages.${currentDeviceLanguage}`)}

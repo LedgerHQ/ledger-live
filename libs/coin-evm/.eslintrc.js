@@ -10,13 +10,11 @@ module.exports = {
         "jest/globals": true,
       },
       plugins: ["jest"],
-      rules: {
-        "@typescript-eslint/no-non-null-assertion": "off",
-      },
     },
   ],
   rules: {
     "no-console": ["error", { allow: ["warn", "error"] }],
     "@typescript-eslint/no-empty-function": "off",
+    "@typescript-eslint/no-explicit-any": "warn",
   },
 };

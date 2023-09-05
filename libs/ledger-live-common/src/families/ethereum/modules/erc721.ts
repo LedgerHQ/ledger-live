@@ -7,7 +7,7 @@ import type { ModeModule, Transaction } from "../types";
 import type { Account } from "@ledgerhq/types-live";
 import { apiForCurrency } from "../api";
 
-const NotOwnedNft = createCustomErrorClass("NotOwnedNft");
+export const NotOwnedNft = createCustomErrorClass("NotOwnedNft");
 
 export type Modes = "erc721.transfer";
 
@@ -19,13 +19,13 @@ export async function prepareTransaction(
   const { collection, collectionName, tokenIds } = transaction;
   if (collection && tokenIds && typeof collectionName === "undefined") {
     const api = apiForCurrency(account.currency);
-    const [{ status, result }] = await api.getNFTCollectionMetadata(
+    const [{ status, result }] = await api.getNftCollectionMetadata(
       [
         {
           contract: collection,
         },
       ],
-      account.currency?.ethereumLikeInfo?.chainId?.toString() || "1",
+      { chainId: account.currency?.ethereumLikeInfo?.chainId ?? 1 },
     );
     let collectionName = ""; // default value fallback if issue
     if (status === 200) {

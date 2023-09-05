@@ -8,17 +8,21 @@ import { spawn, exec } from "child_process";
 import { promises as fsp } from "fs";
 import { log } from "@ledgerhq/logs";
 import type { DeviceModelId } from "@ledgerhq/devices";
-import SpeculosTransport from "@ledgerhq/hw-transport-node-speculos-http";
+import SpeculosTransportHttp from "@ledgerhq/hw-transport-node-speculos-http";
+import SpeculosTransportWebsocket from "@ledgerhq/hw-transport-node-speculos";
 import type { AppCandidate } from "@ledgerhq/coin-framework/bot/types";
 import { registerTransportModule } from "../hw";
-import { getEnv } from "../env";
+import { getEnv } from "@ledgerhq/live-env";
 import { getDependencies } from "../apps/polyfill";
 import { findCryptoCurrencyByKeyword } from "../currencies";
 import { formatAppCandidate } from "../bot/formatters";
 import { delay } from "../promise";
 import { mustUpgrade, shouldUpgrade } from "../apps";
 
+export type SpeculosTransport = SpeculosTransportHttp | SpeculosTransportWebsocket;
+
 let idCounter = getEnv("SPECULOS_PID_OFFSET");
+const isSpeculosWebsocket = getEnv("SPECULOS_USE_WEBSOCKET");
 
 const data = {};
 
@@ -70,6 +74,22 @@ function inferSDK(firmware: string, model: string): string | undefined {
   if (existingSdks.includes(begin + shortVersion + ".elf")) return shortVersion;
 }
 
+const getPorts = (idCounter: number, isSpeculosWebsocket?: boolean) => {
+  if (isSpeculosWebsocket) {
+    const apduPort = 30000 + idCounter;
+    const vncPort = 35000 + idCounter;
+    const buttonPort = 40000 + idCounter;
+    const automationPort = 45000 + idCounter;
+
+    return { apduPort, vncPort, buttonPort, automationPort };
+  } else {
+    const apiPort = 30000 + idCounter;
+    const vncPort = 35000 + idCounter;
+
+    return { apiPort, vncPort };
+  }
+};
+
 export async function createSpeculosDevice(
   arg: {
     model: DeviceModelId;
@@ -89,8 +109,7 @@ export async function createSpeculosDevice(
 }> {
   const { model, firmware, appName, appVersion, seed, coinapps, dependency } = arg;
   const speculosID = `speculosID-${++idCounter}`;
-  const apiPort = 30000 + idCounter;
-  const vncPort = 35000 + idCounter;
+  const ports = getPorts(idCounter, isSpeculosWebsocket);
 
   const sdk = inferSDK(firmware, model);
 
@@ -103,10 +122,18 @@ export async function createSpeculosDevice(
     "run",
     "-v",
     `${coinapps}:/speculos/apps`,
-    "-p",
-    `${apiPort}:40000`,
-    "-p",
-    `${vncPort}:41000`,
+    ...(isSpeculosWebsocket
+      ? [
+          "-p",
+          `${ports.apduPort}:40000`,
+          "-p",
+          `${ports.vncPort}:41000`,
+          "-p",
+          `${ports.buttonPort}:42000`,
+          "-p",
+          `${ports.automationPort}:43000`,
+        ]
+      : ["-p", `${ports.apiPort}:40000`, "-p", `${ports.vncPort}:41000`]),
     "-e",
     `SPECULOS_APPNAME=${appName}:${appVersion}`,
     "--name",
@@ -129,10 +156,18 @@ export async function createSpeculosDevice(
     "headless",
     "--vnc-password",
     "live",
-    "--api-port",
-    "40000",
-    "--vnc-port",
-    "41000",
+    ...(isSpeculosWebsocket
+      ? [
+          "--apdu-port",
+          "40000",
+          "--vnc-port",
+          "41000",
+          "--button-port",
+          "42000",
+          "--automation-port",
+          "43000",
+        ]
+      : ["--api-port", "40000", "--vnc-port", "41000"]),
   ];
 
   log("speculos", `${speculosID}: spawning = ${params.join(" ")}`);
@@ -208,15 +243,34 @@ export async function createSpeculosDevice(
     return createSpeculosDevice(arg, maxRetry - 1);
   }
 
-  const transport = await SpeculosTransport.open({
-    apiPort,
-  });
-  data[speculosID] = {
-    process: p,
-    apiPort,
-    transport,
-    destroy,
-  };
+  let transport: SpeculosTransport;
+  if (isSpeculosWebsocket) {
+    transport = await SpeculosTransportWebsocket.open({
+      apduPort: ports?.apduPort as number,
+      buttonPort: ports?.buttonPort as number,
+      automationPort: ports?.automationPort as number,
+    });
+
+    data[speculosID] = {
+      process: p,
+      apduPort: ports.apduPort as number,
+      buttonPort: ports.buttonPort as number,
+      automationPort: ports.automationPort as number,
+      transport,
+      destroy,
+    };
+  } else {
+    transport = await SpeculosTransportHttp.open({
+      apiPort: ports.apiPort?.toString(),
+    });
+
+    data[speculosID] = {
+      process: p,
+      apiPort: ports.apiPort?.toString(),
+      transport,
+      destroy,
+    };
+  }
   return {
     id: speculosID,
     transport,

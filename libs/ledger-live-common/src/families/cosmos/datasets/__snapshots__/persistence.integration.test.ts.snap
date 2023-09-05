@@ -1,0 +1,92 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`persistence currency bridge scanAccounts persistence seed 1 1`] = `
+Array [
+  Object {
+    "balance": "2636568",
+    "currencyId": "persistence",
+    "derivationMode": "",
+    "freshAddress": "persistence1gyauvl44q2apn3u3aujm36q8zrj74vrym5cypd",
+    "freshAddressPath": "44'/118'/0'/0/0",
+    "freshAddresses": Array [
+      Object {
+        "address": "persistence1gyauvl44q2apn3u3aujm36q8zrj74vrym5cypd",
+        "derivationPath": "44'/118'/0'/0/0",
+      },
+    ],
+    "id": "js:2:persistence:persistence1gyauvl44q2apn3u3aujm36q8zrj74vrym5cypd:",
+    "index": 0,
+    "name": "Persistence 1",
+    "nfts": undefined,
+    "pendingOperations": Array [],
+    "seedIdentifier": "03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e83",
+    "spendableBalance": "1202564",
+    "starred": false,
+    "swapHistory": Array [],
+    "syncHash": undefined,
+    "unitMagnitude": 6,
+    "used": true,
+    "xpub": "persistence1gyauvl44q2apn3u3aujm36q8zrj74vrym5cypd",
+  },
+  Object {
+    "balance": "230000",
+    "currencyId": "persistence",
+    "derivationMode": "",
+    "freshAddress": "persistence1v2mp0m7k96dm9qv60fkspcqlzpkzrwnevf47z2",
+    "freshAddressPath": "44'/118'/1'/0/0",
+    "freshAddresses": Array [
+      Object {
+        "address": "persistence1v2mp0m7k96dm9qv60fkspcqlzpkzrwnevf47z2",
+        "derivationPath": "44'/118'/1'/0/0",
+      },
+    ],
+    "id": "js:2:persistence:persistence1v2mp0m7k96dm9qv60fkspcqlzpkzrwnevf47z2:",
+    "index": 1,
+    "name": "Persistence 2",
+    "nfts": undefined,
+    "pendingOperations": Array [],
+    "seedIdentifier": "03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e83",
+    "spendableBalance": "230000",
+    "starred": false,
+    "swapHistory": Array [],
+    "syncHash": undefined,
+    "unitMagnitude": 6,
+    "used": true,
+    "xpub": "persistence1v2mp0m7k96dm9qv60fkspcqlzpkzrwnevf47z2",
+  },
+  Object {
+    "balance": "0",
+    "currencyId": "persistence",
+    "derivationMode": "",
+    "freshAddress": "persistence17r56udl09ssv88x85cxftx7su0rgv4v27ej3p0",
+    "freshAddressPath": "44'/118'/2'/0/0",
+    "freshAddresses": Array [
+      Object {
+        "address": "persistence17r56udl09ssv88x85cxftx7su0rgv4v27ej3p0",
+        "derivationPath": "44'/118'/2'/0/0",
+      },
+    ],
+    "id": "js:2:persistence:persistence17r56udl09ssv88x85cxftx7su0rgv4v27ej3p0:",
+    "index": 2,
+    "name": "Persistence 3",
+    "nfts": undefined,
+    "pendingOperations": Array [],
+    "seedIdentifier": "03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e83",
+    "spendableBalance": "0",
+    "starred": false,
+    "swapHistory": Array [],
+    "syncHash": undefined,
+    "unitMagnitude": 6,
+    "used": false,
+    "xpub": "persistence17r56udl09ssv88x85cxftx7su0rgv4v27ej3p0",
+  },
+]
+`;
+
+exports[`persistence currency bridge scanAccounts persistence seed 1 2`] = `
+Array [
+  Array [],
+  Array [],
+  Array [],
+]
+`;

@@ -1,8 +1,9 @@
 import EventEmitter from "events";
+import { usb } from "usb";
+import debounce from "lodash/debounce";
 import { getDevices } from "@ledgerhq/hw-transport-node-hid-noevents";
 import { log } from "@ledgerhq/logs";
-import usb from "usb";
-import debounce from "lodash/debounce";
+
 export default (
   delay: number,
   listenDevicesPollingSkip: () => boolean,

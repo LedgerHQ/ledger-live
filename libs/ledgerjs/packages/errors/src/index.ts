@@ -33,6 +33,7 @@ export const DeviceNameInvalid = createCustomErrorClass("DeviceNameInvalid");
 export const DeviceSocketFail = createCustomErrorClass("DeviceSocketFail");
 export const DeviceSocketNoBulkStatus = createCustomErrorClass("DeviceSocketNoBulkStatus");
 export const LockedDeviceError = createCustomErrorClass("LockedDeviceError");
+export const UnresponsiveDeviceError = createCustomErrorClass("UnresponsiveDeviceError");
 export const DisconnectedDevice = createCustomErrorClass("DisconnectedDevice");
 export const DisconnectedDeviceDuringOperation = createCustomErrorClass(
   "DisconnectedDeviceDuringOperation",
@@ -52,6 +53,7 @@ export const FirmwareNotRecognized = createCustomErrorClass("FirmwareNotRecogniz
 export const HardResetFail = createCustomErrorClass("HardResetFail");
 export const InvalidXRPTag = createCustomErrorClass("InvalidXRPTag");
 export const InvalidAddress = createCustomErrorClass("InvalidAddress");
+export const InvalidNonce = createCustomErrorClass("InvalidNonce");
 export const InvalidAddressBecauseDestinationIsAlsoSource = createCustomErrorClass(
   "InvalidAddressBecauseDestinationIsAlsoSource",
 );
@@ -85,6 +87,8 @@ export const NotEnoughBalanceBecauseDestinationNotCreated = createCustomErrorCla
 );
 export const NoAccessToCamera = createCustomErrorClass("NoAccessToCamera");
 export const NotEnoughGas = createCustomErrorClass("NotEnoughGas");
+// Error message specifically for the PTX swap flow
+export const NotEnoughGasSwap = createCustomErrorClass("NotEnoughGasSwap");
 export const NotSupportedLegacyAddress = createCustomErrorClass("NotSupportedLegacyAddress");
 export const GasLessThanEstimate = createCustomErrorClass("GasLessThanEstimate");
 export const PriorityFeeTooLow = createCustomErrorClass("PriorityFeeTooLow");
@@ -122,11 +126,15 @@ export const TransportRaceCondition = createCustomErrorClass("TransportRaceCondi
 export const TransportWebUSBGestureRequired = createCustomErrorClass(
   "TransportWebUSBGestureRequired",
 );
+export const TransactionHasBeenValidatedError = createCustomErrorClass(
+  "TransactionHasBeenValidatedError",
+);
 export const DeviceShouldStayInApp = createCustomErrorClass("DeviceShouldStayInApp");
 export const WebsocketConnectionError = createCustomErrorClass("WebsocketConnectionError");
 export const WebsocketConnectionFailed = createCustomErrorClass("WebsocketConnectionFailed");
 export const WrongDeviceForAccount = createCustomErrorClass("WrongDeviceForAccount");
 export const WrongAppForCurrency = createCustomErrorClass("WrongAppForCurrency");
+
 export const ETHAddressNonEIP = createCustomErrorClass("ETHAddressNonEIP");
 export const CantScanQRCode = createCustomErrorClass("CantScanQRCode");
 export const FeeNotLoaded = createCustomErrorClass("FeeNotLoaded");

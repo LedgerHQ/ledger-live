@@ -415,11 +415,11 @@ const getBalances = (network: NetworkRequestCall) => async (addr: string) => {
   const balance = new BigNumber(balanceInfo.free);
   const spendableBalance = totalLocked.gt(balance) ? new BigNumber(0) : balance.minus(totalLocked);
   return {
-    blockHeight: balanceInfo.at?.height ? Number(balanceInfo.at.height) : null,
+    blockHeight: Number(balanceInfo.at.height),
     balance,
     spendableBalance,
     nonce: Number(balanceInfo.nonce),
-    lockedBalance: new BigNumber(balanceInfo.miscFrozen),
+    lockedBalance: new BigNumber(totalLocked),
   };
 };
 

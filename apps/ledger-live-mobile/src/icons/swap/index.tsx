@@ -1,19 +1,5 @@
 import React from "react";
 import Svg, { Path } from "react-native-svg";
-import { getFTXLogo } from "./FTX";
-import { Changelly } from "./Changelly";
-import { Cic } from "./Cic";
-import { Wyre } from "./Wyre";
-
-export { Paraswap } from "./Paraswap";
-
-export const providerIcons: Record<string, React.FC<{ size: number }>> = {
-  changelly: React.memo(Changelly),
-  cic: React.memo(Cic),
-  ftx: getFTXLogo(),
-  ftxus: getFTXLogo(true),
-  wyre: React.memo(Wyre),
-};
 
 export const SwapIcon = React.memo(({ size = 16, color }: { size: number; color: string }) => (
   <Svg viewBox="0 0 16 16" width={size} height={size}>

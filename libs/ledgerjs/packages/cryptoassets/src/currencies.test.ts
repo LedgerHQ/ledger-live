@@ -217,6 +217,8 @@ test("testnet currencies must also set disableCountervalue to true", () => {
   expect(
     listCryptoCurrencies(true)
       .filter(c => c.isTestnetFor)
+      /** @todo remove this after the ethereum/evm merge */
+      .filter(c => !c.id.includes("_as_evm_test_only"))
       .filter(c => !c.disableCountervalue)
       .map(c => c.id),
   ).toEqual([]);

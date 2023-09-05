@@ -14,6 +14,7 @@ import Card from "~/renderer/screens/card";
 import Manager from "~/renderer/screens/manager";
 import Exchange from "~/renderer/screens/exchange";
 import Earn from "./screens/earn";
+import SwapWeb from "./screens/swapWeb";
 import Swap2 from "~/renderer/screens/exchange/Swap2";
 import USBTroubleshooting from "~/renderer/screens/USBTroubleshooting";
 import Account from "~/renderer/screens/account";
@@ -50,6 +51,8 @@ import { ToastOverlay } from "~/renderer/components/ToastOverlay";
 import Drawer from "~/renderer/drawers/Drawer";
 import UpdateBanner from "~/renderer/components/Updater/Banner";
 import FirmwareUpdateBanner from "~/renderer/components/FirmwareUpdateBanner";
+import VaultSignerBanner from "~/renderer/components/VaultSignerBanner";
+import RecoverRestore from "~/renderer/components/RecoverRestore";
 import Onboarding from "~/renderer/components/Onboarding";
 import PostOnboardingScreen from "~/renderer/components/PostOnboardingScreen";
 import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
@@ -62,6 +65,8 @@ import SyncOnboarding from "./components/SyncOnboarding";
 import RecoverPlayer from "~/renderer/screens/recover/Player";
 import { updateIdentify } from "./analytics/segment";
 import { useDiscoverDB } from "./screens/platform/v2/hooks";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { enableListAppsV2 } from "@ledgerhq/live-common/apps/hw";
 
 // in order to test sentry integration, we need the ability to test it out.
 const LetThisCrashForCrashTest = () => {
@@ -145,6 +150,12 @@ export default function Default() {
   useProviders(); // prefetch data from swap providers here
   const discoverDB = useDiscoverDB();
 
+  const listAppsV2 = useFeature("listAppsV2");
+  useEffect(() => {
+    if (!listAppsV2) return;
+    enableListAppsV2(listAppsV2.enabled);
+  }, [listAppsV2]);
+
   useEffect(() => {
     if (!hasCompletedOnboarding) {
       history.push("/onboarding");
@@ -174,7 +185,15 @@ export default function Default() {
               <DisableTransactionBroadcastWarning />
             ) : null}
             <Switch>
-              <Route path="/onboarding" component={Onboarding} />
+              <Route
+                path="/onboarding"
+                render={() => (
+                  <>
+                    <Onboarding />
+                    <Drawer />
+                  </>
+                )}
+              />
               <Route path="/sync-onboarding" component={SyncOnboarding} />
               <Route
                 path="/post-onboarding"
@@ -185,6 +204,7 @@ export default function Default() {
                   </>
                 )}
               />
+              <Route path="/recover-restore" component={RecoverRestore} />
 
               <Route path="/USBTroubleshooting">
                 <USBTroubleshooting onboarding={!hasCompletedOnboarding} />
@@ -220,6 +240,7 @@ export default function Default() {
                           <TopBannerContainer>
                             <UpdateBanner />
                             <FirmwareUpdateBanner />
+                            <VaultSignerBanner />
                           </TopBannerContainer>
                           <Switch>
                             <Route path="/" exact component={Dashboard} />
@@ -235,12 +256,13 @@ export default function Default() {
                             />
                             <Route path="/platform/:appId?" component={LiveApp} />
                             <Route path="/earn" component={Earn} />
-                            <Route path="/exchange" component={Exchange} />
+                            <Route exact path="/exchange/:appId?" component={Exchange} />
                             <Route
                               exact
                               path="/account/:id/nft-collection"
                               component={NFTGallery}
                             />
+                            <Route path="/swap-web" component={SwapWeb} />
                             <Route
                               path="/account/:id/nft-collection/:collectionAddress?"
                               component={NFTCollection}

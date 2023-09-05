@@ -2,15 +2,21 @@ import { useEffect } from "react";
 import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
 import {
   ImageCropError,
-  ImageMetadataLoadingError,
+  ImageSizeLoadingError,
   ImageResizeError,
 } from "@ledgerhq/live-common/customImage/errors";
-import { ImageBase64Data, ImageDimensions, ImageFileUri } from "./types";
+import { ImageBase64Data, ImageDimensions } from "./types";
 import { loadImageSizeAsync } from "./imageUtils";
 
 export type CenteredResult = ImageBase64Data & ImageDimensions;
 
-export type Params = Partial<ImageFileUri> & {
+export type Params = {
+  /**
+   * URI of the image to crop and center. Can be a file URI or a URL
+   * Careful if using a URL as the image will be downloaded everytime
+   * one of the props changes.
+   * */
+  imageUri?: string;
   targetDimensions: ImageDimensions;
   onError: (_: Error) => void;
   onResult: (_: CenteredResult) => void;
@@ -26,10 +32,10 @@ export type Params = Partial<ImageFileUri> & {
  * */
 
 function useCenteredImage(params: Params) {
-  const { imageFileUri, targetDimensions, onError, onResult } = params;
+  const { imageUri, targetDimensions, onError, onResult } = params;
   useEffect(() => {
     let dead = false;
-    if (!imageFileUri)
+    if (!imageUri)
       return () => {
         dead = true;
       };
@@ -37,10 +43,10 @@ function useCenteredImage(params: Params) {
     const load = async () => {
       let realImageDimensions;
       try {
-        realImageDimensions = await loadImageSizeAsync(imageFileUri);
+        realImageDimensions = await loadImageSizeAsync(imageUri);
       } catch (e) {
         console.error(e);
-        throw new ImageMetadataLoadingError();
+        throw new ImageSizeLoadingError();
       }
 
       const imageDimensions = {
@@ -74,7 +80,7 @@ function useCenteredImage(params: Params) {
       };
 
       if (dead) return;
-      manipulateAsync(imageFileUri, [{ resize: resizedImageDimensions }], {
+      return manipulateAsync(imageUri, [{ resize: resizedImageDimensions }], {
         compress: 1,
         base64: false,
         format: SaveFormat.PNG,
@@ -114,7 +120,7 @@ function useCenteredImage(params: Params) {
       dead = true;
     };
   }, [
-    imageFileUri,
+    imageUri,
     targetDimensions?.height,
     targetDimensions?.width,
     onError,

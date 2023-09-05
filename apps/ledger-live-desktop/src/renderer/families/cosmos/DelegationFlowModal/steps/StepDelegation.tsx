@@ -45,7 +45,13 @@ export default function StepDelegation({
 
   return (
     <Box flow={1}>
-      <TrackPage category="Delegation Flow" name="Step Validator" />
+      <TrackPage
+        category="Delegation Flow"
+        name="Step Validator"
+        flow="stake"
+        action="delegation"
+        currency={account.currency.id}
+      />
       {error && <ErrorBanner error={error} />}
       <ValidatorField
         account={account}

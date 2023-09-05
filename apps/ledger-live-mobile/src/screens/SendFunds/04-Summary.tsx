@@ -12,6 +12,7 @@ import { NotEnoughGas } from "@ledgerhq/errors";
 import { useTheme } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import invariant from "invariant";
+
 import { accountScreenSelector } from "../../reducers/accounts";
 import { ScreenName, NavigatorName } from "../../const";
 import { TrackScreen } from "../../analytics";
@@ -54,6 +55,7 @@ function SendSummary({ navigation, route }: Props) {
   const { nextNavigation, overrideAmountLabel, hideTotal } = route.params;
 
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
+
   invariant(account, "account is missing");
 
   const { transaction, setTransaction, status, bridgePending } = useBridgeTransaction(() => ({
@@ -138,6 +140,7 @@ function SendSummary({ navigation, route }: Props) {
     account &&
     account.type === "Account" &&
     (account.subAccounts || []).some(subAccount => subAccount.balance.gt(0));
+
   const onBuyEth = useCallback(() => {
     navigation.navigate(NavigatorName.Exchange, {
       screen: ScreenName.ExchangeBuy,
@@ -147,8 +150,12 @@ function SendSummary({ navigation, route }: Props) {
       },
     });
   }, [navigation, account?.id, currencyOrToken?.id]);
+
   // FIXME: why is recipient sometimes empty?
-  if (!account || !transaction || !transaction.recipient || !currencyOrToken) return null;
+  if (!account || !transaction || !transaction.recipient || !currencyOrToken) {
+    return null;
+  }
+
   return (
     <SafeAreaView
       style={[
@@ -189,7 +196,7 @@ function SendSummary({ navigation, route }: Props) {
         ) : null}
         <SendRowsCustom
           transaction={transaction}
-          account={mainAccount as Account}
+          account={mainAccount}
           navigation={navigation}
           route={route}
         />
@@ -213,6 +220,7 @@ function SendSummary({ navigation, route }: Props) {
           navigation={navigation}
           route={route}
         />
+
         {error ? (
           <View style={styles.gasPriceError}>
             <View
@@ -256,6 +264,7 @@ function SendSummary({ navigation, route }: Props) {
           <Button
             event="SummaryContinue"
             type="primary"
+            testID="summary-continue-button"
             title={<Trans i18nKey="common.continue" />}
             containerStyle={styles.continueButton}
             onPress={() => setContinuing(true)}

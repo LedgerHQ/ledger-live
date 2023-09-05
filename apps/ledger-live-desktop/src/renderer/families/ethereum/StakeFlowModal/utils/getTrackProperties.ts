@@ -1,11 +1,11 @@
 type Props = {
-  value: string;
+  value: string | boolean;
   modal?: string;
 };
 
 export function getTrackProperties({ value, modal = "stake" }: Props) {
   return {
-    page: window.location.hash
+    path: window.location.hash
       .split("/")
       .filter(e => e !== "#")
       .join("/"),

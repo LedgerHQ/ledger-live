@@ -1,6 +1,6 @@
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { postSwapAccepted, postSwapCancelled } from "@ledgerhq/live-common/exchange/swap/index";
 import addToSwapHistory from "@ledgerhq/live-common/exchange/swap/addToSwapHistory";
 import { SwapTransactionType, ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
@@ -57,6 +57,7 @@ export default function ExchangeDrawer({ swapTransaction, exchangeRate, onComple
       to: { account: toAccount, parentAccount: toParentAccount, currency: targetCurrency },
     },
   } = swapTransaction;
+
   const exchange = useMemo(
     () => ({
       fromParentAccount,
@@ -66,6 +67,7 @@ export default function ExchangeDrawer({ swapTransaction, exchangeRate, onComple
     }),
     [fromAccount, fromParentAccount, toAccount, toParentAccount],
   );
+
   const onError = useCallback(
     errorResult => {
       const { error, swapId } = errorResult;
@@ -85,6 +87,7 @@ export default function ExchangeDrawer({ swapTransaction, exchangeRate, onComple
     },
     [exchangeRate.provider, swapDefaultTrack],
   );
+
   const onCompletion = useCallback(
     (result: { operation: Operation; swapId: string }) => {
       const { operation, swapId } = result;
@@ -130,6 +133,7 @@ export default function ExchangeDrawer({ swapTransaction, exchangeRate, onComple
     },
     [dispatch, exchange, exchangeRate, onCompleteSwap, transaction],
   );
+
   const onViewDetails = useCallback(
     () => {
       if (!result) return;
@@ -148,7 +152,9 @@ export default function ExchangeDrawer({ swapTransaction, exchangeRate, onComple
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [fromAccount, fromParentAccount, result?.operation],
   );
+
   const closeDrawer = useCallback(() => setDrawer(), []);
+
   if (error) {
     return (
       <Box height="100%" justifyContent="space-between">

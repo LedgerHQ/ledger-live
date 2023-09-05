@@ -51,7 +51,13 @@ const StepConfirmation = (props: StepProps) => {
   if (optimisticOperation) {
     return (
       <Container>
-        <TrackPage category="Delegation Cosmos" name="Step Confirmed" />
+        <TrackPage
+          category="Delegation Cosmos"
+          name="Step Confirmed"
+          flow="stake"
+          action="delegate"
+          currency="egld"
+        />
         {account ? <SyncOneAccountOnMount priority={10} accountId={account.id} /> : null}
 
         <SuccessDisplay
@@ -64,7 +70,13 @@ const StepConfirmation = (props: StepProps) => {
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage category="Delegation Elrond" name="Step Confirmation Error" />
+        <TrackPage
+          category="Delegation Elrond"
+          name="Step Confirmation Error"
+          flow="stake"
+          action="delegate"
+          currency="egld"
+        />
 
         {signed ? (
           <BroadcastErrorDisclaimer

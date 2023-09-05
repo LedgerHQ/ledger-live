@@ -1,0 +1,65 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`umee currency bridge scanAccounts umee seed 1 1`] = `
+Array [
+  Object {
+    "balance": "7153469",
+    "currencyId": "umee",
+    "derivationMode": "",
+    "freshAddress": "umee1gyauvl44q2apn3u3aujm36q8zrj74vry8wrgtm",
+    "freshAddressPath": "44'/118'/0'/0/0",
+    "freshAddresses": Array [
+      Object {
+        "address": "umee1gyauvl44q2apn3u3aujm36q8zrj74vry8wrgtm",
+        "derivationPath": "44'/118'/0'/0/0",
+      },
+    ],
+    "id": "js:2:umee:umee1gyauvl44q2apn3u3aujm36q8zrj74vry8wrgtm:",
+    "index": 0,
+    "name": "Umee 1",
+    "nfts": undefined,
+    "pendingOperations": Array [],
+    "seedIdentifier": "03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e83",
+    "spendableBalance": "7090969",
+    "starred": false,
+    "swapHistory": Array [],
+    "syncHash": undefined,
+    "unitMagnitude": 6,
+    "used": true,
+    "xpub": "umee1gyauvl44q2apn3u3aujm36q8zrj74vry8wrgtm",
+  },
+  Object {
+    "balance": "0",
+    "currencyId": "umee",
+    "derivationMode": "",
+    "freshAddress": "umee1v2mp0m7k96dm9qv60fkspcqlzpkzrwnesnwjgu",
+    "freshAddressPath": "44'/118'/1'/0/0",
+    "freshAddresses": Array [
+      Object {
+        "address": "umee1v2mp0m7k96dm9qv60fkspcqlzpkzrwnesnwjgu",
+        "derivationPath": "44'/118'/1'/0/0",
+      },
+    ],
+    "id": "js:2:umee:umee1v2mp0m7k96dm9qv60fkspcqlzpkzrwnesnwjgu:",
+    "index": 1,
+    "name": "Umee 2",
+    "nfts": undefined,
+    "pendingOperations": Array [],
+    "seedIdentifier": "03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e83",
+    "spendableBalance": "0",
+    "starred": false,
+    "swapHistory": Array [],
+    "syncHash": undefined,
+    "unitMagnitude": 6,
+    "used": false,
+    "xpub": "umee1v2mp0m7k96dm9qv60fkspcqlzpkzrwnesnwjgu",
+  },
+]
+`;
+
+exports[`umee currency bridge scanAccounts umee seed 1 2`] = `
+Array [
+  Array [],
+  Array [],
+]
+`;

@@ -35,7 +35,13 @@ export default function ValidationError({ navigation, route }: Props) {
         },
       ]}
     >
-      <TrackScreen category="BondFlow" name="ValidationError" />
+      <TrackScreen
+        category="BondFlow"
+        name="ValidationError"
+        flow="stake"
+        action="bond"
+        currency="dot"
+      />
       <ValidateError error={route.params.error} onRetry={retry} onClose={onClose} />
     </SafeAreaView>
   );

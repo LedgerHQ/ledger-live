@@ -1,8 +1,8 @@
 import React, { useContext } from "react";
 import styled from "styled-components";
 
-import ArrowLeftIcon from "@ledgerhq/icons-ui/react/ArrowLeftMedium";
-import ArrowRightIcon from "@ledgerhq/icons-ui/react/ArrowRightMedium";
+import ArrowLeftIcon from "@ledgerhq/icons-ui/reactLegacy/ArrowLeftMedium";
+import ArrowRightIcon from "@ledgerhq/icons-ui/reactLegacy/ArrowRightMedium";
 import TransitionInOut from "../../../transitions/TransitionInOut";
 import SideBarContext from "../../../navigation/sideBar";
 

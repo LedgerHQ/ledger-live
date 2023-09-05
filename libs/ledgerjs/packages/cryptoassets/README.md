@@ -92,6 +92,8 @@ DO NOT USE AS RECIPIENT OR SIGN TRANSACTIONS INTO THEM
 
 Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
 
+###
+
 ### registerCryptoCurrency
 
 #### Parameters

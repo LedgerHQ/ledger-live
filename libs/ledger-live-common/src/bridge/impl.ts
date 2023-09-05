@@ -1,6 +1,6 @@
 import { CurrencyNotSupported } from "@ledgerhq/errors";
 import { decodeAccountId, getMainAccount } from "../account";
-import { getEnv } from "../env";
+import { getEnv } from "@ledgerhq/live-env";
 import { checkAccountSupported } from "../account/index";
 import jsBridges from "../generated/bridge/js";
 import mockBridges from "../generated/bridge/mock";

@@ -1,5 +1,69 @@
 # @ledgerhq/hw-app-solana
 
+## 7.0.13
+
+### Patch Changes
+
+- Updated dependencies [[`a61a43fc47`](https://github.com/LedgerHQ/ledger-live/commit/a61a43fc47399e969fa68539de6af51bfa41e921), [`3455944496`](https://github.com/LedgerHQ/ledger-live/commit/34559444969ce1571ff4c54f33feb7f3fb59a33a)]:
+  - @ledgerhq/errors@6.14.0
+  - @ledgerhq/hw-transport@6.28.8
+
+## 7.0.13-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`a61a43fc47`](https://github.com/LedgerHQ/ledger-live/commit/a61a43fc47399e969fa68539de6af51bfa41e921), [`3455944496`](https://github.com/LedgerHQ/ledger-live/commit/34559444969ce1571ff4c54f33feb7f3fb59a33a)]:
+  - @ledgerhq/errors@6.14.0-next.0
+  - @ledgerhq/hw-transport@6.28.8-next.0
+
+## 7.0.12
+
+### Patch Changes
+
+- Updated dependencies [[`c7c484acf0`](https://github.com/LedgerHQ/ledger-live/commit/c7c484acf01e9db8dc5a5507b62ffcb863c77ca4)]:
+  - @ledgerhq/errors@6.13.1
+  - @ledgerhq/hw-transport@6.28.7
+
+## 7.0.12-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`c7c484acf0`](https://github.com/LedgerHQ/ledger-live/commit/c7c484acf01e9db8dc5a5507b62ffcb863c77ca4)]:
+  - @ledgerhq/errors@6.13.1-next.0
+  - @ledgerhq/hw-transport@6.28.7-next.0
+
+## 7.0.11
+
+### Patch Changes
+
+- Updated dependencies [[`0f4293e9bf`](https://github.com/LedgerHQ/ledger-live/commit/0f4293e9bf9cac4c2a195efeb0831aab3d51933d)]:
+  - @ledgerhq/errors@6.13.0
+  - @ledgerhq/hw-transport@6.28.6
+
+## 7.0.11-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`0f4293e9bf`](https://github.com/LedgerHQ/ledger-live/commit/0f4293e9bf9cac4c2a195efeb0831aab3d51933d)]:
+  - @ledgerhq/errors@6.13.0-next.0
+  - @ledgerhq/hw-transport@6.28.6-next.0
+
+## 7.0.10
+
+### Patch Changes
+
+- Updated dependencies [[`9adc1862dd`](https://github.com/LedgerHQ/ledger-live/commit/9adc1862dda605a722d19f3b6895bd324834c914)]:
+  - @ledgerhq/errors@6.12.7
+  - @ledgerhq/hw-transport@6.28.5
+
+## 7.0.10-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`9adc1862dd`](https://github.com/LedgerHQ/ledger-live/commit/9adc1862dda605a722d19f3b6895bd324834c914)]:
+  - @ledgerhq/errors@6.12.7-next.0
+  - @ledgerhq/hw-transport@6.28.5-next.0
+
 ## 7.0.9
 
 ### Patch Changes

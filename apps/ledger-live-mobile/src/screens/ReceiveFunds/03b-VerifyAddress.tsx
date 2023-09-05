@@ -76,7 +76,7 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
         complete: () => {
           if (onSuccess) onSuccess(mainAccount.freshAddress);
           else
-            navigation.navigate(ScreenName.ReceiveVerificationConfirmation, {
+            navigation.navigate(ScreenName.ReceiveConfirmation, {
               ...route.params,
               verified: true,
               createTokenAccount: false,
@@ -140,7 +140,7 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
       <SyncSkipUnderPriority priority={100} />
       {error ? (
         <>
-          <TrackScreen category="Receive" name="Address Verification Denied" />
+          <TrackScreen category="Deposit" name="Address Verification Denied" />
           <Flex flex={1} alignItems="center" justifyContent="center" p={6}>
             <Illustration
               lightSource={illustrations.light}
@@ -173,7 +173,7 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
         </>
       ) : (
         <Flex flex={1} alignItems="center" justifyContent="center" p={6}>
-          <TrackScreen category="ReceiveFunds" name="Verify Address" />
+          <TrackScreen category="Deposit" name="Verify Address" />
           <LText variant="h4" textAlign="center" mb={6}>
             {t("transfer.receive.verifyAddress.title")}
           </LText>

@@ -10,12 +10,13 @@ import Fil from "@zondax/ledger-filecoin";
 import { Observable } from "rxjs";
 
 import { makeAccountBridgeReceive, makeSync } from "../../../bridge/jsHelpers";
+import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import {
   Account,
   AccountBridge,
   AccountLike,
-  BroadcastFnSignature,
   Operation,
+  BroadcastFnSignature,
   SignOperationEvent,
   SignOperationFnSignature,
 } from "@ledgerhq/types-live";
@@ -27,7 +28,7 @@ import { close } from "../../../hw";
 import { toCBOR } from "./utils/serializer";
 import { calculateEstimatedFees, getPath, isError } from "../utils";
 import { log } from "@ledgerhq/logs";
-import { getAddressRaw, validateAddress } from "./utils/addresses";
+import { validateAddress } from "./utils/addresses";
 import { encodeOperationId, patchOperationWithHash } from "../../../operation";
 import { withDevice } from "../../../hw/deviceAccess";
 
@@ -48,12 +49,6 @@ const createTransaction = (): Transaction => {
     recipient: "",
     useAllAmount: false,
   };
-};
-
-const updateTransaction = (t: Transaction, patch: Transaction): Transaction => {
-  // log("debug", "[updateTransaction] patching tx");
-
-  return { ...t, ...patch };
 };
 
 const getTransactionStatus = async (a: Account, t: Transaction): Promise<TransactionStatus> => {
@@ -121,7 +116,7 @@ const estimateMaxSpendable = async ({
   if (recipient && !validateAddress(recipient).isValid) throw new InvalidAddress();
 
   const balances = await fetchBalances(address);
-  const balance = new BigNumber(balances.spendable_balance);
+  let balance = new BigNumber(balances.spendable_balance);
 
   if (balance.eq(0)) return balance;
 
@@ -134,8 +129,8 @@ const estimateMaxSpendable = async ({
 
   if (balance.lte(estimatedFees)) return new BigNumber(0);
 
-  balance.minus(estimatedFees);
-  if (amount) balance.minus(amount);
+  balance = balance.minus(estimatedFees);
+  if (amount) balance = balance.minus(amount);
 
   // log("debug", "[estimateMaxSpendable] finish fn");
 
@@ -143,39 +138,44 @@ const estimateMaxSpendable = async ({
 };
 
 const prepareTransaction = async (a: Account, t: Transaction): Promise<Transaction> => {
-  // log("debug", "[prepareTransaction] start fn");
-
+  const { balance } = a;
   const { address } = getAddress(a);
-  const { recipient } = t;
+  const { recipient, useAllAmount } = t;
 
-  if (recipient && address) {
-    // log("debug", "[prepareTransaction] fetching estimated fees");
+  if (
+    recipient &&
+    address &&
+    validateAddress(recipient).isValid &&
+    validateAddress(address).isValid
+  ) {
+    const patch: Partial<Transaction> = {};
 
-    if (validateAddress(recipient).isValid && validateAddress(address).isValid) {
-      const result = await fetchEstimatedFees({ to: recipient, from: address });
-      t.gasFeeCap = new BigNumber(result.gas_fee_cap);
-      t.gasPremium = new BigNumber(result.gas_premium);
-      t.gasLimit = new BigNumber(result.gas_limit);
-      t.nonce = result.nonce;
-    }
+    const result = await fetchEstimatedFees({ to: recipient, from: address });
+    patch.gasFeeCap = new BigNumber(result.gas_fee_cap);
+    patch.gasPremium = new BigNumber(result.gas_premium);
+    patch.gasLimit = new BigNumber(result.gas_limit);
+    patch.nonce = result.nonce;
+
+    const fee = calculateEstimatedFees(patch.gasFeeCap, patch.gasLimit);
+    if (useAllAmount) patch.amount = balance.minus(fee);
+
+    return defaultUpdateTransaction(t, patch);
   }
-
-  // log("debug", "[prepareTransaction] finish fn");
 
   return t;
 };
 
 const sync = makeSync({ getAccountShape });
 
-const broadcast: BroadcastFnSignature = async ({ signedOperation: { operation, signature } }) => {
+const broadcast: BroadcastFnSignature = async ({ signedOperation }) => {
   // log("debug", "[broadcast] start fn");
-
-  const tx = getTxToBroadcast(operation, signature);
+  const { operation, signature, rawData } = signedOperation;
+  const tx = getTxToBroadcast(operation, signature, rawData!);
 
   const resp = await broadcastTx(tx);
   const { hash } = resp;
 
-  const result = patchOperationWithHash(operation, hash);
+  const result = patchOperationWithHash(signedOperation.operation, hash);
 
   // log("debug", "[broadcast] finish fn");
 
@@ -193,18 +193,10 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
         async function main() {
           // log("debug", "[signOperation] start fn");
 
-          const {
-            recipient,
-            method,
-            version,
-            nonce,
-            gasFeeCap,
-            gasLimit,
-            gasPremium,
-            useAllAmount,
-          } = transaction;
-          let { amount } = transaction;
-          const { id: accountId, balance } = account;
+          const { recipient, method, version, nonce, gasFeeCap, gasLimit, gasPremium } =
+            transaction;
+          const { amount } = transaction;
+          const { id: accountId } = account;
           const { address, derivationPath } = getAddress(account);
 
           if (!gasFeeCap.gt(0) || !gasLimit.gt(0)) {
@@ -223,16 +215,9 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
             });
 
             const fee = calculateEstimatedFees(gasFeeCap, gasLimit);
-            if (useAllAmount) amount = balance.minus(fee);
-
-            transaction = { ...transaction, amount };
 
             // Serialize tx
-            const serializedTx = toCBOR(
-              getAddressRaw(address),
-              getAddressRaw(recipient),
-              transaction,
-            );
+            const serializedTx = toCBOR(account, transaction);
 
             log("debug", `[signOperation] serialized CBOR tx: [${serializedTx.toString("hex")}]`);
 
@@ -262,15 +247,18 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
               blockHash: null,
               blockHeight: null,
               date: new Date(),
-              extra: {
-                gasLimit,
-                gasFeeCap,
-                gasPremium,
-                method,
-                version,
-                nonce,
-                signatureType: 1,
-              },
+              extra: {},
+            };
+
+            // Necessary for broadcast
+            const additionalTxFields = {
+              gasLimit,
+              gasFeeCap,
+              gasPremium,
+              method,
+              version,
+              nonce,
+              signatureType: 1,
             };
 
             o.next({
@@ -278,7 +266,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
               signedOperation: {
                 operation,
                 signature,
-                expirationDate: null,
+                rawData: additionalTxFields,
               },
             });
           } finally {
@@ -297,7 +285,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
 
 export const accountBridge: AccountBridge<Transaction> = {
   createTransaction,
-  updateTransaction,
+  updateTransaction: defaultUpdateTransaction,
   prepareTransaction,
   getTransactionStatus,
   estimateMaxSpendable,

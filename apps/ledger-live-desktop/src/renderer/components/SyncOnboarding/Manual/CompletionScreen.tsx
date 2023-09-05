@@ -4,11 +4,19 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/index";
-import DeviceIllustration from "~/renderer/components/DeviceIllustration";
 import { saveSettings } from "~/renderer/actions/settings";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
+import { useTheme } from "styled-components";
 
-const GO_TO_POSTONBOARDING_TIMEOUT = 5000;
+import CompletedOnboardingDark from "./assets/completeOnboardingDark.mp4";
+import CompletedOnboardingLight from "./assets/completeOnboardingLight.mp4";
+
+const GO_TO_POSTONBOARDING_TIMEOUT = 6000;
+
+const videos = {
+  dark: CompletedOnboardingDark,
+  light: CompletedOnboardingLight,
+};
 
 const CompletionScreen = () => {
   const dispatch = useDispatch();
@@ -16,6 +24,9 @@ const CompletionScreen = () => {
   const device = useSelector(getCurrentDevice);
 
   const handleInitPostOnboarding = useStartPostOnboardingCallback();
+
+  const { colors } = useTheme();
+  const palette = colors.palette.type;
 
   useEffect(() => {
     dispatch(saveSettings({ hasCompletedOnboarding: true }));
@@ -34,7 +45,11 @@ const CompletionScreen = () => {
 
   return (
     <Flex alignItems="center" width="100%" justifyContent="center">
-      <DeviceIllustration deviceId={device?.modelId || DeviceModelId.nanoX} />
+      <Flex height={"100vh"}>
+        <video autoPlay loop height="100%">
+          <source src={videos[palette]} type="video/mp4" />
+        </video>
+      </Flex>
     </Flex>
   );
 };

@@ -1,7 +1,19 @@
 import { Server } from "ws";
 import path from "path";
 import fs from "fs";
+import { toAccountRaw } from "@ledgerhq/live-common/account/index";
 import { NavigatorName } from "../../src/const";
+import { Subject } from "rxjs";
+import { MessageData, MockDeviceEvent } from "./client";
+import { BleState } from "../../src/reducers/types";
+import { Account, AccountRaw } from "@ledgerhq/types-live";
+
+type ServerData = {
+  type: "walletAPIResponse";
+  payload: string;
+};
+
+export const e2eBridgeServer = new Subject<ServerData>();
 
 let wss: Server;
 
@@ -21,18 +33,12 @@ export function close() {
   wss?.close();
 }
 
-export async function loadConfig(
-  fileName: string,
-  agreed: true = true,
-): Promise<void> {
+export function loadConfig(fileName: string, agreed: true = true): void {
   if (agreed) {
     acceptTerms();
   }
 
-  const f = fs.readFileSync(
-    path.resolve("e2e", "setups", `${fileName}.json`),
-    "utf8",
-  );
+  const f = fs.readFileSync(path.resolve("e2e", "setups", `${fileName}.json`), "utf8");
 
   const { data } = JSON.parse(f.toString());
 
@@ -45,6 +51,32 @@ export async function loadConfig(
   }
 }
 
+export function loadBleState(bleState: BleState) {
+  postMessage({ type: "importBle", payload: bleState });
+}
+
+export function loadAccountsRaw(
+  payload: {
+    data: AccountRaw;
+    version: number;
+  }[],
+) {
+  postMessage({
+    type: "importAccounts",
+    payload,
+  });
+}
+
+export function loadAccounts(accounts: Account[]) {
+  postMessage({
+    type: "importAccounts",
+    payload: accounts.map(account => ({
+      version: 1,
+      data: toAccountRaw(account),
+    })),
+  });
+}
+
 function navigate(name: string) {
   postMessage({
     type: "navigate",
@@ -52,12 +84,15 @@ function navigate(name: string) {
   });
 }
 
+export function mockDeviceEvent(...args: MockDeviceEvent[]) {
+  postMessage({
+    type: "mockDeviceEvent",
+    payload: args,
+  });
+}
+
 export function addDevices(
-  deviceNames: string[] = [
-    "Nano X de David",
-    "Nano X de Arnaud",
-    "Nano X de Didier Duchmol",
-  ],
+  deviceNames: string[] = ["Nano X de David", "Nano X de Arnaud", "Nano X de Didier Duchmol"],
 ): string[] {
   deviceNames.forEach((name, i) => {
     postMessage({
@@ -76,14 +111,17 @@ export function setInstalledApps(apps: string[] = []) {
 }
 
 export function open() {
-  postMessage({ type: "open", payload: null });
+  postMessage({ type: "open" });
 }
 
 function onMessage(messageStr: string) {
-  const msg = JSON.parse(messageStr);
+  const msg: ServerData = JSON.parse(messageStr);
   log(`Message\n${JSON.stringify(msg, null, 2)}`);
 
   switch (msg.type) {
+    case "walletAPIResponse":
+      e2eBridgeServer.next(msg);
+      break;
     default:
       break;
   }
@@ -95,10 +133,10 @@ function log(message: string) {
 }
 
 function acceptTerms() {
-  postMessage({ type: "acceptTerms", payload: null });
+  postMessage({ type: "acceptTerms" });
 }
 
-function postMessage(message: { type: string; payload: unknown }) {
+function postMessage(message: MessageData) {
   for (const ws of wss.clients.values()) {
     ws.send(JSON.stringify(message));
   }

@@ -26,7 +26,6 @@ export const createActivateVoteMutation = (): MutationSpec<Transaction> => ({
       transaction: bridge.createTransaction(account),
       updates: [
         {
-          memo: "LedgerLiveBot",
           mode: "activate",
         },
         transaction,

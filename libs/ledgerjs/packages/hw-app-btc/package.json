@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-btc",
-  "version": "10.0.4",
+  "version": "10.0.8",
   "description": "Ledger Hardware Wallet Bitcoin Application API",
   "keywords": [
     "Ledger",
@@ -79,7 +79,7 @@
     "@types/jest": "^29.5.0",
     "@types/node": "^18.15.3",
     "axios": "^0.25.0",
-    "documentation": "13.2.4",
+    "documentation": "13.2.5",
     "jest": "^28.1.1",
     "rimraf": "^4.4.1",
     "source-map-support": "^0.5.21",

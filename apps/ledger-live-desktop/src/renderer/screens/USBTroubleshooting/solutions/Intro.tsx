@@ -6,7 +6,8 @@ import Button from "~/renderer/components/Button";
 import styled from "styled-components";
 import illustration from "~/renderer/images/USBTroubleshooting/device.png";
 export const Illustration = styled.div<{ image: string }>`
-  background-image: url("${p => p.image}");
+  // prettier-ignore
+  background-image: url('${p => p.image}');
   background-size: contain;
   background-position: center center;
   background-repeat: no-repeat;

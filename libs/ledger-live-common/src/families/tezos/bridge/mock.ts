@@ -21,14 +21,16 @@ import {
   broadcast,
   sync,
   isInvalidRecipient,
+  makeAccountBridgeReceive,
 } from "../../../bridge/mockHelpers";
+import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import {
   // fetchAllBakers,
   // hydrateBakers,
   // asBaker,
   isAccountDelegating,
 } from "../bakers";
-import { makeAccountBridgeReceive } from "../../../bridge/mockHelpers";
+
 const receive = makeAccountBridgeReceive();
 
 const estimateGasLimitAndStorage = () => {
@@ -62,8 +64,6 @@ const createTransaction = (): Transaction => ({
   taquitoError: null,
   estimatedFees: null,
 });
-
-const updateTransaction = (t, patch) => ({ ...t, ...patch });
 
 const getTransactionStatus = (a: Account, t: Transaction) => {
   const errors: {
@@ -198,7 +198,7 @@ const prepareTransaction = async (a, t) => {
 
 const accountBridge: AccountBridge<Transaction> = {
   createTransaction,
-  updateTransaction,
+  updateTransaction: defaultUpdateTransaction,
   getTransactionStatus,
   estimateMaxSpendable,
   prepareTransaction,

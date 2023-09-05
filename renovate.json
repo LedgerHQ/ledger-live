@@ -1,0 +1,46 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended", ":dependencyDashboard"],
+  "dependencyDashboard": true,
+  "labels": ["dependencies"],
+  "automerge": false,
+  "detectGlobalManagerConfig": true,
+  "ignoreScripts": false,
+  "packageRules": [
+    {
+      "description": "Core Ownership Rules",
+      "matchPackagePatterns": [
+        "changesets",
+        "commitlint",
+        "esbuild",
+        "eslint",
+        "prettier",
+        "turbo",
+        "typescript",
+        "vite",
+        "zx"
+      ],
+      "reviewers": ["team:@ledgerhq/live-eng-core"]
+    },
+    {
+      "description": "Electron linked updates",
+      "matchPackagePatterns": ["electron", "^@electron"],
+      "excludePackageNames": [
+        "@sentry/electron",
+        "electron-context-menu",
+        "electron-store",
+        "vite-plugin-electron"
+      ],
+      "groupName": "electron",
+      "reviewers": ["team:@ledgerhq/live-eng-core", "team:@ledgerhq/live-hub"]
+    },
+    {
+      "extends": "monorepo:expo",
+      "groupName": null
+    }
+  ],
+  "prConcurrentLimit": 10,
+  "separateMinorPatch": true,
+  "timezone": "Europe/Paris",
+  "enabledManagers": ["npm"]
+}

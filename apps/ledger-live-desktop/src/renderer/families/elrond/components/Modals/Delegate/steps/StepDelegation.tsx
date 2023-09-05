@@ -26,7 +26,13 @@ const StepDelegation = (props: StepProps) => {
     );
   return (
     <Box flow={1}>
-      <TrackPage category="Delegation Flow" name="Step Validator" />
+      <TrackPage
+        category="Delegation Flow"
+        name="Step Validator"
+        flow="stake"
+        action="delegate"
+        currency="egld"
+      />
 
       {error && <ErrorBanner error={error} />}
 

@@ -1,6 +1,6 @@
 import type { DefaultFeatures } from "@ledgerhq/types-live";
 
-export const defaultFeatures: DefaultFeatures = {
+export const defaultFeatures = {
   learn: {
     enabled: false,
   },
@@ -18,6 +18,9 @@ export const defaultFeatures: DefaultFeatures = {
     },
   },
   currencyAvalancheCChain: {
+    enabled: false,
+  },
+  currencyStacks: {
     enabled: false,
   },
   currencyOptimism: {
@@ -77,10 +80,58 @@ export const defaultFeatures: DefaultFeatures = {
   currencyPersistence: {
     enabled: false,
   },
+  currencyInternetComputer: {
+    enabled: false,
+  },
+  currencySecretNetwork: {
+    enabled: false,
+  },
+  currencyStargaze: {
+    enabled: false,
+  },
+  currencyUmee: {
+    enabled: false,
+  },
+  currencyDesmos: {
+    enabled: false,
+  },
+  depositNetworkBannerMobile: {
+    enabled: false,
+    params: {
+      url: "https://www.ledger.com/ledger-live",
+    },
+  },
+  depositWithdrawBannerMobile: {
+    enabled: false,
+    params: {
+      url: "https://www.ledger.com/ledger-live",
+    },
+  },
+  currencyTelosEvm: {
+    enabled: false,
+  },
+  currencyCoreum: {
+    enabled: false,
+  },
+  currencyPolygonZkEvm: {
+    enabled: false,
+  },
+  currencyPolygonZkEvmTestnet: {
+    enabled: false,
+  },
+  currencyBase: {
+    enabled: false,
+  },
+  currencyBaseGoerli: {
+    enabled: false,
+  },
+  currencyKlaytn: {
+    enabled: false,
+  },
   deviceInitialApps: {
     enabled: false,
     params: {
-      apps: ["Bitcoin", "Ethereum", "Polygon"],
+      apps: ["Bitcoin", "Ethereum"],
     },
   },
   disableNftSend: {
@@ -96,6 +147,66 @@ export const defaultFeatures: DefaultFeatures = {
     enabled: false,
     params: {
       supportedCurrencyIds: ["ethereum"],
+    },
+  },
+  editEthTx: {
+    enabled: false,
+  },
+  npsRatingsPrompt: {
+    enabled: false,
+    params: {
+      happy_moments: [
+        {
+          route_name: "ReceiveVerificationConfirmation",
+          timer: 2000,
+          type: "on_leave",
+        },
+        {
+          route_name: "ClaimRewardsValidationSuccess",
+          timer: 2000,
+          type: "on_enter",
+        },
+        {
+          route_name: "CosmosClaimRewardsValidationSuccess",
+          timer: 2000,
+          type: "on_enter",
+        },
+        {
+          route_name: "AlgorandClaimRewardsValidationSuccess",
+          timer: 2000,
+          type: "on_enter",
+        },
+        {
+          route_name: "SendValidationSuccess",
+          timer: 2000,
+          type: "on_enter",
+        },
+        {
+          route_name: "MarketDetail",
+          timer: 3000,
+          type: "on_enter",
+        },
+      ],
+      conditions: {
+        not_now_delay: {
+          seconds: 30,
+        },
+        disappointed_delay: {
+          seconds: 60,
+        },
+        satisfied_then_not_now_delay: {
+          seconds: 90,
+        },
+        minimum_accounts_number: 1,
+        minimum_app_starts_number: 0,
+        minimum_duration_since_app_first_start: {
+          seconds: 0,
+        },
+        minimum_number_of_app_starts_since_last_crash: 0,
+      },
+      typeform_url:
+        "https://ledger.typeform.com/to/UsbZ0RBk?typeform-medium=embed-sdk&typeform-medium-version=next&typeform-embed=popup-blank&dev=1",
+      support_email: "support@ledger.com",
     },
   },
   ratingsPrompt: {
@@ -152,12 +263,6 @@ export const defaultFeatures: DefaultFeatures = {
     enabled: false,
   },
   llmNewFirmwareUpdateUx: {
-    enabled: false,
-  },
-  ptxSmartRouting: {
-    enabled: false,
-  },
-  ptxSmartRoutingMobile: {
     enabled: false,
   },
   syncOnboarding: {
@@ -236,7 +341,7 @@ export const defaultFeatures: DefaultFeatures = {
           alreadySubscribedURI: `ledgerlive://recover/protect-simu?redirectTo=login`,
         },
       },
-      login: {
+      account: {
         loginURI: "ledgerlive://recover/protect-simu?redirectTo=login",
       },
       protectId: "protect-simu",
@@ -251,12 +356,11 @@ export const defaultFeatures: DefaultFeatures = {
       version: "1",
     },
   },
-  protectServicesDiscoverDesktop: {
-    enabled: false,
-  },
   protectServicesDesktop: {
     enabled: false,
     params: {
+      openRecoverFromSidebar: true,
+      discoverTheBenefitsLink: "https://www.ledger.com/recover",
       onboardingRestore: {
         restoreInfoDrawer: {
           enabled: true,
@@ -270,7 +374,7 @@ export const defaultFeatures: DefaultFeatures = {
         upsellURI: "ledgerlive://recover/protect-simu?redirectTo=upsell",
         alreadySubscribedURI: "ledgerlive://recover/protect-simu?redirectTo=login",
       },
-      login: {
+      account: {
         loginURI: "ledgerlive://recover/protect-simu?redirectTo=login",
       },
       protectId: "protect-simu",
@@ -281,6 +385,7 @@ export const defaultFeatures: DefaultFeatures = {
     params: {
       path: "/discover/refer-a-friend",
       isNew: true,
+      amount: "$20",
     },
   },
   referralProgramMobile: {
@@ -289,4 +394,14 @@ export const defaultFeatures: DefaultFeatures = {
       path: "/discover/refer-a-friend",
     },
   },
-};
+  transactionsAlerts: {
+    enabled: false,
+    params: {
+      chainwatchBaseUrl: "https://chainwatch.aws.stg.ldg-tech.com/v0",
+      networks: [{ ledgerLiveId: "ethereum", chainwatchId: "eth", nbConfirmations: 1 }],
+    },
+  },
+  listAppsV2: {
+    enabled: false,
+  },
+} as const satisfies DefaultFeatures;

@@ -47,10 +47,14 @@ const defaultConfig = {
       },
       stargaze: {
         lcd: "https://stargaze-api.polkachu.com",
-        minGasPrice: 0.0025,
+        minGasPrice: 1,
       },
       umee: {
         lcd: "https://umee-api.polkachu.com",
+        minGasPrice: 0.1,
+      },
+      coreum: {
+        lcd: "https://full-node.mainnet-1.coreum.dev:1317",
         minGasPrice: 0.1,
       },
     } as { [currency: string]: CosmosCurrencyConfig },

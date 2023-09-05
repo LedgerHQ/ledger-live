@@ -321,7 +321,7 @@ class StepImport extends PureComponent<
     return (
       <>
         <TrackPage category="AddAccounts" name="Step3" currencyName={currencyName} />
-        <Box mt={-4}>
+        <Box data-test-id={"add-accounts-step-import-accounts-list"} mt={-4}>
           {sections.map(({ id, selectable, defaultSelected, data, supportLink }, i) => {
             const hasMultipleSchemes =
               id === "creatable" &&

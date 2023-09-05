@@ -11,6 +11,7 @@ import { StepId } from "./DelegateFlowModal/types";
 const AccountHeaderManageActions: TezosFamily["accountHeaderManageActions"] = ({
   account,
   parentAccount,
+  source,
 }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -31,13 +32,15 @@ const AccountHeaderManageActions: TezosFamily["accountHeaderManageActions"] = ({
           account,
           eventType: "redelegate",
           stepId: "summary" as StepId, // FIXME: "summary is not detected as StepId"
+          source,
         }
       : {
           parentAccount,
           account,
+          source,
         };
     dispatch(openModal("MODAL_DELEGATE", options));
-  }, [account, delegation, parentAccount, dispatch]);
+  }, [account, delegation, parentAccount, dispatch, source]);
   if (parentAccount) return null;
   return [
     {

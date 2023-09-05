@@ -1,6 +1,6 @@
 import { first } from "rxjs/operators";
 import { statusObservable } from "@ledgerhq/live-common/families/bitcoin/satstack";
-import { setEnv } from "@ledgerhq/live-common/env";
+import { setEnv } from "@ledgerhq/live-env";
 export default {
   description: "Check StackSats status",
   args: [

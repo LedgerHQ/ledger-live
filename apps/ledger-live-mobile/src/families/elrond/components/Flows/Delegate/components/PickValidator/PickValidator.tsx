@@ -59,7 +59,13 @@ const PickValidator = (props: PickValidatorPropsType) => {
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="DelegationFlow" name="SelectValidator" />
+      <TrackScreen
+        category="DelegationFlow"
+        name="SelectValidator"
+        flow="stake"
+        action="delegate"
+        currency="egld"
+      />
 
       <Box mx={6} mt={3} mb={4}>
         <SearchInput

@@ -3,17 +3,17 @@ import { useNftCollectionMetadata } from "@ledgerhq/live-common/nft/index";
 import { Account, ProtoNFT } from "@ledgerhq/types-live";
 import NFTCollectionContextMenu from "~/renderer/components/ContextMenu/NFTCollectionContextMenu";
 import Skeleton from "~/renderer/components/Nft/Skeleton";
-import IconDots from "~/renderer/icons/Dots";
 import styled from "styled-components";
+import { IconsLegacy } from "@ledgerhq/react-ui";
 const Dots = styled.div`
   justify-content: flex-end;
   display: flex;
   align-items: center;
   cursor: pointer;
   padding: 5px;
-  color: ${p => p.theme.colors.palette.text.shade20};
+  color: ${p => p.theme.colors.palette.text.shade50};
   &:hover {
-    color: ${p => p.theme.colors.palette.text.shade40};
+    color: ${p => p.theme.colors.palette.text.shade80};
   }
 `;
 const Container = styled.div`
@@ -42,7 +42,7 @@ const CollectionName = ({ nft, fallback, account, showHideMenu }: Props) => {
             leftClick={true}
           >
             <Dots>
-              <IconDots size={20} />
+              <IconsLegacy.OthersMedium size={20} />
             </Dots>
           </NFTCollectionContextMenu>
         )}

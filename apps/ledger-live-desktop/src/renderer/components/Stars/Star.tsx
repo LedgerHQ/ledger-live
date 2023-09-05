@@ -100,7 +100,8 @@ const StarIcon = styled.div<{
 
   height: 50px;
   width: 50px;
-  background-image: url("${p => (p.yellow ? starAnim2 : starAnim)}");
+  // prettier-ignore
+  background-image: url('${p => (p.yellow ? starAnim2 : starAnim)}');
   background-repeat: no-repeat;
   background-size: 3000%;
   filter: brightness(1);

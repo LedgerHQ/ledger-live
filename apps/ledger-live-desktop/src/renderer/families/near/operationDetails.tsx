@@ -10,8 +10,9 @@ import {
 } from "~/renderer/drawers/OperationDetails/styledComponents";
 import { AmountCellExtraProps, OperationDetailsExtraProps } from "../types";
 import { NearAccount } from "@ledgerhq/live-common/families/near/types";
+import { Operation } from "@ledgerhq/types-live";
 
-const AmountCellExtra = ({ operation, currency, unit }: AmountCellExtraProps) => {
+const AmountCellExtra = ({ operation, currency, unit }: AmountCellExtraProps<Operation>) => {
   const amount = operation.value;
   return !amount.isZero() ? (
     <>
@@ -35,7 +36,7 @@ const OperationDetailsExtra = ({
   operation,
   type,
   account,
-}: OperationDetailsExtraProps<NearAccount>) => {
+}: OperationDetailsExtraProps<NearAccount, Operation>) => {
   const amount = operation.value;
   let i18nKey = "";
   if (type === "STAKE") {
