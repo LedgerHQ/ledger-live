@@ -1,5 +1,14 @@
 # @ledgerhq/coin-framework
 
+## 0.5.2-nightly.4
+
+### Patch Changes
+
+- [#4578](https://github.com/LedgerHQ/ledger-live/pull/4578) [`18b4a47b48`](https://github.com/LedgerHQ/ledger-live/commit/18b4a47b4878a23695a50096b7770134883b8a2e) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix elrond bot tests
+
+- Updated dependencies [[`18b4a47b48`](https://github.com/LedgerHQ/ledger-live/commit/18b4a47b4878a23695a50096b7770134883b8a2e)]:
+  - @ledgerhq/cryptoassets@9.12.0-nightly.1
+
 ## 0.5.2-nightly.3
 
 ### Patch Changes

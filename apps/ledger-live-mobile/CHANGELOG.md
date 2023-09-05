@@ -1,5 +1,20 @@
 # live-mobile
 
+## 3.30.0-nightly.12
+
+### Patch Changes
+
+- [#4519](https://github.com/LedgerHQ/ledger-live/pull/4519) [`ea97040266`](https://github.com/LedgerHQ/ledger-live/commit/ea97040266cc0b0b084882739bd38a90908d2b98) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Refactor error rendering to make base UI bricks easily reusable
+  New icons and slightly different design for error rendering
+  Pixel polish of early security checks flow and device language change flow
+- Updated dependencies [[`ea97040266`](https://github.com/LedgerHQ/ledger-live/commit/ea97040266cc0b0b084882739bd38a90908d2b98), [`ea97040266`](https://github.com/LedgerHQ/ledger-live/commit/ea97040266cc0b0b084882739bd38a90908d2b98), [`18b4a47b48`](https://github.com/LedgerHQ/ledger-live/commit/18b4a47b4878a23695a50096b7770134883b8a2e)]:
+  - @ledgerhq/native-ui@0.21.0-nightly.4
+  - @ledgerhq/live-common@31.6.0-nightly.11
+  - @ledgerhq/coin-framework@0.5.2-nightly.4
+  - @ledgerhq/coin-evm@0.6.0-nightly.4
+  - @ledgerhq/domain-service@1.1.9-nightly.2
+  - @ledgerhq/evm-tools@1.0.5-nightly.2
+
 ## 3.30.0-nightly.11
 
 ### Minor Changes

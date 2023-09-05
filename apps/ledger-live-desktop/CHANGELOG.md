@@ -1,5 +1,16 @@
 # ledger-live-desktop
 
+## 2.67.0-nightly.12
+
+### Patch Changes
+
+- Updated dependencies [[`18b4a47b48`](https://github.com/LedgerHQ/ledger-live/commit/18b4a47b4878a23695a50096b7770134883b8a2e)]:
+  - @ledgerhq/live-common@31.6.0-nightly.11
+  - @ledgerhq/coin-framework@0.5.2-nightly.4
+  - @ledgerhq/coin-evm@0.6.0-nightly.4
+  - @ledgerhq/domain-service@1.1.9-nightly.2
+  - @ledgerhq/evm-tools@1.0.5-nightly.2
+
 ## 2.67.0-nightly.11
 
 ### Minor Changes
