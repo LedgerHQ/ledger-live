@@ -4613,7 +4613,7 @@ importers:
         version: 4.6.0(eslint@8.41.0)
       expo:
         specifier: ~48.0.9
-        version: 48.0.9(@babel/core@7.22.8)(glob@7.2.0)(metro-core@0.77.0)(metro@0.76.0)(minimatch@5.1.0)(react-native@0.71.6)(react@18.0.0)
+        version: 48.0.9(@babel/core@7.22.8)(glob@7.2.0)(metro-core@0.79.0)(metro@0.76.0)(minimatch@5.1.0)(react-native@0.71.6)(react@18.0.0)
       expo-asset:
         specifier: ^8.9.1
         version: 8.9.1(expo-constants@14.2.1)(expo-modules-core@1.2.2)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
@@ -4639,8 +4639,8 @@ importers:
         specifier: ^0.76.0
         version: 0.76.0(metro-transform-worker@0.76.0)
       metro-core:
-        specifier: ^0.77.0
-        version: 0.77.0
+        specifier: ^0.79.0
+        version: 0.79.0
       metro-extra-config:
         specifier: workspace:*
         version: link:../../../../tools/metro-extra-config
@@ -13861,7 +13861,7 @@ packages:
       mv: 2.1.1
       safe-json-stringify: 1.2.0
 
-  /@expo/cli@0.6.2(expo-modules-autolinking@1.1.2)(glob@7.2.0)(metro-core@0.77.0)(metro@0.76.0)(minimatch@5.1.0):
+  /@expo/cli@0.6.2(expo-modules-autolinking@1.1.2)(glob@7.2.0)(metro-core@0.79.0)(metro@0.76.0)(minimatch@5.1.0):
     resolution: {integrity: sha512-uhmrXNemXTbCTKP/ycyJHOU/KLGdFwVCrWNBzz1VkwnmL8yJV5F3C18a83ybFFnUNfkGHeH5LtID7CSNbbTWKg==}
     hasBin: true
     peerDependencies:
@@ -13923,7 +13923,7 @@ packages:
       md5-file: 3.2.3
       md5hex: 1.0.0
       metro: 0.76.0
-      metro-core: 0.77.0
+      metro-core: 0.79.0
       minimatch: 5.1.0
       minipass: 3.1.6
       node-fetch: 2.6.9
@@ -35570,7 +35570,7 @@ packages:
         optional: true
     dependencies:
       '@expo/config': 8.0.2
-      expo: 48.0.9(@babel/core@7.22.8)(glob@7.2.0)(metro-core@0.77.0)(metro@0.76.0)(minimatch@5.1.0)(react-native@0.71.6)(react@18.0.0)
+      expo: 48.0.9(@babel/core@7.22.8)(glob@7.2.0)(metro-core@0.79.0)(metro@0.76.0)(minimatch@5.1.0)(react-native@0.71.6)(react@18.0.0)
       expo-constants: 14.2.1(expo-modules-core@1.2.2)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
       expo-modules-core: 1.2.2(expo-constants@14.2.1)(react-native@0.71.6)(react@18.0.0)
       react: 18.0.0
@@ -35648,7 +35648,7 @@ packages:
       react-native:
         optional: true
     dependencies:
-      expo: 48.0.9(@babel/core@7.22.8)(glob@7.2.0)(metro-core@0.77.0)(metro@0.76.0)(minimatch@5.1.0)(react-native@0.71.6)(react@18.0.0)
+      expo: 48.0.9(@babel/core@7.22.8)(glob@7.2.0)(metro-core@0.79.0)(metro@0.76.0)(minimatch@5.1.0)(react-native@0.71.6)(react@18.0.0)
       expo-constants: 14.2.1(expo-modules-core@1.2.2)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
       expo-modules-core: 1.2.2(expo-constants@14.2.1)(react-native@0.71.6)(react@18.0.0)
       react: 18.0.0
@@ -35727,7 +35727,7 @@ packages:
       react-native:
         optional: true
     dependencies:
-      expo: 48.0.9(@babel/core@7.22.8)(glob@7.2.0)(metro-core@0.77.0)(metro@0.76.0)(minimatch@5.1.0)(react-native@0.71.6)(react@18.0.0)
+      expo: 48.0.9(@babel/core@7.22.8)(glob@7.2.0)(metro-core@0.79.0)(metro@0.76.0)(minimatch@5.1.0)(react-native@0.71.6)(react@18.0.0)
       expo-asset: 8.9.1(expo-constants@14.2.1)(expo-modules-core@1.2.2)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
       expo-constants: 14.2.1(expo-modules-core@1.2.2)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
       expo-modules-core: 1.2.2(expo-constants@14.2.1)(react-native@0.71.6)(react@18.0.0)
@@ -35990,7 +35990,7 @@ packages:
       '@expo/image-utils': 0.3.23
       chalk: 4.1.2
       commander: 2.20.0
-      expo: 48.0.9(@babel/core@7.22.8)(glob@7.2.0)(metro-core@0.77.0)(metro@0.76.0)(minimatch@5.1.0)(react-native@0.71.6)(react@18.0.0)
+      expo: 48.0.9(@babel/core@7.22.8)(glob@7.2.0)(metro-core@0.79.0)(metro@0.76.0)(minimatch@5.1.0)(react-native@0.71.6)(react@18.0.0)
       expo-constants: 14.2.1(expo-modules-core@1.2.2)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
       expo-modules-core: 1.2.2(expo-constants@14.2.1)(react-native@0.71.6)(react@18.0.0)
       react: 18.0.0
@@ -36024,7 +36024,7 @@ packages:
       react-native: 0.71.6(react@17.0.2)
     dev: false
 
-  /expo@48.0.9(@babel/core@7.22.8)(glob@7.2.0)(metro-core@0.77.0)(metro@0.76.0)(minimatch@5.1.0)(react-native@0.71.6)(react@18.0.0):
+  /expo@48.0.9(@babel/core@7.22.8)(glob@7.2.0)(metro-core@0.79.0)(metro@0.76.0)(minimatch@5.1.0)(react-native@0.71.6)(react@18.0.0):
     resolution: {integrity: sha512-RlYpJSny4g3G2sqAfx1taaT7QFEw2cIfYLlZWmguA6EQSCviaeaQU1m4tvVXU1jIXb/w8jqer18XIq56VuECfg==}
     hasBin: true
     peerDependencies:
@@ -36037,7 +36037,7 @@ packages:
         optional: true
     dependencies:
       '@babel/runtime': 7.20.13
-      '@expo/cli': 0.6.2(expo-modules-autolinking@1.1.2)(glob@7.2.0)(metro-core@0.77.0)(metro@0.76.0)(minimatch@5.1.0)
+      '@expo/cli': 0.6.2(expo-modules-autolinking@1.1.2)(glob@7.2.0)(metro-core@0.79.0)(metro@0.76.0)(minimatch@5.1.0)
       '@expo/config': 8.0.2
       '@expo/config-plugins': 6.0.1
       '@expo/vector-icons': 13.0.0
@@ -46128,12 +46128,12 @@ packages:
       lodash.throttle: 4.1.1
       metro-resolver: 0.76.0
 
-  /metro-core@0.77.0:
-    resolution: {integrity: sha512-352kpZvPAQUEiUn6nh/bq/eO1jRkZyVoRAy3UtIN+K5B3UQoAFHjZgxvJxXtYRDIgOpC1Nx/oTPI0I/LREq3mQ==}
+  /metro-core@0.79.0:
+    resolution: {integrity: sha512-VWTSfcjadvtP6wECU+EN2iBx0d1M1CFnl+icCzV8D9F2XaB4Fj/xQHwZCSbLYvEAkCYsr8/XkDw7pFd4kd8VLg==}
     engines: {node: '>=18'}
     dependencies:
       lodash.throttle: 4.1.1
-      metro-resolver: 0.77.0
+      metro-resolver: 0.79.0
     dev: true
 
   /metro-file-map@0.73.9(metro@0.73.9):
@@ -46672,8 +46672,8 @@ packages:
     resolution: {integrity: sha512-bU6HvKzPJOHGoe9na+tUa0g3pZqMUaSGE+noFx2qeSMtoIgOYkDzmuU9ZOAGcUOz0qJJtGs+QmgM+nBqfSS/pQ==}
     engines: {node: '>=16'}
 
-  /metro-resolver@0.77.0:
-    resolution: {integrity: sha512-h3rvDWD25cZ/5Iin6mPjSQQe8KtWPAHZnA6AnAj2yadzltkyytPjmHal6JhTPsVHWMKorkC03MUpEgGusuvTww==}
+  /metro-resolver@0.79.0:
+    resolution: {integrity: sha512-ABPYo9EHXTjE3lhDo9SXw/EH1OPltYTv8a7MC+b4ei9xLd7DuiHNvlT4YpZjWADSKrtM5xqbZHFboTgzyBSjWw==}
     engines: {node: '>=18'}
     dev: true
 
