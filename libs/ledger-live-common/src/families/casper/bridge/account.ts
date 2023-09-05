@@ -27,7 +27,7 @@ import {
 import { log } from "@ledgerhq/logs";
 import { Observable } from "rxjs";
 import { withDevice } from "../../../hw/deviceAccess";
-import { encodeOperationId } from "../../../operation";
+import { encodeOperationId, patchOperationWithHash } from "../../../operation";
 import CasperApp from "@zondax/ledger-casper";
 import {
   AmountRequired,
@@ -37,7 +37,7 @@ import {
   RecipientRequired,
 } from "@ledgerhq/errors";
 import { CasperInvalidTransferId, MayBlockAccount, InvalidMinimumAmount } from "../errors";
-import { broadcastTx } from "./bridgeHelpers/api";
+import { broadcastTx } from "../api";
 import { getMainAccount } from "../../../account/helpers";
 import { createNewDeploy, deployHashToString } from "./bridgeHelpers/txn";
 import { getAccountShape } from "./bridgeHelpers/accountShape";
@@ -53,7 +53,7 @@ const createTransaction = (): Transaction => {
   return {
     family: "casper",
     amount: new BigNumber(0),
-    fees: getEstimatedFees(),
+    fees: new BigNumber(0),
     recipient: "",
     useAllAmount: false,
   };
@@ -61,22 +61,12 @@ const createTransaction = (): Transaction => {
 
 const prepareTransaction = async (a: Account, t: Transaction): Promise<Transaction> => {
   // log("debug", "[prepareTransaction] start fn");
+  const fees = getEstimatedFees();
 
-  const { address } = getAddress(a);
-  const { recipient } = t;
-
-  if (recipient && address) {
-    // log("debug", "[prepareTransaction] fetching estimated fees");
-
-    if (t.useAllAmount) {
-      const amount = a.spendableBalance.minus(t.fees);
-      return { ...t, amount };
-    }
-  }
+  const amount = t.useAllAmount ? a.spendableBalance.minus(t.fees) : t.amount;
 
   // log("debug", "[prepareTransaction] finish fn");
-
-  return t;
+  return defaultUpdateTransaction(t, { fees, amount });
 };
 
 const getTransactionStatus = async (a: Account, t: Transaction): Promise<TransactionStatus> => {
@@ -88,19 +78,21 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
   const { recipient, useAllAmount } = t;
   let { amount } = t;
 
-  if (!recipient) errors.recipient = new RecipientRequired();
-  else if (!isAddressValid(recipient))
+  if (!recipient) {
+    errors.recipient = new RecipientRequired();
+  } else if (!isAddressValid(recipient)) {
     errors.recipient = new InvalidAddress("", {
       currencyName: a.currency.name,
     });
-  else if (recipient.toLowerCase() === address.toLowerCase())
+  } else if (recipient.toLowerCase() === address.toLowerCase()) {
     errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
+  }
 
-  if (!isAddressValid(address))
+  if (!isAddressValid(address)) {
     errors.sender = new InvalidAddress("", {
       currencyName: a.currency.name,
     });
-  else if (!isTransferIdValid(t.transferId)) {
+  } else if (!isTransferIdValid(t.transferId)) {
     errors.sender = new CasperInvalidTransferId("", {
       maxTransferId: CASPER_MAX_TRANSFER_ID,
     });
@@ -129,15 +121,19 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
     }
   }
 
-  if (amount.lt(CASPER_MINIMUM_VALID_AMOUNT_MOTES) && !errors.amount)
+  if (amount.lt(CASPER_MINIMUM_VALID_AMOUNT_MOTES) && !errors.amount) {
     errors.amount = new InvalidMinimumAmount("", {
       minAmount: `${CASPER_MINIMUM_VALID_AMOUNT_CSPR} CSPR`,
     });
+  }
 
-  if (spendableBalance.minus(totalSpent).minus(estimatedFees).lt(CASPER_MINIMUM_VALID_AMOUNT_MOTES))
+  if (
+    spendableBalance.minus(totalSpent).minus(estimatedFees).lt(CASPER_MINIMUM_VALID_AMOUNT_MOTES)
+  ) {
     warnings.amount = new MayBlockAccount("", {
       minAmount: `${CASPER_MINIMUM_VALID_AMOUNT_CSPR + CASPER_FEES_CSPR} CSPR`,
     });
+  }
 
   // log("debug", "[getTransactionStatus] finish fn");
 
@@ -252,7 +248,6 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
             signedOperation: {
               operation,
               signature: JSON.stringify(DeployUtil.deployToJson(signedDeploy)),
-              expirationDate: undefined,
             },
           });
         }
@@ -273,8 +268,7 @@ const broadcast: BroadcastFnSignature = async ({ signedOperation: { signature, o
   const resp = await broadcastTx(tx);
   const { deploy_hash } = resp;
 
-  // const result = patchOperationWithHash(operation, deploy_hash);
-  const result = { ...operation, hash: deploy_hash };
+  const result = patchOperationWithHash(operation, deploy_hash);
 
   // log("debug", "[broadcast] finish fn");
 

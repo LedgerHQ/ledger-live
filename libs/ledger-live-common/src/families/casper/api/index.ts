@@ -82,7 +82,7 @@ const casperNodeWrapper = async <T>(payload: NodeRPCPayload) => {
   return data.result;
 };
 
-export const getAccountStateInfo = async (
+export const fetchAccountStateInfo = async (
   publicKey: string,
 ): Promise<{
   purseUref: CLURef | undefined;
@@ -112,7 +112,7 @@ export const getAccountStateInfo = async (
   return { purseUref: uRef, accountHash };
 };
 
-export const fetchBalances = async (purseUref: CLURef): Promise<NAccountBalance> => {
+export const fetchBalance = async (purseUref: CLURef): Promise<NAccountBalance> => {
   const stateRootInfo = await casperNodeWrapper<NStateRootHashResponse>({
     jsonrpc: "2.0",
     method: "chain_get_state_root_hash",
