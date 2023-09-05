@@ -1,4 +1,4 @@
-import Capser from "@zondax/ledger-casper";
+import Casper from "@zondax/ledger-casper";
 import { log } from "@ledgerhq/logs";
 
 import type { Resolver } from "../../hw/getAddress/types";
@@ -8,7 +8,7 @@ import { casperAddressFromPubKey } from "./bridge/bridgeHelpers/addresses";
 const resolver: Resolver = async (transport, { path, verify }) => {
   log("debug", "start getAddress process");
 
-  const casper = new Capser(transport);
+  const casper = new Casper(transport);
 
   const r = verify
     ? await casper.showAddressAndPubKey(getPath(path))

@@ -13,7 +13,7 @@ import {
   getPublicKeyFromCasperAddress,
   isAddressValid,
 } from "./addresses";
-import { ITxnHistoryData } from "./api/types";
+import { ITxnHistoryData } from "../../api/types";
 import { getEstimatedFees } from "./fee";
 import { CasperOperation } from "../../types";
 

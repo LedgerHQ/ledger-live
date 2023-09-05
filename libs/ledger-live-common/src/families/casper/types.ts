@@ -18,12 +18,10 @@ export type Transaction = TransactionCommon & {
   transferId?: string;
 };
 
-export type CasperOperation = Operation & {
-  extra: CasperOperationExtra;
-};
+export type CasperOperation = Operation<CasperOperationExtra>;
 
 interface CasperOperationExtra {
-  transferId: string | undefined;
+  transferId?: string;
 }
 
 export type TransactionRaw = TransactionCommonRaw & {
