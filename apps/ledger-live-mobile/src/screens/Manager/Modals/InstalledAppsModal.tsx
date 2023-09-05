@@ -5,12 +5,10 @@ import { FlatList } from "react-native";
 import { App, DeviceInfo } from "@ledgerhq/types-live";
 import { State, Action } from "@ledgerhq/live-common/apps/index";
 import { Trans } from "react-i18next";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import AppIcon from "../AppsList/AppIcon";
 import ByteSize from "../../../components/ByteSize";
 import AppUninstallButton from "../AppsList/AppUninstallButton";
 import AppProgressButton from "../AppsList/AppProgressButton";
-import { useTheme } from "styled-components/native";
 
 type HeaderProps = {
   illustration: JSX.Element;
