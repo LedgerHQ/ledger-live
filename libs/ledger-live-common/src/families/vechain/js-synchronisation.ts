@@ -7,8 +7,6 @@ import { emptyHistoryCache } from "../../account";
 
 import { getAccount, getLastBlock, getOperations, getTokenOperations } from "./api";
 import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
-// import { Operation } from "@ledgerhq/types-live";
-// import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 
 const getAccountShape: GetAccountShape = async info => {
   const { initialAccount, currency, derivationMode } = info;
@@ -44,40 +42,20 @@ const getAccountShape: GetAccountShape = async info => {
     1,
   );
 
-  //Generate type "NONE" operations on main account for each token operation to run bot tests
-  // VTHOoperations.forEach((operation) => {
-  //   const op: Operation = {
-  //     id: encodeOperationId(accountId, operation.hash, "NONE" as const),
-  //     hash: "",
-  //     type: "NONE",
-  //     value: new BigNumber(0),
-  //     fee: new BigNumber(0),
-  //     senders: [],
-  //     recipients: [],
-  //     blockHash: "",
-  //     blockHeight: 0,
-  //     accountId,
-  //     date: operation.date,
-  //     extra: {},
-  //   };
-  //   newOperations.push(op);
-  // });
-
   const operations = mergeOps(oldOperations, newOperations);
 
   //Account creation date set to now if there are no operation or at the first operation on the account
-  let min_date = -1;
+  let minDate = -1;
   if (operations.length != 0) {
     const operationsDates = operations.map(c => c.date.getTime());
     operationsDates.concat(VTHOoperations.map(c => c.date.getTime()));
-    min_date = Math.min(...operationsDates);
+    minDate = Math.min(...operationsDates);
   }
 
   const shape = {
-    ...info,
     id: accountId,
     balance: new BigNumber(balance),
-    creationDate: min_date != -1 ? new Date(min_date) : new Date(),
+    creationDate: minDate != -1 ? new Date(minDate) : new Date(),
     spendableBalance: new BigNumber(balance),
     operationsCount: operations.length,
     operations: operations,
@@ -91,7 +69,7 @@ const getAccountShape: GetAccountShape = async info => {
         token: getTokenById("vechain/vtho"),
         balance: new BigNumber(energy),
         spendableBalance: new BigNumber(energy),
-        creationDate: min_date != -1 ? new Date(min_date) : new Date(),
+        creationDate: minDate != -1 ? new Date(minDate) : new Date(),
         operationsCount: VTHOoperations.length,
         operations: VTHOoperations,
         blockHeight,
