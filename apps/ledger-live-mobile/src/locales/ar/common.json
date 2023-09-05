@@ -461,6 +461,9 @@
       "title" : "ETH غير كافٍ لتغطية رسوم الشبكة",
       "description" : "يرجى إرسال بعض ETH إلى حسابك لسداد قيمة معاملات رمز ERC20."
     },
+    "NotEnoughGasSwap" : {
+      "title" : "أنت بحاجة إلى {{ticker}} {{fees}} لرسوم الشبكة من أجل المبادلة حيث أنك على شبكة {{cryptoName}}. <link0>شراء {{ticker}}</link0>"
+    },
     "NotEnoughBalanceToDelegate" : {
       "title" : "رصيد غير كافٍ للتفويض"
     },
@@ -624,10 +627,6 @@
       "title" : "لا يمكن الإرسال من الحسابات الفرعية بعد",
       "description" : "ستتم إضافة هذه الميزة في مرحلة لاحقة بسبب التغييرات التي تم تقديمها مؤخراً من خلال تحديث Babylon."
     },
-    "AccessDeniedError" : {
-      "title" : "Ledger Live يحتاج إلى تحديث",
-      "description" : "يرجى تحديث Ledger Live إلى أحدث إصدار، وأعد التحقق من هويتك للمبادلة مع wyre"
-    },
     "RecommendUndelegation" : {
       "title" : "يرجى إلغاء تفويض الحساب قبل إفراغه"
     },
@@ -776,9 +775,13 @@
       "title" : "فشل تنزيل الصورة",
       "description" : "يُرجى المحاولة مرة أخرى بصورة أخرى"
     },
-    "ImageMetadataLoadingError" : {
-      "title" : "فشل تحميل البيانات الوصفية للصورة",
-      "description" : "يُرجى المحاولة مرة أخرى بصورة أخرى"
+    "NFTMetadataLoadingError" : {
+      "title" : "مشكلة تحميل البيانات الوصفية للرموز غير القابلة للاستبدال",
+      "description" : "حاول مرة أخرى برمز غير قابل للاستبدال مختلف."
+    },
+    "ImageSizeLoadingError" : {
+      "title" : "فشل تحديد أبعاد الصورة",
+      "description" : "حاول مرة أخرى باستخدام صورة مختلفة."
     },
     "ImageTooLargeError" : {
       "title" : "حجم الصورة كبير جداً",
@@ -1072,7 +1075,7 @@
       }
     },
     "enjoy" : {
-      "title" : "أنت رائع أيضاً",
+      "title" : "شكراً على ملاحظاتك!",
       "description" : "سنكون ممتنين إذا تمكنت من أخذ دقيقة من وقتك لكتابة مراجعة لنا. يُساعدنا دعمك على الوصول إلى المزيد من الأشخاص ويحفّزنا على إطلاق المزيد من الميزات الجديدة للتطبيق.",
       "cta" : {
         "rate" : "امنحنا 5 نجوم",
@@ -1107,11 +1110,11 @@
     },
     "2" : {
       "title" : "مفتاحك الى ويب 3.0",
-      "desc" : "يمكنك شراء وبيع ومبادلة العملات المشفرة الأساسية من خلال شركائنا بأمان عن طريق Ledger الخاصة بك."
+      "desc" : "يمكنك شراء وبيع ومبادلة العملات المشفرة الأساسية بأمان من خلال مزودينا عن طريق جهازك Ledger."
     },
     "3" : {
       "title" : "أمان مُعتمد",
-      "desc" : "منتجاتنا هي محافظ الأجهزة الوحيدة المعتمدة لأمانها في السوق من قِبل الهيئات الوطنية لأمن نظم المعلومات."
+      "desc" : "منتجاتنا هي محافظ الأجهزة الوحيدة المعتمدة في السوق لأمانها من قِبل الهيئات الوطنية لأمن نظم المعلومات."
     },
     "title" : "أنت بحاجة إلى جهاز Ledger",
     "desc" : "من أجل أمانك، Ledger Live يعمل فقط مع جهاز. أنت بحاجة إلى جهاز لتتمكن من المتابعة.",
@@ -1159,7 +1162,7 @@
   },
   "discover" : {
     "title" : "اكتشف",
-    "desc" : "اكتشف عالم ويب 3.0 بأمان",
+    "desc" : "استكشف عالم ويب 3.0 بأمان",
     "link" : "أخبرني بالمزيد",
     "sections" : {
       "learn" : {
@@ -1247,7 +1250,7 @@
       },
       "buyNano" : {
         "title" : "قم بشراء Ledger Nano X",
-        "subtitle" : "محفظة الجهاز هي الطريقة الوحيدة للتأكد من أن أصولك بأمان "
+        "subtitle" : "محفظة الأجهزة هي الطريقة الوحيدة للتأكد من أن أصولك بأمان "
       },
       "discoverLedger" : {
         "title" : "استكشف Ledger Live",
@@ -1271,10 +1274,10 @@
         "title" : "تأمين جميع أصولك المشفرة."
       },
       "1" : {
-        "title" : "راقب الأسواق."
+        "title" : "تابع الأسواق."
       },
       "2" : {
-        "title" : "اكتشف التطبيقات وتعرّف على ويب 3.0."
+        "title" : "اكتشف التطبيقات وتعرَّف على ويب 3.0."
       },
       "3" : {
         "title" : "حافظ على أصولك المشفرة وNFTs آمنة."
@@ -1353,7 +1356,7 @@
       "0" : {
         "label" : "الأساسيات",
         "title" : "الوصول إلى أصولك المشفرة",
-        "desc" : "يتم حفظ أصولك المشفرة على سلسلة الكتل (blockchain). أنت بحاجة إلى مفتاح خاص للوصول إليها وإدارتها.",
+        "desc" : "يتم حفظ أصولك المشفرة على سلسلة الكتل (blockchain). تحتاج إلى مفتاح خاص للوصول لهم وإدارتهم.",
         "action" : "ليس لديك Nano؟ اكتشف التطبيق"
       },
       "1" : {
@@ -1364,11 +1367,11 @@
       "2" : {
         "label" : "الأساسيات",
         "title" : "ابق غير متصل بالإنترنت",
-        "desc" : "Ledger Live يتيح لك شراء وبيع وإدارة وتبادل وكسب الأصول المشفرة بينما تظل محمياً. ستتحقق من صحة كل معاملة أصول مشفرة باستخدام Nano الخاصة بك."
+        "desc" : "Ledger Live يتيح لك إمكانية شراء وبيع وإدارة وتبادل وكسب الأصول المشفرة بينما تظل محمياً. باستخدام Nano الخاصة بك ستتحقق من صحة كل معاملة من معاملات الأصول المشفرة ."
       },
       "3" : {
         "label" : "الأساسيات",
-        "title" : "التحقق من صحة المعاملات",
+        "title" : "تحقق من صحة المعاملات",
         "desc" : "Nano الخاصة بك تعمل كمحفظة \"تخزين بارد\". ويعني ذلك أنها لا تكشف مفتاحك الخاص على الإنترنت أبدًا، حتى عند استخدام التطبيق."
       },
       "4" : {
@@ -1843,9 +1846,9 @@
       },
       "final" : {
         "successTitle" : "أصبحت محترفًا بالفعل!",
-        "successText" : "أنت مُستعد لإدارة أصولك المشفرة بأمان. لم يتبقى أمامك سوى خطوة واحدة سريعة!",
+        "successText" : "أنت مُستعد لإدارة أصولك المشفرة بأمان. لم يتبقى سوى خطوة واحدة سريعة!",
         "failTitle" : "ستصبح محترفاً قريباً...",
-        "failText" : "لا تقلق، Ledger هنا لإرشادك خلال رحلتك. ستشعر قريباً براحة إضافية بشأن أمان أصولك المشفرة. لم يتبقى سوى خطوة واحدة سريعة!",
+        "failText" : "لا تقلق، Ledger هنا لإرشادك خلال رحلتك. ستشعر قريباً بمزيد من الاطمئنان تجاه أمان أصولك المشفرة. لم يتبقى سوى خطوة واحدة سريعة!",
         "cta" : "الخطوة التالية"
       },
       "nextQuestion" : "السؤال التالي",
@@ -1898,6 +1901,98 @@
         "retryCta" : "إعادة المحاولة",
         "openSettingsCta" : "انتقل إلى إعدادات البلوتوث"
       }
+    }
+  },
+  "earlySecurityCheck" : {
+    "title" : "اختبار الأصالة والتحقق من تحديث نظام التشغيل",
+    "idle" : {
+      "description" : "Genuine Check makes sure your Ledger Stax is an official Ledger. OS update check makes sure Ledger Stax OS is up to date.",
+      "learnMore" : "Learn more about Genuine Check",
+      "checkCta" : "Check Ledger Stax"
+    },
+    "completed" : {
+      "continueCta" : "المتابعة إلى الإعداد"
+    },
+    "earlySecurityCheckMandatoryDrawer" : {
+      "title" : "Genuine Check is mandatory",
+      "description" : "You cannot setup your {{productName}} without allowing this Check.",
+      "resumeCta" : "استئناف الفحص",
+      "cancelCta" : "Cancel Checks"
+    },
+    "genuineCheckErrorDrawer" : {
+      "title" : "Genuine Check error",
+      "description" : "An error occurred while running the genuine check on {{productName}}.",
+      "retryCta" : "إعادة المحاولة",
+      "cancelCta" : "Cancel set up",
+      "notFoundEntity" : {
+        "title" : "Initiate Genuine Check again",
+        "description" : "You must first disable \"My Ledger Provider\" setting. To disable it, open Ledger Live \"Settings\", select \"Experimental features\", and then toggle off \"Manager provider\".",
+        "settingsCta" : "انتقل إلى الإعدادات"
+      }
+    },
+    "genuineCheckNonGenuineDrawer" : {
+      "title" : "This Ledger Stax failed the Genuine Check",
+      "description" : "{{productName}} هذا غير آمن للاستخدام. يُرجى التواصل مع دعم Ledger.",
+      "supportCta" : "تواصل مع دعم Ledger"
+    },
+    "allowManagerDrawer" : {
+      "title" : "Tap 'Allow' to enable Genuine Check and OS update check"
+    },
+    "genuineCheckStep" : {
+      "learnMore" : "Learn more about Genuine Check",
+      "inactive" : {
+        "title" : "اختبار الأصالة",
+        "description" : "Genuine Check makes sure your {{productName}} is an official Ledger."
+      },
+      "active" : {
+        "title" : "اختبار الأصالة",
+        "description" : "Genuine Check makes sure your {{productName}} is an official Ledger."
+      },
+      "completed" : {
+        "title" : "{{productName}} أصلي",
+        "description" : "Genuine Check makes sure your {{productName}} is an official Ledger."
+      },
+      "refused" : {
+        "title" : "اختبار الأصالة تم رفضه",
+        "description" : "لا يمكنك إعداد جهازك {{productName}} بدون السماح بهذا الفحص.",
+        "cta" : "استئناف الفحص"
+      },
+      "error" : {
+        "title" : "اختبار الأصالة",
+        "description" : "Genuine Check makes sure your {{productName}} is an official Ledger."
+      }
+    },
+    "firmwareUpdateCheckStep" : {
+      "active" : {
+        "title" : "التحقق من تحديث نظام التشغيل",
+        "description" : "OS update check makes sure {{productName}} Operating System is up to date."
+      },
+      "completed" : {
+        "noUpdateAvailable" : {
+          "title" : "التحقق من تحديث نظام التشغيل",
+          "description" : "OS update check makes sure {{productName}} Operating System is up to date."
+        }
+      },
+      "error" : {
+        "title" : "Software update check failed",
+        "skipCta" : "تخطي التحديث"
+      },
+      "refused" : {
+        "title" : "OS version {{firmwareVersion}} is available",
+        "description" : "We recommend performing this update to benefit from the latest security and functionality.",
+        "updateCta" : "Update Ledger Stax",
+        "skipCta" : "تخطي التحديث"
+      },
+      "inactive" : {
+        "title" : "التحقق من تحديث نظام التشغيل",
+        "description" : "OS update check makes sure {{productName}} Operating System is up to date."
+      }
+    },
+    "firmwareUpdateAvailableDrawer" : {
+      "title" : "OS update available",
+      "description" : "Update your {{productName}} to benefit from the latest security and functionality.",
+      "descriptionVersion" : "النسخة {{firmwareVersion}}",
+      "updateCta" : "تحديث الآن"
     }
   },
   "syncOnboarding" : {
@@ -1954,10 +2049,9 @@
       "docCta" : "عرض الأسئلة الأكثر شيوعاً لدينا",
       "supportCta" : "التحدث مع شخص"
     },
-    "pairingStep" : {
-      "title" : "تم إقران {{productName}}",
-      "description" : "تابع الإعداد على {{productName}}.\nعد هنا من أجل المساعدة خطوة بخطوة.",
-      "continueOnDevice" : "انقر في أي مكان للمتابعة على {{productName}}"
+    "earlySecurityCheckCompletedStep" : {
+      "title" : "This {{productName}} is genuine",
+      "description" : "تابع الإعداد على {{productName}}."
     },
     "pinStep" : {
       "title" : "كود PIN",
@@ -1992,49 +2086,10 @@
         "title" : "هذا الفحص يُؤكِّد أن Ledger Stax الخاص بك هو جهاز Ledger أصلي.",
         "checkCta" : "بدء اختبار الأصالة"
       },
-      "allowManagerDrawer" : {
-        "wording" : "اختبار الأصالة"
-      },
-      "genuineCheckCancelledDrawer" : {
-        "title" : "تم إلغاء اختبار الأصالة",
-        "description" : "هذا الاختبار ضروري للتأكد من أن {{productName}} الخاص بك هو جهاز Ledger أصلي.",
-        "retryCta" : "إجراء اختبار الأصالة مجدداً",
-        "skipCta" : "سأفعل هذا لاحقاً"
-      },
       "updateAvailableDrawer" : {
         "title" : "تم العثور على برنامج جديد",
         "description" : "لتصل إلى أحدث ميزات الأمان، نوصي بشدة بتحديث {{productName}} خاصتك",
         "updateCta" : "تحديث"
-      },
-      "genuineCheckStep" : {
-        "inactive" : {
-          "title" : "اختبار الأصالة"
-        },
-        "active" : {
-          "title" : "جاري اختبار الأصالة..."
-        },
-        "completed" : {
-          "title" : "{{productName}} أصلي"
-        },
-        "failed" : {
-          "title" : "تم تخطي اختبار الأصالة"
-        }
-      },
-      "firmwareUpdateStep" : {
-        "active" : {
-          "title" : "التحقق من وجود تحديث لنظام التشغيل"
-        },
-        "completed" : {
-          "updateAvailable" : {
-            "title" : "إصدار البرنامج {{firmwareVersion}} متاح"
-          },
-          "noUpdateAvailable" : {
-            "title" : "{{productName}} مُحدَّث إلى آخر إصدار"
-          }
-        },
-        "failed" : {
-          "title" : "فشل تحديث البرنامج"
-        }
       }
     },
     "appsStep" : {
@@ -2093,8 +2148,8 @@
         "title" : "بدء الاستخدام",
         "description" : "يمكنك إما شراء الأصول المشفرة من شركائنا أو إعداد محفظتك"
       },
-      "title" : "ابدأ من خلال إضافة أصولك المفضلة إلى المحفظة",
-      "subtitle" : "Ledger تدعم ما يزيد عن 6,000 عملة ورمز توكن",
+      "title" : "ابدأ بإضافة أصولك المفضلة إلى المحفظة",
+      "subtitle" : "Ledger تدعم أكثر من 6,000 عملة ورمز توكن",
       "addAccount" : "أو قم باضافة حساب"
     },
     "noOpState" : {
@@ -2330,7 +2385,7 @@
       "seeLess" : "عرض عدد أقل من الحسابات الفرعية"
     },
     "send" : "إرسال",
-    "receive" : "تلقي",
+    "receive" : "إيداع",
     "buy" : "شراء",
     "walletconnect" : "WalletConnect",
     "stake" : "تكديس",
@@ -2344,7 +2399,7 @@
       "descWithBuy" : "تأكد أن تطبيق <1><0>{{managerAppName}}</0></1> مُثبت حتى تتمكن من شراء أو تلقي <3><0>{{currencyTicker}}</0></3>",
       "descToken" : "تأكد أن تطبيق <1><0>{{managerAppName}}</0></1> مُثبت وابدأ في تلقي <3><0>{{currencyTicker}}</0></3> و <5><0>{{tokenType}}</0> رموز التوكن</5>",
       "buttons" : {
-        "receiveFunds" : "تلقي",
+        "receiveFunds" : "إيداع",
         "buyCrypto" : "شراء"
       },
       "addAccountCta" : "إضافة حساب"
@@ -2459,7 +2514,7 @@
         "cta" : "إعادة التفويض"
       },
       "delegation" : {
-        "description" : "في حالة أنك لم تكن تعلم، مدقق Ledger يقوم بتكديس {{asset}} خاصتك بعمولة منخفضة.",
+        "description" : "في حالة أنك لم تكن تعلم، يقوم مدقق Ledger بتكديس {{asset}} خاصتك بعمولة منخفضة.",
         "cta" : "قم بالتكديس الآن"
       }
     }
@@ -2696,7 +2751,7 @@
         "desc" : "سيتم إخطارك بوجود تحركات مهمة في سعر BTC وETH"
       },
       "transactionsAlerts" : {
-        "title" : "تنبيهات المعاملات",
+        "title" : "تنبيهات المعاملات (بيتا)",
         "desc" : "تلقى إشعارات بخصوص معاملاتك من إيثريوم و Polygon وسلسلة بينانس الذكية و Avalanche و Ethereum Classic"
       },
       "price" : {
@@ -2720,10 +2775,6 @@
       "clearCacheButton" : "حذف",
       "exportLogs" : "حفظ السجلات",
       "exportLogsDesc" : "حفظ سجلات Ledger Live يمكن أن يكون مطلوب لأغراض استكشاف الأخطاء وإصلاحها.",
-      "resetThirdPartyData" : "إعادة تعيين بيانات الطرف الثالث",
-      "resetThirdPartyDataDesc" : "مسح جميع بياناتك لدى الطرف الثالث المحلي التي تُستخدم للوصول إلى مزود معاملات الطرف الثالث.",
-      "resetThirdPartyDataModal" : "حذف بياناتك لدى الطرف الثالث المحلي",
-      "resetThirdPartyDataModalDesc" : "قم بحذف بياناتك لدى الطرف الثالث المحلي. قد تحتاج لإعادة تقديم بيانات اعرف عميلك (KYC) و/أو تسجيل الدخول مجدداً للوصول إلى الخدمات التي يُقدّمها شركائنا.",
       "hardReset" : "إعادة تعيين Ledger Live",
       "hardResetDesc" : "ليس لهذا الأمر أي تأثير على أصولك. قم بمحو جميع البيانات في Ledger Live، بما في ذلك بيانات الحساب والإعدادات وسجلات المعاملات. استخدم جهازك Ledger لإعادة تحميل وإدارة أصولك المشفرة على Ledger Live فارغ.",
       "repairDevice" : "إصلاح جهازك Ledger",
@@ -2843,8 +2894,8 @@
       "title" : "تعديل الرسوم"
     },
     "receive" : {
-      "title" : "تلقي",
-      "description" : "تلقي الأصول المشفرة من محفظة أخرى.",
+      "title" : "إيداع",
+      "description" : "إيداع الأصول المشفرة من محفظة أخرى.",
       "titleReadOnly" : "عنوان لم يتم التحقق منه",
       "headerTitle" : "الأصول المشفرة",
       "titleDevice" : "توصيل الجهاز",
@@ -2854,26 +2905,35 @@
       "verifyAgain" : "تحقق مرةً اخرى",
       "noAccount" : "لم يتم العثور على حساب",
       "address" : "عنوان الحساب",
-      "copyAddress" : "نسخ",
+      "copyAddress" : "نسخ العنوان",
       "shareAddress" : "عنوان المشاركة",
-      "addressCopied" : "تم النسخ",
+      "addressCopied" : "تم نسخ العنوان إلى ذاكرة النصوص",
       "taprootWarning" : "تأكد أن المُرسل يدعم taproot",
       "selectCrypto" : {
-        "title" : "اختر أصل مشفر"
+        "title" : "اختر الأصل المشفر الذي تريد تلقيه"
+      },
+      "selectNetwork" : {
+        "title" : "اختر شبكة الأصل المشفر الذي تم اختياره",
+        "account" : "{{count}} حساب",
+        "account_plural" : "{{count}} حساب",
+        "subtitle" : "هذه الشبكة يجب أن تُطابق الشبكة المختارة في المحفظة أو منصة التداول التي تحوِّل الأصول المشفرة.",
+        "bannerTitle" : "تأكد من اختيار الشبكة الصحيحة. تعلم كيف يمكنك فعل ذلك."
       },
       "stepperHeader" : {
         "range" : "خطوة {{currentStep}} من {{totalSteps}}",
         "connectDevice" : "توصيل الجهاز"
       },
       "selectAccount" : {
-        "title" : "اختر حساب",
-        "subtitle" : "سيتم إيداع {{currencyTicker}} خاصتك في هذا الحساب."
+        "title" : "اختر أو قم بإنشاء حساب جديد",
+        "subtitle" : "سيتم إيداع {{currencyTicker}} خاصتك في هذا الحساب.",
+        "cta" : "إنشاء حساب جديد"
       },
       "addAccount" : {
-        "title" : "البحث في سلسلة الكتل",
-        "subtitle" : "نقوم بالتحقق لمعرفة إذا كنت تمتلك حسابات {{currencyTicker}} بالفعل.",
+        "title" : "جارٍ البحث عن حساب...",
+        "subtitle" : "جارٍ التحقق ممّا إذا كان لديك حساب {{currencyName}} بالفعل على سلسلة الكتل.",
         "foundAccounts" : "تم العثور على {{count}} حساب",
-        "stopSynchronization" : "إيقاف المزامنة"
+        "stopSynchronization" : "إيقاف المزامنة",
+        "addingAccount" : "لم يتم العثور على حسابات. جارٍ إنشاء حساب {{currencyName}} جديد..."
       },
       "verifyAddress" : {
         "title" : "التحقق من العنوان",
@@ -2885,43 +2945,42 @@
         }
       },
       "receiveConfirmation" : {
-        "title" : "تلقي {{currencyTicker}}",
+        "title" : "إيداع {{currencyTicker}}",
+        "onCurrencyName" : "على {{currencyName}}",
+        "copyAdress" : "نسخ العنوان",
+        "addressCopied" : "تم نسخ العنوان!",
         "addressVerified" : "تم تأكيد العنوان",
-        "verifyAddress" : "انقر هنا للتحقق من عنوانك",
+        "verifyAddress" : "تحقق من عنوانك",
         "adviceVerify" : "نوصي دائماً بالتحقق من عنوانك باستخدام جهازك Ledger",
-        "sendWarning" : "قم بإرسال فقط {{currencyName}} ({{currencyTicker}}) إلى هذا العنوان. إرسال أي عملات أخرى قد يُؤدي إلى فقدانها تماماً.",
-        "dashStakingWarning" : "يُرجى التأكد من أنك لا تستخدم هذا العنوان لتلقي مكافآت التكديس"
+        "sendWarning" : "أرسِل رموز التوكن فقط من شبكة {{network}}. الإرسال من شبكة أخرى قد يُؤدي إلى فقدان رموز التوكن خاصتك تماماً.",
+        "dashStakingWarning" : "يُرجى التأكد من أنك لا تستخدم هذا العنوان لتلقي مكافآت التكديس",
+        "bannerTitle" : "تعلم كيف تقوم بعملية سحب من منصة تداول"
       },
       "securityVerify" : {
-        "title" : "لضمان الأمان، نوصي دائماً بالتحقق من هذا العنوان باستخدام جهازك Ledger.",
-        "subtitle1" : "التحقق من عنوانك يوفر لك الأمان. العنوان المعروض على جهازك Ledger لا يمكن أن يتم اختراقه.",
-        "subtitle2" : "من خلال التحقق من العنوان، ستتمكن من تأكيد أن العنوان المعروض على جهازك هو نفس العنوان المعروض في Ledger Live.",
+        "title" : "التحقق من العنوان أمر بالغ الأهمية لتأمين هذه المعاملة",
+        "subtitle1" : "تأكد من مقارنة العنوان المُلصَق (بعد قيامك بنسخه من Ledger Live) فقط بالعنوان الظاهر على الشاشة الموثوقة (Trusted Display) لجهازك Ledger (شاشة جهاز Ledger). يجب أن يكونا متطابقين.",
+        "subtitle2" : "هذا التحقق سيساعد في إيقاف هجمات استبدال العنوان.",
         "verifyCta" : "التحقق من عنواني",
-        "dontVerifyCta" : "الكشف عن عنواني بدون التحقق"
+        "dontVerifyCta" : "الكشف عن العنوان بدون تحقق"
       },
       "securityDontVerify" : {
-        "title" : "هل أنت متأكد؟",
-        "subtitle" : "لن يتم التحقق من العنوان المعروض في Ledger Live.",
+        "title" : "لا تتحقق؟",
+        "subtitle" : "عدم التحقق يزيد من فرص الخداع بإرسال أصول إلى عنوان خاطئ.",
         "doNotRemindAgain" : "لا تُذكرني مرة أخرى",
-        "no" : "لا",
-        "yes" : "نعم"
+        "no" : "تحقق",
+        "yes" : "لا تتحقق"
       },
       "toastMessages" : {
         "accountImported" : "لقد قمنا باستيراد حساب {{currencyTicker}} من أجلك. ",
         "why" : "أخبرني عن السبب.",
         "addressVerified" : "تم تأكيد عنوانك"
       },
-      "additionalInfoModal" : {
-        "title" : "لماذا قمنا باستيراد الحساب؟",
-        "subtitle" : "لقد اكتشفنا أن لديك حساب {{currencyTicker}} سابق على البذرة الخاصة بك. لذا، قمنا باستيراد هذا الحساب من أجلك.",
-        "closeCta" : "حسناً، فهمت."
-      },
       "notSynced" : {
         "text" : "جاري المزامنة",
         "desc" : "قد يستغرق هذا بعض الوقت إذا كان لديك العديد من المعاملات أو إذا كان اتصالك بالإنترنت بطيئاً."
       },
       "readOnly" : {
-        "title" : "تلقي",
+        "title" : "إيداع",
         "text" : "يرجى أن تكون حذر",
         "desc" : "أنت على وشك رؤية عنوان لم يتم التحقق منه. تحقق من العناوين على جهازك لتظل آمناً.",
         "verify" : "لم يتم التحقق من عنوان {{accountType}}. تحقق من العناوين على جهازك لتظل آمناً."
@@ -2956,66 +3015,8 @@
         "whatIsSwap" : "ما هي المبادلة؟",
         "disclaimer" : "استبدل الأصول المشفرة مباشرةً من جهازك Ledger. هذه الخدمة غير متوفرة في بعض البلدان، بما فيها الولايات المتحدة."
       },
-      "unauthorizedRates" : {
-        "cta" : "إعادة تعيين التحقق",
-        "banner" : "أعد تعيين بيانات KYC (اعرف عميلك) الخاصة بك وقم بتحديث Ledger Live للمبادلة مع Wyre",
-        "bannerCTA" : "إعادة تعيين KYC (اعرف عميلك)"
-      },
       "main" : {
         "header" : "مبادلة"
-      },
-      "kyc" : {
-        "disclaimer" : "أقر بأنه ستتم مشاركة بيانات الموقع الخاصة بي مع أطراف ثالثة لأغراض الامتثال.",
-        "cta" : "متابعة",
-        "wyre" : {
-          "title" : "أكمل بيانات KYC (اعرف عميلك) الخاصة بك",
-          "subtitle" : "يتم جمع معلوماتك من قبِل LEDGER بالنيابة عن WYRE ويتم نقل هذه المعلومات إليها لأغراض KYC (اعرف عميلك). للتعرف على مزيد من المعلومات، يرجى مراجعة",
-          "pending" : {
-            "cta" : "متابعة",
-            "title" : "تم إرسال اعرف عميلك (KYC) للاعتماد",
-            "subtitle" : "تم إرسال بيانات اعرف عميلك (KYC) الخاصة بك وهي في انتظار الموافقة.",
-            "link" : "معرفة المزيد عن KYC (اعرف عميلك)"
-          },
-          "approved" : {
-            "cta" : "متابعة",
-            "title" : "تمت الموافقة على KYC (اعرف عميلك)!",
-            "subtitle" : "تم إرسال بيانات اعرف عميلك (KYC) الخاصة بك وتمت الموافقة عليها.",
-            "link" : "معرفة المزيد عن KYC (اعرف عميلك)"
-          },
-          "closed" : {
-            "cta" : "إعادة تعيين KYC (اعرف عميلك)",
-            "title" : "تم رفض طلب KYC (اعرف عميلك)",
-            "subtitle" : "رفضت Wyre البيانات التي قدمتها لأغراض KYC (اعرف عميلك)",
-            "link" : "معرفة المزيد عن KYC (اعرف عميلك)"
-          },
-          "form" : {
-            "firstName" : "الاسم الأول",
-            "lastName" : "اسم العائلة",
-            "street1" : "عنوان الشارع، السطر 1",
-            "street2" : "عنوان الشارع، السطر 2",
-            "city" : "المدينة",
-            "state" : "الولاية",
-            "country" : "الدولة",
-            "postalCode" : "الرمز البريدي",
-            "dateOfBirth" : "تاريخ الميلاد",
-            "firstNamePlaceholder" : "أدخل اسمك الأول",
-            "lastNamePlaceholder" : "أدخل اسم العائلة",
-            "street1Placeholder" : "مثال: 13 شارع مابل",
-            "street2Placeholder" : "مثال: 13 شارع مابل",
-            "cityPlaceholder" : "مثل: سان خوسيه",
-            "postalCodePlaceholder" : "أدخل رمزك البريدي المكوّن من 5 أرقام",
-            "statePlaceholder" : "اختر ولايتك",
-            "dateOfBirthPlaceholder" : "السنة-الشهر-اليوم",
-            "firstNameError" : "أدخل اسمك الأول للمتابعة",
-            "lastNameError" : "أدخل اسم العائلة للمتابعة",
-            "street1Error" : "أدخل عنوانك",
-            "cityError" : "أدخل المدينة التي تعيش بها في الولايات المتحدة الأمريكية",
-            "stateError" : "اختر ولايتك للمتابعة",
-            "postalCodeError" : "أدخل رمزاً بريدياً صالحاً في الولايات المتحدة الأمريكية",
-            "dateOfBirthError" : "أدخل تاريخ ميلادك"
-          }
-        },
-        "states" : "اختر ولايتك"
       },
       "notAvailable" : {
         "title" : "الخدمة غير متوفرة مؤقتاً أو غير متوفرة في بلدك"
@@ -3190,34 +3191,6 @@
           }
         },
         "providers" : {
-          "kyc" : {
-            "title" : "اعرف عميلك (KYC)",
-            "required" : "تحتاج إلى إكمال اعرف عميلك (KYC) الخاص بك",
-            "complete" : "أكمل KYC (اعرف عميلك)",
-            "update" : "قم بتنشيط KYC (اعرف عميلك)",
-            "rejected" : "تم رفض KYC (اعرف عميلك)، قم ببدء التحقق مرة أخرى",
-            "rejectedContactProviderSupport" : "تم رفض اعرف عميلك (KYC)، برجاء التواصل مع دعم {{providerName}}",
-            "updateRequired" : "استكمل أو حدّث بيانات اعرف عميلك (KYC) الخاصة بك",
-            "status" : {
-              "pending" : "KYC (اعرف عميلك) مُعلق",
-              "approved" : "تمت الموافقة على KYC (اعرف عميلك)",
-              "closed" : "تم رفض KYC (اعرف عميلك)",
-              "upgradeRequired" : "بيانات اعرف عميلك (KYC) غير كافية"
-            }
-          },
-          "login" : {
-            "title" : "تسجيل الدخول",
-            "required" : "تحتاج لتسجيل الدخول مع هذا المزود",
-            "complete" : "تسجيل الدخول"
-          },
-          "mfa" : {
-            "title" : "المصادقة متعددة العوامل (MFA)",
-            "required" : "تحتاج لإعداد المصادقة متعددة العوامل (MFA) مع هذا المزود",
-            "complete" : "إعداد المصادقة متعددة العوامل (MFA)"
-          },
-          "withdrawalsBlockedError" : {
-            "message" : "تم حظر عملية السحب خاصتك من قِبل {{providerName}}.\n\n يرجى التواصل مع فريق الدعم لديهم للمزيد من المعلومات."
-          },
           "noProviders" : "لم يتم العثور على نتائج. ليس متاح عروض أسعار بالتفضيلات الحالية."
         }
       }
@@ -3432,6 +3405,7 @@
     "loading" : "جاري بحث الأجهزة..."
   },
   "send" : {
+    "pendingTxWarning" : "لديك معاملات واردة مُعلقة. يُرجى الانتباه، المعاملات المُعلقة يمكن عكسها.",
     "tooMuchUTXOBottomModal" : {
       "cta" : "متابعة",
       "description" : "قد يستغرق التحقق من هذه المعاملة وتوقيعها وقتاً طويلاً لأن الحساب يحتوي على عدد كبير من العملات.",
@@ -4144,8 +4118,15 @@
     "action" : "تحديث"
   },
   "FirmwareUpdate" : {
+    "banner" : {
+      "title" : "تحديث متاح لنظام التشغيل",
+      "descriptionDeviceName" : "انقر لتحديث \"{{deviceName}}\" إلى الإصدار {{firmwareVersion}} من نظام التشغيل.",
+      "descriptionProductName" : "انقر لتحديث جهازك {{productName}} إلى الإصدار {{firmwareVersion}} من نظام التشغيل."
+    },
     "title" : "قم بتحديث البرنامج الثابت",
+    "beginUpdate" : "بدء التحديث",
     "updateDevice" : "تحديث نظام تشغيل {{deviceName}}",
+    "releaseNotesTitle" : "ماذا يوجد في تحديث نظام التشغيل هذا؟",
     "updateDone" : "تمت! {{deviceName}} الخاص بك مُحدَّث إلى آخر إصدار",
     "updateDoneDescription" : "الإصدار الجديد لنظام التشغيل: {{firmwareVersion}}",
     "preparing" : "جاري إعداد تحديث البرنامج الثابت، رجاءً ابقِ جهازك يقظاً ومتصلاً. سنقوم بإخطارك بالتقدم",
@@ -4196,6 +4177,10 @@
       "preparing" : "جاري إعداد التحديث",
       "firmware" : "جاري تنزيل التحديث",
       "prepareUpdate" : {
+        "earlySecurityCheck" : {
+          "titlePreparingUpdate" : "جارٍ إعداد التحديث للتثبيت",
+          "description" : "Transferring the update to {{deviceName}}."
+        },
         "titleBackingUp" : "نسخ التطبيقات والإعدادات احتياطياً",
         "titleTransferring" : "نقل التحديث",
         "description" : "نسخ التكوين لديك احتياطياً ونقل التحديث إلى {{deviceName}}."
@@ -4206,6 +4191,10 @@
         "description" : "{{deviceName}} سيُعاد تشغيله مرات عديدة.\n\nبعد انتهاء التثبيت على جهازك {{deviceName}}، قم بإلغاء قفل جهازك لإكمال التثبيت"
       },
       "restoreSettings" : {
+        "earlySecurityCheck" : {
+          "titleInactive" : "استعادة الإعدادات",
+          "description" : "Your settings will be restored."
+        },
         "titleInactive" : "استعادة التطبيقات والإعدادات",
         "description" : "الإعدادات وتطبيقات سلسلة الكتل ليدك سيتم استعادتها.",
         "restoreLockScreenPicture" : "استعادة صورة شاشة القَفل",
@@ -4411,6 +4400,86 @@
     "info" : {
       "balanceDoesNotIncludeRewards" : {
         "title" : "الرصيد الإجمالي لا يشمل مكافآت التكديس"
+      },
+      "delegationUnavailable" : {
+        "title" : "التفويض غير متوفر",
+        "description" : "ليس هناك رصيد متاح كافٍ في حسابك لبدء تفويض جديد."
+      }
+    },
+    "undelegation" : {
+      "undelegate" : "إلغاء التفويض",
+      "undelegationMessage" : "بإلغاء التفويض لن تتلقى أي مكافآت عن العصر الحالي والعصور القادمة",
+      "verificationSuccessTitle" : "لقد قمت بإلغاء تفويض أصولك بنجاح"
+    },
+    "delegation" : {
+      "pool" : "المُجمِع",
+      "poolId" : "مُعرِّف المُجمِع",
+      "selectPool" : "اختر المُجمِع",
+      "pools" : "المُجمِعات",
+      "delegationEarn" : "يمكنك كسب مكافآت ADA عن طريق تفويض أصولك.",
+      "delegatingFrom" : "التفويض من",
+      "delegatingTo" : "التفويض إلى",
+      "info" : "كيف يعمل التفويض",
+      "header" : "التفويض",
+      "delegate" : "تفويض",
+      "redelegate" : "إعادة التفويض",
+      "estYield" : "العائد التقديري",
+      "totalStake" : "إجمالي التكديس",
+      "commission" : "العمولة",
+      "cost" : "التكلفة",
+      "select" : "اختر",
+      "change" : "تغيير",
+      "networkFees" : "رسوم الشبكة",
+      "stakeKeyRegistrationDeposit" : "تكديس إيداع تسجيل المفتاح",
+      "stakeKeyRegistrationDepositRefund" : "استرداد تكديس إيداع تسجيل المفتاح",
+      "stepperHeader" : {
+        "starter" : "اكسب المكافآت",
+        "validator" : "تفويض الأصول",
+        "summary" : "الملخص",
+        "verification" : "التحقق",
+        "selectDevice" : "اختر جهاز",
+        "connectDevice" : "توصيل الجهاز",
+        "stepRange" : "خطوة {{currentStep}} من {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "يمكنك كسب المكافآت عن طريق تفويض ADA خاصتك إلى مُجمِع.",
+            "steps" : {
+              "0" : "أنت تحتفظ بملكية الأصول المفوضة",
+              "1" : "قم بالتفويض باستخدام جهازك Ledger",
+              "2" : "الأصول يمكن إعادة تفويضها إلى مُجمِع مختلف أو يمكنك اختيار إلغاء تفويضها في أي وقت."
+            },
+            "cta" : "متابعة"
+          },
+          "validator" : {
+            "validators" : "المدققون",
+            "myDelegations" : "تفويضاتي",
+            "cta" : "متابعة",
+            "estYield" : "العائد التقديري: {{amount}}",
+            "totalAvailable" : "إجمالي المتاح : <0>{{amount}}</0>",
+            "allAssetsUsed" : "جميع الأصول المستخدمة",
+            "noResultsFound" : "لم يتم العثور على مدقق لـ <0>{{search}}</0>"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "لقد قمت بتفويض أصولك بنجاح",
+              "text" : "سيتم تحديث رصيد حسابك بمجرد أن تؤكد الشبكة المعاملة.",
+              "cta" : "رؤية التفاصيل"
+            },
+            "pending" : {
+              "title" : "جاري بث المعاملة..."
+            },
+            "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+          }
+        }
+      },
+      "drawer" : {
+        "status" : "الحالة",
+        "rewards" : "المكافآت",
+        "active" : "نشِط",
+        "inactive" : "غير نشِط",
+        "redelegatedFrom" : "تمت إعادة التفويض من"
       }
     }
   },
@@ -4896,6 +4965,7 @@
     }
   },
   "elrond" : {
+    "guardedAccountWarning" : "إذا كان لديك وصي (guardian) مُعين على حسابك، لن تكون قادراً على إرسال المعاملات بنجاح عبر Ledger Live.",
     "info" : {
       "available" : {
         "title" : "EGLD مُتاحة",
@@ -5853,23 +5923,7 @@
     }
   },
   "walletconnect" : {
-    "scan" : "قم بمسح كود QR الخاص بـWallet Connect",
-    "disclaimer" : "يريد الاتصال بحساب إيثريوم التالي من خلال محفظتك:",
-    "reject" : "رفض",
-    "connect" : "اتصال",
-    "connected" : "متصل",
-    "disconnected" : "تم قطع الاتصال",
-    "warningdisconnected" : "هناك مشكلة في الاتصال بين التطبيق اللامركزي (DApp) وWalletConnect وLedger Live. انتظر بضع لحظات أو أعد تشغيل الاتصال",
-    "info" : "يمكنك الآن الوصول إلى التطبيق اللامركزي {{name}} على متصفح الويب الخاص بك.",
-    "warning" : "مشاركة عناوين التلقي من لتطبيق اللامركزي (DApp) غير آمنة. دائماً استخدم Ledger Live عند مشاركة عنوانك لتلقي الأموال.",
-    "isconnecting" : "يجري الاتصال، يرجى الانتظار...",
-    "disconnect" : "قطع الاتصال",
-    "retry" : "إعادة المحاولة",
-    "close" : "إغلاق",
     "message" : "رسالة",
-    "messageHash" : "دالة تجزئة الرسالة",
-    "domainHash" : "رمز تجزئة المجال",
-    "stringHash" : "دالة تجزئة",
     "from" : "من",
     "successTitle" : "تم توقيع الرسالة",
     "successDescription" : "لقد وقّعت على الرسالة المستلمة من تطبيق طرف ثالث",
@@ -5882,9 +5936,7 @@
     "stepVerification" : {
       "action" : "يرجى تأكيد العملية على جهازك",
       "accountName" : "اسم الحساب"
-    },
-    "deeplinkingTitle" : "اختر حساب إيثريوم",
-    "addAccount" : "إضافة حساب جديد"
+    }
   },
   "notificationCenter" : {
     "title" : "مركز الإشعارات",
@@ -6214,7 +6266,7 @@
       "title" : "قريباً، استخدم {{productName}} الخاص بك من أجل...",
       "allDoneTitle" : "وهذا كل شيء!",
       "skip" : "سأفعل هذا لاحقاً",
-      "done" : "لقد قمت للتو بتأمين مستقبلك"
+      "viewWallet" : "عرض محفظتي"
     },
     "entryPointCard" : {
       "title" : "ما التالي بالنسبة لـ {{productName}} الخاص بك؟",
@@ -6353,10 +6405,10 @@
         "swap" : {
           "title" : "مبادلة",
           "label" : "شائع",
-          "body" : "تحويل أصول مشفرة إلى أصول مشفرة بشكل آمن"
+          "body" : "قم بالتحويل بين الأصول المشفرة بأمان"
         },
         "receive" : {
-          "title" : "تلقي",
+          "title" : "إيداع",
           "body" : "تلقي الأصول المشفرة في محفظتك"
         }
       }
