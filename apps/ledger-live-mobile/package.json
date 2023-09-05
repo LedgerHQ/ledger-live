@@ -255,7 +255,7 @@
     "metro-extra-config": "workspace:*",
     "metro-minify-uglify": "^0.76.0",
     "metro-react-native-babel-preset": "^0.76.0",
-    "metro-resolver": "^0.76.0",
+    "metro-resolver": "^0.79.0",
     "metro-transform-worker": "^0.76.0",
     "react-native-bundle-visualizer": "^3.1.2",
     "react-native-debugger-open": "^0.4.0",
