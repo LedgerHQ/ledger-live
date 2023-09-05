@@ -4,7 +4,6 @@ import {
   SwapSelectorStateType,
   OnNoRatesCallback,
   SwapTransactionType,
-  AvailableProviderV3,
   OnBeforeFetchRates,
   ExchangeRate,
 } from "../types";
