@@ -118,6 +118,7 @@ export const UserRefusedAddress = createCustomErrorClass("UserRefusedAddress");
 export const UserRefusedFirmwareUpdate = createCustomErrorClass("UserRefusedFirmwareUpdate");
 export const UserRefusedAllowManager = createCustomErrorClass("UserRefusedAllowManager");
 export const UserRefusedOnDevice = createCustomErrorClass("UserRefusedOnDevice"); // TODO rename because it's just for transaction refusal
+export const ExpertModeRequired = createCustomErrorClass("ExpertModeRequired");
 export const TransportOpenUserCancelled = createCustomErrorClass("TransportOpenUserCancelled");
 export const TransportInterfaceNotAvailable = createCustomErrorClass(
   "TransportInterfaceNotAvailable",

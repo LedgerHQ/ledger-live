@@ -1,7 +1,9 @@
 import network from "@ledgerhq/live-network/network";
+import { AxiosResponse } from "axios";
 import BigNumber from "bignumber.js";
 import { CosmosAPI } from "./Cosmos";
 jest.mock("@ledgerhq/live-network/network");
+const mockedNetwork = jest.mocked(network);
 
 describe("CosmosApi", () => {
   let cosmosApi: CosmosAPI;
@@ -14,36 +16,89 @@ describe("CosmosApi", () => {
     jest.resetAllMocks();
   });
 
+  describe("getAccount", () => {
+    it("should return base_account if available", async () => {
+      mockedNetwork.mockResolvedValue({
+        data: {
+          account: {
+            account_number: 1,
+            sequence: 0,
+            pub_key: { key: "k", "@type": "type" },
+            base_account: {
+              account_number: 2,
+              sequence: 42,
+              pub_key: { key: "k2", "@type": "type2" },
+            },
+          },
+        },
+      } as AxiosResponse);
+
+      const account = await cosmosApi.getAccount("addr", "default");
+      expect(account.accountNumber).toEqual(2);
+      expect(account.sequence).toEqual(42);
+      expect(account.pubKey).toEqual("k2");
+      expect(account.pubKeyType).toEqual("type2");
+    });
+
+    it("should return account if base_account isn't available", async () => {
+      mockedNetwork.mockResolvedValue({
+        data: {
+          account: { account_number: 1, sequence: 0, pub_key: { key: "k", "@type": "type" } },
+        },
+      } as AxiosResponse);
+
+      const account = await cosmosApi.getAccount("addr", "default");
+      expect(account.accountNumber).toEqual(1);
+      expect(account.sequence).toEqual(0);
+      expect(account.pubKey).toEqual("k");
+      expect(account.pubKeyType).toEqual("type");
+    });
+
+    it("should return default sequence value if network fails", async () => {
+      mockedNetwork.mockImplementation(() => {
+        throw new Error();
+      });
+      const account = await cosmosApi.getAccount("addr", "default");
+      expect(account.sequence).toEqual(0);
+    });
+
+    it("should return default pubkeytype value if network fails", async () => {
+      mockedNetwork.mockImplementation(() => {
+        throw new Error();
+      });
+      const account = await cosmosApi.getAccount("addr", "default");
+      expect(account.pubKeyType).toEqual("default");
+    });
+  });
+
   describe("simulate", () => {
     it("should return gas used when the network call returns gas used", async () => {
-      // @ts-expect-error method is mocked
-      network.mockResolvedValue({
+      mockedNetwork.mockResolvedValue({
         data: {
           gas_info: {
             gas_used: 42000,
           },
         },
-      });
+      } as AxiosResponse);
       const gas = await cosmosApi.simulate([]);
       expect(gas).toEqual(new BigNumber(42000));
     });
 
     it("should throw an error when the network call does not return gas used", async () => {
-      // @ts-expect-error method is mocked
-      network.mockResolvedValue({
+      mockedNetwork.mockResolvedValue({
         data: { gas_info: {} },
-      });
+      } as AxiosResponse);
       await expect(cosmosApi.simulate([])).rejects.toThrowError();
     });
 
     it("should throw an error when the network call fails", async () => {
-      // @ts-expect-error method is mocked
-      network.mockImplementation(() => {
+      mockedNetwork.mockImplementation(() => {
         throw new Error();
       });
       await expect(cosmosApi.simulate([])).rejects.toThrowError();
     });
   });
+
   describe("getTransactions", () => {
     it("should return an empty array when network call fails", async () => {
       // @ts-expect-error method is mocked

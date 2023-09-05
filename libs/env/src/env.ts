@@ -78,7 +78,7 @@ const envDefinitions = {
     desc: "Node endpoint for celo",
   },
   COSMOS_GAS_AMPLIFIER: {
-    def: 1.2,
+    def: 1.5,
     parser: intParser,
     desc: "Cosmos gas estimate multiplier",
   },
