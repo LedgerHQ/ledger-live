@@ -123,6 +123,8 @@ export interface Pair {
   tradeMethod: string;
 }
 
+export type GetProviders = () => Promise<AvailableProvider[]>;
+
 type TradeMethodGroup = {
   methods: TradeMethod[];
   pairs: {
