@@ -67,10 +67,6 @@ const signOperation = ({
     transport =>
       new Observable(o => {
         async function main() {
-          o.next({
-            type: "device-signature-requested",
-          });
-
           const unsigned = new ThorTransaction(transaction.body);
 
           // Sign on device
@@ -79,6 +75,9 @@ const signOperation = ({
             account.freshAddressPath,
             unsigned.encode().toString("hex"),
           );
+          o.next({
+            type: "device-signature-requested",
+          });
 
           o.next({ type: "device-signature-granted" });
 
