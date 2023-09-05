@@ -120,7 +120,7 @@
     "@types/node": "^18.0.0",
     "@types/prop-types": "^15.7.5",
     "@types/react": "^18.2.21",
-    "@types/react-native": "0.71.5",
+    "@types/react-native": "0.72.2",
     "@types/styled-components": "^5.1.3",
     "@types/styled-components-react-native": "^5.1.3",
     "assert": "^2.0.0",
