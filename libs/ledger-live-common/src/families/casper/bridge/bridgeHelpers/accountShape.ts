@@ -26,14 +26,8 @@ export const getAccountShape: GetAccountShape = async info => {
 
   const blockHeight = await fetchNetworkStatus();
 
-  let balance: NAccountBalance, txs: ITxnHistoryData[];
-  if (purseUref) {
-    balance = await fetchBalances(purseUref);
-    txs = await fetchTxs(address);
-  } else {
-    balance = { balance_value: "0", api_version: "", merkle_proof: "" };
-    txs = [];
-  }
+  const balance: NAccountBalance = purseUref ? await fetchBalances(purseUref) : { balance_value: "0", api_version: "", merkle_proof: "" }
+  const txs: ITxnHistoryData[] = purseUref ? await fetchTxs(address) : [];
 
   const csprBalance = new BigNumber(balance.balance_value);
   const result: Partial<Account> = {
