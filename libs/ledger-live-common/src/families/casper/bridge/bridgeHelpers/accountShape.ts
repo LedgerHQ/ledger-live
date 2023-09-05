@@ -29,14 +29,11 @@ export const getAccountShape: GetAccountShape = async info => {
   const balance: NAccountBalance = purseUref ? await fetchBalances(purseUref) : { balance_value: "0", api_version: "", merkle_proof: "" }
   const txs: ITxnHistoryData[] = purseUref ? await fetchTxs(address) : [];
 
-  const csprBalance = new BigNumber(balance.balance_value);
-  const result: Partial<Account> = {
+  return {
     id: accountId,
-    balance: csprBalance,
+    balance: new BigNumber(balance.balance_value),
     spendableBalance: csprBalance,
     operations: flatMap(txs, mapTxToOps(accountId, accountHash ?? "")),
     blockHeight: blockHeight.last_added_block_info.height,
   };
-
-  return result;
 };
