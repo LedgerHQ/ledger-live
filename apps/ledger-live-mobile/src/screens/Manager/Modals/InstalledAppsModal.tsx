@@ -10,6 +10,7 @@ import AppIcon from "../AppsList/AppIcon";
 import ByteSize from "../../../components/ByteSize";
 import AppUninstallButton from "../AppsList/AppUninstallButton";
 import AppProgressButton from "../AppsList/AppProgressButton";
+import { useTheme } from "styled-components/native";
 
 type HeaderProps = {
   illustration: JSX.Element;
@@ -99,14 +100,6 @@ const modalStyleOverrides = {
     justifyContent: "flex-end" as const,
     margin: 0,
   },
-  container: {
-    minHeight: "100%",
-    paddingLeft: 16,
-    paddingRight: 16,
-    paddingTop: 16,
-    paddingBottom: 16,
-    maxHeight: "100%",
-  },
 };
 
 type Props = {
@@ -149,21 +142,12 @@ const InstalledAppsModal = ({
     if (!appList || !appList.length) onClose();
   }, [appList, onClose]);
 
-  const insets = useSafeAreaInsets();
-  const { top: safeAreaTop, bottom: safeAreaBottom } = insets;
-
   return (
     <BaseModal
       isOpen={isOpen}
       onClose={onClose}
       modalStyle={modalStyleOverrides.modal}
-      containerStyle={[
-        modalStyleOverrides.container,
-        {
-          paddingTop: safeAreaTop,
-          paddingBottom: safeAreaBottom,
-        },
-      ]}
+      containerStyle={{ height: "100%" }}
       propagateSwipe={true}
     >
       <Flex flex={1}>
