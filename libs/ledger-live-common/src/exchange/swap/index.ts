@@ -19,6 +19,8 @@ import {
 import getCompleteSwapHistory from "./getCompleteSwapHistory";
 import initSwap from "./initSwap";
 import { postSwapAccepted, postSwapCancelled } from "./postSwapState";
+import getExchangeRates from "./getExchangeRates";
+import getProviders from "./getProviders";
 
 export const operationStatusList = {
   finishedOK: ["finished"],
@@ -185,6 +187,8 @@ export {
   getProviderConfig,
   getCompleteSwapHistory,
   postSwapAccepted,
+  getExchangeRates,
+  getProviders,
   postSwapCancelled,
   initSwap,
   USStates,
