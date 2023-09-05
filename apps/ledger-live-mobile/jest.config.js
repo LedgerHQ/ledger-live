@@ -36,7 +36,9 @@ module.exports = {
   ],
   testPathIgnorePatterns: ["<rootDir>/node_modules/"],
   moduleDirectories: ["node_modules"],
-  coverageReporters: ["json"],
+  collectCoverage: true,
+  collectCoverageFrom: ["src/**/*.{ts,tsx}"],
+  coverageReporters: ["json", "lcov", "json-summary"],
   coverageDirectory: "<rootDir>/coverage",
   moduleNameMapper: {
     "^react-native/(.*)$": "<rootDir>/node_modules/react-native/$1",

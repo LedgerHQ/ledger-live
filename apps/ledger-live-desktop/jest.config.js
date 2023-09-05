@@ -37,6 +37,9 @@ const defaultConfig = {
 };
 
 module.exports = {
+  collectCoverage: true,
+  collectCoverageFrom: ["src/**/*.{ts,tsx}"],
+  coverageReporters: ["json", "lcov", "json-summary"],
   projects: [
     {
       ...defaultConfig,
