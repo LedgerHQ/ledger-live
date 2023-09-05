@@ -65,7 +65,7 @@ export const toOperationRaw = (
     copy.internalOperations = internalOperations.map((o: Operation) => toOperationRaw(o));
   }
 
-  if (nftOperations) {
+  if (nftOperations && nftOperations.length > 0) {
     copy.nftOperations = nftOperations.map((o: Operation) => toOperationRaw(o));
   }
 
@@ -182,7 +182,7 @@ export const fromOperationRaw = (
     );
   }
 
-  if (nftOperations) {
+  if (nftOperations && nftOperations.length > 0) {
     res.nftOperations = nftOperations.map((o: OperationRaw) => fromOperationRaw(o, o.accountId));
   }
 

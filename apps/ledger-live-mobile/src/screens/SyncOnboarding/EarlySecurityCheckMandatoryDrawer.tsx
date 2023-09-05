@@ -1,9 +1,9 @@
 import React from "react";
-import { BoxedIcon, Button, Flex, Text } from "@ledgerhq/native-ui";
-import { WarningSolidMedium } from "@ledgerhq/native-ui/assets/icons";
+import { Icons, Button, Flex, Link } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import QueuedDrawer from "../../components/QueuedDrawer";
 import { TrackScreen } from "../../analytics";
+import { GenericInformationBody } from "../../components/GenericInformationBody";
 
 export type Props = {
   /**
@@ -58,29 +58,22 @@ const EarlySecurityCheckMandatoryDrawer: React.FC<Props> = ({
         type="drawer"
         refreshSource={false}
       />
-      <Flex justifyContent="center" alignItems="center" flex={1} mt={9} mb={6}>
-        <BoxedIcon
-          Icon={<WarningSolidMedium color="warning.c60" size={32} />}
-          variant="circle"
-          backgroundColor="neutral.c30"
-          borderColor="transparent"
-          size={64}
+      <Flex flexDirection="column" alignItems={"center"} mt={10}>
+        <GenericInformationBody
+          title={t("earlySecurityCheck.earlySecurityCheckMandatoryDrawer.title")}
+          description={t("earlySecurityCheck.earlySecurityCheckMandatoryDrawer.description", {
+            productName,
+          })}
+          Icon={Icons.WarningFill}
+          iconColor="warning.c70"
         />
       </Flex>
-      <Text textAlign="center" variant="h4" fontWeight="semiBold" mb={4} mt={8}>
-        {t("earlySecurityCheck.earlySecurityCheckMandatoryDrawer.title")}
-      </Text>
-      <Text textAlign="center" variant="bodyLineHeight" mb={8} color="neutral.c80">
-        {t("earlySecurityCheck.earlySecurityCheckMandatoryDrawer.description", {
-          productName,
-        })}
-      </Text>
-      <Button type="main" mb={4} onPress={onResume}>
+      <Button mt={8} mb={7} type="main" onPress={onResume} size={"large"}>
         {t("earlySecurityCheck.earlySecurityCheckMandatoryDrawer.resumeCta")}
       </Button>
-      <Button onPress={onCancel}>
+      <Link onPress={onCancel} size={"large"}>
         {t("earlySecurityCheck.earlySecurityCheckMandatoryDrawer.cancelCta")}
-      </Button>
+      </Link>
     </QueuedDrawer>
   );
 };

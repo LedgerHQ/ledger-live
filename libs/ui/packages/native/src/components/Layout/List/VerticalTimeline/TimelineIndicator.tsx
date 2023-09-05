@@ -36,6 +36,7 @@ const TopSegmentSvg: React.FC<SegmentProps> = ({ status, hidden, height }) => {
           preserveAspectRatio="xMinYMin slice"
         >
           <Line
+            key={status + " " + hidden}
             x1="0"
             y1="0"
             x2="0"
@@ -65,6 +66,7 @@ const BottomSegmentSvg: React.FC<SegmentProps> = ({ status, hidden }) => {
           preserveAspectRatio="xMinYMin slice"
         >
           <Line
+            key={status + " " + hidden}
             x1="0"
             y1="0"
             x2="0"
