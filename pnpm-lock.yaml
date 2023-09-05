@@ -543,8 +543,8 @@ importers:
         specifier: ^14.4.3
         version: 14.4.3(@testing-library/dom@9.3.1)
       '@types/chart.js':
-        specifier: 2.9.37
-        version: 2.9.37
+        specifier: 2.9.38
+        version: 2.9.38
       '@types/color':
         specifier: ^3.0.3
         version: 3.0.3
@@ -24270,8 +24270,8 @@ packages:
       cbor: 8.1.0
     dev: true
 
-  /@types/chart.js@2.9.37:
-    resolution: {integrity: sha512-9bosRfHhkXxKYfrw94EmyDQcdjMaQPkU1fH2tDxu8DWXxf1mjzWQAV4laJF51ZbC2ycYwNDvIm1rGez8Bug0vg==}
+  /@types/chart.js@2.9.38:
+    resolution: {integrity: sha512-rLoHHprkVEDpAXqke/xHalyXR+5Nv+3tfViwT/UnJZ41Wp/XPaSRlJKw2PU3S3tTCqKKyjkYai+VpeHoti79XQ==}
     dependencies:
       moment: 2.29.4
     dev: true

@@ -151,7 +151,7 @@
     "@testing-library/react": "12",
     "@testing-library/react-hooks": "^8.0.0",
     "@testing-library/user-event": "^14.4.3",
-    "@types/chart.js": "2.9.37",
+    "@types/chart.js": "2.9.38",
     "@types/color": "^3.0.3",
     "@types/invariant": "^2.2.35",
     "@types/jest": "^28.1.8",
