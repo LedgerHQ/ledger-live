@@ -63,10 +63,6 @@ export {
 };
 
 export const isAccountEmpty = (a: AccountLike): boolean => {
-  if (a.type == "Account" && a.currency.family == "vechain") {
-    const checkSubAccounts = a.subAccounts && a.subAccounts[0].balance.isZero();
-    return a.operationsCount === 0 && a.balance.isZero() && !checkSubAccounts;
-  }
   // FIXME LIVE-5966 why do we need this? also this shouldn't be implemented here / this part must be removed back to the coin specifics
   if (a.type === "Account" && a.currency.family === "tron") {
     const tronAcc = a as TronAccount;
