@@ -25,7 +25,7 @@ export const usePageState = (
     swapTransaction.swap.isMaxLoading || swapTransaction.swap.rates.status === "loading";
 
   useEffect(() => {
-    if (swapTransaction.swap.rates.status === "success") {
+    if (!fromFieldIsZero && swapTransaction.swap.rates.status === "success") {
       setPageState("loaded");
     } else if (pageState === "loading" && swapTransaction.swap.rates.status === "error") {
       setPageState("initial");
