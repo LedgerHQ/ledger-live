@@ -1,9 +1,11 @@
 import network from "@ledgerhq/live-network/network";
+import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { patchOperationWithHash } from "../../../operation";
 import cryptoFactory from "../chain/chain";
+import cosmosBase from "../chain/cosmosBase";
 import {
   CosmosDelegation,
   CosmosDelegationStatus,
@@ -15,9 +17,11 @@ import {
 export class CosmosAPI {
   protected defaultEndpoint: string;
   private version: string;
+  private chainInstance: cosmosBase;
 
   constructor(currencyId: string) {
     const crypto = cryptoFactory(currencyId);
+    this.chainInstance = crypto;
     this.defaultEndpoint = crypto.lcd;
     this.version = crypto.version;
   }
@@ -46,7 +50,7 @@ export class CosmosAPI {
         unbondings,
         withdrawAddress,
       ] = await Promise.all([
-        this.getAccount(address),
+        this.getAccount(address, this.chainInstance.defaultPubKeyType),
         this.getAllBalances(address, currency),
         this.getHeight(),
         this.getTransactions(address, 100),
@@ -71,10 +75,15 @@ export class CosmosAPI {
     }
   };
 
-  getAccount = async (address: string): Promise<{ accountNumber: number; sequence: number }> => {
-    const response = {
+  getAccount = async (
+    address: string,
+    defaultPubKeyType: string,
+  ): Promise<{ accountNumber: number; sequence: number; pubKeyType: string; pubKey: string }> => {
+    const accountData = {
       accountNumber: 0,
       sequence: 0,
+      pubKeyType: defaultPubKeyType,
+      pubKey: "",
     };
 
     try {
@@ -83,16 +92,30 @@ export class CosmosAPI {
         url: `${this.defaultEndpoint}/cosmos/auth/${this.version}/accounts/${address}`,
       });
 
-      if (data.account.account_number) {
-        response.accountNumber = parseInt(data.account.account_number);
+      // We use base_account for Ethermint chains and account for the rest
+      const srcAccount = data.account.base_account || data.account;
+
+      if (srcAccount.account_number) {
+        accountData.accountNumber = parseInt(srcAccount.account_number);
       }
 
-      if (data.account.sequence) {
-        response.sequence = parseInt(data.account.sequence);
+      if (srcAccount.sequence) {
+        accountData.sequence = parseInt(srcAccount.sequence);
       }
-      // eslint-disable-next-line no-empty
-    } catch (e) {}
-    return response;
+
+      if (srcAccount.pub_key) {
+        accountData.pubKey = srcAccount.pub_key.key;
+        accountData.pubKeyType = srcAccount.pub_key["@type"];
+      }
+    } catch (e) {
+      log(
+        "debug",
+        "Could not fetch account info, account might have never been used, using default values instead",
+        { e },
+      );
+    }
+
+    return accountData;
   };
 
   getChainId = async (): Promise<string> => {
