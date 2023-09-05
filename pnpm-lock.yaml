@@ -4660,8 +4660,8 @@ importers:
         specifier: ^0.76.0
         version: 0.76.0
       metro-source-map:
-        specifier: ^0.76.0
-        version: 0.76.0
+        specifier: ^0.79.0
+        version: 0.79.0
       metro-transform-worker:
         specifier: ^0.76.0
         version: 0.76.0
@@ -42532,7 +42532,7 @@ packages:
       '@babel/core': 7.22.9
       '@babel/generator': 7.22.5
       '@babel/plugin-syntax-typescript': 7.17.10(@babel/core@7.22.9)
-      '@babel/traverse': 7.22.5
+      '@babel/traverse': 7.22.8
       '@babel/types': 7.22.5
       '@jest/expect-utils': 28.1.3
       '@jest/transform': 28.1.3
@@ -42564,7 +42564,7 @@ packages:
       '@babel/core': 7.22.9
       '@babel/generator': 7.22.5
       '@babel/plugin-syntax-typescript': 7.17.10(@babel/core@7.22.9)
-      '@babel/traverse': 7.22.5
+      '@babel/traverse': 7.22.8
       '@babel/types': 7.22.5
       '@jest/expect-utils': 28.1.3
       '@jest/transform': 28.1.3(metro@0.76.0)
@@ -46727,8 +46727,8 @@ packages:
     resolution: {integrity: sha512-tAXlHI6EOtRTkhXynZbe/as7pBDBxDaHftq/7pV3QCGyLeSaTNy6wzXI5ewr3kTuZxtBXktQH/Zl0rhKO8DGMA==}
     engines: {node: '>=16'}
     dependencies:
-      '@babel/traverse': 7.21.4
-      '@babel/types': 7.21.4
+      '@babel/traverse': 7.22.8
+      '@babel/types': 7.22.5
       invariant: 2.2.4
       metro-symbolicate: 0.76.0
       nullthrows: 1.1.1
@@ -46737,6 +46737,22 @@ packages:
       vlq: 1.0.1
     transitivePeerDependencies:
       - supports-color
+
+  /metro-source-map@0.79.0:
+    resolution: {integrity: sha512-vLVoeWCLq5kGJfwZt54wYAI6GpfZKDb+P9OTv9CcTnPD8EjF7EgZpSO+NNZDKwGqtmwy/JItzzEQDIx6HXs7dw==}
+    engines: {node: '>=18'}
+    dependencies:
+      '@babel/traverse': 7.22.8
+      '@babel/types': 7.22.5
+      invariant: 2.2.4
+      metro-symbolicate: 0.79.0
+      nullthrows: 1.1.1
+      ob1: 0.79.0
+      source-map: 0.5.7
+      vlq: 1.0.1
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
 
   /metro-symbolicate@0.67.0:
     resolution: {integrity: sha512-ZqVVcfa0xSz40eFzA5P8pCF3V6Tna9RU1prFzAJTa3j9dCGqwh0HTXC8AIkMtgX7hNdZrCJI1YipzUBlwkT0/A==}
@@ -46780,6 +46796,21 @@ packages:
       vlq: 1.0.1
     transitivePeerDependencies:
       - supports-color
+
+  /metro-symbolicate@0.79.0:
+    resolution: {integrity: sha512-8o6D1YmoL7Jl45/HekmKem9wtVL7E/W94wW23ajmTx7gnFrpquxNf4plWYtQ0P/Y0K/r1ACRXxnndLjNhGFw5A==}
+    engines: {node: '>=18'}
+    hasBin: true
+    dependencies:
+      invariant: 2.2.4
+      metro-source-map: 0.79.0
+      nullthrows: 1.1.1
+      source-map: 0.5.7
+      through2: 2.0.5
+      vlq: 1.0.1
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
 
   /metro-transform-plugins@0.67.0:
     resolution: {integrity: sha512-DQFoSDIJdTMPDTUlKaCNJjEXiHGwFNneAF9wDSJ3luO5gigM7t7MuSaPzF4hpjmfmcfPnRhP6AEn9jcza2Sh8Q==}
@@ -48846,6 +48877,11 @@ packages:
   /ob1@0.76.0:
     resolution: {integrity: sha512-ZLPDN2wCuFRAno0S2BSitMse+l0ipfjQQCDlYZMjZn9YnOGsRneifMlvN+3mWgTA8TOHsoAMYQdciBylgsfAmA==}
     engines: {node: '>=16'}
+
+  /ob1@0.79.0:
+    resolution: {integrity: sha512-9jFD2M7GcotKTNkS8N5EjyGh+g838p2WCTC6k1LQnx6+MUycoI24stT3Qxuk6DJBEWVTEb2l2GZ6GzUjqpBqOA==}
+    engines: {node: '>=18'}
+    dev: true
 
   /object-assign@4.1.1:
     resolution: {integrity: sha512-rJgTQnkUnH1sFw8yT6VSU3zD3sWmu6sZhIseY8VX+GRu3P6F7Fu+JNDoXfklElbLJSnc3FUQHVe4cU5hj+BcUg==}
