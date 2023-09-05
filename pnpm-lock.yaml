@@ -293,11 +293,11 @@ importers:
         specifier: ^4.3.0
         version: 4.3.0
       '@sentry/node':
-        specifier: 7.37.1
-        version: 7.37.1
+        specifier: 7.66.0
+        version: 7.66.0
       '@sentry/tracing':
-        specifier: 7.37.1
-        version: 7.37.1
+        specifier: 7.66.0
+        version: 7.66.0
       '@tippyjs/react':
         specifier: ^4.2.6
         version: 4.2.6(react-dom@17.0.2)(react@17.0.2)
@@ -19172,6 +19172,16 @@ packages:
       tslib: 1.14.1
     dev: false
 
+  /@sentry-internal/tracing@7.66.0:
+    resolution: {integrity: sha512-3vCgC2hC3T45pn53yTDVcRpHoJTBxelDPPZVsipAbZnoOVPkj7n6dNfDhj3I3kwWCBPahPkXmE+R4xViR8VqJg==}
+    engines: {node: '>=8'}
+    dependencies:
+      '@sentry/core': 7.66.0
+      '@sentry/types': 7.66.0
+      '@sentry/utils': 7.66.0
+      tslib: 2.6.1
+    dev: false
+
   /@sentry/browser@7.37.1:
     resolution: {integrity: sha512-MfVbKzEVHKVH6ZyMCKLtPXvMtRCvxqQzrnK735sYW6EyMpcMYhukBU0pq7ws1E/KaCZjAJi1wDx2nqf2yPIVdQ==}
     engines: {node: '>=8'}
@@ -19273,6 +19283,15 @@ packages:
       tslib: 1.14.1
     dev: false
 
+  /@sentry/core@7.66.0:
+    resolution: {integrity: sha512-WMAEPN86NeCJ1IT48Lqiz4MS5gdDjBwP4M63XP4msZn9aujSf2Qb6My5uT87AJr9zBtgk8MyJsuHr35F0P3q1w==}
+    engines: {node: '>=8'}
+    dependencies:
+      '@sentry/types': 7.66.0
+      '@sentry/utils': 7.66.0
+      tslib: 2.6.1
+    dev: false
+
   /@sentry/electron@4.3.0:
     resolution: {integrity: sha512-LqFMvgycMd+Mcs4Km9S8YBtaHISHSiIUVUz6mgAr2khKY6SNhkW9A4GcoOKtzRJreqYLVeBSbaUVttQfQ4Ot7g==}
     dependencies:
@@ -19356,6 +19375,22 @@ packages:
       - supports-color
     dev: false
 
+  /@sentry/node@7.66.0:
+    resolution: {integrity: sha512-PxqIqLr4Sh5xcDfECiBQ4PuZ7v8yTgLhaRkruWrZPYxQrcJFPkwbFkw/IskzVnhT2VwXUmeWEIlRMQKBJ0t83A==}
+    engines: {node: '>=8'}
+    dependencies:
+      '@sentry-internal/tracing': 7.66.0
+      '@sentry/core': 7.66.0
+      '@sentry/types': 7.66.0
+      '@sentry/utils': 7.66.0
+      cookie: 0.4.2
+      https-proxy-agent: 5.0.1
+      lru_map: 0.3.3
+      tslib: 2.6.1
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
   /@sentry/react-native@5.3.0(react-native@0.71.6)(react@18.0.0):
     resolution: {integrity: sha512-LEhLFYHtxdL1Fnhy+BZdRTuOwBGNYRzIj3xHTgf0z0BxNUzJ9PYBn30mNVGpfSzaoP5ZIi20REFRPj8B3XEoHg==}
     peerDependencies:
@@ -19412,21 +19447,18 @@ packages:
       '@sentry/utils': 7.45.0
     dev: false
 
-  /@sentry/tracing@7.37.1:
-    resolution: {integrity: sha512-3mQG2XtMCGqDkgfzhKpRJAIfRaokNAOF8WafgAmFmZQwEDsRAFjZ3pLoO+KiBUeQE5E5et7HyWBOl9rqHCkWnQ==}
-    engines: {node: '>=8'}
-    dependencies:
-      '@sentry/core': 7.37.1
-      '@sentry/types': 7.37.1
-      '@sentry/utils': 7.37.1
-      tslib: 1.14.1
-    dev: false
-
   /@sentry/tracing@7.45.0:
     resolution: {integrity: sha512-FsoFmZPzTBGvWeJH73NxSF1ot61Zw3aIZo5XolengiKnRmcrQOFxebtMKBiZ61QBRYGqsm5uT7QB7zITU6Ikgg==}
     engines: {node: '>=8'}
     dependencies:
       '@sentry-internal/tracing': 7.45.0
+    dev: false
+
+  /@sentry/tracing@7.66.0:
+    resolution: {integrity: sha512-9bnz2EcOwjeMZAuYJnrwcRrImu9c10p7A0iDB8b2HLcp7gpuCkJbJyGoC1xeKD7reVD0BPq3VIbeHSwCcQufoQ==}
+    engines: {node: '>=8'}
+    dependencies:
+      '@sentry-internal/tracing': 7.66.0
     dev: false
 
   /@sentry/types@6.19.7:
@@ -19448,6 +19480,11 @@ packages:
     resolution: {integrity: sha512-kkAszZwQ5/v4n7Yyw/DPNRWx7h724mVNRGZIJa9ggUMvTgMe7UKCZZ5wfQmYiKVlGbwd9pxXAcP8Oq15EbByFQ==}
     engines: {node: '>=8'}
     dev: true
+
+  /@sentry/types@7.66.0:
+    resolution: {integrity: sha512-uUMSoSiar6JhuD8p7ON/Ddp4JYvrVd2RpwXJRPH1A4H4Bd4DVt1mKJy1OLG6HdeQv39XyhB1lPZckKJg4tATPw==}
+    engines: {node: '>=8'}
+    dev: false
 
   /@sentry/utils@6.19.7:
     resolution: {integrity: sha512-z95ECmE3i9pbWoXQrD/7PgkBAzJYR+iXtPuTkpBjDKs86O3mT+PXOT3BAn79w2wkn7/i3vOGD2xVr1uiMl26dA==}
@@ -19471,6 +19508,14 @@ packages:
     dependencies:
       '@sentry/types': 7.45.0
       tslib: 1.14.1
+    dev: false
+
+  /@sentry/utils@7.66.0:
+    resolution: {integrity: sha512-9GYUVgXjK66uXXcLXVMXVzlptqMtq1eJENCuDeezQiEFrNA71KkLDg00wESp+LL+bl3wpVTBApArpbF6UEG5hQ==}
+    engines: {node: '>=8'}
+    dependencies:
+      '@sentry/types': 7.66.0
+      tslib: 2.6.1
     dev: false
 
   /@shopify/react-native-performance-navigation@3.0.0(@babel/runtime@7.17.9)(@react-navigation/core@6.4.6)(@react-navigation/native@6.0.13)(@react-navigation/stack@6.3.1)(@shopify/react-native-performance@4.1.2)(react-native@0.71.6)(react@18.0.0):
