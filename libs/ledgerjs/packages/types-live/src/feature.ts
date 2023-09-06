@@ -113,6 +113,8 @@ export type CurrencyFeatures = {
 
 /**
  * Features type.
+ *
+ * @dev Add features here.
  */
 export type Features = CurrencyFeatures & {
   learn: Feature_Learn;
