@@ -1,5 +1,35 @@
 # @ledgerhq/live-common
 
+## 31.7.0
+
+### Minor Changes
+
+- [#4476](https://github.com/LedgerHQ/ledger-live/pull/4476) [`b2e8c1053e`](https://github.com/LedgerHQ/ledger-live/commit/b2e8c1053e57c763575c9c4d77d1daca8ef566fe) Thanks [@KVNLS](https://github.com/KVNLS)! - Add modelId and modelIdList in meta object when we do an export with the qrcode
+
+### Patch Changes
+
+- [#4510](https://github.com/LedgerHQ/ledger-live/pull/4510) [`e0cc3a0841`](https://github.com/LedgerHQ/ledger-live/commit/e0cc3a08415de84b9d3ce828444248a043a9d699) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix cosmos family bot
+
+- [#4578](https://github.com/LedgerHQ/ledger-live/pull/4578) [`18b4a47b48`](https://github.com/LedgerHQ/ledger-live/commit/18b4a47b4878a23695a50096b7770134883b8a2e) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix elrond bot tests
+
+- [#4174](https://github.com/LedgerHQ/ledger-live/pull/4174) [`5d20c326a0`](https://github.com/LedgerHQ/ledger-live/commit/5d20c326a038a430a38f28815ba65af71152118b) Thanks [@sarneijim](https://github.com/sarneijim)! - Support customFees in swap web app mode
+
+- [#4528](https://github.com/LedgerHQ/ledger-live/pull/4528) [`1c6deb2336`](https://github.com/LedgerHQ/ledger-live/commit/1c6deb2336a8b76517cc4d367f76dca24f9228dc) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Fix regression when serializing cosmos operation extra
+
+- [#4534](https://github.com/LedgerHQ/ledger-live/pull/4534) [`3ec5739f8a`](https://github.com/LedgerHQ/ledger-live/commit/3ec5739f8a4e3ff81da468cd91036b7b271dfd06) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Add useAPI hook and useFetch hooks for swap v5
+
+- [#4540](https://github.com/LedgerHQ/ledger-live/pull/4540) [`bfd4fef405`](https://github.com/LedgerHQ/ledger-live/commit/bfd4fef405f832489cc5258330e6483260c896d2) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Hardcode Ledger validator details for Solana
+
+- Updated dependencies [[`e0cc3a0841`](https://github.com/LedgerHQ/ledger-live/commit/e0cc3a08415de84b9d3ce828444248a043a9d699), [`18b4a47b48`](https://github.com/LedgerHQ/ledger-live/commit/18b4a47b4878a23695a50096b7770134883b8a2e)]:
+  - @ledgerhq/coin-framework@0.5.3
+  - @ledgerhq/cryptoassets@9.12.1
+  - @ledgerhq/coin-algorand@0.3.1
+  - @ledgerhq/coin-evm@0.6.1
+  - @ledgerhq/coin-polkadot@0.4.1
+  - @ledgerhq/domain-service@1.1.10
+  - @ledgerhq/evm-tools@1.0.6
+  - @ledgerhq/hw-app-eth@6.34.5
+
 ## 31.6.0
 
 ### Minor Changes

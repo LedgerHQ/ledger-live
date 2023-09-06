@@ -1,5 +1,17 @@
 # @ledgerhq/native-ui
 
+## 0.21.1
+
+### Patch Changes
+
+- [#4519](https://github.com/LedgerHQ/ledger-live/pull/4519) [`ea97040266`](https://github.com/LedgerHQ/ledger-live/commit/ea97040266cc0b0b084882739bd38a90908d2b98) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - VerticalStepper: pixel polish
+  VerticalTimeline: fix aspect of lines
+
+- [#4519](https://github.com/LedgerHQ/ledger-live/pull/4519) [`ea97040266`](https://github.com/LedgerHQ/ledger-live/commit/ea97040266cc0b0b084882739bd38a90908d2b98) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Text: fix the line height for bodyLineHeight variant
+
+- Updated dependencies [[`41a38e953b`](https://github.com/LedgerHQ/ledger-live/commit/41a38e953b17075b5ab7bec307c147d8f74b7501)]:
+  - @ledgerhq/icons-ui@0.6.1
+
 ## 0.21.0
 
 ### Minor Changes

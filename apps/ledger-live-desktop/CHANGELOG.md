@@ -1,5 +1,33 @@
 # ledger-live-desktop
 
+## 2.68.0
+
+### Minor Changes
+
+- [#4476](https://github.com/LedgerHQ/ledger-live/pull/4476) [`b2e8c1053e`](https://github.com/LedgerHQ/ledger-live/commit/b2e8c1053e57c763575c9c4d77d1daca8ef566fe) Thanks [@KVNLS](https://github.com/KVNLS)! - Add modelId and modelIdList in meta object when we do an export with the qrcode
+
+### Patch Changes
+
+- Update broken readme environment variable link.
+
+- [#4552](https://github.com/LedgerHQ/ledger-live/pull/4552) [`ca8d064bab`](https://github.com/LedgerHQ/ledger-live/commit/ca8d064babf4df3babbdd4ba03f4be742d805edb) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - add new tag to earn in main side bar
+
+- [#4174](https://github.com/LedgerHQ/ledger-live/pull/4174) [`5d20c326a0`](https://github.com/LedgerHQ/ledger-live/commit/5d20c326a038a430a38f28815ba65af71152118b) Thanks [@sarneijim](https://github.com/sarneijim)! - Support customFees in swap web app mode
+
+- [#4540](https://github.com/LedgerHQ/ledger-live/pull/4540) [`bfd4fef405`](https://github.com/LedgerHQ/ledger-live/commit/bfd4fef405f832489cc5258330e6483260c896d2) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Hardcode Ledger validator details for Solana
+
+- [#4509](https://github.com/LedgerHQ/ledger-live/pull/4509) [`a35135437b`](https://github.com/LedgerHQ/ledger-live/commit/a35135437bef6fcd44925a240f0f4894eeb565da) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Added Storyly SDK along with its base hook and component
+
+- [#4562](https://github.com/LedgerHQ/ledger-live/pull/4562) [`61b1f38193`](https://github.com/LedgerHQ/ledger-live/commit/61b1f38193dc53824e35e3cf2d683330846d9f91) Thanks [@mle-gall](https://github.com/mle-gall)! - Final Stax pixel polished on LLD
+
+- Updated dependencies [[`e0cc3a0841`](https://github.com/LedgerHQ/ledger-live/commit/e0cc3a08415de84b9d3ce828444248a043a9d699), [`18b4a47b48`](https://github.com/LedgerHQ/ledger-live/commit/18b4a47b4878a23695a50096b7770134883b8a2e), [`5d20c326a0`](https://github.com/LedgerHQ/ledger-live/commit/5d20c326a038a430a38f28815ba65af71152118b), [`916d6975e5`](https://github.com/LedgerHQ/ledger-live/commit/916d6975e52f4f83291a9ce1a3e7e60dbccb5b20), [`b2e8c1053e`](https://github.com/LedgerHQ/ledger-live/commit/b2e8c1053e57c763575c9c4d77d1daca8ef566fe), [`916d6975e5`](https://github.com/LedgerHQ/ledger-live/commit/916d6975e52f4f83291a9ce1a3e7e60dbccb5b20), [`1c6deb2336`](https://github.com/LedgerHQ/ledger-live/commit/1c6deb2336a8b76517cc4d367f76dca24f9228dc), [`3ec5739f8a`](https://github.com/LedgerHQ/ledger-live/commit/3ec5739f8a4e3ff81da468cd91036b7b271dfd06), [`bfd4fef405`](https://github.com/LedgerHQ/ledger-live/commit/bfd4fef405f832489cc5258330e6483260c896d2), [`41a38e953b`](https://github.com/LedgerHQ/ledger-live/commit/41a38e953b17075b5ab7bec307c147d8f74b7501)]:
+  - @ledgerhq/live-common@31.7.0
+  - @ledgerhq/coin-framework@0.5.3
+  - @ledgerhq/react-ui@0.14.9
+  - @ledgerhq/coin-evm@0.6.1
+  - @ledgerhq/domain-service@1.1.10
+  - @ledgerhq/evm-tools@1.0.6
+
 ## 2.67.0
 
 ### Minor Changes
