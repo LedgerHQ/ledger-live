@@ -55,7 +55,7 @@ const DATA: QuickActionButtonProps[] = [
 export const List = (): JSX.Element => {
   return (
     <Box width={"100%"} px={7}>
-      <QuickActionList data={DATA} key="test" />
+      <QuickActionList data={DATA} id="test" />
     </Box>
   );
 };
@@ -67,7 +67,7 @@ export const ListSmall = (): JSX.Element => {
     <Box width={"100%"} px={7}>
       <QuickActionList
         data={DATA.map((element) => ({ ...element, variant: "small", textVariant: "small" }))}
-        key="test"
+        id="test"
         numColumns={6}
       />
     </Box>

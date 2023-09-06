@@ -8,8 +8,10 @@ import { GestureResponderEvent } from "react-native";
 import { useDistribution } from "../../actions/general";
 import { TrackScreen } from "../../analytics";
 import { NavigatorName, ScreenName } from "../../const";
+import { Box } from "@ledgerhq/native-ui";
 import { blacklistedTokenIdsSelector, discreetModeSelector } from "../../reducers/settings";
 import Assets from "./Assets";
+import PortfolioQuickActionsBar from "./PortfolioQuickActionsBar";
 
 type Props = {
   hideEmptyTokenAccount: boolean;
@@ -60,6 +62,9 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
         accountsLength={distribution.list && distribution.list.length}
         discreet={discreetMode}
       />
+      <Box mb={24} mt={18}>
+        <PortfolioQuickActionsBar />
+      </Box>
       <Assets assets={assetsToDisplay} />
       {distribution.list.length < maxAssetsToDisplay ? (
         <Button
