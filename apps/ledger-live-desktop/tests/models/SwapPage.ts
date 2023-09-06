@@ -99,6 +99,21 @@ export class SwapPage {
     await this.destinationCurrencyDropdown.click();
   }
 
+  async waitForCurrenciesToExist() {
+    await this.page.waitForTimeout(500);
+  }
+
+  async filterDestinationCurrencyDropdown(filter: string) {
+    await this.waitForCurrenciesToExist();
+    await this.destinationCurrencyDropdown.click();
+    await this.page.keyboard.type(filter);
+  }
+
+  async selectCurrencyFromCurrencyDropdown(textToSelect: string) {
+    await this.waitForCurrenciesToExist();
+    await this.page.getByRole("option").getByText(textToSelect).click();
+  }
+
   async selectCurrencyByName(accountName: string) {
     await this.currencyByName(accountName).click();
   }
