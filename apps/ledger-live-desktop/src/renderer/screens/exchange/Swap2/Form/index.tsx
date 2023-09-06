@@ -3,6 +3,10 @@ import {
   useSwapTransaction,
   usePageState,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import {
+  getCustomFeesPerFamily,
+  convertToNonAtomicUnit,
+} from "@ledgerhq/live-common/exchange/swap/webApp/index";
 import { getProviderName, getCustomDappUrl } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -39,7 +43,6 @@ import EmptyState from "./Rates/EmptyState";
 import { AccountLike, Feature } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { SwapSelectorStateType } from "@ledgerhq/live-common/exchange/swap/types";
 import { SWAP_RATES_TIMEOUT } from "../../config";
 
 const Wrapper = styled(Box).attrs({
@@ -133,6 +136,7 @@ const SwapForm = () => {
   const refreshTime = useRefreshRates(swapTransaction.swap, {
     pause: pauseRefreshing,
   });
+
   const refreshIdle = useCallback(() => {
     idleState && setIdleState(false);
     idleTimeout.current && clearInterval(idleTimeout.current);
@@ -141,19 +145,20 @@ const SwapForm = () => {
     }, idleTime);
   }, [idleState]);
 
-  const swapWebAppRedirection = useCallback(() => {
+  const swapWebAppRedirection = useCallback(async () => {
     const { to, from } = swapTransaction.swap;
     const transaction = swapTransaction.transaction;
     const { account: fromAccount, parentAccount: fromParentAccount } = from;
     const { account: toAccount, parentAccount: toParentAccount } = to;
-    const feesStrategy = transaction?.feesStrategy;
-    const rateId = exchangeRate?.rateId || "1234";
-    if (fromAccount && toAccount && feesStrategy) {
+    const { feesStrategy } = transaction || {};
+
+    const rateId = exchangeRate?.rateId || "12345";
+    if (fromAccount && toAccount) {
       const fromAccountId = accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id;
       const toAccountId = accountToWalletAPIAccount(toAccount, toParentAccount)?.id;
-      const fromMagnitude =
-        (fromAccount as unknown as SwapSelectorStateType)?.currency?.units[0].magnitude || 0;
-      const fromAmount = transaction?.amount.shiftedBy(-fromMagnitude);
+      const fromAmount = convertToNonAtomicUnit(transaction?.amount, fromAccount);
+
+      const customFeesParams = feesStrategy === "custom" ? getCustomFeesPerFamily(transaction) : {};
 
       history.push({
         pathname: "/swap-web",
@@ -163,11 +168,12 @@ const SwapForm = () => {
           toAccountId,
           fromAmount,
           quoteId: encodeURIComponent(rateId),
-          feeStrategy: feesStrategy.toUpperCase(), // Custom fee is not supported yet
+          feeStrategy: feesStrategy?.toUpperCase(),
+          ...customFeesParams,
         },
       });
     }
-  }, [history, swapTransaction, provider, exchangeRate?.rateId]);
+  }, [swapTransaction.swap, swapTransaction.transaction, exchangeRate?.rateId, history, provider]);
 
   useEffect(() => {
     if (swapTransaction.swap.rates.status === "success") {

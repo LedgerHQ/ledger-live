@@ -24,13 +24,13 @@ runs:
       if: inputs.pnpm_dest != ''
       # if: ${{ runner.os == 'Windows' }}
       with:
-        version: 8.6
+        version: 8.7
         dest: ${{ inputs.pnpm_dest }}
     - uses: pnpm/action-setup@v2
       if: inputs.pnpm_dest == ''
       # if: ${{ runner.os == 'Windows' }}
       with:
-        version: 8.6
+        version: 8.7
     - uses: actions/setup-node@v3
       # if: ${{ runner.os == 'Windows' }}
       with:

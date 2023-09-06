@@ -33,20 +33,31 @@ export class CosmosAPI {
     redelegations: CosmosRedelegation[];
     unbondings: CosmosUnbonding[];
     withdrawAddress: string;
+    accountInfo: { sequence: number; accountNumber: number };
   }> => {
     try {
-      const [balances, blockHeight, txs, delegations, redelegations, unbondings, withdrawAddress] =
-        await Promise.all([
-          this.getAllBalances(address, currency),
-          this.getHeight(),
-          this.getTransactions(address, 100),
-          this.getDelegations(address, currency),
-          this.getRedelegations(address),
-          this.getUnbondings(address),
-          this.getWithdrawAddress(address),
-        ]);
+      const [
+        accountInfo,
+        balances,
+        blockHeight,
+        txs,
+        delegations,
+        redelegations,
+        unbondings,
+        withdrawAddress,
+      ] = await Promise.all([
+        this.getAccount(address),
+        this.getAllBalances(address, currency),
+        this.getHeight(),
+        this.getTransactions(address, 100),
+        this.getDelegations(address, currency),
+        this.getRedelegations(address),
+        this.getUnbondings(address),
+        this.getWithdrawAddress(address),
+      ]);
 
       return {
+        accountInfo,
         balances,
         blockHeight,
         txs,

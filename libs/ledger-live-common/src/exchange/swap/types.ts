@@ -34,6 +34,35 @@ export type ExchangeRate = {
   expirationTime?: number;
 };
 
+type ExchangeRateV5ProviderType = "DEX" | "CEX" | "DISABLED";
+
+type ExchangeRateV5CommonProperties = {
+  provider: string;
+  providerType: ExchangeRateV5ProviderType;
+  from: string;
+  to: string;
+  amountFrom: string;
+  amountTo: string;
+  payoutNetworkFees: string;
+  status: string;
+  providerURL?: string;
+};
+
+type ExchangeRateV5FloatRate = ExchangeRateV5CommonProperties & {
+  tradeMethod: "float";
+  rateId?: string;
+  minAmountFrom: string;
+  maxAmountFrom?: string;
+};
+
+type ExchangeRateV5FixedRate = ExchangeRateV5CommonProperties & {
+  tradeMethod: "fixed";
+  rateId: string;
+  expirationTime: string;
+};
+
+export type ExchangeRateV5Response = ExchangeRateV5FloatRate | ExchangeRateV5FixedRate;
+
 export type TradeMethod = "fixed" | "float";
 
 export type ExchangeRateRaw = {

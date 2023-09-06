@@ -144,6 +144,8 @@ export type AppSpec<T extends TransactionCommon> = {
   skipMutationsTimeout?: number;
   // do not expect an account to always be found (Hedera case)
   allowEmptyAccounts?: boolean;
+  // do not keep operations in accounts (Cosmos family case)
+  skipOperationHistory?: boolean;
 };
 export type SpecReport<T extends TransactionCommon> = {
   spec: AppSpec<T>;
