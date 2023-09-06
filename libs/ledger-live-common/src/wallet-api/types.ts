@@ -28,6 +28,9 @@ export type AppPlatform = "ios" | "android" | "desktop";
 
 export type AppBranch = "stable" | "experimental" | "soon" | "debug";
 
+// complete: discover catalog + search + deeplink
+// searchable: only appears via search
+// deep: only appears via deeplink
 export type Visibility = "complete" | "searchable" | "deep";
 
 export type AppPermission = {

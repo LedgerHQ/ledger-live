@@ -18,18 +18,6 @@ export function createTransaction(_account: Account): Transaction {
 }
 
 /**
- * Update a base property of the transaction.
- *
- * @returns  {Transaction}
- */
-export function updateTransaction(
-  transaction: Transaction,
-  patch: Partial<Transaction>,
-): Transaction {
-  return { ...transaction, ...patch };
-}
-
-/**
  * Gather any more neccessary information for a transaction,
  * potentially from a network.
  *

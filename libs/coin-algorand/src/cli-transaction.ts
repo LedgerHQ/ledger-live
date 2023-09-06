@@ -101,11 +101,7 @@ function inferTransactions(
   });
 }
 
-/**
- * FIXME: unsued network and cache params are passed to makeCliTools because of how the
- * libs/ledger-live-common/scripts/sync-families-dispatch.mjs script works.
- */
-export default function makeCliTools(_network: unknown, _cache: unknown) {
+export default function makeCliTools() {
   return {
     options,
     inferAccounts,

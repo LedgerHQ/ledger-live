@@ -55,7 +55,13 @@ function StepConfirmation({ account, t, optimisticOperation, error, signed }: St
   if (optimisticOperation) {
     return (
       <Container>
-        <TrackPage category="Bond Flow" name="Step Confirmed" />
+        <TrackPage
+          category="Bond Flow"
+          name="Step Confirmed"
+          flow="stake"
+          action="bond"
+          currency="dot"
+        />
         <SuccessDisplay
           title={<Trans i18nKey="polkadot.bond.steps.confirmation.success.title" />}
           description={multiline(
@@ -70,7 +76,13 @@ function StepConfirmation({ account, t, optimisticOperation, error, signed }: St
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage category="Bond Flow" name="Step Confirmation Error" />
+        <TrackPage
+          category="Bond Flow"
+          name="Step Confirmation Error"
+          flow="stake"
+          action="bond"
+          currency="dot"
+        />
         {signed ? (
           <BroadcastErrorDisclaimer
             title={<Trans i18nKey="polkadot.bond.steps.confirmation.broadcastError" />}

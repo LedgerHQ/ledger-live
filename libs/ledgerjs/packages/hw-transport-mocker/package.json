@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-transport-mocker",
-  "version": "6.27.15",
+  "version": "6.27.19",
   "description": "Ledger Hardware Wallet mocker utilities used for tests",
   "keywords": [
     "Ledger",
@@ -41,7 +41,7 @@
   "devDependencies": {
     "@types/jest": "^29.5.0",
     "@types/node": "^18.15.3",
-    "documentation": "13.2.4",
+    "documentation": "13.2.5",
     "jest": "^28.1.1",
     "rimraf": "^4.4.1",
     "source-map-support": "^0.5.21",

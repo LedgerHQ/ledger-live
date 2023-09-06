@@ -4,7 +4,7 @@ import * as remote from "@electron/remote";
 import React, { useState, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { getAllEnvs } from "@ledgerhq/live-common/env";
+import { getAllEnvs } from "@ledgerhq/live-env";
 import { Account } from "@ledgerhq/types-live";
 import KeyHandler from "react-key-handler";
 import logger, { memoryLogger } from "~/renderer/logger";

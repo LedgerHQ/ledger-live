@@ -19,6 +19,8 @@ type Props = {
   error?: Error | null | undefined;
   warning?: Error | null | undefined;
   editable?: boolean;
+  testID?: string;
+  fiatTestID?: string;
 };
 export default function AmountInput({
   onChange,
@@ -27,6 +29,8 @@ export default function AmountInput({
   error,
   warning,
   editable,
+  testID,
+  fiatTestID,
 }: Props) {
   const { t } = useTranslation();
   const fiatCurrency = useSelector(counterValueCurrencySelector);
@@ -56,6 +60,7 @@ export default function AmountInput({
     <View style={styles.container}>
       <View style={styles.wrapper}>
         <CurrencyInput
+          testID={testID}
           editable={editable}
           isActive={isCrypto}
           onFocus={onCryptoFieldFocus}
@@ -81,6 +86,7 @@ export default function AmountInput({
       <CounterValuesSeparator />
       <View style={styles.wrapper}>
         <CurrencyInput
+          testID={fiatTestID}
           isActive={!isCrypto}
           onFocus={onFiatFieldFocus}
           onChange={onChangeFiatAmount}

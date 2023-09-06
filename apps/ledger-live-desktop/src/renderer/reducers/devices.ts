@@ -1,14 +1,16 @@
 import { handleActions } from "redux-actions";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { Handlers } from "./types";
+import { SettingsState } from "./settings";
+
 export type DevicesState = {
-  currentDevice: Device | undefined | null;
+  currentDevice: Device | undefined;
   devices: Device[];
 };
 const initialState: DevicesState = {
-  currentDevice: null,
+  currentDevice: undefined,
   devices: [],
 };
 
@@ -33,7 +35,7 @@ const handlers: DevicesHandlers = {
     ...state,
     currentDevice:
       state.currentDevice && state.currentDevice.deviceId === device.deviceId
-        ? null
+        ? undefined
         : state.currentDevice,
     devices: state.devices.filter(d => d.deviceId !== device.deviceId),
   }),
@@ -44,15 +46,31 @@ const handlers: DevicesHandlers = {
 };
 
 function setCurrentDevice(state: DevicesState) {
-  const currentDevice = state.devices.length ? state.devices[state.devices.length - 1] : null;
+  const currentDevice = state.devices.length ? state.devices[state.devices.length - 1] : undefined;
   return {
     ...state,
     currentDevice,
   };
 }
+export function getCurrentDevice(state: { devices: DevicesState; settings: SettingsState }) {
+  const isVaultSigner = state.settings.vaultSigner.enabled;
 
-export function getCurrentDevice(state: { devices: DevicesState }) {
-  if (getEnv("DEVICE_PROXY_URL") || getEnv("MOCK")) {
+  if (isVaultSigner) {
+    const transportParams = new URLSearchParams();
+    transportParams.append("host", state.settings.vaultSigner.host);
+    transportParams.append("token", state.settings.vaultSigner.token);
+    transportParams.append("workspace", state.settings.vaultSigner.workspace);
+
+    const deviceId = `vault-transport:${transportParams.toString()}`;
+
+    return {
+      deviceId,
+      wired: true,
+      modelId: DeviceModelId.nanoS,
+    };
+  }
+
+  if (getEnv("DEVICE_PROXY_URL") || (getEnv("MOCK") && !getEnv("MOCK_NO_BYPASS"))) {
     // bypass the listen devices (we should remove modelId here by instead get it at open time if needed)
     return {
       deviceId: "",

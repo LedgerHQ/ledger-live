@@ -1,10 +1,13 @@
 import React from "react";
 import Video, { OnLoadData, VideoProperties } from "react-native-video";
-import { View, StyleSheet, Animated, StyleProp, ViewStyle } from "react-native";
+import { View, StyleSheet, Animated, StyleProp, ViewStyle, Platform } from "react-native";
 import { ResizeMode } from "react-native-fast-image";
 import { Theme, withTheme } from "../../colors";
 import Skeleton from "../Skeleton";
 import NftImage from "./NftImage";
+import { TouchableOpacity } from "react-native-gesture-handler";
+
+const isAndroid = Platform.OS === "android";
 
 type Props = {
   style?: StyleProp<ViewStyle>;
@@ -14,14 +17,18 @@ type Props = {
   resizeMode?: VideoProperties["resizeMode"] & ResizeMode;
   colors: Theme["colors"];
   children?: React.ReactNode | null;
+  transparency?: boolean;
 };
 
 class NftVideo extends React.PureComponent<Props> {
   state = {
     isPosterMode: false,
+    loaded: false,
   };
 
   opacityAnim = new Animated.Value(0);
+
+  videoRef: Video | null = null;
 
   startAnimation = () => {
     Animated.timing(this.opacityAnim, {
@@ -32,23 +39,33 @@ class NftVideo extends React.PureComponent<Props> {
   };
 
   onError = () => {
-    this.setState({ isPosterMode: true });
+    this.setState({ ...this.state, loaded: true, isPosterMode: true });
     this.startAnimation();
   };
 
   onLoad = (onLoadEvent: OnLoadData) => {
     if (!onLoadEvent?.duration) {
       this.onError();
+    } else {
+      this.setState({ ...this.state, loaded: true });
     }
   };
 
   render() {
-    const { style, src, colors, resizeMode = "cover", srcFallback, children } = this.props;
+    const {
+      style,
+      src,
+      colors,
+      transparency,
+      resizeMode = "cover",
+      srcFallback,
+      children,
+    } = this.props;
     const { isPosterMode } = this.state;
 
     return (
       <View style={[style, styles.root]}>
-        <Skeleton style={styles.skeleton} loading={true} />
+        <Skeleton style={styles.skeleton} loading={!this.state.loaded} />
         <Animated.View
           style={[
             styles.imageContainer,
@@ -60,24 +77,40 @@ class NftVideo extends React.PureComponent<Props> {
           {isPosterMode ? (
             <NftImage {...this.props} status="loaded" src={srcFallback} />
           ) : (
-            <Video
-              style={[
-                styles.image,
-                {
-                  backgroundColor: colors.white,
-                },
-              ]}
-              resizeMode={resizeMode}
-              source={{
-                uri: src,
+            <TouchableOpacity
+              // Android video doesn't seem to support fullscreen without a custom
+              // implmentation so we're leaving the old functionality in place.
+              disabled={isAndroid}
+              onPress={() => {
+                if (this.videoRef) {
+                  this.videoRef.presentFullscreenPlayer();
+                }
               }}
-              onLoad={this.onLoad}
-              onReadyForDisplay={this.startAnimation}
-              onError={this.onError}
-              repeat={true}
-              controls={true}
-              paused={true}
-            />
+              style={styles.videoContainer}
+            >
+              <Video
+                ref={ref => {
+                  this.videoRef = ref;
+                }}
+                style={[
+                  styles.video,
+                  !transparency
+                    ? {
+                        backgroundColor: colors.white,
+                      }
+                    : {},
+                ]}
+                resizeMode={resizeMode}
+                source={{
+                  uri: src,
+                }}
+                onLoad={this.onLoad}
+                onReadyForDisplay={this.startAnimation}
+                onError={this.onError}
+                repeat={true}
+                controls={false}
+              />
+            </TouchableOpacity>
           )}
         </Animated.View>
         {children}
@@ -100,7 +133,12 @@ const styles = StyleSheet.create({
     zIndex: 1,
     flex: 1,
   },
-  image: {
+  videoContainer: {
+    display: "flex",
+    width: "100%",
+    height: "100%",
+  },
+  video: {
     flex: 1,
   },
   notFoundView: {

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-transport-node-hid",
-  "version": "6.27.15",
+  "version": "6.27.21",
   "description": "Ledger Hardware Wallet Node implementation of the communication layer, using node-hid",
   "keywords": [
     "Ledger",
@@ -34,7 +34,7 @@
     "@ledgerhq/logs": "workspace:^",
     "lodash": "^4.17.21",
     "node-hid": "^2.1.2",
-    "usb": "^1.7.0"
+    "usb": "2.9.0"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
@@ -50,7 +50,7 @@
   "devDependencies": {
     "@types/jest": "^29.5.0",
     "@types/node": "^18.15.3",
-    "documentation": "13.2.4",
+    "documentation": "13.2.5",
     "jest": "^28.1.1",
     "rimraf": "^4.4.1",
     "source-map-support": "^0.5.21",

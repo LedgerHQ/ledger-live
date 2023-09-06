@@ -5,7 +5,7 @@ import {
 } from "@ethereumjs/tx";
 import eip55 from "eip55";
 import { encode } from "rlp";
-import type { Operation, Account, SignOperationEvent } from "@ledgerhq/types-live";
+import type { Operation, SignOperationEvent, SignOperationFnSignature } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import { log } from "@ledgerhq/logs";
 import Eth, { ledgerService as ethLedgerServices } from "@ledgerhq/hw-app-eth";
@@ -18,20 +18,16 @@ import { apiForCurrency } from "./api";
 import { withDevice } from "../../hw/deviceAccess";
 import type { Transaction } from "./types";
 import { isNFTActive } from "../../nft";
-import { getEnv } from "../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import { modes } from "./modules";
 import { getGasLimit, buildEthereumTx, EIP1559ShouldBeUsed, toTransactionRaw } from "./transaction";
 import { padHexString } from "./logic";
 
-export const signOperation = ({
+export const signOperation: SignOperationFnSignature<Transaction> = ({
   account,
   deviceId,
   transaction,
-}: {
-  account: Account;
-  deviceId: any;
-  transaction: Transaction;
-}): Observable<SignOperationEvent> =>
+}) =>
   from(
     transaction.nonce !== undefined
       ? of(transaction.nonce)
@@ -71,7 +67,6 @@ export const signOperation = ({
               const { ethTxObject, tx, common } = buildEthereumTx(account, transaction, nonce);
               const to = eip55.encode((tx.to || "").toString());
               const value = new BigNumber("0x" + (tx.value.toString("hex") || "0"));
-
               // rawData Format: type 0 `rlp([nonce, gasPrice, gasLimit, to, value, data, v, r, s])`
               // EIP1559 Format: type 2 || rlp([chainId, nonce, maxPriorityFeePerGas, maxFeePerGas, gasLimit, destination, amount, data, access_list, v, r, s])
               const txHex = (() => {
@@ -150,7 +145,14 @@ export const signOperation = ({
               })();
 
               const transactionSequenceNumber = nonce;
+              transaction.nonce = nonce;
+              if (transaction.useAllAmount && transaction.amount.eq(0)) {
+                transaction.amount = new BigNumber(value);
+              }
               const accountId = account.id;
+              const editingOp = account.pendingOperations.find(
+                op => op.transactionSequenceNumber === nonce,
+              );
               // currently, all mode are always at least one OUT tx on ETH parent
               const operation: Operation = {
                 id: `${accountId}-${txHash}-OUT`,
@@ -164,7 +166,7 @@ export const signOperation = ({
                 senders,
                 recipients,
                 accountId,
-                date: new Date(),
+                date: editingOp ? editingOp.date : new Date(),
                 extra: {},
                 transactionRaw: toTransactionRaw(transaction),
               };
@@ -174,7 +176,6 @@ export const signOperation = ({
                 signedOperation: {
                   operation,
                   signature,
-                  expirationDate: null,
                 },
               });
             }

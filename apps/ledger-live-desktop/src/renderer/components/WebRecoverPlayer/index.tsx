@@ -24,7 +24,13 @@ export const Wrapper = styled(Box).attrs(() => ({
   position: relative;
 `;
 
-const recoverIdsShowTopBar = ["protect-simu", "protect-staging"];
+const recoverIdsShowTopBar = [
+  "protect-local",
+  "protect-local-dev",
+  "protect-simu",
+  "protect-staging",
+  "protect-staging-v2",
+];
 
 export default function WebRecoverPlayer({ manifest, inputs, onClose }: RecoverWebviewProps) {
   const webviewAPIRef = useRef<WebviewAPI>(null);

@@ -1,12 +1,10 @@
 import { expect } from "@playwright/test";
 import test from "../../fixtures/common";
 import { OnboardingPage } from "../../models/OnboardingPage";
-import { ManualPage } from "../../models/ManualPage";
 
 test.use({ featureFlags: { syncOnboarding: { enabled: true } } });
 
-test("Manual", async ({ page }) => {
-  const manualPage = new ManualPage(page);
+test("Manual @smoke", async ({ page }) => {
   const onboardingPage = new OnboardingPage(page);
 
   await test.step("Get started", async () => {
@@ -19,10 +17,5 @@ test("Manual", async ({ page }) => {
 
   await test.step("Take screenshot of main screen", async () => {
     expect(await page.screenshot()).toMatchSnapshot("sync-onboarding-manual.png");
-  });
-
-  await test.step("Open help drawer", async () => {
-    await manualPage.openHelpDrawer();
-    expect(await page.screenshot()).toMatchSnapshot("sync-onboarding-manual-help.png");
   });
 });

@@ -1,8 +1,6 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
-import connectManager from "@ledgerhq/live-common/hw/connectManager";
-import { createAction } from "@ledgerhq/live-common/hw/actions/manager";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import SelectDevice from "../../../components/SelectDevice";
@@ -11,8 +9,7 @@ import DeviceActionModal from "../../../components/DeviceActionModal";
 import { TrackScreen } from "../../../analytics";
 import SkipSelectDevice from "../../SkipSelectDevice";
 import { DeviceMeta } from "./Modal/Confirmation";
-
-const action = createAction(connectManager);
+import { useManagerDeviceAction } from "../../../hooks/deviceActions";
 
 export function Connect({
   setResult,
@@ -21,6 +18,8 @@ export function Connect({
   setResult: (_: DeviceMeta) => void;
   provider?: string;
 }) {
+  const action = useManagerDeviceAction();
+
   const [device, setDevice] = useState<Device>();
   const [result] = useState();
 

@@ -11,8 +11,12 @@ on:
   merge_group:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.ref_name != 'develop' }}
+  group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
 
 env:
   number: ${{ github.event.pull_request.number || -1 }}
@@ -25,9 +29,6 @@ env:
 
 jobs:
   setup:
-    permissions:
-      contents: read
-      pull-requests: write
     name: "Setup"
     runs-on: ubuntu-latest
     outputs:
@@ -47,8 +48,8 @@ jobs:
             const newHeadBranch = head_branch.replace("refs/heads/", "");
             const newBaseBranch = base_branch.replace("refs/heads/", "");
 
-            core.exportVariable("head_branch", newHeadBranch)
-            core.exportVariable("base_branch", newBaseBranch)
+            core.exportVariable("head_branch", newHeadBranch);
+            core.exportVariable("base_branch", newBaseBranch);
 
       - uses: ./tools/actions/turbo-affected
         id: affected

@@ -6,7 +6,8 @@ import signOperation from "../js-signOperation";
 import broadcast from "../js-broadcast";
 import { scanAccounts, sync } from "../js-synchronisation";
 import receive from "../js-receive";
-import { createTransaction, updateTransaction, prepareTransaction } from "../js-transaction";
+import { createTransaction, prepareTransaction } from "../js-transaction";
+import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 
 const currencyBridge: CurrencyBridge = {
   preload: () => Promise.resolve({}),
@@ -17,7 +18,7 @@ const currencyBridge: CurrencyBridge = {
 const accountBridge: AccountBridge<Transaction> = {
   estimateMaxSpendable,
   createTransaction,
-  updateTransaction,
+  updateTransaction: defaultUpdateTransaction,
   getTransactionStatus,
   prepareTransaction,
   sync,

@@ -14,6 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  ********************************************************************************/
+/* eslint @typescript-eslint/no-duplicate-enum-values: 1 */
 // FIXME drop:
 import type Transport from "@ledgerhq/hw-transport";
 import { BigNumber } from "bignumber.js";
@@ -24,15 +25,10 @@ import { decodeTxInfo, hexBuffer, intAsHexBytes, maybeHexBuffer, splitPath } fro
 import { domainResolutionFlow } from "./modules/Domains";
 import ledgerService from "./services/ledger";
 import { EthAppNftNotSupported, EthAppPleaseEnableContractData } from "./errors";
-import {
-  signEIP712HashedMessage,
-  signEIP712Message,
-  EIP712Message,
-  isEIP712Message,
-  getFiltersForMessage,
-} from "./modules/EIP712";
+import { signEIP712HashedMessage, signEIP712Message } from "./modules/EIP712";
+import { EIP712Message } from "@ledgerhq/types-live";
 
-export { ledgerService, isEIP712Message, getFiltersForMessage };
+export { ledgerService };
 export * from "./utils";
 
 export type StarkQuantizationType = "eth" | "erc20" | "erc721" | "erc20mintable" | "erc721mintable";
@@ -296,7 +292,7 @@ export default class Eth {
 
   /**
    * Helper to get resolution and signature of a transaction in a single method
-   * 
+   *
    * @param path: the BIP32 path to sign the transaction on
    * @param rawTxHex: the raw ethereum transaction in hexadecimal to sign
    * @param resolutionConfig: configuration about what should be clear signed in the transaction
@@ -428,7 +424,7 @@ export default class Eth {
   /**
    * Sign an EIP-721 formatted message following the specification here:
    * https://github.com/LedgerHQ/app-ethereum/blob/develop/doc/ethapp.asc#sign-eth-eip-712
-   * ⚠️ This method is not compatible with nano S (LNS). Make sure to use a try/catch to fallback on the signEIP712HashedMessage method ⚠️ 
+   * ⚠️ This method is not compatible with nano S (LNS). Make sure to use a try/catch to fallback on the signEIP712HashedMessage method ⚠️
    @example
    eth.signEIP721Message("44'/60'/0'/0/0", {
       domain: {

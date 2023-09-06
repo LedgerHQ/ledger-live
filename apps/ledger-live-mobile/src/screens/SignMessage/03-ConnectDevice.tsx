@@ -3,8 +3,6 @@ import React, { useMemo } from "react";
 import { StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { createAction } from "@ledgerhq/live-common/hw/signMessage/index";
-import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { accountScreenSelector } from "../../reducers/accounts";
 import DeviceAction from "../../components/DeviceAction";
@@ -13,13 +11,13 @@ import { ScreenName } from "../../const";
 import { navigateToSelectDevice } from "../ConnectDevice";
 import { SignMessageNavigatorStackParamList } from "../../components/RootNavigator/types/SignMessageNavigator";
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-
-const action = createAction(connectApp);
+import { useSignMessageDeviceAction } from "../../hooks/deviceActions";
 
 export default function ConnectDevice({
   route,
   navigation,
 }: StackNavigatorProps<SignMessageNavigatorStackParamList, ScreenName.SignConnectDevice>) {
+  const action = useSignMessageDeviceAction();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
   const mainAccount = getMainAccount(account, parentAccount);

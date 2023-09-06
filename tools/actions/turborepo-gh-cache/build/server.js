@@ -24,6 +24,10 @@ var __copyProps = (to, from, except, desc) => {
   return to;
 };
 var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
   isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
   mod
 ));
@@ -65,7 +69,7 @@ var require_utils = __commonJS({
 var require_command = __commonJS({
   "../../../node_modules/.pnpm/@actions+core@1.10.0/node_modules/@actions/core/lib/command.js"(exports) {
     "use strict";
-    var __createBinding2 = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
+    var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
       if (k2 === void 0)
         k2 = k;
       Object.defineProperty(o, k2, { enumerable: true, get: function() {
@@ -81,21 +85,21 @@ var require_command = __commonJS({
     } : function(o, v) {
       o["default"] = v;
     });
-    var __importStar2 = exports && exports.__importStar || function(mod) {
+    var __importStar = exports && exports.__importStar || function(mod) {
       if (mod && mod.__esModule)
         return mod;
       var result = {};
       if (mod != null) {
         for (var k in mod)
           if (k !== "default" && Object.hasOwnProperty.call(mod, k))
-            __createBinding2(result, mod, k);
+            __createBinding(result, mod, k);
       }
       __setModuleDefault(result, mod);
       return result;
     };
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.issue = exports.issueCommand = void 0;
-    var os3 = __importStar2(require("os"));
+    var os3 = __importStar(require("os"));
     var utils_1 = require_utils();
     function issueCommand(command, properties, message) {
       const cmd = new Command(command, properties, message);
@@ -148,494 +152,351 @@ var require_command = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/rng.js
-var require_rng = __commonJS({
-  "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/rng.js"(exports) {
+// ../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/rng.js
+function rng() {
+  if (poolPtr > rnds8Pool.length - 16) {
+    import_crypto.default.randomFillSync(rnds8Pool);
+    poolPtr = 0;
+  }
+  return rnds8Pool.slice(poolPtr, poolPtr += 16);
+}
+var import_crypto, rnds8Pool, poolPtr;
+var init_rng = __esm({
+  "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/rng.js"() {
     "use strict";
-    Object.defineProperty(exports, "__esModule", {
-      value: true
-    });
-    exports.default = rng;
-    var _crypto = _interopRequireDefault(require("crypto"));
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
-    }
-    var rnds8Pool = new Uint8Array(256);
-    var poolPtr = rnds8Pool.length;
-    function rng() {
-      if (poolPtr > rnds8Pool.length - 16) {
-        _crypto.default.randomFillSync(rnds8Pool);
-        poolPtr = 0;
-      }
-      return rnds8Pool.slice(poolPtr, poolPtr += 16);
-    }
+    import_crypto = __toESM(require("crypto"));
+    rnds8Pool = new Uint8Array(256);
+    poolPtr = rnds8Pool.length;
   }
 });
 
-// ../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/regex.js
-var require_regex = __commonJS({
-  "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/regex.js"(exports) {
+// ../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/regex.js
+var regex_default;
+var init_regex = __esm({
+  "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/regex.js"() {
     "use strict";
-    Object.defineProperty(exports, "__esModule", {
-      value: true
-    });
-    exports.default = void 0;
-    var _default = /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000)$/i;
-    exports.default = _default;
+    regex_default = /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000)$/i;
   }
 });
 
-// ../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/validate.js
-var require_validate = __commonJS({
-  "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/validate.js"(exports) {
+// ../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/validate.js
+function validate(uuid) {
+  return typeof uuid === "string" && regex_default.test(uuid);
+}
+var validate_default;
+var init_validate = __esm({
+  "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/validate.js"() {
     "use strict";
-    Object.defineProperty(exports, "__esModule", {
-      value: true
-    });
-    exports.default = void 0;
-    var _regex = _interopRequireDefault(require_regex());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
-    }
-    function validate2(uuid2) {
-      return typeof uuid2 === "string" && _regex.default.test(uuid2);
-    }
-    var _default = validate2;
-    exports.default = _default;
+    init_regex();
+    validate_default = validate;
   }
 });
 
-// ../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/stringify.js
-var require_stringify = __commonJS({
-  "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/stringify.js"(exports) {
+// ../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/stringify.js
+function stringify(arr, offset = 0) {
+  const uuid = (byteToHex[arr[offset + 0]] + byteToHex[arr[offset + 1]] + byteToHex[arr[offset + 2]] + byteToHex[arr[offset + 3]] + "-" + byteToHex[arr[offset + 4]] + byteToHex[arr[offset + 5]] + "-" + byteToHex[arr[offset + 6]] + byteToHex[arr[offset + 7]] + "-" + byteToHex[arr[offset + 8]] + byteToHex[arr[offset + 9]] + "-" + byteToHex[arr[offset + 10]] + byteToHex[arr[offset + 11]] + byteToHex[arr[offset + 12]] + byteToHex[arr[offset + 13]] + byteToHex[arr[offset + 14]] + byteToHex[arr[offset + 15]]).toLowerCase();
+  if (!validate_default(uuid)) {
+    throw TypeError("Stringified UUID is invalid");
+  }
+  return uuid;
+}
+var byteToHex, stringify_default;
+var init_stringify = __esm({
+  "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/stringify.js"() {
     "use strict";
-    Object.defineProperty(exports, "__esModule", {
-      value: true
-    });
-    exports.default = void 0;
-    var _validate = _interopRequireDefault(require_validate());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
-    }
-    var byteToHex = [];
+    init_validate();
+    byteToHex = [];
     for (let i = 0; i < 256; ++i) {
       byteToHex.push((i + 256).toString(16).substr(1));
     }
-    function stringify2(arr, offset = 0) {
-      const uuid2 = (byteToHex[arr[offset + 0]] + byteToHex[arr[offset + 1]] + byteToHex[arr[offset + 2]] + byteToHex[arr[offset + 3]] + "-" + byteToHex[arr[offset + 4]] + byteToHex[arr[offset + 5]] + "-" + byteToHex[arr[offset + 6]] + byteToHex[arr[offset + 7]] + "-" + byteToHex[arr[offset + 8]] + byteToHex[arr[offset + 9]] + "-" + byteToHex[arr[offset + 10]] + byteToHex[arr[offset + 11]] + byteToHex[arr[offset + 12]] + byteToHex[arr[offset + 13]] + byteToHex[arr[offset + 14]] + byteToHex[arr[offset + 15]]).toLowerCase();
-      if (!(0, _validate.default)(uuid2)) {
-        throw TypeError("Stringified UUID is invalid");
-      }
-      return uuid2;
-    }
-    var _default = stringify2;
-    exports.default = _default;
+    stringify_default = stringify;
   }
 });
 
-// ../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/v1.js
-var require_v1 = __commonJS({
-  "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/v1.js"(exports) {
+// ../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/v1.js
+function v1(options, buf, offset) {
+  let i = buf && offset || 0;
+  const b = buf || new Array(16);
+  options = options || {};
+  let node = options.node || _nodeId;
+  let clockseq = options.clockseq !== void 0 ? options.clockseq : _clockseq;
+  if (node == null || clockseq == null) {
+    const seedBytes = options.random || (options.rng || rng)();
+    if (node == null) {
+      node = _nodeId = [seedBytes[0] | 1, seedBytes[1], seedBytes[2], seedBytes[3], seedBytes[4], seedBytes[5]];
+    }
+    if (clockseq == null) {
+      clockseq = _clockseq = (seedBytes[6] << 8 | seedBytes[7]) & 16383;
+    }
+  }
+  let msecs = options.msecs !== void 0 ? options.msecs : Date.now();
+  let nsecs = options.nsecs !== void 0 ? options.nsecs : _lastNSecs + 1;
+  const dt = msecs - _lastMSecs + (nsecs - _lastNSecs) / 1e4;
+  if (dt < 0 && options.clockseq === void 0) {
+    clockseq = clockseq + 1 & 16383;
+  }
+  if ((dt < 0 || msecs > _lastMSecs) && options.nsecs === void 0) {
+    nsecs = 0;
+  }
+  if (nsecs >= 1e4) {
+    throw new Error("uuid.v1(): Can't create more than 10M uuids/sec");
+  }
+  _lastMSecs = msecs;
+  _lastNSecs = nsecs;
+  _clockseq = clockseq;
+  msecs += 122192928e5;
+  const tl = ((msecs & 268435455) * 1e4 + nsecs) % 4294967296;
+  b[i++] = tl >>> 24 & 255;
+  b[i++] = tl >>> 16 & 255;
+  b[i++] = tl >>> 8 & 255;
+  b[i++] = tl & 255;
+  const tmh = msecs / 4294967296 * 1e4 & 268435455;
+  b[i++] = tmh >>> 8 & 255;
+  b[i++] = tmh & 255;
+  b[i++] = tmh >>> 24 & 15 | 16;
+  b[i++] = tmh >>> 16 & 255;
+  b[i++] = clockseq >>> 8 | 128;
+  b[i++] = clockseq & 255;
+  for (let n = 0; n < 6; ++n) {
+    b[i + n] = node[n];
+  }
+  return buf || stringify_default(b);
+}
+var _nodeId, _clockseq, _lastMSecs, _lastNSecs, v1_default;
+var init_v1 = __esm({
+  "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/v1.js"() {
     "use strict";
-    Object.defineProperty(exports, "__esModule", {
-      value: true
-    });
-    exports.default = void 0;
-    var _rng = _interopRequireDefault(require_rng());
-    var _stringify = _interopRequireDefault(require_stringify());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
-    }
-    var _nodeId;
-    var _clockseq;
-    var _lastMSecs = 0;
-    var _lastNSecs = 0;
-    function v12(options, buf, offset) {
-      let i = buf && offset || 0;
-      const b = buf || new Array(16);
-      options = options || {};
-      let node = options.node || _nodeId;
-      let clockseq = options.clockseq !== void 0 ? options.clockseq : _clockseq;
-      if (node == null || clockseq == null) {
-        const seedBytes = options.random || (options.rng || _rng.default)();
-        if (node == null) {
-          node = _nodeId = [seedBytes[0] | 1, seedBytes[1], seedBytes[2], seedBytes[3], seedBytes[4], seedBytes[5]];
-        }
-        if (clockseq == null) {
-          clockseq = _clockseq = (seedBytes[6] << 8 | seedBytes[7]) & 16383;
-        }
-      }
-      let msecs = options.msecs !== void 0 ? options.msecs : Date.now();
-      let nsecs = options.nsecs !== void 0 ? options.nsecs : _lastNSecs + 1;
-      const dt = msecs - _lastMSecs + (nsecs - _lastNSecs) / 1e4;
-      if (dt < 0 && options.clockseq === void 0) {
-        clockseq = clockseq + 1 & 16383;
-      }
-      if ((dt < 0 || msecs > _lastMSecs) && options.nsecs === void 0) {
-        nsecs = 0;
-      }
-      if (nsecs >= 1e4) {
-        throw new Error("uuid.v1(): Can't create more than 10M uuids/sec");
-      }
-      _lastMSecs = msecs;
-      _lastNSecs = nsecs;
-      _clockseq = clockseq;
-      msecs += 122192928e5;
-      const tl = ((msecs & 268435455) * 1e4 + nsecs) % 4294967296;
-      b[i++] = tl >>> 24 & 255;
-      b[i++] = tl >>> 16 & 255;
-      b[i++] = tl >>> 8 & 255;
-      b[i++] = tl & 255;
-      const tmh = msecs / 4294967296 * 1e4 & 268435455;
-      b[i++] = tmh >>> 8 & 255;
-      b[i++] = tmh & 255;
-      b[i++] = tmh >>> 24 & 15 | 16;
-      b[i++] = tmh >>> 16 & 255;
-      b[i++] = clockseq >>> 8 | 128;
-      b[i++] = clockseq & 255;
-      for (let n = 0; n < 6; ++n) {
-        b[i + n] = node[n];
-      }
-      return buf || (0, _stringify.default)(b);
-    }
-    var _default = v12;
-    exports.default = _default;
+    init_rng();
+    init_stringify();
+    _lastMSecs = 0;
+    _lastNSecs = 0;
+    v1_default = v1;
   }
 });
 
-// ../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/parse.js
-var require_parse = __commonJS({
-  "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/parse.js"(exports) {
+// ../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/parse.js
+function parse(uuid) {
+  if (!validate_default(uuid)) {
+    throw TypeError("Invalid UUID");
+  }
+  let v;
+  const arr = new Uint8Array(16);
+  arr[0] = (v = parseInt(uuid.slice(0, 8), 16)) >>> 24;
+  arr[1] = v >>> 16 & 255;
+  arr[2] = v >>> 8 & 255;
+  arr[3] = v & 255;
+  arr[4] = (v = parseInt(uuid.slice(9, 13), 16)) >>> 8;
+  arr[5] = v & 255;
+  arr[6] = (v = parseInt(uuid.slice(14, 18), 16)) >>> 8;
+  arr[7] = v & 255;
+  arr[8] = (v = parseInt(uuid.slice(19, 23), 16)) >>> 8;
+  arr[9] = v & 255;
+  arr[10] = (v = parseInt(uuid.slice(24, 36), 16)) / 1099511627776 & 255;
+  arr[11] = v / 4294967296 & 255;
+  arr[12] = v >>> 24 & 255;
+  arr[13] = v >>> 16 & 255;
+  arr[14] = v >>> 8 & 255;
+  arr[15] = v & 255;
+  return arr;
+}
+var parse_default;
+var init_parse = __esm({
+  "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/parse.js"() {
     "use strict";
-    Object.defineProperty(exports, "__esModule", {
-      value: true
-    });
-    exports.default = void 0;
-    var _validate = _interopRequireDefault(require_validate());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
-    }
-    function parse3(uuid2) {
-      if (!(0, _validate.default)(uuid2)) {
-        throw TypeError("Invalid UUID");
-      }
-      let v;
-      const arr = new Uint8Array(16);
-      arr[0] = (v = parseInt(uuid2.slice(0, 8), 16)) >>> 24;
-      arr[1] = v >>> 16 & 255;
-      arr[2] = v >>> 8 & 255;
-      arr[3] = v & 255;
-      arr[4] = (v = parseInt(uuid2.slice(9, 13), 16)) >>> 8;
-      arr[5] = v & 255;
-      arr[6] = (v = parseInt(uuid2.slice(14, 18), 16)) >>> 8;
-      arr[7] = v & 255;
-      arr[8] = (v = parseInt(uuid2.slice(19, 23), 16)) >>> 8;
-      arr[9] = v & 255;
-      arr[10] = (v = parseInt(uuid2.slice(24, 36), 16)) / 1099511627776 & 255;
-      arr[11] = v / 4294967296 & 255;
-      arr[12] = v >>> 24 & 255;
-      arr[13] = v >>> 16 & 255;
-      arr[14] = v >>> 8 & 255;
-      arr[15] = v & 255;
-      return arr;
-    }
-    var _default = parse3;
-    exports.default = _default;
+    init_validate();
+    parse_default = parse;
   }
 });
 
-// ../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/v35.js
-var require_v35 = __commonJS({
-  "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/v35.js"(exports) {
+// ../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/v35.js
+function stringToBytes(str) {
+  str = unescape(encodeURIComponent(str));
+  const bytes = [];
+  for (let i = 0; i < str.length; ++i) {
+    bytes.push(str.charCodeAt(i));
+  }
+  return bytes;
+}
+function v35_default(name, version3, hashfunc) {
+  function generateUUID(value, namespace, buf, offset) {
+    if (typeof value === "string") {
+      value = stringToBytes(value);
+    }
+    if (typeof namespace === "string") {
+      namespace = parse_default(namespace);
+    }
+    if (namespace.length !== 16) {
+      throw TypeError("Namespace must be array-like (16 iterable integer values, 0-255)");
+    }
+    let bytes = new Uint8Array(16 + value.length);
+    bytes.set(namespace);
+    bytes.set(value, namespace.length);
+    bytes = hashfunc(bytes);
+    bytes[6] = bytes[6] & 15 | version3;
+    bytes[8] = bytes[8] & 63 | 128;
+    if (buf) {
+      offset = offset || 0;
+      for (let i = 0; i < 16; ++i) {
+        buf[offset + i] = bytes[i];
+      }
+      return buf;
+    }
+    return stringify_default(bytes);
+  }
+  try {
+    generateUUID.name = name;
+  } catch (err) {
+  }
+  generateUUID.DNS = DNS;
+  generateUUID.URL = URL2;
+  return generateUUID;
+}
+var DNS, URL2;
+var init_v35 = __esm({
+  "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/v35.js"() {
     "use strict";
-    Object.defineProperty(exports, "__esModule", {
-      value: true
-    });
-    exports.default = _default;
-    exports.URL = exports.DNS = void 0;
-    var _stringify = _interopRequireDefault(require_stringify());
-    var _parse = _interopRequireDefault(require_parse());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
-    }
-    function stringToBytes(str) {
-      str = unescape(encodeURIComponent(str));
-      const bytes = [];
-      for (let i = 0; i < str.length; ++i) {
-        bytes.push(str.charCodeAt(i));
-      }
-      return bytes;
-    }
-    var DNS = "6ba7b810-9dad-11d1-80b4-00c04fd430c8";
-    exports.DNS = DNS;
-    var URL3 = "6ba7b811-9dad-11d1-80b4-00c04fd430c8";
-    exports.URL = URL3;
-    function _default(name, version3, hashfunc) {
-      function generateUUID(value, namespace, buf, offset) {
-        if (typeof value === "string") {
-          value = stringToBytes(value);
-        }
-        if (typeof namespace === "string") {
-          namespace = (0, _parse.default)(namespace);
-        }
-        if (namespace.length !== 16) {
-          throw TypeError("Namespace must be array-like (16 iterable integer values, 0-255)");
-        }
-        let bytes = new Uint8Array(16 + value.length);
-        bytes.set(namespace);
-        bytes.set(value, namespace.length);
-        bytes = hashfunc(bytes);
-        bytes[6] = bytes[6] & 15 | version3;
-        bytes[8] = bytes[8] & 63 | 128;
-        if (buf) {
-          offset = offset || 0;
-          for (let i = 0; i < 16; ++i) {
-            buf[offset + i] = bytes[i];
-          }
-          return buf;
-        }
-        return (0, _stringify.default)(bytes);
-      }
-      try {
-        generateUUID.name = name;
-      } catch (err) {
-      }
-      generateUUID.DNS = DNS;
-      generateUUID.URL = URL3;
-      return generateUUID;
-    }
+    init_stringify();
+    init_parse();
+    DNS = "6ba7b810-9dad-11d1-80b4-00c04fd430c8";
+    URL2 = "6ba7b811-9dad-11d1-80b4-00c04fd430c8";
   }
 });
 
-// ../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/md5.js
-var require_md5 = __commonJS({
-  "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/md5.js"(exports) {
+// ../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/md5.js
+function md5(bytes) {
+  if (Array.isArray(bytes)) {
+    bytes = Buffer.from(bytes);
+  } else if (typeof bytes === "string") {
+    bytes = Buffer.from(bytes, "utf8");
+  }
+  return import_crypto2.default.createHash("md5").update(bytes).digest();
+}
+var import_crypto2, md5_default;
+var init_md5 = __esm({
+  "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/md5.js"() {
     "use strict";
-    Object.defineProperty(exports, "__esModule", {
-      value: true
-    });
-    exports.default = void 0;
-    var _crypto = _interopRequireDefault(require("crypto"));
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
-    }
-    function md5(bytes) {
-      if (Array.isArray(bytes)) {
-        bytes = Buffer.from(bytes);
-      } else if (typeof bytes === "string") {
-        bytes = Buffer.from(bytes, "utf8");
-      }
-      return _crypto.default.createHash("md5").update(bytes).digest();
-    }
-    var _default = md5;
-    exports.default = _default;
+    import_crypto2 = __toESM(require("crypto"));
+    md5_default = md5;
   }
 });
 
-// ../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/v3.js
-var require_v3 = __commonJS({
-  "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/v3.js"(exports) {
+// ../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/v3.js
+var v3, v3_default;
+var init_v3 = __esm({
+  "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/v3.js"() {
     "use strict";
-    Object.defineProperty(exports, "__esModule", {
-      value: true
-    });
-    exports.default = void 0;
-    var _v = _interopRequireDefault(require_v35());
-    var _md = _interopRequireDefault(require_md5());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
-    }
-    var v32 = (0, _v.default)("v3", 48, _md.default);
-    var _default = v32;
-    exports.default = _default;
+    init_v35();
+    init_md5();
+    v3 = v35_default("v3", 48, md5_default);
+    v3_default = v3;
   }
 });
 
-// ../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/v4.js
-var require_v4 = __commonJS({
-  "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/v4.js"(exports) {
+// ../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/v4.js
+function v4(options, buf, offset) {
+  options = options || {};
+  const rnds = options.random || (options.rng || rng)();
+  rnds[6] = rnds[6] & 15 | 64;
+  rnds[8] = rnds[8] & 63 | 128;
+  if (buf) {
+    offset = offset || 0;
+    for (let i = 0; i < 16; ++i) {
+      buf[offset + i] = rnds[i];
+    }
+    return buf;
+  }
+  return stringify_default(rnds);
+}
+var v4_default;
+var init_v4 = __esm({
+  "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/v4.js"() {
     "use strict";
-    Object.defineProperty(exports, "__esModule", {
-      value: true
-    });
-    exports.default = void 0;
-    var _rng = _interopRequireDefault(require_rng());
-    var _stringify = _interopRequireDefault(require_stringify());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
-    }
-    function v42(options, buf, offset) {
-      options = options || {};
-      const rnds = options.random || (options.rng || _rng.default)();
-      rnds[6] = rnds[6] & 15 | 64;
-      rnds[8] = rnds[8] & 63 | 128;
-      if (buf) {
-        offset = offset || 0;
-        for (let i = 0; i < 16; ++i) {
-          buf[offset + i] = rnds[i];
-        }
-        return buf;
-      }
-      return (0, _stringify.default)(rnds);
-    }
-    var _default = v42;
-    exports.default = _default;
+    init_rng();
+    init_stringify();
+    v4_default = v4;
   }
 });
 
-// ../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/sha1.js
-var require_sha1 = __commonJS({
-  "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/sha1.js"(exports) {
+// ../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/sha1.js
+function sha1(bytes) {
+  if (Array.isArray(bytes)) {
+    bytes = Buffer.from(bytes);
+  } else if (typeof bytes === "string") {
+    bytes = Buffer.from(bytes, "utf8");
+  }
+  return import_crypto3.default.createHash("sha1").update(bytes).digest();
+}
+var import_crypto3, sha1_default;
+var init_sha1 = __esm({
+  "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/sha1.js"() {
     "use strict";
-    Object.defineProperty(exports, "__esModule", {
-      value: true
-    });
-    exports.default = void 0;
-    var _crypto = _interopRequireDefault(require("crypto"));
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
-    }
-    function sha1(bytes) {
-      if (Array.isArray(bytes)) {
-        bytes = Buffer.from(bytes);
-      } else if (typeof bytes === "string") {
-        bytes = Buffer.from(bytes, "utf8");
-      }
-      return _crypto.default.createHash("sha1").update(bytes).digest();
-    }
-    var _default = sha1;
-    exports.default = _default;
+    import_crypto3 = __toESM(require("crypto"));
+    sha1_default = sha1;
   }
 });
 
-// ../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/v5.js
-var require_v5 = __commonJS({
-  "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/v5.js"(exports) {
+// ../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/v5.js
+var v5, v5_default;
+var init_v5 = __esm({
+  "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/v5.js"() {
     "use strict";
-    Object.defineProperty(exports, "__esModule", {
-      value: true
-    });
-    exports.default = void 0;
-    var _v = _interopRequireDefault(require_v35());
-    var _sha = _interopRequireDefault(require_sha1());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
-    }
-    var v52 = (0, _v.default)("v5", 80, _sha.default);
-    var _default = v52;
-    exports.default = _default;
+    init_v35();
+    init_sha1();
+    v5 = v35_default("v5", 80, sha1_default);
+    v5_default = v5;
   }
 });
 
-// ../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/nil.js
-var require_nil = __commonJS({
-  "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/nil.js"(exports) {
+// ../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/nil.js
+var nil_default;
+var init_nil = __esm({
+  "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/nil.js"() {
     "use strict";
-    Object.defineProperty(exports, "__esModule", {
-      value: true
-    });
-    exports.default = void 0;
-    var _default = "00000000-0000-0000-0000-000000000000";
-    exports.default = _default;
+    nil_default = "00000000-0000-0000-0000-000000000000";
   }
 });
 
-// ../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/version.js
-var require_version = __commonJS({
-  "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/version.js"(exports) {
+// ../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/version.js
+function version(uuid) {
+  if (!validate_default(uuid)) {
+    throw TypeError("Invalid UUID");
+  }
+  return parseInt(uuid.substr(14, 1), 16);
+}
+var version_default;
+var init_version = __esm({
+  "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/version.js"() {
     "use strict";
-    Object.defineProperty(exports, "__esModule", {
-      value: true
-    });
-    exports.default = void 0;
-    var _validate = _interopRequireDefault(require_validate());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
-    }
-    function version3(uuid2) {
-      if (!(0, _validate.default)(uuid2)) {
-        throw TypeError("Invalid UUID");
-      }
-      return parseInt(uuid2.substr(14, 1), 16);
-    }
-    var _default = version3;
-    exports.default = _default;
+    init_validate();
+    version_default = version;
   }
 });
 
-// ../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/index.js
-var require_dist = __commonJS({
-  "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/index.js"(exports) {
+// ../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/index.js
+var esm_node_exports = {};
+__export(esm_node_exports, {
+  NIL: () => nil_default,
+  parse: () => parse_default,
+  stringify: () => stringify_default,
+  v1: () => v1_default,
+  v3: () => v3_default,
+  v4: () => v4_default,
+  v5: () => v5_default,
+  validate: () => validate_default,
+  version: () => version_default
+});
+var init_esm_node = __esm({
+  "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/dist/esm-node/index.js"() {
     "use strict";
-    Object.defineProperty(exports, "__esModule", {
-      value: true
-    });
-    Object.defineProperty(exports, "v1", {
-      enumerable: true,
-      get: function() {
-        return _v.default;
-      }
-    });
-    Object.defineProperty(exports, "v3", {
-      enumerable: true,
-      get: function() {
-        return _v2.default;
-      }
-    });
-    Object.defineProperty(exports, "v4", {
-      enumerable: true,
-      get: function() {
-        return _v3.default;
-      }
-    });
-    Object.defineProperty(exports, "v5", {
-      enumerable: true,
-      get: function() {
-        return _v4.default;
-      }
-    });
-    Object.defineProperty(exports, "NIL", {
-      enumerable: true,
-      get: function() {
-        return _nil.default;
-      }
-    });
-    Object.defineProperty(exports, "version", {
-      enumerable: true,
-      get: function() {
-        return _version.default;
-      }
-    });
-    Object.defineProperty(exports, "validate", {
-      enumerable: true,
-      get: function() {
-        return _validate.default;
-      }
-    });
-    Object.defineProperty(exports, "stringify", {
-      enumerable: true,
-      get: function() {
-        return _stringify.default;
-      }
-    });
-    Object.defineProperty(exports, "parse", {
-      enumerable: true,
-      get: function() {
-        return _parse.default;
-      }
-    });
-    var _v = _interopRequireDefault(require_v1());
-    var _v2 = _interopRequireDefault(require_v3());
-    var _v3 = _interopRequireDefault(require_v4());
-    var _v4 = _interopRequireDefault(require_v5());
-    var _nil = _interopRequireDefault(require_nil());
-    var _version = _interopRequireDefault(require_version());
-    var _validate = _interopRequireDefault(require_validate());
-    var _stringify = _interopRequireDefault(require_stringify());
-    var _parse = _interopRequireDefault(require_parse());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
-    }
+    init_v1();
+    init_v3();
+    init_v4();
+    init_v5();
+    init_nil();
+    init_version();
+    init_validate();
+    init_stringify();
+    init_parse();
   }
 });
 
@@ -643,7 +504,7 @@ var require_dist = __commonJS({
 var require_file_command = __commonJS({
   "../../../node_modules/.pnpm/@actions+core@1.10.0/node_modules/@actions/core/lib/file-command.js"(exports) {
     "use strict";
-    var __createBinding2 = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
+    var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
       if (k2 === void 0)
         k2 = k;
       Object.defineProperty(o, k2, { enumerable: true, get: function() {
@@ -659,23 +520,23 @@ var require_file_command = __commonJS({
     } : function(o, v) {
       o["default"] = v;
     });
-    var __importStar2 = exports && exports.__importStar || function(mod) {
+    var __importStar = exports && exports.__importStar || function(mod) {
       if (mod && mod.__esModule)
         return mod;
       var result = {};
       if (mod != null) {
         for (var k in mod)
           if (k !== "default" && Object.hasOwnProperty.call(mod, k))
-            __createBinding2(result, mod, k);
+            __createBinding(result, mod, k);
       }
       __setModuleDefault(result, mod);
       return result;
     };
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.prepareKeyValueMessage = exports.issueFileCommand = void 0;
-    var fs3 = __importStar2(require("fs"));
-    var os3 = __importStar2(require("os"));
-    var uuid_1 = require_dist();
+    var fs3 = __importStar(require("fs"));
+    var os3 = __importStar(require("os"));
+    var uuid_1 = (init_esm_node(), __toCommonJS(esm_node_exports));
     var utils_1 = require_utils();
     function issueFileCommand(command, message) {
       const filePath = process.env[`GITHUB_${command}`];
@@ -801,44 +662,44 @@ var require_tunnel = __commonJS({
       return agent;
     }
     function TunnelingAgent(options) {
-      var self2 = this;
-      self2.options = options || {};
-      self2.proxyOptions = self2.options.proxy || {};
-      self2.maxSockets = self2.options.maxSockets || http3.Agent.defaultMaxSockets;
-      self2.requests = [];
-      self2.sockets = [];
-      self2.on("free", function onFree(socket, host, port, localAddress) {
+      var self = this;
+      self.options = options || {};
+      self.proxyOptions = self.options.proxy || {};
+      self.maxSockets = self.options.maxSockets || http3.Agent.defaultMaxSockets;
+      self.requests = [];
+      self.sockets = [];
+      self.on("free", function onFree(socket, host, port, localAddress) {
         var options2 = toOptions(host, port, localAddress);
-        for (var i = 0, len = self2.requests.length; i < len; ++i) {
-          var pending = self2.requests[i];
+        for (var i = 0, len = self.requests.length; i < len; ++i) {
+          var pending = self.requests[i];
           if (pending.host === options2.host && pending.port === options2.port) {
-            self2.requests.splice(i, 1);
+            self.requests.splice(i, 1);
             pending.request.onSocket(socket);
             return;
           }
         }
         socket.destroy();
-        self2.removeSocket(socket);
+        self.removeSocket(socket);
       });
     }
     util3.inherits(TunnelingAgent, events.EventEmitter);
     TunnelingAgent.prototype.addRequest = function addRequest(req, host, port, localAddress) {
-      var self2 = this;
-      var options = mergeOptions({ request: req }, self2.options, toOptions(host, port, localAddress));
-      if (self2.sockets.length >= this.maxSockets) {
-        self2.requests.push(options);
+      var self = this;
+      var options = mergeOptions({ request: req }, self.options, toOptions(host, port, localAddress));
+      if (self.sockets.length >= this.maxSockets) {
+        self.requests.push(options);
         return;
       }
-      self2.createSocket(options, function(socket) {
+      self.createSocket(options, function(socket) {
         socket.on("free", onFree);
         socket.on("close", onCloseOrRemove);
         socket.on("agentRemove", onCloseOrRemove);
         req.onSocket(socket);
         function onFree() {
-          self2.emit("free", socket, options);
+          self.emit("free", socket, options);
         }
         function onCloseOrRemove(err) {
-          self2.removeSocket(socket);
+          self.removeSocket(socket);
           socket.removeListener("free", onFree);
           socket.removeListener("close", onCloseOrRemove);
           socket.removeListener("agentRemove", onCloseOrRemove);
@@ -846,10 +707,10 @@ var require_tunnel = __commonJS({
       });
     };
     TunnelingAgent.prototype.createSocket = function createSocket(options, cb) {
-      var self2 = this;
+      var self = this;
       var placeholder = {};
-      self2.sockets.push(placeholder);
-      var connectOptions = mergeOptions({}, self2.proxyOptions, {
+      self.sockets.push(placeholder);
+      var connectOptions = mergeOptions({}, self.proxyOptions, {
         method: "CONNECT",
         path: options.host + ":" + options.port,
         agent: false,
@@ -865,7 +726,7 @@ var require_tunnel = __commonJS({
         connectOptions.headers["Proxy-Authorization"] = "Basic " + new Buffer(connectOptions.proxyAuth).toString("base64");
       }
       debug("making CONNECT request");
-      var connectReq = self2.request(connectOptions);
+      var connectReq = self.request(connectOptions);
       connectReq.useChunkedEncodingByDefault = false;
       connectReq.once("response", onResponse);
       connectReq.once("upgrade", onUpgrade);
@@ -892,7 +753,7 @@ var require_tunnel = __commonJS({
           var error = new Error("tunneling socket could not be established, statusCode=" + res.statusCode);
           error.code = "ECONNRESET";
           options.request.emit("error", error);
-          self2.removeSocket(placeholder);
+          self.removeSocket(placeholder);
           return;
         }
         if (head.length > 0) {
@@ -901,11 +762,11 @@ var require_tunnel = __commonJS({
           var error = new Error("got illegal response body from proxy");
           error.code = "ECONNRESET";
           options.request.emit("error", error);
-          self2.removeSocket(placeholder);
+          self.removeSocket(placeholder);
           return;
         }
         debug("tunneling connection has established");
-        self2.sockets[self2.sockets.indexOf(placeholder)] = socket;
+        self.sockets[self.sockets.indexOf(placeholder)] = socket;
         return cb(socket);
       }
       function onError(cause) {
@@ -918,7 +779,7 @@ var require_tunnel = __commonJS({
         var error = new Error("tunneling socket could not be established, cause=" + cause.message);
         error.code = "ECONNRESET";
         options.request.emit("error", error);
-        self2.removeSocket(placeholder);
+        self.removeSocket(placeholder);
       }
     };
     TunnelingAgent.prototype.removeSocket = function removeSocket(socket) {
@@ -935,15 +796,15 @@ var require_tunnel = __commonJS({
       }
     };
     function createSecureSocket(options, cb) {
-      var self2 = this;
-      TunnelingAgent.prototype.createSocket.call(self2, options, function(socket) {
+      var self = this;
+      TunnelingAgent.prototype.createSocket.call(self, options, function(socket) {
         var hostHeader = options.request.getHeader("host");
-        var tlsOptions = mergeOptions({}, self2.options, {
+        var tlsOptions = mergeOptions({}, self.options, {
           socket,
           servername: hostHeader ? hostHeader.replace(/:.*$/, "") : options.host
         });
         var secureSocket = tls.connect(0, tlsOptions);
-        self2.sockets[self2.sockets.indexOf(socket)] = secureSocket;
+        self.sockets[self.sockets.indexOf(socket)] = secureSocket;
         cb(secureSocket);
       });
     }
@@ -994,6 +855,7 @@ var require_tunnel = __commonJS({
 // ../../../node_modules/.pnpm/tunnel@0.0.6/node_modules/tunnel/index.js
 var require_tunnel2 = __commonJS({
   "../../../node_modules/.pnpm/tunnel@0.0.6/node_modules/tunnel/index.js"(exports, module2) {
+    "use strict";
     module2.exports = require_tunnel();
   }
 });
@@ -1002,7 +864,7 @@ var require_tunnel2 = __commonJS({
 var require_lib = __commonJS({
   "../../../node_modules/.pnpm/@actions+http-client@2.0.1/node_modules/@actions/http-client/lib/index.js"(exports) {
     "use strict";
-    var __createBinding2 = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
+    var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
       if (k2 === void 0)
         k2 = k;
       Object.defineProperty(o, k2, { enumerable: true, get: function() {
@@ -1018,19 +880,19 @@ var require_lib = __commonJS({
     } : function(o, v) {
       o["default"] = v;
     });
-    var __importStar2 = exports && exports.__importStar || function(mod) {
+    var __importStar = exports && exports.__importStar || function(mod) {
       if (mod && mod.__esModule)
         return mod;
       var result = {};
       if (mod != null) {
         for (var k in mod)
           if (k !== "default" && Object.hasOwnProperty.call(mod, k))
-            __createBinding2(result, mod, k);
+            __createBinding(result, mod, k);
       }
       __setModuleDefault(result, mod);
       return result;
     };
-    var __awaiter2 = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
+    var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
         return value instanceof P ? value : new P(function(resolve3) {
           resolve3(value);
@@ -1059,10 +921,10 @@ var require_lib = __commonJS({
     };
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.HttpClient = exports.isHttps = exports.HttpClientResponse = exports.HttpClientError = exports.getProxyUrl = exports.MediaTypes = exports.Headers = exports.HttpCodes = void 0;
-    var http3 = __importStar2(require("http"));
-    var https3 = __importStar2(require("https"));
-    var pm = __importStar2(require_proxy());
-    var tunnel2 = __importStar2(require_tunnel2());
+    var http3 = __importStar(require("http"));
+    var https3 = __importStar(require("https"));
+    var pm = __importStar(require_proxy());
+    var tunnel2 = __importStar(require_tunnel2());
     var HttpCodes;
     (function(HttpCodes2) {
       HttpCodes2[HttpCodes2["OK"] = 200] = "OK";
@@ -1122,12 +984,12 @@ var require_lib = __commonJS({
     var RetryableHttpVerbs = ["OPTIONS", "GET", "DELETE", "HEAD"];
     var ExponentialBackoffCeiling = 10;
     var ExponentialBackoffTimeSlice = 5;
-    var HttpClientError = class extends Error {
+    var HttpClientError = class _HttpClientError extends Error {
       constructor(message, statusCode) {
         super(message);
         this.name = "HttpClientError";
         this.statusCode = statusCode;
-        Object.setPrototypeOf(this, HttpClientError.prototype);
+        Object.setPrototypeOf(this, _HttpClientError.prototype);
       }
     };
     exports.HttpClientError = HttpClientError;
@@ -1136,8 +998,8 @@ var require_lib = __commonJS({
         this.message = message;
       }
       readBody() {
-        return __awaiter2(this, void 0, void 0, function* () {
-          return new Promise((resolve3) => __awaiter2(this, void 0, void 0, function* () {
+        return __awaiter(this, void 0, void 0, function* () {
+          return new Promise((resolve3) => __awaiter(this, void 0, void 0, function* () {
             let output = Buffer.alloc(0);
             this.message.on("data", (chunk) => {
               output = Buffer.concat([output, chunk]);
@@ -1194,54 +1056,58 @@ var require_lib = __commonJS({
         }
       }
       options(requestUrl, additionalHeaders) {
-        return __awaiter2(this, void 0, void 0, function* () {
+        return __awaiter(this, void 0, void 0, function* () {
           return this.request("OPTIONS", requestUrl, null, additionalHeaders || {});
         });
       }
       get(requestUrl, additionalHeaders) {
-        return __awaiter2(this, void 0, void 0, function* () {
+        return __awaiter(this, void 0, void 0, function* () {
           return this.request("GET", requestUrl, null, additionalHeaders || {});
         });
       }
       del(requestUrl, additionalHeaders) {
-        return __awaiter2(this, void 0, void 0, function* () {
+        return __awaiter(this, void 0, void 0, function* () {
           return this.request("DELETE", requestUrl, null, additionalHeaders || {});
         });
       }
       post(requestUrl, data, additionalHeaders) {
-        return __awaiter2(this, void 0, void 0, function* () {
+        return __awaiter(this, void 0, void 0, function* () {
           return this.request("POST", requestUrl, data, additionalHeaders || {});
         });
       }
       patch(requestUrl, data, additionalHeaders) {
-        return __awaiter2(this, void 0, void 0, function* () {
+        return __awaiter(this, void 0, void 0, function* () {
           return this.request("PATCH", requestUrl, data, additionalHeaders || {});
         });
       }
       put(requestUrl, data, additionalHeaders) {
-        return __awaiter2(this, void 0, void 0, function* () {
+        return __awaiter(this, void 0, void 0, function* () {
           return this.request("PUT", requestUrl, data, additionalHeaders || {});
         });
       }
       head(requestUrl, additionalHeaders) {
-        return __awaiter2(this, void 0, void 0, function* () {
+        return __awaiter(this, void 0, void 0, function* () {
           return this.request("HEAD", requestUrl, null, additionalHeaders || {});
         });
       }
       sendStream(verb, requestUrl, stream, additionalHeaders) {
-        return __awaiter2(this, void 0, void 0, function* () {
+        return __awaiter(this, void 0, void 0, function* () {
           return this.request(verb, requestUrl, stream, additionalHeaders);
         });
       }
+      /**
+       * Gets a typed object from an endpoint
+       * Be aware that not found returns a null.  Other errors (4xx, 5xx) reject the promise
+       */
       getJson(requestUrl, additionalHeaders = {}) {
-        return __awaiter2(this, void 0, void 0, function* () {
+        return __awaiter(this, void 0, void 0, function* () {
           additionalHeaders[Headers2.Accept] = this._getExistingOrDefaultHeader(additionalHeaders, Headers2.Accept, MediaTypes.ApplicationJson);
           const res = yield this.get(requestUrl, additionalHeaders);
           return this._processResponse(res, this.requestOptions);
         });
       }
       postJson(requestUrl, obj, additionalHeaders = {}) {
-        return __awaiter2(this, void 0, void 0, function* () {
+        return __awaiter(this, void 0, void 0, function* () {
           const data = JSON.stringify(obj, null, 2);
           additionalHeaders[Headers2.Accept] = this._getExistingOrDefaultHeader(additionalHeaders, Headers2.Accept, MediaTypes.ApplicationJson);
           additionalHeaders[Headers2.ContentType] = this._getExistingOrDefaultHeader(additionalHeaders, Headers2.ContentType, MediaTypes.ApplicationJson);
@@ -1250,7 +1116,7 @@ var require_lib = __commonJS({
         });
       }
       putJson(requestUrl, obj, additionalHeaders = {}) {
-        return __awaiter2(this, void 0, void 0, function* () {
+        return __awaiter(this, void 0, void 0, function* () {
           const data = JSON.stringify(obj, null, 2);
           additionalHeaders[Headers2.Accept] = this._getExistingOrDefaultHeader(additionalHeaders, Headers2.Accept, MediaTypes.ApplicationJson);
           additionalHeaders[Headers2.ContentType] = this._getExistingOrDefaultHeader(additionalHeaders, Headers2.ContentType, MediaTypes.ApplicationJson);
@@ -1259,7 +1125,7 @@ var require_lib = __commonJS({
         });
       }
       patchJson(requestUrl, obj, additionalHeaders = {}) {
-        return __awaiter2(this, void 0, void 0, function* () {
+        return __awaiter(this, void 0, void 0, function* () {
           const data = JSON.stringify(obj, null, 2);
           additionalHeaders[Headers2.Accept] = this._getExistingOrDefaultHeader(additionalHeaders, Headers2.Accept, MediaTypes.ApplicationJson);
           additionalHeaders[Headers2.ContentType] = this._getExistingOrDefaultHeader(additionalHeaders, Headers2.ContentType, MediaTypes.ApplicationJson);
@@ -1267,8 +1133,13 @@ var require_lib = __commonJS({
           return this._processResponse(res, this.requestOptions);
         });
       }
+      /**
+       * Makes a raw http request.
+       * All other methods such as get, post, patch, and request ultimately call this.
+       * Prefer get, del, post and patch
+       */
       request(verb, requestUrl, data, headers) {
-        return __awaiter2(this, void 0, void 0, function* () {
+        return __awaiter(this, void 0, void 0, function* () {
           if (this._disposed) {
             throw new Error("Client has already been disposed.");
           }
@@ -1327,14 +1198,22 @@ var require_lib = __commonJS({
           return response;
         });
       }
+      /**
+       * Needs to be called if keepAlive is set to true in request options.
+       */
       dispose() {
         if (this._agent) {
           this._agent.destroy();
         }
         this._disposed = true;
       }
+      /**
+       * Raw request.
+       * @param info
+       * @param data
+       */
       requestRaw(info, data) {
-        return __awaiter2(this, void 0, void 0, function* () {
+        return __awaiter(this, void 0, void 0, function* () {
           return new Promise((resolve3, reject) => {
             function callbackForResult(err, res) {
               if (err) {
@@ -1349,6 +1228,12 @@ var require_lib = __commonJS({
           });
         });
       }
+      /**
+       * Raw request with callback.
+       * @param info
+       * @param data
+       * @param onResult
+       */
       requestRawWithCallback(info, data, onResult) {
         if (typeof data === "string") {
           if (!info.options.headers) {
@@ -1392,6 +1277,11 @@ var require_lib = __commonJS({
           req.end();
         }
       }
+      /**
+       * Gets an http agent. This function is useful when you need an http agent that handles
+       * routing through a proxy server - depending upon the url and proxy environment variables.
+       * @param serverUrl  The server URL where the request will be sent. For example, https://api.github.com
+       */
       getAgent(serverUrl) {
         const parsedUrl = new URL(serverUrl);
         return this._getAgent(parsedUrl);
@@ -1484,15 +1374,15 @@ var require_lib = __commonJS({
         return agent;
       }
       _performExponentialBackoff(retryNumber) {
-        return __awaiter2(this, void 0, void 0, function* () {
+        return __awaiter(this, void 0, void 0, function* () {
           retryNumber = Math.min(ExponentialBackoffCeiling, retryNumber);
           const ms = ExponentialBackoffTimeSlice * Math.pow(2, retryNumber);
           return new Promise((resolve3) => setTimeout(() => resolve3(), ms));
         });
       }
       _processResponse(res, options) {
-        return __awaiter2(this, void 0, void 0, function* () {
-          return new Promise((resolve3, reject) => __awaiter2(this, void 0, void 0, function* () {
+        return __awaiter(this, void 0, void 0, function* () {
+          return new Promise((resolve3, reject) => __awaiter(this, void 0, void 0, function* () {
             const statusCode = res.message.statusCode || 0;
             const response = {
               statusCode,
@@ -1554,7 +1444,7 @@ var require_lib = __commonJS({
 var require_auth = __commonJS({
   "../../../node_modules/.pnpm/@actions+http-client@2.0.1/node_modules/@actions/http-client/lib/auth.js"(exports) {
     "use strict";
-    var __awaiter2 = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
+    var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
         return value instanceof P ? value : new P(function(resolve3) {
           resolve3(value);
@@ -1594,11 +1484,12 @@ var require_auth = __commonJS({
         }
         options.headers["Authorization"] = `Basic ${Buffer.from(`${this.username}:${this.password}`).toString("base64")}`;
       }
+      // This handler cannot handle 401
       canHandleAuthentication() {
         return false;
       }
       handleAuthentication() {
-        return __awaiter2(this, void 0, void 0, function* () {
+        return __awaiter(this, void 0, void 0, function* () {
           throw new Error("not implemented");
         });
       }
@@ -1608,17 +1499,20 @@ var require_auth = __commonJS({
       constructor(token) {
         this.token = token;
       }
+      // currently implements pre-authorization
+      // TODO: support preAuth = false where it hooks on 401
       prepareRequest(options) {
         if (!options.headers) {
           throw Error("The request has no headers");
         }
         options.headers["Authorization"] = `Bearer ${this.token}`;
       }
+      // This handler cannot handle 401
       canHandleAuthentication() {
         return false;
       }
       handleAuthentication() {
-        return __awaiter2(this, void 0, void 0, function* () {
+        return __awaiter(this, void 0, void 0, function* () {
           throw new Error("not implemented");
         });
       }
@@ -1628,17 +1522,20 @@ var require_auth = __commonJS({
       constructor(token) {
         this.token = token;
       }
+      // currently implements pre-authorization
+      // TODO: support preAuth = false where it hooks on 401
       prepareRequest(options) {
         if (!options.headers) {
           throw Error("The request has no headers");
         }
         options.headers["Authorization"] = `Basic ${Buffer.from(`PAT:${this.token}`).toString("base64")}`;
       }
+      // This handler cannot handle 401
       canHandleAuthentication() {
         return false;
       }
       handleAuthentication() {
-        return __awaiter2(this, void 0, void 0, function* () {
+        return __awaiter(this, void 0, void 0, function* () {
           throw new Error("not implemented");
         });
       }
@@ -1651,7 +1548,7 @@ var require_auth = __commonJS({
 var require_oidc_utils = __commonJS({
   "../../../node_modules/.pnpm/@actions+core@1.10.0/node_modules/@actions/core/lib/oidc-utils.js"(exports) {
     "use strict";
-    var __awaiter2 = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
+    var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
         return value instanceof P ? value : new P(function(resolve3) {
           resolve3(value);
@@ -1683,13 +1580,13 @@ var require_oidc_utils = __commonJS({
     var http_client_1 = require_lib();
     var auth_1 = require_auth();
     var core_1 = require_core();
-    var OidcClient = class {
+    var OidcClient = class _OidcClient {
       static createHttpClient(allowRetry = true, maxRetry = 10) {
         const requestOptions = {
           allowRetries: allowRetry,
           maxRetries: maxRetry
         };
-        return new http_client_1.HttpClient("actions/oidc-client", [new auth_1.BearerCredentialHandler(OidcClient.getRequestToken())], requestOptions);
+        return new http_client_1.HttpClient("actions/oidc-client", [new auth_1.BearerCredentialHandler(_OidcClient.getRequestToken())], requestOptions);
       }
       static getRequestToken() {
         const token = process.env["ACTIONS_ID_TOKEN_REQUEST_TOKEN"];
@@ -1707,8 +1604,8 @@ var require_oidc_utils = __commonJS({
       }
       static getCall(id_token_url) {
         var _a;
-        return __awaiter2(this, void 0, void 0, function* () {
-          const httpclient = OidcClient.createHttpClient();
+        return __awaiter(this, void 0, void 0, function* () {
+          const httpclient = _OidcClient.createHttpClient();
           const res = yield httpclient.getJson(id_token_url).catch((error) => {
             throw new Error(`Failed to get ID Token. 
  
@@ -1724,15 +1621,15 @@ var require_oidc_utils = __commonJS({
         });
       }
       static getIDToken(audience) {
-        return __awaiter2(this, void 0, void 0, function* () {
+        return __awaiter(this, void 0, void 0, function* () {
           try {
-            let id_token_url = OidcClient.getIDTokenUrl();
+            let id_token_url = _OidcClient.getIDTokenUrl();
             if (audience) {
               const encodedAudience = encodeURIComponent(audience);
               id_token_url = `${id_token_url}&audience=${encodedAudience}`;
             }
             core_1.debug(`ID token url is ${id_token_url}`);
-            const id_token = yield OidcClient.getCall(id_token_url);
+            const id_token = yield _OidcClient.getCall(id_token_url);
             core_1.setSecret(id_token);
             return id_token;
           } catch (error) {
@@ -1749,7 +1646,7 @@ var require_oidc_utils = __commonJS({
 var require_summary = __commonJS({
   "../../../node_modules/.pnpm/@actions+core@1.10.0/node_modules/@actions/core/lib/summary.js"(exports) {
     "use strict";
-    var __awaiter2 = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
+    var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
         return value instanceof P ? value : new P(function(resolve3) {
           resolve3(value);
@@ -1787,8 +1684,14 @@ var require_summary = __commonJS({
       constructor() {
         this._buffer = "";
       }
+      /**
+       * Finds the summary file path from the environment, rejects if env var is not found or file does not exist
+       * Also checks r/w permissions.
+       *
+       * @returns step summary file path
+       */
       filePath() {
-        return __awaiter2(this, void 0, void 0, function* () {
+        return __awaiter(this, void 0, void 0, function* () {
           if (this._filePath) {
             return this._filePath;
           }
@@ -1805,6 +1708,15 @@ var require_summary = __commonJS({
           return this._filePath;
         });
       }
+      /**
+       * Wraps content in an HTML tag, adding any HTML attributes
+       *
+       * @param {string} tag HTML tag to wrap
+       * @param {string | null} content content within the tag
+       * @param {[attribute: string]: string} attrs key-value list of HTML attributes to add
+       *
+       * @returns {string} content wrapped in HTML element
+       */
       wrap(tag, content, attrs = {}) {
         const htmlAttrs = Object.entries(attrs).map(([key, value]) => ` ${key}="${value}"`).join("");
         if (!content) {
@@ -1812,8 +1724,15 @@ var require_summary = __commonJS({
         }
         return `<${tag}${htmlAttrs}>${content}</${tag}>`;
       }
+      /**
+       * Writes text in the buffer to the summary buffer file and empties buffer. Will append by default.
+       *
+       * @param {SummaryWriteOptions} [options] (optional) options for write operation
+       *
+       * @returns {Promise<Summary>} summary instance
+       */
       write(options) {
-        return __awaiter2(this, void 0, void 0, function* () {
+        return __awaiter(this, void 0, void 0, function* () {
           const overwrite = !!(options === null || options === void 0 ? void 0 : options.overwrite);
           const filePath = yield this.filePath();
           const writeFunc = overwrite ? writeFile : appendFile;
@@ -1821,39 +1740,95 @@ var require_summary = __commonJS({
           return this.emptyBuffer();
         });
       }
+      /**
+       * Clears the summary buffer and wipes the summary file
+       *
+       * @returns {Summary} summary instance
+       */
       clear() {
-        return __awaiter2(this, void 0, void 0, function* () {
+        return __awaiter(this, void 0, void 0, function* () {
           return this.emptyBuffer().write({ overwrite: true });
         });
       }
+      /**
+       * Returns the current summary buffer as a string
+       *
+       * @returns {string} string of summary buffer
+       */
       stringify() {
         return this._buffer;
       }
+      /**
+       * If the summary buffer is empty
+       *
+       * @returns {boolen} true if the buffer is empty
+       */
       isEmptyBuffer() {
         return this._buffer.length === 0;
       }
+      /**
+       * Resets the summary buffer without writing to summary file
+       *
+       * @returns {Summary} summary instance
+       */
       emptyBuffer() {
         this._buffer = "";
         return this;
       }
+      /**
+       * Adds raw text to the summary buffer
+       *
+       * @param {string} text content to add
+       * @param {boolean} [addEOL=false] (optional) append an EOL to the raw text (default: false)
+       *
+       * @returns {Summary} summary instance
+       */
       addRaw(text, addEOL = false) {
         this._buffer += text;
         return addEOL ? this.addEOL() : this;
       }
+      /**
+       * Adds the operating system-specific end-of-line marker to the buffer
+       *
+       * @returns {Summary} summary instance
+       */
       addEOL() {
         return this.addRaw(os_1.EOL);
       }
+      /**
+       * Adds an HTML codeblock to the summary buffer
+       *
+       * @param {string} code content to render within fenced code block
+       * @param {string} lang (optional) language to syntax highlight code
+       *
+       * @returns {Summary} summary instance
+       */
       addCodeBlock(code, lang) {
         const attrs = Object.assign({}, lang && { lang });
         const element = this.wrap("pre", this.wrap("code", code), attrs);
         return this.addRaw(element).addEOL();
       }
+      /**
+       * Adds an HTML list to the summary buffer
+       *
+       * @param {string[]} items list of items to render
+       * @param {boolean} [ordered=false] (optional) if the rendered list should be ordered or not (default: false)
+       *
+       * @returns {Summary} summary instance
+       */
       addList(items, ordered = false) {
         const tag = ordered ? "ol" : "ul";
         const listItems = items.map((item) => this.wrap("li", item)).join("");
         const element = this.wrap(tag, listItems);
         return this.addRaw(element).addEOL();
       }
+      /**
+       * Adds an HTML table to the summary buffer
+       *
+       * @param {SummaryTableCell[]} rows table rows
+       *
+       * @returns {Summary} summary instance
+       */
       addTable(rows) {
         const tableBody = rows.map((row) => {
           const cells = row.map((cell) => {
@@ -1870,35 +1845,86 @@ var require_summary = __commonJS({
         const element = this.wrap("table", tableBody);
         return this.addRaw(element).addEOL();
       }
+      /**
+       * Adds a collapsable HTML details element to the summary buffer
+       *
+       * @param {string} label text for the closed state
+       * @param {string} content collapsable content
+       *
+       * @returns {Summary} summary instance
+       */
       addDetails(label, content) {
         const element = this.wrap("details", this.wrap("summary", label) + content);
         return this.addRaw(element).addEOL();
       }
+      /**
+       * Adds an HTML image tag to the summary buffer
+       *
+       * @param {string} src path to the image you to embed
+       * @param {string} alt text description of the image
+       * @param {SummaryImageOptions} options (optional) addition image attributes
+       *
+       * @returns {Summary} summary instance
+       */
       addImage(src, alt, options) {
         const { width, height } = options || {};
         const attrs = Object.assign(Object.assign({}, width && { width }), height && { height });
         const element = this.wrap("img", null, Object.assign({ src, alt }, attrs));
         return this.addRaw(element).addEOL();
       }
+      /**
+       * Adds an HTML section heading element
+       *
+       * @param {string} text heading text
+       * @param {number | string} [level=1] (optional) the heading level, default: 1
+       *
+       * @returns {Summary} summary instance
+       */
       addHeading(text, level) {
         const tag = `h${level}`;
         const allowedTag = ["h1", "h2", "h3", "h4", "h5", "h6"].includes(tag) ? tag : "h1";
         const element = this.wrap(allowedTag, text);
         return this.addRaw(element).addEOL();
       }
+      /**
+       * Adds an HTML thematic break (<hr>) to the summary buffer
+       *
+       * @returns {Summary} summary instance
+       */
       addSeparator() {
         const element = this.wrap("hr", null);
         return this.addRaw(element).addEOL();
       }
+      /**
+       * Adds an HTML line break (<br>) to the summary buffer
+       *
+       * @returns {Summary} summary instance
+       */
       addBreak() {
         const element = this.wrap("br", null);
         return this.addRaw(element).addEOL();
       }
+      /**
+       * Adds an HTML blockquote to the summary buffer
+       *
+       * @param {string} text quote text
+       * @param {string} cite (optional) citation url
+       *
+       * @returns {Summary} summary instance
+       */
       addQuote(text, cite) {
         const attrs = Object.assign({}, cite && { cite });
         const element = this.wrap("blockquote", text, attrs);
         return this.addRaw(element).addEOL();
       }
+      /**
+       * Adds an HTML anchor tag to the summary buffer
+       *
+       * @param {string} text link text/content
+       * @param {string} href hyperlink
+       *
+       * @returns {Summary} summary instance
+       */
       addLink(text, href) {
         const element = this.wrap("a", text, { href });
         return this.addRaw(element).addEOL();
@@ -1914,7 +1940,7 @@ var require_summary = __commonJS({
 var require_path_utils = __commonJS({
   "../../../node_modules/.pnpm/@actions+core@1.10.0/node_modules/@actions/core/lib/path-utils.js"(exports) {
     "use strict";
-    var __createBinding2 = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
+    var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
       if (k2 === void 0)
         k2 = k;
       Object.defineProperty(o, k2, { enumerable: true, get: function() {
@@ -1930,21 +1956,21 @@ var require_path_utils = __commonJS({
     } : function(o, v) {
       o["default"] = v;
     });
-    var __importStar2 = exports && exports.__importStar || function(mod) {
+    var __importStar = exports && exports.__importStar || function(mod) {
       if (mod && mod.__esModule)
         return mod;
       var result = {};
       if (mod != null) {
         for (var k in mod)
           if (k !== "default" && Object.hasOwnProperty.call(mod, k))
-            __createBinding2(result, mod, k);
+            __createBinding(result, mod, k);
       }
       __setModuleDefault(result, mod);
       return result;
     };
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.toPlatformPath = exports.toWin32Path = exports.toPosixPath = void 0;
-    var path3 = __importStar2(require("path"));
+    var path3 = __importStar(require("path"));
     function toPosixPath(pth) {
       return pth.replace(/[\\]/g, "/");
     }
@@ -1964,7 +1990,7 @@ var require_path_utils = __commonJS({
 var require_core = __commonJS({
   "../../../node_modules/.pnpm/@actions+core@1.10.0/node_modules/@actions/core/lib/core.js"(exports) {
     "use strict";
-    var __createBinding2 = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
+    var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
       if (k2 === void 0)
         k2 = k;
       Object.defineProperty(o, k2, { enumerable: true, get: function() {
@@ -1980,19 +2006,19 @@ var require_core = __commonJS({
     } : function(o, v) {
       o["default"] = v;
     });
-    var __importStar2 = exports && exports.__importStar || function(mod) {
+    var __importStar = exports && exports.__importStar || function(mod) {
       if (mod && mod.__esModule)
         return mod;
       var result = {};
       if (mod != null) {
         for (var k in mod)
           if (k !== "default" && Object.hasOwnProperty.call(mod, k))
-            __createBinding2(result, mod, k);
+            __createBinding(result, mod, k);
       }
       __setModuleDefault(result, mod);
       return result;
     };
-    var __awaiter2 = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
+    var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
         return value instanceof P ? value : new P(function(resolve3) {
           resolve3(value);
@@ -2024,8 +2050,8 @@ var require_core = __commonJS({
     var command_1 = require_command();
     var file_command_1 = require_file_command();
     var utils_1 = require_utils();
-    var os3 = __importStar2(require("os"));
-    var path3 = __importStar2(require("path"));
+    var os3 = __importStar(require("os"));
+    var path3 = __importStar(require("path"));
     var oidc_utils_1 = require_oidc_utils();
     var ExitCode;
     (function(ExitCode2) {
@@ -2138,7 +2164,7 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
     }
     exports.endGroup = endGroup;
     function group(name, fn) {
-      return __awaiter2(this, void 0, void 0, function* () {
+      return __awaiter(this, void 0, void 0, function* () {
         startGroup(name);
         let result;
         try {
@@ -2163,7 +2189,7 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
     }
     exports.getState = getState;
     function getIDToken(aud) {
-      return __awaiter2(this, void 0, void 0, function* () {
+      return __awaiter(this, void 0, void 0, function* () {
         return yield oidc_utils_1.OidcClient.getIDToken(aud);
       });
     }
@@ -2193,7 +2219,7 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
 var require_io_util = __commonJS({
   "../../../node_modules/.pnpm/@actions+io@1.1.2/node_modules/@actions/io/lib/io-util.js"(exports) {
     "use strict";
-    var __createBinding2 = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
+    var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
       if (k2 === void 0)
         k2 = k;
       Object.defineProperty(o, k2, { enumerable: true, get: function() {
@@ -2209,19 +2235,19 @@ var require_io_util = __commonJS({
     } : function(o, v) {
       o["default"] = v;
     });
-    var __importStar2 = exports && exports.__importStar || function(mod) {
+    var __importStar = exports && exports.__importStar || function(mod) {
       if (mod && mod.__esModule)
         return mod;
       var result = {};
       if (mod != null) {
         for (var k in mod)
           if (k !== "default" && Object.hasOwnProperty.call(mod, k))
-            __createBinding2(result, mod, k);
+            __createBinding(result, mod, k);
       }
       __setModuleDefault(result, mod);
       return result;
     };
-    var __awaiter2 = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
+    var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
         return value instanceof P ? value : new P(function(resolve3) {
           resolve3(value);
@@ -2251,12 +2277,12 @@ var require_io_util = __commonJS({
     var _a;
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.getCmdPath = exports.tryGetExecutablePath = exports.isRooted = exports.isDirectory = exports.exists = exports.IS_WINDOWS = exports.unlink = exports.symlink = exports.stat = exports.rmdir = exports.rename = exports.readlink = exports.readdir = exports.mkdir = exports.lstat = exports.copyFile = exports.chmod = void 0;
-    var fs3 = __importStar2(require("fs"));
-    var path3 = __importStar2(require("path"));
+    var fs3 = __importStar(require("fs"));
+    var path3 = __importStar(require("path"));
     _a = fs3.promises, exports.chmod = _a.chmod, exports.copyFile = _a.copyFile, exports.lstat = _a.lstat, exports.mkdir = _a.mkdir, exports.readdir = _a.readdir, exports.readlink = _a.readlink, exports.rename = _a.rename, exports.rmdir = _a.rmdir, exports.stat = _a.stat, exports.symlink = _a.symlink, exports.unlink = _a.unlink;
     exports.IS_WINDOWS = process.platform === "win32";
     function exists(fsPath) {
-      return __awaiter2(this, void 0, void 0, function* () {
+      return __awaiter(this, void 0, void 0, function* () {
         try {
           yield exports.stat(fsPath);
         } catch (err) {
@@ -2270,7 +2296,7 @@ var require_io_util = __commonJS({
     }
     exports.exists = exists;
     function isDirectory(fsPath, useStat = false) {
-      return __awaiter2(this, void 0, void 0, function* () {
+      return __awaiter(this, void 0, void 0, function* () {
         const stats = useStat ? yield exports.stat(fsPath) : yield exports.lstat(fsPath);
         return stats.isDirectory();
       });
@@ -2288,7 +2314,7 @@ var require_io_util = __commonJS({
     }
     exports.isRooted = isRooted;
     function tryGetExecutablePath(filePath, extensions) {
-      return __awaiter2(this, void 0, void 0, function* () {
+      return __awaiter(this, void 0, void 0, function* () {
         let stats = void 0;
         try {
           stats = yield exports.stat(filePath);
@@ -2369,7 +2395,7 @@ var require_io_util = __commonJS({
 var require_io = __commonJS({
   "../../../node_modules/.pnpm/@actions+io@1.1.2/node_modules/@actions/io/lib/io.js"(exports) {
     "use strict";
-    var __createBinding2 = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
+    var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
       if (k2 === void 0)
         k2 = k;
       Object.defineProperty(o, k2, { enumerable: true, get: function() {
@@ -2385,19 +2411,19 @@ var require_io = __commonJS({
     } : function(o, v) {
       o["default"] = v;
     });
-    var __importStar2 = exports && exports.__importStar || function(mod) {
+    var __importStar = exports && exports.__importStar || function(mod) {
       if (mod && mod.__esModule)
         return mod;
       var result = {};
       if (mod != null) {
         for (var k in mod)
           if (k !== "default" && Object.hasOwnProperty.call(mod, k))
-            __createBinding2(result, mod, k);
+            __createBinding(result, mod, k);
       }
       __setModuleDefault(result, mod);
       return result;
     };
-    var __awaiter2 = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
+    var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
         return value instanceof P ? value : new P(function(resolve3) {
           resolve3(value);
@@ -2427,14 +2453,14 @@ var require_io = __commonJS({
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.findInPath = exports.which = exports.mkdirP = exports.rmRF = exports.mv = exports.cp = void 0;
     var assert_1 = require("assert");
-    var childProcess = __importStar2(require("child_process"));
-    var path3 = __importStar2(require("path"));
+    var childProcess = __importStar(require("child_process"));
+    var path3 = __importStar(require("path"));
     var util_1 = require("util");
-    var ioUtil = __importStar2(require_io_util());
+    var ioUtil = __importStar(require_io_util());
     var exec = util_1.promisify(childProcess.exec);
     var execFile = util_1.promisify(childProcess.execFile);
     function cp(source, dest, options = {}) {
-      return __awaiter2(this, void 0, void 0, function* () {
+      return __awaiter(this, void 0, void 0, function* () {
         const { force, recursive, copySourceDirectory } = readCopyOptions(options);
         const destStat = (yield ioUtil.exists(dest)) ? yield ioUtil.stat(dest) : null;
         if (destStat && destStat.isFile() && !force) {
@@ -2461,7 +2487,7 @@ var require_io = __commonJS({
     }
     exports.cp = cp;
     function mv(source, dest, options = {}) {
-      return __awaiter2(this, void 0, void 0, function* () {
+      return __awaiter(this, void 0, void 0, function* () {
         if (yield ioUtil.exists(dest)) {
           let destExists = true;
           if (yield ioUtil.isDirectory(dest)) {
@@ -2482,7 +2508,7 @@ var require_io = __commonJS({
     }
     exports.mv = mv;
     function rmRF(inputPath) {
-      return __awaiter2(this, void 0, void 0, function* () {
+      return __awaiter(this, void 0, void 0, function* () {
         if (ioUtil.IS_WINDOWS) {
           if (/[*"<>|]/.test(inputPath)) {
             throw new Error('File path must not contain `*`, `"`, `<`, `>` or `|` on Windows');
@@ -2527,14 +2553,14 @@ var require_io = __commonJS({
     }
     exports.rmRF = rmRF;
     function mkdirP(fsPath) {
-      return __awaiter2(this, void 0, void 0, function* () {
+      return __awaiter(this, void 0, void 0, function* () {
         assert_1.ok(fsPath, "a path argument must be provided");
         yield ioUtil.mkdir(fsPath, { recursive: true });
       });
     }
     exports.mkdirP = mkdirP;
     function which(tool, check) {
-      return __awaiter2(this, void 0, void 0, function* () {
+      return __awaiter(this, void 0, void 0, function* () {
         if (!tool) {
           throw new Error("parameter 'tool' is required");
         }
@@ -2558,7 +2584,7 @@ var require_io = __commonJS({
     }
     exports.which = which;
     function findInPath(tool) {
-      return __awaiter2(this, void 0, void 0, function* () {
+      return __awaiter(this, void 0, void 0, function* () {
         if (!tool) {
           throw new Error("parameter 'tool' is required");
         }
@@ -2606,7 +2632,7 @@ var require_io = __commonJS({
       return { force, recursive, copySourceDirectory };
     }
     function cpDirRecursive(sourceDir, destDir, currentDepth, force) {
-      return __awaiter2(this, void 0, void 0, function* () {
+      return __awaiter(this, void 0, void 0, function* () {
         if (currentDepth >= 255)
           return;
         currentDepth++;
@@ -2626,7 +2652,7 @@ var require_io = __commonJS({
       });
     }
     function copyFile(srcFile, destFile, force) {
-      return __awaiter2(this, void 0, void 0, function* () {
+      return __awaiter(this, void 0, void 0, function* () {
         if ((yield ioUtil.lstat(srcFile)).isSymbolicLink()) {
           try {
             yield ioUtil.lstat(destFile);
@@ -2651,7 +2677,7 @@ var require_io = __commonJS({
 var require_toolrunner = __commonJS({
   "../../../node_modules/.pnpm/@actions+exec@1.1.1/node_modules/@actions/exec/lib/toolrunner.js"(exports) {
     "use strict";
-    var __createBinding2 = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
+    var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
       if (k2 === void 0)
         k2 = k;
       Object.defineProperty(o, k2, { enumerable: true, get: function() {
@@ -2667,19 +2693,19 @@ var require_toolrunner = __commonJS({
     } : function(o, v) {
       o["default"] = v;
     });
-    var __importStar2 = exports && exports.__importStar || function(mod) {
+    var __importStar = exports && exports.__importStar || function(mod) {
       if (mod && mod.__esModule)
         return mod;
       var result = {};
       if (mod != null) {
         for (var k in mod)
           if (k !== "default" && Object.hasOwnProperty.call(mod, k))
-            __createBinding2(result, mod, k);
+            __createBinding(result, mod, k);
       }
       __setModuleDefault(result, mod);
       return result;
     };
-    var __awaiter2 = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
+    var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
         return value instanceof P ? value : new P(function(resolve3) {
           resolve3(value);
@@ -2708,12 +2734,12 @@ var require_toolrunner = __commonJS({
     };
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.argStringToArray = exports.ToolRunner = void 0;
-    var os3 = __importStar2(require("os"));
-    var events = __importStar2(require("events"));
-    var child = __importStar2(require("child_process"));
-    var path3 = __importStar2(require("path"));
-    var io = __importStar2(require_io());
-    var ioUtil = __importStar2(require_io_util());
+    var os3 = __importStar(require("os"));
+    var events = __importStar(require("events"));
+    var child = __importStar(require("child_process"));
+    var path3 = __importStar(require("path"));
+    var io = __importStar(require_io());
+    var ioUtil = __importStar(require_io_util());
     var timers_1 = require("timers");
     var IS_WINDOWS = process.platform === "win32";
     var ToolRunner = class extends events.EventEmitter {
@@ -2914,13 +2940,22 @@ var require_toolrunner = __commonJS({
         }
         return result;
       }
+      /**
+       * Exec a tool.
+       * Output will be streamed to the live console.
+       * Returns promise with return code
+       *
+       * @param     tool     path to tool to exec
+       * @param     options  optional exec options.  See ExecOptions
+       * @returns   number
+       */
       exec() {
-        return __awaiter2(this, void 0, void 0, function* () {
+        return __awaiter(this, void 0, void 0, function* () {
           if (!ioUtil.isRooted(this.toolPath) && (this.toolPath.includes("/") || IS_WINDOWS && this.toolPath.includes("\\"))) {
             this.toolPath = path3.resolve(process.cwd(), this.options.cwd || process.cwd(), this.toolPath);
           }
           this.toolPath = yield io.which(this.toolPath, true);
-          return new Promise((resolve3, reject) => __awaiter2(this, void 0, void 0, function* () {
+          return new Promise((resolve3, reject) => __awaiter(this, void 0, void 0, function* () {
             this._debug(`exec tool: ${this.toolPath}`);
             this._debug("arguments:");
             for (const arg of this.args) {
@@ -3062,7 +3097,7 @@ var require_toolrunner = __commonJS({
       return args;
     }
     exports.argStringToArray = argStringToArray;
-    var ExecState = class extends events.EventEmitter {
+    var ExecState = class _ExecState extends events.EventEmitter {
       constructor(options, toolPath) {
         super();
         this.processClosed = false;
@@ -3089,7 +3124,7 @@ var require_toolrunner = __commonJS({
         if (this.processClosed) {
           this._setResult();
         } else if (this.processExited) {
-          this.timeout = timers_1.setTimeout(ExecState.HandleTimeout, this.delay, this);
+          this.timeout = timers_1.setTimeout(_ExecState.HandleTimeout, this.delay, this);
         }
       }
       _debug(message) {
@@ -3131,7 +3166,7 @@ var require_toolrunner = __commonJS({
 var require_exec = __commonJS({
   "../../../node_modules/.pnpm/@actions+exec@1.1.1/node_modules/@actions/exec/lib/exec.js"(exports) {
     "use strict";
-    var __createBinding2 = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
+    var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
       if (k2 === void 0)
         k2 = k;
       Object.defineProperty(o, k2, { enumerable: true, get: function() {
@@ -3147,19 +3182,19 @@ var require_exec = __commonJS({
     } : function(o, v) {
       o["default"] = v;
     });
-    var __importStar2 = exports && exports.__importStar || function(mod) {
+    var __importStar = exports && exports.__importStar || function(mod) {
       if (mod && mod.__esModule)
         return mod;
       var result = {};
       if (mod != null) {
         for (var k in mod)
           if (k !== "default" && Object.hasOwnProperty.call(mod, k))
-            __createBinding2(result, mod, k);
+            __createBinding(result, mod, k);
       }
       __setModuleDefault(result, mod);
       return result;
     };
-    var __awaiter2 = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
+    var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
         return value instanceof P ? value : new P(function(resolve3) {
           resolve3(value);
@@ -3189,9 +3224,9 @@ var require_exec = __commonJS({
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.getExecOutput = exports.exec = void 0;
     var string_decoder_1 = require("string_decoder");
-    var tr = __importStar2(require_toolrunner());
+    var tr = __importStar(require_toolrunner());
     function exec(commandLine, args, options) {
-      return __awaiter2(this, void 0, void 0, function* () {
+      return __awaiter(this, void 0, void 0, function* () {
         const commandArgs = tr.argStringToArray(commandLine);
         if (commandArgs.length === 0) {
           throw new Error(`Parameter 'commandLine' cannot be null or empty.`);
@@ -3205,7 +3240,7 @@ var require_exec = __commonJS({
     exports.exec = exec;
     function getExecOutput(commandLine, args, options) {
       var _a, _b;
-      return __awaiter2(this, void 0, void 0, function* () {
+      return __awaiter(this, void 0, void 0, function* () {
         let stdout = "";
         let stderr = "";
         const stdoutDecoder = new string_decoder_1.StringDecoder("utf8");
@@ -3243,7 +3278,7 @@ var require_exec = __commonJS({
 var require_internal_glob_options_helper = __commonJS({
   "../../../node_modules/.pnpm/@actions+glob@0.1.2/node_modules/@actions/glob/lib/internal-glob-options-helper.js"(exports) {
     "use strict";
-    var __createBinding2 = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
+    var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
       if (k2 === void 0)
         k2 = k;
       Object.defineProperty(o, k2, { enumerable: true, get: function() {
@@ -3259,21 +3294,21 @@ var require_internal_glob_options_helper = __commonJS({
     } : function(o, v) {
       o["default"] = v;
     });
-    var __importStar2 = exports && exports.__importStar || function(mod) {
+    var __importStar = exports && exports.__importStar || function(mod) {
       if (mod && mod.__esModule)
         return mod;
       var result = {};
       if (mod != null) {
         for (var k in mod)
           if (k !== "default" && Object.hasOwnProperty.call(mod, k))
-            __createBinding2(result, mod, k);
+            __createBinding(result, mod, k);
       }
       __setModuleDefault(result, mod);
       return result;
     };
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.getOptions = void 0;
-    var core = __importStar2(require_core());
+    var core = __importStar(require_core());
     function getOptions(copy) {
       const result = {
         followSymbolicLinks: true,
@@ -3304,7 +3339,7 @@ var require_internal_glob_options_helper = __commonJS({
 var require_internal_path_helper = __commonJS({
   "../../../node_modules/.pnpm/@actions+glob@0.1.2/node_modules/@actions/glob/lib/internal-path-helper.js"(exports) {
     "use strict";
-    var __createBinding2 = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
+    var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
       if (k2 === void 0)
         k2 = k;
       Object.defineProperty(o, k2, { enumerable: true, get: function() {
@@ -3320,25 +3355,25 @@ var require_internal_path_helper = __commonJS({
     } : function(o, v) {
       o["default"] = v;
     });
-    var __importStar2 = exports && exports.__importStar || function(mod) {
+    var __importStar = exports && exports.__importStar || function(mod) {
       if (mod && mod.__esModule)
         return mod;
       var result = {};
       if (mod != null) {
         for (var k in mod)
           if (k !== "default" && Object.hasOwnProperty.call(mod, k))
-            __createBinding2(result, mod, k);
+            __createBinding(result, mod, k);
       }
       __setModuleDefault(result, mod);
       return result;
     };
-    var __importDefault2 = exports && exports.__importDefault || function(mod) {
+    var __importDefault = exports && exports.__importDefault || function(mod) {
       return mod && mod.__esModule ? mod : { "default": mod };
     };
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.safeTrimTrailingSeparator = exports.normalizeSeparators = exports.hasRoot = exports.hasAbsoluteRoot = exports.ensureAbsoluteRoot = exports.dirname = void 0;
-    var path3 = __importStar2(require("path"));
-    var assert_1 = __importDefault2(require("assert"));
+    var path3 = __importStar(require("path"));
+    var assert_1 = __importDefault(require("assert"));
     var IS_WINDOWS = process.platform === "win32";
     function dirname(p) {
       p = safeTrimTrailingSeparator(p);
@@ -3456,7 +3491,7 @@ var require_internal_match_kind = __commonJS({
 var require_internal_pattern_helper = __commonJS({
   "../../../node_modules/.pnpm/@actions+glob@0.1.2/node_modules/@actions/glob/lib/internal-pattern-helper.js"(exports) {
     "use strict";
-    var __createBinding2 = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
+    var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
       if (k2 === void 0)
         k2 = k;
       Object.defineProperty(o, k2, { enumerable: true, get: function() {
@@ -3472,21 +3507,21 @@ var require_internal_pattern_helper = __commonJS({
     } : function(o, v) {
       o["default"] = v;
     });
-    var __importStar2 = exports && exports.__importStar || function(mod) {
+    var __importStar = exports && exports.__importStar || function(mod) {
       if (mod && mod.__esModule)
         return mod;
       var result = {};
       if (mod != null) {
         for (var k in mod)
           if (k !== "default" && Object.hasOwnProperty.call(mod, k))
-            __createBinding2(result, mod, k);
+            __createBinding(result, mod, k);
       }
       __setModuleDefault(result, mod);
       return result;
     };
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.partialMatch = exports.match = exports.getSearchPaths = void 0;
-    var pathHelper = __importStar2(require_internal_path_helper());
+    var pathHelper = __importStar(require_internal_path_helper());
     var internal_match_kind_1 = require_internal_match_kind();
     var IS_WINDOWS = process.platform === "win32";
     function getSearchPaths(patterns) {
@@ -3543,6 +3578,7 @@ var require_internal_pattern_helper = __commonJS({
 // ../../../node_modules/.pnpm/concat-map@0.0.1/node_modules/concat-map/index.js
 var require_concat_map = __commonJS({
   "../../../node_modules/.pnpm/concat-map@0.0.1/node_modules/concat-map/index.js"(exports, module2) {
+    "use strict";
     module2.exports = function(xs, fn) {
       var res = [];
       for (var i = 0; i < xs.length; i++) {
@@ -3623,6 +3659,7 @@ var require_balanced_match = __commonJS({
 // ../../../node_modules/.pnpm/brace-expansion@1.1.11/node_modules/brace-expansion/index.js
 var require_brace_expansion = __commonJS({
   "../../../node_modules/.pnpm/brace-expansion@1.1.11/node_modules/brace-expansion/index.js"(exports, module2) {
+    "use strict";
     var concatMap = require_concat_map();
     var balanced = require_balanced_match();
     module2.exports = expandTop;
@@ -3768,6 +3805,7 @@ var require_brace_expansion = __commonJS({
 // ../../../node_modules/.pnpm/minimatch@3.1.2/node_modules/minimatch/minimatch.js
 var require_minimatch = __commonJS({
   "../../../node_modules/.pnpm/minimatch@3.1.2/node_modules/minimatch/minimatch.js"(exports, module2) {
+    "use strict";
     module2.exports = minimatch;
     minimatch.Minimatch = Minimatch;
     var path3 = function() {
@@ -3984,7 +4022,7 @@ var require_minimatch = __commonJS({
       var reClassStart = -1;
       var classStart = -1;
       var patternStart = pattern.charAt(0) === "." ? "" : options.dot ? "(?!(?:^|\\/)\\.{1,2}(?:$|\\/))" : "(?!\\.)";
-      var self2 = this;
+      var self = this;
       function clearStateChar() {
         if (stateChar) {
           switch (stateChar) {
@@ -4000,7 +4038,7 @@ var require_minimatch = __commonJS({
               re2 += "\\" + stateChar;
               break;
           }
-          self2.debug("clearStateChar %j %j", stateChar, re2);
+          self.debug("clearStateChar %j %j", stateChar, re2);
           stateChar = false;
         }
       }
@@ -4032,7 +4070,7 @@ var require_minimatch = __commonJS({
               re2 += c;
               continue;
             }
-            self2.debug("call clearStateChar %j", stateChar);
+            self.debug("call clearStateChar %j", stateChar);
             clearStateChar();
             stateChar = c;
             if (options.noext)
@@ -4359,7 +4397,7 @@ var require_minimatch = __commonJS({
 var require_internal_path = __commonJS({
   "../../../node_modules/.pnpm/@actions+glob@0.1.2/node_modules/@actions/glob/lib/internal-path.js"(exports) {
     "use strict";
-    var __createBinding2 = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
+    var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
       if (k2 === void 0)
         k2 = k;
       Object.defineProperty(o, k2, { enumerable: true, get: function() {
@@ -4375,28 +4413,32 @@ var require_internal_path = __commonJS({
     } : function(o, v) {
       o["default"] = v;
     });
-    var __importStar2 = exports && exports.__importStar || function(mod) {
+    var __importStar = exports && exports.__importStar || function(mod) {
       if (mod && mod.__esModule)
         return mod;
       var result = {};
       if (mod != null) {
         for (var k in mod)
           if (k !== "default" && Object.hasOwnProperty.call(mod, k))
-            __createBinding2(result, mod, k);
+            __createBinding(result, mod, k);
       }
       __setModuleDefault(result, mod);
       return result;
     };
-    var __importDefault2 = exports && exports.__importDefault || function(mod) {
+    var __importDefault = exports && exports.__importDefault || function(mod) {
       return mod && mod.__esModule ? mod : { "default": mod };
     };
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Path = void 0;
-    var path3 = __importStar2(require("path"));
-    var pathHelper = __importStar2(require_internal_path_helper());
-    var assert_1 = __importDefault2(require("assert"));
+    var path3 = __importStar(require("path"));
+    var pathHelper = __importStar(require_internal_path_helper());
+    var assert_1 = __importDefault(require("assert"));
     var IS_WINDOWS = process.platform === "win32";
     var Path = class {
+      /**
+       * Constructs a Path
+       * @param itemPath Path or array of segments
+       */
       constructor(itemPath) {
         this.segments = [];
         if (typeof itemPath === "string") {
@@ -4432,6 +4474,9 @@ var require_internal_path = __commonJS({
           }
         }
       }
+      /**
+       * Converts the path to it's string representation
+       */
       toString() {
         let result = this.segments[0];
         let skipSlash = result.endsWith(path3.sep) || IS_WINDOWS && /^[A-Z]:$/i.test(result);
@@ -4454,7 +4499,7 @@ var require_internal_path = __commonJS({
 var require_internal_pattern = __commonJS({
   "../../../node_modules/.pnpm/@actions+glob@0.1.2/node_modules/@actions/glob/lib/internal-pattern.js"(exports) {
     "use strict";
-    var __createBinding2 = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
+    var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
       if (k2 === void 0)
         k2 = k;
       Object.defineProperty(o, k2, { enumerable: true, get: function() {
@@ -4470,32 +4515,32 @@ var require_internal_pattern = __commonJS({
     } : function(o, v) {
       o["default"] = v;
     });
-    var __importStar2 = exports && exports.__importStar || function(mod) {
+    var __importStar = exports && exports.__importStar || function(mod) {
       if (mod && mod.__esModule)
         return mod;
       var result = {};
       if (mod != null) {
         for (var k in mod)
           if (k !== "default" && Object.hasOwnProperty.call(mod, k))
-            __createBinding2(result, mod, k);
+            __createBinding(result, mod, k);
       }
       __setModuleDefault(result, mod);
       return result;
     };
-    var __importDefault2 = exports && exports.__importDefault || function(mod) {
+    var __importDefault = exports && exports.__importDefault || function(mod) {
       return mod && mod.__esModule ? mod : { "default": mod };
     };
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Pattern = void 0;
-    var os3 = __importStar2(require("os"));
-    var path3 = __importStar2(require("path"));
-    var pathHelper = __importStar2(require_internal_path_helper());
-    var assert_1 = __importDefault2(require("assert"));
+    var os3 = __importStar(require("os"));
+    var path3 = __importStar(require("path"));
+    var pathHelper = __importStar(require_internal_path_helper());
+    var assert_1 = __importDefault(require("assert"));
     var minimatch_1 = require_minimatch();
     var internal_match_kind_1 = require_internal_match_kind();
     var internal_path_1 = require_internal_path();
     var IS_WINDOWS = process.platform === "win32";
-    var Pattern = class {
+    var Pattern = class _Pattern {
       constructor(patternOrNegate, isImplicitPattern = false, segments, homedir) {
         this.negate = false;
         let pattern;
@@ -4504,7 +4549,7 @@ var require_internal_pattern = __commonJS({
         } else {
           segments = segments || [];
           assert_1.default(segments.length, `Parameter 'segments' must not empty`);
-          const root = Pattern.getLiteral(segments[0]);
+          const root = _Pattern.getLiteral(segments[0]);
           assert_1.default(root && pathHelper.hasAbsoluteRoot(root), `Parameter 'segments' first element must be a root path`);
           pattern = new internal_path_1.Path(segments).toString().trim();
           if (patternOrNegate) {
@@ -4515,14 +4560,14 @@ var require_internal_pattern = __commonJS({
           this.negate = !this.negate;
           pattern = pattern.substr(1).trim();
         }
-        pattern = Pattern.fixupPattern(pattern, homedir);
+        pattern = _Pattern.fixupPattern(pattern, homedir);
         this.segments = new internal_path_1.Path(pattern).segments;
         this.trailingSeparator = pathHelper.normalizeSeparators(pattern).endsWith(path3.sep);
         pattern = pathHelper.safeTrimTrailingSeparator(pattern);
         let foundGlob = false;
-        const searchSegments = this.segments.map((x) => Pattern.getLiteral(x)).filter((x) => !foundGlob && !(foundGlob = x === ""));
+        const searchSegments = this.segments.map((x) => _Pattern.getLiteral(x)).filter((x) => !foundGlob && !(foundGlob = x === ""));
         this.searchPath = new internal_path_1.Path(searchSegments).toString();
-        this.rootRegExp = new RegExp(Pattern.regExpEscape(searchSegments[0]), IS_WINDOWS ? "i" : "");
+        this.rootRegExp = new RegExp(_Pattern.regExpEscape(searchSegments[0]), IS_WINDOWS ? "i" : "");
         this.isImplicitPattern = isImplicitPattern;
         const minimatchOptions = {
           dot: true,
@@ -4535,6 +4580,9 @@ var require_internal_pattern = __commonJS({
         pattern = IS_WINDOWS ? pattern.replace(/\\/g, "/") : pattern;
         this.minimatch = new minimatch_1.Minimatch(pattern, minimatchOptions);
       }
+      /**
+       * Matches the pattern against the specified path
+       */
       match(itemPath) {
         if (this.segments[this.segments.length - 1] === "**") {
           itemPath = pathHelper.normalizeSeparators(itemPath);
@@ -4549,6 +4597,9 @@ var require_internal_pattern = __commonJS({
         }
         return internal_match_kind_1.MatchKind.None;
       }
+      /**
+       * Indicates whether the pattern may match descendants of the specified path
+       */
       partialMatch(itemPath) {
         itemPath = pathHelper.safeTrimTrailingSeparator(itemPath);
         if (pathHelper.dirname(itemPath) === itemPath) {
@@ -4556,39 +4607,49 @@ var require_internal_pattern = __commonJS({
         }
         return this.minimatch.matchOne(itemPath.split(IS_WINDOWS ? /\\+/ : /\/+/), this.minimatch.set[0], true);
       }
+      /**
+       * Escapes glob patterns within a path
+       */
       static globEscape(s) {
         return (IS_WINDOWS ? s : s.replace(/\\/g, "\\\\")).replace(/(\[)(?=[^/]+\])/g, "[[]").replace(/\?/g, "[?]").replace(/\*/g, "[*]");
       }
+      /**
+       * Normalizes slashes and ensures absolute root
+       */
       static fixupPattern(pattern, homedir) {
         assert_1.default(pattern, "pattern cannot be empty");
-        const literalSegments = new internal_path_1.Path(pattern).segments.map((x) => Pattern.getLiteral(x));
+        const literalSegments = new internal_path_1.Path(pattern).segments.map((x) => _Pattern.getLiteral(x));
         assert_1.default(literalSegments.every((x, i) => (x !== "." || i === 0) && x !== ".."), `Invalid pattern '${pattern}'. Relative pathing '.' and '..' is not allowed.`);
         assert_1.default(!pathHelper.hasRoot(pattern) || literalSegments[0], `Invalid pattern '${pattern}'. Root segment must not contain globs.`);
         pattern = pathHelper.normalizeSeparators(pattern);
         if (pattern === "." || pattern.startsWith(`.${path3.sep}`)) {
-          pattern = Pattern.globEscape(process.cwd()) + pattern.substr(1);
+          pattern = _Pattern.globEscape(process.cwd()) + pattern.substr(1);
         } else if (pattern === "~" || pattern.startsWith(`~${path3.sep}`)) {
           homedir = homedir || os3.homedir();
           assert_1.default(homedir, "Unable to determine HOME directory");
           assert_1.default(pathHelper.hasAbsoluteRoot(homedir), `Expected HOME directory to be a rooted path. Actual '${homedir}'`);
-          pattern = Pattern.globEscape(homedir) + pattern.substr(1);
+          pattern = _Pattern.globEscape(homedir) + pattern.substr(1);
         } else if (IS_WINDOWS && (pattern.match(/^[A-Z]:$/i) || pattern.match(/^[A-Z]:[^\\]/i))) {
           let root = pathHelper.ensureAbsoluteRoot("C:\\dummy-root", pattern.substr(0, 2));
           if (pattern.length > 2 && !root.endsWith("\\")) {
             root += "\\";
           }
-          pattern = Pattern.globEscape(root) + pattern.substr(2);
+          pattern = _Pattern.globEscape(root) + pattern.substr(2);
         } else if (IS_WINDOWS && (pattern === "\\" || pattern.match(/^\\[^\\]/))) {
           let root = pathHelper.ensureAbsoluteRoot("C:\\dummy-root", "\\");
           if (!root.endsWith("\\")) {
             root += "\\";
           }
-          pattern = Pattern.globEscape(root) + pattern.substr(1);
+          pattern = _Pattern.globEscape(root) + pattern.substr(1);
         } else {
-          pattern = pathHelper.ensureAbsoluteRoot(Pattern.globEscape(process.cwd()), pattern);
+          pattern = pathHelper.ensureAbsoluteRoot(_Pattern.globEscape(process.cwd()), pattern);
         }
         return pathHelper.normalizeSeparators(pattern);
       }
+      /**
+       * Attempts to unescape a pattern segment to create a literal path segment.
+       * Otherwise returns empty string.
+       */
       static getLiteral(segment) {
         let literal = "";
         for (let i = 0; i < segment.length; i++) {
@@ -4628,6 +4689,10 @@ var require_internal_pattern = __commonJS({
         }
         return literal;
       }
+      /**
+       * Escapes regexp special characters
+       * https://javascript.info/regexp-escaping
+       */
       static regExpEscape(s) {
         return s.replace(/[[\\^$.|?*+()]/g, "\\$&");
       }
@@ -4656,7 +4721,7 @@ var require_internal_search_state = __commonJS({
 var require_internal_globber = __commonJS({
   "../../../node_modules/.pnpm/@actions+glob@0.1.2/node_modules/@actions/glob/lib/internal-globber.js"(exports) {
     "use strict";
-    var __createBinding2 = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
+    var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
       if (k2 === void 0)
         k2 = k;
       Object.defineProperty(o, k2, { enumerable: true, get: function() {
@@ -4672,19 +4737,19 @@ var require_internal_globber = __commonJS({
     } : function(o, v) {
       o["default"] = v;
     });
-    var __importStar2 = exports && exports.__importStar || function(mod) {
+    var __importStar = exports && exports.__importStar || function(mod) {
       if (mod && mod.__esModule)
         return mod;
       var result = {};
       if (mod != null) {
         for (var k in mod)
           if (k !== "default" && Object.hasOwnProperty.call(mod, k))
-            __createBinding2(result, mod, k);
+            __createBinding(result, mod, k);
       }
       __setModuleDefault(result, mod);
       return result;
     };
-    var __awaiter2 = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
+    var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
         return value instanceof P ? value : new P(function(resolve3) {
           resolve3(value);
@@ -4772,16 +4837,16 @@ var require_internal_globber = __commonJS({
     };
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.DefaultGlobber = void 0;
-    var core = __importStar2(require_core());
-    var fs3 = __importStar2(require("fs"));
-    var globOptionsHelper = __importStar2(require_internal_glob_options_helper());
-    var path3 = __importStar2(require("path"));
-    var patternHelper = __importStar2(require_internal_pattern_helper());
+    var core = __importStar(require_core());
+    var fs3 = __importStar(require("fs"));
+    var globOptionsHelper = __importStar(require_internal_glob_options_helper());
+    var path3 = __importStar(require("path"));
+    var patternHelper = __importStar(require_internal_pattern_helper());
     var internal_match_kind_1 = require_internal_match_kind();
     var internal_pattern_1 = require_internal_pattern();
     var internal_search_state_1 = require_internal_search_state();
     var IS_WINDOWS = process.platform === "win32";
-    var DefaultGlobber = class {
+    var DefaultGlobber = class _DefaultGlobber {
       constructor(options) {
         this.patterns = [];
         this.searchPaths = [];
@@ -4792,7 +4857,7 @@ var require_internal_globber = __commonJS({
       }
       glob() {
         var e_1, _a;
-        return __awaiter2(this, void 0, void 0, function* () {
+        return __awaiter(this, void 0, void 0, function* () {
           const result = [];
           try {
             for (var _b = __asyncValues2(this.globGenerator()), _c; _c = yield _b.next(), !_c.done; ) {
@@ -4845,7 +4910,8 @@ var require_internal_globber = __commonJS({
               continue;
             }
             const stats = yield __await2(
-              DefaultGlobber.stat(item, options, traversalChain)
+              _DefaultGlobber.stat(item, options, traversalChain)
+              // Broken symlink, or symlink cycle detected, or no longer exists
             );
             if (!stats) {
               continue;
@@ -4865,9 +4931,12 @@ var require_internal_globber = __commonJS({
           }
         });
       }
+      /**
+       * Constructs a DefaultGlobber
+       */
       static create(patterns, options) {
-        return __awaiter2(this, void 0, void 0, function* () {
-          const result = new DefaultGlobber(options);
+        return __awaiter(this, void 0, void 0, function* () {
+          const result = new _DefaultGlobber(options);
           if (IS_WINDOWS) {
             patterns = patterns.replace(/\r\n/g, "\n");
             patterns = patterns.replace(/\r/g, "\n");
@@ -4885,7 +4954,7 @@ var require_internal_globber = __commonJS({
         });
       }
       static stat(item, options, traversalChain) {
-        return __awaiter2(this, void 0, void 0, function* () {
+        return __awaiter(this, void 0, void 0, function* () {
           let stats;
           if (options.followSymbolicLinks) {
             try {
@@ -4926,7 +4995,7 @@ var require_internal_globber = __commonJS({
 var require_glob = __commonJS({
   "../../../node_modules/.pnpm/@actions+glob@0.1.2/node_modules/@actions/glob/lib/glob.js"(exports) {
     "use strict";
-    var __awaiter2 = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
+    var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
         return value instanceof P ? value : new P(function(resolve3) {
           resolve3(value);
@@ -4957,7 +5026,7 @@ var require_glob = __commonJS({
     exports.create = void 0;
     var internal_globber_1 = require_internal_globber();
     function create(patterns, options) {
-      return __awaiter2(this, void 0, void 0, function* () {
+      return __awaiter(this, void 0, void 0, function* () {
         return yield internal_globber_1.DefaultGlobber.create(patterns, options);
       });
     }
@@ -4965,9 +5034,10 @@ var require_glob = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/semver@6.3.0/node_modules/semver/semver.js
+// ../../../node_modules/.pnpm/semver@6.3.1/node_modules/semver/semver.js
 var require_semver = __commonJS({
-  "../../../node_modules/.pnpm/semver@6.3.0/node_modules/semver/semver.js"(exports, module2) {
+  "../../../node_modules/.pnpm/semver@6.3.1/node_modules/semver/semver.js"(exports, module2) {
+    "use strict";
     exports = module2.exports = SemVer;
     var debug;
     if (typeof process === "object" && process.env && process.env.NODE_DEBUG && /\bsemver\b/i.test(process.env.NODE_DEBUG)) {
@@ -4982,21 +5052,38 @@ var require_semver = __commonJS({
     }
     exports.SEMVER_SPEC_VERSION = "2.0.0";
     var MAX_LENGTH = 256;
-    var MAX_SAFE_INTEGER = Number.MAX_SAFE_INTEGER || 9007199254740991;
+    var MAX_SAFE_INTEGER = Number.MAX_SAFE_INTEGER || /* istanbul ignore next */
+    9007199254740991;
     var MAX_SAFE_COMPONENT_LENGTH = 16;
+    var MAX_SAFE_BUILD_LENGTH = MAX_LENGTH - 6;
     var re2 = exports.re = [];
+    var safeRe = exports.safeRe = [];
     var src = exports.src = [];
     var t = exports.tokens = {};
     var R = 0;
     function tok(n) {
       t[n] = R++;
     }
+    var LETTERDASHNUMBER = "[a-zA-Z0-9-]";
+    var safeRegexReplacements = [
+      ["\\s", 1],
+      ["\\d", MAX_LENGTH],
+      [LETTERDASHNUMBER, MAX_SAFE_BUILD_LENGTH]
+    ];
+    function makeSafeRe(value) {
+      for (var i2 = 0; i2 < safeRegexReplacements.length; i2++) {
+        var token = safeRegexReplacements[i2][0];
+        var max = safeRegexReplacements[i2][1];
+        value = value.split(token + "*").join(token + "{0," + max + "}").split(token + "+").join(token + "{1," + max + "}");
+      }
+      return value;
+    }
     tok("NUMERICIDENTIFIER");
     src[t.NUMERICIDENTIFIER] = "0|[1-9]\\d*";
     tok("NUMERICIDENTIFIERLOOSE");
-    src[t.NUMERICIDENTIFIERLOOSE] = "[0-9]+";
+    src[t.NUMERICIDENTIFIERLOOSE] = "\\d+";
     tok("NONNUMERICIDENTIFIER");
-    src[t.NONNUMERICIDENTIFIER] = "\\d*[a-zA-Z-][a-zA-Z0-9-]*";
+    src[t.NONNUMERICIDENTIFIER] = "\\d*[a-zA-Z-]" + LETTERDASHNUMBER + "*";
     tok("MAINVERSION");
     src[t.MAINVERSION] = "(" + src[t.NUMERICIDENTIFIER] + ")\\.(" + src[t.NUMERICIDENTIFIER] + ")\\.(" + src[t.NUMERICIDENTIFIER] + ")";
     tok("MAINVERSIONLOOSE");
@@ -5010,7 +5097,7 @@ var require_semver = __commonJS({
     tok("PRERELEASELOOSE");
     src[t.PRERELEASELOOSE] = "(?:-?(" + src[t.PRERELEASEIDENTIFIERLOOSE] + "(?:\\." + src[t.PRERELEASEIDENTIFIERLOOSE] + ")*))";
     tok("BUILDIDENTIFIER");
-    src[t.BUILDIDENTIFIER] = "[0-9A-Za-z-]+";
+    src[t.BUILDIDENTIFIER] = LETTERDASHNUMBER + "+";
     tok("BUILD");
     src[t.BUILD] = "(?:\\+(" + src[t.BUILDIDENTIFIER] + "(?:\\." + src[t.BUILDIDENTIFIER] + ")*))";
     tok("FULL");
@@ -5039,11 +5126,13 @@ var require_semver = __commonJS({
     src[t.COERCE] = "(^|[^\\d])(\\d{1," + MAX_SAFE_COMPONENT_LENGTH + "})(?:\\.(\\d{1," + MAX_SAFE_COMPONENT_LENGTH + "}))?(?:\\.(\\d{1," + MAX_SAFE_COMPONENT_LENGTH + "}))?(?:$|[^\\d])";
     tok("COERCERTL");
     re2[t.COERCERTL] = new RegExp(src[t.COERCE], "g");
+    safeRe[t.COERCERTL] = new RegExp(makeSafeRe(src[t.COERCE]), "g");
     tok("LONETILDE");
     src[t.LONETILDE] = "(?:~>?)";
     tok("TILDETRIM");
     src[t.TILDETRIM] = "(\\s*)" + src[t.LONETILDE] + "\\s+";
     re2[t.TILDETRIM] = new RegExp(src[t.TILDETRIM], "g");
+    safeRe[t.TILDETRIM] = new RegExp(makeSafeRe(src[t.TILDETRIM]), "g");
     var tildeTrimReplace = "$1~";
     tok("TILDE");
     src[t.TILDE] = "^" + src[t.LONETILDE] + src[t.XRANGEPLAIN] + "$";
@@ -5054,6 +5143,7 @@ var require_semver = __commonJS({
     tok("CARETTRIM");
     src[t.CARETTRIM] = "(\\s*)" + src[t.LONECARET] + "\\s+";
     re2[t.CARETTRIM] = new RegExp(src[t.CARETTRIM], "g");
+    safeRe[t.CARETTRIM] = new RegExp(makeSafeRe(src[t.CARETTRIM]), "g");
     var caretTrimReplace = "$1^";
     tok("CARET");
     src[t.CARET] = "^" + src[t.LONECARET] + src[t.XRANGEPLAIN] + "$";
@@ -5066,6 +5156,7 @@ var require_semver = __commonJS({
     tok("COMPARATORTRIM");
     src[t.COMPARATORTRIM] = "(\\s*)" + src[t.GTLT] + "\\s*(" + src[t.LOOSEPLAIN] + "|" + src[t.XRANGEPLAIN] + ")";
     re2[t.COMPARATORTRIM] = new RegExp(src[t.COMPARATORTRIM], "g");
+    safeRe[t.COMPARATORTRIM] = new RegExp(makeSafeRe(src[t.COMPARATORTRIM]), "g");
     var comparatorTrimReplace = "$1$2$3";
     tok("HYPHENRANGE");
     src[t.HYPHENRANGE] = "^\\s*(" + src[t.XRANGEPLAIN] + ")\\s+-\\s+(" + src[t.XRANGEPLAIN] + ")\\s*$";
@@ -5077,6 +5168,7 @@ var require_semver = __commonJS({
       debug(i, src[i]);
       if (!re2[i]) {
         re2[i] = new RegExp(src[i]);
+        safeRe[i] = new RegExp(makeSafeRe(src[i]));
       }
     }
     var i;
@@ -5097,7 +5189,7 @@ var require_semver = __commonJS({
       if (version3.length > MAX_LENGTH) {
         return null;
       }
-      var r = options.loose ? re2[t.LOOSE] : re2[t.FULL];
+      var r = options.loose ? safeRe[t.LOOSE] : safeRe[t.FULL];
       if (!r.test(version3)) {
         return null;
       }
@@ -5143,7 +5235,7 @@ var require_semver = __commonJS({
       debug("SemVer", version3, options);
       this.options = options;
       this.loose = !!options.loose;
-      var m = version3.trim().match(options.loose ? re2[t.LOOSE] : re2[t.FULL]);
+      var m = version3.trim().match(options.loose ? safeRe[t.LOOSE] : safeRe[t.FULL]);
       if (!m) {
         throw new TypeError("Invalid Version: " + version3);
       }
@@ -5495,6 +5587,7 @@ var require_semver = __commonJS({
       if (!(this instanceof Comparator)) {
         return new Comparator(comp26, options);
       }
+      comp26 = comp26.trim().split(/\s+/).join(" ");
       debug("comparator", comp26, options);
       this.options = options;
       this.loose = !!options.loose;
@@ -5508,7 +5601,7 @@ var require_semver = __commonJS({
     }
     var ANY = {};
     Comparator.prototype.parse = function(comp26) {
-      var r = this.options.loose ? re2[t.COMPARATORLOOSE] : re2[t.COMPARATOR];
+      var r = this.options.loose ? safeRe[t.COMPARATORLOOSE] : safeRe[t.COMPARATOR];
       var m = comp26.match(r);
       if (!m) {
         throw new TypeError("Invalid comparator: " + comp26);
@@ -5596,14 +5689,14 @@ var require_semver = __commonJS({
       this.options = options;
       this.loose = !!options.loose;
       this.includePrerelease = !!options.includePrerelease;
-      this.raw = range2;
-      this.set = range2.split(/\s*\|\|\s*/).map(function(range3) {
+      this.raw = range2.trim().split(/\s+/).join(" ");
+      this.set = this.raw.split("||").map(function(range3) {
         return this.parseRange(range3.trim());
       }, this).filter(function(c) {
         return c.length;
       });
       if (!this.set.length) {
-        throw new TypeError("Invalid SemVer Range: " + range2);
+        throw new TypeError("Invalid SemVer Range: " + this.raw);
       }
       this.format();
     }
@@ -5618,16 +5711,15 @@ var require_semver = __commonJS({
     };
     Range.prototype.parseRange = function(range2) {
       var loose = this.options.loose;
-      range2 = range2.trim();
-      var hr = loose ? re2[t.HYPHENRANGELOOSE] : re2[t.HYPHENRANGE];
+      var hr = loose ? safeRe[t.HYPHENRANGELOOSE] : safeRe[t.HYPHENRANGE];
       range2 = range2.replace(hr, hyphenReplace);
       debug("hyphen replace", range2);
-      range2 = range2.replace(re2[t.COMPARATORTRIM], comparatorTrimReplace);
-      debug("comparator trim", range2, re2[t.COMPARATORTRIM]);
-      range2 = range2.replace(re2[t.TILDETRIM], tildeTrimReplace);
-      range2 = range2.replace(re2[t.CARETTRIM], caretTrimReplace);
+      range2 = range2.replace(safeRe[t.COMPARATORTRIM], comparatorTrimReplace);
+      debug("comparator trim", range2, safeRe[t.COMPARATORTRIM]);
+      range2 = range2.replace(safeRe[t.TILDETRIM], tildeTrimReplace);
+      range2 = range2.replace(safeRe[t.CARETTRIM], caretTrimReplace);
       range2 = range2.split(/\s+/).join(" ");
-      var compRe = loose ? re2[t.COMPARATORLOOSE] : re2[t.COMPARATOR];
+      var compRe = loose ? safeRe[t.COMPARATORLOOSE] : safeRe[t.COMPARATOR];
       var set = range2.split(" ").map(function(comp26) {
         return parseComparator(comp26, this.options);
       }, this).join(" ").split(/\s+/);
@@ -5696,7 +5788,7 @@ var require_semver = __commonJS({
       }).join(" ");
     }
     function replaceTilde(comp26, options) {
-      var r = options.loose ? re2[t.TILDELOOSE] : re2[t.TILDE];
+      var r = options.loose ? safeRe[t.TILDELOOSE] : safeRe[t.TILDE];
       return comp26.replace(r, function(_, M, m, p, pr) {
         debug("tilde", comp26, _, M, m, p, pr);
         var ret;
@@ -5723,7 +5815,7 @@ var require_semver = __commonJS({
     }
     function replaceCaret(comp26, options) {
       debug("caret", comp26, options);
-      var r = options.loose ? re2[t.CARETLOOSE] : re2[t.CARET];
+      var r = options.loose ? safeRe[t.CARETLOOSE] : safeRe[t.CARET];
       return comp26.replace(r, function(_, M, m, p, pr) {
         debug("caret", comp26, _, M, m, p, pr);
         var ret;
@@ -5772,7 +5864,7 @@ var require_semver = __commonJS({
     }
     function replaceXRange(comp26, options) {
       comp26 = comp26.trim();
-      var r = options.loose ? re2[t.XRANGELOOSE] : re2[t.XRANGE];
+      var r = options.loose ? safeRe[t.XRANGELOOSE] : safeRe[t.XRANGE];
       return comp26.replace(r, function(ret, gtlt, M, m, p, pr) {
         debug("xRange", comp26, ret, gtlt, M, m, p, pr);
         var xM = isX(M);
@@ -5824,7 +5916,7 @@ var require_semver = __commonJS({
     }
     function replaceStars(comp26, options) {
       debug("replaceStars", comp26, options);
-      return comp26.trim().replace(re2[t.STAR], "");
+      return comp26.trim().replace(safeRe[t.STAR], "");
     }
     function hyphenReplace($0, from, fM, fm, fp, fpr, fb, to, tM, tm, tp, tpr, tb) {
       if (isX(fM)) {
@@ -6074,16 +6166,16 @@ var require_semver = __commonJS({
       options = options || {};
       var match = null;
       if (!options.rtl) {
-        match = version3.match(re2[t.COERCE]);
+        match = version3.match(safeRe[t.COERCE]);
       } else {
         var next;
-        while ((next = re2[t.COERCERTL].exec(version3)) && (!match || match.index + match[0].length !== version3.length)) {
+        while ((next = safeRe[t.COERCERTL].exec(version3)) && (!match || match.index + match[0].length !== version3.length)) {
           if (!match || next.index + next[0].length !== match.index + match[0].length) {
             match = next;
           }
-          re2[t.COERCERTL].lastIndex = next.index + next[1].length + next[2].length;
+          safeRe[t.COERCERTL].lastIndex = next.index + next[1].length + next[2].length;
         }
-        re2[t.COERCERTL].lastIndex = -1;
+        safeRe[t.COERCERTL].lastIndex = -1;
       }
       if (match === null) {
         return null;
@@ -6094,11 +6186,12 @@ var require_semver = __commonJS({
 });
 
 // ../../../node_modules/.pnpm/uuid@3.4.0/node_modules/uuid/lib/rng.js
-var require_rng2 = __commonJS({
+var require_rng = __commonJS({
   "../../../node_modules/.pnpm/uuid@3.4.0/node_modules/uuid/lib/rng.js"(exports, module2) {
-    var crypto = require("crypto");
+    "use strict";
+    var crypto4 = require("crypto");
     module2.exports = function nodeRNG() {
-      return crypto.randomBytes(16);
+      return crypto4.randomBytes(16);
     };
   }
 });
@@ -6106,14 +6199,15 @@ var require_rng2 = __commonJS({
 // ../../../node_modules/.pnpm/uuid@3.4.0/node_modules/uuid/lib/bytesToUuid.js
 var require_bytesToUuid = __commonJS({
   "../../../node_modules/.pnpm/uuid@3.4.0/node_modules/uuid/lib/bytesToUuid.js"(exports, module2) {
-    var byteToHex = [];
+    "use strict";
+    var byteToHex2 = [];
     for (i = 0; i < 256; ++i) {
-      byteToHex[i] = (i + 256).toString(16).substr(1);
+      byteToHex2[i] = (i + 256).toString(16).substr(1);
     }
     var i;
     function bytesToUuid(buf, offset) {
       var i2 = offset || 0;
-      var bth = byteToHex;
+      var bth = byteToHex2;
       return [
         bth[buf[i2++]],
         bth[buf[i2++]],
@@ -6142,24 +6236,25 @@ var require_bytesToUuid = __commonJS({
 });
 
 // ../../../node_modules/.pnpm/uuid@3.4.0/node_modules/uuid/v1.js
-var require_v12 = __commonJS({
+var require_v1 = __commonJS({
   "../../../node_modules/.pnpm/uuid@3.4.0/node_modules/uuid/v1.js"(exports, module2) {
-    var rng = require_rng2();
+    "use strict";
+    var rng2 = require_rng();
     var bytesToUuid = require_bytesToUuid();
-    var _nodeId;
-    var _clockseq;
-    var _lastMSecs = 0;
-    var _lastNSecs = 0;
+    var _nodeId2;
+    var _clockseq2;
+    var _lastMSecs2 = 0;
+    var _lastNSecs2 = 0;
     function v12(options, buf, offset) {
       var i = buf && offset || 0;
       var b = buf || [];
       options = options || {};
-      var node = options.node || _nodeId;
-      var clockseq = options.clockseq !== void 0 ? options.clockseq : _clockseq;
+      var node = options.node || _nodeId2;
+      var clockseq = options.clockseq !== void 0 ? options.clockseq : _clockseq2;
       if (node == null || clockseq == null) {
-        var seedBytes = rng();
+        var seedBytes = rng2();
         if (node == null) {
-          node = _nodeId = [
+          node = _nodeId2 = [
             seedBytes[0] | 1,
             seedBytes[1],
             seedBytes[2],
@@ -6169,24 +6264,24 @@ var require_v12 = __commonJS({
           ];
         }
         if (clockseq == null) {
-          clockseq = _clockseq = (seedBytes[6] << 8 | seedBytes[7]) & 16383;
+          clockseq = _clockseq2 = (seedBytes[6] << 8 | seedBytes[7]) & 16383;
         }
       }
-      var msecs = options.msecs !== void 0 ? options.msecs : new Date().getTime();
-      var nsecs = options.nsecs !== void 0 ? options.nsecs : _lastNSecs + 1;
-      var dt = msecs - _lastMSecs + (nsecs - _lastNSecs) / 1e4;
+      var msecs = options.msecs !== void 0 ? options.msecs : (/* @__PURE__ */ new Date()).getTime();
+      var nsecs = options.nsecs !== void 0 ? options.nsecs : _lastNSecs2 + 1;
+      var dt = msecs - _lastMSecs2 + (nsecs - _lastNSecs2) / 1e4;
       if (dt < 0 && options.clockseq === void 0) {
         clockseq = clockseq + 1 & 16383;
       }
-      if ((dt < 0 || msecs > _lastMSecs) && options.nsecs === void 0) {
+      if ((dt < 0 || msecs > _lastMSecs2) && options.nsecs === void 0) {
         nsecs = 0;
       }
       if (nsecs >= 1e4) {
         throw new Error("uuid.v1(): Can't create more than 10M uuids/sec");
       }
-      _lastMSecs = msecs;
-      _lastNSecs = nsecs;
-      _clockseq = clockseq;
+      _lastMSecs2 = msecs;
+      _lastNSecs2 = nsecs;
+      _clockseq2 = clockseq;
       msecs += 122192928e5;
       var tl = ((msecs & 268435455) * 1e4 + nsecs) % 4294967296;
       b[i++] = tl >>> 24 & 255;
@@ -6210,9 +6305,10 @@ var require_v12 = __commonJS({
 });
 
 // ../../../node_modules/.pnpm/uuid@3.4.0/node_modules/uuid/v4.js
-var require_v42 = __commonJS({
+var require_v4 = __commonJS({
   "../../../node_modules/.pnpm/uuid@3.4.0/node_modules/uuid/v4.js"(exports, module2) {
-    var rng = require_rng2();
+    "use strict";
+    var rng2 = require_rng();
     var bytesToUuid = require_bytesToUuid();
     function v42(options, buf, offset) {
       var i = buf && offset || 0;
@@ -6221,7 +6317,7 @@ var require_v42 = __commonJS({
         options = null;
       }
       options = options || {};
-      var rnds = options.random || (options.rng || rng)();
+      var rnds = options.random || (options.rng || rng2)();
       rnds[6] = rnds[6] & 15 | 64;
       rnds[8] = rnds[8] & 63 | 128;
       if (buf) {
@@ -6238,12 +6334,13 @@ var require_v42 = __commonJS({
 // ../../../node_modules/.pnpm/uuid@3.4.0/node_modules/uuid/index.js
 var require_uuid = __commonJS({
   "../../../node_modules/.pnpm/uuid@3.4.0/node_modules/uuid/index.js"(exports, module2) {
-    var v12 = require_v12();
-    var v42 = require_v42();
-    var uuid2 = v42;
-    uuid2.v1 = v12;
-    uuid2.v4 = v42;
-    module2.exports = uuid2;
+    "use strict";
+    var v12 = require_v1();
+    var v42 = require_v4();
+    var uuid = v42;
+    uuid.v1 = v12;
+    uuid.v4 = v42;
+    module2.exports = uuid;
   }
 });
 
@@ -6273,7 +6370,7 @@ var require_constants = __commonJS({
 var require_cacheUtils = __commonJS({
   "../../../node_modules/.pnpm/@actions+cache@3.0.4/node_modules/@actions/cache/lib/internal/cacheUtils.js"(exports) {
     "use strict";
-    var __awaiter2 = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
+    var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
         return value instanceof P ? value : new P(function(resolve3) {
           resolve3(value);
@@ -6320,7 +6417,7 @@ var require_cacheUtils = __commonJS({
         }, reject);
       }
     };
-    var __importStar2 = exports && exports.__importStar || function(mod) {
+    var __importStar = exports && exports.__importStar || function(mod) {
       if (mod && mod.__esModule)
         return mod;
       var result = {};
@@ -6333,18 +6430,18 @@ var require_cacheUtils = __commonJS({
       return result;
     };
     Object.defineProperty(exports, "__esModule", { value: true });
-    var core = __importStar2(require_core());
-    var exec = __importStar2(require_exec());
-    var glob = __importStar2(require_glob());
-    var io = __importStar2(require_io());
-    var fs3 = __importStar2(require("fs"));
-    var path3 = __importStar2(require("path"));
-    var semver = __importStar2(require_semver());
-    var util3 = __importStar2(require("util"));
+    var core = __importStar(require_core());
+    var exec = __importStar(require_exec());
+    var glob = __importStar(require_glob());
+    var io = __importStar(require_io());
+    var fs3 = __importStar(require("fs"));
+    var path3 = __importStar(require("path"));
+    var semver = __importStar(require_semver());
+    var util3 = __importStar(require("util"));
     var uuid_1 = require_uuid();
     var constants_1 = require_constants();
     function createTempDirectory() {
-      return __awaiter2(this, void 0, void 0, function* () {
+      return __awaiter(this, void 0, void 0, function* () {
         const IS_WINDOWS = process.platform === "win32";
         let tempDirectory = process.env["RUNNER_TEMP"] || "";
         if (!tempDirectory) {
@@ -6373,7 +6470,7 @@ var require_cacheUtils = __commonJS({
     function resolvePaths(patterns) {
       var e_1, _a;
       var _b;
-      return __awaiter2(this, void 0, void 0, function* () {
+      return __awaiter(this, void 0, void 0, function* () {
         const paths = [];
         const workspace = (_b = process.env["GITHUB_WORKSPACE"]) !== null && _b !== void 0 ? _b : process.cwd();
         const globber = yield glob.create(patterns.join("\n"), {
@@ -6406,13 +6503,13 @@ var require_cacheUtils = __commonJS({
     }
     exports.resolvePaths = resolvePaths;
     function unlinkFile(filePath) {
-      return __awaiter2(this, void 0, void 0, function* () {
+      return __awaiter(this, void 0, void 0, function* () {
         return util3.promisify(fs3.unlink)(filePath);
       });
     }
     exports.unlinkFile = unlinkFile;
     function getVersion(app) {
-      return __awaiter2(this, void 0, void 0, function* () {
+      return __awaiter(this, void 0, void 0, function* () {
         core.debug(`Checking ${app} --version`);
         let versionOutput = "";
         try {
@@ -6433,7 +6530,7 @@ var require_cacheUtils = __commonJS({
       });
     }
     function getCompressionMethod() {
-      return __awaiter2(this, void 0, void 0, function* () {
+      return __awaiter(this, void 0, void 0, function* () {
         if (process.platform === "win32" && !(yield isGnuTarInstalled())) {
           return constants_1.CompressionMethod.Gzip;
         }
@@ -6454,7 +6551,7 @@ var require_cacheUtils = __commonJS({
     }
     exports.getCacheFileName = getCacheFileName;
     function isGnuTarInstalled() {
-      return __awaiter2(this, void 0, void 0, function* () {
+      return __awaiter(this, void 0, void 0, function* () {
         const versionOutput = yield getVersion("tar");
         return versionOutput.toLowerCase().includes("gnu tar");
       });
@@ -6491,7 +6588,8 @@ function isHttpHeadersLike(object) {
 var HttpHeaders;
 var init_httpHeaders = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/httpHeaders.js"() {
-    HttpHeaders = class {
+    "use strict";
+    HttpHeaders = class _HttpHeaders {
       constructor(rawHeaders) {
         this._headersMap = {};
         if (rawHeaders) {
@@ -6500,27 +6598,52 @@ var init_httpHeaders = __esm({
           }
         }
       }
+      /**
+       * Set a header in this collection with the provided name and value. The name is
+       * case-insensitive.
+       * @param headerName - The name of the header to set. This value is case-insensitive.
+       * @param headerValue - The value of the header to set.
+       */
       set(headerName, headerValue) {
         this._headersMap[getHeaderKey(headerName)] = {
           name: headerName,
           value: headerValue.toString()
         };
       }
+      /**
+       * Get the header value for the provided header name, or undefined if no header exists in this
+       * collection with the provided name.
+       * @param headerName - The name of the header.
+       */
       get(headerName) {
         const header = this._headersMap[getHeaderKey(headerName)];
         return !header ? void 0 : header.value;
       }
+      /**
+       * Get whether or not this header collection contains a header entry for the provided header name.
+       */
       contains(headerName) {
         return !!this._headersMap[getHeaderKey(headerName)];
       }
+      /**
+       * Remove the header with the provided headerName. Return whether or not the header existed and
+       * was removed.
+       * @param headerName - The name of the header to remove.
+       */
       remove(headerName) {
         const result = this.contains(headerName);
         delete this._headersMap[getHeaderKey(headerName)];
         return result;
       }
+      /**
+       * Get the headers that are contained this collection as an object.
+       */
       rawHeaders() {
         return this.toJson({ preserveCase: true });
       }
+      /**
+       * Get the headers that are contained in this collection as an array.
+       */
       headersArray() {
         const headers = [];
         for (const headerKey in this._headersMap) {
@@ -6528,6 +6651,9 @@ var init_httpHeaders = __esm({
         }
         return headers;
       }
+      /**
+       * Get the header names that are contained in this collection.
+       */
       headerNames() {
         const headerNames = [];
         const headers = this.headersArray();
@@ -6536,6 +6662,9 @@ var init_httpHeaders = __esm({
         }
         return headerNames;
       }
+      /**
+       * Get the header values that are contained in this collection.
+       */
       headerValues() {
         const headerValues = [];
         const headers = this.headersArray();
@@ -6544,6 +6673,9 @@ var init_httpHeaders = __esm({
         }
         return headerValues;
       }
+      /**
+       * Get the JSON object representation of this HTTP header collection.
+       */
       toJson(options = {}) {
         const result = {};
         if (options.preserveCase) {
@@ -6559,16 +6691,22 @@ var init_httpHeaders = __esm({
         }
         return result;
       }
+      /**
+       * Get the string representation of this HTTP header collection.
+       */
       toString() {
         return JSON.stringify(this.toJson({ preserveCase: true }));
       }
+      /**
+       * Create a deep clone/copy of this HttpHeaders collection.
+       */
       clone() {
         const resultPreservingCasing = {};
         for (const headerKey in this._headersMap) {
           const header = this._headersMap[headerKey];
           resultPreservingCasing[header.name] = header.value;
         }
-        return new HttpHeaders(resultPreservingCasing);
+        return new _HttpHeaders(resultPreservingCasing);
       }
     };
   }
@@ -6584,6 +6722,7 @@ function decodeString(value) {
 }
 var init_base64 = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/util/base64.js"() {
+    "use strict";
   }
 });
 
@@ -6591,15 +6730,40 @@ var init_base64 = __esm({
 var Constants;
 var init_constants = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/util/constants.js"() {
+    "use strict";
     Constants = {
+      /**
+       * The core-http version
+       */
       coreHttpVersion: "2.2.6",
+      /**
+       * Specifies HTTP.
+       */
       HTTP: "http:",
+      /**
+       * Specifies HTTPS.
+       */
       HTTPS: "https:",
+      /**
+       * Specifies HTTP Proxy.
+       */
       HTTP_PROXY: "HTTP_PROXY",
+      /**
+       * Specifies HTTPS Proxy.
+       */
       HTTPS_PROXY: "HTTPS_PROXY",
+      /**
+       * Specifies NO Proxy.
+       */
       NO_PROXY: "NO_PROXY",
+      /**
+       * Specifies ALL Proxy.
+       */
       ALL_PROXY: "ALL_PROXY",
       HttpConstants: {
+        /**
+         * Http Verbs
+         */
         HttpVerbs: {
           PUT: "PUT",
           GET: "GET",
@@ -6614,10 +6778,24 @@ var init_constants = __esm({
           ServiceUnavailable: 503
         }
       },
+      /**
+       * Defines constants for use with HTTP headers.
+       */
       HeaderConstants: {
+        /**
+         * The Authorization header.
+         */
         AUTHORIZATION: "authorization",
         AUTHORIZATION_SCHEME: "Bearer",
+        /**
+         * The Retry-After response-header field can be used with a 503 (Service
+         * Unavailable) or 349 (Too Many Requests) responses to indicate how long
+         * the service is expected to be unavailable to the requesting client.
+         */
         RETRY_AFTER: "Retry-After",
+        /**
+         * The UserAgent header.
+         */
         USER_AGENT: "User-Agent"
       }
     };
@@ -6628,34 +6806,18 @@ var init_constants = __esm({
 var XML_ATTRKEY, XML_CHARKEY;
 var init_serializer_common = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/util/serializer.common.js"() {
+    "use strict";
     XML_ATTRKEY = "$";
     XML_CHARKEY = "_";
   }
 });
 
-// ../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/wrapper.mjs
-var import_dist, v1, v3, v4, v5, NIL, version, validate, stringify, parse;
-var init_wrapper = __esm({
-  "../../../node_modules/.pnpm/uuid@8.3.2/node_modules/uuid/wrapper.mjs"() {
-    import_dist = __toESM(require_dist(), 1);
-    v1 = import_dist.default.v1;
-    v3 = import_dist.default.v3;
-    v4 = import_dist.default.v4;
-    v5 = import_dist.default.v5;
-    NIL = import_dist.default.NIL;
-    version = import_dist.default.version;
-    validate = import_dist.default.validate;
-    stringify = import_dist.default.stringify;
-    parse = import_dist.default.parse;
-  }
-});
-
 // ../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/util/utils.js
-function isValidUuid(uuid2) {
-  return validUuidRegex.test(uuid2);
+function isValidUuid(uuid) {
+  return validUuidRegex.test(uuid);
 }
 function generateUuid() {
-  return v4();
+  return v4_default();
 }
 function prepareXMLRootList(obj, elementName, xmlNamespaceKey, xmlNamespace) {
   if (!Array.isArray(obj)) {
@@ -6691,8 +6853,9 @@ function isObject(input) {
 var validUuidRegex, isNode, validateISODuration;
 var init_utils = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/util/utils.js"() {
+    "use strict";
     init_serializer_common();
-    init_wrapper();
+    init_esm_node();
     validUuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/i;
     isNode = typeof process !== "undefined" && !!process.version && !!process.versions && !!process.versions.node;
     validateISODuration = /^(-|\+)?P(?:([-+]?[0-9,.]*)Y)?(?:([-+]?[0-9,.]*)M)?(?:([-+]?[0-9,.]*)W)?(?:([-+]?[0-9,.]*)D)?(?:T(?:([-+]?[0-9,.]*)H)?(?:([-+]?[0-9,.]*)M)?(?:([-+]?[0-9,.]*)S)?)?$/;
@@ -7181,6 +7344,7 @@ function strEnum(o) {
 var Serializer, MapperType;
 var init_serializer = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/serializer.js"() {
+    "use strict";
     init_base64();
     init_utils();
     init_serializer_common();
@@ -7189,6 +7353,13 @@ var init_serializer = __esm({
         this.modelMappers = modelMappers;
         this.isXML = isXML;
       }
+      /**
+       * Validates constraints, if any. This function will throw if the provided value does not respect those constraints.
+       * @param mapper - The definition of data models.
+       * @param value - The value.
+       * @param objectName - Name of the object. Used in the error messages.
+       * @deprecated Removing the constraints validation on client side.
+       */
       validateConstraints(mapper, value, objectName) {
         const failValidation = (constraintName, constraintValue) => {
           throw new Error(`"${objectName}" with value "${value}" should satisfy the constraint "${constraintName}": ${constraintValue}.`);
@@ -7235,6 +7406,15 @@ var init_serializer = __esm({
           }
         }
       }
+      /**
+       * Serialize the given object based on its metadata defined in the mapper.
+       *
+       * @param mapper - The mapper which defines the metadata of the serializable object.
+       * @param object - A valid Javascript object to be serialized.
+       * @param objectName - Name of the serialized object.
+       * @param options - additional options to deserialization.
+       * @returns A valid serialized Javascript object.
+       */
       serialize(mapper, object, objectName, options = {}) {
         var _a, _b, _c;
         const updatedOptions = {
@@ -7289,6 +7469,15 @@ var init_serializer = __esm({
         }
         return payload;
       }
+      /**
+       * Deserialize the given object based on its metadata defined in the mapper.
+       *
+       * @param mapper - The mapper which defines the metadata of the serializable object.
+       * @param responseBody - A valid Javascript entity to be deserialized.
+       * @param objectName - Name of the deserialized object.
+       * @param options - Controls behavior of XML parser and builder.
+       * @returns A valid deserialized Javascript object.
+       */
       deserialize(mapper, responseBody, objectName, options = {}) {
         var _a, _b, _c;
         const updatedOptions = {
@@ -7389,10 +7578,11 @@ function isWebResourceLike(object) {
 var WebResource;
 var init_webResource = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/webResource.js"() {
+    "use strict";
     init_httpHeaders();
     init_serializer();
     init_utils();
-    WebResource = class {
+    WebResource = class _WebResource {
       constructor(url2, method, body2, query, headers, streamResponseBody, withCredentials, abortSignal2, timeout, onUploadProgress, onDownloadProgress, proxySettings, keepAlive, decompressResponse, streamResponseStatusCodes) {
         this.streamResponseBody = streamResponseBody;
         this.streamResponseStatusCodes = streamResponseStatusCodes;
@@ -7412,6 +7602,11 @@ var init_webResource = __esm({
         this.decompressResponse = decompressResponse;
         this.requestId = this.headers.get("x-ms-client-request-id") || generateUuid();
       }
+      /**
+       * Validates that the required properties such as method, url, headers["Content-Type"],
+       * headers["accept-language"] are defined. It will throw an error if one of the above
+       * mentioned properties are not defined.
+       */
       validateRequestProperties() {
         if (!this.method) {
           throw new Error("WebResource.method is required.");
@@ -7420,6 +7615,11 @@ var init_webResource = __esm({
           throw new Error("WebResource.url is required.");
         }
       }
+      /**
+       * Prepares the request.
+       * @param options - Options to provide for preparing the request.
+       * @returns Returns the prepared WebResource (HTTP Request) object that needs to be given to the request pipeline.
+       */
       prepare(options) {
         if (!options) {
           throw new Error("options object is required");
@@ -7561,8 +7761,12 @@ var init_webResource = __esm({
         this.onUploadProgress = options.onUploadProgress;
         return this;
       }
+      /**
+       * Clone this WebResource HTTP request object.
+       * @returns The clone of this WebResource HTTP request object.
+       */
       clone() {
-        const result = new WebResource(this.url, this.method, this.body, this.query, this.headers && this.headers.clone(), this.streamResponseBody, this.withCredentials, this.abortSignal, this.timeout, this.onUploadProgress, this.onDownloadProgress, this.proxySettings, this.keepAlive, this.decompressResponse, this.streamResponseStatusCodes);
+        const result = new _WebResource(this.url, this.method, this.body, this.query, this.headers && this.headers.clone(), this.streamResponseBody, this.withCredentials, this.abortSignal, this.timeout, this.onUploadProgress, this.onDownloadProgress, this.proxySettings, this.keepAlive, this.decompressResponse, this.streamResponseStatusCodes);
         if (this.formData) {
           result.formData = this.formData;
         }
@@ -16869,8 +17073,9 @@ var require_memstore = __commonJS({
 });
 
 // ../../../node_modules/.pnpm/tough-cookie@4.0.0/node_modules/tough-cookie/lib/version.js
-var require_version2 = __commonJS({
+var require_version = __commonJS({
   "../../../node_modules/.pnpm/tough-cookie@4.0.0/node_modules/tough-cookie/lib/version.js"(exports, module2) {
+    "use strict";
     module2.exports = "4.0.0";
   }
 });
@@ -16886,7 +17091,7 @@ var require_cookie = __commonJS({
     var Store = require_store().Store;
     var MemoryCookieStore = require_memstore().MemoryCookieStore;
     var pathMatch = require_pathMatch().pathMatch;
-    var VERSION3 = require_version2();
+    var VERSION3 = require_version();
     var { fromCallback } = require_universalify();
     var COOKIE_OCTETS = /^[\x21\x23-\x2B\x2D-\x3A\x3C-\x5B\x5D-\x7E]+$/;
     var CONTROL_CHARS = /[\x00-\x1F]/;
@@ -17294,6 +17499,7 @@ var require_cookie = __commonJS({
       return urlParse(url2);
     }
     var cookieDefaults = {
+      // the order in which the RFC has them:
       key: "",
       value: "",
       expires: "Infinity",
@@ -17303,24 +17509,26 @@ var require_cookie = __commonJS({
       secure: false,
       httpOnly: false,
       extensions: null,
+      // set by the CookieJar:
       hostOnly: null,
       pathIsDefault: null,
       creation: null,
       lastAccessed: null,
       sameSite: "none"
     };
-    var Cookie = class {
+    var Cookie = class _Cookie {
       constructor(options = {}) {
         if (util3.inspect.custom) {
           this[util3.inspect.custom] = this.inspect;
         }
         Object.assign(this, cookieDefaults, options);
-        this.creation = this.creation || new Date();
+        this.creation = this.creation || /* @__PURE__ */ new Date();
         Object.defineProperty(this, "creationIndex", {
           configurable: false,
           enumerable: false,
+          // important for assert.deepEqual checks
           writable: true,
-          value: ++Cookie.cookiesCreated
+          value: ++_Cookie.cookiesCreated
         });
       }
       inspect() {
@@ -17332,7 +17540,7 @@ var require_cookie = __commonJS({
       }
       toJSON() {
         const obj = {};
-        for (const prop of Cookie.serializableProperties) {
+        for (const prop of _Cookie.serializableProperties) {
           if (this[prop] === cookieDefaults[prop]) {
             continue;
           }
@@ -17406,6 +17614,7 @@ var require_cookie = __commonJS({
         }
         return `${this.key}=${val}`;
       }
+      // gives Set-Cookie header format
       toString() {
         let str = this.cookieString();
         if (this.expires != Infinity) {
@@ -17431,7 +17640,7 @@ var require_cookie = __commonJS({
           str += "; HttpOnly";
         }
         if (this.sameSite && this.sameSite !== "none") {
-          const ssCanon = Cookie.sameSiteCanonical[this.sameSite.toLowerCase()];
+          const ssCanon = _Cookie.sameSiteCanonical[this.sameSite.toLowerCase()];
           str += `; SameSite=${ssCanon ? ssCanon : this.sameSite}`;
         }
         if (this.extensions) {
@@ -17441,6 +17650,10 @@ var require_cookie = __commonJS({
         }
         return str;
       }
+      // TTL() partially replaces the "expiry-time" parts of S5.3 step 3 (setCookie()
+      // elsewhere)
+      // S5.3 says to give the "latest representable date" for which we use Infinity
+      // For "expired" we use 0
       TTL(now) {
         if (this.maxAge != null) {
           return this.maxAge <= 0 ? 0 : this.maxAge * 1e3;
@@ -17457,9 +17670,11 @@ var require_cookie = __commonJS({
         }
         return Infinity;
       }
+      // expiryTime() replaces the "expiry-time" parts of S5.3 step 3 (setCookie()
+      // elsewhere)
       expiryTime(now) {
         if (this.maxAge != null) {
-          const relativeTo = now || this.creation || new Date();
+          const relativeTo = now || this.creation || /* @__PURE__ */ new Date();
           const age = this.maxAge <= 0 ? -Infinity : this.maxAge * 1e3;
           return relativeTo.getTime() + age;
         }
@@ -17468,6 +17683,8 @@ var require_cookie = __commonJS({
         }
         return this.expires.getTime();
       }
+      // expiryDate() replaces the "expiry-time" parts of S5.3 step 3 (setCookie()
+      // elsewhere), except it returns a Date
       expiryDate(now) {
         const millisec = this.expiryTime(now);
         if (millisec == Infinity) {
@@ -17478,9 +17695,11 @@ var require_cookie = __commonJS({
           return new Date(millisec);
         }
       }
+      // This replaces the "persistent-flag" parts of S5.3 step 3
       isPersistent() {
         return this.maxAge != null || this.expires != Infinity;
       }
+      // Mostly S5.1.2 and S5.2.3:
       canonicalizedDomain() {
         if (this.domain == null) {
           return null;
@@ -17516,7 +17735,7 @@ var require_cookie = __commonJS({
       }
       return PrefixSecurityEnum.SILENT;
     }
-    var CookieJar2 = class {
+    var CookieJar2 = class _CookieJar {
       constructor(store, options = { rejectPublicSuffixes: true }) {
         if (typeof options === "boolean") {
           options = { rejectPublicSuffixes: options };
@@ -17563,7 +17782,7 @@ var require_cookie = __commonJS({
           );
           return cb(options.ignoreError ? null : err);
         }
-        const now = options.now || new Date();
+        const now = options.now || /* @__PURE__ */ new Date();
         if (this.rejectPublicSuffixes && cookie.domain) {
           const suffix = pubsuffix.getPublicSuffix(cookie.cdomain());
           if (suffix == null) {
@@ -17652,6 +17871,7 @@ var require_cookie = __commonJS({
         }
         store.findCookie(cookie.domain, cookie.path, cookie.key, withCookie);
       }
+      // RFC6365 S5.4
       getCookies(url2, options, cb) {
         const context4 = getCookieContext(url2);
         if (typeof options === "function") {
@@ -17724,7 +17944,7 @@ var require_cookie = __commonJS({
             if (options.sort !== false) {
               cookies = cookies.sort(cookieCompare);
             }
-            const now2 = new Date();
+            const now2 = /* @__PURE__ */ new Date();
             for (const cookie of cookies) {
               cookie.lastAccessed = now2;
             }
@@ -17770,9 +17990,15 @@ var require_cookie = __commonJS({
           type3 = null;
         }
         const serialized = {
+          // The version of tough-cookie that serialized this jar. Generally a good
+          // practice since future versions can make data import decisions based on
+          // known past behavior. When/if this matters, use `semver`.
           version: `tough-cookie@${VERSION3}`,
+          // add the store type, to make humans happy:
           storeType: type3,
+          // CookieJar configuration:
           rejectPublicSuffixes: !!this.rejectPublicSuffixes,
+          // this gets filled from getAllCookies:
           cookies: []
         };
         if (!(this.store.getAllCookies && typeof this.store.getAllCookies === "function")) {
@@ -17797,6 +18023,7 @@ var require_cookie = __commonJS({
       toJSON() {
         return this.serializeSync();
       }
+      // use the class method CookieJar.deserialize instead of calling this directly
       _importCookies(serialized, cb) {
         let cookies = serialized.cookies;
         if (!cookies || !Array.isArray(cookies)) {
@@ -17832,7 +18059,7 @@ var require_cookie = __commonJS({
           if (err) {
             return cb(err);
           }
-          CookieJar2.deserialize(serialized, newStore, cb);
+          _CookieJar.deserialize(serialized, newStore, cb);
         });
       }
       cloneSync(newStore) {
@@ -17893,7 +18120,7 @@ var require_cookie = __commonJS({
         } else {
           serialized = strOrObj;
         }
-        const jar = new CookieJar2(store, serialized.rejectPublicSuffixes);
+        const jar = new _CookieJar(store, serialized.rejectPublicSuffixes);
         jar._importCookies(serialized, (err) => {
           if (err) {
             return cb(err);
@@ -17903,7 +18130,7 @@ var require_cookie = __commonJS({
       }
       static deserializeSync(strOrObj, store) {
         const serialized = typeof strOrObj === "string" ? JSON.parse(strOrObj) : strOrObj;
-        const jar = new CookieJar2(store, serialized.rejectPublicSuffixes);
+        const jar = new _CookieJar(store, serialized.rejectPublicSuffixes);
         if (!jar.store.synchronous) {
           throw new Error(
             "CookieJar store is not synchronous; use async API instead."
@@ -17985,23 +18212,40 @@ function abortSignal(signal) {
 var listenersMap, abortedMap, AbortSignal;
 var init_AbortSignal = __esm({
   "../../../node_modules/.pnpm/@azure+abort-controller@1.1.0/node_modules/@azure/abort-controller/dist-esm/src/AbortSignal.js"() {
+    "use strict";
     listenersMap = /* @__PURE__ */ new WeakMap();
     abortedMap = /* @__PURE__ */ new WeakMap();
-    AbortSignal = class {
+    AbortSignal = class _AbortSignal {
       constructor() {
         this.onabort = null;
         listenersMap.set(this, []);
         abortedMap.set(this, false);
       }
+      /**
+       * Status of whether aborted or not.
+       *
+       * @readonly
+       */
       get aborted() {
         if (!abortedMap.has(this)) {
           throw new TypeError("Expected `this` to be an instance of AbortSignal.");
         }
         return abortedMap.get(this);
       }
+      /**
+       * Creates a new AbortSignal instance that will never be aborted.
+       *
+       * @readonly
+       */
       static get none() {
-        return new AbortSignal();
+        return new _AbortSignal();
       }
+      /**
+       * Added new "abort" event listener, only support "abort" event.
+       *
+       * @param _type - Only support "abort" event
+       * @param listener - The listener to be added
+       */
       addEventListener(_type, listener) {
         if (!listenersMap.has(this)) {
           throw new TypeError("Expected `this` to be an instance of AbortSignal.");
@@ -18009,6 +18253,12 @@ var init_AbortSignal = __esm({
         const listeners = listenersMap.get(this);
         listeners.push(listener);
       }
+      /**
+       * Remove "abort" event listener, only support "abort" event.
+       *
+       * @param _type - Only support "abort" event
+       * @param listener - The listener to be removed
+       */
       removeEventListener(_type, listener) {
         if (!listenersMap.has(this)) {
           throw new TypeError("Expected `this` to be an instance of AbortSignal.");
@@ -18019,6 +18269,9 @@ var init_AbortSignal = __esm({
           listeners.splice(index, 1);
         }
       }
+      /**
+       * Dispatches a synthetic event to the AbortSignal.
+       */
       dispatchEvent(_event) {
         throw new Error("This is a stub dispatchEvent implementation that should not be used.  It only exists for type-checking purposes.");
       }
@@ -18030,6 +18283,7 @@ var init_AbortSignal = __esm({
 var AbortError, AbortController;
 var init_AbortController = __esm({
   "../../../node_modules/.pnpm/@azure+abort-controller@1.1.0/node_modules/@azure/abort-controller/dist-esm/src/AbortController.js"() {
+    "use strict";
     init_AbortSignal();
     AbortError = class extends Error {
       constructor(message) {
@@ -18038,6 +18292,7 @@ var init_AbortController = __esm({
       }
     };
     AbortController = class {
+      // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
       constructor(parentSignals) {
         this._signal = new AbortSignal();
         if (!parentSignals) {
@@ -18056,12 +18311,26 @@ var init_AbortController = __esm({
           }
         }
       }
+      /**
+       * The AbortSignal associated with this controller that will signal aborted
+       * when the abort method is called on this controller.
+       *
+       * @readonly
+       */
       get signal() {
         return this._signal;
       }
+      /**
+       * Signal that any operations passed this controller's associated abort signal
+       * to cancel any remaining work and throw an `AbortError`.
+       */
       abort() {
         abortSignal(this._signal);
       }
+      /**
+       * Creates a new AbortSignal instance that will abort after the provided ms.
+       * @param ms - Elapsed time in milliseconds to trigger an abort.
+       */
       static timeout(ms) {
         const signal = new AbortSignal();
         const timer = setTimeout(abortSignal, ms, signal);
@@ -18083,6 +18352,7 @@ __export(src_exports, {
 });
 var init_src = __esm({
   "../../../node_modules/.pnpm/@azure+abort-controller@1.1.0/node_modules/@azure/abort-controller/dist-esm/src/index.js"() {
+    "use strict";
     init_AbortController();
     init_AbortSignal();
   }
@@ -18222,17 +18492,29 @@ function nextQuery(tokenizer) {
 var URLQuery, URLBuilder, URLToken, URLTokenizer;
 var init_url = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/url.js"() {
+    "use strict";
     init_utils();
-    URLQuery = class {
+    URLQuery = class _URLQuery {
       constructor() {
         this._rawQuery = {};
       }
+      /**
+       * Get whether or not there any query parameters in this URLQuery.
+       */
       any() {
         return Object.keys(this._rawQuery).length > 0;
       }
+      /**
+       * Get the keys of the query string.
+       */
       keys() {
         return Object.keys(this._rawQuery);
       }
+      /**
+       * Set a query parameter with the provided name and value. If the parameterValue is undefined or
+       * empty, then this will attempt to remove an existing query parameter with the provided
+       * parameterName.
+       */
       set(parameterName, parameterValue) {
         const caseParameterValue = parameterValue;
         if (parameterName) {
@@ -18244,9 +18526,16 @@ var init_url = __esm({
           }
         }
       }
+      /**
+       * Get the value of the query parameter with the provided name. If no parameter exists with the
+       * provided parameter name, then undefined will be returned.
+       */
       get(parameterName) {
         return parameterName ? this._rawQuery[parameterName] : void 0;
       }
+      /**
+       * Get the string representation of this query. The return value will not start with a "?".
+       */
       toString() {
         let result = "";
         for (const parameterName in this._rawQuery) {
@@ -18266,8 +18555,11 @@ var init_url = __esm({
         }
         return result;
       }
+      /**
+       * Parse a URLQuery from the provided text.
+       */
       static parse(text) {
-        const result = new URLQuery();
+        const result = new _URLQuery();
         if (text) {
           if (text.startsWith("?")) {
             text = text.substring(1);
@@ -18316,7 +18608,11 @@ var init_url = __esm({
         return result;
       }
     };
-    URLBuilder = class {
+    URLBuilder = class _URLBuilder {
+      /**
+       * Set the scheme/protocol for this URL. If the provided scheme contains other parts of a URL
+       * (such as a host, port, path, or query), those parts will be added to this URL as well.
+       */
       setScheme(scheme) {
         if (!scheme) {
           this._scheme = void 0;
@@ -18324,9 +18620,16 @@ var init_url = __esm({
           this.set(scheme, "SCHEME");
         }
       }
+      /**
+       * Get the scheme that has been set in this URL.
+       */
       getScheme() {
         return this._scheme;
       }
+      /**
+       * Set the host for this URL. If the provided host contains other parts of a URL (such as a
+       * port, path, or query), those parts will be added to this URL as well.
+       */
       setHost(host) {
         if (!host) {
           this._host = void 0;
@@ -18334,9 +18637,16 @@ var init_url = __esm({
           this.set(host, "SCHEME_OR_HOST");
         }
       }
+      /**
+       * Get the host that has been set in this URL.
+       */
       getHost() {
         return this._host;
       }
+      /**
+       * Set the port for this URL. If the provided port contains other parts of a URL (such as a
+       * path or query), those parts will be added to this URL as well.
+       */
       setPort(port) {
         if (port === void 0 || port === null || port === "") {
           this._port = void 0;
@@ -18344,9 +18654,16 @@ var init_url = __esm({
           this.set(port.toString(), "PORT");
         }
       }
+      /**
+       * Get the port that has been set in this URL.
+       */
       getPort() {
         return this._port;
       }
+      /**
+       * Set the path for this URL. If the provided path contains a query, then it will be added to
+       * this URL as well.
+       */
       setPath(path3) {
         if (!path3) {
           this._path = void 0;
@@ -18360,6 +18677,10 @@ var init_url = __esm({
           }
         }
       }
+      /**
+       * Append the provided path to this URL's existing path. If the provided path contains a query,
+       * then it will be added to this URL as well.
+       */
       appendPath(path3) {
         if (path3) {
           let currentPath = this.getPath();
@@ -18375,9 +18696,15 @@ var init_url = __esm({
           this.set(path3, "PATH");
         }
       }
+      /**
+       * Get the path that has been set in this URL.
+       */
       getPath() {
         return this._path;
       }
+      /**
+       * Set the query in this URL.
+       */
       setQuery(query) {
         if (!query) {
           this._query = void 0;
@@ -18385,6 +18712,11 @@ var init_url = __esm({
           this._query = URLQuery.parse(query);
         }
       }
+      /**
+       * Set a query parameter with the provided name and value in this URL's query. If the provided
+       * query parameter value is undefined or empty, then the query parameter will be removed if it
+       * existed.
+       */
       setQueryParameter(queryParameterName, queryParameterValue) {
         if (queryParameterName) {
           if (!this._query) {
@@ -18393,12 +18725,22 @@ var init_url = __esm({
           this._query.set(queryParameterName, queryParameterValue);
         }
       }
+      /**
+       * Get the value of the query parameter with the provided query parameter name. If no query
+       * parameter exists with the provided name, then undefined will be returned.
+       */
       getQueryParameterValue(queryParameterName) {
         return this._query ? this._query.get(queryParameterName) : void 0;
       }
+      /**
+       * Get the query in this URL.
+       */
       getQuery() {
         return this._query ? this._query.toString() : void 0;
       }
+      /**
+       * Set the parts of this URL by parsing the provided text using the provided startState.
+       */
       set(text, startState) {
         const tokenizer = new URLTokenizer(text, startState);
         while (tokenizer.next()) {
@@ -18430,6 +18772,10 @@ var init_url = __esm({
           }
         }
       }
+      /**
+       * Serializes the URL as a string.
+       * @returns the URL as a string.
+       */
       toString() {
         let result = "";
         if (this._scheme) {
@@ -18452,6 +18798,10 @@ var init_url = __esm({
         }
         return result;
       }
+      /**
+       * If the provided searchValue is found in this URLBuilder, then replace it with the provided
+       * replaceValue.
+       */
       replaceAll(searchValue, replaceValue) {
         if (searchValue) {
           this.setScheme(replaceAll(this.getScheme(), searchValue, replaceValue));
@@ -18461,31 +18811,34 @@ var init_url = __esm({
           this.setQuery(replaceAll(this.getQuery(), searchValue, replaceValue));
         }
       }
+      /**
+       * Parses a given string URL into a new {@link URLBuilder}.
+       */
       static parse(text) {
-        const result = new URLBuilder();
+        const result = new _URLBuilder();
         result.set(text, "SCHEME_OR_HOST");
         return result;
       }
     };
-    URLToken = class {
+    URLToken = class _URLToken {
       constructor(text, type3) {
         this.text = text;
         this.type = type3;
       }
       static scheme(text) {
-        return new URLToken(text, "SCHEME");
+        return new _URLToken(text, "SCHEME");
       }
       static host(text) {
-        return new URLToken(text, "HOST");
+        return new _URLToken(text, "HOST");
       }
       static port(text) {
-        return new URLToken(text, "PORT");
+        return new _URLToken(text, "PORT");
       }
       static path(text) {
-        return new URLToken(text, "PATH");
+        return new _URLToken(text, "PATH");
       }
       static query(text) {
-        return new URLToken(text, "QUERY");
+        return new _URLToken(text, "QUERY");
       }
     };
     URLTokenizer = class {
@@ -18495,9 +18848,16 @@ var init_url = __esm({
         this._currentState = state !== void 0 && state !== null ? state : "SCHEME_OR_HOST";
         this._currentIndex = 0;
       }
+      /**
+       * Get the current URLToken this URLTokenizer is pointing at, or undefined if the URLTokenizer
+       * hasn't started or has finished tokenizing.
+       */
       current() {
         return this._currentToken;
       }
+      /**
+       * Advance to the next URLToken and return whether or not a URLToken was found.
+       */
       next() {
         if (!hasCurrentCharacter(this)) {
           this._currentToken = void 0;
@@ -18581,6 +18941,7 @@ function isValidPort(port) {
 var tunnel;
 var init_proxyAgent = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/proxyAgent.js"() {
+    "use strict";
     tunnel = __toESM(require_tunnel2());
     init_url();
   }
@@ -18589,6 +18950,7 @@ var init_proxyAgent = __esm({
 // ../../../node_modules/.pnpm/delayed-stream@1.0.0/node_modules/delayed-stream/lib/delayed_stream.js
 var require_delayed_stream = __commonJS({
   "../../../node_modules/.pnpm/delayed-stream@1.0.0/node_modules/delayed-stream/lib/delayed_stream.js"(exports, module2) {
+    "use strict";
     var Stream2 = require("stream").Stream;
     var util3 = require("util");
     module2.exports = DelayedStream;
@@ -18680,6 +19042,7 @@ var require_delayed_stream = __commonJS({
 // ../../../node_modules/.pnpm/combined-stream@1.0.8/node_modules/combined-stream/lib/combined_stream.js
 var require_combined_stream = __commonJS({
   "../../../node_modules/.pnpm/combined-stream@1.0.8/node_modules/combined-stream/lib/combined_stream.js"(exports, module2) {
+    "use strict";
     var util3 = require("util");
     var Stream2 = require("stream").Stream;
     var DelayedStream = require_delayed_stream();
@@ -18781,9 +19144,9 @@ var require_combined_stream = __commonJS({
       this._getNext();
     };
     CombinedStream.prototype._handleErrors = function(stream) {
-      var self2 = this;
+      var self = this;
       stream.on("error", function(err) {
-        self2._emitError(err);
+        self._emitError(err);
       });
     };
     CombinedStream.prototype.write = function(data) {
@@ -18830,12 +19193,12 @@ var require_combined_stream = __commonJS({
     };
     CombinedStream.prototype._updateDataSize = function() {
       this.dataSize = 0;
-      var self2 = this;
+      var self = this;
       this._streams.forEach(function(stream) {
         if (!stream.dataSize) {
           return;
         }
-        self2.dataSize += stream.dataSize;
+        self.dataSize += stream.dataSize;
       });
       if (this._currentStream && this._currentStream.dataSize) {
         this.dataSize += this._currentStream.dataSize;
@@ -27376,6 +27739,7 @@ var require_db = __commonJS({
 // ../../../node_modules/.pnpm/mime-db@1.52.0/node_modules/mime-db/index.js
 var require_mime_db = __commonJS({
   "../../../node_modules/.pnpm/mime-db@1.52.0/node_modules/mime-db/index.js"(exports, module2) {
+    "use strict";
     module2.exports = require_db();
   }
 });
@@ -27474,6 +27838,7 @@ var require_mime_types = __commonJS({
 // ../../../node_modules/.pnpm/asynckit@0.4.0/node_modules/asynckit/lib/defer.js
 var require_defer = __commonJS({
   "../../../node_modules/.pnpm/asynckit@0.4.0/node_modules/asynckit/lib/defer.js"(exports, module2) {
+    "use strict";
     module2.exports = defer;
     function defer(fn) {
       var nextTick = typeof setImmediate == "function" ? setImmediate : typeof process == "object" && typeof process.nextTick == "function" ? process.nextTick : null;
@@ -27489,6 +27854,7 @@ var require_defer = __commonJS({
 // ../../../node_modules/.pnpm/asynckit@0.4.0/node_modules/asynckit/lib/async.js
 var require_async = __commonJS({
   "../../../node_modules/.pnpm/asynckit@0.4.0/node_modules/asynckit/lib/async.js"(exports, module2) {
+    "use strict";
     var defer = require_defer();
     module2.exports = async;
     function async(callback) {
@@ -27512,6 +27878,7 @@ var require_async = __commonJS({
 // ../../../node_modules/.pnpm/asynckit@0.4.0/node_modules/asynckit/lib/abort.js
 var require_abort = __commonJS({
   "../../../node_modules/.pnpm/asynckit@0.4.0/node_modules/asynckit/lib/abort.js"(exports, module2) {
+    "use strict";
     module2.exports = abort;
     function abort(state) {
       Object.keys(state.jobs).forEach(clean.bind(state));
@@ -27528,6 +27895,7 @@ var require_abort = __commonJS({
 // ../../../node_modules/.pnpm/asynckit@0.4.0/node_modules/asynckit/lib/iterate.js
 var require_iterate = __commonJS({
   "../../../node_modules/.pnpm/asynckit@0.4.0/node_modules/asynckit/lib/iterate.js"(exports, module2) {
+    "use strict";
     var async = require_async();
     var abort = require_abort();
     module2.exports = iterate;
@@ -27561,6 +27929,7 @@ var require_iterate = __commonJS({
 // ../../../node_modules/.pnpm/asynckit@0.4.0/node_modules/asynckit/lib/state.js
 var require_state = __commonJS({
   "../../../node_modules/.pnpm/asynckit@0.4.0/node_modules/asynckit/lib/state.js"(exports, module2) {
+    "use strict";
     module2.exports = state;
     function state(list, sortMethod) {
       var isNamedList = !Array.isArray(list), initState = {
@@ -27583,6 +27952,7 @@ var require_state = __commonJS({
 // ../../../node_modules/.pnpm/asynckit@0.4.0/node_modules/asynckit/lib/terminator.js
 var require_terminator = __commonJS({
   "../../../node_modules/.pnpm/asynckit@0.4.0/node_modules/asynckit/lib/terminator.js"(exports, module2) {
+    "use strict";
     var abort = require_abort();
     var async = require_async();
     module2.exports = terminator;
@@ -27600,6 +27970,7 @@ var require_terminator = __commonJS({
 // ../../../node_modules/.pnpm/asynckit@0.4.0/node_modules/asynckit/parallel.js
 var require_parallel = __commonJS({
   "../../../node_modules/.pnpm/asynckit@0.4.0/node_modules/asynckit/parallel.js"(exports, module2) {
+    "use strict";
     var iterate = require_iterate();
     var initState = require_state();
     var terminator = require_terminator();
@@ -27627,6 +27998,7 @@ var require_parallel = __commonJS({
 // ../../../node_modules/.pnpm/asynckit@0.4.0/node_modules/asynckit/serialOrdered.js
 var require_serialOrdered = __commonJS({
   "../../../node_modules/.pnpm/asynckit@0.4.0/node_modules/asynckit/serialOrdered.js"(exports, module2) {
+    "use strict";
     var iterate = require_iterate();
     var initState = require_state();
     var terminator = require_terminator();
@@ -27661,6 +28033,7 @@ var require_serialOrdered = __commonJS({
 // ../../../node_modules/.pnpm/asynckit@0.4.0/node_modules/asynckit/serial.js
 var require_serial = __commonJS({
   "../../../node_modules/.pnpm/asynckit@0.4.0/node_modules/asynckit/serial.js"(exports, module2) {
+    "use strict";
     var serialOrdered = require_serialOrdered();
     module2.exports = serial;
     function serial(list, iterator, callback) {
@@ -27672,6 +28045,7 @@ var require_serial = __commonJS({
 // ../../../node_modules/.pnpm/asynckit@0.4.0/node_modules/asynckit/index.js
 var require_asynckit = __commonJS({
   "../../../node_modules/.pnpm/asynckit@0.4.0/node_modules/asynckit/index.js"(exports, module2) {
+    "use strict";
     module2.exports = {
       parallel: require_parallel(),
       serial: require_serial(),
@@ -27683,6 +28057,7 @@ var require_asynckit = __commonJS({
 // ../../../node_modules/.pnpm/form-data@4.0.0/node_modules/form-data/lib/populate.js
 var require_populate = __commonJS({
   "../../../node_modules/.pnpm/form-data@4.0.0/node_modules/form-data/lib/populate.js"(exports, module2) {
+    "use strict";
     module2.exports = function(dst, src) {
       Object.keys(src).forEach(function(prop) {
         dst[prop] = dst[prop] || src[prop];
@@ -27695,6 +28070,7 @@ var require_populate = __commonJS({
 // ../../../node_modules/.pnpm/form-data@4.0.0/node_modules/form-data/lib/form_data.js
 var require_form_data = __commonJS({
   "../../../node_modules/.pnpm/form-data@4.0.0/node_modules/form-data/lib/form_data.js"(exports, module2) {
+    "use strict";
     var CombinedStream = require_combined_stream();
     var util3 = require("util");
     var path3 = require("path");
@@ -27796,7 +28172,9 @@ var require_form_data = __commonJS({
       var contentType2 = this._getContentType(value, options);
       var contents = "";
       var headers = {
+        // add custom disposition as third element or keep it two elements if not
         "Content-Disposition": ["form-data", 'name="' + field + '"'].concat(contentDisposition || []),
+        // if no content type. allow it to be empty array
         "Content-Type": [].concat(contentType2 || [])
       };
       if (typeof options.header == "object") {
@@ -28009,6 +28387,7 @@ var require_form_data = __commonJS({
 var RedactedString, defaultAllowedHeaderNames, defaultAllowedQueryParameters, Sanitizer;
 var init_sanitizer = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/util/sanitizer.js"() {
+    "use strict";
     init_url();
     init_utils();
     RedactedString = "REDACTED";
@@ -28134,6 +28513,7 @@ var init_sanitizer = __esm({
 var import_util, custom;
 var init_inspect = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/util/inspect.js"() {
+    "use strict";
     import_util = require("util");
     custom = import_util.inspect.custom;
   }
@@ -28143,10 +28523,11 @@ var init_inspect = __esm({
 var errorSanitizer, RestError;
 var init_restError = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/restError.js"() {
+    "use strict";
     init_sanitizer();
     init_inspect();
     errorSanitizer = new Sanitizer();
-    RestError = class extends Error {
+    RestError = class _RestError extends Error {
       constructor(message, code, statusCode, request, response) {
         super(message);
         this.name = "RestError";
@@ -28154,8 +28535,11 @@ var init_restError = __esm({
         this.statusCode = statusCode;
         this.request = request;
         this.response = response;
-        Object.setPrototypeOf(this, RestError.prototype);
+        Object.setPrototypeOf(this, _RestError.prototype);
       }
+      /**
+       * Logging method for util.inspect in Node
+       */
       [custom]() {
         return `RestError: ${this.message} 
  ${errorSanitizer.sanitize(this)}`;
@@ -28173,6 +28557,7 @@ function log(message, ...args) {
 var import_util2, import_os;
 var init_log = __esm({
   "../../../node_modules/.pnpm/@azure+logger@1.0.3/node_modules/@azure/logger/dist-esm/src/log.js"() {
+    "use strict";
     import_util2 = __toESM(require("util"));
     import_os = require("os");
   }
@@ -28253,6 +28638,7 @@ function extend(namespace) {
 var debugEnvVariable, enabledString, enabledNamespaces, skippedNamespaces, debuggers, debugObj, debug_default;
 var init_debug = __esm({
   "../../../node_modules/.pnpm/@azure+logger@1.0.3/node_modules/@azure/logger/dist-esm/src/debug.js"() {
+    "use strict";
     init_log();
     debugEnvVariable = typeof process !== "undefined" && process.env && process.env.DEBUG || void 0;
     enabledNamespaces = [];
@@ -28327,6 +28713,7 @@ function isAzureLogLevel(logLevel) {
 var registeredLoggers, logLevelFromEnv, azureLogLevel, AzureLogger, AZURE_LOG_LEVELS, levelMap;
 var init_src2 = __esm({
   "../../../node_modules/.pnpm/@azure+logger@1.0.3/node_modules/@azure/logger/dist-esm/src/index.js"() {
+    "use strict";
     init_debug();
     registeredLoggers = /* @__PURE__ */ new Set();
     logLevelFromEnv = typeof process !== "undefined" && process.env && process.env.AZURE_LOG_LEVEL || void 0;
@@ -28355,6 +28742,7 @@ var init_src2 = __esm({
 var logger;
 var init_log2 = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/log.js"() {
+    "use strict";
     init_src2();
     logger = createClientLogger("core-http");
   }
@@ -29479,7 +29867,9 @@ var require_url_state_machine = __commonJS({
           this.url.fragment = "";
           this.state = "fragment";
         } else {
-          if (this.input.length - this.pointer - 1 === 0 || !isWindowsDriveLetterCodePoints(c, this.input[this.pointer + 1]) || this.input.length - this.pointer - 1 >= 2 && !fileOtherwiseCodePoints.has(this.input[this.pointer + 2])) {
+          if (this.input.length - this.pointer - 1 === 0 || // remaining consists of 0 code points
+          !isWindowsDriveLetterCodePoints(c, this.input[this.pointer + 1]) || this.input.length - this.pointer - 1 >= 2 && // remaining has at least 2 code points
+          !fileOtherwiseCodePoints.has(this.input[this.pointer + 2])) {
             this.url.host = this.base.host;
             this.url.path = this.base.path.slice();
             shortenPath(this.url);
@@ -29942,8 +30332,8 @@ var require_URL = __commonJS({
     var utils = require_utils2();
     var Impl = require_URL_impl();
     var impl = utils.implSymbol;
-    function URL3(url2) {
-      if (!this || this[impl] || !(this instanceof URL3)) {
+    function URL4(url2) {
+      if (!this || this[impl] || !(this instanceof URL4)) {
         throw new TypeError("Failed to construct 'URL': Please use the 'new' operator, this DOM object constructor cannot be called as a function.");
       }
       if (arguments.length < 1) {
@@ -29959,7 +30349,7 @@ var require_URL = __commonJS({
       }
       module2.exports.setup(this, args);
     }
-    URL3.prototype.toJSON = function toJSON() {
+    URL4.prototype.toJSON = function toJSON() {
       if (!this || !module2.exports.is(this)) {
         throw new TypeError("Illegal invocation");
       }
@@ -29969,7 +30359,7 @@ var require_URL = __commonJS({
       }
       return this[impl].toJSON.apply(this[impl], args);
     };
-    Object.defineProperty(URL3.prototype, "href", {
+    Object.defineProperty(URL4.prototype, "href", {
       get() {
         return this[impl].href;
       },
@@ -29980,20 +30370,20 @@ var require_URL = __commonJS({
       enumerable: true,
       configurable: true
     });
-    URL3.prototype.toString = function() {
+    URL4.prototype.toString = function() {
       if (!this || !module2.exports.is(this)) {
         throw new TypeError("Illegal invocation");
       }
       return this.href;
     };
-    Object.defineProperty(URL3.prototype, "origin", {
+    Object.defineProperty(URL4.prototype, "origin", {
       get() {
         return this[impl].origin;
       },
       enumerable: true,
       configurable: true
     });
-    Object.defineProperty(URL3.prototype, "protocol", {
+    Object.defineProperty(URL4.prototype, "protocol", {
       get() {
         return this[impl].protocol;
       },
@@ -30004,7 +30394,7 @@ var require_URL = __commonJS({
       enumerable: true,
       configurable: true
     });
-    Object.defineProperty(URL3.prototype, "username", {
+    Object.defineProperty(URL4.prototype, "username", {
       get() {
         return this[impl].username;
       },
@@ -30015,7 +30405,7 @@ var require_URL = __commonJS({
       enumerable: true,
       configurable: true
     });
-    Object.defineProperty(URL3.prototype, "password", {
+    Object.defineProperty(URL4.prototype, "password", {
       get() {
         return this[impl].password;
       },
@@ -30026,7 +30416,7 @@ var require_URL = __commonJS({
       enumerable: true,
       configurable: true
     });
-    Object.defineProperty(URL3.prototype, "host", {
+    Object.defineProperty(URL4.prototype, "host", {
       get() {
         return this[impl].host;
       },
@@ -30037,7 +30427,7 @@ var require_URL = __commonJS({
       enumerable: true,
       configurable: true
     });
-    Object.defineProperty(URL3.prototype, "hostname", {
+    Object.defineProperty(URL4.prototype, "hostname", {
       get() {
         return this[impl].hostname;
       },
@@ -30048,7 +30438,7 @@ var require_URL = __commonJS({
       enumerable: true,
       configurable: true
     });
-    Object.defineProperty(URL3.prototype, "port", {
+    Object.defineProperty(URL4.prototype, "port", {
       get() {
         return this[impl].port;
       },
@@ -30059,7 +30449,7 @@ var require_URL = __commonJS({
       enumerable: true,
       configurable: true
     });
-    Object.defineProperty(URL3.prototype, "pathname", {
+    Object.defineProperty(URL4.prototype, "pathname", {
       get() {
         return this[impl].pathname;
       },
@@ -30070,7 +30460,7 @@ var require_URL = __commonJS({
       enumerable: true,
       configurable: true
     });
-    Object.defineProperty(URL3.prototype, "search", {
+    Object.defineProperty(URL4.prototype, "search", {
       get() {
         return this[impl].search;
       },
@@ -30081,7 +30471,7 @@ var require_URL = __commonJS({
       enumerable: true,
       configurable: true
     });
-    Object.defineProperty(URL3.prototype, "hash", {
+    Object.defineProperty(URL4.prototype, "hash", {
       get() {
         return this[impl].hash;
       },
@@ -30097,7 +30487,7 @@ var require_URL = __commonJS({
         return !!obj && obj[impl] instanceof Impl.implementation;
       },
       create(constructorArgs, privateData) {
-        let obj = Object.create(URL3.prototype);
+        let obj = Object.create(URL4.prototype);
         this.setup(obj, constructorArgs, privateData);
         return obj;
       },
@@ -30108,10 +30498,10 @@ var require_URL = __commonJS({
         obj[impl] = new Impl.implementation(constructorArgs, privateData);
         obj[impl][utils.wrapperSymbol] = obj;
       },
-      interface: URL3,
+      interface: URL4,
       expose: {
-        Window: { URL: URL3 },
-        Worker: { URL: URL3 }
+        Window: { URL: URL4 },
+        Worker: { URL: URL4 }
       }
     };
   }
@@ -30340,7 +30730,8 @@ function getTotalBytes(instance) {
   } else if (Buffer.isBuffer(body2)) {
     return body2.length;
   } else if (body2 && typeof body2.getLengthSync === "function") {
-    if (body2._lengthRetrievers && body2._lengthRetrievers.length == 0 || body2.hasKnownLength && body2.hasKnownLength()) {
+    if (body2._lengthRetrievers && body2._lengthRetrievers.length == 0 || // 1.x
+    body2.hasKnownLength && body2.hasKnownLength()) {
       return body2.getLengthSync();
     }
     return null;
@@ -30435,7 +30826,7 @@ function createHeadersLenient(obj) {
 }
 function parseURL(urlStr) {
   if (/^[a-zA-Z][a-zA-Z\d+\-.]*:/.exec(urlStr)) {
-    urlStr = new URL2(urlStr).toString();
+    urlStr = new URL3(urlStr).toString();
   }
   return parse_url(urlStr);
 }
@@ -30732,9 +31123,10 @@ function destroyStream(stream, err) {
     stream.end();
   }
 }
-var import_stream, import_http, import_url3, import_whatwg_url, import_https, import_zlib, Readable, BUFFER, TYPE, Blob2, convert, INTERNALS, PassThrough, invalidTokenRegex, invalidHeaderCharRegex, MAP, Headers, INTERNAL, HeadersIteratorPrototype, INTERNALS$1, STATUS_CODES, Response, INTERNALS$2, URL2, parse_url, format_url, streamDestructionSupported, Request, URL$1, PassThrough$1, isDomainOrSubdomain, isSameProtocol, lib_default;
+var import_stream, import_http, import_url3, import_whatwg_url, import_https, import_zlib, Readable, BUFFER, TYPE, Blob2, convert, INTERNALS, PassThrough, invalidTokenRegex, invalidHeaderCharRegex, MAP, Headers, INTERNAL, HeadersIteratorPrototype, INTERNALS$1, STATUS_CODES, Response, INTERNALS$2, URL3, parse_url, format_url, streamDestructionSupported, Request, URL$1, PassThrough$1, isDomainOrSubdomain, isSameProtocol, lib_default;
 var init_lib = __esm({
   "../../../node_modules/.pnpm/node-fetch@2.6.9/node_modules/node-fetch/lib/index.mjs"() {
+    "use strict";
     import_stream = __toESM(require("stream"), 1);
     import_http = __toESM(require("http"), 1);
     import_url3 = __toESM(require("url"), 1);
@@ -30744,7 +31136,7 @@ var init_lib = __esm({
     Readable = import_stream.default.Readable;
     BUFFER = Symbol("buffer");
     TYPE = Symbol("type");
-    Blob2 = class {
+    Blob2 = class _Blob {
       constructor() {
         this[TYPE] = "";
         const blobParts = arguments[0];
@@ -30763,7 +31155,7 @@ var init_lib = __esm({
               buffer = Buffer.from(element.buffer, element.byteOffset, element.byteLength);
             } else if (element instanceof ArrayBuffer) {
               buffer = Buffer.from(element);
-            } else if (element instanceof Blob2) {
+            } else if (element instanceof _Blob) {
               buffer = element[BUFFER];
             } else {
               buffer = Buffer.from(typeof element === "string" ? element : String(element));
@@ -30825,7 +31217,7 @@ var init_lib = __esm({
         const span = Math.max(relativeEnd - relativeStart, 0);
         const buffer = this[BUFFER];
         const slicedBuffer = buffer.slice(relativeStart, relativeStart + span);
-        const blob = new Blob2([], { type: arguments[2] });
+        const blob = new _Blob([], { type: arguments[2] });
         blob[BUFFER] = slicedBuffer;
         return blob;
       }
@@ -30857,15 +31249,26 @@ var init_lib = __esm({
       get bodyUsed() {
         return this[INTERNALS].disturbed;
       },
+      /**
+       * Decode response as ArrayBuffer
+       *
+       * @return  Promise
+       */
       arrayBuffer() {
         return consumeBody.call(this).then(function(buf) {
           return buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength);
         });
       },
+      /**
+       * Return raw response as Blob
+       *
+       * @return Promise
+       */
       blob() {
         let ct = this.headers && this.headers.get("content-type") || "";
         return consumeBody.call(this).then(function(buf) {
           return Object.assign(
+            // Prevent copying
             new Blob2([], {
               type: ct.toLowerCase()
             }),
@@ -30875,6 +31278,11 @@ var init_lib = __esm({
           );
         });
       },
+      /**
+       * Decode response as json
+       *
+       * @return  Promise
+       */
       json() {
         var _this2 = this;
         return consumeBody.call(this).then(function(buffer) {
@@ -30885,14 +31293,30 @@ var init_lib = __esm({
           }
         });
       },
+      /**
+       * Decode response as text
+       *
+       * @return  Promise
+       */
       text() {
         return consumeBody.call(this).then(function(buffer) {
           return buffer.toString();
         });
       },
+      /**
+       * Decode response as buffer (non-spec api)
+       *
+       * @return  Promise
+       */
       buffer() {
         return consumeBody.call(this);
       },
+      /**
+       * Decode response as text, while automatically detecting the encoding and
+       * trying to decode to UTF-8 (non-spec api)
+       *
+       * @return  Promise
+       */
       textConverted() {
         var _this3 = this;
         return consumeBody.call(this).then(function(buffer) {
@@ -30920,11 +31344,17 @@ var init_lib = __esm({
     invalidTokenRegex = /[^\^_`a-zA-Z\-0-9!#$%&'*+.|~]/;
     invalidHeaderCharRegex = /[^\t\x20-\x7e\x80-\xff]/;
     MAP = Symbol("map");
-    Headers = class {
+    Headers = class _Headers {
+      /**
+       * Headers class
+       *
+       * @param   Object  headers  Response headers
+       * @return  Void
+       */
       constructor() {
         let init = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : void 0;
         this[MAP] = /* @__PURE__ */ Object.create(null);
-        if (init instanceof Headers) {
+        if (init instanceof _Headers) {
           const rawHeaders = init.raw();
           const headerNames = Object.keys(rawHeaders);
           for (const headerName of headerNames) {
@@ -30965,6 +31395,12 @@ var init_lib = __esm({
           throw new TypeError("Provided initializer must be an object");
         }
       }
+      /**
+       * Return combined header value given name
+       *
+       * @param   String  name  Header name
+       * @return  Mixed
+       */
       get(name) {
         name = `${name}`;
         validateName(name);
@@ -30974,6 +31410,13 @@ var init_lib = __esm({
         }
         return this[MAP][key].join(", ");
       }
+      /**
+       * Iterate over all headers
+       *
+       * @param   Function  callback  Executed for each item with parameters (value, name, thisArg)
+       * @param   Boolean   thisArg   `this` context for callback function
+       * @return  Void
+       */
       forEach(callback) {
         let thisArg = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : void 0;
         let pairs = getHeaders(this);
@@ -30986,6 +31429,13 @@ var init_lib = __esm({
           i++;
         }
       }
+      /**
+       * Overwrite header values given name
+       *
+       * @param   String  name   Header name
+       * @param   String  value  Header value
+       * @return  Void
+       */
       set(name, value) {
         name = `${name}`;
         value = `${value}`;
@@ -30994,6 +31444,13 @@ var init_lib = __esm({
         const key = find(this[MAP], name);
         this[MAP][key !== void 0 ? key : name] = [value];
       }
+      /**
+       * Append a value onto existing header
+       *
+       * @param   String  name   Header name
+       * @param   String  value  Header value
+       * @return  Void
+       */
       append(name, value) {
         name = `${name}`;
         value = `${value}`;
@@ -31006,11 +31463,23 @@ var init_lib = __esm({
           this[MAP][name] = [value];
         }
       }
+      /**
+       * Check for header name existence
+       *
+       * @param   String   name  Header name
+       * @return  Boolean
+       */
       has(name) {
         name = `${name}`;
         validateName(name);
         return find(this[MAP], name) !== void 0;
       }
+      /**
+       * Delete all header values given name
+       *
+       * @param   String  name  Header name
+       * @return  Void
+       */
       delete(name) {
         name = `${name}`;
         validateName(name);
@@ -31019,15 +31488,37 @@ var init_lib = __esm({
           delete this[MAP][key];
         }
       }
+      /**
+       * Return raw headers (non-spec api)
+       *
+       * @return  Object
+       */
       raw() {
         return this[MAP];
       }
+      /**
+       * Get an iterator on keys.
+       *
+       * @return  Iterator
+       */
       keys() {
         return createHeadersIterator(this, "key");
       }
+      /**
+       * Get an iterator on values.
+       *
+       * @return  Iterator
+       */
       values() {
         return createHeadersIterator(this, "value");
       }
+      /**
+       * Get an iterator on entries.
+       *
+       * This is the default iterator of the Headers object.
+       *
+       * @return  Iterator
+       */
       [Symbol.iterator]() {
         return createHeadersIterator(this, "key+value");
       }
@@ -31081,7 +31572,7 @@ var init_lib = __esm({
     });
     INTERNALS$1 = Symbol("Response internals");
     STATUS_CODES = import_http.default.STATUS_CODES;
-    Response = class {
+    Response = class _Response {
       constructor() {
         let body2 = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : null;
         let opts = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
@@ -31108,6 +31599,9 @@ var init_lib = __esm({
       get status() {
         return this[INTERNALS$1].status;
       }
+      /**
+       * Convenience property representing if the request ended normally
+       */
       get ok() {
         return this[INTERNALS$1].status >= 200 && this[INTERNALS$1].status < 300;
       }
@@ -31120,8 +31614,13 @@ var init_lib = __esm({
       get headers() {
         return this[INTERNALS$1].headers;
       }
+      /**
+       * Clone this response
+       *
+       * @return  Response
+       */
       clone() {
-        return new Response(clone(this), {
+        return new _Response(clone(this), {
           url: this.url,
           status: this.status,
           statusText: this.statusText,
@@ -31148,11 +31647,11 @@ var init_lib = __esm({
       configurable: true
     });
     INTERNALS$2 = Symbol("Request internals");
-    URL2 = import_url3.default.URL || import_whatwg_url.default.URL;
+    URL3 = import_url3.default.URL || import_whatwg_url.default.URL;
     parse_url = import_url3.default.parse;
     format_url = import_url3.default.format;
     streamDestructionSupported = "destroy" in import_stream.default.Readable.prototype;
-    Request = class {
+    Request = class _Request {
       constructor(input) {
         let init = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
         let parsedURL;
@@ -31216,8 +31715,13 @@ var init_lib = __esm({
       get signal() {
         return this[INTERNALS$2].signal;
       }
+      /**
+       * Clone this request
+       *
+       * @return  Request
+       */
       clone() {
-        return new Request(this);
+        return new _Request(this);
       }
     };
     Body.mixIn(Request.prototype);
@@ -31285,6 +31789,7 @@ function parseHeaders(headers) {
 var http2, https2, tough, import_stream2, import_form_data, ReportTransform, NodeFetchHttpClient;
 var init_nodeFetchHttpClient = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/nodeFetchHttpClient.js"() {
+    "use strict";
     http2 = __toESM(require("http"));
     https2 = __toESM(require("https"));
     tough = __toESM(require_cookie());
@@ -31315,6 +31820,11 @@ var init_nodeFetchHttpClient = __esm({
         this.keepAliveAgents = {};
         this.cookieJar = new tough.CookieJar(void 0, { looseMode: true });
       }
+      /**
+       * Provides minimum viable error handling and the logic that executes the abstract methods.
+       * @param httpRequest - Object representing the outgoing HTTP request.
+       * @returns An object representing the incoming HTTP response.
+       */
       async sendRequest(httpRequest) {
         var _a;
         if (!httpRequest && typeof httpRequest !== "object") {
@@ -31479,9 +31989,16 @@ var init_nodeFetchHttpClient = __esm({
           return isHttps ? https2.globalAgent : http2.globalAgent;
         }
       }
+      /**
+       * Uses `node-fetch` to perform the request.
+       */
+      // eslint-disable-next-line @azure/azure-sdk/ts-apisurface-standardized-verbs
       async fetch(input, init) {
         return lib_default(input, init);
       }
+      /**
+       * Prepares a request based on the provided web resource.
+       */
       async prepareRequest(httpRequest) {
         const requestInit = {};
         if (this.cookieJar && !httpRequest.headers.get("Cookie")) {
@@ -31500,6 +32017,9 @@ var init_nodeFetchHttpClient = __esm({
         requestInit.compress = httpRequest.decompressResponse;
         return requestInit;
       }
+      /**
+       * Process an HTTP response. Handles persisting a cookie for subsequent requests if the response has a "Set-Cookie" header.
+       */
       async processRequest(operationResponse) {
         if (this.cookieJar) {
           const setCookieHeader = operationResponse.headers.get("Set-Cookie");
@@ -31523,6 +32043,7 @@ var init_nodeFetchHttpClient = __esm({
 // ../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/defaultHttpClient.js
 var init_defaultHttpClient = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/defaultHttpClient.js"() {
+    "use strict";
     init_nodeFetchHttpClient();
   }
 });
@@ -31531,6 +32052,7 @@ var init_defaultHttpClient = __esm({
 var HttpPipelineLogLevel;
 var init_httpPipelineLogLevel = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/httpPipelineLogLevel.js"() {
+    "use strict";
     (function(HttpPipelineLogLevel2) {
       HttpPipelineLogLevel2[HttpPipelineLogLevel2["OFF"] = 0] = "OFF";
       HttpPipelineLogLevel2[HttpPipelineLogLevel2["ERROR"] = 1] = "ERROR";
@@ -31540,549 +32062,108 @@ var init_httpPipelineLogLevel = __esm({
   }
 });
 
-// ../../../node_modules/.pnpm/tslib@2.5.0/node_modules/tslib/tslib.js
-var require_tslib = __commonJS({
-  "../../../node_modules/.pnpm/tslib@2.5.0/node_modules/tslib/tslib.js"(exports, module2) {
-    var __extends2;
-    var __assign2;
-    var __rest2;
-    var __decorate2;
-    var __param2;
-    var __esDecorate2;
-    var __runInitializers2;
-    var __propKey2;
-    var __setFunctionName2;
-    var __metadata2;
-    var __awaiter2;
-    var __generator2;
-    var __exportStar2;
-    var __values3;
-    var __read2;
-    var __spread2;
-    var __spreadArrays2;
-    var __spreadArray4;
-    var __await2;
-    var __asyncGenerator2;
-    var __asyncDelegator2;
-    var __asyncValues2;
-    var __makeTemplateObject2;
-    var __importStar2;
-    var __importDefault2;
-    var __classPrivateFieldGet2;
-    var __classPrivateFieldSet2;
-    var __classPrivateFieldIn2;
-    var __createBinding2;
-    (function(factory) {
-      var root = typeof global === "object" ? global : typeof self === "object" ? self : typeof this === "object" ? this : {};
-      if (typeof define === "function" && define.amd) {
-        define("tslib", ["exports"], function(exports2) {
-          factory(createExporter(root, createExporter(exports2)));
-        });
-      } else if (typeof module2 === "object" && typeof module2.exports === "object") {
-        factory(createExporter(root, createExporter(module2.exports)));
-      } else {
-        factory(createExporter(root));
+// ../../../node_modules/.pnpm/tslib@2.6.1/node_modules/tslib/tslib.es6.mjs
+function __rest(s, e) {
+  var t = {};
+  for (var p in s)
+    if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+      t[p] = s[p];
+  if (s != null && typeof Object.getOwnPropertySymbols === "function")
+    for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+      if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+        t[p[i]] = s[p[i]];
+    }
+  return t;
+}
+function __values2(o) {
+  var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+  if (m)
+    return m.call(o);
+  if (o && typeof o.length === "number")
+    return {
+      next: function() {
+        if (o && i >= o.length)
+          o = void 0;
+        return { value: o && o[i++], done: !o };
       }
-      function createExporter(exports2, previous) {
-        if (exports2 !== root) {
-          if (typeof Object.create === "function") {
-            Object.defineProperty(exports2, "__esModule", { value: true });
-          } else {
-            exports2.__esModule = true;
-          }
-        }
-        return function(id, v) {
-          return exports2[id] = previous ? previous(id, v) : v;
-        };
-      }
-    })(function(exporter) {
-      var extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d, b) {
-        d.__proto__ = b;
-      } || function(d, b) {
-        for (var p in b)
-          if (Object.prototype.hasOwnProperty.call(b, p))
-            d[p] = b[p];
-      };
-      __extends2 = function(d, b) {
-        if (typeof b !== "function" && b !== null)
-          throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-        extendStatics(d, b);
-        function __() {
-          this.constructor = d;
-        }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-      };
-      __assign2 = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-          s = arguments[i];
-          for (var p in s)
-            if (Object.prototype.hasOwnProperty.call(s, p))
-              t[p] = s[p];
-        }
-        return t;
-      };
-      __rest2 = function(s, e) {
-        var t = {};
-        for (var p in s)
-          if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-            t[p] = s[p];
-        if (s != null && typeof Object.getOwnPropertySymbols === "function")
-          for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-              t[p[i]] = s[p[i]];
-          }
-        return t;
-      };
-      __decorate2 = function(decorators, target, key, desc) {
-        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-        if (typeof Reflect === "object" && typeof Reflect.decorate === "function")
-          r = Reflect.decorate(decorators, target, key, desc);
-        else
-          for (var i = decorators.length - 1; i >= 0; i--)
-            if (d = decorators[i])
-              r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-        return c > 3 && r && Object.defineProperty(target, key, r), r;
-      };
-      __param2 = function(paramIndex, decorator) {
-        return function(target, key) {
-          decorator(target, key, paramIndex);
-        };
-      };
-      __esDecorate2 = function(ctor, descriptorIn, decorators, contextIn, initializers, extraInitializers) {
-        function accept3(f) {
-          if (f !== void 0 && typeof f !== "function")
-            throw new TypeError("Function expected");
-          return f;
-        }
-        var kind = contextIn.kind, key = kind === "getter" ? "get" : kind === "setter" ? "set" : "value";
-        var target = !descriptorIn && ctor ? contextIn["static"] ? ctor : ctor.prototype : null;
-        var descriptor = descriptorIn || (target ? Object.getOwnPropertyDescriptor(target, contextIn.name) : {});
-        var _, done = false;
-        for (var i = decorators.length - 1; i >= 0; i--) {
-          var context4 = {};
-          for (var p in contextIn)
-            context4[p] = p === "access" ? {} : contextIn[p];
-          for (var p in contextIn.access)
-            context4.access[p] = contextIn.access[p];
-          context4.addInitializer = function(f) {
-            if (done)
-              throw new TypeError("Cannot add initializers after decoration has completed");
-            extraInitializers.push(accept3(f || null));
-          };
-          var result = (0, decorators[i])(kind === "accessor" ? { get: descriptor.get, set: descriptor.set } : descriptor[key], context4);
-          if (kind === "accessor") {
-            if (result === void 0)
-              continue;
-            if (result === null || typeof result !== "object")
-              throw new TypeError("Object expected");
-            if (_ = accept3(result.get))
-              descriptor.get = _;
-            if (_ = accept3(result.set))
-              descriptor.set = _;
-            if (_ = accept3(result.init))
-              initializers.push(_);
-          } else if (_ = accept3(result)) {
-            if (kind === "field")
-              initializers.push(_);
-            else
-              descriptor[key] = _;
-          }
-        }
-        if (target)
-          Object.defineProperty(target, contextIn.name, descriptor);
-        done = true;
-      };
-      __runInitializers2 = function(thisArg, initializers, value) {
-        var useValue = arguments.length > 2;
-        for (var i = 0; i < initializers.length; i++) {
-          value = useValue ? initializers[i].call(thisArg, value) : initializers[i].call(thisArg);
-        }
-        return useValue ? value : void 0;
-      };
-      __propKey2 = function(x) {
-        return typeof x === "symbol" ? x : "".concat(x);
-      };
-      __setFunctionName2 = function(f, name, prefix2) {
-        if (typeof name === "symbol")
-          name = name.description ? "[".concat(name.description, "]") : "";
-        return Object.defineProperty(f, "name", { configurable: true, value: prefix2 ? "".concat(prefix2, " ", name) : name });
-      };
-      __metadata2 = function(metadataKey, metadataValue) {
-        if (typeof Reflect === "object" && typeof Reflect.metadata === "function")
-          return Reflect.metadata(metadataKey, metadataValue);
-      };
-      __awaiter2 = function(thisArg, _arguments, P, generator) {
-        function adopt(value) {
-          return value instanceof P ? value : new P(function(resolve3) {
-            resolve3(value);
-          });
-        }
-        return new (P || (P = Promise))(function(resolve3, reject) {
-          function fulfilled(value) {
-            try {
-              step(generator.next(value));
-            } catch (e) {
-              reject(e);
-            }
-          }
-          function rejected(value) {
-            try {
-              step(generator["throw"](value));
-            } catch (e) {
-              reject(e);
-            }
-          }
-          function step(result) {
-            result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
-          }
-          step((generator = generator.apply(thisArg, _arguments || [])).next());
+    };
+  throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+}
+function __await(v) {
+  return this instanceof __await ? (this.v = v, this) : new __await(v);
+}
+function __asyncGenerator(thisArg, _arguments, generator) {
+  if (!Symbol.asyncIterator)
+    throw new TypeError("Symbol.asyncIterator is not defined.");
+  var g = generator.apply(thisArg, _arguments || []), i, q = [];
+  return i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function() {
+    return this;
+  }, i;
+  function verb(n) {
+    if (g[n])
+      i[n] = function(v) {
+        return new Promise(function(a, b) {
+          q.push([n, v, a, b]) > 1 || resume(n, v);
         });
       };
-      __generator2 = function(thisArg, body2) {
-        var _ = { label: 0, sent: function() {
-          if (t[0] & 1)
-            throw t[1];
-          return t[1];
-        }, trys: [], ops: [] }, f, y, t, g;
-        return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() {
-          return this;
-        }), g;
-        function verb(n) {
-          return function(v) {
-            return step([n, v]);
-          };
-        }
-        function step(op) {
-          if (f)
-            throw new TypeError("Generator is already executing.");
-          while (g && (g = 0, op[0] && (_ = 0)), _)
-            try {
-              if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done)
-                return t;
-              if (y = 0, t)
-                op = [op[0] & 2, t.value];
-              switch (op[0]) {
-                case 0:
-                case 1:
-                  t = op;
-                  break;
-                case 4:
-                  _.label++;
-                  return { value: op[1], done: false };
-                case 5:
-                  _.label++;
-                  y = op[1];
-                  op = [0];
-                  continue;
-                case 7:
-                  op = _.ops.pop();
-                  _.trys.pop();
-                  continue;
-                default:
-                  if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
-                    _ = 0;
-                    continue;
-                  }
-                  if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
-                    _.label = op[1];
-                    break;
-                  }
-                  if (op[0] === 6 && _.label < t[1]) {
-                    _.label = t[1];
-                    t = op;
-                    break;
-                  }
-                  if (t && _.label < t[2]) {
-                    _.label = t[2];
-                    _.ops.push(op);
-                    break;
-                  }
-                  if (t[2])
-                    _.ops.pop();
-                  _.trys.pop();
-                  continue;
-              }
-              op = body2.call(thisArg, _);
-            } catch (e) {
-              op = [6, e];
-              y = 0;
-            } finally {
-              f = t = 0;
-            }
-          if (op[0] & 5)
-            throw op[1];
-          return { value: op[0] ? op[1] : void 0, done: true };
-        }
-      };
-      __exportStar2 = function(m, o) {
-        for (var p in m)
-          if (p !== "default" && !Object.prototype.hasOwnProperty.call(o, p))
-            __createBinding2(o, m, p);
-      };
-      __createBinding2 = Object.create ? function(o, m, k, k2) {
-        if (k2 === void 0)
-          k2 = k;
-        var desc = Object.getOwnPropertyDescriptor(m, k);
-        if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-          desc = { enumerable: true, get: function() {
-            return m[k];
-          } };
-        }
-        Object.defineProperty(o, k2, desc);
-      } : function(o, m, k, k2) {
-        if (k2 === void 0)
-          k2 = k;
-        o[k2] = m[k];
-      };
-      __values3 = function(o) {
-        var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
-        if (m)
-          return m.call(o);
-        if (o && typeof o.length === "number")
-          return {
-            next: function() {
-              if (o && i >= o.length)
-                o = void 0;
-              return { value: o && o[i++], done: !o };
-            }
-          };
-        throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
-      };
-      __read2 = function(o, n) {
-        var m = typeof Symbol === "function" && o[Symbol.iterator];
-        if (!m)
-          return o;
-        var i = m.call(o), r, ar = [], e;
-        try {
-          while ((n === void 0 || n-- > 0) && !(r = i.next()).done)
-            ar.push(r.value);
-        } catch (error) {
-          e = { error };
-        } finally {
-          try {
-            if (r && !r.done && (m = i["return"]))
-              m.call(i);
-          } finally {
-            if (e)
-              throw e.error;
-          }
-        }
-        return ar;
-      };
-      __spread2 = function() {
-        for (var ar = [], i = 0; i < arguments.length; i++)
-          ar = ar.concat(__read2(arguments[i]));
-        return ar;
-      };
-      __spreadArrays2 = function() {
-        for (var s = 0, i = 0, il = arguments.length; i < il; i++)
-          s += arguments[i].length;
-        for (var r = Array(s), k = 0, i = 0; i < il; i++)
-          for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-            r[k] = a[j];
-        return r;
-      };
-      __spreadArray4 = function(to, from, pack) {
-        if (pack || arguments.length === 2)
-          for (var i = 0, l = from.length, ar; i < l; i++) {
-            if (ar || !(i in from)) {
-              if (!ar)
-                ar = Array.prototype.slice.call(from, 0, i);
-              ar[i] = from[i];
-            }
-          }
-        return to.concat(ar || Array.prototype.slice.call(from));
-      };
-      __await2 = function(v) {
-        return this instanceof __await2 ? (this.v = v, this) : new __await2(v);
-      };
-      __asyncGenerator2 = function(thisArg, _arguments, generator) {
-        if (!Symbol.asyncIterator)
-          throw new TypeError("Symbol.asyncIterator is not defined.");
-        var g = generator.apply(thisArg, _arguments || []), i, q = [];
-        return i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function() {
-          return this;
-        }, i;
-        function verb(n) {
-          if (g[n])
-            i[n] = function(v) {
-              return new Promise(function(a, b) {
-                q.push([n, v, a, b]) > 1 || resume(n, v);
-              });
-            };
-        }
-        function resume(n, v) {
-          try {
-            step(g[n](v));
-          } catch (e) {
-            settle(q[0][3], e);
-          }
-        }
-        function step(r) {
-          r.value instanceof __await2 ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r);
-        }
-        function fulfill(value) {
-          resume("next", value);
-        }
-        function reject(value) {
-          resume("throw", value);
-        }
-        function settle(f, v) {
-          if (f(v), q.shift(), q.length)
-            resume(q[0][0], q[0][1]);
-        }
-      };
-      __asyncDelegator2 = function(o) {
-        var i, p;
-        return i = {}, verb("next"), verb("throw", function(e) {
-          throw e;
-        }), verb("return"), i[Symbol.iterator] = function() {
-          return this;
-        }, i;
-        function verb(n, f) {
-          i[n] = o[n] ? function(v) {
-            return (p = !p) ? { value: __await2(o[n](v)), done: false } : f ? f(v) : v;
-          } : f;
-        }
-      };
-      __asyncValues2 = function(o) {
-        if (!Symbol.asyncIterator)
-          throw new TypeError("Symbol.asyncIterator is not defined.");
-        var m = o[Symbol.asyncIterator], i;
-        return m ? m.call(o) : (o = typeof __values3 === "function" ? __values3(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function() {
-          return this;
-        }, i);
-        function verb(n) {
-          i[n] = o[n] && function(v) {
-            return new Promise(function(resolve3, reject) {
-              v = o[n](v), settle(resolve3, reject, v.done, v.value);
-            });
-          };
-        }
-        function settle(resolve3, reject, d, v) {
-          Promise.resolve(v).then(function(v2) {
-            resolve3({ value: v2, done: d });
-          }, reject);
-        }
-      };
-      __makeTemplateObject2 = function(cooked, raw) {
-        if (Object.defineProperty) {
-          Object.defineProperty(cooked, "raw", { value: raw });
-        } else {
-          cooked.raw = raw;
-        }
-        return cooked;
-      };
-      var __setModuleDefault = Object.create ? function(o, v) {
-        Object.defineProperty(o, "default", { enumerable: true, value: v });
-      } : function(o, v) {
-        o["default"] = v;
-      };
-      __importStar2 = function(mod) {
-        if (mod && mod.__esModule)
-          return mod;
-        var result = {};
-        if (mod != null) {
-          for (var k in mod)
-            if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k))
-              __createBinding2(result, mod, k);
-        }
-        __setModuleDefault(result, mod);
-        return result;
-      };
-      __importDefault2 = function(mod) {
-        return mod && mod.__esModule ? mod : { "default": mod };
-      };
-      __classPrivateFieldGet2 = function(receiver, state, kind, f) {
-        if (kind === "a" && !f)
-          throw new TypeError("Private accessor was defined without a getter");
-        if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver))
-          throw new TypeError("Cannot read private member from an object whose class did not declare it");
-        return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
-      };
-      __classPrivateFieldSet2 = function(receiver, state, value, kind, f) {
-        if (kind === "m")
-          throw new TypeError("Private method is not writable");
-        if (kind === "a" && !f)
-          throw new TypeError("Private accessor was defined without a setter");
-        if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver))
-          throw new TypeError("Cannot write private member to an object whose class did not declare it");
-        return kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value), value;
-      };
-      __classPrivateFieldIn2 = function(state, receiver) {
-        if (receiver === null || typeof receiver !== "object" && typeof receiver !== "function")
-          throw new TypeError("Cannot use 'in' operator on non-object");
-        return typeof state === "function" ? receiver === state : state.has(receiver);
-      };
-      exporter("__extends", __extends2);
-      exporter("__assign", __assign2);
-      exporter("__rest", __rest2);
-      exporter("__decorate", __decorate2);
-      exporter("__param", __param2);
-      exporter("__esDecorate", __esDecorate2);
-      exporter("__runInitializers", __runInitializers2);
-      exporter("__propKey", __propKey2);
-      exporter("__setFunctionName", __setFunctionName2);
-      exporter("__metadata", __metadata2);
-      exporter("__awaiter", __awaiter2);
-      exporter("__generator", __generator2);
-      exporter("__exportStar", __exportStar2);
-      exporter("__createBinding", __createBinding2);
-      exporter("__values", __values3);
-      exporter("__read", __read2);
-      exporter("__spread", __spread2);
-      exporter("__spreadArrays", __spreadArrays2);
-      exporter("__spreadArray", __spreadArray4);
-      exporter("__await", __await2);
-      exporter("__asyncGenerator", __asyncGenerator2);
-      exporter("__asyncDelegator", __asyncDelegator2);
-      exporter("__asyncValues", __asyncValues2);
-      exporter("__makeTemplateObject", __makeTemplateObject2);
-      exporter("__importStar", __importStar2);
-      exporter("__importDefault", __importDefault2);
-      exporter("__classPrivateFieldGet", __classPrivateFieldGet2);
-      exporter("__classPrivateFieldSet", __classPrivateFieldSet2);
-      exporter("__classPrivateFieldIn", __classPrivateFieldIn2);
-    });
   }
-});
-
-// ../../../node_modules/.pnpm/tslib@2.5.0/node_modules/tslib/modules/index.js
-var import_tslib, __extends, __assign, __rest, __decorate, __param, __esDecorate, __runInitializers, __propKey, __setFunctionName, __metadata, __awaiter, __generator, __exportStar, __createBinding, __values2, __read, __spread, __spreadArrays, __spreadArray, __await, __asyncGenerator, __asyncDelegator, __asyncValues, __makeTemplateObject, __importStar, __importDefault, __classPrivateFieldGet, __classPrivateFieldSet, __classPrivateFieldIn;
-var init_modules = __esm({
-  "../../../node_modules/.pnpm/tslib@2.5.0/node_modules/tslib/modules/index.js"() {
-    import_tslib = __toESM(require_tslib(), 1);
-    ({
-      __extends,
-      __assign,
-      __rest,
-      __decorate,
-      __param,
-      __esDecorate,
-      __runInitializers,
-      __propKey,
-      __setFunctionName,
-      __metadata,
-      __awaiter,
-      __generator,
-      __exportStar,
-      __createBinding,
-      __values: __values2,
-      __read,
-      __spread,
-      __spreadArrays,
-      __spreadArray,
-      __await,
-      __asyncGenerator,
-      __asyncDelegator,
-      __asyncValues,
-      __makeTemplateObject,
-      __importStar,
-      __importDefault,
-      __classPrivateFieldGet,
-      __classPrivateFieldSet,
-      __classPrivateFieldIn
-    } = import_tslib.default);
+  function resume(n, v) {
+    try {
+      step(g[n](v));
+    } catch (e) {
+      settle(q[0][3], e);
+    }
+  }
+  function step(r) {
+    r.value instanceof __await ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r);
+  }
+  function fulfill(value) {
+    resume("next", value);
+  }
+  function reject(value) {
+    resume("throw", value);
+  }
+  function settle(f, v) {
+    if (f(v), q.shift(), q.length)
+      resume(q[0][0], q[0][1]);
+  }
+}
+function __asyncDelegator(o) {
+  var i, p;
+  return i = {}, verb("next"), verb("throw", function(e) {
+    throw e;
+  }), verb("return"), i[Symbol.iterator] = function() {
+    return this;
+  }, i;
+  function verb(n, f) {
+    i[n] = o[n] ? function(v) {
+      return (p = !p) ? { value: __await(o[n](v)), done: false } : f ? f(v) : v;
+    } : f;
+  }
+}
+function __asyncValues(o) {
+  if (!Symbol.asyncIterator)
+    throw new TypeError("Symbol.asyncIterator is not defined.");
+  var m = o[Symbol.asyncIterator], i;
+  return m ? m.call(o) : (o = typeof __values2 === "function" ? __values2(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function() {
+    return this;
+  }, i);
+  function verb(n) {
+    i[n] = o[n] && function(v) {
+      return new Promise(function(resolve3, reject) {
+        v = o[n](v), settle(resolve3, reject, v.done, v.value);
+      });
+    };
+  }
+  function settle(resolve3, reject, d, v) {
+    Promise.resolve(v).then(function(v2) {
+      resolve3({ value: v2, done: d });
+    }, reject);
+  }
+}
+var init_tslib_es6 = __esm({
+  "../../../node_modules/.pnpm/tslib@2.6.1/node_modules/tslib/tslib.es6.mjs"() {
+    "use strict";
   }
 });
 
@@ -32101,7 +32182,8 @@ function operationOptionsToRequestOptionsBase(opts) {
 }
 var init_operationOptions = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/operationOptions.js"() {
-    init_modules();
+    "use strict";
+    init_tslib_es6();
   }
 });
 
@@ -32109,15 +32191,30 @@ var init_operationOptions = __esm({
 var BaseRequestPolicy, RequestPolicyOptions;
 var init_requestPolicy = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/policies/requestPolicy.js"() {
+    "use strict";
     init_httpPipelineLogLevel();
     BaseRequestPolicy = class {
+      /**
+       * The main method to implement that manipulates a request/response.
+       */
       constructor(_nextPolicy, _options) {
         this._nextPolicy = _nextPolicy;
         this._options = _options;
       }
+      /**
+       * Get whether or not a log with the provided log level should be logged.
+       * @param logLevel - The log level of the log that will be logged.
+       * @returns Whether or not a log with the provided log level should be logged.
+       */
       shouldLog(logLevel) {
         return this._options.shouldLog(logLevel);
       }
+      /**
+       * Attempt to log the provided message to the provided logger. If no logger was provided or if
+       * the log level does not meat the logger's threshold, then nothing will be logged.
+       * @param logLevel - The log level of this log.
+       * @param message - The message of this log.
+       */
       log(logLevel, message) {
         this._options.log(logLevel, message);
       }
@@ -32126,9 +32223,20 @@ var init_requestPolicy = __esm({
       constructor(_logger) {
         this._logger = _logger;
       }
+      /**
+       * Get whether or not a log with the provided log level should be logged.
+       * @param logLevel - The log level of the log that will be logged.
+       * @returns Whether or not a log with the provided log level should be logged.
+       */
       shouldLog(logLevel) {
         return !!this._logger && logLevel !== HttpPipelineLogLevel.OFF && logLevel <= this._logger.minimumLogLevel;
       }
+      /**
+       * Attempt to log the provided message to the provided logger. If no logger was provided or if
+       * the log level does not meet the logger's threshold, then nothing will be logged.
+       * @param logLevel - The log level of this log.
+       * @param message - The message of this log.
+       */
       log(logLevel, message) {
         if (this._logger && this.shouldLog(logLevel)) {
           this._logger.log(logLevel, message);
@@ -32141,6 +32249,7 @@ var init_requestPolicy = __esm({
 // ../../../node_modules/.pnpm/xml2js@0.4.23/node_modules/xml2js/lib/defaults.js
 var require_defaults = __commonJS({
   "../../../node_modules/.pnpm/xml2js@0.4.23/node_modules/xml2js/lib/defaults.js"(exports) {
+    "use strict";
     (function() {
       exports.defaults = {
         "0.1": {
@@ -32217,6 +32326,7 @@ var require_defaults = __commonJS({
 // ../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/Utility.js
 var require_Utility = __commonJS({
   "../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/Utility.js"(exports, module2) {
+    "use strict";
     (function() {
       var assign, getValue, isArray, isEmpty, isFunction, isObject2, isPlainObject, slice = [].slice, hasProp = {}.hasOwnProperty;
       assign = function() {
@@ -32290,6 +32400,7 @@ var require_Utility = __commonJS({
 // ../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDOMImplementation.js
 var require_XMLDOMImplementation = __commonJS({
   "../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDOMImplementation.js"(exports, module2) {
+    "use strict";
     (function() {
       var XMLDOMImplementation;
       module2.exports = XMLDOMImplementation = function() {
@@ -32319,6 +32430,7 @@ var require_XMLDOMImplementation = __commonJS({
 // ../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDOMErrorHandler.js
 var require_XMLDOMErrorHandler = __commonJS({
   "../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDOMErrorHandler.js"(exports, module2) {
+    "use strict";
     (function() {
       var XMLDOMErrorHandler;
       module2.exports = XMLDOMErrorHandler = function() {
@@ -32336,6 +32448,7 @@ var require_XMLDOMErrorHandler = __commonJS({
 // ../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDOMStringList.js
 var require_XMLDOMStringList = __commonJS({
   "../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDOMStringList.js"(exports, module2) {
+    "use strict";
     (function() {
       var XMLDOMStringList;
       module2.exports = XMLDOMStringList = function() {
@@ -32362,6 +32475,7 @@ var require_XMLDOMStringList = __commonJS({
 // ../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDOMConfiguration.js
 var require_XMLDOMConfiguration = __commonJS({
   "../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDOMConfiguration.js"(exports, module2) {
+    "use strict";
     (function() {
       var XMLDOMConfiguration, XMLDOMErrorHandler, XMLDOMStringList;
       XMLDOMErrorHandler = require_XMLDOMErrorHandler();
@@ -32421,6 +32535,7 @@ var require_XMLDOMConfiguration = __commonJS({
 // ../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/NodeType.js
 var require_NodeType = __commonJS({
   "../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/NodeType.js"(exports, module2) {
+    "use strict";
     (function() {
       module2.exports = {
         Element: 1,
@@ -32448,6 +32563,7 @@ var require_NodeType = __commonJS({
 // ../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLAttribute.js
 var require_XMLAttribute = __commonJS({
   "../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLAttribute.js"(exports, module2) {
+    "use strict";
     (function() {
       var NodeType, XMLAttribute, XMLNode;
       NodeType = require_NodeType();
@@ -32544,6 +32660,7 @@ var require_XMLAttribute = __commonJS({
 // ../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLNamedNodeMap.js
 var require_XMLNamedNodeMap = __commonJS({
   "../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLNamedNodeMap.js"(exports, module2) {
+    "use strict";
     (function() {
       var XMLNamedNodeMap;
       module2.exports = XMLNamedNodeMap = function() {
@@ -32594,6 +32711,7 @@ var require_XMLNamedNodeMap = __commonJS({
 // ../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLElement.js
 var require_XMLElement = __commonJS({
   "../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLElement.js"(exports, module2) {
+    "use strict";
     (function() {
       var NodeType, XMLAttribute, XMLElement, XMLNamedNodeMap, XMLNode, getValue, isFunction, isObject2, ref, extend2 = function(child, parent) {
         for (var key in parent) {
@@ -32864,6 +32982,7 @@ var require_XMLElement = __commonJS({
 // ../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLCharacterData.js
 var require_XMLCharacterData = __commonJS({
   "../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLCharacterData.js"(exports, module2) {
+    "use strict";
     (function() {
       var XMLCharacterData, XMLNode, extend2 = function(child, parent) {
         for (var key in parent) {
@@ -32942,6 +33061,7 @@ var require_XMLCharacterData = __commonJS({
 // ../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLCData.js
 var require_XMLCData = __commonJS({
   "../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLCData.js"(exports, module2) {
+    "use strict";
     (function() {
       var NodeType, XMLCData, XMLCharacterData, extend2 = function(child, parent) {
         for (var key in parent) {
@@ -32984,6 +33104,7 @@ var require_XMLCData = __commonJS({
 // ../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLComment.js
 var require_XMLComment = __commonJS({
   "../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLComment.js"(exports, module2) {
+    "use strict";
     (function() {
       var NodeType, XMLCharacterData, XMLComment, extend2 = function(child, parent) {
         for (var key in parent) {
@@ -33026,6 +33147,7 @@ var require_XMLComment = __commonJS({
 // ../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDeclaration.js
 var require_XMLDeclaration = __commonJS({
   "../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDeclaration.js"(exports, module2) {
+    "use strict";
     (function() {
       var NodeType, XMLDeclaration, XMLNode, isObject2, extend2 = function(child, parent) {
         for (var key in parent) {
@@ -33075,6 +33197,7 @@ var require_XMLDeclaration = __commonJS({
 // ../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDTDAttList.js
 var require_XMLDTDAttList = __commonJS({
   "../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDTDAttList.js"(exports, module2) {
+    "use strict";
     (function() {
       var NodeType, XMLDTDAttList, XMLNode, extend2 = function(child, parent) {
         for (var key in parent) {
@@ -33137,6 +33260,7 @@ var require_XMLDTDAttList = __commonJS({
 // ../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDTDEntity.js
 var require_XMLDTDEntity = __commonJS({
   "../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDTDEntity.js"(exports, module2) {
+    "use strict";
     (function() {
       var NodeType, XMLDTDEntity, XMLNode, isObject2, extend2 = function(child, parent) {
         for (var key in parent) {
@@ -33234,6 +33358,7 @@ var require_XMLDTDEntity = __commonJS({
 // ../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDTDElement.js
 var require_XMLDTDElement = __commonJS({
   "../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDTDElement.js"(exports, module2) {
+    "use strict";
     (function() {
       var NodeType, XMLDTDElement, XMLNode, extend2 = function(child, parent) {
         for (var key in parent) {
@@ -33279,6 +33404,7 @@ var require_XMLDTDElement = __commonJS({
 // ../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDTDNotation.js
 var require_XMLDTDNotation = __commonJS({
   "../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDTDNotation.js"(exports, module2) {
+    "use strict";
     (function() {
       var NodeType, XMLDTDNotation, XMLNode, extend2 = function(child, parent) {
         for (var key in parent) {
@@ -33336,6 +33462,7 @@ var require_XMLDTDNotation = __commonJS({
 // ../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDocType.js
 var require_XMLDocType = __commonJS({
   "../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDocType.js"(exports, module2) {
+    "use strict";
     (function() {
       var NodeType, XMLDTDAttList, XMLDTDElement, XMLDTDEntity, XMLDTDNotation, XMLDocType, XMLNamedNodeMap, XMLNode, isObject2, extend2 = function(child, parent) {
         for (var key in parent) {
@@ -33506,6 +33633,7 @@ var require_XMLDocType = __commonJS({
 // ../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLRaw.js
 var require_XMLRaw = __commonJS({
   "../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLRaw.js"(exports, module2) {
+    "use strict";
     (function() {
       var NodeType, XMLNode, XMLRaw, extend2 = function(child, parent) {
         for (var key in parent) {
@@ -33547,6 +33675,7 @@ var require_XMLRaw = __commonJS({
 // ../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLText.js
 var require_XMLText = __commonJS({
   "../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLText.js"(exports, module2) {
+    "use strict";
     (function() {
       var NodeType, XMLCharacterData, XMLText, extend2 = function(child, parent) {
         for (var key in parent) {
@@ -33618,6 +33747,7 @@ var require_XMLText = __commonJS({
 // ../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLProcessingInstruction.js
 var require_XMLProcessingInstruction = __commonJS({
   "../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLProcessingInstruction.js"(exports, module2) {
+    "use strict";
     (function() {
       var NodeType, XMLCharacterData, XMLProcessingInstruction, extend2 = function(child, parent) {
         for (var key in parent) {
@@ -33672,6 +33802,7 @@ var require_XMLProcessingInstruction = __commonJS({
 // ../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDummy.js
 var require_XMLDummy = __commonJS({
   "../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDummy.js"(exports, module2) {
+    "use strict";
     (function() {
       var NodeType, XMLDummy, XMLNode, extend2 = function(child, parent) {
         for (var key in parent) {
@@ -33709,6 +33840,7 @@ var require_XMLDummy = __commonJS({
 // ../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLNodeList.js
 var require_XMLNodeList = __commonJS({
   "../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLNodeList.js"(exports, module2) {
+    "use strict";
     (function() {
       var XMLNodeList;
       module2.exports = XMLNodeList = function() {
@@ -33735,6 +33867,7 @@ var require_XMLNodeList = __commonJS({
 // ../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/DocumentPosition.js
 var require_DocumentPosition = __commonJS({
   "../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/DocumentPosition.js"(exports, module2) {
+    "use strict";
     (function() {
       module2.exports = {
         Disconnected: 1,
@@ -33751,6 +33884,7 @@ var require_DocumentPosition = __commonJS({
 // ../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLNode.js
 var require_XMLNode = __commonJS({
   "../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLNode.js"(exports, module2) {
+    "use strict";
     (function() {
       var DocumentPosition, NodeType, XMLCData, XMLComment, XMLDeclaration, XMLDocType, XMLDummy, XMLElement, XMLNamedNodeMap, XMLNode, XMLNodeList, XMLProcessingInstruction, XMLRaw, XMLText, getValue, isEmpty, isFunction, isObject2, ref1, hasProp = {}.hasOwnProperty;
       ref1 = require_Utility(), isObject2 = ref1.isObject, isFunction = ref1.isFunction, isEmpty = ref1.isEmpty, getValue = ref1.getValue;
@@ -34446,6 +34580,7 @@ var require_XMLNode = __commonJS({
 // ../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLStringifier.js
 var require_XMLStringifier = __commonJS({
   "../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLStringifier.js"(exports, module2) {
+    "use strict";
     (function() {
       var XMLStringifier, bind = function(fn, me) {
         return function() {
@@ -34662,6 +34797,7 @@ var require_XMLStringifier = __commonJS({
 // ../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/WriterState.js
 var require_WriterState = __commonJS({
   "../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/WriterState.js"(exports, module2) {
+    "use strict";
     (function() {
       module2.exports = {
         None: 0,
@@ -34676,6 +34812,7 @@ var require_WriterState = __commonJS({
 // ../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLWriterBase.js
 var require_XMLWriterBase = __commonJS({
   "../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLWriterBase.js"(exports, module2) {
+    "use strict";
     (function() {
       var NodeType, WriterState, XMLCData, XMLComment, XMLDTDAttList, XMLDTDElement, XMLDTDEntity, XMLDTDNotation, XMLDeclaration, XMLDocType, XMLDummy, XMLElement, XMLProcessingInstruction, XMLRaw, XMLText, XMLWriterBase, assign, hasProp = {}.hasOwnProperty;
       assign = require_Utility().assign;
@@ -35073,6 +35210,7 @@ var require_XMLWriterBase = __commonJS({
 // ../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLStringWriter.js
 var require_XMLStringWriter = __commonJS({
   "../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLStringWriter.js"(exports, module2) {
+    "use strict";
     (function() {
       var XMLStringWriter, XMLWriterBase, extend2 = function(child, parent) {
         for (var key in parent) {
@@ -35116,6 +35254,7 @@ var require_XMLStringWriter = __commonJS({
 // ../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDocument.js
 var require_XMLDocument = __commonJS({
   "../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDocument.js"(exports, module2) {
+    "use strict";
     (function() {
       var NodeType, XMLDOMConfiguration, XMLDOMImplementation, XMLDocument, XMLNode, XMLStringWriter, XMLStringifier, isPlainObject, extend2 = function(child, parent) {
         for (var key in parent) {
@@ -35324,6 +35463,7 @@ var require_XMLDocument = __commonJS({
 // ../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDocumentCB.js
 var require_XMLDocumentCB = __commonJS({
   "../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLDocumentCB.js"(exports, module2) {
+    "use strict";
     (function() {
       var NodeType, WriterState, XMLAttribute, XMLCData, XMLComment, XMLDTDAttList, XMLDTDElement, XMLDTDEntity, XMLDTDNotation, XMLDeclaration, XMLDocType, XMLDocument, XMLDocumentCB, XMLElement, XMLProcessingInstruction, XMLRaw, XMLStringWriter, XMLStringifier, XMLText, getValue, isFunction, isObject2, isPlainObject, ref, hasProp = {}.hasOwnProperty;
       ref = require_Utility(), isObject2 = ref.isObject, isFunction = ref.isFunction, isPlainObject = ref.isPlainObject, getValue = ref.getValue;
@@ -35794,6 +35934,7 @@ var require_XMLDocumentCB = __commonJS({
 // ../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLStreamWriter.js
 var require_XMLStreamWriter = __commonJS({
   "../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/XMLStreamWriter.js"(exports, module2) {
+    "use strict";
     (function() {
       var NodeType, WriterState, XMLStreamWriter, XMLWriterBase, extend2 = function(child, parent) {
         for (var key in parent) {
@@ -35963,6 +36104,7 @@ var require_XMLStreamWriter = __commonJS({
 // ../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/index.js
 var require_lib3 = __commonJS({
   "../../../node_modules/.pnpm/xmlbuilder@11.0.1/node_modules/xmlbuilder/lib/index.js"(exports, module2) {
+    "use strict";
     (function() {
       var NodeType, WriterState, XMLDOMImplementation, XMLDocument, XMLDocumentCB, XMLStreamWriter, XMLStringWriter, assign, isFunction, ref;
       ref = require_Utility(), assign = ref.assign, isFunction = ref.isFunction;
@@ -36017,6 +36159,7 @@ var require_lib3 = __commonJS({
 // ../../../node_modules/.pnpm/xml2js@0.4.23/node_modules/xml2js/lib/builder.js
 var require_builder = __commonJS({
   "../../../node_modules/.pnpm/xml2js@0.4.23/node_modules/xml2js/lib/builder.js"(exports) {
+    "use strict";
     (function() {
       "use strict";
       var builder, defaults, escapeCDATA, requiresCDATA, wrapCDATA, hasProp = {}.hasOwnProperty;
@@ -36143,6 +36286,7 @@ var require_builder = __commonJS({
 // ../../../node_modules/.pnpm/sax@1.2.4/node_modules/sax/lib/sax.js
 var require_sax = __commonJS({
   "../../../node_modules/.pnpm/sax@1.2.4/node_modules/sax/lib/sax.js"(exports) {
+    "use strict";
     (function(sax) {
       sax.parser = function(strict, opt) {
         return new SAXParser(strict, opt);
@@ -36401,41 +36545,77 @@ var require_sax = __commonJS({
       var S = 0;
       sax.STATE = {
         BEGIN: S++,
+        // leading byte order mark or whitespace
         BEGIN_WHITESPACE: S++,
+        // leading whitespace
         TEXT: S++,
+        // general stuff
         TEXT_ENTITY: S++,
+        // &amp and such.
         OPEN_WAKA: S++,
+        // <
         SGML_DECL: S++,
+        // <!BLARG
         SGML_DECL_QUOTED: S++,
+        // <!BLARG foo "bar
         DOCTYPE: S++,
+        // <!DOCTYPE
         DOCTYPE_QUOTED: S++,
+        // <!DOCTYPE "//blah
         DOCTYPE_DTD: S++,
+        // <!DOCTYPE "//blah" [ ...
         DOCTYPE_DTD_QUOTED: S++,
+        // <!DOCTYPE "//blah" [ "foo
         COMMENT_STARTING: S++,
+        // <!-
         COMMENT: S++,
+        // <!--
         COMMENT_ENDING: S++,
+        // <!-- blah -
         COMMENT_ENDED: S++,
+        // <!-- blah --
         CDATA: S++,
+        // <![CDATA[ something
         CDATA_ENDING: S++,
+        // ]
         CDATA_ENDING_2: S++,
+        // ]]
         PROC_INST: S++,
+        // <?hi
         PROC_INST_BODY: S++,
+        // <?hi there
         PROC_INST_ENDING: S++,
+        // <?hi "there" ?
         OPEN_TAG: S++,
+        // <strong
         OPEN_TAG_SLASH: S++,
+        // <strong /
         ATTRIB: S++,
+        // <a
         ATTRIB_NAME: S++,
+        // <a foo
         ATTRIB_NAME_SAW_WHITE: S++,
+        // <a foo _
         ATTRIB_VALUE: S++,
+        // <a foo=
         ATTRIB_VALUE_QUOTED: S++,
+        // <a foo="bar
         ATTRIB_VALUE_CLOSED: S++,
+        // <a foo="bar"
         ATTRIB_VALUE_UNQUOTED: S++,
+        // <a foo=bar
         ATTRIB_VALUE_ENTITY_Q: S++,
+        // <foo bar="&quot;"
         ATTRIB_VALUE_ENTITY_U: S++,
+        // <foo bar=&quot
         CLOSE_TAG: S++,
+        // </a
         CLOSE_TAG_SAW_WHITE: S++,
+        // </a   >
         SCRIPT: S++,
+        // <script> ...
         SCRIPT_ENDING: S++
+        // <script> ... <
       };
       sax.XML_ENTITIES = {
         "amp": "&",
@@ -37509,7 +37689,10 @@ var require_sax = __commonJS({
             var result = "";
             while (++index < length) {
               var codePoint = Number(arguments[index]);
-              if (!isFinite(codePoint) || codePoint < 0 || codePoint > 1114111 || floor(codePoint) !== codePoint) {
+              if (!isFinite(codePoint) || // `NaN`, `+Infinity`, or `-Infinity`
+              codePoint < 0 || // not a valid Unicode code point
+              codePoint > 1114111 || // not a valid Unicode code point
+              floor(codePoint) !== codePoint) {
                 throw RangeError("Invalid code point: " + codePoint);
               }
               if (codePoint <= 65535) {
@@ -37545,6 +37728,7 @@ var require_sax = __commonJS({
 // ../../../node_modules/.pnpm/xml2js@0.4.23/node_modules/xml2js/lib/bom.js
 var require_bom = __commonJS({
   "../../../node_modules/.pnpm/xml2js@0.4.23/node_modules/xml2js/lib/bom.js"(exports) {
+    "use strict";
     (function() {
       "use strict";
       exports.stripBOM = function(str) {
@@ -37561,6 +37745,7 @@ var require_bom = __commonJS({
 // ../../../node_modules/.pnpm/xml2js@0.4.23/node_modules/xml2js/lib/processors.js
 var require_processors = __commonJS({
   "../../../node_modules/.pnpm/xml2js@0.4.23/node_modules/xml2js/lib/processors.js"(exports) {
+    "use strict";
     (function() {
       "use strict";
       var prefixMatch;
@@ -37593,6 +37778,7 @@ var require_processors = __commonJS({
 // ../../../node_modules/.pnpm/xml2js@0.4.23/node_modules/xml2js/lib/parser.js
 var require_parser = __commonJS({
   "../../../node_modules/.pnpm/xml2js@0.4.23/node_modules/xml2js/lib/parser.js"(exports) {
+    "use strict";
     (function() {
       "use strict";
       var bom, defaults, events, isEmpty, processItem, processors, sax, setImmediate2, bind = function(fn, me) {
@@ -37976,6 +38162,7 @@ var require_parser = __commonJS({
 // ../../../node_modules/.pnpm/xml2js@0.4.23/node_modules/xml2js/lib/xml2js.js
 var require_xml2js = __commonJS({
   "../../../node_modules/.pnpm/xml2js@0.4.23/node_modules/xml2js/lib/xml2js.js"(exports) {
+    "use strict";
     (function() {
       "use strict";
       var builder, defaults, parser, processors, extend2 = function(child, parent) {
@@ -38042,6 +38229,7 @@ function parseXML(str, opts = {}) {
 var xml2js, xml2jsDefaultOptionsV2, xml2jsParserSettings, xml2jsBuilderSettings;
 var init_xml = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/util/xml.js"() {
+    "use strict";
     xml2js = __toESM(require_xml2js());
     init_serializer_common();
     xml2jsDefaultOptionsV2 = {
@@ -38256,6 +38444,7 @@ function parse2(jsonContentTypes, xmlContentTypes, operationResponse, opts) {
 var defaultJsonContentTypes, defaultXmlContentTypes, DeserializationPolicy;
 var init_deserializationPolicy = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/policies/deserializationPolicy.js"() {
+    "use strict";
     init_requestPolicy();
     init_serializer_common();
     init_serializer();
@@ -38291,15 +38480,29 @@ function keepAlivePolicy(keepAliveOptions) {
 var DefaultKeepAliveOptions, KeepAlivePolicy;
 var init_keepAlivePolicy = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/policies/keepAlivePolicy.js"() {
+    "use strict";
     init_requestPolicy();
     DefaultKeepAliveOptions = {
       enable: true
     };
     KeepAlivePolicy = class extends BaseRequestPolicy {
+      /**
+       * Creates an instance of KeepAlivePolicy.
+       *
+       * @param nextPolicy -
+       * @param options -
+       * @param keepAliveOptions -
+       */
       constructor(nextPolicy, options, keepAliveOptions) {
         super(nextPolicy, options);
         this.keepAliveOptions = keepAliveOptions;
       }
+      /**
+       * Sends out request.
+       *
+       * @param request -
+       * @returns
+       */
       async sendRequest(request) {
         request.keepAlive = this.keepAliveOptions.enable;
         return this._nextPolicy.sendRequest(request);
@@ -38334,6 +38537,7 @@ function handleRedirect(policy, response, currentRetries) {
 var allowedRedirect, RedirectPolicy;
 var init_redirectPolicy = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/policies/redirectPolicy.js"() {
+    "use strict";
     init_requestPolicy();
     init_url();
     allowedRedirect = ["GET", "HEAD"];
@@ -38376,6 +38580,7 @@ function updateRetryData(retryOptions, retryData = { retryCount: 0, retryInterva
 var DEFAULT_CLIENT_RETRY_COUNT, DEFAULT_CLIENT_RETRY_INTERVAL, DEFAULT_CLIENT_MAX_RETRY_INTERVAL, DEFAULT_CLIENT_MIN_RETRY_INTERVAL;
 var init_exponentialBackoffStrategy = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/util/exponentialBackoffStrategy.js"() {
+    "use strict";
     DEFAULT_CLIENT_RETRY_COUNT = 3;
     DEFAULT_CLIENT_RETRY_INTERVAL = 1e3 * 30;
     DEFAULT_CLIENT_MAX_RETRY_INTERVAL = 1e3 * 90;
@@ -38389,6 +38594,7 @@ function isDefined(thing) {
 }
 var init_typeguards = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/util/typeguards.js"() {
+    "use strict";
   }
 });
 
@@ -38427,6 +38633,7 @@ function delay(delayInMs, value, options) {
 var StandardAbortMessage;
 var init_delay = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/util/delay.js"() {
+    "use strict";
     init_src();
     init_typeguards();
     StandardAbortMessage = "The operation was aborted.";
@@ -38477,6 +38684,7 @@ async function retry(policy, request, response, retryData, requestError) {
 var RetryMode, ExponentialRetryPolicy;
 var init_exponentialRetryPolicy = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/policies/exponentialRetryPolicy.js"() {
+    "use strict";
     init_requestPolicy();
     init_exponentialBackoffStrategy();
     init_constants();
@@ -38487,6 +38695,14 @@ var init_exponentialRetryPolicy = __esm({
       RetryMode2[RetryMode2["Exponential"] = 0] = "Exponential";
     })(RetryMode || (RetryMode = {}));
     ExponentialRetryPolicy = class extends BaseRequestPolicy {
+      /**
+       * @param nextPolicy - The next RequestPolicy in the pipeline chain.
+       * @param options - The options for this RequestPolicy.
+       * @param retryCount - The client retry count.
+       * @param retryInterval - The client retry interval, in milliseconds.
+       * @param minRetryInterval - The minimum retry interval, in milliseconds.
+       * @param maxRetryInterval - The maximum retry interval, in milliseconds.
+       */
       constructor(nextPolicy, options, retryCount, retryInterval, maxRetryInterval) {
         super(nextPolicy, options);
         this.retryCount = isNumber(retryCount) ? retryCount : DEFAULT_CLIENT_RETRY_COUNT;
@@ -38511,6 +38727,7 @@ function logPolicy(loggingOptions = {}) {
 var LogPolicy;
 var init_logPolicy = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/policies/logPolicy.js"() {
+    "use strict";
     init_requestPolicy();
     init_sanitizer();
     init_log2();
@@ -38520,15 +38737,39 @@ var init_logPolicy = __esm({
         this.logger = logger3;
         this.sanitizer = new Sanitizer({ allowedHeaderNames, allowedQueryParameters });
       }
+      /**
+       * Header names whose values will be logged when logging is enabled. Defaults to
+       * Date, traceparent, x-ms-client-request-id, and x-ms-request id.  Any headers
+       * specified in this field will be added to that list.  Any other values will
+       * be written to logs as "REDACTED".
+       * @deprecated Pass these into the constructor instead.
+       */
       get allowedHeaderNames() {
         return this.sanitizer.allowedHeaderNames;
       }
+      /**
+       * Header names whose values will be logged when logging is enabled. Defaults to
+       * Date, traceparent, x-ms-client-request-id, and x-ms-request id.  Any headers
+       * specified in this field will be added to that list.  Any other values will
+       * be written to logs as "REDACTED".
+       * @deprecated Pass these into the constructor instead.
+       */
       set allowedHeaderNames(allowedHeaderNames) {
         this.sanitizer.allowedHeaderNames = allowedHeaderNames;
       }
+      /**
+       * Query string names whose values will be logged when logging is enabled. By default no
+       * query string values are logged.
+       * @deprecated Pass these into the constructor instead.
+       */
       get allowedQueryParameters() {
         return this.sanitizer.allowedQueryParameters;
       }
+      /**
+       * Query string names whose values will be logged when logging is enabled. By default no
+       * query string values are logged.
+       * @deprecated Pass these into the constructor instead.
+       */
       set allowedQueryParameters(allowedQueryParameters) {
         this.sanitizer.allowedQueryParameters = allowedQueryParameters;
       }
@@ -38567,6 +38808,7 @@ function getPathStringFromParameterPath(parameterPath, mapper) {
 }
 var init_operationParameter = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/operationParameter.js"() {
+    "use strict";
   }
 });
 
@@ -38583,6 +38825,7 @@ function getStreamResponseStatusCodes(operationSpec) {
 }
 var init_operationSpec = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/operationSpec.js"() {
+    "use strict";
     init_serializer();
   }
 });
@@ -38594,12 +38837,14 @@ function isTokenCredential(credential) {
 }
 var init_tokenCredential = __esm({
   "../../../node_modules/.pnpm/@azure+core-auth@1.4.0/node_modules/@azure/core-auth/dist-esm/src/tokenCredential.js"() {
+    "use strict";
   }
 });
 
 // ../../../node_modules/.pnpm/@azure+core-auth@1.4.0/node_modules/@azure/core-auth/dist-esm/src/index.js
 var init_src3 = __esm({
   "../../../node_modules/.pnpm/@azure+core-auth@1.4.0/node_modules/@azure/core-auth/dist-esm/src/index.js"() {
+    "use strict";
     init_tokenCredential();
   }
 });
@@ -38622,6 +38867,7 @@ function getPlatformSpecificData() {
 var os;
 var init_msRestUserAgentPolicy = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/policies/msRestUserAgentPolicy.js"() {
+    "use strict";
     os = __toESM(require("os"));
     init_constants();
   }
@@ -38659,6 +38905,7 @@ function userAgentPolicy(userAgentData) {
 var getDefaultUserAgentHeaderName, UserAgentPolicy;
 var init_userAgentPolicy = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/policies/userAgentPolicy.js"() {
+    "use strict";
     init_requestPolicy();
     init_msRestUserAgentPolicy();
     init_constants();
@@ -38676,6 +38923,9 @@ var init_userAgentPolicy = __esm({
         this.addUserAgentHeader(request);
         return this._nextPolicy.sendRequest(request);
       }
+      /**
+       * Adds the user agent header to the outgoing request.
+       */
       addUserAgentHeader(request) {
         if (!request.headers) {
           request.headers = new HttpHeaders();
@@ -38692,6 +38942,7 @@ var init_userAgentPolicy = __esm({
 var QueryCollectionFormat;
 var init_queryCollectionFormat = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/queryCollectionFormat.js"() {
+    "use strict";
     (function(QueryCollectionFormat2) {
       QueryCollectionFormat2["Csv"] = ",";
       QueryCollectionFormat2["Ssv"] = " ";
@@ -38731,13 +38982,24 @@ function createTokenCycler(credential, scopes, tokenCyclerOptions) {
   let token = null;
   const options = Object.assign(Object.assign({}, DEFAULT_CYCLER_OPTIONS), tokenCyclerOptions);
   const cycler = {
+    /**
+     * Produces true if a refresh job is currently in progress.
+     */
     get isRefreshing() {
       return refreshWorker !== null;
     },
+    /**
+     * Produces true if the cycler SHOULD refresh (we are within the refresh
+     * window and not already refreshing)
+     */
     get shouldRefresh() {
       var _a;
       return !cycler.isRefreshing && ((_a = token === null || token === void 0 ? void 0 : token.expiresOnTimestamp) !== null && _a !== void 0 ? _a : 0) - options.refreshWindowInMs < Date.now();
     },
+    /**
+     * Produces true if the cycler MUST refresh (null or nearly-expired
+     * token).
+     */
     get mustRefresh() {
       return token === null || token.expiresOnTimestamp - options.forcedRefreshWindowInMs < Date.now();
     }
@@ -38749,6 +39011,7 @@ function createTokenCycler(credential, scopes, tokenCyclerOptions) {
       refreshWorker = beginRefresh(
         tryGetAccessToken,
         options.retryIntervalInMs,
+        // If we don't have a token, then we should timeout immediately
         (_a = token === null || token === void 0 ? void 0 : token.expiresOnTimestamp) !== null && _a !== void 0 ? _a : Date.now()
       ).then((_token) => {
         refreshWorker = null;
@@ -38772,7 +39035,11 @@ function createTokenCycler(credential, scopes, tokenCyclerOptions) {
   };
 }
 function bearerTokenAuthenticationPolicy(credential, scopes) {
-  const getToken = createTokenCycler(credential, scopes);
+  const getToken = createTokenCycler(
+    credential,
+    scopes
+    /* , options */
+  );
   class BearerTokenAuthenticationPolicy extends BaseRequestPolicy {
     constructor(nextPolicy, options) {
       super(nextPolicy, options);
@@ -38800,6 +39067,7 @@ function bearerTokenAuthenticationPolicy(credential, scopes) {
 var DEFAULT_CYCLER_OPTIONS;
 var init_bearerTokenAuthenticationPolicy = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/policies/bearerTokenAuthenticationPolicy.js"() {
+    "use strict";
     init_requestPolicy();
     init_constants();
     init_delay();
@@ -38807,6 +39075,7 @@ var init_bearerTokenAuthenticationPolicy = __esm({
       forcedRefreshWindowInMs: 1e3,
       retryIntervalInMs: 3e3,
       refreshWindowInMs: 1e3 * 60 * 2
+      // Start refreshing 2m before expiry
     };
   }
 });
@@ -38822,11 +39091,26 @@ function disableResponseDecompressionPolicy() {
 var DisableResponseDecompressionPolicy;
 var init_disableResponseDecompressionPolicy = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/policies/disableResponseDecompressionPolicy.js"() {
+    "use strict";
     init_requestPolicy();
     DisableResponseDecompressionPolicy = class extends BaseRequestPolicy {
+      /**
+       * Creates an instance of DisableResponseDecompressionPolicy.
+       *
+       * @param nextPolicy -
+       * @param options -
+       */
+      // The parent constructor is protected.
+      /* eslint-disable-next-line @typescript-eslint/no-useless-constructor */
       constructor(nextPolicy, options) {
         super(nextPolicy, options);
       }
+      /**
+       * Sends out request.
+       *
+       * @param request -
+       * @returns
+       */
       async sendRequest(request) {
         request.decompressResponse = false;
         return this._nextPolicy.sendRequest(request);
@@ -38846,6 +39130,7 @@ function generateClientRequestIdPolicy(requestIdHeaderName = "x-ms-client-reques
 var GenerateClientRequestIdPolicy;
 var init_generateClientRequestIdPolicy = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/policies/generateClientRequestIdPolicy.js"() {
+    "use strict";
     init_requestPolicy();
     GenerateClientRequestIdPolicy = class extends BaseRequestPolicy {
       constructor(nextPolicy, options, _requestIdHeaderName) {
@@ -38872,6 +39157,7 @@ function getCachedDefaultHttpClient() {
 var cachedHttpClient;
 var init_httpClientCache = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/httpClientCache.js"() {
+    "use strict";
     init_defaultHttpClient();
   }
 });
@@ -38973,6 +39259,7 @@ function extractAuthFromUrl(url2) {
 var globalNoProxyList, noProxyListLoaded, globalBypassedMap, ProxyPolicy;
 var init_proxyPolicy = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/policies/proxyPolicy.js"() {
+    "use strict";
     init_requestPolicy();
     init_constants();
     init_url();
@@ -39084,6 +39371,7 @@ async function getRegistrationStatus(policy, url2, originalRequest) {
 var RPRegistrationPolicy;
 var init_rpRegistrationPolicy = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/policies/rpRegistrationPolicy.js"() {
+    "use strict";
     init_utils();
     init_requestPolicy();
     init_delay();
@@ -39110,6 +39398,7 @@ function signingPolicy(authenticationProvider) {
 var SigningPolicy;
 var init_signingPolicy = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/policies/signingPolicy.js"() {
+    "use strict";
     init_requestPolicy();
     SigningPolicy = class extends BaseRequestPolicy {
       constructor(nextPolicy, options, authenticationProvider) {
@@ -39159,6 +39448,7 @@ async function retry2(policy, request, operationResponse, err, retryData) {
 var SystemErrorRetryPolicy;
 var init_systemErrorRetryPolicy = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/policies/systemErrorRetryPolicy.js"() {
+    "use strict";
     init_requestPolicy();
     init_exponentialBackoffStrategy();
     init_delay();
@@ -39181,6 +39471,7 @@ var init_systemErrorRetryPolicy = __esm({
 var DEFAULT_CLIENT_MAX_RETRY_COUNT;
 var init_throttlingRetryStrategy = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/util/throttlingRetryStrategy.js"() {
+    "use strict";
     DEFAULT_CLIENT_MAX_RETRY_COUNT = 3;
   }
 });
@@ -39196,6 +39487,7 @@ function throttlingRetryPolicy() {
 var StatusCodes, StandardAbortMessage2, ThrottlingRetryPolicy;
 var init_throttlingRetryPolicy = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/policies/throttlingRetryPolicy.js"() {
+    "use strict";
     init_requestPolicy();
     init_src();
     init_constants();
@@ -39203,7 +39495,7 @@ var init_throttlingRetryPolicy = __esm({
     init_delay();
     StatusCodes = Constants.HttpConstants.StatusCodes;
     StandardAbortMessage2 = "The operation was aborted.";
-    ThrottlingRetryPolicy = class extends BaseRequestPolicy {
+    ThrottlingRetryPolicy = class _ThrottlingRetryPolicy extends BaseRequestPolicy {
       constructor(nextPolicy, options, _handleResponse) {
         super(nextPolicy, options);
         this.numberOfRetries = 0;
@@ -39221,7 +39513,7 @@ var init_throttlingRetryPolicy = __esm({
         var _a;
         const retryAfterHeader = httpResponse.headers.get(Constants.HeaderConstants.RETRY_AFTER);
         if (retryAfterHeader) {
-          const delayInMs = ThrottlingRetryPolicy.parseRetryAfterHeader(retryAfterHeader);
+          const delayInMs = _ThrottlingRetryPolicy.parseRetryAfterHeader(retryAfterHeader);
           if (delayInMs) {
             this.numberOfRetries += 1;
             await delay(delayInMs, void 0, {
@@ -39243,7 +39535,7 @@ var init_throttlingRetryPolicy = __esm({
       static parseRetryAfterHeader(headerValue) {
         const retryAfterInSeconds = Number(headerValue);
         if (Number.isNaN(retryAfterInSeconds)) {
-          return ThrottlingRetryPolicy.parseDateRetryAfterHeader(headerValue);
+          return _ThrottlingRetryPolicy.parseDateRetryAfterHeader(headerValue);
         } else {
           return retryAfterInSeconds * 1e3;
         }
@@ -39265,6 +39557,7 @@ var init_throttlingRetryPolicy = __esm({
 // ../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/baggage/types.js
 var init_types = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/baggage/types.js"() {
+    "use strict";
   }
 });
 
@@ -39272,6 +39565,7 @@ var init_types = __esm({
 var _globalThis;
 var init_globalThis = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/platform/node/globalThis.js"() {
+    "use strict";
     _globalThis = typeof globalThis === "object" ? globalThis : global;
   }
 });
@@ -39279,6 +39573,7 @@ var init_globalThis = __esm({
 // ../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/platform/node/index.js
 var init_node = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/platform/node/index.js"() {
+    "use strict";
     init_globalThis();
   }
 });
@@ -39286,14 +39581,16 @@ var init_node = __esm({
 // ../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/platform/index.js
 var init_platform = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/platform/index.js"() {
+    "use strict";
     init_node();
   }
 });
 
 // ../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/version.js
 var VERSION;
-var init_version = __esm({
+var init_version2 = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/version.js"() {
+    "use strict";
     VERSION = "1.1.0";
   }
 });
@@ -39365,7 +39662,8 @@ function _makeCompatibilityCheck(ownVersion) {
 var re, isCompatible;
 var init_semver = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/internal/semver.js"() {
-    init_version();
+    "use strict";
+    init_version2();
     re = /^(\d+)\.(\d+)\.(\d+)(-(.+))?$/;
     isCompatible = _makeCompatibilityCheck(VERSION);
   }
@@ -39412,8 +39710,9 @@ function unregisterGlobal(type3, diag3) {
 var major, GLOBAL_OPENTELEMETRY_API_KEY, _global;
 var init_global_utils = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/internal/global-utils.js"() {
+    "use strict";
     init_platform();
-    init_version();
+    init_version2();
     init_semver();
     major = VERSION.split(".")[0];
     GLOBAL_OPENTELEMETRY_API_KEY = Symbol.for("opentelemetry.js.api." + major);
@@ -39433,8 +39732,10 @@ function logProxy(funcName, namespace, args) {
 var DiagComponentLogger;
 var init_ComponentLogger = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/diag/ComponentLogger.js"() {
+    "use strict";
     init_global_utils();
-    DiagComponentLogger = function() {
+    DiagComponentLogger = /** @class */
+    function() {
       function DiagComponentLogger2(props) {
         this._namespace = props.namespace || "DiagComponentLogger";
       }
@@ -39482,6 +39783,7 @@ var init_ComponentLogger = __esm({
 var DiagLogLevel;
 var init_types2 = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/diag/types.js"() {
+    "use strict";
     (function(DiagLogLevel2) {
       DiagLogLevel2[DiagLogLevel2["NONE"] = 0] = "NONE";
       DiagLogLevel2[DiagLogLevel2["ERROR"] = 30] = "ERROR";
@@ -39520,6 +39822,7 @@ function createLogLevelDiagLogger(maxLevel, logger3) {
 }
 var init_logLevelLogger = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/diag/internal/logLevelLogger.js"() {
+    "use strict";
     init_types2();
   }
 });
@@ -39528,12 +39831,14 @@ var init_logLevelLogger = __esm({
 var API_NAME, DiagAPI;
 var init_diag = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/api/diag.js"() {
+    "use strict";
     init_ComponentLogger();
     init_logLevelLogger();
     init_types2();
     init_global_utils();
     API_NAME = "diag";
-    DiagAPI = function() {
+    DiagAPI = /** @class */
+    function() {
       function DiagAPI2() {
         function _logProxy(funcName) {
           return function() {
@@ -39547,15 +39852,15 @@ var init_diag = __esm({
             return logger3[funcName].apply(logger3, args);
           };
         }
-        var self2 = this;
-        self2.setLogger = function(logger3, logLevel) {
+        var self = this;
+        self.setLogger = function(logger3, logLevel) {
           var _a, _b;
           if (logLevel === void 0) {
             logLevel = DiagLogLevel.INFO;
           }
-          if (logger3 === self2) {
+          if (logger3 === self) {
             var err = new Error("Cannot use diag as the logger for itself. Please use a DiagLogger implementation like ConsoleDiagLogger or a custom implementation");
-            self2.error((_a = err.stack) !== null && _a !== void 0 ? _a : err.message);
+            self.error((_a = err.stack) !== null && _a !== void 0 ? _a : err.message);
             return false;
           }
           var oldLogger = getGlobal("diag");
@@ -39565,19 +39870,19 @@ var init_diag = __esm({
             oldLogger.warn("Current logger will be overwritten from " + stack);
             newLogger.warn("Current logger will overwrite one already registered from " + stack);
           }
-          return registerGlobal("diag", newLogger, self2, true);
+          return registerGlobal("diag", newLogger, self, true);
         };
-        self2.disable = function() {
-          unregisterGlobal(API_NAME, self2);
+        self.disable = function() {
+          unregisterGlobal(API_NAME, self);
         };
-        self2.createComponentLogger = function(options) {
+        self.createComponentLogger = function(options) {
           return new DiagComponentLogger(options);
         };
-        self2.verbose = _logProxy("verbose");
-        self2.debug = _logProxy("debug");
-        self2.info = _logProxy("info");
-        self2.warn = _logProxy("warn");
-        self2.error = _logProxy("error");
+        self.verbose = _logProxy("verbose");
+        self.debug = _logProxy("debug");
+        self.info = _logProxy("info");
+        self.warn = _logProxy("warn");
+        self.error = _logProxy("error");
       }
       DiagAPI2.instance = function() {
         if (!this._instance) {
@@ -39594,7 +39899,9 @@ var init_diag = __esm({
 var BaggageImpl;
 var init_baggage_impl = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/baggage/internal/baggage-impl.js"() {
-    BaggageImpl = function() {
+    "use strict";
+    BaggageImpl = /** @class */
+    function() {
       function BaggageImpl2(entries) {
         this._entries = entries ? new Map(entries) : /* @__PURE__ */ new Map();
       }
@@ -39645,6 +39952,7 @@ var init_baggage_impl = __esm({
 var baggageEntryMetadataSymbol;
 var init_symbol = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/baggage/internal/symbol.js"() {
+    "use strict";
     baggageEntryMetadataSymbol = Symbol("BaggageEntryMetadata");
   }
 });
@@ -39659,6 +39967,7 @@ function createBaggage(entries) {
 var diag;
 var init_utils2 = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/baggage/utils.js"() {
+    "use strict";
     init_diag();
     init_baggage_impl();
     init_symbol();
@@ -39669,18 +39978,21 @@ var init_utils2 = __esm({
 // ../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/common/Exception.js
 var init_Exception = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/common/Exception.js"() {
+    "use strict";
   }
 });
 
 // ../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/common/Time.js
 var init_Time = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/common/Time.js"() {
+    "use strict";
   }
 });
 
 // ../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/common/Attributes.js
 var init_Attributes = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/common/Attributes.js"() {
+    "use strict";
   }
 });
 
@@ -39688,6 +40000,7 @@ var init_Attributes = __esm({
 var consoleMap, DiagConsoleLogger;
 var init_consoleLogger = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/diag/consoleLogger.js"() {
+    "use strict";
     consoleMap = [
       { n: "error", c: "error" },
       { n: "warn", c: "warn" },
@@ -39695,7 +40008,8 @@ var init_consoleLogger = __esm({
       { n: "debug", c: "debug" },
       { n: "verbose", c: "trace" }
     ];
-    DiagConsoleLogger = function() {
+    DiagConsoleLogger = /** @class */
+    function() {
       function DiagConsoleLogger2() {
         function _consoleFunc(funcName) {
           return function() {
@@ -39726,6 +40040,7 @@ var init_consoleLogger = __esm({
 // ../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/diag/index.js
 var init_diag2 = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/diag/index.js"() {
+    "use strict";
     init_consoleLogger();
     init_types2();
   }
@@ -39735,6 +40050,7 @@ var init_diag2 = __esm({
 var defaultTextMapGetter, defaultTextMapSetter;
 var init_TextMapPropagator = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/propagation/TextMapPropagator.js"() {
+    "use strict";
     defaultTextMapGetter = {
       get: function(carrier, key) {
         if (carrier == null) {
@@ -39763,12 +40079,14 @@ var init_TextMapPropagator = __esm({
 // ../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/trace/attributes.js
 var init_attributes = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/trace/attributes.js"() {
+    "use strict";
   }
 });
 
 // ../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/trace/link.js
 var init_link = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/trace/link.js"() {
+    "use strict";
   }
 });
 
@@ -39779,20 +40097,22 @@ function createContextKey(description) {
 var BaseContext, ROOT_CONTEXT;
 var init_context = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/context/context.js"() {
-    BaseContext = function() {
+    "use strict";
+    BaseContext = /** @class */
+    function() {
       function BaseContext2(parentContext) {
-        var self2 = this;
-        self2._currentContext = parentContext ? new Map(parentContext) : /* @__PURE__ */ new Map();
-        self2.getValue = function(key) {
-          return self2._currentContext.get(key);
+        var self = this;
+        self._currentContext = parentContext ? new Map(parentContext) : /* @__PURE__ */ new Map();
+        self.getValue = function(key) {
+          return self._currentContext.get(key);
         };
-        self2.setValue = function(key, value) {
-          var context4 = new BaseContext2(self2._currentContext);
+        self.setValue = function(key, value) {
+          var context4 = new BaseContext2(self._currentContext);
           context4._currentContext.set(key, value);
           return context4;
         };
-        self2.deleteValue = function(key) {
-          var context4 = new BaseContext2(self2._currentContext);
+        self.deleteValue = function(key) {
+          var context4 = new BaseContext2(self._currentContext);
           context4._currentContext.delete(key);
           return context4;
         };
@@ -39804,16 +40124,18 @@ var init_context = __esm({
 });
 
 // ../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/context/NoopContextManager.js
-var __spreadArray2, NoopContextManager;
+var __spreadArray, NoopContextManager;
 var init_NoopContextManager = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/context/NoopContextManager.js"() {
+    "use strict";
     init_context();
-    __spreadArray2 = function(to, from) {
+    __spreadArray = function(to, from) {
       for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
         to[j] = from[i];
       return to;
     };
-    NoopContextManager = function() {
+    NoopContextManager = /** @class */
+    function() {
       function NoopContextManager2() {
       }
       NoopContextManager2.prototype.active = function() {
@@ -39824,7 +40146,7 @@ var init_NoopContextManager = __esm({
         for (var _i = 3; _i < arguments.length; _i++) {
           args[_i - 3] = arguments[_i];
         }
-        return fn.call.apply(fn, __spreadArray2([thisArg], args));
+        return fn.call.apply(fn, __spreadArray([thisArg], args));
       };
       NoopContextManager2.prototype.bind = function(_context, target) {
         return target;
@@ -39841,20 +40163,22 @@ var init_NoopContextManager = __esm({
 });
 
 // ../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/api/context.js
-var __spreadArray3, API_NAME2, NOOP_CONTEXT_MANAGER, ContextAPI;
+var __spreadArray2, API_NAME2, NOOP_CONTEXT_MANAGER, ContextAPI;
 var init_context2 = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/api/context.js"() {
+    "use strict";
     init_NoopContextManager();
     init_global_utils();
     init_diag();
-    __spreadArray3 = function(to, from) {
+    __spreadArray2 = function(to, from) {
       for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
         to[j] = from[i];
       return to;
     };
     API_NAME2 = "context";
     NOOP_CONTEXT_MANAGER = new NoopContextManager();
-    ContextAPI = function() {
+    ContextAPI = /** @class */
+    function() {
       function ContextAPI2() {
       }
       ContextAPI2.getInstance = function() {
@@ -39875,7 +40199,7 @@ var init_context2 = __esm({
         for (var _i = 3; _i < arguments.length; _i++) {
           args[_i - 3] = arguments[_i];
         }
-        return (_a = this._getContextManager()).with.apply(_a, __spreadArray3([context4, fn, thisArg], args));
+        return (_a = this._getContextManager()).with.apply(_a, __spreadArray2([context4, fn, thisArg], args));
       };
       ContextAPI2.prototype.bind = function(context4, target) {
         return this._getContextManager().bind(context4, target);
@@ -39896,6 +40220,7 @@ var init_context2 = __esm({
 var TraceFlags;
 var init_trace_flags = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/trace/trace_flags.js"() {
+    "use strict";
     (function(TraceFlags2) {
       TraceFlags2[TraceFlags2["NONE"] = 0] = "NONE";
       TraceFlags2[TraceFlags2["SAMPLED"] = 1] = "SAMPLED";
@@ -39907,6 +40232,7 @@ var init_trace_flags = __esm({
 var INVALID_SPANID, INVALID_TRACEID, INVALID_SPAN_CONTEXT;
 var init_invalid_span_constants = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/trace/invalid-span-constants.js"() {
+    "use strict";
     init_trace_flags();
     INVALID_SPANID = "0000000000000000";
     INVALID_TRACEID = "00000000000000000000000000000000";
@@ -39922,8 +40248,10 @@ var init_invalid_span_constants = __esm({
 var NonRecordingSpan;
 var init_NonRecordingSpan = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/trace/NonRecordingSpan.js"() {
+    "use strict";
     init_invalid_span_constants();
-    NonRecordingSpan = function() {
+    NonRecordingSpan = /** @class */
+    function() {
       function NonRecordingSpan2(_spanContext) {
         if (_spanContext === void 0) {
           _spanContext = INVALID_SPAN_CONTEXT;
@@ -39980,6 +40308,7 @@ function getSpanContext(context4) {
 var SPAN_KEY;
 var init_context_utils = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/trace/context-utils.js"() {
+    "use strict";
     init_context();
     init_NonRecordingSpan();
     SPAN_KEY = createContextKey("OpenTelemetry Context Key SPAN");
@@ -40002,6 +40331,7 @@ function wrapSpanContext(spanContext) {
 var VALID_TRACEID_REGEX, VALID_SPANID_REGEX;
 var init_spancontext_utils = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/trace/spancontext-utils.js"() {
+    "use strict";
     init_invalid_span_constants();
     init_NonRecordingSpan();
     VALID_TRACEID_REGEX = /^([0-9a-f]{32})$/i;
@@ -40016,12 +40346,14 @@ function isSpanContext(spanContext) {
 var context, NoopTracer;
 var init_NoopTracer = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/trace/NoopTracer.js"() {
+    "use strict";
     init_context2();
     init_context_utils();
     init_NonRecordingSpan();
     init_spancontext_utils();
     context = ContextAPI.getInstance();
-    NoopTracer = function() {
+    NoopTracer = /** @class */
+    function() {
       function NoopTracer2() {
       }
       NoopTracer2.prototype.startSpan = function(name, options, context4) {
@@ -40066,9 +40398,11 @@ var init_NoopTracer = __esm({
 var NOOP_TRACER, ProxyTracer;
 var init_ProxyTracer = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/trace/ProxyTracer.js"() {
+    "use strict";
     init_NoopTracer();
     NOOP_TRACER = new NoopTracer();
-    ProxyTracer = function() {
+    ProxyTracer = /** @class */
+    function() {
       function ProxyTracer2(_provider, name, version3, options) {
         this._provider = _provider;
         this.name = name;
@@ -40102,8 +40436,10 @@ var init_ProxyTracer = __esm({
 var NoopTracerProvider;
 var init_NoopTracerProvider = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/trace/NoopTracerProvider.js"() {
+    "use strict";
     init_NoopTracer();
-    NoopTracerProvider = function() {
+    NoopTracerProvider = /** @class */
+    function() {
       function NoopTracerProvider2() {
       }
       NoopTracerProvider2.prototype.getTracer = function(_name, _version, _options) {
@@ -40118,10 +40454,12 @@ var init_NoopTracerProvider = __esm({
 var NOOP_TRACER_PROVIDER, ProxyTracerProvider;
 var init_ProxyTracerProvider = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/trace/ProxyTracerProvider.js"() {
+    "use strict";
     init_ProxyTracer();
     init_NoopTracerProvider();
     NOOP_TRACER_PROVIDER = new NoopTracerProvider();
-    ProxyTracerProvider = function() {
+    ProxyTracerProvider = /** @class */
+    function() {
       function ProxyTracerProvider2() {
       }
       ProxyTracerProvider2.prototype.getTracer = function(name, version3, options) {
@@ -40147,6 +40485,7 @@ var init_ProxyTracerProvider = __esm({
 // ../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/trace/Sampler.js
 var init_Sampler = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/trace/Sampler.js"() {
+    "use strict";
   }
 });
 
@@ -40154,6 +40493,7 @@ var init_Sampler = __esm({
 var SamplingDecision;
 var init_SamplingResult = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/trace/SamplingResult.js"() {
+    "use strict";
     (function(SamplingDecision2) {
       SamplingDecision2[SamplingDecision2["NOT_RECORD"] = 0] = "NOT_RECORD";
       SamplingDecision2[SamplingDecision2["RECORD"] = 1] = "RECORD";
@@ -40165,6 +40505,7 @@ var init_SamplingResult = __esm({
 // ../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/trace/span_context.js
 var init_span_context = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/trace/span_context.js"() {
+    "use strict";
   }
 });
 
@@ -40172,6 +40513,7 @@ var init_span_context = __esm({
 var SpanKind;
 var init_span_kind = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/trace/span_kind.js"() {
+    "use strict";
     (function(SpanKind3) {
       SpanKind3[SpanKind3["INTERNAL"] = 0] = "INTERNAL";
       SpanKind3[SpanKind3["SERVER"] = 1] = "SERVER";
@@ -40185,12 +40527,14 @@ var init_span_kind = __esm({
 // ../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/trace/span.js
 var init_span = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/trace/span.js"() {
+    "use strict";
   }
 });
 
 // ../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/trace/SpanOptions.js
 var init_SpanOptions = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/trace/SpanOptions.js"() {
+    "use strict";
   }
 });
 
@@ -40198,6 +40542,7 @@ var init_SpanOptions = __esm({
 var SpanStatusCode;
 var init_status = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/trace/status.js"() {
+    "use strict";
     (function(SpanStatusCode3) {
       SpanStatusCode3[SpanStatusCode3["UNSET"] = 0] = "UNSET";
       SpanStatusCode3[SpanStatusCode3["OK"] = 1] = "OK";
@@ -40209,6 +40554,7 @@ var init_status = __esm({
 // ../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/trace/trace_state.js
 var init_trace_state = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/trace/trace_state.js"() {
+    "use strict";
   }
 });
 
@@ -40222,6 +40568,7 @@ function validateValue2(value) {
 var VALID_KEY_CHAR_RANGE, VALID_KEY, VALID_VENDOR_KEY, VALID_KEY_REGEX, VALID_VALUE_BASE_REGEX, INVALID_VALUE_COMMA_EQUAL_REGEX;
 var init_tracestate_validators = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/trace/internal/tracestate-validators.js"() {
+    "use strict";
     VALID_KEY_CHAR_RANGE = "[_0-9a-z-*/]";
     VALID_KEY = "[a-z]" + VALID_KEY_CHAR_RANGE + "{0,255}";
     VALID_VENDOR_KEY = "[a-z0-9]" + VALID_KEY_CHAR_RANGE + "{0,240}@[a-z]" + VALID_KEY_CHAR_RANGE + "{0,13}";
@@ -40235,12 +40582,14 @@ var init_tracestate_validators = __esm({
 var MAX_TRACE_STATE_ITEMS, MAX_TRACE_STATE_LEN, LIST_MEMBERS_SEPARATOR, LIST_MEMBER_KEY_VALUE_SPLITTER, TraceStateImpl;
 var init_tracestate_impl = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/trace/internal/tracestate-impl.js"() {
+    "use strict";
     init_tracestate_validators();
     MAX_TRACE_STATE_ITEMS = 32;
     MAX_TRACE_STATE_LEN = 512;
     LIST_MEMBERS_SEPARATOR = ",";
     LIST_MEMBER_KEY_VALUE_SPLITTER = "=";
-    TraceStateImpl = function() {
+    TraceStateImpl = /** @class */
+    function() {
       function TraceStateImpl2(rawTraceState) {
         this._internalState = /* @__PURE__ */ new Map();
         if (rawTraceState)
@@ -40305,6 +40654,7 @@ var init_tracestate_impl = __esm({
 // ../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/trace/internal/utils.js
 var init_utils3 = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/trace/internal/utils.js"() {
+    "use strict";
     init_tracestate_impl();
   }
 });
@@ -40312,24 +40662,28 @@ var init_utils3 = __esm({
 // ../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/trace/tracer_provider.js
 var init_tracer_provider = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/trace/tracer_provider.js"() {
+    "use strict";
   }
 });
 
 // ../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/trace/tracer.js
 var init_tracer = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/trace/tracer.js"() {
+    "use strict";
   }
 });
 
 // ../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/trace/tracer_options.js
 var init_tracer_options = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/trace/tracer_options.js"() {
+    "use strict";
   }
 });
 
 // ../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/context/types.js
 var init_types3 = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/context/types.js"() {
+    "use strict";
   }
 });
 
@@ -40337,13 +40691,15 @@ var init_types3 = __esm({
 var API_NAME3, TraceAPI;
 var init_trace = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/api/trace.js"() {
+    "use strict";
     init_global_utils();
     init_ProxyTracerProvider();
     init_spancontext_utils();
     init_context_utils();
     init_diag();
     API_NAME3 = "trace";
-    TraceAPI = function() {
+    TraceAPI = /** @class */
+    function() {
       function TraceAPI2() {
         this._proxyTracerProvider = new ProxyTracerProvider();
         this.wrapSpanContext = wrapSpanContext;
@@ -40386,7 +40742,9 @@ var init_trace = __esm({
 var NoopTextMapPropagator;
 var init_NoopTextMapPropagator = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/propagation/NoopTextMapPropagator.js"() {
-    NoopTextMapPropagator = function() {
+    "use strict";
+    NoopTextMapPropagator = /** @class */
+    function() {
       function NoopTextMapPropagator2() {
       }
       NoopTextMapPropagator2.prototype.inject = function(_context, _carrier) {
@@ -40415,6 +40773,7 @@ function deleteBaggage(context4) {
 var BAGGAGE_KEY;
 var init_context_helpers = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/baggage/context-helpers.js"() {
+    "use strict";
     init_context();
     BAGGAGE_KEY = createContextKey("OpenTelemetry Baggage Key");
   }
@@ -40424,6 +40783,7 @@ var init_context_helpers = __esm({
 var API_NAME4, NOOP_TEXT_MAP_PROPAGATOR, PropagationAPI;
 var init_propagation = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/api/propagation.js"() {
+    "use strict";
     init_global_utils();
     init_NoopTextMapPropagator();
     init_TextMapPropagator();
@@ -40432,7 +40792,8 @@ var init_propagation = __esm({
     init_diag();
     API_NAME4 = "propagation";
     NOOP_TEXT_MAP_PROPAGATOR = new NoopTextMapPropagator();
-    PropagationAPI = function() {
+    PropagationAPI = /** @class */
+    function() {
       function PropagationAPI2() {
         this.createBaggage = createBaggage;
         this.getBaggage = getBaggage;
@@ -40478,6 +40839,7 @@ var init_propagation = __esm({
 var context2, trace, propagation, diag2;
 var init_esm = __esm({
   "../../../node_modules/.pnpm/@opentelemetry+api@1.1.0/node_modules/@opentelemetry/api/build/esm/index.js"() {
+    "use strict";
     init_types();
     init_utils2();
     init_Exception();
@@ -40530,6 +40892,7 @@ function getTracer(name, version3) {
 var SpanKind2, context3, SpanStatusCode2;
 var init_interfaces = __esm({
   "../../../node_modules/.pnpm/@azure+core-tracing@1.0.0-preview.13/node_modules/@azure/core-tracing/dist-esm/src/interfaces.js"() {
+    "use strict";
     init_esm();
     (function(SpanKind3) {
       SpanKind3[SpanKind3["INTERNAL"] = 0] = "INTERNAL";
@@ -40588,6 +40951,7 @@ function createSpanFunction(args) {
 }
 var init_createSpan = __esm({
   "../../../node_modules/.pnpm/@azure+core-tracing@1.0.0-preview.13/node_modules/@azure/core-tracing/dist-esm/src/createSpan.js"() {
+    "use strict";
     init_interfaces();
     init_esm();
   }
@@ -40613,6 +40977,7 @@ function getTraceParentHeader(spanContext) {
 var VERSION2;
 var init_traceParentHeader = __esm({
   "../../../node_modules/.pnpm/@azure+core-tracing@1.0.0-preview.13/node_modules/@azure/core-tracing/dist-esm/src/utils/traceParentHeader.js"() {
+    "use strict";
     VERSION2 = "00";
   }
 });
@@ -40620,6 +40985,7 @@ var init_traceParentHeader = __esm({
 // ../../../node_modules/.pnpm/@azure+core-tracing@1.0.0-preview.13/node_modules/@azure/core-tracing/dist-esm/src/index.js
 var init_src4 = __esm({
   "../../../node_modules/.pnpm/@azure+core-tracing@1.0.0-preview.13/node_modules/@azure/core-tracing/dist-esm/src/index.js"() {
+    "use strict";
     init_createSpan();
     init_interfaces();
     init_traceParentHeader();
@@ -40637,6 +41003,7 @@ function tracingPolicy(tracingOptions = {}) {
 var createSpan, TracingPolicy;
 var init_tracingPolicy = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/policies/tracingPolicy.js"() {
+    "use strict";
     init_requestPolicy();
     init_src4();
     init_log2();
@@ -40958,6 +41325,7 @@ function getCredentialScopes(options, baseUri) {
 var ServiceClient;
 var init_serviceClient = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/serviceClient.js"() {
+    "use strict";
     init_utils();
     init_serializer();
     init_deserializationPolicy();
@@ -40985,6 +41353,11 @@ var init_serviceClient = __esm({
     init_systemErrorRetryPolicy();
     init_throttlingRetryPolicy();
     ServiceClient = class {
+      /**
+       * The ServiceClient constructor
+       * @param credentials - The credentials used for authentication with the service.
+       * @param options - The service client options that govern the behavior of the client.
+       */
       constructor(credentials, options) {
         if (!options) {
           options = {};
@@ -41035,6 +41408,9 @@ var init_serviceClient = __esm({
         }
         this._requestPolicyFactories = requestPolicyFactories;
       }
+      /**
+       * Send the provided httpRequest.
+       */
       sendRequest(options) {
         if (options === null || options === void 0 || typeof options !== "object") {
           throw new Error("options cannot be null or undefined and it must be of type object.");
@@ -41059,6 +41435,12 @@ var init_serviceClient = __esm({
         }
         return httpPipeline.sendRequest(httpRequest);
       }
+      /**
+       * Send an HTTP request that is populated using the provided OperationSpec.
+       * @param operationArguments - The arguments that the HTTP request's templated values will be populated from.
+       * @param operationSpec - The OperationSpec to use to populate the httpRequest.
+       * @param callback - The callback to call when the response is received.
+       */
       async sendOperationRequest(operationArguments, operationSpec, callback) {
         var _a;
         if (typeof operationArguments.options === "function") {
@@ -41212,6 +41594,7 @@ var init_serviceClient = __esm({
 // ../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/coreHttp.js
 var init_coreHttp = __esm({
   "../../../node_modules/.pnpm/@azure+core-http@2.2.6/node_modules/@azure/core-http/dist-esm/src/coreHttp.js"() {
+    "use strict";
     init_webResource();
     init_defaultHttpClient();
     init_httpHeaders();
@@ -41423,6 +41806,7 @@ __export(mappers_exports, {
 var BlobServiceProperties, Logging, RetentionPolicy, Metrics, CorsRule, StaticWebsite, StorageError, BlobServiceStatistics, GeoReplication, ListContainersSegmentResponse, ContainerItem, ContainerProperties, KeyInfo, UserDelegationKey, FilterBlobSegment, FilterBlobItem, BlobTags, BlobTag, SignedIdentifier, AccessPolicy, ListBlobsFlatSegmentResponse, BlobFlatListSegment, BlobItemInternal, BlobName, BlobPropertiesInternal, ListBlobsHierarchySegmentResponse, BlobHierarchyListSegment, BlobPrefix, BlockLookupList, BlockList, Block, PageList, PageRange, ClearRange, QueryRequest, QuerySerialization, QueryFormat, DelimitedTextConfiguration, JsonTextConfiguration, ArrowConfiguration, ArrowField, ServiceSetPropertiesHeaders, ServiceSetPropertiesExceptionHeaders, ServiceGetPropertiesHeaders, ServiceGetPropertiesExceptionHeaders, ServiceGetStatisticsHeaders, ServiceGetStatisticsExceptionHeaders, ServiceListContainersSegmentHeaders, ServiceListContainersSegmentExceptionHeaders, ServiceGetUserDelegationKeyHeaders, ServiceGetUserDelegationKeyExceptionHeaders, ServiceGetAccountInfoHeaders, ServiceGetAccountInfoExceptionHeaders, ServiceSubmitBatchHeaders, ServiceSubmitBatchExceptionHeaders, ServiceFilterBlobsHeaders, ServiceFilterBlobsExceptionHeaders, ContainerCreateHeaders, ContainerCreateExceptionHeaders, ContainerGetPropertiesHeaders, ContainerGetPropertiesExceptionHeaders, ContainerDeleteHeaders, ContainerDeleteExceptionHeaders, ContainerSetMetadataHeaders, ContainerSetMetadataExceptionHeaders, ContainerGetAccessPolicyHeaders, ContainerGetAccessPolicyExceptionHeaders, ContainerSetAccessPolicyHeaders, ContainerSetAccessPolicyExceptionHeaders, ContainerRestoreHeaders, ContainerRestoreExceptionHeaders, ContainerRenameHeaders, ContainerRenameExceptionHeaders, ContainerSubmitBatchHeaders, ContainerSubmitBatchExceptionHeaders, ContainerFilterBlobsHeaders, ContainerFilterBlobsExceptionHeaders, ContainerAcquireLeaseHeaders, ContainerAcquireLeaseExceptionHeaders, ContainerReleaseLeaseHeaders, ContainerReleaseLeaseExceptionHeaders, ContainerRenewLeaseHeaders, ContainerRenewLeaseExceptionHeaders, ContainerBreakLeaseHeaders, ContainerBreakLeaseExceptionHeaders, ContainerChangeLeaseHeaders, ContainerChangeLeaseExceptionHeaders, ContainerListBlobFlatSegmentHeaders, ContainerListBlobFlatSegmentExceptionHeaders, ContainerListBlobHierarchySegmentHeaders, ContainerListBlobHierarchySegmentExceptionHeaders, ContainerGetAccountInfoHeaders, ContainerGetAccountInfoExceptionHeaders, BlobDownloadHeaders, BlobDownloadExceptionHeaders, BlobGetPropertiesHeaders, BlobGetPropertiesExceptionHeaders, BlobDeleteHeaders, BlobDeleteExceptionHeaders, BlobUndeleteHeaders, BlobUndeleteExceptionHeaders, BlobSetExpiryHeaders, BlobSetExpiryExceptionHeaders, BlobSetHttpHeadersHeaders, BlobSetHttpHeadersExceptionHeaders, BlobSetImmutabilityPolicyHeaders, BlobSetImmutabilityPolicyExceptionHeaders, BlobDeleteImmutabilityPolicyHeaders, BlobDeleteImmutabilityPolicyExceptionHeaders, BlobSetLegalHoldHeaders, BlobSetLegalHoldExceptionHeaders, BlobSetMetadataHeaders, BlobSetMetadataExceptionHeaders, BlobAcquireLeaseHeaders, BlobAcquireLeaseExceptionHeaders, BlobReleaseLeaseHeaders, BlobReleaseLeaseExceptionHeaders, BlobRenewLeaseHeaders, BlobRenewLeaseExceptionHeaders, BlobChangeLeaseHeaders, BlobChangeLeaseExceptionHeaders, BlobBreakLeaseHeaders, BlobBreakLeaseExceptionHeaders, BlobCreateSnapshotHeaders, BlobCreateSnapshotExceptionHeaders, BlobStartCopyFromURLHeaders, BlobStartCopyFromURLExceptionHeaders, BlobCopyFromURLHeaders, BlobCopyFromURLExceptionHeaders, BlobAbortCopyFromURLHeaders, BlobAbortCopyFromURLExceptionHeaders, BlobSetTierHeaders, BlobSetTierExceptionHeaders, BlobGetAccountInfoHeaders, BlobGetAccountInfoExceptionHeaders, BlobQueryHeaders, BlobQueryExceptionHeaders, BlobGetTagsHeaders, BlobGetTagsExceptionHeaders, BlobSetTagsHeaders, BlobSetTagsExceptionHeaders, PageBlobCreateHeaders, PageBlobCreateExceptionHeaders, PageBlobUploadPagesHeaders, PageBlobUploadPagesExceptionHeaders, PageBlobClearPagesHeaders, PageBlobClearPagesExceptionHeaders, PageBlobUploadPagesFromURLHeaders, PageBlobUploadPagesFromURLExceptionHeaders, PageBlobGetPageRangesHeaders, PageBlobGetPageRangesExceptionHeaders, PageBlobGetPageRangesDiffHeaders, PageBlobGetPageRangesDiffExceptionHeaders, PageBlobResizeHeaders, PageBlobResizeExceptionHeaders, PageBlobUpdateSequenceNumberHeaders, PageBlobUpdateSequenceNumberExceptionHeaders, PageBlobCopyIncrementalHeaders, PageBlobCopyIncrementalExceptionHeaders, AppendBlobCreateHeaders, AppendBlobCreateExceptionHeaders, AppendBlobAppendBlockHeaders, AppendBlobAppendBlockExceptionHeaders, AppendBlobAppendBlockFromUrlHeaders, AppendBlobAppendBlockFromUrlExceptionHeaders, AppendBlobSealHeaders, AppendBlobSealExceptionHeaders, BlockBlobUploadHeaders, BlockBlobUploadExceptionHeaders, BlockBlobPutBlobFromUrlHeaders, BlockBlobPutBlobFromUrlExceptionHeaders, BlockBlobStageBlockHeaders, BlockBlobStageBlockExceptionHeaders, BlockBlobStageBlockFromURLHeaders, BlockBlobStageBlockFromURLExceptionHeaders, BlockBlobCommitBlockListHeaders, BlockBlobCommitBlockListExceptionHeaders, BlockBlobGetBlockListHeaders, BlockBlobGetBlockListExceptionHeaders;
 var init_mappers = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/generated/src/models/mappers.js"() {
+    "use strict";
     BlobServiceProperties = {
       serializedName: "BlobServiceProperties",
       xmlName: "StorageServiceProperties",
@@ -49614,6 +49998,7 @@ var init_mappers = __esm({
 var contentType, blobServiceProperties, accept, url, restype, comp, timeoutInSeconds, version2, requestId, accept1, comp1, comp2, prefix, marker, maxPageSize, include, keyInfo, comp3, restype1, body, comp4, contentLength, multipartContentType, comp5, where, restype2, metadata, access, defaultEncryptionScope, preventEncryptionScopeOverride, leaseId, ifModifiedSince, ifUnmodifiedSince, comp6, comp7, containerAcl, comp8, deletedContainerName, deletedContainerVersion, comp9, sourceContainerName, sourceLeaseId, comp10, action, duration, proposedLeaseId, action1, leaseId1, action2, action3, breakPeriod, action4, proposedLeaseId1, include1, delimiter, snapshot, versionId, range, rangeGetContentMD5, rangeGetContentCRC64, encryptionKey, encryptionKeySha256, encryptionAlgorithm, ifMatch, ifNoneMatch, ifTags, deleteSnapshots, blobDeleteType, comp11, expiryOptions, expiresOn, blobCacheControl, blobContentType, blobContentMD5, blobContentEncoding, blobContentLanguage, blobContentDisposition, comp12, immutabilityPolicyExpiry, immutabilityPolicyMode, comp13, legalHold, encryptionScope, comp14, tier, rehydratePriority, sourceIfModifiedSince, sourceIfUnmodifiedSince, sourceIfMatch, sourceIfNoneMatch, sourceIfTags, copySource, blobTagsString, sealBlob, legalHold1, xMsRequiresSync, sourceContentMD5, copySourceAuthorization, copySourceTags, comp15, copyActionAbortConstant, copyId, comp16, tier1, queryRequest, comp17, comp18, tags, transactionalContentMD5, transactionalContentCrc64, blobType, blobContentLength, blobSequenceNumber, contentType1, body1, accept2, comp19, pageWrite, ifSequenceNumberLessThanOrEqualTo, ifSequenceNumberLessThan, ifSequenceNumberEqualTo, pageWrite1, sourceUrl, sourceRange, sourceContentCrc64, range1, comp20, prevsnapshot, prevSnapshotUrl, sequenceNumberAction, comp21, blobType1, comp22, maxSize, appendPosition, sourceRange1, comp23, blobType2, copySourceBlobProperties, comp24, blockId, blocks, comp25, listType;
 var init_parameters = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/generated/src/models/parameters.js"() {
+    "use strict";
     init_coreHttp();
     init_mappers();
     contentType = {
@@ -51221,13 +51606,24 @@ var init_parameters = __esm({
 var Service, xmlSerializer, setPropertiesOperationSpec, getPropertiesOperationSpec, getStatisticsOperationSpec, listContainersSegmentOperationSpec, getUserDelegationKeyOperationSpec, getAccountInfoOperationSpec, submitBatchOperationSpec, filterBlobsOperationSpec;
 var init_service = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/generated/src/operations/service.js"() {
+    "use strict";
     init_coreHttp();
     init_mappers();
     init_parameters();
     Service = class {
+      /**
+       * Initialize a new instance of the class Service class.
+       * @param client Reference to the service client
+       */
       constructor(client) {
         this.client = client;
       }
+      /**
+       * Sets properties for a storage account's Blob service endpoint, including properties for Storage
+       * Analytics and CORS (Cross-Origin Resource Sharing) rules
+       * @param blobServiceProperties The StorageService properties.
+       * @param options The options parameters.
+       */
       setProperties(blobServiceProperties2, options) {
         const operationArguments = {
           blobServiceProperties: blobServiceProperties2,
@@ -51235,24 +51631,45 @@ var init_service = __esm({
         };
         return this.client.sendOperationRequest(operationArguments, setPropertiesOperationSpec);
       }
+      /**
+       * gets the properties of a storage account's Blob service, including properties for Storage Analytics
+       * and CORS (Cross-Origin Resource Sharing) rules.
+       * @param options The options parameters.
+       */
       getProperties(options) {
         const operationArguments = {
           options: operationOptionsToRequestOptionsBase(options || {})
         };
         return this.client.sendOperationRequest(operationArguments, getPropertiesOperationSpec);
       }
+      /**
+       * Retrieves statistics related to replication for the Blob service. It is only available on the
+       * secondary location endpoint when read-access geo-redundant replication is enabled for the storage
+       * account.
+       * @param options The options parameters.
+       */
       getStatistics(options) {
         const operationArguments = {
           options: operationOptionsToRequestOptionsBase(options || {})
         };
         return this.client.sendOperationRequest(operationArguments, getStatisticsOperationSpec);
       }
+      /**
+       * The List Containers Segment operation returns a list of the containers under the specified account
+       * @param options The options parameters.
+       */
       listContainersSegment(options) {
         const operationArguments = {
           options: operationOptionsToRequestOptionsBase(options || {})
         };
         return this.client.sendOperationRequest(operationArguments, listContainersSegmentOperationSpec);
       }
+      /**
+       * Retrieves a user delegation key for the Blob service. This is only a valid operation when using
+       * bearer token authentication.
+       * @param keyInfo Key information
+       * @param options The options parameters.
+       */
       getUserDelegationKey(keyInfo2, options) {
         const operationArguments = {
           keyInfo: keyInfo2,
@@ -51260,12 +51677,24 @@ var init_service = __esm({
         };
         return this.client.sendOperationRequest(operationArguments, getUserDelegationKeyOperationSpec);
       }
+      /**
+       * Returns the sku name and account kind
+       * @param options The options parameters.
+       */
       getAccountInfo(options) {
         const operationArguments = {
           options: operationOptionsToRequestOptionsBase(options || {})
         };
         return this.client.sendOperationRequest(operationArguments, getAccountInfoOperationSpec);
       }
+      /**
+       * The Batch operation allows multiple API calls to be embedded into a single HTTP request.
+       * @param contentLength The length of the request.
+       * @param multipartContentType Required. The value of this header must be multipart/mixed with a batch
+       *                             boundary. Example header value: multipart/mixed; boundary=batch_<GUID>
+       * @param body Initial data
+       * @param options The options parameters.
+       */
       submitBatch(contentLength2, multipartContentType2, body2, options) {
         const operationArguments = {
           contentLength: contentLength2,
@@ -51275,6 +51704,12 @@ var init_service = __esm({
         };
         return this.client.sendOperationRequest(operationArguments, submitBatchOperationSpec);
       }
+      /**
+       * The Filter Blobs operation enables callers to list blobs across all containers whose tags match a
+       * given search expression.  Filter blobs searches across all containers within a storage account but
+       * can be scoped within the expression to a single container.
+       * @param options The options parameters.
+       */
       filterBlobs(options) {
         const operationArguments = {
           options: operationOptionsToRequestOptionsBase(options || {})
@@ -51282,7 +51717,11 @@ var init_service = __esm({
         return this.client.sendOperationRequest(operationArguments, filterBlobsOperationSpec);
       }
     };
-    xmlSerializer = new Serializer(mappers_exports, true);
+    xmlSerializer = new Serializer(
+      mappers_exports,
+      /* isXml */
+      true
+    );
     setPropertiesOperationSpec = {
       path: "/",
       httpMethod: "PUT",
@@ -51514,55 +51953,98 @@ var init_service = __esm({
 var Container, xmlSerializer2, createOperationSpec, getPropertiesOperationSpec2, deleteOperationSpec, setMetadataOperationSpec, getAccessPolicyOperationSpec, setAccessPolicyOperationSpec, restoreOperationSpec, renameOperationSpec, submitBatchOperationSpec2, filterBlobsOperationSpec2, acquireLeaseOperationSpec, releaseLeaseOperationSpec, renewLeaseOperationSpec, breakLeaseOperationSpec, changeLeaseOperationSpec, listBlobFlatSegmentOperationSpec, listBlobHierarchySegmentOperationSpec, getAccountInfoOperationSpec2;
 var init_container = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/generated/src/operations/container.js"() {
+    "use strict";
     init_coreHttp();
     init_mappers();
     init_parameters();
     Container = class {
+      /**
+       * Initialize a new instance of the class Container class.
+       * @param client Reference to the service client
+       */
       constructor(client) {
         this.client = client;
       }
+      /**
+       * creates a new container under the specified account. If the container with the same name already
+       * exists, the operation fails
+       * @param options The options parameters.
+       */
       create(options) {
         const operationArguments = {
           options: operationOptionsToRequestOptionsBase(options || {})
         };
         return this.client.sendOperationRequest(operationArguments, createOperationSpec);
       }
+      /**
+       * returns all user-defined metadata and system properties for the specified container. The data
+       * returned does not include the container's list of blobs
+       * @param options The options parameters.
+       */
       getProperties(options) {
         const operationArguments = {
           options: operationOptionsToRequestOptionsBase(options || {})
         };
         return this.client.sendOperationRequest(operationArguments, getPropertiesOperationSpec2);
       }
+      /**
+       * operation marks the specified container for deletion. The container and any blobs contained within
+       * it are later deleted during garbage collection
+       * @param options The options parameters.
+       */
       delete(options) {
         const operationArguments = {
           options: operationOptionsToRequestOptionsBase(options || {})
         };
         return this.client.sendOperationRequest(operationArguments, deleteOperationSpec);
       }
+      /**
+       * operation sets one or more user-defined name-value pairs for the specified container.
+       * @param options The options parameters.
+       */
       setMetadata(options) {
         const operationArguments = {
           options: operationOptionsToRequestOptionsBase(options || {})
         };
         return this.client.sendOperationRequest(operationArguments, setMetadataOperationSpec);
       }
+      /**
+       * gets the permissions for the specified container. The permissions indicate whether container data
+       * may be accessed publicly.
+       * @param options The options parameters.
+       */
       getAccessPolicy(options) {
         const operationArguments = {
           options: operationOptionsToRequestOptionsBase(options || {})
         };
         return this.client.sendOperationRequest(operationArguments, getAccessPolicyOperationSpec);
       }
+      /**
+       * sets the permissions for the specified container. The permissions indicate whether blobs in a
+       * container may be accessed publicly.
+       * @param options The options parameters.
+       */
       setAccessPolicy(options) {
         const operationArguments = {
           options: operationOptionsToRequestOptionsBase(options || {})
         };
         return this.client.sendOperationRequest(operationArguments, setAccessPolicyOperationSpec);
       }
+      /**
+       * Restores a previously-deleted container.
+       * @param options The options parameters.
+       */
       restore(options) {
         const operationArguments = {
           options: operationOptionsToRequestOptionsBase(options || {})
         };
         return this.client.sendOperationRequest(operationArguments, restoreOperationSpec);
       }
+      /**
+       * Renames an existing container.
+       * @param sourceContainerName Required.  Specifies the name of the container to rename.
+       * @param options The options parameters.
+       */
       rename(sourceContainerName2, options) {
         const operationArguments = {
           sourceContainerName: sourceContainerName2,
@@ -51570,6 +52052,14 @@ var init_container = __esm({
         };
         return this.client.sendOperationRequest(operationArguments, renameOperationSpec);
       }
+      /**
+       * The Batch operation allows multiple API calls to be embedded into a single HTTP request.
+       * @param contentLength The length of the request.
+       * @param multipartContentType Required. The value of this header must be multipart/mixed with a batch
+       *                             boundary. Example header value: multipart/mixed; boundary=batch_<GUID>
+       * @param body Initial data
+       * @param options The options parameters.
+       */
       submitBatch(contentLength2, multipartContentType2, body2, options) {
         const operationArguments = {
           contentLength: contentLength2,
@@ -51579,18 +52069,34 @@ var init_container = __esm({
         };
         return this.client.sendOperationRequest(operationArguments, submitBatchOperationSpec2);
       }
+      /**
+       * The Filter Blobs operation enables callers to list blobs in a container whose tags match a given
+       * search expression.  Filter blobs searches within the given container.
+       * @param options The options parameters.
+       */
       filterBlobs(options) {
         const operationArguments = {
           options: operationOptionsToRequestOptionsBase(options || {})
         };
         return this.client.sendOperationRequest(operationArguments, filterBlobsOperationSpec2);
       }
+      /**
+       * [Update] establishes and manages a lock on a container for delete operations. The lock duration can
+       * be 15 to 60 seconds, or can be infinite
+       * @param options The options parameters.
+       */
       acquireLease(options) {
         const operationArguments = {
           options: operationOptionsToRequestOptionsBase(options || {})
         };
         return this.client.sendOperationRequest(operationArguments, acquireLeaseOperationSpec);
       }
+      /**
+       * [Update] establishes and manages a lock on a container for delete operations. The lock duration can
+       * be 15 to 60 seconds, or can be infinite
+       * @param leaseId Specifies the current lease ID on the resource.
+       * @param options The options parameters.
+       */
       releaseLease(leaseId2, options) {
         const operationArguments = {
           leaseId: leaseId2,
@@ -51598,6 +52104,12 @@ var init_container = __esm({
         };
         return this.client.sendOperationRequest(operationArguments, releaseLeaseOperationSpec);
       }
+      /**
+       * [Update] establishes and manages a lock on a container for delete operations. The lock duration can
+       * be 15 to 60 seconds, or can be infinite
+       * @param leaseId Specifies the current lease ID on the resource.
+       * @param options The options parameters.
+       */
       renewLease(leaseId2, options) {
         const operationArguments = {
           leaseId: leaseId2,
@@ -51605,12 +52117,26 @@ var init_container = __esm({
         };
         return this.client.sendOperationRequest(operationArguments, renewLeaseOperationSpec);
       }
+      /**
+       * [Update] establishes and manages a lock on a container for delete operations. The lock duration can
+       * be 15 to 60 seconds, or can be infinite
+       * @param options The options parameters.
+       */
       breakLease(options) {
         const operationArguments = {
           options: operationOptionsToRequestOptionsBase(options || {})
         };
         return this.client.sendOperationRequest(operationArguments, breakLeaseOperationSpec);
       }
+      /**
+       * [Update] establishes and manages a lock on a container for delete operations. The lock duration can
+       * be 15 to 60 seconds, or can be infinite
+       * @param leaseId Specifies the current lease ID on the resource.
+       * @param proposedLeaseId Proposed lease ID, in a GUID string format. The Blob service returns 400
+       *                        (Invalid request) if the proposed lease ID is not in the correct format. See Guid Constructor
+       *                        (String) for a list of valid GUID string formats.
+       * @param options The options parameters.
+       */
       changeLease(leaseId2, proposedLeaseId2, options) {
         const operationArguments = {
           leaseId: leaseId2,
@@ -51619,12 +52145,24 @@ var init_container = __esm({
         };
         return this.client.sendOperationRequest(operationArguments, changeLeaseOperationSpec);
       }
+      /**
+       * [Update] The List Blobs operation returns a list of the blobs under the specified container
+       * @param options The options parameters.
+       */
       listBlobFlatSegment(options) {
         const operationArguments = {
           options: operationOptionsToRequestOptionsBase(options || {})
         };
         return this.client.sendOperationRequest(operationArguments, listBlobFlatSegmentOperationSpec);
       }
+      /**
+       * [Update] The List Blobs operation returns a list of the blobs under the specified container
+       * @param delimiter When the request includes this parameter, the operation returns a BlobPrefix
+       *                  element in the response body that acts as a placeholder for all blobs whose names begin with the
+       *                  same substring up to the appearance of the delimiter character. The delimiter may be a single
+       *                  character or a string.
+       * @param options The options parameters.
+       */
       listBlobHierarchySegment(delimiter2, options) {
         const operationArguments = {
           delimiter: delimiter2,
@@ -51632,6 +52170,10 @@ var init_container = __esm({
         };
         return this.client.sendOperationRequest(operationArguments, listBlobHierarchySegmentOperationSpec);
       }
+      /**
+       * Returns the sku name and account kind
+       * @param options The options parameters.
+       */
       getAccountInfo(options) {
         const operationArguments = {
           options: operationOptionsToRequestOptionsBase(options || {})
@@ -51639,7 +52181,11 @@ var init_container = __esm({
         return this.client.sendOperationRequest(operationArguments, getAccountInfoOperationSpec2);
       }
     };
-    xmlSerializer2 = new Serializer(mappers_exports, true);
+    xmlSerializer2 = new Serializer(
+      mappers_exports,
+      /* isXml */
+      true
+    );
     createOperationSpec = {
       path: "/{containerName}",
       httpMethod: "PUT",
@@ -52178,37 +52724,76 @@ var init_container = __esm({
 var Blob3, xmlSerializer3, downloadOperationSpec, getPropertiesOperationSpec3, deleteOperationSpec2, undeleteOperationSpec, setExpiryOperationSpec, setHttpHeadersOperationSpec, setImmutabilityPolicyOperationSpec, deleteImmutabilityPolicyOperationSpec, setLegalHoldOperationSpec, setMetadataOperationSpec2, acquireLeaseOperationSpec2, releaseLeaseOperationSpec2, renewLeaseOperationSpec2, changeLeaseOperationSpec2, breakLeaseOperationSpec2, createSnapshotOperationSpec, startCopyFromURLOperationSpec, copyFromURLOperationSpec, abortCopyFromURLOperationSpec, setTierOperationSpec, getAccountInfoOperationSpec3, queryOperationSpec, getTagsOperationSpec, setTagsOperationSpec;
 var init_blob = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/generated/src/operations/blob.js"() {
+    "use strict";
     init_coreHttp();
     init_mappers();
     init_parameters();
     Blob3 = class {
+      /**
+       * Initialize a new instance of the class Blob class.
+       * @param client Reference to the service client
+       */
       constructor(client) {
         this.client = client;
       }
+      /**
+       * The Download operation reads or downloads a blob from the system, including its metadata and
+       * properties. You can also call Download to read a snapshot.
+       * @param options The options parameters.
+       */
       download(options) {
         const operationArguments = {
           options: operationOptionsToRequestOptionsBase(options || {})
         };
         return this.client.sendOperationRequest(operationArguments, downloadOperationSpec);
       }
+      /**
+       * The Get Properties operation returns all user-defined metadata, standard HTTP properties, and system
+       * properties for the blob. It does not return the content of the blob.
+       * @param options The options parameters.
+       */
       getProperties(options) {
         const operationArguments = {
           options: operationOptionsToRequestOptionsBase(options || {})
         };
         return this.client.sendOperationRequest(operationArguments, getPropertiesOperationSpec3);
       }
+      /**
+       * If the storage account's soft delete feature is disabled then, when a blob is deleted, it is
+       * permanently removed from the storage account. If the storage account's soft delete feature is
+       * enabled, then, when a blob is deleted, it is marked for deletion and becomes inaccessible
+       * immediately. However, the blob service retains the blob or snapshot for the number of days specified
+       * by the DeleteRetentionPolicy section of [Storage service properties]
+       * (Set-Blob-Service-Properties.md). After the specified number of days has passed, the blob's data is
+       * permanently removed from the storage account. Note that you continue to be charged for the
+       * soft-deleted blob's storage until it is permanently removed. Use the List Blobs API and specify the
+       * "include=deleted" query parameter to discover which blobs and snapshots have been soft deleted. You
+       * can then use the Undelete Blob API to restore a soft-deleted blob. All other operations on a
+       * soft-deleted blob or snapshot causes the service to return an HTTP status code of 404
+       * (ResourceNotFound).
+       * @param options The options parameters.
+       */
       delete(options) {
         const operationArguments = {
           options: operationOptionsToRequestOptionsBase(options || {})
         };
         return this.client.sendOperationRequest(operationArguments, deleteOperationSpec2);
       }
+      /**
+       * Undelete a blob that was previously soft deleted
+       * @param options The options parameters.
+       */
       undelete(options) {
         const operationArguments = {
           options: operationOptionsToRequestOptionsBase(options || {})
         };
         return this.client.sendOperationRequest(operationArguments, undeleteOperationSpec);
       }
+      /**
+       * Sets the time a blob will expire and be deleted.
+       * @param expiryOptions Required. Indicates mode of the expiry time
+       * @param options The options parameters.
+       */
       setExpiry(expiryOptions2, options) {
         const operationArguments = {
           expiryOptions: expiryOptions2,
@@ -52216,24 +52801,41 @@ var init_blob = __esm({
         };
         return this.client.sendOperationRequest(operationArguments, setExpiryOperationSpec);
       }
+      /**
+       * The Set HTTP Headers operation sets system properties on the blob
+       * @param options The options parameters.
+       */
       setHttpHeaders(options) {
         const operationArguments = {
           options: operationOptionsToRequestOptionsBase(options || {})
         };
         return this.client.sendOperationRequest(operationArguments, setHttpHeadersOperationSpec);
       }
+      /**
+       * The Set Immutability Policy operation sets the immutability policy on the blob
+       * @param options The options parameters.
+       */
       setImmutabilityPolicy(options) {
         const operationArguments = {
           options: operationOptionsToRequestOptionsBase(options || {})
         };
         return this.client.sendOperationRequest(operationArguments, setImmutabilityPolicyOperationSpec);
       }
+      /**
+       * The Delete Immutability Policy operation deletes the immutability policy on the blob
+       * @param options The options parameters.
+       */
       deleteImmutabilityPolicy(options) {
         const operationArguments = {
           options: operationOptionsToRequestOptionsBase(options || {})
         };
         return this.client.sendOperationRequest(operationArguments, deleteImmutabilityPolicyOperationSpec);
       }
+      /**
+       * The Set Legal Hold operation sets a legal hold on the blob.
+       * @param legalHold Specified if a legal hold should be set on the blob.
+       * @param options The options parameters.
+       */
       setLegalHold(legalHold2, options) {
         const operationArguments = {
           legalHold: legalHold2,
@@ -52241,18 +52843,34 @@ var init_blob = __esm({
         };
         return this.client.sendOperationRequest(operationArguments, setLegalHoldOperationSpec);
       }
+      /**
+       * The Set Blob Metadata operation sets user-defined metadata for the specified blob as one or more
+       * name-value pairs
+       * @param options The options parameters.
+       */
       setMetadata(options) {
         const operationArguments = {
           options: operationOptionsToRequestOptionsBase(options || {})
         };
         return this.client.sendOperationRequest(operationArguments, setMetadataOperationSpec2);
       }
+      /**
+       * [Update] The Lease Blob operation establishes and manages a lock on a blob for write and delete
+       * operations
+       * @param options The options parameters.
+       */
       acquireLease(options) {
         const operationArguments = {
           options: operationOptionsToRequestOptionsBase(options || {})
         };
         return this.client.sendOperationRequest(operationArguments, acquireLeaseOperationSpec2);
       }
+      /**
+       * [Update] The Lease Blob operation establishes and manages a lock on a blob for write and delete
+       * operations
+       * @param leaseId Specifies the current lease ID on the resource.
+       * @param options The options parameters.
+       */
       releaseLease(leaseId2, options) {
         const operationArguments = {
           leaseId: leaseId2,
@@ -52260,6 +52878,12 @@ var init_blob = __esm({
         };
         return this.client.sendOperationRequest(operationArguments, releaseLeaseOperationSpec2);
       }
+      /**
+       * [Update] The Lease Blob operation establishes and manages a lock on a blob for write and delete
+       * operations
+       * @param leaseId Specifies the current lease ID on the resource.
+       * @param options The options parameters.
+       */
       renewLease(leaseId2, options) {
         const operationArguments = {
           leaseId: leaseId2,
@@ -52267,6 +52891,15 @@ var init_blob = __esm({
         };
         return this.client.sendOperationRequest(operationArguments, renewLeaseOperationSpec2);
       }
+      /**
+       * [Update] The Lease Blob operation establishes and manages a lock on a blob for write and delete
+       * operations
+       * @param leaseId Specifies the current lease ID on the resource.
+       * @param proposedLeaseId Proposed lease ID, in a GUID string format. The Blob service returns 400
+       *                        (Invalid request) if the proposed lease ID is not in the correct format. See Guid Constructor
+       *                        (String) for a list of valid GUID string formats.
+       * @param options The options parameters.
+       */
       changeLease(leaseId2, proposedLeaseId2, options) {
         const operationArguments = {
           leaseId: leaseId2,
@@ -52275,18 +52908,35 @@ var init_blob = __esm({
         };
         return this.client.sendOperationRequest(operationArguments, changeLeaseOperationSpec2);
       }
+      /**
+       * [Update] The Lease Blob operation establishes and manages a lock on a blob for write and delete
+       * operations
+       * @param options The options parameters.
+       */
       breakLease(options) {
         const operationArguments = {
           options: operationOptionsToRequestOptionsBase(options || {})
         };
         return this.client.sendOperationRequest(operationArguments, breakLeaseOperationSpec2);
       }
+      /**
+       * The Create Snapshot operation creates a read-only snapshot of a blob
+       * @param options The options parameters.
+       */
       createSnapshot(options) {
         const operationArguments = {
           options: operationOptionsToRequestOptionsBase(options || {})
         };
         return this.client.sendOperationRequest(operationArguments, createSnapshotOperationSpec);
       }
+      /**
+       * The Start Copy From URL operation copies a blob or an internet resource to a new blob.
+       * @param copySource Specifies the name of the source page blob snapshot. This value is a URL of up to
+       *                   2 KB in length that specifies a page blob snapshot. The value should be URL-encoded as it would
+       *                   appear in a request URI. The source blob must either be public or must be authenticated via a shared
+       *                   access signature.
+       * @param options The options parameters.
+       */
       startCopyFromURL(copySource2, options) {
         const operationArguments = {
           copySource: copySource2,
@@ -52294,6 +52944,15 @@ var init_blob = __esm({
         };
         return this.client.sendOperationRequest(operationArguments, startCopyFromURLOperationSpec);
       }
+      /**
+       * The Copy From URL operation copies a blob or an internet resource to a new blob. It will not return
+       * a response until the copy is complete.
+       * @param copySource Specifies the name of the source page blob snapshot. This value is a URL of up to
+       *                   2 KB in length that specifies a page blob snapshot. The value should be URL-encoded as it would
+       *                   appear in a request URI. The source blob must either be public or must be authenticated via a shared
+       *                   access signature.
+       * @param options The options parameters.
+       */
       copyFromURL(copySource2, options) {
         const operationArguments = {
           copySource: copySource2,
@@ -52301,6 +52960,13 @@ var init_blob = __esm({
         };
         return this.client.sendOperationRequest(operationArguments, copyFromURLOperationSpec);
       }
+      /**
+       * The Abort Copy From URL operation aborts a pending Copy From URL operation, and leaves a destination
+       * blob with zero length and full metadata.
+       * @param copyId The copy identifier provided in the x-ms-copy-id header of the original Copy Blob
+       *               operation.
+       * @param options The options parameters.
+       */
       abortCopyFromURL(copyId2, options) {
         const operationArguments = {
           copyId: copyId2,
@@ -52308,6 +52974,15 @@ var init_blob = __esm({
         };
         return this.client.sendOperationRequest(operationArguments, abortCopyFromURLOperationSpec);
       }
+      /**
+       * The Set Tier operation sets the tier on a blob. The operation is allowed on a page blob in a premium
+       * storage account and on a block blob in a blob storage account (locally redundant storage only). A
+       * premium page blob's tier determines the allowed size, IOPS, and bandwidth of the blob. A block
+       * blob's tier determines Hot/Cool/Archive storage type. This operation does not update the blob's
+       * ETag.
+       * @param tier Indicates the tier to be set on the blob.
+       * @param options The options parameters.
+       */
       setTier(tier2, options) {
         const operationArguments = {
           tier: tier2,
@@ -52315,24 +52990,41 @@ var init_blob = __esm({
         };
         return this.client.sendOperationRequest(operationArguments, setTierOperationSpec);
       }
+      /**
+       * Returns the sku name and account kind
+       * @param options The options parameters.
+       */
       getAccountInfo(options) {
         const operationArguments = {
           options: operationOptionsToRequestOptionsBase(options || {})
         };
         return this.client.sendOperationRequest(operationArguments, getAccountInfoOperationSpec3);
       }
+      /**
+       * The Query operation enables users to select/project on blob data by providing simple query
+       * expressions.
+       * @param options The options parameters.
+       */
       query(options) {
         const operationArguments = {
           options: operationOptionsToRequestOptionsBase(options || {})
         };
         return this.client.sendOperationRequest(operationArguments, queryOperationSpec);
       }
+      /**
+       * The Get Tags operation enables users to get the tags associated with a blob.
+       * @param options The options parameters.
+       */
       getTags(options) {
         const operationArguments = {
           options: operationOptionsToRequestOptionsBase(options || {})
         };
         return this.client.sendOperationRequest(operationArguments, getTagsOperationSpec);
       }
+      /**
+       * The Set Tags operation enables users to set tags on a blob.
+       * @param options The options parameters.
+       */
       setTags(options) {
         const operationArguments = {
           options: operationOptionsToRequestOptionsBase(options || {})
@@ -52340,7 +53032,11 @@ var init_blob = __esm({
         return this.client.sendOperationRequest(operationArguments, setTagsOperationSpec);
       }
     };
-    xmlSerializer3 = new Serializer(mappers_exports, true);
+    xmlSerializer3 = new Serializer(
+      mappers_exports,
+      /* isXml */
+      true
+    );
     downloadOperationSpec = {
       path: "/{containerName}/{blob}",
       httpMethod: "GET",
@@ -53109,13 +53805,25 @@ var init_blob = __esm({
 var PageBlob, xmlSerializer4, serializer, createOperationSpec2, uploadPagesOperationSpec, clearPagesOperationSpec, uploadPagesFromURLOperationSpec, getPageRangesOperationSpec, getPageRangesDiffOperationSpec, resizeOperationSpec, updateSequenceNumberOperationSpec, copyIncrementalOperationSpec;
 var init_pageBlob = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/generated/src/operations/pageBlob.js"() {
+    "use strict";
     init_coreHttp();
     init_mappers();
     init_parameters();
     PageBlob = class {
+      /**
+       * Initialize a new instance of the class PageBlob class.
+       * @param client Reference to the service client
+       */
       constructor(client) {
         this.client = client;
       }
+      /**
+       * The Create operation creates a new page blob.
+       * @param contentLength The length of the request.
+       * @param blobContentLength This header specifies the maximum size for the page blob, up to 1 TB. The
+       *                          page blob size must be aligned to a 512-byte boundary.
+       * @param options The options parameters.
+       */
       create(contentLength2, blobContentLength2, options) {
         const operationArguments = {
           contentLength: contentLength2,
@@ -53124,6 +53832,12 @@ var init_pageBlob = __esm({
         };
         return this.client.sendOperationRequest(operationArguments, createOperationSpec2);
       }
+      /**
+       * The Upload Pages operation writes a range of pages to a page blob
+       * @param contentLength The length of the request.
+       * @param body Initial data
+       * @param options The options parameters.
+       */
       uploadPages(contentLength2, body2, options) {
         const operationArguments = {
           contentLength: contentLength2,
@@ -53132,6 +53846,11 @@ var init_pageBlob = __esm({
         };
         return this.client.sendOperationRequest(operationArguments, uploadPagesOperationSpec);
       }
+      /**
+       * The Clear Pages operation clears a set of pages from a page blob
+       * @param contentLength The length of the request.
+       * @param options The options parameters.
+       */
       clearPages(contentLength2, options) {
         const operationArguments = {
           contentLength: contentLength2,
@@ -53139,6 +53858,17 @@ var init_pageBlob = __esm({
         };
         return this.client.sendOperationRequest(operationArguments, clearPagesOperationSpec);
       }
+      /**
+       * The Upload Pages operation writes a range of pages to a page blob where the contents are read from a
+       * URL
+       * @param sourceUrl Specify a URL to the copy source.
+       * @param sourceRange Bytes of source data in the specified range. The length of this range should
+       *                    match the ContentLength header and x-ms-range/Range destination range header.
+       * @param contentLength The length of the request.
+       * @param range The range of bytes to which the source range would be written. The range should be 512
+       *              aligned and range-end is required.
+       * @param options The options parameters.
+       */
       uploadPagesFromURL(sourceUrl2, sourceRange2, contentLength2, range2, options) {
         const operationArguments = {
           sourceUrl: sourceUrl2,
@@ -53149,18 +53879,34 @@ var init_pageBlob = __esm({
         };
         return this.client.sendOperationRequest(operationArguments, uploadPagesFromURLOperationSpec);
       }
+      /**
+       * The Get Page Ranges operation returns the list of valid page ranges for a page blob or snapshot of a
+       * page blob
+       * @param options The options parameters.
+       */
       getPageRanges(options) {
         const operationArguments = {
           options: operationOptionsToRequestOptionsBase(options || {})
         };
         return this.client.sendOperationRequest(operationArguments, getPageRangesOperationSpec);
       }
+      /**
+       * The Get Page Ranges Diff operation returns the list of valid page ranges for a page blob that were
+       * changed between target blob and previous snapshot.
+       * @param options The options parameters.
+       */
       getPageRangesDiff(options) {
         const operationArguments = {
           options: operationOptionsToRequestOptionsBase(options || {})
         };
         return this.client.sendOperationRequest(operationArguments, getPageRangesDiffOperationSpec);
       }
+      /**
+       * Resize the Blob
+       * @param blobContentLength This header specifies the maximum size for the page blob, up to 1 TB. The
+       *                          page blob size must be aligned to a 512-byte boundary.
+       * @param options The options parameters.
+       */
       resize(blobContentLength2, options) {
         const operationArguments = {
           blobContentLength: blobContentLength2,
@@ -53168,6 +53914,13 @@ var init_pageBlob = __esm({
         };
         return this.client.sendOperationRequest(operationArguments, resizeOperationSpec);
       }
+      /**
+       * Update the sequence number of the blob
+       * @param sequenceNumberAction Required if the x-ms-blob-sequence-number header is set for the request.
+       *                             This property applies to page blobs only. This property indicates how the service should modify the
+       *                             blob's sequence number
+       * @param options The options parameters.
+       */
       updateSequenceNumber(sequenceNumberAction2, options) {
         const operationArguments = {
           sequenceNumberAction: sequenceNumberAction2,
@@ -53175,6 +53928,18 @@ var init_pageBlob = __esm({
         };
         return this.client.sendOperationRequest(operationArguments, updateSequenceNumberOperationSpec);
       }
+      /**
+       * The Copy Incremental operation copies a snapshot of the source page blob to a destination page blob.
+       * The snapshot is copied such that only the differential changes between the previously copied
+       * snapshot are transferred to the destination. The copied snapshots are complete copies of the
+       * original snapshot and can be read or copied from as usual. This API is supported since REST version
+       * 2016-05-31.
+       * @param copySource Specifies the name of the source page blob snapshot. This value is a URL of up to
+       *                   2 KB in length that specifies a page blob snapshot. The value should be URL-encoded as it would
+       *                   appear in a request URI. The source blob must either be public or must be authenticated via a shared
+       *                   access signature.
+       * @param options The options parameters.
+       */
       copyIncremental(copySource2, options) {
         const operationArguments = {
           copySource: copySource2,
@@ -53183,8 +53948,16 @@ var init_pageBlob = __esm({
         return this.client.sendOperationRequest(operationArguments, copyIncrementalOperationSpec);
       }
     };
-    xmlSerializer4 = new Serializer(mappers_exports, true);
-    serializer = new Serializer(mappers_exports, false);
+    xmlSerializer4 = new Serializer(
+      mappers_exports,
+      /* isXml */
+      true
+    );
+    serializer = new Serializer(
+      mappers_exports,
+      /* isXml */
+      false
+    );
     createOperationSpec2 = {
       path: "/{containerName}/{blob}",
       httpMethod: "PUT",
@@ -53532,13 +54305,23 @@ var init_pageBlob = __esm({
 var AppendBlob, xmlSerializer5, serializer2, createOperationSpec3, appendBlockOperationSpec, appendBlockFromUrlOperationSpec, sealOperationSpec;
 var init_appendBlob = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/generated/src/operations/appendBlob.js"() {
+    "use strict";
     init_coreHttp();
     init_mappers();
     init_parameters();
     AppendBlob = class {
+      /**
+       * Initialize a new instance of the class AppendBlob class.
+       * @param client Reference to the service client
+       */
       constructor(client) {
         this.client = client;
       }
+      /**
+       * The Create Append Blob operation creates a new append blob.
+       * @param contentLength The length of the request.
+       * @param options The options parameters.
+       */
       create(contentLength2, options) {
         const operationArguments = {
           contentLength: contentLength2,
@@ -53546,6 +54329,14 @@ var init_appendBlob = __esm({
         };
         return this.client.sendOperationRequest(operationArguments, createOperationSpec3);
       }
+      /**
+       * The Append Block operation commits a new block of data to the end of an existing append blob. The
+       * Append Block operation is permitted only if the blob was created with x-ms-blob-type set to
+       * AppendBlob. Append Block is supported only on version 2015-02-21 version or later.
+       * @param contentLength The length of the request.
+       * @param body Initial data
+       * @param options The options parameters.
+       */
       appendBlock(contentLength2, body2, options) {
         const operationArguments = {
           contentLength: contentLength2,
@@ -53554,6 +54345,15 @@ var init_appendBlob = __esm({
         };
         return this.client.sendOperationRequest(operationArguments, appendBlockOperationSpec);
       }
+      /**
+       * The Append Block operation commits a new block of data to the end of an existing append blob where
+       * the contents are read from a source url. The Append Block operation is permitted only if the blob
+       * was created with x-ms-blob-type set to AppendBlob. Append Block is supported only on version
+       * 2015-02-21 version or later.
+       * @param sourceUrl Specify a URL to the copy source.
+       * @param contentLength The length of the request.
+       * @param options The options parameters.
+       */
       appendBlockFromUrl(sourceUrl2, contentLength2, options) {
         const operationArguments = {
           sourceUrl: sourceUrl2,
@@ -53562,6 +54362,11 @@ var init_appendBlob = __esm({
         };
         return this.client.sendOperationRequest(operationArguments, appendBlockFromUrlOperationSpec);
       }
+      /**
+       * The Seal operation seals the Append Blob to make it read-only. Seal is supported only on version
+       * 2019-12-12 version or later.
+       * @param options The options parameters.
+       */
       seal(options) {
         const operationArguments = {
           options: operationOptionsToRequestOptionsBase(options || {})
@@ -53569,8 +54374,16 @@ var init_appendBlob = __esm({
         return this.client.sendOperationRequest(operationArguments, sealOperationSpec);
       }
     };
-    xmlSerializer5 = new Serializer(mappers_exports, true);
-    serializer2 = new Serializer(mappers_exports, false);
+    xmlSerializer5 = new Serializer(
+      mappers_exports,
+      /* isXml */
+      true
+    );
+    serializer2 = new Serializer(
+      mappers_exports,
+      /* isXml */
+      false
+    );
     createOperationSpec3 = {
       path: "/{containerName}/{blob}",
       httpMethod: "PUT",
@@ -53735,13 +54548,27 @@ var init_appendBlob = __esm({
 var BlockBlob, xmlSerializer6, serializer3, uploadOperationSpec, putBlobFromUrlOperationSpec, stageBlockOperationSpec, stageBlockFromURLOperationSpec, commitBlockListOperationSpec, getBlockListOperationSpec;
 var init_blockBlob = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/generated/src/operations/blockBlob.js"() {
+    "use strict";
     init_coreHttp();
     init_mappers();
     init_parameters();
     BlockBlob = class {
+      /**
+       * Initialize a new instance of the class BlockBlob class.
+       * @param client Reference to the service client
+       */
       constructor(client) {
         this.client = client;
       }
+      /**
+       * The Upload Block Blob operation updates the content of an existing block blob. Updating an existing
+       * block blob overwrites any existing metadata on the blob. Partial updates are not supported with Put
+       * Blob; the content of the existing blob is overwritten with the content of the new blob. To perform a
+       * partial update of the content of a block blob, use the Put Block List operation.
+       * @param contentLength The length of the request.
+       * @param body Initial data
+       * @param options The options parameters.
+       */
       upload(contentLength2, body2, options) {
         const operationArguments = {
           contentLength: contentLength2,
@@ -53750,6 +54577,19 @@ var init_blockBlob = __esm({
         };
         return this.client.sendOperationRequest(operationArguments, uploadOperationSpec);
       }
+      /**
+       * The Put Blob from URL operation creates a new Block Blob where the contents of the blob are read
+       * from a given URL.  This API is supported beginning with the 2020-04-08 version. Partial updates are
+       * not supported with Put Blob from URL; the content of an existing blob is overwritten with the
+       * content of the new blob.  To perform partial updates to a block blob’s contents using a source URL,
+       * use the Put Block from URL API in conjunction with Put Block List.
+       * @param contentLength The length of the request.
+       * @param copySource Specifies the name of the source page blob snapshot. This value is a URL of up to
+       *                   2 KB in length that specifies a page blob snapshot. The value should be URL-encoded as it would
+       *                   appear in a request URI. The source blob must either be public or must be authenticated via a shared
+       *                   access signature.
+       * @param options The options parameters.
+       */
       putBlobFromUrl(contentLength2, copySource2, options) {
         const operationArguments = {
           contentLength: contentLength2,
@@ -53758,6 +54598,15 @@ var init_blockBlob = __esm({
         };
         return this.client.sendOperationRequest(operationArguments, putBlobFromUrlOperationSpec);
       }
+      /**
+       * The Stage Block operation creates a new block to be committed as part of a blob
+       * @param blockId A valid Base64 string value that identifies the block. Prior to encoding, the string
+       *                must be less than or equal to 64 bytes in size. For a given blob, the length of the value specified
+       *                for the blockid parameter must be the same size for each block.
+       * @param contentLength The length of the request.
+       * @param body Initial data
+       * @param options The options parameters.
+       */
       stageBlock(blockId2, contentLength2, body2, options) {
         const operationArguments = {
           blockId: blockId2,
@@ -53767,6 +54616,16 @@ var init_blockBlob = __esm({
         };
         return this.client.sendOperationRequest(operationArguments, stageBlockOperationSpec);
       }
+      /**
+       * The Stage Block operation creates a new block to be committed as part of a blob where the contents
+       * are read from a URL.
+       * @param blockId A valid Base64 string value that identifies the block. Prior to encoding, the string
+       *                must be less than or equal to 64 bytes in size. For a given blob, the length of the value specified
+       *                for the blockid parameter must be the same size for each block.
+       * @param contentLength The length of the request.
+       * @param sourceUrl Specify a URL to the copy source.
+       * @param options The options parameters.
+       */
       stageBlockFromURL(blockId2, contentLength2, sourceUrl2, options) {
         const operationArguments = {
           blockId: blockId2,
@@ -53776,6 +54635,17 @@ var init_blockBlob = __esm({
         };
         return this.client.sendOperationRequest(operationArguments, stageBlockFromURLOperationSpec);
       }
+      /**
+       * The Commit Block List operation writes a blob by specifying the list of block IDs that make up the
+       * blob. In order to be written as part of a blob, a block must have been successfully written to the
+       * server in a prior Put Block operation. You can call Put Block List to update a blob by uploading
+       * only those blocks that have changed, then committing the new and existing blocks together. You can
+       * do this by specifying whether to commit a block from the committed block list or from the
+       * uncommitted block list, or to commit the most recently uploaded version of the block, whichever list
+       * it may belong to.
+       * @param blocks Blob Blocks.
+       * @param options The options parameters.
+       */
       commitBlockList(blocks2, options) {
         const operationArguments = {
           blocks: blocks2,
@@ -53783,6 +54653,13 @@ var init_blockBlob = __esm({
         };
         return this.client.sendOperationRequest(operationArguments, commitBlockListOperationSpec);
       }
+      /**
+       * The Get Block List operation retrieves the list of blocks that have been uploaded as part of a block
+       * blob
+       * @param listType Specifies whether to return the list of committed blocks, the list of uncommitted
+       *                 blocks, or both lists together.
+       * @param options The options parameters.
+       */
       getBlockList(listType2, options) {
         const operationArguments = {
           listType: listType2,
@@ -53791,8 +54668,16 @@ var init_blockBlob = __esm({
         return this.client.sendOperationRequest(operationArguments, getBlockListOperationSpec);
       }
     };
-    xmlSerializer6 = new Serializer(mappers_exports, true);
-    serializer3 = new Serializer(mappers_exports, false);
+    xmlSerializer6 = new Serializer(
+      mappers_exports,
+      /* isXml */
+      true
+    );
+    serializer3 = new Serializer(
+      mappers_exports,
+      /* isXml */
+      false
+    );
     uploadOperationSpec = {
       path: "/{containerName}/{blob}",
       httpMethod: "PUT",
@@ -54059,6 +54944,7 @@ var init_blockBlob = __esm({
 // ../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/generated/src/operations/index.js
 var init_operations = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/generated/src/operations/index.js"() {
+    "use strict";
     init_service();
     init_container();
     init_blob();
@@ -54072,6 +54958,7 @@ var init_operations = __esm({
 var logger2;
 var init_log3 = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/log.js"() {
+    "use strict";
     init_src2();
     logger2 = createClientLogger("storage-blob");
   }
@@ -54081,6 +54968,7 @@ var init_log3 = __esm({
 var SDK_VERSION, SERVICE_VERSION, BLOCK_BLOB_MAX_UPLOAD_BLOB_BYTES, BLOCK_BLOB_MAX_STAGE_BLOCK_BYTES, BLOCK_BLOB_MAX_BLOCKS, DEFAULT_BLOCK_BUFFER_SIZE_BYTES, DEFAULT_BLOB_DOWNLOAD_BLOCK_BYTES, DEFAULT_MAX_DOWNLOAD_RETRY_REQUESTS, StorageOAuthScopes, URLConstants, HTTPURLConnection, HeaderConstants, ETagNone, ETagAny, SIZE_1_MB, BATCH_MAX_REQUEST, BATCH_MAX_PAYLOAD_IN_BYTES, HTTP_LINE_ENDING, HTTP_VERSION_1_1, EncryptionAlgorithmAES25, DevelopmentConnectionString, StorageBlobLoggingAllowedHeaderNames, StorageBlobLoggingAllowedQueryParameters, BlobUsesCustomerSpecifiedEncryptionMsg, BlobDoesNotUseCustomerSpecifiedEncryption;
 var init_constants2 = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/utils/constants.js"() {
+    "use strict";
     SDK_VERSION = "12.11.0";
     SERVICE_VERSION = "2021-08-06";
     BLOCK_BLOB_MAX_UPLOAD_BLOB_BYTES = 256 * 1024 * 1024;
@@ -54993,6 +55881,7 @@ function* ExtractPageRangeInfoItems(getPageRangesSegment) {
 }
 var init_utils_common = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/utils/utils.common.js"() {
+    "use strict";
     init_coreHttp();
     init_constants2();
   }
@@ -55002,19 +55891,32 @@ var init_utils_common = __esm({
 var StorageBrowserPolicy;
 var init_StorageBrowserPolicy = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/policies/StorageBrowserPolicy.js"() {
+    "use strict";
     init_coreHttp();
     init_constants2();
     init_utils_common();
     StorageBrowserPolicy = class extends BaseRequestPolicy {
+      /**
+       * Creates an instance of StorageBrowserPolicy.
+       * @param nextPolicy -
+       * @param options -
+       */
+      // The base class has a protected constructor. Adding a public one to enable constructing of this class.
+      /* eslint-disable-next-line @typescript-eslint/no-useless-constructor*/
       constructor(nextPolicy, options) {
         super(nextPolicy, options);
       }
+      /**
+       * Sends out request.
+       *
+       * @param request -
+       */
       async sendRequest(request) {
         if (isNode) {
           return this._nextPolicy.sendRequest(request);
         }
         if (request.method.toUpperCase() === "GET" || request.method.toUpperCase() === "HEAD") {
-          request.url = setURLParameter(request.url, URLConstants.Parameters.FORCE_BROWSER_NO_CACHE, new Date().getTime().toString());
+          request.url = setURLParameter(request.url, URLConstants.Parameters.FORCE_BROWSER_NO_CACHE, (/* @__PURE__ */ new Date()).getTime().toString());
         }
         request.headers.remove(HeaderConstants.COOKIE);
         request.headers.remove(HeaderConstants.CONTENT_LENGTH);
@@ -55028,8 +55930,15 @@ var init_StorageBrowserPolicy = __esm({
 var StorageBrowserPolicyFactory;
 var init_StorageBrowserPolicyFactory = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/StorageBrowserPolicyFactory.js"() {
+    "use strict";
     init_StorageBrowserPolicy();
     StorageBrowserPolicyFactory = class {
+      /**
+       * Creates a StorageBrowserPolicyFactory object.
+       *
+       * @param nextPolicy -
+       * @param options -
+       */
       create(nextPolicy, options) {
         return new StorageBrowserPolicy(nextPolicy, options);
       }
@@ -55041,6 +55950,7 @@ var init_StorageBrowserPolicyFactory = __esm({
 var StorageRetryPolicyType, DEFAULT_RETRY_OPTIONS, RETRY_ABORT_ERROR, StorageRetryPolicy;
 var init_StorageRetryPolicy = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/policies/StorageRetryPolicy.js"() {
+    "use strict";
     init_src();
     init_coreHttp();
     init_constants2();
@@ -55057,9 +55967,17 @@ var init_StorageRetryPolicy = __esm({
       retryPolicyType: StorageRetryPolicyType.EXPONENTIAL,
       secondaryHost: "",
       tryTimeoutInMs: void 0
+      // Use server side default timeout strategy
     };
     RETRY_ABORT_ERROR = new AbortError("The operation was aborted.");
     StorageRetryPolicy = class extends BaseRequestPolicy {
+      /**
+       * Creates an instance of RetryPolicy.
+       *
+       * @param nextPolicy -
+       * @param options -
+       * @param retryOptions -
+       */
       constructor(nextPolicy, options, retryOptions = DEFAULT_RETRY_OPTIONS) {
         super(nextPolicy, options);
         this.retryOptions = {
@@ -55071,9 +55989,24 @@ var init_StorageRetryPolicy = __esm({
           secondaryHost: retryOptions.secondaryHost ? retryOptions.secondaryHost : DEFAULT_RETRY_OPTIONS.secondaryHost
         };
       }
+      /**
+       * Sends request.
+       *
+       * @param request -
+       */
       async sendRequest(request) {
         return this.attemptSendRequest(request, false, 1);
       }
+      /**
+       * Decide and perform next retry. Won't mutate request parameter.
+       *
+       * @param request -
+       * @param secondaryHas404 -  If attempt was against the secondary & it returned a StatusNotFound (404), then
+       *                                   the resource was not found. This may be due to replication delay. So, in this
+       *                                   case, we'll never try the secondary again for this operation.
+       * @param attempt -           How many retries has been attempted to performed, starting from 1, which includes
+       *                                   the attempt will be performed by this method call.
+       */
       async attemptSendRequest(request, secondaryHas404, attempt) {
         const newRequest = request.clone();
         const isPrimaryRetry = secondaryHas404 || !this.retryOptions.secondaryHost || !(request.method === "GET" || request.method === "HEAD" || request.method === "OPTIONS") || attempt % 2 === 1;
@@ -55100,6 +56033,14 @@ var init_StorageRetryPolicy = __esm({
         await this.delay(isPrimaryRetry, attempt, request.abortSignal);
         return this.attemptSendRequest(request, secondaryHas404, ++attempt);
       }
+      /**
+       * Decide whether to retry according to last HTTP response and retry counters.
+       *
+       * @param isPrimaryRetry -
+       * @param attempt -
+       * @param response -
+       * @param err -
+       */
       shouldRetry(isPrimaryRetry, attempt, response, err) {
         if (attempt >= this.retryOptions.maxTries) {
           logger2.info(`RetryPolicy: Attempt(s) ${attempt} >= maxTries ${this.retryOptions.maxTries}, no further try.`);
@@ -55115,6 +56056,7 @@ var init_StorageRetryPolicy = __esm({
           "TIMEOUT",
           "EPIPE",
           "REQUEST_SEND_ERROR"
+          // For default xhr based http client provided in ms-rest-js
         ];
         if (err) {
           for (const retriableError of retriableErrors) {
@@ -55141,6 +56083,13 @@ var init_StorageRetryPolicy = __esm({
         }
         return false;
       }
+      /**
+       * Delay a calculated time between retries.
+       *
+       * @param isPrimaryRetry -
+       * @param attempt -
+       * @param abortSignal -
+       */
       async delay(isPrimaryRetry, attempt, abortSignal2) {
         let delayTimeInMs = 0;
         if (isPrimaryRetry) {
@@ -55166,11 +56115,22 @@ var init_StorageRetryPolicy = __esm({
 var StorageRetryPolicyFactory;
 var init_StorageRetryPolicyFactory = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/StorageRetryPolicyFactory.js"() {
+    "use strict";
     init_StorageRetryPolicy();
     StorageRetryPolicyFactory = class {
+      /**
+       * Creates an instance of StorageRetryPolicyFactory.
+       * @param retryOptions -
+       */
       constructor(retryOptions) {
         this.retryOptions = retryOptions;
       }
+      /**
+       * Creates a StorageRetryPolicy object.
+       *
+       * @param nextPolicy -
+       * @param options -
+       */
       create(nextPolicy, options) {
         return new StorageRetryPolicy(nextPolicy, options, this.retryOptions);
       }
@@ -55182,11 +56142,23 @@ var init_StorageRetryPolicyFactory = __esm({
 var CredentialPolicy;
 var init_CredentialPolicy = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/policies/CredentialPolicy.js"() {
+    "use strict";
     init_coreHttp();
     CredentialPolicy = class extends BaseRequestPolicy {
+      /**
+       * Sends out request.
+       *
+       * @param request -
+       */
       sendRequest(request) {
         return this._nextPolicy.sendRequest(this.signRequest(request));
       }
+      /**
+       * Child classes must implement this method with request signing. This method
+       * will be executed in {@link sendRequest}.
+       *
+       * @param request -
+       */
       signRequest(request) {
         return request;
       }
@@ -55198,8 +56170,16 @@ var init_CredentialPolicy = __esm({
 var AnonymousCredentialPolicy;
 var init_AnonymousCredentialPolicy = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/policies/AnonymousCredentialPolicy.js"() {
+    "use strict";
     init_CredentialPolicy();
     AnonymousCredentialPolicy = class extends CredentialPolicy {
+      /**
+       * Creates an instance of AnonymousCredentialPolicy.
+       * @param nextPolicy -
+       * @param options -
+       */
+      // The base class has a protected constructor. Adding a public one to enable constructing of this class.
+      /* eslint-disable-next-line @typescript-eslint/no-useless-constructor*/
       constructor(nextPolicy, options) {
         super(nextPolicy, options);
       }
@@ -55211,7 +56191,14 @@ var init_AnonymousCredentialPolicy = __esm({
 var Credential;
 var init_Credential = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/credentials/Credential.js"() {
+    "use strict";
     Credential = class {
+      /**
+       * Creates a RequestPolicy object.
+       *
+       * @param _nextPolicy -
+       * @param _options -
+       */
       create(_nextPolicy, _options) {
         throw new Error("Method should be implemented in children classes.");
       }
@@ -55223,9 +56210,16 @@ var init_Credential = __esm({
 var AnonymousCredential;
 var init_AnonymousCredential = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/credentials/AnonymousCredential.js"() {
+    "use strict";
     init_AnonymousCredentialPolicy();
     init_Credential();
     AnonymousCredential = class extends Credential {
+      /**
+       * Creates an {@link AnonymousCredentialPolicy} object.
+       *
+       * @param nextPolicy -
+       * @param options -
+       */
       create(nextPolicy, options) {
         return new AnonymousCredentialPolicy(nextPolicy, options);
       }
@@ -55237,13 +56231,25 @@ var init_AnonymousCredential = __esm({
 var TelemetryPolicy;
 var init_TelemetryPolicy = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/policies/TelemetryPolicy.js"() {
+    "use strict";
     init_coreHttp();
     init_constants2();
     TelemetryPolicy = class extends BaseRequestPolicy {
+      /**
+       * Creates an instance of TelemetryPolicy.
+       * @param nextPolicy -
+       * @param options -
+       * @param telemetry -
+       */
       constructor(nextPolicy, options, telemetry) {
         super(nextPolicy, options);
         this.telemetry = telemetry;
       }
+      /**
+       * Sends out request.
+       *
+       * @param request -
+       */
       async sendRequest(request) {
         if (isNode) {
           if (!request.headers) {
@@ -55263,11 +56269,16 @@ var init_TelemetryPolicy = __esm({
 var os2, TelemetryPolicyFactory;
 var init_TelemetryPolicyFactory = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/TelemetryPolicyFactory.js"() {
+    "use strict";
     init_coreHttp();
     os2 = __toESM(require("os"));
     init_TelemetryPolicy();
     init_constants2();
     TelemetryPolicyFactory = class {
+      /**
+       * Creates an instance of TelemetryPolicyFactory.
+       * @param telemetry -
+       */
       constructor(telemetry) {
         const userAgentInfo = [];
         if (isNode) {
@@ -55291,6 +56302,12 @@ var init_TelemetryPolicyFactory = __esm({
         }
         this.telemetryString = userAgentInfo.join(" ");
       }
+      /**
+       * Creates a TelemetryPolicy object.
+       *
+       * @param nextPolicy -
+       * @param options -
+       */
       create(nextPolicy, options) {
         return new TelemetryPolicy(nextPolicy, options, this.telemetryString);
       }
@@ -55305,6 +56322,7 @@ function getCachedDefaultHttpClient2() {
 var _defaultHttpClient;
 var init_cache = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/utils/cache.js"() {
+    "use strict";
     init_coreHttp();
     _defaultHttpClient = new NodeFetchHttpClient();
   }
@@ -55339,13 +56357,24 @@ function createTokenCycler2(credential, scopes, tokenCyclerOptions) {
   let token = null;
   const options = Object.assign(Object.assign({}, DEFAULT_CYCLER_OPTIONS2), tokenCyclerOptions);
   const cycler = {
+    /**
+     * Produces true if a refresh job is currently in progress.
+     */
     get isRefreshing() {
       return refreshWorker !== null;
     },
+    /**
+     * Produces true if the cycler SHOULD refresh (we are within the refresh
+     * window and not already refreshing)
+     */
     get shouldRefresh() {
       var _a;
       return !cycler.isRefreshing && ((_a = token === null || token === void 0 ? void 0 : token.expiresOnTimestamp) !== null && _a !== void 0 ? _a : 0) - options.refreshWindowInMs < Date.now();
     },
+    /**
+     * Produces true if the cycler MUST refresh (null or nearly-expired
+     * token).
+     */
     get mustRefresh() {
       return token === null || token.expiresOnTimestamp - options.forcedRefreshWindowInMs < Date.now();
     }
@@ -55357,6 +56386,7 @@ function createTokenCycler2(credential, scopes, tokenCyclerOptions) {
       refreshWorker = beginRefresh2(
         tryGetAccessToken,
         options.retryIntervalInMs,
+        // If we don't have a token, then we should timeout immediately
         (_a = token === null || token === void 0 ? void 0 : token.expiresOnTimestamp) !== null && _a !== void 0 ? _a : Date.now()
       ).then((_token) => {
         refreshWorker = null;
@@ -55444,12 +56474,19 @@ function storageBearerTokenChallengeAuthenticationPolicy(credential, scopes) {
 var Constants2, DEFAULT_CYCLER_OPTIONS2;
 var init_StorageBearerTokenChallengeAuthenticationPolicy = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/policies/StorageBearerTokenChallengeAuthenticationPolicy.js"() {
+    "use strict";
     init_coreHttp();
     init_coreHttp();
     init_coreHttp();
     Constants2 = {
       DefaultScope: "/.default",
+      /**
+       * Defines constants for use with HTTP headers.
+       */
       HeaderConstants: {
+        /**
+         * The Authorization header.
+         */
         AUTHORIZATION: "authorization"
       }
     };
@@ -55457,6 +56494,7 @@ var init_StorageBearerTokenChallengeAuthenticationPolicy = __esm({
       forcedRefreshWindowInMs: 1e3,
       retryIntervalInMs: 3e3,
       refreshWindowInMs: 1e3 * 60 * 2
+      // Start refreshing 2m before expiry
     };
   }
 });
@@ -55482,6 +56520,9 @@ function newPipeline(credential, pipelineOptions = {}) {
     generateClientRequestIdPolicy(),
     new StorageBrowserPolicyFactory(),
     new StorageRetryPolicyFactory(pipelineOptions.retryOptions),
+    // Default deserializationPolicy is provided by protocol layer
+    // Use customized XML char key of "#" so we could deserialize metadata
+    // with "_" key
     deserializationPolicy(void 0, { xmlCharKey: "#" }),
     logPolicy({
       logger: logger2.info,
@@ -55499,6 +56540,7 @@ function newPipeline(credential, pipelineOptions = {}) {
 var Pipeline;
 var init_Pipeline = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/Pipeline.js"() {
+    "use strict";
     init_coreHttp();
     init_log3();
     init_StorageBrowserPolicyFactory();
@@ -55510,10 +56552,22 @@ var init_Pipeline = __esm({
     init_utils_common();
     init_StorageBearerTokenChallengeAuthenticationPolicy();
     Pipeline = class {
+      /**
+       * Creates an instance of Pipeline. Customize HTTPClient by implementing IHttpClient interface.
+       *
+       * @param factories -
+       * @param options -
+       */
       constructor(factories, options = {}) {
         this.factories = factories;
         this.options = Object.assign(Object.assign({}, options), { httpClient: options.httpClient || getCachedDefaultHttpClient2() });
       }
+      /**
+       * Transfer Pipeline object to ServiceClientOptions object which is required by
+       * ServiceClient constructor.
+       *
+       * @returns The ServiceClientOptions object from this Pipeline.
+       */
       toServiceClientOptions() {
         return {
           httpClient: this.options.httpClient,
@@ -55528,16 +56582,28 @@ var init_Pipeline = __esm({
 var StorageSharedKeyCredentialPolicy;
 var init_StorageSharedKeyCredentialPolicy = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/policies/StorageSharedKeyCredentialPolicy.js"() {
+    "use strict";
     init_constants2();
     init_utils_common();
     init_CredentialPolicy();
     StorageSharedKeyCredentialPolicy = class extends CredentialPolicy {
+      /**
+       * Creates an instance of StorageSharedKeyCredentialPolicy.
+       * @param nextPolicy -
+       * @param options -
+       * @param factory -
+       */
       constructor(nextPolicy, options, factory) {
         super(nextPolicy, options);
         this.factory = factory;
       }
+      /**
+       * Signs request.
+       *
+       * @param request -
+       */
       signRequest(request) {
-        request.headers.set(HeaderConstants.X_MS_DATE, new Date().toUTCString());
+        request.headers.set(HeaderConstants.X_MS_DATE, (/* @__PURE__ */ new Date()).toUTCString());
         if (request.body && (typeof request.body === "string" || request.body !== void 0) && request.body.length > 0) {
           request.headers.set(HeaderConstants.CONTENT_LENGTH, Buffer.byteLength(request.body));
         }
@@ -55559,6 +56625,13 @@ var init_StorageSharedKeyCredentialPolicy = __esm({
         request.headers.set(HeaderConstants.AUTHORIZATION, `SharedKey ${this.factory.accountName}:${signature}`);
         return request;
       }
+      /**
+       * Retrieve header value according to shared key sign rules.
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/authenticate-with-shared-key
+       *
+       * @param request -
+       * @param headerName -
+       */
       getHeaderValueToSign(request, headerName) {
         const value = request.headers.get(headerName);
         if (!value) {
@@ -55569,6 +56642,19 @@ var init_StorageSharedKeyCredentialPolicy = __esm({
         }
         return value;
       }
+      /**
+       * To construct the CanonicalizedHeaders portion of the signature string, follow these steps:
+       * 1. Retrieve all headers for the resource that begin with x-ms-, including the x-ms-date header.
+       * 2. Convert each HTTP header name to lowercase.
+       * 3. Sort the headers lexicographically by header name, in ascending order.
+       *    Each header may appear only once in the string.
+       * 4. Replace any linear whitespace in the header value with a single space.
+       * 5. Trim any whitespace around the colon in the header.
+       * 6. Finally, append a new-line character to each canonicalized header in the resulting list.
+       *    Construct the CanonicalizedHeaders string by concatenating all headers in this list into a single string.
+       *
+       * @param request -
+       */
       getCanonicalizedHeadersString(request) {
         let headersArray = request.headers.headersArray().filter((value) => {
           return value.name.toLowerCase().startsWith(HeaderConstants.PREFIX_FOR_STORAGE);
@@ -55589,6 +56675,11 @@ var init_StorageSharedKeyCredentialPolicy = __esm({
         });
         return canonicalizedHeadersStringToSign;
       }
+      /**
+       * Retrieves the webResource canonicalized resource string.
+       *
+       * @param request -
+       */
       getCanonicalizedResourceString(request) {
         const path3 = getURLPath(request.url) || "/";
         let canonicalizedResourceString = "";
@@ -55617,23 +56708,40 @@ ${key}:${decodeURIComponent(lowercaseQueries[key])}`;
 });
 
 // ../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/credentials/StorageSharedKeyCredential.js
-var import_crypto, StorageSharedKeyCredential;
+var import_crypto4, StorageSharedKeyCredential;
 var init_StorageSharedKeyCredential = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/credentials/StorageSharedKeyCredential.js"() {
-    import_crypto = require("crypto");
+    "use strict";
+    import_crypto4 = require("crypto");
     init_StorageSharedKeyCredentialPolicy();
     init_Credential();
     StorageSharedKeyCredential = class extends Credential {
+      /**
+       * Creates an instance of StorageSharedKeyCredential.
+       * @param accountName -
+       * @param accountKey -
+       */
       constructor(accountName, accountKey) {
         super();
         this.accountName = accountName;
         this.accountKey = Buffer.from(accountKey, "base64");
       }
+      /**
+       * Creates a StorageSharedKeyCredentialPolicy object.
+       *
+       * @param nextPolicy -
+       * @param options -
+       */
       create(nextPolicy, options) {
         return new StorageSharedKeyCredentialPolicy(nextPolicy, options, this);
       }
+      /**
+       * Generates a hash signature for an HTTP request or for a SAS.
+       *
+       * @param stringToSign -
+       */
       computeHMACSHA256(stringToSign) {
-        return (0, import_crypto.createHmac)("sha256", this.accountKey).update(stringToSign, "utf8").digest("base64");
+        return (0, import_crypto4.createHmac)("sha256", this.accountKey).update(stringToSign, "utf8").digest("base64");
       }
     };
   }
@@ -55643,10 +56751,17 @@ var init_StorageSharedKeyCredential = __esm({
 var packageName, packageVersion, StorageClientContext;
 var init_storageClientContext = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/generated/src/storageClientContext.js"() {
+    "use strict";
     init_coreHttp();
     packageName = "azure-storage-blob";
     packageVersion = "12.11.0";
     StorageClientContext = class extends ServiceClient {
+      /**
+       * Initializes a new instance of the StorageClientContext class.
+       * @param url The URL of the service account, container, or blob that is the target of the desired
+       *            operation.
+       * @param options The parameter options
+       */
       constructor(url2, options) {
         if (url2 === void 0) {
           throw new Error("'url' cannot be null");
@@ -55672,12 +56787,18 @@ var init_storageClientContext = __esm({
 var StorageClient;
 var init_StorageClient = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/StorageClient.js"() {
+    "use strict";
     init_storageClientContext();
     init_utils_common();
     init_AnonymousCredential();
     init_StorageSharedKeyCredential();
     init_coreHttp();
     StorageClient = class {
+      /**
+       * Creates an instance of StorageClient.
+       * @param url - url to resource
+       * @param pipeline - request policy pipeline.
+       */
       constructor(url2, pipeline) {
         this.url = escapeURLPath(url2);
         this.accountName = getAccountNameFromUrl(url2);
@@ -55703,6 +56824,7 @@ var init_StorageClient = __esm({
 function convertTracingToRequestOptionsBase(options) {
   var _a, _b;
   return {
+    // By passing spanOptions if they exist at runtime, we're backwards compatible with @azure/core-tracing@preview.13 and earlier.
     spanOptions: (_a = options === null || options === void 0 ? void 0 : options.tracingOptions) === null || _a === void 0 ? void 0 : _a.spanOptions,
     tracingContext: (_b = options === null || options === void 0 ? void 0 : options.tracingOptions) === null || _b === void 0 ? void 0 : _b.tracingContext
   };
@@ -55710,6 +56832,7 @@ function convertTracingToRequestOptionsBase(options) {
 var createSpan2;
 var init_tracing = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/utils/tracing.js"() {
+    "use strict";
     init_src4();
     createSpan2 = createSpanFunction({
       packagePrefix: "Azure.Storage.Blob",
@@ -55722,7 +56845,8 @@ var init_tracing = __esm({
 var BlobSASPermissions;
 var init_BlobSASPermissions = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/sas/BlobSASPermissions.js"() {
-    BlobSASPermissions = class {
+    "use strict";
+    BlobSASPermissions = class _BlobSASPermissions {
       constructor() {
         this.read = false;
         this.add = false;
@@ -55736,8 +56860,14 @@ var init_BlobSASPermissions = __esm({
         this.setImmutabilityPolicy = false;
         this.permanentDelete = false;
       }
+      /**
+       * Creates a {@link BlobSASPermissions} from the specified permissions string. This method will throw an
+       * Error if it encounters a character that does not correspond to a valid permission.
+       *
+       * @param permissions -
+       */
       static parse(permissions) {
-        const blobSASPermissions = new BlobSASPermissions();
+        const blobSASPermissions = new _BlobSASPermissions();
         for (const char of permissions) {
           switch (char) {
             case "r":
@@ -55779,8 +56909,14 @@ var init_BlobSASPermissions = __esm({
         }
         return blobSASPermissions;
       }
+      /**
+       * Creates a {@link BlobSASPermissions} from a raw object which contains same keys as it
+       * and boolean values for them.
+       *
+       * @param permissionLike -
+       */
       static from(permissionLike) {
-        const blobSASPermissions = new BlobSASPermissions();
+        const blobSASPermissions = new _BlobSASPermissions();
         if (permissionLike.read) {
           blobSASPermissions.read = true;
         }
@@ -55816,6 +56952,12 @@ var init_BlobSASPermissions = __esm({
         }
         return blobSASPermissions;
       }
+      /**
+       * Converts the given permissions to a string. Using this method will guarantee the permissions are in an
+       * order accepted by the service.
+       *
+       * @returns A string which represents the BlobSASPermissions
+       */
       toString() {
         const permissions = [];
         if (this.read) {
@@ -55861,7 +57003,8 @@ var init_BlobSASPermissions = __esm({
 var ContainerSASPermissions;
 var init_ContainerSASPermissions = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/sas/ContainerSASPermissions.js"() {
-    ContainerSASPermissions = class {
+    "use strict";
+    ContainerSASPermissions = class _ContainerSASPermissions {
       constructor() {
         this.read = false;
         this.add = false;
@@ -55877,8 +57020,14 @@ var init_ContainerSASPermissions = __esm({
         this.permanentDelete = false;
         this.filterByTags = false;
       }
+      /**
+       * Creates an {@link ContainerSASPermissions} from the specified permissions string. This method will throw an
+       * Error if it encounters a character that does not correspond to a valid permission.
+       *
+       * @param permissions -
+       */
       static parse(permissions) {
-        const containerSASPermissions = new ContainerSASPermissions();
+        const containerSASPermissions = new _ContainerSASPermissions();
         for (const char of permissions) {
           switch (char) {
             case "r":
@@ -55926,8 +57075,14 @@ var init_ContainerSASPermissions = __esm({
         }
         return containerSASPermissions;
       }
+      /**
+       * Creates a {@link ContainerSASPermissions} from a raw object which contains same keys as it
+       * and boolean values for them.
+       *
+       * @param permissionLike -
+       */
       static from(permissionLike) {
-        const containerSASPermissions = new ContainerSASPermissions();
+        const containerSASPermissions = new _ContainerSASPermissions();
         if (permissionLike.read) {
           containerSASPermissions.read = true;
         }
@@ -55969,6 +57124,14 @@ var init_ContainerSASPermissions = __esm({
         }
         return containerSASPermissions;
       }
+      /**
+       * Converts the given permissions to a string. Using this method will guarantee the permissions are in an
+       * order accepted by the service.
+       *
+       * The order of the characters should be as specified here to ensure correctness.
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/constructing-a-service-sas
+       *
+       */
       toString() {
         const permissions = [];
         if (this.read) {
@@ -56017,18 +57180,29 @@ var init_ContainerSASPermissions = __esm({
 });
 
 // ../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/credentials/UserDelegationKeyCredential.js
-var import_crypto2, UserDelegationKeyCredential;
+var import_crypto5, UserDelegationKeyCredential;
 var init_UserDelegationKeyCredential = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/credentials/UserDelegationKeyCredential.js"() {
-    import_crypto2 = require("crypto");
+    "use strict";
+    import_crypto5 = require("crypto");
     UserDelegationKeyCredential = class {
+      /**
+       * Creates an instance of UserDelegationKeyCredential.
+       * @param accountName -
+       * @param userDelegationKey -
+       */
       constructor(accountName, userDelegationKey) {
         this.accountName = accountName;
         this.userDelegationKey = userDelegationKey;
         this.key = Buffer.from(userDelegationKey.value, "base64");
       }
+      /**
+       * Generates a hash signature for an HTTP request or for a SAS.
+       *
+       * @param stringToSign -
+       */
       computeHMACSHA256(stringToSign) {
-        return (0, import_crypto2.createHmac)("sha256", this.key).update(stringToSign, "utf8").digest("base64");
+        return (0, import_crypto5.createHmac)("sha256", this.key).update(stringToSign, "utf8").digest("base64");
       }
     };
   }
@@ -56040,6 +57214,7 @@ function ipRangeToString(ipRange) {
 }
 var init_SasIPRange = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/sas/SasIPRange.js"() {
+    "use strict";
   }
 });
 
@@ -56047,6 +57222,7 @@ var init_SasIPRange = __esm({
 var SASProtocol, SASQueryParameters;
 var init_SASQueryParameters = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/sas/SASQueryParameters.js"() {
+    "use strict";
     init_SasIPRange();
     init_utils_common();
     (function(SASProtocol2) {
@@ -56111,6 +57287,11 @@ var init_SASQueryParameters = __esm({
           }
         }
       }
+      /**
+       * Optional. IP range allowed for this SAS.
+       *
+       * @readonly
+       */
       get ipRange() {
         if (this.ipRangeInner) {
           return {
@@ -56120,6 +57301,10 @@ var init_SASQueryParameters = __esm({
         }
         return void 0;
       }
+      /**
+       * Encodes all SAS query parameters into a string that can be appended to a URL.
+       *
+       */
       toString() {
         const params = [
           "sv",
@@ -56230,6 +57415,13 @@ var init_SASQueryParameters = __esm({
         }
         return queries.join("&");
       }
+      /**
+       * A private helper method used to filter and append query key/value pairs into an array.
+       *
+       * @param queries -
+       * @param key -
+       * @param value -
+       */
       tryAppendQueryParameter(queries, key, value) {
         if (!value) {
           return;
@@ -56610,6 +57802,7 @@ function SASSignatureValuesSanityCheckAndAutofill(blobSASSignatureValues) {
 }
 var init_BlobSASSignatureValues = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/sas/BlobSASSignatureValues.js"() {
+    "use strict";
     init_BlobSASPermissions();
     init_ContainerSASPermissions();
     init_StorageSharedKeyCredential();
@@ -56624,12 +57817,14 @@ var init_BlobSASSignatureValues = __esm({
 // ../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/generated/src/models/index.js
 var init_models = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/generated/src/models/index.js"() {
+    "use strict";
   }
 });
 
 // ../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/generated/src/index.js
 var init_src5 = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/generated/src/index.js"() {
+    "use strict";
     init_models();
     init_storageClientContext();
   }
@@ -56639,6 +57834,7 @@ var init_src5 = __esm({
 var BlobLeaseClient;
 var init_BlobLeaseClient = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/BlobLeaseClient.js"() {
+    "use strict";
     init_coreHttp();
     init_src5();
     init_src4();
@@ -56646,6 +57842,11 @@ var init_BlobLeaseClient = __esm({
     init_constants2();
     init_tracing();
     BlobLeaseClient = class {
+      /**
+       * Creates an instance of BlobLeaseClient.
+       * @param client - The client to make the lease operation requests.
+       * @param leaseId - Initial proposed lease id.
+       */
       constructor(client, leaseId2) {
         const clientContext = new StorageClientContext(client.url, client.pipeline.toServiceClientOptions());
         this._url = client.url;
@@ -56661,12 +57862,34 @@ var init_BlobLeaseClient = __esm({
         }
         this._leaseId = leaseId2;
       }
+      /**
+       * Gets the lease Id.
+       *
+       * @readonly
+       */
       get leaseId() {
         return this._leaseId;
       }
+      /**
+       * Gets the url.
+       *
+       * @readonly
+       */
       get url() {
         return this._url;
       }
+      /**
+       * Establishes and manages a lock on a container for delete operations, or on a blob
+       * for write and delete operations.
+       * The lock duration can be 15 to 60 seconds, or can be infinite.
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/lease-container
+       * and
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/lease-blob
+       *
+       * @param duration - Must be between 15 to 60 seconds, or infinite (-1)
+       * @param options - option to configure lease management operations.
+       * @returns Response data for acquire lease operation.
+       */
       async acquireLease(duration2, options = {}) {
         var _a, _b, _c, _d, _e, _f;
         const { span, updatedOptions } = createSpan2("BlobLeaseClient-acquireLease", options);
@@ -56685,6 +57908,16 @@ var init_BlobLeaseClient = __esm({
           span.end();
         }
       }
+      /**
+       * To change the ID of the lease.
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/lease-container
+       * and
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/lease-blob
+       *
+       * @param proposedLeaseId - the proposed new lease Id.
+       * @param options - option to configure lease management operations.
+       * @returns Response data for change lease operation.
+       */
       async changeLease(proposedLeaseId2, options = {}) {
         var _a, _b, _c, _d, _e, _f;
         const { span, updatedOptions } = createSpan2("BlobLeaseClient-changeLease", options);
@@ -56705,6 +57938,16 @@ var init_BlobLeaseClient = __esm({
           span.end();
         }
       }
+      /**
+       * To free the lease if it is no longer needed so that another client may
+       * immediately acquire a lease against the container or the blob.
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/lease-container
+       * and
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/lease-blob
+       *
+       * @param options - option to configure lease management operations.
+       * @returns Response data for release lease operation.
+       */
       async releaseLease(options = {}) {
         var _a, _b, _c, _d, _e, _f;
         const { span, updatedOptions } = createSpan2("BlobLeaseClient-releaseLease", options);
@@ -56723,6 +57966,15 @@ var init_BlobLeaseClient = __esm({
           span.end();
         }
       }
+      /**
+       * To renew the lease.
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/lease-container
+       * and
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/lease-blob
+       *
+       * @param options - Optional option to configure lease management operations.
+       * @returns Response data for renew lease operation.
+       */
       async renewLease(options = {}) {
         var _a, _b, _c, _d, _e, _f;
         const { span, updatedOptions } = createSpan2("BlobLeaseClient-renewLease", options);
@@ -56741,6 +57993,17 @@ var init_BlobLeaseClient = __esm({
           span.end();
         }
       }
+      /**
+       * To end the lease but ensure that another client cannot acquire a new lease
+       * until the current lease period has expired.
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/lease-container
+       * and
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/lease-blob
+       *
+       * @param breakPeriod - Break period
+       * @param options - Optional options to configure lease management operations.
+       * @returns Response data for break lease operation.
+       */
       async breakLease(breakPeriod2, options = {}) {
         var _a, _b, _c, _d, _e, _f;
         const { span, updatedOptions } = createSpan2("BlobLeaseClient-breakLease", options);
@@ -56768,8 +58031,19 @@ var init_BlobLeaseClient = __esm({
 var import_stream3, RetriableReadableStream;
 var init_RetriableReadableStream = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/utils/RetriableReadableStream.js"() {
+    "use strict";
     import_stream3 = require("stream");
     RetriableReadableStream = class extends import_stream3.Readable {
+      /**
+       * Creates an instance of RetriableReadableStream.
+       *
+       * @param source - The current ReadableStream returned from getter
+       * @param getter - A method calling downloading request returning
+       *                                      a new ReadableStream from specified offset
+       * @param offset - Offset position in original data source to read
+       * @param count - How much data in original data source to read
+       * @param options -
+       */
       constructor(source, getter, offset, count, options = {}) {
         super({ highWaterMark: options.highWaterMark });
         this.retries = 0;
@@ -56850,148 +58124,445 @@ var init_RetriableReadableStream = __esm({
 var BlobDownloadResponse;
 var init_BlobDownloadResponse = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/BlobDownloadResponse.js"() {
+    "use strict";
     init_coreHttp();
     init_RetriableReadableStream();
     BlobDownloadResponse = class {
+      /**
+       * Creates an instance of BlobDownloadResponse.
+       *
+       * @param originalResponse -
+       * @param getter -
+       * @param offset -
+       * @param count -
+       * @param options -
+       */
       constructor(originalResponse, getter, offset, count, options = {}) {
         this.originalResponse = originalResponse;
         this.blobDownloadStream = new RetriableReadableStream(this.originalResponse.readableStreamBody, getter, offset, count, options);
       }
+      /**
+       * Indicates that the service supports
+       * requests for partial file content.
+       *
+       * @readonly
+       */
       get acceptRanges() {
         return this.originalResponse.acceptRanges;
       }
+      /**
+       * Returns if it was previously specified
+       * for the file.
+       *
+       * @readonly
+       */
       get cacheControl() {
         return this.originalResponse.cacheControl;
       }
+      /**
+       * Returns the value that was specified
+       * for the 'x-ms-content-disposition' header and specifies how to process the
+       * response.
+       *
+       * @readonly
+       */
       get contentDisposition() {
         return this.originalResponse.contentDisposition;
       }
+      /**
+       * Returns the value that was specified
+       * for the Content-Encoding request header.
+       *
+       * @readonly
+       */
       get contentEncoding() {
         return this.originalResponse.contentEncoding;
       }
+      /**
+       * Returns the value that was specified
+       * for the Content-Language request header.
+       *
+       * @readonly
+       */
       get contentLanguage() {
         return this.originalResponse.contentLanguage;
       }
+      /**
+       * The current sequence number for a
+       * page blob. This header is not returned for block blobs or append blobs.
+       *
+       * @readonly
+       */
       get blobSequenceNumber() {
         return this.originalResponse.blobSequenceNumber;
       }
+      /**
+       * The blob's type. Possible values include:
+       * 'BlockBlob', 'PageBlob', 'AppendBlob'.
+       *
+       * @readonly
+       */
       get blobType() {
         return this.originalResponse.blobType;
       }
+      /**
+       * The number of bytes present in the
+       * response body.
+       *
+       * @readonly
+       */
       get contentLength() {
         return this.originalResponse.contentLength;
       }
+      /**
+       * If the file has an MD5 hash and the
+       * request is to read the full file, this response header is returned so that
+       * the client can check for message content integrity. If the request is to
+       * read a specified range and the 'x-ms-range-get-content-md5' is set to
+       * true, then the request returns an MD5 hash for the range, as long as the
+       * range size is less than or equal to 4 MB. If neither of these sets of
+       * conditions is true, then no value is returned for the 'Content-MD5'
+       * header.
+       *
+       * @readonly
+       */
       get contentMD5() {
         return this.originalResponse.contentMD5;
       }
+      /**
+       * Indicates the range of bytes returned if
+       * the client requested a subset of the file by setting the Range request
+       * header.
+       *
+       * @readonly
+       */
       get contentRange() {
         return this.originalResponse.contentRange;
       }
+      /**
+       * The content type specified for the file.
+       * The default content type is 'application/octet-stream'
+       *
+       * @readonly
+       */
       get contentType() {
         return this.originalResponse.contentType;
       }
+      /**
+       * Conclusion time of the last attempted
+       * Copy File operation where this file was the destination file. This value
+       * can specify the time of a completed, aborted, or failed copy attempt.
+       *
+       * @readonly
+       */
       get copyCompletedOn() {
         return this.originalResponse.copyCompletedOn;
       }
+      /**
+       * String identifier for the last attempted Copy
+       * File operation where this file was the destination file.
+       *
+       * @readonly
+       */
       get copyId() {
         return this.originalResponse.copyId;
       }
+      /**
+       * Contains the number of bytes copied and
+       * the total bytes in the source in the last attempted Copy File operation
+       * where this file was the destination file. Can show between 0 and
+       * Content-Length bytes copied.
+       *
+       * @readonly
+       */
       get copyProgress() {
         return this.originalResponse.copyProgress;
       }
+      /**
+       * URL up to 2KB in length that specifies the
+       * source file used in the last attempted Copy File operation where this file
+       * was the destination file.
+       *
+       * @readonly
+       */
       get copySource() {
         return this.originalResponse.copySource;
       }
+      /**
+       * State of the copy operation
+       * identified by 'x-ms-copy-id'. Possible values include: 'pending',
+       * 'success', 'aborted', 'failed'
+       *
+       * @readonly
+       */
       get copyStatus() {
         return this.originalResponse.copyStatus;
       }
+      /**
+       * Only appears when
+       * x-ms-copy-status is failed or pending. Describes cause of fatal or
+       * non-fatal copy operation failure.
+       *
+       * @readonly
+       */
       get copyStatusDescription() {
         return this.originalResponse.copyStatusDescription;
       }
+      /**
+       * When a blob is leased,
+       * specifies whether the lease is of infinite or fixed duration. Possible
+       * values include: 'infinite', 'fixed'.
+       *
+       * @readonly
+       */
       get leaseDuration() {
         return this.originalResponse.leaseDuration;
       }
+      /**
+       * Lease state of the blob. Possible
+       * values include: 'available', 'leased', 'expired', 'breaking', 'broken'.
+       *
+       * @readonly
+       */
       get leaseState() {
         return this.originalResponse.leaseState;
       }
+      /**
+       * The current lease status of the
+       * blob. Possible values include: 'locked', 'unlocked'.
+       *
+       * @readonly
+       */
       get leaseStatus() {
         return this.originalResponse.leaseStatus;
       }
+      /**
+       * A UTC date/time value generated by the service that
+       * indicates the time at which the response was initiated.
+       *
+       * @readonly
+       */
       get date() {
         return this.originalResponse.date;
       }
+      /**
+       * The number of committed blocks
+       * present in the blob. This header is returned only for append blobs.
+       *
+       * @readonly
+       */
       get blobCommittedBlockCount() {
         return this.originalResponse.blobCommittedBlockCount;
       }
+      /**
+       * The ETag contains a value that you can use to
+       * perform operations conditionally, in quotes.
+       *
+       * @readonly
+       */
       get etag() {
         return this.originalResponse.etag;
       }
+      /**
+       * The number of tags associated with the blob
+       *
+       * @readonly
+       */
       get tagCount() {
         return this.originalResponse.tagCount;
       }
+      /**
+       * The error code.
+       *
+       * @readonly
+       */
       get errorCode() {
         return this.originalResponse.errorCode;
       }
+      /**
+       * The value of this header is set to
+       * true if the file data and application metadata are completely encrypted
+       * using the specified algorithm. Otherwise, the value is set to false (when
+       * the file is unencrypted, or if only parts of the file/application metadata
+       * are encrypted).
+       *
+       * @readonly
+       */
       get isServerEncrypted() {
         return this.originalResponse.isServerEncrypted;
       }
+      /**
+       * If the blob has a MD5 hash, and if
+       * request contains range header (Range or x-ms-range), this response header
+       * is returned with the value of the whole blob's MD5 value. This value may
+       * or may not be equal to the value returned in Content-MD5 header, with the
+       * latter calculated from the requested range.
+       *
+       * @readonly
+       */
       get blobContentMD5() {
         return this.originalResponse.blobContentMD5;
       }
+      /**
+       * Returns the date and time the file was last
+       * modified. Any operation that modifies the file or its properties updates
+       * the last modified time.
+       *
+       * @readonly
+       */
       get lastModified() {
         return this.originalResponse.lastModified;
       }
+      /**
+       * Returns the UTC date and time generated by the service that indicates the time at which the blob was
+       * last read or written to.
+       *
+       * @readonly
+       */
       get lastAccessed() {
         return this.originalResponse.lastAccessed;
       }
+      /**
+       * A name-value pair
+       * to associate with a file storage object.
+       *
+       * @readonly
+       */
       get metadata() {
         return this.originalResponse.metadata;
       }
+      /**
+       * This header uniquely identifies the request
+       * that was made and can be used for troubleshooting the request.
+       *
+       * @readonly
+       */
       get requestId() {
         return this.originalResponse.requestId;
       }
+      /**
+       * If a client request id header is sent in the request, this header will be present in the
+       * response with the same value.
+       *
+       * @readonly
+       */
       get clientRequestId() {
         return this.originalResponse.clientRequestId;
       }
+      /**
+       * Indicates the version of the Blob service used
+       * to execute the request.
+       *
+       * @readonly
+       */
       get version() {
         return this.originalResponse.version;
       }
+      /**
+       * Indicates the versionId of the downloaded blob version.
+       *
+       * @readonly
+       */
       get versionId() {
         return this.originalResponse.versionId;
       }
+      /**
+       * Indicates whether version of this blob is a current version.
+       *
+       * @readonly
+       */
       get isCurrentVersion() {
         return this.originalResponse.isCurrentVersion;
       }
+      /**
+       * The SHA-256 hash of the encryption key used to encrypt the blob. This value is only returned
+       * when the blob was encrypted with a customer-provided key.
+       *
+       * @readonly
+       */
       get encryptionKeySha256() {
         return this.originalResponse.encryptionKeySha256;
       }
+      /**
+       * If the request is to read a specified range and the x-ms-range-get-content-crc64 is set to
+       * true, then the request returns a crc64 for the range, as long as the range size is less than
+       * or equal to 4 MB. If both x-ms-range-get-content-crc64 & x-ms-range-get-content-md5 is
+       * specified in the same request, it will fail with 400(Bad Request)
+       */
       get contentCrc64() {
         return this.originalResponse.contentCrc64;
       }
+      /**
+       * Object Replication Policy Id of the destination blob.
+       *
+       * @readonly
+       */
       get objectReplicationDestinationPolicyId() {
         return this.originalResponse.objectReplicationDestinationPolicyId;
       }
+      /**
+       * Parsed Object Replication Policy Id, Rule Id(s) and status of the source blob.
+       *
+       * @readonly
+       */
       get objectReplicationSourceProperties() {
         return this.originalResponse.objectReplicationSourceProperties;
       }
+      /**
+       * If this blob has been sealed.
+       *
+       * @readonly
+       */
       get isSealed() {
         return this.originalResponse.isSealed;
       }
+      /**
+       * UTC date/time value generated by the service that indicates the time at which the blob immutability policy will expire.
+       *
+       * @readonly
+       */
       get immutabilityPolicyExpiresOn() {
         return this.originalResponse.immutabilityPolicyExpiresOn;
       }
+      /**
+       * Indicates immutability policy mode.
+       *
+       * @readonly
+       */
       get immutabilityPolicyMode() {
         return this.originalResponse.immutabilityPolicyMode;
       }
+      /**
+       * Indicates if a legal hold is present on the blob.
+       *
+       * @readonly
+       */
       get legalHold() {
         return this.originalResponse.legalHold;
       }
+      /**
+       * The response body as a browser Blob.
+       * Always undefined in node.js.
+       *
+       * @readonly
+       */
       get contentAsBlob() {
         return this.originalResponse.blobBody;
       }
+      /**
+       * The response body as a node.js Readable stream.
+       * Always undefined in the browser.
+       *
+       * It will automatically retry when internal read stream unexpected ends.
+       *
+       * @readonly
+       */
       get readableStreamBody() {
         return isNode ? this.blobDownloadStream : void 0;
       }
+      /**
+       * The HTTP response.
+       */
       get _response() {
         return this.originalResponse._response;
       }
@@ -57002,19 +58573,21 @@ var init_BlobDownloadResponse = __esm({
 // ../../../node_modules/.pnpm/@azure+core-paging@1.3.0/node_modules/@azure/core-paging/dist-esm/src/models.js
 var init_models2 = __esm({
   "../../../node_modules/.pnpm/@azure+core-paging@1.3.0/node_modules/@azure/core-paging/dist-esm/src/models.js"() {
+    "use strict";
   }
 });
 
 // ../../../node_modules/.pnpm/@azure+core-paging@1.3.0/node_modules/@azure/core-paging/dist-esm/src/getPagedAsyncIterator.js
 var init_getPagedAsyncIterator = __esm({
   "../../../node_modules/.pnpm/@azure+core-paging@1.3.0/node_modules/@azure/core-paging/dist-esm/src/getPagedAsyncIterator.js"() {
-    init_modules();
+    "use strict";
   }
 });
 
 // ../../../node_modules/.pnpm/@azure+core-paging@1.3.0/node_modules/@azure/core-paging/dist-esm/src/index.js
 var init_src6 = __esm({
   "../../../node_modules/.pnpm/@azure+core-paging@1.3.0/node_modules/@azure/core-paging/dist-esm/src/index.js"() {
+    "use strict";
     init_models2();
     init_getPagedAsyncIterator();
   }
@@ -57024,6 +58597,7 @@ var init_src6 = __esm({
 var AVRO_SYNC_MARKER_SIZE, AVRO_INIT_BYTES, AVRO_CODEC_KEY, AVRO_SCHEMA_KEY;
 var init_AvroConstants = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-internal-avro/src/AvroConstants.js"() {
+    "use strict";
     AVRO_SYNC_MARKER_SIZE = 16;
     AVRO_INIT_BYTES = new Uint8Array([79, 98, 106, 1]);
     AVRO_CODEC_KEY = "avro.codec";
@@ -57035,7 +58609,15 @@ var init_AvroConstants = __esm({
 var AvroParser, AvroComplex, AvroPrimitive, AvroType, AvroPrimitiveType, AvroEnumType, AvroUnionType, AvroMapType, AvroRecordType;
 var init_AvroParser = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-internal-avro/src/AvroParser.js"() {
-    AvroParser = class {
+    "use strict";
+    AvroParser = class _AvroParser {
+      /**
+       * Reads a fixed number of bytes from the stream.
+       *
+       * @param stream -
+       * @param length -
+       * @param options -
+       */
       static async readFixedBytes(stream, length, options = {}) {
         const bytes = await stream.read(length, { abortSignal: options.abortSignal });
         if (bytes.length !== length) {
@@ -57043,16 +58625,25 @@ var init_AvroParser = __esm({
         }
         return bytes;
       }
+      /**
+       * Reads a single byte from the stream.
+       *
+       * @param stream -
+       * @param options -
+       */
       static async readByte(stream, options = {}) {
-        const buf = await AvroParser.readFixedBytes(stream, 1, options);
+        const buf = await _AvroParser.readFixedBytes(stream, 1, options);
         return buf[0];
       }
+      // int and long are stored in variable-length zig-zag coding.
+      // variable-length: https://lucene.apache.org/core/3_5_0/fileformats.html#VInt
+      // zig-zag: https://developers.google.com/protocol-buffers/docs/encoding?csw=1#types
       static async readZigZagLong(stream, options = {}) {
         let zigZagEncoded = 0;
         let significanceInBit = 0;
         let byte, haveMoreByte, significanceInFloat;
         do {
-          byte = await AvroParser.readByte(stream, options);
+          byte = await _AvroParser.readByte(stream, options);
           haveMoreByte = byte & 128;
           zigZagEncoded |= (byte & 127) << significanceInBit;
           significanceInBit += 7;
@@ -57061,7 +58652,7 @@ var init_AvroParser = __esm({
           zigZagEncoded = zigZagEncoded;
           significanceInFloat = 268435456;
           do {
-            byte = await AvroParser.readByte(stream, options);
+            byte = await _AvroParser.readByte(stream, options);
             zigZagEncoded += (byte & 127) * significanceInFloat;
             significanceInFloat *= 128;
           } while (byte & 128);
@@ -57074,16 +58665,16 @@ var init_AvroParser = __esm({
         return zigZagEncoded >> 1 ^ -(zigZagEncoded & 1);
       }
       static async readLong(stream, options = {}) {
-        return AvroParser.readZigZagLong(stream, options);
+        return _AvroParser.readZigZagLong(stream, options);
       }
       static async readInt(stream, options = {}) {
-        return AvroParser.readZigZagLong(stream, options);
+        return _AvroParser.readZigZagLong(stream, options);
       }
       static async readNull() {
         return null;
       }
       static async readBoolean(stream, options = {}) {
-        const b = await AvroParser.readByte(stream, options);
+        const b = await _AvroParser.readByte(stream, options);
         if (b === 1) {
           return true;
         } else if (b === 0) {
@@ -57093,37 +58684,37 @@ var init_AvroParser = __esm({
         }
       }
       static async readFloat(stream, options = {}) {
-        const u8arr = await AvroParser.readFixedBytes(stream, 4, options);
+        const u8arr = await _AvroParser.readFixedBytes(stream, 4, options);
         const view = new DataView(u8arr.buffer, u8arr.byteOffset, u8arr.byteLength);
         return view.getFloat32(0, true);
       }
       static async readDouble(stream, options = {}) {
-        const u8arr = await AvroParser.readFixedBytes(stream, 8, options);
+        const u8arr = await _AvroParser.readFixedBytes(stream, 8, options);
         const view = new DataView(u8arr.buffer, u8arr.byteOffset, u8arr.byteLength);
         return view.getFloat64(0, true);
       }
       static async readBytes(stream, options = {}) {
-        const size = await AvroParser.readLong(stream, options);
+        const size = await _AvroParser.readLong(stream, options);
         if (size < 0) {
           throw new Error("Bytes size was negative.");
         }
         return stream.read(size, { abortSignal: options.abortSignal });
       }
       static async readString(stream, options = {}) {
-        const u8arr = await AvroParser.readBytes(stream, options);
+        const u8arr = await _AvroParser.readBytes(stream, options);
         const utf8decoder = new TextDecoder();
         return utf8decoder.decode(u8arr);
       }
       static async readMapPair(stream, readItemMethod, options = {}) {
-        const key = await AvroParser.readString(stream, options);
+        const key = await _AvroParser.readString(stream, options);
         const value = await readItemMethod(stream, options);
         return { key, value };
       }
       static async readMap(stream, readItemMethod, options = {}) {
         const readPairMethod = (s, opts = {}) => {
-          return AvroParser.readMapPair(s, readItemMethod, opts);
+          return _AvroParser.readMapPair(s, readItemMethod, opts);
         };
-        const pairs = await AvroParser.readArray(stream, readPairMethod, options);
+        const pairs = await _AvroParser.readArray(stream, readPairMethod, options);
         const dict = {};
         for (const pair of pairs) {
           dict[pair.key] = pair.value;
@@ -57132,9 +58723,9 @@ var init_AvroParser = __esm({
       }
       static async readArray(stream, readItemMethod, options = {}) {
         const items = [];
-        for (let count = await AvroParser.readLong(stream, options); count !== 0; count = await AvroParser.readLong(stream, options)) {
+        for (let count = await _AvroParser.readLong(stream, options); count !== 0; count = await _AvroParser.readLong(stream, options)) {
           if (count < 0) {
-            await AvroParser.readLong(stream, options);
+            await _AvroParser.readLong(stream, options);
             count = -count;
           }
           while (count--) {
@@ -57163,14 +58754,17 @@ var init_AvroParser = __esm({
       AvroPrimitive2["BYTES"] = "bytes";
       AvroPrimitive2["STRING"] = "string";
     })(AvroPrimitive || (AvroPrimitive = {}));
-    AvroType = class {
+    AvroType = class _AvroType {
+      /**
+       * Determines the AvroType from the Avro Schema.
+       */
       static fromSchema(schema) {
         if (typeof schema === "string") {
-          return AvroType.fromStringSchema(schema);
+          return _AvroType.fromStringSchema(schema);
         } else if (Array.isArray(schema)) {
-          return AvroType.fromArraySchema(schema);
+          return _AvroType.fromArraySchema(schema);
         } else {
-          return AvroType.fromObjectSchema(schema);
+          return _AvroType.fromObjectSchema(schema);
         }
       }
       static fromStringSchema(schema) {
@@ -57189,12 +58783,12 @@ var init_AvroParser = __esm({
         }
       }
       static fromArraySchema(schema) {
-        return new AvroUnionType(schema.map(AvroType.fromSchema));
+        return new AvroUnionType(schema.map(_AvroType.fromSchema));
       }
       static fromObjectSchema(schema) {
         const type3 = schema.type;
         try {
-          return AvroType.fromStringSchema(type3);
+          return _AvroType.fromStringSchema(type3);
         } catch (err) {
         }
         switch (type3) {
@@ -57210,7 +58804,7 @@ var init_AvroParser = __esm({
               throw new Error(`Required attribute 'fields' doesn't exist on schema: ${schema}`);
             }
             for (const field of schema.fields) {
-              fields[field.name] = AvroType.fromSchema(field.type);
+              fields[field.name] = _AvroType.fromSchema(field.type);
             }
             return new AvroRecordType(fields, schema.name);
           case AvroComplex.ENUM:
@@ -57225,7 +58819,7 @@ var init_AvroParser = __esm({
             if (!schema.values) {
               throw new Error(`Required attribute 'values' doesn't exist on schema: ${schema}`);
             }
-            return new AvroMapType(AvroType.fromSchema(schema.values));
+            return new AvroMapType(_AvroType.fromSchema(schema.values));
           case AvroComplex.ARRAY:
           case AvroComplex.FIXED:
           default:
@@ -57329,6 +58923,7 @@ function arraysEqual(a, b) {
 }
 var init_utils_common2 = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-internal-avro/src/utils/utils.common.js"() {
+    "use strict";
   }
 });
 
@@ -57336,7 +58931,8 @@ var init_utils_common2 = __esm({
 var AvroReader;
 var init_AvroReader = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-internal-avro/src/AvroReader.js"() {
-    init_modules();
+    "use strict";
+    init_tslib_es6();
     init_src6();
     init_AvroConstants();
     init_AvroParser();
@@ -57436,6 +59032,7 @@ var init_AvroReader = __esm({
 var AvroReadable;
 var init_AvroReadable = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-internal-avro/src/AvroReadable.js"() {
+    "use strict";
     AvroReadable = class {
     };
   }
@@ -57445,6 +59042,7 @@ var init_AvroReadable = __esm({
 var ABORT_ERROR, AvroReadableFromStream;
 var init_AvroReadableFromStream = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-internal-avro/src/AvroReadableFromStream.js"() {
+    "use strict";
     init_AvroReadable();
     init_src();
     ABORT_ERROR = new AbortError("Reading from the avro stream was aborted.");
@@ -57525,6 +59123,7 @@ var init_AvroReadableFromStream = __esm({
 // ../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-internal-avro/src/index.js
 var init_src7 = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-internal-avro/src/index.js"() {
+    "use strict";
     init_AvroReader();
     init_AvroReadableFromStream();
   }
@@ -57534,9 +59133,16 @@ var init_src7 = __esm({
 var import_stream4, BlobQuickQueryStream;
 var init_BlobQuickQueryStream = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/utils/BlobQuickQueryStream.js"() {
+    "use strict";
     import_stream4 = require("stream");
     init_src7();
     BlobQuickQueryStream = class extends import_stream4.Readable {
+      /**
+       * Creates an instance of BlobQuickQueryStream.
+       *
+       * @param source - The current ReadableStream returned from getter
+       * @param options -
+       */
       constructor(source, options = {}) {
         super();
         this.avroPaused = true;
@@ -57638,118 +59244,361 @@ var init_BlobQuickQueryStream = __esm({
 var BlobQueryResponse;
 var init_BlobQueryResponse = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/BlobQueryResponse.js"() {
+    "use strict";
     init_coreHttp();
     init_BlobQuickQueryStream();
     BlobQueryResponse = class {
+      /**
+       * Creates an instance of BlobQueryResponse.
+       *
+       * @param originalResponse -
+       * @param options -
+       */
       constructor(originalResponse, options = {}) {
         this.originalResponse = originalResponse;
         this.blobDownloadStream = new BlobQuickQueryStream(this.originalResponse.readableStreamBody, options);
       }
+      /**
+       * Indicates that the service supports
+       * requests for partial file content.
+       *
+       * @readonly
+       */
       get acceptRanges() {
         return this.originalResponse.acceptRanges;
       }
+      /**
+       * Returns if it was previously specified
+       * for the file.
+       *
+       * @readonly
+       */
       get cacheControl() {
         return this.originalResponse.cacheControl;
       }
+      /**
+       * Returns the value that was specified
+       * for the 'x-ms-content-disposition' header and specifies how to process the
+       * response.
+       *
+       * @readonly
+       */
       get contentDisposition() {
         return this.originalResponse.contentDisposition;
       }
+      /**
+       * Returns the value that was specified
+       * for the Content-Encoding request header.
+       *
+       * @readonly
+       */
       get contentEncoding() {
         return this.originalResponse.contentEncoding;
       }
+      /**
+       * Returns the value that was specified
+       * for the Content-Language request header.
+       *
+       * @readonly
+       */
       get contentLanguage() {
         return this.originalResponse.contentLanguage;
       }
+      /**
+       * The current sequence number for a
+       * page blob. This header is not returned for block blobs or append blobs.
+       *
+       * @readonly
+       */
       get blobSequenceNumber() {
         return this.originalResponse.blobSequenceNumber;
       }
+      /**
+       * The blob's type. Possible values include:
+       * 'BlockBlob', 'PageBlob', 'AppendBlob'.
+       *
+       * @readonly
+       */
       get blobType() {
         return this.originalResponse.blobType;
       }
+      /**
+       * The number of bytes present in the
+       * response body.
+       *
+       * @readonly
+       */
       get contentLength() {
         return this.originalResponse.contentLength;
       }
+      /**
+       * If the file has an MD5 hash and the
+       * request is to read the full file, this response header is returned so that
+       * the client can check for message content integrity. If the request is to
+       * read a specified range and the 'x-ms-range-get-content-md5' is set to
+       * true, then the request returns an MD5 hash for the range, as long as the
+       * range size is less than or equal to 4 MB. If neither of these sets of
+       * conditions is true, then no value is returned for the 'Content-MD5'
+       * header.
+       *
+       * @readonly
+       */
       get contentMD5() {
         return this.originalResponse.contentMD5;
       }
+      /**
+       * Indicates the range of bytes returned if
+       * the client requested a subset of the file by setting the Range request
+       * header.
+       *
+       * @readonly
+       */
       get contentRange() {
         return this.originalResponse.contentRange;
       }
+      /**
+       * The content type specified for the file.
+       * The default content type is 'application/octet-stream'
+       *
+       * @readonly
+       */
       get contentType() {
         return this.originalResponse.contentType;
       }
+      /**
+       * Conclusion time of the last attempted
+       * Copy File operation where this file was the destination file. This value
+       * can specify the time of a completed, aborted, or failed copy attempt.
+       *
+       * @readonly
+       */
       get copyCompletedOn() {
         return void 0;
       }
+      /**
+       * String identifier for the last attempted Copy
+       * File operation where this file was the destination file.
+       *
+       * @readonly
+       */
       get copyId() {
         return this.originalResponse.copyId;
       }
+      /**
+       * Contains the number of bytes copied and
+       * the total bytes in the source in the last attempted Copy File operation
+       * where this file was the destination file. Can show between 0 and
+       * Content-Length bytes copied.
+       *
+       * @readonly
+       */
       get copyProgress() {
         return this.originalResponse.copyProgress;
       }
+      /**
+       * URL up to 2KB in length that specifies the
+       * source file used in the last attempted Copy File operation where this file
+       * was the destination file.
+       *
+       * @readonly
+       */
       get copySource() {
         return this.originalResponse.copySource;
       }
+      /**
+       * State of the copy operation
+       * identified by 'x-ms-copy-id'. Possible values include: 'pending',
+       * 'success', 'aborted', 'failed'
+       *
+       * @readonly
+       */
       get copyStatus() {
         return this.originalResponse.copyStatus;
       }
+      /**
+       * Only appears when
+       * x-ms-copy-status is failed or pending. Describes cause of fatal or
+       * non-fatal copy operation failure.
+       *
+       * @readonly
+       */
       get copyStatusDescription() {
         return this.originalResponse.copyStatusDescription;
       }
+      /**
+       * When a blob is leased,
+       * specifies whether the lease is of infinite or fixed duration. Possible
+       * values include: 'infinite', 'fixed'.
+       *
+       * @readonly
+       */
       get leaseDuration() {
         return this.originalResponse.leaseDuration;
       }
+      /**
+       * Lease state of the blob. Possible
+       * values include: 'available', 'leased', 'expired', 'breaking', 'broken'.
+       *
+       * @readonly
+       */
       get leaseState() {
         return this.originalResponse.leaseState;
       }
+      /**
+       * The current lease status of the
+       * blob. Possible values include: 'locked', 'unlocked'.
+       *
+       * @readonly
+       */
       get leaseStatus() {
         return this.originalResponse.leaseStatus;
       }
+      /**
+       * A UTC date/time value generated by the service that
+       * indicates the time at which the response was initiated.
+       *
+       * @readonly
+       */
       get date() {
         return this.originalResponse.date;
       }
+      /**
+       * The number of committed blocks
+       * present in the blob. This header is returned only for append blobs.
+       *
+       * @readonly
+       */
       get blobCommittedBlockCount() {
         return this.originalResponse.blobCommittedBlockCount;
       }
+      /**
+       * The ETag contains a value that you can use to
+       * perform operations conditionally, in quotes.
+       *
+       * @readonly
+       */
       get etag() {
         return this.originalResponse.etag;
       }
+      /**
+       * The error code.
+       *
+       * @readonly
+       */
       get errorCode() {
         return this.originalResponse.errorCode;
       }
+      /**
+       * The value of this header is set to
+       * true if the file data and application metadata are completely encrypted
+       * using the specified algorithm. Otherwise, the value is set to false (when
+       * the file is unencrypted, or if only parts of the file/application metadata
+       * are encrypted).
+       *
+       * @readonly
+       */
       get isServerEncrypted() {
         return this.originalResponse.isServerEncrypted;
       }
+      /**
+       * If the blob has a MD5 hash, and if
+       * request contains range header (Range or x-ms-range), this response header
+       * is returned with the value of the whole blob's MD5 value. This value may
+       * or may not be equal to the value returned in Content-MD5 header, with the
+       * latter calculated from the requested range.
+       *
+       * @readonly
+       */
       get blobContentMD5() {
         return this.originalResponse.blobContentMD5;
       }
+      /**
+       * Returns the date and time the file was last
+       * modified. Any operation that modifies the file or its properties updates
+       * the last modified time.
+       *
+       * @readonly
+       */
       get lastModified() {
         return this.originalResponse.lastModified;
       }
+      /**
+       * A name-value pair
+       * to associate with a file storage object.
+       *
+       * @readonly
+       */
       get metadata() {
         return this.originalResponse.metadata;
       }
+      /**
+       * This header uniquely identifies the request
+       * that was made and can be used for troubleshooting the request.
+       *
+       * @readonly
+       */
       get requestId() {
         return this.originalResponse.requestId;
       }
+      /**
+       * If a client request id header is sent in the request, this header will be present in the
+       * response with the same value.
+       *
+       * @readonly
+       */
       get clientRequestId() {
         return this.originalResponse.clientRequestId;
       }
+      /**
+       * Indicates the version of the File service used
+       * to execute the request.
+       *
+       * @readonly
+       */
       get version() {
         return this.originalResponse.version;
       }
+      /**
+       * The SHA-256 hash of the encryption key used to encrypt the blob. This value is only returned
+       * when the blob was encrypted with a customer-provided key.
+       *
+       * @readonly
+       */
       get encryptionKeySha256() {
         return this.originalResponse.encryptionKeySha256;
       }
+      /**
+       * If the request is to read a specified range and the x-ms-range-get-content-crc64 is set to
+       * true, then the request returns a crc64 for the range, as long as the range size is less than
+       * or equal to 4 MB. If both x-ms-range-get-content-crc64 & x-ms-range-get-content-md5 is
+       * specified in the same request, it will fail with 400(Bad Request)
+       */
       get contentCrc64() {
         return this.originalResponse.contentCrc64;
       }
+      /**
+       * The response body as a browser Blob.
+       * Always undefined in node.js.
+       *
+       * @readonly
+       */
       get blobBody() {
         return void 0;
       }
+      /**
+       * The response body as a node.js Readable stream.
+       * Always undefined in the browser.
+       *
+       * It will parse avor data returned by blob query.
+       *
+       * @readonly
+       */
       get readableStreamBody() {
         return isNode ? this.blobDownloadStream : void 0;
       }
+      /**
+       * The HTTP response.
+       */
       get _response() {
         return this.originalResponse._response;
       }
@@ -57775,6 +59624,7 @@ function ensureCpkIfSpecified(cpk, isHttps) {
 var BlockBlobTier, PremiumPageBlobTier, StorageBlobAudience;
 var init_models3 = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/models.js"() {
+    "use strict";
     init_constants2();
     (function(BlockBlobTier2) {
       BlockBlobTier2["Hot"] = "Hot";
@@ -57822,12 +59672,14 @@ function rangeResponseFromModel(response) {
 }
 var init_PageBlobRangeResponse = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/PageBlobRangeResponse.js"() {
+    "use strict";
   }
 });
 
 // ../../../node_modules/.pnpm/@azure+core-lro@2.2.5/node_modules/@azure/core-lro/dist-esm/src/pollOperation.js
 var init_pollOperation = __esm({
   "../../../node_modules/.pnpm/@azure+core-lro@2.2.5/node_modules/@azure/core-lro/dist-esm/src/pollOperation.js"() {
+    "use strict";
   }
 });
 
@@ -57835,21 +59687,87 @@ var init_pollOperation = __esm({
 var PollerStoppedError, PollerCancelledError, Poller;
 var init_poller = __esm({
   "../../../node_modules/.pnpm/@azure+core-lro@2.2.5/node_modules/@azure/core-lro/dist-esm/src/poller.js"() {
-    PollerStoppedError = class extends Error {
+    "use strict";
+    PollerStoppedError = class _PollerStoppedError extends Error {
       constructor(message) {
         super(message);
         this.name = "PollerStoppedError";
-        Object.setPrototypeOf(this, PollerStoppedError.prototype);
+        Object.setPrototypeOf(this, _PollerStoppedError.prototype);
       }
     };
-    PollerCancelledError = class extends Error {
+    PollerCancelledError = class _PollerCancelledError extends Error {
       constructor(message) {
         super(message);
         this.name = "PollerCancelledError";
-        Object.setPrototypeOf(this, PollerCancelledError.prototype);
+        Object.setPrototypeOf(this, _PollerCancelledError.prototype);
       }
     };
     Poller = class {
+      /**
+       * A poller needs to be initialized by passing in at least the basic properties of the `PollOperation<TState, TResult>`.
+       *
+       * When writing an implementation of a Poller, this implementation needs to deal with the initialization
+       * of any custom state beyond the basic definition of the poller. The basic poller assumes that the poller's
+       * operation has already been defined, at least its basic properties. The code below shows how to approach
+       * the definition of the constructor of a new custom poller.
+       *
+       * ```ts
+       * export class MyPoller extends Poller<MyOperationState, string> {
+       *   constructor({
+       *     // Anything you might need outside of the basics
+       *   }) {
+       *     let state: MyOperationState = {
+       *       privateProperty: private,
+       *       publicProperty: public,
+       *     };
+       *
+       *     const operation = {
+       *       state,
+       *       update,
+       *       cancel,
+       *       toString
+       *     }
+       *
+       *     // Sending the operation to the parent's constructor.
+       *     super(operation);
+       *
+       *     // You can assign more local properties here.
+       *   }
+       * }
+       * ```
+       *
+       * Inside of this constructor, a new promise is created. This will be used to
+       * tell the user when the poller finishes (see `pollUntilDone()`). The promise's
+       * resolve and reject methods are also used internally to control when to resolve
+       * or reject anyone waiting for the poller to finish.
+       *
+       * The constructor of a custom implementation of a poller is where any serialized version of
+       * a previous poller's operation should be deserialized into the operation sent to the
+       * base constructor. For example:
+       *
+       * ```ts
+       * export class MyPoller extends Poller<MyOperationState, string> {
+       *   constructor(
+       *     baseOperation: string | undefined
+       *   ) {
+       *     let state: MyOperationState = {};
+       *     if (baseOperation) {
+       *       state = {
+       *         ...JSON.parse(baseOperation).state,
+       *         ...state
+       *       };
+       *     }
+       *     const operation = {
+       *       state,
+       *       // ...
+       *     }
+       *     super(operation);
+       *   }
+       * }
+       * ```
+       *
+       * @param operation - Must contain the basic properties of `PollOperation<State, TResult>`.
+       */
       constructor(operation) {
         this.stopped = true;
         this.pollProgressCallbacks = [];
@@ -57861,6 +59779,10 @@ var init_poller = __esm({
         this.promise.catch(() => {
         });
       }
+      /**
+       * Starts a loop that will break only if the poller is done
+       * or if the poller is stopped.
+       */
       async startPolling() {
         if (this.stopped) {
           this.stopped = false;
@@ -57870,6 +59792,14 @@ var init_poller = __esm({
           await this.delay();
         }
       }
+      /**
+       * pollOnce does one polling, by calling to the update method of the underlying
+       * poll operation to make any relevant change effective.
+       *
+       * It only optionally receives an object with an abortSignal property, from \@azure/abort-controller's AbortSignalLike.
+       *
+       * @param options - Optional properties passed to the operation's update method.
+       */
       async pollOnce(options = {}) {
         if (!this.isDone()) {
           try {
@@ -57883,14 +59813,33 @@ var init_poller = __esm({
         }
         this.processUpdatedState();
       }
+      /**
+       * fireProgress calls the functions passed in via onProgress the method of the poller.
+       *
+       * It loops over all of the callbacks received from onProgress, and executes them, sending them
+       * the current operation state.
+       *
+       * @param state - The current operation state.
+       */
       fireProgress(state) {
         for (const callback of this.pollProgressCallbacks) {
           callback(state);
         }
       }
+      /**
+       * Invokes the underlying operation's cancel method.
+       */
       async cancelOnce(options = {}) {
         this.operation = await this.operation.cancel(options);
       }
+      /**
+       * Returns a promise that will resolve once a single polling request finishes.
+       * It does this by calling the update method of the Poller's operation.
+       *
+       * It only optionally receives an object with an abortSignal property, from \@azure/abort-controller's AbortSignalLike.
+       *
+       * @param options - Optional properties passed to the operation's update method.
+       */
       poll(options = {}) {
         if (!this.pollOncePromise) {
           this.pollOncePromise = this.pollOnce(options);
@@ -57916,6 +59865,9 @@ var init_poller = __esm({
           this.resolve(this.operation.state.result);
         }
       }
+      /**
+       * Returns a promise that will resolve once the underlying operation is completed.
+       */
       async pollUntilDone() {
         if (this.stopped) {
           this.startPolling().catch(this.reject);
@@ -57923,16 +59875,28 @@ var init_poller = __esm({
         this.processUpdatedState();
         return this.promise;
       }
+      /**
+       * Invokes the provided callback after each polling is completed,
+       * sending the current state of the poller's operation.
+       *
+       * It returns a method that can be used to stop receiving updates on the given callback function.
+       */
       onProgress(callback) {
         this.pollProgressCallbacks.push(callback);
         return () => {
           this.pollProgressCallbacks = this.pollProgressCallbacks.filter((c) => c !== callback);
         };
       }
+      /**
+       * Returns true if the poller has finished polling.
+       */
       isDone() {
         const state = this.operation.state;
         return Boolean(state.isCompleted || state.isCancelled || state.error);
       }
+      /**
+       * Stops the poller from continuing to poll.
+       */
       stopPolling() {
         if (!this.stopped) {
           this.stopped = true;
@@ -57941,9 +59905,21 @@ var init_poller = __esm({
           }
         }
       }
+      /**
+       * Returns true if the poller is stopped.
+       */
       isStopped() {
         return this.stopped;
       }
+      /**
+       * Attempts to cancel the underlying operation.
+       *
+       * It only optionally receives an object with an abortSignal property, from \@azure/abort-controller's AbortSignalLike.
+       *
+       * If it's called again before it finishes, it will throw an error.
+       *
+       * @param options - Optional properties passed to the operation's update method.
+       */
       cancelOperation(options = {}) {
         if (!this.cancelPromise) {
           this.cancelPromise = this.cancelOnce(options);
@@ -57952,13 +59928,71 @@ var init_poller = __esm({
         }
         return this.cancelPromise;
       }
+      /**
+       * Returns the state of the operation.
+       *
+       * Even though TState will be the same type inside any of the methods of any extension of the Poller class,
+       * implementations of the pollers can customize what's shared with the public by writing their own
+       * version of the `getOperationState` method, and by defining two types, one representing the internal state of the poller
+       * and a public type representing a safe to share subset of the properties of the internal state.
+       * Their definition of getOperationState can then return their public type.
+       *
+       * Example:
+       *
+       * ```ts
+       * // Let's say we have our poller's operation state defined as:
+       * interface MyOperationState extends PollOperationState<ResultType> {
+       *   privateProperty?: string;
+       *   publicProperty?: string;
+       * }
+       *
+       * // To allow us to have a true separation of public and private state, we have to define another interface:
+       * interface PublicState extends PollOperationState<ResultType> {
+       *   publicProperty?: string;
+       * }
+       *
+       * // Then, we define our Poller as follows:
+       * export class MyPoller extends Poller<MyOperationState, ResultType> {
+       *   // ... More content is needed here ...
+       *
+       *   public getOperationState(): PublicState {
+       *     const state: PublicState = this.operation.state;
+       *     return {
+       *       // Properties from PollOperationState<TResult>
+       *       isStarted: state.isStarted,
+       *       isCompleted: state.isCompleted,
+       *       isCancelled: state.isCancelled,
+       *       error: state.error,
+       *       result: state.result,
+       *
+       *       // The only other property needed by PublicState.
+       *       publicProperty: state.publicProperty
+       *     }
+       *   }
+       * }
+       * ```
+       *
+       * You can see this in the tests of this repository, go to the file:
+       * `../test/utils/testPoller.ts`
+       * and look for the getOperationState implementation.
+       */
       getOperationState() {
         return this.operation.state;
       }
+      /**
+       * Returns the result value of the operation,
+       * regardless of the state of the poller.
+       * It can return undefined or an incomplete form of the final TResult value
+       * depending on the implementation.
+       */
       getResult() {
         const state = this.operation.state;
         return state.result;
       }
+      /**
+       * Returns a serialized version of the poller's operation
+       * by invoking the operation's toString method.
+       */
       toString() {
         return this.operation.toString();
       }
@@ -57969,12 +60003,14 @@ var init_poller = __esm({
 // ../../../node_modules/.pnpm/@azure+core-lro@2.2.5/node_modules/@azure/core-lro/dist-esm/src/lroEngine/index.js
 var init_lroEngine = __esm({
   "../../../node_modules/.pnpm/@azure+core-lro@2.2.5/node_modules/@azure/core-lro/dist-esm/src/lroEngine/index.js"() {
+    "use strict";
   }
 });
 
 // ../../../node_modules/.pnpm/@azure+core-lro@2.2.5/node_modules/@azure/core-lro/dist-esm/src/index.js
 var init_src8 = __esm({
   "../../../node_modules/.pnpm/@azure+core-lro@2.2.5/node_modules/@azure/core-lro/dist-esm/src/index.js"() {
+    "use strict";
     init_pollOperation();
     init_poller();
     init_lroEngine();
@@ -57993,6 +60029,7 @@ function makeBlobBeginCopyFromURLPollOperation(state) {
 var BlobBeginCopyFromUrlPoller, cancel, update, toString;
 var init_BlobStartCopyFromUrlPoller = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/pollers/BlobStartCopyFromUrlPoller.js"() {
+    "use strict";
     init_coreHttp();
     init_src8();
     BlobBeginCopyFromUrlPoller = class extends Poller {
@@ -58091,6 +60128,7 @@ function rangeToString(iRange) {
 }
 var init_Range = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/Range.js"() {
+    "use strict";
   }
 });
 
@@ -58098,12 +60136,17 @@ var init_Range = __esm({
 var import_events, BatchStates, Batch;
 var init_Batch = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/utils/Batch.js"() {
+    "use strict";
     import_events = require("events");
     (function(BatchStates2) {
       BatchStates2[BatchStates2["Good"] = 0] = "Good";
       BatchStates2[BatchStates2["Error"] = 1] = "Error";
     })(BatchStates || (BatchStates = {}));
     Batch = class {
+      /**
+       * Creates an instance of Batch.
+       * @param concurrency -
+       */
       constructor(concurrency = 5) {
         this.actives = 0;
         this.completed = 0;
@@ -58116,6 +60159,11 @@ var init_Batch = __esm({
         this.concurrency = concurrency;
         this.emitter = new import_events.EventEmitter();
       }
+      /**
+       * Add a operation into queue.
+       *
+       * @param operation -
+       */
       addOperation(operation) {
         this.operations.push(async () => {
           try {
@@ -58129,6 +60177,10 @@ var init_Batch = __esm({
           }
         });
       }
+      /**
+       * Start execute operations in the queue.
+       *
+       */
       async do() {
         if (this.operations.length === 0) {
           return Promise.resolve();
@@ -58142,12 +60194,21 @@ var init_Batch = __esm({
           });
         });
       }
+      /**
+       * Get next operation to be executed. Return null when reaching ends.
+       *
+       */
       nextOperation() {
         if (this.offset < this.operations.length) {
           return this.operations[this.offset++];
         }
         return null;
       }
+      /**
+       * Start execute operations. One one the most important difference between
+       * this method with do() is that do() wraps as an sync method.
+       *
+       */
       parallelExecute() {
         if (this.state === BatchStates.Error) {
           return;
@@ -58173,8 +60234,16 @@ var init_Batch = __esm({
 var import_stream5, BuffersStream;
 var init_BuffersStream = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-common/src/BuffersStream.js"() {
+    "use strict";
     import_stream5 = require("stream");
     BuffersStream = class extends import_stream5.Readable {
+      /**
+       * Creates an instance of BuffersStream that will emit the data
+       * contained in the array of buffers.
+       *
+       * @param buffers - Array of buffers containing the data
+       * @param byteLength - The total length of data contained in the buffers
+       */
       constructor(buffers, byteLength, options) {
         super(options);
         this.buffers = buffers;
@@ -58190,6 +60259,11 @@ var init_BuffersStream = __esm({
           throw new Error("Data size shouldn't be larger than the total length of buffers.");
         }
       }
+      /**
+       * Internal _read() that will be called when the stream wants to pull more data in.
+       *
+       * @param size - Optional. The size of data to be read
+       */
       _read(size) {
         if (this.pushedBytesLength >= this.byteLength) {
           this.push(null);
@@ -58237,6 +60311,7 @@ var init_BuffersStream = __esm({
 var maxBufferLength, PooledBuffer;
 var init_PooledBuffer = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-common/src/PooledBuffer.js"() {
+    "use strict";
     init_BuffersStream();
     maxBufferLength = require("buffer").constants.MAX_LENGTH;
     PooledBuffer = class {
@@ -58256,9 +60331,21 @@ var init_PooledBuffer = __esm({
           this.fill(buffers, totalLength);
         }
       }
+      /**
+       * The size of the data contained in the pooled buffers.
+       */
       get size() {
         return this._size;
       }
+      /**
+       * Fill the internal buffers with data in the input buffers serially
+       * with respect to the total length and the total capacity of the internal buffers.
+       * Data copied will be shift out of the input buffers.
+       *
+       * @param buffers - Input buffers containing the data to be filled in the pooled buffer
+       * @param totalLength - Total length of the data to be filled in.
+       *
+       */
       fill(buffers, totalLength) {
         this._size = Math.min(this.capacity, totalLength);
         let i = 0, j = 0, targetOffset = 0, sourceOffset = 0, totalCopiedNum = 0;
@@ -58283,6 +60370,10 @@ var init_PooledBuffer = __esm({
           buffers[0] = buffers[0].slice(sourceOffset);
         }
       }
+      /**
+       * Get the readable stream assembled from all the data in the internal buffers.
+       *
+       */
       getReadableStream() {
         return new BuffersStream(this.buffers, this.size);
       }
@@ -58294,9 +60385,22 @@ var init_PooledBuffer = __esm({
 var import_events2, BufferScheduler;
 var init_BufferScheduler = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-common/src/BufferScheduler.js"() {
+    "use strict";
     import_events2 = require("events");
     init_PooledBuffer();
     BufferScheduler = class {
+      /**
+       * Creates an instance of BufferScheduler.
+       *
+       * @param readable - A Node.js Readable stream
+       * @param bufferSize - Buffer size of every maintained buffer
+       * @param maxBuffers - How many buffers can be allocated
+       * @param outgoingHandler - An async function scheduled to be
+       *                                          triggered when a buffer fully filled
+       *                                          with stream data
+       * @param concurrency - Concurrency of executing outgoingHandlers (>0)
+       * @param encoding - [Optional] Encoding of Readable stream when it's a string stream
+       */
       constructor(readable, bufferSize, maxBuffers, outgoingHandler, concurrency, encoding) {
         this.emitter = new import_events2.EventEmitter();
         this.offset = 0;
@@ -58324,6 +60428,11 @@ var init_BufferScheduler = __esm({
         this.concurrency = concurrency;
         this.encoding = encoding;
       }
+      /**
+       * Start the scheduler, will return error when stream of any of the outgoingHandlers
+       * returns error.
+       *
+       */
       async do() {
         return new Promise((resolve3, reject) => {
           this.readable.on("data", (data) => {
@@ -58363,10 +60472,20 @@ var init_BufferScheduler = __esm({
           });
         });
       }
+      /**
+       * Insert a new data into unresolved array.
+       *
+       * @param data -
+       */
       appendUnresolvedData(data) {
         this.unresolvedDataArray.push(data);
         this.unresolvedLength += data.length;
       }
+      /**
+       * Try to shift a buffer with size in blockSize. The buffer returned may be less
+       * than blockSize when data in unresolvedDataArray is less than bufferSize.
+       *
+       */
       shiftBufferFromUnresolvedDataArray(buffer) {
         if (!buffer) {
           buffer = new PooledBuffer(this.bufferSize, this.unresolvedDataArray, this.unresolvedLength);
@@ -58376,6 +60495,15 @@ var init_BufferScheduler = __esm({
         this.unresolvedLength -= buffer.size;
         return buffer;
       }
+      /**
+       * Resolve data in unresolvedDataArray. For every buffer with size in blockSize
+       * shifted, it will try to get (or allocate a buffer) from incoming, and fill it,
+       * then push it into outgoing to be handled by outgoing handler.
+       *
+       * Return false when available buffers in incoming are not enough, else true.
+       *
+       * @returns Return false when buffers in incoming are not enough, else true.
+       */
       resolveData() {
         while (this.unresolvedLength >= this.bufferSize) {
           let buffer;
@@ -58395,6 +60523,10 @@ var init_BufferScheduler = __esm({
         }
         return true;
       }
+      /**
+       * Try to trigger a outgoing handler for every buffer in outgoing. Stop when
+       * concurrency reaches.
+       */
       async triggerOutgoingHandlers() {
         let buffer;
         do {
@@ -58407,6 +60539,11 @@ var init_BufferScheduler = __esm({
           }
         } while (buffer);
       }
+      /**
+       * Trigger a outgoing handler for a buffer shifted from outgoing.
+       *
+       * @param buffer -
+       */
       async triggerOutgoingHandler(buffer) {
         const bufferLength = buffer.size;
         this.executingOutgoingHandlers++;
@@ -58421,6 +60558,11 @@ var init_BufferScheduler = __esm({
         this.reuseBuffer(buffer);
         this.emitter.emit("checkEnd");
       }
+      /**
+       * Return buffer used by outgoing handler into incoming.
+       *
+       * @param buffer -
+       */
       reuseBuffer(buffer) {
         this.incoming.push(buffer);
         if (!this.isError && this.resolveData() && !this.isStreamEnd) {
@@ -58434,6 +60576,7 @@ var init_BufferScheduler = __esm({
 // ../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-common/src/index.js
 var init_src9 = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-common/src/index.js"() {
+    "use strict";
     init_BufferScheduler();
   }
 });
@@ -58509,6 +60652,7 @@ async function readStreamToLocalFile(rs, file) {
 var fs, util2, fsStat, fsCreateReadStream;
 var init_utils_node = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/utils/utils.node.js"() {
+    "use strict";
     fs = __toESM(require("fs"));
     util2 = __toESM(require("util"));
     fsStat = util2.promisify(fs.stat);
@@ -58520,7 +60664,8 @@ var init_utils_node = __esm({
 var BlobClient, AppendBlobClient, BlockBlobClient, PageBlobClient;
 var init_Clients = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/Clients.js"() {
-    init_modules();
+    "use strict";
+    init_tslib_es6();
     init_coreHttp();
     init_src4();
     init_BlobDownloadResponse();
@@ -58542,7 +60687,7 @@ var init_Clients = __esm({
     init_utils_node();
     init_BlobSASSignatureValues();
     init_BlobLeaseClient();
-    BlobClient = class extends StorageClient {
+    BlobClient = class _BlobClient extends StorageClient {
       constructor(urlOrConnectionString, credentialOrPipelineOrContainerName, blobNameOrOptions, options) {
         options = options || {};
         let pipeline;
@@ -58587,27 +60732,118 @@ var init_Clients = __esm({
         this._snapshot = getURLParameter(this.url, URLConstants.Parameters.SNAPSHOT);
         this._versionId = getURLParameter(this.url, URLConstants.Parameters.VERSIONID);
       }
+      /**
+       * The name of the blob.
+       */
       get name() {
         return this._name;
       }
+      /**
+       * The name of the storage container the blob is associated with.
+       */
       get containerName() {
         return this._containerName;
       }
+      /**
+       * Creates a new BlobClient object identical to the source but with the specified snapshot timestamp.
+       * Provide "" will remove the snapshot and return a Client to the base blob.
+       *
+       * @param snapshot - The snapshot timestamp.
+       * @returns A new BlobClient object identical to the source but with the specified snapshot timestamp
+       */
       withSnapshot(snapshot2) {
-        return new BlobClient(setURLParameter(this.url, URLConstants.Parameters.SNAPSHOT, snapshot2.length === 0 ? void 0 : snapshot2), this.pipeline);
+        return new _BlobClient(setURLParameter(this.url, URLConstants.Parameters.SNAPSHOT, snapshot2.length === 0 ? void 0 : snapshot2), this.pipeline);
       }
+      /**
+       * Creates a new BlobClient object pointing to a version of this blob.
+       * Provide "" will remove the versionId and return a Client to the base blob.
+       *
+       * @param versionId - The versionId.
+       * @returns A new BlobClient object pointing to the version of this blob.
+       */
       withVersion(versionId2) {
-        return new BlobClient(setURLParameter(this.url, URLConstants.Parameters.VERSIONID, versionId2.length === 0 ? void 0 : versionId2), this.pipeline);
+        return new _BlobClient(setURLParameter(this.url, URLConstants.Parameters.VERSIONID, versionId2.length === 0 ? void 0 : versionId2), this.pipeline);
       }
+      /**
+       * Creates a AppendBlobClient object.
+       *
+       */
       getAppendBlobClient() {
         return new AppendBlobClient(this.url, this.pipeline);
       }
+      /**
+       * Creates a BlockBlobClient object.
+       *
+       */
       getBlockBlobClient() {
         return new BlockBlobClient(this.url, this.pipeline);
       }
+      /**
+       * Creates a PageBlobClient object.
+       *
+       */
       getPageBlobClient() {
         return new PageBlobClient(this.url, this.pipeline);
       }
+      /**
+       * Reads or downloads a blob from the system, including its metadata and properties.
+       * You can also call Get Blob to read a snapshot.
+       *
+       * * In Node.js, data returns in a Readable stream readableStreamBody
+       * * In browsers, data returns in a promise blobBody
+       *
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-blob
+       *
+       * @param offset - From which position of the blob to download, greater than or equal to 0
+       * @param count - How much data to be downloaded, greater than 0. Will download to the end when undefined
+       * @param options - Optional options to Blob Download operation.
+       *
+       *
+       * Example usage (Node.js):
+       *
+       * ```js
+       * // Download and convert a blob to a string
+       * const downloadBlockBlobResponse = await blobClient.download();
+       * const downloaded = await streamToBuffer(downloadBlockBlobResponse.readableStreamBody);
+       * console.log("Downloaded blob content:", downloaded.toString());
+       *
+       * async function streamToBuffer(readableStream) {
+       * return new Promise((resolve, reject) => {
+       * const chunks = [];
+       * readableStream.on("data", (data) => {
+       * chunks.push(data instanceof Buffer ? data : Buffer.from(data));
+       * });
+       * readableStream.on("end", () => {
+       * resolve(Buffer.concat(chunks));
+       * });
+       * readableStream.on("error", reject);
+       * });
+       * }
+       * ```
+       *
+       * Example usage (browser):
+       *
+       * ```js
+       * // Download and convert a blob to a string
+       * const downloadBlockBlobResponse = await blobClient.download();
+       * const downloaded = await blobToString(await downloadBlockBlobResponse.blobBody);
+       * console.log(
+       *   "Downloaded blob content",
+       *   downloaded
+       * );
+       *
+       * async function blobToString(blob: Blob): Promise<string> {
+       *   const fileReader = new FileReader();
+       *   return new Promise<string>((resolve, reject) => {
+       *     fileReader.onloadend = (ev: any) => {
+       *       resolve(ev.target!.result);
+       *     };
+       *     fileReader.onerror = reject;
+       *     fileReader.readAsText(blob);
+       *   });
+       * }
+       * ```
+       */
       async download(offset = 0, count, options = {}) {
         var _a;
         options.conditions = options.conditions || {};
@@ -58617,6 +60853,7 @@ var init_Clients = __esm({
         try {
           const res = await this.blobContext.download(Object.assign({ abortSignal: options.abortSignal, leaseAccessConditions: options.conditions, modifiedAccessConditions: Object.assign(Object.assign({}, options.conditions), { ifTags: (_a = options.conditions) === null || _a === void 0 ? void 0 : _a.tagConditions }), requestOptions: {
             onDownloadProgress: isNode ? void 0 : options.onProgress
+            // for Node.js, progress is reported by RetriableReadableStream
           }, range: offset === 0 && !count ? void 0 : rangeToString({ offset, count }), rangeGetContentMD5: options.rangeGetContentMD5, rangeGetContentCRC64: options.rangeGetContentCrc64, snapshot: options.snapshot, cpkInfo: options.customerProvidedKey }, convertTracingToRequestOptionsBase(updatedOptions)));
           const wrappedRes = Object.assign(Object.assign({}, res), { _response: res._response, objectReplicationDestinationPolicyId: res.objectReplicationPolicyId, objectReplicationSourceProperties: parseObjectReplicationRecord(res.objectReplicationRules) });
           if (!isNode) {
@@ -58666,6 +60903,15 @@ var init_Clients = __esm({
           span.end();
         }
       }
+      /**
+       * Returns true if the Azure blob resource represented by this client exists; false otherwise.
+       *
+       * NOTE: use this function with care since an existing blob might be deleted by other clients or
+       * applications. Vice versa new blobs might be added by other clients or applications after this
+       * function completes.
+       *
+       * @param options - options to Exists operation.
+       */
       async exists(options = {}) {
         const { span, updatedOptions } = createSpan2("BlobClient-exists", options);
         try {
@@ -58692,6 +60938,18 @@ var init_Clients = __esm({
           span.end();
         }
       }
+      /**
+       * Returns all user-defined metadata, standard HTTP properties, and system properties
+       * for the blob. It does not return the content of the blob.
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-blob-properties
+       *
+       * WARNING: The `metadata` object returned in the response will have its keys in lowercase, even if
+       * they originally contained uppercase characters. This differs from the metadata keys returned by
+       * the methods of {@link ContainerClient} that list blobs using the `includeMetadata` option, which
+       * will retain their original casing.
+       *
+       * @param options - Optional options to Get Properties operation.
+       */
       async getProperties(options = {}) {
         var _a;
         const { span, updatedOptions } = createSpan2("BlobClient-getProperties", options);
@@ -58710,6 +60968,15 @@ var init_Clients = __esm({
           span.end();
         }
       }
+      /**
+       * Marks the specified blob or snapshot for deletion. The blob is later deleted
+       * during garbage collection. Note that in order to delete a blob, you must delete
+       * all of its snapshots. You can delete both at the same time with the Delete
+       * Blob operation.
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/delete-blob
+       *
+       * @param options - Optional options to Blob Delete operation.
+       */
       async delete(options = {}) {
         var _a;
         const { span, updatedOptions } = createSpan2("BlobClient-delete", options);
@@ -58726,6 +60993,15 @@ var init_Clients = __esm({
           span.end();
         }
       }
+      /**
+       * Marks the specified blob or snapshot for deletion if it exists. The blob is later deleted
+       * during garbage collection. Note that in order to delete a blob, you must delete
+       * all of its snapshots. You can delete both at the same time with the Delete
+       * Blob operation.
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/delete-blob
+       *
+       * @param options - Optional options to Blob Delete operation.
+       */
       async deleteIfExists(options = {}) {
         var _a, _b;
         const { span, updatedOptions } = createSpan2("BlobClient-deleteIfExists", options);
@@ -58749,6 +61025,14 @@ var init_Clients = __esm({
           span.end();
         }
       }
+      /**
+       * Restores the contents and metadata of soft deleted blob and any associated
+       * soft deleted snapshots. Undelete Blob is supported only on version 2017-07-29
+       * or later.
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/undelete-blob
+       *
+       * @param options - Optional options to Blob Undelete operation.
+       */
       async undelete(options = {}) {
         const { span, updatedOptions } = createSpan2("BlobClient-undelete", options);
         try {
@@ -58763,6 +61047,21 @@ var init_Clients = __esm({
           span.end();
         }
       }
+      /**
+       * Sets system properties on the blob.
+       *
+       * If no value provided, or no value provided for the specified blob HTTP headers,
+       * these blob HTTP headers without a value will be cleared.
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-blob-properties
+       *
+       * @param blobHTTPHeaders - If no value provided, or no value provided for
+       *                                                   the specified blob HTTP headers, these blob HTTP
+       *                                                   headers without a value will be cleared.
+       *                                                   A common header to set is `blobContentType`
+       *                                                   enabling the browser to provide functionality
+       *                                                   based on file type.
+       * @param options - Optional options to Blob Set HTTP Headers operation.
+       */
       async setHTTPHeaders(blobHTTPHeaders, options = {}) {
         var _a;
         const { span, updatedOptions } = createSpan2("BlobClient-setHTTPHeaders", options);
@@ -58780,6 +61079,17 @@ var init_Clients = __esm({
           span.end();
         }
       }
+      /**
+       * Sets user-defined metadata for the specified blob as one or more name-value pairs.
+       *
+       * If no option provided, or no metadata defined in the parameter, the blob
+       * metadata will be removed.
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-blob-metadata
+       *
+       * @param metadata - Replace existing metadata with this value.
+       *                               If no value provided the existing metadata will be removed.
+       * @param options - Optional options to Set Metadata operation.
+       */
       async setMetadata(metadata2, options = {}) {
         var _a;
         const { span, updatedOptions } = createSpan2("BlobClient-setMetadata", options);
@@ -58797,6 +61107,15 @@ var init_Clients = __esm({
           span.end();
         }
       }
+      /**
+       * Sets tags on the underlying blob.
+       * A blob can have up to 10 tags. Tag keys must be between 1 and 128 characters.  Tag values must be between 0 and 256 characters.
+       * Valid tag key and value characters include lower and upper case letters, digits (0-9),
+       * space (' '), plus ('+'), minus ('-'), period ('.'), foward slash ('/'), colon (':'), equals ('='), and underscore ('_').
+       *
+       * @param tags -
+       * @param options -
+       */
       async setTags(tags2, options = {}) {
         var _a;
         const { span, updatedOptions } = createSpan2("BlobClient-setTags", options);
@@ -58812,6 +61131,11 @@ var init_Clients = __esm({
           span.end();
         }
       }
+      /**
+       * Gets the tags associated with the underlying blob.
+       *
+       * @param options -
+       */
       async getTags(options = {}) {
         var _a;
         const { span, updatedOptions } = createSpan2("BlobClient-getTags", options);
@@ -58829,9 +61153,21 @@ var init_Clients = __esm({
           span.end();
         }
       }
+      /**
+       * Get a {@link BlobLeaseClient} that manages leases on the blob.
+       *
+       * @param proposeLeaseId - Initial proposed lease Id.
+       * @returns A new BlobLeaseClient object for managing leases on the blob.
+       */
       getBlobLeaseClient(proposeLeaseId) {
         return new BlobLeaseClient(this, proposeLeaseId);
       }
+      /**
+       * Creates a read-only snapshot of a blob.
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/snapshot-blob
+       *
+       * @param options - Optional options to the Blob Create Snapshot operation.
+       */
       async createSnapshot(options = {}) {
         var _a;
         const { span, updatedOptions } = createSpan2("BlobClient-createSnapshot", options);
@@ -58849,6 +61185,78 @@ var init_Clients = __esm({
           span.end();
         }
       }
+      /**
+       * Asynchronously copies a blob to a destination within the storage account.
+       * This method returns a long running operation poller that allows you to wait
+       * indefinitely until the copy is completed.
+       * You can also cancel a copy before it is completed by calling `cancelOperation` on the poller.
+       * Note that the onProgress callback will not be invoked if the operation completes in the first
+       * request, and attempting to cancel a completed copy will result in an error being thrown.
+       *
+       * In version 2012-02-12 and later, the source for a Copy Blob operation can be
+       * a committed blob in any Azure storage account.
+       * Beginning with version 2015-02-21, the source for a Copy Blob operation can be
+       * an Azure file in any Azure storage account.
+       * Only storage accounts created on or after June 7th, 2012 allow the Copy Blob
+       * operation to copy from another storage account.
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/copy-blob
+       *
+       * Example using automatic polling:
+       *
+       * ```js
+       * const copyPoller = await blobClient.beginCopyFromURL('url');
+       * const result = await copyPoller.pollUntilDone();
+       * ```
+       *
+       * Example using manual polling:
+       *
+       * ```js
+       * const copyPoller = await blobClient.beginCopyFromURL('url');
+       * while (!poller.isDone()) {
+       *    await poller.poll();
+       * }
+       * const result = copyPoller.getResult();
+       * ```
+       *
+       * Example using progress updates:
+       *
+       * ```js
+       * const copyPoller = await blobClient.beginCopyFromURL('url', {
+       *   onProgress(state) {
+       *     console.log(`Progress: ${state.copyProgress}`);
+       *   }
+       * });
+       * const result = await copyPoller.pollUntilDone();
+       * ```
+       *
+       * Example using a changing polling interval (default 15 seconds):
+       *
+       * ```js
+       * const copyPoller = await blobClient.beginCopyFromURL('url', {
+       *   intervalInMs: 1000 // poll blob every 1 second for copy progress
+       * });
+       * const result = await copyPoller.pollUntilDone();
+       * ```
+       *
+       * Example using copy cancellation:
+       *
+       * ```js
+       * const copyPoller = await blobClient.beginCopyFromURL('url');
+       * // cancel operation after starting it.
+       * try {
+       *   await copyPoller.cancelOperation();
+       *   // calls to get the result now throw PollerCancelledError
+       *   await copyPoller.getResult();
+       * } catch (err) {
+       *   if (err.name === 'PollerCancelledError') {
+       *     console.log('The copy was cancelled.');
+       *   }
+       * }
+       * ```
+       *
+       * @param copySource - url to the source Azure Blob/File.
+       * @param options - Optional options to the Blob Start Copy From URL operation.
+       */
       async beginCopyFromURL(copySource2, options = {}) {
         const client = {
           abortCopyFromURL: (...args) => this.abortCopyFromURL(...args),
@@ -58866,6 +61274,14 @@ var init_Clients = __esm({
         await poller.poll();
         return poller;
       }
+      /**
+       * Aborts a pending asynchronous Copy Blob operation, and leaves a destination blob with zero
+       * length and full metadata. Version 2012-02-12 and newer.
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/abort-copy-blob
+       *
+       * @param copyId - Id of the Copy From URL operation.
+       * @param options - Optional options to the Blob Abort Copy From URL operation.
+       */
       async abortCopyFromURL(copyId2, options = {}) {
         const { span, updatedOptions } = createSpan2("BlobClient-abortCopyFromURL", options);
         try {
@@ -58880,6 +61296,14 @@ var init_Clients = __esm({
           span.end();
         }
       }
+      /**
+       * The synchronous Copy From URL operation copies a blob or an internet resource to a new blob. It will not
+       * return a response until the copy is complete.
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/copy-blob-from-url
+       *
+       * @param copySource - The source URL to copy from, Shared Access Signature(SAS) maybe needed for authentication
+       * @param options -
+       */
       async syncCopyFromURL(copySource2, options = {}) {
         var _a, _b, _c;
         const { span, updatedOptions } = createSpan2("BlobClient-syncCopyFromURL", options);
@@ -58902,6 +61326,17 @@ var init_Clients = __esm({
           span.end();
         }
       }
+      /**
+       * Sets the tier on a blob. The operation is allowed on a page blob in a premium
+       * storage account and on a block blob in a blob storage account (locally redundant
+       * storage only). A premium page blob's tier determines the allowed size, IOPS,
+       * and bandwidth of the blob. A block blob's tier determines Hot/Cool/Archive
+       * storage type. This operation does not update the blob's ETag.
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-blob-tier
+       *
+       * @param tier - The tier to be set on the blob. Valid values are Hot, Cool, or Archive.
+       * @param options - Optional options to the Blob Set Tier operation.
+       */
       async setAccessTier(tier2, options = {}) {
         var _a;
         const { span, updatedOptions } = createSpan2("BlobClient-setAccessTier", options);
@@ -59003,6 +61438,22 @@ var init_Clients = __esm({
           span.end();
         }
       }
+      /**
+       * ONLY AVAILABLE IN NODE.JS RUNTIME.
+       *
+       * Downloads an Azure Blob to a local file.
+       * Fails if the the given file path already exits.
+       * Offset and count are optional, pass 0 and undefined respectively to download the entire blob.
+       *
+       * @param filePath -
+       * @param offset - From which position of the block blob to download.
+       * @param count - How much data to be downloaded. Will download to the end when passing undefined.
+       * @param options - Options to Blob download options.
+       * @returns The response data for blob download operation,
+       *                                                 but with readableStreamBody set to undefined since its
+       *                                                 content is already read and written into a local file
+       *                                                 at the specified path.
+       */
       async downloadToFile(filePath, offset = 0, count, options = {}) {
         const { span, updatedOptions } = createSpan2("BlobClient-downloadToFile", options);
         try {
@@ -59051,6 +61502,19 @@ var init_Clients = __esm({
           throw new Error("Unable to extract blobName and containerName with provided information.");
         }
       }
+      /**
+       * Asynchronously copies a blob to a destination within the storage account.
+       * In version 2012-02-12 and later, the source for a Copy Blob operation can be
+       * a committed blob in any Azure storage account.
+       * Beginning with version 2015-02-21, the source for a Copy Blob operation can be
+       * an Azure file in any Azure storage account.
+       * Only storage accounts created on or after June 7th, 2012 allow the Copy Blob
+       * operation to copy from another storage account.
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/copy-blob
+       *
+       * @param copySource - url to the source Azure Blob/File.
+       * @param options - Optional options to the Blob Start Copy From URL operation.
+       */
       async startCopyFromURL(copySource2, options = {}) {
         var _a, _b, _c;
         const { span, updatedOptions } = createSpan2("BlobClient-startCopyFromURL", options);
@@ -59074,6 +61538,17 @@ var init_Clients = __esm({
           span.end();
         }
       }
+      /**
+       * Only available for BlobClient constructed with a shared key credential.
+       *
+       * Generates a Blob Service Shared Access Signature (SAS) URI based on the client properties
+       * and parameters passed in. The SAS is signed by the shared key credential of the client.
+       *
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/constructing-a-service-sas
+       *
+       * @param options - Optional parameters.
+       * @returns The SAS URI consisting of the URI to the resource represented by this client, followed by the generated SAS token.
+       */
       generateSasUrl(options) {
         return new Promise((resolve3) => {
           if (!(this.credential instanceof StorageSharedKeyCredential)) {
@@ -59083,6 +61558,11 @@ var init_Clients = __esm({
           resolve3(appendToURLQuery(this.url, sas));
         });
       }
+      /**
+       * Delete the immutablility policy on the blob.
+       *
+       * @param options - Optional options to delete immutability policy on the blob.
+       */
       async deleteImmutabilityPolicy(options) {
         const { span, updatedOptions } = createSpan2("BlobClient-deleteImmutabilityPolicy", options);
         try {
@@ -59097,6 +61577,11 @@ var init_Clients = __esm({
           span.end();
         }
       }
+      /**
+       * Set immutablility policy on the blob.
+       *
+       * @param options - Optional options to set immutability policy on the blob.
+       */
       async setImmutabilityPolicy(immutabilityPolicy, options) {
         const { span, updatedOptions } = createSpan2("BlobClient-setImmutabilityPolicy", options);
         try {
@@ -59111,6 +61596,11 @@ var init_Clients = __esm({
           span.end();
         }
       }
+      /**
+       * Set legal hold on the blob.
+       *
+       * @param options - Optional options to set legal hold on the blob.
+       */
       async setLegalHold(legalHoldEnabled, options) {
         const { span, updatedOptions } = createSpan2("BlobClient-setLegalHold", options);
         try {
@@ -59126,7 +61616,7 @@ var init_Clients = __esm({
         }
       }
     };
-    AppendBlobClient = class extends BlobClient {
+    AppendBlobClient = class _AppendBlobClient extends BlobClient {
       constructor(urlOrConnectionString, credentialOrPipelineOrContainerName, blobNameOrOptions, options) {
         let pipeline;
         let url2;
@@ -59168,9 +61658,31 @@ var init_Clients = __esm({
         super(url2, pipeline);
         this.appendBlobContext = new AppendBlob(this.storageClientContext);
       }
+      /**
+       * Creates a new AppendBlobClient object identical to the source but with the
+       * specified snapshot timestamp.
+       * Provide "" will remove the snapshot and return a Client to the base blob.
+       *
+       * @param snapshot - The snapshot timestamp.
+       * @returns A new AppendBlobClient object identical to the source but with the specified snapshot timestamp.
+       */
       withSnapshot(snapshot2) {
-        return new AppendBlobClient(setURLParameter(this.url, URLConstants.Parameters.SNAPSHOT, snapshot2.length === 0 ? void 0 : snapshot2), this.pipeline);
+        return new _AppendBlobClient(setURLParameter(this.url, URLConstants.Parameters.SNAPSHOT, snapshot2.length === 0 ? void 0 : snapshot2), this.pipeline);
       }
+      /**
+       * Creates a 0-length append blob. Call AppendBlock to append data to an append blob.
+       * @see https://docs.microsoft.com/rest/api/storageservices/put-blob
+       *
+       * @param options - Options to the Append Block Create operation.
+       *
+       *
+       * Example usage:
+       *
+       * ```js
+       * const appendBlobClient = containerClient.getAppendBlobClient("<blob name>");
+       * await appendBlobClient.create();
+       * ```
+       */
       async create(options = {}) {
         var _a, _b, _c;
         const { span, updatedOptions } = createSpan2("AppendBlobClient-create", options);
@@ -59188,6 +61700,13 @@ var init_Clients = __esm({
           span.end();
         }
       }
+      /**
+       * Creates a 0-length append blob. Call AppendBlock to append data to an append blob.
+       * If the blob with the same name already exists, the content of the existing blob will remain unchanged.
+       * @see https://docs.microsoft.com/rest/api/storageservices/put-blob
+       *
+       * @param options -
+       */
       async createIfNotExists(options = {}) {
         var _a, _b;
         const { span, updatedOptions } = createSpan2("AppendBlobClient-createIfNotExists", options);
@@ -59212,6 +61731,11 @@ var init_Clients = __esm({
           span.end();
         }
       }
+      /**
+       * Seals the append blob, making it read only.
+       *
+       * @param options -
+       */
       async seal(options = {}) {
         var _a;
         const { span, updatedOptions } = createSpan2("AppendBlobClient-seal", options);
@@ -59228,6 +61752,30 @@ var init_Clients = __esm({
           span.end();
         }
       }
+      /**
+       * Commits a new block of data to the end of the existing append blob.
+       * @see https://docs.microsoft.com/rest/api/storageservices/append-block
+       *
+       * @param body - Data to be appended.
+       * @param contentLength - Length of the body in bytes.
+       * @param options - Options to the Append Block operation.
+       *
+       *
+       * Example usage:
+       *
+       * ```js
+       * const content = "Hello World!";
+       *
+       * // Create a new append blob and append data to the blob.
+       * const newAppendBlobClient = containerClient.getAppendBlobClient("<blob name>");
+       * await newAppendBlobClient.create();
+       * await newAppendBlobClient.appendBlock(content, content.length);
+       *
+       * // Append data to an existing append blob.
+       * const existingAppendBlobClient = containerClient.getAppendBlobClient("<blob name>");
+       * await existingAppendBlobClient.appendBlock(content, content.length);
+       * ```
+       */
       async appendBlock(body2, contentLength2, options = {}) {
         var _a;
         const { span, updatedOptions } = createSpan2("AppendBlobClient-appendBlock", options);
@@ -59247,6 +61795,20 @@ var init_Clients = __esm({
           span.end();
         }
       }
+      /**
+       * The Append Block operation commits a new block of data to the end of an existing append blob
+       * where the contents are read from a source url.
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/append-block-from-url
+       *
+       * @param sourceURL -
+       *                 The url to the blob that will be the source of the copy. A source blob in the same storage account can
+       *                 be authenticated via Shared Key. However, if the source is a blob in another account, the source blob
+       *                 must either be public or must be authenticated via a shared access signature. If the source blob is
+       *                 public, no authentication is required to perform the operation.
+       * @param sourceOffset - Offset in source to be appended
+       * @param count - Number of bytes to be appended as a block
+       * @param options -
+       */
       async appendBlockFromURL(sourceURL, sourceOffset, count, options = {}) {
         var _a;
         const { span, updatedOptions } = createSpan2("AppendBlobClient-appendBlockFromURL", options);
@@ -59271,7 +61833,7 @@ var init_Clients = __esm({
         }
       }
     };
-    BlockBlobClient = class extends BlobClient {
+    BlockBlobClient = class _BlockBlobClient extends BlobClient {
       constructor(urlOrConnectionString, credentialOrPipelineOrContainerName, blobNameOrOptions, options) {
         let pipeline;
         let url2;
@@ -59314,9 +61876,47 @@ var init_Clients = __esm({
         this.blockBlobContext = new BlockBlob(this.storageClientContext);
         this._blobContext = new Blob3(this.storageClientContext);
       }
+      /**
+       * Creates a new BlockBlobClient object identical to the source but with the
+       * specified snapshot timestamp.
+       * Provide "" will remove the snapshot and return a URL to the base blob.
+       *
+       * @param snapshot - The snapshot timestamp.
+       * @returns A new BlockBlobClient object identical to the source but with the specified snapshot timestamp.
+       */
       withSnapshot(snapshot2) {
-        return new BlockBlobClient(setURLParameter(this.url, URLConstants.Parameters.SNAPSHOT, snapshot2.length === 0 ? void 0 : snapshot2), this.pipeline);
+        return new _BlockBlobClient(setURLParameter(this.url, URLConstants.Parameters.SNAPSHOT, snapshot2.length === 0 ? void 0 : snapshot2), this.pipeline);
       }
+      /**
+       * ONLY AVAILABLE IN NODE.JS RUNTIME.
+       *
+       * Quick query for a JSON or CSV formatted blob.
+       *
+       * Example usage (Node.js):
+       *
+       * ```js
+       * // Query and convert a blob to a string
+       * const queryBlockBlobResponse = await blockBlobClient.query("select * from BlobStorage");
+       * const downloaded = (await streamToBuffer(queryBlockBlobResponse.readableStreamBody)).toString();
+       * console.log("Query blob content:", downloaded);
+       *
+       * async function streamToBuffer(readableStream) {
+       *   return new Promise((resolve, reject) => {
+       *     const chunks = [];
+       *     readableStream.on("data", (data) => {
+       *       chunks.push(data instanceof Buffer ? data : Buffer.from(data));
+       *     });
+       *     readableStream.on("end", () => {
+       *       resolve(Buffer.concat(chunks));
+       *     });
+       *     readableStream.on("error", reject);
+       *   });
+       * }
+       * ```
+       *
+       * @param query -
+       * @param options -
+       */
       async query(query, options = {}) {
         var _a;
         ensureCpkIfSpecified(options.customerProvidedKey, this.isHttps);
@@ -59347,6 +61947,33 @@ var init_Clients = __esm({
           span.end();
         }
       }
+      /**
+       * Creates a new block blob, or updates the content of an existing block blob.
+       * Updating an existing block blob overwrites any existing metadata on the blob.
+       * Partial updates are not supported; the content of the existing blob is
+       * overwritten with the new content. To perform a partial update of a block blob's,
+       * use {@link stageBlock} and {@link commitBlockList}.
+       *
+       * This is a non-parallel uploading method, please use {@link uploadFile},
+       * {@link uploadStream} or {@link uploadBrowserData} for better performance
+       * with concurrency uploading.
+       *
+       * @see https://docs.microsoft.com/rest/api/storageservices/put-blob
+       *
+       * @param body - Blob, string, ArrayBuffer, ArrayBufferView or a function
+       *                               which returns a new Readable stream whose offset is from data source beginning.
+       * @param contentLength - Length of body in bytes. Use Buffer.byteLength() to calculate body length for a
+       *                               string including non non-Base64/Hex-encoded characters.
+       * @param options - Options to the Block Blob Upload operation.
+       * @returns Response data for the Block Blob Upload operation.
+       *
+       * Example usage:
+       *
+       * ```js
+       * const content = "Hello world!";
+       * const uploadBlobResponse = await blockBlobClient.upload(content, content.length);
+       * ```
+       */
       async upload(body2, contentLength2, options = {}) {
         var _a, _b, _c;
         options.conditions = options.conditions || {};
@@ -59366,6 +61993,24 @@ var init_Clients = __esm({
           span.end();
         }
       }
+      /**
+       * Creates a new Block Blob where the contents of the blob are read from a given URL.
+       * This API is supported beginning with the 2020-04-08 version. Partial updates
+       * are not supported with Put Blob from URL; the content of an existing blob is overwritten with
+       * the content of the new blob.  To perform partial updates to a block blob’s contents using a
+       * source URL, use {@link stageBlockFromURL} and {@link commitBlockList}.
+       *
+       * @param sourceURL - Specifies the URL of the blob. The value
+       *                           may be a URL of up to 2 KB in length that specifies a blob.
+       *                           The value should be URL-encoded as it would appear
+       *                           in a request URI. The source blob must either be public
+       *                           or must be authenticated via a shared access signature.
+       *                           If the source blob is public, no authentication is required
+       *                           to perform the operation. Here are some examples of source object URLs:
+       *                           - https://myaccount.blob.core.windows.net/mycontainer/myblob
+       *                           - https://myaccount.blob.core.windows.net/mycontainer/myblob?snapshot=<DateTime>
+       * @param options - Optional parameters.
+       */
       async syncUploadFromURL(sourceURL, options = {}) {
         var _a, _b, _c, _d, _e;
         options.conditions = options.conditions || {};
@@ -59389,6 +62034,17 @@ var init_Clients = __esm({
           span.end();
         }
       }
+      /**
+       * Uploads the specified block to the block blob's "staging area" to be later
+       * committed by a call to commitBlockList.
+       * @see https://docs.microsoft.com/rest/api/storageservices/put-block
+       *
+       * @param blockId - A 64-byte value that is base64-encoded
+       * @param body - Data to upload to the staging area.
+       * @param contentLength - Number of bytes to upload.
+       * @param options - Options to the Block Blob Stage Block operation.
+       * @returns Response data for the Block Blob Stage Block operation.
+       */
       async stageBlock(blockId2, body2, contentLength2, options = {}) {
         const { span, updatedOptions } = createSpan2("BlockBlobClient-stageBlock", options);
         try {
@@ -59406,6 +62062,27 @@ var init_Clients = __esm({
           span.end();
         }
       }
+      /**
+       * The Stage Block From URL operation creates a new block to be committed as part
+       * of a blob where the contents are read from a URL.
+       * This API is available starting in version 2018-03-28.
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/put-block-from-url
+       *
+       * @param blockId - A 64-byte value that is base64-encoded
+       * @param sourceURL - Specifies the URL of the blob. The value
+       *                           may be a URL of up to 2 KB in length that specifies a blob.
+       *                           The value should be URL-encoded as it would appear
+       *                           in a request URI. The source blob must either be public
+       *                           or must be authenticated via a shared access signature.
+       *                           If the source blob is public, no authentication is required
+       *                           to perform the operation. Here are some examples of source object URLs:
+       *                           - https://myaccount.blob.core.windows.net/mycontainer/myblob
+       *                           - https://myaccount.blob.core.windows.net/mycontainer/myblob?snapshot=<DateTime>
+       * @param offset - From which position of the blob to download, greater than or equal to 0
+       * @param count - How much data to be downloaded, greater than 0. Will download to the end when undefined
+       * @param options - Options to the Block Blob Stage Block From URL operation.
+       * @returns Response data for the Block Blob Stage Block From URL operation.
+       */
       async stageBlockFromURL(blockId2, sourceURL, offset = 0, count, options = {}) {
         const { span, updatedOptions } = createSpan2("BlockBlobClient-stageBlockFromURL", options);
         try {
@@ -59421,6 +62098,18 @@ var init_Clients = __esm({
           span.end();
         }
       }
+      /**
+       * Writes a blob by specifying the list of block IDs that make up the blob.
+       * In order to be written as part of a blob, a block must have been successfully written
+       * to the server in a prior {@link stageBlock} operation. You can call {@link commitBlockList} to
+       * update a blob by uploading only those blocks that have changed, then committing the new and existing
+       * blocks together. Any blocks not specified in the block list and permanently deleted.
+       * @see https://docs.microsoft.com/rest/api/storageservices/put-block-list
+       *
+       * @param blocks -  Array of 64-byte value that is base64-encoded
+       * @param options - Options to the Block Blob Commit Block List operation.
+       * @returns Response data for the Block Blob Commit Block List operation.
+       */
       async commitBlockList(blocks2, options = {}) {
         var _a, _b, _c;
         options.conditions = options.conditions || {};
@@ -59438,6 +62127,16 @@ var init_Clients = __esm({
           span.end();
         }
       }
+      /**
+       * Returns the list of blocks that have been uploaded as part of a block blob
+       * using the specified block list filter.
+       * @see https://docs.microsoft.com/rest/api/storageservices/get-block-list
+       *
+       * @param listType - Specifies whether to return the list of committed blocks,
+       *                                        the list of uncommitted blocks, or both lists together.
+       * @param options - Options to the Block Blob Get Block List operation.
+       * @returns Response data for the Block Blob Get Block List operation.
+       */
       async getBlockList(listType2, options = {}) {
         var _a;
         const { span, updatedOptions } = createSpan2("BlockBlobClient-getBlockList", options);
@@ -59460,6 +62159,22 @@ var init_Clients = __esm({
           span.end();
         }
       }
+      // High level functions
+      /**
+       * Uploads a Buffer(Node.js)/Blob(browsers)/ArrayBuffer/ArrayBufferView object to a BlockBlob.
+       *
+       * When data length is no more than the specifiled {@link BlockBlobParallelUploadOptions.maxSingleShotSize} (default is
+       * {@link BLOCK_BLOB_MAX_UPLOAD_BLOB_BYTES}), this method will use 1 {@link upload} call to finish the upload.
+       * Otherwise, this method will call {@link stageBlock} to upload blocks, and finally call {@link commitBlockList}
+       * to commit the block list.
+       *
+       * A common {@link BlockBlobParallelUploadOptions.blobHTTPHeaders} option to set is
+       * `blobContentType`, enabling the browser to provide
+       * functionality based on file type.
+       *
+       * @param data - Buffer(Node.js), Blob, ArrayBuffer or ArrayBufferView
+       * @param options -
+       */
       async uploadData(data, options = {}) {
         const { span, updatedOptions } = createSpan2("BlockBlobClient-uploadData", options);
         try {
@@ -59488,6 +62203,25 @@ var init_Clients = __esm({
           span.end();
         }
       }
+      /**
+       * ONLY AVAILABLE IN BROWSERS.
+       *
+       * Uploads a browser Blob/File/ArrayBuffer/ArrayBufferView object to block blob.
+       *
+       * When buffer length lesser than or equal to 256MB, this method will use 1 upload call to finish the upload.
+       * Otherwise, this method will call {@link stageBlock} to upload blocks, and finally call
+       * {@link commitBlockList} to commit the block list.
+       *
+       * A common {@link BlockBlobParallelUploadOptions.blobHTTPHeaders} option to set is
+       * `blobContentType`, enabling the browser to provide
+       * functionality based on file type.
+       *
+       * @deprecated Use {@link uploadData} instead.
+       *
+       * @param browserData - Blob, File, ArrayBuffer or ArrayBufferView
+       * @param options - Options to upload browser data.
+       * @returns Response data for the Blob Upload operation.
+       */
       async uploadBrowserData(browserData, options = {}) {
         const { span, updatedOptions } = createSpan2("BlockBlobClient-uploadBrowserData", options);
         try {
@@ -59503,6 +62237,21 @@ var init_Clients = __esm({
           span.end();
         }
       }
+      /**
+       *
+       * Uploads data to block blob. Requires a bodyFactory as the data source,
+       * which need to return a {@link HttpRequestBody} object with the offset and size provided.
+       *
+       * When data length is no more than the specified {@link BlockBlobParallelUploadOptions.maxSingleShotSize} (default is
+       * {@link BLOCK_BLOB_MAX_UPLOAD_BLOB_BYTES}), this method will use 1 {@link upload} call to finish the upload.
+       * Otherwise, this method will call {@link stageBlock} to upload blocks, and finally call {@link commitBlockList}
+       * to commit the block list.
+       *
+       * @param bodyFactory -
+       * @param size - size of the data to upload.
+       * @param options - Options to Upload to Block Blob operation.
+       * @returns Response data for the Blob Upload operation.
+       */
       async uploadSeekableInternal(bodyFactory, size, options = {}) {
         if (!options.blockSize) {
           options.blockSize = 0;
@@ -59579,6 +62328,19 @@ var init_Clients = __esm({
           span.end();
         }
       }
+      /**
+       * ONLY AVAILABLE IN NODE.JS RUNTIME.
+       *
+       * Uploads a local file in blocks to a block blob.
+       *
+       * When file size lesser than or equal to 256MB, this method will use 1 upload call to finish the upload.
+       * Otherwise, this method will call stageBlock to upload blocks, and finally call commitBlockList
+       * to commit the block list.
+       *
+       * @param filePath - Full path of local file
+       * @param options - Options to Upload to Block Blob operation.
+       * @returns Response data for the Blob Upload operation.
+       */
       async uploadFile(filePath, options = {}) {
         const { span, updatedOptions } = createSpan2("BlockBlobClient-uploadFile", options);
         try {
@@ -59600,6 +62362,22 @@ var init_Clients = __esm({
           span.end();
         }
       }
+      /**
+       * ONLY AVAILABLE IN NODE.JS RUNTIME.
+       *
+       * Uploads a Node.js Readable stream into block blob.
+       *
+       * PERFORMANCE IMPROVEMENT TIPS:
+       * * Input stream highWaterMark is better to set a same value with bufferSize
+       *    parameter, which will avoid Buffer.concat() operations.
+       *
+       * @param stream - Node.js Readable stream
+       * @param bufferSize - Size of every buffer allocated, also the block size in the uploaded block blob. Default value is 8MB
+       * @param maxConcurrency -  Max concurrency indicates the max number of buffers that can be allocated,
+       *                                 positive correlation with max uploading concurrency. Default value is 5
+       * @param options - Options to Upload Stream to Block Blob operation.
+       * @returns Response data for the Blob Upload operation.
+       */
       async uploadStream(stream, bufferSize = DEFAULT_BLOCK_BUFFER_SIZE_BYTES, maxConcurrency = 5, options = {}) {
         if (!options.blobHTTPHeaders) {
           options.blobHTTPHeaders = {};
@@ -59631,6 +62409,10 @@ var init_Clients = __esm({
                 options.onProgress({ loadedBytes: transferProgress });
               }
             },
+            // concurrency should set a smaller value than maxConcurrency, which is helpful to
+            // reduce the possibility when a outgoing handler waits for stream data, in
+            // this situation, outgoing handlers are blocked.
+            // Outgoing queue shouldn't be empty.
             Math.ceil(maxConcurrency / 4 * 3)
           );
           await scheduler.do();
@@ -59646,7 +62428,7 @@ var init_Clients = __esm({
         }
       }
     };
-    PageBlobClient = class extends BlobClient {
+    PageBlobClient = class _PageBlobClient extends BlobClient {
       constructor(urlOrConnectionString, credentialOrPipelineOrContainerName, blobNameOrOptions, options) {
         let pipeline;
         let url2;
@@ -59688,9 +62470,26 @@ var init_Clients = __esm({
         super(url2, pipeline);
         this.pageBlobContext = new PageBlob(this.storageClientContext);
       }
+      /**
+       * Creates a new PageBlobClient object identical to the source but with the
+       * specified snapshot timestamp.
+       * Provide "" will remove the snapshot and return a Client to the base blob.
+       *
+       * @param snapshot - The snapshot timestamp.
+       * @returns A new PageBlobClient object identical to the source but with the specified snapshot timestamp.
+       */
       withSnapshot(snapshot2) {
-        return new PageBlobClient(setURLParameter(this.url, URLConstants.Parameters.SNAPSHOT, snapshot2.length === 0 ? void 0 : snapshot2), this.pipeline);
+        return new _PageBlobClient(setURLParameter(this.url, URLConstants.Parameters.SNAPSHOT, snapshot2.length === 0 ? void 0 : snapshot2), this.pipeline);
       }
+      /**
+       * Creates a page blob of the specified length. Call uploadPages to upload data
+       * data to a page blob.
+       * @see https://docs.microsoft.com/rest/api/storageservices/put-blob
+       *
+       * @param size - size of the page blob.
+       * @param options - Options to the Page Blob Create operation.
+       * @returns Response data for the Page Blob Create operation.
+       */
       async create(size, options = {}) {
         var _a, _b, _c;
         options.conditions = options.conditions || {};
@@ -59708,6 +62507,15 @@ var init_Clients = __esm({
           span.end();
         }
       }
+      /**
+       * Creates a page blob of the specified length. Call uploadPages to upload data
+       * data to a page blob. If the blob with the same name already exists, the content
+       * of the existing blob will remain unchanged.
+       * @see https://docs.microsoft.com/rest/api/storageservices/put-blob
+       *
+       * @param size - size of the page blob.
+       * @param options -
+       */
       async createIfNotExists(size, options = {}) {
         var _a, _b;
         const { span, updatedOptions } = createSpan2("PageBlobClient-createIfNotExists", options);
@@ -59732,6 +62540,16 @@ var init_Clients = __esm({
           span.end();
         }
       }
+      /**
+       * Writes 1 or more pages to the page blob. The start and end offsets must be a multiple of 512.
+       * @see https://docs.microsoft.com/rest/api/storageservices/put-page
+       *
+       * @param body - Data to upload
+       * @param offset - Offset of destination page blob
+       * @param count - Content length of the body, also number of bytes to be uploaded
+       * @param options - Options to the Page Blob Upload Pages operation.
+       * @returns Response data for the Page Blob Upload Pages operation.
+       */
       async uploadPages(body2, offset, count, options = {}) {
         var _a;
         options.conditions = options.conditions || {};
@@ -59751,6 +62569,17 @@ var init_Clients = __esm({
           span.end();
         }
       }
+      /**
+       * The Upload Pages operation writes a range of pages to a page blob where the
+       * contents are read from a URL.
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/put-page-from-url
+       *
+       * @param sourceURL - Specify a URL to the copy source, Shared Access Signature(SAS) maybe needed for authentication
+       * @param sourceOffset - The source offset to copy from. Pass 0 to copy from the beginning of source page blob
+       * @param destOffset - Offset of destination page blob
+       * @param count - Number of bytes to be uploaded from source page blob
+       * @param options -
+       */
       async uploadPagesFromURL(sourceURL, sourceOffset, destOffset, count, options = {}) {
         var _a;
         options.conditions = options.conditions || {};
@@ -59774,6 +62603,15 @@ var init_Clients = __esm({
           span.end();
         }
       }
+      /**
+       * Frees the specified pages from the page blob.
+       * @see https://docs.microsoft.com/rest/api/storageservices/put-page
+       *
+       * @param offset - Starting byte position of the pages to clear.
+       * @param count - Number of bytes to clear.
+       * @param options - Options to the Page Blob Clear Pages operation.
+       * @returns Response data for the Page Blob Clear Pages operation.
+       */
       async clearPages(offset = 0, count, options = {}) {
         var _a;
         options.conditions = options.conditions || {};
@@ -59790,6 +62628,15 @@ var init_Clients = __esm({
           span.end();
         }
       }
+      /**
+       * Returns the list of valid page ranges for a page blob or snapshot of a page blob.
+       * @see https://docs.microsoft.com/rest/api/storageservices/get-page-ranges
+       *
+       * @param offset - Starting byte position of the page ranges.
+       * @param count - Number of bytes to get.
+       * @param options - Options to the Page Blob Get Ranges operation.
+       * @returns Response data for the Page Blob Get Ranges operation.
+       */
       async getPageRanges(offset = 0, count, options = {}) {
         var _a;
         options.conditions = options.conditions || {};
@@ -59806,6 +62653,18 @@ var init_Clients = __esm({
           span.end();
         }
       }
+      /**
+       * getPageRangesSegment returns a single segment of page ranges starting from the
+       * specified Marker. Use an empty Marker to start enumeration from the beginning.
+       * After getting a segment, process it, and then call getPageRangesSegment again
+       * (passing the the previously-returned Marker) to get the next segment.
+       * @see https://docs.microsoft.com/rest/api/storageservices/get-page-ranges
+       *
+       * @param offset - Starting byte position of the page ranges.
+       * @param count - Number of bytes to get.
+       * @param marker - A string value that identifies the portion of the list to be returned with the next list operation.
+       * @param options - Options to PageBlob Get Page Ranges Segment operation.
+       */
       async listPageRangesSegment(offset = 0, count, marker2, options = {}) {
         var _a;
         const { span, updatedOptions } = createSpan2("PageBlobClient-getPageRangesSegment", options);
@@ -59821,6 +62680,20 @@ var init_Clients = __esm({
           span.end();
         }
       }
+      /**
+       * Returns an AsyncIterableIterator for {@link PageBlobGetPageRangesResponseModel}
+       *
+       * @param offset - Starting byte position of the page ranges.
+       * @param count - Number of bytes to get.
+       * @param marker - A string value that identifies the portion of
+       *                          the get of page ranges to be returned with the next getting operation. The
+       *                          operation returns the ContinuationToken value within the response body if the
+       *                          getting operation did not return all page ranges remaining within the current page.
+       *                          The ContinuationToken value can be used as the value for
+       *                          the marker parameter in a subsequent call to request the next page of get
+       *                          items. The marker value is opaque to the client.
+       * @param options - Options to List Page Ranges operation.
+       */
       listPageRangeItemSegments(offset = 0, count, marker2, options = {}) {
         return __asyncGenerator(this, arguments, function* listPageRangeItemSegments_1() {
           let getPageRangeItemSegmentsResponse;
@@ -59833,6 +62706,13 @@ var init_Clients = __esm({
           }
         });
       }
+      /**
+       * Returns an AsyncIterableIterator of {@link PageRangeInfo} objects
+       *
+       * @param offset - Starting byte position of the page ranges.
+       * @param count - Number of bytes to get.
+       * @param options - Options to List Page Ranges operation.
+       */
       listPageRangeItems(offset = 0, count, options = {}) {
         return __asyncGenerator(this, arguments, function* listPageRangeItems_1() {
           var e_1, _a;
@@ -59855,21 +62735,111 @@ var init_Clients = __esm({
           }
         });
       }
+      /**
+       * Returns an async iterable iterator to list of page ranges for a page blob.
+       * @see https://docs.microsoft.com/rest/api/storageservices/get-page-ranges
+       *
+       *  .byPage() returns an async iterable iterator to list of page ranges for a page blob.
+       *
+       * Example using `for await` syntax:
+       *
+       * ```js
+       * // Get the pageBlobClient before you run these snippets,
+       * // Can be obtained from `blobServiceClient.getContainerClient("<your-container-name>").getPageBlobClient("<your-blob-name>");`
+       * let i = 1;
+       * for await (const pageRange of pageBlobClient.listPageRanges()) {
+       *   console.log(`Page range ${i++}: ${pageRange.start} - ${pageRange.end}`);
+       * }
+       * ```
+       *
+       * Example using `iter.next()`:
+       *
+       * ```js
+       * let i = 1;
+       * let iter = pageBlobClient.listPageRanges();
+       * let pageRangeItem = await iter.next();
+       * while (!pageRangeItem.done) {
+       *   console.log(`Page range ${i++}: ${pageRangeItem.value.start} - ${pageRangeItem.value.end}, IsClear: ${pageRangeItem.value.isClear}`);
+       *   pageRangeItem = await iter.next();
+       * }
+       * ```
+       *
+       * Example using `byPage()`:
+       *
+       * ```js
+       * // passing optional maxPageSize in the page settings
+       * let i = 1;
+       * for await (const response of pageBlobClient.listPageRanges().byPage({ maxPageSize: 20 })) {
+       *   for (const pageRange of response) {
+       *     console.log(`Page range ${i++}: ${pageRange.start} - ${pageRange.end}`);
+       *   }
+       * }
+       * ```
+       *
+       * Example using paging with a marker:
+       *
+       * ```js
+       * let i = 1;
+       * let iterator = pageBlobClient.listPageRanges().byPage({ maxPageSize: 2 });
+       * let response = (await iterator.next()).value;
+       *
+       * // Prints 2 page ranges
+       * for (const pageRange of response) {
+       *   console.log(`Page range ${i++}: ${pageRange.start} - ${pageRange.end}`);
+       * }
+       *
+       * // Gets next marker
+       * let marker = response.continuationToken;
+       *
+       * // Passing next marker as continuationToken
+       *
+       * iterator = pageBlobClient.listPageRanges().byPage({ continuationToken: marker, maxPageSize: 10 });
+       * response = (await iterator.next()).value;
+       *
+       * // Prints 10 page ranges
+       * for (const blob of response) {
+       *   console.log(`Page range ${i++}: ${pageRange.start} - ${pageRange.end}`);
+       * }
+       * ```
+       * @param offset - Starting byte position of the page ranges.
+       * @param count - Number of bytes to get.
+       * @param options - Options to the Page Blob Get Ranges operation.
+       * @returns An asyncIterableIterator that supports paging.
+       */
       listPageRanges(offset = 0, count, options = {}) {
         options.conditions = options.conditions || {};
         const iter = this.listPageRangeItems(offset, count, options);
         return {
+          /**
+           * The next method, part of the iteration protocol
+           */
           next() {
             return iter.next();
           },
+          /**
+           * The connection to the async iterator, part of the iteration protocol
+           */
           [Symbol.asyncIterator]() {
             return this;
           },
+          /**
+           * Return an AsyncIterableIterator that works a page at a time
+           */
           byPage: (settings = {}) => {
             return this.listPageRangeItemSegments(offset, count, settings.continuationToken, Object.assign({ maxPageSize: settings.maxPageSize }, options));
           }
         };
       }
+      /**
+       * Gets the collection of page ranges that differ between a specified snapshot and this page blob.
+       * @see https://docs.microsoft.com/rest/api/storageservices/get-page-ranges
+       *
+       * @param offset - Starting byte position of the page blob
+       * @param count - Number of bytes to get ranges diff.
+       * @param prevSnapshot - Timestamp of snapshot to retrieve the difference.
+       * @param options - Options to the Page Blob Get Page Ranges Diff operation.
+       * @returns Response data for the Page Blob Get Page Range Diff operation.
+       */
       async getPageRangesDiff(offset, count, prevSnapshot, options = {}) {
         var _a;
         options.conditions = options.conditions || {};
@@ -59886,6 +62856,20 @@ var init_Clients = __esm({
           span.end();
         }
       }
+      /**
+       * getPageRangesDiffSegment returns a single segment of page ranges starting from the
+       * specified Marker for difference between previous snapshot and the target page blob.
+       * Use an empty Marker to start enumeration from the beginning.
+       * After getting a segment, process it, and then call getPageRangesDiffSegment again
+       * (passing the the previously-returned Marker) to get the next segment.
+       * @see https://docs.microsoft.com/rest/api/storageservices/get-page-ranges
+       *
+       * @param offset - Starting byte position of the page ranges.
+       * @param count - Number of bytes to get.
+       * @param prevSnapshotOrUrl - Timestamp of snapshot to retrieve the difference or URL of snapshot to retrieve the difference.
+       * @param marker - A string value that identifies the portion of the get to be returned with the next get operation.
+       * @param options - Options to the Page Blob Get Page Ranges Diff operation.
+       */
       async listPageRangesDiffSegment(offset, count, prevSnapshotOrUrl, marker2, options) {
         var _a;
         const { span, updatedOptions } = createSpan2("PageBlobClient-getPageRangesDiffSegment", options);
@@ -59904,6 +62888,22 @@ var init_Clients = __esm({
           span.end();
         }
       }
+      /**
+       * Returns an AsyncIterableIterator for {@link PageBlobGetPageRangesDiffResponseModel}
+       *
+       *
+       * @param offset - Starting byte position of the page ranges.
+       * @param count - Number of bytes to get.
+       * @param prevSnapshotOrUrl - Timestamp of snapshot to retrieve the difference or URL of snapshot to retrieve the difference.
+       * @param marker - A string value that identifies the portion of
+       *                          the get of page ranges to be returned with the next getting operation. The
+       *                          operation returns the ContinuationToken value within the response body if the
+       *                          getting operation did not return all page ranges remaining within the current page.
+       *                          The ContinuationToken value can be used as the value for
+       *                          the marker parameter in a subsequent call to request the next page of get
+       *                          items. The marker value is opaque to the client.
+       * @param options - Options to the Page Blob Get Page Ranges Diff operation.
+       */
       listPageRangeDiffItemSegments(offset, count, prevSnapshotOrUrl, marker2, options) {
         return __asyncGenerator(this, arguments, function* listPageRangeDiffItemSegments_1() {
           let getPageRangeItemSegmentsResponse;
@@ -59916,6 +62916,14 @@ var init_Clients = __esm({
           }
         });
       }
+      /**
+       * Returns an AsyncIterableIterator of {@link PageRangeInfo} objects
+       *
+       * @param offset - Starting byte position of the page ranges.
+       * @param count - Number of bytes to get.
+       * @param prevSnapshotOrUrl - Timestamp of snapshot to retrieve the difference or URL of snapshot to retrieve the difference.
+       * @param options - Options to the Page Blob Get Page Ranges Diff operation.
+       */
       listPageRangeDiffItems(offset, count, prevSnapshotOrUrl, options) {
         return __asyncGenerator(this, arguments, function* listPageRangeDiffItems_1() {
           var e_2, _a;
@@ -59938,21 +62946,112 @@ var init_Clients = __esm({
           }
         });
       }
+      /**
+       * Returns an async iterable iterator to list of page ranges that differ between a specified snapshot and this page blob.
+       * @see https://docs.microsoft.com/rest/api/storageservices/get-page-ranges
+       *
+       *  .byPage() returns an async iterable iterator to list of page ranges that differ between a specified snapshot and this page blob.
+       *
+       * Example using `for await` syntax:
+       *
+       * ```js
+       * // Get the pageBlobClient before you run these snippets,
+       * // Can be obtained from `blobServiceClient.getContainerClient("<your-container-name>").getPageBlobClient("<your-blob-name>");`
+       * let i = 1;
+       * for await (const pageRange of pageBlobClient.listPageRangesDiff()) {
+       *   console.log(`Page range ${i++}: ${pageRange.start} - ${pageRange.end}`);
+       * }
+       * ```
+       *
+       * Example using `iter.next()`:
+       *
+       * ```js
+       * let i = 1;
+       * let iter = pageBlobClient.listPageRangesDiff();
+       * let pageRangeItem = await iter.next();
+       * while (!pageRangeItem.done) {
+       *   console.log(`Page range ${i++}: ${pageRangeItem.value.start} - ${pageRangeItem.value.end}, IsClear: ${pageRangeItem.value.isClear}`);
+       *   pageRangeItem = await iter.next();
+       * }
+       * ```
+       *
+       * Example using `byPage()`:
+       *
+       * ```js
+       * // passing optional maxPageSize in the page settings
+       * let i = 1;
+       * for await (const response of pageBlobClient.listPageRangesDiff().byPage({ maxPageSize: 20 })) {
+       *   for (const pageRange of response) {
+       *     console.log(`Page range ${i++}: ${pageRange.start} - ${pageRange.end}`);
+       *   }
+       * }
+       * ```
+       *
+       * Example using paging with a marker:
+       *
+       * ```js
+       * let i = 1;
+       * let iterator = pageBlobClient.listPageRangesDiff().byPage({ maxPageSize: 2 });
+       * let response = (await iterator.next()).value;
+       *
+       * // Prints 2 page ranges
+       * for (const pageRange of response) {
+       *   console.log(`Page range ${i++}: ${pageRange.start} - ${pageRange.end}`);
+       * }
+       *
+       * // Gets next marker
+       * let marker = response.continuationToken;
+       *
+       * // Passing next marker as continuationToken
+       *
+       * iterator = pageBlobClient.listPageRangesDiff().byPage({ continuationToken: marker, maxPageSize: 10 });
+       * response = (await iterator.next()).value;
+       *
+       * // Prints 10 page ranges
+       * for (const blob of response) {
+       *   console.log(`Page range ${i++}: ${pageRange.start} - ${pageRange.end}`);
+       * }
+       * ```
+       * @param offset - Starting byte position of the page ranges.
+       * @param count - Number of bytes to get.
+       * @param prevSnapshot - Timestamp of snapshot to retrieve the difference.
+       * @param options - Options to the Page Blob Get Ranges operation.
+       * @returns An asyncIterableIterator that supports paging.
+       */
       listPageRangesDiff(offset, count, prevSnapshot, options = {}) {
         options.conditions = options.conditions || {};
         const iter = this.listPageRangeDiffItems(offset, count, prevSnapshot, Object.assign({}, options));
         return {
+          /**
+           * The next method, part of the iteration protocol
+           */
           next() {
             return iter.next();
           },
+          /**
+           * The connection to the async iterator, part of the iteration protocol
+           */
           [Symbol.asyncIterator]() {
             return this;
           },
+          /**
+           * Return an AsyncIterableIterator that works a page at a time
+           */
           byPage: (settings = {}) => {
             return this.listPageRangeDiffItemSegments(offset, count, prevSnapshot, settings.continuationToken, Object.assign({ maxPageSize: settings.maxPageSize }, options));
           }
         };
       }
+      /**
+       * Gets the collection of page ranges that differ between a specified snapshot and this page blob for managed disks.
+       * @see https://docs.microsoft.com/rest/api/storageservices/get-page-ranges
+       *
+       * @param offset - Starting byte position of the page blob
+       * @param count - Number of bytes to get ranges diff.
+       * @param prevSnapshotUrl - URL of snapshot to retrieve the difference.
+       * @param options - Options to the Page Blob Get Page Ranges Diff operation.
+       * @returns Response data for the Page Blob Get Page Range Diff operation.
+       */
       async getPageRangesDiffForManagedDisks(offset, count, prevSnapshotUrl2, options = {}) {
         var _a;
         options.conditions = options.conditions || {};
@@ -59969,6 +63068,14 @@ var init_Clients = __esm({
           span.end();
         }
       }
+      /**
+       * Resizes the page blob to the specified size (which must be a multiple of 512).
+       * @see https://docs.microsoft.com/rest/api/storageservices/set-blob-properties
+       *
+       * @param size - Target size
+       * @param options - Options to the Page Blob Resize operation.
+       * @returns Response data for the Page Blob Resize operation.
+       */
       async resize(size, options = {}) {
         var _a;
         options.conditions = options.conditions || {};
@@ -59985,6 +63092,15 @@ var init_Clients = __esm({
           span.end();
         }
       }
+      /**
+       * Sets a page blob's sequence number.
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-blob-properties
+       *
+       * @param sequenceNumberAction - Indicates how the service should modify the blob's sequence number.
+       * @param sequenceNumber - Required if sequenceNumberAction is max or update
+       * @param options - Options to the Page Blob Update Sequence Number operation.
+       * @returns Response data for the Page Blob Update Sequence Number operation.
+       */
       async updateSequenceNumber(sequenceNumberAction2, sequenceNumber, options = {}) {
         var _a;
         options.conditions = options.conditions || {};
@@ -60001,6 +63117,19 @@ var init_Clients = __esm({
           span.end();
         }
       }
+      /**
+       * Begins an operation to start an incremental copy from one page blob's snapshot to this page blob.
+       * The snapshot is copied such that only the differential changes between the previously
+       * copied snapshot are transferred to the destination.
+       * The copied snapshots are complete copies of the original snapshot and can be read or copied from as usual.
+       * @see https://docs.microsoft.com/rest/api/storageservices/incremental-copy-blob
+       * @see https://docs.microsoft.com/en-us/azure/virtual-machines/windows/incremental-snapshots
+       *
+       * @param copySource - Specifies the name of the source page blob snapshot. For example,
+       *                            https://myaccount.blob.core.windows.net/mycontainer/myblob?snapshot=<DateTime>
+       * @param options - Options to the Page Blob Copy Incremental operation.
+       * @returns Response data for the Page Blob Copy Incremental operation.
+       */
       async startCopyIncremental(copySource2, options = {}) {
         var _a;
         const { span, updatedOptions } = createSpan2("PageBlobClient-startCopyIncremental", options);
@@ -60032,6 +63161,7 @@ function utf8ByteLength(str) {
 }
 var init_BatchUtils = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/BatchUtils.js"() {
+    "use strict";
     init_utils_node();
     init_constants2();
   }
@@ -60041,6 +63171,7 @@ var init_BatchUtils = __esm({
 var HTTP_HEADER_DELIMITER, SPACE_DELIMITER, NOT_FOUND, BatchResponseParser;
 var init_BatchResponseParser = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/BatchResponseParser.js"() {
+    "use strict";
     init_coreHttp();
     init_constants2();
     init_BatchUtils();
@@ -60062,6 +63193,7 @@ var init_BatchResponseParser = __esm({
         this.perResponsePrefix = `--${this.responseBatchBoundary}${HTTP_LINE_ENDING}`;
         this.batchResponseEnding = `--${this.responseBatchBoundary}--`;
       }
+      // For example of response, please refer to https://docs.microsoft.com/en-us/rest/api/storageservices/blob-batch#response
       async parseBatchResponse() {
         if (this.batchResponse._response.status !== HTTPURLConnection.HTTP_ACCEPTED) {
           throw new Error(`Invalid state: batch request failed with status: '${this.batchResponse._response.status}'.`);
@@ -60146,11 +63278,18 @@ var init_BatchResponseParser = __esm({
 var MutexLockStatus, Mutex;
 var init_Mutex = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/utils/Mutex.js"() {
+    "use strict";
     (function(MutexLockStatus2) {
       MutexLockStatus2[MutexLockStatus2["LOCKED"] = 0] = "LOCKED";
       MutexLockStatus2[MutexLockStatus2["UNLOCKED"] = 1] = "UNLOCKED";
     })(MutexLockStatus || (MutexLockStatus = {}));
     Mutex = class {
+      /**
+       * Lock for a specific key. If the lock has been acquired by another customer, then
+       * will wait until getting the lock.
+       *
+       * @param key - lock key
+       */
       static async lock(key) {
         return new Promise((resolve3) => {
           if (this.keys[key] === void 0 || this.keys[key] === MutexLockStatus.UNLOCKED) {
@@ -60164,6 +63303,11 @@ var init_Mutex = __esm({
           }
         });
       }
+      /**
+       * Unlock a key.
+       *
+       * @param key -
+       */
       static async unlock(key) {
         return new Promise((resolve3) => {
           if (this.keys[key] === MutexLockStatus.LOCKED) {
@@ -60198,6 +63342,7 @@ var init_Mutex = __esm({
 var BlobBatch, InnerBatchRequest, BatchRequestAssemblePolicy, BatchRequestAssemblePolicyFactory, BatchHeaderFilterPolicy, BatchHeaderFilterPolicyFactory;
 var init_BlobBatch = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/BlobBatch.js"() {
+    "use strict";
     init_coreHttp();
     init_src4();
     init_AnonymousCredential();
@@ -60213,12 +63358,23 @@ var init_BlobBatch = __esm({
         this.batch = "batch";
         this.batchRequest = new InnerBatchRequest();
       }
+      /**
+       * Get the value of Content-Type for a batch request.
+       * The value must be multipart/mixed with a batch boundary.
+       * Example: multipart/mixed; boundary=batch_a81786c8-e301-4e42-a729-a32ca24ae252
+       */
       getMultiPartContentType() {
         return this.batchRequest.getMultipartContentType();
       }
+      /**
+       * Get assembled HTTP request body for sub requests.
+       */
       getHttpRequestBody() {
         return this.batchRequest.getHttpRequestBody();
       }
+      /**
+       * Get sub requests that are added into the batch request.
+       */
       getSubRequests() {
         return this.batchRequest.getSubRequests();
       }
@@ -60325,6 +63481,13 @@ var init_BlobBatch = __esm({
         this.batchRequestEnding = `--${this.boundary}--`;
         this.subRequests = /* @__PURE__ */ new Map();
       }
+      /**
+       * Create pipeline to assemble sub requests. The idea here is to use existing
+       * credential and serialization/deserialization components, with additional policies to
+       * filter unnecessary headers, assemble sub requests into request's body
+       * and intercept request from going to wire.
+       * @param credential -  Such as AnonymousCredential, StorageSharedKeyCredential or any credential from the `@azure/identity` package to authenticate requests to the service. You can also provide an object that implements the TokenCredential interface. If not specified, AnonymousCredential is used.
+       */
       createPipeline(credential) {
         const isAnonymousCreds = credential instanceof AnonymousCredential;
         const policyFactoryLength = 3 + (isAnonymousCreds ? 0 : 1);
@@ -60343,6 +63506,7 @@ var init_BlobBatch = __esm({
           `${HeaderConstants.CONTENT_ID}: ${this.operationCount}`,
           "",
           `${request.method.toString()} ${getURLPathAndQuery(request.url)} ${HTTP_VERSION_1_1}${HTTP_LINE_ENDING}`
+          // sub request start line with method
         ].join(HTTP_LINE_ENDING);
         for (const header of request.headers.headersArray()) {
           this.body += `${header.name}: ${header.value}${HTTP_LINE_ENDING}`;
@@ -60362,6 +63526,7 @@ var init_BlobBatch = __esm({
         this.subRequests.set(this.operationCount, subRequest);
         this.operationCount++;
       }
+      // Return the http request body with assembling the ending line to the sub request body.
       getHttpRequestBody() {
         return `${this.body}${this.batchRequestEnding}${HTTP_LINE_ENDING}`;
       }
@@ -60396,6 +63561,8 @@ var init_BlobBatch = __esm({
       }
     };
     BatchHeaderFilterPolicy = class extends BaseRequestPolicy {
+      // The base class has a protected constructor. Adding a public one to enable constructing of this class.
+      /* eslint-disable-next-line @typescript-eslint/no-useless-constructor*/
       constructor(nextPolicy, options) {
         super(nextPolicy, options);
       }
@@ -60424,6 +63591,7 @@ var init_BlobBatch = __esm({
 var BlobBatchClient;
 var init_BlobBatchClient = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/BlobBatchClient.js"() {
+    "use strict";
     init_BatchResponseParser();
     init_BatchUtils();
     init_BlobBatch();
@@ -60452,6 +63620,10 @@ var init_BlobBatchClient = __esm({
           this.serviceOrContainerContext = new Service(storageClientContext);
         }
       }
+      /**
+       * Creates a {@link BlobBatch}.
+       * A BlobBatch represents an aggregated set of operations on blobs.
+       */
       createBatch() {
         return new BlobBatch();
       }
@@ -60477,6 +63649,41 @@ var init_BlobBatchClient = __esm({
         }
         return this.submitBatch(batch);
       }
+      /**
+       * Submit batch request which consists of multiple subrequests.
+       *
+       * Get `blobBatchClient` and other details before running the snippets.
+       * `blobServiceClient.getBlobBatchClient()` gives the `blobBatchClient`
+       *
+       * Example usage:
+       *
+       * ```js
+       * let batchRequest = new BlobBatch();
+       * await batchRequest.deleteBlob(urlInString0, credential0);
+       * await batchRequest.deleteBlob(urlInString1, credential1, {
+       *  deleteSnapshots: "include"
+       * });
+       * const batchResp = await blobBatchClient.submitBatch(batchRequest);
+       * console.log(batchResp.subResponsesSucceededCount);
+       * ```
+       *
+       * Example using a lease:
+       *
+       * ```js
+       * let batchRequest = new BlobBatch();
+       * await batchRequest.setBlobAccessTier(blockBlobClient0, "Cool");
+       * await batchRequest.setBlobAccessTier(blockBlobClient1, "Cool", {
+       *  conditions: { leaseId: leaseId }
+       * });
+       * const batchResp = await blobBatchClient.submitBatch(batchRequest);
+       * console.log(batchResp.subResponsesSucceededCount);
+       * ```
+       *
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/blob-batch
+       *
+       * @param batchRequest - A set of Delete or SetTier operations.
+       * @param options -
+       */
       async submitBatch(batchRequest, options = {}) {
         if (!batchRequest || batchRequest.getSubRequests().size === 0) {
           throw new RangeError("Batch request should contain one or more sub requests.");
@@ -60517,7 +63724,8 @@ var init_BlobBatchClient = __esm({
 var ContainerClient;
 var init_ContainerClient = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/ContainerClient.js"() {
-    init_modules();
+    "use strict";
+    init_tslib_es6();
     init_coreHttp();
     init_src4();
     init_AnonymousCredential();
@@ -60572,9 +63780,28 @@ var init_ContainerClient = __esm({
         this._containerName = this.getContainerNameFromUrl();
         this.containerContext = new Container(this.storageClientContext);
       }
+      /**
+       * The name of the container.
+       */
       get containerName() {
         return this._containerName;
       }
+      /**
+       * Creates a new container under the specified account. If the container with
+       * the same name already exists, the operation fails.
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/create-container
+       *
+       * @param options - Options to Container Create operation.
+       *
+       *
+       * Example usage:
+       *
+       * ```js
+       * const containerClient = blobServiceClient.getContainerClient("<container name>");
+       * const createContainerResponse = await containerClient.create();
+       * console.log("Container was created successfully", createContainerResponse.requestId);
+       * ```
+       */
       async create(options = {}) {
         const { span, updatedOptions } = createSpan2("ContainerClient-create", options);
         try {
@@ -60589,6 +63816,13 @@ var init_ContainerClient = __esm({
           span.end();
         }
       }
+      /**
+       * Creates a new container under the specified account. If the container with
+       * the same name already exists, it is not changed.
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/create-container
+       *
+       * @param options -
+       */
       async createIfNotExists(options = {}) {
         var _a, _b;
         const { span, updatedOptions } = createSpan2("ContainerClient-createIfNotExists", options);
@@ -60612,6 +63846,15 @@ var init_ContainerClient = __esm({
           span.end();
         }
       }
+      /**
+       * Returns true if the Azure container resource represented by this client exists; false otherwise.
+       *
+       * NOTE: use this function with care since an existing container might be deleted by other clients or
+       * applications. Vice versa new containers with the same name might be added by other clients or
+       * applications after this function completes.
+       *
+       * @param options -
+       */
       async exists(options = {}) {
         const { span, updatedOptions } = createSpan2("ContainerClient-exists", options);
         try {
@@ -60637,18 +63880,61 @@ var init_ContainerClient = __esm({
           span.end();
         }
       }
+      /**
+       * Creates a {@link BlobClient}
+       *
+       * @param blobName - A blob name
+       * @returns A new BlobClient object for the given blob name.
+       */
       getBlobClient(blobName) {
         return new BlobClient(appendToURLPath(this.url, encodeURIComponent(blobName)), this.pipeline);
       }
+      /**
+       * Creates an {@link AppendBlobClient}
+       *
+       * @param blobName - An append blob name
+       */
       getAppendBlobClient(blobName) {
         return new AppendBlobClient(appendToURLPath(this.url, encodeURIComponent(blobName)), this.pipeline);
       }
+      /**
+       * Creates a {@link BlockBlobClient}
+       *
+       * @param blobName - A block blob name
+       *
+       *
+       * Example usage:
+       *
+       * ```js
+       * const content = "Hello world!";
+       *
+       * const blockBlobClient = containerClient.getBlockBlobClient("<blob name>");
+       * const uploadBlobResponse = await blockBlobClient.upload(content, content.length);
+       * ```
+       */
       getBlockBlobClient(blobName) {
         return new BlockBlobClient(appendToURLPath(this.url, encodeURIComponent(blobName)), this.pipeline);
       }
+      /**
+       * Creates a {@link PageBlobClient}
+       *
+       * @param blobName - A page blob name
+       */
       getPageBlobClient(blobName) {
         return new PageBlobClient(appendToURLPath(this.url, encodeURIComponent(blobName)), this.pipeline);
       }
+      /**
+       * Returns all user-defined metadata and system properties for the specified
+       * container. The data returned does not include the container's list of blobs.
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-container-properties
+       *
+       * WARNING: The `metadata` object returned in the response will have its keys in lowercase, even if
+       * they originally contained uppercase characters. This differs from the metadata keys returned by
+       * the `listContainers` method of {@link BlobServiceClient} using the `includeMetadata` option, which
+       * will retain their original casing.
+       *
+       * @param options - Options to Container Get Properties operation.
+       */
       async getProperties(options = {}) {
         if (!options.conditions) {
           options.conditions = {};
@@ -60666,6 +63952,13 @@ var init_ContainerClient = __esm({
           span.end();
         }
       }
+      /**
+       * Marks the specified container for deletion. The container and any blobs
+       * contained within it are later deleted during garbage collection.
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/delete-container
+       *
+       * @param options - Options to Container Delete operation.
+       */
       async delete(options = {}) {
         if (!options.conditions) {
           options.conditions = {};
@@ -60683,6 +63976,13 @@ var init_ContainerClient = __esm({
           span.end();
         }
       }
+      /**
+       * Marks the specified container for deletion if it exists. The container and any blobs
+       * contained within it are later deleted during garbage collection.
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/delete-container
+       *
+       * @param options - Options to Container Delete operation.
+       */
       async deleteIfExists(options = {}) {
         var _a, _b;
         const { span, updatedOptions } = createSpan2("ContainerClient-deleteIfExists", options);
@@ -60706,6 +64006,18 @@ var init_ContainerClient = __esm({
           span.end();
         }
       }
+      /**
+       * Sets one or more user-defined name-value pairs for the specified container.
+       *
+       * If no option provided, or no metadata defined in the parameter, the container
+       * metadata will be removed.
+       *
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-container-metadata
+       *
+       * @param metadata - Replace existing metadata with this value.
+       *                            If no value provided the existing metadata will be removed.
+       * @param options - Options to Container Set Metadata operation.
+       */
       async setMetadata(metadata2, options = {}) {
         if (!options.conditions) {
           options.conditions = {};
@@ -60726,6 +64038,17 @@ var init_ContainerClient = __esm({
           span.end();
         }
       }
+      /**
+       * Gets the permissions for the specified container. The permissions indicate
+       * whether container data may be accessed publicly.
+       *
+       * WARNING: JavaScript Date will potentially lose precision when parsing startsOn and expiresOn strings.
+       * For example, new Date("2018-12-31T03:44:23.8827891Z").toISOString() will get "2018-12-31T03:44:23.882Z".
+       *
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-container-acl
+       *
+       * @param options - Options to Container Get Access Policy operation.
+       */
       async getAccessPolicy(options = {}) {
         if (!options.conditions) {
           options.conditions = {};
@@ -60774,6 +64097,23 @@ var init_ContainerClient = __esm({
           span.end();
         }
       }
+      /**
+       * Sets the permissions for the specified container. The permissions indicate
+       * whether blobs in a container may be accessed publicly.
+       *
+       * When you set permissions for a container, the existing permissions are replaced.
+       * If no access or containerAcl provided, the existing container ACL will be
+       * removed.
+       *
+       * When you establish a stored access policy on a container, it may take up to 30 seconds to take effect.
+       * During this interval, a shared access signature that is associated with the stored access policy will
+       * fail with status code 403 (Forbidden), until the access policy becomes active.
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-container-acl
+       *
+       * @param access - The level of public access to data in the container.
+       * @param containerAcl - Array of elements each having a unique Id and details of the access policy.
+       * @param options - Options to Container Set Access Policy operation.
+       */
       async setAccessPolicy(access2, containerAcl2, options = {}) {
         options.conditions = options.conditions || {};
         const { span, updatedOptions } = createSpan2("ContainerClient-setAccessPolicy", options);
@@ -60800,9 +64140,37 @@ var init_ContainerClient = __esm({
           span.end();
         }
       }
+      /**
+       * Get a {@link BlobLeaseClient} that manages leases on the container.
+       *
+       * @param proposeLeaseId - Initial proposed lease Id.
+       * @returns A new BlobLeaseClient object for managing leases on the container.
+       */
       getBlobLeaseClient(proposeLeaseId) {
         return new BlobLeaseClient(this, proposeLeaseId);
       }
+      /**
+       * Creates a new block blob, or updates the content of an existing block blob.
+       *
+       * Updating an existing block blob overwrites any existing metadata on the blob.
+       * Partial updates are not supported; the content of the existing blob is
+       * overwritten with the new content. To perform a partial update of a block blob's,
+       * use {@link BlockBlobClient.stageBlock} and {@link BlockBlobClient.commitBlockList}.
+       *
+       * This is a non-parallel uploading method, please use {@link BlockBlobClient.uploadFile},
+       * {@link BlockBlobClient.uploadStream} or {@link BlockBlobClient.uploadBrowserData} for better
+       * performance with concurrency uploading.
+       *
+       * @see https://docs.microsoft.com/rest/api/storageservices/put-blob
+       *
+       * @param blobName - Name of the block blob to create or update.
+       * @param body - Blob, string, ArrayBuffer, ArrayBufferView or a function
+       *                               which returns a new Readable stream whose offset is from data source beginning.
+       * @param contentLength - Length of body in bytes. Use Buffer.byteLength() to calculate body length for a
+       *                               string including non non-Base64/Hex-encoded characters.
+       * @param options - Options to configure the Block Blob Upload operation.
+       * @returns Block Blob upload response data and the corresponding BlockBlobClient instance.
+       */
       async uploadBlockBlob(blobName, body2, contentLength2, options = {}) {
         const { span, updatedOptions } = createSpan2("ContainerClient-uploadBlockBlob", options);
         try {
@@ -60822,6 +64190,17 @@ var init_ContainerClient = __esm({
           span.end();
         }
       }
+      /**
+       * Marks the specified blob or snapshot for deletion. The blob is later deleted
+       * during garbage collection. Note that in order to delete a blob, you must delete
+       * all of its snapshots. You can delete both at the same time with the Delete
+       * Blob operation.
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/delete-blob
+       *
+       * @param blobName -
+       * @param options - Options to Blob Delete operation.
+       * @returns Block blob deletion response data.
+       */
       async deleteBlob(blobName, options = {}) {
         const { span, updatedOptions } = createSpan2("ContainerClient-deleteBlob", options);
         try {
@@ -60840,6 +64219,16 @@ var init_ContainerClient = __esm({
           span.end();
         }
       }
+      /**
+       * listBlobFlatSegment returns a single segment of blobs starting from the
+       * specified Marker. Use an empty Marker to start enumeration from the beginning.
+       * After getting a segment, process it, and then call listBlobsFlatSegment again
+       * (passing the the previously-returned Marker) to get the next segment.
+       * @see https://docs.microsoft.com/rest/api/storageservices/list-blobs
+       *
+       * @param marker - A string value that identifies the portion of the list to be returned with the next list operation.
+       * @param options - Options to Container List Blob Flat Segment operation.
+       */
       async listBlobFlatSegment(marker2, options = {}) {
         const { span, updatedOptions } = createSpan2("ContainerClient-listBlobFlatSegment", options);
         try {
@@ -60863,6 +64252,17 @@ var init_ContainerClient = __esm({
           span.end();
         }
       }
+      /**
+       * listBlobHierarchySegment returns a single segment of blobs starting from
+       * the specified Marker. Use an empty Marker to start enumeration from the
+       * beginning. After getting a segment, process it, and then call listBlobsHierarchicalSegment
+       * again (passing the the previously-returned Marker) to get the next segment.
+       * @see https://docs.microsoft.com/rest/api/storageservices/list-blobs
+       *
+       * @param delimiter - The character or string used to define the virtual hierarchy
+       * @param marker - A string value that identifies the portion of the list to be returned with the next list operation.
+       * @param options - Options to Container List Blob Hierarchy Segment operation.
+       */
       async listBlobHierarchySegment(delimiter2, marker2, options = {}) {
         var _a;
         const { span, updatedOptions } = createSpan2("ContainerClient-listBlobHierarchySegment", options);
@@ -60896,6 +64296,18 @@ var init_ContainerClient = __esm({
           span.end();
         }
       }
+      /**
+       * Returns an AsyncIterableIterator for ContainerListBlobFlatSegmentResponse
+       *
+       * @param marker - A string value that identifies the portion of
+       *                          the list of blobs to be returned with the next listing operation. The
+       *                          operation returns the ContinuationToken value within the response body if the
+       *                          listing operation did not return all blobs remaining to be listed
+       *                          with the current page. The ContinuationToken value can be used as the value for
+       *                          the marker parameter in a subsequent call to request the next page of list
+       *                          items. The marker value is opaque to the client.
+       * @param options - Options to list blobs operation.
+       */
       listSegments(marker2, options = {}) {
         return __asyncGenerator(this, arguments, function* listSegments_1() {
           let listBlobsFlatSegmentResponse;
@@ -60908,6 +64320,11 @@ var init_ContainerClient = __esm({
           }
         });
       }
+      /**
+       * Returns an AsyncIterableIterator of {@link BlobItem} objects
+       *
+       * @param options - Options to list blobs operation.
+       */
       listItems(options = {}) {
         return __asyncGenerator(this, arguments, function* listItems_1() {
           var e_1, _a;
@@ -60930,6 +64347,76 @@ var init_ContainerClient = __esm({
           }
         });
       }
+      /**
+       * Returns an async iterable iterator to list all the blobs
+       * under the specified account.
+       *
+       * .byPage() returns an async iterable iterator to list the blobs in pages.
+       *
+       * Example using `for await` syntax:
+       *
+       * ```js
+       * // Get the containerClient before you run these snippets,
+       * // Can be obtained from `blobServiceClient.getContainerClient("<your-container-name>");`
+       * let i = 1;
+       * for await (const blob of containerClient.listBlobsFlat()) {
+       *   console.log(`Blob ${i++}: ${blob.name}`);
+       * }
+       * ```
+       *
+       * Example using `iter.next()`:
+       *
+       * ```js
+       * let i = 1;
+       * let iter = containerClient.listBlobsFlat();
+       * let blobItem = await iter.next();
+       * while (!blobItem.done) {
+       *   console.log(`Blob ${i++}: ${blobItem.value.name}`);
+       *   blobItem = await iter.next();
+       * }
+       * ```
+       *
+       * Example using `byPage()`:
+       *
+       * ```js
+       * // passing optional maxPageSize in the page settings
+       * let i = 1;
+       * for await (const response of containerClient.listBlobsFlat().byPage({ maxPageSize: 20 })) {
+       *   for (const blob of response.segment.blobItems) {
+       *     console.log(`Blob ${i++}: ${blob.name}`);
+       *   }
+       * }
+       * ```
+       *
+       * Example using paging with a marker:
+       *
+       * ```js
+       * let i = 1;
+       * let iterator = containerClient.listBlobsFlat().byPage({ maxPageSize: 2 });
+       * let response = (await iterator.next()).value;
+       *
+       * // Prints 2 blob names
+       * for (const blob of response.segment.blobItems) {
+       *   console.log(`Blob ${i++}: ${blob.name}`);
+       * }
+       *
+       * // Gets next marker
+       * let marker = response.continuationToken;
+       *
+       * // Passing next marker as continuationToken
+       *
+       * iterator = containerClient.listBlobsFlat().byPage({ continuationToken: marker, maxPageSize: 10 });
+       * response = (await iterator.next()).value;
+       *
+       * // Prints 10 blob names
+       * for (const blob of response.segment.blobItems) {
+       *   console.log(`Blob ${i++}: ${blob.name}`);
+       * }
+       * ```
+       *
+       * @param options - Options to list blobs.
+       * @returns An asyncIterableIterator that supports paging.
+       */
       listBlobsFlat(options = {}) {
         const include2 = [];
         if (options.includeCopy) {
@@ -60968,17 +64455,39 @@ var init_ContainerClient = __esm({
         const updatedOptions = Object.assign(Object.assign({}, options), include2.length > 0 ? { include: include2 } : {});
         const iter = this.listItems(updatedOptions);
         return {
+          /**
+           * The next method, part of the iteration protocol
+           */
           next() {
             return iter.next();
           },
+          /**
+           * The connection to the async iterator, part of the iteration protocol
+           */
           [Symbol.asyncIterator]() {
             return this;
           },
+          /**
+           * Return an AsyncIterableIterator that works a page at a time
+           */
           byPage: (settings = {}) => {
             return this.listSegments(settings.continuationToken, Object.assign({ maxPageSize: settings.maxPageSize }, updatedOptions));
           }
         };
       }
+      /**
+       * Returns an AsyncIterableIterator for ContainerListBlobHierarchySegmentResponse
+       *
+       * @param delimiter - The character or string used to define the virtual hierarchy
+       * @param marker - A string value that identifies the portion of
+       *                          the list of blobs to be returned with the next listing operation. The
+       *                          operation returns the ContinuationToken value within the response body if the
+       *                          listing operation did not return all blobs remaining to be listed
+       *                          with the current page. The ContinuationToken value can be used as the value for
+       *                          the marker parameter in a subsequent call to request the next page of list
+       *                          items. The marker value is opaque to the client.
+       * @param options - Options to list blobs operation.
+       */
       listHierarchySegments(delimiter2, marker2, options = {}) {
         return __asyncGenerator(this, arguments, function* listHierarchySegments_1() {
           let listBlobsHierarchySegmentResponse;
@@ -60991,6 +64500,12 @@ var init_ContainerClient = __esm({
           }
         });
       }
+      /**
+       * Returns an AsyncIterableIterator for {@link BlobPrefix} and {@link BlobItem} objects.
+       *
+       * @param delimiter - The character or string used to define the virtual hierarchy
+       * @param options - Options to list blobs operation.
+       */
       listItemsByHierarchy(delimiter2, options = {}) {
         return __asyncGenerator(this, arguments, function* listItemsByHierarchy_1() {
           var e_2, _a;
@@ -61021,6 +64536,84 @@ var init_ContainerClient = __esm({
           }
         });
       }
+      /**
+       * Returns an async iterable iterator to list all the blobs by hierarchy.
+       * under the specified account.
+       *
+       * .byPage() returns an async iterable iterator to list the blobs by hierarchy in pages.
+       *
+       * Example using `for await` syntax:
+       *
+       * ```js
+       * for await (const item of containerClient.listBlobsByHierarchy("/")) {
+       *   if (item.kind === "prefix") {
+       *     console.log(`\tBlobPrefix: ${item.name}`);
+       *   } else {
+       *     console.log(`\tBlobItem: name - ${item.name}`);
+       *   }
+       * }
+       * ```
+       *
+       * Example using `iter.next()`:
+       *
+       * ```js
+       * let iter = containerClient.listBlobsByHierarchy("/", { prefix: "prefix1/" });
+       * let entity = await iter.next();
+       * while (!entity.done) {
+       *   let item = entity.value;
+       *   if (item.kind === "prefix") {
+       *     console.log(`\tBlobPrefix: ${item.name}`);
+       *   } else {
+       *     console.log(`\tBlobItem: name - ${item.name}`);
+       *   }
+       *   entity = await iter.next();
+       * }
+       * ```
+       *
+       * Example using `byPage()`:
+       *
+       * ```js
+       * console.log("Listing blobs by hierarchy by page");
+       * for await (const response of containerClient.listBlobsByHierarchy("/").byPage()) {
+       *   const segment = response.segment;
+       *   if (segment.blobPrefixes) {
+       *     for (const prefix of segment.blobPrefixes) {
+       *       console.log(`\tBlobPrefix: ${prefix.name}`);
+       *     }
+       *   }
+       *   for (const blob of response.segment.blobItems) {
+       *     console.log(`\tBlobItem: name - ${blob.name}`);
+       *   }
+       * }
+       * ```
+       *
+       * Example using paging with a max page size:
+       *
+       * ```js
+       * console.log("Listing blobs by hierarchy by page, specifying a prefix and a max page size");
+       *
+       * let i = 1;
+       * for await (const response of containerClient
+       *   .listBlobsByHierarchy("/", { prefix: "prefix2/sub1/" })
+       *   .byPage({ maxPageSize: 2 })) {
+       *   console.log(`Page ${i++}`);
+       *   const segment = response.segment;
+       *
+       *   if (segment.blobPrefixes) {
+       *     for (const prefix of segment.blobPrefixes) {
+       *       console.log(`\tBlobPrefix: ${prefix.name}`);
+       *     }
+       *   }
+       *
+       *   for (const blob of response.segment.blobItems) {
+       *     console.log(`\tBlobItem: name - ${blob.name}`);
+       *   }
+       * }
+       * ```
+       *
+       * @param delimiter - The character or string used to define the virtual hierarchy
+       * @param options - Options to list blobs operation.
+       */
       listBlobsByHierarchy(delimiter2, options = {}) {
         if (delimiter2 === "") {
           throw new RangeError("delimiter should contain one or more characters");
@@ -61062,17 +64655,43 @@ var init_ContainerClient = __esm({
         const updatedOptions = Object.assign(Object.assign({}, options), include2.length > 0 ? { include: include2 } : {});
         const iter = this.listItemsByHierarchy(delimiter2, updatedOptions);
         return {
+          /**
+           * The next method, part of the iteration protocol
+           */
           async next() {
             return iter.next();
           },
+          /**
+           * The connection to the async iterator, part of the iteration protocol
+           */
           [Symbol.asyncIterator]() {
             return this;
           },
+          /**
+           * Return an AsyncIterableIterator that works a page at a time
+           */
           byPage: (settings = {}) => {
             return this.listHierarchySegments(delimiter2, settings.continuationToken, Object.assign({ maxPageSize: settings.maxPageSize }, updatedOptions));
           }
         };
       }
+      /**
+       * The Filter Blobs operation enables callers to list blobs in the container whose tags
+       * match a given search expression.
+       *
+       * @param tagFilterSqlExpression - The where parameter enables the caller to query blobs whose tags match a given expression.
+       *                                        The given expression must evaluate to true for a blob to be returned in the results.
+       *                                        The[OData - ABNF] filter syntax rule defines the formal grammar for the value of the where query parameter;
+       *                                        however, only a subset of the OData filter syntax is supported in the Blob service.
+       * @param marker - A string value that identifies the portion of
+       *                          the list of blobs to be returned with the next listing operation. The
+       *                          operation returns the continuationToken value within the response body if the
+       *                          listing operation did not return all blobs remaining to be listed
+       *                          with the current page. The continuationToken value can be used as the value for
+       *                          the marker parameter in a subsequent call to request the next page of list
+       *                          items. The marker value is opaque to the client.
+       * @param options - Options to find blobs by tags.
+       */
       async findBlobsByTagsSegment(tagFilterSqlExpression, marker2, options = {}) {
         const { span, updatedOptions } = createSpan2("ContainerClient-findBlobsByTagsSegment", options);
         try {
@@ -61096,6 +64715,22 @@ var init_ContainerClient = __esm({
           span.end();
         }
       }
+      /**
+       * Returns an AsyncIterableIterator for ContainerFindBlobsByTagsSegmentResponse.
+       *
+       * @param tagFilterSqlExpression -  The where parameter enables the caller to query blobs whose tags match a given expression.
+       *                                         The given expression must evaluate to true for a blob to be returned in the results.
+       *                                         The[OData - ABNF] filter syntax rule defines the formal grammar for the value of the where query parameter;
+       *                                         however, only a subset of the OData filter syntax is supported in the Blob service.
+       * @param marker - A string value that identifies the portion of
+       *                          the list of blobs to be returned with the next listing operation. The
+       *                          operation returns the continuationToken value within the response body if the
+       *                          listing operation did not return all blobs remaining to be listed
+       *                          with the current page. The continuationToken value can be used as the value for
+       *                          the marker parameter in a subsequent call to request the next page of list
+       *                          items. The marker value is opaque to the client.
+       * @param options - Options to find blobs by tags.
+       */
       findBlobsByTagsSegments(tagFilterSqlExpression, marker2, options = {}) {
         return __asyncGenerator(this, arguments, function* findBlobsByTagsSegments_1() {
           let response;
@@ -61109,6 +64744,15 @@ var init_ContainerClient = __esm({
           }
         });
       }
+      /**
+       * Returns an AsyncIterableIterator for blobs.
+       *
+       * @param tagFilterSqlExpression -  The where parameter enables the caller to query blobs whose tags match a given expression.
+       *                                         The given expression must evaluate to true for a blob to be returned in the results.
+       *                                         The[OData - ABNF] filter syntax rule defines the formal grammar for the value of the where query parameter;
+       *                                         however, only a subset of the OData filter syntax is supported in the Blob service.
+       * @param options - Options to findBlobsByTagsItems.
+       */
       findBlobsByTagsItems(tagFilterSqlExpression, options = {}) {
         return __asyncGenerator(this, arguments, function* findBlobsByTagsItems_1() {
           var e_3, _a;
@@ -61131,16 +64775,102 @@ var init_ContainerClient = __esm({
           }
         });
       }
+      /**
+       * Returns an async iterable iterator to find all blobs with specified tag
+       * under the specified container.
+       *
+       * .byPage() returns an async iterable iterator to list the blobs in pages.
+       *
+       * Example using `for await` syntax:
+       *
+       * ```js
+       * let i = 1;
+       * for await (const blob of containerClient.findBlobsByTags("tagkey='tagvalue'")) {
+       *   console.log(`Blob ${i++}: ${blob.name}`);
+       * }
+       * ```
+       *
+       * Example using `iter.next()`:
+       *
+       * ```js
+       * let i = 1;
+       * const iter = containerClient.findBlobsByTags("tagkey='tagvalue'");
+       * let blobItem = await iter.next();
+       * while (!blobItem.done) {
+       *   console.log(`Blob ${i++}: ${blobItem.value.name}`);
+       *   blobItem = await iter.next();
+       * }
+       * ```
+       *
+       * Example using `byPage()`:
+       *
+       * ```js
+       * // passing optional maxPageSize in the page settings
+       * let i = 1;
+       * for await (const response of containerClient.findBlobsByTags("tagkey='tagvalue'").byPage({ maxPageSize: 20 })) {
+       *   if (response.blobs) {
+       *     for (const blob of response.blobs) {
+       *       console.log(`Blob ${i++}: ${blob.name}`);
+       *     }
+       *   }
+       * }
+       * ```
+       *
+       * Example using paging with a marker:
+       *
+       * ```js
+       * let i = 1;
+       * let iterator = containerClient.findBlobsByTags("tagkey='tagvalue'").byPage({ maxPageSize: 2 });
+       * let response = (await iterator.next()).value;
+       *
+       * // Prints 2 blob names
+       * if (response.blobs) {
+       *   for (const blob of response.blobs) {
+       *     console.log(`Blob ${i++}: ${blob.name}`);
+       *   }
+       * }
+       *
+       * // Gets next marker
+       * let marker = response.continuationToken;
+       * // Passing next marker as continuationToken
+       * iterator = containerClient
+       *   .findBlobsByTags("tagkey='tagvalue'")
+       *   .byPage({ continuationToken: marker, maxPageSize: 10 });
+       * response = (await iterator.next()).value;
+       *
+       * // Prints blob names
+       * if (response.blobs) {
+       *   for (const blob of response.blobs) {
+       *      console.log(`Blob ${i++}: ${blob.name}`);
+       *   }
+       * }
+       * ```
+       *
+       * @param tagFilterSqlExpression -  The where parameter enables the caller to query blobs whose tags match a given expression.
+       *                                         The given expression must evaluate to true for a blob to be returned in the results.
+       *                                         The[OData - ABNF] filter syntax rule defines the formal grammar for the value of the where query parameter;
+       *                                         however, only a subset of the OData filter syntax is supported in the Blob service.
+       * @param options - Options to find blobs by tags.
+       */
       findBlobsByTags(tagFilterSqlExpression, options = {}) {
         const listSegmentOptions = Object.assign({}, options);
         const iter = this.findBlobsByTagsItems(tagFilterSqlExpression, listSegmentOptions);
         return {
+          /**
+           * The next method, part of the iteration protocol
+           */
           next() {
             return iter.next();
           },
+          /**
+           * The connection to the async iterator, part of the iteration protocol
+           */
           [Symbol.asyncIterator]() {
             return this;
           },
+          /**
+           * Return an AsyncIterableIterator that works a page at a time
+           */
           byPage: (settings = {}) => {
             return this.findBlobsByTagsSegments(tagFilterSqlExpression, settings.continuationToken, Object.assign({ maxPageSize: settings.maxPageSize }, listSegmentOptions));
           }
@@ -61166,6 +64896,17 @@ var init_ContainerClient = __esm({
           throw new Error("Unable to extract containerName with provided information.");
         }
       }
+      /**
+       * Only available for ContainerClient constructed with a shared key credential.
+       *
+       * Generates a Blob Container Service Shared Access Signature (SAS) URI based on the client properties
+       * and parameters passed in. The SAS is signed by the shared key credential of the client.
+       *
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/constructing-a-service-sas
+       *
+       * @param options - Optional parameters.
+       * @returns The SAS URI consisting of the URI to the resource represented by this client, followed by the generated SAS token.
+       */
       generateSasUrl(options) {
         return new Promise((resolve3) => {
           if (!(this.credential instanceof StorageSharedKeyCredential)) {
@@ -61175,6 +64916,13 @@ var init_ContainerClient = __esm({
           resolve3(appendToURLQuery(this.url, sas));
         });
       }
+      /**
+       * Creates a BlobBatchClient object to conduct batch operations.
+       *
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/blob-batch
+       *
+       * @returns A new BlobBatchClient object for this container.
+       */
       getBlobBatchClient() {
         return new BlobBatchClient(this.url, this.pipeline);
       }
@@ -61186,7 +64934,8 @@ var init_ContainerClient = __esm({
 var AccountSASPermissions;
 var init_AccountSASPermissions = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/sas/AccountSASPermissions.js"() {
-    AccountSASPermissions = class {
+    "use strict";
+    AccountSASPermissions = class _AccountSASPermissions {
       constructor() {
         this.read = false;
         this.write = false;
@@ -61202,8 +64951,13 @@ var init_AccountSASPermissions = __esm({
         this.setImmutabilityPolicy = false;
         this.permanentDelete = false;
       }
+      /**
+       * Parse initializes the AccountSASPermissions fields from a string.
+       *
+       * @param permissions -
+       */
       static parse(permissions) {
-        const accountSASPermissions = new AccountSASPermissions();
+        const accountSASPermissions = new _AccountSASPermissions();
         for (const c of permissions) {
           switch (c) {
             case "r":
@@ -61251,8 +65005,14 @@ var init_AccountSASPermissions = __esm({
         }
         return accountSASPermissions;
       }
+      /**
+       * Creates a {@link AccountSASPermissions} from a raw object which contains same keys as it
+       * and boolean values for them.
+       *
+       * @param permissionLike -
+       */
       static from(permissionLike) {
-        const accountSASPermissions = new AccountSASPermissions();
+        const accountSASPermissions = new _AccountSASPermissions();
         if (permissionLike.read) {
           accountSASPermissions.read = true;
         }
@@ -61294,6 +65054,16 @@ var init_AccountSASPermissions = __esm({
         }
         return accountSASPermissions;
       }
+      /**
+       * Produces the SAS permissions string for an Azure Storage account.
+       * Call this method to set AccountSASSignatureValues Permissions field.
+       *
+       * Using this method will guarantee the resource types are in
+       * an order accepted by the service.
+       *
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/constructing-an-account-sas
+       *
+       */
       toString() {
         const permissions = [];
         if (this.read) {
@@ -61345,14 +65115,21 @@ var init_AccountSASPermissions = __esm({
 var AccountSASResourceTypes;
 var init_AccountSASResourceTypes = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/sas/AccountSASResourceTypes.js"() {
-    AccountSASResourceTypes = class {
+    "use strict";
+    AccountSASResourceTypes = class _AccountSASResourceTypes {
       constructor() {
         this.service = false;
         this.container = false;
         this.object = false;
       }
+      /**
+       * Creates an {@link AccountSASResourceTypes} from the specified resource types string. This method will throw an
+       * Error if it encounters a character that does not correspond to a valid resource type.
+       *
+       * @param resourceTypes -
+       */
       static parse(resourceTypes) {
-        const accountSASResourceTypes = new AccountSASResourceTypes();
+        const accountSASResourceTypes = new _AccountSASResourceTypes();
         for (const c of resourceTypes) {
           switch (c) {
             case "s":
@@ -61370,6 +65147,12 @@ var init_AccountSASResourceTypes = __esm({
         }
         return accountSASResourceTypes;
       }
+      /**
+       * Converts the given resource types to a string.
+       *
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/constructing-an-account-sas
+       *
+       */
       toString() {
         const resourceTypes = [];
         if (this.service) {
@@ -61391,15 +65174,22 @@ var init_AccountSASResourceTypes = __esm({
 var AccountSASServices;
 var init_AccountSASServices = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/sas/AccountSASServices.js"() {
-    AccountSASServices = class {
+    "use strict";
+    AccountSASServices = class _AccountSASServices {
       constructor() {
         this.blob = false;
         this.file = false;
         this.queue = false;
         this.table = false;
       }
+      /**
+       * Creates an {@link AccountSASServices} from the specified services string. This method will throw an
+       * Error if it encounters a character that does not correspond to a valid service.
+       *
+       * @param services -
+       */
       static parse(services) {
-        const accountSASServices = new AccountSASServices();
+        const accountSASServices = new _AccountSASServices();
         for (const c of services) {
           switch (c) {
             case "b":
@@ -61420,6 +65210,10 @@ var init_AccountSASServices = __esm({
         }
         return accountSASServices;
       }
+      /**
+       * Converts the given services to a string.
+       *
+       */
       toString() {
         const services = [];
         if (this.blob) {
@@ -61478,6 +65272,7 @@ function generateAccountSASQueryParameters(accountSASSignatureValues, sharedKeyC
       version3,
       accountSASSignatureValues.encryptionScope ? accountSASSignatureValues.encryptionScope : "",
       ""
+      // Account SAS requires an additional newline character
     ].join("\n");
   } else {
     stringToSign = [
@@ -61491,6 +65286,7 @@ function generateAccountSASQueryParameters(accountSASSignatureValues, sharedKeyC
       accountSASSignatureValues.protocol ? accountSASSignatureValues.protocol : "",
       version3,
       ""
+      // Account SAS requires an additional newline character
     ].join("\n");
   }
   const signature = sharedKeyCredential.computeHMACSHA256(stringToSign);
@@ -61498,6 +65294,7 @@ function generateAccountSASQueryParameters(accountSASSignatureValues, sharedKeyC
 }
 var init_AccountSASSignatureValues = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/sas/AccountSASSignatureValues.js"() {
+    "use strict";
     init_AccountSASPermissions();
     init_AccountSASResourceTypes();
     init_AccountSASServices();
@@ -61512,7 +65309,8 @@ var init_AccountSASSignatureValues = __esm({
 var BlobServiceClient;
 var init_BlobServiceClient = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/BlobServiceClient.js"() {
-    init_modules();
+    "use strict";
+    init_tslib_es6();
     init_coreHttp();
     init_src4();
     init_operations();
@@ -61529,7 +65327,7 @@ var init_BlobServiceClient = __esm({
     init_AccountSASPermissions();
     init_AccountSASSignatureValues();
     init_AccountSASServices();
-    BlobServiceClient = class extends StorageClient {
+    BlobServiceClient = class _BlobServiceClient extends StorageClient {
       constructor(url2, credentialOrPipeline, options) {
         let pipeline;
         if (isPipelineLike(credentialOrPipeline)) {
@@ -61542,6 +65340,18 @@ var init_BlobServiceClient = __esm({
         super(url2, pipeline);
         this.serviceContext = new Service(this.storageClientContext);
       }
+      /**
+       *
+       * Creates an instance of BlobServiceClient from connection string.
+       *
+       * @param connectionString - Account connection string or a SAS connection string of an Azure storage account.
+       *                                  [ Note - Account connection string can only be used in NODE.JS runtime. ]
+       *                                  Account connection string example -
+       *                                  `DefaultEndpointsProtocol=https;AccountName=myaccount;AccountKey=accountKey;EndpointSuffix=core.windows.net`
+       *                                  SAS connection string example -
+       *                                  `BlobEndpoint=https://myaccount.blob.core.windows.net/;QueueEndpoint=https://myaccount.queue.core.windows.net/;FileEndpoint=https://myaccount.file.core.windows.net/;TableEndpoint=https://myaccount.table.core.windows.net/;SharedAccessSignature=sasString`
+       * @param options - Optional. Options to configure the HTTP pipeline.
+       */
       static fromConnectionString(connectionString, options) {
         options = options || {};
         const extractedCreds = extractConnectionStringParts(connectionString);
@@ -61552,20 +65362,39 @@ var init_BlobServiceClient = __esm({
               options.proxyOptions = getDefaultProxySettings(extractedCreds.proxyUri);
             }
             const pipeline = newPipeline(sharedKeyCredential, options);
-            return new BlobServiceClient(extractedCreds.url, pipeline);
+            return new _BlobServiceClient(extractedCreds.url, pipeline);
           } else {
             throw new Error("Account connection string is only supported in Node.js environment");
           }
         } else if (extractedCreds.kind === "SASConnString") {
           const pipeline = newPipeline(new AnonymousCredential(), options);
-          return new BlobServiceClient(extractedCreds.url + "?" + extractedCreds.accountSas, pipeline);
+          return new _BlobServiceClient(extractedCreds.url + "?" + extractedCreds.accountSas, pipeline);
         } else {
           throw new Error("Connection string must be either an Account connection string or a SAS connection string");
         }
       }
+      /**
+       * Creates a {@link ContainerClient} object
+       *
+       * @param containerName - A container name
+       * @returns A new ContainerClient object for the given container name.
+       *
+       * Example usage:
+       *
+       * ```js
+       * const containerClient = blobServiceClient.getContainerClient("<container name>");
+       * ```
+       */
       getContainerClient(containerName) {
         return new ContainerClient(appendToURLPath(this.url, encodeURIComponent(containerName)), this.pipeline);
       }
+      /**
+       * Create a Blob container.
+       *
+       * @param containerName - Name of the container to create.
+       * @param options - Options to configure Container Create operation.
+       * @returns Container creation response and the corresponding container client.
+       */
       async createContainer(containerName, options = {}) {
         const { span, updatedOptions } = createSpan2("BlobServiceClient-createContainer", options);
         try {
@@ -61585,6 +65414,13 @@ var init_BlobServiceClient = __esm({
           span.end();
         }
       }
+      /**
+       * Deletes a Blob container.
+       *
+       * @param containerName - Name of the container to delete.
+       * @param options - Options to configure Container Delete operation.
+       * @returns Container deletion response.
+       */
       async deleteContainer(containerName, options = {}) {
         const { span, updatedOptions } = createSpan2("BlobServiceClient-deleteContainer", options);
         try {
@@ -61600,6 +65436,15 @@ var init_BlobServiceClient = __esm({
           span.end();
         }
       }
+      /**
+       * Restore a previously deleted Blob container.
+       * This API is only functional if Container Soft Delete is enabled for the storage account associated with the container.
+       *
+       * @param deletedContainerName - Name of the previously deleted container.
+       * @param deletedContainerVersion - Version of the previously deleted container, used to uniquely identify the deleted container.
+       * @param options - Options to configure Container Restore operation.
+       * @returns Container deletion response.
+       */
       async undeleteContainer(deletedContainerName2, deletedContainerVersion2, options = {}) {
         const { span, updatedOptions } = createSpan2("BlobServiceClient-undeleteContainer", options);
         try {
@@ -61620,6 +65465,15 @@ var init_BlobServiceClient = __esm({
           span.end();
         }
       }
+      /**
+       * Rename an existing Blob Container.
+       *
+       * @param sourceContainerName - The name of the source container.
+       * @param destinationContainerName - The new name of the container.
+       * @param options - Options to configure Container Rename operation.
+       */
+      /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */
+      // @ts-ignore Need to hide this interface for now. Make it public and turn on the live tests for it when the service is ready.
       async renameContainer(sourceContainerName2, destinationContainerName, options = {}) {
         var _a;
         const { span, updatedOptions } = createSpan2("BlobServiceClient-renameContainer", options);
@@ -61638,6 +65492,14 @@ var init_BlobServiceClient = __esm({
           span.end();
         }
       }
+      /**
+       * Gets the properties of a storage account’s Blob service, including properties
+       * for Storage Analytics and CORS (Cross-Origin Resource Sharing) rules.
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-blob-service-properties
+       *
+       * @param options - Options to the Service Get Properties operation.
+       * @returns Response data for the Service Get Properties operation.
+       */
       async getProperties(options = {}) {
         const { span, updatedOptions } = createSpan2("BlobServiceClient-getProperties", options);
         try {
@@ -61652,6 +65514,15 @@ var init_BlobServiceClient = __esm({
           span.end();
         }
       }
+      /**
+       * Sets properties for a storage account’s Blob service endpoint, including properties
+       * for Storage Analytics, CORS (Cross-Origin Resource Sharing) rules and soft delete settings.
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/set-blob-service-properties
+       *
+       * @param properties -
+       * @param options - Options to the Service Set Properties operation.
+       * @returns Response data for the Service Set Properties operation.
+       */
       async setProperties(properties, options = {}) {
         const { span, updatedOptions } = createSpan2("BlobServiceClient-setProperties", options);
         try {
@@ -61666,6 +65537,15 @@ var init_BlobServiceClient = __esm({
           span.end();
         }
       }
+      /**
+       * Retrieves statistics related to replication for the Blob service. It is only
+       * available on the secondary location endpoint when read-access geo-redundant
+       * replication is enabled for the storage account.
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-blob-service-stats
+       *
+       * @param options - Options to the Service Get Statistics operation.
+       * @returns Response data for the Service Get Statistics operation.
+       */
       async getStatistics(options = {}) {
         const { span, updatedOptions } = createSpan2("BlobServiceClient-getStatistics", options);
         try {
@@ -61680,6 +65560,16 @@ var init_BlobServiceClient = __esm({
           span.end();
         }
       }
+      /**
+       * The Get Account Information operation returns the sku name and account kind
+       * for the specified account.
+       * The Get Account Information operation is available on service versions beginning
+       * with version 2018-03-28.
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-account-information
+       *
+       * @param options - Options to the Service Get Account Info operation.
+       * @returns Response data for the Service Get Account Info operation.
+       */
       async getAccountInfo(options = {}) {
         const { span, updatedOptions } = createSpan2("BlobServiceClient-getAccountInfo", options);
         try {
@@ -61694,6 +65584,20 @@ var init_BlobServiceClient = __esm({
           span.end();
         }
       }
+      /**
+       * Returns a list of the containers under the specified account.
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/list-containers2
+       *
+       * @param marker - A string value that identifies the portion of
+       *                        the list of containers to be returned with the next listing operation. The
+       *                        operation returns the continuationToken value within the response body if the
+       *                        listing operation did not return all containers remaining to be listed
+       *                        with the current page. The continuationToken value can be used as the value for
+       *                        the marker parameter in a subsequent call to request the next page of list
+       *                        items. The marker value is opaque to the client.
+       * @param options - Options to the Service List Container Segment operation.
+       * @returns Response data for the Service List Container Segment operation.
+       */
       async listContainersSegment(marker2, options = {}) {
         const { span, updatedOptions } = createSpan2("BlobServiceClient-listContainersSegment", options);
         try {
@@ -61708,6 +65612,24 @@ var init_BlobServiceClient = __esm({
           span.end();
         }
       }
+      /**
+       * The Filter Blobs operation enables callers to list blobs across all containers whose tags
+       * match a given search expression. Filter blobs searches across all containers within a
+       * storage account but can be scoped within the expression to a single container.
+       *
+       * @param tagFilterSqlExpression - The where parameter enables the caller to query blobs whose tags match a given expression.
+       *                                        The given expression must evaluate to true for a blob to be returned in the results.
+       *                                        The[OData - ABNF] filter syntax rule defines the formal grammar for the value of the where query parameter;
+       *                                        however, only a subset of the OData filter syntax is supported in the Blob service.
+       * @param marker - A string value that identifies the portion of
+       *                          the list of blobs to be returned with the next listing operation. The
+       *                          operation returns the continuationToken value within the response body if the
+       *                          listing operation did not return all blobs remaining to be listed
+       *                          with the current page. The continuationToken value can be used as the value for
+       *                          the marker parameter in a subsequent call to request the next page of list
+       *                          items. The marker value is opaque to the client.
+       * @param options - Options to find blobs by tags.
+       */
       async findBlobsByTagsSegment(tagFilterSqlExpression, marker2, options = {}) {
         const { span, updatedOptions } = createSpan2("BlobServiceClient-findBlobsByTagsSegment", options);
         try {
@@ -61731,6 +65653,22 @@ var init_BlobServiceClient = __esm({
           span.end();
         }
       }
+      /**
+       * Returns an AsyncIterableIterator for ServiceFindBlobsByTagsSegmentResponse.
+       *
+       * @param tagFilterSqlExpression -  The where parameter enables the caller to query blobs whose tags match a given expression.
+       *                                         The given expression must evaluate to true for a blob to be returned in the results.
+       *                                         The[OData - ABNF] filter syntax rule defines the formal grammar for the value of the where query parameter;
+       *                                         however, only a subset of the OData filter syntax is supported in the Blob service.
+       * @param marker - A string value that identifies the portion of
+       *                          the list of blobs to be returned with the next listing operation. The
+       *                          operation returns the continuationToken value within the response body if the
+       *                          listing operation did not return all blobs remaining to be listed
+       *                          with the current page. The continuationToken value can be used as the value for
+       *                          the marker parameter in a subsequent call to request the next page of list
+       *                          items. The marker value is opaque to the client.
+       * @param options - Options to find blobs by tags.
+       */
       findBlobsByTagsSegments(tagFilterSqlExpression, marker2, options = {}) {
         return __asyncGenerator(this, arguments, function* findBlobsByTagsSegments_1() {
           let response;
@@ -61744,6 +65682,15 @@ var init_BlobServiceClient = __esm({
           }
         });
       }
+      /**
+       * Returns an AsyncIterableIterator for blobs.
+       *
+       * @param tagFilterSqlExpression -  The where parameter enables the caller to query blobs whose tags match a given expression.
+       *                                         The given expression must evaluate to true for a blob to be returned in the results.
+       *                                         The[OData - ABNF] filter syntax rule defines the formal grammar for the value of the where query parameter;
+       *                                         however, only a subset of the OData filter syntax is supported in the Blob service.
+       * @param options - Options to findBlobsByTagsItems.
+       */
       findBlobsByTagsItems(tagFilterSqlExpression, options = {}) {
         return __asyncGenerator(this, arguments, function* findBlobsByTagsItems_1() {
           var e_1, _a;
@@ -61766,21 +65713,121 @@ var init_BlobServiceClient = __esm({
           }
         });
       }
+      /**
+       * Returns an async iterable iterator to find all blobs with specified tag
+       * under the specified account.
+       *
+       * .byPage() returns an async iterable iterator to list the blobs in pages.
+       *
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-blob-service-properties
+       *
+       * Example using `for await` syntax:
+       *
+       * ```js
+       * let i = 1;
+       * for await (const blob of blobServiceClient.findBlobsByTags("tagkey='tagvalue'")) {
+       *   console.log(`Blob ${i++}: ${container.name}`);
+       * }
+       * ```
+       *
+       * Example using `iter.next()`:
+       *
+       * ```js
+       * let i = 1;
+       * const iter = blobServiceClient.findBlobsByTags("tagkey='tagvalue'");
+       * let blobItem = await iter.next();
+       * while (!blobItem.done) {
+       *   console.log(`Blob ${i++}: ${blobItem.value.name}`);
+       *   blobItem = await iter.next();
+       * }
+       * ```
+       *
+       * Example using `byPage()`:
+       *
+       * ```js
+       * // passing optional maxPageSize in the page settings
+       * let i = 1;
+       * for await (const response of blobServiceClient.findBlobsByTags("tagkey='tagvalue'").byPage({ maxPageSize: 20 })) {
+       *   if (response.blobs) {
+       *     for (const blob of response.blobs) {
+       *       console.log(`Blob ${i++}: ${blob.name}`);
+       *     }
+       *   }
+       * }
+       * ```
+       *
+       * Example using paging with a marker:
+       *
+       * ```js
+       * let i = 1;
+       * let iterator = blobServiceClient.findBlobsByTags("tagkey='tagvalue'").byPage({ maxPageSize: 2 });
+       * let response = (await iterator.next()).value;
+       *
+       * // Prints 2 blob names
+       * if (response.blobs) {
+       *   for (const blob of response.blobs) {
+       *     console.log(`Blob ${i++}: ${blob.name}`);
+       *   }
+       * }
+       *
+       * // Gets next marker
+       * let marker = response.continuationToken;
+       * // Passing next marker as continuationToken
+       * iterator = blobServiceClient
+       *   .findBlobsByTags("tagkey='tagvalue'")
+       *   .byPage({ continuationToken: marker, maxPageSize: 10 });
+       * response = (await iterator.next()).value;
+       *
+       * // Prints blob names
+       * if (response.blobs) {
+       *   for (const blob of response.blobs) {
+       *      console.log(`Blob ${i++}: ${blob.name}`);
+       *   }
+       * }
+       * ```
+       *
+       * @param tagFilterSqlExpression -  The where parameter enables the caller to query blobs whose tags match a given expression.
+       *                                         The given expression must evaluate to true for a blob to be returned in the results.
+       *                                         The[OData - ABNF] filter syntax rule defines the formal grammar for the value of the where query parameter;
+       *                                         however, only a subset of the OData filter syntax is supported in the Blob service.
+       * @param options - Options to find blobs by tags.
+       */
       findBlobsByTags(tagFilterSqlExpression, options = {}) {
         const listSegmentOptions = Object.assign({}, options);
         const iter = this.findBlobsByTagsItems(tagFilterSqlExpression, listSegmentOptions);
         return {
+          /**
+           * The next method, part of the iteration protocol
+           */
           next() {
             return iter.next();
           },
+          /**
+           * The connection to the async iterator, part of the iteration protocol
+           */
           [Symbol.asyncIterator]() {
             return this;
           },
+          /**
+           * Return an AsyncIterableIterator that works a page at a time
+           */
           byPage: (settings = {}) => {
             return this.findBlobsByTagsSegments(tagFilterSqlExpression, settings.continuationToken, Object.assign({ maxPageSize: settings.maxPageSize }, listSegmentOptions));
           }
         };
       }
+      /**
+       * Returns an AsyncIterableIterator for ServiceListContainersSegmentResponses
+       *
+       * @param marker - A string value that identifies the portion of
+       *                        the list of containers to be returned with the next listing operation. The
+       *                        operation returns the continuationToken value within the response body if the
+       *                        listing operation did not return all containers remaining to be listed
+       *                        with the current page. The continuationToken value can be used as the value for
+       *                        the marker parameter in a subsequent call to request the next page of list
+       *                        items. The marker value is opaque to the client.
+       * @param options - Options to list containers operation.
+       */
       listSegments(marker2, options = {}) {
         return __asyncGenerator(this, arguments, function* listSegments_1() {
           let listContainersSegmentResponse;
@@ -61794,6 +65841,11 @@ var init_BlobServiceClient = __esm({
           }
         });
       }
+      /**
+       * Returns an AsyncIterableIterator for Container Items
+       *
+       * @param options - Options to list containers operation.
+       */
       listItems(options = {}) {
         return __asyncGenerator(this, arguments, function* listItems_1() {
           var e_2, _a;
@@ -61816,6 +65868,80 @@ var init_BlobServiceClient = __esm({
           }
         });
       }
+      /**
+       * Returns an async iterable iterator to list all the containers
+       * under the specified account.
+       *
+       * .byPage() returns an async iterable iterator to list the containers in pages.
+       *
+       * Example using `for await` syntax:
+       *
+       * ```js
+       * let i = 1;
+       * for await (const container of blobServiceClient.listContainers()) {
+       *   console.log(`Container ${i++}: ${container.name}`);
+       * }
+       * ```
+       *
+       * Example using `iter.next()`:
+       *
+       * ```js
+       * let i = 1;
+       * const iter = blobServiceClient.listContainers();
+       * let containerItem = await iter.next();
+       * while (!containerItem.done) {
+       *   console.log(`Container ${i++}: ${containerItem.value.name}`);
+       *   containerItem = await iter.next();
+       * }
+       * ```
+       *
+       * Example using `byPage()`:
+       *
+       * ```js
+       * // passing optional maxPageSize in the page settings
+       * let i = 1;
+       * for await (const response of blobServiceClient.listContainers().byPage({ maxPageSize: 20 })) {
+       *   if (response.containerItems) {
+       *     for (const container of response.containerItems) {
+       *       console.log(`Container ${i++}: ${container.name}`);
+       *     }
+       *   }
+       * }
+       * ```
+       *
+       * Example using paging with a marker:
+       *
+       * ```js
+       * let i = 1;
+       * let iterator = blobServiceClient.listContainers().byPage({ maxPageSize: 2 });
+       * let response = (await iterator.next()).value;
+       *
+       * // Prints 2 container names
+       * if (response.containerItems) {
+       *   for (const container of response.containerItems) {
+       *     console.log(`Container ${i++}: ${container.name}`);
+       *   }
+       * }
+       *
+       * // Gets next marker
+       * let marker = response.continuationToken;
+       * // Passing next marker as continuationToken
+       * iterator = blobServiceClient
+       *   .listContainers()
+       *   .byPage({ continuationToken: marker, maxPageSize: 10 });
+       * response = (await iterator.next()).value;
+       *
+       * // Prints 10 container names
+       * if (response.containerItems) {
+       *   for (const container of response.containerItems) {
+       *      console.log(`Container ${i++}: ${container.name}`);
+       *   }
+       * }
+       * ```
+       *
+       * @param options - Options to list containers.
+       * @returns An asyncIterableIterator that supports paging.
+       */
       listContainers(options = {}) {
         if (options.prefix === "") {
           options.prefix = void 0;
@@ -61833,17 +65959,37 @@ var init_BlobServiceClient = __esm({
         const listSegmentOptions = Object.assign(Object.assign({}, options), include2.length > 0 ? { include: include2 } : {});
         const iter = this.listItems(listSegmentOptions);
         return {
+          /**
+           * The next method, part of the iteration protocol
+           */
           next() {
             return iter.next();
           },
+          /**
+           * The connection to the async iterator, part of the iteration protocol
+           */
           [Symbol.asyncIterator]() {
             return this;
           },
+          /**
+           * Return an AsyncIterableIterator that works a page at a time
+           */
           byPage: (settings = {}) => {
             return this.listSegments(settings.continuationToken, Object.assign({ maxPageSize: settings.maxPageSize }, listSegmentOptions));
           }
         };
       }
+      /**
+       * ONLY AVAILABLE WHEN USING BEARER TOKEN AUTHENTICATION (TokenCredential).
+       *
+       * Retrieves a user delegation key for the Blob service. This is only a valid operation when using
+       * bearer token authentication.
+       *
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/get-user-delegation-key
+       *
+       * @param startsOn -      The start time for the user delegation SAS. Must be within 7 days of the current time
+       * @param expiresOn -     The end time for the user delegation SAS. Must be within 7 days of the current time
+       */
       async getUserDelegationKey(startsOn, expiresOn2, options = {}) {
         const { span, updatedOptions } = createSpan2("BlobServiceClient-getUserDelegationKey", options);
         try {
@@ -61872,15 +66018,36 @@ var init_BlobServiceClient = __esm({
           span.end();
         }
       }
+      /**
+       * Creates a BlobBatchClient object to conduct batch operations.
+       *
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/blob-batch
+       *
+       * @returns A new BlobBatchClient object for this service.
+       */
       getBlobBatchClient() {
         return new BlobBatchClient(this.url, this.pipeline);
       }
+      /**
+       * Only available for BlobServiceClient constructed with a shared key credential.
+       *
+       * Generates a Blob account Shared Access Signature (SAS) URI based on the client properties
+       * and parameters passed in. The SAS is signed by the shared key credential of the client.
+       *
+       * @see https://docs.microsoft.com/en-us/rest/api/storageservices/create-account-sas
+       *
+       * @param expiresOn - Optional. The time at which the shared access signature becomes invalid. Default to an hour later if not provided.
+       * @param permissions - Specifies the list of permissions to be associated with the SAS.
+       * @param resourceTypes - Specifies the resource types associated with the shared access signature.
+       * @param options - Optional parameters.
+       * @returns An account SAS URI consisting of the URI to the resource represented by this client, followed by the generated SAS token.
+       */
       generateAccountSasUrl(expiresOn2, permissions = AccountSASPermissions.parse("r"), resourceTypes = "sco", options = {}) {
         if (!(this.credential instanceof StorageSharedKeyCredential)) {
           throw RangeError("Can only generate the account SAS when the client is initialized with a shared key credential");
         }
         if (expiresOn2 === void 0) {
-          const now = new Date();
+          const now = /* @__PURE__ */ new Date();
           expiresOn2 = new Date(now.getTime() + 3600 * 1e3);
         }
         const sas = generateAccountSASQueryParameters(Object.assign({
@@ -61898,12 +66065,14 @@ var init_BlobServiceClient = __esm({
 // ../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/BatchResponse.js
 var init_BatchResponse = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/BatchResponse.js"() {
+    "use strict";
   }
 });
 
 // ../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/generatedModels.js
 var init_generatedModels = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/generatedModels.js"() {
+    "use strict";
   }
 });
 
@@ -61956,6 +66125,7 @@ __export(src_exports2, {
 });
 var init_src10 = __esm({
   "../../../node_modules/.pnpm/@azure+storage-blob@12.11.0/node_modules/@azure/storage-blob/dist-esm/storage-blob/src/index.js"() {
+    "use strict";
     init_coreHttp();
     init_BlobServiceClient();
     init_Clients();
@@ -61991,7 +66161,7 @@ var init_src10 = __esm({
 var require_requestUtils = __commonJS({
   "../../../node_modules/.pnpm/@actions+cache@3.0.4/node_modules/@actions/cache/lib/internal/requestUtils.js"(exports) {
     "use strict";
-    var __awaiter2 = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
+    var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
         return value instanceof P ? value : new P(function(resolve3) {
           resolve3(value);
@@ -62018,7 +66188,7 @@ var require_requestUtils = __commonJS({
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
     };
-    var __importStar2 = exports && exports.__importStar || function(mod) {
+    var __importStar = exports && exports.__importStar || function(mod) {
       if (mod && mod.__esModule)
         return mod;
       var result = {};
@@ -62031,7 +66201,7 @@ var require_requestUtils = __commonJS({
       return result;
     };
     Object.defineProperty(exports, "__esModule", { value: true });
-    var core = __importStar2(require_core());
+    var core = __importStar(require_core());
     var http_client_1 = require_lib();
     var constants_1 = require_constants();
     function isSuccessStatusCode(statusCode) {
@@ -62061,12 +66231,12 @@ var require_requestUtils = __commonJS({
     }
     exports.isRetryableStatusCode = isRetryableStatusCode;
     function sleep(milliseconds) {
-      return __awaiter2(this, void 0, void 0, function* () {
+      return __awaiter(this, void 0, void 0, function* () {
         return new Promise((resolve3) => setTimeout(resolve3, milliseconds));
       });
     }
     function retry3(name, method, getStatusCode, maxAttempts = constants_1.DefaultRetryAttempts, delay3 = constants_1.DefaultRetryDelay, onError = void 0) {
-      return __awaiter2(this, void 0, void 0, function* () {
+      return __awaiter(this, void 0, void 0, function* () {
         let errorMessage = "";
         let attempt = 1;
         while (attempt <= maxAttempts) {
@@ -62105,13 +66275,15 @@ var require_requestUtils = __commonJS({
     }
     exports.retry = retry3;
     function retryTypedResponse(name, method, maxAttempts = constants_1.DefaultRetryAttempts, delay3 = constants_1.DefaultRetryDelay) {
-      return __awaiter2(this, void 0, void 0, function* () {
+      return __awaiter(this, void 0, void 0, function* () {
         return yield retry3(
           name,
           method,
           (response) => response.statusCode,
           maxAttempts,
           delay3,
+          // If the error object contains the statusCode property, extract it and return
+          // an TypedResponse<T> so it can be processed by the retry logic.
           (error) => {
             if (error instanceof http_client_1.HttpClientError) {
               return {
@@ -62129,7 +66301,7 @@ var require_requestUtils = __commonJS({
     }
     exports.retryTypedResponse = retryTypedResponse;
     function retryHttpClientResponse(name, method, maxAttempts = constants_1.DefaultRetryAttempts, delay3 = constants_1.DefaultRetryDelay) {
-      return __awaiter2(this, void 0, void 0, function* () {
+      return __awaiter(this, void 0, void 0, function* () {
         return yield retry3(name, method, (response) => response.message.statusCode, maxAttempts, delay3);
       });
     }
@@ -62141,7 +66313,7 @@ var require_requestUtils = __commonJS({
 var require_downloadUtils = __commonJS({
   "../../../node_modules/.pnpm/@actions+cache@3.0.4/node_modules/@actions/cache/lib/internal/downloadUtils.js"(exports) {
     "use strict";
-    var __awaiter2 = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
+    var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
         return value instanceof P ? value : new P(function(resolve3) {
           resolve3(value);
@@ -62168,7 +66340,7 @@ var require_downloadUtils = __commonJS({
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
     };
-    var __importStar2 = exports && exports.__importStar || function(mod) {
+    var __importStar = exports && exports.__importStar || function(mod) {
       if (mod && mod.__esModule)
         return mod;
       var result = {};
@@ -62181,19 +66353,19 @@ var require_downloadUtils = __commonJS({
       return result;
     };
     Object.defineProperty(exports, "__esModule", { value: true });
-    var core = __importStar2(require_core());
+    var core = __importStar(require_core());
     var http_client_1 = require_lib();
     var storage_blob_1 = (init_src10(), __toCommonJS(src_exports2));
-    var buffer = __importStar2(require("buffer"));
-    var fs3 = __importStar2(require("fs"));
-    var stream = __importStar2(require("stream"));
-    var util3 = __importStar2(require("util"));
-    var utils = __importStar2(require_cacheUtils());
+    var buffer = __importStar(require("buffer"));
+    var fs3 = __importStar(require("fs"));
+    var stream = __importStar(require("stream"));
+    var util3 = __importStar(require("util"));
+    var utils = __importStar(require_cacheUtils());
     var constants_1 = require_constants();
     var requestUtils_1 = require_requestUtils();
     var abort_controller_1 = (init_src(), __toCommonJS(src_exports));
     function pipeResponseToStream(response, output) {
-      return __awaiter2(this, void 0, void 0, function* () {
+      return __awaiter(this, void 0, void 0, function* () {
         const pipeline = util3.promisify(stream.pipeline);
         yield pipeline(response.message, output);
       });
@@ -62208,6 +66380,12 @@ var require_downloadUtils = __commonJS({
         this.displayedComplete = false;
         this.startTime = Date.now();
       }
+      /**
+       * Progress to the next segment. Only call this method when the previous segment
+       * is complete.
+       *
+       * @param segmentSize the length of the next segment
+       */
       nextSegment(segmentSize) {
         this.segmentOffset = this.segmentOffset + this.segmentSize;
         this.segmentIndex = this.segmentIndex + 1;
@@ -62215,15 +66393,30 @@ var require_downloadUtils = __commonJS({
         this.receivedBytes = 0;
         core.debug(`Downloading segment at offset ${this.segmentOffset} with length ${this.segmentSize}...`);
       }
+      /**
+       * Sets the number of bytes received for the current segment.
+       *
+       * @param receivedBytes the number of bytes received
+       */
       setReceivedBytes(receivedBytes) {
         this.receivedBytes = receivedBytes;
       }
+      /**
+       * Returns the total number of bytes transferred.
+       */
       getTransferredBytes() {
         return this.segmentOffset + this.receivedBytes;
       }
+      /**
+       * Returns true if the download is complete.
+       */
       isDone() {
         return this.getTransferredBytes() === this.contentLength;
       }
+      /**
+       * Prints the current download stats. Once the download completes, this will print one
+       * last line and then stop.
+       */
       display() {
         if (this.displayedComplete) {
           return;
@@ -62237,11 +66430,19 @@ var require_downloadUtils = __commonJS({
           this.displayedComplete = true;
         }
       }
+      /**
+       * Returns a function used to handle TransferProgressEvents.
+       */
       onProgress() {
         return (progress) => {
           this.setReceivedBytes(progress.loadedBytes);
         };
       }
+      /**
+       * Starts the timer that displays the stats.
+       *
+       * @param delayInMs the delay between each write
+       */
       startDisplayTimer(delayInMs = 1e3) {
         const displayCallback = () => {
           this.display();
@@ -62251,6 +66452,11 @@ var require_downloadUtils = __commonJS({
         };
         this.timeoutHandle = setTimeout(displayCallback, delayInMs);
       }
+      /**
+       * Stops the timer that displays the stats. As this typically indicates the download
+       * is complete, this will display one last line, unless the last line has already
+       * been written.
+       */
       stopDisplayTimer() {
         if (this.timeoutHandle) {
           clearTimeout(this.timeoutHandle);
@@ -62261,10 +66467,10 @@ var require_downloadUtils = __commonJS({
     };
     exports.DownloadProgress = DownloadProgress;
     function downloadCacheHttpClient(archiveLocation, archivePath) {
-      return __awaiter2(this, void 0, void 0, function* () {
+      return __awaiter(this, void 0, void 0, function* () {
         const writeStream = fs3.createWriteStream(archivePath);
         const httpClient = new http_client_1.HttpClient("actions/cache");
-        const downloadResponse = yield requestUtils_1.retryHttpClientResponse("downloadCache", () => __awaiter2(this, void 0, void 0, function* () {
+        const downloadResponse = yield requestUtils_1.retryHttpClientResponse("downloadCache", () => __awaiter(this, void 0, void 0, function* () {
           return httpClient.get(archiveLocation);
         }));
         downloadResponse.message.socket.setTimeout(constants_1.SocketTimeout, () => {
@@ -62287,9 +66493,11 @@ var require_downloadUtils = __commonJS({
     exports.downloadCacheHttpClient = downloadCacheHttpClient;
     function downloadCacheStorageSDK(archiveLocation, archivePath, options) {
       var _a;
-      return __awaiter2(this, void 0, void 0, function* () {
+      return __awaiter(this, void 0, void 0, function* () {
         const client = new storage_blob_1.BlockBlobClient(archiveLocation, void 0, {
           retryOptions: {
+            // Override the timeout used when downloading each 4 MB chunk
+            // The default is 2 min / MB, which is way too slow
             tryTimeoutInMs: options.timeoutInMs
           }
         });
@@ -62330,7 +66538,7 @@ var require_downloadUtils = __commonJS({
       });
     }
     exports.downloadCacheStorageSDK = downloadCacheStorageSDK;
-    var promiseWithTimeout = (timeoutMs, promise) => __awaiter2(void 0, void 0, void 0, function* () {
+    var promiseWithTimeout = (timeoutMs, promise) => __awaiter(void 0, void 0, void 0, function* () {
       let timeoutHandle;
       const timeoutPromise = new Promise((resolve3) => {
         timeoutHandle = setTimeout(() => resolve3("timeout"), timeoutMs);
@@ -62347,7 +66555,7 @@ var require_downloadUtils = __commonJS({
 var require_options = __commonJS({
   "../../../node_modules/.pnpm/@actions+cache@3.0.4/node_modules/@actions/cache/lib/options.js"(exports) {
     "use strict";
-    var __importStar2 = exports && exports.__importStar || function(mod) {
+    var __importStar = exports && exports.__importStar || function(mod) {
       if (mod && mod.__esModule)
         return mod;
       var result = {};
@@ -62360,7 +66568,7 @@ var require_options = __commonJS({
       return result;
     };
     Object.defineProperty(exports, "__esModule", { value: true });
-    var core = __importStar2(require_core());
+    var core = __importStar(require_core());
     function getUploadOptions(copy) {
       const result = {
         uploadConcurrency: 4,
@@ -62419,7 +66627,7 @@ var require_options = __commonJS({
 var require_cacheHttpClient = __commonJS({
   "../../../node_modules/.pnpm/@actions+cache@3.0.4/node_modules/@actions/cache/lib/internal/cacheHttpClient.js"(exports) {
     "use strict";
-    var __awaiter2 = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
+    var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
         return value instanceof P ? value : new P(function(resolve3) {
           resolve3(value);
@@ -62446,7 +66654,7 @@ var require_cacheHttpClient = __commonJS({
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
     };
-    var __importStar2 = exports && exports.__importStar || function(mod) {
+    var __importStar = exports && exports.__importStar || function(mod) {
       if (mod && mod.__esModule)
         return mod;
       var result = {};
@@ -62459,13 +66667,13 @@ var require_cacheHttpClient = __commonJS({
       return result;
     };
     Object.defineProperty(exports, "__esModule", { value: true });
-    var core = __importStar2(require_core());
+    var core = __importStar(require_core());
     var http_client_1 = require_lib();
     var auth_1 = require_auth();
-    var crypto = __importStar2(require("crypto"));
-    var fs3 = __importStar2(require("fs"));
+    var crypto4 = __importStar(require("crypto"));
+    var fs3 = __importStar(require("fs"));
     var url_1 = require("url");
-    var utils = __importStar2(require_cacheUtils());
+    var utils = __importStar(require_cacheUtils());
     var constants_1 = require_constants();
     var downloadUtils_1 = require_downloadUtils();
     var options_1 = require_options();
@@ -62499,15 +66707,15 @@ var require_cacheHttpClient = __commonJS({
     function getCacheVersion(paths, compressionMethod) {
       const components = paths.concat(!compressionMethod || compressionMethod === constants_1.CompressionMethod.Gzip ? [] : [compressionMethod]);
       components.push(versionSalt);
-      return crypto.createHash("sha256").update(components.join("|")).digest("hex");
+      return crypto4.createHash("sha256").update(components.join("|")).digest("hex");
     }
     exports.getCacheVersion = getCacheVersion;
     function getCacheEntry(keys, paths, options) {
-      return __awaiter2(this, void 0, void 0, function* () {
+      return __awaiter(this, void 0, void 0, function* () {
         const httpClient = createHttpClient();
         const version3 = getCacheVersion(paths, options === null || options === void 0 ? void 0 : options.compressionMethod);
         const resource = `cache?keys=${encodeURIComponent(keys.join(","))}&version=${version3}`;
-        const response = yield requestUtils_1.retryTypedResponse("getCacheEntry", () => __awaiter2(this, void 0, void 0, function* () {
+        const response = yield requestUtils_1.retryTypedResponse("getCacheEntry", () => __awaiter(this, void 0, void 0, function* () {
           return httpClient.getJson(getCacheApiUrl(resource));
         }));
         if (response.statusCode === 204) {
@@ -62529,7 +66737,7 @@ var require_cacheHttpClient = __commonJS({
     }
     exports.getCacheEntry = getCacheEntry;
     function downloadCache(archiveLocation, archivePath, options) {
-      return __awaiter2(this, void 0, void 0, function* () {
+      return __awaiter(this, void 0, void 0, function* () {
         const archiveUrl = new url_1.URL(archiveLocation);
         const downloadOptions = options_1.getDownloadOptions(options);
         if (downloadOptions.useAzureSdk && archiveUrl.hostname.endsWith(".blob.core.windows.net")) {
@@ -62541,7 +66749,7 @@ var require_cacheHttpClient = __commonJS({
     }
     exports.downloadCache = downloadCache;
     function reserveCache(key, paths, options) {
-      return __awaiter2(this, void 0, void 0, function* () {
+      return __awaiter(this, void 0, void 0, function* () {
         const httpClient = createHttpClient();
         const version3 = getCacheVersion(paths, options === null || options === void 0 ? void 0 : options.compressionMethod);
         const reserveCacheRequest = {
@@ -62549,7 +66757,7 @@ var require_cacheHttpClient = __commonJS({
           version: version3,
           cacheSize: options === null || options === void 0 ? void 0 : options.cacheSize
         };
-        const response = yield requestUtils_1.retryTypedResponse("reserveCache", () => __awaiter2(this, void 0, void 0, function* () {
+        const response = yield requestUtils_1.retryTypedResponse("reserveCache", () => __awaiter(this, void 0, void 0, function* () {
           return httpClient.postJson(getCacheApiUrl("caches"), reserveCacheRequest);
         }));
         return response;
@@ -62560,13 +66768,13 @@ var require_cacheHttpClient = __commonJS({
       return `bytes ${start}-${end}/*`;
     }
     function uploadChunk(httpClient, resourceUrl, openStream, start, end) {
-      return __awaiter2(this, void 0, void 0, function* () {
+      return __awaiter(this, void 0, void 0, function* () {
         core.debug(`Uploading chunk of size ${end - start + 1} bytes at offset ${start} with content range: ${getContentRange(start, end)}`);
         const additionalHeaders = {
           "Content-Type": "application/octet-stream",
           "Content-Range": getContentRange(start, end)
         };
-        const uploadChunkResponse = yield requestUtils_1.retryHttpClientResponse(`uploadChunk (start: ${start}, end: ${end})`, () => __awaiter2(this, void 0, void 0, function* () {
+        const uploadChunkResponse = yield requestUtils_1.retryHttpClientResponse(`uploadChunk (start: ${start}, end: ${end})`, () => __awaiter(this, void 0, void 0, function* () {
           return httpClient.sendStream("PATCH", resourceUrl, openStream(), additionalHeaders);
         }));
         if (!requestUtils_1.isSuccessStatusCode(uploadChunkResponse.message.statusCode)) {
@@ -62575,7 +66783,7 @@ var require_cacheHttpClient = __commonJS({
       });
     }
     function uploadFile(httpClient, cacheId, archivePath, options) {
-      return __awaiter2(this, void 0, void 0, function* () {
+      return __awaiter(this, void 0, void 0, function* () {
         const fileSize = utils.getArchiveFileSizeInBytes(archivePath);
         const resourceUrl = getCacheApiUrl(`caches/${cacheId.toString()}`);
         const fd = fs3.openSync(archivePath, "r");
@@ -62586,7 +66794,7 @@ var require_cacheHttpClient = __commonJS({
         core.debug("Awaiting all uploads");
         let offset = 0;
         try {
-          yield Promise.all(parallelUploads.map(() => __awaiter2(this, void 0, void 0, function* () {
+          yield Promise.all(parallelUploads.map(() => __awaiter(this, void 0, void 0, function* () {
             while (offset < fileSize) {
               const chunkSize = Math.min(fileSize - offset, maxChunkSize);
               const start = offset;
@@ -62609,15 +66817,15 @@ var require_cacheHttpClient = __commonJS({
       });
     }
     function commitCache(httpClient, cacheId, filesize) {
-      return __awaiter2(this, void 0, void 0, function* () {
+      return __awaiter(this, void 0, void 0, function* () {
         const commitCacheRequest = { size: filesize };
-        return yield requestUtils_1.retryTypedResponse("commitCache", () => __awaiter2(this, void 0, void 0, function* () {
+        return yield requestUtils_1.retryTypedResponse("commitCache", () => __awaiter(this, void 0, void 0, function* () {
           return httpClient.postJson(getCacheApiUrl(`caches/${cacheId.toString()}`), commitCacheRequest);
         }));
       });
     }
     function saveCache2(cacheId, archivePath, options) {
-      return __awaiter2(this, void 0, void 0, function* () {
+      return __awaiter(this, void 0, void 0, function* () {
         const httpClient = createHttpClient();
         core.debug("Upload cache");
         yield uploadFile(httpClient, cacheId, archivePath, options);
@@ -62639,7 +66847,7 @@ var require_cacheHttpClient = __commonJS({
 var require_tar = __commonJS({
   "../../../node_modules/.pnpm/@actions+cache@3.0.4/node_modules/@actions/cache/lib/internal/tar.js"(exports) {
     "use strict";
-    var __awaiter2 = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
+    var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
         return value instanceof P ? value : new P(function(resolve3) {
           resolve3(value);
@@ -62666,7 +66874,7 @@ var require_tar = __commonJS({
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
     };
-    var __importStar2 = exports && exports.__importStar || function(mod) {
+    var __importStar = exports && exports.__importStar || function(mod) {
       if (mod && mod.__esModule)
         return mod;
       var result = {};
@@ -62680,14 +66888,14 @@ var require_tar = __commonJS({
     };
     Object.defineProperty(exports, "__esModule", { value: true });
     var exec_1 = require_exec();
-    var io = __importStar2(require_io());
+    var io = __importStar(require_io());
     var fs_1 = require("fs");
-    var path3 = __importStar2(require("path"));
-    var utils = __importStar2(require_cacheUtils());
+    var path3 = __importStar(require("path"));
+    var utils = __importStar(require_cacheUtils());
     var constants_1 = require_constants();
     var IS_WINDOWS = process.platform === "win32";
     function getTarPath(args, compressionMethod) {
-      return __awaiter2(this, void 0, void 0, function* () {
+      return __awaiter(this, void 0, void 0, function* () {
         switch (process.platform) {
           case "win32": {
             const systemTar = `${process.env["windir"]}\\System32\\tar.exe`;
@@ -62715,7 +66923,7 @@ var require_tar = __commonJS({
       });
     }
     function execTar(args, compressionMethod, cwd) {
-      return __awaiter2(this, void 0, void 0, function* () {
+      return __awaiter(this, void 0, void 0, function* () {
         try {
           yield exec_1.exec(`"${yield getTarPath(args, compressionMethod)}"`, args, { cwd });
         } catch (error) {
@@ -62741,7 +66949,7 @@ var require_tar = __commonJS({
       }
     }
     function listTar(archivePath, compressionMethod) {
-      return __awaiter2(this, void 0, void 0, function* () {
+      return __awaiter(this, void 0, void 0, function* () {
         const args = [
           ...getCompressionProgram(compressionMethod),
           "-tf",
@@ -62753,7 +66961,7 @@ var require_tar = __commonJS({
     }
     exports.listTar = listTar;
     function extractTar(archivePath, compressionMethod) {
-      return __awaiter2(this, void 0, void 0, function* () {
+      return __awaiter(this, void 0, void 0, function* () {
         const workingDirectory = getWorkingDirectory();
         yield io.mkdirP(workingDirectory);
         const args = [
@@ -62769,7 +66977,7 @@ var require_tar = __commonJS({
     }
     exports.extractTar = extractTar;
     function createTar(archiveFolder, sourceDirectories, compressionMethod) {
-      return __awaiter2(this, void 0, void 0, function* () {
+      return __awaiter(this, void 0, void 0, function* () {
         const manifestFilename = "manifest.txt";
         const cacheFileName = utils.getCacheFileName(compressionMethod);
         fs_1.writeFileSync(path3.join(archiveFolder, manifestFilename), sourceDirectories.join("\n"));
@@ -62811,7 +67019,7 @@ var require_tar = __commonJS({
 var require_cache = __commonJS({
   "../../../node_modules/.pnpm/@actions+cache@3.0.4/node_modules/@actions/cache/lib/cache.js"(exports) {
     "use strict";
-    var __awaiter2 = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
+    var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
         return value instanceof P ? value : new P(function(resolve3) {
           resolve3(value);
@@ -62838,7 +67046,7 @@ var require_cache = __commonJS({
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
     };
-    var __importStar2 = exports && exports.__importStar || function(mod) {
+    var __importStar = exports && exports.__importStar || function(mod) {
       if (mod && mod.__esModule)
         return mod;
       var result = {};
@@ -62851,24 +67059,24 @@ var require_cache = __commonJS({
       return result;
     };
     Object.defineProperty(exports, "__esModule", { value: true });
-    var core = __importStar2(require_core());
-    var path3 = __importStar2(require("path"));
-    var utils = __importStar2(require_cacheUtils());
-    var cacheHttpClient = __importStar2(require_cacheHttpClient());
+    var core = __importStar(require_core());
+    var path3 = __importStar(require("path"));
+    var utils = __importStar(require_cacheUtils());
+    var cacheHttpClient = __importStar(require_cacheHttpClient());
     var tar_1 = require_tar();
-    var ValidationError = class extends Error {
+    var ValidationError = class _ValidationError extends Error {
       constructor(message) {
         super(message);
         this.name = "ValidationError";
-        Object.setPrototypeOf(this, ValidationError.prototype);
+        Object.setPrototypeOf(this, _ValidationError.prototype);
       }
     };
     exports.ValidationError = ValidationError;
-    var ReserveCacheError = class extends Error {
+    var ReserveCacheError = class _ReserveCacheError extends Error {
       constructor(message) {
         super(message);
         this.name = "ReserveCacheError";
-        Object.setPrototypeOf(this, ReserveCacheError.prototype);
+        Object.setPrototypeOf(this, _ReserveCacheError.prototype);
       }
     };
     exports.ReserveCacheError = ReserveCacheError;
@@ -62891,7 +67099,7 @@ var require_cache = __commonJS({
     }
     exports.isFeatureAvailable = isFeatureAvailable;
     function restoreCache2(paths, primaryKey, restoreKeys, options) {
-      return __awaiter2(this, void 0, void 0, function* () {
+      return __awaiter(this, void 0, void 0, function* () {
         checkPaths(paths);
         restoreKeys = restoreKeys || [];
         const keys = [primaryKey, ...restoreKeys];
@@ -62943,7 +67151,7 @@ var require_cache = __commonJS({
     exports.restoreCache = restoreCache2;
     function saveCache2(paths, key, options) {
       var _a, _b, _c, _d, _e;
-      return __awaiter2(this, void 0, void 0, function* () {
+      return __awaiter(this, void 0, void 0, function* () {
         checkPaths(paths);
         checkKey(key);
         const compressionMethod = yield utils.getCompressionMethod();
@@ -63008,6 +67216,7 @@ var require_cache = __commonJS({
 // ../../../node_modules/.pnpm/depd@2.0.0/node_modules/depd/index.js
 var require_depd = __commonJS({
   "../../../node_modules/.pnpm/depd@2.0.0/node_modules/depd/index.js"(exports, module2) {
+    "use strict";
     var relative = require("path").relative;
     module2.exports = depd;
     var basePath = process.cwd();
@@ -63173,7 +67382,7 @@ var require_depd = __commonJS({
       return typeName && callSite.getMethodName() ? typeName + "." + funcName : funcName;
     }
     function formatPlain(msg, caller, stack) {
-      var timestamp = new Date().toUTCString();
+      var timestamp = (/* @__PURE__ */ new Date()).toUTCString();
       var formatted = timestamp + " " + this._namespace + " deprecated " + msg;
       if (this._traced) {
         for (var i = 0; i < stack.length; i++) {
@@ -63669,6 +67878,7 @@ var require_statuses = __commonJS({
 // ../../../node_modules/.pnpm/inherits@2.0.4/node_modules/inherits/inherits_browser.js
 var require_inherits_browser = __commonJS({
   "../../../node_modules/.pnpm/inherits@2.0.4/node_modules/inherits/inherits_browser.js"(exports, module2) {
+    "use strict";
     if (typeof Object.create === "function") {
       module2.exports = function inherits(ctor, superCtor) {
         if (superCtor) {
@@ -63701,6 +67911,7 @@ var require_inherits_browser = __commonJS({
 // ../../../node_modules/.pnpm/inherits@2.0.4/node_modules/inherits/inherits.js
 var require_inherits = __commonJS({
   "../../../node_modules/.pnpm/inherits@2.0.4/node_modules/inherits/inherits.js"(exports, module2) {
+    "use strict";
     try {
       util3 = require("util");
       if (typeof util3.inherits !== "function")
@@ -63893,6 +68104,7 @@ var require_http_errors = __commonJS({
 // ../../../node_modules/.pnpm/ms@2.0.0/node_modules/ms/index.js
 var require_ms = __commonJS({
   "../../../node_modules/.pnpm/ms@2.0.0/node_modules/ms/index.js"(exports, module2) {
+    "use strict";
     var s = 1e3;
     var m = s * 60;
     var h = m * 60;
@@ -63995,6 +68207,7 @@ var require_ms = __commonJS({
 // ../../../node_modules/.pnpm/debug@2.6.9/node_modules/debug/src/debug.js
 var require_debug = __commonJS({
   "../../../node_modules/.pnpm/debug@2.6.9/node_modules/debug/src/debug.js"(exports, module2) {
+    "use strict";
     exports = module2.exports = createDebug.debug = createDebug["default"] = createDebug;
     exports.coerce = coerce;
     exports.disable = disable2;
@@ -64017,12 +68230,12 @@ var require_debug = __commonJS({
       function debug() {
         if (!debug.enabled)
           return;
-        var self2 = debug;
-        var curr = +new Date();
+        var self = debug;
+        var curr = +/* @__PURE__ */ new Date();
         var ms = curr - (prevTime || curr);
-        self2.diff = ms;
-        self2.prev = prevTime;
-        self2.curr = curr;
+        self.diff = ms;
+        self.prev = prevTime;
+        self.curr = curr;
         prevTime = curr;
         var args = new Array(arguments.length);
         for (var i = 0; i < args.length; i++) {
@@ -64040,15 +68253,15 @@ var require_debug = __commonJS({
           var formatter = exports.formatters[format];
           if ("function" === typeof formatter) {
             var val = args[index];
-            match = formatter.call(self2, val);
+            match = formatter.call(self, val);
             args.splice(index, 1);
             index--;
           }
           return match;
         });
-        exports.formatArgs.call(self2, args);
+        exports.formatArgs.call(self, args);
         var logFn = debug.log || exports.log || console.log.bind(console);
-        logFn.apply(self2, args);
+        logFn.apply(self, args);
       }
       debug.namespace = namespace;
       debug.enabled = exports.enabled(namespace);
@@ -64104,6 +68317,7 @@ var require_debug = __commonJS({
 // ../../../node_modules/.pnpm/debug@2.6.9/node_modules/debug/src/browser.js
 var require_browser = __commonJS({
   "../../../node_modules/.pnpm/debug@2.6.9/node_modules/debug/src/browser.js"(exports, module2) {
+    "use strict";
     exports = module2.exports = require_debug();
     exports.log = log2;
     exports.formatArgs = formatArgs;
@@ -64123,7 +68337,11 @@ var require_browser = __commonJS({
       if (typeof window !== "undefined" && window.process && window.process.type === "renderer") {
         return true;
       }
-      return typeof document !== "undefined" && document.documentElement && document.documentElement.style && document.documentElement.style.WebkitAppearance || typeof window !== "undefined" && window.console && (window.console.firebug || window.console.exception && window.console.table) || typeof navigator !== "undefined" && navigator.userAgent && navigator.userAgent.toLowerCase().match(/firefox\/(\d+)/) && parseInt(RegExp.$1, 10) >= 31 || typeof navigator !== "undefined" && navigator.userAgent && navigator.userAgent.toLowerCase().match(/applewebkit\/(\d+)/);
+      return typeof document !== "undefined" && document.documentElement && document.documentElement.style && document.documentElement.style.WebkitAppearance || // is firebug? http://stackoverflow.com/a/398120/376773
+      typeof window !== "undefined" && window.console && (window.console.firebug || window.console.exception && window.console.table) || // is firefox >= v31?
+      // https://developer.mozilla.org/en-US/docs/Tools/Web_Console#Styling_messages
+      typeof navigator !== "undefined" && navigator.userAgent && navigator.userAgent.toLowerCase().match(/firefox\/(\d+)/) && parseInt(RegExp.$1, 10) >= 31 || // double check webkit in userAgent just in case we are in a worker
+      typeof navigator !== "undefined" && navigator.userAgent && navigator.userAgent.toLowerCase().match(/applewebkit\/(\d+)/);
     }
     exports.formatters.j = function(v) {
       try {
@@ -64188,6 +68406,7 @@ var require_browser = __commonJS({
 // ../../../node_modules/.pnpm/debug@2.6.9/node_modules/debug/src/node.js
 var require_node = __commonJS({
   "../../../node_modules/.pnpm/debug@2.6.9/node_modules/debug/src/node.js"(exports, module2) {
+    "use strict";
     var tty = require("tty");
     var util3 = require("util");
     exports = module2.exports = require_debug();
@@ -64244,7 +68463,7 @@ var require_node = __commonJS({
         args[0] = prefix2 + args[0].split("\n").join("\n" + prefix2);
         args.push("\x1B[3" + c + "m+" + exports.humanize(this.diff) + "\x1B[0m");
       } else {
-        args[0] = new Date().toUTCString() + " " + name + " " + args[0];
+        args[0] = (/* @__PURE__ */ new Date()).toUTCString() + " " + name + " " + args[0];
       }
     }
     function log2() {
@@ -64312,6 +68531,7 @@ var require_node = __commonJS({
 // ../../../node_modules/.pnpm/debug@2.6.9/node_modules/debug/src/index.js
 var require_src = __commonJS({
   "../../../node_modules/.pnpm/debug@2.6.9/node_modules/debug/src/index.js"(exports, module2) {
+    "use strict";
     if (typeof process !== "undefined" && process.type === "renderer") {
       module2.exports = require_browser();
     } else {
@@ -64529,6 +68749,7 @@ var require_internal = __commonJS({
     "use strict";
     var Buffer2 = require_safer().Buffer;
     module2.exports = {
+      // Encodings
       utf8: { type: "_internal", bomAware: true },
       cesu8: { type: "_internal", bomAware: true },
       unicode11utf8: "utf8",
@@ -64537,6 +68758,7 @@ var require_internal = __commonJS({
       binary: { type: "_internal" },
       base64: { type: "_internal" },
       hex: { type: "_internal" },
+      // Codec.
       _internal: InternalCodec
     };
     function InternalCodec(codecOptions, iconv) {
@@ -65045,6 +69267,7 @@ var require_sbcs_data = __commonJS({
   "../../../node_modules/.pnpm/iconv-lite@0.4.24/node_modules/iconv-lite/encodings/sbcs-data.js"(exports, module2) {
     "use strict";
     module2.exports = {
+      // Not supported by iconv, not sure why.
       "10029": "maccenteuro",
       "maccenteuro": {
         "type": "_sbcs",
@@ -65060,6 +69283,7 @@ var require_sbcs_data = __commonJS({
         "type": "_sbcs",
         "chars": "\u0410\u0411\u0412\u0413\u0414\u0415\u0416\u0417\u0418\u0419\u041A\u041B\u041C\u041D\u041E\u041F\u0420\u0421\u0422\u0423\u0424\u0425\u0426\u0427\u0428\u0429\u042A\u042B\u042C\u042D\u042E\u042F\u0430\u0431\u0432\u0433\u0434\u0435\u0436\u0437\u0438\u0439\u043A\u043B\u043C\u043D\u043E\u043F\u0440\u0441\u0442\u0443\u0444\u0445\u0446\u0447\u0448\u0449\u044A\u044B\u044C\u044D\u044E\u044F\u2514\u2534\u252C\u251C\u2500\u253C\u2563\u2551\u255A\u2554\u2569\u2566\u2560\u2550\u256C\u2510\u2591\u2592\u2593\u2502\u2524\u2116\xA7\u2557\u255D\u2518\u250C\u2588\u2584\u258C\u2590\u2580\u03B1\xDF\u0393\u03C0\u03A3\u03C3\xB5\u03C4\u03A6\u0398\u03A9\u03B4\u221E\u03C6\u03B5\u2229\u2261\xB1\u2265\u2264\u2320\u2321\xF7\u2248\xB0\u2219\xB7\u221A\u207F\xB2\u25A0\xA0"
       },
+      // Aliases of generated encodings.
       "ascii8bit": "ascii",
       "usascii": "ascii",
       "ansix34": "ascii",
@@ -67279,6 +71503,36 @@ var require_dbcs_data = __commonJS({
   "../../../node_modules/.pnpm/iconv-lite@0.4.24/node_modules/iconv-lite/encodings/dbcs-data.js"(exports, module2) {
     "use strict";
     module2.exports = {
+      // == Japanese/ShiftJIS ====================================================
+      // All japanese encodings are based on JIS X set of standards:
+      // JIS X 0201 - Single-byte encoding of ASCII + ¥ + Kana chars at 0xA1-0xDF.
+      // JIS X 0208 - Main set of 6879 characters, placed in 94x94 plane, to be encoded by 2 bytes. 
+      //              Has several variations in 1978, 1983, 1990 and 1997.
+      // JIS X 0212 - Supplementary plane of 6067 chars in 94x94 plane. 1990. Effectively dead.
+      // JIS X 0213 - Extension and modern replacement of 0208 and 0212. Total chars: 11233.
+      //              2 planes, first is superset of 0208, second - revised 0212.
+      //              Introduced in 2000, revised 2004. Some characters are in Unicode Plane 2 (0x2xxxx)
+      // Byte encodings are:
+      //  * Shift_JIS: Compatible with 0201, uses not defined chars in top half as lead bytes for double-byte
+      //               encoding of 0208. Lead byte ranges: 0x81-0x9F, 0xE0-0xEF; Trail byte ranges: 0x40-0x7E, 0x80-0x9E, 0x9F-0xFC.
+      //               Windows CP932 is a superset of Shift_JIS. Some companies added more chars, notably KDDI.
+      //  * EUC-JP:    Up to 3 bytes per character. Used mostly on *nixes.
+      //               0x00-0x7F       - lower part of 0201
+      //               0x8E, 0xA1-0xDF - upper part of 0201
+      //               (0xA1-0xFE)x2   - 0208 plane (94x94).
+      //               0x8F, (0xA1-0xFE)x2 - 0212 plane (94x94).
+      //  * JIS X 208: 7-bit, direct encoding of 0208. Byte ranges: 0x21-0x7E (94 values). Uncommon.
+      //               Used as-is in ISO2022 family.
+      //  * ISO2022-JP: Stateful encoding, with escape sequences to switch between ASCII, 
+      //                0201-1976 Roman, 0208-1978, 0208-1983.
+      //  * ISO2022-JP-1: Adds esc seq for 0212-1990.
+      //  * ISO2022-JP-2: Adds esc seq for GB2313-1980, KSX1001-1992, ISO8859-1, ISO8859-7.
+      //  * ISO2022-JP-3: Adds esc seq for 0201-1976 Kana set, 0213-2000 Planes 1, 2.
+      //  * ISO2022-JP-2004: Adds 0213-2004 Plane 1.
+      //
+      // After JIS X 0213 appeared, Shift_JIS-2004, EUC-JISX0213 and ISO2022-JP-2004 followed, with just changing the planes.
+      //
+      // Overall, it seems that it's a mess :( http://www8.plala.or.jp/tkubota1/unicode-symbols-map2.html
       "shiftjis": {
         type: "_dbcs",
         table: function() {
@@ -67304,12 +71558,20 @@ var require_dbcs_data = __commonJS({
         },
         encodeAdd: { "\xA5": 92, "\u203E": 126 }
       },
+      // TODO: KDDI extension to Shift_JIS
+      // TODO: IBM CCSID 942 = CP932, but F0-F9 custom chars and other char changes.
+      // TODO: IBM CCSID 943 = Shift_JIS = CP932 with original Shift_JIS lower 128 chars.
+      // == Chinese/GBK ==========================================================
+      // http://en.wikipedia.org/wiki/GBK
+      // We mostly implement W3C recommendation: https://www.w3.org/TR/encoding/#gbk-encoder
+      // Oldest GB2312 (1981, ~7600 chars) is a subset of CP936
       "gb2312": "cp936",
       "gb231280": "cp936",
       "gb23121980": "cp936",
       "csgb2312": "cp936",
       "csiso58gb231280": "cp936",
       "euccn": "cp936",
+      // Microsoft's CP936 is a subset and approximation of GBK.
       "windows936": "cp936",
       "ms936": "cp936",
       "936": "cp936",
@@ -67319,6 +71581,7 @@ var require_dbcs_data = __commonJS({
           return require_cp936();
         }
       },
+      // GBK (~22000 chars) is an extension of CP936 that added user-mapped chars and some other.
       "gbk": {
         type: "_dbcs",
         table: function() {
@@ -67327,6 +71590,11 @@ var require_dbcs_data = __commonJS({
       },
       "xgbk": "gbk",
       "isoir58": "gbk",
+      // GB18030 is an algorithmic extension of GBK.
+      // Main source: https://www.w3.org/TR/encoding/#gbk-encoder
+      // http://icu-project.org/docs/papers/gb18030.html
+      // http://source.icu-project.org/repos/icu/data/trunk/charset/data/xml/gb-18030-2000.xml
+      // http://www.khngai.com/chinese/charmap/tblgbk.php?page=0
       "gb18030": {
         type: "_dbcs",
         table: function() {
@@ -67339,6 +71607,8 @@ var require_dbcs_data = __commonJS({
         encodeAdd: { "\u20AC": 41699 }
       },
       "chinese": "gb18030",
+      // == Korean ===============================================================
+      // EUC-KR, KS_C_5601 and KS X 1001 are exactly the same.
       "windows949": "cp949",
       "ms949": "cp949",
       "949": "cp949",
@@ -67356,6 +71626,28 @@ var require_dbcs_data = __commonJS({
       "ksc56011987": "cp949",
       "ksc56011989": "cp949",
       "ksc5601": "cp949",
+      // == Big5/Taiwan/Hong Kong ================================================
+      // There are lots of tables for Big5 and cp950. Please see the following links for history:
+      // http://moztw.org/docs/big5/  http://www.haible.de/bruno/charsets/conversion-tables/Big5.html
+      // Variations, in roughly number of defined chars:
+      //  * Windows CP 950: Microsoft variant of Big5. Canonical: http://www.unicode.org/Public/MAPPINGS/VENDORS/MICSFT/WINDOWS/CP950.TXT
+      //  * Windows CP 951: Microsoft variant of Big5-HKSCS-2001. Seems to be never public. http://me.abelcheung.org/articles/research/what-is-cp951/
+      //  * Big5-2003 (Taiwan standard) almost superset of cp950.
+      //  * Unicode-at-on (UAO) / Mozilla 1.8. Falling out of use on the Web. Not supported by other browsers.
+      //  * Big5-HKSCS (-2001, -2004, -2008). Hong Kong standard. 
+      //    many unicode code points moved from PUA to Supplementary plane (U+2XXXX) over the years.
+      //    Plus, it has 4 combining sequences.
+      //    Seems that Mozilla refused to support it for 10 yrs. https://bugzilla.mozilla.org/show_bug.cgi?id=162431 https://bugzilla.mozilla.org/show_bug.cgi?id=310299
+      //    because big5-hkscs is the only encoding to include astral characters in non-algorithmic way.
+      //    Implementations are not consistent within browsers; sometimes labeled as just big5.
+      //    MS Internet Explorer switches from big5 to big5-hkscs when a patch applied.
+      //    Great discussion & recap of what's going on https://bugzilla.mozilla.org/show_bug.cgi?id=912470#c31
+      //    In the encoder, it might make sense to support encoding old PUA mappings to Big5 bytes seq-s.
+      //    Official spec: http://www.ogcio.gov.hk/en/business/tech_promotion/ccli/terms/doc/2003cmp_2008.txt
+      //                   http://www.ogcio.gov.hk/tc/business/tech_promotion/ccli/terms/doc/hkscs-2008-big5-iso.txt
+      // 
+      // Current understanding of how to deal with Big5(-HKSCS) is in the Encoding Standard, http://encoding.spec.whatwg.org/#big5-encoder
+      // Unicode mapping (http://www.unicode.org/Public/MAPPINGS/OBSOLETE/EASTASIA/OTHER/BIG5.TXT) is said to be wrong.
       "windows950": "cp950",
       "ms950": "cp950",
       "950": "cp950",
@@ -67365,6 +71657,7 @@ var require_dbcs_data = __commonJS({
           return require_cp950();
         }
       },
+      // Big5 has many variations and is an extension of cp950. We use Encoding Standard's as a consensus.
       "big5": "big5hkscs",
       "big5hkscs": {
         type: "_dbcs",
@@ -68307,6 +72600,7 @@ var require_read = __commonJS({
 // ../../../node_modules/.pnpm/media-typer@0.3.0/node_modules/media-typer/index.js
 var require_media_typer = __commonJS({
   "../../../node_modules/.pnpm/media-typer@0.3.0/node_modules/media-typer/index.js"(exports) {
+    "use strict";
     var paramRegExp = /; *([!#$%&'\*\+\-\.0-9A-Z\^_`a-z\|~]+) *= *("(?:[ !\u0023-\u005b\u005d-\u007e\u0080-\u00ff]|\\[\u0020-\u007e])*"|[!#$%&'\*\+\-\.0-9A-Z\^_`a-z\|~]+) */g;
     var textRegExp = /^[\u0020-\u007e\u0080-\u00ff]+$/;
     var tokenRegExp = /^[!#$%&'\*\+\-\.0-9A-Z\^_`a-z\|~]+$/;
@@ -68989,6 +73283,7 @@ var require_get_intrinsic = __commonJS({
       "%encodeURIComponent%": encodeURIComponent,
       "%Error%": Error,
       "%eval%": eval,
+      // eslint-disable-line no-eval
       "%EvalError%": EvalError,
       "%Float32Array%": typeof Float32Array === "undefined" ? undefined2 : Float32Array,
       "%Float64Array%": typeof Float64Array === "undefined" ? undefined2 : Float64Array,
@@ -69290,6 +73585,7 @@ var require_callBound = __commonJS({
 // ../../../node_modules/.pnpm/object-inspect@1.12.3/node_modules/object-inspect/util.inspect.js
 var require_util_inspect = __commonJS({
   "../../../node_modules/.pnpm/object-inspect@1.12.3/node_modules/object-inspect/util.inspect.js"(exports, module2) {
+    "use strict";
     module2.exports = require("util").inspect;
   }
 });
@@ -69297,6 +73593,7 @@ var require_util_inspect = __commonJS({
 // ../../../node_modules/.pnpm/object-inspect@1.12.3/node_modules/object-inspect/index.js
 var require_object_inspect = __commonJS({
   "../../../node_modules/.pnpm/object-inspect@1.12.3/node_modules/object-inspect/index.js"(exports, module2) {
+    "use strict";
     var hasMap = typeof Map === "function" && Map.prototype;
     var mapSizeDescriptor = Object.getOwnPropertyDescriptor && hasMap ? Object.getOwnPropertyDescriptor(Map.prototype, "size") : null;
     var mapSize = hasMap && mapSizeDescriptor && typeof mapSizeDescriptor.get === "function" ? mapSizeDescriptor.get : null;
@@ -69839,6 +74136,7 @@ var require_side_channel = __commonJS({
         node.value = value;
       } else {
         objects.next = {
+          // eslint-disable-line no-param-reassign
           key,
           next: objects.next,
           value
@@ -70139,7 +74437,7 @@ var require_utils3 = __commonJS({
 });
 
 // ../../../node_modules/.pnpm/qs@6.10.3/node_modules/qs/lib/stringify.js
-var require_stringify2 = __commonJS({
+var require_stringify = __commonJS({
   "../../../node_modules/.pnpm/qs@6.10.3/node_modules/qs/lib/stringify.js"(exports, module2) {
     "use strict";
     var getSideChannel = require_side_channel();
@@ -70177,6 +74475,7 @@ var require_stringify2 = __commonJS({
       encodeValuesOnly: false,
       format: defaultFormat,
       formatter: formats.formatters[defaultFormat],
+      // deprecated
       indices: false,
       serializeDate: function serializeDate(date) {
         return toISO.call(date);
@@ -70394,7 +74693,7 @@ var require_stringify2 = __commonJS({
 });
 
 // ../../../node_modules/.pnpm/qs@6.10.3/node_modules/qs/lib/parse.js
-var require_parse2 = __commonJS({
+var require_parse = __commonJS({
   "../../../node_modules/.pnpm/qs@6.10.3/node_modules/qs/lib/parse.js"(exports, module2) {
     "use strict";
     var utils = require_utils3();
@@ -70564,6 +74863,7 @@ var require_parse2 = __commonJS({
         comma: typeof opts.comma === "boolean" ? opts.comma : defaults.comma,
         decoder: typeof opts.decoder === "function" ? opts.decoder : defaults.decoder,
         delimiter: typeof opts.delimiter === "string" || utils.isRegExp(opts.delimiter) ? opts.delimiter : defaults.delimiter,
+        // eslint-disable-next-line no-implicit-coercion, no-extra-parens
         depth: typeof opts.depth === "number" || opts.depth === false ? +opts.depth : defaults.depth,
         ignoreQueryPrefix: opts.ignoreQueryPrefix === true,
         interpretNumericEntities: typeof opts.interpretNumericEntities === "boolean" ? opts.interpretNumericEntities : defaults.interpretNumericEntities,
@@ -70598,8 +74898,8 @@ var require_parse2 = __commonJS({
 var require_lib5 = __commonJS({
   "../../../node_modules/.pnpm/qs@6.10.3/node_modules/qs/lib/index.js"(exports, module2) {
     "use strict";
-    var stringify2 = require_stringify2();
-    var parse3 = require_parse2();
+    var stringify2 = require_stringify();
+    var parse3 = require_parse();
     var formats = require_formats();
     module2.exports = {
       formats,
@@ -71197,6 +75497,7 @@ var require_array_flatten = __commonJS({
 // ../../../node_modules/.pnpm/path-to-regexp@0.1.7/node_modules/path-to-regexp/index.js
 var require_path_to_regexp = __commonJS({
   "../../../node_modules/.pnpm/path-to-regexp@0.1.7/node_modules/path-to-regexp/index.js"(exports, module2) {
+    "use strict";
     module2.exports = pathtoRegexp;
     var MATCHING_GROUP_REGEXP = /\((?!\?)/g;
     function pathtoRegexp(path3, keys, options) {
@@ -71258,6 +75559,7 @@ var require_path_to_regexp = __commonJS({
         if (keysOffset + i === keys.length || keys[keysOffset + i].offset > m.index) {
           keys.splice(keysOffset + i, 0, {
             name: name++,
+            // Unnamed matching groups must be consistently linear.
             optional: false,
             offset: m.index
           });
@@ -71525,6 +75827,7 @@ var require_route = __commonJS({
 // ../../../node_modules/.pnpm/utils-merge@1.0.1/node_modules/utils-merge/index.js
 var require_utils_merge = __commonJS({
   "../../../node_modules/.pnpm/utils-merge@1.0.1/node_modules/utils-merge/index.js"(exports, module2) {
+    "use strict";
     exports = module2.exports = function(a, b) {
       if (a && b) {
         for (var key in b) {
@@ -71591,7 +75894,7 @@ var require_router = __commonJS({
       return this;
     };
     proto.handle = function handle(req, res, out) {
-      var self2 = this;
+      var self = this;
       debug("dispatching %s %s", req.method, req.url);
       var idx = 0;
       var protohost = getProtohost(req.url) || "";
@@ -71600,7 +75903,7 @@ var require_router = __commonJS({
       var sync = 0;
       var paramcalled = {};
       var options = [];
-      var stack = self2.stack;
+      var stack = self.stack;
       var parentParams = req.params;
       var parentUrl = req.baseUrl || "";
       var done = restore(out, req, "baseUrl", "next", "params");
@@ -71676,9 +75979,9 @@ var require_router = __commonJS({
         if (route) {
           req.route = route;
         }
-        req.params = self2.mergeParams ? mergeParams(layer.params, parentParams) : layer.params;
+        req.params = self.mergeParams ? mergeParams(layer.params, parentParams) : layer.params;
         var layerPath = layer.path;
-        self2.process_params(layer, paramcalled, req, res, function(err2) {
+        self.process_params(layer, paramcalled, req, res, function(err2) {
           if (err2) {
             next(layerError || err2);
           } else if (route) {
@@ -72054,6 +76357,7 @@ var require_view = __commonJS({
 // ../../../node_modules/.pnpm/safe-buffer@5.2.1/node_modules/safe-buffer/index.js
 var require_safe_buffer = __commonJS({
   "../../../node_modules/.pnpm/safe-buffer@5.2.1/node_modules/safe-buffer/index.js"(exports, module2) {
+    "use strict";
     var buffer = require("buffer");
     var Buffer2 = buffer.Buffer;
     function copyProps(src, dst) {
@@ -72272,120 +76576,19 @@ var require_content_disposition = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/content-type@1.0.4/node_modules/content-type/index.js
-var require_content_type2 = __commonJS({
-  "../../../node_modules/.pnpm/content-type@1.0.4/node_modules/content-type/index.js"(exports) {
-    "use strict";
-    var PARAM_REGEXP = /; *([!#$%&'*+.^_`|~0-9A-Za-z-]+) *= *("(?:[\u000b\u0020\u0021\u0023-\u005b\u005d-\u007e\u0080-\u00ff]|\\[\u000b\u0020-\u00ff])*"|[!#$%&'*+.^_`|~0-9A-Za-z-]+) */g;
-    var TEXT_REGEXP = /^[\u000b\u0020-\u007e\u0080-\u00ff]+$/;
-    var TOKEN_REGEXP = /^[!#$%&'*+.^_`|~0-9A-Za-z-]+$/;
-    var QESC_REGEXP = /\\([\u000b\u0020-\u00ff])/g;
-    var QUOTE_REGEXP = /([\\"])/g;
-    var TYPE_REGEXP = /^[!#$%&'*+.^_`|~0-9A-Za-z-]+\/[!#$%&'*+.^_`|~0-9A-Za-z-]+$/;
-    exports.format = format;
-    exports.parse = parse3;
-    function format(obj) {
-      if (!obj || typeof obj !== "object") {
-        throw new TypeError("argument obj is required");
-      }
-      var parameters = obj.parameters;
-      var type3 = obj.type;
-      if (!type3 || !TYPE_REGEXP.test(type3)) {
-        throw new TypeError("invalid type");
-      }
-      var string = type3;
-      if (parameters && typeof parameters === "object") {
-        var param;
-        var params = Object.keys(parameters).sort();
-        for (var i = 0; i < params.length; i++) {
-          param = params[i];
-          if (!TOKEN_REGEXP.test(param)) {
-            throw new TypeError("invalid parameter name");
-          }
-          string += "; " + param + "=" + qstring(parameters[param]);
-        }
-      }
-      return string;
-    }
-    function parse3(string) {
-      if (!string) {
-        throw new TypeError("argument string is required");
-      }
-      var header = typeof string === "object" ? getcontenttype(string) : string;
-      if (typeof header !== "string") {
-        throw new TypeError("argument string is required to be a string");
-      }
-      var index = header.indexOf(";");
-      var type3 = index !== -1 ? header.substr(0, index).trim() : header.trim();
-      if (!TYPE_REGEXP.test(type3)) {
-        throw new TypeError("invalid media type");
-      }
-      var obj = new ContentType(type3.toLowerCase());
-      if (index !== -1) {
-        var key;
-        var match;
-        var value;
-        PARAM_REGEXP.lastIndex = index;
-        while (match = PARAM_REGEXP.exec(header)) {
-          if (match.index !== index) {
-            throw new TypeError("invalid parameter format");
-          }
-          index += match[0].length;
-          key = match[1].toLowerCase();
-          value = match[2];
-          if (value[0] === '"') {
-            value = value.substr(1, value.length - 2).replace(QESC_REGEXP, "$1");
-          }
-          obj.parameters[key] = value;
-        }
-        if (index !== header.length) {
-          throw new TypeError("invalid parameter format");
-        }
-      }
-      return obj;
-    }
-    function getcontenttype(obj) {
-      var header;
-      if (typeof obj.getHeader === "function") {
-        header = obj.getHeader("content-type");
-      } else if (typeof obj.headers === "object") {
-        header = obj.headers && obj.headers["content-type"];
-      }
-      if (typeof header !== "string") {
-        throw new TypeError("content-type header is missing from object");
-      }
-      return header;
-    }
-    function qstring(val) {
-      var str = String(val);
-      if (TOKEN_REGEXP.test(str)) {
-        return str;
-      }
-      if (str.length > 0 && !TEXT_REGEXP.test(str)) {
-        throw new TypeError("invalid parameter value");
-      }
-      return '"' + str.replace(QUOTE_REGEXP, "\\$1") + '"';
-    }
-    function ContentType(type3) {
-      this.parameters = /* @__PURE__ */ Object.create(null);
-      this.type = type3;
-    }
-  }
-});
-
 // ../../../node_modules/.pnpm/etag@1.8.1/node_modules/etag/index.js
 var require_etag = __commonJS({
   "../../../node_modules/.pnpm/etag@1.8.1/node_modules/etag/index.js"(exports, module2) {
     "use strict";
     module2.exports = etag;
-    var crypto = require("crypto");
+    var crypto4 = require("crypto");
     var Stats = require("fs").Stats;
     var toString3 = Object.prototype.toString;
     function entitytag(entity) {
       if (entity.length === 0) {
         return '"0-2jmj7l5rSw0yVb/vlWAYkK/YBwk"';
       }
-      var hash = crypto.createHash("sha1").update(entity, "utf8").digest("base64").substring(0, 27);
+      var hash = crypto4.createHash("sha1").update(entity, "utf8").digest("base64").substring(0, 27);
       var len = typeof entity === "string" ? Buffer.byteLength(entity, "utf8") : entity.length;
       return '"' + len.toString(16) + "-" + hash + '"';
     }
@@ -72498,6 +76701,7 @@ var require_types = __commonJS({
 // ../../../node_modules/.pnpm/mime@1.6.0/node_modules/mime/mime.js
 var require_mime = __commonJS({
   "../../../node_modules/.pnpm/mime@1.6.0/node_modules/mime/mime.js"(exports, module2) {
+    "use strict";
     var path3 = require("path");
     var fs3 = require("fs");
     function Mime() {
@@ -72552,6 +76756,7 @@ var require_mime = __commonJS({
 // ../../../node_modules/.pnpm/ms@2.1.3/node_modules/ms/index.js
 var require_ms2 = __commonJS({
   "../../../node_modules/.pnpm/ms@2.1.3/node_modules/ms/index.js"(exports, module2) {
+    "use strict";
     var s = 1e3;
     var m = s * 60;
     var h = m * 60;
@@ -73090,59 +77295,59 @@ var require_send = __commonJS({
     };
     SendStream.prototype.sendFile = function sendFile(path4) {
       var i = 0;
-      var self2 = this;
+      var self = this;
       debug('stat "%s"', path4);
       fs3.stat(path4, function onstat(err, stat2) {
         if (err && err.code === "ENOENT" && !extname(path4) && path4[path4.length - 1] !== sep) {
           return next(err);
         }
         if (err)
-          return self2.onStatError(err);
+          return self.onStatError(err);
         if (stat2.isDirectory())
-          return self2.redirect(path4);
-        self2.emit("file", path4, stat2);
-        self2.send(path4, stat2);
+          return self.redirect(path4);
+        self.emit("file", path4, stat2);
+        self.send(path4, stat2);
       });
       function next(err) {
-        if (self2._extensions.length <= i) {
-          return err ? self2.onStatError(err) : self2.error(404);
+        if (self._extensions.length <= i) {
+          return err ? self.onStatError(err) : self.error(404);
         }
-        var p = path4 + "." + self2._extensions[i++];
+        var p = path4 + "." + self._extensions[i++];
         debug('stat "%s"', p);
         fs3.stat(p, function(err2, stat2) {
           if (err2)
             return next(err2);
           if (stat2.isDirectory())
             return next();
-          self2.emit("file", p, stat2);
-          self2.send(p, stat2);
+          self.emit("file", p, stat2);
+          self.send(p, stat2);
         });
       }
     };
     SendStream.prototype.sendIndex = function sendIndex(path4) {
       var i = -1;
-      var self2 = this;
+      var self = this;
       function next(err) {
-        if (++i >= self2._index.length) {
+        if (++i >= self._index.length) {
           if (err)
-            return self2.onStatError(err);
-          return self2.error(404);
+            return self.onStatError(err);
+          return self.error(404);
         }
-        var p = join2(path4, self2._index[i]);
+        var p = join2(path4, self._index[i]);
         debug('stat "%s"', p);
         fs3.stat(p, function(err2, stat2) {
           if (err2)
             return next(err2);
           if (stat2.isDirectory())
             return next();
-          self2.emit("file", p, stat2);
-          self2.send(p, stat2);
+          self.emit("file", p, stat2);
+          self.send(p, stat2);
         });
       }
       next();
     };
     SendStream.prototype.stream = function stream(path4, options) {
-      var self2 = this;
+      var self = this;
       var res = this.res;
       var stream2 = fs3.createReadStream(path4, options);
       this.emit("stream", stream2);
@@ -73153,10 +77358,10 @@ var require_send = __commonJS({
       onFinished(res, cleanup);
       stream2.on("error", function onerror(err) {
         cleanup();
-        self2.onStatError(err);
+        self.onStatError(err);
       });
       stream2.on("end", function onend() {
-        self2.emit("end");
+        self.emit("end");
       });
     };
     SendStream.prototype.type = function type3(path4) {
@@ -73350,6 +77555,7 @@ var require_forwarded = __commonJS({
 // ../../../node_modules/.pnpm/ipaddr.js@1.9.1/node_modules/ipaddr.js/lib/ipaddr.js
 var require_ipaddr = __commonJS({
   "../../../node_modules/.pnpm/ipaddr.js@1.9.1/node_modules/ipaddr.js/lib/ipaddr.js"(exports, module2) {
+    "use strict";
     (function() {
       var expandIPv6, ipaddr, ipv4Part, ipv4Regexes, ipv6Part, ipv6Regexes, matchCIDR, root, zoneIndex;
       ipaddr = {};
@@ -74137,7 +78343,7 @@ var require_utils4 = __commonJS({
     "use strict";
     var Buffer2 = require_safe_buffer().Buffer;
     var contentDisposition = require_content_disposition();
-    var contentType2 = require_content_type2();
+    var contentType2 = require_content_type();
     var deprecate = require_depd()("express");
     var flatten = require_array_flatten();
     var mime = require_send().mime;
@@ -75308,13 +79514,14 @@ var require_request = __commonJS({
 // ../../../node_modules/.pnpm/cookie-signature@1.0.6/node_modules/cookie-signature/index.js
 var require_cookie_signature = __commonJS({
   "../../../node_modules/.pnpm/cookie-signature@1.0.6/node_modules/cookie-signature/index.js"(exports) {
-    var crypto = require("crypto");
+    "use strict";
+    var crypto4 = require("crypto");
     exports.sign = function(val, secret) {
       if ("string" != typeof val)
         throw new TypeError("Cookie value must be provided as a string.");
       if ("string" != typeof secret)
         throw new TypeError("Secret string must be provided.");
-      return val + "." + crypto.createHmac("sha256", secret).update(val).digest("base64").replace(/\=+$/, "");
+      return val + "." + crypto4.createHmac("sha256", secret).update(val).digest("base64").replace(/\=+$/, "");
     };
     exports.unsign = function(val, secret) {
       if ("string" != typeof val)
@@ -75322,10 +79529,10 @@ var require_cookie_signature = __commonJS({
       if ("string" != typeof secret)
         throw new TypeError("Secret string must be provided.");
       var str = val.slice(0, val.lastIndexOf(".")), mac = exports.sign(str, secret);
-      return sha1(mac) == sha1(val) ? str : false;
+      return sha12(mac) == sha12(val) ? str : false;
     };
-    function sha1(str) {
-      return crypto.createHash("sha1").update(str).digest("hex");
+    function sha12(str) {
+      return crypto4.createHash("sha1").update(str).digest("hex");
     }
   }
 });
@@ -75902,7 +80109,7 @@ var require_response = __commonJS({
       return this.getHeader(field);
     };
     res.clearCookie = function clearCookie(name, options) {
-      var opts = merge({ expires: new Date(1), path: "/" }, options);
+      var opts = merge({ expires: /* @__PURE__ */ new Date(1), path: "/" }, options);
       return this.cookie(name, "", opts);
     };
     res.cookie = function(name, value, options) {
@@ -75983,16 +80190,16 @@ var require_response = __commonJS({
       var done = callback;
       var opts = options || {};
       var req = this.req;
-      var self2 = this;
+      var self = this;
       if (typeof options === "function") {
         done = options;
         opts = {};
       }
-      opts._locals = self2.locals;
+      opts._locals = self.locals;
       done = done || function(err, str) {
         if (err)
           return req.next(err);
-        self2.send(str);
+        self.send(str);
       };
       app.render(view, opts, done);
     };
@@ -76286,10 +80493,7 @@ var asyncHandler_default = (fn) => (req, res, next) => Promise.resolve(fn(req, r
 var path = __toESM(require("path"));
 var rootDirectory = process.env.GITHUB_WORKSPACE;
 var cacheDirectory = "node_modules/.cache/turbo";
-var absoluteCacheDirectory = path.resolve(
-  rootDirectory,
-  cacheDirectory
-);
+var absoluteCacheDirectory = path.resolve(rootDirectory, cacheDirectory);
 var portFileName = "__turbo_port.txt";
 
 // src/server.ts
@@ -76340,9 +80544,7 @@ async function startServer() {
     asyncHandler_default(async (req, res) => {
       const artifactId = req.params.artifactId;
       const filename = `${artifactId}.gz`;
-      const writeStream = fs2.createWriteStream(
-        path2.join(cacheDirectory, filename)
-      );
+      const writeStream = fs2.createWriteStream(path2.join(cacheDirectory, filename));
       try {
         await new Promise((resolve3, reject) => {
           req.pipe(writeStream);
@@ -76372,277 +80574,607 @@ startServer().catch((error) => {
   console.error(error);
   process.exit(1);
 });
-/*!
- * Copyright (c) 2015, Salesforce.com, Inc.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice,
- * this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- * this list of conditions and the following disclaimer in the documentation
- * and/or other materials provided with the distribution.
- *
- * 3. Neither the name of Salesforce.com nor the names of its contributors may
- * be used to endorse or promote products derived from this software without
- * specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- */
-/*!
- * Copyright (c) 2018, Salesforce.com, Inc.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice,
- * this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- * this list of conditions and the following disclaimer in the documentation
- * and/or other materials provided with the distribution.
- *
- * 3. Neither the name of Salesforce.com nor the names of its contributors may
- * be used to endorse or promote products derived from this software without
- * specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- */
-/*!
- * accepts
- * Copyright(c) 2014 Jonathan Ong
- * Copyright(c) 2015 Douglas Christopher Wilson
- * MIT Licensed
- */
-/*!
- * body-parser
- * Copyright(c) 2014 Jonathan Ong
- * Copyright(c) 2014-2015 Douglas Christopher Wilson
- * MIT Licensed
- */
-/*!
- * body-parser
- * Copyright(c) 2014-2015 Douglas Christopher Wilson
- * MIT Licensed
- */
-/*!
- * bytes
- * Copyright(c) 2012-2014 TJ Holowaychuk
- * Copyright(c) 2015 Jed Watson
- * MIT Licensed
- */
-/*!
- * content-disposition
- * Copyright(c) 2014-2017 Douglas Christopher Wilson
- * MIT Licensed
- */
-/*!
- * content-type
- * Copyright(c) 2015 Douglas Christopher Wilson
- * MIT Licensed
- */
-/*!
- * cookie
- * Copyright(c) 2012-2014 Roman Shtylman
- * Copyright(c) 2015 Douglas Christopher Wilson
- * MIT Licensed
- */
-/*!
- * depd
- * Copyright(c) 2014-2018 Douglas Christopher Wilson
- * MIT Licensed
- */
-/*!
- * destroy
- * Copyright(c) 2014 Jonathan Ong
- * Copyright(c) 2015-2022 Douglas Christopher Wilson
- * MIT Licensed
- */
-/*!
- * ee-first
- * Copyright(c) 2014 Jonathan Ong
- * MIT Licensed
- */
-/*!
- * encodeurl
- * Copyright(c) 2016 Douglas Christopher Wilson
- * MIT Licensed
- */
-/*!
- * escape-html
- * Copyright(c) 2012-2013 TJ Holowaychuk
- * Copyright(c) 2015 Andreas Lubbe
- * Copyright(c) 2015 Tiancheng "Timothy" Gu
- * MIT Licensed
- */
-/*!
- * etag
- * Copyright(c) 2014-2016 Douglas Christopher Wilson
- * MIT Licensed
- */
-/*!
- * express
- * Copyright(c) 2009-2013 TJ Holowaychuk
- * Copyright(c) 2013 Roman Shtylman
- * Copyright(c) 2014-2015 Douglas Christopher Wilson
- * MIT Licensed
- */
-/*!
- * express
- * Copyright(c) 2009-2013 TJ Holowaychuk
- * Copyright(c) 2014-2015 Douglas Christopher Wilson
- * MIT Licensed
- */
-/*!
- * finalhandler
- * Copyright(c) 2014-2022 Douglas Christopher Wilson
- * MIT Licensed
- */
-/*!
- * forwarded
- * Copyright(c) 2014-2017 Douglas Christopher Wilson
- * MIT Licensed
- */
-/*!
- * fresh
- * Copyright(c) 2012 TJ Holowaychuk
- * Copyright(c) 2016-2017 Douglas Christopher Wilson
- * MIT Licensed
- */
-/*!
- * http-errors
- * Copyright(c) 2014 Jonathan Ong
- * Copyright(c) 2016 Douglas Christopher Wilson
- * MIT Licensed
- */
-/*!
- * media-typer
- * Copyright(c) 2014 Douglas Christopher Wilson
- * MIT Licensed
- */
-/*!
- * merge-descriptors
- * Copyright(c) 2014 Jonathan Ong
- * Copyright(c) 2015 Douglas Christopher Wilson
- * MIT Licensed
- */
-/*!
- * methods
- * Copyright(c) 2013-2014 TJ Holowaychuk
- * Copyright(c) 2015-2016 Douglas Christopher Wilson
- * MIT Licensed
- */
-/*!
- * mime-db
- * Copyright(c) 2014 Jonathan Ong
- * Copyright(c) 2015-2022 Douglas Christopher Wilson
- * MIT Licensed
- */
-/*!
- * mime-types
- * Copyright(c) 2014 Jonathan Ong
- * Copyright(c) 2015 Douglas Christopher Wilson
- * MIT Licensed
- */
-/*!
- * negotiator
- * Copyright(c) 2012 Federico Romero
- * Copyright(c) 2012-2014 Isaac Z. Schlueter
- * Copyright(c) 2015 Douglas Christopher Wilson
- * MIT Licensed
- */
-/*!
- * on-finished
- * Copyright(c) 2013 Jonathan Ong
- * Copyright(c) 2014 Douglas Christopher Wilson
- * MIT Licensed
- */
-/*!
- * parseurl
- * Copyright(c) 2014 Jonathan Ong
- * Copyright(c) 2014-2017 Douglas Christopher Wilson
- * MIT Licensed
- */
-/*!
- * proxy-addr
- * Copyright(c) 2014-2016 Douglas Christopher Wilson
- * MIT Licensed
- */
-/*!
- * range-parser
- * Copyright(c) 2012-2014 TJ Holowaychuk
- * Copyright(c) 2015-2016 Douglas Christopher Wilson
- * MIT Licensed
- */
-/*!
- * raw-body
- * Copyright(c) 2013-2014 Jonathan Ong
- * Copyright(c) 2014-2022 Douglas Christopher Wilson
- * MIT Licensed
- */
-/*!
- * send
- * Copyright(c) 2012 TJ Holowaychuk
- * Copyright(c) 2014-2022 Douglas Christopher Wilson
- * MIT Licensed
- */
-/*!
- * serve-static
- * Copyright(c) 2010 Sencha Inc.
- * Copyright(c) 2011 TJ Holowaychuk
- * Copyright(c) 2014-2016 Douglas Christopher Wilson
- * MIT Licensed
- */
-/*!
- * statuses
- * Copyright(c) 2014 Jonathan Ong
- * Copyright(c) 2016 Douglas Christopher Wilson
- * MIT Licensed
- */
-/*!
- * toidentifier
- * Copyright(c) 2016 Douglas Christopher Wilson
- * MIT Licensed
- */
-/*!
- * type-is
- * Copyright(c) 2014 Jonathan Ong
- * Copyright(c) 2014-2015 Douglas Christopher Wilson
- * MIT Licensed
- */
-/*!
- * unpipe
- * Copyright(c) 2015 Douglas Christopher Wilson
- * MIT Licensed
- */
-/*!
- * vary
- * Copyright(c) 2014-2017 Douglas Christopher Wilson
- * MIT Licensed
- */
-/*! http://mths.be/fromcodepoint v0.1.0 by @mathias */
-/*! safe-buffer. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> */
+/*! Bundled license information:
+
+tough-cookie/lib/pubsuffix-psl.js:
+  (*!
+   * Copyright (c) 2018, Salesforce.com, Inc.
+   * All rights reserved.
+   *
+   * Redistribution and use in source and binary forms, with or without
+   * modification, are permitted provided that the following conditions are met:
+   *
+   * 1. Redistributions of source code must retain the above copyright notice,
+   * this list of conditions and the following disclaimer.
+   *
+   * 2. Redistributions in binary form must reproduce the above copyright notice,
+   * this list of conditions and the following disclaimer in the documentation
+   * and/or other materials provided with the distribution.
+   *
+   * 3. Neither the name of Salesforce.com nor the names of its contributors may
+   * be used to endorse or promote products derived from this software without
+   * specific prior written permission.
+   *
+   * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+   * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+   * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+   * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+   * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+   * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+   * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+   * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+   * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+   * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+   * POSSIBILITY OF SUCH DAMAGE.
+   *)
+
+tough-cookie/lib/store.js:
+  (*!
+   * Copyright (c) 2015, Salesforce.com, Inc.
+   * All rights reserved.
+   *
+   * Redistribution and use in source and binary forms, with or without
+   * modification, are permitted provided that the following conditions are met:
+   *
+   * 1. Redistributions of source code must retain the above copyright notice,
+   * this list of conditions and the following disclaimer.
+   *
+   * 2. Redistributions in binary form must reproduce the above copyright notice,
+   * this list of conditions and the following disclaimer in the documentation
+   * and/or other materials provided with the distribution.
+   *
+   * 3. Neither the name of Salesforce.com nor the names of its contributors may
+   * be used to endorse or promote products derived from this software without
+   * specific prior written permission.
+   *
+   * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+   * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+   * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+   * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+   * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+   * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+   * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+   * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+   * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+   * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+   * POSSIBILITY OF SUCH DAMAGE.
+   *)
+
+tough-cookie/lib/permuteDomain.js:
+  (*!
+   * Copyright (c) 2015, Salesforce.com, Inc.
+   * All rights reserved.
+   *
+   * Redistribution and use in source and binary forms, with or without
+   * modification, are permitted provided that the following conditions are met:
+   *
+   * 1. Redistributions of source code must retain the above copyright notice,
+   * this list of conditions and the following disclaimer.
+   *
+   * 2. Redistributions in binary form must reproduce the above copyright notice,
+   * this list of conditions and the following disclaimer in the documentation
+   * and/or other materials provided with the distribution.
+   *
+   * 3. Neither the name of Salesforce.com nor the names of its contributors may
+   * be used to endorse or promote products derived from this software without
+   * specific prior written permission.
+   *
+   * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+   * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+   * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+   * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+   * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+   * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+   * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+   * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+   * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+   * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+   * POSSIBILITY OF SUCH DAMAGE.
+   *)
+
+tough-cookie/lib/pathMatch.js:
+  (*!
+   * Copyright (c) 2015, Salesforce.com, Inc.
+   * All rights reserved.
+   *
+   * Redistribution and use in source and binary forms, with or without
+   * modification, are permitted provided that the following conditions are met:
+   *
+   * 1. Redistributions of source code must retain the above copyright notice,
+   * this list of conditions and the following disclaimer.
+   *
+   * 2. Redistributions in binary form must reproduce the above copyright notice,
+   * this list of conditions and the following disclaimer in the documentation
+   * and/or other materials provided with the distribution.
+   *
+   * 3. Neither the name of Salesforce.com nor the names of its contributors may
+   * be used to endorse or promote products derived from this software without
+   * specific prior written permission.
+   *
+   * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+   * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+   * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+   * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+   * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+   * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+   * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+   * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+   * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+   * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+   * POSSIBILITY OF SUCH DAMAGE.
+   *)
+
+tough-cookie/lib/memstore.js:
+  (*!
+   * Copyright (c) 2015, Salesforce.com, Inc.
+   * All rights reserved.
+   *
+   * Redistribution and use in source and binary forms, with or without
+   * modification, are permitted provided that the following conditions are met:
+   *
+   * 1. Redistributions of source code must retain the above copyright notice,
+   * this list of conditions and the following disclaimer.
+   *
+   * 2. Redistributions in binary form must reproduce the above copyright notice,
+   * this list of conditions and the following disclaimer in the documentation
+   * and/or other materials provided with the distribution.
+   *
+   * 3. Neither the name of Salesforce.com nor the names of its contributors may
+   * be used to endorse or promote products derived from this software without
+   * specific prior written permission.
+   *
+   * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+   * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+   * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+   * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+   * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+   * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+   * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+   * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+   * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+   * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+   * POSSIBILITY OF SUCH DAMAGE.
+   *)
+
+tough-cookie/lib/cookie.js:
+  (*!
+   * Copyright (c) 2015, Salesforce.com, Inc.
+   * All rights reserved.
+   *
+   * Redistribution and use in source and binary forms, with or without
+   * modification, are permitted provided that the following conditions are met:
+   *
+   * 1. Redistributions of source code must retain the above copyright notice,
+   * this list of conditions and the following disclaimer.
+   *
+   * 2. Redistributions in binary form must reproduce the above copyright notice,
+   * this list of conditions and the following disclaimer in the documentation
+   * and/or other materials provided with the distribution.
+   *
+   * 3. Neither the name of Salesforce.com nor the names of its contributors may
+   * be used to endorse or promote products derived from this software without
+   * specific prior written permission.
+   *
+   * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+   * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+   * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+   * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+   * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+   * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+   * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+   * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+   * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+   * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+   * POSSIBILITY OF SUCH DAMAGE.
+   *)
+
+mime-db/index.js:
+  (*!
+   * mime-db
+   * Copyright(c) 2014 Jonathan Ong
+   * Copyright(c) 2015-2022 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+mime-types/index.js:
+  (*!
+   * mime-types
+   * Copyright(c) 2014 Jonathan Ong
+   * Copyright(c) 2015 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+sax/lib/sax.js:
+  (*! http://mths.be/fromcodepoint v0.1.0 by @mathias *)
+
+depd/index.js:
+  (*!
+   * depd
+   * Copyright(c) 2014-2018 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+bytes/index.js:
+  (*!
+   * bytes
+   * Copyright(c) 2012-2014 TJ Holowaychuk
+   * Copyright(c) 2015 Jed Watson
+   * MIT Licensed
+   *)
+
+content-type/index.js:
+  (*!
+   * content-type
+   * Copyright(c) 2015 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+statuses/index.js:
+  (*!
+   * statuses
+   * Copyright(c) 2014 Jonathan Ong
+   * Copyright(c) 2016 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+toidentifier/index.js:
+  (*!
+   * toidentifier
+   * Copyright(c) 2016 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+http-errors/index.js:
+  (*!
+   * http-errors
+   * Copyright(c) 2014 Jonathan Ong
+   * Copyright(c) 2016 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+destroy/index.js:
+  (*!
+   * destroy
+   * Copyright(c) 2014 Jonathan Ong
+   * Copyright(c) 2015-2022 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+unpipe/index.js:
+  (*!
+   * unpipe
+   * Copyright(c) 2015 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+raw-body/index.js:
+  (*!
+   * raw-body
+   * Copyright(c) 2013-2014 Jonathan Ong
+   * Copyright(c) 2014-2022 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+ee-first/index.js:
+  (*!
+   * ee-first
+   * Copyright(c) 2014 Jonathan Ong
+   * MIT Licensed
+   *)
+
+on-finished/index.js:
+  (*!
+   * on-finished
+   * Copyright(c) 2013 Jonathan Ong
+   * Copyright(c) 2014 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+body-parser/lib/read.js:
+  (*!
+   * body-parser
+   * Copyright(c) 2014-2015 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+media-typer/index.js:
+  (*!
+   * media-typer
+   * Copyright(c) 2014 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+type-is/index.js:
+  (*!
+   * type-is
+   * Copyright(c) 2014 Jonathan Ong
+   * Copyright(c) 2014-2015 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+body-parser/lib/types/json.js:
+  (*!
+   * body-parser
+   * Copyright(c) 2014 Jonathan Ong
+   * Copyright(c) 2014-2015 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+body-parser/lib/types/raw.js:
+  (*!
+   * body-parser
+   * Copyright(c) 2014-2015 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+body-parser/lib/types/text.js:
+  (*!
+   * body-parser
+   * Copyright(c) 2014-2015 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+body-parser/lib/types/urlencoded.js:
+  (*!
+   * body-parser
+   * Copyright(c) 2014 Jonathan Ong
+   * Copyright(c) 2014-2015 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+body-parser/index.js:
+  (*!
+   * body-parser
+   * Copyright(c) 2014-2015 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+merge-descriptors/index.js:
+  (*!
+   * merge-descriptors
+   * Copyright(c) 2014 Jonathan Ong
+   * Copyright(c) 2015 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+encodeurl/index.js:
+  (*!
+   * encodeurl
+   * Copyright(c) 2016 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+escape-html/index.js:
+  (*!
+   * escape-html
+   * Copyright(c) 2012-2013 TJ Holowaychuk
+   * Copyright(c) 2015 Andreas Lubbe
+   * Copyright(c) 2015 Tiancheng "Timothy" Gu
+   * MIT Licensed
+   *)
+
+parseurl/index.js:
+  (*!
+   * parseurl
+   * Copyright(c) 2014 Jonathan Ong
+   * Copyright(c) 2014-2017 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+finalhandler/index.js:
+  (*!
+   * finalhandler
+   * Copyright(c) 2014-2022 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+express/lib/router/layer.js:
+  (*!
+   * express
+   * Copyright(c) 2009-2013 TJ Holowaychuk
+   * Copyright(c) 2013 Roman Shtylman
+   * Copyright(c) 2014-2015 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+methods/index.js:
+  (*!
+   * methods
+   * Copyright(c) 2013-2014 TJ Holowaychuk
+   * Copyright(c) 2015-2016 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+express/lib/router/route.js:
+  (*!
+   * express
+   * Copyright(c) 2009-2013 TJ Holowaychuk
+   * Copyright(c) 2013 Roman Shtylman
+   * Copyright(c) 2014-2015 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+express/lib/router/index.js:
+  (*!
+   * express
+   * Copyright(c) 2009-2013 TJ Holowaychuk
+   * Copyright(c) 2013 Roman Shtylman
+   * Copyright(c) 2014-2015 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+express/lib/middleware/init.js:
+  (*!
+   * express
+   * Copyright(c) 2009-2013 TJ Holowaychuk
+   * Copyright(c) 2013 Roman Shtylman
+   * Copyright(c) 2014-2015 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+express/lib/middleware/query.js:
+  (*!
+   * express
+   * Copyright(c) 2009-2013 TJ Holowaychuk
+   * Copyright(c) 2013 Roman Shtylman
+   * Copyright(c) 2014-2015 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+express/lib/view.js:
+  (*!
+   * express
+   * Copyright(c) 2009-2013 TJ Holowaychuk
+   * Copyright(c) 2013 Roman Shtylman
+   * Copyright(c) 2014-2015 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+safe-buffer/index.js:
+  (*! safe-buffer. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> *)
+
+content-disposition/index.js:
+  (*!
+   * content-disposition
+   * Copyright(c) 2014-2017 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+etag/index.js:
+  (*!
+   * etag
+   * Copyright(c) 2014-2016 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+fresh/index.js:
+  (*!
+   * fresh
+   * Copyright(c) 2012 TJ Holowaychuk
+   * Copyright(c) 2016-2017 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+range-parser/index.js:
+  (*!
+   * range-parser
+   * Copyright(c) 2012-2014 TJ Holowaychuk
+   * Copyright(c) 2015-2016 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+send/index.js:
+  (*!
+   * send
+   * Copyright(c) 2012 TJ Holowaychuk
+   * Copyright(c) 2014-2022 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+forwarded/index.js:
+  (*!
+   * forwarded
+   * Copyright(c) 2014-2017 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+proxy-addr/index.js:
+  (*!
+   * proxy-addr
+   * Copyright(c) 2014-2016 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+express/lib/utils.js:
+  (*!
+   * express
+   * Copyright(c) 2009-2013 TJ Holowaychuk
+   * Copyright(c) 2014-2015 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+express/lib/application.js:
+  (*!
+   * express
+   * Copyright(c) 2009-2013 TJ Holowaychuk
+   * Copyright(c) 2013 Roman Shtylman
+   * Copyright(c) 2014-2015 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+negotiator/index.js:
+  (*!
+   * negotiator
+   * Copyright(c) 2012 Federico Romero
+   * Copyright(c) 2012-2014 Isaac Z. Schlueter
+   * Copyright(c) 2015 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+accepts/index.js:
+  (*!
+   * accepts
+   * Copyright(c) 2014 Jonathan Ong
+   * Copyright(c) 2015 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+express/lib/request.js:
+  (*!
+   * express
+   * Copyright(c) 2009-2013 TJ Holowaychuk
+   * Copyright(c) 2013 Roman Shtylman
+   * Copyright(c) 2014-2015 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+cookie/index.js:
+  (*!
+   * cookie
+   * Copyright(c) 2012-2014 Roman Shtylman
+   * Copyright(c) 2015 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+vary/index.js:
+  (*!
+   * vary
+   * Copyright(c) 2014-2017 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+express/lib/response.js:
+  (*!
+   * express
+   * Copyright(c) 2009-2013 TJ Holowaychuk
+   * Copyright(c) 2014-2015 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+serve-static/index.js:
+  (*!
+   * serve-static
+   * Copyright(c) 2010 Sencha Inc.
+   * Copyright(c) 2011 TJ Holowaychuk
+   * Copyright(c) 2014-2016 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+express/lib/express.js:
+  (*!
+   * express
+   * Copyright(c) 2009-2013 TJ Holowaychuk
+   * Copyright(c) 2013 Roman Shtylman
+   * Copyright(c) 2014-2015 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+express/index.js:
+  (*!
+   * express
+   * Copyright(c) 2009-2013 TJ Holowaychuk
+   * Copyright(c) 2013 Roman Shtylman
+   * Copyright(c) 2014-2015 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+*/

@@ -9,7 +9,7 @@ import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 
-import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
+import { Flex, Text } from "@ledgerhq/native-ui";
 import { makeEmptyTokenAccount } from "@ledgerhq/live-common/account/index";
 import { replaceAccounts } from "../../actions/accounts";
 import logger from "../../logger";
@@ -29,6 +29,10 @@ import {
   StackNavigatorProps,
 } from "../../components/RootNavigator/types/helpers";
 import { RootStackParamList } from "../../components/RootNavigator/types/RootNavigator";
+import Animation from "../../components/Animation";
+import lottie from "./assets/lottie.json";
+import GradientContainer from "../../components/GradientContainer";
+import { useTheme } from "styled-components/native";
 
 type Props = StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveAddAccount>;
 
@@ -37,6 +41,7 @@ function AddAccountsAccounts({ navigation, route }: Props) {
   const { t } = useTranslation();
 
   const [scanning, setScanning] = useState(true);
+  const [addingAccount, setAddingAccount] = useState(false);
   const [error, setError] = useState(null);
   const [scannedAccounts, setScannedAccounts] = useState<Account[]>([]);
   const [cancelled, setCancelled] = useState(false);
@@ -54,6 +59,43 @@ function AddAccountsAccounts({ navigation, route }: Props) {
     return () => stopSubscription(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const selectAccount = useCallback(
+    (account: Account, addingAccountDelayMs?: number) => {
+      if (!selectedAccount) {
+        setSelectedAccount(account.id);
+        dispatch(
+          replaceAccounts({
+            scannedAccounts,
+            selectedIds: [account.id],
+            renamings: {},
+          }),
+        );
+        if (addingAccountDelayMs) {
+          setTimeout(() => {
+            setAddingAccount(false);
+            navigation.navigate(ScreenName.ReceiveConfirmation, {
+              ...route.params,
+              accountId: account.id,
+            });
+          }, addingAccountDelayMs);
+        } else {
+          navigation.navigate(ScreenName.ReceiveConfirmation, {
+            ...route.params,
+            accountId: account.id,
+          });
+        }
+      }
+    },
+    [dispatch, navigation, route.params, scannedAccounts, selectedAccount],
+  );
+
+  useEffect(() => {
+    if (!scanning && scannedAccounts.length === 1) {
+      setAddingAccount(true);
+      selectAccount(scannedAccounts[0], 4000);
+    }
+  }, [scanning, scannedAccounts, selectAccount]);
 
   const startSubscription = useCallback(() => {
     const c = currency.type === "TokenCurrency" ? currency.parentCurrency : currency;
@@ -135,26 +177,6 @@ function AddAccountsAccounts({ navigation, route }: Props) {
     }
   }, [cancelled, navigation]);
 
-  const selectAccount = useCallback(
-    (account: Account) => {
-      if (!selectedAccount) {
-        setSelectedAccount(account.id);
-        dispatch(
-          replaceAccounts({
-            scannedAccounts,
-            selectedIds: [account.id],
-            renamings: {},
-          }),
-        );
-        navigation.navigate(ScreenName.ReceiveConfirmation, {
-          ...route.params,
-          accountId: account.id,
-        });
-      }
-    },
-    [dispatch, navigation, route.params, scannedAccounts, selectedAccount],
-  );
-
   const renderItem = useCallback(
     ({ item: account }: { item: Account }) => {
       const acc =
@@ -199,7 +221,7 @@ function AddAccountsAccounts({ navigation, route }: Props) {
 
   return (
     <>
-      <TrackScreen category="AddAccounts" name="Accounts" currencyName={currency.name} />
+      <TrackScreen category="Deposit" name="Accounts" asset={currency.name} />
       <PreventNativeBack />
       {scanning ? (
         <ScanLoading
@@ -207,14 +229,23 @@ function AddAccountsAccounts({ navigation, route }: Props) {
           scannedAccounts={scannedAccounts}
           stopSubscription={stopSubscription}
         />
+      ) : addingAccount ? (
+        <AddingAccountLoading currency={currency} />
       ) : (
-        <FlatList
-          data={scannedAccounts}
-          renderItem={renderItem}
-          ListHeaderComponent={renderHeader}
-          keyExtractor={keyExtractor}
-          showsVerticalScrollIndicator={false}
-        />
+        <>
+          <TrackScreen
+            category="Deposit"
+            name="Select account to deposit to"
+            asset={currency.name}
+          />
+          <FlatList
+            data={scannedAccounts}
+            renderItem={renderItem}
+            ListHeaderComponent={renderHeader}
+            keyExtractor={keyExtractor}
+            showsVerticalScrollIndicator={false}
+          />
+        </>
       )}
       <GenericErrorBottomModal
         error={error}
@@ -240,38 +271,91 @@ function ScanLoading({
   stopSubscription: () => void;
 }) {
   const { t } = useTranslation();
+
   return (
-    <>
-      <Flex flex={1} alignItems="center" justifyContent="center" m={6}>
-        <InfiniteLoader size={48} />
-        <LText mt={13} variant="h4" textAlign="center">
-          {t("transfer.receive.addAccount.title")}
-        </LText>
-        <LText p={6} textAlign="center" variant="body" color="neutral.c80">
-          {t("transfer.receive.addAccount.subtitle", {
-            currencyTicker: currency?.ticker,
-          })}
-        </LText>
-      </Flex>
+    <Loading
+      title={t("transfer.receive.addAccount.subtitle", {
+        currencyName: currency.name,
+      })}
+    >
+      <TrackScreen category="Deposit" name="Create account" asset={currency.name} />
       <Flex
         minHeight={120}
         flexDirection="column"
         alignItems="stretch"
-        m={6}
-        justifyContent="flex-end"
+        p={6}
+        position="absolute"
+        bottom={0}
+        left={0}
+        width="100%"
       >
-        {scannedAccounts?.length > 0 ? (
-          <>
-            <LText textAlign="center" mb={6} variant="body" color="neutral.c80">
-              {t("transfer.receive.addAccount.foundAccounts", {
-                count: scannedAccounts?.length,
-              })}
-            </LText>
-            <Button type="secondary" onPress={stopSubscription}>
-              {t("transfer.receive.addAccount.stopSynchronization")}
-            </Button>
-          </>
-        ) : null}
+        <Flex
+          minHeight={120}
+          flexDirection="column"
+          alignItems="stretch"
+          m={6}
+          justifyContent="flex-end"
+        >
+          {scannedAccounts?.length > 0 ? (
+            <>
+              <LText textAlign="center" mb={6} variant="body" color="neutral.c80">
+                {t("transfer.receive.addAccount.foundAccounts", {
+                  count: scannedAccounts?.length,
+                })}
+              </LText>
+              <Button type="secondary" onPress={stopSubscription}>
+                {t("transfer.receive.addAccount.stopSynchronization")}
+              </Button>
+            </>
+          ) : null}
+        </Flex>
+      </Flex>
+    </Loading>
+  );
+}
+
+function AddingAccountLoading({ currency }: { currency: Currency }) {
+  const { t } = useTranslation();
+
+  return (
+    <Loading
+      title={t("transfer.receive.addAccount.addingAccount", { currencyName: currency.name })}
+    />
+  );
+}
+
+function Loading({
+  children,
+  title,
+  subtitle,
+}: {
+  children?: React.ReactNode;
+  title: string;
+  subtitle?: string;
+}) {
+  const { colors } = useTheme();
+
+  return (
+    <>
+      <GradientContainer
+        color={colors.background.main}
+        startOpacity={1}
+        endOpacity={0}
+        containerStyle={{ borderRadius: 0, position: "absolute", bottom: 0, left: 0 }}
+        gradientStyle={{ zIndex: 1 }}
+      >
+        <Animation style={{ width: "100%" }} source={lottie} />
+      </GradientContainer>
+      <Flex flex={1} position="relative">
+        <Flex flex={1} alignItems="center" justifyContent="center" m={6}>
+          <Text variant="h4" fontWeight="semiBold" textAlign="center">
+            {title}
+          </Text>
+          <Text mt={6} textAlign="center" variant="body" fontWeight="medium" color="neutral.c80">
+            {subtitle}
+          </Text>
+        </Flex>
+        {children}
       </Flex>
     </>
   );

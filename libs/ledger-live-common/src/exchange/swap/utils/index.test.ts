@@ -10,10 +10,8 @@ import {
   isRegistrationRequired,
   getProviderName,
   getNoticeType,
-  shouldShowKYCBanner,
-  shouldShowLoginBanner,
+  getCustomDappUrl,
 } from "./index";
-import { ValidKYCStatus } from "../types";
 
 /* TODO: Refacto these two function and move them to mock/account.ts if needed */
 function* accountGenerator(currency: CryptoCurrency): Generator<Account> {
@@ -178,106 +176,7 @@ describe("swap/utils/getAvailableAccountsById", () => {
   });
 });
 
-describe("swap/utils/shouldShowLoginBanner", () => {
-  test("should not display Login banner if no provider is specified", () => {
-    const result = shouldShowLoginBanner({
-      provider: undefined,
-      token: "token",
-    });
-
-    expect(result).toBe(false);
-  });
-
-  ["changelly", "wyre"].forEach(provider => {
-    test(`should not display Login banner for ${provider}`, () => {
-      const result = shouldShowLoginBanner({
-        provider,
-        token: "token",
-      });
-
-      expect(result).toBe(false);
-    });
-  });
-
-  ["ftx", "ftxus"].forEach(provider => {
-    describe(`${provider.toUpperCase()}`, () => {
-      test("should display Login banner if no token is provided", () => {
-        const result = shouldShowLoginBanner({
-          provider: provider,
-          token: undefined,
-        });
-
-        expect(result).toBe(true);
-      });
-
-      test("should display Login banner if token is expired", () => {
-        /**
-         * TODO: add test by mocking `isJwtExpired`
-         */
-      });
-
-      test("should not display Login banner if token is not expired", () => {
-        /**
-         * TODO: add test by mocking `isJwtExpired`
-         */
-      });
-    });
-  });
-});
-
-describe("swap/utils/shouldShowKYCBanner", () => {
-  test("should not display KYC banner if no provider is specified", () => {
-    const result = shouldShowKYCBanner({
-      provider: undefined,
-      kycStatus: "rejected",
-    });
-
-    expect(result).toBe(false);
-  });
-
-  test("should not display KYC banner if provider does not require KYC", () => {
-    const result = shouldShowKYCBanner({
-      provider: "changelly",
-      kycStatus: "rejected",
-    });
-
-    expect(result).toBe(false);
-  });
-
-  ["ftx", "ftxus", "wyre"].forEach(provider => {
-    describe(`${provider.toUpperCase()}`, () => {
-      ["pending", "upgradeRequired", "rejected"].forEach(status => {
-        test(`should display KYC banner if kycStatus is ${status}`, () => {
-          const result = shouldShowKYCBanner({
-            provider,
-            kycStatus: status as ValidKYCStatus,
-          });
-
-          expect(result).toBe(true);
-        });
-      });
-
-      test("should not display KYC banner if kycStatus is approved", () => {
-        const result = shouldShowKYCBanner({
-          provider,
-          kycStatus: "approved",
-        });
-
-        expect(result).toBe(false);
-      });
-    });
-  });
-});
-
 describe("swap/utils/isRegistrationRequired", () => {
-  test("should return registration is required for ftx", () => {
-    const expectedResult = true;
-
-    const result = isRegistrationRequired("ftx");
-
-    expect(result).toBe(expectedResult);
-  });
-
   test("should return registration is not required for changelly", () => {
     const expectedResult = false;
 
@@ -288,22 +187,6 @@ describe("swap/utils/isRegistrationRequired", () => {
 });
 
 describe("swap/utils/getProviderName", () => {
-  test("should return uppercase provider name for ftx", () => {
-    const expectedResult = "FTX";
-
-    const result = getProviderName("ftx");
-
-    expect(result).toBe(expectedResult);
-  });
-
-  test("should return uppercase provider name for ftxus", () => {
-    const expectedResult = "FTXUS";
-
-    const result = getProviderName("ftxus");
-
-    expect(result).toBe(expectedResult);
-  });
-
   test("should return capitalized provider name for 1inch", () => {
     const expectedResult = "1inch";
 
@@ -330,19 +213,40 @@ describe("swap/utils/getNoticeType", function () {
     expect(result).toEqual(expectedResult);
   });
 
-  test("should return notice type for ftx", () => {
-    const expectedResult = { message: "default", learnMore: true };
-
-    const result = getNoticeType("ftx");
-
-    expect(result).toEqual(expectedResult);
-  });
-
   test("should return notice type for Changelly", () => {
     const expectedResult = { message: "provider", learnMore: false };
 
     const result = getNoticeType("changelly");
 
     expect(result).toEqual(expectedResult);
+  });
+});
+
+describe("swap/utils/getCustomDappUrl", () => {
+  it("should convert correct paraswap URL", async () => {
+    const customDappUrl = getCustomDappUrl({
+      provider: "paraswap",
+      providerURL:
+        "/platform/paraswap/#/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee-0xdac17f958d2ee523a2206206994597c13d831ec7/0.004?network=1",
+    });
+    expect(customDappUrl).toBe(
+      "https://embedded.paraswap.io?referrer=ledger2&embed=true&enableStaking=false&displayMenu=false&enableNetworkSwitch=false&network=1#/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee-0xdac17f958d2ee523a2206206994597c13d831ec7/0.004",
+    );
+  });
+  it("should convert correct 1inch URL", async () => {
+    const customDappUrl = getCustomDappUrl({
+      provider: "oneinch",
+      providerURL: "/platform/1inch/#/1/unified/swap/eth/usdt?sourceTokenAmount=0.04",
+    });
+    expect(customDappUrl).toBe(
+      "https://app.1inch.io/#/1/simple/swap/eth/usdt?ledgerLive=true&sourceTokenAmount=0.04",
+    );
+  });
+  it("should not update URL when complete URL is provided", async () => {
+    const customDappUrl = getCustomDappUrl({
+      provider: "oneinch",
+      providerURL: "https://app.1inch.io/#/test",
+    });
+    expect(customDappUrl).toBe("https://app.1inch.io/#/test");
   });
 });

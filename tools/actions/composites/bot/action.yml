@@ -4,8 +4,17 @@ inputs:
   SEED:
     description: "seed to use"
     required: true
-  BOT_FILTER_FAMILY:
-    description: "family to filter on"
+  BOT_FILTER_FAMILIES:
+    description: "families to filter on"
+    required: false
+  BOT_FILTER_CURRENCIES:
+    description: "currencies to filter on"
+    required: false
+  BOT_DISABLED_FAMILIES:
+    description: "disabled families"
+    required: false
+  BOT_DISABLED_CURRENCIES:
+    description: "disabled currencies"
     required: false
   SLACK_CHANNEL:
     description: "slack channel to report on"
@@ -25,13 +34,18 @@ inputs:
   BOT_ENVIRONMENT:
     description: "defines an environment to be included in the report.json"
     required: false
+  SPECULOS_USE_WEBSOCKET:
+    description: true if you want to use speculos has a websocket
+    type: boolean
+    required: false
+    default: false
 
 runs:
   using: "composite"
   steps:
     - uses: pnpm/action-setup@v2
       with:
-        version: 8.1
+        version: 8.7
     - uses: actions/setup-node@v3
       with:
         node-version: 18
@@ -45,7 +59,7 @@ runs:
         pnpm i --filter="live-cli..." --filter="ledger-live"
         pnpm build:llc
       shell: bash
-    - uses: 8BitJonny/gh-get-current-pr@2.1.1
+    - uses: 8BitJonny/gh-get-current-pr@v2.1.3
       id: PR
       with:
         github-token: ${{ github.token }}
@@ -58,10 +72,14 @@ runs:
         VERBOSE_FILE: botreport/logs.txt
         GITHUB_RUN_ID: ${{ github.run_id }}
         GITHUB_WORKFLOW: ${{ github.workflow }}
-        BOT_FILTER_FAMILY: ${{ inputs.BOT_FILTER_FAMILY }}
+        BOT_FILTER_FAMILIES: ${{ inputs.BOT_FILTER_FAMILIES }}
+        BOT_FILTER_CURRENCIES: ${{ inputs.BOT_FILTER_CURRENCIES }}
+        BOT_DISABLED_FAMILIES: ${{ inputs.BOT_DISABLED_FAMILIES }}
+        BOT_DISABLED_CURRENCIES: ${{ inputs.BOT_DISABLED_CURRENCIES }}
         SHOW_LEGACY_NEW_ACCOUNT: ${{ inputs.SHOW_LEGACY_NEW_ACCOUNT }}
         BOT_ENVIRONMENT: ${{ inputs.BOT_ENVIRONMENT }}
         explorerinput: ${{ inputs.EXPLORER }}
+        SPECULOS_USE_WEBSOCKET: ${{inputs.speculos_websocket}}
       run: |
         export COINAPPS=$PWD/coin-apps
         export NODE_ENV=production
@@ -73,7 +91,7 @@ runs:
         node --prof lib/bot/cli.js
       shell: bash
     - name: submit bot report
-      uses: ledgerhq/ledger-live/tools/actions/submit-bot-report@develop
+      uses: ./tools/actions/submit-bot-report
       with:
         path: libs/ledger-live-common/botreport
         githubSha: ${{github.sha}}

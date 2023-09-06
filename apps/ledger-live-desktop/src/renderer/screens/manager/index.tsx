@@ -8,7 +8,7 @@ import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import connectManager from "@ledgerhq/live-common/hw/connectManager";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import Disconnected from "./Disconnected";
 import { setLastSeenDevice } from "~/renderer/actions/settings";
 import { useDispatch } from "react-redux";
@@ -16,7 +16,7 @@ import { context } from "~/renderer/drawers/Provider";
 
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectManager);
 const Manager = () => {
-  const [appsToRestore, setRestoreApps] = useState();
+  const [appsToRestore, setRestoreApps] = useState([]);
   const { setDrawer } = useContext(context);
   const [result, setResult] = useState<Result | null>(null);
   const [hasReset, setHasReset] = useState(false);
@@ -57,7 +57,7 @@ const Manager = () => {
         <Dashboard
           {...result}
           onReset={onReset}
-          appsToRestore={appsToRestore || []}
+          appsToRestore={appsToRestore}
           onRefreshDeviceInfo={refreshDeviceInfo}
         />
       ) : !hasReset ? (

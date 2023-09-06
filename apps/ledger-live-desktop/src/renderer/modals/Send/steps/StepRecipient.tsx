@@ -1,4 +1,5 @@
 import React, { PureComponent } from "react";
+import { getStuckAccountAndOperation } from "@ledgerhq/live-common/operation";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -13,6 +14,8 @@ import RecipientField from "../fields/RecipientField";
 import { StepProps } from "../types";
 import StepRecipientSeparator from "~/renderer/components/StepRecipientSeparator";
 import { Account } from "@ledgerhq/types-live";
+import EditOperationPanel from "~/renderer/components/OperationsList/EditOperationPanel";
+
 const StepRecipient = ({
   t,
   account,
@@ -31,8 +34,11 @@ const StepRecipient = ({
   onChangeNFT,
   maybeNFTCollection,
 }: StepProps) => {
-  if (!status) return null;
-  const mainAccount = account ? getMainAccount(account, parentAccount) : null;
+  if (!status || !account) return null;
+  const mainAccount = getMainAccount(account, parentAccount);
+  // for ethereum family, check if there is a stuck transaction. If so, display a warning panel with "speed up or cancel" button
+  const stuckAccountAndOperation = getStuckAccountAndOperation(account, parentAccount);
+
   return (
     <Box flow={4}>
       <TrackPage
@@ -67,6 +73,13 @@ const StepRecipient = ({
           />
         </Box>
       )}
+      {stuckAccountAndOperation ? (
+        <EditOperationPanel
+          operation={stuckAccountAndOperation.operation}
+          account={stuckAccountAndOperation.account}
+          parentAccount={stuckAccountAndOperation.parentAccount}
+        />
+      ) : null}
       <StepRecipientSeparator />
       {account && transaction && mainAccount && (
         <>
@@ -94,8 +107,12 @@ const StepRecipient = ({
 };
 export class StepRecipientFooter extends PureComponent<StepProps> {
   onNext = async () => {
-    const { transitionTo } = this.props;
-    transitionTo("amount");
+    const { transitionTo, shouldSkipAmount } = this.props;
+    if (shouldSkipAmount) {
+      transitionTo("summary");
+    } else {
+      transitionTo("amount");
+    }
   };
 
   render() {
@@ -121,4 +138,5 @@ export class StepRecipientFooter extends PureComponent<StepProps> {
     );
   }
 }
+
 export default StepRecipient;

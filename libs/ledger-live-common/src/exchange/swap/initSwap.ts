@@ -10,7 +10,7 @@ import secp256k1 from "secp256k1";
 import { getCurrencyExchangeConfig } from "../";
 import { getAccountCurrency, getAccountUnit, getMainAccount } from "../../account";
 import { getAccountBridge } from "../../bridge";
-import { getEnv } from "../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import { SwapGenericAPIError, TransactionRefusedOnDevice } from "../../errors";
 import perFamily from "../../generated/exchange";
 import { withDevice } from "../../hw/deviceAccess";
@@ -28,7 +28,7 @@ const withDevicePromise = (deviceId, fn) =>
 const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
   let swapId;
   let { transaction } = input;
-  const { exchange, exchangeRate, deviceId, userId } = input;
+  const { exchange, exchangeRate, deviceId } = input;
 
   if (getEnv("MOCK")) return mockInitSwap(exchange, exchangeRate, transaction);
   return new Observable(o => {
@@ -62,12 +62,8 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
 
         const swapProviderConfig = getProviderConfig(provider);
 
-        const { needsBearerToken } = swapProviderConfig;
-
         const headers = {
           EquipmentId: getEnv("USER_ID"),
-          ...(needsBearerToken ? { Authorization: `Bearer ${userId}` } : {}),
-          ...(userId ? { userId } : {}), // NB: only for Wyre AFAIK
         };
 
         const data = {

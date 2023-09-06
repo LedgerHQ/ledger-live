@@ -1,5 +1,5 @@
 import React from "react";
-import { Account } from "@ledgerhq/types-live";
+import { Account, Operation } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { getLLDCoinFamily } from "~/renderer/families";
 
@@ -17,7 +17,7 @@ export const getFields = (account: Account): string[] => {
 };
 
 const RecipientRelatedField = (props: Props) => {
-  const module = getLLDCoinFamily<Account, Transaction, TransactionStatus>(
+  const module = getLLDCoinFamily<Account, Transaction, TransactionStatus, Operation>(
     props.account.currency.family,
   )?.sendRecipientFields;
   if (!module) return null;

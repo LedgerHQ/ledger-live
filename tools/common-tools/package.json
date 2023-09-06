@@ -1,6 +1,6 @@
 {
   "name": "live-common-tools",
-  "version": "0.5.0",
+  "version": "0.6.3",
   "private": true,
   "dependencies": {
     "@ledgerhq/coin-framework": "workspace:^",
@@ -16,6 +16,7 @@
     "@ledgerhq/hw-transport-webauthn": "5.36.0-deprecated",
     "@ledgerhq/hw-transport-webhid": "workspace:^",
     "@ledgerhq/hw-transport-webusb": "workspace:^",
+    "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "axios": "*",
@@ -33,13 +34,14 @@
     "react-redux": "*",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "3.4.3",
+    "react-scripts": "3.4.4",
     "react-select": "^5.3.2",
     "react-table": "^6.11.4",
     "rxjs": "*",
     "semver": "^7.3.7",
     "styled-components": "^4.4.0",
-    "webpack": "4.42"
+    "tslib": "^2.5.0",
+    "webpack": "4.46"
   },
   "scripts": {
     "start": "react-app-rewired start",

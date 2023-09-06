@@ -26,14 +26,23 @@ import { SatStackStatus } from "@ledgerhq/live-common/families/bitcoin/satstack"
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { NetworkDown } from "@ledgerhq/errors";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-const listSupportedTokens = () => listTokens().filter(t => isCurrencySupported(t.parentCurrency));
+import { CryptoCurrencyId, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { Feature } from "@ledgerhq/types-live";
+
+const listSupportedTokens = () =>
+  listTokens().filter(token => isCurrencySupported(token.parentCurrency));
+
 const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const axelar = useFeature("currencyAxelar");
+  const stargaze = useFeature("currencyStargaze");
+  const secretNetwork = useFeature("currencySecretNetwork");
+  const umee = useFeature("currencyUmee");
+  const desmos = useFeature("currencyDesmos");
   const onomy = useFeature("currencyOnomy");
   const quicksilver = useFeature("currencyQuicksilver");
   const persistence = useFeature("currencyPersistence");
   const avaxCChain = useFeature("currencyAvalancheCChain");
+  const stacks = useFeature("currencyStacks");
   const optimism = useFeature("currencyOptimism");
   const optimismGoerli = useFeature("currencyOptimismGoerli");
   const arbitrum = useFeature("currencyArbitrum");
@@ -49,14 +58,28 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const moonriver = useFeature("currencyMoonriver");
   const velasEvm = useFeature("currencyVelasEvm");
   const syscoin = useFeature("currencySyscoin");
+  const internetComputer = useFeature("currencyInternetComputer");
+  const telosEvm = useFeature("currencyTelosEvm");
+  const coreum = useFeature("currencyCoreum");
+  const polygonZkEvm = useFeature("currencyPolygonZkEvm");
+  const polygonZkEvmTestnet = useFeature("currencyPolygonZkEvmTestnet");
+  const base = useFeature("currencyBase");
+  const baseGoerli = useFeature("currencyBaseGoerli");
+  const klaytn = useFeature("currencyKlaytn");
+  const mock = useEnv("MOCK");
 
   const featureFlaggedCurrencies = useMemo(
-    () => ({
+    (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
       axelar,
+      stargaze,
+      secret_network: secretNetwork,
+      umee,
+      desmos,
       onomy,
       quicksilver,
       persistence,
       avalanche_c_chain: avaxCChain,
+      stacks,
       optimism,
       optimism_goerli: optimismGoerli,
       arbitrum,
@@ -72,9 +95,26 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       moonriver,
       velas_evm: velasEvm,
       syscoin,
+      internet_computer: internetComputer,
+      telos_evm: telosEvm,
+      coreum,
+      polygon_zk_evm: polygonZkEvm,
+      polygon_zk_evm_testnet: polygonZkEvmTestnet,
+      base,
+      base_goerli: baseGoerli,
+      klaytn,
     }),
     [
+      axelar,
+      stargaze,
+      secretNetwork,
+      umee,
+      desmos,
+      onomy,
+      quicksilver,
+      persistence,
       avaxCChain,
+      stacks,
       optimism,
       optimismGoerli,
       arbitrum,
@@ -90,25 +130,35 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       moonriver,
       velasEvm,
       syscoin,
-      axelar,
-      onomy,
-      persistence,
-      quicksilver,
+      internetComputer,
+      telosEvm,
+      coreum,
+      polygonZkEvm,
+      polygonZkEvmTestnet,
+      base,
+      baseGoerli,
+      klaytn,
     ],
   );
+
   const currencies = useMemo(() => {
     const currencies = (listSupportedCurrencies() as CryptoOrTokenCurrency[]).concat(
       listSupportedTokens(),
     );
-    const deactivatedCurrencies = Object.entries(featureFlaggedCurrencies)
-      .filter(([, feature]) => !feature?.enabled)
-      .map(([name]) => name);
+
+    const deactivatedCurrencies = mock
+      ? [] // mock mode: all currencies are available for playwrigth tests
+      : Object.entries(featureFlaggedCurrencies)
+          .filter(([, feature]) => !feature?.enabled)
+          .map(([name]) => name);
     return currencies.filter(c => !deactivatedCurrencies.includes(c.id));
-  }, [featureFlaggedCurrencies]);
+  }, [featureFlaggedCurrencies, mock]);
+
   const url =
     currency && currency.type === "TokenCurrency"
       ? supportLinkByTokenType[currency.tokenType as keyof typeof supportLinkByTokenType]
       : null;
+
   return (
     <>
       {!navigator.onLine ? (
@@ -139,6 +189,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
     </>
   );
 };
+
 export const StepChooseCurrencyFooter = ({
   transitionTo,
   currency,
@@ -198,6 +249,7 @@ export const StepChooseCurrencyFooter = ({
     tokenAccount,
     transitionTo,
   ]);
+
   return (
     <>
       <TrackPage category="AddAccounts" name="Step1" />
@@ -227,4 +279,5 @@ export const StepChooseCurrencyFooter = ({
     </>
   );
 };
+
 export default StepChooseCurrency;

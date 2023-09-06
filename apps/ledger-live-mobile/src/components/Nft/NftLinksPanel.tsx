@@ -4,13 +4,12 @@ import { useNavigation } from "@react-navigation/native";
 import { NFTMetadata } from "@ledgerhq/types-live";
 import { View, StyleSheet, TouchableOpacity, Linking, Platform } from "react-native";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { Box, Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { Box, Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import styled, { useTheme } from "styled-components/native";
 import { NavigatorName, ScreenName } from "../../const";
 import ExternalLinkIcon from "../../icons/ExternalLink";
 import OpenSeaIcon from "../../icons/OpenSea";
 import RaribleIcon from "../../icons/Rarible";
-import GlobeIcon from "../../icons/Globe";
 import QueuedDrawer from "../QueuedDrawer";
 import { rgba } from "../../colors";
 import HideNftDrawer from "./HideNftDrawer";
@@ -137,6 +136,7 @@ const NftLinksPanel = ({ nftContract, nftId, links, isOpen, onClose, nftMetadata
       ...(links?.opensea && !areRaribleOpenseaDisabled
         ? [
             <NftLink
+              key="nftLinkOpenSea"
               leftIcon={<OpenSeaIcon size={36} />}
               title={`${t("nft.viewerModal.viewOn")} OpenSea`}
               rightIcon={<ExternalLinkIcon size={20} color={colors.neutral.c100} />}
@@ -147,6 +147,7 @@ const NftLinksPanel = ({ nftContract, nftId, links, isOpen, onClose, nftMetadata
       ...(links?.rarible && !areRaribleOpenseaDisabled
         ? [
             <NftLink
+              key="nftLinkRarible"
               style={styles.sectionMargin}
               leftIcon={<RaribleIcon size={36} />}
               title={`${t("nft.viewerModal.viewOn")} Rarible`}
@@ -160,6 +161,7 @@ const NftLinksPanel = ({ nftContract, nftId, links, isOpen, onClose, nftMetadata
     const bottomSection = [
       [
         <NftLink
+          key="nftLinkHide"
           primary
           leftIcon={
             <View
@@ -168,7 +170,7 @@ const NftLinksPanel = ({ nftContract, nftId, links, isOpen, onClose, nftMetadata
                 { backgroundColor: rgba(colors.primary.c90, 0.1) },
               ]}
             >
-              <Icons.EyeNoneMedium size={16} color={colors.primary.c90} />
+              <IconsLegacy.EyeNoneMedium size={16} color={colors.primary.c90} />
             </View>
           }
           title={t("nft.viewerModal.hide")}
@@ -178,6 +180,7 @@ const NftLinksPanel = ({ nftContract, nftId, links, isOpen, onClose, nftMetadata
       ...(links?.explorer
         ? [
             <NftLink
+              key="nftLinkViewInExplorer"
               primary
               leftIcon={
                 <View
@@ -186,7 +189,7 @@ const NftLinksPanel = ({ nftContract, nftId, links, isOpen, onClose, nftMetadata
                     { backgroundColor: rgba(colors.primary.c90, 0.1) },
                   ]}
                 >
-                  <GlobeIcon size={16} color={colors.primary.c90} />
+                  <IconsLegacy.GlobeMedium size={16} color={colors.primary.c90} />
                 </View>
               }
               title={t("nft.viewerModal.viewInExplorer")}
@@ -197,6 +200,7 @@ const NftLinksPanel = ({ nftContract, nftId, links, isOpen, onClose, nftMetadata
       ...(showCustomImageButton
         ? [
             <NftLink
+              key="nftLinkCLS"
               primary
               title={t("customImage.nftEntryPointButtonLabel")}
               leftIcon={
@@ -206,7 +210,7 @@ const NftLinksPanel = ({ nftContract, nftId, links, isOpen, onClose, nftMetadata
                     { backgroundColor: rgba(colors.primary.c90, 0.1) },
                   ]}
                 >
-                  <Icons.BracketsMedium size={16} color={colors.primary.c90} />
+                  <IconsLegacy.PhotographMedium size={16} color={colors.primary.c90} />
                 </View>
               }
               onPress={handlePressCustomImage}

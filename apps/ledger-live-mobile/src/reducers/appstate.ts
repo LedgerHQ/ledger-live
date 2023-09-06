@@ -10,7 +10,6 @@ import type {
   AppStatePayload,
   AppStateSetHasConnectedDevicePayload,
   AppStateSetModalLockPayload,
-  AppStateSetWiredDevicePayload,
   AppStateUpdateMainNavigatorVisibilityPayload,
   DangerouslyOverrideStatePayload,
 } from "../actions/types";
@@ -27,7 +26,6 @@ export const INITIAL_STATE: AppState = {
   backgroundEvents: [],
   debugMenuVisible: false,
   isMainNavigatorVisible: true,
-  wiredDevice: null,
 };
 
 const handlers: ReducerMap<AppState, AppStatePayload> = {
@@ -49,11 +47,6 @@ const handlers: ReducerMap<AppState, AppStatePayload> = {
   [AppStateActionTypes.SET_MODAL_LOCK]: (state, action) => ({
     ...state,
     modalLock: (action as Action<AppStateSetModalLockPayload>).payload,
-  }),
-
-  [AppStateActionTypes.SET_WIRED_DEVICE]: (state, action) => ({
-    ...state,
-    wiredDevice: (action as Action<AppStateSetWiredDevicePayload>).payload,
   }),
 
   [AppStateActionTypes.QUEUE_BACKGROUND_EVENT]: (state, action) => ({
@@ -94,7 +87,6 @@ const handlers: ReducerMap<AppState, AppStatePayload> = {
 export const isDebugMenuVisible = (state: State) => state.appstate.debugMenuVisible;
 export const isConnectedSelector = (state: State) => state.appstate.isConnected;
 export const isModalLockedSelector = (state: State) => state.appstate.modalLock;
-export const getWiredDeviceSelector = (state: State) => state.appstate.wiredDevice;
 export const hasConnectedDeviceSelector = (state: State) => state.appstate.hasConnectedDevice;
 
 export const backgroundEventsSelector = (state: State) => state.appstate.backgroundEvents;

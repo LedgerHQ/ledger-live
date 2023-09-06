@@ -55,7 +55,13 @@ function StepConfirmation({
   if (optimisticOperation) {
     return (
       <Container>
-        <TrackPage category="Solana Delegation" name="Step Confirmation" />
+        <TrackPage
+          category="Solana Delegation"
+          name="Step Confirmation"
+          flow="stake"
+          action="delegation"
+          currency="sol"
+        />
         <SyncOneAccountOnMount
           reason="transaction-flow-confirmation"
           priority={10}
@@ -71,7 +77,13 @@ function StepConfirmation({
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage category="Delegation Solana" name="Step Confirmation Error" />
+        <TrackPage
+          category="Delegation Solana"
+          name="Step Confirmation Error"
+          flow="stake"
+          action="delegation"
+          currency="sol"
+        />
         {signed ? (
           <BroadcastErrorDisclaimer title={<Trans i18nKey="solana.common.broadcastError" />} />
         ) : null}

@@ -21,6 +21,7 @@ export type RecoverComponentParams = {
 
 export type RecoverState = {
   fromOnboarding?: boolean;
+  deviceId?: string;
 };
 
 const FullscreenWrapper = styled.div`
@@ -32,6 +33,7 @@ const FullscreenWrapper = styled.div`
   width: 100vw;
   height: 100vh;
   z-index: 20;
+  background-color: ${p => p.theme.colors.palette.background.default};
 `;
 
 export default function RecoverPlayer({
@@ -70,19 +72,21 @@ export default function RecoverPlayer({
     }
   }, [onClose, onboardingState]);
 
+  const inputs = useMemo(
+    () => ({
+      theme,
+      lang: locale,
+      availableOnDesktop,
+      deviceId: state?.deviceId,
+      ...params,
+      ...queryParams,
+    }),
+    [availableOnDesktop, locale, params, queryParams, state?.deviceId, theme],
+  );
+
   return manifest ? (
     <FullscreenWrapper>
-      <WebRecoverPlayer
-        manifest={manifest}
-        inputs={{
-          theme,
-          lang: locale,
-          availableOnDesktop,
-          ...params,
-          ...queryParams,
-        }}
-        onClose={onClose}
-      />
+      <WebRecoverPlayer manifest={manifest} inputs={inputs} onClose={onClose} />
     </FullscreenWrapper>
   ) : null; // TODO: display an error component instead of `null`
 }

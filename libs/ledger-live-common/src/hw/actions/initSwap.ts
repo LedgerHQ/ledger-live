@@ -33,7 +33,6 @@ type InitSwapRequest = {
   exchange: Exchange;
   exchangeRate: ExchangeRate;
   transaction: SwapTransaction;
-  userId?: string;
   requireLatestFirmware?: boolean;
   status?: TransactionStatus;
   device?: React.RefObject<Device | null | undefined>;
@@ -130,7 +129,7 @@ export const createAction = (
     const [state, setState] = useState(initialState);
     const reduxDeviceFrozen = useFrozenValue(reduxDevice, state.freezeReduxDevice);
 
-    const { exchange, exchangeRate, transaction, userId, requireLatestFirmware } = initSwapRequest;
+    const { exchange, exchangeRate, transaction, requireLatestFirmware } = initSwapRequest;
 
     const { fromAccount, fromParentAccount, toAccount, toParentAccount } = exchange;
     const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
@@ -168,7 +167,6 @@ export const createAction = (
           exchangeRate,
           transaction,
           deviceId: device.deviceId,
-          userId,
         }),
       )
         .pipe(
@@ -187,7 +185,7 @@ export const createAction = (
       return () => {
         sub.unsubscribe();
       };
-    }, [exchange, exchangeRate, transaction, device, opened, hasError, userId]);
+    }, [exchange, exchangeRate, transaction, device, opened, hasError]);
 
     return {
       ...appState,

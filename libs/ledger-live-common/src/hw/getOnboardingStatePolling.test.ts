@@ -7,6 +7,7 @@ import {
   DeviceExtractOnboardingStateError,
   DisconnectedDevice,
   LockedDeviceError,
+  UnexpectedBootloader,
 } from "@ledgerhq/errors";
 import { withDevice } from "./deviceAccess";
 import getVersion from "./getVersion";
@@ -295,6 +296,33 @@ describe("getOnboardingStatePolling", () => {
       });
 
       jest.advanceTimersByTime(1);
+    });
+  });
+
+  describe("When the device is in bootloader mode", () => {
+    it("should throw an error so it is considered a fatal error", done => {
+      mockedGetVersion.mockResolvedValue({ ...aFirmwareInfo, isBootloader: true });
+
+      const device = aDevice;
+
+      onboardingStatePollingSubscription = getOnboardingStatePolling({
+        deviceId: device.deviceId,
+        pollingPeriodMs,
+      }).subscribe({
+        next: value => {
+          done(`It should have thrown an error. Received value: ${JSON.stringify(value)}`);
+        },
+        error: error => {
+          try {
+            expect(error).toBeInstanceOf(UnexpectedBootloader);
+            done();
+          } catch (expectError) {
+            done(expectError);
+          }
+        },
+      });
+
+      jest.advanceTimersByTime(pollingPeriodMs - 1);
     });
   });
 });

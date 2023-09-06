@@ -133,7 +133,13 @@ export default function RevokeSummary({ navigation, route }: Props) {
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="CeloRevoke" name="Summary" />
+      <TrackScreen
+        category="CeloRevoke"
+        name="Summary"
+        flow="stake"
+        action="revoke"
+        currency="celo"
+      />
 
       <View style={styles.body}>
         <View style={styles.summary}>

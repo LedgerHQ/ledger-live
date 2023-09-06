@@ -1,0 +1,192 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`coreum currency bridge scanAccounts coreum seed 1 1`] = `
+Array [
+  Object {
+    "balance": "966840",
+    "currencyId": "coreum",
+    "derivationMode": "",
+    "freshAddress": "core10l6h3qw05u7qduqgafj8wlrx3fjhr852z7r5l2",
+    "freshAddressPath": "44'/118'/0'/0/0",
+    "freshAddresses": Array [
+      Object {
+        "address": "core10l6h3qw05u7qduqgafj8wlrx3fjhr852z7r5l2",
+        "derivationPath": "44'/118'/0'/0/0",
+      },
+    ],
+    "id": "js:2:coreum:core10l6h3qw05u7qduqgafj8wlrx3fjhr852z7r5l2:",
+    "index": 0,
+    "name": "Coreum 1",
+    "nfts": undefined,
+    "pendingOperations": Array [],
+    "seedIdentifier": "03633639c689420031c73c1157975ea734e22eae588045a96fc9495d28aba3f0d1",
+    "spendableBalance": "666840",
+    "starred": false,
+    "swapHistory": Array [],
+    "syncHash": undefined,
+    "unitMagnitude": 6,
+    "used": true,
+    "xpub": "core10l6h3qw05u7qduqgafj8wlrx3fjhr852z7r5l2",
+  },
+  Object {
+    "balance": "1000000",
+    "currencyId": "coreum",
+    "derivationMode": "",
+    "freshAddress": "core1sel9ys8a7jlsmrxp9692zfjncnmhxkws0qr3g9",
+    "freshAddressPath": "44'/118'/1'/0/0",
+    "freshAddresses": Array [
+      Object {
+        "address": "core1sel9ys8a7jlsmrxp9692zfjncnmhxkws0qr3g9",
+        "derivationPath": "44'/118'/1'/0/0",
+      },
+    ],
+    "id": "js:2:coreum:core1sel9ys8a7jlsmrxp9692zfjncnmhxkws0qr3g9:",
+    "index": 1,
+    "name": "Coreum 2",
+    "nfts": undefined,
+    "pendingOperations": Array [],
+    "seedIdentifier": "03633639c689420031c73c1157975ea734e22eae588045a96fc9495d28aba3f0d1",
+    "spendableBalance": "1000000",
+    "starred": false,
+    "swapHistory": Array [],
+    "syncHash": undefined,
+    "unitMagnitude": 6,
+    "used": true,
+    "xpub": "core1sel9ys8a7jlsmrxp9692zfjncnmhxkws0qr3g9",
+  },
+  Object {
+    "balance": "0",
+    "currencyId": "coreum",
+    "derivationMode": "",
+    "freshAddress": "core1mdj6j89ev4yfelv3kqn7prj4h92er5zlxssxwk",
+    "freshAddressPath": "44'/118'/2'/0/0",
+    "freshAddresses": Array [
+      Object {
+        "address": "core1mdj6j89ev4yfelv3kqn7prj4h92er5zlxssxwk",
+        "derivationPath": "44'/118'/2'/0/0",
+      },
+    ],
+    "id": "js:2:coreum:core1mdj6j89ev4yfelv3kqn7prj4h92er5zlxssxwk:",
+    "index": 2,
+    "name": "Coreum 3",
+    "nfts": undefined,
+    "pendingOperations": Array [],
+    "seedIdentifier": "03633639c689420031c73c1157975ea734e22eae588045a96fc9495d28aba3f0d1",
+    "spendableBalance": "0",
+    "starred": false,
+    "swapHistory": Array [],
+    "syncHash": undefined,
+    "unitMagnitude": 6,
+    "used": false,
+    "xpub": "core1mdj6j89ev4yfelv3kqn7prj4h92er5zlxssxwk",
+  },
+]
+`;
+
+exports[`coreum currency bridge scanAccounts coreum seed 1 2`] = `
+Array [
+  Array [
+    Object {
+      "accountId": "js:2:coreum:core10l6h3qw05u7qduqgafj8wlrx3fjhr852z7r5l2:",
+      "blockHash": null,
+      "blockHeight": "6306505",
+      "contract": undefined,
+      "extra": Object {
+        "memo": "Ledger Live",
+        "validators": Array [
+          Object {
+            "address": "corevaloper1ll9gdh5ur6gyv6swgshcm4zkkw4ttakt0zghmr",
+            "amount": "300000",
+          },
+        ],
+      },
+      "fee": "14280",
+      "hash": "08303E7722D24EA4660DF93EA7170090AAAD4B884284FFE6EE8CA67C9B0D1957",
+      "id": "js:2:coreum:core10l6h3qw05u7qduqgafj8wlrx3fjhr852z7r5l2:-08303E7722D24EA4660DF93EA7170090AAAD4B884284FFE6EE8CA67C9B0D1957-DELEGATE",
+      "operator": undefined,
+      "recipients": Array [],
+      "senders": Array [],
+      "standard": undefined,
+      "tokenId": undefined,
+      "transactionSequenceNumber": 1,
+      "type": "DELEGATE",
+      "value": "14280",
+    },
+    Object {
+      "accountId": "js:2:coreum:core10l6h3qw05u7qduqgafj8wlrx3fjhr852z7r5l2:",
+      "blockHash": null,
+      "blockHeight": "6306437",
+      "contract": undefined,
+      "extra": Object {
+        "memo": "lb",
+      },
+      "fee": "8880",
+      "hash": "0B17FF19A1E8DC703A3AEC457B414DE88845DD76BB4D95F8F6368F68D59248DF",
+      "id": "js:2:coreum:core10l6h3qw05u7qduqgafj8wlrx3fjhr852z7r5l2:-0B17FF19A1E8DC703A3AEC457B414DE88845DD76BB4D95F8F6368F68D59248DF-OUT",
+      "operator": undefined,
+      "recipients": Array [
+        "core1sel9ys8a7jlsmrxp9692zfjncnmhxkws0qr3g9",
+      ],
+      "senders": Array [
+        "core10l6h3qw05u7qduqgafj8wlrx3fjhr852z7r5l2",
+      ],
+      "standard": undefined,
+      "tokenId": undefined,
+      "transactionSequenceNumber": 0,
+      "type": "OUT",
+      "value": "1008880",
+    },
+    Object {
+      "accountId": "js:2:coreum:core10l6h3qw05u7qduqgafj8wlrx3fjhr852z7r5l2:",
+      "blockHash": null,
+      "blockHeight": "6306340",
+      "contract": undefined,
+      "extra": Object {
+        "memo": "Lc",
+      },
+      "fee": "10000",
+      "hash": "B128DC8C3D820F0832BEBD81045FA65ABFDC88FB83246B37E3F1298AF3DE778A",
+      "id": "js:2:coreum:core10l6h3qw05u7qduqgafj8wlrx3fjhr852z7r5l2:-B128DC8C3D820F0832BEBD81045FA65ABFDC88FB83246B37E3F1298AF3DE778A-IN",
+      "operator": undefined,
+      "recipients": Array [
+        "core10l6h3qw05u7qduqgafj8wlrx3fjhr852z7r5l2",
+      ],
+      "senders": Array [
+        "core1lptvx486j7630632q3ah0dwq20ghdrpxm3la9n",
+      ],
+      "standard": undefined,
+      "tokenId": undefined,
+      "transactionSequenceNumber": 0,
+      "type": "IN",
+      "value": "1990000",
+    },
+  ],
+  Array [
+    Object {
+      "accountId": "js:2:coreum:core1sel9ys8a7jlsmrxp9692zfjncnmhxkws0qr3g9:",
+      "blockHash": null,
+      "blockHeight": "6306437",
+      "contract": undefined,
+      "extra": Object {
+        "memo": "lb",
+      },
+      "fee": "8880",
+      "hash": "0B17FF19A1E8DC703A3AEC457B414DE88845DD76BB4D95F8F6368F68D59248DF",
+      "id": "js:2:coreum:core1sel9ys8a7jlsmrxp9692zfjncnmhxkws0qr3g9:-0B17FF19A1E8DC703A3AEC457B414DE88845DD76BB4D95F8F6368F68D59248DF-IN",
+      "operator": undefined,
+      "recipients": Array [
+        "core1sel9ys8a7jlsmrxp9692zfjncnmhxkws0qr3g9",
+      ],
+      "senders": Array [
+        "core10l6h3qw05u7qduqgafj8wlrx3fjhr852z7r5l2",
+      ],
+      "standard": undefined,
+      "tokenId": undefined,
+      "transactionSequenceNumber": 0,
+      "type": "IN",
+      "value": "1000000",
+    },
+  ],
+  Array [],
+]
+`;

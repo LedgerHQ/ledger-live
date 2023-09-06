@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { rgba } from "~/renderer/styles/helpers";
 import Box from "~/renderer/components/Box";
 import { createStructuredSelector } from "reselect";
-import { TFunction } from "react-i18next";
+import { TFunction } from "i18next";
 import { AccountLike, Account, Operation } from "@ledgerhq/types-live";
 import {
   getAccountCurrency,
@@ -47,6 +47,7 @@ type OwnProps = {
   withAccount?: boolean;
   withAddress?: boolean;
   text?: string;
+  editable?: boolean;
 };
 type Props = {
   confirmationsNb: number;
@@ -72,6 +73,7 @@ class OperationComponent extends PureComponent<Props> {
       text,
       withAddress,
       confirmationsNb,
+      editable,
     } = this.props;
     const isOptimistic = operation.blockHeight === null;
     const currency = getAccountCurrency(account);
@@ -91,7 +93,7 @@ class OperationComponent extends PureComponent<Props> {
           t={t}
           isConfirmed={isConfirmed}
         />
-        <DateCell text={text} operation={operation} t={t} />
+        <DateCell text={text} operation={operation} editable={editable} t={t} />
         {withAccount && <AccountCell accountName={getAccountName(account)} currency={currency} />}
         {withAddress ? <AddressCell operation={operation} /> : <Box flex="1" />}
         <AmountCell

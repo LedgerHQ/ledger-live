@@ -8,8 +8,8 @@ import { useTranslation } from "react-i18next";
 import { Result } from "./Result";
 
 interface Props {
-  categories: Pick<Categories, "categories" | "setSelected">;
-  search: Pick<SearchType, "input" | "onChange" | "result">;
+  categories: Pick<Categories, "manifests" | "categories" | "setSelected" | "selected">;
+  search: Pick<SearchType, "input" | "onChange" | "result" | "isSearching">;
   disclaimer: Pick<DisclaimerRaw, "onSelect">;
 }
 
@@ -21,7 +21,7 @@ export function Browse({ categories, search, disclaimer }: Props) {
       <SectionHeader iconLeft="Globe">{t("platform.catalog.section.browse")}</SectionHeader>
 
       <Search categories={categories} search={search} />
-      <Result search={search} disclaimer={disclaimer} />
+      <Result categories={categories} search={search} disclaimer={disclaimer} />
     </Flex>
   );
 }

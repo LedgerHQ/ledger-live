@@ -9,6 +9,7 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
 import Markdown, { Notes } from "~/renderer/components/Markdown";
+
 type Props = {
   onClose?: () => void | undefined;
 };

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Subscription } from "rxjs";
 import { isEqual } from "lodash";
 import type { Device } from "../../hw/actions/types";
@@ -14,6 +14,7 @@ import { OnboardingState } from "../../hw/extractOnboardingState";
 
 export type UseOnboardingStatePollingResult = OnboardingStatePollingResult & {
   fatalError: Error | null;
+  resetStates: () => void;
 };
 
 export type UseOnboardingStatePollingDependencies = {
@@ -41,6 +42,7 @@ export type UseOnboardingStatePollingArgs = UseOnboardingStatePollingDependencie
  * - allowedError: any error that is allowed and does not stop the polling
  * - fatalError: any error that is fatal and stops the polling
  * - lockedDevice: a boolean set to true if the device is currently locked, false otherwise
+ * - resetStates: a function to reset the values of: onboardingState, allowedError, fatalError and lockedDevice
  */
 export const useOnboardingStatePolling = ({
   getOnboardingStatePolling = defaultGetOnboardingStatePolling,
@@ -115,7 +117,14 @@ export const useOnboardingStatePolling = ({
     getOnboardingStatePolling,
   ]);
 
-  return { onboardingState, allowedError, fatalError, lockedDevice };
+  const resetStates = useCallback(() => {
+    setOnboardingState(null);
+    setAllowedError(null);
+    setFatalError(null);
+    setLockedDevice(false);
+  }, []);
+
+  return { onboardingState, allowedError, fatalError, lockedDevice, resetStates };
 };
 
 const getNewOnboardingStateIfChanged = (

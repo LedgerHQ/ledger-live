@@ -4,8 +4,9 @@ import { AppPlatform, LiveAppManifest, Loadable } from "../../types";
 
 import api from "./api";
 import { FilterParams } from "../../filters";
-import { getEnv } from "../../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import useIsMounted from "../../../hooks/useIsMounted";
+import { AppManifest, Visibility } from "../../../wallet-api/types";
 
 const initialState: Loadable<LiveAppRegistry> = {
   isLoading: false,
@@ -60,20 +61,28 @@ export function useRemoteLiveAppContext(): LiveAppContextType {
   return useContext(liveAppContext);
 }
 
-export function useManifests(options: Partial<LiveAppManifest> = {}): LiveAppManifest[] {
+export function useManifests(
+  options: Partial<Omit<AppManifest, "visibility"> & { visibility: Visibility[] }> = {},
+): AppManifest[] {
   const ctx = useRemoteLiveAppContext();
 
-  const filteredList = useMemo(() => {
+  return useMemo(() => {
     const liveAppFiltered = ctx.state?.value?.liveAppFiltered ?? [];
     if (Object.keys(options).length === 0) {
       return liveAppFiltered;
     }
 
     return liveAppFiltered.filter(manifest =>
-      Object.keys(options).some(key => manifest[key] === options[key]),
+      Object.entries(options).some(([key, val]) => {
+        switch (key) {
+          case "visibility":
+            return (val as Visibility[]).includes(manifest[key]);
+          default:
+            return manifest[key] === val;
+        }
+      }),
     );
   }, [options, ctx]);
-  return filteredList;
 }
 
 export function RemoteLiveAppProvider({

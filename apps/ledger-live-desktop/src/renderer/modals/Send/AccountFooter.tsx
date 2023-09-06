@@ -13,6 +13,7 @@ import { CurrencyCircleIcon } from "~/renderer/components/CurrencyBadge";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Label from "~/renderer/components/Label";
 import CounterValue from "~/renderer/components/CounterValue";
+import { getLLDCoinFamily } from "~/renderer/families";
 type Props = {
   account: AccountLike;
   parentAccount?: Account | undefined | null;
@@ -23,7 +24,13 @@ const AccountFooter = ({ account, parentAccount, status }: Props) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const feesCurrency = getFeesCurrency(mainAccount);
   const feesUnit = getFeesUnit(feesCurrency);
-  return (
+
+  const cryptoCurrency = mainAccount.currency;
+  const specific = cryptoCurrency ? getLLDCoinFamily(cryptoCurrency.family) : null;
+  const SpecificComponent = specific?.AccountFooter;
+  return SpecificComponent ? (
+    <SpecificComponent account={account} parentAccount={parentAccount} status={status} />
+  ) : (
     <>
       <CurrencyCircleIcon size={40} currency={currency} />
       <Box grow>

@@ -63,7 +63,7 @@ function AccountHeader({
   const onBackButtonPress = useCallback(() => {
     track("button_clicked", {
       button: "Back",
-      screen: "Account",
+      page: "Account",
     });
     navigation.goBack();
   }, [navigation]);

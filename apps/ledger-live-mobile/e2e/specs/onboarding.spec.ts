@@ -1,5 +1,4 @@
 import { expect } from "detox";
-import { waitForElementByText } from "../helpers";
 import OnboardingSteps from "../models/onboarding/onboardingSteps";
 import PortfolioPage from "../models/wallet/portfolioPage";
 
@@ -16,30 +15,16 @@ describe("Onboarding", () => {
     await onboardingSteps.startOnboarding();
   });
 
-  it("selects already owned nano", async () => {
-    await onboardingSteps.DoIOwnDevice(true);
+  it("selects to access wallet", async () => {
+    await onboardingSteps.chooseToAccessYourWallet();
   });
 
-  it("goes to setup my ledger nano", async () => {
-    await onboardingSteps.chooseToSetupLedger();
-    await waitForElementByText("Ledger\u00A0Nano\u00A0X");
-  });
-
-  it("chooses Nano X", async () => {
-    await onboardingSteps.selectYourDevice("Ledger\u00A0Nano\u00A0X");
-  });
-
-  it("connects to Nano X", async () => {
-    await onboardingSteps.chooseToConnectYourNano();
-    await onboardingSteps.verifyContentsOfBoxAreChecked();
+  it("chooses to connect Ledger", async () => {
+    await onboardingSteps.chooseToConnectYourLedger();
   });
 
   it("choses to Pair Nano", async () => {
     await onboardingSteps.chooseToPairMyNano();
-  });
-
-  it("selects Pair with Bluetooth", async () => {
-    await onboardingSteps.selectPairWithBluetooth();
   });
 
   it("adds device via Bluetooth", async () => {

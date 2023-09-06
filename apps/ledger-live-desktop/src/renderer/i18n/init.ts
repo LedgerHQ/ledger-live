@@ -1,11 +1,13 @@
-import i18n from "i18next";
+import i18n, { InitOptions } from "i18next";
 import { initReactI18next } from "react-i18next";
-import locales from ".";
-const config = {
+import locales, { i18_DEFAULT_NAMESPACE } from ".";
+import { DEFAULT_LANGUAGE } from "~/config/languages";
+
+const config: InitOptions = {
   resources: locales,
-  lng: "en",
-  defaultNS: "app",
-  fallbackLng: "en",
+  lng: DEFAULT_LANGUAGE.id,
+  defaultNS: i18_DEFAULT_NAMESPACE,
+  fallbackLng: DEFAULT_LANGUAGE.id,
   interpolation: {
     escapeValue: false,
   },
@@ -14,5 +16,7 @@ const config = {
     useSuspense: false,
   },
 };
+
 i18n.use(initReactI18next).init(config);
+
 export default i18n;

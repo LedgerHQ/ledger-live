@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-solana",
-  "version": "7.0.9",
+  "version": "7.0.13",
   "description": "Ledger Hardware Wallet Solana Application API",
   "keywords": [
     "Ledger",
@@ -38,7 +38,7 @@
     "@types/jest": "^29.5.0",
     "@types/node": "^18.15.3",
     "axios": "^0.26.1",
-    "documentation": "13.2.4",
+    "documentation": "13.2.5",
     "jest": "^28.1.1",
     "rimraf": "^4.4.1",
     "source-map-support": "^0.5.21",

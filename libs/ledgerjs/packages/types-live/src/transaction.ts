@@ -12,10 +12,10 @@ export type SignedOperation = {
   operation: Operation;
   // usually the device signature hex OR anything that is needed to broadcast (can be an inline JSON)
   signature: string;
-  // sometimes a coin needs the raw object (it must be serializable)
-  signatureRaw?: Record<string, any>;
+  // sometimes a coin needs additional data along with the signature (it must be serializable)
+  rawData?: Record<string, unknown>;
   // date calculated as expiring
-  expirationDate: Date | null | undefined;
+  expirationDate?: Date;
 };
 
 /**
@@ -24,8 +24,8 @@ export type SignedOperation = {
 export type SignedOperationRaw = {
   operation: OperationRaw;
   signature: string;
-  signatureRaw?: Record<string, any>;
-  expirationDate: string | null | undefined;
+  rawData?: Record<string, unknown>;
+  expirationDate?: string;
 };
 
 /**

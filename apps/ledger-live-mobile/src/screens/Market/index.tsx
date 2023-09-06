@@ -8,7 +8,7 @@ import {
   Icon,
   ScrollContainer,
   InfiniteLoader,
-  Icons,
+  IconsLegacy,
 } from "@ledgerhq/native-ui";
 import { useDispatch, useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
@@ -19,6 +19,7 @@ import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
 import { useRoute, useFocusEffect } from "@react-navigation/native";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import {
   marketFilterByStarredAccountsSelector,
   starredMarketCoinsSelector,
@@ -147,7 +148,7 @@ const BottomSection = ({ navigation }: { navigation: NavigationProps["navigation
     >
       <TrackScreen category="Page" name={"Market"} access={true} />
 
-      <TouchableOpacity onPress={toggleFilterByStarredAccounts}>
+      <TouchableOpacity onPress={toggleFilterByStarredAccounts} testID="starred">
         <Badge bg={filterByStarredAccount ? "primary.c80" : "neutral.c30"}>
           <Icon
             name={filterByStarredAccount ? "StarSolid" : "Star"}
@@ -163,10 +164,10 @@ const BottomSection = ({ navigation }: { navigation: NavigationProps["navigation
         )}
         Icon={
           top100
-            ? Icons.GraphGrowMedium
+            ? IconsLegacy.GraphGrowMedium
             : order === "asc"
-            ? Icons.ArrowTopMedium
-            : Icons.ArrowBottomMedium
+            ? IconsLegacy.ArrowTopMedium
+            : IconsLegacy.ArrowBottomMedium
         }
         value={top100 ? "top100" : `${orderBy}_${order}`}
         options={[
@@ -264,6 +265,7 @@ export default function Market({ navigation }: NavigationProps) {
   const { isConnected } = useNetInfo();
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
   const filterByStarredAccount: boolean = useSelector(marketFilterByStarredAccountsSelector);
+  const ptxEarnFeature = useFeature("ptxEarn");
 
   useProviders();
 
@@ -423,6 +425,26 @@ export default function Market({ navigation }: NavigationProps) {
     [isLoading],
   );
 
+  const MarketHeader = useCallback(
+    () =>
+      ptxEarnFeature?.enabled ? (
+        <Flex px={6} pt={6}>
+          <SearchHeader search={search} refresh={refresh} />
+          <BottomSection navigation={navigation} />
+        </Flex>
+      ) : (
+        <Flex px={6}>
+          <Text my={3} variant="h4" fontWeight="semiBold">
+            {t("market.title")}
+          </Text>
+
+          <SearchHeader search={search} refresh={refresh} />
+          <BottomSection navigation={navigation} />
+        </Flex>
+      ),
+    [ptxEarnFeature?.enabled, t, refresh, search, navigation],
+  );
+
   const [refreshControlVisible, setRefreshControlVisible] = useState(false);
 
   const handlePullToRefresh = useCallback(() => {
@@ -458,13 +480,7 @@ export default function Market({ navigation }: NavigationProps) {
       mt={insets.top}
       bg="background.main"
     >
-      <Flex px={6}>
-        <Text my={3} variant="h4" fontWeight="semiBold">
-          {t("market.title")}
-        </Text>
-        <SearchHeader search={search} refresh={refresh} />
-        <BottomSection navigation={navigation} />
-      </Flex>
+      <MarketHeader />
 
       <FlatList
         contentContainerStyle={{

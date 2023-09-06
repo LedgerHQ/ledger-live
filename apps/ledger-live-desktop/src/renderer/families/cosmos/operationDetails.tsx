@@ -7,6 +7,7 @@ import { mapDelegationInfo } from "@ledgerhq/live-common/families/cosmos/logic";
 import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
 import {
   CosmosAccount,
+  CosmosOperation,
   CosmosDelegationInfo,
   CosmosValidatorItem,
 } from "@ledgerhq/live-common/families/cosmos/types";
@@ -45,6 +46,7 @@ function getURLFeesInfo({
     return cryptoFactory(currencyId).stakingDocUrl;
   }
 }
+
 function getURLWhatIsThis({
   op,
   currencyId,
@@ -56,6 +58,7 @@ function getURLWhatIsThis({
     return cryptoFactory(currencyId).stakingDocUrl;
   }
 }
+
 export const redirectAddress = (currency: CryptoCurrency, address: string) => () => {
   const url = getAddressExplorer(getDefaultExplorerView(currency), address);
   if (url) openURL(url);
@@ -70,6 +73,7 @@ type OperationDetailsDelegationProps = {
   isTransactionField?: boolean;
   validators: CosmosValidatorItem[];
 };
+
 export const OperationDetailsDelegation = ({
   unit,
   currency,
@@ -116,15 +120,16 @@ export const OperationDetailsDelegation = ({
 };
 
 const OperationDetailsExtra = ({
-  extra,
+  operation,
   type,
   account,
-}: OperationDetailsExtraProps<CosmosAccount>) => {
+}: OperationDetailsExtraProps<CosmosAccount, CosmosOperation>) => {
   const unit = getAccountUnit(account);
   const currency = getAccountCurrency(account);
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   const currencyId = account.currency.id;
+  const { extra } = operation;
   const { validators: cosmosValidators } = useCosmosFamilyPreloadData(currencyId);
   const getValidatorName = (address: string): string => {
     return cosmosValidators.find(v => v.validatorAddress === address)?.name || address;
@@ -162,23 +167,28 @@ const OperationDetailsExtra = ({
   if (currency.type === "CryptoCurrency") {
     switch (type) {
       case "DELEGATE": {
-        const { validators: delegations } = extra;
-        if (!delegations || !delegations.length) return <>{OpDetails}</>;
-        return (
+        const { validators } = extra;
+        return !validators || !validators.length ? null : (
           <OperationDetailsDelegation
             discreet={discreet}
             unit={unit}
             currency={currency}
-            delegations={delegations}
+            delegations={validators}
             account={account}
             validators={cosmosValidators}
           />
         );
       }
       case "UNDELEGATE": {
-        const validator = extra.validators[0];
+        const { validators } = extra;
+        if (!validators || !validators.length) return <>{OpDetails}</>;
+        const validator = validators[0];
         const formattedValidator = getValidatorName(validator.address);
-        const formattedAmount = formatCurrencyUnit(unit, BigNumber(validator.amount), formatConfig);
+        const formattedAmount = formatCurrencyUnit(
+          unit,
+          new BigNumber(validator.amount),
+          formatConfig,
+        );
         ret = (
           <>
             <B />
@@ -204,12 +214,16 @@ const OperationDetailsExtra = ({
         break;
       }
       case "REDELEGATE": {
-        const { sourceValidator } = extra;
-        if (!sourceValidator) return <>{OpDetails}</>;
-        const validator = extra.validators[0];
+        const { sourceValidator, validators } = extra;
+        if (!sourceValidator || !validators) return <>{OpDetails}</>;
+        const validator = validators[0];
         const formattedValidator = getValidatorName(validator.address);
         const formattedSourceValidator = getValidatorName(sourceValidator);
-        const formattedAmount = formatCurrencyUnit(unit, BigNumber(validator.amount), formatConfig);
+        const formattedAmount = formatCurrencyUnit(
+          unit,
+          new BigNumber(validator.amount),
+          formatConfig,
+        );
         ret = (
           <>
             <B />
@@ -247,7 +261,7 @@ const OperationDetailsExtra = ({
       }
       case "REWARD": {
         const { validators } = extra;
-        ret = (
+        ret = !validators ? null : (
           <>
             <OpDetailsSection>
               <OpDetailsTitle>
@@ -289,11 +303,14 @@ const OperationDetailsExtra = ({
   );
 };
 
-const RedelegateAmountCell = ({ operation, currency, unit }: AmountCellExtraProps) => {
-  const amount =
-    operation.extra && operation.extra.validators
-      ? BigNumber(operation.extra.validators[0].amount)
-      : BigNumber(0);
+const RedelegateAmountCell = ({
+  operation,
+  currency,
+  unit,
+}: AmountCellExtraProps<CosmosOperation>) => {
+  const amount = operation.extra.validators?.length
+    ? new BigNumber(operation.extra.validators[0].amount)
+    : new BigNumber(0);
   return !amount.isZero() ? (
     <>
       <FormattedVal val={amount} unit={unit} showCode fontSize={4} color={"palette.text.shade80"} />
@@ -308,11 +325,14 @@ const RedelegateAmountCell = ({ operation, currency, unit }: AmountCellExtraProp
     </>
   ) : null;
 };
-const UndelegateAmountCell = ({ operation, currency, unit }: AmountCellExtraProps) => {
-  const amount =
-    operation.extra && operation.extra.validators
-      ? BigNumber(operation.extra.validators[0].amount)
-      : BigNumber(0);
+const UndelegateAmountCell = ({
+  operation,
+  currency,
+  unit,
+}: AmountCellExtraProps<CosmosOperation>) => {
+  const amount = operation.extra.validators?.length
+    ? new BigNumber(operation.extra.validators[0].amount)
+    : new BigNumber(0);
   return !amount.isZero() ? (
     <>
       <FormattedVal val={amount} unit={unit} showCode fontSize={4} color={"palette.text.shade80"} />

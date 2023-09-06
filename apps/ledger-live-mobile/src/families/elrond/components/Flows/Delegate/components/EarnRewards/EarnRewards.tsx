@@ -61,7 +61,13 @@ const EarnRewards = (props: EarnRewardsPropsType) => {
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
       <NavigationScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
-        <TrackScreen category="DelegationFlow" name="Started" />
+        <TrackScreen
+          category="DelegationFlow"
+          name="Started"
+          flow="stake"
+          action="delegate"
+          currency="egld"
+        />
         <IlluRewards style={styles.rewards} />
 
         <LText semiBold style={styles.description}>
@@ -71,7 +77,7 @@ const EarnRewards = (props: EarnRewardsPropsType) => {
         <BulletList
           Bullet={BulletGreenCheck}
           list={bulletList.map(item => (
-            <LText semiBold={true}>
+            <LText semiBold={true} key={item}>
               <Trans i18nKey={item} />
             </LText>
           ))}

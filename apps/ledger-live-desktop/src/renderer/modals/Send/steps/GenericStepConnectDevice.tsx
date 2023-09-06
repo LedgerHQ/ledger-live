@@ -8,7 +8,7 @@ import { createAction } from "@ledgerhq/live-common/hw/actions/transaction";
 import { useBroadcast } from "~/renderer/hooks/useBroadcast";
 import { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker";
 import { closeModal } from "~/renderer/actions/modals";

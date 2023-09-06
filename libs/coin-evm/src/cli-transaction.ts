@@ -1,8 +1,7 @@
-import { NetworkRequestCall } from "@ledgerhq/coin-framework/network";
-import { LRUCacheFn } from "@ledgerhq/coin-framework/cache";
+/* istanbul ignore file: untested because empty */
 
 // Needed by sync-families-dispatch script
 // libs/ledger-live-common/scripts/sync-families-dispatch.mjs
-export default function makeCliTools(_network: NetworkRequestCall, _cache: LRUCacheFn) {
+export default function makeCliTools() {
   return {};
 }

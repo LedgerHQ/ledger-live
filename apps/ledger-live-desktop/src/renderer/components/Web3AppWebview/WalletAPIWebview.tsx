@@ -143,6 +143,15 @@ function useUiHook(manifest: AppManifest): Partial<UiHook> {
           }),
         );
       },
+      "device.select": ({ appName, onSuccess, onCancel }) => {
+        dispatch(
+          openModal("MODAL_CONNECT_DEVICE", {
+            appName,
+            onResult: onSuccess,
+            onCancel,
+          }),
+        );
+      },
       "exchange.start": ({ exchangeType, onSuccess, onCancel }) => {
         dispatch(
           openModal("MODAL_PLATFORM_EXCHANGE_START", {
@@ -286,7 +295,7 @@ function useWebView({ manifest }: Pick<Props, "manifest">, webviewRef: RefObject
 
 interface Props {
   manifest: AppManifest;
-  inputs?: Record<string, string>;
+  inputs?: Record<string, string | undefined>;
 }
 
 export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(

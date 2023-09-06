@@ -2,9 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Flex, InfiniteLoader } from "@ledgerhq/native-ui";
-import { createAction } from "@ledgerhq/live-common/hw/actions/staxRemoveImage";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import removeImage from "@ledgerhq/live-common/hw/staxRemoveImage";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { ImageDoesNotExistOnDevice } from "@ledgerhq/live-common/errors";
 import { NavigatorName, ScreenName } from "../../const";
@@ -15,8 +13,7 @@ import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigato
 import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { TrackScreen } from "../../analytics";
 import DeviceAction from "../DeviceAction";
-
-const action = createAction(removeImage);
+import { useStaxRemoveImageDeviceAction } from "../../hooks/deviceActions";
 
 const analyticsDrawerName = "Choose an image to set as your Stax lockscreen";
 
@@ -117,6 +114,8 @@ const CustomImageBottomModal: React.FC<Props> = props => {
     },
     [setDeviceHasImage],
   );
+
+  const action = useStaxRemoveImageDeviceAction();
 
   return (
     <QueuedDrawer

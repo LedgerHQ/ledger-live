@@ -10,6 +10,7 @@ export class AddAccountModal extends Modal {
   readonly retryButton: Locator;
   readonly addMoreButton: Locator;
   readonly doneButton: Locator;
+  readonly accountsList: Locator;
 
   constructor(page: Page) {
     super(page);
@@ -17,6 +18,7 @@ export class AddAccountModal extends Modal {
     this.selectAccount = page.locator("text=Choose a crypto asset"); // FIXME: I need an id
     this.selectAccountInput = page.locator('[placeholder="Search"]'); // FIXME: I need an id
     this.addAccountsButton = page.locator("data-test-id=add-accounts-import-add-button");
+    this.accountsList = page.locator("data-test-id=add-accounts-step-import-accounts-list");
     this.retryButton = page.locator("data-test-id=add-accounts-import-retry-button");
     this.stopButton = page.locator("data-test-id=add-accounts-import-stop-button");
     this.addMoreButton = page.locator("data-test-id=add-accounts-finish-add-more-button");
@@ -31,6 +33,11 @@ export class AddAccountModal extends Modal {
 
   async addAccounts() {
     await this.addAccountsButton.click();
+  }
+
+  async getFirstAccountName() {
+    const firstAccountName = await this.accountsList.locator("input").first().inputValue();
+    return firstAccountName;
   }
 
   async done() {

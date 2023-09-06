@@ -15,7 +15,8 @@ const Layer = styled(animated.div)<{
   width: number;
   height: number;
 }>`
-  background-image: url("${p => p.image}");
+  // prettier-ignore
+  background-image: url('${p => p.image}');
   background-size: contain;
   background-position: center center;
   background-repeat: no-repeat;
@@ -122,7 +123,7 @@ const Slide = ({ id, url, path, title, description, image, imgs, onClickOnSlide 
       )}
       {image && (
         <Box mr={8}>
-          <Image resource={image} alt="" width={180} height={180} />
+          <Image resource={image} alt="" width={180} height={100} />
         </Box>
       )}
     </Wrapper>

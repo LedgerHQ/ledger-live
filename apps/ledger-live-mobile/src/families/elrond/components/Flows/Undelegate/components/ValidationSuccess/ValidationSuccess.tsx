@@ -64,7 +64,13 @@ const ValidationSuccess = (props: ValidationSuccessPropsType) => {
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="ElrondDelegation" name="ValidationSuccess" />
+      <TrackScreen
+        category="ElrondDelegation"
+        name="ValidationSuccess"
+        flow="stake"
+        action="undelegate"
+        currency="egld"
+      />
       <PreventNativeBack />
 
       <ValidateSuccess

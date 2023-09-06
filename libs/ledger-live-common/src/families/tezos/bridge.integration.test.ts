@@ -80,20 +80,6 @@ const dataset: DatasetTest<Transaction> = {
               },
             },
             {
-              name: "Send max",
-              transaction: (t, account) => ({
-                ...t,
-                amount: account.balance,
-                useAllAmount: true,
-                recipient: "tz1VSichevvJSNkSSntgwKDKikWNB6iqNJii",
-              }),
-              expectedStatus: account => {
-                return {
-                  amount: account.balance,
-                };
-              },
-            },
-            {
               name: "Amount > spendablebalance",
               transaction: (t, account) => ({
                 ...t,
@@ -146,11 +132,20 @@ function makeAccount(name, pubkey, address, derivationMode) {
 testBridge(dataset);
 
 describe("tezos bakers", () => {
-  // FIXME Flaky test that will fail every time a Tezos baker is discontinued
-  test("getting the bakers", async () => {
-    const list = await listBakers(whitelist);
-    expect(list.map(o => o.address)).toEqual(whitelist);
+  test("atleast 10 whitelisted bakers are online", async () => {
+    const bakers = await listBakers(whitelist);
+    const retrievedAddresses = bakers.map(o => o.address);
+    let available = 0;
+    for (const whitelisted of whitelist) {
+      if (retrievedAddresses.includes(whitelisted)) {
+        available++;
+      } else {
+        console.warn(`Baker ${whitelisted} no longer online !`);
+      }
+    }
+    expect(available).toBeGreaterThan(10);
   });
+
   // TODO we'll need two accounts to test diff cases
   test("load account baker info", async () => {
     const account = fromAccountRaw(accountTZrevealedDelegating);

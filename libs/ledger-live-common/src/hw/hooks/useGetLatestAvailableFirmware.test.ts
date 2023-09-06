@@ -1,7 +1,8 @@
 import { of } from "rxjs";
-import { FirmwareUpdateContext } from "@ledgerhq/types-live";
+import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { renderHook, act } from "@testing-library/react-hooks";
 import { aLatestFirmwareContextBuilder } from "../../mock/fixtures/aLatestFirmwareContext";
+import { aDeviceInfoBuilder } from "../../mock/fixtures/aDeviceInfo";
 import { getLatestAvailableFirmwareFromDeviceId } from "../getLatestAvailableFirmwareFromDeviceId";
 import { useGetLatestAvailableFirmware } from "./useGetLatestAvailableFirmware";
 
@@ -14,9 +15,11 @@ const mockedGetLatestAvailableFirmwareFromDeviceId = jest.mocked(
 
 describe("useGetLatestAvailableFirmware", () => {
   let aLatestFirmwareContext: FirmwareUpdateContext;
+  let aDeviceInfo: DeviceInfo;
 
   beforeEach(() => {
     aLatestFirmwareContext = aLatestFirmwareContextBuilder();
+    aDeviceInfo = aDeviceInfoBuilder();
   });
 
   afterEach(() => {
@@ -25,10 +28,11 @@ describe("useGetLatestAvailableFirmware", () => {
   });
 
   describe("When no new firmware update is available for a device", () => {
-    it("should notify the hook consumer that there is no latest available firmware", async () => {
+    it("should notify the hook consumer that there is no latest available firmware, and returns the device info", async () => {
       mockedGetLatestAvailableFirmwareFromDeviceId.mockReturnValue(
         of({
           firmwareUpdateContext: null,
+          deviceInfo: aDeviceInfo,
           lockedDevice: false,
           status: "done",
         }),
@@ -47,14 +51,16 @@ describe("useGetLatestAvailableFirmware", () => {
       expect(result.current.status).toEqual("no-available-firmware");
       expect(result.current.error).toBeNull();
       expect(result.current.latestFirmware).toBeNull();
+      expect(result.current.deviceInfo).toEqual(aDeviceInfo);
     });
   });
 
   describe("When a new firmware update is available for a device", () => {
-    it("should notify the hook consumer that there is a new latest available firmware", async () => {
+    it("should notify the hook consumer that there is a new latest available firmware, and return the device info", async () => {
       mockedGetLatestAvailableFirmwareFromDeviceId.mockReturnValue(
         of({
           firmwareUpdateContext: aLatestFirmwareContext,
+          deviceInfo: aDeviceInfo,
           lockedDevice: false,
           status: "done",
         }),
@@ -73,6 +79,7 @@ describe("useGetLatestAvailableFirmware", () => {
       expect(result.current.status).toEqual("available-firmware");
       expect(result.current.error).toBeNull();
       expect(result.current.latestFirmware).toEqual(aLatestFirmwareContext);
+      expect(result.current.deviceInfo).toEqual(aDeviceInfo);
     });
   });
 
@@ -81,6 +88,7 @@ describe("useGetLatestAvailableFirmware", () => {
       mockedGetLatestAvailableFirmwareFromDeviceId.mockReturnValue(
         of({
           firmwareUpdateContext: null,
+          deviceInfo: null,
           lockedDevice: true,
           status: "started",
         }),
@@ -101,6 +109,7 @@ describe("useGetLatestAvailableFirmware", () => {
       expect(result.current.status).toEqual("checking");
       expect(result.current.error).toBeNull();
       expect(result.current.latestFirmware).toBeNull();
+      expect(result.current.deviceInfo).toBeNull();
     });
   });
 });

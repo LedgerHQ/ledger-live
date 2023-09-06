@@ -15,15 +15,17 @@ import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-liv
 import type { Transaction } from "../types";
 import { getMainAccount } from "../../../account";
 import { formatCurrencyUnit } from "../../../currencies";
-import { makeAccountBridgeReceive } from "../../../bridge/mockHelpers";
-const receive = makeAccountBridgeReceive();
 import {
   scanAccounts,
   signOperation,
   broadcast,
   sync,
   isInvalidRecipient,
+  makeAccountBridgeReceive,
 } from "../../../bridge/mockHelpers";
+
+const receive = makeAccountBridgeReceive();
+
 const notCreatedAddresses: string[] = [];
 const multiSignAddresses: string[] = [];
 export function addNotCreatedStellarMockAddresses(addr: string) {

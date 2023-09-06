@@ -6,7 +6,7 @@ import { UpdateFetchFileFail } from "@ledgerhq/errors";
 import network from "@ledgerhq/live-network/network";
 import createAppUpdater from "./createAppUpdater";
 import pubKey from "./ledger-pubkey";
-import { UpdateDownloadedEvent } from "@ledgerhq/electron-updater";
+import { UpdateDownloadedEvent } from "electron-updater";
 
 export default async ({ feedURL, info }: { feedURL: string; info: UpdateDownloadedEvent }) => {
   const { version: updateVersion, path: filename, downloadedFile: filePath } = info;

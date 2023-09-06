@@ -37,6 +37,7 @@ import {
 import FirmwareUpdateBanner from "../../../components/FirmwareUpdateBanner";
 import CollapsibleHeaderFlatList from "../../../components/WalletTab/CollapsibleHeaderFlatList";
 import { WalletTabNavigatorStackParamList } from "../../../components/RootNavigator/types/WalletTabNavigator";
+import { UpdateStep } from "../../FirmwareUpdate";
 
 const maxAssetsToDisplay = 5;
 
@@ -97,7 +98,7 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
 
   const data = useMemo(
     () => [
-      <Box onLayout={onPortfolioCardLayout}>
+      <Box onLayout={onPortfolioCardLayout} key="GraphCardContainer">
         <GraphCardContainer
           counterValueCurrency={counterValueCurrency}
           portfolio={portfolio}
@@ -109,12 +110,12 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
       </Box>,
       ...(hasOrderedNano
         ? [
-            <Box mx={6} mt={7}>
+            <Box mx={6} mt={7} key="SetupDeviceBanner">
               <SetupDeviceBanner screen="Wallet" />
             </Box>,
           ]
         : []),
-      <Box background={colors.background.main} px={6} mt={6}>
+      <Box background={colors.background.main} px={6} mt={6} key="Assets">
         <Assets assets={assetsToDisplay} />
         <Button type="shade" size="large" outline mt={6} onPress={goToAssets}>
           {t("portfolio.seelAllAssets")}
@@ -137,6 +138,7 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
               }}
               screen="Wallet"
               {...IMAGE_PROPS_BIG_NANO}
+              key="BuyDeviceBanner"
             />,
           ]
         : []),
@@ -157,6 +159,13 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
 
   const { source, setSource, setScreen } = useContext(AnalyticsContext);
 
+  const onBackFromUpdate = useCallback(
+    (_updateState: UpdateStep) => {
+      navigation.goBack();
+    },
+    [navigation],
+  );
+
   useFocusEffect(
     useCallback(() => {
       setScreen && setScreen("Wallet");
@@ -170,7 +179,7 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
   return (
     <>
       <Flex px={6} py={4}>
-        <FirmwareUpdateBanner />
+        <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
       </Flex>
       <CheckLanguageAvailability />
       <CheckTermOfUseUpdate />
@@ -181,6 +190,7 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
         renderItem={({ item }: ListRenderItemInfo<unknown>) => item as JSX.Element}
         keyExtractor={(_: unknown, index: number) => String(index)}
         showsVerticalScrollIndicator={false}
+        testID="PortfolioReadOnlyList"
       />
     </>
   );

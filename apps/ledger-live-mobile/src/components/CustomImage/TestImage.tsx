@@ -4,7 +4,7 @@ import { Dimensions, Image, Pressable } from "react-native";
 import Alert from "../Alert";
 import { ProcessorPreviewResult, ProcessorRawResult } from "./ImageProcessor";
 import { fitImageContain } from "./imageUtils";
-import ResultDataTester from "./ResultDataTester";
+import ImageHexProcessor from "./ImageHexProcessor";
 
 type Props = {
   rawData: ProcessorRawResult;
@@ -90,7 +90,7 @@ const TestImage: React.FC<Props> = props => {
         Image reconstructed from raw data:
       </Text>
       {rawData && (
-        <ResultDataTester
+        <ImageHexProcessor
           {...rawData}
           onPreviewResult={handlePreviewResult}
           onError={handleError}

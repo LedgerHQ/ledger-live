@@ -42,11 +42,13 @@ const Item = ({
   imageProps,
   displayNavigationButtons = false,
   currentIndex,
+  testID,
 }: {
   title: string;
   imageProps: ImageProps;
   displayNavigationButtons?: boolean;
   currentIndex?: number;
+  testID?: string;
 }) => {
   const dispatch = useDispatch();
   const navigation = useNavigation<NavigationProp>();
@@ -59,7 +61,7 @@ const Item = ({
     (value: string) => {
       track("button_clicked", {
         button: value,
-        screen: screenName,
+        page: screenName,
       });
     },
     [screenName],
@@ -111,7 +113,14 @@ const Item = ({
         </Defs>
         <Rect x="0" y="0" width="100%" height="100%" fill="url(#myGradient)" />
       </Svg>
-      <Text variant="h4" style={{ fontSize: 40, lineHeight: 45 }} mx={7} mt={3} mb={10}>
+      <Text
+        variant="h4"
+        style={{ fontSize: 40, lineHeight: 45 }}
+        mx={7}
+        mt={3}
+        mb={10}
+        testID={testID}
+      >
         {title}
       </Text>
       <Box flex={1} alignItems={"center"} justifyContent={"flex-end"} overflow={"hidden"}>
@@ -119,7 +128,12 @@ const Item = ({
       </Box>
       {displayNavigationButtons && (
         <Box position={"absolute"} bottom={0} width={"100%"} px={6} pb={10}>
-          <Button onPress={pressExplore} type={"main"} mb={6}>
+          <Button
+            onPress={pressExplore}
+            type={"main"}
+            mb={6}
+            testID="discoverLive-exploreWithoutADevice"
+          >
             {t("onboarding.discoverLive.exploreWithoutADevice")}
           </Button>
           <Button onPress={pressBuy} type={"shade"} outline={true}>
@@ -189,6 +203,7 @@ function DiscoverLiveInfo() {
             }}
             displayNavigationButtons={slidesImages.length - 1 === index}
             currentIndex={currentIndex}
+            testID={`onboarding-discoverLive-${index}-title`}
           />
         ))}
       </Carousel>

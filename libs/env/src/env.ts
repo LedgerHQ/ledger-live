@@ -1,36 +1,31 @@
-// TODO: this file will be moved to a @ledgerhq/env library
-import mapValues from "lodash/mapValues";
 // set and get environment & config variables
 import { Subject } from "rxjs";
 import { $ElementType } from "utility-types";
-type EnvDef<V> = {
-  desc: string;
-  def: V;
-  parser: (arg0: unknown) => V | null | undefined;
-};
 // type ExtractEnvValue = <V>(arg0: EnvDef<V>) => V;
 type EnvDefs = typeof envDefinitions;
 type Env = typeof env;
+
+type EnvDef<T extends string> = T extends EnvName ? EnvDefs[T] : undefined;
+
 export type EnvName = keyof EnvDefs;
 export type EnvValue<Name extends EnvName> = $ElementType<Env, Name>;
 
-const intParser = (v: any): number | null | undefined => {
+const intParser = (v: any): number | undefined => {
   if (!Number.isNaN(v)) return parseInt(v, 10);
 };
 
-const floatParser = (v: any): number | null | undefined => {
+const floatParser = (v: any): number | undefined => {
   if (!Number.isNaN(v)) return parseFloat(v);
 };
 
-const boolParser = (v: unknown): boolean | null | undefined => {
+const boolParser = (v: unknown): boolean | undefined => {
   if (typeof v === "boolean") return v;
   return !(v === "0" || v === "false");
 };
 
-const stringParser = (v: unknown): string | null | undefined =>
-  typeof v === "string" ? v : undefined;
+const stringParser = (v: unknown): string | undefined => (typeof v === "string" ? v : undefined);
 
-type JSONValue = string | number | boolean | null | { [x: string]: JSONValue } | Array<JSONValue>;
+type JSONValue = string | number | boolean | { [x: string]: JSONValue } | Array<JSONValue>;
 
 const jsonParser = (v: unknown): JSONValue | undefined => {
   try {
@@ -41,12 +36,12 @@ const jsonParser = (v: unknown): JSONValue | undefined => {
   }
 };
 
-const stringArrayParser = (v: any): string[] | null | undefined => {
+const stringArrayParser = (v: unknown): string[] | undefined => {
   const v_array = typeof v === "string" ? v.split(",") : null;
   if (Array.isArray(v_array) && v_array.length > 0) return v_array;
 };
 
-const envDefinitions: Record<string, EnvDef<boolean | string | number | string[] | unknown>> = {
+const envDefinitions = {
   ADDRESS_POISONING_FAMILIES: {
     def: "ethereum,evm,tron",
     parser: stringParser,
@@ -61,6 +56,11 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     def: false,
     parser: boolParser,
     desc: "Show theme debug overlay UI",
+  },
+  API_ICP_ENDPOINT: {
+    def: "https://icp.coin.ledger.com/",
+    parser: stringParser,
+    desc: "Rosetta API for ICP",
   },
   API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT: {
     def: "https://algorand.coin.ledger.com",
@@ -107,6 +107,11 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     parser: stringParser,
     desc: "NEAR staking positions API",
   },
+  API_STACKS_ENDPOINT: {
+    parser: stringParser,
+    def: "https://stacks.coin.ledger.com",
+    desc: "Stacks API url",
+  },
   API_POLKADOT_INDEXER: {
     parser: stringParser,
     def: "https://polkadot.coin.ledger.com",
@@ -141,11 +146,6 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     def: false,
     parser: boolParser,
     desc: "Static fee for Stellar account",
-  },
-  API_OSMOSIS_NODE: {
-    def: "https://osmosis.coin.ledger.com/lcd",
-    parser: stringParser,
-    desc: "Endpoint for Osmosis Node",
   },
   API_TEZOS_BAKER: {
     parser: stringParser,
@@ -442,11 +442,6 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     parser: boolParser,
     desc: "enable sending to KT accounts. Not tested.",
   },
-  LIST_APPS_V2: {
-    def: false,
-    parser: boolParser,
-    desc: "use new version of list apps for My Ledger",
-  },
   MANAGER_API_BASE: {
     def: "https://manager.api.live.ledger.com/api",
     parser: stringParser,
@@ -462,6 +457,11 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     parser: intParser,
     desc: "defines the time to wait before installing apps to prevent known glitch (<=1.5.5) when chaining installs",
   },
+  MAPPING_SERVICE: {
+    def: "https://mapping-service.api.ledger.com",
+    parser: stringParser,
+    desc: "",
+  },
   MAX_ACCOUNT_NAME_SIZE: {
     def: 50,
     parser: intParser,
@@ -476,21 +476,6 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     def: "",
     parser: stringParser,
     desc: "switch the countervalues resolution into a MOCK mode for test purpose",
-  },
-  MOCK_SWAP_KYC: {
-    def: "",
-    parser: stringParser,
-    desc: "mock the server response for the exchange KYC check, options are 'open', 'pending', 'closed' or 'approved'.",
-  },
-  MOCK_SWAP_CHECK_QUOTE: {
-    def: "",
-    parser: stringParser,
-    desc: "mock the server response for the exchange check quote, options are 'RATE_VALID', 'KYC_FAILED', 'KYC_PENDING', 'KYC_UNDEFINED', 'KYC_UPGRADE_REQUIRED', 'MFA_REQUIRED', 'OVER_TRADE_LIMIT', 'UNKNOW_USER' or 'UNKNOWN_ERROR'.",
-  },
-  MOCK_SWAP_WIDGET_BASE_URL: {
-    def: "",
-    parser: stringParser,
-    desc: "mock the FTX swap widget base url",
   },
   /**
    * Note: the mocked cryptoassets config and test partner are signed with the
@@ -511,8 +496,13 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     parser: stringParser,
     desc: "if defined, overrides the os and version. format: os@version. Example: Windows_NT@6.1.7601",
   },
+  MOCK_NO_BYPASS: {
+    def: false,
+    parser: boolParser,
+    desc: "if defined, avoids bypass of the currentDevice in the store.",
+  },
   NFT_CURRENCIES: {
-    def: "ethereum,polygon",
+    def: "ethereum,polygon,ethereum_as_evm_test_only,polygon_as_evm_test_only",
     parser: stringParser,
     desc: "set the currencies where NFT is active",
   },
@@ -571,10 +561,27 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     parser: intParser,
     desc: "offset to be added to the speculos pid and avoid collision with other instances",
   },
+  /**
+   * It's just here as a backup, the REST API is supposed to be the right mode
+   * We can always fallback on the previous method if we need to.
+   * The websocket option is harmless, we can remove it at some point but let's
+   * keep it for a while just in case.
+   * Introduced on June 27th 2023 by https://github.com/LedgerHQ/ledger-live/pull/3824
+   */
+  SPECULOS_USE_WEBSOCKET: {
+    def: false,
+    parser: boolParser,
+    desc: "Use speculos websocket interface instead of Rest API",
+  },
   SWAP_API_BASE: {
     def: "https://swap.ledger.com/v4",
     parser: stringParser,
     desc: "Swap API base",
+  },
+  SWAP_API_BASE_V5: {
+    def: "https://swap-stg.ledger.com/v5",
+    parser: stringParser,
+    desc: "Swap API base staging version 5",
   },
   SYNC_ALL_INTERVAL: {
     def: 8 * 60 * 1000,
@@ -736,22 +743,72 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     parser: intParser,
     desc: "Time after which an optimisc operation is considered stuck",
   },
+  EDIT_TX_LEGACY_GASPRICE_GAP_SPEEDUP_FACTOR: {
+    def: 0.1,
+    parser: floatParser,
+    desc: "Speedup transaction gasprice gap factor for NON-EIP1559 for edit eth transaction feature",
+  },
+  EDIT_TX_LEGACY_GASPRICE_GAP_CANCEL_FACTOR: {
+    def: 0.3,
+    parser: floatParser,
+    desc: "Cancel transaction gasprice gap factor for NON-EIP1559 for edit eth transaction feature",
+  },
+  EDIT_TX_EIP1559_FEE_GAP_SPEEDUP_FACTOR: {
+    def: 0.1,
+    parser: floatParser,
+    desc: "Speedup transaction max priority fee gap factor for EIP1559 for edit eth transaction feature",
+  },
+  EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_CANCEL_FACTOR: {
+    def: 0.1,
+    parser: floatParser,
+    desc: "Cancel transaction max priority fee gap factor for EIP1559 for edit eth transaction feature",
+  },
+  EDIT_TX_EIP1559_MAXFEE_GAP_CANCEL_FACTOR: {
+    def: 0.3,
+    parser: floatParser,
+    desc: "Cancel transaction max fee gap factor for EIP1559 for edit eth transaction feature",
+  },
   ENABLE_NETWORK_LOGS: {
     def: false,
     parser: boolParser,
     desc: "Enable network request and responses logs. Errors are always logged",
   },
+  CRYPTO_ASSET_SEARCH_KEYS: {
+    def: ["ticker", "name", "keywords"],
+    parser: stringArrayParser,
+    desc: "Fuse search attributes to find a currency according to user input",
+  },
+  EDIT_TX_NON_EIP1559_GASPRICE_GAP_SPEEDUP_FACTOR: {
+    def: 0.1,
+    parser: floatParser,
+    desc: "Speedup transaction gasprice gap factor for NON-EIP1559 for edit eth transaction feature",
+  },
+  EDIT_TX_NON_EIP1559_GASPRICE_GAP_CANCEL_FACTOR: {
+    def: 0.3,
+    parser: floatParser,
+    desc: "Cancel transaction gasprice gap factor for NON-EIP1559 for edit eth transaction feature",
+  },
 };
 
-export const getDefinition = (name: string): EnvDef<any> | null | undefined => envDefinitions[name];
+export const getDefinition = (name: string): EnvDef<any> => {
+  if (name in envDefinitions) {
+    return envDefinitions[name];
+  }
+  return undefined;
+};
 
-envDefinitions as Record<EnvName, EnvDef<any>>;
-const defaults: Record<EnvName, any> = mapValues(envDefinitions, o => o.def) as unknown as Record<
-  EnvName,
-  any
->;
+const defaults = Object.keys(envDefinitions).reduce<{ [Key in EnvName]: EnvDefs[Key]["def"] }>(
+  (acc, curr) => {
+    return {
+      ...acc,
+      [curr]: envDefinitions[curr].def,
+    };
+  },
+  {} as { [Key in EnvName]: EnvDefs[Key]["def"] },
+);
+
 // private local state
-const env: Record<EnvName, any> = { ...defaults };
+const env = { ...defaults };
 export const getAllEnvNames = (): EnvName[] => Object.keys(envDefinitions) as EnvName[];
 export const getAllEnvs = (): Env => ({ ...env });
 // Usage: you must use getEnv at runtime because the env might be settled over time. typically will allow us to dynamically change them on the interface (e.g. some sort of experimental flags system)
@@ -780,7 +837,7 @@ export const setEnv = <Name extends EnvName>(name: Name, value: EnvValue<Name>):
   }
 };
 // change one environment with safety. returns true if it succeed
-export const setEnvUnsafe = (name: EnvName, unsafeValue: unknown): boolean => {
+export const setEnvUnsafe = (name: string, unsafeValue: unknown): boolean => {
   const definition = getDefinition(name);
   if (!definition) return false;
   const { parser } = definition;
@@ -791,7 +848,6 @@ export const setEnvUnsafe = (name: EnvName, unsafeValue: unknown): boolean => {
     return false;
   }
 
-  // $FlowFixMe flow don't seem to type proof it
-  setEnv(name, value);
+  setEnv(name as EnvName, value);
   return true;
 };

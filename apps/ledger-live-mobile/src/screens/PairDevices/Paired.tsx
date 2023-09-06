@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { Trans } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -6,8 +6,10 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Flex, IconBox, Text } from "@ledgerhq/native-ui";
 import { CheckAloneMedium } from "@ledgerhq/native-ui/assets/icons";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { TrackScreen } from "../../analytics";
+import { useSelector } from "react-redux";
+import { TrackScreen, track } from "../../analytics";
 import Button from "../../components/Button";
+import { onboardingTypeSelector } from "../../reducers/settings";
 
 type Props = {
   device: Device;
@@ -16,9 +18,18 @@ type Props = {
 };
 
 export default function Paired({ device, onContinue: onContinueProps }: Props) {
+  const onboardingType = useSelector(onboardingTypeSelector);
   const onContinue = useCallback(() => {
     onContinueProps(device);
   }, [onContinueProps, device]);
+
+  useEffect(() => {
+    if (onboardingType) {
+      track("Onboarding success", {
+        onboarding_type: onboardingType,
+      });
+    }
+  }, [onboardingType]);
 
   return (
     <Flex flexDirection={"column"} flex={1} justifyContent={"center"} mx={6}>
@@ -44,7 +55,13 @@ export default function Paired({ device, onContinue: onContinueProps }: Props) {
           values={getDeviceModel("nanoX" as DeviceModelId)}
         />
       </Text>
-      <Button event="PairDevicesContinue" type="main" onPress={onContinue} width={"100%"}>
+      <Button
+        event="PairDevicesContinue"
+        type="main"
+        onPress={onContinue}
+        width={"100%"}
+        testID="onboarding-paired-continue"
+      >
         <Trans i18nKey="PairDevices.Paired.action" />
       </Button>
     </Flex>

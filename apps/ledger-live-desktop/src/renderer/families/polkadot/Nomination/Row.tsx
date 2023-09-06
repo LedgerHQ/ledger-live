@@ -2,7 +2,6 @@ import React, { useCallback, useMemo } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import moment from "moment";
-import { Polkadot as PolkadotIdenticon } from "@polkadot/react-identicon/icons";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import {
@@ -19,6 +18,8 @@ import ClockIcon from "~/renderer/icons/Clock";
 import ExclamationCircle from "~/renderer/icons/ExclamationCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 import ExternalLink from "~/renderer/icons/ExternalLink";
+import Identicon from "@polkadot/react-identicon";
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -117,8 +118,7 @@ export function Row({
     <Wrapper>
       <ValidatorName onClick={onExternalLinkClick}>
         <Box mr={2}>
-          {/* @ts-expect-error issue in the underlying lib that unexpectedly have publicKey prop */}
-          <PolkadotIdenticon address={address} size={24} />
+          <Identicon value={address} size={24} theme="polkadot" />
         </Box>
         <ToolTip content={validator?.identity ? address : null}>
           <Ellipsis>{name}</Ellipsis>

@@ -23,8 +23,9 @@ import {
 } from "../actions/notifications";
 import { setRatingsModalLocked } from "../actions/ratings";
 import { track } from "../analytics";
-import { notificationsSelector } from "../reducers/settings";
+import { notificationsSelector, INITIAL_STATE as settingsInitialState } from "../reducers/settings";
 import { setNotifications } from "../actions/settings";
+import { NotificationsSettings } from "../reducers/types";
 
 export type EventTrigger = {
   timeout: NodeJS.Timeout;
@@ -245,14 +246,15 @@ const useNotifications = () => {
 
   const initPushNotificationsData = useCallback(() => {
     if (notifications && notifications.areNotificationsAllowed === undefined) {
-      dispatch(
-        setNotifications({
-          areNotificationsAllowed: true,
-          announcementsCategory: true,
-          recommendationsCategory: true,
-          largeMoverCategory: true,
-        }),
-      );
+      dispatch(setNotifications(settingsInitialState.notifications));
+    } else {
+      const newNotificationsState = { ...notifications };
+      for (const [key, value] of Object.entries(settingsInitialState.notifications)) {
+        if (notifications[key as keyof NotificationsSettings] === undefined) {
+          newNotificationsState[key as keyof NotificationsSettings] = value;
+        }
+      }
+      dispatch(setNotifications(newNotificationsState));
     }
     getPushNotificationsDataOfUserFromStorage().then(dataOfUser => {
       updatePushNotificationsDataOfUserInStateAndStore({
@@ -329,7 +331,7 @@ const useNotifications = () => {
   const modalAllowNotifications = useCallback(() => {
     track("button_clicked", {
       button: "Allow",
-      screen: pushNotificationsOldRoute,
+      page: pushNotificationsOldRoute,
       drawer: "Notif",
     });
     setPushNotificationsModalOpenCallback(false);
@@ -350,7 +352,7 @@ const useNotifications = () => {
   const modalDelayLater = useCallback(() => {
     track("button_clicked", {
       button: "Maybe Later",
-      screen: pushNotificationsOldRoute,
+      page: pushNotificationsOldRoute,
       drawer: "Notif",
     });
     setPushNotificationsModalOpenCallback(false);

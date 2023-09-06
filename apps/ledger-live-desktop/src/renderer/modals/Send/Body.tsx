@@ -2,10 +2,13 @@ import React, { useMemo, useCallback, useEffect, useState } from "react";
 import { BigNumber } from "bignumber.js";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import { TFunction, Trans, withTranslation } from "react-i18next";
+import invariant from "invariant";
+import { TFunction } from "i18next";
+import { Trans, withTranslation } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getNFT, getNftCapabilities, decodeNftId } from "@ledgerhq/live-common/nft/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
@@ -27,6 +30,7 @@ import StepSummary, { StepSummaryFooter } from "./steps/StepSummary";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import StepWarning, { StepWarningFooter } from "./steps/StepWarning";
 import { St, StepId } from "./types";
+import { getLLDCoinFamily } from "~/renderer/families";
 
 export type Data = {
   account?: AccountLike | undefined | null;
@@ -60,52 +64,60 @@ type StateProps = {
   updateAccountWithUpdater: (b: string, a: (a: Account) => Account) => void;
 };
 type Props = {} & OwnProps & StateProps;
-const createSteps = (disableBacks: string[] = []): St[] => [
-  {
-    id: "warning",
-    excludeFromBreadcrumb: true,
-    component: StepWarning,
-    footer: StepWarningFooter,
-  },
-  {
-    id: "recipient",
-    label: <Trans i18nKey="send.steps.recipient.title" />,
-    component: StepRecipient,
-    footer: StepRecipientFooter,
-  },
-  {
-    id: "amount",
-    label: <Trans i18nKey="send.steps.amount.title" />,
-    component: StepAmount,
-    footer: StepAmountFooter,
-    onBack: !disableBacks.includes("amount")
-      ? ({ transitionTo }) => transitionTo("recipient")
-      : null,
-  },
-  {
-    id: "summary",
-    label: <Trans i18nKey="send.steps.summary.title" />,
-    component: StepSummary,
-    footer: StepSummaryFooter,
-    onBack: !disableBacks.includes("transaction")
-      ? ({ transitionTo }) => transitionTo("amount")
-      : null,
-  },
-  {
-    id: "device",
-    label: <Trans i18nKey="send.steps.device.title" />,
-    component: StepConnectDevice,
-    onBack: !disableBacks.includes("device") ? ({ transitionTo }) => transitionTo("summary") : null,
-  },
-  {
-    id: "confirmation",
-    label: <Trans i18nKey="send.steps.confirmation.title" />,
-    excludeFromBreadcrumb: true,
-    component: StepConfirmation,
-    footer: StepConfirmationFooter,
-    onBack: null,
-  },
-];
+const createSteps = (disableBacks: string[] = [], shouldSkipAmount = false): St[] => {
+  const steps: Array<St | undefined> = [
+    {
+      id: "warning",
+      excludeFromBreadcrumb: true,
+      component: StepWarning,
+      footer: StepWarningFooter,
+    },
+    {
+      id: "recipient",
+      label: <Trans i18nKey="send.steps.recipient.title" />,
+      component: StepRecipient,
+      footer: StepRecipientFooter,
+    },
+    shouldSkipAmount
+      ? undefined
+      : {
+          id: "amount",
+          label: <Trans i18nKey="send.steps.amount.title" />,
+          component: StepAmount,
+          footer: StepAmountFooter,
+          onBack: !disableBacks.includes("amount")
+            ? ({ transitionTo }) => transitionTo("recipient")
+            : null,
+        },
+    {
+      id: "summary",
+      label: <Trans i18nKey="send.steps.summary.title" />,
+      component: StepSummary,
+      footer: StepSummaryFooter,
+      onBack: !disableBacks.includes("transaction")
+        ? ({ transitionTo }) => transitionTo("amount")
+        : null,
+    },
+    {
+      id: "device",
+      label: <Trans i18nKey="send.steps.device.title" />,
+      component: StepConnectDevice,
+      onBack: !disableBacks.includes("device")
+        ? ({ transitionTo }) => transitionTo("summary")
+        : null,
+    },
+    {
+      id: "confirmation",
+      label: <Trans i18nKey="send.steps.confirmation.title" />,
+      excludeFromBreadcrumb: true,
+      component: StepConfirmation,
+      footer: StepConfirmationFooter,
+      onBack: null,
+    },
+  ];
+
+  return steps.filter(Boolean) as St[];
+};
 const mapStateToProps = createStructuredSelector({
   device: getCurrentDevice,
   accounts: accountsSelector,
@@ -130,7 +142,6 @@ const Body = ({
   const openedFromAccount = !!params.account;
   const isNFTSend = !!params.isNFTSend;
   const walletConnectProxy = !!params.walletConnectProxy;
-  const [steps] = useState(() => createSteps(params.disableBacks));
 
   // initial values might coming from deeplink
   const [maybeAmount, setMaybeAmount] = useState(() => params.amount || null);
@@ -143,6 +154,34 @@ const Body = ({
   const onResetMaybeRecipient = useCallback(() => {
     setMaybeRecipient(null);
   }, [setMaybeRecipient]);
+
+  // if it's an ERC721 transfer, it has no amount and since the
+  // "amount" step is also showing the gas selection options,
+  // having no quantity + no gas options should mean
+  // skipping the amount step completely
+  const shouldSkipAmount = useMemo(() => {
+    if (!isNFTSend) return false;
+
+    const parentAccount = params?.parentAccount;
+    const account = params?.account || accounts[0];
+
+    const mainAccount = getMainAccount(account, parentAccount);
+    const { currency } = mainAccount;
+
+    // FIXME to remove after ethereum -> evm migration
+    if (currency.family !== "evm") return false;
+
+    const { contract, tokenId } = maybeNFTId
+      ? decodeNftId(maybeNFTId)
+      : ({} as Record<string, undefined>);
+    const nft = getNFT(contract, tokenId, mainAccount.nfts);
+    const nftCapabilities = getNftCapabilities(nft);
+
+    return !currency.ethereumLikeInfo?.gasTracker && !nftCapabilities.hasQuantity;
+  }, [isNFTSend, params?.parentAccount, params?.account, accounts, maybeNFTId]);
+
+  const [steps] = useState(() => createSteps(params.disableBacks, shouldSkipAmount));
+
   const {
     transaction,
     setTransaction,
@@ -154,8 +193,8 @@ const Body = ({
     bridgeError,
     bridgePending,
   } = useBridgeTransaction(() => {
-    const parentAccount = params && params.parentAccount;
-    const account = (params && params.account) || accounts[0];
+    const parentAccount = params?.parentAccount;
+    const account = params?.account || accounts[0];
     return {
       account,
       parentAccount,
@@ -163,9 +202,11 @@ const Body = ({
     };
   });
 
+  invariant(account, "account required");
+
   // make sure step id is in sync
   useEffect(() => {
-    const stepId = params && params.startWithWarning ? "warning" : null;
+    const stepId = params?.startWithWarning ? "warning" : null;
     if (stepId) onChangeStepId(stepId);
   }, [onChangeStepId, params]);
   const [optimisticOperation, setOptimisticOperation] = useState<Operation | null>(null);
@@ -173,6 +214,7 @@ const Body = ({
   const [signed, setSigned] = useState(false);
   const currency = account ? getAccountCurrency(account) : undefined;
   const currencyName = currency ? currency.name : undefined;
+  const mainAccount = getMainAccount(account, parentAccount);
   const handleCloseModal = useCallback(() => {
     closeModal("MODAL_SEND");
   }, [closeModal]);
@@ -186,37 +228,43 @@ const Body = ({
   );
   const handleChangeNFT = useCallback(
     nextNft => {
-      setAccount(account as AccountLike, undefined);
-      const bridge = account && getAccountBridge(account);
+      setAccount(mainAccount, undefined);
+      const specific = getLLDCoinFamily(mainAccount.currency.family);
+      if (!specific.nft || !transaction) return;
+
+      const bridge = getAccountBridge(mainAccount);
       const standard = nextNft.standard.toLowerCase();
-      setTransaction(
-        bridge?.updateTransaction(transaction, {
-          tokenIds: [nextNft.tokenId],
-          quantities: [BigNumber(1)],
-          collection: nextNft.contract,
-          mode: `${standard}.transfer`,
-        }),
+      const newTransaction = specific.nft.injectNftIntoTransaction(
+        transaction,
+        {
+          contract: nextNft.contract,
+          tokenId: nextNft.tokenId,
+          quantity: new BigNumber(1),
+        },
+        standard,
       );
+
+      setTransaction(bridge?.updateTransaction(transaction, newTransaction));
     },
-    [account, setAccount, setTransaction, transaction],
+    [mainAccount, setAccount, setTransaction, transaction],
   );
   const handleChangeQuantities = useCallback(
     nextQuantity => {
-      const bridge = account && getAccountBridge(account);
-      const cleanQuantity = BigNumber(nextQuantity.replace(/\D/g, "") || 0);
-      if (
-        !transaction ||
-        !("quantities" in transaction) ||
-        !transaction.quantities?.[0]?.eq(cleanQuantity)
-      ) {
-        setTransaction(
-          bridge?.updateTransaction(transaction, {
-            quantities: [BigNumber(cleanQuantity)],
-          }),
-        );
+      const specific = getLLDCoinFamily(mainAccount.currency.family);
+      if (!specific.nft || !transaction) return;
+
+      const bridge = getAccountBridge(mainAccount);
+      const newQuantity = new BigNumber(nextQuantity.replace(/\D/g, "") || 0);
+      const { quantity } = specific.nft.getNftTransactionProperties(transaction);
+
+      if (!transaction || !quantity?.eq(newQuantity)) {
+        const newTransaction = specific.nft.injectNftIntoTransaction(transaction, {
+          quantity: newQuantity,
+        });
+        setTransaction(bridge.updateTransaction(transaction, newTransaction));
       }
     },
-    [account, setTransaction, transaction],
+    [mainAccount, setTransaction, transaction],
   );
   const handleRetry = useCallback(() => {
     setTransactionError(null);
@@ -294,6 +342,7 @@ const Body = ({
     maybeNFTCollection,
     onChangeQuantities: handleChangeQuantities,
     onChangeNFT: handleChangeNFT,
+    shouldSkipAmount,
   };
   if (!status) return null;
   return (

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState, useMemo, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { StyleSheet, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
@@ -12,16 +12,12 @@ import {
   SwapTransactionType,
 } from "@ledgerhq/live-common/exchange/swap/types";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
-import { createAction } from "@ledgerhq/live-common/hw/actions/transaction";
-import { createAction as initSwapCreateAction } from "@ledgerhq/live-common/hw/actions/initSwap";
-import initSwap from "@ledgerhq/live-common/exchange/swap/initSwap";
-import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import addToSwapHistory from "@ledgerhq/live-common/exchange/swap/addToSwapHistory";
 import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { AccountLike, DeviceInfo, SignedOperation } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { postSwapAccepted, postSwapCancelled } from "@ledgerhq/live-common/exchange/swap/index";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { InstalledItem } from "@ledgerhq/live-common/apps/types";
 import { renderLoading } from "../../../../components/DeviceAction/rendering";
 import { updateAccountWithUpdater } from "../../../../actions/accounts";
@@ -29,14 +25,14 @@ import DeviceAction from "../../../../components/DeviceAction";
 import QueuedDrawer from "../../../../components/QueuedDrawer";
 import ModalBottomAction from "../../../../components/ModalBottomAction";
 import { useBroadcast } from "../../../../components/useBroadcast";
-import { swapKYCSelector } from "../../../../reducers/settings";
 import { UnionToIntersection } from "../../../../types/helpers";
 import type { StackNavigatorNavigation } from "../../../../components/RootNavigator/types/helpers";
 import { ScreenName } from "../../../../const";
 import type { SwapNavigatorParamList } from "../../../../components/RootNavigator/types/SwapNavigator";
-
-const silentSigningAction = createAction(connectApp);
-const swapAction = initSwapCreateAction(connectApp, initSwap);
+import {
+  useInitSwapDeviceAction,
+  useTransactionDeviceAction,
+} from "../../../../hooks/deviceActions";
 
 export type DeviceMeta = {
   result: { installed: InstalledItem[] } | null | undefined;
@@ -82,9 +78,6 @@ export function Confirmation({
     }),
     [fromAccount, fromParentAccount, toAccount, toParentAccount],
   );
-
-  const swapKYC = useSelector(swapKYCSelector);
-  const providerKYC = swapKYC[provider];
 
   const [swapData, setSwapData] = useState<InitSwapResult | null>(null);
   const [signedOperation, setSignedOperation] = useState<SignedOperation | null>(null);
@@ -181,6 +174,9 @@ export function Confirmation({
     }
   }, [broadcast, onComplete, onError, signedOperation, swapData]);
 
+  const silentSigningAction = useTransactionDeviceAction();
+  const swapAction = useInitSwapDeviceAction();
+
   const { t } = useTranslation();
 
   return (
@@ -204,7 +200,6 @@ export function Confirmation({
                   exchange,
                   exchangeRate: exchangeRate.current,
                   transaction: swapTx.current.transaction as SwapTransaction,
-                  userId: providerKYC?.id,
                 }}
                 onResult={result => {
                   const { initSwapResult, initSwapError, swapId } = result as UnionToIntersection<

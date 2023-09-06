@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components/native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -11,7 +11,7 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { NavigatorName, ScreenName } from "../../../const";
 import StyledStatusBar from "../../../components/StyledStatusBar";
 import { urls } from "../../../config/urls";
-import { TermsContext } from "../../../logic/terms";
+import { useAcceptGeneralTerms } from "../../../logic/terms";
 import { setAnalytics } from "../../../actions/settings";
 import useIsAppInBackground from "../../../components/useIsAppInBackground";
 import ForceTheme from "../../../components/theme/ForceTheme";
@@ -44,7 +44,7 @@ type NavigationProps = BaseComposite<
 function OnboardingStepWelcome({ navigation }: NavigationProps) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const { accept: acceptTerms } = useContext(TermsContext);
+  const acceptTerms = useAcceptGeneralTerms();
 
   const {
     i18n: { language: locale },
@@ -67,7 +67,12 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
     acceptTerms();
     dispatch(setAnalytics(true));
 
-    navigation.navigate(ScreenName.OnboardingDoYouHaveALedgerDevice);
+    navigation.navigate({
+      name: ScreenName.OnboardingPostWelcomeSelection,
+      params: {
+        userHasDevice: true,
+      },
+    });
   }, [acceptTerms, dispatch, navigation]);
 
   const videoMounted = !useIsAppInBackground();
@@ -192,7 +197,14 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
           >
             {t("onboarding.stepWelcome.subtitle")}
           </Text>
-          <Button type="main" size="large" event="Onboarding - Start" onPress={next} mt={0} mb={7}>
+          <Button
+            type="main"
+            size="large"
+            onPress={next}
+            mt={0}
+            mb={7}
+            testID="onboarding-getStarted-button"
+          >
             {t("onboarding.stepWelcome.start")}
           </Button>
           {recoverFeature?.enabled && recoverFeature?.params?.onboardingLogin ? (

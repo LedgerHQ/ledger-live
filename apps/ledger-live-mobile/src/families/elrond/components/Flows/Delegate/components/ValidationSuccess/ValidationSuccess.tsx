@@ -1,11 +1,12 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { View } from "react-native";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 
 import { accountScreenSelector } from "../../../../../../../reducers/accounts";
-import { TrackScreen } from "../../../../../../../analytics";
+import { TrackScreen, track } from "../../../../../../../analytics";
 import { ScreenName } from "../../../../../../../const";
 import PreventNativeBack from "../../../../../../../components/PreventNativeBack";
 import ValidateSuccess from "../../../../../../../components/ValidateSuccess";
@@ -20,23 +21,39 @@ import styles from "./styles";
  * Handle the component declaration.
  */
 
-const ValidationSuccess = (props: ValidationSuccessPropsType) => {
-  const { navigation, route } = props;
+const ValidationSuccess = ({ navigation, route }: ValidationSuccessPropsType) => {
   const { params } = route;
   const { result } = params;
 
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
+  const { ticker } = getAccountCurrency(account);
 
   const parent = useMemo<StackNavigatorNavigation<BaseNavigatorStackParamList>>(
     () => navigation.getParent(),
     [navigation],
   );
 
+  const validator = useMemo(() => {
+    const voteAccAddress = route.params.transaction.recipient;
+    const chosenValidator = route.params.validators.find(v => v.contract === voteAccAddress);
+    return chosenValidator?.identity?.name ?? voteAccAddress;
+  }, [route.params.transaction, route.params.validators]);
+  const source = route.params.source?.name ?? "unknown";
+
+  useEffect(() => {
+    track("staking_completed", {
+      currency: ticker,
+      validator,
+      source,
+      delegation: "delegation",
+      flow: "stake",
+    });
+  }, [source, validator, ticker]);
+
   /*
    * Should the validation fail, close all stacks, on callback click.
    */
-
   const onClose = useCallback(() => {
     if (parent) {
       parent.pop();
@@ -46,7 +63,6 @@ const ValidationSuccess = (props: ValidationSuccessPropsType) => {
   /*
    * Callback taking the user to the operation details panel, on successful operation.
    */
-
   const goToOperationDetails = useCallback(() => {
     if (!account || !result) {
       return;
@@ -64,7 +80,13 @@ const ValidationSuccess = (props: ValidationSuccessPropsType) => {
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="ElrondDelegation" name="ValidationSuccess" />
+      <TrackScreen
+        category="ElrondDelegation"
+        name="ValidationSuccess"
+        flow="stake"
+        action="delegate"
+        currency="egld"
+      />
       <PreventNativeBack />
 
       <ValidateSuccess

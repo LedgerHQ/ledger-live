@@ -37,6 +37,9 @@ const StepCustom = ({
       <TrackPage
         category={`Delegation Flow${eventType ? ` (${eventType})` : ""}`}
         name="Step Custom"
+        flow="stake"
+        action="delegation"
+        currency="xtz"
       />
       <Box>
         <IconWrapper color="palette.primary.main">

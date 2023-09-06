@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import * as Animatable from "react-native-animatable";
 import { useTranslation } from "react-i18next";
-import { Flex, Carousel, Text, Button, Icons } from "@ledgerhq/native-ui";
+import { Flex, Carousel, Text, Button, IconsLegacy } from "@ledgerhq/native-ui";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
@@ -108,7 +108,7 @@ function OnboardingStepNewDevice() {
         height={48}
       >
         <Button
-          Icon={() => <Icons.ArrowLeftMedium color="constant.black" size={24} />}
+          Icon={() => <IconsLegacy.ArrowLeftMedium color="constant.black" size={24} />}
           onPress={handleBack}
           style={styles.backArrow}
         />

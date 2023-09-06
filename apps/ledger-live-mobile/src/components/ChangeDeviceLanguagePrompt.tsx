@@ -1,4 +1,4 @@
-import { Flex, Text, Button, Link, Icons } from "@ledgerhq/native-ui";
+import { Flex, Text, Button, Link, IconsLegacy } from "@ledgerhq/native-ui";
 import React from "react";
 import { ImageSourcePropType, Linking } from "react-native";
 import { useTranslation } from "react-i18next";
@@ -38,35 +38,37 @@ const ChangeDeviceLanguagePrompt: React.FC<Props> = ({
   const illustration = images[deviceModel.id];
 
   return (
-    <Flex alignItems="center">
+    <Flex alignItems="center" px={3}>
       {illustration ? (
         <Illustration size={200} darkSource={illustration.dark} lightSource={illustration.light} />
       ) : null}
-      <Text variant="h4" textAlign="center">
-        {t("onboarding.stepLanguage.changeDeviceLanguage", {
-          language: t(`deviceLocalization.languages.${language}`),
-          deviceName: deviceModel.productName,
-        })}
-      </Text>
-      <Flex px={7} mt={4} mb={8}>
-        <Text variant="paragraph" textAlign="center" color="neutral.c70">
+      <Flex mb={8}>
+        <Text variant="h4" fontWeight={"semiBold"} textAlign="center">
+          {t("onboarding.stepLanguage.changeDeviceLanguage", {
+            language: t(`deviceLocalization.languages.${language}`),
+            deviceName: deviceModel.productName,
+          })}
+        </Text>
+        <Text mt={6} variant="bodyLineHeight" textAlign="center" color="neutral.c80">
           {t("onboarding.stepLanguage.changeDeviceLanguageDescription", {
             language: t(`deviceLocalization.languages.${language}`),
           })}
         </Text>
       </Flex>
-      <Button type="main" onPress={onConfirm} alignSelf="stretch">
+      <Button size="large" type="main" onPress={onConfirm} alignSelf="stretch">
         {t("deviceLocalization.yesChangeLanguage")}
       </Button>
       {canSkip && (
-        <Button mt={4} onPress={onSkip} alignSelf="stretch" type="main" outline>
-          {t("common.skip")}
-        </Button>
+        <Flex pt={7}>
+          <Link size={"large"} onPress={onSkip} type="main">
+            {t("common.skip")}
+          </Link>
+        </Flex>
       )}
-      <Flex mt={6}>
+      <Flex mt={7}>
         <Link
           onPress={() => Linking.openURL(urls.deviceLocalization.learnMore)}
-          Icon={Icons.ExternalLinkMedium}
+          Icon={IconsLegacy.ExternalLinkMedium}
           iconPosition="right"
           type="color"
           style={{ justifyContent: "flex-start" }}

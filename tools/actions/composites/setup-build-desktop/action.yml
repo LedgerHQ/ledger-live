@@ -4,6 +4,12 @@ inputs:
   os:
     description: "name of the os <mac | linux | win>"
     required: true
+  aws-access-key:
+    description: "aws access key"
+    required: false
+  aws-secret-key:
+    description: "aws secret key"
+    required: false
 outputs:
   version:
     description: "package.json version"
@@ -20,10 +26,13 @@ runs:
   steps:
     - name: TurboRepo local caching server
       id: turborepo-cache-server
-      uses: ./tools/actions/turborepo-gh-cache
+      uses: ./tools/actions/turborepo-s3-cache
+      if: inputs.aws-access-key != '' && inputs.aws-secret-key != ''
       with:
         server-token: "yolo"
         cleanup-cache-folder: "true"
+        aws-access-key: ${{ inputs.aws-access-key }}
+        aws-secret-key: ${{ inputs.aws-secret-key }}
     - name: install dependencies
       if: ${{ inputs.os != 'mac' }}
       run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --unsafe-perm

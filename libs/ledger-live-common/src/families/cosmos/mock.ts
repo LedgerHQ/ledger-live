@@ -1,12 +1,13 @@
 import Prando from "prando";
 import { BigNumber } from "bignumber.js";
-import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
+import type { OperationType } from "@ledgerhq/types-live";
 import type {
+  CosmosAccount,
+  CosmosOperation,
   CosmosResources,
   CosmosDelegation,
   CosmosUnbonding,
   CosmosRedelegation,
-  CosmosAccount,
 } from "./types";
 import preloadedData from "./preloadedData.mock";
 import { genHex, genAddress } from "../../mock/helpers";
@@ -18,7 +19,7 @@ function setCosmosResources(
   unbondingBalance: BigNumber = new BigNumber(0),
   unbondings: CosmosUnbonding[] | null | undefined,
   redelegations: CosmosRedelegation[] | null | undefined,
-): Account {
+): CosmosAccount {
   /** format cosmosResources given the new delegations */
   account.cosmosResources = {
     delegations,
@@ -33,11 +34,12 @@ function setCosmosResources(
     withdrawAddress: account.id,
     unbondings: unbondings ?? account.cosmosResources?.unbondings ?? [],
     redelegations: redelegations ?? account.cosmosResources?.redelegations ?? [],
+    sequence: account.cosmosResources.sequence + 1,
   };
   return account;
 }
 
-function setOperationFeeValue(operation: Operation, base: BigNumber): Operation {
+function setOperationFeeValue(operation: CosmosOperation, base: BigNumber): CosmosOperation {
   operation.fee = new BigNumber(Math.round(base.toNumber() * 0.001));
   operation.value = operation.fee;
   return operation;
@@ -48,7 +50,7 @@ function genBaseOperation(
   rng: Prando,
   type: OperationType,
   index: number,
-): Operation {
+): CosmosOperation {
   const { operations: ops } = account;
   const address = genAddress(account.currency, rng);
   const lastOp = ops[index];
@@ -81,7 +83,7 @@ function genBaseOperation(
  * @param {CosmosAccount} account
  * @param {Prando} rng
  */
-function addDelegationOperation(account: CosmosAccount, rng: Prando): Account {
+function addDelegationOperation(account: CosmosAccount, rng: Prando): CosmosAccount {
   const { spendableBalance } = account;
   const cosmosResources: CosmosResources = account.cosmosResources
     ? account.cosmosResources
@@ -93,6 +95,7 @@ function addDelegationOperation(account: CosmosAccount, rng: Prando): Account {
         withdrawAddress: "",
         unbondings: [],
         redelegations: [],
+        sequence: 1,
       };
   if (spendableBalance.isZero()) return account;
 
@@ -149,7 +152,7 @@ function addDelegationOperation(account: CosmosAccount, rng: Prando): Account {
  * @param {CosmosAccount} account
  * @param {Prando} rng
  */
-function addRedelegationOperation(account: CosmosAccount, rng: Prando): Account {
+function addRedelegationOperation(account: CosmosAccount, rng: Prando): CosmosAccount {
   const cosmosResources: CosmosResources = account.cosmosResources
     ? account.cosmosResources
     : {
@@ -160,6 +163,7 @@ function addRedelegationOperation(account: CosmosAccount, rng: Prando): Account 
         withdrawAddress: "",
         unbondings: [],
         redelegations: [],
+        sequence: 1,
       };
   if (!cosmosResources.delegations.length) return account;
 
@@ -208,7 +212,7 @@ function addRedelegationOperation(account: CosmosAccount, rng: Prando): Account 
  * @param {CosmosAccount} account
  * @param {Prando} rng
  */
-function addClaimRewardsOperation(account: CosmosAccount, rng: Prando): Account {
+function addClaimRewardsOperation(account: CosmosAccount, rng: Prando): CosmosAccount {
   const cosmosResources: CosmosResources = account.cosmosResources
     ? account.cosmosResources
     : {
@@ -219,6 +223,7 @@ function addClaimRewardsOperation(account: CosmosAccount, rng: Prando): Account 
         withdrawAddress: "",
         unbondings: [],
         redelegations: [],
+        sequence: 1,
       };
   if (!cosmosResources.delegations.length) return account;
 
@@ -256,7 +261,7 @@ function addClaimRewardsOperation(account: CosmosAccount, rng: Prando): Account 
  * @param {CosmosAccount} account
  * @param {Prando} rng
  */
-function addUndelegationOperation(account: CosmosAccount, rng: Prando): Account {
+function addUndelegationOperation(account: CosmosAccount, rng: Prando): CosmosAccount {
   const cosmosResources: CosmosResources = account.cosmosResources
     ? account.cosmosResources
     : {
@@ -267,6 +272,7 @@ function addUndelegationOperation(account: CosmosAccount, rng: Prando): Account 
         withdrawAddress: "",
         unbondings: [],
         redelegations: [],
+        sequence: 1,
       };
   if (!cosmosResources.delegations.length) return account;
 
@@ -320,7 +326,7 @@ function addUndelegationOperation(account: CosmosAccount, rng: Prando): Account 
  * @param {CosmosAccount} account
  * @param {Prando} rng
  */
-function genAccountEnhanceOperations(account: CosmosAccount, rng: Prando): Account {
+function genAccountEnhanceOperations(account: CosmosAccount, rng: Prando): CosmosAccount {
   addDelegationOperation(account, rng);
   addRedelegationOperation(account, rng);
   addClaimRewardsOperation(account, rng);
@@ -334,7 +340,7 @@ function genAccountEnhanceOperations(account: CosmosAccount, rng: Prando): Accou
  * @memberof cosmos/mock
  * @param {CosmosAccount} account
  */
-function postSyncAccount(account: CosmosAccount): Account {
+function postSyncAccount(account: CosmosAccount): CosmosAccount {
   const cosmosResources = account?.cosmosResources;
   const delegatedBalance = cosmosResources?.delegatedBalance ?? new BigNumber(0);
   const unbondingBalance = cosmosResources?.unbondingBalance ?? new BigNumber(0);
@@ -346,7 +352,7 @@ function postSyncAccount(account: CosmosAccount): Account {
  * post account scan data logic
  * clears account cosmos resources if supposed to be empty
  * @memberof cosmos/mock
- * @param {Account} account
+ * @param {CosmosAccount} account
  */
 function postScanAccount(
   account: CosmosAccount,
@@ -365,6 +371,7 @@ function postScanAccount(
       withdrawAddress: account.id,
       unbondings: [],
       redelegations: [],
+      sequence: 0,
     };
     account.operations = [];
   }

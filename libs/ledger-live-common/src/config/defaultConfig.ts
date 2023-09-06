@@ -32,7 +32,7 @@ const defaultConfig = {
         minGasPrice: 0.025,
       },
       persistence: {
-        lcd: "https://rest-persistence.architectnodes.com",
+        lcd: "https://rest.core.persistence.one",
         minGasPrice: 0.025,
         ledgerValidator: "persistencevaloper1fgklp9hemczlwtqp9jqzq3xahh38hznxatty38",
       },
@@ -47,10 +47,14 @@ const defaultConfig = {
       },
       stargaze: {
         lcd: "https://stargaze-api.polkachu.com",
-        minGasPrice: 0.0025,
+        minGasPrice: 1,
       },
       umee: {
         lcd: "https://umee-api.polkachu.com",
+        minGasPrice: 0.1,
+      },
+      coreum: {
+        lcd: "https://full-node.mainnet-1.coreum.dev:1317",
         minGasPrice: 0.1,
       },
     } as { [currency: string]: CosmosCurrencyConfig },

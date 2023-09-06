@@ -74,7 +74,13 @@ const StepConfirmation = ({ t, optimisticOperation, error, signed, source }: Ste
   if (optimisticOperation) {
     return (
       <S.Container>
-        <TrackPage category="Celo Lock" name="Step Confirmed" />
+        <TrackPage
+          category="Celo Lock"
+          name="Step Confirmed"
+          flow="stake"
+          action="lock"
+          currency="celo"
+        />
         <SuccessDisplay
           title={<Trans i18nKey="celo.lock.steps.confirmation.success.title" />}
           description={multiline(t("celo.lock.steps.confirmation.success.textVote"))}
@@ -85,7 +91,13 @@ const StepConfirmation = ({ t, optimisticOperation, error, signed, source }: Ste
   if (error) {
     return (
       <S.Container shouldSpace={signed}>
-        <TrackPage category="Celo Lock" name="Step Confirmation Error" />
+        <TrackPage
+          category="Celo Lock"
+          name="Step Confirmation Error"
+          flow="stake"
+          action="lock"
+          currency="celo"
+        />
         {signed ? (
           <BroadcastErrorDisclaimer
             title={<Trans i18nKey="celo.lock.steps.confirmation.broadcastError" />}

@@ -1,7 +1,8 @@
 import React, { useMemo, useCallback } from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import { withTranslation, Trans, TFunction } from "react-i18next";
+import { withTranslation, Trans } from "react-i18next";
+import { TFunction } from "i18next";
 import { openModal } from "~/renderer/actions/modals";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
@@ -20,7 +21,6 @@ import { useHistory, withRouter } from "react-router-dom";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 const mapDispatchToProps = {
   openModal,
 };
@@ -39,9 +39,6 @@ function EmptyStateAccount({ t, account, parentAccount, openModal }: Props) {
   const rampCatalog = useRampCatalog();
   const history = useHistory();
 
-  // PTX smart routing feature flag - buy sell live app flag
-  const ptxSmartRouting = useFeature("ptxSmartRouting");
-
   // eslint-disable-next-line no-unused-vars
   const availableOnBuy = useMemo(() => {
     if (!rampCatalog.value) {
@@ -59,19 +56,13 @@ function EmptyStateAccount({ t, account, parentAccount, openModal }: Props) {
     setTrackingSource("empty state account");
     history.push({
       pathname: "/exchange",
-      state: ptxSmartRouting?.enabled
-        ? {
-            currency: currency?.id,
-            account: mainAccount?.id,
-            mode: "buy", // buy or sell
-          }
-        : {
-            mode: "onRamp",
-            currencyId: currency.id,
-            accountId: mainAccount.id,
-          },
+      state: {
+        currency: currency?.id,
+        account: mainAccount?.id,
+        mode: "buy", // buy or sell
+      },
     });
-  }, [currency, history, mainAccount, ptxSmartRouting]);
+  }, [currency, history, mainAccount]);
   if (!mainAccount) return null;
   return (
     <Box mt={10} alignItems="center" selectable>

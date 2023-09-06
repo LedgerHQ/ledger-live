@@ -6,7 +6,7 @@ import { Trans, useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { Alert, Button, Flex, Text } from "@ledgerhq/native-ui";
 import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
-
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { ScreenName } from "../../../const";
 import LText from "../../../components/LText";
@@ -34,6 +34,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
   }, [navigation, route.params]);
 
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { ticker } = getAccountCurrency(account);
   invariant(account, "account must be defined");
 
   const mainAccount = getMainAccount(account, parentAccount);
@@ -45,7 +46,13 @@ export default function DelegationStarted({ navigation, route }: Props) {
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
       <NavigationScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
-        <TrackScreen category="DelegationFlow" name="Started" />
+        <TrackScreen
+          category="DelegationFlow"
+          name="Started"
+          flow="stake"
+          action="delegation"
+          currency={ticker}
+        />
         <Flex alignItems="center" mb={6}>
           <Illustration lightSource={EarnLight} darkSource={EarnDark} size={150} />
         </Flex>
@@ -58,14 +65,17 @@ export default function DelegationStarted({ navigation, route }: Props) {
         <BulletList
           Bullet={BulletGreenCheck}
           list={[
-            <Trans i18nKey="cosmos.delegation.flow.steps.starter.steps.0" />,
+            <Trans i18nKey="cosmos.delegation.flow.steps.starter.steps.0" key="DelegationText0" />,
             <Trans
               i18nKey="cosmos.delegation.flow.steps.starter.steps.1"
               values={{ numberOfDays: crypto.unbondingPeriod }}
+              key="DelegationText1"
             />,
-            <Trans i18nKey="cosmos.delegation.flow.steps.starter.steps.2" />,
+            <Trans i18nKey="cosmos.delegation.flow.steps.starter.steps.2" key="DelegationText2" />,
           ].map(wording => (
-            <LText semiBold>{wording}</LText>
+            <LText semiBold key={wording.key}>
+              {wording}
+            </LText>
           ))}
         />
         <View style={[styles.howDelegationWorks]}>

@@ -48,7 +48,13 @@ function StepConfirmation({ account, optimisticOperation, error, signed, transac
     const textKey = transaction?.mode === "claimReward" ? "text" : "textCompound";
     return (
       <Container>
-        <TrackPage category="ClaimRewards Cosmos Flow" name="Step Confirmed" />
+        <TrackPage
+          category="ClaimRewards Cosmos Flow"
+          name="Step Confirmed"
+          flow="stake"
+          action="claim_rewards"
+          currency={account.currency.id}
+        />
         <SyncOneAccountOnMount
           reason="transaction-flow-confirmation"
           priority={10}
@@ -78,7 +84,13 @@ function StepConfirmation({ account, optimisticOperation, error, signed, transac
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage category="ClaimRewards Cosmos Flow" name="Step Confirmation Error" />
+        <TrackPage
+          category="ClaimRewards Cosmos Flow"
+          name="Step Confirmation Error"
+          flow="stake"
+          action="claim_rewards"
+          currency={account.currency.id}
+        />
         {signed ? (
           <BroadcastErrorDisclaimer
             title={<Trans i18nKey="cosmos.claimRewards.flow.steps.confirmation.broadcastError" />}

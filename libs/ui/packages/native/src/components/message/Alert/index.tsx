@@ -1,9 +1,9 @@
 import React from "react";
 import styled, { useTheme } from "styled-components/native";
-import InfoAltFillMedium from "@ledgerhq/icons-ui/native/InfoAltFillMedium";
-import CircledCheckSolidMedium from "@ledgerhq/icons-ui/native/CircledCheckSolidMedium";
-import WarningSolidMedium from "@ledgerhq/icons-ui/native/WarningSolidMedium";
-import CircledCrossSolidMedium from "@ledgerhq/icons-ui/native/CircledCrossSolidMedium";
+import InfoAltFillMedium from "@ledgerhq/icons-ui/nativeLegacy/InfoAltFillMedium";
+import CircledCheckSolidMedium from "@ledgerhq/icons-ui/nativeLegacy/CircledCheckSolidMedium";
+import WarningSolidMedium from "@ledgerhq/icons-ui/nativeLegacy/WarningSolidMedium";
+import CircledCrossSolidMedium from "@ledgerhq/icons-ui/nativeLegacy/CircledCrossSolidMedium";
 
 import Text from "../../Text";
 import FlexBox from "../../Layout/Flex";

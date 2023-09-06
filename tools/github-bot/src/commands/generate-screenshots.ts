@@ -60,7 +60,7 @@ export function generateScreenshots(app: Probot) {
     });
   });
 
-  app.on("check_run.requested_action", async (context) => {
+  app.on("check_run.requested_action", async context => {
     const { payload } = context;
 
     if (payload.requested_action.identifier !== ACTION_ID) return;
@@ -83,7 +83,7 @@ export function generateScreenshots(app: Probot) {
     description:
       "Regenerates playwright screenshots for the Live Desktop app and commit the changes.",
     summaryFile: "summary.json",
-    getInputs: (payload) => ({
+    getInputs: payload => ({
       ref: payload.check_run.head_sha,
       login: payload.sender.login,
     }),

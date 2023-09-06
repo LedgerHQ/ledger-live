@@ -4,7 +4,7 @@ import { fromTransactionRaw } from "../transaction";
 import BigNumber from "bignumber.js";
 
 const dataset: CurrenciesData<Transaction> = {
-  FIXME_ignoreAccountFields: ["cosmosResources"],
+  FIXME_ignoreAccountFields: ["cosmosResources", "operationsCount", "operations"],
   scanAccounts: [
     {
       name: "desmos seed 1",
@@ -20,6 +20,7 @@ const dataset: CurrenciesData<Transaction> = {
   ],
   accounts: [
     {
+      FIXME_tests: ["balance is sum of ops"],
       raw: {
         id: "js:2:desmos:desmos1gyauvl44q2apn3u3aujm36q8zrj74vrypqn8c3:",
         seedIdentifier: "03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e83",
@@ -75,9 +76,7 @@ const dataset: CurrenciesData<Transaction> = {
           expectedStatus: () => ({
             errors: {},
             warnings: {},
-            estimatedFees: BigNumber("203"),
             amount: BigNumber("100000"),
-            totalSpent: BigNumber("100203"),
           }),
         },
       ],

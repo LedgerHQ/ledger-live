@@ -4,7 +4,7 @@ import Modal from "react-native-modal";
 import { Edge, SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
 import Video from "react-native-video";
-import { Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import Button from "../../../../components/Button";
 import QueuedDrawer from "../../../../components/QueuedDrawer";
 import Touchable from "../../../../components/Touchable";
@@ -84,7 +84,7 @@ const DebugVideos = () => {
               setKeyIndex(Math.max(selectedIndex - 1, 0));
             }}
             type="primary"
-            Icon={Icons.ChevronLeftMedium}
+            Icon={IconsLegacy.ChevronLeftMedium}
           />
           <Flex mx={3} flex={1}>
             <Button type="primary" title="Video key" onPress={() => setKeyModalVisible(true)} />
@@ -95,7 +95,7 @@ const DebugVideos = () => {
               setKeyIndex(Math.min(selectedIndex + 1, entries.length - 1));
             }}
             type="primary"
-            Icon={Icons.ChevronRightMedium}
+            Icon={IconsLegacy.ChevronRightMedium}
           />
         </Flex>
       </Flex>

@@ -57,7 +57,7 @@ jobs:
       - name: commit
         run: |
           git add .
-          git commit -m ":rocket: nightly release"
+          git commit -m "chore(nightly): :rocket: nightly release"
       - name: publish nightly
         run: pnpm changeset publish
         env:

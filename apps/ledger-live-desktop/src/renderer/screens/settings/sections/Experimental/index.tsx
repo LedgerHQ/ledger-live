@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback, useState } from "react";
 import { Trans } from "react-i18next";
-import { isEnvDefault } from "@ledgerhq/live-common/env";
+import { EnvName, isEnvDefault } from "@ledgerhq/live-env";
 import { experimentalFeatures, isReadOnlyEnv, Feature } from "~/renderer/experimental";
 import { useDispatch } from "react-redux";
 import { setEnvOnAllThreads } from "~/helpers/env";
@@ -15,6 +15,11 @@ import ExperimentalSwitch from "./ExperimentalSwitch";
 import ExperimentalInteger from "./ExperimentalInteger";
 import ExperimentalFloat from "./ExperimentalFloat";
 import FullNode from "~/renderer/screens/settings/sections/Accounts/FullNode";
+import LottieTester from "./LottieTester";
+import StorylyTester from "./StorylyTester";
+import PostOnboardingHubTester from "./PostOnboardingHubTester";
+import VaultSigner from "./VaultSigner";
+
 const experimentalTypesMap = {
   toggle: ExperimentalSwitch,
   integer: ExperimentalInteger,
@@ -32,7 +37,7 @@ const ExperimentalFeatureRow = ({
   const envValue = useEnv(feature.name);
   const isDefault = isEnvDefault(feature.name);
   const onChange = useCallback(
-    (name: string, value) => {
+    (name: EnvName, value) => {
       if (dirty) {
         onDirtyChange();
       }
@@ -43,11 +48,11 @@ const ExperimentalFeatureRow = ({
   return Children ? (
     <Row title={feature.title} desc={feature.description}>
       <Children
-        value={envValue}
         readOnly={isReadOnlyEnv(feature.name)}
         isDefault={isDefault}
         onChange={onChange}
         {...rest}
+        value={envValue as number}
       />
     </Row>
   ) : null;
@@ -98,6 +103,10 @@ const SectionExperimental = () => {
           ) : null,
         )}
         {process.env.SHOW_ETHEREUM_BRIDGE ? <EthereumBridgeRow /> : null}
+        {process.env.DEBUG_LOTTIE ? <LottieTester /> : null}
+        {process.env.DEBUG_STORYLY ? <StorylyTester /> : null}
+        {process.env.DEBUG_POSTONBOARDINGHUB ? <PostOnboardingHubTester /> : null}
+        <VaultSigner />
         <FullNode />
       </Body>
     </div>

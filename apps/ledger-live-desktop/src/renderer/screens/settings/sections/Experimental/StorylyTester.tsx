@@ -1,17 +1,14 @@
-import React, { useCallback } from "react";
-import { useTranslation, Trans } from "react-i18next";
+import React from "react";
+import { Trans, useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { SettingsSectionRow } from "~/renderer/screens/settings/SettingsSection";
-import Button from "~/renderer/components/Button";
 import { openModal } from "~/renderer/actions/modals";
+import Button from "~/renderer/components/Button";
+import { SettingsSectionRow } from "~/renderer/screens/settings/SettingsSection";
 
 const StorylyTester = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const onOpenModal = useCallback(
-    () => dispatch(openModal("MODAL_STORYLY_DEBUGGER", undefined)),
-    [dispatch],
-  );
+  const onOpenModal = () => dispatch(openModal("MODAL_STORYLY_DEBUGGER", undefined));
 
   return (
     <SettingsSectionRow

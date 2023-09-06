@@ -36,7 +36,13 @@ export default function StepConfirmation({
       });
     return (
       <Container>
-        <TrackPage category="Withdraw NEAR Flow" name="Step Confirmed" />
+        <TrackPage
+          category="Withdraw NEAR Flow"
+          name="Step Confirmed"
+          flow="stake"
+          action="withdrawing"
+          currency="near"
+        />
         <SyncOneAccountOnMount priority={10} accountId={optimisticOperation.accountId} />
         <SuccessDisplay
           title={t("near.withdraw.flow.steps.confirmation.success.title")}
@@ -60,7 +66,13 @@ export default function StepConfirmation({
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage category="Withdraw NEAR Flow" name="Step Confirmation Error" />
+        <TrackPage
+          category="Withdraw NEAR Flow"
+          name="Step Confirmation Error"
+          flow="stake"
+          action="withdrawing"
+          currency="near"
+        />
         {signed ? (
           <BroadcastErrorDisclaimer
             title={t("near.withdraw.flow.steps.confirmation.broadcastError")}

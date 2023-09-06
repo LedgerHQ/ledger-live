@@ -13,14 +13,14 @@ import {
   isTaprootDerivationMode,
   DerivationMode,
 } from "@ledgerhq/coin-framework/derivation";
-import { BitcoinAccount, BitcoinOutput } from "./types";
+import { BitcoinAccount, BitcoinOutput, Transaction } from "./types";
 import { perCoinLogic } from "./logic";
 import wallet from "./wallet-btc";
-import { getAddress } from "./hw-getAddress";
 import { mapTxToOperations } from "./logic";
-import { Account, Operation } from "@ledgerhq/types-live";
+import { Account, AccountBridge, CurrencyBridge, Operation } from "@ledgerhq/types-live";
 import { decodeAccountId } from "../../account/index";
 import { startSpan } from "../../performance";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 // Map LL's DerivationMode to wallet-btc's
 const toWalletDerivationMode = (mode: DerivationMode): WalletDerivationModes => {
@@ -73,120 +73,131 @@ const deduplicateOperations = (operations: (Operation | undefined)[]): Operation
   return out;
 };
 
-const getAccountShape: GetAccountShape = async info => {
-  let span;
-  const { transport, currency, index, derivationPath, derivationMode, initialAccount } = info;
-  // In case we get a full derivation path, extract the seed identification part
-  // 44'/0'/0'/0/0 --> 44'/0'
-  // FIXME Only the CLI provides a full derivationPath: why?
-  const rootPath = derivationPath.split("/", 2).join("/");
-  const accountPath = `${rootPath}/${index}'`;
+export type SignerContext = (
+  deviceId: string,
+  crypto: CryptoCurrency,
+  fn: (signer: Btc) => Promise<string>,
+) => Promise<string>;
 
-  const paramXpub = initialAccount ? decodeAccountId(initialAccount.id).xpubOrAddress : undefined;
+const makeGetAccountShape =
+  (signerContext: SignerContext): GetAccountShape =>
+  async info => {
+    let span;
+    const { currency, index, derivationPath, derivationMode, initialAccount, deviceId } = info;
+    // In case we get a full derivation path, extract the seed identification part
+    // 44'/0'/0'/0/0 --> 44'/0'
+    // FIXME Only the CLI provides a full derivationPath: why?
+    const rootPath = derivationPath.split("/", 2).join("/");
+    const accountPath = `${rootPath}/${index}'`;
 
-  let generatedXpub;
-  if (!paramXpub) {
-    // Xpub not provided, generate it using the hwapp
+    const paramXpub = initialAccount ? decodeAccountId(initialAccount.id).xpubOrAddress : undefined;
 
-    if (!transport) {
-      // hwapp not provided
-      throw new Error("hwapp required to generate the xpub");
+    let generatedXpub;
+    if (!paramXpub) {
+      // Xpub not provided, generate it using the hwapp
+
+      if (deviceId === undefined || deviceId === null) {
+        throw new Error("deviceId required to generate the xpub");
+      }
+      const { bitcoinLikeInfo } = currency;
+      const { XPUBVersion: xpubVersion } = bitcoinLikeInfo as {
+        // FIXME It's supposed to be optional
+        //XPUBVersion?: number;
+        XPUBVersion: number;
+      };
+      generatedXpub = await signerContext(deviceId, currency, signer =>
+        signer.getWalletXpub({
+          path: accountPath,
+          xpubVersion,
+        }),
+      );
     }
-    const { bitcoinLikeInfo } = currency;
-    const btc = new Btc({ transport, currency: currency.id });
-    const { XPUBVersion: xpubVersion } = bitcoinLikeInfo as {
-      // FIXME It's supposed to be optional
-      //XPUBVersion?: number;
-      XPUBVersion: number;
-    };
-    generatedXpub = await btc.getWalletXpub({ path: accountPath, xpubVersion });
-  }
-  const xpub = paramXpub || generatedXpub;
+    const xpub = paramXpub || generatedXpub;
 
-  const accountId = encodeAccountId({
-    type: "js",
-    version: "2",
-    currencyId: currency.id,
-    xpubOrAddress: xpub,
-    derivationMode,
-  });
+    const accountId = encodeAccountId({
+      type: "js",
+      version: "2",
+      currencyId: currency.id,
+      xpubOrAddress: xpub,
+      derivationMode,
+    });
 
-  const walletNetwork = toWalletNetwork(currency.id);
-  const walletDerivationMode = toWalletDerivationMode(derivationMode as DerivationMode);
+    const walletNetwork = toWalletNetwork(currency.id);
+    const walletDerivationMode = toWalletDerivationMode(derivationMode as DerivationMode);
 
-  span = startSpan("sync", "generateAccount");
-  const walletAccount =
-    (initialAccount as BitcoinAccount)?.bitcoinResources?.walletAccount ||
-    (await wallet.generateAccount(
-      {
-        xpub,
-        path: rootPath,
-        index,
-        currency: <Currency>currency.id,
-        network: walletNetwork,
-        derivationMode: walletDerivationMode,
+    span = startSpan("sync", "generateAccount");
+    const walletAccount =
+      (initialAccount as BitcoinAccount)?.bitcoinResources?.walletAccount ||
+      (await wallet.generateAccount(
+        {
+          xpub,
+          path: rootPath,
+          index,
+          currency: <Currency>currency.id,
+          network: walletNetwork,
+          derivationMode: walletDerivationMode,
+        },
+        currency,
+      ));
+    span.finish();
+
+    const oldOperations = initialAccount?.operations || [];
+    const [, currentBlock] = await Promise.all([
+      wallet.syncAccount(walletAccount),
+      walletAccount.xpub.explorer.getCurrentBlock(),
+    ]);
+    const blockHeight = currentBlock?.height;
+    const balance = await wallet.getAccountBalance(walletAccount);
+    span = startSpan("sync", "getAccountTransactions");
+    const { txs: transactions } = await wallet.getAccountTransactions(walletAccount);
+    span.finish();
+
+    span = startSpan("sync", "getXpubAddresses");
+    const accountAddresses: Set<string> = new Set<string>();
+    const accountAddressesWithInfo = await walletAccount.xpub.getXpubAddresses();
+    accountAddressesWithInfo.forEach(a => accountAddresses.add(a.address));
+    span.finish();
+
+    span = startSpan("sync", "getUniquesAddresses");
+    const changeAddresses: Set<string> = new Set<string>();
+    const changeAddressesWithInfo = await walletAccount.xpub.storage.getUniquesAddresses({
+      account: 1,
+    });
+    changeAddressesWithInfo.forEach(a => changeAddresses.add(a.address));
+    span.finish();
+
+    span = startSpan("sync", "mapTxToOperations");
+    const newOperations = transactions
+      ?.map(tx => mapTxToOperations(tx, currency.id, accountId, accountAddresses, changeAddresses))
+      .flat();
+    span.finish();
+
+    span = startSpan("sync", "unify operations");
+    const newUniqueOperations = deduplicateOperations(newOperations);
+    const operations = mergeOps(oldOperations, newUniqueOperations);
+    span.finish();
+
+    span = startSpan("sync", "gather utxos");
+    const rawUtxos = await wallet.getAccountUnspentUtxos(walletAccount);
+    const utxos = rawUtxos.map(utxo => fromWalletUtxo(utxo, changeAddresses));
+    span.finish();
+
+    return {
+      id: accountId,
+      xpub,
+      balance,
+      spendableBalance: balance,
+      operations,
+      operationsCount: operations.length,
+      freshAddress: walletAccount.xpub.freshAddress,
+      freshAddressPath: `${accountPath}/0/${walletAccount.xpub.freshAddressIndex}`,
+      blockHeight,
+      bitcoinResources: {
+        utxos,
+        walletAccount,
       },
-      currency,
-    ));
-  span.finish();
-
-  const oldOperations = initialAccount?.operations || [];
-  const [, currentBlock] = await Promise.all([
-    wallet.syncAccount(walletAccount),
-    walletAccount.xpub.explorer.getCurrentBlock(),
-  ]);
-  const blockHeight = currentBlock?.height;
-  const balance = await wallet.getAccountBalance(walletAccount);
-  span = startSpan("sync", "getAccountTransactions");
-  const { txs: transactions } = await wallet.getAccountTransactions(walletAccount);
-  span.finish();
-
-  span = startSpan("sync", "getXpubAddresses");
-  const accountAddresses: Set<string> = new Set<string>();
-  const accountAddressesWithInfo = await walletAccount.xpub.getXpubAddresses();
-  accountAddressesWithInfo.forEach(a => accountAddresses.add(a.address));
-  span.finish();
-
-  span = startSpan("sync", "getUniquesAddresses");
-  const changeAddresses: Set<string> = new Set<string>();
-  const changeAddressesWithInfo = await walletAccount.xpub.storage.getUniquesAddresses({
-    account: 1,
-  });
-  changeAddressesWithInfo.forEach(a => changeAddresses.add(a.address));
-  span.finish();
-
-  span = startSpan("sync", "mapTxToOperations");
-  const newOperations = transactions
-    ?.map(tx => mapTxToOperations(tx, currency.id, accountId, accountAddresses, changeAddresses))
-    .flat();
-  span.finish();
-
-  span = startSpan("sync", "unify operations");
-  const newUniqueOperations = deduplicateOperations(newOperations);
-  const operations = mergeOps(oldOperations, newUniqueOperations);
-  span.finish();
-
-  span = startSpan("sync", "gather utxos");
-  const rawUtxos = await wallet.getAccountUnspentUtxos(walletAccount);
-  const utxos = rawUtxos.map(utxo => fromWalletUtxo(utxo, changeAddresses));
-  span.finish();
-
-  return {
-    id: accountId,
-    xpub,
-    balance,
-    spendableBalance: balance,
-    operations,
-    operationsCount: operations.length,
-    freshAddress: walletAccount.xpub.freshAddress,
-    freshAddressPath: `${accountPath}/0/${walletAccount.xpub.freshAddressIndex}`,
-    blockHeight,
-    bitcoinResources: {
-      utxos,
-      walletAccount,
-    },
+    };
   };
-};
 
 const postSync = (initial: Account, synced: Account) => {
   log("bitcoin/postSync", "bitcoinResources");
@@ -218,12 +229,10 @@ const postSync = (initial: Account, synced: Account) => {
   return syncedBtc;
 };
 
-const getAddressFn = transport => {
-  return opts => getAddress(transport, opts);
-};
+export const scanAccounts = (signerContext: SignerContext): CurrencyBridge["scanAccounts"] =>
+  makeScanAccounts({
+    getAccountShape: makeGetAccountShape(signerContext),
+  });
 
-export const scanAccounts = makeScanAccounts({
-  getAccountShape,
-  getAddressFn,
-});
-export const sync = makeSync({ getAccountShape, postSync });
+export const sync = (signerContext: SignerContext): AccountBridge<Transaction>["sync"] =>
+  makeSync({ getAccountShape: makeGetAccountShape(signerContext), postSync });

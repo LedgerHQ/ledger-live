@@ -25,10 +25,10 @@ import { NavigationProps } from "./types";
 export function useCatalog() {
   const db = useDiscoverDB();
   const categories = useCategories();
-  const recentlyUsed = useRecentlyUsed(categories.manifests, db);
+  const recentlyUsed = useRecentlyUsed(categories.manifests.all, db);
 
   const search = useSearch<AppManifest, TextInput>({
-    list: categories.manifests,
+    list: categories.searchable,
     options: BROWSE_SEARCH_OPTIONS,
   });
 
@@ -39,7 +39,7 @@ export function useCatalog() {
 
   const disclaimer = useDisclaimer(recentlyUsed.append);
 
-  useDeeplinkEffect(categories.manifests, disclaimer.openApp);
+  useDeeplinkEffect(categories.manifests.all, disclaimer.openApp);
 
   return useMemo(
     () => ({

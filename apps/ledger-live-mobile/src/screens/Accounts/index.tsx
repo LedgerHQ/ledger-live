@@ -71,7 +71,9 @@ function Accounts({ navigation, route }: NavigationProps) {
         if (currency) {
           const account = params.address
             ? accounts.find(
-                acc => acc.currency.id === currency.id && acc.freshAddress === params.address,
+                acc =>
+                  acc.currency.id === currency.id &&
+                  acc.freshAddress.toLowerCase() === params.address?.toLowerCase(),
               )
             : null;
 

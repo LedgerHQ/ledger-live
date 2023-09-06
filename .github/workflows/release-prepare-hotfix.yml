@@ -49,7 +49,7 @@ jobs:
       - name: commit
         run: |
           git add .
-          git commit -m ":fire: hotfix release [skip ci]"
+          git commit -m "chore(hotfix): :fire: hotfix release [skip ci]"
 
       - name: push changes
         run: |

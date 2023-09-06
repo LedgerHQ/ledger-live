@@ -12,7 +12,7 @@ export enum BatteryStatusTypes {
 
 // Nb USB and BLE masks not used by implementation since we have
 // them from the model.
-enum FlagMasks {
+export enum FlagMasks {
   CHARGING = 0x00000001,
   USB = 0x00000002,
   USB_POWERED = 0x00000008,

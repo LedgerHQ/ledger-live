@@ -47,4 +47,8 @@ export class PortfolioPage {
   async navigateToAsset(currency: string) {
     this.assetRow(currency).click();
   }
+
+  async scrollToOperations() {
+    await this.page.locator("id=operation-list").scrollIntoViewIfNeeded();
+  }
 }

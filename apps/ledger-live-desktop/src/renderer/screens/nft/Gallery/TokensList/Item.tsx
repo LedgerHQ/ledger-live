@@ -9,12 +9,12 @@ import Text from "~/renderer/components/Text";
 import { centerEllipsis } from "~/renderer/styles/helpers";
 import Media from "~/renderer/components/Nft/Media";
 import Skeleton from "~/renderer/components/Nft/Skeleton";
-import IconDots from "~/renderer/icons/Dots";
 import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
 import NFTContextMenu from "~/renderer/components/ContextMenu/NFTContextMenu";
 import NFTViewerDrawer from "~/renderer/drawers/NFTViewerDrawer";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { State } from "~/renderer/reducers";
+import { IconsLegacy } from "@ledgerhq/react-ui";
 const Wrapper = styled(Card)`
   &.disabled {
     pointer-events: none;
@@ -37,9 +37,9 @@ const Dots = styled.div`
   align-items: center;
   cursor: pointer;
   padding: 5px;
-  color: ${p => p.theme.colors.palette.text.shade20};
+  color: ${p => p.theme.colors.palette.text.shade50};
   &:hover {
-    color: ${p => p.theme.colors.palette.text.shade40};
+    color: ${p => p.theme.colors.palette.text.shade80};
   }
 `;
 const TitleContainer = styled(Text)`
@@ -67,11 +67,15 @@ const NftCard = ({ id, mode, account, withContextMenu = false, onHideCollection 
   const show = useMemo(() => status === "loading", [status]);
   const isGrid = mode === "grid";
   const onItemClick = useCallback(() => {
-    setDrawer(NFTViewerDrawer, {
-      account,
-      nftId: id,
-      isOpen: true,
-    });
+    setDrawer(
+      NFTViewerDrawer,
+      {
+        account,
+        nftId: id,
+        isOpen: true,
+      },
+      { forceDisableFocusTrap: true },
+    );
   }, [id, account]);
   const MaybeContext = ({ children }: { children: React.ReactNode }) =>
     withContextMenu && nft && metadata ? (
@@ -145,7 +149,7 @@ const NftCard = ({ id, mode, account, withContextMenu = false, onHideCollection 
                 onHideCollection={onHideCollection}
               >
                 <Dots>
-                  <IconDots size={20} />
+                  <IconsLegacy.OthersMedium size={20} />
                 </Dots>
               </NFTContextMenu>
             )}

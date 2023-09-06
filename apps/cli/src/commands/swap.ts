@@ -23,21 +23,20 @@ import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import invariant from "invariant";
 import { Account, SignedOperation, SubAccount } from "@ledgerhq/types-live";
+
 type SwapJobOpts = ScanCommonOpts & {
   amount: string;
   useAllAmount: boolean;
   useFloat: boolean;
-  wyreUserId?: string;
-  _unknown: any;
+  _unknown: any; // what is this?
   deviceId: string;
   tokenId: string;
 };
 
 const exec = async (opts: SwapJobOpts) => {
-  const { amount, useAllAmount, tokenId, useFloat, wyreUserId = "", deviceId = "" } = opts;
+  const { amount, useAllAmount, tokenId, useFloat, deviceId = "" } = opts;
   invariant(amount || useAllAmount, `✖ amount in satoshis is needed or --useAllAmount `);
   invariant(opts._unknown, `✖ second account information is missing`);
-  invariant(!wyreUserId || wyreUserId.length === 14, "Provider wyre user id is not valid");
 
   //Remove suffix from arguments before passing them to sync.
   const secondAccountOpts = commandLineArgs(
@@ -173,15 +172,12 @@ const exec = async (opts: SwapJobOpts) => {
     toParentAccount,
   };
 
-  const exchangeRates = await getExchangeRates(exchange, transaction, wyreUserId);
+  const exchangeRates = await getExchangeRates({ exchange, transaction });
 
   console.log({ exchangeRates });
 
   const exchangeRate = exchangeRates.find(er => {
-    if (
-      er.tradeMethod === (useFloat ? "float" : "fixed") &&
-      (!wyreUserId || er.provider === "wyre")
-    ) {
+    if (er.tradeMethod === (useFloat ? "float" : "fixed")) {
       return true;
     }
     return false;
@@ -200,7 +196,6 @@ const exec = async (opts: SwapJobOpts) => {
     exchangeRate: exchangeRate as ExchangeRate,
     transaction,
     deviceId,
-    userId: wyreUserId,
   })
     .pipe(
       tap((e: any) => {
@@ -280,12 +275,6 @@ export default {
       alias: "u",
       type: Boolean,
       desc: "Attempt to send all using the emulated max amount calculation",
-    },
-    {
-      name: "wyreUserId",
-      alias: "w",
-      type: String,
-      desc: "If provided, will attempt to use Wyre provider with given userId",
     },
     {
       name: "tokenId",

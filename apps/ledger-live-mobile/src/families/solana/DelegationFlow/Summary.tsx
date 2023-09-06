@@ -161,7 +161,13 @@ export default function DelegationSummary({ navigation, route }: Props) {
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="DelegationFlow" name="Summary" />
+      <TrackScreen
+        category="DelegationFlow"
+        name="Summary"
+        flow="stake"
+        action="delegation"
+        currency="sol"
+      />
 
       <View style={styles.body}>
         <DelegatingContainer

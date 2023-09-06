@@ -393,13 +393,15 @@ const send: ModeModule = {
       if (!t.data) {
         if (!t.allowZeroAmount && !result.errors.amount && result.amount.eq(0)) {
           result.errors.amount = new AmountRequired();
-        } else if (!result.totalSpent.gt(0) || result.totalSpent.gt(account.spendableBalance)) {
+        } else if (
+          (!result.totalSpent.gt(0) && !t.allowZeroAmount) ||
+          result.totalSpent.gt(account.spendableBalance)
+        ) {
           result.errors.amount = new NotEnoughBalance();
         }
       }
     }
   },
-
   fillTransactionData(a, t, tx) {
     const subAccount = inferTokenAccount(a, t);
 
@@ -476,7 +478,6 @@ const send: ModeModule = {
           },
     );
   },
-
   fillOptimisticOperation(a, t, op) {
     const subAccount = inferTokenAccount(a, t);
 
@@ -503,7 +504,6 @@ const send: ModeModule = {
       ];
     }
   },
-
   // This is resolution config is necessary for plugins like Lido and stuff cause they use the send mode
   getResolutionConfig: () => ({
     erc20: true,

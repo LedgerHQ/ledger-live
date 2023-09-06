@@ -1,6 +1,7 @@
 // cross helps dealing with cross-project feature like export/import & cross project conversions
 import { BigNumber } from "bignumber.js";
 import compressjs from "@ledgerhq/compressjs";
+import type { DeviceModelId } from "@ledgerhq/devices";
 import {
   runDerivationScheme,
   getDerivationScheme,
@@ -43,11 +44,15 @@ export type DataIn = {
   exporterName: string;
   // the version of the exporter. e.g. the desktop app version
   exporterVersion: string;
+  modelId?: DeviceModelId;
+  modelIdList?: DeviceModelId[];
 };
 
 type Meta = {
   exporterName: string;
   exporterVersion: string;
+  modelId?: DeviceModelId;
+  modelIdList?: DeviceModelId[];
 };
 
 export type Result = {
@@ -56,7 +61,14 @@ export type Result = {
   meta: Meta;
 };
 
-export function encode({ accounts, settings, exporterName, exporterVersion }: DataIn): string {
+export function encode({
+  accounts,
+  settings,
+  exporterName,
+  exporterVersion,
+  modelId,
+  modelIdList,
+}: DataIn): string {
   return Buffer.from(
     compressjs.Bzip2.compressFile(
       Buffer.from(
@@ -64,6 +76,8 @@ export function encode({ accounts, settings, exporterName, exporterVersion }: Da
           meta: {
             exporterName,
             exporterVersion,
+            modelId,
+            modelIdList,
           },
           accounts: accounts.map(accountToAccountData),
           settings,
@@ -78,7 +92,7 @@ const asResultMeta = (unsafe: Record<string, any>): Meta => {
     throw new Error("invalid meta data");
   }
 
-  const { exporterName, exporterVersion } = unsafe;
+  const { exporterName, exporterVersion, modelId, modelIdList } = unsafe;
 
   if (typeof exporterName !== "string") {
     throw new Error("invalid meta.exporterName");
@@ -88,9 +102,19 @@ const asResultMeta = (unsafe: Record<string, any>): Meta => {
     throw new Error("invalid meta.exporterVersion");
   }
 
+  if (modelId && typeof modelId !== "string") {
+    throw new Error("invalid meta.modelId");
+  }
+
+  if (modelIdList && modelIdList.some(id => typeof id !== "string")) {
+    throw new Error("invalid meta.modelIdList");
+  }
+
   return {
     exporterName,
     exporterVersion,
+    modelId,
+    modelIdList,
   };
 };
 
@@ -299,7 +323,7 @@ export const accountDataToAccount = ({
     // In bitcoin implementation, xpubOrAddress field always go in the xpub
     xpub = xpubOrAddress;
   } else {
-    if (currency.family === "tezos") {
+    if (currency.family === "tezos" || currency.family === "stacks") {
       xpub = xpubOrAddress;
     } else if (!freshAddress) {
       // otherwise, it's the freshAddress

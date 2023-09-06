@@ -6,6 +6,7 @@ beforeAll(async () => {
 
   await device.reverseTcpPort(8081);
   await device.reverseTcpPort(8099);
+  await device.reverseTcpPort(52619); // To allow the android emulator to access the dummy app
 
   await device.launchApp({
     languageAndLocale: {
@@ -13,7 +14,7 @@ beforeAll(async () => {
       locale: "en-US",
     },
   });
-}, 350000);
+}, 2000000);
 
 afterAll(async () => {
   serverBridge.close();

@@ -1,32 +1,32 @@
-import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
+/* istanbul ignore file: pure exports, bridge tested by live-common with bridge.integration.test.ts */
 import {
-  DeviceCommunication,
+  defaultUpdateTransaction,
   makeAccountBridgeReceive,
   makeScanAccounts,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import { broadcast } from "../broadcast";
-import { createTransaction } from "../createTransaction";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import type { AccountBridge, Bridge, CurrencyBridge } from "@ledgerhq/types-live";
+import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
+import type { Transaction as EvmTransaction } from "../types/index";
+import { EvmAddress, EvmSignature, EvmSigner } from "../signer";
 import { estimateMaxSpendable } from "../estimateMaxSpendable";
 import { getTransactionStatus } from "../getTransactionStatus";
-import getAddress from "../hw-getAddress";
-import { hydrate, preload } from "../preload";
-import { prepareTransaction } from "../prepareTransaction";
-import { buildSignOperation } from "../signOperation";
 import { getAccountShape, sync } from "../synchronization";
-import type { Transaction as EvmTransaction, Transaction } from "../types";
+import { prepareTransaction } from "../prepareTransaction";
+import { createTransaction } from "../createTransaction";
+import { buildSignOperation } from "../signOperation";
+import { hydrate, preload } from "../preload";
+import nftResolvers from "../nftResolvers";
+import { broadcast } from "../broadcast";
+import resolver from "../hw-getAddress";
 
-const updateTransaction: AccountBridge<EvmTransaction>["updateTransaction"] = (
-  transaction,
-  patch,
-) => {
-  return { ...transaction, ...patch } as EvmTransaction;
-};
+export function buildCurrencyBridge(
+  signerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature>,
+): CurrencyBridge {
+  const getAddress = resolver(signerContext);
 
-export function buildCurrencyBridge(deviceCommunication: DeviceCommunication): CurrencyBridge {
   const scanAccounts = makeScanAccounts({
     getAccountShape,
-    deviceCommunication,
     getAddressFn: getAddress,
   });
 
@@ -34,18 +34,21 @@ export function buildCurrencyBridge(deviceCommunication: DeviceCommunication): C
     preload,
     hydrate,
     scanAccounts,
+    nftResolvers,
   };
 }
 
 export function buildAccountBridge(
-  deviceCommunication: DeviceCommunication,
-): AccountBridge<Transaction> {
-  const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress), deviceCommunication);
-  const signOperation = buildSignOperation(deviceCommunication);
+  signerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature>,
+): AccountBridge<EvmTransaction> {
+  const getAddress = resolver(signerContext);
+
+  const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
+  const signOperation = buildSignOperation(signerContext);
 
   return {
     createTransaction,
-    updateTransaction,
+    updateTransaction: defaultUpdateTransaction<EvmTransaction>,
     prepareTransaction,
     getTransactionStatus,
     sync,
@@ -56,17 +59,11 @@ export function buildAccountBridge(
   };
 }
 
-/**
- * FIXME: unsued network and cacheFn are passed to createBridges because of how the
- * libs/ledger-live-common/scripts/sync-families-dispatch.mjs script works.
- */
 export function createBridges(
-  deviceCommunication: DeviceCommunication,
-  _network: unknown,
-  _cacheFn: unknown,
-) {
+  signerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature>,
+): Bridge<EvmTransaction> {
   return {
-    currencyBridge: buildCurrencyBridge(deviceCommunication),
-    accountBridge: buildAccountBridge(deviceCommunication),
+    currencyBridge: buildCurrencyBridge(signerContext),
+    accountBridge: buildAccountBridge(signerContext),
   };
 }

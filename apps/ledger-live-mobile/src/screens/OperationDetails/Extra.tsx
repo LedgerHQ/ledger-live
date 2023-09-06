@@ -1,17 +1,24 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { Operation } from "@ledgerhq/types-live";
 import Section from "./Section";
 
 type Props = {
-  extra: Record<string, string>;
+  operation: Operation;
 };
-export default function OperationDetailsExtra({ extra }: Props) {
+export default function OperationDetailsExtra({ operation }: Props) {
   const { t } = useTranslation();
-  return (
+
+  // Safety type checks
+  return operation.extra &&
+    typeof operation.extra === "object" &&
+    !Array.isArray(operation.extra) ? (
     <>
-      {Object.entries(extra).map(([key, value]) => (
-        <Section title={t(`operationDetails.extra.${key}`)} value={String(value)} />
+      {Object.entries(operation.extra as object).map(([key, value]) => (
+        <Section title={t(`operationDetails.extra.${key}`)} value={String(value)} key={key} />
       ))}
     </>
+  ) : (
+    <></>
   );
 }

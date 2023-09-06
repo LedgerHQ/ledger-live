@@ -59,8 +59,7 @@ const CustomLockScreen: React.FC<{ device: Device; disabled: boolean }> = ({
   return (
     <>
       <DeviceOptionRow
-        Icon={Icons.PhotographMedium}
-        iconSize={20}
+        Icon={Icons.PictureImage}
         label={t("customImage.title")}
         onPress={disabled ? undefined : handleStartCustomImage}
         linkLabel={t(deviceHasImage ? "customImage.replace" : "common.add")}

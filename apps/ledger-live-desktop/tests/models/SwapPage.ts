@@ -1,5 +1,5 @@
 import { Page, Locator } from "@playwright/test";
-import { waitFor } from "tests/utils/waitFor";
+import { waitFor } from "../utils/waitFor";
 
 export class SwapPage {
   readonly page: Page;
@@ -26,6 +26,7 @@ export class SwapPage {
   readonly decentralisedQuoteFilterButton: Locator;
   readonly floatQuoteFilterButton: Locator;
   readonly fixedQuoteFilterButton: Locator;
+  readonly swapProviderRates: Locator;
 
   constructor(page: Page) {
     // Misc Swap Components
@@ -77,10 +78,16 @@ export class SwapPage {
 
     // Swap History Components
     this.historyRow = page.locator(".swap-history-row").first();
+
+    // Swap Provider Rates
+    this.swapProviderRates = page.locator("data-test-id='swap2.provider-rates'");
   }
 
   async navigate() {
     await this.swapMenuButton.click();
+  }
+
+  async waitForSwapFormToLoad() {
     await this.maxSpendableToggle.waitFor({ state: "visible" });
   }
 
@@ -163,9 +170,8 @@ export class SwapPage {
     await this.exchangeButton.click();
   }
 
-  async verifySuccessfulExchange() {
+  async waitForSuccessfulExchange() {
     await this.swapId.waitFor({ state: "visible" });
-    return this.swapId.innerText();
   }
 
   async navigateToExchangeDetails() {
@@ -173,9 +179,14 @@ export class SwapPage {
     await this.swapId.waitFor({ state: "hidden" }); // for some reason the detailsSwapId visible check below is not sufficient and we need to check that this element is gone before checking the new page is available.
   }
 
-  async verifyExchangeDetails() {
+  async waitForExchangeDetails() {
     await this.detailsSwapId.waitFor({ state: "visible" });
     return this.detailsSwapId.innerText();
+  }
+
+  async waitForProviderRates() {
+    await this.centralisedQuoteFilterButton.waitFor({ state: "visible" });
+    await this.decentralisedQuoteFilterButton.waitFor({ state: "visible" });
   }
 
   // TODO: pull this function out into a utility function so we can use it elsewhere

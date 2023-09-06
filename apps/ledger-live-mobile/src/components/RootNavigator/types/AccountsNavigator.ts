@@ -10,13 +10,6 @@ export type AccountsNavigatorParamList = {
         address?: string;
         currencyTicker?: string;
         currencyId?: string;
-        drawer?: {
-          id: string;
-          props: {
-            singleProviderRedirectMode: boolean;
-            accountId: string;
-          };
-        };
       }
     | undefined;
   [ScreenName.Account]: {
@@ -25,13 +18,6 @@ export type AccountsNavigatorParamList = {
     parentId?: string;
     currencyId?: string;
     currencyType?: "CryptoCurrency" | "TokenCurrency";
-    drawer?: {
-      id: string;
-      props: {
-        singleProviderRedirectMode: boolean;
-        accountId: string;
-      };
-    };
   };
   [ScreenName.NftCollection]: {
     accountId: string;
@@ -47,12 +33,5 @@ export type AccountsNavigatorParamList = {
   [ScreenName.Assets]: undefined;
   [ScreenName.Asset]: {
     currency: CryptoOrTokenCurrency;
-    drawer?: {
-      id: string;
-      props: {
-        singleProviderRedirectMode: boolean;
-        accountId: string;
-      };
-    };
   };
 };

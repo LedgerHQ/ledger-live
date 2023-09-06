@@ -35,7 +35,13 @@ export default function ValidationError({ navigation, route }: Props) {
         },
       ]}
     >
-      <TrackScreen category="NearUnstaking" name="ValidationError" />
+      <TrackScreen
+        category="NearUnstaking"
+        name="ValidationError"
+        flow="stake"
+        action="unstaking"
+        currency="near"
+      />
       <ValidateError error={error} onRetry={retry} onClose={onClose} />
     </SafeAreaView>
   );

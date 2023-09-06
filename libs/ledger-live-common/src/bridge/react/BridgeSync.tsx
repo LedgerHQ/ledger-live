@@ -7,7 +7,7 @@ import React, { useEffect, useCallback, useState, useRef, useMemo } from "react"
 import { getVotesCount, isUpToDateAccount } from "../../account";
 import { getAccountBridge } from "..";
 import { getAccountCurrency } from "../../account";
-import { getEnv } from "../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import type { SyncAction, SyncState, BridgeSyncState } from "./types";
 import { BridgeSyncContext, BridgeSyncStateContext } from "./context";
 import type { Account, SubAccount } from "@ledgerhq/types-live";
@@ -379,13 +379,14 @@ function useSyncContinouslyPendingOperations({ sync, accounts }) {
     let timeout;
 
     const update = () => {
+      timeout = setTimeout(update, getEnv("SYNC_PENDING_INTERVAL"));
+      if (!refIds.current.length) return;
       sync({
         type: "SYNC_SOME_ACCOUNTS",
         accountIds: refIds.current,
         priority: 20,
         reason: "pending-operations",
       });
-      timeout = setTimeout(update, getEnv("SYNC_PENDING_INTERVAL"));
     };
 
     timeout = setTimeout(update, getEnv("SYNC_PENDING_INTERVAL"));
