@@ -183,7 +183,7 @@
     "chalk": "^4.1.2",
     "cross-env": "^7.0.3",
     "debug": "^4.3.4",
-    "electron": "^25.1.1",
+    "electron": "^25.5.0",
     "electron-builder": "^23.6.0",
     "electron-devtools-installer": "^3.2.0",
     "esbuild-utils": "workspace:*",
