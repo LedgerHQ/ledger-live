@@ -151,8 +151,7 @@ const SwapForm = () => {
     const { account: fromAccount, parentAccount: fromParentAccount } = from;
     const { account: toAccount, parentAccount: toParentAccount } = to;
     const { feesStrategy } = transaction || {};
-
-    const rateId = exchangeRate?.rateId || "12345";
+    const { rate, rateId = "1234" } = exchangeRate || {};
     if (fromAccount && toAccount) {
       const fromAccountId = accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id;
       const toAccountId = accountToWalletAPIAccount(toAccount, toParentAccount)?.id;
@@ -168,12 +167,13 @@ const SwapForm = () => {
           toAccountId,
           fromAmount,
           quoteId: encodeURIComponent(rateId),
+          rate,
           feeStrategy: feesStrategy?.toUpperCase(),
           ...customFeesParams,
         },
       });
     }
-  }, [swapTransaction.swap, swapTransaction.transaction, exchangeRate?.rateId, history, provider]);
+  }, [swapTransaction.swap, swapTransaction.transaction, exchangeRate, history, provider]);
 
   useEffect(() => {
     if (swapTransaction.swap.rates.status === "success") {

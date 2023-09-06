@@ -154,6 +154,8 @@ describe("completeExchangeLogic", () => {
         signature: "signature",
         feesStrategy: "medium",
         exchangeType: 8,
+        swapId: "1234",
+        rate: 1,
       };
 
       const expectedTransaction: EthereumTransaction = {
@@ -211,6 +213,8 @@ describe("completeExchangeLogic", () => {
         signature: "signature",
         feesStrategy: "medium",
         exchangeType: 8,
+        swapId: "1234",
+        rate: 1,
       };
 
       const expectedTransaction: EthereumTransaction = {
@@ -269,6 +273,8 @@ describe("completeExchangeLogic", () => {
           signature: "signature",
           feesStrategy: expectedFeeStrategy,
           exchangeType: 8,
+          swapId: "1234",
+          rate: 1,
         };
 
         // When
@@ -293,6 +299,8 @@ describe("completeExchangeLogic", () => {
         signature: "signature",
         feesStrategy: "feeStrategy",
         exchangeType: 8,
+        swapId: "1234",
+        rate: 1,
       };
 
       // When
@@ -323,6 +331,8 @@ describe("completeExchangeLogic", () => {
         signature: "signature",
         feesStrategy: "feeStrategy",
         exchangeType: 8,
+        swapId: "1234",
+        rate: 1,
       };
 
       // When

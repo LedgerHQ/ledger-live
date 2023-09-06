@@ -727,6 +727,8 @@ export function useWalletAPIServer({
         signature: params.signature.toString("hex"),
         feesStrategy: params.feeStrategy,
         exchangeType: ExchangeType[params.exchangeType],
+        swapId: params.exchangeType === "SWAP" ? params.swapId : undefined,
+        rate: params.exchangeType === "SWAP" ? params.rate : undefined,
       };
 
       return completeExchangeLogic(

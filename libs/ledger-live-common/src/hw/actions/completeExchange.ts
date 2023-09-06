@@ -25,6 +25,8 @@ type CompleteExchangeRequest = {
   exchange: Exchange;
   exchangeType: number;
   rateType?: number;
+  swapId?: string;
+  rate?: number;
 };
 type Result =
   | {
