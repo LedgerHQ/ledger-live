@@ -168,6 +168,7 @@ export type Features = CurrencyFeatures & {
   protectServicesDiscoverDesktop: Feature_ProtectServicesDiscoverDesktop;
   transactionsAlerts: Feature_TransactionsAlerts;
   listAppsV2: Feature_ListAppsV2;
+  llmWalletQuickActions: Feature_LlmWalletQuickActions;
 };
 
 /**
@@ -437,6 +438,7 @@ export type Feature_ProtectServicesDiscoverDesktop = DefaultFeature;
 export type Feature_ListAppsV2 = DefaultFeature;
 export type Feature_BrazeLearn = DefaultFeature;
 export type Feature_LlmNewDeviceSelection = DefaultFeature;
+export type Feature_LlmWalletQuickActions = DefaultFeature;
 
 /**
  * Utils types.
