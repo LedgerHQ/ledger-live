@@ -1,5 +1,34 @@
 # @ledgerhq/hw-app-eth
 
+## 6.34.5
+
+### Patch Changes
+
+- Updated dependencies [[`18b4a47b48`](https://github.com/LedgerHQ/ledger-live/commit/18b4a47b4878a23695a50096b7770134883b8a2e)]:
+  - @ledgerhq/cryptoassets@9.12.1
+  - @ledgerhq/domain-service@1.1.10
+  - @ledgerhq/evm-tools@1.0.6
+
+## 6.34.4
+
+### Patch Changes
+
+- Updated dependencies [[`8e9df43a0c`](https://github.com/LedgerHQ/ledger-live/commit/8e9df43a0cd00a2065b494439f300f96724b8eb8), [`45be23c776`](https://github.com/LedgerHQ/ledger-live/commit/45be23c77666697dbe395f836ab592062173d5cb), [`6375c250a9`](https://github.com/LedgerHQ/ledger-live/commit/6375c250a9a58b33e3dd1d6c96a96c7e46150298)]:
+  - @ledgerhq/types-live@6.39.0
+  - @ledgerhq/cryptoassets@9.12.0
+  - @ledgerhq/domain-service@1.1.9
+  - @ledgerhq/evm-tools@1.0.5
+
+## 6.34.4-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`8e9df43a0c`](https://github.com/LedgerHQ/ledger-live/commit/8e9df43a0cd00a2065b494439f300f96724b8eb8), [`45be23c776`](https://github.com/LedgerHQ/ledger-live/commit/45be23c77666697dbe395f836ab592062173d5cb), [`6375c250a9`](https://github.com/LedgerHQ/ledger-live/commit/6375c250a9a58b33e3dd1d6c96a96c7e46150298)]:
+  - @ledgerhq/types-live@6.39.0-next.0
+  - @ledgerhq/cryptoassets@9.12.0-next.0
+  - @ledgerhq/domain-service@1.1.9-next.0
+  - @ledgerhq/evm-tools@1.0.5-next.0
+
 ## 6.34.3
 
 ### Patch Changes

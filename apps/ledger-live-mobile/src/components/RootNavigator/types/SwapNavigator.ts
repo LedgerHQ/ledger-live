@@ -1,12 +1,15 @@
-import {
-  ExchangeRate,
-  MappedSwapOperation,
-  SwapDataType,
-} from "@ledgerhq/live-common/exchange/swap/types";
-import { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { ExchangeRate, SwapDataType } from "@ledgerhq/live-common/exchange/swap/types";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { Transaction as EthereumTransaction } from "@ledgerhq/live-common/families/ethereum/types";
 import type { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
+import type {
+  DetailsSwapParamList,
+  DefaultAccountSwapParamList,
+  SwapSelectCurrency,
+  SwapPendingOperation,
+  SwapOperation,
+} from "../../../screens/Swap/types";
 
 import type {
   CardanoAccount,
@@ -44,13 +47,12 @@ import { ScreenName } from "../../../const";
 
 type Target = "from" | "to";
 
-type SwapOperation = Omit<MappedSwapOperation, "fromAccount" | "toAccount"> & {
-  fromAccountId: string;
-  toAccountId: string;
-};
-
 export type SwapNavigatorParamList = {
-  [ScreenName.SwapTab]: undefined;
+  [ScreenName.SwapTab]:
+    | DetailsSwapParamList
+    | DefaultAccountSwapParamList
+    | SwapSelectCurrency
+    | SwapPendingOperation;
   [ScreenName.SwapSelectAccount]: {
     target: Target;
     provider?: string;
@@ -58,10 +60,7 @@ export type SwapNavigatorParamList = {
     selectableCurrencyIds: string[];
     selectedCurrency: CryptoCurrency | TokenCurrency;
   };
-  [ScreenName.SwapSelectCurrency]: {
-    currencies: Currency[];
-    provider?: string;
-  };
+  [ScreenName.SwapSelectCurrency]: SwapSelectCurrency;
   [ScreenName.SwapSelectProvider]: {
     provider?: string;
     swap: SwapDataType;
@@ -86,9 +85,7 @@ export type SwapNavigatorParamList = {
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
-  [ScreenName.SwapPendingOperation]: {
-    swapOperation: SwapOperation;
-  };
+  [ScreenName.SwapPendingOperation]: SwapPendingOperation;
   [ScreenName.SwapOperationDetails]: {
     swapOperation: SwapOperation;
     fromPendingOperation?: true;
