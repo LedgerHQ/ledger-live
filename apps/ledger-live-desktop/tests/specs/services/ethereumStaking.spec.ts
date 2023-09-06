@@ -80,11 +80,6 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
   const marketCoinPage = new MarketCoinPage(page);
   const analytics = new Analytics(page);
 
-  await page.route("https://swap.ledger.com/v4/providers**", async route => {
-    const mockProvidersResponse = getProvidersMock();
-    route.fulfill({ body: mockProvidersResponse });
-  });
-
   await test.step("Entry buttons load with feature flag enabled", async () => {
     await expect.soft(page).toHaveScreenshot("portfolio-entry-buttons.png");
   });
