@@ -88,6 +88,7 @@ const account: CosmosAccount = {
     pendingRewardsBalance: new BigNumber("0"),
     unbondingBalance: new BigNumber("0"),
     withdrawAddress: "",
+    sequence: 0,
   },
 };
 
