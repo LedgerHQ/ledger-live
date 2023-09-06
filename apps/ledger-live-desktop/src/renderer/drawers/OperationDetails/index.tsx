@@ -171,8 +171,10 @@ const OperationD = (props: Props) => {
   const urlFeesInfo = getURLFeesInfo
     ? getURLFeesInfo({ op: operation, currencyId: cryptoCurrency.id })
     : null;
-  // const url = cryptoCurrency.id != "hedera" ? getTransactionExplorer(getDefaultExplorerView(mainAccount.currency), operation.hash) : getTransactionExplorer(getDefaultExplorerView(mainAccount.currency), operation.extra.consensusTimeStamp);
-  const url = getTransactionExplorer(getDefaultExplorerView(mainAccount.currency), operation.hash);
+  let url = getLLDCoinFamily(account.currency.family).getTransactionExplorer?.(getDefaultExplorerView(mainAccount.currency), operation);
+  if (!url) {
+    url = getTransactionExplorer(getDefaultExplorerView(mainAccount.currency), operation.hash);
+  }
   const uniqueSenders = uniq(senders);
   const OpDetailsExtra = specific?.operationDetails?.OperationDetailsExtra || OperationDetailsExtra;
   const { hasFailed } = operation;
@@ -379,7 +381,7 @@ const OperationD = (props: Props) => {
           </Skeleton>
         </Box>
       )}
-      {/* {url ? (
+      {url ? (
         <Box m={0} ff="Inter|SemiBold" horizontal justifyContent="center" fontSize={4} my={1}>
           <LinkWithExternalIcon
             fontSize={4}
@@ -391,8 +393,7 @@ const OperationD = (props: Props) => {
             label={t("operationDetails.viewOperation")}
           />
         </Box>
-      ) : null} */}
-      <ExplorerLink account={account} url={url} currencyName={currencyName} operation={operation}/>
+      ) : null}
       {editable ? (
         <Alert type={isStuck ? "warning" : "primary"}>
           <Trans

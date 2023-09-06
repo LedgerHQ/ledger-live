@@ -2,7 +2,7 @@ import AccountSubHeader from "./AccountSubHeader";
 import NoAssociatedAccounts from "./NoAssociatedAccounts";
 import sendAmountFields from "./SendAmountFields";
 import StepReceiveFunds from "./StepReceiveFunds";
-import ExplorerLink from "./ExplorerLink";
+import getTransactionExplorer from "./getTransactionExplorer";
 import { HederaFamily } from "./types";
 
 const family: HederaFamily = {
@@ -10,7 +10,7 @@ const family: HederaFamily = {
   sendAmountFields,
   StepReceiveFunds,
   NoAssociatedAccounts,
-  ExplorerLink,
+  getTransactionExplorer
 };
 
 export default family;
