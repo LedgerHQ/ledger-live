@@ -1969,8 +1969,7 @@
       },
       "completed" : {
         "noUpdateAvailable" : {
-          "title" : "التحقق من تحديث نظام التشغيل",
-          "description" : "OS update check makes sure {{productName}} Operating System is up to date."
+          "title" : "نظام تشغيل {{productName}} مُحدَّث إلى آخر إصدار"
         }
       },
       "error" : {
@@ -1989,10 +1988,11 @@
       }
     },
     "firmwareUpdateAvailableDrawer" : {
-      "title" : "OS update available",
+      "title" : "{{productName}} OS update available",
       "description" : "Update your {{productName}} to benefit from the latest security and functionality.",
       "descriptionVersion" : "النسخة {{firmwareVersion}}",
-      "updateCta" : "تحديث الآن"
+      "updateCta" : "تحديث الآن",
+      "seeWhatsInUpdateCta" : "See what's in the update"
     }
   },
   "syncOnboarding" : {
@@ -2446,12 +2446,16 @@
     },
     "import" : {
       "scan" : {
-        "title" : "قم بالاستيراد من سطح المكتب",
-        "descTop" : {
-          "line1" : "في Ledger Live لسطح المكتب، انتقل إلى:",
-          "line2" : "إعدادات > حسابات > تصدير الحسابات > تصدير"
+        "title" : "قم بالاستيراد من سطح المكتب"
+      },
+      "newScan" : {
+        "title" : "Scan and import your accounts from Ledger Live desktop",
+        "instructions" : {
+          "line1" : "Open Ledger Live Desktop.",
+          "line2" : "Settings > Accounts > Exports accounts",
+          "line3" : "Scan QR code until loader hits 100%."
         },
-        "descBottom" : "افتح Ledger Live لسطح المكتب وقم بمسح كود QR ضوئياً"
+        "hodl" : "Hold until scanning completes."
       },
       "result" : {
         "title" : "استيراد الحسابات",
@@ -4291,6 +4295,7 @@
     "yesChangeLanguage" : "نعم، غيّر اللغة",
     "allowLanguageInstallation" : "وافق على تثبيت اللغة على {{deviceName}}",
     "languageInstalled" : "تم تغيير اللغة إلى {{language}}",
+    "languageInstalledDesc" : "Your device is now in the language you chose",
     "firmwareUpdatePrompt" : {
       "title" : "تعيين {{deviceName}} خاصتك باللغة {{language}}؟",
       "description" : "اللغة {{language}} متاحة الآن لجهازك {{deviceName}}. يمكنك تعيينها الآن، أو تغيير لغة جهازك في أي وقت من My Ledger."
@@ -6351,10 +6356,10 @@
       "status" : {
         "new" : {
           "title" : "جديد",
-          "desc" : "لا تقلق بشأن فقد الوصول إلى محفظتك.",
+          "desc" : "استعدْ الوصول إلى محفظتك بدون عبارة الاسترداد السرية الخاصة بك.",
           "actions" : {
             "learnMore" : "تعرّف على Ledger Recover",
-            "alreadySubscribed" : "لديّ معلومات تسجيل دخول بالفعل <LinkAccount>عرض اشتراكي</LinkAccount>"
+            "alreadySubscribed" : "مشترك بالفعل؟ <LinkAccount>عرض الاشتراك</LinkAccount>"
           }
         }
       }
