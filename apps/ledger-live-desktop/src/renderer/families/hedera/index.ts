@@ -10,7 +10,7 @@ const family: HederaFamily = {
   sendAmountFields,
   StepReceiveFunds,
   NoAssociatedAccounts,
-  getTransactionExplorer
+  getTransactionExplorer,
 };
 
 export default family;

@@ -75,7 +75,6 @@ import NFTOperationDetails from "./NFTOperationDetails";
 import { State } from "~/renderer/reducers";
 // import { openModal } from "~/renderer/actions/modals";
 import { getLLDCoinFamily } from "~/renderer/families";
-import { ExplorerLink } from "./ExplorerLink";
 
 const mapStateToProps = (
   state: State,
@@ -171,7 +170,10 @@ const OperationD = (props: Props) => {
   const urlFeesInfo = getURLFeesInfo
     ? getURLFeesInfo({ op: operation, currencyId: cryptoCurrency.id })
     : null;
-  let url = getLLDCoinFamily(account.currency.family).getTransactionExplorer?.(getDefaultExplorerView(mainAccount.currency), operation);
+  let url = getLLDCoinFamily(account.currency.family).getTransactionExplorer?.(
+    getDefaultExplorerView(mainAccount.currency),
+    operation,
+  );
   if (!url) {
     url = getTransactionExplorer(getDefaultExplorerView(mainAccount.currency), operation.hash);
   }
