@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { BigNumber } from "bignumber.js";
 import { useDispatch } from "react-redux";
 import { Exchange, ExchangeSwap } from "@ledgerhq/live-common/exchange/platform/types";
+import { Exchange as SwapExchange } from "@ledgerhq/live-common/exchange/swap/types";
 import { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -10,7 +11,6 @@ import Box from "~/renderer/components/Box";
 import { useBroadcast } from "~/renderer/hooks/useBroadcast";
 import { BodyContent } from "./BodyContent";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
-import completeExchange from "@ledgerhq/live-common/exchange/platform/completeExchange";
 import { onCompleteExchange } from "~/renderer/screens/exchange/Swap2/Form/ExchangeDrawer/utils";
 
 export type Data = {
@@ -77,15 +77,12 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
           const magnitudeAwareRate = new BigNumber(rate).div(
             new BigNumber(10).pow(unitFrom.magnitude - unitTo.magnitude),
           );
-          const exchangeRate = {
-            magnitudeAwareRate,
-            provider,
-          };
           const dispatchAction = onCompleteExchange({
             result,
-            exchange,
+            exchange: exchange as SwapExchange,
             transaction: transactionParams,
-            exchangeRate,
+            magnitudeAwareRate,
+            provider,
           });
           dispatch(dispatchAction);
         }
@@ -93,7 +90,21 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
         onClose?.();
       }, setError);
     }
-  }, [broadcast, onClose, onResult, signedOperation, transaction]);
+  }, [
+    account,
+    dispatch,
+    exchange,
+    provider,
+    rate,
+    swapId,
+    toAccount,
+    transactionParams,
+    broadcast,
+    onClose,
+    onResult,
+    signedOperation,
+    transaction,
+  ]);
 
   return (
     <ModalBody

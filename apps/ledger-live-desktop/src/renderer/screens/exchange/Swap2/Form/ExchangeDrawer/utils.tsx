@@ -1,12 +1,27 @@
+import { BigNumber } from "bignumber.js";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { getEnv } from "@ledgerhq/live-env";
 import { postSwapAccepted, postSwapCancelled } from "@ledgerhq/live-common/exchange/swap/index";
 import addToSwapHistory from "@ledgerhq/live-common/exchange/swap/addToSwapHistory";
-import { Account } from "@ledgerhq/types-live";
+import { Account, Operation } from "@ledgerhq/types-live";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
+import { Exchange as SwapExchange, ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
 
-export const onCompleteExchange = ({ result, exchange, transaction, exchangeRate }: any) => {
+export const onCompleteExchange = ({
+  result,
+  exchange,
+  transaction,
+  magnitudeAwareRate,
+  provider,
+}: {
+  result: { operation: Operation; swapId: string };
+  exchange: SwapExchange;
+  transaction?: Transaction | null;
+  magnitudeAwareRate: BigNumber;
+  provider: string;
+}) => {
   const { operation, swapId } = result;
 
   /**
@@ -15,12 +30,12 @@ export const onCompleteExchange = ({ result, exchange, transaction, exchangeRate
    */
   if (getEnv("DISABLE_TRANSACTION_BROADCAST")) {
     postSwapCancelled({
-      provider: exchangeRate.provider,
+      provider,
       swapId,
     });
   } else {
     postSwapAccepted({
-      provider: exchangeRate.provider,
+      provider,
       swapId,
       transactionId: operation.hash,
     });
@@ -37,7 +52,10 @@ export const onCompleteExchange = ({ result, exchange, transaction, exchangeRate
       transaction,
       swap: {
         exchange,
-        exchangeRate,
+        exchangeRate: {
+          magnitudeAwareRate,
+          provider,
+        } as ExchangeRate,
       },
       swapId,
     });

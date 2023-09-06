@@ -1,6 +1,10 @@
 import { postSwapCancelled } from "@ledgerhq/live-common/exchange/swap/index";
 import { onCompleteExchange } from "./utils";
-import { SwapTransactionType, ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
+import {
+  Exchange,
+  SwapTransactionType,
+  ExchangeRate,
+} from "@ledgerhq/live-common/exchange/swap/types";
 import React, { useCallback, useMemo, useState } from "react";
 import { Trans } from "react-i18next";
 import { useDispatch } from "react-redux";
@@ -62,7 +66,7 @@ export default function ExchangeDrawer({ swapTransaction, exchangeRate, onComple
       toAccount,
     }),
     [fromAccount, fromParentAccount, toAccount, toParentAccount],
-  );
+  ) as Exchange;
 
   const onError = useCallback(
     errorResult => {
@@ -86,17 +90,19 @@ export default function ExchangeDrawer({ swapTransaction, exchangeRate, onComple
 
   const onCompletion = useCallback(
     (result: { operation: Operation; swapId: string }) => {
+      const { magnitudeAwareRate, provider } = exchangeRate;
       const dispatchAction = onCompleteExchange({
         result,
         exchange,
         transaction,
-        exchangeRate,
+        magnitudeAwareRate,
+        provider,
       });
       dispatch(dispatchAction);
       setResult(result);
       onCompleteSwap && onCompleteSwap();
     },
-    [dispatch, exchange, transaction],
+    [dispatch, exchange, exchangeRate, transaction, onCompleteSwap],
   );
 
   const onViewDetails = useCallback(
