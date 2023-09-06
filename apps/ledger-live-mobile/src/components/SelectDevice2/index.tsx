@@ -54,7 +54,7 @@ type Props = {
    * should react to a request from this component to set or to clean its header.
    */
   requestToSetHeaderOptions: (request: SetHeaderOptionsRequest) => void;
-
+  hasPostOnboardingEntryPointCard?: boolean;
   isChoiceDrawerDisplayedOnAddDevice?: boolean;
   withMyLedgerTracking?: boolean;
   filterByDeviceModelId?: DeviceModelId;
@@ -66,6 +66,7 @@ export default function SelectDevice({
   displayServicesWidget,
   requestToSetHeaderOptions,
   isChoiceDrawerDisplayedOnAddDevice = true,
+  hasPostOnboardingEntryPointCard,
   withMyLedgerTracking,
   filterByDeviceModelId,
 }: Props) {
@@ -79,7 +80,7 @@ export default function SelectDevice({
   const [isPairingDevices, setIsPairingDevices] = useState<boolean>(false);
 
   const postOnboardingVisible = usePostOnboardingEntryPointVisibleOnWallet();
-
+  const isPostOnboardingVisible = hasPostOnboardingEntryPointCard && postOnboardingVisible;
   const { t } = useTranslation();
 
   const knownDevices = useSelector(knownDevicesSelector);
@@ -326,7 +327,7 @@ export default function SelectDevice({
         />
       ) : (
         <Flex flex={1}>
-          {postOnboardingVisible && (
+          {isPostOnboardingVisible && (
             <Box mb={8}>
               <PostOnboardingEntryPointCard />
             </Box>
