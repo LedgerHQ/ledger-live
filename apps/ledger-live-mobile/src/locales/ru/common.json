@@ -1969,8 +1969,7 @@
       },
       "completed" : {
         "noUpdateAvailable" : {
-          "title" : "Проверка обновления прошивки",
-          "description" : "Проверка обновления ОС нужна для гарантии того, что {{productName}} обновлён."
+          "title" : "Прошивка {{productName}} актуальна"
         }
       },
       "error" : {
@@ -1989,10 +1988,11 @@
       }
     },
     "firmwareUpdateAvailableDrawer" : {
-      "title" : "Доступно обновление ОС",
+      "title" : "{{productName}} OS update available",
       "description" : "Обновите {{productName}}, чтобы поддерживать актуальный уровень безопасности и функциональности.",
       "descriptionVersion" : "Версия {{firmwareVersion}}",
-      "updateCta" : "Обновить"
+      "updateCta" : "Обновить",
+      "seeWhatsInUpdateCta" : "See what's in the update"
     }
   },
   "syncOnboarding" : {
@@ -2446,12 +2446,16 @@
     },
     "import" : {
       "scan" : {
-        "title" : "Импорт из настольного приложения",
-        "descTop" : {
-          "line1" : "В настольном приложении Ledger Live перейдите в:",
-          "line2" : "Настройки > Счета > Экспорт счетов > Экспортировать"
+        "title" : "Импорт из настольного приложения"
+      },
+      "newScan" : {
+        "title" : "Scan and import your accounts from Ledger Live desktop",
+        "instructions" : {
+          "line1" : "Open Ledger Live Desktop.",
+          "line2" : "Settings > Accounts > Exports accounts",
+          "line3" : "Scan QR code until loader hits 100%."
         },
-        "descBottom" : "Откройте настольное приложение Ledger Live и сканируйте QR-код"
+        "hodl" : "Hold until scanning completes."
       },
       "result" : {
         "title" : "Импорт счетов",
@@ -4291,6 +4295,7 @@
     "yesChangeLanguage" : "Да, поменять язык",
     "allowLanguageInstallation" : "Разрешите установку языка на {{deviceName}}",
     "languageInstalled" : "Новый язык устройства — {{language}}",
+    "languageInstalledDesc" : "Your device is now in the language you chose",
     "firmwareUpdatePrompt" : {
       "title" : "Добавить {{language}} язык на устройство {{deviceName}}?",
       "description" : "Теперь {{language}} язык доступен для {{deviceName}}. Можно установить его сейчас или поменять в любое удобное время в разделе «Мой Ledger»."
@@ -6351,10 +6356,10 @@
       "status" : {
         "new" : {
           "title" : "Новинка",
-          "desc" : "Хватит беспокоиться о возможной потере доступа к своему кошельку.",
+          "desc" : "Восстановите доступ к кошельку без фразы восстановления.",
           "actions" : {
             "learnMore" : "Изучить Ledger Recover",
-            "alreadySubscribed" : "Уже есть учётная запись? <LinkAccount>Посмотреть подписку</LinkAccount>"
+            "alreadySubscribed" : "Уже подписаны? <LinkAccount>Посмотреть подписку</LinkAccount>"
           }
         }
       }
