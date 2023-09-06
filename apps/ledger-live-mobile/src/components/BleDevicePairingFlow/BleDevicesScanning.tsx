@@ -8,10 +8,12 @@ import { useSelector } from "react-redux";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { Device, DeviceModelId } from "@ledgerhq/types-devices";
 import { useNavigation } from "@react-navigation/native";
+import { IconsLegacy } from "@ledgerhq/native-ui";
 import TransportBLE from "../../react-native-hw-transport-ble";
 import { knownDevicesSelector } from "../../reducers/ble";
 import Animation from "../Animation";
 import BleDeviceItem from "./BleDeviceItem";
+import Link from "../../components/wrappedUi/Link";
 import lottie from "./assets/bluetooth.json";
 import { urls } from "../../config/urls";
 import { TrackScreen, track } from "../../analytics";
@@ -193,15 +195,15 @@ const BleDevicesScanning = ({
         </Flex>
       </Flex>
       {productName !== null && isCantSeeDeviceShown && (
-        <Text
-          textAlign="center"
-          mb={40}
-          fontSize={14}
-          fontWeight="semiBold"
+        <Link
           onPress={onCantSeeDevicePress}
+          size={"medium"}
+          Icon={IconsLegacy.HelpMedium}
+          type="shade"
+          iconPosition="right"
         >
           {t("blePairingFlow.scanning.cantSeeDevice", { productName })}
-        </Text>
+        </Link>
       )}
     </Flex>
   );
