@@ -1969,8 +1969,7 @@
       },
       "completed" : {
         "noUpdateAvailable" : {
-          "title" : "Vérification du système d’exploitation",
-          "description" : "La vérification du système d’exploitation confirme que votre {{productName}} est à jour."
+          "title" : "Votre {{productName}} est à jour"
         }
       },
       "error" : {
@@ -1989,10 +1988,11 @@
       }
     },
     "firmwareUpdateAvailableDrawer" : {
-      "title" : "Mise à jour du système d’exploitation disponible",
+      "title" : "{{productName}} OS update available",
       "description" : "Mettez à jour votre {{productName}} pour bénéficier des dernières fonctionnalités et d’une sécurité optimale.",
       "descriptionVersion" : "Version {{firmwareVersion}}",
-      "updateCta" : "Mettre à jour"
+      "updateCta" : "Mettre à jour",
+      "seeWhatsInUpdateCta" : "See what's in the update"
     }
   },
   "syncOnboarding" : {
@@ -2446,12 +2446,16 @@
     },
     "import" : {
       "scan" : {
-        "title" : "Importer depuis l’ordinateur",
-        "descTop" : {
-          "line1" : "Dans Ledger Live pour l’ordinateur, ouvrez :",
-          "line2" : "Paramètres > Comptes > Exporter les comptes > Exporter"
+        "title" : "Importer depuis l’ordinateur"
+      },
+      "newScan" : {
+        "title" : "Scan and import your accounts from Ledger Live desktop",
+        "instructions" : {
+          "line1" : "Open Ledger Live Desktop.",
+          "line2" : "Settings > Accounts > Exports accounts",
+          "line3" : "Scan QR code until loader hits 100%."
         },
-        "descBottom" : "Ouvrez Ledger Live pour l’ordinateur et scannez le code QR."
+        "hodl" : "Hold until scanning completes."
       },
       "result" : {
         "title" : "Importer des comptes",
@@ -4291,6 +4295,7 @@
     "yesChangeLanguage" : "Oui, changer la langue",
     "allowLanguageInstallation" : "Confirmez l’ajout de la langue sur votre {{deviceName}}",
     "languageInstalled" : "Votre Ledger est maintenant en {{language}}.",
+    "languageInstalledDesc" : "Your device is now in the language you chose",
     "firmwareUpdatePrompt" : {
       "title" : "Utiliser votre {{deviceName}} en {{language}} ?",
       "description" : "Une nouvelle langue est disponible pour votre {{deviceName}} : {{language}}. Vous pouvez changer la langue de votre Ledger maintenant ou à tout moment à partir de My Ledger."
@@ -6351,10 +6356,10 @@
       "status" : {
         "new" : {
           "title" : "Nouveau",
-          "desc" : "Ne craignez plus de perdre l’accès à votre wallet.",
+          "desc" : "Retrouvez l’accès à votre wallet sans votre phrase de récupération secrète.",
           "actions" : {
             "learnMore" : "Découvrir Ledger Recover",
-            "alreadySubscribed" : "J’ai déjà un identifiant pour <LinkAccount>voir mon abonnement</LinkAccount>."
+            "alreadySubscribed" : "Déjà abonné(e) ? <LinkAccount>Voir mon abonnement</LinkAccount>"
           }
         }
       }
