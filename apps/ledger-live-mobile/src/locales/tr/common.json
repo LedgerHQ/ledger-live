@@ -37,7 +37,7 @@
     "rename" : "Cihazın adını değiştir",
     "learnMore" : "Daha fazla bilgi",
     "checkItOut" : "Göz at",
-    "viewDetails" : "Ayrıntıları göster",
+    "viewDetails" : "Ayrıntıları gör",
     "today" : "Bugün",
     "yesterday" : "Dün",
     "upToDate" : "Güncel",
@@ -2475,7 +2475,7 @@
     "undelegating" : "Yetki iptali",
     "delegation" : {
       "sectionLabel" : "Yetki Devirleri",
-      "addDelegation" : "Yetkili ekleme",
+      "addDelegation" : "Yetki devri ekle",
       "info" : {
         "title" : "Ödüller kazanın",
         "cta" : "Ödüller kazanın"
@@ -3364,7 +3364,7 @@
           "extraInfo" : "İşlemlerin bir tarayıcıda görünmesi ve doğrulanması biraz zaman alabilir.",
           "button" : {
             "done" : "Tamam",
-            "cta" : "Ayrıntıları göster"
+            "cta" : "Ayrıntıları gör"
           }
         }
       },
@@ -3381,7 +3381,7 @@
           "info" : "Çekim işlemi ağ tarafından doğrulandıktan sonra varlıklarınız kullanıma açılacaktır.",
           "button" : {
             "done" : "Tamam",
-            "cta" : "Ayrıntıları göster"
+            "cta" : "Ayrıntıları gör"
           }
         }
       }
@@ -3496,7 +3496,7 @@
       "fees" : "Ücretler",
       "confirm" : "İşlem, ağ tarafından onaylanınca hesap bakiyeniz güncellenecek.",
       "button" : {
-        "details" : "Ayrıntıları göster",
+        "details" : "Ayrıntıları gör",
         "retry" : "Tekrar dene"
       }
     },
@@ -4385,7 +4385,7 @@
             "success" : {
               "title" : "{{token}} varlığı başarıyla eklendi",
               "text" : "Artık Algorand hesabınıza {{token}} varlıklarını alıp gönderebilirsiniz.",
-              "cta" : "Ayrıntıları göster"
+              "cta" : "Ayrıntıları gör"
             },
             "pending" : {
               "title" : "İşlem yayınlanıyor..."
@@ -4465,7 +4465,7 @@
             "success" : {
               "title" : "Varlıklarınızla başarıyla yetki devrettiniz.",
               "text" : "İşlem, ağ tarafından onaylanınca hesap bakiyeniz güncellenecek.",
-              "cta" : "Ayrıntıları göster"
+              "cta" : "Ayrıntıları gör"
             },
             "pending" : {
               "title" : "İşlem yayınlanıyor..."
@@ -4714,7 +4714,7 @@
           "success" : {
             "title" : "Çekim işlemi başarıyla gönderildi",
             "text" : "Çekilen tutar mevcut bakiyenize aktarılacaktır.",
-            "cta" : "Ayrıntıları göster"
+            "cta" : "Ayrıntıları gör"
           },
           "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
         }
@@ -4840,7 +4840,7 @@
             "success" : {
               "title" : "Varlıklarınızla başarıyla yetki devrettiniz.",
               "text" : "İşlem, ağ tarafından onaylanınca hesap bakiyeniz güncellenecek.",
-              "cta" : "Ayrıntıları göster"
+              "cta" : "Ayrıntıları gör"
             },
             "pending" : {
               "title" : "İşlem yayınlanıyor..."
@@ -4888,7 +4888,7 @@
             "success" : {
               "title" : "Varlıklarınızla başarıyla yeniden yetki devrettiniz",
               "text" : "İşlem, ağ tarafından onaylandığında hesap bakiyeniz güncellenecek.",
-              "cta" : "Ayrıntıları göster"
+              "cta" : "Ayrıntıları gör"
             },
             "pending" : {
               "title" : "İşlem yayınlanıyor..."
@@ -4915,7 +4915,7 @@
             "success" : {
               "title" : "Varlıklarınızdaki yetkileri başarıyla iptal ettiniz",
               "text" : "İşlem, ağ tarafından onaylandığında hesap bakiyeniz güncellenecek.",
-              "cta" : "Ayrıntıları göster"
+              "cta" : "Ayrıntıları gör"
             },
             "pending" : {
               "title" : "İşlem yayınlanıyor..."
@@ -4953,7 +4953,7 @@
               "title" : "Ödüllerinizi başarıyla aldınız. Ödül tutarı mevcut bakiyenize eklendi.",
               "titleCompound" : "Ödüllerinizin yetkileri aynı doğrulayıcıya devredildi.",
               "text" : "İşlem, ağ tarafından onaylandığında hesap bakiyeniz güncellenecek.",
-              "cta" : "Ayrıntıları göster"
+              "cta" : "Ayrıntıları gör"
             },
             "pending" : {
               "title" : "İşlem yayınlanıyor..."
@@ -5045,7 +5045,7 @@
             "success" : {
               "title" : "Varlıklarınızı başarıyla stake ettiniz",
               "text" : "İşlem, ağ tarafından onaylanınca hesap bakiyeniz güncellenecek.",
-              "cta" : "Ayrıntıları göster"
+              "cta" : "Ayrıntıları gör"
             },
             "pending" : {
               "title" : "İşlem yayınlanıyor..."
@@ -5092,7 +5092,7 @@
               "claimRewardsSuccess" : "Ödüllerinizi başarıyla aldınız. Ödül tutarı mevcut bakiyenize eklendi.",
               "reDelegateRewardsSuccess" : "Ödülleriniz aynı Staking Sağlayıcısına stake edildi.",
               "text" : "İşlem, ağ tarafından onaylandığında hesap bakiyeniz güncellenecek.",
-              "cta" : "Ayrıntıları göster"
+              "cta" : "Ayrıntıları gör"
             },
             "pending" : {
               "title" : "İşlem yayınlanıyor..."
@@ -5123,7 +5123,7 @@
             "success" : {
               "title" : "Varlıklarınızın staking'ini başarıyla iptal ettiniz",
               "text" : "İşlem, ağ tarafından onaylandığında hesap bakiyeniz güncellenecek.",
-              "cta" : "Ayrıntıları göster"
+              "cta" : "Ayrıntıları gör"
             },
             "pending" : {
               "title" : "İşlem yayınlanıyor..."
@@ -5155,7 +5155,7 @@
             "success" : {
               "title" : "Ödüllerinizi başarıyla aldınız. Ödül tutarı mevcut bakiyenize eklendi.",
               "text" : "İşlem, ağ tarafından onaylandığında hesap bakiyeniz güncellenecek.",
-              "cta" : "Ayrıntıları göster"
+              "cta" : "Ayrıntıları gör"
             },
             "pending" : {
               "title" : "İşlem yayınlanıyor..."
@@ -5329,7 +5329,7 @@
             "success" : {
               "title" : "{{token}} varlığı başarıyla eklendi",
               "text" : "Artık Stellar hesabınızla <0>{{token}}</0> varlıkları gönderip alabilirsiniz.",
-              "cta" : "Ayrıntıları göster"
+              "cta" : "Ayrıntıları gör"
             },
             "pending" : {
               "title" : "İşlem yayınlanıyor..."
@@ -5738,7 +5738,7 @@
     "yieldInfos" : "Getiri oranlarını sağlayan:",
     "termsAndPrivacy" : "<1>Ledger Live Kullanım Koşullarını</1> ve <3>Gizlilik Politikasını</3> okudum ve kabul ediyorum.",
     "delegation" : "Yetki Devri",
-    "viewDetails" : "Ayrıntıları göster",
+    "viewDetails" : "Ayrıntıları gör",
     "validator" : "Doğrulayıcı",
     "validatorGroup" : "Doğrulayıcı Grubu",
     "validatorAddress" : "Doğrulayıcı adresi",
