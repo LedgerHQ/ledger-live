@@ -361,8 +361,6 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         signature: string;
         feesStrategy: string;
         exchangeType: number;
-        swapId?: string;
-        rate?: number;
       }) =>
         completeExchangeLogic(
           { manifest, accounts, tracking },
