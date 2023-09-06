@@ -1,5 +1,11 @@
 # @ledgerhq/coin-framework
 
+## 0.5.2-nightly.5
+
+### Patch Changes
+
+- [#4510](https://github.com/LedgerHQ/ledger-live/pull/4510) [`e0cc3a0841`](https://github.com/LedgerHQ/ledger-live/commit/e0cc3a08415de84b9d3ce828444248a043a9d699) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix cosmos family bot
+
 ## 0.5.2-nightly.4
 
 ### Patch Changes

@@ -1,5 +1,17 @@
 # @ledgerhq/live-common
 
+## 31.6.0-nightly.12
+
+### Patch Changes
+
+- [#4510](https://github.com/LedgerHQ/ledger-live/pull/4510) [`e0cc3a0841`](https://github.com/LedgerHQ/ledger-live/commit/e0cc3a08415de84b9d3ce828444248a043a9d699) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix cosmos family bot
+
+- Updated dependencies [[`e0cc3a0841`](https://github.com/LedgerHQ/ledger-live/commit/e0cc3a08415de84b9d3ce828444248a043a9d699)]:
+  - @ledgerhq/coin-framework@0.5.2-nightly.5
+  - @ledgerhq/coin-algorand@0.3.0-nightly.5
+  - @ledgerhq/coin-evm@0.6.0-nightly.5
+  - @ledgerhq/coin-polkadot@0.4.0-nightly.5
+
 ## 31.6.0-nightly.11
 
 ### Patch Changes
