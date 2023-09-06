@@ -1,10 +1,23 @@
-import { DefaultFeature, Features } from "@ledgerhq/types-live";
+import { DefaultFeature, Feature, Features } from "@ledgerhq/types-live";
 
 /**
  * Default feature.
  */
 export const DEFAULT_FEATURE: DefaultFeature = {
   enabled: false,
+};
+
+/**
+ * Util function that create a default feature and type its return.
+ *
+ * @dev needed for proper type infering.
+ *
+ * @param opts
+ * @returns typed `opts` parameter or the default feature.
+ */
+export const initFeature = <T>(opts?: Feature<T>) => {
+  const feature = opts ?? DEFAULT_FEATURE;
+  return feature as Feature<T>;
 };
 
 /**
@@ -49,7 +62,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
 /**
  * Default Features.
  */
-export const DEFAULT_FEATURES = {
+export const DEFAULT_FEATURES: Features = {
   ...CURRENCY_DEFAULT_FEATURES,
 
   brazeLearn: DEFAULT_FEATURE,
@@ -73,20 +86,21 @@ export const DEFAULT_FEATURES = {
   disableNftLedgerMarket: DEFAULT_FEATURE,
   disableNftRaribleOpensea: DEFAULT_FEATURE,
   disableNftSend: DEFAULT_FEATURE,
-  ethStakingProviders: DEFAULT_FEATURE,
   staxWelcomeScreen: DEFAULT_FEATURE,
   protectServicesDiscoverDesktop: DEFAULT_FEATURE,
-  referralProgramDiscoverCard: DEFAULT_FEATURE,
-  newsfeedPage: DEFAULT_FEATURE,
-  ptxEarn: DEFAULT_FEATURE,
-  swapWalletApiPartnerList: DEFAULT_FEATURE,
-  stakePrograms: DEFAULT_FEATURE,
-  learn: DEFAULT_FEATURE,
-  receiveStakingFlowConfigDesktop: DEFAULT_FEATURE,
-  brazePushNotifications: DEFAULT_FEATURE,
-  walletConnectLiveApp: DEFAULT_FEATURE,
-  walletNftGallery: DEFAULT_FEATURE,
-  stakeAccountBanner: DEFAULT_FEATURE,
+
+  ethStakingProviders: initFeature(),
+  referralProgramDiscoverCard: initFeature(),
+  newsfeedPage: initFeature(),
+  ptxEarn: initFeature(),
+  swapWalletApiPartnerList: initFeature(),
+  stakePrograms: initFeature(),
+  learn: initFeature(),
+  receiveStakingFlowConfigDesktop: initFeature(),
+  brazePushNotifications: initFeature(),
+  walletConnectLiveApp: initFeature(),
+  walletNftGallery: initFeature(),
+  stakeAccountBanner: initFeature(),
 
   buyDeviceFromLive: {
     enabled: false,
@@ -333,4 +347,4 @@ export const DEFAULT_FEATURES = {
         "https://form.typeform.com/to/Jo7gqcB4?typeform-medium=embed-sdk&typeform-medium-version=next&typeform-embed=popup-blank",
     },
   },
-} as Features;
+};
