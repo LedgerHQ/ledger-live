@@ -1,9 +1,8 @@
-import { expect, Route } from "@playwright/test";
+import { expect } from "@playwright/test";
 import test from "../../fixtures/common";
 import { MarketPage } from "../../models/MarketPage";
 import { Layout } from "../../models/Layout";
 import { MarketCoinPage } from "../../models/MarketCoinPage";
-import { getProvidersMock } from "../services/services-api-mocks/getProviders.mock";
 
 test.use({
   userdata: "skip-onboarding",
@@ -13,14 +12,6 @@ test("Market", async ({ page }) => {
   const marketPage = new MarketPage(page);
   const marketCoinPage = new MarketCoinPage(page);
   const layout = new Layout(page);
-
-  await page.route("https://swap.ledger.com/v4/providers**", async (route: Route) => {
-    const mockProvidersResponse = getProvidersMock();
-    route.fulfill({
-      headers: { teststatus: "mocked" },
-      body: mockProvidersResponse,
-    });
-  });
 
   await test.step("go to market", async () => {
     await layout.goToMarket();
@@ -56,6 +47,10 @@ test("Market", async ({ page }) => {
     await marketPage.waitForLoading();
     await marketPage.waitForSearchBarToBeEmpty(); // windows was showing the search bar still containing text. This wait prevents that
     await expect.soft(page).toHaveScreenshot("market-page-filter-starred.png");
+  });
+
+  await test.step("swap available to bitcoin", async () => {
+    await marketPage.swapButton("btc").isVisible();
   });
 
   await test.step("buy bitcoin from market page", async () => {
