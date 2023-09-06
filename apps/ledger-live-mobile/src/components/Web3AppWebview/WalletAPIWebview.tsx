@@ -8,7 +8,12 @@ import { NetworkError } from "./NetworkError";
 
 export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
   ({ manifest, inputs = {}, onStateChange, allowsBackForwardNavigationGestures = true }, ref) => {
-    const { onMessage, onLoadError, webviewProps, webviewRef } = useWebView(
+    const {
+      onMessage,
+      onLoadError,
+      webviewProps: { onLoadEnd, ...webviewStateProps },
+      webviewRef,
+    } = useWebView(
       {
         manifest,
         inputs,
@@ -38,7 +43,16 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         renderError={() => <NetworkError handleTryAgain={() => webviewRef.current?.reload()} />}
         testID="wallet-api-webview"
         allowsUnsecureHttps={__DEV__ && !!Config.IGNORE_CERTIFICATE_ERRORS}
-        {...webviewProps}
+        {...webviewStateProps}
+        onLoadEnd={event => {
+          if (onLoadEnd) {
+            onLoadEnd(event);
+
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore next-line
+            this.isLoading = event.nativeEvent.loading;
+          }
+        }}
       />
     );
   },
