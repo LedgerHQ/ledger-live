@@ -1,9 +1,7 @@
 import BigNumber from "bignumber.js";
-import { getEnv } from "@ledgerhq/live-env";
-import { NFTStandard, AnyMessage } from "@ledgerhq/types-live";
+import { NFTStandard } from "@ledgerhq/types-live";
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
-import { getEIP712FieldsDisplayedOnNano } from "@ledgerhq/evm-tools/message/EIP712/index";
-import { NftProperties, MessageProperties } from "../types";
+import { NftProperties } from "../types";
 
 export const getNftTransactionProperties = (transaction: EvmTransaction): NftProperties => ({
   tokenId: transaction.nft?.tokenId || null,
@@ -25,13 +23,3 @@ export const injectNftIntoTransaction = (
     quantity: nftProperties?.quantity ?? transaction.nft?.quantity ?? new BigNumber(NaN),
   },
 });
-
-export const getMessageProperties = async (
-  messageData: AnyMessage,
-): Promise<MessageProperties | null> => {
-  if (messageData.standard === "EIP712") {
-    return getEIP712FieldsDisplayedOnNano(messageData.message, getEnv("DYNAMIC_CAL_BASE_URL"));
-  }
-
-  return null;
-};

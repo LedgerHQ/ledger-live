@@ -1,14 +1,14 @@
-import { View, StyleSheet, ScrollView } from "react-native";
+import { getMessageProperties } from "@ledgerhq/coin-evm/logic";
+import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import type { AccountLike, AnyMessage, MessageProperties } from "@ledgerhq/types-live";
+import { useTheme } from "@react-navigation/native";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import type { AccountLike, AnyMessage } from "@ledgerhq/types-live";
-import { useTheme } from "@react-navigation/native";
-import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
-import LText from "./LText";
-import Animation from "./Animation";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { getDeviceAnimation } from "../helpers/getDeviceAnimation";
-import { getMessageProperties, MessageProperties } from "../helpers/signMessageUtils";
+import Animation from "./Animation";
+import LText from "./LText";
 
 type Props = {
   device: Device;

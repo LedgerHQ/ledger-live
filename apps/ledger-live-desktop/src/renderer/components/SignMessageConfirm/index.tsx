@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import React, { useEffect, useState } from "react";
-import { Account, AccountLike, AnyMessage } from "@ledgerhq/types-live";
+import { Account, AccountLike, AnyMessage, MessageProperties } from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceTransactionField } from "@ledgerhq/live-common/transaction/index";
@@ -12,7 +12,6 @@ import useTheme from "~/renderer/hooks/useTheme";
 import Text from "~/renderer/components/Text";
 import Box from "~/renderer/components/Box";
 import { getLLDCoinFamily } from "~/renderer/families";
-import { MessageProperties } from "~/renderer/families/types";
 
 const FieldText = styled(Text).attrs(() => ({
   ml: 1,

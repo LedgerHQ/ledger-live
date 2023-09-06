@@ -1,16 +1,16 @@
-import React, { memo, useEffect, useState } from "react";
-import styled from "styled-components";
-import { Trans, useTranslation } from "react-i18next";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
-import Button from "~/renderer/components/Button";
-import { rgba } from "~/renderer/styles/helpers";
-import IconWallet from "~/renderer/icons/Wallet";
-import Text from "~/renderer/components/Text";
+import type { MessageProperties } from "@ledgerhq/types-live";
+import React, { memo, useEffect, useState } from "react";
+import { Trans, useTranslation } from "react-i18next";
+import styled from "styled-components";
 import Box from "~/renderer/components/Box";
-import type { MessageProperties } from "~/renderer/families/types";
-import { StepProps } from "../types";
+import Button from "~/renderer/components/Button";
+import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
+import Text from "~/renderer/components/Text";
 import { getLLDCoinFamily } from "~/renderer/families";
+import IconWallet from "~/renderer/icons/Wallet";
+import { rgba } from "~/renderer/styles/helpers";
+import { StepProps } from "../types";
 
 const Circle = styled.div`
   height: 32px;

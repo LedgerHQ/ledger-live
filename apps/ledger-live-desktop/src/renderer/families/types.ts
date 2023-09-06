@@ -14,6 +14,7 @@ import {
   SubAccount,
   TransactionCommon,
   TransactionCommonRaw,
+  MessageProperties,
 } from "@ledgerhq/types-live";
 // FIXME: ideally we need to have <A,T,TS> parametric version of StepProps
 import { StepProps as SendStepProps } from "../modals/Send/types";
@@ -347,8 +348,3 @@ export type NftProperties = {
   contract: string | null;
   quantity: BigNumber | null;
 };
-
-export type MessageProperties = {
-  label: string;
-  value: string | string[];
-}[];
