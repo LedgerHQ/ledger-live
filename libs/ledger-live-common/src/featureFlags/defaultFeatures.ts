@@ -404,4 +404,7 @@ export const defaultFeatures = {
   listAppsV2: {
     enabled: false,
   },
+  llmWalletQuickActions: {
+    enabled: false,
+  },
 } as const satisfies DefaultFeatures;

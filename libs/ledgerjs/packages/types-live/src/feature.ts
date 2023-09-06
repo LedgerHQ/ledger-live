@@ -82,7 +82,8 @@ export type FeatureId =
   | "discover"
   | "protectServicesDiscoverDesktop"
   | "transactionsAlerts"
-  | "listAppsV2";
+  | "listAppsV2"
+  | "llmWalletQuickActions";
 
 /**  We use objects instead of direct booleans for potential future improvements
 like feature versioning etc */
