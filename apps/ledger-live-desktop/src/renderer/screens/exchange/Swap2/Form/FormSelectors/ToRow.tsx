@@ -58,7 +58,7 @@ function ToRow({
   loadingRates,
   updateSelectedRate,
 }: Props) {
-  const { data: currenciesTo, isLoading: currenciesToIsLoading, error: currenciesToError } = useFetchCurrencyTo({
+  const { data: currenciesTo, isLoading: currenciesToIsLoading } = useFetchCurrencyTo({
     fromCurrencyAccount: fromAccount,
   });
   const swapDefaultTrack = useGetSwapTrackingProperties();
@@ -83,10 +83,6 @@ function ToRow({
     });
     setToCurrency(currency || undefined);
   };
-
-  if (currenciesToError) {
-    
-  }
 
   return (
     <>
