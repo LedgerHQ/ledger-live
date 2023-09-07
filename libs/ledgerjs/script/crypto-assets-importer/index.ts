@@ -4,7 +4,7 @@ import path from "path";
 import { importEIP712 } from "./importers/eip712";
 import { importBEP20 } from "./importers/bep20";
 import { importERC20 } from "./importers/erc20";
-import { importPolygonTokens } from "./importers/polygontokens";
+import { importPolygonTokens } from "./importers/polygon";
 import { importAsaTokens } from "./importers/asa";
 import { importCardanoNativeTokens } from "./importers/cardanoNative";
 import { importESDTTokens } from "./importers/esdt";

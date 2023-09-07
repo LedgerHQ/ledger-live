@@ -27,7 +27,7 @@ export const importAsaTokens = async (outputFolder: string) => {
 ];
 
 import tokens from "./asa.json";
- 
+
 export default tokens as AlgorandASAToken[];
 `,
   );
