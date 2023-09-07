@@ -16,6 +16,7 @@ import { importTRC10Tokens } from "./tron/sync-trc10-tokens";
 import { importCardanoNativeTokens } from "./importers/cardanoNative";
 import { importESDTTokens } from "./importers/esdt";
 import { importInternetComputerTokens } from "./importers/internet_computer";
+import { importSPLTokens } from "./importers/spl";
 
 const outputFolder = path.join(__dirname, "../../packages/cryptoassets/src/data");
 
@@ -29,6 +30,7 @@ const importTokens = async () => {
   await importCardanoNativeTokens(outputFolder);
   await importESDTTokens(outputFolder);
   await importInternetComputerTokens(outputFolder);
+  await importSPLTokens(outputFolder);
 };
 
 const importExchangeTokens = async () => {
