@@ -4,7 +4,7 @@ import { ParamListBase, useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { NavigatorName } from "../const";
 import type { DrawerProps, RootDrawerProps } from "../components/RootDrawer/types";
-import { setIsDeepLinking } from "../actions/earn";
+import { setIsDeepLinking } from "../actions/appstate";
 import { useDispatch } from "react-redux";
 
 const rootDrawerEmitter = new EventEmitter();
