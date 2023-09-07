@@ -2446,12 +2446,16 @@
     },
     "import": {
       "scan": {
-        "title": "Import from desktop",
-        "descTop": {
-          "line1": "In Ledger Live Desktop, go to:",
-          "line2": "Settings > Accounts > Export accounts > Export"
+        "title": "Import from desktop"
+      },
+      "newScan": {
+        "title": "Scan and import your accounts from Ledger Live desktop",
+        "instructions": {
+          "line1": "Open Ledger Live Desktop.",
+          "line2": "Settings > Accounts > Exports accounts",
+          "line3": "Scan QR code until loader hits 100%."
         },
-        "descBottom": "Open Ledger Live Desktop & Scan QR Code"
+        "hodl": "Hold until scanning completes."
       },
       "result": {
         "title": "Import accounts",
