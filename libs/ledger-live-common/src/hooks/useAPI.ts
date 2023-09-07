@@ -28,7 +28,7 @@ export function useAPI<T, P extends Record<PropertyKey, unknown> | undefined>({
   queryFn,
   queryProps = {},
   enabled = true,
-  staleTimeout = 5000,
+  staleTimeout = 60000,
   onSuccess,
   onError,
   onBeforeFetch,
