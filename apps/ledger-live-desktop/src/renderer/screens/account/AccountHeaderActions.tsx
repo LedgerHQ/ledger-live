@@ -184,7 +184,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
 
   // don't show buttons until we know whether or not we can show swap button, otherwise possible click jacking
   const showButtons = !!getAvailableProviders();
-  const availableOnSwap = (currenciesAll ?? []).includes(currency.id);
+  const availableOnSwap = currenciesAll.includes(currency.id);
 
   const history = useHistory();
   const buttonSharedTrackingFields = useMemo(
