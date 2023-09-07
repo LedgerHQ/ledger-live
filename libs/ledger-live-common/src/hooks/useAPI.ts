@@ -76,6 +76,7 @@ export function useAPI<T, P extends Record<PropertyKey, unknown> | undefined>({
         fetch();
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cacheKey, staleTimeout, enabled]);
 
   useEffect(() => {
