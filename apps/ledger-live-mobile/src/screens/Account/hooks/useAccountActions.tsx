@@ -78,7 +78,7 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
   }, [rampCatalog.value, currency]);
 
   const { data: currenciesAll } = useFetchCurrencyAll();
-  const availableOnSwap = currency && (currenciesAll ?? []).includes(currency.id);
+  const availableOnSwap = currency && currenciesAll.includes(currency.id);
 
   const extraSendActionParams = useMemo(
     () =>

@@ -50,7 +50,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
     () => (accounts && accounts.length === 1 ? accounts[0] : undefined),
     [accounts],
   );
-  const availableOnSwap = currency && (currenciesAll ?? []).includes(currency.id);
+  const availableOnSwap = currency && currenciesAll.includes(currency.id);
 
   const rampCatalog = useRampCatalog();
   const [canBeBought, canBeSold] = useMemo(() => {

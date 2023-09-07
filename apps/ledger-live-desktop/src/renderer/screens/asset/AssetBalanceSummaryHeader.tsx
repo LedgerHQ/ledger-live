@@ -85,7 +85,7 @@ export default function AssetBalanceSummaryHeader({
   const listFlag = stakeProgramsFeatureFlag?.params?.list ?? [];
   const stakeProgramsEnabled = stakeProgramsFeatureFlag?.enabled ?? false;
   const availableOnStake = stakeProgramsEnabled && currency && listFlag.includes(currency?.id);
-  const availableOnSwap = (currenciesAll ?? []).includes(currency.id);
+  const availableOnSwap = currenciesAll.includes(currency.id);
 
   const onBuy = useCallback(() => {
     setTrackingSource("asset header actions");
