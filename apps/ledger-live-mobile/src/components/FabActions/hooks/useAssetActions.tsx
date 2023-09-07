@@ -16,6 +16,7 @@ import ZeroBalanceDisabledModalContent from "../modals/ZeroBalanceDisabledModalC
 import { sharedSwapTracking } from "../../../screens/Swap/utils";
 import { Toast } from "../../Toast/Toast";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import { flattenAccountsSelector } from "../../../reducers/accounts";
 
 type useAssetActionsProps = {
   currency?: CryptoCurrency | TokenCurrency;
@@ -72,7 +73,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
   const listFlag = featureFlag?.params?.list;
 
   const canBeStaken = stakeFlagEnabled && listFlag && currency && listFlag.includes(currency?.id);
-  const totalAccounts = useSelector(accountsSelector);
+  const totalAccounts = useSelector(flattenAccountsSelector);
   const parentAccount = isTokenAccount(defaultAccount)
     ? getParentAccount(defaultAccount, totalAccounts)
     : undefined;
