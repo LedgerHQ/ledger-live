@@ -1,6 +1,6 @@
 import fs from "fs";
 import { log } from "console";
-import { fetchTokens } from "../fetch";
+import { fetchTokens } from "../../fetch";
 
 export type EVMToken = [
   string, // parent currecncy id
@@ -72,7 +72,7 @@ ${supportedChainIds
   .map((chainId, index) => `  ${chainId}: ${chainNames[index]}_signatures`)
   .join("," + String.fromCharCode(10))},
 };
-          
+
 export default {
   tokens,
   signatures,
