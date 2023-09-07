@@ -410,8 +410,8 @@ importers:
         specifier: ^3.3.3
         version: 3.3.3(react-dom@17.0.2)(react@17.0.2)
       react-redux:
-        specifier: ^7.2.9
-        version: 7.2.9(@types/react@17.0.53)(react-dom@17.0.2)(react@17.0.2)
+        specifier: ^8.0.0
+        version: 8.1.2(@types/react-dom@17.0.16)(@types/react@17.0.53)(react-dom@17.0.2)(react@17.0.2)(redux@4.2.0)
       react-router:
         specifier: ^5.2.0
         version: 5.3.1(react@17.0.2)
@@ -1062,8 +1062,8 @@ importers:
         specifier: ^11.26.1
         version: 11.26.1(patch_hash=dcex23p4rtl66gnhzv43mcucta)(react-native@0.71.6)(react@18.0.0)
       react-redux:
-        specifier: ^7.2.9
-        version: 7.2.9(@types/react@17.0.53)(react@18.0.0)
+        specifier: ^8.0.0
+        version: 8.1.2(@types/react@17.0.53)(react@18.0.0)(redux@4.2.0)
       redux:
         specifier: ^4.1.2
         version: 4.2.0
@@ -2362,8 +2362,8 @@ importers:
         specifier: 13.4.0
         version: 13.4.0(react-native@0.71.6)(react@17.0.2)
       react-redux:
-        specifier: ^7.2.9
-        version: 7.2.9(@types/react@17.0.53)(react-dom@17.0.2)(react@17.0.2)
+        specifier: ^8.0.0
+        version: 8.1.2(@types/react@17.0.53)(react-dom@17.0.2)(react@17.0.2)(redux@4.2.0)
       react-test-renderer:
         specifier: ^17.0.2
         version: 17.0.2(react@17.0.2)
@@ -10538,6 +10538,7 @@ packages:
     engines: {node: '>=6.9.0'}
     dependencies:
       regenerator-runtime: 0.13.11
+    dev: false
 
   /@babel/runtime@7.20.13:
     resolution: {integrity: sha512-gt3PKXs0DBoL9xCvOIIZ2NEqAGZqHjAnmVbfQtB620V0uReIQutpel14KcneZuer7UioY8ALKZ7iocavvzTNFA==}
@@ -24859,7 +24860,6 @@ packages:
         optional: true
     dependencies:
       '@types/react': 17.0.53
-    dev: true
 
   /@types/react-is@17.0.3(@types/react@17.0.53):
     resolution: {integrity: sha512-aBTIWg1emtu95bLTLx0cpkxwGW3ueZv71nE2YFBpL8k/z5czEW8yYpOo8Dp+UUAFAtKwNaOsh/ioSeQnWlZcfw==}
@@ -25000,6 +25000,7 @@ packages:
       '@types/react': 17.0.53
       hoist-non-react-statics: 3.3.2
       redux: 4.2.0
+    dev: true
 
   /@types/react-router-dom@5.3.3(@types/react@17.0.53):
     resolution: {integrity: sha512-kpqnYK4wcdm5UaWI3fLcELopqLrHgLqNsdpHauzlQktfkHL3npOSwtj1Uz9oKBAzs7lFtVkV8j83voAz2D8fhw==}
@@ -25303,6 +25304,9 @@ packages:
   /@types/urijs@1.19.19:
     resolution: {integrity: sha512-FDJNkyhmKLw7uEvTxx5tSXfPeQpO0iy73Ry+PmYZJvQy0QIWX8a7kJ4kLWRf+EbTPJEPDSgPXHaM7pzr5lmvCg==}
     dev: false
+
+  /@types/use-sync-external-store@0.0.3:
+    resolution: {integrity: sha512-EwmlvuaxPNej9+T4v5AuBPJa2x2UOJVdjCtDHgcDqitUeOtjnJKJ+apYjVcAoBEMjKW1VVFGZLUb5+qqa09XFA==}
 
   /@types/utf8@2.1.6:
     resolution: {integrity: sha512-pRs2gYF5yoKYrgSaira0DJqVg2tFuF+Qjp838xS7K+mJyY2jJzjsrl6y17GbIa4uMRogMbxs+ghNCvKg6XyNrA==}
@@ -53636,46 +53640,6 @@ packages:
       fsevents: 2.3.2
     dev: false
 
-  /react-redux@7.2.9(@types/react@17.0.53)(react-dom@17.0.2)(react@17.0.2):
-    resolution: {integrity: sha512-Gx4L3uM182jEEayZfRbI/G11ZpYdNAnBs70lFVMNdHJI76XYtR+7m0MN+eAs7UHBPhWXcnFPaS+9owSCJQHNpQ==}
-    peerDependencies:
-      react: ^16.8.3 || ^17 || ^18
-      react-dom: '*'
-    peerDependenciesMeta:
-      react-dom:
-        optional: true
-    dependencies:
-      '@babel/runtime': 7.18.9
-      '@types/react-redux': 7.1.24(@types/react@17.0.53)
-      hoist-non-react-statics: 3.3.2
-      loose-envify: 1.4.0
-      prop-types: 15.8.1
-      react: 17.0.2
-      react-dom: 17.0.2(react@17.0.2)
-      react-is: 17.0.2
-    transitivePeerDependencies:
-      - '@types/react'
-
-  /react-redux@7.2.9(@types/react@17.0.53)(react@18.0.0):
-    resolution: {integrity: sha512-Gx4L3uM182jEEayZfRbI/G11ZpYdNAnBs70lFVMNdHJI76XYtR+7m0MN+eAs7UHBPhWXcnFPaS+9owSCJQHNpQ==}
-    peerDependencies:
-      react: ^16.8.3 || ^17 || ^18
-      react-dom: '*'
-    peerDependenciesMeta:
-      react-dom:
-        optional: true
-    dependencies:
-      '@babel/runtime': 7.18.9
-      '@types/react-redux': 7.1.24(@types/react@17.0.53)
-      hoist-non-react-statics: 3.3.2
-      loose-envify: 1.4.0
-      prop-types: 15.8.1
-      react: 18.0.0
-      react-is: 17.0.2
-    transitivePeerDependencies:
-      - '@types/react'
-    dev: false
-
   /react-redux@7.2.9(react-dom@17.0.2)(react@17.0.2):
     resolution: {integrity: sha512-Gx4L3uM182jEEayZfRbI/G11ZpYdNAnBs70lFVMNdHJI76XYtR+7m0MN+eAs7UHBPhWXcnFPaS+9owSCJQHNpQ==}
     peerDependencies:
@@ -53695,6 +53659,96 @@ packages:
       react-is: 17.0.2
     transitivePeerDependencies:
       - '@types/react'
+    dev: false
+
+  /react-redux@8.1.2(@types/react-dom@17.0.16)(@types/react@17.0.53)(react-dom@17.0.2)(react@17.0.2)(redux@4.2.0):
+    resolution: {integrity: sha512-xJKYI189VwfsFc4CJvHqHlDrzyFTY/3vZACbE+rr/zQ34Xx1wQfB4OTOSeOSNrF6BDVe8OOdxIrAnMGXA3ggfw==}
+    peerDependencies:
+      '@types/react': ^16.8 || ^17.0 || ^18.0
+      '@types/react-dom': ^16.8 || ^17.0 || ^18.0
+      react: ^16.8 || ^17.0 || ^18.0
+      react-dom: ^16.8 || ^17.0 || ^18.0
+      redux: ^4 || ^5.0.0-beta.0
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      '@types/react-dom':
+        optional: true
+      react-dom:
+        optional: true
+      redux:
+        optional: true
+    dependencies:
+      '@babel/runtime': 7.22.10
+      '@types/hoist-non-react-statics': 3.3.1(@types/react@17.0.53)
+      '@types/react': 17.0.53
+      '@types/react-dom': 17.0.16(@types/react@17.0.53)
+      '@types/use-sync-external-store': 0.0.3
+      hoist-non-react-statics: 3.3.2
+      react: 17.0.2
+      react-dom: 17.0.2(react@17.0.2)
+      react-is: 18.2.0
+      redux: 4.2.0
+      use-sync-external-store: 1.1.0(react@17.0.2)
+    dev: false
+
+  /react-redux@8.1.2(@types/react@17.0.53)(react-dom@17.0.2)(react@17.0.2)(redux@4.2.0):
+    resolution: {integrity: sha512-xJKYI189VwfsFc4CJvHqHlDrzyFTY/3vZACbE+rr/zQ34Xx1wQfB4OTOSeOSNrF6BDVe8OOdxIrAnMGXA3ggfw==}
+    peerDependencies:
+      '@types/react': ^16.8 || ^17.0 || ^18.0
+      '@types/react-dom': ^16.8 || ^17.0 || ^18.0
+      react: ^16.8 || ^17.0 || ^18.0
+      react-dom: ^16.8 || ^17.0 || ^18.0
+      redux: ^4 || ^5.0.0-beta.0
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      '@types/react-dom':
+        optional: true
+      react-dom:
+        optional: true
+      redux:
+        optional: true
+    dependencies:
+      '@babel/runtime': 7.22.10
+      '@types/hoist-non-react-statics': 3.3.1(@types/react@17.0.53)
+      '@types/react': 17.0.53
+      '@types/use-sync-external-store': 0.0.3
+      hoist-non-react-statics: 3.3.2
+      react: 17.0.2
+      react-dom: 17.0.2(react@17.0.2)
+      react-is: 18.2.0
+      redux: 4.2.0
+      use-sync-external-store: 1.1.0(react@17.0.2)
+    dev: true
+
+  /react-redux@8.1.2(@types/react@17.0.53)(react@18.0.0)(redux@4.2.0):
+    resolution: {integrity: sha512-xJKYI189VwfsFc4CJvHqHlDrzyFTY/3vZACbE+rr/zQ34Xx1wQfB4OTOSeOSNrF6BDVe8OOdxIrAnMGXA3ggfw==}
+    peerDependencies:
+      '@types/react': ^16.8 || ^17.0 || ^18.0
+      '@types/react-dom': ^16.8 || ^17.0 || ^18.0
+      react: ^16.8 || ^17.0 || ^18.0
+      react-dom: ^16.8 || ^17.0 || ^18.0
+      redux: ^4 || ^5.0.0-beta.0
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      '@types/react-dom':
+        optional: true
+      react-dom:
+        optional: true
+      redux:
+        optional: true
+    dependencies:
+      '@babel/runtime': 7.22.10
+      '@types/hoist-non-react-statics': 3.3.1(@types/react@17.0.53)
+      '@types/react': 17.0.53
+      '@types/use-sync-external-store': 0.0.3
+      hoist-non-react-statics: 3.3.2
+      react: 18.0.0
+      react-is: 18.2.0
+      redux: 4.2.0
+      use-sync-external-store: 1.1.0(react@18.0.0)
     dev: false
 
   /react-refresh@0.10.0:
