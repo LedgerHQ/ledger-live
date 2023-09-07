@@ -115,7 +115,7 @@
     "react-window": "^1.8.6",
     "react-window-infinite-loader": "^1.0.7",
     "redux": "^4.1.2",
-    "redux-actions": "^2.6.5",
+    "redux-actions": "^3.0.0",
     "redux-thunk": "^2.4.0",
     "reselect": "^4.1.4",
     "rimraf": "^4.4.1",

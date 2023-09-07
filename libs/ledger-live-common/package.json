@@ -85,7 +85,7 @@
     "react-native": ">=0.65.1",
     "react-native-svg": ">=12.1.1",
     "react-redux": "^7.2.9",
-    "redux-actions": "2.6.5"
+    "redux-actions": "3.0.0"
   },
   "peerDependenciesMeta": {
     "react": {
@@ -304,7 +304,7 @@
     "react-native-svg": "13.4.0",
     "react-redux": "^7.2.9",
     "react-test-renderer": "^17.0.2",
-    "redux-actions": "2.6.5",
+    "redux-actions": "3.0.0",
     "timemachine": "^0.3.2",
     "ts-jest": "^28.0.5",
     "ts-node": "^10.4.0",

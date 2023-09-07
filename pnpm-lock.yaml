@@ -440,8 +440,8 @@ importers:
         specifier: ^4.1.2
         version: 4.2.0
       redux-actions:
-        specifier: ^2.6.5
-        version: 2.6.5
+        specifier: ^3.0.0
+        version: 3.0.0
       redux-thunk:
         specifier: ^2.4.0
         version: 2.4.1(redux@4.2.0)
@@ -1068,8 +1068,8 @@ importers:
         specifier: ^4.1.2
         version: 4.2.0
       redux-actions:
-        specifier: 2.6.5
-        version: 2.6.5
+        specifier: 3.0.0
+        version: 3.0.0
       redux-flipper:
         specifier: ^2.0.2
         version: 2.0.2(react-native-flipper@0.164.0)(react-native@0.71.6)(redux@4.2.0)
@@ -2368,8 +2368,8 @@ importers:
         specifier: ^17.0.2
         version: 17.0.2(react@17.0.2)
       redux-actions:
-        specifier: 2.6.5
-        version: 2.6.5
+        specifier: 3.0.0
+        version: 3.0.0
       timemachine:
         specifier: ^0.3.2
         version: 0.3.2
@@ -44025,8 +44025,8 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
-  /just-curry-it@3.2.1:
-    resolution: {integrity: sha512-Q8206k8pTY7krW32cdmPsP+DqqLgWx/hYPSj9/+7SYqSqz7UuwPbfSe07lQtvuuaVyiSJveXk0E5RydOuWwsEg==}
+  /just-curry-it@5.3.0:
+    resolution: {integrity: sha512-silMIRiFjUWlfaDhkgSzpuAyQ6EX/o09Eu8ZBfmFwQMbax7+LQzeIU2CBrICT6Ne4l86ITCGvUCBpCubWYy0Yw==}
 
   /jwa@1.4.1:
     resolution: {integrity: sha512-qiLX/xhEEFKUAJ6FiBMbes3w9ATzyk5W7Hvzpa/SLYdxNtng+gcurvrI7TbACjIXlsJyr05/S1oUhZrc63evQA==}
@@ -54477,17 +54477,14 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
-  /reduce-reducers@0.4.3:
-    resolution: {integrity: sha512-+CNMnI8QhgVMtAt54uQs3kUxC3Sybpa7Y63HR14uGLgI9/QR5ggHvpxwhGGe3wmx5V91YwqQIblN9k5lspAmGw==}
+  /reduce-reducers@1.0.4:
+    resolution: {integrity: sha512-Mb2WZ2bJF597exiqX7owBzrqJ74DHLK3yOQjCyPAaNifRncE8OD0wFIuoMhXxTnHK07+8zZ2SJEKy/qtiyR7vw==}
 
-  /redux-actions@2.6.5:
-    resolution: {integrity: sha512-pFhEcWFTYNk7DhQgxMGnbsB1H2glqhQJRQrtPb96kD3hWiZRzXHwwmFPswg6V2MjraXRXWNmuP9P84tvdLAJmw==}
+  /redux-actions@3.0.0:
+    resolution: {integrity: sha512-5r+G8JizsTfyfWolVDkCLL2SpZA0Sk9ao2MXwfdXkG5+72s0PcO9qEqpo51D2o8dZY2gXLjNmY5yoRB+BuizRw==}
     dependencies:
-      invariant: 2.2.4
-      just-curry-it: 3.2.1
-      loose-envify: 1.4.0
-      reduce-reducers: 0.4.3
-      to-camel-case: 1.0.0
+      just-curry-it: 5.3.0
+      reduce-reducers: 1.0.4
 
   /redux-flipper@2.0.2(react-native-flipper@0.164.0)(react-native@0.71.6)(redux@4.2.0):
     resolution: {integrity: sha512-X6OD3+Ok8g0SunzrwS5OtbE735eBDxLz3uuK4fdJSwbAzskqOS3SWc+rKuOpqmLkt8pN+Szp7Nof9Etm75B1Rg==}
@@ -58577,17 +58574,13 @@ packages:
   /to-arraybuffer@1.0.1:
     resolution: {integrity: sha1-fSKbH8xjfkZsoIEYCDanqr/4P0M=}
 
-  /to-camel-case@1.0.0:
-    resolution: {integrity: sha512-nD8pQi5H34kyu1QDMFjzEIYqk0xa9Alt6ZfrdEMuHCFOfTLhDG5pgTu/aAM9Wt9lXILwlXmWP43b8sav0GNE8Q==}
-    dependencies:
-      to-space-case: 1.0.0
-
   /to-fast-properties@2.0.0:
     resolution: {integrity: sha512-/OaKK0xYrs3DmxRYqL/yDc+FxFUVYhDlXMhRmv3z915w2HF1tnN1omB354j8VUGO/hbRzyD6Y3sA7v7GS/ceog==}
     engines: {node: '>=4'}
 
   /to-no-case@1.0.2:
     resolution: {integrity: sha512-Z3g735FxuZY8rodxV4gH7LxClE4H0hTIyHNIHdk+vpQxjLm0cwnKXq/OFVZ76SOQmto7txVcwSCwkU5kqp+FKg==}
+    dev: false
 
   /to-object-path@0.3.0:
     resolution: {integrity: sha512-9mWHdnGRuh3onocaHzukyvCZhzvr6tiflAy/JRFXcJX0TjgfWA9pk9t8CMbzmBE4Jfw58pXbkngtBtqYxzNEyg==}
@@ -58635,6 +58628,7 @@ packages:
     resolution: {integrity: sha512-rLdvwXZ39VOn1IxGL3V6ZstoTbwLRckQmn/U8ZDLuWwIXNpuZDhQ3AiRUlhTbOXFVE9C+dR51wM0CBDhk31VcA==}
     dependencies:
       to-no-case: 1.0.2
+    dev: false
 
   /to-through@2.0.0:
     resolution: {integrity: sha512-+QIz37Ly7acM4EMdw2PRN389OneM5+d844tirkGp4dPKzI5OE72V9OsbFp+CIYJDahZ41ZV05hNtcPAQUAm9/Q==}
