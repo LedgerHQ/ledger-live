@@ -13,7 +13,7 @@ export type StellarToken = [
 
 export const importStellarTokens = async (outputFolder: string) => {
   log("importing stellar tokens...");
-  const stellarTokens = await fetchTokens<StellarToken[]>("asa.json");
+  const stellarTokens = await fetchTokens<StellarToken[]>("stellar.json");
   fs.writeFileSync(`${outputFolder}/stellar.json`, JSON.stringify(stellarTokens));
   fs.writeFileSync(
     `${outputFolder}/stellar.ts`,
