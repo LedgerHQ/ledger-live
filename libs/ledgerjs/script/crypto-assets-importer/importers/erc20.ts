@@ -14,8 +14,8 @@ type ERC20Token = [
   string, // contract address
   boolean, // disabled counter values
   boolean, // delisted
-  string?, // countervalue_ticker (legacy)
-  string?, // coumpound_for (legacy)
+  string | null | undefined, // countervalue_ticker (legacy)
+  string | null | undefined, // coumpound_for (legacy)
 ];
 
 export const importERC20 = async (outputDir: string) => {
@@ -36,8 +36,8 @@ export const importERC20 = async (outputDir: string) => {
   string, // contract address
   boolean, // disabled counter values
   boolean, // delisted
-  string?, // countervalue_ticker (legacy)
-  string?, // coumpound_for (legacy)
+  string | null | undefined, // countervalue_ticker (legacy)
+  string | null | undefined, // coumpound_for (legacy)
 ];`;
 
       const tokensStringified = `const tokens: ERC20Token[] = ${JSON.stringify(erc20, null, 2)}`;
