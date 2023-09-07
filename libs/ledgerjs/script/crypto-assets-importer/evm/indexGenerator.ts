@@ -1,16 +1,13 @@
 // eslint-disable-next-line prettier/prettier
-module.exports = (chains) => 
-`${chains
-    .map(
-      ({ chainId, name }) =>
-        `import ${name}_tokens from "./${chainId}/erc20.json"`
-    )
+
+import { Chain } from "./types";
+
+export const fileGenerator = (chains: Chain[]) =>
+  `${chains
+    .map(({ chainId, name }) => `import ${name}_tokens from "./${chainId}/erc20.json"`)
     .join(";" + String.fromCharCode(10))};
 ${chains
-  .map(
-    ({ chainId, name }) =>
-      `import ${name}_signatures from "./${chainId}/erc20-signatures.json"`
-  )
+  .map(({ chainId, name }) => `import ${name}_signatures from "./${chainId}/erc20-signatures.json"`)
   .join(";" + String.fromCharCode(10))};
 
 export const tokens = {

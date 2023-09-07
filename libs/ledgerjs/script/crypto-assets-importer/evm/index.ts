@@ -1,8 +1,8 @@
-const path = require("path");
-const axios = require("axios");
-const fs = require("fs/promises");
-const erc20Importer = require("./erc20Importer");
-const indexGenerator = require("./indexGenerator");
+import path from "path";
+import axios from "axios";
+import fs from "fs/promises";
+import erc20Importer from "./erc20Importer";
+import indexGenerator from "./indexGenerator";
 
 /**
  * bsc folder contains a "bep20" and not an "erc20" folder
@@ -19,7 +19,7 @@ const getTokenStandardFolderName = async chainPath => {
   );
 };
 
-module.exports = async (inputFolder, outputFolder) => {
+export const importERC20Tokens = async (outputFolder: string) => {
   const definitionTokensPath = path.join(inputFolder, "assets/tokens");
   const signaturesTokensPath = path.join(inputFolder, "signatures/prod/tokens");
 

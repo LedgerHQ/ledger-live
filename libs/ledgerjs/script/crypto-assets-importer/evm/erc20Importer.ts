@@ -1,8 +1,24 @@
-const path = require("path");
-const fs = require("fs/promises");
-const { ENTRIES_CHECKS, asUint4be } = require("../utils");
+import path from "path";
+import fs from "fs";
+import { ENTRIES_CHECKS, asUint4be } from "../utils";
+import { Chain } from "./types";
 
-const getDefinition = (chain, tokenId, definitionJSON, signature) => {
+type Definition = {
+  name: string;
+  ticker: string;
+  decimals: number;
+  contract_address: string;
+  delisted: boolean;
+  countervalue_ticker: string;
+  disable_countervalue: boolean;
+};
+
+const getDefinition = (
+  chain: Chain,
+  tokenId: string,
+  definitionJSON: Definition,
+  signature: string,
+) => {
   try {
     const currencyId = ENTRIES_CHECKS.currencyId(chain.name);
     const name = ENTRIES_CHECKS.name(definitionJSON.name);
@@ -36,7 +52,7 @@ const getDefinition = (chain, tokenId, definitionJSON, signature) => {
   }
 };
 
-const getSignatureBuffer = (chain, definitionJSON, signature) => {
+const getSignatureBuffer = (chain: Chain, definitionJSON: Definition, signature: string) => {
   const decimals = asUint4be(definitionJSON.decimals);
   const contractAddress = Buffer.from(definitionJSON.contract_address.slice(2), "hex");
 
@@ -58,7 +74,7 @@ const getSignatureBuffer = (chain, definitionJSON, signature) => {
   ]);
 };
 
-module.exports = async (chain, outputFolder) => {
+const importERC20Tokens = async (chain, outputFolder) => {
   const outputDir = path.join(outputFolder, "data", "evm", chain.chainId.toString());
 
   const tokenIds = await fs
