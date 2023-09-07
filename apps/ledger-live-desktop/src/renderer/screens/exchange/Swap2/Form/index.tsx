@@ -151,7 +151,7 @@ const SwapForm = () => {
     const { account: fromAccount, parentAccount: fromParentAccount } = from;
     const { account: toAccount, parentAccount: toParentAccount } = to;
     const { feesStrategy } = transaction || {};
-    const { rate, rateId = "1234" } = exchangeRate || {};
+    const { rate, rateId } = exchangeRate || {};
     if (fromAccount && toAccount) {
       const fromAccountId = accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id;
       const toAccountId = accountToWalletAPIAccount(toAccount, toParentAccount)?.id;
@@ -166,7 +166,7 @@ const SwapForm = () => {
           fromAccountId,
           toAccountId,
           fromAmount,
-          quoteId: encodeURIComponent(rateId),
+          quoteId: rateId ? encodeURIComponent(rateId) : undefined,
           rate,
           feeStrategy: feesStrategy?.toUpperCase(),
           ...customFeesParams,
