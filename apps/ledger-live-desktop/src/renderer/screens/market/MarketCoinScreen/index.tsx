@@ -116,7 +116,7 @@ export default function MarketCoinScreen() {
 
   const availableOnBuy =
     currency && currency.ticker && onRampAvailableTickers.includes(currency.ticker?.toUpperCase());
-  const availableOnSwap = internalCurrency && (currenciesAll ?? []).includes(internalCurrency.id);
+  const availableOnSwap = internalCurrency && currenciesAll.includes(internalCurrency.id);
   const stakeProgramsFeatureFlag = useFeature("stakePrograms");
   const listFlag = stakeProgramsFeatureFlag?.params?.list ?? [];
   const stakeProgramsEnabled = stakeProgramsFeatureFlag?.enabled ?? false;

@@ -43,7 +43,7 @@ export default function NoFunds({ route }: Props) {
     return getAllSupportedCryptoCurrencyTickers(rampCatalog.value.onRamp);
   }, [rampCatalog.value]);
 
-  const swapAvailableIds = useMemo(() => currenciesAll ?? [], [currenciesAll]);
+  const swapAvailableIds = currenciesAll;
 
   const currency = parentAccount?.currency || account?.currency;
   const availableOnReceive = true;

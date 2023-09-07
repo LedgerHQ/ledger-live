@@ -39,7 +39,7 @@ const NoFundsStakeModal = ({ account, parentAccount }: NoFundsStakeModalProps) =
   const currency: CryptoCurrency = parentAccount?.currency || (account as Account).currency;
   const availableOnBuy = currency && onRampAvailableTickers.includes(currency.ticker.toUpperCase());
   const availableOnSwap = useMemo(() => {
-    return currency && (currenciesAll ?? []).includes(currency.id);
+    return currency && currenciesAll.includes(currency.id);
   }, [currency, currenciesAll]);
 
   const availableOnReceive = true;
