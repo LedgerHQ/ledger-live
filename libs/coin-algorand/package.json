@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-algorand",
-  "version": "0.3.0-nightly.5",
+  "version": "0.3.1",
   "description": "Ledger Algorand Coin integration",
   "keywords": [
     "Ledger",

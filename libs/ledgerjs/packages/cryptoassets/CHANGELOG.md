@@ -1,12 +1,18 @@
 # @ledgerhq/cryptoassets
 
-## 9.12.0-nightly.1
+## 9.12.1
 
 ### Patch Changes
 
 - [#4578](https://github.com/LedgerHQ/ledger-live/pull/4578) [`18b4a47b48`](https://github.com/LedgerHQ/ledger-live/commit/18b4a47b4878a23695a50096b7770134883b8a2e) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix elrond bot tests
 
-## 9.12.0-nightly.0
+## 9.12.0
+
+### Minor Changes
+
+- [#4449](https://github.com/LedgerHQ/ledger-live/pull/4449) [`6375c250a9`](https://github.com/LedgerHQ/ledger-live/commit/6375c250a9a58b33e3dd1d6c96a96c7e46150298) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - CAL update
+
+## 9.12.0-next.0
 
 ### Minor Changes
 

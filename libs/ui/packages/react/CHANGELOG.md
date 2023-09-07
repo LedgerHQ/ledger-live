@@ -1,6 +1,6 @@
 # @ledgerhq/react-ui
 
-## 0.14.8-nightly.2
+## 0.14.9
 
 ### Patch Changes
 
@@ -8,21 +8,24 @@
 
 - [#4543](https://github.com/LedgerHQ/ledger-live/pull/4543) [`916d6975e5`](https://github.com/LedgerHQ/ledger-live/commit/916d6975e52f4f83291a9ce1a3e7e60dbccb5b20) Thanks [@stephane-lieumont-ledger](https://github.com/stephane-lieumont-ledger)! - fix error console on checkbox components with readOnly props
 
-## 0.14.8-nightly.1
-
-### Patch Changes
-
 - [#4518](https://github.com/LedgerHQ/ledger-live/pull/4518) [`41a38e953b`](https://github.com/LedgerHQ/ledger-live/commit/41a38e953b17075b5ab7bec307c147d8f74b7501) Thanks [@mle-gall](https://github.com/mle-gall)! - Removal of ProviderIcons from UILib
 
 - Updated dependencies [[`41a38e953b`](https://github.com/LedgerHQ/ledger-live/commit/41a38e953b17075b5ab7bec307c147d8f74b7501)]:
-  - @ledgerhq/icons-ui@0.6.0-nightly.1
+  - @ledgerhq/icons-ui@0.6.1
 
-## 0.14.8-nightly.0
+## 0.14.8
 
 ### Patch Changes
 
 - Updated dependencies [[`5fb60bc6bb`](https://github.com/LedgerHQ/ledger-live/commit/5fb60bc6bb0bc6a9452d580cdace16ca87e478ff)]:
-  - @ledgerhq/icons-ui@0.6.0-nightly.0
+  - @ledgerhq/icons-ui@0.6.0
+
+## 0.14.8-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`5fb60bc6bb`](https://github.com/LedgerHQ/ledger-live/commit/5fb60bc6bb0bc6a9452d580cdace16ca87e478ff)]:
+  - @ledgerhq/icons-ui@0.6.0-next.0
 
 ## 0.14.7
 
