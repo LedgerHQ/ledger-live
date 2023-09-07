@@ -15,7 +15,7 @@ import { EarnScreen } from "../../screens/PTX/Earn";
 import { shallowAccountsSelector } from "../../reducers/accounts";
 import { EarnInfoDrawer } from "../../screens/PTX/Earn/EarnInfoDrawer";
 import { useStakingDrawer } from "../Stake/useStakingDrawer";
-import { setIsDeepLinking } from "../../actions/earn";
+import { setIsDeepLinking } from "../../actions/appstate";
 
 const Stack = createStackNavigator<EarnLiveAppNavigatorParamList>();
 

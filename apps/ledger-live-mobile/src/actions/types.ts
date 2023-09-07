@@ -86,6 +86,7 @@ export enum AppStateActionTypes {
   CLEAR_BACKGROUND_EVENTS = "CLEAR_BACKGROUND_EVENTS",
   DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
   UPDATE_MAIN_NAVIGATOR_VISIBILITY = "UPDATE_MAIN_NAVIGATOR_VISIBILITY",
+  SET_IS_DEEP_LINKING = "SET_IS_DEEP_LINKING",
 }
 
 export type AppStateIsConnectedPayload = AppState["isConnected"];
@@ -94,6 +95,7 @@ export type AppStateSetModalLockPayload = AppState["modalLock"];
 export type AppStateAddBackgroundEventPayload = {
   event: FwUpdateBackgroundEvent;
 };
+export type AppStateIsDeeplinkingPayload = boolean;
 
 export type AppStateUpdateMainNavigatorVisibilityPayload = AppState["isMainNavigatorVisible"];
 export type AppStatePayload =
@@ -101,7 +103,8 @@ export type AppStatePayload =
   | AppStateSetHasConnectedDevicePayload
   | AppStateSetModalLockPayload
   | AppStateAddBackgroundEventPayload
-  | AppStateUpdateMainNavigatorVisibilityPayload;
+  | AppStateUpdateMainNavigatorVisibilityPayload
+  | AppStateIsDeeplinkingPayload;
 
 // === BLE ACTIONS ===
 
@@ -453,13 +456,11 @@ export type SwapPayload = UpdateProvidersPayload | UpdateTransactionPayload | Up
 // === EARN ACTIONS ==
 export enum EarnActionTypes {
   EARN_INFO_MODAL = "EARN_INFO_MODAL",
-  SET_IS_DEEP_LINKING = "SET_IS_DEEP_LINKING",
 }
-export type EarnSetIsDeeplinkingPayload = boolean;
 
 export type EarnSetInfoModalPayload = EarnState["infoModal"] | undefined;
 
-export type EarnPayload = EarnSetInfoModalPayload | EarnSetIsDeeplinkingPayload;
+export type EarnPayload = EarnSetInfoModalPayload;
 
 // === PROTECT ACTIONS ===
 export enum ProtectActionTypes {
