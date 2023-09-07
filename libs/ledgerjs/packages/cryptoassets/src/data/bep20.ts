@@ -8,8 +8,7 @@ export type BEP20Token = [
   string, // contract address
   boolean, // disabled counter value
   boolean, // delisted
-  string?, // legacy
-  string?, // legacy
+  string | null | undefined, // legacy
 ];
 
 const tokens: BEP20Token[] = [
@@ -889,6 +888,18 @@ const tokens: BEP20Token[] = [
   ],
   [
     "bsc",
+    "bep20dhp",
+    "BDHP",
+    18,
+    "BEP20DHP",
+    "3044022002b3e6793a6599a7041746f72fcdbe74f26082a1e0b14e7566ced6d5c289fddf02201cd0e8647fd4b2cb363735dbabf8e2c2ac7ebe5ab1e954d2931ed57d4c8f8542",
+    "0x3cB6B8DbBe340691529551B2BC460efaFdc91d20",
+    false,
+    false,
+    null
+  ],
+  [
+    "bsc",
     "berry_tributes",
     "BRY",
     18,
@@ -1750,6 +1761,18 @@ const tokens: BEP20Token[] = [
     "0xB84cBbF09b3Ed388a45cD875ebba41a20365e6e7",
     false,
     false,
+  ],
+  [
+    "bsc",
+    "bitshiba",
+    "SHIBA",
+    18,
+    "BitShiba",
+    "3045022100cdb1ac3075493e102e6b05b44854156377c38cee552e0b6dc18f843640c8c13e022020a0639bbe6870f742e00aa8ddd97422907ef04e7cb7001e100d83f0af1d655e",
+    "0xB84cBbF09b3Ed388a45cD875ebba41a20365e6e7",
+    false,
+    false,
+    null
   ],
   [
     "bsc",
@@ -2677,6 +2700,18 @@ const tokens: BEP20Token[] = [
     "0x99AA29Ac023057951781Dc5d1784E9A4C362Ce23",
     false,
     false,
+  ],
+  [
+    "bsc",
+    "crowns",
+    "CWS",
+    18,
+    "Crowns",
+    "3045022100ee135ea2bc85f14d3b86e1f232e6652c6a22a9fa3b8314406f34f501dfd1e03f02206d20121a69246c60a9e34857d8c9109d154b337d0145e6919318a6d9cc1c49b0",
+    "0x99AA29Ac023057951781Dc5d1784E9A4C362Ce23",
+    false,
+    false,
+    null
   ],
   [
     "bsc",
@@ -9210,6 +9245,18 @@ const tokens: BEP20Token[] = [
   ],
   [
     "bsc",
+    "taboo_token",
+    "TABOO",
+    9,
+    "TABOO TOKEN",
+    "3044022065f67b2484f40b94172006688abad6bf0bbbbd5399506df4e3a168cbd1c48639022003c9b7cf6ae37e894c650348c62ecb6985a7c2228066f7295050c730d8f6b7a8",
+    "0x9abDbA20EdFbA06B782126b4D8d72A5853918FD0",
+    false,
+    false,
+    null
+  ],
+  [
+    "bsc",
     "taco",
     "TACO",
     18,
@@ -10808,6 +10855,18 @@ const tokens: BEP20Token[] = [
     "0x08A1333E06B9FF97623e3d568351E5B6550B46e6",
     false,
     false,
+  ],
+  [
+    "bsc",
+    "xianzai",
+    "XIAN",
+    9,
+    "XIANZAI",
+    "3044022019d73b6b395b82dbead6c4d8f83d8183d0e78e919f227fbb75134b068dcaad5702200d1188f554476a43095a29ecb1ee982d9a7dcc7d161fb8d9a7afc96de336dead",
+    "0x08A1333E06B9FF97623e3d568351E5B6550B46e6",
+    false,
+    false,
+    null
   ],
   [
     "bsc",

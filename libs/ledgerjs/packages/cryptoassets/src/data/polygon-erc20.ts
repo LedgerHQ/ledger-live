@@ -8,8 +8,8 @@ export type PolygonERC20Token = [
   string, // contract address
   boolean, // disabled counter value
   boolean, // delisted
-  string?, // legacy
-  string?, // legacy
+  string | null | undefined, // legacy
+  string | null | undefined, // legacy
 ];
 
 const tokens: PolygonERC20Token[] = [
@@ -4851,6 +4851,18 @@ const tokens: PolygonERC20Token[] = [
   ],
   [
     "polygon",
+    "plex",
+    "PLEX",
+    18,
+    "PLEX",
+    "30450221009e06c4572d204e3e3e1d03fd8a32194708fa8fe8184458e2b1851d2b0f01ed66022078282d20b90ebefff9ca2a026c142afddf23076f8ff038e9205aadc63ea66fa9",
+    "0x1bE9425AB42897F0C14759ee36493Fd7Db895c22",
+    false,
+    false,
+    null
+  ],
+  [
+    "polygon",
     "pluton",
     "PLU",
     18,
@@ -6699,6 +6711,18 @@ const tokens: PolygonERC20Token[] = [
   ],
   [
     "polygon",
+    "veloce",
+    "VEXT",
+    18,
+    "Veloce",
+    "3045022100b17f3e8a711f9fb9b02a845a8da4458c59bb2add8727c184a60aeb238b00a4cc022044ec3a8b666e0ec8b7e7d085f1c3295ac9598f275c1c8cfecfad523c98c16b92",
+    "0x27842334C55c01DDFE81Bf687425F906816c5141",
+    false,
+    false,
+    null
+  ],
+  [
+    "polygon",
     "vespertoken",
     "VSP",
     18,
@@ -6936,6 +6960,18 @@ const tokens: PolygonERC20Token[] = [
     false,
     false,
     null,
+  ],
+  [
+    "polygon",
+    "wrapped_liquid_staked_ether_2.0_(pos)",
+    "WSTETH",
+    18,
+    "Wrapped liquid staked Ether 2.0 (PoS)",
+    "30440220025201a6cc15d15e2735f3b549c024cc4d9782ebc891dfbc086a3ed31a803c9902204a6a98011acbcd8ba47c5ce61602f9d91f5882d553aa3eef78016d6b257874ee",
+    "0x03b54A6e9a984069379fae1a4fC4dBAE93B3bCCD",
+    false,
+    false,
+    null
   ],
   [
     "polygon",
