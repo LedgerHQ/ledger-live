@@ -36,14 +36,10 @@ module.exports = {
   ],
   testPathIgnorePatterns: ["<rootDir>/node_modules/"],
   moduleDirectories: ["node_modules"],
-  collectCoverage: true,
+  collectCoverage: false,
   collectCoverageFrom: [
     "src/**/*.{ts,tsx}",
     "!src/**/*.test.{ts,tsx}",
-    "!src/families/evm/EvmCustomFees/Evm1559CustomFees.tsx",
-    "!src/families/evm/EvmCustomFees/EvmLegacyCustomFees.tsx",
-    "!src/families/evm/SelectFeesStrategy.tsx",
-    "!src/families/evm/EvmFeesStrategy.tsx"
   ],
   coverageReporters: ["json", "lcov", "json-summary"],
   coverageDirectory: "<rootDir>/coverage",
