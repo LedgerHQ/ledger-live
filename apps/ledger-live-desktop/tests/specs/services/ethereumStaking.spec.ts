@@ -11,7 +11,6 @@ import { MarketCoinPage } from "../../models/MarketCoinPage";
 import { AssetPage } from "../../models/AssetPage";
 import { AccountsPage } from "../../models/AccountsPage";
 import { AccountPage } from "../../models/AccountPage";
-import { getProvidersMock } from "./services-api-mocks/getProviders.mock";
 
 test.use({
   env: {
