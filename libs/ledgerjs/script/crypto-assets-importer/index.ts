@@ -2,12 +2,15 @@ import { log } from "console";
 import path from "path";
 
 import { importEIP712 } from "./importers/eip712";
-import { importERC20 } from "./importers/erc20";
-import { importBEP20Exchange } from "./exchange/bep20";
-import { importERC20Signatures } from "./importers/erc20-signature";
-import { importCoinsExchange } from "./exchange/coins";
 import { importBEP20 } from "./importers/bep20";
+import { importERC20 } from "./importers/erc20";
+import { importPolygonTokens } from "./importers/polygontokens";
+
+import { importBEP20Exchange } from "./exchange/bep20";
+import { importCoinsExchange } from "./exchange/coins";
 import { importERC20Exchange } from "./exchange/erc20";
+
+import { importERC20Signatures } from "./importers/erc20-signature";
 
 const outputFolder = path.join(__dirname, "../../packages/cryptoassets/src/data");
 
@@ -15,6 +18,7 @@ const importTokens = async () => {
   await importEIP712(outputFolder);
   await importERC20(outputFolder);
   await importBEP20(outputFolder);
+  await importPolygonTokens(outputFolder);
 };
 
 const importExchangeTokens = async () => {
