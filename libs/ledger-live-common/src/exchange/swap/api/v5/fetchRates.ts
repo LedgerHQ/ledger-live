@@ -28,7 +28,9 @@ export async function fetchRates({
   fromCurrencyAmount,
 }: Props): Promise<ExchangeRate[]> {
   if (isIntegrationTestEnv()) {
-    return Promise.resolve(enrichRatesResponse(fetchRatesMock, unitTo, unitFrom));
+    return Promise.resolve(
+      enrichRatesResponse(fetchRatesMock(fromCurrencyAmount), unitTo, unitFrom),
+    );
   }
 
   const url = new URL(`${getEnv("SWAP_API_BASE_V5")}/rate`);
