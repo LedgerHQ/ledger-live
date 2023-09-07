@@ -2528,6 +2528,9 @@ importers:
         specifier: ^4.17.21
         version: 4.17.21
     devDependencies:
+      '@types/bs58check':
+        specifier: ^2.1.0
+        version: 2.1.0
       '@types/node':
         specifier: ^20.5.7
         version: 20.5.7
@@ -24793,8 +24796,7 @@ packages:
   /@types/bs58check@2.1.0:
     resolution: {integrity: sha512-OxsysnJQh82vy9DRbOcw9m2j/WiyqZLn0YBhKxdQ+aCwoHj+tWzyCgpwAkr79IfDXZKxc6h7k89T9pwS78CqTQ==}
     dependencies:
-      '@types/node': 18.16.19
-    dev: false
+      '@types/node': 20.5.7
 
   /@types/btoa-lite@1.0.0:
     resolution: {integrity: sha512-wJsiX1tosQ+J5+bY5LrSahHxr2wT+uME5UDwdN1kg4frt40euqA+wzECkmq4t5QbveHiJepfdThgQrPw6KiSlg==}

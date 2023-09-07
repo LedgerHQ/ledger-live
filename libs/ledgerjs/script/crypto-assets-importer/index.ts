@@ -5,6 +5,7 @@ import { importEIP712 } from "./importers/eip712";
 import { importBEP20 } from "./importers/bep20";
 import { importERC20 } from "./importers/erc20";
 import { importPolygonTokens } from "./importers/polygontokens";
+import { importAsaTokens } from "./importers/asa";
 
 import { importBEP20Exchange } from "./exchange/bep20";
 import { importCoinsExchange } from "./exchange/coins";
@@ -21,6 +22,7 @@ const importTokens = async () => {
   await importBEP20(outputFolder);
   await importPolygonTokens(outputFolder);
   await importTRC10Tokens(outputFolder);
+  await importAsaTokens(outputFolder);
 };
 
 const importExchangeTokens = async () => {

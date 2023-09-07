@@ -74,7 +74,7 @@ const getSignatureBuffer = (chain: Chain, definitionJSON: Definition, signature:
   ]);
 };
 
-const importERC20Tokens = async (chain, outputFolder) => {
+const importERC20Token = async (chain, outputFolder) => {
   const outputDir = path.join(outputFolder, "data", "evm", chain.chainId.toString());
 
   const tokenIds = await fs
