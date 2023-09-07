@@ -1,20 +1,21 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import { useTheme } from "styled-components/native";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFocusEffect, useRoute } from "@react-navigation/native";
+import { useDispatch, useSelector } from "react-redux";
+import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
+
 import { ScreenName, NavigatorName } from "../../const";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
-import { useRoute } from "@react-navigation/native";
-import { useSelector } from "react-redux";
-
 import type { EarnLiveAppNavigatorParamList } from "./types/EarnLiveAppNavigator";
 import type { BaseComposite, StackNavigatorProps } from "./types/helpers";
 import { EarnScreen } from "../../screens/PTX/Earn";
-import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
-import { accountsSelector } from "../../reducers/accounts";
+import { shallowAccountsSelector } from "../../reducers/accounts";
 import { EarnInfoDrawer } from "../../screens/PTX/Earn/EarnInfoDrawer";
 import { useStakingDrawer } from "../Stake/useStakingDrawer";
+import { setIsDeepLinking } from "../../actions/earn";
 
 const Stack = createStackNavigator<EarnLiveAppNavigatorParamList>();
 
@@ -23,11 +24,12 @@ type NavigationProps = BaseComposite<
 >;
 
 const Earn = (props: NavigationProps) => {
+  const dispatch = useDispatch();
   // Earn dashboard feature flag
   const ptxEarn = useFeature("ptxEarn");
   const paramAction = props.route.params?.action;
   const navigation = props.navigation;
-  const accounts = useSelector(accountsSelector);
+  const accounts = useSelector(shallowAccountsSelector);
   const route = useRoute();
 
   const openStakingDrawer = useStakingDrawer({
@@ -46,9 +48,16 @@ const Earn = (props: NavigationProps) => {
 
     // Reset params so that it will retrigger actions if a new deeplink is used
     const clearDeepLink = () =>
-      navigation.setParams({ action: undefined, accountId: undefined, currencyId: undefined });
+      navigation.setParams({
+        action: undefined,
+        accountId: undefined,
+        currencyId: undefined,
+      });
 
-    async function deeplinkRouting() {
+    function deeplinkRouting() {
+      /** Deeplinks cause app to background on Android. Temporarily prevent privacy lock while deeplinking: */
+      dispatch(setIsDeepLinking(true));
+
       switch (paramAction) {
         case "stake":
           navigation.navigate(NavigatorName.StakeFlow, {
@@ -105,7 +114,7 @@ const Earn = (props: NavigationProps) => {
 
     deeplinkRouting();
 
-    return clearDeepLink();
+    return () => clearDeepLink();
   }, [
     paramAction,
     ptxEarn?.enabled,
@@ -114,7 +123,15 @@ const Earn = (props: NavigationProps) => {
     navigation,
     route,
     openStakingDrawer,
+    dispatch,
   ]);
+
+  /** Reset deeplinking state so that privacy lock can be re-enabled. */
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(setIsDeepLinking(false));
+    }, [dispatch]),
+  );
 
   return (
     <>

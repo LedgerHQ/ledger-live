@@ -6,16 +6,21 @@ import { withTranslation } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import { compose } from "redux";
 import { privacySelector } from "../../reducers/settings";
+import { isDeepLinkingSelector } from "../../reducers/earn";
 import { SkipLockContext } from "../../components/behaviour/SkipLock";
-import type { Privacy, State as GlobalState } from "../../reducers/types";
+import type { Privacy, State as GlobalState, EarnState } from "../../reducers/types";
 import AuthScreen from "./AuthScreen";
 import RequestBiometricAuth from "../../components/RequestBiometricAuth";
 
 const mapStateToProps = createStructuredSelector<
   GlobalState,
-  { privacy: Privacy | null | undefined }
+  {
+    privacy: Privacy | null | undefined;
+    isDeepLinking: EarnState["isDeepLinking"]; // skips screen lock for internal deeplinks from ptx web player.
+  }
 >({
   privacy: privacySelector,
+  isDeepLinking: isDeepLinkingSelector,
 });
 type State = {
   isLocked: boolean;
@@ -32,6 +37,7 @@ type OwnProps = {
 type Props = OwnProps & {
   t: TFunction;
   privacy: Privacy | null | undefined;
+  isDeepLinking: EarnState["isDeepLinking"];
 };
 // as we needs to be resilient to reboots (not showing unlock again after a reboot)
 // we need to store this global variable to know if we need to isLocked initially
@@ -78,11 +84,21 @@ class AuthPass extends PureComponent<Props, State> {
   }
 
   // The state lifecycle differs between iOS and Android. This is to prevent FaceId from triggering an inactive state and looping.
-  checkAppStateChange = (appState: string) =>
-    Platform.OS === "ios" ? appState === "background" : appState.match(/inactive|background/);
+  isBackgrounded = (appState: string) => {
+    const isAppInBackground =
+      Platform.OS === "ios" ? appState === "background" : appState.match(/inactive|background/);
 
+    return isAppInBackground;
+  };
+
+  // If the app reopened from the background, lock the app
   handleAppStateChange = (nextAppState: string) => {
-    if (this.checkAppStateChange(this.state.appState) && nextAppState === "active") {
+    if (
+      this.isBackgrounded(this.state.appState) &&
+      nextAppState === "active" &&
+      // do not lock if triggered by a deep link flow
+      !this.props.isDeepLinking
+    ) {
       this.lock();
     }
 
@@ -91,6 +107,7 @@ class AuthPass extends PureComponent<Props, State> {
         appState: nextAppState,
       });
   };
+
   // auth: try to auth with biometrics and fallback on password
   auth = () => {
     const { privacy } = this.props;
@@ -102,6 +119,7 @@ class AuthPass extends PureComponent<Props, State> {
       });
     }
   };
+
   onSuccess = () => {
     if (this.state.mounted)
       this.setState({
@@ -109,6 +127,7 @@ class AuthPass extends PureComponent<Props, State> {
       });
     this.unlock();
   };
+
   onError = (error: Error) => {
     if (this.state.mounted) {
       this.setState({

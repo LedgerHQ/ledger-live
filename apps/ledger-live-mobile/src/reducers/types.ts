@@ -268,6 +268,8 @@ export type EarnState = {
     message?: string;
     messageTitle?: string;
   };
+  /** Earn web player deeplinks need to skip privacy lock. Resets on return to Earn dashboard. If other deeplinks also need to skip lock, could move this to AppState or somewhere more global. */
+  isDeepLinking: boolean;
 };
 
 // === PROTECT STATE ===

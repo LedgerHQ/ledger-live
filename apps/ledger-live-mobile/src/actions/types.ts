@@ -453,11 +453,13 @@ export type SwapPayload = UpdateProvidersPayload | UpdateTransactionPayload | Up
 // === EARN ACTIONS ==
 export enum EarnActionTypes {
   EARN_INFO_MODAL = "EARN_INFO_MODAL",
+  SET_IS_DEEP_LINKING = "SET_IS_DEEP_LINKING",
 }
+export type EarnSetIsDeeplinkingPayload = boolean;
 
 export type EarnSetInfoModalPayload = EarnState["infoModal"] | undefined;
 
-export type EarnPayload = EarnSetInfoModalPayload;
+export type EarnPayload = EarnSetInfoModalPayload | EarnSetIsDeeplinkingPayload;
 
 // === PROTECT ACTIONS ===
 export enum ProtectActionTypes {
