@@ -6,6 +6,8 @@ import { WebviewAPI, WebviewProps } from "./types";
 import { useWebView } from "./helpers";
 import { NetworkError } from "./NetworkError";
 
+import { DEFAULT_MULTIBUY_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
+
 export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
   ({ manifest, inputs = {}, onStateChange, allowsBackForwardNavigationGestures = true }, ref) => {
     const { onMessage, onLoadError, webviewProps, webviewRef } = useWebView(
@@ -16,6 +18,8 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       ref,
       onStateChange,
     );
+
+    const javaScriptCanOpenWindowsAutomatically = manifest.id === DEFAULT_MULTIBUY_APP_ID;
 
     return (
       <RNWebView
@@ -38,6 +42,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         renderError={() => <NetworkError handleTryAgain={() => webviewRef.current?.reload()} />}
         testID="wallet-api-webview"
         allowsUnsecureHttps={__DEV__ && !!Config.IGNORE_CERTIFICATE_ERRORS}
+        javaScriptCanOpenWindowsAutomatically={javaScriptCanOpenWindowsAutomatically}
         {...webviewProps}
       />
     );
