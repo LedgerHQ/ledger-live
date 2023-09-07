@@ -1,6 +1,6 @@
 import fs from "fs";
-import { fetchTokens } from "../fetch";
 import { log } from "console";
+import { fetchTokens } from "../fetch";
 
 export type AlgorandASAToken = [
   string, // id

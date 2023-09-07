@@ -1,6 +1,6 @@
 import fs from "fs";
-import { fetchTokens } from "../fetch";
 import { log } from "console";
+import { fetchTokens } from "../fetch";
 
 type PolygonToken = [
   string, // parent currency id
