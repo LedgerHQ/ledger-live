@@ -263,7 +263,7 @@
     "react-native-flipper-performance-plugin": "^0.4.0",
     "react-native-gradle-plugin": "^0.71.16",
     "react-native-performance": "^3.1.2",
-    "react-native-performance-flipper-reporter": "^3.0.0",
+    "react-native-performance-flipper-reporter": "^5.0.0",
     "react-test-renderer": "^18",
     "strip-ansi": "6.0.1",
     "ts-jest": "^28.0.8",

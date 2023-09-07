@@ -1321,8 +1321,8 @@ importers:
         specifier: ^3.1.2
         version: 3.1.2(react-native@0.71.6)
       react-native-performance-flipper-reporter:
-        specifier: ^3.0.0
-        version: 3.0.0(react-native-flipper@0.164.0)(react-native-performance@3.1.2)
+        specifier: ^5.0.0
+        version: 5.0.0(react-native-flipper@0.164.0)(react-native-performance@3.1.2)
       react-test-renderer:
         specifier: ^18
         version: 18.0.0(react@18.0.0)
@@ -53162,8 +53162,8 @@ packages:
       react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
-  /react-native-performance-flipper-reporter@3.0.0(react-native-flipper@0.164.0)(react-native-performance@3.1.2):
-    resolution: {integrity: sha512-2cESO1bn1lqd2g6r2W2EePUMdgm/EbAFhwpga9cAzpGUYmw+jpdAM1c20YkLWyoGuGWrWLvRInyy9+OvjpjIpw==}
+  /react-native-performance-flipper-reporter@5.0.0(react-native-flipper@0.164.0)(react-native-performance@3.1.2):
+    resolution: {integrity: sha512-nlr1tI3C3kBpraCUw5TLdf++Brdf/eahg5be/70kAS3p10/A6zIiGf/4qDhrsWZyZh2YKzAiCfa8XsJeprP3QA==}
     peerDependencies:
       react-native-flipper: '*'
       react-native-performance: '*'
