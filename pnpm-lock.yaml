@@ -1317,6 +1317,9 @@ importers:
       react-native-gradle-plugin:
         specifier: ^0.71.16
         version: 0.71.16
+      react-native-launch-arguments:
+        specifier: ^4.0.1
+        version: 4.0.1(react-native@0.71.6)(react@18.0.0)
       react-native-performance:
         specifier: ^3.1.2
         version: 3.1.2(react-native@0.71.6)
@@ -53091,6 +53094,16 @@ packages:
   /react-native-keychain@7.0.0:
     resolution: {integrity: sha512-tH26sgW4OxB/llXmhO+DajFISEUoF1Ip2+WSDMIgCt8SP1xRE81m2qFzgIOc/7StYsUERxHhDPkxvq2H0/Goig==}
     dev: false
+
+  /react-native-launch-arguments@4.0.1(react-native@0.71.6)(react@18.0.0):
+    resolution: {integrity: sha512-sP2Vd+IEtApGiSDboyx8Dqnjj6IlPRA/M8KEoip4r5gidOvGcF/JGVJh9kIlgAchXheH7SWXvtmgvP0dJopikg==}
+    peerDependencies:
+      react: '>=16.8.1'
+      react-native: '>=0.60.0-rc.0 <1.0.x'
+    dependencies:
+      react: 18.0.0
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+    dev: true
 
   /react-native-level-fs@3.0.1(asyncstorage-down@4.2.0):
     resolution: {integrity: sha1-8wVGFMK8Gjedyz0+5RtqG2YSMoM=}
