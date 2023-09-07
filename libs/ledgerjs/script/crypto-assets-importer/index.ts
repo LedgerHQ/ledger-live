@@ -15,6 +15,7 @@ import { importERC20Signatures } from "./importers/erc20-signature";
 import { importTRC10Tokens } from "./tron/sync-trc10-tokens";
 import { importCardanoNativeTokens } from "./importers/cardanoNative";
 import { importESDTTokens } from "./importers/esdt";
+import { importInternetComputerTokens } from "./importers/internet_computer";
 
 const outputFolder = path.join(__dirname, "../../packages/cryptoassets/src/data");
 
@@ -27,6 +28,7 @@ const importTokens = async () => {
   await importAsaTokens(outputFolder);
   await importCardanoNativeTokens(outputFolder);
   await importESDTTokens(outputFolder);
+  await importInternetComputerTokens(outputFolder);
 };
 
 const importExchangeTokens = async () => {
