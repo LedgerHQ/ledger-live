@@ -22,7 +22,7 @@ export const importPolygonTokens = async (outputDir: string) => {
   if (polygonTokens) {
     fs.writeFileSync(`${outputDir}/polygon-erc20.json`, JSON.stringify(polygonTokens));
 
-    const tokenTypeStringified = `type PolygonERC20Token = [
+    const tokenTypeStringified = `export type PolygonERC20Token = [
   string, // parent currency id
   string, // token
   string, // ticker

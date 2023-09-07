@@ -11,6 +11,7 @@ import { importCoinsExchange } from "./exchange/coins";
 import { importERC20Exchange } from "./exchange/erc20";
 
 import { importERC20Signatures } from "./importers/erc20-signature";
+import { importTRC10Tokens } from "./tron/sync-trc10-tokens";
 
 const outputFolder = path.join(__dirname, "../../packages/cryptoassets/src/data");
 
@@ -19,6 +20,7 @@ const importTokens = async () => {
   await importERC20(outputFolder);
   await importBEP20(outputFolder);
   await importPolygonTokens(outputFolder);
+  await importTRC10Tokens(outputFolder);
 };
 
 const importExchangeTokens = async () => {

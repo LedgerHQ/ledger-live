@@ -1,4 +1,4 @@
-type PolygonERC20Token = [
+export type PolygonERC20Token = [
   string, // parent currency id
   string, // token
   string, // ticker
