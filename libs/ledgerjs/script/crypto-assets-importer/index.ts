@@ -17,6 +17,7 @@ import { importCardanoNativeTokens } from "./importers/cardanoNative";
 import { importESDTTokens } from "./importers/esdt";
 import { importInternetComputerTokens } from "./importers/internet_computer";
 import { importSPLTokens } from "./importers/spl";
+import { importStellarTokens } from "./importers/stellar";
 
 const outputFolder = path.join(__dirname, "../../packages/cryptoassets/src/data");
 
@@ -31,6 +32,7 @@ const importTokens = async () => {
   await importESDTTokens(outputFolder);
   await importInternetComputerTokens(outputFolder);
   await importSPLTokens(outputFolder);
+  await importStellarTokens(outputFolder);
 };
 
 const importExchangeTokens = async () => {
