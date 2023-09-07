@@ -53,26 +53,26 @@ export default { tokens, signatures };
     const rootIndexStringified = `${supportedChainIds
       .map((chainId, index) => `import ${chainNames[index]}_tokens from "./${chainId}/erc20.json"`)
       .join(";" + String.fromCharCode(10))};
-  
+
 ${supportedChainIds
   .map(
     (chainId, index) =>
       `import ${chainNames[index]}_signatures from "./${chainId}/erc20-signatures.json"`,
   )
   .join(";" + String.fromCharCode(10))};
-            
+
 export const tokens = {
-  ${supportedChainIds
-    .map((chainId, index) => `${chainId}: ${chainNames[index]}_tokens`)
-    .join("," + String.fromCharCode(10))},
+${supportedChainIds
+  .map((chainId, index) => `  ${chainId}: ${chainNames[index]}_tokens`)
+  .join("," + String.fromCharCode(10))},
 };
-              
+       
 export const signatures = {
-  ${supportedChainIds
-    .map((chainId, index) => `${chainId}: ${chainNames[index]}_signatures`)
-    .join("," + String.fromCharCode(10))},
+${supportedChainIds
+  .map((chainId, index) => `  ${chainId}: ${chainNames[index]}_signatures`)
+  .join("," + String.fromCharCode(10))},
 };
-                
+          
 export default {
   tokens,
   signatures,
