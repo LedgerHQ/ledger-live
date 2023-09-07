@@ -8,7 +8,7 @@ export const fetchTokens = async <T>(filename: string): Promise<T | null> => {
     return data;
   } catch (err) {
     const error = err as AxiosError;
-    console.error(error.message);
+    console.error(error.message, `${CRYPTO_ASSETS_BASE_URL}/${filename}`);
     return null;
   }
 };

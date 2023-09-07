@@ -1,63 +1,88 @@
-import path from "path";
-import axios from "axios";
-import fs from "fs/promises";
-import erc20Importer from "./erc20Importer";
-import indexGenerator from "./indexGenerator";
+import fs from "fs";
+import { log } from "console";
+import { fetchTokens } from "../fetch";
 
-/**
- * bsc folder contains a "bep20" and not an "erc20" folder
- * this method is here in case it becomes a bigger thing in the future
- */
-const getTokenStandardFolderName = async chainPath => {
-  const standards = ["erc20", "bep20"];
+export type EVMToken = [
+  string, // parent currecncy id
+  string, // token
+  string, // ticker
+  number, // precision
+  string, // name
+  string, // ledgerSignature
+  string, // contract address
+  boolean, // disabled counter values
+  boolean, // delisted
+  string?, // countervalue_ticker (legacy)
+  string?, // coumpound_for (legacy)
+];
 
-  return Promise.any(
-    standards.map(async standard => {
-      await fs.access(path.join(chainPath, standard), fs.constants.R_OK); // will throw if not existing or readable
-      return standard;
-    }),
-  );
+export const importEVMTokens = async (outputDir: string) => {
+  try {
+    const supportedChainIds = [
+      1, 3, 5, 10, 25, 30, 40, 56, 57, 106, 137, 199, 246, 250, 420, 592, 1088, 1101, 1284, 1442,
+      8217, 42161, 84531, 421613,
+    ];
+
+    const chainNames: string[] = [];
+
+    log("Importing evm tokens...");
+
+    for await (const chainId of supportedChainIds) {
+      log(`importing chain with chainId: ${chainId}...`);
+      const erc20 = await fetchTokens<EVMToken[]>(`evm/${chainId}/erc20.json`);
+      const erc20Signatures = await fetchTokens<string>(`evm/${chainId}/erc20-signatures.json`);
+      const indexTsStringified = `import tokens from "./erc20.json";
+import signatures from "./erc20-signatures.json";
+export default { tokens, signatures };
+`;
+
+      if (erc20 && erc20Signatures) {
+        const [coinName] = erc20[0];
+        chainNames.push(coinName);
+        fs.writeFileSync(`${outputDir}/evm/${chainId}/erc20.json`, JSON.stringify(erc20));
+        fs.writeFileSync(
+          `${outputDir}/evm/${chainId}/erc20-signatures.json`,
+          JSON.stringify(erc20Signatures),
+        );
+        fs.writeFileSync(`${outputDir}/evm/${chainId}/index.ts`, indexTsStringified);
+
+        log(`importing chain with chainId: ${chainId} (${coinName}) success`);
+      }
+    }
+
+    const rootIndexStringified = `${supportedChainIds
+      .map((chainId, index) => `import ${chainNames[index]}_tokens from "./${chainId}/erc20.json"`)
+      .join(";" + String.fromCharCode(10))};
+  
+${supportedChainIds
+  .map(
+    (chainId, index) =>
+      `import ${chainNames[index]}_signatures from "./${chainId}/erc20-signatures.json"`,
+  )
+  .join(";" + String.fromCharCode(10))};
+            
+export const tokens = {
+  ${supportedChainIds
+    .map((chainId, index) => `${chainId}: ${chainNames[index]}_tokens`)
+    .join("," + String.fromCharCode(10))},
 };
+              
+export const signatures = {
+  ${supportedChainIds
+    .map((chainId, index) => `${chainId}: ${chainNames[index]}_signatures`)
+    .join("," + String.fromCharCode(10))},
+};
+                
+export default {
+  tokens,
+  signatures,
+};
+`;
 
-export const importERC20Tokens = async (outputFolder: string) => {
-  const definitionTokensPath = path.join(inputFolder, "assets/tokens");
-  const signaturesTokensPath = path.join(inputFolder, "signatures/prod/tokens");
+    fs.writeFileSync(`${outputDir}/evm/index.ts`, rootIndexStringified);
 
-  // Get all folders names inside the assets/tokens folder
-  const chainNames = await fs
-    .readdir(definitionTokensPath, { withFileTypes: true })
-    .then(paths => paths.filter(dirent => dirent.isDirectory()))
-    .then(dirents => dirents.map(dir => dir.name));
-
-  // Create an array of chains with their paths and chainId
-  const chains = await Promise.all(
-    chainNames.map(async chainName => {
-      const chainPath = path.join(definitionTokensPath, chainName);
-      const tokenStandardName = await getTokenStandardFolderName(chainPath).catch(() => null);
-      // removing unsupported currencies/standards
-      if (!tokenStandardName) return;
-
-      const definitionPath = path.join(chainPath, tokenStandardName);
-      const signaturePath = path.join(signaturesTokensPath, chainName, tokenStandardName);
-
-      const baseCommonJSON = await fs
-        .readFile(path.join(definitionPath, "base_common.json"))
-        .then(JSON.parse);
-
-      const isTestNet = baseCommonJSON.networks.some(network => network.type === "test");
-
-      return {
-        name: chainName,
-        chainId: baseCommonJSON.chain_id,
-        isTestNet,
-        definitionPath,
-        signaturePath,
-      };
-    }),
-  ).then(list => list.filter(Boolean));
-
-  // Creating each file for each chain id
-  chains.forEach(chain => erc20Importer(chain, outputFolder));
-  // Creating the index.ts gathering all files
-  await fs.writeFile(path.join(outputFolder, "data", "evm", "index.ts"), indexGenerator(chains));
+    log("Importing evm tokens success");
+  } catch (err) {
+    console.error(err);
+  }
 };

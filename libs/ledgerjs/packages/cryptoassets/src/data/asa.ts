@@ -8,5 +8,5 @@ export type AlgorandASAToken = [
 ];
 
 import tokens from "./asa.json";
- 
+
 export default tokens as AlgorandASAToken[];

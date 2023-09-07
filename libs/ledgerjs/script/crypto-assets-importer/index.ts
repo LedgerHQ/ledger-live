@@ -19,6 +19,7 @@ import { importCoinsExchange } from "./exchange/coins";
 import { importERC20Exchange } from "./exchange/erc20";
 
 import { importERC20Signatures } from "./importers/erc20-signature";
+import { importEVMTokens } from "./evm";
 
 const outputFolder = path.join(__dirname, "../../packages/cryptoassets/src/data");
 
@@ -35,6 +36,7 @@ const importTokens = async () => {
   await importSPLTokens(outputFolder);
   await importStellarTokens(outputFolder);
   await importTRC20Tokens(outputFolder);
+  await importEVMTokens(outputFolder);
 };
 
 const importExchangeTokens = async () => {
