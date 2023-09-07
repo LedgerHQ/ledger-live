@@ -4,7 +4,7 @@ import { log } from "console";
 import fs from "fs";
 import { fetchTokens } from "../fetch";
 
-export type ERC20Token = [
+type ERC20Token = [
   string, // parent currecncy id
   string, // token
   string, // ticker
@@ -21,7 +21,7 @@ export type ERC20Token = [
 export const importERC20 = async (outputDir: string) => {
   try {
     log("importing ERC20 tokens....");
-    const erc20 = await fetchTokens("erc20.json");
+    const erc20 = await fetchTokens<ERC20Token>("erc20.json");
 
     if (erc20) {
       fs.writeFileSync(`${outputDir}/erc20.json`, JSON.stringify(erc20));

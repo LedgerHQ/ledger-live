@@ -2,7 +2,7 @@ import fs from "fs";
 import { log } from "console";
 import { fetchTokens } from "../fetch";
 
-export type SPLToken = [
+type SPLToken = [
   number, // chainId
   string, // name
   string, // symbol

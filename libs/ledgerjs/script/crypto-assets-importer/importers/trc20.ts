@@ -2,7 +2,7 @@ import fs from "fs";
 import { log } from "console";
 import { fetchTokens } from "../fetch";
 
-export type TRC20Token = [
+type TRC20Token = [
   string, // id
   string, // abbr
   string, // name

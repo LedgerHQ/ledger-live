@@ -2,7 +2,7 @@ import { log } from "console";
 import fs from "fs";
 import { fetchTokens } from "../fetch";
 
-export type BEP20Token = [
+type BEP20Token = [
   string, // parent currency id
   string, // token
   string, // ticker

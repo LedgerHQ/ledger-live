@@ -2,7 +2,7 @@ import fs from "fs";
 import { log } from "console";
 import { fetchTokens } from "../fetch";
 
-export type AlgorandASAToken = [
+type AlgorandASAToken = [
   string, // id
   string, // abbr
   string, // name

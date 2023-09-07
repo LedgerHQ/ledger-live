@@ -2,7 +2,7 @@ import fs from "fs";
 import { log } from "console";
 import { fetchTokens } from "../fetch";
 
-export type CardanoNativeToken = [
+type CardanoNativeToken = [
   string, // parentCurrencyId
   string, // policyId
   string, // assetName

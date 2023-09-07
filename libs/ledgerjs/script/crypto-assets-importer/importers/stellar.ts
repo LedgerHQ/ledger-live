@@ -2,7 +2,7 @@ import fs from "fs";
 import { log } from "console";
 import { fetchTokens } from "../fetch";
 
-export type StellarToken = [
+type StellarToken = [
   string, // assetCode
   string, // assetIssuer
   string, // assetType (note: only used in Receive asset message and always should be "Stellar")

@@ -2,7 +2,7 @@ import fs from "fs";
 import { log } from "console";
 import { fetchTokens } from "../fetch";
 
-export type ElrondESDTToken = [
+type ElrondESDTToken = [
   string, // ticker
   string, // identifier
   number, // decimals
