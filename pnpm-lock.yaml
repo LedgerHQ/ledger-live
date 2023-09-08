@@ -1887,8 +1887,8 @@ importers:
         specifier: ^0.9.16
         version: 0.9.16
       '@keplr-wallet/proto-types':
-        specifier: ^0.10.4
-        version: 0.10.4
+        specifier: ^0.12.0
+        version: 0.12.23
       '@ledgerhq/coin-algorand':
         specifier: workspace:^
         version: link:../coin-algorand
@@ -16521,8 +16521,8 @@ packages:
       sha.js: 2.4.11
     dev: false
 
-  /@keplr-wallet/proto-types@0.10.4:
-    resolution: {integrity: sha512-n/ZmiENgvARs1h0hedy/mh57DNF7SH/DgfTqeT89+JKHfwRs2ikrCwXw6HzCn3yaDiv+0H/LudnNPf8WVZcw+w==}
+  /@keplr-wallet/proto-types@0.12.23:
+    resolution: {integrity: sha512-2tPQGy9bicvDRIhtAuj16hvNK/h9a6IcYdRjxpioJUiLbVb9ted40gjngbDnbaWgyED4WQjLVgFWTQzzU+JDQg==}
     dependencies:
       long: 4.0.0
       protobufjs: 6.11.3
