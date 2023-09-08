@@ -1,5 +1,6 @@
 import { log } from "console";
 import fs from "fs";
+import path from "path";
 import { fetchTokens } from "../fetch";
 
 type BEP20Token = [
@@ -19,8 +20,9 @@ export const importBEP20 = async (outputDir: string) => {
   try {
     log("import BEP 20 tokens...");
     const bep20 = await fetchTokens<BEP20Token[]>("bep20.json");
+    const filePath = path.join(outputDir, "bep20");
     if (bep20) {
-      fs.writeFileSync(`${outputDir}/bep20.json`, JSON.stringify(bep20));
+      fs.writeFileSync(`${filePath}.json`, JSON.stringify(bep20));
 
       const BEP20TokenTypeStringified = `export type BEP20Token = [
   string, // parent currency id
@@ -39,7 +41,7 @@ export const importBEP20 = async (outputDir: string) => {
       const exportStringified = `export default tokens;`;
 
       fs.writeFileSync(
-        `${outputDir}/bep20.ts`,
+        `${filePath}.ts`,
         `${BEP20TokenTypeStringified}
 
 ${tokensStringified}

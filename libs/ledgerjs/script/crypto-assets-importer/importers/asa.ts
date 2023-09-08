@@ -1,5 +1,6 @@
 import fs from "fs";
 import { log } from "console";
+import path from "path";
 import { fetchTokens } from "../fetch";
 
 type AlgorandASAToken = [
@@ -11,12 +12,13 @@ type AlgorandASAToken = [
   boolean?, // enableCountervalues
 ];
 
-export const importAsaTokens = async (outputFolder: string) => {
+export const importAsaTokens = async (outputDir: string) => {
   log("importing asa tokens...");
   const asaTokens = await fetchTokens<AlgorandASAToken[]>("asa.json");
-  fs.writeFileSync(`${outputFolder}/asa.json`, JSON.stringify(asaTokens));
+  const filePath = path.join(outputDir, "asa");
+  fs.writeFileSync(`${filePath}.json`, JSON.stringify(asaTokens));
   fs.writeFileSync(
-    `${outputFolder}/asa.ts`,
+    `${filePath}.ts`,
     `export type AlgorandASAToken = [
   string, // id
   string, // abbr

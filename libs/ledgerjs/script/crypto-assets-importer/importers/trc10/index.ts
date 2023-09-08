@@ -1,8 +1,9 @@
 import fs from "fs";
 import axios from "axios";
-import { signedList, whitelist } from "./trc10-tokens";
 import bs58check from "bs58check";
 import { log } from "console";
+import path from "path";
+import { signedList, whitelist } from "./trc10-tokens";
 
 type TrongridAsset = {
   id: number;
@@ -109,8 +110,9 @@ export const importTRC10Tokens = async (outputDir: string) => {
     })
     .filter((token): token is TRC10Token => !!token);
 
-  fs.writeFileSync(`${outputDir}/trc10.json`, JSON.stringify(tokens));
-  fs.writeFileSync(`${outputDir}/trc10.ts`, ts);
+  const filePath = path.join(outputDir, "trc10");
+  fs.writeFileSync(`${filePath}.json`, JSON.stringify(tokens));
+  fs.writeFileSync(`${filePath}.ts`, ts);
 
   log(`importing trc10 tokens success, imported ${tokens.length} tokens`);
 };

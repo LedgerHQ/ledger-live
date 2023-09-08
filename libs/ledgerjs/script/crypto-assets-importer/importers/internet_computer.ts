@@ -1,10 +1,12 @@
 import { log } from "console";
 import fs from "fs";
+import path from "path";
 
-export const importInternetComputerTokens = async (outputFolder: string) => {
+export const importInternetComputerTokens = async (outputDir: string) => {
   log("importing internet computer tokens...");
+  const filePath = path.join(outputDir, "internet_computer");
   fs.writeFileSync(
-    `${outputFolder}/internet_computer.ts`,
+    `${filePath}.ts`,
     `export type ICPToken = [
     string, // assetCode
     string, // assetIssuer

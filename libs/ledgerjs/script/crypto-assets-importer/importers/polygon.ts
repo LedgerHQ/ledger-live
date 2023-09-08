@@ -1,5 +1,6 @@
 import fs from "fs";
 import { log } from "console";
+import path from "path";
 import { fetchTokens } from "../fetch";
 
 type PolygonToken = [
@@ -20,7 +21,8 @@ export const importPolygonTokens = async (outputDir: string) => {
   log("importing polygon tokens...");
   const polygonTokens = await fetchTokens<PolygonToken[]>("polygon-erc20.json");
   if (polygonTokens) {
-    fs.writeFileSync(`${outputDir}/polygon-erc20.json`, JSON.stringify(polygonTokens));
+    const filePath = path.join(outputDir, "polygon-erc20");
+    fs.writeFileSync(`${filePath}.json`, JSON.stringify(polygonTokens));
 
     const tokenTypeStringified = `export type PolygonERC20Token = [
   string, // parent currency id
@@ -45,7 +47,7 @@ export const importPolygonTokens = async (outputDir: string) => {
     const exportStringified = `export default tokens;`;
 
     fs.writeFileSync(
-      `${outputDir}/polygon-erc20.ts`,
+      `${filePath}.ts`,
       `${tokenTypeStringified}
 
 ${tokensStringified}

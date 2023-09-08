@@ -1,5 +1,6 @@
 import fs from "fs";
 import { log } from "console";
+import path from "path";
 import { fetchTokens } from "../fetch";
 
 type ElrondESDTToken = [
@@ -11,12 +12,13 @@ type ElrondESDTToken = [
   boolean, // disableCountervalue
 ];
 
-export const importESDTTokens = async (outputFolder: string) => {
+export const importESDTTokens = async (outputDir: string) => {
   log("importing esdt tokens...");
   const esdtTokens = await fetchTokens<ElrondESDTToken[]>("esdt.json");
-  fs.writeFileSync(`${outputFolder}/esdt.json`, JSON.stringify(esdtTokens));
+  const filePath = path.join(outputDir, "esdt");
+  fs.writeFileSync(`${filePath}.json`, JSON.stringify(esdtTokens));
   fs.writeFileSync(
-    `${outputFolder}/esdt.ts`,
+    `${filePath}.ts`,
     `export type ElrondESDTToken = [
   string, // ticker
   string, // identifier

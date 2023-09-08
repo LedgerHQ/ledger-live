@@ -2,6 +2,7 @@
 // If still useful should add validation checks
 import { log } from "console";
 import fs from "fs";
+import path from "path";
 import { fetchTokens } from "../fetch";
 
 type ERC20Token = [
@@ -24,7 +25,8 @@ export const importERC20 = async (outputDir: string) => {
     const erc20 = await fetchTokens<ERC20Token>("erc20.json");
 
     if (erc20) {
-      fs.writeFileSync(`${outputDir}/erc20.json`, JSON.stringify(erc20));
+      const filePath = path.join(outputDir, "erc20");
+      fs.writeFileSync(`${filePath}.json`, JSON.stringify(erc20));
 
       const erc20TokenTypeStringified = `export type ERC20Token = [
   string, // parent currecncy id
@@ -50,7 +52,7 @@ ${tokensStringified}
 ${exportStringified}
 `;
 
-      fs.writeFileSync(`${outputDir}/erc20.ts`, erc20TsFile);
+      fs.writeFileSync(`${filePath}.ts`, erc20TsFile);
 
       log("importing ERC20 tokens: success");
     }

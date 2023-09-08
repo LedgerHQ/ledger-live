@@ -1,5 +1,6 @@
 import fs from "fs";
 import { log } from "console";
+import path from "path";
 import { fetchTokens } from "../../fetch";
 
 export type EVMToken = [
@@ -37,14 +38,15 @@ export default { tokens, signatures };
 `;
 
       if (erc20 && erc20Signatures) {
+        const dirPath = path.join(outputDir, "evm", chainId.toString());
         const [coinName] = erc20[0];
         chainNames.push(coinName);
-        fs.writeFileSync(`${outputDir}/evm/${chainId}/erc20.json`, JSON.stringify(erc20));
+        fs.writeFileSync(path.join(dirPath, "erc20.json"), JSON.stringify(erc20));
         fs.writeFileSync(
-          `${outputDir}/evm/${chainId}/erc20-signatures.json`,
+          path.join(dirPath, "erc20-signatures.json"),
           JSON.stringify(erc20Signatures),
         );
-        fs.writeFileSync(`${outputDir}/evm/${chainId}/index.ts`, indexTsStringified);
+        fs.writeFileSync(path.join(dirPath, "index.ts"), indexTsStringified);
 
         log(`importing chain with chainId: ${chainId} (${coinName}) success`);
       }

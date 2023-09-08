@@ -1,5 +1,6 @@
 import fs from "fs";
 import { log } from "console";
+import path from "path";
 import { fetchTokens } from "../fetch";
 
 type StellarToken = [
@@ -11,12 +12,13 @@ type StellarToken = [
   boolean, // enableCountervalues
 ];
 
-export const importStellarTokens = async (outputFolder: string) => {
+export const importStellarTokens = async (outputDir: string) => {
   log("importing stellar tokens...");
   const stellarTokens = await fetchTokens<StellarToken[]>("stellar.json");
-  fs.writeFileSync(`${outputFolder}/stellar.json`, JSON.stringify(stellarTokens));
+  const filePath = path.join(outputDir, "stellar");
+  fs.writeFileSync(`${filePath}.json`, JSON.stringify(stellarTokens));
   fs.writeFileSync(
-    `${outputFolder}/stellar.ts`,
+    `${filePath}.ts`,
     `export type StellarToken = [
   string, // assetCode
   string, // assetIssuer
