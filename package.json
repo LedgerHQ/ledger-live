@@ -59,7 +59,7 @@
     "doc": "pnpm --filter docs",
     "mobile": "pnpm --filter live-mobile",
     "common": "pnpm --filter live-common",
-    "common-tools": "pnpm --filter live-common-tools",
+    "web-tools": "pnpm --filter web-tools",
     "live-env": "pnpm --filter live-env",
     "portfolio": "pnpm --filter live-portfolio",
     "promise": "pnpm --filter live-promise",

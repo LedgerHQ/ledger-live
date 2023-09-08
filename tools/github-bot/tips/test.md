@@ -15,6 +15,7 @@ _Note: you should always navigate to the workflow run page linked above to get a
 The test process consists of the following tasks that are performed in parallel (in a nutshell):
 
 - **Library tests** (On macOS and linux - windows is disabled for the moment)
+
   - Checkout the repository. ℹ️ For pull requests, it does a checkout of the branch targeted by the pull request, merges the pull request branch into it and then runs the workflow from that merge commit. It does NOT run at the HEAD commit of the pull request branch. So if you have different results locally make sure to checkout, fetch and pull the target branch and rebase your branch onto it.
   - Install the system dependencies
   - Install the javascript dependencies
@@ -23,6 +24,7 @@ The test process consists of the following tasks that are performed in parallel 
   - Tests the affected libraries by running the `test` script defined inside their package json file. Most of the time the script run `jest` scripts, linters and/or type checkers.
 
 - **Documentation check**
+
   - Checkout the repository
   - Install the system dependencies
   - Install the javascript dependencies
@@ -57,7 +59,7 @@ This error is usually related to the documentation being out of date. You can ru
 
 Find which step failed and which library is affected by the error. Then run the command that failed locally to try to reproduce.
 
-To reproduce the exact same behaviour as the CI and test all affected packages, you can run the `pnpm run test --continue --filter="!./apps/**" --filter="!live-common-tools" --filter="!ledger-live...[$$BASE_BRANCH$$]"` command locally - just replace the `$$BASE_BRANCH$$` part with the branch you pull request is targeting (for instance: `[develop]`).
+To reproduce the exact same behaviour as the CI and test all affected packages, you can run the `pnpm run test --continue --filter="!./apps/**" --filter="!ledger-live...[$$BASE_BRANCH$$]"` command locally - just replace the `$$BASE_BRANCH$$` part with the branch you pull request is targeting (for instance: `[develop]`).
 
 ### Check other runs of the same workflow
 
