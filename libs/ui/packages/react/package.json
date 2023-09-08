@@ -118,7 +118,7 @@
     "rimraf": "^4.4.1",
     "styled-components": "^5.3.3",
     "stylelint": "^14.9.1",
-    "stylelint-config-recommended": "^8.0.0",
+    "stylelint-config-recommended": "^13.0.0",
     "stylelint-config-styled-components": "^0.1.1",
     "stylelint-processor-styled-components": "^1.10.0",
     "tiny-glob": "^0.2.9",

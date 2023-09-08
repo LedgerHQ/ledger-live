@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: false
+  excludeLinksFromLockfile: false
+
 overrides:
   stellar-base>sodium-native: ^3.2.1
   remove-flow-types-loader>flow-remove-types: ^2
@@ -1083,7 +1087,7 @@ importers:
         version: 6.6.7
       rxjs-compat:
         specifier: ^6.6.6
-        version: 6.6.7(rxjs@7.8.1)
+        version: 6.6.7(rxjs@6.6.7)
       rxjs7:
         specifier: npm:rxjs@7.8.1
         version: /rxjs@7.8.1
@@ -2344,7 +2348,7 @@ importers:
         version: 6.6.7
       rxjs-compat:
         specifier: ^6.6.7
-        version: 6.6.7(rxjs@7.8.1)
+        version: 6.6.7(rxjs@6.6.7)
       rxjs7:
         specifier: npm:rxjs@7.8.1
         version: /rxjs@7.8.1
@@ -4837,8 +4841,8 @@ importers:
         specifier: ^14.9.1
         version: 14.10.0
       stylelint-config-recommended:
-        specifier: ^8.0.0
-        version: 8.0.0(stylelint@14.10.0)
+        specifier: ^13.0.0
+        version: 13.0.0(stylelint@14.10.0)
       stylelint-config-styled-components:
         specifier: ^0.1.1
         version: 0.1.1
@@ -4988,8 +4992,8 @@ importers:
         specifier: ^14.9.1
         version: 14.10.0
       stylelint-config-recommended:
-        specifier: ^8.0.0
-        version: 8.0.0(stylelint@14.10.0)
+        specifier: ^13.0.0
+        version: 13.0.0(stylelint@14.10.0)
       stylelint-config-styled-components:
         specifier: ^0.1.1
         version: 0.1.1
@@ -28945,7 +28949,7 @@ packages:
       babel-plugin-syntax-jsx: 6.18.0
       lodash: 4.17.21
       picomatch: 2.3.1
-      styled-components: 5.3.5(react-is@18.1.0)(react@18.0.0)
+      styled-components: 5.3.5(react-dom@17.0.2)(react-is@17.0.2)(react@17.0.2)
 
   /babel-plugin-syntax-jsx@6.18.0:
     resolution: {integrity: sha512-qrPaCSo9c8RHNRHIotaufGbuOBN8rtdC4QrrFFc43vyWCCz7Kl7GL1PGaXtMGQZUXrkCjNEgxDfmAuAabr/rlw==}
@@ -56576,7 +56580,7 @@ packages:
     resolution: {integrity: sha512-PdhdWy89SiZogBLaw42zdeqtRJ//zFd2PgQavcICDUgJT5oW10QCRKbJ6bg4r0/UY2M6BWd5tkxuGFRvCkgfHQ==}
     dev: false
 
-  /rxjs-compat@6.6.7(rxjs@7.8.1):
+  /rxjs-compat@6.6.7(rxjs@6.6.7):
     resolution: {integrity: sha512-szN4fK+TqBPOFBcBcsR0g2cmTTUF/vaFEOZNuSdfU8/pGFnNmmn2u8SystYXG1QMrjOPBc6XTKHMVfENDf6hHw==}
     peerDependencies:
       rxjs: '*'
@@ -56584,7 +56588,7 @@ packages:
       rxjs:
         optional: true
     dependencies:
-      rxjs: 7.8.1
+      rxjs: 6.6.7
     dev: false
 
   /rxjs@6.6.7:
@@ -58614,6 +58618,7 @@ packages:
       react-is: 18.1.0
       shallowequal: 1.1.0
       supports-color: 5.5.0
+    dev: false
 
   /styled-components@6.0.7(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-xIwWuiRMYR43mskVsW9MGTRjSo7ol4bcVjT595fGUp3OLBJOlOgaiKaxsHdC4a2HqWKqKnh0CmcRbk5ogyDjTg==}
@@ -58702,10 +58707,11 @@ packages:
       postcss: 8.4.29
       postcss-selector-parser: 6.0.10
 
-  /stylelint-config-recommended@8.0.0(stylelint@14.10.0):
-    resolution: {integrity: sha512-IK6dWvE000+xBv9jbnHOnBq01gt6HGVB2ZTsot+QsMpe82doDQ9hvplxfv4YnpEuUwVGGd9y6nbaAnhrjcxhZQ==}
+  /stylelint-config-recommended@13.0.0(stylelint@14.10.0):
+    resolution: {integrity: sha512-EH+yRj6h3GAe/fRiyaoO2F9l9Tgg50AOFhaszyfov9v6ayXJ1IkSHwTxd7lB48FmOeSGDPLjatjO11fJpmarkQ==}
+    engines: {node: ^14.13.1 || >=16.0.0}
     peerDependencies:
-      stylelint: ^14.8.0
+      stylelint: ^15.10.0
     dependencies:
       stylelint: 14.10.0
     dev: true
@@ -64795,7 +64801,6 @@ packages:
     resolution: {directory: libs/ui/packages/crypto-icons, type: directory}
     id: file:libs/ui/packages/crypto-icons
     name: '@ledgerhq/crypto-icons-ui'
-    version: 0.5.1
     peerDependencies:
       '@types/react': '*'
       react: '*'
@@ -64815,7 +64820,6 @@ packages:
     resolution: {directory: libs/ui/packages/icons, type: directory}
     id: file:libs/ui/packages/icons
     name: '@ledgerhq/icons-ui'
-    version: 0.6.1
     peerDependencies:
       '@types/react': '*'
       react: '*'
@@ -64839,7 +64843,3 @@ packages:
     dependencies:
       commander: 2.20.3
     dev: false
-
-settings:
-  autoInstallPeers: false
-  excludeLinksFromLockfile: false
