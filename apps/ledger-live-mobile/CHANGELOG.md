@@ -1,5 +1,17 @@
 # live-mobile
 
+## 3.32.0-nightly.0
+
+### Minor Changes
+
+- [#4616](https://github.com/LedgerHQ/ledger-live/pull/4616) [`299eaba752`](https://github.com/LedgerHQ/ledger-live/commit/299eaba752f2581e935706efbd13ae752627fa3e) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Add a deeplinking state in redux to inform the AuthPass component not to lock when app is temporarily backgrounded by ptx player deeplinks.
+
+### Patch Changes
+
+- [#4617](https://github.com/LedgerHQ/ledger-live/pull/4617) [`a5b7444489`](https://github.com/LedgerHQ/ledger-live/commit/a5b7444489af8b58cd4b8a04abdb2df81d21c813) Thanks [@cksanders](https://github.com/cksanders)! - Ensure iOS opens links correctly in wallet api webview & remove binancecnt
+
+- [#4588](https://github.com/LedgerHQ/ledger-live/pull/4588) [`c89f7d0e9e`](https://github.com/LedgerHQ/ledger-live/commit/c89f7d0e9e37f4389578c2833adde076a5811ff5) Thanks [@aboissiere-ledger](https://github.com/aboissiere-ledger)! - Fix jest config to generate coverage report and include untested files
+
 ## 3.31.0
 
 ### Minor Changes

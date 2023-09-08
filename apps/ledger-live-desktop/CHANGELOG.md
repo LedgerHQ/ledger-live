@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.68.1-nightly.0
+
+### Patch Changes
+
+- [#4588](https://github.com/LedgerHQ/ledger-live/pull/4588) [`c89f7d0e9e`](https://github.com/LedgerHQ/ledger-live/commit/c89f7d0e9e37f4389578c2833adde076a5811ff5) Thanks [@aboissiere-ledger](https://github.com/aboissiere-ledger)! - Fix jest config to generate coverage report and include untested files
+
 ## 2.68.0
 
 ### Minor Changes
