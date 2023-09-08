@@ -1,7 +1,5 @@
 import React, { useCallback } from "react";
-import { ArrowDown, ArrowUp, CoinPercent, Exchange, Plus } from "@ledgerhq/native-ui/assets/icons";
 import { useNavigation } from "@react-navigation/native";
-import { NewIconType } from "@ledgerhq/native-ui/components/Icon/type";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import useQuickActions from "../../hooks/useQuickActions";
@@ -13,12 +11,6 @@ const SHARED_CONFIG = {
   variant: "small" as const,
   textVariant: "small" as TextVariants,
 };
-
-const getIcon =
-  (Component: NewIconType) =>
-  ({ color }: { color: string }) =>
-    <Component size="S" color={color} />;
-
 function PortfolioQuickActionsBar() {
   const navigation = useNavigation();
   const { page } = useAnalytics();
@@ -41,28 +33,28 @@ function PortfolioQuickActionsBar() {
   const quickActionsData: QuickActionButtonProps[] = [
     {
       ...SHARED_CONFIG,
-      Icon: getIcon(Plus),
+      Icon: BUY.icon,
       children: t("portfolio.quickActions.buy"),
       onPress: () => onNavigate(...BUY.route, "quick_action_buy"),
       disabled: BUY.disabled,
     },
     {
       ...SHARED_CONFIG,
-      Icon: getIcon(Exchange),
+      Icon: SWAP.icon,
       children: t("portfolio.quickActions.swap"),
       onPress: () => onNavigate(...SWAP.route, "quick_action_swap"),
       disabled: SWAP.disabled,
     },
     {
       ...SHARED_CONFIG,
-      Icon: getIcon(ArrowUp),
+      Icon: SEND.icon,
       children: t("portfolio.quickActions.send"),
       onPress: () => onNavigate(...SEND.route, "quick_action_send"),
       disabled: SEND.disabled,
     },
     {
       ...SHARED_CONFIG,
-      Icon: getIcon(ArrowDown),
+      Icon: RECEIVE.icon,
       children: t("portfolio.quickActions.deposit"),
       onPress: () => onNavigate(...RECEIVE.route, "quick_action_receive"),
       disabled: RECEIVE.disabled,
@@ -71,7 +63,7 @@ function PortfolioQuickActionsBar() {
   if (STAKE) {
     quickActionsData.push({
       ...SHARED_CONFIG,
-      Icon: getIcon(CoinPercent),
+      Icon: STAKE.icon,
       children: t("portfolio.quickActions.stake"),
       onPress: () => onNavigate(...STAKE.route, "quick_action_stake"),
       disabled: STAKE.disabled,
