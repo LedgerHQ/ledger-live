@@ -146,7 +146,11 @@ const SwapForm = () => {
   }, [idleState]);
 
   const swapWebAppRedirection = useCallback(async () => {
-    const { to, from } = swapTransaction.swap;
+    const {
+      swap,
+      status: { estimatedFees: initFeeTotalValue },
+    } = swapTransaction;
+    const { to, from } = swap;
     const transaction = swapTransaction.transaction;
     const { account: fromAccount, parentAccount: fromParentAccount } = from;
     const { account: toAccount, parentAccount: toParentAccount } = to;
@@ -154,10 +158,15 @@ const SwapForm = () => {
     const { rate, rateId } = exchangeRate || {};
     if (fromAccount && toAccount) {
       const fromAccountId = accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id;
+      const initFeeCurrencyCode = accountToWalletAPIAccount(
+        fromParentAccount || fromAccount,
+        fromParentAccount,
+      ).currency;
       const toAccountId = accountToWalletAPIAccount(toAccount, toParentAccount)?.id;
       const fromAmount = convertToNonAtomicUnit(transaction?.amount, fromAccount);
 
-      const customFeesParams = feesStrategy === "custom" ? getCustomFeesPerFamily(transaction) : {};
+      const customFeeConfig =
+        feesStrategy === "custom" ? getCustomFeesPerFamily(transaction) : null;
 
       history.push({
         pathname: "/swap-web",
@@ -166,10 +175,12 @@ const SwapForm = () => {
           fromAccountId,
           toAccountId,
           fromAmount,
-          quoteId: rateId ? encodeURIComponent(rateId) : undefined,
+          quoteId: rateId ? rateId : undefined,
           rate,
           feeStrategy: feesStrategy?.toUpperCase(),
-          ...customFeesParams,
+          customFeeConfig: customFeeConfig ? JSON.stringify(customFeeConfig) : undefined,
+          initFeeTotalValue,
+          initFeeCurrencyCode,
         },
       });
     }
