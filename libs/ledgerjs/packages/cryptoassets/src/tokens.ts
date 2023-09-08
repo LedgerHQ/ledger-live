@@ -343,7 +343,7 @@ function convertTRONTokens(type: "trc10" | "trc20") {
     name,
     ticker: abbr,
     delisted,
-    disableCountervalue: !enableCountervalues,
+    disableCountervalue: enableCountervalues !== null ? !enableCountervalues : false,
     ledgerSignature,
     units: [
       {
