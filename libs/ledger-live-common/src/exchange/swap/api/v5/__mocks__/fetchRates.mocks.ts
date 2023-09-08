@@ -95,18 +95,5 @@ export const fetchRatesMock = (
       tradeMethod: "float",
       status: "success",
     },
-    {
-      provider: "oneinch",
-      providerType: "DEX",
-      providerURL: "/platform/1inch/#/1/unified/swap/usdc/eth?sourceTokenAmount=100",
-      from: "ethereum/erc20/usd__coin",
-      to: "ethereum",
-      amountFrom: "100",
-      amountTo: "0.030863259880419774",
-      minAmountFrom: "0.0",
-      payoutNetworkFees: "0.00192528",
-      tradeMethod: "float",
-      status: "success",
-    },
   ];
 };
