@@ -220,7 +220,7 @@
     "@types/invariant": "^2.2.35",
     "@types/jest": "^28.1.8",
     "@types/lodash": "^4.14.182",
-    "@types/react": "^17.0.53",
+    "@types/react": "^18.0.0",
     "@types/react-native-extra-dimensions-android": "^1.2.0",
     "@types/react-native-vector-icons": "^6.4.10",
     "@types/react-native-video": "^5.0.14",
