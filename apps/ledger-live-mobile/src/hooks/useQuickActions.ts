@@ -1,7 +1,9 @@
 import { useMemo } from "react";
 import { useRoute } from "@react-navigation/native";
 import { useSelector } from "react-redux";
+import { IconsLegacy } from "@ledgerhq/native-ui";
 import { type ParamListBase } from "@react-navigation/native";
+import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { NavigatorName, ScreenName } from "../const";
 import { accountsCountSelector, areAccountsEmptySelector } from "../reducers/accounts";
@@ -10,6 +12,7 @@ import { readOnlyModeEnabledSelector } from "../reducers/settings";
 export type QuickAction = {
   disabled: boolean;
   route: [NavigatorName, { screen: ScreenName; params?: ParamListBase }];
+  icon: IconType;
 };
 
 export type QuickActionsList = {
@@ -49,14 +52,17 @@ function useQuickActions() {
             screen: ScreenName.SendCoin,
           },
         ],
+        icon: IconsLegacy.ArrowTopMedium,
       },
       RECEIVE: {
         disabled: readOnlyModeEnabled,
         route: [NavigatorName.ReceiveFunds, { screen: ScreenName.ReceiveSelectCrypto }],
+        icon: IconsLegacy.ArrowBottomMedium,
       },
       BUY: {
         disabled: isPtxServiceCtaExchangeDrawerDisabled || readOnlyModeEnabled,
         route: [NavigatorName.Exchange, { screen: ScreenName.ExchangeBuy }],
+        icon: IconsLegacy.PlusMedium,
       },
       SELL: {
         disabled:
@@ -65,6 +71,7 @@ function useQuickActions() {
           readOnlyModeEnabled ||
           areAccountsEmpty,
         route: [NavigatorName.Exchange, { screen: ScreenName.ExchangeSell }],
+        icon: IconsLegacy.MinusMedium,
       },
       SWAP: {
         disabled:
@@ -78,6 +85,7 @@ function useQuickActions() {
             screen: ScreenName.SwapForm,
           },
         ],
+        icon: IconsLegacy.BuyCryptoMedium,
       },
     };
 
@@ -91,6 +99,7 @@ function useQuickActions() {
             params: { parentRoute: route },
           },
         ],
+        icon: IconsLegacy.ClaimRewardsMedium,
       };
     }
 
@@ -103,6 +112,7 @@ function useQuickActions() {
             screen: ScreenName.WalletConnectConnect,
           },
         ],
+        icon: IconsLegacy.WalletConnectMedium,
       };
     }
     return list;
