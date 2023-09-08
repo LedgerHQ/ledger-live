@@ -21,7 +21,7 @@ export const importEVMTokens = async (outputDir: string) => {
   try {
     const supportedChainIds = [
       1, 3, 5, 10, 25, 30, 40, 56, 57, 106, 137, 199, 246, 250, 420, 592, 1088, 1101, 1284, 1442,
-      8217, 42161, 84531, 421613,
+      8217, 8453, 42161, 84531, 421613,
     ];
 
     const chainNames: string[] = [];
@@ -39,6 +39,9 @@ export default { tokens, signatures };
 
       if (erc20 && erc20Signatures) {
         const dirPath = path.join(outputDir, "evm", chainId.toString());
+        if (!fs.existsSync(dirPath)) {
+          fs.mkdirSync(dirPath, { recursive: true });
+        }
         const [coinName] = erc20[0];
         chainNames.push(coinName);
         fs.writeFileSync(path.join(dirPath, "erc20.json"), JSON.stringify(erc20));
