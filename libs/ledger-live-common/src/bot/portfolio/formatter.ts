@@ -1,5 +1,4 @@
 import BigNumber from "bignumber.js";
-import { isString } from "lodash";
 import groupBy from "lodash/groupBy";
 import { findCryptoCurrencyById, formatCurrencyUnit } from "../../currencies";
 import { getDefaultExplorerView, getAddressExplorer } from "../../explorers";
@@ -192,7 +191,7 @@ export function finalMarkdownReport(reports: Report[], specsPerBots: SpecPerBot[
 
   md += table({
     title: "HTTP Calls Details",
-    lenseValue: d => d.report?.auditResult?.network?.details || "",
+    lenseValue: d => d.report?.auditResult?.network?.details,
     formatValue: v => formatDetails(v),
     totalPerCurrency: true,
     totalPerSeed: true,
@@ -292,17 +291,14 @@ function formatSize(bytes: number | undefined): string | undefined {
   return kb < 1024 ? `${kb.toFixed(0)}kb` : `${(kb / 1024).toFixed(0)}mb`;
 }
 
-function formatDetails(details: Map<string, NetworkAuditDetails> | string): string | undefined {
+function formatDetails(details: Map<string, NetworkAuditDetails> | undefined): string | undefined {
   if (!details) return;
-  if (isString(details)) return;
-  const detailsMap = details as Map<String, NetworkAuditDetails>;
   let report = "";
-  for (const url of detailsMap.keys()) {
-    const urlDetails = detailsMap.get(url) as NetworkAuditDetails;
+  details.forEach((urlDetails, url) => {
     report += `${url} (calls: ${urlDetails.calls}, duration: ${formatTime(
       urlDetails.duration,
-    )}, size: ${formatSize(urlDetails.size)}`;
-  }
+    )}, size: ${formatSize(urlDetails.size)}\n`;
+  });
   return report;
 }
 
