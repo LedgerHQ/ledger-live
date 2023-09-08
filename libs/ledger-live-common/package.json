@@ -111,7 +111,7 @@
   },
   "dependencies": {
     "@cardano-foundation/ledgerjs-hw-app-cardano": "^5.1.0",
-    "@celo/connect": "^3.0.1",
+    "@celo/connect": "^4.0.0",
     "@celo/contractkit": "^3.0.1",
     "@celo/utils": "^3.0.1",
     "@celo/wallet-base": "^3.0.1",
