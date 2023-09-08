@@ -1,5 +1,3 @@
-// TDOD: confirm with @kvn but might be a duplicate of what is inside cryptoassets/data/evm/*/erc20.json
-// If still useful should add validation checks
 import { log } from "console";
 import fs from "fs";
 import path from "path";
