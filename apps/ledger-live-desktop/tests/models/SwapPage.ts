@@ -111,7 +111,7 @@ export class SwapPage {
 
   async selectCurrencyFromCurrencyDropdown(textToSelect: string) {
     await this.waitForCurrenciesToExist();
-    await this.page.getByRole("option").getByText(textToSelect).click();
+    await this.page.getByRole("option").getByText(textToSelect).first().click();
   }
 
   async selectCurrencyByName(accountName: string) {
