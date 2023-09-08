@@ -29,7 +29,7 @@ export async function fetchRates({
 }: Props): Promise<ExchangeRate[]> {
   if (isIntegrationTestEnv()) {
     return Promise.resolve(
-      enrichRatesResponse(fetchRatesMock(fromCurrencyAmount), unitTo, unitFrom),
+      enrichRatesResponse(fetchRatesMock(fromCurrencyAmount, currencyFrom), unitTo, unitFrom),
     );
   }
 
