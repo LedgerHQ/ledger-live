@@ -1969,8 +1969,7 @@
       },
       "completed" : {
         "noUpdateAvailable" : {
-          "title" : "Verificación de actualización del SO",
-          "description" : "La verificación de actualizaciones del SO garantiza que el sistema operativo {{productName}} está actualizado."
+          "title" : "El SO del {{productName}} está actualizado"
         }
       },
       "error" : {
@@ -1989,10 +1988,11 @@
       }
     },
     "firmwareUpdateAvailableDrawer" : {
-      "title" : "Actualización del SO disponible",
+      "title" : "{{productName}} OS update available",
       "description" : "Actualiza tu {{productName}} para disfrutar de la seguridad y la funcionalidad más recientes.",
       "descriptionVersion" : "Versión {{firmwareVersion}}",
-      "updateCta" : "Actualizar ahora"
+      "updateCta" : "Actualizar ahora",
+      "seeWhatsInUpdateCta" : "See what's in the update"
     }
   },
   "syncOnboarding" : {
@@ -2172,6 +2172,13 @@
       "title" : "Precio de mercado de {{currencyTicker}}",
       "currencyPrice" : "Precio de 1 {{currencyTicker}}",
       "currencyPriceChange" : "Cambio en las últimas 24 horas"
+    },
+    "quickActions" : {
+      "buy" : "Buy",
+      "swap" : "Swap",
+      "send" : "Send",
+      "deposit" : "Deposit",
+      "stake" : "Stake"
     }
   },
   "addAccountsModal" : {
@@ -2446,12 +2453,16 @@
     },
     "import" : {
       "scan" : {
-        "title" : "Importar desde Desktop",
-        "descTop" : {
-          "line1" : "En Ledger Live Desktop, ingresa a:",
-          "line2" : "Ajustes > Cuentas > Exportar cuentas > Exportar"
+        "title" : "Importar desde Desktop"
+      },
+      "newScan" : {
+        "title" : "Scan and import your accounts from Ledger Live desktop",
+        "instructions" : {
+          "line1" : "Open Ledger Live Desktop.",
+          "line2" : "Settings > Accounts > Exports accounts",
+          "line3" : "Scan QR code until loader hits 100%."
         },
-        "descBottom" : "Abre Ledger Live Desktop y Escanea el Código QR"
+        "hodl" : "Hold until scanning completes."
       },
       "result" : {
         "title" : "Importar cuentas",
@@ -4291,6 +4302,7 @@
     "yesChangeLanguage" : "Sí, cambiar idioma",
     "allowLanguageInstallation" : "Aprueba la instalación del idioma en {{deviceName}}",
     "languageInstalled" : "Idioma cambiado al {{language}}",
+    "languageInstalledDesc" : "Your device is now in the language you chose",
     "firmwareUpdatePrompt" : {
       "title" : "¿Cambiar tu {{deviceName}} a {{language}}?",
       "description" : "Ya está disponible el idioma {{language}} para tu {{deviceName}}. Puedes cambiar el idioma de tu dispositivo ahora o en cualquier momento desde My Ledger."
@@ -6351,10 +6363,10 @@
       "status" : {
         "new" : {
           "title" : "Nuevo",
-          "desc" : "Ya no tienes que preocuparte de perder el acceso a tu billetera.",
+          "desc" : "Recupera el acceso a tu billetera sin tu Frase de recuperación secreta.",
           "actions" : {
             "learnMore" : "Conoce Ledger Recover",
-            "alreadySubscribed" : "Ya tengo un inicio de sesión, <LinkAccount>ver mi suscripción</LinkAccount>"
+            "alreadySubscribed" : "¿Ya tienes una suscripción? <LinkAccount>Ver suscripción</LinkAccount>"
           }
         }
       }
