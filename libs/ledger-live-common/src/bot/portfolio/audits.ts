@@ -1,5 +1,5 @@
 import { PerformanceObserver, PerformanceObserverCallback } from "node:perf_hooks";
-import { AuditResult, NetworkAuditResult } from "./types";
+import { AuditResult, NetworkAuditDetails, NetworkAuditResult } from "./types";
 
 export class SlowFrameDetector {
   _count = 0;
@@ -115,7 +115,7 @@ export class NetworkAudit {
   _totalCount = 0;
   _totalResponseSize = 0;
   _totalDuplicateRequests = 0;
-  _urlsSeen = new Set<string>();
+  _urlsDetails = new Map<string, NetworkAuditDetails>();
 
   start(): void {
     this._obs = new PerformanceObserver(this.onPerformanceEntry);
@@ -139,19 +139,31 @@ export class NetworkAudit {
         }
         const req = (entry.detail as any)?.req;
         const res = (entry.detail as any)?.res;
+
         if (res && req) {
           const { url } = req;
-          if (this._urlsSeen.has(url)) {
-            this._totalDuplicateRequests = (this._totalDuplicateRequests || 0) + 1;
+          if (this._urlsDetails.get(url) == null) {
+            this._urlsDetails.set(url, {
+              calls: 0,
+              duration: 0,
+              size: 0,
+            });
           } else {
-            this._urlsSeen.add(url);
+            this._totalDuplicateRequests = (this._totalDuplicateRequests || 0) + 1;
           }
+
+          const details = this._urlsDetails.get(url) as NetworkAuditDetails;
+          details.calls += 1;
+          details.duration += entry.duration;
+
           const { headers } = res;
 
           if (headers) {
             const contentLength = headers["content-length"];
             if (contentLength) {
-              this._totalResponseSize = (this._totalResponseSize || 0) + parseInt(contentLength);
+              const size = parseInt(contentLength);
+              this._totalResponseSize = (this._totalResponseSize || 0) + size;
+              details.size += size;
             }
           }
         }
@@ -165,6 +177,7 @@ export class NetworkAudit {
       totalCount: this._totalCount,
       totalResponseSize: this._totalResponseSize,
       totalDuplicateRequests: this._totalDuplicateRequests,
+      details: this._urlsDetails,
     };
   }
 }

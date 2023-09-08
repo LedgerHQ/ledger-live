@@ -3,7 +3,7 @@ import groupBy from "lodash/groupBy";
 import { findCryptoCurrencyById, formatCurrencyUnit } from "../../currencies";
 import { getDefaultExplorerView, getAddressExplorer } from "../../explorers";
 import { AppSpec } from "../types";
-import { Report, SpecPerBot } from "./types";
+import { NetworkAuditDetails, Report, SpecPerBot } from "./types";
 
 function round(n?: number): number | undefined {
   if (n === undefined) return undefined;
@@ -190,6 +190,15 @@ export function finalMarkdownReport(reports: Report[], specsPerBots: SpecPerBot[
   });
 
   md += table({
+    title: "HTTP Calls Details",
+    lenseValue: d => d.report?.auditResult?.network?.details || "",
+    formatValue: v => formatDetails(v),
+    totalPerCurrency: true,
+    totalPerSeed: true,
+    totalPerFamily: true,
+  });
+
+  md += table({
     title: "Accounts Data Size",
     lenseValue: d => d.report?.auditResult?.accountsJSONSize,
     formatValue: v => formatSize(v),
@@ -280,6 +289,20 @@ function formatSize(bytes: number | undefined): string | undefined {
   if (!bytes) return;
   const kb = bytes / 1024;
   return kb < 1024 ? `${kb.toFixed(0)}kb` : `${(kb / 1024).toFixed(0)}mb`;
+}
+
+function formatDetails(details: Map<string, NetworkAuditDetails> | string): string | undefined {
+  if (!details) return;
+  if (details["get"] == null) return;
+  const detailsMap = details as Map<String, NetworkAuditDetails>;
+  let report = "";
+  for (const url of detailsMap.keys()) {
+    const urlDetails = detailsMap.get(url) as NetworkAuditDetails;
+    report += `${url} (calls: ${urlDetails.calls}, duration: ${formatTime(
+      urlDetails.duration,
+    )}, size: ${formatSize(urlDetails.size)}`;
+  }
+  return report;
 }
 
 type Datapoint = {

@@ -5,6 +5,13 @@ export type NetworkAuditResult = {
   totalCount?: number;
   totalResponseSize?: number;
   totalDuplicateRequests?: number;
+  details?: Map<string, NetworkAuditDetails>;
+};
+
+export type NetworkAuditDetails = {
+  calls: number;
+  size: number;
+  duration: number;
 };
 
 export type AuditResult = {
