@@ -3,7 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { ScrollView } from "react-native-gesture-handler";
-import { Flex, IconsLegacy, Text, Box } from "@ledgerhq/native-ui";
+import { Flex, Text, Box } from "@ledgerhq/native-ui";
 import { StyleProp, ViewStyle } from "react-native";
 import { snakeCase } from "lodash";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -75,7 +75,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       title: t("transfer.send.title"),
       description: t("transfer.send.description"),
       onPress: () => onNavigate(...SEND.route),
-      Icon: IconsLegacy.ArrowTopMedium,
+      Icon: SEND.icon,
       disabled: SEND.disabled,
       testID: "transfer-send-button",
     },
@@ -88,7 +88,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       title: t("transfer.receive.title"),
       description: t("transfer.receive.description"),
       onPress: () => onNavigate(...RECEIVE.route),
-      Icon: IconsLegacy.ArrowBottomMedium,
+      Icon: RECEIVE.icon,
       disabled: RECEIVE.disabled,
       testID: "transfer-receive-button",
     },
@@ -101,7 +101,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       title: t("transfer.buy.title"),
       description: t("transfer.buy.description"),
       tag: t("common.popular"),
-      Icon: IconsLegacy.PlusMedium,
+      Icon: BUY.icon,
       onPress: () => onNavigate(...BUY.route),
       onDisabledPress: () => {
         if (isPtxServiceCtaExchangeDrawerDisabled) {
@@ -126,7 +126,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       },
       title: t("transfer.sell.title"),
       description: t("transfer.sell.description"),
-      Icon: IconsLegacy.MinusMedium,
+      Icon: SELL.icon,
       onPress: () => onNavigate(...SELL.route),
       onDisabledPress: () => {
         if (isPtxServiceCtaExchangeDrawerDisabled) {
@@ -154,7 +154,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
             },
             title: t("transfer.stake.title"),
             description: t("transfer.stake.description"),
-            Icon: IconsLegacy.ClaimRewardsMedium,
+            Icon: STAKE.icon,
             onPress: () => onNavigate(...STAKE.route),
             disabled: STAKE.disabled,
             testID: "transfer-stake-button",
@@ -169,7 +169,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       },
       title: t("transfer.swap.title"),
       description: t("transfer.swap.description"),
-      Icon: IconsLegacy.BuyCryptoMedium,
+      Icon: SWAP.icon,
       onPress: () => onNavigate(...SWAP.route),
       onDisabledPress: () => {
         if (isPtxServiceCtaExchangeDrawerDisabled) {
@@ -197,7 +197,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
             },
             title: t("transfer.walletConnect.title"),
             description: t("transfer.walletConnect.description"),
-            Icon: IconsLegacy.WalletConnectMedium,
+            Icon: WALLET_CONNECT.icon,
             onPress: () => onNavigate(...WALLET_CONNECT.route),
             disabled: WALLET_CONNECT.disabled,
             testID: "transfer-walletconnect-button",
