@@ -24796,7 +24796,7 @@ packages:
   /@types/bs58check@2.1.0:
     resolution: {integrity: sha512-OxsysnJQh82vy9DRbOcw9m2j/WiyqZLn0YBhKxdQ+aCwoHj+tWzyCgpwAkr79IfDXZKxc6h7k89T9pwS78CqTQ==}
     dependencies:
-      '@types/node': 20.5.7
+      '@types/node': 18.16.19
 
   /@types/btoa-lite@1.0.0:
     resolution: {integrity: sha512-wJsiX1tosQ+J5+bY5LrSahHxr2wT+uME5UDwdN1kg4frt40euqA+wzECkmq4t5QbveHiJepfdThgQrPw6KiSlg==}
@@ -41849,7 +41849,7 @@ packages:
       pretty-format: 28.1.3
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@5.1.3)
+      ts-node: 10.7.0(@types/node@18.15.11)(source-map-support@0.5.21)(typescript@5.1.3)
     transitivePeerDependencies:
       - metro
       - supports-color
@@ -42673,7 +42673,7 @@ packages:
       jest-resolve:
         optional: true
     dependencies:
-      jest-resolve: 28.1.3
+      jest-resolve: 28.1.3(metro@0.76.0)
     dev: true
 
   /jest-pnp-resolver@1.2.2(jest-resolve@29.6.2):
@@ -58648,7 +58648,7 @@ packages:
     dependencies:
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
-      jest: 28.1.3(@types/node@18.15.3)(ts-node@10.7.0)
+      jest: 28.1.3(@types/node@18.15.11)(ts-node@10.7.0)
       jest-util: 28.1.3
       json5: 2.2.1
       lodash.memoize: 4.1.2
