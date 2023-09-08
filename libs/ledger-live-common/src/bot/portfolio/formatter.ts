@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { isString } from "lodash";
 import groupBy from "lodash/groupBy";
 import { findCryptoCurrencyById, formatCurrencyUnit } from "../../currencies";
 import { getDefaultExplorerView, getAddressExplorer } from "../../explorers";
@@ -293,7 +294,7 @@ function formatSize(bytes: number | undefined): string | undefined {
 
 function formatDetails(details: Map<string, NetworkAuditDetails> | string): string | undefined {
   if (!details) return;
-  if (details["get"] == null) return;
+  if (isString(details)) return;
   const detailsMap = details as Map<String, NetworkAuditDetails>;
   let report = "";
   for (const url of detailsMap.keys()) {
