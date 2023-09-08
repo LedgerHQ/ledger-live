@@ -1969,8 +1969,7 @@
       },
       "completed" : {
         "noUpdateAvailable" : {
-          "title" : "OS update check",
-          "description" : "OS update check makes sure {{productName}} Operating System is up to date."
+          "title" : "{{productName}} OS is up to date"
         }
       },
       "error" : {
@@ -1989,10 +1988,11 @@
       }
     },
     "firmwareUpdateAvailableDrawer" : {
-      "title" : "OS update available",
+      "title" : "{{productName}} OS update available",
       "description" : "Update your {{productName}} to benefit from the latest security and functionality.",
       "descriptionVersion" : "Version {{firmwareVersion}}",
-      "updateCta" : "Update now"
+      "updateCta" : "Update now",
+      "seeWhatsInUpdateCta" : "See what's in the update"
     }
   },
   "syncOnboarding" : {
@@ -2172,6 +2172,13 @@
       "title" : "{{currencyTicker}}の市場価格",
       "currencyPrice" : "1 {{currencyTicker}}の価格",
       "currencyPriceChange" : "24時間前の変更"
+    },
+    "quickActions" : {
+      "buy" : "Buy",
+      "swap" : "Swap",
+      "send" : "Send",
+      "deposit" : "Deposit",
+      "stake" : "Stake"
     }
   },
   "addAccountsModal" : {
@@ -2446,12 +2453,16 @@
     },
     "import" : {
       "scan" : {
-        "title" : "デスクトップからインポート",
-        "descTop" : {
-          "line1" : "Ledger Live Desktopから移動：",
-          "line2" : "設定 > アカウント > アカウントのエクスポート > エクスポート"
+        "title" : "デスクトップからインポート"
+      },
+      "newScan" : {
+        "title" : "Scan and import your accounts from Ledger Live desktop",
+        "instructions" : {
+          "line1" : "Open Ledger Live Desktop.",
+          "line2" : "Settings > Accounts > Exports accounts",
+          "line3" : "Scan QR code until loader hits 100%."
         },
-        "descBottom" : "Ledger Live Desktopを開き、QRコードをスキャンする"
+        "hodl" : "Hold until scanning completes."
       },
       "result" : {
         "title" : "アカウントのインポート",
@@ -4291,6 +4302,7 @@
     "yesChangeLanguage" : "はい、言語を変更します。",
     "allowLanguageInstallation" : "{{deviceName}}への言語のインストールを承認する",
     "languageInstalled" : "言語が{{language}}に変更されました",
+    "languageInstalledDesc" : "Your device is now in the language you chose",
     "firmwareUpdatePrompt" : {
       "title" : "{{deviceName}}を{{language}}に設定しますか？",
       "description" : "{{language}}が{{deviceName}}でご利用可能になりました。今すぐ設定できます。また、My Ledgerからいつでもデバイスの言語を変更することが可能です。"
@@ -6351,10 +6363,10 @@
       "status" : {
         "new" : {
           "title" : "新商品",
-          "desc" : "ウォレットへのアクセス権を失う不安を解消しましょう。",
+          "desc" : "秘密のリカバリーフレーズなしでウォレットへのアクセスを復元します。",
           "actions" : {
             "learnMore" : "Ledger Recoverの詳細を確認",
-            "alreadySubscribed" : "すでにログイン済みの場合<LinkAccount>サブスクリプションを表示</LinkAccount>"
+            "alreadySubscribed" : "すでにご登録済みですか？<LinkAccount>サブスクリプションを見る</LinkAccount>"
           }
         }
       }
