@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: false
+  excludeLinksFromLockfile: false
+
 overrides:
   stellar-base>sodium-native: ^3.2.1
   remove-flow-types-loader>flow-remove-types: ^2
@@ -1083,7 +1087,7 @@ importers:
         version: 6.6.7
       rxjs-compat:
         specifier: ^6.6.6
-        version: 6.6.7(rxjs@7.8.1)
+        version: 6.6.7(rxjs@6.6.7)
       rxjs7:
         specifier: npm:rxjs@7.8.1
         version: /rxjs@7.8.1
@@ -2344,7 +2348,7 @@ importers:
         version: 6.6.7
       rxjs-compat:
         specifier: ^6.6.7
-        version: 6.6.7(rxjs@7.8.1)
+        version: 6.6.7(rxjs@6.6.7)
       rxjs7:
         specifier: npm:rxjs@7.8.1
         version: /rxjs@7.8.1
@@ -4618,11 +4622,11 @@ importers:
         specifier: ^7.17.2
         version: 7.17.9
       '@emotion/core':
-        specifier: ^10.3.1
-        version: 10.3.1(react@18.0.0)
+        specifier: ^11.0.0
+        version: 11.0.0
       '@emotion/native':
-        specifier: ^10.0.27
-        version: 10.0.27(@emotion/core@10.3.1)(react-native@0.71.6)(react@18.0.0)
+        specifier: ^11.0.0
+        version: 11.11.0(react-native@0.71.6)(react@18.0.0)
       '@expo/metro-config':
         specifier: ^0.7.1
         version: 0.7.1
@@ -4658,7 +4662,7 @@ importers:
         version: 6.5.6(@storybook/addon-actions@6.5.16)(react-dom@18.0.0)(react-native@0.71.6)(react@18.0.0)
       '@storybook/addon-ondevice-backgrounds':
         specifier: 6.5.6
-        version: 6.5.6(@emotion/native@10.0.27)(react-dom@18.0.0)(react-native@0.71.6)(react@18.0.0)
+        version: 6.5.6(@emotion/native@11.11.0)(react-dom@18.0.0)(react-native@0.71.6)(react@18.0.0)
       '@storybook/addon-ondevice-controls':
         specifier: 6.5.6
         version: 6.5.6(@react-native-community/datetimepicker@6.7.5)(@react-native-community/slider@4.4.2)(@storybook/addon-controls@6.5.16)(react-dom@18.0.0)(react-native@0.71.6)(react@18.0.0)
@@ -12750,18 +12754,8 @@ packages:
       '@emotion/utils': 0.11.3
       react: 17.0.2
 
-  /@emotion/core@10.3.1(react@18.0.0):
-    resolution: {integrity: sha512-447aUEjPIm0MnE6QYIaFz9VQOHSXf4Iu6EWOIqq11EAPqinkSZmfymPTmlOE3QjLv846lH4JVZBUOtwGbuQoww==}
-    peerDependencies:
-      react: '>=16.3.0'
-    dependencies:
-      '@babel/runtime': 7.20.13
-      '@emotion/cache': 10.0.29
-      '@emotion/css': 10.0.27
-      '@emotion/serialize': 0.11.16
-      '@emotion/sheet': 0.9.4
-      '@emotion/utils': 0.11.3
-      react: 18.0.0
+  /@emotion/core@11.0.0:
+    resolution: {integrity: sha512-w4sE3AmHmyG6RDKf6mIbtHpgJUSJ2uGvPQb8VXFL7hFjMPibE8IiehG8cMX3Ztm4svfCQV6KqusQbeIOkurBcA==}
     dev: true
 
   /@emotion/css@10.0.27:
@@ -12800,26 +12794,25 @@ packages:
     resolution: {integrity: sha512-W2P2c/VRW1/1tLox0mVUalvnWXxavmv/Oum2aPsRcoDJuob75FC3Y8FbpfLwUegRcxINtGUMPq0tFCvYNTBXNA==}
     dev: false
 
-  /@emotion/native@10.0.27(@emotion/core@10.3.1)(react-native@0.71.6)(react@18.0.0):
-    resolution: {integrity: sha512-3qxR2XFizGfABKKbX9kAYc0PHhKuCEuyxshoq3TaMEbi9asWHdQVChg32ULpblm4XAf9oxaitAU7J9SfdwFxtw==}
+  /@emotion/native@11.11.0(react-native@0.71.6)(react@18.0.0):
+    resolution: {integrity: sha512-t1b5bLv+o5OUNLqXlnw+LJYU10OpmYkLC/1W873Y1ohG+vObx5TT3o3Eh1okXb2KCuZTTBPgsEnU/Sl7NNkJ9Q==}
     peerDependencies:
       react-native: '>=0.14.0 <1'
     dependencies:
-      '@emotion/primitives-core': 10.0.27(@emotion/core@10.3.1)(react@18.0.0)
+      '@emotion/primitives-core': 11.11.0(react@18.0.0)
       react-native: 0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     transitivePeerDependencies:
-      - '@emotion/core'
+      - '@emotion/react'
       - react
     dev: true
 
-  /@emotion/primitives-core@10.0.27(@emotion/core@10.3.1)(react@18.0.0):
-    resolution: {integrity: sha512-fRBEDNPSFFOrBJ0OcheuElayrNTNdLF9DzMxtL0sFgsCFvvadlzwJHhJMSwEJuxwARm9GhVLr1p8G8JGkK98lQ==}
+  /@emotion/primitives-core@11.11.0(react@18.0.0):
+    resolution: {integrity: sha512-cTVsAe7Y5E/RRoHnWDh6ZE3aPHOuuUDqIkSibJ+tz/wFZizkqg+VNcKvTLU6DFRMXH+NhNWdyhzldJ9PUY9/vA==}
     peerDependencies:
-      '@emotion/core': ^10.0.27
-      react: '>=16.3.0'
+      '@emotion/react': ^11.0.0-rc.0
+      react: '>=16.8.0'
     dependencies:
-      '@emotion/core': 10.3.1(react@18.0.0)
-      css-to-react-native: 2.3.2
+      css-to-react-native: 3.2.0
       react: 18.0.0
     dev: true
 
@@ -21381,7 +21374,7 @@ packages:
       - react-dom
     dev: true
 
-  /@storybook/addon-ondevice-backgrounds@6.5.6(@emotion/native@10.0.27)(react-dom@18.0.0)(react-native@0.71.6)(react@18.0.0):
+  /@storybook/addon-ondevice-backgrounds@6.5.6(@emotion/native@11.11.0)(react-dom@18.0.0)(react-native@0.71.6)(react@18.0.0):
     resolution: {integrity: sha512-+UkFdVxB/wylMzlhxz3pKx2cDfR+ULm9DvmAiseYCJvpyB/pF2yqUCJe/LhsBZr8NNBGhbAoMbOIwVB3vJ5S2Q==}
     peerDependencies:
       '@emotion/native': '*'
@@ -21391,7 +21384,7 @@ packages:
       '@emotion/native':
         optional: true
     dependencies:
-      '@emotion/native': 10.0.27(@emotion/core@10.3.1)(react-native@0.71.6)(react@18.0.0)
+      '@emotion/native': 11.11.0(react-native@0.71.6)(react@18.0.0)
       '@storybook/addons': 6.5.16(react-dom@18.0.0)(react@18.0.0)
       '@storybook/api': 6.5.16(react-dom@18.0.0)(react@18.0.0)
       '@storybook/client-api': 6.5.16(react-dom@18.0.0)(react@18.0.0)
@@ -28945,7 +28938,7 @@ packages:
       babel-plugin-syntax-jsx: 6.18.0
       lodash: 4.17.21
       picomatch: 2.3.1
-      styled-components: 5.3.5(react-is@18.1.0)(react@18.0.0)
+      styled-components: 5.3.5(react-dom@17.0.2)(react-is@17.0.2)(react@17.0.2)
 
   /babel-plugin-syntax-jsx@6.18.0:
     resolution: {integrity: sha512-qrPaCSo9c8RHNRHIotaufGbuOBN8rtdC4QrrFFc43vyWCCz7Kl7GL1PGaXtMGQZUXrkCjNEgxDfmAuAabr/rlw==}
@@ -32343,6 +32336,7 @@ packages:
       camelize: 1.0.0
       css-color-keywords: 1.0.0
       postcss-value-parser: 3.3.1
+    dev: false
 
   /css-to-react-native@3.0.0:
     resolution: {integrity: sha512-Ro1yETZA813eoyUp2GDBhG2j+YggidUmzO1/v9eYBKR2EHVEniE2MI/NqpTQ954BMpTPZFsGNPm46qFB9dpaPQ==}
@@ -32357,7 +32351,6 @@ packages:
       camelize: 1.0.0
       css-color-keywords: 1.0.0
       postcss-value-parser: 4.2.0
-    dev: false
 
   /css-tree@1.0.0-alpha.37:
     resolution: {integrity: sha512-DMxWJg0rnz7UgxKT0Q1HU/L9BeJI0M6ksor0OgqOnF+aRCDWg/N2641HmVyU9KVIu0OVVWOb2IpC9A+BJRnejg==}
@@ -56576,7 +56569,7 @@ packages:
     resolution: {integrity: sha512-PdhdWy89SiZogBLaw42zdeqtRJ//zFd2PgQavcICDUgJT5oW10QCRKbJ6bg4r0/UY2M6BWd5tkxuGFRvCkgfHQ==}
     dev: false
 
-  /rxjs-compat@6.6.7(rxjs@7.8.1):
+  /rxjs-compat@6.6.7(rxjs@6.6.7):
     resolution: {integrity: sha512-szN4fK+TqBPOFBcBcsR0g2cmTTUF/vaFEOZNuSdfU8/pGFnNmmn2u8SystYXG1QMrjOPBc6XTKHMVfENDf6hHw==}
     peerDependencies:
       rxjs: '*'
@@ -56584,7 +56577,7 @@ packages:
       rxjs:
         optional: true
     dependencies:
-      rxjs: 7.8.1
+      rxjs: 6.6.7
     dev: false
 
   /rxjs@6.6.7:
@@ -58614,6 +58607,7 @@ packages:
       react-is: 18.1.0
       shallowequal: 1.1.0
       supports-color: 5.5.0
+    dev: false
 
   /styled-components@6.0.7(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-xIwWuiRMYR43mskVsW9MGTRjSo7ol4bcVjT595fGUp3OLBJOlOgaiKaxsHdC4a2HqWKqKnh0CmcRbk5ogyDjTg==}
@@ -64795,7 +64789,6 @@ packages:
     resolution: {directory: libs/ui/packages/crypto-icons, type: directory}
     id: file:libs/ui/packages/crypto-icons
     name: '@ledgerhq/crypto-icons-ui'
-    version: 0.5.1
     peerDependencies:
       '@types/react': '*'
       react: '*'
@@ -64815,7 +64808,6 @@ packages:
     resolution: {directory: libs/ui/packages/icons, type: directory}
     id: file:libs/ui/packages/icons
     name: '@ledgerhq/icons-ui'
-    version: 0.6.1
     peerDependencies:
       '@types/react': '*'
       react: '*'
@@ -64839,7 +64831,3 @@ packages:
     dependencies:
       commander: 2.20.3
     dev: false
-
-settings:
-  autoInstallPeers: false
-  excludeLinksFromLockfile: false
