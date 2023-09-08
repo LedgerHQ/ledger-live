@@ -12,8 +12,8 @@ type PolygonToken = [
   string, // contract address
   boolean, // disabled counter value
   boolean, // delisted
-  string | null | undefined, // legacy
-  string | null | undefined, // legacy
+  (string | null)?, // legacy
+  (string | null)?, // legacy
 ];
 
 export const importPolygonTokens = async (outputDir: string) => {
@@ -32,8 +32,8 @@ export const importPolygonTokens = async (outputDir: string) => {
   string, // contract address
   boolean, // disabled counter value
   boolean, // delisted
-  string | null | undefined, // legacy
-  string | null | undefined, // legacy
+  (string | null)?, // legacy
+  (string | null)?, // legacy
 ];`;
 
     const tokensStringified = `const tokens: PolygonERC20Token[] = ${JSON.stringify(

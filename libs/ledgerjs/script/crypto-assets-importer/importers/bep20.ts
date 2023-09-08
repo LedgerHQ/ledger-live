@@ -12,7 +12,7 @@ type BEP20Token = [
   string, // contract address
   boolean, // disabled counter value
   boolean, // delisted
-  string | null | undefined, // legacy
+  (string | null)?, // legacy
 ];
 
 export const importBEP20 = async (outputDir: string) => {
@@ -32,7 +32,7 @@ export const importBEP20 = async (outputDir: string) => {
   string, // contract address
   boolean, // disabled counter value
   boolean, // delisted
-  string | null | undefined, // legacy
+  (string | null)?, // legacy
 ];`;
 
       const tokensStringified = `const tokens: BEP20Token[] = ${JSON.stringify(bep20, null, 2)};`;

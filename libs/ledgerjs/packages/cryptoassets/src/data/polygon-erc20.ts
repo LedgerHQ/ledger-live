@@ -8,8 +8,8 @@ export type PolygonERC20Token = [
   string, // contract address
   boolean, // disabled counter value
   boolean, // delisted
-  string | null | undefined, // legacy
-  string | null | undefined, // legacy
+  (string | null)?, // legacy
+  (string | null)?, // legacy
 ];
 
 const tokens: PolygonERC20Token[] = [

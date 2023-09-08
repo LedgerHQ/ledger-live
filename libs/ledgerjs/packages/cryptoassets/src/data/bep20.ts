@@ -8,7 +8,7 @@ export type BEP20Token = [
   string, // contract address
   boolean, // disabled counter value
   boolean, // delisted
-  string | null | undefined, // legacy
+  (string | null)?, // legacy
 ];
 
 const tokens: BEP20Token[] = [
