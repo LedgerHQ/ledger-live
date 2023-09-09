@@ -100,9 +100,11 @@
     "@actions/turborepo-s3-cache": "1.0.1",
     "@ledgerhq/docs-libs": "0.1.0",
     "next.js-example": "0.0.2",
-    "webpack.js-example": "0.0.2"
+    "webpack.js-example": "0.0.2",
+    "@ledgerhq/web-tools": "0.1.0"
   },
   "changesets": [
+    "hungry-pianos-vanish",
     "light-planes-cry",
     "olive-ants-clean",
     "twenty-ears-care"
