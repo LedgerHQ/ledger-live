@@ -1,0 +1,5 @@
+{
+  "buildCommand": "pnpm turbo run build --filter=web-tools",
+  "outputDirectory": "./apps/web-tools/build",
+  "installCommand": "pnpm i -F web-tools... -F ledger-live"
+}
