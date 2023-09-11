@@ -102,7 +102,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       onPress: () => onNavigate(...RECEIVE.route),
       Icon: RECEIVE.icon,
       disabled: RECEIVE.disabled,
-      testID: "transfer-receive-button",
+      testID: "transfer-deposit-button",
     },
     {
       eventProperties: {
