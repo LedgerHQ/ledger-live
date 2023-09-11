@@ -1095,8 +1095,8 @@ importers:
         specifier: ^7.3.7
         version: 7.3.7
       storyly-react-native:
-        specifier: 2.0.1
-        version: 2.0.1(prop-types@15.8.1)(react-native@0.71.6)(react@18.0.0)
+        specifier: 2.3.0
+        version: 2.3.0(prop-types@15.8.1)(react-native@0.71.6)(react@18.0.0)
       styled-components:
         specifier: ^5.3.3
         version: 5.3.5(react-is@18.1.0)(react@18.0.0)
@@ -29467,6 +29467,7 @@ packages:
   /binary-extensions@2.2.0:
     resolution: {integrity: sha512-jDctJ/IVQbZoJykoeHbhXpOlNBqGNcwXJKJog42E5HDPUwQTSdjCHdihjj0DlnheQ7blbT6dHOafNAiS8ooQKA==}
     engines: {node: '>=8'}
+    requiresBuild: true
 
   /binary@0.3.0:
     resolution: {integrity: sha512-D4H1y5KYwpJgK8wk1Cue5LLPgmwHKYSChkbspQg5JtVuR5ulGckxfR62H3AE9UDkdMC8yyXlqYihuz3Aqg2XZg==}
@@ -40343,6 +40344,7 @@ packages:
   /is-binary-path@2.1.0:
     resolution: {integrity: sha512-ZMERYes6pDydyuGidse7OsHxtbI7WVeUEozgR/g7rd0xUimYNlvZRE/K2MgZTjWy725IfelLeVcEM97mmtRGXw==}
     engines: {node: '>=8'}
+    requiresBuild: true
     dependencies:
       binary-extensions: 2.2.0
 
@@ -55536,6 +55538,7 @@ packages:
   /readdirp@3.6.0:
     resolution: {integrity: sha512-hOS089on8RduqdbhvQ5Z37A0ESjsqz6qnRcffsMU3495FuTdqSm+7bhJ29JvIOsBDEEnan5DPu9t3To9VRlMzA==}
     engines: {node: '>=8.10.0'}
+    requiresBuild: true
     dependencies:
       picomatch: 2.3.1
 
@@ -57970,8 +57973,8 @@ packages:
     resolution: {integrity: sha512-eO9xlzDpXLiMr9W1nQ3Nfp9EzZieIQc10zPPMP5jsVV7bLOziSFFBP0XoDXACEIFtdI+rIz0NwWVA/QVJ8zJtw==}
     dev: false
 
-  /storyly-react-native@2.0.1(prop-types@15.8.1)(react-native@0.71.6)(react@18.0.0):
-    resolution: {integrity: sha512-UFJBNjrpcrOyC2lpDv/+Bz48PjST10AlnlZbqrN7TrPf2bDpKQ3LwWYU3QiGBXa6yoFXMEuR6NSc/vg1rKynRg==}
+  /storyly-react-native@2.3.0(prop-types@15.8.1)(react-native@0.71.6)(react@18.0.0):
+    resolution: {integrity: sha512-f3u8ESp9i9RRAetZ6IpDJVGHcV8seUXtzs57I8EvPelaIBRjnNCMDwQGs2/X9EohZ+uB0XLmxWvNpQeBdntDaw==}
     peerDependencies:
       prop-types: '*'
       react: ^18.0.0
