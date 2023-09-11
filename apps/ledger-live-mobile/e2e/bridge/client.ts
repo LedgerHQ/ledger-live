@@ -9,8 +9,7 @@ import { ConnectManagerEvent } from "@ledgerhq/live-common/hw/connectManager";
 import { store } from "../../src/context/LedgerStore";
 import { importSettings } from "../../src/actions/settings";
 import { importStore as importAccounts } from "../../src/actions/accounts";
-import { acceptGeneralTermsLastVersion } from "../../src/logic/terms";
-import accountModel from "../../src/logic/accountModel";
+import { acceptGeneralTerms } from "../../src/logic/terms";
 import { navigate } from "../../src/rootnavigation";
 import { BleState, SettingsState } from "../../src/reducers/types";
 import { importBle } from "../../src/actions/ble";
@@ -126,7 +125,7 @@ function onMessage(event: WebSocketMessageEvent) {
       });
       break;
     case "acceptTerms":
-      acceptGeneralTermsLastVersion();
+      acceptGeneralTerms(store);
       break;
     case "importAccounts": {
       store.dispatch(importAccounts({ active: msg.payload }));

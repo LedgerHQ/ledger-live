@@ -87,6 +87,7 @@ const ConnectNanoScene = ({
             stopBleScanning={!!device}
             requestToSetHeaderOptions={requestToSetHeaderOptions}
             isChoiceDrawerDisplayedOnAddDevice={false}
+            hasPostOnboardingEntryPointCard
           />
         ) : (
           <SelectDevice

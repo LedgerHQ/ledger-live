@@ -2,9 +2,10 @@ import React, { useEffect } from "react";
 
 import { Language, languageIds } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
-import { Flex, Text, Button, Icons, BoxedIcon } from "@ledgerhq/native-ui";
+import { Flex, Button, Icons } from "@ledgerhq/native-ui";
 import { useDispatch } from "react-redux";
 import { setLastSeenDeviceLanguageId } from "../actions/settings";
+import { GenericInformationBody } from "./GenericInformationBody";
 
 const DeviceLanguageInstalled: React.FC<{
   onContinue?: () => void;
@@ -25,24 +26,16 @@ const DeviceLanguageInstalled: React.FC<{
   const { t } = useTranslation();
 
   return (
-    <Flex alignItems="center" flex={1}>
-      <Flex pt={10}>
-        <BoxedIcon
-          Icon={Icons.Check}
-          backgroundColor={"opacityDefault.c05"}
-          size={64}
-          variant="circle"
-          borderColor="transparent"
-          iconSize={"L"}
-          iconColor="success.c50"
-        />
-      </Flex>
-      <Text variant="h4" textAlign="center" mt={7} mb={6} fontWeight="semiBold">
-        {t("deviceLocalization.languageInstalled", {
+    <Flex pt={10} alignItems={"center"}>
+      <GenericInformationBody
+        Icon={Icons.CheckmarkCircleFill}
+        iconColor="success.c60"
+        title={t("deviceLocalization.languageInstalled", {
           language: t(`deviceLocalization.languages.${installedLanguage}`),
         })}
-      </Text>
-      <Button type="main" alignSelf="stretch" onPress={onContinue}>
+        description={t("deviceLocalization.languageInstalledDesc")}
+      />
+      <Button mt={8} size="large" type="main" alignSelf="stretch" onPress={onContinue}>
         {t("common.continue")}
       </Button>
     </Flex>

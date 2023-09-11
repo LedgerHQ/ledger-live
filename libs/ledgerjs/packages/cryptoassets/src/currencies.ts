@@ -1071,6 +1071,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         address: "https://explorer.elrond.com/accounts/$address",
       },
     ],
+    keywords: ["elrond"],
   },
   eos: {
     type: "CryptoCurrency",

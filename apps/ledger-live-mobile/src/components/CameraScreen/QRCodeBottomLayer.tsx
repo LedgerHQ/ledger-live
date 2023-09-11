@@ -1,9 +1,8 @@
 import React, { memo } from "react";
-import { StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
-import { Flex, Text, ProgressBar } from "@ledgerhq/native-ui";
+import { Text, ProgressBar, NumberedList, Box } from "@ledgerhq/native-ui";
 import { rgba } from "../../colors";
-import { softMenuBarHeight } from "../../logic/getWindowDimensions";
+import { useTheme } from "styled-components/native";
 
 type Props = {
   progress?: number;
@@ -12,47 +11,60 @@ type Props = {
 };
 
 function QrCodeBottomLayer({ progress, liveQrCode, instruction }: Props) {
+  const { colors } = useTheme();
+
   return (
-    <Flex style={[styles.darken, { backgroundColor: rgba("#142533", 0.4) }, styles.centered]}>
-      <Flex flex={1} alignItems="center" py={8} px={6}>
-        <Text fontWeight="semiBold" variant="h3" textAlign="center" color="constant.white" mb={2}>
-          {instruction || (
-            <Trans
-              i18nKey={liveQrCode ? "account.import.scan.descBottom" : "send.scan.descBottom"}
+    <Box
+      backgroundColor={rgba(colors.constant.black, 0.4)}
+      borderRadius={2}
+      pt={6}
+      pb={6}
+      px={6}
+      mt={"auto"}
+      mx={6}
+      mb={7}
+    >
+      <Text variant={"h5"} fontWeight={"semiBold"} mb={6}>
+        {instruction || (
+          <Trans i18nKey={liveQrCode ? "account.import.newScan.title" : "send.scan.descBottom"} />
+        )}
+      </Text>
+      {liveQrCode && (
+        <>
+          {progress !== undefined && progress > 0 ? (
+            <Box>
+              <Text variant={"body"} color={"neutral.c80"} mb={6}>
+                <Trans i18nKey={"account.import.newScan.hodl"} />
+              </Text>
+              <ProgressBar
+                length={100}
+                index={Math.floor((progress || 0) * 100)}
+                bg={"neutral.c40"}
+                height={8}
+                borderRadius={2}
+                activeBarProps={{ bg: "primary.c80", borderRadius: 2 }}
+              />
+            </Box>
+          ) : (
+            <NumberedList
+              items={[
+                {
+                  description: <Trans i18nKey={"account.import.newScan.instructions.line1"} />,
+                },
+                {
+                  description: <Trans i18nKey={"account.import.newScan.instructions.line2"} />,
+                },
+                {
+                  description: <Trans i18nKey={"account.import.newScan.instructions.line3"} />,
+                },
+              ]}
+              itemContainerProps={{ mb: 3 }}
             />
           )}
-        </Text>
-        {progress !== undefined && progress > 0 && (
-          <Flex width={104} mt={8} alignItems="center">
-            <ProgressBar length={100} index={Math.floor((progress || 0) * 100)} />
-            <Text mt={6} variant="large" color="constant.white">
-              {Math.floor((progress || 0) * 100)}%
-            </Text>
-          </Flex>
-        )}
-        <Flex flex={1} />
-      </Flex>
-    </Flex>
+        </>
+      )}
+    </Box>
   );
 }
-
-const styles = StyleSheet.create({
-  darken: {
-    flexGrow: 1,
-    paddingBottom: softMenuBarHeight(),
-  },
-  text: {
-    fontSize: 16,
-    lineHeight: 24,
-    textAlign: "center",
-    color: "#fff",
-  },
-  centered: {
-    flex: 1,
-    alignItems: "center",
-    paddingTop: 8,
-    paddingHorizontal: 16,
-  },
-});
 
 export default memo<Props>(QrCodeBottomLayer);

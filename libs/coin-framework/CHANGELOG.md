@@ -1,5 +1,16 @@
 # @ledgerhq/coin-framework
 
+## 0.5.3
+
+### Patch Changes
+
+- [#4510](https://github.com/LedgerHQ/ledger-live/pull/4510) [`e0cc3a0841`](https://github.com/LedgerHQ/ledger-live/commit/e0cc3a08415de84b9d3ce828444248a043a9d699) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix cosmos family bot
+
+- [#4578](https://github.com/LedgerHQ/ledger-live/pull/4578) [`18b4a47b48`](https://github.com/LedgerHQ/ledger-live/commit/18b4a47b4878a23695a50096b7770134883b8a2e) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix elrond bot tests
+
+- Updated dependencies [[`18b4a47b48`](https://github.com/LedgerHQ/ledger-live/commit/18b4a47b4878a23695a50096b7770134883b8a2e)]:
+  - @ledgerhq/cryptoassets@9.12.1
+
 ## 0.5.2
 
 ### Patch Changes

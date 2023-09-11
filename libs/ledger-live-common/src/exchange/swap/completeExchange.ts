@@ -73,6 +73,7 @@ const completeExchange = (
         const payoutAccount = getMainAccount(toAccount, toParentAccount);
         const accountBridge = getAccountBridge(refundAccount);
         const mainPayoutCurrency = getAccountCurrency(payoutAccount);
+        const payoutCurrency = getAccountCurrency(toAccount);
         const refundCurrency = getAccountCurrency(fromAccount);
         const mainRefundCurrency = getAccountCurrency(refundAccount);
         if (mainPayoutCurrency.type !== "CryptoCurrency")
@@ -126,7 +127,7 @@ const completeExchange = (
         if (unsubscribed) return;
 
         const { config: payoutAddressConfig, signature: payoutAddressConfigSignature } =
-          getCurrencyExchangeConfig(mainPayoutCurrency);
+          getCurrencyExchangeConfig(payoutCurrency);
 
         try {
           currentStep = "CHECK_PAYOUT_ADDRESS";

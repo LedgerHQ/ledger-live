@@ -1969,8 +1969,7 @@
       },
       "completed": {
         "noUpdateAvailable": {
-          "title": "OS update check",
-          "description": "OS update check makes sure {{productName}} Operating System is up to date."
+          "title": "{{productName}} OS is up to date"
         }
       },
       "error": {
@@ -1989,10 +1988,11 @@
       }
     },
     "firmwareUpdateAvailableDrawer": {
-      "title": "OS update available",
+      "title": "{{productName}} OS update available",
       "description": "Update your {{productName}} to benefit from the latest security and functionality.",
       "descriptionVersion": "Version {{firmwareVersion}}",
-      "updateCta": "Update now"
+      "updateCta": "Update now",
+      "seeWhatsInUpdateCta": "See what's in the update"
     }
   },
   "syncOnboarding": {
@@ -2446,12 +2446,16 @@
     },
     "import": {
       "scan": {
-        "title": "Import from desktop",
-        "descTop": {
-          "line1": "In Ledger Live Desktop, go to:",
-          "line2": "Settings > Accounts > Export accounts > Export"
+        "title": "Import from desktop"
+      },
+      "newScan": {
+        "title": "Scan and import your accounts from Ledger Live desktop",
+        "instructions": {
+          "line1": "Open Ledger Live Desktop.",
+          "line2": "Settings > Accounts > Exports accounts",
+          "line3": "Scan QR code until loader hits 100%."
         },
-        "descBottom": "Open Ledger Live Desktop & Scan QR Code"
+        "hodl": "Hold until scanning completes."
       },
       "result": {
         "title": "Import accounts",
@@ -4289,6 +4293,7 @@
     "yesChangeLanguage": "Yes, change language",
     "allowLanguageInstallation": "Approve language installation on {{deviceName}}",
     "languageInstalled": "Language changed to {{language}}",
+    "languageInstalledDesc": "Your device is now in the language you chose",
     "firmwareUpdatePrompt": {
       "title": "Set your {{deviceName}} in {{language}}?",
       "description": "{{language}} is now available for your {{deviceName}}. You can set it now, or change your device language at any time from My Ledger."
@@ -6357,10 +6362,10 @@
       "status": {
         "new": {
           "title": "New",
-          "desc": "Stop worrying about getting locked out of your wallet.",
+          "desc": "Recover access to your wallet without your Secret Recovery Phrase.",
           "actions": {
             "learnMore": "Get to know Ledger Recover",
-            "alreadySubscribed": "I already have a log in <LinkAccount>View my subscription</LinkAccount>"
+            "alreadySubscribed": "Already subscribed? <LinkAccount>View subscription</LinkAccount>"
           }
         }
       }

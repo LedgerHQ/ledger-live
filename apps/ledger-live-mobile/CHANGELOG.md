@@ -1,5 +1,33 @@
 # live-mobile
 
+## 3.31.0
+
+### Minor Changes
+
+- [#4557](https://github.com/LedgerHQ/ledger-live/pull/4557) [`6c5a27ac02`](https://github.com/LedgerHQ/ledger-live/commit/6c5a27ac029d473b97e1ba93e7f1842b4aa4ea7c) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Fixed the following issue : User cannot select device on device selection screen when verifying address a second time
+
+### Patch Changes
+
+- Update broken readme environment variable link.
+
+- [#4556](https://github.com/LedgerHQ/ledger-live/pull/4556) [`04206a2939`](https://github.com/LedgerHQ/ledger-live/commit/04206a2939bb8bb807a9f57a175f054c613e3d57) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix sync onboarding: if the sync onboarding is aborted after the device has been seeded, the device should appear in the list of known devices
+
+- [#4519](https://github.com/LedgerHQ/ledger-live/pull/4519) [`ea97040266`](https://github.com/LedgerHQ/ledger-live/commit/ea97040266cc0b0b084882739bd38a90908d2b98) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Refactor error rendering to make base UI bricks easily reusable
+  New icons and slightly different design for error rendering
+  Pixel polish of early security checks flow and device language change flow
+
+- [#4453](https://github.com/LedgerHQ/ledger-live/pull/4453) [`efd119dc7c`](https://github.com/LedgerHQ/ledger-live/commit/efd119dc7c320715fff2feeffedbaaf1e78b7583) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Cleanup dead code, kill unused react contexts
+
+- [#4569](https://github.com/LedgerHQ/ledger-live/pull/4569) [`8f99e87e43`](https://github.com/LedgerHQ/ledger-live/commit/8f99e87e43da87ac9cc768eddfb183ebc88cebb2) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - cache live app manifest to prevent infinite reload
+
+- Updated dependencies [[`ea97040266`](https://github.com/LedgerHQ/ledger-live/commit/ea97040266cc0b0b084882739bd38a90908d2b98), [`ea97040266`](https://github.com/LedgerHQ/ledger-live/commit/ea97040266cc0b0b084882739bd38a90908d2b98), [`e0cc3a0841`](https://github.com/LedgerHQ/ledger-live/commit/e0cc3a08415de84b9d3ce828444248a043a9d699), [`18b4a47b48`](https://github.com/LedgerHQ/ledger-live/commit/18b4a47b4878a23695a50096b7770134883b8a2e), [`5d20c326a0`](https://github.com/LedgerHQ/ledger-live/commit/5d20c326a038a430a38f28815ba65af71152118b), [`b2e8c1053e`](https://github.com/LedgerHQ/ledger-live/commit/b2e8c1053e57c763575c9c4d77d1daca8ef566fe), [`1c6deb2336`](https://github.com/LedgerHQ/ledger-live/commit/1c6deb2336a8b76517cc4d367f76dca24f9228dc), [`3ec5739f8a`](https://github.com/LedgerHQ/ledger-live/commit/3ec5739f8a4e3ff81da468cd91036b7b271dfd06), [`bfd4fef405`](https://github.com/LedgerHQ/ledger-live/commit/bfd4fef405f832489cc5258330e6483260c896d2)]:
+  - @ledgerhq/native-ui@0.21.1
+  - @ledgerhq/live-common@31.7.0
+  - @ledgerhq/coin-framework@0.5.3
+  - @ledgerhq/coin-evm@0.6.1
+  - @ledgerhq/domain-service@1.1.10
+  - @ledgerhq/evm-tools@1.0.6
+
 ## 3.30.0
 
 ### Minor Changes

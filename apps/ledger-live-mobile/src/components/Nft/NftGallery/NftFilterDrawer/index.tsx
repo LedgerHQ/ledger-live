@@ -4,12 +4,12 @@ import { useTranslation } from "react-i18next";
 import { TrackScreen } from "../../../../analytics";
 import NftFilterSection from "./NftFilterSection";
 import { NftFilterCurrencyItem } from "./NftFilterItem";
-import { BottomDrawer } from "@ledgerhq/native-ui";
 import { NftGalleryChainFiltersState } from "../../../../reducers/types";
 import { NavigatorName, ScreenName } from "../../../../const/navigation";
 import { useNavigation } from "@react-navigation/native";
 import { track } from "../../../../analytics";
 import { View } from "react-native";
+import QueuedDrawer from "../../../QueuedDrawer";
 
 type Props = {
   readonly isOpen: boolean;
@@ -21,8 +21,8 @@ const NftFilterDraw: FC<Props> = ({ onClose, isOpen, filters, toggleFilter }) =>
   const { t } = useTranslation();
   const navigation = useNavigation();
   return (
-    <BottomDrawer
-      isOpen={isOpen}
+    <QueuedDrawer
+      isRequestingToBeOpened={isOpen}
       onClose={() => {
         track("button_clicked", {
           button: "Close Filter",
@@ -71,7 +71,7 @@ const NftFilterDraw: FC<Props> = ({ onClose, isOpen, filters, toggleFilter }) =>
           }}
         />
       </View>
-    </BottomDrawer>
+    </QueuedDrawer>
   );
 };
 

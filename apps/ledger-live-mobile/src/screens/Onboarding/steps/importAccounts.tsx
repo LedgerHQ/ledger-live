@@ -69,23 +69,14 @@ function OnboardingStepPairNew() {
     });
   }, [dispatch, navigation, resetCurrentStep]);
 
-  const onNext = useCallback(
-    () =>
-      navigation.navigate(NavigatorName.ImportAccounts, {
-        screen: ScreenName.ScanAccounts,
-        params: {
-          onFinish,
-        },
-      }),
-    [navigation, onFinish],
-  );
-
   const nextPage = useCallback(() => {
-    navigation.navigate(NavigatorName.OnboardingCarefulWarning, {
-      screen: ScreenName.OnboardingModalSyncDesktopInformation,
-      params: { onNext },
+    navigation.navigate(NavigatorName.ImportAccounts, {
+      screen: ScreenName.ScanAccounts,
+      params: {
+        onFinish,
+      },
     });
-  }, [navigation, onNext]);
+  }, [navigation, onFinish]);
 
   return (
     <>

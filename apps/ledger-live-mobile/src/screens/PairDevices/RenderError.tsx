@@ -87,7 +87,6 @@ function RenderError({ error, status, onBypassGenuine, onRetry }: Props) {
           outerError={outerError}
           withDescription
           withHelp={!isBrokenPairing}
-          withIcon
           hasExportLogButton={!isBrokenPairing}
         />
         {isBrokenPairing ? (

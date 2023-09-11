@@ -11,8 +11,8 @@ import {
   Text,
   Button,
   IconsLegacy,
-  Icons,
   BoxedIcon,
+  Icons,
 } from "@ledgerhq/native-ui";
 
 import { LockedDeviceError, PeerRemovedPairing } from "@ledgerhq/errors";
@@ -20,6 +20,7 @@ import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
 import Animation from "../Animation";
 import { TrackScreen } from "../../analytics";
 import GenericErrorView from "../GenericErrorView";
+import { GenericInformationBody } from "../GenericInformationBody";
 import { urls } from "../../config/urls";
 
 export type BleDevicePairingProps = {
@@ -66,15 +67,15 @@ const BleDevicePairing = ({ deviceToPair, onPaired, onRetry }: BleDevicePairingP
     content = (
       <Flex flex={1} alignItems="center">
         <TrackScreen category="BT pairing successful" />
-        <Flex width="100%" py={16} alignItems="center">
+        <Flex width="100%" py={6} alignItems="center">
           <Flex height={100} justifyContent="center" mb={7}>
             <BoxedIcon
-              Icon={IconsLegacy.CheckTickMedium}
+              Icon={Icons.CheckmarkCircleFill}
               backgroundColor={colors.opacityDefault.c05}
               size={64}
               variant="circle"
-              borderColor={colors.opacityDefault.c05}
-              iconSize={32}
+              borderColor="transparent"
+              iconSize={"L"}
               iconColor={colors.success.c50}
             />
           </Flex>
@@ -106,7 +107,6 @@ const BleDevicePairing = ({ deviceToPair, onPaired, onRetry }: BleDevicePairingP
             error={pairingError}
             withDescription
             hasExportLogButton={false}
-            withIcon
             withHelp={false}
           />
         </Flex>
@@ -147,23 +147,7 @@ const BleDevicePairing = ({ deviceToPair, onPaired, onRetry }: BleDevicePairingP
       <Flex flex={1}>
         <TrackScreen category="BT failed to pair" />
         <Flex flex={1} alignItems="center" justifyContent="center">
-          <Flex height={100} justifyContent="center">
-            <BoxedIcon
-              Icon={Icons.InformationFill}
-              backgroundColor={"opacityDefault.c05"}
-              size={64}
-              variant="circle"
-              borderColor="transparent"
-              iconSize={"L"}
-              iconColor="primary.c80"
-            />
-          </Flex>
-          <Text mt={4} mb={2} textAlign="center" variant="h4" fontWeight="semiBold">
-            {title}
-          </Text>
-          <Text variant="body" mb={8} color="neutral.c80" textAlign="center">
-            {subtitle}
-          </Text>
+          <GenericInformationBody title={title} description={subtitle} />
         </Flex>
         <Button type="main" onPress={onRetry} mb={8}>
           {t("blePairingFlow.pairing.error.retryCta")}
@@ -181,7 +165,7 @@ const BleDevicePairing = ({ deviceToPair, onPaired, onRetry }: BleDevicePairingP
               backgroundColor={colors.opacityDefault.c05}
               size={64}
               variant="circle"
-              borderColor={colors.opacityDefault.c05}
+              borderColor={"transparent"}
               iconSize={32}
               iconColor={colors.success.c50}
             />

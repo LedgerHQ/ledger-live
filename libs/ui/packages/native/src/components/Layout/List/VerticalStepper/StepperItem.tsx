@@ -86,9 +86,9 @@ export default function StepperItem({
               )}
             </Flex>
             <Flex flex={1} ml={nested ? 0 : 4} mr={nested ? 0 : 2}>
-              <Flex pb={item.status === "active" && item.renderBody ? 4 : undefined}>
+              <Flex pb={item.status === "active" && item.renderBody ? 3 : undefined}>
                 <Text
-                  variant="body"
+                  {...(nested ? { variant: "body" } : { variant: "large", fontWeight: "semiBold" })}
                   color={item.status === "active" || nested ? "neutral.c100" : "neutral.c80"}
                 >
                   {item.status === "completed" ? item.doneTitle ?? item.title : item.title}

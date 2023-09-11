@@ -1,6 +1,6 @@
 {
   "name": "live-mobile",
-  "version": "3.30.0",
+  "version": "3.31.0",
   "private": true,
   "scripts": {
     "postinstall": "zx ./scripts/post.mjs",
@@ -59,8 +59,8 @@
   },
   "dependencies": {
     "@azure/core-asynciterator-polyfill": "^1.0.2",
-    "@formatjs/intl-locale": "^2.4.46",
-    "@formatjs/intl-pluralrules": "^4.3.2",
+    "@formatjs/intl-locale": "^3.0.0",
+    "@formatjs/intl-pluralrules": "^5.0.0",
     "@formatjs/intl-relativetimeformat": "^11.1.8",
     "@ledgerhq/coin-evm": "workspace:^",
     "@ledgerhq/coin-framework": "workspace:^",
@@ -249,7 +249,7 @@
     "jest": "^28.1.3",
     "jest-circus": "^28.1.1",
     "jest-environment-node": "^29.3.1",
-    "jetifier": "^1.6.6",
+    "jetifier": "^2.0.0",
     "local-web-server": "^4.2.1",
     "metro": "^0.76.0",
     "metro-extra-config": "workspace:*",

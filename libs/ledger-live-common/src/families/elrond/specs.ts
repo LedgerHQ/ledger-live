@@ -121,7 +121,6 @@ function expectCorrectOptimisticOperation(input: TransactionTestInput<Transactio
       optimisticOperation.transactionSequenceNumber,
     ),
   );
-
   botTest("raw optimistic operation matches", () =>
     expect(toOperationRaw(operation)).toMatchObject(opExpected),
   );

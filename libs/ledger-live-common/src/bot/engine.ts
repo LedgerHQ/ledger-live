@@ -603,6 +603,9 @@ export async function runOnAccount<T extends Transaction>({
     const testBefore = now();
     const timeOut = mutation.testTimeout || spec.testTimeout || 5 * 60 * 1000;
     const step = account => {
+      if (spec.skipOperationHistory) {
+        return optimisticOperation;
+      }
       const timedOut = now() - testBefore > timeOut;
       const operation = account.operations.find(o => o.id === optimisticOperation.id);
 
@@ -663,6 +666,9 @@ export async function runOnAccount<T extends Transaction>({
       log("bot", "remaining time to test destination: " + (newTimeOut / 1000).toFixed(0) + "s");
       const sendingOperation = operation;
       const step = account => {
+        if (spec.skipOperationHistory) {
+          return sendingOperation;
+        }
         const timedOut = now() - ntestBefore > newTimeOut;
         let operation;
         try {
