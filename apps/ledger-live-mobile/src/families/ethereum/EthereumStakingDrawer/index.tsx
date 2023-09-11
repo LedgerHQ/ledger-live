@@ -3,7 +3,6 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { Button, Flex } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 
-import { EthStakingProviders } from "./types";
 import { EthereumStakingDrawerBody } from "./EthereumStakingDrawerBody";
 import { Track } from "../../../analytics";
 import QueuedDrawer from "../../../components/QueuedDrawer";
@@ -12,7 +11,7 @@ import { useRootDrawerContext } from "../../../context/RootDrawerContext";
 export function EthereumStakingDrawer() {
   const { t } = useTranslation();
   const { isOpen, onModalHide, openDrawer, onClose, drawer } = useRootDrawerContext();
-  const ethStakingProviders = useFeature<EthStakingProviders>("ethStakingProviders");
+  const ethStakingProviders = useFeature("ethStakingProviders");
 
   useEffect(() => {
     if (

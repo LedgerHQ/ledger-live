@@ -40,7 +40,7 @@ import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/conv
 import useRefreshRates from "./hooks/useRefreshRates";
 import LoadingState from "./Rates/LoadingState";
 import EmptyState from "./Rates/EmptyState";
-import { AccountLike, Feature } from "@ledgerhq/types-live";
+import { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { SWAP_RATES_TIMEOUT } from "../../config";
@@ -90,9 +90,7 @@ const SwapForm = () => {
   const accounts = useSelector(shallowAccountsSelector);
   const { storedProviders, providersError } = useProviders();
   const exchangeRate = useSelector(rateSelector);
-  const walletApiPartnerList: Feature<{ list: Array<string> }> | null = useFeature(
-    "swapWalletApiPartnerList",
-  );
+  const walletApiPartnerList = useFeature("swapWalletApiPartnerList");
 
   const setExchangeRate = useCallback(
     rate => {

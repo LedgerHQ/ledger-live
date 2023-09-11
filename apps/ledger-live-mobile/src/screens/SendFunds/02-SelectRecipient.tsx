@@ -61,10 +61,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
       account: mainAccount,
     }),
   );
-  const { enabled: isDomainResolutionEnabled, params } =
-    useFeature<{
-      supportedCurrencyIds: CryptoCurrencyId[];
-    }>("domainInputResolution") || {};
+  const { enabled: isDomainResolutionEnabled, params } = useFeature("domainInputResolution");
   const isCurrencySupported =
     params?.supportedCurrencyIds?.includes(mainAccount.currency.id as CryptoCurrencyId) || false;
 
