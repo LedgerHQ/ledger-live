@@ -10,6 +10,7 @@ import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import { EvmNftTransaction, Transaction as EvmTransaction } from "./types";
 import { getEstimatedFees, isNftTransaction } from "./logic";
+import { toTransactionRaw } from "./transaction";
 
 /**
  * Build an optimistic operation for the coin of the integration (e.g. Ether for Ethereum)
@@ -40,6 +41,12 @@ export const buildOptimisticCoinOperation = (
     nftOperations: [],
     date: new Date(),
     extra: {},
+    // Not sure it's the right way of doing it...
+    // We should be able to recreate the transaction from the operation fields
+    // (using a reverse logic of buildOptimisticOperation)
+    // Also, won't work with the sync logic since there is no transactionRaw provided by the API
+    // FIXME: Operation["transactionRaw"] is a TransactionCommonRaw, not a TransactionRaw
+    transactionRaw: toTransactionRaw(transaction), // to allow edit / cancel flows
   };
 
   return operation;
@@ -85,6 +92,7 @@ export const buildOptimisticTokenOperation = (
         date: new Date(),
         extra: {},
         contract: tokenAccount.token.contractAddress,
+        transactionRaw: toTransactionRaw(transaction),
       },
     ],
   };
@@ -141,6 +149,7 @@ export const buildOptimisticNftOperation = (
         contract: nft.contract,
         standard: transaction.mode.toUpperCase(),
         tokenId: nft.tokenId,
+        transactionRaw: toTransactionRaw(transaction),
       },
     ],
   };
