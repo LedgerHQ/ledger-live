@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.1",
   "scripts": {
-    "cal_import": "ts-node script/crypto-assets-importer/index.ts"
+    "import_cal_tokens": "ts-node script/crypto-assets-importer/index.ts"
   },
   "dependencies": {
     "axios": "^0.27.2",

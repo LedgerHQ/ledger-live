@@ -111,7 +111,8 @@
     "ui:shared": "pnpm --filter ui-shared",
     "ui:example:next": "pnpm  --filter=\"next.js-example\"",
     "ui:example:webpack": "pnpm  --filter=\"webpack.js-example\"",
-    "actions": "pnpm --filter @actions/*"
+    "actions": "pnpm --filter @actions/*",
+    "import:cal_tokens": "pnpm --filter=\"./libs/ledgerjs/**\" import_cal_tokens"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.4.8",
