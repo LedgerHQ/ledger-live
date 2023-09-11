@@ -45,9 +45,9 @@ describe("DEX Swap", () => {
       const url = await detox.web.element(detox.by.web.id("__next")).getCurrentUrl();
       expect(url).toContain("app.1inch.io");
       expect(url).toContain("usdt");
-      expect(url).toContain("sourceTokenAmount%3D11309838568372696785");
+      expect(url).toContain("sourceTokenAmount%3D100");
       expect(url).toContain("currency%22%3A%22ethereum");
-      expect(url).toContain("accountId=mock%3A1%3Aethereum");
+      expect(url).toContain("accountId=d9d1d396-2081-53e1-9c67-f0623e0c4d3a");
 
       await detox.expect(detox.web.element(detox.by.web.tag("iframe"))).toExist();
     }
