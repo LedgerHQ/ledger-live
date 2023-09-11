@@ -1969,8 +1969,7 @@
       },
       "completed" : {
         "noUpdateAvailable" : {
-          "title" : "OS 업데이트 확인",
-          "description" : "OS 업데이트 확인을 통해 {{productName}} 운영 시스템이 최신 상태인지 확인합니다."
+          "title" : "{{productName}} OS is up to date"
         }
       },
       "error" : {
@@ -1989,10 +1988,11 @@
       }
     },
     "firmwareUpdateAvailableDrawer" : {
-      "title" : "OS 업데이트 사용 가능",
+      "title" : "{{productName}} OS update available",
       "description" : "{{productName}} 제품을 업데이트하여 최신 보안 및 기능 개선 혜택을 누리세요",
       "descriptionVersion" : "버전 {{firmwareVersion}}",
-      "updateCta" : "지금 업데이트"
+      "updateCta" : "지금 업데이트",
+      "seeWhatsInUpdateCta" : "See what's in the update"
     }
   },
   "syncOnboarding" : {
@@ -2172,6 +2172,13 @@
       "title" : "{{currencyTicker}} 시장가",
       "currencyPrice" : "1 {{currencyTicker}} 가격",
       "currencyPriceChange" : "지난 24시간 변경 사항"
+    },
+    "quickActions" : {
+      "buy" : "구매",
+      "swap" : "스왑",
+      "send" : "전송",
+      "deposit" : "입금",
+      "stake" : "스테이킹"
     }
   },
   "addAccountsModal" : {
@@ -2446,12 +2453,16 @@
     },
     "import" : {
       "scan" : {
-        "title" : "데스크탑에서 가져오기",
-        "descTop" : {
-          "line1" : "Ledger Live 데스크탑에서:",
-          "line2" : "설정 > 계정 > 계정 내보내기 > 내보내기"
+        "title" : "데스크탑에서 가져오기"
+      },
+      "newScan" : {
+        "title" : "Scan and import your accounts from Ledger Live desktop",
+        "instructions" : {
+          "line1" : "Open Ledger Live Desktop.",
+          "line2" : "Settings > Accounts > Exports accounts",
+          "line3" : "Scan QR code until loader hits 100%."
         },
-        "descBottom" : "Ledger Live 데스크탑 열기 및 QR 코드 스캔"
+        "hodl" : "Hold until scanning completes."
       },
       "result" : {
         "title" : "계정 가져오기",
@@ -4291,6 +4302,7 @@
     "yesChangeLanguage" : "예, 언어를 변경하겠습니다",
     "allowLanguageInstallation" : "{{deviceName}}에 언어 설치를 승인합니다",
     "languageInstalled" : "{{language}}로 언어가 변경되었습니다",
+    "languageInstalledDesc" : "Your device is now in the language you chose",
     "firmwareUpdatePrompt" : {
       "title" : "{{deviceName}} 장치 언어를 {{language}}로 설정하시겠습니까?",
       "description" : "이제 {{deviceName}}에서 {{language}}가 지원됩니다. 지금 장치 언어를 설정하거나 My Ledger에서 언제든지 변경하세요."
@@ -6351,10 +6363,10 @@
       "status" : {
         "new" : {
           "title" : "신규",
-          "desc" : "지갑 잠김에 대해 걱정하지 마세요.",
+          "desc" : "비밀 복구 문구 없이 지갑에 대한 액세스를 복구하세요.",
           "actions" : {
             "learnMore" : "Ledger Recover 알아보기",
-            "alreadySubscribed" : "<LinkAccount>내 구독 보기</LinkAccount>에 이미 로그인되어 있습니다"
+            "alreadySubscribed" : "이미 가입하셨나요? <LinkAccount>구독 보기</LinkAccount>"
           }
         }
       }
