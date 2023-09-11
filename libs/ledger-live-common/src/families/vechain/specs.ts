@@ -19,7 +19,6 @@ const vechain: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Vechain",
-    appVersion: "1.0.7",
   },
   allowEmptyAccounts: true,
   genericDeviceAction: deviceAction.acceptTransaction,

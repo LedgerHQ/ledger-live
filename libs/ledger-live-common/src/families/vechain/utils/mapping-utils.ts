@@ -3,7 +3,7 @@ import { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { EventLog, TransferLog } from "../api/types";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { getFees } from "./transaction-utils";
+import { getFees } from "../api";
 
 export const mapVetTransfersToOperations = async (
   txs: TransferLog[],

@@ -8,10 +8,6 @@ import type {
 import BigNumber from "bignumber.js";
 import { Transaction as ThorTransaction } from "thor-devkit";
 
-export type NetworkInfo = {
-  family: "ethereum";
-};
-
 export type Transaction = TransactionCommon & {
   family: "vechain";
   estimatedFees: BigNumber;

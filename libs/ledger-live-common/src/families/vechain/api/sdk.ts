@@ -7,6 +7,7 @@ import { TransferEventSignature } from "../contracts/constants";
 import { Transaction } from "thor-devkit";
 import { HEX_PREFIX } from "../constants";
 import { getEnv } from "@ledgerhq/live-env";
+import BigNumber from "bignumber.js";
 
 const BASE_URL = getEnv("API_VECHAIN_THOREST");
 
@@ -19,13 +20,13 @@ export const getAccount = async (address: string): Promise<AccountResponse> => {
   return data;
 };
 
-export const getLastBlock = async (): Promise<{ number: number }> => {
+export const getLastBlockHeight = async (): Promise<number> => {
   const { data } = await network({
     method: "GET",
     url: `${BASE_URL}/blocks/best`,
   });
 
-  return data;
+  return data.number;
 };
 
 /**
@@ -141,4 +142,33 @@ export const query = async (queryData: Query[]): Promise<QueryResponse[]> => {
   });
 
   return data;
+};
+
+/**
+ * Get the block ref to use in a transaction
+ * @returns the block ref of head
+ */
+export const getBlockRef = async (): Promise<string> => {
+  const { data } = await network({
+    method: "GET",
+    url: `${BASE_URL}/blocks/best`,
+  });
+
+  return data.id.slice(0, 18);
+};
+
+/**
+ * Get fees paid for the transaction
+ * @param transactionId - the id of the transaction
+ * @return the fee paid in VTHO or 0
+ */
+export const getFees = async (transactionID: string): Promise<BigNumber> => {
+  const { data } = await network({
+    method: "GET",
+    url: `${BASE_URL}/transactions/${transactionID}/receipt`,
+    params: { id: transactionID },
+  });
+
+  if (!data || !data.paid) return new BigNumber(0);
+  return new BigNumber(data.paid);
 };

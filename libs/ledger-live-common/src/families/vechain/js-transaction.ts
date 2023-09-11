@@ -4,11 +4,16 @@ import { $Shape } from "utility-types";
 import { DEFAULT_GAS_COEFFICIENT, HEX_PREFIX, MAINNET_CHAIN_TAG } from "./constants";
 import { Transaction } from "./types";
 import { Transaction as ThorTransaction } from "thor-devkit";
-import { calculateFee, estimateGas, generateNonce, getBlockRef } from "./utils/transaction-utils";
+import {
+  calculateFee,
+  calculateTransactionInfo,
+  estimateGas,
+  generateNonce,
+} from "./utils/transaction-utils";
 import { VTHO_ADDRESS } from "./contracts/constants";
 import VIP180 from "./contracts/abis/VIP180";
-import { calculateTransactionInfo } from "./utils/calculateTransactionInfo";
 import { isValid } from "./utils/address-utils";
+import { getBlockRef } from "./api";
 
 /**
  * Create an empty VET or VTHO transaction

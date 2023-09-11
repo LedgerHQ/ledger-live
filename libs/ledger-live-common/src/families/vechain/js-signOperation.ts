@@ -71,13 +71,13 @@ const signOperation = ({
 
           // Sign on device
           const vechainApp = new Vet(transport);
+          o.next({
+            type: "device-signature-requested",
+          });
           const signature = await vechainApp.signTransaction(
             account.freshAddressPath,
             unsigned.encode().toString("hex"),
           );
-          o.next({
-            type: "device-signature-requested",
-          });
 
           o.next({ type: "device-signature-granted" });
 

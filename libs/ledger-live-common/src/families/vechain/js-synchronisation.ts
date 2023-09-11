@@ -5,13 +5,12 @@ import { encodeAccountId } from "../../account";
 import eip55 from "eip55";
 import { emptyHistoryCache } from "../../account";
 
-import { getAccount, getLastBlock, getOperations, getTokenOperations } from "./api";
+import { getAccount, getLastBlockHeight, getOperations, getTokenOperations } from "./api";
 import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
 
 const getAccountShape: GetAccountShape = async info => {
   const { initialAccount, currency, derivationMode } = info;
-  let { address } = info;
-  address = eip55.encode(address);
+  const address = eip55.encode(info.address);
 
   const oldOperations = initialAccount?.operations || [];
   const startAt = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 1;
@@ -28,14 +27,14 @@ const getAccountShape: GetAccountShape = async info => {
   const { balance, energy } = await getAccount(address);
 
   // get the current block height
-  const { number: blockHeight } = await getLastBlock();
+  const blockHeight = await getLastBlockHeight();
 
   // Merge new operations with the previously synced ones
   const newOperations = await getOperations(accountId, address, startAt);
 
   //Get last token operations
   const vthoAccountId = accountId + "+" + encodeURIComponent("vechain/vtho");
-  const VTHOoperations = await getTokenOperations(
+  const vthoOperations = await getTokenOperations(
     vthoAccountId,
     address,
     "0x0000000000000000000000000000456e65726779",
@@ -48,7 +47,7 @@ const getAccountShape: GetAccountShape = async info => {
   let minDate = -1;
   if (operations.length != 0) {
     const operationsDates = operations.map(c => c.date.getTime());
-    operationsDates.concat(VTHOoperations.map(c => c.date.getTime()));
+    operationsDates.concat(vthoOperations.map(c => c.date.getTime()));
     minDate = Math.min(...operationsDates);
   }
 
@@ -58,7 +57,7 @@ const getAccountShape: GetAccountShape = async info => {
     creationDate: minDate != -1 ? new Date(minDate) : new Date(),
     spendableBalance: new BigNumber(balance),
     operationsCount: operations.length,
-    operations: operations,
+    operations,
     blockHeight,
     feesCurrency: getTokenById("vechain/vtho"),
     subAccounts: [
@@ -70,8 +69,8 @@ const getAccountShape: GetAccountShape = async info => {
         balance: new BigNumber(energy),
         spendableBalance: new BigNumber(energy),
         creationDate: minDate != -1 ? new Date(minDate) : new Date(),
-        operationsCount: VTHOoperations.length,
-        operations: VTHOoperations,
+        operationsCount: vthoOperations.length,
+        operations: vthoOperations,
         blockHeight,
         pendingOperations:
           (initialAccount?.subAccounts && initialAccount.subAccounts[0]?.pendingOperations) || [],
@@ -84,7 +83,7 @@ const getAccountShape: GetAccountShape = async info => {
     ],
   };
 
-  return { ...shape, operations };
+  return shape;
 };
 
 export const scanAccounts = makeScanAccounts({ getAccountShape });
