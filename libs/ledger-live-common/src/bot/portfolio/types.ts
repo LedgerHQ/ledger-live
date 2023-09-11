@@ -5,7 +5,7 @@ export type NetworkAuditResult = {
   totalCount?: number;
   totalResponseSize?: number;
   totalDuplicateRequests?: number;
-  details?: Map<string, NetworkAuditDetails>;
+  details?: { [url: string]: NetworkAuditDetails };
 };
 
 export type NetworkAuditDetails = {

@@ -291,16 +291,21 @@ function formatSize(bytes: number | undefined): string | undefined {
   return kb < 1024 ? `${kb.toFixed(0)}kb` : `${(kb / 1024).toFixed(0)}mb`;
 }
 
-function formatDetails(details: Map<string, NetworkAuditDetails> | undefined): string | undefined {
+function formatDetails(
+  details: { [url: string]: NetworkAuditDetails } | undefined,
+): string | undefined {
   if (!details) return;
   let report = "";
 
   try {
-    details.forEach((urlDetails, url) => {
+    for (const url of Object.keys(details)) {
+      const urlDetails = details[url];
       report += `${url} (calls: ${urlDetails.calls}, duration: ${formatTime(
         urlDetails.duration,
       )}, size: ${formatSize(urlDetails.size)}\n`;
-    });
+    }
+
+    console.log("success with value", typeof details, details);
   } catch (e) {
     console.log("failed with value", typeof details, details);
   }
