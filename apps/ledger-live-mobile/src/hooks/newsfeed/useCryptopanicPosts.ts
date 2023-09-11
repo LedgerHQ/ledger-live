@@ -39,8 +39,7 @@ export function useCryptopanicPosts(
           ...params,
           page,
           regions: cryptopanicLocale && [cryptopanicLocale as CryptopanicAvailableRegionsType],
-          // @ts-expect-error TYPINGS
-          auth_token: newsfeedPageFeature?.params?.cryptopanicApiKey,
+          auth_token: newsfeedPageFeature?.params?.cryptopanicApiKey || "",
         });
         if (concatPosts) {
           setPosts(currentPosts => currentPosts.concat(apiResult.results));

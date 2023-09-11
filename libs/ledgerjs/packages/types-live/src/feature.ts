@@ -1,4 +1,5 @@
 import { ChainwatchNetwork } from "./chainwatch";
+import { StorylyInstanceID } from "./storyly";
 
 /**
  * Feature type.
@@ -276,7 +277,7 @@ export type Feature_PtxEarn = Feature<{
 }>;
 
 export type Feature_Storyly = Feature<{
-  stories: { [storyName: string]: { testingEnabled: boolean; token: string } };
+  stories: { [key in StorylyInstanceID]: { testingEnabled: boolean; token: string } };
 }>;
 
 export type Feature_NewsfeedPage = Feature<{

@@ -50,8 +50,8 @@ export const useStoryly = (instanceId: StorylyInstanceID) => {
   useLayoutEffect(() => {
     ref.current?.init({
       layout: "classic",
-      // @ts-expect-error TYPINGS
-      token: storyly.params?.stories[instanceId].token,
+      //
+      token: storyly.params?.stories[instanceId].token || "",
       //
       lang: language,
       segments: [`lang_${language}`],

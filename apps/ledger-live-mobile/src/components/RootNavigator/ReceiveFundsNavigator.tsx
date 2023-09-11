@@ -108,8 +108,7 @@ export default function ReceiveFundsNavigator() {
               {hasClosedNetworkBanner && (
                 <HelpButton
                   eventButton="Choose a network article"
-                  // @ts-expect-error TYPINGS
-                  url={depositNetworkBannerMobile?.params?.url}
+                  url={depositNetworkBannerMobile?.params?.url || ""}
                   enabled={depositNetworkBannerMobile?.enabled ?? false}
                 />
               )}
@@ -194,8 +193,7 @@ export default function ReceiveFundsNavigator() {
             <Flex alignItems="center" justifyContent="center" flexDirection="row">
               {hasClosedWithdrawBanner && (
                 <HelpButton
-                  // @ts-expect-error TYPINGS
-                  url={depositWithdrawBannerMobile?.params?.url}
+                  url={depositWithdrawBannerMobile?.params?.url || ""}
                   enabled={depositWithdrawBannerMobile?.enabled ?? false}
                   eventButton="How to withdraw from exchange"
                 />
