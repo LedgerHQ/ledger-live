@@ -5,6 +5,8 @@ import SplashScreen from "react-native-splash-screen";
 import { getStateFromPath, LinkingOptions, NavigationContainer } from "@react-navigation/native";
 import { useFlipper } from "@react-navigation/devtools";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+import { DEFAULT_MULTIBUY_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
+
 import Braze from "react-native-appboy-sdk";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
@@ -76,7 +78,7 @@ function getProxyURL(url: string) {
   // This is to handle links set in the useFromAmountStatusMessage in LLC.
   // Also handles a difference in paths between LLD on LLD /platform/:app_id
   // but on LLM /discover/:app_id
-  if (hostname === "platform" && ["multibuy"].includes(platform)) {
+  if (hostname === "platform" && [DEFAULT_MULTIBUY_APP_ID].includes(platform)) {
     return url.replace("://platform", "://discover");
   }
 
