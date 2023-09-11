@@ -42,7 +42,7 @@ jobs:
         if: steps.changes.outputs.cryptoassets == 'true'
         run: |
           git add .
-          git commit -m "chore(prerelease) updating cryptoassets list
+          git commit -m "chore(prerelease) update cryptoassets list
       - name: enter prerelease mode
         run: pnpm changeset pre enter next
       - name: commit
