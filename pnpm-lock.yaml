@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: false
+  excludeLinksFromLockfile: false
+
 overrides:
   stellar-base>sodium-native: ^3.2.1
   remove-flow-types-loader>flow-remove-types: ^2
@@ -1083,7 +1087,7 @@ importers:
         version: 6.6.7
       rxjs-compat:
         specifier: ^6.6.6
-        version: 6.6.7(rxjs@7.8.1)
+        version: 6.6.7(rxjs@6.6.7)
       rxjs7:
         specifier: npm:rxjs@7.8.1
         version: /rxjs@7.8.1
@@ -1233,8 +1237,8 @@ importers:
         specifier: ^28.0.0
         version: 28.1.3(@babel/core@7.22.8)(metro@0.76.0)
       babel-plugin-module-resolver:
-        specifier: ^4.1.0
-        version: 4.1.0
+        specifier: ^5.0.0
+        version: 5.0.0
       detox:
         specifier: ^20.11.0
         version: 20.11.0(patch_hash=s7677qnx4lewyjdetvacseh6fm)(jest@28.1.3)(metro@0.76.0)
@@ -2344,7 +2348,7 @@ importers:
         version: 6.6.7
       rxjs-compat:
         specifier: ^6.6.7
-        version: 6.6.7(rxjs@7.8.1)
+        version: 6.6.7(rxjs@6.6.7)
       rxjs7:
         specifier: npm:rxjs@7.8.1
         version: /rxjs@7.8.1
@@ -4720,8 +4724,8 @@ importers:
         specifier: ^8.2.2
         version: 8.2.5(@babel/core@7.22.8)(webpack@5.76.1)
       babel-plugin-module-resolver:
-        specifier: ^4.1.0
-        version: 4.1.0
+        specifier: ^5.0.0
+        version: 5.0.0
       babel-plugin-react-docgen-typescript:
         specifier: ^1.5.1
         version: 1.5.1(@babel/core@7.22.8)(typescript@5.1.3)
@@ -26885,10 +26889,21 @@ packages:
     engines: {node: '>= 8.0.0'}
     dependencies:
       find-babel-config: 1.2.0
-      glob: 7.2.0
+      glob: 7.2.3
       pkg-up: 3.1.0
       reselect: 4.1.5
-      resolve: 1.22.0
+      resolve: 1.22.1
+
+  /babel-plugin-module-resolver@5.0.0:
+    resolution: {integrity: sha512-g0u+/ChLSJ5+PzYwLwP8Rp8Rcfowz58TJNCe+L/ui4rpzE/mg//JVX0EWBUYoxaextqnwuGHzfGp2hh0PPV25Q==}
+    engines: {node: '>= 16'}
+    dependencies:
+      find-babel-config: 2.0.0
+      glob: 8.0.3
+      pkg-up: 3.1.0
+      reselect: 4.1.8
+      resolve: 1.22.1
+    dev: true
 
   /babel-plugin-named-asset-import@0.3.8(@babel/core@7.22.8):
     resolution: {integrity: sha512-WXiAc++qo7XcJ1ZnTYGtLxmBCVbddAml3CEXgWaBzNzLNoxtQ8AiGEFDMOhot9XjTCQbvP5E77Fj9Gk924f00Q==}
@@ -27566,6 +27581,7 @@ packages:
   /binary-extensions@2.2.0:
     resolution: {integrity: sha512-jDctJ/IVQbZoJykoeHbhXpOlNBqGNcwXJKJog42E5HDPUwQTSdjCHdihjj0DlnheQ7blbT6dHOafNAiS8ooQKA==}
     engines: {node: '>=8'}
+    requiresBuild: true
 
   /binary@0.3.0:
     resolution: {integrity: sha512-D4H1y5KYwpJgK8wk1Cue5LLPgmwHKYSChkbspQg5JtVuR5ulGckxfR62H3AE9UDkdMC8yyXlqYihuz3Aqg2XZg==}
@@ -28755,6 +28771,7 @@ packages:
   /chokidar@2.1.8:
     resolution: {integrity: sha512-ZmZUazfOzf0Nve7duiCKD23PFSCs4JPoYyccjUFF3aQkQadqBhfzhjkwBH2mNOG9cTBwhamM37EIsIkZw3nRgg==}
     deprecated: Chokidar 2 does not receive security updates since 2019. Upgrade to chokidar 3 with 15x fewer dependencies
+    requiresBuild: true
     dependencies:
       anymatch: 2.0.0
       async-each: 1.0.3
@@ -35099,6 +35116,14 @@ packages:
       json5: 0.5.1
       path-exists: 3.0.0
 
+  /find-babel-config@2.0.0:
+    resolution: {integrity: sha512-dOKT7jvF3hGzlW60Gc3ONox/0rRZ/tz7WCil0bqA1In/3I8f1BctpXahRnEKDySZqci7u+dqq93sZST9fOJpFw==}
+    engines: {node: '>=16.0.0'}
+    dependencies:
+      json5: 2.2.3
+      path-exists: 4.0.0
+    dev: true
+
   /find-cache-dir@2.1.0:
     resolution: {integrity: sha512-Tq6PixE0w/VMFfCgbONnkiQIVol/JJL7nRMi20fqzA4NRs9AfeqMGeRdPi3wIhYkxjeBaWh2rxwapn5Tu3IqOQ==}
     engines: {node: '>=6'}
@@ -35127,6 +35152,7 @@ packages:
   /find-up@1.1.2:
     resolution: {integrity: sha512-jvElSjyuo4EMQGoTwo1uJU5pQMwTW5lS1x05zzfJuTIyLR3zwO27LYrxNg+dlvKpGOuGy/MzBdXh80g0ve5+HA==}
     engines: {node: '>=0.10.0'}
+    requiresBuild: true
     dependencies:
       path-exists: 2.1.0
       pinkie-promise: 2.0.1
@@ -36077,6 +36103,7 @@ packages:
       minimatch: 3.1.2
       once: 1.4.0
       path-is-absolute: 1.0.1
+    dev: true
 
   /glob@7.2.3:
     resolution: {integrity: sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==}
@@ -37546,6 +37573,7 @@ packages:
   /is-binary-path@2.1.0:
     resolution: {integrity: sha512-ZMERYes6pDydyuGidse7OsHxtbI7WVeUEozgR/g7rd0xUimYNlvZRE/K2MgZTjWy725IfelLeVcEM97mmtRGXw==}
     engines: {node: '>=8'}
+    requiresBuild: true
     dependencies:
       binary-extensions: 2.2.0
 
@@ -46992,6 +47020,7 @@ packages:
   /parse-json@2.2.0:
     resolution: {integrity: sha512-QR/GGaKCkhwk1ePQNYDRKYZ3mwU9ypsKhB0XyFnLQdomyEqk3e8wpW3V5Jp88zbxK4n5ST1nqo+g9juTpownhQ==}
     engines: {node: '>=0.10.0'}
+    requiresBuild: true
     dependencies:
       error-ex: 1.3.2
     dev: true
@@ -51216,6 +51245,7 @@ packages:
   /readdirp@3.6.0:
     resolution: {integrity: sha512-hOS089on8RduqdbhvQ5Z37A0ESjsqz6qnRcffsMU3495FuTdqSm+7bhJ29JvIOsBDEEnan5DPu9t3To9VRlMzA==}
     engines: {node: '>=8.10.0'}
+    requiresBuild: true
     dependencies:
       picomatch: 2.3.1
 
@@ -51800,6 +51830,10 @@ packages:
   /reselect@4.1.5:
     resolution: {integrity: sha512-uVdlz8J7OO+ASpBYoz1Zypgx0KasCY20H+N8JD13oUMtPvSHQuscrHop4KbXrbsBcdB9Ds7lVK7eRkBIfO43vQ==}
 
+  /reselect@4.1.8:
+    resolution: {integrity: sha512-ab9EmR80F/zQTMNeneUr4cv+jSwPJgIlvEmVwLerwrWVbpLlBuls9XHzIeTFy4cegU2NHBp3va0LKOzU5qFEYQ==}
+    dev: true
+
   /resolve-alpn@1.2.1:
     resolution: {integrity: sha512-0a1F4l73/ZFZOakJnQ3FvkJ2+gSTQWz/r2KE5OdDY0TxPm5h4GkqkWWfM47T7HsbnOtcJVEF4epCVy6u7Q3K+g==}
 
@@ -51894,6 +51928,7 @@ packages:
       is-core-module: 2.11.0
       path-parse: 1.0.7
       supports-preserve-symlinks-flag: 1.0.0
+    dev: false
 
   /resolve@1.22.1:
     resolution: {integrity: sha512-nBpuuYuY5jFsli/JIs1oldw6fOQCBioohqWZg/2hiaOybXOft4lonv85uDOKXdf8rhyK159cxU5cDcK/NKk8zw==}
@@ -52180,7 +52215,7 @@ packages:
     resolution: {integrity: sha512-PdhdWy89SiZogBLaw42zdeqtRJ//zFd2PgQavcICDUgJT5oW10QCRKbJ6bg4r0/UY2M6BWd5tkxuGFRvCkgfHQ==}
     dev: false
 
-  /rxjs-compat@6.6.7(rxjs@7.8.1):
+  /rxjs-compat@6.6.7(rxjs@6.6.7):
     resolution: {integrity: sha512-szN4fK+TqBPOFBcBcsR0g2cmTTUF/vaFEOZNuSdfU8/pGFnNmmn2u8SystYXG1QMrjOPBc6XTKHMVfENDf6hHw==}
     peerDependencies:
       rxjs: '*'
@@ -52188,7 +52223,7 @@ packages:
       rxjs:
         optional: true
     dependencies:
-      rxjs: 7.8.1
+      rxjs: 6.6.7
     dev: false
 
   /rxjs@6.6.7:
@@ -59774,7 +59809,6 @@ packages:
     resolution: {directory: libs/ui/packages/crypto-icons, type: directory}
     id: file:libs/ui/packages/crypto-icons
     name: '@ledgerhq/crypto-icons-ui'
-    version: 0.5.1
     peerDependencies:
       '@types/react': '*'
       react: '*'
@@ -59794,7 +59828,6 @@ packages:
     resolution: {directory: libs/ui/packages/icons, type: directory}
     id: file:libs/ui/packages/icons
     name: '@ledgerhq/icons-ui'
-    version: 0.6.1
     peerDependencies:
       '@types/react': '*'
       react: '*'
@@ -59818,7 +59851,3 @@ packages:
     dependencies:
       commander: 2.20.3
     dev: false
-
-settings:
-  autoInstallPeers: false
-  excludeLinksFromLockfile: false
