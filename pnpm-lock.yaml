@@ -4865,8 +4865,8 @@ importers:
   libs/ui/packages/react:
     dependencies:
       '@floating-ui/react-dom':
-        specifier: ^0.4.0
-        version: 0.4.3(@types/react@17.0.53)(react-dom@17.0.2)(react@17.0.2)
+        specifier: ^2.0.0
+        version: 2.0.2(react-dom@17.0.2)(react@17.0.2)
       '@ledgerhq/crypto-icons-ui':
         specifier: workspace:^
         version: file:libs/ui/packages/crypto-icons(@types/react@17.0.53)(react@17.0.2)(styled-components@5.3.5)(styled-system@5.1.5)
@@ -14228,20 +14228,10 @@ packages:
     resolution: {integrity: sha512-9FqhNjKQWpQ3fGnSOCovHOm+yhhiorKEqYLAfd525jWavunDJcx8rOW6i6ozAh+FbwcYMkL7b+3j4UR/30MpoQ==}
     dev: false
 
-  /@floating-ui/core@0.3.1:
-    resolution: {integrity: sha512-ensKY7Ub59u16qsVIFEo2hwTCqZ/r9oZZFh51ivcLGHfUwTn8l1Xzng8RJUe91H/UP8PeqeBronAGx0qmzwk2g==}
-    dev: false
-
   /@floating-ui/core@1.4.1:
     resolution: {integrity: sha512-jk3WqquEJRlcyu7997NtR5PibI+y5bi+LS3hPmguVClypenMsCY3CBa3LAQnozRCtCrYWSEtAdiskpamuJRFOQ==}
     dependencies:
       '@floating-ui/utils': 0.1.1
-    dev: false
-
-  /@floating-ui/dom@0.1.10:
-    resolution: {integrity: sha512-4kAVoogvQm2N0XE0G6APQJuCNuErjOfPW8Ux7DFxh8+AfugWflwVJ5LDlHOwrwut7z/30NUvdtHzQ3zSip4EzQ==}
-    dependencies:
-      '@floating-ui/core': 0.3.1
     dev: false
 
   /@floating-ui/dom@1.5.1:
@@ -14251,18 +14241,15 @@ packages:
       '@floating-ui/utils': 0.1.1
     dev: false
 
-  /@floating-ui/react-dom@0.4.3(@types/react@17.0.53)(react-dom@17.0.2)(react@17.0.2):
-    resolution: {integrity: sha512-ZL88ryd9p6sFh9jIC/+05JZoNsogcq6U09cygQjiy757QtQqxIVLQwFag+BAWWYqpNEMO0S60fkqmh8KIAV4oA==}
+  /@floating-ui/react-dom@2.0.2(react-dom@17.0.2)(react@17.0.2):
+    resolution: {integrity: sha512-5qhlDvjaLmAst/rKb3VdlCinwTF4EYMiVxuuc/HVUjs46W0zgtbMmAZ1UTsDrRTxRmUEzl92mOtWbeeXL26lSQ==}
     peerDependencies:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
     dependencies:
-      '@floating-ui/dom': 0.1.10
+      '@floating-ui/dom': 1.5.1
       react: 17.0.2
       react-dom: 17.0.2(react@17.0.2)
-      use-isomorphic-layout-effect: 1.1.2(@types/react@17.0.53)(react@17.0.2)
-    transitivePeerDependencies:
-      - '@types/react'
     dev: false
 
   /@floating-ui/utils@0.1.1:
