@@ -294,11 +294,16 @@ function formatSize(bytes: number | undefined): string | undefined {
 function formatDetails(details: Map<string, NetworkAuditDetails> | undefined): string | undefined {
   if (!details) return;
   let report = "";
-  details.forEach((urlDetails, url) => {
-    report += `${url} (calls: ${urlDetails.calls}, duration: ${formatTime(
-      urlDetails.duration,
-    )}, size: ${formatSize(urlDetails.size)}\n`;
-  });
+
+  try {
+    details.forEach((urlDetails, url) => {
+      report += `${url} (calls: ${urlDetails.calls}, duration: ${formatTime(
+        urlDetails.duration,
+      )}, size: ${formatSize(urlDetails.size)}\n`;
+    });
+  } catch (e) {
+    console.log("failed with value", typeof details, details);
+  }
   return report;
 }
 
