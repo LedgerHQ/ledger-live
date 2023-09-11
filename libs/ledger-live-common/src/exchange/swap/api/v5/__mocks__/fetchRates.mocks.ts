@@ -58,8 +58,8 @@ export const fetchRatesMock = (
     {
       provider: "oneinch",
       providerType: "DEX",
-      providerURL: "/platform/1inch/#/1/unified/swap/usdc/eth?sourceTokenAmount=100",
-      from: "ethereum/erc20/usd__coin",
+      providerURL: "/platform/1inch/#/1/unified/swap/usdt/eth?sourceTokenAmount=100",
+      from: "ethereum/erc20/usd_tether__erc20_",
       to: "ethereum",
       amountFrom: "100",
       amountTo: "0.030863259880419774",
@@ -72,7 +72,7 @@ export const fetchRatesMock = (
       provider: "changelly",
       providerType: "CEX",
       rateId: "^WIpYZZFCdjPwLY7YLFnY*T5Q4@abI",
-      from: "ethereum/erc20/usd__coin",
+      from: "ethereum/erc20/usd_tether__erc20_",
       to: "ethereum",
       amountFrom: "100",
       amountTo: "0.059713921500",
@@ -85,7 +85,7 @@ export const fetchRatesMock = (
     {
       provider: "changelly",
       providerType: "CEX",
-      from: "ethereum/erc20/usd__coin",
+      from: "ethereum/erc20/usd_tether__erc20_",
       to: "ethereum",
       amountFrom: "100",
       amountTo: "0.05949154",

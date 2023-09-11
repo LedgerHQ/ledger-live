@@ -45,20 +45,9 @@ describe("DEX Swap", () => {
       const url = await detox.web.element(detox.by.web.id("__next")).getCurrentUrl();
       expect(url).toContain("app.1inch.io");
       expect(url).toContain("usdt");
-      /**
-       * Not sure if it makes sence to test the exact amount as it can be dynamic
-       * (depending on network fees) and not specifically relevant for this test.
-       * It might be more relevent in a unit test related to the swap logic.
-       * Here it could make more sense to test the presence of a `sourceTokenAmount`
-       * query param.
-       * For example:
-       * `expect(url).toContain("sourceTokenAmount%3D");`
-       * or (to test that an amount is provided to the query param, without the need for the exact value):
-       * `expect(url).toContain("sourceTokenAmount%3D11");`
-       */
-      expect(url).toContain("sourceTokenAmount%3D11310048568372696785");
+      expect(url).toContain("sourceTokenAmount%3D100");
       expect(url).toContain("currency%22%3A%22ethereum");
-      expect(url).toContain("accountId=mock%3A1%3Aethereum");
+      expect(url).toContain("accountId=d9d1d396-2081-53e1-9c67-f0623e0c4d3a");
 
       await detox.expect(detox.web.element(detox.by.web.tag("iframe"))).toExist();
     }
