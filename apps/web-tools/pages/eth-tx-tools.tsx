@@ -3,6 +3,8 @@ import { ledgerService } from "@ledgerhq/hw-app-eth";
 
 type LedgerEthTransactionResolution = Awaited<ReturnType<typeof ledgerService.resolveTransaction>>;
 
+export const getStaticProps = async () => ({ props: {} });
+
 function App() {
   const [unsignedTxHex, setUnsignedTxHex] = useState("");
   const [result, setResult] = useState<LedgerEthTransactionResolution | null>(null);

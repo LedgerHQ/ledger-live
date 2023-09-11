@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+export const getStaticProps = async () => ({ props: {} });
+
 export default function Home() {
   return (
     <main>

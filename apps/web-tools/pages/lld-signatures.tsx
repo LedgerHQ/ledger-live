@@ -1,9 +1,9 @@
-import Image from "next/image";
 import React, { useState, useEffect, useMemo } from "react";
 import styled from "styled-components";
 import Select from "react-select";
 import semver from "semver";
-import logoSvg from "../ledgerlive-logo.svg";
+
+export const getStaticProps = async () => ({ props: {} });
 
 const excludes = ["1.101.0", "1.102.0", "1.103.0", "1.104.0", "1.105.0"];
 
@@ -227,9 +227,7 @@ const LLDSignature = () => {
 
   return (
     <Main>
-      <h1>
-        <Image alt="" src={logoSvg} height="32" /> Ledger Live releases
-      </h1>
+      <h1>Ledger Live releases</h1>
 
       <Field>
         <FieldHeader>
