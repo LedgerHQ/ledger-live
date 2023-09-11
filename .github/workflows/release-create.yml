@@ -39,7 +39,7 @@ jobs:
       - name: update dynamic call tokens
         run: pnpm import:cal_tokens
       - name: commit new cryptoassets
-        if: steps.changes.outputs.cryptoassets == 'true'
+        if: steps.filters.outputs.cryptoassets == 'true'
         run: |
           git add .
           git commit -m "chore(prerelease) update cryptoassets list
