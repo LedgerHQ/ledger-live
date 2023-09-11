@@ -113,7 +113,7 @@
     "@cardano-foundation/ledgerjs-hw-app-cardano": "^5.1.0",
     "@celo/connect": "^3.0.1",
     "@celo/contractkit": "^3.0.1",
-    "@celo/utils": "^3.0.1",
+    "@celo/utils": "^5.0.0",
     "@celo/wallet-base": "^3.0.1",
     "@celo/wallet-ledger": "^3.0.1",
     "@cosmjs/amino": "^0.28.4",
