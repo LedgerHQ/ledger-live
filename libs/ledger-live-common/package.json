@@ -115,7 +115,7 @@
     "@celo/contractkit": "^3.0.1",
     "@celo/utils": "^3.0.1",
     "@celo/wallet-base": "^3.0.1",
-    "@celo/wallet-ledger": "^3.0.1",
+    "@celo/wallet-ledger": "^5.0.0",
     "@cosmjs/amino": "^0.28.4",
     "@cosmjs/crypto": "^0.26.5",
     "@cosmjs/launchpad": "^0.26.5",
