@@ -300,15 +300,13 @@ function formatDetails(
   try {
     for (const url of Object.keys(details)) {
       const urlDetails = details[url];
-      report += `- ${url} (calls: ${urlDetails.calls}, duration: ${formatTime(
+      const split = url.split("/");
+      const endpoint = split[split.length - 1];
+      report += `<details><summary>${endpoint}</summary>${urlDetails.calls} calls, ${formatTime(
         urlDetails.duration,
-      )}, size: ${formatSize(urlDetails.size)})`;
+      )}, ${formatSize(urlDetails.size)}</details>)`;
     }
-
-    console.log("success with value", typeof details, details);
-  } catch (e) {
-    console.log("failed with value", typeof details, details);
-  }
+  } catch (e) {}
   return report;
 }
 
