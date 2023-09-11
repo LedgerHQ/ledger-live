@@ -24,7 +24,6 @@ import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import { log } from "@ledgerhq/logs";
-import { Feature } from "@ledgerhq/types-live";
 import { shallowAccountsSelector } from "../../../reducers/accounts";
 import { swapAcceptedProvidersSelector } from "../../../reducers/settings";
 import { setSwapSelectableCurrencies } from "../../../actions/settings";
@@ -103,9 +102,7 @@ export function SwapForm({
     [dispatch],
   );
 
-  const walletApiPartnerList: Feature<{ list: Array<string> }> | null = useFeature(
-    "swapWalletApiPartnerList",
-  );
+  const walletApiPartnerList = useFeature("swapWalletApiPartnerList");
   const navigation = useNavigation<Navigation["navigation"]>();
 
   const onNoRates: OnNoRatesCallback = useCallback(

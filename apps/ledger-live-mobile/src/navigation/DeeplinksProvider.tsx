@@ -18,8 +18,8 @@ import { useGeneralTermsAccepted } from "../logic/terms";
 import { Writeable } from "../types/helpers";
 import { lightTheme, darkTheme, Theme } from "../colors";
 import { track } from "../analytics";
-import { Feature } from "@ledgerhq/types-live/lib/feature";
 import { setEarnInfoModal } from "../actions/earn";
+import { OptionalFeatureMap } from "@ledgerhq/types-live";
 
 const routingInstrumentation = new Sentry.ReactNavigationInstrumentation();
 
@@ -83,10 +83,8 @@ function getProxyURL(url: string) {
   return url;
 }
 
-type FeatureFlags = Record<string, Feature<undefined> | null>;
-
 // DeepLinking
-const linkingOptions = (featureFlags: FeatureFlags) => ({
+const linkingOptions = (featureFlags: OptionalFeatureMap) => ({
   async getInitialURL() {
     const url = await Linking.getInitialURL();
     if (url) {
@@ -201,7 +199,7 @@ const linkingOptions = (featureFlags: FeatureFlags) => ({
                           [ScreenName.Accounts]: "account",
                         },
                       },
-                      ...(featureFlags.ptxEarnFeature?.enabled && {
+                      ...(featureFlags?.ptxEarn?.enabled && {
                         [NavigatorName.Market]: {
                           screens: {
                             /**
@@ -215,7 +213,7 @@ const linkingOptions = (featureFlags: FeatureFlags) => ({
                   },
                 },
               },
-              ...(!featureFlags.ptxEarnFeature?.enabled && {
+              ...(!featureFlags?.ptxEarn?.enabled && {
                 [NavigatorName.Market]: {
                   screens: {
                     /**
@@ -376,7 +374,10 @@ const linkingOptions = (featureFlags: FeatureFlags) => ({
   },
 });
 
-const getOnboardingLinkingOptions = (acceptedTermsOfUse: boolean, featureFlags: FeatureFlags) => ({
+const getOnboardingLinkingOptions = (
+  acceptedTermsOfUse: boolean,
+  featureFlags: OptionalFeatureMap,
+) => ({
   ...linkingOptions(featureFlags),
   config: {
     initialRouteName: NavigatorName.BaseOnboarding,
@@ -412,7 +413,7 @@ export const DeeplinksProvider = ({
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const ptxEarnFeature = useFeature("ptxEarn");
-  const features = useMemo(() => ({ ptxEarnFeature }), [ptxEarnFeature]);
+  const features = useMemo(() => ({ ptxEarn: ptxEarnFeature }), [ptxEarnFeature]);
 
   const { state } = useRemoteLiveAppContext();
   const liveAppProviderInitialized = !!state.value || !!state.error;

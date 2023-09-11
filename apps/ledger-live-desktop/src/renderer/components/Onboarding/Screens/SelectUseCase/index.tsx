@@ -187,7 +187,7 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
                 );
               }}
             />
-            <FeatureToggle feature="protectServicesDesktop">
+            <FeatureToggle featureId="protectServicesDesktop">
               <UseCaseOption
                 dataTestId="v3-onboarding-restore-using-recover"
                 id="restore-device"

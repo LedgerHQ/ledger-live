@@ -25,10 +25,7 @@ export const TagDisabled = styled(Tag).attrs({
 })``;
 
 export default function DebugTransactionsAlerts() {
-  const featureTransactionsAlerts = useFeature<{
-    chainwatchBaseUrl: string;
-    networks: ChainwatchNetwork[];
-  }>("transactionsAlerts");
+  const featureTransactionsAlerts = useFeature("transactionsAlerts");
   const notifications = useSelector(notificationsSelector);
   const chainwatchBaseUrl = featureTransactionsAlerts?.params?.chainwatchBaseUrl;
   const supportedChains: ChainwatchNetwork[] = useMemo(

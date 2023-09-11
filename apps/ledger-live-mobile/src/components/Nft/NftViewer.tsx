@@ -461,7 +461,7 @@ const NftViewer = ({ route }: Props) => {
           </Box>
         </Box>
 
-        <FeatureToggle feature="counterValue">
+        <FeatureToggle featureId="counterValue">
           {!floorPriceLoading && floorPrice ? (
             <Section
               title={t("nft.viewer.attributes.floorPrice")}
