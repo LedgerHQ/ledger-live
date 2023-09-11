@@ -304,7 +304,7 @@ function formatDetails(
       const endpoint = split[split.length - 1];
       report += `<details><summary>${endpoint}</summary>${urlDetails.calls} calls, ${formatTime(
         urlDetails.duration,
-      )}, ${formatSize(urlDetails.size)}</details>)`;
+      )}, ${formatSize(urlDetails.size)}</details>`;
     }
   } catch (e) {}
   return report;
