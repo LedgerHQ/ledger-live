@@ -4,6 +4,7 @@ import { Transaction as VechainTransaction } from "./types";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { VTHO_ADDRESS } from "./contracts/constants";
 import VIP180 from "./contracts/abis/VIP180";
+import { MustBeVechain } from "./errors";
 
 type Clauses = {
   to: string;
@@ -49,6 +50,8 @@ function inferTransactions(
         to: VTHO_ADDRESS,
         data: VIP180.transfer.encode(transaction.recipient, transaction.amount.toFixed()),
       });
+    } else {
+      throw new MustBeVechain();
     }
 
     return {

@@ -27,7 +27,6 @@ export const createTransaction = (): Transaction => {
     family: "vechain",
     body: {
       chainTag,
-      // placeholder, if "empty" returns error on send modal open
       blockRef: "0x0000000000000000",
       expiration: 18,
       clauses: [],
@@ -37,25 +36,10 @@ export const createTransaction = (): Transaction => {
       nonce: generateNonce(),
     },
     amount: BigNumber(0),
-    estimatedFees: BigNumber(0),
+    estimatedFees: "0",
     recipient: "",
     useAllAmount: false,
-    networkInfo: true,
   };
-};
-
-/**
- * Apply patch to a transaction
- *
- * @param {Transaction} t
- * @param {TransactionCommon} patch
- * @returns patched transaction
- */
-export const updateTransaction = (
-  t: Transaction,
-  patch: $Shape<TransactionCommon>,
-): Transaction => {
-  return { ...t, ...patch };
 };
 
 /**
@@ -87,7 +71,9 @@ export const prepareTransaction = async (
     body: { ...transaction.body, clauses: clauses },
   });
 
-  const estimatedFees = await calculateFee(new BigNumber(gas), transaction.body.gasPriceCoef);
+  const estimatedFees = (
+    await calculateFee(new BigNumber(gas), transaction.body.gasPriceCoef)
+  ).toString();
 
   const body = { ...transaction.body, gas, blockRef, clauses };
 

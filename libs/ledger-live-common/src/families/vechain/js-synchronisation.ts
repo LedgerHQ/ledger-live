@@ -1,12 +1,12 @@
 import type { GetAccountShape } from "../../bridge/jsHelpers";
 import { BigNumber } from "bignumber.js";
 import { makeSync, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
-import { encodeAccountId } from "../../account";
+import { encodeAccountId, encodeTokenAccountId } from "../../account";
 import eip55 from "eip55";
 import { emptyHistoryCache } from "../../account";
 
 import { getAccount, getLastBlockHeight, getOperations, getTokenOperations } from "./api";
-import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
+import { findTokenById, getTokenById } from "@ledgerhq/cryptoassets/tokens";
 
 const getAccountShape: GetAccountShape = async info => {
   const { initialAccount, currency, derivationMode } = info;
@@ -33,7 +33,7 @@ const getAccountShape: GetAccountShape = async info => {
   const newOperations = await getOperations(accountId, address, startAt);
 
   //Get last token operations
-  const vthoAccountId = accountId + "+" + encodeURIComponent("vechain/vtho");
+  const vthoAccountId = encodeTokenAccountId(accountId, findTokenById("vechain/vtho")!);
   const vthoOperations = await getTokenOperations(
     vthoAccountId,
     address,

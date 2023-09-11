@@ -5241,6 +5241,10 @@
       "title": "Sorry, insufficient VTHO funds",
       "description": "Please make sure the account has enough VTHO."
     },
+    "MustBeVechain": {
+      "title": "Not a vechain account",
+      "description": "Please make sure the coin is VTHO or VET"
+    },
     "NotEnoughBalance": {
       "title": "Sorry, insufficient funds",
       "description": "Please make sure the account has enough funds."

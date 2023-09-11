@@ -19,23 +19,23 @@ const buildOptimisticOperation = async (
     id: encodeOperationId(account.id, "", type),
     hash: "",
     type: subAccountId ? "NONE" : type,
-    value: subAccountId ? new BigNumber(0) : BigNumber(transaction.amount),
-    fee: subAccountId ? new BigNumber(0) : transaction.estimatedFees,
+    value: subAccountId ? new BigNumber(0) : new BigNumber(transaction.amount),
+    fee: subAccountId ? new BigNumber(0) : new BigNumber(transaction.estimatedFees),
     blockHash: null,
     blockHeight: null,
     senders: [account.freshAddress],
     recipients: [transaction.recipient].filter(Boolean),
     accountId: account.id,
     date: new Date(),
-    extra: { transaction },
+    extra: {},
     subOperations: subAccountId
       ? [
           {
-            id: `${subAccountId}--OUT`,
+            id: encodeOperationId(subAccountId, "", "OUT"),
             hash: "",
             type: "OUT",
             value: transaction.amount,
-            fee: subAccountId ? transaction.estimatedFees : new BigNumber(0),
+            fee: subAccountId ? new BigNumber(transaction.estimatedFees) : new BigNumber(0),
             blockHash: null,
             blockHeight: null,
             senders: [account.freshAddress],
@@ -88,7 +88,7 @@ const signOperation = ({
             signedOperation: {
               operation,
               signature: signature.toString("hex"),
-              expirationDate: undefined,
+              rawData: transaction,
             },
           });
         }
