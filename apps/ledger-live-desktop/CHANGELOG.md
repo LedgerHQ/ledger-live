@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.68.1
+
+### Patch Changes
+
+- [#4613](https://github.com/LedgerHQ/ledger-live/pull/4613) [`e499949b1e`](https://github.com/LedgerHQ/ledger-live/commit/e499949b1e890b1efc7233596ac1a439a7963b1d) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - trigger lld prerelease build
+
 ## 2.68.1-next.0
 
 ### Patch Changes
