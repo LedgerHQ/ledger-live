@@ -3766,7 +3766,7 @@
     "stayInTheAppPlz": "Stay in the Ledger Live app and keep your Ledger nearby.",
     "allowAppPermission": "Open the {{wording}} app on your device",
     "allowAppPermissionSubtitleToken": "to manage your {{token}} tokens",
-    "allowManagerPermission": "Allow {{wording}} on your {{productName}}",
+    "allowManagerPermission": "Allow Ledger Manager on your {{productName}}",
     "allowRemoveCustomLockscreen": "Confirm removal of image on your Ledger Stax",
     "allowSecureConnection": "Allow a secure connection with Ledger",
     "loading": "Loading...",

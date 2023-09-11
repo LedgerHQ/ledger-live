@@ -19,7 +19,7 @@ describe("useGenuineCheck", () => {
     it("should notify the hook consumer of the request", async () => {
       mockedGetGenuineCheckFromDeviceId.mockReturnValue(
         of({
-          socketEvent: { type: "device-permission-requested", wording: "" },
+          socketEvent: { type: "device-permission-requested" },
           lockedDevice: false,
         }),
       );

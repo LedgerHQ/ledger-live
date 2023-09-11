@@ -79,7 +79,6 @@ describe("getGenuineCheckFromDeviceId", () => {
         mockedGenuineCheck.mockReturnValue(
           of({
             type: "device-permission-requested",
-            wording: "",
           }),
         );
 
@@ -102,7 +101,6 @@ describe("getGenuineCheckFromDeviceId", () => {
                 case 3:
                   expect(socketEvent).toEqual({
                     type: "device-permission-requested",
-                    wording: "",
                   });
                   expect(lockedDevice).toBe(false);
                   done();
@@ -143,7 +141,6 @@ describe("getGenuineCheckFromDeviceId", () => {
         mockedGenuineCheck.mockReturnValue(
           of({
             type: "device-permission-requested",
-            wording: "",
           }),
         );
 
@@ -168,7 +165,6 @@ describe("getGenuineCheckFromDeviceId", () => {
                 case 3:
                   expect(socketEvent).toEqual({
                     type: "device-permission-requested",
-                    wording: "",
                   });
                   expect(lockedDevice).toBe(false);
                   done();
@@ -221,7 +217,6 @@ describe("getGenuineCheckFromDeviceId", () => {
         mockedGenuineCheck.mockReturnValue(
           of({
             type: "device-permission-requested",
-            wording: "",
           }),
         );
 
@@ -279,7 +274,6 @@ describe("getGenuineCheckFromDeviceId", () => {
             } else {
               o.next({
                 type: "device-permission-requested",
-                wording: "",
               });
             }
           });
@@ -312,7 +306,6 @@ describe("getGenuineCheckFromDeviceId", () => {
                 case 4:
                   expect(socketEvent).toEqual({
                     type: "device-permission-requested",
-                    wording: "",
                   });
                   expect(lockedDevice).toBe(false);
                   done();

@@ -86,7 +86,8 @@ type States = PartialNullable<{
     managerAppName?: string;
   };
   isLoading: boolean;
-  allowManagerRequestedWording: string;
+  allowManagerRequested: boolean;
+  allowRenamingRequested: boolean;
   requestQuitApp: boolean;
   deviceInfo: DeviceInfo;
   latestFirmware: unknown;
@@ -182,7 +183,8 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     isLocked,
     error,
     isLoading,
-    allowManagerRequestedWording,
+    allowManagerRequested,
+    allowRenamingRequested,
     imageRemoveRequested,
     requestQuitApp,
     deviceInfo,
@@ -288,9 +290,12 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     return renderRequiresAppInstallation({ appNames });
   }
 
-  if (allowManagerRequestedWording) {
-    const wording = allowManagerRequestedWording;
-    return renderAllowManager({ modelId, type, wording });
+  if (allowRenamingRequested) {
+    return renderAllowManager({ modelId, type, isRenameRequest: true });
+  }
+
+  if (allowManagerRequested) {
+    return renderAllowManager({ modelId, type });
   }
 
   if (languageInstallationRequested) {

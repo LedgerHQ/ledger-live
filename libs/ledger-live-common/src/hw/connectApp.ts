@@ -71,7 +71,6 @@ export type ConnectAppEvent =
     }
   | {
       type: "device-permission-requested";
-      wording: string;
     }
   | {
       type: "device-permission-granted";

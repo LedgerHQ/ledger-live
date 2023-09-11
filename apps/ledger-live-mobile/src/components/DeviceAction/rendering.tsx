@@ -377,11 +377,9 @@ export function renderConfirmSell({
 
 export function renderAllowManager({
   t,
-  wording,
   device,
   theme,
 }: RawProps & {
-  wording: string;
   device: Device;
 }) {
   // TODO: disable gesture, modal close, hide header buttons
@@ -390,7 +388,6 @@ export function renderAllowManager({
       <Flex>
         <Text fontWeight="semiBold" fontSize={24} textAlign="center" mb={10}>
           {t("DeviceAction.allowManagerPermission", {
-            wording,
             productName: getDeviceModel(device.modelId)?.productName,
           })}
         </Text>
