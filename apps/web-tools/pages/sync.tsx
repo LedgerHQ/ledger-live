@@ -23,6 +23,8 @@ import {
 } from "@ledgerhq/coin-framework/derivation";
 import { Account } from "@ledgerhq/types-live";
 
+export const getStaticProps = async () => ({ props: {} });
+
 const localCache: Record<string, unknown> = {};
 const bridgeCache = makeBridgeCacheSystem({
   saveData(c, d) {

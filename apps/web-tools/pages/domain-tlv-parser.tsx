@@ -1,6 +1,8 @@
 import React, { useCallback, useState } from "react";
 import { tlvParser } from "@ledgerhq/domain-service/tools/index";
 
+export const getStaticProps = async () => ({ props: {} });
+
 const App = () => {
   const [domainAPDU, setDomainAPDU] = useState("");
   const [parsedAPDU, setParsedAPDU] = useState<ReturnType<typeof tlvParser>>([]);
