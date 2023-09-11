@@ -129,7 +129,7 @@
     "@dfinity/candid": "^0.15.6",
     "@dfinity/principal": "^0.15.6",
     "@ethereumjs/common": "^2.6.2",
-    "@ethereumjs/tx": "^3.5.0",
+    "@ethereumjs/tx": "^5.0.0",
     "@ethersproject/bignumber": "^5.7.0",
     "@ethersproject/bytes": "^5.7.0",
     "@ethersproject/keccak256": "^5.7.0",
