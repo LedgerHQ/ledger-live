@@ -702,8 +702,8 @@ importers:
         specifier: ^4.1.1
         version: 4.1.1
       vite-plugin-electron:
-        specifier: 0.4.9
-        version: 0.4.9
+        specifier: 0.14.1
+        version: 0.14.1
       yargs:
         specifier: ^17.0.0
         version: 17.4.1
@@ -29467,6 +29467,7 @@ packages:
   /binary-extensions@2.2.0:
     resolution: {integrity: sha512-jDctJ/IVQbZoJykoeHbhXpOlNBqGNcwXJKJog42E5HDPUwQTSdjCHdihjj0DlnheQ7blbT6dHOafNAiS8ooQKA==}
     engines: {node: '>=8'}
+    requiresBuild: true
 
   /binary@0.3.0:
     resolution: {integrity: sha512-D4H1y5KYwpJgK8wk1Cue5LLPgmwHKYSChkbspQg5JtVuR5ulGckxfR62H3AE9UDkdMC8yyXlqYihuz3Aqg2XZg==}
@@ -40343,6 +40344,7 @@ packages:
   /is-binary-path@2.1.0:
     resolution: {integrity: sha512-ZMERYes6pDydyuGidse7OsHxtbI7WVeUEozgR/g7rd0xUimYNlvZRE/K2MgZTjWy725IfelLeVcEM97mmtRGXw==}
     engines: {node: '>=8'}
+    requiresBuild: true
     dependencies:
       binary-extensions: 2.2.0
 
@@ -55536,6 +55538,7 @@ packages:
   /readdirp@3.6.0:
     resolution: {integrity: sha512-hOS089on8RduqdbhvQ5Z37A0ESjsqz6qnRcffsMU3495FuTdqSm+7bhJ29JvIOsBDEEnan5DPu9t3To9VRlMzA==}
     engines: {node: '>=8.10.0'}
+    requiresBuild: true
     dependencies:
       picomatch: 2.3.1
 
@@ -62215,14 +62218,13 @@ packages:
       replace-ext: 1.0.1
     dev: true
 
-  /vite-plugin-electron@0.4.9:
-    resolution: {integrity: sha512-LYKBd2/hncUqe99AG7D4PDzdU7qP0R7W1ijvO4IHTKwARhlWii2tsPa2dr+6Yi/+NBazlKK2OBSzc8lRNl+ctQ==}
-    dependencies:
-      vite-plugin-optimizer: 1.4.0
-    dev: true
-
-  /vite-plugin-optimizer@1.4.0:
-    resolution: {integrity: sha512-hTY1pdtSmN/BNOnjvmcmK+2fW1Ac9wD0gFBy67i5IsKwhr1fS1/GGmssdCaik2SpnplHjoDrmCgVsgBv20HzrA==}
+  /vite-plugin-electron@0.14.1:
+    resolution: {integrity: sha512-QGQ2nJ4wjMf1FaDSkdoC/UskQGiYGcAToATJqJXvqrL4Jmt0CFaZqoDjh1xLicUWEo/X7urHYjhKTqwEeP7F7g==}
+    peerDependencies:
+      vite-plugin-electron-renderer: '*'
+    peerDependenciesMeta:
+      vite-plugin-electron-renderer:
+        optional: true
     dev: true
 
   /vite@4.1.1:
