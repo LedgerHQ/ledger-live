@@ -300,9 +300,9 @@ function formatDetails(
   try {
     for (const url of Object.keys(details)) {
       const urlDetails = details[url];
-      report += `${url} (calls: ${urlDetails.calls}, duration: ${formatTime(
+      report += `- ${url} (calls: ${urlDetails.calls}, duration: ${formatTime(
         urlDetails.duration,
-      )}, size: ${formatSize(urlDetails.size)}\n`;
+      )}, size: ${formatSize(urlDetails.size)})`;
     }
 
     console.log("success with value", typeof details, details);
