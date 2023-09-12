@@ -7,6 +7,7 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import {
   useFetchCurrencyFrom,
   usePickDefaultAccount,
+  useSwapableAccounts,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
 import { WarningSolidMedium } from "@ledgerhq/native-ui/assets/icons";
@@ -17,7 +18,8 @@ import TranslatedError from "../../../../components/TranslatedError";
 import { ScreenName } from "../../../../const";
 import { useAnalytics } from "../../../../analytics";
 import { sharedSwapTracking } from "../../utils";
-import { useSwapableAccounts } from "../../useSwapableAccounts";
+import { flattenAccountsSelector } from "../../../../reducers/accounts";
+import { useSelector } from "react-redux";
 
 interface Props {
   provider?: string;
@@ -32,8 +34,8 @@ export function From({ swapTx, provider, swapError, swapWarning, isSendMaxLoadin
   const { t } = useTranslation();
   const navigation = useNavigation<SwapFormParamList>();
   const { data: currenciesFrom } = useFetchCurrencyFrom();
-
-  const accounts = useSwapableAccounts();
+  const flattenedAccounts = useSelector(flattenAccountsSelector);
+  const accounts = useSwapableAccounts({ accounts: flattenedAccounts });
   const { name, balance, unit } = useMemo(() => {
     const { currency, account } = swapTx.swap.from;
 
