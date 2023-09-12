@@ -147,7 +147,7 @@ export class NetworkAudit {
           console.log("res req)");
           const { url } = req;
           const split = url.split("/");
-          const endpoint = split[split.length - 1];
+          const endpoint = split[split.length - 1].split("?")[0];
           if (this._urlsDetails[endpoint] == null) {
             this._urlsDetails[endpoint] = {
               calls: 0,
