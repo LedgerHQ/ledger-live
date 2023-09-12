@@ -107,6 +107,7 @@ const createSteps = (params: Data): St[] => [
     footer: StepConfirmationFooter,
   },
 ];
+
 const Body = ({ onChangeStepId, onClose, stepId, params }: Props) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -199,6 +200,7 @@ const Body = ({ onChangeStepId, onClose, stepId, params }: Props) => {
     },
     [account, parentAccount, dispatch],
   );
+
   const handleStepChange = useCallback(e => onChangeStepId(e.id), [onChangeStepId]);
   const titles = useMemo(() => createTitles(t), [t]);
   const title =
@@ -249,7 +251,9 @@ const Body = ({ onChangeStepId, onClose, stepId, params }: Props) => {
     onTransactionError: handleTransactionError,
     source,
   };
+
   if (!status) return null;
+
   return (
     <Stepper {...stepperProps}>
       <SyncSkipUnderPriority priority={100} />
@@ -257,4 +261,5 @@ const Body = ({ onChangeStepId, onClose, stepId, params }: Props) => {
     </Stepper>
   );
 };
+
 export default Body;

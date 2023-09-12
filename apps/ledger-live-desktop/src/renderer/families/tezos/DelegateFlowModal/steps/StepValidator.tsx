@@ -14,6 +14,7 @@ import ModalContent from "~/renderer/components/Modal/ModalContent";
 import UserPlusIcon from "~/renderer/icons/UserPlus";
 import BakerImage from "../../BakerImage";
 import { StepProps } from "../types";
+
 const Row = styled(Box).attrs(() => ({
   horizontal: true,
 }))`
@@ -35,6 +36,7 @@ const Row = styled(Box).attrs(() => ({
     margin-bottom: 0;
   }
 `;
+
 const BakerRow = ({ baker, onClick }: { baker: Baker; onClick: (a: Baker) => void }) => (
   <Row onClick={() => onClick(baker)}>
     <Box horizontal alignItems="center">
@@ -74,6 +76,7 @@ const BakerRow = ({ baker, onClick }: { baker: Baker; onClick: (a: Baker) => voi
     </Text>
   </Row>
 );
+
 const StepValidator = ({
   account,
   parentAccount,
@@ -85,6 +88,7 @@ const StepValidator = ({
   invariant(account, "account is required");
   const contentRef = useRef(null);
   const bakers = useBakers(bakersWhitelistDefault);
+
   const onBakerClick = useCallback(
     baker => {
       onChangeTransaction(
@@ -96,9 +100,11 @@ const StepValidator = ({
     },
     [account, onChangeTransaction, parentAccount, transaction, transitionTo],
   );
+
   const openPartner = useCallback(() => {
     openURL("https://baking-bad.org/");
   }, []);
+
   return (
     <Box flow={4} mx={20}>
       <TrackPage
@@ -172,4 +178,5 @@ const StepValidator = ({
     </Box>
   );
 };
+
 export default StepValidator;

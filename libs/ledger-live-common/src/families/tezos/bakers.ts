@@ -4,18 +4,17 @@ import { log } from "@ledgerhq/logs";
 import type { AccountLike, Operation } from "@ledgerhq/types-live";
 import { useEffect, useMemo, useState } from "react";
 import { getEnv } from "@ledgerhq/live-env";
-const capacityStatuses = {
-  normal: null,
-  full: null,
-};
-export type CapacityStatus = keyof typeof capacityStatuses;
+
+export type CapacityStatus = "normal" | "full";
+
 export type Baker = {
   address: string;
   name: string;
   logoURL: string;
-  nominalYield: string;
+  nominalYield: `${number} %`;
   capacityStatus: CapacityStatus;
 };
+
 // type used by UI to facilitate business logic of current delegation data
 export type Delegation = {
   // delegator address
@@ -31,24 +30,52 @@ export type Delegation = {
   // true if a send should inform it will top down the delegation
   sendShouldWarnDelegation: boolean;
 };
+
+type API_BAKER = {
+  address: string;
+  name: string;
+  logo: string;
+  balance: number;
+  stakingBalance: number;
+  stakingCapacity: number;
+  maxStakingBalance: number;
+  freeSpace: number;
+  fee: number;
+  minDelegation: number;
+  payoutDelay: number;
+  payoutPeriod: number;
+  openForDelegation: true;
+  estimatedRoi: number;
+  serviceType: string;
+  serviceHealth: string;
+  payoutTiming: string;
+  payoutAccuracy: string;
+  audit: string;
+  insuranceCoveragenumber: number;
+};
+
+const ledgerValidator: Baker = {
+  address: "tz3LV9aGKHDnAZHCtC9SjNtTrKRu678FqSki",
+  name: "Ledger by Kiln",
+  logoURL: "https://services.tzkt.io/v1/avatars/tz3LV9aGKHDnAZHCtC9SjNtTrKRu678FqSki",
+  nominalYield: "6.56 %",
+  capacityStatus: "normal",
+};
+
 const cache = makeLRUCache(
   async (): Promise<Baker[]> => {
-    const base = getEnv("API_TEZOS_BAKER");
-    const {
-      data,
-    }: {
-      data: unknown;
-    } = await network({
-      url: `${base}/v2/bakers`,
-    });
     const bakers: Baker[] = [];
+    const TEZOS_API_BASE_URL = getEnv("API_TEZOS_BAKER");
+    const { data } = await network<API_BAKER[]>({
+      url: `${TEZOS_API_BASE_URL}/v2/bakers`,
+    });
 
-    if (data && typeof data === "object" && Array.isArray(data)) {
+    if (data && Array.isArray(data)) {
       log("tezos/bakers", "found " + data.length + " bakers");
       data
         .filter(raw => raw.serviceHealth === "active")
         .forEach(raw => {
-          const baker: Baker | null | undefined = asBaker(raw);
+          const baker = asBaker(raw);
 
           if (baker) {
             bakers.push(baker);
@@ -62,7 +89,7 @@ const cache = makeLRUCache(
   () => "",
 );
 
-let _lastBakers: Baker[];
+let _lastBakers: Baker[] = [];
 
 export const fetchAllBakers = async (): Promise<Baker[]> => {
   const r = await cache.force();
@@ -71,24 +98,19 @@ export const fetchAllBakers = async (): Promise<Baker[]> => {
 };
 
 function whitelist(all: Baker[], addresses: string[]) {
-  const map = {};
-  all.forEach(b => {
-    map[b.address] = b;
-  });
-  return addresses.map(addr => map[addr]).filter(Boolean);
+  return all.filter(baker => addresses.includes(baker.address));
 }
 
 export const listBakers = async (whitelistAddresses: string[]): Promise<Baker[]> => {
   const all = await cache();
-  _lastBakers = all;
-  return whitelist(all, whitelistAddresses);
+  _lastBakers = [ledgerValidator, ...all];
+  return whitelist(_lastBakers, whitelistAddresses);
 };
+
 export function useBakers(whitelistAddresses: string[]): Baker[] {
-  const [bakers, setBakers] = useState<Baker[]>(() =>
-    whitelist(_lastBakers || [], whitelistAddresses),
-  );
+  const [bakers, setBakers] = useState<Baker[]>(() => whitelist(_lastBakers, whitelistAddresses));
   useEffect(() => {
-    let cancelled;
+    let cancelled = false;
     listBakers(whitelistAddresses).then(bakers => {
       if (cancelled) return;
       setBakers(bakers);
@@ -97,13 +119,14 @@ export function useBakers(whitelistAddresses: string[]): Baker[] {
       cancelled = true;
     };
   }, [whitelistAddresses]);
+
   return bakers;
 }
-export function getBakerSync(addr: string): Baker | null | undefined {
-  if (_lastBakers) {
-    return _lastBakers.find(baker => baker.address === addr);
-  }
+
+export function getBakerSync(addr: string): Baker | undefined {
+  return _lastBakers.find(baker => baker.address === addr);
 }
+
 export function getAccountDelegationSync(account: AccountLike): Delegation | null | undefined {
   const op = account.operations.find(
     op => !op.hasFailed && (op.type === "DELEGATE" || op.type === "UNDELEGATE"),
@@ -132,28 +155,32 @@ export function getAccountDelegationSync(account: AccountLike): Delegation | nul
     receiveShouldWarnDelegation,
   };
 }
+
 export function isAccountDelegating(account: AccountLike): boolean {
   return !!getAccountDelegationSync(account);
 }
-export async function loadBaker(addr: string): Promise<Baker | null | undefined> {
+
+export async function loadBaker(addr: string): Promise<Baker | undefined> {
   const cacheBaker = getBakerSync(addr);
-  if (cacheBaker) return Promise.resolve(cacheBaker);
+  if (cacheBaker) return cacheBaker;
   const bakers = await cache();
   const baker = bakers.find(baker => baker.address === addr);
   return baker;
 }
+
 export async function loadAccountDelegation(
   account: AccountLike,
 ): Promise<Delegation | null | undefined> {
-  const d = getAccountDelegationSync(account);
-  if (!d) return Promise.resolve(null);
-  const baker = await loadBaker(d.address);
-  return { ...d, baker };
+  const delegation = getAccountDelegationSync(account);
+  if (!delegation) return null;
+  const baker = await loadBaker(delegation.address);
+  return { ...delegation, baker };
 }
+
 export function useDelegation(account: AccountLike): Delegation | null | undefined {
   const [delegation, setDelegation] = useState(() => getAccountDelegationSync(account));
   useEffect(() => {
-    let cancelled;
+    let cancelled = false;
     loadAccountDelegation(account).then(delegation => {
       if (cancelled) return;
       setDelegation(delegation);
@@ -162,12 +189,14 @@ export function useDelegation(account: AccountLike): Delegation | null | undefin
       cancelled = true;
     };
   }, [account]);
+
   return delegation;
 }
-export function useBaker(addr: string): Baker | null | undefined {
+
+export function useBaker(addr: string): Baker | undefined {
   const [baker, setBaker] = useState(() => getBakerSync(addr));
   useEffect(() => {
-    let cancelled;
+    let cancelled = false;
     loadBaker(addr).then(baker => {
       if (cancelled) return;
       setBaker(baker);
@@ -176,8 +205,10 @@ export function useBaker(addr: string): Baker | null | undefined {
       cancelled = true;
     };
   }, [addr]);
+
   return baker;
 }
+
 //  select a random baker for the mount time (assuming bakers length don't change)
 export function useRandomBaker(bakers: Baker[]): Baker {
   const randomBakerIndex = useMemo(() => {
@@ -195,30 +226,30 @@ export function useRandomBaker(bakers: Baker[]): Baker {
   }, [bakers.length]);
   return bakers[randomBakerIndex];
 }
-export const asBaker = (data: Record<string, unknown>): Baker | null | undefined => {
-  if (data && typeof data === "object") {
-    const { address, name, logo, freeSpace, estimatedRoi } = data;
 
-    if (
-      typeof name === "string" &&
-      typeof address === "string" &&
-      typeof logo === "string" &&
-      (logo.startsWith("https://") || logo.startsWith("http://")) &&
-      typeof freeSpace === "number" &&
-      typeof estimatedRoi === "number" &&
-      0 <= estimatedRoi &&
-      estimatedRoi <= 1
-    ) {
-      return {
-        name,
-        address,
-        logoURL: logo,
-        nominalYield: Math.floor(10000 * estimatedRoi) / 100 + " %",
-        capacityStatus: freeSpace <= 0 ? "full" : "normal",
-      };
-    }
+export const asBaker = (data: API_BAKER): Baker | undefined => {
+  const { address, name, logo, freeSpace, estimatedRoi } = data;
+
+  if (
+    typeof name === "string" &&
+    typeof address === "string" &&
+    typeof logo === "string" &&
+    typeof freeSpace === "number" &&
+    typeof estimatedRoi === "number" &&
+    (logo.startsWith("https://") || logo.startsWith("http://")) &&
+    estimatedRoi >= 0 &&
+    estimatedRoi <= 1
+  ) {
+    return {
+      name,
+      address,
+      logoURL: logo,
+      nominalYield: `${Math.floor(10000 * estimatedRoi) / 100} %`,
+      capacityStatus: freeSpace <= 0 ? "full" : "normal",
+    };
   }
 };
+
 export const hydrateBakers = (bakers: Baker[]): void => {
   log("tezos/bakers", "hydrate " + bakers.length + " bakers");
   cache.hydrate("", bakers);
