@@ -102,7 +102,7 @@ export type LiveAppManifest = {
   apiVersion: string;
   manifestVersion: string;
   branch: AppBranch;
-  permissions: AppPermission[];
+  permissions: string[];
   domains: string[];
   categories: string[];
   currencies: string[] | "*";
