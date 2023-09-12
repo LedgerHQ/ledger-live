@@ -8,7 +8,6 @@ import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index"
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { isEditableOperation } from "@ledgerhq/live-common/operation";
-import { getEnv } from "@ledgerhq/live-env";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { TFunction } from "i18next";
@@ -81,10 +80,7 @@ const createSteps = (): St[] => [
     label: <Trans i18nKey="operation.edit.steps.summary.title" />,
     component: StepSummary,
     footer: StepSummaryFooter,
-    onBack: ({ transitionTo, editType }) => {
-      // transit to "fees" page for speedup flow and skip the "fees" page for cancel flow
-      transitionTo(editType === "speedup" ? "fees" : "method");
-    },
+    onBack: ({ transitionTo }) => transitionTo("fees"),
   },
   {
     id: "device",
@@ -192,13 +188,14 @@ const Body = ({
   const feeValue = getEstimatedFees(transactionToUpdate);
 
   const haveFundToCancel = mainAccount.balance.gt(
-    feeValue.times(1 + getEnv("EDIT_TX_EIP1559_MAXFEE_GAP_CANCEL_FACTOR")),
+    feeValue.times(1.1).integerValue(BigNumber.ROUND_CEIL),
   );
 
   const haveFundToSpeedup = mainAccount.balance.gt(
     feeValue
-      .times(1 + getEnv("EDIT_TX_EIP1559_FEE_GAP_SPEEDUP_FACTOR"))
-      .plus(account.type === "Account" ? transactionToUpdate.amount : 0),
+      .times(1.1)
+      .plus(account.type === "Account" ? transactionToUpdate.amount : 0)
+      .integerValue(BigNumber.ROUND_CEIL),
   );
 
   // log account and fees info
