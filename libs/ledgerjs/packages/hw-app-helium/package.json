@@ -28,7 +28,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@helium/address": "^4.6.2",
-    "@helium/proto": "^1.6.0",
+    "@helium/proto": "^2.0.0",
     "@helium/transactions": "^4.7.5",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",

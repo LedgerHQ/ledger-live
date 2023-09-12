@@ -2947,8 +2947,8 @@ importers:
         specifier: ^4.6.2
         version: 4.6.2
       '@helium/proto':
-        specifier: ^1.6.0
-        version: 1.6.0
+        specifier: ^2.0.0
+        version: 2.2.0
       '@helium/transactions':
         specifier: ^4.7.5
         version: 4.7.5
@@ -14448,6 +14448,12 @@ packages:
 
   /@helium/proto@1.6.0:
     resolution: {integrity: sha512-aoVjhYDcic5g+n/iwKGXmGgMruPXTffpyr2ziGjuhAvU0phPSv6gnTbyHKY7FqBCUOYX4jHzEKJgX7M27UOGGg==}
+    dependencies:
+      protobufjs: 6.11.3
+    dev: false
+
+  /@helium/proto@2.2.0:
+    resolution: {integrity: sha512-DhDSYZWaMoHAQPVSp/CrrhEUgJtvgaCdKC1GLhXLYxMYDMbYEcT/wWKEjegeY2WeyTUwSsV+Q1U3eWMjEg/q6Q==}
     dependencies:
       protobufjs: 6.11.3
     dev: false
