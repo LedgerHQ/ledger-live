@@ -1,4 +1,5 @@
 import { getTransactionByHash } from "@ledgerhq/coin-evm/api/transaction/index";
+import { DEFAULT_GAS_LIMIT } from "@ledgerhq/coin-evm/transaction";
 import {
   Transaction as EvmTransaction,
   EvmTransactionEIP1559,
@@ -58,6 +59,7 @@ const buildCancelTxPatch = ({
   account: Account;
 }): Partial<EvmTransaction> => {
   let patch: Partial<EvmTransaction> = {
+    type: transaction.type,
     amount: new BigNumber(0),
     data: undefined,
     nonce: transaction.nonce,
@@ -65,6 +67,11 @@ const buildCancelTxPatch = ({
     recipient: account.freshAddress,
     feesStrategy: "custom",
     useAllAmount: false,
+    /**
+     * since canceling a tx is just sending 0 eth to yourself, the gasLimit can
+     * just be the default value
+     */
+    gasLimit: DEFAULT_GAS_LIMIT,
   };
 
   // increase gas fees in case of cancel flow as we don't have the fees input screen for cancel flow
@@ -72,11 +79,11 @@ const buildCancelTxPatch = ({
     const type2Patch: Partial<EvmTransactionEIP1559> = {
       ...patch,
       maxFeePerGas: transaction.maxFeePerGas
-        ?.times(1 + getEnv("EDIT_TX_EIP1559_MAXFEE_GAP_CANCEL_FACTOR"))
-        .integerValue(),
+        ?.times(1.1 + getEnv("EDIT_TX_EIP1559_MAXFEE_GAP_CANCEL_FACTOR"))
+        .integerValue(BigNumber.ROUND_CEIL),
       maxPriorityFeePerGas: transaction.maxPriorityFeePerGas
-        ?.times(1 + getEnv("EDIT_TX_EIP1559_FEE_GAP_SPEEDUP_FACTOR"))
-        .integerValue(),
+        ?.times(1.1 + getEnv("EDIT_TX_EIP1559_FEE_GAP_SPEEDUP_FACTOR"))
+        .integerValue(BigNumber.ROUND_CEIL),
     };
     patch = type2Patch;
   } else if (patch.type === 1 || patch.type === 0) {
@@ -84,7 +91,7 @@ const buildCancelTxPatch = ({
       ...patch,
       gasPrice: transaction.gasPrice
         ?.times(1 + getEnv("EDIT_TX_LEGACY_GASPRICE_GAP_CANCEL_FACTOR"))
-        .integerValue(),
+        .integerValue(BigNumber.ROUND_CEIL),
     };
     patch = type1Patch;
   }
