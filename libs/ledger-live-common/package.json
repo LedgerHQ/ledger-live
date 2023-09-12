@@ -202,7 +202,7 @@
     "bchaddrjs": "^0.5.2",
     "bech32": "^1.1.3",
     "big-integer": "^1.6.51",
-    "bignumber.js": "^9.1.1",
+    "bignumber.js": "^9.1.2",
     "bip32": "^2.0.6",
     "bip32-path": "^0.4.2",
     "bip39": "^3.0.4",

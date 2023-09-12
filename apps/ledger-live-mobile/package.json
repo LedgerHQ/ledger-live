@@ -102,7 +102,7 @@
     "@shopify/react-native-performance": "^4.1.2",
     "@shopify/react-native-performance-navigation": "^3.0.0",
     "asyncstorage-down": "^4.2.0",
-    "bignumber.js": "^9.1.1",
+    "bignumber.js": "^9.1.2",
     "buffer": "6.0.3",
     "color": "^4.0.0",
     "d3-array": "~2.3.0",
