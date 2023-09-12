@@ -11,7 +11,7 @@ import Box from "~/renderer/components/Box";
 import { useBroadcast } from "~/renderer/hooks/useBroadcast";
 import { BodyContent } from "./BodyContent";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
-import { onCompleteExchange } from "~/renderer/screens/exchange/Swap2/Form/ExchangeDrawer/utils";
+import { getUpdateAccountActionAfterSwap } from "~/renderer/screens/exchange/Swap2/Form/ExchangeDrawer/utils";
 
 export type Data = {
   provider: string;
@@ -77,7 +77,7 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
           const magnitudeAwareRate = new BigNumber(rate).div(
             new BigNumber(10).pow(unitFrom.magnitude - unitTo.magnitude),
           );
-          const dispatchAction = onCompleteExchange({
+          const dispatchAction = getUpdateAccountActionAfterSwap({
             result,
             exchange: exchange as SwapExchange,
             transaction: transactionParams,

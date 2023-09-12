@@ -9,7 +9,7 @@ import { Account, Operation } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { Exchange as SwapExchange, ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
 
-export const onCompleteExchange = ({
+export const getUpdateAccountActionAfterSwap = ({
   result,
   exchange,
   transaction,

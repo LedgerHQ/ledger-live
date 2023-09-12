@@ -1,5 +1,5 @@
 import { postSwapCancelled } from "@ledgerhq/live-common/exchange/swap/index";
-import { onCompleteExchange } from "./utils";
+import { getUpdateAccountActionAfterSwap } from "./utils";
 import {
   Exchange,
   SwapTransactionType,
@@ -91,7 +91,7 @@ export default function ExchangeDrawer({ swapTransaction, exchangeRate, onComple
   const onCompletion = useCallback(
     (result: { operation: Operation; swapId: string }) => {
       const { magnitudeAwareRate, provider } = exchangeRate;
-      const dispatchAction = onCompleteExchange({
+      const dispatchAction = getUpdateAccountActionAfterSwap({
         result,
         exchange,
         transaction,
