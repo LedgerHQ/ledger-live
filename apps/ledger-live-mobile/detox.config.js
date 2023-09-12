@@ -73,7 +73,7 @@ module.exports = {
       device: {
         avdName: "Pixel_5_API_31",
       },
-      gpuMode: "swiftshader_indirect",
+      // gpuMode: "swiftshader_indirect",
       headless: process.env.CI ? true : false,
     },
   },
