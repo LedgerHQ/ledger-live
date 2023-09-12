@@ -36,7 +36,7 @@ export type ExchangeRate = {
 
 type ExchangeProviderType = "CEX" | "DEX";
 
-type ExchangeRateV5CommonPropertiesRaw = {
+type ExchangeRateV5CommonRaw = {
   provider: string;
   providerType: ExchangeProviderType;
   from: string;
@@ -51,14 +51,14 @@ type ExchangeRateV5CommonPropertiesRaw = {
   providerURL?: string;
 };
 
-type ExchangeRateV5FloatRateRaw = ExchangeRateV5CommonPropertiesRaw & {
+type ExchangeRateV5FloatRateRaw = ExchangeRateV5CommonRaw & {
   tradeMethod: "float";
   rateId?: string;
   minAmountFrom: string;
   maxAmountFrom?: string;
 };
 
-type ExchangeRateV5FixedRateRaw = ExchangeRateV5CommonPropertiesRaw & {
+type ExchangeRateV5FixedRateRaw = ExchangeRateV5CommonRaw & {
   tradeMethod: "fixed";
   rateId: string;
   expirationTime: string;
