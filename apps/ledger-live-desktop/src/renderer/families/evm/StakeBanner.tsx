@@ -26,7 +26,8 @@ const StakeBanner: React.FC<{ account: Account }> = ({ account }) => {
   const { t } = useTranslation();
   const stakeAccountBanner = useFeature("stakeAccountBanner");
   const ethStakingProviders = useFeature("ethStakingProviders");
-  const stakeAccountBannerParams: StakeAccountBannerParams = stakeAccountBanner?.params;
+  const stakeAccountBannerParams: StakeAccountBannerParams | null =
+    stakeAccountBanner?.params ?? null;
   const { stakeProvider } = getAccountBannerState(account);
 
   if (stakeProvider === "lido" && !stakeAccountBannerParams?.eth?.lido) return null;
