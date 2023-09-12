@@ -1,15 +1,14 @@
 import { BigNumber } from "bignumber.js";
-import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
-import { addPendingOperation } from "@ledgerhq/live-common/account/index";
-import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { getEnv } from "@ledgerhq/live-env";
-import { postSwapAccepted, postSwapCancelled } from "@ledgerhq/live-common/exchange/swap/index";
-import addToSwapHistory from "@ledgerhq/live-common/exchange/swap/addToSwapHistory";
 import { Account, Operation } from "@ledgerhq/types-live";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { Exchange as SwapExchange, ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
+import { postSwapAccepted, postSwapCancelled } from "./index";
+import addToSwapHistory from "./addToSwapHistory";
+import { Exchange, ExchangeRate } from "./types";
+import { addPendingOperation } from "../../account/index";
+import { getMainAccount } from "../../account/helpers";
+import { Transaction } from "../../generated/types";
 
-export const getUpdateAccountActionAfterSwap = ({
+export const getUpdateAccountActionParamsAfterSwap = ({
   result,
   exchange,
   transaction,
@@ -17,7 +16,7 @@ export const getUpdateAccountActionAfterSwap = ({
   provider,
 }: {
   result: { operation: Operation; swapId: string };
-  exchange: SwapExchange;
+  exchange: Exchange;
   transaction?: Transaction | null;
   magnitudeAwareRate: BigNumber;
   provider: string;
@@ -61,5 +60,5 @@ export const getUpdateAccountActionAfterSwap = ({
     });
     return addPendingOperation(accountWithUpdatedHistory, operation);
   };
-  return updateAccountWithUpdater(mainAccount.id, accountUpdater);
+  return [mainAccount.id, accountUpdater];
 };

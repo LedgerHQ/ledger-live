@@ -3,15 +3,16 @@ import { BigNumber } from "bignumber.js";
 import { useDispatch } from "react-redux";
 import { Exchange, ExchangeSwap } from "@ledgerhq/live-common/exchange/platform/types";
 import { Exchange as SwapExchange } from "@ledgerhq/live-common/exchange/swap/types";
+import { getUpdateAccountActionParamsAfterSwap } from "@ledgerhq/live-common/exchange/swap/getUpdateAccountActionParamsAfterSwap";
 import { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { ModalBody } from "~/renderer/components/Modal";
 import Box from "~/renderer/components/Box";
 import { useBroadcast } from "~/renderer/hooks/useBroadcast";
 import { BodyContent } from "./BodyContent";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
-import { getUpdateAccountActionAfterSwap } from "~/renderer/screens/exchange/Swap2/Form/ExchangeDrawer/utils";
 
 export type Data = {
   provider: string;
@@ -77,13 +78,14 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
           const magnitudeAwareRate = new BigNumber(rate).div(
             new BigNumber(10).pow(unitFrom.magnitude - unitTo.magnitude),
           );
-          const dispatchAction = getUpdateAccountActionAfterSwap({
+          const params = getUpdateAccountActionParamsAfterSwap({
             result,
             exchange: exchange as SwapExchange,
             transaction: transactionParams,
             magnitudeAwareRate,
             provider,
           });
+          const dispatchAction = updateAccountWithUpdater(...params);
           dispatch(dispatchAction);
         }
         onResult(operation);

@@ -1,5 +1,5 @@
 import { postSwapCancelled } from "@ledgerhq/live-common/exchange/swap/index";
-import { getUpdateAccountActionAfterSwap } from "./utils";
+import { getUpdateAccountActionParamsAfterSwap } from "@ledgerhq/live-common/exchange/swap/getUpdateAccountActionParamsAfterSwap";
 import {
   Exchange,
   SwapTransactionType,
@@ -11,6 +11,7 @@ import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
+import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import {
@@ -91,13 +92,14 @@ export default function ExchangeDrawer({ swapTransaction, exchangeRate, onComple
   const onCompletion = useCallback(
     (result: { operation: Operation; swapId: string }) => {
       const { magnitudeAwareRate, provider } = exchangeRate;
-      const dispatchAction = getUpdateAccountActionAfterSwap({
+      const params = getUpdateAccountActionParamsAfterSwap({
         result,
         exchange,
         transaction,
         magnitudeAwareRate,
         provider,
       });
+      const dispatchAction = updateAccountWithUpdater(...params);
       dispatch(dispatchAction);
       setResult(result);
       onCompleteSwap && onCompleteSwap();
