@@ -8,7 +8,6 @@ import {
 import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { getEnv } from "@ledgerhq/live-env";
 import { Flex } from "@ledgerhq/react-ui";
 import { Account, AccountBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
@@ -78,20 +77,16 @@ const buildCancelTxPatch = ({
   if (patch.type === 2) {
     const type2Patch: Partial<EvmTransactionEIP1559> = {
       ...patch,
-      maxFeePerGas: transaction.maxFeePerGas
-        ?.times(1.1 + getEnv("EDIT_TX_EIP1559_MAXFEE_GAP_CANCEL_FACTOR"))
-        .integerValue(BigNumber.ROUND_CEIL),
+      maxFeePerGas: transaction.maxFeePerGas?.times(1.1).integerValue(BigNumber.ROUND_CEIL),
       maxPriorityFeePerGas: transaction.maxPriorityFeePerGas
-        ?.times(1.1 + getEnv("EDIT_TX_EIP1559_FEE_GAP_SPEEDUP_FACTOR"))
+        ?.times(1.1)
         .integerValue(BigNumber.ROUND_CEIL),
     };
     patch = type2Patch;
   } else if (patch.type === 1 || patch.type === 0) {
     const type1Patch: Partial<EvmTransactionLegacy> = {
       ...patch,
-      gasPrice: transaction.gasPrice
-        ?.times(1 + getEnv("EDIT_TX_LEGACY_GASPRICE_GAP_CANCEL_FACTOR"))
-        .integerValue(BigNumber.ROUND_CEIL),
+      gasPrice: transaction.gasPrice?.times(1.1).integerValue(BigNumber.ROUND_CEIL),
     };
     patch = type1Patch;
   }
@@ -219,6 +214,7 @@ export const StepMethodFooter: React.FC<StepProps> = (props: StepProps) => {
     invariant(transactionToUpdate, "transactionToUpdate required");
     const bridge: AccountBridge<EvmTransaction> = getAccountBridge(account, parentAccount);
 
+    // FIXME: get max(txFees + 10%, fast fees) for speedup and cancel flows
     if (editType === "speedup") {
       const patch: Partial<EvmTransaction> = {
         amount: transactionToUpdate.amount,
@@ -242,8 +238,7 @@ export const StepMethodFooter: React.FC<StepProps> = (props: StepProps) => {
       updateTransaction(tx => bridge.updateTransaction(tx, patch));
     }
 
-    // skip fees input screen for cancel flow
-    transitionTo(editType === "speedup" ? "fees" : "summary");
+    transitionTo("summary");
   };
 
   if (!account || !transaction || !transactionHash) {
