@@ -64,8 +64,6 @@ export const prepareTransaction = async (
     } else {
       clauses = await calculateClausesVet(transaction, amount);
     }
-  } else {
-    throw new InvalidAddress();
   }
 
   const gas = await estimateGas({
