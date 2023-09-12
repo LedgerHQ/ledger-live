@@ -84,7 +84,7 @@ describe("EVM Family", () => {
                     uri: "http://nope.com",
                     type: "unsupported" as any,
                   },
-                },
+                } as any,
               },
             },
             {} as any,
