@@ -67,8 +67,4 @@ export default class SwapFormPage {
     await this.exchangeScrollView().scrollTo("bottom");
     return await tapByElement(this.exchangeButton());
   }
-
-  acceptTerms() {
-    return tapByElement(this.termsAcceptButton());
-  }
 }
