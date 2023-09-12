@@ -36,17 +36,12 @@ export const filterAvailableToAssets = (pairs: Pair[] | null | undefined, fromId
       toAssets.push(pair.to);
     }
   }
-  return toAssets;
+  return [...new Set(toAssets)];
 };
 
 export const toSelector = createSelector(
   (state: State) => state.swap.pairs,
-  pairs =>
-    memoize((fromId?: string) => {
-      const filteredAssets = filterAvailableToAssets(pairs, fromId);
-      const uniqueAssetList = [...new Set(filteredAssets)];
-      return uniqueAssetList;
-    }),
+  pairs => memoize((fromId?: string) => filterAvailableToAssets(pairs, fromId)),
 );
 
 // Put disabled accounts and subaccounts at the bottom of the list while preserving the parent/children position.
