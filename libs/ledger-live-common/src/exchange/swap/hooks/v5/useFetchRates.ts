@@ -13,7 +13,6 @@ type Props = {
   toCurrency: CryptoOrTokenCurrency | undefined;
   fromCurrencyAmount: BigNumber;
   onSuccess?(data: ExchangeRate[]): void;
-  onBeforeFetch?(): void;
 };
 
 export function useFetchRates({
@@ -21,7 +20,6 @@ export function useFetchRates({
   toCurrency,
   fromCurrencyAmount,
   onSuccess,
-  onBeforeFetch,
 }: Props) {
   const currencyFrom = fromCurrencyAccount ? getAccountCurrency(fromCurrencyAccount).id : undefined;
   const unitFrom = fromCurrencyAccount ? getAccountUnit(fromCurrencyAccount) : undefined;
@@ -44,6 +42,5 @@ export function useFetchRates({
     staleTimeout: 50000,
     enabled: !!toCurrencyId && !!currencyFrom && fromCurrencyAmount.gt(0) && !!unitFrom && !!unitTo,
     onSuccess,
-    onBeforeFetch,
   });
 }
