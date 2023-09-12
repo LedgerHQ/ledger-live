@@ -15,6 +15,7 @@ import { PortfolioRange } from "@ledgerhq/types-live";
 import PlaceholderChart from "~/renderer/components/PlaceholderChart";
 import Alert from "~/renderer/components/Alert";
 import { useTranslation } from "react-i18next";
+import { tokensWithUnsupportedGraph } from "~/helpers/tokensWithUnsupportedGraph";
 
 type Props = {
   counterValue: Currency;
@@ -95,10 +96,10 @@ export default function BalanceSummary({
       </Box>
 
       <Box px={5} ff="Inter" fontSize={4} color="palette.text.shade80" pt={6}>
-        {currency.type === "TokenCurrency" && currency.id === "vechain/vtho" ? (
+        {currency.type === "TokenCurrency" && tokensWithUnsupportedGraph.includes(currency.id) ? (
           <>
             <Alert type="secondary" noIcon={false}>
-              <span>{t("vechain.noGraphWarning")}</span>
+              <span>{t("graph.noGraphWarning")}</span>
             </Alert>
             <PlaceholderChart
               magnitude={counterValue.units[0].magnitude}

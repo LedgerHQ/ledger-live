@@ -1,6 +1,5 @@
-import { Account, TransactionCommon } from "@ledgerhq/types-live";
+import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { $Shape } from "utility-types";
 import { DEFAULT_GAS_COEFFICIENT, HEX_PREFIX, MAINNET_CHAIN_TAG } from "./constants";
 import { Transaction } from "./types";
 import { Transaction as ThorTransaction } from "thor-devkit";
@@ -14,6 +13,7 @@ import { VTHO_ADDRESS } from "./contracts/constants";
 import VIP180 from "./contracts/abis/VIP180";
 import { isValid } from "./utils/address-utils";
 import { getBlockRef } from "./api";
+import { InvalidAddress } from "@ledgerhq/errors";
 
 /**
  * Create an empty VET or VTHO transaction
@@ -64,6 +64,8 @@ export const prepareTransaction = async (
     } else {
       clauses = await calculateClausesVet(transaction, amount);
     }
+  } else {
+    throw new InvalidAddress();
   }
 
   const gas = await estimateGas({
