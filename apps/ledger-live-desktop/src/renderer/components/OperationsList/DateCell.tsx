@@ -28,17 +28,16 @@ class DateCell extends PureComponent<Props> {
     withAccount: false,
   };
 
-  // less than 5 minutes: loading spinner; more than 5 minutes: yellow warning icon
-  pendingLoadingIcon(isOlderThan5Min: boolean) {
-    if (isOlderThan5Min) {
+  pendingLoadingIcon(displayWarning: boolean) {
+    if (displayWarning) {
       return (
         <Box style={{ verticalAlign: "sub", display: "inline" }}>
           <WarningSolidMedium size={12} color={"#FFBD42"} />
         </Box>
       );
-    } else {
-      return <InfiniteLoader size={12} style={{ verticalAlign: "middle" }} />;
     }
+
+    return <InfiniteLoader size={12} style={{ verticalAlign: "middle" }} />;
   }
 
   render() {
@@ -59,7 +58,11 @@ class DateCell extends PureComponent<Props> {
           <Box fontSize={3} color="palette.text.shade80">
             <Box ff="Inter|SemiBold" fontSize={3} color="palette.text.shade80" style={ellipsis}>
               {
-                // display pending icon (less than 5 minutes: loading spinner; more than 5 minutes: yellow warning icon)
+                /**
+                 * display pending icon
+                 * less than ETHEREUM_STUCK_TRANSACTION_TIMEOUT: loading spinner
+                 * more than ETHEREUM_STUCK_TRANSACTION_TIMEOUT: yellow warning icon
+                 */
                 this.pendingLoadingIcon(
                   new Date().getTime() - operation.date.getTime() >
                     getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT"),
