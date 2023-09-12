@@ -291,7 +291,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   }
 
   if (allowRenamingRequested) {
-    return renderAllowManager({ modelId, type, isRenameRequest: true });
+    return renderAllowManager({ modelId, type, requestType: "rename" });
   }
 
   if (allowManagerRequested) {
