@@ -3,6 +3,7 @@ import { getSwapAPIError } from "..";
 import {
   SwapExchangeRateAmountTooHigh,
   SwapExchangeRateAmountTooLow,
+  SwapExchangeRateAmountTooLowOrTooHigh,
   SwapGenericAPIError,
 } from "../../../errors";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
@@ -18,7 +19,20 @@ export function inferError(response: ExchangeRateV5Errors, unitFrom: Unit): Erro
     !!response.maxAmountFrom &&
     !!response.amountRequested;
 
+  const isADexMinMaxError =
+    !("minAmountFrom" in response) &&
+    !("maxAmountFrom" in response) &&
+    "errorCode" in response &&
+    response.providerType === "DEX" &&
+    response.errorCode !== 300;
+
   const isAnErrorCodeMessageError = "errorCode" in response && "errorMessage" in response;
+
+  if (isADexMinMaxError) {
+    return new SwapExchangeRateAmountTooLowOrTooHigh(undefined, {
+      message: "",
+    });
+  }
 
   if (isAMinMaxError) {
     const isTooSmall = BigNumber(response.amountRequested).lt(response.minAmountFrom);
