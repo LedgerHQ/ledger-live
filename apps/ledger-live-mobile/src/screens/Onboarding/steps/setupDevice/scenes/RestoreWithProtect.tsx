@@ -5,7 +5,6 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Linking } from "react-native";
 import Button from "../../../../../components/wrappedUi/Button";
 import { TrackScreen } from "../../../../../analytics";
-import Touchable from "../../../../../components/Touchable";
 import QueuedDrawer from "../../../../../components/QueuedDrawer";
 import { urls } from "../../../../../config/urls";
 
@@ -98,11 +97,16 @@ const Next = ({ onNext }: { onNext: () => void }) => {
         />
       </QueuedDrawer>
       {restoreInfoDrawer?.enabled ? (
-        <Touchable onPress={onOpen}>
-          <Text textAlign="center" variant="large">
-            {t("onboarding.stepProtect.extraInfo.tooltip")}
-          </Text>
-        </Touchable>
+        <Button
+          type="shade"
+          outline
+          size="large"
+          onPress={onOpen}
+          event={"button_clicked"}
+          eventProperties={{ button: "Can't see recover" }}
+        >
+          <Text variant="small">{t("onboarding.stepProtect.extraInfo.tooltip")}</Text>
+        </Button>
       ) : null}
     </>
   );
