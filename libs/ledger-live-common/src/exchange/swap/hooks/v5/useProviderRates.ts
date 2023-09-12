@@ -7,7 +7,6 @@ type Props = {
   fromState: SwapSelectorStateType;
   toState: SwapSelectorStateType;
   onNoRates?: OnNoRatesCallback;
-  onBeforeFetchRates?(): void;
   setExchangeRate?: SetExchangeRateCallback | null | undefined;
 };
 
@@ -22,13 +21,11 @@ export function useProviderRates({
   toState,
   onNoRates,
   setExchangeRate,
-  onBeforeFetchRates,
 }: Props): UseProviderRatesResponse {
   const { data, isLoading, error, refetch } = useFetchRates({
     fromCurrencyAccount: fromState.account,
     toCurrency: toState.currency,
     fromCurrencyAmount: fromState.amount ?? BigNumber(0),
-    onBeforeFetch: onBeforeFetchRates,
     onSuccess(data) {
       if (data.length === 0) {
         onNoRates?.({ fromState, toState });
