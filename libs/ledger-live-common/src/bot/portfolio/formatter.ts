@@ -292,21 +292,23 @@ function formatSize(bytes: number | undefined): string | undefined {
 }
 
 function formatDetails(
-  details: { [url: string]: NetworkAuditDetails } | undefined,
+  details: { [endpoint: string]: NetworkAuditDetails } | undefined,
 ): string | undefined {
   if (!details) return;
   let report = "";
 
   try {
-    for (const url of Object.keys(details)) {
-      const urlDetails = details[url];
-      const split = url.split("/");
-      const endpoint = split[split.length - 1];
-      report += `<details><summary>${endpoint}</summary>${urlDetails.calls} calls, ${formatTime(
-        urlDetails.duration,
-      )}, ${formatSize(urlDetails.size)}</details>`;
+    for (const endpoint of Object.keys(details)) {
+      const endpointDetails = details[endpoint];
+      report += `<details><summary>${endpoint}</summary>${endpointDetails.calls} calls (${
+        endpointDetails.duplicatedCalls
+      } duplicated), ${formatTime(endpointDetails.duration)}, ${formatSize(
+        endpointDetails.size,
+      )}</details>`;
     }
-  } catch (e) {}
+  } catch (e) {
+    console.log(e);
+  }
   return report;
 }
 

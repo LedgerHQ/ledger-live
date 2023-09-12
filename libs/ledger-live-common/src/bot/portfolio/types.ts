@@ -10,8 +10,10 @@ export type NetworkAuditResult = {
 
 export type NetworkAuditDetails = {
   calls: number;
+  duplicatedCalls: number;
   size: number;
   duration: number;
+  urls: string[];
 };
 
 export type AuditResult = {

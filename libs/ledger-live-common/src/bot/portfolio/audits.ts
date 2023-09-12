@@ -115,7 +115,7 @@ export class NetworkAudit {
   _totalCount = 0;
   _totalResponseSize = 0;
   _totalDuplicateRequests = 0;
-  _urlsDetails = {};
+  _urlsDetails: { [endpoint: string]: NetworkAuditDetails } = {};
 
   start(): void {
     this._obs = new PerformanceObserver(this.onPerformanceEntry);
@@ -132,6 +132,7 @@ export class NetworkAudit {
   onPerformanceEntry: PerformanceObserverCallback = (items, _observer) => {
     const entries = items.getEntries();
     console.log(entries.length + "entries");
+    const urlsSeen = new Set();
     for (const entry of entries) {
       if (entry.entryType === "http") {
         console.log("http entry");
@@ -145,20 +146,30 @@ export class NetworkAudit {
         if (res && req) {
           console.log("res req)");
           const { url } = req;
-          if (this._urlsDetails[url] == null) {
-            this._urlsDetails[url] = {
+          const split = url.split("/");
+          const endpoint = split[split.length - 1];
+          if (this._urlsDetails[endpoint] == null) {
+            this._urlsDetails[endpoint] = {
               calls: 0,
               duration: 0,
               size: 0,
+              urls: [url],
+              duplicatedCalls: 0,
             };
-            console.log("created url" + url);
-          } else {
-            this._totalDuplicateRequests = (this._totalDuplicateRequests || 0) + 1;
           }
 
-          const details = this._urlsDetails[url] as NetworkAuditDetails;
+          if (urlsSeen.has(url)) {
+            this._totalDuplicateRequests = (this._totalDuplicateRequests || 0) + 1;
+          } else {
+            urlsSeen.add(url);
+          }
+
+          const details = this._urlsDetails[endpoint];
           details.calls += 1;
           details.duration += entry.duration;
+          if (details.urls.includes(url)) {
+            details.duplicatedCalls += 1;
+          }
 
           const { headers } = res;
 
