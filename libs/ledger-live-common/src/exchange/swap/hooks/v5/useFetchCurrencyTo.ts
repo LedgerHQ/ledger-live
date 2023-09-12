@@ -8,6 +8,7 @@ import { useFeature } from "../../../../featureFlags";
 
 type Props = {
   fromCurrencyAccount: AccountLike | undefined;
+  additionalCoinsFlag?: boolean;
 };
 
 export function useFetchCurrencyTo({ fromCurrencyAccount }: Props) {

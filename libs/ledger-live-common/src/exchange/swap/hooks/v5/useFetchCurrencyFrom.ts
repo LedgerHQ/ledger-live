@@ -5,11 +5,12 @@ import { fetchCurrencyFrom } from "../../api/v5/fetchCurrencyFrom";
 
 type Props = {
   currencyTo?: string;
+  additionalCoinsFlag?: boolean;
   enabled?: boolean;
 };
 
 export function useFetchCurrencyFrom({ currencyTo, enabled }: Props = {}) {
-  const fetchAdditionalCoins = useFeature("fetchAdditionalCoins")
+  const fetchAdditionalCoins = useFeature("fetchAdditionalCoins");
   return useAPI({
     queryFn: fetchCurrencyFrom,
     queryProps: {
