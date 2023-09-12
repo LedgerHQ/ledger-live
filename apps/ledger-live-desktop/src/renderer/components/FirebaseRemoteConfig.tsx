@@ -53,6 +53,7 @@ export const FirebaseRemoteConfigProvider = ({ children }: Props): JSX.Element |
           ...formatDefaultFeatures(DEFAULT_FEATURES),
         };
         await fetchAndActivate(remoteConfig);
+        console.log("Firebase remote config fetched and activated");
         setConfig(remoteConfig);
       } catch (error) {
         console.error(`Failed to fetch Firebase remote config with error: ${error}`);
