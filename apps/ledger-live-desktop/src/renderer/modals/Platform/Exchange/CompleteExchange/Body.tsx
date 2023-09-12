@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { BigNumber } from "bignumber.js";
 import { useDispatch } from "react-redux";
 import { Exchange, ExchangeSwap } from "@ledgerhq/live-common/exchange/platform/types";
 import { Exchange as SwapExchange } from "@ledgerhq/live-common/exchange/swap/types";
 import { getUpdateAccountActionParamsAfterSwap } from "@ledgerhq/live-common/exchange/swap/getUpdateAccountActionParamsAfterSwap";
+import { convertParametersToValidFormat } from "@ledgerhq/live-common/exchange/swap/webApp/index";
 import { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -12,7 +12,6 @@ import { ModalBody } from "~/renderer/components/Modal";
 import Box from "~/renderer/components/Box";
 import { useBroadcast } from "~/renderer/hooks/useBroadcast";
 import { BodyContent } from "./BodyContent";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 
 export type Data = {
   provider: string;
@@ -72,12 +71,13 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
       broadcast(signedOperation).then(operation => {
         // Save swap history
         if (swapId && rate && toAccount) {
-          const result = { operation, swapId };
-          const unitFrom = getAccountUnit(account);
-          const unitTo = getAccountUnit(toAccount);
-          const magnitudeAwareRate = new BigNumber(rate).div(
-            new BigNumber(10).pow(unitFrom.magnitude - unitTo.magnitude),
-          );
+          const { result, magnitudeAwareRate } = convertParametersToValidFormat({
+            operation,
+            swapId,
+            fromAccount: account,
+            toAccount,
+            rate,
+          });
           const params = getUpdateAccountActionParamsAfterSwap({
             result,
             exchange: exchange as SwapExchange,
@@ -85,6 +85,7 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
             magnitudeAwareRate,
             provider,
           });
+          if (!params.length) return;
           const dispatchAction = updateAccountWithUpdater(...params);
           dispatch(dispatchAction);
         }

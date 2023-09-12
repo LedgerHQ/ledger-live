@@ -184,7 +184,7 @@ const SwapForm = () => {
         },
       });
     }
-  }, [swapTransaction.swap, swapTransaction.transaction, exchangeRate, history, provider]);
+  }, [swapTransaction, exchangeRate, history, provider]);
 
   useEffect(() => {
     if (swapTransaction.swap.rates.status === "success") {

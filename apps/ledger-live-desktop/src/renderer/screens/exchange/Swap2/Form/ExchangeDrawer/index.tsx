@@ -99,6 +99,7 @@ export default function ExchangeDrawer({ swapTransaction, exchangeRate, onComple
         magnitudeAwareRate,
         provider,
       });
+      if (!params.length) return;
       const dispatchAction = updateAccountWithUpdater(...params);
       dispatch(dispatchAction);
       setResult(result);

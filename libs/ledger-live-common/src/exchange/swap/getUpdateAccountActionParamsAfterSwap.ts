@@ -20,7 +20,7 @@ export const getUpdateAccountActionParamsAfterSwap = ({
   transaction?: Transaction | null;
   magnitudeAwareRate: BigNumber;
   provider: string;
-}) => {
+}): [string, (account: Account) => Account] | [] => {
   const { operation, swapId } = result;
 
   /**
@@ -42,7 +42,7 @@ export const getUpdateAccountActionParamsAfterSwap = ({
 
   const mainAccount =
     exchange.fromAccount && getMainAccount(exchange.fromAccount, exchange.fromParentAccount);
-  if (!mainAccount) return;
+  if (!mainAccount) return [];
   const accountUpdater = (account: Account) => {
     if (!transaction) return account;
     const accountWithUpdatedHistory = addToSwapHistory({
