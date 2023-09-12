@@ -27,7 +27,9 @@ import { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { TranslatedError } from "~/renderer/components/TranslatedError/TranslatedError";
 import { WarningSolidMedium } from "@ledgerhq/react-ui/assets/icons";
-import { useSwapableAccounts } from "../hooks/useSwapableAccounts";
+import { useSwapableAccounts } from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import { useSelector } from "react-redux";
+import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 
 const SwapStatusContainer = styled.div<{ isError: boolean }>(
   ({ theme: { space, colors }, isError }) => `
@@ -121,7 +123,8 @@ function FromRow({
   updateSelectedRate,
 }: Props) {
   const swapDefaultTrack = useGetSwapTrackingProperties();
-  const accounts = useSwapableAccounts();
+  const flattenedAccounts = useSelector(flattenAccountsSelector);
+  const accounts = useSwapableAccounts({ accounts: flattenedAccounts });
   const unit = fromAccount && getAccountUnit(fromAccount);
   const { t } = useTranslation();
   usePickDefaultAccount(accounts, fromAccount, setFromAccount);

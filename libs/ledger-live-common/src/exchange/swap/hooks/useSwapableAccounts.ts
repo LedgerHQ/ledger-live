@@ -1,13 +1,16 @@
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
-import { useFetchCurrencyFrom } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { useMemo } from "react";
-import { useSelector } from "react-redux";
-import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
+import { AccountLike } from "@ledgerhq/types-live";
 
-export function useSwapableAccounts() {
+import { useFetchCurrencyFrom } from "./v5";
+
+type Props = {
+  accounts: AccountLike[];
+};
+
+export function useSwapableAccounts({ accounts }: Props) {
   const { data: currenciesFrom } = useFetchCurrencyFrom();
 
-  const accounts = useSelector(flattenAccountsSelector);
   return useMemo(
     () =>
       accounts.map(account => {
