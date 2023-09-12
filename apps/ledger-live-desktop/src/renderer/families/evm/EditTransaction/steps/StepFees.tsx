@@ -1,6 +1,6 @@
 import { getTransactionByHash } from "@ledgerhq/coin-evm/api/transaction/index";
 import { getEstimatedFees } from "@ledgerhq/coin-evm/logic";
-import { NotEnoughGas, TransactionHasBeenValidatedError } from "@ledgerhq/errors";
+import { AmountRequired, NotEnoughGas, TransactionHasBeenValidatedError } from "@ledgerhq/errors";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { NotEnoughNftOwned, NotOwnedNft } from "@ledgerhq/live-common/errors";
 import BigNumber from "bignumber.js";
@@ -138,12 +138,15 @@ export const StepFeesFooter = ({
     }
   });
 
+  // FIXME: use error.name instead of instanceof to filter errors(?)
+  // discard "AmountRequired" (for cancel and speedup since one can discide to speedup a cancel)
   // exclude "NotOwnedNft" and "NotEnoughNftOwned" error if it's a nft speedup operation
   let errorCount = Object.keys(errors).length;
   if (
     errors.amount &&
     ((errors.amount as Error) instanceof NotOwnedNft ||
-      (errors.amount as Error) instanceof NotEnoughNftOwned)
+      (errors.amount as Error) instanceof NotEnoughNftOwned ||
+      (errors.amount as Error) instanceof AmountRequired)
   ) {
     errorCount = errorCount - 1;
   }
