@@ -33,6 +33,7 @@ export const FirebaseRemoteConfigProvider = ({ children }: Props): JSX.Element |
   const [loaded, setLoaded] = useState<boolean>(false);
 
   useEffect(() => {
+    console.log("FirebaseRemoteConfigProvider");
     try {
       const firebaseConfig = getFirebaseConfig();
       initializeApp(firebaseConfig);
@@ -40,7 +41,7 @@ export const FirebaseRemoteConfigProvider = ({ children }: Props): JSX.Element |
       console.error(`Failed to initialize Firebase SDK with error: ${error}`);
       setLoaded(true);
     }
-
+    console.log("fetch FirebaseRemoteConfigProvider");
     const fetchConfig = async () => {
       try {
         const remoteConfig = getRemoteConfig();
