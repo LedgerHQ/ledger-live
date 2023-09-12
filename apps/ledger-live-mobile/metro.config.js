@@ -4,14 +4,18 @@
  *
  * @format
  */
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable no-console */
 
 const extraConfig = require("metro-extra-config");
-
+const { getDefaultConfig, mergeConfig } = require("@react-native/metro-config");
 // Dependencies that are forcefully resolved from the LLM folder.
 const forcedDependencies = ["react-redux", "react-native", "react-native-svg", "styled-components"];
 
 const specificConfig = {
   resolver: {
+    unstable_enableSymlinks: true,
+    unstable_enablePackageExports: true,
     extraNodeModules: {
       ...require("node-libs-react-native"),
       fs: require.resolve("react-native-level-fs"),
@@ -41,4 +45,7 @@ const extraConfigOptions = {
   },
 };
 
-module.exports = extraConfig(extraConfigOptions, specificConfig);
+module.exports = module.exports = mergeConfig(
+  getDefaultConfig(__dirname),
+  extraConfig(extraConfigOptions, specificConfig),
+);

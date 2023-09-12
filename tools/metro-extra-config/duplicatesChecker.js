@@ -8,11 +8,7 @@ module.exports = () => {
   const modulesMap = new Map();
 
   return ({ context, moduleName, resolution }) => {
-    if (
-      !resolution?.filePath ||
-      moduleName.startsWith(".") ||
-      path.isAbsolute("/")
-    ) {
+    if (!resolution?.filePath || moduleName.startsWith(".") || path.isAbsolute("/")) {
       return;
     }
     const { originModulePath } = context;
@@ -27,7 +23,7 @@ module.exports = () => {
             `      From: ${context.originModulePath}\n` +
             `            -----------------------------------------\n` +
             `  Previous: ${bold(storedResolution?.filePath)}\n` +
-            `      From: ${storedResolution?.originModulePath}\n`
+            `      From: ${storedResolution?.originModulePath}\n`,
         );
       }
     } else {

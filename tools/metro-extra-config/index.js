@@ -4,19 +4,18 @@
  *
  * @format
  */
-/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable no-console */
 
 const path = require("path");
-const defaultSourceExts =
-  require("metro-config/src/defaults/defaults").sourceExts;
+const defaultSourceExts = require("metro-config/src/defaults/defaults").sourceExts;
 const { makeMetroConfig } = require("@rnx-kit/metro-config");
 const MetroSymlinksResolver = require("@rnx-kit/metro-resolver-symlinks");
-const resolve = require("metro-resolver").resolve;
+// const resolve = require("metro-resolver").resolve;
 
 function forceDependency(moduleName, filters, nodeModulesPaths) {
   const matches = filters.some(
-    (filter) => moduleName === filter || moduleName.startsWith(`${filter}/`)
+    filter => moduleName === filter || moduleName.startsWith(`${filter}/`),
   );
   if (matches) {
     const resolution = require.resolve(moduleName, {
@@ -56,22 +55,13 @@ module.exports = function (options = {}, config = {}) {
   const nodeModulesPaths = [
     ...(projectRoot ? [path.resolve(projectRoot, "node_modules")] : []),
     path.resolve(__dirname, "..", "..", "node_modules"),
-    path.resolve(
-      __dirname,
-      "..",
-      "..",
-      "node_modules",
-      ".pnpm",
-      "node_modules"
-    ),
+    path.resolve(__dirname, "..", "..", "node_modules", ".pnpm", "node_modules"),
   ];
 
   function checkGlobalPackage(resolution) {
     if (
       globalPackagesGuard &&
-      path
-        .relative(path.resolve(__dirname, "..", ".."), resolution)
-        .startsWith("..")
+      path.relative(path.resolve(__dirname, "..", ".."), resolution).startsWith("..")
     ) {
       throw new Error("Global package resolution is not allowed", resolution);
     }
@@ -103,11 +93,7 @@ module.exports = function (options = {}, config = {}) {
       resolveRequest: (context, moduleName, platform) => {
         try {
           if (earlyResolver) {
-            const earlyResolution = earlyResolver(
-              context,
-              moduleName,
-              platform
-            );
+            const earlyResolution = earlyResolver(context, moduleName, platform);
             if (earlyResolution) return earlyResolution;
           }
           // pnpm hoists wrong versions when using the --frozen-lockfile argument.
@@ -116,7 +102,7 @@ module.exports = function (options = {}, config = {}) {
             const forcedResolution = forceDependency(
               moduleName,
               forcedDependencies,
-              nodeModulesPaths
+              nodeModulesPaths,
             );
             if (forcedResolution) return forcedResolution;
           } catch (_) {
@@ -151,10 +137,7 @@ module.exports = function (options = {}, config = {}) {
             // Another common cause of failure is when importing a nodejs stdlib module.
             // In that case we fallback to the good old require.resolve function.
             const resolution = require.resolve(moduleName, {
-              paths: [
-                path.dirname(context.originModulePath),
-                ...nodeModulesPaths,
-              ],
+              paths: [path.dirname(context.originModulePath), ...nodeModulesPaths],
             });
             if (callbackNodeResolution) {
               callbackNodeResolution({
