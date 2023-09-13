@@ -6,6 +6,7 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { getEditTransactionStatus } from "@ledgerhq/live-common/families/evm/getUpdateTransactionPatch";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { isEditableOperation } from "@ledgerhq/live-common/operation";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
@@ -31,7 +32,7 @@ import { getCurrentDevice } from "~/renderer/reducers/devices";
 import StepFees, { StepFeesFooter } from "./steps/StepFees";
 import StepMethod, { StepMethodFooter } from "./steps/StepMethod";
 import { StepSummaryFooter } from "./steps/StepSummaryFooter";
-import { St, StepId } from "./types";
+import { St, StepId, StepProps } from "./types";
 
 export type Data = {
   account: AccountLike | undefined | null;
@@ -60,6 +61,21 @@ type StateProps = {
 };
 
 type Props = OwnProps & StateProps;
+
+/**
+ * Method used to dynamically change the title of the stepper depending on the
+ * editType selected
+ */
+const getStepTitleKey = (
+  stepId: StepId,
+  editType?: StepProps["editType"],
+): "operation.edit.title" | "operation.edit.cancel.title" | "operation.edit.speedUp.title" => {
+  if (!editType || stepId === "method") {
+    return "operation.edit.title";
+  }
+
+  return editType === "cancel" ? "operation.edit.cancel.title" : "operation.edit.speedUp.title";
+};
 
 const createSteps = (): St[] => [
   {
@@ -134,7 +150,7 @@ const Body = ({
     status,
     bridgeError,
     bridgePending,
-  } = useBridgeTransaction(() => {
+  } = useBridgeTransaction<Transaction>(() => {
     const parentAccount = params && params.parentAccount;
     const account = (params && params.account) || accounts[0];
     return {
@@ -146,6 +162,7 @@ const Body = ({
 
   invariant(account, "account required");
   invariant(transactionToUpdate, "transactionToUpdate required");
+  invariant(transaction, "original transaction required");
   const [optimisticOperation, setOptimisticOperation] = useState<Operation | null>(null);
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
@@ -187,16 +204,18 @@ const Body = ({
 
   const feeValue = getEstimatedFees(transactionToUpdate);
 
+  // ----
+  // TODO: create fonction for this and move to LLC or coin-evm
   const haveFundToCancel = mainAccount.balance.gt(
     feeValue.times(1.1).integerValue(BigNumber.ROUND_CEIL),
   );
-
   const haveFundToSpeedup = mainAccount.balance.gt(
     feeValue
       .times(1.1)
       .plus(account.type === "Account" ? transactionToUpdate.amount : 0)
       .integerValue(BigNumber.ROUND_CEIL),
   );
+  // ----
 
   // log account and fees info
   logger.log(`main account address: ${mainAccount.freshAddress}`);
@@ -204,8 +223,7 @@ const Body = ({
   logger.log(`feeValue: ${feeValue.toFixed()}`);
   logger.log(`pending transaction amount: ${transactionToUpdate.amount.toFixed()}`);
 
-  let isOldestEditableOperation = true;
-  mainAccount.pendingOperations.forEach((operation: Operation) => {
+  const isOldestEditableOperation = mainAccount.pendingOperations.reduce((isOldest, operation) => {
     if (isEditableOperation(account, operation)) {
       if (
         operation.transactionSequenceNumber !== undefined &&
@@ -213,19 +231,32 @@ const Body = ({
         transactionToUpdate.nonce !== undefined &&
         operation.transactionSequenceNumber < transactionToUpdate.nonce
       ) {
-        isOldestEditableOperation = false;
+        return false;
       }
     }
-  });
 
-  // FIXME: should be enmu (or TS type) instead of string
-  const [editType, setEditType] = useState(
-    isOldestEditableOperation && haveFundToSpeedup ? "speedup" : haveFundToCancel ? "cancel" : "",
+    return isOldest;
+  }, true);
+
+  const [editType, setEditType] = useState<StepProps["editType"]>(
+    isOldestEditableOperation && haveFundToSpeedup
+      ? "speedup"
+      : haveFundToCancel
+      ? "cancel"
+      : undefined,
   );
   const handleSetEditType = useCallback(editType => setEditType(editType), []);
 
+  const updatedStatus = getEditTransactionStatus({
+    editType,
+    transaction,
+    transactionToUpdate,
+    status,
+  });
+
+  // TODO: this should be properly types (use StepProps from "./types")
   const stepperProps = {
-    title: t("operation.edit.title"),
+    title: t(getStepTitleKey(stepId, editType)),
     stepId,
     steps,
     device,
@@ -236,7 +267,7 @@ const Body = ({
     currencyName,
     hideBreadcrumb: false,
     error,
-    status,
+    status: updatedStatus,
     bridgePending,
     optimisticOperation,
     editType,

@@ -6,6 +6,7 @@ import { Step } from "~/renderer/components/Stepper";
 import { Transaction, TransactionStatus } from "@ledgerhq/coin-evm/types/index";
 
 export type StepId = "method" | "fees" | "summary" | "device" | "confirmation";
+export type EditType = "cancel" | "speedup";
 
 export type StepProps = {
   device: Device | undefined | null;
@@ -19,7 +20,7 @@ export type StepProps = {
   signed: boolean;
   currencyName: string | undefined | null;
   transactionHash: string;
-  editType: "cancel" | "speedup" | undefined;
+  editType?: EditType;
   haveFundToSpeedup: boolean;
   haveFundToCancel: boolean;
   isOldestEditableOperation: boolean;

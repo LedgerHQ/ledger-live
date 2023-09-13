@@ -3,7 +3,7 @@ import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
 import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { getUpdateTransactionPatch } from "@ledgerhq/live-common/families/evm/getUpdateTransactionPatch";
+import { getEditTransactionPatch } from "@ledgerhq/live-common/families/evm/getUpdateTransactionPatch";
 import { Flex } from "@ledgerhq/react-ui";
 import { AccountBridge } from "@ledgerhq/types-live";
 import invariant from "invariant";
@@ -44,8 +44,27 @@ const Description = styled(Box)<{ selected: boolean }>`
   width: 400px;
 `;
 
+const getSpeedUpDescriptionKey = (
+  haveFundToSpeedup: boolean,
+  isOldestEditableOperation: boolean,
+):
+  | "operation.edit.speedUp.description"
+  | "operation.edit.error.notEnoughFundsToSpeedup"
+  | "operation.edit.error.notlowestNonceToSpeedup" => {
+  if (!haveFundToSpeedup) {
+    return "operation.edit.error.notEnoughFundsToSpeedup";
+  }
+
+  if (!isOldestEditableOperation) {
+    return "operation.edit.error.notlowestNonceToSpeedup";
+  }
+
+  return "operation.edit.speedUp.description";
+};
+
 const StepMethod = ({
   account,
+  parentAccount,
   editType,
   haveFundToSpeedup,
   haveFundToCancel,
@@ -54,22 +73,23 @@ const StepMethod = ({
   t,
 }: StepProps) => {
   invariant(account, "account required");
+  const mainAccount = getMainAccount(account, parentAccount);
   const isCancel = editType === "cancel";
   const isSpeedup = editType === "speedup";
-  const disableSpeedup = !haveFundToSpeedup || !isOldestEditableOperation;
-  const disableCancel = !haveFundToCancel;
+  const canSpeedup = haveFundToSpeedup && isOldestEditableOperation;
+  const canCancel = haveFundToCancel;
 
   const handleSpeedupClick = useCallback(() => {
-    if (!disableSpeedup) {
+    if (canSpeedup) {
       setEditType("speedup");
     }
-  }, [disableSpeedup, setEditType]);
+  }, [canSpeedup, setEditType]);
 
   const handleCancelClick = useCallback(() => {
-    if (!disableCancel) {
+    if (canCancel) {
       setEditType("cancel");
     }
-  }, [disableCancel, setEditType]);
+  }, [canCancel, setEditType]);
 
   const handleLearnMoreClick = useCallback(() => {
     openURL(urls.editEthTx.learnMore);
@@ -79,7 +99,7 @@ const StepMethod = ({
     <Box flow={4}>
       <EditTypeWrapper key={0} selected={isSpeedup} onClick={handleSpeedupClick}>
         <Flex flexDirection="row" justifyContent="left" alignItems="center">
-          <CheckBox isChecked={isSpeedup} disabled={disableSpeedup} />
+          <CheckBox isChecked={isSpeedup} disabled={!canSpeedup} />
           <Box>
             <EditTypeHeader horizontal alignItems="center" selected={isSpeedup}>
               <Text fontSize={14} ff="Inter|SemiBold" uppercase ml={1}>
@@ -88,13 +108,9 @@ const StepMethod = ({
             </EditTypeHeader>
             <Description selected={editType === "speedup"}>
               <Text ff="Inter|Medium" fontSize={12}>
-                {haveFundToSpeedup && isOldestEditableOperation ? (
-                  <Trans i18nKey={"operation.edit.speedUp.description"} />
-                ) : isOldestEditableOperation ? (
-                  <Trans i18nKey={"operation.edit.error.notEnoughFundsToSpeedup"} />
-                ) : (
-                  <Trans i18nKey={"operation.edit.error.notlowestNonceToSpeedup"} />
-                )}
+                <Trans
+                  i18nKey={getSpeedUpDescriptionKey(haveFundToSpeedup, isOldestEditableOperation)}
+                />
               </Text>
             </Description>
           </Box>
@@ -102,7 +118,7 @@ const StepMethod = ({
       </EditTypeWrapper>
       <EditTypeWrapper key={1} selected={isCancel} onClick={handleCancelClick}>
         <Flex flexDirection="row" justifyContent="left" alignItems="center">
-          <CheckBox isChecked={editType === "cancel"} disabled={disableCancel} />
+          <CheckBox isChecked={editType === "cancel"} disabled={!canCancel} />
           <Box>
             <EditTypeHeader horizontal alignItems="center" selected={isCancel}>
               <Text fontSize={14} ff="Inter|SemiBold" uppercase ml={1}>
@@ -111,14 +127,12 @@ const StepMethod = ({
             </EditTypeHeader>
             <Description selected={isCancel}>
               <Text ff="Inter|Medium" fontSize={12}>
-                {haveFundToCancel ? (
+                {canCancel ? (
                   <Trans
                     i18nKey={"operation.edit.cancel.description"}
                     values={{
-                      ticker:
-                        account.type === "TokenAccount"
-                          ? account.token.ticker
-                          : account.currency.ticker,
+                      // note: ticker is always the main currency ticker
+                      ticker: mainAccount.currency.ticker,
                     }}
                   />
                 ) : (
@@ -141,22 +155,24 @@ const StepMethod = ({
   );
 };
 
-export const StepMethodFooter: React.FC<StepProps> = (props: StepProps) => {
+export const StepMethodFooter: React.FC<StepProps> = ({
+  editType,
+  account,
+  parentAccount,
+  transaction,
+  transactionToUpdate,
+  transactionHash,
+  haveFundToSpeedup,
+  haveFundToCancel,
+  isOldestEditableOperation,
+  t,
+  updateTransaction,
+  transitionTo,
+}: StepProps) => {
   const [transactionHasBeenValidated, setTransactionHasBeenValidated] = useState(false);
-  const {
-    editType,
-    account,
-    parentAccount,
-    transaction,
-    transactionToUpdate,
-    transactionHash,
-    haveFundToSpeedup,
-    haveFundToCancel,
-    isOldestEditableOperation,
-    t,
-    updateTransaction,
-    transitionTo,
-  } = props;
+
+  const canSpeedup = haveFundToSpeedup && isOldestEditableOperation;
+  const canCancel = haveFundToCancel;
 
   const handleContinueClick = async () => {
     invariant(account, "account required");
@@ -167,7 +183,7 @@ export const StepMethodFooter: React.FC<StepProps> = (props: StepProps) => {
     const bridge: AccountBridge<EvmTransaction> = getAccountBridge(account, parentAccount);
     const mainAccount = getMainAccount(account, parentAccount);
 
-    const patch = await getUpdateTransactionPatch({
+    const patch = await getEditTransactionPatch({
       account: mainAccount,
       transaction: transactionToUpdate,
       editType,
@@ -184,6 +200,9 @@ export const StepMethodFooter: React.FC<StepProps> = (props: StepProps) => {
 
   const mainAccount = getMainAccount(account, parentAccount);
 
+  // TODO: should be in a useEffect with a setInterval to regularly check the transaction
+  // could even be moved in the body to avoid having to check it in every step
+  // and also avoid to pass the transactionHash to every step
   getTransactionByHash(mainAccount.currency, transactionHash).then(tx => {
     if (tx?.confirmations) {
       setTransactionHasBeenValidated(true);
@@ -198,10 +217,7 @@ export const StepMethodFooter: React.FC<StepProps> = (props: StepProps) => {
       <Button
         id={"send-recipient-continue-button"}
         primary
-        disabled={
-          transactionHasBeenValidated ||
-          ((!haveFundToSpeedup || !isOldestEditableOperation) && !haveFundToCancel)
-        } // continue button is disable if both "speedup" and "cancel" are not possible
+        disabled={transactionHasBeenValidated || (!canSpeedup && !canCancel)}
         onClick={handleContinueClick}
       >
         {t("common.continue")}

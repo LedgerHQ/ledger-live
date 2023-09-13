@@ -11,8 +11,7 @@ type Props = {
   parentAccount: Account | undefined | null;
 };
 
-const EditStuckTransactionPanelBodyHeader = (props: Props) => {
-  const { account, parentAccount } = props;
+const EditStuckTransactionPanelBodyHeader = ({ account, parentAccount }: Props) => {
   const editEthTx = useFeature("editEthTx");
   if (!editEthTx?.enabled) {
     return null;
