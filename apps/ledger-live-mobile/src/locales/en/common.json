@@ -6432,8 +6432,8 @@
       }
     },
     "getFundsModal": {
-      "text": "Get {{coin}} to stake for rewards*",
-      "description": "Buy, swap or receive {{coin}} directly to your Ledger using Ledger Live."
+      "text": "Get {{coin}} to stake",
+      "description": "Buy, swap or receive crypto directly to your Ledger using Ledger Live."
     }
   }
 }
