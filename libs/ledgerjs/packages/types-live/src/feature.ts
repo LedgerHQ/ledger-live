@@ -82,9 +82,7 @@ export type FeatureId =
   | "discover"
   | "protectServicesDiscoverDesktop"
   | "transactionsAlerts"
-  | "listAppsV2"
-  | "cexDepositEntryPointsDesktop"
-  | "cexDepositEntryPointsMobile";
+  | "listAppsV2";
 
 /**  We use objects instead of direct booleans for potential future improvements
 like feature versioning etc */
