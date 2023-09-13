@@ -22,11 +22,11 @@ const useText = (entryPoint: "noFunds" | "getFunds", currency: Currency) => {
   const textMap = {
     noFunds: {
       title: t("stake.noFundsModal.text", { coin: currency.ticker }),
-      body: t("stake.noFundsModal.description", { coin: currency.name }),
+      body: t("stake.noFundsModal.description"),
     },
     getFunds: {
       title: t("stake.getFundsModal.text", { coin: currency.ticker }),
-      body: t("stake.getFundsModal.description", { coin: currency.name }),
+      body: undefined,
     },
   };
 
