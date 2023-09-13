@@ -2,7 +2,7 @@ import { test as base, Page, ElectronApplication, _electron as electron } from "
 import * as fs from "fs";
 import * as path from "path";
 import * as crypto from "crypto";
-import { DefaultFeatures } from "@ledgerhq/types-live";
+import { OptionalFeatureMap } from "@ledgerhq/types-live";
 import { responseLogfilePath } from "../utils/networkResponseLogger";
 
 export function generateUUID(): string {
@@ -19,7 +19,7 @@ type TestFixtures = {
   env: Record<string, string>;
   electronApp: ElectronApplication;
   page: Page;
-  featureFlags: DefaultFeatures;
+  featureFlags: OptionalFeatureMap;
   recordTestNamesForApiResponseLogging: void;
 };
 

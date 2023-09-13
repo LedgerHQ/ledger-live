@@ -5,7 +5,7 @@ import Button from "~/renderer/components/ButtonV3";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import {
-  defaultFeatures,
+  DEFAULT_FEATURES,
   groupedFeatures,
   useFeature,
   useFeatureFlags,
@@ -44,7 +44,7 @@ export const FeatureFlagContent = withV3StyleProvider((props: { expanded?: boole
   const [focusedGroupName, setFocusedGroupName] = useState<string | undefined>();
 
   const featureFlags = useMemo(() => {
-    const featureKeys = Object.keys(defaultFeatures);
+    const featureKeys = Object.keys(DEFAULT_FEATURES);
     if (searchInputTrimmed && !featureKeys.includes(searchInputTrimmed)) {
       const isHiddenFeature = isFeature(searchInputTrimmed);
 

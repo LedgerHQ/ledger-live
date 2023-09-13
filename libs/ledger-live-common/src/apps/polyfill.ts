@@ -159,7 +159,12 @@ export const calculateDependencies = (): void => {
   listCryptoCurrencies(true, true).forEach((currency: CryptoCurrency) => {
     if (!currency.managerAppName) return; // no app for this currency
 
-    const family = findCryptoCurrencyById(currency.family);
+    /**
+     * For currencies from the evm family that use a specific app (other than the Ethereum app),
+     * the currency ID of the parent app is ethereum and not the family name.
+     */
+    const parentCurrencyId = currency.family === "evm" ? "ethereum" : currency.family;
+    const family = findCryptoCurrencyById(parentCurrencyId);
 
     if (!family || !family.managerAppName) return; // no dep
     if (family.managerAppName === currency.managerAppName) return; // same app

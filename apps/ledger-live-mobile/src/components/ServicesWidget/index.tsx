@@ -7,7 +7,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import {
   useAlreadySubscribedURI,
   useLearnMoreURI,
-} from "@ledgerhq/live-common/hooks/recoverFeatueFlag";
+} from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import NewProtectState from "./Protect/NewProtectState";
 import Touchable from "../Touchable";
 

@@ -21,7 +21,7 @@
   "types": "lib/index.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "bignumber.js": "^9.1.1",
+    "bignumber.js": "^9.1.2",
     "rxjs": "6"
   },
   "devDependencies": {

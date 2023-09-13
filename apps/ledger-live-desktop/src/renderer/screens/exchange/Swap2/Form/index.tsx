@@ -40,7 +40,7 @@ import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/conv
 import useRefreshRates from "./hooks/useRefreshRates";
 import LoadingState from "./Rates/LoadingState";
 import EmptyState from "./Rates/EmptyState";
-import { AccountLike, Feature } from "@ledgerhq/types-live";
+import { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { SWAP_RATES_TIMEOUT } from "../../config";
@@ -52,9 +52,11 @@ const Wrapper = styled(Box).attrs({
   row-gap: 2rem;
   max-width: 37rem;
 `;
+
 const Hide = styled.div`
   opacity: 0;
 `;
+
 const idleTime = 60 * 60000; // 1 hour
 
 const Button = styled(ButtonBase)`
@@ -69,10 +71,12 @@ export const useProviders = () => {
     if (providers) dispatch(updateProvidersAction(providers));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [providers]);
+
   useEffect(() => {
     if (providersError) dispatch(resetSwapAction());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [providersError]);
+
   return {
     storedProviders,
     providers,
@@ -90,9 +94,7 @@ const SwapForm = () => {
   const accounts = useSelector(shallowAccountsSelector);
   const { storedProviders, providersError } = useProviders();
   const exchangeRate = useSelector(rateSelector);
-  const walletApiPartnerList: Feature<{ list: Array<string> }> | null = useFeature(
-    "swapWalletApiPartnerList",
-  );
+  const walletApiPartnerList = useFeature("swapWalletApiPartnerList");
 
   const setExchangeRate = useCallback(
     rate => {
@@ -219,6 +221,7 @@ const SwapForm = () => {
     swapTransaction.swap.to.account &&
     swapTransaction.swap.from.amount &&
     swapTransaction.swap.from.amount.gt(0);
+
   const onSubmit = () => {
     if (!exchangeRate) return;
 
@@ -295,6 +298,7 @@ const SwapForm = () => {
       }
     }
   };
+
   const sourceAccount = swapTransaction.swap.from.account;
   const sourceCurrency = swapTransaction.swap.from.currency;
   const targetCurrency = swapTransaction.swap.to.currency;
@@ -313,17 +317,20 @@ const SwapForm = () => {
   const setFromAccount = (account: AccountLike | undefined) => {
     swapTransaction.setFromAccount(account);
   };
+
   const setFromAmount = (amount: BigNumber) => {
     swapTransaction.setFromAmount(amount);
   };
+
   const setToCurrency = (currency: TokenCurrency | CryptoCurrency | undefined) => {
     swapTransaction.setToCurrency(currency);
   };
+
   const toggleMax = () => {
     swapTransaction.toggleMax();
   };
 
-  if (storedProviders?.length)
+  if (storedProviders?.length) {
     return (
       <Wrapper>
         <TrackPage category="Swap" name="Form" provider={provider} {...swapDefaultTrack} />
@@ -374,6 +381,7 @@ const SwapForm = () => {
         </Box>
       </Wrapper>
     );
+  }
 
   // TODO: ensure that the error is catch by Sentry in this case
   if (storedProviders?.length === 0 || providersError) {

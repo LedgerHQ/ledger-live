@@ -73,7 +73,8 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
   const featureFlag = useFeature("stakePrograms");
   const stakeFlagEnabled = featureFlag?.enabled;
   const listFlag = featureFlag?.params?.list;
-  const canBeStaken = stakeFlagEnabled && listFlag.includes(currency?.id);
+
+  const canBeStaken = stakeFlagEnabled && listFlag && currency && listFlag.includes(currency?.id);
   const totalAccounts = useSelector(accountsSelector);
   const parentAccount = isTokenAccount(defaultAccount)
     ? getParentAccount(defaultAccount, totalAccounts)

@@ -203,7 +203,7 @@ const StepReceiveFunds = (props: StepProps) => {
       !receiveNFTMode &&
       !receiveTokenMode &&
       receiveStakingFlowConfig?.enabled &&
-      receiveStakingFlowConfig?.params[id]?.enabled
+      receiveStakingFlowConfig?.params?.[id]?.enabled
     ) {
       track("button_clicked", {
         button: "continue",
@@ -217,7 +217,7 @@ const StepReceiveFunds = (props: StepProps) => {
       });
       if (receiveStakingFlowConfig?.params?.[id]?.direct) {
         dispatch(
-          openModal("MODAL_ETH_STAKE", {
+          openModal("MODAL_EVM_STAKE", {
             account: mainAccount,
             hasCheckbox: true,
             singleProviderRedirectMode: false,

@@ -2172,6 +2172,13 @@
       "title": "{{currencyTicker}} market price",
       "currencyPrice": "1 {{currencyTicker}} price",
       "currencyPriceChange": "Last 24h change"
+    },
+    "quickActions": {
+      "buy": "Buy",
+      "swap": "Swap",
+      "send": "Send",
+      "deposit": "Deposit",
+      "stake": "Stake"
     }
   },
   "addAccountsModal": {

@@ -230,7 +230,7 @@ export default function Default() {
                           height: "100%",
                         }}
                       >
-                        <FeatureToggle feature="protectServicesDesktop">
+                        <FeatureToggle featureId="protectServicesDesktop">
                           <Switch>
                             <Route path="/recover/:appId" component={RecoverPlayer} />
                           </Switch>
@@ -273,7 +273,7 @@ export default function Default() {
                             <Route path="/swap" component={Swap2} />
                             <Route path="/market/:currencyId" component={MarketCoinScreen} />
                             <Route path="/market" component={Market} />
-                            <FeatureToggle feature="learn">
+                            <FeatureToggle featureId="learn">
                               <Route path="/learn" component={Learn} />
                             </FeatureToggle>
                           </Switch>
