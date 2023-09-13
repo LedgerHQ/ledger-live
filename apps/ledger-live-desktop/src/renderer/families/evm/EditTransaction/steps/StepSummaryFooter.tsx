@@ -2,14 +2,25 @@ import { getTransactionByHash } from "@ledgerhq/coin-evm/api/transaction/index";
 import { AmountRequired, TransactionHasBeenValidatedError } from "@ledgerhq/errors";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { NotEnoughNftOwned, NotOwnedNft } from "@ledgerhq/live-common/errors";
+import { validateUpdateTransaction } from "@ledgerhq/live-common/families/evm/getUpdateTransactionPatch";
+import invariant from "invariant";
 import React, { useState } from "react";
 import { Trans } from "react-i18next";
 import Button from "~/renderer/components/Button";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import { StepProps } from "../types";
 
-export const StepSummaryFooter = (props: StepProps) => {
-  const { account, parentAccount, transactionHash, status, bridgePending, transitionTo } = props;
+export const StepSummaryFooter = ({
+  account,
+  parentAccount,
+  transactionHash,
+  status,
+  bridgePending,
+  transitionTo,
+  transactionToUpdate,
+  transaction,
+  editType,
+}: StepProps) => {
   const [transactionHasBeenValidated, setTransactionHasBeenValidated] = useState(false);
 
   if (!account || !transactionHash) {
@@ -31,7 +42,20 @@ export const StepSummaryFooter = (props: StepProps) => {
     }
   });
 
-  const { errors } = status;
+  // FIXME: move in Body
+  // -----
+  invariant(editType, "editType required");
+
+  const { errors: editTxErrors } = validateUpdateTransaction({
+    editType,
+    transaction,
+    transactionToUpdate,
+  });
+
+  const errors: Record<string, Error> = { ...status.errors, ...editTxErrors };
+
+  console.log("StepSummaryFooter", { errors });
+
   // exclude "NotOwnedNft" and "NotEnoughNftOwned" error if it's a nft speedup operation
   let errorCount = Object.keys(errors).length;
   if (
@@ -42,6 +66,8 @@ export const StepSummaryFooter = (props: StepProps) => {
   ) {
     errorCount = errorCount - 1;
   }
+
+  // -----
 
   const canNext = !bridgePending && !errorCount && !transactionHasBeenValidated;
 
