@@ -160,10 +160,6 @@ const SwapForm = () => {
     const { rate, rateId } = exchangeRate || {};
     if (fromAccount && toAccount) {
       const fromAccountId = accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id;
-      const initFeeCurrencyCode = accountToWalletAPIAccount(
-        fromParentAccount || fromAccount,
-        fromParentAccount,
-      ).currency;
       const toAccountId = accountToWalletAPIAccount(toAccount, toParentAccount)?.id;
       const fromAmount = convertToNonAtomicUnit(transaction?.amount, fromAccount);
 
@@ -182,7 +178,6 @@ const SwapForm = () => {
           feeStrategy: feesStrategy?.toUpperCase(),
           customFeeConfig: customFeeConfig ? JSON.stringify(customFeeConfig) : undefined,
           initFeeTotalValue,
-          initFeeCurrencyCode,
         },
       });
     }
