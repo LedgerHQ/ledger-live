@@ -1,9 +1,6 @@
 import { getTransactionByHash } from "@ledgerhq/coin-evm/api/transaction/index";
-import { AmountRequired, TransactionHasBeenValidatedError } from "@ledgerhq/errors";
+import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { NotEnoughNftOwned, NotOwnedNft } from "@ledgerhq/live-common/errors";
-import { validateUpdateTransaction } from "@ledgerhq/live-common/families/evm/getUpdateTransactionPatch";
-import invariant from "invariant";
 import React, { useState } from "react";
 import { Trans } from "react-i18next";
 import Button from "~/renderer/components/Button";
@@ -17,9 +14,6 @@ export const StepSummaryFooter = ({
   status,
   bridgePending,
   transitionTo,
-  transactionToUpdate,
-  transaction,
-  editType,
 }: StepProps) => {
   const [transactionHasBeenValidated, setTransactionHasBeenValidated] = useState(false);
 
@@ -42,35 +36,13 @@ export const StepSummaryFooter = ({
     }
   });
 
-  // FIXME: move in Body
-  // -----
-  invariant(editType, "editType required");
-
-  const { errors: editTxErrors } = validateUpdateTransaction({
-    editType,
-    transaction,
-    transactionToUpdate,
-  });
-
-  const errors: Record<string, Error> = { ...status.errors, ...editTxErrors };
-
-  console.log("StepSummaryFooter", { errors });
-
-  // exclude "NotOwnedNft" and "NotEnoughNftOwned" error if it's a nft speedup operation
-  let errorCount = Object.keys(errors).length;
-  if (
-    errors.amount &&
-    ((errors.amount as Error) instanceof NotOwnedNft ||
-      (errors.amount as Error) instanceof NotEnoughNftOwned ||
-      (errors.amount as Error) instanceof AmountRequired)
-  ) {
-    errorCount = errorCount - 1;
-  }
-
-  // -----
+  const { errors } = status;
+  const errorCount = Object.keys(errors).length;
 
   const canNext = !bridgePending && !errorCount && !transactionHasBeenValidated;
 
+  // TODO: it looks like we don't display any other error than TransactionHasBeenValidatedError 🤔
+  // we should at least display EditTx specific errors (like replacementTransactionUnderpriced)
   return (
     <>
       {transactionHasBeenValidated ? (
