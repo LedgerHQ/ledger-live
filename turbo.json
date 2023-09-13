@@ -61,6 +61,10 @@
     "doc": {
       "cache": false
     },
+    "web-tools#build": {
+      "dependsOn": ["^build"],
+      "cache": false
+    },
     "ledger-live-desktop#build": {
       "dependsOn": ["^build"],
       "cache": false
