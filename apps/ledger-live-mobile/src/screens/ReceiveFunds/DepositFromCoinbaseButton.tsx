@@ -17,12 +17,14 @@ const DepositFromCoinbaseButton = ({ location, source }: Props) => {
 
   const onPressDepositFromCex = () => {
     const path = cexDepositEntryPointsMobile?.params?.path;
-    Linking.canOpenURL(path).then(() => Linking.openURL(path));
 
-    track("button_clicked", {
-      button: "deposit from coinbase",
-      page: source,
-    });
+    if (path) {
+      Linking.canOpenURL(path).then(() => Linking.openURL(path));
+      track("button_clicked", {
+        button: "deposit from coinbase",
+        page: source,
+      });
+    }
   };
 
   if (

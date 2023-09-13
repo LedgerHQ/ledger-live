@@ -356,7 +356,7 @@ export const DEFAULT_FEATURES: Features = {
       locations: {
         selectCrypto: true,
       },
-    }
+    },
   },
 
   cexDepositEntryPointsMobile: {
@@ -366,6 +366,6 @@ export const DEFAULT_FEATURES: Features = {
       locations: {
         selectCrypto: true,
       },
-    }
+    },
   },
 };
