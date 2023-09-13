@@ -1,11 +1,8 @@
 import { getTransactionByHash } from "@ledgerhq/coin-evm/api/transaction/index";
 import { getEstimatedFees } from "@ledgerhq/coin-evm/logic";
-import { AmountRequired, NotEnoughGas, TransactionHasBeenValidatedError } from "@ledgerhq/errors";
+import { NotEnoughGas, TransactionHasBeenValidatedError } from "@ledgerhq/errors";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { NotEnoughNftOwned, NotOwnedNft } from "@ledgerhq/live-common/errors";
-import { validateUpdateTransaction } from "@ledgerhq/live-common/families/evm/getUpdateTransactionPatch";
 import BigNumber from "bignumber.js";
-import invariant from "invariant";
 import React, { Fragment, memo, useState } from "react";
 import { Trans } from "react-i18next";
 import Alert from "~/renderer/components/Alert";
@@ -20,18 +17,17 @@ import { StepProps } from "../types";
 
 const ONE_WEI_IN_GWEI = 1_000_000_000;
 
-const StepFees = (props: StepProps) => {
-  const {
-    account,
-    parentAccount,
-    transaction,
-    transactionToUpdate,
-    status,
-    bridgePending,
-    t,
-    onChangeTransaction,
-    updateTransaction,
-  } = props;
+const StepFees = ({
+  account,
+  parentAccount,
+  transaction,
+  transactionToUpdate,
+  status,
+  bridgePending,
+  t,
+  onChangeTransaction,
+  updateTransaction,
+}: StepProps) => {
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
 
   if (!mainAccount || !transaction || !transactionToUpdate) {
@@ -118,11 +114,9 @@ export const StepFeesFooter = ({
   account,
   parentAccount,
   transaction,
-  transactionToUpdate,
   transactionHash,
   bridgePending,
   status,
-  editType,
   transitionTo,
 }: StepProps) => {
   const [transactionHasBeenValidated, setTransactionHasBeenValidated] = useState(false);
@@ -143,35 +137,10 @@ export const StepFeesFooter = ({
     }
   });
 
-  // FIXME: move in Body
-  // -----
-  invariant(editType, "editType required");
+  const { errors } = status;
+  const errorCount = Object.keys(errors).length;
 
-  const { errors: editTxErrors } = validateUpdateTransaction({
-    editType,
-    transaction,
-    transactionToUpdate,
-  });
-
-  const errors: Record<string, Error> = { ...status.errors, ...editTxErrors };
-
-  console.log("StepFeesFooter", { errors });
-
-  // FIXME: use error.name instead of instanceof to filter errors(?)
-  // discard "AmountRequired" (for cancel and speedup since one can discide to speedup a cancel)
-  // exclude "NotOwnedNft" and "NotEnoughNftOwned" error if it's a nft speedup operation
-  let errorCount = Object.keys(errors).length;
-  if (
-    errors.amount &&
-    ((errors.amount as Error) instanceof NotOwnedNft ||
-      (errors.amount as Error) instanceof NotEnoughNftOwned ||
-      (errors.amount as Error) instanceof AmountRequired)
-  ) {
-    errorCount = errorCount - 1;
-  }
-
-  // -----
-
+  // TODO: why using Alert instead of ErrorBanner to display some errors?
   return (
     <>
       {transactionHasBeenValidated ? (
