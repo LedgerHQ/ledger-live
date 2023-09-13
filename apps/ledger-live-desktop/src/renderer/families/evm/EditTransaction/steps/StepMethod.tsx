@@ -1,16 +1,11 @@
 import { getTransactionByHash } from "@ledgerhq/coin-evm/api/transaction/index";
-import { DEFAULT_GAS_LIMIT } from "@ledgerhq/coin-evm/transaction";
-import {
-  Transaction as EvmTransaction,
-  EvmTransactionEIP1559,
-  EvmTransactionLegacy,
-} from "@ledgerhq/coin-evm/types/index";
+import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
 import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { getUpdateTransactionPatch } from "@ledgerhq/live-common/families/evm/getUpdateTransactionPatch";
 import { Flex } from "@ledgerhq/react-ui";
-import { Account, AccountBridge } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import { AccountBridge } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import React, { memo, useCallback, useState } from "react";
 import { Trans } from "react-i18next";
@@ -48,51 +43,6 @@ const Description = styled(Box)<{ selected: boolean }>`
   margin-left: 15px;
   width: 400px;
 `;
-
-// build the appropriate patch for cancel flow depending on the transaction type
-const buildCancelTxPatch = ({
-  transaction,
-  account,
-}: {
-  transaction: StepProps["transaction"];
-  account: Account;
-}): Partial<EvmTransaction> => {
-  let patch: Partial<EvmTransaction> = {
-    type: transaction.type,
-    amount: new BigNumber(0),
-    data: undefined,
-    nonce: transaction.nonce,
-    mode: "send",
-    recipient: account.freshAddress,
-    feesStrategy: "custom",
-    useAllAmount: false,
-    /**
-     * since canceling a tx is just sending 0 eth to yourself, the gasLimit can
-     * just be the default value
-     */
-    gasLimit: DEFAULT_GAS_LIMIT,
-  };
-
-  // increase gas fees in case of cancel flow as we don't have the fees input screen for cancel flow
-  if (patch.type === 2) {
-    const type2Patch: Partial<EvmTransactionEIP1559> = {
-      ...patch,
-      maxFeePerGas: transaction.maxFeePerGas?.times(1.1).integerValue(BigNumber.ROUND_CEIL),
-      maxPriorityFeePerGas: transaction.maxPriorityFeePerGas
-        ?.times(1.1)
-        .integerValue(BigNumber.ROUND_CEIL),
-    };
-    patch = type2Patch;
-  } else if (patch.type === 1 || patch.type === 0) {
-    const type1Patch: Partial<EvmTransactionLegacy> = {
-      ...patch,
-      gasPrice: transaction.gasPrice?.times(1.1).integerValue(BigNumber.ROUND_CEIL),
-    };
-    patch = type1Patch;
-  }
-
-  return patch;
-};
 
 const StepMethod = ({
   account,
@@ -208,35 +158,22 @@ export const StepMethodFooter: React.FC<StepProps> = (props: StepProps) => {
     transitionTo,
   } = props;
 
-  const handleContinueClick = () => {
+  const handleContinueClick = async () => {
     invariant(account, "account required");
     invariant(transaction, "transaction required");
     invariant(transactionToUpdate, "transactionToUpdate required");
+    invariant(editType, "editType required");
+
     const bridge: AccountBridge<EvmTransaction> = getAccountBridge(account, parentAccount);
+    const mainAccount = getMainAccount(account, parentAccount);
 
-    // FIXME: get max(txFees + 10%, fast fees) for speedup and cancel flows
-    if (editType === "speedup") {
-      const patch: Partial<EvmTransaction> = {
-        amount: transactionToUpdate.amount,
-        data: transactionToUpdate.data,
-        nonce: transactionToUpdate.nonce,
-        recipient: transactionToUpdate.recipient,
-        mode: transactionToUpdate.mode,
-        feesStrategy: "fast", // set "fast" as default option for speedup flow
-        maxFeePerGas: undefined,
-        maxPriorityFeePerGas: undefined,
-        gasPrice: undefined,
-        useAllAmount: false,
-      };
+    const patch = await getUpdateTransactionPatch({
+      account: mainAccount,
+      transaction: transactionToUpdate,
+      editType,
+    });
 
-      updateTransaction(tx => bridge.updateTransaction(tx, patch));
-    } else {
-      const mainAccount = getMainAccount(account, parentAccount);
-
-      const patch = buildCancelTxPatch({ transaction: transactionToUpdate, account: mainAccount });
-
-      updateTransaction(tx => bridge.updateTransaction(tx, patch));
-    }
+    updateTransaction(tx => bridge.updateTransaction(tx, patch));
 
     transitionTo("summary");
   };

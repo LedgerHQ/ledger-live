@@ -3,7 +3,9 @@ import { getEstimatedFees } from "@ledgerhq/coin-evm/logic";
 import { AmountRequired, NotEnoughGas, TransactionHasBeenValidatedError } from "@ledgerhq/errors";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { NotEnoughNftOwned, NotOwnedNft } from "@ledgerhq/live-common/errors";
+import { validateUpdateTransaction } from "@ledgerhq/live-common/families/evm/getUpdateTransactionPatch";
 import BigNumber from "bignumber.js";
+import invariant from "invariant";
 import React, { Fragment, memo, useState } from "react";
 import { Trans } from "react-i18next";
 import Alert from "~/renderer/components/Alert";
@@ -41,10 +43,12 @@ const StepFees = (props: StepProps) => {
   );
 
   // log fees info
-  logger.log(`transactionToUpdate.maxFeePerGas: ${transactionToUpdate.maxFeePerGas?.toFixed()}`);
-  logger.log(`transactionToUpdate.gasPrice: ${transactionToUpdate.gasPrice?.toFixed()}`);
+  logger.log(`transactionToUpdate.maxFeePerGas: ${transactionToUpdate.maxFeePerGas?.toFixed(0)}`);
+  logger.log(`transactionToUpdate.gasPrice: ${transactionToUpdate.gasPrice?.toFixed(0)}`);
   logger.log(
-    `transactionToUpdate.maxPriorityFeePerGas: ${transactionToUpdate.maxPriorityFeePerGas?.toFixed()}`,
+    `transactionToUpdate.maxPriorityFeePerGas: ${transactionToUpdate.maxPriorityFeePerGas?.toFixed(
+      0,
+    )}`,
   );
 
   let maxPriorityFeePerGasinGwei, maxFeePerGasinGwei, maxGasPriceinGwei;
@@ -56,10 +60,10 @@ const StepFees = (props: StepProps) => {
      */
     maxPriorityFeePerGasinGwei = transactionToUpdate.maxPriorityFeePerGas
       .dividedBy(ONE_WEI_IN_GWEI)
-      .toFixed();
-    maxFeePerGasinGwei = transactionToUpdate.maxFeePerGas.dividedBy(ONE_WEI_IN_GWEI).toFixed();
+      .toFixed(0);
+    maxFeePerGasinGwei = transactionToUpdate.maxFeePerGas.dividedBy(ONE_WEI_IN_GWEI).toFixed(0);
   } else {
-    maxGasPriceinGwei = transactionToUpdate.gasPrice.dividedBy(ONE_WEI_IN_GWEI).toFixed();
+    maxGasPriceinGwei = transactionToUpdate.gasPrice.dividedBy(ONE_WEI_IN_GWEI).toFixed(0);
   }
 
   return (
@@ -114,12 +118,13 @@ export const StepFeesFooter = ({
   account,
   parentAccount,
   transaction,
+  transactionToUpdate,
   transactionHash,
   bridgePending,
   status,
+  editType,
   transitionTo,
 }: StepProps) => {
-  const { errors } = status;
   const [transactionHasBeenValidated, setTransactionHasBeenValidated] = useState(false);
 
   const onClick = async () => {
@@ -138,6 +143,20 @@ export const StepFeesFooter = ({
     }
   });
 
+  // FIXME: move in Body
+  // -----
+  invariant(editType, "editType required");
+
+  const { errors: editTxErrors } = validateUpdateTransaction({
+    editType,
+    transaction,
+    transactionToUpdate,
+  });
+
+  const errors: Record<string, Error> = { ...status.errors, ...editTxErrors };
+
+  console.log("StepFeesFooter", { errors });
+
   // FIXME: use error.name instead of instanceof to filter errors(?)
   // discard "AmountRequired" (for cancel and speedup since one can discide to speedup a cancel)
   // exclude "NotOwnedNft" and "NotEnoughNftOwned" error if it's a nft speedup operation
@@ -150,6 +169,8 @@ export const StepFeesFooter = ({
   ) {
     errorCount = errorCount - 1;
   }
+
+  // -----
 
   return (
     <>

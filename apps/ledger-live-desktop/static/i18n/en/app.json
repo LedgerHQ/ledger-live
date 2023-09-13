@@ -4956,6 +4956,10 @@
     }
   },
   "errors": {
+    "ReplacementTransactionUnderpriced": {
+      "title": "Replacement transaction underpriced",
+      "description": "The network fee must be at least 10% higher than the fee of the original transaction."
+    },
     "NoSuchAppOnProvider": {
       "title": "The {{appName}} app cannot be found for your specific configuration.",
       "description": "Try reinstalling the app from My Ledger"

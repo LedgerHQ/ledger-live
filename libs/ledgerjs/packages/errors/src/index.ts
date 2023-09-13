@@ -150,6 +150,11 @@ export const LedgerAPI4xx = createCustomErrorClass("LedgerAPI4xx");
 export const LedgerAPI5xx = createCustomErrorClass("LedgerAPI5xx");
 export const FirmwareOrAppUpdateRequired = createCustomErrorClass("FirmwareOrAppUpdateRequired");
 
+// SpeedUp / Cancel EVM tx
+export const ReplacementTransactionUnderpriced = createCustomErrorClass(
+  "ReplacementTransactionUnderpriced",
+);
+
 // Bitcoin family
 export const OpReturnDataSizeLimit = createCustomErrorClass("OpReturnSizeLimit");
 export const DustLimit = createCustomErrorClass("DustLimit");
