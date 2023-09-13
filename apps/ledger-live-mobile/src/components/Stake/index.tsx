@@ -26,7 +26,12 @@ const StakeFlow = ({ route }: Props) => {
     });
   }, [currencies]);
 
-  const goToAccountStakeFlow = useStakingDrawer({ navigation, parentRoute, alwaysShowNoFunds });
+  const goToAccountStakeFlow = useStakingDrawer({
+    navigation,
+    parentRoute,
+    alwaysShowNoFunds,
+    entryPoint: route.params.entryPoint,
+  });
 
   const requestAccount = useCallback(() => {
     if (cryptoCurrencies.length === 1) {

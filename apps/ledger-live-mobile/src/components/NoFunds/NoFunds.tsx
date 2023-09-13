@@ -14,6 +14,24 @@ import { NavigatorName, ScreenName } from "../../const";
 import { TrackScreen, useAnalytics, track } from "../../analytics";
 import type { NoFundsNavigatorParamList } from "../RootNavigator/types/NoFundsNavigator";
 import { StackNavigatorProps } from "../RootNavigator/types/helpers";
+import { Currency } from "@ledgerhq/types-cryptoassets";
+
+const useText = (entryPoint: "noFunds" | "getFunds", currency: Currency) => {
+  const { t } = useTranslation();
+
+  const textMap = {
+    noFunds: {
+      title: t("stake.noFundsModal.text", { coin: currency.ticker }),
+      body: t("stake.noFundsModal.description", { coin: currency.name }),
+    },
+    getFunds: {
+      title: t("stake.getFundsModal.text", { coin: currency.ticker }),
+      body: t("stake.getFundsModal.description", { coin: currency.name }),
+    },
+  };
+
+  return textMap[entryPoint];
+};
 
 type Props = StackNavigatorProps<NoFundsNavigatorParamList, ScreenName.NoFunds>;
 
@@ -30,12 +48,16 @@ type ButtonItem = {
   rightArrow: boolean;
 };
 
+/** Entry point is either "stake" button but user has insufficient funds in account, or "Get <ticker>" button on Earn dashboard, so text differs accordingly.  */
 export default function NoFunds({ route }: Props) {
   const { t } = useTranslation();
-  const { account, parentAccount } = route?.params;
+  const { account, parentAccount, entryPoint } = route?.params;
   const rampCatalog = useRampCatalog();
   const { providers } = useProviders();
   const navigation = useNavigation();
+
+  const text = useText(entryPoint === "get-funds" ? "getFunds" : "noFunds", account.currency);
+
   const onRampAvailableTickers = useMemo(() => {
     if (!rampCatalog.value) {
       return [];
@@ -142,10 +164,10 @@ export default function NoFunds({ route }: Props) {
           <CoinsIcon />
         </Flex>
         <Text variant="h4" textAlign="center" mt={10}>
-          {t("stake.noFundsModal.text", { coin: currency.ticker })}
+          {text.title}
         </Text>
         <Text variant="body" textAlign="center" color="neutral.c70" mt={6}>
-          {t("stake.noFundsModal.description", { coin: currency.name })}
+          {text.body}
         </Text>
       </Flex>
       <Flex my={8} mx={6}>
