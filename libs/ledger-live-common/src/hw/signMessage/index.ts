@@ -41,7 +41,6 @@ const signMessage: SignMessage = (transport, account, opts) => {
         `signMessage ${currency.id} on ${account.freshAddressPath} with message [${opts.message}]`,
         result,
       );
-      console.warn(result);
       return result;
     })
     .catch(e => {
@@ -52,7 +51,6 @@ const signMessage: SignMessage = (transport, account, opts) => {
           throw new UserRefusedAddress();
         }
       }
-      console.warn(e);
 
       throw e;
     });

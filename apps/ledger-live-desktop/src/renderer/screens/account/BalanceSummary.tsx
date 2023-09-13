@@ -18,6 +18,7 @@ import { getLLDCoinFamily } from "~/renderer/families";
 import PlaceholderChart from "~/renderer/components/PlaceholderChart";
 import Alert from "~/renderer/components/Alert";
 import { useTranslation } from "react-i18next";
+import { tokensWithUnsupportedGraph } from "~/helpers/tokensWithUnsupportedGraph";
 
 type Props = {
   chartColor: string;
@@ -111,10 +112,11 @@ export default function AccountBalanceSummary({
       </Box>
 
       <Box px={5} ff="Inter" fontSize={4} color="palette.text.shade80" pt={5}>
-        {account.type === "TokenAccount" && account.token.id === "vechain/vtho" ? (
+        {account.type === "TokenAccount" &&
+        tokensWithUnsupportedGraph.includes(account.token.id) ? (
           <>
             <Alert type="secondary" noIcon={false}>
-              <span>{t("vechain.noGraphWarning")}</span>
+              <span>{t("graph.noGraphWarning")}</span>
             </Alert>
             <PlaceholderChart
               magnitude={counterValue.units[0].magnitude}

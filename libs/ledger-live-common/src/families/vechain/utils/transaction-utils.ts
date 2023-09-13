@@ -1,4 +1,3 @@
-import network from "@ledgerhq/live-network/network";
 import { HEX_PREFIX } from "../constants";
 import crypto from "crypto";
 import BigNumber from "bignumber.js";
@@ -7,24 +6,11 @@ import params from "../contracts/abis/params";
 import { BASE_GAS_PRICE_KEY, PARAMS_ADDRESS } from "../contracts/constants";
 import { Query } from "../api/types";
 import { query } from "../api/sdk";
-import { Transaction } from "../types";
-import { getEnv } from "@ledgerhq/live-env";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
+import { Transaction, TransactionInfo } from "../types";
+import { DEFAULT_GAS_COEFFICIENT } from "../constants";
 
-const BASE_URL = getEnv("API_VECHAIN_THOREST");
 const GAS_COEFFICIENT = 15000;
-
-/**
- * Get the block ref to use in a transaction
- * @returns the block ref of head
- */
-export const getBlockRef = async (): Promise<string> => {
-  const { data } = await network({
-    method: "GET",
-    url: `${BASE_URL}/blocks/best`,
-  });
-
-  return data.id.slice(0, 18);
-};
 
 /**
  * Generate a Unique ID to be used as a nonce
@@ -87,18 +73,82 @@ export const calculateFee = async (gas: BigNumber, gasPriceCoef: number): Promis
   return new BigNumber(baseGasPrice).times(gasPriceCoef).idiv(255).plus(baseGasPrice).times(gas);
 };
 
-/**
- * Get fees paid for the transaction
- * @param transactionId - the id of the transaction
- * @return the fee paid in VTHO or 0
- */
-export const getFees = async (transactionID: string): Promise<BigNumber> => {
-  const { data } = await network({
-    method: "GET",
-    url: `${BASE_URL}/transactions/${transactionID}/receipt`,
-    params: { id: transactionID },
-  });
+export const calculateTransactionInfo = async (
+  account: Account,
+  transaction: Transaction,
+): Promise<TransactionInfo> => {
+  const { subAccounts } = account;
+  const { amount: oldAmount, useAllAmount, subAccountId } = transaction;
+  const maxTokenFees = await calculateMaxFeesToken();
 
-  if (!data || !data.paid) return new BigNumber(0);
-  return new BigNumber(data.paid);
+  const tokenAccount =
+    subAccountId && subAccounts
+      ? (subAccounts.find(subAccount => {
+          return subAccount.id === subAccountId;
+        }) as TokenAccount)
+      : undefined;
+  const isTokenAccount = !!tokenAccount;
+
+  let balance;
+  let spendableBalance;
+  let amount;
+
+  if (isTokenAccount) {
+    balance = tokenAccount.balance;
+    spendableBalance = tokenAccount.balance.minus(maxTokenFees).gt(0)
+      ? tokenAccount.balance.minus(maxTokenFees)
+      : new BigNumber(0);
+    amount = useAllAmount ? spendableBalance : oldAmount;
+  } else {
+    balance = account.balance;
+    spendableBalance = account.balance;
+    amount = useAllAmount ? spendableBalance : oldAmount;
+  }
+
+  return {
+    isTokenAccount,
+    amount,
+    spendableBalance,
+    balance,
+    tokenAccount,
+  };
+};
+
+export const calculateMaxFeesToken = async (): Promise<BigNumber> => {
+  //FIXME: The BE call is currently returning not stable values, hardwiring a value
+  // account: AccountLike,
+  // transaction: Transaction
+
+  // const accountTmp =
+  //   account.type === "Account" ? account?.subAccounts?.[0] : account;
+
+  // if (
+  //   transaction.subAccountId &&
+  //   transaction.recipient &&
+  //   isValid(transaction.recipient) &&
+  //   accountTmp
+  // ) {
+  //   transaction.amount = new BigNumber("1500000000000000");
+  //   const clauses = await calculateClausesVtho(
+  //     transaction,
+  //     new BigNumber("1500000000000000")
+  //   );
+  //   console.warn(transaction);
+  //   const gas = await estimateGas({
+  //     ...transaction,
+  //     body: { ...transaction.body, clauses: clauses },
+  //   });
+  //   const estimatedFees = new BigNumber(gas);
+  //   return estimatedFees;
+  // }
+  const fees = await calculateFee(new BigNumber("67000"), DEFAULT_GAS_COEFFICIENT);
+  return fees;
+};
+
+export const calculateTotalSpent = (isToken: boolean, transaction: Transaction): BigNumber => {
+  if (isToken) {
+    return transaction.amount.plus(transaction.estimatedFees);
+  } else {
+    return transaction.amount;
+  }
 };

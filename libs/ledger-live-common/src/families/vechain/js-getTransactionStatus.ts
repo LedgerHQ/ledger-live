@@ -9,10 +9,10 @@ import {
 import type { TransactionStatus } from "./types";
 import type { Transaction } from "./types";
 import { Account } from "@ledgerhq/types-live";
-import { calculateTotalSpent, calculateTransactionInfo } from "./utils/calculateTransactionInfo";
 import { isValid } from "./utils/address-utils";
 import BigNumber from "bignumber.js";
 import { NotEnoughVTHO } from "./errors";
+import { calculateTotalSpent, calculateTransactionInfo } from "./utils/transaction-utils";
 
 const getTransactionStatus = async (
   account: Account,
@@ -51,7 +51,7 @@ const getTransactionStatus = async (
     if (!isTokenAccount) {
       // vet
       const vthoBalance = subAccounts?.[0].balance;
-      if (transaction.estimatedFees.gt(vthoBalance || 0)) {
+      if (new BigNumber(transaction.estimatedFees).gt(vthoBalance || 0)) {
         errors.amount = new NotEnoughVTHO();
       }
     }
@@ -62,7 +62,9 @@ const getTransactionStatus = async (
   return Promise.resolve({
     errors,
     warnings,
-    estimatedFees: Object.keys(errors).length ? new BigNumber(0) : transaction.estimatedFees,
+    estimatedFees: Object.keys(errors).length
+      ? new BigNumber(0)
+      : new BigNumber(transaction.estimatedFees),
     amount: amount,
     totalSpent: Object.keys(errors).length ? new BigNumber(0) : totalSpent,
   });

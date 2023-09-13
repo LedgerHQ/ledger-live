@@ -19,7 +19,6 @@ const vechain: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Vechain",
-    appVersion: "1.0.7",
   },
   allowEmptyAccounts: true,
   genericDeviceAction: deviceAction.acceptTransaction,
@@ -97,14 +96,12 @@ const vechain: AppSpec<Transaction> = {
         account,
         siblings,
         bridge,
-        maxSpendable,
       }: TransactionArg<Transaction>): TransactionRes<Transaction> => {
         const sibling = pickSiblings(siblings, 4);
         const recipient = sibling.freshAddress;
         const transaction = bridge.createTransaction(account);
         transaction.useAllAmount = true;
-        const amount = maxSpendable.integerValue();
-        const updates = [{ amount }, { recipient }];
+        const updates = [{ recipient }];
         return {
           transaction,
           updates,
@@ -134,9 +131,7 @@ const vechain: AppSpec<Transaction> = {
           throw new Error("no VTHO account");
         const transaction = bridge.createTransaction(account);
         transaction.useAllAmount = true;
-        transaction.subAccountId = account.subAccounts[0].id;
-        const amount = account.subAccounts[0].spendableBalance.integerValue();
-        const updates = [{ amount }, { recipient }, { subAccountId: account.subAccounts[0].id }];
+        const updates = [{ recipient }, { subAccountId: account.subAccounts[0].id }];
         return {
           transaction,
           updates,

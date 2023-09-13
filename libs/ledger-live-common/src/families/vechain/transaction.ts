@@ -6,16 +6,32 @@ import {
   toTransactionCommonRaw,
   toTransactionStatusRawCommon,
 } from "@ledgerhq/coin-framework/transaction/common";
+import type { Account } from "@ledgerhq/types-live";
+import { getAccountUnit } from "../../account";
+import { formatCurrencyUnit } from "../../currencies";
 
-export const formatTransaction = (t: Transaction): string => {
-  return t.estimatedFees.toString();
+export const formatTransaction = (t: Transaction, account: Account): string => {
+  const { amount, recipient, useAllAmount } = t;
+  let displayedAmount: string;
+  if (useAllAmount) {
+    displayedAmount = "MAX";
+  } else if (amount.isZero()) {
+    displayedAmount = "";
+  } else {
+    displayedAmount =
+      " " +
+      formatCurrencyUnit(getAccountUnit(account), amount, {
+        showCode: true,
+        disableRounding: true,
+      });
+  }
+  return `SEND ${displayedAmount} TO ${recipient}`;
 };
 
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);
 
   return {
-    networkInfo: true,
     ...tr,
     ...common,
   };

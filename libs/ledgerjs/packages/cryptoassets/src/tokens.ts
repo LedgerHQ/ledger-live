@@ -359,7 +359,7 @@ function convertTRONTokens(type: "trc10" | "trc20") {
 }
 
 function convertVechainToken([
-  abbr,
+  ticker,
   name,
   contractAddress,
   precision,
@@ -372,12 +372,12 @@ function convertVechainToken([
     parentCurrency: getCryptoCurrencyById("vechain"),
     tokenType: "erc20",
     name,
-    ticker: abbr,
+    ticker,
     disableCountervalue: !enableCountervalues,
     units: [
       {
         name,
-        code: abbr,
+        code: ticker,
         magnitude: precision,
       },
     ],

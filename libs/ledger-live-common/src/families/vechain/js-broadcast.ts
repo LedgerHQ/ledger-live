@@ -8,12 +8,11 @@ import { submit } from "./api";
  * @param {signature: string, operation: string} signedOperation
  */
 const broadcast = async ({
-  signedOperation: { signature, operation },
+  signedOperation: { signature, operation, rawData },
 }: {
   signedOperation: SignedOperation;
 }): Promise<Operation> => {
-  const extra = operation.extra as { transaction: Transaction };
-  const transaction = new Transaction(extra.transaction.body);
+  const transaction = new Transaction((rawData as unknown as Transaction).body);
   transaction.signature = Buffer.from(signature, "hex");
   const hash = await submit(transaction);
 

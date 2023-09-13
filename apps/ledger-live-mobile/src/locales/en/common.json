@@ -449,6 +449,10 @@
       "title": "Sorry, insufficient VTHO funds",
       "description": "Please make sure the account has enough VTHO."
     },
+    "MustBeVechain": {
+      "title": "Not a vechain account",
+      "description": "Please make sure the coin is VTHO or VET"
+    },
     "NotEnoughEGLDForFees": {
       "title": "Not enough EGLD to pay the transaction fees",
       "description": "Please send some EGLD to your account to pay for transactions."
