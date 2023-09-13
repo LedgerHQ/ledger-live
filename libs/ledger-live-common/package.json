@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "31.5.0",
+  "version": "31.7.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -79,7 +79,6 @@
     "reactNative.js"
   ],
   "peerDependencies": {
-    "@types/react": "*",
     "react": ">=16",
     "react-dom": ">=16",
     "react-native": ">=0.65.1",
@@ -95,9 +94,6 @@
       "optional": true
     },
     "react-native": {
-      "optional": true
-    },
-    "@types/react": {
       "optional": true
     },
     "react-redux": {
@@ -127,11 +123,11 @@
     "@cosmjs/proto-signing": "^0.26.5",
     "@cosmjs/stargate": "^0.26.5",
     "@crypto-org-chain/chain-jslib": "1.1.2",
-    "@elrondnetwork/erdjs": "11.0.0",
-    "@elrondnetwork/erdjs-network-providers": "^1.1.2",
     "@dfinity/agent": "^0.15.6",
     "@dfinity/candid": "^0.15.6",
     "@dfinity/principal": "^0.15.6",
+    "@elrondnetwork/erdjs": "11.0.0",
+    "@elrondnetwork/erdjs-network-providers": "^1.1.2",
     "@ethereumjs/common": "^2.6.2",
     "@ethereumjs/tx": "^3.5.0",
     "@ethersproject/bignumber": "^5.7.0",
@@ -152,7 +148,6 @@
     "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/domain-service": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
-    "@ledgerhq/evm-tools": "workspace:^",
     "@ledgerhq/hw-app-algorand": "workspace:^",
     "@ledgerhq/hw-app-btc": "workspace:^",
     "@ledgerhq/hw-app-cosmos": "workspace:^",
@@ -281,7 +276,7 @@
     "@types/lodash": "^4.14.179",
     "@types/node": "^18",
     "@types/object-hash": "^2.1.0",
-    "@types/react": "^17.0.53",
+    "@types/react": "17",
     "@types/uuid": "^8.3.4",
     "benchmark": "^2.1.4",
     "camelcase": "^6.2.1",

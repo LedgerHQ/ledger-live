@@ -143,7 +143,7 @@ function WalletTabNavigatorTabBar({
   const insets = useSafeAreaInsets();
 
   const accessReferralProgram = useCallback(() => {
-    const path = referralProgramMobile?.params.path;
+    const path = referralProgramMobile?.params?.path;
     if (referralProgramMobile?.enabled && path) {
       Linking.canOpenURL(path).then(() => Linking.openURL(path));
 

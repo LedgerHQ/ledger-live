@@ -528,7 +528,7 @@
   },
   "stake" : {
     "noFundsModal" : {
-      "title" : "Kaufen, umtauschen oder empfangen",
+      "title" : "{{actions, list(type: disjunction)}}",
       "text" : "Sie haben nicht genug {{coin}} verfügbar um am Staking teilzunehmen",
       "description" : "Zu niedriges Guthaben? Keine Sorge, Sie können direkt in Ledger Live sicher Kryptowährungen kaufen, umtauschen oder empfangen.",
       "options" : {
@@ -1369,31 +1369,7 @@
     }
   },
   "walletconnect" : {
-    "titleAccount" : "Wallet Connect",
-    "disconnect" : "Trennen",
-    "disconnected" : "Getrennt",
-    "connected" : "Verbunden",
-    "connecting" : "Verbinde ...",
-    "invalidAccount" : "Ungültige Konto-ID",
-    "steps" : {
-      "paste" : {
-        "title" : "Link einfügen",
-        "label" : "Wallet Connect Adresse",
-        "placeholder" : "Wallet Connect Link einfügen"
-      },
-      "confirm" : {
-        "title" : "Verbinden",
-        "details" : "Will sich mit dem folgenden Konto über Ihre Wallet verbinden:",
-        "deeplinkDetails" : "Will sich mit Ledger Live verbinden. Wählen Sie Ihr Konto:",
-        "noAccount" : "Sie haben kein kompatibles Konto. Bitte fügen Sie ein kompatibles Konto hinzu, um Wallet Connect zu verwenden.",
-        "alreadyConnected" : "Sie versuchen sich mit einer dApp zu verbinden, während eine andere bereits verbunden ist. Bitte trennen Sie die Verbindung von der angeschlossenen dApp, bevor Sie Live mit einer neuen dApp verbinden."
-      }
-    },
-    "connectedscreen" : {
-      "info" : "Sie können nun auf die {{name}} dApp in Ihrem Webbrowser zugreifen.",
-      "warning" : "Das Teilen von Empfangsadressen von dApps ist nicht sicher. Verwenden Sie immer Ledger Live, wenn Sie Ihre Adresse teilen, um Geld zu empfangen.",
-      "disconnected" : "Es besteht ein Verbindungsproblem zwischen der dApp, WalletConnect und Ledger Live. Warten Sie ein paar Augenblicke oder starten Sie die Verbindung neu"
-    }
+    "titleAccount" : "WalletConnect"
   },
   "dashboard" : {
     "title" : "Portfolio",
@@ -2292,6 +2268,7 @@
     "header" : "Kontozuteilung ({{count}})"
   },
   "elrond" : {
+    "guardedAccountWarning" : "Wenn Sie für Ihr Konto einen „Guardian“ (zusätzlicher Sicherheitsmechanismus für Transaktionsfreigaben) aktiviert haben, können Sie keine Transaktionen über Ledger Live senden.",
     "summary" : {
       "availableBalanceTooltip" : "Dieser Betrag kann überwiesen werden.",
       "availableBalance" : "Verfügbares Guthaben",
@@ -5691,10 +5668,6 @@
     },
     "ImageDownloadError" : {
       "title" : "Bilddownload fehlgeschlagen",
-      "description" : "Bitte versuchen Sie es noch einmal mit einem anderen Bild"
-    },
-    "ImageMetadataLoadingError" : {
-      "title" : "Laden der Bild-Metadaten fehlgeschlagen",
       "description" : "Bitte versuchen Sie es noch einmal mit einem anderen Bild"
     },
     "ImageTooLargeError" : {

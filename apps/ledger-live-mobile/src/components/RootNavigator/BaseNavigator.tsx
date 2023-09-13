@@ -1,3 +1,5 @@
+// FIXME: to update when implementing edit transaction on evm
+
 import React, { useMemo } from "react";
 import {
   createStackNavigator,
@@ -83,7 +85,8 @@ import {
   NavigationHeaderCloseButtonAdvanced,
 } from "../NavigationHeaderCloseButton";
 import { RootDrawer } from "../RootDrawer/RootDrawer";
-import EditTransactionNavigator from "../../families/ethereum/EditTransactionFlow/EditTransactionNavigator";
+// to keep until edit transaction on evm is implemented
+// import EditTransactionNavigator from "../../families/ethereum/EditTransactionFlow/EditTransactionNavigator";
 import { DrawerProps } from "../RootDrawer/types";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
@@ -534,11 +537,12 @@ export default function BaseNavigator() {
             headerLeft: () => null,
           }}
         />
-        <Stack.Screen
+        {/* to keep until edit transaction on evm is implemented */}
+        {/* <Stack.Screen
           name={NavigatorName.EditTransaction}
           options={{ headerShown: false }}
           component={EditTransactionNavigator}
-        />
+        /> */}
       </Stack.Navigator>
     </>
   );

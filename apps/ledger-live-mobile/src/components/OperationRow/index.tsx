@@ -18,7 +18,6 @@ import { isEqual } from "lodash";
 import { useSelector } from "react-redux";
 import { getEnv } from "@ledgerhq/live-env";
 import { isEditableOperation } from "@ledgerhq/coin-framework/operation";
-
 import CurrencyUnitValue from "../CurrencyUnitValue";
 import CounterValue from "../CounterValue";
 import OperationIcon from "../OperationIcon";

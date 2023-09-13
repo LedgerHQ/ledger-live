@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-cli",
-  "version": "22.11.1",
+  "version": "22.11.3",
   "description": "ledger-live CLI version",
   "repository": {
     "type": "git",
@@ -42,8 +42,8 @@
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/hw-transport-node-hid": "workspace:^",
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
-    "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
+    "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",

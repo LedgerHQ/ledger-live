@@ -181,6 +181,8 @@ export const urls = {
   },
   maxSpendable:
     "https://support.ledger.com/hc/en-us/articles/360012960679?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=max_spendable_alert",
+  stakingEthereum:
+    "https://www.ledger.com/staking-ethereum?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=ethereum",
   stakingTezos:
     "https://www.ledger.com/staking-tezos?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=tezos",
   stakingTron:

@@ -497,7 +497,7 @@ const envDefinitions = {
     desc: "if defined, avoids bypass of the currentDevice in the store.",
   },
   NFT_CURRENCIES: {
-    def: "ethereum,polygon,ethereum_as_evm_test_only,polygon_as_evm_test_only",
+    def: "ethereum,polygon",
     parser: stringParser,
     desc: "set the currencies where NFT is active",
   },
@@ -556,6 +556,13 @@ const envDefinitions = {
     parser: intParser,
     desc: "offset to be added to the speculos pid and avoid collision with other instances",
   },
+  /**
+   * It's just here as a backup, the REST API is supposed to be the right mode
+   * We can always fallback on the previous method if we need to.
+   * The websocket option is harmless, we can remove it at some point but let's
+   * keep it for a while just in case.
+   * Introduced on June 27th 2023 by https://github.com/LedgerHQ/ledger-live/pull/3824
+   */
   SPECULOS_USE_WEBSOCKET: {
     def: false,
     parser: boolParser,

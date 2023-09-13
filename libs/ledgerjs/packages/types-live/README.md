@@ -53,96 +53,96 @@ Ledger Live main types.
 *   [DatasetTest](#datasettest)
     *   [Properties](#properties-12)
 *   [DerivationMode](#derivationmode)
-*   [FeatureId](#featureid)
 *   [Feature](#feature)
     *   [Properties](#properties-13)
     *   [enabled](#enabled)
     *   [desktop_version](#desktop_version)
-    *   [desktop_version](#desktop_version-1)
-    *   [desktop_version](#desktop_version-2)
     *   [enabledOverriddenForCurrentDesktopVersion](#enabledoverriddenforcurrentdesktopversion)
     *   [mobile_version](#mobile_version)
-    *   [mobile_version](#mobile_version-1)
-    *   [mobile_version](#mobile_version-2)
     *   [enabledOverriddenForCurrentMobileVersion](#enabledoverriddenforcurrentmobileversion)
     *   [languages_whitelisted](#languages_whitelisted)
-    *   [languages_whitelisted](#languages_whitelisted-1)
     *   [languages_blacklisted](#languages_blacklisted)
     *   [enabledOverriddenForCurrentLanguage](#enabledoverriddenforcurrentlanguage)
     *   [overridesRemote](#overridesremote)
     *   [overriddenByEnv](#overriddenbyenv)
     *   [params](#params)
-*   [DefaultFeatures](#defaultfeatures)
-*   [LedgerScriptParams](#ledgerscriptparams)
+*   [DefaultFeature](#defaultfeature)
+*   [CurrencyFeatures](#currencyfeatures)
     *   [Properties](#properties-14)
-*   [DeviceInfo](#deviceinfo)
+*   [Features](#features)
+*   [FeatureId](#featureid)
+*   [Feature_EthStakingProviders](#feature_ethstakingproviders)
+*   [FeatureMap](#featuremap)
+*   [LedgerScriptParams](#ledgerscriptparams)
     *   [Properties](#properties-15)
-*   [DeviceModelInfo](#devicemodelinfo)
+*   [DeviceInfo](#deviceinfo)
     *   [Properties](#properties-16)
-*   [DeviceVersion](#deviceversion)
+*   [DeviceModelInfo](#devicemodelinfo)
     *   [Properties](#properties-17)
-*   [McuVersion](#mcuversion)
+*   [DeviceVersion](#deviceversion)
     *   [Properties](#properties-18)
+*   [McuVersion](#mcuversion)
+    *   [Properties](#properties-19)
 *   [SeedPhraseType](#seedphrasetype)
 *   [FirmwareInfo](#firmwareinfo)
-    *   [Properties](#properties-19)
+    *   [Properties](#properties-20)
 *   [OsuFirmware](#osufirmware)
 *   [FinalFirmware](#finalfirmware)
 *   [FirmwareUpdateContext](#firmwareupdatecontext)
-    *   [Properties](#properties-20)
-*   [ApplicationVersion](#applicationversion)
     *   [Properties](#properties-21)
-*   [Application](#application)
+*   [ApplicationVersion](#applicationversion)
     *   [Properties](#properties-22)
+*   [Application](#application)
+    *   [Properties](#properties-23)
 *   [AppType](#apptype)
 *   [App](#app)
-    *   [Properties](#properties-23)
-*   [Category](#category)
     *   [Properties](#properties-24)
+*   [Category](#category)
+    *   [Properties](#properties-25)
 *   [SocketEvent](#socketevent)
 *   [NFTStandard](#nftstandard)
 *   [NFTMediaSize](#nftmediasize)
 *   [NFTMedias](#nftmedias)
 *   [NFTMetadata](#nftmetadata)
-    *   [Properties](#properties-25)
-*   [NFTCollectionMetadata](#nftcollectionmetadata)
     *   [Properties](#properties-26)
-*   [ProtoNFT](#protonft)
+*   [NFTCollectionMetadata](#nftcollectionmetadata)
     *   [Properties](#properties-27)
+*   [ProtoNFT](#protonft)
+    *   [Properties](#properties-28)
 *   [ProtoNFTRaw](#protonftraw)
 *   [NFT](#nft)
 *   [NFTMetadataLinksProviders](#nftmetadatalinksproviders)
 *   [NFTMetadataResponse](#nftmetadataresponse)
-    *   [Properties](#properties-28)
-*   [NFTCollectionMetadataResponse](#nftcollectionmetadataresponse)
     *   [Properties](#properties-29)
-*   [FloorPrice](#floorprice)
+*   [NFTCollectionMetadataResponse](#nftcollectionmetadataresponse)
     *   [Properties](#properties-30)
+*   [FloorPrice](#floorprice)
+    *   [Properties](#properties-31)
 *   [OperationType](#operationtype)
 *   [Operation](#operation)
-    *   [Properties](#properties-31)
-*   [PaginationConfig](#paginationconfig)
     *   [Properties](#properties-32)
-*   [SyncConfig](#syncconfig)
+*   [PaginationConfig](#paginationconfig)
     *   [Properties](#properties-33)
-*   [BalanceHistoryData](#balancehistorydata)
+*   [SyncConfig](#syncconfig)
     *   [Properties](#properties-34)
+*   [BalanceHistoryData](#balancehistorydata)
+    *   [Properties](#properties-35)
 *   [BalanceHistory](#balancehistory)
 *   [BalanceHistoryRaw](#balancehistoryraw)
 *   [BalanceHistoryWithCountervalue](#balancehistorywithcountervalue)
 *   [ValueChange](#valuechange)
-    *   [Properties](#properties-35)
-*   [AccountPortfolio](#accountportfolio)
     *   [Properties](#properties-36)
-*   [CurrencyPortfolio](#currencyportfolio)
+*   [AccountPortfolio](#accountportfolio)
     *   [Properties](#properties-37)
-*   [Portfolio](#portfolio)
+*   [CurrencyPortfolio](#currencyportfolio)
     *   [Properties](#properties-38)
-*   [PortfolioRangeConfig](#portfoliorangeconfig)
+*   [Portfolio](#portfolio)
     *   [Properties](#properties-39)
+*   [PortfolioRangeConfig](#portfoliorangeconfig)
+    *   [Properties](#properties-40)
 *   [PortfolioRange](#portfoliorange)
 *   [AssetsDistribution](#assetsdistribution)
-    *   [Properties](#properties-40)
+    *   [Properties](#properties-41)
 *   [PostOnboardingActionId](#postonboardingactionid)
 *   [navigationParams](#navigationparams)
 *   [startAction](#startaction)
@@ -157,37 +157,37 @@ Ledger Live main types.
     *   [actionCompletedPopupLabel](#actioncompletedpopuplabel)
     *   [buttonLabelForAnalyticsEvent](#buttonlabelforanalyticsevent)
 *   [PostOnboardingActionState](#postonboardingactionstate)
-    *   [Properties](#properties-41)
+    *   [Properties](#properties-42)
     *   [completed](#completed)
 *   [PostOnboardingState](#postonboardingstate)
-    *   [Properties](#properties-42)
+    *   [Properties](#properties-43)
     *   [deviceModelId](#devicemodelid)
     *   [walletEntryPointDismissed](#walletentrypointdismissed)
     *   [actionsToComplete](#actionstocomplete)
     *   [actionsCompleted](#actionscompleted)
     *   [lastActionCompleted](#lastactioncompleted)
 *   [PostOnboardingHubState](#postonboardinghubstate)
-    *   [Properties](#properties-43)
-*   [SwapOperation](#swapoperation)
     *   [Properties](#properties-44)
-*   [SwapOperationRaw](#swapoperationraw)
+*   [SwapOperation](#swapoperation)
     *   [Properties](#properties-45)
-*   [SignedOperation](#signedoperation)
+*   [SwapOperationRaw](#swapoperationraw)
     *   [Properties](#properties-46)
-*   [SignedOperationRaw](#signedoperationraw)
+*   [SignedOperation](#signedoperation)
     *   [Properties](#properties-47)
+*   [SignedOperationRaw](#signedoperationraw)
+    *   [Properties](#properties-48)
 *   [SignOperationEvent](#signoperationevent)
 *   [SignOperationEventRaw](#signoperationeventraw)
 *   [TransactionCommon](#transactioncommon)
-    *   [Properties](#properties-48)
-*   [TransactionCommonRaw](#transactioncommonraw)
     *   [Properties](#properties-49)
-*   [FeeStrategy](#feestrategy)
+*   [TransactionCommonRaw](#transactioncommonraw)
     *   [Properties](#properties-50)
-*   [TransactionStatusCommon](#transactionstatuscommon)
+*   [FeeStrategy](#feestrategy)
     *   [Properties](#properties-51)
-*   [TransactionStatusCommonRaw](#transactionstatuscommonraw)
+*   [TransactionStatusCommon](#transactionstatuscommon)
     *   [Properties](#properties-52)
+*   [TransactionStatusCommonRaw](#transactionstatuscommonraw)
+    *   [Properties](#properties-53)
 
 ### TokenAccount
 
@@ -523,18 +523,11 @@ DerivationMode is a string identifier of a specific derivation scheme in a list 
 
 Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
 
-### FeatureId
-
-Add others with union (e.g. "learn" | "market" | "foo")
-
-Type: (`"learn"` | `"brazePushNotifications"` | `"brazeLearn"` | `"llmNewDeviceSelection"` | `"llmNewFirmwareUpdateUx"` | `"ratingsPrompt"` | `"npsRatingsPrompt"` | `"counterValue"` | `"deviceInitialApps"` | `"buyDeviceFromLive"` | `"ptxEarn"` | `"currencyAvalancheCChain"` | `"currencyStacks"` | `"currencyOptimism"` | `"currencyOptimismGoerli"` | `"currencyArbitrum"` | `"currencyArbitrumGoerli"` | `"currencyRsk"` | `"currencyBittorrent"` | `"currencyKavaEvm"` | `"currencyEvmosEvm"` | `"currencyEnergyWeb"` | `"currencyAstar"` | `"currencyMetis"` | `"currencyBoba"` | `"currencyMoonriver"` | `"currencyVelasEvm"` | `"currencySyscoin"` | `"currencyAxelar"` | `"currencySecretNetwork"` | `"currencyDesmos"` | `"currencyUmee"` | `"currencyStargaze"` | `"currencyOnomy"` | `"currencyPersistence"` | `"currencyQuicksilver"` | `"currencyInternetComputer"` | `"depositNetworkBannerMobile"` | `"depositWithdrawBannerMobile"` | `"currencyTelosEvm"` | `"currencyCoreum"` | `"currencyPolygonZkEvm"` | `"currencyPolygonZkEvmTestnet"` | `"currencyBase"` | `"currencyBaseGoerli"` | `"currencyKlaytn"` | `"mockFeature"` | `"multibuyNavigation"` | `"syncOnboarding"` | `"walletConnectLiveApp"` | `"walletConnectEntryPoint"` | `"customImage"` | `"referralProgramDiscoverCard"` | `"referralProgramDesktopBanner"` | `"referralProgramDesktopSidebar"` | `"referralProgramMobile"` | `"disableNftSend"` | `"disableNftLedgerMarket"` | `"disableNftRaribleOpensea"` | `"walletNftGallery"` | `"receiveStakingFlowConfigDesktop"` | `"ethStakingProviders"` | `"storyly"` | `"staxWelcomeScreen"` | `"postOnboardingClaimNft"` | `"postOnboardingAssetsTransfer"` | `"firebaseEnvironmentReadOnly"` | `"protectServicesMobile"` | `"protectServicesDesktop"` | `"ptxServiceCtaExchangeDrawer"` | `"ptxServiceCtaScreens"` | `"swapWalletApiPartnerList"` | `"stakePrograms"` | `"portfolioExchangeBanner"` | `"objkt"` | `"editEthTx"` | `"stakeAccountBanner"` | `"newsfeedPage"` | `"domainInputResolution"` | `"discover"` | `"protectServicesDiscoverDesktop"` | `"transactionsAlerts"` | `"listAppsV2"`)
-
 ### Feature
 
-We use objects instead of direct booleans for potential future improvements
-like feature versioning etc
+Feature type.
 
-Type: {enabled: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), desktop_version: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, enabledOverriddenForCurrentDesktopVersion: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, mobile_version: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, enabledOverriddenForCurrentMobileVersion: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, languages_whitelisted: \[[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)]?, languages_blacklisted: \[[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)]?, enabledOverriddenForCurrentLanguage: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, overridesRemote: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, overriddenByEnv: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, params: T?}
+Type: {enabled: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), desktop_version: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, enabledOverriddenForCurrentDesktopVersion: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, mobile_version: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, enabledOverriddenForCurrentMobileVersion: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, languages_whitelisted: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>?, languages_blacklisted: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>?, enabledOverriddenForCurrentLanguage: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, overridesRemote: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, overriddenByEnv: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, params: T?}
 
 #### Properties
 
@@ -543,8 +536,8 @@ Type: {enabled: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Refe
 *   `enabledOverriddenForCurrentDesktopVersion` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** 
 *   `mobile_version` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** 
 *   `enabledOverriddenForCurrentMobileVersion` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** 
-*   `languages_whitelisted` **\[[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)]?** 
-*   `languages_blacklisted` **\[[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)]?** 
+*   `languages_whitelisted` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>?** 
+*   `languages_blacklisted` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>?** 
 *   `enabledOverriddenForCurrentLanguage` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** 
 *   `overridesRemote` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** 
 *   `overriddenByEnv` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** 
@@ -559,17 +552,7 @@ Type: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Glob
 #### desktop_version
 
 The `desktop_version` option is desktop specific, it has no impact on mobile
-
-Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
-
-#### desktop_version
-
 If set, the feature is disabled when the desktop app version does not satisfies this param
-
-Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
-
-#### desktop_version
-
 It should respect the semantic versioning specification (<https://semver.org/>)
 
 Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
@@ -583,17 +566,7 @@ Type: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Glob
 #### mobile_version
 
 The `mobile_version` option is mobile specific, it has no impact on mobile
-
-Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
-
-#### mobile_version
-
 If set, the feature is disabled when the mobile app version does not satisfies this param
-
-Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
-
-#### mobile_version
-
 It should respect the semantic versioning specification (<https://semver.org/>)
 
 Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
@@ -607,20 +580,15 @@ Type: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Glob
 #### languages_whitelisted
 
 You can optionnally use one of the two following options (languages_whitelisted and languages_blacklisted) (Only implemented on mobile for now)
-
-Type: \[[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)]
-
-#### languages_whitelisted
-
 List of languages for which the feature is enabled (it will be disabled by default for all of the others)
 
-Type: \[[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)]
+Type: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>
 
 #### languages_blacklisted
 
 List of languages for which the feature is disabled
 
-Type: \[[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)]
+Type: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>
 
 #### enabledOverriddenForCurrentLanguage
 
@@ -646,7 +614,75 @@ Additional params
 
 Type: T
 
-### DefaultFeatures
+### DefaultFeature
+
+Default Feature type.
+
+Type: [Feature](#feature)\<any>
+
+### CurrencyFeatures
+
+Currency Features type.
+
+Type: {currencyAvalancheCChain: [DefaultFeature](#defaultfeature), currencyStacks: [DefaultFeature](#defaultfeature), currencyOptimism: [DefaultFeature](#defaultfeature), currencyOptimismGoerli: [DefaultFeature](#defaultfeature), currencyArbitrum: [DefaultFeature](#defaultfeature), currencyArbitrumGoerli: [DefaultFeature](#defaultfeature), currencyRsk: [DefaultFeature](#defaultfeature), currencyBittorrent: [DefaultFeature](#defaultfeature), currencyKavaEvm: [DefaultFeature](#defaultfeature), currencyEvmosEvm: [DefaultFeature](#defaultfeature), currencyEnergyWeb: [DefaultFeature](#defaultfeature), currencyAstar: [DefaultFeature](#defaultfeature), currencyMetis: [DefaultFeature](#defaultfeature), currencyBoba: [DefaultFeature](#defaultfeature), currencyMoonriver: [DefaultFeature](#defaultfeature), currencyVelasEvm: [DefaultFeature](#defaultfeature), currencySyscoin: [DefaultFeature](#defaultfeature), currencyAxelar: [DefaultFeature](#defaultfeature), currencySecretNetwork: [DefaultFeature](#defaultfeature), currencyDesmos: [DefaultFeature](#defaultfeature), currencyUmee: [DefaultFeature](#defaultfeature), currencyStargaze: [DefaultFeature](#defaultfeature), currencyOnomy: [DefaultFeature](#defaultfeature), currencyPersistence: [DefaultFeature](#defaultfeature), currencyQuicksilver: [DefaultFeature](#defaultfeature), currencyInternetComputer: [DefaultFeature](#defaultfeature), currencyTelosEvm: [DefaultFeature](#defaultfeature), currencyCoreum: [DefaultFeature](#defaultfeature), currencyPolygonZkEvm: [DefaultFeature](#defaultfeature), currencyPolygonZkEvmTestnet: [DefaultFeature](#defaultfeature), currencyBase: [DefaultFeature](#defaultfeature), currencyBaseGoerli: [DefaultFeature](#defaultfeature), currencyKlaytn: [DefaultFeature](#defaultfeature)}
+
+#### Properties
+
+*   `currencyAvalancheCChain` **[DefaultFeature](#defaultfeature)** 
+*   `currencyStacks` **[DefaultFeature](#defaultfeature)** 
+*   `currencyOptimism` **[DefaultFeature](#defaultfeature)** 
+*   `currencyOptimismGoerli` **[DefaultFeature](#defaultfeature)** 
+*   `currencyArbitrum` **[DefaultFeature](#defaultfeature)** 
+*   `currencyArbitrumGoerli` **[DefaultFeature](#defaultfeature)** 
+*   `currencyRsk` **[DefaultFeature](#defaultfeature)** 
+*   `currencyBittorrent` **[DefaultFeature](#defaultfeature)** 
+*   `currencyKavaEvm` **[DefaultFeature](#defaultfeature)** 
+*   `currencyEvmosEvm` **[DefaultFeature](#defaultfeature)** 
+*   `currencyEnergyWeb` **[DefaultFeature](#defaultfeature)** 
+*   `currencyAstar` **[DefaultFeature](#defaultfeature)** 
+*   `currencyMetis` **[DefaultFeature](#defaultfeature)** 
+*   `currencyBoba` **[DefaultFeature](#defaultfeature)** 
+*   `currencyMoonriver` **[DefaultFeature](#defaultfeature)** 
+*   `currencyVelasEvm` **[DefaultFeature](#defaultfeature)** 
+*   `currencySyscoin` **[DefaultFeature](#defaultfeature)** 
+*   `currencyAxelar` **[DefaultFeature](#defaultfeature)** 
+*   `currencySecretNetwork` **[DefaultFeature](#defaultfeature)** 
+*   `currencyDesmos` **[DefaultFeature](#defaultfeature)** 
+*   `currencyUmee` **[DefaultFeature](#defaultfeature)** 
+*   `currencyStargaze` **[DefaultFeature](#defaultfeature)** 
+*   `currencyOnomy` **[DefaultFeature](#defaultfeature)** 
+*   `currencyPersistence` **[DefaultFeature](#defaultfeature)** 
+*   `currencyQuicksilver` **[DefaultFeature](#defaultfeature)** 
+*   `currencyInternetComputer` **[DefaultFeature](#defaultfeature)** 
+*   `currencyTelosEvm` **[DefaultFeature](#defaultfeature)** 
+*   `currencyCoreum` **[DefaultFeature](#defaultfeature)** 
+*   `currencyPolygonZkEvm` **[DefaultFeature](#defaultfeature)** 
+*   `currencyPolygonZkEvmTestnet` **[DefaultFeature](#defaultfeature)** 
+*   `currencyBase` **[DefaultFeature](#defaultfeature)** 
+*   `currencyBaseGoerli` **[DefaultFeature](#defaultfeature)** 
+*   `currencyKlaytn` **[DefaultFeature](#defaultfeature)** 
+
+### Features
+
+Features type.
+
+Type: any
+
+### FeatureId
+
+FeatureId type.
+
+Type: any
+
+### Feature_EthStakingProviders
+
+Features types.
+
+Type: [Feature](#feature)<{listProvider: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<{id: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), name: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), liveAppId: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), supportLink: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, icon: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, queryParams: Record<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>?}>}>
+
+### FeatureMap
+
+Utils types.
 
 Type: any
 

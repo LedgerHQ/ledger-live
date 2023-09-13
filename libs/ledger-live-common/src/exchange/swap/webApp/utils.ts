@@ -1,26 +1,16 @@
 import { BigNumber } from "bignumber.js";
-import { getGasLimit as getEthGasLimit } from "../../../families/ethereum/transaction";
-import { getGasLimit as getEvmGasLimit } from "@ledgerhq/coin-evm/logic";
+import { getGasLimit } from "@ledgerhq/coin-evm/logic";
 import { getAccountUnit } from "../../../account/index";
 
 export const getCustomFeesPerFamily = transaction => {
-  const { family, maxFeePerGas, maxPriorityFeePerGas, userGasLimit, customGasLimit, feePerByte } =
-    transaction;
+  const { family, maxFeePerGas, maxPriorityFeePerGas, customGasLimit, feePerByte } = transaction;
 
   switch (family) {
-    case "ethereum": {
-      return {
-        maxFeePerGas,
-        maxPriorityFeePerGas,
-        userGasLimit,
-        gasLimit: getEthGasLimit(transaction),
-      };
-    }
     case "evm": {
       return {
         maxFeePerGas,
         maxPriorityFeePerGas,
-        gasLimit: getEvmGasLimit(transaction),
+        gasLimit: getGasLimit(transaction),
         customGasLimit,
       };
     }

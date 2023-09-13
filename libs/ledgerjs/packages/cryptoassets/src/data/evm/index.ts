@@ -1,6 +1,7 @@
 import arbitrum_tokens from "./42161/erc20.json";
 import arbitrum_goerli_tokens from "./421613/erc20.json";
 import astar_tokens from "./592/erc20.json";
+import base_tokens from "./8453/erc20.json";
 import base_goerli_tokens from "./84531/erc20.json";
 import bittorrent_tokens from "./199/erc20.json";
 import bsc_tokens from "./56/erc20.json";
@@ -29,6 +30,7 @@ import velas_evm_tokens from "./106/erc20.json";
 import arbitrum_signatures from "./42161/erc20-signatures.json";
 import arbitrum_goerli_signatures from "./421613/erc20-signatures.json";
 import astar_signatures from "./592/erc20-signatures.json";
+import base_signatures from "./8453/erc20-signatures.json";
 import base_goerli_signatures from "./84531/erc20-signatures.json";
 import bittorrent_signatures from "./199/erc20-signatures.json";
 import bsc_signatures from "./56/erc20-signatures.json";
@@ -59,6 +61,7 @@ export const tokens = {
   42161: arbitrum_tokens,
   421613: arbitrum_goerli_tokens,
   592: astar_tokens,
+  8453: base_tokens,
   84531: base_goerli_tokens,
   199: bittorrent_tokens,
   56: bsc_tokens,
@@ -90,6 +93,7 @@ export const signatures = {
   42161: arbitrum_signatures,
   421613: arbitrum_goerli_signatures,
   592: astar_signatures,
+  8453: base_signatures,
   84531: base_goerli_signatures,
   199: bittorrent_signatures,
   56: bsc_signatures,

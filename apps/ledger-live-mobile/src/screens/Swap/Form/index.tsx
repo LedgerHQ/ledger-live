@@ -24,7 +24,6 @@ import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import { log } from "@ledgerhq/logs";
-import { Feature } from "@ledgerhq/types-live";
 import { shallowAccountsSelector } from "../../../reducers/accounts";
 import { swapAcceptedProvidersSelector } from "../../../reducers/settings";
 import { setSwapSelectableCurrencies } from "../../../actions/settings";
@@ -55,6 +54,7 @@ import { ScreenName } from "../../../const";
 import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
 import { SwapFormNavigatorParamList } from "../../../components/RootNavigator/types/SwapFormNavigator";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import type { DetailsSwapParamList } from "../types";
 
 type Navigation = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.Account>;
 
@@ -102,9 +102,7 @@ export function SwapForm({
     [dispatch],
   );
 
-  const walletApiPartnerList: Feature<{ list: Array<string> }> | null = useFeature(
-    "swapWalletApiPartnerList",
-  );
+  const walletApiPartnerList = useFeature("swapWalletApiPartnerList");
   const navigation = useNavigation<Navigation["navigation"]>();
 
   const onNoRates: OnNoRatesCallback = useCallback(
@@ -120,6 +118,7 @@ export function SwapForm({
   );
 
   const swapTransaction = useSwapTransaction({
+    ...params,
     accounts,
     setExchangeRate,
     onNoRates,
@@ -305,21 +304,23 @@ export function SwapForm({
   }, []);
 
   useEffect(() => {
-    if (params?.currency) {
-      swapTransaction.setToCurrency(params.currency);
+    const { currency, accountId, target, transaction } = params as DetailsSwapParamList;
+
+    if (currency) {
+      swapTransaction.setToCurrency(currency);
     }
 
-    if (params?.accountId) {
+    if (accountId) {
       const enhancedAccounts =
-        params.target === "from"
+        target === "from"
           ? accounts
           : accounts.map(acc =>
-              accountWithMandatoryTokens(acc, [(params?.currency as TokenCurrency) || []]),
+              accountWithMandatoryTokens(acc, [(currency as TokenCurrency) || []]),
             );
 
-      const account = flattenAccounts(enhancedAccounts).find(a => a.id === params.accountId);
+      const account = flattenAccounts(enhancedAccounts).find(a => a.id === accountId);
 
-      if (params.target === "from") {
+      if (target === "from") {
         track(
           "Page Swap Form - New Source Account",
           {
@@ -331,7 +332,7 @@ export function SwapForm({
         swapTransaction.setFromAccount(account);
       }
 
-      if (params.target === "to") {
+      if (target === "to") {
         swapTransaction.setToAccount(
           swapTransaction.swap.to.currency,
           account,
@@ -340,15 +341,16 @@ export function SwapForm({
       }
     }
 
-    if (params?.transaction) {
-      swapTransaction.setTransaction(params.transaction);
+    if (transaction) {
+      swapTransaction.setTransaction(transaction);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params]);
 
   useEffect(() => {
-    if (params?.rate) {
-      setExchangeRate(params.rate);
+    const { rate } = params as DetailsSwapParamList;
+    if (rate) {
+      setExchangeRate(rate);
     }
   }, [params, setExchangeRate, swapTransaction]);
 

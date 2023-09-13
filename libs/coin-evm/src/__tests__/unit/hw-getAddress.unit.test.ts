@@ -7,7 +7,10 @@ jest.mock(
   "@ledgerhq/hw-app-eth",
   () =>
     class {
-      getAddress = async () => ({
+      getAddress = async (): Promise<{
+        publicKey: string;
+        address: string;
+      }> => ({
         publicKey: "",
         address: address.toLowerCase(),
       });
@@ -16,7 +19,7 @@ jest.mock(
 const mockSignerFactory = (
   _: string,
   fn: (signer: EvmSigner) => Promise<EvmAddress | EvmSignature>,
-) =>
+): Promise<EvmAddress | EvmSignature> =>
   fn({
     setLoadConfig: jest.fn(),
     getAddress: async () => ({

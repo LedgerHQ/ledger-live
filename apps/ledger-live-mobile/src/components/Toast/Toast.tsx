@@ -1,21 +1,33 @@
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { ToastData } from "@ledgerhq/live-common/notifications/ToastProvider/types";
-import { useEffect } from "react";
-import { v4 as uuidV4 } from "uuid";
+import { useEffect, useState } from "react";
 
-type Props = Omit<ToastData, "id"> & { id?: string };
+type Props = Omit<ToastData, "id"> & { id: string; onClose(): void };
 
-export function Toast(props: Props) {
-  const { pushToast, dismissToast } = useToasts();
+export function Toast({ onClose, ...props }: Props) {
+  const { pushToast, dismissToast, toasts } = useToasts();
+  const [hasPushedToast, setHasPushedToast] = useState(false);
 
   useEffect(() => {
-    const id = props.id ?? uuidV4();
+    if (hasPushedToast) {
+      const foundToast = toasts.find(toast => toast.id === props.id);
+      if (!foundToast) {
+        onClose();
+      }
+    }
+  }, [toasts, props.id, hasPushedToast, onClose]);
+
+  useEffect(() => {
     pushToast({
       ...props,
-      id,
     });
-    return () => dismissToast(id);
-  }, [pushToast, dismissToast, props]);
+    setHasPushedToast(true);
+    return () => {
+      dismissToast(props.id);
+      onClose();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.id]);
 
   return null;
 }

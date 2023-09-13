@@ -121,7 +121,7 @@ const Form = ({ setStep }: Props) => {
   );
   const formUrlSplitted = ratingsFeatureParams?.typeform_url.split("?");
   const formUrl =
-    formUrlSplitted[0] +
+    formUrlSplitted?.[0] +
     `#app_version=${appVersion}` +
     `&app_language=${language}` +
     `&platform_os=${Platform.OS}` +
@@ -130,7 +130,7 @@ const Form = ({ setStep }: Props) => {
     `&firmware_version=${lastDevice?.deviceInfo?.version}` +
     `&notifications_allowed=${notificationsAllowed}` +
     `&notifications_blacklisted=${notificationsBlacklisted}` +
-    `&done?${formUrlSplitted[1] || ""}`;
+    `&done?${formUrlSplitted?.[1] || ""}`;
 
   return (
     <Flex flex={1} height={height * (1 / 2)}>

@@ -1,5 +1,5 @@
 import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { useLoginPath } from "@ledgerhq/live-common/hooks/recoverFeatueFlag";
+import { useLoginPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { Button, Flex, IconsLegacy, InvertThemeV3, Logos, Text } from "@ledgerhq/react-ui";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -179,7 +179,7 @@ export function Welcome() {
           >
             {t("onboarding.screens.welcome.nextButton")}
           </Button>
-          <FeatureToggle feature="protectServicesDesktop">
+          <FeatureToggle featureId="protectServicesDesktop">
             <Button
               iconPosition="right"
               variant="main"

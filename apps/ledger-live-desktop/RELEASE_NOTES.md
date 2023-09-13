@@ -1,3 +1,7 @@
+# 2.68.1
+
+This release includes minor bug fixes and security improvements.
+
 # 2.66.0
 
 ### 🚀 Features

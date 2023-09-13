@@ -41,7 +41,7 @@ const Next = ({ onNext }: { onNext: () => void }) => {
   const [isOpened, setIsOpened] = useState<boolean>(false);
   const servicesConfig = useFeature("protectServicesMobile");
 
-  const restoreInfoDrawer = servicesConfig?.params?.onboardingRestore?.restoreInfoDrawer || {};
+  const restoreInfoDrawer = servicesConfig?.params?.onboardingRestore?.restoreInfoDrawer;
 
   const supportLink = restoreInfoDrawer?.supportLinkURI;
 

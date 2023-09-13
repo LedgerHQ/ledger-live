@@ -32,15 +32,15 @@ export const FabAccountMainActionsComponent: React.FC<FabAccountActionsProps> = 
             <QuickActionList
               data={quickActions}
               numColumns={2}
-              key={"two_columns"}
-              keyExtractor={(_item, index) => "two_columns_" + index}
+              id="two_columns"
+              key="two_columns"
             />
           ) : (
             <QuickActionList
               data={quickActions}
               numColumns={3}
-              key={"three_columns"}
-              keyExtractor={(_item, index) => "three_columns_" + index}
+              id="three_columns"
+              key="three_columns"
             />
           )}
         </>

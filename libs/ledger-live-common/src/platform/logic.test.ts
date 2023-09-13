@@ -1,17 +1,5 @@
-import {
-  broadcastTransactionLogic,
-  completeExchangeLogic,
-  receiveOnAccountLogic,
-  signMessageLogic,
-  WebPlatformContext,
-} from "./logic";
-
-import { LiveAppManifest } from "./types";
-import {
-  createFixtureAccount,
-  createFixtureTokenAccount,
-  createFixtureCryptoCurrency,
-} from "../mock/fixtures/cryptoCurrencies";
+import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   OperationType,
   SignedOperation,
@@ -19,14 +7,24 @@ import {
   TokenAccount,
 } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-
-import * as converters from "./converters";
-import * as serializers from "./serializers";
-import * as signMessage from "../hw/signMessage/index";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { RawPlatformTransaction } from "./rawTypes";
 import { setSupportedCurrencies } from "../currencies";
-import { Transaction as EthereumTransaction } from "../families/ethereum/types";
+import * as signMessage from "../hw/signMessage/index";
+import {
+  createFixtureAccount,
+  createFixtureCryptoCurrency,
+  createFixtureTokenAccount,
+} from "../mock/fixtures/cryptoCurrencies";
+import * as converters from "./converters";
+import {
+  broadcastTransactionLogic,
+  completeExchangeLogic,
+  receiveOnAccountLogic,
+  signMessageLogic,
+  WebPlatformContext,
+} from "./logic";
+import { RawPlatformTransaction } from "./rawTypes";
+import * as serializers from "./serializers";
+import { LiveAppManifest } from "./types";
 
 describe("receiveOnAccountLogic", () => {
   // Given
@@ -50,7 +48,7 @@ describe("receiveOnAccountLogic", () => {
 
   describe("when nominal case", () => {
     // Given
-    const accountId = "ethereumjs:2:ethereum:0x012:";
+    const accountId = "js:2:ethereum:0x012:";
     const expectedResult = "Function called";
 
     beforeEach(() => uiNavigation.mockResolvedValueOnce(expectedResult));
@@ -84,7 +82,7 @@ describe("receiveOnAccountLogic", () => {
 
   describe("when account cannot be found", () => {
     // Given
-    const nonFoundAccountId = "ethereumjs:2:ethereum:0x010:";
+    const nonFoundAccountId = "js:2:ethereum:0x010:";
 
     it("returns an error", async () => {
       // When
@@ -148,7 +146,7 @@ describe("completeExchangeLogic", () => {
       const completeExchangeRequest = {
         provider: "provider",
         fromAccountId: "js:2:ethereum:0x16:+ethereum%2Ferc20%2Fusd_tether__erc20_",
-        toAccountId: "ethereumjs:2:ethereum:0x042:",
+        toAccountId: "js:2:ethereum:0x042:",
         transaction: rawPlatformTransaction,
         binaryPayload: "binaryPayload",
         signature: "signature",
@@ -158,23 +156,23 @@ describe("completeExchangeLogic", () => {
         rate: 1,
       };
 
-      const expectedTransaction: EthereumTransaction = {
-        family: "ethereum",
+      const expectedTransaction: EvmTransaction = {
+        family: "evm",
         amount: new BigNumber("1000000000"),
         subAccountId: "js:2:ethereum:0x16:+ethereum%2Ferc20%2Fusd_tether__erc20_",
         recipient: "0x0123456",
         nonce: 8,
         data: Buffer.from("Some data...", "hex"),
+        type: 0,
         gasPrice: new BigNumber("700000"),
-        maxFeePerGas: null,
-        maxPriorityFeePerGas: null,
-        userGasLimit: new BigNumber("1200000"),
+        maxFeePerGas: undefined,
+        maxPriorityFeePerGas: undefined,
+        gasLimit: new BigNumber("1200000"),
+        customGasLimit: new BigNumber("1200000"),
         feesStrategy: "medium",
-        estimatedGasLimit: null,
-        feeCustomUnit: { name: "Gwei", code: "Gwei", magnitude: 9 },
         mode: "send",
-        networkInfo: null,
         useAllAmount: false,
+        chainId: 1,
       };
 
       // When
@@ -206,8 +204,8 @@ describe("completeExchangeLogic", () => {
       const rawPlatformTransaction = createRawEtherumTransaction();
       const completeExchangeRequest = {
         provider: "provider",
-        fromAccountId: "ethereumjs:2:ethereum:0x017:",
-        toAccountId: "ethereumjs:2:ethereum:0x042:",
+        fromAccountId: "js:2:ethereum:0x017:",
+        toAccountId: "js:2:ethereum:0x042:",
         transaction: rawPlatformTransaction,
         binaryPayload: "binaryPayload",
         signature: "signature",
@@ -217,22 +215,23 @@ describe("completeExchangeLogic", () => {
         rate: 1,
       };
 
-      const expectedTransaction: EthereumTransaction = {
-        family: "ethereum",
+      const expectedTransaction: EvmTransaction = {
+        family: "evm",
         amount: new BigNumber("1000000000"),
         recipient: "0x0123456",
         nonce: 8,
         data: Buffer.from("Some data...", "hex"),
         gasPrice: new BigNumber("700000"),
-        maxFeePerGas: null,
-        maxPriorityFeePerGas: null,
-        userGasLimit: new BigNumber("1200000"),
+        gasLimit: new BigNumber("1200000"),
+        customGasLimit: new BigNumber("1200000"),
         feesStrategy: "medium",
-        estimatedGasLimit: null,
-        feeCustomUnit: { name: "Gwei", code: "Gwei", magnitude: 9 },
         mode: "send",
-        networkInfo: null,
         useAllAmount: false,
+        chainId: 1,
+        subAccountId: undefined,
+        type: 0,
+        maxFeePerGas: undefined,
+        maxPriorityFeePerGas: undefined,
       };
 
       // When
@@ -266,8 +265,8 @@ describe("completeExchangeLogic", () => {
         const rawPlatformTransaction = createRawEtherumTransaction();
         const completeExchangeRequest = {
           provider: "provider",
-          fromAccountId: "ethereumjs:2:ethereum:0x017:",
-          toAccountId: "ethereumjs:2:ethereum:0x042:",
+          fromAccountId: "js:2:ethereum:0x017:",
+          toAccountId: "js:2:ethereum:0x042:",
           transaction: rawPlatformTransaction,
           binaryPayload: "binaryPayload",
           signature: "signature",
@@ -292,8 +291,8 @@ describe("completeExchangeLogic", () => {
       // Given
       const completeExchangeRequest = {
         provider: "provider",
-        fromAccountId: "ethereumjs:2:ethereum:0x012:",
-        toAccountId: "ethereumjs:2:ethereum:0x042:",
+        fromAccountId: "js:2:ethereum:0x012:",
+        toAccountId: "js:2:ethereum:0x042:",
         transaction: createRawEtherumTransaction(),
         binaryPayload: "binaryPayload",
         signature: "signature",
@@ -324,8 +323,8 @@ describe("completeExchangeLogic", () => {
       const rawPlatformTransaction = createRawBitcoinTransaction();
       const completeExchangeRequest = {
         provider: "provider",
-        fromAccountId: "ethereumjs:2:ethereum:0x017:",
-        toAccountId: "ethereumjs:2:ethereum:0x042:",
+        fromAccountId: "js:2:ethereum:0x017:",
+        toAccountId: "js:2:ethereum:0x042:",
         transaction: rawPlatformTransaction,
         binaryPayload: "binaryPayload",
         signature: "signature",
@@ -365,7 +364,7 @@ describe("broadcastTransactionLogic", () => {
 
   describe("when nominal case", () => {
     // Given
-    const accountId = "ethereumjs:2:ethereum:0x012:";
+    const accountId = "js:2:ethereum:0x012:";
     const rawSignedTransaction = createSignedOperationRaw();
 
     it("calls uiNavigation callback with a signedOperation", async () => {
@@ -402,7 +401,7 @@ describe("broadcastTransactionLogic", () => {
 
   describe("when account cannot be found", () => {
     // Given
-    const nonFoundAccountId = "ethereumjs:2:ethereum:0x010:";
+    const nonFoundAccountId = "js:2:ethereum:0x010:";
     const rawSignedTransaction = createSignedOperationRaw();
 
     it("returns an error", async () => {
@@ -467,7 +466,7 @@ describe("signMessageLogic", () => {
 
   describe("when nominal case", () => {
     // Given
-    const accountId = "ethereumjs:2:ethereum:0x012:";
+    const accountId = "js:2:ethereum:0x012:";
     const messageToSign = "Message to sign";
     const spyPrepareMessageToSign = jest.spyOn(signMessage, "prepareMessageToSign");
 
@@ -501,7 +500,7 @@ describe("signMessageLogic", () => {
 
   describe("when account cannot be found", () => {
     // Given
-    const nonFoundAccountId = "ethereumjs:2:ethereum:0x010:";
+    const nonFoundAccountId = "js:2:ethereum:0x010:";
     const messageToSign = "Message to sign";
 
     it("returns an error", async () => {
@@ -556,7 +555,7 @@ describe("signMessageLogic", () => {
 
   describe("when inner call prepareMessageToSign raise an error", () => {
     // Given
-    const accountId = "ethereumjs:2:ethereum:0x012:";
+    const accountId = "js:2:ethereum:0x012:";
     const messageToSign = "Message to sign";
     const spyPrepareMessageToSign = jest.spyOn(signMessage, "prepareMessageToSign");
 
