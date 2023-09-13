@@ -23,7 +23,9 @@ import InfoCircle from "~/renderer/icons/InfoCircle";
 import BakerImage from "../../BakerImage";
 import DelegationContainer from "../DelegationContainer";
 import { StepProps } from "../types";
+
 const urlDelegationHelp = "https://support.ledger.com/hc/en-us/articles/360010653260";
+
 const Container = styled(Box)`
   width: 148px;
   min-height: 170px;
@@ -41,15 +43,17 @@ const Container = styled(Box)`
     margin-bottom: 10px;
   }
 `;
+
 const Placeholder = styled(Box)`
   height: 14px;
 `;
+
 const StepSummary = ({
   account,
   transaction,
-  transitionTo,
   isRandomChoice,
   eventType,
+  transitionTo,
 }: StepProps) => {
   invariant(
     account && transaction && transaction.family === "tezos",
@@ -61,6 +65,9 @@ const StepSummary = ({
   const unit = getAccountUnit(account);
   const getBakerName = (baker: Baker | undefined | null, fallback: string) =>
     baker ? baker.name : fallback;
+
+  console.log({ baker, recipient: transaction.recipient });
+
   return (
     <Box flow={4} mx={40}>
       <TrackPage
@@ -213,7 +220,9 @@ const StepSummary = ({
     </Box>
   );
 };
+
 export default StepSummary;
+
 export const StepSummaryFooter = ({
   t,
   account,

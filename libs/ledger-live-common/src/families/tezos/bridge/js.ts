@@ -3,7 +3,7 @@ import { BigNumber } from "bignumber.js";
 import { TezosToolkit, DEFAULT_FEE, DEFAULT_STORAGE_LIMIT } from "@taquito/taquito";
 import { DerivationType } from "@taquito/ledger-signer";
 import { compressPublicKey } from "@taquito/ledger-signer/dist/lib/utils";
-import { b58cencode, prefix, Prefix } from "@taquito/utils";
+import { b58cencode, prefix, Prefix, validateAddress, ValidationResult } from "@taquito/utils";
 import {
   AmountRequired,
   NotEnoughBalance,
@@ -15,7 +15,6 @@ import {
   RecipientRequired,
   InvalidAddress,
 } from "@ledgerhq/errors";
-import { validateAddress, ValidationResult } from "@taquito/utils";
 import type { CurrencyBridge, AccountBridge, Account, AccountLike } from "@ledgerhq/types-live";
 import { makeSync, makeScanAccounts, makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
 import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";

@@ -2,7 +2,7 @@ import { TFunction } from "i18next";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/tezos/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { Step } from "~/renderer/components/Stepper";
+import { Step as StepperProps } from "~/renderer/components/Stepper";
 import { OpenModal } from "~/renderer/actions/modals";
 export type StepId =
   | "starter"
@@ -12,6 +12,7 @@ export type StepId =
   | "custom"
   | "device"
   | "confirmation";
+
 export type StepProps = {
   t: TFunction;
   transitionTo: (a: string) => void;
@@ -38,4 +39,5 @@ export type StepProps = {
   openedWithAccount: boolean;
   source?: string;
 };
-export type St = Step<StepId, StepProps>;
+
+export type Step = StepperProps<StepId, StepProps>;

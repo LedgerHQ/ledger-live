@@ -267,6 +267,7 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
           e => {
             if (ignore) return;
             statusIsPending.current = false;
+            console.log({ e });
             dispatch({
               type: "onStatusError",
               error: e,
@@ -302,7 +303,7 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
   }, [transaction, mainAccount, bridgePending, dispatch]);
 
   const bridgeError = errorAccount || errorStatus;
-
+  console.log({ errorAccount, errorStatus });
   useEffect(() => {
     if (bridgeError && globalOnBridgeError) {
       globalOnBridgeError(bridgeError);

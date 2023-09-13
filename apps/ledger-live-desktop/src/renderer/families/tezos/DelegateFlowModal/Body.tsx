@@ -1,11 +1,10 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { bindActionCreators } from "redux";
 import { useDispatch, useSelector } from "react-redux";
-import { TFunction } from "i18next";
 import { Trans, useTranslation } from "react-i18next";
 import invariant from "invariant";
 import { Account, AccountLike, Operation, SubAccount } from "@ledgerhq/types-live";
-import { useBakers, useRandomBaker } from "@ledgerhq/live-common/families/tezos/bakers";
+import { useBakers } from "@ledgerhq/live-common/families/tezos/bakers";
 import whitelist from "@ledgerhq/live-common/families/tezos/bakers.whitelist-default";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount, addPendingOperation } from "@ledgerhq/live-common/account/index";
@@ -16,9 +15,7 @@ import logger from "~/renderer/logger";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import Track from "~/renderer/analytics/Track";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { delegatableAccountsSelector } from "~/renderer/actions/general";
 import { openModal } from "~/renderer/actions/modals";
-
 import Stepper from "~/renderer/components/Stepper";
 import StepAccount, { StepAccountFooter } from "./steps/StepAccount";
 import StepStarter from "./steps/StepStarter";
@@ -27,23 +24,12 @@ import StepSummary, { StepSummaryFooter } from "./steps/StepSummary";
 import StepValidator from "./steps/StepValidator";
 import StepCustom, { StepCustomFooter } from "./steps/StepCustom";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
-import { StepId, St } from "./types";
+import { StepId, Step } from "./types";
 import {
   TezosAccount,
   TezosOperationMode,
   Transaction,
 } from "@ledgerhq/live-common/families/tezos/types";
-
-const createTitles = (t: TFunction): Record<StepId | "undelegate", string> => ({
-  account: t("delegation.flow.steps.account.title"),
-  device: t("delegation.flow.steps.account.title"), // same as account
-  starter: t("delegation.flow.steps.starter.title"),
-  summary: t("delegation.flow.steps.summary.title"),
-  validator: t("delegation.flow.steps.validator.title"),
-  undelegate: t("delegation.flow.steps.undelegate.title"),
-  confirmation: t("delegation.flow.steps.confirmation.title"),
-  custom: t("delegation.flow.steps.custom.title"),
-});
 
 export type Data = {
   account?: TezosAccount | SubAccount;
@@ -61,7 +47,7 @@ type Props = {
   params: Data;
 };
 
-const createSteps = (params: Data): St[] => [
+const createSteps = (params: Data): Step[] => [
   {
     id: "starter",
     component: StepStarter,
@@ -108,15 +94,16 @@ const createSteps = (params: Data): St[] => [
   },
 ];
 
-const Body = ({ onChangeStepId, onClose, stepId, params }: Props) => {
+const Body = ({ stepId, params, onChangeStepId, onClose }: Props) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const device = useSelector(getCurrentDevice);
-  const accounts = useSelector(delegatableAccountsSelector);
   const openedFromAccount = !!params.account;
   const bakers = useBakers(whitelist);
-  const randomBaker = useRandomBaker(bakers);
+  const [defaultBaker] = bakers;
+
   const [steps] = useState(() => createSteps(params));
+
   const {
     transaction,
     setTransaction,
@@ -126,12 +113,10 @@ const Body = ({ onChangeStepId, onClose, stepId, params }: Props) => {
     status,
     bridgeError,
     bridgePending,
-  } = useBridgeTransaction(() => {
-    const parentAccount = params && params.parentAccount;
-    const account = (params && params.account) || accounts[0];
+  } = useBridgeTransaction<Transaction>(() => {
+    const account = params.account;
     return {
       account,
-      parentAccount,
     };
   });
 
@@ -142,21 +127,21 @@ const Body = ({ onChangeStepId, onClose, stepId, params }: Props) => {
 
     // make sure the mode is in sync (an account changes can reset it)
     const patch: Partial<Transaction> = {
-      mode: (params && params.mode) || "delegate",
+      mode: params.mode || "delegate",
     };
 
     // make sure that in delegate mode, a transaction recipient is set (random pick)
-    if (patch.mode === "delegate" && !transaction.recipient && stepId !== "custom" && randomBaker) {
-      patch.recipient = randomBaker.address;
+    if (patch.mode === "delegate" && !transaction.recipient && stepId !== "custom") {
+      patch.recipient = defaultBaker.address;
     }
 
     // when changes, we set again
-    if (patch.mode !== transaction.mode || "recipient" in patch) {
+    if (patch.mode !== transaction.mode || patch.recipient) {
       setTransaction(
         getAccountBridge(account, parentAccount).updateTransaction(transaction, patch),
       );
     }
-  }, [account, randomBaker, stepId, params, parentAccount, setTransaction, transaction]);
+  }, [account, defaultBaker, stepId, params, parentAccount, setTransaction, transaction]);
 
   // make sure step id is in sync
   useEffect(() => {
@@ -175,17 +160,21 @@ const Body = ({ onChangeStepId, onClose, stepId, params }: Props) => {
     },
     [account, setAccount],
   );
+
   const handleRetry = useCallback(() => {
     setTransactionError(null);
     setOptimisticOperation(null);
     setSigned(false);
   }, []);
+
   const handleTransactionError = useCallback((error: Error) => {
+    console.log(error);
     if (!(error instanceof UserRefusedOnDevice)) {
       logger.critical(error);
     }
     setTransactionError(error);
   }, []);
+
   const handleOperationBroadcasted = useCallback(
     (optimisticOperation: Operation) => {
       if (!account) return;
@@ -202,21 +191,36 @@ const Body = ({ onChangeStepId, onClose, stepId, params }: Props) => {
   );
 
   const handleStepChange = useCallback(e => onChangeStepId(e.id), [onChangeStepId]);
-  const titles = useMemo(() => createTitles(t), [t]);
+
+  const titles: Record<StepId | "undelegate", string> = {
+    account: t("delegation.flow.steps.account.title"),
+    device: t("delegation.flow.steps.account.title"), // same as account
+    starter: t("delegation.flow.steps.starter.title"),
+    summary: t("delegation.flow.steps.summary.title"),
+    validator: t("delegation.flow.steps.validator.title"),
+    undelegate: t("delegation.flow.steps.undelegate.title"),
+    confirmation: t("delegation.flow.steps.confirmation.title"),
+    custom: t("delegation.flow.steps.custom.title"),
+  };
+
   const title =
     transaction && transaction.family === "tezos" && transaction.mode === "undelegate"
       ? titles.undelegate
       : (stepId ? titles[stepId] : undefined) || titles.account;
+
   const errorSteps = [];
   if (transactionError) {
     errorSteps.push(2);
   } else if (bridgeError) {
     errorSteps.push(1);
   }
+
   const isRandomChoice =
-    !transaction || !randomBaker || transaction.recipient === randomBaker.address;
+    !transaction || !defaultBaker || transaction.recipient === defaultBaker.address;
   const error = transactionError || bridgeError;
+  console.log({ bridgeError });
   const { account: accountParams, eventType, source = "Account Page" } = params || {};
+
   const stepperProps = {
     title,
     stepId,
@@ -238,18 +242,18 @@ const Body = ({ onChangeStepId, onClose, stepId, params }: Props) => {
     status,
     bridgePending,
     signed,
-    setSigned,
+    isRandomChoice,
     optimisticOperation,
+    source,
+    setSigned,
     openModal: handleOpenModal,
     onClose,
-    isRandomChoice,
     onChangeAccount: handleChangeAccount,
     onChangeTransaction: setTransaction,
     onRetry: handleRetry,
     onStepChange: handleStepChange,
     onOperationBroadcasted: handleOperationBroadcasted,
     onTransactionError: handleTransactionError,
-    source,
   };
 
   if (!status) return null;

@@ -92,9 +92,9 @@ const cache = makeLRUCache(
 let _lastBakers: Baker[] = [];
 
 export const fetchAllBakers = async (): Promise<Baker[]> => {
-  const r = await cache.force();
-  _lastBakers = r;
-  return r;
+  const allBakers = await cache.force();
+  _lastBakers = allBakers;
+  return allBakers;
 };
 
 function whitelist(all: Baker[], addresses: string[]) {

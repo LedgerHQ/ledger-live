@@ -1,5 +1,5 @@
+const ledgerValidatorAddress = "tz3LV9aGKHDnAZHCtC9SjNtTrKRu678FqSki";
 const whitelist = [
-  "tz3LV9aGKHDnAZHCtC9SjNtTrKRu678FqSki", // ledger validator
   "tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q",
   "tz1Scdr2HsZiQjc7bHMeBbmDRXYVvdhjJbBh",
   "tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194",
@@ -28,4 +28,4 @@ const whitelist = [
 // we give no ordering preference. it's settled at module load time
 whitelist.sort(() => Math.random() - 0.5);
 
-export default whitelist;
+export default [ledgerValidatorAddress, ...whitelist];
