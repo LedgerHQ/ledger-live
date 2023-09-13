@@ -152,8 +152,6 @@ describe("completeExchangeLogic", () => {
         signature: "signature",
         feesStrategy: "medium",
         exchangeType: 8,
-        swapId: "1234",
-        rate: 1,
       };
 
       const expectedTransaction: EvmTransaction = {
@@ -211,8 +209,6 @@ describe("completeExchangeLogic", () => {
         signature: "signature",
         feesStrategy: "medium",
         exchangeType: 8,
-        swapId: "1234",
-        rate: 1,
       };
 
       const expectedTransaction: EvmTransaction = {
