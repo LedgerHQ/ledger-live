@@ -48,7 +48,6 @@ import {
 import PortfolioAssets from "./PortfolioAssets";
 import { internetReachable } from "../../logic/internetReachable";
 import { UpdateStep } from "../FirmwareUpdate";
-import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -106,7 +105,6 @@ function PortfolioScreen({ navigation }: NavigationProps) {
     });
     setAddModalOpened(true);
   }, [setAddModalOpened]);
-  useFetchCurrencyAll();
 
   const closeAddModal = useCallback(() => setAddModalOpened(false), [setAddModalOpened]);
   const refreshAccountsOrdering = useRefreshAccountsOrdering();

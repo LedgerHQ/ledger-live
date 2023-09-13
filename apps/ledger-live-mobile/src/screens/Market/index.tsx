@@ -38,7 +38,6 @@ import { AnalyticsContext } from "../../analytics/AnalyticsContext";
 import EmptyStarredCoins from "./EmptyStarredCoins";
 import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { MarketNavigatorStackParamList } from "../../components/RootNavigator/types/MarketNavigator";
-import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 
 const noResultIllustration = {
   dark: require("../../images/illustration/Dark/_051.png"),
@@ -266,8 +265,6 @@ export default function Market({ navigation }: NavigationProps) {
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
   const filterByStarredAccount: boolean = useSelector(marketFilterByStarredAccountsSelector);
   const ptxEarnFeature = useFeature("ptxEarn");
-
-  useFetchCurrencyAll();
 
   const {
     requestParams,

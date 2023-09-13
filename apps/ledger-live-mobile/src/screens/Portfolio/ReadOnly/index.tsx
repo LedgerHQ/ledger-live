@@ -37,7 +37,6 @@ import FirmwareUpdateBanner from "../../../components/FirmwareUpdateBanner";
 import CollapsibleHeaderFlatList from "../../../components/WalletTab/CollapsibleHeaderFlatList";
 import { WalletTabNavigatorStackParamList } from "../../../components/RootNavigator/types/WalletTabNavigator";
 import { UpdateStep } from "../../FirmwareUpdate";
-import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 
 const maxAssetsToDisplay = 5;
 
@@ -51,7 +50,6 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
   const portfolio = usePortfolioAllAccounts();
   const { colors } = useTheme();
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
-  useFetchCurrencyAll();
 
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
   useFocusEffect(refreshAccountsOrdering);
