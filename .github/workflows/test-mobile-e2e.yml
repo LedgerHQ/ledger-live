@@ -404,3 +404,11 @@ jobs:
           payload-file-path: "./payload-slack-content.json"
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+      - name: post to a Slack channel
+        if: contains(fromJson('["develop", "main"]'), github.ref_name)
+        uses: slackapi/slack-github-action@v1.23.0
+        with:
+          channel-id: "C05FKJ7DFAP"
+          payload-file-path: "./payload-slack-content.json"
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
