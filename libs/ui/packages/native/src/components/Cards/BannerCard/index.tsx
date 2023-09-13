@@ -62,16 +62,20 @@ const CardContainer = (props: CardProps): React.ReactElement => {
 
   return (
     <Container {...props}>
-      {hideLeftElementContainer ? (<Flex
-        borderRadius={50}
-        height={40}
-        width={40}
-        alignItems="center"
-        justifyContent="center"
-        bg={"opacityDefault.c05"}
-      >
-        {LeftElement}
-      </Flex>) : LeftElement}
+      {hideLeftElementContainer ? (
+        <Flex
+          borderRadius={50}
+          height={40}
+          width={40}
+          alignItems="center"
+          justifyContent="center"
+          bg={"opacityDefault.c05"}
+        >
+          {LeftElement}
+        </Flex>
+      ) : (
+        LeftElement
+      )}
 
       <Text
         mx={4}

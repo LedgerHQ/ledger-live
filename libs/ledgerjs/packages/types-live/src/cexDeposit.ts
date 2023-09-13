@@ -1,7 +1,7 @@
 export enum CexDepositEntryPointsLocationsDesktop {
-    selectCrypto = "selectCrypto",
+  selectCrypto = "selectCrypto",
 }
 
 export enum CexDepositEntryPointsLocationsMobile {
-    selectCrypto = "selectCrypto",
+  selectCrypto = "selectCrypto",
 }

@@ -1,4 +1,7 @@
-import { CexDepositEntryPointsLocationsDesktop, CexDepositEntryPointsLocationsMobile } from "./cexDeposit";
+import {
+  CexDepositEntryPointsLocationsDesktop,
+  CexDepositEntryPointsLocationsMobile,
+} from "./cexDeposit";
 import { ChainwatchNetwork } from "./chainwatch";
 import { StorylyInstanceID } from "./storyly";
 
