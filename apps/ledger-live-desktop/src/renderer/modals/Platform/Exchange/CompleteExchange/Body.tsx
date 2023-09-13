@@ -2,7 +2,8 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Exchange, ExchangeSwap } from "@ledgerhq/live-common/exchange/platform/types";
 import { Exchange as SwapExchange } from "@ledgerhq/live-common/exchange/swap/types";
-import { getUpdateAccountActionParamsAfterSwap } from "@ledgerhq/live-common/exchange/swap/getUpdateAccountActionParamsAfterSwap";
+import { setBroadcastTransaction } from "@ledgerhq/live-common/exchange/swap/setBroadcastTransaction";
+import { getUpdateAccountWithUpdaterParams } from "@ledgerhq/live-common/exchange/swap/getUpdateAccountWithUpdaterParams";
 import { convertParametersToValidFormat } from "@ledgerhq/live-common/exchange/swap/webApp/index";
 import { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -78,7 +79,11 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
             toAccount,
             rate,
           });
-          const params = getUpdateAccountActionParamsAfterSwap({
+          setBroadcastTransaction({
+            result,
+            provider,
+          });
+          const params = getUpdateAccountWithUpdaterParams({
             result,
             exchange: exchange as SwapExchange,
             transaction: transactionParams,

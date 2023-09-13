@@ -1,5 +1,6 @@
 import { postSwapCancelled } from "@ledgerhq/live-common/exchange/swap/index";
-import { getUpdateAccountActionParamsAfterSwap } from "@ledgerhq/live-common/exchange/swap/getUpdateAccountActionParamsAfterSwap";
+import { setBroadcastTransaction } from "@ledgerhq/live-common/exchange/swap/setBroadcastTransaction";
+import { getUpdateAccountWithUpdaterParams } from "@ledgerhq/live-common/exchange/swap/getUpdateAccountWithUpdaterParams";
 import {
   Exchange,
   SwapTransactionType,
@@ -92,7 +93,11 @@ export default function ExchangeDrawer({ swapTransaction, exchangeRate, onComple
   const onCompletion = useCallback(
     (result: { operation: Operation; swapId: string }) => {
       const { magnitudeAwareRate, provider } = exchangeRate;
-      const params = getUpdateAccountActionParamsAfterSwap({
+      setBroadcastTransaction({
+        result,
+        provider,
+      });
+      const params = getUpdateAccountWithUpdaterParams({
         result,
         exchange,
         transaction,

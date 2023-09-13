@@ -1,14 +1,12 @@
 import { BigNumber } from "bignumber.js";
-import { getEnv } from "@ledgerhq/live-env";
 import { Account, Operation } from "@ledgerhq/types-live";
-import { postSwapAccepted, postSwapCancelled } from "./index";
 import addToSwapHistory from "./addToSwapHistory";
 import { Exchange, ExchangeRate } from "./types";
 import { addPendingOperation } from "../../account/index";
 import { getMainAccount } from "../../account/helpers";
 import { Transaction } from "../../generated/types";
 
-export const getUpdateAccountActionParamsAfterSwap = ({
+export const getUpdateAccountWithUpdaterParams = ({
   result,
   exchange,
   transaction,
@@ -22,24 +20,6 @@ export const getUpdateAccountActionParamsAfterSwap = ({
   provider: string;
 }): [string, (account: Account) => Account] | [] => {
   const { operation, swapId } = result;
-
-  /**
-   * If transaction broadcast are disabled, consider the swap as cancelled
-   * since the partner will never receive the funds
-   */
-  if (getEnv("DISABLE_TRANSACTION_BROADCAST")) {
-    postSwapCancelled({
-      provider,
-      swapId,
-    });
-  } else {
-    postSwapAccepted({
-      provider,
-      swapId,
-      transactionId: operation.hash,
-    });
-  }
-
   const mainAccount =
     exchange.fromAccount && getMainAccount(exchange.fromAccount, exchange.fromParentAccount);
   if (!mainAccount) return [];
