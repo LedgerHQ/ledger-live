@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import type { Account } from "@ledgerhq/types-live";
