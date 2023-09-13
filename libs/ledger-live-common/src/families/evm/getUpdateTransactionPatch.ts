@@ -1,145 +1,161 @@
 // TODO: move to coin-evm
 
 import { getGasTracker } from "@ledgerhq/coin-evm/api/gasTracker/index";
-import { DEFAULT_GAS_LIMIT } from "@ledgerhq/coin-evm/transaction";
 import type {
   EvmTransactionEIP1559,
   EvmTransactionLegacy,
-  FeeData,
+  GasOptions,
   Transaction,
+  TransactionStatus,
 } from "@ledgerhq/coin-evm/types/index";
-import { ReplacementTransactionUnderpriced } from "@ledgerhq/errors";
+import { AmountRequired, ReplacementTransactionUnderpriced } from "@ledgerhq/errors";
 import type { Account, TransactionStatusCommon } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
+import { NotEnoughNftOwned, NotOwnedNft } from "../../errors";
 
 type EditType = "cancel" | "speedup";
 
-// build the appropriate patch for cancel flow depending on the transaction type
-// const buildCancelTxPatch = ({
-//   transaction,
-//   account,
-// }: {
-//   transaction: Transaction;
-//   account: Account;
-// }): Partial<Transaction> => {
-//   let patch: Partial<Transaction> = {
-//     type: transaction.type,
-//     amount: new BigNumber(0),
-//     data: undefined,
-//     nonce: transaction.nonce,
-//     mode: "send",
-//     recipient: account.freshAddress,
-//     feesStrategy: "custom",
-//     useAllAmount: false,
-//     /**
-//      * since canceling a tx is just sending 0 eth to yourself, the gasLimit can
-//      * just be the default value
-//      */
-//     gasLimit: DEFAULT_GAS_LIMIT,
-//   };
+const getMinLegacyFees = ({ gasPrice }: { gasPrice: BigNumber }): { gasPrice: BigNumber } => {
+  return {
+    gasPrice: gasPrice.times(1.1).integerValue(BigNumber.ROUND_CEIL),
+  };
+};
 
-//   // increase gas fees in case of cancel flow as we don't have the fees input screen for cancel flow
-//   if (patch.type === 2) {
-//     const type2Patch: Partial<EvmTransactionEIP1559> = {
-//       ...patch,
-//       maxFeePerGas: transaction.maxFeePerGas?.times(1.1).integerValue(BigNumber.ROUND_CEIL),
-//       maxPriorityFeePerGas: transaction.maxPriorityFeePerGas
-//         ?.times(1.1)
-//         .integerValue(BigNumber.ROUND_CEIL),
-//     };
-//     patch = type2Patch;
-//   } else if (patch.type === 1 || patch.type === 0) {
-//     const type1Patch: Partial<EvmTransactionLegacy> = {
-//       ...patch,
-//       gasPrice: transaction.gasPrice?.times(1.1).integerValue(BigNumber.ROUND_CEIL),
-//     };
-//     patch = type1Patch;
-//   }
+const getMinEip1559Fees = ({
+  maxFeePerGas,
+  maxPriorityFeePerGas,
+}: {
+  maxFeePerGas: BigNumber;
+  maxPriorityFeePerGas: BigNumber;
+}): {
+  maxFeePerGas: BigNumber;
+  maxPriorityFeePerGas: BigNumber;
+} => {
+  return {
+    maxFeePerGas: maxFeePerGas.times(1.1).integerValue(BigNumber.ROUND_CEIL),
+    maxPriorityFeePerGas: maxPriorityFeePerGas.times(1.1).integerValue(BigNumber.ROUND_CEIL),
+  };
+};
 
-//   return patch;
-// };
+/**
+ * Can't easily and properly use generics with Partial to avoid type casting
+ * when used with EvmTransactionLegacy or EvmTransactionEIP1559
+ * cf. https://github.com/microsoft/TypeScript/issues/13442
+ * Ideal signature would be something like:
+ * getCommonSpeedUpPatch<T extends Transaction>(...): Partial<T>
+ * With T being either EvmTransactionLegacy or EvmTransactionEIP1559
+ */
+const getCommonSpeedUpPatch = ({
+  transaction,
+  shouldUseFastStrategy,
+  gasOptions,
+}: {
+  transaction: Transaction;
+  shouldUseFastStrategy: boolean;
+  gasOptions: GasOptions;
+}): Partial<Transaction> => {
+  const patch: Partial<Transaction> = {
+    /**
+     * Since there is multiple update transactions happening throughout the edit flow,
+     * and a user can change the edit type (cancel -> speedup or speedup -> cancel),
+     * within the flow, we need to make sure we use the correct values fron the original transaction
+     * when creating the new tx patch
+     */
+    subAccountId: transaction.subAccountId,
+    amount: transaction.amount,
+    data: transaction.data,
+    nonce: transaction.nonce,
+    recipient: transaction.recipient,
+    mode: transaction.mode,
+    feesStrategy: shouldUseFastStrategy ? "fast" : "custom",
+    useAllAmount: false,
+    gasLimit: transaction.gasLimit,
+    // TODO: explain why we need to set customGasLimit (if really needed?)
+    customGasLimit: transaction.gasLimit,
+    /**
+     * we add gasOptions to the patch to prevent `prepareTransaction` to request
+     * value from a node when fast fee option is used
+     * cf. https://github.com/LedgerHQ/ledger-live/blob/f03479a40eba734e1ac4ec92415fe139b3b7eee6/libs/coin-evm/src/prepareTransaction.ts#L200-L201
+     */
+    gasOptions,
+  };
 
-// const buildSpeedupTxPatch = ({}: {}): Partial<Transaction> => {};
+  return patch;
+};
 
-// ------------------->
+/**
+ * Can't easily and properly use generics with Partial to avoid type casting
+ * when used with EvmTransactionLegacy or EvmTransactionEIP1559
+ * cf. https://github.com/microsoft/TypeScript/issues/13442
+ * Ideal signature would be something like:
+ * getCommonCancelPatch<T extends Transaction>(...): Partial<T>
+ * With T being either EvmTransactionLegacy or EvmTransactionEIP1559
+ */
+const getCommonCancelPatch = ({
+  transaction,
+  shouldUseFastStrategy,
+  freshAddress,
+  gasOptions,
+}: {
+  transaction: Transaction;
+  shouldUseFastStrategy: boolean;
+  freshAddress: string;
+  gasOptions: GasOptions;
+}): Partial<Transaction> => {
+  const patch: Partial<Transaction> = {
+    amount: new BigNumber(0),
+    // removing the subAccountId to transform a token tx to main coin tx
+    subAccountId: undefined,
+    data: undefined,
+    nonce: transaction.nonce,
+    mode: "send",
+    recipient: freshAddress,
+    feesStrategy: shouldUseFastStrategy ? "fast" : "custom",
+    useAllAmount: false,
+    gasLimit: transaction.gasLimit,
+    // TODO: explain why we need to set customGasLimit (if really needed?)
+    customGasLimit: transaction.gasLimit,
+    /**
+     * we add gasOptions to the patch to prevent `prepareTransaction` to request
+     * value from a node when fast fee option is used
+     * cf. https://github.com/LedgerHQ/ledger-live/blob/f03479a40eba734e1ac4ec92415fe139b3b7eee6/libs/coin-evm/src/prepareTransaction.ts#L200-L201
+     */
+    gasOptions,
+  };
 
-// const getCommonSpeedupPatch = ({
-//   transaction,
-//   shouldUseFastStrategy,
-// }: {
-//   transaction: Transaction;
-//   shouldUseFastStrategy: boolean;
-// }): Partial<Transaction> => {
-//   const patch: Partial<Transaction> = {
-//     amount: transaction.amount,
-//     data: transaction.data,
-//     nonce: transaction.nonce,
-//     recipient: transaction.recipient,
-//     mode: transaction.mode,
-//     feesStrategy: shouldUseFastStrategy ? "fast" : "custom",
-//     useAllAmount: false,
-//   };
-
-//   return patch;
-// };
-
-// const getCommonCancelPatch = ({
-//   transaction,
-//   shouldUseFastStrategy,
-//   freshAddress,
-// }: {
-//   transaction: Transaction;
-//   shouldUseFastStrategy: boolean;
-//   freshAddress: string;
-// }): Partial<Transaction> => {
-//   const patch: Partial<Transaction> = {
-//     amount: new BigNumber(0),
-//     data: undefined,
-//     nonce: transaction.nonce,
-//     mode: "send",
-//     recipient: freshAddress,
-//     feesStrategy: shouldUseFastStrategy ? "fast" : "custom",
-//     useAllAmount: false,
-//   };
-
-//   return patch;
-// };
-
-// ------------------->
-
-// FIXME: add tests
+  return patch;
+};
 
 const getLegacyPatch = ({
   transaction,
-  feeData,
+  gasOptions,
   editType,
   account,
 }: {
   transaction: EvmTransactionLegacy;
-  feeData: FeeData;
+  gasOptions: GasOptions;
   editType: EditType;
   account: Account;
 }): Partial<EvmTransactionLegacy> => {
-  const { gasPrice } = feeData;
+  const { gasPrice } = gasOptions.fast;
 
   if (!gasPrice) {
     throw new Error("gasPrice is required");
   }
 
-  const minNewGasPrice = transaction.gasPrice.times(1.1).integerValue(BigNumber.ROUND_CEIL);
+  const { gasPrice: minNewGasPrice } = getMinLegacyFees({ gasPrice: transaction.gasPrice });
+
   const newGasPrice = BigNumber.max(minNewGasPrice, gasPrice);
 
   const shouldUseFastStrategy = newGasPrice.isEqualTo(gasPrice);
 
   if (editType === "speedup") {
     const patch: Partial<EvmTransactionLegacy> = {
-      amount: transaction.amount,
-      data: transaction.data,
-      nonce: transaction.nonce,
-      recipient: transaction.recipient,
-      mode: transaction.mode,
-      feesStrategy: shouldUseFastStrategy ? "fast" : "custom",
-      useAllAmount: false,
+      ...(getCommonSpeedUpPatch({
+        transaction,
+        shouldUseFastStrategy,
+        gasOptions,
+      }) as Partial<EvmTransactionLegacy>),
       maxFeePerGas: undefined,
       maxPriorityFeePerGas: undefined,
       gasPrice: newGasPrice,
@@ -149,21 +165,15 @@ const getLegacyPatch = ({
   }
 
   const patch: Partial<EvmTransactionLegacy> = {
-    amount: new BigNumber(0),
-    data: undefined,
-    nonce: transaction.nonce,
-    mode: "send",
-    recipient: account.freshAddress,
-    feesStrategy: shouldUseFastStrategy ? "fast" : "custom",
+    ...(getCommonCancelPatch({
+      transaction,
+      shouldUseFastStrategy,
+      freshAddress: account.freshAddress,
+      gasOptions,
+    }) as Partial<EvmTransactionLegacy>),
     maxFeePerGas: undefined,
     maxPriorityFeePerGas: undefined,
     gasPrice: newGasPrice,
-    useAllAmount: false,
-    /**
-     * since canceling a tx is just sending 0 eth to yourself, the gasLimit can
-     * just be the default value
-     */
-    gasLimit: DEFAULT_GAS_LIMIT,
   };
 
   return patch;
@@ -171,16 +181,16 @@ const getLegacyPatch = ({
 
 const getEip1559Patch = ({
   transaction,
-  feeData,
+  gasOptions,
   editType,
   account,
 }: {
   transaction: EvmTransactionEIP1559;
-  feeData: FeeData;
+  gasOptions: GasOptions;
   editType: EditType;
   account: Account;
 }): Partial<EvmTransactionEIP1559> => {
-  const { maxFeePerGas, maxPriorityFeePerGas } = feeData;
+  const { maxFeePerGas, maxPriorityFeePerGas } = gasOptions.fast;
 
   if (!maxFeePerGas) {
     throw new Error("maxFeePerGas is required");
@@ -190,10 +200,11 @@ const getEip1559Patch = ({
     throw new Error("maxPriorityFeePerGas is required");
   }
 
-  const minNewMaxFeePerGas = transaction.maxFeePerGas.times(1.1).integerValue(BigNumber.ROUND_CEIL);
-  const minNewMaxPriorityFeePerGas = transaction.maxPriorityFeePerGas
-    .times(1.1)
-    .integerValue(BigNumber.ROUND_CEIL);
+  const { maxFeePerGas: minNewMaxFeePerGas, maxPriorityFeePerGas: minNewMaxPriorityFeePerGas } =
+    getMinEip1559Fees({
+      maxFeePerGas: transaction.maxFeePerGas,
+      maxPriorityFeePerGas: transaction.maxPriorityFeePerGas,
+    });
 
   const newMaxFeePerGas = BigNumber.max(minNewMaxFeePerGas, maxFeePerGas);
   const newMaxPriorityFeePerGas = BigNumber.max(minNewMaxPriorityFeePerGas, maxPriorityFeePerGas);
@@ -204,43 +215,36 @@ const getEip1559Patch = ({
 
   if (editType === "speedup") {
     const patch: Partial<EvmTransactionEIP1559> = {
-      amount: transaction.amount,
-      data: transaction.data,
-      nonce: transaction.nonce,
-      recipient: transaction.recipient,
-      mode: transaction.mode,
-      feesStrategy: shouldUseFastStrategy ? "fast" : "custom",
+      ...(getCommonSpeedUpPatch({
+        transaction,
+        shouldUseFastStrategy,
+        gasOptions,
+      }) as Partial<EvmTransactionEIP1559>),
       maxFeePerGas: newMaxFeePerGas,
       maxPriorityFeePerGas: newMaxPriorityFeePerGas,
       gasPrice: undefined,
-      useAllAmount: false,
     };
 
     return patch;
   }
 
   const patch: Partial<EvmTransactionEIP1559> = {
-    amount: new BigNumber(0),
-    data: undefined,
-    nonce: transaction.nonce,
-    mode: "send",
-    recipient: account.freshAddress,
-    feesStrategy: shouldUseFastStrategy ? "fast" : "custom",
+    ...(getCommonCancelPatch({
+      transaction,
+      shouldUseFastStrategy,
+      freshAddress: account.freshAddress,
+      gasOptions,
+    }) as Partial<EvmTransactionEIP1559>),
     maxFeePerGas: newMaxFeePerGas,
     maxPriorityFeePerGas: newMaxPriorityFeePerGas,
     gasPrice: undefined,
-    useAllAmount: false,
-    /**
-     * since canceling a tx is just sending 0 eth to yourself, the gasLimit can
-     * just be the default value
-     */
-    gasLimit: DEFAULT_GAS_LIMIT,
   };
 
   return patch;
 };
 
-export const getUpdateTransactionPatch = async ({
+// FIXME: add tests
+export const getEditTransactionPatch = async ({
   editType,
   transaction,
   account,
@@ -258,27 +262,35 @@ export const getUpdateTransactionPatch = async ({
 
   const shouldUseEip1559 = transaction.type === 2;
 
-  const { fast } = await gasTracker.getGasOptions({
+  const gasOptions = await gasTracker.getGasOptions({
     currency,
     options: { useEIP1559: shouldUseEip1559 },
   });
 
   return shouldUseEip1559
-    ? getEip1559Patch({ transaction, feeData: fast, editType, account })
-    : getLegacyPatch({ transaction, feeData: fast, editType, account });
+    ? getEip1559Patch({ transaction, gasOptions, editType, account })
+    : getLegacyPatch({ transaction, gasOptions, editType, account });
 };
 
 type ValidatedTransactionFields = "replacementTransactionUnderpriced";
 type ValidationIssues = Partial<Record<ValidatedTransactionFields, Error>>;
 
-export const validateUpdateTransaction = ({
+/**
+ * Validate an edited transaction and returns related errors and warnings
+ * Makes sure the updated fees are at least 10% higher than the original fees
+ * 10% isn't defined in the protocol, it's just how most nodes & miners implement it
+ * If the new transaction fees are less than 10% higher than the original fees,
+ * the transaction will be rejected by the network with a
+ * "replacement transaction underpriced" error
+ */
+const validateEditTransaction = ({
   editType,
   transaction,
   transactionToUpdate,
 }: {
-  editType: EditType;
   transaction: Transaction;
   transactionToUpdate: Transaction;
+  editType?: EditType;
 }): {
   errors: TransactionStatusCommon["errors"];
   warnings: TransactionStatusCommon["warnings"];
@@ -286,10 +298,7 @@ export const validateUpdateTransaction = ({
   const errors: ValidationIssues = {};
   const warnings: ValidationIssues = {};
 
-  console.log("validateUpdateTransaction", { editType, transaction, transactionToUpdate });
-
-  if (editType === "speedup") {
-    // FIXME: check new fees > old fees
+  if (!editType) {
     return {
       errors: {},
       warnings: {},
@@ -315,10 +324,9 @@ export const validateUpdateTransaction = ({
         warnings: {},
       };
     }
-    const minNewMaxFeePerGas = maxFeePerGas.times(1.1).integerValue(BigNumber.ROUND_CEIL);
-    const minNewMaxPriorityFeePerGas = maxPriorityFeePerGas
-      .times(1.1)
-      .integerValue(BigNumber.ROUND_CEIL);
+
+    const { maxFeePerGas: minNewMaxFeePerGas, maxPriorityFeePerGas: minNewMaxPriorityFeePerGas } =
+      getMinEip1559Fees({ maxFeePerGas, maxPriorityFeePerGas });
 
     if (
       newMaxFeePerGas.isLessThan(minNewMaxFeePerGas) ||
@@ -344,7 +352,7 @@ export const validateUpdateTransaction = ({
       };
     }
 
-    const minNewGasPrice = gasPrice.times(1.1).integerValue(BigNumber.ROUND_CEIL);
+    const { gasPrice: minNewGasPrice } = getMinLegacyFees({ gasPrice });
 
     if (newGasPrice.isLessThan(minNewGasPrice)) {
       errors.replacementTransactionUnderpriced = new ReplacementTransactionUnderpriced();
@@ -360,4 +368,51 @@ export const validateUpdateTransaction = ({
     errors: {},
     warnings: {},
   };
+};
+
+const ERROR_NOT_ENOUGH_NFT_OWNED = new NotEnoughNftOwned();
+const ERROR_NOT_OWNED_NFT = new NotOwnedNft();
+const ERROR_AMOUNT_REQUIRED = new AmountRequired();
+
+// NOTE: this logic should ideally be done in getTransactionStatus if possible
+// (not sure it is)
+export const getEditTransactionStatus = ({
+  transaction,
+  transactionToUpdate,
+  status,
+  editType,
+}: {
+  transaction: Transaction;
+  transactionToUpdate: Transaction;
+  status: TransactionStatus;
+  editType?: EditType;
+}): TransactionStatus => {
+  const { errors: editTxErrors } = validateEditTransaction({
+    editType,
+    transaction,
+    transactionToUpdate,
+  });
+
+  const errors: Record<string, Error> = { ...status.errors, ...editTxErrors };
+
+  const updatedErrors: Record<string, Error> = { ...errors };
+
+  // discard "AmountRequired" (for cancel and speedup since one can decide to speedup a cancel)
+  // TODO: why is this needed?
+  // exclude "NotOwnedNft" and "NotEnoughNftOwned" error if it's a nft speedup operation
+  if (
+    updatedErrors.amount &&
+    (updatedErrors.amount.name === ERROR_NOT_OWNED_NFT.name ||
+      updatedErrors.amount.name === ERROR_NOT_ENOUGH_NFT_OWNED.name ||
+      updatedErrors.amount.name === ERROR_AMOUNT_REQUIRED.name)
+  ) {
+    delete updatedErrors.amount;
+  }
+
+  const updatedStatus: TransactionStatus = {
+    ...status,
+    errors: updatedErrors,
+  };
+
+  return updatedStatus;
 };
