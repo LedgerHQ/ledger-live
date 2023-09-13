@@ -404,4 +404,24 @@ export const defaultFeatures = {
   listAppsV2: {
     enabled: false,
   },
+  cexDepositEntryPointsDesktop: {
+    enabled: false,
+    params: {
+      path: "/discover/ledger-cex-deposit",
+      locations: {
+        selectCrypto: true,
+        receiveConfirmation: true,
+      },
+    },
+  },
+  cexDepositEntryPointsMobile: {
+    enabled: false,
+    params: {
+      path: "/discover/ledger-cex-deposit",
+      locations: {
+        selectCrypto: true,
+        receiveConfirmation: true,
+      },
+    },
+  },
 } as const satisfies DefaultFeatures;
