@@ -13,11 +13,8 @@ import Button, { Props as ButtonProps } from "~/renderer/components/Button";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 
 const saveLogs = async (path: Electron.SaveDialogReturnValue) => {
-  await ipcRenderer.invoke(
-    "save-logs",
-    path,
-    JSON.stringify(memoryLogger.getMemoryLogs(), null, 2),
-  );
+  // Requests the main thread to save logs in a file
+  await ipcRenderer.invoke("save-logs", path, memoryLogger.getMemoryLogs());
 };
 
 type RestProps = ButtonProps & {

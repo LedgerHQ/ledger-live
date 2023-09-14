@@ -14,23 +14,31 @@ import {
   transportListenUnsubscribeChannel,
 } from "~/config/transportChannels";
 import { Message as ToInternalMessage } from "~/internal/types";
+import { ConsoleLogger, InMemoryLogger, isALog } from "./logger";
 
 // ~~~
 
 const LEDGER_CONFIG_DIRECTORY = app.getPath("userData");
 const HOME_DIRECTORY = app.getPath("home");
-const internal = new InternalProcess({
-  timeout: 3000,
-});
 let sentryEnabled: boolean | null = null;
 let userId: string | null = null;
 let sentryTags: string | null = null;
+
+const internal = new InternalProcess({
+  timeout: 3000,
+});
+
+const inMemoryLogger = InMemoryLogger.getLogger();
+const consoleLogger = ConsoleLogger.getLogger();
+
 export function getSentryEnabled(): boolean | null {
   return sentryEnabled;
 }
+
 export function setUserId(id: string) {
   userId = id;
 }
+
 ipcMain.handle("set-sentry-tags", (event, tags) => {
   setTags(tags);
   const tagsJSON = JSON.stringify(tags);
@@ -40,6 +48,7 @@ ipcMain.handle("set-sentry-tags", (event, tags) => {
     tagsJSON,
   });
 });
+
 const spawnCoreProcess = () => {
   const env = {
     ...getAllEnvs(),
@@ -52,31 +61,50 @@ const spawnCoreProcess = () => {
     INITIAL_SENTRY_ENABLED: String(!!sentryEnabled),
     SENTRY_USER_ID: userId,
   };
+
   internal.configure(path.resolve(__dirname, "main.bundle.js"), [], {
     silent: true,
     // @ts-expect-error Some envs are not typed as strings…
     env,
+    // Passes a list of env variables set on `LEDGER_INTERNAL_ARGS` to the internal thread
     execArgv: (process.env.LEDGER_INTERNAL_ARGS || "").split(/[ ]+/).filter(Boolean),
   });
   internal.start();
 };
+
 internal.onStart(() => {
   internal.process?.on("message", handleGlobalInternalMessage);
 });
+
 app.on("window-all-closed", async () => {
   if (internal.active) {
     await internal.stop();
   }
   app.quit();
 });
+
 ipcMain.on("clean-processes", async () => {
   if (internal.active) {
     await internal.stop();
   }
   spawnCoreProcess();
 });
+
 const ongoing: Record<string, Electron.IpcMainEvent> = {};
+
+// Sets up callback on messages coming from the internal process
 internal.onMessage(message => {
+  if (message.type === "log:log") {
+    if (!message.data || !isALog(message.data)) {
+      console.error(`Log not in correct format: ${JSON.stringify(message.data)}`);
+    } else {
+      inMemoryLogger.log(message.data);
+      consoleLogger.log(message.data);
+    }
+
+    return;
+  }
+
   const event = ongoing[message.requestId];
   if (event) {
     event.reply("command-event", message);
@@ -85,6 +113,7 @@ internal.onMessage(message => {
     }
   }
 });
+
 internal.onExit((code, signal, unexpected) => {
   if (unexpected) {
     Object.keys(ongoing).forEach(requestId => {
@@ -169,7 +198,9 @@ ipcMain.on("setEnv", async (event, env) => {
   }
 });
 
-// route internal process messages to renderer
+// Routes a (request) message from the renderer process to the internal process,
+// and sets a handler to receive the response from the internal thread and reply it to the renderer process
+// Only 1 response from the internal process is expected.
 const internalHandlerPromise = (channel: string) => {
   ipcMain.on(channel, (event, { data, requestId }) => {
     const replyChannel = `${channel}_RESPONSE_${requestId}`;
@@ -198,7 +229,8 @@ const internalHandlerPromise = (channel: string) => {
   });
 };
 
-// multi event version of internalHandler
+// Multi event version of internalHandlerPromise:
+// Several response from the internal process can be expected
 const internalHandlerObservable = (channel: string) => {
   ipcMain.on(channel, (event, { data, requestId }) => {
     const replyChannel = `${channel}_RESPONSE_${requestId}`;
@@ -230,7 +262,8 @@ const internalHandlerObservable = (channel: string) => {
   });
 };
 
-// simple event routing
+// Only routes a (request) message from the renderer process to the internal process
+// No response from the internal process is expected.
 const internalHandlerEvent = (channel: string) => {
   ipcMain.on(channel, (event, { data, requestId }) => {
     internal.send({
@@ -240,6 +273,7 @@ const internalHandlerEvent = (channel: string) => {
     } as ToInternalMessage);
   });
 };
+
 internalHandlerPromise(transportOpenChannel);
 internalHandlerPromise(transportExchangeChannel);
 internalHandlerPromise(transportCloseChannel);

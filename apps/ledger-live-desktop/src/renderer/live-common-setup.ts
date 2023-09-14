@@ -11,11 +11,19 @@ import { setEnvOnAllThreads } from "./../helpers/env";
 import { IPCTransport } from "./IPCTransport";
 import logger from "./logger";
 import { currentMode, setDeviceMode } from "@ledgerhq/live-common/hw/actions/app";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { ipcRenderer } from "electron";
+
 listenLogs(({ id, date, ...log }) => {
+  // console.log(`🐬 listenLogs: ${JSON.stringify(log)}`);
   if (log.type === "hid-frame") return;
+
   logger.debug(log);
 });
+
+ipcRenderer.on("log:internal", event => {
+  console.log(`👽 LOG from internal: ${JSON.stringify(event)}`);
+});
+
 setEnvOnAllThreads("USER_ID", getUserId());
 
 const originalDeviceMode = currentMode;

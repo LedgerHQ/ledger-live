@@ -7,17 +7,44 @@ import fs from "fs/promises";
 import updater from "./updater";
 import resolveUserDataDirectory from "~/helpers/resolveUserDataDirectory";
 import path from "path";
+import { InMemoryLogger } from "./logger";
+
 ipcMain.on("mainCrashTest", () => {
   captureException(new Error("CrashTestMain"));
 });
+
 ipcMain.on("updater", (e, type) => {
   updater(type);
 });
+
+/**
+ * Saves logs from the renderer thread and logs recorded from the internal thread to a file.
+ */
 ipcMain.handle(
   "save-logs",
-  async (event, path: Electron.SaveDialogReturnValue, experimentalLogs: string) =>
-    !path.canceled && path.filePath && fs.writeFile(path.filePath, experimentalLogs),
+  async (_event, path: Electron.SaveDialogReturnValue, rendererLogs: unknown[]) => {
+    if (!path.canceled && path.filePath) {
+      const inMemoryLogger = InMemoryLogger.getLogger();
+      const internalLogs = inMemoryLogger.getLogs();
+      console.log(
+        `Saving ${rendererLogs.length} logs from the renderer thread and ${internalLogs.length} logs from the internal thread`,
+      );
+
+      // Merging according to a `date` (internal logs) / `timestamp` (most of renderer logs) does not seem necessary.
+      // Simply pushes all the internal logs after the renderer logs.
+      // Note: this is not respecting the `EXPORT_MAX_LOGS` env var, but this is fine.
+      rendererLogs.push(
+        { type: "logs-separator", message: "Logs coming from the internal thread" },
+        ...internalLogs,
+      );
+
+      fs.writeFile(path.filePath, JSON.stringify(rendererLogs, null, 2));
+    } else {
+      console.warn("No path given to save logs");
+    }
+  },
 );
+
 ipcMain.handle(
   "export-operations",
   async (
@@ -39,6 +66,7 @@ ipcMain.handle(
     return false;
   },
 );
+
 const lssFileName = "lss.json";
 ipcMain.handle("generate-lss-config", async (event, data: string): Promise<boolean> => {
   const userDataDirectory = resolveUserDataDirectory();
@@ -52,6 +80,7 @@ ipcMain.handle("generate-lss-config", async (event, data: string): Promise<boole
   }
   return false;
 });
+
 ipcMain.handle("delete-lss-config", async (): Promise<boolean> => {
   const userDataDirectory = resolveUserDataDirectory();
   const filePath = path.resolve(userDataDirectory, lssFileName);
@@ -62,6 +91,7 @@ ipcMain.handle("delete-lss-config", async (): Promise<boolean> => {
   }
   return false;
 });
+
 ipcMain.handle("load-lss-config", async (): Promise<string | undefined | null> => {
   try {
     const userDataDirectory = resolveUserDataDirectory();
@@ -76,6 +106,7 @@ ipcMain.handle("load-lss-config", async (): Promise<string | undefined | null> =
   }
   return undefined;
 });
+
 process.setMaxListeners(0);
 
 // eslint-disable-next-line no-console

@@ -33,42 +33,41 @@ const logger = winston.createLogger({
 export const add = (transport: winston.transport) => {
   logger.add(transport);
 };
-export function enableDebugLogger() {
+
+/**
+ * Prints logs to the console, for debugging purposes.
+ *
+ * @param filter Optional filtering function applied to decide if the log should be printed
+ */
+export function enableDebugLogger(filter?: (log: LogEntry) => boolean) {
   let consoleT;
+
   if (typeof window === "undefined") {
     // on Node we want a concise logger
     consoleT = new winston.transports.Console({
       format: format.simple(),
     });
   } else {
-    // On Browser we want to preserve direct usage of console with the "expandable" objects
-    const SPLAT = Symbol.for("splat");
     class CustomConsole extends Transport {
-      log(info: LogEntry, callback: () => void) {
+      log(log: LogEntry, callback: () => void) {
+        if (filter && !filter(log)) {
+          callback();
+          return;
+        }
         setImmediate(() => {
-          this.emit("logged", info);
+          this.emit("logged", log);
         });
-        // @ts-expect-error it exists allegedly
-        const rest = info[SPLAT];
         /* eslint-disable no-console, no-lonely-if */
-        if (info.level === "error") {
-          if (rest) {
-            console.error(info.message, ...rest);
-          } else {
-            console.error(info.message);
-          }
-        } else if (info.level === "warn") {
-          if (rest) {
-            console.warn(info.message, ...rest);
-          } else {
-            console.warn(info.message);
-          }
-        } else {
-          if (rest) {
-            console.log(info.message, ...rest);
-          } else {
-            console.log(info.message);
-          }
+        switch (log.level) {
+          case "error":
+            console.error(JSON.stringify(log));
+            break;
+          case "warn":
+            console.warn(JSON.stringify(log));
+            break;
+          default:
+            console.log(JSON.stringify(log));
+            break;
         }
         /* eslint-enable */
         callback();
@@ -308,6 +307,7 @@ export default {
   debug: (...args: unknown[]) => {
     // @ts-expect-error spreading unknowns is fine
     logger.log("debug", ...args);
+    console.log(`LOGGER: debug: ${JSON.stringify(args)}`);
   },
   info: (...args: unknown[]) => {
     // @ts-expect-error spreading unknowns is fine
