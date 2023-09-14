@@ -99,8 +99,7 @@ const Body = ({ stepId, params, onChangeStepId, onClose }: Props) => {
   const dispatch = useDispatch();
   const device = useSelector(getCurrentDevice);
   const openedFromAccount = !!params.account;
-  const bakers = useBakers(whitelist);
-  const [defaultBaker] = bakers;
+  const [defaultBaker] = useBakers(whitelist);
 
   const [steps] = useState(() => createSteps(params));
 
@@ -115,7 +114,10 @@ const Body = ({ stepId, params, onChangeStepId, onClose }: Props) => {
     bridgePending,
   } = useBridgeTransaction<Transaction>(() => {
     const account = params.account;
+    const parentAccount = params.parentAccount;
+
     return {
+      parentAccount,
       account,
     };
   });
@@ -168,7 +170,6 @@ const Body = ({ stepId, params, onChangeStepId, onClose }: Props) => {
   }, []);
 
   const handleTransactionError = useCallback((error: Error) => {
-    console.log(error);
     if (!(error instanceof UserRefusedOnDevice)) {
       logger.critical(error);
     }
@@ -215,10 +216,7 @@ const Body = ({ stepId, params, onChangeStepId, onClose }: Props) => {
     errorSteps.push(1);
   }
 
-  const isRandomChoice =
-    !transaction || !defaultBaker || transaction.recipient === defaultBaker.address;
   const error = transactionError || bridgeError;
-  console.log({ bridgeError });
   const { account: accountParams, eventType, source = "Account Page" } = params || {};
 
   const stepperProps = {
@@ -242,7 +240,6 @@ const Body = ({ stepId, params, onChangeStepId, onClose }: Props) => {
     status,
     bridgePending,
     signed,
-    isRandomChoice,
     optimisticOperation,
     source,
     setSigned,

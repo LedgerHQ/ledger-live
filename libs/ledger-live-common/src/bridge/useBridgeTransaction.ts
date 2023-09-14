@@ -202,6 +202,7 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
       }),
     [dispatch],
   );
+
   const setTransaction = useCallback(
     transaction =>
       dispatch({
@@ -218,6 +219,7 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
       }),
     [dispatch],
   );
+
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const errorDelay = useRef(INITIAL_ERROR_RETRY_DELAY);
   const statusIsPending = useRef(false); // Stores if status already being processed
@@ -267,7 +269,6 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
           e => {
             if (ignore) return;
             statusIsPending.current = false;
-            console.log({ e });
             dispatch({
               type: "onStatusError",
               error: e,
@@ -303,7 +304,6 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
   }, [transaction, mainAccount, bridgePending, dispatch]);
 
   const bridgeError = errorAccount || errorStatus;
-  console.log({ errorAccount, errorStatus });
   useEffect(() => {
     if (bridgeError && globalOnBridgeError) {
       globalOnBridgeError(bridgeError);

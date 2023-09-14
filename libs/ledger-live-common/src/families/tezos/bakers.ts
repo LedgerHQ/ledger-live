@@ -4,6 +4,7 @@ import { log } from "@ledgerhq/logs";
 import type { AccountLike, Operation } from "@ledgerhq/types-live";
 import { useEffect, useMemo, useState } from "react";
 import { getEnv } from "@ledgerhq/live-env";
+import { ledgerValidatorAddress } from "./bakers.whitelist-default";
 
 export type CapacityStatus = "normal" | "full";
 
@@ -55,10 +56,10 @@ type API_BAKER = {
 };
 
 const ledgerValidator: Baker = {
-  address: "tz3LV9aGKHDnAZHCtC9SjNtTrKRu678FqSki",
   name: "Ledger by Kiln",
-  logoURL: "https://services.tzkt.io/v1/avatars/tz3LV9aGKHDnAZHCtC9SjNtTrKRu678FqSki",
-  nominalYield: "6.56 %",
+  address: ledgerValidatorAddress,
+  logoURL: `https://services.tzkt.io/v1/avatars/${ledgerValidatorAddress}`,
+  nominalYield: "5.67 %",
   capacityStatus: "normal",
 };
 
@@ -84,7 +85,7 @@ const cache = makeLRUCache(
     }
 
     log("tezos/bakers", "loaded " + bakers.length + " bakers");
-    return bakers;
+    return [ledgerValidator, ...bakers];
   },
   () => "",
 );
@@ -102,22 +103,14 @@ function whitelist(all: Baker[], addresses: string[]) {
 }
 
 export const listBakers = async (whitelistAddresses: string[]): Promise<Baker[]> => {
-  const all = await cache();
-  _lastBakers = [ledgerValidator, ...all];
+  _lastBakers = await cache();
   return whitelist(_lastBakers, whitelistAddresses);
 };
 
 export function useBakers(whitelistAddresses: string[]): Baker[] {
   const [bakers, setBakers] = useState<Baker[]>(() => whitelist(_lastBakers, whitelistAddresses));
   useEffect(() => {
-    let cancelled = false;
-    listBakers(whitelistAddresses).then(bakers => {
-      if (cancelled) return;
-      setBakers(bakers);
-    });
-    return () => {
-      cancelled = true;
-    };
+    listBakers(whitelistAddresses).then(setBakers);
   }, [whitelistAddresses]);
 
   return bakers;
@@ -196,14 +189,7 @@ export function useDelegation(account: AccountLike): Delegation | null | undefin
 export function useBaker(addr: string): Baker | undefined {
   const [baker, setBaker] = useState(() => getBakerSync(addr));
   useEffect(() => {
-    let cancelled = false;
-    loadBaker(addr).then(baker => {
-      if (cancelled) return;
-      setBaker(baker);
-    });
-    return () => {
-      cancelled = true;
-    };
+    loadBaker(addr).then(setBaker);
   }, [addr]);
 
   return baker;

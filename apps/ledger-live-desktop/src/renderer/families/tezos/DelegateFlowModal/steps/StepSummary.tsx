@@ -48,13 +48,7 @@ const Placeholder = styled(Box)`
   height: 14px;
 `;
 
-const StepSummary = ({
-  account,
-  transaction,
-  isRandomChoice,
-  eventType,
-  transitionTo,
-}: StepProps) => {
+const StepSummary = ({ account, transaction, eventType, transitionTo }: StepProps) => {
   invariant(
     account && transaction && transaction.family === "tezos",
     "step summary requires account and transaction settled",
@@ -65,8 +59,6 @@ const StepSummary = ({
   const unit = getAccountUnit(account);
   const getBakerName = (baker: Baker | undefined | null, fallback: string) =>
     baker ? baker.name : fallback;
-
-  console.log({ baker, recipient: transaction.recipient });
 
   return (
     <Box flow={4} mx={40}>
@@ -169,12 +161,6 @@ const StepSummary = ({
                   <Placeholder />
                 )}
               </Container>
-
-              {isRandomChoice ? (
-                <Text ff="Inter|Medium" color="palette.text.shade60" fontSize={2}>
-                  <Trans i18nKey="delegation.flow.steps.summary.randomly" />
-                </Text>
-              ) : null}
             </Box>
           ) : delegation ? (
             <Box>

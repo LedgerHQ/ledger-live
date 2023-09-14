@@ -4,6 +4,7 @@ import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/t
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Step as StepperProps } from "~/renderer/components/Stepper";
 import { OpenModal } from "~/renderer/actions/modals";
+
 export type StepId =
   | "starter"
   | "account"
@@ -35,7 +36,6 @@ export type StepProps = {
   onRetry: (a: void) => void;
   setSigned: (a: boolean) => void;
   signed: boolean;
-  isRandomChoice: boolean;
   openedWithAccount: boolean;
   source?: string;
 };
