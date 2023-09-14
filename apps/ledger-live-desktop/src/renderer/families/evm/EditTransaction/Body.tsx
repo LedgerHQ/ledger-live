@@ -1,3 +1,4 @@
+import { getTransactionByHash } from "@ledgerhq/coin-evm/api/transaction/index";
 import { getEstimatedFees } from "@ledgerhq/coin-evm/logic";
 import { fromTransactionRaw } from "@ledgerhq/coin-evm/transaction";
 import { Transaction, TransactionRaw } from "@ledgerhq/coin-evm/types/index";
@@ -13,7 +14,7 @@ import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { TFunction } from "i18next";
 import invariant from "invariant";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Trans, withTranslation } from "react-i18next";
 import { connect } from "react-redux";
 import { compose } from "redux";
@@ -125,6 +126,10 @@ const mapDispatchToProps = {
   updateAccountWithUpdater,
 };
 
+// Default interval to poll for transaction confirmation
+// Arbitrarily set to 30 seconds
+const DEFAULT_INTERVAL = 30 * 1000;
+
 const Body = ({
   device,
   stepId,
@@ -138,6 +143,7 @@ const Body = ({
   updateAccountWithUpdater,
 }: Props) => {
   const [steps] = useState(() => createSteps());
+  const [transactionHasBeenValidated, setTransactionHasBeenValidated] = useState(false);
 
   const transactionToUpdate = fromTransactionRaw(params.transactionRaw);
 
@@ -201,6 +207,29 @@ const Body = ({
   const handleStepChange = useCallback(e => onChangeStepId(e.id), [onChangeStepId]);
   const error = transactionError || bridgeError;
   const mainAccount = getMainAccount(account, parentAccount);
+
+  useEffect(() => {
+    const setTransactionHasBeenValidatedCallback = async () => {
+      const tx = await getTransactionByHash(mainAccount.currency, params.transactionHash);
+      if (tx?.confirmations) {
+        setTransactionHasBeenValidated(true);
+        // stop polling as soon as we have a confirmation
+        clearInterval(intervalId);
+      }
+    };
+
+    setTransactionHasBeenValidatedCallback();
+    const intervalId = setInterval(
+      () => setTransactionHasBeenValidatedCallback(),
+      mainAccount.currency.blockAvgTime
+        ? mainAccount.currency.blockAvgTime * 1000
+        : DEFAULT_INTERVAL,
+    );
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [mainAccount.currency, params.transactionHash]);
 
   const feeValue = getEstimatedFees(transactionToUpdate);
 
@@ -271,7 +300,7 @@ const Body = ({
     bridgePending,
     optimisticOperation,
     editType,
-    transactionHash: params.transactionHash,
+    transactionHasBeenValidated,
     haveFundToSpeedup,
     haveFundToCancel,
     isOldestEditableOperation,
