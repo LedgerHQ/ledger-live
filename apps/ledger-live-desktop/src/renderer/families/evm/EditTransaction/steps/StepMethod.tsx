@@ -1,4 +1,3 @@
-import { getTransactionByHash } from "@ledgerhq/coin-evm/api/transaction/index";
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -6,7 +5,7 @@ import { getEditTransactionPatch } from "@ledgerhq/live-common/families/evm/getU
 import { Flex } from "@ledgerhq/react-ui";
 import { AccountBridge } from "@ledgerhq/types-live";
 import invariant from "invariant";
-import React, { memo, useCallback, useState } from "react";
+import React, { memo, useCallback } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { urls } from "~/config/urls";
@@ -160,7 +159,7 @@ export const StepMethodFooter: React.FC<StepProps> = ({
   parentAccount,
   transaction,
   transactionToUpdate,
-  transactionHash,
+  transactionHasBeenValidated,
   haveFundToSpeedup,
   haveFundToCancel,
   isOldestEditableOperation,
@@ -168,8 +167,6 @@ export const StepMethodFooter: React.FC<StepProps> = ({
   updateTransaction,
   transitionTo,
 }: StepProps) => {
-  const [transactionHasBeenValidated, setTransactionHasBeenValidated] = useState(false);
-
   const canSpeedup = haveFundToSpeedup && isOldestEditableOperation;
   const canCancel = haveFundToCancel;
 
@@ -193,20 +190,9 @@ export const StepMethodFooter: React.FC<StepProps> = ({
     transitionTo("summary");
   };
 
-  if (!account || !transaction || !transactionHash) {
+  if (!account || !transaction) {
     return null;
   }
-
-  const mainAccount = getMainAccount(account, parentAccount);
-
-  // TODO: should be in a useEffect with a setInterval to regularly check the transaction
-  // could even be moved in the body to avoid having to check it in every step
-  // and also avoid to pass the transactionHash to every step
-  getTransactionByHash(mainAccount.currency, transactionHash).then(tx => {
-    if (tx?.confirmations) {
-      setTransactionHasBeenValidated(true);
-    }
-  });
 
   return (
     <>
