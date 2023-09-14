@@ -304,6 +304,7 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
   }, [transaction, mainAccount, bridgePending, dispatch]);
 
   const bridgeError = errorAccount || errorStatus;
+
   useEffect(() => {
     if (bridgeError && globalOnBridgeError) {
       globalOnBridgeError(bridgeError);
