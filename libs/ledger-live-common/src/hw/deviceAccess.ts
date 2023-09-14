@@ -116,7 +116,7 @@ let jobId = 0;
  *
  * @param deviceId
  * @param options contains optional configuration
- *   - openTimeoutMs: TODO: to keep, will be used in a separate PR
+ *   - openTimeoutMs: optional timeout when opening a Transport
  */
 export const withDevice =
   (deviceId: string, options?: { openTimeoutMs?: number }) =>
