@@ -1,6 +1,5 @@
 import { getTransactionByHash } from "@ledgerhq/coin-evm/api/transaction/index";
 import { getEstimatedFees } from "@ledgerhq/coin-evm/logic";
-import { NotEnoughGas, TransactionHasBeenValidatedError } from "@ledgerhq/errors";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getMinFees } from "@ledgerhq/live-common/families/evm/getUpdateTransactionPatch";
 import BigNumber from "bignumber.js";
@@ -10,10 +9,9 @@ import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
-import ErrorBanner from "~/renderer/components/ErrorBanner";
-import TranslatedError from "~/renderer/components/TranslatedError";
 import logger from "~/renderer/logger";
 import SendAmountFields from "../../../../modals/Send/SendAmountFields";
+import { TransactionErrorBanner } from "../components/TransactionErrorBanner";
 import { StepProps } from "../types";
 
 const ONE_WEI_IN_GWEI = 1_000_000_000;
@@ -142,20 +140,12 @@ export const StepFeesFooter = ({
   const { errors } = status;
   const errorCount = Object.keys(errors).length;
 
-  // TODO: why using Alert instead of ErrorBanner to display some errors?
   return (
     <>
-      {transactionHasBeenValidated ? (
-        <ErrorBanner error={new TransactionHasBeenValidatedError()} />
-      ) : errors.gasPrice && errors.gasPrice instanceof NotEnoughGas ? (
-        <Box width={"70%"}>
-          <Alert type={"error"} title={<TranslatedError error={errors.gasPrice} />} />
-        </Box>
-      ) : errorCount ? (
-        <Box width={"70%"}>
-          <Alert type={"error"} title={<TranslatedError error={Object.values(errors)[0]} />} />
-        </Box>
-      ) : null}
+      <TransactionErrorBanner
+        transactionHasBeenValidated={transactionHasBeenValidated}
+        errors={errors}
+      />
       <Button
         id={"send-amount-continue-button"}
         isLoading={bridgePending}
