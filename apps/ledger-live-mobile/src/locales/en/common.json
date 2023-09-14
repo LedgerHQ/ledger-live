@@ -1075,10 +1075,10 @@
       }
     },
     "enjoy": {
-      "title": "Thanks for the feedback!",
-      "description": "We'd be grateful if you could take a moment to write us a review. Your support helps us reach more people and motivates us to release new app features.",
+      "title": "Enjoying Ledger Live?\nShare some love!",
+      "description": "Leave us a positive rating on the App Store.",
       "cta": {
-        "rate": "Give us 5 stars",
+        "rate": "Rate Ledger Live",
         "notNow": "Not now"
       }
     },
