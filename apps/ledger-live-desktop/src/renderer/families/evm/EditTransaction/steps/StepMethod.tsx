@@ -1,6 +1,5 @@
 import { getTransactionByHash } from "@ledgerhq/coin-evm/api/transaction/index";
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
-import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getEditTransactionPatch } from "@ledgerhq/live-common/families/evm/getUpdateTransactionPatch";
@@ -14,9 +13,9 @@ import { urls } from "~/config/urls";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import CheckBox from "~/renderer/components/CheckBox";
-import ErrorBanner from "~/renderer/components/ErrorBanner";
 import Text from "~/renderer/components/Text";
 import { openURL } from "~/renderer/linking";
+import { TransactionErrorBanner } from "../components/TransactionErrorBanner";
 import { StepProps } from "../types";
 
 const EditTypeWrapper = styled(Box)<{ selected: boolean }>`
@@ -211,9 +210,7 @@ export const StepMethodFooter: React.FC<StepProps> = ({
 
   return (
     <>
-      {transactionHasBeenValidated ? (
-        <ErrorBanner error={new TransactionHasBeenValidatedError()} />
-      ) : null}
+      <TransactionErrorBanner transactionHasBeenValidated={transactionHasBeenValidated} />
       <Button
         id={"send-recipient-continue-button"}
         primary
