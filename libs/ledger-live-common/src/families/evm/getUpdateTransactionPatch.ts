@@ -443,11 +443,13 @@ export const getEditTransactionStatus = ({
 
   const errors: Record<string, Error> = { ...status.errors, ...editTxErrors };
 
+  // copy errors object to avoid mutating the original one
   const updatedErrors: Record<string, Error> = { ...errors };
 
   // discard "AmountRequired" (for cancel and speedup since one can decide to speedup a cancel)
-  // TODO: why is this needed?
-  // exclude "NotOwnedNft" and "NotEnoughNftOwned" error if it's a nft speedup operation
+  // exclude "NotOwnedNft" and "NotEnoughNftOwned" error if it's a nft operation
+  // since nfts being sent are not owned by the user anymore (removed from the account)
+  // cf. this (as of 14-09-2023) https://github.com/LedgerHQ/ledger-live/blob/73217c9aa93c901d9c8d2067dcc7090243d35d35/libs/coin-evm/src/synchronization.ts#L111-L120
   if (
     updatedErrors.amount &&
     (updatedErrors.amount.name === ERROR_NOT_OWNED_NFT.name ||
