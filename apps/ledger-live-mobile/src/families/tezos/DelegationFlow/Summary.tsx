@@ -15,12 +15,7 @@ import {
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import type { Transaction as TezosTransaction } from "@ledgerhq/live-common/families/tezos/types";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import {
-  useDelegation,
-  useBaker,
-  useBakers,
-  useRandomBaker,
-} from "@ledgerhq/live-common/families/tezos/bakers";
+import { useDelegation, useBaker, useBakers } from "@ledgerhq/live-common/families/tezos/bakers";
 import whitelist from "@ledgerhq/live-common/families/tezos/bakers.whitelist-default";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
@@ -108,8 +103,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const { t } = useTranslation();
-  const bakers = useBakers(whitelist);
-  const randomBaker = useRandomBaker(bakers);
+  const [defaultBaker] = useBakers(whitelist);
 
   const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
     () => ({
@@ -136,8 +130,8 @@ export default function DelegationSummary({ navigation, route }: Props) {
     };
 
     // make sure that in delegate mode, a transaction recipient is set (random pick)
-    if (patch.mode === "delegate" && !transaction.recipient && randomBaker) {
-      patch.recipient = randomBaker.address;
+    if (patch.mode === "delegate" && !transaction.recipient && defaultBaker) {
+      patch.recipient = defaultBaker.address;
     }
 
     // when changes, we set again
@@ -146,7 +140,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
         getAccountBridge(account, parentAccount).updateTransaction(transaction, patch),
       );
     }
-  }, [account, randomBaker, navigation, parentAccount, setTransaction, transaction, route.params]);
+  }, [account, defaultBaker, navigation, parentAccount, setTransaction, transaction, route.params]);
 
   const [rotateAnim] = useState(() => new Animated.Value(0));
   useEffect(() => {
@@ -292,14 +286,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
 
           {baker && transaction.mode === "delegate" ? (
             baker.capacityStatus === "full" ? null : (
-              /*
               <Line>
-                <IconInfo size={16} color={colors.orange} />
-                <Words style={{ marginLeft: 8, color: colors.orange }}>
-                  <Trans i18nKey="delegation.overdelegated" />
-                </Words>
-              </Line>
-              */ <Line>
                 <Words>
                   <Trans i18nKey="delegation.forAnEstYield" />
                 </Words>
