@@ -18,7 +18,7 @@ export type StepProps = {
   optimisticOperation: Operation | undefined | null;
   signed: boolean;
   currencyName: string | undefined | null;
-  transactionHash: string;
+  transactionHasBeenValidated: boolean;
   editType?: EditType;
   haveFundToSpeedup: boolean;
   haveFundToCancel: boolean;
