@@ -123,7 +123,7 @@ const clearDisconnectTimeout = (deviceId: string, context?: TraceContext): void 
  *
  * @param deviceOrId
  * @param needsReconnect
- * @param timeoutMs TODO: to keep, used in a separate PR
+ * @param timeoutMs Optional Timeout (in ms) applied during the connection with the device
  * @param context Optional tracing/log context
  * @returns A BleTransport instance
  */
@@ -179,13 +179,16 @@ async function open(
 
       // Nb ConnectionOptions dropped since it's not used internally by ble-plx.
       try {
-        device = await bleManagerInstance().connectToDevice(deviceOrId, connectOptions);
+        device = await bleManagerInstance().connectToDevice(deviceOrId, {
+          ...connectOptions,
+          timeout: timeoutMs,
+        });
       } catch (e: any) {
         tracer.trace(`Error code: ${e.errorCode}`);
         if (e.errorCode === BleErrorCode.DeviceMTUChangeFailed) {
           // If the MTU update did not work, we try to connect without requesting for a specific MTU
           connectOptions = {};
-          device = await bleManagerInstance().connectToDevice(deviceOrId);
+          device = await bleManagerInstance().connectToDevice(deviceOrId, { timeout: timeoutMs });
         } else {
           throw e;
         }
@@ -203,7 +206,7 @@ async function open(
   if (!(await device.isConnected())) {
     tracer.trace(`Device found but not connected. connecting...`, { timeoutMs, connectOptions });
     try {
-      await device.connect({ ...connectOptions });
+      await device.connect({ ...connectOptions, timeout: timeoutMs });
     } catch (error: any) {
       tracer.trace(`Connect error`, { error });
       if (error.errorCode === BleErrorCode.DeviceMTUChangeFailed) {
@@ -513,7 +516,7 @@ export default class BleTransport extends Transport {
    * Opens a BLE transport
    *
    * @param {Device | string} deviceOrId
-   * @param timeoutMs TODO: to keep, used in a separate PR
+   * @param timeoutMs Applied when trying to connect to a device
    * @param context An optional context object for log/tracing strategy
    */
   static async open(
