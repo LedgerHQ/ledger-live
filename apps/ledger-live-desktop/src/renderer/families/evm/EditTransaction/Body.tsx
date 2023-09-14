@@ -1,5 +1,4 @@
 import { getTransactionByHash } from "@ledgerhq/coin-evm/api/transaction/index";
-import { getEstimatedFees } from "@ledgerhq/coin-evm/logic";
 import { fromTransactionRaw } from "@ledgerhq/coin-evm/transaction";
 import { Transaction, TransactionRaw } from "@ledgerhq/coin-evm/types/index";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
@@ -7,7 +6,11 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { getEditTransactionStatus } from "@ledgerhq/live-common/families/evm/getUpdateTransactionPatch";
+import {
+  getEditTransactionStatus,
+  hasMinimumFundsToCancel,
+  hasMinimumFundsToSpeedUp,
+} from "@ledgerhq/live-common/families/evm/getUpdateTransactionPatch";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { isEditableOperation } from "@ledgerhq/live-common/operation";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
@@ -231,26 +234,8 @@ const Body = ({
     };
   }, [mainAccount.currency, params.transactionHash]);
 
-  const feeValue = getEstimatedFees(transactionToUpdate);
-
-  // ----
-  // TODO: create fonction for this and move to LLC or coin-evm
-  const haveFundToCancel = mainAccount.balance.gt(
-    feeValue.times(1.1).integerValue(BigNumber.ROUND_CEIL),
-  );
-  const haveFundToSpeedup = mainAccount.balance.gt(
-    feeValue
-      .times(1.1)
-      .plus(account.type === "Account" ? transactionToUpdate.amount : 0)
-      .integerValue(BigNumber.ROUND_CEIL),
-  );
-  // ----
-
-  // log account and fees info
-  logger.log(`main account address: ${mainAccount.freshAddress}`);
-  logger.log(`main account balance: ${mainAccount.balance.toFixed()}`);
-  logger.log(`feeValue: ${feeValue.toFixed()}`);
-  logger.log(`pending transaction amount: ${transactionToUpdate.amount.toFixed()}`);
+  const haveFundToCancel = hasMinimumFundsToCancel({ transactionToUpdate, mainAccount });
+  const haveFundToSpeedup = hasMinimumFundsToSpeedUp({ transactionToUpdate, mainAccount, account });
 
   const isOldestEditableOperation = mainAccount.pendingOperations.reduce((isOldest, operation) => {
     if (isEditableOperation(account, operation)) {
