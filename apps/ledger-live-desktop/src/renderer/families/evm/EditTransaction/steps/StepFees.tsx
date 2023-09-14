@@ -1,9 +1,8 @@
-import { getTransactionByHash } from "@ledgerhq/coin-evm/api/transaction/index";
 import { getEstimatedFees } from "@ledgerhq/coin-evm/logic";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getMinFees } from "@ledgerhq/live-common/families/evm/getUpdateTransactionPatch";
 import BigNumber from "bignumber.js";
-import React, { Fragment, memo, useState } from "react";
+import React, { Fragment, memo } from "react";
 import { Trans } from "react-i18next";
 import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
@@ -111,31 +110,14 @@ const StepFees = ({
 };
 
 export const StepFeesFooter = ({
-  account,
-  parentAccount,
-  transaction,
-  transactionHash,
+  transactionHasBeenValidated,
   bridgePending,
   status,
   transitionTo,
 }: StepProps) => {
-  const [transactionHasBeenValidated, setTransactionHasBeenValidated] = useState(false);
-
   const onClick = async () => {
     transitionTo("summary");
   };
-
-  if (!account || !transaction || !transactionHash) {
-    return null;
-  }
-
-  const mainAccount = getMainAccount(account, parentAccount);
-
-  getTransactionByHash(mainAccount.currency, transactionHash).then(tx => {
-    if (tx?.confirmations) {
-      setTransactionHasBeenValidated(true);
-    }
-  });
 
   const { errors } = status;
   const errorCount = Object.keys(errors).length;
