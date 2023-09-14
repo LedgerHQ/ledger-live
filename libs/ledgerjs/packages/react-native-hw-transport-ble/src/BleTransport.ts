@@ -594,45 +594,57 @@ export default class BleTransport extends Transport {
    * Send data to the device using a low level API.
    * It's recommended to use the "send" method for a higher level API.
    *
+   * A scoped `tracer` is used because the BleTransport instance is often cached, and its
+   * `context` is updated.
+   *
    * @param {Buffer} apdu - The data to send.
    * @returns {Promise<Buffer>} A promise that resolves with the response data from the device.
    */
-  exchange = (apdu: Buffer): Promise<any> => {
+  exchange = (
+    apdu: Buffer,
+    { abortTimeoutMs }: { abortTimeoutMs?: number } = {},
+  ): Promise<Buffer> => {
     const tracer = this.tracer.withUpdatedContext({
       function: "exchange",
     });
-    tracer.trace("Exchanging APDU ...");
+    tracer.trace("Exchanging APDU ...", { abortTimeoutMs });
 
-    return this.exchangeAtomicImpl(async () => {
-      try {
-        const msgIn = apdu.toString("hex");
-        tracer.withType("apdu").trace(`=> ${msgIn}`);
+    return this.abortableExchangeAtomicImpl(
+      async () => {
+        try {
+          const msgIn = apdu.toString("hex");
+          tracer.withType("apdu").trace(`=> ${msgIn}`);
 
-        const data = await firstValueFrom(
-          merge(this.notifyObservable.pipe(receiveAPDU), sendAPDU(this.write, apdu, this.mtuSize)),
-        );
+          const data = await firstValueFrom(
+            merge(
+              this.notifyObservable.pipe(receiveAPDU),
+              sendAPDU(this.write, apdu, this.mtuSize),
+            ),
+          );
 
-        const msgOut = data.toString("hex");
-        tracer.withType("apdu").trace(`<= ${msgOut}`);
+          const msgOut = data.toString("hex");
+          tracer.withType("apdu").trace(`<= ${msgOut}`);
 
-        return data;
-      } catch (error: any) {
-        tracer.withType("ble-error").trace(`Error while exchanging APDU`, { error });
+          return data;
+        } catch (error: any) {
+          tracer.withType("ble-error").trace(`Error while exchanging APDU`, { error });
 
-        if (this.notYetDisconnected) {
-          // in such case we will always disconnect because something is bad.
-          await bleManagerInstance()
-            .cancelDeviceConnection(this.id)
-            .catch(() => {}); // but we ignore if disconnect worked.
+          if (this.notYetDisconnected) {
+            // in such case we will always disconnect because something is bad.
+            await bleManagerInstance()
+              .cancelDeviceConnection(this.id)
+              .catch(() => {}); // but we ignore if disconnect worked.
+          }
+
+          const mappedError = remapError(error);
+          tracer.trace("Error while exchanging APDU, mapped and throws following error", {
+            mappedError,
+          });
+          throw mappedError;
         }
-
-        const mappedError = remapError(error);
-        tracer.trace("Error while exchanging APDU, mapped and throws following error", {
-          mappedError,
-        });
-        throw mappedError;
-      }
-    });
+      },
+      { abortTimeoutMs },
+    );
   };
 
   /**

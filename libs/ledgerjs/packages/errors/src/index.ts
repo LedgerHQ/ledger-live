@@ -45,6 +45,7 @@ export const DeviceExtractOnboardingStateError = createCustomErrorClass(
 export const DeviceOnboardingStatePollingError = createCustomErrorClass(
   "DeviceOnboardingStatePollingError",
 );
+export const ExchangeTimeoutError = createCustomErrorClass("ExchangeTimeoutError");
 export const EnpointConfigError = createCustomErrorClass("EnpointConfig");
 export const EthAppPleaseEnableContractData = createCustomErrorClass(
   "EthAppPleaseEnableContractData",

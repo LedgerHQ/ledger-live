@@ -6,9 +6,13 @@ import {
   StatusCodes,
   getAltStatusMessage,
   TransportStatusError,
+  ExchangeTimeoutError,
 } from "@ledgerhq/errors";
 import { LocalTracer, TraceContext, LogType } from "@ledgerhq/logs";
 export { TransportError, TransportStatusError, StatusCodes, getAltStatusMessage };
+import { TimeoutError, firstValueFrom, from, throwError } from "rxjs7";
+import { catchError, finalize, map, tap, timeout } from "rxjs7/operators";
+
 const DEFAULT_LOG_TYPE = "transport";
 
 /**
@@ -116,9 +120,15 @@ export default class Transport {
    * Send data to the device using a low level API.
    * It's recommended to use the "send" method for a higher level API.
    * @param {Buffer} apdu - The data to send.
+   * @param {Object} options - Contains optional options for the exchange function
+   *  - abortTimeoutMs: stop the exchange after a given timeout. Another timeout exists
+   *    to detect unresponsive device (see `unresponsiveTimeout`). This timeout aborts the exchange.
    * @returns {Promise<Buffer>} A promise that resolves with the response data from the device.
    */
-  exchange(_apdu: Buffer): Promise<Buffer> {
+  exchange(
+    _apdu: Buffer,
+    { abortTimeoutMs: _abortTimeoutMs }: { abortTimeoutMs?: number } = {},
+  ): Promise<Buffer> {
     throw new Error("exchange not implemented");
   }
 
@@ -227,6 +237,9 @@ export default class Transport {
    * @param {number} p2 - The second parameter for the instruction.
    * @param {Buffer} data - The data to be sent. Defaults to an empty buffer.
    * @param {Array<number>} statusList - A list of acceptable status codes for the response. Defaults to [StatusCodes.OK].
+   * @param {Object} options - Contains optional options for the exchange function
+   *  - abortTimeoutMs: stop the send after a given timeout. Another timeout exists
+   *    to detect unresponsive device (see `unresponsiveTimeout`). This timeout aborts the exchange.
    * @returns {Promise<Buffer>} A promise that resolves with the response data from the device.
    */
   send = async (
@@ -236,17 +249,24 @@ export default class Transport {
     p2: number,
     data: Buffer = Buffer.alloc(0),
     statusList: Array<number> = [StatusCodes.OK],
+    { abortTimeoutMs }: { abortTimeoutMs?: number } = {},
   ): Promise<Buffer> => {
+    const tracer = this.tracer.withUpdatedContext({ function: "send" });
+
     if (data.length >= 256) {
+      tracer.trace("data.length exceeded 256 bytes limit", { dataLength: data.length });
       throw new TransportError(
         "data.length exceed 256 bytes limit. Got: " + data.length,
         "DataLengthTooBig",
       );
     }
 
+    tracer.trace("Starting an exchange", { abortTimeoutMs });
     const response = await this.exchange(
       Buffer.concat([Buffer.from([cla, ins, p1, p2]), Buffer.from([data.length]), data]),
+      { abortTimeoutMs },
     );
+    tracer.trace("Received response from exchange");
     const sw = response.readUInt16BE(response.length - 2);
 
     if (!statusList.some(s => s === sw)) {
@@ -334,6 +354,87 @@ export default class Transport {
       if (resolveBusy) resolveBusy();
       this.exchangeBusyPromise = null;
     }
+  };
+
+  /**
+   * Implementation of an "atomic" (blocking any other exchange) exchange
+   *
+   * To only use on Transport implementation that can handle an exchange that can abort.
+   *
+   * Using the same guard than `exchangeAtomicImpl` (`exchangeBusyPromise`).
+   * When aborted, the inner job might still exist and wait for a response for example (a Promise cannot be cancelled).
+   * But not response will be emitted to the consumer of this function.
+   * Observable makes this easy to implement.
+   *
+   * @param f The job, using the transport to run
+   * @param options Contains optional options for the exchange function
+   *  - abortTimeoutMs: stop the exchange after a given timeout. Another timeout exists
+   *    to detect unresponsive device (see `unresponsiveTimeout`). This timeout aborts the exchange.
+   * @returns a Promise with a Buffer containing the response, or void if not response
+   */
+  abortableExchangeAtomicImpl = async (
+    f: () => Promise<Buffer | void>,
+    { abortTimeoutMs }: { abortTimeoutMs?: number } = {},
+  ): Promise<Buffer> => {
+    const tracer = this.tracer.withUpdatedContext({ function: "abortableExchangeAtomicImpl" });
+    tracer.trace("(new abort) Starting an atomic APDU exchange", { abortTimeoutMs });
+
+    if (this.exchangeBusyPromise) {
+      tracer.trace("❌🚨 Atomic exchange is already busy");
+      throw new TransportRaceCondition(
+        "An action was already pending on the Ledger device. Please deny or reconnect.",
+      );
+    }
+
+    // Sets the atomic guard
+    let resolveBusy;
+    const busyPromise: Promise<void> = new Promise(r => {
+      resolveBusy = r;
+    });
+    this.exchangeBusyPromise = busyPromise;
+
+    let unresponsiveReached = false;
+    const unresponsiveTimer = setTimeout(() => {
+      tracer.trace("Timeout reached, emitting unresponsive");
+      unresponsiveReached = true;
+      this.emit("unresponsive");
+    }, this.unresponsiveTimeout);
+
+    // The subscription will be closed after the observable emits 1 event, an error, or complete
+    return firstValueFrom(
+      from(f()).pipe(
+        map(res => {
+          tracer.trace("Received a response from atomic exchange");
+
+          if (unresponsiveReached) {
+            tracer.trace("Device was unresponsive, emitting responsive");
+            this.emit("responsive");
+          }
+
+          return res ? res : Buffer.from("");
+        }),
+        abortTimeoutMs ? timeout(abortTimeoutMs) : tap(),
+        catchError(error => {
+          tracer.trace("🔥🍕 Atomic exchange caught error", { error, abortTimeoutMs });
+
+          if (error instanceof TimeoutError) {
+            tracer.trace("Aborting exchange due to timeout", { abortTimeoutMs });
+            return throwError(
+              () => new ExchangeTimeoutError("Atomic exchange aborted due to timeout"),
+            );
+          }
+
+          return throwError(() => error);
+        }),
+        finalize(() => {
+          tracer.trace("Finalize, clearing busy guard");
+
+          clearTimeout(unresponsiveTimer);
+          if (resolveBusy) resolveBusy();
+          this.exchangeBusyPromise = null;
+        }),
+      ),
+    );
   };
 
   decorateAppAPIMethods(self: Record<string, any>, methods: Array<string>, scrambleKey: string) {
