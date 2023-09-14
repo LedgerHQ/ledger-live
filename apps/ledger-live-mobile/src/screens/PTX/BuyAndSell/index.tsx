@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import {
@@ -40,11 +40,19 @@ export function BuyAndSellScreen({ route }: Props) {
    * to ensure the context is reset. last-screen is used to give an external app's webview context
    * of the last screen the user was on before navigating to the external app screen.
    */
-  if (manifest?.id && INTERNAL_APP_IDS.includes(manifest.id)) {
-    AsyncStorage.removeItem("last-screen");
-    AsyncStorage.removeItem("manifest-id");
-    AsyncStorage.removeItem("flow-name");
-  }
+  useEffect(
+    () => {
+      (async () => {
+        if (manifest?.id && INTERNAL_APP_IDS.includes(manifest.id)) {
+          await AsyncStorage.removeItem("last-screen");
+          await AsyncStorage.removeItem("manifest-id");
+          await AsyncStorage.removeItem("flow-name");
+        }
+      })();
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
 
   return manifest ? (
     <>
