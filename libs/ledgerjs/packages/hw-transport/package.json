@@ -28,7 +28,8 @@
     "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
-    "events": "^3.3.0"
+    "events": "^3.3.0",
+    "rxjs7": "npm:rxjs@~7.8.1"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
