@@ -89,19 +89,16 @@ export function signTransactionLogic(
     ? parentAccount?.currency.family
     : account.currency.family;
 
-  if (
-    accountFamily !== platformTransaction.family &&
-    // `transaction` is a RawPlatformTransaction, so it doesn't have a evm family and use ethereum instead
-    !(accountFamily === "evm" && transaction.family === "ethereum")
-  ) {
-    return Promise.reject(
-      new Error(`Transaction family not matching account currency family. Account family: ${accountFamily}, Transaction family: ${platformTransaction.family}
-      `),
-    );
-  }
-
   const { canEditFees, liveTx, hasFeesProvided } =
     getPlatformTransactionSignFlowInfos(platformTransaction);
+
+  if (accountFamily !== liveTx.family) {
+    return Promise.reject(
+      new Error(
+        `Account and transaction must be from the same family. Account family: ${accountFamily}, Transaction family: ${liveTx.family}`,
+      ),
+    );
+  }
 
   return uiNavigation(account, parentAccount, {
     canEditFees,
@@ -200,20 +197,16 @@ export function completeExchangeLogic(
   const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
   const mainFromAccountFamily = mainFromAccount.currency.family;
 
-  if (
-    transaction.family !== mainFromAccountFamily &&
-    // `transaction` is a RawPlatformTransaction, so it doesn't have a evm family and use ethereum instead
-    !(mainFromAccountFamily === "evm" && transaction.family === "ethereum")
-  ) {
+  const platformTransaction = deserializePlatformTransaction(transaction);
+  const { liveTx: liveTransaction } = getPlatformTransactionSignFlowInfos(platformTransaction);
+
+  if (liveTransaction.family !== mainFromAccountFamily) {
     return Promise.reject(
       new Error(
-        `Account and transaction must be from the same family. Account family: ${mainFromAccountFamily}, Transaction family: ${transaction.family}`,
+        `Account and transaction must be from the same family. Account family: ${mainFromAccountFamily}, Transaction family: ${liveTransaction.family}`,
       ),
     );
   }
-
-  const platformTransaction = deserializePlatformTransaction(transaction);
-  const { liveTx: liveTransaction } = getPlatformTransactionSignFlowInfos(platformTransaction);
 
   /**
    * 'subAccountId' is used for ETH and it's ERC-20 tokens.
