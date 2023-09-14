@@ -1,7 +1,7 @@
 import Config from "react-native-config";
 import { Observable, timer } from "rxjs";
 import { map, debounce } from "rxjs/operators";
-import { listen } from "@ledgerhq/logs";
+import { TraceContext, listen } from "@ledgerhq/logs";
 import HIDTransport from "@ledgerhq/react-native-hid";
 import withStaticURLs from "@ledgerhq/hw-transport-http";
 import { retry } from "@ledgerhq/live-common/promise";
@@ -112,12 +112,41 @@ setSupportedCurrencies([
   "injective",
 ]);
 
-if (Config.VERBOSE) {
-  listen(({ type, message, ...rest }) => {
-    if (Object.keys(rest).length) {
-      console.log(`${type}: ${message || ""}`, rest); // eslint-disable-line no-console
+const { VERBOSE } = Config;
+
+/**
+ * Sets up a printing of logs in the console/stdout
+ *
+ * The configuration is done with the env variable `VERBOSE`
+ *
+ * Usage: a filtering (only on console printing) on Ledger libs are possible:
+ * - VERBOSE="apdu,hw,transport,hid-verbose" : filtering on a list of log `type` separated by a `,`
+ * - VERBOSE=1 or VERBOSE=true : to print all logs
+ *
+ * Note: we should add a log level defined in our logger, different that `type`.
+ */
+if (VERBOSE) {
+  const everyLogs = VERBOSE === "true" || VERBOSE === "1";
+  const filters = everyLogs ? [] : VERBOSE.split(",");
+
+  // eslint-disable-next-line no-console
+  console.log(`Logs console display setup: ${JSON.stringify({ everyLogs, filters })}`);
+
+  listen(({ type, message, context, ...rest }) => {
+    if (!everyLogs && !filters.includes(type)) {
+      return;
+    }
+
+    if (context) {
+      // Displays the tracing context before the message for better readability in the console
+      // eslint-disable-next-line no-console
+      console.log(
+        `------------------------------\n${type}: ${JSON.stringify(context)}\n${message || ""}\n`,
+        rest,
+      );
     } else {
-      console.log(`${type}: ${message || ""}`); // eslint-disable-line no-console
+      // eslint-disable-next-line no-console
+      console.log(`------------------------------\n${type}: ${message || ""}`, rest);
     }
   });
 }
@@ -186,7 +215,8 @@ registerTransportModule(httpdebug);
 // BLE is always the fallback choice because we always keep raw id in it
 registerTransportModule({
   id: "ble",
-  open: id => BluetoothTransport.open(id),
+  open: (id: string, timeoutMs?: number, context?: TraceContext) =>
+    BluetoothTransport.open(id, timeoutMs, context),
   disconnect: id => BluetoothTransport.disconnect(id),
 });
 
