@@ -210,6 +210,13 @@ export type LLDCoinFamily<
       mapStrategies?: (a: FeeStrategy) => FeeStrategy;
       bridgePending?: boolean;
       trackProperties?: Record<string, unknown>;
+      // FIXME: shity typing
+      minFees?: {
+        maxFeePerGas?: BigNumber;
+        maxPriorityFeePerGas?: BigNumber;
+        gasPrice?: BigNumber;
+      };
+      // TODO: still needed / used?
       transactionRaw?: TransactionCommonRaw;
     }>;
     fields?: string[];

@@ -2,11 +2,13 @@ import { getEstimatedFees } from "@ledgerhq/coin-evm/logic";
 import { getTypedTransaction } from "@ledgerhq/coin-evm/transaction";
 import {
   Transaction as EvmTransaction,
+  FeeData,
   GasOptions,
   Strategy,
 } from "@ledgerhq/coin-evm/types/index";
 import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { Account } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import React, { memo, useMemo } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
@@ -24,6 +26,12 @@ type Props = {
   transaction: EvmTransaction;
   account: Account;
   gasOptions: GasOptions;
+  // FIXME: shity typing
+  minFees?: {
+    maxFeePerGas?: BigNumber;
+    maxPriorityFeePerGas?: BigNumber;
+    gasPrice?: BigNumber;
+  };
 };
 
 const FeesWrapper = styled(Tabbable)`
@@ -40,17 +48,21 @@ const FeesWrapper = styled(Tabbable)`
   font-family: "Inter";
   border-radius: 4px;
   width: 140px;
+  ${p => (p.disabled ? `background: ${p.theme.colors.palette.background.default};` : "")};
 
   &:hover {
-    cursor: "pointer";
+    cursor: ${p => (p.disabled ? "unset" : "pointer")};
   }
 `;
 
-const FeesHeader = styled(Box)<{ selected?: boolean }>`
+const FeesHeader = styled(Box)<{ selected?: boolean; disabled?: boolean }>`
   color: ${p =>
-    p.selected ? p.theme.colors.palette.primary.main : p.theme.colors.palette.text.shade50};
+    p.selected
+      ? p.theme.colors.palette.primary.main
+      : p.disabled
+      ? p.theme.colors.palette.text.shade20
+      : p.theme.colors.palette.text.shade50};
 `;
-
 const FeesValue = styled(Box)`
   flex-direction: column;
   align-items: center;
@@ -68,29 +80,76 @@ const ApproximateTransactionTime = styled(Box)<{ selected?: boolean }>`
 
 const strategies: Strategy[] = ["slow", "medium", "fast"];
 
-const SelectFeeStrategy = ({ transaction, account, onClick, gasOptions }: Props) => {
+// TODO: move this function to LLC or coin-evm?
+const isStrategyDisabled = ({
+  isEIP1559,
+  feeData,
+  minFees,
+}: {
+  isEIP1559: boolean;
+  feeData: FeeData;
+  minFees?: Props["minFees"];
+}): boolean => {
+  if (!minFees) {
+    return false;
+  }
+
+  if (isEIP1559) {
+    if (
+      !feeData.maxFeePerGas ||
+      !feeData.maxPriorityFeePerGas ||
+      !minFees.maxFeePerGas ||
+      !minFees.maxPriorityFeePerGas
+    ) {
+      return false;
+    }
+
+    return (
+      feeData.maxFeePerGas.isLessThan(minFees.maxFeePerGas) ||
+      feeData.maxPriorityFeePerGas.isLessThan(minFees.maxPriorityFeePerGas)
+    );
+  } else {
+    if (!feeData.gasPrice || !minFees.gasPrice) {
+      return false;
+    }
+
+    return feeData.gasPrice.isLessThan(minFees.gasPrice);
+  }
+};
+
+const SelectFeeStrategy = ({ transaction, account, onClick, gasOptions, minFees }: Props) => {
   const accountUnit = getAccountUnit(account);
   const feesCurrency = getAccountCurrency(account);
 
   const feeStrategies = useMemo(
     () =>
       strategies.map(strategy => {
-        const selected = transaction.feesStrategy === strategy;
         const gasOption = gasOptions[strategy];
         const estimatedFees = getEstimatedFees(getTypedTransaction(transaction, gasOption));
 
+        const disabled = isStrategyDisabled({
+          isEIP1559: transaction.type === 2,
+          feeData: gasOption,
+          minFees,
+        });
+        const selected = !disabled && transaction.feesStrategy === strategy;
+
+        // TODO: create a FeesStrategy dumb component
+        // TODO: display the "custom" strategy?
         return (
           <FeesWrapper
             key={strategy}
             selected={selected}
+            disabled={disabled}
             onClick={() => {
-              onClick({
-                feesStrategy: strategy,
-              });
+              !disabled &&
+                onClick({
+                  feesStrategy: strategy,
+                });
             }}
           >
             <>
-              <FeesHeader horizontal alignItems="center" selected={selected}>
+              <FeesHeader horizontal alignItems="center" selected={selected} disabled={disabled}>
                 {strategy === "medium" ? (
                   <TachometerMedium size={13} />
                 ) : strategy === "slow" ? (
@@ -106,7 +165,13 @@ const SelectFeeStrategy = ({ transaction, account, onClick, gasOptions }: Props)
                 <FormattedVal
                   noShrink
                   inline
-                  color={selected ? "palette.primary.main" : "palette.text.shade100"}
+                  color={
+                    selected
+                      ? "palette.primary.main"
+                      : disabled
+                      ? "palette.text.shade40"
+                      : "palette.text.shade100"
+                  }
                   fontSize={3}
                   fontWeight="600"
                   val={estimatedFees}
@@ -118,7 +183,7 @@ const SelectFeeStrategy = ({ transaction, account, onClick, gasOptions }: Props)
                 <CounterValue
                   currency={feesCurrency}
                   value={estimatedFees}
-                  color={"palette.text.shade50"}
+                  color={disabled ? "palette.text.shade20" : "palette.text.shade50"}
                   fontSize={3}
                   showCode
                   alwaysShowValue
@@ -148,7 +213,7 @@ const SelectFeeStrategy = ({ transaction, account, onClick, gasOptions }: Props)
           </FeesWrapper>
         );
       }),
-    [accountUnit, feesCurrency, gasOptions, onClick, transaction],
+    [accountUnit, feesCurrency, gasOptions, onClick, transaction, minFees],
   );
 
   return (

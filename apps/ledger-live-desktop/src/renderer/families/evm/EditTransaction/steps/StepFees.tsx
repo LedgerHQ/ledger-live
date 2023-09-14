@@ -2,6 +2,7 @@ import { getTransactionByHash } from "@ledgerhq/coin-evm/api/transaction/index";
 import { getEstimatedFees } from "@ledgerhq/coin-evm/logic";
 import { NotEnoughGas, TransactionHasBeenValidatedError } from "@ledgerhq/errors";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getMinFees } from "@ledgerhq/live-common/families/evm/getUpdateTransactionPatch";
 import BigNumber from "bignumber.js";
 import React, { Fragment, memo, useState } from "react";
 import { Trans } from "react-i18next";
@@ -75,6 +76,7 @@ const StepFees = ({
             onChange={onChangeTransaction}
             bridgePending={bridgePending}
             updateTransaction={updateTransaction}
+            minFees={getMinFees({ transaction: transactionToUpdate })}
           />
         </Fragment>
       )}
