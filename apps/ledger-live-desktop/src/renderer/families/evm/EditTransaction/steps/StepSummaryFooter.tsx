@@ -1,6 +1,5 @@
-import { getTransactionByHash } from "@ledgerhq/coin-evm/api/transaction/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import React, { useState } from "react";
+import React from "react";
 import { Trans } from "react-i18next";
 import Button from "~/renderer/components/Button";
 import { TransactionErrorBanner } from "../components/TransactionErrorBanner";
@@ -9,14 +8,12 @@ import { StepProps } from "../types";
 export const StepSummaryFooter = ({
   account,
   parentAccount,
-  transactionHash,
+  transactionHasBeenValidated,
   status,
   bridgePending,
   transitionTo,
 }: StepProps) => {
-  const [transactionHasBeenValidated, setTransactionHasBeenValidated] = useState(false);
-
-  if (!account || !transactionHash) {
+  if (!account) {
     return null;
   }
 
@@ -28,12 +25,6 @@ export const StepSummaryFooter = ({
   const onNext = async () => {
     transitionTo("device");
   };
-
-  getTransactionByHash(mainAccount.currency, transactionHash).then(tx => {
-    if (tx?.confirmations) {
-      setTransactionHasBeenValidated(true);
-    }
-  });
 
   const { errors } = status;
   const errorCount = Object.keys(errors).length;
