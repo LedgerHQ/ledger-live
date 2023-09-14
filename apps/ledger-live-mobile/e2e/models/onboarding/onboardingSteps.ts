@@ -6,7 +6,6 @@ import {
   tapById,
   waitForElementByText,
 } from "../../helpers";
-import { device } from "detox";
 import * as bridge from "../../bridge/server";
 
 export default class OnboardingSteps {
@@ -61,10 +60,8 @@ export default class OnboardingSteps {
   }
 
   async addDeviceViaBluetooth(name = "David") {
-    await device.disableSynchronization(); // Scanning animation prevents launching mocks
     await tapByElement(this.pairDeviceButton());
     bridge.addDevices();
-    await device.enableSynchronization();
     await waitForElementByText(this.deviceName(name));
     await tapByText(this.deviceName(name));
     bridge.setInstalledApps(); // tell LLM what apps the mock device has

@@ -1,4 +1,4 @@
-import { device, expect } from "detox";
+import { expect } from "detox";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
 import {
   formatCurrencyUnit,
@@ -66,11 +66,8 @@ describe("Bitcoin send flow", () => {
     await expect(getElementByText(amountWithCode)).toBeVisible();
     await sendPage.summaryContinue();
 
-    // device actions and add accounts modal have animations that requires to disable synchronization default detox behavior
-    await device.disableSynchronization();
     await deviceAction.selectMockDevice();
     await deviceAction.openApp();
-    await device.enableSynchronization();
 
     await sendPage.successContinue();
   });

@@ -68,6 +68,7 @@ import {
 import ModalLock from "../ModalLock";
 import confirmLockscreen from "../../animations/stax/customimage/confirmLockscreen.json";
 import allowConnection from "../../animations/stax/customimage/allowConnection.json";
+import Config from "react-native-config";
 
 export const Wrapper = styled(Flex).attrs({
   flex: 1,
@@ -888,7 +889,7 @@ export function renderLoading({
   return (
     <Wrapper>
       <SpinnerContainer>
-        <InfiniteLoader />
+        <InfiniteLoader mock={Config.MOCK} />
       </SpinnerContainer>
       <CenteredText testID="device-action-loading">
         {description ?? t("DeviceAction.loading")}
