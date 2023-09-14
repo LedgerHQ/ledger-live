@@ -74,6 +74,7 @@ function transportFinally(cleanup: () => Promise<void>) {
           finalize().then(() => o.error(e));
         },
       });
+
       return () => {
         sub.unsubscribe();
         finalize();
