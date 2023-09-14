@@ -1,6 +1,7 @@
 // TODO: move to coin-evm
 
 import { getGasTracker } from "@ledgerhq/coin-evm/api/gasTracker/index";
+import { getEstimatedFees } from "@ledgerhq/coin-evm/logic";
 import type {
   EvmTransactionEIP1559,
   EvmTransactionLegacy,
@@ -9,7 +10,7 @@ import type {
   TransactionStatus,
 } from "@ledgerhq/coin-evm/types/index";
 import { AmountRequired, ReplacementTransactionUnderpriced } from "@ledgerhq/errors";
-import type { Account, TransactionStatusCommon } from "@ledgerhq/types-live";
+import type { Account, AccountLike, TransactionStatusCommon } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { NotEnoughNftOwned, NotOwnedNft } from "../../errors";
 
@@ -53,6 +54,35 @@ export const getMinFees = ({
     const { gasPrice } = transaction;
     return getMinLegacyFees({ gasPrice });
   }
+};
+
+export const hasMinimumFundsToCancel = ({
+  mainAccount,
+  transactionToUpdate,
+}: {
+  mainAccount: Account;
+  transactionToUpdate: Transaction;
+}): boolean => {
+  const feeValue = getEstimatedFees(transactionToUpdate);
+  return mainAccount.balance.gt(feeValue.times(1.1).integerValue(BigNumber.ROUND_CEIL));
+};
+
+export const hasMinimumFundsToSpeedUp = ({
+  account,
+  mainAccount,
+  transactionToUpdate,
+}: {
+  account: AccountLike;
+  mainAccount: Account;
+  transactionToUpdate: Transaction;
+}): boolean => {
+  const feeValue = getEstimatedFees(transactionToUpdate);
+  return mainAccount.balance.gt(
+    feeValue
+      .times(1.1)
+      .plus(account.type === "Account" ? transactionToUpdate.amount : 0)
+      .integerValue(BigNumber.ROUND_CEIL),
+  );
 };
 
 /**
