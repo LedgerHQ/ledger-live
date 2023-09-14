@@ -37,6 +37,24 @@ const getMinEip1559Fees = ({
   };
 };
 
+export const getMinFees = ({
+  transaction,
+}: {
+  transaction: Transaction;
+}): {
+  gasPrice?: BigNumber;
+  maxFeePerGas?: BigNumber;
+  maxPriorityFeePerGas?: BigNumber;
+} => {
+  if (transaction.type === 2) {
+    const { maxFeePerGas, maxPriorityFeePerGas } = transaction;
+    return getMinEip1559Fees({ maxFeePerGas, maxPriorityFeePerGas });
+  } else {
+    const { gasPrice } = transaction;
+    return getMinLegacyFees({ gasPrice });
+  }
+};
+
 /**
  * Can't easily and properly use generics with Partial to avoid type casting
  * when used with EvmTransactionLegacy or EvmTransactionEIP1559
