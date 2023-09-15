@@ -208,7 +208,7 @@ export const withDevice =
             .subscribe({
               next: event => {
                 // This kind of log should be a "debug" level for ex
-                tracer.trace("Job next", { event });
+                // tracer.trace("Job next", { event });
                 o.next(event);
               },
               error: error => {
@@ -216,7 +216,6 @@ export const withDevice =
                 o.error(error);
               },
               complete: () => {
-                tracer.trace("Job completed");
                 o.complete();
               },
             });
