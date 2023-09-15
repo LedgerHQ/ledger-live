@@ -1,7 +1,7 @@
 import fs from "fs";
 import { log } from "console";
 import path from "path";
-import { fetchTokens } from "../fetch";
+import { fetchTokens } from "../../fetch";
 
 type PolygonToken = [
   string, // parent currency id
@@ -42,7 +42,7 @@ export const importPolygonTokens = async (outputDir: string) => {
       polygonTokens,
       null,
       2,
-    )}; `;
+    )};`;
 
     const exportStringified = `export default tokens;`;
 
@@ -53,7 +53,7 @@ export const importPolygonTokens = async (outputDir: string) => {
 ${tokensStringified}
 
 ${exportStringified}
-    `,
+`,
     );
 
     log("import polygon tokens success");

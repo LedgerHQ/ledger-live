@@ -29,7 +29,7 @@ describe("import ERC20", () => {
   (string | null)?, // coumpound_for (legacy)
 ];
 
-const tokens: ERC20Token[] = ${JSON.stringify(erc20, null, 2)}
+const tokens: ERC20Token[] = ${JSON.stringify(erc20, null, 2)};
 
 export default tokens;
 `;

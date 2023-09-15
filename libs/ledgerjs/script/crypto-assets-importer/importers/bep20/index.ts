@@ -1,7 +1,7 @@
 import { log } from "console";
 import fs from "fs";
 import path from "path";
-import { fetchTokens } from "../fetch";
+import { fetchTokens } from "../../fetch";
 
 type BEP20Token = [
   string, // parent currency id
