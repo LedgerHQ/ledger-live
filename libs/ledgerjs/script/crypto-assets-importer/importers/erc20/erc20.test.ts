@@ -34,7 +34,7 @@ const tokens: ERC20Token[] = ${JSON.stringify(erc20, null, 2)}
 export default tokens;
 `;
 
-    const mockedFs = (fs.writeFileSync = jest.fn().mockImplementationOnce(() => expectedFile));
+    const mockedFs = (fs.writeFileSync = jest.fn());
 
     await importERC20(".");
 
