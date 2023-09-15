@@ -34,6 +34,7 @@ import TroubleshootingDrawer, {
 } from "./TroubleshootingDrawer";
 import LockedDeviceDrawer, { Props as LockedDeviceDrawerProps } from "./LockedDeviceDrawer";
 import { LockedDeviceError, UnexpectedBootloader } from "@ledgerhq/errors";
+import ErrorDrawer from "./EarlySecurityChecks/ErrorDrawer";
 
 const POLLING_PERIOD_MS = 1000;
 const DESYNC_TIMEOUT_MS = 20000;
@@ -108,7 +109,22 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
         const { isBootloader } = deviceInfo || {};
         setIsBootloader(isBootloader);
       })
-      .catch(e => console.error(e));
+      .catch(error => {
+        if (error instanceof LockedDeviceError) {
+          // Here we just want to know if the device is in bootloader mode.
+          // It can't be locked in bootloader mode so we can just ignore the
+          // error, another LockedDeviceError error will be handled in the
+          // polling hook.
+          setIsBootloader(false);
+          return;
+        }
+        console.error(error);
+        setDrawer(
+          ErrorDrawer,
+          { onClickRetry: refreshIsBootloaderMode, error },
+          { preventBackdropClick: true, forceDisableFocusTrap: true },
+        );
+      });
   }, [device]);
 
   useEffect(() => {
