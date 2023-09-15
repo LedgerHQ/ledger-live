@@ -58,14 +58,14 @@ const createSteps = (params: Data): Step[] => [
     label: <Trans i18nKey="delegation.flow.steps.account.label" />,
     component: StepAccount,
     footer: StepAccountFooter,
-    excludeFromBreadcrumb: Boolean(params && params.account),
+    excludeFromBreadcrumb: Boolean(params.account),
   },
   {
     id: "summary",
     label: <Trans i18nKey="delegation.flow.steps.summary.label" />,
     component: StepSummary,
     footer: StepSummaryFooter,
-    onBack: params && params.account ? null : ({ transitionTo }) => transitionTo("account"),
+    onBack: params.account ? null : ({ transitionTo }) => transitionTo("account"),
   },
   {
     id: "validator",
@@ -100,8 +100,7 @@ const Body = ({ stepId, params, onChangeStepId, onClose }: Props) => {
   const device = useSelector(getCurrentDevice);
   const openedFromAccount = !!params.account;
   const [defaultBaker] = useBakers(whitelist);
-
-  const [steps] = useState(() => createSteps(params));
+  const steps = createSteps(params);
 
   const {
     transaction,
@@ -193,21 +192,26 @@ const Body = ({ stepId, params, onChangeStepId, onClose }: Props) => {
 
   const handleStepChange = useCallback(e => onChangeStepId(e.id), [onChangeStepId]);
 
-  const titles: Record<StepId | "undelegate", string> = {
-    account: t("delegation.flow.steps.account.title"),
-    device: t("delegation.flow.steps.account.title"), // same as account
-    starter: t("delegation.flow.steps.starter.title"),
-    summary: t("delegation.flow.steps.summary.title"),
-    validator: t("delegation.flow.steps.validator.title"),
-    undelegate: t("delegation.flow.steps.undelegate.title"),
-    confirmation: t("delegation.flow.steps.confirmation.title"),
-    custom: t("delegation.flow.steps.custom.title"),
-  };
+  const titles = useMemo(() => {
+    const titles: Record<StepId | "undelegate", string> = {
+      account: t("delegation.flow.steps.account.title"),
+      device: t("delegation.flow.steps.account.title"), // same as account
+      starter: t("delegation.flow.steps.starter.title"),
+      summary: t("delegation.flow.steps.summary.title"),
+      validator: t("delegation.flow.steps.validator.title"),
+      undelegate: t("delegation.flow.steps.undelegate.title"),
+      confirmation: t("delegation.flow.steps.confirmation.title"),
+      custom: t("delegation.flow.steps.custom.title"),
+    };
 
-  const title =
-    transaction && transaction.family === "tezos" && transaction.mode === "undelegate"
+    return titles;
+  }, [t]);
+
+  const title = useMemo(() => {
+    return transaction && transaction.family === "tezos" && transaction.mode === "undelegate"
       ? titles.undelegate
       : (stepId ? titles[stepId] : undefined) || titles.account;
+  }, [stepId, titles, transaction]);
 
   const errorSteps = [];
   if (transactionError) {
