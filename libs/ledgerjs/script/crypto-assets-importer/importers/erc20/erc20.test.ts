@@ -4,11 +4,12 @@ import fs from "fs";
 
 const erc20 = [["ethereum", "mytoken", "$TK", 8, "mytoken", "ledgersign", "0x0000", false, false]];
 
-jest.mock("fs", () => ({
-  writeFileSync: jest.fn().mockResolvedValue(() => {}),
-}));
-
 describe("import ERC20", () => {
+  beforeEach(() => {
+    const mockedAxios = jest.spyOn(axios, "get");
+    mockedAxios.mockImplementation(() => Promise.resolve({ data: erc20 }));
+  });
+
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -33,8 +34,6 @@ const tokens: ERC20Token[] = ${JSON.stringify(erc20, null, 2)}
 export default tokens;
 `;
 
-    const mockedAxios = jest.spyOn(axios, "get");
-    mockedAxios.mockImplementation(() => Promise.resolve({ data: erc20 }));
     const mockedFs = (fs.writeFileSync = jest.fn().mockImplementationOnce(() => expectedFile));
 
     await importERC20(".");
