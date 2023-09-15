@@ -1,7 +1,7 @@
 import { log } from "console";
 import fs from "fs";
 import path from "path";
-import { fetchTokens } from "../fetch";
+import { fetchTokens } from "../../fetch";
 
 type ERC20Token = [
   string, // parent currecncy id
