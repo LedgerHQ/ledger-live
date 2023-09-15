@@ -35,6 +35,7 @@ import TroubleshootingDrawer, {
 import LockedDeviceDrawer, { Props as LockedDeviceDrawerProps } from "./LockedDeviceDrawer";
 import { LockedDeviceError, UnexpectedBootloader } from "@ledgerhq/errors";
 import ErrorDrawer from "./EarlySecurityChecks/ErrorDrawer";
+import useIsMounted from "@ledgerhq/live-common/hooks/useIsMounted";
 
 const POLLING_PERIOD_MS = 1000;
 const DESYNC_TIMEOUT_MS = 20000;
@@ -101,35 +102,45 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
     toggleType: toggleOnboardingEarlyCheckType,
   });
 
-  const refreshIsBootloaderMode = useCallback(() => {
-    if (!device) return;
-    withDevice(device.deviceId)(transport => from(getDeviceInfo(transport)))
-      .toPromise()
-      .then((deviceInfo: DeviceInfo) => {
-        const { isBootloader } = deviceInfo || {};
-        setIsBootloader(isBootloader);
-      })
-      .catch(error => {
-        if (error instanceof LockedDeviceError) {
-          // Here we just want to know if the device is in bootloader mode.
-          // It can't be locked in bootloader mode so we can just ignore the
-          // error, another LockedDeviceError error will be handled in the
-          // polling hook.
-          setIsBootloader(false);
-          return;
-        }
-        console.error(error);
-        setDrawer(
-          ErrorDrawer,
-          { onClickRetry: refreshIsBootloaderMode, error },
-          { preventBackdropClick: true, forceDisableFocusTrap: true },
-        );
-      });
-  }, [device]);
-
   useEffect(() => {
+    let dead = false;
+    function refreshIsBootloaderMode() {
+      if (!device) return;
+      withDevice(device.deviceId)(transport => from(getDeviceInfo(transport)))
+        .toPromise()
+        .then(({ isBootloader }: DeviceInfo) => {
+          if (dead) return;
+          setIsBootloader(isBootloader);
+        })
+        .catch(error => {
+          if (dead) return;
+          if (error instanceof LockedDeviceError) {
+            // Here we just want to know if the device is in bootloader mode.
+            // It can't be locked in bootloader mode so we can just ignore the
+            // error, another LockedDeviceError error will be handled in the
+            // polling hook.
+            setIsBootloader(false);
+            return;
+          }
+          console.error(error);
+          setDrawer(
+            ErrorDrawer,
+            {
+              onClickRetry: () => {
+                setDrawer();
+                refreshIsBootloaderMode();
+              },
+              error,
+            },
+            { preventBackdropClick: true, forceDisableFocusTrap: true },
+          );
+        });
+    }
     refreshIsBootloaderMode();
-  }, [device, refreshIsBootloaderMode]);
+    return () => {
+      dead = true;
+    };
+  }, [device]);
 
   // Called when the ESC is complete
   const notifyOnboardingEarlyCheckEnded = useCallback(() => {
