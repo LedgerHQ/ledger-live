@@ -4577,7 +4577,7 @@ importers:
         version: 13.11.0(react-native@0.71.6)(react@18.0.0)
       rn-range-slider:
         specifier: 2.1.1
-        version: 2.1.1(prop-types@15.8.1)(react-native@0.71.6)(react@18.0.0)
+        version: 2.1.1(react-native@0.71.6)(react@18.0.0)
       styled-system:
         specifier: ^5.1.5
         version: 5.1.5
@@ -4699,9 +4699,6 @@ importers:
       '@types/node':
         specifier: ^18.0.0
         version: 18.16.19
-      '@types/prop-types':
-        specifier: ^15.7.5
-        version: 15.7.5
       '@types/react':
         specifier: ^17.0.53
         version: 17.0.53
@@ -4801,9 +4798,6 @@ importers:
       minimatch:
         specifier: ^5.1.0
         version: 5.1.0
-      prop-types:
-        specifier: ^15.8.1
-        version: 15.8.1
       react:
         specifier: ^18
         version: 18.0.0
@@ -52887,7 +52881,7 @@ packages:
     dev: false
     patched: true
 
-  /rn-range-slider@2.1.1(prop-types@15.8.1)(react-native@0.71.6)(react@18.0.0):
+  /rn-range-slider@2.1.1(react-native@0.71.6)(react@18.0.0):
     resolution: {integrity: sha512-tDfH8G4e/k+waGMMd+HaYTlpOqyh1dd3aWdDmqKo0WGh1BfHB+NXy0X2REyr1ZJDvsrq7WEeFZ+PBTdD6cisbw==}
     peerDependencies:
       prop-types: '*'
@@ -52901,7 +52895,6 @@ packages:
       react-native:
         optional: true
     dependencies:
-      prop-types: 15.8.1
       react: 18.0.0
       react-native: 0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false

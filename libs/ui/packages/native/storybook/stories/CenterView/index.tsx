@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useFonts } from "expo-font";
 import styled from "styled-components/native";
-import PropTypes from "prop-types";
 import { StyleProvider } from "../../../src/styles/StyleProvider";
 
 export const Main = styled.View`
@@ -54,14 +53,13 @@ export function FontProvider({
   return children;
 }
 
-// container for stories hosted on expo
-export default function CenterView({
-  waitFonts,
-  children,
-}: {
+export type CenterViewProps = {
   waitFonts?: boolean;
   children: React.ReactNode;
-}): JSX.Element {
+};
+
+// container for stories hosted on expo
+export default function CenterView({ waitFonts, children }: CenterViewProps): JSX.Element {
   const [isLight, setIsLight] = useState(true);
 
   return (
@@ -78,8 +76,4 @@ export default function CenterView({
 
 CenterView.defaultProps = {
   children: null,
-};
-
-CenterView.propTypes = {
-  children: PropTypes.node,
 };
