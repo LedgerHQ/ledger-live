@@ -137,16 +137,27 @@ if (VERBOSE) {
       return;
     }
 
-    if (context) {
-      // Displays the tracing context before the message for better readability in the console
-      // eslint-disable-next-line no-console
-      console.log(
-        `------------------------------\n${type}: ${JSON.stringify(context)}\n${message || ""}\n`,
-        rest,
-      );
-    } else {
-      // eslint-disable-next-line no-console
-      console.log(`------------------------------\n${type}: ${message || ""}`, rest);
+    try {
+      if (context) {
+        // Displays the tracing context before the message for better readability in the console
+        // eslint-disable-next-line no-console
+        console.log(
+          `------------------------------\n${type}: ${JSON.stringify(context, null, 2)}\n${
+            message || ""
+          }\n${JSON.stringify(rest, null, 2)}`,
+        );
+      } else {
+        // eslint-disable-next-line no-console
+        console.log(
+          `------------------------------\n${type}: ${message || ""}${JSON.stringify(
+            rest,
+            null,
+            2,
+          )}`,
+        );
+      }
+    } catch (_e) {
+      console.error("Badly formatted log");
     }
   });
 }
