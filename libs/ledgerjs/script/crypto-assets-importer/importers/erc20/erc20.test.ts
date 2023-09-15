@@ -16,7 +16,7 @@ describe("import ERC20", () => {
 
   it("should output the file in the correct format", async () => {
     const expectedFile = `export type ERC20Token = [
-  string, // parent currecncy id
+  string, // parent currency id
   string, // token
   string, // ticker
   number, // precision

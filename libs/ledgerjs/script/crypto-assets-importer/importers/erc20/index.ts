@@ -27,7 +27,7 @@ export const importERC20 = async (outputDir: string) => {
       fs.writeFileSync(`${filePath}.json`, JSON.stringify(erc20));
 
       const erc20TokenTypeStringified = `export type ERC20Token = [
-  string, // parent currecncy id
+  string, // parent currency id
   string, // token
   string, // ticker
   number, // precision
