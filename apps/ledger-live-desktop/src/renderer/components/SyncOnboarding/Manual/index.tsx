@@ -33,7 +33,7 @@ import TroubleshootingDrawer, {
   Props as TroubleshootingDrawerProps,
 } from "./TroubleshootingDrawer";
 import LockedDeviceDrawer, { Props as LockedDeviceDrawerProps } from "./LockedDeviceDrawer";
-import { LockedDeviceError } from "@ledgerhq/errors";
+import { LockedDeviceError, UnexpectedBootloader } from "@ledgerhq/errors";
 
 const POLLING_PERIOD_MS = 1000;
 const DESYNC_TIMEOUT_MS = 20000;
@@ -67,7 +67,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
   const deviceModelId = stringToDeviceModelId(strDeviceModelId, DeviceModelId.stax);
 
   const [mustRecoverIfBootloader, setMustRecoverIfBootloader] = useState(true);
-  const [isBootloader, setIsBootloader] = useState<boolean | null>(null);
+  const [isBootloader, setIsBootloader] = useState(false);
   // Needed because `device` object can be null or changed if disconnected/reconnected
   const [lastSeenDevice, setLastSeenDevice] = useState<Device | null>(device ?? null);
   useEffect(() => {
@@ -92,7 +92,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
   const { onboardingState, allowedError, fatalError, lockedDevice } = useOnboardingStatePolling({
     device: lastSeenDevice,
     pollingPeriodMs: POLLING_PERIOD_MS,
-    stopPolling: !isPollingOn || isBootloader === null || isBootloader,
+    stopPolling: !isPollingOn || isBootloader,
   });
 
   const { state: toggleOnboardingEarlyCheckState } = useToggleOnboardingEarlyCheck({
@@ -105,8 +105,10 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
     withDevice(device.deviceId)(transport => from(getDeviceInfo(transport)))
       .toPromise()
       .then((deviceInfo: DeviceInfo) => {
-        setIsBootloader(deviceInfo?.isBootloader);
-      });
+        const { isBootloader } = deviceInfo || {};
+        setIsBootloader(isBootloader);
+      })
+      .catch(e => console.error(e));
   }, [device]);
 
   useEffect(() => {
@@ -186,7 +188,9 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
 
   // A fatal error during polling triggers directly an error message
   useEffect(() => {
-    if (fatalError) {
+    if ((fatalError as unknown) instanceof UnexpectedBootloader) {
+      setIsBootloader(true);
+    } else if (fatalError) {
       setIsPollingOn(false);
       setTroubleshootingDrawerOpen(true);
     }
@@ -307,8 +311,8 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
     );
   }
 
-  const onDeviceActionResult = useCallback((result: Result) => {
-    setIsBootloader(result.deviceInfo.isBootloader);
+  const onDeviceActionResult = useCallback(({ deviceInfo: { isBootloader } }: Result) => {
+    setIsBootloader(isBootloader);
   }, []);
 
   return (
