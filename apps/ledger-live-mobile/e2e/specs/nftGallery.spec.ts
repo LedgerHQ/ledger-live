@@ -80,7 +80,7 @@ describe("NFT Gallery screen", () => {
   });
 
   it("should render empty state", async () => {
-    await expect(nftGalleryPage.emptyScreen()).toBeVisible();
+    await expect(nftGalleryPage.emptyScreen()).toBeVisible(50);
   });
 
   it('should show filters on "reset" button tap', async () => {

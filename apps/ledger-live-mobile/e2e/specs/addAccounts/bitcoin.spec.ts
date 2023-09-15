@@ -1,4 +1,4 @@
-import { expect, device } from "detox";
+import { expect } from "detox";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { loadBleState, loadConfig } from "../../bridge/server";
 import PortfolioPage from "../../models/wallet/portfolioPage";
@@ -37,8 +37,6 @@ describe("Add Bitcoin Accounts", () => {
 
   it("add Bitcoin accounts", async () => {
     await addAccountDrawer.selectCurrency("bitcoin");
-    // device actions and add accounts modal have animations that requires to disable synchronization default detox behavior
-    await device.disableSynchronization();
     await deviceAction.selectMockDevice();
     await deviceAction.openApp();
     await addAccountDrawer.startAccountsDiscovery();
@@ -48,7 +46,6 @@ describe("Add Bitcoin Accounts", () => {
   });
 
   it("displays accounts page summary", async () => {
-    await device.disableSynchronization();
     await accountsPage.waitForAccountsCoinPageToLoad("Bitcoin");
     await expect(getElementByText("1.19576 BTC")).toBeVisible();
   });
