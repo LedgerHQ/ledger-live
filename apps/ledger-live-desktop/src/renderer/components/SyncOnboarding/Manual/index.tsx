@@ -35,7 +35,6 @@ import TroubleshootingDrawer, {
 import LockedDeviceDrawer, { Props as LockedDeviceDrawerProps } from "./LockedDeviceDrawer";
 import { LockedDeviceError, UnexpectedBootloader } from "@ledgerhq/errors";
 import ErrorDrawer from "./EarlySecurityChecks/ErrorDrawer";
-import useIsMounted from "@ledgerhq/live-common/hooks/useIsMounted";
 
 const POLLING_PERIOD_MS = 1000;
 const DESYNC_TIMEOUT_MS = 20000;
