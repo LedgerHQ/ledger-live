@@ -1,5 +1,5 @@
 import axios from "axios";
-import { fetchTokens } from "./fetch";
+import { fetchTokens } from ".";
 
 jest.mock("axios");
 const mockedAxios = axios as jest.Mocked<typeof axios>;

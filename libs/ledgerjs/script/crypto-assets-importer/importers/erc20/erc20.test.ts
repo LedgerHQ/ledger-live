@@ -40,6 +40,6 @@ export default tokens;
     await importERC20(".");
 
     expect(mockedFs).toHaveBeenNthCalledWith(1, "erc20.json", JSON.stringify(erc20));
-    expect(mockedFs).toHaveBeenNthCalledWith(2, "erc20.ts", JSON.stringify(erc20, null, 2));
+    expect(mockedFs).toHaveBeenNthCalledWith(2, "erc20.ts", expectedFile);
   });
 });
