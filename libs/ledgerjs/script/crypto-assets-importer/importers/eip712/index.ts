@@ -1,7 +1,7 @@
 import { log } from "console";
 import fs from "fs";
 import path from "path";
-import { fetchTokens } from "../fetch";
+import { fetchTokens } from "../../fetch";
 
 type EIP712 = {
   [key: string]: {
@@ -18,8 +18,8 @@ export const importEIP712 = async (outputDir: string) => {
     if (eip712) {
       const filePath = path.join(outputDir, "eip712");
       const tsContent = `export default ${JSON.stringify(eip712, null, 2)};`;
-      fs.writeFileSync(`${filePath}.json`, JSON.stringify(eip712), "utf-8");
-      fs.writeFileSync(`${filePath}.ts`, tsContent, "utf-8");
+      fs.writeFileSync(`${filePath}.json`, JSON.stringify(eip712));
+      fs.writeFileSync(`${filePath}.ts`, tsContent);
       log("importing ERC712 tokens sucess");
     }
   } catch (err) {

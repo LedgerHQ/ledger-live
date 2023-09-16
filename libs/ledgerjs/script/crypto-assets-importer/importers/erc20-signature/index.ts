@@ -1,7 +1,7 @@
 import { log } from "console";
 import fs from "fs";
 import path from "path";
-import { fetchTokens } from "../fetch";
+import { fetchTokens } from "../../fetch";
 
 export const importERC20Signatures = async (outputDir: string) => {
   log("importing erc20 signatures...");

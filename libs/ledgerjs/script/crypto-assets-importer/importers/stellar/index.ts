@@ -1,7 +1,7 @@
 import fs from "fs";
 import { log } from "console";
 import path from "path";
-import { fetchTokens } from "../fetch";
+import { fetchTokens } from "../../fetch";
 
 type StellarToken = [
   string, // assetCode
