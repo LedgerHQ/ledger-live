@@ -864,8 +864,8 @@ importers:
         specifier: ~12.3.1
         version: 12.3.1(expo-modules-core@1.2.2)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
       expo-camera:
-        specifier: ~13.2.1
-        version: 13.2.1(expo-modules-core@1.2.2)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
+        specifier: ~13.6.0
+        version: 13.6.0(expo-modules-core@1.2.2)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
       expo-file-system:
         specifier: ~15.2.2
         version: 15.2.2(expo-modules-core@1.2.2)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
@@ -16409,15 +16409,6 @@ packages:
     dependencies:
       vary: 1.1.2
     dev: true
-
-  /@koale/useworker@4.0.2(react@18.0.0):
-    resolution: {integrity: sha512-xPIPADtom8/3/4FLNj7MvNcBM/Z2FleH85Fdx2O869eoKW8+PoEgtSVvoxWjCWMA46Sm9A5/R1TyzNGc+yM0wg==}
-    peerDependencies:
-      react: ^16.8.0
-    dependencies:
-      dequal: 1.0.1
-      react: 18.0.0
-    dev: false
 
   /@ledgerhq/devices@5.51.1:
     resolution: {integrity: sha512-4w+P0VkbjzEXC7kv8T1GJ/9AVaP9I6uasMZ/JcdwZBS3qwvKo5A5z9uGhP5c7TvItzcmPb44b5Mw2kT+WjUuAA==}
@@ -31985,11 +31976,6 @@ packages:
   /deprecation@2.3.1:
     resolution: {integrity: sha512-xmHIy4F3scKVwMsQ4WnVaS8bHOx0DmVwRywosKhaILI0ywMDWPtBSku2HNxRvF7jtwDRsoEwYQSfbxj8b7RlJQ==}
 
-  /dequal@1.0.1:
-    resolution: {integrity: sha512-Fx8jxibzkJX2aJgyfSdLhr9tlRoTnHKrRJuu2XHlAgKioN2j19/Bcbe0d4mFXYZ3+wpE2KVobUVTfDutcD17xQ==}
-    engines: {node: '>=6'}
-    dev: false
-
   /dequal@2.0.3:
     resolution: {integrity: sha512-0je+qPKHEMohvfRTCEo3CrPG6cAzAYgmzKyxRiYSSDkS6eGJdyVJm7WaYA5ECaAD9wLB2T4EEeymA5aFVcYXCA==}
     engines: {node: '>=6'}
@@ -34788,8 +34774,8 @@ packages:
       react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
-  /expo-camera@13.2.1(expo-modules-core@1.2.2)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0):
-    resolution: {integrity: sha512-fZdRyF402jJGGmLVlumrLcr5Em9+Y2SO1MIlxLBtHXnybyHbTRMRAbzVapKX1Aryfujqadh+Kl+sdsWYkMuJjg==}
+  /expo-camera@13.6.0(expo-modules-core@1.2.2)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0):
+    resolution: {integrity: sha512-8lxK15D2tuEZom9bhDMMqNPW+5241Ak4wIup/ebh4JekgOtSQ/egbq7qDn2FCFi+5vPFKX4nRsvGOuzfuzvmZA==}
     peerDependencies:
       expo: '*'
       expo-constants: '*'
@@ -34806,7 +34792,6 @@ packages:
       react-native:
         optional: true
     dependencies:
-      '@koale/useworker': 4.0.2(react@18.0.0)
       expo: 48.0.9(@babel/core@7.22.8)(metro@0.76.0)(react-native@0.71.6)(react@18.0.0)
       expo-modules-core: 1.2.2(react-native@0.71.6)(react@18.0.0)
       invariant: 2.2.4
