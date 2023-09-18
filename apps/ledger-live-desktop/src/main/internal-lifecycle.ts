@@ -183,7 +183,13 @@ ipcMain.on("internalCrashTest", () => {
 });
 ipcMain.on("setEnv", async (event, env) => {
   const { name, value } = env;
+
   if (setEnvUnsafe(name, value)) {
+    // Enables updating at runtime the settings of logs printed on stdout
+    if (name === "VERBOSE") {
+      consoleLogger.refreshSetup();
+    }
+
     if (isRestartNeeded(name)) {
       if (internal.active) {
         await internal.stop();

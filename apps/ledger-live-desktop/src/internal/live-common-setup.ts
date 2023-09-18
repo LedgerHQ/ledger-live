@@ -10,18 +10,18 @@ import { DisconnectedDevice } from "@ledgerhq/errors";
 import { TraceContext, listen as listenLogs } from "@ledgerhq/logs";
 import { ForwardToMainLogger } from "./logger";
 
+/* eslint-disable guard-for-in */
+for (const k in process.env) {
+  setEnvUnsafe(k, process.env[k]);
+}
+/* eslint-enable guard-for-in */
+
 const forwardToMainLogger = ForwardToMainLogger.getLogger();
 
 // Listens to logs from the internal threads, and forwards them to the main thread
 listenLogs(log => {
   forwardToMainLogger.log(log);
 });
-
-/* eslint-disable guard-for-in */
-for (const k in process.env) {
-  setEnvUnsafe(k, process.env[k]);
-}
-/* eslint-enable guard-for-in */
 
 setErrorRemapping(e => {
   // NB ideally we should solve it in ledgerjs

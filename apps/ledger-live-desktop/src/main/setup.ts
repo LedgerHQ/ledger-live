@@ -8,6 +8,17 @@ import updater from "./updater";
 import resolveUserDataDirectory from "~/helpers/resolveUserDataDirectory";
 import path from "path";
 import { InMemoryLogger } from "./logger";
+import { setEnvUnsafe } from "@ledgerhq/live-env";
+
+/**
+ * Sets env variables for the main thread.
+ *
+ * The renderer thread will also set some env variables via the `setEnv` IPC channel
+ * but we might need some envs before the renderer thread is spawned.
+ */
+for (const k in process.env) {
+  setEnvUnsafe(k, process.env[k]);
+}
 
 ipcMain.on("mainCrashTest", () => {
   captureException(new Error("CrashTestMain"));

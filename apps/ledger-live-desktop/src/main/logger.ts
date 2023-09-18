@@ -70,8 +70,8 @@ export class InMemoryLogger {
  */
 export class ConsoleLogger {
   private static instance: ConsoleLogger | undefined;
-  private everyLogs: boolean;
-  private filters: Array<string>;
+  private everyLogs: boolean = false;
+  private filters: Array<string> = [];
 
   /**
    * Sets up debug console printing of logs
@@ -81,12 +81,27 @@ export class ConsoleLogger {
    * - VERBOSE=1 or VERBOSE=true : to print all logs
    */
   private constructor() {
-    // `VERBOSE` cannot be changed at runtime
-    const { VERBOSE } = process.env;
+    this.refreshSetup();
+  }
 
-    if (VERBOSE) {
-      this.everyLogs = VERBOSE === "true" || VERBOSE === "1";
-      this.filters = this.everyLogs ? [] : VERBOSE.split(",");
+  // Simple singleton factory
+  static getLogger() {
+    if (!ConsoleLogger.instance) {
+      ConsoleLogger.instance = new ConsoleLogger();
+    }
+    return ConsoleLogger.instance;
+  }
+
+  /**
+   * Refreshes the logger config from the `VERBOSE` env variable
+   */
+  refreshSetup() {
+    const logVerbose = getEnv("VERBOSE");
+
+    if (logVerbose) {
+      this.everyLogs =
+        logVerbose.length === 1 && (logVerbose[0] === "true" || logVerbose[0] === "1");
+      this.filters = this.everyLogs ? [] : logVerbose;
 
       // eslint-disable-next-line no-console
     } else {
@@ -98,17 +113,8 @@ export class ConsoleLogger {
       `Logs console display setup (main thread): ${JSON.stringify({
         everyLogs: this.everyLogs,
         filters: this.filters,
-        verbose: VERBOSE,
       })}`,
     );
-  }
-
-  // Simple singleton factory
-  static getLogger() {
-    if (!ConsoleLogger.instance) {
-      ConsoleLogger.instance = new ConsoleLogger();
-    }
-    return ConsoleLogger.instance;
   }
 
   /**

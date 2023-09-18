@@ -307,7 +307,6 @@ export default {
   debug: (...args: unknown[]) => {
     // @ts-expect-error spreading unknowns is fine
     logger.log("debug", ...args);
-    console.log(`LOGGER: debug: ${JSON.stringify(args)}`);
   },
   info: (...args: unknown[]) => {
     // @ts-expect-error spreading unknowns is fine

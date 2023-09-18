@@ -25,7 +25,12 @@ import { setGlobalOnBridgeError } from "@ledgerhq/live-common/bridge/useBridgeTr
 import { prepareCurrency } from "./bridge/cache";
 import BluetoothTransport from "./react-native-hw-transport-ble";
 import "./experimental";
-import logger from "./logger";
+import logger, { ConsoleLogger } from "./logger";
+
+const consoleLogger = ConsoleLogger.getLogger();
+listen(log => {
+  consoleLogger.log(log);
+});
 
 setGlobalOnBridgeError(e => logger.critical(e));
 setDeviceMode("polling");
@@ -111,56 +116,6 @@ setSupportedCurrencies([
   "coreum",
   "injective",
 ]);
-
-const { VERBOSE } = Config;
-
-/**
- * Sets up a printing of logs in the console/stdout
- *
- * The configuration is done with the env variable `VERBOSE`
- *
- * Usage: a filtering (only on console printing) on Ledger libs are possible:
- * - VERBOSE="apdu,hw,transport,hid-verbose" : filtering on a list of log `type` separated by a `,`
- * - VERBOSE=1 or VERBOSE=true : to print all logs
- *
- * Note: we should add a log level defined in our logger, different that `type`.
- */
-if (VERBOSE) {
-  const everyLogs = VERBOSE === "true" || VERBOSE === "1";
-  const filters = everyLogs ? [] : VERBOSE.split(",");
-
-  // eslint-disable-next-line no-console
-  console.log(`Logs console display setup: ${JSON.stringify({ everyLogs, filters })}`);
-
-  listen(({ type, message, context, ...rest }) => {
-    if (!everyLogs && !filters.includes(type)) {
-      return;
-    }
-
-    try {
-      if (context) {
-        // Displays the tracing context before the message for better readability in the console
-        // eslint-disable-next-line no-console
-        console.log(
-          `------------------------------\n${type}: ${JSON.stringify(context, null, 2)}\n${
-            message || ""
-          }\n${JSON.stringify(rest, null, 2)}`,
-        );
-      } else {
-        // eslint-disable-next-line no-console
-        console.log(
-          `------------------------------\n${type}: ${message || ""}${JSON.stringify(
-            rest,
-            null,
-            2,
-          )}`,
-        );
-      }
-    } catch (_e) {
-      console.error("Badly formatted log");
-    }
-  });
-}
 
 if (Config.BLE_LOG_LEVEL) BluetoothTransport.setLogLevel(Config.BLE_LOG_LEVEL);
 if (Config.FORCE_PROVIDER && !isNaN(parseInt(Config.FORCE_PROVIDER, 10)))
