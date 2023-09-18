@@ -164,7 +164,9 @@ const SoftwareCheckContent = ({
             {t("syncOnboarding.manual.softwareCheckContent.whyPerformChecksLink")}
           </Link>
           <Button onClick={onClickStartChecks} variant="main" size="large" outline={false}>
-            {t("syncOnboarding.manual.softwareCheckContent.startChecksCTA")}
+            {t("syncOnboarding.manual.softwareCheckContent.startChecksCTA", {
+              modelName,
+            })}
           </Button>
         </Flex>
       ) : null}
