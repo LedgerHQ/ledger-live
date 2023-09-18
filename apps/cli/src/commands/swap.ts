@@ -17,10 +17,11 @@ import type {
   ExchangeRate,
   InitSwapResult,
 } from "@ledgerhq/live-common/exchange/swap/types";
-import { initSwap, getExchangeRates } from "@ledgerhq/live-common/exchange/swap/index";
+import { getAvailableProviders, initSwap } from "@ledgerhq/live-common/exchange/swap/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { fetchRates } from "@ledgerhq/live-common/exchange/swap/api/v5/fetchRates";
 import invariant from "invariant";
 import { Account, SignedOperation, SubAccount } from "@ledgerhq/types-live";
 
@@ -171,10 +172,20 @@ const exec = async (opts: SwapJobOpts) => {
     toAccount,
     toParentAccount,
   };
+  const currencyTo = getAccountCurrency(toAccount);
+  const currencyFrom = getAccountCurrency(fromAccount);
 
-  const exchangeRates = await getExchangeRates({ exchange, transaction });
+  const unitTo = currencyTo.units[0];
+  const unitFrom = currencyFrom.units[0];
 
-  console.log({ exchangeRates });
+  const exchangeRates = await fetchRates({
+    providers: getAvailableProviders(),
+    fromCurrencyAmount: amount,
+    unitTo,
+    unitFrom,
+    currencyFrom: currencyFrom.id,
+    toCurrencyId: currencyTo.id,
+  });
 
   const exchangeRate = exchangeRates.find(er => {
     if (er.tradeMethod === (useFloat ? "float" : "fixed")) {

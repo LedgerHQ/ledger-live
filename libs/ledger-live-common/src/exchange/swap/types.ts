@@ -148,10 +148,6 @@ export type ExchangeObject = {
   timeoutErrorMessage?: string;
 };
 
-export type GetExchangeRates = (
-  exchangeObject: ExchangeObject,
-) => Promise<(ExchangeRate & { expirationDate?: Date })[]>;
-
 export type InitSwapResult = {
   transaction: Transaction;
   swapId: string;

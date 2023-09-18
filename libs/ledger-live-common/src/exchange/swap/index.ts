@@ -19,8 +19,6 @@ import {
 import getCompleteSwapHistory from "./getCompleteSwapHistory";
 import initSwap from "./initSwap";
 import { postSwapAccepted, postSwapCancelled } from "./postSwapState";
-import getExchangeRates from "./getExchangeRates";
-import getProviders from "./getProviders";
 import { isIntegrationTestEnv } from "./utils/isIntegrationTestEnv";
 
 export const operationStatusList = {
@@ -193,8 +191,6 @@ export {
   getProviderConfig,
   getCompleteSwapHistory,
   postSwapAccepted,
-  getExchangeRates,
-  getProviders,
   postSwapCancelled,
   initSwap,
   USStates,
