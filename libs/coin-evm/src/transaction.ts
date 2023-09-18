@@ -20,6 +20,9 @@ import type {
   EvmTransactionLegacy,
   TransactionRaw as EvmTransactionRaw,
   FeeData,
+  FeeDataRaw,
+  GasOptions,
+  GasOptionsRaw,
 } from "./types";
 
 export const DEFAULT_GAS_LIMIT = new BigNumber(21000);
@@ -94,6 +97,22 @@ export const fromTransactionRaw = (rawTx: EvmTransactionRaw): EvmTransaction => 
     tx.customGasLimit = new BigNumber(rawTx.customGasLimit);
   }
 
+  // @TODO: Make it look better
+  if (rawTx.gasOptions) {
+    tx.gasOptions = {} as GasOptions;
+    Object.keys(rawTx.gasOptions).forEach(feeStrategy => {
+      const options: FeeDataRaw = rawTx.gasOptions![feeStrategy as keyof GasOptions];
+      tx.gasOptions![feeStrategy as keyof GasOptions] = {
+        gasPrice: options.gasPrice ? new BigNumber(options.gasPrice) : undefined,
+        maxFeePerGas: options.maxFeePerGas ? new BigNumber(options.maxFeePerGas) : undefined,
+        maxPriorityFeePerGas: options.maxPriorityFeePerGas
+          ? new BigNumber(options.maxPriorityFeePerGas)
+          : undefined,
+        nextBaseFee: options.nextBaseFee ? new BigNumber(options.nextBaseFee) : undefined,
+      } as FeeData;
+    });
+  }
+
   return tx as EvmTransaction;
 };
 
@@ -144,6 +163,20 @@ export const toTransactionRaw = (tx: EvmTransaction): EvmTransactionRaw => {
 
   if (tx.customGasLimit) {
     txRaw.customGasLimit = tx.customGasLimit.toFixed();
+  }
+
+  // @TODO: Make it look better
+  if (tx.gasOptions) {
+    txRaw.gasOptions = {} as GasOptionsRaw;
+    Object.keys(tx.gasOptions).forEach(feeStrategy => {
+      const options = tx.gasOptions![feeStrategy as keyof GasOptions];
+      txRaw.gasOptions![feeStrategy as keyof GasOptions] = {
+        gasPrice: options.gasPrice?.toFixed(),
+        maxFeePerGas: options.maxFeePerGas?.toFixed(),
+        maxPriorityFeePerGas: options.maxPriorityFeePerGas?.toFixed(),
+        nextBaseFee: options.nextBaseFee?.toFixed(),
+      } as FeeDataRaw;
+    });
   }
 
   return txRaw as EvmTransactionRaw;

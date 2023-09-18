@@ -27,6 +27,7 @@ export default function EvmFeesStrategy({
   setTransaction,
   navigation,
   route,
+  // @TODO:  shouldPrefillGasOptions = true,
   ...props
 }: Props<Transaction>) {
   const account = getMainAccount(accountProp, parentAccount);
@@ -42,13 +43,17 @@ export default function EvmFeesStrategy({
     log("error", error.message);
   }
 
-  useEffect(() => {
-    const updatedTransaction = bridge.updateTransaction(transaction, {
-      ...transaction,
-      gasOptions,
-    });
-    setTransaction(updatedTransaction);
-  }, [bridge, setTransaction, gasOptions, transaction]);
+  // @TODO: ADD LOADING STATE
+  // + activate next hook only for shouldPrefillGasOptions
+  // useEffect(() => {
+  //   if (shouldPrefillGasOptions) {
+  //     const updatedTransaction = bridge.updateTransaction(transaction, {
+  //       ...transaction,
+  //       gasOptions,
+  //     });
+  //     setTransaction(updatedTransaction);
+  //   }
+  // }, [bridge, setTransaction, gasOptions, transaction]);
 
   const [customStrategy, setCustomStrategy] = useState(getCustomStrategy(transaction));
 
@@ -62,14 +67,14 @@ export default function EvmFeesStrategy({
 
   const onFeesSelected = useCallback(
     ({ feesStrategy }) => {
-      const bridge = getAccountBridge(account, parentAccount);
       setTransaction(
         bridge.updateTransaction(transaction, {
           feesStrategy,
+          gasOptions,
         }),
       );
     },
-    [setTransaction, account, parentAccount, transaction],
+    [setTransaction, bridge, transaction, gasOptions],
   );
 
   const openCustomFees = useCallback(() => {

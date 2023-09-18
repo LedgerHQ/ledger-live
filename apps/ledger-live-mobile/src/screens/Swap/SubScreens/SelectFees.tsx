@@ -56,6 +56,7 @@ export function SelectFees({ navigation, route }: SelectFeesParamList) {
               },
             }}
             disabledStrategies={isFixed ? ["slow"] : []}
+            // @TODO: Should prefill set to false here
           />
         ) : null}
       </NavigationScrollView>
