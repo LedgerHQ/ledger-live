@@ -106,8 +106,8 @@ const UpdateModal = ({
   const [cancel, setCancel] = useState<boolean>(false);
 
   const onRequestCancel = useCallback(() => {
-    setCancel(state => !state);
-  }, []);
+    showDisclaimer ? onRequestClose() : setCancel(state => !state);
+  }, [showDisclaimer, onRequestClose]);
 
   const createSteps = useCallback(
     ({ withResetStep }: { withResetStep: boolean }) => {
