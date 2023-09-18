@@ -112,7 +112,7 @@
     "expo-barcode-scanner": "~12.3.1",
     "expo-camera": "~13.2.1",
     "expo-file-system": "~15.2.2",
-    "expo-image-loader": "~4.1.1",
+    "expo-image-loader": "~4.4.0",
     "expo-image-manipulator": "~11.1.1",
     "expo-modules-autolinking": "^1.1.2",
     "expo-modules-core": "^1.2.2",
