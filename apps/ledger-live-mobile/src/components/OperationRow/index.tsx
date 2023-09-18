@@ -16,8 +16,7 @@ import { WarningMedium } from "@ledgerhq/native-ui/assets/icons";
 import debounce from "lodash/debounce";
 import { isEqual } from "lodash";
 import { useSelector } from "react-redux";
-import { getEnv } from "@ledgerhq/live-env";
-import { isEditableOperation } from "@ledgerhq/coin-framework/operation";
+import { isEditableOperation, isStuckOperation } from "@ledgerhq/coin-framework/operation";
 import CurrencyUnitValue from "../CurrencyUnitValue";
 import CounterValue from "../CounterValue";
 import OperationIcon from "../OperationIcon";
@@ -165,8 +164,7 @@ function OperationRow({
   const text = <Trans i18nKey={`operations.types.${operation.type}`} />;
   const isOptimistic = operation.blockHeight === null;
   const isOperationStuck =
-    isEditableOperation(account, operation) &&
-    operation.date.getTime() <= new Date().getTime() - getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT");
+    isEditableOperation(mainAccount, operation) && isStuckOperation(operation);
 
   const spinner = isOperationStuck ? (
     <WarningMedium />
