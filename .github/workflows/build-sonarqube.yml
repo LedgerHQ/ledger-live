@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - develop
+      - support/LIVE-9378-add-sonarqube-integration
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
