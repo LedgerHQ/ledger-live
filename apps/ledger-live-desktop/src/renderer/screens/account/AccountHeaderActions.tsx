@@ -92,6 +92,7 @@ type Props = {
   t: TFunction;
   openModal: Function;
 } & OwnProps;
+
 const AccountHeaderSettingsButtonComponent = ({ account, parentAccount, openModal, t }: Props) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const currency = getAccountCurrency(account);
@@ -106,6 +107,7 @@ const AccountHeaderSettingsButtonComponent = ({ account, parentAccount, openModa
       state: params,
     });
   }, [mainAccount.id, history]);
+
   return (
     <Box horizontal alignItems="center" justifyContent="flex-end" flow={2}>
       <Tooltip content={t("stars.tooltip")}>
@@ -145,7 +147,9 @@ const AccountHeaderSettingsButtonComponent = ({ account, parentAccount, openModa
     </Box>
   );
 };
+
 const pageName = "Page Account";
+
 const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const contrastText = useTheme().colors.palette.text.shade60;
@@ -196,6 +200,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
     }),
     [currency],
   );
+
   const onBuySell = useCallback(
     (mode = "buy") => {
       setTrackingSource("account header actions");
@@ -214,6 +219,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
     },
     [currency, history, mainAccount.id, buttonSharedTrackingFields],
   );
+
   const onSwap = useCallback(() => {
     track("button_clicked", {
       button: "swap",
@@ -230,6 +236,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
       },
     });
   }, [currency, swapDefaultTrack, history, account, parentAccount, buttonSharedTrackingFields]);
+
   const onSend = useCallback(() => {
     track("button_clicked", {
       button: "send",
@@ -240,6 +247,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
       account,
     });
   }, [openModal, parentAccount, account, buttonSharedTrackingFields]);
+
   const onReceive = useCallback(() => {
     track("button_clicked", {
       button: "receive",
@@ -250,6 +258,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
       account,
     });
   }, [openModal, parentAccount, account, buttonSharedTrackingFields]);
+
   const renderAction = ({
     label,
     onClick,
@@ -277,6 +286,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
     }
     return Action;
   };
+
   const manageActions: RenderActionParams[] = [
     ...manageList.map(item => ({
       ...item,
@@ -286,10 +296,12 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
       },
     })),
   ];
+
   const buyHeader = <BuyActionDefault onClick={() => onBuySell("buy")} />;
   const sellHeader = <SellActionDefault onClick={() => onBuySell("sell")} />;
   const swapHeader = <SwapActionDefault onClick={onSwap} />;
   const manageActionsHeader = manageActions.map(item => renderAction(item));
+
   const NonEmptyAccountHeader = (
     <FadeInButtonsContainer data-test-id="account-buttons-group" show={showButtons}>
       {manageActions.length > 0 ? manageActionsHeader : null}
@@ -302,6 +314,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
       <ReceiveAction account={account} parentAccount={parentAccount} onClick={onReceive} />
     </FadeInButtonsContainer>
   );
+
   return (
     <Box horizontal alignItems="center" justifyContent="flex-end" flow={2} mt={15}>
       {!isAccountEmpty(account) ? NonEmptyAccountHeader : null}
@@ -312,8 +325,10 @@ const ConnectedAccountHeaderActions = compose<React.ComponentType<OwnProps>>(
   connect(null, mapDispatchToProps),
   withTranslation(),
 )(AccountHeaderActions);
+
 export const AccountHeaderSettingsButton = compose<React.ComponentType<OwnProps>>(
   connect(null, mapDispatchToProps),
   withTranslation(),
 )(AccountHeaderSettingsButtonComponent);
+
 export default ConnectedAccountHeaderActions;
