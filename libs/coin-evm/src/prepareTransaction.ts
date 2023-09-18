@@ -224,21 +224,24 @@ export const prepareTransaction = async (
  * with the smart contract address as recipient and add the nonce
  * (which would change as well in the UI if it was done before that step)
  */
-export const prepareForSignOperation = async (
-  account: Account,
-  transaction: EvmTransaction,
-): Promise<EvmTransaction> => {
+export const prepareForSignOperation = async ({
+  account,
+  transaction,
+  /**
+   * specify if the nonce of the transaction should be used or replaced by the
+   * one returned by the node
+   */
+  isValidNonce = false,
+}: {
+  account: Account;
+  transaction: EvmTransaction;
+  isValidNonce?: boolean;
+}): Promise<EvmTransaction> => {
   const nodeApi = getNodeApi(account.currency);
 
-  /**
-   * If there is already a nonce (nonce different than default value of -1),
-   * we are editing or cancelling an existing transaction, so we don't update
-   * the nonce
-   */
-  const nonce =
-    transaction.nonce < 0
-      ? await nodeApi.getTransactionCount(account.currency, account.freshAddress)
-      : transaction.nonce;
+  const nonce = isValidNonce
+    ? transaction.nonce
+    : await nodeApi.getTransactionCount(account.currency, account.freshAddress);
 
   if (isNftTransaction(transaction)) {
     return {
