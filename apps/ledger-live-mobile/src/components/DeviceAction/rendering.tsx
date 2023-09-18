@@ -378,22 +378,26 @@ export function renderConfirmSell({
 
 export function renderAllowManager({
   t,
-  wording,
   device,
   theme,
+  requestType = "manager",
 }: RawProps & {
-  wording: string;
   device: Device;
+  requestType?: "manager" | "rename";
 }) {
   // TODO: disable gesture, modal close, hide header buttons
   return (
     <Wrapper pb={6} pt={6}>
       <Flex>
         <Text fontWeight="semiBold" fontSize={24} textAlign="center" mb={10}>
-          {t("DeviceAction.allowManagerPermission", {
-            wording,
-            productName: getDeviceModel(device.modelId)?.productName,
-          })}
+          {t(
+            requestType === "rename"
+              ? "DeviceAction.allowRenaming"
+              : "DeviceAction.allowManagerPermission",
+            {
+              productName: getDeviceModel(device.modelId)?.productName,
+            },
+          )}
         </Text>
       </Flex>
       <AnimationContainer>

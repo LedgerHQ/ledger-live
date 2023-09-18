@@ -15,7 +15,7 @@ type State = {
   isLoading: boolean;
   requestQuitApp: boolean;
   unresponsive: boolean;
-  allowManagerRequestedWording: string | null | undefined;
+  allowManagerRequested: boolean;
   allowManagerGranted: boolean;
   device: Device | null | undefined;
   deviceInfo: DeviceInfo | null | undefined;
@@ -78,7 +78,7 @@ const getInitialState = (device?: Device | null | undefined): State => ({
   requestQuitApp: false,
   unresponsive: false,
   isLocked: false,
-  allowManagerRequestedWording: null,
+  allowManagerRequested: false,
   allowManagerGranted: false,
   device,
   deviceInfo: null,
@@ -139,7 +139,7 @@ const reducer = (state: State, e: Event): State => {
         ...state,
         unresponsive: false,
         isLocked: false,
-        allowManagerRequestedWording: e.wording,
+        allowManagerRequested: true,
       };
 
     case "device-permission-granted":
@@ -147,7 +147,7 @@ const reducer = (state: State, e: Event): State => {
         ...state,
         unresponsive: false,
         isLocked: false,
-        allowManagerRequestedWording: null,
+        allowManagerRequested: false,
         allowManagerGranted: true,
       };
 

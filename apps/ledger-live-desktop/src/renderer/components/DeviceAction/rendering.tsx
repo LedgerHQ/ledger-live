@@ -406,11 +406,11 @@ export const renderListingApps = () => (
 export const renderAllowManager = ({
   modelId,
   type,
-  wording,
+  requestType = "manager",
 }: {
   modelId: DeviceModelId;
   type: Theme["theme"];
-  wording: string;
+  requestType?: "manager" | "rename";
 }) => (
   <Wrapper>
     <DeviceBlocker />
@@ -420,7 +420,11 @@ export const renderAllowManager = ({
     </AnimationWrapper>
     <Footer>
       <Title>
-        <Trans i18nKey="DeviceAction.allowManagerPermission" values={{ wording }} />
+        {requestType === "rename" ? (
+          <Trans i18nKey="DeviceAction.allowRenaming" />
+        ) : (
+          <Trans i18nKey="DeviceAction.allowManagerPermission" />
+        )}
       </Title>
     </Footer>
   </Wrapper>
