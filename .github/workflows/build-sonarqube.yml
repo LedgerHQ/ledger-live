@@ -10,7 +10,7 @@ concurrency:
 
 jobs:
   run-bot:
-    runs-on: [ledger-live-medium-linux]
+    runs-on: [ledger-live-4xlarge-linux]
     steps:
       - uses: actions/checkout@v3
         with:
