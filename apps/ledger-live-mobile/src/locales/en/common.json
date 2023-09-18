@@ -597,6 +597,10 @@
       "title": "Operation canceled on device",
       "description": "You rejected the operation on the device."
     },
+    "ExpertModeRequired": {
+      "title": "Expert mode required",
+      "description": "Expert mode needs to be enabled."
+    },
     "WebsocketConnectionError": {
       "title": "Sorry, connection failed",
       "description": "Please try again with a better network connection (websocket error)."

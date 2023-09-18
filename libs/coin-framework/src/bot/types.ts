@@ -12,6 +12,10 @@ import {
 } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
+import type SpeculosTransportHttp from "@ledgerhq/hw-transport-node-speculos-http";
+import type SpeculosTransportWebsocket from "@ledgerhq/hw-transport-node-speculos";
+export type SpeculosTransport = SpeculosTransportHttp | SpeculosTransportWebsocket;
+
 // Type coming from live-common/src/load/speculos.ts
 export type AppCandidate = {
   path: string;
@@ -146,6 +150,12 @@ export type AppSpec<T extends TransactionCommon> = {
   allowEmptyAccounts?: boolean;
   // do not keep operations in accounts (Cosmos family case)
   skipOperationHistory?: boolean;
+  // executed when speculos device is created, used for example to enable expert mode on cosmos nano app
+  onSpeculosDeviceCreated?: (device: {
+    transport: SpeculosTransport;
+    id: string;
+    appPath: string;
+  }) => Promise<void>;
 };
 export type SpecReport<T extends TransactionCommon> = {
   spec: AppSpec<T>;
