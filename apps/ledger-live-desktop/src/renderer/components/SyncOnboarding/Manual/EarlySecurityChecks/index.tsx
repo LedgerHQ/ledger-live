@@ -166,6 +166,7 @@ const EarlySecurityChecks = ({
     setDrawer(UpdateFirmwareModal, updateFirmwareModalProps, {
       preventBackdropClick: true,
       forceDisableFocusTrap: true,
+      padding: false,
       onRequestClose: undefined,
     });
   }, [

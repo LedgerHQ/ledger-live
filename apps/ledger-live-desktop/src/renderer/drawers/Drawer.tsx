@@ -18,11 +18,11 @@ const transitionStyles = {
   },
 };
 const DURATION = 200;
-const Bar = styled.div.attrs<{ state: TransitionStatus }>(props => ({
+const Bar = styled.div.attrs<{ state: TransitionStatus; padding: boolean }>(props => ({
   style: {
     ...transitionStyles[props.state as keyof typeof transitionStyles],
   },
-}))<{ state: TransitionStatus; index: number }>`
+}))<{ state: TransitionStatus; index: number; padding: boolean }>`
   position: absolute;
   top: 0;
   left: 0;
@@ -30,11 +30,11 @@ const Bar = styled.div.attrs<{ state: TransitionStatus }>(props => ({
   height: 100%;
   z-index: ${p => p.index};
   transform: translateX(${p => (p.index === 0 ? 0 : 100)}%);
-  transition: all ${DURATION}ms ease-in-out;
+  transition: all ${DURATION}ms ease-in-out, padding none;
   will-change: transform;
   background-color: ${p => p.theme.colors.palette.background.paper};
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.03);
-  padding: 62px 0px 15px 0px;
+  padding: ${p => (p.padding ? "62px 0px 15px 0px" : "0px 0px 15px 0px")};
   overflow-x: hidden;
   overflow-y: auto;
 `;
@@ -83,7 +83,11 @@ export const Drawer = () => {
               key={index}
             >
               {s => (
-                <Bar state={s} index={index}>
+                <Bar
+                  state={s}
+                  index={index}
+                  padding={state.options.padding === undefined ? true : state.options.padding}
+                >
                   {Component && (
                     <Component
                       onClose={state.options.onRequestClose || onRequestClose}
