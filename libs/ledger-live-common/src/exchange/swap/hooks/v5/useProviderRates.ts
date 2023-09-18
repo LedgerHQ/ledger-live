@@ -29,13 +29,12 @@ export function useProviderRates({
     onSuccess(data) {
       if (data.length === 0) {
         onNoRates?.({ fromState, toState });
-      } else {
-        setExchangeRate?.(data[0]);
       }
     },
   });
 
   if (!fromState.amount || fromState.amount.lte(0)) {
+    setExchangeRate?.(undefined);
     return {
       rates: {
         status: "idle",
@@ -48,6 +47,7 @@ export function useProviderRates({
   }
 
   if (isLoading) {
+    setExchangeRate?.(undefined);
     return {
       rates: {
         status: "loading",
@@ -59,6 +59,7 @@ export function useProviderRates({
     };
   }
   if (error) {
+    setExchangeRate?.(undefined);
     return {
       rates: {
         status: "error",
@@ -71,6 +72,7 @@ export function useProviderRates({
   }
 
   if (data) {
+    setExchangeRate?.(data[0]);
     return {
       rates: {
         status: "success",
