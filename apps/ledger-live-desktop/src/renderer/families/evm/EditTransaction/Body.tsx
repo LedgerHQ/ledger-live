@@ -12,7 +12,7 @@ import {
   hasMinimumFundsToSpeedUp,
 } from "@ledgerhq/live-common/families/evm/getUpdateTransactionPatch";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { isEditableOperation } from "@ledgerhq/live-common/operation";
+import { isOldestPendingEditableOperation } from "@ledgerhq/live-common/operation";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { TFunction } from "i18next";
@@ -237,20 +237,10 @@ const Body = ({
   const haveFundToCancel = hasMinimumFundsToCancel({ transactionToUpdate, mainAccount });
   const haveFundToSpeedup = hasMinimumFundsToSpeedUp({ transactionToUpdate, mainAccount, account });
 
-  const isOldestEditableOperation = mainAccount.pendingOperations.reduce((isOldest, operation) => {
-    if (isEditableOperation(account, operation)) {
-      if (
-        operation.transactionSequenceNumber !== undefined &&
-        /* nonce is always defined in evm type as of today */
-        transactionToUpdate.nonce !== undefined &&
-        operation.transactionSequenceNumber < transactionToUpdate.nonce
-      ) {
-        return false;
-      }
-    }
-
-    return isOldest;
-  }, true);
+  const isOldestEditableOperation = isOldestPendingEditableOperation(
+    mainAccount,
+    transactionToUpdate.nonce,
+  );
 
   const [editType, setEditType] = useState<StepProps["editType"]>(
     isOldestEditableOperation && haveFundToSpeedup
