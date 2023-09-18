@@ -128,6 +128,12 @@ export function SwapForm({
     timeoutErrorMessage: t("errors.SwapTimeoutError.title"),
   });
 
+  // @TODO: Try to check if we can directly have the right state from `useSwapTransaction`
+  useEffect(() => {
+    swapTransaction.setFromAccount(swapTransaction.account);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const exchangeRatesState = swapTransaction.swap?.rates;
   const { partnersList, exchangeRateList } = useMemo(() => {
     const partnerAndExchangeRateDefault = {
