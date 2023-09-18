@@ -26,6 +26,7 @@ export function PlatformAppProviderWrapper({ children }: PlatformAppProviderWrap
         platform: "desktop",
         allowDebugApps,
         allowExperimentalApps,
+        llVersion: __APP_VERSION__,
       }}
       updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}
     >
