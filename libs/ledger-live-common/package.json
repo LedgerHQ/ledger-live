@@ -117,7 +117,6 @@
     "@celo/wallet-base": "^3.0.1",
     "@celo/wallet-ledger": "^3.0.1",
     "@cosmjs/crypto": "^0.31.0",
-    "@cosmjs/launchpad": "^0.26.5",
     "@cosmjs/stargate": "^0.26.5",
     "@cosmjs/amino": "^0.31.1",
     "@crypto-org-chain/chain-jslib": "1.1.2",
