@@ -88,6 +88,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const baseGoerli = useFeature("currencyBaseGoerli");
   const klaytn = useFeature("currencyKlaytn");
   const mock = useEnv("MOCK");
+  const injective = useFeature("currencyInjective");
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
       axelar,
@@ -123,6 +124,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       base,
       base_goerli: baseGoerli,
       klaytn,
+      injective,
     }),
     [
       axelar,
@@ -158,6 +160,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       base,
       baseGoerli,
       klaytn,
+      injective,
     ],
   );
 
