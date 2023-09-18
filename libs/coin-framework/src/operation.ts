@@ -240,16 +240,49 @@ export const isAddressPoisoningOperation = (
   );
 };
 
-export function isEditableOperation(account: AccountLike, operation: Operation): boolean {
-  let isEvmFamily = false;
-  if (account.type === "Account") {
-    isEvmFamily = account.currency.family === "evm";
-  } else if (account.type === "TokenAccount") {
-    isEvmFamily = account.token.parentCurrency.family === "evm";
+export const isEditableOperation = (account: Account, operation: Operation): boolean => {
+  const { currency } = account;
+
+  // the edit transaction feature is only available for evm family
+  if (currency.family !== "evm") {
+    return false;
   }
 
-  return isEvmFamily && operation.blockHeight === null && !!operation.transactionRaw;
-}
+  // gasTracker and explorer are needed to perform the edit transaction logic
+  if (!currency.ethereumLikeInfo?.gasTracker || !currency.ethereumLikeInfo?.explorer) {
+    return false;
+  }
+
+  return operation.blockHeight === null && !!operation.transactionRaw;
+};
+
+// FIXME: add tests
+/**
+ * @param account The account of the transaction to edit
+ * @param nonce The nouce of the transaction to edit
+ * @returns true if the nonce corresponds to the oldest pending operation
+ */
+export const isOldestPendingEditableOperation = (account: Account, nonce: number): boolean => {
+  /**
+   * The selected pending operation is the oldest if there is no pending
+   * operation with a lower transactionSequenceNumber
+   */
+  return !account.pendingOperations.some(pendingOp => {
+    invariant(pendingOp.transactionSequenceNumber, "transactionSequenceNumber required");
+
+    return isEditableOperation(account, pendingOp) && pendingOp.transactionSequenceNumber < nonce;
+  });
+};
+
+/**
+ * pending operations that exceed the ETHEREUM_STUCK_TRANSACTION_TIMEOUT
+ * threshold are considered as stuck
+ */
+export const isStuckOperation = (operation: Operation): boolean => {
+  return (
+    new Date().getTime() - operation.date.getTime() > getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT")
+  );
+};
 
 // return the oldest stuck pending operation and its corresponding account according to a eth account or a token subaccount. If no stuck pending operation is found, return undefined
 export function getStuckAccountAndOperation(
@@ -272,11 +305,8 @@ export function getStuckAccountAndOperation(
     return undefined;
   }
 
-  const now = new Date().getTime();
   const stuckOperations = mainAccount.pendingOperations.filter(
-    pendingOp =>
-      isEditableOperation(mainAccount, pendingOp) &&
-      now - pendingOp.date.getTime() > getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT"),
+    pendingOp => isEditableOperation(mainAccount, pendingOp) && isStuckOperation(pendingOp),
   );
 
   if (stuckOperations.length === 0) {

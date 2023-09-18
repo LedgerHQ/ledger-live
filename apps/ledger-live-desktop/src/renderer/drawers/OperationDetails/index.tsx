@@ -25,6 +25,7 @@ import {
   getOperationConfirmationDisplayableNumber,
   isConfirmedOperation,
   isEditableOperation,
+  isStuckOperation,
 } from "@ledgerhq/live-common/operation";
 import { Account, AccountLike, NFTMetadata, Operation, OperationType } from "@ledgerhq/types-live";
 import { useNftMetadata } from "@ledgerhq/live-common/nft/NftMetadataProvider/index";
@@ -264,9 +265,7 @@ const OperationD = (props: Props) => {
     [dispatch, isToken, subOperations],
   );
 
-  // pending transactions that exceeds 5 minutes are considered as stuck transactions
-  const isStuck =
-    new Date().getTime() - operation.date.getTime() > getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT");
+  const isStuck = isStuckOperation(operation);
   const feesCurrency = useMemo(() => getFeesCurrency(mainAccount), [mainAccount]);
   const feesUnit = useMemo(() => getFeesUnit(feesCurrency), [feesCurrency]);
 

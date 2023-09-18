@@ -1,12 +1,14 @@
-import Prando from "prando";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import Prando from "prando";
 import { getCryptoCurrencyById, getTokenById } from "./currencies";
+import { genAccount, genOperation, genTokenAccount } from "./mocks/account";
 import {
+  getStuckAccountAndOperation,
   isAddressPoisoningOperation,
   isEditableOperation,
-  getStuckAccountAndOperation,
 } from "./operation";
-import { genTokenAccount, genAccount, genOperation } from "./mocks/account";
 
 const ethereum = getCryptoCurrencyById("ethereum");
 const usdc = getTokenById("ethereum/erc20/usd__coin");
@@ -74,36 +76,121 @@ describe("Operation.ts", () => {
   });
 
   describe("isEditableOperation", () => {
-    it("should return false if the currency is not in eth family", () => {
-      const account = genAccount("myAccount", { currency: cardano });
-      const tokenAccount = genTokenAccount(0, account, lobster);
-      const operation = {
-        ...genOperation(account, tokenAccount, account.operations, new Prando("")),
-        value: new BigNumber(0),
-      };
+    describe("should return false", () => {
+      it("if the currency is not in evm family", () => {
+        const account = genAccount("myAccount", { currency: cardano });
+        const tokenAccount = genTokenAccount(0, account, lobster);
+        const operation = {
+          ...genOperation(account, tokenAccount, account.operations, new Prando("")),
+          value: new BigNumber(0),
+        };
 
-      expect(isEditableOperation(account, operation)).toBe(false);
-      expect(isEditableOperation(tokenAccount, operation)).toBe(false);
+        expect(isEditableOperation(account, operation)).toBe(false);
+      });
+
+      it("if the operation is not pending", () => {
+        const account = genAccount("myAccount", { currency: ethereum });
+        const tokenAccount = genTokenAccount(0, account, usdc);
+        const operation: Operation = {
+          ...genOperation(account, tokenAccount, account.operations, new Prando("")),
+          value: new BigNumber(0),
+          blockHeight: 1,
+        };
+
+        expect(isEditableOperation(account, operation)).toBe(false);
+      });
+
+      it("if the transactionRaw is not filled", () => {
+        const account = genAccount("myAccount", { currency: ethereum });
+        const tokenAccount = genTokenAccount(0, account, usdc);
+        const operation: Operation = {
+          ...genOperation(account, tokenAccount, account.operations, new Prando("")),
+          value: new BigNumber(0),
+          blockHeight: null, // pending transaction
+        };
+
+        expect(isEditableOperation(account, operation)).toBe(false);
+      });
+
+      it("if the gasTracker is not filled", () => {
+        const evmWithoutGasTracker: CryptoCurrency = {
+          ...ethereum,
+          ethereumLikeInfo: {
+            chainId: 1,
+            node: { type: "ledger", explorerId: "eth" },
+            gasTracker: undefined,
+            explorer: { type: "ledger", explorerId: "eth" },
+          },
+        };
+
+        const tokenCurrencyWithoutGasTracker: TokenCurrency = {
+          ...usdc,
+          parentCurrency: evmWithoutGasTracker,
+        };
+
+        const account = genAccount("myAccount", { currency: evmWithoutGasTracker });
+        const tokenAccount = genTokenAccount(0, account, tokenCurrencyWithoutGasTracker);
+        const operation: Operation = {
+          ...genOperation(account, tokenAccount, account.operations, new Prando("")),
+          value: new BigNumber(0),
+          blockHeight: null, // pending transaction
+          transactionRaw: {
+            amount: "1",
+            recipient: "MockRecipient",
+          },
+        };
+
+        expect(isEditableOperation(account, operation)).toBe(false);
+      });
+
+      it("if the explorer is not filled", () => {
+        const evmWithoutExplorer: CryptoCurrency = {
+          ...ethereum,
+          ethereumLikeInfo: {
+            chainId: 1,
+            node: { type: "ledger", explorerId: "eth" },
+            gasTracker: { type: "ledger", explorerId: "eth" },
+            explorer: undefined,
+          },
+        };
+
+        const tokenCurrencyWithoutExplorer: TokenCurrency = {
+          ...usdc,
+          parentCurrency: evmWithoutExplorer,
+        };
+
+        const account = genAccount("myAccount", { currency: evmWithoutExplorer });
+        const tokenAccount = genTokenAccount(0, account, tokenCurrencyWithoutExplorer);
+        const operation: Operation = {
+          ...genOperation(account, tokenAccount, account.operations, new Prando("")),
+          value: new BigNumber(0),
+          blockHeight: null, // pending transaction
+          transactionRaw: {
+            amount: "1",
+            recipient: "MockRecipient",
+          },
+        };
+
+        expect(isEditableOperation(account, operation)).toBe(false);
+      });
     });
 
-    it("should return true if the currency is in eth family, the operation is pending and transactionRaw is filled, otherwise, return false", () => {
-      const account = genAccount("myAccount", { currency: ethereum });
-      const tokenAccount = genTokenAccount(0, account, usdc);
-      const operation = {
-        ...genOperation(account, tokenAccount, account.operations, new Prando("")),
-        value: new BigNumber(0),
-        blockHeight: null, // pending transaction
-      };
-      const transactionRaw = {
-        family: "evm",
-        amount: "1",
-        recipient: "MockRecipient",
-      };
-      expect(isEditableOperation(account, operation)).toBe(false);
-      expect(isEditableOperation(tokenAccount, operation)).toBe(false);
-      operation.transactionRaw = transactionRaw;
-      expect(isEditableOperation(account, operation)).toBe(true);
-      expect(isEditableOperation(tokenAccount, operation)).toBe(true);
+    describe("should return true", () => {
+      it("if the currency is valid evm currency, the operation is pending and transactionRaw is filled", () => {
+        const account = genAccount("myAccount", { currency: ethereum });
+        const tokenAccount = genTokenAccount(0, account, usdc);
+        const operation: Operation = {
+          ...genOperation(account, tokenAccount, account.operations, new Prando("")),
+          value: new BigNumber(0),
+          blockHeight: null, // pending transaction
+          transactionRaw: {
+            amount: "1",
+            recipient: "MockRecipient",
+          },
+        };
+
+        expect(isEditableOperation(account, operation)).toBe(true);
+      });
     });
   });
 

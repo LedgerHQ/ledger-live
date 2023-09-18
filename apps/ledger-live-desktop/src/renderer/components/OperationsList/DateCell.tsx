@@ -1,12 +1,13 @@
-import React, { PureComponent } from "react";
-import styled from "styled-components";
-import { Operation } from "@ledgerhq/types-live";
-import { TFunction } from "i18next";
-import Box from "~/renderer/components/Box";
-import OperationDate from "./OperationDate";
+import { isStuckOperation } from "@ledgerhq/live-common/operation";
 import { InfiniteLoader } from "@ledgerhq/react-ui";
 import { WarningSolidMedium } from "@ledgerhq/react-ui/assets/icons";
-import { getEnv } from "@ledgerhq/live-env";
+import { Operation } from "@ledgerhq/types-live";
+import { TFunction } from "i18next";
+import React, { PureComponent } from "react";
+import styled from "styled-components";
+import Box from "~/renderer/components/Box";
+import OperationDate from "./OperationDate";
+
 const Cell = styled(Box).attrs(() => ({
   px: 3,
   horizontal: false,
@@ -16,6 +17,7 @@ const Cell = styled(Box).attrs(() => ({
   width: auto;
   min-width: ${p => (p.compact ? 90 : 120)}px;
 `;
+
 type Props = {
   t: TFunction;
   operation: Operation;
@@ -23,22 +25,24 @@ type Props = {
   compact?: boolean;
   editable?: boolean;
 };
+
+const PendingLoadingIcon = ({ displayWarning }: { displayWarning: boolean }): JSX.Element => {
+  if (displayWarning) {
+    return (
+      <Box style={{ verticalAlign: "sub", display: "inline" }}>
+        <WarningSolidMedium size={12} color={"#FFBD42"} />
+      </Box>
+    );
+  }
+
+  return <InfiniteLoader size={12} style={{ verticalAlign: "middle" }} />;
+};
+
 class DateCell extends PureComponent<Props> {
+  // FIXME: still needed? seems unused
   static defaultProps = {
     withAccount: false,
   };
-
-  pendingLoadingIcon(displayWarning: boolean) {
-    if (displayWarning) {
-      return (
-        <Box style={{ verticalAlign: "sub", display: "inline" }}>
-          <WarningSolidMedium size={12} color={"#FFBD42"} />
-        </Box>
-      );
-    }
-
-    return <InfiniteLoader size={12} style={{ verticalAlign: "middle" }} />;
-  }
 
   render() {
     const { t, operation, compact, text, editable } = this.props;
@@ -57,17 +61,7 @@ class DateCell extends PureComponent<Props> {
         {editable ? (
           <Box fontSize={3} color="palette.text.shade80">
             <Box ff="Inter|SemiBold" fontSize={3} color="palette.text.shade80" style={ellipsis}>
-              {
-                /**
-                 * display pending icon
-                 * less than ETHEREUM_STUCK_TRANSACTION_TIMEOUT: loading spinner
-                 * more than ETHEREUM_STUCK_TRANSACTION_TIMEOUT: yellow warning icon
-                 */
-                this.pendingLoadingIcon(
-                  new Date().getTime() - operation.date.getTime() >
-                    getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT"),
-                )
-              }
+              <PendingLoadingIcon displayWarning={isStuckOperation(operation)} />
               <Box
                 style={{
                   marginLeft: "4px",
