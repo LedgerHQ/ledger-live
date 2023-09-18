@@ -1,4 +1,4 @@
-// TODO: move to coin-evm
+// FIXME: Rename file (and maybe break it down?)
 
 import { getGasTracker } from "@ledgerhq/coin-evm/api/gasTracker/index";
 import { getEstimatedFees } from "@ledgerhq/coin-evm/logic";
@@ -13,12 +13,14 @@ import { AmountRequired, ReplacementTransactionUnderpriced } from "@ledgerhq/err
 import type { Account, AccountLike, TransactionStatusCommon } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { NotEnoughNftOwned, NotOwnedNft } from "../../errors";
+import { getEnv } from "@ledgerhq/live-env";
 
 type EditType = "cancel" | "speedup";
 
 const getMinLegacyFees = ({ gasPrice }: { gasPrice: BigNumber }): { gasPrice: BigNumber } => {
+  const gasPriceFactor: number = getEnv("EVM_REPLACE_TX_LEGACY_GASPRICE_FACTOR");
   return {
-    gasPrice: gasPrice.times(1.1).integerValue(BigNumber.ROUND_CEIL),
+    gasPrice: gasPrice.times(gasPriceFactor).integerValue(BigNumber.ROUND_CEIL),
   };
 };
 
@@ -32,9 +34,14 @@ const getMinEip1559Fees = ({
   maxFeePerGas: BigNumber;
   maxPriorityFeePerGas: BigNumber;
 } => {
+  const maxFeePerGasFactor: number = getEnv("EVM_REPLACE_TX_EIP1559_MAXFEE_FACTOR");
+  const maxPriorityFeePerGasFactor: number = getEnv("EVM_REPLACE_TX_EIP1559_MAXPRIORITYFEE_FACTOR");
+
   return {
-    maxFeePerGas: maxFeePerGas.times(1.1).integerValue(BigNumber.ROUND_CEIL),
-    maxPriorityFeePerGas: maxPriorityFeePerGas.times(1.1).integerValue(BigNumber.ROUND_CEIL),
+    maxFeePerGas: maxFeePerGas.times(maxFeePerGasFactor).integerValue(BigNumber.ROUND_CEIL),
+    maxPriorityFeePerGas: maxPriorityFeePerGas
+      .times(maxPriorityFeePerGasFactor)
+      .integerValue(BigNumber.ROUND_CEIL),
   };
 };
 
@@ -63,8 +70,14 @@ export const hasMinimumFundsToCancel = ({
   mainAccount: Account;
   transactionToUpdate: Transaction;
 }): boolean => {
+  const isEip1559 = transactionToUpdate.type === 2;
+
+  const factor: number = isEip1559
+    ? getEnv("EVM_REPLACE_TX_EIP1559_MAXFEE_FACTOR")
+    : getEnv("EVM_REPLACE_TX_LEGACY_GASPRICE_FACTOR");
+
   const feeValue = getEstimatedFees(transactionToUpdate);
-  return mainAccount.balance.gt(feeValue.times(1.1).integerValue(BigNumber.ROUND_CEIL));
+  return mainAccount.balance.gt(feeValue.times(factor).integerValue(BigNumber.ROUND_CEIL));
 };
 
 export const hasMinimumFundsToSpeedUp = ({
@@ -76,10 +89,16 @@ export const hasMinimumFundsToSpeedUp = ({
   mainAccount: Account;
   transactionToUpdate: Transaction;
 }): boolean => {
+  const isEip1559 = transactionToUpdate.type === 2;
+
+  const factor: number = isEip1559
+    ? getEnv("EVM_REPLACE_TX_EIP1559_MAXFEE_FACTOR")
+    : getEnv("EVM_REPLACE_TX_LEGACY_GASPRICE_FACTOR");
+
   const feeValue = getEstimatedFees(transactionToUpdate);
   return mainAccount.balance.gt(
     feeValue
-      .times(1.1)
+      .times(factor)
       .plus(account.type === "Account" ? transactionToUpdate.amount : 0)
       .integerValue(BigNumber.ROUND_CEIL),
   );
