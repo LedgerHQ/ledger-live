@@ -3581,7 +3581,7 @@
       "notEnoughFundsToSpeedup": "Speeding up transaction is not available because you don’t have enough funds in your account.",
       "notlowestNonceToSpeedup": "Speed up feature is not available. Your transaction is pending because a previous transaction is stuck. You can wait for it to be confirmed, speed it up and cancel it.",
       "TransactionHasBeenValidatedError": {
-        "title": "Can't be speed up or cancel",
+        "title": "Can't be sped up or canceled",
         "description": "This transaction has already been validated"
       }
     }
