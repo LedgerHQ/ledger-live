@@ -76,10 +76,11 @@ export const calculateFee = async (gas: BigNumber, gasPriceCoef: number): Promis
 export const calculateTransactionInfo = async (
   account: Account,
   transaction: Transaction,
+  fixedMaxTokenFees?: BigNumber,
 ): Promise<TransactionInfo> => {
   const { subAccounts } = account;
   const { amount: oldAmount, useAllAmount, subAccountId } = transaction;
-  const maxTokenFees = await calculateMaxFeesToken();
+  const maxTokenFees = fixedMaxTokenFees || (await calculateMaxFeesToken());
 
   const tokenAccount =
     subAccountId && subAccounts

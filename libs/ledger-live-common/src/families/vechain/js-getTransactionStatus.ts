@@ -40,7 +40,7 @@ const getTransactionStatus = async (
       currencyName: currency.name,
     });
   }
-
+  const estimatedFees = new BigNumber(transaction.estimatedFees);
   if (!amount.gt(0)) {
     if (!transaction.useAllAmount) errors.amount = new AmountRequired();
     else errors.amount = new NotEnoughBalance();
@@ -51,7 +51,7 @@ const getTransactionStatus = async (
     if (!isTokenAccount) {
       // vet
       const vthoBalance = subAccounts?.[0].balance;
-      if (new BigNumber(transaction.estimatedFees).gt(vthoBalance || 0)) {
+      if (estimatedFees.gt(vthoBalance || 0)) {
         errors.amount = new NotEnoughVTHO();
       }
     }
@@ -62,11 +62,9 @@ const getTransactionStatus = async (
   return Promise.resolve({
     errors,
     warnings,
-    estimatedFees: Object.keys(errors).length
-      ? new BigNumber(0)
-      : new BigNumber(transaction.estimatedFees),
-    amount: amount,
-    totalSpent: Object.keys(errors).length ? new BigNumber(0) : totalSpent,
+    estimatedFees,
+    amount,
+    totalSpent,
   });
 };
 

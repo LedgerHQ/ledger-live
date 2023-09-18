@@ -13,7 +13,6 @@ import { VTHO_ADDRESS } from "./contracts/constants";
 import VIP180 from "./contracts/abis/VIP180";
 import { isValid } from "./utils/address-utils";
 import { getBlockRef } from "./api";
-import { InvalidAddress } from "@ledgerhq/errors";
 
 /**
  * Create an empty VET or VTHO transaction
