@@ -10,16 +10,17 @@ export function enrichRatesResponse(
 ): ExchangeRate[] {
   return response.map<ExchangeRate>(r => {
     if (r.status === "success") {
+      const payoutNetworkFees = r.providerType === "DEX" ? 0 : r.payoutNetworkFees;
       const rate =
         r.tradeMethod === "fixed"
           ? BigNumber(r.rate)
-          : BigNumber(r.amountTo).minus(r.payoutNetworkFees).div(r.amountFrom);
+          : BigNumber(r.amountTo).minus(payoutNetworkFees).div(r.amountFrom);
 
       const magnitudeAwareToAmount = BigNumber(r.amountTo)
-        .minus(r.payoutNetworkFees)
+        .minus(payoutNetworkFees)
         .times(new BigNumber(10).pow(unitTo.magnitude));
 
-      const magnitudeAwarePayoutNetworkFees = BigNumber(r.payoutNetworkFees).times(
+      const magnitudeAwarePayoutNetworkFees = BigNumber(payoutNetworkFees).times(
         new BigNumber(10).pow(unitTo.magnitude),
       );
 

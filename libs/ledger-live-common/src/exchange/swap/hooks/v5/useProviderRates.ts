@@ -29,6 +29,8 @@ export function useProviderRates({
     onSuccess(data) {
       if (data.length === 0) {
         onNoRates?.({ fromState, toState });
+      } else {
+        setExchangeRate?.(data[0]);
       }
     },
   });
@@ -72,7 +74,6 @@ export function useProviderRates({
   }
 
   if (data) {
-    setExchangeRate?.(data[0]);
     return {
       rates: {
         status: "success",

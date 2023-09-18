@@ -79,7 +79,9 @@ export async function fetchRates({
     }
 
     // if some of the rates are successful then return those.
-    return enrichedResponse.filter(res => !res.error);
+    return enrichedResponse
+      .filter(res => !res.error)
+      .sort((a, b) => b.toAmount.minus(a.toAmount).toNumber());
   } catch (e: unknown) {
     if (axios.isAxiosError(e)) {
       if (e.code === "ECONNABORTED") {
