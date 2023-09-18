@@ -13,12 +13,12 @@ import { Account } from "@ledgerhq/types-live";
 const currency: CryptoCurrency = {
   ...getCryptoCurrencyById("ethereum"),
   ethereumLikeInfo: {
-    ...getCryptoCurrencyById("ethereum").ethereumLikeInfo,
+    ...getCryptoCurrencyById("ethereum").ethereumLikeInfo!,
     node: {
       type: "external",
       uri: "any-uri",
     },
-  } as any,
+  },
 };
 export const tokenAccount = makeTokenAccount("0xkvn", getTokenById("ethereum/erc20/usd__coin"));
 export const account = makeAccount("0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d", currency, [

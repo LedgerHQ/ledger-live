@@ -546,6 +546,10 @@
           "body": "Receive crypto in your wallet"
         }
       }
+    },
+    "getFundsModal": {
+      "text": "Get {{coin}} to stake",
+      "description": "Buy, swap or receive crypto directly to your Ledger using Ledger Live."
     }
   },
   "lottieDebugger": {
@@ -4081,7 +4085,7 @@
     "downloadProgress": "{{progress}}% completed",
     "checking": "Checking update...",
     "checkSuccess": "New Ledger Live update available, it will install automatically when you close the app",
-    "quitAndInstall": "Install now",
+    "quitAndInstall": "Install now and relaunch",
     "updateAvailable": "Update to Ledger Live version {{version}} is available",
     "error": "Error during update. Please download again",
     "reDownload": "Download again",

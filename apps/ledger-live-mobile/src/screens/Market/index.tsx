@@ -267,8 +267,6 @@ export default function Market({ navigation }: NavigationProps) {
   const filterByStarredAccount: boolean = useSelector(marketFilterByStarredAccountsSelector);
   const ptxEarnFeature = useFeature("ptxEarn");
 
-  useFetchCurrencyAll();
-
   const {
     requestParams,
     refresh,

@@ -51,6 +51,20 @@ const SwapStatusText = styled(Text)(
 `,
 );
 
+/* @dev: Yeah, Im sorry if you read this, design asked us to
+ override the input component when it is called from the swap form. */
+const InputSection = styled(Box)`
+  & ${ErrorContainer} {
+    font-weight: 500;
+    font-size: 11px;
+    text-align: right;
+    margin-left: calc(calc(100% + 30px) * -1);
+    margin-top: 6px;
+    align-self: flex-end;
+    margin-right: -15px;
+  }
+`;
+
 // Pick a default source account if none are selected.
 // TODO use live-common once its ready
 const usePickDefaultAccount = (
@@ -96,20 +110,6 @@ type Props = {
   updateSelectedRate: SwapDataType["updateSelectedRate"];
 };
 
-/* @dev: Yeah, Im sorry if you read this, design asked us to
- override the input component when it is called from the swap form. */
-const InputSection = styled(Box)`
-  & ${ErrorContainer} {
-    font-weight: 500;
-    font-size: 11px;
-    text-align: right;
-    margin-left: calc(calc(100% + 30px) * -1);
-    margin-top: 6px;
-    align-self: flex-end;
-    margin-right: -15px;
-  }
-`;
-
 function FromRow({
   fromAmount,
   setFromAmount,
@@ -128,12 +128,15 @@ function FromRow({
   const unit = fromAccount && getAccountUnit(fromAccount);
   const { t } = useTranslation();
   usePickDefaultAccount(accounts, fromAccount, setFromAccount);
-  const trackEditAccount = () =>
+
+  const trackEditAccount = () => {
     track("button_clicked", {
       button: "Edit source account",
       page: "Page Swap Form",
       ...swapDefaultTrack,
     });
+  };
+
   const setAccountAndTrack = (account: AccountLike) => {
     updateSelectedRate();
     const name = account ? getAccountName(account) : undefined;
@@ -145,6 +148,7 @@ function FromRow({
     });
     setFromAccount(account);
   };
+
   const setValue = (fromAmount: BigNumber) => {
     track("button_clicked", {
       button: "Amount input",
@@ -155,6 +159,7 @@ function FromRow({
     updateSelectedRate();
     setFromAmount(fromAmount);
   };
+
   const toggleMaxAndTrack = (state: unknown) => {
     track("button_clicked", {
       button: "max",
@@ -232,4 +237,5 @@ function FromRow({
     </>
   );
 }
+
 export default React.memo<Props>(FromRow);

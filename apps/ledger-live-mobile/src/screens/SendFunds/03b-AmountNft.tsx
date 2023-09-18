@@ -55,12 +55,6 @@ const SendAmountNFT = ({ route }: Props) => {
             },
           }),
         );
-      } else if (mainAccount.currency.family === "ethereum") {
-        setTransaction(
-          bridge.updateTransaction(transaction, {
-            quantities: [newQuantity],
-          }),
-        );
       }
     },
     [bridge, mainAccount.currency.family, setTransaction, transaction],
@@ -68,16 +62,12 @@ const SendAmountNFT = ({ route }: Props) => {
   const quantity = useMemo(() => {
     if (transaction.family === "evm") {
       return transaction.nft?.quantity;
-    } else if (transaction.family === "ethereum") {
-      return transaction.quantities?.[0];
     }
   }, [transaction]);
 
   const nft = useMemo(() => {
     if (transaction.family === "evm") {
       return getNFT(transaction.nft?.contract, transaction.nft?.tokenId, mainAccount.nfts);
-    } else if (transaction.family === "ethereum") {
-      return getNFT(transaction.collection, transaction.tokenIds?.[0], mainAccount.nfts);
     }
   }, [mainAccount, transaction]);
 

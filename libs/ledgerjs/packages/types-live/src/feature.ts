@@ -169,6 +169,7 @@ export type Features = CurrencyFeatures & {
   transactionsAlerts: Feature_TransactionsAlerts;
   listAppsV2: Feature_ListAppsV2;
   fetchAdditionalCoins: Feature_FetchAdditionalCoins;
+  llmWalletQuickActions: Feature_LlmWalletQuickActions;
 };
 
 /**
@@ -439,6 +440,7 @@ export type Feature_ListAppsV2 = DefaultFeature;
 export type Feature_BrazeLearn = DefaultFeature;
 export type Feature_LlmNewDeviceSelection = DefaultFeature;
 export type Feature_FetchAdditionalCoins = DefaultFeature;
+export type Feature_LlmWalletQuickActions = DefaultFeature;
 
 /**
  * Utils types.

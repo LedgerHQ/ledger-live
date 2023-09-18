@@ -14,9 +14,11 @@ type UPDATE_PROVIDERS_TYPE = {
 /* ACTIONS */
 export const updateProvidersAction =
   createAction<UPDATE_PROVIDERS_TYPE["payload"]>("SWAP/UPDATE_PROVIDERS");
+
 export const updateTransactionAction = createAction<Transaction | undefined | null>(
   "SWAP/UPDATE_TRANSACTION",
 );
+
 export const updateRateAction = createAction<ExchangeRate | undefined | null>("SWAP/UPDATE_RATE");
 export const resetSwapAction = createAction("SWAP/RESET_STATE");
 
@@ -25,6 +27,7 @@ export const providersSelector = createSelector(
   (state: State) => state.swap,
   swap => swap.providers,
 );
+
 export const filterAvailableToAssets = (pairs: Pair[] | null | undefined, fromId?: string) => {
   if (pairs === null || pairs === undefined) return null;
   const toAssets = [];
@@ -33,17 +36,12 @@ export const filterAvailableToAssets = (pairs: Pair[] | null | undefined, fromId
       toAssets.push(pair.to);
     }
   }
-  return toAssets;
+  return [...new Set(toAssets)];
 };
 
 export const toSelector = createSelector(
   (state: State) => state.swap.pairs,
-  pairs =>
-    memoize((fromId?: string) => {
-      const filteredAssets = filterAvailableToAssets(pairs, fromId);
-      const uniqueAssetList = [...new Set(filteredAssets)];
-      return uniqueAssetList;
-    }),
+  pairs => memoize((fromId?: string) => filterAvailableToAssets(pairs, fromId)),
 );
 
 // Put disabled accounts and subaccounts at the bottom of the list while preserving the parent/children position.
@@ -81,14 +79,17 @@ export function sortAccountsByStatus(accounts: (Account & { disabled: boolean })
   }
   return [...activeAccounts, ...disabledAccounts];
 }
+
 export const transactionSelector = createSelector(
   (state: State) => state.swap,
   swap => swap.transaction,
 );
+
 export const rateSelector = createSelector(
   (state: State) => state.swap,
   swap => swap.exchangeRate,
 );
+
 export const rateExpirationSelector = createSelector(
   (state: State) => state.swap,
   swap => swap.exchangeRateExpiration,

@@ -92,7 +92,7 @@ const Form = ({ setStep }: Props) => {
       if (data.startsWith("nps-submit")) {
         const rate = data.split("-")[2];
         setSelectedRate(rate);
-        if (rate <= 7) {
+        if (rate <= 8) {
           screen(
             "",
             "NPS Step 2 not Happy",

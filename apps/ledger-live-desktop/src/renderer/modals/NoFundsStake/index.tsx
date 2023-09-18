@@ -16,12 +16,30 @@ import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 
+const useText = (entryPoint: "noFunds" | "getFunds", currency: CryptoCurrency) => {
+  const { t } = useTranslation();
+
+  const textMap = {
+    noFunds: {
+      title: t("stake.noFundsModal.text", { coin: currency.ticker }),
+      body: t("stake.noFundsModal.description"),
+    },
+    getFunds: {
+      title: t("stake.getFundsModal.text", { coin: currency.ticker }),
+      body: t("stake.getFundsModal.description"),
+    },
+  };
+
+  return textMap[entryPoint];
+};
+
 interface NoFundsStakeModalProps {
   account: AccountLike | undefined | null;
   parentAccount?: Account | undefined | null;
+  entryPoint?: "get-funds" | undefined;
 }
 
-const NoFundsStakeModal = ({ account, parentAccount }: NoFundsStakeModalProps) => {
+const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeModalProps) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const history = useHistory();
@@ -37,7 +55,11 @@ const NoFundsStakeModal = ({ account, parentAccount }: NoFundsStakeModalProps) =
   }, [rampCatalog.value]);
 
   const currency: CryptoCurrency = parentAccount?.currency || (account as Account).currency;
+
+  const text = useText(entryPoint === "get-funds" ? "getFunds" : "noFunds", currency);
+
   const availableOnBuy = currency && onRampAvailableTickers.includes(currency.ticker.toUpperCase());
+
   const availableOnSwap = useMemo(() => {
     return currency && currenciesAll.includes(currency.id);
   }, [currency, currenciesAll]);
@@ -135,13 +157,11 @@ const NoFundsStakeModal = ({ account, parentAccount }: NoFundsStakeModalProps) =
               <CoinsIcon />
             </Box>
             <Box textAlign="center" mb={16}>
-              <Text fontWeight="semiBold">
-                {t("stake.noFundsModal.text", { coin: currency.ticker })}
-              </Text>
+              <Text fontWeight="semiBold">{text.title}</Text>
             </Box>
             <Box textAlign="center" mb={24}>
               <Text fontSize={13} fontWeight="regular" color="neutral.c70">
-                {t("stake.noFundsModal.description")}
+                {text.body}
               </Text>
             </Box>
             {availableOnBuy && (

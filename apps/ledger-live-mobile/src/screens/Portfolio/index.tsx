@@ -106,7 +106,6 @@ function PortfolioScreen({ navigation }: NavigationProps) {
     });
     setAddModalOpened(true);
   }, [setAddModalOpened]);
-  useFetchCurrencyAll();
 
   const closeAddModal = useCallback(() => setAddModalOpened(false), [setAddModalOpened]);
   const refreshAccountsOrdering = useRefreshAccountsOrdering();

@@ -70,6 +70,27 @@ describe("EVM Family", () => {
 
           expect(transactionToEthersTransaction(legacyTx)).toEqual(legacyEthersTx);
         });
+
+        it("should properly handle floating point numbers", () => {
+          const txWithFloatingPoint = {
+            ...eip1559Tx,
+            maxFeePerGas: new BigNumber("29625091714.5"),
+          };
+
+          const ethers1559Tx: ethers.Transaction = {
+            to: "0xkvn",
+            nonce: 0,
+            gasLimit: ethers.BigNumber.from(21000),
+            data: "0x" + testData,
+            value: ethers.BigNumber.from(100),
+            chainId: 1,
+            type: 2,
+            maxFeePerGas: ethers.BigNumber.from("29625091715"),
+            maxPriorityFeePerGas: ethers.BigNumber.from(10000),
+          };
+
+          expect(transactionToEthersTransaction(txWithFloatingPoint)).toEqual(ethers1559Tx);
+        });
       });
     });
   });

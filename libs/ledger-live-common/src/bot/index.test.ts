@@ -27,7 +27,7 @@ describe("getSpecs", () => {
     setSupportedCurrencies(["bitcoin", "ethereum", "digibyte"]);
     const specs = getSpecs({ disabled: { families: ["bitcoin"] }, filter: {} });
     expect(specs.find(spec => spec.currency.family === "bitcoin")).toBeFalsy();
-    expect(specs.filter(spec => spec.currency.family === "ethereum").length).toEqual(1);
+    expect(specs.filter(spec => spec.currency.family === "evm").length).toEqual(1);
   });
 
   it("should return no specs with no currencies supported", () => {

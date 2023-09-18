@@ -497,7 +497,7 @@ const envDefinitions = {
     desc: "if defined, avoids bypass of the currentDevice in the store.",
   },
   NFT_CURRENCIES: {
-    def: "ethereum,polygon,ethereum_as_evm_test_only,polygon_as_evm_test_only",
+    def: "ethereum,polygon",
     parser: stringParser,
     desc: "set the currencies where NFT is active",
   },
@@ -574,7 +574,7 @@ const envDefinitions = {
     desc: "Swap API base",
   },
   SWAP_API_BASE_V5: {
-    def: "https://swap-stg.ledger.com/v5",
+    def: "https://swap.staging.aws.ledger.fr/v5",
     parser: stringParser,
     desc: "Swap API base staging version 5",
   },

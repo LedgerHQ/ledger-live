@@ -1,7 +1,8 @@
 import React, { useCallback } from "react";
 import { FlatList, StyleSheet } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { v4 as uuid } from "uuid";
 import { TFunction, useTranslation } from "react-i18next";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/index";
 import { TrackScreen, useAnalytics } from "../../../analytics";
@@ -13,6 +14,16 @@ import { ScreenName } from "../../../const";
 import { sharedSwapTracking } from "../utils";
 import { getEnv } from "@ledgerhq/live-env";
 
+function keyExtractor() {
+  return uuid();
+}
+
+const getItemLayout = (_: unknown, index: number) => ({
+  length: 64,
+  offset: 64 * index,
+  index,
+});
+
 export function SelectCurrency({
   navigation,
   route: {
@@ -23,7 +34,7 @@ export function SelectCurrency({
   const { track } = useAnalytics();
 
   const onSelect = useCallback(
-    (currency: CryptoCurrency | TokenCurrency) => {
+    (currency: Currency) => {
       track("button_clicked", {
         ...sharedSwapTracking,
         button: "new target currency",
@@ -32,22 +43,35 @@ export function SelectCurrency({
       // @ts-expect-error navigation type is only partially declared
       navigation.navigate(ScreenName.SwapForm, { currency });
     },
-    [track, navigation],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
   );
+
+  const RenderItem = useCallback(({ item }: { item: CryptoCurrency | TokenCurrency }) => {
+    return <CurrencyRow currency={item} onPress={onSelect} />;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const sortedCurrencies = useCurrenciesByMarketcap(currencies);
 
   const renderList = useCallback(
     items => (
       <FlatList
         contentContainerStyle={styles.list}
+        removeClippedSubviews={true}
         data={items}
-        renderItem={({ item }) => <CurrencyRow currency={item} onPress={onSelect} />}
-        keyExtractor={currency => currency.id}
+        renderItem={RenderItem}
+        keyExtractor={keyExtractor}
         showsVerticalScrollIndicator={false}
         keyboardDismissMode="on-drag"
+        getItemLayout={getItemLayout}
+        maxToRenderPerBatch={13}
+        windowSize={7}
+        initialNumToRender={13}
       />
     ),
-    [onSelect],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
   );
 
   return (

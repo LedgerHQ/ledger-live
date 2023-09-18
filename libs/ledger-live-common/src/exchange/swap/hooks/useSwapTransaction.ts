@@ -100,6 +100,7 @@ export const useSwapTransaction = ({
     account: defaultAccount,
     parentAccount: defaultParentAccount,
   }));
+
   const { fromState, setFromAccount, setFromAmount } = useFromState({
     accounts,
     defaultCurrency,
@@ -107,15 +108,18 @@ export const useSwapTransaction = ({
     defaultParentAccount,
     bridgeTransaction,
   });
+
   const { toState, setToAccount, setToAmount, setToCurrency, targetAccounts } = useToState({
     accounts,
     fromCurrencyAccount: fromState.account,
   });
+
   const {
     account: fromAccount,
     parentAccount: fromParentAccount,
     currency: fromCurrency,
   } = fromState;
+
   const { account: toAccount } = toState;
   const transaction = bridgeTransaction?.transaction;
 

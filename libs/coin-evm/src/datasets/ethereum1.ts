@@ -3,7 +3,7 @@
 import { AccountRaw } from "@ledgerhq/types-live";
 
 export const ethereum1: AccountRaw = {
-  id: "js:1:ethereum_as_evm_test_only:0x0E3F0bb9516F01f2C34c25E0957518b8aC9414c5:",
+  id: "js:1:ethereum:0x0E3F0bb9516F01f2C34c25E0957518b8aC9414c5:",
   seedIdentifier: "0x0E3F0bb9516F01f2C34c25E0957518b8aC9414c5",
   name: "Ethereum xpub6Bem...JyAdpYZy",
   derivationMode: "",
@@ -13,7 +13,7 @@ export const ethereum1: AccountRaw = {
   freshAddresses: [],
   pendingOperations: [],
   operations: [],
-  currencyId: "ethereum_as_evm_test_only",
+  currencyId: "ethereum",
   unitMagnitude: 18,
   balance: "",
   blockHeight: 0,

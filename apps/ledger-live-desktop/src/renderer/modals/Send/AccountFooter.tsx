@@ -14,11 +14,13 @@ import FormattedVal from "~/renderer/components/FormattedVal";
 import Label from "~/renderer/components/Label";
 import CounterValue from "~/renderer/components/CounterValue";
 import { getLLDCoinFamily } from "~/renderer/families";
+
 type Props = {
   account: AccountLike;
   parentAccount?: Account | undefined | null;
   status: TransactionStatus;
 };
+
 const AccountFooter = ({ account, parentAccount, status }: Props) => {
   const currency = getAccountCurrency(account);
   const mainAccount = getMainAccount(account, parentAccount);
@@ -28,6 +30,7 @@ const AccountFooter = ({ account, parentAccount, status }: Props) => {
   const cryptoCurrency = mainAccount.currency;
   const specific = cryptoCurrency ? getLLDCoinFamily(cryptoCurrency.family) : null;
   const SpecificComponent = specific?.AccountFooter;
+
   return SpecificComponent ? (
     <SpecificComponent account={account} parentAccount={parentAccount} status={status} />
   ) : (
@@ -73,4 +76,5 @@ const AccountFooter = ({ account, parentAccount, status }: Props) => {
     </>
   );
 };
+
 export default AccountFooter;

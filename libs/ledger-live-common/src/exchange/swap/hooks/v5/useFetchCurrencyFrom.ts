@@ -9,8 +9,7 @@ type Props = {
   enabled?: boolean;
 };
 
-export function useFetchCurrencyFrom({ currencyTo, enabled }: Props = {}) {
-  const fetchAdditionalCoins = useFeature("fetchAdditionalCoins");
+export function useFetchCurrencyFrom({ currencyTo, additionalCoinsFlag, enabled }: Props = {}) {
   return useAPI({
     queryFn: fetchCurrencyFrom,
     queryProps: {

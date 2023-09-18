@@ -1075,10 +1075,10 @@
       }
     },
     "enjoy": {
-      "title": "Thanks for the feedback!",
-      "description": "We'd be grateful if you could take a moment to write us a review. Your support helps us reach more people and motivates us to release new app features.",
+      "title": "Enjoying Ledger Live?\nShare some love!",
+      "description": "Leave us a positive rating on the App Store.",
       "cta": {
-        "rate": "Give us 5 stars",
+        "rate": "Rate Ledger Live",
         "notNow": "Not now"
       }
     },
@@ -2172,6 +2172,13 @@
       "title": "{{currencyTicker}} market price",
       "currencyPrice": "1 {{currencyTicker}} price",
       "currencyPriceChange": "Last 24h change"
+    },
+    "quickActions": {
+      "buy": "Buy",
+      "swap": "Swap",
+      "send": "Send",
+      "deposit": "Deposit",
+      "stake": "Stake"
     }
   },
   "addAccountsModal": {
@@ -6423,6 +6430,10 @@
           "body": "Receive crypto in your wallet"
         }
       }
+    },
+    "getFundsModal": {
+      "text": "Get {{coin}} to stake",
+      "description": "Buy, swap or receive crypto directly to your Ledger using Ledger Live."
     }
   }
 }
