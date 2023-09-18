@@ -43,7 +43,7 @@ export type TransportModule = {
   disconnect: (id: string) => Promise<void> | null | undefined;
 
   /**
-   * Determines whether an auto-disconnect can happen at this time or not. 
+   * Determines whether an auto-disconnect can happen at this time or not.
    *
    * Currently only used by TransportNodeHid
    */

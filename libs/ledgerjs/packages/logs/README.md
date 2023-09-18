@@ -11,28 +11,136 @@ Utility library that is used by all Ledger libraries to dispatch logs so we can 
 #### Table of Contents
 
 *   [Log](#log)
+    *   [type](#type)
+    *   [data](#data)
+    *   [context](#context)
+    *   [id](#id)
 *   [log](#log-1)
     *   [Parameters](#parameters)
-*   [listen](#listen)
+*   [trace](#trace)
     *   [Parameters](#parameters-1)
+*   [LocalTracer](#localtracer)
+    *   [Parameters](#parameters-2)
+    *   [withType](#withtype)
+        *   [Parameters](#parameters-3)
+    *   [withContext](#withcontext)
+        *   [Parameters](#parameters-4)
+    *   [withAdditionalContext](#withadditionalcontext)
+        *   [Parameters](#parameters-5)
+*   [listen](#listen)
+    *   [Parameters](#parameters-6)
 
 ### Log
 
 A Log object
 
+#### type
+
+A namespaced identifier of the log (not a level like "debug", "error" but more like "apdu", "hw", etc...)
+
+Type: LogType
+
+#### data
+
+Data associated to the log event
+
+Type: LogData
+
+#### context
+
+Context data, coming for example from the caller's parent, to enable a simple tracing system
+
+Type: TraceContext
+
+#### id
+
+Unique id among all logs
+
+Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
+
 ### log
 
-log something
+Logs something
 
 #### Parameters
 
-*   `type` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a namespaced identifier of the log (it is not a level like "debug", "error" but more like "apdu-in", "apdu-out", etc...)
+*   `type` **LogType** a namespaced identifier of the log (it is not a level like "debug", "error" but more like "apdu-in", "apdu-out", etc...)
 *   `message` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** a clear message of the log associated to the type
-*   `data` **any?** 
+*   `data` **LogData?** 
+
+### trace
+
+A simple tracer function, only expanding the existing log function
+
+Its goal is to capture more context than a log function.
+This is simple for now, but can be improved later.
+
+#### Parameters
+
+*   `context` **{type: LogType, message: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, data: LogData?, context: TraceContext?}** Anything representing the context where the log occurred
+
+    *   `context.type`  
+    *   `context.message`  
+    *   `context.data`  
+    *   `context.context`  
+
+### LocalTracer
+
+A simple tracer class, that can be used to avoid repetition when using the `trace` function
+
+Its goal is to capture more context than a log function.
+This is simple for now, but can be improved later.
+
+#### Parameters
+
+*   ``  
+*   ``  
+*   `type`  A given type (not level) for the current local tracer ("hw", "withDevice", etc.)
+*   `context`  Anything representing the context where the log occurred
+
+#### withType
+
+Create a new instance of the LocalTracer with an updated `type`
+
+It does not mutate the calling instance, but returns a new LocalTracer,
+following a simple builder pattern.
+
+##### Parameters
+
+*   `type` **LogType** 
+
+Returns **[LocalTracer](#localtracer)** 
+
+#### withContext
+
+Create a new instance of the LocalTracer with a new `context`
+
+It does not mutate the calling instance, but returns a new LocalTracer,
+following a simple builder pattern.
+
+##### Parameters
+
+*   `context` **TraceContext?** A TraceContext, that can undefined to reset the context
+
+Returns **[LocalTracer](#localtracer)** 
+
+#### withAdditionalContext
+
+Create a new instance of the LocalTracer with an updated `context`,
+on which an additional context is merged with the existing one.
+
+It does not mutate the calling instance, but returns a new LocalTracer,
+following a simple builder pattern.
+
+##### Parameters
+
+*   `contextToAdd` **TraceContext** 
+
+Returns **[LocalTracer](#localtracer)** 
 
 ### listen
 
-listen to logs.
+Adds a subscribers to the emitted logs.
 
 #### Parameters
 
