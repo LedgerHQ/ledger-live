@@ -348,4 +348,24 @@ export const DEFAULT_FEATURES: Features = {
         "https://form.typeform.com/to/Jo7gqcB4?typeform-medium=embed-sdk&typeform-medium-version=next&typeform-embed=popup-blank",
     },
   },
+
+  cexDepositEntryPointsDesktop: {
+    enabled: false,
+    params: {
+      path: "/discover/ledger-cex-deposit",
+      locations: {
+        selectCrypto: true,
+      },
+    },
+  },
+
+  cexDepositEntryPointsMobile: {
+    enabled: false,
+    params: {
+      path: "/discover/ledger-cex-deposit",
+      locations: {
+        selectCrypto: true,
+      },
+    },
+  },
 };

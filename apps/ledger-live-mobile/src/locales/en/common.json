@@ -2928,7 +2928,8 @@
         "account": "{{count}} account",
         "account_plural": "{{count}} accounts",
         "subtitle": "This must match the network chosen on the wallet or exchange transferring the crypto.",
-        "bannerTitle": "Make sure to select the right network. Learn how."
+        "bannerTitle": "Make sure to select the right network. Learn how.",
+        "depositFromCexBannerTitle": "Deposit crypto from your Coinbase account"
       },
       "stepperHeader": {
         "range": "Step {{currentStep}} of {{totalSteps}}",

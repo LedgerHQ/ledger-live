@@ -1,3 +1,7 @@
+import {
+  CexDepositEntryPointsLocationsDesktop,
+  CexDepositEntryPointsLocationsMobile,
+} from "./cexDeposit";
 import { ChainwatchNetwork } from "./chainwatch";
 import { StorylyInstanceID } from "./storyly";
 
@@ -169,6 +173,8 @@ export type Features = CurrencyFeatures & {
   transactionsAlerts: Feature_TransactionsAlerts;
   listAppsV2: Feature_ListAppsV2;
   llmWalletQuickActions: Feature_LlmWalletQuickActions;
+  cexDepositEntryPointsDesktop: Feature_CexDepositEntryPointsDesktop;
+  cexDepositEntryPointsMobile: Feature_CexDepositEntryPointsMobile;
 };
 
 /**
@@ -413,6 +419,20 @@ export type Feature_RatingsPrompt = Feature<{
   }[];
   support_email: string;
   typeform_url: string;
+}>;
+
+export type Feature_CexDepositEntryPointsDesktop = Feature<{
+  path: string;
+  locations: {
+    [key in CexDepositEntryPointsLocationsDesktop]: boolean;
+  };
+}>;
+
+export type Feature_CexDepositEntryPointsMobile = Feature<{
+  path: string;
+  locations: {
+    [key in CexDepositEntryPointsLocationsMobile]: boolean;
+  };
 }>;
 
 export type Feature_LlmNewFirmwareUpdateUx = DefaultFeature;
