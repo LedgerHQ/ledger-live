@@ -442,7 +442,6 @@ const generateGenericCosmosTest = (
     appQuery: {
       model: DeviceModelId.nanoS,
       appName: "Cosmos",
-      appVersion: "2.34.11",
     },
     genericDeviceAction: acceptTransaction,
     testTimeout: 2 * 60 * 1000,

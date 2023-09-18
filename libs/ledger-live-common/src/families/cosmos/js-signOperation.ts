@@ -24,7 +24,6 @@ const signOperation: SignOperationFnSignature<Transaction> = ({ account, deviceI
 
           const { accountNumber, sequence, pubKeyType } = await cosmosAPI.getAccount(
             account.freshAddress,
-            chainInstance.defaultPubKeyType,
           );
           o.next({ type: "device-signature-requested" });
           const { aminoMsgs, protoMsgs } = txToMessages(account, transaction);

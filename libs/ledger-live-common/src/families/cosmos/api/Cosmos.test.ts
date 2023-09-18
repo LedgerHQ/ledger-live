@@ -1,6 +1,7 @@
 import network from "@ledgerhq/live-network/network";
 import { AxiosResponse } from "axios";
 import BigNumber from "bignumber.js";
+import cryptoFactory from "../chain/chain";
 import { CosmosAPI } from "./Cosmos";
 jest.mock("@ledgerhq/live-network/network");
 const mockedNetwork = jest.mocked(network);
@@ -33,7 +34,7 @@ describe("CosmosApi", () => {
         },
       } as AxiosResponse);
 
-      const account = await cosmosApi.getAccount("addr", "default");
+      const account = await cosmosApi.getAccount("addr");
       expect(account.accountNumber).toEqual(2);
       expect(account.sequence).toEqual(42);
       expect(account.pubKey).toEqual("k2");
@@ -47,7 +48,7 @@ describe("CosmosApi", () => {
         },
       } as AxiosResponse);
 
-      const account = await cosmosApi.getAccount("addr", "default");
+      const account = await cosmosApi.getAccount("addr");
       expect(account.accountNumber).toEqual(1);
       expect(account.sequence).toEqual(0);
       expect(account.pubKey).toEqual("k");
@@ -58,7 +59,7 @@ describe("CosmosApi", () => {
       mockedNetwork.mockImplementation(() => {
         throw new Error();
       });
-      const account = await cosmosApi.getAccount("addr", "default");
+      const account = await cosmosApi.getAccount("addr");
       expect(account.sequence).toEqual(0);
     });
 
@@ -66,8 +67,8 @@ describe("CosmosApi", () => {
       mockedNetwork.mockImplementation(() => {
         throw new Error();
       });
-      const account = await cosmosApi.getAccount("addr", "default");
-      expect(account.pubKeyType).toEqual("default");
+      const account = await cosmosApi.getAccount("addr");
+      expect(account.pubKeyType).toEqual(cryptoFactory("cosmos").defaultPubKeyType);
     });
   });
 

@@ -50,7 +50,7 @@ export class CosmosAPI {
         unbondings,
         withdrawAddress,
       ] = await Promise.all([
-        this.getAccount(address, this.chainInstance.defaultPubKeyType),
+        this.getAccount(address),
         this.getAllBalances(address, currency),
         this.getHeight(),
         this.getTransactions(address, 100),
@@ -77,12 +77,11 @@ export class CosmosAPI {
 
   getAccount = async (
     address: string,
-    defaultPubKeyType: string,
   ): Promise<{ accountNumber: number; sequence: number; pubKeyType: string; pubKey: string }> => {
     const accountData = {
       accountNumber: 0,
       sequence: 0,
-      pubKeyType: defaultPubKeyType,
+      pubKeyType: this.chainInstance.defaultPubKeyType,
       pubKey: "",
     };
 
