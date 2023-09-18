@@ -27,12 +27,12 @@ export type TransportModule = {
    * returns falsy if the transport module can't handle this id
    * here, open means we want to START doing something with the transport
    *
-   * @param deviceId
+   * @param id
    * @param timeoutMs Optional timeout that can be used by the Transport implementation when opening a communication channel
    * @param context Optional context to be used in logs/tracing
    */
   open: (
-    deviceId: string,
+    id: string,
     timeoutMs?: number,
     context?: TraceContext,
   ) => Promise<Transport> | null | undefined;
