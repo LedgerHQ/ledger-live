@@ -99,7 +99,7 @@ function useQuickActions() {
             params: { parentRoute: route },
           },
         ],
-        icon: IconsLegacy.ClaimRewardsMedium,
+        icon: IconsLegacy.CoinsMedium,
       };
     }
 
