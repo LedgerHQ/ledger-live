@@ -16,8 +16,7 @@ import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
 import { NearAccount } from "@ledgerhq/live-common/families/near/types";
-import { isEditableOperation } from "@ledgerhq/coin-framework/operation";
-import { getEnv } from "@ledgerhq/live-env";
+import { isEditableOperation, isStuckOperation } from "@ledgerhq/coin-framework/operation";
 import Header from "./Header";
 import AccountGraphCard from "../../components/AccountGraphCard";
 import SubAccountsList from "./SubAccountsList";
@@ -118,10 +117,7 @@ export function getListHeaderComponents({
     })
     .sort((a, b) => a.transactionSequenceNumber! - b.transactionSequenceNumber!);
 
-  const isOperationStuck =
-    oldestEditableOperation &&
-    oldestEditableOperation.date.getTime() <=
-      new Date().getTime() - getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT");
+  const isOperationStuck = oldestEditableOperation && isStuckOperation(oldestEditableOperation);
 
   return {
     listHeaderComponents: [
