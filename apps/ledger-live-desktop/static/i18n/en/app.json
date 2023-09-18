@@ -209,11 +209,11 @@
       },
       "speedUp": {
         "title": "Speed Up",
-        "description": "Re-submit the transaction with a higher network fee."
+        "description": "Re-submit the transaction with a higher network fee.\n\nThe network fee must be at least 30% higher than the fee of the original transaction."
       },
       "cancel": {
         "title": "Cancel",
-        "description": "Sending 0 {{ticker}} to your own address. To ensure cancellation, the network fee is 30% higher than the fee of the transaction meant to be cancelled."
+        "description": "Sending 0 {{ticker}} to your own address.\n\nThe network fee must be at least 30% higher than the fee of the original transaction."
       },
       "steps": {
         "method": {
