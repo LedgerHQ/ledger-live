@@ -5412,7 +5412,7 @@
       "description": "Send NFT feature is only available for Nano X and Nano S+. Please visit our customer support platform to know how to send a NFT with a Nano S."
     },
     "TransactionHasBeenValidatedError": {
-      "title": "Can't be speed up or cancel",
+      "title": "Can't be sped up or canceled",
       "description": "This transaction has already been validated"
     },
     "CantScanQRCode": {
