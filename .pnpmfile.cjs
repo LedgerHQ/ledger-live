@@ -85,15 +85,18 @@ function readPackage(pkg, context) {
       }),
       /* React Native and Metro bundler packages */
       // Crashes ios build if removed /!\
+      addDependencies("@react-native/codegen", {
+        glob: "*",
+        invariant: "*",
+      }),
+      // Crashes ios build if removed /!\
       addDependencies("react-native", {
         mkdirp: "*",
         yargs: "*",
-        invariant: "*",
       }),
 
       addPeerDependencies("@react-native-community/cli", {
         "metro-resolver": "*",
-        invariant: "*",
       }),
       addPeerDependencies("@react-native-community/cli-tools", {
         "find-up": "*",
