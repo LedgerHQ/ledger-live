@@ -1,7 +1,6 @@
 import fs from "fs";
 import axios from "axios";
 import bs58check from "bs58check";
-import { log } from "console";
 import path from "path";
 import { signedList, whitelist } from "./trc10-tokens";
 
@@ -85,7 +84,7 @@ const convertTRC10 = ({
 const TRONGRID_TOKENS_URL = "https://api.trongrid.io/v1/assets?limit=200";
 
 export const importTRC10Tokens = async (outputDir: string) => {
-  log("importing trc10 tokens...");
+  console.log("importing trc10 tokens...");
   const allTokens: TrongridAsset[] = [];
   const { data } = await axios.get<TrongridAssetResponse>(TRONGRID_TOKENS_URL);
   allTokens.push(...data.data);
@@ -114,5 +113,5 @@ export const importTRC10Tokens = async (outputDir: string) => {
   fs.writeFileSync(`${filePath}.json`, JSON.stringify(tokens));
   fs.writeFileSync(`${filePath}.ts`, ts);
 
-  log(`importing trc10 tokens success, imported ${tokens.length} tokens`);
+  console.log(`importing trc10 tokens success, imported ${tokens.length} tokens`);
 };

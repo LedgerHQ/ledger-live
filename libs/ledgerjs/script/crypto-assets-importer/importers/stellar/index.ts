@@ -1,5 +1,4 @@
 import fs from "fs";
-import { log } from "console";
 import path from "path";
 import { fetchTokens } from "../../fetch";
 
@@ -13,7 +12,7 @@ type StellarToken = [
 ];
 
 export const importStellarTokens = async (outputDir: string) => {
-  log("importing stellar tokens...");
+  console.log("importing stellar tokens...");
   const stellarTokens = await fetchTokens<StellarToken[]>("stellar.json");
   const filePath = path.join(outputDir, "stellar");
   fs.writeFileSync(`${filePath}.json`, JSON.stringify(stellarTokens));
@@ -34,5 +33,5 @@ export default tokens as StellarToken[];
 `,
   );
 
-  log("importing stellar tokens sucess");
+  console.log("importing stellar tokens sucess");
 };

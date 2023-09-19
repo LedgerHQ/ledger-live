@@ -1,9 +1,8 @@
-import { log } from "console";
 import fs from "fs";
 import path from "path";
 
 export const importInternetComputerTokens = async (outputDir: string) => {
-  log("importing internet computer tokens...");
+  console.log("importing internet computer tokens...");
   const filePath = path.join(outputDir, "internet_computer");
   fs.writeFileSync(
     `${filePath}.ts`,
@@ -32,5 +31,5 @@ export default tokens;
 `,
   );
 
-  log("importing internet computer tokens success");
+  console.log("importing internet computer tokens success");
 };

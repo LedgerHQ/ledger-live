@@ -1,5 +1,4 @@
 import fs from "fs";
-import { log } from "console";
 import path from "path";
 import { fetchTokens } from "../../fetch";
 
@@ -13,7 +12,7 @@ type AlgorandASAToken = [
 ];
 
 export const importAsaTokens = async (outputDir: string) => {
-  log("importing asa tokens...");
+  console.log("importing asa tokens...");
   const asaTokens = await fetchTokens<AlgorandASAToken[]>("asa.json");
   const filePath = path.join(outputDir, "asa");
   fs.writeFileSync(`${filePath}.json`, JSON.stringify(asaTokens));
@@ -34,5 +33,5 @@ export default tokens as AlgorandASAToken[];
 `,
   );
 
-  log("importing asa tokens sucess");
+  console.log("importing asa tokens sucess");
 };

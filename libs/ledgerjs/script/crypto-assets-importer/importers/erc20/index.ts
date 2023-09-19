@@ -1,4 +1,3 @@
-import { log } from "console";
 import fs from "fs";
 import path from "path";
 import { fetchTokens } from "../../fetch";
@@ -19,7 +18,7 @@ type ERC20Token = [
 
 export const importERC20 = async (outputDir: string) => {
   try {
-    log("importing ERC20 tokens....");
+    console.log("importing ERC20 tokens....");
     const erc20 = await fetchTokens<ERC20Token>("erc20.json");
 
     if (erc20) {
@@ -52,7 +51,7 @@ ${exportStringified}
 
       fs.writeFileSync(`${filePath}.ts`, erc20TsFile);
 
-      log("importing ERC20 tokens: success");
+      console.log("importing ERC20 tokens: success");
     }
   } catch (err) {
     console.error(err);

@@ -1,5 +1,4 @@
 import fs from "fs";
-import { log } from "console";
 import path from "path";
 import { fetchTokens } from "../../fetch";
 
@@ -18,7 +17,7 @@ type PolygonToken = [
 ];
 
 export const importPolygonTokens = async (outputDir: string) => {
-  log("importing polygon tokens...");
+  console.log("importing polygon tokens...");
   const polygonTokens = await fetchTokens<PolygonToken[]>("polygon-erc20.json");
   if (polygonTokens) {
     const filePath = path.join(outputDir, "polygon-erc20");
@@ -56,6 +55,6 @@ ${exportStringified}
 `,
     );
 
-    log("import polygon tokens success");
+    console.log("import polygon tokens success");
   }
 };

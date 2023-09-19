@@ -1,5 +1,4 @@
 import fs from "fs";
-import { log } from "console";
 import path from "path";
 import { fetchTokens } from "../../fetch";
 
@@ -13,7 +12,7 @@ type SPLToken = [
 ];
 
 export const importSPLTokens = async (outputDir: string) => {
-  log("importing spl tokens...");
+  console.log("importing spl tokens...");
   const splTokens = await fetchTokens<SPLToken[]>("asa.json");
   const filePath = path.join(outputDir, "spl");
   fs.writeFileSync(`${filePath}.json`, JSON.stringify(splTokens));
@@ -34,5 +33,5 @@ export default tokens as SPLToken[];
 `,
   );
 
-  log("importing spl tokens sucess");
+  console.log("importing spl tokens sucess");
 };

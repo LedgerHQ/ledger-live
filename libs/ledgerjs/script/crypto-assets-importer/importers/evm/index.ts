@@ -1,5 +1,4 @@
 import fs from "fs";
-import { log } from "console";
 import path from "path";
 import { fetchTokens } from "../../fetch";
 
@@ -26,10 +25,10 @@ export const importEVMTokens = async (outputDir: string) => {
 
     const chainNames: string[] = [];
 
-    log("Importing evm tokens...");
+    console.log("Importing evm tokens...");
 
     for await (const chainId of supportedChainIds) {
-      log(`importing chain with chainId: ${chainId}...`);
+      console.log(`importing chain with chainId: ${chainId}...`);
       const erc20 = await fetchTokens<EVMToken[]>(`evm/${chainId}/erc20.json`);
       const erc20Signatures = await fetchTokens<string>(`evm/${chainId}/erc20-signatures.json`);
       const indexTsStringified = `import tokens from "./erc20.json";
@@ -51,7 +50,7 @@ export default { tokens, signatures };
         );
         fs.writeFileSync(path.join(dirPath, "index.ts"), indexTsStringified);
 
-        log(`importing chain with chainId: ${chainId} (${coinName}) success`);
+        console.log(`importing chain with chainId: ${chainId} (${coinName}) success`);
       }
     }
 
@@ -86,7 +85,7 @@ export default {
 
     fs.writeFileSync(`${outputDir}/evm/index.ts`, rootIndexStringified);
 
-    log("Importing evm tokens success");
+    console.log("Importing evm tokens success");
   } catch (err) {
     console.error(err);
   }

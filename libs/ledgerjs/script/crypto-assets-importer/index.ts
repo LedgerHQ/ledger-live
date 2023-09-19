@@ -1,4 +1,3 @@
-import { log } from "console";
 import path from "path";
 
 import { importEIP712 } from "./importers/eip712";
@@ -50,13 +49,13 @@ const importSignatures = async () => {
 };
 
 const main = async () => {
-  log("Starting importing cryptoassets from CDN...");
+  console.log("Starting importing cryptoassets from CDN...");
 
   await importTokens();
   await importExchangeTokens();
   await importSignatures();
 
-  log("Import of cryptoassets finished successfully");
+  console.log("Import of cryptoassets finished successfully");
 };
 
 main();
