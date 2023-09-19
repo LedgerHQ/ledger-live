@@ -5106,12 +5106,12 @@
       "description": "Please try again."
     },
     "DisconnectedDevice": {
-      "title": "Sorry, it looks like your device disconnected",
-      "description": "Please reconnect and try again."
+      "title": "Device disconnected",
+      "description": "Ledger Live could not connect to your device. Please try again."
     },
     "DisconnectedDeviceDuringOperation": {
-      "title": "Sorry, it looks like your device disconnected",
-      "description": "Please reconnect and try again."
+      "title": "Device disconnected",
+      "description": "Ledger Live could not connect to your device. Please try again."
     },
     "EConnReset": {
       "title": "The Ledger application store can't be reached",
@@ -5846,10 +5846,11 @@
       },
       "transfer": {
         "stepLabel": "Load",
-        "useAnotherPicture": "Use another picture",
+        "useAnotherPicture": "Upload another picture",
         "allowPreview": "Tap on “Load picture” to customize the lock screen",
         "allowConfirmPreview": "Allow lock screen picture restoration on {{productName}}",
         "loadingPicture": "Loading...",
+        "voila": "Voilà!",
         "imageLoaded": "Image loaded on {{productName}}",
         "confirmPicture": "Like what you see?\nKeep it!",
         "confirmRestorePicture": "Confirm restoration of the lock screen picture",
@@ -5862,7 +5863,7 @@
       "actionCompletedPopupLabel": "Device personalized"
     },
     "customImageSet": "Lock screen customized",
-    "finishCTA": "Finish"
+    "finishCTA": "Close"
   },
   "onboardingAppInstall": {
     "restore": {

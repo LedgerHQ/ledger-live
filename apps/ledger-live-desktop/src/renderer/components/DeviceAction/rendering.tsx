@@ -1121,9 +1121,14 @@ export const renderLoadingImage = ({
 }) => {
   return (
     <ImageLoadingGeneric
-      title={t("customImage.steps.transfer.loadingPicture", {
-        productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
-      })}
+      title={t(
+        progress && progress > 0.9
+          ? "customImage.steps.transfer.voila"
+          : "customImage.steps.transfer.loadingPicture",
+        {
+          productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
+        },
+      )}
       testId={`device-action-image-loading-${progress}`}
     >
       <AnimationWrapper>
