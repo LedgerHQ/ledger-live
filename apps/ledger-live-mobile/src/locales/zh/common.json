@@ -1969,8 +1969,7 @@
       },
       "completed" : {
         "noUpdateAvailable" : {
-          "title" : "操作系统更新检查",
-          "description" : "操作系统更新检查可确保 {{productName}} 操作系统是最新的。"
+          "title" : "{{productName}} 操作系统是最新的"
         }
       },
       "error" : {
@@ -1989,10 +1988,11 @@
       }
     },
     "firmwareUpdateAvailableDrawer" : {
-      "title" : "操作系统有更新",
+      "title" : "{{productName}} 操作系统有更新",
       "description" : "更新您的 {{productName}} 以享用最新的安全性和功能。",
       "descriptionVersion" : "版本 {{firmwareVersion}}",
-      "updateCta" : "立即更新"
+      "updateCta" : "立即更新",
+      "seeWhatsInUpdateCta" : "查看更新内容"
     }
   },
   "syncOnboarding" : {
@@ -2172,6 +2172,13 @@
       "title" : "{{currencyTicker}} 市场价格",
       "currencyPrice" : "1 {{currencyTicker}} 价格",
       "currencyPriceChange" : "最近 24 小时变化"
+    },
+    "quickActions" : {
+      "buy" : "买入",
+      "swap" : "互换",
+      "send" : "发送",
+      "deposit" : "存款",
+      "stake" : "质押"
     }
   },
   "addAccountsModal" : {
@@ -2446,12 +2453,16 @@
     },
     "import" : {
       "scan" : {
-        "title" : "从桌面程序导入",
-        "descTop" : {
-          "line1" : "在 Ledger Live 桌面版程序中，前往：",
-          "line2" : "设置 > 账户 > 导出账户 > 导出"
+        "title" : "从桌面程序导入"
+      },
+      "newScan" : {
+        "title" : "在 Ledger Live 桌面版中扫描并导入您的账户",
+        "instructions" : {
+          "line1" : "打开 Ledger Live 桌面版。",
+          "line2" : "设置 > 账户 > 导出账户",
+          "line3" : "扫描二维码直至加载进度达到 100%。"
         },
-        "descBottom" : "打开 Ledger Live 桌面版程序并扫描二维码"
+        "hodl" : "按住直至扫描完成。"
       },
       "result" : {
         "title" : "导入账户",
@@ -4291,6 +4302,7 @@
     "yesChangeLanguage" : "是，更改语言",
     "allowLanguageInstallation" : "批准在 {{deviceName}} 上安装语言",
     "languageInstalled" : "语言已更改为{{language}}",
+    "languageInstalledDesc" : "您的设备现已使用您选择的语言",
     "firmwareUpdatePrompt" : {
       "title" : "将您的 {{deviceName}} 设置为 {{language}}？",
       "description" : "您的 {{deviceName}} 现已可以使用 {{language}}。您可以立即设置语言，或随时在 My Ledger（我的 Ledger）中更改设备语言。"
@@ -6351,10 +6363,10 @@
       "status" : {
         "new" : {
           "title" : "新",
-          "desc" : "无需再为失去对您钱包的访问权而担忧。",
+          "desc" : "不用秘密恢复短语即可恢复钱包访问权限。",
           "actions" : {
             "learnMore" : "了解 Ledger Recover",
-            "alreadySubscribed" : "我已经有登录信息 <LinkAccount>查看我的订阅</LinkAccount>"
+            "alreadySubscribed" : "已订阅？<LinkAccount>查看订阅</LinkAccount>"
           }
         }
       }
