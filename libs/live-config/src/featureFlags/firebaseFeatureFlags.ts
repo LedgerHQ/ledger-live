@@ -13,6 +13,7 @@ export const checkFeatureFlagVersion = (feature: Feature) => {
   if (!feature?.enabled || !platform) {
     return feature;
   }
+
   const featureSpecificVersion: string | undefined = (() => {
     switch (platform) {
       case "desktop":
@@ -24,6 +25,7 @@ export const checkFeatureFlagVersion = (feature: Feature) => {
         return undefined;
     }
   })();
+
   if (
     featureSpecificVersion &&
     !semver.satisfies(LiveConfig.getInstance().appVersion, featureSpecificVersion, {
@@ -36,6 +38,7 @@ export const checkFeatureFlagVersion = (feature: Feature) => {
       enabled: false,
     };
   }
+
   return feature;
 };
 
@@ -43,6 +46,7 @@ export const isFeature = (key: string): boolean => {
   if (!LiveConfig.getInstance().providerGetvalueMethod) {
     return false;
   }
+
   try {
     const value = LiveConfig.getInstance().providerGetvalueMethod!["firebaseRemoteConfig"](
       formatToFirebaseFeatureId(key),

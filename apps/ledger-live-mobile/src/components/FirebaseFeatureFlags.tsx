@@ -27,6 +27,7 @@ export const getAllDivergedFlags = (
       res[key] = value.enabled;
     }
   });
+
   return res;
 };
 
