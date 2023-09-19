@@ -2,9 +2,9 @@ import { PolkadotTransaction as WalletAPIPolkadotTransaction } from "@ledgerhq/w
 import {
   ConvertToLiveTransaction,
   GetWalletAPITransactionSignFlowInfos,
-} from "../../wallet-api/types";
+} from "../../ledger-live-common/src/wallet-api/types";
 
-import { Transaction } from "@ledgerhq/coin-polkadot/types";
+import { Transaction } from "./types";
 
 const CAN_EDIT_FEES = false;
 

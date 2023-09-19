@@ -1,5 +1,5 @@
 import { PolkadotTransaction as PlatformTransaction } from "@ledgerhq/wallet-api-core";
-import { Transaction } from "@ledgerhq/coin-polkadot/types";
+import { Transaction } from "./types";
 import BigNumber from "bignumber.js";
 import dot from "./walletApiAdapter";
 
