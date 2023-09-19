@@ -11,7 +11,7 @@ import { Rotating } from "~/renderer/components/Spinner";
 import ProgressCircle from "~/renderer/components/ProgressCircle";
 import Alert from "~/renderer/components/Alert";
 import Text from "~/renderer/components/Text";
-import useEnv from "~/renderer/hooks/useEnv";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 const Container = styled(Box).attrs(() => ({
   horizontal: true,
 }))`
