@@ -250,7 +250,7 @@
     "jest-environment-node": "^29.3.1",
     "jetifier": "^2.0.0",
     "local-web-server": "^4.2.1",
-    "metro": "^0.76.0",
+    "metro": "^0.79.0",
     "metro-extra-config": "workspace:*",
     "metro-minify-uglify": "^0.76.0",
     "metro-react-native-babel-preset": "^0.76.0",
