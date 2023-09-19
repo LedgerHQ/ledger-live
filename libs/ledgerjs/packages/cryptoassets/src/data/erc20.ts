@@ -1,5 +1,5 @@
 export type ERC20Token = [
-  string, // parent currecncy id
+  string, // parent currency id
   string, // token
   string, // ticker
   number, // precision
@@ -84013,6 +84013,6 @@ const tokens: ERC20Token[] = [
     false,
     null
   ]
-]
+];
 
 export default tokens;

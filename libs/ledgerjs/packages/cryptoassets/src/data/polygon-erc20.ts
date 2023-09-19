@@ -7141,7 +7141,6 @@ const tokens: PolygonERC20Token[] = [
     false,
     null
   ]
-]; 
+];
 
 export default tokens;
-    
