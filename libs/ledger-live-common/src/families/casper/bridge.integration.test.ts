@@ -149,7 +149,7 @@ const casper: CurrenciesData<Transaction> = {
           expectedStatus: {
             errors: {},
             warnings: {
-              amount: new MayBlockAccount()
+              amount: new MayBlockAccount(),
             },
           },
         },

@@ -1,7 +1,6 @@
 import { flatMap } from "lodash";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
-import { Account } from "@ledgerhq/types-live";
 import { encodeAccountId } from "../../../../account";
 
 import { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
@@ -26,7 +25,9 @@ export const getAccountShape: GetAccountShape = async info => {
 
   const blockHeight = await fetchNetworkStatus();
 
-  const balance: NAccountBalance = purseUref ? await fetchBalance(purseUref) : { balance_value: "0", api_version: "", merkle_proof: "" }
+  const balance: NAccountBalance = purseUref
+    ? await fetchBalance(purseUref)
+    : { balance_value: "0", api_version: "", merkle_proof: "" };
   const txs: ITxnHistoryData[] = purseUref ? await fetchTxs(address) : [];
 
   return {
