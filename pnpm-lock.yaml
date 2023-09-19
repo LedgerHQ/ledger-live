@@ -789,8 +789,8 @@ importers:
         specifier: ^14.11.1
         version: 14.11.1(react-native@0.71.6)(react@18.0.0)
       '@react-native-firebase/messaging':
-        specifier: ^14.11.1
-        version: 14.11.1(@react-native-firebase/app@14.11.1)
+        specifier: ^18.0.0
+        version: 18.4.0(@react-native-firebase/app@14.11.1)
       '@react-native-firebase/remote-config':
         specifier: ^14.11.1
         version: 14.11.1(@react-native-firebase/app@14.11.1)
@@ -19369,10 +19369,10 @@ packages:
       - supports-color
     dev: false
 
-  /@react-native-firebase/messaging@14.11.1(@react-native-firebase/app@14.11.1):
-    resolution: {integrity: sha512-nJjmA+Oku/rWM//y0hpsXJAM8dqkucZKyu71bZ8f4XCOU0ueqO/Qlyv8ylQ/2G+4+FCoSxncffxDdUfr+3nExA==}
+  /@react-native-firebase/messaging@18.4.0(@react-native-firebase/app@14.11.1):
+    resolution: {integrity: sha512-oVxOHRmLrdEXBVHgnrTkzWFiL/SbXi9oaXf/kYuqgcMGkupIhBNpPxvnqq4Z1QO0d9huZp0KHDeTgNEwA5hq1Q==}
     peerDependencies:
-      '@react-native-firebase/app': 14.11.1
+      '@react-native-firebase/app': 18.4.0
     dependencies:
       '@react-native-firebase/app': 14.11.1(react-native@0.71.6)(react@18.0.0)
     dev: false
@@ -28981,7 +28981,7 @@ packages:
       babel-plugin-syntax-jsx: 6.18.0
       lodash: 4.17.21
       picomatch: 2.3.1
-      styled-components: 5.3.5(react-is@18.1.0)(react@18.0.0)
+      styled-components: 5.3.5(react-dom@17.0.2)(react-is@17.0.2)(react@17.0.2)
 
   /babel-plugin-syntax-jsx@6.18.0:
     resolution: {integrity: sha512-qrPaCSo9c8RHNRHIotaufGbuOBN8rtdC4QrrFFc43vyWCCz7Kl7GL1PGaXtMGQZUXrkCjNEgxDfmAuAabr/rlw==}
@@ -56715,6 +56715,7 @@ packages:
       react-is: 18.1.0
       shallowequal: 1.1.0
       supports-color: 5.5.0
+    dev: false
 
   /styled-components@6.0.7(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-xIwWuiRMYR43mskVsW9MGTRjSo7ol4bcVjT595fGUp3OLBJOlOgaiKaxsHdC4a2HqWKqKnh0CmcRbk5ogyDjTg==}
