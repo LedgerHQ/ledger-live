@@ -1,12 +1,16 @@
-import React, { useCallback, ReactNode, useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import isEqual from "lodash/isEqual";
 import semver from "semver";
 import { useDispatch, useSelector } from "react-redux";
-import { FeatureFlagsProvider } from "@ledgerhq/live-common/featureFlags/index";
+import {
+  FeatureFlagsProvider,
+  formatToFirebaseFeatureId,
+} from "@ledgerhq/live-common/featureFlags/index";
+import type { FirebaseFeatureFlagsProviderProps as Props } from "@ledgerhq/live-common/featureFlags/index";
 import { Feature, FeatureId } from "@ledgerhq/types-live";
 import { getAll, getValue } from "firebase/remote-config";
 import { getEnv } from "@ledgerhq/live-env";
-import { formatToFirebaseFeatureId, useFirebaseRemoteConfig } from "./FirebaseRemoteConfig";
+import { useFirebaseRemoteConfig } from "./FirebaseRemoteConfig";
 import { overriddenFeatureFlagsSelector } from "../reducers/settings";
 import { setOverriddenFeatureFlag, setOverriddenFeatureFlags } from "../actions/settings";
 import { setAnalyticsFeatureFlagMethod } from "../analytics/segment";
@@ -24,10 +28,6 @@ const checkFeatureFlagVersion = (feature: Feature) => {
     };
   }
   return feature;
-};
-
-type Props = {
-  children?: ReactNode;
 };
 
 export const FirebaseFeatureFlagsProvider = ({ children }: Props): JSX.Element => {
@@ -111,16 +111,16 @@ export const FirebaseFeatureFlagsProvider = ({ children }: Props): JSX.Element =
       if (!isEqual(actualRemoteValue, value)) {
         const { overriddenByEnv, ...pureValue } = value; // eslint-disable-line
         const overridenValue = { ...pureValue, overridesRemote: true };
-        dispatch(setOverriddenFeatureFlag(key, overridenValue));
+        dispatch(setOverriddenFeatureFlag({ key, value: overridenValue }));
       } else {
-        dispatch(setOverriddenFeatureFlag(key, undefined));
+        dispatch(setOverriddenFeatureFlag({ key, value: undefined }));
       }
     },
     [dispatch, getFeature],
   );
 
   const resetFeature = (key: FeatureId): void => {
-    dispatch(setOverriddenFeatureFlag(key, undefined));
+    dispatch(setOverriddenFeatureFlag({ key, value: undefined }));
   };
 
   const resetFeatures = (): void => {

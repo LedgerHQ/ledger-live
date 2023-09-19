@@ -1,19 +1,20 @@
-import React, { PropsWithChildren, useCallback, useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import isEqual from "lodash/isEqual";
 import semver from "semver";
 import remoteConfig from "@react-native-firebase/remote-config";
 import VersionNumber from "react-native-version-number";
-import { FeatureFlagsProvider, DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/index";
+import {
+  FeatureFlagsProvider,
+  DEFAULT_FEATURES,
+  formatToFirebaseFeatureId,
+} from "@ledgerhq/live-common/featureFlags/index";
+import type { FirebaseFeatureFlagsProviderProps as Props } from "@ledgerhq/live-common/featureFlags/index";
 import { FeatureId, Feature } from "@ledgerhq/types-live";
 import { getEnv } from "@ledgerhq/live-env";
-
-import { formatToFirebaseFeatureId } from "./FirebaseRemoteConfig";
 import { languageSelector, overriddenFeatureFlagsSelector } from "../reducers/settings";
 import { setOverriddenFeatureFlag, setOverriddenFeatureFlags } from "../actions/settings";
 import { setAnalyticsFeatureFlagMethod } from "../analytics/segment";
-
-type Props = PropsWithChildren<unknown>;
 
 const checkFeatureFlagVersion = (feature: Feature | undefined) => {
   if (
