@@ -786,14 +786,14 @@ importers:
         specifier: ^9.3.7
         version: 9.3.7(react-native@0.71.6)
       '@react-native-firebase/app':
-        specifier: ^14.11.1
-        version: 14.11.1(react-native@0.71.6)(react@18.0.0)
+        specifier: ^18.0.0
+        version: 18.4.0(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
       '@react-native-firebase/messaging':
         specifier: ^14.11.1
-        version: 14.11.1(@react-native-firebase/app@14.11.1)
+        version: 14.11.1(@react-native-firebase/app@18.4.0)
       '@react-native-firebase/remote-config':
         specifier: ^14.11.1
-        version: 14.11.1(@react-native-firebase/app@14.11.1)
+        version: 14.11.1(@react-native-firebase/app@18.4.0)
       '@react-native-masked-view/masked-view':
         specifier: ^0.2.6
         version: 0.2.6(react-native@0.71.6)(react@18.0.0)
@@ -14720,6 +14720,7 @@ packages:
       xml2js: 0.4.23
     transitivePeerDependencies:
       - supports-color
+    dev: true
 
   /@expo/config-plugins@6.0.1:
     resolution: {integrity: sha512-6mqZutxeibXFeqFfoZApFUEH2n1RxGXYMHCdJrDj4eXDBBFZ3aJ0XBoroZcHHHvfRieEsf54vNyJoWp7JZGj8g==}
@@ -14748,6 +14749,7 @@ packages:
 
   /@expo/config-types@45.0.0:
     resolution: {integrity: sha512-/QGhhLWyaGautgEyU50UJr5YqKJix5t77ePTwreOVAhmZH+ff3nrrtYTTnccx+qF08ZNQmfAyYMCD3rQfzpiJA==}
+    dev: true
 
   /@expo/config-types@48.0.0:
     resolution: {integrity: sha512-DwyV4jTy/+cLzXGAo1xftS6mVlSiLIWZjl9DjTCLPFVgNYQxnh7htPilRv4rBhiNs7KaznWqKU70+4zQoKVT9A==}
@@ -14898,6 +14900,7 @@ packages:
       '@babel/code-frame': 7.10.4
       json5: 1.0.1
       write-file-atomic: 2.4.3
+    dev: true
 
   /@expo/json-file@8.2.37:
     resolution: {integrity: sha512-YaH6rVg11JoTS2P6LsW7ybS2CULjf40AbnAHw2F1eDPuheprNjARZMnyHFPkKv7GuxCy+B9GPcbOKgc4cgA80Q==}
@@ -14948,6 +14951,7 @@ packages:
       '@xmldom/xmldom': 0.7.9
       base64-js: 1.5.1
       xmlbuilder: 14.0.0
+    dev: true
 
   /@expo/plist@0.0.20:
     resolution: {integrity: sha512-UXQ4LXCfTZ580LDHGJ5q62jSTwJFFJ1GqBu8duQMThiHKWbMJ+gajJh6rsB6EJ3aLUr9wcauxneL5LVRFxwBEA==}
@@ -19354,36 +19358,38 @@ packages:
     resolution: {integrity: sha512-D9bv+3Vd2gairAhnRPAghwccgEmoM7g562pm8i4qB3Esrms5mggF81G3UvCyc0w3jjtFHh8dpQkfEoKiP0NW/Q==}
     dev: true
 
-  /@react-native-firebase/app@14.11.1(react-native@0.71.6)(react@18.0.0):
-    resolution: {integrity: sha512-fkvOK8c7e8MxIbfb2076kO3GtGUc3ZXNEkPyfamRKBnPgANpmnjQaTVIraXpeuIIOfjj5uDK4uw32znWiDusGA==}
+  /@react-native-firebase/app@18.4.0(expo@48.0.9)(react-native@0.71.6)(react@18.0.0):
+    resolution: {integrity: sha512-FPHwb4O5Bug5Q5WOfSPq38LHGrTRBIThNvs7Fl7OfotGpMbWKMCfwc5RN7F+PRRDeHyk2WDYvoH905zla1pPcw==}
     peerDependencies:
+      expo: '>=47.0.0'
       react: '*'
       react-native: '*'
+    peerDependenciesMeta:
+      expo:
+        optional: true
     dependencies:
-      '@expo/config-plugins': 4.1.5
+      expo: 48.0.9(@babel/core@7.22.8)(metro@0.76.0)(react-native@0.71.6)(react@18.0.0)
       opencollective-postinstall: 2.0.3
       react: 18.0.0
       react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       superstruct: 0.6.2
-    transitivePeerDependencies:
-      - supports-color
     dev: false
 
-  /@react-native-firebase/messaging@14.11.1(@react-native-firebase/app@14.11.1):
+  /@react-native-firebase/messaging@14.11.1(@react-native-firebase/app@18.4.0):
     resolution: {integrity: sha512-nJjmA+Oku/rWM//y0hpsXJAM8dqkucZKyu71bZ8f4XCOU0ueqO/Qlyv8ylQ/2G+4+FCoSxncffxDdUfr+3nExA==}
     peerDependencies:
       '@react-native-firebase/app': 14.11.1
     dependencies:
-      '@react-native-firebase/app': 14.11.1(react-native@0.71.6)(react@18.0.0)
+      '@react-native-firebase/app': 18.4.0(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
     dev: false
 
-  /@react-native-firebase/remote-config@14.11.1(@react-native-firebase/app@14.11.1):
+  /@react-native-firebase/remote-config@14.11.1(@react-native-firebase/app@18.4.0):
     resolution: {integrity: sha512-OyiOQweTh06kNdLDxyllvqYYzaUEUQ4S63/f6aS0d2287o/W8nXybb1O0UWz1NRg6mfqlqQPIqdpjtKJrKz9Tg==}
     peerDependencies:
       '@react-native-firebase/analytics': 14.11.1
       '@react-native-firebase/app': 14.11.1
     dependencies:
-      '@react-native-firebase/app': 14.11.1(react-native@0.71.6)(react@18.0.0)
+      '@react-native-firebase/app': 18.4.0(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
     dev: false
 
   /@react-native-masked-view/masked-view@0.2.6(react-native@0.71.6)(react@18.0.0):
@@ -28981,7 +28987,7 @@ packages:
       babel-plugin-syntax-jsx: 6.18.0
       lodash: 4.17.21
       picomatch: 2.3.1
-      styled-components: 5.3.5(react-is@18.1.0)(react@18.0.0)
+      styled-components: 5.3.5(react-dom@17.0.2)(react-is@17.0.2)(react@17.0.2)
 
   /babel-plugin-syntax-jsx@6.18.0:
     resolution: {integrity: sha512-qrPaCSo9c8RHNRHIotaufGbuOBN8rtdC4QrrFFc43vyWCCz7Kl7GL1PGaXtMGQZUXrkCjNEgxDfmAuAabr/rlw==}
@@ -56715,6 +56721,7 @@ packages:
       react-is: 18.1.0
       shallowequal: 1.1.0
       supports-color: 5.5.0
+    dev: false
 
   /styled-components@6.0.7(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-xIwWuiRMYR43mskVsW9MGTRjSo7ol4bcVjT595fGUp3OLBJOlOgaiKaxsHdC4a2HqWKqKnh0CmcRbk5ogyDjTg==}
