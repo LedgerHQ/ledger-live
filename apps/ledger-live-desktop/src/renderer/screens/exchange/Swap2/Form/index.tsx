@@ -125,6 +125,18 @@ const SwapForm = () => {
     timeoutErrorMessage: t("swap2.form.timeout.message"),
   });
 
+  // @TODO: Try to check if we can directly have the right state from `useSwapTransaction`
+  // Used to set the right state (recipient address, data, etc...) when comming from a token account
+  // As of today, we need to call setFromAccount to trigger an updateTransaction in order to set the correct
+  // recipient address (token contract address) and related data to compute the fees
+  // cf. https://github.com/LedgerHQ/ledger-live/blob/c135c887b313ecc9f4a3b3a421ced0e3a081dc37/libs/ledger-live-common/src/exchange/swap/hooks/useFromState.ts#L50-L57
+  useEffect(() => {
+    if (swapTransaction.account) {
+      swapTransaction.setFromAccount(swapTransaction.account);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const exchangeRatesState = swapTransaction.swap?.rates;
   const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
   const swapWarning = swapTransaction.fromAmountWarning;
