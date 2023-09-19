@@ -48,6 +48,42 @@ ${mode.toUpperCase()} ${
         })
   }${recipient ? `\nTO ${recipient}` : ""}`;
 
+const fromGasOptionsRaw = (gasOptions: GasOptionsRaw): GasOptions => {
+  const gasOptionsFormatted: GasOptions = {} as GasOptions;
+
+  Object.keys(gasOptions).forEach(feeStrategy => {
+    const { gasPrice, maxFeePerGas, maxPriorityFeePerGas, nextBaseFee }: FeeDataRaw =
+      gasOptions[feeStrategy as keyof GasOptionsRaw];
+
+    gasOptionsFormatted[feeStrategy as keyof GasOptions] = {
+      gasPrice: gasPrice ? new BigNumber(gasPrice) : null,
+      maxFeePerGas: maxFeePerGas ? new BigNumber(maxFeePerGas) : null,
+      maxPriorityFeePerGas: maxPriorityFeePerGas ? new BigNumber(maxPriorityFeePerGas) : null,
+      nextBaseFee: nextBaseFee ? new BigNumber(nextBaseFee) : null,
+    } as FeeData;
+  });
+
+  return gasOptionsFormatted;
+};
+
+const toGasOptionsRaw = (gasOptions: GasOptions): GasOptionsRaw => {
+  const gasOptionsFormatted: GasOptionsRaw = {} as GasOptionsRaw;
+
+  Object.keys(gasOptions).forEach(feeStrategy => {
+    const { gasPrice, maxFeePerGas, maxPriorityFeePerGas, nextBaseFee }: FeeData =
+      gasOptions[feeStrategy as keyof GasOptions];
+
+    gasOptionsFormatted[feeStrategy as keyof GasOptionsRaw] = {
+      gasPrice: gasPrice?.toFixed() ?? null,
+      maxFeePerGas: maxFeePerGas?.toFixed() ?? null,
+      maxPriorityFeePerGas: maxPriorityFeePerGas?.toFixed() ?? null,
+      nextBaseFee: nextBaseFee?.toFixed() ?? null,
+    } as FeeDataRaw;
+  });
+
+  return gasOptionsFormatted;
+};
+
 /**
  * Serializer raw to transaction
  */
@@ -97,20 +133,8 @@ export const fromTransactionRaw = (rawTx: EvmTransactionRaw): EvmTransaction => 
     tx.customGasLimit = new BigNumber(rawTx.customGasLimit);
   }
 
-  // @TODO: Make it look better
   if (rawTx.gasOptions) {
-    tx.gasOptions = {} as GasOptions;
-    Object.keys(rawTx.gasOptions).forEach(feeStrategy => {
-      const options: FeeDataRaw = rawTx.gasOptions![feeStrategy as keyof GasOptions];
-      tx.gasOptions![feeStrategy as keyof GasOptions] = {
-        gasPrice: options.gasPrice ? new BigNumber(options.gasPrice) : undefined,
-        maxFeePerGas: options.maxFeePerGas ? new BigNumber(options.maxFeePerGas) : undefined,
-        maxPriorityFeePerGas: options.maxPriorityFeePerGas
-          ? new BigNumber(options.maxPriorityFeePerGas)
-          : undefined,
-        nextBaseFee: options.nextBaseFee ? new BigNumber(options.nextBaseFee) : undefined,
-      } as FeeData;
-    });
+    tx.gasOptions = fromGasOptionsRaw(rawTx.gasOptions);
   }
 
   return tx as EvmTransaction;
@@ -165,18 +189,8 @@ export const toTransactionRaw = (tx: EvmTransaction): EvmTransactionRaw => {
     txRaw.customGasLimit = tx.customGasLimit.toFixed();
   }
 
-  // @TODO: Make it look better
   if (tx.gasOptions) {
-    txRaw.gasOptions = {} as GasOptionsRaw;
-    Object.keys(tx.gasOptions).forEach(feeStrategy => {
-      const options = tx.gasOptions![feeStrategy as keyof GasOptions];
-      txRaw.gasOptions![feeStrategy as keyof GasOptions] = {
-        gasPrice: options.gasPrice?.toFixed(),
-        maxFeePerGas: options.maxFeePerGas?.toFixed(),
-        maxPriorityFeePerGas: options.maxPriorityFeePerGas?.toFixed(),
-        nextBaseFee: options.nextBaseFee?.toFixed(),
-      } as FeeDataRaw;
-    });
+    txRaw.gasOptions = toGasOptionsRaw(tx.gasOptions);
   }
 
   return txRaw as EvmTransactionRaw;
