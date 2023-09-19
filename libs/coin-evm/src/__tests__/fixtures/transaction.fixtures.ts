@@ -45,6 +45,26 @@ export const rawEip1559Tx: EvmTransactionEIP1559Raw = Object.freeze(
     maxFeePerGas: "10000",
     maxPriorityFeePerGas: "10000",
     additionalFees: "420",
+    gasOptions: {
+      slow: {
+        maxFeePerGas: "10000",
+        maxPriorityFeePerGas: "15000",
+        gasPrice: null,
+        nextBaseFee: "16000",
+      },
+      medium: {
+        maxFeePerGas: "20000",
+        maxPriorityFeePerGas: "25000",
+        gasPrice: null,
+        nextBaseFee: "16000",
+      },
+      fast: {
+        maxFeePerGas: "30000",
+        maxPriorityFeePerGas: "35000",
+        gasPrice: null,
+        nextBaseFee: "16000",
+      },
+    },
     type: 2,
   }),
 );
@@ -71,6 +91,26 @@ export const eip1559Tx: EvmTransactionEIP1559 = Object.freeze(
     maxFeePerGas: new BigNumber(10000),
     maxPriorityFeePerGas: new BigNumber(10000),
     additionalFees: new BigNumber(420),
+    gasOptions: {
+      slow: {
+        maxFeePerGas: new BigNumber(10000),
+        maxPriorityFeePerGas: new BigNumber(15000),
+        gasPrice: null,
+        nextBaseFee: new BigNumber(16000),
+      },
+      medium: {
+        maxFeePerGas: new BigNumber(20000),
+        maxPriorityFeePerGas: new BigNumber(25000),
+        gasPrice: null,
+        nextBaseFee: new BigNumber(16000),
+      },
+      fast: {
+        maxFeePerGas: new BigNumber(30000),
+        maxPriorityFeePerGas: new BigNumber(35000),
+        gasPrice: null,
+        nextBaseFee: new BigNumber(16000),
+      },
+    },
     type: 2,
   }),
 );
@@ -95,6 +135,26 @@ export const rawLegacyTx: EvmTransactionLegacyRaw = Object.freeze({
   data: testData,
   gasPrice: "10000",
   additionalFees: "420",
+  gasOptions: {
+    slow: {
+      maxFeePerGas: null,
+      maxPriorityFeePerGas: null,
+      gasPrice: "10000",
+      nextBaseFee: null,
+    },
+    medium: {
+      maxFeePerGas: null,
+      maxPriorityFeePerGas: null,
+      gasPrice: "20000",
+      nextBaseFee: null,
+    },
+    fast: {
+      maxFeePerGas: null,
+      maxPriorityFeePerGas: null,
+      gasPrice: "30000",
+      nextBaseFee: null,
+    },
+  },
   type: 0,
 });
 
@@ -119,6 +179,26 @@ export const legacyTx: EvmTransactionLegacy = Object.freeze(
     data: Buffer.from(testData, "hex"),
     gasPrice: new BigNumber(10000),
     additionalFees: new BigNumber(420),
+    gasOptions: {
+      slow: {
+        maxFeePerGas: null,
+        maxPriorityFeePerGas: null,
+        gasPrice: new BigNumber(10000),
+        nextBaseFee: null,
+      },
+      medium: {
+        maxFeePerGas: null,
+        maxPriorityFeePerGas: null,
+        gasPrice: new BigNumber(20000),
+        nextBaseFee: null,
+      },
+      fast: {
+        maxFeePerGas: null,
+        maxPriorityFeePerGas: null,
+        gasPrice: new BigNumber(30000),
+        nextBaseFee: null,
+      },
+    },
     type: 0,
   }),
 );
