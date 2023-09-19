@@ -1,16 +1,17 @@
+import { getEstimatedFees } from "@ledgerhq/coin-evm/lib/logic";
+import type { Transaction } from "@ledgerhq/coin-evm/types/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import type { Transaction } from "@ledgerhq/coin-evm/types/index";
-import React, { useCallback, useEffect, useState } from "react";
-import SelectFeesStrategy from "./SelectFeesStrategy";
-import { ScreenName } from "../../const";
-import { EvmNetworkFeeInfo } from "./EvmNetworkFeesInfo";
-import { SendRowsFeeProps as Props } from "./types";
 import { useGasOptions } from "@ledgerhq/live-common/families/evm/react";
 import { log } from "@ledgerhq/logs";
+import { InfiniteLoader } from "@ledgerhq/native-ui";
 import { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { getEstimatedFees } from "@ledgerhq/coin-evm/lib/logic";
+import React, { useCallback, useEffect, useState } from "react";
+import { ScreenName } from "../../const";
+import { EvmNetworkFeeInfo } from "./EvmNetworkFeesInfo";
+import SelectFeesStrategy from "./SelectFeesStrategy";
+import { SendRowsFeeProps as Props } from "./types";
 
 const getCustomStrategy = (transaction: Transaction): BigNumber | null => {
   if (transaction.feesStrategy === "custom") {
@@ -27,7 +28,7 @@ export default function EvmFeesStrategy({
   setTransaction,
   navigation,
   route,
-  // @TODO:  shouldPrefillGasOptions = true,
+  shouldPrefillEvmGasOptions = true,
   ...props
 }: Props<Transaction>) {
   const account = getMainAccount(accountProp, parentAccount);
@@ -43,17 +44,15 @@ export default function EvmFeesStrategy({
     log("error", error.message);
   }
 
-  // @TODO: ADD LOADING STATE
-  // + activate next hook only for shouldPrefillGasOptions
-  // useEffect(() => {
-  //   if (shouldPrefillGasOptions) {
-  //     const updatedTransaction = bridge.updateTransaction(transaction, {
-  //       ...transaction,
-  //       gasOptions,
-  //     });
-  //     setTransaction(updatedTransaction);
-  //   }
-  // }, [bridge, setTransaction, gasOptions, transaction]);
+  useEffect(() => {
+    if (shouldPrefillEvmGasOptions) {
+      const updatedTransaction = bridge.updateTransaction(transaction, {
+        ...transaction,
+        gasOptions,
+      });
+      setTransaction(updatedTransaction);
+    }
+  }, [bridge, setTransaction, gasOptions, transaction, shouldPrefillEvmGasOptions]);
 
   const [customStrategy, setCustomStrategy] = useState(getCustomStrategy(transaction));
 
