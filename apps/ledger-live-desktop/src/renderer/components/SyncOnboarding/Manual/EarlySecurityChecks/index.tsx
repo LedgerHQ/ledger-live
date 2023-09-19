@@ -131,6 +131,10 @@ const EarlySecurityChecks = ({
         closeFwUpdateDrawer();
         setUpdateInterrupted(true);
       },
+      onRequestClose: () => {
+        closeFwUpdateDrawer();
+        setUpdateInterrupted(true);
+      },
       status: modal,
       stepId,
       firmware: latestFirmware,
@@ -156,10 +160,7 @@ const EarlySecurityChecks = ({
     setDrawer(UpdateFirmwareModal, updateFirmwareModalProps, {
       preventBackdropClick: true,
       forceDisableFocusTrap: true,
-      onRequestClose: () => {
-        closeFwUpdateDrawer();
-        setUpdateInterrupted(true);
-      },
+      onRequestClose: undefined,
     });
   }, [
     closeFwUpdateDrawer,
