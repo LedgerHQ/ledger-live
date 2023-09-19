@@ -11,12 +11,8 @@ export const importERC20Exchange = async (outputDir: string) => {
     fs.writeFileSync(`${outputDir}/exchange/erc20.json`, JSON.stringify(erc20Exchange));
 
     const erc20typeStringified = `export type ERC20Exchange = [string, string, string];`;
-    const tokensStringified = `const exchanges: ERC20Exchange[] = ${JSON.stringify(
-      erc20Exchange,
-      null,
-      2,
-    )};`;
-    const exportStringified = `export default exchanges;`;
+    const tokensStringified = `import exchanges from "./erc20.json";`;
+    const exportStringified = `export default exchanges as ERC20Exchange[];`;
 
     fs.writeFileSync(
       `${outputDir}/exchange/erc20.ts`,

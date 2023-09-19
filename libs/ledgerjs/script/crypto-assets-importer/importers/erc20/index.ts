@@ -39,8 +39,8 @@ export const importERC20 = async (outputDir: string) => {
   (string | null)?, // coumpound_for (legacy)
 ];`;
 
-      const tokensStringified = `const tokens: ERC20Token[] = ${JSON.stringify(erc20, null, 2)};`;
-      const exportStringified = `export default tokens;`;
+      const tokensStringified = `import tokens from "./erc20.json";`;
+      const exportStringified = `export default tokens as ERC20Token[];`;
 
       const erc20TsFile = `${erc20TokenTypeStringified}
 

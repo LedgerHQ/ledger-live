@@ -9,10 +9,10 @@ export const importBEP20Exchange = async (outputDir: string) => {
   try {
     const bep20Exchange = await fetchTokens<BEP20Exchange>("exchange/bep20.json");
     fs.writeFileSync(`${outputDir}/exchange/bep20.json`, JSON.stringify(bep20Exchange));
-    const bep20ExchangeTypeStringified = `export type BEP20Exchange = [string, string, string];`;
 
-    const tokensStringified = `const tokens = ${JSON.stringify(bep20Exchange, null, 2)}`;
-    const exportstringified = `export default tokens;`;
+    const bep20ExchangeTypeStringified = `export type BEP20Exchange = [string, string, string];`;
+    const tokensStringified = `import tokens from "./bep20.json";`;
+    const exportstringified = `export default tokens as BEP20Exchange[];`;
 
     const tsFile = `${bep20ExchangeTypeStringified}
 

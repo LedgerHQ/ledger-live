@@ -36,8 +36,8 @@ export const importBEP20 = async (outputDir: string) => {
   (string | null)?, // legacy
 ];`;
 
-      const tokensStringified = `const tokens: BEP20Token[] = ${JSON.stringify(bep20, null, 2)};`;
-      const exportStringified = `export default tokens;`;
+      const tokensStringified = `import tokens from "./bep20.json";`;
+      const exportStringified = `export default tokens as BEP20Token[];`;
 
       fs.writeFileSync(
         `${filePath}.ts`,

@@ -37,13 +37,8 @@ export const importPolygonTokens = async (outputDir: string) => {
   (string | null)?, // legacy
 ];`;
 
-    const tokensStringified = `const tokens: PolygonERC20Token[] = ${JSON.stringify(
-      polygonTokens,
-      null,
-      2,
-    )};`;
-
-    const exportStringified = `export default tokens;`;
+    const tokensStringified = `import tokens from "./polygon-erc20.json";`;
+    const exportStringified = `export default tokens as PolygonERC20Token[];`;
 
     fs.writeFileSync(
       `${filePath}.ts`,
