@@ -1969,8 +1969,7 @@
       },
       "completed" : {
         "noUpdateAvailable" : {
-          "title" : "Проверка обновления прошивки",
-          "description" : "Проверка обновления ОС нужна для гарантии того, что {{productName}} обновлён."
+          "title" : "Прошивка {{productName}} актуальна"
         }
       },
       "error" : {
@@ -1989,10 +1988,11 @@
       }
     },
     "firmwareUpdateAvailableDrawer" : {
-      "title" : "Доступно обновление ОС",
+      "title" : "Доступно обновление ОС {{productName}}",
       "description" : "Обновите {{productName}}, чтобы поддерживать актуальный уровень безопасности и функциональности.",
       "descriptionVersion" : "Версия {{firmwareVersion}}",
-      "updateCta" : "Обновить"
+      "updateCta" : "Обновить",
+      "seeWhatsInUpdateCta" : "Детали обновления"
     }
   },
   "syncOnboarding" : {
@@ -2172,6 +2172,13 @@
       "title" : "Рыночная цена {{currencyTicker}}",
       "currencyPrice" : "Цена {{currencyTicker}}",
       "currencyPriceChange" : "Изменение 24ч"
+    },
+    "quickActions" : {
+      "buy" : "Покупка",
+      "swap" : "Обмен",
+      "send" : "Отправить",
+      "deposit" : "Пополнить",
+      "stake" : "Стейкать"
     }
   },
   "addAccountsModal" : {
@@ -2446,12 +2453,16 @@
     },
     "import" : {
       "scan" : {
-        "title" : "Импорт из настольного приложения",
-        "descTop" : {
-          "line1" : "В настольном приложении Ledger Live перейдите в:",
-          "line2" : "Настройки > Счета > Экспорт счетов > Экспортировать"
+        "title" : "Импорт из настольного приложения"
+      },
+      "newScan" : {
+        "title" : "Сканируйте и перенесите счета из Ledger Live для ПК",
+        "instructions" : {
+          "line1" : "Откройте настольную версию Ledger Live.",
+          "line2" : "Настройки > Счета > Экспорт счетов > Экспортировать",
+          "line3" : "Cканируйте QR-код камерой смартфона до 100%."
         },
-        "descBottom" : "Откройте настольное приложение Ledger Live и сканируйте QR-код"
+        "hodl" : "Дождитесь окончания сканирования."
       },
       "result" : {
         "title" : "Импорт счетов",
@@ -3846,7 +3857,7 @@
         }
       },
       "genuineCheck" : {
-        "title" : "Откройте «Мой Ledger» на {{productName}}",
+        "title" : "Одобрите включение «Мой Ledger» на {{productName}}",
         "accept" : "Не выключайте Ledger Nano X и предоставьте приложению доступ к устройству."
       },
       "genuineCheckPending" : {
@@ -4291,6 +4302,7 @@
     "yesChangeLanguage" : "Да, поменять язык",
     "allowLanguageInstallation" : "Разрешите установку языка на {{deviceName}}",
     "languageInstalled" : "Новый язык устройства — {{language}}",
+    "languageInstalledDesc" : "Язык на вашем устройстве изменён",
     "firmwareUpdatePrompt" : {
       "title" : "Добавить {{language}} язык на устройство {{deviceName}}?",
       "description" : "Теперь {{language}} язык доступен для {{deviceName}}. Можно установить его сейчас или поменять в любое удобное время в разделе «Мой Ledger»."
@@ -6351,10 +6363,10 @@
       "status" : {
         "new" : {
           "title" : "Новинка",
-          "desc" : "Хватит беспокоиться о возможной потере доступа к своему кошельку.",
+          "desc" : "Восстановите доступ к кошельку без фразы восстановления.",
           "actions" : {
             "learnMore" : "Изучить Ledger Recover",
-            "alreadySubscribed" : "Уже есть учётная запись? <LinkAccount>Посмотреть подписку</LinkAccount>"
+            "alreadySubscribed" : "Уже подписаны? <LinkAccount>Посмотреть подписку</LinkAccount>"
           }
         }
       }
