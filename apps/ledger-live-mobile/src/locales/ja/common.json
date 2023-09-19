@@ -1225,8 +1225,8 @@
       "start" : "はじめに",
       "noDevice" : "デバイスをお持ちでない場合",
       "buy" : "{{fullDeviceName}}を購入",
-      "terms" : "By continuing, you agree to Ledger's",
-      "termsLink" : "Terms & Conditions",
+      "terms" : "続行した場合、Ledgerの",
+      "termsLink" : "利用規約に同意したものとみなされます",
       "privacyLink" : "プライバシーポリシー",
       "and" : "そして",
       "recoverLogIn" : "Ledger Recoverにログイン"
@@ -1904,95 +1904,95 @@
     }
   },
   "earlySecurityCheck" : {
-    "title" : "Genuine Check and OS update check",
+    "title" : "正規品チェックと\nOSアップデートチェック",
     "idle" : {
-      "description" : "Genuine Check makes sure your Ledger Stax is an official Ledger. OS update check makes sure Ledger Stax OS is up to date.",
-      "learnMore" : "Learn more about Genuine Check",
-      "checkCta" : "Check Ledger Stax"
+      "description" : "正規品チェックでは、Ledger Staxデバイスが、正規品であることを確認します。OSアップデートチェックでは、Ledger Stax OSが最新であることを確認します。",
+      "learnMore" : "正規品チェックの詳細",
+      "checkCta" : "Ledger Staxをチェック"
     },
     "completed" : {
-      "continueCta" : "Continue to setup"
+      "continueCta" : "初期設定を続行する"
     },
     "earlySecurityCheckMandatoryDrawer" : {
-      "title" : "Genuine Check is mandatory",
-      "description" : "You cannot setup your {{productName}} without allowing this Check.",
-      "resumeCta" : "Resume Check",
-      "cancelCta" : "Cancel Checks"
+      "title" : "正規品チェックは必須です",
+      "description" : "このチェックを許可しない場合、お客様の{{productName}}の初期設定を行うことができません。",
+      "resumeCta" : "チェックを再開",
+      "cancelCta" : "チェックをキャンセル"
     },
     "genuineCheckErrorDrawer" : {
-      "title" : "Genuine Check error",
-      "description" : "An error occurred while running the genuine check on {{productName}}.",
-      "retryCta" : "Try again",
-      "cancelCta" : "Cancel set up",
+      "title" : "正規品チェックエラー",
+      "description" : "{{productName}}で正規品チェックを実行中にエラーが発生しました。",
+      "retryCta" : "再試行",
+      "cancelCta" : "セットアップをキャンセルする",
       "notFoundEntity" : {
-        "title" : "Initiate Genuine Check again",
-        "description" : "You must first disable \"My Ledger Provider\" setting. To disable it, open Ledger Live \"Settings\", select \"Experimental features\", and then toggle off \"Manager provider\".",
-        "settingsCta" : "Go to settings"
+        "title" : "正規品チェックを再開する",
+        "description" : "まず「My Ledger Provider」設定を無効化してください。無効にするには、Ledger Liveの「設定」を開き、「試験的機能」を選択して、「マネージャープロバイダー（Manager provider）」をオフに切り替えます。",
+        "settingsCta" : "設定を開く"
       }
     },
     "genuineCheckNonGenuineDrawer" : {
-      "title" : "This Ledger Stax failed the Genuine Check",
-      "description" : "This {{productName}} is not safe to use. Please contact Ledger Support.",
-      "supportCta" : "Contact Ledger Support"
+      "title" : "このLedger Staxは正規品チェックに失敗しました",
+      "description" : "この{{productName}}は安全に使用できません。\nLedgerサポートにご連絡ください。",
+      "supportCta" : "Ledgerサポートへのお問い合わせ"
     },
     "allowManagerDrawer" : {
-      "title" : "Tap 'Allow' to enable Genuine Check and OS update check"
+      "title" : "「許可する（Allow）」をタップして、正規品チェックとOSアップデートチェックを有効化"
     },
     "genuineCheckStep" : {
-      "learnMore" : "Learn more about Genuine Check",
+      "learnMore" : "正規品チェックについて詳しく見る",
       "inactive" : {
-        "title" : "Genuine Check",
-        "description" : "Genuine Check makes sure your {{productName}} is an official Ledger."
+        "title" : "正規品チェック",
+        "description" : "正規品チェックにより、お持ちの{{productName}}が正式なLedgerであることが保証されます。"
       },
       "active" : {
-        "title" : "Genuine Check",
-        "description" : "Genuine Check makes sure your {{productName}} is an official Ledger."
+        "title" : "正規品チェック",
+        "description" : "正規品チェックにより、お持ちの{{productName}}が正式なLedgerであることが保証されます。"
       },
       "completed" : {
-        "title" : "{{productName}} is genuine",
-        "description" : "Genuine Check makes sure your {{productName}} is an official Ledger."
+        "title" : "{{productName}}は正規品です",
+        "description" : "正規品チェックにより、お持ちの{{productName}}が正式なLedgerであることが保証されます。"
       },
       "refused" : {
-        "title" : "Genuine Check declined",
+        "title" : "正規品チェックが拒否されました",
         "description" : "このチェックを許可されない場合、{{productName}}をセットアップできません。",
-        "cta" : "Resume Check"
+        "cta" : "チェックを再開"
       },
       "error" : {
-        "title" : "Genuine Check",
-        "description" : "Genuine Check makes sure your {{productName}} is an official Ledger."
+        "title" : "正規品チェック",
+        "description" : "正規品チェックにより、お持ちの{{productName}}が正式なLedgerであることが保証されます。"
       }
     },
     "firmwareUpdateCheckStep" : {
       "active" : {
-        "title" : "OS update check",
-        "description" : "OS update check makes sure {{productName}} Operating System is up to date."
+        "title" : "OSアップデートチェック",
+        "description" : "OSアップデートチェックにより、{{productName}}オペレーティングシステムが最新であることが保証されます。"
       },
       "completed" : {
         "noUpdateAvailable" : {
-          "title" : "OS update check",
-          "description" : "OS update check makes sure {{productName}} Operating System is up to date."
+          "title" : "{{productName}} OS is up to date"
         }
       },
       "error" : {
-        "title" : "Software update check failed",
-        "skipCta" : "Skip update"
+        "title" : "ソフトウェアアップデートのチェックに失敗しました",
+        "skipCta" : "アップデートをスキップする"
       },
       "refused" : {
-        "title" : "OS version {{firmwareVersion}} is available",
-        "description" : "We recommend performing this update to benefit from the latest security and functionality.",
-        "updateCta" : "Update Ledger Stax",
-        "skipCta" : "Skip update"
+        "title" : "OSバージョン{{firmwareVersion}}がご利用可能です",
+        "description" : "最新のセキュリティと機能をご活用いただくために、このアップデートの実行をお勧めします。",
+        "updateCta" : "Ledger Staxをアップデート",
+        "skipCta" : "アップデートをスキップする"
       },
       "inactive" : {
-        "title" : "OS update check",
-        "description" : "OS update check makes sure {{productName}} Operating System is up to date."
+        "title" : "OSアップデートチェック",
+        "description" : "OSアップデートチェックにより、{{productName}}オペレーティングシステムが最新であることが保証されます。"
       }
     },
     "firmwareUpdateAvailableDrawer" : {
-      "title" : "OS update available",
-      "description" : "Update your {{productName}} to benefit from the latest security and functionality.",
-      "descriptionVersion" : "Version {{firmwareVersion}}",
-      "updateCta" : "Update now"
+      "title" : "{{productName}} OS update available",
+      "description" : "最新のセキュリティと機能をご活用いただくために、{{productName}}をアップデートしてください。",
+      "descriptionVersion" : "バージョン{{firmwareVersion}}",
+      "updateCta" : "今すぐアップデート",
+      "seeWhatsInUpdateCta" : "See what's in the update"
     }
   },
   "syncOnboarding" : {
@@ -2050,8 +2050,8 @@
       "supportCta" : "人と話す"
     },
     "earlySecurityCheckCompletedStep" : {
-      "title" : "This {{productName}} is genuine",
-      "description" : "Continue setting up on {{productName}}."
+      "title" : "この{{productName}}は正規品です",
+      "description" : "{{productName}}でセットアップを続行します。"
     },
     "pinStep" : {
       "title" : "PINコード",
@@ -2172,6 +2172,13 @@
       "title" : "{{currencyTicker}}の市場価格",
       "currencyPrice" : "1 {{currencyTicker}}の価格",
       "currencyPriceChange" : "24時間前の変更"
+    },
+    "quickActions" : {
+      "buy" : "購入",
+      "swap" : "スワップ",
+      "send" : "送付",
+      "deposit" : "入金",
+      "stake" : "ステーキング"
     }
   },
   "addAccountsModal" : {
@@ -2446,12 +2453,16 @@
     },
     "import" : {
       "scan" : {
-        "title" : "デスクトップからインポート",
-        "descTop" : {
-          "line1" : "Ledger Live Desktopから移動：",
-          "line2" : "設定 > アカウント > アカウントのエクスポート > エクスポート"
+        "title" : "デスクトップからインポート"
+      },
+      "newScan" : {
+        "title" : "Scan and import your accounts from Ledger Live desktop",
+        "instructions" : {
+          "line1" : "Open Ledger Live Desktop.",
+          "line2" : "Settings > Accounts > Exports accounts",
+          "line3" : "Scan QR code until loader hits 100%."
         },
-        "descBottom" : "Ledger Live Desktopを開き、QRコードをスキャンする"
+        "hodl" : "Hold until scanning completes."
       },
       "result" : {
         "title" : "アカウントのインポート",
@@ -4178,8 +4189,8 @@
       "firmware" : "アップデートをダウンロードしています",
       "prepareUpdate" : {
         "earlySecurityCheck" : {
-          "titlePreparingUpdate" : "Preparing update for install",
-          "description" : "Transferring the update to {{deviceName}}."
+          "titlePreparingUpdate" : "インストール用のアップデートを準備しています",
+          "description" : "アップデートを{{deviceName}}に転送中"
         },
         "titleBackingUp" : "アプリと設定のバックアップ",
         "titleTransferring" : "アップデートの転送",
@@ -4192,8 +4203,8 @@
       },
       "restoreSettings" : {
         "earlySecurityCheck" : {
-          "titleInactive" : "Restore settings",
-          "description" : "Your settings will be restored."
+          "titleInactive" : "設定の復元",
+          "description" : "設定が復元されます。"
         },
         "titleInactive" : "アプリと設定を復元する",
         "description" : "設定とブロックチェーンアプリが復元されます。",
@@ -4291,6 +4302,7 @@
     "yesChangeLanguage" : "はい、言語を変更します。",
     "allowLanguageInstallation" : "{{deviceName}}への言語のインストールを承認する",
     "languageInstalled" : "言語が{{language}}に変更されました",
+    "languageInstalledDesc" : "Your device is now in the language you chose",
     "firmwareUpdatePrompt" : {
       "title" : "{{deviceName}}を{{language}}に設定しますか？",
       "description" : "{{language}}が{{deviceName}}でご利用可能になりました。今すぐ設定できます。また、My Ledgerからいつでもデバイスの言語を変更することが可能です。"
@@ -6266,7 +6278,7 @@
       "title" : "次に、{{productName}}を使用して...",
       "allDoneTitle" : "はい、終わりぃ！",
       "skip" : "これは後でやります",
-      "viewWallet" : "View my wallet"
+      "viewWallet" : "ウォレットを見る"
     },
     "entryPointCard" : {
       "title" : "{{productName}}の次のステップは何ですか？",
@@ -6351,10 +6363,10 @@
       "status" : {
         "new" : {
           "title" : "新商品",
-          "desc" : "ウォレットへのアクセス権を失う不安を解消しましょう。",
+          "desc" : "秘密のリカバリーフレーズなしでウォレットへのアクセスを復元します。",
           "actions" : {
             "learnMore" : "Ledger Recoverの詳細を確認",
-            "alreadySubscribed" : "すでにログイン済みの場合<LinkAccount>サブスクリプションを表示</LinkAccount>"
+            "alreadySubscribed" : "すでにご登録済みですか？<LinkAccount>サブスクリプションを見る</LinkAccount>"
           }
         }
       }
