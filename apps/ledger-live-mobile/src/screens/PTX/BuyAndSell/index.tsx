@@ -42,13 +42,11 @@ export function BuyAndSellScreen({ route }: Props) {
    */
   useEffect(
     () => {
-      (async () => {
-        if (manifest?.id && INTERNAL_APP_IDS.includes(manifest.id)) {
-          await AsyncStorage.removeItem("last-screen");
-          await AsyncStorage.removeItem("manifest-id");
-          await AsyncStorage.removeItem("flow-name");
-        }
-      })();
+      if (manifest?.id && INTERNAL_APP_IDS.includes(manifest.id)) {
+        AsyncStorage.removeItem("last-screen");
+        AsyncStorage.removeItem("manifest-id");
+        AsyncStorage.removeItem("flow-name");
+      }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [],

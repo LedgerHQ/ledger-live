@@ -142,38 +142,36 @@ export const WebPTXPlayer = ({ manifest, inputs, disableHeader }: Props) => {
     useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
 
   useEffect(() => {
-    (async () => {
-      if (isInternalApp && webviewState.url) {
-        const url = safeUrl(webviewState.url);
+    if (isInternalApp && webviewState.url) {
+      const url = safeUrl(webviewState.url);
 
-        if (url) {
-          const goToURL = url.searchParams.get("goToURL") || "";
-          const manifestId = url.searchParams.get("goToManifest");
+      if (url) {
+        const goToURL = url.searchParams.get("goToURL") || "";
+        const manifestId = url.searchParams.get("goToManifest");
 
-          if (manifestId && goToURL) {
-            const flowName = url.searchParams.get("flowName") || "buy";
+        if (manifestId && goToURL) {
+          const flowName = url.searchParams.get("flowName") || "buy";
 
-            await AsyncStorage.setItem("manifest-id", manifestId);
-            await AsyncStorage.setItem("flow-name", flowName);
-            await AsyncStorage.setItem("last-screen", url.searchParams.get("lastScreen") || "");
+          AsyncStorage.setItem("manifest-id", manifestId);
+          AsyncStorage.setItem("flow-name", flowName);
+          AsyncStorage.setItem("last-screen", url.searchParams.get("lastScreen") || "");
 
-            navigation.navigate(NavigatorName.Exchange, {
-              screen: flowName === "buy" ? ScreenName.ExchangeBuy : ScreenName.ExchangeSell,
-              params: {
-                platform: manifestId,
-                goToURL,
-              },
-            });
+          navigation.navigate(NavigatorName.Exchange, {
+            screen: flowName === "buy" ? ScreenName.ExchangeBuy : ScreenName.ExchangeSell,
+            params: {
+              platform: manifestId,
+              goToURL,
+            },
+          });
 
-            return void 0;
-          }
+          return void 0;
         }
       }
+    }
 
-      if (isInternalApp && lastMatchingURL) {
-        lastMatchingURL.current = webviewState.url;
-      }
-    })();
+    if (isInternalApp && lastMatchingURL) {
+      lastMatchingURL.current = webviewState.url;
+    }
   }, [isInternalApp, navigation, webviewState.url]);
 
   const handleHardwareBackPress = useCallback(() => {
