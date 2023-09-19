@@ -20,7 +20,7 @@ describe("fetchCurrencyAll", () => {
     expect(network as jest.Mock).toHaveBeenCalledWith({
       method: "GET",
       timeout: DEFAULT_SWAP_TIMEOUT_MS,
-      url: "https://swap-stg.ledger.com/v5/currencies/all?providers-whitelist=oneinch&additional-coins-flag=false",
+      url: "https://swap.staging.aws.ledger.fr/v5/currencies/all?providers-whitelist=oneinch&additional-coins-flag=false",
     });
   });
 });
