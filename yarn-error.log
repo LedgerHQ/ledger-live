@@ -1,0 +1,196 @@
+Arguments: 
+  /Users/landry.monga/.nvm/versions/node/v18.17.0/bin/node /Users/landry.monga/.cache/node/corepack/yarn/1.22.19/bin/yarn.js
+
+PATH: 
+  /Users/landry.monga/.bun/bin:/Users/landry.monga/.nvm/versions/node/v18.17.0/bin:/Users/landry.monga/.proto/bin:/Users/landry.monga/.rbenv/shims:/Users/landry.monga/Library/pnpm:/Users/landry.monga/.volta/bin:/Users/landry.monga/.pyenv/shims:/Library/Frameworks/Python.framework/Versions/3.11/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/Users/landry.monga/.rbenv/versions/3.1.2/bin:/Users/landry.monga/.yarn/bin:/Users/landry.monga/Library/Android/sdk/emulator:/Users/landry.monga/Library/Android/sdk/platform-tools:/Users/landry.monga/Library/Android/sdk/tools:/Users/landry.monga/Library/Android/sdk/tools/bin:/Users/landry.monga/bin/flutter/bin
+
+Yarn version: 
+  1.22.19
+
+Node version: 
+  18.17.0
+
+Platform: 
+  darwin arm64
+
+Trace: 
+  Error: https://registry.yarnpkg.com/create-release-hash: Not found
+      at params.callback [as _callback] (/Users/landry.monga/.cache/node/corepack/yarn/1.22.19/lib/cli.js:66145:18)
+      at self.callback (/Users/landry.monga/.cache/node/corepack/yarn/1.22.19/lib/cli.js:140890:22)
+      at Request.emit (node:events:514:28)
+      at Request.<anonymous> (/Users/landry.monga/.cache/node/corepack/yarn/1.22.19/lib/cli.js:141862:10)
+      at Request.emit (node:events:514:28)
+      at IncomingMessage.<anonymous> (/Users/landry.monga/.cache/node/corepack/yarn/1.22.19/lib/cli.js:141784:12)
+      at Object.onceWrapper (node:events:628:28)
+      at IncomingMessage.emit (node:events:526:35)
+      at endReadableNT (node:internal/streams/readable:1359:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+
+npm manifest: 
+  {
+    "name": "ledger-live",
+    "version": "0.0.0",
+    "license": "MIT",
+    "private": true,
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/LedgerHQ/ledger-live.git"
+    },
+    "bugs": {
+      "url": "https://github.com/LedgerHQ/ledger-live/issues"
+    },
+    "scripts": {
+      "bump": "changeset version",
+      "clean": "git clean -fdX",
+      "changelog": "changeset add",
+      "prerelease": "pnpm run build:libs",
+      "release": "changeset publish",
+      "build:libs": "pnpm turbo build --no-daemon --filter=\"./libs/**\" --filter=\"!./libs/ui/examples/**\"",
+      "build:libs:force": "pnpm -r --filter=\"./libs/**\" --filter=\"!./libs/ui/examples/**\" build",
+      "build:actions": "pnpm turbo build --filter=@actions/*",
+      "build:cli": "pnpm turbo build --no-daemon --filter=live-cli",
+      "build:coin": "pnpm turbo build --no-daemon --filter=\"./libs/coin-**\"",
+      "build:domain": "pnpm turbo build --no-daemon --filter=domain-service",
+      "build:network": "pnpm turbo build --no-daemon --filter=live-network",
+      "build:llc": "pnpm turbo build --no-daemon --filter=\"live-common\"",
+      "build:lld": "pnpm turbo build --no-daemon --filter=ledger-live-desktop",
+      "build:lld:deps": "pnpm turbo build --no-daemon --filter=\"ledger-live-desktop^...\"",
+      "build:llm:android": "pnpm turbo android:apk:local --no-daemon --filter=live-mobile",
+      "build:llm:ios": "pnpm turbo ios:local:ipa --no-daemon --filter=live-mobile",
+      "build:llm:deps": "pnpm turbo build --no-daemon --filter=\"live-mobile^...\"",
+      "build:ljs": "pnpm turbo build --no-daemon --filter=\"./libs/ledgerjs/**\"",
+      "build-ci:llm:ios": "pnpm turbo ios:ci:adhoc --no-daemon --filter=live-mobile",
+      "build-ci:llm:android": "pnpm turbo android:apk --no-daemon --filter=live-mobile",
+      "clean:ljs": "pnpm turbo clean --no-daemon --filter=\"./libs/ledgerjs/**\"",
+      "doc:ljs": "pnpm turbo doc --no-daemon --filter=\"./libs/ledgerjs/**\"",
+      "watch:ljs": "pnpm turbo watch --no-daemon --filter=\"./libs/ledgerjs/**\"",
+      "watch:common": "pnpm turbo watch --no-daemon --filter=live-common",
+      "dev:cli": "pnpm turbo watch --no-daemon --filter=live-cli",
+      "dev:lld": "pnpm turbo start --no-daemon --filter=ledger-live-desktop",
+      "dev:lld:debug": "DEV_TOOLS=1 LEDGER_INTERNAL_ARGS=--inspect ELECTRON_ARGS=--remote-debugging-port=8315 pnpm turbo start --no-daemon --filter=ledger-live-desktop",
+      "dev:llm": "pnpm turbo start --no-daemon --filter=live-mobile",
+      "release:lld": "pnpm turbo release --no-daemon --filter=ledger-live-desktop",
+      "pre:lld": "pnpm turbo pre-build --no-daemon --filter=ledger-live-desktop",
+      "nightly": "pnpm turbo nightly --no-daemon",
+      "nightly:lld": "pnpm turbo nightly --no-daemon --filter=ledger-live-desktop",
+      "test": "pnpm turbo test --no-daemon --concurrency=100%",
+      "run:cli": "./apps/cli/bin/index.js",
+      "lint": "pnpm turbo lint --no-daemon",
+      "lint:fix": "pnpm turbo lint:fix --no-daemon",
+      "typecheck": "pnpm turbo typecheck --no-daemon",
+      "desktop": "pnpm --filter ledger-live-desktop",
+      "cli": "pnpm --filter live-cli",
+      "coin": "pnpm --filter coin-framework",
+      "coin:algorand": "pnpm --filter coin-algorand",
+      "coin:polkadot": "pnpm --filter coin-polkadot",
+      "coin:evm": "pnpm --filter coin-evm",
+      "domain": "pnpm --filter domain-service",
+      "doc": "pnpm --filter docs",
+      "mobile": "pnpm --filter live-mobile",
+      "common": "pnpm --filter live-common",
+      "web-tools": "pnpm --filter web-tools",
+      "live-env": "pnpm --filter live-env",
+      "portfolio": "pnpm --filter live-portfolio",
+      "promise": "pnpm --filter live-promise",
+      "network": "pnpm --filter live-network",
+      "utils": "pnpm --filter live-utils",
+      "bot:github": "pnpm --filter live-github-bot",
+      "ljs:cryptoassets": "pnpm --filter cryptoassets",
+      "ljs:devices": "pnpm --filter devices",
+      "ljs:errors": "pnpm --filter errors",
+      "ljs:hw-app-algorand": "pnpm --filter hw-app-algorand",
+      "ljs:hw-app-btc": "pnpm --filter hw-app-btc",
+      "ljs:hw-app-cosmos": "pnpm --filter hw-app-cosmos",
+      "ljs:hw-app-eth": "pnpm --filter hw-app-eth",
+      "ljs:hw-app-exchange": "pnpm --filter hw-app-exchange",
+      "ljs:hw-app-helium": "pnpm --filter hw-app-helium",
+      "ljs:hw-app-near": "pnpm --filter hw-app-near",
+      "ljs:hw-app-polkadot": "pnpm --filter hw-app-polkadot",
+      "ljs:hw-app-solana": "pnpm --filter hw-app-solana",
+      "ljs:hw-app-str": "pnpm --filter hw-app-str",
+      "ljs:hw-app-tezos": "pnpm --filter hw-app-tezos",
+      "ljs:hw-app-trx": "pnpm --filter hw-app-trx",
+      "ljs:hw-app-xrp": "pnpm --filter hw-app-xrp",
+      "ljs:hw-transport": "pnpm --filter hw-transport",
+      "ljs:hw-transport-http": "pnpm --filter hw-transport-http",
+      "ljs:hw-transport-mocker": "pnpm --filter hw-transport-mocker",
+      "ljs:hw-transport-node-ble": "pnpm --filter hw-transport-node-ble",
+      "ljs:hw-transport-node-hid": "pnpm --filter hw-transport-node-hid",
+      "ljs:hw-transport-node-hid-noevents": "pnpm --filter hw-transport-node-hid-noevents",
+      "ljs:hw-transport-node-hid-singleton": "pnpm --filter hw-transport-node-hid-singleton",
+      "ljs:hw-transport-node-speculos": "pnpm --filter hw-transport-node-speculos",
+      "ljs:hw-transport-node-speculos-http": "pnpm --filter hw-transport-node-speculos-http",
+      "ljs:hw-transport-web-ble": "pnpm --filter hw-transport-web-ble",
+      "ljs:hw-transport-webhid": "pnpm --filter hw-transport-webhid",
+      "ljs:hw-transport-webusb": "pnpm --filter hw-transport-webusb",
+      "ljs:logs": "pnpm --filter logs",
+      "ljs:react-native-hid": "pnpm --filter react-native-hid",
+      "ljs:react-native-hw-transport-ble": "pnpm --filter react-native-hw-transport-ble",
+      "ljs:types-cryptoassets": "pnpm --filter types-cryptoassets",
+      "ljs:types-devices": "pnpm --filter types-devices",
+      "ljs:types-live": "pnpm --filter types-live",
+      "test-utils": "pnpm --filter test-utils",
+      "test-utils:dummy-live-app": "pnpm --filter dummy-live-app",
+      "test-utils:dummy-wallet-app": "pnpm --filter dummy-wallet-app",
+      "ui": "pnpm --filter ui",
+      "ui:react": "pnpm --filter react-ui",
+      "ui:native": "pnpm --filter native-ui",
+      "ui:icons": "pnpm --filter icons-ui",
+      "ui:crypto-icons": "pnpm --filter crypto-icons-ui",
+      "ui:shared": "pnpm --filter ui-shared",
+      "ui:example:next": "pnpm  --filter=\"next.js-example\"",
+      "ui:example:webpack": "pnpm  --filter=\"webpack.js-example\"",
+      "actions": "pnpm --filter @actions/*"
+    },
+    "devDependencies": {
+      "@changesets/changelog-github": "^0.4.8",
+      "@changesets/cli": "^2.26.0",
+      "@commitlint/cli": "^17.4.2",
+      "@commitlint/config-conventional": "^17.6.5",
+      "@commitlint/prompt-cli": "^17.4.2",
+      "@typescript-eslint/eslint-plugin": "^6.2.0",
+      "@typescript-eslint/parser": "^6.2.0",
+      "create-release-hash": "workspace:*",
+      "eslint": "^8.41.0",
+      "eslint-config-prettier": "^9.0.0",
+      "eslint-plugin-json": "^3.1.0",
+      "eslint-plugin-prettier": "^4.2.1",
+      "migrate-branch": "workspace:*",
+      "pnpm-utils": "workspace:*",
+      "prettier": "^2.8.1",
+      "rimraf": "^4.4.1",
+      "turbo": "^1.10.1",
+      "typescript": "^5.1.3",
+      "zx": "^7.2.2"
+    },
+    "pnpm": {
+      "overrides": {
+        "stellar-base>sodium-native": "^3.2.1",
+        "remove-flow-types-loader>flow-remove-types": "^2",
+        "remove-flow-types-loader>loader-utils": "*"
+      },
+      "patchedDependencies": {
+        "react-native-fast-crypto@2.2.0": "patches/react-native-fast-crypto@2.2.0.patch",
+        "react-native-video@5.2.0": "patches/react-native-video@5.2.0.patch",
+        "rn-fetch-blob@0.12.0": "patches/rn-fetch-blob@0.12.0.patch",
+        "react-native-image-crop-tools@1.6.4": "patches/react-native-image-crop-tools@1.6.4.patch",
+        "react-native-webview@11.26.1": "patches/react-native-webview@11.26.1.patch",
+        "asyncstorage-down@4.2.0": "patches/asyncstorage-down@4.2.0.patch",
+        "detox@20.11.0": "patches/detox@20.11.0.patch",
+        "usb@2.9.0": "patches/usb@2.9.0.patch"
+      },
+      "packageExtensions": {
+        "eslint-config-next@*": {
+          "dependencies": {
+            "next": "*"
+          }
+        }
+      }
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
