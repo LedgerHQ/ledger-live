@@ -33,7 +33,7 @@ export default function EvmFeesStrategy({
   const account = getMainAccount(accountProp, parentAccount);
   const bridge: AccountBridge<Transaction> = getAccountBridge(account);
 
-  const [gasOptions, error] = useGasOptions({
+  const [gasOptions, error, loading] = useGasOptions({
     currency: account.currency,
     transaction,
     interval: account.currency.blockAvgTime ? account.currency.blockAvgTime * 1000 : undefined,
@@ -88,6 +88,10 @@ export default function EvmFeesStrategy({
       setTransaction,
     });
   }, [navigation, route.params, account.id, parentAccount, transaction, setTransaction]);
+
+  if (loading) {
+    return <InfiniteLoader size={32} />;
+  }
 
   /**
    * If no gasOptions available, this means this currency does not have a
