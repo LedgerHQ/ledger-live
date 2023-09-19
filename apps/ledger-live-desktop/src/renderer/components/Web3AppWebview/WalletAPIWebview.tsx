@@ -299,9 +299,9 @@ interface Props {
 }
 
 export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
-  ({ manifest, inputs = {}, onStateChange }, ref) => {
+  ({ manifest, inputs = {}, hash = {}, onStateChange }, ref) => {
     const { webviewState, webviewRef, webviewProps, handleRefresh } = useWebviewState(
-      { manifest, inputs },
+      { manifest, inputs, hash },
       ref,
     );
     useEffect(() => {

@@ -40,8 +40,15 @@ import { useWebviewState } from "./helpers";
 
 const tracking = trackingWrapper(track);
 export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
-  ({ manifest, inputs = {}, onStateChange }, ref) => {
-    const { webviewState, webviewRef, webviewProps } = useWebviewState({ manifest, inputs }, ref);
+  ({ manifest, inputs = {}, hash = {}, onStateChange }, ref) => {
+    const { webviewState, webviewRef, webviewProps } = useWebviewState(
+      {
+        manifest,
+        inputs,
+        hash,
+      },
+      ref,
+    );
 
     useEffect(() => {
       if (onStateChange) {

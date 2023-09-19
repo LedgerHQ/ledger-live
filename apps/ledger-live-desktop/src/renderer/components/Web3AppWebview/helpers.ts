@@ -12,6 +12,7 @@ import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { WebviewAPI, WebviewState, WebviewTag } from "./types";
 import { track } from "~/renderer/analytics/segment";
+import { JsonValue } from "@dfinity/candid";
 
 export const initialWebviewState: WebviewState = {
   url: "",
@@ -24,7 +25,8 @@ export const initialWebviewState: WebviewState = {
 
 type UseWebviewStateParams = {
   manifest: LiveAppManifest;
-  inputs?: Record<string, string | boolean | undefined>;
+  inputs?: Record<string, string | undefined>;
+  hash?: Record<string, JsonValue>;
 };
 
 type UseWebviewStateReturn = {
@@ -41,8 +43,11 @@ export function useWebviewState(
   webviewAPIRef: React.ForwardedRef<WebviewAPI>,
 ): UseWebviewStateReturn {
   const webviewRef = useRef<WebviewTag>(null);
-  const { manifest, inputs } = params;
-  const initialURL = useMemo(() => getInitialURL(inputs, manifest), [manifest, inputs]);
+  const { manifest, inputs = {}, hash = {} } = params;
+  const initialURL = useMemo<string>(
+    () => getInitialURL({ inputs, manifest, hash }),
+    [manifest, inputs, hash],
+  );
   const [state, setState] = useState<WebviewState>(initialWebviewState);
 
   useImperativeHandle(
@@ -88,6 +93,13 @@ export function useWebviewState(
   useEffect(() => {
     setMounted(true);
   }, [isMounted]);
+
+  const handleUpdateTargetURL = useCallback((event: Electron.UpdateTargetUrlEvent) => {
+    setState(oldState => ({
+      ...oldState,
+      url: event.url,
+    }));
+  }, []);
 
   const handlePageTitleUpdated = useCallback((event: Electron.PageTitleUpdatedEvent) => {
     setState(oldState => ({
@@ -210,6 +222,7 @@ export function useWebviewState(
       return;
     }
 
+    webview.addEventListener("update-target-url", handleUpdateTargetURL);
     webview.addEventListener("page-title-updated", handlePageTitleUpdated);
     webview.addEventListener("did-navigate", handleDidNavigate);
     webview.addEventListener("did-navigate-in-page", handleDidNavigateInPage);
@@ -220,6 +233,7 @@ export function useWebviewState(
     webview.addEventListener("crashed", handleCrashed);
 
     return () => {
+      webview.removeEventListener("update-target-url", handleUpdateTargetURL);
       webview.removeEventListener("page-title-updated", handlePageTitleUpdated);
       webview.removeEventListener("did-navigate", handleDidNavigate);
       webview.removeEventListener("did-navigate-in-page", handleDidNavigateInPage);
@@ -230,6 +244,7 @@ export function useWebviewState(
       webview.removeEventListener("crashed", handleCrashed);
     };
   }, [
+    handleUpdateTargetURL,
     handleDidNavigate,
     handleDidNavigateInPage,
     handleDidStartLoading,

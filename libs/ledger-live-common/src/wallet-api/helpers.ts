@@ -8,6 +8,8 @@ import {
 } from "./types";
 import { WALLET_API_FAMILIES } from "./constants";
 import { includes } from "../helpers";
+import { LiveAppManifest } from "../platform/types";
+import { JsonValue } from "@dfinity/candid";
 
 export function isWalletAPISupportedCurrency(
   currency: Currency,
@@ -55,6 +57,28 @@ export function addParamsToURL(url: URL, inputs?: Record<string, string | undefi
   }
 }
 
+export function addHashToURL(url: URL, hash?: Record<string, JsonValue>): void {
+  const hashParams = new URLSearchParams(url.hash);
+  if (hash) {
+    Object.entries(hash).forEach(([key, value]) => {
+      if (value ?? false) {
+        if (typeof value === "string") {
+          console.log(
+            '%chelpers.ts line:66 "fesfpsofjspfoesjfpsoj"',
+            "color: #007acc;",
+            "fesfpsofjspfoesjfpsoj",
+          );
+          hashParams.set(key, value);
+        } else {
+          console.log('%chelpers.ts line:68 "we iz here"', "color: #007acc;", "we iz here");
+          hashParams.set(key, JSON.stringify(value));
+        }
+      }
+    });
+  }
+  url.hash = hashParams.toString();
+}
+
 type getHostHeadersParams = {
   client: string;
   theme: "light" | "dark";
@@ -81,7 +105,15 @@ const isWhitelistedDomain = (url: string, whitelistedDomains: string[]): boolean
   return isValid;
 };
 
-export const getInitialURL = (inputs, manifest) => {
+export const getInitialURL = ({
+  inputs,
+  manifest,
+  hash = {},
+}: {
+  inputs: Record<string, string | undefined>;
+  manifest: LiveAppManifest;
+  hash?: Record<string, JsonValue>;
+}) => {
   try {
     if (inputs?.goToURL) {
       const url = decodeURIComponent(inputs.goToURL);
@@ -94,6 +126,7 @@ export const getInitialURL = (inputs, manifest) => {
     const url = new URL(manifest.url);
 
     addParamsToURL(url, inputs);
+    addHashToURL(url, hash);
 
     if (manifest.params) {
       url.searchParams.set("params", JSON.stringify(manifest.params));

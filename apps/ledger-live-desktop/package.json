@@ -45,6 +45,7 @@
   },
   "dependencies": {
     "@braze/web-sdk": "^4.6.3",
+    "@dfinity/candid": "^0.15.6",
     "@electron/remote": "^2",
     "@ledgerhq/coin-evm": "workspace:^",
     "@ledgerhq/coin-framework": "workspace:^",

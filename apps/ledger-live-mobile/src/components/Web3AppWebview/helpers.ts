@@ -130,7 +130,7 @@ export function useWebviewState(
 ) {
   const webviewRef = useRef<WebView>(null);
   const { manifest, inputs } = params;
-  const initialURL = useMemo(() => getInitialURL(inputs, manifest), [manifest, inputs]);
+  const initialURL = useMemo(() => getInitialURL({ inputs, manifest }), [manifest, inputs]);
   const [state, setState] = useState<WebviewState>(initialWebviewState);
 
   useEffect(() => {
