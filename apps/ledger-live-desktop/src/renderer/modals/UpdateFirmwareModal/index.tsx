@@ -15,6 +15,7 @@ import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/manager/loc
 import StepConfirmation, { StepConfirmFooter } from "./steps/03-step-confirmation";
 import { Divider, Flex, FlowStepper, Text } from "@ledgerhq/react-ui";
 import Disclaimer from "./Disclaimer";
+import Header from "./Header";
 
 type MaybeError = Error | undefined | null;
 
@@ -58,6 +59,7 @@ export type Props = {
   withResetStep: boolean;
   withAppsToReinstall: boolean;
   onDrawerClose: (reinstall?: boolean) => void;
+  onRequestClose: () => void;
   firmware?: FirmwareUpdateContext;
   stepId: StepId;
   error?: Error | null | undefined;
@@ -83,6 +85,7 @@ const UpdateModal = ({
   withAppsToReinstall,
   error,
   onDrawerClose,
+  onRequestClose,
   setFirmwareUpdateCompleted,
   firmware,
   ...props
@@ -232,6 +235,7 @@ const UpdateModal = ({
       flex={1}
       data-test-id="firmware-update-container"
     >
+      <Header onRequestClose={onRequestClose} />
       <Text alignSelf="center" variant="h5Inter">
         {t("manager.modal.title", { productName: deviceModel.productName })}
       </Text>

@@ -101,6 +101,7 @@ const FirmwareUpdate = (props: Props) => {
         device.modelId,
       ),
       onDrawerClose,
+      onRequestClose,
       status: modal,
       stepId: stepId,
       installed: installed,
@@ -116,7 +117,7 @@ const FirmwareUpdate = (props: Props) => {
     setDrawer(UpdateModal, updateModalProps, {
       preventBackdropClick: true,
       forceDisableFocusTrap: true,
-      onRequestClose,
+      onRequestClose: undefined,
     });
   }, [
     device,
