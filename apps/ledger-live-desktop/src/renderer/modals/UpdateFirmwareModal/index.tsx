@@ -16,6 +16,7 @@ import StepConfirmation, { StepConfirmFooter } from "./steps/03-step-confirmatio
 import { Divider, Flex, FlowStepper, Text } from "@ledgerhq/react-ui";
 import Disclaimer from "./Disclaimer";
 import Header from "./Header";
+import Cancel from "./Cancel";
 
 type MaybeError = Error | undefined | null;
 
@@ -102,6 +103,11 @@ const UpdateModal = ({
   const [CLSBackup, setCLSBackup] = useState<string>();
   const [updatedDeviceInfo, setUpdatedDeviceInfo] = useState<DeviceInfo | undefined>(undefined);
   const withFinal = useMemo(() => hasFinalFirmware(firmware?.final), [firmware]);
+  const [cancel, setCancel] = useState<boolean>(false);
+
+  const onRequestCancel = useCallback(() => {
+    setCancel(state => !state);
+  }, []);
 
   const createSteps = useCallback(
     ({ withResetStep }: { withResetStep: boolean }) => {
@@ -235,11 +241,13 @@ const UpdateModal = ({
       flex={1}
       data-test-id="firmware-update-container"
     >
-      <Header onRequestClose={onRequestClose} />
+      <Header onRequestClose={onRequestCancel} />
       <Text alignSelf="center" variant="h5Inter">
         {t("manager.modal.title", { productName: deviceModel.productName })}
       </Text>
-      {showDisclaimer ? (
+      {cancel ? (
+        <Cancel onContinue={onRequestCancel} onCancel={onRequestClose} />
+      ) : showDisclaimer ? (
         <Disclaimer onContinue={() => setShowDisclaimer(false)} t={t} firmware={firmware} />
       ) : (
         <FlowStepper.Indexed
