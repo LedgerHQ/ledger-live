@@ -1,8 +1,8 @@
 import { openDeeplink, tapById, waitForElementById } from "../helpers";
 
 export default class ReceivePage {
-  noVerifyAddressButton = "no-verify-address-button";
-  noVerifyValidateButton = "no-verify-validate-button";
+  noVerifyAddressButton = "button-DontVerify-my-address";
+  noVerifyValidateButton = "button-confirm-dont-verify";
   receiveFreshAddress = "receive-fresh-address";
 
   openViaDeeplink() {

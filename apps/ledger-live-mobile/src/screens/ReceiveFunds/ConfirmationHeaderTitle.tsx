@@ -12,7 +12,11 @@ function ConfirmationHeaderTitle({ accountCurrency }: Props) {
 
   return (
     <Box alignItems={"center"} justifyContent={"center"}>
-      <Text variant={"h5"} fontWeight={"semiBold"}>
+      <Text
+        variant={"h5"}
+        fontWeight={"semiBold"}
+        testID={"deposit-confirmation-title-" + accountCurrency?.ticker}
+      >
         {t("transfer.receive.receiveConfirmation.title", {
           currencyTicker: accountCurrency?.ticker,
         })}

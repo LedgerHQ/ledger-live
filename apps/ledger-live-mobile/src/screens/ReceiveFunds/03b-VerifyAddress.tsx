@@ -67,7 +67,7 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
 
       sub.current = (
         mainAccount.id.startsWith("mock")
-          ? of({}).pipe(delay(1000), rejectionOp())
+          ? of({}).pipe(delay(5000), rejectionOp())
           : getAccountBridge(mainAccount).receive(mainAccount, {
               deviceId: device.deviceId,
               verify: true,

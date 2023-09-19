@@ -85,6 +85,10 @@ export default class PortfolioPage {
     return tapByElement(this.earnButton());
   }
 
+  waitForTransfertDrawerToLoad() {
+    return waitForElementById("transfer-deposit-button", 120000);
+  }
+
   navigateToDepositFromTransferMenu() {
     return tapByElement(this.depositTransfertMenuButton());
   }

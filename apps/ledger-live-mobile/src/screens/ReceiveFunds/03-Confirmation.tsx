@@ -283,6 +283,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
                   fontWeight={"semiBold"}
                   textAlign={"center"}
                   numberOfLines={1}
+                  testID={"deposit-account-name-" + mainAccount.name}
                 >
                   {mainAccount.name}
                 </Text>
@@ -382,7 +383,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
       </NavigationScrollView>
       <Flex m={6}>
         <Flex>
-          <Button type="main" size="large" onPress={onRetry}>
+          <Button type="main" size="large" onPress={onRetry} testID="button-receive-confirmation">
             {t("transfer.receive.receiveConfirmation.verifyAddress")}
           </Button>
 
