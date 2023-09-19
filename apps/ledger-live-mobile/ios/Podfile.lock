@@ -1172,7 +1172,11 @@ SPEC CHECKSUMS:
   glog: 04b94705f318337d7ead9e6d17c019bd9b1f6b1b
   GoogleDataTransport: 54dee9d48d14580407f8f5fbf2f496e92437a2f2
   GoogleUtilities: 13e2c67ede716b8741c7989e26893d151b2b2084
+<<<<<<< HEAD
   hermes-engine: 10fbd3f62405c41ea07e71973ea61e1878d07322
+=======
+  hermes-engine: b434cea529ad0152c56c7cb6486b0c4c0b23b5de
+>>>>>>> cf84e3478c (lockfile)
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   libwebp: 1786c9f4ff8a279e4dac1e8f385004d5fc253009
   lottie-ios: 809ecf2d460ed650a6aed7aa88b2ec45fab4779c
