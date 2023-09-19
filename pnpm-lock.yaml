@@ -792,8 +792,8 @@ importers:
         specifier: ^14.11.1
         version: 14.11.1(@react-native-firebase/app@14.11.1)
       '@react-native-firebase/remote-config':
-        specifier: ^14.11.1
-        version: 14.11.1(@react-native-firebase/app@14.11.1)
+        specifier: ^18.0.0
+        version: 18.4.0(@react-native-firebase/app@14.11.1)
       '@react-native-masked-view/masked-view':
         specifier: ^0.2.6
         version: 0.2.6(react-native@0.71.6)(react@18.0.0)
@@ -19377,11 +19377,11 @@ packages:
       '@react-native-firebase/app': 14.11.1(react-native@0.71.6)(react@18.0.0)
     dev: false
 
-  /@react-native-firebase/remote-config@14.11.1(@react-native-firebase/app@14.11.1):
-    resolution: {integrity: sha512-OyiOQweTh06kNdLDxyllvqYYzaUEUQ4S63/f6aS0d2287o/W8nXybb1O0UWz1NRg6mfqlqQPIqdpjtKJrKz9Tg==}
+  /@react-native-firebase/remote-config@18.4.0(@react-native-firebase/app@14.11.1):
+    resolution: {integrity: sha512-BAcmwHVkDGKhcSSM8S7E5sqsH1FCz0RMDD+lklv0yd+4QE2jp+BrXGj81maEoIP9zgG1cYRLshVs6y/tF/nrWQ==}
     peerDependencies:
-      '@react-native-firebase/analytics': 14.11.1
-      '@react-native-firebase/app': 14.11.1
+      '@react-native-firebase/analytics': 18.4.0
+      '@react-native-firebase/app': 18.4.0
     dependencies:
       '@react-native-firebase/app': 14.11.1(react-native@0.71.6)(react@18.0.0)
     dev: false
@@ -28981,7 +28981,7 @@ packages:
       babel-plugin-syntax-jsx: 6.18.0
       lodash: 4.17.21
       picomatch: 2.3.1
-      styled-components: 5.3.5(react-is@18.1.0)(react@18.0.0)
+      styled-components: 5.3.5(react-dom@17.0.2)(react-is@17.0.2)(react@17.0.2)
 
   /babel-plugin-syntax-jsx@6.18.0:
     resolution: {integrity: sha512-qrPaCSo9c8RHNRHIotaufGbuOBN8rtdC4QrrFFc43vyWCCz7Kl7GL1PGaXtMGQZUXrkCjNEgxDfmAuAabr/rlw==}
@@ -56715,6 +56715,7 @@ packages:
       react-is: 18.1.0
       shallowequal: 1.1.0
       supports-color: 5.5.0
+    dev: false
 
   /styled-components@6.0.7(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-xIwWuiRMYR43mskVsW9MGTRjSo7ol4bcVjT595fGUp3OLBJOlOgaiKaxsHdC4a2HqWKqKnh0CmcRbk5ogyDjTg==}
