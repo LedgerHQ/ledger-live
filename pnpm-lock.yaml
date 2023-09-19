@@ -822,8 +822,8 @@ importers:
         specifier: ^2.9.1
         version: 2.9.1(react-native@0.71.6)(react@18.0.0)
       '@segment/sovran-react-native':
-        specifier: ^0.4.5
-        version: 0.4.5(react-native@0.71.6)(react@18.0.0)
+        specifier: ^1.0.0
+        version: 1.0.4(@react-native-async-storage/async-storage@1.19.2)(react-native@0.71.6)(react@18.0.0)
       '@sentry/react-native':
         specifier: ^5.3.0
         version: 5.3.0(react-native@0.71.6)(react@18.0.0)
@@ -19150,7 +19150,7 @@ packages:
       open: 6.4.0
       ora: 5.4.1
       semver: 6.3.1
-      shell-quote: 1.7.3
+      shell-quote: 1.8.1
     transitivePeerDependencies:
       - encoding
 
@@ -19179,7 +19179,7 @@ packages:
       node-fetch: 2.6.9
       open: 6.4.0
       semver: 6.3.1
-      shell-quote: 1.7.3
+      shell-quote: 1.8.1
     transitivePeerDependencies:
       - encoding
     dev: true
@@ -19195,7 +19195,7 @@ packages:
       open: 6.4.0
       ora: 5.4.1
       semver: 6.3.1
-      shell-quote: 1.7.3
+      shell-quote: 1.8.1
     transitivePeerDependencies:
       - encoding
     dev: true
@@ -19759,6 +19759,24 @@ packages:
       react: 18.0.0
       react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       shell-quote: 1.7.3
+    dev: false
+
+  /@segment/sovran-react-native@1.0.4(@react-native-async-storage/async-storage@1.19.2)(react-native@0.71.6)(react@18.0.0):
+    resolution: {integrity: sha512-oeIjspLOX9V+YmM7arZ+OXCyjooKdurnyVji+sj8OVkw+tUcXtvy+m9oC8E4yqazR/tghWCYE+tCriNx4jsVTw==}
+    peerDependencies:
+      '@react-native-async-storage/async-storage': 1.x
+      react: '*'
+      react-native: '*'
+    peerDependenciesMeta:
+      '@react-native-async-storage/async-storage':
+        optional: true
+    dependencies:
+      '@react-native-async-storage/async-storage': 1.19.2(react-native@0.71.6)
+      ansi-regex: 5.0.1
+      deepmerge: 4.3.0
+      react: 18.0.0
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      shell-quote: 1.8.0
     dev: false
 
   /@sentry-internal/tracing@7.45.0:
@@ -28981,7 +28999,7 @@ packages:
       babel-plugin-syntax-jsx: 6.18.0
       lodash: 4.17.21
       picomatch: 2.3.1
-      styled-components: 5.3.5(react-is@18.1.0)(react@18.0.0)
+      styled-components: 5.3.5(react-dom@17.0.2)(react-is@17.0.2)(react@17.0.2)
 
   /babel-plugin-syntax-jsx@6.18.0:
     resolution: {integrity: sha512-qrPaCSo9c8RHNRHIotaufGbuOBN8rtdC4QrrFFc43vyWCCz7Kl7GL1PGaXtMGQZUXrkCjNEgxDfmAuAabr/rlw==}
@@ -44200,7 +44218,7 @@ packages:
     resolution: {integrity: sha512-JpDCcQnyAAzZZaZ7vEiSqL690w7dAEyLao+KC96zBplnYbJS7TYNjvM3M7y3dGz+v7aIsJk3hllWuc0kWAjyRQ==}
     dependencies:
       picocolors: 1.0.0
-      shell-quote: 1.7.3
+      shell-quote: 1.8.1
 
   /layout-base@1.0.2:
     resolution: {integrity: sha512-8h2oVEZNktL4BH2JCOI90iD1yXwL6iNW7KcCKT2QZgQJR2vbqDsldCTPRU9NifTCqHZci57XvQQ15YTu+sTYPg==}
@@ -52129,7 +52147,7 @@ packages:
       prompts: 2.4.2
       react-error-overlay: 6.0.11
       recursive-readdir: 2.2.2
-      shell-quote: 1.7.3
+      shell-quote: 1.8.1
       strip-ansi: 6.0.1
       text-table: 0.2.0
       typescript: 5.1.3
@@ -52143,7 +52161,7 @@ packages:
   /react-devtools-core@4.27.4:
     resolution: {integrity: sha512-dvZjrAJjahd6NNl7dDwEk5TyHsWJxDpYL7VnD9jdEr98EEEsVhw9G8JDX54Nrb3XIIOBlJDpjo3AuBuychX9zg==}
     dependencies:
-      shell-quote: 1.7.3
+      shell-quote: 1.8.1
       ws: 7.5.7
     transitivePeerDependencies:
       - bufferutil
@@ -55499,9 +55517,12 @@ packages:
   /shell-quote@1.7.3:
     resolution: {integrity: sha512-Vpfqwm4EnqGdlsBFNmHhxhElJYrdfcxPThu+ryKS5J8L/fhAwLazFZtq+S+TWZ9ANj2piSQLGj6NQg+lKPmxrw==}
 
+  /shell-quote@1.8.0:
+    resolution: {integrity: sha512-QHsz8GgQIGKlRi24yFc6a6lN69Idnx634w49ay6+jA5yFh7a1UY+4Rp6HPx/L/1zcEDPEij8cIsiqR6bQsE5VQ==}
+    dev: false
+
   /shell-quote@1.8.1:
     resolution: {integrity: sha512-6j1W9l1iAs/4xYBI1SYOVZyFcCis9b4KCLQ8fgAGG07QvzaRLVVRQvAy85yNmmZSjYjg4MWh4gNvlPujU/5LpA==}
-    dev: true
 
   /shiki@0.14.3:
     resolution: {integrity: sha512-U3S/a+b0KS+UkTyMjoNojvTgrBHjgp7L6ovhFVZsXmBGnVdQ4K4U9oK0z63w538S91ATngv1vXigHCSWOwnr+g==}
@@ -56715,6 +56736,7 @@ packages:
       react-is: 18.1.0
       shallowequal: 1.1.0
       supports-color: 5.5.0
+    dev: false
 
   /styled-components@6.0.7(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-xIwWuiRMYR43mskVsW9MGTRjSo7ol4bcVjT595fGUp3OLBJOlOgaiKaxsHdC4a2HqWKqKnh0CmcRbk5ogyDjTg==}
