@@ -1,6 +1,7 @@
-import { Flex } from "@ledgerhq/react-ui";
+import { Box, Flex } from "@ledgerhq/react-ui";
 import React from "react";
 import styled from "styled-components";
+import { useDeviceBlocked } from "~/renderer/components/DeviceAction/DeviceBlocker";
 import IconCross from "~/renderer/icons/Cross";
 
 const TouchButton = styled.button`
@@ -27,12 +28,17 @@ type Props = {
   onRequestClose: () => void;
 };
 const Header = ({ onRequestClose }: Props) => {
+  const blocked = useDeviceBlocked();
   return (
     <Flex padding={8}>
       <Flex flex={1} />
-      <TouchButton onClick={onRequestClose} data-test-id="drawer-close-button">
-        <IconCross size={16} />
-      </TouchButton>
+      {blocked ? (
+        <Box height={16}></Box>
+      ) : (
+        <TouchButton onClick={onRequestClose} data-test-id="drawer-close-button">
+          <IconCross size={16} />
+        </TouchButton>
+      )}
     </Flex>
   );
 };
