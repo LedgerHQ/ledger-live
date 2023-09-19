@@ -63,14 +63,8 @@ export function addHashToURL(url: URL, hash?: Record<string, JsonValue>): void {
     Object.entries(hash).forEach(([key, value]) => {
       if (value ?? false) {
         if (typeof value === "string") {
-          console.log(
-            '%chelpers.ts line:66 "fesfpsofjspfoesjfpsoj"',
-            "color: #007acc;",
-            "fesfpsofjspfoesjfpsoj",
-          );
           hashParams.set(key, value);
         } else {
-          console.log('%chelpers.ts line:68 "we iz here"', "color: #007acc;", "we iz here");
           hashParams.set(key, JSON.stringify(value));
         }
       }
