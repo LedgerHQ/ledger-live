@@ -35,6 +35,7 @@ import TroubleshootingDrawer, {
 import LockedDeviceDrawer, { Props as LockedDeviceDrawerProps } from "./LockedDeviceDrawer";
 import { LockedDeviceError, UnexpectedBootloader } from "@ledgerhq/errors";
 import ErrorDrawer from "./EarlySecurityChecks/ErrorDrawer";
+import logger from "~/renderer/logger";
 
 const POLLING_PERIOD_MS = 1000;
 const DESYNC_TIMEOUT_MS = 20000;
@@ -121,7 +122,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
             setIsBootloader(false);
             return;
           }
-          console.error(error);
+          logger.error(error);
           setDrawer(
             ErrorDrawer,
             {
