@@ -83,7 +83,7 @@ test.describe.parallel("Swap", () => {
     const swapPage = new SwapPage(page);
     const layout = new Layout(page);
 
-    await page.route("https://swap.staging.aws.ledger.fr/v5/rate**", async route => {
+    await page.route("https://swap.ledger.com/v5/rate**", async route => {
       const mockRatesResponse = getEthereumToTetherRatesMock();
       route.fulfill({ headers: { teststatus: "mocked" }, body: mockRatesResponse });
     });
@@ -132,24 +132,24 @@ test.describe.parallel("Swap", () => {
     const drawer = new Drawer(page);
     const layout = new Layout(page);
 
-    await page.route("https://swap.staging.aws.ledger.fr/v5/rate**", async route => {
+    await page.route("https://swap.ledger.com/v5/rate**", async route => {
       const mockRatesResponse = getBitcoinToEthereumRatesMock();
       route.fulfill({ headers: { teststatus: "mocked" }, body: mockRatesResponse });
     });
 
     // We mock the 'cancelled' swap response because the transaction isn't broadcast when run locally.
     // If 'cancelled' is called then it's a successful test
-    await page.route("https://swap.staging.aws.ledger.fr/v5/swap/cancelled", async route => {
+    await page.route("https://swap.ledger.com/v5/swap/cancelled", async route => {
       console.log("Mocking swap cancelled HTTP response");
       route.fulfill({ headers: { teststatus: "mocked" }, body: "" });
     });
 
-    await page.route("https://swap.staging.aws.ledger.fr/v5/swap/accepted", async route => {
+    await page.route("https://swap.ledger.com/v5/swap/accepted", async route => {
       console.log("Mocking swap accepted HTTP response");
       route.fulfill({ headers: { teststatus: "mocked" }, body: "" });
     });
 
-    await page.route("https://swap.staging.aws.ledger.fr/v5/swap/status", async route => {
+    await page.route("https://swap.ledger.com/v5/swap/status", async route => {
       console.log("Mocking swap status HTTP response");
       const mockStatusResponse = getStatusMock();
       route.fulfill({ headers: { teststatus: "mocked" }, body: mockStatusResponse });

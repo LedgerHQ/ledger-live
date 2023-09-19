@@ -574,7 +574,7 @@ const envDefinitions = {
     desc: "Swap API base",
   },
   SWAP_API_BASE_V5: {
-    def: "https://swap.staging.aws.ledger.fr/v5",
+    def: "https://swap.ledger.com/v5",
     parser: stringParser,
     desc: "Swap API base staging version 5",
   },
