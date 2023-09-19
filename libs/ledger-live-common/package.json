@@ -170,7 +170,7 @@
     "@ledgerhq/wallet-api-server": "^1.2.0",
     "@solana/spl-token": "^0.3.7",
     "@solana/web3.js": "1.77.3",
-    "@stacks/network": "1.2.2",
+    "@stacks/network": "6.8.1",
     "@stacks/transactions": "1.3.5",
     "@stricahq/bip32ed25519": "^1.0.3",
     "@stricahq/typhonjs": "^1.2.6",

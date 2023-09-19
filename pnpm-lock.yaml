@@ -2125,8 +2125,8 @@ importers:
         specifier: 1.77.3
         version: 1.77.3
       '@stacks/network':
-        specifier: 1.2.2
-        version: 1.2.2
+        specifier: 6.8.1
+        version: 6.8.1
       '@stacks/transactions':
         specifier: 1.3.5
         version: 1.3.5
@@ -20686,6 +20686,13 @@ packages:
       buffer: 6.0.3
     dev: false
 
+  /@stacks/common@6.8.1:
+    resolution: {integrity: sha512-ewL9GLZNQYa5a/3K4xSHlHIgHkD4rwWW/QEaPId8zQIaL+1O9qCaF4LX9orNQeOmEk8kvG0x2xGV54fXKCZeWQ==}
+    dependencies:
+      '@types/bn.js': 5.1.1
+      '@types/node': 18.16.19
+    dev: false
+
   /@stacks/network@1.2.2:
     resolution: {integrity: sha512-xcWwuRrLJn9qqi3PEBcP2UPZHQztTZd31C0aVlzYHttNMir/sY9SrUqSnw45z2Jo4O9pIYYPIiPRtdV91Ho3fw==}
     dependencies:
@@ -20698,6 +20705,15 @@ packages:
     resolution: {integrity: sha512-TC4+AkuT6qi3MoEGxTftA+4BNp99QvGnI+qtKQkoA1m0KDr8b9hSBUhugJHRhQbWuo7D6q0+JagYEGxLID29Kw==}
     dependencies:
       '@stacks/common': 4.3.5
+      cross-fetch: 3.1.5
+    transitivePeerDependencies:
+      - encoding
+    dev: false
+
+  /@stacks/network@6.8.1:
+    resolution: {integrity: sha512-n8M25pPbLqpSBctabtsLOTBlmPvm9EPQpTI//x7HLdt5lEjDXxauEQt0XGSvDUZwecrmztqt9xNxlciiGApRBw==}
+    dependencies:
+      '@stacks/common': 6.8.1
       cross-fetch: 3.1.5
     transitivePeerDependencies:
       - encoding
@@ -28981,7 +28997,7 @@ packages:
       babel-plugin-syntax-jsx: 6.18.0
       lodash: 4.17.21
       picomatch: 2.3.1
-      styled-components: 5.3.5(react-is@18.1.0)(react@18.0.0)
+      styled-components: 5.3.5(react-dom@17.0.2)(react-is@17.0.2)(react@17.0.2)
 
   /babel-plugin-syntax-jsx@6.18.0:
     resolution: {integrity: sha512-qrPaCSo9c8RHNRHIotaufGbuOBN8rtdC4QrrFFc43vyWCCz7Kl7GL1PGaXtMGQZUXrkCjNEgxDfmAuAabr/rlw==}
@@ -56715,6 +56731,7 @@ packages:
       react-is: 18.1.0
       shallowequal: 1.1.0
       supports-color: 5.5.0
+    dev: false
 
   /styled-components@6.0.7(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-xIwWuiRMYR43mskVsW9MGTRjSo7ol4bcVjT595fGUp3OLBJOlOgaiKaxsHdC4a2HqWKqKnh0CmcRbk5ogyDjTg==}
