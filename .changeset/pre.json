@@ -90,5 +90,33 @@
     "pnpm-utils": "1.0.1",
     "@ledgerhq/react-devtools": "0.0.0"
   },
-  "changesets": []
+  "changesets": [
+    "brown-lions-speak",
+    "five-monkeys-juggle",
+    "gentle-tomatoes-draw",
+    "gold-pants-sniff",
+    "great-tomatoes-punch",
+    "grumpy-flowers-enjoy",
+    "hungry-pianos-vanish",
+    "lemon-taxis-applaud",
+    "light-planes-cry",
+    "little-papayas-nail",
+    "long-schools-live",
+    "mighty-doors-visit",
+    "neat-colts-glow",
+    "nine-cooks-drop",
+    "nine-kangaroos-lick",
+    "olive-ants-clean",
+    "perfect-shrimps-type",
+    "plenty-starfishes-train",
+    "pretty-panthers-approve",
+    "quick-olives-grab",
+    "quick-students-glow",
+    "real-wolves-lie",
+    "short-dogs-buy",
+    "small-jars-hug",
+    "tender-laws-itch",
+    "twenty-ears-care",
+    "young-toes-clap"
+  ]
 }
