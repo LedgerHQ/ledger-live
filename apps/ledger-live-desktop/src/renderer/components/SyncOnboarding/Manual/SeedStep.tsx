@@ -1,6 +1,6 @@
 import React from "react";
-import { Divider, Flex, VerticalTimeline } from "@ledgerhq/react-ui";
-import { useTranslation } from "react-i18next";
+import { Divider, Flex, VerticalTimeline, Text } from "@ledgerhq/react-ui";
+import { useTranslation, Trans } from "react-i18next";
 import { StepText } from "./shared";
 import ContinueOnDeviceWithAnim from "./ContinueOnDeviceWithAnim";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -31,7 +31,13 @@ const SeedStep = ({ seedPathStatus, deviceModelId }: Props) => {
               productName,
             })}
           </StepText>
-          <StepText mb={6}>{t("syncOnboarding.manual.seedContent.newSeedDescription2")}</StepText>
+          <StepText mb={6}>
+            <Trans i18nKey="syncOnboarding.manual.seedContent.newSeedDescription2">
+              <Text fontWeight="bold" variant="body" color="neutral.c80">
+                {""}
+              </Text>
+            </Trans>
+          </StepText>
           <StepText mb={6}>{t("syncOnboarding.manual.seedContent.newSeedDescription3")}</StepText>
           <StepText mb={6}>{t("syncOnboarding.manual.seedContent.newSeedDescription4")}</StepText>
           <StepText>{t("syncOnboarding.manual.seedContent.newSeedDescription5")}</StepText>
@@ -80,14 +86,24 @@ const SeedStep = ({ seedPathStatus, deviceModelId }: Props) => {
             })}
           </StepText>
           <StepText mb={6}>
-            {t("syncOnboarding.manual.seedContent.selectionNewLedger", {
-              deviceName: productName,
-            })}
+            <Trans
+              i18nKey="syncOnboarding.manual.seedContent.selectionNewLedger"
+              values={{ deviceName: productName }}
+            >
+              <Text fontWeight="bold" variant="body" color="neutral.c80">
+                {""}
+              </Text>
+            </Trans>
           </StepText>
           <StepText>
-            {t("syncOnboarding.manual.seedContent.selectionRestore", {
-              deviceName: productName,
-            })}
+            <Trans
+              i18nKey="syncOnboarding.manual.seedContent.selectionRestore"
+              values={{ deviceName: productName }}
+            >
+              <Text fontWeight="bold" variant="body" color="neutral.c80">
+                {""}
+              </Text>
+            </Trans>
           </StepText>
           <ContinueOnDeviceWithAnim
             deviceModelId={deviceModelId}

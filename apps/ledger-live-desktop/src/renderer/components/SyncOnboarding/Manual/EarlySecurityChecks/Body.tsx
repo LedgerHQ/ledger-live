@@ -122,7 +122,9 @@ const SoftwareCheckContent = ({
             <Button variant="main" size="small" outline={false} onClick={onClickViewUpdate}>
               {updateSkippable
                 ? t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.resumeUpdateCTA")
-                : t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.viewUpdateCTA")}
+                : t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.viewUpdateCTA", {
+                    modelName,
+                  })}
             </Button>
             {updateSkippable ? (
               <Button
