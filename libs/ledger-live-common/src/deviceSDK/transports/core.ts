@@ -76,7 +76,7 @@ export const withTransport = (deviceId: string, options?: { openTimeoutMs?: numb
   return <T>(job: ({ transportRef }: JobArgs) => Observable<T>): Observable<T> =>
     new Observable(subscriber => {
       jobId++;
-      const tracer = new LocalTracer(LOG_TYPE, { jobId: jobId });
+      const tracer = new LocalTracer(LOG_TYPE, { jobId: jobId, origin: "deviceSdk:withTransport" });
       tracer.trace(`New job for device: ${deviceId || "USB"}`);
 
       let unsubscribed;

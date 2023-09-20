@@ -122,7 +122,7 @@ export const withDevice =
   <T>(job: (t: Transport) => Observable<T>): Observable<T> =>
     new Observable(o => {
       jobId++;
-      const tracer = new LocalTracer(LOG_TYPE, { jobId: jobId });
+      const tracer = new LocalTracer(LOG_TYPE, { jobId: jobId, origin: "hw:withDevice" });
       tracer.trace(`New job for device: ${deviceId || "USB"}`);
 
       let unsubscribed;
