@@ -140,7 +140,7 @@
 | lisk | LSK | NO | lisk |
 | æternity | AE | NO | aeternity |
 
-## Tokens (11551)
+## Tokens (11561)
 | parent currency | ticker | contract | name | status | ledger id |
 |--|--|--|--|--|--|
 | Algorand | ARCC | MESEJMPXKL7YUWEQGNRCKSLMQDKHOHWIZ3RBWP7BV4JDMUJXFUVQZWUBJM | Asia Reserve Currency Coin |  | algorand/asa/163650 |
@@ -243,6 +243,7 @@
 | Binance Smart Chain | BABYSHIB | 0xAECf6d1afF214feF70042740054f0f6D0Caa98Ab | Baby Shiba Inu | delisted | bsc/bep20/baby_shiba_inu |
 | Binance Smart Chain | BABYBNBTIGER | 0x5a04565ee1c90c84061aD357AE9E2f1c32D57dc6 | BabyBNBTiger |  | bsc/bep20/babybnbtiger |
 | Binance Smart Chain | BABYFD | 0xe24F6Bc7635501d5684a963f7e75C8062b9c0eA4 | BabyFlokiDoge |  | bsc/bep20/babyflokidoge |
+| Binance Smart Chain | BABYDOGE2.0 | 0xa4E068e2B8f58E6c3090174a9E4E95F5bB025CA4 | Babydoge 2.0 |  | bsc/bep20/babydoge_2.0 |
 | Binance Smart Chain | BBADGER | 0x1F7216fdB338247512Ec99715587bb97BBf96eae | Badger Sett Badger |  | bsc/bep20/badger_sett_badger |
 | Binance Smart Chain | BDIGG | 0x5986D5c77c65e5801a5cAa4fAE80089f870A71dA | Badger Sett Digg |  | bsc/bep20/badger_sett_digg |
 | Binance Smart Chain | BAKE | 0xE02dF9e3e622DeBdD69fb838bB799E3F168902c5 | BakeryToken |  | bsc/bep20/bakerytoken |
@@ -8246,33 +8247,18 @@
 | Ethereum Ropsten | HASKELL | 0x63652B9Dd39565332B22BB815104c8210934Ae45 | haskell | delisted | ethereum_ropsten/erc20/haskell |
 | Internet Computer | USDC | GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN | USDC |  | icp/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN |
 | MultiversX | AERO | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | Aerovek |  | elrond/esdt/4145524f2d343538626266 |
-| MultiversX | ASH | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | AshSwap |  | elrond/esdt/4153482d613634326431 |
+| MultiversX | ASH | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | AshSwap |  | elrond/esdt/4153482d346365343434 |
 | MultiversX | BHAT | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | BHNetwork |  | elrond/esdt/424841542d633166646533 |
-| MultiversX | INFRA | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | Bware |  | elrond/esdt/494e4652412d343339383563 |
 | MultiversX | CRU | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | CrustNetwork |  | elrond/esdt/4352552d613566346161 |
-| MultiversX | CYBER | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | CyberpunkCity |  | elrond/esdt/43594245522d343839633163 |
-| MultiversX | CHARGED | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | GoChargeTech |  | elrond/esdt/434841524745442d373033353833 |
-| MultiversX | HTM | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | Hatom |  | elrond/esdt/48544d2d663531643535 |
-| MultiversX | HSEGLD | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | HatomSEGLD |  | elrond/esdt/485345474c442d633133613465 |
 | MultiversX | ISET | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | IsengardToken |  | elrond/esdt/495345542d383465353565 |
 | MultiversX | ITHEUM | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | Itheum |  | elrond/esdt/49544845554d2d646636663236 |
-| MultiversX | KRO | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | Krogan |  | elrond/esdt/4b524f2d646639376563 |
-| MultiversX | LEGLD | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | LiquidEGLD |  | elrond/esdt/4c45474c442d643734646139 |
 | MultiversX | MEX | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | MEX |  | elrond/esdt/4d45582d343535633537 |
-| MultiversX | MOOVE | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | MOOVEProtocol |  | elrond/esdt/4d4f4f56452d383735353339 |
-| MultiversX | OFE | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | Ofero |  | elrond/esdt/4f46452d323965623534 |
-| MultiversX | ONE | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | OneDex |  | elrond/esdt/4f4e452d663939353466 |
-| MultiversX | PROTEO | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | Proteo |  | elrond/esdt/50524f54454f2d306337333131 |
 | MultiversX | QWT | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | QoWatt |  | elrond/esdt/5157542d343661633031 |
-| MultiversX | RARE | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | RARE |  | elrond/esdt/524152452d393965386230 |
 | MultiversX | SUPER | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | SUPER |  | elrond/esdt/53555045522d353037616136 |
 | MultiversX | SFIT | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | Sense4FIT |  | elrond/esdt/534649542d616562633930 |
-| MultiversX | SEGLD | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | StakedEGLD |  | elrond/esdt/5345474c442d336164326430 |
-| MultiversX | UTK | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | Utrust |  | elrond/esdt/55544B2D326638306539 |
+| MultiversX | UTK | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | Utrust |  | elrond/esdt/55544b2d326638306539 |
 | MultiversX | WAM | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | WAM |  | elrond/esdt/57414d2d353130653432 |
-| MultiversX | WBTC | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | WrappedBTC |  | elrond/esdt/574254432d353334396233 |
 | MultiversX | BUSD | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | WrappedBUSD |  | elrond/esdt/425553442d343062353765 |
-| MultiversX | WETH | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | WrappedETH |  | elrond/esdt/574554482d623463613239 |
 | MultiversX | USDC | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | WrappedUSDC |  | elrond/esdt/555344432d633736663166 |
 | MultiversX | USDT | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | WrappedUSDT |  | elrond/esdt/555344542d663863303863 |
 | MultiversX | ZPAY | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | ZoidPay |  | elrond/esdt/5a5041592d323437383735 |
