@@ -76,7 +76,7 @@ const Modals = () => {
 
   return (
     <>
-      <FeatureToggle feature="brazePushNotifications">
+      <FeatureToggle featureId="brazePushNotifications">
         <PushNotificationsModal />
       </FeatureToggle>
       {activeRatings === "no-nps" && <RatingsModal />}

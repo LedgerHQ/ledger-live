@@ -51,10 +51,15 @@ const InitMessage = ({ setStep, onVerifyAddress }: Props) => {
         <Trans i18nKey="transfer.receive.securityVerify.subtitle2" />
       </Text>
       <Flex alignSelf="stretch" my={8}>
-        <Button onPress={handleVerifyAddress} type="main" size="large">
+        <Button
+          onPress={handleVerifyAddress}
+          type="main"
+          size="large"
+          testID="verify-address-button"
+        >
           <Trans i18nKey="transfer.receive.securityVerify.verifyCta" />
         </Button>
-        <NotNowButton onPress={onDontVerify}>
+        <NotNowButton onPress={onDontVerify} testID="no-verify-address-button">
           <Text variant="large" fontWeight="semiBold" color="neutral.c100">
             <Trans i18nKey="transfer.receive.securityVerify.dontVerifyCta" />
           </Text>

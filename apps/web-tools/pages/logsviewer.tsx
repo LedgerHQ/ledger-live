@@ -6,6 +6,8 @@ import styled from "styled-components";
 import "react-table/react-table.css";
 import { AccountRaw } from "@ledgerhq/types-live";
 
+export const getStaticProps = async () => ({ props: {} });
+
 type Log = {
   type: string;
   level: string;

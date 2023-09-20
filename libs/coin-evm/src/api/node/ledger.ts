@@ -221,6 +221,13 @@ export const getFeeData: NodeApi["getFeeData"] = async (currency, transaction) =
         gasTracker: { type: "ledger", explorerId: node.explorerId },
       },
     },
+    /**
+     * ⚠️ We don't know the type of the transaction for sure at this stage since
+     * `getFeeData` is called before `getTypedTransaction` in prepareTransaction
+     * libs/coin-evm/src/prepareTransaction.ts:201
+     * It's most probably always 2 since it's the default type value for a new transaction
+     * cf. libs/coin-evm/src/createTransaction.ts:23
+     */
     options: { useEIP1559: transaction.type === 2 },
   });
 
@@ -306,7 +313,7 @@ export const getOptimismAdditionalFees: NodeApi["getOptimismAdditionalFees"] = a
   }
 
   // Fake signature is added to get the best approximation possible for the gas on L1
-  const serializedTransaction = (() => {
+  const serializedTransaction = ((): string | null => {
     try {
       return getSerializedTransaction(transaction, {
         r: "0xffffffffffffffffffffffffffffffffffffffff",

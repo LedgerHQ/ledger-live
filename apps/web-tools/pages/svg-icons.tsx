@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 
+export const getStaticProps = async () => ({ props: {} });
+
 function App() {
   const [svgCode, setSvgCode] = useState("");
   const [validationResult, setValidationResult] = useState("");

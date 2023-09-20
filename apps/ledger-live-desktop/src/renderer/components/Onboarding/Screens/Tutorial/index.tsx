@@ -2,7 +2,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import {
   usePostOnboardingPath,
   useUpsellPath,
-} from "@ledgerhq/live-common/hooks/recoverFeatueFlag";
+} from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import {
   Aside,

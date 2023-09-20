@@ -3,10 +3,6 @@ import { Account, AccountLike, ProtoNFT } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { Operation } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import type {
-  Transaction as EthereumTransaction,
-  TransactionRaw as EtherumTransactionRaw,
-} from "@ledgerhq/live-common/families/ethereum/types";
 import type { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
 import type {
   CardanoAccount,
@@ -160,36 +156,6 @@ export type SendFundsNavigatorStackParamList = {
     parentId?: string;
     account: CardanoAccount;
     transaction: CardanoTransaction;
-    currentNavigation:
-      | ScreenName.SignTransactionSummary
-      | ScreenName.SendSummary
-      | ScreenName.SwapForm;
-    nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.SendSelectDevice
-      | ScreenName.SwapForm;
-  };
-  [ScreenName.EthereumCustomFees]: {
-    accountId: string;
-    parentId?: string;
-    transaction: EthereumTransaction;
-    setTransaction: Result<EthereumTransaction>["setTransaction"];
-    transactionRaw?: EtherumTransactionRaw;
-    currentNavigation:
-      | ScreenName.SignTransactionSummary
-      | ScreenName.SendSummary
-      | ScreenName.SwapForm;
-    nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.SendSelectDevice
-      | ScreenName.SwapForm;
-  };
-  [ScreenName.EthereumEditGasLimit]: {
-    accountId: string;
-    parentId?: string;
-    setGasLimit: (_: BigNumber) => void;
-    gasLimit?: BigNumber | null;
-    transaction: EthereumTransaction;
     currentNavigation:
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary

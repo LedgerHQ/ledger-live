@@ -39,6 +39,7 @@ type FetchLiveAppCatalogPrams = {
   platform: AppPlatform;
   allowDebugApps: boolean;
   allowExperimentalApps: boolean;
+  llVersion: string;
 };
 
 type LiveAppProviderProps = {
@@ -94,7 +95,7 @@ export function RemoteLiveAppProvider({
   const [state, setState] = useState<Loadable<LiveAppRegistry>>(initialState);
   const [provider, setProvider] = useState<string>(initialProvider);
 
-  const { allowExperimentalApps, allowDebugApps, apiVersions, platform } = parameters;
+  const { allowExperimentalApps, allowDebugApps, apiVersions, platform, llVersion } = parameters;
 
   // apiVersion renamed without (s) because param
   const apiVersion = apiVersions ? apiVersions : ["1.0.0", "2.0.0"];
@@ -121,6 +122,7 @@ export function RemoteLiveAppProvider({
         branches,
         platform,
         private: false,
+        llVersion,
       });
 
       if (!isMounted()) return;

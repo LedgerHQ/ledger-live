@@ -17,6 +17,7 @@ type Props = {
   parentAccount: PolkadotAccount | undefined | null;
   source?: string;
 };
+
 const AccountHeaderManageActions = ({ account, parentAccount, source = "Account Page" }: Props) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -24,6 +25,7 @@ const AccountHeaderManageActions = ({ account, parentAccount, source = "Account 
   const { polkadotResources } = mainAccount;
   const hasBondedBalance = polkadotResources.lockedBalance && polkadotResources.lockedBalance.gt(0);
   const hasPendingBondOperation = hasPendingOperationType(mainAccount, "BOND");
+
   const onClick = useCallback(() => {
     if (isAccountEmpty(mainAccount)) {
       dispatch(
@@ -46,6 +48,7 @@ const AccountHeaderManageActions = ({ account, parentAccount, source = "Account 
       );
     }
   }, [mainAccount, hasBondedBalance, hasPendingBondOperation, dispatch, source]);
+
   const _hasExternalController = hasExternalController(mainAccount);
   const _hasExternalStash = hasExternalStash(mainAccount);
   const manageEnabled = !(
@@ -53,6 +56,7 @@ const AccountHeaderManageActions = ({ account, parentAccount, source = "Account 
     _hasExternalStash ||
     (!hasBondedBalance && hasPendingBondOperation)
   );
+
   const disabledLabel = manageEnabled
     ? ""
     : `${t(
@@ -62,6 +66,7 @@ const AccountHeaderManageActions = ({ account, parentAccount, source = "Account 
           ? "polkadot.nomination.externalStashTooltip"
           : "polkadot.nomination.hasPendingBondOperation",
       )}`;
+
   return [
     {
       key: "Stake",
@@ -77,4 +82,5 @@ const AccountHeaderManageActions = ({ account, parentAccount, source = "Account 
     },
   ];
 };
+
 export default AccountHeaderManageActions;

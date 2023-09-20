@@ -1,21 +1,16 @@
 # ledger-live-desktop
 
-## 2.68.1-nightly.1
+## 2.68.1
 
 ### Patch Changes
 
-- Updated dependencies []:
-  - @ledgerhq/coin-evm@0.6.2-nightly.0
-  - @ledgerhq/coin-framework@0.5.4-nightly.0
-  - @ledgerhq/domain-service@1.1.11-nightly.0
-  - @ledgerhq/evm-tools@1.0.7-nightly.0
-  - @ledgerhq/live-common@31.7.1-nightly.0
+- [#4613](https://github.com/LedgerHQ/ledger-live/pull/4613) [`e499949b1e`](https://github.com/LedgerHQ/ledger-live/commit/e499949b1e890b1efc7233596ac1a439a7963b1d) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - trigger lld prerelease build
 
-## 2.68.1-nightly.0
+## 2.68.1-next.0
 
 ### Patch Changes
 
-- [#4588](https://github.com/LedgerHQ/ledger-live/pull/4588) [`c89f7d0e9e`](https://github.com/LedgerHQ/ledger-live/commit/c89f7d0e9e37f4389578c2833adde076a5811ff5) Thanks [@aboissiere-ledger](https://github.com/aboissiere-ledger)! - Fix jest config to generate coverage report and include untested files
+- [#4613](https://github.com/LedgerHQ/ledger-live/pull/4613) [`e499949b1e`](https://github.com/LedgerHQ/ledger-live/commit/e499949b1e890b1efc7233596ac1a439a7963b1d) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - trigger lld prerelease build
 
 ## 2.68.0
 

@@ -1,5 +1,5 @@
-import { BigNumber } from "bignumber.js";
 import type { DeviceModelId } from "@ledgerhq/devices";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   Account,
   AccountBridge,
@@ -10,7 +10,12 @@ import {
   TransactionCommon,
   TransactionStatusCommon,
 } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { BigNumber } from "bignumber.js";
+import { SpeculosButton } from "./specs";
+
+import type SpeculosTransportHttp from "@ledgerhq/hw-transport-node-speculos-http";
+import type SpeculosTransportWebsocket from "@ledgerhq/hw-transport-node-speculos";
+export type SpeculosTransport = SpeculosTransportHttp | SpeculosTransportWebsocket;
 
 // Type coming from live-common/src/load/speculos.ts
 export type AppCandidate = {
@@ -146,6 +151,12 @@ export type AppSpec<T extends TransactionCommon> = {
   allowEmptyAccounts?: boolean;
   // do not keep operations in accounts (Cosmos family case)
   skipOperationHistory?: boolean;
+  // executed when speculos device is created, used for example to enable expert mode on cosmos nano app
+  onSpeculosDeviceCreated?: (device: {
+    transport: SpeculosTransport;
+    id: string;
+    appPath: string;
+  }) => Promise<void>;
 };
 export type SpecReport<T extends TransactionCommon> = {
   spec: AppSpec<T>;
@@ -222,4 +233,38 @@ export type MinimalSerializedReport = {
   results: Array<MinimalSerializedSpecReport>;
   environment: string | undefined;
   seedHash: string;
+};
+
+export type State<T extends TransactionCommon> = {
+  finalState: boolean;
+  stepTitle: string;
+  stepValue: string;
+  acc: Array<{
+    title: string;
+    value: string;
+  }>;
+  currentStep: Step<T> | null | undefined;
+};
+
+export type Step<T extends TransactionCommon> = {
+  title: string;
+  stepValueTransform?: (s: string) => string;
+  expectedValue?: (
+    arg0: DeviceActionArg<T, State<T>>,
+    acc: Array<{
+      title: string;
+      value: string;
+    }>,
+  ) => string;
+  ignoreAssertionFailure?: boolean;
+  trimValue?: boolean;
+  button?: SpeculosButton;
+  // action to apply in term of button press
+  final?: boolean; // tells if there is no step after that and action should terminate all further action (hack to do deboncing)
+  maxY?: number; // check if text is bellow a certains Y coordinate on the screen, it happened that two text have the same content but different positions
+};
+
+export type FlowDesc<T extends TransactionCommon> = {
+  steps: Array<Step<T>>;
+  fallback?: (arg0: DeviceActionArg<T, State<T>>) => Step<T> | null | undefined;
 };

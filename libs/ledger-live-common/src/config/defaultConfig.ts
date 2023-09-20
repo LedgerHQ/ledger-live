@@ -57,6 +57,10 @@ const defaultConfig = {
         lcd: "https://full-node.mainnet-1.coreum.dev:1317",
         minGasPrice: 0.1,
       },
+      injective: {
+        lcd: "https://injective-api.polkachu.com",
+        minGasPrice: 900000000,
+      },
     } as { [currency: string]: CosmosCurrencyConfig },
   },
 };

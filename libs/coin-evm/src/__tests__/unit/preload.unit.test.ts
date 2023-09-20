@@ -35,7 +35,9 @@ const currency1 = getCryptoCurrencyById("ethereum"); // chain id 1
 
 jest.mock("@ledgerhq/live-network/network");
 jest.mock("@ledgerhq/cryptoassets/data/evm/index", () => ({
-  get tokens() {
+  get tokens(): {
+    1: ERC20Token[];
+  } {
     return {
       1: [usdcDefinition],
     };

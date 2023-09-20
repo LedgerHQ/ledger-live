@@ -528,7 +528,7 @@
   },
   "stake" : {
     "noFundsModal" : {
-      "title" : "Compra, permuta o recibe",
+      "title" : "{{actions, list(type: disjunction)}}",
       "text" : "No tienes suficientes {{coin}} disponibles para poner en participación",
       "description" : "¿No tienes fondos suficientes? No te preocupes, puedes comprar, permutar o recibir cripto de forma segura directamente en Ledger Live.",
       "options" : {
@@ -1369,31 +1369,7 @@
     }
   },
   "walletconnect" : {
-    "titleAccount" : "WalletConnect",
-    "disconnect" : "Desconectar",
-    "disconnected" : "Desconectado",
-    "connected" : "Conectado",
-    "connecting" : "Conectando...",
-    "invalidAccount" : "ID de cuenta inválido",
-    "steps" : {
-      "paste" : {
-        "title" : "Pegar enlace",
-        "label" : "Dirección de WalletConnect",
-        "placeholder" : "Pegar enlace de Wallet Connect"
-      },
-      "confirm" : {
-        "title" : "Conectar",
-        "details" : "Desea conectarse a la siguiente cuenta mediante tu billetera:",
-        "deeplinkDetails" : "Desea conectarse a Ledger Live. Elige tu cuenta:",
-        "noAccount" : "No tienes ninguna cuenta compatible. Agrega una cuenta compatible para utilizar Wallet Connect.",
-        "alreadyConnected" : "Estás intentando conectarse a una dApp al mismo tiempo de que ya existe una conectada. Desconectar la dApp conectada antes de reconectar Live con la nueva dApp"
-      }
-    },
-    "connectedscreen" : {
-      "info" : "Ahora puedes acceder a la dApp {{name}} desde tu navegador web.",
-      "warning" : "No es seguro compartir direcciones de recepción de una dApp. Utiliza siempre Ledger Live cuando desees compartir tu dirección para recibir fondos.",
-      "disconnected" : "Hay un problema de conexión entre la dApp, WalletConnect y Ledger Live. Espera unos momentos o intenta de nuevo la conexión"
-    }
+    "titleAccount" : "WalletConnect"
   },
   "dashboard" : {
     "title" : "Portfolio",
@@ -2292,6 +2268,7 @@
     "header" : "Asignación de cuenta ({{count}})"
   },
   "elrond" : {
+    "guardedAccountWarning" : "Si tienes un guardián definido en tu cuenta, no podrás enviar transacciones mediante Ledger Live.",
     "summary" : {
       "availableBalanceTooltip" : "Este importe se puede transferir.",
       "availableBalance" : "Saldo disponible",
@@ -4398,7 +4375,7 @@
           },
           "quizSuccess" : {
             "title" : "¡Ya tienes nivel de profesional!",
-            "paragraph" : "Está todo listo para que administres de forma segura tus cripto. ¡Solo te queda un breve paso!",
+            "paragraph" : "Está todo listo para que administres de forma segura tus cripto. ¡Sólo te queda un breve paso!",
             "buttons" : {
               "next" : "Siguiente paso",
               "prev" : "Paso anterior",
@@ -4632,10 +4609,10 @@
       },
       "questions" : {
         "1" : {
-          "text" : "Como usuario de Ledger, mis criptomonedas se almacenan:",
+          "text" : "Como usuario de Ledger, mis criptomonedas se almacenan…",
           "answers" : {
-            "1" : "En mi Ledger Nano",
-            "2" : "En la cadena de bloques"
+            "1" : "…en mi Ledger Nano",
+            "2" : "…en la cadena de bloques"
           },
           "results" : {
             "success" : {
@@ -4651,8 +4628,8 @@
         "2" : {
           "text" : "Si otra persona accede a mi Frase de Recuperación Secreta...",
           "answers" : {
-            "1" : "No pasa nada, siempre que yo sepa cuál es",
-            "2" : "Mis activos serán vulnerables y dicha persona podría acceder a ellos"
+            "1" : "…no pasa nada, siempre que yo siga teniendo la Frase correcta.",
+            "2" : "…mis activos serán vulnerables y dicha persona podría acceder a ellos"
           },
           "results" : {
             "success" : {
@@ -4666,10 +4643,10 @@
           }
         },
         "3" : {
-          "text" : "Cuando conecto mi Ledger Nano a la aplicación Ledger Live, mi clave privada es...",
+          "text" : "Cuando conecto mi Ledger Nano a la aplicación Ledger Live, mi clave privada...",
           "answers" : {
             "1" : "Sigue sin conectarse a Internet",
-            "2" : "Se conecta brevemente a Internet"
+            "2" : "…se conecta brevemente a Internet"
           },
           "results" : {
             "success" : {
@@ -5691,10 +5668,6 @@
     },
     "ImageDownloadError" : {
       "title" : "Error al descargar la imagen",
-      "description" : "Vuelve a intentarlo con otra imagen"
-    },
-    "ImageMetadataLoadingError" : {
-      "title" : "Error al cargar los metadatos de la imagen",
       "description" : "Vuelve a intentarlo con otra imagen"
     },
     "ImageTooLargeError" : {

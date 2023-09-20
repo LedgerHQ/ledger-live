@@ -4,7 +4,7 @@ import isEqual from "lodash/isEqual";
 import semver from "semver";
 import remoteConfig from "@react-native-firebase/remote-config";
 import VersionNumber from "react-native-version-number";
-import { FeatureFlagsProvider, defaultFeatures } from "@ledgerhq/live-common/featureFlags/index";
+import { FeatureFlagsProvider, DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/index";
 import { FeatureId, Feature } from "@ledgerhq/types-live";
 import { getEnv } from "@ledgerhq/live-env";
 
@@ -107,10 +107,10 @@ export const getAllDivergedFlags = (
   appLanguage: string,
 ): Partial<{ [key in FeatureId]: boolean }> => {
   const res: Partial<{ [key in FeatureId]: boolean }> = {};
-  Object.keys(defaultFeatures).forEach(k => {
-    const key = k as keyof typeof defaultFeatures;
+  Object.keys(DEFAULT_FEATURES).forEach(k => {
+    const key = k as keyof typeof DEFAULT_FEATURES;
     const value = getFeature({ key, appLanguage });
-    if (value && value.enabled !== defaultFeatures[key]?.enabled) {
+    if (value && value.enabled !== DEFAULT_FEATURES[key]?.enabled) {
       res[key] = value.enabled;
     }
   });

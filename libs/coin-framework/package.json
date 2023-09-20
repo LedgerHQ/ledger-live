@@ -87,7 +87,7 @@
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "bignumber.js": "^9.1.1",
+    "bignumber.js": "^9.1.2",
     "eip55": "^2.1.0",
     "expect": "^27.4.6",
     "invariant": "^2.2.2",
@@ -98,6 +98,8 @@
     "rxjs": "^6.6.7"
   },
   "devDependencies": {
+    "@ledgerhq/hw-transport-node-speculos": "workspace:^",
+    "@ledgerhq/hw-transport-node-speculos-http": "workspace:^",
     "@types/invariant": "^2.2.2",
     "@types/jest": "^29.2.4",
     "@types/lodash": "^4.14.191",

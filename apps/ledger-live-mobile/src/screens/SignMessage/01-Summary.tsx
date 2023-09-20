@@ -1,21 +1,22 @@
-import React, { useCallback, useState, memo, useEffect } from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Trans, useTranslation } from "react-i18next";
+import { getMessageProperties } from "@ledgerhq/coin-evm/logic";
 import { getAccountName, getMainAccount } from "@ledgerhq/live-common/account/index";
-import { useSelector } from "react-redux";
+import type { MessageProperties } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
-import { accountScreenSelector } from "../../reducers/accounts";
-import { ScreenName } from "../../const";
+import React, { memo, useCallback, useEffect, useState } from "react";
+import { Trans, useTranslation } from "react-i18next";
+import { ScrollView, StyleSheet, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useSelector } from "react-redux";
 import { TrackScreen } from "../../analytics";
 import Button from "../../components/Button";
-import WalletIcon from "../../icons/Wallet";
 import LText from "../../components/LText";
-import { getMessageProperties, MessageProperties } from "../../helpers/signMessageUtils";
 import ParentCurrencyIcon from "../../components/ParentCurrencyIcon";
 import { SignMessageNavigatorStackParamList } from "../../components/RootNavigator/types/SignMessageNavigator";
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import { ScreenName } from "../../const";
+import WalletIcon from "../../icons/Wallet";
+import { accountScreenSelector } from "../../reducers/accounts";
 
 const MessageProperty = memo(({ label, value }: MessageProperties[0]) => {
   const { colors } = useTheme();
@@ -99,7 +100,7 @@ function SignSummary({
 
   useEffect(() => {
     if (messageData.standard === "EIP712") {
-      getMessageProperties(mainAccount, messageData).then(setMessageFields);
+      getMessageProperties(messageData).then(setMessageFields);
     }
   }, [mainAccount, mainAccount.currency, messageData, setMessageFields]);
 

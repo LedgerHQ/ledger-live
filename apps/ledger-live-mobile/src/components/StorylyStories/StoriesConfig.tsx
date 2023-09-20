@@ -24,6 +24,7 @@ const StoriesConfig: React.FC<Props> = ({ instanceID }) => {
   const { overrideFeature } = useFeatureFlags();
   const featureValue = useFeature("storyly");
   const stories = featureValue?.params?.stories;
+  // @ts-expect-error TYPINGS
   const storyConfig = stories[instanceID];
   const { testingEnabled, token } = storyConfig;
 

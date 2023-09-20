@@ -19,7 +19,7 @@ import {
   fromSeedPhraseTypeToNbOfSeedWords,
 } from "@ledgerhq/live-common/hw/extractOnboardingState";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { usePostOnboardingPath } from "@ledgerhq/live-common/hooks/recoverFeatueFlag";
+import { usePostOnboardingPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
 import { DesyncOverlay } from "./DesyncOverlay";
 import SeedStep, { SeedPathStatus } from "./SeedStep";
