@@ -10,10 +10,8 @@ import { closeModal } from "~/renderer/actions/modals";
 import { track } from "~/renderer/analytics/segment";
 import Box from "~/renderer/components/Box";
 import { focusedShadowStyle } from "~/renderer/components/Box/Tabbable";
-import { Container } from "~/renderer/components/Input";
 import ChevronRight from "~/renderer/icons/ChevronRight";
 import CoinbaseIcon from "~/renderer/icons/Coinbase";
-import { openURL } from "~/renderer/linking";
 
 const TitleText = styled(Text).attrs(() => ({
   variant: "body",
