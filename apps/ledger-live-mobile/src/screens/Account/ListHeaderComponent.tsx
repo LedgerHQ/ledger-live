@@ -113,7 +113,7 @@ export function getListHeaderComponents({
 
   const [oldestEditableOperation] = account.pendingOperations
     .filter(pendingOperation => {
-      return isEditableOperation(account, pendingOperation);
+      return isEditableOperation(mainAccount, pendingOperation);
     })
     .sort((a, b) => a.transactionSequenceNumber! - b.transactionSequenceNumber!);
 

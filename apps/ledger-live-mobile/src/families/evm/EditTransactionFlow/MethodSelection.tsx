@@ -1,0 +1,274 @@
+import React, { memo, useCallback, useEffect, useState } from "react";
+import invariant from "invariant";
+import { Trans, useTranslation } from "react-i18next";
+import BigNumber from "bignumber.js";
+import { Dimensions, Linking } from "react-native";
+import { Box, Flex, SelectableList } from "@ledgerhq/native-ui";
+import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { Account } from "@ledgerhq/types-live";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { getStuckAccountAndOperation } from "@ledgerhq/coin-framework/operation";
+import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
+import { getEnv } from "@ledgerhq/live-env";
+import { log } from "@ledgerhq/logs";
+import { Transaction, TransactionRaw } from "@ledgerhq/coin-evm/types/index";
+import { getTransactionByHash } from "@ledgerhq/coin-evm/api/transaction/index";
+
+import { ScreenName } from "../../../const";
+import { TrackScreen } from "../../../analytics";
+import { EditTransactionParamList } from "./EditTransactionParamList";
+import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import LText from "../../../components/LText";
+import { urls } from "../../../config/urls";
+
+type Props = StackNavigatorProps<
+  EditTransactionParamList,
+  ScreenName.EditTransactionMethodSelection
+>;
+
+function MethodSelectionComponent({ navigation, route }: Props) {
+  const { operation, account, parentAccount } = route.params;
+
+  invariant(
+    operation.transactionRaw,
+    "operation.transactionRaw not found. Could not edit the transaction",
+  );
+
+  const mainAccount = getMainAccount(account, parentAccount);
+
+  const transactionToEdit = fromTransactionRaw(
+    operation.transactionRaw as TransactionRaw,
+  ) as Transaction;
+
+  const { transaction, setTransaction, status } = useBridgeTransaction<Transaction>(() => {
+    return {
+      account,
+      parentAccount,
+      transaction: transactionToEdit,
+    };
+  });
+
+  invariant(
+    transaction,
+    "[useBridgeTransaction - MethodSelection] could not found transaction from bridge.",
+  );
+
+  const feePerGas = new BigNumber(
+    transaction.type === 2 ? transactionToEdit.maxFeePerGas! : transactionToEdit.gasPrice!,
+  );
+
+  const estimatedFees = new BigNumber(
+    transactionToEdit.gasLimit || transactionToEdit.customGasLimit || 0,
+  )
+    .times(feePerGas)
+    .div(new BigNumber(10).pow(mainAccount.unit.magnitude));
+
+  const haveFundToCancel = mainAccount.balance.gt(
+    estimatedFees.times(getEnv("EVM_REPLACE_TX_EIP1559_MAXFEE_FACTOR")),
+  );
+
+  const haveFundToSpeedup = mainAccount.balance.gt(
+    estimatedFees
+      .times(getEnv("EVM_REPLACE_TX_EIP1559_MAXFEE_FACTOR"))
+      .plus(account.type === "Account" ? transactionToEdit.amount : 0),
+  );
+
+  const [selectedMethod, setSelectedMethod] = useState<"cancel" | "speedup" | null>();
+
+  const stuckAccountAndOperation = getStuckAccountAndOperation(account, parentAccount);
+  const oldestOperation = stuckAccountAndOperation?.operation;
+  const currency = getAccountCurrency(account);
+  const bridge = getAccountBridge(account, parentAccount as Account);
+
+  const onSelect = useCallback(
+    (option: "cancel" | "speedup") => {
+      log("Edit Transaction - Method Selection", "onSelect Cancel/Speed up", option);
+
+      switch (option) {
+        case "cancel":
+          {
+            const mainAccount = getMainAccount(account, parentAccount);
+            const updatedTransaction: Partial<Transaction> = {
+              amount: new BigNumber(0),
+              data: undefined,
+              nonce: operation.transactionSequenceNumber,
+              mode: "send",
+              recipient: mainAccount.freshAddress,
+              useAllAmount: false,
+            };
+
+            if (transaction.type === 2) {
+              if (transactionToEdit.maxPriorityFeePerGas) {
+                updatedTransaction.maxPriorityFeePerGas = transactionToEdit.maxPriorityFeePerGas
+                  ?.times(getEnv("EVM_REPLACE_TX_EIP1559_MAXPRIORITYFEE_FACTOR"))
+                  .integerValue();
+              }
+
+              if (transactionToEdit.maxFeePerGas) {
+                updatedTransaction.maxFeePerGas = transactionToEdit.maxFeePerGas
+                  ?.times(getEnv("EVM_REPLACE_TX_EIP1559_MAXFEE_FACTOR"))
+                  .integerValue();
+              }
+            } else if (transactionToEdit.gasPrice) {
+              updatedTransaction.gasPrice = transactionToEdit.gasPrice
+                .times(getEnv("EVM_REPLACE_TX_LEGACY_GASPRICE_FACTOR"))
+                .integerValue();
+            }
+
+            setTransaction(bridge.updateTransaction(transaction, updatedTransaction));
+
+            setSelectedMethod("cancel");
+          }
+
+          break;
+
+        case "speedup":
+          {
+            const updatedTransaction: Partial<Transaction> = {
+              amount: transactionToEdit.amount,
+              data: transactionToEdit.data,
+              recipient: transactionToEdit.recipient,
+              mode: transactionToEdit.mode,
+              nonce: operation.transactionSequenceNumber,
+              // set "fast" as default option for speedup flow
+              feesStrategy: "fast",
+              gasPrice: undefined,
+              maxFeePerGas: undefined,
+              maxPriorityFeePerGas: undefined,
+              useAllAmount: false,
+            };
+
+            setTransaction(bridge.updateTransaction(transaction, updatedTransaction));
+
+            setSelectedMethod("speedup");
+          }
+
+          break;
+        default:
+          break;
+      }
+    },
+    [
+      account,
+      parentAccount,
+      transaction,
+      transactionToEdit,
+      bridge,
+      operation.transactionSequenceNumber,
+      setTransaction,
+    ],
+  );
+
+  getTransactionByHash(mainAccount.currency, operation.hash).then(tx => {
+    if (tx?.confirmations) {
+      navigation.navigate(ScreenName.TransactionAlreadyValidatedError, {
+        error: new TransactionHasBeenValidatedError(
+          "The transaction has already been validated. You can't cancel or speedup a validated transaction.",
+        ),
+      });
+    }
+  });
+
+  useEffect(() => {
+    log("[edit transaction]", "Transaction to edit", transaction);
+    log("[edit transaction]", "User balance", mainAccount.balance.toNumber());
+
+    if (selectedMethod === "cancel") {
+      navigation.navigate(ScreenName.SendSelectDevice, {
+        accountId: account.id,
+        parentId: parentAccount?.id,
+        transaction,
+        status,
+      });
+    } else if (selectedMethod === "speedup") {
+      navigation.navigate(ScreenName.EditTransactionSummary, {
+        accountId: account.id,
+        parentId: parentAccount?.id,
+        transaction,
+        transactionRaw: operation.transactionRaw as TransactionRaw,
+        operation,
+        currentNavigation: ScreenName.EditTransactionMethodSelection,
+        nextNavigation: ScreenName.SendSelectDevice,
+      });
+    }
+  }, [
+    selectedMethod,
+    transaction,
+    operation,
+    status,
+    account.id,
+    parentAccount?.id,
+    mainAccount.balance,
+    navigation,
+  ]);
+
+  const { t } = useTranslation();
+
+  if (!transaction) {
+    return null;
+  }
+
+  return (
+    <Flex flex={1} color="background.main">
+      <TrackScreen category="EditTransaction" name="EditTransaction" />
+      <Flex p={6}>
+        <SelectableList onChange={onSelect}>
+          <SelectableList.Element
+            disabled={!haveFundToSpeedup || !oldestOperation}
+            value={"speedup"}
+          >
+            <Box style={{ width: Dimensions.get("window").width * 0.8 }}>
+              <LText bold>
+                <Trans i18nKey={"editTransaction.speedUp.title"} />
+              </LText>
+              <Flex>
+                <LText style={{ marginTop: 15, marginBottom: 0 }}>
+                  <Trans
+                    i18nKey={
+                      !oldestOperation
+                        ? "editTransaction.error.notlowestNonceToSpeedup"
+                        : haveFundToSpeedup
+                        ? "editTransaction.speedUp.description"
+                        : "editTransaction.error.notEnoughFundsToSpeedup"
+                    }
+                  />
+                </LText>
+              </Flex>
+            </Box>
+          </SelectableList.Element>
+
+          <SelectableList.Element disabled={!haveFundToCancel} value={"cancel"}>
+            <Box style={{ width: Dimensions.get("window").width * 0.8 }}>
+              <LText bold>
+                <Trans i18nKey={"editTransaction.cancel.title"} />
+              </LText>
+              <LText
+                style={{
+                  marginTop: 15,
+                  marginBottom: 0,
+                  overflow: "hidden",
+                }}
+              >
+                {haveFundToCancel
+                  ? t("editTransaction.cancel.description", {
+                      ticker: currency.ticker,
+                    })
+                  : t("editTransaction.error.notEnoughFundsToCancel")}
+              </LText>
+            </Box>
+          </SelectableList.Element>
+        </SelectableList>
+        <LText
+          style={{ marginTop: 8, textDecorationLine: "underline" }}
+          onPress={() => Linking.openURL(urls.editEthTx.learnMore)}
+        >
+          {t("editTransaction.learnMore")}
+        </LText>
+      </Flex>
+    </Flex>
+  );
+}
+
+export const MethodSelection = memo<Props>(MethodSelectionComponent);
