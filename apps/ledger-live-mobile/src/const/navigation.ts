@@ -76,6 +76,7 @@ export enum ScreenName {
   EditAccountName = "EditAccountName",
   EditAccountUnits = "EditAccountUnits",
   EditDeviceName = "EditDeviceName",
+  // TODO: rename to EvmEditTransactionMethodSelection
   EditTransactionMethodSelection = "EditTransactionMethodSelection",
   Exchange = "Exchange",
   ExchangeBuy = "ExchangeBuy",
@@ -334,6 +335,7 @@ export enum ScreenName {
   // Evm
   EvmEditGasLimit = "EvmEditGasLimit",
   EvmCustomFees = "EvmCustomFees",
+  EditTransactionSummary = "EditTransactionSummary",
 
   // Polkadot
   PolkadotBondStarted = "PolkadotBondStarted",
@@ -562,6 +564,7 @@ export enum NavigatorName {
   RequestAccountsAddAccounts = "RequestAccountsAddAccounts",
 
   // Edit transaction
+  // TODO: rename to EvmEditTransaction
   EditTransaction = "EditTransaction",
 
   // Polkadot
