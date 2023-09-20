@@ -15,6 +15,8 @@ export type SharedTaskEvent = { type: "error"; error: Error; retrying: boolean }
 export const NO_RESPONSE_TIMEOUT_MS = 30000;
 export const RETRY_ON_ERROR_DELAY_MS = 500;
 
+export const LOG_TYPE = "device-sdk-task";
+
 /**
  * Wraps a task function to add some common logic to it:
  * - Timeout for no response
