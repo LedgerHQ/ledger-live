@@ -539,13 +539,17 @@
         "swap" : {
           "title" : "Trocar",
           "label" : "Populares",
-          "body" : "Converta cripto para cripto em segurança"
+          "body" : "Troque cripto por cripto em segurança"
         },
         "receive" : {
           "title" : "Receber",
           "body" : "Receba cripto na sua carteira"
         }
       }
+    },
+    "getFundsModal" : {
+      "text" : "Obter {{coin}} para fazer staking",
+      "description" : "Compre, troque ou receba criptomoedas diretamente em sua Ledger pelo Ledger Live."
     }
   },
   "lottieDebugger" : {
@@ -1387,7 +1391,7 @@
       },
       "swap" : {
         "title" : "Trocar",
-        "description" : "Converta cripto para cripto em segurança",
+        "description" : "Troque cripto por cripto em segurança",
         "label" : "Populares"
       },
       "earn" : {
@@ -1700,7 +1704,8 @@
   "DeviceAction" : {
     "allowAppPermission" : "Abra o aplicativo {{wording}} no seu dispositivo",
     "allowAppPermissionSubtitleToken" : "para gerenciar seus tokens {{token}}",
-    "allowManagerPermission" : "Permitir {{wording}} no seu dispositivo",
+    "allowManagerPermission" : "Permitir uma conexão segura no seu dispositivo",
+    "allowRenaming" : "Permitir renomeação do seu dispositivo",
     "loading" : "Carregando...",
     "connectAndUnlockDevice" : "Conecte e desbloqueie seu dispositivo",
     "unlockDevice" : "Desbloqueie seu dispositivo",
@@ -1878,7 +1883,11 @@
       "contactSupport" : "Falar com o suporte",
       "deprecated" : "A versão do firmware do dispositivo é antiga demais para ser atualizada. Contate o Suporte Ledger para substituir o dispositivo.",
       "prepareSeed" : "Por precaução, certifique-se de que sua frase de recuperação de 24 palavras esteja anotada na folha de recuperação e esteja disponível.",
-      "disclaimerTitle" : "Você está prestes a instalar a <1>versão {{version}} do firmware</1>."
+      "disclaimerTitle" : "Você está prestes a instalar a <1>versão {{version}} do firmware</1>.",
+      "cancelUpdate" : "Cancelar atualização",
+      "continueUpdate" : "Continuar atualização",
+      "cancelUpdateWarning" : "Se cancelar a atualização agora, seus aplicativos e configurações podem não ser restaurados corretamente.",
+      "updateInProgress" : "Atualização do sistema operacional em andamento"
     },
     "modal" : {
       "title" : "Atualizar a {{productName}}",
@@ -4061,7 +4070,7 @@
     "downloadProgress" : "{{progress}}% concluído",
     "checking" : "Verificando Atualização...",
     "checkSuccess" : "Nova atualização do Ledger Live disponível, ela será instalada automaticamente quando você fechar o aplicativo",
-    "quitAndInstall" : "Instalar agora",
+    "quitAndInstall" : "Instalar e reiniciar agora",
     "updateAvailable" : "Atualização para a versão {{version}} do Ledger Live disponível",
     "error" : "Erro durante a atualização. Baixe Novamente",
     "reDownload" : "Baixar Novamente",
@@ -5309,6 +5318,10 @@
     "UserRefusedOnDevice" : {
       "title" : "Ação Rejeitada",
       "description" : "O usuário rejeitou a operação no dispositivo"
+    },
+    "ExpertModeRequired" : {
+      "title" : "Expert mode required",
+      "description" : "Expert mode needs to be enabled."
     },
     "TransactionRefusedOnDevice" : {
       "title" : "Operação negada no dispositivo",
