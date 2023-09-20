@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.32.0-next.1
+
+### Patch Changes
+
+- [#4771](https://github.com/LedgerHQ/ledger-live/pull/4771) [`1d7b4543f5`](https://github.com/LedgerHQ/ledger-live/commit/1d7b4543f5a9f6a8658c5355a3ae87c890223ab4) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - bump fastlane to fix publishing to google play store
+
 ## 3.32.0-next.0
 
 ### Minor Changes
