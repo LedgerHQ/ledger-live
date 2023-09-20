@@ -112,12 +112,14 @@ export function getListHeaderComponents({
 
   const stickyHeaderIndices = empty ? [] : [0];
 
+  // TODO: remove (this is part of isEditableOperation logic)
   const [oldestEditableOperation] = account.pendingOperations
     .filter(pendingOperation => {
-      return isEditableOperation(account, pendingOperation);
+      return isEditableOperation(mainAccount, pendingOperation);
     })
     .sort((a, b) => a.transactionSequenceNumber! - b.transactionSequenceNumber!);
 
+  // TODO: move to LLC
   const isOperationStuck =
     oldestEditableOperation &&
     oldestEditableOperation.date.getTime() <=

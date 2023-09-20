@@ -164,8 +164,9 @@ function OperationRow({
   const unit = getAccountUnit(account);
   const text = <Trans i18nKey={`operations.types.${operation.type}`} />;
   const isOptimistic = operation.blockHeight === null;
+  // TODO: move to LLC
   const isOperationStuck =
-    isEditableOperation(account, operation) &&
+    isEditableOperation(mainAccount, operation) &&
     operation.date.getTime() <= new Date().getTime() - getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT");
 
   const spinner = isOperationStuck ? (
