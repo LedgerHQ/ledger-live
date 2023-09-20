@@ -546,6 +546,10 @@
           "body" : "본인 지갑에서 암호화폐 수령"
         }
       }
+    },
+    "getFundsModal" : {
+      "text" : "{{coin}} 코인을 스테이킹하세요",
+      "description" : "Ledger Live를 사용해 Ledger로 직접 암호화폐를 구매, 스왑, 수령하세요."
     }
   },
   "lottieDebugger" : {
@@ -1700,7 +1704,8 @@
   "DeviceAction" : {
     "allowAppPermission" : "내 장치에서 {{wording}} 앱 열기",
     "allowAppPermissionSubtitleToken" : "나의 {{token}} 토큰 관리",
-    "allowManagerPermission" : "장치에서 {{wording}} 허용",
+    "allowManagerPermission" : "Allow Ledger Manager on your device",
+    "allowRenaming" : "Allow renaming on your device",
     "loading" : "로딩...",
     "connectAndUnlockDevice" : "장치를 연결하고 잠금 해제하세요",
     "unlockDevice" : "장치를 잠금 해제하세요",
@@ -1878,7 +1883,11 @@
       "contactSupport" : "지원 부서 연락",
       "deprecated" : "장치 펌웨어가 오래되어 업데이트가 불가능합니다. Leger 지원에 연락하여 교체를 요청하세요.",
       "prepareSeed" : "만약을 대비하여 24개의 단어 복구 문구를 복구 시트에 반드시 기록해 두고 언제든 사용 가능한 상태로 준비해 두세요.",
-      "disclaimerTitle" : "곧 <1>펌웨어 버전 {{version}}</1> 설치가 시작됩니다."
+      "disclaimerTitle" : "곧 <1>펌웨어 버전 {{version}}</1> 설치가 시작됩니다.",
+      "cancelUpdate" : "업데이트 취소",
+      "continueUpdate" : "업데이트 계속하기",
+      "cancelUpdateWarning" : "지금 업데이트를 취소하면 설정 및 앱이 제대로 복구되지 않을 수 있습니다.",
+      "updateInProgress" : "OS 업데이트 진행 중"
     },
     "modal" : {
       "title" : "{{productName}} 업데이트",
@@ -4061,7 +4070,7 @@
     "downloadProgress" : "{{progress}}% 완료됨",
     "checking" : "업데이트 확인 중...",
     "checkSuccess" : "새로운 Ledger Live 업데이트가 있습니다. 앱을 닫으면 자동으로 설치됩니다.",
-    "quitAndInstall" : "지금 설치",
+    "quitAndInstall" : "지금 설치하고 다시 시작하기",
     "updateAvailable" : "Ledger Live {{version}} 버전을 업데이트할 수 있습니다",
     "error" : "업데이트 중 오류가 발생했습니다. 다시 다운로드하세요",
     "reDownload" : "다시 다운로드",
@@ -5309,6 +5318,10 @@
     "UserRefusedOnDevice" : {
       "title" : "거부된 조치",
       "description" : "사용자가 장치에서 거래를 거부했습니다"
+    },
+    "ExpertModeRequired" : {
+      "title" : "Expert mode required",
+      "description" : "Expert mode needs to be enabled."
     },
     "TransactionRefusedOnDevice" : {
       "title" : "장치에서 거래 거부",
