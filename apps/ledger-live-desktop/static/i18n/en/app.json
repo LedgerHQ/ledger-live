@@ -122,6 +122,7 @@
     "search": "Search...",
     "searchWithoutEllipsis": "Search",
     "manage": "Manage",
+    "tryAgain": "Try again",
     "lockScreen": {
       "title": "Welcome back",
       "subTitle": null,
@@ -5105,12 +5106,12 @@
       "description": "Please try again."
     },
     "DisconnectedDevice": {
-      "title": "Sorry, it looks like your device disconnected",
-      "description": "Please reconnect and try again."
+      "title": "Device disconnected",
+      "description": "Ledger Live could not connect to your device. Please try again."
     },
     "DisconnectedDeviceDuringOperation": {
-      "title": "Sorry, it looks like your device disconnected",
-      "description": "Please reconnect and try again."
+      "title": "Device disconnected",
+      "description": "Ledger Live could not connect to your device. Please try again."
     },
     "EConnReset": {
       "title": "The Ledger application store can't be reached",
@@ -5827,31 +5828,33 @@
     "managerCTARemove": "Remove",
     "steps": {
       "choose": {
-        "stepLabel": "Choose an image",
+        "stepLabel": "Choose picture",
         "description": "Choose an image to set as (...)",
         "pickFromNftGallery": "Select from my NFT gallery",
         "myNfts": "My NFTs",
-        "upload": "Upload from my computer",
+        "upload": "Upload from computer",
         "chooseNft": "Choose an NFT",
         "remove": "Remove current picture",
         "selectNft": "Choose NFT",
-        "previousSelectNft": "back",
         "nftEmptyStateTitle": "No NFT's to show yet",
         "nftEmptyStateDescription": "Get started by adding NFTs to your wallet."
       },
       "adjust": {
-        "stepLabel": "Adjust image",
-        "rotate": "Rotate"
+        "stepLabel": "Crop",
+        "rotate": "Rotate",
+        "confirmCrop": "Confirm Crop"
       },
       "contrast": {
-        "stepLabel": "Choose contrast"
+        "stepLabel": "Set contrast",
+        "confirmContrast": "Confirm contrast"
       },
       "transfer": {
-        "stepLabel": "Transfer",
-        "uploadAnotherImage": "Upload another image",
-        "allowPreview": "Allow lock screen picture to load on your {{productName}}",
+        "stepLabel": "Load",
+        "useAnotherPicture": "Upload another picture",
+        "allowPreview": "Tap on “Load picture” to customize the lock screen",
         "allowConfirmPreview": "Allow lock screen picture restoration on {{productName}}",
         "loadingPicture": "Loading...",
+        "voila": "Voilà!",
         "imageLoaded": "Image loaded on {{productName}}",
         "confirmPicture": "Like what you see?\nKeep it!",
         "confirmRestorePicture": "Confirm restoration of the lock screen picture",
@@ -5859,12 +5862,12 @@
       }
     },
     "postOnboarding": {
-      "title": "Personalize my device",
-      "description": "By customizing the screen",
+      "title": "Customize the lock screen",
+      "description": "Choose any NFT or picture to set as the lock screen of your Ledger Stax.",
       "actionCompletedPopupLabel": "Device personalized"
     },
-    "customImageSet": "Lock screen set",
-    "finishCTA": "Finish"
+    "customImageSet": "Lock screen customized",
+    "finishCTA": "Close"
   },
   "onboardingAppInstall": {
     "restore": {
@@ -5910,7 +5913,6 @@
     "networkError": {
       "title": "Network Error",
       "subtitle": "Something went wrong. Please try again. If the problem persists, save your log and contact Ledger support.",
-      "tryAgain": "Try again",
       "contactSupport": "Contact Ledger support",
       "saveLog": "Save log"
     }
