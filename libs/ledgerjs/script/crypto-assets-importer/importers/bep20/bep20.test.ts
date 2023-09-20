@@ -28,9 +28,9 @@ describe("import bep20", () => {
   (string | null)?, // legacy
 ];
 
-const tokens: BEP20Token[] = ${JSON.stringify(bep20, null, 2)};
+import tokens from "./bep20.json";
 
-export default tokens;
+export default tokens as BEP20Token[];
 `;
 
     const mockedFs = (fs.writeFileSync = jest.fn());

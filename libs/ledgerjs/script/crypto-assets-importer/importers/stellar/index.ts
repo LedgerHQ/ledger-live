@@ -15,17 +15,20 @@ export const importStellarTokens = async (outputDir: string) => {
   console.log("importing stellar tokens...");
   const stellarTokens = await fetchTokens<StellarToken[]>("stellar.json");
   const filePath = path.join(outputDir, "stellar");
-  fs.writeFileSync(`${filePath}.json`, JSON.stringify(stellarTokens));
-  fs.writeFileSync(
-    `${filePath}.ts`,
-    `export type StellarToken = [
+
+  const stellarTypeStringified = `export type StellarToken = [
   string, // assetCode
   string, // assetIssuer
   string, // assetType (note: only used in Receive asset message and always should be "Stellar")
   string, // name
   number, // precision
   boolean, // enableCountervalues
-];
+];`;
+
+  fs.writeFileSync(`${filePath}.json`, JSON.stringify(stellarTokens));
+  fs.writeFileSync(
+    `${filePath}.ts`,
+    `${stellarTypeStringified}
 
 import tokens from "./stellar.json";
 

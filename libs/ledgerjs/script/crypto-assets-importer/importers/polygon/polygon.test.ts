@@ -42,9 +42,9 @@ describe("import poylgon erc20", () => {
   (string | null)?, // legacy
 ];
 
-const tokens: PolygonERC20Token[] = ${JSON.stringify(poylgonErc20, null, 2)};
+import tokens from "./polygon-erc20.json";
 
-export default tokens;
+export default tokens as PolygonERC20Token[];
 `;
 
     const mockedFs = (fs.writeFileSync = jest.fn());

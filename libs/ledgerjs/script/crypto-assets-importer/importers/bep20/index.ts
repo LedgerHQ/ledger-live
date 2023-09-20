@@ -23,7 +23,9 @@ export const importBEP20 = async (outputDir: string) => {
     if (bep20) {
       fs.writeFileSync(`${filePath}.json`, JSON.stringify(bep20));
 
-      const BEP20TokenTypeStringified = `export type BEP20Token = [
+      fs.writeFileSync(
+        `${filePath}.ts`,
+        `export type BEP20Token = [
   string, // parent currency id
   string, // token
   string, // ticker
@@ -34,18 +36,11 @@ export const importBEP20 = async (outputDir: string) => {
   boolean, // disabled counter value
   boolean, // delisted
   (string | null)?, // legacy
-];`;
+];
 
-      const tokensStringified = `import tokens from "./bep20.json";`;
-      const exportStringified = `export default tokens as BEP20Token[];`;
+import tokens from "./bep20.json";
 
-      fs.writeFileSync(
-        `${filePath}.ts`,
-        `${BEP20TokenTypeStringified}
-
-${tokensStringified}
-
-${exportStringified}
+export default tokens as BEP20Token[];
 `,
       );
 

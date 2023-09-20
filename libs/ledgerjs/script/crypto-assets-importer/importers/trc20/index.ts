@@ -17,10 +17,8 @@ export const importTRC20Tokens = async (outputDir: string) => {
   console.log("importing trc20 tokens...");
   const trc20tokens = await fetchTokens<TRC20Token[]>("trc20.json");
   const filePath = path.join(outputDir, "trc20");
-  fs.writeFileSync(`${filePath}.json`, JSON.stringify(trc20tokens));
-  fs.writeFileSync(
-    `${filePath}.ts`,
-    `export type TRC20Token = [
+
+  const trc20TypeStringified = `export type TRC20Token = [
   string, // id
   string, // abbr
   string, // name
@@ -29,7 +27,12 @@ export const importTRC20Tokens = async (outputDir: string) => {
   boolean?, // delisted
   string?, // ledgerSignature
   boolean?, // enableCountervalues
-];
+];`;
+
+  fs.writeFileSync(`${filePath}.json`, JSON.stringify(trc20tokens));
+  fs.writeFileSync(
+    `${filePath}.ts`,
+    `${trc20TypeStringified}
 
 import tokens from "./trc20.json";
 

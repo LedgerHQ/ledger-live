@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.1.1",
   "scripts": {
+    "test:importer": "jest script/crypto-assets-importer/",
     "import-cal-tokens": "ts-node script/crypto-assets-importer/index.ts"
   },
   "dependencies": {

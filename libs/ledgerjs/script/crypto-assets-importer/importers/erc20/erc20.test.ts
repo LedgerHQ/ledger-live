@@ -29,9 +29,9 @@ describe("import ERC20", () => {
   (string | null)?, // coumpound_for (legacy)
 ];
 
-const tokens: ERC20Token[] = ${JSON.stringify(erc20, null, 2)};
+import tokens from "./erc20.json";
 
-export default tokens;
+export default tokens as ERC20Token[];
 `;
 
     const mockedFs = (fs.writeFileSync = jest.fn());

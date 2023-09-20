@@ -15,17 +15,20 @@ export const importESDTTokens = async (outputDir: string) => {
   console.log("importing esdt tokens...");
   const esdtTokens = await fetchTokens<ElrondESDTToken[]>("esdt.json");
   const filePath = path.join(outputDir, "esdt");
-  fs.writeFileSync(`${filePath}.json`, JSON.stringify(esdtTokens));
-  fs.writeFileSync(
-    `${filePath}.ts`,
-    `export type ElrondESDTToken = [
+
+  const estTypeStringified = `export type ElrondESDTToken = [
   string, // ticker
   string, // identifier
   number, // decimals
   string, // signature
   string, // name
   boolean, // disableCountervalue
-];
+];`;
+
+  fs.writeFileSync(`${filePath}.json`, JSON.stringify(esdtTokens));
+  fs.writeFileSync(
+    `${filePath}.ts`,
+    `${estTypeStringified}
 
 import tokens from "./esdt.json";
 

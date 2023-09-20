@@ -13,7 +13,7 @@ describe("fetcher", () => {
   });
 
   it("should return null if error", async () => {
-    mockedAxios.get.mockImplementation(() => Promise.reject({ error: { message: "error" } }));
+    mockedAxios.get.mockImplementation(() => Promise.reject({ message: "could not fetch" }));
     const tokens = await fetchTokens("tokens.json");
     expect(tokens).toBe(null);
   });
