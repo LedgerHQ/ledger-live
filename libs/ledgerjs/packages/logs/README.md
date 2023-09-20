@@ -25,7 +25,7 @@ Utility library that is used by all Ledger libraries to dispatch logs so we can 
         *   [Parameters](#parameters-3)
     *   [withContext](#withcontext)
         *   [Parameters](#parameters-4)
-    *   [withAdditionalContext](#withadditionalcontext)
+    *   [withUpdatedContext](#withupdatedcontext)
         *   [Parameters](#parameters-5)
 *   [listen](#listen)
     *   [Parameters](#parameters-6)
@@ -124,7 +124,7 @@ following a simple builder pattern.
 
 Returns **[LocalTracer](#localtracer)** 
 
-#### withAdditionalContext
+#### withUpdatedContext
 
 Create a new instance of the LocalTracer with an updated `context`,
 on which an additional context is merged with the existing one.
