@@ -26,6 +26,7 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
 import { log } from "@ledgerhq/logs";
 import { useDynamicUrl } from "~/renderer/terms";
+import { FinalFirmware } from "@ledgerhq/types-live";
 
 export type Props = {
   onComplete: () => void;
@@ -40,7 +41,8 @@ export type Props = {
    * */
   isInitialRunOfSecurityChecks: boolean;
   restartChecksAfterUpdate: () => void;
-  isBootloader: boolean | null;
+  setFwUpdateInterrupted: (finalFirmware: FinalFirmware) => void;
+  fwUpdateInterrupted: FinalFirmware | null;
 };
 
 const commonDrawerProps = {
@@ -61,7 +63,8 @@ const EarlySecurityChecks = ({
   device,
   restartChecksAfterUpdate,
   isInitialRunOfSecurityChecks,
-  isBootloader,
+  setFwUpdateInterrupted,
+  fwUpdateInterrupted,
 }: Props) => {
   const { t } = useTranslation();
   const whySecurityChecksUrl = useDynamicUrl("genuineCheck");
@@ -74,7 +77,6 @@ const EarlySecurityChecks = ({
     SoftwareCheckStatus.inactive,
   );
   const [availableFirmwareVersion, setAvailableFirmwareVersion] = useState<string>("");
-  const [updateInterrupted, setUpdateInterrupted] = useState(false);
 
   const deviceId = device.deviceId ?? "";
   const deviceModelId = device.modelId;
@@ -129,7 +131,8 @@ const EarlySecurityChecks = ({
       ),
       onDrawerClose: () => {
         closeFwUpdateDrawer();
-        setUpdateInterrupted(true);
+        setFwUpdateInterrupted(latestFirmware?.final);
+        restartChecksAfterUpdate();
       },
       status: modal,
       stepId,
@@ -158,7 +161,8 @@ const EarlySecurityChecks = ({
       forceDisableFocusTrap: true,
       onRequestClose: () => {
         closeFwUpdateDrawer();
-        setUpdateInterrupted(true);
+        setFwUpdateInterrupted(latestFirmware.final);
+        restartChecksAfterUpdate();
       },
     });
   }, [
@@ -168,14 +172,9 @@ const EarlySecurityChecks = ({
     deviceModelId,
     latestFirmware,
     restartChecksAfterUpdate,
+    setFwUpdateInterrupted,
     t,
   ]);
-
-  useEffect(() => {
-    if (updateInterrupted && isBootloader) {
-      restartChecksAfterUpdate();
-    }
-  }, [isBootloader, restartChecksAfterUpdate, updateInterrupted]);
 
   useEffect(() => {
     if (devicePermissionState === "refused") {
@@ -330,7 +329,7 @@ const EarlySecurityChecks = ({
         }
         availableFirmwareVersion={availableFirmwareVersion}
         modelName={productName}
-        updateSkippable={updateInterrupted}
+        updateSkippable={latestFirmware?.final.id === fwUpdateInterrupted?.id}
         onClickStartChecks={() => {
           track("button_clicked", { button: "Start checks" });
           setGenuineCheckStatus(SoftwareCheckStatus.active);
