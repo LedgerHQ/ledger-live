@@ -546,6 +546,10 @@
           "body" : "在您的钱包中接收加密货币"
         }
       }
+    },
+    "getFundsModal" : {
+      "text" : "获取 {{coin}} 进行权益质押",
+      "description" : "使用 Ledger Live 直接在您的 Ledger 设备上买入、互换或接收加密货币。"
     }
   },
   "lottieDebugger" : {
@@ -1700,7 +1704,8 @@
   "DeviceAction" : {
     "allowAppPermission" : "在您的设备上打开 {{wording}} 应用程序",
     "allowAppPermissionSubtitleToken" : "管理您的 {{token}} 代币",
-    "allowManagerPermission" : "允许 {{wording}} 在您的设备上运行",
+    "allowManagerPermission" : "允许 Ledger 管理器在您的设备上运行",
+    "allowRenaming" : "允许在您的设备上重命名",
     "loading" : "正在加载……",
     "connectAndUnlockDevice" : "连接并解锁您的设备",
     "unlockDevice" : "解锁您的设备",
@@ -1878,7 +1883,11 @@
       "contactSupport" : "联系客服",
       "deprecated" : "设备固件版本太旧而无法更新。请联系 Ledger 客服以获取替代版本。",
       "prepareSeed" : "预防起见，请确保将您的 24 词恢复短语写在所提供的恢复表中。",
-      "disclaimerTitle" : "您即将安装 <1>固件版本 {{version}}</1>。"
+      "disclaimerTitle" : "您即将安装 <1>固件版本 {{version}}</1>。",
+      "cancelUpdate" : "取消更新",
+      "continueUpdate" : "继续更新",
+      "cancelUpdateWarning" : "如果您现在取消更新，您的设置和应用程序可能无法正确恢复。",
+      "updateInProgress" : "正在更新操作系统"
     },
     "modal" : {
       "title" : "更新 {{productName}}",
@@ -4061,7 +4070,7 @@
     "downloadProgress" : "已完成 {{progress}}%",
     "checking" : "正在检查更新...",
     "checkSuccess" : "Ledger Live 有新的更新，当您关闭应用程序时会自动安装更新。",
-    "quitAndInstall" : "立即安装",
+    "quitAndInstall" : "立即安装并重新启动",
     "updateAvailable" : "Ledger Live 有新版本 {{version}} 可更新",
     "error" : "更新时出错。请重新下载",
     "reDownload" : "重新下载",
@@ -5309,6 +5318,10 @@
     "UserRefusedOnDevice" : {
       "title" : "操作被拒绝",
       "description" : "用户在设备上拒绝了该操作"
+    },
+    "ExpertModeRequired" : {
+      "title" : "Expert mode required",
+      "description" : "Expert mode needs to be enabled."
     },
     "TransactionRefusedOnDevice" : {
       "title" : "操作在设备上被拒绝",
