@@ -546,6 +546,10 @@
           "body" : "Recibe cripto en tu billetera"
         }
       }
+    },
+    "getFundsModal" : {
+      "text" : "Consigue {{coin}} para poner en participación",
+      "description" : "Compra, permuta o recibe cripto directamente en tu Ledger mediante Ledger Live."
     }
   },
   "lottieDebugger" : {
@@ -1700,7 +1704,8 @@
   "DeviceAction" : {
     "allowAppPermission" : "Abre la aplicación {{wording}} en tu dispositivo",
     "allowAppPermissionSubtitleToken" : "para administrar los tokens {{token}}",
-    "allowManagerPermission" : "Permite {{wording}} en tu dispositivo",
+    "allowManagerPermission" : "Permitir Ledger Manager en tu dispositivo",
+    "allowRenaming" : "Permitir renombrar en tu dispositivo",
     "loading" : "Cargando...",
     "connectAndUnlockDevice" : "Conecta y desbloquea tu dispositivo",
     "unlockDevice" : "Desbloquea tu dispositivo",
@@ -1878,7 +1883,11 @@
       "contactSupport" : "Ponte en contacto con Soporte",
       "deprecated" : "La versión de firmware del dispositivo es demasiado antigua para poder actualizarla. Contacta al Soporte de Ledger para obtener un reemplazo.",
       "prepareSeed" : "Como precaución, asegúrate de que la Frase de recuperación de 24 Palabras esté escrita en la Hoja de recuperación y de tener fácil acceso a ella.",
-      "disclaimerTitle" : "Estás a punto de instalar <1>la versión de firmware {{version}}</1>."
+      "disclaimerTitle" : "Estás a punto de instalar <1>la versión de firmware {{version}}</1>.",
+      "cancelUpdate" : "Cancelar actualización",
+      "continueUpdate" : "Continuar con la actualización",
+      "cancelUpdateWarning" : "Si cancelas la actualización ahora, tus ajustes y aplicaciones podrían no restaurarse correctamente.",
+      "updateInProgress" : "Actualización del SO en curso"
     },
     "modal" : {
       "title" : "Actualizar {{productName}}",
@@ -4061,7 +4070,7 @@
     "downloadProgress" : "{{progress}}% completado",
     "checking" : "Comprobando actualización...",
     "checkSuccess" : "Nueva actualización de Ledger Live disponible, se instalará automáticamente cuando cierres la aplicación.",
-    "quitAndInstall" : "Instalar ahora",
+    "quitAndInstall" : "Instalar ahora y reiniciar",
     "updateAvailable" : "Se encuentra disponible la actualización a la versión {{version}} de Ledger Live",
     "error" : "Error durante la actualización. Descárgala de nuevo",
     "reDownload" : "Descargar de nuevo",
@@ -5309,6 +5318,10 @@
     "UserRefusedOnDevice" : {
       "title" : "Acción rechazada",
       "description" : "El usuario rechazó la operación en el dispositivo"
+    },
+    "ExpertModeRequired" : {
+      "title" : "Se requiere el modo Experto",
+      "description" : "Es necesario activar el modo Experto."
     },
     "TransactionRefusedOnDevice" : {
       "title" : "Operación denegada en el dispositivo",
