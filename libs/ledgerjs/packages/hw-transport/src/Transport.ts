@@ -296,7 +296,7 @@ export default class Transport {
 
   exchangeBusyPromise: Promise<void> | null | undefined;
   exchangeAtomicImpl = async (f: () => Promise<Buffer | void>): Promise<Buffer | void> => {
-    const tracer = this.tracer.withAdditionalContext({ function: "exchangeAtomicImpl" });
+    const tracer = this.tracer.withUpdatedContext({ function: "exchangeAtomicImpl" });
     tracer.trace("Starting an atomic APDU exchange");
 
     if (this.exchangeBusyPromise) {

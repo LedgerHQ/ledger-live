@@ -581,7 +581,7 @@ export default class BleTransport extends Transport {
    * @returns {Promise<Buffer>} A promise that resolves with the response data from the device.
    */
   exchange = (apdu: Buffer): Promise<any> => {
-    const tracer = this.tracer.withAdditionalContext({
+    const tracer = this.tracer.withUpdatedContext({
       function: "exchange",
     });
     tracer.trace("Exchanging APDU ...");

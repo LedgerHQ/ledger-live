@@ -113,6 +113,10 @@ export class LocalTracer {
     this.context = context;
   }
 
+  updateContext(contextToAdd: TraceContext) {
+    this.context = { ...this.context, ...contextToAdd };
+  }
+
   getType(): LogType {
     return this.type;
   }
@@ -150,7 +154,7 @@ export class LocalTracer {
    * It does not mutate the calling instance, but returns a new LocalTracer,
    * following a simple builder pattern.
    */
-  withAdditionalContext(contextToAdd: TraceContext): LocalTracer {
+  withUpdatedContext(contextToAdd: TraceContext): LocalTracer {
     return new LocalTracer(this.type, { ...this.context, ...contextToAdd });
   }
 }
