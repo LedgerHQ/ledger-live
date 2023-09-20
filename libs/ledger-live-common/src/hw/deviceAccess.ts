@@ -142,14 +142,13 @@ export const withDevice =
       };
 
       // When we'll finish all the current job, we'll call finish
-      // notifyJobCompleted ? resolveCurrentJob
-      let resolveQueuedDevice;
+      let resolveQueuedJob;
 
       // Queue of linked Promises that wait after each other
       // Blocking any future job on this device
       deviceQueues[deviceId] = {
         job: new Promise(resolve => {
-          resolveQueuedDevice = resolve;
+          resolveQueuedJob = resolve;
         }),
         id: jobId,
       };
@@ -172,7 +171,7 @@ export const withDevice =
           if (unsubscribed) {
             tracer.trace("Unsubscribed (1) while processing job");
             // It was unsubscribed prematurely
-            return finalize(transport, [resolveQueuedDevice]);
+            return finalize(transport, [resolveQueuedJob]);
           }
           setAllowAutoDisconnect(transport, deviceId, false);
 
@@ -186,7 +185,7 @@ export const withDevice =
         // This catch is here only for errors that might happen at open or at clean up of the transport before doing the job
         .catch(e => {
           tracer.trace("Error while opening Transport: ", { e });
-          resolveQueuedDevice();
+          resolveQueuedJob();
           if (e instanceof BluetoothRequired) throw e;
           if (e instanceof TransportWebUSBGestureRequired) throw e;
           if (e instanceof TransportInterfaceNotAvailable) throw e;
@@ -202,7 +201,7 @@ export const withDevice =
           // It was unsubscribed prematurely
           if (unsubscribed) {
             tracer.trace("Unsubscribed (2) while processing job");
-            return finalize(transport, [resolveQueuedDevice]);
+            return finalize(transport, [resolveQueuedJob]);
           }
 
           sub = job(transport)
@@ -211,7 +210,7 @@ export const withDevice =
               catchError(errorRemapping),
               transportFinally(() => {
                 // Closes the transport and cleans up everything
-                return finalize(transport, [resolveQueuedDevice]);
+                return finalize(transport, [resolveQueuedJob]);
               }),
             )
             .subscribe({

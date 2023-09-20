@@ -96,14 +96,13 @@ export const withTransport = (deviceId: string, options?: { openTimeoutMs?: numb
       };
 
       // When we'll finish all the current job, we'll call finish
-      // resolveQueuedJob
-      let resolveQueuedDevice;
+      let resolveQueuedJob;
 
       // Queue of linked Promises that wait after each other
       // Blocking any future job on this device
       deviceQueues[deviceId] = {
         job: new Promise(resolve => {
-          resolveQueuedDevice = resolve;
+          resolveQueuedJob = resolve;
         }),
         id: jobId,
       };
@@ -116,7 +115,7 @@ export const withTransport = (deviceId: string, options?: { openTimeoutMs?: numb
         if (unsubscribed) {
           tracer.trace("Unsubscribed (1) while processing job");
           // It was unsubscribed prematurely
-          return finalize(transport, [resolveQueuedDevice]);
+          return finalize(transport, [resolveQueuedJob]);
         }
 
         if (needsCleanup[identifyTransport(transport)]) {
@@ -130,7 +129,7 @@ export const withTransport = (deviceId: string, options?: { openTimeoutMs?: numb
       // This catch is here only for errors that might happen at open or at clean up of the transport before doing the job
       const onErrorDuringTransportSetup = (error: unknown) => {
         tracer.trace("Error while setting up a transport: ", { error });
-        resolveQueuedDevice();
+        resolveQueuedJob();
         if (error instanceof BluetoothRequired) throw error;
         if (error instanceof TransportWebUSBGestureRequired) throw error;
         if (error instanceof TransportInterfaceNotAvailable) throw error;
@@ -204,7 +203,7 @@ export const withTransport = (deviceId: string, options?: { openTimeoutMs?: numb
           if (unsubscribed) {
             tracer.trace("Unsubscribed (2) while processing job");
             // It was unsubscribed prematurely
-            return finalize(transportRef.current, [resolveQueuedDevice]);
+            return finalize(transportRef.current, [resolveQueuedJob]);
           }
 
           sub = job({ transportRef })
@@ -212,7 +211,7 @@ export const withTransport = (deviceId: string, options?: { openTimeoutMs?: numb
               catchError(error => initialErrorRemapping(error, tracer.getContext())),
               catchError(errorRemapping), // close the transport and clean up everything
               transportFinally(() => {
-                return finalize(transportRef.current, [resolveQueuedDevice]);
+                return finalize(transportRef.current, [resolveQueuedJob]);
               }),
             )
             .subscribe(subscriber);
