@@ -1,7 +1,7 @@
 ---
 "@ledgerhq/cryptoassets": major
-"ledger-live-desktop": major
-"live-mobile": major
+"ledger-live-desktop": minor
+"live-mobile": minor
 "@ledgerhq/live-common": major
 "@ledgerhq/types-cryptoassets": minor
 "@ledgerhq/coin-framework": minor
