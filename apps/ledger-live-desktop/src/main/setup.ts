@@ -33,10 +33,21 @@ ipcMain.on("updater", (e, type) => {
  */
 ipcMain.handle(
   "save-logs",
-  async (_event, path: Electron.SaveDialogReturnValue, rendererLogs: unknown[]) => {
+  async (_event, path: Electron.SaveDialogReturnValue, rendererLogsStr: string) => {
     if (!path.canceled && path.filePath) {
       const inMemoryLogger = InMemoryLogger.getLogger();
       const internalLogs = inMemoryLogger.getLogs();
+
+      // The deserialization would have been done internally by electron if `rendererLogs` was passed directly as a JS object/array.
+      // But it avoids certain issues with the serialization/deserialization done by electron.
+      let rendererLogs: unknown[] = [];
+      try {
+        rendererLogs = JSON.parse(rendererLogsStr) as unknown[];
+      } catch (error) {
+        console.error("Error while parsing logs from the renderer thread", error);
+        return;
+      }
+
       console.log(
         `Saving ${rendererLogs.length} logs from the renderer thread and ${internalLogs.length} logs from the internal thread`,
       );

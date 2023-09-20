@@ -13,8 +13,17 @@ import Button, { Props as ButtonProps } from "~/renderer/components/Button";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 
 const saveLogs = async (path: Electron.SaveDialogReturnValue) => {
-  // Requests the main thread to save logs in a file
-  await ipcRenderer.invoke("save-logs", path, memoryLogger.getMemoryLogs());
+  const memoryLogs = memoryLogger.getMemoryLogs();
+
+  try {
+    // Serializes ourself with `stringify` to avoid "object could not be cloned" errors from the electron IPC serializer.
+    const memoryLogsStr = JSON.stringify(memoryLogs, null, 2);
+
+    // Requests the main thread to save logs in a file
+    await ipcRenderer.invoke("save-logs", path, memoryLogsStr);
+  } catch (error) {
+    console.error("Error while requesting to save logs from the renderer thread", error);
+  }
 };
 
 type RestProps = ButtonProps & {
