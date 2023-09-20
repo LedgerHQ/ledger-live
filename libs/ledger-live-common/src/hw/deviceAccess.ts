@@ -90,7 +90,14 @@ const needsCleanup = {};
 // When a series of APDUs are interrupted, this is called
 // so we don't forget to cleanup on the next withDevice
 export const cancelDeviceAction = (transport: Transport): void => {
-  needsCleanup[identifyTransport(transport)] = true;
+  const transportId = identifyTransport(transport);
+  trace({
+    type: LOG_TYPE,
+    message: "Cancelling device action",
+    data: { transportId },
+  });
+
+  needsCleanup[transportId] = true;
 };
 
 // The devicesQueues object only stores, for each device, the latest void promise that will resolve when the device is ready to be opened again.
@@ -147,7 +154,9 @@ export const withDevice =
         id: jobId,
       };
 
-      tracer.trace("Waiting for queue to complete previous job", { previousJobId: deviceQueue.id });
+      tracer.trace("Waiting for the previous job in the queue to complete", {
+        previousJobId: deviceQueue.id,
+      });
       // For any new job, we'll now wait the exec queue to be available
       deviceQueue.job
         .then(() => {
