@@ -18,7 +18,6 @@ XCODE_PROJECT = "./ios/#{PROJECT_NAME}.xcodeproj"
 XCODE_WORKSPACE = "./ios/#{PROJECT_NAME}.xcworkspace"
 OUTPUT_DIRECTORY = "./ios"
 IPA_DIRECTORY = "#{OUTPUT_DIRECTORY}/#{PROJECT_NAME}.ipa"
-SUPPLY_UPLOAD_MAX_RETRIES ="5"
 
 # Uncomment the line if you want fastlane to automatically update itself
 # update_fastlane
