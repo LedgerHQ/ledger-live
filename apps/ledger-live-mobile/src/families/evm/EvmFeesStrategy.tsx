@@ -7,7 +7,7 @@ import { log } from "@ledgerhq/logs";
 import { InfiniteLoader } from "@ledgerhq/native-ui";
 import { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import React, { useCallback, useEffect, useState } from "react";
+import { default as React, useCallback, useEffect, useState } from "react";
 import { ScreenName } from "../../const";
 import { EvmNetworkFeeInfo } from "./EvmNetworkFeesInfo";
 import SelectFeesStrategy from "./SelectFeesStrategy";
