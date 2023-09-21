@@ -95,7 +95,13 @@ function SelectAccountAndCurrencyDrawer(props: SelectAccountAndCurrencyDrawerPro
     [onAccountSelected, props, onClose, accounts$],
   );
   if (currencies.length === 1) {
-    return <SelectAccountDrawer currency={currencies[0]} onAccountSelected={onAccountSelected} />;
+    return (
+      <SelectAccountDrawer
+        currency={currencies[0]}
+        onAccountSelected={onAccountSelected}
+        accounts$={accounts$}
+      />
+    );
   }
   return (
     <SelectAccountAndCurrencyDrawerContainer>
