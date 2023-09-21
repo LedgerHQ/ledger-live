@@ -18,10 +18,7 @@ import { ExchangeNavigatorParamList } from "../../../components/RootNavigator/ty
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import { ScreenName } from "../../../const";
 import { accountsSelector } from "../../../reducers/accounts";
-import {
-  DEFAULT_MULTIBUY_APP_ID,
-  INTERNAL_APP_IDS,
-} from "@ledgerhq/live-common/wallet-api/constants";
+import { INTERNAL_APP_IDS } from "@ledgerhq/live-common/wallet-api/constants";
 
 export type Props = StackNavigatorProps<
   ExchangeNavigatorParamList,
