@@ -122,6 +122,7 @@
     "search" : "جارٍ البحث...",
     "searchWithoutEllipsis" : "بحث",
     "manage" : "إدارة",
+    "tryAgain" : "إعادة المحاولة",
     "lockScreen" : {
       "title" : "مرحباً بك مجدداً",
       "subTitle" : null,
@@ -546,6 +547,10 @@
           "body" : "تلقي الأصول المشفرة في محفظتك"
         }
       }
+    },
+    "getFundsModal" : {
+      "text" : "احصل على {{coin}} للتكديس",
+      "description" : "قم بشراء أو مبادلة أو تلقى الأصول المشفرة مباشرةً إلى جهازك Ledger باستخدام Ledger Live."
     }
   },
   "lottieDebugger" : {
@@ -1700,7 +1705,8 @@
   "DeviceAction" : {
     "allowAppPermission" : "افتح تطبيق {{wording}} على جهازك",
     "allowAppPermissionSubtitleToken" : "لإدارة رموزك {{token}}",
-    "allowManagerPermission" : "السماح بــ {{wording}} على جهازك",
+    "allowManagerPermission" : "اسمح بمدير Ledger على جهازك",
+    "allowRenaming" : "اسمح بإعادة التسمية على جهازك",
     "loading" : "جاري التحميل...",
     "connectAndUnlockDevice" : "قم بتوصيل جهازك وإلغاء قفله",
     "unlockDevice" : "قم بإلغاء قفل جهازك",
@@ -1878,7 +1884,11 @@
       "contactSupport" : "تواصل مع الدعم",
       "deprecated" : "إصدار البرنامج الثابت للجهاز قديم للغاية ليتم تحديثه. تواصل مع دعم Ledger للحصول على بديل.",
       "prepareSeed" : "تأكد من كتابة عبارة الاسترداد الخاصة المكونة من 24 كلمة على ورقة الاسترداد وأنها متوفرة، على سبيل الاحتياط.",
-      "disclaimerTitle" : "أنت على وشك تثبيت <1>إصدار البرنامج الثابت {{version}}</1>."
+      "disclaimerTitle" : "أنت على وشك تثبيت <1>إصدار البرنامج الثابت {{version}}</1>.",
+      "cancelUpdate" : "إلغاء التحديث",
+      "continueUpdate" : "متابعة التحديث",
+      "cancelUpdateWarning" : "إعداداتك وتطبيقاتك قد لا يتم استعادتها بشكل صحيح إذا ألغيت التحديث الآن.",
+      "updateInProgress" : "تحديث نظام التشغيل قيد التنفيذ"
     },
     "modal" : {
       "title" : "تحديث {{productName}}",
@@ -2064,7 +2074,8 @@
         "parentAccount" : "1. اختر حساب {{currencyName}}",
         "token" : "2. اختر رمز التوكن",
         "verifyTokenType" : "يرجى التحقق أن <0>{{token}}</0> هو رمز <0>{{tokenType}}</0>. أي أصل مشفر آخر تم إرساله إلى حساب {{currency}} قد يتم فقده.",
-        "warningTokenType" : "يرجى إرسال رموز <0>{{ticker}}</0> أو <0>{{tokenType}}</0> الى حسابات {{currency}}. إرسال الأصول المشفرة الأخرى قد ينتج عنه فقدان دائم للأموال."
+        "warningTokenType" : "يرجى إرسال رموز <0>{{ticker}}</0> أو <0>{{tokenType}}</0> الى حسابات {{currency}}. إرسال الأصول المشفرة الأخرى قد ينتج عنه فقدان دائم للأموال.",
+        "depositFromCexBannerTitle" : "Deposit crypto from your Coinbase account"
       },
       "connectDevice" : {
         "title" : "جهاز",
@@ -4061,7 +4072,7 @@
     "downloadProgress" : "اكتمل {{progress}}%",
     "checking" : "جاري التحقق من التحديث...",
     "checkSuccess" : "متاح تحديث Ledger Live جديد، سيتم تثبيته تلقائياً عندما تغلق التطبيق",
-    "quitAndInstall" : "تثبيت الآن",
+    "quitAndInstall" : "تثبيت الآن وإعادة الإطلاق",
     "updateAvailable" : "التحديث إلى إصدار {{version}} من Ledger Live متاح",
     "error" : "حدث خطأ أثناء التحديث. يرجى التنزيل مرة أخرى",
     "reDownload" : "التنزيل مرة أخرى",
@@ -5077,12 +5088,12 @@
       "description" : "يرجى إعادة المحاولة."
     },
     "DisconnectedDevice" : {
-      "title" : "عذراً، يبدو أنه قد انقطع الاتصال عن جهازك",
-      "description" : "يرجى إعادة الاتصال والمحاولة مرة أخرى."
+      "title" : "الجهاز غير متصل",
+      "description" : "Ledger Live could not connect to your device. Please try again."
     },
     "DisconnectedDeviceDuringOperation" : {
-      "title" : "عذراً، يبدو أنه قد انقطع الاتصال عن جهازك",
-      "description" : "يرجى إعادة الاتصال والمحاولة مرة أخرى."
+      "title" : "الجهاز غير متصل",
+      "description" : "Ledger Live could not connect to your device. Please try again."
     },
     "EConnReset" : {
       "title" : "لا يمكن الوصول إلى متجر تطبيقات Ledger",
@@ -5309,6 +5320,10 @@
     "UserRefusedOnDevice" : {
       "title" : "تم رفض الإجراء",
       "description" : "رفض المستخدم العملية على الجهاز"
+    },
+    "ExpertModeRequired" : {
+      "title" : "Expert mode required",
+      "description" : "Expert mode needs to be enabled."
     },
     "TransactionRefusedOnDevice" : {
       "title" : "تم رفض العملية على الجهاز",
@@ -5795,31 +5810,33 @@
     "managerCTARemove" : "حذف",
     "steps" : {
       "choose" : {
-        "stepLabel" : "اختر صورة",
+        "stepLabel" : "Choose picture",
         "description" : "اختر صورة لتعيينها على أنها (...)",
         "pickFromNftGallery" : "اختر من معرض NFT",
         "myNfts" : "رموزي غير القابلة للاستبدال",
-        "upload" : "تحميل من الكمبيوتر الخاص بي",
+        "upload" : "Upload from computer",
         "chooseNft" : "اختر رمزاً غير قابل للاستبدال",
         "remove" : "إزالة الصورة الحالية",
         "selectNft" : "اختر رمز غير قابل للاستبدال",
-        "previousSelectNft" : "عودة",
         "nftEmptyStateTitle" : "ليس هناك رموز غير قابلة للاستبدال بعد لعرضها",
         "nftEmptyStateDescription" : "ابدأ بإضافة رموز غير قابلة للاستبدال إلى محفظتك."
       },
       "adjust" : {
-        "stepLabel" : "ضبط الصورة",
-        "rotate" : "تدوير"
+        "stepLabel" : "Crop",
+        "rotate" : "تدوير",
+        "confirmCrop" : "تأكيد القص"
       },
       "contrast" : {
-        "stepLabel" : "اختر التباين"
+        "stepLabel" : "Set contrast",
+        "confirmContrast" : "تأكيد التباين"
       },
       "transfer" : {
-        "stepLabel" : "تحويل",
-        "uploadAnotherImage" : "قم بتحميل صورة أخرى",
-        "allowPreview" : "اسمح لصورة شاشة القَفل بالتحميل على {{productName}} الخاص بك",
+        "stepLabel" : "Load",
+        "useAnotherPicture" : "Upload another picture",
+        "allowPreview" : "Tap on “Load picture” to customize the lock screen",
         "allowConfirmPreview" : "السماح باستعادة صورة شاشة القفل على {{productName}}",
         "loadingPicture" : "جاري التحميل ...",
+        "voila" : "Voilà!",
         "imageLoaded" : "تم تحميل الصورة على {{productName}}",
         "confirmPicture" : "يُعجبك ما تراه؟\nاحتفظ بها!",
         "confirmRestorePicture" : "تأكيد استعادة صورة شاشة القفل",
@@ -5827,12 +5844,12 @@
       }
     },
     "postOnboarding" : {
-      "title" : "تخصيص جهازي",
-      "description" : "عبر تخصيص الشاشة",
+      "title" : "قم بتخصيص شاشة القَفل",
+      "description" : "اختر أي رمز غير قابل للاستبدال أو صورة لتعيينها كشاشة قَفل Ledger Stax الخاص بك.",
       "actionCompletedPopupLabel" : "تم تخصيص الجهاز"
     },
-    "customImageSet" : "تم تعيين شاشة القَفل",
-    "finishCTA" : "إنهاء"
+    "customImageSet" : "تم تخصيص شاشة القَفل",
+    "finishCTA" : "Close"
   },
   "onboardingAppInstall" : {
     "restore" : {
@@ -5878,7 +5895,6 @@
     "networkError" : {
       "title" : "خطأ في الشبكة",
       "subtitle" : "حدث خطأ ما. يُرجى إعادة المحاولة. إذا استمرت المشكلة، احفظ السجل وتواصل مع دعم Ledger.",
-      "tryAgain" : "أعد المحاولة",
       "contactSupport" : "تواصل مع دعم Ledger",
       "saveLog" : "حفظ السجل"
     }
