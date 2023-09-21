@@ -105,6 +105,7 @@ export type SettingsState = {
   };
   featureFlagsButtonVisible: boolean;
   vaultSigner: VaultSigner;
+  supportedCounterValues: supportedCountervaluesData[];
 };
 
 export const getInitialLanguageAndLocale = (): { language: Language; locale: Locale } => {
@@ -189,6 +190,7 @@ const INITIAL_STATE: SettingsState = {
 
   // Vault
   vaultSigner: { enabled: false, host: "", token: "", workspace: "" },
+  supportedCounterValues: [],
 };
 
 /* Handlers */
@@ -237,6 +239,7 @@ type HandlersPayloads = {
     featureFlagsButtonVisible: boolean;
   };
   SET_VAULT_SIGNER: VaultSigner;
+  SET_SUPPORTED_COUNTER_VALUES: supportedCountervaluesData[];
 };
 type SettingsHandlers<PreciseKey = true> = Handlers<SettingsState, HandlersPayloads, PreciseKey>;
 
@@ -267,7 +270,9 @@ const handlers: SettingsHandlers = {
   FETCH_SETTINGS: (state, { payload: settings }) => {
     if (
       settings.counterValue &&
-      !supportedCountervalues.find(({ currency }) => currency.ticker === settings.counterValue)
+      !state.supportedCounterValues.find(
+        ({ currency }) => currency.ticker === settings.counterValue,
+      )
     ) {
       settings.counterValue = INITIAL_STATE.counterValue;
     }
@@ -396,6 +401,10 @@ const handlers: SettingsHandlers = {
     ...state,
     vaultSigner: payload,
   }),
+  SET_SUPPORTED_COUNTER_VALUES: (state: SettingsState, { payload }) => ({
+    ...state,
+    supportedCounterValues: payload,
+  }),
 };
 export default handleActions<SettingsState, HandlersPayloads[keyof HandlersPayloads]>(
   handlers as unknown as SettingsHandlers<false>,
@@ -460,22 +469,23 @@ const defaultsForCurrency: (a: Currency) => CurrencySettings = crypto => {
   };
 };
 
-export type SupportedCoutervaluesData = {
+export type supportedCountervaluesData = {
   value: string;
   label: string;
   currency: Currency;
 };
-export const supportedCountervalues: SupportedCoutervaluesData[] = [
-  ...listSupportedFiats(),
-  ...possibleIntermediaries,
-]
-  .map(currency => ({
-    value: currency.ticker,
-    label: `${currency.name} - ${currency.ticker}`,
-    currency,
-  }))
-  .sort((a, b) => (a.currency.name < b.currency.name ? -1 : 1));
 
+export const getsupportedCountervalues = async (): Promise<supportedCountervaluesData[]> => {
+  const supportedFiats = await listSupportedFiats();
+  const data = [...supportedFiats, ...possibleIntermediaries]
+    .map(currency => ({
+      value: currency.ticker,
+      label: `${currency.name} - ${currency.ticker}`,
+      currency,
+    }))
+    .sort((a, b) => (a.currency.name < b.currency.name ? -1 : 1));
+  return data;
+};
 // TODO refactor selectors to *Selector naming convention
 
 export const storeSelector = (state: State): SettingsState => state.settings;
@@ -691,3 +701,5 @@ export const overriddenFeatureFlagsSelector = (state: State) =>
 export const featureFlagsButtonVisibleSelector = (state: State) =>
   state.settings.featureFlagsButtonVisible;
 export const vaultSignerSelector = (state: State) => state.settings.vaultSigner;
+export const supportedCounterValuesSelector = (state: State) =>
+  state.settings.supportedCounterValues;

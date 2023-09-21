@@ -3,9 +3,7 @@ import type { Action } from "redux-actions";
 import merge from "lodash/merge";
 import {
   findCurrencyByTicker,
-  getCryptoCurrencyById,
   getFiatCurrencyByTicker,
-  listSupportedFiats,
 } from "@ledgerhq/live-common/currencies/index";
 import { getEnv, setEnvUnsafe } from "@ledgerhq/live-env";
 import { createSelector } from "reselect";
@@ -77,6 +75,7 @@ import type {
   SettingsSetClosedNetworkBannerPayload,
   SettingsSetClosedWithdrawBannerPayload,
   SettingsSetUserNps,
+  SettingsSetSupportedCounterValues,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -84,14 +83,6 @@ import {
 } from "../actions/types";
 import { ScreenName } from "../const";
 
-const bitcoin = getCryptoCurrencyById("bitcoin");
-const ethereum = getCryptoCurrencyById("ethereum");
-export const possibleIntermediaries = [bitcoin, ethereum];
-export const supportedCountervalues = [...listSupportedFiats(), ...possibleIntermediaries];
-export const intermediaryCurrency = (from: Currency, _to: Currency) => {
-  if (from === ethereum || from.type === "TokenCurrency") return ethereum;
-  return bitcoin;
-};
 export const timeRangeDaysByKey = {
   day: 1,
   week: 7,
@@ -184,6 +175,7 @@ export const INITIAL_STATE: SettingsState = {
     hasClosedWithdrawBanner: false,
   },
   userNps: null,
+  supportedCounterValues: [],
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
@@ -625,6 +617,10 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     userNps: (action as Action<SettingsSetUserNps>).payload,
   }),
+  [SettingsActionTypes.SET_SUPPORTED_COUNTER_VALUES]: (state, action) => ({
+    ...state,
+    supportedCounterValues: (action as Action<SettingsSetSupportedCounterValues>).payload,
+  }),
 };
 
 export default handleActions<SettingsState, SettingsPayload>(handlers, INITIAL_STATE);
@@ -813,3 +809,4 @@ export const hasBeenUpsoldProtectSelector = (state: State) => state.settings.has
 export const generalTermsVersionAcceptedSelector = (state: State) =>
   state.settings.generalTermsVersionAccepted;
 export const userNpsSelector = (state: State) => state.settings.userNps;
+export const getSupportedCounterValues = (state: State) => state.settings.supportedCounterValues;
