@@ -20,6 +20,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import logger from "~/renderer/logger";
 import Text from "~/renderer/components/Text";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import { ModalData } from "../types";
 
 export type Params = {
   canEditFees: boolean;
@@ -142,7 +143,11 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
     };
   });
   const [transactionError, setTransactionError] = useState<Error | null>(null);
-  const handleOpenModal = useCallback((name, data) => dispatch(openModal(name, data)), [dispatch]);
+  const handleOpenModal = useCallback(
+    <Name extends keyof ModalData>(name: Name, data: ModalData[Name]) =>
+      dispatch(openModal(name, data)),
+    [dispatch],
+  );
   const handleCloseModal = useCallback(() => {
     dispatch(closeModal("MODAL_SIGN_TRANSACTION"));
   }, [dispatch]);
@@ -168,7 +173,7 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
     },
     [setError],
   );
-  const handleStepChange = useCallback(e => onChangeStepId(e.id), [onChangeStepId]);
+  const handleStepChange = useCallback((e: St) => onChangeStepId(e.id), [onChangeStepId]);
   const handleTransactionSigned = useCallback(
     (signedTransaction: SignedOperation) => {
       params.onResult(signedTransaction);

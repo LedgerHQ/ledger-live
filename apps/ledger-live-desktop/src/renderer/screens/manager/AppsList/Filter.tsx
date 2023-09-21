@@ -14,13 +14,6 @@ type Props = {
 };
 
 const Filter = ({ onFilterChange, filter }: Props) => {
-  const onFilterChangeWrapper = useCallback(
-    item => {
-      if (!item) return;
-      onFilterChange(item.key);
-    },
-    [onFilterChange],
-  );
   const filterItems = [
     {
       key: "all",
@@ -39,8 +32,17 @@ const Filter = ({ onFilterChange, filter }: Props) => {
       label: <Trans i18nKey="manager.applist.filter.supported" />,
     },
   ];
+
+  const onFilterChangeWrapper = useCallback(
+    (item: (typeof filterItems)[number]) => {
+      if (!item) return;
+      onFilterChange(item.key);
+    },
+    [onFilterChange],
+  );
+
   const renderItem = useCallback(
-    ({ item, isActive }) => (
+    ({ item, isActive }: { item: (typeof filterItems)[number]; isActive: boolean }) => (
       <DropDownItem
         alignItems="center"
         justifyContent="flex-start"

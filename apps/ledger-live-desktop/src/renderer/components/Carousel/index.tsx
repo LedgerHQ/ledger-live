@@ -180,7 +180,7 @@ const Carousel = ({
   }, [logSlideImpression]);
 
   const changeVisibleSlide = useCallback(
-    index => {
+    (index: number) => {
       setIndex(index);
       logSlideImpression(index);
     },
@@ -190,7 +190,7 @@ const Carousel = ({
   const dispatch = useDispatch();
 
   const onChooseSlide = useCallback(
-    newIndex => {
+    (newIndex: number) => {
       setReverse(index > newIndex);
       changeVisibleSlide(newIndex);
     },

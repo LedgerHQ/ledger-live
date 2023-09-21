@@ -35,7 +35,7 @@ const RangeItem = React.memo<RangeItemProps>(function RangeItem({
 });
 function Range() {
   const { t } = useTranslation();
-  const renderItem = useCallback(props => <RangeItem {...props} />, []);
+  const renderItem = useCallback((props: RangeItemProps) => <RangeItem {...props} />, []);
   const [range, onRangeChange, rangeItems] = useTimeRange();
   return (
     // DropDownSelector is not typed well

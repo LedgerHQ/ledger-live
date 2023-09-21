@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Pressable } from "react-native";
+import { LayoutChangeEvent, Pressable } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { Theme } from "src/styles/theme";
 import styled, { useTheme } from "styled-components/native";
@@ -68,7 +68,7 @@ export default function TimelineItem({
    */
   const sharedHeight = useSharedValue<number | null>(null);
   const handleLayout = useCallback(
-    ({ nativeEvent: { layout } }) => {
+    ({ nativeEvent: { layout } }: LayoutChangeEvent) => {
       sharedHeight.value = withTiming(layout.height, { duration: 300 });
     },
     [sharedHeight],

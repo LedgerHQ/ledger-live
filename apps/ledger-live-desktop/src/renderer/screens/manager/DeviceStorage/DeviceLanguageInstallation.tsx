@@ -71,7 +71,7 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
   }, [setInstalling, selectedLanguage]);
 
   const onWrappedError = useCallback(
-    error => {
+    (error: Error) => {
       setError(error);
       onError(error);
     },

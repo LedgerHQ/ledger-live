@@ -11,7 +11,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { Account, Operation } from "@ledgerhq/types-live";
-import { StepId } from "./types";
+import { StepId, St } from "./types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import logger from "~/renderer/logger";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
@@ -96,7 +96,7 @@ function Body({
     setTransactionError(null);
     onChangeStepId("amount");
   }, [onChangeStepId]);
-  const handleStepChange = useCallback(({ id }) => onChangeStepId(id), [onChangeStepId]);
+  const handleStepChange = useCallback(({ id }: St) => onChangeStepId(id), [onChangeStepId]);
 
   const handleOperationBroadcasted = useCallback(
     (optimisticOperation: Operation) => {

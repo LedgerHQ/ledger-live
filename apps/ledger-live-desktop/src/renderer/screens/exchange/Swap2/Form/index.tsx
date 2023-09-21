@@ -2,6 +2,7 @@ import {
   useSwapTransaction,
   usePageState,
   useIsSwapLiveApp,
+  SetExchangeRateCallback,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import {
   getCustomFeesPerFamily,
@@ -35,6 +36,7 @@ import { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { SWAP_RATES_TIMEOUT } from "../../config";
+import { OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
 
 const Wrapper = styled(Box).attrs({
   p: 20,
@@ -65,14 +67,14 @@ const SwapForm = () => {
   const exchangeRate = useSelector(rateSelector);
   const walletApiPartnerList = useFeature("swapWalletApiPartnerList");
 
-  const setExchangeRate = useCallback(
+  const setExchangeRate: SetExchangeRateCallback = useCallback(
     rate => {
       dispatch(updateRateAction(rate));
     },
     [dispatch],
   );
 
-  const onNoRates = useCallback(
+  const onNoRates: OnNoRatesCallback = useCallback(
     ({ toState }) => {
       track("error_message", {
         message: "no_rates",

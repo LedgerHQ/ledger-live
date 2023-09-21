@@ -54,7 +54,7 @@ const Stepper = <T, StepProps>({
 }: Props<T, StepProps>) => {
   const deviceBlocked = useDeviceBlocked();
   const transitionTo = useCallback(
-    stepId => {
+    (stepId: number) => {
       const stepIndex = steps.findIndex(s => s.id === stepId);
       const step = steps[stepIndex];
       invariant(step, "Stepper: step %s doesn't exists", stepId);

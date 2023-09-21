@@ -30,7 +30,7 @@ export default function BlacklistedTokens() {
     [sync],
   );
   const onShowToken = useCallback(
-    tokenId => {
+    (tokenId: string) => {
       dispatch(showToken(tokenId));
     },
     [dispatch],

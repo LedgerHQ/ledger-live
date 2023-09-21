@@ -125,7 +125,7 @@ export function Welcome() {
     history.push("/settings");
   }, [dispatch, history]);
 
-  const handleOpenFeatureFlagsDrawer = useCallback(nb => {
+  const handleOpenFeatureFlagsDrawer = useCallback((nb: string) => {
     if (nb === "1") countTitle.current++;
     else if (nb === "2") countSubtitle.current++;
     if (countTitle.current > 3 && countSubtitle.current > 5) {
