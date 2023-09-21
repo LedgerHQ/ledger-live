@@ -2020,8 +2020,8 @@ importers:
         specifier: ^0.9.16
         version: 0.9.16
       '@keplr-wallet/proto-types':
-        specifier: ^0.10.4
-        version: 0.10.4
+        specifier: ^0.12.0
+        version: 0.12.26
       '@ledgerhq/coin-algorand':
         specifier: workspace:^
         version: link:../coin-algorand
@@ -17020,8 +17020,8 @@ packages:
       sha.js: 2.4.11
     dev: false
 
-  /@keplr-wallet/proto-types@0.10.4:
-    resolution: {integrity: sha512-n/ZmiENgvARs1h0hedy/mh57DNF7SH/DgfTqeT89+JKHfwRs2ikrCwXw6HzCn3yaDiv+0H/LudnNPf8WVZcw+w==}
+  /@keplr-wallet/proto-types@0.12.26:
+    resolution: {integrity: sha512-ZAQjKeF2Dv+MNiwZ5UlWpv+5uv8HTRkqTRAMhzF+cWeMv3NbELjgdSBv/Xh296WMEDceES/si+o37KfSihoqew==}
     dependencies:
       long: 4.0.0
       protobufjs: 6.11.3
@@ -28984,7 +28984,7 @@ packages:
       babel-plugin-syntax-jsx: 6.18.0
       lodash: 4.17.21
       picomatch: 2.3.1
-      styled-components: 5.3.5(react-is@18.1.0)(react@18.0.0)
+      styled-components: 5.3.5(react-dom@17.0.2)(react-is@17.0.2)(react@17.0.2)
 
   /babel-plugin-syntax-jsx@6.18.0:
     resolution: {integrity: sha512-qrPaCSo9c8RHNRHIotaufGbuOBN8rtdC4QrrFFc43vyWCCz7Kl7GL1PGaXtMGQZUXrkCjNEgxDfmAuAabr/rlw==}
@@ -56718,6 +56718,7 @@ packages:
       react-is: 18.1.0
       shallowequal: 1.1.0
       supports-color: 5.5.0
+    dev: false
 
   /styled-components@6.0.7(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-xIwWuiRMYR43mskVsW9MGTRjSo7ol4bcVjT595fGUp3OLBJOlOgaiKaxsHdC4a2HqWKqKnh0CmcRbk5ogyDjTg==}
