@@ -15,8 +15,8 @@ import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/manager/loc
 import StepConfirmation, { StepConfirmFooter } from "./steps/03-step-confirmation";
 import { Divider, Flex, FlowStepper, Text } from "@ledgerhq/react-ui";
 import Disclaimer from "./Disclaimer";
-import Header from "./Header";
 import Cancel from "./Cancel";
+import SideDrawerHeader from "~/renderer/components/SideDrawerHeader";
 
 type MaybeError = Error | undefined | null;
 
@@ -241,7 +241,7 @@ const UpdateModal = ({
       flex={1}
       data-test-id="firmware-update-container"
     >
-      <Header onRequestClose={onRequestCancel} />
+      <SideDrawerHeader onRequestClose={onRequestCancel} />
       <Text alignSelf="center" variant="h5Inter">
         {t("manager.modal.title", { productName: deviceModel.productName })}
       </Text>
