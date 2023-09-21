@@ -65,7 +65,10 @@ const SelectCurrency = ({
   }
   const [searchInputValue, setSearchInputValue] = useState("");
   const cryptos = useCurrenciesByMarketcap(c);
-  const onChangeCallback = useCallback(item => onChange(item ? item.currency : null), [onChange]);
+  const onChangeCallback = useCallback(
+    (item: CurrencyOption) => onChange(item ? item.currency : null),
+    [onChange],
+  );
   const noOptionsMessage = useCallback(
     ({ inputValue }: { inputValue: string }) =>
       inputValue
@@ -132,6 +135,7 @@ const SelectCurrency = ({
       inputValue={searchInputValue}
       placeholder={placeholder || t("common.selectCurrency")}
       noOptionsMessage={noOptionsMessage}
+      // @ts-expect-error Select hell again
       onChange={onChangeCallback}
       minWidth={minWidth}
       width={width}

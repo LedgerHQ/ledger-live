@@ -39,7 +39,7 @@ I.defaultProps = {
 };
 export type OwnProps = {
   unit?: Unit;
-  val: BigNumber | number;
+  val?: BigNumber | number;
   alwaysShowSign?: boolean;
   showCode?: boolean;
   withIcon?: boolean;
@@ -89,7 +89,7 @@ function FormattedVal(props: Props) {
     ...p
   } = props;
   const valProp = props.val;
-  let val: BigNumber = valProp instanceof BigNumber ? valProp : BigNumber(valProp);
+  let val: BigNumber = valProp instanceof BigNumber ? valProp : BigNumber(valProp as number);
   invariant(val, "FormattedVal require a `val` prop. Received `undefined`");
   const isZero = val.isZero();
   const isNegative = val.isNegative() && !isZero;

@@ -199,7 +199,7 @@ const Body = ({ onChangeStepId, onClose, stepId, params }: Props) => {
     },
     [account, parentAccount, dispatch],
   );
-  const handleStepChange = useCallback(e => onChangeStepId(e.id), [onChangeStepId]);
+  const handleStepChange = useCallback((e: St) => onChangeStepId(e.id), [onChangeStepId]);
   const titles = useMemo(() => createTitles(t), [t]);
   const title =
     transaction && transaction.family === "tezos" && transaction.mode === "undelegate"

@@ -2,6 +2,7 @@ import invariant from "invariant";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StepProps } from "../types";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -21,7 +22,10 @@ export default function StepAsset({
   invariant(account && transaction, "account and transaction required");
   const bridge = getAccountBridge(account);
   const onUpdateAsset = useCallback(
-    ({ id: assetId }) => {
+    (t?: TokenCurrency | null) => {
+      // NOTE: to match the signature of AsaSelector, i had to change a bit the function
+      if (!t) return;
+      const { id: assetId } = t;
       onUpdateTransaction(transaction =>
         bridge.updateTransaction(transaction, {
           assetId,

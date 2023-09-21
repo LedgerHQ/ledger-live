@@ -9,7 +9,7 @@ const CarouselVisibility = () => {
   const dispatch = useDispatch();
   const carouselVisibility = useSelector(carouselVisibilitySelector);
   const onSetCarouselVisibility = useCallback(
-    checked => dispatch(setCarouselVisibility(checked ? 0 : CAROUSEL_NONCE)),
+    (checked: boolean) => dispatch(setCarouselVisibility(checked ? 0 : CAROUSEL_NONCE)),
     [dispatch],
   );
   return (

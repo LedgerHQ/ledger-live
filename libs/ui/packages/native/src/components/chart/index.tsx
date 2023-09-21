@@ -50,7 +50,7 @@ const Chart = ({
   const sortData = useMemo(() => data.sort(sortByDate), [data]);
 
   const labelFormatted = useCallback(
-    ({ datum }) => {
+    ({ datum }: any) => {
       const valueFormatted = valueFormatter(datum[valueKey]);
       return valueFormatted === "-" ? "0" : valueFormatted;
     },

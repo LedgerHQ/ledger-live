@@ -63,7 +63,7 @@ export function useDisclaimer(appendRecentlyUsed: (manifest: AppManifest) => voi
   }, [dispatch]);
 
   const prompt = useCallback(
-    (manifest, onConfirm) => {
+    (manifest: AppManifest, onConfirm: (manifest: AppManifest, isChecked: boolean) => void) => {
       dispatch(
         openPlatformAppDisclaimerDrawer({
           manifest,

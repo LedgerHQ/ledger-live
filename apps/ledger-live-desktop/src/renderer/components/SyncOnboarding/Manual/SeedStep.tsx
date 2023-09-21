@@ -26,6 +26,7 @@ const SeedStep = ({ seedPathStatus, deviceModelId }: Props) => {
     <Flex flexDirection="column">
       {seedPathStatus === "new_seed" ? (
         <Flex flexDirection="column">
+          {/* @ts-expect-error weird props issue with React 18 */}
           <StepText>
             {t("syncOnboarding.manual.seedContent.newSeedDescription", {
               productName,
@@ -40,14 +41,18 @@ const SeedStep = ({ seedPathStatus, deviceModelId }: Props) => {
         </Flex>
       ) : seedPathStatus === "choice_restore_direct_or_recover" ? (
         <Flex flexDirection="column">
+          {/* @ts-expect-error weird props issue with React 18 */}
           <VerticalTimeline.SubtitleText>
             {t("syncOnboarding.manual.seedContent.restoreChoiceSRPTitle")}
           </VerticalTimeline.SubtitleText>
+          {/* @ts-expect-error weird props issue with React 18 */}
           <StepText>{t("syncOnboarding.manual.seedContent.restoreChoiceSRPDescription")}</StepText>
           <Divider text={t("common.or")} my={6} />
+          {/* @ts-expect-error weird props issue with React 18 */}
           <VerticalTimeline.SubtitleText>
             {t("syncOnboarding.manual.seedContent.restoreChoiceRecoverTitle")}
           </VerticalTimeline.SubtitleText>
+          {/* @ts-expect-error weird props issue with React 18 */}
           <StepText>
             {t("syncOnboarding.manual.seedContent.restoreChoiceRecoverDescription")}
           </StepText>
@@ -60,6 +65,7 @@ const SeedStep = ({ seedPathStatus, deviceModelId }: Props) => {
         </Flex>
       ) : seedPathStatus === "restore_seed" ? (
         <>
+          {/* @ts-expect-error weird props issue with React 18 */}
           <StepText>{t("syncOnboarding.manual.seedContent.restoreSeed", { productName })}</StepText>
           <ContinueOnDeviceWithAnim
             deviceModelId={deviceModelId}
@@ -67,9 +73,11 @@ const SeedStep = ({ seedPathStatus, deviceModelId }: Props) => {
           />
         </>
       ) : seedPathStatus === "recover_seed" ? (
+        // @ts-expect-error props issue with React 18
         <StepText>{t("syncOnboarding.manual.seedContent.recoverSeed")}</StepText>
       ) : (
         <Flex flexDirection="column">
+          {/* @ts-expect-error weird props issue with React 18 */}
           <StepText>
             {t("syncOnboarding.manual.seedContent.selection", {
               productName,

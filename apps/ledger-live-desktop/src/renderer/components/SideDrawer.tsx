@@ -91,8 +91,8 @@ const DrawerContainer = styled.div.attrs(({ state }: { state: TransitionStatus }
 export type DrawerProps = {
   children?: React.ReactNode;
   isOpen?: boolean;
-  onRequestClose?: (a: React.MouseEvent) => void;
-  onRequestBack?: (a: React.MouseEvent) => void;
+  onRequestClose?: (a: React.MouseEvent | KeyboardEvent) => void;
+  onRequestBack?: (a: React.MouseEvent | KeyboardEvent) => void;
   direction?: "right" | "left";
   paper?: boolean;
   title?: string;
@@ -117,11 +117,11 @@ export function SideDrawer({
   const deviceBlocked = useDeviceBlocked();
 
   const onKeyPress = useCallback(
-    e => {
+    (e: React.MouseEvent | KeyboardEvent) => {
       if (
         isOpen &&
         !preventBackdropClick &&
-        e.key === "Escape" &&
+        (e as KeyboardEvent).key === "Escape" &&
         onRequestClose &&
         !deviceBlocked
       ) {

@@ -26,7 +26,7 @@ const MemoValueField = ({
   invariant(transaction.family === "cardano", "Memo: cardano family expected");
   const bridge = getAccountBridge(account);
   const onMemoValueChange = useCallback(
-    memo => {
+    (memo: string) => {
       track("button_clicked", {
         ...trackProperties,
         button: "input",

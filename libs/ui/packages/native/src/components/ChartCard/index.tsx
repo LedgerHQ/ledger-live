@@ -37,7 +37,7 @@ const ChartCard = ({
   const activeRangeIndex = ranges.findIndex((r) => r.value === range);
 
   const setRange = useCallback(
-    (index) => {
+    (index: number) => {
       if (isLoading) return;
       const newRange = ranges[index]?.value;
       if (range !== newRange) refreshChart({ range: newRange });

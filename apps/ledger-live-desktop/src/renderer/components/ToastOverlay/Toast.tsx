@@ -118,7 +118,7 @@ export function Toast({
       scheduledDismiss(duration);
     }
   }, [duration, id, onDismiss]);
-  const onClick = useCallback(
+  const onClick: React.MouseEventHandler<HTMLInputElement> = useCallback(
     event => {
       if (typeof callback === "function") {
         callback();

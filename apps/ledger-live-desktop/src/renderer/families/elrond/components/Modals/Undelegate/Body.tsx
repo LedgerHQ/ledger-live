@@ -22,7 +22,7 @@ import {
   ElrondAccount,
   ElrondProvider,
 } from "@ledgerhq/live-common/families/elrond/types";
-import { StepId } from "./types";
+import { StepId, St } from "./types";
 import { Device } from "@ledgerhq/types-devices";
 import { DelegationType } from "../../../types";
 
@@ -99,7 +99,7 @@ const Body = (props: Props) => {
     setTransactionError(null);
     onChangeStepId("amount");
   }, [onChangeStepId]);
-  const handleStepChange = useCallback(({ id }) => onChangeStepId(id), [onChangeStepId]);
+  const handleStepChange = useCallback(({ id }: St) => onChangeStepId(id), [onChangeStepId]);
 
   const handleOperationBroadcasted = useCallback(
     (optimisticOperation: Operation) => {
