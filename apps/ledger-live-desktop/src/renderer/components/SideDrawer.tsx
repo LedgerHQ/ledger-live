@@ -122,7 +122,7 @@ export type DrawerProps = {
   preventBackdropClick?: boolean;
   forceDisableFocusTrap?: boolean;
   style?: React.CSSProperties;
-  padding?: boolean;
+  withPaddingTop?: boolean;
 };
 const domNode = document.getElementById("modals");
 
