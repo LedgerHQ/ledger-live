@@ -3299,6 +3299,9 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../errors
+      '@ledgerhq/logs':
+        specifier: workspace:^
+        version: link:../logs
       events:
         specifier: ^3.3.0
         version: 3.3.0

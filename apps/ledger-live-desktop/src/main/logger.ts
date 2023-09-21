@@ -1,28 +1,72 @@
-/* eslint-disable no-console */
-import * as Sentry from "@sentry/react-native";
-import Config from "react-native-config"; // for now we have the bare minimum
+import { getEnv } from "@ledgerhq/live-env";
 import { Log } from "@ledgerhq/logs";
-import { getEnv, setEnvUnsafe } from "@ledgerhq/live-env";
+export type { Log };
 
-export default {
-  critical: (e: Error) => {
-    if (Config.DEBUG_ERROR) console.error(e);
-    else console.log(e);
-
-    if (e instanceof Error) {
-      Sentry.captureException(e);
-    }
-  },
-};
+// Runtime type check (type predicate) on the logs
+export function isALog(log: unknown): log is Log {
+  return (
+    (log as Log).id !== undefined &&
+    (log as Log).type !== undefined &&
+    (log as Log).date !== undefined
+  );
+}
 
 /**
- * Simple logger displaying on the console/stdout logs
+ * Simple logger recording logs in memory (in the main thread)
+ *
+ * Used to record logs coming from the internal process.
+ * The logs follow the structure of `Log` from `@ledgerhq/logs`
+ *
+ * Works as a singleton
+ */
+export class InMemoryLogger {
+  private logRecord: Log[];
+  private static instance: InMemoryLogger | undefined;
+
+  private constructor() {
+    this.logRecord = [];
+  }
+
+  // Simple singleton factory
+  static getLogger() {
+    if (!InMemoryLogger.instance) {
+      InMemoryLogger.instance = new InMemoryLogger();
+    }
+    return InMemoryLogger.instance;
+  }
+
+  /**
+   * Records a log in memory.
+   * If more logs are recorded than `maxLogCount`, the oldest ones are removed.
+   */
+  log(log: Log) {
+    // Those env variables can be updated at runtime
+    const maxLogCount = getEnv("EXPORT_MAX_LOGS");
+    const excludedLogTypes = getEnv("EXPORT_EXCLUDED_LOG_TYPES").split(",");
+
+    if (!excludedLogTypes.includes(log.type)) {
+      this.logRecord.unshift(log);
+
+      while (this.logRecord.length > maxLogCount) {
+        this.logRecord.pop();
+      }
+    }
+  }
+
+  /**
+   * Returns the list of recorded logs, from the most recent to the oldest.
+   */
+  getLogs(): Log[] {
+    return this.logRecord;
+  }
+}
+
+/**
+ * Simple logger displaying on the console/stdout logs from the main thread
  *
  * The filtering is set from the `VERBOSE` env variable.
  *
  * Works as a singleton.
- *
- * Note: we should add a log level defined in our logger, different that `type`.
  */
 export class ConsoleLogger {
   private static instance: ConsoleLogger | undefined;
@@ -37,9 +81,6 @@ export class ConsoleLogger {
    * - VERBOSE=1 or VERBOSE=true : to print all logs
    */
   private constructor() {
-    // Makes sure the `VERBOSE` env has been set before the logger is created
-    setEnvUnsafe("VERBOSE", Config.VERBOSE);
-
     this.refreshSetup();
   }
 
@@ -69,7 +110,7 @@ export class ConsoleLogger {
     }
 
     console.log(
-      `Logs console display setup: ${JSON.stringify({
+      `Logs console display setup (main thread): ${JSON.stringify({
         everyLogs: this.everyLogs,
         filters: this.filters,
       })}`,

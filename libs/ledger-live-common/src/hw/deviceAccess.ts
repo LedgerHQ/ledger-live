@@ -15,21 +15,33 @@ import {
   PeerRemovedPairing,
   PairingFailed,
 } from "@ledgerhq/errors";
-import { log } from "@ledgerhq/logs";
+import { LocalTracer, TraceContext, trace } from "@ledgerhq/logs";
 import { getEnv } from "@ledgerhq/live-env";
 import { open, close, setAllowAutoDisconnect } from ".";
 
-const initialErrorRemapping = error =>
-  throwError(
-    error &&
-      error instanceof TransportStatusError &&
-      // @ts-expect-error typescript not checking agains the instanceof
-      error.statusCode === 0x6faa
-      ? new DeviceHalted(error.message)
-      : error.statusCode === 0x6b00
-      ? new FirmwareOrAppUpdateRequired(error.message)
-      : error,
-  );
+const LOG_TYPE = "hw";
+
+const initialErrorRemapping = (error: unknown, context?: TraceContext) => {
+  let mappedError = error;
+
+  if (error && error instanceof TransportStatusError) {
+    // @ts-expect-error TS only inferring Error and not TransportStatusError
+    if (error.statusCode === 0x6faa) {
+      mappedError = new DeviceHalted(error.message);
+      // @ts-expect-error TransportStatusError
+    } else if (error.statusCode === 0x6b00) {
+      mappedError = new FirmwareOrAppUpdateRequired(error.message);
+    }
+  }
+
+  trace({
+    type: LOG_TYPE,
+    message: "Initial error remapping",
+    data: { error, mappedError },
+    context,
+  });
+  return throwError(mappedError);
+};
 
 let errorRemapping = e => throwError(e);
 
@@ -38,10 +50,15 @@ export const setErrorRemapping = (f: (arg0: Error) => Observable<never>): void =
 };
 const never = new Promise(() => {});
 
-const transportFinally =
-  (cleanup: () => Promise<void>) =>
-  <T>(observable: Observable<T>): Observable<T> =>
-    Observable.create(o => {
+/**
+ * Wrapper to pipe a "cleanup" function at then end of an Observable flow.
+ *
+ * The `finalize` is only called once if there is an error and a complete
+ * (but normally an error event completes automatically the Observable pipes. Is it needed ?)
+ */
+function transportFinally(cleanup: () => Promise<void>) {
+  return <T>(observable: Observable<T>): Observable<T> => {
+    return new Observable(o => {
       let done = false;
 
       const finalize = () => {
@@ -64,6 +81,8 @@ const transportFinally =
         finalize();
       };
     });
+  };
+}
 
 const identifyTransport = t => (typeof t.id === "string" ? t.id : "");
 
@@ -71,7 +90,14 @@ const needsCleanup = {};
 // When a series of APDUs are interrupted, this is called
 // so we don't forget to cleanup on the next withDevice
 export const cancelDeviceAction = (transport: Transport): void => {
-  needsCleanup[identifyTransport(transport)] = true;
+  const transportId = identifyTransport(transport);
+  trace({
+    type: LOG_TYPE,
+    message: "Cancelling device action",
+    data: { transportId },
+  });
+
+  needsCleanup[transportId] = true;
 };
 
 // The devicesQueues object only stores, for each device, the latest void promise that will resolve when the device is ready to be opened again.
@@ -79,23 +105,34 @@ export const cancelDeviceAction = (transport: Transport): void => {
 // When calling withDevice several times, the new promise will be chained to the "then" of the previous promise:
 // open(device) -> execute job -> clean connection -> resolve promise -> next promise can start: open(device) -> etc.
 // So a queue is indeed created for each device, by creating a chain of promises, but only the end of the queue is stored for each device.
-const deviceQueues: { [deviceId: string]: Promise<void> } = {};
+const deviceQueues: { [deviceId: string]: { job: Promise<void>; id: number } } = {};
 
 // To be able to differentiate withDevice calls in our logs
-let withDeviceNonce = 0;
+let jobId = 0;
 
+/**
+ * Provides a Transport instance to a given job
+ *
+ * @param deviceId
+ * @param options contains optional configuration
+ *   - openTimeoutMs: TODO: to keep, will be used in a separate PR
+ */
 export const withDevice =
-  (deviceId: string) =>
+  (deviceId: string, options?: { openTimeoutMs?: number }) =>
   <T>(job: (t: Transport) => Observable<T>): Observable<T> =>
     new Observable(o => {
-      const nonce = withDeviceNonce++;
-      log("withDevice", `${nonce}: New job: deviceId=${deviceId || "USB"}`);
+      jobId++;
+      const tracer = new LocalTracer(LOG_TYPE, { jobId: jobId, origin: "hw:withDevice" });
+      tracer.trace(`New job for device: ${deviceId || "USB"}`);
 
       let unsubscribed;
       let sub;
-      const deviceQueue = deviceQueues[deviceId] || Promise.resolve();
+      const deviceQueue = deviceQueues[deviceId] || { job: Promise.resolve(), id: -1 };
 
-      const finalize = (transport, cleanups) => {
+      // To call to cleanup the current transport
+      const finalize = (transport: Transport, cleanups: Array<() => void>) => {
+        tracer.trace("Closing and cleaning transport");
+
         setAllowAutoDisconnect(transport, deviceId, true);
         return close(transport, deviceId)
           .catch(() => {})
@@ -105,26 +142,36 @@ export const withDevice =
       };
 
       // When we'll finish all the current job, we'll call finish
-      let resolveQueuedDevice;
+      let resolveQueuedJob;
 
-      // This new promise is the next exec queue
-      deviceQueues[deviceId] = new Promise(resolve => {
-        resolveQueuedDevice = resolve;
-      });
+      // Queue of linked Promises that wait after each other
+      // Blocking any future job on this device
+      deviceQueues[deviceId] = {
+        job: new Promise(resolve => {
+          resolveQueuedJob = resolve;
+        }),
+        id: jobId,
+      };
 
-      log("withDevice", `${nonce}: Waiting for queue to complete`, {
-        deviceQueue,
+      tracer.trace("Waiting for the previous job in the queue to complete", {
+        previousJobId: deviceQueue.id,
       });
       // For any new job, we'll now wait the exec queue to be available
-      deviceQueue
-        .then(() => open(deviceId)) // open the transport
+      deviceQueue.job
+        .then(() => {
+          tracer.trace("Previous queued job resolved, now trying to get a Transport instance", {
+            previousJobId: deviceQueue.id,
+            currentJobId: jobId,
+          });
+          return open(deviceId, options?.openTimeoutMs, tracer.getContext());
+        }) // open the transport
         .then(async transport => {
-          log("withDevice", `${nonce}: got a transport`);
+          tracer.trace("Got a Transport instance from open");
 
           if (unsubscribed) {
-            log("withDevice", `${nonce}: but we're unsubscribed`);
+            tracer.trace("Unsubscribed (1) while processing job");
             // It was unsubscribed prematurely
-            return finalize(transport, [resolveQueuedDevice]);
+            return finalize(transport, [resolveQueuedJob]);
           }
           setAllowAutoDisconnect(transport, deviceId, false);
 
@@ -137,7 +184,8 @@ export const withDevice =
         })
         // This catch is here only for errors that might happen at open or at clean up of the transport before doing the job
         .catch(e => {
-          resolveQueuedDevice();
+          tracer.trace("Error while opening Transport: ", { e });
+          resolveQueuedJob();
           if (e instanceof BluetoothRequired) throw e;
           if (e instanceof TransportWebUSBGestureRequired) throw e;
           if (e instanceof TransportInterfaceNotAvailable) throw e;
@@ -147,31 +195,48 @@ export const withDevice =
         })
         // Executes the job
         .then(transport => {
+          tracer.trace("Executing job", { hasTransport: !!transport, unsubscribed });
           if (!transport) return;
 
+          // It was unsubscribed prematurely
           if (unsubscribed) {
-            // It was unsubscribed prematurely
-            return finalize(transport, [resolveQueuedDevice]);
+            tracer.trace("Unsubscribed (2) while processing job");
+            return finalize(transport, [resolveQueuedJob]);
           }
 
-          log("withDevice", `${nonce}: Starting job`);
           sub = job(transport)
             .pipe(
-              catchError(initialErrorRemapping),
-              catchError(errorRemapping), // close the transport and clean up everything
+              catchError(error => initialErrorRemapping(error, tracer.getContext())),
+              catchError(errorRemapping),
               transportFinally(() => {
-                log("withDevice", `${nonce}: job fully completed`);
-                return finalize(transport, [resolveQueuedDevice]);
+                // Closes the transport and cleans up everything
+                return finalize(transport, [resolveQueuedJob]);
               }),
             )
-            .subscribe(o);
+            .subscribe({
+              next: event => {
+                // This kind of log should be a "debug" level for ex
+                // tracer.trace("Job next", { event });
+                o.next(event);
+              },
+              error: error => {
+                tracer.trace("Job error", { error });
+                o.error(error);
+              },
+              complete: () => {
+                o.complete();
+              },
+            });
         })
-        .catch(error => o.error(error));
+        .catch(error => {
+          tracer.trace("Caught error on job execution step", { error });
+          o.error(error);
+        });
 
       // Returns function to unsubscribe from the job if we don't need it anymore.
       // This will prevent us from executing the job unnecessarily later on
       return () => {
-        log("withDevice", `${nonce}: Unsubscribing job: ${!!sub}`);
+        tracer.trace(`Unsubscribing withDevice flow. Ongoing job to unsubscribe from ? ${!!sub}`);
         unsubscribed = true;
         if (sub) sub.unsubscribe();
       };
