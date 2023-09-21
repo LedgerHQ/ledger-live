@@ -1,8 +1,10 @@
 import * as core from "@actions/core";
 import * as fs from "fs";
-import FormData from "form-data";
 import * as path from "path";
 import fetch, { Response } from "node-fetch";
+import { FormData } from "formdata-node";
+import { FormDataEncoder } from "form-data-encoder";
+import { Readable } from "stream";
 
 function handleErrors(response: Response) {
   if (!response.ok) {
@@ -29,18 +31,20 @@ const uploadImage = async () => {
     if (i > 2) {
       return "error";
     }
-    const body = new FormData();
-    body.append("type", "file");
-    body.append("image", file);
-
     try {
+      const form = new FormData();
+      form.set("type", "file");
+      form.set("image", file);
+
+      const encoder = new FormDataEncoder(form);
+
       const res = await fetch("https://api.imgur.com/3/image", {
         method: "POST",
         headers: {
           Accept: "application/json",
           Authorization: `Client-ID 11eb8a62f4c7927`,
         },
-        body,
+        body: Readable.from(encoder),
       }).then(handleErrors);
 
       const link = ((await res.json()) as { data: { link: string } }).data.link;
