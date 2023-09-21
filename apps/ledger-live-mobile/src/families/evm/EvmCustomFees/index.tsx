@@ -3,7 +3,6 @@ import invariant from "invariant";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { Transaction } from "@ledgerhq/coin-evm/types/index";
 import { SendFundsNavigatorStackParamList } from "../../../components/RootNavigator/types/SendFundsNavigator";
 import { accountScreenSelector } from "../../../reducers/accounts";
@@ -26,21 +25,19 @@ const options = {
 };
 
 export default function EvmCustomFees({ route }: Props) {
-  const { setTransaction, transaction } = route.params;
+  const { setCustomStrategyTransactionPatch, transaction } = route.params;
   const { account: accountLike } = useSelector(accountScreenSelector(route));
   const navigation = useNavigation();
   invariant(accountLike, "no account found");
 
   const account = getMainAccount(accountLike);
 
-  const bridge = getAccountBridge(account);
-
   const onValidateFees = useCallback(
     (transactionPatch: Partial<Transaction>) => () => {
-      setTransaction(bridge.updateTransaction(route.params.transaction, transactionPatch));
+      setCustomStrategyTransactionPatch(transactionPatch);
       navigation.goBack();
     },
-    [bridge, navigation, route.params, setTransaction],
+    [navigation, setCustomStrategyTransactionPatch],
   );
 
   const shouldUseEip1559 = transaction.type === 2;
