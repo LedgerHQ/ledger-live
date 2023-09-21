@@ -1,5 +1,12 @@
 # @ledgerhq/live-common
 
+## 32.0.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`b779f6c964`](https://github.com/LedgerHQ/ledger-live/commit/b779f6c964079b9cd9a4ee985cd5cdbb8c49406e)]:
+  - @ledgerhq/coin-evm@0.7.0-next.1
+
 ## 32.0.0-next.0
 
 ### Major Changes

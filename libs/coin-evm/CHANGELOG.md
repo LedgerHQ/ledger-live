@@ -1,5 +1,11 @@
 # @ledgerhq/coin-evm
 
+## 0.7.0-next.1
+
+### Minor Changes
+
+- [#4791](https://github.com/LedgerHQ/ledger-live/pull/4791) [`b779f6c964`](https://github.com/LedgerHQ/ledger-live/commit/b779f6c964079b9cd9a4ee985cd5cdbb8c49406e) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update `getDeviceTransactionConfig` to return correctly nano fields when the transaction has been crafted by a third party (like the Wallet API)
+
 ## 0.7.0-next.0
 
 ### Minor Changes
