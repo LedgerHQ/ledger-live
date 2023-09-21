@@ -122,6 +122,7 @@
     "search" : "Поиск...",
     "searchWithoutEllipsis" : "Поиск",
     "manage" : "Управление",
+    "tryAgain" : "Попробовать ещё раз",
     "lockScreen" : {
       "title" : "С возвращением",
       "subTitle" : null,
@@ -546,6 +547,10 @@
           "body" : "Получайте криптоактивы прямо на счёт"
         }
       }
+    },
+    "getFundsModal" : {
+      "text" : "Получить {{coin}} для стейкинга",
+      "description" : "Покупайте, обменивайте или получайте крипту сразу на Ledger через Ledger Live."
     }
   },
   "lottieDebugger" : {
@@ -1509,7 +1514,7 @@
     "viewer" : {
       "actions" : {
         "send" : "Отправить",
-        "open" : "Open in {{viewer}}"
+        "open" : "Открыть в {{viewer}}"
       },
       "attributes" : {
         "properties" : "Свойства",
@@ -1700,7 +1705,8 @@
   "DeviceAction" : {
     "allowAppPermission" : "Откройте приложение {{wording}} на устройстве",
     "allowAppPermissionSubtitleToken" : "для управления {{token}}",
-    "allowManagerPermission" : "Одобрите использование «Мой Ledger» на устройстве",
+    "allowManagerPermission" : "Одобрите работу приложения на устройстве",
+    "allowRenaming" : "Одобрите переименование на устройстве",
     "loading" : "Загружаем...",
     "connectAndUnlockDevice" : "Подключите и разблокируйте устройство",
     "unlockDevice" : "Разблокируйте устройство",
@@ -1878,7 +1884,11 @@
       "contactSupport" : "Связаться с Поддержкой",
       "deprecated" : "Прошивка устройства устарела и не может быть обновлена. Обратитесь в Поддержку Ledger для решения этого вопроса.",
       "prepareSeed" : "Запишите фразу восстановления из 24 слов на специальный лист. Убедитесь, что в случае необходимости к нему будет доступ.",
-      "disclaimerTitle" : "Вы собираетесь установить <1>прошивку версии {{version}}</1>."
+      "disclaimerTitle" : "Вы собираетесь установить <1>прошивку версии {{version}}</1>.",
+      "cancelUpdate" : "Не обновлять",
+      "continueUpdate" : "Продолжить обновление",
+      "cancelUpdateWarning" : "Если прервать обновление, ваши настройки и приложения могут не восстановиться.",
+      "updateInProgress" : "Идёт обновление прошивки"
     },
     "modal" : {
       "title" : "Обновление {{productName}}",
@@ -2064,7 +2074,8 @@
         "parentAccount" : "1. Выберите счёт {{currencyName}}",
         "token" : "2. Выберите токен",
         "verifyTokenType" : "Проверьте, чтобы <0>{{token}}</0> был токеном <0>{{tokenType}}</0>. Любой другой криптоактив, отправленный на счёт {{currency}}, может быть потерян.",
-        "warningTokenType" : "Отправляйте только <0>{{ticker}}</0> или токены сети <0>{{tokenType}}</0> на счета {{currency}}. Любые другие криптоактивы могут быть потеряны."
+        "warningTokenType" : "Отправляйте только <0>{{ticker}}</0> или токены сети <0>{{tokenType}}</0> на счета {{currency}}. Любые другие криптоактивы могут быть потеряны.",
+        "depositFromCexBannerTitle" : "Перенести активы с Coinbase"
       },
       "connectDevice" : {
         "title" : "Устройство",
@@ -4049,11 +4060,11 @@
     "setPassword" : {
       "title" : "Блокировка паролем",
       "subTitle" : "Установить пароль",
-      "desc" : "Храните свой пароль в безопасности. В случае его потери нужно будет сбросить Ledger Live и заново подключить счета."
+      "desc" : "Храните свой пароль в безопасности. В случае его потери нужно будет сбросить Ledger Live и заново добавить счета."
     },
     "disablePassword" : {
       "title" : "Отключить блокировку паролем",
-      "desc" : "Данные Ledger Live будут храниться на ПК в незашифрованном виде. К таким данным относятся названия счетов, информация о транзакциях и публичные адреса кошельков."
+      "desc" : "Данные Ledger Live будут храниться в незашифрованном виде. К таким данным относятся названия счетов, информация о транзакциях и публичные адреса кошельков."
     }
   },
   "update" : {
@@ -4061,7 +4072,7 @@
     "downloadProgress" : "Уже {{progress}}%",
     "checking" : "Проверяем обновления...",
     "checkSuccess" : "Доступно обновление Ledger Live. Оно установится автоматически после закрытия приложения",
-    "quitAndInstall" : "Установить",
+    "quitAndInstall" : "Обновить и перезапустить",
     "updateAvailable" : "Доступно обновление Ledger Live {{version}}",
     "error" : "Во время обновления произошла ошибка. Попробуйте ещё раз",
     "reDownload" : "Скачать ещё раз",
@@ -5077,12 +5088,12 @@
       "description" : "Пожалуйста, попробуйте ещё раз."
     },
     "DisconnectedDevice" : {
-      "title" : "Извините, похоже, ваше устройство отключено",
-      "description" : "Пожалуйста, переподключите его и повторите попытку."
+      "title" : "Устройство отключено",
+      "description" : "Ledger Live could not connect to your device. Please try again."
     },
     "DisconnectedDeviceDuringOperation" : {
-      "title" : "Извините, похоже, ваше устройство отключено",
-      "description" : "Пожалуйста, переподключите его и повторите попытку."
+      "title" : "Устройство отключено",
+      "description" : "Ledger Live could not connect to your device. Please try again."
     },
     "EConnReset" : {
       "title" : "Мой Ledger недоступен",
@@ -5309,6 +5320,10 @@
     "UserRefusedOnDevice" : {
       "title" : "Действие отклонено",
       "description" : "Пользователь отклонил операцию на устройстве"
+    },
+    "ExpertModeRequired" : {
+      "title" : "Требуется Режим эксперта",
+      "description" : "Нужно активировать «Режим эксперта»."
     },
     "TransactionRefusedOnDevice" : {
       "title" : "Операция отклонена на устройстве",
@@ -5795,7 +5810,7 @@
     "managerCTARemove" : "Удалить",
     "steps" : {
       "choose" : {
-        "stepLabel" : "Выбрать изображение",
+        "stepLabel" : "Выбор изображения",
         "description" : "Выберите изображение для использования в качестве (...)",
         "pickFromNftGallery" : "Выбрать из галереи NFT",
         "myNfts" : "Мои NFT",
@@ -5803,23 +5818,25 @@
         "chooseNft" : "Выбрать NFT",
         "remove" : "Удалить изображение",
         "selectNft" : "Выбрать NFT",
-        "previousSelectNft" : "Назад",
         "nftEmptyStateTitle" : "Пока тут ничего нет",
         "nftEmptyStateDescription" : "Сначала добавьте NFT в кошелёк"
       },
       "adjust" : {
-        "stepLabel" : "Изменить изображение",
-        "rotate" : "Повернуть"
+        "stepLabel" : "Обрезка",
+        "rotate" : "Повернуть",
+        "confirmCrop" : "Подтвердить обрезку"
       },
       "contrast" : {
-        "stepLabel" : "Указать контраст"
+        "stepLabel" : "Контраст",
+        "confirmContrast" : "Подтвердить контраст"
       },
       "transfer" : {
-        "stepLabel" : "Перевод",
-        "uploadAnotherImage" : "Загрузить другое изображение",
-        "allowPreview" : "Дождитесь загрузки экрана блокировки на {{productName}}",
+        "stepLabel" : "Загрузка",
+        "useAnotherPicture" : "Загрузить другое изображение",
+        "allowPreview" : "Нажмите «Загрузить картинку» для настройки экрана блокировки",
         "allowConfirmPreview" : "Разрешите восстановление изображения экрана блокировки на {{productName}}",
         "loadingPicture" : "Загружаем...",
+        "voila" : "Вот и всё!",
         "imageLoaded" : "Изображение загружено в {{productName}}",
         "confirmPicture" : "Ну как, нравится?\nТогда так и оставьте!",
         "confirmRestorePicture" : "Подтвердите восстановление изображения экрана блокировки",
@@ -5827,12 +5844,12 @@
       }
     },
     "postOnboarding" : {
-      "title" : "Персонализируйте устройство",
-      "description" : "Благодаря гибким настройкам экрана",
+      "title" : "Настройки экрана блокировки",
+      "description" : "Выберите любой NFT или изображение и используйте его как экран блокировки Ledger Stax.",
       "actionCompletedPopupLabel" : "Устройство персонализировано"
     },
-    "customImageSet" : "Изображение установлено",
-    "finishCTA" : "Завершить"
+    "customImageSet" : "Экран блокировки настроен",
+    "finishCTA" : "Закрыть"
   },
   "onboardingAppInstall" : {
     "restore" : {
@@ -5878,7 +5895,6 @@
     "networkError" : {
       "title" : "Ошибка сети",
       "subtitle" : "Что-то пошло не так. Пожалуйста, попробуйте ещё раз. Если проблема повторяется, сохраните логи и свяжитесь с Поддержкой Ledger.",
-      "tryAgain" : "Попробовать ещё раз",
       "contactSupport" : "Связаться с Поддержкой",
       "saveLog" : "Сохранить логи"
     }
