@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.32.0-next.4
+
+### Patch Changes
+
+- [#4796](https://github.com/LedgerHQ/ledger-live/pull/4796) [`e1c089470a`](https://github.com/LedgerHQ/ledger-live/commit/e1c089470a880b6c74d6834d110975169fd006fc) Thanks [@chabroA](https://github.com/chabroA)! - Use account instead of main account for evm custom fees navigation
+
 ## 3.32.0-next.3
 
 ### Patch Changes
