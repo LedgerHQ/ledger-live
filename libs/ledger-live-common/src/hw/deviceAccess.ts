@@ -40,10 +40,10 @@ const initialErrorRemapping = (error: unknown, context?: TraceContext) => {
     data: { error, mappedError },
     context,
   });
-  return throwError(mappedError);
+  return throwError(() => mappedError);
 };
 
-let errorRemapping = e => throwError(e);
+let errorRemapping = e => throwError(() => e);
 
 export const setErrorRemapping = (f: (arg0: Error) => Observable<never>): void => {
   errorRemapping = f;
@@ -261,7 +261,7 @@ export const retryWhileErrors =
     attempts.pipe(
       mergeMap(error => {
         if (!acceptError(error)) {
-          return throwError(error);
+          return throwError(() => error);
         }
 
         return timer(getEnv("WITH_DEVICE_POLLING_DELAY"));
