@@ -546,6 +546,10 @@
           "body" : "ウォレットで暗号資産を受け取る"
         }
       }
+    },
+    "getFundsModal" : {
+      "text" : "{{coin}}を入手してステーキング",
+      "description" : "Ledger Liveを使用すると、Ledgerで暗号資産の直接購入、スワップ、受け取りができます。"
     }
   },
   "lottieDebugger" : {
@@ -1700,7 +1704,8 @@
   "DeviceAction" : {
     "allowAppPermission" : "デバイスで{{wording}} アプリを開く",
     "allowAppPermissionSubtitleToken" : "{{token}} トークンを管理",
-    "allowManagerPermission" : "デバイス上で{{wording}}を許可",
+    "allowManagerPermission" : "デバイスでLedger Managerを許可する",
+    "allowRenaming" : "デバイスで名前の変更を許可する",
     "loading" : "読み込み中...",
     "connectAndUnlockDevice" : "デバイスを接続してロックを解除する",
     "unlockDevice" : "デバイスのロックを解除する",
@@ -1878,7 +1883,11 @@
       "contactSupport" : "サポートへのお問い合わせ",
       "deprecated" : "デバイスのファームウェアのバージョンが古いため、アップデートできません。Ledgerサポートに連絡して、デバイスを交換してください。",
       "prepareSeed" : "万が一に備えて、書き留めた24単語のリカバリーフレーズを用意してください。",
-      "disclaimerTitle" : "<1>ファームウェアバージョン{{version}}</1>をインストールします。"
+      "disclaimerTitle" : "<1>ファームウェアバージョン{{version}}</1>をインストールします。",
+      "cancelUpdate" : "アップデートをキャンセル",
+      "continueUpdate" : "アップデートを続行",
+      "cancelUpdateWarning" : "今アップデートをキャンセルすると、設定とアプリが正しく復元されない可能性があります。",
+      "updateInProgress" : "OSアップデート中"
     },
     "modal" : {
       "title" : "{{productName}}をアップデートする",
@@ -4061,7 +4070,7 @@
     "downloadProgress" : "{{progress}}%完了",
     "checking" : "アップデートの確認中...",
     "checkSuccess" : "新しいLedger Liveアップデートをご利用いただけます。アプリを終了すると自動的にインストールされます。",
-    "quitAndInstall" : "今すぐインストールする",
+    "quitAndInstall" : "今すぐインストールして再起動する",
     "updateAvailable" : "Ledger Liveバージョン {{version}} へのアップデートが利用可能です。",
     "error" : "更新中にエラーが発生再度ダウンロードしてください",
     "reDownload" : "再度ダウンロード",
@@ -5309,6 +5318,10 @@
     "UserRefusedOnDevice" : {
       "title" : "アクションが拒否されました。",
       "description" : "デバイス上で操作を拒否しました。"
+    },
+    "ExpertModeRequired" : {
+      "title" : "Expert mode required",
+      "description" : "Expert mode needs to be enabled."
     },
     "TransactionRefusedOnDevice" : {
       "title" : "デバイス上で操作が却下されました。",
