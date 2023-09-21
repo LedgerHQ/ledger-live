@@ -2492,8 +2492,8 @@ importers:
         specifier: 0.71.6
         version: 0.71.6(react@17.0.2)
       react-native-svg:
-        specifier: 13.4.0
-        version: 13.4.0(react-native@0.71.6)(react@17.0.2)
+        specifier: 13.14.0
+        version: 13.14.0(react-native@0.71.6)(react@17.0.2)
       react-redux:
         specifier: ^7.2.9
         version: 7.2.9(@types/react@17.0.53)(react-dom@17.0.2)(react@17.0.2)
@@ -4483,8 +4483,8 @@ importers:
         specifier: ^18
         version: 18.0.0
       react-native-svg:
-        specifier: 13.4.0
-        version: 13.4.0(react@18.0.0)
+        specifier: 13.14.0
+        version: 13.14.0(react@18.0.0)
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -4534,8 +4534,8 @@ importers:
         specifier: ^18
         version: 18.0.0
       react-native-svg:
-        specifier: 13.4.0
-        version: 13.4.0(react@18.0.0)
+        specifier: 13.14.0
+        version: 13.14.0(react@18.0.0)
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -28984,7 +28984,7 @@ packages:
       babel-plugin-syntax-jsx: 6.18.0
       lodash: 4.17.21
       picomatch: 2.3.1
-      styled-components: 5.3.5(react-is@18.1.0)(react@18.0.0)
+      styled-components: 5.3.5(react-dom@17.0.2)(react-is@17.0.2)(react@17.0.2)
 
   /babel-plugin-syntax-jsx@6.18.0:
     resolution: {integrity: sha512-qrPaCSo9c8RHNRHIotaufGbuOBN8rtdC4QrrFFc43vyWCCz7Kl7GL1PGaXtMGQZUXrkCjNEgxDfmAuAabr/rlw==}
@@ -52983,8 +52983,8 @@ packages:
       react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
-  /react-native-svg@13.4.0(react-native@0.71.6)(react@17.0.2):
-    resolution: {integrity: sha512-B3TwK+H0+JuRhYPzF21AgqMt4fjhCwDZ9QUtwNstT5XcslJBXC0FoTkdZo8IEb1Sv4suSqhZwlAY6lwOv3tHag==}
+  /react-native-svg@13.14.0(react-native@0.71.6)(react@17.0.2):
+    resolution: {integrity: sha512-27ZnxUkHgWICimhuj6MuqBkISN53lVvgWJB7pIypjXysAyM+nqgQBPh4vXg+7MbqLBoYvR4PiBgKfwwGAqVxHg==}
     peerDependencies:
       react: '*'
       react-native: '*'
@@ -52995,8 +52995,8 @@ packages:
       react-native: 0.71.6(react@17.0.2)
     dev: true
 
-  /react-native-svg@13.4.0(react@18.0.0):
-    resolution: {integrity: sha512-B3TwK+H0+JuRhYPzF21AgqMt4fjhCwDZ9QUtwNstT5XcslJBXC0FoTkdZo8IEb1Sv4suSqhZwlAY6lwOv3tHag==}
+  /react-native-svg@13.14.0(react@18.0.0):
+    resolution: {integrity: sha512-27ZnxUkHgWICimhuj6MuqBkISN53lVvgWJB7pIypjXysAyM+nqgQBPh4vXg+7MbqLBoYvR4PiBgKfwwGAqVxHg==}
     peerDependencies:
       react: '*'
       react-native: '*'
@@ -56718,6 +56718,7 @@ packages:
       react-is: 18.1.0
       shallowequal: 1.1.0
       supports-color: 5.5.0
+    dev: false
 
   /styled-components@6.0.7(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-xIwWuiRMYR43mskVsW9MGTRjSo7ol4bcVjT595fGUp3OLBJOlOgaiKaxsHdC4a2HqWKqKnh0CmcRbk5ogyDjTg==}
