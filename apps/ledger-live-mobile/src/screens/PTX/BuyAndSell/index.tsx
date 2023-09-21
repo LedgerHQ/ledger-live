@@ -1,10 +1,13 @@
 import React, { useEffect } from "react";
+import { useSelector } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getParentAccount, isTokenAccount } from "@ledgerhq/live-common/account/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import {
   useRemoteLiveAppContext,
   useRemoteLiveAppManifest,
 } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import { useTheme } from "styled-components/native";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import TrackScreen from "../../../analytics/TrackScreen";
@@ -14,7 +17,11 @@ import { WebPTXPlayer } from "../../../components/WebPTXPlayer";
 import { ExchangeNavigatorParamList } from "../../../components/RootNavigator/types/ExchangeNavigator";
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import { ScreenName } from "../../../const";
-import { INTERNAL_APP_IDS } from "@ledgerhq/live-common/wallet-api/constants";
+import { accountsSelector } from "../../../reducers/accounts";
+import {
+  DEFAULT_MULTIBUY_APP_ID,
+  INTERNAL_APP_IDS,
+} from "@ledgerhq/live-common/wallet-api/constants";
 
 export type Props = StackNavigatorProps<
   ExchangeNavigatorParamList,
@@ -24,6 +31,7 @@ export type Props = StackNavigatorProps<
 const appManifestNotFoundError = new Error("App not found"); // FIXME move this elsewhere.
 
 export function BuyAndSellScreen({ route }: Props) {
+  const accounts = useSelector(accountsSelector);
   const { theme } = useTheme();
   const { platform, ...params } = route.params || {};
   const searchParams = route.path
@@ -43,6 +51,18 @@ export function BuyAndSellScreen({ route }: Props) {
   useEffect(
     () => {
       (async () => {
+        // Use wallet-api ids if it is using v2 multibuy manifest
+        if (manifest?.id === DEFAULT_MULTIBUY_APP_ID) {
+          const { account: accountId } = params;
+          const account = accounts.find(a => a.id === accountId);
+          if (account) {
+            const parentAccount = isTokenAccount(account)
+              ? getParentAccount(account, accounts)
+              : undefined;
+            const walletApiId = accountToWalletAPIAccount(account, parentAccount)?.id;
+            params.account = walletApiId;
+          }
+        }
         if (manifest?.id && INTERNAL_APP_IDS.includes(manifest.id)) {
           await AsyncStorage.removeItem("last-screen");
           await AsyncStorage.removeItem("manifest-id");
