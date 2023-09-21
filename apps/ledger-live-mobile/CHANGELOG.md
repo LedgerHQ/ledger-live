@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.32.0-next.2
+
+### Patch Changes
+
+- [#4780](https://github.com/LedgerHQ/ledger-live/pull/4780) [`602e15dcfa`](https://github.com/LedgerHQ/ledger-live/commit/602e15dcfa5079a64db9aaf4cc08c46547daa0ab) Thanks [@sarneijim](https://github.com/sarneijim)! - Add SUPPLY_UPLOAD_MAX_RETRIES fastlane android env
+
 ## 3.32.0-next.1
 
 ### Patch Changes
