@@ -193,7 +193,7 @@
     "axios": "0.26.1",
     "axios-retry": "^3.2.4",
     "bchaddrjs": "^0.5.2",
-    "bech32": "^1.1.3",
+    "bech32": "^2.0.0",
     "big-integer": "^1.6.51",
     "bignumber.js": "^9.1.2",
     "bip32": "^2.0.6",
