@@ -1,7 +1,6 @@
 import flow from "lodash/flow";
 import { BigNumber } from "bignumber.js";
 import type { NetworkInfo } from "./types";
-import { getEstimatedFees } from "./api";
 import { getWalletAccount } from "./wallet-btc";
 import { Account } from "@ledgerhq/types-live";
 const speeds = ["fast", "medium", "slow"];
