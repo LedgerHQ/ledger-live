@@ -51,8 +51,13 @@ export function BuyAndSellScreen({ route }: Props) {
   useEffect(
     () => {
       (async () => {
-        // Use wallet-api ids if it is using v2 multibuy manifest
-        if (manifest?.id === DEFAULT_MULTIBUY_APP_ID) {
+        // Use wallet-api ids when manifest is using apiVersion 2
+        const WALLET_API_VERSION = 2;
+        const apiVersion = manifest?.apiVersion;
+        const apiVersionMatch =
+          !!apiVersion &&
+          (apiVersion.match(/\d+|\d+\b|\d+(?=\w)/g) || []).shift() === `${WALLET_API_VERSION}`;
+        if (params && apiVersionMatch) {
           const { account: accountId } = params;
           const account = accounts.find(a => a.id === accountId);
           if (account) {

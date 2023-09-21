@@ -38,8 +38,13 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
   const manifest = localManifest || mockManifest || remoteManifest;
   const themeType = useTheme().colors.palette.type;
 
-  // Use wallet-api ids if it is using v2 multibuy manifest
-  if (urlParams && manifest?.id === DEFAULT_MULTIBUY_APP_ID) {
+  // Use wallet-api ids when manifest is using apiVersion 2
+  const WALLET_API_VERSION = 2;
+  const apiVersion = manifest?.apiVersion;
+  const apiVersionMatch =
+    !!apiVersion &&
+    (apiVersion.match(/\d+|\d+\b|\d+(?=\w)/g) || []).shift() === `${WALLET_API_VERSION}`;
+  if (urlParams && apiVersionMatch) {
     const { account: accountId } = urlParams;
     const account = accounts.find(a => a.id === accountId);
     if (account) {
