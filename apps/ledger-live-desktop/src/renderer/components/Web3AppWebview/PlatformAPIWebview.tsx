@@ -247,7 +247,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
                   },
                   onClose: () => {
                     tracking.platformSignMessageUserRefused(manifest);
-                    reject(UserRefusedOnDevice());
+                    reject(new UserRefusedOnDevice());
                   },
                 }),
               );

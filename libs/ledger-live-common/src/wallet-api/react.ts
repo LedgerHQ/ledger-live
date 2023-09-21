@@ -113,7 +113,7 @@ export interface UiHook {
     accounts$: Observable<WalletAPIAccount[]>;
     currencies: CryptoOrTokenCurrency[];
     onSuccess: (account: AccountLike, parentAccount: Account | undefined) => void;
-    onError: () => void;
+    onCancel: () => void;
   }) => void;
   "account.receive": (params: {
     account: AccountLike;
@@ -355,7 +355,7 @@ export function useWalletAPIServer({
             tracking.requestAccountSuccess(manifest);
             resolve(accountToWalletAPIAccount(account, parentAccount));
           },
-          onError: () => {
+          onCancel: () => {
             tracking.requestAccountFail(manifest);
             reject(new Error("Canceled by user"));
           },
