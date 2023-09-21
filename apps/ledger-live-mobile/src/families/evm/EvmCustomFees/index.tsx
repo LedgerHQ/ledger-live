@@ -27,13 +27,13 @@ const options = {
 
 export default function EvmCustomFees({ route }: Props) {
   const { setCustomStrategyTransactionPatch, setTransaction, transaction } = route.params;
-  const { account: accountLike } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const navigation = useNavigation();
-  invariant(accountLike, "no account found");
+  invariant(account, "no account found");
+  const mainAccount = getMainAccount(account, parentAccount);
+  invariant(mainAccount, "no main account found");
 
-  const account = getMainAccount(accountLike);
-
-  const bridge = getAccountBridge(account);
+  const bridge = getAccountBridge(mainAccount);
 
   const onValidateFees = useCallback(
     (transactionPatch: Partial<Transaction>) => () => {
@@ -48,13 +48,13 @@ export default function EvmCustomFees({ route }: Props) {
 
   return shouldUseEip1559 ? (
     <Evm1559CustomFees
-      account={account}
+      account={mainAccount}
       transaction={transaction}
       onValidateFees={onValidateFees}
     />
   ) : (
     <EvmLegacyCustomFees
-      account={account}
+      account={mainAccount}
       transaction={transaction}
       onValidateFees={onValidateFees}
     />
