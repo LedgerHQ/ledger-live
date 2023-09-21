@@ -101,12 +101,38 @@
     "@ledgerhq/docs-libs": "0.1.0",
     "next.js-example": "0.0.2",
     "webpack.js-example": "0.0.2",
-    "@ledgerhq/web-tools": "0.1.0"
+    "@ledgerhq/web-tools": "0.1.0",
+    "web-tools": "0.1.0"
   },
   "changesets": [
+    "brown-lions-speak",
+    "five-monkeys-juggle",
+    "gentle-tomatoes-draw",
+    "gold-pants-sniff",
+    "great-tomatoes-punch",
+    "grumpy-flowers-enjoy",
     "hungry-pianos-vanish",
+    "lemon-taxis-applaud",
     "light-planes-cry",
+    "little-papayas-nail",
+    "long-schools-live",
+    "mighty-doors-visit",
+    "neat-colts-glow",
+    "neat-insects-sin",
+    "nine-cooks-drop",
+    "nine-kangaroos-lick",
     "olive-ants-clean",
-    "twenty-ears-care"
+    "perfect-shrimps-type",
+    "plenty-starfishes-train",
+    "pretty-panthers-approve",
+    "quick-olives-grab",
+    "quick-students-glow",
+    "real-wolves-lie",
+    "short-dogs-buy",
+    "slow-squids-press",
+    "small-jars-hug",
+    "tender-laws-itch",
+    "twenty-ears-care",
+    "young-toes-clap"
   ]
 }

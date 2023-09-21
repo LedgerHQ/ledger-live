@@ -1,5 +1,17 @@
 # @ledgerhq/hw-app-eth
 
+## 6.34.6-nightly.1
+
+### Patch Changes
+
+- [#4687](https://github.com/LedgerHQ/ledger-live/pull/4687) [`c86637f6e5`](https://github.com/LedgerHQ/ledger-live/commit/c86637f6e57845716a791854dd8f686807152e73) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fixing hexBuffer helper for EIP712 signature not padding byte strings with 0
+
+- Updated dependencies [[`f527d1bb5a`](https://github.com/LedgerHQ/ledger-live/commit/f527d1bb5a2888a916f761d43d2ba5093eaa3e3f), [`a134f28e9d`](https://github.com/LedgerHQ/ledger-live/commit/a134f28e9d220d172148619ed281d4ca897d5532), [`49ea3fd98b`](https://github.com/LedgerHQ/ledger-live/commit/49ea3fd98ba1e1e0ed54d29ab5fdc71c4918183f), [`533278e2c4`](https://github.com/LedgerHQ/ledger-live/commit/533278e2c40ee764ecb87d4430fa6650f251ff0c), [`70e4277bc9`](https://github.com/LedgerHQ/ledger-live/commit/70e4277bc9dda253b894bdae5f2c8a5f43a9a64e)]:
+  - @ledgerhq/cryptoassets@10.0.0-nightly.1
+  - @ledgerhq/types-live@6.40.0-nightly.0
+  - @ledgerhq/domain-service@1.1.11-nightly.1
+  - @ledgerhq/evm-tools@1.0.7-nightly.1
+
 ## 6.34.6-nightly.0
 
 ### Patch Changes
