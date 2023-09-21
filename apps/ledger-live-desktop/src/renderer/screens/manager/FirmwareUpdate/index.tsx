@@ -118,7 +118,7 @@ const FirmwareUpdate = (props: Props) => {
       preventBackdropClick: true,
       forceDisableFocusTrap: true,
       onRequestClose: undefined,
-      padding: false,
+      withPaddingTop: false,
     });
   }, [
     device,
