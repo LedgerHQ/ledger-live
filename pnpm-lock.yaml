@@ -2143,8 +2143,8 @@ importers:
         specifier: ^13.0.1
         version: 13.0.1
       '@taquito/utils':
-        specifier: ^13.0.1
-        version: 13.0.1
+        specifier: ^17.0.0
+        version: 17.3.1
       '@types/bchaddrjs':
         specifier: ^0.4.0
         version: 0.4.0
@@ -20650,6 +20650,14 @@ packages:
       '@stablelib/wipe': 1.0.1
     dev: false
 
+  /@stablelib/ed25519@1.0.3:
+    resolution: {integrity: sha512-puIMWaX9QlRsbhxfDc5i+mNPMY+0TmQEskunY1rZEBPi1acBCVQAhnsk/1Hk50DGPtVsZtAWQg4NHGlVaO9Hqg==}
+    dependencies:
+      '@stablelib/random': 1.0.2
+      '@stablelib/sha512': 1.0.1
+      '@stablelib/wipe': 1.0.1
+    dev: false
+
   /@stablelib/hash@1.0.1:
     resolution: {integrity: sha512-eTPJc/stDkdtOcrNMZ6mcMK1e6yBbqRBaNW55XA1jU8w/7QdnCF0CmMmOD1m7VSkBR44PWrMHU2l6r8YEQHMgg==}
     dev: false
@@ -20660,6 +20668,13 @@ packages:
 
   /@stablelib/random@1.0.1:
     resolution: {integrity: sha512-zOh+JHX3XG9MSfIB0LZl/YwPP9w3o6WBiJkZvjPoKKu5LKFW4OLV71vMxWp9qG5T43NaWyn0QQTWgqCdO+yOBQ==}
+    dependencies:
+      '@stablelib/binary': 1.0.1
+      '@stablelib/wipe': 1.0.1
+    dev: false
+
+  /@stablelib/random@1.0.2:
+    resolution: {integrity: sha512-rIsE83Xpb7clHPVRlBj8qNe5L8ISQOzjghYQm/dZ7VaM2KHYwMW5adjQjrzTZCchFnNCNhkwtnOBa9HTMJCI8w==}
     dependencies:
       '@stablelib/binary': 1.0.1
       '@stablelib/wipe': 1.0.1
@@ -24341,6 +24356,11 @@ packages:
     dependencies:
       defer-to-connect: 2.0.1
 
+  /@taquito/core@17.3.1:
+    resolution: {integrity: sha512-dk8ZXuZktfoIV5ESUx3mPkJxLBVL7o3CXLsaVoiPIu2nyd4I/VNkPh+aIOrhxHSVPBib3sVYN0Pc2a8ZO+0gsg==}
+    engines: {node: '>=16'}
+    dev: false
+
   /@taquito/http-utils@13.0.1:
     resolution: {integrity: sha512-eHzd0HSL3qX6bOOSaQClm+0XmpbSNcJP69uzaBJwfXo7ntQR1bUfGLn6+1Hgsk/lJ0JxakD2PDA4aaeajHvyPw==}
     engines: {node: '>=6.0.0'}
@@ -24413,6 +24433,22 @@ packages:
       '@stablelib/blake2b': 1.0.1
       '@stablelib/ed25519': 1.0.2
       '@types/bs58check': 2.1.0
+      blakejs: 1.2.1
+      bs58check: 2.1.2
+      buffer: 6.0.3
+      elliptic: 6.5.4
+      typedarray-to-buffer: 4.0.0
+    dev: false
+
+  /@taquito/utils@17.3.1:
+    resolution: {integrity: sha512-NLSFOaZbbs5L7aSV+vgCxj6celHBYLkzwmGvPiCm/mDSj1a1i4bgt8fJ6DbtwDiAmiA9tXPmRileRC4iPEaewg==}
+    engines: {node: '>=16'}
+    dependencies:
+      '@stablelib/blake2b': 1.0.1
+      '@stablelib/ed25519': 1.0.3
+      '@taquito/core': 17.3.1
+      '@types/bs58check': 2.1.0
+      bignumber.js: 9.1.2
       blakejs: 1.2.1
       bs58check: 2.1.2
       buffer: 6.0.3

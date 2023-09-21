@@ -176,7 +176,7 @@
     "@stricahq/typhonjs": "^1.2.6",
     "@taquito/ledger-signer": "^13.0.1",
     "@taquito/taquito": "^13.0.1",
-    "@taquito/utils": "^13.0.1",
+    "@taquito/utils": "^17.0.0",
     "@types/bchaddrjs": "^0.4.0",
     "@types/bs58check": "^2.1.0",
     "@types/pako": "^2.0.0",
