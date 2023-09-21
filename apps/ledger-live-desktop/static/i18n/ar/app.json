@@ -546,6 +546,10 @@
           "body" : "تلقي الأصول المشفرة في محفظتك"
         }
       }
+    },
+    "getFundsModal" : {
+      "text" : "احصل على {{coin}} للتكديس",
+      "description" : "قم بشراء أو مبادلة أو تلقى الأصول المشفرة مباشرةً إلى جهازك Ledger باستخدام Ledger Live."
     }
   },
   "lottieDebugger" : {
@@ -1700,7 +1704,8 @@
   "DeviceAction" : {
     "allowAppPermission" : "افتح تطبيق {{wording}} على جهازك",
     "allowAppPermissionSubtitleToken" : "لإدارة رموزك {{token}}",
-    "allowManagerPermission" : "السماح بــ {{wording}} على جهازك",
+    "allowManagerPermission" : "اسمح بمدير Ledger على جهازك",
+    "allowRenaming" : "اسمح بإعادة التسمية على جهازك",
     "loading" : "جاري التحميل...",
     "connectAndUnlockDevice" : "قم بتوصيل جهازك وإلغاء قفله",
     "unlockDevice" : "قم بإلغاء قفل جهازك",
@@ -1878,7 +1883,11 @@
       "contactSupport" : "تواصل مع الدعم",
       "deprecated" : "إصدار البرنامج الثابت للجهاز قديم للغاية ليتم تحديثه. تواصل مع دعم Ledger للحصول على بديل.",
       "prepareSeed" : "تأكد من كتابة عبارة الاسترداد الخاصة المكونة من 24 كلمة على ورقة الاسترداد وأنها متوفرة، على سبيل الاحتياط.",
-      "disclaimerTitle" : "أنت على وشك تثبيت <1>إصدار البرنامج الثابت {{version}}</1>."
+      "disclaimerTitle" : "أنت على وشك تثبيت <1>إصدار البرنامج الثابت {{version}}</1>.",
+      "cancelUpdate" : "إلغاء التحديث",
+      "continueUpdate" : "متابعة التحديث",
+      "cancelUpdateWarning" : "إعداداتك وتطبيقاتك قد لا يتم استعادتها بشكل صحيح إذا ألغيت التحديث الآن.",
+      "updateInProgress" : "تحديث نظام التشغيل قيد التنفيذ"
     },
     "modal" : {
       "title" : "تحديث {{productName}}",
@@ -4061,7 +4070,7 @@
     "downloadProgress" : "اكتمل {{progress}}%",
     "checking" : "جاري التحقق من التحديث...",
     "checkSuccess" : "متاح تحديث Ledger Live جديد، سيتم تثبيته تلقائياً عندما تغلق التطبيق",
-    "quitAndInstall" : "تثبيت الآن",
+    "quitAndInstall" : "تثبيت الآن وإعادة الإطلاق",
     "updateAvailable" : "التحديث إلى إصدار {{version}} من Ledger Live متاح",
     "error" : "حدث خطأ أثناء التحديث. يرجى التنزيل مرة أخرى",
     "reDownload" : "التنزيل مرة أخرى",
@@ -5309,6 +5318,10 @@
     "UserRefusedOnDevice" : {
       "title" : "تم رفض الإجراء",
       "description" : "رفض المستخدم العملية على الجهاز"
+    },
+    "ExpertModeRequired" : {
+      "title" : "Expert mode required",
+      "description" : "Expert mode needs to be enabled."
     },
     "TransactionRefusedOnDevice" : {
       "title" : "تم رفض العملية على الجهاز",
