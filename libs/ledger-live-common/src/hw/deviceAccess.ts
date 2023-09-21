@@ -101,34 +101,98 @@ export const cancelDeviceAction = (transport: Transport): void => {
   needsCleanup[transportId] = true;
 };
 
-// The devicesQueues object only stores, for each device, the latest void promise that will resolve when the device is ready to be opened again.
-// They are scheduled to resolve whenever the job associated to the device is finished.
-// When calling withDevice several times, the new promise will be chained to the "then" of the previous promise:
-// open(device) -> execute job -> clean connection -> resolve promise -> next promise can start: open(device) -> etc.
-// So a queue is indeed created for each device, by creating a chain of promises, but only the end of the queue is stored for each device.
-const deviceQueues: { [deviceId: string]: { job: Promise<void>; id: number } } = {};
+export type QueuedJob = { job: Promise<void>; id: number };
 
-// To be able to differentiate withDevice calls in our logs
-let jobId = 0;
+/**
+ * Manages queued jobs for each device (id)
+ *
+ * Careful: a USB-connected device has no unique id, and its `deviceId` will be an empty string.
+ *
+ * The queue object `queuedJobsByDevice` only stores, for each device, the latest void promise that will resolve
+ * when the device is ready to be opened again.
+ * They are scheduled to resolve whenever the job associated to the device is finished.
+ * When calling withDevice several times, the new promise will be chained to the "then" of the previous promise:
+ * open(device) -> execute job -> clean connection -> resolve promise -> next promise can start: open(device) -> etc.
+ * So a queue is indeed created for each device, by creating a chain of promises, but only the end of the queue is stored for each device.
+ */
+export class DeviceQueuedJobsManager {
+  // For each device, queue of linked Promises that wait after each other, blocking any future job for a given device
+  private queuedJobsByDevice: { [deviceId: string]: QueuedJob };
+
+  private static instance: DeviceQueuedJobsManager | null = null;
+
+  // To be able to differentiate withDevice calls in our logs
+  private static jobIdCounter: number = -1;
+
+  private constructor() {
+    this.queuedJobsByDevice = {};
+  }
+
+  /**
+   * Get the singleton instance
+   */
+  static getInstance(): DeviceQueuedJobsManager {
+    if (!this.instance) {
+      this.instance = new DeviceQueuedJobsManager();
+    }
+
+    return this.instance;
+  }
+
+  /**
+   * Returns the latest queued job for a given device id
+   *
+   * @param deviceId
+   * @returns the latest QueuedJob. If none, return a queued job that can be resolved directly.
+   */
+  getLastQueuedJob(deviceId: string): QueuedJob {
+    return this.queuedJobsByDevice[deviceId] || { job: Promise.resolve(), id: -1 };
+  }
+
+  /**
+   * Sets the latest queue job for a given device id
+   *
+   * Also increments the job id counter and set the newly queued job id to this new incremented value.
+   *
+   * Note: we should be fine on race conditions when updating the jobId in our use cases.
+   *
+   * @param deviceId
+   * @param jobToQueue a Promise that resolve to void, representing an async job
+   * @returns the id of the queued job
+   */
+  setLastQueuedJob(deviceId: string, jobToQueue: Promise<void>): number {
+    const id = ++DeviceQueuedJobsManager.jobIdCounter;
+    this.queuedJobsByDevice[deviceId] = { job: jobToQueue, id };
+    return id;
+  }
+}
 
 /**
  * Provides a Transport instance to a given job
  *
  * @param deviceId
  * @param options contains optional configuration
- *   - openTimeoutMs: optional timeout when opening a Transport
+ *   - openTimeoutMs: optional timeout that limits in time the open attempt of the matching registered transport.
  */
 export const withDevice =
   (deviceId: string, options?: { openTimeoutMs?: number }) =>
   <T>(job: (t: Transport) => Observable<T>): Observable<T> =>
     new Observable(o => {
-      jobId++;
-      const tracer = new LocalTracer(LOG_TYPE, { jobId: jobId, origin: "hw:withDevice" });
-      tracer.trace(`New job for device: ${deviceId || "USB"}`);
+      const queuedJobManager = DeviceQueuedJobsManager.getInstance();
+      const previousQueuedJob = queuedJobManager.getLastQueuedJob(deviceId);
 
-      let unsubscribed;
-      let sub;
-      const deviceQueue = deviceQueues[deviceId] || { job: Promise.resolve(), id: -1 };
+      // When the new job is finished, this will unlock the associated device queue of jobs
+      let unlockQueuedJob;
+
+      const jobId = queuedJobManager.setLastQueuedJob(
+        deviceId,
+        new Promise(resolve => {
+          unlockQueuedJob = resolve;
+        }),
+      );
+
+      const tracer = new LocalTracer(LOG_TYPE, { jobId, deviceId, origin: "hw:withDevice" });
+      tracer.trace(`New job for device: ${deviceId || "USB"}`);
 
       // To call to cleanup the current transport
       const finalize = (transport: Transport, cleanups: Array<() => void>) => {
@@ -142,26 +206,17 @@ export const withDevice =
           });
       };
 
-      // When we'll finish all the current job, we'll call finish
-      let resolveQueuedJob;
-
-      // Queue of linked Promises that wait after each other
-      // Blocking any future job on this device
-      deviceQueues[deviceId] = {
-        job: new Promise(resolve => {
-          resolveQueuedJob = resolve;
-        }),
-        id: jobId,
-      };
+      let unsubscribed;
+      let sub;
 
       tracer.trace("Waiting for the previous job in the queue to complete", {
-        previousJobId: deviceQueue.id,
+        previousJobId: previousQueuedJob.id,
       });
       // For any new job, we'll now wait the exec queue to be available
-      deviceQueue.job
+      previousQueuedJob.job
         .then(() => {
           tracer.trace("Previous queued job resolved, now trying to get a Transport instance", {
-            previousJobId: deviceQueue.id,
+            previousJobId: previousQueuedJob.id,
             currentJobId: jobId,
           });
           return open(deviceId, options?.openTimeoutMs, tracer.getContext());
@@ -172,7 +227,7 @@ export const withDevice =
           if (unsubscribed) {
             tracer.trace("Unsubscribed (1) while processing job");
             // It was unsubscribed prematurely
-            return finalize(transport, [resolveQueuedJob]);
+            return finalize(transport, [unlockQueuedJob]);
           }
           setAllowAutoDisconnect(transport, deviceId, false);
 
@@ -186,7 +241,7 @@ export const withDevice =
         // This catch is here only for errors that might happen at open or at clean up of the transport before doing the job
         .catch(e => {
           tracer.trace("Error while opening Transport: ", { e });
-          resolveQueuedJob();
+          unlockQueuedJob();
           if (e instanceof BluetoothRequired) throw e;
           if (e instanceof TransportWebUSBGestureRequired) throw e;
           if (e instanceof TransportInterfaceNotAvailable) throw e;
@@ -202,7 +257,7 @@ export const withDevice =
           // It was unsubscribed prematurely
           if (unsubscribed) {
             tracer.trace("Unsubscribed (2) while processing job");
-            return finalize(transport, [resolveQueuedJob]);
+            return finalize(transport, [unlockQueuedJob]);
           }
 
           sub = job(transport)
@@ -211,7 +266,7 @@ export const withDevice =
               catchError(errorRemapping),
               transportFinally(() => {
                 // Closes the transport and cleans up everything
-                return finalize(transport, [resolveQueuedJob]);
+                return finalize(transport, [unlockQueuedJob]);
               }),
             )
             .subscribe({
