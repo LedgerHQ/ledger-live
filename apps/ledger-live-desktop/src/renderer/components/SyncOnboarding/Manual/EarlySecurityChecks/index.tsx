@@ -41,8 +41,10 @@ export type Props = {
    * */
   isInitialRunOfSecurityChecks: boolean;
   restartChecksAfterUpdate: () => void;
-  setFwUpdateInterrupted: (finalFirmware: FinalFirmware) => void;
+  // Pulling this state out of the early security check component because it gets
+  // unmounted when we restart the polling after the user interrupts an update."
   fwUpdateInterrupted: FinalFirmware | null;
+  setFwUpdateInterrupted: (finalFirmware: FinalFirmware) => void;
 };
 
 const commonDrawerProps = {
