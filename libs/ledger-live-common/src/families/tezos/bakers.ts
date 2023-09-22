@@ -57,7 +57,7 @@ type API_BAKER = {
 
 const getLedgerValidator = async (): Promise<Baker> => {
   const { data } = await network<API_BAKER>({
-    url: "https://api.baking-bad.org/v2/bakers/tz3LV9aGKHDnAZHCtC9SjNtTrKRu678FqSki",
+    url: `https://api.baking-bad.org/v2/bakers/${ledgerValidatorAddress}`,
     method: "GET",
   });
 
