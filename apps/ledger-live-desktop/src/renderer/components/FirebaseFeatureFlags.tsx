@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect } from "react";
 import isEqual from "lodash/isEqual";
-import semver from "semver";
 import { useDispatch, useSelector } from "react-redux";
 import {
   FeatureFlagsProvider,
   formatToFirebaseFeatureId,
+  checkFeatureFlagVersion,
 } from "@ledgerhq/live-common/featureFlags/index";
 import type { FirebaseFeatureFlagsProviderProps as Props } from "@ledgerhq/live-common/featureFlags/index";
 import { Feature, FeatureId } from "@ledgerhq/types-live";
@@ -14,21 +14,6 @@ import { useFirebaseRemoteConfig } from "./FirebaseRemoteConfig";
 import { overriddenFeatureFlagsSelector } from "../reducers/settings";
 import { setOverriddenFeatureFlag, setOverriddenFeatureFlags } from "../actions/settings";
 import { setAnalyticsFeatureFlagMethod } from "../analytics/segment";
-
-const checkFeatureFlagVersion = (feature: Feature) => {
-  if (
-    feature.enabled &&
-    feature.desktop_version &&
-    !semver.satisfies(__APP_VERSION__, feature.desktop_version, { includePrerelease: true })
-  ) {
-    return {
-      enabledOverriddenForCurrentDesktopVersion: true,
-      ...feature,
-      enabled: false,
-    };
-  }
-  return feature;
-};
 
 export const FirebaseFeatureFlagsProvider = ({ children }: Props): JSX.Element => {
   const remoteConfig = useFirebaseRemoteConfig();

@@ -1,13 +1,12 @@
 import React, { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import isEqual from "lodash/isEqual";
-import semver from "semver";
 import remoteConfig from "@react-native-firebase/remote-config";
-import VersionNumber from "react-native-version-number";
 import {
   FeatureFlagsProvider,
   DEFAULT_FEATURES,
   formatToFirebaseFeatureId,
+  checkFeatureFlagVersion,
 } from "@ledgerhq/live-common/featureFlags/index";
 import type { FirebaseFeatureFlagsProviderProps as Props } from "@ledgerhq/live-common/featureFlags/index";
 import { FeatureId, Feature } from "@ledgerhq/types-live";
@@ -15,24 +14,6 @@ import { getEnv } from "@ledgerhq/live-env";
 import { languageSelector, overriddenFeatureFlagsSelector } from "../reducers/settings";
 import { setOverriddenFeatureFlag, setOverriddenFeatureFlags } from "../actions/settings";
 import { setAnalyticsFeatureFlagMethod } from "../analytics/segment";
-
-const checkFeatureFlagVersion = (feature: Feature | undefined) => {
-  if (
-    feature &&
-    feature.enabled &&
-    feature.mobile_version &&
-    !semver.satisfies(VersionNumber.appVersion, feature.mobile_version, {
-      includePrerelease: true,
-    })
-  ) {
-    return {
-      enabledOverriddenForCurrentMobileVersion: true,
-      ...feature,
-      enabled: false,
-    };
-  }
-  return feature;
-};
 
 const isFeature = (key: string): boolean => {
   try {

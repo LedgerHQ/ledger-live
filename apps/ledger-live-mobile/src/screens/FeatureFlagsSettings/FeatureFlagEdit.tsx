@@ -24,7 +24,7 @@ const FeatureFlagEdit: React.FC<{
     overriddenByEnv,
     overridesRemote,
     enabledOverriddenForCurrentLanguage,
-    enabledOverriddenForCurrentMobileVersion,
+    enabledOverriddenForCurrentVersion,
     ...pureValue
   } = flagValue || {};
 

@@ -34,7 +34,7 @@ const FeatureFlagDetails: React.FC<Props> = props => {
     overriddenByEnv,
     overridesRemote,
     enabledOverriddenForCurrentLanguage,
-    enabledOverriddenForCurrentDesktopVersion,
+    enabledOverriddenForCurrentVersion,
   } = flagValue || {};
 
   const handleClick = useCallback(() => {
@@ -69,7 +69,7 @@ const FeatureFlagDetails: React.FC<Props> = props => {
               disabled for current language
             </Tag>
           ) : null}
-          {enabledOverriddenForCurrentDesktopVersion ? (
+          {enabledOverriddenForCurrentVersion ? (
             <Tag active mx={1} type="outlinedOpacity" size="small">
               disabled for current version
             </Tag>

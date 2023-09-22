@@ -10,6 +10,7 @@ import {
   getCryptoCurrencyById,
   setSupportedCurrencies,
 } from "@ledgerhq/live-common/currencies/index";
+import { AppConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { setWalletAPIVersion } from "@ledgerhq/live-common/wallet-api/version";
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import { registerTransportModule } from "@ledgerhq/live-common/hw/index";
@@ -30,6 +31,13 @@ import logger from "./logger";
 setGlobalOnBridgeError(e => logger.critical(e));
 setDeviceMode("polling");
 setWalletAPIVersion(WALLET_API_VERSION);
+
+AppConfig.init({
+  appVersion: VersionNumber.appVersion,
+  platform: Platform.OS,
+  environment: process.env.NODE_ENV ?? "development",
+});
+
 setSupportedCurrencies([
   "avalanche_c_chain",
   "axelar",
