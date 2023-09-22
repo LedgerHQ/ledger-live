@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.32.0-next.6
+
+### Patch Changes
+
+- [#4792](https://github.com/LedgerHQ/ledger-live/pull/4792) [`260b3811dd`](https://github.com/LedgerHQ/ledger-live/commit/260b3811dd4804ab02dd52b9a6ab4d738e28b656) Thanks [@sarneijim](https://github.com/sarneijim)! - Add account wallet id conversion for buy deeplinks
+
 ## 3.32.0-next.5
 
 ### Patch Changes
