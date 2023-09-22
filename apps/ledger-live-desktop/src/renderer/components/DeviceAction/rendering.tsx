@@ -551,7 +551,7 @@ export const renderLockedDeviceError = ({
   inlineRetry,
 }: {
   t: TFunction;
-  device?: Device;
+  device?: Device | null;
   onRetry?: (() => void) | null | undefined;
   inlineRetry?: boolean;
 }) => {
@@ -581,7 +581,7 @@ export const renderLockedDeviceError = ({
   );
 };
 
-export const RenderDeviceNotOnboardedError = ({ t, device }: { t: TFunction; device?: Device }) => {
+export const RenderDeviceNotOnboardedError = ({ t, device }: { t: TFunction; device?: Device | null }) => {
   const productName = device ? getDeviceModel(device.modelId).productName : null;
   const history = useHistory();
   const { setDrawer } = useContext(context);
@@ -680,7 +680,7 @@ export const renderError = ({
   managerAppName?: string;
   requireFirmwareUpdate?: boolean;
   withOnboardingCTA?: boolean;
-  device?: Device;
+  device?: Device | null;
   inlineRetry?: boolean;
   Icon?: (props: { color?: string | undefined; size?: number | undefined }) => JSX.Element;
 }) => {
