@@ -16,7 +16,7 @@ function ServicesWidget() {
   const { displayService, onClickFreeTrial, onClickCard, onClickSignIn } = useProtect();
 
   return displayService ? (
-    <>
+    <Flex>
       <Flex flexDirection="row" justifyContent="space-between" alignItems="center" mb={6} mt={8}>
         <Text variant="h5" fontWeight="semiBold">
           {t("servicesWidget.title")}
@@ -65,7 +65,7 @@ function ServicesWidget() {
           {t("servicesWidget.recover.cta")}
         </Text>
       </Button>
-    </>
+    </Flex>
   ) : null;
 }
 
