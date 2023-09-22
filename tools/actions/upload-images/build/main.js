@@ -10760,11 +10760,11 @@ var uploadImage = async () => {
     if (i3 > 2) {
       return "error";
     }
-    const form = new FormData3();
-    form.set("type", "file");
-    form.set("image", file);
-    const encoder = new FormDataEncoder(form);
     try {
+      const form = new FormData3();
+      form.set("type", "file");
+      form.set("image", file);
+      const encoder = new FormDataEncoder(form);
       const res = await fetch("https://api.imgur.com/3/image", {
         method: "POST",
         headers: {
@@ -10780,7 +10780,7 @@ var uploadImage = async () => {
       return link;
     } catch (e3) {
       await wait(3e3);
-      return upload(file, i3 + 1);
+      return await upload(file, i3 + 1);
     }
   };
   const getAllFiles = (currentPath) => {

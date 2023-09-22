@@ -54,7 +54,7 @@ const uploadImage = async () => {
       return link;
     } catch (e) {
       await wait(3000);
-      return upload(file, i + 1);
+      return await upload(file, i + 1);
     }
   };
 
