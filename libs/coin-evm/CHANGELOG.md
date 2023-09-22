@@ -1,5 +1,11 @@
 # @ledgerhq/coin-evm
 
+## 0.7.0-next.2
+
+### Patch Changes
+
+- [#4804](https://github.com/LedgerHQ/ledger-live/pull/4804) [`4cb507a52b`](https://github.com/LedgerHQ/ledger-live/commit/4cb507a52bf336d395b08b4c1a429bd4956ab22d) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add cache to CDN requests during preload
+
 ## 0.7.0-next.1
 
 ### Minor Changes
