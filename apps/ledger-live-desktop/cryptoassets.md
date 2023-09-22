@@ -1242,13 +1242,13 @@
 | Cardano | cbTHC | 025146866af908340247fe4e9672d5ac7059f1e8534696b5f920c9e66362544843 | cbTHC |  | cardano/native/025146866af908340247fe4e9672d5ac7059f1e8534696b5f920c9e66362544843 |
 | Cardano | GMBL | 2b0a04a7b60132b1805b296c7fcb3b217ff14413991bf76f72663c3067696d62616c | gimbal |  | cardano/native/2b0a04a7b60132b1805b296c7fcb3b217ff14413991bf76f72663c3067696d62616c |
 | Cardano | iUSD | f66d78b4a3cb3d37afa0ec36461e51ecbde00f26c8f0a68f94b6988069555344 | iUSD |  | cardano/native/f66d78b4a3cb3d37afa0ec36461e51ecbde00f26c8f0a68f94b6988069555344 |
-| Cardano | purrADA | 97747aa3c33fdfe4b5faa7bb8b4534932c6d980cb13c14c5a547e7ca70757272414441 | purrADA | countervalues disabled | cardano/native/97747aa3c33fdfe4b5faa7bb8b4534932c6d980cb13c14c5a547e7ca70757272414441 |
-| Cardano | SPACE | d894897411707efa755a76deb66d26dfd50593f2e70863e1661e98a07370616365636f696e73 | spacecoins | countervalues disabled | cardano/native/d894897411707efa755a76deb66d26dfd50593f2e70863e1661e98a07370616365636f696e73 |
-| Cardano (Testnet) | tToken | 47be64fcc8a7fe5321b976282ce4e43e4d29015f6613cfabcea28eab54657374 | TEST_TOKEN | countervalues disabled | cardano_testnet/native/47be64fcc8a7fe5321b976282ce4e43e4d29015f6613cfabcea28eab54657374 |
+| Cardano | purrADA | 97747aa3c33fdfe4b5faa7bb8b4534932c6d980cb13c14c5a547e7ca70757272414441 | purrADA |  | cardano/native/97747aa3c33fdfe4b5faa7bb8b4534932c6d980cb13c14c5a547e7ca70757272414441 |
+| Cardano | SPACE | d894897411707efa755a76deb66d26dfd50593f2e70863e1661e98a07370616365636f696e73 | spacecoins |  | cardano/native/d894897411707efa755a76deb66d26dfd50593f2e70863e1661e98a07370616365636f696e73 |
+| Cardano (Testnet) | tToken | 47be64fcc8a7fe5321b976282ce4e43e4d29015f6613cfabcea28eab54657374 | TEST_TOKEN |  | cardano_testnet/native/47be64fcc8a7fe5321b976282ce4e43e4d29015f6613cfabcea28eab54657374 |
 | Casper | USDC | GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN | USDC |  | casper/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN |
-| Ethereum | INJ | 0x84bFFfFD702d924C6d9b25F87151bf0FB1A8913E |  Injective Protocol | countervalues disabled | ethereum/erc20/_injective_protocol |
-| Ethereum | $AAPL | 0x41eFc0253ee7Ea44400abB5F907FDbfdEbc82bec | $AAPL | countervalues disabled | ethereum/erc20/$aapl |
-| Ethereum | $BASED | 0x68A118Ef45063051Eac49c7e647CE5Ace48a68a5 | $BASED | countervalues disabled | ethereum/erc20/$based |
+| Ethereum | INJ | 0x84bFFfFD702d924C6d9b25F87151bf0FB1A8913E |  Injective Protocol |  | ethereum/erc20/_injective_protocol |
+| Ethereum | $AAPL | 0x41eFc0253ee7Ea44400abB5F907FDbfdEbc82bec | $AAPL |  | ethereum/erc20/$aapl |
+| Ethereum | $BASED | 0x68A118Ef45063051Eac49c7e647CE5Ace48a68a5 | $BASED |  | ethereum/erc20/$based |
 | Ethereum | $DIE | 0x15F5f5F29a819BF7B4B80BF55352E1e42707c94e | $DIE |  | ethereum/erc20/$die |
 | Ethereum | POOLZ | 0x69A95185ee2a045CDC4bCd1b1Df10710395e4e23 | $Poolz Finance |  | ethereum/erc20/$poolz_finance |
 | Ethereum | $ROPE | 0x9D47894f8BECB68B9cF3428d256311Affe8B068B | $ROPE |  | ethereum/erc20/$rope |
