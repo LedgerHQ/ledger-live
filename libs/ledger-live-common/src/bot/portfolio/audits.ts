@@ -1,4 +1,5 @@
 import { PerformanceObserver, PerformanceObserverCallback } from "node:perf_hooks";
+import { urlToEndpoint } from "./formatter";
 import { AuditResult, NetworkAuditDetails, NetworkAuditResult } from "./types";
 
 export class SlowFrameDetector {
@@ -132,7 +133,6 @@ export class NetworkAudit {
   onPerformanceEntry: PerformanceObserverCallback = (items, _observer) => {
     const entries = items.getEntries();
     console.log(entries.length + "entries");
-    const urlsSeen = new Set();
     for (const entry of entries) {
       if (entry.entryType === "http") {
         console.log("http entry");
@@ -146,30 +146,32 @@ export class NetworkAudit {
         if (res && req) {
           console.log("res req)");
           const { url } = req;
-          const split = url.split("/");
-          const endpoint = split[split.length - 1].split("?")[0];
+          const endpointWithParameters = urlToEndpoint(url);
+          const endpoint = endpointWithParameters.split("?")[0];
           if (this._urlsDetails[endpoint] == null) {
             this._urlsDetails[endpoint] = {
               calls: 0,
               duration: 0,
               size: 0,
-              urls: [url],
+              urls: [{ url: endpointWithParameters, calls: 0 }],
               duplicatedCalls: 0,
             };
           }
 
-          if (urlsSeen.has(url)) {
-            this._totalDuplicateRequests = (this._totalDuplicateRequests || 0) + 1;
+          const details = this._urlsDetails[endpoint];
+
+          const relatedUrl = details.urls.find(u => u.url === endpointWithParameters);
+
+          if (relatedUrl == null) {
+            details.urls.push({ url: endpointWithParameters, calls: 1 });
           } else {
-            urlsSeen.add(url);
+            relatedUrl.calls++;
+            details.duplicatedCalls++;
+            this._totalDuplicateRequests = (this._totalDuplicateRequests || 0) + 1;
           }
 
-          const details = this._urlsDetails[endpoint];
-          details.calls += 1;
+          details.calls++;
           details.duration += entry.duration;
-          if (details.urls.includes(url)) {
-            details.duplicatedCalls += 1;
-          }
 
           const { headers } = res;
 

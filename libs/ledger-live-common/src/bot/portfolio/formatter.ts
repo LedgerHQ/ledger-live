@@ -291,20 +291,37 @@ function formatSize(bytes: number | undefined): string | undefined {
   return kb < 1024 ? `${kb.toFixed(0)}kb` : `${(kb / 1024).toFixed(0)}mb`;
 }
 
+export function urlToEndpoint(url: string): string {
+  const regex = new RegExp(/^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/\n]+)/, "igm");
+  const regexResult = regex.exec(url);
+  return regexResult ? url.slice().replace(regexResult[0], "") : url;
+}
+
 function formatDetails(
   details: { [endpoint: string]: NetworkAuditDetails } | undefined,
 ): string | undefined {
   if (!details) return;
   let report = "";
-
+  const boldIfHigherThan1 = nbr => (nbr > 1 ? `**${nbr}**` : nbr);
   try {
     for (const endpoint of Object.keys(details)) {
       const endpointDetails = details[endpoint];
-      report += `<details><summary>${endpoint}</summary>${endpointDetails.calls} calls (${
-        endpointDetails.duplicatedCalls
-      } duplicated), ${formatTime(endpointDetails.duration)}, ${formatSize(
-        endpointDetails.size,
-      )}</details>`;
+      if (endpoint === "/apdu") {
+        continue;
+      }
+      if (endpointDetails.calls === 1 || endpointDetails.urls.length === 1) {
+        // no need details
+        report += `- <sub><sup>${endpointDetails.urls[0].url} [${boldIfHigherThan1(
+          endpointDetails.urls[0].calls,
+        )}]</sup></sub><br>`;
+      } else {
+        let urls = "";
+        for (const url of endpointDetails.urls) {
+          urls += `- <sub><sup>${url.url} [${boldIfHigherThan1(url.calls)}]</sup></sub><br>`;
+        }
+        urls += "";
+        report += `<details><summary><sub><sup>${endpoint} (${endpointDetails.calls})</sup></sub></summary>${urls}</details>`;
+      }
     }
   } catch (e) {
     console.log(e);

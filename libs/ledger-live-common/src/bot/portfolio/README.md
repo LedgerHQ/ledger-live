@@ -40,3 +40,9 @@ The environment variables are similar to the bot:
 - `REPORT_FOLDER`: a folder where structured reports will be stored
 - `FILTER_CURRENCY`: a currency id to filter on (ex: `dogecoin`)
 - `FILTER_FAMILY`: a family to filter on (ex: `bitcoin`)
+
+### How to run it locally
+
+- Build ledger-live-common `pnpm build:llc`
+
+- Execute `COINAPPS=YOUR_COIN_APPS_FOLDER SEED=MNEMONIC_SEPERATED_WITH_COMMAS node lib/bot/portfolio/process-main.js`

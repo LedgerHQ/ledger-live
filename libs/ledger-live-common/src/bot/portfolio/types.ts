@@ -13,7 +13,10 @@ export type NetworkAuditDetails = {
   duplicatedCalls: number;
   size: number;
   duration: number;
-  urls: string[];
+  urls: {
+    url: string;
+    calls: number;
+  }[];
 };
 
 export type AuditResult = {
