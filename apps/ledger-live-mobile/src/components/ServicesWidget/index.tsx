@@ -8,7 +8,7 @@ import Touchable from "../Touchable";
 
 import LedgerRecoverLogoLight from "../../images/ledger_recover_light.png";
 import LedgerRecoverBackground from "../../images/ledger_recover_card_background.png";
-import { useProtect } from "./useProtect";
+import { useProtect } from "./Protect/useProtect";
 
 function ServicesWidget() {
   const { t } = useTranslation();

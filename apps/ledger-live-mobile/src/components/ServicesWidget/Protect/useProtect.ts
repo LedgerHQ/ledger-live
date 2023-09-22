@@ -5,8 +5,8 @@ import {
 } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { useCallback, useMemo } from "react";
 import { Linking } from "react-native";
-import { track } from "../../analytics";
-import { urls } from "../../config/urls";
+import { track } from "../../../analytics";
+import { urls } from "../../../config/urls";
 
 export function useProtect() {
   const servicesConfig = useFeature("protectServicesMobile");
