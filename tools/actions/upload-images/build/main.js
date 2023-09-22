@@ -725,7 +725,7 @@ var require_tunnel = __commonJS({
         connectOptions.headers = connectOptions.headers || {};
         connectOptions.headers["Proxy-Authorization"] = "Basic " + new Buffer(connectOptions.proxyAuth).toString("base64");
       }
-      debug("making CONNECT request");
+      debug2("making CONNECT request");
       var connectReq = self2.request(connectOptions);
       connectReq.useChunkedEncodingByDefault = false;
       connectReq.once("response", onResponse);
@@ -745,7 +745,7 @@ var require_tunnel = __commonJS({
         connectReq.removeAllListeners();
         socket.removeAllListeners();
         if (res.statusCode !== 200) {
-          debug(
+          debug2(
             "tunneling socket could not be established, statusCode=%d",
             res.statusCode
           );
@@ -757,7 +757,7 @@ var require_tunnel = __commonJS({
           return;
         }
         if (head.length > 0) {
-          debug("got illegal response body from proxy");
+          debug2("got illegal response body from proxy");
           socket.destroy();
           var error = new Error("got illegal response body from proxy");
           error.code = "ECONNRESET";
@@ -765,13 +765,13 @@ var require_tunnel = __commonJS({
           self2.removeSocket(placeholder);
           return;
         }
-        debug("tunneling connection has established");
+        debug2("tunneling connection has established");
         self2.sockets[self2.sockets.indexOf(placeholder)] = socket;
         return cb(socket);
       }
       function onError(cause) {
         connectReq.removeAllListeners();
-        debug(
+        debug2(
           "tunneling socket could not be established, cause=%s\n",
           cause.message,
           cause.stack
@@ -833,9 +833,9 @@ var require_tunnel = __commonJS({
       }
       return target;
     }
-    var debug;
+    var debug2;
     if (process.env.NODE_DEBUG && /\btunnel\b/.test(process.env.NODE_DEBUG)) {
-      debug = function() {
+      debug2 = function() {
         var args = Array.prototype.slice.call(arguments);
         if (typeof args[0] === "string") {
           args[0] = "TUNNEL: " + args[0];
@@ -845,10 +845,10 @@ var require_tunnel = __commonJS({
         console.error.apply(console, args);
       };
     } else {
-      debug = function() {
+      debug2 = function() {
       };
     }
-    exports.debug = debug;
+    exports.debug = debug2;
   }
 });
 
@@ -1001,8 +1001,8 @@ var require_lib = __commonJS({
         return __awaiter(this, void 0, void 0, function* () {
           return new Promise((resolve2) => __awaiter(this, void 0, void 0, function* () {
             let output = Buffer.alloc(0);
-            this.message.on("data", (chunk2) => {
-              output = Buffer.concat([output, chunk2]);
+            this.message.on("data", (chunk) => {
+              output = Buffer.concat([output, chunk]);
             });
             this.message.on("end", () => {
               resolve2(output.toString());
@@ -2135,10 +2135,10 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
       return process.env["RUNNER_DEBUG"] === "1";
     }
     exports.isDebug = isDebug;
-    function debug(message) {
+    function debug2(message) {
       command_1.issueCommand("debug", {}, message);
     }
-    exports.debug = debug;
+    exports.debug = debug2;
     function error(message, properties = {}) {
       command_1.issueCommand("error", utils_1.toCommandProperties(properties), message instanceof Error ? message.toString() : message);
     }
@@ -2523,13 +2523,13 @@ var require_ponyfill_es2018 = __commonJS({
       function ReadableStreamAddReadRequest(stream, readRequest) {
         stream._reader._readRequests.push(readRequest);
       }
-      function ReadableStreamFulfillReadRequest(stream, chunk2, done) {
+      function ReadableStreamFulfillReadRequest(stream, chunk, done) {
         const reader = stream._reader;
         const readRequest = reader._readRequests.shift();
         if (done) {
           readRequest._closeSteps();
         } else {
-          readRequest._chunkSteps(chunk2);
+          readRequest._chunkSteps(chunk);
         }
       }
       function ReadableStreamGetNumReadRequests(stream) {
@@ -2596,7 +2596,7 @@ var require_ponyfill_es2018 = __commonJS({
             rejectPromise = reject;
           });
           const readRequest = {
-            _chunkSteps: (chunk2) => resolvePromise({ value: chunk2, done: false }),
+            _chunkSteps: (chunk) => resolvePromise({ value: chunk, done: false }),
             _closeSteps: () => resolvePromise({ value: void 0, done: true }),
             _errorSteps: (e3) => rejectPromise(e3)
           };
@@ -2693,9 +2693,9 @@ var require_ponyfill_es2018 = __commonJS({
             rejectPromise = reject;
           });
           const readRequest = {
-            _chunkSteps: (chunk2) => {
+            _chunkSteps: (chunk) => {
               this._ongoingPromise = void 0;
-              queueMicrotask2(() => resolvePromise({ value: chunk2, done: false }));
+              queueMicrotask2(() => resolvePromise({ value: chunk, done: false }));
             },
             _closeSteps: () => {
               this._ongoingPromise = void 0;
@@ -2927,18 +2927,18 @@ var require_ponyfill_es2018 = __commonJS({
           }
           ReadableByteStreamControllerClose(this);
         }
-        enqueue(chunk2) {
+        enqueue(chunk) {
           if (!IsReadableByteStreamController(this)) {
             throw byteStreamControllerBrandCheckException("enqueue");
           }
-          assertRequiredArgument(chunk2, 1, "enqueue");
-          if (!ArrayBuffer.isView(chunk2)) {
+          assertRequiredArgument(chunk, 1, "enqueue");
+          if (!ArrayBuffer.isView(chunk)) {
             throw new TypeError("chunk must be an array buffer view");
           }
-          if (chunk2.byteLength === 0) {
+          if (chunk.byteLength === 0) {
             throw new TypeError("chunk must have non-zero byteLength");
           }
-          if (chunk2.buffer.byteLength === 0) {
+          if (chunk.buffer.byteLength === 0) {
             throw new TypeError(`chunk's buffer must have non-zero byteLength`);
           }
           if (this._closeRequested) {
@@ -2948,7 +2948,7 @@ var require_ponyfill_es2018 = __commonJS({
           if (state !== "readable") {
             throw new TypeError(`The stream (in ${state} state) is not in the readable state and cannot be enqueued to`);
           }
-          ReadableByteStreamControllerEnqueue(this, chunk2);
+          ReadableByteStreamControllerEnqueue(this, chunk);
         }
         /**
          * Errors the controlled readable stream, making all future interactions with it fail with the given error `e`.
@@ -3274,14 +3274,14 @@ var require_ponyfill_es2018 = __commonJS({
         ReadableByteStreamControllerClearAlgorithms(controller);
         ReadableStreamClose(stream);
       }
-      function ReadableByteStreamControllerEnqueue(controller, chunk2) {
+      function ReadableByteStreamControllerEnqueue(controller, chunk) {
         const stream = controller._controlledReadableByteStream;
         if (controller._closeRequested || stream._state !== "readable") {
           return;
         }
-        const buffer = chunk2.buffer;
-        const byteOffset = chunk2.byteOffset;
-        const byteLength = chunk2.byteLength;
+        const buffer = chunk.buffer;
+        const byteOffset = chunk.byteOffset;
+        const byteLength = chunk.byteLength;
         const transferredBuffer = TransferArrayBuffer(buffer);
         if (controller._pendingPullIntos.length > 0) {
           const firstPendingPullInto = controller._pendingPullIntos.peek();
@@ -3440,13 +3440,13 @@ var require_ponyfill_es2018 = __commonJS({
       function ReadableStreamAddReadIntoRequest(stream, readIntoRequest) {
         stream._reader._readIntoRequests.push(readIntoRequest);
       }
-      function ReadableStreamFulfillReadIntoRequest(stream, chunk2, done) {
+      function ReadableStreamFulfillReadIntoRequest(stream, chunk, done) {
         const reader = stream._reader;
         const readIntoRequest = reader._readIntoRequests.shift();
         if (done) {
-          readIntoRequest._closeSteps(chunk2);
+          readIntoRequest._closeSteps(chunk);
         } else {
-          readIntoRequest._chunkSteps(chunk2);
+          readIntoRequest._chunkSteps(chunk);
         }
       }
       function ReadableStreamGetNumReadIntoRequests(stream) {
@@ -3527,8 +3527,8 @@ var require_ponyfill_es2018 = __commonJS({
             rejectPromise = reject;
           });
           const readIntoRequest = {
-            _chunkSteps: (chunk2) => resolvePromise({ value: chunk2, done: false }),
-            _closeSteps: (chunk2) => resolvePromise({ value: chunk2, done: true }),
+            _chunkSteps: (chunk) => resolvePromise({ value: chunk, done: false }),
+            _closeSteps: (chunk) => resolvePromise({ value: chunk, done: true }),
             _errorSteps: (e3) => rejectPromise(e3)
           };
           ReadableStreamBYOBReaderRead(this, view, readIntoRequest);
@@ -3617,7 +3617,7 @@ var require_ponyfill_es2018 = __commonJS({
       }
       function convertQueuingStrategySize(fn, context) {
         assertFunction(fn, context);
-        return (chunk2) => convertUnrestrictedDouble(fn(chunk2));
+        return (chunk) => convertUnrestrictedDouble(fn(chunk));
       }
       function convertUnderlyingSink(original, context) {
         assertDictionary(original, context);
@@ -3648,7 +3648,7 @@ var require_ponyfill_es2018 = __commonJS({
       }
       function convertUnderlyingSinkWriteCallback(fn, original, context) {
         assertFunction(fn, context);
-        return (chunk2, controller) => promiseCall(fn, original, [chunk2, controller]);
+        return (chunk, controller) => promiseCall(fn, original, [chunk, controller]);
       }
       function assertWritableStream(x3, context) {
         if (!IsWritableStream(x3)) {
@@ -4105,14 +4105,14 @@ var require_ponyfill_es2018 = __commonJS({
           }
           WritableStreamDefaultWriterRelease(this);
         }
-        write(chunk2 = void 0) {
+        write(chunk = void 0) {
           if (!IsWritableStreamDefaultWriter(this)) {
             return promiseRejectedWith(defaultWriterBrandCheckException("write"));
           }
           if (this._ownerWritableStream === void 0) {
             return promiseRejectedWith(defaultWriterLockException("write to"));
           }
-          return WritableStreamDefaultWriterWrite(this, chunk2);
+          return WritableStreamDefaultWriterWrite(this, chunk);
         }
       }
       Object.defineProperties(WritableStreamDefaultWriter2.prototype, {
@@ -4191,10 +4191,10 @@ var require_ponyfill_es2018 = __commonJS({
         stream._writer = void 0;
         writer._ownerWritableStream = void 0;
       }
-      function WritableStreamDefaultWriterWrite(writer, chunk2) {
+      function WritableStreamDefaultWriterWrite(writer, chunk) {
         const stream = writer._ownerWritableStream;
         const controller = stream._writableStreamController;
-        const chunkSize = WritableStreamDefaultControllerGetChunkSize(controller, chunk2);
+        const chunkSize = WritableStreamDefaultControllerGetChunkSize(controller, chunk);
         if (stream !== writer._ownerWritableStream) {
           return promiseRejectedWith(defaultWriterLockException("write to"));
         }
@@ -4209,7 +4209,7 @@ var require_ponyfill_es2018 = __commonJS({
           return promiseRejectedWith(stream._storedError);
         }
         const promise = WritableStreamAddWriteRequest(stream);
-        WritableStreamDefaultControllerWrite(controller, chunk2, chunkSize);
+        WritableStreamDefaultControllerWrite(controller, chunk, chunkSize);
         return promise;
       }
       const closeSentinel = {};
@@ -4326,7 +4326,7 @@ var require_ponyfill_es2018 = __commonJS({
           startAlgorithm = () => underlyingSink.start(controller);
         }
         if (underlyingSink.write !== void 0) {
-          writeAlgorithm = (chunk2) => underlyingSink.write(chunk2, controller);
+          writeAlgorithm = (chunk) => underlyingSink.write(chunk, controller);
         }
         if (underlyingSink.close !== void 0) {
           closeAlgorithm = () => underlyingSink.close();
@@ -4346,9 +4346,9 @@ var require_ponyfill_es2018 = __commonJS({
         EnqueueValueWithSize(controller, closeSentinel, 0);
         WritableStreamDefaultControllerAdvanceQueueIfNeeded(controller);
       }
-      function WritableStreamDefaultControllerGetChunkSize(controller, chunk2) {
+      function WritableStreamDefaultControllerGetChunkSize(controller, chunk) {
         try {
-          return controller._strategySizeAlgorithm(chunk2);
+          return controller._strategySizeAlgorithm(chunk);
         } catch (chunkSizeE) {
           WritableStreamDefaultControllerErrorIfNeeded(controller, chunkSizeE);
           return 1;
@@ -4357,9 +4357,9 @@ var require_ponyfill_es2018 = __commonJS({
       function WritableStreamDefaultControllerGetDesiredSize(controller) {
         return controller._strategyHWM - controller._queueTotalSize;
       }
-      function WritableStreamDefaultControllerWrite(controller, chunk2, chunkSize) {
+      function WritableStreamDefaultControllerWrite(controller, chunk, chunkSize) {
         try {
-          EnqueueValueWithSize(controller, chunk2, chunkSize);
+          EnqueueValueWithSize(controller, chunk, chunkSize);
         } catch (enqueueE) {
           WritableStreamDefaultControllerErrorIfNeeded(controller, enqueueE);
           return;
@@ -4411,10 +4411,10 @@ var require_ponyfill_es2018 = __commonJS({
           WritableStreamFinishInFlightCloseWithError(stream, reason);
         });
       }
-      function WritableStreamDefaultControllerProcessWrite(controller, chunk2) {
+      function WritableStreamDefaultControllerProcessWrite(controller, chunk) {
         const stream = controller._controlledWritableStream;
         WritableStreamMarkFirstWriteRequestInFlight(stream);
-        const sinkWritePromise = controller._writeAlgorithm(chunk2);
+        const sinkWritePromise = controller._writeAlgorithm(chunk);
         uponPromise(sinkWritePromise, () => {
           WritableStreamFinishInFlightWrite(stream);
           const state = stream._state;
@@ -4609,8 +4609,8 @@ var require_ponyfill_es2018 = __commonJS({
             return PerformPromiseThen(writer._readyPromise, () => {
               return newPromise((resolveRead, rejectRead) => {
                 ReadableStreamDefaultReaderRead(reader, {
-                  _chunkSteps: (chunk2) => {
-                    currentWrite = PerformPromiseThen(WritableStreamDefaultWriterWrite(writer, chunk2), void 0, noop2);
+                  _chunkSteps: (chunk) => {
+                    currentWrite = PerformPromiseThen(WritableStreamDefaultWriterWrite(writer, chunk), void 0, noop2);
                     resolveRead(false);
                   },
                   _closeSteps: () => resolveRead(true),
@@ -4733,14 +4733,14 @@ var require_ponyfill_es2018 = __commonJS({
           }
           ReadableStreamDefaultControllerClose(this);
         }
-        enqueue(chunk2 = void 0) {
+        enqueue(chunk = void 0) {
           if (!IsReadableStreamDefaultController(this)) {
             throw defaultControllerBrandCheckException$1("enqueue");
           }
           if (!ReadableStreamDefaultControllerCanCloseOrEnqueue(this)) {
             throw new TypeError("The stream is not in a state that permits enqueue");
           }
-          return ReadableStreamDefaultControllerEnqueue(this, chunk2);
+          return ReadableStreamDefaultControllerEnqueue(this, chunk);
         }
         /**
          * Errors the controlled readable stream, making all future interactions with it fail with the given error `e`.
@@ -4762,14 +4762,14 @@ var require_ponyfill_es2018 = __commonJS({
         [PullSteps](readRequest) {
           const stream = this._controlledReadableStream;
           if (this._queue.length > 0) {
-            const chunk2 = DequeueValue(this);
+            const chunk = DequeueValue(this);
             if (this._closeRequested && this._queue.length === 0) {
               ReadableStreamDefaultControllerClearAlgorithms(this);
               ReadableStreamClose(stream);
             } else {
               ReadableStreamDefaultControllerCallPullIfNeeded(this);
             }
-            readRequest._chunkSteps(chunk2);
+            readRequest._chunkSteps(chunk);
           } else {
             ReadableStreamAddReadRequest(stream, readRequest);
             ReadableStreamDefaultControllerCallPullIfNeeded(this);
@@ -4851,23 +4851,23 @@ var require_ponyfill_es2018 = __commonJS({
           ReadableStreamClose(stream);
         }
       }
-      function ReadableStreamDefaultControllerEnqueue(controller, chunk2) {
+      function ReadableStreamDefaultControllerEnqueue(controller, chunk) {
         if (!ReadableStreamDefaultControllerCanCloseOrEnqueue(controller)) {
           return;
         }
         const stream = controller._controlledReadableStream;
         if (IsReadableStreamLocked(stream) && ReadableStreamGetNumReadRequests(stream) > 0) {
-          ReadableStreamFulfillReadRequest(stream, chunk2, false);
+          ReadableStreamFulfillReadRequest(stream, chunk, false);
         } else {
           let chunkSize;
           try {
-            chunkSize = controller._strategySizeAlgorithm(chunk2);
+            chunkSize = controller._strategySizeAlgorithm(chunk);
           } catch (chunkSizeE) {
             ReadableStreamDefaultControllerError(controller, chunkSizeE);
             throw chunkSizeE;
           }
           try {
-            EnqueueValueWithSize(controller, chunk2, chunkSize);
+            EnqueueValueWithSize(controller, chunk, chunkSize);
           } catch (enqueueE) {
             ReadableStreamDefaultControllerError(controller, enqueueE);
             throw enqueueE;
@@ -4975,16 +4975,16 @@ var require_ponyfill_es2018 = __commonJS({
           }
           reading = true;
           const readRequest = {
-            _chunkSteps: (chunk2) => {
+            _chunkSteps: (chunk) => {
               queueMicrotask2(() => {
                 readAgain = false;
-                const chunk1 = chunk2;
-                const chunk22 = chunk2;
+                const chunk1 = chunk;
+                const chunk2 = chunk;
                 if (!canceled1) {
                   ReadableStreamDefaultControllerEnqueue(branch1._readableStreamController, chunk1);
                 }
                 if (!canceled2) {
-                  ReadableStreamDefaultControllerEnqueue(branch2._readableStreamController, chunk22);
+                  ReadableStreamDefaultControllerEnqueue(branch2._readableStreamController, chunk2);
                 }
                 reading = false;
                 if (readAgain) {
@@ -5078,15 +5078,15 @@ var require_ponyfill_es2018 = __commonJS({
             forwardReaderError(reader);
           }
           const readRequest = {
-            _chunkSteps: (chunk2) => {
+            _chunkSteps: (chunk) => {
               queueMicrotask2(() => {
                 readAgainForBranch1 = false;
                 readAgainForBranch2 = false;
-                const chunk1 = chunk2;
-                let chunk22 = chunk2;
+                const chunk1 = chunk;
+                let chunk2 = chunk;
                 if (!canceled1 && !canceled2) {
                   try {
-                    chunk22 = CloneAsUint8Array(chunk2);
+                    chunk2 = CloneAsUint8Array(chunk);
                   } catch (cloneE) {
                     ReadableByteStreamControllerError(branch1._readableStreamController, cloneE);
                     ReadableByteStreamControllerError(branch2._readableStreamController, cloneE);
@@ -5098,7 +5098,7 @@ var require_ponyfill_es2018 = __commonJS({
                   ReadableByteStreamControllerEnqueue(branch1._readableStreamController, chunk1);
                 }
                 if (!canceled2) {
-                  ReadableByteStreamControllerEnqueue(branch2._readableStreamController, chunk22);
+                  ReadableByteStreamControllerEnqueue(branch2._readableStreamController, chunk2);
                 }
                 reading = false;
                 if (readAgainForBranch1) {
@@ -5141,7 +5141,7 @@ var require_ponyfill_es2018 = __commonJS({
           const byobBranch = forBranch2 ? branch2 : branch1;
           const otherBranch = forBranch2 ? branch1 : branch2;
           const readIntoRequest = {
-            _chunkSteps: (chunk2) => {
+            _chunkSteps: (chunk) => {
               queueMicrotask2(() => {
                 readAgainForBranch1 = false;
                 readAgainForBranch2 = false;
@@ -5150,7 +5150,7 @@ var require_ponyfill_es2018 = __commonJS({
                 if (!otherCanceled) {
                   let clonedChunk;
                   try {
-                    clonedChunk = CloneAsUint8Array(chunk2);
+                    clonedChunk = CloneAsUint8Array(chunk);
                   } catch (cloneE) {
                     ReadableByteStreamControllerError(byobBranch._readableStreamController, cloneE);
                     ReadableByteStreamControllerError(otherBranch._readableStreamController, cloneE);
@@ -5158,11 +5158,11 @@ var require_ponyfill_es2018 = __commonJS({
                     return;
                   }
                   if (!byobCanceled) {
-                    ReadableByteStreamControllerRespondWithNewView(byobBranch._readableStreamController, chunk2);
+                    ReadableByteStreamControllerRespondWithNewView(byobBranch._readableStreamController, chunk);
                   }
                   ReadableByteStreamControllerEnqueue(otherBranch._readableStreamController, clonedChunk);
                 } else if (!byobCanceled) {
-                  ReadableByteStreamControllerRespondWithNewView(byobBranch._readableStreamController, chunk2);
+                  ReadableByteStreamControllerRespondWithNewView(byobBranch._readableStreamController, chunk);
                 }
                 reading = false;
                 if (readAgainForBranch1) {
@@ -5172,7 +5172,7 @@ var require_ponyfill_es2018 = __commonJS({
                 }
               });
             },
-            _closeSteps: (chunk2) => {
+            _closeSteps: (chunk) => {
               reading = false;
               const byobCanceled = forBranch2 ? canceled2 : canceled1;
               const otherCanceled = forBranch2 ? canceled1 : canceled2;
@@ -5182,9 +5182,9 @@ var require_ponyfill_es2018 = __commonJS({
               if (!otherCanceled) {
                 ReadableByteStreamControllerClose(otherBranch._readableStreamController);
               }
-              if (chunk2 !== void 0) {
+              if (chunk !== void 0) {
                 if (!byobCanceled) {
-                  ReadableByteStreamControllerRespondWithNewView(byobBranch._readableStreamController, chunk2);
+                  ReadableByteStreamControllerRespondWithNewView(byobBranch._readableStreamController, chunk);
                 }
                 if (!otherCanceled && otherBranch._readableStreamController._pendingPullIntos.length > 0) {
                   ReadableByteStreamControllerRespond(otherBranch._readableStreamController, 0);
@@ -5585,8 +5585,8 @@ var require_ponyfill_es2018 = __commonJS({
           highWaterMark: convertUnrestrictedDouble(highWaterMark)
         };
       }
-      const byteLengthSizeFunction = (chunk2) => {
-        return chunk2.byteLength;
+      const byteLengthSizeFunction = (chunk) => {
+        return chunk.byteLength;
       };
       try {
         Object.defineProperty(byteLengthSizeFunction, "name", {
@@ -5725,7 +5725,7 @@ var require_ponyfill_es2018 = __commonJS({
       }
       function convertTransformerTransformCallback(fn, original, context) {
         assertFunction(fn, context);
-        return (chunk2, controller) => promiseCall(fn, original, [chunk2, controller]);
+        return (chunk, controller) => promiseCall(fn, original, [chunk, controller]);
       }
       class TransformStream2 {
         constructor(rawTransformer = {}, rawWritableStrategy = {}, rawReadableStrategy = {}) {
@@ -5790,8 +5790,8 @@ var require_ponyfill_es2018 = __commonJS({
         function startAlgorithm() {
           return startPromise;
         }
-        function writeAlgorithm(chunk2) {
-          return TransformStreamDefaultSinkWriteAlgorithm(stream, chunk2);
+        function writeAlgorithm(chunk) {
+          return TransformStreamDefaultSinkWriteAlgorithm(stream, chunk);
         }
         function abortAlgorithm(reason) {
           return TransformStreamDefaultSinkAbortAlgorithm(stream, reason);
@@ -5857,11 +5857,11 @@ var require_ponyfill_es2018 = __commonJS({
           const readableController = this._controlledTransformStream._readable._readableStreamController;
           return ReadableStreamDefaultControllerGetDesiredSize(readableController);
         }
-        enqueue(chunk2 = void 0) {
+        enqueue(chunk = void 0) {
           if (!IsTransformStreamDefaultController(this)) {
             throw defaultControllerBrandCheckException("enqueue");
           }
-          TransformStreamDefaultControllerEnqueue(this, chunk2);
+          TransformStreamDefaultControllerEnqueue(this, chunk);
         }
         /**
          * Errors both the readable side and the writable side of the controlled transform stream, making all future
@@ -5913,9 +5913,9 @@ var require_ponyfill_es2018 = __commonJS({
       }
       function SetUpTransformStreamDefaultControllerFromTransformer(stream, transformer) {
         const controller = Object.create(TransformStreamDefaultController2.prototype);
-        let transformAlgorithm = (chunk2) => {
+        let transformAlgorithm = (chunk) => {
           try {
-            TransformStreamDefaultControllerEnqueue(controller, chunk2);
+            TransformStreamDefaultControllerEnqueue(controller, chunk);
             return promiseResolvedWith(void 0);
           } catch (transformResultE) {
             return promiseRejectedWith(transformResultE);
@@ -5923,7 +5923,7 @@ var require_ponyfill_es2018 = __commonJS({
         };
         let flushAlgorithm = () => promiseResolvedWith(void 0);
         if (transformer.transform !== void 0) {
-          transformAlgorithm = (chunk2) => transformer.transform(chunk2, controller);
+          transformAlgorithm = (chunk) => transformer.transform(chunk, controller);
         }
         if (transformer.flush !== void 0) {
           flushAlgorithm = () => transformer.flush(controller);
@@ -5934,14 +5934,14 @@ var require_ponyfill_es2018 = __commonJS({
         controller._transformAlgorithm = void 0;
         controller._flushAlgorithm = void 0;
       }
-      function TransformStreamDefaultControllerEnqueue(controller, chunk2) {
+      function TransformStreamDefaultControllerEnqueue(controller, chunk) {
         const stream = controller._controlledTransformStream;
         const readableController = stream._readable._readableStreamController;
         if (!ReadableStreamDefaultControllerCanCloseOrEnqueue(readableController)) {
           throw new TypeError("Readable side is not in a state that permits enqueue");
         }
         try {
-          ReadableStreamDefaultControllerEnqueue(readableController, chunk2);
+          ReadableStreamDefaultControllerEnqueue(readableController, chunk);
         } catch (e3) {
           TransformStreamErrorWritableAndUnblockWrite(stream, e3);
           throw stream._readable._storedError;
@@ -5954,8 +5954,8 @@ var require_ponyfill_es2018 = __commonJS({
       function TransformStreamDefaultControllerError(controller, e3) {
         TransformStreamError(controller._controlledTransformStream, e3);
       }
-      function TransformStreamDefaultControllerPerformTransform(controller, chunk2) {
-        const transformPromise = controller._transformAlgorithm(chunk2);
+      function TransformStreamDefaultControllerPerformTransform(controller, chunk) {
+        const transformPromise = controller._transformAlgorithm(chunk);
         return transformPromiseWith(transformPromise, void 0, (r3) => {
           TransformStreamError(controller._controlledTransformStream, r3);
           throw r3;
@@ -5968,7 +5968,7 @@ var require_ponyfill_es2018 = __commonJS({
         const error = new TypeError("TransformStream terminated");
         TransformStreamErrorWritableAndUnblockWrite(stream, error);
       }
-      function TransformStreamDefaultSinkWriteAlgorithm(stream, chunk2) {
+      function TransformStreamDefaultSinkWriteAlgorithm(stream, chunk) {
         const controller = stream._transformStreamController;
         if (stream._backpressure) {
           const backpressureChangePromise = stream._backpressureChangePromise;
@@ -5978,10 +5978,10 @@ var require_ponyfill_es2018 = __commonJS({
             if (state === "erroring") {
               throw writable._storedError;
             }
-            return TransformStreamDefaultControllerPerformTransform(controller, chunk2);
+            return TransformStreamDefaultControllerPerformTransform(controller, chunk);
           });
         }
-        return TransformStreamDefaultControllerPerformTransform(controller, chunk2);
+        return TransformStreamDefaultControllerPerformTransform(controller, chunk);
       }
       function TransformStreamDefaultSinkAbortAlgorithm(stream, reason) {
         TransformStreamError(stream, reason);
@@ -6061,8 +6061,8 @@ var require_streams = __commonJS({
           return new ReadableStream({
             type: "bytes",
             async pull(ctrl) {
-              const chunk2 = blob.slice(position, Math.min(blob.size, position + POOL_SIZE2));
-              const buffer = await chunk2.arrayBuffer();
+              const chunk = blob.slice(position, Math.min(blob.size, position + POOL_SIZE2));
+              const buffer = await chunk.arrayBuffer();
               position += buffer.byteLength;
               ctrl.enqueue(new Uint8Array(buffer));
               if (position === blob.size) {
@@ -6091,9 +6091,9 @@ async function* toIterator(parts, clone2 = true) {
         const end = part.byteOffset + part.byteLength;
         while (position !== end) {
           const size = Math.min(end - position, POOL_SIZE);
-          const chunk2 = part.buffer.slice(position, position + size);
-          position += chunk2.byteLength;
-          yield new Uint8Array(chunk2);
+          const chunk = part.buffer.slice(position, position + size);
+          position += chunk.byteLength;
+          yield new Uint8Array(chunk);
         }
       } else {
         yield part;
@@ -6104,8 +6104,8 @@ async function* toIterator(parts, clone2 = true) {
         part
       );
       while (position !== b2.size) {
-        const chunk2 = b2.slice(position, Math.min(b2.size, position + POOL_SIZE));
-        const buffer = await chunk2.arrayBuffer();
+        const chunk = b2.slice(position, Math.min(b2.size, position + POOL_SIZE));
+        const buffer = await chunk.arrayBuffer();
         position += buffer.byteLength;
         yield new Uint8Array(buffer);
       }
@@ -6202,9 +6202,9 @@ var init_fetch_blob = __esm({
       async arrayBuffer() {
         const data = new Uint8Array(this.size);
         let offset = 0;
-        for await (const chunk2 of toIterator(this.#parts, false)) {
-          data.set(chunk2, offset);
-          offset += chunk2.length;
+        for await (const chunk of toIterator(this.#parts, false)) {
+          data.set(chunk, offset);
+          offset += chunk.length;
         }
         return data.buffer;
       }
@@ -6214,8 +6214,8 @@ var init_fetch_blob = __esm({
           // @ts-ignore
           type: "bytes",
           async pull(ctrl) {
-            const chunk2 = await it2.next();
-            chunk2.done ? ctrl.close() : ctrl.enqueue(chunk2.value);
+            const chunk = await it2.next();
+            chunk.done ? ctrl.close() : ctrl.enqueue(chunk.value);
           },
           async cancel() {
             await it2.return();
@@ -6248,16 +6248,16 @@ var init_fetch_blob = __esm({
             relativeStart -= size2;
             relativeEnd -= size2;
           } else {
-            let chunk2;
+            let chunk;
             if (ArrayBuffer.isView(part)) {
-              chunk2 = part.subarray(relativeStart, Math.min(size2, relativeEnd));
-              added += chunk2.byteLength;
+              chunk = part.subarray(relativeStart, Math.min(size2, relativeEnd));
+              added += chunk.byteLength;
             } else {
-              chunk2 = part.slice(relativeStart, Math.min(size2, relativeEnd));
-              added += chunk2.size;
+              chunk = part.slice(relativeStart, Math.min(size2, relativeEnd));
+              added += chunk.size;
             }
             relativeEnd -= size2;
-            blobParts.push(chunk2);
+            blobParts.push(chunk);
             relativeStart = 0;
           }
         }
@@ -6584,8 +6584,8 @@ async function toFormData(Body2, ct2) {
     headerValue = "";
     headerField = "";
   };
-  for await (const chunk2 of Body2) {
-    parser.write(chunk2);
+  for await (const chunk of Body2) {
+    parser.write(chunk);
   }
   parser.end();
   return formData;
@@ -7115,14 +7115,14 @@ async function consumeBody(data) {
   const accum = [];
   let accumBytes = 0;
   try {
-    for await (const chunk2 of body) {
-      if (data.size > 0 && accumBytes + chunk2.length > data.size) {
+    for await (const chunk of body) {
+      if (data.size > 0 && accumBytes + chunk.length > data.size) {
         const error = new FetchError(`content size at ${data.url} over limit: ${data.size}`, "max-size");
         body.destroy(error);
         throw error;
       }
-      accumBytes += chunk2.length;
-      accum.push(chunk2);
+      accumBytes += chunk.length;
+      accum.push(chunk);
     }
   } catch (error) {
     const error_ = error instanceof FetchBaseError ? error : new FetchError(`Invalid response body while trying to fetch ${data.url}: ${error.message}`, "system", error);
@@ -8070,8 +8070,8 @@ async function fetch(url, options_) {
             reject(error);
           }
         });
-        raw.once("data", (chunk2) => {
-          if ((chunk2[0] & 15) === 8) {
+        raw.once("data", (chunk) => {
+          if ((chunk[0] & 15) === 8) {
             body = (0, import_node_stream2.pipeline)(body, import_node_zlib.default.createInflate(), (error) => {
               if (error) {
                 reject(error);
@@ -10146,16 +10146,16 @@ async function* clonePart(part) {
   let position = part.byteOffset;
   while (position !== end) {
     const size = Math.min(end - position, CHUNK_SIZE);
-    const chunk2 = part.buffer.slice(position, position + size);
-    position += chunk2.byteLength;
-    yield new Uint8Array(chunk2);
+    const chunk = part.buffer.slice(position, position + size);
+    position += chunk.byteLength;
+    yield new Uint8Array(chunk);
   }
 }
 async function* consumeNodeBlob(blob) {
   let position = 0;
   while (position !== blob.size) {
-    const chunk2 = blob.slice(position, Math.min(blob.size, position + CHUNK_SIZE));
-    const buffer = await chunk2.arrayBuffer();
+    const chunk = blob.slice(position, Math.min(blob.size, position + CHUNK_SIZE));
+    const buffer = await chunk.arrayBuffer();
     position += buffer.byteLength;
     yield new Uint8Array(buffer);
   }
@@ -10190,17 +10190,17 @@ function* sliceBlob(blobParts, blobSize, start = 0, end) {
       relativeStart -= partSize;
       relativeEnd -= partSize;
     } else {
-      let chunk2;
+      let chunk;
       if (ArrayBuffer.isView(part)) {
-        chunk2 = part.subarray(relativeStart, Math.min(partSize, relativeEnd));
-        added += chunk2.byteLength;
+        chunk = part.subarray(relativeStart, Math.min(partSize, relativeEnd));
+        added += chunk.byteLength;
       } else {
-        chunk2 = part.slice(relativeStart, Math.min(partSize, relativeEnd));
-        added += chunk2.size;
+        chunk = part.slice(relativeStart, Math.min(partSize, relativeEnd));
+        added += chunk.size;
       }
       relativeEnd -= partSize;
       relativeStart = 0;
-      yield chunk2;
+      yield chunk;
     }
   }
 }
@@ -10275,8 +10275,8 @@ var Blob3 = class _Blob2 {
   async text() {
     const decoder = new TextDecoder();
     let result = "";
-    for await (const chunk2 of consumeBlobParts(__classPrivateFieldGet(this, _Blob_parts, "f"))) {
-      result += decoder.decode(chunk2, { stream: true });
+    for await (const chunk of consumeBlobParts(__classPrivateFieldGet(this, _Blob_parts, "f"))) {
+      result += decoder.decode(chunk, { stream: true });
     }
     result += decoder.decode();
     return result;
@@ -10284,9 +10284,9 @@ var Blob3 = class _Blob2 {
   async arrayBuffer() {
     const view = new Uint8Array(this.size);
     let offset = 0;
-    for await (const chunk2 of consumeBlobParts(__classPrivateFieldGet(this, _Blob_parts, "f"))) {
-      view.set(chunk2, offset);
-      offset += chunk2.length;
+    for await (const chunk of consumeBlobParts(__classPrivateFieldGet(this, _Blob_parts, "f"))) {
+      view.set(chunk, offset);
+      offset += chunk.length;
     }
     return view.buffer;
   }
@@ -10495,252 +10495,7 @@ var FormData3 = class {
   }
 };
 
-// ../../../node_modules/.pnpm/form-data-encoder@3.0.0/node_modules/form-data-encoder/lib/util/isFunction.js
-var isFunction2 = (value) => typeof value === "function";
-
-// ../../../node_modules/.pnpm/form-data-encoder@3.0.0/node_modules/form-data-encoder/lib/util/isAsyncIterable.js
-var isAsyncIterable = (value) => isFunction2(value[Symbol.asyncIterator]);
-
-// ../../../node_modules/.pnpm/form-data-encoder@3.0.0/node_modules/form-data-encoder/lib/util/chunk.js
-var MAX_CHUNK_SIZE = 65536;
-function* chunk(value) {
-  if (value.byteLength <= MAX_CHUNK_SIZE) {
-    yield value;
-    return;
-  }
-  let offset = 0;
-  while (offset < value.byteLength) {
-    const size = Math.min(value.byteLength - offset, MAX_CHUNK_SIZE);
-    const buffer = value.buffer.slice(offset, offset + size);
-    offset += buffer.byteLength;
-    yield new Uint8Array(buffer);
-  }
-}
-
-// ../../../node_modules/.pnpm/form-data-encoder@3.0.0/node_modules/form-data-encoder/lib/util/getStreamIterator.js
-async function* readStream(readable) {
-  const reader = readable.getReader();
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) {
-      break;
-    }
-    yield value;
-  }
-}
-async function* chunkStream(stream) {
-  for await (const value of stream) {
-    yield* chunk(value);
-  }
-}
-var getStreamIterator = (source) => {
-  if (isAsyncIterable(source)) {
-    return chunkStream(source);
-  }
-  if (isFunction2(source.getReader)) {
-    return chunkStream(readStream(source));
-  }
-  throw new TypeError("Unsupported data source: Expected either ReadableStream or async iterable.");
-};
-
-// ../../../node_modules/.pnpm/form-data-encoder@3.0.0/node_modules/form-data-encoder/lib/util/createBoundary.js
-var alphabet = "abcdefghijklmnopqrstuvwxyz0123456789";
-function createBoundary() {
-  let size = 16;
-  let res = "";
-  while (size--) {
-    res += alphabet[Math.random() * alphabet.length << 0];
-  }
-  return res;
-}
-
-// ../../../node_modules/.pnpm/form-data-encoder@3.0.0/node_modules/form-data-encoder/lib/util/normalizeValue.js
-var normalizeValue = (value) => String(value).replace(/\r|\n/g, (match, i3, str) => {
-  if (match === "\r" && str[i3 + 1] !== "\n" || match === "\n" && str[i3 - 1] !== "\r") {
-    return "\r\n";
-  }
-  return match;
-});
-
-// ../../../node_modules/.pnpm/form-data-encoder@3.0.0/node_modules/form-data-encoder/lib/util/isPlainObject.js
-var getType = (value) => Object.prototype.toString.call(value).slice(8, -1).toLowerCase();
-function isPlainObject(value) {
-  if (getType(value) !== "object") {
-    return false;
-  }
-  const pp = Object.getPrototypeOf(value);
-  if (pp === null || pp === void 0) {
-    return true;
-  }
-  const Ctor = pp.constructor && pp.constructor.toString();
-  return Ctor === Object.toString();
-}
-
-// ../../../node_modules/.pnpm/form-data-encoder@3.0.0/node_modules/form-data-encoder/lib/util/proxyHeaders.js
-function getProperty(target, prop) {
-  if (typeof prop === "string") {
-    for (const [name, value] of Object.entries(target)) {
-      if (prop.toLowerCase() === name.toLowerCase()) {
-        return value;
-      }
-    }
-  }
-  return void 0;
-}
-var proxyHeaders = (object) => new Proxy(object, {
-  get: (target, prop) => getProperty(target, prop),
-  has: (target, prop) => getProperty(target, prop) !== void 0
-});
-
-// ../../../node_modules/.pnpm/form-data-encoder@3.0.0/node_modules/form-data-encoder/lib/util/isFormData.js
-var isFormData = (value) => Boolean(value && isFunction2(value.constructor) && value[Symbol.toStringTag] === "FormData" && isFunction2(value.append) && isFunction2(value.getAll) && isFunction2(value.entries) && isFunction2(value[Symbol.iterator]));
-
-// ../../../node_modules/.pnpm/form-data-encoder@3.0.0/node_modules/form-data-encoder/lib/util/escapeName.js
-var escapeName = (name) => String(name).replace(/\r/g, "%0D").replace(/\n/g, "%0A").replace(/"/g, "%22");
-
-// ../../../node_modules/.pnpm/form-data-encoder@3.0.0/node_modules/form-data-encoder/lib/util/isFile.js
-var isFile2 = (value) => Boolean(value && typeof value === "object" && isFunction2(value.constructor) && value[Symbol.toStringTag] === "File" && isFunction2(value.stream) && value.name != null);
-
-// ../../../node_modules/.pnpm/form-data-encoder@3.0.0/node_modules/form-data-encoder/lib/FormDataEncoder.js
-var __classPrivateFieldSet3 = function(receiver, state, value, kind, f4) {
-  if (kind === "m")
-    throw new TypeError("Private method is not writable");
-  if (kind === "a" && !f4)
-    throw new TypeError("Private accessor was defined without a setter");
-  if (typeof state === "function" ? receiver !== state || !f4 : !state.has(receiver))
-    throw new TypeError("Cannot write private member to an object whose class did not declare it");
-  return kind === "a" ? f4.call(receiver, value) : f4 ? f4.value = value : state.set(receiver, value), value;
-};
-var __classPrivateFieldGet4 = function(receiver, state, kind, f4) {
-  if (kind === "a" && !f4)
-    throw new TypeError("Private accessor was defined without a getter");
-  if (typeof state === "function" ? receiver !== state || !f4 : !state.has(receiver))
-    throw new TypeError("Cannot read private member from an object whose class did not declare it");
-  return kind === "m" ? f4 : kind === "a" ? f4.call(receiver) : f4 ? f4.value : state.get(receiver);
-};
-var _FormDataEncoder_instances;
-var _FormDataEncoder_CRLF;
-var _FormDataEncoder_CRLF_BYTES;
-var _FormDataEncoder_CRLF_BYTES_LENGTH;
-var _FormDataEncoder_DASHES;
-var _FormDataEncoder_encoder;
-var _FormDataEncoder_footer;
-var _FormDataEncoder_form;
-var _FormDataEncoder_options;
-var _FormDataEncoder_getFieldHeader;
-var _FormDataEncoder_getContentLength;
-var defaultOptions = {
-  enableAdditionalHeaders: false
-};
-var readonlyProp = { writable: false, configurable: false };
-var FormDataEncoder = class {
-  constructor(form, boundaryOrOptions, options) {
-    _FormDataEncoder_instances.add(this);
-    _FormDataEncoder_CRLF.set(this, "\r\n");
-    _FormDataEncoder_CRLF_BYTES.set(this, void 0);
-    _FormDataEncoder_CRLF_BYTES_LENGTH.set(this, void 0);
-    _FormDataEncoder_DASHES.set(this, "-".repeat(2));
-    _FormDataEncoder_encoder.set(this, new TextEncoder());
-    _FormDataEncoder_footer.set(this, void 0);
-    _FormDataEncoder_form.set(this, void 0);
-    _FormDataEncoder_options.set(this, void 0);
-    if (!isFormData(form)) {
-      throw new TypeError("Expected first argument to be a FormData instance.");
-    }
-    let boundary;
-    if (isPlainObject(boundaryOrOptions)) {
-      options = boundaryOrOptions;
-    } else {
-      boundary = boundaryOrOptions;
-    }
-    if (!boundary) {
-      boundary = createBoundary();
-    }
-    if (typeof boundary !== "string") {
-      throw new TypeError("Expected boundary argument to be a string.");
-    }
-    if (options && !isPlainObject(options)) {
-      throw new TypeError("Expected options argument to be an object.");
-    }
-    __classPrivateFieldSet3(this, _FormDataEncoder_form, Array.from(form.entries()), "f");
-    __classPrivateFieldSet3(this, _FormDataEncoder_options, { ...defaultOptions, ...options }, "f");
-    __classPrivateFieldSet3(this, _FormDataEncoder_CRLF_BYTES, __classPrivateFieldGet4(this, _FormDataEncoder_encoder, "f").encode(__classPrivateFieldGet4(this, _FormDataEncoder_CRLF, "f")), "f");
-    __classPrivateFieldSet3(this, _FormDataEncoder_CRLF_BYTES_LENGTH, __classPrivateFieldGet4(this, _FormDataEncoder_CRLF_BYTES, "f").byteLength, "f");
-    this.boundary = `form-data-boundary-${boundary}`;
-    this.contentType = `multipart/form-data; boundary=${this.boundary}`;
-    __classPrivateFieldSet3(this, _FormDataEncoder_footer, __classPrivateFieldGet4(this, _FormDataEncoder_encoder, "f").encode(`${__classPrivateFieldGet4(this, _FormDataEncoder_DASHES, "f")}${this.boundary}${__classPrivateFieldGet4(this, _FormDataEncoder_DASHES, "f")}${__classPrivateFieldGet4(this, _FormDataEncoder_CRLF, "f").repeat(2)}`), "f");
-    const headers = {
-      "Content-Type": this.contentType
-    };
-    const contentLength = __classPrivateFieldGet4(this, _FormDataEncoder_instances, "m", _FormDataEncoder_getContentLength).call(this);
-    if (contentLength) {
-      this.contentLength = contentLength;
-      headers["Content-Length"] = contentLength;
-    }
-    this.headers = proxyHeaders(Object.freeze(headers));
-    Object.defineProperties(this, {
-      boundary: readonlyProp,
-      contentType: readonlyProp,
-      contentLength: readonlyProp,
-      headers: readonlyProp
-    });
-  }
-  *values() {
-    for (const [name, raw] of __classPrivateFieldGet4(this, _FormDataEncoder_form, "f")) {
-      const value = isFile2(raw) ? raw : __classPrivateFieldGet4(this, _FormDataEncoder_encoder, "f").encode(normalizeValue(raw));
-      yield __classPrivateFieldGet4(this, _FormDataEncoder_instances, "m", _FormDataEncoder_getFieldHeader).call(this, name, value);
-      yield value;
-      yield __classPrivateFieldGet4(this, _FormDataEncoder_CRLF_BYTES, "f");
-    }
-    yield __classPrivateFieldGet4(this, _FormDataEncoder_footer, "f");
-  }
-  async *encode() {
-    for (const part of this.values()) {
-      if (isFile2(part)) {
-        yield* getStreamIterator(part.stream());
-      } else {
-        yield* chunk(part);
-      }
-    }
-  }
-  [(_FormDataEncoder_CRLF = /* @__PURE__ */ new WeakMap(), _FormDataEncoder_CRLF_BYTES = /* @__PURE__ */ new WeakMap(), _FormDataEncoder_CRLF_BYTES_LENGTH = /* @__PURE__ */ new WeakMap(), _FormDataEncoder_DASHES = /* @__PURE__ */ new WeakMap(), _FormDataEncoder_encoder = /* @__PURE__ */ new WeakMap(), _FormDataEncoder_footer = /* @__PURE__ */ new WeakMap(), _FormDataEncoder_form = /* @__PURE__ */ new WeakMap(), _FormDataEncoder_options = /* @__PURE__ */ new WeakMap(), _FormDataEncoder_instances = /* @__PURE__ */ new WeakSet(), _FormDataEncoder_getFieldHeader = function _FormDataEncoder_getFieldHeader2(name, value) {
-    let header = "";
-    header += `${__classPrivateFieldGet4(this, _FormDataEncoder_DASHES, "f")}${this.boundary}${__classPrivateFieldGet4(this, _FormDataEncoder_CRLF, "f")}`;
-    header += `Content-Disposition: form-data; name="${escapeName(name)}"`;
-    if (isFile2(value)) {
-      header += `; filename="${escapeName(value.name)}"${__classPrivateFieldGet4(this, _FormDataEncoder_CRLF, "f")}`;
-      header += `Content-Type: ${value.type || "application/octet-stream"}`;
-    }
-    if (__classPrivateFieldGet4(this, _FormDataEncoder_options, "f").enableAdditionalHeaders === true) {
-      const size = isFile2(value) ? value.size : value.byteLength;
-      if (size != null && !isNaN(size)) {
-        header += `${__classPrivateFieldGet4(this, _FormDataEncoder_CRLF, "f")}Content-Length: ${size}`;
-      }
-    }
-    return __classPrivateFieldGet4(this, _FormDataEncoder_encoder, "f").encode(`${header}${__classPrivateFieldGet4(this, _FormDataEncoder_CRLF, "f").repeat(2)}`);
-  }, _FormDataEncoder_getContentLength = function _FormDataEncoder_getContentLength2() {
-    let length = 0;
-    for (const [name, raw] of __classPrivateFieldGet4(this, _FormDataEncoder_form, "f")) {
-      const value = isFile2(raw) ? raw : __classPrivateFieldGet4(this, _FormDataEncoder_encoder, "f").encode(normalizeValue(raw));
-      const size = isFile2(value) ? value.size : value.byteLength;
-      if (size == null || isNaN(size)) {
-        return void 0;
-      }
-      length += __classPrivateFieldGet4(this, _FormDataEncoder_instances, "m", _FormDataEncoder_getFieldHeader).call(this, name, value).byteLength;
-      length += size;
-      length += __classPrivateFieldGet4(this, _FormDataEncoder_CRLF_BYTES_LENGTH, "f");
-    }
-    return String(length + __classPrivateFieldGet4(this, _FormDataEncoder_footer, "f").byteLength);
-  }, Symbol.iterator)]() {
-    return this.values();
-  }
-  [Symbol.asyncIterator]() {
-    return this.encode();
-  }
-};
-
 // main.ts
-var import_stream = require("stream");
 function handleErrors(response) {
   if (!response.ok) {
     throw Error(response.statusText);
@@ -10760,18 +10515,18 @@ var uploadImage = async () => {
     if (i3 > 2) {
       return "error";
     }
-    const form = new FormData3();
-    form.set("type", "file");
-    form.set("image", file);
-    const encoder = new FormDataEncoder(form);
     try {
+      const form = new FormData3();
+      form.set("image", file.toString("base64"));
       const res = await fetch("https://api.imgur.com/3/image", {
         method: "POST",
         headers: {
           Accept: "application/json",
           Authorization: `Client-ID 11eb8a62f4c7927`
         },
-        body: import_stream.Readable.from(encoder)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        body: form
       }).then(handleErrors);
       const link = (await res.json()).data.link;
       if (!link) {
@@ -10780,7 +10535,10 @@ var uploadImage = async () => {
       return link;
     } catch (e3) {
       await wait(3e3);
-      return upload(file, i3 + 1);
+      console.log(e3);
+      core.debug(e3);
+      core.setOutput("error", e3);
+      return await upload(file, i3 + 1);
     }
   };
   const getAllFiles = (currentPath) => {
