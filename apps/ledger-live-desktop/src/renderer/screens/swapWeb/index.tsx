@@ -7,11 +7,26 @@ import WebPlatformPlayer from "~/renderer/components/WebPlatformPlayer";
 import useTheme from "~/renderer/hooks/useTheme";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import { useLocation } from "react-router-dom";
+import BigNumber from "bignumber.js";
 
 const DEFAULT_SWAP_APP_ID = "swapWeb";
 
+type SwapParamsState =
+  | {
+      provider?: string;
+      fromAccountId: string;
+      toAccountId: string;
+      fromAmount?: BigNumber;
+      quoteId?: string;
+      rate?: BigNumber;
+      feeStrategy?: string;
+      customFeeConfig?: string;
+      initFeeTotalValue: BigNumber;
+    }
+  | undefined;
+
 const Swap = () => {
-  const location = useLocation();
+  const location = useLocation<SwapParamsState>();
   const locale = useSelector(languageSelector);
   const fiatCurrency = useSelector(counterValueCurrencySelector);
   const localManifest = useLocalLiveAppManifest(DEFAULT_SWAP_APP_ID);
@@ -40,7 +55,13 @@ const Swap = () => {
             theme: themeType,
             lang: locale,
             currencyTicker: fiatCurrency.ticker,
-            ...params,
+          }}
+          hash={params}
+          onStateChange={webViewState => {
+            const url = new URL(webViewState.url);
+            const hash = new URLSearchParams(url.hash.substring(1));
+            const state = hash.get("state");
+            console.log("%cindex.tsx line:65 state", "color: #007acc;", state);
           }}
         />
       ) : null}

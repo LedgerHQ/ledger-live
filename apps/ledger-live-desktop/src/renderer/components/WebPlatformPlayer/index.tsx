@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { Web3AppWebview } from "../Web3AppWebview";
 import { TopBar, TopBarConfig } from "./TopBar";
@@ -28,9 +28,20 @@ type Props = {
   config?: WebPlatformPlayerConfig;
 } & WebviewProps;
 
-export default function WebPlatformPlayer({ manifest, inputs, onClose, config }: Props) {
+export default function WebPlatformPlayer({
+  manifest,
+  inputs,
+  onClose,
+  config,
+  hash,
+  onStateChange,
+}: Props) {
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
+
+  useEffect(() => {
+    onStateChange?.(webviewState);
+  }, [webviewState, onStateChange]);
 
   return (
     <Container>
@@ -45,6 +56,7 @@ export default function WebPlatformPlayer({ manifest, inputs, onClose, config }:
         <Web3AppWebview
           manifest={manifest}
           inputs={inputs}
+          hash={hash}
           onStateChange={setWebviewState}
           ref={webviewAPIRef}
         />

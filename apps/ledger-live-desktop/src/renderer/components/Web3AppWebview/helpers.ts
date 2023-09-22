@@ -94,13 +94,6 @@ export function useWebviewState(
     setMounted(true);
   }, [isMounted]);
 
-  const handleUpdateTargetURL = useCallback((event: Electron.UpdateTargetUrlEvent) => {
-    setState(oldState => ({
-      ...oldState,
-      url: event.url,
-    }));
-  }, []);
-
   const handlePageTitleUpdated = useCallback((event: Electron.PageTitleUpdatedEvent) => {
     setState(oldState => ({
       ...oldState,
@@ -222,7 +215,6 @@ export function useWebviewState(
       return;
     }
 
-    webview.addEventListener("update-target-url", handleUpdateTargetURL);
     webview.addEventListener("page-title-updated", handlePageTitleUpdated);
     webview.addEventListener("did-navigate", handleDidNavigate);
     webview.addEventListener("did-navigate-in-page", handleDidNavigateInPage);
@@ -233,7 +225,6 @@ export function useWebviewState(
     webview.addEventListener("crashed", handleCrashed);
 
     return () => {
-      webview.removeEventListener("update-target-url", handleUpdateTargetURL);
       webview.removeEventListener("page-title-updated", handlePageTitleUpdated);
       webview.removeEventListener("did-navigate", handleDidNavigate);
       webview.removeEventListener("did-navigate-in-page", handleDidNavigateInPage);
@@ -244,7 +235,6 @@ export function useWebviewState(
       webview.removeEventListener("crashed", handleCrashed);
     };
   }, [
-    handleUpdateTargetURL,
     handleDidNavigate,
     handleDidNavigateInPage,
     handleDidStartLoading,
