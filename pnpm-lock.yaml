@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: false
+  excludeLinksFromLockfile: false
+
 overrides:
   stellar-base>sodium-native: ^3.2.1
   remove-flow-types-loader>flow-remove-types: ^2
@@ -2211,8 +2215,8 @@ importers:
         specifier: ^5.2.1
         version: 5.2.1
       bs58:
-        specifier: ^4.0.1
-        version: 4.0.1
+        specifier: ^5.0.0
+        version: 5.0.0
       bs58check:
         specifier: ^2.1.2
         version: 2.1.2
@@ -2714,8 +2718,8 @@ importers:
         specifier: ^5.2.0
         version: 5.2.0
       bs58:
-        specifier: ^4.0.1
-        version: 4.0.1
+        specifier: ^5.0.0
+        version: 5.0.0
       bs58check:
         specifier: ^2.1.2
         version: 2.1.2
@@ -63135,7 +63139,6 @@ packages:
     resolution: {directory: libs/ui/packages/crypto-icons, type: directory}
     id: file:libs/ui/packages/crypto-icons
     name: '@ledgerhq/crypto-icons-ui'
-    version: 0.5.1
     peerDependencies:
       '@types/react': '*'
       react: '*'
@@ -63155,7 +63158,6 @@ packages:
     resolution: {directory: libs/ui/packages/icons, type: directory}
     id: file:libs/ui/packages/icons
     name: '@ledgerhq/icons-ui'
-    version: 0.6.1
     peerDependencies:
       '@types/react': '*'
       react: '*'
@@ -63179,7 +63181,3 @@ packages:
     dependencies:
       commander: 2.20.3
     dev: false
-
-settings:
-  autoInstallPeers: false
-  excludeLinksFromLockfile: false
