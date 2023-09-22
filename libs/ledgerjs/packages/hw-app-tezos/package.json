@@ -29,7 +29,7 @@
   "dependencies": {
     "@ledgerhq/hw-transport": "workspace:^",
     "blake2b": "^2.1.4",
-    "bs58check": "^2.1.2",
+    "bs58check": "^3.0.0",
     "invariant": "^2.2.4"
   },
   "devDependencies": {
