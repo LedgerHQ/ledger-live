@@ -199,7 +199,7 @@
     "bip32": "^2.0.6",
     "bip32-path": "^0.4.2",
     "bip39": "^3.0.4",
-    "bitcoinjs-lib": "^5.2.0",
+    "bitcoinjs-lib": "^6.0.0",
     "blake-hash": "^2.0.0",
     "blake2b": "^2.1.4",
     "bn.js": "^5.2.1",
