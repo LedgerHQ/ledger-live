@@ -145,7 +145,7 @@ export default function installLanguage({
                   }),
                 );
               }
-              return throwError(e);
+              return throwError(() => e);
             }),
           )
           .subscribe(subscriber);

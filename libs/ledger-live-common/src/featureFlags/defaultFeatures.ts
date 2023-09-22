@@ -353,7 +353,7 @@ export const DEFAULT_FEATURES: Features = {
   cexDepositEntryPointsDesktop: {
     enabled: false,
     params: {
-      path: "/discover/ledger-cex-deposit",
+      path: "/platform/ledger-cex-deposit",
       locations: {
         selectCrypto: true,
       },

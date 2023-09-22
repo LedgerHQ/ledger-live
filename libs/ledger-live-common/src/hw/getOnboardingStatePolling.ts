@@ -54,7 +54,7 @@ export const getOnboardingStatePolling = ({
           return of(error as Error);
         }
 
-        return throwError(error);
+        return throwError(() => error);
       }),
       map((event: FirmwareInfo | Error) => {
         if ("flags" in event) {

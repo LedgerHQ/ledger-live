@@ -2,7 +2,7 @@ import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import type { CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { Observable } from "rxjs7";
+import { Observable } from "rxjs";
 import { NavigatorScreenParams } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "../../../const";
 import { AddAccountsNavigatorParamList } from "./AddAccountsNavigator";
