@@ -4,8 +4,7 @@ import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { getParentAccount, isTokenAccount } from "@ledgerhq/live-common/account/index";
-import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
-import { filterRampCatalogEntries } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
+import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useRoute } from "@react-navigation/native";
@@ -52,21 +51,10 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
   );
   const availableOnSwap = currency && currenciesAll.includes(currency.id);
 
-  const rampCatalog = useRampCatalog();
-  const [canBeBought, canBeSold] = useMemo(() => {
-    if (!rampCatalog.value || !currency) {
-      return [false, false];
-    }
+  const { isCurrencyAvailable } = useRampCatalog();
 
-    const onRampProviders = filterRampCatalogEntries(rampCatalog.value.onRamp, {
-      tickers: [currency.ticker],
-    });
-    const offRampProviders = filterRampCatalogEntries(rampCatalog.value.offRamp, {
-      tickers: [currency.ticker],
-    });
-
-    return [onRampProviders.length > 0, offRampProviders.length > 0];
-  }, [rampCatalog.value, currency]);
+  const canBeBought = !!currency && isCurrencyAvailable(currency.id, "onRamp");
+  const canBeSold = !!currency && isCurrencyAvailable(currency.id, "offRamp");
 
   const featureFlag = useFeature("stakePrograms");
   const stakeFlagEnabled = featureFlag?.enabled;

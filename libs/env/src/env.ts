@@ -207,6 +207,13 @@ const envDefinitions = {
     parser: intParser,
     desc: "define the default value of spec.skipMutationsTimeout (if not overriden by spec)",
   },
+  BUY_API_BASE: {
+    def: "https://buy.api.live.ledger.com/buy/v1",
+
+    parser: stringParser,
+    desc: "Buy crypto API base url - version 1",
+  },
+
   CARDANO_API_ENDPOINT: {
     def: "https://cardano.coin.ledger.com/api",
     parser: stringParser,

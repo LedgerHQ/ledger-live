@@ -1,78 +1,37 @@
-import { uniq, flatten } from "lodash";
-import { QueryParams, RampCatalogEntry, RampLiveAppCatalogEntry } from "./types";
+import { uniq, isEmpty } from "lodash";
+import { CurrenciesPerProvider, RampCatalog } from "./types";
+import { CryptoCurrency } from "@ledgerhq/wallet-api-core/lib/currencies/types";
 
-export type RampFilters = {
-  fiatCurrencies?: string[];
-  cryptoCurrencies?: string[];
-  paymentProviders?: string[];
-  tickers?: string[];
-};
-
-function filterArray(array: string[], filters: string[]) {
-  return filters.every(filter => array.includes(filter));
+/** Flatten all providers' currencies into a single array */
+export function getCryptoCurrencyIds(entries: CurrenciesPerProvider): Array<string> | null {
+  if (!entries || isEmpty(entries)) {
+    return null;
+  }
+  return uniq(Object.values(entries).flat());
 }
 
-export function mapQueryParamsForProvider(
-  entry: RampLiveAppCatalogEntry,
-  params: QueryParams,
-): QueryParams {
-  const result = {};
+export function isCurrencyInCatalog(
+  currencyId: string | CryptoCurrency["id"],
+  catalog: RampCatalog,
+  status: "onRamp" | "offRamp",
+) {
+  if (!catalog || isEmpty(catalog[status])) {
+    return false;
+  }
+  const currencies = getCryptoCurrencyIds(catalog[status]);
 
-  const keys = Object.keys(params);
-  keys.forEach(key => {
-    const providerKey = entry.paramsMapping[key];
-    const providerValue = params[key];
-
-    if (providerKey && providerValue) {
-      result[providerKey] = providerValue;
-    }
-  });
-  return result;
+  return !currencies ? false : currencies.includes(currencyId);
 }
 
-export function filterRampCatalogEntries(
-  entries: RampCatalogEntry[],
-  filters: RampFilters,
-): RampCatalogEntry[] {
-  return entries.filter(entry => {
-    if (
-      filters.cryptoCurrencies &&
-      !filterArray(
-        entry.cryptoCurrencies.map(entry => entry.id),
-        filters.cryptoCurrencies,
-      )
-    ) {
-      return false;
-    }
+/** Get the array of providers in the catalog that support the given currency */
+export function getRampServiceProviders(
+  currencyId: string | CryptoCurrency["id"],
+  catalog: RampCatalog["onRamp"] | RampCatalog["offRamp"],
+) {
+  if (!catalog || isEmpty(catalog)) {
+    return null;
+  }
+  const providers = Object.keys(catalog).filter(provider => catalog[provider].includes(currencyId));
 
-    if (filters.fiatCurrencies && !filterArray(entry.fiatCurrencies, filters.fiatCurrencies)) {
-      return false;
-    }
-
-    if (
-      filters.paymentProviders &&
-      !filterArray(entry.paymentProviders, filters.paymentProviders)
-    ) {
-      return false;
-    }
-
-    if (
-      filters.tickers &&
-      !filterArray(
-        entry.cryptoCurrencies.map(entry => entry.ticker.toLowerCase()),
-        filters.tickers.map(ticker => ticker.toLowerCase()),
-      )
-    ) {
-      return false;
-    }
-    return true;
-  });
-}
-
-export function getAllSupportedCryptoCurrencyIds(entries: RampCatalogEntry[]): string[] {
-  return uniq(flatten(entries.map(entry => entry.cryptoCurrencies.map(entry => entry.id))));
-}
-
-export function getAllSupportedCryptoCurrencyTickers(entries: RampCatalogEntry[]): string[] {
-  return uniq(flatten(entries.map(entry => entry.cryptoCurrencies.map(entry => entry.ticker))));
+  return providers;
 }

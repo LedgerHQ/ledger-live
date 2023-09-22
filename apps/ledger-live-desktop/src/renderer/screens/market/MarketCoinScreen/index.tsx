@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import { Flex, Text, Icon } from "@ledgerhq/react-ui";
 import { useSelector, useDispatch } from "react-redux";
 import { useHistory, useParams } from "react-router-dom";
@@ -18,8 +18,7 @@ import MarketInfo from "./MarketInfo";
 import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { openModal } from "~/renderer/actions/modals";
-import { getAllSupportedCryptoCurrencyTickers } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
-import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
+import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import useStakeFlow from "../../stake";
@@ -81,8 +80,6 @@ export default function MarketCoinScreen() {
     supportedCounterCurrencies,
   } = useSingleCoinMarketData();
 
-  const rampCatalog = useRampCatalog();
-
   const {
     id,
     ticker,
@@ -107,16 +104,12 @@ export default function MarketCoinScreen() {
     chartData,
   } = currency || {};
 
-  const onRampAvailableTickers = useMemo(() => {
-    if (!rampCatalog.value) {
-      return [];
-    }
-    return getAllSupportedCryptoCurrencyTickers(rampCatalog.value.onRamp);
-  }, [rampCatalog.value]);
+  const { isCurrencyAvailable } = useRampCatalog();
 
-  const availableOnBuy =
-    currency && currency.ticker && onRampAvailableTickers.includes(currency.ticker?.toUpperCase());
+  const availableOnBuy = !!currency && isCurrencyAvailable(currency.id, "onRamp");
+
   const availableOnSwap = internalCurrency && currenciesAll.includes(internalCurrency.id);
+
   const stakeProgramsFeatureFlag = useFeature("stakePrograms");
   const listFlag = stakeProgramsFeatureFlag?.params?.list ?? [];
   const stakeProgramsEnabled = stakeProgramsFeatureFlag?.enabled ?? false;

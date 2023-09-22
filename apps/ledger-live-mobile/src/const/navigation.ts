@@ -113,7 +113,6 @@ export enum ScreenName {
   Portfolio = "Wallet",
   PortfolioOperationHistory = "PortfolioOperationHistory",
   ProviderList = "ProviderList",
-  ProviderView = "ProviderView",
   PurchaseDevice = "PurchaseDevice",
   RateProviderSettings = "RateProviderSettings",
   ReceiveAddAccount = "ReceiveAddAccount",
