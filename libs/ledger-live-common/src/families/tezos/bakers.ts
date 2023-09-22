@@ -55,12 +55,21 @@ type API_BAKER = {
   insuranceCoveragenumber: number;
 };
 
-const ledgerValidator: Baker = {
-  name: "Ledger by Kiln",
-  address: ledgerValidatorAddress,
-  logoURL: `https://services.tzkt.io/v1/avatars/${ledgerValidatorAddress}`,
-  nominalYield: "5.67 %",
-  capacityStatus: "normal",
+const getLedgerValidator = async (): Promise<Baker> => {
+  const { data } = await network<API_BAKER>({
+    url: "https://api.baking-bad.org/v2/bakers/tz3LV9aGKHDnAZHCtC9SjNtTrKRu678FqSki",
+    method: "GET",
+  });
+
+  const { name, logo, estimatedRoi, freeSpace } = data;
+
+  return {
+    name,
+    address: ledgerValidatorAddress,
+    logoURL: logo,
+    nominalYield: `${Math.floor(10000 * estimatedRoi) / 100} %`,
+    capacityStatus: freeSpace <= 0 ? "full" : "normal",
+  };
 };
 
 const cache = makeLRUCache(
@@ -83,6 +92,8 @@ const cache = makeLRUCache(
           }
         });
     }
+
+    const ledgerValidator = await getLedgerValidator();
 
     log("tezos/bakers", "loaded " + bakers.length + " bakers");
     return [ledgerValidator, ...bakers];
