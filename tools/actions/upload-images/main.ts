@@ -53,6 +53,7 @@ const uploadImage = async () => {
       }
       return link;
     } catch (e) {
+      core.setOutput("error", e);
       await wait(3000);
       return upload(file, i + 1);
     }
