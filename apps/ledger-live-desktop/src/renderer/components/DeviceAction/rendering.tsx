@@ -581,7 +581,13 @@ export const renderLockedDeviceError = ({
   );
 };
 
-export const RenderDeviceNotOnboardedError = ({ t, device }: { t: TFunction; device?: Device | null }) => {
+export const RenderDeviceNotOnboardedError = ({
+  t,
+  device,
+}: {
+  t: TFunction;
+  device?: Device | null;
+}) => {
   const productName = device ? getDeviceModel(device.modelId).productName : null;
   const history = useHistory();
   const { setDrawer } = useContext(context);
