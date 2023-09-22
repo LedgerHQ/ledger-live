@@ -1,5 +1,27 @@
 # live-mobile
 
+## 3.32.0-nightly.3
+
+### Patch Changes
+
+- [#4709](https://github.com/LedgerHQ/ledger-live/pull/4709) [`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac) Thanks [@alexandremgo](https://github.com/alexandremgo)! - feat: enable printing logs to stdout for debug
+
+  - Setup simple tracing system on LLM with context
+  - If `VERBOSE` env var is set, filtered logs can be stdout from the main thread
+
+- Updated dependencies [[`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac), [`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac), [`7cb844b6c1`](https://github.com/LedgerHQ/ledger-live/commit/7cb844b6c1d65df4b083dcda51976b33a6d55b59), [`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac)]:
+  - @ledgerhq/logs@6.11.0-nightly.0
+  - @ledgerhq/live-env@0.6.0-nightly.1
+  - @ledgerhq/live-common@32.0.0-nightly.2
+  - @ledgerhq/react-native-hw-transport-ble@6.30.0-nightly.0
+  - @ledgerhq/hw-transport@6.29.0-nightly.0
+  - @ledgerhq/coin-evm@0.7.0-nightly.2
+  - @ledgerhq/coin-framework@0.6.0-nightly.2
+  - @ledgerhq/domain-service@1.1.11-nightly.2
+  - @ledgerhq/devices@8.0.8-nightly.0
+  - @ledgerhq/hw-transport-http@6.28.4-nightly.0
+  - @ledgerhq/react-native-hid@6.30.1-nightly.0
+
 ## 3.32.0-nightly.2
 
 ### Minor Changes

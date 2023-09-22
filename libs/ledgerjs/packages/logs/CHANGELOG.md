@@ -1,5 +1,13 @@
 # @ledgerhq/logs
 
+## 6.11.0-nightly.0
+
+### Minor Changes
+
+- [#4709](https://github.com/LedgerHQ/ledger-live/pull/4709) [`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac) Thanks [@alexandremgo](https://github.com/alexandremgo)! - feat: new trace and LocalTracer definition
+
+  Without breaking the behavior of the existing log function
+
 ## 6.10.1
 
 ### Patch Changes

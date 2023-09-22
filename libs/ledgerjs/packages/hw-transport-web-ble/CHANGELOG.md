@@ -1,5 +1,14 @@
 # @ledgerhq/hw-transport-web-ble
 
+## 6.27.20-nightly.0
+
+### Patch Changes
+
+- Updated dependencies [[`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac), [`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac)]:
+  - @ledgerhq/logs@6.11.0-nightly.0
+  - @ledgerhq/hw-transport@6.29.0-nightly.0
+  - @ledgerhq/devices@8.0.8-nightly.0
+
 ## 6.27.19
 
 ### Patch Changes

@@ -1,5 +1,44 @@
 # @ledgerhq/live-common
 
+## 32.0.0-nightly.2
+
+### Patch Changes
+
+- [#4779](https://github.com/LedgerHQ/ledger-live/pull/4779) [`7cb844b6c1`](https://github.com/LedgerHQ/ledger-live/commit/7cb844b6c1d65df4b083dcda51976b33a6d55b59) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Add entry point to CEX with feature flag
+
+- [#4709](https://github.com/LedgerHQ/ledger-live/pull/4709) [`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac) Thanks [@alexandremgo](https://github.com/alexandremgo)! - feat: usage of new tracing system
+
+  The tracing helps keeping a context (for ex a `job id`) that is propagated to other logs,
+  creating a (simple) tracing span
+
+- Updated dependencies [[`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac), [`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac), [`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac)]:
+  - @ledgerhq/logs@6.11.0-nightly.0
+  - @ledgerhq/live-env@0.6.0-nightly.1
+  - @ledgerhq/hw-transport@6.29.0-nightly.0
+  - @ledgerhq/coin-evm@0.7.0-nightly.2
+  - @ledgerhq/coin-framework@0.6.0-nightly.2
+  - @ledgerhq/coin-polkadot@0.4.2-nightly.2
+  - @ledgerhq/domain-service@1.1.11-nightly.2
+  - @ledgerhq/devices@8.0.8-nightly.0
+  - @ledgerhq/hw-app-btc@10.0.9-nightly.0
+  - @ledgerhq/hw-app-eth@6.34.6-nightly.2
+  - @ledgerhq/hw-app-solana@7.0.14-nightly.0
+  - @ledgerhq/hw-transport-mocker@6.27.20-nightly.0
+  - @ledgerhq/hw-transport-node-speculos@6.27.20-nightly.0
+  - @ledgerhq/hw-transport-node-speculos-http@6.27.20-nightly.0
+  - @ledgerhq/live-network@1.1.7-nightly.1
+  - @ledgerhq/live-promise@0.0.2-nightly.0
+  - @ledgerhq/coin-algorand@0.3.2-nightly.2
+  - @ledgerhq/hw-app-algorand@6.27.20-nightly.0
+  - @ledgerhq/hw-app-cosmos@6.28.6-nightly.0
+  - @ledgerhq/hw-app-exchange@0.2.4-nightly.0
+  - @ledgerhq/hw-app-near@6.27.15-nightly.0
+  - @ledgerhq/hw-app-polkadot@6.27.20-nightly.0
+  - @ledgerhq/hw-app-str@6.27.20-nightly.0
+  - @ledgerhq/hw-app-tezos@6.27.20-nightly.0
+  - @ledgerhq/hw-app-trx@6.27.20-nightly.0
+  - @ledgerhq/hw-app-xrp@6.27.20-nightly.0
+
 ## 32.0.0-nightly.1
 
 ### Major Changes

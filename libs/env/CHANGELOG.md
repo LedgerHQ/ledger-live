@@ -1,5 +1,14 @@
 # @ledgerhq/live-env
 
+## 0.6.0-nightly.1
+
+### Patch Changes
+
+- [#4709](https://github.com/LedgerHQ/ledger-live/pull/4709) [`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac) Thanks [@alexandremgo](https://github.com/alexandremgo)! - feat: enable printing logs to stdout for debug
+
+  - Setup simple tracing system on LLM with context
+  - If `VERBOSE` env var is set, filtered logs can be stdout from the main thread
+
 ## 0.6.0-nightly.0
 
 ### Minor Changes

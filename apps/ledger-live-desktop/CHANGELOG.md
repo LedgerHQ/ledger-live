@@ -1,5 +1,37 @@
 # ledger-live-desktop
 
+## 2.69.0-nightly.1
+
+### Patch Changes
+
+- [#4709](https://github.com/LedgerHQ/ledger-live/pull/4709) [`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac) Thanks [@alexandremgo](https://github.com/alexandremgo)! - feat: enable printing logs to stdout for debug and record logs from internal thread
+
+  - Logs from the internal thread are forward to the main thread
+  - The main thread records them, and can export them
+  - If `VERBOSE` env var is set, filtered logs can be stdout from the main thread
+  - Same from the renderer thread
+  - Setup simple tracing system (context) on LLD
+
+- [#4753](https://github.com/LedgerHQ/ledger-live/pull/4753) [`10746fc21f`](https://github.com/LedgerHQ/ledger-live/commit/10746fc21fd80826a1d9a7e60ff1815d89956a3d) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - Remove misleading "countervalues disabled" status from cryptoassets.md
+
+- [#4779](https://github.com/LedgerHQ/ledger-live/pull/4779) [`7cb844b6c1`](https://github.com/LedgerHQ/ledger-live/commit/7cb844b6c1d65df4b083dcda51976b33a6d55b59) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Add entry point to CEX with feature flag
+
+- [#4777](https://github.com/LedgerHQ/ledger-live/pull/4777) [`41cc8e6a70`](https://github.com/LedgerHQ/ledger-live/commit/41cc8e6a709540124b4b118f8e6ccc99aa213102) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Stax early security checks: fix race condition between "toggle early check" and "get device info"
+
+- Updated dependencies [[`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac), [`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac), [`7cb844b6c1`](https://github.com/LedgerHQ/ledger-live/commit/7cb844b6c1d65df4b083dcda51976b33a6d55b59), [`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac)]:
+  - @ledgerhq/logs@6.11.0-nightly.0
+  - @ledgerhq/live-env@0.6.0-nightly.1
+  - @ledgerhq/live-common@32.0.0-nightly.2
+  - @ledgerhq/hw-transport-node-hid-singleton@6.29.0-nightly.0
+  - @ledgerhq/hw-transport@6.29.0-nightly.0
+  - @ledgerhq/coin-evm@0.7.0-nightly.2
+  - @ledgerhq/coin-framework@0.6.0-nightly.2
+  - @ledgerhq/domain-service@1.1.11-nightly.2
+  - @ledgerhq/devices@8.0.8-nightly.0
+  - @ledgerhq/hw-transport-http@6.28.4-nightly.0
+  - @ledgerhq/hw-transport-vault@1.1.4-nightly.0
+  - @ledgerhq/live-network@1.1.7-nightly.1
+
 ## 2.69.0-nightly.0
 
 ### Minor Changes
