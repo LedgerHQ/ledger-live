@@ -62,7 +62,7 @@ describe("js-estimateMaxSpendable", () => {
         method: "GET",
         url: "https://countervalues.live.ledger.com/latest/direct?pairs=hbar:usd",
       });
-      estimatedFees = new BigNumber(10000).dividedBy(data[0]);
+      estimatedFees = new BigNumber(10000).dividedBy(data[0]).integerValue(BigNumber.ROUND_CEIL);
     } catch {
       console.error("Could not fetch Hedera price");
     }
