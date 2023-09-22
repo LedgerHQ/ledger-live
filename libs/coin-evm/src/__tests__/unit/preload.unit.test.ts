@@ -1,3 +1,6 @@
+// do not move lower otherwise time based LRU tests won't work anymore
+jest.useFakeTimers();
+
 import network from "@ledgerhq/live-network/network";
 import evms from "@ledgerhq/cryptoassets/data/evm/index";
 import { ERC20Token } from "@ledgerhq/cryptoassets/types";
@@ -52,10 +55,23 @@ describe("EVM Family", () => {
 
   afterEach(() => {
     jest.restoreAllMocks();
+    // @ts-expect-error exposed reset method from `makeLRUCache`
+    fetchERC20Tokens.reset();
   });
 
   describe("preload.ts", () => {
     describe("fetchERC20Tokens", () => {
+      it("should respect the cache", async () => {
+        jest.advanceTimersByTime(1); // necessary for LRU to not consider the TTL as infinity
+        await fetchERC20Tokens(currency1);
+        await fetchERC20Tokens(currency1);
+        expect(network).toHaveBeenCalledTimes(1);
+
+        jest.advanceTimersByTime(6 * 60 * 60 * 1000 + 1); // Wait 6 hours and 1 millisecond
+        await fetchERC20Tokens(currency1);
+        expect(network).toHaveBeenCalledTimes(2);
+      });
+
       it("should load dynamically the tokens", async () => {
         // @ts-expect-error not casted as jest mock
         network.mockResolvedValue({ data: [usdtDefinition] });
