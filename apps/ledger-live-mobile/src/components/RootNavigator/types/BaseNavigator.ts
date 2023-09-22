@@ -2,7 +2,6 @@
 
 import type { Operation, AccountLike, Account, DeviceInfo } from "@ledgerhq/types-live";
 import type { NavigatorScreenParams, ParamListBase } from "@react-navigation/native";
-import type { RampCatalogEntry } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/types";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { PropertyPath } from "lodash";
@@ -65,14 +64,6 @@ import type { TronVoteFlowParamList } from "../../../families/tron/VoteFlow/type
 import type { NoFundsNavigatorParamList } from "./NoFundsNavigator";
 import type { StakeNavigatorParamList } from "./StakeNavigator";
 import type { ExploreTabNavigatorStackParamList } from "./ExploreTabNavigator";
-
-type TradeParams = {
-  type: "onRamp" | "offRamp";
-  cryptoCurrencyId: string;
-  fiatCurrencyId: string;
-  fiatAmount?: number;
-  cryptoAmount?: number;
-};
 
 export type NavigateInput<
   ParamList extends ParamListBase = ParamListBase,
@@ -177,14 +168,7 @@ export type BaseNavigatorStackParamList = {
     currency: CryptoCurrency | TokenCurrency;
     type: "onRamp" | "offRamp";
   };
-  [ScreenName.ProviderView]: {
-    provider: RampCatalogEntry;
-    accountId: string;
-    accountAddress: string;
-    trade: TradeParams;
-    icon?: string | null;
-    name?: string | null;
-  };
+
   [ScreenName.CurrencySettings]: {
     currencyId: string;
     headerTitle?: string | undefined;
