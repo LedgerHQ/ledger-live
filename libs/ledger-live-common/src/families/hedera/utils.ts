@@ -13,7 +13,11 @@ export async function getEstimatedFees(): Promise<BigNumber> {
       url: "https://countervalues.live.ledger.com/latest/direct?pairs=hbar:usd",
     });
 
-    return new BigNumber(10000).dividedBy(data[0]);
+    BigNumber.config({
+      ROUNDING_MODE: BigNumber.ROUND_UP,
+    });
+
+    return new BigNumber(10000).dividedBy(data[0]).dp(0);
   } catch {
     // as fees are based on a currency conversion, we stay
     // on the safe side here and double the estimate for "max spendable"

@@ -70,7 +70,10 @@ describe("utils", () => {
         method: "GET",
         url: "https://countervalues.live.ledger.com/latest/direct?pairs=hbar:usd",
       });
-      estimatedFees = new BigNumber(10000).dividedBy(data[0]);
+      BigNumber.config({
+        ROUNDING_MODE: BigNumber.ROUND_UP,
+      });
+      estimatedFees = new BigNumber(10000).dividedBy(data[0]).dp(0);
     } catch {
       console.error("Could not fetch Hedera price");
     }
