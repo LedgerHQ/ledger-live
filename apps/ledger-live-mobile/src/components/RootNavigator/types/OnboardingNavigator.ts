@@ -54,4 +54,5 @@ export type OnboardingNavigatorParamList = {
     success: boolean;
     deviceModelId: DeviceModelId;
   };
+  [ScreenName.OnboardingBlePairing]: undefined;
 };
