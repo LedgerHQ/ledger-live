@@ -1,5 +1,16 @@
 # ledger-live-desktop
 
+## 2.69.0-nightly.2
+
+### Patch Changes
+
+- [#4809](https://github.com/LedgerHQ/ledger-live/pull/4809) [`a080d81ce5`](https://github.com/LedgerHQ/ledger-live/commit/a080d81ce57672e17b502f62b020f4aaf88662f5) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix infinite loading in manager device action if no device is connected
+
+- [#4800](https://github.com/LedgerHQ/ledger-live/pull/4800) [`e63d3bbc2a`](https://github.com/LedgerHQ/ledger-live/commit/e63d3bbc2ad60411920cc4872d36fc11d1ae73d7) Thanks [@Justkant](https://github.com/Justkant)! - fix: platform-sdk & wallet-api onClose response in `account.request` & `message.sign`
+
+- Updated dependencies [[`e63d3bbc2a`](https://github.com/LedgerHQ/ledger-live/commit/e63d3bbc2ad60411920cc4872d36fc11d1ae73d7)]:
+  - @ledgerhq/live-common@32.0.0-nightly.3
+
 ## 2.69.0-nightly.1
 
 ### Patch Changes

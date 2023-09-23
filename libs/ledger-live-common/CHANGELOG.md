@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 32.0.0-nightly.3
+
+### Patch Changes
+
+- [#4800](https://github.com/LedgerHQ/ledger-live/pull/4800) [`e63d3bbc2a`](https://github.com/LedgerHQ/ledger-live/commit/e63d3bbc2ad60411920cc4872d36fc11d1ae73d7) Thanks [@Justkant](https://github.com/Justkant)! - fix: platform-sdk & wallet-api onClose response in `account.request` & `message.sign`
+
 ## 32.0.0-nightly.2
 
 ### Patch Changes

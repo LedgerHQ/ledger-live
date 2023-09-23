@@ -1,5 +1,16 @@
 # live-mobile
 
+## 3.32.0-nightly.4
+
+### Patch Changes
+
+- [#4789](https://github.com/LedgerHQ/ledger-live/pull/4789) [`2bdd03b36c`](https://github.com/LedgerHQ/ledger-live/commit/2bdd03b36ce296649b18d58d6a68378a5ae09523) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add New Entry in TransferDrawer for Recover
+
+- [#4800](https://github.com/LedgerHQ/ledger-live/pull/4800) [`e63d3bbc2a`](https://github.com/LedgerHQ/ledger-live/commit/e63d3bbc2ad60411920cc4872d36fc11d1ae73d7) Thanks [@Justkant](https://github.com/Justkant)! - fix: platform-sdk & wallet-api onClose response in `account.request` & `message.sign`
+
+- Updated dependencies [[`e63d3bbc2a`](https://github.com/LedgerHQ/ledger-live/commit/e63d3bbc2ad60411920cc4872d36fc11d1ae73d7)]:
+  - @ledgerhq/live-common@32.0.0-nightly.3
+
 ## 3.32.0-nightly.3
 
 ### Patch Changes
