@@ -13,7 +13,6 @@ export type RequestAccountNavigatorParamList = {
     currencies: CryptoOrTokenCurrency[];
     allowAddAccount?: boolean;
     onSuccess?: (account: AccountLike, parentAccount?: Account) => void;
-    onError?: (_: Error) => void;
   };
   [ScreenName.RequestAccountsSelectAccount]: {
     accounts$?: Observable<WalletAPIAccount[]>;
@@ -21,7 +20,6 @@ export type RequestAccountNavigatorParamList = {
     currency: CryptoOrTokenCurrency;
     allowAddAccount?: boolean;
     onSuccess?: (account: AccountLike, parentAccount?: Account) => void;
-    onError?: (_: Error) => void;
   };
   [NavigatorName.RequestAccountsAddAccounts]: NavigatorScreenParams<AddAccountsNavigatorParamList> &
     Partial<{
@@ -31,6 +29,5 @@ export type RequestAccountNavigatorParamList = {
       returnToSwap?: boolean;
       analyticsPropertyFlow?: string;
       onSuccess?: (account: AccountLike, parentAccount?: Account) => void;
-      onError?: (_: Error) => void;
     }>;
 };

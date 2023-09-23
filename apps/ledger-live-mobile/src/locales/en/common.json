@@ -3405,6 +3405,11 @@
     "walletConnect": {
       "title": "WalletConnect",
       "description": "Connect your wallet to dapps"
+    },
+    "recover": {
+      "title": "Ledger Recover",
+      "description": "Wallet recovery made easy",
+      "tag": "One month free"
     }
   },
   "signMessage": {
