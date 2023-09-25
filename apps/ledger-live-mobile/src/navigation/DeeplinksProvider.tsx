@@ -386,10 +386,19 @@ const getOnboardingLinkingOptions = (
     screens: !acceptedTermsOfUse
       ? {}
       : {
+          [NavigatorName.BaseOnboarding]: {
+            screens: {
+              [NavigatorName.Onboarding]: {
+                initialRouteName: ScreenName.OnboardingWelcome,
+                screens: {
+                  [ScreenName.OnboardingBlePairing]: "sync-onboarding",
+                },
+              },
+            },
+          },
           [NavigatorName.Base]: {
             screens: {
               [ScreenName.PostBuyDeviceScreen]: "hw-purchase-success",
-              [ScreenName.BleDevicePairingFlow]: "sync-onboarding",
               /**
                * @params ?platform: string
                * ie: "ledgerlive://discover/protect?theme=light" will open the catalog and the protect dapp with a light theme as parameter
