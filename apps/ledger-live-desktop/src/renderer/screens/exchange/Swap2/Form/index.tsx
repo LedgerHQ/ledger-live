@@ -7,7 +7,7 @@ import {
   getCustomFeesPerFamily,
   convertToNonAtomicUnit,
 } from "@ledgerhq/live-common/exchange/swap/webApp/index";
-import { getProviderName, getCustomDappUrl } from "@ledgerhq/live-common/exchange/swap/utils/index";
+import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
@@ -227,14 +227,7 @@ const SwapForm = () => {
     if (providerType === "DEX") {
       const from = swapTransaction.swap.from;
       const fromAccountId = from.parentAccount?.id || from.account?.id;
-      const customParams = {
-        provider,
-        providerURL,
-      } as {
-        provider: string;
-        providerURL?: string;
-      };
-      const customDappUrl = getCustomDappUrl(customParams);
+
       const pathname = `/platform/${getProviderName(provider).toLowerCase()}`;
       const getAccountId = ({
         accountId,
@@ -262,7 +255,7 @@ const SwapForm = () => {
         // This looks like an issue, the proper signature is: push(path, [state]) - (function) Pushes a new entry onto the history stack
         // It seems possible to also pass a LocationDescriptorObject but it does not expect extra properties
         // @ts-expect-error so customDappUrl is not expected to be here
-        customDappUrl,
+        customDappUrl: providerURL,
         pathname,
         state: {
           returnTo: "/swap",
