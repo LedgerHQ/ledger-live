@@ -25,10 +25,12 @@ export type NetworkInfo = {
   family: "tezos";
   fees: BigNumber;
 };
+
 export type NetworkInfoRaw = {
   family: "tezos";
   fees: string;
 };
+
 // TODO add a field for indicating if staking
 export type Transaction = TransactionCommon & {
   family: "tezos";
@@ -40,6 +42,7 @@ export type Transaction = TransactionCommon & {
   estimatedFees: BigNumber | null | undefined;
   taquitoError: string | null | undefined;
 };
+
 export type TransactionRaw = TransactionCommonRaw & {
   family: "tezos";
   mode: TezosOperationMode;
@@ -50,7 +53,9 @@ export type TransactionRaw = TransactionCommonRaw & {
   estimatedFees: string | null | undefined;
   taquitoError: string | null | undefined;
 };
+
 export type TezosAccount = Account & { tezosResources: TezosResources };
+
 export type TezosAccountRaw = AccountRaw & {
   tezosResources: TezosResourcesRaw;
 };

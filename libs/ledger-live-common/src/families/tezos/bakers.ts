@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import { getEnv } from "@ledgerhq/live-env";
 import { ledgerValidatorAddress } from "./bakers.whitelist-default";
 
-export type CapacityStatus = "normal" | "full";
+type CapacityStatus = "normal" | "full";
 
 export type Baker = {
   address: string;
@@ -55,23 +55,6 @@ type API_BAKER = {
   insuranceCoveragenumber: number;
 };
 
-const getLedgerValidator = async (): Promise<Baker> => {
-  const { data } = await network<API_BAKER>({
-    url: `https://api.baking-bad.org/v2/bakers/${ledgerValidatorAddress}`,
-    method: "GET",
-  });
-
-  const { name, logo, estimatedRoi, freeSpace } = data;
-
-  return {
-    name,
-    address: ledgerValidatorAddress,
-    logoURL: logo,
-    nominalYield: `${Math.floor(10000 * estimatedRoi) / 100} %`,
-    capacityStatus: freeSpace <= 0 ? "full" : "normal",
-  };
-};
-
 const cache = makeLRUCache(
   async (): Promise<Baker[]> => {
     const bakers: Baker[] = [];
@@ -93,10 +76,11 @@ const cache = makeLRUCache(
         });
     }
 
-    const ledgerValidator = await getLedgerValidator();
+    const ledgerBakerIndex = bakers.findIndex(baker => baker.address === ledgerValidatorAddress);
+    const [ledgerBaker] = bakers.splice(ledgerBakerIndex, 1);
 
     log("tezos/bakers", "loaded " + bakers.length + " bakers");
-    return [ledgerValidator, ...bakers];
+    return [ledgerBaker, ...bakers];
   },
   () => "",
 );
