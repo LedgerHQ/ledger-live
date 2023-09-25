@@ -119,7 +119,7 @@ jobs:
         id: detox
         timeout-minutes: 45
         run: |
-          pnpm mobile e2e:test -c ios.sim.release --loglevel error --record-logs all --take-screenshots all --detectOpenHandles --headless --retries 1
+          pnpm mobile e2e:test -c ios.sim.release --loglevel error --record-logs all --take-screenshots all --headless --retries 1 --cleanup --record-performance all
       - name: Delete iOS simulator
         if: always()
         run: |
@@ -258,7 +258,7 @@ jobs:
           ram-size: 8192M
           disable-linux-hw-accel: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          script: pnpm mobile e2e:test -c android.emu.release --loglevel error --record-logs all --take-screenshots all --forceExit --detectOpenHandles --headless --retries 1
+          script: pnpm mobile e2e:test -c android.emu.release --loglevel error --record-logs all --take-screenshots all --forceExit --headless --retries 1 --cleanup
       - name: Upload test artifacts
         if: always()
         uses: actions/upload-artifact@v3
