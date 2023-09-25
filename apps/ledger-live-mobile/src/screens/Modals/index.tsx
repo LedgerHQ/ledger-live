@@ -40,10 +40,11 @@ const Modals = () => {
     : "none";
 
   const onRouteChange = useCallback(
+    // @ts-expect-error cannot find the correct event there
     e => {
       const navState = e?.data?.state;
       if (navState && navState.routeNames) {
-        const currentRouteName = getCurrentRouteName(navState);
+        const currentRouteName = getCurrentRouteName(navState) as string;
         let isModalOpened = false;
         if (pushNotificationsFeature?.enabled) {
           isModalOpened = onPushNotificationsRouteChange(currentRouteName, isModalOpened);

@@ -153,8 +153,10 @@ function OnboardingQuiz({ navigation, route }: Props) {
   );
 
   const onNext = useCallback(
-    correct => {
-      setAnswers(userAnswers + correct);
+    (correct: boolean) => {
+      if (correct) {
+        setAnswers(userAnswers + 1);
+      }
       setBg("constant.purple");
       if (index < quizData.length - 1) {
         setIndex(index + 1);

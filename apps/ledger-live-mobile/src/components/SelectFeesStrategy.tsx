@@ -28,7 +28,7 @@ import NetworkFeeInfo from "./NetworkFeeInfo";
 import { useAnalytics } from "../analytics";
 import { sharedSwapTracking } from "../screens/Swap/utils";
 
-type SelectFeeStrategy = FeeStrategy & {
+export type SelectFeeStrategy = FeeStrategy & {
   userGasLimit?: BigNumber;
   forceValueLabel?: string;
 };

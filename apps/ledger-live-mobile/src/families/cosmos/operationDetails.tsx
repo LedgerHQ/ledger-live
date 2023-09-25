@@ -38,7 +38,7 @@ function OperationDetailsExtra({ operation, type, account }: Props) {
   const { extra } = operation;
   const { validators: cosmosValidators } = useCosmosFamilyPreloadData(currencyId);
   const redirectAddressCreator = useCallback(
-    address => () => {
+    (address: string) => () => {
       const url = getAddressExplorer(getDefaultExplorerView(account.currency), address);
       if (url) Linking.openURL(url);
     },

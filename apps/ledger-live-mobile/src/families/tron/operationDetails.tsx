@@ -87,7 +87,7 @@ function OperationDetailsVotes({ votes, account }: OperationsDetailsVotesProps) 
   const locale = useSelector(localeSelector);
   const formattedVotes = formatVotes(votes, sp);
   const redirectAddressCreator = useCallback(
-    address => () => {
+    (address: string) => () => {
       const url = getAddressExplorer(getDefaultExplorerView(account.currency), address);
       if (url) Linking.openURL(url);
     },

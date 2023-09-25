@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { Flex } from "@ledgerhq/native-ui";
-import { WebView } from "react-native-webview";
+import { WebView, WebViewMessageEvent } from "react-native-webview";
 import VersionNumber from "react-native-version-number";
 import { Platform } from "react-native";
 import styled from "styled-components/native";
@@ -81,7 +81,7 @@ const DisappointedForm = ({ setStep }: Props) => {
     });
   }, [ratingsFeatureParams, ratingsHappyMoment?.route_name]);
   const onMessage = useCallback(
-    event => {
+    (event: WebViewMessageEvent) => {
       const { data } = event.nativeEvent;
 
       if (data === "form-submit") {

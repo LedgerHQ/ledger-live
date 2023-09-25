@@ -8,6 +8,7 @@ import Form from "./Form";
 
 import Enjoy from "./Enjoy";
 import DisappointedDone from "./DisappointedDone";
+import { LayoutChangeEvent } from "react-native";
 
 const eventNameByPage: Record<string, string> = {
   form: "NPS Step 1 Rating",
@@ -40,7 +41,7 @@ const RatingsModal = () => {
    */
   const sharedHeight = useSharedValue<number | null>(null);
   const onLayout = useCallback(
-    ({ nativeEvent: { layout } }) => {
+    ({ nativeEvent: { layout } }: LayoutChangeEvent) => {
       sharedHeight.value = withTiming(layout.height, { duration: 200 });
     },
     [sharedHeight],

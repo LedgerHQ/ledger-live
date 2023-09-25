@@ -103,7 +103,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
     });
   }, [navigation, transaction, route.params]);
   const onChangeText = useCallback(
-    recipient => {
+    (recipient: string) => {
       if (!account) return;
       const bridge = getAccountBridge(account, parentAccount);
       setTransaction(
@@ -116,8 +116,6 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
     [account, parentAccount, setTransaction, transaction, setValue],
   );
 
-  // FIXME: PROP IS NOT USED. REMOVE ?
-  // const clear = useCallback(() => onChangeText(""), [onChangeText]);
   const [bridgeErr, setBridgeErr] = useState(bridgeError);
   useEffect(() => setBridgeErr(bridgeError), [bridgeError]);
   invariant(account, "account is needed ");

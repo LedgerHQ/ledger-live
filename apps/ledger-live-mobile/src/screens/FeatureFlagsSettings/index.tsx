@@ -59,7 +59,7 @@ export default function DebugFeatureFlags() {
     return featureKeys;
   }, [isFeature, searchInputTrimmed]);
 
-  const handleSearch = useCallback(value => {
+  const handleSearch = useCallback((value: string) => {
     setSearchInput(value);
   }, []);
 
@@ -135,7 +135,7 @@ export default function DebugFeatureFlags() {
   const featureFlagsBannerVisible = useSelector(featureFlagsBannerVisibleSelector);
   const dispatch = useDispatch();
   const setFeatureFlagBannerVisible = useCallback(
-    newVal => {
+    (newVal: boolean) => {
       dispatch(setFeatureFlagsBannerVisible(newVal));
     },
     [dispatch],

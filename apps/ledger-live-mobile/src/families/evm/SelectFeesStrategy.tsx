@@ -31,7 +31,7 @@ import TachometerSlow from "../../icons/TachometerSlow";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 import { sharedSwapTracking } from "../../screens/Swap/utils";
 
-type StrategyWithCustom = Strategy | "custom";
+export type StrategyWithCustom = Strategy | "custom";
 
 type Props = {
   gasOptions: GasOptions;

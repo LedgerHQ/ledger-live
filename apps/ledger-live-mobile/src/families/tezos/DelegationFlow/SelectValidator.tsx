@@ -8,6 +8,7 @@ import {
   Platform,
   Linking,
   KeyboardEventListener,
+  ListRenderItem,
 } from "react-native";
 import { useSelector } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -176,7 +177,7 @@ export default function SelectValidator({ navigation, route }: Props) {
   }
 
   const onChangeText = useCallback(
-    recipient => {
+    (recipient: string) => {
       const bridge = getAccountBridge(account, parentAccount);
       setTransaction(
         bridge.updateTransaction(transaction, {
@@ -220,7 +221,7 @@ export default function SelectValidator({ navigation, route }: Props) {
     },
     [account, parentAccount, route.params, navigation, status],
   );
-  const renderItem = useCallback(
+  const renderItem: ListRenderItem<Baker> = useCallback(
     ({ item }) => <BakerRow baker={item} onPress={onItemPress} />,
     [onItemPress],
   );

@@ -10,7 +10,7 @@ import BigNumber from "bignumber.js";
 import React, { useCallback, useEffect, useState } from "react";
 import { ScreenName } from "../../const";
 import { EvmNetworkFeeInfo } from "./EvmNetworkFeesInfo";
-import SelectFeesStrategy from "./SelectFeesStrategy";
+import SelectFeesStrategy, { StrategyWithCustom } from "./SelectFeesStrategy";
 import { SendRowsFeeProps as Props } from "./types";
 
 const getCustomStrategy = (transaction: Transaction): BigNumber | null => {
@@ -65,7 +65,7 @@ export default function EvmFeesStrategy({
   }, [transaction, setCustomStrategy]);
 
   const onFeesSelected = useCallback(
-    ({ feesStrategy }) => {
+    ({ feesStrategy }: { feesStrategy: StrategyWithCustom }) => {
       setTransaction(
         bridge.updateTransaction(transaction, {
           feesStrategy,
