@@ -132,12 +132,6 @@ jobs:
           fetch-depth: 0
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
-      # - uses: actions/setup-python@v4
-      #   with:
-      #     python-version: "3.10"
-      # - uses: ruby/setup-ruby@v1
-      #   with:
-      #     ruby-version: 2.6
       - name: TurboRepo local caching server
         id: turborepo-cache-server
         uses: ./tools/actions/turborepo-s3-cache
@@ -195,9 +189,6 @@ jobs:
           fetch-depth: 0
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
-      # - uses: actions/setup-python@v4
-      #   with:
-      #     python-version: "3.10"
       - uses: ruby/setup-ruby@v1
         if: ${{ matrix.os == 'macos-latest' }}
         with:
@@ -252,12 +243,6 @@ jobs:
           fetch-depth: 0
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
-      # - uses: actions/setup-python@v4
-      #   with:
-      #     python-version: "3.10"
-      # - uses: ruby/setup-ruby@v1
-      #   with:
-      #     ruby-version: 2.6
       - name: TurboRepo local caching server
         id: turborepo-cache-server
         uses: ./tools/actions/turborepo-s3-cache
