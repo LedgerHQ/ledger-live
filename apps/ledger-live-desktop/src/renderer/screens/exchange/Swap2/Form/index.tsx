@@ -19,7 +19,6 @@ import { context } from "~/renderer/drawers/Provider";
 import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import { trackSwapError, useGetSwapTrackingProperties } from "../utils/index";
 import ExchangeDrawer from "./ExchangeDrawer/index";
-import FormLoading from "./FormLoading";
 import SwapFormSelectors from "./FormSelectors";
 import SwapFormSummary from "./FormSummary";
 import SwapFormRates from "./FormRates";
@@ -32,7 +31,6 @@ import { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { SWAP_RATES_TIMEOUT } from "../../config";
-import { getAvailableProviders } from "@ledgerhq/live-common/exchange/swap/index";
 
 const Wrapper = styled(Box).attrs({
   p: 20,
@@ -62,8 +60,6 @@ const SwapForm = () => {
   const accounts = useSelector(shallowAccountsSelector);
   const exchangeRate = useSelector(rateSelector);
   const walletApiPartnerList = useFeature("swapWalletApiPartnerList");
-
-  const storedProviders = getAvailableProviders();
 
   const setExchangeRate = useCallback(
     rate => {
@@ -313,60 +309,56 @@ const SwapForm = () => {
     swapTransaction.toggleMax();
   };
 
-  if (storedProviders?.length) {
-    return (
-      <Wrapper>
-        <TrackPage category="Swap" name="Form" provider={provider} {...swapDefaultTrack} />
-        <SwapFormSelectors
-          fromAccount={sourceAccount}
-          toAccount={swapTransaction.swap.to.account}
-          fromAmount={swapTransaction.swap.from.amount}
-          toCurrency={targetCurrency}
-          toAmount={exchangeRate?.toAmount}
-          setFromAccount={setFromAccount}
-          setFromAmount={setFromAmount}
-          setToCurrency={setToCurrency}
-          isMaxEnabled={swapTransaction.swap.isMaxEnabled}
-          toggleMax={toggleMax}
-          fromAmountError={swapError}
-          fromAmountWarning={swapWarning}
-          isSwapReversable={swapTransaction.swap.isSwapReversable}
-          reverseSwap={swapTransaction.reverseSwap}
-          provider={provider}
-          loadingRates={swapTransaction.swap.rates.status === "loading"}
-          isSendMaxLoading={swapTransaction.swap.isMaxLoading}
-          updateSelectedRate={swapTransaction.swap.updateSelectedRate}
-        />
-        {pageState === "empty" && <EmptyState />}
-        {pageState === "loading" && <LoadingState />}
-        {pageState === "initial" && (
-          <Hide>
-            <LoadingState />
-          </Hide>
-        )}
+  return (
+    <Wrapper>
+      <TrackPage category="Swap" name="Form" provider={provider} {...swapDefaultTrack} />
+      <SwapFormSelectors
+        fromAccount={sourceAccount}
+        toAccount={swapTransaction.swap.to.account}
+        fromAmount={swapTransaction.swap.from.amount}
+        toCurrency={targetCurrency}
+        toAmount={exchangeRate?.toAmount}
+        setFromAccount={setFromAccount}
+        setFromAmount={setFromAmount}
+        setToCurrency={setToCurrency}
+        isMaxEnabled={swapTransaction.swap.isMaxEnabled}
+        toggleMax={toggleMax}
+        fromAmountError={swapError}
+        fromAmountWarning={swapWarning}
+        isSwapReversable={swapTransaction.swap.isSwapReversable}
+        reverseSwap={swapTransaction.reverseSwap}
+        provider={provider}
+        loadingRates={swapTransaction.swap.rates.status === "loading"}
+        isSendMaxLoading={swapTransaction.swap.isMaxLoading}
+        updateSelectedRate={swapTransaction.swap.updateSelectedRate}
+      />
+      {pageState === "empty" && <EmptyState />}
+      {pageState === "loading" && <LoadingState />}
+      {pageState === "initial" && (
+        <Hide>
+          <LoadingState />
+        </Hide>
+      )}
 
-        {pageState === "loaded" && (
-          <>
-            <SwapFormSummary swapTransaction={swapTransaction} provider={provider} />
-            <SwapFormRates
-              swap={swapTransaction.swap}
-              provider={provider}
-              refreshTime={refreshTime}
-              countdown={!pauseRefreshing}
-            />
-          </>
-        )}
+      {pageState === "loaded" && (
+        <>
+          <SwapFormSummary swapTransaction={swapTransaction} provider={provider} />
+          <SwapFormRates
+            swap={swapTransaction.swap}
+            provider={provider}
+            refreshTime={refreshTime}
+            countdown={!pauseRefreshing}
+          />
+        </>
+      )}
 
-        <Box>
-          <Button primary disabled={!isSwapReady} onClick={onSubmit} data-test-id="exchange-button">
-            {t("common.exchange")}
-          </Button>
-        </Box>
-      </Wrapper>
-    );
-  }
-
-  return <FormLoading />;
+      <Box>
+        <Button primary disabled={!isSwapReady} onClick={onSubmit} data-test-id="exchange-button">
+          {t("common.exchange")}
+        </Button>
+      </Box>
+    </Wrapper>
+  );
 };
 
 export default SwapForm;
