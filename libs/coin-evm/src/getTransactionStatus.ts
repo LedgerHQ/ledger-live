@@ -120,11 +120,21 @@ const validateGas = (
   const warnings: ValidationIssues = {};
 
   // Gas Limit
-  if (gasLimit.isZero()) {
-    errors.gasLimit = new FeeNotLoaded(); // "Could not load fee rates. Please set manual fees"
-  } else if (gasLimit.isLessThan(DEFAULT_GAS_LIMIT)) {
-    errors.gasLimit = new GasLessThanEstimate(); // "This may be too low. Please increase"
+  // TODO: add tests for customGasLimit checks
+  if (customGasLimit) {
+    if (customGasLimit.isZero()) {
+      errors.gasLimit = new FeeNotLoaded(); // "Could not load fee rates. Please set manual fees"
+    } else if (customGasLimit.isLessThan(DEFAULT_GAS_LIMIT)) {
+      errors.gasLimit = new GasLessThanEstimate(); // "This may be too low. Please increase"
+    }
+  } else {
+    if (gasLimit.isZero()) {
+      errors.gasLimit = new FeeNotLoaded(); // "Could not load fee rates. Please set manual fees"
+    } else if (gasLimit.isLessThan(DEFAULT_GAS_LIMIT)) {
+      errors.gasLimit = new GasLessThanEstimate(); // "This may be too low. Please increase"
+    }
   }
+
   if (customGasLimit && customGasLimit.isLessThan(gasLimit)) {
     warnings.gasLimit = new GasLessThanEstimate(); // "This may be too low. Please increase"
   }
