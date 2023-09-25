@@ -3,7 +3,7 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import { Image } from "react-native";
 import { useTranslation } from "react-i18next";
 
-const graphPlaceholderSource = require("../../../assets/images/graph/graphPlaceholder.png"); // eslint-disable-line @typescript-eslint/no-var-requires
+import graphPlaceholderSource from "../../../assets/images/graph/graphPlaceholder.png";
 
 export const GraphPlaceholder = () => {
   const { t } = useTranslation();
