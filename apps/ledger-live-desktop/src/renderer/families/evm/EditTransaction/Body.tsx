@@ -12,7 +12,7 @@ import {
   hasMinimumFundsToSpeedUp,
 } from "@ledgerhq/live-common/families/evm/getUpdateTransactionPatch";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { isOldestPendingEditableOperation } from "@ledgerhq/live-common/operation";
+import { isOldestPendingOperation } from "@ledgerhq/live-common/operation";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { TFunction } from "i18next";
@@ -215,9 +215,9 @@ const Body = ({
     const setTransactionHasBeenValidatedCallback = async () => {
       const tx = await getTransactionByHash(mainAccount.currency, params.transactionHash);
       if (tx?.confirmations) {
-        setTransactionHasBeenValidated(true);
         // stop polling as soon as we have a confirmation
         clearInterval(intervalId);
+        setTransactionHasBeenValidated(true);
       }
     };
 
@@ -237,7 +237,8 @@ const Body = ({
   const haveFundToCancel = hasMinimumFundsToCancel({ transactionToUpdate, mainAccount });
   const haveFundToSpeedup = hasMinimumFundsToSpeedUp({ transactionToUpdate, mainAccount, account });
 
-  const isOldestEditableOperation = isOldestPendingEditableOperation(
+  // if we are at this step (i.e: in this screen) it means the transaction is editable
+  const isOldestEditableOperation = isOldestPendingOperation(
     mainAccount,
     transactionToUpdate.nonce,
   );
