@@ -7,7 +7,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { ledgerValidatorAddress } from "./bakers.whitelist-default";
 import { API_BAKER, Baker, Delegation } from "./types";
 
-const cache = makeLRUCache(
+export const cache = makeLRUCache(
   async (): Promise<Baker[]> => {
     const bakers: Baker[] = [];
     const TEZOS_API_BASE_URL = getEnv("API_TEZOS_BAKER");

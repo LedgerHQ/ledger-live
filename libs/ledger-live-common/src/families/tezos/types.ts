@@ -99,8 +99,8 @@ export type API_BAKER = {
   serviceHealth: string;
   payoutTiming: string;
   payoutAccuracy: string;
-  audit: string;
-  insuranceCoveragenumber: number;
+  audit?: string;
+  insuranceCoverage: number;
 };
 
 export type TezosAccount = Account & { tezosResources: TezosResources };
