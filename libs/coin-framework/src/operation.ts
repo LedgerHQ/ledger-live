@@ -253,6 +253,17 @@ export const isEditableOperation = (account: Account, operation: Operation): boo
     return false;
   }
 
+  // For UX reasons, we don't allow to edit the FEES operation associated to a
+  // token or nft operation
+  // If the operation has subOperations, it's a token operation
+  // If the operation has nftOperations, it's an nft operation
+  if (
+    operation.type === "FEES" &&
+    (operation.subOperations?.length || operation.nftOperations?.length)
+  ) {
+    return false;
+  }
+
   return operation.blockHeight === null && !!operation.transactionRaw;
 };
 
@@ -262,7 +273,7 @@ export const isEditableOperation = (account: Account, operation: Operation): boo
  * @param nonce The nouce of the transaction to edit
  * @returns true if the nonce corresponds to the oldest pending operation
  */
-export const isOldestPendingEditableOperation = (account: Account, nonce: number): boolean => {
+export const isOldestPendingOperation = (account: Account, nonce: number): boolean => {
   /**
    * The selected pending operation is the oldest if there is no pending
    * operation with a lower transactionSequenceNumber
@@ -270,7 +281,7 @@ export const isOldestPendingEditableOperation = (account: Account, nonce: number
   return !account.pendingOperations.some(pendingOp => {
     invariant(pendingOp.transactionSequenceNumber, "transactionSequenceNumber required");
 
-    return isEditableOperation(account, pendingOp) && pendingOp.transactionSequenceNumber < nonce;
+    return pendingOp.transactionSequenceNumber < nonce;
   });
 };
 
