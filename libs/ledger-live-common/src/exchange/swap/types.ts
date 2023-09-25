@@ -36,7 +36,7 @@ export type ExchangeRate = {
 
 type ExchangeProviderType = "CEX" | "DEX";
 
-type ExchangeRateV5CommonRaw = {
+type ExchangeRateCommonRaw = {
   provider: string;
   providerType: ExchangeProviderType;
   from: string;
@@ -51,21 +51,21 @@ type ExchangeRateV5CommonRaw = {
   providerURL?: string;
 };
 
-type ExchangeRateV5FloatRateRaw = ExchangeRateV5CommonRaw & {
+type ExchangeRateFloatRateRaw = ExchangeRateCommonRaw & {
   tradeMethod: "float";
   rateId?: string;
   minAmountFrom: string;
   maxAmountFrom?: string;
 };
 
-type ExchangeRateV5FixedRateRaw = ExchangeRateV5CommonRaw & {
+type ExchangeRateFixedRateRaw = ExchangeRateCommonRaw & {
   tradeMethod: "fixed";
   rateId: string;
   expirationTime: string;
   rate: string;
 };
 
-type ExchangeRateV5ErrorCommon = {
+type ExchangeRateErrorCommon = {
   status: "error";
   tradeMethod: TradeMethod;
   from: string;
@@ -74,23 +74,23 @@ type ExchangeRateV5ErrorCommon = {
   provider: string;
 };
 
-type ExchangeRateV5ErrorDefault = ExchangeRateV5ErrorCommon & {
+type ExchangeRateErrorDefault = ExchangeRateErrorCommon & {
   errorCode: number;
   errorMessage: string;
 };
 
-type ExchangeRateV5ErrorMinMaxAmount = ExchangeRateV5ErrorCommon & {
+type ExchangeRateErrorMinMaxAmount = ExchangeRateErrorCommon & {
   amountRequested: string;
   minAmountFrom: string;
   maxAmountFrom: string;
 };
 
-export type ExchangeRateV5Errors = ExchangeRateV5ErrorDefault | ExchangeRateV5ErrorMinMaxAmount;
+export type ExchangeRateErrors = ExchangeRateErrorDefault | ExchangeRateErrorMinMaxAmount;
 
-export type ExchangeRateV5ResponseRaw =
-  | ExchangeRateV5FloatRateRaw
-  | ExchangeRateV5FixedRateRaw
-  | ExchangeRateV5Errors;
+export type ExchangeRateResponseRaw =
+  | ExchangeRateFloatRateRaw
+  | ExchangeRateFixedRateRaw
+  | ExchangeRateErrors;
 
 export type TradeMethod = "fixed" | "float";
 

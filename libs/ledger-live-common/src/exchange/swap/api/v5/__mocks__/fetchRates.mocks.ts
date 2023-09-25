@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { ExchangeRateV5ResponseRaw } from "../../../types";
+import { ExchangeRateResponseRaw } from "../../../types";
 import { SwapExchangeRateAmountTooHigh, SwapExchangeRateAmountTooLow } from "../../../../../errors";
 
 const MIN_AMOUNT_FROM = new BigNumber(0.0001);
@@ -8,7 +8,7 @@ const MAX_AMOUNT_FROM = new BigNumber(1000);
 export const fetchRatesMock = (
   amountFrom: string,
   fromCurrencyID?: string,
-): ExchangeRateV5ResponseRaw[] => {
+): ExchangeRateResponseRaw[] => {
   const bigNumberAmountFrom = BigNumber(amountFrom);
   if (bigNumberAmountFrom.lte(MIN_AMOUNT_FROM)) {
     throw new SwapExchangeRateAmountTooLow(undefined, {

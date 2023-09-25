@@ -2,7 +2,7 @@ import network from "@ledgerhq/live-network/network";
 import { DEFAULT_SWAP_TIMEOUT_MS } from "../../const/timeout";
 import axios from "axios";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
-import { ExchangeRate, ExchangeRateV5ResponseRaw } from "../../types";
+import { ExchangeRate, ExchangeRateResponseRaw } from "../../types";
 import { Unit } from "@ledgerhq/live-app-sdk";
 import { SwapGenericAPIError } from "../../../../errors";
 import { enrichRatesResponse } from "../../utils/enrichRatesResponse";
@@ -42,7 +42,7 @@ export async function fetchRates({
   };
 
   try {
-    const { data } = await network<ExchangeRateV5ResponseRaw[]>({
+    const { data } = await network<ExchangeRateResponseRaw[]>({
       method: "POST",
       url: url.toString(),
       timeout: DEFAULT_SWAP_TIMEOUT_MS,

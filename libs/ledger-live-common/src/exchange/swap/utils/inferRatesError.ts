@@ -7,10 +7,10 @@ import {
   SwapGenericAPIError,
 } from "../../../errors";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
-import { ExchangeRateV5Errors } from "../types";
+import { ExchangeRateErrors } from "../types";
 import { Unit } from "@ledgerhq/types-cryptoassets";
 
-export function inferError(response: ExchangeRateV5Errors, unitFrom: Unit): Error {
+export function inferError(response: ExchangeRateErrors, unitFrom: Unit): Error {
   const isAMinMaxError =
     "minAmountFrom" in response &&
     "maxAmountFrom" in response &&
