@@ -2,7 +2,7 @@ import network from "@ledgerhq/live-network/network";
 import { mockPostSwapAccepted, mockPostSwapCancelled } from "./mock";
 import type { PostSwapAccepted, PostSwapCancelled } from "./types";
 import { isIntegrationTestEnv } from "./utils/isIntegrationTestEnv";
-import { getEnv } from "@ledgerhq/live-env";
+import { getSwapAPIBaseURL } from ".";
 
 export const postSwapAccepted: PostSwapAccepted = async ({
   provider,
@@ -22,7 +22,7 @@ export const postSwapAccepted: PostSwapAccepted = async ({
   try {
     await network({
       method: "POST",
-      url: `${getEnv("SWAP_API_BASE_V5")}/swap/accepted`,
+      url: `${getSwapAPIBaseURL()}/swap/accepted`,
       data: { provider, swapId, transactionId },
     });
   } catch (error) {
@@ -46,7 +46,7 @@ export const postSwapCancelled: PostSwapCancelled = async ({ provider, swapId = 
   try {
     await network({
       method: "POST",
-      url: `${getEnv("SWAP_API_BASE_V5")}/swap/cancelled`,
+      url: `${getSwapAPIBaseURL()}/swap/cancelled`,
       data: { provider, swapId },
     });
   } catch (error) {

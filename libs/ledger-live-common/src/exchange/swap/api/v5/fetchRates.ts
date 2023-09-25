@@ -2,13 +2,13 @@ import network from "@ledgerhq/live-network/network";
 import { DEFAULT_SWAP_TIMEOUT_MS } from "../../const/timeout";
 import axios from "axios";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
-import { getEnv } from "@ledgerhq/live-env";
 import { ExchangeRate, ExchangeRateV5ResponseRaw } from "../../types";
 import { Unit } from "@ledgerhq/live-app-sdk";
 import { SwapGenericAPIError } from "../../../../errors";
 import { enrichRatesResponse } from "../../utils/enrichRatesResponse";
 import { isIntegrationTestEnv } from "../../utils/isIntegrationTestEnv";
 import { fetchRatesMock } from "./__mocks__/fetchRates.mocks";
+import { getSwapAPIBaseURL } from "../..";
 
 type Props = {
   providers: Array<string>;
@@ -33,7 +33,7 @@ export async function fetchRates({
     );
   }
 
-  const url = new URL(`${getEnv("SWAP_API_BASE_V5")}/rate`);
+  const url = new URL(`${getSwapAPIBaseURL()}/rate`);
   const requestBody = {
     from: currencyFrom,
     to: toCurrencyId,
