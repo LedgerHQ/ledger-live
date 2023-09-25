@@ -6,7 +6,8 @@ import {
   getAccountName,
   getAccountUnit,
 } from "@ledgerhq/live-common/account/index";
-import { useBaker, useDelegation, Baker } from "@ledgerhq/live-common/families/tezos/bakers";
+import { useBaker, useDelegation } from "@ledgerhq/live-common/families/tezos/bakers";
+import { Baker } from "@ledgerhq/live-common/families/tezos/types";
 import { Trans } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { openURL } from "~/renderer/linking";
