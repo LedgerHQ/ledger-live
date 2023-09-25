@@ -4,7 +4,6 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { Button, Flex } from "@ledgerhq/native-ui";
 import { OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
 import { useSwapTransaction, usePageState } from "@ledgerhq/live-common/exchange/swap/hooks/index";
-import { getCustomDappUrl } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -224,8 +223,6 @@ export function SwapForm({
         providerURL?: string;
       };
 
-      const customDappUrl = getCustomDappUrl(customParams);
-
       const getAccountId = ({
         accountId,
         provider,
@@ -253,7 +250,7 @@ export function SwapForm({
         platform: getProviderName(provider).toLowerCase(),
         name: getProviderName(provider),
         accountId,
-        customDappURL: customDappUrl,
+        customDappURL: providerURL,
       });
     } else {
       setConfirmed(true);
