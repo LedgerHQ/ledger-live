@@ -3,11 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Button, Flex } from "@ledgerhq/native-ui";
 import { ExchangeRate, OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
-import {
-  useSwapTransaction,
-  useSwapProviders,
-  usePageState,
-} from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import { useSwapTransaction, usePageState } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { getCustomDappUrl } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useDispatch, useSelector } from "react-redux";
