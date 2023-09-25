@@ -3,7 +3,7 @@ import {
   useLearnMoreURI,
   useAlreadySubscribedURI,
 } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 import { Linking } from "react-native";
 import { track } from "../../../analytics";
 import { urls } from "../../../config/urls";
@@ -14,15 +14,15 @@ export function useProtect() {
   const learnMoreURI = useLearnMoreURI(servicesConfig);
   const alreadySubscribedURI = useAlreadySubscribedURI(servicesConfig);
 
-  const onLearnMore = useCallback(() => {
+  const onLearnMore = () => {
     const url = `${learnMoreURI}&source=${urls.recoverSources.myLedger}`;
     Linking.canOpenURL(url).then(() => Linking.openURL(url));
-  }, [learnMoreURI]);
+  };
 
-  const onAlreadySubscribe = useCallback(() => {
+  const onAlreadySubscribe = () => {
     const url = `${alreadySubscribedURI}&source=${urls.recoverSources.myLedger}`;
     Linking.canOpenURL(url).then(() => Linking.openURL(url));
-  }, [alreadySubscribedURI]);
+  };
 
   const onClickCard = () => {
     onLearnMore();
