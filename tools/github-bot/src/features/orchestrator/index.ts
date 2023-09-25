@@ -29,6 +29,7 @@ export function orchestrator(app: Probot) {
    * When a workflow is requested for the first time:
    *  - Create the related check run
    */
+  // @ts-expect-error ts pls
   app.on("workflow_run.requested", async (context): Promise<void> => {
     const { payload, octokit } = context;
 
