@@ -27,7 +27,7 @@ export function useAPI<T, P extends Record<PropertyKey, unknown> | undefined>({
   queryFn,
   queryProps = {},
   enabled = true,
-  staleTimeout = 60000,
+  staleTimeout = 5000,
   onSuccess,
   onError,
 }: Props<T, P>): UseAsyncReturn<T> {
