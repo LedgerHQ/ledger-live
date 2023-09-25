@@ -100,7 +100,7 @@ export class SwapPage {
   }
 
   async waitForCurrenciesToExist() {
-    await this.page.waitForTimeout(500);
+    await this.page.getByRole("option");
   }
 
   async filterDestinationCurrencyDropdown(filter: string) {
