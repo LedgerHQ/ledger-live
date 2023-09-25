@@ -91,7 +91,7 @@ jobs:
       - name: Test iOS app
         id: detox
         run: |
-          pnpm mobile e2e:test -c ios.sim.release --loglevel error --record-logs all --take-screenshots all --detectOpenHandles --headless
+          pnpm mobile e2e:test -c ios.sim.release --loglevel error --record-logs all --take-screenshots all --headless  --cleanup
       - name: Delete iOS simulator
         if: always()
         run: |
@@ -199,7 +199,7 @@ jobs:
           heap-size: 512M
           disk-size: 4096M
           disable-linux-hw-accel: false
-          script: pnpm mobile e2e:test -c android.emu.release --loglevel error --record-logs all --take-screenshots all --record-videos failing --forceExit --detectOpenHandles --headless
+          script: pnpm mobile e2e:test -c android.emu.release --loglevel error --record-logs all --take-screenshots all --record-videos failing --forceExit --headless  --cleanup
       - name: Upload test artifacts
         if: always()
         uses: actions/upload-artifact@v2

@@ -49,7 +49,7 @@
     "lint": "eslint src e2e --ext .js,.json,.ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "typecheck": "tsc --noEmit",
-    "test:jest": "jest",
+    "test:jest": "jest --maxWorkers=50%",
     "test:env": "node ./scripts/mobile-env-md.mjs",
     "test": "pnpm test:jest && pnpm test:env",
     "sync-locales": "./scripts/sync-locales.sh",
