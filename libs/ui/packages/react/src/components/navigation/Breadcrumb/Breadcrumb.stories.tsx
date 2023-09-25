@@ -77,7 +77,7 @@ const Routes = ({
 export const Breadcrumb = (args: Props): JSX.Element => {
   const [route, setRoute] = useState("apps/swap/confirm");
 
-  const onChange = useCallback(value => setRoute(value.join("/")), [setRoute]);
+  const onChange = useCallback((value: string[]) => setRoute(value.join("/")), [setRoute]);
   const segments = useMemo(() => {
     const paths = route.split("/");
 
