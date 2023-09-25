@@ -19,7 +19,7 @@ export function SelectFees({ navigation, route }: SelectFeesParamList) {
   const isFixed = params.rate?.tradeMethod === "fixed";
 
   const onSetTransaction = useCallback(
-    updatedTransaction => {
+    (updatedTransaction: NonNullable<typeof transaction>) => {
       // @ts-expect-error navigation type is only partially declared
       navigation.navigate(ScreenName.SwapForm, {
         transaction: updatedTransaction,

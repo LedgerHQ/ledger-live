@@ -43,7 +43,7 @@ const ImageCropper = React.forwardRef<CropView, Props>((props, ref) => {
   const { t } = useTranslation();
 
   const handleImageCrop = useCallback(
-    async res => {
+    async (res: { uri: string; width: number; height: number }) => {
       const { height, width, uri: fileUri } = res;
       if (!fileUri) {
         onError(new ImageCropError());

@@ -114,6 +114,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
   const subAccounts = mainAccount.subAccounts;
   const options = listTokensForCryptoCurrency(mainAccount.currency);
   const [infoModalOpen, setInfoModalOpen] = useState(false);
+  // @ts-expect-error token is a string and setInfoModalOpen expect a boolean, whut ?
   const openModal = useCallback(token => setInfoModalOpen(token), [setInfoModalOpen]);
   const closeModal = useCallback(() => setInfoModalOpen(false), [setInfoModalOpen]);
   const renderList = useCallback(

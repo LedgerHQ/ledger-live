@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Button, Flex } from "@ledgerhq/native-ui";
-import { OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
+import { ExchangeRate, OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
 import { useSwapTransaction, usePageState } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useDispatch, useSelector } from "react-redux";
@@ -57,7 +57,7 @@ export function SwapForm({
   const [confirmed, setConfirmed] = useState(false);
 
   const setExchangeRate = useCallback(
-    rate => {
+    (rate?: ExchangeRate) => {
       dispatch(updateRateAction(rate));
     },
     [dispatch],

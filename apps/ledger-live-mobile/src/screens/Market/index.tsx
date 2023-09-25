@@ -13,8 +13,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import { useMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
-import { FlatList, RefreshControl, TouchableOpacity } from "react-native";
-import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
+import { FlatList, ListRenderItem, RefreshControl, TouchableOpacity } from "react-native";
+import { CurrencyData, MarketListRequestParams } from "@ledgerhq/live-common/market/types";
 import { useRoute, useFocusEffect } from "@react-navigation/native";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -315,7 +315,7 @@ export default function Market({ navigation }: NavigationProps) {
     }
   }, [initialTop100, refresh]);
 
-  const renderItems = useCallback(
+  const renderItems: ListRenderItem<CurrencyData> = useCallback(
     ({ item, index }) => (
       <TouchableOpacity
         onPress={() => {

@@ -45,7 +45,7 @@ export default function VerifyAccount({ navigation, route }: NavigationProps) {
     navigation.pop();
   }, [navigation]);
   const onConfirm = useCallback(
-    (confirmed, error) => {
+    (confirmed: boolean, error?: Error) => {
       if (confirmed) {
         onSuccess(account);
       } else if (error) {

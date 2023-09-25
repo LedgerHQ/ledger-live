@@ -53,7 +53,7 @@ export default function DebugEnv() {
     setResetIndex(resetIndex + 1);
   }, [value, resetIndex]);
 
-  const onPress = useCallback(env => {
+  const onPress = useCallback((env: string) => {
     Clipboard.setString(env);
   }, []);
 

@@ -9,7 +9,7 @@ import { useFeesStrategy } from "@ledgerhq/live-common/families/bitcoin/react";
 import { CompositeScreenProps } from "@react-navigation/native";
 import BigNumber from "bignumber.js";
 import { ScreenName } from "../../const";
-import SelectFeesStrategy from "../../components/SelectFeesStrategy";
+import SelectFeesStrategy, { SelectFeeStrategy } from "../../components/SelectFeesStrategy";
 import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import type { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
 import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
@@ -56,7 +56,7 @@ export default function BitcoinSendRowsFee({
     [defaultStrategies, transaction],
   );
   const onFeesSelected = useCallback(
-    ({ amount, label }) => {
+    ({ amount, label }: SelectFeeStrategy) => {
       const bridge = getAccountBridge(account, parentAccount);
       setTransaction(
         bridge.updateTransaction(transaction, {

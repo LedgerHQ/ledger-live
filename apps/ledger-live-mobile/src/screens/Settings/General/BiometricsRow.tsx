@@ -41,7 +41,7 @@ export default function BiometricsRow({ iconLeft }: Props) {
   }, [dispatch, biometricsEnabled]);
 
   const onError = useCallback(
-    error => {
+    (error?: Error) => {
       setValidationPending(false);
       setBiometricsEnabled((val: boolean) => !val);
       Alert.alert(t("auth.failed.title"), `${t("auth.failed.denied")}\n${String(error || "")}`);

@@ -66,6 +66,7 @@ function ConnectDevice({
         // @ts-expect-error Wrong types?
         request={request}
         device={route.params.device}
+        // @ts-expect-error onResult dissonance
         onResult={handleTx}
         onSelectDeviceLink={() => navigateToSelectDevice(navigation, route)}
       />

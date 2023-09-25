@@ -18,6 +18,7 @@ import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/
 import type {
   PolkadotAccount,
   PolkadotNomination,
+  PolkadotUnlocking,
   PolkadotValidator,
 } from "@ledgerhq/live-common/families/polkadot/types";
 
@@ -227,7 +228,7 @@ export default function Nominations(props: Props) {
   const earnRewardsEnabled = !electionOpen && !hasBondedBalance && !hasPendingBondOperation;
 
   const renderNomination = useCallback(
-    ({ nomination, validator }, i, isLast) => (
+    ({ nomination, validator }: Section, i: number, isLast: boolean) => (
       <View key={nomination.address}>
         <NominationRow
           nomination={nomination}
@@ -242,7 +243,7 @@ export default function Nominations(props: Props) {
   );
 
   const renderShowInactiveNominations = useCallback(
-    collapsed =>
+    (collapsed: boolean) =>
       collapsed
         ? t("polkadot.nomination.showInactiveNominations", {
             count: mappedNominations.collapsed.length,
@@ -252,7 +253,7 @@ export default function Nominations(props: Props) {
   );
 
   const renderUnlocking = useCallback(
-    (unlocking, i, isLast) => (
+    (unlocking: PolkadotUnlocking, i: number, isLast: boolean) => (
       <View key={`unlocking_${i}`}>
         <UnlockingRow
           amount={unlocking.amount}
@@ -268,7 +269,7 @@ export default function Nominations(props: Props) {
   );
 
   const renderShowAllUnlockings = useCallback(
-    collapsed =>
+    (collapsed: boolean) =>
       collapsed
         ? t("polkadot.nomination.showAllUnlockings", {
             count: mappedUnlockings.collapsed.length,

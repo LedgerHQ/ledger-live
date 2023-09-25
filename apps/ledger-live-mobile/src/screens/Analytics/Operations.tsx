@@ -3,7 +3,13 @@ import { SectionList, SectionListData, SectionListRenderItem } from "react-nativ
 import { Flex } from "@ledgerhq/native-ui";
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
-import { Account, AccountLikeArray, DailyOperationsSection, Operation } from "@ledgerhq/types-live";
+import {
+  Account,
+  AccountLike,
+  AccountLikeArray,
+  DailyOperationsSection,
+  Operation,
+} from "@ledgerhq/types-live";
 import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/account/index";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
 
@@ -55,7 +61,7 @@ export function Operations({ navigation, route }: Props) {
     filterTokenOperationsZeroAmountEnabledSelector,
   );
   const filterOperation = useCallback(
-    (operation, account) => {
+    (operation: Operation, account: AccountLike) => {
       // Remove operations linked to address poisoning
       const removeZeroAmountTokenOp =
         shouldFilterTokenOpsZeroAmount && isAddressPoisoningOperation(operation, account);

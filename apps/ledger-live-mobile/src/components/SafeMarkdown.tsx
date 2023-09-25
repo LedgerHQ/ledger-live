@@ -32,6 +32,7 @@ class SafeMarkdown extends PureComponent<
     }
 
     return (
+      // @ts-expect-error children is not on Markdown props
       <Markdown
         markdownStyles={{
           text: { ...markdownStyles.text, color: colors.darkBlue },

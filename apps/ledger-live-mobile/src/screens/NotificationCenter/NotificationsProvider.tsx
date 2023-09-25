@@ -74,7 +74,15 @@ export default function NotificationsProvider({ children }: Props) {
     [],
   );
   const onSave = useCallback(
-    ({ announcements, seenIds, lastUpdateTime }) =>
+    ({
+      announcements,
+      seenIds,
+      lastUpdateTime,
+    }: {
+      announcements: Announcement[];
+      seenIds: string[];
+      lastUpdateTime: number;
+    }) =>
       saveNotifications({
         announcements,
         seenIds,
@@ -108,7 +116,7 @@ export default function NotificationsProvider({ children }: Props) {
     },
     [pushToast, initDateRef],
   );
-  const onAnnouncementRead = useCallback(({ uuid, utm_campaign: utmCampaign }) => {
+  const onAnnouncementRead = useCallback(({ uuid, utm_campaign: utmCampaign }: Announcement) => {
     track("Announcement Viewed", {
       uuid,
       utm_campaign: utmCampaign,

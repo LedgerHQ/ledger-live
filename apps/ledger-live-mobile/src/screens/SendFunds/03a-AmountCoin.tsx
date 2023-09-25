@@ -74,7 +74,7 @@ export default function SendAmountCoin({ navigation, route }: Props) {
   }, [account, parentAccount, debouncedTransaction]);
   invariant(account, "account is needed");
   const onChange = useCallback(
-    amount => {
+    (amount: BigNumber) => {
       if (!amount.isNaN()) {
         if (!account) return;
         const bridge = getAccountBridge(account, parentAccount);

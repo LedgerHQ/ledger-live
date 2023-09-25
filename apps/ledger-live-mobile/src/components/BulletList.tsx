@@ -39,7 +39,7 @@ export class BulletItem extends PureComponent<{
   itemContainerStyle?: StyleProp<ViewStyle>;
   itemStyle?: StyleProp<ViewStyle>;
   itemTextStyle?: StyleProp<TextStyle>;
-  Bullet: React.ComponentType<unknown>;
+  Bullet: React.ComponentType<{ children: React.ReactNode }>;
 }> {
   static defaultProps = {
     Bullet,
@@ -106,7 +106,7 @@ export function BulletSmallDot() {
 class BulletList extends PureComponent<{
   list: React.ComponentProps<typeof BulletItem>["value"][];
   animated?: boolean;
-  Bullet: React.ComponentType<unknown>;
+  Bullet: React.ComponentType<{ children: React.ReactNode }>;
   itemContainerStyle?: React.ComponentProps<typeof BulletItem>["itemContainerStyle"];
   itemStyle?: React.ComponentProps<typeof BulletItem>["itemStyle"];
   style?: StyleProp<ViewStyle>;
