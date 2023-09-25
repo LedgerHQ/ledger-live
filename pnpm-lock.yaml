@@ -3287,13 +3287,10 @@ importers:
       events:
         specifier: ^3.3.0
         version: 3.3.0
-      rxjs7:
-        specifier: npm:rxjs@~7.8.1
-        version: /rxjs@7.8.1
+      rxjs:
+        specifier: ^7.8.1
+        version: 7.8.1
     devDependencies:
-      '@ledgerhq/logs':
-        specifier: workspace:^
-        version: link:../logs
       '@types/jest':
         specifier: ^29.5.0
         version: 29.5.0
