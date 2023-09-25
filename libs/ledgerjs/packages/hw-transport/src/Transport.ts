@@ -10,8 +10,8 @@ import {
 } from "@ledgerhq/errors";
 import { LocalTracer, TraceContext, LogType } from "@ledgerhq/logs";
 export { TransportError, TransportStatusError, StatusCodes, getAltStatusMessage };
-import { TimeoutError, firstValueFrom, from, throwError } from "rxjs7";
-import { catchError, finalize, map, tap, timeout } from "rxjs7/operators";
+import { TimeoutError, firstValueFrom, from, throwError } from "rxjs";
+import { catchError, finalize, map, tap, timeout } from "rxjs/operators";
 
 const DEFAULT_LOG_TYPE = "transport";
 

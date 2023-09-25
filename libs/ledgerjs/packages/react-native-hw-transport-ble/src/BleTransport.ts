@@ -319,9 +319,12 @@ async function open(
   }
 
   tracer.trace(`device.mtu=${device.mtu}`);
+
+  // Inits the observable that will emit received data from the device via BLE
   const notifyObservable = monitorCharacteristic(notifyC, context).pipe(
     catchError(e => {
       // LL-9033 fw 2.0.2 introduced this case, we silence the inner unhandled error.
+      // It will be handled when negotiating the MTU in `inferMTU` but will be ignored in other cases.
       const msg = String(e);
       return msg.includes("notify change failed")
         ? of(new PairingFailed(msg))
@@ -331,6 +334,8 @@ async function open(
       if (value instanceof PairingFailed) return;
       trace({ type: "ble-frame", message: `<= ${value.toString("hex")}`, context });
     }),
+    // Returns a new Observable that multicasts (shares) the original Observable.
+    // As long as there is at least one Subscriber this Observable will be subscribed and emitting data.
     share(),
   );
   const notif = notifyObservable.subscribe();
@@ -564,7 +569,8 @@ export default class BleTransport extends Transport {
   id: string;
   isConnected = true;
   mtuSize = 20;
-  notifyObservable: Observable<any>;
+  // Observable emitting data received from the device via BLE
+  notifyObservable: Observable<Buffer | Error>;
   notYetDisconnected = true;
   writeCharacteristic: Characteristic;
   writeCmdCharacteristic: Characteristic | undefined;
@@ -573,7 +579,7 @@ export default class BleTransport extends Transport {
     device: Device,
     writeCharacteristic: Characteristic,
     writeCmdCharacteristic: Characteristic | undefined,
-    notifyObservable: Observable<any>,
+    notifyObservable: Observable<Buffer | Error>,
     deviceModel: DeviceModel,
     { context }: { context?: TraceContext } = {},
   ) {
@@ -615,10 +621,14 @@ export default class BleTransport extends Transport {
           const msgIn = apdu.toString("hex");
           tracer.withType("apdu").trace(`=> ${msgIn}`);
 
+          // `sendApdu` will only emit if an error occurred, otherwise it will complete, while `receiveAPDU` will emit the full response.
+          // Consequently `firstValueFrom` with `merge` is monitoring the response while being able to reject on an error from the send.
           const data = await firstValueFrom(
             merge(
-              this.notifyObservable.pipe(receiveAPDU),
-              sendAPDU(this.write, apdu, this.mtuSize),
+              this.notifyObservable.pipe(data =>
+                receiveAPDU(data, { context: tracer.getContext() }),
+              ),
+              sendAPDU(this.write, apdu, this.mtuSize, { context: tracer.getContext() }),
             ),
           );
 
@@ -660,8 +670,13 @@ export default class BleTransport extends Transport {
         mtu = await firstValueFrom(
           merge(
             this.notifyObservable.pipe(
-              tap(maybeError => {
-                if (maybeError instanceof Error) throw maybeError;
+              map(maybeError => {
+                // Catches the PairingFailed Error that has only been emitted
+                if (maybeError instanceof Error) {
+                  throw maybeError;
+                }
+
+                return maybeError;
               }),
               first(buffer => buffer.readUInt8(0) === 0x08),
               map(buffer => buffer.readUInt8(5)),
