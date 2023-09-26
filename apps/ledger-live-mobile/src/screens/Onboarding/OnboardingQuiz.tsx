@@ -11,7 +11,7 @@ import { ScreenName } from "../../const";
 
 import quizImage1 from "../../images/illustration/Light/_056.png";
 import quizImage2 from "../../images/illustration/Light/_021.png";
-import quizImage3 from "../../images/illustration/Light/_060.png";
+import quizImage3 from "../../images/illustration/Light/_055.png";
 
 import OnboardingQuizItem from "./OnboardingQuizItem";
 import { OnboardingNavigatorParamList } from "../../components/RootNavigator/types/OnboardingNavigator";

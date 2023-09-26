@@ -119,12 +119,7 @@ function OnboardingPreQuizModalNavigator(
   };
 
   return (
-    <NavigationModalContainer
-      {...props}
-      backgroundColor="constant.purple"
-      deadZoneProps={{ flex: 1 }}
-      contentContainerProps={{ maxHeight: "55%" }}
-    >
+    <NavigationModalContainer {...props} backgroundColor="constant.purple">
       <OnboardingPreQuizModalStack.Navigator>
         <OnboardingPreQuizModalStack.Screen
           name={ScreenName.OnboardingPreQuizModal}
