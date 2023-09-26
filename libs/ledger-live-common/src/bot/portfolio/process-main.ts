@@ -80,6 +80,7 @@ promiseAllBatched(parallelRuns, specsPerBots, async ({ env, family, key, seed })
           REPORT_FOLDER: localFolder,
           START_TIME: String(Date.now()),
         },
+        timeout: 600000,
       },
     );
 
