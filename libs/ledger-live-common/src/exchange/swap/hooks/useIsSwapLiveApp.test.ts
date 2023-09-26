@@ -15,10 +15,10 @@ describe("useIsSwapLiveApp hook", () => {
     jest.clearAllMocks();
   });
 
-  it("returns the enabled flag when currencyTo is not defined", () => {
+  it("returns the enabled flag when currencyFrom is not defined", () => {
     useMockFeature.mockReturnValue({ enabled: true });
 
-    const { result } = renderHook(() => useIsSwapLiveApp({ currencyTo: undefined }));
+    const { result } = renderHook(() => useIsSwapLiveApp({ currencyFrom: undefined }));
 
     expect(result.current).toBe(true);
   });
@@ -29,40 +29,40 @@ describe("useIsSwapLiveApp hook", () => {
       params: { families: undefined, currencies: undefined },
     });
 
-    const { result } = renderHook(() => useIsSwapLiveApp({ currencyTo: bitcoin }));
+    const { result } = renderHook(() => useIsSwapLiveApp({ currencyFrom: bitcoin }));
 
     expect(result.current).toBe(true);
   });
 
-  it("returns true when currencyTo family is in families array and feature is enabled", () => {
+  it("returns true when currencyFrom family is in families array and feature is enabled", () => {
     useMockFeature.mockReturnValue({
       enabled: true,
       params: { families: ["bitcoin"], currencies: [] },
     });
 
-    const { result } = renderHook(() => useIsSwapLiveApp({ currencyTo: bitcoin }));
+    const { result } = renderHook(() => useIsSwapLiveApp({ currencyFrom: bitcoin }));
 
     expect(result.current).toBe(true);
   });
 
-  it("returns true when currencyTo is in currencies array and feature is enabled", () => {
+  it("returns true when currencyFrom is in currencies array and feature is enabled", () => {
     useMockFeature.mockReturnValue({
       enabled: true,
       params: { families: [], currencies: ["bitcoin"] },
     });
 
-    const { result } = renderHook(() => useIsSwapLiveApp({ currencyTo: bitcoin }));
+    const { result } = renderHook(() => useIsSwapLiveApp({ currencyFrom: bitcoin }));
 
     expect(result.current).toBe(true);
   });
 
-  it("returns false when currencyTo family is not in families, currencyTo is not in currencies, and feature is disabled", () => {
+  it("returns false when currencyFrom family is not in families, currencyFrom is not in currencies, and feature is disabled", () => {
     useMockFeature.mockReturnValue({
       enabled: false,
       params: { families: ["ethereum"], currencies: ["ethereum"] },
     });
 
-    const { result } = renderHook(() => useIsSwapLiveApp({ currencyTo: bitcoin }));
+    const { result } = renderHook(() => useIsSwapLiveApp({ currencyFrom: bitcoin }));
 
     expect(result.current).toBe(false);
   });
@@ -73,7 +73,7 @@ describe("useIsSwapLiveApp hook", () => {
       params: { families: [], currencies: [] },
     });
 
-    const { result } = renderHook(() => useIsSwapLiveApp({ currencyTo: bitcoin }));
+    const { result } = renderHook(() => useIsSwapLiveApp({ currencyFrom: bitcoin }));
 
     expect(result.current).toBe(true);
   });

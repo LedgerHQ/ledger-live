@@ -1,31 +1,25 @@
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useFeature } from "../../../featureFlags";
 import { isCryptoCurrency } from "../../../currencies";
-import { useCallback } from "react";
 
 type Props = {
-  currencyTo?: CryptoOrTokenCurrency;
+  currencyFrom?: CryptoOrTokenCurrency;
 };
 
-export function useIsSwapLiveApp({ currencyTo }: Props) {
+export function useIsSwapLiveApp({ currencyFrom }: Props) {
   const ptxSwapLiveApp = useFeature("ptxSwapLiveApp");
   const { families, currencies } = ptxSwapLiveApp.params || {};
 
-  const isEnabled = useCallback(
-    (flag: boolean) => ptxSwapLiveApp.enabled && flag,
-    [ptxSwapLiveApp.enabled],
-  );
-
-  if (!currencyTo || (!families && !currencies)) {
+  if (!currencyFrom || (!families && !currencies)) {
     return ptxSwapLiveApp.enabled;
   }
 
-  const familyOfCurrencyTo = isCryptoCurrency(currencyTo)
-    ? currencyTo.family
-    : currencyTo.parentCurrency.family;
+  const familyOfCurrencyFrom = isCryptoCurrency(currencyFrom)
+    ? currencyFrom.family
+    : currencyFrom.parentCurrency.family;
 
-  const familyIsEnabled = families?.length ? families.includes(familyOfCurrencyTo) : true;
-  const currencyIsEnabled = currencies?.length ? currencies.includes(currencyTo.id) : true;
+  const familyIsEnabled = families?.length ? families.includes(familyOfCurrencyFrom) : true;
+  const currencyIsEnabled = currencies?.length ? currencies.includes(currencyFrom.id) : true;
 
-  return isEnabled(familyIsEnabled || currencyIsEnabled);
+  return ptxSwapLiveApp.enabled && (familyIsEnabled || currencyIsEnabled);
 }

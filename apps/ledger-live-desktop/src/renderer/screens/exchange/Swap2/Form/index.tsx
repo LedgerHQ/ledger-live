@@ -93,7 +93,9 @@ const SwapForm = () => {
     timeoutErrorMessage: t("swap2.form.timeout.message"),
   });
 
-  const isSwapLiveAppEnabled = useIsSwapLiveApp({ currencyTo: swapTransaction.swap.to.currency });
+  const isSwapLiveAppEnabled = useIsSwapLiveApp({
+    currencyFrom: swapTransaction.swap.from.currency,
+  });
 
   // @TODO: Try to check if we can directly have the right state from `useSwapTransaction`
   // Used to set the fake transaction recipient
