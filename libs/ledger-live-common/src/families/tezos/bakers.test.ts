@@ -97,19 +97,24 @@ const data: API_BAKER[] = [
 ];
 
 describe("Tezos Baker", () => {
-  beforeEach(() => {
-    const response: AxiosResponse<API_BAKER[]> = {
-      data,
-      status: 200,
-      headers: {},
-      statusText: "",
-      config: {},
-    };
-
-    mockedNetwork.mockReturnValue(Promise.resolve(response));
+  afterEach(() => {
+    jest.clearAllMocks();
+    cache.reset();
   });
 
   describe("Get bakers from cache", () => {
+    beforeEach(() => {
+      const response: AxiosResponse<API_BAKER[]> = {
+        data,
+        status: 200,
+        headers: {},
+        statusText: "",
+        config: {},
+      };
+
+      mockedNetwork.mockReturnValue(Promise.resolve(response));
+    });
+
     it("Ledger Baker should be first in the list", async () => {
       const bakers = await cache();
       expect(bakers[0].name).toBe("Ledger Live by Kiln");
