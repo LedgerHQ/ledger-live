@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import semver from "semver";
@@ -43,29 +43,25 @@ export function BuyAndSellScreen({ route }: Props) {
 
   /**
    * Pass correct account ID
-   * Due to Platform SDK account ID not being equivilent to Wallet API account ID
+   * Due to Platform SDK account ID not being equivalent to Wallet API account ID
    */
-  useEffect(
-    () => {
-      if (
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        params?.account &&
-        semver.satisfies(WALLET_API_VERSION, manifest?.apiVersion as string)
-      ) {
-        const { account: accountId } = params;
-        const account = accounts.find(a => a.id === accountId);
-        if (account) {
-          const parentAccount = isTokenAccount(account)
-            ? getParentAccount(account, accounts)
-            : undefined;
-          params.account = accountToWalletAPIAccount(account, parentAccount)?.id;
-        }
+  const customParams = useMemo(() => {
+    if (
+      params?.account &&
+      manifest?.apiVersion &&
+      semver.satisfies(WALLET_API_VERSION, manifest.apiVersion)
+    ) {
+      const { account: accountId } = params;
+      const account = accounts.find(a => a.id === accountId);
+      if (account) {
+        const parentAccount = isTokenAccount(account)
+          ? getParentAccount(account, accounts)
+          : undefined;
+        params.account = accountToWalletAPIAccount(account, parentAccount).id;
       }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
-  );
+    }
+    return params;
+  }, [accounts, manifest?.apiVersion, params]);
 
   /**
    * Given the user is on an internal app (webview url is owned by LL) we must reset the session
@@ -94,7 +90,7 @@ export function BuyAndSellScreen({ route }: Props) {
         inputs={{
           theme,
           lang: locale,
-          ...params,
+          ...customParams,
           ...Object.fromEntries(searchParams.entries()),
         }}
       />

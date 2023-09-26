@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useMemo } from "react";
 import semver from "semver";
 import { RouteComponentProps, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -26,8 +26,10 @@ export type DProps = {
   rampCatalog: Loadable<RampCatalog>;
 };
 
+type ExchangeState = { account?: string } | undefined;
+
 const LiveAppExchange = ({ appId }: { appId: string }) => {
-  const { state: urlParams, search } = useLocation();
+  const { state: urlParams, search } = useLocation<ExchangeState>();
   const searchParams = new URLSearchParams(search);
   const locale = useSelector(languageSelector);
   const accounts = useSelector(accountsSelector);
@@ -42,33 +44,25 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
 
   /**
    * Pass correct account ID
-   * Due to Platform SDK account ID not being equivilent to Wallet API account ID
+   * Due to Platform SDK account ID not being equivalent to Wallet API account ID
    */
-  useEffect(
-    () => {
-      if (
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        urlParams?.account &&
-        semver.satisfies(WALLET_API_VERSION, manifest?.apiVersion as string)
-      ) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        const { account: accountId } = urlParams;
-        const account = accounts.find(a => a.id === accountId);
-        if (account) {
-          const parentAccount = isTokenAccount(account)
-            ? getParentAccount(account, accounts)
-            : undefined;
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          urlParams.account = accountToWalletAPIAccount(account, parentAccount)?.id;
-        }
+  const customUrlParams = useMemo(() => {
+    if (
+      urlParams?.account &&
+      manifest?.apiVersion &&
+      semver.satisfies(WALLET_API_VERSION, manifest.apiVersion)
+    ) {
+      const { account: accountId } = urlParams;
+      const account = accounts.find(a => a.id === accountId);
+      if (account) {
+        const parentAccount = isTokenAccount(account)
+          ? getParentAccount(account, accounts)
+          : undefined;
+        urlParams.account = accountToWalletAPIAccount(account, parentAccount).id;
       }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
-  );
+    }
+    return urlParams;
+  }, [accounts, manifest?.apiVersion, urlParams]);
 
   /**
    * Given the user is on an internal app (webview url is owned by LL) we must reset the session
@@ -94,7 +88,7 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
           manifest={manifest}
           inputs={{
             theme: themeType,
-            ...(urlParams as object),
+            ...customUrlParams,
             lang: locale,
             ...Object.fromEntries(searchParams.entries()),
           }}
