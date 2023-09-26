@@ -1,5 +1,23 @@
 # @ledgerhq/live-common
 
+## 31.8.0-hotfix.0
+
+### Minor Changes
+
+- [#4851](https://github.com/LedgerHQ/ledger-live/pull/4851) [`6c83521fee`](https://github.com/LedgerHQ/ledger-live/commit/6c83521fee8da656858630c1cb37a5af95df3362) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Integrate injective + gas rework
+
+### Patch Changes
+
+- Updated dependencies [[`6c83521fee`](https://github.com/LedgerHQ/ledger-live/commit/6c83521fee8da656858630c1cb37a5af95df3362)]:
+  - @ledgerhq/cryptoassets@9.13.0-hotfix.0
+  - @ledgerhq/coin-algorand@0.3.2-hotfix.0
+  - @ledgerhq/coin-evm@0.6.2-hotfix.0
+  - @ledgerhq/coin-framework@0.5.4-hotfix.0
+  - @ledgerhq/coin-polkadot@0.4.2-hotfix.0
+  - @ledgerhq/domain-service@1.1.11-hotfix.0
+  - @ledgerhq/evm-tools@1.0.7-hotfix.0
+  - @ledgerhq/hw-app-eth@6.34.6-hotfix.0
+
 ## 31.7.0
 
 ### Minor Changes

@@ -1,5 +1,15 @@
 # @ledgerhq/hw-app-eth
 
+## 6.34.6-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`6c83521fee`](https://github.com/LedgerHQ/ledger-live/commit/6c83521fee8da656858630c1cb37a5af95df3362)]:
+  - @ledgerhq/cryptoassets@9.13.0-hotfix.0
+  - @ledgerhq/types-live@6.40.0-hotfix.0
+  - @ledgerhq/domain-service@1.1.11-hotfix.0
+  - @ledgerhq/evm-tools@1.0.7-hotfix.0
+
 ## 6.34.5
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.40.0-hotfix.0
+
+### Minor Changes
+
+- [#4851](https://github.com/LedgerHQ/ledger-live/pull/4851) [`6c83521fee`](https://github.com/LedgerHQ/ledger-live/commit/6c83521fee8da656858630c1cb37a5af95df3362) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Integrate injective + gas rework
+
 ## 6.39.0
 
 ### Minor Changes
