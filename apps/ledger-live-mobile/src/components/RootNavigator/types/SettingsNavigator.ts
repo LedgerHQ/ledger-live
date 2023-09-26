@@ -19,17 +19,17 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.ExperimentalSettings]: undefined;
   [ScreenName.DeveloperSettings]: undefined;
   [ScreenName.DeveloperCustomManifest]: undefined;
-  [ScreenName.DebugSettings]:
-    | {
-        pairedDevice?: Device | null;
-      }
-    | undefined;
+  [ScreenName.DebugSettings]: undefined;
   [ScreenName.DebugFeatureFlags]: undefined;
   [ScreenName.DebugInformation]: undefined;
   [ScreenName.DebugPerformance]: undefined;
   [ScreenName.DebugDebugging]: undefined;
   [ScreenName.DebugConfiguration]: undefined;
-  [ScreenName.DebugFeatures]: undefined;
+  [ScreenName.DebugFeatures]:
+    | {
+        pairedDevice?: Device | null;
+      }
+    | undefined;
   [ScreenName.DebugConnectivity]: undefined;
   [ScreenName.DebugGenerators]: undefined;
   [ScreenName.DebugMockGenerateAccounts]: undefined;
