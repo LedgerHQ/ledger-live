@@ -4,7 +4,6 @@ import { NavigatorScreenParams } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "../../../const";
 
 export type OnboardingCarefulWarningParamList = {
-  [ScreenName.OnboardingModalWarning]: { onNext?: () => void };
   [ScreenName.OnboardingModalSyncDesktopInformation]: { onNext?: () => void };
   [ScreenName.OnboardingModalRecoveryPhraseWarning]: {
     onNext?: () => void;

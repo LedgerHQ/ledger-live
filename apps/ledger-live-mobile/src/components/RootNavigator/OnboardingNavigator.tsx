@@ -35,7 +35,6 @@ import OnboardingSetupDeviceInformation from "../../screens/Onboarding/steps/set
 import OnboardingSetupDeviceRecoveryPhrase from "../../screens/Onboarding/steps/setupDevice/drawers/SecureRecoveryPhrase";
 import OnboardingGeneralInformation from "../../screens/Onboarding/steps/setupDevice/drawers/GeneralInformation";
 import OnboardingBluetoothInformation from "../../screens/Onboarding/steps/setupDevice/drawers/BluetoothConnection";
-import OnboardingWarning from "../../screens/Onboarding/steps/setupDevice/drawers/Warning";
 import OnboardingSyncDesktopInformation from "../../screens/Onboarding/steps/setupDevice/drawers/SyncDesktopInformation";
 import OnboardingRecoveryPhraseWarning from "../../screens/Onboarding/steps/setupDevice/drawers/RecoveryPhraseWarning";
 import PostWelcomeSelection from "../../screens/Onboarding/steps/postWelcomeSelection";
@@ -81,12 +80,6 @@ function OnboardingCarefulWarning(
       backgroundColor="background.main"
     >
       <OnboardingCarefulWarningStack.Navigator>
-        <OnboardingCarefulWarningStack.Screen
-          name={ScreenName.OnboardingModalWarning}
-          component={OnboardingWarning}
-          options={{ title: "", ...options }}
-          // initialParams={props.route.params}
-        />
         <OnboardingCarefulWarningStack.Screen
           name={ScreenName.OnboardingModalSyncDesktopInformation}
           component={OnboardingSyncDesktopInformation}
