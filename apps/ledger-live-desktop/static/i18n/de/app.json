@@ -122,6 +122,7 @@
     "search" : "Suche...",
     "searchWithoutEllipsis" : "Suchen nach",
     "manage" : "Verwalten",
+    "tryAgain" : "Wiederholen",
     "lockScreen" : {
       "title" : "Willkommen zurück",
       "subTitle" : null,
@@ -546,6 +547,10 @@
           "body" : "Empfangen Sie Kryptowährungen in Ihrer Wallet"
         }
       }
+    },
+    "getFundsModal" : {
+      "text" : "Holen Sie sich {{coin}} zum Staken",
+      "description" : "Kaufen, tauschen oder empfangen Sie Kryptowährungen mit Ledger Live direkt auf Ihrem Ledger-Gerät."
     }
   },
   "lottieDebugger" : {
@@ -1700,7 +1705,8 @@
   "DeviceAction" : {
     "allowAppPermission" : "Öffnen Sie die {{wording}} App auf Ihrem Gerät",
     "allowAppPermissionSubtitleToken" : "zum Verwalten Ihrer {{token}}-Tokens",
-    "allowManagerPermission" : "Erlauben Sie {{wording}} auf Ihrem Gerät",
+    "allowManagerPermission" : "Ledger Manager auf Ihrem Gerät zulassen",
+    "allowRenaming" : "Umbenennen auf Ihrem Gerät zulassen",
     "loading" : "Lade Daten...",
     "connectAndUnlockDevice" : "Verbinden und entsperren Sie Ihr Gerät",
     "unlockDevice" : "Entsperren Sie Ihr Gerät",
@@ -4061,7 +4067,7 @@
     "downloadProgress" : "{{progress}}% abgeschlossen",
     "checking" : "Prüfen des Updates ...",
     "checkSuccess" : "Ein neues Update für Ledger Live ist verfügbar. Es wird automatisch installiert, wenn Sie die App schließen",
-    "quitAndInstall" : "Jetzt installieren",
+    "quitAndInstall" : "Jetzt installieren und neu starten",
     "updateAvailable" : "Update auf Ledger Live Version {{version}} ist verfügbar",
     "error" : "Fehler beim Update. Bitte erneut herunterladen",
     "reDownload" : "Erneut herunterladen",
@@ -5077,12 +5083,12 @@
       "description" : "Bitte versuchen Sie es erneut."
     },
     "DisconnectedDevice" : {
-      "title" : "Entschuldigung, es scheint Ihr Gerät ist nicht verbunden",
-      "description" : "Bitte neu verbinden und erneut versuchen."
+      "title" : "Gerät nicht verbunden",
+      "description" : "Ledger Live konnte keine Verbindung zu Ihrem Gerät herstellen. Bitte versuchen Sie es erneut."
     },
     "DisconnectedDeviceDuringOperation" : {
-      "title" : "Entschuldigung, es scheint Ihr Gerät ist nicht verbunden",
-      "description" : "Bitte neu verbinden und erneut versuchen."
+      "title" : "Gerät nicht verbunden",
+      "description" : "Ledger Live konnte keine Verbindung zu Ihrem Gerät herstellen. Bitte versuchen Sie es erneut."
     },
     "EConnReset" : {
       "title" : "Der Ledger Application Store kann nicht erreicht werden",
@@ -5309,6 +5315,10 @@
     "UserRefusedOnDevice" : {
       "title" : "Aktion abgelehnt",
       "description" : "Der Benutzer hat die Aktion am Gerät abgelehnt"
+    },
+    "ExpertModeRequired" : {
+      "title" : "Expertenmodus erforderlich",
+      "description" : "Der Expertenmodus muss aktiviert werden."
     },
     "TransactionRefusedOnDevice" : {
       "title" : "Aktion auf Gerät verweigert",
@@ -5795,31 +5805,33 @@
     "managerCTARemove" : "Entfernen",
     "steps" : {
       "choose" : {
-        "stepLabel" : "Wählen Sie ein Bild aus",
+        "stepLabel" : "Bild auswählen",
         "description" : "Wählen Sie ein Bild, das als (...) festgelegt werden soll",
         "pickFromNftGallery" : "Aus meiner NFT-Galerie auswählen",
         "myNfts" : "Meine NFTs",
-        "upload" : "Von meinem Computer hochladen",
+        "upload" : "Vom Computer hochladen",
         "chooseNft" : "Wählen Sie ein NFT",
         "remove" : "Aktuelles Bild entfernen",
         "selectNft" : "NFT wählen",
-        "previousSelectNft" : "Zurück",
         "nftEmptyStateTitle" : "Es können noch keine NFTs angezeigt werden",
         "nftEmptyStateDescription" : "Fügen Sie NFTs zu Ihrer Wallet hinzu, um loszulegen."
       },
       "adjust" : {
-        "stepLabel" : "Bild anpassen",
-        "rotate" : "Drehen"
+        "stepLabel" : "Zuschneiden",
+        "rotate" : "Drehen",
+        "confirmCrop" : "Ausschnitt bestätigen"
       },
       "contrast" : {
-        "stepLabel" : "Kontrast auswählen"
+        "stepLabel" : "Kontrast einstellen",
+        "confirmContrast" : "Kontrast bestätigen"
       },
       "transfer" : {
-        "stepLabel" : "Übertragen",
-        "uploadAnotherImage" : "Ein weiteres Bild hochladen",
-        "allowPreview" : "Erlauben Sie das Laden eines Bildes im Sperrbildschirm auf Ihrem {{productName}}",
+        "stepLabel" : "Laden",
+        "useAnotherPicture" : "Ein weiteres Bild hochladen",
+        "allowPreview" : "Tippen Sie auf „Load picture“ (Bild laden), um den Sperrbildschirm anzupassen",
         "allowConfirmPreview" : "Wiederherstellung des Sperrbildschirmbildes auf {{productName}} erlauben",
         "loadingPicture" : "Lade Daten...",
+        "voila" : "Voilà!",
         "imageLoaded" : "Bild geladen auf {{productName}}",
         "confirmPicture" : "Gefällt Ihnen, was Sie sehen?\nBehalten Sie es!",
         "confirmRestorePicture" : "Wiederherstellung des Sperrbildschirmbildes bestätigen",
@@ -5827,12 +5839,12 @@
       }
     },
     "postOnboarding" : {
-      "title" : "Mein Gerät personalisieren",
-      "description" : "Durch Anpassen des Bildschirms",
+      "title" : "Passen Sie den Sperrbildschirm an",
+      "description" : "Wählen Sie ein beliebiges NFT oder Bild, das Sie als Sperrbildschirm Ihres Ledger Stax festlegen möchten.",
       "actionCompletedPopupLabel" : "Gerät personalisiert"
     },
-    "customImageSet" : "Sperrbildschirm festgelegt",
-    "finishCTA" : "Beenden"
+    "customImageSet" : "Sperrbildschirm angepasst",
+    "finishCTA" : "Schließen"
   },
   "onboardingAppInstall" : {
     "restore" : {
@@ -5878,7 +5890,6 @@
     "networkError" : {
       "title" : "Netzwerkfehler",
       "subtitle" : "Das hat leider nicht funktioniert. Bitte versuchen Sie es noch einmal. Wenn das Problem weiterhin besteht, speichern Sie Ihre Logdatei und kontaktieren Sie den Ledger-Kundenservice.",
-      "tryAgain" : "Wiederholen",
       "contactSupport" : "Ledger-Kundenservice kontaktieren",
       "saveLog" : "Log speichern"
     }
