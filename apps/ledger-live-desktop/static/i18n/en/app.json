@@ -5333,6 +5333,10 @@
       "title": "Action rejected",
       "description": "User rejected the operation on the device"
     },
+    "ExpertModeRequired": {
+      "title": "Expert mode required",
+      "description": "Expert mode needs to be enabled."
+    },
     "TransactionRefusedOnDevice": {
       "title": "Operation denied on device",
       "description": "Please retry or contact Ledger Support if in doubt"

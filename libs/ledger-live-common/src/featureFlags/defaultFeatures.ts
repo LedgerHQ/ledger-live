@@ -95,6 +95,9 @@ export const defaultFeatures = {
   currencyDesmos: {
     enabled: false,
   },
+  currencyInjective: {
+    enabled: false,
+  },
   depositNetworkBannerMobile: {
     enabled: false,
     params: {

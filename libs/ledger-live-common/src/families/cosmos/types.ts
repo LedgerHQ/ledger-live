@@ -261,3 +261,8 @@ export type CosmosCurrencyConfig = {
   minGasPrice: number;
   ledgerValidator?: string;
 };
+
+export const RETURN_CODES = {
+  EXPERT_MODE_REQUIRED: 27012,
+  REFUSED_OPERATION: 27014,
+};

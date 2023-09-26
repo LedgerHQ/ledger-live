@@ -111,6 +111,7 @@ setSupportedCurrencies([
   "stacks",
   "telos_evm",
   "coreum",
+  "injective",
 ]);
 
 if (Config.VERBOSE) {
