@@ -569,14 +569,9 @@ const envDefinitions = {
     desc: "Use speculos websocket interface instead of Rest API",
   },
   SWAP_API_BASE: {
-    def: "https://swap.ledger.com/v4",
+    def: "https://swap.ledger.com/v5",
     parser: stringParser,
     desc: "Swap API base",
-  },
-  SWAP_API_BASE_V5: {
-    def: "https://swap-stg.ledger.com/v5",
-    parser: stringParser,
-    desc: "Swap API base staging version 5",
   },
   SYNC_ALL_INTERVAL: {
     def: 8 * 60 * 1000,

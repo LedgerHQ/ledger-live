@@ -31,21 +31,21 @@ export const rateExpirationSelector = (state: State) => state.swap.exchangeRateE
 
 export const toSelector = createSelector(pairsSelector, pairs => (fromId?: string) => {
   if (!fromId || !pairs) return [];
-  const filteredAssets = filterAvailableToAssets(pairs, fromId);
-  const uniqueAssetList = [...new Set(filteredAssets)];
-  return uniqueAssetList;
+  return filterAvailableToAssets(pairs, fromId);
 });
 
-function filterAvailableToAssets(pairs: Pair[], fromId?: string): string[] | null {
-  if (pairs === null || pairs === undefined) return null;
+function filterAvailableToAssets(pairs: Pair[], fromId?: string): string[] {
+  if (!pairs) return [];
 
-  if (fromId)
-    return pairs.reduce<string[]>(
-      (acc, pair) => (pair.from === fromId ? [...acc, pair.to] : acc),
-      [],
-    );
+  if (fromId) {
+    return [
+      ...new Set(
+        pairs.reduce<string[]>((acc, pair) => (pair.from === fromId ? [...acc, pair.to] : acc), []),
+      ),
+    ];
+  }
 
-  return pairs.reduce<string[]>((acc, pair) => [...acc, pair.to], []);
+  return [...new Set(pairs.map(pair => pair.to))];
 }
 
 function filterAvailableFromAssets(pairs: Pair[], allAccounts: Account[]): SwapAccount[] {

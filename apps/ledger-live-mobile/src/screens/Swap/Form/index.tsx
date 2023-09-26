@@ -3,11 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Button, Flex } from "@ledgerhq/native-ui";
 import { OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
-import {
-  useSwapTransaction,
-  useSwapProviders,
-  usePageState,
-} from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import { useSwapTransaction, usePageState } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { getCustomDappUrl } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,25 +15,15 @@ import {
   isTokenAccount,
   getFeesUnit,
 } from "@ledgerhq/live-common/account/index";
-import { getSwapSelectableCurrencies } from "@ledgerhq/live-common/exchange/swap/logic";
+
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import { log } from "@ledgerhq/logs";
 import { shallowAccountsSelector } from "../../../reducers/accounts";
-import { swapAcceptedProvidersSelector } from "../../../reducers/settings";
-import { setSwapSelectableCurrencies } from "../../../actions/settings";
-import {
-  providersSelector,
-  rateSelector,
-  resetSwapAction,
-  updateProvidersAction,
-  updateRateAction,
-  updateTransactionAction,
-} from "../../../actions/swap";
+import { rateSelector, updateRateAction, updateTransactionAction } from "../../../actions/swap";
 import { TrackScreen, useAnalytics } from "../../../analytics";
 import { Loading } from "../Loading";
-import { NotAvailable } from "./NotAvailable";
 import { TxForm } from "./TxForm";
 import { Summary } from "./Summary";
 import { sharedSwapTracking, useTrackSwapError } from "../utils";
@@ -55,32 +41,9 @@ import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/t
 import { SwapFormNavigatorParamList } from "../../../components/RootNavigator/types/SwapFormNavigator";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import type { DetailsSwapParamList } from "../types";
+import { getAvailableProviders } from "@ledgerhq/live-common/exchange/swap/index";
 
 type Navigation = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.Account>;
-
-export const useProviders = () => {
-  const dispatch = useDispatch();
-  const storedProviders = useSelector(providersSelector);
-  const { providers, error: providersError } = useSwapProviders();
-
-  useEffect(() => {
-    if (providers) {
-      dispatch(updateProvidersAction(providers));
-      dispatch(setSwapSelectableCurrencies(getSwapSelectableCurrencies(providers)));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [providers]);
-
-  useEffect(() => {
-    if (providersError) dispatch(resetSwapAction());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [providersError]);
-
-  return {
-    providers: storedProviders,
-    providersError,
-  };
-};
 
 export function SwapForm({
   route: { params },
@@ -90,7 +53,6 @@ export function SwapForm({
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const accounts = useSelector(shallowAccountsSelector);
-  const { providers, providersError } = useProviders();
   const exchangeRate = useSelector(rateSelector);
   // mobile specific
   const [confirmed, setConfirmed] = useState(false);
@@ -123,9 +85,6 @@ export function SwapForm({
     setExchangeRate,
     onNoRates,
     excludeFixedRates: true,
-    providers,
-    timeout: 10000,
-    timeoutErrorMessage: t("errors.SwapTimeoutError.title"),
   });
 
   // @TODO: Try to check if we can directly have the right state from `useSwapTransaction`
@@ -234,7 +193,6 @@ export function SwapForm({
     !swapTransaction.bridgePending &&
     exchangeRatesState.status !== "loading" &&
     swapTransaction.transaction &&
-    !providersError &&
     !swapError &&
     !swapWarning &&
     exchangeRate &&
@@ -366,7 +324,7 @@ export function SwapForm({
     }
   }, [params, setExchangeRate, swapTransaction]);
 
-  const swapAcceptedProviders = useSelector(swapAcceptedProvidersSelector);
+  const swapAcceptedProviders = getAvailableProviders();
   const termsAccepted = (swapAcceptedProviders || []).includes(provider ?? "");
   const [deviceMeta, setDeviceMeta] = useState<DeviceMeta>();
 
@@ -375,7 +333,7 @@ export function SwapForm({
     return <Connect provider={provider} setResult={setDeviceMeta} />;
   }
 
-  if (providers?.length) {
+  if (getAvailableProviders().length) {
     return (
       <KeyboardAwareScrollView testID="exchange-scrollView">
         <Flex flex={1} justifyContent="space-between" padding={6}>
@@ -426,11 +384,6 @@ export function SwapForm({
         />
       </KeyboardAwareScrollView>
     );
-  }
-
-  // Sentry?
-  if (providers?.length === 0 || providersError) {
-    return <NotAvailable />;
   }
 
   return <Loading />;
