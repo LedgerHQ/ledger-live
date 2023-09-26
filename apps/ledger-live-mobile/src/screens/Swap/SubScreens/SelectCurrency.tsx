@@ -2,7 +2,6 @@ import React, { useCallback } from "react";
 import { FlatList, StyleSheet } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { v4 as uuid } from "uuid";
 import { TFunction, useTranslation } from "react-i18next";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/index";
 import { TrackScreen, useAnalytics } from "../../../analytics";
@@ -14,8 +13,8 @@ import { ScreenName } from "../../../const";
 import { sharedSwapTracking } from "../utils";
 import { getEnv } from "@ledgerhq/live-env";
 
-function keyExtractor() {
-  return uuid();
+function keyExtractor({ id }: CryptoCurrency | TokenCurrency) {
+  return id;
 }
 
 const getItemLayout = (_: unknown, index: number) => ({
@@ -47,10 +46,9 @@ export function SelectCurrency({
     [],
   );
 
-  const RenderItem = useCallback(({ item }: { item: CryptoCurrency | TokenCurrency }) => {
+  const RenderItem = ({ item }: { item: CryptoCurrency | TokenCurrency }) => {
     return <CurrencyRow currency={item} onPress={onSelect} />;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  };
 
   const sortedCurrencies = useCurrenciesByMarketcap(currencies);
 
