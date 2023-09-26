@@ -7,6 +7,7 @@ import { emptyHistoryCache } from "../../account";
 
 import { getAccount, getLastBlockHeight, getOperations, getTokenOperations } from "./api";
 import { findTokenById, getTokenById } from "@ledgerhq/cryptoassets/tokens";
+import { VTHO_ADDRESS } from "./contracts/constants";
 
 const getAccountShape: GetAccountShape = async info => {
   const { initialAccount, currency, derivationMode } = info;
@@ -34,12 +35,7 @@ const getAccountShape: GetAccountShape = async info => {
 
   //Get last token operations
   const vthoAccountId = encodeTokenAccountId(accountId, findTokenById("vechain/vtho")!);
-  const vthoOperations = await getTokenOperations(
-    vthoAccountId,
-    address,
-    "0x0000000000000000000000000000456e65726779",
-    1,
-  );
+  const vthoOperations = await getTokenOperations(vthoAccountId, address, VTHO_ADDRESS, 0);
 
   const operations = mergeOps(oldOperations, newOperations);
 
