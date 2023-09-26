@@ -1,5 +1,6 @@
 import type { Device } from "@ledgerhq/types-devices";
 import { ScreenName } from "../../../const";
+import { FilterByDeviceModelId } from "../../BleDevicePairingFlow/BleDevicesScanning";
 
 export type SettingsNavigatorStackParamList = {
   [ScreenName.SettingsScreen]: undefined;
@@ -44,6 +45,11 @@ export type SettingsNavigatorStackParamList = {
   };
   [ScreenName.DebugBLEBenchmark]: {
     deviceId: string;
+  };
+  [ScreenName.DebugBLEDevicePairing]: {
+    areKnownDevicesDisplayed: boolean;
+    onSuccessAddToKnownDevices: boolean;
+    filterByDeviceModelId?: FilterByDeviceModelId;
   };
   [ScreenName.DebugCrash]: undefined;
   [ScreenName.DebugStore]: undefined;
