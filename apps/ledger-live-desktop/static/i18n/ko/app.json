@@ -561,7 +561,7 @@
     "modal" : {
       "title" : "Ledger Vault 연결하기",
       "info" : "아래 필드를 작성하여 Ledger Vault 워크스페이스 계정을 연결하고 Ledger Live에서 트랜잭션을 생성하세요. 설정 > 외부 지갑 서명인에서 정보를 찾으세요.",
-      "info_link" : "Learn more",
+      "info_link" : "자세히 알아보기",
       "host" : {
         "title" : "URL 엔드포인트",
         "placeholder" : "ws://localhost:3030"
@@ -572,9 +572,9 @@
       },
       "token" : {
         "title" : "운영자 API 토큰",
-        "placeholder" : "Token"
+        "placeholder" : "토큰"
       },
-      "submit" : "Connect"
+      "submit" : "연결"
     }
   },
   "fullNode" : {
@@ -2934,7 +2934,7 @@
             }
           },
           "amount" : {
-            "title" : "Amount"
+            "title" : "금액"
           },
           "validator" : {
             "title" : "검증인"
@@ -3006,7 +3006,7 @@
             "newDelegation" : "새로운 위임",
             "chooseValidator" : "검증인 선택",
             "warning" : "다시 마음이 바뀌어 새로운 검증인 교체하고 재위임하려면 <0>{{numberOfDays}}일</0>을 기다려야 합니다",
-            "amountLabel" : "Amount to redelegate"
+            "amountLabel" : "재위임할 금액"
           },
           "device" : {
             "title" : "장치"
@@ -3790,7 +3790,7 @@
         "button" : "완료",
         "title" : "모바일로 내보내려면 스캔해주세요",
         "listTitle" : "Ledger Live 모바일 앱에서:",
-        "step1" : "Tap the <highlight><icon>+</icon></highlight> button in <highlight>accounts</highlight>",
+        "step1" : "<highlight><icon>+</icon></highlight> 버튼을 <highlight>계정</highlight>에서 누르세요",
         "step2" : "<highlight>데스크탑 계정 가져오기</highlight>를 탭하세요",
         "step3" : "100% 로딩될 때까지 <highlight>LiveQR 코드</highlight> 를 스캔하세요"
       }
@@ -5599,7 +5599,7 @@
       "title" : "이전 트랜잭션이 아직 처리되지 않았습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
     },
     "SolanaTxConfirmationTimeout" : {
-      "title" : "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+      "title" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
     },
     "NotEnoughNftOwned" : {
       "title" : "사용 가능한 토큰 수를 초과했습니다"
