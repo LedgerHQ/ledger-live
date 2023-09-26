@@ -28,6 +28,7 @@ export enum ScreenName {
   CurrencySettings = "CurrencySettings",
   DebugBLE = "DebugBLE",
   DebugBLEBenchmark = "DebugBLEBenchmark",
+  DebugBLEDevicePairing = "DebugBLEDevicePairing",
   DebugConfiguration = "DebugConfiguration",
   DebugCommandSender = "DebugCommandSender",
   DebugConnectivity = "DebugConnectivity",

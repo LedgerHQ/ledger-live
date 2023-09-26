@@ -6,10 +6,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import SettingsRow from "../../../../components/SettingsRow";
 import { NavigatorName, ScreenName } from "../../../../const";
 import type { SettingsNavigatorStackParamList } from "../../../../components/RootNavigator/types/SettingsNavigator";
-import type {
-  BaseNavigatorStackParamList,
-  NavigateInput,
-} from "../../../../components/RootNavigator/types/BaseNavigator";
+import type { BaseNavigatorStackParamList } from "../../../../components/RootNavigator/types/BaseNavigator";
 import {
   StackNavigatorNavigation,
   StackNavigatorRoute,
@@ -41,39 +38,16 @@ export default () => {
   const goToBlePairingFlow = useCallback(() => {
     setIsDrawerOpen(false);
 
-    // To avoid an unsuccesful return that would keep the current (if any) paired device object
-    // This cleaning strategy would depend on the use case.
-    const newParams = { ...params, pairedDevice: null };
-    // @ts-expect-error react navigation does not like having undefined as possible params
-    navigation.setParams(newParams);
-
-    const navigateInput: NavigateInput<BaseNavigatorStackParamList, NavigatorName.Settings> = {
-      name: NavigatorName.Settings,
+    navigation.navigate(NavigatorName.Settings, {
+      screen: ScreenName.DebugBLEDevicePairing,
       params: {
-        screen: screenName,
-        params: {
-          ...newParams,
-        },
-      },
-    };
-    navigation.navigate(ScreenName.BleDevicePairingFlow, {
-      filterByDeviceModelId:
-        chosenDeviceModelFilter === "none" ? undefined : chosenDeviceModelFilter,
-      areKnownDevicesDisplayed,
-      onSuccessAddToKnownDevices,
-      onSuccessNavigateToConfig: {
-        navigateInput,
-        pathToDeviceParam: "params.params.pairedDevice",
+        filterByDeviceModelId:
+          chosenDeviceModelFilter === "none" ? undefined : chosenDeviceModelFilter,
+        areKnownDevicesDisplayed,
+        onSuccessAddToKnownDevices,
       },
     });
-  }, [
-    params,
-    navigation,
-    screenName,
-    chosenDeviceModelFilter,
-    areKnownDevicesDisplayed,
-    onSuccessAddToKnownDevices,
-  ]);
+  }, [areKnownDevicesDisplayed, chosenDeviceModelFilter, navigation, onSuccessAddToKnownDevices]);
 
   const onPress = useCallback(() => {
     setIsDrawerOpen(true);
