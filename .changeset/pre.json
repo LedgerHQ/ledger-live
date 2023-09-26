@@ -105,7 +105,9 @@
     "web-tools": "0.1.0"
   },
   "changesets": [
+    "angry-apples-study",
     "brown-lions-speak",
+    "chilly-shoes-do",
     "five-monkeys-juggle",
     "gentle-tomatoes-draw",
     "gold-pants-sniff",
@@ -135,6 +137,7 @@
     "short-dogs-buy",
     "silver-glasses-shout",
     "sixty-comics-double",
+    "sixty-cooks-run",
     "slow-squids-press",
     "small-jars-hug",
     "smooth-shoes-wait",
@@ -143,6 +146,7 @@
     "thick-icons-pull",
     "thirty-coats-dance",
     "twenty-ears-care",
+    "unlucky-cups-hunt",
     "young-toes-clap"
   ]
 }

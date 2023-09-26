@@ -1,5 +1,13 @@
 # live-mobile
 
+## 3.32.0-nightly.5
+
+### Patch Changes
+
+- [#4808](https://github.com/LedgerHQ/ledger-live/pull/4808) [`881cd3462e`](https://github.com/LedgerHQ/ledger-live/commit/881cd3462e854b9859c1ce70559366ce555afd24) Thanks [@stephane-lieumont-ledger](https://github.com/stephane-lieumont-ledger)! - remove source query params includes in featureflags
+
+- [#4778](https://github.com/LedgerHQ/ledger-live/pull/4778) [`4b8b38cdb7`](https://github.com/LedgerHQ/ledger-live/commit/4b8b38cdb78edf89b93b8847ad615a7674994a47) Thanks [@lvndry](https://github.com/lvndry)! - Remove Cardano poolCost
+
 ## 3.32.0-nightly.4
 
 ### Patch Changes

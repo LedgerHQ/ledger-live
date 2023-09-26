@@ -1,5 +1,13 @@
 # ledger-live-desktop
 
+## 2.69.0-nightly.3
+
+### Patch Changes
+
+- [#4778](https://github.com/LedgerHQ/ledger-live/pull/4778) [`4b8b38cdb7`](https://github.com/LedgerHQ/ledger-live/commit/4b8b38cdb78edf89b93b8847ad615a7674994a47) Thanks [@lvndry](https://github.com/lvndry)! - Remove Cardano Poolcost
+
+- [#4824](https://github.com/LedgerHQ/ledger-live/pull/4824) [`96e146af65`](https://github.com/LedgerHQ/ledger-live/commit/96e146af65e14b0562e56211114495538bbff40f) Thanks [@stephane-lieumont-ledger](https://github.com/stephane-lieumont-ledger)! - on previous cta recover onboarding, the app redirect to disclaimer screen
+
 ## 2.69.0-nightly.2
 
 ### Patch Changes
