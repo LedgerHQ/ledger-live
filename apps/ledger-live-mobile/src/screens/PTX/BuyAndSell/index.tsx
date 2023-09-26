@@ -39,6 +39,23 @@ export function BuyAndSellScreen({ route }: Props) {
   const { state: remoteLiveAppState } = useRemoteLiveAppContext();
   const { locale } = useLocale();
   const manifest = localManifest || remoteManifest;
+  // // Use wallet-api ids when manifest is using apiVersion 2
+  const WALLET_API_VERSION = 2;
+  const apiVersion = manifest?.apiVersion;
+  const apiVersionMatch =
+    !!apiVersion &&
+    (apiVersion.match(/\d+|\d+\b|\d+(?=\w)/g) || []).shift() === `${WALLET_API_VERSION}`;
+  if (params && apiVersionMatch) {
+    const { account: accountId } = params;
+    const account = accounts.find(a => a.id === accountId);
+    if (account) {
+      const parentAccount = isTokenAccount(account)
+        ? getParentAccount(account, accounts)
+        : undefined;
+      const walletApiId = accountToWalletAPIAccount(account, parentAccount)?.id;
+      params.account = walletApiId;
+    }
+  }
 
   /**
    * Given the user is on an internal app (webview url is owned by LL) we must reset the session
@@ -48,23 +65,6 @@ export function BuyAndSellScreen({ route }: Props) {
   useEffect(
     () => {
       (async () => {
-        // Use wallet-api ids when manifest is using apiVersion 2
-        const WALLET_API_VERSION = 2;
-        const apiVersion = manifest?.apiVersion;
-        const apiVersionMatch =
-          !!apiVersion &&
-          (apiVersion.match(/\d+|\d+\b|\d+(?=\w)/g) || []).shift() === `${WALLET_API_VERSION}`;
-        if (params && apiVersionMatch) {
-          const { account: accountId } = params;
-          const account = accounts.find(a => a.id === accountId);
-          if (account) {
-            const parentAccount = isTokenAccount(account)
-              ? getParentAccount(account, accounts)
-              : undefined;
-            const walletApiId = accountToWalletAPIAccount(account, parentAccount)?.id;
-            params.account = walletApiId;
-          }
-        }
         if (manifest?.id && INTERNAL_APP_IDS.includes(manifest.id)) {
           await AsyncStorage.removeItem("last-screen");
           await AsyncStorage.removeItem("manifest-id");
