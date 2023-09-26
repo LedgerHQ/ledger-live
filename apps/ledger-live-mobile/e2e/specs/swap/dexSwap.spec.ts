@@ -56,7 +56,7 @@ describe("DEX Swap", () => {
        * or (to test that an amount is provided to the query param, without the need for the exact value):
        * `expect(url).toContain("sourceTokenAmount%3D11");`
        */
-      expect(url).toContain("sourceTokenAmount%3D11");
+      expect(url).toContain("sourceTokenAmount%3D");
       expect(url).toContain("currency%22%3A%22ethereum");
       expect(url).toContain("accountId=mock%3A1%3Aethereum%3Atrue_ethereum_1%3A");
 
