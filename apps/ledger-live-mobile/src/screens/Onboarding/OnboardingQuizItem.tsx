@@ -39,7 +39,7 @@ export default function OnboardingQuizItem({
         <Flex flex={1} alignItems="center" justifyContent="center">
           <Image
             source={selectedAnswer ? (selectedAnswer.correct ? successImage : failImage) : image}
-            style={{ width: "100%", height: 200 }}
+            style={{ width: "100%", height: 280 }}
             resizeMode="contain"
           />
           {selectedAnswer ? (
