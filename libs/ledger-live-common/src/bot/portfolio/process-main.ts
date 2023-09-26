@@ -4,7 +4,7 @@ import fs from "fs/promises";
 import mkdirp from "mkdirp";
 import path from "path";
 import { promiseAllBatched } from "../../promise";
-import { exec, spawn } from "child_process";
+import { exec, ExecOptions, spawn } from "child_process";
 import { Report } from "./types";
 import { getSpecsPerBots } from "./logic";
 import { finalMarkdownReport, csvReports } from "./formatter";
@@ -83,25 +83,35 @@ promiseAllBatched(parallelRuns, specsPerBots, async ({ env, family, key, seed })
       },
     );
 
-    // TODO timeout
     let lastResult = null;
-    child.stdout.on("data", data => {
-      const str = data.toString();
-      if (VERBOSE) {
-        // eslint-disable-next-line no-console
-        console.log(`${family}:${key}: stdout: ${str}`);
-      }
-      if (str.startsWith("{")) {
+    let stdoutChunks = [];
+
+    child.stdout.on("end", code => {
+      const str = stdoutChunks.toString();
+      try {
         lastResult = JSON.parse(str);
+      } catch (e) {
+        console.log(`Error when parsing family ${family}`, e);
+      }
+
+      if (VERBOSE) {
+        console.log(`${family}:${key}:child process exited with code ${code}`);
       }
     });
+
+    child.stdout.on("data", data => {
+      stdoutChunks = stdoutChunks.concat(data.toString());
+    });
+
     child.stderr.on("data", data => {
       console.error(`${family}:${key}: stderr: ${data}`);
     });
+
     child.on("error", error => {
       console.error(`${family}:${key}: error: ${error}`);
       resolve({ error: String(error) });
     });
+
     child.on("close", code => {
       if (code === 0) {
         resolve(lastResult || { error: "no result" });
@@ -162,7 +172,7 @@ promiseAllBatched(parallelRuns, specsPerBots, async ({ env, family, key, seed })
   }
 });
 
-function execp(cmd, opts) {
+function execp(cmd: string, opts: ExecOptions) {
   return new Promise((resolve, reject) => {
     exec(cmd, opts, (err, stdout) => {
       if (err) {

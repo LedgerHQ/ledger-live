@@ -182,15 +182,7 @@ export function finalMarkdownReport(reports: Report[], specsPerBots: SpecPerBot[
   });
 
   md += table({
-    title: "Duplicate HTTP Calls",
-    lenseValue: d => d.report?.auditResult?.network?.totalDuplicateRequests || 0,
-    totalPerCurrency: true,
-    totalPerSeed: true,
-    totalPerFamily: true,
-  });
-
-  md += table({
-    title: "HTTP Calls Details",
+    title: "HTTP Calls",
     lenseValue: d => d.report?.auditResult?.network?.details,
     formatValue: v => formatDetails(v),
     totalPerCurrency: true,
@@ -304,6 +296,7 @@ function formatDetails(
   let report = "";
   const boldIfHigherThan1 = nbr => (nbr > 1 ? `**${nbr}**` : nbr);
   try {
+    report += "<details>";
     for (const endpoint of Object.keys(details)) {
       const endpointDetails = details[endpoint];
       if (endpoint === "/apdu") {
@@ -323,8 +316,10 @@ function formatDetails(
         report += `<details><summary><sub><sup>${endpoint} (${endpointDetails.calls})</sup></sub></summary>${urls}</details>`;
       }
     }
+    report += "</details>";
   } catch (e) {
-    console.log(e);
+    // eslint-disable-next-line no-console
+    console.log(`Error when formatting details`);
   }
   return report;
 }

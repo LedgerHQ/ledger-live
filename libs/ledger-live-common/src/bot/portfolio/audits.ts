@@ -115,7 +115,6 @@ export class NetworkAudit {
   _totalTime = 0;
   _totalCount = 0;
   _totalResponseSize = 0;
-  _totalDuplicateRequests = 0;
   _urlsDetails: { [endpoint: string]: NetworkAuditDetails } = {};
 
   start(): void {
@@ -132,10 +131,8 @@ export class NetworkAudit {
 
   onPerformanceEntry: PerformanceObserverCallback = (items, _observer) => {
     const entries = items.getEntries();
-    console.log(entries.length + "entries");
     for (const entry of entries) {
       if (entry.entryType === "http") {
-        console.log("http entry");
         this._totalCount = (this._totalCount || 0) + 1;
         if (entry.duration) {
           this._totalTime = (this._totalTime || 0) + entry.duration;
@@ -144,7 +141,6 @@ export class NetworkAudit {
         const res = (entry.detail as any)?.res;
 
         if (res && req) {
-          console.log("res req)");
           const { url } = req;
           const endpointWithParameters = urlToEndpoint(url);
           const endpoint = endpointWithParameters.split("?")[0];
@@ -154,7 +150,6 @@ export class NetworkAudit {
               duration: 0,
               size: 0,
               urls: [{ url: endpointWithParameters, calls: 0 }],
-              duplicatedCalls: 0,
             };
           }
 
@@ -166,8 +161,6 @@ export class NetworkAudit {
             details.urls.push({ url: endpointWithParameters, calls: 1 });
           } else {
             relatedUrl.calls++;
-            details.duplicatedCalls++;
-            this._totalDuplicateRequests = (this._totalDuplicateRequests || 0) + 1;
           }
 
           details.calls++;
@@ -193,7 +186,6 @@ export class NetworkAudit {
       totalTime: this._totalTime,
       totalCount: this._totalCount,
       totalResponseSize: this._totalResponseSize,
-      totalDuplicateRequests: this._totalDuplicateRequests,
       details: this._urlsDetails,
     };
   }

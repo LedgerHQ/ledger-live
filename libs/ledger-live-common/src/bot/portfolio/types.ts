@@ -4,13 +4,11 @@ export type NetworkAuditResult = {
   totalTime?: number;
   totalCount?: number;
   totalResponseSize?: number;
-  totalDuplicateRequests?: number;
   details?: { [url: string]: NetworkAuditDetails };
 };
 
 export type NetworkAuditDetails = {
   calls: number;
-  duplicatedCalls: number;
   size: number;
   duration: number;
   urls: {
