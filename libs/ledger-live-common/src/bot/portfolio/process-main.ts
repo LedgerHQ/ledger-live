@@ -92,10 +92,12 @@ promiseAllBatched(parallelRuns, specsPerBots, async ({ env, family, key, seed })
       try {
         lastResult = JSON.parse(str);
       } catch (e) {
+        // eslint-disable-next-line no-console
         console.log(`Error when parsing family ${family}`, e);
       }
 
       if (VERBOSE) {
+        // eslint-disable-next-line no-console
         console.log(`${family}:${key}:child process exited with code ${code}`);
       }
     });

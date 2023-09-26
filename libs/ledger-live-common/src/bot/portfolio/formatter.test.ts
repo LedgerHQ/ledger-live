@@ -1,6 +1,6 @@
 import "../../__tests__/test-helpers/environment";
 
-import { finalMarkdownReport } from "./formatter";
+import { finalMarkdownReport, formatDetails, urlToEndpoint } from "./formatter";
 import { getSpecsPerBots } from "./logic";
 
 test("finalMarkdownReport sample", () => {
@@ -987,4 +987,49 @@ test("finalMarkdownReport sample", () => {
       }),
     ),
   ).toBeTruthy();
+});
+
+describe("urlToEndpoint", () => {
+  it("should transform simple urls to endpoint correctly", () => {
+    const url = "http://www.google.fr/";
+    expect(urlToEndpoint(url)).toEqual("/");
+  });
+
+  it("should manage endpoint without parameters correctly", () => {
+    const url = "http://mydomain.com/endpoint/sub";
+    expect(urlToEndpoint(url)).toEqual("/endpoint/sub");
+  });
+
+  it("should manage endpoint with parameters correctly", () => {
+    const url = "http://mydomain.com/endpoint?animal=cat&weight=slim";
+    expect(urlToEndpoint(url)).toEqual("/endpoint?animal=cat&weight=slim");
+  });
+});
+
+describe("formatDetails", () => {
+  it("should include a bold number if calls are duplicated", () => {
+    expect(
+      formatDetails({
+        endpoint: {
+          urls: [{ url: "endpoint/toto", calls: 2 }],
+          size: 10,
+          duration: 10,
+          calls: 2,
+        },
+      })?.includes("**"),
+    ).toEqual(true);
+  });
+
+  it("should not include a bold number if calls are unique", () => {
+    expect(
+      formatDetails({
+        endpoint: {
+          urls: [{ url: "endpoint/toto", calls: 1 }],
+          size: 10,
+          duration: 10,
+          calls: 1,
+        },
+      })?.includes("**"),
+    ).toEqual(false);
+  });
 });

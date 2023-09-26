@@ -284,12 +284,13 @@ function formatSize(bytes: number | undefined): string | undefined {
 }
 
 export function urlToEndpoint(url: string): string {
+  // eslint-disable-next-line no-useless-escape
   const regex = new RegExp(/^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/\n]+)/, "igm");
   const regexResult = regex.exec(url);
   return regexResult ? url.slice().replace(regexResult[0], "") : url;
 }
 
-function formatDetails(
+export function formatDetails(
   details: { [endpoint: string]: NetworkAuditDetails } | undefined,
 ): string | undefined {
   if (!details) return;
