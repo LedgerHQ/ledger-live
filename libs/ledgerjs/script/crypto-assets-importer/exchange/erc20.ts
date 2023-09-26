@@ -1,11 +1,10 @@
-import { log } from "console";
 import fs from "fs";
 import { fetchTokens } from "../fetch";
 
 type ERC20Exchange = [string, string, string];
 
 export const importERC20Exchange = async (outputDir: string) => {
-  log("importing ERC20 exchange...");
+  console.log("importing ERC20 exchange...");
   try {
     const erc20Exchange = await fetchTokens<ERC20Exchange>("exchange/erc20.json");
     fs.writeFileSync(`${outputDir}/exchange/erc20.json`, JSON.stringify(erc20Exchange));
@@ -24,7 +23,7 @@ ${exportStringified}
 `,
     );
 
-    log("importing ERC20 exchange success");
+    console.log("importing ERC20 exchange success");
   } catch (err) {
     console.error(err);
   }

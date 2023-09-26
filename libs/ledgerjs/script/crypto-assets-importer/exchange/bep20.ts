@@ -1,11 +1,10 @@
-import { log } from "console";
 import fs from "fs";
 import { fetchTokens } from "../fetch";
 
 type BEP20Exchange = [string, string, string];
 
 export const importBEP20Exchange = async (outputDir: string) => {
-  log("importing bep 20 exchange tokens...");
+  console.log("importing bep 20 exchange tokens...");
   try {
     const bep20Exchange = await fetchTokens<BEP20Exchange>("exchange/bep20.json");
     fs.writeFileSync(`${outputDir}/exchange/bep20.json`, JSON.stringify(bep20Exchange));
@@ -22,7 +21,7 @@ ${exportstringified}
 `;
 
     fs.writeFileSync(`${outputDir}/exchange/bep20.ts`, tsFile);
-    log("importing bep 20 exchange tokens success");
+    console.log("importing bep 20 exchange tokens success");
   } catch (err) {
     console.error(err);
   }
