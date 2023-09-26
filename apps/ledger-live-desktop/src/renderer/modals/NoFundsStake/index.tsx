@@ -7,7 +7,6 @@ import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCat
 import { getAllSupportedCryptoCurrencyTickers } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { closeModal, openModal } from "~/renderer/actions/modals";
-import { useProviders } from "~/renderer/screens/exchange/Swap2/Form";
 import Modal, { ModalBody } from "~/renderer/components/Modal";
 import Box from "~/renderer/components/Box";
 import EntryButton from "~/renderer/components/EntryButton/EntryButton";
@@ -15,6 +14,7 @@ import CoinsIcon from "./assets/CoinsIcon";
 import { trackPage, track } from "~/renderer/analytics/segment";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 
 const useText = (entryPoint: "noFunds" | "getFunds", currency: CryptoCurrency) => {
   const { t } = useTranslation();
@@ -43,9 +43,9 @@ const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeM
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const history = useHistory();
+  const { data: currenciesAll } = useFetchCurrencyAll();
 
   const rampCatalog = useRampCatalog();
-  const { providers, storedProviders } = useProviders();
 
   const onRampAvailableTickers: string[] = useMemo(() => {
     if (!rampCatalog.value) {
@@ -54,14 +54,6 @@ const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeM
     return getAllSupportedCryptoCurrencyTickers(rampCatalog.value.onRamp);
   }, [rampCatalog.value]);
 
-  const swapAvailableIds = useMemo(() => {
-    return providers || storedProviders
-      ? (providers || storedProviders)!
-          .map(({ pairs }) => pairs.map(({ from, to }) => [from, to]))
-          .flat(2)
-      : [];
-  }, [providers, storedProviders]);
-
   const currency: CryptoCurrency = parentAccount?.currency || (account as Account).currency;
 
   const text = useText(entryPoint === "get-funds" ? "getFunds" : "noFunds", currency);
@@ -69,8 +61,8 @@ const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeM
   const availableOnBuy = currency && onRampAvailableTickers.includes(currency.ticker.toUpperCase());
 
   const availableOnSwap = useMemo(() => {
-    return currency && swapAvailableIds.includes(currency.id);
-  }, [currency, swapAvailableIds]);
+    return currency && currenciesAll.includes(currency.id);
+  }, [currency, currenciesAll]);
 
   const availableOnReceive = true;
 

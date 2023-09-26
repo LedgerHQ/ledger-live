@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import {
@@ -8,13 +7,11 @@ import {
   getAccountName,
 } from "@ledgerhq/live-common/account/index";
 import Box from "~/renderer/components/Box";
-import { fromSelector } from "~/renderer/actions/swap";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import { ErrorContainer } from "~/renderer/components/Input";
 import { SelectAccount } from "~/renderer/components/SelectAccount";
 import Switch from "~/renderer/components/Switch";
 import Text from "~/renderer/components/Text";
-import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import { amountInputContainerProps, renderAccountValue, selectRowStylesMap } from "./utils";
 import { FormLabel } from "./FormLabel";
 import {
@@ -30,6 +27,9 @@ import { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { TranslatedError } from "~/renderer/components/TranslatedError/TranslatedError";
 import { WarningSolidMedium } from "@ledgerhq/react-ui/assets/icons";
+import { useSwapableAccounts } from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import { useSelector } from "react-redux";
+import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 
 const SwapStatusContainer = styled.div<{ isError: boolean }>(
   ({ theme: { space, colors }, isError }) => `
@@ -123,7 +123,8 @@ function FromRow({
   updateSelectedRate,
 }: Props) {
   const swapDefaultTrack = useGetSwapTrackingProperties();
-  const accounts = useSelector(fromSelector)(useSelector(shallowAccountsSelector));
+  const flattenedAccounts = useSelector(flattenAccountsSelector);
+  const accounts = useSwapableAccounts({ accounts: flattenedAccounts });
   const unit = fromAccount && getAccountUnit(fromAccount);
   const { t } = useTranslation();
   usePickDefaultAccount(accounts, fromAccount, setFromAccount);

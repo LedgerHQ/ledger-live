@@ -176,6 +176,7 @@ export type Features = CurrencyFeatures & {
   llmWalletQuickActions: Feature_LlmWalletQuickActions;
   cexDepositEntryPointsDesktop: Feature_CexDepositEntryPointsDesktop;
   cexDepositEntryPointsMobile: Feature_CexDepositEntryPointsMobile;
+  fetchAdditionalCoins: Feature_FetchAdditionalCoins;
 };
 
 /**
@@ -460,6 +461,7 @@ export type Feature_ListAppsV2 = DefaultFeature;
 export type Feature_BrazeLearn = DefaultFeature;
 export type Feature_LlmNewDeviceSelection = DefaultFeature;
 export type Feature_LlmWalletQuickActions = DefaultFeature;
+export type Feature_FetchAdditionalCoins = DefaultFeature;
 
 /**
  * Utils types.
