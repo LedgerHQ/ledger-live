@@ -13,7 +13,7 @@ export const estimateMaxSpendable = async (inputs: {
     return account.balance;
   }
   if (transaction) {
-    const maxTokenFees = await calculateMaxFeesToken();
+    const maxTokenFees = await calculateMaxFeesToken(transaction);
     const spendable = account.balance.minus(maxTokenFees);
     if (spendable.gt(0)) return account.balance.minus(maxTokenFees);
     return new BigNumber(0);

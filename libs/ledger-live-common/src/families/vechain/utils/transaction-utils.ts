@@ -1,4 +1,4 @@
-import { HEX_PREFIX } from "../constants";
+import { DEFAULT_GAS_COEFFICIENT, HEX_PREFIX } from "../constants";
 import crypto from "crypto";
 import BigNumber from "bignumber.js";
 import { Transaction as ThorTransaction } from "thor-devkit";
@@ -8,7 +8,8 @@ import { Query } from "../api/types";
 import { query } from "../api/sdk";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { Transaction, TransactionInfo } from "../types";
-import { DEFAULT_GAS_COEFFICIENT } from "../constants";
+import { isValid } from "./address-utils";
+import { calculateClausesVtho } from "../js-transaction";
 
 const GAS_COEFFICIENT = 15000;
 
@@ -80,7 +81,7 @@ export const calculateTransactionInfo = async (
 ): Promise<TransactionInfo> => {
   const { subAccounts } = account;
   const { amount: oldAmount, useAllAmount, subAccountId } = transaction;
-  const maxTokenFees = fixedMaxTokenFees || (await calculateMaxFeesToken());
+  const maxTokenFees = fixedMaxTokenFees || (await calculateMaxFeesToken(transaction));
 
   const tokenAccount =
     subAccountId && subAccounts
@@ -115,35 +116,16 @@ export const calculateTransactionInfo = async (
   };
 };
 
-export const calculateMaxFeesToken = async (): Promise<BigNumber> => {
-  //FIXME: The BE call is currently returning not stable values, hardwiring a value
-  // account: AccountLike,
-  // transaction: Transaction
-
-  // const accountTmp =
-  //   account.type === "Account" ? account?.subAccounts?.[0] : account;
-
-  // if (
-  //   transaction.subAccountId &&
-  //   transaction.recipient &&
-  //   isValid(transaction.recipient) &&
-  //   accountTmp
-  // ) {
-  //   transaction.amount = new BigNumber("1500000000000000");
-  //   const clauses = await calculateClausesVtho(
-  //     transaction,
-  //     new BigNumber("1500000000000000")
-  //   );
-  //   console.warn(transaction);
-  //   const gas = await estimateGas({
-  //     ...transaction,
-  //     body: { ...transaction.body, clauses: clauses },
-  //   });
-  //   const estimatedFees = new BigNumber(gas);
-  //   return estimatedFees;
-  // }
-  const fees = await calculateFee(new BigNumber("67000"), DEFAULT_GAS_COEFFICIENT);
-  return fees;
+export const calculateMaxFeesToken = async (transaction: Transaction): Promise<BigNumber> => {
+  if (transaction.recipient && isValid(transaction.recipient)) {
+    const clauses = await calculateClausesVtho(transaction, transaction.amount);
+    const gas = await estimateGas({
+      ...transaction,
+      body: { ...transaction.body, clauses: clauses },
+    });
+    return await calculateFee(new BigNumber(gas), DEFAULT_GAS_COEFFICIENT);
+  }
+  return new BigNumber(0);
 };
 
 export const calculateTotalSpent = (isToken: boolean, transaction: Transaction): BigNumber => {
