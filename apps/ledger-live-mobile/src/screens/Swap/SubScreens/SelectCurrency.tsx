@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { FlatList, StyleSheet } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { TFunction, useTranslation } from "react-i18next";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/index";
 import { TrackScreen, useAnalytics } from "../../../analytics";
@@ -33,7 +33,7 @@ export function SelectCurrency({
   const { track } = useAnalytics();
 
   const onSelect = useCallback(
-    (currency: Currency) => {
+    (currency: CryptoCurrency | TokenCurrency) => {
       track("button_clicked", {
         ...sharedSwapTracking,
         button: "new target currency",
