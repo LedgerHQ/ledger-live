@@ -27,13 +27,13 @@ export default () => {
   const [onSuccessAddToKnownDevices, setOnSuccessAddToKnownDevices] = useState<boolean>(false);
   const navigation =
     useNavigation<
-      StackNavigatorNavigation<BaseNavigatorStackParamList, ScreenName.DebugSettings>
+      StackNavigatorNavigation<BaseNavigatorStackParamList, ScreenName.DebugFeatures>
     >();
 
   // Example using the route to get the current screen name and any params
   // But no current way to get the navigator name (even from the navigation state)
-  const { name: screenName, params } =
-    useRoute<StackNavigatorRoute<SettingsNavigatorStackParamList, ScreenName.DebugSettings>>();
+  const { params } =
+    useRoute<StackNavigatorRoute<SettingsNavigatorStackParamList, ScreenName.DebugFeatures>>();
   const { pairedDevice } = params ?? {
     pairedDevice: null,
   };
