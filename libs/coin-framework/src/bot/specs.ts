@@ -1,5 +1,3 @@
-// helpers for spec
-import { DeviceModelId } from "@ledgerhq/devices";
 import { log } from "@ledgerhq/logs";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, TransactionCommon } from "@ledgerhq/types-live";
