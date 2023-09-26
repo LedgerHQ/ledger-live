@@ -3,7 +3,7 @@ import { Observable, Subject, merge, throwError, interval, concat, of } from "rx
 import { mergeMap, take, map, ignoreElements } from "rxjs/operators";
 export const socketErrorSubject: Subject<any> = new Subject();
 export const withSocketErrors = (observable: Observable<SocketEvent>): Observable<SocketEvent> =>
-  merge(observable, socketErrorSubject.pipe(mergeMap(e => throwError(e))));
+  merge(observable, socketErrorSubject.pipe(mergeMap(e => throwError(() => e))));
 
 const pause = ms => interval(ms).pipe(take(1), ignoreElements());
 
@@ -13,7 +13,6 @@ export const secureChannelMock = (managerGranted = false): Observable<SocketEven
         pause(500),
         of<SocketEvent>({
           type: "device-permission-requested",
-          wording: "Ledger manager",
         }),
         pause(500),
         of<SocketEvent>({

@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { ScrollView } from "react-native-gesture-handler";
 import { Flex, Text, Box } from "@ledgerhq/native-ui";
-import { StyleProp, ViewStyle } from "react-native";
+import { Linking, StyleProp, ViewStyle } from "react-native";
 import { snakeCase } from "lodash";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
@@ -19,6 +19,11 @@ import { track, useAnalytics } from "../../analytics";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import useQuickActions from "../../hooks/useQuickActions";
 import { PTX_SERVICES_TOAST_ID } from "../../constants";
+
+import {
+  useAlreadySubscribedURI,
+  useLearnMoreURI,
+} from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 
 type ButtonItem = {
   title: string;
@@ -37,7 +42,7 @@ type ButtonItem = {
 export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequestingToBeOpened">) {
   const navigation = useNavigation();
   const {
-    quickActionsList: { SEND, RECEIVE, BUY, SELL, SWAP, STAKE, WALLET_CONNECT },
+    quickActionsList: { SEND, RECEIVE, BUY, SELL, SWAP, STAKE, WALLET_CONNECT, RECOVER },
   } = useQuickActions();
   const { t } = useTranslation();
   const { pushToast, dismissToast } = useToasts();
@@ -54,6 +59,11 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
     [ptxServiceCtaExchangeDrawer],
   );
 
+  const recoverConfig = useFeature("protectServicesMobile");
+
+  const learnMoreURI = useLearnMoreURI(recoverConfig);
+  const alreadySubscribedURI = useAlreadySubscribedURI(recoverConfig);
+
   const onNavigate = useCallback(
     (name: string, options?: object) => {
       (navigation as StackNavigationProp<{ [key: string]: object | undefined }>).navigate(
@@ -64,6 +74,15 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
     },
     [navigation, onClose],
   );
+  const onNavigateRecover = useCallback(() => {
+    if (alreadySubscribedURI) {
+      Linking.canOpenURL(alreadySubscribedURI).then(() => Linking.openURL(alreadySubscribedURI));
+    } else if (learnMoreURI) {
+      Linking.canOpenURL(learnMoreURI).then(() => Linking.openURL(learnMoreURI));
+    }
+
+    onClose?.();
+  }, [alreadySubscribedURI, learnMoreURI, onClose]);
 
   const buttonsList: ButtonItem[] = [
     {
@@ -201,6 +220,24 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
             onPress: () => onNavigate(...WALLET_CONNECT.route),
             disabled: WALLET_CONNECT.disabled,
             testID: "transfer-walletconnect-button",
+          },
+        ]
+      : []),
+    ...(RECOVER
+      ? [
+          {
+            eventProperties: {
+              button: "transfer_recover",
+              page,
+              drawer: "trade",
+            },
+            tag: t("transfer.recover.tag"),
+            title: t("transfer.recover.title"),
+            description: t("transfer.recover.description"),
+            Icon: RECOVER.icon,
+            onPress: () => onNavigateRecover(),
+            disabled: RECOVER.disabled,
+            testID: "transfer-recover-button",
           },
         ]
       : []),

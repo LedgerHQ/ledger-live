@@ -198,7 +198,7 @@ export const mockExecWithInstalledContext = (installedInitial: InstalledItem[]):
     }
 
     if (getDependents(app.name).some(dep => installed.some(i => i.name === dep))) {
-      return throwError(new ManagerAppDepUninstallRequired(""));
+      return throwError(() => new ManagerAppDepUninstallRequired(""));
     }
 
     if (appOp.type === "install") {
@@ -207,7 +207,7 @@ export const mockExecWithInstalledContext = (installedInitial: InstalledItem[]):
         const depInstalled = installed.find(i => i.name === dep);
 
         if (!depInstalled || !depInstalled.updated) {
-          return throwError(new ManagerAppDepInstallRequired(""));
+          return throwError(() => new ManagerAppDepInstallRequired(""));
         }
       });
     }

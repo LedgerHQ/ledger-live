@@ -125,6 +125,18 @@ const SwapForm = () => {
     timeoutErrorMessage: t("swap2.form.timeout.message"),
   });
 
+  // @TODO: Try to check if we can directly have the right state from `useSwapTransaction`
+  // Used to set the fake transaction recipient
+  // As of today, we need to call setFromAccount to trigger an updateTransaction
+  // in order to set the correct recipient address (abandonSeed address)
+  // cf. https://github.com/LedgerHQ/ledger-live/blob/c135c887b313ecc9f4a3b3a421ced0e3a081dc37/libs/ledger-live-common/src/exchange/swap/hooks/useFromState.ts#L50-L57
+  useEffect(() => {
+    if (swapTransaction.account) {
+      swapTransaction.setFromAccount(swapTransaction.account);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const exchangeRatesState = swapTransaction.swap?.rates;
   const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
   const swapWarning = swapTransaction.fromAmountWarning;
@@ -148,19 +160,23 @@ const SwapForm = () => {
   }, [idleState]);
 
   const swapWebAppRedirection = useCallback(async () => {
-    const { to, from } = swapTransaction.swap;
+    const {
+      swap,
+      status: { estimatedFees: initFeeTotalValue },
+    } = swapTransaction;
+    const { to, from } = swap;
     const transaction = swapTransaction.transaction;
     const { account: fromAccount, parentAccount: fromParentAccount } = from;
     const { account: toAccount, parentAccount: toParentAccount } = to;
     const { feesStrategy } = transaction || {};
-
-    const rateId = exchangeRate?.rateId || "12345";
+    const { rate, rateId } = exchangeRate || {};
     if (fromAccount && toAccount) {
       const fromAccountId = accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id;
       const toAccountId = accountToWalletAPIAccount(toAccount, toParentAccount)?.id;
       const fromAmount = convertToNonAtomicUnit(transaction?.amount, fromAccount);
 
-      const customFeesParams = feesStrategy === "custom" ? getCustomFeesPerFamily(transaction) : {};
+      const customFeeConfig =
+        feesStrategy === "custom" ? getCustomFeesPerFamily(transaction) : null;
 
       history.push({
         pathname: "/swap-web",
@@ -169,13 +185,15 @@ const SwapForm = () => {
           fromAccountId,
           toAccountId,
           fromAmount,
-          quoteId: encodeURIComponent(rateId),
+          quoteId: rateId ? rateId : undefined,
+          rate,
           feeStrategy: feesStrategy?.toUpperCase(),
-          ...customFeesParams,
+          customFeeConfig: customFeeConfig ? JSON.stringify(customFeeConfig) : undefined,
+          initFeeTotalValue,
         },
       });
     }
-  }, [swapTransaction.swap, swapTransaction.transaction, exchangeRate?.rateId, history, provider]);
+  }, [swapTransaction, exchangeRate, history, provider]);
 
   useEffect(() => {
     if (swapTransaction.swap.rates.status === "success") {

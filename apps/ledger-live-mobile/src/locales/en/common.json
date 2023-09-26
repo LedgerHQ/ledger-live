@@ -597,6 +597,10 @@
       "title": "Operation canceled on device",
       "description": "You rejected the operation on the device."
     },
+    "ExpertModeRequired": {
+      "title": "Expert mode required",
+      "description": "Expert mode needs to be enabled."
+    },
     "WebsocketConnectionError": {
       "title": "Sorry, connection failed",
       "description": "Please try again with a better network connection (websocket error)."
@@ -2928,7 +2932,8 @@
         "account": "{{count}} account",
         "account_plural": "{{count}} accounts",
         "subtitle": "This must match the network chosen on the wallet or exchange transferring the crypto.",
-        "bannerTitle": "Make sure to select the right network. Learn how."
+        "bannerTitle": "Make sure to select the right network. Learn how.",
+        "depositFromCexBannerTitle": "Deposit crypto from your Coinbase account"
       },
       "stepperHeader": {
         "range": "Step {{currentStep}} of {{totalSteps}}",
@@ -3400,6 +3405,11 @@
     "walletConnect": {
       "title": "WalletConnect",
       "description": "Connect your wallet to dapps"
+    },
+    "recover": {
+      "title": "Ledger Recover",
+      "description": "Wallet recovery made easy",
+      "tag": "One month free"
     }
   },
   "signMessage": {
@@ -3773,7 +3783,8 @@
     "stayInTheAppPlz": "Stay in the Ledger Live app and keep your Ledger nearby.",
     "allowAppPermission": "Open the {{wording}} app on your device",
     "allowAppPermissionSubtitleToken": "to manage your {{token}} tokens",
-    "allowManagerPermission": "Allow {{wording}} on your {{productName}}",
+    "allowManagerPermission": "Allow Ledger Manager on your {{productName}}",
+    "allowRenaming": "Allow renaming on your {{productName}}",
     "allowRemoveCustomLockscreen": "Confirm removal of image on your Ledger Stax",
     "allowSecureConnection": "Allow a secure connection with Ledger",
     "loading": "Loading...",

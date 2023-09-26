@@ -92,7 +92,6 @@ const helpfulEvents = [
     name: "permission requested",
     event: {
       type: "device-permission-requested",
-      wording: "Allow Ledger Manager",
     },
   },
   {

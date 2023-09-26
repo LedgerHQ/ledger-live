@@ -31,7 +31,7 @@ const iconSwap = IconsLegacy.BuyCryptoMedium;
 const iconReceive = IconsLegacy.ArrowBottomMedium;
 const iconSend = IconsLegacy.ArrowTopMedium;
 const iconAddAccount = IconsLegacy.WalletMedium;
-const iconStake = IconsLegacy.ClaimRewardsMedium;
+const iconStake = IconsLegacy.CoinsMedium;
 
 export default function useAssetActions({ currency, accounts }: useAssetActionsProps): {
   mainActions: ActionButtonEvent[];

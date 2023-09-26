@@ -235,6 +235,8 @@ export type CompleteExchangeRequest = {
   signature: string;
   feesStrategy: string;
   exchangeType: number;
+  swapId?: string;
+  rate?: number;
 };
 export type CompleteExchangeUiRequest = {
   provider: string;
@@ -244,6 +246,8 @@ export type CompleteExchangeUiRequest = {
   signature: string;
   feesStrategy: string;
   exchangeType: number;
+  swapId?: string;
+  rate?: number;
 };
 
 export function completeExchangeLogic(
@@ -257,6 +261,8 @@ export function completeExchangeLogic(
     signature,
     feesStrategy,
     exchangeType,
+    swapId,
+    rate,
   }: CompleteExchangeRequest,
   uiNavigation: (request: CompleteExchangeUiRequest) => Promise<string>,
 ): Promise<string> {
@@ -345,5 +351,7 @@ export function completeExchangeLogic(
     signature,
     feesStrategy,
     exchangeType,
+    swapId,
+    rate,
   });
 }

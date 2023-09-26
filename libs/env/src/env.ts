@@ -78,7 +78,7 @@ const envDefinitions = {
     desc: "Node endpoint for celo",
   },
   COSMOS_GAS_AMPLIFIER: {
-    def: 1.2,
+    def: 1.5,
     parser: intParser,
     desc: "Cosmos gas estimate multiplier",
   },
@@ -782,6 +782,11 @@ const envDefinitions = {
     def: 0.3,
     parser: floatParser,
     desc: "Cancel transaction gasprice gap factor for NON-EIP1559 for edit eth transaction feature",
+  },
+  VERBOSE: {
+    def: [] as Array<string>,
+    parser: stringArrayParser,
+    desc: 'Sets up debug console printing of logs. `VERBOSE=1` or `VERBOSE=true`: to print all logs | `VERBOSE="apdu,hw,transport,hid-verbose"` : filtering on a list of log `type` separated by a `,`',
   },
 };
 

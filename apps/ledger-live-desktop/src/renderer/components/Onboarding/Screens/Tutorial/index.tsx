@@ -515,10 +515,11 @@ export default function Tutorial({ useCase }: Props) {
         },
         canContinue: !!connectedDevice,
         next: () => {
-          if (upsellPath) {
-            history.push(upsellPath);
-          }
-          dispatch(saveSettings({ hasCompletedOnboarding: true }));
+          dispatch(
+            saveSettings({
+              hasCompletedOnboarding: true,
+            }),
+          );
           track("Onboarding - End");
           setOnboardingDone(true);
         },
@@ -547,7 +548,6 @@ export default function Tutorial({ useCase }: Props) {
       path,
       fromRecover,
       recoverDiscoverPath,
-      upsellPath,
       dispatch,
     ],
   );
@@ -567,12 +567,15 @@ export default function Tutorial({ useCase }: Props) {
             deviceModelId: connectedDevice.modelId,
             fallbackIfNoAction: () => history.push("/"),
           });
+        if (upsellPath) {
+          history.push(upsellPath);
+        }
       }, 0);
       return () => {
         clearTimeout(timeout);
       };
     }
-  }, [connectedDevice, handleStartPostOnboarding, history, onboardingDone]);
+  }, [connectedDevice, handleStartPostOnboarding, history, onboardingDone, upsellPath]);
 
   const steps = useMemo(() => {
     const stepList = [

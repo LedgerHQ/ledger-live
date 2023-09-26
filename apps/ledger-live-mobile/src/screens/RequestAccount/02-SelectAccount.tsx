@@ -96,7 +96,7 @@ const List = ({
 
 function SelectAccount({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { accounts$, currency, allowAddAccount, onSuccess, onError } = route.params;
+  const { accounts$, currency, allowAddAccount, onSuccess } = route.params;
   const accountIds = useGetAccountIds(accounts$);
   const accounts = useSelector(accountsByCryptoCurrencyScreenSelector(currency, accountIds)) as {
     account: AccountLike;
@@ -122,15 +122,10 @@ function SelectAccount({ navigation, route }: Props) {
       screen: ScreenName.AddAccountsSelectDevice,
       params: {
         currency: currency as CryptoOrTokenCurrency,
-        onSuccess: () =>
-          navigation.navigate(NavigatorName.RequestAccount, {
-            screen: ScreenName.RequestAccountsSelectAccount,
-            params: route.params,
-          }),
-        onError,
+        onSuccess: () => navigation.navigate(ScreenName.RequestAccountsSelectAccount, route.params),
       },
     });
-  }, [currency, navigation, onError, route.params]);
+  }, [currency, navigation, route.params]);
 
   const renderFooter = useCallback(
     () =>

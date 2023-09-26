@@ -37,6 +37,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyDesmos: DEFAULT_FEATURE,
   currencyEnergyWeb: DEFAULT_FEATURE,
   currencyEvmosEvm: DEFAULT_FEATURE,
+  currencyInjective: DEFAULT_FEATURE,
   currencyInternetComputer: DEFAULT_FEATURE,
   currencyKavaEvm: DEFAULT_FEATURE,
   currencyKlaytn: DEFAULT_FEATURE,
@@ -346,6 +347,26 @@ export const DEFAULT_FEATURES: Features = {
       support_email: "support@ledger.com",
       typeform_url:
         "https://form.typeform.com/to/Jo7gqcB4?typeform-medium=embed-sdk&typeform-medium-version=next&typeform-embed=popup-blank",
+    },
+  },
+
+  cexDepositEntryPointsDesktop: {
+    enabled: false,
+    params: {
+      path: "/platform/ledger-cex-deposit",
+      locations: {
+        selectCrypto: true,
+      },
+    },
+  },
+
+  cexDepositEntryPointsMobile: {
+    enabled: false,
+    params: {
+      path: "/discover/ledger-cex-deposit",
+      locations: {
+        selectCrypto: true,
+      },
     },
   },
 };
