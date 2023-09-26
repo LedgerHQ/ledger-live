@@ -453,6 +453,10 @@
       "title": "Not a vechain account",
       "description": "Please make sure the coin is VTHO or VET"
     },
+    "ImpossibleToCalculateAmountAndFees": {
+      "title": "Impossible to calculate amount and fees",
+      "description": "Impossible to calculate amount and fees"
+    },
     "NotEnoughEGLDForFees": {
       "title": "Not enough EGLD to pay the transaction fees",
       "description": "Please send some EGLD to your account to pay for transactions."

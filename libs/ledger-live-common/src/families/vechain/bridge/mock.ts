@@ -4,11 +4,7 @@ import { scanAccounts, signOperation, broadcast, sync } from "../../../bridge/mo
 import { makeAccountBridgeReceive } from "../../../bridge/mockHelpers";
 import BigNumber from "bignumber.js";
 import { DEFAULT_GAS_COEFFICIENT, MAINNET_CHAIN_TAG } from "../constants";
-import {
-  calculateTotalSpent,
-  calculateTransactionInfo,
-  generateNonce,
-} from "../utils/transaction-utils";
+import { calculateTransactionInfo, generateNonce } from "../utils/transaction-utils";
 import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { Account } from "@ledgerhq/types-live";
 import {
@@ -70,11 +66,10 @@ const getTransactionStatus = async (
   const isTokenAccount = !!tokenAccount;
   const estimatedFees = new BigNumber(transaction.estimatedFees);
 
-  const { amount, spendableBalance } = await calculateTransactionInfo(
-    account,
-    transaction,
-    estimatedFees,
-  );
+  const { amount, spendableBalance } = await calculateTransactionInfo(account, transaction, {
+    estimatedGas: body.gas as number,
+    estimatedGasFees: estimatedFees,
+  });
 
   if (!body?.gas) {
     errors.fees = new FeeNotLoaded();
@@ -106,7 +101,10 @@ const getTransactionStatus = async (
     }
   }
 
-  const totalSpent = calculateTotalSpent(isTokenAccount, transaction);
+  let totalSpent = amount;
+  if (isTokenAccount) {
+    totalSpent = amount.plus(estimatedFees);
+  }
 
   return Promise.resolve({
     errors,

@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { calculateMaxFeesToken } from "../utils/transaction-utils";
+import { calculateGasFees } from "../utils/transaction-utils";
 import type { Transaction } from "../types";
 import { AccountLike } from "@ledgerhq/types-live";
 
@@ -13,7 +13,7 @@ export const estimateMaxSpendable = async (inputs: {
     return account.balance;
   }
   if (transaction) {
-    const maxTokenFees = await calculateMaxFeesToken();
+    const { estimatedGasFees: maxTokenFees } = await calculateGasFees(transaction, true);
     const spendable = account.balance.minus(maxTokenFees);
     if (spendable.gt(0)) return account.balance.minus(maxTokenFees);
     return new BigNumber(0);

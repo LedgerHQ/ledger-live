@@ -12,19 +12,23 @@ import { Account } from "@ledgerhq/types-live";
 import { isValid } from "./utils/address-utils";
 import BigNumber from "bignumber.js";
 import { NotEnoughVTHO } from "./errors";
-import { calculateTotalSpent, calculateTransactionInfo } from "./utils/transaction-utils";
+import { calculateTransactionInfo } from "./utils/transaction-utils";
 
 const getTransactionStatus = async (
   account: Account,
   transaction: Transaction,
 ): Promise<TransactionStatus> => {
   const { freshAddress, currency, subAccounts } = account;
-  const { body, recipient } = transaction;
+  const { body, recipient, amount } = transaction;
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
-  const { isTokenAccount, amount, spendableBalance } = await calculateTransactionInfo(
+  const { isTokenAccount, spendableBalance } = await calculateTransactionInfo(
     account,
     transaction,
+    {
+      estimatedGas: body.gas as number,
+      estimatedGasFees: new BigNumber(transaction.estimatedFees),
+    },
   );
 
   if (!body || !body.gas) {
@@ -57,7 +61,10 @@ const getTransactionStatus = async (
     }
   }
 
-  const totalSpent = calculateTotalSpent(isTokenAccount, transaction);
+  let totalSpent = amount;
+  if (isTokenAccount) {
+    totalSpent = amount.plus(estimatedFees);
+  }
 
   return Promise.resolve({
     errors,

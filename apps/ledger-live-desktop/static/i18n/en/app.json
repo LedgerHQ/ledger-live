@@ -5245,6 +5245,10 @@
       "title": "Not a vechain account",
       "description": "Please make sure the coin is VTHO or VET"
     },
+    "ImpossibleToCalculateAmountAndFees": {
+      "title": "Impossible to calculate amount and fees",
+      "description": "Impossible to calculate amount and fees"
+    },
     "NotEnoughBalance": {
       "title": "Sorry, insufficient funds",
       "description": "Please make sure the account has enough funds."

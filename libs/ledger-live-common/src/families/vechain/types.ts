@@ -30,4 +30,6 @@ export type TransactionInfo = {
   balance: BigNumber;
   spendableBalance: BigNumber;
   tokenAccount?: TokenAccount;
+  estimatedFees: string;
+  estimatedGas: number;
 };

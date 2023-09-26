@@ -3,12 +3,7 @@ import BigNumber from "bignumber.js";
 import { DEFAULT_GAS_COEFFICIENT, HEX_PREFIX, MAINNET_CHAIN_TAG } from "./constants";
 import { Transaction } from "./types";
 import { Transaction as ThorTransaction } from "thor-devkit";
-import {
-  calculateFee,
-  calculateTransactionInfo,
-  estimateGas,
-  generateNonce,
-} from "./utils/transaction-utils";
+import { calculateTransactionInfo, generateNonce } from "./utils/transaction-utils";
 import { VTHO_ADDRESS } from "./contracts/constants";
 import VIP180 from "./contracts/abis/VIP180";
 import { isValid } from "./utils/address-utils";
@@ -51,7 +46,10 @@ export const prepareTransaction = async (
   account: Account,
   transaction: Transaction,
 ): Promise<Transaction> => {
-  const { amount, isTokenAccount } = await calculateTransactionInfo(account, transaction);
+  const { amount, isTokenAccount, estimatedFees, estimatedGas } = await calculateTransactionInfo(
+    account,
+    transaction,
+  );
 
   let blockRef = "";
 
@@ -59,28 +57,18 @@ export const prepareTransaction = async (
   if (transaction.recipient && isValid(transaction.recipient)) {
     blockRef = await getBlockRef();
     if (isTokenAccount) {
-      clauses = await calculateClausesVtho(transaction, amount);
+      clauses = await calculateClausesVtho(transaction.recipient, amount);
     } else {
-      clauses = await calculateClausesVet(transaction, amount);
+      clauses = await calculateClausesVet(transaction.recipient, amount);
     }
   }
 
-  const gas = await estimateGas({
-    ...transaction,
-    body: { ...transaction.body, clauses: clauses },
-  });
-
-  const estimatedFees = (
-    await calculateFee(new BigNumber(gas), transaction.body.gasPriceCoef)
-  ).toString();
-
-  const body = { ...transaction.body, gas, blockRef, clauses };
-
+  const body = { ...transaction.body, gas: estimatedGas, blockRef, clauses };
   return { ...transaction, body, amount, estimatedFees };
 };
 
 export const calculateClausesVtho = async (
-  transaction: Transaction,
+  recipient: string,
   amount: BigNumber,
 ): Promise<ThorTransaction.Clause[]> => {
   const clauses: ThorTransaction.Clause[] = [];
@@ -91,20 +79,14 @@ export const calculateClausesVtho = async (
     value: 0,
     data: "0x",
   };
-
-  const updatedValues = {
-    to: transaction.recipient,
-    amount: amount.toFixed(),
-  };
-
-  updatedClause.data = VIP180.transfer.encode(updatedValues.to, updatedValues.amount);
+  updatedClause.data = VIP180.transfer.encode(recipient, amount.toFixed());
 
   clauses.push(updatedClause);
   return clauses;
 };
 
-const calculateClausesVet = async (
-  transaction: Transaction,
+export const calculateClausesVet = async (
+  recipient: string,
   amount: BigNumber,
 ): Promise<ThorTransaction.Clause[]> => {
   const clauses: ThorTransaction.Clause[] = [];
@@ -117,7 +99,7 @@ const calculateClausesVet = async (
   };
 
   updatedClause.value = `${HEX_PREFIX}${amount.toString(16)}`;
-  updatedClause.to = transaction.recipient;
+  updatedClause.to = recipient;
 
   clauses.push(updatedClause);
 
