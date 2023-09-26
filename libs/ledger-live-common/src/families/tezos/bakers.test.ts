@@ -109,28 +109,32 @@ describe("Tezos Baker", () => {
     mockedNetwork.mockReturnValue(Promise.resolve(response));
   });
 
-  it("Ledger Baker should be first in the list", async () => {
-    const bakers = await cache();
-    expect(bakers[0].name).toBe("Ledger Live by Kiln");
+  describe("Get bakers from cache", () => {
+    it("Ledger Baker should be first in the list", async () => {
+      const bakers = await cache();
+      expect(bakers[0].name).toBe("Ledger Live by Kiln");
+    });
   });
 
-  it("Should convert api baker to LL baker (capacity status full)", () => {
-    const testBaker = data.find(baker => baker.freeSpace < 0);
-    if (testBaker) {
-      const baker = asBaker(testBaker);
-      expect(baker?.name).toBe(testBaker.name);
-      expect(baker?.nominalYield).toBe(`${Math.floor(10000 * testBaker.estimatedRoi) / 100} %`);
-      expect(baker?.capacityStatus).toBe("full");
-    }
-  });
+  describe("asBaker", () => {
+    it("Should convert api baker to LL baker (capacity status full)", () => {
+      const testBaker = data.find(baker => baker.freeSpace < 0);
+      if (testBaker) {
+        const baker = asBaker(testBaker);
+        expect(baker?.name).toBe(testBaker.name);
+        expect(baker?.nominalYield).toBe(`${Math.floor(10000 * testBaker.estimatedRoi) / 100} %`);
+        expect(baker?.capacityStatus).toBe("full");
+      }
+    });
 
-  it("Should convert api baker to LL baker (capacity status normal)", () => {
-    const testBaker = data.find(baker => baker.freeSpace > 0);
-    if (testBaker) {
-      const baker = asBaker(testBaker);
-      expect(baker?.name).toBe(testBaker.name);
-      expect(baker?.nominalYield).toBe(`${Math.floor(10000 * testBaker.estimatedRoi) / 100} %`);
-      expect(baker?.capacityStatus).toBe("normal");
-    }
+    it("Should convert api baker to LL baker (capacity status normal)", () => {
+      const testBaker = data.find(baker => baker.freeSpace > 0);
+      if (testBaker) {
+        const baker = asBaker(testBaker);
+        expect(baker?.name).toBe(testBaker.name);
+        expect(baker?.nominalYield).toBe(`${Math.floor(10000 * testBaker.estimatedRoi) / 100} %`);
+        expect(baker?.capacityStatus).toBe("normal");
+      }
+    });
   });
 });
