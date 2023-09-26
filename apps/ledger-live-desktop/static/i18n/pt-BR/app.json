@@ -406,12 +406,12 @@
     "missingApp" : {
       "title" : "Instale o aplicativo {{appName}} no seu dispositivo",
       "subtitle" : "Vá à Minha Ledger e instale o aplicativo {{appName}} para trocar ativos.",
-      "cta" : "Vá à Minha Ledger"
+      "cta" : "Ir para Minha Ledger"
     },
     "outdatedApp" : {
       "title" : "Atualize o aplicativo {{appName}} no seu dispositivo",
       "subtitle" : "Vá à Minha Ledger e atualize o aplicativo {{appName}} para trocar ativos.",
-      "cta" : "Vá à Minha Ledger"
+      "cta" : "Ir para Minha Ledger"
     },
     "providers" : {
       "title" : "Escolha um provedor para trocar criptos",
@@ -539,7 +539,7 @@
         "swap" : {
           "title" : "Trocar",
           "label" : "Populares",
-          "body" : "Converta cripto para cripto em segurança"
+          "body" : "Troque cripto por cripto em segurança"
         },
         "receive" : {
           "title" : "Receber",
@@ -1387,7 +1387,7 @@
       },
       "swap" : {
         "title" : "Trocar",
-        "description" : "Converta cripto para cripto em segurança",
+        "description" : "Troque cripto por cripto em segurança",
         "label" : "Populares"
       },
       "earn" : {
@@ -1410,7 +1410,7 @@
       "title" : "Instalar aplicativos no seu dispositivo",
       "desc" : "Vá à Minha Ledger para instalar aplicativos no seu dispositivo. Você pode adicionar contas quando tiver aplicativos instalados.",
       "buttons" : {
-        "installApp" : "Vá à Minha Ledger",
+        "installApp" : "Ir para Minha Ledger",
         "help" : "Ajuda"
       }
     },
@@ -1867,7 +1867,7 @@
       "updateBtn" : "Atualizar Firmware",
       "banner" : {
         "warning" : "Atualização do firmware {{latestFirmware}} disponível",
-        "cta" : "Vá à Minha Ledger",
+        "cta" : "Ir para Minha Ledger",
         "old" : {
           "warning" : "A versão do firmware do dispositivo é antiga demais para ser atualizada. Contate o Suporte Ledger para substituir o dispositivo.",
           "cta" : "Falar com o suporte"
