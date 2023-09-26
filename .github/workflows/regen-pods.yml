@@ -69,7 +69,7 @@ jobs:
       - name: install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
       - name: regenerate pods
-        run: pnpm mobile pod
+        run: NO_FLIPPER=1 pnpm mobile pod
       - name: status
         id: check-status
         run: echo "status=$(git status --porcelain | wc -l)" >> $GITHUB_OUTPUT
