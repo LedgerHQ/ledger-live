@@ -322,18 +322,18 @@
       "description": "Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
     },
     "ImageCommitRefusedOnDevice": {
-      "title": "Lock screen cancelled on Ledger Stax",
+      "title": "Lock screen picture discarded on Ledger Stax",
       "description": "If this image wasn't the right fit, you can try again with another image.",
       "primaryCTA": "Upload another picture"
     },
     "ImageLoadRefusedOnDevice": {
-      "title": "Lock screen cancelled on Ledger Stax",
+      "title": "Loading of lock screen picture cancelled on Ledger Stax",
       "description": "If this image wasn't the right fit, you can try again with another image.",
       "primaryCTA": "Upload another picture"
     },
     "ImageDoesNotExistOnDevice": {
-      "title": "Your Ledger Stax doesn’t have a lock screen picture to remove",
-      "description": "The customized lock screen picture was previously removed."
+      "title": "No lock screen picture",
+      "description": "The lock screen picture was previously deleted."
     },
     "InvalidAddress": {
       "title": "This is not a valid {{currencyName}} address"
@@ -776,8 +776,8 @@
       "description": "Please try again with another image"
     },
     "ImageDownloadError": {
-      "title": "Image download failed",
-      "description": "Please try again with another image"
+      "title": "Picture failed to download",
+      "description": "Try again with a different picture."
     },
     "NFTMetadataLoadingError": {
       "title": "NFT metadata loading issue",
@@ -788,24 +788,24 @@
       "description": "Try again with a different picture."
     },
     "ImageTooLargeError": {
-      "title": "Image too large",
-      "description": "Please try with a smaller image"
+      "title": "The picture is too big",
+      "description": "Resize or compress the picture and try again, or upload a smaller picture."
     },
     "ImageCropError": {
-      "title": "Cropping of the image failed",
-      "description": "Please try again with another image"
+      "title": "Picture crop failed",
+      "description": "Try again with a different picture."
     },
     "ImageResizeError": {
-      "title": "Resizing of the image failed",
-      "description": "Please try again with another image"
+      "title": "Picture failed to resize",
+      "description": "Try again with a different picture."
     },
     "ImagePreviewError": {
-      "title": "Preview of the image failed",
-      "description": "Please try again with another image"
+      "title": "Preview failed to load",
+      "description": "Try again with a different picture."
     },
     "ImageProcessingError": {
-      "title": "Processing of the image failed",
-      "description": "Please try again with another image"
+      "title": "Picture processing error",
+      "description": "Try again with a different picture."
     },
     "HederaAddAccountError": {
       "title": "Your account has not been added. Please try again."
@@ -6245,15 +6245,15 @@
     "toastRemove": "Lock screen picture removed",
     "cropImage": "Crop picture",
     "chooseConstrast": "Choose contrast",
-    "uploadAnotherImage": "Upload another image",
+    "uploadAnotherImage": "Upload another picture",
     "rotateImage": "Rotate",
-    "allowPreview": "Allow lock screen picture to load on your {{productName}}",
+    "allowPreview": "Tap on “Load picture” to customize the lock screen",
     "loadingPicture": "Loading...",
     "loadingPictureAlmostOver": "Voilà!",
     "commitRequested": "Like what you see?\nKeep it!",
     "confirmPicture": "Confirm on {{productName}}",
     "landingPage": {
-      "title": "Choose any NFT, or photo.\nCustomize.\nMake your Ledger, yours.",
+      "title": "Choose any digital art or photo.\nCustomize your Ledger Stax.\nMake it yours.",
       "choosePicture": "Choose a picture"
     },
     "confirmCrop": "Confirm crop",
@@ -6307,7 +6307,7 @@
         "title": "Customize the lock screen",
         "titleCompleted": "Lock screen customized",
         "description": "Choose any NFT or picture to set as the lock screen of your Ledger Stax.",
-        "popupLabel": "Lock screen set"
+        "popupLabel": "Lockscreen customized"
       },
       "claimNft": {
         "title": "Claim the Infinity NFT",
