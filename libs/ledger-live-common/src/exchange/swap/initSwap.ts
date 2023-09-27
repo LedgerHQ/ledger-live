@@ -69,6 +69,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         const data = {
           provider,
           amountFrom: apiAmount.toString(),
+          amountFromInSmallestDenomination: amount.toNumber(),
           from: refundCurrency.id,
           to: payoutCurrency.id,
           address: payoutAccount.freshAddress,
