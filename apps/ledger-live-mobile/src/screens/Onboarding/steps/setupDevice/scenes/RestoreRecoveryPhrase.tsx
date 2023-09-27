@@ -1,11 +1,9 @@
-import React, { useCallback } from "react";
-import { useTranslation } from "react-i18next";
 import { Text } from "@ledgerhq/native-ui";
-import { useNavigation } from "@react-navigation/native";
-import { NavigatorName, ScreenName } from "../../../../../const";
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import Button from "../../../../../components/PreventDoubleClickButton";
-import { StackNavigatorNavigation } from "../../../../../components/RootNavigator/types/helpers";
-import { OnboardingNavigatorParamList } from "../../../../../components/RootNavigator/types/OnboardingNavigator";
+import OnboardingRecoveryPhraseWarning from "../drawers/RecoveryPhraseWarning";
+import QueuedDrawer from "../../../../../components/QueuedDrawer";
 
 const RestoreRecoveryPhraseScene = () => {
   const { t } = useTranslation();
@@ -13,9 +11,6 @@ const RestoreRecoveryPhraseScene = () => {
     <>
       <Text variant="h2" uppercase mb={3}>
         {t("onboarding.stepRecoveryPhrase.importRecoveryPhrase.title")}
-      </Text>
-      <Text variant="body" color="neutral.c80" mb={3}>
-        {t("onboarding.stepRecoveryPhrase.importRecoveryPhrase.desc")}
       </Text>
       <Text variant="body" color="neutral.c80" mb={3}>
         {t("onboarding.stepRecoveryPhrase.importRecoveryPhrase.desc")}
@@ -28,19 +23,26 @@ RestoreRecoveryPhraseScene.id = "RestoreRecoveryPhraseScene";
 
 const Next = ({ onNext }: { onNext: () => void }) => {
   const { t } = useTranslation();
-  const navigation = useNavigation<StackNavigatorNavigation<OnboardingNavigatorParamList>>();
 
-  const handlePress = useCallback(() => {
-    navigation.navigate(NavigatorName.OnboardingCarefulWarning, {
-      screen: ScreenName.OnboardingModalRecoveryPhraseWarning,
-      params: { onNext },
-    });
-  }, [navigation, onNext]);
+  const [isOpened, setOpen] = useState(false);
+
+  const next = () => {
+    setOpen(false);
+    setTimeout(() => onNext(), 200);
+  };
 
   return (
-    <Button type="main" size="large" onPress={handlePress}>
-      {t("onboarding.stepRecoveryPhrase.importRecoveryPhrase.cta")}
-    </Button>
+    <>
+      <Button type="main" size="large" onPress={() => setOpen(true)}>
+        {t("onboarding.stepRecoveryPhrase.importRecoveryPhrase.cta")}
+      </Button>
+
+      <OnboardingRecoveryPhraseWarning
+        open={isOpened}
+        onClose={() => setOpen(false)}
+        onPress={next}
+      />
+    </>
   );
 };
 
