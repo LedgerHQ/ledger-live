@@ -5310,6 +5310,10 @@
       "title" : "アクションが拒否されました。",
       "description" : "デバイス上で操作を拒否しました。"
     },
+    "ExpertModeRequired" : {
+      "title" : "エキスパートモードが必要です",
+      "description" : "エキスパートモードを有効にする必要があります。"
+    },
     "TransactionRefusedOnDevice" : {
       "title" : "デバイス上で操作が却下されました。",
       "description" : "再試行するか、疑わしい場合はLedgerサポートにお問い合わせください。"
