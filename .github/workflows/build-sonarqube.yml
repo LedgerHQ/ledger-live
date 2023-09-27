@@ -29,7 +29,6 @@ env:
 jobs:
   run-sonarqube-bot:
     env:
-      NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
     runs-on: [ledger-live-4xlarge-linux]
     steps:
