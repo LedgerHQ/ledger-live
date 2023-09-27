@@ -1280,7 +1280,7 @@
     },
     "postOnboardingBanner" : {
       "title" : "Que faire ensuite avec votre Ledger Stax ?",
-      "description" : "Demandez votre NFT Infinity Pass, personnalisez\n l’écran de verrouillage ou transférez vos actifs.",
+      "description" : "Demandez votre NFT Infinity Pass, personnalisez\n le fond d’écran ou transférez vos actifs.",
       "link" : "Découvrir la suite"
     }
   },
@@ -5310,6 +5310,10 @@
       "title" : "Action rejetée",
       "description" : "Vous avez refusé l’opération sur votre appareil."
     },
+    "ExpertModeRequired" : {
+      "title" : "Mode Expert requis",
+      "description" : "Veuillez activer le mode Expert."
+    },
     "TransactionRefusedOnDevice" : {
       "title" : "Opération refusée sur l’appareil",
       "description" : "Veuillez réessayer ou contacter l’Assistance Ledger."
@@ -5699,8 +5703,8 @@
       "description" : "Si ce fond d’écran ne vous plaît pas, choisissez une autre image."
     },
     "ImageDoesNotExistOnDevice" : {
-      "title" : "Aucun fond d’écran de verrouillage à supprimer sur votre Ledger Stax",
-      "description" : "Vous avez déjà supprimé votre fond d’écran de verrouillage."
+      "title" : "Aucun fond d’écran à supprimer sur votre Ledger Stax",
+      "description" : "Vous avez déjà supprimé votre fond d’écran."
     },
     "RestoreImageCommitRefusedOnDevice" : {
       "title" : "Restauration du fond d’écran annulée sur votre Ledger Stax",
@@ -5789,8 +5793,8 @@
     }
   },
   "customImage" : {
-    "title" : "Écran de verrouillage personnalisé",
-    "cta" : "Écran de verrouillage personnalisé",
+    "title" : "Fond d’écran personnalisé",
+    "cta" : "Fond d’écran personnalisé",
     "managerCTA" : "Fond d’écran",
     "managerCTARemove" : "Retirer",
     "steps" : {
@@ -5831,7 +5835,7 @@
       "description" : "Avec un fond d’écran unique",
       "actionCompletedPopupLabel" : "Appareil personnalisé"
     },
-    "customImageSet" : "Écran de verrouillage défini",
+    "customImageSet" : "Fond d’écran défini",
     "finishCTA" : "Terminer"
   },
   "onboardingAppInstall" : {
