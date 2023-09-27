@@ -597,6 +597,10 @@
       "title" : "تم إلغاء العملية على الجهاز",
       "description" : "أنت قمت برفض العملية على الجهاز."
     },
+    "ExpertModeRequired" : {
+      "title" : "وضع الخبير مطلوب",
+      "description" : "يجب تمكين وضع الخبير."
+    },
     "WebsocketConnectionError" : {
       "title" : "عذراً، فشل الاتصال",
       "description" : "يرجى المحاولة مرة أخرى مع اتصال أفضل بالشبكة (خطأ websocket)."
@@ -1075,10 +1079,10 @@
       }
     },
     "enjoy" : {
-      "title" : "شكراً على ملاحظاتك!",
-      "description" : "سنكون ممتنين إذا تمكنت من أخذ دقيقة من وقتك لكتابة مراجعة لنا. يُساعدنا دعمك على الوصول إلى المزيد من الأشخاص ويحفّزنا على إطلاق المزيد من الميزات الجديدة للتطبيق.",
+      "title" : "تستمتع باستخدام Ledger Live؟\nشارك رأيك!",
+      "description" : "اترك لنا تقييماً إيجابياً على App Store.",
       "cta" : {
-        "rate" : "امنحنا 5 نجوم",
+        "rate" : "تقييم Ledger Live",
         "notNow" : "ليس الآن"
       }
     },
@@ -1906,51 +1910,51 @@
   "earlySecurityCheck" : {
     "title" : "اختبار الأصالة والتحقق من تحديث نظام التشغيل",
     "idle" : {
-      "description" : "Genuine Check makes sure your Ledger Stax is an official Ledger. OS update check makes sure Ledger Stax OS is up to date.",
-      "learnMore" : "Learn more about Genuine Check",
-      "checkCta" : "Check Ledger Stax"
+      "description" : "اختبار الأصالة يتأكد من أن Ledger Stax الخاص بك هو جهاز Ledger أصلي. فحص تحديث نظام التشغيل يتأكد من أن نظام تشغيل Ledger Stax مُحدَّث إلى آخر إصدار.",
+      "learnMore" : "تعرّف على المزيد حول اختبار الأصالة",
+      "checkCta" : "فحص Ledger Stax"
     },
     "completed" : {
       "continueCta" : "المتابعة إلى الإعداد"
     },
     "earlySecurityCheckMandatoryDrawer" : {
-      "title" : "Genuine Check is mandatory",
-      "description" : "You cannot setup your {{productName}} without allowing this Check.",
+      "title" : "اختبار الأصالة إلزامي",
+      "description" : "لا يمكنك إعداد جهازك {{productName}} بدون السماح بهذا الفحص.",
       "resumeCta" : "استئناف الفحص",
-      "cancelCta" : "Cancel Checks"
+      "cancelCta" : "إلغاء الفحوصات"
     },
     "genuineCheckErrorDrawer" : {
-      "title" : "Genuine Check error",
-      "description" : "An error occurred while running the genuine check on {{productName}}.",
+      "title" : "خطأ في اختبار الأصالة",
+      "description" : "حدث خطأ أثناء إجراء اختبار الأصالة على جهاز {{productName}}.",
       "retryCta" : "إعادة المحاولة",
-      "cancelCta" : "Cancel set up",
+      "cancelCta" : "إلغاء الإعداد",
       "notFoundEntity" : {
-        "title" : "Initiate Genuine Check again",
-        "description" : "You must first disable \"My Ledger Provider\" setting. To disable it, open Ledger Live \"Settings\", select \"Experimental features\", and then toggle off \"Manager provider\".",
+        "title" : "بدء اختبار الأصالة مجدداً",
+        "description" : "يجب عليك أولاً تعطيل إعداد \"My Ledger Provider (مزوّد My Ledger)\". لتعطيله، افتح \"Settings (إعدادات)\" في Ledger Live، واختر \"Experimental features (الميزات التجريبية)\"، ثم قم بتبديل زر \"Manager provider (مزوّد المدير)\" إلى وضع التعطيل.",
         "settingsCta" : "انتقل إلى الإعدادات"
       }
     },
     "genuineCheckNonGenuineDrawer" : {
-      "title" : "This Ledger Stax failed the Genuine Check",
+      "title" : "فشل Ledger Stax هذا في اختبار الأصالة",
       "description" : "{{productName}} هذا غير آمن للاستخدام. يُرجى التواصل مع دعم Ledger.",
       "supportCta" : "تواصل مع دعم Ledger"
     },
     "allowManagerDrawer" : {
-      "title" : "Tap 'Allow' to enable Genuine Check and OS update check"
+      "title" : "انقر على 'Allow [سماح]' لتمكين اختبار الأصالة وفحص تحديث نظام التشغيل"
     },
     "genuineCheckStep" : {
-      "learnMore" : "Learn more about Genuine Check",
+      "learnMore" : "تعرّف على المزيد حول اختبار الأصالة",
       "inactive" : {
         "title" : "اختبار الأصالة",
-        "description" : "Genuine Check makes sure your {{productName}} is an official Ledger."
+        "description" : "اختبار الأصالة يتأكد من أن {{productName}} الخاص بك هو جهاز Ledger أصلي."
       },
       "active" : {
         "title" : "اختبار الأصالة",
-        "description" : "Genuine Check makes sure your {{productName}} is an official Ledger."
+        "description" : "اختبار الأصالة يتأكد من أن {{productName}} الخاص بك هو جهاز Ledger أصلي."
       },
       "completed" : {
         "title" : "{{productName}} أصلي",
-        "description" : "Genuine Check makes sure your {{productName}} is an official Ledger."
+        "description" : "اختبار الأصالة يتأكد من أن {{productName}} الخاص بك هو جهاز Ledger أصلي."
       },
       "refused" : {
         "title" : "اختبار الأصالة تم رفضه",
@@ -1959,40 +1963,40 @@
       },
       "error" : {
         "title" : "اختبار الأصالة",
-        "description" : "Genuine Check makes sure your {{productName}} is an official Ledger."
+        "description" : "اختبار الأصالة يتأكد من أن {{productName}} الخاص بك هو جهاز Ledger أصلي."
       }
     },
     "firmwareUpdateCheckStep" : {
       "active" : {
         "title" : "التحقق من تحديث نظام التشغيل",
-        "description" : "OS update check makes sure {{productName}} Operating System is up to date."
+        "description" : "فحص تحديث نظام التشغيل يتأكد من أن نظام تشغيل {{productName}} مُحدَّث إلى آخر إصدار."
       },
       "completed" : {
         "noUpdateAvailable" : {
-          "title" : "التحقق من تحديث نظام التشغيل",
-          "description" : "OS update check makes sure {{productName}} Operating System is up to date."
+          "title" : "نظام تشغيل {{productName}} مُحدَّث إلى آخر إصدار"
         }
       },
       "error" : {
-        "title" : "Software update check failed",
+        "title" : "فشل فحص تحديث البرامج",
         "skipCta" : "تخطي التحديث"
       },
       "refused" : {
-        "title" : "OS version {{firmwareVersion}} is available",
-        "description" : "We recommend performing this update to benefit from the latest security and functionality.",
-        "updateCta" : "Update Ledger Stax",
+        "title" : "الإصدار {{firmwareVersion}} من نظام التشغيل متاح",
+        "description" : "نوصي بإجراء هذا التحديث للاستفادة من أحدث إصدارات الأمان والوظائف.",
+        "updateCta" : "تحديث Ledger Stax",
         "skipCta" : "تخطي التحديث"
       },
       "inactive" : {
         "title" : "التحقق من تحديث نظام التشغيل",
-        "description" : "OS update check makes sure {{productName}} Operating System is up to date."
+        "description" : "فحص تحديث نظام التشغيل يتأكد من أن نظام تشغيل {{productName}} مُحدَّث إلى آخر إصدار."
       }
     },
     "firmwareUpdateAvailableDrawer" : {
-      "title" : "OS update available",
-      "description" : "Update your {{productName}} to benefit from the latest security and functionality.",
+      "title" : "تحديث نظام تشغيل {{productName}} متاح",
+      "description" : "قم بتحديث جهازك {{productName}} للاستفادة من أحدث إصدارات الأمان والوظائف.",
       "descriptionVersion" : "النسخة {{firmwareVersion}}",
-      "updateCta" : "تحديث الآن"
+      "updateCta" : "تحديث الآن",
+      "seeWhatsInUpdateCta" : "تعرّف على ماذا يتضمن التحديث"
     }
   },
   "syncOnboarding" : {
@@ -2050,7 +2054,7 @@
       "supportCta" : "التحدث مع شخص"
     },
     "earlySecurityCheckCompletedStep" : {
-      "title" : "This {{productName}} is genuine",
+      "title" : "جهاز {{productName}} هذا أصلي",
       "description" : "تابع الإعداد على {{productName}}."
     },
     "pinStep" : {
@@ -2172,6 +2176,13 @@
       "title" : "سعر السوق لـ{{currencyTicker}}",
       "currencyPrice" : "سعر 1 {{currencyTicker}}",
       "currencyPriceChange" : "آخر تغيير خلال 24 ساعة"
+    },
+    "quickActions" : {
+      "buy" : "شراء",
+      "swap" : "مبادلة",
+      "send" : "إرسال",
+      "deposit" : "إيداع",
+      "stake" : "تكديس"
     }
   },
   "addAccountsModal" : {
@@ -2446,12 +2457,16 @@
     },
     "import" : {
       "scan" : {
-        "title" : "قم بالاستيراد من سطح المكتب",
-        "descTop" : {
-          "line1" : "في Ledger Live لسطح المكتب، انتقل إلى:",
-          "line2" : "إعدادات > حسابات > تصدير الحسابات > تصدير"
+        "title" : "قم بالاستيراد من سطح المكتب"
+      },
+      "newScan" : {
+        "title" : "مسح واستيراد حساباتك من Ledger Live لسطح المكتب",
+        "instructions" : {
+          "line1" : "افتح Ledger Live لسطح المكتب.",
+          "line2" : "Settings (الإعدادات) > Accounts (الحسابات) > Exports accounts (تصدير الحسابات)",
+          "line3" : "امسح كود QR حتى يصل شريط التحميل إلى %100."
         },
-        "descBottom" : "افتح Ledger Live لسطح المكتب وقم بمسح كود QR ضوئياً"
+        "hodl" : "انتظر حتى يكتمل المسح."
       },
       "result" : {
         "title" : "استيراد الحسابات",
@@ -2711,7 +2726,7 @@
       "privacyPolicy" : "سياسة الخصوصية",
       "privacyPolicyDesc" : "تعرف على البيانات الشخصية التي يتم جمعها ولماذا وكيف يتم استخدامها.",
       "liveReview" : {
-        "title" : "Feedback",
+        "title" : "الآراء والتعليقات",
         "desc" : "شاركنا ملاحظاتك على التطبيق",
         "ios" : "التقييم على App Store",
         "android" : "التقييم على Google Play store"
@@ -2917,7 +2932,8 @@
         "account" : "{{count}} حساب",
         "account_plural" : "{{count}} حساب",
         "subtitle" : "هذه الشبكة يجب أن تُطابق الشبكة المختارة في المحفظة أو منصة التداول التي تحوِّل الأصول المشفرة.",
-        "bannerTitle" : "تأكد من اختيار الشبكة الصحيحة. تعلم كيف يمكنك فعل ذلك."
+        "bannerTitle" : "تأكد من اختيار الشبكة الصحيحة. تعلم كيف يمكنك فعل ذلك.",
+        "depositFromCexBannerTitle" : "إيداع الأصول المشفرة من حسابك كوينباس (Coinbase)"
       },
       "stepperHeader" : {
         "range" : "خطوة {{currentStep}} من {{totalSteps}}",
@@ -3389,6 +3405,11 @@
     "walletConnect" : {
       "title" : "WalletConnect",
       "description" : "قم بتوصيل محفظتك بالتطبيقات اللامركزية"
+    },
+    "recover" : {
+      "title" : "Ledger Recover",
+      "description" : "Wallet recovery made easy",
+      "tag" : "One month free"
     }
   },
   "signMessage" : {
@@ -3764,7 +3785,8 @@
     "stayInTheAppPlz" : "لا تُغادر تطبيق Ledger Live وابق على Ledger خاصتك بالقرب منك.",
     "allowAppPermission" : "افتح تطبيق {{wording}} على جهازك",
     "allowAppPermissionSubtitleToken" : "لإدارة رموزك {{token}}",
-    "allowManagerPermission" : "السماح بـ {{wording}} على {{productName}} الخاص بك",
+    "allowManagerPermission" : "اسمح بمدير Ledger على جهازك {{productName}}",
+    "allowRenaming" : "اسمح بإعادة التسمية على جهازك {{productName}}",
     "allowRemoveCustomLockscreen" : "قم بتأكيد إزالة الصورة على Ledger Stax الخاص بك",
     "allowSecureConnection" : "السماح باتصال آمن مع Ledger",
     "loading" : "جاري التحميل...",
@@ -4179,7 +4201,7 @@
       "prepareUpdate" : {
         "earlySecurityCheck" : {
           "titlePreparingUpdate" : "جارٍ إعداد التحديث للتثبيت",
-          "description" : "Transferring the update to {{deviceName}}."
+          "description" : "جارِ نقل التحديث إلى {{deviceName}}."
         },
         "titleBackingUp" : "نسخ التطبيقات والإعدادات احتياطياً",
         "titleTransferring" : "نقل التحديث",
@@ -4193,10 +4215,10 @@
       "restoreSettings" : {
         "earlySecurityCheck" : {
           "titleInactive" : "استعادة الإعدادات",
-          "description" : "Your settings will be restored."
+          "description" : "الإعدادات لديك سيتم استعادتها."
         },
         "titleInactive" : "استعادة التطبيقات والإعدادات",
-        "description" : "الإعدادات وتطبيقات سلسلة الكتل ليدك سيتم استعادتها.",
+        "description" : "الإعدادات وتطبيقات سلسلة الكتل لديك سيتم استعادتها.",
         "restoreLockScreenPicture" : "استعادة صورة شاشة القَفل",
         "restoreLanguage" : "استعادة اللغة",
         "imageLoadRequested" : "السماح باستعادة صورة شاشة القفل على {{deviceName}}",
@@ -4291,6 +4313,7 @@
     "yesChangeLanguage" : "نعم، غيّر اللغة",
     "allowLanguageInstallation" : "وافق على تثبيت اللغة على {{deviceName}}",
     "languageInstalled" : "تم تغيير اللغة إلى {{language}}",
+    "languageInstalledDesc" : "جهازك الآن باللغة التي تختارها",
     "firmwareUpdatePrompt" : {
       "title" : "تعيين {{deviceName}} خاصتك باللغة {{language}}؟",
       "description" : "اللغة {{language}} متاحة الآن لجهازك {{deviceName}}. يمكنك تعيينها الآن، أو تغيير لغة جهازك في أي وقت من My Ledger."
@@ -6351,10 +6374,10 @@
       "status" : {
         "new" : {
           "title" : "جديد",
-          "desc" : "لا تقلق بشأن فقد الوصول إلى محفظتك.",
+          "desc" : "استعدْ الوصول إلى محفظتك بدون عبارة الاسترداد السرية الخاصة بك.",
           "actions" : {
             "learnMore" : "تعرّف على Ledger Recover",
-            "alreadySubscribed" : "لديّ معلومات تسجيل دخول بالفعل <LinkAccount>عرض اشتراكي</LinkAccount>"
+            "alreadySubscribed" : "مشترك بالفعل؟ <LinkAccount>عرض الاشتراك</LinkAccount>"
           }
         }
       }
@@ -6412,6 +6435,10 @@
           "body" : "تلقي الأصول المشفرة في محفظتك"
         }
       }
+    },
+    "getFundsModal" : {
+      "text" : "احصل على {{coin}} للتكديس",
+      "description" : "قم بشراء أو مبادلة أو تلقى الأصول المشفرة مباشرةً إلى جهازك Ledger باستخدام Ledger Live."
     }
   }
 }
