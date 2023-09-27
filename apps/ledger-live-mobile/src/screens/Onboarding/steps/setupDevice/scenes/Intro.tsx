@@ -41,7 +41,7 @@ const Next = ({ onNext }: { onNext: () => void }) => {
 
   const next = () => {
     setOpen(false);
-    setTimeout(() => onNext(), 0);
+    setTimeout(() => onNext(), 200);
   };
 
   return (
