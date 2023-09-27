@@ -403,8 +403,6 @@ export enum ScreenName {
   OnboardingModalSetupSecureRecovery = "OnboardingModalSetupSecureRecovery",
   OnboardingModalGeneralInformation = "OnboardingModalGeneralInformation",
   OnboardingPreQuizModal = "OnboardingPreQuizModal",
-  OnboardingModalSyncDesktopInformation = "OnboardingModalSyncDesktopInformation",
-  OnboardingModalRecoveryPhraseWarning = "OnboardingModalRecoveryPhraseWarning",
   OnboardingProtectFlow = "OnboardingProtectFlow",
   SyncOnboardingCompanion = "SyncOnboardingCompanion",
   SyncOnboardingCompletion = "SyncOnboardingCompletion",
