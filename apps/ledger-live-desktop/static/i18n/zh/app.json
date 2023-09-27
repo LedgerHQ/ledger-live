@@ -5310,6 +5310,10 @@
       "title" : "操作被拒绝",
       "description" : "用户在设备上拒绝了该操作"
     },
+    "ExpertModeRequired" : {
+      "title" : "需要专家模式",
+      "description" : "需要启用专家模式。"
+    },
     "TransactionRefusedOnDevice" : {
       "title" : "操作在设备上被拒绝",
       "description" : "请重试，如有疑问，请联系 Ledger 客服。"
@@ -5596,7 +5600,7 @@
       "title" : "确保您有足够的剩余余额以用作未来的交易费"
     },
     "SolanaTxSimulationFailedWhilePendingOp" : {
-      "title" : "Your previous transaction hasn't been processed yet. Please wait a moment then check the transaction history before trying again."
+      "title" : "您之前的交易尚未处理。请稍等片刻后检查交易记录，然后重试。"
     },
     "SolanaTxConfirmationTimeout" : {
       "title" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。"
