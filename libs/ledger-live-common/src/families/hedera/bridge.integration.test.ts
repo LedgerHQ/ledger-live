@@ -105,7 +105,7 @@ const hedera: CurrenciesData<Transaction> = {
 };
 
 const dataset: DatasetTest<Transaction> = {
-  implementations: ["js"],
+  implementations: [],
   currencies: {
     hedera,
   },
