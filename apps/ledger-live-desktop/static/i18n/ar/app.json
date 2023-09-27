@@ -5310,6 +5310,10 @@
       "title" : "تم رفض الإجراء",
       "description" : "رفض المستخدم العملية على الجهاز"
     },
+    "ExpertModeRequired" : {
+      "title" : "وضع الخبير مطلوب",
+      "description" : "يجب تمكين وضع الخبير."
+    },
     "TransactionRefusedOnDevice" : {
       "title" : "تم رفض العملية على الجهاز",
       "description" : "يرجى إعادة المحاولة أو التواصل مع دعم Ledger إذا كان لديك شك"
