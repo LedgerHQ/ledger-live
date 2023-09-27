@@ -91,16 +91,16 @@ const validateAmount = (
 
   const isTokenTransaction = account?.type === "TokenAccount";
   const isSmartContractInteraction = !!transaction.data;
-  const transactionHasFees =
-    legacyTransactionHasFees(transaction as EvmTransactionLegacy) ||
-    eip1559TransactionHasFees(transaction as EvmTransactionEIP1559);
 
   /**
-   * If the transaction is a smart contract interaction, it's normal that it has no amount
-   * Even though a token transaction is technically a smart contract interaction,
-   * in the Ledger Live model, an amount is requiered for TokenAccounts transactions
+   * A transaction can have no amount if:
+   * - it's a smart contract interaction not crafted by the Live
+   * (i.e: data coming from a third party using Wallet-API for example)
+   * OR
+   * - it's an NFT transaction
+   * (since for an NFT transaction, the "amount" is under the `nft.quantity` property)
    */
-  const canHaveZeroAmount = isSmartContractInteraction && !isTokenTransaction && transactionHasFees;
+  const canHaveZeroAmount = isSmartContractInteraction && !isTokenTransaction;
 
   // if no amount or 0
   if ((!transaction.amount || transaction.amount.isZero()) && !canHaveZeroAmount) {
