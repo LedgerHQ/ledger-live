@@ -91,6 +91,7 @@
     "@ledgerhq/react-devtools": "0.0.0"
   },
   "changesets": [
+    "lemon-plums-rest",
     "lemon-taxis-applaud"
   ]
 }

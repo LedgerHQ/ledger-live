@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 31.8.0-hotfix.1
+
+### Minor Changes
+
+- [#4846](https://github.com/LedgerHQ/ledger-live/pull/4846) [`61272164de`](https://github.com/LedgerHQ/ledger-live/commit/61272164de6e81d9b5e5ad988b7eb8c40d3cf735) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Force min app cosmos version to 2.34.12
+
 ## 31.8.0-hotfix.0
 
 ### Minor Changes
