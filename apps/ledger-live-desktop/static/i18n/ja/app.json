@@ -122,6 +122,7 @@
     "search" : "検索…",
     "searchWithoutEllipsis" : "検索",
     "manage" : "管理",
+    "tryAgain" : "再試行",
     "lockScreen" : {
       "title" : "おかえりなさい",
       "subTitle" : null,
@@ -546,6 +547,10 @@
           "body" : "ウォレットで暗号資産を受け取る"
         }
       }
+    },
+    "getFundsModal" : {
+      "text" : "{{coin}}を入手してステーキング",
+      "description" : "Ledger Liveを使用すると、Ledgerで暗号資産の直接購入、スワップ、受け取りができます。"
     }
   },
   "lottieDebugger" : {
@@ -1700,7 +1705,8 @@
   "DeviceAction" : {
     "allowAppPermission" : "デバイスで{{wording}} アプリを開く",
     "allowAppPermissionSubtitleToken" : "{{token}} トークンを管理",
-    "allowManagerPermission" : "デバイス上で{{wording}}を許可",
+    "allowManagerPermission" : "デバイスでLedger Managerを許可する",
+    "allowRenaming" : "デバイスで名前の変更を許可する",
     "loading" : "読み込み中...",
     "connectAndUnlockDevice" : "デバイスを接続してロックを解除する",
     "unlockDevice" : "デバイスのロックを解除する",
@@ -1878,7 +1884,11 @@
       "contactSupport" : "サポートへのお問い合わせ",
       "deprecated" : "デバイスのファームウェアのバージョンが古いため、アップデートできません。Ledgerサポートに連絡して、デバイスを交換してください。",
       "prepareSeed" : "万が一に備えて、書き留めた24単語のリカバリーフレーズを用意してください。",
-      "disclaimerTitle" : "<1>ファームウェアバージョン{{version}}</1>をインストールします。"
+      "disclaimerTitle" : "<1>ファームウェアバージョン{{version}}</1>をインストールします。",
+      "cancelUpdate" : "アップデートをキャンセル",
+      "continueUpdate" : "アップデートを続行",
+      "cancelUpdateWarning" : "今アップデートをキャンセルすると、設定とアプリが正しく復元されない可能性があります。",
+      "updateInProgress" : "OSアップデート中"
     },
     "modal" : {
       "title" : "{{productName}}をアップデートする",
@@ -2064,7 +2074,8 @@
         "parentAccount" : "1. {{currencyName}}アカウントを選択",
         "token" : "2. トークンを選択する",
         "verifyTokenType" : "<0>{{token}}</0>が<0>{{tokenType}}</0>トークンであることを確認してください。{{currency}}アカウント他の暗号資産を送信すると失われる可能性があります。",
-        "warningTokenType" : "{{currency}}アカウントには、<0>{{ticker}}</0>または<0>{{tokenType}}</0>トークンのみを送金してください他の暗号資産を送信すると、資金が永久に失われる可能性があります。"
+        "warningTokenType" : "{{currency}}アカウントには、<0>{{ticker}}</0>または<0>{{tokenType}}</0>トークンのみを送金してください他の暗号資産を送信すると、資金が永久に失われる可能性があります。",
+        "depositFromCexBannerTitle" : "Coinbaseアカウントから暗号資産を入金する"
       },
       "connectDevice" : {
         "title" : "デバイス",
@@ -4061,7 +4072,7 @@
     "downloadProgress" : "{{progress}}%完了",
     "checking" : "アップデートの確認中...",
     "checkSuccess" : "新しいLedger Liveアップデートをご利用いただけます。アプリを終了すると自動的にインストールされます。",
-    "quitAndInstall" : "今すぐインストールする",
+    "quitAndInstall" : "今すぐインストールして再起動する",
     "updateAvailable" : "Ledger Liveバージョン {{version}} へのアップデートが利用可能です。",
     "error" : "更新中にエラーが発生再度ダウンロードしてください",
     "reDownload" : "再度ダウンロード",
@@ -5077,12 +5088,12 @@
       "description" : "もう一度お試しください。"
     },
     "DisconnectedDevice" : {
-      "title" : "デバイスの接続が切断されているようです。",
-      "description" : "デバイスを再接続して、もう一度お試しください。"
+      "title" : "デバイスが切断されました",
+      "description" : "Ledger Liveはデバイスに接続できませんでした。もう一度お試しください。"
     },
     "DisconnectedDeviceDuringOperation" : {
-      "title" : "デバイスの接続が切断されているようです。",
-      "description" : "デバイスを再接続して、もう一度お試しください。"
+      "title" : "デバイスが切断されました",
+      "description" : "Ledger Liveはデバイスに接続できませんでした。もう一度お試しください。"
     },
     "EConnReset" : {
       "title" : "Ledgerアプリケーションストアに到達できません",
@@ -5309,6 +5320,10 @@
     "UserRefusedOnDevice" : {
       "title" : "アクションが拒否されました。",
       "description" : "デバイス上で操作を拒否しました。"
+    },
+    "ExpertModeRequired" : {
+      "title" : "エキスパートモードが必要です",
+      "description" : "エキスパートモードを有効にする必要があります。"
     },
     "TransactionRefusedOnDevice" : {
       "title" : "デバイス上で操作が却下されました。",
@@ -5795,7 +5810,7 @@
     "managerCTARemove" : "削除",
     "steps" : {
       "choose" : {
-        "stepLabel" : "画像を選択してください",
+        "stepLabel" : "画像を選択",
         "description" : "(...) として設定する画像を選択",
         "pickFromNftGallery" : "NFTギャラリーから選択",
         "myNfts" : "私のNFT",
@@ -5803,23 +5818,25 @@
         "chooseNft" : "NFTを選択",
         "remove" : "現在の画像を削除する",
         "selectNft" : "NFTを選択",
-        "previousSelectNft" : "戻る",
         "nftEmptyStateTitle" : "表示できるNFTがありません",
         "nftEmptyStateDescription" : "NFTをウォレットに追加して始めます。"
       },
       "adjust" : {
-        "stepLabel" : "画像を調整",
-        "rotate" : "回転"
+        "stepLabel" : "クロップ",
+        "rotate" : "回転",
+        "confirmCrop" : "トリミングを確定"
       },
       "contrast" : {
-        "stepLabel" : "コントラストを選択"
+        "stepLabel" : "コントラストを設定",
+        "confirmContrast" : "コントラストを確定"
       },
       "transfer" : {
-        "stepLabel" : "送金",
-        "uploadAnotherImage" : "他の画像をアップロードする",
-        "allowPreview" : "{{productName}}でのロック画面の画像の読み込みを許可します",
+        "stepLabel" : "読み込む",
+        "useAnotherPicture" : "別の写真をアップロード",
+        "allowPreview" : "「Load picture（画像を読み込む）」をタップしてロック画面をカスタマイズ",
         "allowConfirmPreview" : "{{productName}}でロック画面の画像の復元を許可する",
         "loadingPicture" : "読み込み中...",
+        "voila" : "これで完了です！",
         "imageLoaded" : "{{productName}}に画像が読み込まれました",
         "confirmPicture" : "気に入りましたか？\n",
         "confirmRestorePicture" : "ロック画面の画像の復元を確定する",
@@ -5827,12 +5844,12 @@
       }
     },
     "postOnboarding" : {
-      "title" : "Ledgerデバイスをパーソナライズ",
-      "description" : "画面をカスタマイズ",
+      "title" : "ロック画面をカスタマイズ",
+      "description" : "Ledger Staxのロック画面として設定するNFTまたは写真を選択する。",
       "actionCompletedPopupLabel" : "デバイスがパーソナライズされました"
     },
-    "customImageSet" : "スクリーン設定をロック",
-    "finishCTA" : "終了する"
+    "customImageSet" : "ロック画面がカスタマイズされました",
+    "finishCTA" : "閉じる"
   },
   "onboardingAppInstall" : {
     "restore" : {
@@ -5878,7 +5895,6 @@
     "networkError" : {
       "title" : "ネットワークエラー",
       "subtitle" : "何か問題が発生しました。もう一度お試しください。問題が解決しない場合は、ログを保存し、Ledgerサポートにご連絡ください。",
-      "tryAgain" : "再試行",
       "contactSupport" : "Ledgerサポートへ問い合わせ",
       "saveLog" : "ログを保存"
     }
