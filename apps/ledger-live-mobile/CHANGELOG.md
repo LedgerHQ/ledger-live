@@ -1,5 +1,16 @@
 # live-mobile
 
+## 3.32.0-nightly.6
+
+### Minor Changes
+
+- [#4564](https://github.com/LedgerHQ/ledger-live/pull/4564) [`0902e24948`](https://github.com/LedgerHQ/ledger-live/commit/0902e249484c6ea3a82068c270edadd53eb7874f) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Update swap endpoints to v5 on llm and lld
+
+### Patch Changes
+
+- Updated dependencies [[`0902e24948`](https://github.com/LedgerHQ/ledger-live/commit/0902e249484c6ea3a82068c270edadd53eb7874f)]:
+  - @ledgerhq/live-common@32.0.0-nightly.4
+
 ## 3.32.0-nightly.5
 
 ### Patch Changes
