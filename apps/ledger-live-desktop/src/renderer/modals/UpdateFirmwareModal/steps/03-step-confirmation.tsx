@@ -6,6 +6,7 @@ import { UserRefusedFirmwareUpdate } from "@ledgerhq/errors";
 import { useHistory } from "react-router-dom";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Track from "~/renderer/analytics/Track";
+import { getDeviceModel } from "@ledgerhq/devices";
 import Box from "~/renderer/components/Box";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { StepProps } from "../";
