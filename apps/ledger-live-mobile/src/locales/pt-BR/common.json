@@ -87,7 +87,7 @@
     "seeMore" : "Ver mais",
     "moreInfo" : "Mais Informações",
     "buyEth" : "Comprar Ethereum",
-    "popular" : "populares",
+    "popular" : "popular",
     "getSupport" : "Obter suporte",
     "comingSoon" : "Em Breve",
     "restart" : "Reiniciar",
@@ -596,6 +596,10 @@
     "UserRefusedOnDevice" : {
       "title" : "Operação cancelada no dispositivo",
       "description" : "Você rejeitou a operação no dispositivo."
+    },
+    "ExpertModeRequired" : {
+      "title" : "Requer modo Expert",
+      "description" : "É necessário ativar o modo Expert."
     },
     "WebsocketConnectionError" : {
       "title" : "Desculpe, falha de conexão",
@@ -1969,8 +1973,7 @@
       },
       "completed" : {
         "noUpdateAvailable" : {
-          "title" : "Verificação de atualização do sistema operacional",
-          "description" : "A atualização do sistema operacional certifica de que o sistema operacional da {{productName}} está atualizado."
+          "title" : "O sistema da {{productName}} está atualizado"
         }
       },
       "error" : {
@@ -1989,10 +1992,11 @@
       }
     },
     "firmwareUpdateAvailableDrawer" : {
-      "title" : "Atualização do sistema operacional disponível",
+      "title" : "Atualização de OS da {{productName}} disponível",
       "description" : "Atualize sua {{productName}} para ter os ajustes de funcionalidade e segurança mais recentes.",
       "descriptionVersion" : "Versão {{firmwareVersion}}",
-      "updateCta" : "Atualizar agora"
+      "updateCta" : "Atualizar agora",
+      "seeWhatsInUpdateCta" : "Veja o que esta atualização traz"
     }
   },
   "syncOnboarding" : {
@@ -2446,12 +2450,16 @@
     },
     "import" : {
       "scan" : {
-        "title" : "Importar do desktop",
-        "descTop" : {
-          "line1" : "No Ledger Live desktop, vá para:",
-          "line2" : "Configurações > Contas > Exportar Contas > Exportar"
+        "title" : "Importar do desktop"
+      },
+      "newScan" : {
+        "title" : "Escanear e importar suas contas do Ledger Live desktop",
+        "instructions" : {
+          "line1" : "Abra o Ledger Live Desktop.",
+          "line2" : "Configurações > Contas > Exportar Contas",
+          "line3" : "Escaneie o QR code até a barra chegar a 100%."
         },
-        "descBottom" : "Abra o Ledger Live desktop e escaneie o QR code"
+        "hodl" : "Mantenha a posição até terminar."
       },
       "result" : {
         "title" : "Importar contas",
@@ -2888,7 +2896,7 @@
     },
     "send" : {
       "title" : "Enviar",
-      "description" : "Envie cripto para outra carteira."
+      "description" : "Envie cripto a outra carteira."
     },
     "fees" : {
       "title" : "Editar taxas"
@@ -2994,14 +3002,14 @@
     },
     "sell" : {
       "title" : "Vender",
-      "description" : "Venda cripto por dinheiro em segurança"
+      "description" : "Venda cripto por dinheiro em segurança."
     },
     "exchange" : {
       "title" : "Comprar / Vender"
     },
     "stake" : {
       "title" : "Aplicar",
-      "description" : "Aumente suas posições de cripto"
+      "description" : "Multiplique seus criptoativos."
     },
     "swap" : {
       "title" : "Trocar",
@@ -3388,7 +3396,7 @@
     },
     "walletConnect" : {
       "title" : "WalletConnect",
-      "description" : "Conectar sua carteira a DApps"
+      "description" : "Conecte sua carteira a DApps."
     }
   },
   "signMessage" : {
@@ -3566,7 +3574,7 @@
       "stepRange" : "Etapa {{currentStep}} de {{totalSteps}}"
     },
     "selectAccount" : {
-      "addAccount" : "Adicionar conta de {{currency}}"
+      "addAccount" : "Adicionar conta {{currency}}"
     }
   },
   "freeze" : {
@@ -3716,7 +3724,7 @@
     "cantCreateAccount" : "Uma nova conta não pode ser adicionada antes de receber ativos na sua conta <1><0>{{accountName}}</></>.",
     "tokens" : {
       "title" : "Adicionar Token",
-      "createParentCurrencyAccount" : "Adicionar conta de {{parrentCurrencyName}}",
+      "createParentCurrencyAccount" : "Adicionar conta {{parrentCurrencyName}}",
       "erc20" : {
         "title" : "Adicionar Token",
         "disclaimer" : "{{tokenName}} é um Token ERC20.\nVocê pode receber tokens diretamente em uma conta Ethereum.",
@@ -4247,7 +4255,7 @@
     "updateAvailableFromLLM" : {
       "title" : "Atualização de firmware necessária",
       "description" : "Para realizar esta ação, você precisa primeiro atualizar o firmware da sua {{ deviceName }}.",
-      "cta" : "Vá à Minha Ledger"
+      "cta" : "Ir para Minha Ledger"
     },
     "updateNotAvailableFromLLM" : {
       "title" : "Atualização de firmware necessária no computador",
@@ -4291,6 +4299,7 @@
     "yesChangeLanguage" : "Sim, mudar idioma",
     "allowLanguageInstallation" : "Permitir a instalação do idioma na {{deviceName}}",
     "languageInstalled" : "Idioma alterado para {{language}}",
+    "languageInstalledDesc" : "Seu dispositivo agora está no idioma que escolheu",
     "firmwareUpdatePrompt" : {
       "title" : "Colocar sua {{deviceName}} em {{language}}?",
       "description" : "{{language}} agora está disponível para sua {{deviceName}}. Você pode configurar agora ou mudar o idioma do seu dispositivo a qualquer momento em Minha Ledger."
@@ -6351,10 +6360,10 @@
       "status" : {
         "new" : {
           "title" : "Novo",
-          "desc" : "Nunca mais se preocupe em perder acesso à sua carteira.",
+          "desc" : "Recuperar acesso a sua carteira sem sua Frase de Recuperação Secreta.",
           "actions" : {
             "learnMore" : "Conhecer o Ledger Recover",
-            "alreadySubscribed" : "Já tenho um login <LinkAccount>Ver minha inscrição</LinkAccount>"
+            "alreadySubscribed" : "Já se inscreveu? <LinkAccount>Ver inscrição</LinkAccount>"
           }
         }
       }
@@ -6405,7 +6414,7 @@
         "swap" : {
           "title" : "Trocar",
           "label" : "Populares",
-          "body" : "Converta cripto para cripto em segurança"
+          "body" : "Troque cripto por cripto em segurança"
         },
         "receive" : {
           "title" : "Depositar",
