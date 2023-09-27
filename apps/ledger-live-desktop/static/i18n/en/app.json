@@ -1884,7 +1884,11 @@
       "contactSupport": "Contact support",
       "deprecated": "Device firmware version too old to be updated. Contact Ledger Support for a replacement.",
       "prepareSeed": "Ensure your 24-word recovery phrase is written down on the Recovery sheet and it is available, as a precaution.",
-      "disclaimerTitle": "You are about to install <1>firmware version {{version}}</1>."
+      "disclaimerTitle": "You are about to install <1>firmware version {{version}}</1>.",
+      "cancelUpdate": "Cancel update",
+      "continueUpdate": "Continue update",
+      "cancelUpdateWarning": "Your settings and apps may not be restored properly if you cancel the update now.",
+      "updateInProgress": "OS update in progress"
     },
     "modal": {
       "title": "Update {{productName}}",
