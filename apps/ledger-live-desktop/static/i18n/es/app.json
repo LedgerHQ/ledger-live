@@ -5310,6 +5310,10 @@
       "title" : "Acción rechazada",
       "description" : "El usuario rechazó la operación en el dispositivo"
     },
+    "ExpertModeRequired" : {
+      "title" : "Se requiere el modo Experto",
+      "description" : "Es necesario activar el modo Experto."
+    },
     "TransactionRefusedOnDevice" : {
       "title" : "Operación denegada en el dispositivo",
       "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
