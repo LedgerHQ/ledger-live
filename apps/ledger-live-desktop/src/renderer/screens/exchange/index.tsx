@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useMemo } from "react";
+import semver from "semver";
 import { RouteComponentProps, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/types";
@@ -15,6 +16,7 @@ import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/conv
 import {
   DEFAULT_MULTIBUY_APP_ID,
   INTERNAL_APP_IDS,
+  WALLET_API_VERSION,
 } from "@ledgerhq/live-common/wallet-api/constants";
 
 export type DProps = {
@@ -24,8 +26,10 @@ export type DProps = {
   rampCatalog: Loadable<RampCatalog>;
 };
 
+type ExchangeState = { account?: string } | undefined;
+
 const LiveAppExchange = ({ appId }: { appId: string }) => {
-  const { state: urlParams, search } = useLocation();
+  const { state: urlParams, search } = useLocation<ExchangeState>();
   const searchParams = new URLSearchParams(search);
   const locale = useSelector(languageSelector);
   const accounts = useSelector(accountsSelector);
@@ -38,23 +42,27 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
   const manifest = localManifest || mockManifest || remoteManifest;
   const themeType = useTheme().colors.palette.type;
 
-  // Use wallet-api ids when manifest is using apiVersion 2
-  const WALLET_API_VERSION = 2;
-  const apiVersion = manifest?.apiVersion;
-  const apiVersionMatch =
-    !!apiVersion &&
-    (apiVersion.match(/\d+|\d+\b|\d+(?=\w)/g) || []).shift() === `${WALLET_API_VERSION}`;
-  if (urlParams && apiVersionMatch) {
-    const { account: accountId } = urlParams;
-    const account = accounts.find(a => a.id === accountId);
-    if (account) {
-      const parentAccount = isTokenAccount(account)
-        ? getParentAccount(account, accounts)
-        : undefined;
-      const walletApiId = accountToWalletAPIAccount(account, parentAccount)?.id;
-      urlParams.account = walletApiId;
+  /**
+   * Pass correct account ID
+   * Due to Platform SDK account ID not being equivalent to Wallet API account ID
+   */
+  const customUrlParams = useMemo(() => {
+    if (
+      urlParams?.account &&
+      manifest?.apiVersion &&
+      semver.satisfies(WALLET_API_VERSION, manifest.apiVersion)
+    ) {
+      const { account: accountId } = urlParams;
+      const account = accounts.find(a => a.id === accountId);
+      if (account) {
+        const parentAccount = isTokenAccount(account)
+          ? getParentAccount(account, accounts)
+          : undefined;
+        urlParams.account = accountToWalletAPIAccount(account, parentAccount).id;
+      }
     }
-  }
+    return urlParams;
+  }, [accounts, manifest?.apiVersion, urlParams]);
 
   /**
    * Given the user is on an internal app (webview url is owned by LL) we must reset the session
@@ -80,7 +88,7 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
           manifest={manifest}
           inputs={{
             theme: themeType,
-            ...(urlParams as object),
+            ...customUrlParams,
             lang: locale,
             ...Object.fromEntries(searchParams.entries()),
           }}

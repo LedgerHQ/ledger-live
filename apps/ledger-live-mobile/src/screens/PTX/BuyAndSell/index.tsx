@@ -1,6 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import semver from "semver";
 import { getParentAccount, isTokenAccount } from "@ledgerhq/live-common/account/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import {
@@ -18,7 +19,7 @@ import { ExchangeNavigatorParamList } from "../../../components/RootNavigator/ty
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import { ScreenName } from "../../../const";
 import { accountsSelector } from "../../../reducers/accounts";
-import { INTERNAL_APP_IDS } from "@ledgerhq/live-common/wallet-api/constants";
+import { INTERNAL_APP_IDS, WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 
 export type Props = StackNavigatorProps<
   ExchangeNavigatorParamList,
@@ -41,6 +42,28 @@ export function BuyAndSellScreen({ route }: Props) {
   const manifest = localManifest || remoteManifest;
 
   /**
+   * Pass correct account ID
+   * Due to Platform SDK account ID not being equivalent to Wallet API account ID
+   */
+  const customParams = useMemo(() => {
+    if (
+      params?.account &&
+      manifest?.apiVersion &&
+      semver.satisfies(WALLET_API_VERSION, manifest.apiVersion)
+    ) {
+      const { account: accountId } = params;
+      const account = accounts.find(a => a.id === accountId);
+      if (account) {
+        const parentAccount = isTokenAccount(account)
+          ? getParentAccount(account, accounts)
+          : undefined;
+        params.account = accountToWalletAPIAccount(account, parentAccount).id;
+      }
+    }
+    return params;
+  }, [accounts, manifest?.apiVersion, params]);
+
+  /**
    * Given the user is on an internal app (webview url is owned by LL) we must reset the session
    * to ensure the context is reset. last-screen is used to give an external app's webview context
    * of the last screen the user was on before navigating to the external app screen.
@@ -48,23 +71,6 @@ export function BuyAndSellScreen({ route }: Props) {
   useEffect(
     () => {
       (async () => {
-        // Use wallet-api ids when manifest is using apiVersion 2
-        const WALLET_API_VERSION = 2;
-        const apiVersion = manifest?.apiVersion;
-        const apiVersionMatch =
-          !!apiVersion &&
-          (apiVersion.match(/\d+|\d+\b|\d+(?=\w)/g) || []).shift() === `${WALLET_API_VERSION}`;
-        if (params && apiVersionMatch) {
-          const { account: accountId } = params;
-          const account = accounts.find(a => a.id === accountId);
-          if (account) {
-            const parentAccount = isTokenAccount(account)
-              ? getParentAccount(account, accounts)
-              : undefined;
-            const walletApiId = accountToWalletAPIAccount(account, parentAccount)?.id;
-            params.account = walletApiId;
-          }
-        }
         if (manifest?.id && INTERNAL_APP_IDS.includes(manifest.id)) {
           await AsyncStorage.removeItem("last-screen");
           await AsyncStorage.removeItem("manifest-id");
@@ -84,7 +90,7 @@ export function BuyAndSellScreen({ route }: Props) {
         inputs={{
           theme,
           lang: locale,
-          ...params,
+          ...customParams,
           ...Object.fromEntries(searchParams.entries()),
         }}
       />
