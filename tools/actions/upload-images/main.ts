@@ -1,17 +1,18 @@
 import * as core from "@actions/core";
 import * as fs from "fs";
 import * as path from "path";
-import fetch, { Response } from "node-fetch";
-import { FormData } from "formdata-node";
+// import fetch, { Response } from "node-fetch";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+// import { FormData } from "formdata-node";
 
-function handleErrors(response: Response) {
-  if (!response.ok) {
-    throw Error(response.statusText);
-  }
-  return response;
-}
+// function handleErrors(response: Response) {
+//   if (!response.ok) {
+//     throw Error(response.statusText);
+//   }
+//   return response;
+// }
 
-const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+// const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 const clean = (str: string): string =>
   str.replace("-expected.png", "").replace("-actual.png", "").replace("-diff.png", "");
@@ -24,39 +25,33 @@ const uploadImage = async () => {
   const os = core.getInput("os").replace("-latest", "");
   const workspace = core.getInput("workspace");
   const fullPath = path.resolve(p);
+  const region = "eu-west-1";
+  const client = new S3Client({
+    region,
+  });
+  const bucket = core.getInput("bucket-name");
+  const groupName = core.getInput("group-name");
 
-  const upload = async (file: Buffer, i = 0): Promise<string> => {
-    if (i > 2) {
-      return "error";
-    }
+  const upload = async (file: Buffer, filename: string): Promise<string> => {
+    const key = `${groupName}/${os}/${filename}`;
+    const command = new PutObjectCommand({
+      Bucket: bucket,
+      Key: key,
+      Body: file,
+    });
+
     try {
-      const form = new FormData();
-      form.set("image", file.toString("base64"));
-
-      const res = await fetch("https://api.imgur.com/3/image", {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          Authorization: `Client-ID 11eb8a62f4c7927`,
-        },
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        body: form,
-      }).then(handleErrors);
-
-      const link = ((await res.json()) as { data: { link: string } }).data.link;
-      if (!link) {
-        throw new Error("no link");
-      }
-      return link;
-    } catch (e) {
-      await wait(3000);
-      console.log(e);
-      core.debug(e as string);
-      core.setOutput("error", e);
-      return await upload(file, i + 1);
+      await client.send(command);
+      const url = `https://${bucket}.s3.${region}.amazonaws.com/${groupName}/${os}/${filename}`;
+      return url;
+    } catch (error) {
+      core.error(error as Error);
+      console.error(error);
+      throw error;
     }
   };
+
+  // https://{bucketName}.s3.{region}.amazonaws.com/{rungroup}/{os}/${imageName}
 
   const getAllFiles = (currentPath: string): string[] => {
     let results: string[] = [];
@@ -83,13 +78,18 @@ const uploadImage = async () => {
   }
 
   const resultsP = files.map(async file => {
+    const basename = path.basename(file);
+    core.info("basename: " + basename);
     const img = fs.readFileSync(`${file}`);
-    return upload(img);
+    return upload(img, basename);
   });
 
   const results = await Promise.all(resultsP);
 
-  const formatted: Record<string, any> = {};
+  const formatted: Record<
+    string,
+    Record<"actual" | "diff" | "expected", { link?: string; name?: string }>
+  > = {};
   results.forEach((link, index) => {
     const file = files[index];
     const key = clean(file);
