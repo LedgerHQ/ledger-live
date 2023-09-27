@@ -12,6 +12,7 @@ import {
   hasMinimumFundsToSpeedUp,
 } from "@ledgerhq/live-common/families/evm/getUpdateTransactionPatch";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
 import { isOldestPendingOperation } from "@ledgerhq/live-common/operation";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
@@ -154,8 +155,8 @@ const Body = ({
     transaction,
     setTransaction,
     updateTransaction,
-    account,
-    parentAccount,
+    account: accountFromBridge,
+    parentAccount: parentAccountFromBridge,
     status,
     bridgeError,
     bridgePending,
@@ -169,12 +170,18 @@ const Body = ({
     };
   });
 
-  invariant(account, "account required");
-  invariant(transactionToUpdate, "transactionToUpdate required");
-  invariant(transaction, "original transaction required");
   const [optimisticOperation, setOptimisticOperation] = useState<Operation | null>(null);
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
+
+  const [account, setAccount] = useState<AccountLike | null | undefined>(accountFromBridge);
+  const [parentAccount, setParentAccount] = useState<Account | null | undefined>(
+    parentAccountFromBridge,
+  );
+
+  invariant(account, "account required");
+  invariant(transactionToUpdate, "transactionToUpdate required");
+  invariant(transaction, "original transaction required");
 
   const currencyName = getAccountCurrency(account).name;
 
@@ -252,6 +259,32 @@ const Body = ({
   );
   const handleSetEditType = useCallback(editType => setEditType(editType), []);
 
+  /**
+   * In order to display the relevant informations in the summary step, regarding
+   * account and currency, depending on the editType selected,
+   * we need to update the account and parentAccount provided to the StepSummary
+   * component.
+   * - When we do a speedup, the acount is the same as the one used in the transaction
+   * (wether it's an Account or TokenAccount)
+   * - When we do a cancel, the account used is always the mainAccount, since a cancel
+   * is sending 0 COIN_CURRENCY (for example ETH for ethereum) to yourself
+   */
+  useEffect(() => {
+    if (editType === "speedup") {
+      setAccount(accountFromBridge);
+      setParentAccount(parentAccountFromBridge);
+      return;
+    }
+
+    if (editType === "cancel") {
+      setAccount(mainAccount);
+      setParentAccount(undefined);
+      return;
+    }
+    // We only want to update the account and parentAccount when the editType changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editType]);
+
   const updatedStatus = getEditTransactionStatus({
     editType,
     transaction,
@@ -281,6 +314,8 @@ const Body = ({
     haveFundToCancel,
     isOldestEditableOperation,
     transactionToUpdate,
+    // Used to display the NFT summary component in the summary step
+    isNFTSend: isNftTransaction(transaction),
     openModal,
     onClose,
     setSigned,
