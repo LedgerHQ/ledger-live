@@ -65,7 +65,7 @@ export const toOperationRaw = (
     copy.internalOperations = internalOperations.map((o: Operation) => toOperationRaw(o));
   }
 
-  if (nftOperations) {
+  if (nftOperations && nftOperations.length > 0) {
     copy.nftOperations = nftOperations.map((o: Operation) => toOperationRaw(o));
   }
 
@@ -140,10 +140,6 @@ export const fromOperationRaw = (
     value: new BigNumber(value),
     fee: new BigNumber(fee),
     extra,
-    contract,
-    operator,
-    standard,
-    tokenId,
   };
 
   if (transactionSequenceNumber !== undefined) {
@@ -152,6 +148,26 @@ export const fromOperationRaw = (
 
   if (hasFailed !== undefined) {
     res.hasFailed = hasFailed;
+  }
+
+  if (transactionRaw !== undefined) {
+    res.transactionRaw = transactionRaw;
+  }
+
+  if (contract !== undefined) {
+    res.contract = contract;
+  }
+
+  if (operator !== undefined) {
+    res.operator = operator;
+  }
+
+  if (standard !== undefined) {
+    res.standard = standard;
+  }
+
+  if (tokenId !== undefined) {
+    res.tokenId = tokenId;
   }
 
   if (subAccounts) {
@@ -166,12 +182,8 @@ export const fromOperationRaw = (
     );
   }
 
-  if (nftOperations) {
+  if (nftOperations && nftOperations.length > 0) {
     res.nftOperations = nftOperations.map((o: OperationRaw) => fromOperationRaw(o, o.accountId));
-  }
-
-  if (transactionRaw !== undefined) {
-    res.transactionRaw = transactionRaw;
   }
 
   return res;

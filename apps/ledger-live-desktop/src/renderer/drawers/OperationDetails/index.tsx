@@ -170,7 +170,7 @@ const OperationD = (props: Props) => {
   const urlFeesInfo = getURLFeesInfo
     ? getURLFeesInfo({ op: operation, currencyId: cryptoCurrency.id })
     : null;
-  let url = getLLDCoinFamily(account.currency.family).getTransactionExplorer?.(
+  let url = specific?.getTransactionExplorer?.(
     getDefaultExplorerView(mainAccount.currency),
     operation,
   );
@@ -388,7 +388,7 @@ const OperationD = (props: Props) => {
           <LinkWithExternalIcon
             fontSize={4}
             onClick={() =>
-              openURL(url, "viewOperationInExplorer", {
+              openURL(url as string, "viewOperationInExplorer", {
                 currencyId: currencyName,
               })
             }
