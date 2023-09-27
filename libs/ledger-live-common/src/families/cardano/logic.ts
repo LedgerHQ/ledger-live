@@ -38,7 +38,7 @@ import {
   TxOutputDestination,
   TxOutputDestinationType,
 } from "@cardano-foundation/ledgerjs-hw-app-cardano";
-import { str_to_path } from "@cardano-foundation/ledgerjs-hw-app-cardano/dist/utils";
+import { str_to_path } from "@cardano-foundation/ledgerjs-hw-app-cardano/dist/utils/address";
 
 /**
  *  returns BipPath object with account, chain and index field for cardano

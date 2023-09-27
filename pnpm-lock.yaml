@@ -1,9 +1,5 @@
 lockfileVersion: '6.0'
 
-settings:
-  autoInstallPeers: false
-  excludeLinksFromLockfile: false
-
 overrides:
   stellar-base>sodium-native: ^3.2.1
   remove-flow-types-loader>flow-remove-types: ^2
@@ -1939,8 +1935,8 @@ importers:
   libs/ledger-live-common:
     dependencies:
       '@cardano-foundation/ledgerjs-hw-app-cardano':
-        specifier: ^5.1.0
-        version: 5.1.0
+        specifier: ^6.0.0
+        version: 6.0.0
       '@celo/connect':
         specifier: ^3.0.1
         version: 3.0.1
@@ -11181,14 +11177,12 @@ packages:
     resolution: {integrity: sha512-i9TxOEnZdK4npHY9rR3VSNG51VErpZ2GTAg5RIwMFmcOb+9/Q2oWyUGg50ZSiflUi0nfnakuodhSpugS96k7pQ==}
     dev: false
 
-  /@cardano-foundation/ledgerjs-hw-app-cardano@5.1.0:
-    resolution: {integrity: sha512-ucuz/XbS/0ZD0Bal/GI/kiTm9jDIl8J+A7ypEqcAcBDGicFsyWmtPotOTwuDovTsiM8+eA/5OGTFX0oRqzxstQ==}
+  /@cardano-foundation/ledgerjs-hw-app-cardano@6.0.0:
+    resolution: {integrity: sha512-aiWlERF5sXMzygE62YH9AXrVePu5ZG+QKGv/ZhvYec35vUhDFJK8qPiLzXmTy6MdoDKSqbYVRPd6jY3KKs5pOg==}
     dependencies:
-      '@ledgerhq/hw-transport': 5.51.1
-      '@types/ledgerhq__hw-transport': 4.21.4
+      '@ledgerhq/hw-transport': 6.28.8
       base-x: 3.0.9
       bech32: 1.1.4
-      blake2: 4.1.1
       int64-buffer: 1.0.1
     dev: false
 
@@ -25167,12 +25161,6 @@ packages:
     dependencies:
       '@types/node': 18.16.19
 
-  /@types/ledgerhq__hw-transport@4.21.4:
-    resolution: {integrity: sha512-vep+6yZnGv6owAthIY0w3f72w4dJIb4+yE5PCHveInTlZE9wukvU6Wc5Eig0OUUxcdhTazzeZx1xUaNVLqyQSg==}
-    dependencies:
-      '@types/node': 18.16.19
-    dev: false
-
   /@types/libsodium-wrappers@0.7.9:
     resolution: {integrity: sha512-LisgKLlYQk19baQwjkBZZXdJL0KbeTpdEnrAfz5hQACbklCY0gVFnsKUyjfNWF1UQsCSjw93Sj5jSbiO8RPfdw==}
     dev: false
@@ -29707,14 +29695,6 @@ packages:
       node-addon-api: 3.2.1
       node-gyp-build: 4.4.0
       readable-stream: 3.6.2
-    dev: false
-
-  /blake2@4.1.1:
-    resolution: {integrity: sha512-HUmkY0MUDUVgejJVNrpNKAva8C4IWD/Rd862sdexoSibu86b6iu0gO0/RjovO2lM5+w6JqjIEmkuAgGhfHlnJw==}
-    engines: {node: '>= 8.0.0'}
-    requiresBuild: true
-    dependencies:
-      nan: 2.17.0
     dev: false
 
   /blake2b-wasm@1.1.7:
@@ -48431,6 +48411,7 @@ packages:
   /nan@2.17.0:
     resolution: {integrity: sha512-2ZTgtl0nJsO0KQCjEpxcIr5D+Yv90plTitZt9JBfQvVJDS5seMl3FOvsh3+9CoYWXf/1l5OaZzzF6nDm4cagaQ==}
     requiresBuild: true
+    optional: true
 
   /nano-json-stream-parser@0.1.2:
     resolution: {integrity: sha512-9MqxMH/BSJC7dnLsEMPyfN5Dvoo49IsPFYMcHw3Bcfc2kN0lpHRBSzlMSVx4HGyJ7s9B31CyBTVehWJoQ8Ctew==}
@@ -63348,6 +63329,7 @@ packages:
     resolution: {directory: libs/ui/packages/crypto-icons, type: directory}
     id: file:libs/ui/packages/crypto-icons
     name: '@ledgerhq/crypto-icons-ui'
+    version: 0.5.1
     peerDependencies:
       '@types/react': '*'
       react: '*'
@@ -63367,6 +63349,7 @@ packages:
     resolution: {directory: libs/ui/packages/icons, type: directory}
     id: file:libs/ui/packages/icons
     name: '@ledgerhq/icons-ui'
+    version: 0.6.1
     peerDependencies:
       '@types/react': '*'
       react: '*'
@@ -63390,3 +63373,7 @@ packages:
     dependencies:
       commander: 2.20.3
     dev: false
+
+settings:
+  autoInstallPeers: false
+  excludeLinksFromLockfile: false
