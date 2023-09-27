@@ -5310,6 +5310,10 @@
       "title" : "Eylem reddedildi",
       "description" : "Kullanıcı cihazdaki işlemi reddetti"
     },
+    "ExpertModeRequired" : {
+      "title" : "Uzman modu gerekli",
+      "description" : "Uzman modunun etkinleştirilmesi gerekiyor."
+    },
     "TransactionRefusedOnDevice" : {
       "title" : "İşlem cihazda reddedildi",
       "description" : "Lütfen tekrar deneyin veya bir şüpheniz varsa Ledger Destek ile iletişime geçin"
