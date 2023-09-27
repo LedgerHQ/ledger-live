@@ -67,9 +67,10 @@ const getFeatureFlagProperties = (): Record<string, boolean | string> => {
   try {
     if (!analyticsFeatureFlagMethod) return {};
     const ptxEarnFeatureFlag = analyticsFeatureFlagMethod("ptxEarn");
-
+    const llmWalletQuickActions = analyticsFeatureFlagMethod("llmWalletQuickActions");
     return {
       ptxEarnEnabled: !!ptxEarnFeatureFlag?.enabled,
+      llmWalletQuickActionsEnabled: !!llmWalletQuickActions?.enabled,
     };
   } catch (e) {
     return {};
