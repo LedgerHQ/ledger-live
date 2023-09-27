@@ -5704,8 +5704,10 @@ var cleanupCacheFolder = (0, import_core.getInput)("cleanup-cache-folder", {
   } catch (error) {
     console.error("Timeout while waiting for the server to boot.");
   } finally {
-    clearInterval(interval);
-    clearTimeout(timeout);
+    if (interval)
+      clearInterval(interval);
+    if (timeout)
+      clearTimeout(timeout);
   }
   (0, import_core.info)(`Server PID: ${subprocess.pid}`);
   (0, import_core.saveState)("pidToKill", subprocess.pid);
