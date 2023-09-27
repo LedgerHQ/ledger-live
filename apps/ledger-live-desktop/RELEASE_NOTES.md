@@ -1,3 +1,7 @@
+# 2.69.0
+
+This release includes minor bug fixes and security improvements.
+
 # 2.68.1
 
 This release includes minor bug fixes and security improvements.
