@@ -122,6 +122,7 @@
     "search" : "검색 중...",
     "searchWithoutEllipsis" : "검색",
     "manage" : "관리",
+    "tryAgain" : "Try again",
     "lockScreen" : {
       "title" : "다시 돌아오신 것을 환영합니다.",
       "subTitle" : null,
@@ -546,6 +547,10 @@
           "body" : "본인 지갑에서 암호화폐 수령"
         }
       }
+    },
+    "getFundsModal" : {
+      "text" : "{{coin}} 코인을 스테이킹하세요",
+      "description" : "Ledger Live를 사용해 Ledger로 직접 암호화폐를 구매, 스왑, 수령하세요."
     }
   },
   "lottieDebugger" : {
@@ -561,7 +566,7 @@
     "modal" : {
       "title" : "Ledger Vault 연결하기",
       "info" : "아래 필드를 작성하여 Ledger Vault 워크스페이스 계정을 연결하고 Ledger Live에서 트랜잭션을 생성하세요. 설정 > 외부 지갑 서명인에서 정보를 찾으세요.",
-      "info_link" : "Learn more",
+      "info_link" : "자세히 알아보기",
       "host" : {
         "title" : "URL 엔드포인트",
         "placeholder" : "ws://localhost:3030"
@@ -572,9 +577,9 @@
       },
       "token" : {
         "title" : "운영자 API 토큰",
-        "placeholder" : "Token"
+        "placeholder" : "토큰"
       },
-      "submit" : "Connect"
+      "submit" : "연결"
     }
   },
   "fullNode" : {
@@ -1700,7 +1705,8 @@
   "DeviceAction" : {
     "allowAppPermission" : "내 장치에서 {{wording}} 앱 열기",
     "allowAppPermissionSubtitleToken" : "나의 {{token}} 토큰 관리",
-    "allowManagerPermission" : "장치에서 {{wording}} 허용",
+    "allowManagerPermission" : "장치에서 Ledger 관리자를 허용하세요",
+    "allowRenaming" : "장치에서 이름 변경을 허용하세요",
     "loading" : "로딩...",
     "connectAndUnlockDevice" : "장치를 연결하고 잠금 해제하세요",
     "unlockDevice" : "장치를 잠금 해제하세요",
@@ -1878,7 +1884,11 @@
       "contactSupport" : "지원 부서 연락",
       "deprecated" : "장치 펌웨어가 오래되어 업데이트가 불가능합니다. Leger 지원에 연락하여 교체를 요청하세요.",
       "prepareSeed" : "만약을 대비하여 24개의 단어 복구 문구를 복구 시트에 반드시 기록해 두고 언제든 사용 가능한 상태로 준비해 두세요.",
-      "disclaimerTitle" : "곧 <1>펌웨어 버전 {{version}}</1> 설치가 시작됩니다."
+      "disclaimerTitle" : "곧 <1>펌웨어 버전 {{version}}</1> 설치가 시작됩니다.",
+      "cancelUpdate" : "업데이트 취소",
+      "continueUpdate" : "업데이트 계속하기",
+      "cancelUpdateWarning" : "지금 업데이트를 취소하면 설정 및 앱이 제대로 복구되지 않을 수 있습니다.",
+      "updateInProgress" : "OS 업데이트 진행 중"
     },
     "modal" : {
       "title" : "{{productName}} 업데이트",
@@ -2064,7 +2074,8 @@
         "parentAccount" : "1. {{currencyName}} 계정을 선택하세요",
         "token" : "2. 토큰을 선택하세요",
         "verifyTokenType" : "<0>{{token}}</0>이 <0>{{tokenType}}</0> 토큰인지 확인하세요. 다른 암호화폐가 {{currency}} 계정으로 전송되면 소실될 수 있습니다.",
-        "warningTokenType" : "<0>{{ticker}}</0> 또는 <0>{{tokenType}}</0> 토큰은 {{currency}} 계정으로만 보내세요. 다른 암호화폐를 보내면 영구적인 자금 손실을 초래할 수 있습니다."
+        "warningTokenType" : "<0>{{ticker}}</0> 또는 <0>{{tokenType}}</0> 토큰은 {{currency}} 계정으로만 보내세요. 다른 암호화폐를 보내면 영구적인 자금 손실을 초래할 수 있습니다.",
+        "depositFromCexBannerTitle" : "코인베이스 계정의 암호화폐를 예치하세요"
       },
       "connectDevice" : {
         "title" : "장치",
@@ -2934,7 +2945,7 @@
             }
           },
           "amount" : {
-            "title" : "Amount"
+            "title" : "금액"
           },
           "validator" : {
             "title" : "검증인"
@@ -3006,7 +3017,7 @@
             "newDelegation" : "새로운 위임",
             "chooseValidator" : "검증인 선택",
             "warning" : "다시 마음이 바뀌어 새로운 검증인 교체하고 재위임하려면 <0>{{numberOfDays}}일</0>을 기다려야 합니다",
-            "amountLabel" : "Amount to redelegate"
+            "amountLabel" : "재위임할 금액"
           },
           "device" : {
             "title" : "장치"
@@ -3790,7 +3801,7 @@
         "button" : "완료",
         "title" : "모바일로 내보내려면 스캔해주세요",
         "listTitle" : "Ledger Live 모바일 앱에서:",
-        "step1" : "Tap the <highlight><icon>+</icon></highlight> button in <highlight>accounts</highlight>",
+        "step1" : "<highlight><icon>+</icon></highlight> 버튼을 <highlight>계정</highlight>에서 누르세요",
         "step2" : "<highlight>데스크탑 계정 가져오기</highlight>를 탭하세요",
         "step3" : "100% 로딩될 때까지 <highlight>LiveQR 코드</highlight> 를 스캔하세요"
       }
@@ -4061,7 +4072,7 @@
     "downloadProgress" : "{{progress}}% 완료됨",
     "checking" : "업데이트 확인 중...",
     "checkSuccess" : "새로운 Ledger Live 업데이트가 있습니다. 앱을 닫으면 자동으로 설치됩니다.",
-    "quitAndInstall" : "지금 설치",
+    "quitAndInstall" : "지금 설치하고 다시 시작하기",
     "updateAvailable" : "Ledger Live {{version}} 버전을 업데이트할 수 있습니다",
     "error" : "업데이트 중 오류가 발생했습니다. 다시 다운로드하세요",
     "reDownload" : "다시 다운로드",
@@ -5077,12 +5088,12 @@
       "description" : "다시 시도해 주세요."
     },
     "DisconnectedDevice" : {
-      "title" : "죄송하지만 장치 연결이 해제된 것 같습니다",
-      "description" : "다시 연결하여 재시도해주세요."
+      "title" : "Device disconnected",
+      "description" : "Ledger Live could not connect to your device. Please try again."
     },
     "DisconnectedDeviceDuringOperation" : {
-      "title" : "죄송하지만 장치 연결이 해제된 것 같습니다",
-      "description" : "다시 연결하여 재시도해주세요."
+      "title" : "Device disconnected",
+      "description" : "Ledger Live could not connect to your device. Please try again."
     },
     "EConnReset" : {
       "title" : "Ledger 애플리케이션 스토어에 연결할 수 없습니다.",
@@ -5309,6 +5320,10 @@
     "UserRefusedOnDevice" : {
       "title" : "거부된 조치",
       "description" : "사용자가 장치에서 거래를 거부했습니다"
+    },
+    "ExpertModeRequired" : {
+      "title" : "전문가 모드 필요",
+      "description" : "전문가 모드를 활성화해야 합니다."
     },
     "TransactionRefusedOnDevice" : {
       "title" : "장치에서 거래 거부",
@@ -5599,7 +5614,7 @@
       "title" : "이전 트랜잭션이 아직 처리되지 않았습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
     },
     "SolanaTxConfirmationTimeout" : {
-      "title" : "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+      "title" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
     },
     "NotEnoughNftOwned" : {
       "title" : "사용 가능한 토큰 수를 초과했습니다"
@@ -5795,31 +5810,33 @@
     "managerCTARemove" : "제거",
     "steps" : {
       "choose" : {
-        "stepLabel" : "이미지 선택",
+        "stepLabel" : "Choose picture",
         "description" : "(...)로 설정할 이미지 선택",
         "pickFromNftGallery" : "내 NFT 갤러리에서 선택",
         "myNfts" : "내 NFT",
-        "upload" : "내 컴퓨터에서 업로드",
+        "upload" : "Upload from computer",
         "chooseNft" : "NFT 선택하기",
         "remove" : "현재 사진 삭제",
         "selectNft" : "NFT 선택",
-        "previousSelectNft" : "뒤로",
         "nftEmptyStateTitle" : "아직 표시할 NFT가 없습니다",
         "nftEmptyStateDescription" : "지갑에 NFT를 추가하고 시작하세요."
       },
       "adjust" : {
-        "stepLabel" : "이미지 조정",
-        "rotate" : "회전"
+        "stepLabel" : "Crop",
+        "rotate" : "회전",
+        "confirmCrop" : "Confirm Crop"
       },
       "contrast" : {
-        "stepLabel" : "대비 선택"
+        "stepLabel" : "Set contrast",
+        "confirmContrast" : "Confirm contrast"
       },
       "transfer" : {
-        "stepLabel" : "전송",
-        "uploadAnotherImage" : "다른 이미지 업로드",
-        "allowPreview" : "잠금 화면 사진이 {{productName}}에 로드되도록 허용하세요",
+        "stepLabel" : "Load",
+        "useAnotherPicture" : "Upload another picture",
+        "allowPreview" : "Tap on “Load picture” to customize the lock screen",
         "allowConfirmPreview" : "{{productName}}에서 잠금 화면 이미지 복원 허용",
         "loadingPicture" : "로딩 중...",
+        "voila" : "Voilà!",
         "imageLoaded" : "{{productName}}에서 로드한 이미지",
         "confirmPicture" : "마음에 드시나요?\n그러면 저장하세요!",
         "confirmRestorePicture" : "잠금 화면 이미지 복원 확인",
@@ -5827,12 +5844,12 @@
       }
     },
     "postOnboarding" : {
-      "title" : "내 장치 커스텀",
-      "description" : "화면 커스텀을 통해",
+      "title" : "Customize the lock screen",
+      "description" : "Choose any NFT or picture to set as the lock screen of your Ledger Stax.",
       "actionCompletedPopupLabel" : "장치 커스텀 완료"
     },
-    "customImageSet" : "잠금화면을 설정하세요",
-    "finishCTA" : "완료"
+    "customImageSet" : "Lock screen customized",
+    "finishCTA" : "Close"
   },
   "onboardingAppInstall" : {
     "restore" : {
@@ -5878,7 +5895,6 @@
     "networkError" : {
       "title" : "네트워크 오류",
       "subtitle" : "문제가 발생했습니다. 다시 시도해주세요. 문제가 지속될 경우, 로그를 저장하고 Ledger 지원 부서에 연락하세요.",
-      "tryAgain" : "다시 시도하세요",
       "contactSupport" : "Ledger 지원 부서에 문의해주세요",
       "saveLog" : "로그 저장"
     }
