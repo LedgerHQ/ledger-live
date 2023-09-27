@@ -5310,6 +5310,10 @@
       "title" : "Aktion abgelehnt",
       "description" : "Der Benutzer hat die Aktion am Gerät abgelehnt"
     },
+    "ExpertModeRequired" : {
+      "title" : "Expertenmodus erforderlich",
+      "description" : "Der Expertenmodus muss aktiviert werden."
+    },
     "TransactionRefusedOnDevice" : {
       "title" : "Aktion auf Gerät verweigert",
       "description" : "Bitte versuchen Sie es erneut oder kontaktieren Sie im Zweifelsfall den Ledger-Support"
