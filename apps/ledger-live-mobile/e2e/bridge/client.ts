@@ -21,6 +21,7 @@ import { ExchangeRequestEvent } from "@ledgerhq/live-common/hw/actions/startExch
 import { CompleteExchangeRequestEvent } from "@ledgerhq/live-common/exchange/platform/types";
 import { RemoveImageEvent } from "@ledgerhq/live-common/hw/staxRemoveImage";
 import { RenameDeviceEvent } from "@ledgerhq/live-common/hw/renameDevice";
+import { LaunchArguments } from "react-native-launch-arguments";
 
 export type MockDeviceEvent =
   | ConnectAppEvent
@@ -93,13 +94,15 @@ export const e2eBridgeClient = new Subject<MessageData>();
 
 let ws: WebSocket;
 
-export function init(port = 8099) {
+export function init() {
+  let wsPort = LaunchArguments.value()["wsPort"] || "8099";
+
   if (ws) {
     ws.close();
   }
 
   const ipAddress = Platform.OS === "ios" ? "localhost" : "10.0.2.2";
-  const path = `${ipAddress}:${port}`;
+  const path = `${ipAddress}:${wsPort}`;
   ws = new WebSocket(`ws://${path}`);
   ws.onopen = () => {
     log(`Connection opened on ${path}`);

@@ -2,7 +2,7 @@ import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
 import { act, renderHook } from "@testing-library/react-hooks";
 import BigNumber from "bignumber.js";
 import { checkAccountSupported } from "../../../account/index";
-import ethBridge from "../../../families/ethereum/bridge/mock";
+import ethBridge from "../../../families/evm/bridge/mock";
 import { genTokenAccount } from "@ledgerhq/coin-framework/mocks/account";
 import { genAccount } from "../../../mock/account";
 import { useUpdateMaxAmount, ZERO } from "./useUpdateMaxAmount";
@@ -11,7 +11,7 @@ import { useUpdateMaxAmount, ZERO } from "./useUpdateMaxAmount";
 jest.mock("../../../account/support");
 const mockedCheckAccount = jest.mocked(checkAccountSupported);
 // Mock to use a custom estimate value and test the result.
-jest.mock("../../../families/ethereum/bridge/mock");
+jest.mock("../../../families/evm/bridge/mock");
 const mockedEstimateMaxSpendable = jest.mocked(ethBridge.accountBridge.estimateMaxSpendable, true);
 
 const ETH = getCryptoCurrencyById("ethereum");

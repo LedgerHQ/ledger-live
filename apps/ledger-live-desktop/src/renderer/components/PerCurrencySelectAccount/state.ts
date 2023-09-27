@@ -14,11 +14,13 @@ export function getAccountTuplesForCurrency(
 ): AccountTuple[] {
   if (currency.type === "TokenCurrency") {
     return allAccounts
-      .filter(
-        account =>
-          account.currency.id === currency.parentCurrency.id &&
-          (accountIds ? accountIds.has(account.id) : true),
-      )
+      .filter(account => {
+        // not checking subAccounts against accountIds for TokenCurrency
+        // because the wallet-api is not able to setup empty accounts
+        // for all parentAccounts and currencies we support
+        // and we would lose the empty token accounts in the drawer
+        return account.currency.id === currency.parentCurrency.id;
+      })
       .map(account => ({
         account,
         subAccount:

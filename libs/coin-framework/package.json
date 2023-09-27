@@ -87,7 +87,7 @@
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "bignumber.js": "^9.1.1",
+    "bignumber.js": "^9.1.2",
     "eip55": "^2.1.0",
     "expect": "^27.4.6",
     "invariant": "^2.2.2",
@@ -95,7 +95,7 @@
     "lru-cache": "^7.14.1",
     "numeral": "^2.0.6",
     "prando": "^6.0.1",
-    "rxjs": "^6.6.7"
+    "rxjs": "^7.8.1"
   },
   "devDependencies": {
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",

@@ -142,17 +142,18 @@ const build = async argv => {
     );
   }
 
-  // Enable this code if you want to analyze bundle sizes
-  /*
-  fs.writeFileSync("metafile.main.json", JSON.stringify(results[0].metafile), "utf-8");
-  fs.writeFileSync("metafile.preloader.json", JSON.stringify(results[1].metafile), "utf-8");
-  fs.writeFileSync("metafile.webviewPreloader.json", JSON.stringify(results[2].metafile), "utf-8");
-  fs.writeFileSync(
-    JSON.stringify(results[3].metafile),
-    "utf-8",
-  );
-  fs.writeFileSync("metafile.renderer.json", JSON.stringify(results[4].metafile), "utf-8");
-  */
+  if (process.env.GENERATE_METAFILES) {
+    // analyze bundle sizes. use it with https://esbuild.github.io/analyze/
+    fs.writeFileSync("metafile.main.json", JSON.stringify(results[0].metafile), "utf-8");
+    fs.writeFileSync("metafile.preloader.json", JSON.stringify(results[1].metafile), "utf-8");
+    fs.writeFileSync(
+      "metafile.webviewPreloader.json",
+      JSON.stringify(results[2].metafile),
+      "utf-8",
+    );
+    fs.writeFileSync("metafile.renderer.json", JSON.stringify(results[3].metafile), "utf-8");
+    fs.writeFileSync("metafile.renderer.worker.json", JSON.stringify(results[4].metafile), "utf-8");
+  }
 };
 
 yargs

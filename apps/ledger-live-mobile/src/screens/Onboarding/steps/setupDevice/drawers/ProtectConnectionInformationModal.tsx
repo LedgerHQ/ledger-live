@@ -10,7 +10,7 @@ const ProtectConnectionInformationModal = () => {
   const { t } = useTranslation();
   const servicesConfig = useFeature("protectServicesMobile");
 
-  const restoreInfoDrawer = servicesConfig?.params?.onboardingRestore?.restoreInfoDrawer || {};
+  const restoreInfoDrawer = servicesConfig?.params?.onboardingRestore?.restoreInfoDrawer;
   const supportLink = restoreInfoDrawer?.supportLinkURI;
 
   const handlePressBluetoothIssue = useCallback(() => {

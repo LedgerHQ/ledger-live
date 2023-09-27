@@ -8,7 +8,7 @@ import { useTheme } from "styled-components/native";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { ReactNavigationPerformanceView } from "@shopify/react-native-performance-navigation";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { useLearnMoreURI } from "@ledgerhq/live-common/hooks/recoverFeatueFlag";
+import { useLearnMoreURI } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { useRefreshAccountsOrdering } from "../../actions/general";
 import {
   // TODO: discreetMode is never used 😱 is it safe to remove
@@ -23,7 +23,6 @@ import { ScreenName } from "../../const";
 import FirmwareUpdateBanner from "../../components/FirmwareUpdateBanner";
 import CheckLanguageAvailability from "../../components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "../../components/CheckTermOfUseUpdate";
-import { useProviders } from "../Swap/Form/index";
 import PortfolioEmptyState from "./PortfolioEmptyState";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import SectionContainer from "../WalletCentricSections/SectionContainer";
@@ -106,7 +105,6 @@ function PortfolioScreen({ navigation }: NavigationProps) {
     });
     setAddModalOpened(true);
   }, [setAddModalOpened]);
-  useProviders();
 
   const closeAddModal = useCallback(() => setAddModalOpened(false), [setAddModalOpened]);
   const refreshAccountsOrdering = useRefreshAccountsOrdering();

@@ -8,5 +8,5 @@ export * from "./LiveApp";
 export function PlatformCatalog({ db }: { db: RecentlyUsedDB }) {
   const config = useFeature("discover");
 
-  return config?.enabled && config?.params.version === "2" ? <Catalog2 db={db} /> : <Catalog1 />;
+  return config?.enabled && config?.params?.version === "2" ? <Catalog2 db={db} /> : <Catalog1 />;
 }

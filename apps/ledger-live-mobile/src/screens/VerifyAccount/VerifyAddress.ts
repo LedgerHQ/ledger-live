@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import type { Account } from "@ledgerhq/types-live";
@@ -18,24 +18,30 @@ function VerifyAddress({
 }) {
   const { theme } = useTheme();
   const { t } = useTranslation();
-  const onConfirmAddress = useCallback(async () => {
-    try {
-      if (!device) return;
-      await getAccountBridge(account)
-        .receive(account, {
-          deviceId: device.deviceId,
-          verify: true,
-        })
-        .toPromise();
-      onResult(true);
-    } catch (err) {
-      onResult(false, err as Error);
-    }
-  }, [account, device, onResult]);
   useEffect(() => {
-    onConfirmAddress();
-  }, [onConfirmAddress]);
+    if (!device) return;
+
+    const sub = getAccountBridge(account)
+      .receive(account, {
+        deviceId: device.deviceId,
+        verify: true,
+      })
+      .subscribe({
+        complete() {
+          onResult(true);
+        },
+        error(err) {
+          onResult(false, err as Error);
+        },
+      });
+
+    return () => {
+      sub.unsubscribe();
+    };
+  }, [account, device, onResult]);
+
   if (!device) return null;
+
   return renderVerifyAddress({
     t,
     currencyName: getAccountCurrency(account).name,

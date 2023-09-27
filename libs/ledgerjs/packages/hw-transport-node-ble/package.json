@@ -34,7 +34,7 @@
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "invariant": "^2.2.4",
-    "rxjs": "6"
+    "rxjs": "^7.8.1"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

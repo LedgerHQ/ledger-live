@@ -30,6 +30,7 @@ export type Props = React.ComponentProps<typeof Loader> & {
 export default function InfiniteLoader({
   size = 38,
   color = "primary.c50",
+  mock = false,
   ...extraProps
 }: Props): JSX.Element {
   const rotation = useSharedValue(0);
@@ -49,7 +50,7 @@ export default function InfiniteLoader({
         duration: 1000,
         easing: Easing.linear,
       }),
-      -1, //Infinite
+      mock ? 1 : -1, //Infinite if not mock, else once
     );
     return () => cancelAnimation(rotation);
     // eslint-disable-next-line react-hooks/exhaustive-deps

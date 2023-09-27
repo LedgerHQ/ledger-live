@@ -38,3 +38,6 @@ export const updateMainNavigatorVisibility =
   createAction<AppStateUpdateMainNavigatorVisibilityPayload>(
     AppStateActionTypes.UPDATE_MAIN_NAVIGATOR_VISIBILITY,
   );
+
+/** Set to true to prevent privacy lock being triggered by deep links. Reset to false on re-focus or on close. */
+export const setIsDeepLinking = createAction<boolean>(AppStateActionTypes.SET_IS_DEEP_LINKING);

@@ -25,6 +25,7 @@ import Button from "~/renderer/components/Button";
 import Alert from "~/renderer/components/Alert";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Receive2NoDevice from "~/renderer/components/Receive2NoDevice";
+import { firstValueFrom } from "rxjs";
 
 export const Separator = styled.div`
   &::after {
@@ -85,12 +86,12 @@ const VerifyOnDevice = ({
           onAddressVerified(true);
         }, 3000);
       } else {
-        await getAccountBridge(mainAccount)
-          .receive(mainAccount, {
+        await firstValueFrom(
+          getAccountBridge(mainAccount).receive(mainAccount, {
             deviceId: device.deviceId,
             verify: true,
-          })
-          .toPromise();
+          }),
+        );
         onAddressVerified(true);
       }
     } catch (err) {

@@ -294,7 +294,7 @@ const MainSideBar = () => {
     trackEntry("swap");
   }, [push, trackEntry]);
   const handleClickRefer = useCallback(() => {
-    if (referralProgramConfig?.enabled && referralProgramConfig?.params.path) {
+    if (referralProgramConfig?.enabled && referralProgramConfig?.params?.path) {
       push(referralProgramConfig?.params.path);
       trackEntry("refer-a-friend", referralProgramConfig?.params.isNew);
     }
@@ -380,7 +380,7 @@ const MainSideBar = () => {
                   isActive={location.pathname === "/market"}
                   collapsed={secondAnim}
                 />
-                <FeatureToggle feature="learn">
+                <FeatureToggle featureId="learn">
                   <SideBarListItem
                     id="learn"
                     label={t("sidebar.learn")}
@@ -433,7 +433,7 @@ const MainSideBar = () => {
                   disabled={noAccounts || navigationLocked}
                   collapsed={secondAnim}
                 />
-                <FeatureToggle feature="ptxEarn">
+                <FeatureToggle featureId="ptxEarn">
                   <SideBarListItem
                     id={"earn"}
                     label={t("sidebar.earn")}
@@ -444,6 +444,7 @@ const MainSideBar = () => {
                     isActive={location.pathname === "/earn"}
                     collapsed={secondAnim}
                     NotifComponent={
+                      // @ts-expect-error TODO doesn't exist yet in our types
                       ptxEarnConfig?.params?.isNew ? (
                         <CustomTag active type="plain" size="small">
                           {t("common.new")}
@@ -474,7 +475,7 @@ const MainSideBar = () => {
                   disabled={noAccounts}
                   collapsed={secondAnim}
                 />
-                <FeatureToggle feature="referralProgramDesktopSidebar">
+                <FeatureToggle featureId="referralProgramDesktopSidebar">
                   <SideBarListItem
                     id={"refer"}
                     label={t("sidebar.refer")}
@@ -482,14 +483,17 @@ const MainSideBar = () => {
                     iconSize={20}
                     iconActiveColor="wallet"
                     onClick={handleClickRefer}
-                    isActive={location.pathname.startsWith(referralProgramConfig?.params.path)}
+                    isActive={
+                      referralProgramConfig?.params &&
+                      location.pathname.startsWith(referralProgramConfig.params.path)
+                    }
                     collapsed={secondAnim}
                     NotifComponent={
-                      referralProgramConfig?.params.amount ? (
+                      referralProgramConfig?.params?.amount ? (
                         <CustomTag active type="plain" size="small">
                           {referralProgramConfig?.params.amount}
                         </CustomTag>
-                      ) : referralProgramConfig?.params.isNew ? (
+                      ) : referralProgramConfig?.params?.isNew ? (
                         <CustomTag active type="plain" size="small">
                           {t("common.new")}
                         </CustomTag>
@@ -508,7 +512,7 @@ const MainSideBar = () => {
                   collapsed={secondAnim}
                   disabled={isCardDisabled}
                 />
-                <FeatureToggle feature="protectServicesDesktop">
+                <FeatureToggle featureId="protectServicesDesktop">
                   <SideBarListItem
                     id={"recover"}
                     label={t("sidebar.recover")}

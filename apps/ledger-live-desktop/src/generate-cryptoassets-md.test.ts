@@ -49,9 +49,6 @@ function gen() {
       if (t.delisted) {
         status.push("delisted");
       }
-      if (t.disableCountervalue) {
-        status.push("countervalues disabled");
-      }
       md += `| ${t.parentCurrency.name} | ${t.ticker} | ${t.contractAddress || ""} | ${
         t.name
       } | ${status.join(", ")} | ${t.id} |\n`;

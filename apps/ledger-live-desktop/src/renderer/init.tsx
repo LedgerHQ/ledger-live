@@ -46,12 +46,35 @@ import { expectOperatingSystemSupportStatus } from "~/support/os";
 import { addDevice, removeDevice, resetDevices } from "~/renderer/actions/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { listCachedCurrencyIds } from "./bridge/cache";
-if (process.env.VERBOSE) {
-  enableDebugLogger();
-}
+import { LogEntry } from "winston";
+
 const rootNode = document.getElementById("react-root");
 const TAB_KEY = 9;
+
 async function init() {
+  const logVerbose = getEnv("VERBOSE");
+
+  // Sets up a debug console printing of logs (from the renderer thread)
+  //
+  // Usage: a filtering (only on console printing) on Ledger libs are possible:
+  // - VERBOSE="apdu,hw,transport,hid-verbose" : filtering on a list of log `type` separated by a `,`
+  // - VERBOSE=1 or VERBOSE=true : to print all logs
+  if (logVerbose) {
+    const everyLogs =
+      logVerbose.length === 1 && (logVerbose[0] === "true" || logVerbose[0] === "1");
+
+    const filters = everyLogs ? [] : logVerbose;
+
+    // eslint-disable-next-line no-console
+    console.log(
+      `Logs console display setup (renderer thread): ${JSON.stringify({
+        everyLogs,
+        filters,
+      })}`,
+    );
+    enableDebugLogger((log: LogEntry) => everyLogs || (log?.type && filters.includes(log.type)));
+  }
+
   checkLibs({
     NotEnoughBalance,
     React,

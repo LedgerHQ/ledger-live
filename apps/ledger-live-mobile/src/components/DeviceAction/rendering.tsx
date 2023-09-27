@@ -68,6 +68,7 @@ import {
 import ModalLock from "../ModalLock";
 import confirmLockscreen from "../../animations/stax/customimage/confirmLockscreen.json";
 import allowConnection from "../../animations/stax/customimage/allowConnection.json";
+import Config from "react-native-config";
 
 export const Wrapper = styled(Flex).attrs({
   flex: 1,
@@ -377,22 +378,26 @@ export function renderConfirmSell({
 
 export function renderAllowManager({
   t,
-  wording,
   device,
   theme,
+  requestType = "manager",
 }: RawProps & {
-  wording: string;
   device: Device;
+  requestType?: "manager" | "rename";
 }) {
   // TODO: disable gesture, modal close, hide header buttons
   return (
     <Wrapper pb={6} pt={6}>
       <Flex>
         <Text fontWeight="semiBold" fontSize={24} textAlign="center" mb={10}>
-          {t("DeviceAction.allowManagerPermission", {
-            wording,
-            productName: getDeviceModel(device.modelId)?.productName,
-          })}
+          {t(
+            requestType === "rename"
+              ? "DeviceAction.allowRenaming"
+              : "DeviceAction.allowManagerPermission",
+            {
+              productName: getDeviceModel(device.modelId)?.productName,
+            },
+          )}
         </Text>
       </Flex>
       <AnimationContainer>
@@ -888,7 +893,7 @@ export function renderLoading({
   return (
     <Wrapper>
       <SpinnerContainer>
-        <InfiniteLoader />
+        <InfiniteLoader mock={Config.MOCK} />
       </SpinnerContainer>
       <CenteredText testID="device-action-loading">
         {description ?? t("DeviceAction.loading")}

@@ -104,7 +104,7 @@ const StepChooseImage: React.FC<Props> = props => {
             nextDisabled={!selectedNftBase64Data}
             nextLoading={Boolean(selectedNftId && !selectedNftBase64Data)}
             nextLabel={t("customImage.steps.choose.selectNft")}
-            previousLabel={t("common.previous")}
+            previousLabel={t("common.back")}
             onClickNext={handleClickNext}
             onClickPrevious={handleClickPrevious}
             previousTestId="custom-image-nft-previous-button"

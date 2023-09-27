@@ -406,11 +406,11 @@ export const renderListingApps = () => (
 export const renderAllowManager = ({
   modelId,
   type,
-  wording,
+  requestType = "manager",
 }: {
   modelId: DeviceModelId;
   type: Theme["theme"];
-  wording: string;
+  requestType?: "manager" | "rename";
 }) => (
   <Wrapper>
     <DeviceBlocker />
@@ -420,7 +420,11 @@ export const renderAllowManager = ({
     </AnimationWrapper>
     <Footer>
       <Title>
-        <Trans i18nKey="DeviceAction.allowManagerPermission" values={{ wording }} />
+        {requestType === "rename" ? (
+          <Trans i18nKey="DeviceAction.allowRenaming" />
+        ) : (
+          <Trans i18nKey="DeviceAction.allowManagerPermission" />
+        )}
       </Title>
     </Footer>
   </Wrapper>
@@ -547,7 +551,7 @@ export const renderLockedDeviceError = ({
   inlineRetry,
 }: {
   t: TFunction;
-  device?: Device;
+  device?: Device | null;
   onRetry?: (() => void) | null | undefined;
   inlineRetry?: boolean;
 }) => {
@@ -577,7 +581,13 @@ export const renderLockedDeviceError = ({
   );
 };
 
-export const RenderDeviceNotOnboardedError = ({ t, device }: { t: TFunction; device?: Device }) => {
+export const RenderDeviceNotOnboardedError = ({
+  t,
+  device,
+}: {
+  t: TFunction;
+  device?: Device | null;
+}) => {
   const productName = device ? getDeviceModel(device.modelId).productName : null;
   const history = useHistory();
   const { setDrawer } = useContext(context);
@@ -676,7 +686,7 @@ export const renderError = ({
   managerAppName?: string;
   requireFirmwareUpdate?: boolean;
   withOnboardingCTA?: boolean;
-  device?: Device;
+  device?: Device | null;
   inlineRetry?: boolean;
   Icon?: (props: { color?: string | undefined; size?: number | undefined }) => JSX.Element;
 }) => {
@@ -1117,9 +1127,14 @@ export const renderLoadingImage = ({
 }) => {
   return (
     <ImageLoadingGeneric
-      title={t("customImage.steps.transfer.loadingPicture", {
-        productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
-      })}
+      title={t(
+        progress && progress > 0.9
+          ? "customImage.steps.transfer.voila"
+          : "customImage.steps.transfer.loadingPicture",
+        {
+          productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
+        },
+      )}
       testId={`device-action-image-loading-${progress}`}
     >
       <AnimationWrapper>
