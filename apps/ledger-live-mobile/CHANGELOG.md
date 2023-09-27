@@ -1,5 +1,13 @@
 # live-mobile
 
+## 3.32.0-next.8
+
+### Patch Changes
+
+- [#4861](https://github.com/LedgerHQ/ledger-live/pull/4861) [`0872f274dc`](https://github.com/LedgerHQ/ledger-live/commit/0872f274dceaddfdefc33cd2880476f44e8c43a4) Thanks [@cksanders](https://github.com/cksanders)! - Pass correct account ID, due to Platform SDK account ID not being equivalent to Wallet API account ID
+
+  Includes fix for iOS and Android A series.
+
 ## 3.32.0-next.7
 
 ### Patch Changes
