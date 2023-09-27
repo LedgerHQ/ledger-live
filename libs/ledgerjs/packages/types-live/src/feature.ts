@@ -177,6 +177,7 @@ export type Features = CurrencyFeatures & {
   cexDepositEntryPointsDesktop: Feature_CexDepositEntryPointsDesktop;
   cexDepositEntryPointsMobile: Feature_CexDepositEntryPointsMobile;
   fetchAdditionalCoins: Feature_FetchAdditionalCoins;
+  ptxSwapLiveApp: Feature_PtxSwapLiveApp;
 };
 
 /**
@@ -435,6 +436,11 @@ export type Feature_CexDepositEntryPointsMobile = Feature<{
   locations: {
     [key in CexDepositEntryPointsLocationsMobile]: boolean;
   };
+}>;
+
+export type Feature_PtxSwapLiveApp = Feature<{
+  currencies?: Array<string>;
+  families?: Array<string>;
 }>;
 
 export type Feature_LlmNewFirmwareUpdateUx = DefaultFeature;
