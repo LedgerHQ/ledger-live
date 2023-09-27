@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/swift-bridge-hw-app-eth",
-  "version": "1.0.17-hotfix.0",
+  "version": "1.0.17",
   "description": "Package to facilitate bundling hw-app-eth in the EthWrapper Swift package",
   "keywords": [
     "Ledger",
