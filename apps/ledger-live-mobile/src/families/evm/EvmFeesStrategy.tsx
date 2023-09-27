@@ -86,9 +86,19 @@ export default function EvmFeesStrategy({
       transaction,
       currentNavigation: ScreenName.SendSummary,
       nextNavigation: ScreenName.SendSelectDevice,
+      gasOptions,
+      goBackOnSetTransaction: false,
       setTransaction,
     });
-  }, [navigation, route.params, account.id, parentAccount, transaction, setTransaction]);
+  }, [
+    navigation,
+    route.params,
+    account.id,
+    parentAccount,
+    gasOptions,
+    transaction,
+    setTransaction,
+  ]);
 
   if (loading) {
     return <InfiniteLoader size={32} />;
