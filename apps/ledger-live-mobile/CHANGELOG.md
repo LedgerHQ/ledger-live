@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.32.0-next.7
+
+### Patch Changes
+
+- [#4853](https://github.com/LedgerHQ/ledger-live/pull/4853) [`06d20dd95f`](https://github.com/LedgerHQ/ledger-live/commit/06d20dd95fbda6c2ed7148f9182816d20ea53910) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Prevent crash on Custom Fees selection when no GasOptions is set for EVM transactions
+
 ## 3.32.0-next.6
 
 ### Patch Changes
