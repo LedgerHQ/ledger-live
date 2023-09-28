@@ -23,10 +23,10 @@ export const EditOperationCard = ({
   parentAccount,
 }: EditOperationCardProps) => {
   const { t } = useTranslation();
-  const flag = useFeature("editEthTx");
+  const { enabled } = useFeature("editEthTx");
   const navigation = useNavigation();
 
-  const onEditTrnasctionCardPress = useCallback(() => {
+  const onEditTransactionCardPress = useCallback(() => {
     if (account) {
       navigation.navigate(NavigatorName.EditTransaction, {
         screen: ScreenName.EditTransactionMethodSelection,
@@ -39,7 +39,11 @@ export const EditOperationCard = ({
     }
   }, [account, oldestEditableOperation, parentAccount, navigation]);
 
-  return flag?.enabled ? (
+  if (!enabled) {
+    return null;
+  }
+
+  return (
     <SectionContainer px={6}>
       <SideImageCard
         title={t(
@@ -49,10 +53,10 @@ export const EditOperationCard = ({
         )}
         cta={t("editTransaction.cta")}
         onPress={() => {
-          onEditTrnasctionCardPress();
+          onEditTransactionCardPress();
           onPress && onPress(oldestEditableOperation);
         }}
       />
     </SectionContainer>
-  ) : null;
+  );
 };
