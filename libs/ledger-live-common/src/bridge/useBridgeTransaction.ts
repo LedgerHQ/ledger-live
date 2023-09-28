@@ -191,7 +191,7 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
 ): Result<T> => {
   const [
     { account, parentAccount, transaction, status, statusOnTransaction, errorAccount, errorStatus },
-    dispatch, // $FlowFixMe for ledger-live-mobile older react/flow version
+    dispatch,
   ] = useReducer(reducer as Reducer<T>, undefined, makeInit<T>(optionalInit));
   const setAccount = useCallback(
     (account, parentAccount) =>
