@@ -3,6 +3,7 @@ import * as braze from "@braze/web-sdk";
 import { ClassicCard } from "@braze/web-sdk";
 import { getBrazeConfig } from "~/braze-setup";
 import {
+  ContentCard as LedgerContentCard,
   LocationContentCard,
   PortfolioContentCard,
   NotificationContentCard,
@@ -19,6 +20,19 @@ const getDesktopCards = (elem: braze.ContentCards) =>
 export const filterByPage = (array: braze.Card[], page: LocationContentCard) =>
   array.filter(card => card.extras?.location === page);
 
+export const compareCards = (a: LedgerContentCard, b: LedgerContentCard) => {
+  if (a.order && !b.order) {
+    return -1;
+  }
+  if (!a.order && b.order) {
+    return 1;
+  }
+  if ((!a.order && !b.order) || a.order === b.order) {
+    return b.createdAt.getTime() - a.createdAt.getTime();
+  }
+  return (a.order || 0) - (b.order || 0);
+};
+
 export const mapAsPortfolioContentCard = (card: ClassicCard) =>
   ({
     id: card.id,
@@ -28,6 +42,8 @@ export const mapAsPortfolioContentCard = (card: ClassicCard) =>
     image: card.extras?.image,
     url: card.extras?.url,
     path: card.extras?.path,
+    createdAt: card.created,
+    order: parseInt(card.extras?.order) ? parseInt(card.extras?.order) : undefined,
   } as PortfolioContentCard);
 
 export const mapAsNotificationContentCard = (card: ClassicCard) =>
@@ -41,6 +57,7 @@ export const mapAsNotificationContentCard = (card: ClassicCard) =>
     cta: card.extras?.cta,
     createdAt: card.created,
     viewed: card.viewed,
+    order: parseInt(card.extras?.order) ? parseInt(card.extras?.order) : undefined,
   } as NotificationContentCard);
 
 export async function useBraze() {
@@ -70,14 +87,13 @@ export async function useBraze() {
     braze.subscribeToContentCardsUpdates(cards => {
       const desktopCards = getDesktopCards(cards);
 
-      const portfolioCards = filterByPage(desktopCards, LocationContentCard.Portfolio).map(card =>
-        mapAsPortfolioContentCard(card as ClassicCard),
-      );
+      const portfolioCards = filterByPage(desktopCards, LocationContentCard.Portfolio)
+        .map(card => mapAsPortfolioContentCard(card as ClassicCard))
+        .sort(compareCards);
 
-      const notificationsCards = filterByPage(
-        desktopCards,
-        LocationContentCard.NotificationCenter,
-      ).map(card => mapAsNotificationContentCard(card as ClassicCard));
+      const notificationsCards = filterByPage(desktopCards, LocationContentCard.NotificationCenter)
+        .map(card => mapAsNotificationContentCard(card as ClassicCard))
+        .sort(compareCards);
 
       dispatch(setPortfolioCards(portfolioCards));
       dispatch(setNotificationsCards(notificationsCards));

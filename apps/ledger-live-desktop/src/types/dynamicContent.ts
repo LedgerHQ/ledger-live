@@ -20,15 +20,16 @@ export type ContentCard = {
   imgs?: Img[];
   title: React.ReactNode;
   description: React.ReactNode;
+  createdAt: Date;
   url?: string;
   path?: string;
   image?: string;
   onClickOnSlide?: (cardId: string) => void;
+  order?: number;
 };
 
 export type PortfolioContentCard = ContentCard;
 export type NotificationContentCard = ContentCard & {
-  createdAt: Date;
   cta: string;
   viewed: boolean;
 };
