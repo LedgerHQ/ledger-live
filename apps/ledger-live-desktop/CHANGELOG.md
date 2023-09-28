@@ -1,5 +1,20 @@
 # ledger-live-desktop
 
+## 2.69.0-nightly.5
+
+### Patch Changes
+
+- [#4843](https://github.com/LedgerHQ/ledger-live/pull/4843) [`304bb461ec`](https://github.com/LedgerHQ/ledger-live/commit/304bb461ec3a2786c8309ecc15334367b8d163ff) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Add feature_ptx_swap_live_app feature flag and logic
+
+- [#4841](https://github.com/LedgerHQ/ledger-live/pull/4841) [`948d3bac85`](https://github.com/LedgerHQ/ledger-live/commit/948d3bac856a47ef203989111f565002379c416e) Thanks [@cksanders](https://github.com/cksanders)! - Add account wallet id conversion for buy deeplinks
+
+- Updated dependencies [[`304bb461ec`](https://github.com/LedgerHQ/ledger-live/commit/304bb461ec3a2786c8309ecc15334367b8d163ff)]:
+  - @ledgerhq/types-live@6.40.0-nightly.1
+  - @ledgerhq/live-common@32.0.0-nightly.5
+  - @ledgerhq/coin-evm@0.7.0-nightly.3
+  - @ledgerhq/coin-framework@0.6.0-nightly.3
+  - @ledgerhq/domain-service@1.1.11-nightly.3
+
 ## 2.69.0-nightly.4
 
 ### Minor Changes

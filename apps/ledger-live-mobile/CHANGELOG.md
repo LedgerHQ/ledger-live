@@ -1,5 +1,20 @@
 # live-mobile
 
+## 3.32.0-nightly.7
+
+### Patch Changes
+
+- [#4841](https://github.com/LedgerHQ/ledger-live/pull/4841) [`948d3bac85`](https://github.com/LedgerHQ/ledger-live/commit/948d3bac856a47ef203989111f565002379c416e) Thanks [@cksanders](https://github.com/cksanders)! - Add account wallet id conversion for buy deeplinks
+
+- [#4818](https://github.com/LedgerHQ/ledger-live/pull/4818) [`e00647bc97`](https://github.com/LedgerHQ/ledger-live/commit/e00647bc9719659f29a30d0acae9c9f609cff8a1) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update UI in Manager for Services Recover
+
+- Updated dependencies [[`304bb461ec`](https://github.com/LedgerHQ/ledger-live/commit/304bb461ec3a2786c8309ecc15334367b8d163ff)]:
+  - @ledgerhq/types-live@6.40.0-nightly.1
+  - @ledgerhq/live-common@32.0.0-nightly.5
+  - @ledgerhq/coin-evm@0.7.0-nightly.3
+  - @ledgerhq/coin-framework@0.6.0-nightly.3
+  - @ledgerhq/domain-service@1.1.11-nightly.3
+
 ## 3.32.0-nightly.6
 
 ### Minor Changes

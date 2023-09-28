@@ -1,5 +1,19 @@
 # @ledgerhq/live-common
 
+## 32.0.0-nightly.5
+
+### Patch Changes
+
+- [#4843](https://github.com/LedgerHQ/ledger-live/pull/4843) [`304bb461ec`](https://github.com/LedgerHQ/ledger-live/commit/304bb461ec3a2786c8309ecc15334367b8d163ff) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Add feature_ptx_swap_live_app feature flag and logic
+
+- Updated dependencies []:
+  - @ledgerhq/coin-algorand@0.3.2-nightly.3
+  - @ledgerhq/coin-evm@0.7.0-nightly.3
+  - @ledgerhq/coin-framework@0.6.0-nightly.3
+  - @ledgerhq/coin-polkadot@0.4.2-nightly.3
+  - @ledgerhq/domain-service@1.1.11-nightly.3
+  - @ledgerhq/hw-app-eth@6.34.6-nightly.3
+
 ## 32.0.0-nightly.4
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.40.0-nightly.1
+
+### Patch Changes
+
+- [#4843](https://github.com/LedgerHQ/ledger-live/pull/4843) [`304bb461ec`](https://github.com/LedgerHQ/ledger-live/commit/304bb461ec3a2786c8309ecc15334367b8d163ff) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Add feature_ptx_swap_live_app feature flag and logic
+
 ## 6.40.0-nightly.0
 
 ### Minor Changes
