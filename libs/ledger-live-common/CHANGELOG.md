@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 32.1.0-next.0
+
+### Minor Changes
+
+- [#4771](https://github.com/LedgerHQ/ledger-live/pull/4771) [`61a891b06f`](https://github.com/LedgerHQ/ledger-live/commit/61a891b06f9028f285f87c321487f691272a9172) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Force nano app min version
+
 ## 31.8.0
 
 ### Minor Changes
