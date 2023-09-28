@@ -197,11 +197,11 @@
       "description": "Your transaction is ongoing. You can speed it up with a higher network fee, or cancel it.",
       "stuckDescription": "Your transaction is stuck. Speed it up with a higher network fee, or cancel it.",
       "previousFeesInfo": {
-        "pendingTransactionFeesInfo": "Pending transaction fees info: ",
-        "networkfee": "Network fee = ",
-        "maxFee": "Max fee = ",
-        "maxPriorityFee": "Max Priority fee = ",
-        "gasPrice": "GasPrice = "
+        "pendingTransactionFeesInfo": "Pending transaction fees info:",
+        "networkfee": "Network fee = {{amount}}",
+        "maxFee": "Max fee = {{amount}}",
+        "maxPriorityFee": "Max Priority fee = {{amount}}",
+        "gasPrice": "GasPrice = {{amount}}"
       },
       "learnMore": "I want to learn more",
       "panel": {

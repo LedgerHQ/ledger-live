@@ -3561,10 +3561,10 @@
     },
     "previousFeesInfo": {
       "pendingTransactionFeesInfo": "Pending transaction fees info: ",
-      "networkfee": "Network fee = {{amount}} {{unit}}",
-      "maxFee": "Max fee = {{amount}} Gwei",
-      "maxPriorityFee": "Max Priority fee = {{amount}} Gwei",
-      "gasPrice": "GasPrice = {{amount}} Gwei"
+      "networkfee": "Network fee = {{amount}}",
+      "maxFee": "Max fee = {{amount}}",
+      "maxPriorityFee": "Max Priority fee = {{amount}}",
+      "gasPrice": "GasPrice = {{amount}}"
     },
     "speedUp": {
       "title": "Speed Up",
