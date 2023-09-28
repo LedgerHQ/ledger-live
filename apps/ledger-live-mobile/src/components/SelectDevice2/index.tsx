@@ -354,53 +354,66 @@ export default function SelectDevice({
               </Touchable>
             )}
           </Flex>
-          <ScrollContainer my={4}>
-            {deviceList.length > 0 ? (
-              deviceList.map(device => (
-                <Item key={device.deviceId} device={device as Device} onPress={handleOnSelect} />
-              ))
-            ) : (
-              <Touchable
-                onPress={isChoiceDrawerDisplayedOnAddDevice ? onAddNewPress : openBlePairingFlow}
-                {...addNewButtonEventProps}
-              >
-                <Flex
-                  p={5}
-                  mb={4}
-                  borderRadius={5}
-                  flexDirection="row"
-                  alignItems="center"
-                  borderColor="neutral.c40"
-                  borderStyle="dashed"
-                  borderWidth="1px"
+          <ScrollContainer
+            my={4}
+            contentContainerStyle={{
+              flexGrow: 1,
+              justifyContent: "space-between",
+              flexDirection: "column",
+            }}
+          >
+            <Flex>
+              {deviceList.length > 0 ? (
+                deviceList.map(device => (
+                  <Item key={device.deviceId} device={device as Device} onPress={handleOnSelect} />
+                ))
+              ) : (
+                <Touchable
+                  onPress={isChoiceDrawerDisplayedOnAddDevice ? onAddNewPress : openBlePairingFlow}
+                  {...addNewButtonEventProps}
                 >
-                  <IconsLegacy.PlusMedium color="neutral.c90" size={20} />
-                  <Text variant="large" fontWeight="semiBold" ml={5}>
-                    {t(
-                      `manager.selectDevice.${
-                        Platform.OS === "android" ? "addWithBluetooth" : "addALedger"
-                      }`,
-                    )}
+                  <Flex
+                    p={5}
+                    mb={4}
+                    borderRadius={5}
+                    flexDirection="row"
+                    alignItems="center"
+                    borderColor="neutral.c40"
+                    borderStyle="dashed"
+                    borderWidth="1px"
+                  >
+                    <IconsLegacy.PlusMedium color="neutral.c90" size={20} />
+                    <Text variant="large" fontWeight="semiBold" ml={5}>
+                      {t(
+                        `manager.selectDevice.${
+                          Platform.OS === "android" ? "addWithBluetooth" : "addALedger"
+                        }`,
+                      )}
+                    </Text>
+                  </Flex>
+                </Touchable>
+              )}
+              {Platform.OS === "android" &&
+                USBDevice === undefined &&
+                ProxyDevice === undefined && (
+                  <Text
+                    color="neutral.c100"
+                    variant="large"
+                    fontWeight="semiBold"
+                    fontSize={4}
+                    lineHeight="21px"
+                  >
+                    <Trans i18nKey="manager.selectDevice.otgBanner" />
                   </Text>
-                </Flex>
-              </Touchable>
-            )}
-            {Platform.OS === "android" && USBDevice === undefined && ProxyDevice === undefined && (
-              <Text
-                color="neutral.c100"
-                variant="large"
-                fontWeight="semiBold"
-                fontSize={4}
-                lineHeight="21px"
-              >
-                <Trans i18nKey="manager.selectDevice.otgBanner" />
-              </Text>
-            )}
-            {displayServicesWidget && <ServicesWidget />}
+                )}
+              {displayServicesWidget && <ServicesWidget />}
+            </Flex>
+
+            <Flex alignItems="center" mt={10}>
+              <BuyDeviceCTA />
+            </Flex>
           </ScrollContainer>
-          <Flex alignItems="center" mt={5}>
-            <BuyDeviceCTA />
-          </Flex>
+
           <QueuedDrawer
             isRequestingToBeOpened={isAddNewDrawerOpen}
             onClose={() => setIsAddNewDrawerOpen(false)}
