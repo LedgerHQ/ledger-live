@@ -1,27 +1,52 @@
-import React, { memo, useCallback, useEffect, useState } from "react";
-import invariant from "invariant";
-import { Trans, useTranslation } from "react-i18next";
-import BigNumber from "bignumber.js";
-import { Dimensions, Linking } from "react-native";
-import { Box, Flex, SelectableList } from "@ledgerhq/native-ui";
-import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
-import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { Account } from "@ledgerhq/types-live";
-import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { getStuckAccountAndOperation } from "@ledgerhq/coin-framework/operation";
-import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
-import { getEnv } from "@ledgerhq/live-env";
-import { log } from "@ledgerhq/logs";
-import { Transaction, TransactionRaw } from "@ledgerhq/coin-evm/types/index";
 import { getTransactionByHash } from "@ledgerhq/coin-evm/api/transaction/index";
-
-import { ScreenName } from "../../../const";
+import { Transaction as EvmTransaction, TransactionRaw } from "@ledgerhq/coin-evm/types/index";
+import { isOldestPendingOperation } from "@ledgerhq/coin-framework/operation";
+import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import {
+  getEditTransactionPatch,
+  hasMinimumFundsToCancel,
+  hasMinimumFundsToSpeedUp,
+} from "@ledgerhq/live-common/families/evm/getUpdateTransactionPatch";
+import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
+import { log } from "@ledgerhq/logs";
+import { Box, Flex, SelectableList } from "@ledgerhq/native-ui";
+import { Account, AccountBridge } from "@ledgerhq/types-live";
+import invariant from "invariant";
+import React, { memo, useCallback, useEffect, useState } from "react";
+import { Trans, useTranslation } from "react-i18next";
+import { Dimensions, Linking } from "react-native";
 import { TrackScreen } from "../../../analytics";
-import { EditTransactionParamList } from "./EditTransactionParamList";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import LText from "../../../components/LText";
+import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import { urls } from "../../../config/urls";
+import { ScreenName } from "../../../const";
+import { EditTransactionParamList } from "./EditTransactionParamList";
+
+// Default interval to poll for transaction confirmation
+// Arbitrarily set to 30 seconds
+// TODO: could be env var or defined in LLC
+const DEFAULT_INTERVAL = 30 * 1000;
+
+const getSpeedUpDescriptionKey = (
+  haveFundToSpeedup: boolean,
+  isOldestEditableOperation: boolean,
+):
+  | "editTransaction.speedUp.description"
+  | "editTransaction.error.notEnoughFundsToSpeedup"
+  | "editTransaction.error.notlowestNonceToSpeedup" => {
+  if (!haveFundToSpeedup) {
+    return "editTransaction.error.notEnoughFundsToSpeedup";
+  }
+
+  if (!isOldestEditableOperation) {
+    return "editTransaction.error.notlowestNonceToSpeedup";
+  }
+
+  return "editTransaction.speedUp.description";
+};
 
 type Props = StackNavigatorProps<
   EditTransactionParamList,
@@ -29,6 +54,7 @@ type Props = StackNavigatorProps<
 >;
 
 function MethodSelectionComponent({ navigation, route }: Props) {
+  const { t } = useTranslation();
   const { operation, account, parentAccount } = route.params;
 
   invariant(
@@ -36,175 +62,124 @@ function MethodSelectionComponent({ navigation, route }: Props) {
     "operation.transactionRaw not found. Could not edit the transaction",
   );
 
+  const [transactionHasBeenValidated, setTransactionHasBeenValidated] = useState(false);
+
   const mainAccount = getMainAccount(account, parentAccount);
 
   const transactionToEdit = fromTransactionRaw(
     operation.transactionRaw as TransactionRaw,
-  ) as Transaction;
+  ) as EvmTransaction;
 
-  const { transaction, setTransaction, status } = useBridgeTransaction<Transaction>(() => {
-    return {
-      account,
-      parentAccount,
-      transaction: transactionToEdit,
-    };
-  });
+  const { transaction, setTransaction } = useBridgeTransaction<EvmTransaction>(() => ({
+    account,
+    parentAccount,
+    transaction: transactionToEdit,
+  }));
 
   invariant(
     transaction,
     "[useBridgeTransaction - MethodSelection] could not found transaction from bridge.",
   );
 
-  const feePerGas = new BigNumber(
-    transaction.type === 2 ? transactionToEdit.maxFeePerGas! : transactionToEdit.gasPrice!,
-  );
+  const haveFundToCancel = hasMinimumFundsToCancel({
+    mainAccount,
+    transactionToUpdate: transactionToEdit,
+  });
 
-  const estimatedFees = new BigNumber(
-    transactionToEdit.gasLimit || transactionToEdit.customGasLimit || 0,
-  )
-    .times(feePerGas)
-    .div(new BigNumber(10).pow(mainAccount.unit.magnitude));
+  const haveFundToSpeedup = hasMinimumFundsToSpeedUp({
+    account,
+    mainAccount,
+    transactionToUpdate: transactionToEdit,
+  });
 
-  const haveFundToCancel = mainAccount.balance.gt(
-    estimatedFees.times(getEnv("EVM_REPLACE_TX_EIP1559_MAXFEE_FACTOR")),
-  );
-
-  const haveFundToSpeedup = mainAccount.balance.gt(
-    estimatedFees
-      .times(getEnv("EVM_REPLACE_TX_EIP1559_MAXFEE_FACTOR"))
-      .plus(account.type === "Account" ? transactionToEdit.amount : 0),
-  );
-
+  // TODO: options should be a proper type (use EditType in ledger-live-common/src/families/evm/getUpdateTransactionPatch.ts)
   const [selectedMethod, setSelectedMethod] = useState<"cancel" | "speedup" | null>();
 
-  const stuckAccountAndOperation = getStuckAccountAndOperation(account, parentAccount);
-  const oldestOperation = stuckAccountAndOperation?.operation;
-  const currency = getAccountCurrency(account);
-  const bridge = getAccountBridge(account, parentAccount as Account);
+  // if we are at this step (i.e: in this screen) it means the transaction is editable
+  const isOldestEditableOperation = isOldestPendingOperation(mainAccount, transactionToEdit.nonce);
+  const bridge: AccountBridge<EvmTransaction> = getAccountBridge(account, parentAccount as Account);
 
   const onSelect = useCallback(
-    (option: "cancel" | "speedup") => {
+    async (option: "cancel" | "speedup") => {
       log("Edit Transaction - Method Selection", "onSelect Cancel/Speed up", option);
 
-      switch (option) {
-        case "cancel":
-          {
-            const mainAccount = getMainAccount(account, parentAccount);
-            const updatedTransaction: Partial<Transaction> = {
-              amount: new BigNumber(0),
-              data: undefined,
-              nonce: operation.transactionSequenceNumber,
-              mode: "send",
-              recipient: mainAccount.freshAddress,
-              useAllAmount: false,
-            };
+      const patch = await getEditTransactionPatch({
+        account: mainAccount,
+        transaction: transactionToEdit,
+        editType: option,
+      });
 
-            if (transaction.type === 2) {
-              if (transactionToEdit.maxPriorityFeePerGas) {
-                updatedTransaction.maxPriorityFeePerGas = transactionToEdit.maxPriorityFeePerGas
-                  ?.times(getEnv("EVM_REPLACE_TX_EIP1559_MAXPRIORITYFEE_FACTOR"))
-                  .integerValue();
-              }
+      setTransaction(bridge.updateTransaction(transaction, patch));
 
-              if (transactionToEdit.maxFeePerGas) {
-                updatedTransaction.maxFeePerGas = transactionToEdit.maxFeePerGas
-                  ?.times(getEnv("EVM_REPLACE_TX_EIP1559_MAXFEE_FACTOR"))
-                  .integerValue();
-              }
-            } else if (transactionToEdit.gasPrice) {
-              updatedTransaction.gasPrice = transactionToEdit.gasPrice
-                .times(getEnv("EVM_REPLACE_TX_LEGACY_GASPRICE_FACTOR"))
-                .integerValue();
-            }
-
-            setTransaction(bridge.updateTransaction(transaction, updatedTransaction));
-
-            setSelectedMethod("cancel");
-          }
-
-          break;
-
-        case "speedup":
-          {
-            const updatedTransaction: Partial<Transaction> = {
-              amount: transactionToEdit.amount,
-              data: transactionToEdit.data,
-              recipient: transactionToEdit.recipient,
-              mode: transactionToEdit.mode,
-              nonce: operation.transactionSequenceNumber,
-              // set "fast" as default option for speedup flow
-              feesStrategy: "fast",
-              gasPrice: undefined,
-              maxFeePerGas: undefined,
-              maxPriorityFeePerGas: undefined,
-              useAllAmount: false,
-            };
-
-            setTransaction(bridge.updateTransaction(transaction, updatedTransaction));
-
-            setSelectedMethod("speedup");
-          }
-
-          break;
-        default:
-          break;
-      }
+      setSelectedMethod(option);
     },
-    [
-      account,
-      parentAccount,
-      transaction,
-      transactionToEdit,
-      bridge,
-      operation.transactionSequenceNumber,
-      setTransaction,
-    ],
+    [mainAccount, transaction, transactionToEdit, bridge, setTransaction],
   );
 
-  getTransactionByHash(mainAccount.currency, operation.hash).then(tx => {
-    if (tx?.confirmations) {
-      navigation.navigate(ScreenName.TransactionAlreadyValidatedError, {
-        error: new TransactionHasBeenValidatedError(
-          "The transaction has already been validated. You can't cancel or speedup a validated transaction.",
-        ),
-      });
-    }
-  });
+  /**
+   * Poll for transaction confirmation
+   * If the transaction has been confirmed, we navigate to the error screen
+   * PS: this still runs even if the user has navigated forward in the steps
+   * This might be a ReactNative antipatern leading to silent error
+   * "Cannot update a component while rendering a different component" error
+   * But it works for now and avoid code duplication 🤷‍♂️
+   * If you have a better way to do this, please do!
+   */
+  useEffect(() => {
+    const setTransactionHasBeenValidatedCallback = async () => {
+      const tx = await getTransactionByHash(mainAccount.currency, operation.hash);
+      if (tx?.confirmations) {
+        // stop polling as soon as we have a confirmation
+        clearInterval(intervalId);
+        setTransactionHasBeenValidated(true);
+      }
+    };
+
+    setTransactionHasBeenValidatedCallback();
+    const intervalId = setInterval(
+      () => setTransactionHasBeenValidatedCallback(),
+      mainAccount.currency.blockAvgTime
+        ? mainAccount.currency.blockAvgTime * 1000
+        : DEFAULT_INTERVAL,
+    );
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [mainAccount.currency, operation.hash]);
+
+  if (transactionHasBeenValidated) {
+    navigation.navigate(ScreenName.TransactionAlreadyValidatedError, {
+      error: new TransactionHasBeenValidatedError(),
+    });
+  }
 
   useEffect(() => {
     log("[edit transaction]", "Transaction to edit", transaction);
     log("[edit transaction]", "User balance", mainAccount.balance.toNumber());
 
-    if (selectedMethod === "cancel") {
-      navigation.navigate(ScreenName.SendSelectDevice, {
-        accountId: account.id,
-        parentId: parentAccount?.id,
-        transaction,
-        status,
-      });
-    } else if (selectedMethod === "speedup") {
-      navigation.navigate(ScreenName.EditTransactionSummary, {
-        accountId: account.id,
-        parentId: parentAccount?.id,
-        transaction,
-        transactionRaw: operation.transactionRaw as TransactionRaw,
-        operation,
-        currentNavigation: ScreenName.EditTransactionMethodSelection,
-        nextNavigation: ScreenName.SendSelectDevice,
-      });
+    if (!selectedMethod) {
+      return;
     }
+
+    navigation.navigate(ScreenName.EditTransactionSummary, {
+      accountId: account.id,
+      parentId: parentAccount?.id,
+      transaction,
+      transactionRaw: operation.transactionRaw as TransactionRaw,
+      currentNavigation: ScreenName.EditTransactionMethodSelection,
+      nextNavigation: ScreenName.SendSelectDevice,
+      editType: selectedMethod,
+    });
   }, [
     selectedMethod,
     transaction,
-    operation,
-    status,
+    operation.transactionRaw,
     account.id,
     parentAccount?.id,
     mainAccount.balance,
     navigation,
   ]);
-
-  const { t } = useTranslation();
 
   if (!transaction) {
     return null;
@@ -216,7 +191,8 @@ function MethodSelectionComponent({ navigation, route }: Props) {
       <Flex p={6}>
         <SelectableList onChange={onSelect}>
           <SelectableList.Element
-            disabled={!haveFundToSpeedup || !oldestOperation}
+            // FIMXE: style should be different (faded, gayed out) when disabled, does not seem to be the case
+            disabled={!haveFundToSpeedup || !isOldestEditableOperation}
             value={"speedup"}
           >
             <Box style={{ width: Dimensions.get("window").width * 0.8 }}>
@@ -226,13 +202,7 @@ function MethodSelectionComponent({ navigation, route }: Props) {
               <Flex>
                 <LText style={{ marginTop: 15, marginBottom: 0 }}>
                   <Trans
-                    i18nKey={
-                      !oldestOperation
-                        ? "editTransaction.error.notlowestNonceToSpeedup"
-                        : haveFundToSpeedup
-                        ? "editTransaction.speedUp.description"
-                        : "editTransaction.error.notEnoughFundsToSpeedup"
-                    }
+                    i18nKey={getSpeedUpDescriptionKey(haveFundToSpeedup, isOldestEditableOperation)}
                   />
                 </LText>
               </Flex>
@@ -253,7 +223,8 @@ function MethodSelectionComponent({ navigation, route }: Props) {
               >
                 {haveFundToCancel
                   ? t("editTransaction.cancel.description", {
-                      ticker: currency.ticker,
+                      // note: ticker is always the main currency ticker
+                      ticker: mainAccount.currency.ticker,
                     })
                   : t("editTransaction.error.notEnoughFundsToCancel")}
               </LText>
