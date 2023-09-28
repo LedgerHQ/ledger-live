@@ -14,7 +14,7 @@ import { getNodeApi } from "./api/node/index";
  * Should be used for transactions coming from the wallet API
  * Handling addition of gas limit
  */
-export const prepareCoinTransaction = async (
+const prepareCoinTransaction = async (
   account: Account,
   typedTransaction: EvmTransaction,
 ): Promise<EvmTransaction> => {
@@ -74,7 +74,7 @@ export const prepareCoinTransaction = async (
  * Prepare ERC20 transactions.
  * Handling addition of ERC20 transfer data and gas limit
  */
-export const prepareTokenTransaction = async (
+const prepareTokenTransaction = async (
   account: Account,
   tokenAccount: TokenAccount,
   typedTransaction: EvmTransaction,
@@ -122,7 +122,7 @@ export const prepareTokenTransaction = async (
  * Prepare ERC721/ERC1155 transactions.
  * Handling addition of NFT safeTransferFrom data and gas limit
  */
-export const prepareNftTransaction = async (
+const prepareNftTransaction = async (
   account: Account,
   typedTransaction: EvmNftTransaction & EvmTransaction,
 ): Promise<EvmTransaction> => {
