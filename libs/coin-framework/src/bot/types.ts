@@ -17,10 +17,6 @@ import type SpeculosTransportHttp from "@ledgerhq/hw-transport-node-speculos-htt
 import type SpeculosTransportWebsocket from "@ledgerhq/hw-transport-node-speculos";
 export type SpeculosTransport = SpeculosTransportHttp | SpeculosTransportWebsocket;
 
-import type SpeculosTransportHttp from "@ledgerhq/hw-transport-node-speculos-http";
-import type SpeculosTransportWebsocket from "@ledgerhq/hw-transport-node-speculos";
-export type SpeculosTransport = SpeculosTransportHttp | SpeculosTransportWebsocket;
-
 // Type coming from live-common/src/load/speculos.ts
 export type AppCandidate = {
   path: string;
