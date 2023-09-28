@@ -26,6 +26,7 @@ export type EditTransactionParamList = {
     overrideAmountLabel?: string;
     hideTotal?: boolean;
     appName?: string;
+    editType: "cancel" | "speedup";
   };
   [ScreenName.EvmCustomFees]: {
     accountId: string;
