@@ -1,19 +1,21 @@
-import { getEstimatedFees } from "@ledgerhq/coin-evm/logic";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { getMinFees } from "@ledgerhq/live-common/families/evm/getUpdateTransactionPatch";
-import BigNumber from "bignumber.js";
+import {
+  getFormattedFeeFields,
+  getMinFees,
+} from "@ledgerhq/live-common/families/evm/getUpdateTransactionPatch";
 import React, { Fragment, memo } from "react";
 import { Trans } from "react-i18next";
+import { useSelector } from "react-redux";
 import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
+import BuyButton from "~/renderer/components/BuyButton";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
 import logger from "~/renderer/logger";
+import { localeSelector } from "~/renderer/reducers/settings";
 import SendAmountFields from "../../../../modals/Send/SendAmountFields";
 import { TransactionErrorBanner } from "../components/TransactionErrorBanner";
 import { StepProps } from "../types";
-
-const ONE_WEI_IN_GWEI = 1_000_000_000;
 
 const StepFees = ({
   account,
@@ -27,14 +29,11 @@ const StepFees = ({
   updateTransaction,
 }: StepProps) => {
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
+  const locale = useSelector(localeSelector);
 
   if (!mainAccount || !transaction || !transactionToUpdate) {
     return null;
   }
-
-  const feeValue = getEstimatedFees(transactionToUpdate).div(
-    new BigNumber(10).pow(mainAccount.unit.magnitude),
-  );
 
   // log fees info
   logger.log(`transactionToUpdate.maxFeePerGas: ${transactionToUpdate.maxFeePerGas?.toFixed(0)}`);
@@ -45,20 +44,12 @@ const StepFees = ({
     )}`,
   );
 
-  let maxPriorityFeePerGasinGwei, maxFeePerGasinGwei, maxGasPriceinGwei;
-  if (transactionToUpdate.type === 2) {
-    // convert from wei to gwei
-    /**
-     * FIXME: should not be done here but through usage of FormattedVal component
-     * for display, cf. FIXME bellow
-     */
-    maxPriorityFeePerGasinGwei = transactionToUpdate.maxPriorityFeePerGas
-      .dividedBy(ONE_WEI_IN_GWEI)
-      .toFixed(0);
-    maxFeePerGasinGwei = transactionToUpdate.maxFeePerGas.dividedBy(ONE_WEI_IN_GWEI).toFixed(0);
-  } else {
-    maxGasPriceinGwei = transactionToUpdate.gasPrice.dividedBy(ONE_WEI_IN_GWEI).toFixed(0);
-  }
+  const {
+    formattedFeeValue,
+    formattedMaxPriorityFeePerGas,
+    formattedMaxFeePerGas,
+    formattedGasPrice,
+  } = getFormattedFeeFields({ transaction: transactionToUpdate, mainAccount, locale });
 
   return (
     <Box flow={4}>
@@ -77,39 +68,33 @@ const StepFees = ({
           />
         </Fragment>
       )}
-      {/* FIXME: this whole UI bit displaying pending tx fees info should be
-      it's own independant dumb react ui component */}
       <Alert type="primary">
-        {/* FIXME: fix i18n (value as param for propper formatting) */}
-        {/* FIXME: use FormattedVal src/renderer/components/FormattedVal.tsx component to display fees related values
-          cf. usage in src/renderer/drawers/OperationDetails/index.tsx
-        */}
-        {transactionToUpdate.type === 2 ? ( // Display the fees info of the pending transaction (network fee, maxPriorityFeePerGas, maxFeePerGas, maxGasPrice)
-          <ul style={{ marginLeft: "5px" }}>
-            {t("operation.edit.previousFeesInfo.pendingTransactionFeesInfo")}
-            <li>{`${t("operation.edit.previousFeesInfo.networkfee")} ${feeValue} ${
-              mainAccount.currency.ticker
-            }`}</li>
-            <li>{`${t(
-              "operation.edit.previousFeesInfo.maxPriorityFee",
-            )} ${maxPriorityFeePerGasinGwei} Gwei`}</li>
-            <li>{`${t("operation.edit.previousFeesInfo.maxFee")} ${maxFeePerGasinGwei} Gwei`}</li>
-          </ul>
-        ) : (
-          <ul style={{ marginLeft: "5px" }}>
-            {t("operation.edit.previousFeesInfo.pendingTransactionFeesInfo")}
-            <li>{`${t("operation.edit.previousFeesInfo.networkfee")} ${feeValue} ${
-              mainAccount.currency.ticker
-            }`}</li>
-            <li>{`${t("operation.edit.previousFeesInfo.gasPrice")} ${maxGasPriceinGwei} Gwei`}</li>
-          </ul>
-        )}
+        {t("operation.edit.previousFeesInfo.pendingTransactionFeesInfo")}
+        <ul style={{ marginLeft: "5%" }}>
+          <li>{t("operation.edit.previousFeesInfo.networkfee", { amount: formattedFeeValue })}</li>
+          {transactionToUpdate.type === 2 ? (
+            <>
+              <li>
+                {t("operation.edit.previousFeesInfo.maxPriorityFee", {
+                  amount: formattedMaxPriorityFeePerGas,
+                })}
+              </li>
+              <li>
+                {t("operation.edit.previousFeesInfo.maxFee", { amount: formattedMaxFeePerGas })}
+              </li>
+            </>
+          ) : (
+            <li>{t("operation.edit.previousFeesInfo.gasPrice", { amount: formattedGasPrice })}</li>
+          )}
+        </ul>
       </Alert>
     </Box>
   );
 };
 
 export const StepFeesFooter = ({
+  account,
+  parentAccount,
   transactionHasBeenValidated,
   bridgePending,
   status,
@@ -119,20 +104,48 @@ export const StepFeesFooter = ({
     transitionTo("summary");
   };
 
+  if (!account) {
+    return null;
+  }
+
+  const mainAccount = getMainAccount(account, parentAccount);
+
   const { errors } = status;
-  const errorCount = Object.keys(errors).length;
+  const hasErrors = !!Object.keys(errors).length;
+  const disabled = bridgePending || hasErrors || transactionHasBeenValidated;
+
+  const {
+    gasPrice: gasPriceError,
+    maxPriorityFee: maxPriorityFeeError,
+    maxFee: maxFeeError,
+    replacementTransactionUnderpriced,
+  } = errors;
+
+  /**
+   * To match the UX of StepAmount (see the StepAmountFooter component
+   * under apps/ledger-live-desktop/src/renderer/modals/Send/steps/StepAmount.tsx),
+   * we only want to display SpeedUp / Cancel specific errors as Alert.
+   * All other errors should be displayed under specific fields components as done
+   * in StepAmount.
+   */
+  const errorsToDisplay: Record<string, Error> | undefined = replacementTransactionUnderpriced
+    ? { replacementTransactionUnderpriced: replacementTransactionUnderpriced }
+    : undefined;
 
   return (
     <>
+      {gasPriceError || maxPriorityFeeError || maxFeeError ? (
+        <BuyButton currency={mainAccount.currency} account={mainAccount} />
+      ) : null}
       <TransactionErrorBanner
         transactionHasBeenValidated={transactionHasBeenValidated}
-        errors={errors}
+        errors={errorsToDisplay}
       />
       <Button
         id={"send-amount-continue-button"}
         isLoading={bridgePending}
         primary
-        disabled={transactionHasBeenValidated || bridgePending || errorCount}
+        disabled={disabled}
         onClick={onClick}
       >
         <Trans i18nKey="common.continue" />
