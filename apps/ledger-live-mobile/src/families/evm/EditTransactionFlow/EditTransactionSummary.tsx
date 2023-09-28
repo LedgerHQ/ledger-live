@@ -1,75 +1,100 @@
+import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
+import { isCurrencySupported } from "@ledgerhq/coin-framework/currencies/index";
+import { NotEnoughGas } from "@ledgerhq/errors";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import React, { useState, useCallback, Component, useEffect } from "react";
-import { View, StyleSheet } from "react-native";
+import { getEditTransactionStatus } from "@ledgerhq/live-common/families/evm/getUpdateTransactionPatch";
+import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
+import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { Account } from "@ledgerhq/types-live";
+import { useTheme } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import invariant from "invariant";
+import React, { Component, useCallback, useState } from "react";
+import { Trans } from "react-i18next";
+import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
-import { Trans } from "react-i18next";
-import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import type { Account } from "@ledgerhq/types-live";
-import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
-import { isEditableOperation } from "@ledgerhq/coin-framework/operation";
-import { NotEnoughGas, TransactionHasBeenValidatedError } from "@ledgerhq/errors";
-import { useNavigation, useTheme } from "@react-navigation/native";
-import invariant from "invariant";
-import { isCurrencySupported } from "@ledgerhq/coin-framework/currencies/index";
-import { getTransactionByHash } from "@ledgerhq/coin-evm/api/transaction/index";
-
-import { NavigatorName, ScreenName } from "../../../const";
-import { accountScreenSelector } from "../../../reducers/accounts";
 import { TrackScreen } from "../../../analytics";
-import NavigationScrollView from "../../../components/NavigationScrollView";
 import Alert from "../../../components/Alert";
-import SummaryFromSection from "../../../screens/SendFunds/SummaryFromSection";
-import SummaryToSection from "../../../screens/SendFunds/SummaryToSection";
-import LText from "../../../components/LText";
-import SectionSeparator from "../../../components/SectionSeparator";
-import SummaryNft from "../../../screens/SendFunds/SummaryNft";
-import SummaryAmountSection from "../../../screens/SendFunds/SummaryAmountSection";
-import TranslatedError from "../../../components/TranslatedError";
-import SendRowsFee from "../../../components/SendRowsFee";
-import SendRowsCustom from "../../../components/SendRowsCustom";
-import Info from "../../../icons/Info";
-import SummaryTotalSection from "../../../screens/SendFunds/SummaryTotalSection";
 import Button from "../../../components/Button";
 import ConfirmationModal from "../../../components/ConfirmationModal";
+import LText from "../../../components/LText";
+import NavigationScrollView from "../../../components/NavigationScrollView";
+import {
+  BaseComposite,
+  StackNavigatorProps,
+} from "../../../components/RootNavigator/types/helpers";
+import SectionSeparator from "../../../components/SectionSeparator";
+import SendRowsCustom from "../../../components/SendRowsCustom";
+import SendRowsFee from "../../../components/SendRowsFee";
+import TranslatedError from "../../../components/TranslatedError";
+import { NavigatorName, ScreenName } from "../../../const";
 import AlertTriangle from "../../../icons/AlertTriangle";
-import TooMuchUTXOBottomModal from "../../../screens/SendFunds/TooMuchUTXOBottomModal";
-import { CurrentNetworkFee } from "../CurrentNetworkFee";
 import { useTransactionChangeFromNavigation } from "../../../logic/screenTransactionHooks";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { accountScreenSelector } from "../../../reducers/accounts";
+import SummaryAmountSection from "../../../screens/SendFunds/SummaryAmountSection";
+import SummaryFromSection from "../../../screens/SendFunds/SummaryFromSection";
+import SummaryNft from "../../../screens/SendFunds/SummaryNft";
+import SummaryToSection from "../../../screens/SendFunds/SummaryToSection";
+import SummaryTotalSection from "../../../screens/SendFunds/SummaryTotalSection";
+import { CurrentNetworkFee } from "../CurrentNetworkFee";
+import { EditTransactionParamList } from "./EditTransactionParamList";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function EditTransactionSummary({ navigation, route }: any) {
+type Navigation = BaseComposite<
+  StackNavigatorProps<EditTransactionParamList, ScreenName.EditTransactionSummary>
+>;
+
+type Props = Navigation;
+
+function EditTransactionSummary({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { nextNavigation, overrideAmountLabel, hideTotal, operation } = route.params;
+  const { nextNavigation, overrideAmountLabel, transactionRaw, editType } = route.params;
 
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
 
   invariant(account, "account is missing");
+  invariant(transactionRaw, "transactionRaw is missing");
 
-  const { transaction, setTransaction, status, bridgePending } = useBridgeTransaction(() => ({
+  const {
+    transaction,
+    setTransaction,
+    status: txStatus,
+    bridgePending,
+  } = useBridgeTransaction(() => ({
     transaction: route.params.transaction,
     account,
     parentAccount,
   }));
 
+  const transactionToUpdate = fromTransactionRaw(transactionRaw) as EvmTransaction;
+
+  const status = getEditTransactionStatus({
+    transaction: transaction as EvmTransaction,
+    transactionToUpdate,
+    status: txStatus,
+    editType,
+  });
+
   invariant(transaction, "transaction is missing");
 
   const isNFTSend = isNftTransaction(transaction);
+
   // handle any edit screen changes like fees changes
   useTransactionChangeFromNavigation(setTransaction);
-  const [continuing, setContinuing] = useState(false);
+
   const [highFeesOpen, setHighFeesOpen] = useState(false);
-  const [highFeesWarningPassed, setHighFeesWarningPassed] = useState(false);
-  const [utxoWarningOpen, setUtxoWarningOpen] = useState(false);
-  const [utxoWarningPassed, setUtxoWarningPassed] = useState(false);
+
   const navigateToNext = useCallback(() => {
-    if (!nextNavigation) return null;
+    if (!nextNavigation) {
+      return;
+    }
     return (
       // This component is used in a wild bunch of navigators.
       // nextNavigation is a param which can have too many shapes
       // Unfortunately for this reason let's keep it untyped for now.
-      navigation.navigate(nextNavigation, {
+      (navigation as StackNavigationProp<{ [key: string]: object }>).navigate(nextNavigation, {
         ...route.params,
         transaction,
         status,
@@ -77,43 +102,22 @@ function EditTransactionSummary({ navigation, route }: any) {
       })
     );
   }, [navigation, nextNavigation, route.params, transaction, status]);
-  useEffect(() => {
-    if (!continuing) {
-      return;
-    }
-    const { warnings } = status;
 
-    if (Object.keys(warnings).includes("feeTooHigh") && !highFeesWarningPassed) {
-      setHighFeesOpen(true);
-      return;
-    }
-
-    setContinuing(false);
-    setUtxoWarningPassed(false);
-    setHighFeesWarningPassed(false);
-    navigateToNext();
-  }, [status, continuing, highFeesWarningPassed, account, utxoWarningPassed, navigateToNext]);
-  const onPassUtxoWarning = useCallback(() => {
-    setUtxoWarningOpen(false);
-    setUtxoWarningPassed(true);
-  }, []);
-  const onRejectUtxoWarning = useCallback(() => {
-    setUtxoWarningOpen(false);
-    setContinuing(false);
-  }, []);
   const onAcceptFees = useCallback(() => {
     setHighFeesOpen(false);
-    setHighFeesWarningPassed(true);
-  }, []);
+    navigateToNext();
+  }, [navigateToNext]);
   const onRejectFees = useCallback(() => {
     setHighFeesOpen(false);
-    setContinuing(false);
-  }, [setHighFeesOpen]);
-  const { amount, totalSpent, errors } = status;
-  const { transaction: transactionError } = errors;
-  const error = errors[Object.keys(errors)[0]];
+  }, []);
+
+  const { amount, totalSpent, errors, warnings } = status;
+
+  const firstError = errors[Object.keys(errors)[0]];
+
   const mainAccount = getMainAccount(account, parentAccount);
   const currencyOrToken = getAccountCurrency(account);
+
   const hasNonEmptySubAccounts =
     account &&
     account.type === "Account" &&
@@ -129,21 +133,13 @@ function EditTransactionSummary({ navigation, route }: any) {
     });
   }, [navigation, account?.id, currencyOrToken?.id]);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const errorNavigation = useNavigation<any>();
-  const editableOperation = operation && isEditableOperation(mainAccount, operation);
-
-  if (editableOperation) {
-    getTransactionByHash(mainAccount.currency, operation?.hash || "").then(tx => {
-      if (tx?.confirmations) {
-        errorNavigation.navigate(ScreenName.TransactionAlreadyValidatedError, {
-          error: new TransactionHasBeenValidatedError(
-            "The transaction has already been validated. You can't cancel or speedup a validated transaction.",
-          ),
-        });
-      }
-    });
-  }
+  const onContinue = useCallback(() => {
+    if (warnings.feeTooHigh) {
+      setHighFeesOpen(true);
+      return;
+    }
+    navigateToNext();
+  }, [navigateToNext, warnings.feeTooHigh]);
 
   // FIXME: why is recipient sometimes empty?
   if (!account || !transaction || !transaction.recipient || !currencyOrToken) {
@@ -173,7 +169,7 @@ function EditTransactionSummary({ navigation, route }: any) {
             </Alert>
           </View>
         ) : null}
-        <SummaryFromSection account={account} parentAccount={parentAccount} />
+        <SummaryFromSection account={mainAccount} parentAccount={undefined} />
         <VerticalConnector
           style={[
             styles.verticalConnector,
@@ -183,24 +179,27 @@ function EditTransactionSummary({ navigation, route }: any) {
           ]}
         />
         <SummaryToSection transaction={transaction} currency={mainAccount.currency} />
-        {status.warnings.recipient ? (
+        {warnings.recipient ? (
           <LText style={styles.warning} color="orange">
-            <TranslatedError error={status.warnings.recipient} />
+            <TranslatedError error={warnings.recipient} />
           </LText>
         ) : null}
         <SendRowsCustom
           transaction={transaction}
           account={mainAccount}
-          navigation={navigation}
-          route={route}
+          // FIXME: fix typing
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          navigation={navigation as any}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          route={route as any}
         />
         <SectionSeparator lineColor={colors.lightFog} />
         {isNFTSend ? (
           <SummaryNft transaction={transaction} currencyId={(account as Account).currency.id} />
         ) : (
           <SummaryAmountSection
-            account={account}
-            parentAccount={parentAccount}
+            account={mainAccount}
+            parentAccount={undefined}
             amount={amount}
             overrideAmountLabel={overrideAmountLabel}
           />
@@ -211,38 +210,25 @@ function EditTransactionSummary({ navigation, route }: any) {
           account={account}
           parentAccount={parentAccount}
           transaction={transaction}
-          navigation={navigation}
-          route={route}
+          // FIXME: fix typing
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          navigation={navigation as any}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          route={route as any}
         />
 
-        {editableOperation ? (
-          <CurrentNetworkFee
-            account={account}
-            parentAccount={parentAccount}
-            transactionRaw={operation.transactionRaw}
-          />
-        ) : null}
+        <CurrentNetworkFee
+          account={account}
+          parentAccount={parentAccount}
+          transactionRaw={transactionRaw}
+        />
 
-        {error ? (
-          <View style={styles.gasPriceError}>
-            <View
-              style={{
-                padding: 4,
-              }}
-            >
-              <Info size={12} color={colors.alert} />
-            </View>
-            <LText style={[styles.error, styles.gasPriceErrorText]}>
-              <TranslatedError error={error} />
-            </LText>
-          </View>
-        ) : null}
-        {!amount.eq(totalSpent) && !hideTotal ? (
+        {!amount.eq(totalSpent) ? (
           <>
             <SectionSeparator lineColor={colors.lightFog} />
             <SummaryTotalSection
-              account={account}
-              parentAccount={parentAccount}
+              account={mainAccount}
+              parentAccount={undefined}
               amount={totalSpent}
             />
           </>
@@ -250,9 +236,9 @@ function EditTransactionSummary({ navigation, route }: any) {
       </NavigationScrollView>
       <View style={styles.footer}>
         <LText style={styles.error} color="alert">
-          <TranslatedError error={transactionError} />
+          <TranslatedError error={firstError} />
         </LText>
-        {error && error instanceof NotEnoughGas ? (
+        {firstError && firstError instanceof NotEnoughGas ? (
           isCurrencySupported(currencyOrToken as CryptoCurrency) && (
             <Button
               event="SummaryBuyEth"
@@ -268,8 +254,8 @@ function EditTransactionSummary({ navigation, route }: any) {
             type="primary"
             title={<Trans i18nKey="common.continue" />}
             containerStyle={styles.continueButton}
-            onPress={() => setContinuing(true)}
-            disabled={bridgePending || !!transactionError}
+            onPress={() => onContinue()}
+            disabled={bridgePending || !!firstError}
             pending={bridgePending}
           />
         )}
@@ -289,11 +275,6 @@ function EditTransactionSummary({ navigation, route }: any) {
           </Trans>
         }
         confirmButtonText={<Trans i18nKey="common.continue" />}
-      />
-      <TooMuchUTXOBottomModal
-        isOpened={utxoWarningOpen}
-        onPress={onPassUtxoWarning}
-        onClose={() => onRejectUtxoWarning()}
       />
     </SafeAreaView>
   );
