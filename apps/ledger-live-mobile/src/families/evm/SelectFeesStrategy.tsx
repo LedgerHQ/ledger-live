@@ -1,7 +1,8 @@
 import { getEstimatedFees } from "@ledgerhq/coin-evm/logic";
 import { getTypedTransaction } from "@ledgerhq/coin-evm/transaction";
-import type { GasOptions, Strategy, Transaction } from "@ledgerhq/coin-evm/types/index";
+import type { FeeData, GasOptions, Strategy, Transaction } from "@ledgerhq/coin-evm/types/index";
 import { getFeesCurrency, getFeesUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
+import { isStrategyDisabled } from "@ledgerhq/live-common/families/evm/getUpdateTransactionPatch";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import BigNumber from "bignumber.js";
@@ -33,6 +34,11 @@ import { sharedSwapTracking } from "../../screens/Swap/utils";
 import { StrategyWithCustom } from "./types";
 
 type Props = {
+  minFees?: {
+    maxFeePerGas?: BigNumber;
+    maxPriorityFeePerGas?: BigNumber;
+    gasPrice?: BigNumber;
+  };
   gasOptions: GasOptions;
   customFees: BigNumber | null;
   account: AccountLike;
@@ -65,6 +71,7 @@ export default function SelectFeesStrategy({
   forceUnitLabel,
   disabledStrategies,
   NetworkFeesInfoComponent,
+  minFees,
 }: Props) {
   const { track } = useAnalytics();
   const { t } = useTranslation();
@@ -104,7 +111,25 @@ export default function SelectFeesStrategy({
       return getEstimatedFees(getTypedTransaction(transaction, gasOptions[strategy]));
     })();
 
-    const isDisabled = disabledStrategies?.includes(strategy);
+    const feeData: FeeData =
+      strategy === "custom"
+        ? {
+            maxFeePerGas: transaction.maxFeePerGas ?? null,
+            maxPriorityFeePerGas: transaction.maxPriorityFeePerGas ?? null,
+            gasPrice: transaction.gasPrice ?? null,
+            nextBaseFee: null,
+          }
+        : gasOptions[strategy];
+
+    const isDisabled =
+      disabledStrategies?.includes(strategy) ||
+      isStrategyDisabled({
+        isEIP1559: transaction.type === 2,
+        feeData,
+        minFees,
+      });
+
+    const isSelected = feesStrategy === strategy && !isDisabled;
 
     return (
       <TouchableOpacity
@@ -113,8 +138,8 @@ export default function SelectFeesStrategy({
         style={[
           styles.feeButton,
           {
-            borderColor: feesStrategy === strategy ? colors.live : colors.background,
-            backgroundColor: feesStrategy === strategy ? colors.lightLive : colors.lightFog,
+            borderColor: isSelected ? colors.live : colors.background,
+            backgroundColor: isSelected ? colors.lightLive : colors.lightFog,
           },
         ]}
       >

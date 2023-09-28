@@ -2,11 +2,11 @@ import { getEstimatedFees } from "@ledgerhq/coin-evm/logic";
 import { getTypedTransaction } from "@ledgerhq/coin-evm/transaction";
 import {
   Transaction as EvmTransaction,
-  FeeData,
   GasOptions,
   Strategy,
 } from "@ledgerhq/coin-evm/types/index";
 import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { isStrategyDisabled } from "@ledgerhq/live-common/families/evm/getUpdateTransactionPatch";
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import React, { memo, useMemo } from "react";
@@ -79,43 +79,6 @@ const ApproximateTransactionTime = styled(Box)<{ selected?: boolean }>`
 `;
 
 const strategies: Strategy[] = ["slow", "medium", "fast"];
-
-// TODO: move this function to LLC or coin-evm?
-const isStrategyDisabled = ({
-  isEIP1559,
-  feeData,
-  minFees,
-}: {
-  isEIP1559: boolean;
-  feeData: FeeData;
-  minFees?: Props["minFees"];
-}): boolean => {
-  if (!minFees) {
-    return false;
-  }
-
-  if (isEIP1559) {
-    if (
-      !feeData.maxFeePerGas ||
-      !feeData.maxPriorityFeePerGas ||
-      !minFees.maxFeePerGas ||
-      !minFees.maxPriorityFeePerGas
-    ) {
-      return false;
-    }
-
-    return (
-      feeData.maxFeePerGas.isLessThan(minFees.maxFeePerGas) ||
-      feeData.maxPriorityFeePerGas.isLessThan(minFees.maxPriorityFeePerGas)
-    );
-  } else {
-    if (!feeData.gasPrice || !minFees.gasPrice) {
-      return false;
-    }
-
-    return feeData.gasPrice.isLessThan(minFees.gasPrice);
-  }
-};
 
 const SelectFeeStrategy = ({ transaction, account, onClick, gasOptions, minFees }: Props) => {
   const accountUnit = getAccountUnit(account);
