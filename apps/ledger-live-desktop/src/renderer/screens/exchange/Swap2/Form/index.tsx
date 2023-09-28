@@ -35,6 +35,7 @@ import { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { SWAP_RATES_TIMEOUT } from "../../config";
+import SwapLiveApp from "../../SwapLiveApp";
 
 const Wrapper = styled(Box).attrs({
   p: 20,
@@ -64,6 +65,8 @@ const SwapForm = () => {
   const accounts = useSelector(shallowAccountsSelector);
   const exchangeRate = useSelector(rateSelector);
   const walletApiPartnerList = useFeature("swapWalletApiPartnerList");
+
+  const ptxSwapLiveApp = useFeature("ptxSwapLiveApp");
 
   const setExchangeRate = useCallback(
     rate => {
@@ -316,6 +319,8 @@ const SwapForm = () => {
     swapTransaction.toggleMax();
   };
 
+  console.log("ptxSwapLiveApp", ptxSwapLiveApp);
+
   return (
     <Wrapper>
       <TrackPage category="Swap" name="Form" provider={provider} {...swapDefaultTrack} />
@@ -364,6 +369,8 @@ const SwapForm = () => {
           {t("common.exchange")}
         </Button>
       </Box>
+
+      {ptxSwapLiveApp.enabled && <SwapLiveApp />}
     </Wrapper>
   );
 };
