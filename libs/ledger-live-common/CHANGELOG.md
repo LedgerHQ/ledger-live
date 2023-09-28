@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 32.0.0-next.3
+
+### Patch Changes
+
+- [#4879](https://github.com/LedgerHQ/ledger-live/pull/4879) [`51857f5c20`](https://github.com/LedgerHQ/ledger-live/commit/51857f5c2016d435fa970fac899aa906e3f97722) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Remove old obsolete hack on Tezos gas limit
+
 ## 32.0.0-next.2
 
 ### Patch Changes
