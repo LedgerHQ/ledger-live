@@ -1,16 +1,16 @@
-import React from "react";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { CompositeScreenProps } from "@react-navigation/native";
-
+import BigNumber from "bignumber.js";
+import React from "react";
+import { ScreenName } from "../const";
 import perFamily from "../generated/SendRowsFee";
-import type { StackNavigatorProps } from "./RootNavigator/types/helpers";
+import type { BaseNavigatorStackParamList } from "./RootNavigator/types/BaseNavigator";
 import type { SendFundsNavigatorStackParamList } from "./RootNavigator/types/SendFundsNavigator";
 import type { SignTransactionNavigatorParamList } from "./RootNavigator/types/SignTransactionNavigator";
-import type { BaseNavigatorStackParamList } from "./RootNavigator/types/BaseNavigator";
 import type { SwapNavigatorParamList } from "./RootNavigator/types/SwapNavigator";
-import { ScreenName } from "../const";
+import type { StackNavigatorProps } from "./RootNavigator/types/helpers";
 
 type Props = {
   transaction: Transaction;
@@ -18,6 +18,14 @@ type Props = {
   parentAccount?: Account | null;
   status?: TransactionStatus;
   setTransaction: (..._: Array<Transaction>) => void;
+  // cf. apps/ledger-live-desktop/src/renderer/modals/Send/SendAmountFields.tsx
+  // FIXME: shity typing
+  minFees?: {
+    maxFeePerGas?: BigNumber;
+    maxPriorityFeePerGas?: BigNumber;
+    gasPrice?: BigNumber;
+  };
+  // FIXME: not used anymore, to remove
   disabledStrategies?: Array<string>;
   shouldPrefillEvmGasOptions?: boolean;
 } & CompositeScreenProps<
