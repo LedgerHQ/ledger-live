@@ -220,10 +220,10 @@ const prepareTransaction = async (
   }
 
   try {
-    let out: Estimate;
+    let estimate: Estimate;
     switch (transaction.mode) {
       case "send":
-        out = await tezos.estimate.transfer({
+        estimate = await tezos.estimate.transfer({
           mutez: true,
           to: transaction.recipient,
           amount: amount.toNumber(),
@@ -231,13 +231,13 @@ const prepareTransaction = async (
         });
         break;
       case "delegate":
-        out = await tezos.estimate.setDelegate({
+        estimate = await tezos.estimate.setDelegate({
           source: account.freshAddress,
           delegate: transaction.recipient,
         });
         break;
       case "undelegate":
-        out = await tezos.estimate.setDelegate({
+        estimate = await tezos.estimate.setDelegate({
           source: account.freshAddress,
         });
         break;
@@ -246,7 +246,7 @@ const prepareTransaction = async (
     }
 
     if (tx.useAllAmount) {
-      const totalFees = out.suggestedFeeMutez + out.burnFeeMutez;
+      const totalFees = estimate.suggestedFeeMutez + estimate.burnFeeMutez;
       const maxAmount = account.balance
         .minus(totalFees + (tezosResources.revealed ? 0 : DEFAULT_FEE.REVEAL))
         .toNumber();
@@ -258,17 +258,17 @@ const prepareTransaction = async (
       const increasedFee = (gasBuffer: number, opSize: number) => {
         return gasBuffer * MINIMAL_FEE_PER_GAS_MUTEZ + opSize;
       };
-      const incr = increasedFee(gasBuffer, Number(out.opSize));
-      tx.fees = new BigNumber(out.suggestedFeeMutez + incr);
-      tx.gasLimit = new BigNumber(out.gasLimit + gasBuffer);
+      const incr = increasedFee(gasBuffer, Number(estimate.opSize));
+      tx.fees = new BigNumber(estimate.suggestedFeeMutez + incr);
+      tx.gasLimit = new BigNumber(estimate.gasLimit + gasBuffer);
       tx.amount = maxAmount - incr > 0 ? new BigNumber(maxAmount - incr) : new BigNumber(0);
     } else {
-      tx.fees = new BigNumber(out.suggestedFeeMutez);
-      tx.gasLimit = new BigNumber(out.gasLimit);
-      tx.storageLimit = new BigNumber(out.storageLimit);
+      tx.fees = new BigNumber(estimate.suggestedFeeMutez);
+      tx.gasLimit = new BigNumber(estimate.gasLimit);
+      tx.storageLimit = new BigNumber(estimate.storageLimit);
     }
 
-    tx.storageLimit = new BigNumber(out.storageLimit);
+    tx.storageLimit = new BigNumber(estimate.storageLimit);
     tx.estimatedFees = tx.fees;
     if (!tezosResources.revealed) {
       tx.estimatedFees = tx.estimatedFees.plus(DEFAULT_FEE.REVEAL);
