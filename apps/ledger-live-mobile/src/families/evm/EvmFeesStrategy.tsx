@@ -76,10 +76,66 @@ export default function EvmFeesStrategy({
   const [customStrategyFees, setCustomStrategyFees] = useState<BigNumber | null>(null);
 
   useEffect(() => {
-    if (customStrategyTransactionPatch && transaction.feesStrategy === "custom") {
+    if (!customStrategyTransactionPatch && transaction.feesStrategy === "custom") {
+      const newCustomStrategyTransactionPatch: Partial<Transaction> =
+        transaction.type === 2
+          ? {
+              feesStrategy: "custom",
+              gasLimit: transaction.gasLimit,
+              customGasLimit: transaction.customGasLimit,
+              maxPriorityFeePerGas: transaction.maxPriorityFeePerGas,
+              maxFeePerGas: transaction.maxFeePerGas,
+            }
+          : {
+              feesStrategy: "custom",
+              gasLimit: transaction.gasLimit,
+              customGasLimit: transaction.customGasLimit,
+              gasPrice: transaction.gasPrice,
+            };
+      setCustomStrategyTransactionPatch(newCustomStrategyTransactionPatch);
+    }
+  }, [transaction, customStrategyTransactionPatch]);
+
+  useEffect(() => {
+    if (transaction.feesStrategy !== "custom") {
+      return;
+    }
+
+    if (customStrategyTransactionPatch) {
       const newCustomStrategyFees = getCustomStrategyFees(transaction);
       setCustomStrategyFees(newCustomStrategyFees);
+      return;
     }
+
+    /**
+     * If the feesStrategy is "custom" but no customStrategyTransactionPatch is
+     * present, this means the custom fee has been selected by default ahead in
+     * the flow (e.g. if the tx comes from a live-app or from the edit tx flow).
+     * In this case, we need to create the customStrategyTransactionPatch from
+     * the transaction fee data.
+     */
+    const patchCommon: Partial<Transaction> = {
+      feesStrategy: "custom",
+      gasLimit: transaction.gasLimit,
+      customGasLimit: transaction.customGasLimit,
+    };
+
+    const patchTypeSpecific: Partial<Transaction> =
+      transaction.type === 2
+        ? {
+            maxPriorityFeePerGas: transaction.maxPriorityFeePerGas,
+            maxFeePerGas: transaction.maxFeePerGas,
+          }
+        : { gasPrice: transaction.gasPrice };
+
+    // note: we need to cast the patch to Partial<Transaction> because of a weird
+    // missmatch with the type of the `mode` property
+    const newCustomStrategyTransactionPatch: Partial<Transaction> = {
+      ...patchCommon,
+      ...patchTypeSpecific,
+    } as Partial<Transaction>;
+
+    setCustomStrategyTransactionPatch(newCustomStrategyTransactionPatch);
   }, [transaction, customStrategyTransactionPatch]);
 
   const onFeesSelected = useCallback(
