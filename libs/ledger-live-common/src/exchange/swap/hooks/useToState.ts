@@ -34,6 +34,7 @@ export const useToState = ({
     currency => currency && accounts && getAccountTuplesForCurrency(currency, accounts, false),
     [accounts],
   );
+
   const targetAccounts = useMemo(
     () =>
       getTargetAccountsPairs(toState.currency)?.map(

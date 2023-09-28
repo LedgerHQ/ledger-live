@@ -17,29 +17,11 @@
   - @ledgerhq/domain-service@1.1.11
   - @ledgerhq/evm-tools@1.0.7
 
-## 2.69.0-hotfix.1
-
 ### Patch Changes
 
-- Updated dependencies [[`61272164de`](https://github.com/LedgerHQ/ledger-live/commit/61272164de6e81d9b5e5ad988b7eb8c40d3cf735)]:
-  - @ledgerhq/live-common@31.8.0-hotfix.1
-
-## 2.69.0-hotfix.0
-
-### Minor Changes
-
-- [#4851](https://github.com/LedgerHQ/ledger-live/pull/4851) [`6c83521fee`](https://github.com/LedgerHQ/ledger-live/commit/6c83521fee8da656858630c1cb37a5af95df3362) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Integrate injective + gas rework
-
-### Patch Changes
-
-- Updated dependencies [[`6c83521fee`](https://github.com/LedgerHQ/ledger-live/commit/6c83521fee8da656858630c1cb37a5af95df3362)]:
-  - @ledgerhq/types-cryptoassets@7.5.0-hotfix.0
-  - @ledgerhq/types-live@6.40.0-hotfix.0
-  - @ledgerhq/live-common@31.8.0-hotfix.0
-  - @ledgerhq/coin-evm@0.6.2-hotfix.0
-  - @ledgerhq/coin-framework@0.5.4-hotfix.0
-  - @ledgerhq/domain-service@1.1.11-hotfix.0
-  - @ledgerhq/evm-tools@1.0.7-hotfix.0
+- Updated dependencies [[`b779f6c964`](https://github.com/LedgerHQ/ledger-live/commit/b779f6c964079b9cd9a4ee985cd5cdbb8c49406e)]:
+  - @ledgerhq/coin-evm@0.7.0-next.1
+  - @ledgerhq/live-common@32.0.0-next.1
 
 ## 2.68.1
 

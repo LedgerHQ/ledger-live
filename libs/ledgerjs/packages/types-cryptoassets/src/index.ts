@@ -129,8 +129,6 @@ export type CryptoCurrencyId =
   | "solana_testnet"
   | "solana_devnet"
   | "filecoin"
-  | "ethereum_as_evm_test_only"
-  | "polygon_as_evm_test_only"
   | "arbitrum"
   | "arbitrum_goerli"
   | "cronos"
@@ -262,12 +260,9 @@ export type ExplorerView = {
 
 export type EthereumLikeInfo = {
   chainId: number;
-  networkId?: number; // FIXME To remove after the EVM merge (only used by legacy ethereum family)
-  baseChain?: "mainnet" | "goerli" | "ropsten"; // FIXME To remove after the EVM merge
-  hardfork?: string; // FIXME To remove after the EVM merge
   // used by evm coin integration
-  node?: // FIXME Should not be optional after the EVM merge
-  | {
+  node:
+    | {
         type: "external";
         uri: string;
       }

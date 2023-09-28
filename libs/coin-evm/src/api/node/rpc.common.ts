@@ -132,7 +132,20 @@ export const getFeeData: NodeApi["getFeeData"] = currency =>
     const block = await api.getBlock("latest");
     const currencySupports1559 = Boolean(block.baseFeePerGas);
 
-    const feeData = await (async () => {
+    const feeData = await (async (): Promise<
+      | {
+          maxPriorityFeePerGas: BigNumber;
+          maxFeePerGas: BigNumber;
+          nextBaseFee: BigNumber;
+          gasPrice?: undefined;
+        }
+      | {
+          maxPriorityFeePerGas?: undefined;
+          maxFeePerGas?: undefined;
+          nextBaseFee?: undefined;
+          gasPrice: ethers.BigNumber;
+        }
+    > => {
       if (currencySupports1559) {
         const feeHistory: FeeHistory = await api.send("eth_feeHistory", [
           "0x5", // Fetching the history for 5 blocks
@@ -231,7 +244,7 @@ export const getOptimismAdditionalFees: NodeApi["getOptimismAdditionalFees"] = m
       }
 
       // Fake signature is added to get the best approximation possible for the gas on L1
-      const serializedTransaction = (() => {
+      const serializedTransaction = ((): string | null => {
         try {
           return getSerializedTransaction(transaction, {
             r: "0xffffffffffffffffffffffffffffffffffffffff",
@@ -257,7 +270,7 @@ export const getOptimismAdditionalFees: NodeApi["getOptimismAdditionalFees"] = m
       return new BigNumber(additionalL1Fees.toString());
     }),
   (currency, transaction) => {
-    const serializedTransaction = (() => {
+    const serializedTransaction = ((): string | null => {
       try {
         return getSerializedTransaction(transaction);
       } catch (e) {

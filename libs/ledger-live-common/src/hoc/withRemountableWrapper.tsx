@@ -5,7 +5,7 @@ import React, { useCallback, useState } from "react";
  * that simply remounts the component.
  * */
 export default function withRemountableWrapper<T>(
-  Component: React.ComponentType<T & { remountMe: () => void }>,
+  Component: React.FC<T & { remountMe: () => void }>,
 ): React.FC<T> {
   const WrappedComponent: React.FC<T> = (props: T) => {
     const [nonce, setNonce] = useState(0);

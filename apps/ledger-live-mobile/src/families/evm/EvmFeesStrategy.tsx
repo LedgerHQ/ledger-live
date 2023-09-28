@@ -1,16 +1,17 @@
+import { getEstimatedFees } from "@ledgerhq/coin-evm/lib/logic";
+import type { Transaction } from "@ledgerhq/coin-evm/types/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import type { Transaction } from "@ledgerhq/coin-evm/types/index";
-import React, { useCallback, useEffect, useState } from "react";
-import SelectFeesStrategy from "./SelectFeesStrategy";
-import { ScreenName } from "../../const";
-import { EvmNetworkFeeInfo } from "./EvmNetworkFeesInfo";
-import { SendRowsFeeProps as Props } from "./types";
 import { useGasOptions } from "@ledgerhq/live-common/families/evm/react";
 import { log } from "@ledgerhq/logs";
+import { InfiniteLoader } from "@ledgerhq/native-ui";
 import { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { getEstimatedFees } from "@ledgerhq/coin-evm/lib/logic";
+import React, { useCallback, useEffect, useState } from "react";
+import { ScreenName } from "../../const";
+import { EvmNetworkFeeInfo } from "./EvmNetworkFeesInfo";
+import SelectFeesStrategy from "./SelectFeesStrategy";
+import { SendRowsFeeProps as Props } from "./types";
 
 const getCustomStrategy = (transaction: Transaction): BigNumber | null => {
   if (transaction.feesStrategy === "custom") {
@@ -21,21 +22,24 @@ const getCustomStrategy = (transaction: Transaction): BigNumber | null => {
 };
 
 export default function EvmFeesStrategy({
-  account: accountProp,
+  account,
   parentAccount,
   transaction,
   setTransaction,
   navigation,
   route,
+  shouldPrefillEvmGasOptions = true,
   ...props
 }: Props<Transaction>) {
-  const account = getMainAccount(accountProp, parentAccount);
-  const bridge: AccountBridge<Transaction> = getAccountBridge(account);
+  const mainAccount = getMainAccount(account, parentAccount);
+  const bridge: AccountBridge<Transaction> = getAccountBridge(mainAccount);
 
-  const [gasOptions, error] = useGasOptions({
-    currency: account.currency,
+  const [gasOptions, error, loading] = useGasOptions({
+    currency: mainAccount.currency,
     transaction,
-    interval: account.currency.blockAvgTime ? account.currency.blockAvgTime * 1000 : undefined,
+    interval: mainAccount.currency.blockAvgTime
+      ? mainAccount.currency.blockAvgTime * 1000
+      : undefined,
   });
 
   if (error) {
@@ -43,12 +47,14 @@ export default function EvmFeesStrategy({
   }
 
   useEffect(() => {
-    const updatedTransaction = bridge.updateTransaction(transaction, {
-      ...transaction,
-      gasOptions,
-    });
-    setTransaction(updatedTransaction);
-  }, [bridge, setTransaction, gasOptions, transaction]);
+    if (shouldPrefillEvmGasOptions) {
+      const updatedTransaction = bridge.updateTransaction(transaction, {
+        ...transaction,
+        gasOptions,
+      });
+      setTransaction(updatedTransaction);
+    }
+  }, [bridge, setTransaction, gasOptions, transaction, shouldPrefillEvmGasOptions]);
 
   const [customStrategy, setCustomStrategy] = useState(getCustomStrategy(transaction));
 
@@ -62,14 +68,14 @@ export default function EvmFeesStrategy({
 
   const onFeesSelected = useCallback(
     ({ feesStrategy }) => {
-      const bridge = getAccountBridge(account, parentAccount);
       setTransaction(
         bridge.updateTransaction(transaction, {
           feesStrategy,
+          gasOptions,
         }),
       );
     },
-    [setTransaction, account, parentAccount, transaction],
+    [setTransaction, bridge, transaction, gasOptions],
   );
 
   const openCustomFees = useCallback(() => {
@@ -80,9 +86,23 @@ export default function EvmFeesStrategy({
       transaction,
       currentNavigation: ScreenName.SendSummary,
       nextNavigation: ScreenName.SendSelectDevice,
+      gasOptions,
+      goBackOnSetTransaction: false,
       setTransaction,
     });
-  }, [navigation, route.params, account.id, parentAccount, transaction, setTransaction]);
+  }, [
+    navigation,
+    route.params,
+    account.id,
+    parentAccount,
+    gasOptions,
+    transaction,
+    setTransaction,
+  ]);
+
+  if (loading) {
+    return <InfiniteLoader size={32} />;
+  }
 
   /**
    * If no gasOptions available, this means this currency does not have a
@@ -99,7 +119,7 @@ export default function EvmFeesStrategy({
       customFees={customStrategy}
       onStrategySelect={onFeesSelected}
       onCustomFeesPress={openCustomFees}
-      account={account}
+      account={mainAccount}
       parentAccount={parentAccount}
       transaction={transaction}
       NetworkFeesInfoComponent={EvmNetworkFeeInfo}

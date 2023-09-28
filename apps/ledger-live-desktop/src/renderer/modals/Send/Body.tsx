@@ -344,7 +344,11 @@ const Body = ({
     onChangeNFT: handleChangeNFT,
     shouldSkipAmount,
   };
-  if (!status) return null;
+
+  if (!status) {
+    return null;
+  }
+
   return (
     <Stepper {...stepperProps}>
       {stepId === "confirmation" ? null : <SyncSkipUnderPriority priority={100} />}
@@ -352,6 +356,7 @@ const Body = ({
     </Stepper>
   );
 };
+
 const m = compose(
   connect(mapStateToProps, mapDispatchToProps),
   withTranslation(),

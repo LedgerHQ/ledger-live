@@ -60,7 +60,11 @@ export const getAccountShape: GetAccountShape = async infos => {
         return (acc?.blockHeight || 0) > (curr?.blockHeight || 0) ? acc : curr;
       }, null);
 
-  const { lastCoinOperations, lastTokenOperations, lastNftOperations } = await (async () => {
+  const { lastCoinOperations, lastTokenOperations, lastNftOperations } = await (async (): Promise<{
+    lastCoinOperations: Operation[];
+    lastTokenOperations: Operation[];
+    lastNftOperations: Operation[];
+  }> => {
     try {
       const { getLastOperations } = getExplorerApi(currency);
       return await getLastOperations(

@@ -13,26 +13,6 @@
   - @ledgerhq/cryptoassets@9.13.0
   - @ledgerhq/coin-framework@0.5.4
 
-## 22.12.0-hotfix.1
-
-### Patch Changes
-
-- Updated dependencies [[`61272164de`](https://github.com/LedgerHQ/ledger-live/commit/61272164de6e81d9b5e5ad988b7eb8c40d3cf735)]:
-  - @ledgerhq/live-common@31.8.0-hotfix.1
-
-## 22.12.0-hotfix.0
-
-### Minor Changes
-
-- [#4851](https://github.com/LedgerHQ/ledger-live/pull/4851) [`6c83521fee`](https://github.com/LedgerHQ/ledger-live/commit/6c83521fee8da656858630c1cb37a5af95df3362) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Integrate injective + gas rework
-
-### Patch Changes
-
-- Updated dependencies [[`6c83521fee`](https://github.com/LedgerHQ/ledger-live/commit/6c83521fee8da656858630c1cb37a5af95df3362)]:
-  - @ledgerhq/cryptoassets@9.13.0-hotfix.0
-  - @ledgerhq/live-common@31.8.0-hotfix.0
-  - @ledgerhq/coin-framework@0.5.4-hotfix.0
-
 ## 22.11.3
 
 ### Patch Changes

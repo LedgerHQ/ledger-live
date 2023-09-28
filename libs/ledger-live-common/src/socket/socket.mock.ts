@@ -13,7 +13,6 @@ export const secureChannelMock = (managerGranted = false): Observable<SocketEven
         pause(500),
         of<SocketEvent>({
           type: "device-permission-requested",
-          wording: "Ledger manager",
         }),
         pause(500),
         of<SocketEvent>({

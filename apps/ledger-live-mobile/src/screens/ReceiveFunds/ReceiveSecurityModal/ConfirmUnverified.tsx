@@ -68,7 +68,12 @@ const ConfirmUnverified = ({ closeModal, setStep, setShouldNotRemindUserAgain }:
           </Button>
         </Flex>
         <Flex flex={1} ml={3}>
-          <Button onPress={onCloseModal} type="main" size="large">
+          <Button
+            onPress={onCloseModal}
+            type="main"
+            size="large"
+            testID="no-verify-validate-button"
+          >
             <Trans i18nKey="transfer.receive.securityDontVerify.yes" />
           </Button>
         </Flex>

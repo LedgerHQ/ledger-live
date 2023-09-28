@@ -8,7 +8,7 @@ export interface WebviewTag extends Electron.WebviewTag {
 export type WebviewProps = {
   // TODO: technically it's LiveAppManifest | AppManifest depends on `apiVersion`
   manifest: LiveAppManifest;
-  inputs?: Record<string, string | undefined>;
+  inputs?: Record<string, string | boolean | undefined>;
   onStateChange?: (webviewState: WebviewState) => void;
 };
 

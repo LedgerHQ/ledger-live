@@ -6,21 +6,6 @@
 
 - Updated dependencies [[`61272164de`](https://github.com/LedgerHQ/ledger-live/commit/61272164de6e81d9b5e5ad988b7eb8c40d3cf735), [`6c83521fee`](https://github.com/LedgerHQ/ledger-live/commit/6c83521fee8da656858630c1cb37a5af95df3362)]:
   - @ledgerhq/live-common@31.8.0
-
-## 0.0.6-hotfix.1
-
-### Patch Changes
-
-- Updated dependencies [[`61272164de`](https://github.com/LedgerHQ/ledger-live/commit/61272164de6e81d9b5e5ad988b7eb8c40d3cf735)]:
-  - @ledgerhq/live-common@31.8.0-hotfix.1
-
-## 0.0.6-hotfix.0
-
-### Patch Changes
-
-- Updated dependencies [[`6c83521fee`](https://github.com/LedgerHQ/ledger-live/commit/6c83521fee8da656858630c1cb37a5af95df3362)]:
-  - @ledgerhq/live-common@31.8.0-hotfix.0
-
 ## 0.0.5
 
 ### Patch Changes

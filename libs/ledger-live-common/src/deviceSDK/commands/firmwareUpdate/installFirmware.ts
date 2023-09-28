@@ -30,7 +30,6 @@ type FilteredSocketEvent =
     }
   | {
       type: "device-permission-requested";
-      wording: string;
     };
 
 export type InstallFirmwareCommandEvent =

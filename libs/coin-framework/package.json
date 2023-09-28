@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-framework",
-  "version": "0.5.4",
+  "version": "0.6.0",
   "description": "Ledger framework for Coin integration",
   "keywords": [
     "Ledger",
@@ -87,7 +87,7 @@
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "bignumber.js": "^9.1.1",
+    "bignumber.js": "^9.1.2",
     "eip55": "^2.1.0",
     "expect": "^27.4.6",
     "invariant": "^2.2.2",

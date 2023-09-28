@@ -77,7 +77,7 @@ export default function Settings({
         onClick={() => navigation.navigate(ScreenName.AboutSettings)}
         arrowRight
       />
-      <FeatureToggle feature="brazePushNotifications">
+      <FeatureToggle featureId="brazePushNotifications">
         <SettingsCard
           title={t("settings.notifications.title")}
           desc={t("settings.notifications.desc")}
@@ -108,7 +108,7 @@ export default function Settings({
           onClick={handleNpsRatingsRateApp}
         />
       ) : (
-        <FeatureToggle feature="ratingsPrompt">
+        <FeatureToggle featureId="ratingsPrompt">
           <SettingsCard
             title={t("settings.about.liveReview.title")}
             desc={t("settings.about.liveReview.desc")}

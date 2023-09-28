@@ -195,15 +195,17 @@ const BleDevicesScanning = ({
         </Flex>
       </Flex>
       {productName !== null && isCantSeeDeviceShown && (
-        <Link
-          onPress={onCantSeeDevicePress}
-          size={"medium"}
-          Icon={IconsLegacy.HelpMedium}
-          type="shade"
-          iconPosition="right"
-        >
-          {t("blePairingFlow.scanning.cantSeeDevice", { productName })}
-        </Link>
+        <Flex pb={16}>
+          <Link
+            onPress={onCantSeeDevicePress}
+            size={"medium"}
+            Icon={IconsLegacy.HelpMedium}
+            type="shade"
+            iconPosition="right"
+          >
+            {t("blePairingFlow.scanning.cantSeeDevice", { productName })}
+          </Link>
+        </Flex>
       )}
     </Flex>
   );

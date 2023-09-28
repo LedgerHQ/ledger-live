@@ -41,6 +41,16 @@ export function SelectFees({ navigation, route }: SelectFeesParamList) {
       <NavigationScrollView contentContainerStyle={styles.scrollView}>
         {account && transaction ? (
           <SendRowsFee
+            /**
+             * This is needed to avoid a React side effect caused by the
+             * onSetTransaction callback above. The callback is called
+             * when a tx is updated, which causes a navigation back to the
+             * SwapForm screen. This causes the SendRowsFee screen to unmount.
+             * If we prefill the gas options, the tx will get updated when the
+             * SendRowsFee screen mounts, which causes the callback to be called
+             * cf. apps/ledger-live-mobile/src/families/evm/EvmFeesStrategy.tsx
+             */
+            shouldPrefillEvmGasOptions={false}
             setTransaction={onSetTransaction}
             account={account}
             parentAccount={parentAccount}
