@@ -20,10 +20,7 @@ import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/ind
 import useQuickActions from "../../hooks/useQuickActions";
 import { PTX_SERVICES_TOAST_ID } from "../../constants";
 
-import {
-  useAlreadySubscribedURI,
-  useLearnMoreURI,
-} from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
+import { useLearnMoreURI } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 
 type ButtonItem = {
   title: string;
@@ -62,7 +59,6 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
   const recoverConfig = useFeature("protectServicesMobile");
 
   const learnMoreURI = useLearnMoreURI(recoverConfig);
-  const alreadySubscribedURI = useAlreadySubscribedURI(recoverConfig);
 
   const onNavigate = useCallback(
     (name: string, options?: object) => {
@@ -75,14 +71,11 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
     [navigation, onClose],
   );
   const onNavigateRecover = useCallback(() => {
-    if (alreadySubscribedURI) {
-      Linking.canOpenURL(alreadySubscribedURI).then(() => Linking.openURL(alreadySubscribedURI));
-    } else if (learnMoreURI) {
+    if (learnMoreURI) {
       Linking.canOpenURL(learnMoreURI).then(() => Linking.openURL(learnMoreURI));
     }
-
     onClose?.();
-  }, [alreadySubscribedURI, learnMoreURI, onClose]);
+  }, [learnMoreURI, onClose]);
 
   const buttonsList: ButtonItem[] = [
     {
