@@ -1,16 +1,10 @@
 # @ledgerhq/types-cryptoassets
 
-## 7.5.0-next.0
+## 7.5.0
 
 ### Minor Changes
 
-- [#4583](https://github.com/LedgerHQ/ledger-live/pull/4583) [`f527d1bb5a`](https://github.com/LedgerHQ/ledger-live/commit/f527d1bb5a2888a916f761d43d2ba5093eaa3e3f) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Integrate injective + gas rework
-
-- [#4285](https://github.com/LedgerHQ/ledger-live/pull/4285) [`533278e2c4`](https://github.com/LedgerHQ/ledger-live/commit/533278e2c40ee764ecb87d4430fa6650f251ff0c) Thanks [@chabroA](https://github.com/chabroA)! - Migrate Ethereum family implementation to EVM family
-
-  Replace the legcay Ethereum familly implementation that was present in ledger-live-common by the coin-evm lib implementation.
-  This change was made in order to improve scalabillity and maintainability of the evm coins, as well as more easilly integrate new evm based chains in the future.
-
+- [#4851](https://github.com/LedgerHQ/ledger-live/pull/4851) [`6c83521fee`](https://github.com/LedgerHQ/ledger-live/commit/6c83521fee8da656858630c1cb37a5af95df3362) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Integrate injective + gas rework
 ## 7.4.0
 
 ### Minor Changes
