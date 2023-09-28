@@ -66,8 +66,6 @@ const SwapForm = () => {
   const exchangeRate = useSelector(rateSelector);
   const walletApiPartnerList = useFeature("swapWalletApiPartnerList");
 
-  const ptxSwapLiveApp = useFeature("ptxSwapLiveApp");
-
   const setExchangeRate = useCallback(
     rate => {
       dispatch(updateRateAction(rate));
@@ -319,8 +317,6 @@ const SwapForm = () => {
     swapTransaction.toggleMax();
   };
 
-  console.log("ptxSwapLiveApp", ptxSwapLiveApp);
-
   return (
     <Wrapper>
       <TrackPage category="Swap" name="Form" provider={provider} {...swapDefaultTrack} />
@@ -370,7 +366,7 @@ const SwapForm = () => {
         </Button>
       </Box>
 
-      {ptxSwapLiveApp.enabled && <SwapLiveApp />}
+      {isSwapLiveAppEnabled && <SwapLiveApp />}
     </Wrapper>
   );
 };
