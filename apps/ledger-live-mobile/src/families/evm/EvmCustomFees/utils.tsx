@@ -10,7 +10,9 @@ const defaultMaxPriorityFeeRange = inferDynamicRange(TEN_GWEI); // 0 - 10 Gwei
 const defaultMaxFeePerGasRange = inferDynamicRange(TEN_GWEI); // 0 - 10 Gwei
 
 export const inferMaxPriorityFeeRange = (gasOptions: GasOptions): Range => {
-  if (!gasOptions) return defaultMaxPriorityFeeRange;
+  if (!gasOptions) {
+    return defaultMaxPriorityFeeRange;
+  }
 
   invariant(
     gasOptions.slow.maxPriorityFeePerGas,
@@ -27,14 +29,18 @@ export const inferMaxPriorityFeeRange = (gasOptions: GasOptions): Range => {
 
   return inferDynamicRange(gasOptions.medium.maxPriorityFeePerGas, {
     minValue: getEnv("EIP1559_MINIMUM_FEES_GATE")
-      ? gasOptions.slow.maxPriorityFeePerGas.times(getEnv("EIP1559_PRIORITY_FEE_LOWER_GATE"))
+      ? gasOptions.slow.maxPriorityFeePerGas
+          .times(getEnv("EIP1559_PRIORITY_FEE_LOWER_GATE"))
+          .integerValue()
       : new BigNumber(0),
     maxValue: gasOptions.fast.maxPriorityFeePerGas,
   });
 };
 
 export const inferMaxFeeRange = (gasOptions: GasOptions): Range => {
-  if (!gasOptions) return defaultMaxFeePerGasRange;
+  if (!gasOptions) {
+    return defaultMaxFeePerGasRange;
+  }
 
   invariant(
     gasOptions.medium.maxFeePerGas,
