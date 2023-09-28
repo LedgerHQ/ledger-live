@@ -1,20 +1,23 @@
-import React, { memo } from "react";
-import BigNumber from "bignumber.js";
-import { useTranslation } from "react-i18next";
-import { View } from "react-native";
-import { TransactionRaw } from "@ledgerhq/coin-evm/types/index";
+import { getEstimatedFees } from "@ledgerhq/coin-evm/lib/logic";
 import { fromTransactionRaw } from "@ledgerhq/coin-evm/transaction";
-import type { Account, AccountLike, TransactionCommonRaw } from "@ledgerhq/types-live";
+import { TransactionRaw } from "@ledgerhq/coin-evm/types/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { log } from "@ledgerhq/logs";
-
+import type { Account, AccountLike, TransactionCommonRaw } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import React, { memo } from "react";
+import { useTranslation } from "react-i18next";
+import { View } from "react-native";
 import Alert from "../../components/Alert";
 import LText from "../../components/LText";
+
+const ONE_WEI_IN_GWEI = 1_000_000_000;
 
 const CurrentNetworkFeeComponent = ({
   account,
   parentAccount,
   transactionRaw,
+  // FIXME: this is never set by caller
   advancedMode = false,
 }: {
   account: AccountLike;
@@ -35,26 +38,24 @@ const CurrentNetworkFeeComponent = ({
     );
 
     const mainAccount = getMainAccount(account, parentAccount);
-    const feePerGas = new BigNumber(
-      transaction.type === 2 ? transaction.maxFeePerGas! : transaction.gasPrice!,
-    );
 
-    const feeValue = new BigNumber(transaction.customGasLimit || transaction.gasLimit || 1)
-      .times(feePerGas)
-      .div(new BigNumber(10).pow(mainAccount.unit.magnitude));
+    // FIMXE: don't we have a helper component to display a formatted value?
+    const feeValue = getEstimatedFees(transaction).div(
+      new BigNumber(10).pow(mainAccount.unit.magnitude),
+    );
 
     if (advancedMode) {
       const maxPriorityFeePerGasinGwei = new BigNumber(transaction.maxPriorityFeePerGas ?? 0)
-        .dividedBy(1_000_000_000)
-        .toFixed();
+        .dividedBy(ONE_WEI_IN_GWEI)
+        .toFixed(0);
 
       const maxFeePerGasinGwei = new BigNumber(transaction.maxFeePerGas ?? 0)
-        .dividedBy(1_000_000_000)
-        .toFixed();
+        .dividedBy(ONE_WEI_IN_GWEI)
+        .toFixed(0);
 
       const maxGasPriceinGwei = new BigNumber(transaction?.gasPrice ?? 0)
-        .dividedBy(1_000_000_000)
-        .toFixed();
+        .dividedBy(ONE_WEI_IN_GWEI)
+        .toFixed(0);
 
       return (
         <Alert type="hint">
