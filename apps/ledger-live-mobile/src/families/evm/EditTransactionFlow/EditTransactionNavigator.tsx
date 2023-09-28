@@ -17,6 +17,7 @@ import SendValidationError from "../../../screens/SendFunds/07-ValidationError";
 
 const Stack = createStackNavigator<EditTransactionParamList>();
 
+// TODO: would be better UX to change headerTitle based on selected edition mode
 export default function EditTransactionNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -63,7 +64,6 @@ export default function EditTransactionNavigator() {
           headerShown: false,
           headerRight: undefined,
           gestureEnabled: false,
-          headerTitle: () => <StepHeader title={t("editTransaction.header")} />,
         }}
       />
       <Stack.Screen
@@ -71,7 +71,6 @@ export default function EditTransactionNavigator() {
         component={SendValidationError}
         options={{
           headerShown: false,
-          headerTitle: () => <StepHeader title={t("editTransaction.header")} />,
         }}
       />
       <Stack.Screen
@@ -79,7 +78,6 @@ export default function EditTransactionNavigator() {
         component={TransactionAlreadyValidatedError}
         options={{
           headerShown: false,
-          headerTitle: () => <StepHeader title={t("editTransaction.header")} />,
         }}
       />
     </Stack.Navigator>
