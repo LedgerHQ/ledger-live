@@ -26,7 +26,7 @@ const EditOperationPanelComponent = ({
   onPress,
 }: EditOperationPanelProps) => {
   const { t } = useTranslation();
-  const flag = useFeature("editEthTx");
+  const { enabled } = useFeature("editEthTx");
   const navigation = useNavigation();
   const { colors } = useTheme();
 
@@ -41,7 +41,11 @@ const EditOperationPanelComponent = ({
     }
   }, [account, parentAccount, operation, navigation, onPress]);
 
-  return flag?.enabled ? (
+  if (!enabled) {
+    return null;
+  }
+
+  return (
     <Flex
       backgroundColor={isOperationStuck ? colors.warning.c70 : colors.warning.c80}
       color={"primary.c80"}
@@ -51,41 +55,28 @@ const EditOperationPanelComponent = ({
       borderRadius={8}
       padding={8}
     >
-      {isOperationStuck ? (
-        <Box>
-          <LText color={colors.neutral.c20}>{t("editTransaction.panel.stuckMessage")}</LText>
-          <LText marginTop={4}>
-            <Link onPress={onLinkPress}>
-              <LText
-                color={colors.neutral.c20}
-                style={{ textDecorationLine: "underline" }}
-                marginTop={4}
-              >
-                {t("editTransaction.cta")}
-              </LText>
-            </Link>
-          </LText>
-        </Box>
-      ) : (
-        <>
-          <Box>
-            <LText color={colors.neutral.c20}>{t("editTransaction.panel.speedupMessage")}</LText>
-            <LText marginTop={4}>
-              <Link onPress={onLinkPress}>
-                <LText
-                  color={colors.neutral.c20}
-                  style={{ textDecorationLine: "underline" }}
-                  marginTop={4}
-                >
-                  {t("editTransaction.cta")}
-                </LText>
-              </Link>
+      <Box>
+        <LText color={colors.neutral.c20}>
+          {t(
+            isOperationStuck
+              ? "editTransaction.panel.stuckMessage"
+              : "editTransaction.panel.speedupMessage",
+          )}
+        </LText>
+        <LText marginTop={4}>
+          <Link onPress={onLinkPress}>
+            <LText
+              color={colors.neutral.c20}
+              style={{ textDecorationLine: "underline" }}
+              marginTop={4}
+            >
+              {t("editTransaction.cta")}
             </LText>
-          </Box>
-        </>
-      )}
+          </Link>
+        </LText>
+      </Box>
     </Flex>
-  ) : null;
+  );
 };
 
 export const EditOperationPanel = memo<EditOperationPanelProps>(EditOperationPanelComponent);
