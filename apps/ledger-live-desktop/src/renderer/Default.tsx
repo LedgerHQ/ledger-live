@@ -190,7 +190,7 @@ export default function Default() {
   useFetchCurrencyFrom();
   const discoverDB = useDiscoverDB();
 
-  const listAppsV2 = useFeature("listAppsV2");
+  const listAppsV2 = useFeature("listAppsV2dot1");
   useEffect(() => {
     if (!listAppsV2) return;
     enableListAppsV2(listAppsV2.enabled);

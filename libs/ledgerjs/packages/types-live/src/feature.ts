@@ -173,7 +173,7 @@ export type Features = CurrencyFeatures & {
   discover: Feature_Discover;
   protectServicesDiscoverDesktop: Feature_ProtectServicesDiscoverDesktop;
   transactionsAlerts: Feature_TransactionsAlerts;
-  listAppsV2: Feature_ListAppsV2;
+  listAppsV2dot1: Feature_ListAppsV2dot1;
   llmWalletQuickActions: Feature_LlmWalletQuickActions;
   cexDepositEntryPointsDesktop: Feature_CexDepositEntryPointsDesktop;
   cexDepositEntryPointsMobile: Feature_CexDepositEntryPointsMobile;
@@ -467,7 +467,7 @@ export type Feature_PortfolioExchangeBanner = DefaultFeature;
 export type Feature_Objkt = DefaultFeature;
 export type Feature_EditEthTx = DefaultFeature;
 export type Feature_ProtectServicesDiscoverDesktop = DefaultFeature;
-export type Feature_ListAppsV2 = DefaultFeature;
+export type Feature_ListAppsV2dot1 = DefaultFeature;
 export type Feature_BrazeLearn = DefaultFeature;
 export type Feature_LlmNewDeviceSelection = DefaultFeature;
 export type Feature_LlmWalletQuickActions = DefaultFeature;
