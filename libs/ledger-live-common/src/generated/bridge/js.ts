@@ -1,3 +1,4 @@
+import aptos from "../../families/aptos/bridge/js";
 import bitcoin from "../../families/bitcoin/bridge/js";
 import cardano from "../../families/cardano/bridge/js";
 import celo from "../../families/celo/bridge/js";
@@ -19,6 +20,7 @@ import { bridge as evm } from "../../families/evm/setup";
 import { bridge as polkadot } from "../../families/polkadot/setup";
 
 export default {
+  aptos,
   bitcoin,
   cardano,
   celo,

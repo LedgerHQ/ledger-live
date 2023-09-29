@@ -1,0 +1,7 @@
+{
+  "extends": "../../../../../ledgerjs/tsconfig.json",
+  "compilerOptions": {
+    "outDir": "lib"
+  },
+  "include": ["src/**/*"]
+}

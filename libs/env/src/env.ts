@@ -62,6 +62,16 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Rosetta API for ICP",
   },
+  APTOS_API_ENDPOINT: {
+    def: "https://aptos-mainnet.pontem.network/v1/",
+    parser: stringParser,
+    desc: "API enpoint for aptos",
+  },
+  APTOS_TESTNET_API_ENDPOINT: {
+    def: "https://aptos-testnet.pontem.network/v1/",
+    parser: stringParser,
+    desc: "API enpoint for aptos",
+  },
   API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT: {
     def: "https://algorand.coin.ledger.com",
     parser: stringParser,

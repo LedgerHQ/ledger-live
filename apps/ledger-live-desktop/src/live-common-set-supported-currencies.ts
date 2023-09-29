@@ -57,6 +57,8 @@ setSupportedCurrencies([
   "songbird",
   "flare",
   "near",
+  "aptos",
+  "aptos_testnet",
   "optimism",
   "optimism_goerli",
   "arbitrum",

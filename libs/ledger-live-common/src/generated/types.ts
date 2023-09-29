@@ -2,6 +2,10 @@ import { Transaction as algorandTransaction } from "@ledgerhq/coin-algorand/type
 import { TransactionRaw as algorandTransactionRaw } from "@ledgerhq/coin-algorand/types";
 import { TransactionStatus as algorandTransactionStatus } from "@ledgerhq/coin-algorand/types";
 import { TransactionStatusRaw as algorandTransactionStatusRaw } from "@ledgerhq/coin-algorand/types";
+import { Transaction as aptosTransaction } from "../families/aptos/types";
+import { TransactionRaw as aptosTransactionRaw } from "../families/aptos/types";
+import { TransactionStatus as aptosTransactionStatus } from "../families/aptos/types";
+import { TransactionStatusRaw as aptosTransactionStatusRaw } from "../families/aptos/types";
 import { Transaction as bitcoinTransaction } from "../families/bitcoin/types";
 import { TransactionRaw as bitcoinTransactionRaw } from "../families/bitcoin/types";
 import { TransactionStatus as bitcoinTransactionStatus } from "../families/bitcoin/types";
@@ -77,6 +81,7 @@ import { TransactionStatusRaw as tronTransactionStatusRaw } from "../families/tr
 
 export type Transaction =
   | algorandTransaction
+  | aptosTransaction
   | bitcoinTransaction
   | cardanoTransaction
   | celoTransaction
@@ -98,6 +103,7 @@ export type Transaction =
 
 export type TransactionRaw =
   | algorandTransactionRaw
+  | aptosTransactionRaw
   | bitcoinTransactionRaw
   | cardanoTransactionRaw
   | celoTransactionRaw
@@ -119,6 +125,7 @@ export type TransactionRaw =
 
 export type TransactionStatus =
   | algorandTransactionStatus
+  | aptosTransactionStatus
   | bitcoinTransactionStatus
   | cardanoTransactionStatus
   | celoTransactionStatus
@@ -140,6 +147,7 @@ export type TransactionStatus =
 
 export type TransactionStatusRaw =
   | algorandTransactionStatusRaw
+  | aptosTransactionStatusRaw
   | bitcoinTransactionStatusRaw
   | cardanoTransactionStatusRaw
   | celoTransactionStatusRaw

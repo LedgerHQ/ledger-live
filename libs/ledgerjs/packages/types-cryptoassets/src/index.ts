@@ -137,6 +137,8 @@ export type CryptoCurrencyId =
   | "songbird"
   | "moonbeam"
   | "near"
+  | "aptos"
+  | "aptos_testnet"
   | "rsk"
   | "bittorrent"
   | "kava_evm"

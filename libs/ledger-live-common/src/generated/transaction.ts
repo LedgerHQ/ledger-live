@@ -1,3 +1,4 @@
+import aptos from "../families/aptos/transaction";
 import bitcoin from "../families/bitcoin/transaction";
 import cardano from "../families/cardano/transaction";
 import celo from "../families/celo/transaction";
@@ -19,6 +20,7 @@ import evm from "@ledgerhq/coin-evm/transaction";
 import polkadot from "@ledgerhq/coin-polkadot/transaction";
 
 export default {
+  aptos,
   bitcoin,
   cardano,
   celo,
