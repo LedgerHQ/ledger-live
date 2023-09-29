@@ -7,9 +7,9 @@
 */
 
 import { ipcRenderer } from "electron";
-import * as remote from "@electron/remote";
+// import * as remote from "@electron/remote";
 import logo from "./logo.svg";
-import palettes from "~/renderer/styles/palettes";
+// import palettes from "~/renderer/styles/palettes";
 const appLoaded = () => {
   setTimeout(() => {
     const rendererNode = document.getElementById("react-root");
@@ -39,10 +39,10 @@ window.api = {
  * This param "theme" that we are using is set in the main thread,
  * in the main/window-lifecycle.js function loadWindow()
  */
-const theme = new URLSearchParams(window.location.search).get("theme") as "dark" | "light" | "null";
-const osTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-const palette = palettes[theme && theme !== "null" ? theme : osTheme] || palettes.dark;
-remote.getCurrentWindow().setBackgroundColor(palette.background.default);
+// const theme = new URLSearchParams(window.location.search).get("theme") as "dark" | "light" | "null";
+// const osTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+// const palette = palettes[theme && theme !== "null" ? theme : osTheme] || palettes.dark;
+// remote.getCurrentWindow().setBackgroundColor(palette.background.default);
 window.addEventListener("DOMContentLoaded", () => {
   const imgNode = document.getElementById("loading-logo") as unknown as HTMLImageElement;
   const loaderContainer = document.getElementById("loader-container");
