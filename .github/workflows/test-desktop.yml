@@ -157,12 +157,6 @@ jobs:
         with:
           name: images
           path: images-windows.json
-      - name: upload network responses
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: windows-network-responses
-          path: apps/ledger-live-desktop/tests/artifacts/networkResponses.log
       - name: Upload playwright test results [On Failure]
         uses: actions/upload-artifact@v3
         if: failure() && !cancelled()
@@ -174,6 +168,7 @@ jobs:
             apps/ledger-live-desktop/tests/artifacts/coverage
             apps/ledger-live-desktop/tests/artifacts/videos
             apps/ledger-live-desktop/tests/artifacts/logs
+            apps/ledger-live-desktop/tests/artifacts/*.log
       - name: Upload Allure Report
         if: always()
         uses: actions/upload-artifact@v3
@@ -225,12 +220,6 @@ jobs:
         with:
           name: images
           path: images-linux.json
-      - name: upload network responses
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: linux-network-responses
-          path: apps/ledger-live-desktop/tests/artifacts/networkResponses.log
       - name: Upload playwright test results [On Failure]
         uses: actions/upload-artifact@v3
         if: failure() && !cancelled()
@@ -242,6 +231,7 @@ jobs:
             apps/ledger-live-desktop/tests/artifacts/coverage
             apps/ledger-live-desktop/tests/artifacts/videos
             apps/ledger-live-desktop/tests/artifacts/logs
+            apps/ledger-live-desktop/tests/artifacts/*.log
       - name: Upload Allure Report
         if: always()
         uses: actions/upload-artifact@v3
@@ -293,12 +283,6 @@ jobs:
         with:
           name: images
           path: images-macos.json
-      - name: upload network responses
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: macos-network-responses
-          path: apps/ledger-live-desktop/tests/artifacts/networkResponses.log
       - name: Upload playwright test results [On Failure]
         uses: actions/upload-artifact@v3
         if: failure() && !cancelled()
@@ -310,6 +294,7 @@ jobs:
             apps/ledger-live-desktop/tests/artifacts/coverage
             apps/ledger-live-desktop/tests/artifacts/videos
             apps/ledger-live-desktop/tests/artifacts/logs
+            apps/ledger-live-desktop/tests/artifacts/*.log
       - name: Upload Allure Report
         if: always()
         uses: actions/upload-artifact@v3

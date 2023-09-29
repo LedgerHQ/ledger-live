@@ -373,4 +373,8 @@ export const DEFAULT_FEATURES: Features = {
   fetchAdditionalCoins: {
     enabled: false,
   },
+
+  ptxSwapLiveApp: {
+    enabled: false,
+  },
 };

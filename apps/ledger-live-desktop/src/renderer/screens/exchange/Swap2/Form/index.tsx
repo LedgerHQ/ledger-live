@@ -1,4 +1,8 @@
-import { useSwapTransaction, usePageState } from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import {
+  useSwapTransaction,
+  usePageState,
+  useIsSwapLiveApp,
+} from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import {
   getCustomFeesPerFamily,
   convertToNonAtomicUnit,
@@ -87,6 +91,10 @@ const SwapForm = () => {
     ...(locationState as object),
     timeout: SWAP_RATES_TIMEOUT,
     timeoutErrorMessage: t("swap2.form.timeout.message"),
+  });
+
+  const isSwapLiveAppEnabled = useIsSwapLiveApp({
+    currencyFrom: swapTransaction.swap.from.currency,
   });
 
   // @TODO: Try to check if we can directly have the right state from `useSwapTransaction`
@@ -262,8 +270,7 @@ const SwapForm = () => {
         },
       });
     } else {
-      const swapWebApp = !!process.env.SWAP_WEB_APP;
-      if (swapWebApp) {
+      if (isSwapLiveAppEnabled) {
         swapWebAppRedirection();
       } else {
         setDrawer(
