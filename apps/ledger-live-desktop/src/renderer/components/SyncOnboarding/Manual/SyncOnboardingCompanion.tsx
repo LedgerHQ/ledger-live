@@ -10,7 +10,7 @@ import React, {
 import { useHistory } from "react-router-dom";
 import { Box, Flex, Text, VerticalTimeline } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelInfo, SeedPhraseType } from "@ledgerhq/types-live";
@@ -29,11 +29,12 @@ import { getOnboardingStatePolling } from "@ledgerhq/live-common/hw/getOnboardin
 import ContinueOnDeviceWithAnim from "./ContinueOnDeviceWithAnim";
 import { RecoverState } from "~/renderer/screens/recover/Player";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage } from "~/renderer/analytics/segment";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import LockedDeviceDrawer, { Props as LockedDeviceDrawerProps } from "./LockedDeviceDrawer";
 import { LockedDeviceError } from "@ledgerhq/errors";
+import { saveSettings } from "~/renderer/actions/settings";
 
 const READY_REDIRECT_DELAY_MS = 2500;
 const POLLING_PERIOD_MS = 1000;
@@ -100,6 +101,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
   notifySyncOnboardingShouldReset,
 }) => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const history = useHistory<RecoverState>();
   const [stepKey, setStepKey] = useState<StepKey>(StepKey.Paired);
   const [shouldRestoreApps, setShouldRestoreApps] = useState<boolean>(false);
@@ -456,13 +458,19 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
   useEffect(() => {
     if (seedPathStatus === "recover_seed" && postOnboardingPath) {
       const [pathname, search] = postOnboardingPath.split("?");
+      dispatch(
+        saveSettings({
+          hasCompletedOnboarding: true,
+        }),
+      );
+      track("Onboarding - End");
       history.push({
         pathname,
         search: search ? `?${search}` : undefined,
         state: { fromOnboarding: true },
       });
     }
-  }, [history, postOnboardingPath, seedPathStatus]);
+  }, [dispatch, history, postOnboardingPath, seedPathStatus]);
 
   return (
     <Flex width="100%" height="100%" flexDirection="column" justifyContent="flex-start">
