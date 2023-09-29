@@ -6258,7 +6258,7 @@
     },
     "confirmCrop": "Confirm crop",
     "confirmContrast": "Confirm contrast",
-    "nftEntryPointButtonLabel": "Set as Ledger Stax lock screen",
+    "nftEntryPointButtonLabel": "Set as Ledger Stax lockscreen picture",
     "customImage": "Custom picture",
     "doThisLater": "Maybe later",
     "preview": {
@@ -6304,10 +6304,10 @@
     },
     "actions": {
       "customImage": {
-        "title": "Customize the lock screen",
-        "titleCompleted": "Lock screen customized",
-        "description": "Choose any NFT or picture to set as the lock screen of your Ledger Stax.",
-        "popupLabel": "Lockscreen customized"
+        "title": "Set a lock screen picture",
+        "titleCompleted": "Lock screen picture set",
+        "description": "Choose any digital art or picture to set as the lock screen.",
+        "popupLabel": "Lockscreen set"
       },
       "claimNft": {
         "title": "Claim the Infinity NFT",
@@ -6348,8 +6348,8 @@
         "button": "Reset Filters"
       },
       "empty": {
-        "title": "No NFTs to show, yet",
-        "subtitle": "Get started by receiving your first NFT.",
+        "title": "No NFT's to show yet",
+        "subtitle": "Get started by adding NFTs to your wallet.",
         "receive": "Receive NFTs",
         "supportLink": "How to get NFTs from other wallets?"
       },
