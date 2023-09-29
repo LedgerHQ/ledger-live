@@ -332,8 +332,8 @@
       "primaryCTA" : "Télécharger un autre fond d’écran"
     },
     "ImageDoesNotExistOnDevice" : {
-      "title" : "Aucun fond d’écran de verrouillage à supprimer sur votre Ledger Stax",
-      "description" : "Vous avez déjà supprimé votre fond d’écran de verrouillage."
+      "title" : "Aucun fond d’écran à supprimer sur votre Ledger Stax",
+      "description" : "Vous avez déjà supprimé votre fond d’écran."
     },
     "InvalidAddress" : {
       "title" : "Adresse {{currencyName}} invalide"
@@ -596,6 +596,10 @@
     "UserRefusedOnDevice" : {
       "title" : "Opération annulée sur l’appareil",
       "description" : "Vous avez refusé l’opération sur votre appareil."
+    },
+    "ExpertModeRequired" : {
+      "title" : "Mode Expert requis",
+      "description" : "Veuillez activer le mode Expert."
     },
     "WebsocketConnectionError" : {
       "title" : "Échec de la connexion",
@@ -1075,10 +1079,10 @@
       }
     },
     "enjoy" : {
-      "title" : "Merci !",
-      "description" : "Nous vous invitons à partager votre avis. Votre soutien nous est précieux et nous encourage à développer de nouvelles fonctionnalités.",
+      "title" : "Vous appréciez Ledger Live ?\nPartagez votre enthousiasme !",
+      "description" : "Laissez-nous une évaluation positive.",
       "cta" : {
-        "rate" : "Noter 5 étoiles",
+        "rate" : "Laisser un avis",
         "notNow" : "Pas maintenant"
       }
     },
@@ -1969,8 +1973,7 @@
       },
       "completed" : {
         "noUpdateAvailable" : {
-          "title" : "Vérification du système d’exploitation",
-          "description" : "La vérification du système d’exploitation confirme que votre {{productName}} est à jour."
+          "title" : "Votre {{productName}} est à jour"
         }
       },
       "error" : {
@@ -1989,10 +1992,11 @@
       }
     },
     "firmwareUpdateAvailableDrawer" : {
-      "title" : "Mise à jour du système d’exploitation disponible",
+      "title" : "Mise à jour disponible pour votre {{productName}}",
       "description" : "Mettez à jour votre {{productName}} pour bénéficier des dernières fonctionnalités et d’une sécurité optimale.",
       "descriptionVersion" : "Version {{firmwareVersion}}",
-      "updateCta" : "Mettre à jour"
+      "updateCta" : "Mettre à jour",
+      "seeWhatsInUpdateCta" : "Voir les nouveautés"
     }
   },
   "syncOnboarding" : {
@@ -2172,6 +2176,13 @@
       "title" : "Cours du {{currencyTicker}}",
       "currencyPrice" : "Prix de 1 {{currencyTicker}}",
       "currencyPriceChange" : "Variation (24h)"
+    },
+    "quickActions" : {
+      "buy" : "Acheter",
+      "swap" : "Échanger",
+      "send" : "Envoyer",
+      "deposit" : "Déposer",
+      "stake" : "Staker"
     }
   },
   "addAccountsModal" : {
@@ -2446,12 +2457,16 @@
     },
     "import" : {
       "scan" : {
-        "title" : "Importer depuis l’ordinateur",
-        "descTop" : {
-          "line1" : "Dans Ledger Live pour l’ordinateur, ouvrez :",
-          "line2" : "Paramètres > Comptes > Exporter les comptes > Exporter"
+        "title" : "Importer depuis l’ordinateur"
+      },
+      "newScan" : {
+        "title" : "Scannez et importez vos comptes à partir de Ledger Live pour l’ordinateur",
+        "instructions" : {
+          "line1" : "Ouvrez Ledger Live pour l’ordinateur.",
+          "line2" : "Paramètres > Comptes > Exporter les comptes",
+          "line3" : "Scannez le code QR jusqu’à ce que la barre soit à 100 %."
         },
-        "descBottom" : "Ouvrez Ledger Live pour l’ordinateur et scannez le code QR."
+        "hodl" : "Ne bougez pas jusqu’à la fin de la numérisation."
       },
       "result" : {
         "title" : "Importer des comptes",
@@ -2917,7 +2932,8 @@
         "account" : "{{count}} compte",
         "account_plural" : "{{count}} comptes",
         "subtitle" : "Il doit être identique au réseau choisi sur le wallet/la plateforme qui émet cette transaction.",
-        "bannerTitle" : "Assurez-vous de sélectionner le bon réseau. En savoir plus."
+        "bannerTitle" : "Assurez-vous de sélectionner le bon réseau. En savoir plus.",
+        "depositFromCexBannerTitle" : "Recevoir des cryptos de votre compte Coinbase"
       },
       "stepperHeader" : {
         "range" : "Étape {{currentStep}} sur {{totalSteps}}",
@@ -3389,6 +3405,11 @@
     "walletConnect" : {
       "title" : "WalletConnect",
       "description" : "Connectez votre wallet aux dApps"
+    },
+    "recover" : {
+      "title" : "Ledger Recover",
+      "description" : "Récupérez votre wallet, tout simplement",
+      "tag" : "Un mois offert"
     }
   },
   "signMessage" : {
@@ -3761,10 +3782,11 @@
     }
   },
   "DeviceAction" : {
-    "stayInTheAppPlz" : "Restez dans Ledger Live et gardez votre Ledger à portée de main.",
+    "stayInTheAppPlz" : "Restez dans Ledger Live et gardez votre appareil Ledger à portée de main.",
     "allowAppPermission" : "Ouvrez l’app {{wording}} sur votre appareil",
     "allowAppPermissionSubtitleToken" : "pour gérer vos tokens {{token}}",
-    "allowManagerPermission" : "Autorisez {{wording}} sur votre {{productName}}.",
+    "allowManagerPermission" : "Autorisez la connexion sécurisée sur votre {{productName}}",
+    "allowRenaming" : "Autorisez le changement de nom sur votre {{productName}}",
     "allowRemoveCustomLockscreen" : "Confirmez la suppression du fond d’écran sur votre Ledger Stax",
     "allowSecureConnection" : "Autorisez la connexion sécurisée avec Ledger",
     "loading" : "Chargement...",
@@ -4149,7 +4171,7 @@
     "updateCancelled" : "Mise à jour annulée sur votre {{deviceName}}",
     "updateCancelledDescription" : "L’installation de la mise à jour du système d’exploitation {{newFirmwareVersion}} a été refusée sur votre {{deviceName}}. S’il s’agit d’une erreur, veuillez relancer la mise à jour.",
     "updateNotYetComplete" : "La mise à jour n’est pas encore terminée",
-    "updateNotYetCompleteDescription" : "Si vous interrompez la mise à jour, vos apps, langue et fond d’écran de verrouillage peuvent ne pas être restaurées correctement.",
+    "updateNotYetCompleteDescription" : "Si vous interrompez la mise à jour, vos apps, langue et fond d’écran peuvent ne pas être restaurées correctement.",
     "restartUpdate" : "Relancer la mise à jour",
     "quitUpdate" : "Quitter la mise à jour",
     "continueUpdate" : "Continuer la mise à jour",
@@ -4206,8 +4228,8 @@
         "errors" : {
           "description" : "Vous pouvez réessayer de restaurer, ou choisir de sauter cette étape.",
           "LanguageInstallRefusedOnDevice" : "Changement de langue annulé sur {{deviceName}}",
-          "ImageLoadRefusedOnDevice" : "Restauration du fond d’écran de verrouillage annulée sur {{deviceName}}",
-          "ImageCommitRefusedOnDevice" : "Restauration du fond d’écran de verrouillage annulée sur {{deviceName}}",
+          "ImageLoadRefusedOnDevice" : "Restauration du fond d’écran annulée sur {{deviceName}}",
+          "ImageCommitRefusedOnDevice" : "Restauration du fond d’écran annulée sur {{deviceName}}",
           "UserRefusedAllowManager" : "Restauration des apps annulée sur {{deviceName}}"
         },
         "installingApps" : "Restauration des apps"
@@ -4291,6 +4313,7 @@
     "yesChangeLanguage" : "Oui, changer la langue",
     "allowLanguageInstallation" : "Confirmez l’ajout de la langue sur votre {{deviceName}}",
     "languageInstalled" : "Votre Ledger est maintenant en {{language}}.",
+    "languageInstalledDesc" : "Votre appareil est dans votre langue préférée.",
     "firmwareUpdatePrompt" : {
       "title" : "Utiliser votre {{deviceName}} en {{language}} ?",
       "description" : "Une nouvelle langue est disponible pour votre {{deviceName}} : {{language}}. Vous pouvez changer la langue de votre Ledger maintenant ou à tout moment à partir de My Ledger."
@@ -6148,7 +6171,7 @@
     "designedForStax" : {
       "title" : "<0>Conçu pour le</0><1>Ledger</1><2>Stax</2>",
       "drawer" : {
-        "description" : "Ce NFT contient une image supplémentaire qui a été spécialement conçue pour l’écran E Ink du Ledger Stax.\n\nCette image est utilisée si vous affichez ce NFT sur l’écran de verrouillage.",
+        "description" : "Ce NFT contient une image supplémentaire qui a été spécialement conçue pour l’écran E Ink du Ledger Stax.\n\nCette image est utilisée si vous définissez ce NFT comme fond d’écran.",
         "cta" : "Compris"
       }
     },
@@ -6235,7 +6258,7 @@
     "preview" : {
       "title" : "Aperçu",
       "loading" : "Chargement de l’aperçu",
-      "setPicture" : "Définir sur l’écran de verrouillage",
+      "setPicture" : "Définir comme fond d’écran",
       "editPicture" : "Modifier le fond d’écran"
     },
     "nftGallery" : {
@@ -6270,15 +6293,15 @@
     },
     "entryPointCard" : {
       "title" : "Que faire ensuite avec votre {{productName}} ?",
-      "description" : "Demandez le NFT Infinity Pass, personnalisez votre écran de verrouillage ou transférez vos actifs à partir de plateformes d’échange.",
+      "description" : "Demandez le NFT Infinity Pass, personnalisez votre fond d’écran ou transférez vos actifs à partir de plateformes d’échange.",
       "buttonLabel" : "Découvrir la suite"
     },
     "actions" : {
       "customImage" : {
-        "title" : "Personnaliser l’écran de verrouillage",
-        "titleCompleted" : "Écran de verrouillage personnalisé",
-        "description" : "Choisissez votre NFT ou image préféré comme écran de verrouillage de votre Ledger Stax.",
-        "popupLabel" : "Écran de verrouillage défini"
+        "title" : "Personnaliser le fond d’écran",
+        "titleCompleted" : "Fond d’écran personnalisé",
+        "description" : "Choisissez votre NFT ou image préféré comme fond d’écran de votre Ledger Stax.",
+        "popupLabel" : "Fond d’écran défini"
       },
       "claimNft" : {
         "title" : "Demander le NFT Infinity Pass",
@@ -6347,14 +6370,20 @@
   "servicesWidget" : {
     "title" : "Services",
     "subTitle" : "Gérez vos services Ledger",
+    "signIn" : "Se connecter",
+    "recover" : {
+      "cta" : "Commencer votre essai gratuit",
+      "desc" : "Ne craignez plus de perdre l’accès à votre wallet.",
+      "tag" : "1 mois offert"
+    },
     "protect" : {
       "status" : {
         "new" : {
           "title" : "Nouveau",
-          "desc" : "Ne craignez plus de perdre l’accès à votre wallet.",
+          "desc" : "Retrouvez l’accès à votre wallet sans votre phrase de récupération secrète.",
           "actions" : {
             "learnMore" : "Découvrir Ledger Recover",
-            "alreadySubscribed" : "J’ai déjà un identifiant pour <LinkAccount>voir mon abonnement</LinkAccount>."
+            "alreadySubscribed" : "Déjà abonné(e) ? <LinkAccount>Voir mon abonnement</LinkAccount>"
           }
         }
       }
@@ -6412,6 +6441,10 @@
           "body" : "Recevez des cryptos dans votre wallet."
         }
       }
+    },
+    "getFundsModal" : {
+      "text" : "Recevez des {{coin}} pour staker",
+      "description" : "Achetez, échangez ou recevez des cryptos directement sur votre appareil Ledger via Ledger Live."
     }
   }
 }
