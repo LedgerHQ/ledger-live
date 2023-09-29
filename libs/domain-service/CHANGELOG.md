@@ -1,5 +1,12 @@
 # @ledgerhq/domain-service
 
+## 1.1.12-nightly.0
+
+### Patch Changes
+
+- Updated dependencies [[`8fadeb17fb`](https://github.com/LedgerHQ/ledger-live/commit/8fadeb17fbf65e671762be9668a5ff72223ebe47)]:
+  - @ledgerhq/cryptoassets@9.14.0-nightly.0
+
 ## 1.1.11
 
 ### Patch Changes

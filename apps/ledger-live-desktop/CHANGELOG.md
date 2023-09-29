@@ -1,5 +1,15 @@
 # ledger-live-desktop
 
+## 2.69.1-nightly.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-evm@0.6.3-nightly.0
+  - @ledgerhq/coin-framework@0.5.5-nightly.0
+  - @ledgerhq/domain-service@1.1.12-nightly.0
+  - @ledgerhq/live-common@31.8.1-nightly.0
+
 ## 2.69.0
 
 ### Minor Changes

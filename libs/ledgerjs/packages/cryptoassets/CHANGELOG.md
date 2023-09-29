@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 9.14.0-nightly.0
+
+### Minor Changes
+
+- [#4525](https://github.com/LedgerHQ/ledger-live/pull/4525) [`8fadeb17fb`](https://github.com/LedgerHQ/ledger-live/commit/8fadeb17fbf65e671762be9668a5ff72223ebe47) Thanks [@lvndry](https://github.com/lvndry)! - Add new data from dynamic CAL
+
 ## 9.13.0
 
 ### Minor Changes
