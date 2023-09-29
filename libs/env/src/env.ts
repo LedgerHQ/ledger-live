@@ -770,6 +770,11 @@ const envDefinitions = {
     parser: stringArrayParser,
     desc: 'Sets up debug console printing of logs. `VERBOSE=1` or `VERBOSE=true`: to print all logs | `VERBOSE="apdu,hw,transport,hid-verbose"` : filtering on a list of log `type` separated by a `,`',
   },
+  DEFAULT_TRANSACTION_POLLING_INTERVAL: {
+    def: 30 * 1000,
+    parser: intParser,
+    desc: "Default interval to poll for transaction confirmation in speedup/cancel evm flow (in ms)",
+  },
 };
 
 export const getDefinition = (name: string): EnvDef<any> => {
