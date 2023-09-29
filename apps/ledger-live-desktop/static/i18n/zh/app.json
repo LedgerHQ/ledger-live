@@ -122,9 +122,9 @@
     "search" : "搜索...",
     "searchWithoutEllipsis" : "搜索",
     "manage" : "管理",
+    "tryAgain" : "请重试",
     "lockScreen" : {
       "title" : "欢迎回来",
-      "subTitle" : null,
       "description" : "请输入您的密码后继续操作",
       "inputPlaceholder" : "输入您的密码",
       "lostPassword" : "我忘记了密码"
@@ -546,6 +546,10 @@
           "body" : "在您的钱包中接收加密货币"
         }
       }
+    },
+    "getFundsModal" : {
+      "text" : "获取 {{coin}} 进行权益质押",
+      "description" : "使用 Ledger Live 直接在您的 Ledger 设备上买入、互换或接收加密货币。"
     }
   },
   "lottieDebugger" : {
@@ -1700,7 +1704,8 @@
   "DeviceAction" : {
     "allowAppPermission" : "在您的设备上打开 {{wording}} 应用程序",
     "allowAppPermissionSubtitleToken" : "管理您的 {{token}} 代币",
-    "allowManagerPermission" : "允许 {{wording}} 在您的设备上运行",
+    "allowManagerPermission" : "允许 Ledger 管理器在您的设备上运行",
+    "allowRenaming" : "允许在您的设备上重命名",
     "loading" : "正在加载……",
     "connectAndUnlockDevice" : "连接并解锁您的设备",
     "unlockDevice" : "解锁您的设备",
@@ -1878,7 +1883,11 @@
       "contactSupport" : "联系客服",
       "deprecated" : "设备固件版本太旧而无法更新。请联系 Ledger 客服以获取替代版本。",
       "prepareSeed" : "预防起见，请确保将您的 24 词恢复短语写在所提供的恢复表中。",
-      "disclaimerTitle" : "您即将安装 <1>固件版本 {{version}}</1>。"
+      "disclaimerTitle" : "您即将安装 <1>固件版本 {{version}}</1>。",
+      "cancelUpdate" : "取消更新",
+      "continueUpdate" : "继续更新",
+      "cancelUpdateWarning" : "如果您现在取消更新，您的设置和应用程序可能无法正确恢复。",
+      "updateInProgress" : "正在更新操作系统"
     },
     "modal" : {
       "title" : "更新 {{productName}}",
@@ -2064,7 +2073,8 @@
         "parentAccount" : "1. 选择 {{currencyName}} 账户",
         "token" : "2. 选择代币",
         "verifyTokenType" : "请验证 <0>{{token}}</0> 是 <0>{{tokenType}}</0> 代币。发送到 {{currency}} 账户的任何其他类型的加密资产都可能被丢失。",
-        "warningTokenType" : "请只发送 <0>{{ticker}}</0> 或 <0>{{tokenType}}</0> 代币到 {{currency}} 账户。发送其他加密资产可能会导致资金的永久损失"
+        "warningTokenType" : "请只发送 <0>{{ticker}}</0> 或 <0>{{tokenType}}</0> 代币到 {{currency}} 账户。发送其他加密资产可能会导致资金的永久损失",
+        "depositFromCexBannerTitle" : "从您的比特币基地（Coinbase）账户存入加密货币"
       },
       "connectDevice" : {
         "title" : "设备",
@@ -4061,7 +4071,7 @@
     "downloadProgress" : "已完成 {{progress}}%",
     "checking" : "正在检查更新...",
     "checkSuccess" : "Ledger Live 有新的更新，当您关闭应用程序时会自动安装更新。",
-    "quitAndInstall" : "立即安装",
+    "quitAndInstall" : "立即安装并重新启动",
     "updateAvailable" : "Ledger Live 有新版本 {{version}} 可更新",
     "error" : "更新时出错。请重新下载",
     "reDownload" : "重新下载",
@@ -5077,12 +5087,12 @@
       "description" : "请再次尝试。"
     },
     "DisconnectedDevice" : {
-      "title" : "抱歉，您的设备似乎已断开连接",
-      "description" : "请重新连接并重试。"
+      "title" : "设备已断开",
+      "description" : "Ledger Live 无法连接到您的设备。请再次尝试。"
     },
     "DisconnectedDeviceDuringOperation" : {
-      "title" : "抱歉，您的设备似乎已断开连接",
-      "description" : "请重新连接并重试。"
+      "title" : "设备已断开",
+      "description" : "Ledger Live 无法连接到您的设备。请再次尝试。"
     },
     "EConnReset" : {
       "title" : "无法访问 Ledger 应用程序商店",
@@ -5309,6 +5319,10 @@
     "UserRefusedOnDevice" : {
       "title" : "操作被拒绝",
       "description" : "用户在设备上拒绝了该操作"
+    },
+    "ExpertModeRequired" : {
+      "title" : "需要专家模式",
+      "description" : "需要启用专家模式。"
     },
     "TransactionRefusedOnDevice" : {
       "title" : "操作在设备上被拒绝",
@@ -5596,7 +5610,7 @@
       "title" : "确保您有足够的剩余余额以用作未来的交易费"
     },
     "SolanaTxSimulationFailedWhilePendingOp" : {
-      "title" : "Your previous transaction hasn't been processed yet. Please wait a moment then check the transaction history before trying again."
+      "title" : "您之前的交易尚未处理。请稍等片刻后检查交易记录，然后重试。"
     },
     "SolanaTxConfirmationTimeout" : {
       "title" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。"
@@ -5795,31 +5809,33 @@
     "managerCTARemove" : "删除",
     "steps" : {
       "choose" : {
-        "stepLabel" : "选择一张图片",
+        "stepLabel" : "选择图片",
         "description" : "选择要设为 (...) 的图片",
         "pickFromNftGallery" : "从我的 NFT 画廊中选择",
         "myNfts" : "我的 NFT",
-        "upload" : "从我的计算机上传",
+        "upload" : "从计算机上传",
         "chooseNft" : "选择 NFT",
         "remove" : "移除当前图片",
         "selectNft" : "选择 NFT",
-        "previousSelectNft" : "返回",
         "nftEmptyStateTitle" : "暂时没有 NFT 可显示",
         "nftEmptyStateDescription" : "首先将 NFT 添加到您的钱包"
       },
       "adjust" : {
-        "stepLabel" : "调整图片",
-        "rotate" : "旋转"
+        "stepLabel" : "裁剪",
+        "rotate" : "旋转",
+        "confirmCrop" : "确认剪裁"
       },
       "contrast" : {
-        "stepLabel" : "选择对比度"
+        "stepLabel" : "设置对比度",
+        "confirmContrast" : "确认对比"
       },
       "transfer" : {
-        "stepLabel" : "转移",
-        "uploadAnotherImage" : "上传另一张图片",
-        "allowPreview" : "允许在您的 {{productName}} 上加载锁屏图片",
+        "stepLabel" : "加载",
+        "useAnotherPicture" : "上传另一张图片",
+        "allowPreview" : "点按“Load picture”（加载图片）自定义锁屏界面",
         "allowConfirmPreview" : "允许在 {{productName}} 上恢复锁屏图片",
         "loadingPicture" : "正在加载……",
+        "voila" : "好啦！",
         "imageLoaded" : "图片已加载到 {{productName}}",
         "confirmPicture" : "很合心意？\n用此设定！",
         "confirmRestorePicture" : "确认恢复锁屏图片",
@@ -5827,12 +5843,12 @@
       }
     },
     "postOnboarding" : {
-      "title" : "个性化我的设备",
-      "description" : "通过自定义屏幕",
+      "title" : "自定义锁屏界面",
+      "description" : "选择任意 NFT 或图片，将其设置为 Ledger Stax 的锁屏界面。",
       "actionCompletedPopupLabel" : "设备已个性化"
     },
-    "customImageSet" : "锁屏已设置",
-    "finishCTA" : "完成"
+    "customImageSet" : "已自定义锁屏界面",
+    "finishCTA" : "关闭"
   },
   "onboardingAppInstall" : {
     "restore" : {
@@ -5878,7 +5894,6 @@
     "networkError" : {
       "title" : "网络错误",
       "subtitle" : "出错了。请再次尝试。如果仍有问题，请保存日志并联系 Ledger 客服。",
-      "tryAgain" : "请重试",
       "contactSupport" : "联系 Ledger 客服",
       "saveLog" : "保存日志"
     }
