@@ -14,6 +14,7 @@ import {
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
 import { isOldestPendingOperation } from "@ledgerhq/live-common/operation";
+import { getEnv } from "@ledgerhq/live-env";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { TFunction } from "i18next";
@@ -130,10 +131,6 @@ const mapDispatchToProps = {
   updateAccountWithUpdater,
 };
 
-// Default interval to poll for transaction confirmation
-// Arbitrarily set to 30 seconds
-const DEFAULT_INTERVAL = 30 * 1000;
-
 const Body = ({
   device,
   stepId,
@@ -233,7 +230,7 @@ const Body = ({
       () => setTransactionHasBeenValidatedCallback(),
       mainAccount.currency.blockAvgTime
         ? mainAccount.currency.blockAvgTime * 1000
-        : DEFAULT_INTERVAL,
+        : getEnv("DEFAULT_TRANSACTION_POLLING_INTERVAL"),
     );
 
     return () => {

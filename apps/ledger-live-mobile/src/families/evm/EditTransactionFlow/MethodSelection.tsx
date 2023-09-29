@@ -11,6 +11,7 @@ import {
   hasMinimumFundsToSpeedUp,
 } from "@ledgerhq/live-common/families/evm/getUpdateTransactionPatch";
 import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
+import { getEnv } from "@ledgerhq/live-env";
 import { log } from "@ledgerhq/logs";
 import { Box, Flex, SelectableList } from "@ledgerhq/native-ui";
 import { Account, AccountBridge } from "@ledgerhq/types-live";
@@ -24,11 +25,6 @@ import { StackNavigatorProps } from "../../../components/RootNavigator/types/hel
 import { urls } from "../../../config/urls";
 import { ScreenName } from "../../../const";
 import { EditTransactionParamList } from "./EditTransactionParamList";
-
-// Default interval to poll for transaction confirmation
-// Arbitrarily set to 30 seconds
-// TODO: could be env var or defined in LLC
-const DEFAULT_INTERVAL = 30 * 1000;
 
 const getSpeedUpDescriptionKey = (
   haveFundToSpeedup: boolean,
@@ -140,7 +136,7 @@ function MethodSelectionComponent({ navigation, route }: Props) {
       () => setTransactionHasBeenValidatedCallback(),
       mainAccount.currency.blockAvgTime
         ? mainAccount.currency.blockAvgTime * 1000
-        : DEFAULT_INTERVAL,
+        : getEnv("DEFAULT_TRANSACTION_POLLING_INTERVAL"),
     );
 
     return () => {
