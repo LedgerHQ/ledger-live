@@ -6292,7 +6292,7 @@
   },
   "postOnboarding": {
     "hub": {
-      "title": "Next up, use your {{productName}} to...",
+      "title": "Next up, use your {{productName}} to:",
       "allDoneTitle": "and that’s a wrap!",
       "skip": "I’ll do this later",
       "viewWallet": "View my wallet"
@@ -6319,7 +6319,7 @@
       "assetsTransfer": {
         "title": "Transfer your assets to Ledger",
         "titleCompleted": "Assets transferred to Ledger",
-        "description": "Transfer from any other exchange or wallet.",
+        "description": "Easily transfer assets from Coinbase or any other exchange or wallet.",
         "popupLabel": "Assets transferred"
       }
     }
