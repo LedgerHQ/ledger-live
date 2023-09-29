@@ -309,6 +309,7 @@ export type Feature_ProtectServicesMobile = Feature<{
     NEW: {
       learnMoreURI: string;
       alreadySubscribedURI: string;
+      quickAccessURI: string;
     };
   };
   login: {
