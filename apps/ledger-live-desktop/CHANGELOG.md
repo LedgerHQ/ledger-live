@@ -1,131 +1,21 @@
 # ledger-live-desktop
 
-## 2.69.0-nightly.5
-
-### Patch Changes
-
-- [#4843](https://github.com/LedgerHQ/ledger-live/pull/4843) [`304bb461ec`](https://github.com/LedgerHQ/ledger-live/commit/304bb461ec3a2786c8309ecc15334367b8d163ff) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Add feature_ptx_swap_live_app feature flag and logic
-
-- [#4841](https://github.com/LedgerHQ/ledger-live/pull/4841) [`948d3bac85`](https://github.com/LedgerHQ/ledger-live/commit/948d3bac856a47ef203989111f565002379c416e) Thanks [@cksanders](https://github.com/cksanders)! - Add account wallet id conversion for buy deeplinks
-
-- Updated dependencies [[`304bb461ec`](https://github.com/LedgerHQ/ledger-live/commit/304bb461ec3a2786c8309ecc15334367b8d163ff)]:
-  - @ledgerhq/types-live@6.40.0-nightly.1
-  - @ledgerhq/live-common@32.0.0-nightly.5
-  - @ledgerhq/coin-evm@0.7.0-nightly.3
-  - @ledgerhq/coin-framework@0.6.0-nightly.3
-  - @ledgerhq/domain-service@1.1.11-nightly.3
-
-## 2.69.0-nightly.4
+## 2.69.0
 
 ### Minor Changes
 
-- [#4564](https://github.com/LedgerHQ/ledger-live/pull/4564) [`0902e24948`](https://github.com/LedgerHQ/ledger-live/commit/0902e249484c6ea3a82068c270edadd53eb7874f) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Update swap endpoints to v5 on llm and lld
+- [#4851](https://github.com/LedgerHQ/ledger-live/pull/4851) [`6c83521fee`](https://github.com/LedgerHQ/ledger-live/commit/6c83521fee8da656858630c1cb37a5af95df3362) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Integrate injective + gas rework
 
 ### Patch Changes
 
-- [#4689](https://github.com/LedgerHQ/ledger-live/pull/4689) [`94c117c714`](https://github.com/LedgerHQ/ledger-live/commit/94c117c714ef4f56ce92f2362a944159680b9a71) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Add a new drawer view to ask user before cancelling current firmware update
-
-- Updated dependencies [[`0902e24948`](https://github.com/LedgerHQ/ledger-live/commit/0902e249484c6ea3a82068c270edadd53eb7874f)]:
-  - @ledgerhq/live-common@32.0.0-nightly.4
-
-## 2.69.0-nightly.3
-
-### Patch Changes
-
-- [#4778](https://github.com/LedgerHQ/ledger-live/pull/4778) [`4b8b38cdb7`](https://github.com/LedgerHQ/ledger-live/commit/4b8b38cdb78edf89b93b8847ad615a7674994a47) Thanks [@lvndry](https://github.com/lvndry)! - Remove Cardano Poolcost
-
-- [#4824](https://github.com/LedgerHQ/ledger-live/pull/4824) [`96e146af65`](https://github.com/LedgerHQ/ledger-live/commit/96e146af65e14b0562e56211114495538bbff40f) Thanks [@stephane-lieumont-ledger](https://github.com/stephane-lieumont-ledger)! - on previous cta recover onboarding, the app redirect to disclaimer screen
-
-## 2.69.0-nightly.2
-
-### Patch Changes
-
-- [#4809](https://github.com/LedgerHQ/ledger-live/pull/4809) [`a080d81ce5`](https://github.com/LedgerHQ/ledger-live/commit/a080d81ce57672e17b502f62b020f4aaf88662f5) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix infinite loading in manager device action if no device is connected
-
-- [#4800](https://github.com/LedgerHQ/ledger-live/pull/4800) [`e63d3bbc2a`](https://github.com/LedgerHQ/ledger-live/commit/e63d3bbc2ad60411920cc4872d36fc11d1ae73d7) Thanks [@Justkant](https://github.com/Justkant)! - fix: platform-sdk & wallet-api onClose response in `account.request` & `message.sign`
-
-- Updated dependencies [[`e63d3bbc2a`](https://github.com/LedgerHQ/ledger-live/commit/e63d3bbc2ad60411920cc4872d36fc11d1ae73d7)]:
-  - @ledgerhq/live-common@32.0.0-nightly.3
-
-## 2.69.0-nightly.1
-
-### Patch Changes
-
-- [#4709](https://github.com/LedgerHQ/ledger-live/pull/4709) [`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac) Thanks [@alexandremgo](https://github.com/alexandremgo)! - feat: enable printing logs to stdout for debug and record logs from internal thread
-
-  - Logs from the internal thread are forward to the main thread
-  - The main thread records them, and can export them
-  - If `VERBOSE` env var is set, filtered logs can be stdout from the main thread
-  - Same from the renderer thread
-  - Setup simple tracing system (context) on LLD
-
-- [#4753](https://github.com/LedgerHQ/ledger-live/pull/4753) [`10746fc21f`](https://github.com/LedgerHQ/ledger-live/commit/10746fc21fd80826a1d9a7e60ff1815d89956a3d) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - Remove misleading "countervalues disabled" status from cryptoassets.md
-
-- [#4779](https://github.com/LedgerHQ/ledger-live/pull/4779) [`7cb844b6c1`](https://github.com/LedgerHQ/ledger-live/commit/7cb844b6c1d65df4b083dcda51976b33a6d55b59) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Add entry point to CEX with feature flag
-
-- [#4777](https://github.com/LedgerHQ/ledger-live/pull/4777) [`41cc8e6a70`](https://github.com/LedgerHQ/ledger-live/commit/41cc8e6a709540124b4b118f8e6ccc99aa213102) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Stax early security checks: fix race condition between "toggle early check" and "get device info"
-
-- Updated dependencies [[`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac), [`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac), [`7cb844b6c1`](https://github.com/LedgerHQ/ledger-live/commit/7cb844b6c1d65df4b083dcda51976b33a6d55b59), [`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac)]:
-  - @ledgerhq/logs@6.11.0-nightly.0
-  - @ledgerhq/live-env@0.6.0-nightly.1
-  - @ledgerhq/live-common@32.0.0-nightly.2
-  - @ledgerhq/hw-transport-node-hid-singleton@6.29.0-nightly.0
-  - @ledgerhq/hw-transport@6.29.0-nightly.0
-  - @ledgerhq/coin-evm@0.7.0-nightly.2
-  - @ledgerhq/coin-framework@0.6.0-nightly.2
-  - @ledgerhq/domain-service@1.1.11-nightly.2
-  - @ledgerhq/devices@8.0.8-nightly.0
-  - @ledgerhq/hw-transport-http@6.28.4-nightly.0
-  - @ledgerhq/hw-transport-vault@1.1.4-nightly.0
-  - @ledgerhq/live-network@1.1.7-nightly.1
-
-## 2.69.0-nightly.0
-
-### Minor Changes
-
-- [#4741](https://github.com/LedgerHQ/ledger-live/pull/4741) [`a134f28e9d`](https://github.com/LedgerHQ/ledger-live/commit/a134f28e9d220d172148619ed281d4ca897d5532) Thanks [@chabroA](https://github.com/chabroA)! - Fix swap issue when estimating and editing fees
-
-- [#4583](https://github.com/LedgerHQ/ledger-live/pull/4583) [`f527d1bb5a`](https://github.com/LedgerHQ/ledger-live/commit/f527d1bb5a2888a916f761d43d2ba5093eaa3e3f) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Integrate injective + gas rework
-
-- [#4706](https://github.com/LedgerHQ/ledger-live/pull/4706) [`4dd486d87f`](https://github.com/LedgerHQ/ledger-live/commit/4dd486d87fea4c641cc4a21fc181c6097bab9d3d) Thanks [@Justkant](https://github.com/Justkant)! - feat: send LL version to the manifest-api
-
-- [#4766](https://github.com/LedgerHQ/ledger-live/pull/4766) [`9509a9f659`](https://github.com/LedgerHQ/ledger-live/commit/9509a9f659b9520e05086c16a9def5dfded320b9) Thanks [@chabroA](https://github.com/chabroA)! - Add loading spinner in evm fee stratgey screen for gas options
-
-- [#4285](https://github.com/LedgerHQ/ledger-live/pull/4285) [`533278e2c4`](https://github.com/LedgerHQ/ledger-live/commit/533278e2c40ee764ecb87d4430fa6650f251ff0c) Thanks [@chabroA](https://github.com/chabroA)! - Migrate Ethereum family implementation to EVM family
-
-  Replace the legcay Ethereum familly implementation that was present in ledger-live-common by the coin-evm lib implementation.
-  This change was made in order to improve scalabillity and maintainability of the evm coins, as well as more easilly integrate new evm based chains in the future.
-
-### Patch Changes
-
-- [#4695](https://github.com/LedgerHQ/ledger-live/pull/4695) [`73217c9aa9`](https://github.com/LedgerHQ/ledger-live/commit/73217c9aa93c901d9c8d2067dcc7090243d35d35) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Update learn more link for cosmos redelegation banner to point to cosmos page instead of ethereum page.
-
-- [#4615](https://github.com/LedgerHQ/ledger-live/pull/4615) [`cf2f585659`](https://github.com/LedgerHQ/ledger-live/commit/cf2f58565937b2a695ac7ff7d225cdbb6e598039) Thanks [@sarneijim](https://github.com/sarneijim)! - Save swap history wallet api exchange
-
-- [#4705](https://github.com/LedgerHQ/ledger-live/pull/4705) [`a4a6fda329`](https://github.com/LedgerHQ/ledger-live/commit/a4a6fda329ae44b54a3216ddebde41792dfa8b30) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix Stax onboarding early security checks: infinite loading state for locked device
-
-- [#4755](https://github.com/LedgerHQ/ledger-live/pull/4755) [`7cb2d033a6`](https://github.com/LedgerHQ/ledger-live/commit/7cb2d033a6b358e3508c098565393ebc64b25166) Thanks [@Justkant](https://github.com/Justkant)! - fix(wallet-api): request account was not showing token accounts in some cases
-
-  The issue was only visible on mobile but is also prevented on desktop now
-  The issue was only reproducible when omitting the parent account currency from the currencyIds of the request account query
-
-- [#4648](https://github.com/LedgerHQ/ledger-live/pull/4648) [`8b09b0b571`](https://github.com/LedgerHQ/ledger-live/commit/8b09b0b5717a47aedae5a8a80acf6d077af3b40b) Thanks [@cksanders](https://github.com/cksanders)! - Update multibuy manifest to v2 to ensure full backwards compatibility
-
-- [#4685](https://github.com/LedgerHQ/ledger-live/pull/4685) [`35cb442294`](https://github.com/LedgerHQ/ledger-live/commit/35cb4422944f1e7af696c816a53a6ada74525de2) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Conditionally render different text when user arrives at the buy funds modal from a get funds button rather than default of no funds. Applies to mobile and desktop.
-
-- [#4717](https://github.com/LedgerHQ/ledger-live/pull/4717) [`a80310f16a`](https://github.com/LedgerHQ/ledger-live/commit/a80310f16af3f22f71052d0f3696ab8b7a652a77) Thanks [@lvndry](https://github.com/lvndry)! - Update ethereum staking icon
-
-- [#4533](https://github.com/LedgerHQ/ledger-live/pull/4533) [`70e4277bc9`](https://github.com/LedgerHQ/ledger-live/commit/70e4277bc9dda253b894bdae5f2c8a5f43a9a64e) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Typed useFeature hook
-
-- Updated dependencies [[`f527d1bb5a`](https://github.com/LedgerHQ/ledger-live/commit/f527d1bb5a2888a916f761d43d2ba5093eaa3e3f), [`a134f28e9d`](https://github.com/LedgerHQ/ledger-live/commit/a134f28e9d220d172148619ed281d4ca897d5532), [`cf2f585659`](https://github.com/LedgerHQ/ledger-live/commit/cf2f58565937b2a695ac7ff7d225cdbb6e598039), [`a134f28e9d`](https://github.com/LedgerHQ/ledger-live/commit/a134f28e9d220d172148619ed281d4ca897d5532), [`4dd486d87f`](https://github.com/LedgerHQ/ledger-live/commit/4dd486d87fea4c641cc4a21fc181c6097bab9d3d), [`b21de593ee`](https://github.com/LedgerHQ/ledger-live/commit/b21de593ee705ece38fc812eedb9bf85694e94cb), [`8b09b0b571`](https://github.com/LedgerHQ/ledger-live/commit/8b09b0b5717a47aedae5a8a80acf6d077af3b40b), [`533278e2c4`](https://github.com/LedgerHQ/ledger-live/commit/533278e2c40ee764ecb87d4430fa6650f251ff0c), [`70e4277bc9`](https://github.com/LedgerHQ/ledger-live/commit/70e4277bc9dda253b894bdae5f2c8a5f43a9a64e)]:
-  - @ledgerhq/types-cryptoassets@7.5.0-nightly.0
-  - @ledgerhq/types-live@6.40.0-nightly.0
-  - @ledgerhq/live-common@32.0.0-nightly.1
-  - @ledgerhq/coin-evm@0.7.0-nightly.1
-  - @ledgerhq/coin-framework@0.6.0-nightly.1
-  - @ledgerhq/live-env@0.6.0-nightly.0
-  - @ledgerhq/domain-service@1.1.11-nightly.1
-  - @ledgerhq/live-network@1.1.7-nightly.0
+- Updated dependencies [[`61272164de`](https://github.com/LedgerHQ/ledger-live/commit/61272164de6e81d9b5e5ad988b7eb8c40d3cf735), [`6c83521fee`](https://github.com/LedgerHQ/ledger-live/commit/6c83521fee8da656858630c1cb37a5af95df3362)]:
+  - @ledgerhq/live-common@31.8.0
+  - @ledgerhq/types-cryptoassets@7.5.0
+  - @ledgerhq/types-live@6.40.0
+  - @ledgerhq/coin-evm@0.6.2
+  - @ledgerhq/coin-framework@0.5.4
+  - @ledgerhq/domain-service@1.1.11
+  - @ledgerhq/evm-tools@1.0.7
 
 ## 2.68.1
 

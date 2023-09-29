@@ -1,20 +1,10 @@
 # @ledgerhq/types-live
 
-## 6.40.0-nightly.1
-
-### Patch Changes
-
-- [#4843](https://github.com/LedgerHQ/ledger-live/pull/4843) [`304bb461ec`](https://github.com/LedgerHQ/ledger-live/commit/304bb461ec3a2786c8309ecc15334367b8d163ff) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Add feature_ptx_swap_live_app feature flag and logic
-
-## 6.40.0-nightly.0
+## 6.40.0
 
 ### Minor Changes
 
-- [#4583](https://github.com/LedgerHQ/ledger-live/pull/4583) [`f527d1bb5a`](https://github.com/LedgerHQ/ledger-live/commit/f527d1bb5a2888a916f761d43d2ba5093eaa3e3f) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Integrate injective + gas rework
-
-### Patch Changes
-
-- [#4533](https://github.com/LedgerHQ/ledger-live/pull/4533) [`70e4277bc9`](https://github.com/LedgerHQ/ledger-live/commit/70e4277bc9dda253b894bdae5f2c8a5f43a9a64e) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Typed useFeature hook
+- [#4851](https://github.com/LedgerHQ/ledger-live/pull/4851) [`6c83521fee`](https://github.com/LedgerHQ/ledger-live/commit/6c83521fee8da656858630c1cb37a5af95df3362) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Integrate injective + gas rework
 
 ## 6.39.0
 

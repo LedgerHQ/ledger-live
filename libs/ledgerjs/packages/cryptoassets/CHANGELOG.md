@@ -1,29 +1,10 @@
 # @ledgerhq/cryptoassets
 
-## 10.0.0-nightly.1
-
-### Major Changes
-
-- [#4285](https://github.com/LedgerHQ/ledger-live/pull/4285) [`533278e2c4`](https://github.com/LedgerHQ/ledger-live/commit/533278e2c40ee764ecb87d4430fa6650f251ff0c) Thanks [@chabroA](https://github.com/chabroA)! - Migrate Ethereum family implementation to EVM family
-
-  Replace the legcay Ethereum familly implementation that was present in ledger-live-common by the coin-evm lib implementation.
-  This change was made in order to improve scalabillity and maintainability of the evm coins, as well as more easilly integrate new evm based chains in the future.
+## 9.13.0
 
 ### Minor Changes
 
-- [#4583](https://github.com/LedgerHQ/ledger-live/pull/4583) [`f527d1bb5a`](https://github.com/LedgerHQ/ledger-live/commit/f527d1bb5a2888a916f761d43d2ba5093eaa3e3f) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Integrate injective + gas rework
-
-### Patch Changes
-
-- [#4741](https://github.com/LedgerHQ/ledger-live/pull/4741) [`a134f28e9d`](https://github.com/LedgerHQ/ledger-live/commit/a134f28e9d220d172148619ed281d4ca897d5532) Thanks [@chabroA](https://github.com/chabroA)! - Don't use `0` address for evm currencies to avoid gas estimation error in swap when interacting with smart contracts (swapping from token accounts)
-
-- [#4714](https://github.com/LedgerHQ/ledger-live/pull/4714) [`49ea3fd98b`](https://github.com/LedgerHQ/ledger-live/commit/49ea3fd98ba1e1e0ed54d29ab5fdc71c4918183f) Thanks [@lvndry](https://github.com/lvndry)! - Update zcash explorer to zcashblockexplorer.com
-
-## 9.13.0-nightly.0
-
-### Minor Changes
-
-- [#4624](https://github.com/LedgerHQ/ledger-live/pull/4624) [`72288402ec`](https://github.com/LedgerHQ/ledger-live/commit/72288402ec70f9159022505cb3187e63b24df450) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - CAL update
+- [#4851](https://github.com/LedgerHQ/ledger-live/pull/4851) [`6c83521fee`](https://github.com/LedgerHQ/ledger-live/commit/6c83521fee8da656858630c1cb37a5af95df3362) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Integrate injective + gas rework
 
 ## 9.12.1
 
