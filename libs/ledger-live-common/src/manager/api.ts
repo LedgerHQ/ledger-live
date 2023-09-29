@@ -399,13 +399,15 @@ const getFinalFirmwareById: (id: number) => Promise<FinalFirmware> = makeLRUCach
  * Given an array of hashes that we can obtain by either listInstalledApps in this same
  * API (a websocket connection to a scriptrunner) or via direct apdus using hw/listApps.ts
  * retrieve all the information needed from the backend for those applications.
+ * The apps in the output are mapped in the same order as the hashes in the input
+ * and if no match is found for a given hash the result for that hash will be null.
  */
-const getAppsByHash: (hashes: string[]) => Promise<Array<App>> = makeLRUCache(
+const getAppsByHash: (hashes: string[]) => Promise<Array<App | null>> = makeLRUCache(
   async hashes => {
     const {
       data,
     }: {
-      data: Array<ApplicationV2>;
+      data: Array<ApplicationV2 | null>;
     } = await network({
       method: "POST",
       url: URL.format({
@@ -421,7 +423,7 @@ const getAppsByHash: (hashes: string[]) => Promise<Array<App>> = makeLRUCache(
       throw new NetworkDown("");
     }
 
-    return data.map(mapApplicationV2ToApp);
+    return data.map(appV2 => (appV2 ? mapApplicationV2ToApp(appV2) : null));
   },
   hashes => String(hashes),
 );

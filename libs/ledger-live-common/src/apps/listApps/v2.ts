@@ -128,12 +128,9 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
 
       const installedList: App[] = [];
 
-      // Nb We can't reliably get the ordered result from the backend because of apps with
-      // inconsistent hashes. An iteration of the backend would be to return a key-value result
-      // instead of an unordered array but I think that's a needless optimization.
-      listApps.forEach(({ name: localName, hash: localHash }) => {
-        const matchFromHash = matches.find(({ hash }) => hash === localHash);
-        if (matchFromHash) {
+      listApps.forEach(({ name: localName, hash: localHash }, index) => {
+        const matchFromHash = matches[index];
+        if (matchFromHash && matchFromHash.hash === localHash) {
           installedList.push(matchFromHash);
           return;
         }
