@@ -125,7 +125,6 @@
     "tryAgain": "Try again",
     "lockScreen": {
       "title": "Welcome back",
-      "subTitle": null,
       "description": "Enter your password to continue",
       "inputPlaceholder": "Type your password",
       "lostPassword": "I lost my password"
