@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.40.1-nightly.0
+
+### Patch Changes
+
+- [#4884](https://github.com/LedgerHQ/ledger-live/pull/4884) [`df5c9ae02a`](https://github.com/LedgerHQ/ledger-live/commit/df5c9ae02a604ddba13ddc64caf8d9ad079c303d) Thanks [@stephane-lieumont-ledger](https://github.com/stephane-lieumont-ledger)! - Need to add other link firebase for quickAccess Recover
+
 ## 6.40.0
 
 ### Minor Changes

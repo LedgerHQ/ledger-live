@@ -1,5 +1,13 @@
 # @ledgerhq/coin-algorand
 
+## 0.3.3-nightly.1
+
+### Patch Changes
+
+- Updated dependencies [[`df5c9ae02a`](https://github.com/LedgerHQ/ledger-live/commit/df5c9ae02a604ddba13ddc64caf8d9ad079c303d)]:
+  - @ledgerhq/types-live@6.40.1-nightly.0
+  - @ledgerhq/coin-framework@0.5.5-nightly.1
+
 ## 0.3.3-nightly.0
 
 ### Patch Changes

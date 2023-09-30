@@ -1,5 +1,21 @@
 # @ledgerhq/live-common
 
+## 31.8.1-nightly.1
+
+### Patch Changes
+
+- [#4867](https://github.com/LedgerHQ/ledger-live/pull/4867) [`bf4c366b6f`](https://github.com/LedgerHQ/ledger-live/commit/bf4c366b6f5b062476645fe37ce62b3925822377) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - include smallest denomination in swap request
+
+- [#4884](https://github.com/LedgerHQ/ledger-live/pull/4884) [`df5c9ae02a`](https://github.com/LedgerHQ/ledger-live/commit/df5c9ae02a604ddba13ddc64caf8d9ad079c303d) Thanks [@stephane-lieumont-ledger](https://github.com/stephane-lieumont-ledger)! - Need to add other link firebase for quickAccess Recover
+
+- Updated dependencies []:
+  - @ledgerhq/coin-algorand@0.3.3-nightly.1
+  - @ledgerhq/coin-evm@0.6.3-nightly.1
+  - @ledgerhq/coin-framework@0.5.5-nightly.1
+  - @ledgerhq/coin-polkadot@0.4.3-nightly.1
+  - @ledgerhq/domain-service@1.1.12-nightly.1
+  - @ledgerhq/hw-app-eth@6.34.7-nightly.1
+
 ## 31.8.1-nightly.0
 
 ### Patch Changes

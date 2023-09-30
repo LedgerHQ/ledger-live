@@ -1,5 +1,22 @@
 # live-mobile
 
+## 3.32.1-nightly.1
+
+### Patch Changes
+
+- [#4887](https://github.com/LedgerHQ/ledger-live/pull/4887) [`cf5ee11bad`](https://github.com/LedgerHQ/ledger-live/commit/cf5ee11bad98dbe3c473244891b5d2a7ef8d7106) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix discreet mode on Deposit flow LLM
+
+- [#4884](https://github.com/LedgerHQ/ledger-live/pull/4884) [`df5c9ae02a`](https://github.com/LedgerHQ/ledger-live/commit/df5c9ae02a604ddba13ddc64caf8d9ad079c303d) Thanks [@stephane-lieumont-ledger](https://github.com/stephane-lieumont-ledger)! - Need to add other link firebase for quickAccess Recover
+
+- [#4844](https://github.com/LedgerHQ/ledger-live/pull/4844) [`7ffc6619aa`](https://github.com/LedgerHQ/ledger-live/commit/7ffc6619aae18b8071ce8ebd2d664d8e09729b47) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Fix drawers in LLM onboarding
+
+- Updated dependencies [[`bf4c366b6f`](https://github.com/LedgerHQ/ledger-live/commit/bf4c366b6f5b062476645fe37ce62b3925822377), [`df5c9ae02a`](https://github.com/LedgerHQ/ledger-live/commit/df5c9ae02a604ddba13ddc64caf8d9ad079c303d)]:
+  - @ledgerhq/live-common@31.8.1-nightly.1
+  - @ledgerhq/types-live@6.40.1-nightly.0
+  - @ledgerhq/coin-evm@0.6.3-nightly.1
+  - @ledgerhq/coin-framework@0.5.5-nightly.1
+  - @ledgerhq/domain-service@1.1.12-nightly.1
+
 ## 3.32.1-nightly.0
 
 ### Patch Changes
