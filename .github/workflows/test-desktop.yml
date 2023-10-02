@@ -118,7 +118,7 @@ jobs:
       FORCE_COLOR: 3
       CI_OS: "windows-latest"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-      DEBUG: "*"
+      DEBUG: "pw:browser*"
       DEBUG_LOGS: 1
     runs-on: [ledger-live-4xlarge-windows-2022]
     steps:
@@ -186,7 +186,7 @@ jobs:
       FORCE_COLOR: 3
       CI_OS: "ubuntu-latest"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-      DEBUG: "*"
+      DEBUG: "pw:browser*"
       DEBUG_LOGS: 1
     runs-on: [ledger-live-4xlarge-linux]
     steps:
@@ -249,7 +249,7 @@ jobs:
       FORCE_COLOR: 3
       CI_OS: "macos-latest"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-      DEBUG: "*"
+      DEBUG: "pw:browser*"
       DEBUG_LOGS: 1
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
