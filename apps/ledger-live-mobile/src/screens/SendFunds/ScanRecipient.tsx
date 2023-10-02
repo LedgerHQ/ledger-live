@@ -9,6 +9,7 @@ import Scanner from "../../components/Scanner";
 import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import type { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
 import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import { log } from "@ledgerhq/logs";
 
 type NavigationProps =
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSelectRecipient>
@@ -36,6 +37,10 @@ const ScanRecipient = ({ route, navigation }: NavigationProps) => {
         }
       }
 
+      const updatedTransaction = bridge.updateTransaction(transaction, patch);
+      log(JSON.stringify(updatedTransaction));
+      console.log({ updatedTransaction, rest });
+
       // FIXME: how can this work?
       // This screen belongs to 2 navigators, Base & SendFunds,
       // but ScreenName.SendSelectRecipient does not exist in Base.
@@ -44,7 +49,7 @@ const ScanRecipient = ({ route, navigation }: NavigationProps) => {
         ...route.params,
         accountId: account.id,
         parentId: parentAccount?.id,
-        transaction: bridge.updateTransaction(transaction, patch),
+        transaction: updatedTransaction,
         justScanned: true,
       });
     },

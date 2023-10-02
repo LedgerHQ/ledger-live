@@ -40,6 +40,7 @@ import RecipientRow from "./RecipientRow";
 import { EditOperationCard } from "../../components/EditOperationCard";
 import { currencySettingsForAccountSelector } from "../../reducers/settings";
 import type { State } from "../../reducers/types";
+import { log } from "@ledgerhq/logs";
 
 const withoutHiddenError = (error: Error): Error | null =>
   error instanceof RecipientRequired ? null : error;
@@ -80,20 +81,24 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
 
     return false;
   }, [transaction]);
+
   const isNftSend = isNftTransaction(transaction);
 
   // handle changes from camera qr code
   const initialTransaction = useRef(transaction);
   const navigationTransaction = route.params?.transaction;
+
   useEffect(() => {
     if (initialTransaction.current !== navigationTransaction && navigationTransaction) {
       setTransaction(navigationTransaction);
       setValue(navigationTransaction.recipient);
     }
   }, [setTransaction, navigationTransaction]);
+
   const onRecipientFieldFocus = useCallback(() => {
     track("SendRecipientFieldFocused");
   }, []);
+
   const onPressScan = useCallback(() => {
     if (!transaction) return null;
     return navigation.navigate(ScreenName.ScanRecipient, {
@@ -103,6 +108,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
       transaction,
     });
   }, [navigation, transaction, route.params]);
+
   const onChangeText = useCallback(
     recipient => {
       if (!account) return;
@@ -117,23 +123,24 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
     [account, parentAccount, setTransaction, transaction, setValue],
   );
 
-  // FIXME: PROP IS NOT USED. REMOVE ?
-  // const clear = useCallback(() => onChangeText(""), [onChangeText]);
   const [bridgeErr, setBridgeErr] = useState(bridgeError);
   useEffect(() => setBridgeErr(bridgeError), [bridgeError]);
-  invariant(account, "account is needed ");
+
   const currency = getAccountCurrency(account);
+
   const onBridgeErrorCancel = useCallback(() => {
     setBridgeErr(null);
     const parent = navigation.getParent();
     if (parent) parent.goBack();
   }, [navigation]);
+
   const onBridgeErrorRetry = useCallback(() => {
     setBridgeErr(null);
     if (!transaction) return;
     const bridge = getAccountBridge(account, parentAccount);
     setTransaction(bridge.updateTransaction(transaction, {}));
   }, [setTransaction, account, parentAccount, transaction]);
+
   const onPressContinue = useCallback(async () => {
     if (!account || !transaction) return null;
     // ERC721 transactions are always sending 1 NFT, so amount step is unecessary
@@ -182,6 +189,8 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
   );
 
   const stuckAccountAndOperation = getStuckAccountAndOperation(account, mainAccount);
+  log("test", JSON.stringify(account));
+  console.log({ account });
 
   return (
     <>
