@@ -25,9 +25,6 @@ const cardano: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoSP,
     appName: "CardanoADA",
-    // FIXME latest app version requires to update cardano libs
-    // https://ledgerhq.atlassian.net/browse/LIVE-5447
-    appVersion: "5.0.0",
   },
   minViableAmount: minBalanceRequired,
   genericDeviceAction: acceptTransaction,
