@@ -136,7 +136,10 @@ export const identifyTargetId = (targetId: number): DeviceModel | null | undefin
 };
 
 /**
+ * From a given USB product id, return the deviceModel associated to it.
  *
+ * The mapping from the product id is only based on the 2 most significant bytes.
+ * For example, Stax is defined with a product id of 0x60ii, a product id 0x6011 would be mapped to it.
  */
 export const identifyUSBProductId = (usbProductId: number): DeviceModel | null | undefined => {
   const legacy = devicesList.find(d => d.legacyUsbProductId === usbProductId);
