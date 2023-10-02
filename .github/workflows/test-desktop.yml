@@ -256,6 +256,9 @@ jobs:
         with:
           ref: ${{ env.REFNAME }}
           base: ${{ inputs.base_ref }}
+      - name: Log content of node_modules
+        run: |
+          find node_modules || echo "no node_modules"
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
