@@ -15,7 +15,10 @@ import {
 } from "../../../components/RootNavigator/types/helpers";
 import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
 import { Step } from "./setupDevice/scenes/BaseStepperView";
-import { lastConnectedDeviceSelector } from "../../../reducers/settings";
+import {
+  hasCompletedOnboardingSelector,
+  lastConnectedDeviceSelector,
+} from "../../../reducers/settings";
 
 type Metadata = {
   id: string;
@@ -33,6 +36,7 @@ function OnboardingStepProtectFlow({ navigation, route }: NavigationProps) {
   const { theme } = useTheme();
 
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
+  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const protectFeature = useFeature("protectServicesMobile");
 
   const dispatch = useDispatch();
@@ -67,7 +71,12 @@ function OnboardingStepProtectFlow({ navigation, route }: NavigationProps) {
     dispatch(completeOnboarding());
     resetCurrentStep();
 
-    if (protectFeature?.enabled && lastConnectedDevice) {
+    // eslint-disable-next-line no-console
+    console.log("onboardingCompleted: ", hasCompletedOnboarding);
+    // eslint-disable-next-line no-console
+    console.log("lastConnectedDevice: ", lastConnectedDevice);
+
+    if (protectFeature?.enabled && (lastConnectedDevice || !hasCompletedOnboarding)) {
       navigation.navigate(NavigatorName.Base, {
         screen: ScreenName.Recover,
         params: {
@@ -80,10 +89,11 @@ function OnboardingStepProtectFlow({ navigation, route }: NavigationProps) {
     }
   }, [
     dispatch,
+    hasCompletedOnboarding,
     lastConnectedDevice,
     navigation,
     protectFeature?.enabled,
-    protectFeature?.params?.protectId,
+    protectFeature.params?.protectId,
     resetCurrentStep,
   ]);
 
