@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 
 if (getEnv("PLAYWRIGHT_RUN")) {
   const timemachine = require("timemachine");
@@ -12,6 +12,6 @@ if (!process.env.IS_INTERNAL_PROCESS) {
   // Main electron thread
   require("./main");
 } else {
-  // Internal thread (coins, hardware)
+  // Internal process (hardware wallet USB management)
   require("./internal");
 }
