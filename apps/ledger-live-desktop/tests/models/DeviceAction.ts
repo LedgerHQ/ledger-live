@@ -45,7 +45,7 @@ export class DeviceAction {
   async genuineCheck(appDesc = "Bitcoin", installedDesc = "Bitcoin") {
     const result = mockListAppsResult(appDesc, installedDesc, deviceInfo);
     const modelId = DeviceModelId.nanoS;
-
+    console.log(modelId);
     await this.page.evaluate(
       args => {
         const [deviceInfo, result, modelId] = args;
