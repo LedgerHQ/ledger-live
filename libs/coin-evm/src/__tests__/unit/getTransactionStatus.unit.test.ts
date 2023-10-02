@@ -177,11 +177,10 @@ describe("EVM Family", () => {
         expect(res.errors).toEqual({});
       });
 
-      it("should detect tx without amount (because of useAllAmount) but from tokenAccount and not return error", async () => {
+      it("should detect tx without amount from tokenAccount and return error", async () => {
         const tx = {
           ...eip1559Tx,
           amount: new BigNumber(0),
-          useAllAmount: true,
           subAccountId: tokenAccount.id,
         };
         const res = await getTransactionStatus(
@@ -198,7 +197,11 @@ describe("EVM Family", () => {
           tx,
         );
 
-        expect(res.errors).toEqual({});
+        expect(res.errors).toEqual(
+          expect.objectContaining({
+            amount: new AmountRequired(),
+          }),
+        );
       });
 
       it("should detect account not having enough balance for a tx and have an error", async () => {
