@@ -249,13 +249,16 @@ jobs:
       FORCE_COLOR: 3
       CI_OS: "macos-latest"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-      # DEBUG: "pw:browser*"
-      # DEBUG_LOGS: 1
+      DEBUG: "pw:*"
+      DEBUG_LOGS: 1
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
           ref: ${{ env.REFNAME }}
           base: ${{ inputs.base_ref }}
+      - name: Log content of node_modules
+        run: |
+          find node_modules || echo "no node_modules"
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
@@ -268,6 +271,8 @@ jobs:
       - name: Run playwright tests
         id: tests
         run: |
+          find node_modules/.pnpm/electron*
+          readlink -f 'node_modules/.pnpm/electron@25.1.1/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Framework.framework/Electron Framework' || echo "no such Electron Framework"
           pnpm desktop test:playwright
       - name: upload diffs to imgur
         if: always() && !cancelled()
