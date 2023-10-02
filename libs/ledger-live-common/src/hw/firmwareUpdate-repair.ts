@@ -91,7 +91,7 @@ const repair = (
             (deviceInfo.majMin === "0.6" || deviceInfo.majMin === "0.7")
           ) {
             // finish earlier
-            return throwError(new MCUNotGenuineToDashboard());
+            return throwError(() => new MCUNotGenuineToDashboard());
           }
 
           if (forceMCU) {

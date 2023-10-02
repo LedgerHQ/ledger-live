@@ -151,6 +151,7 @@ export type CryptoCurrencyId =
   | "velas_evm"
   | "syscoin"
   | "internet_computer"
+  | "injective"
   | "telos_evm"
   | "klaytn"
   | "polygon_zk_evm"

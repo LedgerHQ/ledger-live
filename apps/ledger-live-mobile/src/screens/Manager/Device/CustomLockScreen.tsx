@@ -6,7 +6,7 @@ import { Device } from "@ledgerhq/types-devices";
 import staxFetchImageHash from "@ledgerhq/live-common/hw/staxFetchImageHash";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 
-import { from } from "rxjs";
+import { firstValueFrom, from } from "rxjs";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 
@@ -36,11 +36,11 @@ const CustomLockScreen: React.FC<{ device: Device; disabled: boolean }> = ({
   }, [lastSeenCustomImage]);
 
   useEffect(() => {
-    withDevice(device.deviceId)(transport => from(staxFetchImageHash(transport)))
-      .toPromise()
-      .then(hash => {
-        setDeviceHasImage(hash !== "");
-      });
+    firstValueFrom(
+      withDevice(device.deviceId)(transport => from(staxFetchImageHash(transport))),
+    ).then(hash => {
+      setDeviceHasImage(hash !== "");
+    });
   }, [device.deviceId]);
 
   const handleStartCustomImage = useCallback(

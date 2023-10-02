@@ -23,18 +23,12 @@ on:
         description: true if the PR is in draft
         required: false
         default: "false"
-      full-tests:
-        description: Set to true to run the full e2e tests
-        required: false
-        type: boolean
-        default: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
   cancel-in-progress: true
 
 env:
-  RUN_FULL_SUITE: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.full-tests) }}
   REFNAME: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
 
 jobs:
@@ -127,7 +121,6 @@ jobs:
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
     runs-on: [ledger-live-4xlarge-windows-2022]
-    if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.full-tests) }}
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
@@ -164,12 +157,6 @@ jobs:
         with:
           name: images
           path: images-windows.json
-      - name: upload network responses
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: windows-network-responses
-          path: apps/ledger-live-desktop/tests/artifacts/networkResponses.log
       - name: Upload playwright test results [On Failure]
         uses: actions/upload-artifact@v3
         if: failure() && !cancelled()
@@ -181,6 +168,7 @@ jobs:
             apps/ledger-live-desktop/tests/artifacts/coverage
             apps/ledger-live-desktop/tests/artifacts/videos
             apps/ledger-live-desktop/tests/artifacts/logs
+            apps/ledger-live-desktop/tests/artifacts/*.log
       - name: Upload Allure Report
         if: always()
         uses: actions/upload-artifact@v3
@@ -217,11 +205,7 @@ jobs:
       - name: Run playwright tests [Linux => xvfb-run]
         id: tests
         run: |
-          if [[ $RUN_FULL_SUITE == true ]]; then
-            xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
-          else
-            xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright:smoke
-          fi
+          xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
       - name: upload diffs to imgur
         if: always() && !cancelled()
         uses: ./tools/actions/upload-images
@@ -236,12 +220,6 @@ jobs:
         with:
           name: images
           path: images-linux.json
-      - name: upload network responses
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: linux-network-responses
-          path: apps/ledger-live-desktop/tests/artifacts/networkResponses.log
       - name: Upload playwright test results [On Failure]
         uses: actions/upload-artifact@v3
         if: failure() && !cancelled()
@@ -253,6 +231,7 @@ jobs:
             apps/ledger-live-desktop/tests/artifacts/coverage
             apps/ledger-live-desktop/tests/artifacts/videos
             apps/ledger-live-desktop/tests/artifacts/logs
+            apps/ledger-live-desktop/tests/artifacts/*.log
       - name: Upload Allure Report
         if: always()
         uses: actions/upload-artifact@v3
@@ -269,9 +248,8 @@ jobs:
       FORCE_COLOR: 3
       CI_OS: "macos-latest"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-      DEBUG: "pw:browser*"
-      DEBUG_LOGS: 1
-    if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.full-tests) }}
+      # DEBUG: "pw:browser*"
+      # DEBUG_LOGS: 1
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
@@ -304,12 +282,6 @@ jobs:
         with:
           name: images
           path: images-macos.json
-      - name: upload network responses
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: macos-network-responses
-          path: apps/ledger-live-desktop/tests/artifacts/networkResponses.log
       - name: Upload playwright test results [On Failure]
         uses: actions/upload-artifact@v3
         if: failure() && !cancelled()
@@ -321,6 +293,7 @@ jobs:
             apps/ledger-live-desktop/tests/artifacts/coverage
             apps/ledger-live-desktop/tests/artifacts/videos
             apps/ledger-live-desktop/tests/artifacts/logs
+            apps/ledger-live-desktop/tests/artifacts/*.log
       - name: Upload Allure Report
         if: always()
         uses: actions/upload-artifact@v3
@@ -351,7 +324,7 @@ jobs:
         with:
           script: |
             const fs = require("fs");
-            const files = ${{ env.RUN_FULL_SUITE }} ? ["images-linux", "images-windows", "images-macos"] : ["images-linux"]
+            const files = ["images-linux", "images-windows", "images-macos"];
             let result = {};
             for (const file of files) {
               try {
@@ -421,7 +394,7 @@ jobs:
               pass: ${{ needs.deadcodecheck.result == 'success' }},
             };
 
-            const report = ${{ env.RUN_FULL_SUITE }} ? {
+            const report = {
               mac: {
                 pass: ${{ needs.e2e-tests-mac.outputs.status == 'success' }},
                 status: "${{ needs.e2e-tests-mac.outputs.status }}",
@@ -433,11 +406,6 @@ jobs:
               windows: {
                 pass: ${{ needs.e2e-tests-windows.outputs.status == 'success' }},
                 status: "${{ needs.e2e-tests-windows.outputs.status }}",
-              },
-            } : {
-              linux: {
-                pass: ${{ needs.e2e-tests-linux.outputs.status == 'success' }},
-                status: "${{ needs.e2e-tests-linux.outputs.status }}",
               },
             };
 
@@ -578,20 +546,11 @@ jobs:
                   }
                 },
                 {
-                  ...(${{ env.RUN_FULL_SUITE }} ? {
-                    "type": "section",
-                    "text": {
-                      "type": "mrkdwn",
-                      "text": `- 🐧 linux: ${report.linux.pass ? "✅" : "❌"}\n - 🪟 windows: ${report.windows.pass ? "✅" : "❌"}\n - 🍏 macos: ${report.mac.pass ? "✅" : "❌"}\n`
-                    }
-                  } :
-                  {
-                    "type": "section",
-                    "text": {
-                      "type": "mrkdwn",
-                      "text": `- 🐧 linux: ${report.linux.pass ? "✅" : "❌"}\n`
-                    }
-                  })
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": `- 🐧 linux: ${report.linux.pass ? "✅" : "❌"}\n - 🪟 windows: ${report.windows.pass ? "✅" : "❌"}\n - 🍏 macos: ${report.mac.pass ? "✅" : "❌"}\n`
+                  }
                 },
                 {
                   "type": "divider"

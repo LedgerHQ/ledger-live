@@ -69,7 +69,8 @@ type Status = PartialNullable<{
     managerAppName?: string;
   };
   isLoading: boolean;
-  allowManagerRequestedWording: string;
+  allowManagerRequested: boolean;
+  allowRenamingRequested: boolean;
   requestQuitApp: boolean;
   deviceInfo: DeviceInfo;
   requestOpenApp: string;
@@ -184,7 +185,8 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     isLocked,
     error,
     isLoading,
-    allowManagerRequestedWording,
+    allowManagerRequested,
+    allowRenamingRequested,
     requestQuitApp,
     deviceInfo,
     requestOpenApp,
@@ -314,15 +316,22 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
       theme,
     });
   }
-
-  if (allowManagerRequestedWording) {
-    const wording = allowManagerRequestedWording;
+  if (allowManagerRequested) {
     return renderAllowManager({
       t,
       device: selectedDevice,
-      wording,
       colors,
       theme,
+    });
+  }
+
+  if (allowRenamingRequested) {
+    return renderAllowManager({
+      t,
+      device: selectedDevice,
+      colors,
+      theme,
+      requestType: "rename",
     });
   }
 

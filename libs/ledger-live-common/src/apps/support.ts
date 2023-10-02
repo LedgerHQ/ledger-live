@@ -25,7 +25,7 @@ export function shouldUpgrade(appName: string, appVersion: string): boolean {
   return false;
 }
 const appVersionsRequired = {
-  Cosmos: ">= 2.34.4",
+  Cosmos: ">= 2.34.12",
   Algorand: ">= 1.2.9",
   MultiversX: ">= 1.0.18",
   Polkadot: ">= 24.9430.1",

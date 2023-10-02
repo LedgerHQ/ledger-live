@@ -1,4 +1,5 @@
 import React, { ReactNode } from "react";
+import VersionNumber from "react-native-version-number";
 import { RemoteLiveAppProvider } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { LocalLiveAppProvider } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import { RampCatalogProvider } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
@@ -30,6 +31,7 @@ export default function PlatformAppProviderWrapper({ children }: PlatformAppProv
         platform: PLATFORM,
         allowDebugApps: isDebugAppEnabled,
         allowExperimentalApps: isExperimentalAppEnabled,
+        llVersion: VersionNumber.appVersion,
       }}
     >
       <LocalLiveAppProvider>

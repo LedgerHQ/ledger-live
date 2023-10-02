@@ -1,8 +1,8 @@
 import * as core from "@actions/core";
 import * as fs from "fs";
-import FormData from "form-data";
 import * as path from "path";
 import fetch, { Response } from "node-fetch";
+import { FormData } from "formdata-node";
 
 function handleErrors(response: Response) {
   if (!response.ok) {
@@ -25,22 +25,23 @@ const uploadImage = async () => {
   const workspace = core.getInput("workspace");
   const fullPath = path.resolve(p);
 
-  const upload = async (file: any, i = 0): Promise<string> => {
+  const upload = async (file: Buffer, i = 0): Promise<string> => {
     if (i > 2) {
       return "error";
     }
-    const body = new FormData();
-    body.append("type", "file");
-    body.append("image", file);
-
     try {
+      const form = new FormData();
+      form.set("image", file.toString("base64"));
+
       const res = await fetch("https://api.imgur.com/3/image", {
         method: "POST",
         headers: {
           Accept: "application/json",
           Authorization: `Client-ID 11eb8a62f4c7927`,
         },
-        body,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        body: form,
       }).then(handleErrors);
 
       const link = ((await res.json()) as { data: { link: string } }).data.link;
@@ -50,7 +51,10 @@ const uploadImage = async () => {
       return link;
     } catch (e) {
       await wait(3000);
-      return upload(file, i + 1);
+      console.log(e);
+      core.debug(e as string);
+      core.setOutput("error", e);
+      return await upload(file, i + 1);
     }
   };
 

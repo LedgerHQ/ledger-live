@@ -43,6 +43,15 @@ export function useLearnMoreURI(
   return useReplacedURI(uri, id);
 }
 
+export function useQuickAccessURI(
+  servicesConfig: Feature_ProtectServicesMobile | null,
+): string | undefined {
+  const uri = servicesConfig?.params?.managerStatesData?.NEW?.quickAccessURI;
+  const id = servicesConfig?.params?.protectId;
+
+  return useReplacedURI(uri, id);
+}
+
 export function useAlreadySubscribedURI(
   servicesConfig: Feature_ProtectServicesMobile | null,
 ): string | undefined {

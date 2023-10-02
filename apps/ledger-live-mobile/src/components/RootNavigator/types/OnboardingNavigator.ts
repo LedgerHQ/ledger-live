@@ -3,14 +3,6 @@ import { NavigatorScreenParams } from "@react-navigation/native";
 
 import { NavigatorName, ScreenName } from "../../../const";
 
-export type OnboardingCarefulWarningParamList = {
-  [ScreenName.OnboardingModalWarning]: { onNext?: () => void };
-  [ScreenName.OnboardingModalSyncDesktopInformation]: { onNext?: () => void };
-  [ScreenName.OnboardingModalRecoveryPhraseWarning]: {
-    onNext?: () => void;
-  };
-};
-
 export type OnboardingPreQuizModalNavigatorParamList = {
   [ScreenName.OnboardingPreQuizModal]: { onNext?: () => void };
 };
@@ -24,7 +16,6 @@ export type OnboardingNavigatorParamList = {
   [ScreenName.OnboardingTermsOfUse]: undefined;
   [ScreenName.OnboardingDeviceSelection]: undefined;
   [ScreenName.OnboardingUseCase]: { deviceModelId: DeviceModelId };
-  [NavigatorName.OnboardingCarefulWarning]: NavigatorScreenParams<OnboardingCarefulWarningParamList>;
   [NavigatorName.OnboardingPreQuiz]: NavigatorScreenParams<OnboardingPreQuizModalNavigatorParamList>;
   [ScreenName.OnboardingModalDiscoverLive]: undefined;
   [ScreenName.OnboardingModalSetupNewDevice]: { deviceModelId: DeviceModelId };

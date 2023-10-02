@@ -8,7 +8,7 @@ import React, { useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { Languages, Language } from "~/config/languages";
-import { from } from "rxjs";
+import { firstValueFrom, from } from "rxjs";
 import { setLanguage, setLastSeenDevice } from "~/renderer/actions/settings";
 import Track from "~/renderer/analytics/Track";
 import { track } from "~/renderer/analytics/segment";
@@ -43,12 +43,12 @@ const LanguageSelect: React.FC<Props> = ({ disableLanguagePrompt }) => {
   const currentDevice = useSelector(getCurrentDevice);
   const refreshDeviceInfo = useCallback(() => {
     if (currentDevice) {
-      withDevice(currentDevice.deviceId)(transport => from(getDeviceInfo(transport)))
-        .toPromise()
-        .then((deviceInfo: DeviceInfo) => {
-          if (!isEqual(deviceInfo, lastSeenDevice?.deviceInfo))
-            dispatch(setLastSeenDevice({ deviceInfo }));
-        });
+      firstValueFrom(
+        withDevice(currentDevice.deviceId)(transport => from(getDeviceInfo(transport))),
+      ).then((deviceInfo: DeviceInfo) => {
+        if (!isEqual(deviceInfo, lastSeenDevice?.deviceInfo))
+          dispatch(setLastSeenDevice({ deviceInfo }));
+      });
     }
   }, [currentDevice, lastSeenDevice?.deviceInfo, dispatch]);
 

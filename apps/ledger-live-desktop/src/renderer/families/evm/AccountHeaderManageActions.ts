@@ -2,7 +2,7 @@ import { Account, AccountLike } from "@ledgerhq/types-live";
 import { useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import IconCoins from "~/renderer/icons/ClaimReward";
+import IconCoins from "~/renderer/icons/Coins";
 import { openModal } from "~/renderer/actions/modals";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 

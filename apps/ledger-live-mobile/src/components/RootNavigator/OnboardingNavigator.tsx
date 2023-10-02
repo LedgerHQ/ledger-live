@@ -35,15 +35,11 @@ import OnboardingSetupDeviceInformation from "../../screens/Onboarding/steps/set
 import OnboardingSetupDeviceRecoveryPhrase from "../../screens/Onboarding/steps/setupDevice/drawers/SecureRecoveryPhrase";
 import OnboardingGeneralInformation from "../../screens/Onboarding/steps/setupDevice/drawers/GeneralInformation";
 import OnboardingBluetoothInformation from "../../screens/Onboarding/steps/setupDevice/drawers/BluetoothConnection";
-import OnboardingWarning from "../../screens/Onboarding/steps/setupDevice/drawers/Warning";
-import OnboardingSyncDesktopInformation from "../../screens/Onboarding/steps/setupDevice/drawers/SyncDesktopInformation";
-import OnboardingRecoveryPhraseWarning from "../../screens/Onboarding/steps/setupDevice/drawers/RecoveryPhraseWarning";
 import PostWelcomeSelection from "../../screens/Onboarding/steps/postWelcomeSelection";
 import GetDeviceScreen from "../../screens/GetDeviceScreen";
 import OnboardingProtectFlow from "../../screens/Onboarding/steps/protectFlow";
 
 import {
-  OnboardingCarefulWarningParamList,
   OnboardingNavigatorParamList,
   OnboardingPreQuizModalNavigatorParamList,
 } from "./types/OnboardingNavigator";
@@ -53,56 +49,8 @@ import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import AccessExistingWallet from "../../screens/Onboarding/steps/accessExistingWallet";
 
 const Stack = createStackNavigator<OnboardingNavigatorParamList>();
-const OnboardingCarefulWarningStack = createStackNavigator<OnboardingCarefulWarningParamList>();
 const OnboardingPreQuizModalStack =
   createStackNavigator<OnboardingPreQuizModalNavigatorParamList>();
-
-function OnboardingCarefulWarning(
-  props: StackNavigatorProps<OnboardingNavigatorParamList, NavigatorName.OnboardingCarefulWarning>,
-) {
-  const options: Partial<StackNavigationOptions> = {
-    header: props => (
-      // TODO: Replace this value with constant.purple as soon as the value is fixed in the theme
-      <Flex backgroundColor="background.main">
-        <NavigationHeader {...props} hideBack containerProps={{ backgroundColor: "transparent" }} />
-      </Flex>
-    ),
-    headerStyle: { backgroundColor: "transparent" },
-  };
-
-  return (
-    <NavigationModalContainer
-      {...props}
-      deadZoneProps={{ flex: 1 }}
-      contentContainerProps={{
-        maxHeight: "70%",
-        flexDirection: "row",
-      }}
-      backgroundColor="background.main"
-    >
-      <OnboardingCarefulWarningStack.Navigator>
-        <OnboardingCarefulWarningStack.Screen
-          name={ScreenName.OnboardingModalWarning}
-          component={OnboardingWarning}
-          options={{ title: "", ...options }}
-          // initialParams={props.route.params}
-        />
-        <OnboardingCarefulWarningStack.Screen
-          name={ScreenName.OnboardingModalSyncDesktopInformation}
-          component={OnboardingSyncDesktopInformation}
-          options={{ title: "", ...options }}
-          // initialParams={props.route.params}
-        />
-        <OnboardingCarefulWarningStack.Screen
-          name={ScreenName.OnboardingModalRecoveryPhraseWarning}
-          component={OnboardingRecoveryPhraseWarning}
-          options={{ title: "", ...options }}
-          // initialParams={props.route.params}
-        />
-      </OnboardingCarefulWarningStack.Navigator>
-    </NavigationModalContainer>
-  );
-}
 
 function OnboardingPreQuizModalNavigator(
   props: StackNavigatorProps<OnboardingNavigatorParamList, NavigatorName.OnboardingPreQuiz>,
@@ -119,12 +67,7 @@ function OnboardingPreQuizModalNavigator(
   };
 
   return (
-    <NavigationModalContainer
-      {...props}
-      backgroundColor="constant.purple"
-      deadZoneProps={{ flex: 1 }}
-      contentContainerProps={{ maxHeight: "55%" }}
-    >
+    <NavigationModalContainer {...props} backgroundColor="constant.purple">
       <OnboardingPreQuizModalStack.Navigator>
         <OnboardingPreQuizModalStack.Screen
           name={ScreenName.OnboardingPreQuizModal}
@@ -213,11 +156,6 @@ export default function OnboardingNavigator() {
           headerShown: true,
           headerLeft: () => <NavigationHeaderBackButton />,
         }}
-      />
-      <Stack.Screen
-        name={NavigatorName.OnboardingCarefulWarning}
-        component={OnboardingCarefulWarning}
-        options={modalOptions}
       />
       <Stack.Screen
         name={NavigatorName.OnboardingPreQuiz}

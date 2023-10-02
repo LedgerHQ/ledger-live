@@ -38,6 +38,10 @@ node-hid Transport minimal implementation
 #### Parameters
 
 *   `device` **HID.HID** 
+*   `$1` **{context: TraceContext?, logType: LogType?}**  (optional, default `{}`)
+
+    *   `$1.context`  
+    *   `$1.logType`  
 
 #### Examples
 

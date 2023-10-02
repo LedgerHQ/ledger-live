@@ -5,6 +5,7 @@ import { log } from "@ledgerhq/logs";
 import { AccountBridge } from "@ledgerhq/types-live";
 import React, { useCallback, useEffect, useState } from "react";
 import SendFeeMode from "~/renderer/components/SendFeeMode";
+import Spinner from "~/renderer/components/Spinner";
 import { EvmFamily } from "../types";
 import GasLimitField from "./GasLimitField";
 import GasPriceField from "./GasPriceField";
@@ -16,7 +17,7 @@ const Root: NonNullable<EvmFamily["sendAmountFields"]>["component"] = props => {
   const { account, updateTransaction, transaction } = props;
   const bridge: AccountBridge<EvmTransaction> = getAccountBridge(account);
 
-  const [gasOptions, error] = useGasOptions({
+  const [gasOptions, error, loading] = useGasOptions({
     currency: account.currency,
     transaction,
     interval: account.currency.blockAvgTime ? account.currency.blockAvgTime * 1000 : undefined,
@@ -44,6 +45,18 @@ const Root: NonNullable<EvmFamily["sendAmountFields"]>["component"] = props => {
     },
     [updateTransaction, bridge],
   );
+
+  if (loading) {
+    return (
+      <Spinner
+        style={{
+          margin: "auto",
+        }}
+        size={32}
+        id="evm-fee-strategy-gas-options-spinner"
+      />
+    );
+  }
 
   /**
    * If no gasOptions available, this means this currency does not have a
