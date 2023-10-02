@@ -1,5 +1,25 @@
 # @ledgerhq/live-common
 
+## 31.8.0
+
+### Minor Changes
+
+- [#4846](https://github.com/LedgerHQ/ledger-live/pull/4846) [`61272164de`](https://github.com/LedgerHQ/ledger-live/commit/61272164de6e81d9b5e5ad988b7eb8c40d3cf735) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Force min app cosmos version to 2.34.12
+
+- [#4851](https://github.com/LedgerHQ/ledger-live/pull/4851) [`6c83521fee`](https://github.com/LedgerHQ/ledger-live/commit/6c83521fee8da656858630c1cb37a5af95df3362) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Integrate injective + gas rework
+
+### Patch Changes
+
+- Updated dependencies [[`6c83521fee`](https://github.com/LedgerHQ/ledger-live/commit/6c83521fee8da656858630c1cb37a5af95df3362)]:
+  - @ledgerhq/cryptoassets@9.13.0
+  - @ledgerhq/coin-algorand@0.3.2
+  - @ledgerhq/coin-evm@0.6.2
+  - @ledgerhq/coin-framework@0.5.4
+  - @ledgerhq/coin-polkadot@0.4.2
+  - @ledgerhq/domain-service@1.1.11
+  - @ledgerhq/evm-tools@1.0.7
+  - @ledgerhq/hw-app-eth@6.34.6
+
 ## 31.7.0
 
 ### Minor Changes

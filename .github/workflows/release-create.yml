@@ -9,6 +9,12 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
+      - uses: dorny/paths-filter@v2
+        id: filters
+        with:
+          filters: |
+            cryptoassets:
+              - 'libs/ledgerjs/packages/cryptoassets/src/data/**'
       - name: generate token
         id: generate-token
         uses: tibdex/github-app-token@v1
@@ -30,6 +36,13 @@ jobs:
         uses: ./tools/actions/composites/setup-toolchain
       - name: install dependencies
         run: pnpm i -F "ledger-live"
+      - name: update dynamic call tokens
+        run: pnpm import:cal_tokens
+      - name: commit new cryptoassets
+        if: steps.filters.outputs.cryptoassets == 'true'
+        run: |
+          git add .
+          git commit -m "chore(prerelease) update cryptoassets list
       - name: enter prerelease mode
         run: pnpm changeset pre enter next
       - name: commit
