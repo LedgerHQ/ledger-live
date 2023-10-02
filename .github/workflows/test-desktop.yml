@@ -249,7 +249,7 @@ jobs:
       FORCE_COLOR: 3
       CI_OS: "macos-latest"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-      DEBUG: "*"
+      DEBUG: "pw:*"
       DEBUG_LOGS: 1
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
@@ -268,6 +268,8 @@ jobs:
       - name: Run playwright tests
         id: tests
         run: |
+          ls -la "node_modules/.pnpm/electron@25.1.1/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron\ Framework.framework/Electron\ Framework"
+          tree node_modules/.pnpm/electron*
           pnpm desktop test:playwright
       - name: upload diffs to imgur
         if: always() && !cancelled()
