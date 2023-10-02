@@ -19,7 +19,11 @@ const StorageBarItem = (props: FlexBoxProps & { installing: boolean }) => {
   const animatedStyle = useAnimatedStyle(() => {
     const opacityValue = interpolate(opacity.value, [0, 1], [0, 1]);
     return {
-      opacity: withRepeat(withTiming(opacityValue, { duration: 800 }), -1, true),
+      opacity: withRepeat(
+        withTiming(opacityValue, { duration: 800 }),
+        installing ? -1 : undefined,
+        true,
+      ),
     };
   });
 

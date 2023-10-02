@@ -62,6 +62,7 @@ export type GlobalModalData = {
   MODAL_NO_FUNDS_STAKE: {
     account: AccountLike | undefined | null;
     parentAccount?: Account | undefined | null;
+    entryPoint?: "get-funds" | undefined;
   };
   MODAL_PASSWORD: undefined;
   MODAL_DISABLE_PASSWORD: undefined;

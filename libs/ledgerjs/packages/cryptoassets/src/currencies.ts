@@ -3179,8 +3179,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "https://chain.so/tx/ZEC/$hash",
-        address: "https://chain.so/address/ZEC/$address",
+        tx: "https://zcashblockexplorer.com/transactions/$hash",
+        address: "https://zcashblockexplorer.com/address/$address",
       },
     ],
     explorerId: "zec",
@@ -3596,6 +3596,35 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       {
         tx: "https://dashboard.internetcomputer.org/transaction/$hash",
         address: "https://dashboard.internetcomputer.org/account/$address",
+      },
+    ],
+  },
+  injective: {
+    type: "CryptoCurrency",
+    id: "injective",
+    coinType: 60,
+    name: "Injective",
+    managerAppName: "Cosmos",
+    ticker: "INJ",
+    scheme: "injective",
+    color: "#0bd",
+    family: "cosmos",
+    units: [
+      {
+        name: "Injective",
+        code: "INJ",
+        magnitude: 18,
+      },
+      {
+        name: "Micro-Injective",
+        code: "inj",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://www.mintscan.io/injective/txs/$hash",
+        address: "https://www.mintscan.io/injective/validators/$address",
       },
     ],
   },

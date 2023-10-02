@@ -1,6 +1,6 @@
 {
   "name": "live-mobile",
-  "version": "3.31.0",
+  "version": "3.32.0",
   "private": true,
   "scripts": {
     "postinstall": "zx ./scripts/post.mjs",
@@ -181,9 +181,7 @@
     "redux-thunk": "2.4.2",
     "reselect": "4.0.0",
     "rn-fetch-blob": "^0.12.0",
-    "rxjs": "^6.6.6",
-    "rxjs-compat": "^6.6.6",
-    "rxjs7": "npm:rxjs@7.8.1",
+    "rxjs": "^7.8.1",
     "semver": "^7.3.7",
     "storyly-react-native": "2.0.1",
     "styled-components": "^5.3.3",

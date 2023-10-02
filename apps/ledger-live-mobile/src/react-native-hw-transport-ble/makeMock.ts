@@ -1,5 +1,5 @@
 import Transport from "@ledgerhq/hw-transport";
-import { from, PartialObserver } from "rxjs";
+import { firstValueFrom, from, PartialObserver } from "rxjs";
 import { take, first, filter } from "rxjs/operators";
 import type { Device } from "@ledgerhq/types-devices";
 import type { Observer as TransportObserver, DescriptorEvent } from "@ledgerhq/hw-transport";
@@ -59,12 +59,12 @@ export default (opts: Opts) => {
     }
 
     static async open(device: string | Device) {
-      await e2eBridgeClient
-        .pipe(
+      await firstValueFrom(
+        e2eBridgeClient.pipe(
           filter(msg => msg.type === "open"),
           first(),
-        )
-        .toPromise();
+        ),
+      );
       return new BluetoothTransportMock(
         typeof device === "string" ? createTransportDeviceMock(device, "", "") : device,
       );

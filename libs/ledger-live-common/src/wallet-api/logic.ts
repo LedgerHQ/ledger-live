@@ -99,19 +99,16 @@ export function signTransactionLogic(
     ? parentAccount?.currency.family
     : account.currency.family;
 
-  if (
-    accountFamily !== transaction.family &&
-    // `transaction` is a WalletAPITransaction, so it doesn't have a evm family and use ethereum instead
-    !(accountFamily === "evm" && transaction.family === "ethereum")
-  ) {
-    return Promise.reject(
-      new Error(`Transaction family not matching account currency family. Account family: ${accountFamily}, Transaction family: ${transaction.family}
-      `),
-    );
-  }
-
   const { canEditFees, liveTx, hasFeesProvided } =
     getWalletAPITransactionSignFlowInfos(transaction);
+
+  if (accountFamily !== liveTx.family) {
+    return Promise.reject(
+      new Error(
+        `Account and transaction must be from the same family. Account family: ${accountFamily}, Transaction family: ${liveTx.family}`,
+      ),
+    );
+  }
 
   return uiNavigation(account, parentAccount, {
     canEditFees,
@@ -238,6 +235,8 @@ export type CompleteExchangeRequest = {
   signature: string;
   feesStrategy: string;
   exchangeType: number;
+  swapId?: string;
+  rate?: number;
 };
 export type CompleteExchangeUiRequest = {
   provider: string;
@@ -247,6 +246,8 @@ export type CompleteExchangeUiRequest = {
   signature: string;
   feesStrategy: string;
   exchangeType: number;
+  swapId?: string;
+  rate?: number;
 };
 
 export function completeExchangeLogic(
@@ -260,6 +261,8 @@ export function completeExchangeLogic(
     signature,
     feesStrategy,
     exchangeType,
+    swapId,
+    rate,
   }: CompleteExchangeRequest,
   uiNavigation: (request: CompleteExchangeUiRequest) => Promise<string>,
 ): Promise<string> {
@@ -306,15 +309,15 @@ export function completeExchangeLogic(
   const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
   const mainFromAccountFamily = mainFromAccount.currency.family;
 
-  if (transaction.family !== mainFromAccountFamily) {
+  const { liveTx } = getWalletAPITransactionSignFlowInfos(transaction);
+
+  if (liveTx.family !== mainFromAccountFamily) {
     return Promise.reject(
       new Error(
-        `Account and transaction must be from the same family. Account family: ${mainFromAccountFamily}, Transaction family: ${transaction.family}`,
+        `Account and transaction must be from the same family. Account family: ${mainFromAccountFamily}, Transaction family: ${liveTx.family}`,
       ),
     );
   }
-
-  const { liveTx } = getWalletAPITransactionSignFlowInfos(transaction);
 
   /**
    * 'subAccountId' is used for ETH and it's ERC-20 tokens.
@@ -348,5 +351,7 @@ export function completeExchangeLogic(
     signature,
     feesStrategy,
     exchangeType,
+    swapId,
+    rate,
   });
 }

@@ -100,6 +100,7 @@ const Earn = (props: NavigationProps) => {
                 parentRoute: route,
                 // Stake flow will skip step 1 (select CryptoCurrency) and step 2 (select Account), and navigate straight to NoFunds flow:
                 alwaysShowNoFunds: true, // Navigate to NoFunds even if some funds available.
+                entryPoint: "get-funds",
               },
             });
           }

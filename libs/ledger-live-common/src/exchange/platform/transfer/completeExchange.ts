@@ -1,5 +1,5 @@
 import secp256k1 from "secp256k1";
-import { from, Observable } from "rxjs";
+import { firstValueFrom, from, Observable } from "rxjs";
 import { TransportStatusError, WrongDeviceForAccount } from "@ledgerhq/errors";
 
 import { delay } from "../../../promise";
@@ -19,7 +19,7 @@ import type {
 } from "../types";
 
 const withDevicePromise = (deviceId, fn) =>
-  withDevice(deviceId)(transport => from(fn(transport))).toPromise();
+  firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
 
 const completeExchange = (
   input: CompleteExchangeInputFund | CompleteExchangeInputSell,

@@ -1,3 +1,7 @@
+import {
+  CexDepositEntryPointsLocationsDesktop,
+  CexDepositEntryPointsLocationsMobile,
+} from "./cexDeposit";
 import { ChainwatchNetwork } from "./chainwatch";
 import { StorylyInstanceID } from "./storyly";
 
@@ -103,6 +107,7 @@ export type CurrencyFeatures = {
   currencyPersistence: DefaultFeature;
   currencyQuicksilver: DefaultFeature;
   currencyInternetComputer: DefaultFeature;
+  currencyInjective: DefaultFeature;
   currencyTelosEvm: DefaultFeature;
   currencyCoreum: DefaultFeature;
   currencyPolygonZkEvm: DefaultFeature;
@@ -169,6 +174,10 @@ export type Features = CurrencyFeatures & {
   transactionsAlerts: Feature_TransactionsAlerts;
   listAppsV2: Feature_ListAppsV2;
   llmWalletQuickActions: Feature_LlmWalletQuickActions;
+  cexDepositEntryPointsDesktop: Feature_CexDepositEntryPointsDesktop;
+  cexDepositEntryPointsMobile: Feature_CexDepositEntryPointsMobile;
+  fetchAdditionalCoins: Feature_FetchAdditionalCoins;
+  ptxSwapLiveApp: Feature_PtxSwapLiveApp;
 };
 
 /**
@@ -300,6 +309,7 @@ export type Feature_ProtectServicesMobile = Feature<{
     NEW: {
       learnMoreURI: string;
       alreadySubscribedURI: string;
+      quickAccessURI: string;
     };
   };
   login: {
@@ -415,6 +425,25 @@ export type Feature_RatingsPrompt = Feature<{
   typeform_url: string;
 }>;
 
+export type Feature_CexDepositEntryPointsDesktop = Feature<{
+  path: string;
+  locations: {
+    [key in CexDepositEntryPointsLocationsDesktop]: boolean;
+  };
+}>;
+
+export type Feature_CexDepositEntryPointsMobile = Feature<{
+  path: string;
+  locations: {
+    [key in CexDepositEntryPointsLocationsMobile]: boolean;
+  };
+}>;
+
+export type Feature_PtxSwapLiveApp = Feature<{
+  currencies?: Array<string>;
+  families?: Array<string>;
+}>;
+
 export type Feature_LlmNewFirmwareUpdateUx = DefaultFeature;
 export type Feature_CounterValue = DefaultFeature;
 export type Feature_MockFeature = DefaultFeature;
@@ -439,6 +468,7 @@ export type Feature_ListAppsV2 = DefaultFeature;
 export type Feature_BrazeLearn = DefaultFeature;
 export type Feature_LlmNewDeviceSelection = DefaultFeature;
 export type Feature_LlmWalletQuickActions = DefaultFeature;
+export type Feature_FetchAdditionalCoins = DefaultFeature;
 
 /**
  * Utils types.

@@ -14,6 +14,7 @@ export type SendRowsFeeProps<T extends Transaction = Transaction> = {
   account: AccountLike;
   parentAccount?: Account | null;
   setTransaction: Result<T>["setTransaction"];
+  shouldPrefillEvmGasOptions?: boolean;
 } & CompositeScreenProps<
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
   | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.SignTransactionSummary>

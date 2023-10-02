@@ -1,5 +1,5 @@
 import HID, { Device } from "node-hid";
-import { log } from "@ledgerhq/logs";
+import { LogType, TraceContext } from "@ledgerhq/logs";
 import Transport, {
   Observer,
   DescriptorEvent,
@@ -32,7 +32,6 @@ export function getDevices(): (Device & { deviceName?: string })[] {
  * ...
  * TransportNodeHid.create().then(transport => ...)
  */
-
 export default class TransportNodeHidNoEvents extends Transport {
   /**
    *
@@ -83,9 +82,13 @@ export default class TransportNodeHidNoEvents extends Transport {
   packetSize = 64;
   disconnected = false;
 
-  constructor(device: HID.HID) {
-    super();
+  constructor(
+    device: HID.HID,
+    { context, logType }: { context?: TraceContext; logType?: LogType } = {},
+  ) {
+    super({ context, logType });
     this.device = device;
+
     // @ts-expect-error accessing low level API in C
     const info = device.getDeviceInfo();
     this.deviceModel = info && info.product ? identifyProductName(info.product) : null;
@@ -141,14 +144,22 @@ export default class TransportNodeHidNoEvents extends Transport {
 
   /**
    * Exchange with the device using APDU protocol.
+   *
    * @param apdu
    * @returns a promise of apdu response
    */
   async exchange(apdu: Buffer): Promise<Buffer> {
+    const tracer = this.tracer.withUpdatedContext({
+      function: "exchange",
+    });
+    tracer.trace("Exchanging APDU ...");
+
     const b = await this.exchangeAtomicImpl(async () => {
       const { channel, packetSize } = this;
-      log("apdu", "=> " + apdu.toString("hex"));
+      tracer.withType("apdu").trace(`=> ${apdu.toString("hex")}`);
+
       const framing = hidFraming(channel, packetSize);
+
       // Write...
       const blocks = framing.makeBlocks(apdu);
 
@@ -165,7 +176,7 @@ export default class TransportNodeHidNoEvents extends Transport {
         acc = framing.reduceResponse(acc, buffer);
       }
 
-      log("apdu", "<= " + result.toString("hex"));
+      tracer.withType("apdu").trace(`<= ${result.toString("hex")}`);
       return result;
     });
 

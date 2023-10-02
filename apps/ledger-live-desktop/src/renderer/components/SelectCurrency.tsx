@@ -203,7 +203,7 @@ export function CurrencyOption({
     </>
   );
   return (
-    <Box grow horizontal alignItems="center" flow={2}>
+    <Box grow horizontal role="option" alignItems="center" flow={2}>
       <CryptoCurrencyIcon circle currency={currency} size={26} />
       {textContents}
     </Box>

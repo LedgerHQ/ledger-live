@@ -41,7 +41,7 @@ function useUiHook(manifest: AppManifest): Partial<UiHook> {
 
   return useMemo(
     () => ({
-      "account.request": ({ accounts$, currencies, onSuccess, onError }) => {
+      "account.request": ({ accounts$, currencies, onSuccess, onCancel }) => {
         setDrawer(
           SelectAccountAndCurrencyDrawer,
           {
@@ -55,7 +55,7 @@ function useUiHook(manifest: AppManifest): Partial<UiHook> {
           {
             onRequestClose: () => {
               setDrawer();
-              onError();
+              onCancel();
             },
           },
         );

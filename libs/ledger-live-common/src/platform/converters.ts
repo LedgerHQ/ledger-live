@@ -96,12 +96,12 @@ export const getPlatformTransactionSignFlowInfos = (
 } => {
   // This is a hack to link WalletAPI "ethereum" family to new "evm" family
   const isEthereumFamily = platformTx.family === FAMILIES.ETHEREUM;
-  const tyFamily = isEthereumFamily ? "evm" : platformTx.family;
+  const liveFamily = isEthereumFamily ? "evm" : platformTx.family;
 
-  const family = byFamily[tyFamily];
+  const familyModule = byFamily[liveFamily];
 
-  if (family) {
-    return family.getPlatformTransactionSignFlowInfos(platformTx);
+  if (familyModule) {
+    return familyModule.getPlatformTransactionSignFlowInfos(platformTx);
   }
 
   return {

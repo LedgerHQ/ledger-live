@@ -56,6 +56,7 @@ import {
 } from "../../components/RootNavigator/types/helpers";
 import { AddAccountsNavigatorParamList } from "../../components/RootNavigator/types/AddAccountsNavigator";
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
+import Config from "react-native-config";
 
 const SectionAccounts = ({
   defaultSelected,
@@ -339,7 +340,7 @@ function AddAccountsAccounts({
               <SectionAccounts
                 defaultSelected={defaultSelected}
                 key={id}
-                showHint={selectable && i === 0}
+                showHint={selectable && i === 0 && !Config.MOCK}
                 header={
                   <Trans
                     values={{

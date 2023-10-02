@@ -166,7 +166,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
         </Flex>
       ) : (
         <NavigationScrollView
-          style={{ paddingBottom: insets.bottom + TAB_BAR_SAFE_HEIGHT }}
+          style={{ marginBottom: insets.bottom + TAB_BAR_SAFE_HEIGHT }}
           contentContainerStyle={styles.scrollContainer}
         >
           <SelectDevice
