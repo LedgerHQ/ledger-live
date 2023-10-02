@@ -239,69 +239,6 @@ jobs:
           name: allure-results-linux
           path: apps/ledger-live-desktop/allure-results
 
-  e2e-tests-mac:
-    name: "Desktop E2E (macOS X)"
-    runs-on: [m1, ARM64]
-    outputs:
-      status: ${{ steps.tests.outcome }}
-    env:
-      NODE_OPTIONS: "--max-old-space-size=7168"
-      FORCE_COLOR: 3
-      CI_OS: "macos-latest"
-      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-      # DEBUG: "pw:browser*"
-      # DEBUG_LOGS: 1
-    steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
-        with:
-          ref: ${{ env.REFNAME }}
-          base: ${{ inputs.base_ref }}
-      - uses: ./tools/actions/composites/setup-test-desktop
-        id: setup-test-desktop
-        with:
-          skip_python: true
-          skip_ruby: true
-          install_playwright: true
-          pnpm_dest: ${{ runner.temp }}/setup-pnpm
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
-      - name: Run playwright tests
-        id: tests
-        run: |
-          pnpm desktop test:playwright
-      - name: upload diffs to imgur
-        if: always() && !cancelled()
-        uses: ./tools/actions/upload-images
-        id: imgur
-        with:
-          path: apps/ledger-live-desktop/tests/artifacts/test-results
-          workspace: ${{ github.workspace }}
-          os: macos
-      - name: upload ci suggested screenshots
-        if: always() && !cancelled()
-        uses: actions/upload-artifact@v3
-        with:
-          name: images
-          path: images-macos.json
-      - name: Upload playwright test results [On Failure]
-        uses: actions/upload-artifact@v3
-        if: failure() && !cancelled()
-        with:
-          name: playwright-results-macos
-          path: |
-            apps/ledger-live-desktop/tests/artifacts/test-results
-            apps/ledger-live-desktop/tests/artifacts/html-report
-            apps/ledger-live-desktop/tests/artifacts/coverage
-            apps/ledger-live-desktop/tests/artifacts/videos
-            apps/ledger-live-desktop/tests/artifacts/logs
-            apps/ledger-live-desktop/tests/artifacts/*.log
-      - name: Upload Allure Report
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: allure-results-macos
-          path: apps/ledger-live-desktop/allure-results
-
   report:
     needs: [codechecks, deadcodecheck, unit-tests, e2e-tests-linux, e2e-tests-windows]
     runs-on: ubuntu-latest
