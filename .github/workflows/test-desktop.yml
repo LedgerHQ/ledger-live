@@ -268,7 +268,7 @@ jobs:
       - name: Run playwright tests
         id: tests
         run: |
-          tree node_modules/.pnpm/electron*
+          find node_modules/.pnpm/electron*
           pnpm desktop test:playwright
       - name: upload diffs to imgur
         if: always() && !cancelled()
