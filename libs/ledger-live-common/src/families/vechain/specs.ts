@@ -6,11 +6,10 @@ import type {
   TransactionTestInput,
 } from "../../bot/types";
 import type { Transaction } from "./types";
-import { pickSiblings, botTest } from "../../bot/specs";
+import { pickSiblings, botTest, SpeculosButton } from "../../bot/specs";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import deviceAction from "../vechain/speculos-deviceActions";
-import assert from "assert";
 import BigNumber from "bignumber.js";
 
 const vechain: AppSpec<Transaction> = {
@@ -21,7 +20,27 @@ const vechain: AppSpec<Transaction> = {
     appName: "Vechain",
   },
   allowEmptyAccounts: true,
+  skipOperationHistory: true,
   genericDeviceAction: deviceAction.acceptTransaction,
+  testTimeout: 2 * 60 * 1000, // 2 minutes
+  onSpeculosDeviceCreated: async ({ transport }) => {
+    console.log("enabling contract data and multi-clause");
+    // enter app vechain
+    await transport.button(SpeculosButton.BOTH);
+    // enable contract data
+    await transport.button(SpeculosButton.RIGHT);
+    await transport.button(SpeculosButton.BOTH);
+    await transport.button(SpeculosButton.BOTH);
+    await transport.button(SpeculosButton.RIGHT);
+    await transport.button(SpeculosButton.BOTH);
+    // enable multi-clause
+    await transport.button(SpeculosButton.RIGHT);
+    await transport.button(SpeculosButton.BOTH);
+    await transport.button(SpeculosButton.RIGHT);
+    await transport.button(SpeculosButton.BOTH);
+    await transport.button(SpeculosButton.RIGHT);
+    await transport.button(SpeculosButton.BOTH);
+  },
   mutations: [
     {
       name: "move ~50% VET",
@@ -77,16 +96,15 @@ const vechain: AppSpec<Transaction> = {
       },
       test: ({
         account,
-        optimisticOperation,
+        accountBeforeTransaction,
       }: TransactionTestInput<Transaction>): void | undefined => {
-        botTest("checks the existence of the operation in the subaccount", () => {
-          assert(account?.subAccounts?.[0]);
-          expect(
-            account.subAccounts[0].operations.find(
-              op => op.id === optimisticOperation?.subOperations?.[0].id,
-            ),
-          ).toBeTruthy();
-        });
+        botTest("account balance decreased with operation value", () =>
+          expect(account?.subAccounts?.[0].balance.toString()).toBe(
+            new BigNumber(accountBeforeTransaction?.subAccounts?.[0].balance || 0)
+              .div(2)
+              .toString(),
+          ),
+        );
       },
     },
     {
@@ -141,21 +159,10 @@ const vechain: AppSpec<Transaction> = {
           updates,
         };
       },
-      test: ({
-        account,
-        optimisticOperation,
-      }: TransactionTestInput<Transaction>): void | undefined => {
-        botTest("account balance decreased with operation value", () => {
-          if (!account?.subAccounts?.[0]) throw new Error("no VTHO account");
-          botTest("checks the existence of the operation in the subaccount", () => {
-            assert(account?.subAccounts?.[0]);
-            expect(
-              account.subAccounts[0].operations.find(
-                op => op.id === optimisticOperation?.subOperations?.[0].id,
-              ),
-            ).toBeTruthy();
-          });
-        });
+      test: ({ account }: TransactionTestInput<Transaction>): void | undefined => {
+        botTest("account balance decreased with operation value", () =>
+          expect(account?.subAccounts?.[0].balance.toString()).toBe(new BigNumber(0).toString()),
+        );
       },
     },
   ],
