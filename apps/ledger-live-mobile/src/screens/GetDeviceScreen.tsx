@@ -152,7 +152,7 @@ export default function GetDeviceScreen() {
             <IconsLegacy.ArrowLeftMedium size="24px" />
           </TouchableOpacity>
         )}
-        <Text variant="h3" lineHeight="20" uppercase>
+        <Text variant="h3" lineHeight="20px" uppercase>
           {t("buyDevice.title")}
         </Text>
         {hasCompletedOnboarding ? (

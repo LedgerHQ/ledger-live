@@ -1,10 +1,11 @@
 import React from "react";
 import { ScrollView } from "react-native";
-import { Flex, Text } from "@ledgerhq/native-ui";
+import { Flex, Link, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import Button from "../../components/wrappedUi/Button";
 import type { Step, UiCheckStatus } from "./EarlySecurityCheck";
 import CheckCard from "./CheckCard";
+import { useTheme } from "styled-components/native";
 
 export type Props = {
   productName: string;
@@ -48,8 +49,7 @@ const EarlySecurityCheckBody: React.FC<Props> = ({
   // Updates the genuine check UI step
   let genuineCheckStepTitle;
   let genuineCheckStepDescription: string | null = null;
-  // Always displays the learn more section on the genuine check
-  const genuineCheckStepLearnMore = t("earlySecurityCheck.genuineCheckStep.learnMore");
+  let genuineCheckStepLearnMore: string | null = t("earlySecurityCheck.genuineCheckStep.learnMore");
   const genuineCheckOnLearnMore = onGenuineCheckLearnMore;
 
   switch (genuineCheckUiStepStatus) {
@@ -63,9 +63,7 @@ const EarlySecurityCheckBody: React.FC<Props> = ({
       genuineCheckStepTitle = t("earlySecurityCheck.genuineCheckStep.completed.title", {
         productName,
       });
-      genuineCheckStepDescription = t("earlySecurityCheck.genuineCheckStep.completed.description", {
-        productName,
-      });
+      genuineCheckStepLearnMore = null;
       break;
     case "error":
       genuineCheckStepTitle = t("earlySecurityCheck.genuineCheckStep.error.title");
@@ -75,9 +73,11 @@ const EarlySecurityCheckBody: React.FC<Props> = ({
       break;
     case "genuineCheckRefused":
       genuineCheckStepTitle = t("earlySecurityCheck.genuineCheckStep.refused.title");
-      genuineCheckStepDescription = t("earlySecurityCheck.genuineCheckStep.refused.description");
+      genuineCheckStepDescription = t("earlySecurityCheck.genuineCheckStep.refused.description", {
+        productName,
+      });
       primaryBottomCta = (
-        <Button type="main" onPress={onRetryGenuineCheck}>
+        <Button type="main" size="large" onPress={onRetryGenuineCheck}>
           {t("earlySecurityCheck.genuineCheckStep.refused.cta")}
         </Button>
       );
@@ -109,15 +109,9 @@ const EarlySecurityCheckBody: React.FC<Props> = ({
         "earlySecurityCheck.firmwareUpdateCheckStep.completed.noUpdateAvailable.title",
         { productName },
       );
-      firmwareUpdateCheckStepDescription = t(
-        "earlySecurityCheck.firmwareUpdateCheckStep.completed.noUpdateAvailable.description",
-        {
-          productName,
-        },
-      );
 
       primaryBottomCta = (
-        <Button type="main" onPress={notifyOnboardingEarlyCheckEnded}>
+        <Button type="main" size="large" onPress={notifyOnboardingEarlyCheckEnded}>
           {t("earlySecurityCheck.completed.continueCta")}
         </Button>
       );
@@ -127,9 +121,9 @@ const EarlySecurityCheckBody: React.FC<Props> = ({
 
       // So the user can continue the onboarding in case of failure
       primaryBottomCta = (
-        <Button type="main" onPress={onSkipFirmwareUpdate} mt="2">
+        <Link size="large" onPress={onSkipFirmwareUpdate}>
           {t("earlySecurityCheck.firmwareUpdateCheckStep.error.skipCta")}
-        </Button>
+        </Link>
       );
       break;
     case "firmwareUpdateRefused":
@@ -146,7 +140,7 @@ const EarlySecurityCheckBody: React.FC<Props> = ({
         );
 
         primaryBottomCta = (
-          <Button type="main" onPress={onUpdateFirmware} mt="2">
+          <Button type="main" size="large" onPress={onUpdateFirmware}>
             {t("earlySecurityCheck.firmwareUpdateCheckStep.refused.updateCta")}
           </Button>
         );
@@ -159,9 +153,9 @@ const EarlySecurityCheckBody: React.FC<Props> = ({
       }
 
       secondaryBottomCta = (
-        <Button type="default" onPress={onSkipFirmwareUpdate}>
+        <Link size="large" onPress={onSkipFirmwareUpdate}>
           {t("earlySecurityCheck.firmwareUpdateCheckStep.refused.skipCta")}
-        </Button>
+        </Link>
       );
 
       break;
@@ -179,11 +173,13 @@ const EarlySecurityCheckBody: React.FC<Props> = ({
 
   if (currentStep === "idle") {
     primaryBottomCta = (
-      <Button type="main" onPress={onStartChecks}>
+      <Button type="main" size="large" onPress={onStartChecks}>
         {t("earlySecurityCheck.idle.checkCta")}
       </Button>
     );
   }
+
+  const { space } = useTheme();
 
   return (
     <ScrollView
@@ -198,16 +194,17 @@ const EarlySecurityCheckBody: React.FC<Props> = ({
     >
       <Flex
         flex={1}
-        mt="5"
         flexDirection="column"
         alignItems="stretch"
         justifyContent="space-between"
+        px={6}
+        pb={7}
       >
-        <Flex paddingX="4">
-          <Text variant="h4" mb="4">
+        <Flex>
+          <Text variant="h4" fontWeight="semiBold" mb={3}>
             {t("earlySecurityCheck.title")}
           </Text>
-          <Flex width="100%" mt="4">
+          <Flex width="100%" mt={7} rowGap={space[7]}>
             <CheckCard
               title={genuineCheckStepTitle}
               description={genuineCheckStepDescription}
@@ -215,7 +212,6 @@ const EarlySecurityCheckBody: React.FC<Props> = ({
               learnMore={genuineCheckStepLearnMore}
               onLearnMore={genuineCheckOnLearnMore}
               index={1}
-              mb={6}
             />
             <CheckCard
               title={firmwareUpdateCheckStepTitle}
@@ -225,7 +221,7 @@ const EarlySecurityCheckBody: React.FC<Props> = ({
             />
           </Flex>
         </Flex>
-        <Flex mx="5" mb="4">
+        <Flex rowGap={space[7]} mb={6}>
           {primaryBottomCta}
           {secondaryBottomCta}
         </Flex>

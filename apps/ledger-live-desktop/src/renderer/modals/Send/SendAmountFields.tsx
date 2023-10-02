@@ -1,5 +1,5 @@
 import React from "react";
-import { Account, FeeStrategy, TransactionCommonRaw } from "@ledgerhq/types-live";
+import { Account, FeeStrategy, Operation, TransactionCommonRaw } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { getLLDCoinFamily } from "~/renderer/families";
 
@@ -17,11 +17,12 @@ type Props = {
 };
 
 const AmountRelatedField = (props: Props) => {
-  const module = getLLDCoinFamily<Account, Transaction, TransactionStatus>(
+  const module = getLLDCoinFamily<Account, Transaction, TransactionStatus, Operation>(
     props.account.currency.family,
   )?.sendAmountFields;
   if (!module) return null;
   const Cmp = module.component;
   return <Cmp {...props} />;
 };
+
 export default AmountRelatedField;

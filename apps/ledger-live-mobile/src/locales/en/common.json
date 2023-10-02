@@ -597,6 +597,10 @@
       "title": "Operation canceled on device",
       "description": "You rejected the operation on the device."
     },
+    "ExpertModeRequired": {
+      "title": "Expert mode required",
+      "description": "Expert mode needs to be enabled."
+    },
     "WebsocketConnectionError": {
       "title": "Sorry, connection failed",
       "description": "Please try again with a better network connection (websocket error)."
@@ -775,9 +779,13 @@
       "title": "Image download failed",
       "description": "Please try again with another image"
     },
-    "ImageMetadataLoadingError": {
-      "title": "Image metadata loading failed",
-      "description": "Please try again with another image"
+    "NFTMetadataLoadingError": {
+      "title": "NFT metadata loading issue",
+      "description": "Try again with a different NFT."
+    },
+    "ImageSizeLoadingError": {
+      "title": "Failed to retrieve picture dimensions",
+      "description": "Try again with a different picture."
     },
     "ImageTooLargeError": {
       "title": "Image too large",
@@ -1071,10 +1079,10 @@
       }
     },
     "enjoy": {
-      "title": "You're great too",
-      "description": "We'd be grateful if you could take a moment to write us a review. Your support helps us reach more people and motivates us to release new app features.",
+      "title": "Enjoying Ledger Live?\nShare some love!",
+      "description": "Leave us a positive rating on the App Store.",
       "cta": {
-        "rate": "Give us 5 stars",
+        "rate": "Rate Ledger Live",
         "notNow": "Not now"
       }
     },
@@ -1950,7 +1958,7 @@
       },
       "refused": {
         "title": "Genuine Check declined",
-        "description": "You cannot setup your Ledger Stax without allowing this Check.",
+        "description": "You cannot setup your {{productName}} without allowing this Check.",
         "cta": "Resume Check"
       },
       "error": {
@@ -1965,8 +1973,7 @@
       },
       "completed": {
         "noUpdateAvailable": {
-          "title": "OS update check",
-          "description": "OS update check makes sure {{productName}} Operating System is up to date."
+          "title": "{{productName}} OS is up to date"
         }
       },
       "error": {
@@ -1985,10 +1992,11 @@
       }
     },
     "firmwareUpdateAvailableDrawer": {
-      "title": "OS update available",
+      "title": "{{productName}} OS update available",
       "description": "Update your {{productName}} to benefit from the latest security and functionality.",
       "descriptionVersion": "Version {{firmwareVersion}}",
-      "updateCta": "Update now"
+      "updateCta": "Update now",
+      "seeWhatsInUpdateCta": "See what's in the update"
     }
   },
   "syncOnboarding": {
@@ -2168,6 +2176,13 @@
       "title": "{{currencyTicker}} market price",
       "currencyPrice": "1 {{currencyTicker}} price",
       "currencyPriceChange": "Last 24h change"
+    },
+    "quickActions": {
+      "buy": "Buy",
+      "swap": "Swap",
+      "send": "Send",
+      "deposit": "Deposit",
+      "stake": "Stake"
     }
   },
   "addAccountsModal": {
@@ -2442,12 +2457,16 @@
     },
     "import": {
       "scan": {
-        "title": "Import from desktop",
-        "descTop": {
-          "line1": "In Ledger Live Desktop, go to:",
-          "line2": "Settings > Accounts > Export accounts > Export"
+        "title": "Import from desktop"
+      },
+      "newScan": {
+        "title": "Scan and import your accounts from Ledger Live desktop",
+        "instructions": {
+          "line1": "Open Ledger Live Desktop.",
+          "line2": "Settings > Accounts > Exports accounts",
+          "line3": "Scan QR code until loader hits 100%."
         },
-        "descBottom": "Open Ledger Live Desktop & Scan QR Code"
+        "hodl": "Hold until scanning completes."
       },
       "result": {
         "title": "Import accounts",
@@ -2747,7 +2766,7 @@
         "desc": "You'll be notified of important price movements for BTC and ETH"
       },
       "transactionsAlerts": {
-        "title": "Transaction Alerts",
+        "title": "Transaction Alerts (Beta)",
         "desc": "Be notified on your transactions for Ethereum, Polygon, Binance Smart Chain, Avalanche and Ethereum Classic"
       },
       "price": {
@@ -2909,11 +2928,12 @@
         "title": "Choose a crypto you want to receive"
       },
       "selectNetwork": {
-        "title": "Select network for the chosen crypto",
+        "title": "Select the network for the chosen crypto",
         "account": "{{count}} account",
         "account_plural": "{{count}} accounts",
-        "subtitle": "Selected network must match the network from where you withdraw or get crypto sent.",
-        "bannerTitle": "Make sure to select the right network. Learn how."
+        "subtitle": "This must match the network chosen on the wallet or exchange transferring the crypto.",
+        "bannerTitle": "Make sure to select the right network. Learn how.",
+        "depositFromCexBannerTitle": "Deposit crypto from your Coinbase account"
       },
       "stepperHeader": {
         "range": "Step {{currentStep}} of {{totalSteps}}",
@@ -2941,14 +2961,14 @@
         }
       },
       "receiveConfirmation": {
-        "title": "Receive {{currencyTicker}}",
+        "title": "Deposit {{currencyTicker}}",
         "onCurrencyName": "On {{currencyName}}",
         "copyAdress": "Copy address",
         "addressCopied": "Address copied!",
         "addressVerified": "Address verified",
         "verifyAddress": "Verify your address",
         "adviceVerify": "We always recommend verifying your address with your Ledger device",
-        "sendWarning": "Send only {{currencyName}} ({{currencyTicker}}) to this address. Sending any other crypto to this address may result in the loss of your crypto.",
+        "sendWarning": "Send only tokens from {{network}} network. Sending from another network may result in permanent loss of your tokens.",
         "dashStakingWarning": "Please make sure you don't use this address for receiving staking rewards",
         "bannerTitle": "Learn how to withdraw from an exchange"
       },
@@ -3385,6 +3405,11 @@
     "walletConnect": {
       "title": "WalletConnect",
       "description": "Connect your wallet to dapps"
+    },
+    "recover": {
+      "title": "Ledger Recover",
+      "description": "Wallet recovery made easy",
+      "tag": "One month free"
     }
   },
   "signMessage": {
@@ -3401,6 +3426,7 @@
     "loading": "Searching devices..."
   },
   "send": {
+    "pendingTxWarning": "You have incoming transactions pending. Please beware, pending transactions can be reversed.",
     "tooMuchUTXOBottomModal": {
       "cta": "Continue",
       "description": "This transaction may take long to verify and sign because the account has a significant number of coins.",
@@ -3757,7 +3783,8 @@
     "stayInTheAppPlz": "Stay in the Ledger Live app and keep your Ledger nearby.",
     "allowAppPermission": "Open the {{wording}} app on your device",
     "allowAppPermissionSubtitleToken": "to manage your {{token}} tokens",
-    "allowManagerPermission": "Allow {{wording}} on your {{productName}}",
+    "allowManagerPermission": "Allow Ledger Manager on your {{productName}}",
+    "allowRenaming": "Allow renaming on your {{productName}}",
     "allowRemoveCustomLockscreen": "Confirm removal of image on your Ledger Stax",
     "allowSecureConnection": "Allow a secure connection with Ledger",
     "loading": "Loading...",
@@ -4111,6 +4138,11 @@
     "action": "Update"
   },
   "FirmwareUpdate": {
+    "banner": {
+      "title": "OS update available",
+      "descriptionDeviceName": "Tap to update “{{deviceName}}” to OS version {{firmwareVersion}}.",
+      "descriptionProductName": "Tap to update your {{productName}} to OS version {{firmwareVersion}}."
+    },
     "title": "Update firmware",
     "beginUpdate": "Begin update",
     "updateDevice": "{{deviceName}} OS Update",
@@ -4279,6 +4311,7 @@
     "yesChangeLanguage": "Yes, change language",
     "allowLanguageInstallation": "Approve language installation on {{deviceName}}",
     "languageInstalled": "Language changed to {{language}}",
+    "languageInstalledDesc": "Your device is now in the language you chose",
     "firmwareUpdatePrompt": {
       "title": "Set your {{deviceName}} in {{language}}?",
       "description": "{{language}} is now available for your {{deviceName}}. You can set it now, or change your device language at any time from My Ledger."
@@ -6343,14 +6376,20 @@
   "servicesWidget": {
     "title": "Services",
     "subTitle": "Manage your Ledger services",
+    "signIn": "Sign in",
+    "recover": {
+      "cta": "Start your free trial",
+      "desc": "Stop worrying about getting locked out of your own wallet.",
+      "tag": "1 month free"
+    },
     "protect": {
       "status": {
         "new": {
           "title": "New",
-          "desc": "Stop worrying about getting locked out of your wallet.",
+          "desc": "Recover access to your wallet without your Secret Recovery Phrase.",
           "actions": {
             "learnMore": "Get to know Ledger Recover",
-            "alreadySubscribed": "I already have a log in <LinkAccount>View my subscription</LinkAccount>"
+            "alreadySubscribed": "Already subscribed? <LinkAccount>View subscription</LinkAccount>"
           }
         }
       }
@@ -6408,6 +6447,10 @@
           "body": "Receive crypto in your wallet"
         }
       }
+    },
+    "getFundsModal": {
+      "text": "Get {{coin}} to stake",
+      "description": "Buy, swap or receive crypto directly to your Ledger using Ledger Live."
     }
   }
 }

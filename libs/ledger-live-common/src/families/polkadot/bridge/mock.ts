@@ -64,7 +64,9 @@ const getTransactionStatus = (account: PolkadotAccount, t: Transaction) => {
   if (!t.recipient) {
     errors.recipient = new RecipientRequired("");
   } else if (isInvalidRecipient(t.recipient)) {
-    errors.recipient = new InvalidAddress("");
+    errors.recipient = new InvalidAddress("", {
+      currencyName: account.currency.name,
+    });
   }
 
   return Promise.resolve({
@@ -97,111 +99,115 @@ const accountBridge: AccountBridge<Transaction> = {
   signOperation,
   broadcast,
 };
+
+const preload = () => {
+  return Promise.resolve({
+    validators: [
+      {
+        address: "111B8CxcmnWbuDLyGvgUmRezDCK1brRZmvUuQ6SrFdMyc3S",
+        identity: "",
+        nominatorsCount: 84,
+        rewardPoints: "28220",
+        commission: "1",
+        totalBonded: "19189935927996803",
+        selfBonded: "0",
+        isElected: true,
+        isOversubscribed: false,
+      },
+      {
+        address: "114SUbKCXjmb9czpWTtS3JANSmNRwVa4mmsMrWYpRG1kDH5",
+        identity: "BINANCE_STAKE_9",
+        nominatorsCount: 58,
+        rewardPoints: "45700",
+        commission: "1",
+        totalBonded: "19978546965782204",
+        selfBonded: "0",
+        isElected: true,
+        isOversubscribed: false,
+      },
+      {
+        address: "11VR4pF6c7kfBhfmuwwjWY3FodeYBKWx7ix2rsRCU2q6hqJ",
+        identity: "🐑 HODL.FARM 🐑 - C",
+        nominatorsCount: 498,
+        rewardPoints: "35440",
+        commission: "0.008",
+        totalBonded: "19983183606433211",
+        selfBonded: "8214924206368",
+        isElected: true,
+        isOversubscribed: false,
+      },
+      {
+        address: "11uMPbeaEDJhUxzU4ZfWW9VQEsryP9XqFcNRfPdYda6aFWJ",
+        identity: "P2P.ORG - 4",
+        nominatorsCount: 406,
+        rewardPoints: "83240",
+        commission: "0.025",
+        totalBonded: "19983278498651499",
+        selfBonded: "0",
+        isElected: true,
+        isOversubscribed: false,
+      },
+      {
+        address: "13mK8AssyPekT5cFuYQ7ijKNXcjHPq8Gnx6TxF5eFCAwoLQ",
+        identity: "HYPERSPHERE - 5",
+        nominatorsCount: 457,
+        rewardPoints: "83100",
+        commission: "0.03",
+        totalBonded: "19983182481092181",
+        selfBonded: "11099882066510",
+        isElected: true,
+        isOversubscribed: false,
+      },
+      {
+        address: "14QRY2UTErfZCqVMFVRmgbeUt7XQdeCVgNUV1XqDcza4g9E",
+        identity: "",
+        nominatorsCount: 1,
+        rewardPoints: "64600",
+        commission: "1",
+        totalBonded: "20294901840238041",
+        selfBonded: "0",
+        isElected: true,
+        isOversubscribed: false,
+      },
+      {
+        address: "17bR6rzVsVrzVJS1hM4dSJU43z2MUmz7ZDpPLh8y2fqVg7m",
+        identity: "",
+        nominatorsCount: 3,
+        rewardPoints: "60160",
+        commission: "1",
+        totalBonded: "25412727149722391",
+        selfBonded: "15697837257290",
+        isElected: true,
+        isOversubscribed: false,
+      },
+      {
+        address: "19K3AKAkcrVWcXrXCXJ1fbaySuo58kUXhpsh7gBpa6emdgz",
+        identity: "",
+        nominatorsCount: 21,
+        rewardPoints: "36960",
+        commission: "1",
+        totalBonded: "17669588437879800",
+        selfBonded: "0",
+        isElected: true,
+        isOversubscribed: false,
+      },
+    ],
+    staking: {
+      activeEra: 1123,
+      electionClosed: true,
+      maxNominatorRewardedPerValidator: 512,
+      bondingDuration: 28,
+    },
+    minimumBondBalance: "2500000000000",
+  });
+};
+
 const currencyBridge: CurrencyBridge = {
   scanAccounts,
-  preload: () => {
-    return Promise.resolve({
-      validators: [
-        {
-          address: "111B8CxcmnWbuDLyGvgUmRezDCK1brRZmvUuQ6SrFdMyc3S",
-          identity: "",
-          nominatorsCount: 84,
-          rewardPoints: "28220",
-          commission: "1",
-          totalBonded: "19189935927996803",
-          selfBonded: "0",
-          isElected: true,
-          isOversubscribed: false,
-        },
-        {
-          address: "114SUbKCXjmb9czpWTtS3JANSmNRwVa4mmsMrWYpRG1kDH5",
-          identity: "BINANCE_STAKE_9",
-          nominatorsCount: 58,
-          rewardPoints: "45700",
-          commission: "1",
-          totalBonded: "19978546965782204",
-          selfBonded: "0",
-          isElected: true,
-          isOversubscribed: false,
-        },
-        {
-          address: "11VR4pF6c7kfBhfmuwwjWY3FodeYBKWx7ix2rsRCU2q6hqJ",
-          identity: "🐑 HODL.FARM 🐑 - C",
-          nominatorsCount: 498,
-          rewardPoints: "35440",
-          commission: "0.008",
-          totalBonded: "19983183606433211",
-          selfBonded: "8214924206368",
-          isElected: true,
-          isOversubscribed: false,
-        },
-        {
-          address: "11uMPbeaEDJhUxzU4ZfWW9VQEsryP9XqFcNRfPdYda6aFWJ",
-          identity: "P2P.ORG - 4",
-          nominatorsCount: 406,
-          rewardPoints: "83240",
-          commission: "0.025",
-          totalBonded: "19983278498651499",
-          selfBonded: "0",
-          isElected: true,
-          isOversubscribed: false,
-        },
-        {
-          address: "13mK8AssyPekT5cFuYQ7ijKNXcjHPq8Gnx6TxF5eFCAwoLQ",
-          identity: "HYPERSPHERE - 5",
-          nominatorsCount: 457,
-          rewardPoints: "83100",
-          commission: "0.03",
-          totalBonded: "19983182481092181",
-          selfBonded: "11099882066510",
-          isElected: true,
-          isOversubscribed: false,
-        },
-        {
-          address: "14QRY2UTErfZCqVMFVRmgbeUt7XQdeCVgNUV1XqDcza4g9E",
-          identity: "",
-          nominatorsCount: 1,
-          rewardPoints: "64600",
-          commission: "1",
-          totalBonded: "20294901840238041",
-          selfBonded: "0",
-          isElected: true,
-          isOversubscribed: false,
-        },
-        {
-          address: "17bR6rzVsVrzVJS1hM4dSJU43z2MUmz7ZDpPLh8y2fqVg7m",
-          identity: "",
-          nominatorsCount: 3,
-          rewardPoints: "60160",
-          commission: "1",
-          totalBonded: "25412727149722391",
-          selfBonded: "15697837257290",
-          isElected: true,
-          isOversubscribed: false,
-        },
-        {
-          address: "19K3AKAkcrVWcXrXCXJ1fbaySuo58kUXhpsh7gBpa6emdgz",
-          identity: "",
-          nominatorsCount: 21,
-          rewardPoints: "36960",
-          commission: "1",
-          totalBonded: "17669588437879800",
-          selfBonded: "0",
-          isElected: true,
-          isOversubscribed: false,
-        },
-      ],
-      staking: {
-        activeEra: 1123,
-        electionClosed: true,
-        maxNominatorRewardedPerValidator: 512,
-        bondingDuration: 28,
-      },
-      minimumBondBalance: "2500000000000",
-    });
-  },
-  hydrate: hydrate,
+  preload,
+  hydrate,
 };
+
 export default {
   currencyBridge,
   accountBridge,

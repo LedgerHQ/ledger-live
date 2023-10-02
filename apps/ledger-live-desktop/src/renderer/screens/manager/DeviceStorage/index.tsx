@@ -468,7 +468,7 @@ const DeviceStorage = ({
             {deviceModel.id === DeviceModelId.stax ? (
               <>
                 {deviceInfo.languageId !== undefined && <VerticalSeparator />}
-                <FeatureToggle feature="customImage">
+                <FeatureToggle featureId="customImage">
                   <CustomImageManagerButton disabled={navigationLocked} />
                 </FeatureToggle>
               </>

@@ -77,7 +77,6 @@ const RequiresBluetoothDrawer = ({
         onModalHide={onDrawerHide}
       >
         <BluetoothPermissionsDenied
-          componentType="drawer"
           onRetry={retryRequestOnIssue}
           neverAskAgain={cannotRetryRequest}
         />
@@ -91,7 +90,7 @@ const RequiresBluetoothDrawer = ({
         preventBackdropClick
         onModalHide={onDrawerHide}
       >
-        <BluetoothDisabled componentType="drawer" onRetry={retryRequestOnIssue} />
+        <BluetoothDisabled onRetry={retryRequestOnIssue} />
       </QueuedDrawer>
 
       <QueuedDrawer
@@ -103,7 +102,6 @@ const RequiresBluetoothDrawer = ({
         onModalHide={onDrawerHide}
       >
         <LocationPermissionDenied
-          componentType="drawer"
           onRetry={retryRequestOnIssue}
           neverAskAgain={cannotRetryRequest}
         />
@@ -117,7 +115,7 @@ const RequiresBluetoothDrawer = ({
         preventBackdropClick
         onModalHide={onDrawerHide}
       >
-        <LocationDisabled componentType="drawer" onRetry={retryRequestOnIssue} />
+        <LocationDisabled onRetry={retryRequestOnIssue} />
       </QueuedDrawer>
     </>
   );

@@ -100,7 +100,6 @@ export const createDeviceSocket = (
                 if (unsubscribed) return;
                 o.next({
                   type: "device-permission-requested",
-                  wording: "Ledger Manager", // TODO make this dynamic per fw version to match device
                 });
                 // Nb Permission is only requested once per reboot, delaying the event
                 // prevents the UI from flashing the rendering for allowing.

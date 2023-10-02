@@ -6,7 +6,7 @@ export type TRC20Token = [
   number, // precision
   boolean?, // delisted
   string?, // ledgerSignature
-  boolean? // enableCountervalues
+  boolean?, // enableCountervalues
 ];
 
 import tokens from "./trc20.json";

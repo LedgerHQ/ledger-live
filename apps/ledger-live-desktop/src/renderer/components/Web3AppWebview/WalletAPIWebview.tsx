@@ -41,7 +41,7 @@ function useUiHook(manifest: AppManifest): Partial<UiHook> {
 
   return useMemo(
     () => ({
-      "account.request": ({ accounts$, currencies, onSuccess, onError }) => {
+      "account.request": ({ accounts$, currencies, onSuccess, onCancel }) => {
         setDrawer(
           SelectAccountAndCurrencyDrawer,
           {
@@ -55,7 +55,7 @@ function useUiHook(manifest: AppManifest): Partial<UiHook> {
           {
             onRequestClose: () => {
               setDrawer();
-              onError();
+              onCancel();
             },
           },
         );
@@ -295,7 +295,7 @@ function useWebView({ manifest }: Pick<Props, "manifest">, webviewRef: RefObject
 
 interface Props {
   manifest: AppManifest;
-  inputs?: Record<string, string>;
+  inputs?: Record<string, string | undefined>;
 }
 
 export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(

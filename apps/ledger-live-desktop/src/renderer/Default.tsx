@@ -59,7 +59,6 @@ import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
 import Market from "~/renderer/screens/market";
 import MarketCoinScreen from "~/renderer/screens/market/MarketCoinScreen";
 import Learn from "~/renderer/screens/learn";
-import { useProviders } from "~/renderer/screens/exchange/Swap2/Form";
 import WelcomeScreenSettings from "~/renderer/screens/settings/WelcomeScreenSettings";
 import SyncOnboarding from "./components/SyncOnboarding";
 import RecoverPlayer from "~/renderer/screens/recover/Player";
@@ -67,6 +66,10 @@ import { updateIdentify } from "./analytics/segment";
 import { useDiscoverDB } from "./screens/platform/v2/hooks";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { enableListAppsV2 } from "@ledgerhq/live-common/apps/hw";
+import {
+  useFetchCurrencyAll,
+  useFetchCurrencyFrom,
+} from "@ledgerhq/live-common/exchange/swap/hooks/index";
 
 // in order to test sentry integration, we need the ability to test it out.
 const LetThisCrashForCrashTest = () => {
@@ -147,7 +150,8 @@ export default function Default() {
   useListenToHidDevices();
   useDeeplink();
   useUSBTroubleshooting();
-  useProviders(); // prefetch data from swap providers here
+  useFetchCurrencyAll();
+  useFetchCurrencyFrom();
   const discoverDB = useDiscoverDB();
 
   const listAppsV2 = useFeature("listAppsV2");
@@ -230,7 +234,7 @@ export default function Default() {
                           height: "100%",
                         }}
                       >
-                        <FeatureToggle feature="protectServicesDesktop">
+                        <FeatureToggle featureId="protectServicesDesktop">
                           <Switch>
                             <Route path="/recover/:appId" component={RecoverPlayer} />
                           </Switch>
@@ -256,7 +260,7 @@ export default function Default() {
                             />
                             <Route path="/platform/:appId?" component={LiveApp} />
                             <Route path="/earn" component={Earn} />
-                            <Route path="/exchange" component={Exchange} />
+                            <Route exact path="/exchange/:appId?" component={Exchange} />
                             <Route
                               exact
                               path="/account/:id/nft-collection"
@@ -273,7 +277,7 @@ export default function Default() {
                             <Route path="/swap" component={Swap2} />
                             <Route path="/market/:currencyId" component={MarketCoinScreen} />
                             <Route path="/market" component={Market} />
-                            <FeatureToggle feature="learn">
+                            <FeatureToggle featureId="learn">
                               <Route path="/learn" component={Learn} />
                             </FeatureToggle>
                           </Switch>

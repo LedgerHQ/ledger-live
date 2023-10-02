@@ -1,23 +1,23 @@
-import fetch from "isomorphic-unfetch";
 import * as core from "@actions/core";
 import * as fs from "fs";
-import FormData from "form-data";
 import * as path from "path";
+import fetch, { Response } from "node-fetch";
+import { FormData } from "formdata-node";
 
-function handleErrors(response) {
+function handleErrors(response: Response) {
   if (!response.ok) {
     throw Error(response.statusText);
   }
   return response;
 }
 
-const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 const clean = (str: string): string =>
   str.replace("-expected.png", "").replace("-actual.png", "").replace("-diff.png", "");
 
-const isDiff = (str): boolean => str.includes("diff");
-const isActual = (str): boolean => str.includes("actual");
+const isDiff = (str: string): boolean => str.includes("diff");
+const isActual = (str: string): boolean => str.includes("actual");
 
 const uploadImage = async () => {
   const p = core.getInput("path");
@@ -25,38 +25,41 @@ const uploadImage = async () => {
   const workspace = core.getInput("workspace");
   const fullPath = path.resolve(p);
 
-  const upload = async (file, i = 0) => {
+  const upload = async (file: Buffer, i = 0): Promise<string> => {
     if (i > 2) {
       return "error";
     }
-    const body = new FormData();
-    body.append("type", "file");
-    body.append("image", file);
-
     try {
+      const form = new FormData();
+      form.set("image", file.toString("base64"));
+
       const res = await fetch("https://api.imgur.com/3/image", {
         method: "POST",
         headers: {
           Accept: "application/json",
           Authorization: `Client-ID 11eb8a62f4c7927`,
         },
-        // @ts-expect-error correct types are not found. FormData are acceptable
-        body,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        body: form,
       }).then(handleErrors);
 
-      const link = (await res.json()).data.link;
+      const link = ((await res.json()) as { data: { link: string } }).data.link;
       if (!link) {
         throw new Error("no link");
       }
       return link;
     } catch (e) {
       await wait(3000);
-      return upload(file, i + 1);
+      console.log(e);
+      core.debug(e as string);
+      core.setOutput("error", e);
+      return await upload(file, i + 1);
     }
   };
 
-  const getAllFiles = currentPath => {
-    let results = [];
+  const getAllFiles = (currentPath: string): string[] => {
+    let results: string[] = [];
     const dirents = fs.readdirSync(currentPath, { withFileTypes: true });
     dirents.forEach(dirent => {
       if (dirent.name.toLocaleLowerCase().includes("retry") || dirent.name.endsWith(".zip")) return;
@@ -71,7 +74,7 @@ const uploadImage = async () => {
     return results;
   };
 
-  let files;
+  let files: any[];
   try {
     files = getAllFiles(fullPath);
   } catch {
@@ -86,7 +89,7 @@ const uploadImage = async () => {
 
   const results = await Promise.all(resultsP);
 
-  const formatted = {};
+  const formatted: Record<string, any> = {};
   results.forEach((link, index) => {
     const file = files[index];
     const key = clean(file);

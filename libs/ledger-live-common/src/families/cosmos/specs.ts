@@ -1,6 +1,4 @@
 import { DeviceModelId } from "@ledgerhq/devices";
-import { Account, Operation } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
 import expect from "expect";
 import invariant from "invariant";
 import sample from "lodash/sample";
@@ -11,6 +9,7 @@ import {
   expectSiblingsHaveSpendablePartGreaterThan,
   genericTestDestination,
   pickSiblings,
+  SpeculosButton,
 } from "../../bot/specs";
 import type { AppSpec, MutationSpec } from "../../bot/types";
 import { getCryptoCurrencyById } from "../../currencies";
@@ -18,30 +17,45 @@ import { getCurrentCosmosPreloadData } from "../../families/cosmos/preloadedData
 import type {
   CosmosAccount,
   CosmosDelegation,
+  CosmosOperationExtraRaw,
+  CosmosDelegationInfoRaw,
   CosmosRedelegation,
   CosmosResources,
   CosmosUnbonding,
   Transaction,
+  CosmosOperationRaw,
 } from "../../families/cosmos/types";
-import cryptoFactory from "./chain/chain";
 import { canDelegate, canRedelegate, canUndelegate, getMaxDelegationAvailable } from "./logic";
 import { acceptTransaction } from "./speculos-deviceActions";
+import { Operation } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
+import { log } from "@ledgerhq/logs";
 
 const maxAccounts = 16;
 
 // amounts of delegation are not exact so we are applying an approximation
-function approximateValue(value) {
-  return "~" + value.div(100).integerValue().times(100).toString();
+function checkAmountsCloseEnough(amount1: BigNumber | string, amount2: BigNumber | string) {
+  amount1 = new BigNumber(amount1);
+  amount2 = new BigNumber(amount2);
+  expect(amount1.isNegative()).toBe(false);
+  expect(amount2.isNegative()).toBe(false);
+  const difference = amount1.minus(amount2).absoluteValue();
+  const onePercentOfLargerNumber = BigNumber.max(amount1, amount2).multipliedBy(0.01);
+  const isCloseEnough = difference.isLessThan(onePercentOfLargerNumber);
+  if (!isCloseEnough) {
+    log(
+      "bot",
+      "delegation amounts do not match",
+      `Amount1: ${amount1.toString()} , Amount2: ${amount2.toString()}`,
+    );
+  }
+  expect(isCloseEnough).toBe(true);
 }
 
-function approximateExtra(extra) {
-  extra = { ...extra };
+function extraWithoutAmount(extra: CosmosOperationExtraRaw) {
   if (extra.validators && Array.isArray(extra.validators)) {
-    extra.validators = extra.validators.map(v => {
-      if (!v) return v;
-      const { amount, ...rest } = v;
-      if (!amount || typeof amount !== "string") return v;
-      return { ...rest, amount: approximateValue(new BigNumber(amount)) };
+    extra.validators = extra.validators.map((validator: CosmosDelegationInfoRaw) => {
+      return { ...validator, amount: "" };
     });
   }
   return extra;
@@ -52,7 +66,7 @@ const cosmosLikeTest: ({
   operation,
   optimisticOperation,
 }: {
-  account: Account;
+  account: CosmosAccount;
   operation: Operation;
   optimisticOperation: Operation;
 }) => void = ({ account, operation, optimisticOperation }) => {
@@ -65,25 +79,41 @@ const cosmosLikeTest: ({
       allOperationsMatchingId: [operation],
     }),
   );
-  const opExpected: Record<string, any> = toOperationRaw({
+  const opExpected: Partial<CosmosOperationRaw> = toOperationRaw({
     ...optimisticOperation,
-  });
+  }) as CosmosOperationRaw;
+  const expectedExtra: CosmosOperationExtraRaw = opExpected.extra || {};
   delete opExpected.value;
   delete opExpected.fee;
   delete opExpected.date;
   delete opExpected.blockHash;
   delete opExpected.blockHeight;
-  const extra = opExpected.extra;
   delete opExpected.extra;
   delete opExpected.transactionSequenceNumber;
-  const op = toOperationRaw(operation);
+  delete opExpected.nftOperations;
+
+  const op: Partial<CosmosOperationRaw> = toOperationRaw(operation) as CosmosOperationRaw;
+  const opExtra: CosmosOperationExtraRaw = op.extra || {};
+  delete op.extra;
+
   botTest("optimistic operation matches op", () => expect(op).toMatchObject(opExpected));
-  botTest("operation extra matches", () =>
-    expect(approximateExtra(op.extra)).toMatchObject(approximateExtra(extra)),
-  );
+  botTest("operation extra matches", () => {
+    // compare the validators amount firstly
+    if (
+      expectedExtra.validators &&
+      Array.isArray(expectedExtra.validators) &&
+      expectedExtra.validators.length > 0
+    ) {
+      for (let i = 0; i < expectedExtra.validators.length; i++) {
+        checkAmountsCloseEnough(opExtra.validators![i].amount, expectedExtra.validators[i].amount);
+      }
+    }
+    // compare the rest of the extra, except the amount
+    expect(extraWithoutAmount(opExtra)).toMatchObject(extraWithoutAmount(expectedExtra));
+  });
 };
 
-function cosmosLikeMutations(currency: string): MutationSpec<Transaction>[] {
+function cosmosLikeMutations(minimalTransactionAmount: BigNumber): MutationSpec<Transaction>[] {
   return [
     {
       name: "send some",
@@ -95,6 +125,7 @@ function cosmosLikeMutations(currency: string): MutationSpec<Transaction>[] {
         );
       },
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
+        invariant(maxSpendable.gt(minimalTransactionAmount), "balance is too low for send");
         const amount = maxSpendable.times(0.3 + 0.4 * Math.random()).integerValue();
         invariant(amount.gt(0), "random amount to be positive");
         return {
@@ -119,7 +150,8 @@ function cosmosLikeMutations(currency: string): MutationSpec<Transaction>[] {
       name: "send max",
       maxRun: 1,
       testDestination: genericTestDestination,
-      transaction: ({ account, siblings, bridge }) => {
+      transaction: ({ account, siblings, bridge, maxSpendable }) => {
+        invariant(maxSpendable.gt(minimalTransactionAmount), "balance is too low for send max");
         return {
           transaction: bridge.createTransaction(account),
           updates: [
@@ -154,7 +186,7 @@ function cosmosLikeMutations(currency: string): MutationSpec<Transaction>[] {
         const data = getCurrentCosmosPreloadData()[account.currency.id];
         const count = 1; // we'r always going to have only one validator because of the new delegation flow.
         let remaining = getMaxDelegationAvailable(account as CosmosAccount, count)
-          .minus(cryptoFactory(currency).minimalTransactionAmount.times(2))
+          .minus(minimalTransactionAmount.times(2))
           .times(0.1 * Math.random());
         invariant(remaining.gt(0), "not enough funds in account for delegate");
         const all = data.validators.filter(
@@ -199,25 +231,21 @@ function cosmosLikeMutations(currency: string): MutationSpec<Transaction>[] {
             d => d.validatorAddress === v.address,
           );
           invariant(d, "delegated %s must be found in account", v.address);
-          botTest("delegator have planned address and amount", () =>
-            expect({
-              address: v.address,
-              amount: approximateValue(v.amount),
-            }).toMatchObject({
-              address: (d as CosmosDelegation).validatorAddress,
-              amount: approximateValue((d as CosmosDelegation).amount),
-            }),
-          );
+          botTest("delegator have planned address and amount", () => {
+            expect(v.address).toBe((d as CosmosDelegation).validatorAddress);
+            checkAmountsCloseEnough(v.amount, (d as CosmosDelegation).amount);
+          });
         });
       },
     },
     {
       name: "undelegate",
       maxRun: 5,
-      transaction: ({ account, bridge }) => {
+      transaction: ({ account, bridge, maxSpendable }) => {
         invariant(canUndelegate(account as CosmosAccount), "can undelegate");
         const { cosmosResources } = account as CosmosAccount;
         invariant(cosmosResources, "cosmos");
+        invariant(maxSpendable.gt(minimalTransactionAmount.times(2)), "balance is too low");
         invariant(
           (cosmosResources as CosmosResources).delegations.length > 0,
           "already enough delegations",
@@ -268,24 +296,23 @@ function cosmosLikeMutations(currency: string): MutationSpec<Transaction>[] {
             d => d.validatorAddress === v.address,
           );
           invariant(d, "undelegated %s must be found in account", v.address);
-          botTest("validator have planned address and amount", () =>
-            expect({
-              address: v.address,
-              amount: approximateValue(v.amount),
-            }).toMatchObject({
-              address: (d as CosmosUnbonding).validatorAddress,
-              amount: approximateValue((d as CosmosUnbonding).amount),
-            }),
-          );
+          botTest("validator have planned address and amount", () => {
+            expect(v.address).toBe((d as CosmosUnbonding).validatorAddress);
+            checkAmountsCloseEnough(v.amount, (d as CosmosUnbonding).amount);
+          });
         });
       },
     },
     {
       name: "redelegate",
       maxRun: 1,
-      transaction: ({ account, bridge }) => {
+      transaction: ({ account, bridge, maxSpendable }) => {
         const { cosmosResources } = account as CosmosAccount;
         invariant(cosmosResources, "cosmos");
+        invariant(
+          maxSpendable.gt(minimalTransactionAmount.times(3)),
+          "balance is too low for redelegate",
+        );
         const sourceDelegation = sample(
           (cosmosResources as CosmosResources).delegations.filter(d =>
             canRedelegate(account as CosmosAccount, d),
@@ -344,15 +371,10 @@ function cosmosLikeMutations(currency: string): MutationSpec<Transaction>[] {
                   d.validatorSrcAddress === transaction.sourceValidator,
               );
             invariant(d, "redelegated %s must be found in account", v.address);
-            botTest("validator have planned address and amount", () =>
-              expect({
-                address: v.address,
-                amount: approximateValue(v.amount),
-              }).toMatchObject({
-                address: (d as CosmosRedelegation).validatorDstAddress,
-                amount: approximateValue((d as CosmosRedelegation).amount),
-              }),
-            );
+            botTest("validator have planned address and amount", () => {
+              expect(v.address).toBe((d as CosmosRedelegation).validatorDstAddress);
+              checkAmountsCloseEnough(v.amount, (d as CosmosRedelegation).amount);
+            });
           }
         });
       },
@@ -360,9 +382,13 @@ function cosmosLikeMutations(currency: string): MutationSpec<Transaction>[] {
     {
       name: "claim rewards",
       maxRun: 1,
-      transaction: ({ account, bridge }) => {
+      transaction: ({ account, bridge, maxSpendable }) => {
         const { cosmosResources } = account as CosmosAccount;
         invariant(cosmosResources, "cosmos");
+        invariant(
+          maxSpendable.gt(minimalTransactionAmount.times(2)),
+          "balance is too low for claim rewards",
+        );
         const delegation = sample(
           (cosmosResources as CosmosResources).delegations.filter(d => d.pendingRewards.gt(1000)),
         ) as CosmosDelegation;
@@ -405,7 +431,11 @@ function cosmosLikeMutations(currency: string): MutationSpec<Transaction>[] {
   ];
 }
 
-const generateGenericCosmosTest = (currencyId: string, config?: Partial<AppSpec<Transaction>>) => {
+const generateGenericCosmosTest = (
+  currencyId: string,
+  isExpertModeRequired: boolean,
+  config?: Partial<AppSpec<Transaction>>,
+) => {
   return {
     name: currencyId,
     currency: getCryptoCurrencyById(currencyId),
@@ -415,73 +445,129 @@ const generateGenericCosmosTest = (currencyId: string, config?: Partial<AppSpec<
     },
     genericDeviceAction: acceptTransaction,
     testTimeout: 2 * 60 * 1000,
-    minViableAmount: cryptoFactory(currencyId).minimalTransactionAmount,
-    transactionCheck: ({ maxSpendable }) => {
-      invariant(
-        maxSpendable.gt(cryptoFactory(currencyId).minimalTransactionAmount),
-        "balance is too low",
-      );
-    },
     test: cosmosLikeTest,
-    mutations: cosmosLikeMutations(currencyId),
+    onSpeculosDeviceCreated: isExpertModeRequired
+      ? async ({ transport }) => {
+          await transport.button(SpeculosButton.RIGHT);
+          await transport.button(SpeculosButton.BOTH);
+        }
+      : undefined,
     ...config,
   };
 };
 
+// In the bot tests, when we make a transaction ,we should make sure that the spendable balance is greater than minimalTransactionAmount.
+// We usually use the upper limit of send transaction fee as the minimalTransactionAmount. e.g. 5000 uatom for cosmos.
+const cosmosMinimalTransactionAmount = new BigNumber(5000);
 const cosmos = {
-  ...generateGenericCosmosTest("cosmos"),
+  ...generateGenericCosmosTest("cosmos", false, {
+    minViableAmount: cosmosMinimalTransactionAmount,
+    mutations: cosmosLikeMutations(cosmosMinimalTransactionAmount),
+  }),
 };
 
+const osmosisMinimalTransactionAmount = new BigNumber(5000);
 const osmosis = {
-  ...generateGenericCosmosTest("osmosis", {
+  ...generateGenericCosmosTest("osmosis", false, {
+    minViableAmount: osmosisMinimalTransactionAmount,
+    mutations: cosmosLikeMutations(osmosisMinimalTransactionAmount),
     testTimeout: 8 * 60 * 1000,
   }),
 };
 
+const desmosMinimalTransactionAmount = new BigNumber(500);
 const desmos = {
-  ...generateGenericCosmosTest("desmos", {
+  ...generateGenericCosmosTest("desmos", false, {
+    minViableAmount: desmosMinimalTransactionAmount,
+    mutations: cosmosLikeMutations(desmosMinimalTransactionAmount),
     testTimeout: 8 * 60 * 1000,
+    skipOperationHistory: true,
   }),
 };
 
+const umeeMinimalTransactionAmount = new BigNumber(15000);
 const umee = {
-  ...generateGenericCosmosTest("umee", {
+  ...generateGenericCosmosTest("umee", false, {
+    minViableAmount: umeeMinimalTransactionAmount,
+    mutations: cosmosLikeMutations(umeeMinimalTransactionAmount),
     testTimeout: 8 * 60 * 1000,
+    skipOperationHistory: true,
   }),
 };
 
+const persistenceMinimalTransactionAmount = new BigNumber(5000);
 const persistence = {
-  ...generateGenericCosmosTest("persistence", {
+  ...generateGenericCosmosTest("persistence", false, {
+    minViableAmount: persistenceMinimalTransactionAmount,
+    mutations: cosmosLikeMutations(persistenceMinimalTransactionAmount),
     testTimeout: 8 * 60 * 1000,
+    skipOperationHistory: true,
   }),
 };
 
+const quicksilverMinimalTransactionAmount = new BigNumber(600);
 const quicksilver = {
-  ...generateGenericCosmosTest("quicksilver", {
+  ...generateGenericCosmosTest("quicksilver", false, {
+    minViableAmount: quicksilverMinimalTransactionAmount,
+    mutations: cosmosLikeMutations(quicksilverMinimalTransactionAmount),
     testTimeout: 8 * 60 * 1000,
+    skipOperationHistory: true,
   }),
 };
 
+const onomyMinimalTransactionAmount = new BigNumber(5000);
 const onomy = {
-  ...generateGenericCosmosTest("onomy", {
+  ...generateGenericCosmosTest("onomy", false, {
+    minViableAmount: onomyMinimalTransactionAmount,
+    mutations: cosmosLikeMutations(onomyMinimalTransactionAmount),
     testTimeout: 8 * 60 * 1000,
+    skipOperationHistory: true,
   }),
 };
 
+const axelarMinimalTransactionAmount = new BigNumber(10000);
 const axelar = {
-  ...generateGenericCosmosTest("axelar"),
+  ...generateGenericCosmosTest("axelar", false, {
+    minViableAmount: axelarMinimalTransactionAmount,
+    mutations: cosmosLikeMutations(axelarMinimalTransactionAmount),
+    skipOperationHistory: true,
+  }),
 };
 
+const secretNetworkMinimalTransactionAmount = new BigNumber(60000);
 const secretNetwork = {
-  ...generateGenericCosmosTest("secret_network"),
+  ...generateGenericCosmosTest("secret_network", false, {
+    minViableAmount: secretNetworkMinimalTransactionAmount,
+    mutations: cosmosLikeMutations(secretNetworkMinimalTransactionAmount),
+    skipOperationHistory: true,
+  }),
 };
 
+const stargazeMinimalTransactionAmount = new BigNumber(160000);
 const stargaze = {
-  ...generateGenericCosmosTest("stargaze"),
+  ...generateGenericCosmosTest("stargaze", false, {
+    minViableAmount: stargazeMinimalTransactionAmount,
+    mutations: cosmosLikeMutations(stargazeMinimalTransactionAmount),
+    skipOperationHistory: true,
+  }),
 };
 
+const coreumMinimalTransactionAmount = new BigNumber(20000);
 const coreum = {
-  ...generateGenericCosmosTest("coreum"),
+  ...generateGenericCosmosTest("coreum", false, {
+    minViableAmount: coreumMinimalTransactionAmount,
+    mutations: cosmosLikeMutations(coreumMinimalTransactionAmount),
+    skipOperationHistory: true,
+  }),
+};
+
+const injectiveMinimalTransactionAmount = new BigNumber(1000000);
+const injective = {
+  ...generateGenericCosmosTest("injective", true, {
+    minViableAmount: injectiveMinimalTransactionAmount,
+    mutations: cosmosLikeMutations(injectiveMinimalTransactionAmount),
+    skipOperationHistory: true,
+  }),
 };
 
 export default {
@@ -496,4 +582,5 @@ export default {
   secretNetwork,
   stargaze,
   coreum,
+  injective,
 };

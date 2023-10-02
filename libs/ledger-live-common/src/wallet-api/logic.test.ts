@@ -48,7 +48,7 @@ describe("receiveOnAccountLogic", () => {
 
   describe("when nominal case", () => {
     // Given
-    const accountId = "ethereumjs:2:ethereum:0x012:";
+    const accountId = "js:2:ethereum:0x012:";
     const walletAccountId = "806ea21d-f5f0-425a-add3-39d4b78209f1";
     const expectedResult = "Function called";
 
@@ -141,7 +141,7 @@ describe("broadcastTransactionLogic", () => {
 
   describe("when nominal case", () => {
     // Given
-    const accountId = "ethereumjs:2:ethereum:0x012:";
+    const accountId = "js:2:ethereum:0x012:";
     const walletAccountId = "806ea21d-f5f0-425a-add3-39d4b78209f1";
     const signedTransaction = createSignedOperation();
 
@@ -183,7 +183,7 @@ describe("broadcastTransactionLogic", () => {
 
   describe("when account cannot be found", () => {
     // Given
-    const nonFoundAccountId = "ethereumjs:2:ethereum:0x010:";
+    const nonFoundAccountId = "js:2:ethereum:0x010:";
     const walletAccountId = "806ea21d-f5f0-425a-add3-39d4b78209f1";
     const signedTransaction = createSignedOperation();
 
@@ -250,7 +250,7 @@ describe("signMessageLogic", () => {
 
   describe("when nominal case", () => {
     // Given
-    const accountId = "ethereumjs:2:ethereum:0x012:";
+    const accountId = "js:2:ethereum:0x012:";
     const messageToSign = "Message to sign";
     const spyPrepareMessageToSign = jest.spyOn(signMessage, "prepareMessageToSign");
 
@@ -289,7 +289,7 @@ describe("signMessageLogic", () => {
 
   describe("when account cannot be found", () => {
     // Given
-    const nonFoundAccountId = "ethereumjs:2:ethereum:0x010:";
+    const nonFoundAccountId = "js:2:ethereum:0x010:";
     const messageToSign = "Message to sign";
 
     const walletAccountId = "806ea21d-f5f0-425a-add3-39d4b78209f1";
@@ -356,7 +356,7 @@ describe("signMessageLogic", () => {
 
   describe("when inner call prepareMessageToSign raise an error", () => {
     // Given
-    const accountId = "ethereumjs:2:ethereum:0x012:";
+    const accountId = "js:2:ethereum:0x012:";
     const messageToSign = "Message to sign";
     const spyPrepareMessageToSign = jest.spyOn(signMessage, "prepareMessageToSign");
 
@@ -439,12 +439,12 @@ describe("bitcoinFamillyAccountGetXPubLogic", () => {
     },
     {
       desc: "account not found",
-      accountId: "ethereumjs:2:ethereum:0x010:",
+      accountId: "js:2:ethereum:0x010:",
       errorMessage: "account not found",
     },
     {
       desc: "account is not a bitcoin family account",
-      accountId: "ethereumjs:2:ethereum:0x012:",
+      accountId: "js:2:ethereum:0x012:",
       errorMessage: "not a bitcoin family account",
     },
   ])("returns an error when $desc", async ({ accountId, errorMessage }) => {
@@ -465,7 +465,7 @@ describe("bitcoinFamillyAccountGetXPubLogic", () => {
 
   it("should return the xpub", async () => {
     // Given
-    const accountId = "bitcoinjs:2:bitcoin:0x013:";
+    const accountId = "js:2:bitcoin:0x013:";
     getAccountIdFromWalletAccountIdSpy.mockReturnValueOnce(accountId);
 
     // When
@@ -543,7 +543,6 @@ function createSignedOperation(): SignedOperation {
   return {
     operation,
     signature: "Signature",
-    expirationDate: null,
   };
 }
 

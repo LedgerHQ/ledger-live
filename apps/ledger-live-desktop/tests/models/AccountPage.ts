@@ -12,6 +12,7 @@ export class AccountPage {
   readonly stakeButton: Locator;
   readonly stakeBanner: Locator;
   readonly stakeBannerButton: Locator;
+  readonly stakeButtonCosmos: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -23,6 +24,7 @@ export class AccountPage {
     this.buyButton = page.locator("data-test-id=buy-button");
     this.sellButton = page.locator("data-test-id=sell-button");
     this.stakeButton = page.locator("data-test-id=stake-from-account-action-button");
+    this.stakeButtonCosmos = page.locator("data-test-id=stake-button-cosmos");
     this.stakeBanner = page.locator("data-test-id=account-stake-banner");
     this.stakeBannerButton = page.locator("data-test-id=account-stake-banner-button");
   }
@@ -50,6 +52,10 @@ export class AccountPage {
 
   async scrollToOperations() {
     await this.page.locator("id=operation-list").scrollIntoViewIfNeeded();
+  }
+
+  async startCosmosStakingFlow() {
+    await this.stakeButtonCosmos.click();
   }
 
   /**

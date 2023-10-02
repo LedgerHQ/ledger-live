@@ -1,22 +1,22 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { AccountLikeArray } from "@ledgerhq/types-live";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { IconsLegacy } from "@ledgerhq/native-ui";
+import { getParentAccount, isTokenAccount } from "@ledgerhq/live-common/account/index";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import { filterRampCatalogEntries } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useRoute } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "../../../const";
-import {
-  readOnlyModeEnabledSelector,
-  swapSelectableCurrenciesSelector,
-} from "../../../reducers/settings";
+import { readOnlyModeEnabledSelector } from "../../../reducers/settings";
 import { ActionButtonEvent } from "..";
 import ZeroBalanceDisabledModalContent from "../modals/ZeroBalanceDisabledModalContent";
 import { sharedSwapTracking } from "../../../screens/Swap/utils";
-import { Toast } from "../../Toast/Toast";
+import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import { flattenAccountsSelector } from "../../../reducers/accounts";
+import { PtxToast } from "../../Toast/PtxToast";
 
 type useAssetActionsProps = {
   currency?: CryptoCurrency | TokenCurrency;
@@ -29,12 +29,13 @@ const iconSwap = IconsLegacy.BuyCryptoMedium;
 const iconReceive = IconsLegacy.ArrowBottomMedium;
 const iconSend = IconsLegacy.ArrowTopMedium;
 const iconAddAccount = IconsLegacy.WalletMedium;
-const iconStake = IconsLegacy.ClaimRewardsMedium;
+const iconStake = IconsLegacy.CoinsMedium;
 
 export default function useAssetActions({ currency, accounts }: useAssetActionsProps): {
   mainActions: ActionButtonEvent[];
 } {
   const route = useRoute();
+  const { data: currenciesAll } = useFetchCurrencyAll();
 
   const ptxServiceCtaScreens = useFeature("ptxServiceCtaScreens");
 
@@ -49,8 +50,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
     () => (accounts && accounts.length === 1 ? accounts[0] : undefined),
     [accounts],
   );
-  const swapSelectableCurrencies = useSelector(swapSelectableCurrenciesSelector);
-  const availableOnSwap = currency && swapSelectableCurrencies.includes(currency.id);
+  const availableOnSwap = currency && currenciesAll.includes(currency.id);
 
   const rampCatalog = useRampCatalog();
   const [canBeBought, canBeSold] = useMemo(() => {
@@ -71,7 +71,12 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
   const featureFlag = useFeature("stakePrograms");
   const stakeFlagEnabled = featureFlag?.enabled;
   const listFlag = featureFlag?.params?.list;
-  const canBeStaken = stakeFlagEnabled && listFlag.includes(currency?.id);
+
+  const canBeStaken = stakeFlagEnabled && listFlag && currency && listFlag.includes(currency?.id);
+  const totalAccounts = useSelector(flattenAccountsSelector);
+  const parentAccount = isTokenAccount(defaultAccount)
+    ? getParentAccount(defaultAccount, totalAccounts)
+    : undefined;
 
   const actions = useMemo<ActionButtonEvent[]>(() => {
     const isPtxServiceCtaScreensDisabled = !(ptxServiceCtaScreens?.enabled ?? true);
@@ -85,14 +90,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
               Icon: iconBuy,
               disabled: isPtxServiceCtaScreensDisabled,
               modalOnDisabledClick: {
-                component: () => (
-                  <Toast
-                    id="ptx-services"
-                    type="success"
-                    title={t("notifications.ptxServices.toast.title")}
-                    icon="info"
-                  />
-                ),
+                component: PtxToast,
               },
               testId: "market-buy-btn",
               navigationParams: [
@@ -125,14 +123,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
               disabled: isPtxServiceCtaScreensDisabled || areAccountsBalanceEmpty,
               modalOnDisabledClick: {
                 component: isPtxServiceCtaScreensDisabled
-                  ? () => (
-                      <Toast
-                        id="ptx-services"
-                        type="success"
-                        title={t("notifications.ptxServices.toast.title")}
-                        icon="info"
-                      />
-                    )
+                  ? PtxToast
                   : ZeroBalanceDisabledModalContent,
               },
             },
@@ -154,20 +145,17 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
                       NavigatorName.Swap,
                       {
                         screen: ScreenName.Swap,
-                        params: { currencyId: currency?.id, defaultAccount },
+                        params: {
+                          defaultAccount,
+                          defaultCurrency: currency,
+                          defaultParentAccount: parentAccount,
+                        },
                       },
                     ] as const,
                     disabled: isPtxServiceCtaScreensDisabled || areAccountsBalanceEmpty,
                     modalOnDisabledClick: {
                       component: isPtxServiceCtaScreensDisabled
-                        ? () => (
-                            <Toast
-                              id="ptx-services"
-                              type="success"
-                              title={t("notifications.ptxServices.toast.title")}
-                              icon="info"
-                            />
-                          )
+                        ? PtxToast
                         : ZeroBalanceDisabledModalContent,
                     },
                   },
@@ -271,6 +259,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
     currency,
     defaultAccount,
     hasAccounts,
+    parentAccount,
     readOnlyModeEnabled,
     t,
     route,

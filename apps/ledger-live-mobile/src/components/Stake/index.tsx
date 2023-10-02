@@ -2,13 +2,13 @@
 import { useMemo, useLayoutEffect, useCallback } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
-import { Account } from "@ledgerhq/types-live";
 import { listCurrencies, filterCurrencies } from "@ledgerhq/live-common/currencies/helpers";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { NavigatorName, ScreenName } from "../../const";
-import perFamilyAccountActions from "../../generated/accountActions";
 import type { StackNavigatorProps, BaseComposite } from "../RootNavigator/types/helpers";
 import type { StakeNavigatorParamList } from "../RootNavigator/types/StakeNavigator";
+
+import { useStakingDrawer } from "./useStakingDrawer";
 
 type Props = BaseComposite<StackNavigatorProps<StakeNavigatorParamList, ScreenName.Stake>>;
 
@@ -26,57 +26,12 @@ const StakeFlow = ({ route }: Props) => {
     });
   }, [currencies]);
 
-  const goToAccount = useCallback(
-    (account: Account, parentAccount?: Account) => {
-      if (alwaysShowNoFunds) {
-        navigation.navigate(NavigatorName.Base, {
-          screen: NavigatorName.NoFundsFlow,
-          drawer: undefined,
-          params: {
-            screen: ScreenName.NoFunds,
-            params: {
-              account,
-              parentAccount,
-            },
-          },
-        });
-        return;
-      }
-
-      // @ts-expect-error issue in typing
-      const decorators = perFamilyAccountActions[account?.currency?.family];
-      const familySpecificMainActions =
-        (decorators &&
-          decorators.getMainActions &&
-          decorators.getMainActions({
-            account,
-            parentAccount,
-            colors: {},
-            parentRoute,
-          })) ||
-        [];
-      const stakeFlow = familySpecificMainActions.find(
-        (action: { id: string }) => action.id === "stake",
-      )?.navigationParams;
-      if (!stakeFlow) return null;
-
-      const [name, options] = stakeFlow;
-
-      navigation.navigate(NavigatorName.Base, {
-        screen: name,
-        drawer: options?.drawer,
-        params: {
-          screen: options.screen,
-          params: {
-            ...(options?.params || {}),
-            account,
-            parentAccount,
-          },
-        },
-      });
-    },
-    [navigation, parentRoute, alwaysShowNoFunds],
-  );
+  const goToAccountStakeFlow = useStakingDrawer({
+    navigation,
+    parentRoute,
+    alwaysShowNoFunds,
+    entryPoint: route.params.entryPoint,
+  });
 
   const requestAccount = useCallback(() => {
     if (cryptoCurrencies.length === 1) {
@@ -85,7 +40,8 @@ const StakeFlow = ({ route }: Props) => {
         screen: ScreenName.RequestAccountsSelectAccount,
         params: {
           currency: cryptoCurrencies[0],
-          onSuccess: goToAccount,
+          onSuccess: goToAccountStakeFlow,
+          allowAddAccount: true, // if no account, need to be able to add one to get funds.
         },
       });
     } else {
@@ -94,19 +50,19 @@ const StakeFlow = ({ route }: Props) => {
         params: {
           currencies: cryptoCurrencies,
           allowAddAccount: true,
-          onSuccess: goToAccount,
+          onSuccess: goToAccountStakeFlow,
         },
       });
     }
-  }, [cryptoCurrencies, navigation, goToAccount]);
+  }, [cryptoCurrencies, navigation, goToAccountStakeFlow]);
 
   useLayoutEffect(() => {
     if (account) {
-      goToAccount(account);
+      goToAccountStakeFlow(account);
     } else {
       requestAccount();
     }
-  }, [requestAccount, goToAccount, account]);
+  }, [requestAccount, goToAccountStakeFlow, account]);
 
   return null;
 };

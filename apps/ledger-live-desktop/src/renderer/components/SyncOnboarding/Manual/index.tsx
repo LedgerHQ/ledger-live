@@ -15,12 +15,8 @@ import { RecoverState } from "~/renderer/screens/recover/Player";
 import SyncOnboardingCompanion from "./SyncOnboardingCompanion";
 import EarlySecurityChecks from "./EarlySecurityChecks";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
-import { DeviceInfo } from "@ledgerhq/types-live";
 import connectManager from "@ledgerhq/live-common/hw/connectManager";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
-import { from } from "rxjs";
-import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import { getEnv } from "@ledgerhq/live-env";
 import ExitChecksDrawer, {
   Props as ExitChecksDrawerProps,
@@ -33,7 +29,8 @@ import TroubleshootingDrawer, {
   Props as TroubleshootingDrawerProps,
 } from "./TroubleshootingDrawer";
 import LockedDeviceDrawer, { Props as LockedDeviceDrawerProps } from "./LockedDeviceDrawer";
-import { LockedDeviceError } from "@ledgerhq/errors";
+import { LockedDeviceError, UnexpectedBootloader } from "@ledgerhq/errors";
+import { FinalFirmware } from "@ledgerhq/types-live";
 
 const POLLING_PERIOD_MS = 1000;
 const DESYNC_TIMEOUT_MS = 20000;
@@ -67,7 +64,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
   const deviceModelId = stringToDeviceModelId(strDeviceModelId, DeviceModelId.stax);
 
   const [mustRecoverIfBootloader, setMustRecoverIfBootloader] = useState(true);
-  const [isBootloader, setIsBootloader] = useState<boolean | null>(null);
+  const [isBootloader, setIsBootloader] = useState(false);
   // Needed because `device` object can be null or changed if disconnected/reconnected
   const [lastSeenDevice, setLastSeenDevice] = useState<Device | null>(device ?? null);
   useEffect(() => {
@@ -85,33 +82,27 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
   const [toggleOnboardingEarlyCheckType, setToggleOnboardingEarlyCheckType] = useState<
     null | "enter" | "exit"
   >(null);
+  const [fwUpdateInterrupted, setFwUpdateInterrupted] = useState<FinalFirmware | null>(null);
 
   /* The early security checks are run again after a firmware update. */
   const [isInitialRunOfSecurityChecks, setIsInitialRunOfSecurityChecks] = useState(true);
 
-  const { onboardingState, allowedError, fatalError, lockedDevice } = useOnboardingStatePolling({
+  const {
+    onboardingState,
+    allowedError,
+    fatalError,
+    lockedDevice,
+    resetStates: resetPollingStates,
+  } = useOnboardingStatePolling({
     device: lastSeenDevice,
     pollingPeriodMs: POLLING_PERIOD_MS,
-    stopPolling: !isPollingOn || isBootloader === null || isBootloader,
+    stopPolling: !isPollingOn || isBootloader,
   });
 
   const { state: toggleOnboardingEarlyCheckState } = useToggleOnboardingEarlyCheck({
     deviceId: lastSeenDevice?.deviceId ?? "",
     toggleType: toggleOnboardingEarlyCheckType,
   });
-
-  const refreshIsBootloaderMode = useCallback(() => {
-    if (!device) return;
-    withDevice(device.deviceId)(transport => from(getDeviceInfo(transport)))
-      .toPromise()
-      .then((deviceInfo: DeviceInfo) => {
-        setIsBootloader(deviceInfo?.isBootloader);
-      });
-  }, [device]);
-
-  useEffect(() => {
-    refreshIsBootloaderMode();
-  }, [device, refreshIsBootloaderMode]);
 
   // Called when the ESC is complete
   const notifyOnboardingEarlyCheckEnded = useCallback(() => {
@@ -122,8 +113,9 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
   const notifyOnboardingEarlyCheckShouldReset = useCallback(() => {
     setIsPollingOn(true);
     setCurrentStep("loading");
+    resetPollingStates();
     setMustRecoverIfBootloader(true);
-  }, []);
+  }, [resetPollingStates]);
 
   const restartChecksAfterUpdate = useCallback(() => {
     setIsInitialRunOfSecurityChecks(false);
@@ -186,7 +178,9 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
 
   // A fatal error during polling triggers directly an error message
   useEffect(() => {
-    if (fatalError) {
+    if ((fatalError as unknown) instanceof UnexpectedBootloader) {
+      setIsBootloader(true);
+    } else if (fatalError) {
       setIsPollingOn(false);
       setTroubleshootingDrawerOpen(true);
     }
@@ -259,6 +253,16 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
     }
   }, [history, isEarlySecurityChecks]);
 
+  const [contentScroll, setContentScroll] = useState(0);
+
+  const onContentScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const { currentTarget } = e;
+    if (currentTarget instanceof HTMLDivElement) {
+      const scrollTop = currentTarget.scrollTop;
+      setContentScroll(scrollTop);
+    }
+  };
+
   let stepContent = (
     <Flex height="100%" width="100%" justifyContent="center" alignItems="center">
       <InfiniteLoader />
@@ -284,7 +288,8 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
         onComplete={notifyOnboardingEarlyCheckEnded}
         restartChecksAfterUpdate={restartChecksAfterUpdate}
         isInitialRunOfSecurityChecks={isInitialRunOfSecurityChecks}
-        isBootloader={isBootloader}
+        setFwUpdateInterrupted={setFwUpdateInterrupted}
+        fwUpdateInterrupted={fwUpdateInterrupted}
       />
     );
   } else if (currentStep === "companion" && lastSeenDevice) {
@@ -297,12 +302,19 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
     );
   }
 
-  const onDeviceActionResult = useCallback((result: Result) => {
-    setIsBootloader(result.deviceInfo.isBootloader);
+  const onDeviceActionResult = useCallback(({ deviceInfo: { isBootloader } }: Result) => {
+    setIsBootloader(isBootloader);
   }, []);
 
   return (
-    <Flex width="100%" height="100%" flexDirection="column" justifyContent="flex-start">
+    <Flex
+      width="100%"
+      height="100%"
+      overflow="scroll"
+      flexDirection="column"
+      justifyContent="flex-start"
+      onScroll={onContentScroll}
+    >
       {isBootloader && mustRecoverIfBootloader ? (
         /**
          * In case a firmware update gets interrupted and the device is in
@@ -312,8 +324,12 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
         <DeviceAction onResult={onDeviceActionResult} action={action} request={null} />
       ) : (
         <>
+          <Header
+            device={lastSeenDevice}
+            onClose={handleClose}
+            displayTitle={currentStep === "companion" && lastSeenDevice && contentScroll > 30}
+          />
           {stepContent}
-          <Header onClose={handleClose} />
         </>
       )}
     </Flex>

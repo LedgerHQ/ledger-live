@@ -22,7 +22,6 @@ export const createUnlockMutation = (): MutationSpec<Transaction> => ({
       transaction: bridge.createTransaction(account),
       updates: [
         {
-          memo: "LedgerLiveBot",
           mode: "unlock",
         },
         {

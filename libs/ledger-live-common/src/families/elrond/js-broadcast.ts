@@ -1,4 +1,4 @@
-import type { Operation, SignedOperation } from "@ledgerhq/types-live";
+import type { BroadcastFnSignature, Operation } from "@ledgerhq/types-live";
 import { patchOperationWithHash } from "../../operation";
 import { broadcastTransaction } from "./api";
 
@@ -6,17 +6,10 @@ import { broadcastTransaction } from "./api";
  * Broadcast the signed transaction
  * @param {signature: string, operation: string} signedOperation
  */
-const broadcast = async ({
-  signedOperation: { signature, operation, signatureRaw },
-}: {
-  signedOperation: SignedOperation;
-}): Promise<Operation> => {
-  const hash = await broadcastTransaction({
-    signatureRaw,
-    signature,
-  } as SignedOperation);
+const broadcast: BroadcastFnSignature = async ({ signedOperation }): Promise<Operation> => {
+  const hash = await broadcastTransaction(signedOperation);
 
-  return patchOperationWithHash(operation, hash);
+  return patchOperationWithHash(signedOperation.operation, hash);
 };
 
 export default broadcast;

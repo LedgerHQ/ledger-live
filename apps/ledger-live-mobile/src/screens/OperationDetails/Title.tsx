@@ -12,6 +12,7 @@ import LText from "../../components/LText";
 
 type Props = {
   hasFailed: boolean;
+  isConfirmed: boolean;
   amount: BigNumber;
   operation: Operation;
   currency: Currency;
@@ -25,6 +26,7 @@ type Props = {
 const Title = ({
   operation,
   hasFailed,
+  isConfirmed,
   amount,
   isNftOperation,
   currency,
@@ -36,7 +38,7 @@ const Title = ({
   const { t } = useTranslation();
   const { colors } = useTheme();
   const isNegative = amount.isNegative();
-  const valueColor = isNegative ? colors.smoke : colors.green;
+  const valueColor = isNegative ? colors.smoke : isConfirmed ? colors.green : colors.warning;
 
   if (isNftOperation) {
     return (

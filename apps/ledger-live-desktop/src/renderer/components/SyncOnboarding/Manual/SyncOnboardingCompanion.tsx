@@ -19,7 +19,7 @@ import {
   fromSeedPhraseTypeToNbOfSeedWords,
 } from "@ledgerhq/live-common/hw/extractOnboardingState";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { usePostOnboardingPath } from "@ledgerhq/live-common/hooks/recoverFeatueFlag";
+import { usePostOnboardingPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
 import { DesyncOverlay } from "./DesyncOverlay";
 import SeedStep, { SeedPathStatus } from "./SeedStep";
@@ -481,15 +481,12 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
       />
       <Flex
         height="100%"
-        overflow="hidden"
-        width="432px"
+        width="480px"
         flexDirection="column"
         justifyContent="flex-start"
         alignSelf="center"
-        overflowY="scroll"
         flexGrow={0}
         flexShrink={1}
-        pt={84}
       >
         <Text variant="h3Inter" fontSize="8" fontWeight="semiBold" mb="8">
           {t("syncOnboarding.manual.title", { deviceName })}

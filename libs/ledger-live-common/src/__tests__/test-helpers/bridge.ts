@@ -31,6 +31,7 @@ import type {
   TransactionStatusCommon,
 } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { firstValueFrom } from "rxjs";
 
 const warnDev = process.env.CI ? (..._args) => {} : (...msg) => console.warn(...msg);
 // FIXME move out into DatasetTest to be defined in
@@ -54,10 +55,11 @@ export function syncAccount<T extends TransactionCommon>(
   account: Account,
   syncConfig: SyncConfig = defaultSyncConfig,
 ): Promise<Account> {
-  return bridge
-    .sync(account, syncConfig)
-    .pipe(reduce((a, f: (arg0: Account) => Account) => f(a), account))
-    .toPromise();
+  return firstValueFrom(
+    bridge
+      .sync(account, syncConfig)
+      .pipe(reduce((a, f: (arg0: Account) => Account) => f(a), account)),
+  );
 }
 
 export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): void {
@@ -113,18 +115,19 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
     const scanAccounts = async apdus => {
       const deviceId = await mockDeviceWithAPDUs(apdus, currencyData.mockDeviceOptions);
       try {
-        const accounts = await bridge
-          .scanAccounts({
-            currency,
-            deviceId,
-            syncConfig: defaultSyncConfig,
-          })
-          .pipe(
-            filter(e => e.type === "discovered"),
-            map(e => e.account),
-            reduce((all, a) => all.concat(a), [] as Account[]),
-          )
-          .toPromise();
+        const accounts = await firstValueFrom(
+          bridge
+            .scanAccounts({
+              currency,
+              deviceId,
+              syncConfig: defaultSyncConfig,
+            })
+            .pipe(
+              filter(e => e.type === "discovered"),
+              map(e => e.account),
+              reduce((all, a) => all.concat(a), [] as Account[]),
+            ),
+        );
         return implicitMigration(accounts);
       } catch (e: any) {
         console.error(e.message);
@@ -515,9 +518,11 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
           // stability: function called twice will return the same object reference
           // (=== convergence so we can stop looping, typically because transaction will be a hook effect dependency of prepareTransaction)
           async function expectStability(account, t) {
-            const t2 = await bridge.prepareTransaction(account, t);
-            const t3 = await bridge.prepareTransaction(account, t2);
-            expect(t2).toBe(t3);
+            let t2 = await bridge.prepareTransaction(account, t);
+            let t3 = await bridge.prepareTransaction(account, t2);
+            t2 = omit(t2, arg.currencyData.IgnorePrepareTransactionFields || []);
+            t3 = omit(t3, arg.currencyData.IgnorePrepareTransactionFields || []);
+            expect(t2).toStrictEqual(t3);
           }
 
           makeTest("ref stability on empty transaction", async () => {
@@ -540,13 +545,17 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
               recipient: account.freshAddress,
             };
             const stable = await bridge.prepareTransaction(account, t);
-            const first = await bridge.prepareTransaction(account, stable);
+            const first = omit(
+              await bridge.prepareTransaction(account, stable),
+              arg.currencyData.IgnorePrepareTransactionFields || [],
+            );
             const concur = await Promise.all(
               Array(3)
                 .fill(null)
                 .map(() => bridge.prepareTransaction(account, stable)),
             );
             concur.forEach(r => {
+              r = omit(r, arg.currencyData.IgnorePrepareTransactionFields || []);
               expect(r).toEqual(first);
             });
           });
@@ -707,17 +716,18 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
                   const deviceId = await mockDeviceWithAPDUs(apdus);
 
                   try {
-                    const signedOperation = await bridge
-                      .signOperation({
-                        account,
-                        deviceId,
-                        transaction: t,
-                      })
-                      .pipe(
-                        filter(e => e.type === "signed"),
-                        map((e: any) => e.signedOperation),
-                      )
-                      .toPromise();
+                    const signedOperation = await firstValueFrom(
+                      bridge
+                        .signOperation({
+                          account,
+                          deviceId,
+                          transaction: t,
+                        })
+                        .pipe(
+                          filter(e => e.type === "signed"),
+                          map((e: any) => e.signedOperation),
+                        ),
+                    );
 
                     if (testSignedOperation) {
                       await testSignedOperation(expect, signedOperation, account, t, s, bridge);

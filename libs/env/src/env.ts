@@ -78,7 +78,7 @@ const envDefinitions = {
     desc: "Node endpoint for celo",
   },
   COSMOS_GAS_AMPLIFIER: {
-    def: 1.2,
+    def: 1.5,
     parser: intParser,
     desc: "Cosmos gas estimate multiplier",
   },
@@ -497,7 +497,7 @@ const envDefinitions = {
     desc: "if defined, avoids bypass of the currentDevice in the store.",
   },
   NFT_CURRENCIES: {
-    def: "ethereum,polygon,ethereum_as_evm_test_only,polygon_as_evm_test_only",
+    def: "ethereum,polygon",
     parser: stringParser,
     desc: "set the currencies where NFT is active",
   },
@@ -556,20 +556,22 @@ const envDefinitions = {
     parser: intParser,
     desc: "offset to be added to the speculos pid and avoid collision with other instances",
   },
+  /**
+   * It's just here as a backup, the REST API is supposed to be the right mode
+   * We can always fallback on the previous method if we need to.
+   * The websocket option is harmless, we can remove it at some point but let's
+   * keep it for a while just in case.
+   * Introduced on June 27th 2023 by https://github.com/LedgerHQ/ledger-live/pull/3824
+   */
   SPECULOS_USE_WEBSOCKET: {
     def: false,
     parser: boolParser,
     desc: "Use speculos websocket interface instead of Rest API",
   },
   SWAP_API_BASE: {
-    def: "https://swap.ledger.com/v4",
+    def: "https://swap.ledger.com/v5",
     parser: stringParser,
     desc: "Swap API base",
-  },
-  SWAP_API_BASE_V5: {
-    def: "https://swap-stg.ledger.com/v5",
-    parser: stringParser,
-    desc: "Swap API base staging version 5",
   },
   SYNC_ALL_INTERVAL: {
     def: 8 * 60 * 1000,
@@ -775,6 +777,11 @@ const envDefinitions = {
     def: 0.3,
     parser: floatParser,
     desc: "Cancel transaction gasprice gap factor for NON-EIP1559 for edit eth transaction feature",
+  },
+  VERBOSE: {
+    def: [] as Array<string>,
+    parser: stringArrayParser,
+    desc: 'Sets up debug console printing of logs. `VERBOSE=1` or `VERBOSE=true`: to print all logs | `VERBOSE="apdu,hw,transport,hid-verbose"` : filtering on a list of log `type` separated by a `,`',
   },
 };
 

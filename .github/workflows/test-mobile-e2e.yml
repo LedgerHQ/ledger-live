@@ -91,7 +91,7 @@ jobs:
       - name: Test iOS app
         id: detox
         run: |
-          pnpm mobile e2e:test -c ios.sim.release --loglevel error --record-logs all --take-screenshots all --detectOpenHandles --cleanup --headless
+          pnpm mobile e2e:test -c ios.sim.release --loglevel error --record-logs all --take-screenshots all --detectOpenHandles --headless
       - name: Delete iOS simulator
         if: always()
         run: |
@@ -180,9 +180,12 @@ jobs:
       - name: Build Android app for Detox test run
         run: |
           pnpm mobile e2e:build -c android.emu.release
-      - name: Start Emulator
+      - name: Start Emulator and Run Android Tests
+        id: detox
         uses: reactivecircus/android-emulator-runner@v2
         timeout-minutes: 60
+        env:
+          DETOX_INSTALL_TIMEOUT: 120000
         with:
           api-level: 31
           arch: x86_64
@@ -196,13 +199,7 @@ jobs:
           heap-size: 512M
           disk-size: 4096M
           disable-linux-hw-accel: false
-          script: echo "Starting Emulator"
-      - name: Run Android Tests
-        id: detox
-        env:
-          DETOX_INSTALL_TIMEOUT: 120000
-        run: |
-          pnpm mobile e2e:test -c android.emu.release --loglevel error --record-logs all --take-screenshots all --record-videos failing --forceExit --detectOpenHandles --cleanup --headless
+          script: pnpm mobile e2e:test -c android.emu.release --loglevel error --record-logs all --take-screenshots all --record-videos failing --forceExit --detectOpenHandles --headless
       - name: Upload test artifacts
         if: always()
         uses: actions/upload-artifact@v2
@@ -404,6 +401,14 @@ jobs:
         uses: slackapi/slack-github-action@v1.23.0
         with:
           channel-id: "CTMQ0S5SB"
+          payload-file-path: "./payload-slack-content.json"
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+      - name: post to a Slack channel
+        if: contains(fromJson('["develop", "main"]'), github.ref_name)
+        uses: slackapi/slack-github-action@v1.23.0
+        with:
+          channel-id: "C05FKJ7DFAP"
           payload-file-path: "./payload-slack-content.json"
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}

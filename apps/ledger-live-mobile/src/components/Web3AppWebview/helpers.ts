@@ -1,5 +1,5 @@
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
-import { addParamsToURL, getClientHeaders } from "@ledgerhq/live-common/wallet-api/helpers";
+import { getClientHeaders, getInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
 import {
   safeGetRefValue,
   ExchangeType,
@@ -26,7 +26,7 @@ import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { analyticsEnabledSelector } from "../../reducers/settings";
 import deviceStorage from "../../logic/storeWrapper";
-import { track } from "../../analytics/segment";
+import { track } from "../../analytics";
 import getOrCreateUser from "../../user";
 import * as bridge from "../../../e2e/bridge/client";
 import Config from "react-native-config";
@@ -130,16 +130,7 @@ export function useWebviewState(
 ) {
   const webviewRef = useRef<WebView>(null);
   const { manifest, inputs } = params;
-
-  const initialURL = useMemo(() => {
-    const url = new URL(manifest.url);
-    addParamsToURL(url, inputs);
-    if (manifest.params) {
-      url.searchParams.set("params", JSON.stringify(manifest.params));
-    }
-    return url.toString();
-  }, [manifest, inputs]);
-
+  const initialURL = useMemo(() => getInitialURL(inputs, manifest), [manifest, inputs]);
   const [state, setState] = useState<WebviewState>(initialWebviewState);
 
   useEffect(() => {
@@ -260,7 +251,7 @@ function useUiHook(): Partial<UiHook> {
 
   return useMemo(
     () => ({
-      "account.request": ({ accounts$, currencies, onSuccess, onError }) => {
+      "account.request": ({ accounts$, currencies, onSuccess, onCancel }) => {
         if (currencies.length === 1) {
           navigation.navigate(NavigatorName.RequestAccount, {
             screen: ScreenName.RequestAccountsSelectAccount,
@@ -269,8 +260,8 @@ function useUiHook(): Partial<UiHook> {
               currency: currencies[0],
               allowAddAccount: true,
               onSuccess,
-              onError,
             },
+            onClose: onCancel,
           });
         } else {
           navigation.navigate(NavigatorName.RequestAccount, {
@@ -280,8 +271,8 @@ function useUiHook(): Partial<UiHook> {
               currencies,
               allowAddAccount: true,
               onSuccess,
-              onError,
             },
+            onClose: onCancel,
           });
         }
       },

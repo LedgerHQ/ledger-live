@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components/native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -11,7 +11,7 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { NavigatorName, ScreenName } from "../../../const";
 import StyledStatusBar from "../../../components/StyledStatusBar";
 import { urls } from "../../../config/urls";
-import { TermsContext } from "../../../logic/terms";
+import { useAcceptGeneralTerms } from "../../../logic/terms";
 import { setAnalytics } from "../../../actions/settings";
 import useIsAppInBackground from "../../../components/useIsAppInBackground";
 import ForceTheme from "../../../components/theme/ForceTheme";
@@ -44,7 +44,7 @@ type NavigationProps = BaseComposite<
 function OnboardingStepWelcome({ navigation }: NavigationProps) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const { accept: acceptTerms } = useContext(TermsContext);
+  const acceptTerms = useAcceptGeneralTerms();
 
   const {
     i18n: { language: locale },
@@ -120,12 +120,12 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
     acceptTerms();
     dispatch(setAnalytics(true));
 
-    const url = `${recoverFeature?.params?.account?.loginURI}&shouldBypassLLOnboarding=true`;
+    const url = `${recoverFeature?.params?.login?.loginURI}&shouldBypassLLOnboarding=true`;
 
     Linking.canOpenURL(url).then(canOpen => {
       if (canOpen) Linking.openURL(url);
     });
-  }, [acceptTerms, dispatch, recoverFeature?.params?.account?.loginURI]);
+  }, [acceptTerms, dispatch, recoverFeature?.params?.login?.loginURI]);
 
   return (
     <ForceTheme selectedPalette={"dark"}>
@@ -207,7 +207,9 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
           >
             {t("onboarding.stepWelcome.start")}
           </Button>
-          {recoverFeature?.enabled && recoverFeature?.params?.onboardingLogin ? (
+          {/* @TODO check if proper URL */}
+          {recoverFeature?.enabled &&
+          recoverFeature?.params?.onboardingRestore.postOnboardingURI ? (
             <Button outline type="main" size="large" onPress={recoverLogIn} mt={0} mb={7}>
               {t("onboarding.stepWelcome.recoverLogIn")}
             </Button>

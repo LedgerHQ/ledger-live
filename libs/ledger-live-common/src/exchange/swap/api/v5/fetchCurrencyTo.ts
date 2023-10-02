@@ -1,13 +1,14 @@
 import network from "@ledgerhq/live-network/network";
-import { getEnv } from "@ledgerhq/live-env";
 import { fetchCurrencyToMock } from "./__mocks__/fetchCurrencyTo.mocks";
 import { isIntegrationTestEnv } from "../../utils/isIntegrationTestEnv";
 import { DEFAULT_SWAP_TIMEOUT_MS } from "../../const/timeout";
 import axios from "axios";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
+import { flattenV5CurrenciesToAndFrom } from "../../utils/flattenV5CurrenciesToAndFrom";
+import { getSwapAPIBaseURL } from "../..";
 
 type Props = {
-  currencyFrom: string;
+  currencyFromId?: string;
   providers: string[];
   additionalCoinsFlag?: boolean;
 };
@@ -21,17 +22,19 @@ type CurrencyGroup = {
 };
 
 export async function fetchCurrencyTo({
-  currencyFrom,
+  currencyFromId,
   providers,
   additionalCoinsFlag = false,
 }: Props) {
-  if (isIntegrationTestEnv()) return Promise.resolve(fetchCurrencyToMock);
+  if (isIntegrationTestEnv()) {
+    return Promise.resolve(flattenV5CurrenciesToAndFrom(fetchCurrencyToMock));
+  }
 
-  const url = new URL(`${getEnv("SWAP_API_BASE_V5")}/currencies/to`);
+  const url = new URL(`${getSwapAPIBaseURL()}/currencies/to`);
 
   url.searchParams.append("providers-whitelist", providers.join(","));
   url.searchParams.append("additional-coins-flag", additionalCoinsFlag.toString());
-  url.searchParams.append("currencyFrom", currencyFrom);
+  url.searchParams.append("currency-from", currencyFromId!);
 
   try {
     const { data } = await network<ResponseData>({
@@ -39,7 +42,7 @@ export async function fetchCurrencyTo({
       url: url.toString(),
       timeout: DEFAULT_SWAP_TIMEOUT_MS,
     });
-    return data;
+    return flattenV5CurrenciesToAndFrom(data);
   } catch (e: unknown) {
     if (axios.isAxiosError(e)) {
       if (e.code === "ECONNABORTED") {

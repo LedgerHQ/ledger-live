@@ -5,7 +5,6 @@ export * from "./celo";
 export * from "./cosmos";
 export * from "./crypto_org";
 export * from "./elrond";
-export * from "./ethereum";
 export * from "./evm";
 export * from "./hedera";
 export * from "./internet_computer";

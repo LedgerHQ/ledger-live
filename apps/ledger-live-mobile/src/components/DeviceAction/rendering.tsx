@@ -2,7 +2,12 @@ import React, { useEffect, useState } from "react";
 import { Platform, ScrollView, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { LockedDeviceError, PeerRemovedPairing, WrongDeviceForAccount } from "@ledgerhq/errors";
+import {
+  BluetoothRequired,
+  LockedDeviceError,
+  PeerRemovedPairing,
+  WrongDeviceForAccount,
+} from "@ledgerhq/errors";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { getDeviceModel } from "@ledgerhq/devices";
@@ -63,6 +68,7 @@ import {
 import ModalLock from "../ModalLock";
 import confirmLockscreen from "../../animations/stax/customimage/confirmLockscreen.json";
 import allowConnection from "../../animations/stax/customimage/allowConnection.json";
+import Config from "react-native-config";
 
 export const Wrapper = styled(Flex).attrs({
   flex: 1,
@@ -372,22 +378,26 @@ export function renderConfirmSell({
 
 export function renderAllowManager({
   t,
-  wording,
   device,
   theme,
+  requestType = "manager",
 }: RawProps & {
-  wording: string;
   device: Device;
+  requestType?: "manager" | "rename";
 }) {
   // TODO: disable gesture, modal close, hide header buttons
   return (
     <Wrapper pb={6} pt={6}>
       <Flex>
         <Text fontWeight="semiBold" fontSize={24} textAlign="center" mb={10}>
-          {t("DeviceAction.allowManagerPermission", {
-            wording,
-            productName: getDeviceModel(device.modelId)?.productName,
-          })}
+          {t(
+            requestType === "rename"
+              ? "DeviceAction.allowRenaming"
+              : "DeviceAction.allowManagerPermission",
+            {
+              productName: getDeviceModel(device.modelId)?.productName,
+            },
+          )}
         </Text>
       </Flex>
       <AnimationContainer>
@@ -625,7 +635,6 @@ export function renderError({
   iconColor,
   device,
   hasExportLogButton,
-  renderedInType = "view",
 }: RawProps & {
   navigation?: StackNavigationProp<ParamListBase>;
   error: Error;
@@ -635,13 +644,6 @@ export function renderError({
   iconColor?: string;
   device?: Device;
   hasExportLogButton?: boolean;
-  /*
-   * Used when rendering a Bluetooth disabled error
-   *
-   * If "drawer", the component will be rendered as a content to be rendered in a drawer.
-   * If "view", the component will be rendered as a view. Defaults to "view".
-   */
-  renderedInType?: "drawer" | "view";
 }) {
   const onPress = () => {
     if (managerAppName && navigation) {
@@ -675,22 +677,25 @@ export function renderError({
       <GenericErrorView
         error={error}
         withDescription
-        withIcon
         Icon={Icon}
         iconColor={iconColor}
         hasExportLogButton={hasExportLogButton}
-        renderedInType={renderedInType}
       >
         {showRetryIfAvailable && (onRetry || managerAppName) ? (
-          <ActionContainer marginBottom={0} marginTop={32}>
+          <Flex
+            alignSelf="stretch"
+            mb={0}
+            mt={(error as unknown as Error) instanceof BluetoothRequired ? 0 : 8}
+          >
             <StyledButton
               event="DeviceActionErrorRetry"
               type="main"
+              size="large"
               outline={false}
               title={managerAppName ? t("DeviceAction.button.openManager") : t("common.retry")}
               onPress={onPress}
             />
-          </ActionContainer>
+          </Flex>
         ) : null}
       </GenericErrorView>
     </Wrapper>
@@ -888,7 +893,7 @@ export function renderLoading({
   return (
     <Wrapper>
       <SpinnerContainer>
-        <InfiniteLoader />
+        <InfiniteLoader mock={Config.MOCK} />
       </SpinnerContainer>
       <CenteredText testID="device-action-loading">
         {description ?? t("DeviceAction.loading")}

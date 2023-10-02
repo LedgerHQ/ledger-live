@@ -1,6 +1,6 @@
 import { TransportStatusError, WrongDeviceForAccount } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
-import { from, Observable } from "rxjs";
+import { firstValueFrom, from, Observable } from "rxjs";
 import secp256k1 from "secp256k1";
 import { getCurrencyExchangeConfig } from "../";
 import { getAccountCurrency, getMainAccount } from "../../account";
@@ -14,7 +14,7 @@ import type { CompleteExchangeInputSwap, CompleteExchangeRequestEvent } from "..
 import { getProviderConfig } from "./";
 
 const withDevicePromise = (deviceId, fn) =>
-  withDevice(deviceId)(transport => from(fn(transport))).toPromise();
+  firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
 
 const COMPLETE_EXCHANGE_LOG = "SWAP-CompleteExchange";
 
@@ -73,6 +73,7 @@ const completeExchange = (
         const payoutAccount = getMainAccount(toAccount, toParentAccount);
         const accountBridge = getAccountBridge(refundAccount);
         const mainPayoutCurrency = getAccountCurrency(payoutAccount);
+        const payoutCurrency = getAccountCurrency(toAccount);
         const refundCurrency = getAccountCurrency(fromAccount);
         const mainRefundCurrency = getAccountCurrency(refundAccount);
         if (mainPayoutCurrency.type !== "CryptoCurrency")
@@ -126,7 +127,7 @@ const completeExchange = (
         if (unsubscribed) return;
 
         const { config: payoutAddressConfig, signature: payoutAddressConfigSignature } =
-          getCurrencyExchangeConfig(mainPayoutCurrency);
+          getCurrencyExchangeConfig(payoutCurrency);
 
         try {
           currentStep = "CHECK_PAYOUT_ADDRESS";

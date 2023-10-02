@@ -59,7 +59,7 @@
     "doc": "pnpm --filter docs",
     "mobile": "pnpm --filter live-mobile",
     "common": "pnpm --filter live-common",
-    "common-tools": "pnpm --filter live-common-tools",
+    "web-tools": "pnpm --filter web-tools",
     "live-env": "pnpm --filter live-env",
     "portfolio": "pnpm --filter live-portfolio",
     "promise": "pnpm --filter live-promise",
@@ -111,7 +111,8 @@
     "ui:shared": "pnpm --filter ui-shared",
     "ui:example:next": "pnpm  --filter=\"next.js-example\"",
     "ui:example:webpack": "pnpm  --filter=\"webpack.js-example\"",
-    "actions": "pnpm --filter @actions/*"
+    "actions": "pnpm --filter @actions/*",
+    "import:cal-tokens": "pnpm --filter=\"./libs/ledgerjs/**\" import-cal-tokens"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.4.8",
@@ -123,7 +124,7 @@
     "@typescript-eslint/parser": "^6.2.0",
     "create-release-hash": "workspace:*",
     "eslint": "^8.41.0",
-    "eslint-config-prettier": "^8.8.0",
+    "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-json": "^3.1.0",
     "eslint-plugin-prettier": "^4.2.1",
     "migrate-branch": "workspace:*",

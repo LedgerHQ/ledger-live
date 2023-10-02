@@ -169,7 +169,13 @@ const OnboardingAppInstallStep = ({ device, deviceToRestore, onComplete, onError
             {t(`onboardingAppInstall.${deviceToRestore ? "restore" : "default"}.subtitle`)}
           </Text>
           <Flex pt={8} pb={2} justifyContent="space-between">
-            <Button flex={1} onClick={handlePressSkip} data-test-id="skip-cta-button">
+            <Button
+              variant="main"
+              outline
+              flex={1}
+              onClick={handlePressSkip}
+              data-test-id="skip-cta-button"
+            >
               {t(`onboardingAppInstall.${deviceToRestore ? "restore" : "default"}.skipCTA`)}
             </Button>
             <Flex px={2} />

@@ -1,10 +1,11 @@
 import { utils } from "@crypto-org-chain/chain-jslib";
 import network from "@ledgerhq/live-network/network";
-import type { Operation, OperationType } from "@ledgerhq/types-live";
+import type { OperationType } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { getEnv } from "@ledgerhq/live-env";
 import { encodeOperationId } from "../../../operation";
 import { getCroSdk, isTestNet } from "../logic";
+import { CryptoOrgOperation } from "../types";
 import {
   CryptoOrgAccountTransaction,
   CryptoOrgAccountTransactionTypeEnum,
@@ -138,7 +139,7 @@ function convertSendTransactionToOperation(
   transaction: CryptoOrgAccountTransaction,
   currencyId: string,
   memo: string,
-): Operation {
+): CryptoOrgOperation {
   const type = getOperationType(messageSendContent, addr);
   return {
     id: encodeOperationId(accountId, messageSendContent.txHash, type),
@@ -165,8 +166,8 @@ export const getOperations = async (
   addr: string,
   startAt: number,
   currencyId: string,
-): Promise<Operation[]> => {
-  const rawTransactions: Operation[] = [];
+): Promise<CryptoOrgOperation[]> => {
+  const rawTransactions: CryptoOrgOperation[] = [];
   const crypto_org_indexer = isTestNet(currencyId)
     ? getEnv("CRYPTO_ORG_TESTNET_INDEXER")
     : getEnv("CRYPTO_ORG_INDEXER");

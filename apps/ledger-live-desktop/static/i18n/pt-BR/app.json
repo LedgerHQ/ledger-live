@@ -528,7 +528,7 @@
   },
   "stake" : {
     "noFundsModal" : {
-      "title" : "Compre, troque ou receba",
+      "title" : "{{actions, list(type: disjunction)}}",
       "text" : "Você não tem {{coin}} disponível o suficiente para fazer staking",
       "description" : "Fundos insuficientes? Não se preocupe, você pode comprar, trocar ou receber cripto em segurança diretamente no Ledger Live.",
       "options" : {
@@ -807,7 +807,7 @@
     "reset" : "Redefinir fluxo",
     "verifyAddress" : "Confirme que o endereço exibido corresponde exatamente ao exibido no seu dispositivo",
     "buy" : {
-      "header" : "Compre cripto com nossos parceiros",
+      "header" : "Compre cripto com provedores externos",
       "title" : "Escolha um provedor para comprar cripto",
       "buyFrom" : "Compre de qualquer lugar",
       "cryptoSupported" : "compatível com cripto",
@@ -1369,31 +1369,7 @@
     }
   },
   "walletconnect" : {
-    "titleAccount" : "WalletConnect",
-    "disconnect" : "Desconectar",
-    "disconnected" : "Desconectado",
-    "connected" : "Conectado",
-    "connecting" : "Conectando...",
-    "invalidAccount" : "ID de conta inválido",
-    "steps" : {
-      "paste" : {
-        "title" : "Colar Link",
-        "label" : "Endereço do Wallet Connect",
-        "placeholder" : "Colar link do Wallet Connect"
-      },
-      "confirm" : {
-        "title" : "Conectar",
-        "details" : "Quer se conectar à seguinte conta através da sua carteira:",
-        "deeplinkDetails" : "Quer se conectar ao Ledger Live. Escolha sua conta:",
-        "noAccount" : "Você não tem nenhuma conta compatível. Adicione uma conta compatível para usar o WalletConnect.",
-        "alreadyConnected" : "Você está tentando se conectar a um DApp enquanto outro DApp já está conectado. Desconecte-se do DApp conectado antes de reconectar o Live a um novo DApp."
-      }
-    },
-    "connectedscreen" : {
-      "info" : "Agora você pode acessar o DApp {{name}} em seu navegador web.",
-      "warning" : "Não é seguro compartilhar endereços de recebimento em DApps Sempre use o Ledger Live ao compartilhar seu endereço para receber fundos.",
-      "disconnected" : "Há um problema de conexão entre o DApp, o WalletConnect e o Ledger Live. Aguarde um pouco ou reinicie a conexão"
-    }
+    "titleAccount" : "WalletConnect"
   },
   "dashboard" : {
     "title" : "Portfólio",
@@ -2289,9 +2265,10 @@
     "distribution" : "Alocação",
     "amount" : "Quantia",
     "value" : "Valor",
-    "header" : "Alocação de conta ({{count}})"
+    "header" : "Alocação de contas ({{count}})"
   },
   "elrond" : {
+    "guardedAccountWarning" : "Se você tiver um guardião definido em sua conta, não conseguirá enviar transações pelo Ledger Live.",
     "summary" : {
       "availableBalanceTooltip" : "Esta quantia pode ser transferida.",
       "availableBalance" : "Saldo Disponível",
@@ -3830,7 +3807,7 @@
       "stock" : "Indicador de mercado regional",
       "stockDesc" : "Escolha Ocidental para exibir os aumentos de mercado em azul ou Oriental para exibi-los em vermelho.",
       "carouselVisibility" : "Presença do carrossel",
-      "carouselVisibilityDesc" : "Habilite presença do carrossel no portfólio"
+      "carouselVisibilityDesc" : "Habilite presença do carrossel no portfólio."
     },
     "developer" : {
       "toast" : {
@@ -4237,7 +4214,7 @@
         "description" : "Gerencie, compre e multiplique suas criptos e NFTs de forma segura no Ledger Live.",
         "nextButton" : "Começar",
         "noDevice" : "Sem dispositivo?",
-        "buyLink" : "Sem dispositivo? Compre uma Ledger Nano X",
+        "buyLink" : "Sem dispositivo? Compre uma Ledger",
         "recoverSignIn" : "Entrar no Ledger Recover",
         "byTapping" : "Ao clicar em \"Começar\" você consente e concorda com nossos",
         "termsAndConditions" : "Termos e condições",
@@ -4342,7 +4319,7 @@
             },
             "follow" : {
               "title" : "Siga as instruções",
-              "descr" : "Volte aqui para seguir as instruções para o código PIN."
+              "descr" : "Volte aqui para seguir as instruções do código PIN."
             },
             "buttons" : {
               "next" : "Próximo Passo",
@@ -4370,7 +4347,7 @@
             },
             "follow" : {
               "title" : "Siga as instruções",
-              "descr" : "Volte aqui para seguir as instruções para o código PIN."
+              "descr" : "Volte aqui para seguir as instruções do código PIN."
             },
             "buttons" : {
               "next" : "Próximo Passo",
@@ -4494,7 +4471,7 @@
             "title" : "Sua Frase de Recuperação Secreta",
             "paragraph1" : "Sua Frase de Recuperação Secreta é uma lista de 24 palavras que respaldam as suas chaves privadas.",
             "paragraph2" : "Sua Ledger Nano gera uma Frase de Recuperação Secreta única. A Ledger não sabe qual é.",
-            "disclaimer" : "Entendo que, se alguém obtiver minha Frase Secreta de Recuperação, meus ativos se tornarão vulneráveis.",
+            "disclaimer" : "Entendo que, se alguém obtiver minha Frase Secreta de Recuperação, meus ativos ficarão vulneráveis.",
             "buttons" : {
               "next" : "Frase de recuperação",
               "prev" : "Passo Anterior",
@@ -4652,7 +4629,7 @@
           "text" : "Se alguém obtiver acesso à minha Frase de Recuperação Secreta...",
           "answers" : {
             "1" : "Não tem problema, desde que eu ainda saiba qual é",
-            "2" : "Meus ativos se tornam vulneráveis e essa pessoa pode ter acesso a eles"
+            "2" : "Meus ativos ficam vulneráveis e essa pessoa pode ter acesso a eles"
           },
           "results" : {
             "success" : {
@@ -5691,10 +5668,6 @@
     },
     "ImageDownloadError" : {
       "title" : "Falha m baixar a imagem",
-      "description" : "Tente novamente com outra imagem"
-    },
-    "ImageMetadataLoadingError" : {
-      "title" : "Falha no carregamento dos metadados da imagem",
       "description" : "Tente novamente com outra imagem"
     },
     "ImageTooLargeError" : {

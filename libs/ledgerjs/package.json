@@ -2,9 +2,9 @@
   "name": "ledger-libs",
   "private": true,
   "version": "0.1.1",
-  "devDependencies": {
-    "create-hash": "^1.1.3",
-    "eslint-plugin-react": "^7.32.2"
+  "scripts": {
+    "test:importer": "jest script/crypto-assets-importer/",
+    "import-cal-tokens": "ts-node script/crypto-assets-importer/index.ts"
   },
   "dependencies": {
     "axios": "^0.27.2",
@@ -13,5 +13,14 @@
     "invariant": "^2.2.4",
     "js-levenshtein": "^1.1.6",
     "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "@types/bs58check": "^2.1.0",
+    "@types/jest": "^29.5.4",
+    "@types/node": "^20.5.7",
+    "eslint-plugin-react": "^7.32.2",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1",
+    "ts-node": "^10.9.1"
   }
 }

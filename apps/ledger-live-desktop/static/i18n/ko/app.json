@@ -528,7 +528,7 @@
   },
   "stake" : {
     "noFundsModal" : {
-      "title" : "구매, 스왑 또는 수령",
+      "title" : "{{actions, list(type: disjunction)}}",
       "text" : "스테이킹에 이용 가능한 {{coin}} 잔액이 충분하지 않습니다",
       "description" : "자금이 부족하신가요? 걱정하지 마세요. Ledger Live에서 바로 암호화폐 구매, 스왑, 또는 수령이 가능합니다.",
       "options" : {
@@ -1183,8 +1183,8 @@
           "completed" : "귀하의 {{modelName}}는 정품이며 최신 상태입니다"
         },
         "exitWarningDrawer" : {
-          "title" : "Are you sure you want to exit setup?",
-          "description" : "You cannot setup your Ledger Stax without allowing this check.",
+          "title" : "정말 설정에서 나가시겠습니까?",
+          "description" : "이 점검을 허용하지 않으면 Ledger Stax의 설정을 완료할 수 없습니다.",
           "cancelCheckCTA" : "확인 취소",
           "resumeCheckCTA" : "확인 재개"
         },
@@ -1194,12 +1194,12 @@
           "retryCTA" : "다시 시도",
           "contactSupportCTA" : "Ledger 지원 부서에 문의해주세요",
           "notFoundEntityError" : {
-            "title" : "We could not check if this device was genuine.",
-            "description" : "The experimental setting “My Ledger provider ({{providerNumber}})” may be conflicting with the genuine check. You can disable it in settings."
+            "title" : "해당 장치가 정품인지 확인하지 못했습니다.",
+            "description" : "실험 설정인 “My Ledger 공급자({{providerNumber}})”가 정품 확인 기능과 충돌할 수 있습니다. 이는 설정에서 비활성화할 수 있습니다."
           },
           "deviceNotGenuineError" : {
-            "title" : "This {{productName}} is not genuine",
-            "description" : "This {{productName}} is not safe to use.\nPlease contact Ledger Support."
+            "title" : "이 {{productName}} 장치는 정품입니다",
+            "description" : "이 {{productName}} 장치는 사용하기에 안전합니다.\nLedger 지원 부서로 문의하세요"
           }
         },
         "whyPerformChecksLink" : "왜 이러한 보안 검사를 수행하나요?",
@@ -1369,31 +1369,7 @@
     }
   },
   "walletconnect" : {
-    "titleAccount" : "지갑 연결",
-    "disconnect" : "연결 해제",
-    "disconnected" : "연결 해제",
-    "connected" : "연결됨",
-    "connecting" : "연결 중...",
-    "invalidAccount" : "잘못된 계정 ID",
-    "steps" : {
-      "paste" : {
-        "title" : "링크를 붙여넣으세요",
-        "label" : "지갑 연결 주소",
-        "placeholder" : "지갑 연결 링크를 붙여 넣기 하세요"
-      },
-      "confirm" : {
-        "title" : "연결",
-        "details" : "귀하의 지갑을 통해 다음 계정에 연결하고 싶다면:",
-        "deeplinkDetails" : "Ledger Live에 연결하고 싶습니다. 귀하의 계정을 선택하세요:",
-        "noAccount" : "호환되는 계정이 없습니다. Wallet Connect를 사용하려면 호환되는 계정을 추가하세요.",
-        "alreadyConnected" : "다른 dApp이 이미 연결된 상태에서 dApp에 연결하려고 합니다. Live를 새로운 dApp으로 다시 연결하기 전에 연결된 dApp에서 연결을 끊으세요."
-      }
-    },
-    "connectedscreen" : {
-      "info" : "이제 웹 브라우저에서 {{name}} 디앱을 이용할 수 있습니다.",
-      "warning" : "디앱에서 수신 주소를 공유하는 것은 안전하지 않습니다. 자금 수신을 위해 주소를 공유할 때는 언제나 Ledger Live를 이용하세요.",
-      "disconnected" : "디앱, WalletConnect, Ledger Live 사이에 연결 문제가 있습니다. 잠시 기다리거나 연결을 다시 시작하세요"
-    }
+    "titleAccount" : "WalletConnect"
   },
   "dashboard" : {
     "title" : "포트폴리오",
@@ -2292,6 +2268,7 @@
     "header" : "계정 배분 ({{count}})"
   },
   "elrond" : {
+    "guardedAccountWarning" : "계정에 보호자가 설정되어 있으면 Ledger Live를 통해 트랜잭션을 전송할 수 없습니다.",
     "summary" : {
       "availableBalanceTooltip" : "이체 가능한 금액입니다.",
       "availableBalance" : "이용 가능 잔액",
@@ -5691,10 +5668,6 @@
     },
     "ImageDownloadError" : {
       "title" : "이미지 다운로드 실패",
-      "description" : "다른 이미지로 다시 시도하세요"
-    },
-    "ImageMetadataLoadingError" : {
-      "title" : "이미지 메타데이터 로딩 실패",
       "description" : "다른 이미지로 다시 시도하세요"
     },
     "ImageTooLargeError" : {

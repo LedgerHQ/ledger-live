@@ -1,8 +1,8 @@
-import fetch from "isomorphic-unfetch";
 import { Parse } from "unzipper";
 import { parser } from "stream-json";
 import { streamValues } from "stream-json/streamers/StreamValues";
 import { delay, retry, promiseAllBatched } from "./promise";
+import fetch from "node-fetch";
 import groupBy from "lodash/groupBy";
 
 type AppCandidate = {
@@ -113,7 +113,7 @@ export async function loadReports({
   days: string | undefined;
   githubToken: string;
   environment: string | undefined;
-}): Promise<{ report: MinimalSerializedReport; artifact: Artifact }[]> {
+}): Promise<{ report: MinimalSerializedReport | null; artifact: Artifact }[]> {
   let page = 1;
   const maxPage = 100;
 
@@ -169,7 +169,7 @@ export async function loadReports({
   )
     .filter(Boolean)
     .filter(({ report }) => {
-      if (environment) {
+      if (environment && report) {
         return report.environment === environment;
       }
       return true;
@@ -179,7 +179,7 @@ export async function loadReports({
 }
 
 export function generateSuperReport(
-  all: { report: MinimalSerializedReport; artifact: Artifact }[],
+  all: { report: MinimalSerializedReport | null; artifact: Artifact }[],
   days: string | undefined,
 ): {
   reportMarkdownBody: string;
@@ -210,7 +210,7 @@ export function generateSuperReport(
 
   // initialize all stats to make sure we have all the mutations known and so we can detect non coverage
   all.forEach(({ report }) => {
-    report.results.forEach(({ specName, existingMutationNames }) => {
+    report?.results.forEach(({ specName, existingMutationNames }) => {
       const s = (stats[specName] = stats[specName] || {
         specName,
         fatalErrors: [],
@@ -230,7 +230,7 @@ export function generateSuperReport(
 
   all.forEach(({ report }) => {
     totalReports++;
-    report.results?.forEach(result => {
+    report?.results?.forEach(result => {
       const { specName, fatalError, mutations } = result;
       const specStats = stats[specName];
       if (fatalError) {
@@ -320,7 +320,7 @@ export function generateSuperReport(
 
     const m = Object.values(mutations);
     if (m.length > 0) {
-      const allErrors = m.reduce((acc, m) => acc.concat(m.errors), []);
+      const allErrors = m.reduce((acc, m) => acc.concat(m.errors), [] as string[]);
       const groupedErrors = groupErrors(allErrors);
       reportMarkdownBody += "\n";
       reportMarkdownBody += "| Mutation | Tx Success | Ops | Errors |\n";

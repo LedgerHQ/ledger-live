@@ -1,10 +1,9 @@
-import { device } from "detox";
 import { loadBleState, loadConfig } from "../../bridge/server";
 import PortfolioPage from "../../models/wallet/portfolioPage";
 import ReceivePage from "../../models/receive";
 import DeviceAction from "../../models/DeviceAction";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { tapByText, waitForElementById, waitForElementByText } from "../../helpers";
+import { tapById, tapByText, waitForElementById, waitForElementByText } from "../../helpers";
 
 let portfolioPage: PortfolioPage;
 let receivePage: ReceivePage;
@@ -15,6 +14,9 @@ const knownDevice = {
   id: "mock_1",
   modelId: DeviceModelId.nanoX,
 };
+
+const currency = "bitcoin";
+const accountName = "Bitcoin 2";
 
 describe("Bitcoin 2 account", () => {
   beforeAll(async () => {
@@ -28,29 +30,23 @@ describe("Bitcoin 2 account", () => {
     await portfolioPage.waitForPortfolioPageToLoad();
   });
 
-  it("receive from portfolio", async () => {
+  it("clicks on receive from portfolio", async () => {
     await receivePage.openViaDeeplink();
   });
 
   it("receive on Bitcoin 2 (through scanning)", async () => {
-    await receivePage.selectCurrency("bitcoin");
-
-    // device actions and add accounts modal have animations that requires to disable synchronization default detox behavior
-    await device.disableSynchronization();
+    await receivePage.selectCurrency(currency);
     await deviceAction.selectMockDevice();
     await deviceAction.openApp();
 
-    await waitForElementByText("Bitcoin 2");
-    await tapByText("Bitcoin 2");
-    await waitForElementById("receive-fresh-address");
+    await waitForElementByText(accountName);
+    await tapByText(accountName);
+    await waitForElementById(receivePage.noVerifyAddressButton);
   });
 
-  // TODO: TO BE CONTINUED
-  /*
-  it("verifies the address", async () => {
-    await waitForElementByText("Verify my address");
-    await tapByText("Verify my address");
-    await waitForElementByText("Address verified");
+  it("don't verify the address", async () => {
+    await tapById(receivePage.noVerifyAddressButton);
+    await tapById(receivePage.noVerifyValidateButton);
+    await waitForElementById(receivePage.receiveFreshAddress);
   });
-  */
 });

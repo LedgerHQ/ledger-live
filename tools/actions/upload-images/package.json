@@ -13,8 +13,8 @@
   "devDependencies": {
     "@actions/core": "^1.10.0",
     "@actions/github": "^5.1.1",
-    "form-data": "^4.0.0",
-    "isomorphic-unfetch": "^4.0.0",
+    "formdata-node": "^5.0.1",
+    "node-fetch": "^3.3.2",
     "tsup": "^7.0.0"
   }
 }

@@ -1,4 +1,5 @@
-import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -25,12 +26,16 @@ import { useDynamicUrl } from "~/renderer/terms";
 const RecoverRestore = () => {
   const { t } = useTranslation();
   const history = useHistory();
+  const recoverFF = useFeature("protectServicesDesktop");
   const currentDevice = useSelector(getCurrentDevice);
   const [state, setState] = useState<OnboardingState>();
   const [error, setError] = useState<Error>();
   const { setDeviceModelId } = useContext(OnboardingContext);
   const buyNew = useDynamicUrl("buyNew");
   const sub = useRef<Subscription>();
+  const recoverDiscoverPath = useMemo(() => {
+    return `/recover/${recoverFF?.params?.protectId}?redirectTo=disclaimerRestore`;
+  }, [recoverFF?.params?.protectId]);
 
   const getOnboardingState = useCallback((device: Device) => {
     sub.current?.unsubscribe();
@@ -78,10 +83,18 @@ const RecoverRestore = () => {
       switch (currentDevice?.modelId) {
         case DeviceModelId.nanoX:
           setDeviceModelId(currentDevice.modelId);
-          history.push(`/onboarding/${UseCase.recover}/${ScreenId.pairMyNano}`);
+          history.push({
+            pathname: `/onboarding/${UseCase.recover}/${ScreenId.pairMyNano}`,
+            state: {
+              fromRecover: true,
+            },
+          });
           break;
         case DeviceModelId.stax:
-          history.push(`/onboarding/sync/${currentDevice.modelId}`);
+          history.push({
+            pathname: `/onboarding/sync/${currentDevice.modelId}`,
+            state: { fromRecover: true },
+          });
           break;
         default:
           break;
@@ -108,7 +121,7 @@ const RecoverRestore = () => {
     return (
       <Flex width="100%" height="100%" position="relative">
         <Flex position="relative" height="100%" width="100%" flexDirection="column">
-          <OnboardingNavHeader onClickPrevious={() => history.push("/onboarding/select-device")} />
+          <OnboardingNavHeader onClickPrevious={() => history.push(recoverDiscoverPath)} />
           {renderError({
             t,
             error: new DeviceAlreadySetup("", { device: currentDevice?.modelId ?? "device" }),

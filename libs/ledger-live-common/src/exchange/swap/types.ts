@@ -27,12 +27,70 @@ export type ExchangeRate = {
   // There's a delta somewhere between from times rate and the api.
   rateId?: string;
   provider: string;
-  providerType: "CEX" | "DEX";
+  providerType: ExchangeProviderType;
   tradeMethod: "fixed" | "float";
   error?: Error;
   providerURL?: string;
   expirationTime?: number;
 };
+
+type ExchangeProviderType = "CEX" | "DEX";
+
+type ExchangeRateCommonRaw = {
+  provider: string;
+  providerType: ExchangeProviderType;
+  from: string;
+  to: string;
+  amountFrom: string;
+  amountRequested?: string;
+  amountTo: string;
+  payoutNetworkFees: string;
+  status: "success";
+  errorCode?: number;
+  errorMessage?: string;
+  providerURL?: string;
+};
+
+type ExchangeRateFloatRateRaw = ExchangeRateCommonRaw & {
+  tradeMethod: "float";
+  rateId?: string;
+  minAmountFrom: string;
+  maxAmountFrom?: string;
+};
+
+type ExchangeRateFixedRateRaw = ExchangeRateCommonRaw & {
+  tradeMethod: "fixed";
+  rateId: string;
+  expirationTime: string;
+  rate: string;
+};
+
+type ExchangeRateErrorCommon = {
+  status: "error";
+  tradeMethod: TradeMethod;
+  from: string;
+  to: string;
+  providerType: ExchangeProviderType;
+  provider: string;
+};
+
+type ExchangeRateErrorDefault = ExchangeRateErrorCommon & {
+  errorCode: number;
+  errorMessage: string;
+};
+
+type ExchangeRateErrorMinMaxAmount = ExchangeRateErrorCommon & {
+  amountRequested: string;
+  minAmountFrom: string;
+  maxAmountFrom: string;
+};
+
+export type ExchangeRateErrors = ExchangeRateErrorDefault | ExchangeRateErrorMinMaxAmount;
+
+export type ExchangeRateResponseRaw =
+  | ExchangeRateFloatRateRaw
+  | ExchangeRateFixedRateRaw
+  | ExchangeRateErrors;
 
 export type TradeMethod = "fixed" | "float";
 
@@ -65,6 +123,8 @@ export interface Pair {
   tradeMethod: string;
 }
 
+export type GetProviders = () => Promise<AvailableProvider[]>;
+
 type TradeMethodGroup = {
   methods: TradeMethod[];
   pairs: {
@@ -91,8 +151,6 @@ export type ExchangeObject = {
 export type GetExchangeRates = (
   exchangeObject: ExchangeObject,
 ) => Promise<(ExchangeRate & { expirationDate?: Date })[]>;
-
-export type GetProviders = () => Promise<AvailableProvider[]>;
 
 export type InitSwapResult = {
   transaction: Transaction;
@@ -238,7 +296,7 @@ export type OnNoRatesCallback = (arg: {
   toState: SwapSelectorStateType;
 }) => void;
 
-export type OnBeforeTransaction = () => void;
+export type OnBeforeFetchRates = () => void;
 
 export type RatesReducerState = {
   status?: string | null;

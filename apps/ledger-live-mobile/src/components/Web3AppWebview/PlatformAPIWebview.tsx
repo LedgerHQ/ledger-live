@@ -35,6 +35,7 @@ import {
 } from "@ledgerhq/live-common/platform/react";
 import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
 import BigNumber from "bignumber.js";
+import { DEFAULT_MULTIBUY_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
 import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 import { NavigatorName, ScreenName } from "../../const";
 import { broadcastSignedTx } from "../../logic/screenTransactionHooks";
@@ -133,9 +134,9 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
             resolve(serializePlatformAccount(accountToPlatformAccount(account, parentAccount)));
           };
 
-          const onError = (error: Error) => {
+          const onClose = () => {
             tracking.platformRequestAccountFail(manifest);
-            reject(error);
+            reject(new Error("User cancelled"));
           };
 
           // if single currency available redirect to select account directly
@@ -156,8 +157,8 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
                 currency,
                 allowAddAccount,
                 onSuccess,
-                onError,
               },
+              onClose,
             });
           } else {
             navigation.navigate(NavigatorName.RequestAccount, {
@@ -166,8 +167,8 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
                 currencies: allCurrencies,
                 allowAddAccount,
                 onSuccess,
-                onError,
               },
+              onClose,
             });
           }
         }),
@@ -232,44 +233,41 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
             );
 
             return new Promise((resolve, reject) => {
-              (navigation as StackNavigatorNavigation<BaseNavigatorStackParamList>).navigate(
-                NavigatorName.SignTransaction,
-                {
-                  screen: ScreenName.SignTransactionSummary,
-                  params: {
-                    currentNavigation: ScreenName.SignTransactionSummary,
-                    nextNavigation: ScreenName.SignTransactionSelectDevice,
-                    transaction: tx as Transaction,
-                    accountId,
-                    parentId: parentAccount?.id,
-                    appName: params?.useApp,
-                    onSuccess: ({
-                      signedOperation,
-                      transactionSignError,
-                    }: {
-                      signedOperation: SignedOperation;
-                      transactionSignError: Error;
-                    }) => {
-                      if (transactionSignError) {
-                        tracking.platformSignTransactionFail(manifest);
-                        reject(transactionSignError);
-                      } else {
-                        tracking.platformSignTransactionSuccess(manifest);
-                        resolve(serializePlatformSignedTransaction(signedOperation));
-                        const n =
-                          navigation.getParent<
-                            StackNavigatorNavigation<BaseNavigatorStackParamList>
-                          >() || navigation;
-                        n.pop();
-                      }
-                    },
-                    onError: (error: Error) => {
+              navigation.navigate(NavigatorName.SignTransaction, {
+                screen: ScreenName.SignTransactionSummary,
+                params: {
+                  currentNavigation: ScreenName.SignTransactionSummary,
+                  nextNavigation: ScreenName.SignTransactionSelectDevice,
+                  transaction: tx as Transaction,
+                  accountId,
+                  parentId: parentAccount?.id,
+                  appName: params?.useApp,
+                  onSuccess: ({
+                    signedOperation,
+                    transactionSignError,
+                  }: {
+                    signedOperation: SignedOperation;
+                    transactionSignError: Error;
+                  }) => {
+                    if (transactionSignError) {
                       tracking.platformSignTransactionFail(manifest);
-                      reject(error);
-                    },
+                      reject(transactionSignError);
+                    } else {
+                      tracking.platformSignTransactionSuccess(manifest);
+                      resolve(serializePlatformSignedTransaction(signedOperation));
+                      const n =
+                        navigation.getParent<
+                          StackNavigatorNavigation<BaseNavigatorStackParamList>
+                        >() || navigation;
+                      n.pop();
+                    }
+                  },
+                  onError: (error: Error) => {
+                    tracking.platformSignTransactionFail(manifest);
+                    reject(error);
                   },
                 },
-              );
+              });
             });
           },
         ),
@@ -434,7 +432,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
                 },
                 onClose: () => {
                   tracking.platformSignMessageUserRefused(manifest);
-                  reject(UserRefusedOnDevice());
+                  reject(new UserRefusedOnDevice());
                 },
               });
             }),
@@ -495,9 +493,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       tracking.platformLoad(manifest);
     }, [manifest]);
 
-    // See https://ledgerhq.atlassian.net/browse/LIVE-7646 : (temporary ?) workaround for binance buy integration
-    const javaScriptCanOpenWindowsAutomatically =
-      manifest.id === "binancecnt" || manifest.id === "multibuy";
+    const javaScriptCanOpenWindowsAutomatically = manifest.id === DEFAULT_MULTIBUY_APP_ID;
 
     return (
       <RNWebView

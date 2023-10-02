@@ -55,7 +55,7 @@
   "dependencies": {
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
-    "rxjs": "6",
+    "rxjs": "^7.8.1",
     "semver": "^7.3.5"
   },
   "devDependencies": {

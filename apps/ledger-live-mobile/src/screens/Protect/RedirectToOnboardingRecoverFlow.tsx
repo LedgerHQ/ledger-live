@@ -165,7 +165,6 @@ export function RedirectToOnboardingRecoverFlowScreen({ navigation }: Navigation
               error={error}
               withDescription
               hasExportLogButton={false}
-              withIcon
               withHelp={false}
             />
           </Flex>
@@ -198,7 +197,6 @@ export function RedirectToOnboardingRecoverFlowScreen({ navigation }: Navigation
             <GenericErrorView
               error={new DeviceAlreadySetup("", { device: device?.modelId ?? "device" })}
               hasExportLogButton={false}
-              withIcon
               withHelp={false}
             />
           </Flex>

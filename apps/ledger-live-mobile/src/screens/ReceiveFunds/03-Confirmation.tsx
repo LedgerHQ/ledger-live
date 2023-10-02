@@ -42,10 +42,7 @@ import * as Animatable from "react-native-animatable";
 const AnimatedView = Animatable.View;
 
 type ScreenProps = BaseComposite<
-  StackNavigatorProps<
-    ReceiveFundsStackParamList,
-    ScreenName.ReceiveConfirmation | ScreenName.ReceiveVerificationConfirmation
-  >
+  StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveConfirmation>
 >;
 
 type Props = {
@@ -124,8 +121,9 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
       type: "card",
       page: "Receive Account Qr Code",
     });
-    Linking.openURL(depositWithdrawBannerMobile?.params.url);
-  }, [depositWithdrawBannerMobile?.params.url]);
+    // @ts-expect-error TYPINGS
+    Linking.openURL(depositWithdrawBannerMobile?.params?.url);
+  }, [depositWithdrawBannerMobile?.params?.url]);
 
   useEffect(() => {
     if (route.params?.createTokenAccount && !hasAddedTokenAccount) {
@@ -375,8 +373,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
               textAlign="center"
             >
               {t("transfer.receive.receiveConfirmation.sendWarning", {
-                currencyName: currency.name,
-                currencyTicker: currency.ticker,
+                network: network || currency.name,
               })}
             </Text>
           </Flex>

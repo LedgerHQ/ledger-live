@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import {
   useRemoteLiveAppContext,
@@ -6,6 +6,7 @@ import {
 } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useTheme } from "styled-components/native";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import TrackScreen from "../../../analytics/TrackScreen";
 import GenericErrorView from "../../../components/GenericErrorView";
 import { WebPTXPlayer } from "../../../components/WebPTXPlayer";
@@ -18,7 +19,8 @@ import {
   languageSelector,
 } from "../../../reducers/settings";
 import { useSelector } from "react-redux";
-import { TAB_BAR_HEIGHT } from "../../../components/TabBar/shared";
+import { MAIN_BUTTON_SIZE } from "../../../components/TabBar/shared";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 export type Props = StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenName.Earn>;
 
@@ -27,9 +29,11 @@ const DEFAULT_EARN_APP_ID = "earn";
 
 export function EarnScreen({ route }: Props) {
   const { theme } = useTheme();
+  const [manifest, setManifest] = useState<LiveAppManifest | undefined>();
   const language = useSelector(languageSelector);
   const { ticker: currencyTicker } = useSelector(counterValueCurrencySelector);
   const discreet = useSelector(discreetModeSelector);
+  const insets = useSafeAreaInsets();
 
   const { platform: appId, ...params } = route.params || {};
   const searchParams = route.path
@@ -39,7 +43,16 @@ export function EarnScreen({ route }: Props) {
   const localManifest = useLocalLiveAppManifest(DEFAULT_EARN_APP_ID);
   const remoteManifest = useRemoteLiveAppManifest(DEFAULT_EARN_APP_ID);
   const { state: remoteLiveAppState } = useRemoteLiveAppContext();
-  const manifest = localManifest || remoteManifest;
+
+  // To avoid manifest updating to undefined when previously defined
+  useEffect(() => {
+    const appManifest = localManifest || remoteManifest;
+
+    // Perform a simple diff check
+    if (appManifest && JSON.stringify(appManifest) !== JSON.stringify(manifest)) {
+      setManifest(appManifest);
+    }
+  }, [localManifest, remoteManifest, manifest]);
 
   return manifest ? (
     <Flex
@@ -48,7 +61,8 @@ export function EarnScreen({ route }: Props) {
        * https://github.com/th3rdwave/react-native-safe-area-context/issues/219
        */
       flex={1}
-      mb={TAB_BAR_HEIGHT}
+      pt={insets.top}
+      pb={MAIN_BUTTON_SIZE} // Avoid nav button at the bottom
     >
       <TrackScreen category="EarnDashboard" name="Earn" />
       <WebPTXPlayer

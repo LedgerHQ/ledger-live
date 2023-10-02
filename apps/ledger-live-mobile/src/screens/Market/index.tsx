@@ -14,7 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import { useMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
-import { FlatList, RefreshControl, TouchableOpacity, Platform } from "react-native";
+import { FlatList, RefreshControl, TouchableOpacity } from "react-native";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
 import { useRoute, useFocusEffect } from "@react-navigation/native";
 import { useNetInfo } from "@react-native-community/netinfo";
@@ -31,7 +31,6 @@ import SearchHeader from "./SearchHeader";
 import { ScreenName } from "../../const";
 import { track } from "../../analytics";
 import TrackScreen from "../../analytics/TrackScreen";
-import { useProviders } from "../Swap/Form/index";
 import Illustration from "../../images/illustration/Illustration";
 import { TAB_BAR_SAFE_HEIGHT } from "../../components/TabBar/TabBarSafeAreaView";
 import { setMarketFilterByStarredAccounts, setMarketRequestParams } from "../../actions/settings";
@@ -267,8 +266,6 @@ export default function Market({ navigation }: NavigationProps) {
   const filterByStarredAccount: boolean = useSelector(marketFilterByStarredAccountsSelector);
   const ptxEarnFeature = useFeature("ptxEarn");
 
-  useProviders();
-
   const {
     requestParams,
     refresh,
@@ -428,7 +425,7 @@ export default function Market({ navigation }: NavigationProps) {
   const MarketHeader = useCallback(
     () =>
       ptxEarnFeature?.enabled ? (
-        <Flex px={6} marginTop={Platform.OS === "ios" ? "20px" : "40px"}>
+        <Flex px={6} pt={6}>
           <SearchHeader search={search} refresh={refresh} />
           <BottomSection navigation={navigation} />
         </Flex>

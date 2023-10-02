@@ -12,10 +12,9 @@ import type {
   SubAccount,
   SignedOperation,
   AccountLike,
-  SignOperationEvent,
-  DeviceId,
   CurrencyBridge,
   AccountBridge,
+  SignOperationFnSignature,
 } from "@ledgerhq/types-live";
 import type {
   NetworkInfo,
@@ -23,6 +22,7 @@ import type {
   Transaction,
   TransactionStatus,
   TronAccount,
+  TronOperation,
   TrongridExtraTxInfo,
 } from "../types";
 import {
@@ -88,219 +88,212 @@ import { activationFees, oneTrx } from "../constants";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
 import type { AccountShapeInfo } from "../../../bridge/jsHelpers";
 import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 
 const receive = makeAccountBridgeReceive();
 
-const signOperation = ({
-  account,
-  transaction,
-  deviceId,
-}: {
-  account: Account;
-  transaction: Transaction;
-  deviceId: DeviceId;
-}): Observable<SignOperationEvent> =>
-  withDevice(deviceId)(transport =>
-    Observable.create(o => {
-      async function main() {
-        const subAccount =
-          transaction.subAccountId && account.subAccounts
-            ? account.subAccounts.find(sa => sa.id === transaction.subAccountId)
-            : null;
-        const isContractAddressRecipient =
-          (await fetchTronContract(transaction.recipient)) !== undefined;
-        const fee = await getEstimatedFees(account, transaction, isContractAddressRecipient);
-        const balance = subAccount
-          ? subAccount.balance
-          : BigNumber.max(0, account.spendableBalance.minus(fee));
+const signOperation: SignOperationFnSignature<Transaction> = ({ account, transaction, deviceId }) =>
+  withDevice(deviceId)(
+    transport =>
+      new Observable(o => {
+        async function main() {
+          const subAccount =
+            transaction.subAccountId && account.subAccounts
+              ? account.subAccounts.find(sa => sa.id === transaction.subAccountId)
+              : null;
+          const isContractAddressRecipient =
+            (await fetchTronContract(transaction.recipient)) !== undefined;
+          const fee = await getEstimatedFees(account, transaction, isContractAddressRecipient);
+          const balance = subAccount
+            ? subAccount.balance
+            : BigNumber.max(0, account.spendableBalance.minus(fee));
 
-        if (transaction.useAllAmount) {
-          transaction = { ...transaction }; // transaction object must not be mutated
-          transaction.amount = balance; // force the amount to be the max
-        }
-
-        // send trc20 to a new account is forbidden by us (because it will not activate the account)
-        if (
-          transaction.recipient &&
-          transaction.mode === "send" &&
-          subAccount &&
-          subAccount.type === "TokenAccount" &&
-          subAccount.token.tokenType === "trc20" &&
-          !isContractAddressRecipient && // send trc20 to a smart contract is allowed
-          (await fetchTronAccount(transaction.recipient)).length === 0
-        ) {
-          throw new TronSendTrc20ToNewAccountForbidden();
-        }
-
-        const getPreparedTransaction = () => {
-          switch (transaction.mode) {
-            case "freeze":
-              return freezeTronTransaction(account, transaction);
-
-            case "unfreeze":
-              return unfreezeTronTransaction(account, transaction);
-
-            case "vote":
-              return voteTronSuperRepresentatives(account, transaction);
-
-            case "claimReward":
-              return claimRewardTronTransaction(account);
-
-            default:
-              return createTronTransaction(account, transaction, subAccount);
+          if (transaction.useAllAmount) {
+            transaction = { ...transaction }; // transaction object must not be mutated
+            transaction.amount = balance; // force the amount to be the max
           }
-        };
 
-        const preparedTransaction = await getPreparedTransaction();
+          // send trc20 to a new account is forbidden by us (because it will not activate the account)
+          if (
+            transaction.recipient &&
+            transaction.mode === "send" &&
+            subAccount &&
+            subAccount.type === "TokenAccount" &&
+            subAccount.token.tokenType === "trc20" &&
+            !isContractAddressRecipient && // send trc20 to a smart contract is allowed
+            (await fetchTronAccount(transaction.recipient)).length === 0
+          ) {
+            throw new TronSendTrc20ToNewAccountForbidden();
+          }
 
-        o.next({
-          type: "device-signature-requested",
-        });
-        // Sign by device
-        const signature = await signTransaction(
-          account.currency,
-          transport,
-          account.freshAddressPath,
-          {
-            rawDataHex: preparedTransaction.raw_data_hex,
-            // only for trc10, we need to put the token ledger signature
-            tokenSignature:
-              subAccount &&
-              subAccount.type === "TokenAccount" &&
-              subAccount.token.id.includes("trc10")
-                ? subAccount.token.ledgerSignature
-                : undefined,
-          },
-        );
-        o.next({
-          type: "device-signature-granted",
-        });
-        const hash = preparedTransaction.txID;
+          const getPreparedTransaction = () => {
+            switch (transaction.mode) {
+              case "freeze":
+                return freezeTronTransaction(account, transaction);
 
-        const getValue = (): BigNumber => {
-          switch (transaction.mode) {
-            case "send":
-              return subAccount ? fee : new BigNumber(transaction.amount || 0).plus(fee);
+              case "unfreeze":
+                return unfreezeTronTransaction(account, transaction);
 
-            case "claimReward": {
-              const tronAcc = account as TronAccount;
-              return tronAcc.tronResources
-                ? tronAcc.tronResources.unwithdrawnReward
-                : new BigNumber(0);
+              case "vote":
+                return voteTronSuperRepresentatives(account, transaction);
+
+              case "claimReward":
+                return claimRewardTronTransaction(account);
+
+              default:
+                return createTronTransaction(account, transaction, subAccount);
             }
+          };
 
-            default:
-              return new BigNumber(0);
-          }
-        };
+          const preparedTransaction = await getPreparedTransaction();
 
-        const value = getValue();
-        const operationType = getOperationTypefromMode(transaction.mode);
-        const resource = transaction.resource || "BANDWIDTH";
-
-        const getExtra = (): TrongridExtraTxInfo | null | undefined => {
-          switch (transaction.mode) {
-            case "freeze":
-              return {
-                frozenAmount: transaction.amount,
-              };
-
-            case "unfreeze":
-              return {
-                unfreezeAmount: get(
-                  (account as TronAccount).tronResources,
-                  `frozen.${resource.toLocaleLowerCase()}.amount`,
-                  new BigNumber(0),
-                ),
-              };
-
-            case "vote":
-              return {
-                votes: transaction.votes,
-              };
-
-            default:
-              return undefined;
-          }
-        };
-
-        const extra = getExtra() || {};
-        /**
-         * FIXME
-         *
-         * This is not working and cannot work simply because this "NONE" type doesn't exist during a sync,
-         * as well as subOperations which are never created either.
-         *
-         * And even after fixing this,  we're getting wrong fee estimation for TRC20 transactions
-         * which are considered as 0 all the time, while it always being between 1 and 10 TRX.
-         */
-        const operation: Operation = {
-          id: `${account.id}-${hash}-${operationType}`,
-          hash,
-          // if it's a token op and there is no fee, this operation does not exist and is a "NONE"
-          type: subAccount && value.eq(0) ? "NONE" : operationType,
-          value,
-          fee,
-          blockHash: null,
-          blockHeight: null,
-          senders: [account.freshAddress],
-          recipients: [transaction.recipient],
-          accountId: account.id,
-          date: new Date(),
-          extra,
-        };
-
-        if (subAccount) {
-          /**
-           * SEE FIXME ABOVE
-           */
-          operation.subOperations = [
+          o.next({
+            type: "device-signature-requested",
+          });
+          // Sign by device
+          const signature = await signTransaction(
+            account.currency,
+            transport,
+            account.freshAddressPath,
             {
-              id: `${subAccount.id}-${hash}-OUT`,
-              hash,
-              type: "OUT",
-              value:
-                transaction.useAllAmount && subAccount
-                  ? subAccount.balance
-                  : new BigNumber(transaction.amount || 0),
-              fee: new BigNumber(0),
-              blockHash: null,
-              blockHeight: null,
-              senders: [account.freshAddress],
-              recipients: [transaction.recipient],
-              accountId: subAccount.id,
-              date: new Date(),
-              extra: {},
+              rawDataHex: preparedTransaction.raw_data_hex,
+              // only for trc10, we need to put the token ledger signature
+              tokenSignature:
+                subAccount &&
+                subAccount.type === "TokenAccount" &&
+                subAccount.token.id.includes("trc10")
+                  ? subAccount.token.ledgerSignature
+                  : undefined,
             },
-          ];
+          );
+          o.next({
+            type: "device-signature-granted",
+          });
+          const hash = preparedTransaction.txID;
+
+          const getValue = (): BigNumber => {
+            switch (transaction.mode) {
+              case "send":
+                return subAccount ? fee : new BigNumber(transaction.amount || 0).plus(fee);
+
+              case "claimReward": {
+                const tronAcc = account as TronAccount;
+                return tronAcc.tronResources
+                  ? tronAcc.tronResources.unwithdrawnReward
+                  : new BigNumber(0);
+              }
+
+              default:
+                return new BigNumber(0);
+            }
+          };
+
+          const value = getValue();
+          const operationType = getOperationTypefromMode(transaction.mode);
+          const resource = transaction.resource || "BANDWIDTH";
+
+          const getExtra = (): TrongridExtraTxInfo | null | undefined => {
+            switch (transaction.mode) {
+              case "freeze":
+                return {
+                  frozenAmount: transaction.amount,
+                };
+
+              case "unfreeze":
+                return {
+                  unfreezeAmount: get(
+                    (account as TronAccount).tronResources,
+                    `frozen.${resource.toLocaleLowerCase()}.amount`,
+                    new BigNumber(0),
+                  ),
+                };
+
+              case "vote":
+                return {
+                  votes: transaction.votes,
+                };
+
+              default:
+                return undefined;
+            }
+          };
+
+          const extra = getExtra() || {};
+          /**
+           * FIXME
+           *
+           * This is not working and cannot work simply because this "NONE" type doesn't exist during a sync,
+           * as well as subOperations which are never created either.
+           *
+           * And even after fixing this,  we're getting wrong fee estimation for TRC20 transactions
+           * which are considered as 0 all the time, while it always being between 1 and 10 TRX.
+           */
+          const operation: TronOperation = {
+            id: encodeOperationId(account.id, hash, operationType),
+            hash,
+            // if it's a token op and there is no fee, this operation does not exist and is a "NONE"
+            type: subAccount && value.eq(0) ? "NONE" : operationType,
+            value,
+            fee,
+            blockHash: null,
+            blockHeight: null,
+            senders: [account.freshAddress],
+            recipients: [transaction.recipient],
+            accountId: account.id,
+            date: new Date(),
+            extra,
+          };
+
+          if (subAccount) {
+            /**
+             * SEE FIXME ABOVE
+             */
+            operation.subOperations = [
+              {
+                id: encodeOperationId(subAccount.id, hash, "OUT"),
+                hash,
+                type: "OUT",
+                value:
+                  transaction.useAllAmount && subAccount
+                    ? subAccount.balance
+                    : new BigNumber(transaction.amount || 0),
+                fee: new BigNumber(0),
+                blockHash: null,
+                blockHeight: null,
+                senders: [account.freshAddress],
+                recipients: [transaction.recipient],
+                accountId: subAccount.id,
+                date: new Date(),
+                extra: {},
+              },
+            ];
+          }
+
+          o.next({
+            type: "signed",
+            signedOperation: {
+              operation,
+              signature,
+              rawData: preparedTransaction.raw_data,
+            },
+          });
         }
 
-        o.next({
-          type: "signed",
-          signedOperation: {
-            operation,
-            signature,
-            signatureRaw: preparedTransaction.raw_data,
-            expirationDate: null,
-          },
-        });
-      }
-
-      main().then(
-        () => o.complete(),
-        e => o.error(e),
-      );
-    }),
+        main().then(
+          () => o.complete(),
+          e => o.error(e),
+        );
+      }),
   );
 
 const broadcast = async ({
-  signedOperation: { signature, operation, signatureRaw },
+  signedOperation: { signature, operation, rawData },
 }: {
   account: Account;
   signedOperation: SignedOperation;
 }): Promise<Operation> => {
   const transaction = {
-    raw_data: signatureRaw,
+    raw_data: rawData,
     txID: operation.hash,
     signature: [signature],
   };
@@ -369,7 +362,7 @@ const getAccountShape = async (info: AccountShapeInfo, syncConfig) => {
         : new BigNumber(0),
     );
   const parentTxs = txs.filter(isParentTx);
-  const parentOperations: Operation[] = compact(
+  const parentOperations: TronOperation[] = compact(
     parentTxs.map(tx => txInfoToOperation(accountId, info.address, tx)),
   );
   const trc10Tokens = get(acc, "assetV2", []).map(({ key, value }) => ({
@@ -421,14 +414,17 @@ const getAccountShape = async (info: AccountShapeInfo, syncConfig) => {
     }),
   );
   // get 'OUT' token operations with fee
-  const subOutOperationsWithFee: Operation[] = flatMap(subAccounts.map(s => s.operations))
+  const subOutOperationsWithFee: TronOperation[] = flatMap(subAccounts.map(s => s.operations))
     .filter(o => o.type === "OUT" && o.fee.isGreaterThan(0))
-    .map(o => ({
-      ...o,
-      accountId,
-      value: o.fee,
-      id: `${accountId}-${o.hash}-OUT`,
-    }));
+    .map(
+      (o): TronOperation => ({
+        ...o,
+        accountId,
+        value: o.fee,
+        id: encodeOperationId(accountId, o.hash, "OUT"),
+        extra: o.extra as TrongridExtraTxInfo,
+      }),
+    );
   // add them to the parent operations and sort by date desc
 
   /**

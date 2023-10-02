@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import {
   getAccountCurrency,
@@ -14,16 +14,14 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { getAllSupportedCryptoCurrencyIds } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 import { DefaultTheme } from "styled-components/native";
 import { NavigatorName, ScreenName } from "../../../const";
-import {
-  readOnlyModeEnabledSelector,
-  swapSelectableCurrenciesSelector,
-} from "../../../reducers/settings";
+import { readOnlyModeEnabledSelector } from "../../../reducers/settings";
 import perFamilyAccountActions from "../../../generated/accountActions";
 
 import ZeroBalanceDisabledModalContent from "../../../components/FabActions/modals/ZeroBalanceDisabledModalContent";
 import { ActionButtonEvent } from "../../../components/FabActions";
 import { useCanShowStake } from "./useCanShowStake";
-import { Toast } from "../../../components/Toast/Toast";
+import { PtxToast } from "../../../components/Toast/PtxToast";
+import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 
 type Props = {
   account: AccountLike;
@@ -79,8 +77,8 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
     ];
   }, [rampCatalog.value, currency]);
 
-  const swapSelectableCurrencies = useSelector(swapSelectableCurrenciesSelector);
-  const availableOnSwap = swapSelectableCurrencies.includes(currency.id);
+  const { data: currenciesAll } = useFetchCurrencyAll();
+  const availableOnSwap = currency && currenciesAll.includes(currency.id);
 
   const extraSendActionParams = useMemo(
     () =>
@@ -106,6 +104,7 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
         screen: ScreenName.Swap,
         params: {
           defaultAccount: account,
+          defaultCurrency: currency,
           defaultParentAccount: parentAccount,
         },
       },
@@ -114,16 +113,7 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
     Icon: iconSwap,
     disabled: isPtxServiceCtaScreensDisabled || isZeroBalance,
     modalOnDisabledClick: {
-      component: isPtxServiceCtaScreensDisabled
-        ? () => (
-            <Toast
-              id="ptx-services"
-              title={t("notifications.ptxServices.toast.title")}
-              icon="info"
-              type="success"
-            />
-          )
-        : ZeroBalanceDisabledModalContent,
+      component: isPtxServiceCtaScreensDisabled ? PtxToast : ZeroBalanceDisabledModalContent,
     },
     event: "Swap Crypto Account Button",
     eventProperties: { currencyName: currency.name },
@@ -133,14 +123,7 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
     id: "buy",
     disabled: isPtxServiceCtaScreensDisabled,
     modalOnDisabledClick: {
-      component: () => (
-        <Toast
-          id="ptx-services"
-          type="success"
-          title={t("notifications.ptxServices.toast.title")}
-          icon="info"
-        />
-      ),
+      component: PtxToast,
     },
     navigationParams: [
       NavigatorName.Exchange,
@@ -176,16 +159,7 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
     Icon: iconSell,
     disabled: isPtxServiceCtaScreensDisabled || isZeroBalance,
     modalOnDisabledClick: {
-      component: isPtxServiceCtaScreensDisabled
-        ? () => (
-            <Toast
-              id="ptx-services"
-              title={t("notifications.ptxServices.toast.title")}
-              icon="info"
-              type="success"
-            />
-          )
-        : ZeroBalanceDisabledModalContent,
+      component: isPtxServiceCtaScreensDisabled ? PtxToast : ZeroBalanceDisabledModalContent,
     },
     event: "Sell Crypto Account Button",
     eventProperties: {

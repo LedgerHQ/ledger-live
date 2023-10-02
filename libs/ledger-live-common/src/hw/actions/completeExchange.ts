@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import type { Action, Device } from "./types";
 import type { AppState } from "./app";
 import { log } from "@ledgerhq/logs";
-import { Exchange } from "../../exchange/swap/types";
+import { Exchange } from "../../exchange/platform/types";
 import { Transaction } from "../../generated/types";
 
 type State = {
@@ -24,7 +24,9 @@ type CompleteExchangeRequest = {
   signature: string;
   exchange: Exchange;
   exchangeType: number;
-  rateType: number;
+  rateType?: number;
+  swapId?: string;
+  rate?: number;
 };
 type Result =
   | {

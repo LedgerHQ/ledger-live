@@ -22,7 +22,7 @@ export function genHex(length: number, rng: Prando): string {
 export function genAddress(currency: CryptoCurrency | TokenCurrency, rng: Prando): string {
   if (
     currency.type === "CryptoCurrency"
-      ? currency.family === "ethereum" // all eth family
+      ? currency.family === "evm" // all evm family
       : currency.id.startsWith("ethereum") // erc20 case
   ) {
     return `0x${genHex(40, rng)}`;

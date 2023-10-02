@@ -2,7 +2,7 @@ import React, { useCallback, memo } from "react";
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
-import styled, { CSSProperties } from "styled-components";
+import styled from "styled-components";
 import { Flex, Text, Icon } from "@ledgerhq/react-ui";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
@@ -20,7 +20,6 @@ import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/ut
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import useStakeFlow from "~/renderer/screens/stake/index";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const CryptoCurrencyIconWrapper = styled.div`
   height: 32px;
@@ -43,7 +42,7 @@ const EllipsisText = styled(Text)`
 type Props = {
   currency?: CurrencyData | null;
   counterCurrency?: string;
-  style: CSSProperties;
+  style: React.CSSProperties;
   loading: boolean;
   locale: string;
   isStarred: boolean;
@@ -71,8 +70,6 @@ function MarketRowItem({
   const dispatch = useDispatch();
   const swapDefaultTrack = useGetSwapTrackingProperties();
 
-  // PTX smart routing feature flag - buy sell live app flag
-  const ptxSmartRouting = useFeature("ptxSmartRouting");
   const startStakeFlow = useStakeFlow();
 
   const openAddAccounts = useCallback(() => {
@@ -110,20 +107,19 @@ function MarketRowItem({
 
       history.push({
         pathname: "/exchange",
-        state:
-          ptxSmartRouting?.enabled && currency?.internalCurrency
-            ? {
-                currency: currency.internalCurrency?.id,
-                mode: "buy", // buy or sell
-              }
-            : {
-                mode: "onRamp",
-                defaultTicker:
-                  currency && currency.ticker ? currency.ticker.toUpperCase() : undefined,
-              },
+        state: currency?.internalCurrency
+          ? {
+              currency: currency.internalCurrency?.id,
+              mode: "buy", // buy or sell
+            }
+          : {
+              mode: "onRamp",
+              defaultTicker:
+                currency && currency.ticker ? currency.ticker.toUpperCase() : undefined,
+            },
       });
     },
-    [currency, history, ptxSmartRouting],
+    [currency, history],
   );
 
   const onSwap = useCallback(

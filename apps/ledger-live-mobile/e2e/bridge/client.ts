@@ -9,8 +9,7 @@ import { ConnectManagerEvent } from "@ledgerhq/live-common/hw/connectManager";
 import { store } from "../../src/context/LedgerStore";
 import { importSettings } from "../../src/actions/settings";
 import { importStore as importAccounts } from "../../src/actions/accounts";
-import { acceptGeneralTermsLastVersion } from "../../src/logic/terms";
-import accountModel from "../../src/logic/accountModel";
+import { acceptGeneralTerms } from "../../src/logic/terms";
 import { navigate } from "../../src/rootnavigation";
 import { BleState, SettingsState } from "../../src/reducers/types";
 import { importBle } from "../../src/actions/ble";
@@ -22,6 +21,7 @@ import { ExchangeRequestEvent } from "@ledgerhq/live-common/hw/actions/startExch
 import { CompleteExchangeRequestEvent } from "@ledgerhq/live-common/exchange/platform/types";
 import { RemoveImageEvent } from "@ledgerhq/live-common/hw/staxRemoveImage";
 import { RenameDeviceEvent } from "@ledgerhq/live-common/hw/renameDevice";
+import { LaunchArguments } from "react-native-launch-arguments";
 
 export type MockDeviceEvent =
   | ConnectAppEvent
@@ -94,13 +94,15 @@ export const e2eBridgeClient = new Subject<MessageData>();
 
 let ws: WebSocket;
 
-export function init(port = 8099) {
+export function init() {
+  let wsPort = LaunchArguments.value()["wsPort"] || "8099";
+
   if (ws) {
     ws.close();
   }
 
   const ipAddress = Platform.OS === "ios" ? "localhost" : "10.0.2.2";
-  const path = `${ipAddress}:${port}`;
+  const path = `${ipAddress}:${wsPort}`;
   ws = new WebSocket(`ws://${path}`);
   ws.onopen = () => {
     log(`Connection opened on ${path}`);
@@ -126,7 +128,7 @@ function onMessage(event: WebSocketMessageEvent) {
       });
       break;
     case "acceptTerms":
-      acceptGeneralTermsLastVersion();
+      acceptGeneralTerms(store);
       break;
     case "importAccounts": {
       store.dispatch(importAccounts({ active: msg.payload }));

@@ -59,7 +59,7 @@ export const buildSignOperation =
     transaction: Transaction;
   }): Observable<SignOperationEvent> =>
     new Observable(o => {
-      async function main() {
+      async function main(): Promise<void> {
         const preparedTransaction = await prepareForSignOperation(account, transaction);
         const serializedTxHexString = getSerializedTransaction(preparedTransaction).slice(2); // Remove 0x prefix
 
@@ -115,7 +115,6 @@ export const buildSignOperation =
           signedOperation: {
             operation,
             signature,
-            expirationDate: null,
           },
         });
       }

@@ -1,10 +1,12 @@
-import React, { useContext, useMemo, useEffect } from "react";
+import React, { useMemo, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Linking } from "react-native";
 import SplashScreen from "react-native-splash-screen";
 import { getStateFromPath, LinkingOptions, NavigationContainer } from "@react-navigation/native";
 import { useFlipper } from "@react-navigation/devtools";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+import { DEFAULT_MULTIBUY_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
+
 import Braze from "react-native-appboy-sdk";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
@@ -14,12 +16,12 @@ import { hasCompletedOnboardingSelector } from "../reducers/settings";
 import { navigationRef, isReadyRef } from "../rootnavigation";
 import { ScreenName, NavigatorName } from "../const";
 import { setWallectConnectUri } from "../actions/walletconnect";
-import { TermsContext } from "../logic/terms";
+import { useGeneralTermsAccepted } from "../logic/terms";
 import { Writeable } from "../types/helpers";
 import { lightTheme, darkTheme, Theme } from "../colors";
 import { track } from "../analytics";
-import { Feature } from "@ledgerhq/types-live/lib/feature";
 import { setEarnInfoModal } from "../actions/earn";
+import { OptionalFeatureMap } from "@ledgerhq/types-live";
 
 const routingInstrumentation = new Sentry.ReactNavigationInstrumentation();
 
@@ -60,22 +62,12 @@ function isInvalidWalletConnectLink(url: string) {
   return true;
 }
 
-const recoverManifests = [
-  "protect",
-  "protect-simu",
-  "protect-staging",
-  "protect-preprod",
-  "protect-prod",
-  "protect-sec",
-  "protect-sit",
-];
-
 function getProxyURL(url: string) {
   const uri = new URL(url);
   const { hostname, pathname } = uri;
   const platform = pathname.split("/")[1];
 
-  if (hostname === "discover" && platform && recoverManifests.includes(platform)) {
+  if (hostname === "discover" && platform && platform.startsWith("protect")) {
     return url.replace("://discover", "://recover");
   }
 
@@ -86,17 +78,15 @@ function getProxyURL(url: string) {
   // This is to handle links set in the useFromAmountStatusMessage in LLC.
   // Also handles a difference in paths between LLD on LLD /platform/:app_id
   // but on LLM /discover/:app_id
-  if (hostname === "platform" && ["multibuy"].includes(platform)) {
+  if (hostname === "platform" && [DEFAULT_MULTIBUY_APP_ID].includes(platform)) {
     return url.replace("://platform", "://discover");
   }
 
   return url;
 }
 
-type FeatureFlags = Record<string, Feature<undefined> | null>;
-
 // DeepLinking
-const linkingOptions = (featureFlags: FeatureFlags) => ({
+const linkingOptions = (featureFlags: OptionalFeatureMap) => ({
   async getInitialURL() {
     const url = await Linking.getInitialURL();
     if (url) {
@@ -163,8 +153,6 @@ const linkingOptions = (featureFlags: FeatureFlags) => ({
           [ScreenName.BleDevicePairingFlow]: "sync-onboarding",
 
           [ScreenName.RedirectToOnboardingRecoverFlow]: "recover-restore-flow",
-          [ScreenName.RedirectToRecoverStaxFlow]: "recover-restore-stax-flow",
-
           [NavigatorName.PostOnboarding]: {
             screens: {
               /**
@@ -213,7 +201,7 @@ const linkingOptions = (featureFlags: FeatureFlags) => ({
                           [ScreenName.Accounts]: "account",
                         },
                       },
-                      ...(featureFlags.ptxEarnFeature?.enabled && {
+                      ...(featureFlags?.ptxEarn?.enabled && {
                         [NavigatorName.Market]: {
                           screens: {
                             /**
@@ -227,7 +215,7 @@ const linkingOptions = (featureFlags: FeatureFlags) => ({
                   },
                 },
               },
-              ...(!featureFlags.ptxEarnFeature?.enabled && {
+              ...(!featureFlags?.ptxEarn?.enabled && {
                 [NavigatorName.Market]: {
                   screens: {
                     /**
@@ -388,7 +376,10 @@ const linkingOptions = (featureFlags: FeatureFlags) => ({
   },
 });
 
-const getOnboardingLinkingOptions = (acceptedTermsOfUse: boolean, featureFlags: FeatureFlags) => ({
+const getOnboardingLinkingOptions = (
+  acceptedTermsOfUse: boolean,
+  featureFlags: OptionalFeatureMap,
+) => ({
   ...linkingOptions(featureFlags),
   config: {
     initialRouteName: NavigatorName.BaseOnboarding,
@@ -405,7 +396,7 @@ const getOnboardingLinkingOptions = (acceptedTermsOfUse: boolean, featureFlags: 
                */
               [ScreenName.PlatformApp]: "discover/:platform",
               [ScreenName.Recover]: "recover/:platform",
-              [ScreenName.RedirectToRecoverStaxFlow]: "recover-restore-stax-flow",
+              [ScreenName.RedirectToOnboardingRecoverFlow]: "recover-restore-flow",
             },
           },
         },
@@ -424,13 +415,13 @@ export const DeeplinksProvider = ({
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const ptxEarnFeature = useFeature("ptxEarn");
-  const features = useMemo(() => ({ ptxEarnFeature }), [ptxEarnFeature]);
+  const features = useMemo(() => ({ ptxEarn: ptxEarnFeature }), [ptxEarnFeature]);
 
   const { state } = useRemoteLiveAppContext();
   const liveAppProviderInitialized = !!state.value || !!state.error;
   const manifests = state?.value?.liveAppByIndex || emptyObject;
   // Can be either true, false or null, meaning we don't know yet
-  const { accepted: userAcceptedTerms } = useContext(TermsContext);
+  const userAcceptedTerms = useGeneralTermsAccepted();
 
   const linking = useMemo<LinkingOptions<ReactNavigation.RootParamList>>(
     () =>
@@ -469,11 +460,33 @@ export const DeeplinksProvider = ({
         },
         getStateFromPath: (path, config) => {
           const url = new URL(`ledgerlive://${path}`);
-          const { hostname, pathname } = url;
+          const { hostname, searchParams, pathname } = url;
+          const query = Object.fromEntries(searchParams);
+
+          const {
+            ajs_prop_campaign: ajsPropCampaign,
+            ajs_prop_track_data: ajsPropTrackData,
+            ajs_prop_source: ajsPropSource,
+            currency,
+            installApp,
+            appName,
+          } = query;
+
+          // Track deeplink only when ajsPropSource attribute exists.
+          if (ajsPropSource) {
+            track("deeplink_clicked", {
+              deeplinkSource: ajsPropSource,
+              deeplinkCampaign: ajsPropCampaign,
+              url: hostname,
+              currency,
+              installApp,
+              appName,
+              ...(ajsPropTrackData ? JSON.parse(ajsPropTrackData) : {}),
+            });
+          }
           const platform = pathname.split("/")[1];
 
           if (hostname === "earn") {
-            const searchParams = url.searchParams;
             if (searchParams.get("action") === "info-modal") {
               const message = searchParams.get("message") || "";
               const messageTitle = searchParams.get("messageTitle") || "";
@@ -488,13 +501,7 @@ export const DeeplinksProvider = ({
             }
           }
           if ((hostname === "discover" || hostname === "recover") && platform) {
-            const whitelistLiveAppsAccessibleInNonOnboardedLL: LiveAppManifest["id"][] =
-              recoverManifests;
-            if (
-              !hasCompletedOnboarding &&
-              !whitelistLiveAppsAccessibleInNonOnboardedLL.includes(platform)
-            )
-              return undefined;
+            if (!hasCompletedOnboarding && !platform.startsWith("protect")) return undefined;
             /**
              * Upstream validation of "ledgerlive://discover/:platform":
              *  - checking that a manifest exists

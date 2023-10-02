@@ -87,7 +87,8 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const base = useFeature("currencyBase");
   const baseGoerli = useFeature("currencyBaseGoerli");
   const klaytn = useFeature("currencyKlaytn");
-
+  const mock = useEnv("MOCK");
+  const injective = useFeature("currencyInjective");
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
       axelar,
@@ -123,6 +124,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       base,
       base_goerli: baseGoerli,
       klaytn,
+      injective,
     }),
     [
       axelar,
@@ -158,6 +160,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       base,
       baseGoerli,
       klaytn,
+      injective,
     ],
   );
 
@@ -165,9 +168,11 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
     const currencies = [...listSupportedCurrencies(), ...listSupportedTokens()].filter(
       ({ id }) => filterCurrencyIds.length <= 0 || filterCurrencyIds.includes(id),
     );
-    const deactivatedCurrencies = Object.entries(featureFlaggedCurrencies)
-      .filter(([, feature]) => !feature?.enabled)
-      .map(([name]) => name);
+    const deactivatedCurrencies = mock
+      ? []
+      : Object.entries(featureFlaggedCurrencies)
+          .filter(([, feature]) => !feature?.enabled)
+          .map(([name]) => name);
 
     const currenciesFiltered = currencies.filter(c => !deactivatedCurrencies.includes(c.id));
 
@@ -175,7 +180,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       return currenciesFiltered.filter(c => c.type !== "CryptoCurrency" || !c.isTestnetFor);
     }
     return currenciesFiltered;
-  }, [devMode, featureFlaggedCurrencies, filterCurrencyIds]);
+  }, [devMode, featureFlaggedCurrencies, filterCurrencyIds, mock]);
 
   const sortedCryptoCurrencies = useCurrenciesByMarketcap(cryptoCurrencies);
 

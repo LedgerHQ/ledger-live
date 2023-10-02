@@ -11,6 +11,7 @@ export function toCosmosResourcesRaw(r: CosmosResources): CosmosResourcesRaw {
     withdrawAddress,
     redelegations,
     unbondings,
+    sequence,
   } = r;
 
   return {
@@ -37,6 +38,7 @@ export function toCosmosResourcesRaw(r: CosmosResources): CosmosResourcesRaw {
     pendingRewardsBalance: pendingRewardsBalance.toString(),
     unbondingBalance: unbondingBalance.toString(),
     withdrawAddress,
+    sequence,
   };
 }
 export function fromCosmosResourcesRaw(r: CosmosResourcesRaw): CosmosResources {
@@ -48,6 +50,7 @@ export function fromCosmosResourcesRaw(r: CosmosResourcesRaw): CosmosResources {
     unbondingBalance,
     withdrawAddress,
     unbondings,
+    sequence,
   } = r;
   return {
     delegations: delegations.map(({ amount, status, pendingRewards, validatorAddress }) => ({
@@ -73,6 +76,7 @@ export function fromCosmosResourcesRaw(r: CosmosResourcesRaw): CosmosResources {
     pendingRewardsBalance: new BigNumber(pendingRewardsBalance),
     unbondingBalance: new BigNumber(unbondingBalance),
     withdrawAddress,
+    sequence,
   };
 }
 

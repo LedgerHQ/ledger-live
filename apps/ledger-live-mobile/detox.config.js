@@ -25,6 +25,9 @@ module.exports = {
       exposeGlobals: false,
     },
     launchApp: "auto",
+    cleanup: {
+      shutdownDevice: false,
+    },
   },
   apps: {
     "ios.debug": {

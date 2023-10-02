@@ -23,6 +23,7 @@ function getTyphonInputFromUtxo(utxo: CardanoOutput): TyphonTypes.Input {
   if (address.paymentCredential.type === TyphonTypes.HashType.ADDRESS) {
     address.paymentCredential.bipPath = utxo.paymentCredential.path;
   }
+
   return {
     txId: utxo.hash,
     index: utxo.index,

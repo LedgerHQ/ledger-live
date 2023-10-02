@@ -35,6 +35,7 @@ import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getLLDCoinFamily } from "~/renderer/families";
+import { firstValueFrom } from "rxjs";
 
 const Separator = styled.div`
   border-top: 1px solid #99999933;
@@ -148,6 +149,8 @@ const StepReceiveFunds = (props: StepProps) => {
     onClose,
     eventType,
     currencyName,
+    receiveTokenMode,
+    receiveNFTMode,
   } = props;
   const dispatch = useDispatch();
   const receiveStakingFlowConfig = useFeature("receiveStakingFlowConfigDesktop");
@@ -170,12 +173,12 @@ const StepReceiveFunds = (props: StepProps) => {
         if (!device) {
           throw new DisconnectedDevice();
         }
-        await getAccountBridge(mainAccount)
-          .receive(mainAccount, {
+        await firstValueFrom(
+          getAccountBridge(mainAccount).receive(mainAccount, {
             deviceId: device.deviceId,
             verify: true,
-          })
-          .toPromise();
+          }),
+        );
         onChangeAddressVerified(true);
         hideQRCodeModal();
         transitionTo("receive");
@@ -198,8 +201,10 @@ const StepReceiveFunds = (props: StepProps) => {
     const dismissModal = global.localStorage.getItem(`${LOCAL_STORAGE_KEY_PREFIX}${id}`) === "true";
     if (
       !dismissModal &&
+      !receiveNFTMode &&
+      !receiveTokenMode &&
       receiveStakingFlowConfig?.enabled &&
-      receiveStakingFlowConfig?.params[id]?.enabled
+      receiveStakingFlowConfig?.params?.[id]?.enabled
     ) {
       track("button_clicked", {
         button: "continue",
@@ -213,7 +218,7 @@ const StepReceiveFunds = (props: StepProps) => {
       });
       if (receiveStakingFlowConfig?.params?.[id]?.direct) {
         dispatch(
-          openModal("MODAL_ETH_STAKE", {
+          openModal("MODAL_EVM_STAKE", {
             account: mainAccount,
             hasCheckbox: true,
             singleProviderRedirectMode: false,
@@ -235,6 +240,8 @@ const StepReceiveFunds = (props: StepProps) => {
     onClose,
     receiveStakingFlowConfig?.enabled,
     receiveStakingFlowConfig?.params,
+    receiveNFTMode,
+    receiveTokenMode,
     transitionTo,
   ]);
 

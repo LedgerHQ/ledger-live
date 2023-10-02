@@ -11,6 +11,8 @@ import {
   PriorityFeeTooHigh,
   PriorityFeeHigherThanMaxFee,
   MaxFeeTooLow,
+  NotEnoughBalanceInParentAccount,
+  FeeTooHigh,
 } from "@ledgerhq/errors";
 import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
@@ -31,7 +33,8 @@ type ValidatedTransactionFields =
   | "gasPrice"
   | "amount"
   | "maxPriorityFee"
-  | "maxFee";
+  | "maxFee"
+  | "feeTooHigh";
 type ValidationIssues = Partial<Record<ValidatedTransactionFields, Error>>;
 
 // This regex will not work with Starknet since addresses are 65 caracters long after the 0x
@@ -53,7 +56,7 @@ export const validateRecipient = (
 
     if (!isRecipientMatchingEthFormat) {
       errors.recipient = new InvalidAddress("", {
-        currency: account.currency,
+        currencyName: account.currency.name,
       });
     } else {
       // Check if address is respecting EIP-55
@@ -78,7 +81,7 @@ export const validateRecipient = (
 /**
  * Validate the amount of a transaction for an account
  */
-export const validateAmount = (
+const validateAmount = (
   account: Account | SubAccount,
   transaction: EvmTransaction,
   totalSpent: BigNumber,
@@ -106,7 +109,7 @@ export const validateAmount = (
 /**
  * Validate gas properties of a transaction, depending on its type and the account emitter
  */
-export const validateGas = (
+const validateGas = (
   account: Account,
   tx: EvmTransaction,
   estimatedFees: BigNumber,
@@ -166,7 +169,11 @@ export const validateGas = (
   return [errors, warnings];
 };
 
-export const validateNft = (account: Account, tx: EvmTransaction): Array<ValidationIssues> => {
+const validateNft = (
+  account: Account,
+  tx: EvmTransaction,
+  totalFees: BigNumber,
+): Array<ValidationIssues> => {
   if (!tx.nft) return [{}, {}];
 
   const errors: ValidationIssues = {};
@@ -183,6 +190,33 @@ export const validateNft = (account: Account, tx: EvmTransaction): Array<Validat
     errors.amount = new QuantityNeedsToBePositive();
   } else if (nftFromAccount.amount.lt(tx.nft.quantity)) {
     errors.amount = new NotEnoughNftOwned();
+  } else if (totalFees.isGreaterThan(account.balance)) {
+    // if not enough balance to pay fees
+    errors.amount = new NotEnoughBalanceInParentAccount();
+  }
+
+  return [errors, warnings];
+};
+
+/**
+ * Validate business logic related to the fee ratio of a transaction:
+ * - if sending ETH, warn if fees are more than 10% of the amount
+ */
+const validateFeeRatio = (
+  account: Account | SubAccount,
+  tx: EvmTransaction,
+  estimatedFees: BigNumber,
+): Array<ValidationIssues> => {
+  const errors: ValidationIssues = {};
+  const warnings: ValidationIssues = {};
+
+  const isTokenTransaction = account?.type === "TokenAccount";
+
+  // If sending ETH (ie.: no tokens, no nft, no smart contract interactions)
+  if (!tx.nft && !tx.data && !isTokenTransaction) {
+    if (tx.amount.gt(0) && estimatedFees.times(10).gt(tx.amount)) {
+      warnings.feeTooHigh = new FeeTooHigh();
+    }
   }
 
   return [errors, warnings];
@@ -208,19 +242,24 @@ export const getTransactionStatus: AccountBridge<EvmTransaction>["getTransaction
   const [amountErr, amountWarn] = validateAmount(subAccount || account, tx, totalSpent);
   // Gas related errors and warnings
   const [gasErr, gasWarn] = validateGas(account, tx, totalFees, gasLimit, customGasLimit);
-  const [nftErr, nftWarn] = validateNft(account, tx);
+  // NFT related errors and warnings
+  const [nftErr, nftWarn] = validateNft(account, tx, totalFees);
+  // Fee ratio related errors and warnings
+  const [feeRatioErr, feeRatioWarn] = validateFeeRatio(subAccount || account, tx, estimatedFees);
 
   const errors: ValidationIssues = {
     ...recipientErr,
     ...gasErr,
     ...amountErr,
     ...nftErr,
+    ...feeRatioErr,
   };
   const warnings: ValidationIssues = {
     ...recipientWarn,
     ...gasWarn,
     ...amountWarn,
     ...nftWarn,
+    ...feeRatioWarn,
   };
 
   return {

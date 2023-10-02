@@ -66,9 +66,6 @@ export const runAppOp = (
               type: "runSuccess",
               appOp,
             };
-
-          default:
-            throw new Error("invalid notification of kind=" + n.kind);
         }
       }),
     ),

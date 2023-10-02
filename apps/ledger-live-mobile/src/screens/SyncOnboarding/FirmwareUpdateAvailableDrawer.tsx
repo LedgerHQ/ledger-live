@@ -1,9 +1,8 @@
 import React from "react";
-import { BoxedIcon, Button, Flex, Text } from "@ledgerhq/native-ui";
-import { NanoFirmwareUpdateMedium } from "@ledgerhq/native-ui/assets/icons";
+import { Button, Flex, Icons, IconsLegacy, Link } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import QueuedDrawer from "../../components/QueuedDrawer";
-import { TrackScreen } from "../../analytics";
+import { GenericInformationBody } from "../../components/GenericInformationBody";
 
 export type Props = {
   isOpen: boolean;
@@ -34,33 +33,28 @@ const FirmwareUpdateAvailableDrawer: React.FC<Props> = ({
 
   return (
     <QueuedDrawer onClose={onClose} isRequestingToBeOpened={isOpen} preventBackdropClick>
-      <TrackScreen
-        category={`Set up ${productName}: Step 4: Software update available`}
-        type={"drawer"}
-      />
       <Flex justifyContent="center" alignItems="center">
-        <BoxedIcon
-          Icon={<NanoFirmwareUpdateMedium color="primary.c90" size={24} />}
-          variant="circle"
-          backgroundColor="primary.c30"
-          borderColor="transparent"
-          size={48}
+        <GenericInformationBody
+          Icon={Icons.InformationFill}
+          iconColor="primary.c80"
+          title={t("earlySecurityCheck.firmwareUpdateAvailableDrawer.title", { productName })}
+          description={
+            <>
+              {t("earlySecurityCheck.firmwareUpdateAvailableDrawer.descriptionVersion", {
+                firmwareVersion,
+              })}
+              {"\n"}
+              {t("earlySecurityCheck.firmwareUpdateAvailableDrawer.description", { productName })}
+            </>
+          }
         />
       </Flex>
-      <Text textAlign="center" variant="h4" fontWeight="semiBold" mb={4} mt={8}>
-        {t("earlySecurityCheck.firmwareUpdateAvailableDrawer.title")}
-      </Text>
-      <Text textAlign="center" variant="bodyLineHeight" mb={1} color="neutral.c80">
-        {t("earlySecurityCheck.firmwareUpdateAvailableDrawer.descriptionVersion", {
-          firmwareVersion,
-        })}
-      </Text>
-      <Text textAlign="center" variant="bodyLineHeight" mb={8} color="neutral.c80">
-        {t("earlySecurityCheck.firmwareUpdateAvailableDrawer.description", { productName })}
-      </Text>
-      <Button type="main" mb={6} onPress={onUpdate}>
+      <Button mt={8} mb={7} type="main" onPress={onUpdate} size={"large"}>
         {t("earlySecurityCheck.firmwareUpdateAvailableDrawer.updateCta")}
       </Button>
+      <Link onPress={onUpdate} size={"large"} Icon={IconsLegacy.ExternalLinkMedium}>
+        {t("earlySecurityCheck.firmwareUpdateAvailableDrawer.seeWhatsInUpdateCta")}
+      </Link>
     </QueuedDrawer>
   );
 };
