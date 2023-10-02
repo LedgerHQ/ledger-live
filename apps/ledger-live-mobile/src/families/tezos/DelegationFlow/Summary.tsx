@@ -135,7 +135,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
     }
 
     // when changes, we set again
-    if (patch.mode !== transaction.mode || "recipient" in patch) {
+    if (patch.mode !== transaction.mode || patch.recipient) {
       setTransaction(
         getAccountBridge(account, parentAccount).updateTransaction(transaction, patch),
       );
@@ -186,9 +186,8 @@ export default function DelegationSummary({ navigation, route }: Props) {
 
   const delegation = useDelegation(account);
   const addr =
-    transaction.mode === "undelegate"
-      ? (delegation && delegation.address) || ""
-      : transaction.recipient;
+    transaction.mode === "undelegate" ? delegation?.address || "" : transaction.recipient;
+
   const baker = useBaker(addr);
   const bakerName = baker ? baker.name : shortAddressPreview(addr);
   const currency = getAccountCurrency(account);

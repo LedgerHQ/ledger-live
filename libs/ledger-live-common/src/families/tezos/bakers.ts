@@ -135,9 +135,8 @@ export function useDelegation(account: AccountLike): Delegation | null | undefin
 
 export function useBaker(addr: string): Baker | undefined {
   const [baker, setBaker] = useState(() => getBakerSync(addr));
-  useEffect(() => {
-    loadBaker(addr).then(setBaker);
-  }, [addr]);
+
+  loadBaker(addr).then(setBaker);
 
   return baker;
 }
