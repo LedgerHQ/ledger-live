@@ -37,8 +37,7 @@ const config: PlaywrightTestConfig = {
   preserveOutput: process.env.CI ? "failures-only" : "always",
   maxFailures: process.env.CI ? 5 : undefined,
   reportSlowTests: process.env.CI ? { max: 0, threshold: 60000 } : null,
-  fullyParallel: true,
-  workers: "50%", // NOTE: 'macos-latest' and 'windows-latest' can't run 3 concurrent workers
+  workers: 1,
   retries: process.env.CI ? 2 : 0, // FIXME: --update-snapshots doesn't work with --retries
   reporter: process.env.CI
     ? [
