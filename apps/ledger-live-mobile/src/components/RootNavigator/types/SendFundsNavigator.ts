@@ -170,13 +170,14 @@ export type SendFundsNavigatorStackParamList = {
     parentId?: string;
     transaction: EvmTransaction;
     setTransaction: Result<EvmTransaction>["setTransaction"];
+    setCustomStrategyTransactionPatch: React.Dispatch<
+      React.SetStateAction<Partial<EvmTransaction> | undefined>
+    >;
     currentNavigation:
-      | ScreenName.SignTransactionSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
@@ -188,11 +189,9 @@ export type SendFundsNavigatorStackParamList = {
     transaction: EvmTransaction;
     currentNavigation:
       | ScreenName.SignTransactionSummary
-      | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
