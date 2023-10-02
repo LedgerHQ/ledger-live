@@ -3,7 +3,7 @@ import BigNumber from "bignumber.js";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import { getAdditionalLayer2Fees, getEstimatedFees, isNftTransaction } from "./logic";
-import { EvmNftTransaction, Transaction as EvmTransaction, FeeData, GasOptions } from "./types";
+import { EvmNftTransaction, Transaction as EvmTransaction, FeeData, Strategy } from "./types";
 import { getTransactionData, getTypedTransaction } from "./transaction";
 import { validateRecipient } from "./getTransactionStatus";
 import { getNftCollectionMetadata } from "./api/nft";
@@ -197,7 +197,7 @@ export const prepareTransaction = async (
       };
     }
 
-    const gasOption = transaction.gasOptions?.[transaction.feesStrategy as keyof GasOptions];
+    const gasOption = transaction.gasOptions?.[transaction.feesStrategy as Strategy];
     return gasOption || nodeApi.getFeeData(currency, transaction);
   })();
 

@@ -11,9 +11,9 @@ import React, { useCallback, useEffect, useState } from "react";
 import { ScreenName } from "../../const";
 import { EvmNetworkFeeInfo } from "./EvmNetworkFeesInfo";
 import SelectFeesStrategy from "./SelectFeesStrategy";
-import { SendRowsFeeProps as Props } from "./types";
+import { SendRowsFeeProps as Props, StrategyWithCustom } from "./types";
 
-const getCustomStrategy = (transaction: Transaction): BigNumber | null => {
+const getCustomStrategyFees = (transaction: Transaction): BigNumber | null => {
   if (transaction.feesStrategy === "custom") {
     return getEstimatedFees(transaction);
   }
@@ -54,26 +54,45 @@ export default function EvmFeesStrategy({
     }
   }, [bridge, setTransaction, gasOptions, transaction, shouldPrefillEvmGasOptions]);
 
-  const [customStrategy, setCustomStrategy] = useState(getCustomStrategy(transaction));
-
-  useEffect(() => {
-    const newCustomStrategy = getCustomStrategy(transaction);
-
-    if (newCustomStrategy) {
-      setCustomStrategy(newCustomStrategy);
-    }
-  }, [transaction, setCustomStrategy]);
+  /**
+   * When the user edits the custom fees, we save the related transaction patch
+   * in order to reapply it the next time the user selects the saved custom
+   * strategy entry in the strategy list.
+   * This is done in order to display the correct fees value for the saved custom
+   * entry in the fees strategy list.
+   * We don't need to save the transaction patch for other fees strategies since
+   * the transaction is already updated with the correct fee data retrieved from
+   * the gasTracker in `prepareTransaction`.
+   * cf. (as of 21-09-2023) https://github.com/LedgerHQ/ledger-live/blob/e87c4c2d879fb9322cd2849f2d34c3be9e500a1e/libs/coin-evm/src/prepareTransaction.ts#L190-L202
+   * But since the custom strategy is handled locally by the client, if we don't
+   * save the patch (including updated fee data) and only update the `feesStrategy`
+   * field, the fees value displayed in the fees strategy for the custom entry
+   * will be the one from the last selected strategy (e.g. slow, medium, fast).
+   */
+  const [customStrategyTransactionPatch, setCustomStrategyTransactionPatch] =
+    useState<Partial<Transaction>>();
 
   const onFeesSelected = useCallback(
-    ({ feesStrategy }) => {
-      setTransaction(
-        bridge.updateTransaction(transaction, {
-          feesStrategy,
-          gasOptions,
-        }),
-      );
+    ({ feesStrategy }: { feesStrategy: StrategyWithCustom }) => {
+      const bridge = getAccountBridge<Transaction>(account, parentAccount);
+
+      const patch: Partial<Transaction> =
+        feesStrategy === "custom" && customStrategyTransactionPatch
+          ? customStrategyTransactionPatch
+          : {
+              feesStrategy,
+            };
+
+      setTransaction(bridge.updateTransaction(transaction, { ...patch, gasOptions }));
     },
-    [setTransaction, bridge, transaction, gasOptions],
+    [
+      setTransaction,
+      account,
+      parentAccount,
+      transaction,
+      customStrategyTransactionPatch,
+      gasOptions,
+    ],
   );
 
   const openCustomFees = useCallback(() => {
@@ -85,6 +104,7 @@ export default function EvmFeesStrategy({
       currentNavigation: ScreenName.SendSummary,
       nextNavigation: ScreenName.SendSelectDevice,
       setTransaction,
+      setCustomStrategyTransactionPatch,
     });
   }, [navigation, route.params, account.id, parentAccount, transaction, setTransaction]);
 
@@ -104,7 +124,10 @@ export default function EvmFeesStrategy({
     <SelectFeesStrategy
       {...props}
       gasOptions={gasOptions}
-      customFees={customStrategy}
+      customFees={getCustomStrategyFees({
+        ...transaction,
+        ...customStrategyTransactionPatch,
+      } as Transaction)}
       onStrategySelect={onFeesSelected}
       onCustomFeesPress={openCustomFees}
       account={account}

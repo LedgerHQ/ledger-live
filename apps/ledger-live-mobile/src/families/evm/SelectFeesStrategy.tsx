@@ -30,8 +30,7 @@ import TachometerMedium from "../../icons/TachometerMedium";
 import TachometerSlow from "../../icons/TachometerSlow";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 import { sharedSwapTracking } from "../../screens/Swap/utils";
-
-type StrategyWithCustom = Strategy | "custom";
+import { StrategyWithCustom } from "./types";
 
 type Props = {
   gasOptions: GasOptions;
@@ -105,10 +104,12 @@ export default function SelectFeesStrategy({
       return getEstimatedFees(getTypedTransaction(transaction, gasOptions[strategy]));
     })();
 
+    const isDisabled = disabledStrategies?.includes(strategy);
+
     return (
       <TouchableOpacity
         onPress={() => onPressStrategySelect(strategy)}
-        disabled={disabledStrategies ? disabledStrategies.includes(strategy) : false}
+        disabled={isDisabled}
         style={[
           styles.feeButton,
           {
@@ -121,7 +122,7 @@ export default function SelectFeesStrategy({
           style={[
             styles.feeStrategyContainer,
             {
-              opacity: disabledStrategies?.includes(strategy) ? 0.2 : 1,
+              opacity: isDisabled ? 0.2 : 1,
             },
           ]}
         >
