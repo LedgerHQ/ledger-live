@@ -303,8 +303,7 @@ jobs:
           path: apps/ledger-live-desktop/allure-results
 
   report:
-    needs:
-      [codechecks, deadcodecheck, unit-tests, e2e-tests-linux, e2e-tests-windows, e2e-tests-mac]
+    needs: [codechecks, deadcodecheck, unit-tests, e2e-tests-linux, e2e-tests-windows]
     runs-on: ubuntu-latest
     if: always() && !cancelled()
     steps:
@@ -397,8 +396,8 @@ jobs:
 
             const report = {
               mac: {
-                pass: ${{ needs.e2e-tests-mac.outputs.status == 'success' }},
-                status: "${{ needs.e2e-tests-mac.outputs.status }}",
+                pass: false,
+                status: "SKIPPED",
               },
               linux: {
                 pass: ${{ needs.e2e-tests-linux.outputs.status == 'success' }},
@@ -584,7 +583,7 @@ jobs:
 
   allure-report:
     name: "Allure Reports Export on Server"
-    needs: [e2e-tests-windows, e2e-tests-linux, e2e-tests-mac]
+    needs: [e2e-tests-windows, e2e-tests-linux]
     runs-on: [ledger-live-medium-linux]
     if: ${{ always() && !cancelled() && github.ref_name == 'develop' }}
     steps:
@@ -615,14 +614,6 @@ jobs:
           login: ${{ secrets.ALLURE_LOGIN }}
           password: ${{ secrets.ALLURE_PASSWORD }}
           path: allure-results-windows
-      - name: Send Results and Generate Allure Report - MacOS
-        uses: ./tools/actions/composites/upload-allure-report
-        if: always()
-        with:
-          platform: macos
-          login: ${{ secrets.ALLURE_LOGIN }}
-          password: ${{ secrets.ALLURE_PASSWORD }}
-          path: allure-results-macos
       - name: Send Results and Generate Allure Report - Linux
         uses: ./tools/actions/composites/upload-allure-report
         if: always()

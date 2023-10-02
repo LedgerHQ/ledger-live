@@ -12,6 +12,6 @@ if (!process.env.IS_INTERNAL_PROCESS) {
   // Main electron thread
   require("./main");
 } else {
-  // Internal thread (coins, hardware)
+  // Internal process (hardware wallet USB management)
   require("./internal");
 }
