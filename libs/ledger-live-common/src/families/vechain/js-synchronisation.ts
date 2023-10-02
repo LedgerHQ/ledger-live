@@ -39,25 +39,6 @@ const getAccountShape: GetAccountShape = async info => {
   const vthoAccountId = encodeTokenAccountId(accountId, findTokenById("vechain/vtho")!);
   const vthoOperations = await getTokenOperations(vthoAccountId, address, VTHO_ADDRESS, 0);
 
-  // Generate type "NONE" operations on main account for each token operation to run bot tests
-  // vthoOperations.forEach(operation => {
-  //   const op: Operation = {
-  //     id: encodeOperationId(accountId, operation.hash, "NONE" as const),
-  //     hash: "",
-  //     type: "NONE",
-  //     value: new BigNumber(0),
-  //     fee: new BigNumber(0),
-  //     senders: [],
-  //     recipients: [],
-  //     blockHash: "",
-  //     blockHeight: 0,
-  //     accountId,
-  //     date: operation.date,
-  //     extra: {},
-  //   };
-  //   newOperations.push(op);
-  // });
-
   const operations = mergeOps(oldOperations, newOperations);
 
   //Account creation date set to now if there are no operation or at the first operation on the account
