@@ -268,7 +268,6 @@ jobs:
       - name: Run playwright tests
         id: tests
         run: |
-          ls -la "node_modules/.pnpm/electron@25.1.1/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron\ Framework.framework/Electron\ Framework"
           tree node_modules/.pnpm/electron*
           pnpm desktop test:playwright
       - name: upload diffs to imgur
