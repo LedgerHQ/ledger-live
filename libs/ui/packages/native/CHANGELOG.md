@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.22.0
+
+### Minor Changes
+
+- [#4628](https://github.com/LedgerHQ/ledger-live/pull/4628) [`d1d0977f33`](https://github.com/LedgerHQ/ledger-live/commit/d1d0977f338beb860d40f4b38a9e123cbbb5ebbb) Thanks [@KVNLS](https://github.com/KVNLS)! - [LIVE-8347] Add quick actions on the wallet
+
 ## 0.22.0-next.0
 
 ### Minor Changes

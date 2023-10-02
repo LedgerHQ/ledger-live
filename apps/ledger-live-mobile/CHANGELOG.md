@@ -1,5 +1,70 @@
 # live-mobile
 
+## 3.33.0
+
+### Minor Changes
+
+- [#4741](https://github.com/LedgerHQ/ledger-live/pull/4741) [`a134f28e9d`](https://github.com/LedgerHQ/ledger-live/commit/a134f28e9d220d172148619ed281d4ca897d5532) Thanks [@chabroA](https://github.com/chabroA)! - Fix swap issue when estimating and editing fees
+
+- [#4583](https://github.com/LedgerHQ/ledger-live/pull/4583) [`f527d1bb5a`](https://github.com/LedgerHQ/ledger-live/commit/f527d1bb5a2888a916f761d43d2ba5093eaa3e3f) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Integrate injective + gas rework
+
+- [#4616](https://github.com/LedgerHQ/ledger-live/pull/4616) [`299eaba752`](https://github.com/LedgerHQ/ledger-live/commit/299eaba752f2581e935706efbd13ae752627fa3e) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Add a deeplinking state in redux to inform the AuthPass component not to lock when app is temporarily backgrounded by ptx player deeplinks.
+
+- [#4706](https://github.com/LedgerHQ/ledger-live/pull/4706) [`4dd486d87f`](https://github.com/LedgerHQ/ledger-live/commit/4dd486d87fea4c641cc4a21fc181c6097bab9d3d) Thanks [@Justkant](https://github.com/Justkant)! - feat: send LL version to the manifest-api
+
+- [#4628](https://github.com/LedgerHQ/ledger-live/pull/4628) [`d1d0977f33`](https://github.com/LedgerHQ/ledger-live/commit/d1d0977f338beb860d40f4b38a9e123cbbb5ebbb) Thanks [@KVNLS](https://github.com/KVNLS)! - [LIVE-8347] Add quick actions on the wallet
+
+- [#4285](https://github.com/LedgerHQ/ledger-live/pull/4285) [`533278e2c4`](https://github.com/LedgerHQ/ledger-live/commit/533278e2c40ee764ecb87d4430fa6650f251ff0c) Thanks [@chabroA](https://github.com/chabroA)! - Migrate Ethereum family implementation to EVM family
+
+  Replace the legcay Ethereum familly implementation that was present in ledger-live-common by the coin-evm lib implementation.
+  This change was made in order to improve scalabillity and maintainability of the evm coins, as well as more easilly integrate new evm based chains in the future.
+
+### Patch Changes
+
+- [#4693](https://github.com/LedgerHQ/ledger-live/pull/4693) [`f99705e45c`](https://github.com/LedgerHQ/ledger-live/commit/f99705e45c004e90f4f33969b9c223da76475ccb) Thanks [@cksanders](https://github.com/cksanders)! - Ensure we reset the storage correctly in the PTXWebPlayer
+
+- [#4680](https://github.com/LedgerHQ/ledger-live/pull/4680) [`8c1de2f9de`](https://github.com/LedgerHQ/ledger-live/commit/8c1de2f9debb825b47c99e6fc34a19d73d04c1cf) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Add Entry point to CEX with feature flag
+
+- [#4717](https://github.com/LedgerHQ/ledger-live/pull/4717) [`a80310f16a`](https://github.com/LedgerHQ/ledger-live/commit/a80310f16af3f22f71052d0f3696ab8b7a652a77) Thanks [@lvndry](https://github.com/lvndry)! - Update staking icon
+
+- [#4861](https://github.com/LedgerHQ/ledger-live/pull/4861) [`0872f274dc`](https://github.com/LedgerHQ/ledger-live/commit/0872f274dceaddfdefc33cd2880476f44e8c43a4) Thanks [@cksanders](https://github.com/cksanders)! - Pass correct account ID, due to Platform SDK account ID not being equivalent to Wallet API account ID
+
+  Includes fix for iOS and Android A series.
+
+- [#4674](https://github.com/LedgerHQ/ledger-live/pull/4674) [`4f3ff62b77`](https://github.com/LedgerHQ/ledger-live/commit/4f3ff62b775ffde01c546c798d7cd4f87959e5fc) Thanks [@stephane-lieumont-ledger](https://github.com/stephane-lieumont-ledger)! - change ui button device select restore flow
+
+- [#4792](https://github.com/LedgerHQ/ledger-live/pull/4792) [`260b3811dd`](https://github.com/LedgerHQ/ledger-live/commit/260b3811dd4804ab02dd52b9a6ab4d738e28b656) Thanks [@sarneijim](https://github.com/sarneijim)! - Add account wallet id conversion for buy deeplinks
+
+- [#4617](https://github.com/LedgerHQ/ledger-live/pull/4617) [`a5b7444489`](https://github.com/LedgerHQ/ledger-live/commit/a5b7444489af8b58cd4b8a04abdb2df81d21c813) Thanks [@cksanders](https://github.com/cksanders)! - Ensure iOS opens links correctly in wallet api webview & remove binancecnt
+
+- [#4679](https://github.com/LedgerHQ/ledger-live/pull/4679) [`9bde1dcda3`](https://github.com/LedgerHQ/ledger-live/commit/9bde1dcda31de44d5362abed00e2bee580e7c13e) Thanks [@Justkant](https://github.com/Justkant)! - fix: wallet-api & platform verify account screen
+
+- [#4853](https://github.com/LedgerHQ/ledger-live/pull/4853) [`06d20dd95f`](https://github.com/LedgerHQ/ledger-live/commit/06d20dd95fbda6c2ed7148f9182816d20ea53910) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Prevent crash on Custom Fees selection when no GasOptions is set for EVM transactions
+
+- [#4648](https://github.com/LedgerHQ/ledger-live/pull/4648) [`8b09b0b571`](https://github.com/LedgerHQ/ledger-live/commit/8b09b0b5717a47aedae5a8a80acf6d077af3b40b) Thanks [@cksanders](https://github.com/cksanders)! - Update multibuy manifest to v2 to ensure full backwards compatibility
+
+- [#4685](https://github.com/LedgerHQ/ledger-live/pull/4685) [`35cb442294`](https://github.com/LedgerHQ/ledger-live/commit/35cb4422944f1e7af696c816a53a6ada74525de2) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Conditionally render different text when user arrives at the buy funds modal from a get funds button rather than default of no funds. Applies to mobile and desktop.
+
+- [#4780](https://github.com/LedgerHQ/ledger-live/pull/4780) [`602e15dcfa`](https://github.com/LedgerHQ/ledger-live/commit/602e15dcfa5079a64db9aaf4cc08c46547daa0ab) Thanks [@sarneijim](https://github.com/sarneijim)! - Add SUPPLY_UPLOAD_MAX_RETRIES fastlane android env
+
+- [#4796](https://github.com/LedgerHQ/ledger-live/pull/4796) [`e1c089470a`](https://github.com/LedgerHQ/ledger-live/commit/e1c089470a880b6c74d6834d110975169fd006fc) Thanks [@chabroA](https://github.com/chabroA)! - Use account instead of main account for evm custom fees navigation
+
+- [#4588](https://github.com/LedgerHQ/ledger-live/pull/4588) [`c89f7d0e9e`](https://github.com/LedgerHQ/ledger-live/commit/c89f7d0e9e37f4389578c2833adde076a5811ff5) Thanks [@aboissiere-ledger](https://github.com/aboissiere-ledger)! - Fix jest config to generate coverage report and include untested files
+
+- [#4771](https://github.com/LedgerHQ/ledger-live/pull/4771) [`1d7b4543f5`](https://github.com/LedgerHQ/ledger-live/commit/1d7b4543f5a9f6a8658c5355a3ae87c890223ab4) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - bump fastlane to fix publishing to google play store
+
+- [#4533](https://github.com/LedgerHQ/ledger-live/pull/4533) [`70e4277bc9`](https://github.com/LedgerHQ/ledger-live/commit/70e4277bc9dda253b894bdae5f2c8a5f43a9a64e) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Typed useFeature hook
+
+- Updated dependencies [[`51857f5c20`](https://github.com/LedgerHQ/ledger-live/commit/51857f5c2016d435fa970fac899aa906e3f97722), [`61a891b06f`](https://github.com/LedgerHQ/ledger-live/commit/61a891b06f9028f285f87c321487f691272a9172), [`f527d1bb5a`](https://github.com/LedgerHQ/ledger-live/commit/f527d1bb5a2888a916f761d43d2ba5093eaa3e3f), [`a134f28e9d`](https://github.com/LedgerHQ/ledger-live/commit/a134f28e9d220d172148619ed281d4ca897d5532), [`cf2f585659`](https://github.com/LedgerHQ/ledger-live/commit/cf2f58565937b2a695ac7ff7d225cdbb6e598039), [`a134f28e9d`](https://github.com/LedgerHQ/ledger-live/commit/a134f28e9d220d172148619ed281d4ca897d5532), [`4dd486d87f`](https://github.com/LedgerHQ/ledger-live/commit/4dd486d87fea4c641cc4a21fc181c6097bab9d3d), [`4cb507a52b`](https://github.com/LedgerHQ/ledger-live/commit/4cb507a52bf336d395b08b4c1a429bd4956ab22d), [`d1d0977f33`](https://github.com/LedgerHQ/ledger-live/commit/d1d0977f338beb860d40f4b38a9e123cbbb5ebbb), [`b21de593ee`](https://github.com/LedgerHQ/ledger-live/commit/b21de593ee705ece38fc812eedb9bf85694e94cb), [`8b09b0b571`](https://github.com/LedgerHQ/ledger-live/commit/8b09b0b5717a47aedae5a8a80acf6d077af3b40b), [`b779f6c964`](https://github.com/LedgerHQ/ledger-live/commit/b779f6c964079b9cd9a4ee985cd5cdbb8c49406e), [`533278e2c4`](https://github.com/LedgerHQ/ledger-live/commit/533278e2c40ee764ecb87d4430fa6650f251ff0c), [`70e4277bc9`](https://github.com/LedgerHQ/ledger-live/commit/70e4277bc9dda253b894bdae5f2c8a5f43a9a64e)]:
+  - @ledgerhq/live-common@33.0.0
+  - @ledgerhq/types-cryptoassets@7.6.0
+  - @ledgerhq/types-live@6.41.0
+  - @ledgerhq/coin-evm@0.8.0
+  - @ledgerhq/native-ui@0.22.0
+  - @ledgerhq/coin-framework@0.7.0
+  - @ledgerhq/live-env@0.6.0
+  - @ledgerhq/domain-service@1.1.12
+
 ## 3.32.1-next.0
 
 ### Patch Changes
