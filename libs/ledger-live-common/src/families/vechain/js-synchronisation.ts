@@ -8,6 +8,8 @@ import { emptyHistoryCache } from "../../account";
 import { getAccount, getLastBlockHeight, getOperations, getTokenOperations } from "./api";
 import { findTokenById, getTokenById } from "@ledgerhq/cryptoassets/tokens";
 import { VTHO_ADDRESS } from "./contracts/constants";
+import { Operation } from "@ledgerhq/types-live";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 
 const getAccountShape: GetAccountShape = async info => {
   const { initialAccount, currency, derivationMode } = info;
@@ -36,6 +38,25 @@ const getAccountShape: GetAccountShape = async info => {
   //Get last token operations
   const vthoAccountId = encodeTokenAccountId(accountId, findTokenById("vechain/vtho")!);
   const vthoOperations = await getTokenOperations(vthoAccountId, address, VTHO_ADDRESS, 0);
+
+  // Generate type "NONE" operations on main account for each token operation to run bot tests
+  // vthoOperations.forEach(operation => {
+  //   const op: Operation = {
+  //     id: encodeOperationId(accountId, operation.hash, "NONE" as const),
+  //     hash: "",
+  //     type: "NONE",
+  //     value: new BigNumber(0),
+  //     fee: new BigNumber(0),
+  //     senders: [],
+  //     recipients: [],
+  //     blockHash: "",
+  //     blockHeight: 0,
+  //     accountId,
+  //     date: operation.date,
+  //     extra: {},
+  //   };
+  //   newOperations.push(op);
+  // });
 
   const operations = mergeOps(oldOperations, newOperations);
 

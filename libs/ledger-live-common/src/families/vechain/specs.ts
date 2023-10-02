@@ -96,12 +96,14 @@ const vechain: AppSpec<Transaction> = {
         account,
         siblings,
         bridge,
+        maxSpendable,
       }: TransactionArg<Transaction>): TransactionRes<Transaction> => {
         const sibling = pickSiblings(siblings, 4);
         const recipient = sibling.freshAddress;
         const transaction = bridge.createTransaction(account);
         transaction.useAllAmount = true;
-        const updates = [{ recipient }];
+        const amount = maxSpendable.integerValue();
+        const updates = [{ amount }, { recipient }];
         return {
           transaction,
           updates,
@@ -131,7 +133,9 @@ const vechain: AppSpec<Transaction> = {
           throw new Error("no VTHO account");
         const transaction = bridge.createTransaction(account);
         transaction.useAllAmount = true;
-        const updates = [{ recipient }, { subAccountId: account.subAccounts[0].id }];
+        transaction.subAccountId = account.subAccounts[0].id;
+        const amount = account.subAccounts[0].spendableBalance.integerValue();
+        const updates = [{ amount }, { recipient }, { subAccountId: account.subAccounts[0].id }];
         return {
           transaction,
           updates,

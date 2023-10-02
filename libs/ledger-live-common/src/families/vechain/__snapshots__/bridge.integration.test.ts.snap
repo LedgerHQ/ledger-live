@@ -31,7 +31,7 @@ Array [
   Object {
     "approvals": undefined,
     "id": "js:2:vechain:0x0fe6688548f0C303932bB197B0A96034f1d74dba:vechain+vechain%2Fvtho",
-    "operationsCount": 1,
+    "operationsCount": 0,
     "parentId": "js:2:vechain:0x0fe6688548f0C303932bB197B0A96034f1d74dba:vechain",
     "pendingOperations": Array [],
     "starred": false,
@@ -141,29 +141,7 @@ Array [
       "value": "10000000000000000000",
     },
   ],
-  Array [
-    Object {
-      "accountId": "js:2:vechain:0x0fe6688548f0C303932bB197B0A96034f1d74dba:vechain+vechain%2Fvtho",
-      "blockHash": "0x00fa5b4ee2eca5cf65907e3695bbea044cd1f78224534dc0ba02526890055ecc",
-      "blockHeight": 16407374,
-      "contract": undefined,
-      "extra": Object {},
-      "fee": "365180000000000000",
-      "hash": "0x5fdd7191c4d476a8e86060d516366e87421f65667b9b3c14c33a740c04921b10",
-      "id": "js:2:vechain:0x0fe6688548f0C303932bB197B0A96034f1d74dba:vechain+vechain%2Fvtho-0x5fdd7191c4d476a8e86060d516366e87421f65667b9b3c14c33a740c04921b10-IN",
-      "operator": undefined,
-      "recipients": Array [
-        "0x0fe6688548f0c303932bb197b0a96034f1d74dba",
-      ],
-      "senders": Array [
-        "0xcf130b42ae31c4931298b4b1c0f1d974b8732957",
-      ],
-      "standard": undefined,
-      "tokenId": undefined,
-      "type": "IN",
-      "value": "10000000000000000000",
-    },
-  ],
+  Array [],
   Array [
     Object {
       "accountId": "js:2:vechain:0x02961B92B8D20A4ea12f1f1CeFA74Dd7B4355A86:vechain",
