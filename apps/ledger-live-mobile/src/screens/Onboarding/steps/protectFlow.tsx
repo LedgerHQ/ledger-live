@@ -71,16 +71,11 @@ function OnboardingStepProtectFlow({ navigation, route }: NavigationProps) {
     dispatch(completeOnboarding());
     resetCurrentStep();
 
-    // eslint-disable-next-line no-console
-    console.log("onboardingCompleted: ", hasCompletedOnboarding);
-    // eslint-disable-next-line no-console
-    console.log("lastConnectedDevice: ", lastConnectedDevice);
-
     if (protectFeature?.enabled && (lastConnectedDevice || !hasCompletedOnboarding)) {
       navigation.navigate(NavigatorName.Base, {
         screen: ScreenName.Recover,
         params: {
-          device: lastConnectedDevice,
+          device: lastConnectedDevice || undefined,
           platform: protectFeature.params?.protectId,
           redirectTo: "restore",
           date: new Date().toISOString(), // adding a date to reload the page in case of same device restored again
