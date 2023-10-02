@@ -75,7 +75,6 @@ export const DEFAULT_FEATURES: Features = {
   syncOnboarding: DEFAULT_FEATURE,
   walletConnectEntryPoint: DEFAULT_FEATURE,
   counterValue: DEFAULT_FEATURE,
-  listAppsV2: DEFAULT_FEATURE,
   llmNewDeviceSelection: DEFAULT_FEATURE,
   llmNewFirmwareUpdateUx: DEFAULT_FEATURE,
   mockFeature: DEFAULT_FEATURE,
@@ -91,7 +90,7 @@ export const DEFAULT_FEATURES: Features = {
   staxWelcomeScreen: DEFAULT_FEATURE,
   protectServicesDiscoverDesktop: DEFAULT_FEATURE,
   llmWalletQuickActions: DEFAULT_FEATURE,
-
+  listAppsV2minor1: DEFAULT_FEATURE,
   ethStakingProviders: initFeature(),
   referralProgramDiscoverCard: initFeature(),
   newsfeedPage: initFeature(),
