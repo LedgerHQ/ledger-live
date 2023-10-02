@@ -54,7 +54,7 @@ type Props = {
    * should react to a request from this component to set or to clean its header.
    */
   requestToSetHeaderOptions: (request: SetHeaderOptionsRequest) => void;
-
+  hasPostOnboardingEntryPointCard?: boolean;
   isChoiceDrawerDisplayedOnAddDevice?: boolean;
   withMyLedgerTracking?: boolean;
   filterByDeviceModelId?: DeviceModelId;
@@ -66,6 +66,7 @@ export default function SelectDevice({
   displayServicesWidget,
   requestToSetHeaderOptions,
   isChoiceDrawerDisplayedOnAddDevice = true,
+  hasPostOnboardingEntryPointCard,
   withMyLedgerTracking,
   filterByDeviceModelId,
 }: Props) {
@@ -79,7 +80,7 @@ export default function SelectDevice({
   const [isPairingDevices, setIsPairingDevices] = useState<boolean>(false);
 
   const postOnboardingVisible = usePostOnboardingEntryPointVisibleOnWallet();
-
+  const isPostOnboardingVisible = hasPostOnboardingEntryPointCard && postOnboardingVisible;
   const { t } = useTranslation();
 
   const knownDevices = useSelector(knownDevicesSelector);
@@ -326,7 +327,7 @@ export default function SelectDevice({
         />
       ) : (
         <Flex flex={1}>
-          {postOnboardingVisible && (
+          {isPostOnboardingVisible && (
             <Box mb={8}>
               <PostOnboardingEntryPointCard />
             </Box>
@@ -353,53 +354,66 @@ export default function SelectDevice({
               </Touchable>
             )}
           </Flex>
-          <ScrollContainer my={4}>
-            {deviceList.length > 0 ? (
-              deviceList.map(device => (
-                <Item key={device.deviceId} device={device as Device} onPress={handleOnSelect} />
-              ))
-            ) : (
-              <Touchable
-                onPress={isChoiceDrawerDisplayedOnAddDevice ? onAddNewPress : openBlePairingFlow}
-                {...addNewButtonEventProps}
-              >
-                <Flex
-                  p={5}
-                  mb={4}
-                  borderRadius={5}
-                  flexDirection="row"
-                  alignItems="center"
-                  borderColor="neutral.c40"
-                  borderStyle="dashed"
-                  borderWidth="1px"
+          <ScrollContainer
+            my={4}
+            contentContainerStyle={{
+              flexGrow: 1,
+              justifyContent: "space-between",
+              flexDirection: "column",
+            }}
+          >
+            <Flex>
+              {deviceList.length > 0 ? (
+                deviceList.map(device => (
+                  <Item key={device.deviceId} device={device as Device} onPress={handleOnSelect} />
+                ))
+              ) : (
+                <Touchable
+                  onPress={isChoiceDrawerDisplayedOnAddDevice ? onAddNewPress : openBlePairingFlow}
+                  {...addNewButtonEventProps}
                 >
-                  <IconsLegacy.PlusMedium color="neutral.c90" size={20} />
-                  <Text variant="large" fontWeight="semiBold" ml={5}>
-                    {t(
-                      `manager.selectDevice.${
-                        Platform.OS === "android" ? "addWithBluetooth" : "addALedger"
-                      }`,
-                    )}
+                  <Flex
+                    p={5}
+                    mb={4}
+                    borderRadius={5}
+                    flexDirection="row"
+                    alignItems="center"
+                    borderColor="neutral.c40"
+                    borderStyle="dashed"
+                    borderWidth="1px"
+                  >
+                    <IconsLegacy.PlusMedium color="neutral.c90" size={20} />
+                    <Text variant="large" fontWeight="semiBold" ml={5}>
+                      {t(
+                        `manager.selectDevice.${
+                          Platform.OS === "android" ? "addWithBluetooth" : "addALedger"
+                        }`,
+                      )}
+                    </Text>
+                  </Flex>
+                </Touchable>
+              )}
+              {Platform.OS === "android" &&
+                USBDevice === undefined &&
+                ProxyDevice === undefined && (
+                  <Text
+                    color="neutral.c100"
+                    variant="large"
+                    fontWeight="semiBold"
+                    fontSize={4}
+                    lineHeight="21px"
+                  >
+                    <Trans i18nKey="manager.selectDevice.otgBanner" />
                   </Text>
-                </Flex>
-              </Touchable>
-            )}
-            {Platform.OS === "android" && USBDevice === undefined && ProxyDevice === undefined && (
-              <Text
-                color="neutral.c100"
-                variant="large"
-                fontWeight="semiBold"
-                fontSize={4}
-                lineHeight="21px"
-              >
-                <Trans i18nKey="manager.selectDevice.otgBanner" />
-              </Text>
-            )}
-            {displayServicesWidget && <ServicesWidget />}
+                )}
+              {displayServicesWidget && <ServicesWidget />}
+            </Flex>
+
+            <Flex alignItems="center" mt={10}>
+              <BuyDeviceCTA />
+            </Flex>
           </ScrollContainer>
-          <Flex alignItems="center" mt={5}>
-            <BuyDeviceCTA />
-          </Flex>
+
           <QueuedDrawer
             isRequestingToBeOpened={isAddNewDrawerOpen}
             onClose={() => setIsAddNewDrawerOpen(false)}

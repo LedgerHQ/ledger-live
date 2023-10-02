@@ -528,7 +528,7 @@
   },
   "stake" : {
     "noFundsModal" : {
-      "title" : "Satın alın, takas edin veya transfer alın",
+      "title" : "{{actions, list(type: disjunction)}}",
       "text" : "Stake etmek için hesabınızda yeterince {{coin}} bulunmuyor",
       "description" : "Fonlarınız yetersiz mi? Merak etmeyin! Doğrudan Ledger Live üzerinden güvenli bir şekilde kripto satın alabilir, takas edebilir veya transfer alabilirsiniz.",
       "options" : {
@@ -928,7 +928,7 @@
       "enable" : {
         "approve" : "Onayla",
         "manageLimit" : "Limiti yönet",
-        "viewDetails" : "Ayrıntıları göster",
+        "viewDetails" : "Ayrıntıları gör",
         "info" : "Bu hesapta <0>{{amount}}</0> onayladınız. Ücret karşılığında tutarı düşürebilirsiniz.",
         "infoNoLimit" : "Bu hesabı tamamen onayladınız. Ücret karşılığında tutarı düşürebilirsiniz.",
         "approvedWithLimit" : "Bu hesapta <0>{{value}}</0> onayladınız.",
@@ -999,7 +999,7 @@
             "title" : "Çekim talebi başarıyla gönderildi",
             "text" : "Çekim işlemi ağ tarafından doğrulandıktan sonra varlıklarınız kullanıma açılacaktır.",
             "done" : "Kapat",
-            "cta" : "Ayrıntıları göster"
+            "cta" : "Ayrıntıları gör"
           },
           "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin.",
           "tooltip" : {
@@ -1049,7 +1049,7 @@
             "title" : "Fon başarıyla gönderildi",
             "text" : "Fonunuz ağ tarafından doğrulandıktan sonra faiz getirisi kazanmaya başlayacaksınız.",
             "done" : "Kapat",
-            "cta" : "Ayrıntıları göster",
+            "cta" : "Ayrıntıları gör",
             "info" : "İşlemlerin bir tarayıcıda görünmesi ve doğrulanması biraz zaman alabilir."
           }
         }
@@ -1369,31 +1369,7 @@
     }
   },
   "walletconnect" : {
-    "titleAccount" : "Cüzdan Bağlantısı",
-    "disconnect" : "Bağlantıyı Kes",
-    "disconnected" : "Bağlantı Kesildi",
-    "connected" : "Bağlandı",
-    "connecting" : "Bağlanıyor...",
-    "invalidAccount" : "Geçersiz hesap kimliği",
-    "steps" : {
-      "paste" : {
-        "title" : "Bağlantıyı yapıştır",
-        "label" : "WalletConnect adresi",
-        "placeholder" : "WalletConnect Bağlantısını Yapıştır"
-      },
-      "confirm" : {
-        "title" : "Bağlan",
-        "details" : "Cüzdanınız üzerinden bağlanmak istenen hesap:",
-        "deeplinkDetails" : "Ledger Live'a bağlanmak istiyor. Hesabınızı seçini:",
-        "noAccount" : "Uyumlu bir hesabınız bulunmuyor. Lütfen WalletConnect'i kullanmak için uyumlu bir hesap ekleyin.",
-        "alreadyConnected" : "Halihazırda bir dApp bağlıyken başka bir dApp'e bağlanmaya çalışıyorsunuz. Live'ı yeni bir dApp'e bağlamadan önce lütfen mevcut dApp bağlantısını kesin."
-      }
-    },
-    "connectedscreen" : {
-      "info" : "Artık web tarayıcınızdan {{name}} dApp'e erişebilirsiniz.",
-      "warning" : "Alım adreslerini dApps üzerinden paylaşmak güvenli değildir. Tarafınıza gönderilen fonları almak için adresinizi paylaşırken her zaman Ledger Live kullanın.",
-      "disconnected" : "dApp, WalletConnect ve Ledger Live arasında bir bağlantı sorunu var. Birkaç dakika bekleyin veya bağlantıyı yeniden başlatın"
-    }
+    "titleAccount" : "WalletConnect"
   },
   "dashboard" : {
     "title" : "Portföy",
@@ -1938,7 +1914,7 @@
       "successTitle" : "İşletim sistemi başarıyla güncellendi.",
       "successTextApps" : "Lütfen uygulamaları cihazınıza tekrar yükleyin",
       "successTextNoApps" : "Artık cihazınıza uygulama yükleyebilirsiniz",
-      "sucessCTAApps" : "Uygulamaları yeniden yükleyin",
+      "sucessCTAApps" : "Uygulamaları yeniden yükle",
       "SuccessCTANoApps" : "Uygulama yükleyin",
       "cancelReinstallCTA" : "Güncellemeyi yükle",
       "resetSteps" : {
@@ -1974,7 +1950,7 @@
         "success" : {
           "title" : "Alınan ödüller",
           "text" : "Ödülleriniz mevcut bakiyenize eklendi.",
-          "cta" : "Ayrıntıları göster",
+          "cta" : "Ayrıntıları gör",
           "done" : "Tamam"
         },
         "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
@@ -2060,7 +2036,7 @@
         "success" : {
           "title" : "Oylarınız başarılı bir şekilde verildi.",
           "text" : "",
-          "cta" : "Ayrıntıları göster"
+          "cta" : "Ayrıntıları gör"
         },
         "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
       }
@@ -2202,7 +2178,7 @@
         "success" : {
           "title" : "İşlem gönderildi",
           "text" : "İşlem blok zinciri tarafından onaylandığında hesap bakiyeniz güncellenecek",
-          "cta" : "Ayrıntıları göster"
+          "cta" : "Ayrıntıları gör"
         },
         "pending" : {
           "title" : "İşlem yayınlanıyor..."
@@ -2292,6 +2268,7 @@
     "header" : "Hesap dağılımı ({{count}})"
   },
   "elrond" : {
+    "guardedAccountWarning" : "Hesabınız için bir Guardian belirlediyseniz Ledger Live üzerinden gönderme işlemlerini başarıyla yapamayacaksınız.",
     "summary" : {
       "availableBalanceTooltip" : "Bu miktar aktarılabilir.",
       "availableBalance" : "Mevcut bakiye",
@@ -2366,7 +2343,7 @@
             "success" : {
               "title" : "Varlıklarınızın yetkisini başarıyla devrettiniz.",
               "text" : "İşlem blok zinciri tarafından onaylandığında hesap bakiyeniz güncellenecek",
-              "cta" : "Ayrıntıları göster"
+              "cta" : "Ayrıntıları gör"
             },
             "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
           }
@@ -2399,7 +2376,7 @@
               "titleCompound" : "Ödüller başarıyla birleştirildi",
               "text" : "Ödüller mevcut bakiyenize eklendi",
               "textCompound" : "<0>{{validator}}</0> hesabına <0>{{amount}}</0> EGLD tutarındaki birleştirme ödülü aktarımı başarıyla gerçekleştirildi.",
-              "cta" : "Ayrıntıları göster"
+              "cta" : "Ayrıntıları gör"
             },
             "pending" : {
               "title" : "İşlem yayınlanıyor..."
@@ -2436,7 +2413,7 @@
             "success" : {
               "title" : "Varlıklarınızdaki yetki devrini başarıyla iptal ettiniz.",
               "description" : "<0>{{validator}}</0> hesabına devredilen <0>{{amount}}</0> tutarındaki yetki iptal edildi.",
-              "cta" : "Ayrıntıları göster"
+              "cta" : "Ayrıntıları gör"
             },
             "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
           }
@@ -2461,7 +2438,7 @@
             "success" : {
               "title" : "Fonlar başarıyla çekildi",
               "text" : "<0>{{amount}}</0> adet varlık çekilerek hesap bakiyenize geri eklendi.",
-              "cta" : "Ayrıntıları göster"
+              "cta" : "Ayrıntıları gör"
             },
             "pending" : {
               "title" : "İşlem yayınlanıyor..."
@@ -2509,7 +2486,7 @@
             "success" : {
               "title" : "Varlıklarınızla başarıyla yetki devrettiniz.",
               "text" : "İşlem blok zinciri tarafından onaylandığında hesap bakiyeniz güncellenecek",
-              "cta" : "Ayrıntıları göster"
+              "cta" : "Ayrıntıları gör"
             },
             "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
           }
@@ -2533,7 +2510,7 @@
             "success" : {
               "title" : "Yetki devrini başarıyla iptal ettiniz",
               "text" : "İşlem blok zinciri tarafından onaylandığında hesap bakiyeniz güncellenecek",
-              "cta" : "Ayrıntıları göster"
+              "cta" : "Ayrıntıları gör"
             },
             "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
           }
@@ -2749,7 +2726,7 @@
             "title" : "Varlıkların kilidi başarıyla açıldı",
             "text" : "İşleminiz ağ tarafından onaylandıktan sonra doğrulayıcılara oy verebilirsiniz.",
             "textVote" : "İşleminiz ağ tarafından onaylandıktan sonra doğrulayıcılara oy verebileceksiniz.",
-            "cta" : "Ayrıntıları göster"
+            "cta" : "Ayrıntıları gör"
           },
           "pending" : {
             "title" : "Varlıklarınız kilitleniyor..."
@@ -2778,7 +2755,7 @@
           "success" : {
             "title" : "Kilit açma işlemi başarıyla gönderildi",
             "text" : "Kilidi açılan varlıklar 3 gün sonra çekilebilir.",
-            "cta" : "Ayrıntıları göster"
+            "cta" : "Ayrıntıları gör"
           },
           "pending" : {
             "title" : "Varlıklarınızın kilidi açılıyor..."
@@ -2835,7 +2812,7 @@
           "success" : {
             "title" : "",
             "text" : "Varlıklarınız başarıyla çekildi. Çekilen tutar mevcut bakiyenize aktarılacaktır.",
-            "cta" : "Ayrıntıları göster"
+            "cta" : "Ayrıntıları gör"
           },
           "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
         }
@@ -2855,7 +2832,7 @@
           "success" : {
             "title" : "Başarıyla oy verdiniz",
             "text" : "İşlem kısa süre içinde işlem geçmişinde görünecek.",
-            "cta" : "Ayrıntıları göster"
+            "cta" : "Ayrıntıları gör"
           },
           "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
         },
@@ -2881,7 +2858,7 @@
           "success" : {
             "title" : "",
             "text" : "Oyunuz başarıyla etkinleştirildi.",
-            "cta" : "Ayrıntıları göster"
+            "cta" : "Ayrıntıları gör"
           },
           "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
         }
@@ -2904,7 +2881,7 @@
           "success" : {
             "title" : "Oylarınızı başarıyla iptal ettiniz",
             "text" : "İşlem kısa süre içinde işlem geçmişinde görünecek.",
-            "cta" : "Ayrıntıları göster"
+            "cta" : "Ayrıntıları gör"
           },
           "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
         },
@@ -2970,7 +2947,7 @@
             "success" : {
               "title" : "Varlıklarınızla başarıyla yetki devrettiniz.",
               "text" : "İşlem blok zinciri tarafından onaylandığında hesap bakiyeniz güncellenecek",
-              "cta" : "Ayrıntıları göster"
+              "cta" : "Ayrıntıları gör"
             },
             "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
           }
@@ -3003,7 +2980,7 @@
               "titleCompound" : "Ödüller başarıyla birleştirildi",
               "text" : "Ödülleriniz mevcut bakiyenize eklendi.",
               "textCompound" : "<0>{{amount}}</0> tutarındaki ödülünüz otomatik olarak <0>{{validator}}</0> hesabına devredildi",
-              "cta" : "Ayrıntıları göster"
+              "cta" : "Ayrıntıları gör"
             },
             "pending" : {
               "title" : "İşlem yayınlanıyor..."
@@ -3039,7 +3016,7 @@
             "success" : {
               "title" : "Varlıklarınızla başarıyla yeniden yetki devrettiniz",
               "text" : "İşlem blok zinciri tarafından onaylandığında yetkinizin yeniden devri gerçekleşecek",
-              "cta" : "Ayrıntıları göster"
+              "cta" : "Ayrıntıları gör"
             },
             "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
           }
@@ -3070,7 +3047,7 @@
             "success" : {
               "title" : "Varlıklarınızdaki yetki devrini başarıyla iptal ettiniz.",
               "description" : "<0>{{validator}}</0> hesabına devredilen <0>{{amount}}</0> tutarındaki yetki iptal edildi",
-              "cta" : "Ayrıntıları göster"
+              "cta" : "Ayrıntıları gör"
             },
             "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
           }
@@ -3100,7 +3077,7 @@
             "success" : {
               "title" : "{{token}} varlığı başarıyla eklendi",
               "text" : "Artık Algorand hesabınıza <0>{{token}}</0> varlıklarını alıp gönderebilirsiniz.",
-              "cta" : "Ayrıntıları göster"
+              "cta" : "Ayrıntıları gör"
             },
             "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
           }
@@ -3140,7 +3117,7 @@
             "success" : {
               "title" : "Ödüller başarıyla alındı!",
               "text" : "Ödülleriniz mevcut bakiyenize eklendi.",
-              "cta" : "Ayrıntıları göster"
+              "cta" : "Ayrıntıları gör"
             },
             "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
           }
@@ -3244,7 +3221,7 @@
           "success" : {
             "title" : "Doğrulayıcıları başarıyla aday gösterdiniz",
             "text" : "Varlıklarınız, seçtiğiniz doğrulayıcı(lar) ile bağlandığında ödül kazanmaya başlayacaksınız.",
-            "cta" : "Ayrıntıları göster"
+            "cta" : "Ayrıntıları gör"
           },
           "pending" : {
             "title" : "İşlem yayınlanıyor..."
@@ -3322,7 +3299,7 @@
           "success" : {
             "title" : "Varlıklar başarıyla tekrar bağlandı",
             "text" : "İşlem, ağ tarafından onaylandıktan sonra hesap bakiyeniz güncellenecek.",
-            "cta" : "Ayrıntıları göster"
+            "cta" : "Ayrıntıları gör"
           },
           "pending" : {
             "title" : "Varlıklarınız tekrar bağlanıyor..."
@@ -3351,7 +3328,7 @@
           "success" : {
             "title" : "Çözme işlemi başarıyla gönderildi",
             "text" : "Çözülmüş varlıklar 28 gün içinde çekilebilir.",
-            "cta" : "Ayrıntıları göster"
+            "cta" : "Ayrıntıları gör"
           },
           "pending" : {
             "title" : "Varlıklarınız çözülüyor..."
@@ -3391,7 +3368,7 @@
           "success" : {
             "title" : "İşlem başarıyla gönderildi",
             "text" : "İşlem kısa süre içinde işlem geçmişinde görünecek.",
-            "cta" : "Ayrıntıları göster"
+            "cta" : "Ayrıntıları gör"
           },
           "pending" : {
             "title" : "İşlem yayınlanıyor..."
@@ -3419,7 +3396,7 @@
           "success" : {
             "title" : "{{token}} varlığı başarıyla eklendi",
             "text" : "Artık Stellar hesabınızla <0>{{token}}</0> varlıkları gönderip alabilirsiniz.",
-            "cta" : "Ayrıntıları göster"
+            "cta" : "Ayrıntıları gör"
           },
           "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
         }
@@ -3429,7 +3406,7 @@
   "solana" : {
     "common" : {
       "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin.",
-      "viewDetails" : "Ayrıntıları göster",
+      "viewDetails" : "Ayrıntıları gör",
       "connectDevice" : {
         "title" : "Cihaz"
       },
@@ -3628,7 +3605,7 @@
             "success" : {
               "title" : "Varlıklarınızı başarıyla stake ettiniz",
               "text" : "İşlem blok zinciri tarafından onaylandığında hesap bakiyeniz güncellenecek",
-              "cta" : "Ayrıntıları göster"
+              "cta" : "Ayrıntıları gör"
             },
             "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
           }
@@ -3657,7 +3634,7 @@
             "success" : {
               "title" : "Varlıklarınızın stake’ini başarıyla iptal ettiniz.",
               "description" : "<0>{{validator}}</0> doğrulayıcısında <0>{{amount}}</0> tutarındaki stake iptal edildi",
-              "cta" : "Ayrıntıları göster"
+              "cta" : "Ayrıntıları gör"
             },
             "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
           }
@@ -3684,7 +3661,7 @@
             "success" : {
               "title" : "Varlıklarınızı başarıyla çektiniz.",
               "description" : "<0>{{validator}}</0> doğrulayıcısından <0>{{amount}}</0> tutarında çekim yapıldı",
-              "cta" : "Ayrıntıları göster"
+              "cta" : "Ayrıntıları gör"
             },
             "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
           }
@@ -5520,7 +5497,7 @@
       "title" : "Enerji yetersiz. Ağ ücreti 50 TRX tutarına ulaşabilir."
     },
     "PairingFailed" : {
-      "title" : "Eşleştirme başarısız",
+      "title" : "Eşleme başarısız",
       "description" : "Lütfen tekrar deneyin veya şüpheniz varsa Ledger Destek ile iletişime geçin."
     },
     "GenuineCheckFailed" : {
@@ -5693,10 +5670,6 @@
       "title" : "Görüntü indirilemedi",
       "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
     },
-    "ImageMetadataLoadingError" : {
-      "title" : "Görüntü meta verileri yüklenemedi",
-      "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
-    },
     "ImageTooLargeError" : {
       "title" : "Görüntü çok büyük",
       "description" : "Lütfen daha küçük bir görüntü seçmeyi deneyin"
@@ -5809,10 +5782,10 @@
   },
   "drawers" : {
     "selectCurrency" : {
-      "title" : "varlık seç"
+      "title" : "varlık seçin"
     },
     "selectAccount" : {
-      "title" : "hesap seç"
+      "title" : "hesap seçin"
     }
   },
   "customImage" : {

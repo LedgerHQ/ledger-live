@@ -65,7 +65,12 @@ const mockSignerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature> = (
 jest.mock("@ledgerhq/hw-app-eth", () => ({
   __esModule: true,
   ledgerService: {
-    resolveTransaction: () =>
+    resolveTransaction: (): Promise<{
+      erc20Tokens: never[];
+      nfts: never[];
+      externalPlugin: never[];
+      plugin: never[];
+    }> =>
       Promise.resolve({
         erc20Tokens: [],
         nfts: [],
@@ -129,7 +134,7 @@ describe("EVM Family", () => {
 
     describe("applyEIP155", () => {
       const chainIds = listCryptoCurrencies(true)
-        .filter(c => c.family === "evm")
+        .filter(c => c.family === "evm" && c.ethereumLikeInfo !== undefined)
         .map(c => c.ethereumLikeInfo!.chainId)
         .sort((a, b) => a - b);
 

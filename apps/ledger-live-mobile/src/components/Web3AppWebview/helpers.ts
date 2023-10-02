@@ -251,7 +251,7 @@ function useUiHook(): Partial<UiHook> {
 
   return useMemo(
     () => ({
-      "account.request": ({ accounts$, currencies, onSuccess, onError }) => {
+      "account.request": ({ accounts$, currencies, onSuccess, onCancel }) => {
         if (currencies.length === 1) {
           navigation.navigate(NavigatorName.RequestAccount, {
             screen: ScreenName.RequestAccountsSelectAccount,
@@ -260,8 +260,8 @@ function useUiHook(): Partial<UiHook> {
               currency: currencies[0],
               allowAddAccount: true,
               onSuccess,
-              onError,
             },
+            onClose: onCancel,
           });
         } else {
           navigation.navigate(NavigatorName.RequestAccount, {
@@ -271,8 +271,8 @@ function useUiHook(): Partial<UiHook> {
               currencies,
               allowAddAccount: true,
               onSuccess,
-              onError,
             },
+            onClose: onCancel,
           });
         }
       },

@@ -65,9 +65,9 @@ const OnboardingStepUseCaseSelection = () => {
 
   const onPressProtect = () => {
     if (deviceModelId === "nanoX") {
-      const deeplink = servicesConfig?.params.deeplink;
+      const deeplink = servicesConfig?.params?.deeplink;
 
-      if (deeplink !== null) {
+      if (deeplink) {
         Linking.openURL(deeplink);
       } else {
         navigation.navigate(ScreenName.OnboardingPairNew, {

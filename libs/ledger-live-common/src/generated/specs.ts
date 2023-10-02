@@ -4,7 +4,6 @@ import celo from "../families/celo/specs";
 import cosmos from "../families/cosmos/specs";
 import crypto_org from "../families/crypto_org/specs";
 import elrond from "../families/elrond/specs";
-import ethereum from "../families/ethereum/specs";
 import filecoin from "../families/filecoin/specs";
 import hedera from "../families/hedera/specs";
 import internet_computer from "../families/internet_computer/specs";
@@ -27,7 +26,6 @@ export default {
   cosmos,
   crypto_org,
   elrond,
-  ethereum,
   filecoin,
   hedera,
   internet_computer,

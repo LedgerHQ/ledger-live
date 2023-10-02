@@ -121,8 +121,9 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
       type: "card",
       page: "Receive Account Qr Code",
     });
-    Linking.openURL(depositWithdrawBannerMobile?.params.url);
-  }, [depositWithdrawBannerMobile?.params.url]);
+    // @ts-expect-error TYPINGS
+    Linking.openURL(depositWithdrawBannerMobile?.params?.url);
+  }, [depositWithdrawBannerMobile?.params?.url]);
 
   useEffect(() => {
     if (route.params?.createTokenAccount && !hasAddedTokenAccount) {

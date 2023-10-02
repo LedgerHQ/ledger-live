@@ -6,13 +6,13 @@ import BigNumber from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 import { fetchRates } from "../../api/v5/fetchRates";
 import { useAPI } from "../../../../hooks/useAPI";
-import { ExchangeRateV5Response } from "../../types";
+import { ExchangeRate } from "../../types";
 
 type Props = {
   fromCurrencyAccount: AccountLike | undefined;
   toCurrency: CryptoOrTokenCurrency | undefined;
   fromCurrencyAmount: BigNumber;
-  onSuccess?(data: ExchangeRateV5Response[]): void;
+  onSuccess?(data: ExchangeRate[]): void;
 };
 
 export function useFetchRates({
@@ -22,20 +22,25 @@ export function useFetchRates({
   onSuccess,
 }: Props) {
   const currencyFrom = fromCurrencyAccount ? getAccountCurrency(fromCurrencyAccount).id : undefined;
-  const unit = fromCurrencyAccount ? getAccountUnit(fromCurrencyAccount) : undefined;
+  const unitFrom = fromCurrencyAccount ? getAccountUnit(fromCurrencyAccount) : undefined;
+  const unitTo = toCurrency?.units[0];
 
-  const formattedCurrencyAmount = (unit && formatCurrencyUnit(unit, fromCurrencyAmount)) ?? "0";
+  const formattedCurrencyAmount =
+    (unitFrom && formatCurrencyUnit(unitFrom, fromCurrencyAmount)) ?? "0";
 
   const toCurrencyId = toCurrency?.id;
   return useAPI({
     queryFn: fetchRates,
     queryProps: {
       providers: getAvailableProviders(),
+      unitTo: unitTo!,
+      unitFrom: unitFrom!,
       currencyFrom,
       toCurrencyId,
       fromCurrencyAmount: formattedCurrencyAmount,
     },
-    enabled: !!toCurrencyId && !!currencyFrom && fromCurrencyAmount.gt(0),
+    staleTimeout: 50000,
+    enabled: !!toCurrencyId && !!currencyFrom && fromCurrencyAmount.gt(0) && !!unitFrom && !!unitTo,
     onSuccess,
   });
 }

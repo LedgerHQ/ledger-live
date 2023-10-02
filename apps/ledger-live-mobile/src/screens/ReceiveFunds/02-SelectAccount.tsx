@@ -16,6 +16,7 @@ import AccountCard from "../../components/AccountCard";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AccountsNavigatorParamList } from "../../components/RootNavigator/types/AccountsNavigator";
 import { useNavigation } from "@react-navigation/core";
+import { withDiscreetMode } from "../../context/DiscreetModeContext";
 
 type SubAccountEnhanced = SubAccount & {
   parentAccount: Account;
@@ -177,5 +178,4 @@ function ReceiveSelectAccount({
     </>
   ) : null;
 }
-
-export default ReceiveSelectAccount;
+export default withDiscreetMode(ReceiveSelectAccount);

@@ -14,6 +14,16 @@ export class Modal {
   readonly doneButton: Locator;
   readonly closeButton: Locator;
   readonly backButton: Locator;
+  readonly titleProvider: Locator;
+  readonly delegateContinueButton: Locator;
+  readonly spendableBanner: Locator;
+  readonly maxAmountCheckbox: Locator;
+  readonly cryptoAmountField: Locator;
+  readonly continueAmountButton: Locator;
+  readonly searchOpenButton: Locator;
+  readonly searchCloseButton: Locator;
+  readonly inputSearchField: Locator;
+  readonly rowProvider: Locator;
   readonly stakeProviderContainer: (stakeProvider: string) => Locator;
   readonly stakeProviderSupportLink: (stakeProvider: string) => Locator;
   readonly signNetworkWarning: Locator;
@@ -36,6 +46,16 @@ export class Modal {
     this.doneButton = page.locator("data-test-id=modal-done-button");
     this.closeButton = page.locator("data-test-id=modal-close-button");
     this.backButton = page.locator("data-test-id=modal-back-button");
+    this.titleProvider = page.locator("data-test-id=modal-provider-title");
+    this.rowProvider = page.locator('[data-test-id="modal-provider-row"]');
+    this.delegateContinueButton = page.locator("id=delegate-continue-button");
+    this.spendableBanner = page.locator("data-test-id=modal-spendable-banner");
+    this.maxAmountCheckbox = page.locator("data-test-id=modal-max-checkbox");
+    this.cryptoAmountField = page.locator("data-test-id=modal-amount-field");
+    this.continueAmountButton = page.locator("id=send-amount-continue-button");
+    this.searchOpenButton = page.getByText("Show all");
+    this.searchCloseButton = page.getByText("Show less");
+    this.inputSearchField = page.getByPlaceholder("Search by name or address...");
     this.stakeProviderContainer = stakeProviderID =>
       page.locator(`data-test-id=stake-provider-container-${stakeProviderID}`);
     this.stakeProviderSupportLink = stakeProviderID =>
@@ -90,6 +110,48 @@ export class Modal {
 
   async chooseStakeSupportLink(stakeProvider: string) {
     await this.stakeProviderSupportLink(stakeProvider).dispatchEvent("click");
+  }
+
+  async getTitleProvider() {
+    await this.titleProvider.waitFor();
+    const provider = await this.titleProvider.textContent();
+    return provider;
+  }
+
+  async continueDelegate() {
+    await this.delegateContinueButton.click();
+  }
+
+  async getSpendableBannerValue() {
+    const amountValue = await this.spendableBanner.textContent();
+    // removing non numerical values
+    return parseInt(amountValue!.replace(/[^0-9.]/g, ""));
+  }
+
+  async toggleMaxAmount() {
+    await this.maxAmountCheckbox.click();
+  }
+
+  async getCryptoAmount() {
+    const valueAmount = await this.cryptoAmountField.inputValue();
+    return parseInt(valueAmount);
+  }
+
+  async countinueSendAmount() {
+    await this.continueAmountButton.click();
+  }
+
+  async openSearchProviderModal() {
+    await this.searchOpenButton.click();
+  }
+
+  async inputProvider(provider: string) {
+    await this.inputSearchField.fill(provider);
+  }
+
+  async selectProvider(providerIndex: number) {
+    await this.rowProvider.nth(providerIndex).click();
+    await this.searchCloseButton.click();
   }
 
   async continueToSignTransaction() {

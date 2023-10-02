@@ -20,6 +20,12 @@ test("Send flow", async ({ page }) => {
     await sendModal.selectAccount("Ethereum 1");
     await sendModal.fillRecipient("randomvalidvalue");
     await page.getByRole("button", { name: "Continue" }).click();
+
+    const evmGasOptionsLoader = sendModal.container
+      .locator("id=evm-fee-strategy-gas-options-spinner")
+      .locator("data-test-id=loading-spinner");
+    await evmGasOptionsLoader.waitFor({ state: "detached" });
+
     await expect.soft(sendModal.container).toHaveScreenshot("send-modal-eth-max-network-fees.png");
     expect(sendModal.container.getByText("Max Network fees").isVisible()).toBeTruthy();
     await sendModal.back();

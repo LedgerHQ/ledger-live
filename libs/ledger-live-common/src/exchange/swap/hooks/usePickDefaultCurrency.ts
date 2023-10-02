@@ -1,11 +1,11 @@
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useEffect } from "react";
 
 // Pick a default currency target if none are selected.
 export const usePickDefaultCurrency = (
-  currencies: (CryptoCurrency | TokenCurrency)[],
-  currency: (CryptoCurrency | TokenCurrency) | null | undefined,
-  setCurrency: (currency: CryptoCurrency | TokenCurrency) => void,
+  currencies: CryptoOrTokenCurrency[],
+  currency: CryptoOrTokenCurrency | null | undefined,
+  setCurrency: (currency: CryptoOrTokenCurrency) => void,
 ): void => {
   useEffect(() => {
     // Keep the same currency target if it is still valid.

@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useMemo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  defaultFeatures,
+  DEFAULT_FEATURES,
   groupedFeatures,
   useFeature,
   useFeatureFlags,
@@ -45,7 +45,7 @@ export default function DebugFeatureFlags() {
   const { resetFeatures, isFeature } = useFeatureFlags();
 
   const featureFlags = useMemo(() => {
-    const featureKeys = Object.keys(defaultFeatures);
+    const featureKeys = Object.keys(DEFAULT_FEATURES);
 
     if (searchInputTrimmed && !featureKeys.includes(searchInputTrimmed)) {
       const isHiddenFeature = isFeature(searchInputTrimmed);

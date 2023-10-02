@@ -208,7 +208,7 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
         };
 
     if (typeof appjsondata.data.accounts === "string") {
-      return throwError(new Error("encrypted ledger live data is not supported"));
+      return throwError(() => new Error("encrypted ledger live data is not supported"));
     }
 
     return from(appjsondata.data.accounts.map(a => fromAccountRaw(a.data))).pipe(

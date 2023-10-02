@@ -1,12 +1,20 @@
-import { ethers } from "ethers";
-import BigNumber from "bignumber.js";
-import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
-import { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { Account, SubAccount, Operation } from "@ledgerhq/types-live";
+import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets/tokens";
-import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
+import { getEIP712FieldsDisplayedOnNano } from "@ledgerhq/evm-tools/message/EIP712/index";
+import { getEnv } from "@ledgerhq/live-env";
+import { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+import {
+  Account,
+  AnyMessage,
+  MessageProperties,
+  Operation,
+  SubAccount,
+} from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import { ethers } from "ethers";
 import { getNodeApi } from "./api/node/index";
 import {
   EvmNftTransaction,
@@ -280,4 +288,17 @@ export const isNftTransaction = (
  */
 export const padHexString = (str: string): string => {
   return str.length % 2 !== 0 ? "0" + str : str;
+};
+
+/**
+ * Helper to get the message properties to be displayed on the Nano
+ */
+export const getMessageProperties = async (
+  messageData: AnyMessage,
+): Promise<MessageProperties | null> => {
+  if (messageData.standard === "EIP712") {
+    return getEIP712FieldsDisplayedOnNano(messageData.message, getEnv("DYNAMIC_CAL_BASE_URL"));
+  }
+
+  return null;
 };

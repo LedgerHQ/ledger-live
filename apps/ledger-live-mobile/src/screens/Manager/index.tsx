@@ -161,11 +161,12 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
             displayServicesWidget
             requestToSetHeaderOptions={requestToSetHeaderOptions}
             withMyLedgerTracking
+            hasPostOnboardingEntryPointCard
           />
         </Flex>
       ) : (
         <NavigationScrollView
-          style={{ paddingBottom: insets.bottom + TAB_BAR_SAFE_HEIGHT }}
+          style={{ marginBottom: insets.bottom + TAB_BAR_SAFE_HEIGHT }}
           contentContainerStyle={styles.scrollContainer}
         >
           <SelectDevice

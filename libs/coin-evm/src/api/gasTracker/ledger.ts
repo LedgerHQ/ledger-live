@@ -4,11 +4,7 @@ import network from "@ledgerhq/live-network/network";
 import { CryptoCurrency, LedgerExplorerId } from "@ledgerhq/types-cryptoassets";
 import { GasTrackerApi, isLedgerGasTracker } from "./types";
 import { GasOptions } from "../../types";
-import {
-  GasTrackerDoesNotSupportEIP1559,
-  LedgerGasTrackerUsedIncorrectly,
-  NoGasTrackerFound,
-} from "../../errors";
+import { LedgerGasTrackerUsedIncorrectly, NoGasTrackerFound } from "../../errors";
 
 type GasTracker = {
   compatibilty: {
@@ -49,13 +45,8 @@ export const getGasOptions = async ({
     throw new NoGasTrackerFound(`No gas tracker found for ${currency.id}`);
   }
 
-  const { useEIP1559 = false } = options || /* istanbul ignore next */ {};
-
-  if (useEIP1559 && !gasTrackerConfig.compatibilty.eip1559) {
-    throw new GasTrackerDoesNotSupportEIP1559(
-      `Gas tracker does not support EIP1559 for ${currency.id}`,
-    );
-  }
+  // We use the eip1559 display parameter only if requested AND the currency supports it
+  const useEIP1559 = options?.useEIP1559 && gasTrackerConfig.compatibilty.eip1559;
 
   const { low, medium, high, next_base } = await network({
     method: "GET",
@@ -63,30 +54,40 @@ export const getGasOptions = async ({
       useEIP1559 ? "?display=eip1559" : ""
     }`,
   }).then(({ data }) => ({
-    low: new BigNumber(data.low),
-    medium: new BigNumber(data.medium),
-    high: new BigNumber(data.high),
-    next_base: new BigNumber(data.next_base),
+    /**
+     * Note: the explorer API is supposed to return integer values for each field,
+     * but since we can't guarantee that, better be safe than sorry
+     */
+    low: new BigNumber(data.low).integerValue(),
+    medium: new BigNumber(data.medium).integerValue(),
+    high: new BigNumber(data.high).integerValue(),
+    next_base: new BigNumber(data.next_base).integerValue(),
   }));
 
   const EIP1559_BASE_FEE_MULTIPLIER: number = getEnv("EIP1559_BASE_FEE_MULTIPLIER");
 
+  /**
+   * Since our use of BigNumber implies only using integers, we need to round up to
+   * integer value with `integerValue()` after doing some math
+   * (like multiplying with a possible float value in this case)
+   */
+
   if (useEIP1559) {
     return {
       slow: {
-        maxFeePerGas: next_base.times(EIP1559_BASE_FEE_MULTIPLIER).plus(low),
+        maxFeePerGas: next_base.times(EIP1559_BASE_FEE_MULTIPLIER).plus(low).integerValue(),
         maxPriorityFeePerGas: low,
         gasPrice: null,
         nextBaseFee: next_base,
       },
       medium: {
-        maxFeePerGas: next_base.times(EIP1559_BASE_FEE_MULTIPLIER).plus(medium),
+        maxFeePerGas: next_base.times(EIP1559_BASE_FEE_MULTIPLIER).plus(medium).integerValue(),
         maxPriorityFeePerGas: medium,
         gasPrice: null,
         nextBaseFee: next_base,
       },
       fast: {
-        maxFeePerGas: next_base.times(EIP1559_BASE_FEE_MULTIPLIER).plus(high),
+        maxFeePerGas: next_base.times(EIP1559_BASE_FEE_MULTIPLIER).plus(high).integerValue(),
         maxPriorityFeePerGas: high,
         gasPrice: null,
         nextBaseFee: next_base,

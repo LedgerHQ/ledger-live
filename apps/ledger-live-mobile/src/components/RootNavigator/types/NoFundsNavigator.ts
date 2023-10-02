@@ -5,5 +5,6 @@ export type NoFundsNavigatorParamList = {
   [ScreenName.NoFunds]: {
     account: Account;
     parentAccount?: Account;
+    entryPoint?: "get-funds" | undefined;
   };
 };

@@ -7,6 +7,7 @@ export type FilterParams = {
   platform?: AppPlatform;
   private?: boolean;
   apiVersion?: string[] | string;
+  llVersion?: string;
 };
 
 export type AccountFilters = {

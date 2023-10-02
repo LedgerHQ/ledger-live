@@ -6,12 +6,18 @@ import { getPlatformTransactionSignFlowInfos } from "./converters";
 import type { Transaction } from "../generated/types";
 import type { PlatformTransaction } from "./types";
 
-const ethBridge = jest.fn();
+const evmBridge = jest.fn();
+const bitcoinBridge = jest.fn();
 jest.mock("../generated/platformAdapter", () => {
   return {
-    ethereum: {
+    evm: {
       getPlatformTransactionSignFlowInfos: function () {
-        return ethBridge();
+        return evmBridge();
+      },
+    },
+    bitcoin: {
+      getPlatformTransactionSignFlowInfos: function () {
+        return bitcoinBridge();
       },
     },
   };
@@ -19,25 +25,43 @@ jest.mock("../generated/platformAdapter", () => {
 
 describe("getPlatformTransactionSignFlowInfos", () => {
   beforeEach(() => {
-    ethBridge.mockClear();
+    evmBridge.mockClear();
+    bitcoinBridge.mockClear();
   });
 
-  it("calls the bridge if the implementation exists", () => {
+  it("should call the bridge if the implementation exists", () => {
     // Given
-    const platformTx: PlatformTransaction = {
+    const tx: PlatformTransaction = {
+      family: FAMILIES.BITCOIN,
+      amount: new BigNumber(100000),
+      recipient: "0xABCDEF",
+    };
+
+    // When
+    getPlatformTransactionSignFlowInfos(tx);
+
+    // Then
+    expect(bitcoinBridge).toBeCalledTimes(1);
+    expect(evmBridge).toBeCalledTimes(0);
+  });
+
+  it("should call the evm bridge for PlatformTransaction tx of ethereum family", () => {
+    // Given
+    const tx: PlatformTransaction = {
       family: FAMILIES.ETHEREUM,
       amount: new BigNumber(100000),
       recipient: "0xABCDEF",
     };
 
     // When
-    getPlatformTransactionSignFlowInfos(platformTx);
+    getPlatformTransactionSignFlowInfos(tx);
 
     // Then
-    expect(ethBridge).toBeCalledTimes(1);
+    expect(evmBridge).toBeCalledTimes(1);
+    expect(bitcoinBridge).toBeCalledTimes(0);
   });
 
-  it("uses its fallback if the bridge doesn't exist", () => {
+  it("should use its fallback if the bridge doesn't exist", () => {
     // Given
     const platformTx: PlatformTransaction = {
       family: FAMILIES.ALGORAND,
@@ -58,7 +82,8 @@ describe("getPlatformTransactionSignFlowInfos", () => {
       getPlatformTransactionSignFlowInfos(platformTx);
 
     // Then
-    expect(ethBridge).toBeCalledTimes(0);
+    expect(evmBridge).toBeCalledTimes(0);
+    expect(bitcoinBridge).toBeCalledTimes(0);
     expect(canEditFees).toBe(false);
     expect(hasFeesProvided).toBe(false);
     expect(liveTx).toEqual(expectedLiveTx);

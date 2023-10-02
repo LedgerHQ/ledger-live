@@ -24,7 +24,7 @@
       }
     },
     "catalog" : {
-      "title" : "Discover",
+      "title" : "アプリ一覧",
       "section" : {
         "recentlyUsed" : "最近使用した項目",
         "browse" : "チェックする"
@@ -282,7 +282,7 @@
     "swap" : "スワップ",
     "refer" : "ご友人紹介",
     "lend" : "レンディング",
-    "catalog" : "Discover",
+    "catalog" : "アプリ一覧",
     "market" : "マーケット",
     "recover" : "Ledger Recover"
   },
@@ -385,7 +385,7 @@
     "decentralizedSwapAvailable" : "一部のトランザクションでは、分散型スワップの使用を検討することができます。<0>ParaSwapと<1>1inch</1>の詳細をチェック",
     "paraswap" : {
       "cta" : " 確認する",
-      "description" : "Paraswapをお探しですか？この項目は「Discover」タブに移動されました。"
+      "description" : "Paraswapをお探しですか？この項目は「アプリ一覧」タブに移動されました。"
     },
     "tabs" : {
       "exchange" : "取引",
@@ -528,7 +528,7 @@
   },
   "stake" : {
     "noFundsModal" : {
-      "title" : "購入、スワップ、受け取り",
+      "title" : "{{actions, list(type: disjunction)}}",
       "text" : "ステーキングに十分な{{coin}}がありません",
       "description" : "資金が足りませんか？ご心配いりません。Ledger Liveで暗号資産を直接、安全に購入、スワップ、または受け取ることができます。",
       "options" : {
@@ -1369,31 +1369,7 @@
     }
   },
   "walletconnect" : {
-    "titleAccount" : "Wallet Connect",
-    "disconnect" : "接続を切断",
-    "disconnected" : "接続を切断済み",
-    "connected" : "接続済み",
-    "connecting" : "接続しています...",
-    "invalidAccount" : "無効なアカウントID",
-    "steps" : {
-      "paste" : {
-        "title" : "リンクを貼り付け",
-        "label" : "Wallet Connectアドレス",
-        "placeholder" : "Wallet Connectのリンクを貼り付ける"
-      },
-      "confirm" : {
-        "title" : "接続",
-        "details" : "ウォレットを通じて以下のアカウントに接続：",
-        "deeplinkDetails" : "Ledger Liveに接続します。アカウントを選択",
-        "noAccount" : "互換性のあるアカウントがありません。Wallet Connectを使用するには、互換性のあるアカウントを追加してください。",
-        "alreadyConnected" : "別のdAppを接続中にdAppに接続しようとしています。新しいdAppでLiveを再接続する前に、接続されたdAppを解除してください。"
-      }
-    },
-    "connectedscreen" : {
-      "info" : "ウェブブラウザから、{{name}}dAppにアクセス可能になりました。",
-      "warning" : "dAppsからの受取アドレスの共有は安全ではありません。資金を受け取るためのアドレスを共有するときは、必ずLedger Liveを使用してください。",
-      "disconnected" : "dApp、WalletConnect、Ledger Live間の接続に問題があります。しばらく待つか、接続を再起動してください。"
-    }
+    "titleAccount" : "WalletConnect"
   },
   "dashboard" : {
     "title" : "ポートフォリオ",
@@ -2292,6 +2268,7 @@
     "header" : "アカウント配分({{count}})"
   },
   "elrond" : {
+    "guardedAccountWarning" : "アカウントにガーディアンが設定されている場合、Ledger Live経由でトランザクションを送信することはできません。",
     "summary" : {
       "availableBalanceTooltip" : "この額は送金可能です。",
       "availableBalance" : "利用可能残高",
@@ -5691,10 +5668,6 @@
     },
     "ImageDownloadError" : {
       "title" : "画像のダウンロードに失敗しました",
-      "description" : "別の画像でもう一度お試しください"
-    },
-    "ImageMetadataLoadingError" : {
-      "title" : "画像メタデータの読み込みに失敗しました",
       "description" : "別の画像でもう一度お試しください"
     },
     "ImageTooLargeError" : {

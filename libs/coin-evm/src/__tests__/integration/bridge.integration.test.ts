@@ -2,17 +2,17 @@
  * ⚠️ In order to test this file, you must run the test from the live-common repo
  */
 
-import { BigNumber } from "bignumber.js";
 import { FeeNotLoaded, NotEnoughBalance } from "@ledgerhq/errors";
-import type { AccountRaw, DatasetTest } from "@ledgerhq/types-live";
-import { fromTransactionRaw } from "../../transaction";
+import type { AccountRaw, DatasetTest, TransactionStatusCommon } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
 import { ethereum1 } from "../../datasets/ethereum1";
+import { fromTransactionRaw } from "../../transaction";
 import type { Transaction } from "../../types";
 
 export const dataset: DatasetTest<Transaction> = {
   implementations: ["mock", "js"],
   currencies: {
-    ethereum_as_evm_test_only: {
+    ethereum: {
       IgnorePrepareTransactionFields: ["maxFeePerGas", "maxPriorityFeePerGas"],
       accounts: [
         {
@@ -32,7 +32,7 @@ export const dataset: DatasetTest<Transaction> = {
                 chainId: 1,
                 nonce: 0,
               }),
-              expectedStatus: (account, transaction) => {
+              expectedStatus: (_account, transaction): Partial<TransactionStatusCommon> => {
                 const estimatedFees = transaction.gasLimit.times(transaction.maxFeePerGas || 0);
                 return {
                   amount: new BigNumber(1e19), // 10 ETH
@@ -59,7 +59,7 @@ export const dataset: DatasetTest<Transaction> = {
                 nonce: 0,
                 useAllAmount: true,
               }),
-              expectedStatus: (account, _, status) => {
+              expectedStatus: (account, _, status): Partial<TransactionStatusCommon> => {
                 return {
                   amount: BigNumber.max(account.balance.minus(status.estimatedFees), 0),
                   errors: {},

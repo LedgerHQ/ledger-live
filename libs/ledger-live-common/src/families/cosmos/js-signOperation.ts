@@ -1,16 +1,16 @@
-import type { Transaction } from "./types";
+import { RETURN_CODES, Transaction } from "./types";
 import { Observable } from "rxjs";
 import { withDevice } from "../../hw/deviceAccess";
 import { encodeOperationId } from "../../operation";
-import { LedgerSigner } from "@cosmjs/ledger-amino";
-import { stringToPath } from "@cosmjs/crypto";
-import { buildTransaction, postBuildTransaction } from "./js-buildTransaction";
+import { txToMessages, buildTransaction } from "./js-buildTransaction";
 import BigNumber from "bignumber.js";
-import { makeSignDoc } from "@cosmjs/launchpad";
-
 import type { Operation, OperationType, SignOperationFnSignature } from "@ledgerhq/types-live";
 import { CosmosAPI } from "./api/Cosmos";
 import cryptoFactory from "./chain/chain";
+import { Secp256k1Signature } from "@cosmjs/crypto";
+import { CosmosApp } from "@zondax/ledger-cosmos-js";
+import { serializeSignDoc, makeSignDoc } from "@cosmjs/amino";
+import { UserRefusedOnDevice, ExpertModeRequired } from "@ledgerhq/errors";
 
 const signOperation: SignOperationFnSignature<Transaction> = ({ account, deviceId, transaction }) =>
   withDevice(deviceId)(
@@ -20,14 +20,15 @@ const signOperation: SignOperationFnSignature<Transaction> = ({ account, deviceI
 
         async function main() {
           const cosmosAPI = new CosmosAPI(account.currency.id);
-          const { accountNumber, sequence } = await cosmosAPI.getAccount(account.freshAddress);
+          const chainInstance = cryptoFactory(account.currency.id);
+
+          const { accountNumber, sequence, pubKeyType } = await cosmosAPI.getAccount(
+            account.freshAddress,
+          );
           o.next({ type: "device-signature-requested" });
-          const { aminoMsgs, protoMsgs } = await buildTransaction(account, transaction);
-          if (!transaction.gas) {
-            throw new Error("transaction.gas is missing");
-          }
-          if (!transaction.fees) {
-            throw new Error("transaction.fees is missing");
+          const { aminoMsgs, protoMsgs } = txToMessages(account, transaction);
+          if (transaction.fees == null || transaction.gas == null) {
+            throw new Error("Transaction misses gas information");
           }
           const feeToEncode = {
             amount: [
@@ -50,14 +51,42 @@ const signOperation: SignOperationFnSignature<Transaction> = ({ account, deviceI
             accountNumber.toString(),
             sequence.toString(),
           );
-          const ledgerSigner = new LedgerSigner(transport, {
-            hdPaths: [stringToPath("m/" + account.freshAddressPath)],
-            prefix: cryptoFactory(account.currency.id).prefix,
+          const tx = Buffer.from(serializeSignDoc(signDoc));
+          const app = new CosmosApp(transport);
+          const path = account.freshAddressPath.split("/").map(p => parseInt(p.replace("'", "")));
+
+          const { compressed_pk } = await app.getAddressAndPubKey(path, chainInstance.prefix);
+          const pubKey = Buffer.from(compressed_pk).toString("base64");
+
+          // HRP is only needed when signing for ethermint chains
+          const signResponseApp =
+            path[1] === 60
+              ? await app.sign(path, tx, chainInstance.prefix)
+              : await app.sign(path, tx);
+
+          switch (signResponseApp.return_code) {
+            case RETURN_CODES.EXPERT_MODE_REQUIRED:
+              throw new ExpertModeRequired();
+            case RETURN_CODES.REFUSED_OPERATION:
+              throw new UserRefusedOnDevice();
+          }
+
+          const signature = Buffer.from(
+            Secp256k1Signature.fromDer(signResponseApp.signature).toFixedLength(),
+          );
+
+          const txBytes = buildTransaction({
+            protoMsgs,
+            memo: transaction.memo || "",
+            pubKeyType,
+            pubKey,
+            feeAmount: signDoc.fee.amount as any,
+            gasLimit: signDoc.fee.gas,
+            sequence: signDoc.sequence,
+            signature,
           });
 
-          const signResponse = await ledgerSigner.signAmino(account.freshAddress, signDoc);
-          const tx_bytes = await postBuildTransaction(signResponse, protoMsgs);
-          const signed = Buffer.from(tx_bytes).toString("hex");
+          const signed = Buffer.from(txBytes).toString("hex");
 
           if (cancelled) {
             return;

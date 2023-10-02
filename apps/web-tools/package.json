@@ -1,0 +1,68 @@
+{
+  "name": "web-tools",
+  "version": "0.1.0",
+  "private": true,
+  "browser": {
+    "fs": false,
+    "tls": false,
+    "net": false,
+    "dns": false
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@ledgerhq/coin-framework": "workspace:^",
+    "@ledgerhq/domain-service": "workspace:^",
+    "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/hw-app-eth": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:^",
+    "@ledgerhq/hw-transport-http": "workspace:^",
+    "@ledgerhq/hw-transport-web-ble": "workspace:^",
+    "@ledgerhq/hw-transport-webhid": "workspace:^",
+    "@ledgerhq/hw-transport-webusb": "workspace:^",
+    "@ledgerhq/live-common": "workspace:^",
+    "@ledgerhq/live-env": "workspace:^",
+    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/types-cryptoassets": "workspace:^",
+    "@ledgerhq/types-live": "workspace:^",
+    "bignumber.js": "^9.1.2",
+    "bufferutil": "^4.0.7",
+    "encoding": "^0.1.13",
+    "eslint": "8.49.0",
+    "eslint-config-next": "13.5.2",
+    "invariant": "^2.2.4",
+    "lodash": "^4.17.21",
+    "next": "13.5.2",
+    "prop-types": "^15.8.1",
+    "re-resizable": "^6.9.11",
+    "react": ">=18.2",
+    "react-dom": ">=18.2",
+    "react-dropzone": "14",
+    "react-inspector": "^4.0.1",
+    "react-select": "^5.7.4",
+    "react-table": "^6.11.4",
+    "rxjs": "^7.8.1",
+    "semver": "^7.5.4",
+    "styled-components": "^6.0.7",
+    "typescript": "5.2.2",
+    "utf-8-validate": "^6.0.3"
+  },
+  "devDependencies": {
+    "@types/invariant": "^2.2.35",
+    "@types/lodash": "^4.14.198",
+    "@types/node": "20.6.3",
+    "@types/react": ">=18.2",
+    "@types/react-dom": ">=18.2",
+    "@types/react-inspector": "^4.0.2",
+    "@types/react-table": "^7.7.15",
+    "@types/semver": "^7.3.9"
+  },
+  "resolutions": {
+    "**/@types/react": "^18.2",
+    "**/@types/react-dom": "^18.2"
+  }
+}

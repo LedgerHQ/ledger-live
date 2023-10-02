@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { ipcRenderer } from "electron";
 import { EnvName, getEnv } from "@ledgerhq/live-env";
-import { defaultFeatures, useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
+import { DEFAULT_FEATURES, useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
 import { FeatureId } from "@ledgerhq/types-live";
 import { enabledExperimentalFeatures } from "../experimental";
 import { setTags } from "../../sentry/renderer";
@@ -37,10 +37,10 @@ export const ConnectEnvsToSentry = () => {
       });
       // if there are features on, we will add them in tags
       const features: { [key in FeatureId]?: boolean } = {};
-      Object.keys(defaultFeatures).forEach(k => {
-        const key = k as keyof typeof defaultFeatures;
+      Object.keys(DEFAULT_FEATURES).forEach(k => {
+        const key = k as keyof typeof DEFAULT_FEATURES;
         const value = featureFlags.getFeature(key);
-        if (key && value && value.enabled !== defaultFeatures[key]!.enabled) {
+        if (key && value && value.enabled !== DEFAULT_FEATURES[key]!.enabled) {
           features[key] = value.enabled;
         }
       });

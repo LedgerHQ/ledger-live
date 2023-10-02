@@ -15,6 +15,7 @@ import TransportBLE from "../../react-native-hw-transport-ble";
 import { TrackScreen } from "../../analytics";
 import DeviceItem from "../../components/SelectDevice/DeviceItem";
 import ScanningHeader from "./ScanningHeader";
+import Config from "react-native-config";
 
 type Props = {
   onSelect: (device: TransportBleDevice, deviceMeta?: DeviceMeta) => Promise<void>;
@@ -101,7 +102,7 @@ export default function Scanning({ onTimeout, onError, onSelect, deviceModelIds 
           renderItem={renderItem}
           keyExtractor={item => item.id}
           ListHeaderComponent={ScanningHeader}
-          ListEmptyComponent={<InfiniteLoader size={58} />}
+          ListEmptyComponent={<InfiniteLoader size={58} mock={Config.MOCK} />}
         />
       </Flex>
     </>

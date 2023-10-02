@@ -22,7 +22,7 @@ test.beforeAll(async () => {
   // Check that dummy app in libs/test-utils/dummy-ptx-app has been started successfully
   testServerIsRunning = await LiveAppWebview.startLiveApp("dummy-ptx-app/public", {
     name: "Buy App",
-    id: "multibuy",
+    id: "multibuy-v2",
     permissions: [
       {
         method: "account.request",
