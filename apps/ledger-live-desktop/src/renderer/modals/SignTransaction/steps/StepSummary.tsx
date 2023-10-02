@@ -68,7 +68,7 @@ const StepSummary = (props: StepProps) => {
     return null;
   }
 
-  const { estimatedFees, amount, totalSpent, warnings } = status;
+  const { estimatedFees, amount, totalSpent, errors, warnings } = status;
   const txInputs = "txInputs" in status ? status.txInputs : undefined;
   const feeTooHigh = warnings.feeTooHigh;
   const currency = getAccountCurrency(account);
@@ -101,6 +101,13 @@ const StepSummary = (props: StepProps) => {
               currency: currency.name,
             }}
           />
+        </Alert>
+      ) : null}
+      {/* Since a sign transaction (live-app related) can start at the summary step
+      (if fees provided by live-app), we need to display transaction status errors here */}
+      {errors && Object.keys(errors).length ? (
+        <Alert type="error">
+          <TranslatedError error={Object.values<Error>(errors)[0]} />
         </Alert>
       ) : null}
       <FromToWrapper>

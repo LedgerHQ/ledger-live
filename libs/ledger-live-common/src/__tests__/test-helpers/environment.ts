@@ -80,8 +80,6 @@ setSupportedCurrencies([
   "velas_evm",
   "syscoin",
   "internet_computer",
-  "ethereum_as_evm_test_only",
-  "polygon_as_evm_test_only",
   "klaytn",
   "polygon_zk_evm",
   "polygon_zk_evm_testnet",
@@ -90,6 +88,7 @@ setSupportedCurrencies([
   "stacks",
   "telos_evm",
   "coreum",
+  "injective",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);

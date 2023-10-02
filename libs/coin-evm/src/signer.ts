@@ -37,7 +37,7 @@ type LoadConfig = {
   pluginBaseURL?: string | null;
   // provide manually some extra plugins to add for the resolution (e.g. for dev purpose)
   // object will be merged with the returned value of the Ledger cdn payload
-  extraPlugins?: any | null;
+  extraPlugins?: unknown | null;
   cryptoassetsBaseURL?: string | null;
 };
 

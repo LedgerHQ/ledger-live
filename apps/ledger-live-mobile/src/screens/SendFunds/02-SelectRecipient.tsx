@@ -61,10 +61,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
       account: mainAccount,
     }),
   );
-  const { enabled: isDomainResolutionEnabled, params } =
-    useFeature<{
-      supportedCurrencyIds: CryptoCurrencyId[];
-    }>("domainInputResolution") || {};
+  const { enabled: isDomainResolutionEnabled, params } = useFeature("domainInputResolution");
   const isCurrencySupported =
     params?.supportedCurrencyIds?.includes(mainAccount.currency.id as CryptoCurrencyId) || false;
 
@@ -79,8 +76,6 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
   const shouldSkipAmount = useMemo(() => {
     if (transaction?.family === "evm") {
       return transaction.mode === "erc721";
-    } else if (transaction?.family === "ethereum") {
-      return transaction.mode === "erc721.transfer";
     }
 
     return false;

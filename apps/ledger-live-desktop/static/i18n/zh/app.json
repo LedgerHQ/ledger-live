@@ -528,7 +528,7 @@
   },
   "stake" : {
     "noFundsModal" : {
-      "title" : "买入、互换或接收",
+      "title" : "{{actions, list(type: disjunction)}}",
       "text" : "您没有足够的 {{coin}} 可供权益质押",
       "description" : "资金不足？别担心，您可以直接在 Ledger Live 中买入、互换或接收加密货币。",
       "options" : {
@@ -1369,31 +1369,7 @@
     }
   },
   "walletconnect" : {
-    "titleAccount" : "Wallet Connect（钱包连接）",
-    "disconnect" : "断开连接",
-    "disconnected" : "已断开连接",
-    "connected" : "已连接",
-    "connecting" : "正在连接...",
-    "invalidAccount" : "无效的账户 ID",
-    "steps" : {
-      "paste" : {
-        "title" : "粘贴链接",
-        "label" : "Wallet Connect（钱包连接）地址",
-        "placeholder" : "粘贴 Wallet Connect（钱包连接）链接"
-      },
-      "confirm" : {
-        "title" : "连接",
-        "details" : "想要通过您的钱包连接到以下账户：",
-        "deeplinkDetails" : "想要连接到 Ledger Live。选择您的账户：",
-        "noAccount" : "您没有任何兼容的账户。请添加一个兼容账户以使用 Wallet Connect 钱包连接。",
-        "alreadyConnected" : "您正试图连接到一个 dApp 去中心化应用，然而您已经连接了另一个。在用新的 dApp 重新连接 Live 之前，请断开已连接的 dApp。"
-      }
-    },
-    "connectedscreen" : {
-      "info" : "您现在可以在您的网络浏览器上访问 {{name}} dApp 去中心化应用。",
-      "warning" : "通过 dApp（去中心化应用）分享接收地址并不安全。在分享地址以接收资金时，要一直使用 Ledger Live。",
-      "disconnected" : "在 dApp、WalletConnect 和 Ledger Live 之间出现了连接问题。请稍候片刻或重新发起连接"
-    }
+    "titleAccount" : "WalletConnect"
   },
   "dashboard" : {
     "title" : "资产组合",
@@ -2292,6 +2268,7 @@
     "header" : "账户配置 ({{count}})"
   },
   "elrond" : {
+    "guardedAccountWarning" : "如果您的账户设置了保管人，您将无法通过 Ledger Live 成功发送交易。",
     "summary" : {
       "availableBalanceTooltip" : "此数额可以转移。",
       "availableBalance" : "可用余额",
@@ -5691,10 +5668,6 @@
     },
     "ImageDownloadError" : {
       "title" : "图片下载失败",
-      "description" : "请使用另一张图片重试"
-    },
-    "ImageMetadataLoadingError" : {
-      "title" : "图片元数据加载失败",
       "description" : "请使用另一张图片重试"
     },
     "ImageTooLargeError" : {

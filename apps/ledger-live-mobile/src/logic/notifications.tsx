@@ -153,6 +153,7 @@ const useNotifications = () => {
     }
 
     // minimum accounts number criteria
+    // @ts-expect-error TYPINGS
     const minimumAccountsNumber: number =
       pushNotificationsFeature?.params?.conditions?.minimum_accounts_with_funds_number;
     if (minimumAccountsNumber && accountsWithAmountCount < minimumAccountsNumber) {
@@ -160,6 +161,7 @@ const useNotifications = () => {
     }
 
     // minimum app start number criteria
+    // @ts-expect-error TYPINGS
     const minimumAppStartsNumber: number =
       pushNotificationsFeature?.params?.conditions?.minimum_app_starts_number;
     if (
@@ -170,6 +172,7 @@ const useNotifications = () => {
     }
 
     // duration since first app start long enough criteria
+    // @ts-expect-error TYPINGS
     const minimumDurationSinceAppFirstStart: Duration =
       pushNotificationsFeature?.params?.conditions?.minimum_duration_since_app_first_start;
     if (
@@ -207,13 +210,16 @@ const useNotifications = () => {
 
       if (isOtherModalOpened || !areConditionsMet()) return false;
 
+      // @ts-expect-error TYPINGS
       for (const eventTrigger of pushNotificationsFeature?.params?.trigger_events) {
+        // @ts-expect-error TYPINGS
         if (isEventTriggered(eventTrigger, newRoute)) {
           dispatch(setRatingsModalLocked(true));
           const timeout = setTimeout(() => {
             setPushNotificationsModalOpenCallback(true);
           }, eventTrigger.timer);
           dispatch(
+            // @ts-expect-error TYPINGS
             setNotificationsEventTriggered({
               ...eventTrigger,
               timeout,

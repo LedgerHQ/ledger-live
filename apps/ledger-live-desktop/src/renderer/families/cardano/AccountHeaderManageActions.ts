@@ -18,16 +18,20 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   const dispatch = useDispatch();
   const mainAccount = getMainAccount(account, parentAccount);
   const { cardanoResources } = mainAccount as CardanoAccount;
+
   invariant(cardanoResources, "cardano account expected");
+
   const disableStakeButton =
     (cardanoResources.delegation && !!cardanoResources.delegation.poolId) ||
     mainAccount.balance.isZero();
+
   const disabledLabel =
     cardanoResources.delegation && cardanoResources.delegation.poolId
       ? t("cardano.delegation.assetsAlreadyStaked")
       : mainAccount.balance.isZero()
       ? t("cardano.delegation.addFundsToStake")
       : "";
+
   const onClick = useCallback(() => {
     dispatch(
       openModal("MODAL_CARDANO_REWARDS_INFO", {
@@ -35,7 +39,9 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
       }),
     );
   }, [dispatch, account]);
+
   if (parentAccount) return null;
+
   return [
     {
       key: "Stake",

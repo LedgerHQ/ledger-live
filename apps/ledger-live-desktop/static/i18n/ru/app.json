@@ -528,7 +528,7 @@
   },
   "stake" : {
     "noFundsModal" : {
-      "title" : "Покупайте, обменивайте или получайте",
+      "title" : "{{actions, list(type: disjunction)}}",
       "text" : "У вас не хватает {{coin}} для стейкинга",
       "description" : "Не хватает монет? Ничего страшного. Купить, обменять или получить криптоактивы можно полностью безопасно прямо в Ledger Live.",
       "options" : {
@@ -1369,31 +1369,7 @@
     }
   },
   "walletconnect" : {
-    "titleAccount" : "WalletConnect",
-    "disconnect" : "Отключить",
-    "disconnected" : "Отключено",
-    "connected" : "Подключено",
-    "connecting" : "Подключаем...",
-    "invalidAccount" : "Неправильный ID счёта",
-    "steps" : {
-      "paste" : {
-        "title" : "Вставьте ссылку",
-        "label" : "Адрес WalletConnect",
-        "placeholder" : "Вставьте ссылку на WalletConnect"
-      },
-      "confirm" : {
-        "title" : "Подключить",
-        "details" : "Собирается подключиться к этому Ethereum-счёту через ваш кошелёк:",
-        "deeplinkDetails" : "Собирается подключиться к Ledger Live. Выберите счёт:",
-        "noAccount" : "У вас нет совместимых счетов. Пожалуйста, добавьте совместимый счёт, чтобы использовать WalletConnect.",
-        "alreadyConnected" : "Вы пытаетесь подключиться к dApp-приложению при другом активном подключении. Пожалуйста, отключитесь от предыдущего приложения, прежде чем подключить новое."
-      }
-    },
-    "connectedscreen" : {
-      "info" : "Теперь приложение {{name}} доступно в веб-браузере.",
-      "warning" : "Совместное использование адресов, полученных в dApp, несёт риск для безопасности. Обязательно используйте Ledger Live при отправке адреса для получения средств.",
-      "disconnected" : "Проблема с подключением между dApp, WalletConnect и Ledger Live. Подождите пару секунд или попробуйте подключиться снова"
-    }
+    "titleAccount" : "WalletConnect"
   },
   "dashboard" : {
     "title" : "Портфель",
@@ -2292,6 +2268,7 @@
     "header" : "Распределение счёта ({{count}})"
   },
   "elrond" : {
+    "guardedAccountWarning" : "Если для вашего счёта уже выбран «страж» (guardian), провести транзакцию с помощью Ledger Live не получится.",
     "summary" : {
       "availableBalanceTooltip" : "Эту сумму можно отправить.",
       "availableBalance" : "Доступно",
@@ -3336,7 +3313,7 @@
       "steps" : {
         "amount" : {
           "title" : "Сумма",
-          "amountLabel" : "Сумма для разблокировки",
+          "amountLabel" : "Сумма разблокировки",
           "availableLabel" : "Заблокировано",
           "maxLabel" : "Макс.",
           "info" : "Разблокированные активы можно вывести спустя 28 дней после разблокировки.",
@@ -3503,7 +3480,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "Вы успешно делегировали средства."
+                "title" : "Вы успешно делегировали активы."
               }
             }
           }
@@ -5691,10 +5668,6 @@
     },
     "ImageDownloadError" : {
       "title" : "Не удалось загрузить изображение",
-      "description" : "Попробуйте другое изображение"
-    },
-    "ImageMetadataLoadingError" : {
-      "title" : "Не удалось загрузить метаданные изображения",
       "description" : "Попробуйте другое изображение"
     },
     "ImageTooLargeError" : {

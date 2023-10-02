@@ -20,6 +20,9 @@ import type {
   EvmTransactionLegacy,
   TransactionRaw as EvmTransactionRaw,
   FeeData,
+  FeeDataRaw,
+  GasOptions,
+  GasOptionsRaw,
 } from "./types";
 
 export const DEFAULT_GAS_LIMIT = new BigNumber(21000);
@@ -44,6 +47,42 @@ ${mode.toUpperCase()} ${
           disableRounding: true,
         })
   }${recipient ? `\nTO ${recipient}` : ""}`;
+
+const fromGasOptionsRaw = (gasOptions: GasOptionsRaw): GasOptions => {
+  const gasOptionsFormatted: GasOptions = {} as GasOptions;
+
+  Object.keys(gasOptions).forEach(feeStrategy => {
+    const { gasPrice, maxFeePerGas, maxPriorityFeePerGas, nextBaseFee }: FeeDataRaw =
+      gasOptions[feeStrategy as keyof GasOptionsRaw];
+
+    gasOptionsFormatted[feeStrategy as keyof GasOptions] = {
+      gasPrice: gasPrice ? new BigNumber(gasPrice) : null,
+      maxFeePerGas: maxFeePerGas ? new BigNumber(maxFeePerGas) : null,
+      maxPriorityFeePerGas: maxPriorityFeePerGas ? new BigNumber(maxPriorityFeePerGas) : null,
+      nextBaseFee: nextBaseFee ? new BigNumber(nextBaseFee) : null,
+    } as FeeData;
+  });
+
+  return gasOptionsFormatted;
+};
+
+const toGasOptionsRaw = (gasOptions: GasOptions): GasOptionsRaw => {
+  const gasOptionsFormatted: GasOptionsRaw = {} as GasOptionsRaw;
+
+  Object.keys(gasOptions).forEach(feeStrategy => {
+    const { gasPrice, maxFeePerGas, maxPriorityFeePerGas, nextBaseFee }: FeeData =
+      gasOptions[feeStrategy as keyof GasOptions];
+
+    gasOptionsFormatted[feeStrategy as keyof GasOptionsRaw] = {
+      gasPrice: gasPrice?.toFixed() ?? null,
+      maxFeePerGas: maxFeePerGas?.toFixed() ?? null,
+      maxPriorityFeePerGas: maxPriorityFeePerGas?.toFixed() ?? null,
+      nextBaseFee: nextBaseFee?.toFixed() ?? null,
+    } as FeeDataRaw;
+  });
+
+  return gasOptionsFormatted;
+};
 
 /**
  * Serializer raw to transaction
@@ -92,6 +131,10 @@ export const fromTransactionRaw = (rawTx: EvmTransactionRaw): EvmTransaction => 
 
   if (rawTx.customGasLimit) {
     tx.customGasLimit = new BigNumber(rawTx.customGasLimit);
+  }
+
+  if (rawTx.gasOptions) {
+    tx.gasOptions = fromGasOptionsRaw(rawTx.gasOptions);
   }
 
   return tx as EvmTransaction;
@@ -144,6 +187,10 @@ export const toTransactionRaw = (tx: EvmTransaction): EvmTransactionRaw => {
 
   if (tx.customGasLimit) {
     txRaw.customGasLimit = tx.customGasLimit.toFixed();
+  }
+
+  if (tx.gasOptions) {
+    txRaw.gasOptions = toGasOptionsRaw(tx.gasOptions);
   }
 
   return txRaw as EvmTransactionRaw;

@@ -23,7 +23,7 @@ if (BOT_FILTER_CURRENCIES) {
 }
 
 if (BOT_FILTER_FAMILIES) {
-  arg.filter.families = BOT_FILTER_FAMILIES?.split(",");
+  arg.filter.families = BOT_FILTER_FAMILIES.split(",");
 }
 
 if (BOT_DISABLED_CURRENCIES) {

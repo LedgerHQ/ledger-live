@@ -83,6 +83,7 @@ type EvmTransactionBaseRaw = TransactionCommonRaw & {
   data?: string | null;
   type?: number;
   additionalFees?: string;
+  gasOptions?: GasOptionsRaw;
   nft?: EvmTransactionNftParamRaw;
 };
 
@@ -126,18 +127,30 @@ export type FeeHistory = {
 };
 
 export type FeeData = {
-  maxFeePerGas: null | BigNumber;
-  maxPriorityFeePerGas: null | BigNumber;
-  gasPrice: null | BigNumber;
+  maxFeePerGas: BigNumber | null;
+  maxPriorityFeePerGas: BigNumber | null;
+  gasPrice: BigNumber | null;
   // only used by UI send flow in advanced mode for EIP-1559
-  nextBaseFee: null | BigNumber;
+  nextBaseFee: BigNumber | null;
 };
+
+export type FeeDataRaw = {
+  maxFeePerGas: string | null;
+  maxPriorityFeePerGas: string | null;
+  gasPrice: string | null;
+  // only used by UI send flow in advanced mode for EIP-1559
+  nextBaseFee: string | null;
+};
+
+export type Strategy = "slow" | "medium" | "fast";
 
 export type GasOptions = {
-  [key in "slow" | "medium" | "fast"]: FeeData;
+  [key in Strategy]: FeeData;
 };
 
-export type Strategy = keyof GasOptions;
+export type GasOptionsRaw = {
+  [key in Strategy]: FeeDataRaw;
+};
 
 export type EvmTransactionNftParam = {
   tokenId: ProtoNFT["tokenId"];

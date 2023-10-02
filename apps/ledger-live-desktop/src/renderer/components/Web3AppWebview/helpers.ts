@@ -24,7 +24,7 @@ export const initialWebviewState: WebviewState = {
 
 type UseWebviewStateParams = {
   manifest: LiveAppManifest;
-  inputs?: Record<string, string | undefined>;
+  inputs?: Record<string, string | boolean | undefined>;
 };
 
 type UseWebviewStateReturn = {

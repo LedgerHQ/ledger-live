@@ -5,6 +5,8 @@ import SplashScreen from "react-native-splash-screen";
 import { getStateFromPath, LinkingOptions, NavigationContainer } from "@react-navigation/native";
 import { useFlipper } from "@react-navigation/devtools";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+import { DEFAULT_MULTIBUY_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
+
 import Braze from "react-native-appboy-sdk";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
@@ -18,8 +20,8 @@ import { useGeneralTermsAccepted } from "../logic/terms";
 import { Writeable } from "../types/helpers";
 import { lightTheme, darkTheme, Theme } from "../colors";
 import { track } from "../analytics";
-import { Feature } from "@ledgerhq/types-live/lib/feature";
 import { setEarnInfoModal } from "../actions/earn";
+import { OptionalFeatureMap } from "@ledgerhq/types-live";
 
 const routingInstrumentation = new Sentry.ReactNavigationInstrumentation();
 
@@ -76,17 +78,15 @@ function getProxyURL(url: string) {
   // This is to handle links set in the useFromAmountStatusMessage in LLC.
   // Also handles a difference in paths between LLD on LLD /platform/:app_id
   // but on LLM /discover/:app_id
-  if (hostname === "platform" && ["multibuy"].includes(platform)) {
+  if (hostname === "platform" && [DEFAULT_MULTIBUY_APP_ID].includes(platform)) {
     return url.replace("://platform", "://discover");
   }
 
   return url;
 }
 
-type FeatureFlags = Record<string, Feature<undefined> | null>;
-
 // DeepLinking
-const linkingOptions = (featureFlags: FeatureFlags) => ({
+const linkingOptions = (featureFlags: OptionalFeatureMap) => ({
   async getInitialURL() {
     const url = await Linking.getInitialURL();
     if (url) {
@@ -201,7 +201,7 @@ const linkingOptions = (featureFlags: FeatureFlags) => ({
                           [ScreenName.Accounts]: "account",
                         },
                       },
-                      ...(featureFlags.ptxEarnFeature?.enabled && {
+                      ...(featureFlags?.ptxEarn?.enabled && {
                         [NavigatorName.Market]: {
                           screens: {
                             /**
@@ -215,7 +215,7 @@ const linkingOptions = (featureFlags: FeatureFlags) => ({
                   },
                 },
               },
-              ...(!featureFlags.ptxEarnFeature?.enabled && {
+              ...(!featureFlags?.ptxEarn?.enabled && {
                 [NavigatorName.Market]: {
                   screens: {
                     /**
@@ -376,7 +376,10 @@ const linkingOptions = (featureFlags: FeatureFlags) => ({
   },
 });
 
-const getOnboardingLinkingOptions = (acceptedTermsOfUse: boolean, featureFlags: FeatureFlags) => ({
+const getOnboardingLinkingOptions = (
+  acceptedTermsOfUse: boolean,
+  featureFlags: OptionalFeatureMap,
+) => ({
   ...linkingOptions(featureFlags),
   config: {
     initialRouteName: NavigatorName.BaseOnboarding,
@@ -412,7 +415,7 @@ export const DeeplinksProvider = ({
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const ptxEarnFeature = useFeature("ptxEarn");
-  const features = useMemo(() => ({ ptxEarnFeature }), [ptxEarnFeature]);
+  const features = useMemo(() => ({ ptxEarn: ptxEarnFeature }), [ptxEarnFeature]);
 
   const { state } = useRemoteLiveAppContext();
   const liveAppProviderInitialized = !!state.value || !!state.error;

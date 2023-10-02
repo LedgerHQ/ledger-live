@@ -60,6 +60,7 @@ export const useDeepLinkListener = () => {
             shouldRedirect: false,
             currencies: [currencyId],
             alwaysShowNoFunds: true,
+            entryPoint: "get-funds",
           });
         }
         queryParams.delete("currencyId");

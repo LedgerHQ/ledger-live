@@ -331,11 +331,6 @@ export enum ScreenName {
   AlgorandOptInValidationError = "AlgorandOptInValidationError",
   AlgorandOptInValidationSuccess = "AlgorandOptInValidationSuccess",
 
-  // Ethereum
-  EthereumCustomFees = "EthereumCustomFees",
-  EthereumEditGasLimit = "EthereumEditGasLimit",
-  EthereumEditTransactionSummary = "EthereumEditTransactionSummary",
-
   // Evm
   EvmEditGasLimit = "EvmEditGasLimit",
   EvmCustomFees = "EvmCustomFees",
@@ -406,11 +401,8 @@ export enum ScreenName {
   OnboardingModalSetupNewDevice = "OnboardingModalSetupNewDevice",
   OnboardingModalSetupSteps = "OnboardingModalSetupSteps",
   OnboardingModalSetupSecureRecovery = "OnboardingModalSetupSecureRecovery",
-  OnboardingModalWarning = "OnboardingModalWarning",
   OnboardingModalGeneralInformation = "OnboardingModalGeneralInformation",
   OnboardingPreQuizModal = "OnboardingPreQuizModal",
-  OnboardingModalSyncDesktopInformation = "OnboardingModalSyncDesktopInformation",
-  OnboardingModalRecoveryPhraseWarning = "OnboardingModalRecoveryPhraseWarning",
   OnboardingProtectFlow = "OnboardingProtectFlow",
   SyncOnboardingCompanion = "SyncOnboardingCompanion",
   SyncOnboardingCompletion = "SyncOnboardingCompletion",

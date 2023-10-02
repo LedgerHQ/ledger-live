@@ -179,7 +179,7 @@ export default function loadImage({ deviceId, request }: Input): Observable<Load
                   }),
                 );
               }
-              return throwError(e);
+              return throwError(() => e);
             }),
           )
           .subscribe(subscriber);

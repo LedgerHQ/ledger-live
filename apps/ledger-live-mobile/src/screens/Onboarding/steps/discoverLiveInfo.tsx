@@ -19,6 +19,7 @@ import {
 } from "../../../components/RootNavigator/types/helpers";
 import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
 import { BaseOnboardingNavigatorParamList } from "../../../components/RootNavigator/types/BaseOnboardingNavigator";
+import Config from "react-native-config";
 
 const slidesImages = [
   require("../../../../assets/images/onboarding/stories/slide1.png"),
@@ -178,7 +179,7 @@ function DiscoverLiveInfo() {
   return (
     <StyledSafeAreaView>
       <Carousel
-        autoDelay={6000}
+        autoDelay={Config.MOCK ? 0 : 6000}
         scrollOnSidePress={true}
         restartAfterEnd={false}
         IndicatorComponent={StoriesIndicator}

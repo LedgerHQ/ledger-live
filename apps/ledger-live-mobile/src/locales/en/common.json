@@ -609,6 +609,10 @@
       "title": "Operation canceled on device",
       "description": "You rejected the operation on the device."
     },
+    "ExpertModeRequired": {
+      "title": "Expert mode required",
+      "description": "Expert mode needs to be enabled."
+    },
     "WebsocketConnectionError": {
       "title": "Sorry, connection failed",
       "description": "Please try again with a better network connection (websocket error)."
@@ -1088,10 +1092,10 @@
       }
     },
     "enjoy": {
-      "title": "Thanks for the feedback!",
-      "description": "We'd be grateful if you could take a moment to write us a review. Your support helps us reach more people and motivates us to release new app features.",
+      "title": "Enjoying Ledger Live?\nShare some love!",
+      "description": "Leave us a positive rating on the App Store.",
       "cta": {
-        "rate": "Give us 5 stars",
+        "rate": "Rate Ledger Live",
         "notNow": "Not now"
       }
     },
@@ -2185,6 +2189,13 @@
       "title": "{{currencyTicker}} market price",
       "currencyPrice": "1 {{currencyTicker}} price",
       "currencyPriceChange": "Last 24h change"
+    },
+    "quickActions": {
+      "buy": "Buy",
+      "swap": "Swap",
+      "send": "Send",
+      "deposit": "Deposit",
+      "stake": "Stake"
     }
   },
   "addAccountsModal": {
@@ -2459,12 +2470,16 @@
     },
     "import": {
       "scan": {
-        "title": "Import from desktop",
-        "descTop": {
-          "line1": "In Ledger Live Desktop, go to:",
-          "line2": "Settings > Accounts > Export accounts > Export"
+        "title": "Import from desktop"
+      },
+      "newScan": {
+        "title": "Scan and import your accounts from Ledger Live desktop",
+        "instructions": {
+          "line1": "Open Ledger Live Desktop.",
+          "line2": "Settings > Accounts > Exports accounts",
+          "line3": "Scan QR code until loader hits 100%."
         },
-        "descBottom": "Open Ledger Live Desktop & Scan QR Code"
+        "hodl": "Hold until scanning completes."
       },
       "result": {
         "title": "Import accounts",
@@ -2930,7 +2945,8 @@
         "account": "{{count}} account",
         "account_plural": "{{count}} accounts",
         "subtitle": "This must match the network chosen on the wallet or exchange transferring the crypto.",
-        "bannerTitle": "Make sure to select the right network. Learn how."
+        "bannerTitle": "Make sure to select the right network. Learn how.",
+        "depositFromCexBannerTitle": "Deposit crypto from your Coinbase account"
       },
       "stepperHeader": {
         "range": "Step {{currentStep}} of {{totalSteps}}",
@@ -3402,6 +3418,11 @@
     "walletConnect": {
       "title": "WalletConnect",
       "description": "Connect your wallet to dapps"
+    },
+    "recover": {
+      "title": "Ledger Recover",
+      "description": "Wallet recovery made easy",
+      "tag": "One month free"
     }
   },
   "signMessage": {
@@ -3780,7 +3801,8 @@
     "stayInTheAppPlz": "Stay in the Ledger Live app and keep your Ledger nearby.",
     "allowAppPermission": "Open the {{wording}} app on your device",
     "allowAppPermissionSubtitleToken": "to manage your {{token}} tokens",
-    "allowManagerPermission": "Allow {{wording}} on your {{productName}}",
+    "allowManagerPermission": "Allow Ledger Manager on your {{productName}}",
+    "allowRenaming": "Allow renaming on your {{productName}}",
     "allowRemoveCustomLockscreen": "Confirm removal of image on your Ledger Stax",
     "allowSecureConnection": "Allow a secure connection with Ledger",
     "loading": "Loading...",
@@ -6372,6 +6394,12 @@
   "servicesWidget": {
     "title": "Services",
     "subTitle": "Manage your Ledger services",
+    "signIn": "Sign in",
+    "recover": {
+      "cta": "Start your free trial",
+      "desc": "Stop worrying about getting locked out of your own wallet.",
+      "tag": "1 month free"
+    },
     "protect": {
       "status": {
         "new": {
@@ -6437,6 +6465,10 @@
           "body": "Receive crypto in your wallet"
         }
       }
+    },
+    "getFundsModal": {
+      "text": "Get {{coin}} to stake",
+      "description": "Buy, swap or receive crypto directly to your Ledger using Ledger Live."
     }
   }
 }

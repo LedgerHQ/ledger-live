@@ -1,7 +1,7 @@
 import Config from "react-native-config";
 import { Observable, timer } from "rxjs";
 import { map, debounce } from "rxjs/operators";
-import { listen } from "@ledgerhq/logs";
+import { TraceContext, listen } from "@ledgerhq/logs";
 import HIDTransport from "@ledgerhq/react-native-hid";
 import withStaticURLs from "@ledgerhq/hw-transport-http";
 import { retry } from "@ledgerhq/live-common/promise";
@@ -25,7 +25,12 @@ import { setGlobalOnBridgeError } from "@ledgerhq/live-common/bridge/useBridgeTr
 import { prepareCurrency } from "./bridge/cache";
 import BluetoothTransport from "./react-native-hw-transport-ble";
 import "./experimental";
-import logger from "./logger";
+import logger, { ConsoleLogger } from "./logger";
+
+const consoleLogger = ConsoleLogger.getLogger();
+listen(log => {
+  consoleLogger.log(log);
+});
 
 setGlobalOnBridgeError(e => logger.critical(e));
 setDeviceMode("polling");
@@ -102,8 +107,6 @@ setSupportedCurrencies([
   "syscoin",
   "vechain",
   "internet_computer",
-  "ethereum_as_evm_test_only",
-  "polygon_as_evm_test_only",
   "klaytn",
   "polygon_zk_evm",
   "polygon_zk_evm_testnet",
@@ -112,17 +115,8 @@ setSupportedCurrencies([
   "stacks",
   "telos_evm",
   "coreum",
+  "injective",
 ]);
-
-if (Config.VERBOSE) {
-  listen(({ type, message, ...rest }) => {
-    if (Object.keys(rest).length) {
-      console.log(`${type}: ${message || ""}`, rest); // eslint-disable-line no-console
-    } else {
-      console.log(`${type}: ${message || ""}`); // eslint-disable-line no-console
-    }
-  });
-}
 
 if (Config.BLE_LOG_LEVEL) BluetoothTransport.setLogLevel(Config.BLE_LOG_LEVEL);
 if (Config.FORCE_PROVIDER && !isNaN(parseInt(Config.FORCE_PROVIDER, 10)))
@@ -188,7 +182,8 @@ registerTransportModule(httpdebug);
 // BLE is always the fallback choice because we always keep raw id in it
 registerTransportModule({
   id: "ble",
-  open: id => BluetoothTransport.open(id),
+  open: (id: string, timeoutMs?: number, context?: TraceContext) =>
+    BluetoothTransport.open(id, timeoutMs, context),
   disconnect: id => BluetoothTransport.disconnect(id),
 });
 

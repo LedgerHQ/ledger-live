@@ -69,6 +69,8 @@ export type AppState = {
   modalLock: boolean;
   backgroundEvents: Array<FwUpdateBackgroundEvent>;
   isMainNavigatorVisible: boolean;
+  /** For deep links that inadvertently trigger privacy lock. Reset to false on close. */
+  isDeepLinking: boolean;
 };
 
 // === BLE STATE ===

@@ -1,3 +1,5 @@
+// FIXME: to update when implementing edit transaction on evm
+
 import type { Operation, AccountLike, Account, DeviceInfo } from "@ledgerhq/types-live";
 import type { NavigatorScreenParams, ParamListBase } from "@react-navigation/native";
 import type { RampCatalogEntry } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/types";
@@ -58,7 +60,7 @@ import type { CosmosClaimRewardsFlowParamList } from "../../../families/cosmos/C
 import type { SolanaDelegationFlowParamList } from "../../../families/solana/DelegationFlow/types";
 import type { StellarAddAssetFlowParamList } from "../../../families/stellar/AddAssetFlow/types";
 import type { TezosDelegationFlowParamList } from "../../../families/tezos/DelegationFlow/types";
-import type { EditTransactionParamList } from "../../../families/ethereum/EditTransactionFlow/EditTransactionParamList";
+// import type { EditTransactionParamList } from "../../../families/ethereum/EditTransactionFlow/EditTransactionParamList";
 import type { TronVoteFlowParamList } from "../../../families/tron/VoteFlow/types";
 import type { NoFundsNavigatorParamList } from "./NoFundsNavigator";
 import type { StakeNavigatorParamList } from "./StakeNavigator";
@@ -225,8 +227,7 @@ export type BaseNavigatorStackParamList = {
       })
     | undefined;
   [NavigatorName.RequestAccount]: NavigatorScreenParams<RequestAccountNavigatorParamList> & {
-    onError?: (_: Error) => void;
-    error?: Error;
+    onClose?: () => void;
   };
   [NavigatorName.Exchange]: NavigatorScreenParams<ExchangeLiveAppNavigatorParamList> | undefined;
   [NavigatorName.ExchangeStack]: NavigatorScreenParams<ExchangeStackNavigatorParamList> & {
@@ -286,7 +287,7 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.CosmosClaimRewardsFlow]: NavigatorScreenParams<CosmosClaimRewardsFlowParamList>;
 
   // Ethereum
-  [NavigatorName.EditTransaction]: NavigatorScreenParams<EditTransactionParamList>;
+  // [NavigatorName.EditTransaction]: NavigatorScreenParams<EditTransactionParamList>;
 
   // Solana
   [NavigatorName.SolanaDelegationFlow]: NavigatorScreenParams<SolanaDelegationFlowParamList>;

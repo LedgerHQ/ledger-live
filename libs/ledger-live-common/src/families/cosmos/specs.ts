@@ -9,6 +9,7 @@ import {
   expectSiblingsHaveSpendablePartGreaterThan,
   genericTestDestination,
   pickSiblings,
+  SpeculosButton,
 } from "../../bot/specs";
 import type { AppSpec, MutationSpec } from "../../bot/types";
 import { getCryptoCurrencyById } from "../../currencies";
@@ -430,7 +431,11 @@ function cosmosLikeMutations(minimalTransactionAmount: BigNumber): MutationSpec<
   ];
 }
 
-const generateGenericCosmosTest = (currencyId: string, config?: Partial<AppSpec<Transaction>>) => {
+const generateGenericCosmosTest = (
+  currencyId: string,
+  isExpertModeRequired: boolean,
+  config?: Partial<AppSpec<Transaction>>,
+) => {
   return {
     name: currencyId,
     currency: getCryptoCurrencyById(currencyId),
@@ -441,6 +446,12 @@ const generateGenericCosmosTest = (currencyId: string, config?: Partial<AppSpec<
     genericDeviceAction: acceptTransaction,
     testTimeout: 2 * 60 * 1000,
     test: cosmosLikeTest,
+    onSpeculosDeviceCreated: isExpertModeRequired
+      ? async ({ transport }) => {
+          await transport.button(SpeculosButton.RIGHT);
+          await transport.button(SpeculosButton.BOTH);
+        }
+      : undefined,
     ...config,
   };
 };
@@ -449,7 +460,7 @@ const generateGenericCosmosTest = (currencyId: string, config?: Partial<AppSpec<
 // We usually use the upper limit of send transaction fee as the minimalTransactionAmount. e.g. 5000 uatom for cosmos.
 const cosmosMinimalTransactionAmount = new BigNumber(5000);
 const cosmos = {
-  ...generateGenericCosmosTest("cosmos", {
+  ...generateGenericCosmosTest("cosmos", false, {
     minViableAmount: cosmosMinimalTransactionAmount,
     mutations: cosmosLikeMutations(cosmosMinimalTransactionAmount),
   }),
@@ -457,7 +468,7 @@ const cosmos = {
 
 const osmosisMinimalTransactionAmount = new BigNumber(5000);
 const osmosis = {
-  ...generateGenericCosmosTest("osmosis", {
+  ...generateGenericCosmosTest("osmosis", false, {
     minViableAmount: osmosisMinimalTransactionAmount,
     mutations: cosmosLikeMutations(osmosisMinimalTransactionAmount),
     testTimeout: 8 * 60 * 1000,
@@ -466,7 +477,7 @@ const osmosis = {
 
 const desmosMinimalTransactionAmount = new BigNumber(500);
 const desmos = {
-  ...generateGenericCosmosTest("desmos", {
+  ...generateGenericCosmosTest("desmos", false, {
     minViableAmount: desmosMinimalTransactionAmount,
     mutations: cosmosLikeMutations(desmosMinimalTransactionAmount),
     testTimeout: 8 * 60 * 1000,
@@ -476,7 +487,7 @@ const desmos = {
 
 const umeeMinimalTransactionAmount = new BigNumber(15000);
 const umee = {
-  ...generateGenericCosmosTest("umee", {
+  ...generateGenericCosmosTest("umee", false, {
     minViableAmount: umeeMinimalTransactionAmount,
     mutations: cosmosLikeMutations(umeeMinimalTransactionAmount),
     testTimeout: 8 * 60 * 1000,
@@ -486,16 +497,17 @@ const umee = {
 
 const persistenceMinimalTransactionAmount = new BigNumber(5000);
 const persistence = {
-  ...generateGenericCosmosTest("persistence", {
+  ...generateGenericCosmosTest("persistence", false, {
     minViableAmount: persistenceMinimalTransactionAmount,
     mutations: cosmosLikeMutations(persistenceMinimalTransactionAmount),
     testTimeout: 8 * 60 * 1000,
+    skipOperationHistory: true,
   }),
 };
 
 const quicksilverMinimalTransactionAmount = new BigNumber(600);
 const quicksilver = {
-  ...generateGenericCosmosTest("quicksilver", {
+  ...generateGenericCosmosTest("quicksilver", false, {
     minViableAmount: quicksilverMinimalTransactionAmount,
     mutations: cosmosLikeMutations(quicksilverMinimalTransactionAmount),
     testTimeout: 8 * 60 * 1000,
@@ -505,16 +517,17 @@ const quicksilver = {
 
 const onomyMinimalTransactionAmount = new BigNumber(5000);
 const onomy = {
-  ...generateGenericCosmosTest("onomy", {
+  ...generateGenericCosmosTest("onomy", false, {
     minViableAmount: onomyMinimalTransactionAmount,
     mutations: cosmosLikeMutations(onomyMinimalTransactionAmount),
     testTimeout: 8 * 60 * 1000,
+    skipOperationHistory: true,
   }),
 };
 
 const axelarMinimalTransactionAmount = new BigNumber(10000);
 const axelar = {
-  ...generateGenericCosmosTest("axelar", {
+  ...generateGenericCosmosTest("axelar", false, {
     minViableAmount: axelarMinimalTransactionAmount,
     mutations: cosmosLikeMutations(axelarMinimalTransactionAmount),
     skipOperationHistory: true,
@@ -523,25 +536,37 @@ const axelar = {
 
 const secretNetworkMinimalTransactionAmount = new BigNumber(60000);
 const secretNetwork = {
-  ...generateGenericCosmosTest("secret_network", {
+  ...generateGenericCosmosTest("secret_network", false, {
     minViableAmount: secretNetworkMinimalTransactionAmount,
     mutations: cosmosLikeMutations(secretNetworkMinimalTransactionAmount),
+    skipOperationHistory: true,
   }),
 };
 
 const stargazeMinimalTransactionAmount = new BigNumber(160000);
 const stargaze = {
-  ...generateGenericCosmosTest("stargaze", {
+  ...generateGenericCosmosTest("stargaze", false, {
     minViableAmount: stargazeMinimalTransactionAmount,
     mutations: cosmosLikeMutations(stargazeMinimalTransactionAmount),
+    skipOperationHistory: true,
   }),
 };
 
 const coreumMinimalTransactionAmount = new BigNumber(20000);
 const coreum = {
-  ...generateGenericCosmosTest("coreum", {
+  ...generateGenericCosmosTest("coreum", false, {
     minViableAmount: coreumMinimalTransactionAmount,
     mutations: cosmosLikeMutations(coreumMinimalTransactionAmount),
+    skipOperationHistory: true,
+  }),
+};
+
+const injectiveMinimalTransactionAmount = new BigNumber(1000000);
+const injective = {
+  ...generateGenericCosmosTest("injective", true, {
+    minViableAmount: injectiveMinimalTransactionAmount,
+    mutations: cosmosLikeMutations(injectiveMinimalTransactionAmount),
+    skipOperationHistory: true,
   }),
 };
 
@@ -557,4 +582,5 @@ export default {
   secretNetwork,
   stargaze,
   coreum,
+  injective,
 };

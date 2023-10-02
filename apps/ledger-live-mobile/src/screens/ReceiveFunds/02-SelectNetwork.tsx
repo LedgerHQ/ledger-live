@@ -156,8 +156,9 @@ export default function SelectNetwork({ navigation, route }: Props) {
       type: "card",
       page: "Choose a network",
     });
-    Linking.openURL(depositNetworkBannerMobile?.params.url);
-  }, [depositNetworkBannerMobile?.params.url]);
+    // @ts-expect-error TYPINGS
+    Linking.openURL(depositNetworkBannerMobile?.params?.url);
+  }, [depositNetworkBannerMobile?.params?.url]);
 
   const renderItem = useCallback(
     ({ item }: { item: CryptoWithAccounts }) => (

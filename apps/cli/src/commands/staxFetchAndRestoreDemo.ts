@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { from } from "rxjs";
+import { firstValueFrom, from } from "rxjs";
 import fs from "fs";
 import type { ScanCommonOpts } from "../scan";
 import { deviceOpt } from "../scan";
@@ -32,7 +32,9 @@ const exec = async (opts: staxFetchAndRestoreJobOpts) => {
     console.log(hash);
     console.log("Extracting hash from device");
 
-    const currentHash = await withDevice(deviceId)(t => from(staxFetchImageHash(t))).toPromise();
+    const currentHash = await firstValueFrom(
+      withDevice(deviceId)(t => from(staxFetchImageHash(t))),
+    );
     if (currentHash === hash) {
       console.log("Hashes match, skip backup step because we can use the one we have");
     } else {
@@ -40,7 +42,9 @@ const exec = async (opts: staxFetchAndRestoreJobOpts) => {
     }
 
     console.log("Delete the current image (simulate the wipe from fw update)");
-    await withDevice(deviceId)(t => from(t.exchange(Buffer.from("e063000000", "hex")))).toPromise();
+    await firstValueFrom(
+      withDevice(deviceId)(t => from(t.exchange(Buffer.from("e063000000", "hex")))),
+    );
 
     console.log("Restoring the image we backedup");
     await new Promise<void>(resolve =>

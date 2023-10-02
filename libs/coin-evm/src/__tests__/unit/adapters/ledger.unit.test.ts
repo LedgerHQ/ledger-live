@@ -293,6 +293,73 @@ describe("EVM Family", () => {
           ]);
         });
 
+        it("should convert ledger explorer legacy coin none operation (smart contract creation) to a Ledger Live Operation", () => {
+          // This operation represents a smart contract creation
+          // cf. https://polygonscan.com/tx/0x11a358387669d58f3791461124212e40e6899fd286074636f745990f57f87eb1
+          // For some reason the explorer API returns a "to" address of "0x0"
+
+          const ledgerOperation: LedgerExplorerOperation = {
+            hash: "0x11a358387669d58f3791461124212e40e6899fd286074636f745990f57f87eb1",
+            transaction_type: 0,
+            nonce: "0x3",
+            nonce_value: 3,
+            value: "0",
+            gas: "21356033",
+            gas_price: "42392511388",
+            // this is a legacy operation (transaction_type === 0), so we don't have max_fee_per_gas and max_priority_fee_per_gas
+            max_fee_per_gas: null,
+            max_priority_fee_per_gas: null,
+            from: "0x787acf62ffc81bb171d1f46fb8b3fc6503d503e8",
+            to: "0x0",
+            transfer_events: [],
+            erc721_transfer_events: [
+              {
+                contract: "0xe22eab38e8325ae03aeb53390c00a66eb0218c25",
+                sender: "0x68b3465833fb72a70ecdf485e0e4c7bd8665fc45",
+                receiver: "0x84c9a36721eb21da9244fe50177180d8f4a7caf7",
+                token_id: "63",
+              },
+            ],
+            erc1155_transfer_events: [],
+            approval_events: [],
+            actions: [],
+            confirmations: 9822660,
+            input: null,
+            gas_used: "21356033",
+            cumulative_gas_used: "24822433",
+            status: 1,
+            received_at: "2022-12-13T21:41:37Z",
+            block: {
+              hash: "0xcf0072dc5eb6e39ae5377b5323914f750da0cf5d2538f7d3ce7d8739c0624199",
+              height: 36795782,
+              time: "2022-12-13T21:41:37Z",
+            },
+          };
+
+          const expectedOperation: Operation = {
+            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:-0x11a358387669d58f3791461124212e40e6899fd286074636f745990f57f87eb1-NONE",
+            hash: "0x11a358387669d58f3791461124212e40e6899fd286074636f745990f57f87eb1",
+            accountId,
+            blockHash: "0xcf0072dc5eb6e39ae5377b5323914f750da0cf5d2538f7d3ce7d8739c0624199",
+            blockHeight: 36795782,
+            recipients: [""],
+            senders: ["0x787aCF62fFC81Bb171d1f46fB8b3Fc6503D503e8"],
+            value: new BigNumber("0"),
+            fee: new BigNumber("905335872155003804"),
+            date: new Date("2022-12-13T21:41:37Z"),
+            transactionSequenceNumber: 3,
+            hasFailed: false,
+            nftOperations: [],
+            subOperations: [],
+            type: "NONE",
+            extra: {},
+          };
+
+          expect(ledgerOperationToOperations(accountId, ledgerOperation)).toEqual([
+            expectedOperation,
+          ]);
+        });
+
         it("should convert ledger explorer self send coin operation to 2 Ledger Live Operations", () => {
           const ledgerOperation: LedgerExplorerOperation = {
             hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",

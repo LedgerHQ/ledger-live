@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, memo, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { from } from "rxjs";
+import { firstValueFrom, from } from "rxjs";
 import type { App } from "@ledgerhq/types-live";
 import { predictOptimisticState } from "@ledgerhq/live-common/apps/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
@@ -57,11 +57,11 @@ const Manager = ({ navigation, route }: NavigationProps) => {
   }, [device.deviceId, lastConnectedDevice, navigation]);
 
   const refreshDeviceInfo = useCallback(() => {
-    withDevice(deviceId)(transport => from(getDeviceInfo(transport)))
-      .toPromise()
-      .then(deviceInfo => {
+    firstValueFrom(withDevice(deviceId)(transport => from(getDeviceInfo(transport)))).then(
+      deviceInfo => {
         navigation.setParams({ deviceInfo });
-      });
+      },
+    );
   }, [deviceId, navigation]);
 
   const { currentError, installQueue, uninstallQueue } = state;

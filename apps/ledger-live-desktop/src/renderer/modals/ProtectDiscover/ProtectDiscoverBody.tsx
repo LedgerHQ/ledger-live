@@ -32,6 +32,7 @@ const ProtectDiscoverBody = ({ onClose }: Props) => {
     track("button_clicked", {
       button: "Discover the benefits",
     });
+    // @ts-expect-error TYPINGS
     openURL(protectServicesDesktopFeature?.params?.discoverTheBenefitsLink);
   }, [protectServicesDesktopFeature?.params?.discoverTheBenefitsLink]);
 

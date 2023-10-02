@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { FeatureId } from "@ledgerhq/types-live";
 import { useFeatureFlags } from "./provider";
-import { defaultFeatures } from "./defaultFeatures";
+import { DEFAULT_FEATURES } from "./defaultFeatures";
 
 /**
  *
@@ -11,7 +11,7 @@ export function useHasLocallyOverriddenFeatureFlags(): boolean {
   const { getFeature } = useFeatureFlags();
   return useMemo(
     () =>
-      Object.entries(defaultFeatures).some(([featureId]) => {
+      Object.entries(DEFAULT_FEATURES).some(([featureId]) => {
         try {
           const val = getFeature(featureId as FeatureId);
           return val?.overridesRemote || val?.overriddenByEnv;

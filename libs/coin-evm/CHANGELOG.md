@@ -1,5 +1,77 @@
 # @ledgerhq/coin-evm
 
+## 0.6.2
+
+### Patch Changes
+
+- Updated dependencies [[`6c83521fee`](https://github.com/LedgerHQ/ledger-live/commit/6c83521fee8da656858630c1cb37a5af95df3362)]:
+  - @ledgerhq/types-cryptoassets@7.5.0
+  - @ledgerhq/cryptoassets@9.13.0
+  - @ledgerhq/types-live@6.40.0
+  - @ledgerhq/coin-framework@0.5.4
+  - @ledgerhq/domain-service@1.1.11
+  - @ledgerhq/evm-tools@1.0.7
+  - @ledgerhq/hw-app-eth@6.34.6
+
+## 0.6.1
+
+### Patch Changes
+
+- Updated dependencies [[`e0cc3a0841`](https://github.com/LedgerHQ/ledger-live/commit/e0cc3a08415de84b9d3ce828444248a043a9d699), [`18b4a47b48`](https://github.com/LedgerHQ/ledger-live/commit/18b4a47b4878a23695a50096b7770134883b8a2e)]:
+  - @ledgerhq/coin-framework@0.5.3
+  - @ledgerhq/cryptoassets@9.12.1
+  - @ledgerhq/domain-service@1.1.10
+  - @ledgerhq/evm-tools@1.0.6
+  - @ledgerhq/hw-app-eth@6.34.5
+
+## 0.6.0
+
+### Minor Changes
+
+- [#4235](https://github.com/LedgerHQ/ledger-live/pull/4235) [`8e9df43a0c`](https://github.com/LedgerHQ/ledger-live/commit/8e9df43a0cd00a2065b494439f300f96724b8eb8) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Better typing for the Operation.extra field
+
+### Patch Changes
+
+- [#4391](https://github.com/LedgerHQ/ledger-live/pull/4391) [`fde2fe79f1`](https://github.com/LedgerHQ/ledger-live/commit/fde2fe79f1df69fffe80763cd6d9792fe9de1262) Thanks [@valpinkman](https://github.com/valpinkman)! - Rework some env typings
+
+- [#4452](https://github.com/LedgerHQ/ledger-live/pull/4452) [`1020f27632`](https://github.com/LedgerHQ/ledger-live/commit/1020f276322fe361585a56573091ec647fbd901e) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix evm integration tests
+
+- [#4268](https://github.com/LedgerHQ/ledger-live/pull/4268) [`707e59f8b5`](https://github.com/LedgerHQ/ledger-live/commit/707e59f8b516448e6f2845288ad4cb3f5488e688) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix pending transaction bug in evm family
+
+- Updated dependencies [[`8e9df43a0c`](https://github.com/LedgerHQ/ledger-live/commit/8e9df43a0cd00a2065b494439f300f96724b8eb8), [`fde2fe79f1`](https://github.com/LedgerHQ/ledger-live/commit/fde2fe79f1df69fffe80763cd6d9792fe9de1262), [`f6f70ba0e8`](https://github.com/LedgerHQ/ledger-live/commit/f6f70ba0e85c7898cdeec19402b1eadfde6a2206), [`45be23c776`](https://github.com/LedgerHQ/ledger-live/commit/45be23c77666697dbe395f836ab592062173d5cb), [`6375c250a9`](https://github.com/LedgerHQ/ledger-live/commit/6375c250a9a58b33e3dd1d6c96a96c7e46150298), [`0d9ad3599b`](https://github.com/LedgerHQ/ledger-live/commit/0d9ad3599bce8872fde97d27c977ab24445afc3a)]:
+  - @ledgerhq/types-live@6.39.0
+  - @ledgerhq/live-env@0.5.0
+  - @ledgerhq/coin-framework@0.5.2
+  - @ledgerhq/cryptoassets@9.12.0
+  - @ledgerhq/domain-service@1.1.9
+  - @ledgerhq/evm-tools@1.0.5
+  - @ledgerhq/hw-app-eth@6.34.4
+  - @ledgerhq/live-network@1.1.6
+
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#4235](https://github.com/LedgerHQ/ledger-live/pull/4235) [`8e9df43a0c`](https://github.com/LedgerHQ/ledger-live/commit/8e9df43a0cd00a2065b494439f300f96724b8eb8) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Better typing for the Operation.extra field
+
+### Patch Changes
+
+- [#4391](https://github.com/LedgerHQ/ledger-live/pull/4391) [`fde2fe79f1`](https://github.com/LedgerHQ/ledger-live/commit/fde2fe79f1df69fffe80763cd6d9792fe9de1262) Thanks [@valpinkman](https://github.com/valpinkman)! - Rework some env typings
+
+- [#4452](https://github.com/LedgerHQ/ledger-live/pull/4452) [`1020f27632`](https://github.com/LedgerHQ/ledger-live/commit/1020f276322fe361585a56573091ec647fbd901e) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix evm integration tests
+
+- [#4268](https://github.com/LedgerHQ/ledger-live/pull/4268) [`707e59f8b5`](https://github.com/LedgerHQ/ledger-live/commit/707e59f8b516448e6f2845288ad4cb3f5488e688) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix pending transaction bug in evm family
+
+- Updated dependencies [[`8e9df43a0c`](https://github.com/LedgerHQ/ledger-live/commit/8e9df43a0cd00a2065b494439f300f96724b8eb8), [`fde2fe79f1`](https://github.com/LedgerHQ/ledger-live/commit/fde2fe79f1df69fffe80763cd6d9792fe9de1262), [`f6f70ba0e8`](https://github.com/LedgerHQ/ledger-live/commit/f6f70ba0e85c7898cdeec19402b1eadfde6a2206), [`45be23c776`](https://github.com/LedgerHQ/ledger-live/commit/45be23c77666697dbe395f836ab592062173d5cb), [`6375c250a9`](https://github.com/LedgerHQ/ledger-live/commit/6375c250a9a58b33e3dd1d6c96a96c7e46150298), [`0d9ad3599b`](https://github.com/LedgerHQ/ledger-live/commit/0d9ad3599bce8872fde97d27c977ab24445afc3a)]:
+  - @ledgerhq/types-live@6.39.0-next.0
+  - @ledgerhq/live-env@0.5.0-next.0
+  - @ledgerhq/coin-framework@0.5.2-next.0
+  - @ledgerhq/cryptoassets@9.12.0-next.0
+  - @ledgerhq/domain-service@1.1.9-next.0
+  - @ledgerhq/evm-tools@1.0.5-next.0
+  - @ledgerhq/hw-app-eth@6.34.4-next.0
+  - @ledgerhq/live-network@1.1.6-next.0
+
 ## 0.5.1
 
 ### Patch Changes
