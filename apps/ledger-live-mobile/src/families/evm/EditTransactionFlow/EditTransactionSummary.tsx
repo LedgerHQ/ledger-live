@@ -6,7 +6,7 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import {
   getEditTransactionStatus,
   getMinFees,
-} from "@ledgerhq/live-common/families/evm/getUpdateTransactionPatch";
+} from "@ledgerhq/live-common/families/evm/editTransaction/index";
 import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
 import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";

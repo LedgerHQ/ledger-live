@@ -10,7 +10,7 @@ import {
   getEditTransactionStatus,
   hasMinimumFundsToCancel,
   hasMinimumFundsToSpeedUp,
-} from "@ledgerhq/live-common/families/evm/getUpdateTransactionPatch";
+} from "@ledgerhq/live-common/families/evm/editTransaction/index";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
 import { isOldestPendingOperation } from "@ledgerhq/live-common/operation";

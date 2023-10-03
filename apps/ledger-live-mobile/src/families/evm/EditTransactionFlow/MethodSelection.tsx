@@ -9,7 +9,7 @@ import {
   getEditTransactionPatch,
   hasMinimumFundsToCancel,
   hasMinimumFundsToSpeedUp,
-} from "@ledgerhq/live-common/families/evm/getUpdateTransactionPatch";
+} from "@ledgerhq/live-common/families/evm/editTransaction/index";
 import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 import { getEnv } from "@ledgerhq/live-env";
 import { log } from "@ledgerhq/logs";

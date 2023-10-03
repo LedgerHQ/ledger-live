@@ -6,7 +6,7 @@ import {
   Strategy,
 } from "@ledgerhq/coin-evm/types/index";
 import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
-import { isStrategyDisabled } from "@ledgerhq/live-common/families/evm/getUpdateTransactionPatch";
+import { isStrategyDisabled } from "@ledgerhq/live-common/families/evm/editTransaction/index";
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import React, { memo, useMemo } from "react";

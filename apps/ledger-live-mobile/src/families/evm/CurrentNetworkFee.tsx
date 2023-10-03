@@ -1,7 +1,7 @@
 import { fromTransactionRaw } from "@ledgerhq/coin-evm/transaction";
 import { TransactionRaw } from "@ledgerhq/coin-evm/types/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { getFormattedFeeFields } from "@ledgerhq/live-common/families/evm/getUpdateTransactionPatch";
+import { getFormattedFeeFields } from "@ledgerhq/live-common/families/evm/editTransaction/index";
 import { log } from "@ledgerhq/logs";
 import { Alert, Flex } from "@ledgerhq/native-ui";
 import type { Account, AccountLike, TransactionCommonRaw } from "@ledgerhq/types-live";
