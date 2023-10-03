@@ -36,7 +36,8 @@ const EditTypeHeader = styled(Box)<{ selected: boolean }>`
 `;
 
 const Description = styled(Box)<{ selected: boolean }>`
-  color: ${p => (p.selected ? "white" : "gray")};
+  color: ${p =>
+    p.selected ? p.theme.colors.palette.primary.main : p.theme.colors.palette.text.shade50};
   margin-top: 5px;
   margin-left: 15px;
   width: 400px;
