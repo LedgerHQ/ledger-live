@@ -64,11 +64,11 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
       title: "Deregister",
     },
     {
-      title: "staking key",
+      title: "stake key",
       button: SpeculosButton.BOTH,
     },
     {
-      title: "Staking key",
+      title: "Stake key",
       button: SpeculosButton.BOTH,
       expectedValue: ({ account }) => {
         const stakeCred = getAccountStakeCredential(account.xpub as string, account.index);
@@ -97,23 +97,23 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
     },
     {
       // sometimes the poolId fits on a single screen
-      title: "Delegate stake to",
+      title: "Delegate stake",
       button: SpeculosButton.BOTH,
     },
     {
-      title: "Delegate stake to (1/2)",
+      title: "Delegate stake (1/2)",
       button: SpeculosButton.RIGHT,
     },
     {
-      title: "Delegate stake to (2/2)",
+      title: "Delegate stake (2/2)",
       button: SpeculosButton.BOTH,
     },
     {
-      title: "Delegate s...ke to (1/2)",
+      title: "Delegate s...ke (1/2)",
       button: SpeculosButton.RIGHT,
     },
     {
-      title: "Delegate ...ke to (2/2)",
+      title: "Delegate ...ke (2/2)",
       button: SpeculosButton.BOTH,
     },
     {
