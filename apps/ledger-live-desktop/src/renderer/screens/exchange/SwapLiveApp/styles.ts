@@ -1,6 +1,6 @@
-import Card from "~/renderer/components/Box/Card";
 import styled from "styled-components";
 
-export const Container = styled(Card)`
+export const Container = styled.div`
+  flex-grow: 1;
   overflow: hidden;
 `;

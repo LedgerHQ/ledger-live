@@ -16,7 +16,7 @@ const Swap = () => {
   useDeepLinkListener();
 
   return (
-    <Container grow data-test-id="swap-app-container">
+    <Container data-test-id="swap-app-container">
       {manifest ? (
         <WebPlatformPlayer
           config={{
