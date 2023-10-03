@@ -235,7 +235,6 @@ const getEip1559Patch = ({
   return patch;
 };
 
-// FIXME: add tests
 export const getEditTransactionPatch = async ({
   editType,
   transaction,
