@@ -35,6 +35,7 @@ const appVersionsRequired = {
   "Cardano ADA": ">= 4.1.0",
   Zcash: "> 2.0.6",
   NEAR: ">= 1.2.1",
+  "Tezos Wallet": ">= 2.4.3",
 };
 export function mustUpgrade(appName: string, appVersion: string): boolean {
   if (getEnv("DISABLE_APP_VERSION_REQUIREMENTS")) return false;
