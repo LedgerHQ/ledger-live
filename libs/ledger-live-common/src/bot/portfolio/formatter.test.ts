@@ -1007,20 +1007,39 @@ describe("urlToEndpoint", () => {
 });
 
 describe("formatDetails", () => {
-  it("should include a bold number if calls are duplicated", () => {
+  it("should only show duplicated calls", () => {
     expect(
       formatDetails({
         endpoint: {
-          urls: [{ url: "endpoint/toto", calls: 2 }],
+          urls: [
+            { url: "endpoint/toto", calls: 2 },
+            { url: "endpoint/test", calls: 1 },
+          ],
           size: 10,
           duration: 10,
-          calls: 2,
+          calls: 3,
         },
-      })?.includes("**"),
+      })?.includes("toto"),
     ).toEqual(true);
   });
 
-  it("should not include a bold number if calls are unique", () => {
+  it("should not return not duplicated urls", () => {
+    expect(
+      formatDetails({
+        endpoint: {
+          urls: [
+            { url: "endpoint/toto", calls: 1 },
+            { url: "endpoint/test", calls: 2 },
+          ],
+          size: 10,
+          duration: 10,
+          calls: 3,
+        },
+      })?.includes("toto"),
+    ).toEqual(false);
+  });
+
+  it("should not return endpoints if there are no duplicated calls", () => {
     expect(
       formatDetails({
         endpoint: {
@@ -1029,7 +1048,7 @@ describe("formatDetails", () => {
           duration: 10,
           calls: 1,
         },
-      })?.includes("**"),
+      })?.includes("toto"),
     ).toEqual(false);
   });
 });

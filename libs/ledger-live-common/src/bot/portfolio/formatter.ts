@@ -182,7 +182,7 @@ export function finalMarkdownReport(reports: Report[], specsPerBots: SpecPerBot[
   });
 
   md += table({
-    title: "HTTP Calls",
+    title: "HTTP Duplicated Calls",
     lenseValue: d => d.report?.auditResult?.network?.details,
     formatValue: v => formatDetails(v),
     totalPerCurrency: true,
@@ -295,29 +295,26 @@ export function formatDetails(
 ): string | undefined {
   if (!details) return;
   let report = "";
-  const boldIfHigherThan1 = nbr => (nbr > 1 ? `**${nbr}**` : nbr);
   try {
-    report += "<details>";
+    let toReport = "";
+    let duplicated = 0;
     for (const endpoint of Object.keys(details)) {
       const endpointDetails = details[endpoint];
       if (endpoint === "/apdu") {
         continue;
       }
-      if (endpointDetails.calls === 1 || endpointDetails.urls.length === 1) {
-        // no need details
-        report += `- <sub><sup>${endpointDetails.urls[0].url} [${boldIfHigherThan1(
-          endpointDetails.urls[0].calls,
-        )}]</sup></sub><br>`;
-      } else {
-        let urls = "";
-        for (const url of endpointDetails.urls) {
-          urls += `- <sub><sup>${url.url} [${boldIfHigherThan1(url.calls)}]</sup></sub><br>`;
+      for (const url of endpointDetails.urls) {
+        if (url.calls > 1) {
+          toReport += `- <sub><sup>${url.url} [${url.calls}]</sup></sub><br>`;
+          duplicated++;
         }
-        urls += "";
-        report += `<details><summary><sub><sup>${endpoint} (${endpointDetails.calls})</sup></sub></summary>${urls}</details>`;
       }
     }
-    report += "</details>";
+    if (duplicated > 0) {
+      report += `<details><summary>${duplicated} duplicated</summary>${toReport}</details>`;
+    } else {
+      report += "-";
+    }
   } catch (e) {
     // eslint-disable-next-line no-console
     console.log(`Error when formatting details`);
