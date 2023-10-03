@@ -63,6 +63,8 @@ export default function EvmCustomFees({ route }: Props) {
   const transaction = useMemo(
     () => (baseTransaction.gasOptions ? baseTransaction : { ...baseTransaction, gasOptions }),
     [baseTransaction, gasOptions],
+  );
+
   const account = getMainAccount(accountLike);
 
   const onValidateFees = useCallback(
