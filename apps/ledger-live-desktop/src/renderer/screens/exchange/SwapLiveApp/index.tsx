@@ -1,10 +1,10 @@
 import React from "react";
-import Card from "~/renderer/components/Box/Card";
 import WebPlatformPlayer from "~/renderer/components/WebPlatformPlayer";
 import { useDeepLinkListener } from "~/renderer/screens/earn/useDeepLinkListener";
 import { useLiveAppParameters } from "~/renderer/hooks/useLiveAppParameters";
 import { useLiveAppManifest } from "~/renderer/hooks/useLiveAppManifest";
 import { useLiveAppTopBarConfig } from "~/renderer/hooks/useLiveAppTopBarConfig";
+import { Container } from "./styles";
 
 const DEFAULT_SWAP_APP_ID = "swap";
 
@@ -16,17 +16,18 @@ const Swap = () => {
   useDeepLinkListener();
 
   return (
-    <Card grow style={{ overflow: "hidden" }} data-test-id="swap-app-container">
+    <Container grow data-test-id="swap-app-container">
       {manifest ? (
         <WebPlatformPlayer
           config={{
             topBarConfig,
+            topBarDisabled: true,
           }}
           manifest={manifest}
           inputs={liveAppParameters}
         />
       ) : null}
-    </Card>
+    </Container>
   );
 };
 
