@@ -62,6 +62,11 @@ jobs:
             ~/Library/Caches/CocoaPods
             ~/.cocoapods
           key: ${{ runner.os }}-pods-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock') }}
+      - uses: actions/cache/restore@v3
+        id: detox-build
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
+          key: ${{ runner.os }}-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/ledgerlivemobile.xcodeproj/project.pbxproj') }}
       - name: TurboRepo local caching server
         id: turborepo-cache-server
         uses: ./tools/actions/turborepo-s3-cache
@@ -86,8 +91,19 @@ jobs:
           ID=$(xcrun simctl create "iPhone 13" "iPhone 13")
           echo "id=$ID" >> $GITHUB_OUTPUT
       - name: Build iOS app for Detox test run
+        if: steps.detox-build.outputs.cache-hit != 'true'
         run: |
           pnpm mobile e2e:build -c ios.sim.release
+      - uses: actions/cache/save@v3
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
+          key: ${{ steps.detox-build.outputs.cache-primary-key }}
+      - name: Build JS Bundle app for Detox test run
+        if: steps.detox-build.outputs.cache-hit == 'true'
+        run: |
+          pnpm mobile bundle:ios
+          cd apps/ledger-live-mobile
+          mv main.jsbundle ios/build/Build/Products/Release-iphonesimulator/main.jsbundle
       - name: Test iOS app
         id: detox
         run: |
