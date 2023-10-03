@@ -3,10 +3,7 @@ import { isCurrencySupported } from "@ledgerhq/coin-framework/currencies/index";
 import { NotEnoughGas } from "@ledgerhq/errors";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import {
-  getEditTransactionStatus,
-  getMinFees,
-} from "@ledgerhq/live-common/families/evm/editTransaction/index";
+import { getEditTransactionStatus } from "@ledgerhq/live-common/families/evm/editTransaction/index";
 import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
 import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -208,7 +205,6 @@ function EditTransactionSummary({ navigation, route }: Props) {
           />
         )}
         <SendRowsFee
-          minFees={getMinFees({ transaction: transactionToUpdate })}
           setTransaction={setTransaction}
           status={status}
           account={account}
@@ -219,6 +215,7 @@ function EditTransactionSummary({ navigation, route }: Props) {
           navigation={navigation as any}
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           route={route as any}
+          transactionToUpdate={transactionToUpdate}
         />
 
         <CurrentNetworkFee

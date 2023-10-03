@@ -1,29 +1,19 @@
-import type { FeeData } from "@ledgerhq/coin-evm/types/index";
-import { BigNumber } from "bignumber.js";
-
-// TODO: could use getMinFees directly and note rely on `minFees` props
+import type { FeeData, Transaction } from "@ledgerhq/coin-evm/types/index";
+import { getMinFees } from "./getMinFees";
 
 /**
- * A strategy is disabled if the current fees are lower than the minimum fees
+ * A strategy is disabled if it's fees are lower than the minimum fees
  */
 export const isStrategyDisabled = ({
-  isEIP1559,
+  transaction,
   feeData,
-  minFees,
 }: {
-  isEIP1559: boolean;
+  transaction: Transaction;
   feeData: FeeData;
-  minFees?: {
-    maxFeePerGas?: BigNumber;
-    maxPriorityFeePerGas?: BigNumber;
-    gasPrice?: BigNumber;
-  };
 }): boolean => {
-  if (!minFees) {
-    return false;
-  }
+  const minFees = getMinFees({ transaction });
 
-  if (isEIP1559) {
+  if (transaction.type === 2) {
     if (
       !feeData.maxFeePerGas ||
       !feeData.maxPriorityFeePerGas ||
