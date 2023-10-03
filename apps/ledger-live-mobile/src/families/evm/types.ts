@@ -3,7 +3,6 @@ import { Result } from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { CompositeScreenProps } from "@react-navigation/native";
-import BigNumber from "bignumber.js";
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
 import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
@@ -14,16 +13,12 @@ import { ScreenName } from "../../const";
 export type StrategyWithCustom = Strategy | "custom";
 
 export type SendRowsFeeProps<T extends Transaction = Transaction> = {
-  minFees?: {
-    maxFeePerGas?: BigNumber;
-    maxPriorityFeePerGas?: BigNumber;
-    gasPrice?: BigNumber;
-  };
   transaction: T;
   account: AccountLike;
   parentAccount?: Account | null;
   setTransaction: Result<T>["setTransaction"];
   shouldPrefillEvmGasOptions?: boolean;
+  transactionToUpdate?: T;
 } & CompositeScreenProps<
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
   | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.SignTransactionSummary>

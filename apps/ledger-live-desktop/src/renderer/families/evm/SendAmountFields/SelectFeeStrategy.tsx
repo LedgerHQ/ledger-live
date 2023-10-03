@@ -8,7 +8,6 @@ import {
 import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { isStrategyDisabled } from "@ledgerhq/live-common/families/evm/editTransaction/index";
 import { Account } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
 import React, { memo, useMemo } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
@@ -26,12 +25,7 @@ type Props = {
   transaction: EvmTransaction;
   account: Account;
   gasOptions: GasOptions;
-  // FIXME: shity typing
-  minFees?: {
-    maxFeePerGas?: BigNumber;
-    maxPriorityFeePerGas?: BigNumber;
-    gasPrice?: BigNumber;
-  };
+  transactionToUpdate?: EvmTransaction;
 };
 
 const FeesWrapper = styled(Tabbable)`
@@ -80,7 +74,13 @@ const ApproximateTransactionTime = styled(Box)<{ selected?: boolean }>`
 
 const strategies: Strategy[] = ["slow", "medium", "fast"];
 
-const SelectFeeStrategy = ({ transaction, account, onClick, gasOptions, minFees }: Props) => {
+const SelectFeeStrategy = ({
+  transaction,
+  account,
+  onClick,
+  gasOptions,
+  transactionToUpdate,
+}: Props) => {
   const accountUnit = getAccountUnit(account);
   const feesCurrency = getAccountCurrency(account);
 
@@ -90,15 +90,14 @@ const SelectFeeStrategy = ({ transaction, account, onClick, gasOptions, minFees 
         const gasOption = gasOptions[strategy];
         const estimatedFees = getEstimatedFees(getTypedTransaction(transaction, gasOption));
 
-        const disabled = isStrategyDisabled({
-          isEIP1559: transaction.type === 2,
-          feeData: gasOption,
-          minFees,
-        });
+        const disabled =
+          !!transactionToUpdate &&
+          isStrategyDisabled({
+            transaction: transactionToUpdate,
+            feeData: gasOption,
+          });
         const selected = !disabled && transaction.feesStrategy === strategy;
 
-        // TODO: create a FeesStrategy dumb component
-        // TODO: display the "custom" strategy?
         return (
           <FeesWrapper
             key={strategy}
@@ -176,7 +175,7 @@ const SelectFeeStrategy = ({ transaction, account, onClick, gasOptions, minFees 
           </FeesWrapper>
         );
       }),
-    [accountUnit, feesCurrency, gasOptions, onClick, transaction, minFees],
+    [accountUnit, feesCurrency, gasOptions, onClick, transaction, transactionToUpdate],
   );
 
   return (

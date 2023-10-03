@@ -34,11 +34,6 @@ import { sharedSwapTracking } from "../../screens/Swap/utils";
 import { StrategyWithCustom } from "./types";
 
 type Props = {
-  minFees?: {
-    maxFeePerGas?: BigNumber;
-    maxPriorityFeePerGas?: BigNumber;
-    gasPrice?: BigNumber;
-  };
   gasOptions: GasOptions;
   customFees: BigNumber | null;
   account: AccountLike;
@@ -49,6 +44,7 @@ type Props = {
   forceUnitLabel?: boolean | React.ReactNode;
   disabledStrategies?: Array<string>;
   NetworkFeesInfoComponent?: React.FC;
+  transactionToUpdate?: Transaction;
 };
 
 const CVWrapper = ({ children }: { children?: React.ReactNode }) => (
@@ -71,7 +67,7 @@ export default function SelectFeesStrategy({
   forceUnitLabel,
   disabledStrategies,
   NetworkFeesInfoComponent,
-  minFees,
+  transactionToUpdate,
 }: Props) {
   const { track } = useAnalytics();
   const { t } = useTranslation();
@@ -123,11 +119,11 @@ export default function SelectFeesStrategy({
 
     const isDisabled =
       disabledStrategies?.includes(strategy) ||
-      isStrategyDisabled({
-        isEIP1559: transaction.type === 2,
-        feeData,
-        minFees,
-      });
+      (!!transactionToUpdate &&
+        isStrategyDisabled({
+          transaction: transactionToUpdate,
+          feeData,
+        }));
 
     const isSelected = feesStrategy === strategy && !isDisabled;
 

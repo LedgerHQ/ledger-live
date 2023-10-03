@@ -1,8 +1,5 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import {
-  getFormattedFeeFields,
-  getMinFees,
-} from "@ledgerhq/live-common/families/evm/editTransaction/index";
+import { getFormattedFeeFields } from "@ledgerhq/live-common/families/evm/editTransaction/index";
 import React, { Fragment, memo } from "react";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
@@ -64,7 +61,7 @@ const StepFees = ({
             onChange={onChangeTransaction}
             bridgePending={bridgePending}
             updateTransaction={updateTransaction}
-            minFees={getMinFees({ transaction: transactionToUpdate })}
+            transactionToUpdate={transactionToUpdate}
           />
         </Fragment>
       )}
