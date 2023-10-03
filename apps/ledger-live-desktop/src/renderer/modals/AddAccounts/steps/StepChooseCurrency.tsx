@@ -68,6 +68,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const klaytn = useFeature("currencyKlaytn");
   const mock = useEnv("MOCK");
   const injective = useFeature("currencyInjective");
+  const casper = useFeature("currencyCasper");
 
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
@@ -105,6 +106,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       base_goerli: baseGoerli,
       klaytn,
       injective,
+      casper,
     }),
     [
       axelar,
@@ -141,6 +143,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       baseGoerli,
       klaytn,
       injective,
+      casper,
     ],
   );
 

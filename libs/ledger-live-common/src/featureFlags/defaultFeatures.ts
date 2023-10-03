@@ -58,6 +58,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyTelosEvm: DEFAULT_FEATURE,
   currencyUmee: DEFAULT_FEATURE,
   currencyVelasEvm: DEFAULT_FEATURE,
+  currencyCasper: DEFAULT_FEATURE,
 };
 
 /**
