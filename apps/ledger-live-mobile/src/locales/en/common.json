@@ -428,6 +428,10 @@
       "title": "Sorry, internet seems to be down",
       "description": "Please check your internet connection."
     },
+    "NetworkError": {
+      "title": "A network error occurred",
+      "description": "Please try again later"
+    },
     "NoAddressesFound": {
       "title": "Sorry, no account was found",
       "description": "Something went wrong with the address calculation. Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."

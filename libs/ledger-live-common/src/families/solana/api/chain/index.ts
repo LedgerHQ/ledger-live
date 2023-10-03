@@ -14,7 +14,7 @@ import {
 } from "@solana/web3.js";
 import { getEnv } from "@ledgerhq/live-env";
 import { Awaited } from "../../logic";
-import { NetworkDown } from "@ledgerhq/errors";
+import { NetworkError } from "@ledgerhq/errors";
 
 export type Config = {
   readonly endpoint: string;
@@ -73,7 +73,7 @@ export type ChainAPI = Readonly<{
 
 // Naive mode, allow us to filter in sentry all this error comming from Sol RPC node
 const remapErrors = e => {
-  throw new NetworkDown(e?.message);
+  throw new NetworkError(e?.message);
 };
 
 export function getChainAPI(
