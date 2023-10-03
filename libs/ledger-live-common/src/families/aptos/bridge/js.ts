@@ -13,7 +13,7 @@ import { withDevice } from "../../../hw/deviceAccess";
 import Aptos from "../hw-app-aptos"; // TODO: change path when package is published
 import { from, firstValueFrom } from "rxjs";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { AddressData } from "../hw-app-aptos/src/Aptos";
+import { AddressData } from "../hw-app-aptos";
 
 const receive = makeAccountBridgeReceive();
 

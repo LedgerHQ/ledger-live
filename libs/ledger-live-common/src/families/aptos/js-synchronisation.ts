@@ -11,7 +11,7 @@ import { encodeOperationId } from "../../operation";
 import { AptosAPI } from "./api";
 import Aptos from "./hw-app-aptos";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { AddressData } from "./hw-app-aptos/src/Aptos";
+import { AddressData } from "./hw-app-aptos";
 
 const getBlankOperation = (tx: AptosTransaction, id: string): Operation => ({
   id: "",
