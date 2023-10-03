@@ -1,6 +1,6 @@
 import "../../__tests__/test-helpers/environment";
 
-import { finalMarkdownReport, formatDetails, urlToEndpoint } from "./formatter";
+import { finalMarkdownReport, formatDuplicatedCalls, urlToEndpoint } from "./formatter";
 import { getSpecsPerBots } from "./logic";
 
 test("finalMarkdownReport sample", () => {
@@ -1006,10 +1006,10 @@ describe("urlToEndpoint", () => {
   });
 });
 
-describe("formatDetails", () => {
+describe("formatDuplicatedCalls", () => {
   it("should only show duplicated calls", () => {
     expect(
-      formatDetails({
+      formatDuplicatedCalls({
         endpoint: {
           urls: [
             { url: "endpoint/toto", calls: 2 },
@@ -1025,7 +1025,7 @@ describe("formatDetails", () => {
 
   it("should not return not duplicated urls", () => {
     expect(
-      formatDetails({
+      formatDuplicatedCalls({
         endpoint: {
           urls: [
             { url: "endpoint/toto", calls: 1 },
@@ -1041,7 +1041,7 @@ describe("formatDetails", () => {
 
   it("should not return endpoints if there are no duplicated calls", () => {
     expect(
-      formatDetails({
+      formatDuplicatedCalls({
         endpoint: {
           urls: [{ url: "endpoint/toto", calls: 1 }],
           size: 10,

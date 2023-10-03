@@ -184,7 +184,7 @@ export function finalMarkdownReport(reports: Report[], specsPerBots: SpecPerBot[
   md += table({
     title: "HTTP Duplicated Calls",
     lenseValue: d => d.report?.auditResult?.network?.details,
-    formatValue: v => formatDetails(v),
+    formatValue: v => formatDuplicatedCalls(v),
     totalPerCurrency: true,
     totalPerSeed: true,
     totalPerFamily: true,
@@ -290,7 +290,7 @@ export function urlToEndpoint(url: string): string {
   return regexResult ? url.slice().replace(regexResult[0], "") : url;
 }
 
-export function formatDetails(
+export function formatDuplicatedCalls(
   details: { [endpoint: string]: NetworkAuditDetails } | undefined,
 ): string | undefined {
   if (!details) return;
