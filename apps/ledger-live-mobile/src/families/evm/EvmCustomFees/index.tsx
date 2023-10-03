@@ -25,35 +25,13 @@ const options = {
 };
 
 export default function EvmCustomFees({ route }: Props) {
-  const {
-    setTransaction,
-    transaction: baseTransaction,
-    gasOptions,
-    goBackOnSetTransaction = true,
-  } = route.params;
+  const { transaction: baseTransaction, gasOptions, goBackOnSetTransaction = true } = route.params;
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
-  const { setCustomStrategyTransactionPatch, transaction } = route.params;
-  const { account: accountLike } = useSelector(accountScreenSelector(route));
+  const { setCustomStrategyTransactionPatch } = route.params;
   const navigation = useNavigation();
   invariant(account, "no account found");
   const mainAccount = getMainAccount(account, parentAccount);
   invariant(mainAccount, "no main account found");
-
-  const bridge = getAccountBridge(mainAccount);
-
-  const onValidateFees = useCallback(
-    (transactionPatch: Partial<Transaction>) => () => {
-      setTransaction(bridge.updateTransaction(route.params.transaction, transactionPatch));
-      // In the context of some UI flows like the swap, the main component might already
-      // be providing a navigation after updating the transaction. On those cases,
-      // we'll remove the default "go back" behaviour and
-      // let the parent UI decide how to navigate.
-      if (goBackOnSetTransaction) {
-        navigation.goBack();
-      }
-    },
-    [bridge, navigation, route.params, setTransaction, goBackOnSetTransaction],
-  );
 
   // The transaction might be coming without gasOptions already added to it, like for the swap flow
   //
@@ -65,14 +43,18 @@ export default function EvmCustomFees({ route }: Props) {
     [baseTransaction, gasOptions],
   );
 
-  const account = getMainAccount(accountLike);
-
   const onValidateFees = useCallback(
     (transactionPatch: Partial<Transaction>) => () => {
       setCustomStrategyTransactionPatch(transactionPatch);
-      navigation.goBack();
+      // In the context of some UI flows like the swap, the main component might already
+      // be providing a navigation after updating the transaction. On those cases,
+      // we'll remove the default "go back" behaviour and
+      // let the parent UI decide how to navigate.
+      if (goBackOnSetTransaction) {
+        navigation.goBack();
+      }
     },
-    [navigation, setCustomStrategyTransactionPatch],
+    [navigation, setCustomStrategyTransactionPatch, goBackOnSetTransaction],
   );
 
   const shouldUseEip1559 = transaction.type === 2;
