@@ -120,12 +120,12 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
     acceptTerms();
     dispatch(setAnalytics(true));
 
-    const url = `${recoverFeature?.params?.login?.loginURI}&shouldBypassLLOnboarding=true`;
+    const url = `${recoverFeature?.params?.account?.loginURI}&shouldBypassLLOnboarding=true`;
 
     Linking.canOpenURL(url).then(canOpen => {
       if (canOpen) Linking.openURL(url);
     });
-  }, [acceptTerms, dispatch, recoverFeature?.params?.login?.loginURI]);
+  }, [acceptTerms, dispatch, recoverFeature?.params?.account?.loginURI]);
 
   return (
     <ForceTheme selectedPalette={"dark"}>
@@ -207,9 +207,8 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
           >
             {t("onboarding.stepWelcome.start")}
           </Button>
-          {/* @TODO check if proper URL */}
           {recoverFeature?.enabled &&
-          recoverFeature?.params?.onboardingRestore.postOnboardingURI ? (
+          recoverFeature?.params?.onboardingRestore?.postOnboardingURI ? (
             <Button outline type="main" size="large" onPress={recoverLogIn} mt={0} mb={7}>
               {t("onboarding.stepWelcome.recoverLogIn")}
             </Button>
