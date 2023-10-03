@@ -396,11 +396,14 @@ const getFinalFirmwareById: (id: number) => Promise<FinalFirmware> = makeLRUCach
 );
 
 /**
+ * Resolve applications details by hashes.
+ * Order of outputs matches order of inputs.
+ * If an application version is not found, a null is returned instead.
+ * If several versions match the same hash, only the latest one is returned.
+ *
  * Given an array of hashes that we can obtain by either listInstalledApps in this same
  * API (a websocket connection to a scriptrunner) or via direct apdus using hw/listApps.ts
  * retrieve all the information needed from the backend for those applications.
- * The apps in the output are mapped in the same order as the hashes in the input
- * and if no match is found for a given hash the result for that hash will be null.
  */
 const getAppsByHash: (hashes: string[]) => Promise<Array<App | null>> = makeLRUCache(
   async hashes => {
