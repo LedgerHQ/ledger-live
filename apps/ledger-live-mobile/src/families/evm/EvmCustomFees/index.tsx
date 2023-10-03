@@ -25,9 +25,13 @@ const options = {
 };
 
 export default function EvmCustomFees({ route }: Props) {
-  const { transaction: baseTransaction, gasOptions, goBackOnSetTransaction = true } = route.params;
+  const {
+    setCustomStrategyTransactionPatch,
+    transaction: baseTransaction,
+    gasOptions,
+    goBackOnSetTransaction = true,
+  } = route.params;
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
-  const { setCustomStrategyTransactionPatch } = route.params;
   const navigation = useNavigation();
   invariant(account, "no account found");
   const mainAccount = getMainAccount(account, parentAccount);
