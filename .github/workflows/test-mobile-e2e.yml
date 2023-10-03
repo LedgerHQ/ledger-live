@@ -95,6 +95,7 @@ jobs:
         run: |
           pnpm mobile e2e:build -c ios.sim.release
       - uses: actions/cache/save@v3
+        if: steps.detox-build.outputs.cache-hit != 'true'
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
           key: ${{ steps.detox-build.outputs.cache-primary-key }}
@@ -107,7 +108,7 @@ jobs:
       - name: Test iOS app
         id: detox
         run: |
-          pnpm mobile e2e:test -c ios.sim.release --loglevel error --record-logs all --take-screenshots all --detectOpenHandles --headless
+          pnpm mobile e2e:test -c ios.sim.release --loglevel error --record-logs all --take-screenshots all --detectOpenHandles --headless --maxWorkers 2
       - name: Delete iOS simulator
         if: always()
         run: |
