@@ -1,5 +1,11 @@
 # @ledgerhq/coin-evm
 
+## 0.6.3-nightly.2
+
+### Patch Changes
+
+- [#4856](https://github.com/LedgerHQ/ledger-live/pull/4856) [`173d7d6d22`](https://github.com/LedgerHQ/ledger-live/commit/173d7d6d224bcf1cecf364062b6571f52792e371) Thanks [@chabroA](https://github.com/chabroA)! - return error when tx from tokenAccount has no amount
+
 ## 0.6.3-nightly.1
 
 ### Patch Changes

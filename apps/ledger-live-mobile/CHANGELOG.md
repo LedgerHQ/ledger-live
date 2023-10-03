@@ -1,5 +1,17 @@
 # live-mobile
 
+## 3.32.1-nightly.2
+
+### Patch Changes
+
+- [#4845](https://github.com/LedgerHQ/ledger-live/pull/4845) [`f08474f11a`](https://github.com/LedgerHQ/ledger-live/commit/f08474f11a09963e2a7ffae3d57ce2146c1e58c3) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update wording on Lock Screen for Stax
+
+- [#4790](https://github.com/LedgerHQ/ledger-live/pull/4790) [`6b9bf82828`](https://github.com/LedgerHQ/ledger-live/commit/6b9bf8282833909e097c28b61fb149330a281c83) Thanks [@chabroA](https://github.com/chabroA)! - Fix wrong fee value for evm custom fee in strategies list
+
+- Updated dependencies [[`173d7d6d22`](https://github.com/LedgerHQ/ledger-live/commit/173d7d6d224bcf1cecf364062b6571f52792e371)]:
+  - @ledgerhq/coin-evm@0.6.3-nightly.2
+  - @ledgerhq/live-common@31.8.1-nightly.2
+
 ## 3.32.1-nightly.1
 
 ### Patch Changes
