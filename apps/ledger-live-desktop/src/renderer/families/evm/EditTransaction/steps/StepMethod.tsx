@@ -1,7 +1,7 @@
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { getEditTransactionPatch } from "@ledgerhq/live-common/families/evm/getUpdateTransactionPatch";
+import { getEditTransactionPatch } from "@ledgerhq/live-common/families/evm/editTransaction/index";
 import { Flex } from "@ledgerhq/react-ui";
 import { AccountBridge } from "@ledgerhq/types-live";
 import invariant from "invariant";
