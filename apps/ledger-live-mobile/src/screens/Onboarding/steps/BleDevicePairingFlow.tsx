@@ -16,10 +16,10 @@ import { hasCompletedOnboardingSelector } from "../../../reducers/settings";
 import { bleDevicePairingFlowHeaderOptions } from "../../BleDevicePairingFlow";
 
 export type Props = RootComposite<
-  StackNavigatorProps<OnboardingNavigatorParamList, ScreenName.OnboardingBlePairing>
+  StackNavigatorProps<OnboardingNavigatorParamList, ScreenName.OnboardingBleDevicePairingFlow>
 >;
 
-const OnboardingBlePairing: React.FC<Props> = ({ navigation }) => {
+const OnboardingBleDevicePairingFlow: React.FC<Props> = ({ navigation }) => {
   const onPairingSuccess = useCallback(
     (device: Device) => {
       navigation.push(NavigatorName.BaseOnboarding, {
@@ -66,4 +66,4 @@ const OnboardingBlePairing: React.FC<Props> = ({ navigation }) => {
   );
 };
 
-export default OnboardingBlePairing;
+export default OnboardingBleDevicePairingFlow;

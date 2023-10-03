@@ -70,7 +70,7 @@ function OnboardingStepDeviceSelection() {
       // On pairing success, navigate to the Sync Onboarding Companion
       // navigation.push on stack navigation because with navigation.navigate
       // it could not go back to this screen in certain cases.
-      navigation.push(ScreenName.OnboardingBlePairing);
+      navigation.push(ScreenName.OnboardingBleDevicePairingFlow);
     } else {
       navigation.navigate(ScreenName.OnboardingUseCase, {
         deviceModelId,

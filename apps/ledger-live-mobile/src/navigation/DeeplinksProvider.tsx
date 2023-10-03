@@ -391,7 +391,7 @@ const getOnboardingLinkingOptions = (
               [NavigatorName.Onboarding]: {
                 initialRouteName: ScreenName.OnboardingWelcome,
                 screens: {
-                  [ScreenName.OnboardingBlePairing]: "sync-onboarding",
+                  [ScreenName.OnboardingBleDevicePairingFlow]: "sync-onboarding",
                 },
               },
             },

@@ -30,7 +30,7 @@ export const bleDevicePairingFlowHeaderOptions: ReactNavigationHeaderOptions = {
 /**
  * Screen handling the BLE flow with a scanning step and a pairing step
  *
- * Note: this screen is used only from deep link sync-onboarding
+ * Note: this screen is only used from deep link sync-onboarding
  *
  * @returns a JSX component
  */
@@ -38,7 +38,7 @@ export const BleDevicePairingFlow: React.FC<Props> = ({ navigation }) => {
   const keyToReset = useIncrementOnNavigationFocusState<Props["navigation"]>(navigation);
   const onPairingSuccess = useCallback(
     (device: Device) => {
-      // Navigate to base onboarding stack
+      // Navigates to the sync onboarding passing the newly paired device
       navigation.navigate(NavigatorName.BaseOnboarding, {
         screen: NavigatorName.SyncOnboarding,
         params: {

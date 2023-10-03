@@ -18,7 +18,7 @@ export type Props = RootComposite<
   StackNavigatorProps<SettingsNavigatorStackParamList, ScreenName.DebugBLEDevicePairing>
 >;
 
-const BLEDevicePairingScreen: React.FC<Props> = ({ navigation, route }) => {
+const BleDevicePairingScreen: React.FC<Props> = ({ navigation, route }) => {
   const { onSuccessAddToKnownDevices, filterByDeviceModelId, areKnownDevicesDisplayed } =
     route.params;
 
@@ -59,4 +59,4 @@ const BLEDevicePairingScreen: React.FC<Props> = ({ navigation, route }) => {
   );
 };
 
-export default BLEDevicePairingScreen;
+export default BleDevicePairingScreen;

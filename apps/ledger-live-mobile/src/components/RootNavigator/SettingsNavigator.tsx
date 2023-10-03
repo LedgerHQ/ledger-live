@@ -65,7 +65,7 @@ import { SettingsNavigatorStackParamList } from "./types/SettingsNavigator";
 import DebugTermsOfUse from "../../screens/Settings/Debug/Features/TermsOfUse";
 import CameraPermissions from "../../screens/Settings/Debug/Debugging/CameraPermissions";
 import DebugQueuedDrawers from "../../screens/Settings/Debug/Features/QueuedDrawers";
-import BLEDevicePairingScreen from "../../screens/Settings/Debug/Features/BLEDevicePairingScreen";
+import BleEDevicePairingScreen from "../../screens/Settings/Debug/Features/BleDevicePairingScreen";
 
 const Stack = createStackNavigator<SettingsNavigatorStackParamList>();
 
@@ -303,7 +303,7 @@ export default function SettingsNavigator() {
       />
       <Stack.Screen
         name={ScreenName.DebugBLEDevicePairing}
-        component={BLEDevicePairingScreen}
+        component={BleEDevicePairingScreen}
         options={{
           title: "Debug Ble Pairing Flow",
         }}
