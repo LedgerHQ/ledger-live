@@ -284,8 +284,9 @@ export const DEFAULT_FEATURES: Features = {
       },
       managerStatesData: {
         NEW: {
-          alreadySubscribedURI: `ledgerlive://recover/protect-simu?redirectTo=login`,
-          learnMoreURI: `ledgerlive://recover/protect-simu?redirectTo=upsell`,
+          alreadySubscribedURI: `ledgerlive://recover/protect-simu?redirectTo=login&source=llm_onboarding_24&ajs_prop_source=llm_onboarding_24&ajs_prop_campaign=launch`,
+          learnMoreURI: `ledgerlive://recover/protect-simu?redirectTo=upsell&source=llm_onboarding_24&ajs_prop_source=llm_onboarding_24&ajs_prop_campaign=launch`,
+          quickAccessURI: `ledgerlive://recover/protect-simu?redirectTo=login&source=llm-navbar-quick-access&ajs_prop_source=llm-navbar-quick-access&ajs_prop_campaign=launch`,
         },
       },
       onboardingRestore: {
@@ -353,7 +354,7 @@ export const DEFAULT_FEATURES: Features = {
   cexDepositEntryPointsDesktop: {
     enabled: false,
     params: {
-      path: "/discover/ledger-cex-deposit",
+      path: "/platform/ledger-cex-deposit",
       locations: {
         selectCrypto: true,
       },
@@ -368,5 +369,13 @@ export const DEFAULT_FEATURES: Features = {
         selectCrypto: true,
       },
     },
+  },
+
+  fetchAdditionalCoins: {
+    enabled: false,
+  },
+
+  ptxSwapLiveApp: {
+    enabled: false,
   },
 };

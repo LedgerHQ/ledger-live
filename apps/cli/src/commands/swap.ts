@@ -6,7 +6,7 @@ import {
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
 import { getAbandonSeedAddress, findTokenById } from "@ledgerhq/cryptoassets";
-import { from } from "rxjs";
+import { firstValueFrom, from } from "rxjs";
 import { BigNumber } from "bignumber.js";
 import commandLineArgs from "command-line-args";
 import { delay } from "@ledgerhq/live-common/promise";
@@ -57,7 +57,9 @@ const exec = async (opts: SwapJobOpts) => {
   console.log("• Open the source currency app");
   await delay(8000);
   let fromParentAccount: Account | null = null;
-  let fromAccount: Account | SubAccount | undefined = await scan(opts).pipe(take(1)).toPromise();
+  let fromAccount: Account | SubAccount | undefined = await firstValueFrom(
+    scan(opts).pipe(take(1)),
+  );
   invariant(fromAccount, `✖ No account found, is the right currency app open?`);
   if (!fromAccount) {
     throw new Error(`✖ No account found, is the right currency app open?`);
@@ -105,16 +107,18 @@ const exec = async (opts: SwapJobOpts) => {
   console.log("• Open the destination currency app");
   await delay(8000);
   let toParentAccount: Account | null = null;
-  let toAccount: Account | SubAccount | undefined = await scan(secondAccountOpts)
-    .pipe(take(1))
-    .toPromise();
-  invariant(toAccount, `✖ No account found`);
+  let toAccount: Account | SubAccount | undefined = await firstValueFrom(
+    scan(secondAccountOpts).pipe(take(1)),
+  );
+
+  if (!toAccount) {
+    throw new Error(`✖ No account found`);
+  }
   const { tokenId: tokenId2 } = secondAccountOpts;
 
   //Are we asking for a token account?
   if (tokenId2) {
     const token = findTokenById(tokenId2);
-    invariant(token, `✖ No token currency found with id ${tokenId2}`);
     if (!token) {
       throw new Error(`✖ No token currency found with id ${tokenId2}`);
     }
@@ -191,13 +195,13 @@ const exec = async (opts: SwapJobOpts) => {
   });
   console.log("• Open the Exchange app");
   await delay(8000);
-  const initSwapResult = await initSwap({
-    exchange,
-    exchangeRate: exchangeRate as ExchangeRate,
-    transaction,
-    deviceId,
-  })
-    .pipe(
+  const initSwapResult = await firstValueFrom(
+    initSwap({
+      exchange,
+      exchangeRate: exchangeRate as ExchangeRate,
+      transaction,
+      deviceId,
+    }).pipe(
       tap((e: any) => {
         switch (e.type) {
           case "init-swap-requested":
@@ -223,28 +227,29 @@ const exec = async (opts: SwapJobOpts) => {
           return e.initSwapResult;
         }
       }),
-    )
-    .toPromise();
+    ),
+  );
   transaction = (initSwapResult as InitSwapResult).transaction;
   console.log("Device app switch & silent signing");
   await delay(8000);
   const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
-  const signedOperation = await bridge
-    .signOperation({
-      account: mainFromAccount,
-      deviceId,
-      transaction,
-    })
-    .pipe(
-      tap(e => console.log(e)),
-      first((e: any) => e.type === "signed"),
-      map((e: any) => {
-        if (e.type === "signed") {
-          return e.signedOperation;
-        }
-      }),
-    )
-    .toPromise();
+  const signedOperation = await firstValueFrom(
+    bridge
+      .signOperation({
+        account: mainFromAccount,
+        deviceId,
+        transaction,
+      })
+      .pipe(
+        tap(e => console.log(e)),
+        first((e: any) => e.type === "signed"),
+        map((e: any) => {
+          if (e.type === "signed") {
+            return e.signedOperation;
+          }
+        }),
+      ),
+  );
   console.log("Broadcasting");
   const operation = await bridge.broadcast({
     account: mainFromAccount,

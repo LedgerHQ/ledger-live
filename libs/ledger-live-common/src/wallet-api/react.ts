@@ -15,8 +15,7 @@ import {
   Permission,
 } from "@ledgerhq/wallet-api-core";
 import { StateDB } from "../hooks/useDBRaw";
-import { Subject } from "rxjs";
-import { Observable, firstValueFrom } from "rxjs7";
+import { Observable, firstValueFrom, Subject } from "rxjs";
 import { first } from "rxjs/operators";
 import {
   accountToWalletAPIAccount,
@@ -113,7 +112,7 @@ export interface UiHook {
     accounts$: Observable<WalletAPIAccount[]>;
     currencies: CryptoOrTokenCurrency[];
     onSuccess: (account: AccountLike, parentAccount: Account | undefined) => void;
-    onError: () => void;
+    onCancel: () => void;
   }) => void;
   "account.receive": (params: {
     account: AccountLike;
@@ -355,7 +354,7 @@ export function useWalletAPIServer({
             tracking.requestAccountSuccess(manifest);
             resolve(accountToWalletAPIAccount(account, parentAccount));
           },
-          onError: () => {
+          onCancel: () => {
             tracking.requestAccountFail(manifest);
             reject(new Error("Canceled by user"));
           },

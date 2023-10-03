@@ -7,39 +7,33 @@ import type { GetProviders, ProvidersResponseV4 } from "./types";
 import { isIntegrationTestEnv } from "./utils/isIntegrationTestEnv";
 
 const getProviders: GetProviders = async () => {
-  if (isIntegrationTestEnv()) {
-    return mockGetProviders();
-  }
+  if (isIntegrationTestEnv()) return mockGetProviders();
 
-  const { data: responseV4 } = await network<ProvidersResponseV4>({
+  const res = await network({
     method: "GET",
     url: `${getSwapAPIBaseURL()}/providers`,
     params: { whitelist: getAvailableProviders() },
     paramsSerializer: params => qs.stringify(params, { arrayFormat: "comma" }),
   });
 
+  const responseV4 = res.data as ProvidersResponseV4;
   if (!responseV4.providers || !Object.keys(responseV4.providers).length) {
     throw new SwapNoAvailableProviders();
   }
-
-  const { currencies } = responseV4;
-
-  return Object.entries(responseV4.providers).flatMap(([provider, groups]) => {
-    return {
-      provider,
-      pairs: groups.flatMap(group =>
-        group.methods.flatMap(tradeMethod =>
-          Object.entries(group.pairs).flatMap(([from, toArray]) =>
-            toArray.map(to => ({
-              from: currencies[from],
-              to: currencies[to],
-              tradeMethod,
-            })),
-          ),
+  return Object.entries(responseV4.providers).flatMap(([provider, groups]) => ({
+    provider: provider,
+    pairs: groups.flatMap(group =>
+      group.methods.flatMap(tradeMethod =>
+        Object.entries(group.pairs).flatMap(([from, toArray]) =>
+          (toArray as number[]).map(to => ({
+            from: responseV4.currencies[from],
+            to: responseV4.currencies[to.toString()],
+            tradeMethod,
+          })),
         ),
       ),
-    };
-  });
+    ),
+  }));
 };
 
 export default getProviders;

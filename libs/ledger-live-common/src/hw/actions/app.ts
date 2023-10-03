@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import { EMPTY, interval, Observable } from "rxjs";
+import { interval, Observable, of } from "rxjs";
 import { scan, debounce, tap, takeWhile } from "rxjs/operators";
 import { useEffect, useCallback, useState, useMemo, useRef } from "react";
 import { log } from "@ledgerhq/logs";
@@ -542,7 +542,7 @@ export const createAction = (
       const sub = impl
         .pipe(
           tap((e: any) => log("actions-app-event", e.type, e)),
-          debounce((e: Event) => ("replaceable" in e && e.replaceable ? interval(100) : EMPTY)),
+          debounce((e: Event) => ("replaceable" in e && e.replaceable ? interval(100) : of(null))),
           scan(reducer, getInitialState()),
           takeWhile((s: State) => !s.requiresAppInstallation && !s.error, true),
         )

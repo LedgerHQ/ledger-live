@@ -227,8 +227,7 @@ export type BaseNavigatorStackParamList = {
       })
     | undefined;
   [NavigatorName.RequestAccount]: NavigatorScreenParams<RequestAccountNavigatorParamList> & {
-    onError?: (_: Error) => void;
-    error?: Error;
+    onClose?: () => void;
   };
   [NavigatorName.Exchange]: NavigatorScreenParams<ExchangeLiveAppNavigatorParamList> | undefined;
   [NavigatorName.ExchangeStack]: NavigatorScreenParams<ExchangeStackNavigatorParamList> & {

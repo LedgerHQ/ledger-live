@@ -11,15 +11,18 @@ import { setEnvOnAllThreads } from "./../helpers/env";
 import { IPCTransport } from "./IPCTransport";
 import logger from "./logger";
 import { currentMode, setDeviceMode } from "@ledgerhq/live-common/hw/actions/app";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-listenLogs(({ id, date, ...log }) => {
-  if (log.type === "hid-frame") return;
-  logger.debug(log);
-});
+
 setEnvOnAllThreads("USER_ID", getUserId());
 
 const originalDeviceMode = currentMode;
 const vaultTransportPrefixID = "vault-transport:";
+
+// Listens to logs from `@ledgerhq/logs` (happening on the renderer thread) and transfers them to the LLD logger system
+listenLogs(({ id, date, ...log }) => {
+  if (log.type === "hid-frame") return;
+
+  logger.debug(log);
+});
 
 // This defines our IPC Transport that will proxy to an internal process (we shouldn't use node-hid on renderer)
 registerTransportModule({

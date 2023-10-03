@@ -30,17 +30,21 @@ type Props = {
 const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId }: Props) => {
   const [ledgerPools, setLedgerPools] = useState<Array<StakePool>>([]);
   const unit = getAccountUnit(account);
+
   const [showAll, setShowAll] = useState(
     LEDGER_POOL_IDS.length === 0 ||
       (LEDGER_POOL_IDS.length === 1 && delegation?.poolId === LEDGER_POOL_IDS[0]),
   );
+
   const [ledgerPoolsLoading, setLedgerPoolsLoading] = useState(false);
   const { pools, searchQuery, setSearchQuery, onScrollEndReached, isSearching, isPaginating } =
     useCardanoFamilyPools(account.currency);
+
   const poolIdsToFilterFromAllPools = [...LEDGER_POOL_IDS];
   if (delegation?.poolId) {
     poolIdsToFilterFromAllPools.push(delegation?.poolId);
   }
+
   useEffect(() => {
     if (LEDGER_POOL_IDS.length) {
       setLedgerPoolsLoading(true);
@@ -60,6 +64,7 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
   const onSearch = useCallback(evt => setSearchQuery(evt.target.value), [setSearchQuery]);
   const renderItem = (validator: StakePool, validatorIdx: number) => {
     return (
@@ -70,9 +75,10 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
         unit={unit}
         active={selectedPoolId === validator.poolId || validator.poolId === delegation?.poolId}
         onClick={onChangeValidator}
-      ></ValidatorRow>
+      />
     );
   };
+
   return (
     <>
       {showAll && <ValidatorSearchInput noMargin={true} search={searchQuery} onSearch={onSearch} />}

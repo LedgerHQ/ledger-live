@@ -4,7 +4,7 @@ import { log } from "@ledgerhq/logs";
 const TagId = 0x05;
 // operator that transform the input raw stream into one apdu response and finishes
 export const receiveAPDU = (rawStream: Observable<Buffer>): Observable<Buffer> =>
-  Observable.create(o => {
+  new Observable(o => {
     let notifiedIndex = 0;
     let notifiedDataLength = 0;
     let notifiedData = Buffer.alloc(0);

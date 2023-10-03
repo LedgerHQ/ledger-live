@@ -569,14 +569,9 @@ const envDefinitions = {
     desc: "Use speculos websocket interface instead of Rest API",
   },
   SWAP_API_BASE: {
-    def: "https://swap.ledger.com/v4",
+    def: "https://swap.ledger.com/v5",
     parser: stringParser,
     desc: "Swap API base",
-  },
-  SWAP_API_BASE_V5: {
-    def: "https://swap-stg.ledger.com/v5",
-    parser: stringParser,
-    desc: "Swap API base staging version 5",
   },
   SYNC_ALL_INTERVAL: {
     def: 8 * 60 * 1000,
@@ -782,6 +777,11 @@ const envDefinitions = {
     def: 0.3,
     parser: floatParser,
     desc: "Cancel transaction gasprice gap factor for NON-EIP1559 for edit eth transaction feature",
+  },
+  VERBOSE: {
+    def: [] as Array<string>,
+    parser: stringArrayParser,
+    desc: 'Sets up debug console printing of logs. `VERBOSE=1` or `VERBOSE=true`: to print all logs | `VERBOSE="apdu,hw,transport,hid-verbose"` : filtering on a list of log `type` separated by a `,`',
   },
 };
 

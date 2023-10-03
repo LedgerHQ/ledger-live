@@ -1884,7 +1884,11 @@
       "contactSupport": "Contact support",
       "deprecated": "Device firmware version too old to be updated. Contact Ledger Support for a replacement.",
       "prepareSeed": "Ensure your 24-word recovery phrase is written down on the Recovery sheet and it is available, as a precaution.",
-      "disclaimerTitle": "You are about to install <1>firmware version {{version}}</1>."
+      "disclaimerTitle": "You are about to install <1>firmware version {{version}}</1>.",
+      "cancelUpdate": "Cancel update",
+      "continueUpdate": "Continue update",
+      "cancelUpdateWarning": "Your settings and apps may not be restored properly if you cancel the update now.",
+      "updateInProgress": "OS update in progress"
     },
     "modal": {
       "title": "Update {{productName}}",
@@ -2070,7 +2074,8 @@
         "parentAccount": "1. Select {{currencyName}} account",
         "token": "2. Select a token",
         "verifyTokenType": "Please verify that <0>{{token}}</0> is an <0>{{tokenType}}</0> token. Any other crypto asset sent to an {{currency}} account may be lost.",
-        "warningTokenType": "Please only send <0>{{ticker}}</0> or <0>{{tokenType}}</0> tokens to {{currency}} accounts. Sending other crypto assets may result in the permanent loss of funds."
+        "warningTokenType": "Please only send <0>{{ticker}}</0> or <0>{{tokenType}}</0> tokens to {{currency}} accounts. Sending other crypto assets may result in the permanent loss of funds.",
+        "depositFromCexBannerTitle": "Deposit crypto from your Coinbase account"
       },
       "connectDevice": {
         "title": "Device",

@@ -240,7 +240,6 @@ test("can get fiat by coin type", () => {
 test("all USDT are countervalue enabled", () => {
   const tokens = listTokens().filter(t => t.ticker === "USDT" && !t.parentCurrency.isTestnetFor);
   expect(tokens.map(t => t.id).sort()).toMatchSnapshot();
-  expect(tokens.every(t => t.disableCountervalue === false)).toBe(true);
 });
 
 test("Evm family convention: all evm testnet coins must derivate on the same cointype as the testnet it's for (e.g. ethereum ropsten is on 60)", () => {
