@@ -317,7 +317,7 @@ export function formatDuplicatedCalls(
     }
   } catch (e) {
     // eslint-disable-next-line no-console
-    console.log(`Error when formatting details`);
+    console.log(`Error when formatting duplicated calls`);
   }
   return report;
 }
