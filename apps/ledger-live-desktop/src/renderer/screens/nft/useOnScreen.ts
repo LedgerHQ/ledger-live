@@ -1,27 +1,50 @@
-import React, { useState, useEffect } from "react";
-const useOnScreen = (ref: React.RefObject<Element>) => {
-  // State and setter for storing whether element is visible
-  const [isIntersecting, setIntersecting] = useState(false);
+import React, { useEffect } from "react";
+
+interface InteractionObserverHookParams {
+  root?: React.RefObject<Element>;
+  target: React.RefObject<Element>;
+  onIntersect: Function;
+  threshold?: number;
+  rootMargin?: string;
+  enabled?: boolean;
+}
+
+/**
+ * Observe if target is getting into viewport
+ * (related to root. Root is document viewport if not given)
+ **/
+export function useOnScreen({
+  root,
+  target,
+  onIntersect,
+  threshold = 1.0,
+  rootMargin = "0px",
+  enabled = true,
+}: InteractionObserverHookParams) {
   useEffect(() => {
+    if (!enabled) {
+      return;
+    }
+
+    const el = target && target.current;
+
+    if (!el) {
+      return;
+    }
+
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        // Update our state when observer callback fires
-        setIntersecting(entry.isIntersecting);
-      },
+      entries => entries.forEach(entry => entry.isIntersecting && onIntersect()),
       {
-        rootMargin: "0px",
+        root: root?.current ?? null,
+        rootMargin,
+        threshold,
       },
     );
-    if (ref.current) {
-      observer.observe(ref.current);
-    }
-    const target = ref.current;
+
+    observer.observe(el);
+
     return () => {
-      if (target) observer.unobserve(target);
+      observer.unobserve(el);
     };
-    // Empty array ensures that effect is only run on mount and unmount
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  return isIntersecting;
-};
-export default useOnScreen;
+  }, [enabled, root, rootMargin, threshold, target, onIntersect]);
+}
