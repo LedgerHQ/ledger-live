@@ -2,7 +2,7 @@ import { getEstimatedFees } from "@ledgerhq/coin-evm/logic";
 import { getTypedTransaction } from "@ledgerhq/coin-evm/transaction";
 import type { FeeData, GasOptions, Strategy, Transaction } from "@ledgerhq/coin-evm/types/index";
 import { getFeesCurrency, getFeesUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
-import { isStrategyDisabled } from "@ledgerhq/live-common/families/evm/getUpdateTransactionPatch";
+import { isStrategyDisabled } from "@ledgerhq/live-common/families/evm/editTransaction/index";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import BigNumber from "bignumber.js";
