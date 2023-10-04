@@ -120,12 +120,12 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
     acceptTerms();
     dispatch(setAnalytics(true));
 
-    const url = `${recoverFeature?.params?.login?.loginURI}&shouldBypassLLOnboarding=true`;
+    const url = `${recoverFeature?.params?.account?.loginURI}&shouldBypassLLOnboarding=true`;
 
     Linking.canOpenURL(url).then(canOpen => {
       if (canOpen) Linking.openURL(url);
     });
-  }, [acceptTerms, dispatch, recoverFeature?.params?.login?.loginURI]);
+  }, [acceptTerms, dispatch, recoverFeature?.params?.account?.loginURI]);
 
   return (
     <ForceTheme selectedPalette={"dark"}>

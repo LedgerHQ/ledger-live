@@ -279,18 +279,19 @@ export const DEFAULT_FEATURES: Features = {
     enabled: false,
     params: {
       deeplink: "",
-      login: {
+      account: {
         loginURI: "ledgerlive://recover/protect-simu?redirectTo=login",
+        homeURI: "ledgerlive://recover/protect-simu?redirectTo=account",
       },
       managerStatesData: {
         NEW: {
-          alreadySubscribedURI: `ledgerlive://recover/protect-simu?redirectTo=login&source=llm_onboarding_24&ajs_prop_source=llm_onboarding_24&ajs_prop_campaign=launch`,
-          learnMoreURI: `ledgerlive://recover/protect-simu?redirectTo=upsell&source=llm_onboarding_24&ajs_prop_source=llm_onboarding_24&ajs_prop_campaign=launch`,
-          quickAccessURI: `ledgerlive://recover/protect-simu?redirectTo=login&source=llm-navbar-quick-access&ajs_prop_source=llm-navbar-quick-access&ajs_prop_campaign=launch`,
+          alreadySubscribedURI: "ledgerlive://recover/protect-simu?redirectTo=login",
+          learnMoreURI: "ledgerlive://recover/protect-simu?redirectTo=upsell",
+          quickAccessURI: "ledgerlive://recover/protect-simu?redirectTo=login",
         },
       },
       onboardingRestore: {
-        postOnboardingURI: `ledgerlive://recover/protect-simu?redirectTo=restore`,
+        postOnboardingURI: "ledgerlive://recover/protect-simu?redirectTo=restore",
         restoreInfoDrawer: {
           enabled: true,
           manualStepsURI:
