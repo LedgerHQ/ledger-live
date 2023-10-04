@@ -122,9 +122,9 @@
     "search" : "Ara...",
     "searchWithoutEllipsis" : "Ara",
     "manage" : "Yönet",
+    "tryAgain" : "Tekrar dene",
     "lockScreen" : {
       "title" : "Tekrar hoş geldiniz",
-      "subTitle" : null,
       "description" : "Devam etmek için parolanızı girin",
       "inputPlaceholder" : "Parolanızı yazın",
       "lostPassword" : "Parolamı kaybettim"
@@ -546,6 +546,10 @@
           "body" : "Cüzdanınıza kripto transferi alın"
         }
       }
+    },
+    "getFundsModal" : {
+      "text" : "Stake etmek için {{coin}} edinin",
+      "description" : "Ledger Live'ı kullanarak doğrudan Ledger'ınızda kripto satın alın, takas edin veya alın."
     }
   },
   "lottieDebugger" : {
@@ -1401,7 +1405,7 @@
     "for" : "<1><0>{{name}}</0></1> için adres",
     "messageIfUnverified" : "Lütfen paylaşılan adres ile cihazınızdaki adresin tam olarak eşleştiğini doğrulayın",
     "messageIfSkipped" : "{{name}} adresiniz Ledger cihazınızda doğrulanmadı. Güvenlik için lütfen doğrulayın.",
-    "showQrCode" : "QR Kodunu Göster",
+    "showQrCode" : "Karekodu Göster",
     "taprootWarning" : "Gönderenin Taproot'u desteklediğinden emin olun",
     "dashStakingWarning" : "Lütfen bu adresi staking ödüllerini almak için kullanmayın"
   },
@@ -1700,7 +1704,8 @@
   "DeviceAction" : {
     "allowAppPermission" : "Cihazınızda {{wording}} uygulamasını açın",
     "allowAppPermissionSubtitleToken" : "ve {{token}} token'larınızı yönetin",
-    "allowManagerPermission" : "Cihazınızda {{wording}} uygulamasına izin verin",
+    "allowManagerPermission" : "Cihazınızda Ledger Yöneticisine izin verin",
+    "allowRenaming" : "Cihazınızda yeniden adlandırmaya izin verin",
     "loading" : "Yükleniyor...",
     "connectAndUnlockDevice" : "Cihazınızı bağlayın ve kilidini açın",
     "unlockDevice" : "Cihazınızın kilidini açın",
@@ -1878,7 +1883,11 @@
       "contactSupport" : "Destek al",
       "deprecated" : "Cihazın yazılım sürümü güncellenemeyecek kadar eski. Değiştirmek için Ledger Destek ekibiyle iletişime geçin.",
       "prepareSeed" : "Önlem olarak, 24 kelimelik kurtarma ifadenizi bir Kurtarma Kağıdına yazdığınızdan ve ona kolayca ulaşabileceğinizden emin olun.",
-      "disclaimerTitle" : "<1>Donanım yazılımının {{version}} sürümünü</1> yüklemek üzeresiniz."
+      "disclaimerTitle" : "<1>Donanım yazılımının {{version}} sürümünü</1> yüklemek üzeresiniz.",
+      "cancelUpdate" : "Güncellemeyi iptal et",
+      "continueUpdate" : "Güncellemeye devam et",
+      "cancelUpdateWarning" : "Güncellemeyi şimdi iptal ederseniz ayarlarınız ve uygulamalarınız düzgün bir şekilde geri yüklenmeyebilir.",
+      "updateInProgress" : "İşletim sistemi güncellemesi devam ediyor"
     },
     "modal" : {
       "title" : "{{productName}} cihazını güncelleyin",
@@ -2064,7 +2073,8 @@
         "parentAccount" : "1. {{currencyName}} hesabı seçin",
         "token" : "2. Token seçin",
         "verifyTokenType" : "Lütfen <0>{{token}}</0> token'ının <0>{{tokenType}}</0> türü bir token olduğunu doğrulayın. {{currency}} hesabına gönderilen diğer tüm kripto varlıklar kaybolabilir.",
-        "warningTokenType" : "Lütfen {{currency}} hesaplarına sadece <0>{{ticker}}</0> veya <0>{{tokenType}}</0> türü token'lar gönderin. Diğer kripto varlıklarının gönderilmesi, fonların kalıcı olarak kaybedilmesine yol açabilir."
+        "warningTokenType" : "Lütfen {{currency}} hesaplarına sadece <0>{{ticker}}</0> veya <0>{{tokenType}}</0> türü token'lar gönderin. Diğer kripto varlıklarının gönderilmesi, fonların kalıcı olarak kaybedilmesine yol açabilir.",
+        "depositFromCexBannerTitle" : "Coinbase hesabınızdan kripto yatırın"
       },
       "connectDevice" : {
         "title" : "Cihaz",
@@ -3857,7 +3867,7 @@
     "profile" : {
       "password" : "Parola kilidi",
       "passwordDesc" : "Hesap adları, bakiyeler, işlemler ve açık adresler gibi bilgisayarınızda bulunan Ledger Live verilerinin güvenliğini sağlamak için bir parola belirleyin.",
-      "passwordAutoLock" : "Otomatik kilitleme",
+      "passwordAutoLock" : "Otomatik kilit",
       "passwordAutoLockDesc" : "Ledger Live etkin olmadığında onu otomatik olarak kilitleyin.",
       "changePassword" : "Parola değiştir",
       "softResetTitle" : "Önbelleği temizleyin",
@@ -4061,7 +4071,7 @@
     "downloadProgress" : "%{{progress}} tamamlandı",
     "checking" : "Güncelleme kontrol ediliyor...",
     "checkSuccess" : "Yeni Ledger Live güncellemesi mevcut. Güncelleme, uygulamayı kapattığınızda otomatik olarak yüklenecek.",
-    "quitAndInstall" : "Şimdi yükle",
+    "quitAndInstall" : "Hemen yükle ve yeniden başlat",
     "updateAvailable" : "Ledger Live {{version}} sürüm güncellemesi mevcut",
     "error" : "Güncelleme sırasında bir hata oluştu. Lütfen tekrar indirin",
     "reDownload" : "Tekrar indir",
@@ -5077,12 +5087,12 @@
       "description" : "Lütfen tekrar deneyin."
     },
     "DisconnectedDevice" : {
-      "title" : "Üzgünüz, cihazınızın bağlantısı kesilmiş görünüyor",
-      "description" : "Lütfen yeniden bağlanın ve tekrar deneyin."
+      "title" : "Cihaz bağlantısı kesildi",
+      "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin."
     },
     "DisconnectedDeviceDuringOperation" : {
-      "title" : "Üzgünüz, cihazınızın bağlantısı kesilmiş görünüyor",
-      "description" : "Lütfen yeniden bağlanın ve tekrar deneyin."
+      "title" : "Cihaz bağlantısı kesildi",
+      "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin."
     },
     "EConnReset" : {
       "title" : "Ledger uygulama mağazasına ulaşılamıyor",
@@ -5310,6 +5320,10 @@
       "title" : "Eylem reddedildi",
       "description" : "Kullanıcı cihazdaki işlemi reddetti"
     },
+    "ExpertModeRequired" : {
+      "title" : "Uzman modu gerekli",
+      "description" : "Uzman modunun etkinleştirilmesi gerekiyor."
+    },
     "TransactionRefusedOnDevice" : {
       "title" : "İşlem cihazda reddedildi",
       "description" : "Lütfen tekrar deneyin veya bir şüpheniz varsa Ledger Destek ile iletişime geçin"
@@ -5374,7 +5388,7 @@
       "description" : "Bu işlem zaten doğrulanmış"
     },
     "CantScanQRCode" : {
-      "title" : "Bu QR kodu taranamadı; otomatik doğrulama bu adres tarafından desteklenmiyor"
+      "title" : "Bu karekod okunamadı; otomatik doğrulama bu adres tarafından desteklenmiyor"
     },
     "FeeNotLoaded" : {
       "title" : "Ücret oranları yüklenemedi. Lütfen manuel ücretler belirleyin"
@@ -5795,31 +5809,33 @@
     "managerCTARemove" : "Kaldır",
     "steps" : {
       "choose" : {
-        "stepLabel" : "Bir görüntü seçin",
+        "stepLabel" : "Resim seçin",
         "description" : "Bir görüntü seçip ayarlayın (...)",
         "pickFromNftGallery" : "NFT galerimden seç",
         "myNfts" : "NFT'lerim",
-        "upload" : "Bilgisayarımdan yükle",
+        "upload" : "Bilgisayardan yükle",
         "chooseNft" : "Bir NFT seçin",
         "remove" : "Mevcut resmi kaldır",
         "selectNft" : "NFT'yi seç",
-        "previousSelectNft" : "Geri",
         "nftEmptyStateTitle" : "Gösterilecek NFT yok",
         "nftEmptyStateDescription" : "Öncelikle cüzdanınıza NFT ekleyin."
       },
       "adjust" : {
-        "stepLabel" : "Görüntüyü ayarla",
-        "rotate" : "Döndür"
+        "stepLabel" : "Kırpın",
+        "rotate" : "Döndür",
+        "confirmCrop" : "Kırpmayı onayla"
       },
       "contrast" : {
-        "stepLabel" : "Kontrastı seç"
+        "stepLabel" : "Kontrastı ayarlayın",
+        "confirmContrast" : "Kontrastı onayla"
       },
       "transfer" : {
-        "stepLabel" : "Transfer",
-        "uploadAnotherImage" : "Başka bir görsel yükleyin",
-        "allowPreview" : "{{productName}} cihazınızda kilitli ekran resminin yüklenmesine izin verin",
+        "stepLabel" : "Yükleyin",
+        "useAnotherPicture" : "Başka bir resim yükleyin",
+        "allowPreview" : "Kilit ekranını özelleştirmek için “Resmi yükle” seçeneğine dokunun",
         "allowConfirmPreview" : "{{productName}} cihazında kilitli ekran resminin geri yüklenmesine izin verin",
         "loadingPicture" : "Yükleniyor...",
+        "voila" : "İşte bu kadar!",
         "imageLoaded" : "Görsel {{productName}} cihazına yüklendi",
         "confirmPicture" : "Gördüğünüz şey hoşunuza gitti mi?\nO zaman böyle kalsın!",
         "confirmRestorePicture" : "Kilitli ekran resminin geri yüklenmesini onaylayın",
@@ -5827,12 +5843,12 @@
       }
     },
     "postOnboarding" : {
-      "title" : "Cihazınızı kişiselleştirin",
-      "description" : "Ekranı özelleştirin",
+      "title" : "Kilit ekranını kişiselleştirin",
+      "description" : "Ledger Stax cihazınızın kilit ekranında gösterilmesini istediğiniz NFT'yi ya da resmi seçin.",
       "actionCompletedPopupLabel" : "Cihaz kişiselleştirildi"
     },
-    "customImageSet" : "Kilitli ekran belirlendi",
-    "finishCTA" : "Bitir"
+    "customImageSet" : "Kilit ekranı kişiselleştirildi",
+    "finishCTA" : "Kapat"
   },
   "onboardingAppInstall" : {
     "restore" : {
@@ -5878,7 +5894,6 @@
     "networkError" : {
       "title" : "Ağ Hatası",
       "subtitle" : "Bir hata oluştu. Lütfen tekrar deneyin. Sorun devam ederse log'unuzu kaydedin ve Ledger destek ekibiyle iletişime geçin.",
-      "tryAgain" : "Tekrar dene",
       "contactSupport" : "Ledger Destek ile iletişime geçin",
       "saveLog" : "Log'u kaydet"
     }
