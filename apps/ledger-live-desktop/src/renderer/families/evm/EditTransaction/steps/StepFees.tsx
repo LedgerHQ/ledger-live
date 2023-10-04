@@ -9,8 +9,8 @@ import Button from "~/renderer/components/Button";
 import BuyButton from "~/renderer/components/BuyButton";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
 import logger from "~/renderer/logger";
+import SendAmountFields, { SendAmountFieldsProps } from "~/renderer/modals/Send/SendAmountFields";
 import { localeSelector } from "~/renderer/reducers/settings";
-import SendAmountFields from "../../../../modals/Send/SendAmountFields";
 import { TransactionErrorBanner } from "../components/TransactionErrorBanner";
 import { StepProps } from "../types";
 
@@ -58,9 +58,13 @@ const StepFees = ({
             parentAccount={parentAccount}
             status={status}
             transaction={transaction}
-            onChange={onChangeTransaction}
+            /**
+             * Looks like TS does not like the fact that the arg of the functions
+             * are going from specific (EvmTransaction) to generic (Transaction).
+             */
+            onChange={onChangeTransaction as SendAmountFieldsProps["onChange"]}
+            updateTransaction={updateTransaction as SendAmountFieldsProps["updateTransaction"]}
             bridgePending={bridgePending}
-            updateTransaction={updateTransaction}
             transactionToUpdate={transactionToUpdate}
           />
         </Fragment>
