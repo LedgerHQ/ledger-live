@@ -779,7 +779,7 @@ const envDefinitions = {
     desc: "Cancel transaction gasprice gap factor for NON-EIP1559 for edit eth transaction feature",
   },
   VERBOSE: {
-    def: ["true"],
+    def: [] as Array<string>,
     parser: stringArrayParser,
     desc: 'Sets up debug console printing of logs. `VERBOSE=1` or `VERBOSE=true`: to print all logs | `VERBOSE="apdu,hw,transport,hid-verbose"` : filtering on a list of log `type` separated by a `,`',
   },

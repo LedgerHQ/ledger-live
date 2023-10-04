@@ -111,7 +111,7 @@ const DomainServiceRecipientInput = ({
           }}
           onFocus={onRecipientFieldFocus}
           onChangeText={onChangeText}
-          value={value || transaction.recipient}
+          value={value}
           placeholderTranslationKey="transfer.recipient.inputEns"
         />
       </View>
