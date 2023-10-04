@@ -184,7 +184,7 @@
     "rxjs": "^7.8.1",
     "semver": "^7.3.7",
     "storyly-react-native": "2.0.1",
-    "styled-components": "^5.3.3",
+    "styled-components": "^6.0.0",
     "styled-system": "^5.1.5",
     "text-encoding-polyfill": "^0.6.7",
     "uuid": "^8.3.2"
