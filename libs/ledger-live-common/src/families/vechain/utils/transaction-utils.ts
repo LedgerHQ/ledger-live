@@ -75,45 +75,6 @@ export const calculateFee = async (gas: BigNumber, gasPriceCoef: number): Promis
   return new BigNumber(baseGasPrice).times(gasPriceCoef).idiv(255).plus(baseGasPrice).times(gas);
 };
 
-export const calculateTransactionEconomicInfo = async ({
-  isTokenAccount,
-  account,
-  tokenAccount,
-  transaction,
-  maxEstimatedGasFees,
-}: {
-  isTokenAccount: boolean;
-  account: Account;
-  tokenAccount?: TokenAccount;
-  transaction: Transaction;
-  maxEstimatedGasFees: BigNumber;
-}): Promise<{
-  amount: BigNumber;
-  balance: BigNumber;
-  spendableBalance: BigNumber;
-}> => {
-  const { amount: oldAmount, useAllAmount } = transaction;
-  let balance;
-  let spendableBalance;
-
-  if (isTokenAccount && tokenAccount) {
-    balance = tokenAccount.balance;
-    spendableBalance = tokenAccount.balance.minus(maxEstimatedGasFees).gt(0)
-      ? tokenAccount.balance.minus(maxEstimatedGasFees)
-      : new BigNumber(0);
-  } else {
-    balance = account.balance;
-    spendableBalance = account.balance;
-  }
-  const amount = useAllAmount ? spendableBalance : oldAmount;
-
-  return {
-    amount,
-    balance,
-    spendableBalance,
-  };
-};
-
 // Here there is a circular dependency between values, that is why we need the do-while loop
 // dependencies are:
 // useAllAmount: USER

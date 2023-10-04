@@ -22,9 +22,7 @@ const vechain: AppSpec<Transaction> = {
   allowEmptyAccounts: true,
   skipOperationHistory: true,
   genericDeviceAction: deviceAction.acceptTransaction,
-  testTimeout: 2 * 60 * 1000, // 2 minutes
   onSpeculosDeviceCreated: async ({ transport }) => {
-    console.log("enabling contract data and multi-clause");
     // enter app vechain
     await transport.button(SpeculosButton.BOTH);
     // enable contract data

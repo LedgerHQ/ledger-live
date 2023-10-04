@@ -13,12 +13,12 @@ const buildOptimisticOperation = async (
   account: Account,
   transaction: Transaction,
 ): Promise<Operation> => {
-  const type = "OUT";
+  const TYPE_OUT = "OUT";
   const subAccountId = transaction.subAccountId;
   const operation: Operation = {
-    id: encodeOperationId(account.id, "", type),
+    id: encodeOperationId(account.id, "", TYPE_OUT),
     hash: "",
-    type: subAccountId ? "NONE" : type,
+    type: TYPE_OUT,
     value: subAccountId ? new BigNumber(0) : new BigNumber(transaction.amount),
     fee: subAccountId ? new BigNumber(0) : new BigNumber(transaction.estimatedFees),
     blockHash: null,
