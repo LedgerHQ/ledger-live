@@ -1,11 +1,11 @@
-import { TFunction } from "i18next";
-import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
-import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { Step } from "~/renderer/components/Stepper";
 import { Transaction, TransactionStatus } from "@ledgerhq/coin-evm/types/index";
+import { EditType } from "@ledgerhq/live-common/families/evm/editTransaction/types";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
+import { TFunction } from "i18next";
+import { Step } from "~/renderer/components/Stepper";
 
 export type StepId = "method" | "fees" | "summary" | "device" | "confirmation";
-export type EditType = "cancel" | "speedup";
 
 export type StepProps = {
   device: Device | undefined | null;
