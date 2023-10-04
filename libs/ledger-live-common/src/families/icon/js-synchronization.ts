@@ -20,7 +20,7 @@ const getAccountShape: GetAccountShape = async (info) => {
   });
   const oldOperations = initialAccount?.operations || [];
   // Needed for incremental synchronisation
-  const startAt = 1;
+  const skip = 0;
 
   const url = getApiUrl(currency);
 
@@ -31,7 +31,7 @@ const getAccountShape: GetAccountShape = async (info) => {
   );
 
   // Merge new operations with the previously synced ones
-  const newOperations = await getOperations(accountId, address, startAt, url);
+  const newOperations = await getOperations(accountId, address, skip, url);
   const operations = mergeOps(oldOperations, newOperations);
   const delegationData = await getDelegation(address, currency);
   const { unstake } = await getStake(address, currency);

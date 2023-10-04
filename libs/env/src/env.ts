@@ -127,26 +127,6 @@ const envDefinitions = {
     def: "https://delegations-elrond.coin.ledger.com",
     desc: "Elrond DELEGATION API url",
   },
-  ICON_RPC_ENDPOINT: {
-    parser: stringParser,
-    def: "https://icon.coin.ledger.com/node/api/v3",
-    desc: "ICON RPC url",
-  },
-  ICON_TESTNET_RPC_ENDPOINT: {
-    parser: stringParser,
-    def: "https://lisbon.net.solidwallet.io/api/v3",
-    desc: "ICON Berlin Testnet API url",
-  },
-  ICON_API_ENDPOINT: {
-    parser: stringParser,
-    def: "https://icon.coin.ledger.com/indexer/v3",
-    desc: "ICON API url",
-  },
-  ICON_TESTNET_API_ENDPOINT: {
-    parser: stringParser,
-    def: "https://lisbon.tracker.solidwallet.io/v3",
-    desc: "ICON Berlin Testnet API url",
-  },
   API_STELLAR_HORIZON: {
     parser: stringParser,
     def: "https://stellar.coin.ledger.com",
@@ -246,6 +226,26 @@ const envDefinitions = {
     def: "https://testnet-ledger.cardanoscan.io/api",
     parser: stringParser,
     desc: "Cardano API url",
+  },
+  ICON_RPC_ENDPOINT: {
+    parser: stringParser,
+    def: "https://icon.coin.ledger.com/node/api/v3",
+    desc: "ICON RPC url",
+  },
+  ICON_TESTNET_RPC_ENDPOINT: {
+    parser: stringParser,
+    def: "https://berlin.net.solidwallet.io/api/v3",
+    desc: "ICON Berlin Testnet API url",
+  },
+  ICON_API_ENDPOINT: {
+    parser: stringParser,
+    def: "https://tracker.icon.community/api/v1",
+    desc: "ICON API url",
+  },
+  ICON_TESTNET_API_ENDPOINT: {
+    parser: stringParser,
+    def: "https://tracker.berlin.icon.community/api/v1",
+    desc: "ICON Berlin Testnet API url",
   },
   COINAPPS: {
     def: "",
