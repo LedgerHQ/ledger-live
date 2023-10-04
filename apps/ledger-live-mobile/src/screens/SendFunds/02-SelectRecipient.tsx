@@ -8,7 +8,6 @@ import {
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
-import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { Operation } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import {
@@ -40,7 +39,6 @@ import RecipientRow from "./RecipientRow";
 import { EditOperationCard } from "../../components/EditOperationCard";
 import { currencySettingsForAccountSelector } from "../../reducers/settings";
 import type { State } from "../../reducers/types";
-import { log } from "@ledgerhq/logs";
 
 const withoutHiddenError = (error: Error): Error | null =>
   error instanceof RecipientRequired ? null : error;
@@ -64,7 +62,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
   );
   const { enabled: isDomainResolutionEnabled, params } = useFeature("domainInputResolution");
   const isCurrencySupported =
-    params?.supportedCurrencyIds?.includes(mainAccount.currency.id as CryptoCurrencyId) || false;
+    params?.supportedCurrencyIds?.includes(mainAccount.currency.id) || false;
 
   const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
     () => ({
@@ -189,8 +187,6 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
   );
 
   const stuckAccountAndOperation = getStuckAccountAndOperation(account, mainAccount);
-  log("test", JSON.stringify(account));
-  console.log({ account });
 
   return (
     <>

@@ -101,6 +101,8 @@ const DomainServiceRecipientInput = ({
     }
   }, [bridge, setTransaction, ensResolution, transaction, isForwardResolution, value]);
 
+  console.log({ value, recipient: transaction.recipient });
+
   return (
     <>
       <View style={styles.inputWrapper}>
@@ -111,7 +113,7 @@ const DomainServiceRecipientInput = ({
           }}
           onFocus={onRecipientFieldFocus}
           onChangeText={onChangeText}
-          value={value}
+          value={value || transaction.recipient}
           placeholderTranslationKey="transfer.recipient.inputEns"
         />
       </View>
