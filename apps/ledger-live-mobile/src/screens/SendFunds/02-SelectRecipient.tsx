@@ -71,6 +71,8 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
     }),
   );
 
+  invariant(transaction, `couldn't get transaction from ${mainAccount.currency.name} bridge`);
+
   const [value, setValue] = useState<string>("");
 
   const shouldSkipAmount = useMemo(() => {
@@ -95,8 +97,8 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
   }, [setTransaction, navigationTransaction]);
 
   useEffect(() => {
-    if (!value && transaction?.recipient) {
-      setValue(transaction?.recipient);
+    if (!value && transaction.recipient) {
+      setValue(transaction.recipient);
     }
   }, [transaction?.recipient, value]);
 
@@ -105,7 +107,6 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
   }, []);
 
   const onPressScan = useCallback(() => {
-    if (!transaction) return null;
     setValue("");
     return navigation.navigate(ScreenName.ScanRecipient, {
       ...route.params,
@@ -117,7 +118,6 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
 
   const onChangeText = useCallback(
     recipient => {
-      if (!account) return;
       const bridge = getAccountBridge(account, parentAccount);
       setTransaction(
         bridge.updateTransaction(transaction, {
@@ -142,13 +142,11 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
 
   const onBridgeErrorRetry = useCallback(() => {
     setBridgeErr(null);
-    if (!transaction) return;
     const bridge = getAccountBridge(account, parentAccount);
     setTransaction(bridge.updateTransaction(transaction, {}));
   }, [setTransaction, account, parentAccount, transaction]);
 
   const onPressContinue = useCallback(async () => {
-    if (!account || !transaction) return null;
     // ERC721 transactions are always sending 1 NFT, so amount step is unecessary
     if (shouldSkipAmount) {
       return navigation.navigate(ScreenName.SendSummary, {
