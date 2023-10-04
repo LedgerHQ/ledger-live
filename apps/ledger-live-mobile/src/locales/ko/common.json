@@ -272,12 +272,21 @@
       "description" : "다시 시도해 주세요."
     },
     "DisconnectedDevice" : {
-      "title" : "Device disconnected",
-      "description" : "Ledger Live could not connect to your device. Please try it again."
+      "title" : "장치 연결 해제됨",
+      "description" : "Ledger Live를 장치에 연결할 수 없습니다. 다시 시도해 주세요."
     },
     "DisconnectedDeviceDuringOperation" : {
-      "title" : "Device disconnected",
-      "description" : "Ledger Live could not connect to your device. Please try it again."
+      "title" : "장치 연결 해제됨",
+      "description" : "Ledger Live를 장치에 연결할 수 없습니다. 다시 시도해 주세요."
+    },
+    "CasperInvalidTransferId" : {
+      "title" : "전송 ID는 {{maxTransferId}}보다 작은 양수여야 합니다"
+    },
+    "MayBlockAccount" : {
+      "title" : "귀하의 계정에는 송금을 수행하는 데 필요한 {{minAmount}} 미만의 금액이 남게 됩니다."
+    },
+    "InvalidMinimumAmount" : {
+      "title" : "전송할 수 있는 최저 금액은 {{minAmount}}입니다"
     },
     "ETHAddressNonEIP" : {
       "title" : "자동 검증이 불가능합니다. 주소를 신중하게 확인해 주세요.",
@@ -597,6 +606,10 @@
       "title" : "장치에서 거래가 취소됨",
       "description" : "귀하가 이 장치 사용을 거부했습니다."
     },
+    "ExpertModeRequired" : {
+      "title" : "전문가 모드 필요",
+      "description" : "전문가 모드를 활성화해야 합니다."
+    },
     "WebsocketConnectionError" : {
       "title" : "죄송하지만, 연결에 실패했습니다",
       "description" : "네트워크 연결이 더 좋은 곳에서 다시 시도하세요(WebSocket 오류)."
@@ -718,7 +731,7 @@
       "title" : "이전 트랜잭션이 아직 처리되지 않았습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
     },
     "SolanaTxConfirmationTimeout" : {
-      "title" : "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+      "title" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
     },
     "CardanoMinAmountError" : {
       "title" : "전송할 수 있는 최소 금액은 {{amount}} ADA입니다"
@@ -1075,10 +1088,10 @@
       }
     },
     "enjoy" : {
-      "title" : "피드백 감사합니다!",
-      "description" : "잠시 시간을 내어 리뷰를 작성해 주시면 감사하겠습니다. 귀하의 지원은 당사가 더 많은 사람들에게 다가가는 데 도움이 되며 새로운 앱 기능을 출시하도록 동기를 부여합니다.",
+      "title" : "Ledger Live를 마음껏 누리고 있나요?\n즐거운 시간을 나눠보세요!",
+      "description" : "앱 스토어에 긍정적인 평가를 남겨주세요.",
       "cta" : {
-        "rate" : "별 5개를 주세요",
+        "rate" : "Ledger Live 평가하기",
         "notNow" : "나중에 하기"
       }
     },
@@ -1095,7 +1108,7 @@
       "title" : "피드백 감사합니다",
       "description" : "더 자세한 피드백을 보내고 싶거나 도움이 필요하다면 다음 주소로 이메일을 보내주세요. ",
       "cta" : {
-        "done" : "Done"
+        "done" : "완료"
       }
     }
   },
@@ -1141,7 +1154,7 @@
       "url" : {
         "title" : "iframe URL 업데이트",
         "subtitle" : "디버그 설정",
-        "cta" : "Save"
+        "cta" : "Ledger Nano S를"
       },
       "message" : {
         "successTitle" : "트랜잭션 완료",
@@ -1446,7 +1459,7 @@
           "0" : {
             "title" : "Pin 코드 선택",
             "label" : "왼쪽이나 오른쪽 버튼을 눌러 숫자를 변경하세요. 양쪽 버튼을 눌러 선택한 숫자를 승인해 주세요. <0></0>을(를) 선택하여 Pin 코드를 확인해 주세요. <1></1>(을)를 선택하여 숫자를 삭제하세요.",
-            "desc" : "Press the left or right button to change digits. Press both buttons to validate a digit. Select <validIcon></validIcon> to confirm your PIN code. Select <cancelIcon></cancelIcon> to erase a digit."
+            "desc" : "숫자를 변경하려면 왼쪽 또는 오른쪽 버튼을 누릅니다. 숫자를 확인하려면 두 버튼을 모두 누르세요. <validIcon></validIcon>을 선택하여 PIN 코드를 확인하세요. <cancelIcon></cancelIcon>을 선택하여 숫자를 지웁니다."
           },
           "1" : {
             "title" : "Pin 코드를 승인해 주세요",
@@ -1969,8 +1982,7 @@
       },
       "completed" : {
         "noUpdateAvailable" : {
-          "title" : "OS 업데이트 확인",
-          "description" : "OS 업데이트 확인을 통해 {{productName}} 운영 시스템이 최신 상태인지 확인합니다."
+          "title" : "{{productName}} OS는 최신 상태입니다"
         }
       },
       "error" : {
@@ -1989,10 +2001,11 @@
       }
     },
     "firmwareUpdateAvailableDrawer" : {
-      "title" : "OS 업데이트 사용 가능",
+      "title" : "{{productName}} OS 업데이트 사용 가능",
       "description" : "{{productName}} 제품을 업데이트하여 최신 보안 및 기능 개선 혜택을 누리세요",
       "descriptionVersion" : "버전 {{firmwareVersion}}",
-      "updateCta" : "지금 업데이트"
+      "updateCta" : "지금 업데이트",
+      "seeWhatsInUpdateCta" : "업데이트 내용 보기"
     }
   },
   "syncOnboarding" : {
@@ -2172,6 +2185,13 @@
       "title" : "{{currencyTicker}} 시장가",
       "currencyPrice" : "1 {{currencyTicker}} 가격",
       "currencyPriceChange" : "지난 24시간 변경 사항"
+    },
+    "quickActions" : {
+      "buy" : "구매",
+      "swap" : "스왑",
+      "send" : "전송",
+      "deposit" : "입금",
+      "stake" : "스테이킹"
     }
   },
   "addAccountsModal" : {
@@ -2289,6 +2309,7 @@
     },
     "details" : "{{ currency }} 세부정보",
     "extra" : {
+      "transferId" : "전송 ID",
       "resource" : "리소스",
       "frozenAmount" : "동결 금액",
       "unfreezeAmount" : "동결 해제 금액",
@@ -2446,12 +2467,16 @@
     },
     "import" : {
       "scan" : {
-        "title" : "데스크탑에서 가져오기",
-        "descTop" : {
-          "line1" : "Ledger Live 데스크탑에서:",
-          "line2" : "설정 > 계정 > 계정 내보내기 > 내보내기"
+        "title" : "데스크탑에서 가져오기"
+      },
+      "newScan" : {
+        "title" : "Ledger Live 데스크탑에서 계정을 스캔하고 가져옵니다",
+        "instructions" : {
+          "line1" : "Ledger Live 데스크탑을 엽니다.",
+          "line2" : "설정 > 계정 > 계정 내보내기",
+          "line3" : "100% 로딩될 때까지 QR 코드를 스캔하세요."
         },
-        "descBottom" : "Ledger Live 데스크탑 열기 및 QR 코드 스캔"
+        "hodl" : "스캔이 완료될 때까지 기다리세요."
       },
       "result" : {
         "title" : "계정 가져오기",
@@ -2711,7 +2736,7 @@
       "privacyPolicy" : "개인 정보 보호 정책",
       "privacyPolicyDesc" : "당사가 어떤 개인 데이터를 수집하는지, 수집 이유와 사용처도 살펴보세요.",
       "liveReview" : {
-        "title" : "Feedback",
+        "title" : "피드백",
         "desc" : "앱에 대한 피드백을 보내주세요",
         "ios" : "앱 스토어에서 리뷰",
         "android" : "구글 플레이 스토어에서 리뷰"
@@ -2917,7 +2942,8 @@
         "account" : "{{count}}개 계정",
         "account_plural" : "{{count}} 계정",
         "subtitle" : "암호화폐를 전송하는 지갑이나 거래소에서 선택한 네트워크와 일치해야 합니다.",
-        "bannerTitle" : "올바른 네트워크를 선택했는지 확인하세요. 그 방법을 알아보세요."
+        "bannerTitle" : "올바른 네트워크를 선택했는지 확인하세요. 그 방법을 알아보세요.",
+        "depositFromCexBannerTitle" : "코인베이스 계정의 암호화폐를 예치하세요"
       },
       "stepperHeader" : {
         "range" : "{{totalSteps}} 중 {{currentStep}} 단계",
@@ -2989,11 +3015,11 @@
       "noResultsDesc" : "철자를 확인하고 재시도하세요"
     },
     "buy" : {
-      "title" : "Buy",
+      "title" : "구매",
       "description" : "현금으로 암호화폐를 안전하게 구매하세요."
     },
     "sell" : {
-      "title" : "Sell",
+      "title" : "판매",
       "description" : "암호화폐를 안전하게 현금으로 매도하세요."
     },
     "exchange" : {
@@ -3197,7 +3223,7 @@
     },
     "lending" : {
       "title" : "암호화폐를 대출",
-      "titleTransferTab" : "Earn",
+      "titleTransferTab" : "수익 창출",
       "descriptionTransferTab" : "불로소득을 올리세요.",
       "actionTitle" : "대출",
       "accountActions" : {
@@ -3389,6 +3415,11 @@
     "walletConnect" : {
       "title" : "WalletConnect",
       "description" : "지갑을 디앱에 연결합니다"
+    },
+    "recover" : {
+      "title" : "Ledger Recover",
+      "description" : "손쉬운 지갑 복구",
+      "tag" : "한 달 무료"
     }
   },
   "signMessage" : {
@@ -3481,6 +3512,8 @@
       "maxEstimatedFee" : "최대 예상 수수료",
       "validateFees" : "수수료 검증",
       "customizeFees" : "맞춤형 수수료",
+      "transferId" : "전송 ID",
+      "validateTransferId" : "ID 확인",
       "memo" : {
         "title" : "메모",
         "type" : "메모 유형",
@@ -3764,7 +3797,8 @@
     "stayInTheAppPlz" : "Ledger Live 앱을 끄지 마시고 Ledger 장치를 가까운 곳에 위치시켜 주세요.",
     "allowAppPermission" : "내 장치에서 {{wording}} 앱 열기",
     "allowAppPermissionSubtitleToken" : "나의 {{token}} 토큰 관리",
-    "allowManagerPermission" : "{{productName}}에서 {{wording}} 허용",
+    "allowManagerPermission" : "{{productName}}에서 Ledger 관리자를 허용하세요",
+    "allowRenaming" : "{{productName}}의 이름 변경을 허용하세요",
     "allowRemoveCustomLockscreen" : "Ledger Stax에서 이미지 삭제 확인",
     "allowSecureConnection" : "Ledger와 보안 연결을 허용",
     "loading" : "로딩...",
@@ -3783,8 +3817,8 @@
       "description" : "먼저 {{deviceName}} 장치 설정이 필요합니다. 장치를 설정하는 과정을 안내해드리겠습니다."
     },
     "deviceInBootloader" : {
-      "title" : "Device in Bootloader mode.",
-      "description" : "Click on \"Continue\" to update it."
+      "title" : "부트로더 모드 장치",
+      "description" : "\"계속\"을 클릭하여 업데이트하세요."
     },
     "verifyAddress" : {
       "title" : "장치에서 주소 확인",
@@ -4129,20 +4163,20 @@
     "releaseNotesTitle" : "OS에 무엇이 새롭게 업데이트되었나요?",
     "updateDone" : "모두 완료되었습니다! {{deviceName}}가 최신 상태입니다",
     "updateDoneDescription" : "신규 OS 버전: {{firmwareVersion}}",
-    "preparing" : "Preparing the firmware update, please keep your device awake and connected. We will notify you of the progress",
-    "confirmIdentifierText" : "Verify that the identifier on your device is the same as the identifier below. Confirm and enter your PIN code if requested.",
-    "pleaseReinstallApps" : "Please reinstall the apps on your device.",
-    "pleaseConfirmUpdate" : "Confirm the update on your device",
+    "preparing" : "펌웨어 업데이트를 준비 중입니다. 장치의 전원을 끄지 말고 연결 상태를 유지하세요. 진행 상황을 알려드립니다",
+    "confirmIdentifierText" : "장치의 식별자가 아래 식별자와 동일한지 확인하세요. 요청 받은 경우 PIN 코드를 확인하여 입력하세요",
+    "pleaseReinstallApps" : "장치에 앱을 재설치하세요.",
+    "pleaseConfirmUpdate" : "장치에서 업데이트를 확인하세요",
     "pleaseConfirmUpdateOnYourDevice" : "{{deviceName}}에 설치 확인",
     "finishUpdateCTA" : "완료",
-    "finishUpdate" : "Finish the update on your {{deviceName}}",
-    "identifierTitle" : "Identifier:",
-    "pleaseWaitDownload" : "Please wait for the installer to be downloaded",
+    "finishUpdate" : "{{deviceName}}에서 업데이트를 완료하세요.",
+    "identifierTitle" : "식별자",
+    "pleaseWaitDownload" : "설치 프로그램이 다운로드될 때까지 기다리세요.",
     "doNotLeaveLedgerLive" : "업데이트가 완료될 때까지 Ledger Live 앱을 종료하지 마세요.",
-    "preparingDevice" : "Preparing your device",
-    "pleaseWaitUpdate" : "Please wait for the update to finish",
+    "preparingDevice" : "장치 준비 중",
+    "pleaseWaitUpdate" : "업데이트가 완료될 때까지 기다려 주세요",
     "viewUpdateChangelog" : "업데이트 변경 로그 보기",
-    "waitForFirmwareUpdate" : "Wait for the firmware update to finish on your device",
+    "waitForFirmwareUpdate" : "장치에서 펌웨어 업데이트가 완료될 때까지 기다리세요.",
     "waitForInstallationToFinish" : "{{deviceName}}에 설치를 완료할 때까지 기다려주세요",
     "staxBatteryLow" : "Ledger Stax 배터리 부족으로 업데이트 불가",
     "staxBatteryLowDescription" : "OS를 업데이트하려면 Ledger가 20% 이상 충전된 상태이거나, 현재 충전 중이어야 합니다.",
@@ -4154,16 +4188,16 @@
     "quitUpdate" : "업데이트 종료",
     "continueUpdate" : "업데이트 계속하기",
     "unlockDeviceToComplete" : "{{deviceName}}의 잠금을 해제해 설치를 완료하세요",
-    "unlockDeviceWithPin" : "Unlock your device with your PIN",
-    "reinstallApps" : "Reinstall apps.",
-    "currentVersionNumber" : "Current version",
-    "newVersionNumber" : "New version",
-    "success" : "Firmware updated",
-    "update" : "Update",
+    "unlockDeviceWithPin" : "PIN으로 장치를 잠금 해제하세요.",
+    "reinstallApps" : "앱 재설치",
+    "currentVersionNumber" : "현재 버전",
+    "newVersionNumber" : "신규 버전",
+    "success" : "펌웨어 업데이트됨",
+    "update" : "업데이트",
     "Notifications" : {
-      "confirmOnDevice" : "We require your confirmation on the device",
-      "preparingUpdate" : "Transferring update, we will notify you when we're done",
-      "installing" : "Installing {{progress}}%"
+      "confirmOnDevice" : "장치에서 확인이 필요합니다.",
+      "preparingUpdate" : "업데이트를 전송하는 중입니다. 완료되면 알려드리겠습니다.",
+      "installing" : "{{progress}}% 설치 중"
     },
     "Installing" : {
       "title" : "{{stepName}}...",
@@ -4174,8 +4208,8 @@
       "flash-mcu" : "MCU 업데이트 중",
       "flash-bootloader" : "Bootloader 업데이트 중",
       "flash" : "내 장치에 설치",
-      "preparing" : "Preparing update",
-      "firmware" : "Downloading update",
+      "preparing" : "업데이트 준비 중",
+      "firmware" : "업데이트 다운로드 중",
       "prepareUpdate" : {
         "earlySecurityCheck" : {
           "titlePreparingUpdate" : "업데이트 설치 준비 중",
@@ -4213,7 +4247,7 @@
         "installingApps" : "앱 복원"
       }
     },
-    "newVersion" : "Update {{version}} available for your {{deviceName}}",
+    "newVersion" : "{{deviceName}}에 사용할 수 있는 업데이트 {{version}}",
     "drawerUpdate" : {
       "title" : "펌웨어 업데이트",
       "description" : "Ledger Nano 펌웨어를 Ledger Live 데스크탑 애플리케이션에 연결해 업데이트하세요",
@@ -4255,9 +4289,9 @@
     }
   },
   "FirmwareUpdateReleaseNotes" : {
-    "introTitle" : "Update {{deviceName}} to version {{version}}",
-    "recoveryPhraseBackupInstructions" : "Ensure your 24-word recovery phrase is written down on the Recovery sheet and it is available, as a precaution.",
-    "confirmRecoveryPhrase" : "I have my recovery phrase",
+    "introTitle" : "{{deviceName}}을 버전 {{version}}로 업데이트",
+    "recoveryPhraseBackupInstructions" : "만약을 대비하여 24개의 단어 복구 문구를 복구 시트에 반드시 기록해 두고 언제든 사용 가능한 상태로 준비해 두세요.",
+    "confirmRecoveryPhrase" : "복구 문구가 있습니다",
     "introDescription1" : "장치의 모든 앱이 제거될 것이니 주의하세요. 펌웨어 업데이트 후에 앱을 재설치할 수 있습니다.",
     "introDescription2" : "귀하의 암호화 자산에는 영향을 주지 않습니다.",
     "action" : "업데이트 계속하기"
@@ -4291,6 +4325,7 @@
     "yesChangeLanguage" : "예, 언어를 변경하겠습니다",
     "allowLanguageInstallation" : "{{deviceName}}에 언어 설치를 승인합니다",
     "languageInstalled" : "{{language}}로 언어가 변경되었습니다",
+    "languageInstalledDesc" : "이제 장치가 선택하신 언어로 표시됩니다",
     "firmwareUpdatePrompt" : {
       "title" : "{{deviceName}} 장치 언어를 {{language}}로 설정하시겠습니까?",
       "description" : "이제 {{deviceName}}에서 {{language}}가 지원됩니다. 지금 장치 언어를 설정하거나 My Ledger에서 언제든지 변경하세요."
@@ -5862,7 +5897,7 @@
   "exchange" : {
     "count" : "+ {{count}} 이상",
     "buy" : {
-      "screenTitle" : "BUY CRYPTO",
+      "screenTitle" : "암호화폐 구매",
       "tabTitle" : "구매",
       "selectCurrency" : "통화를 선택하세요",
       "selectAccount" : "계정 선택",
@@ -6351,10 +6386,10 @@
       "status" : {
         "new" : {
           "title" : "신규",
-          "desc" : "지갑 잠김에 대해 걱정하지 마세요.",
+          "desc" : "비밀 복구 문구 없이 지갑에 대한 액세스를 복구하세요.",
           "actions" : {
             "learnMore" : "Ledger Recover 알아보기",
-            "alreadySubscribed" : "<LinkAccount>내 구독 보기</LinkAccount>에 이미 로그인되어 있습니다"
+            "alreadySubscribed" : "이미 가입하셨나요? <LinkAccount>구독 보기</LinkAccount>"
           }
         }
       }
@@ -6412,6 +6447,10 @@
           "body" : "본인 지갑에서 암호화폐 수령"
         }
       }
+    },
+    "getFundsModal" : {
+      "text" : "{{coin}} 코인을 스테이킹하세요",
+      "description" : "Ledger Live를 사용해 Ledger로 직접 암호화폐를 구매, 스왑, 수령하세요."
     }
   }
 }
