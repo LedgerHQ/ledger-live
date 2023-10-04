@@ -29,6 +29,7 @@ const uploadImage = async () => {
       Bucket: bucket,
       Key: key,
       Body: file,
+      ContentType: "image/png",
     });
 
     try {
@@ -56,7 +57,7 @@ const uploadImage = async () => {
         results = results.concat(getAllFiles(newPath));
       } else {
         const extname = path.extname(newPath);
-        if (![".jpg", ".jpeg", ".png"].includes(extname)) return;
+        if (![".png"].includes(extname)) return;
         results.push(newPath);
       }
     });

@@ -13861,7 +13861,8 @@ var uploadImage = async () => {
     const command = new PutObjectCommand({
       Bucket: bucket,
       Key: key,
-      Body: file
+      Body: file,
+      ContentType: "image/png"
     });
     try {
       await client.send(command);
@@ -13886,7 +13887,7 @@ var uploadImage = async () => {
         results2 = results2.concat(getAllFiles(newPath));
       } else {
         const extname2 = path.extname(newPath);
-        if (![".jpg", ".jpeg", ".png"].includes(extname2))
+        if (![".png"].includes(extname2))
           return;
         results2.push(newPath);
       }
