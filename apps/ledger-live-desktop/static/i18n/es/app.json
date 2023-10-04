@@ -122,6 +122,7 @@
     "search" : "Buscar...",
     "searchWithoutEllipsis" : "Buscar",
     "manage" : "Administrar",
+    "tryAgain" : "Inténtalo de nuevo",
     "lockScreen" : {
       "title" : "Bienvenidos",
       "subTitle" : null,
@@ -546,6 +547,10 @@
           "body" : "Recibe cripto en tu billetera"
         }
       }
+    },
+    "getFundsModal" : {
+      "text" : "Consigue {{coin}} para poner en participación",
+      "description" : "Compra, permuta o recibe cripto directamente en tu Ledger mediante Ledger Live."
     }
   },
   "lottieDebugger" : {
@@ -1700,7 +1705,8 @@
   "DeviceAction" : {
     "allowAppPermission" : "Abre la aplicación {{wording}} en tu dispositivo",
     "allowAppPermissionSubtitleToken" : "para administrar los tokens {{token}}",
-    "allowManagerPermission" : "Permite {{wording}} en tu dispositivo",
+    "allowManagerPermission" : "Permitir Ledger Manager en tu dispositivo",
+    "allowRenaming" : "Permitir renombrar en tu dispositivo",
     "loading" : "Cargando...",
     "connectAndUnlockDevice" : "Conecta y desbloquea tu dispositivo",
     "unlockDevice" : "Desbloquea tu dispositivo",
@@ -2064,7 +2070,8 @@
         "parentAccount" : "1. Selecciona la cuenta de {{currencyName}}",
         "token" : "2. Selecciona un token",
         "verifyTokenType" : "Verifica que el token <0>{{token}}</0> sea un token <0>{{tokenType}}</0>. Es posible que se pierdan los activos de cualquier otro tipo si son enviados a una cuenta de {{currency}}.",
-        "warningTokenType" : "Solamente debes enviar tokens <0>{{ticker}}</0> o <0>{{tokenType}}</0> una cuenta de {{currency}}. El envío de cualquier otro tipo de activos cripto puede provocar la pérdida permanente de fondos."
+        "warningTokenType" : "Solamente debes enviar tokens <0>{{ticker}}</0> o <0>{{tokenType}}</0> una cuenta de {{currency}}. El envío de cualquier otro tipo de activos cripto puede provocar la pérdida permanente de fondos.",
+        "depositFromCexBannerTitle" : "Deposita cripto desde tu cuenta de Coinbase"
       },
       "connectDevice" : {
         "title" : "Dispositivo",
@@ -4061,7 +4068,7 @@
     "downloadProgress" : "{{progress}}% completado",
     "checking" : "Comprobando actualización...",
     "checkSuccess" : "Nueva actualización de Ledger Live disponible, se instalará automáticamente cuando cierres la aplicación.",
-    "quitAndInstall" : "Instalar ahora",
+    "quitAndInstall" : "Instalar ahora y reiniciar",
     "updateAvailable" : "Se encuentra disponible la actualización a la versión {{version}} de Ledger Live",
     "error" : "Error durante la actualización. Descárgala de nuevo",
     "reDownload" : "Descargar de nuevo",
@@ -4873,6 +4880,11 @@
     "cta" : "Continuar"
   },
   "families" : {
+    "casper" : {
+      "transferIdPlaceholder" : "Opcional",
+      "transferId" : "ID de transferencia",
+      "transferIdWarningText" : "El ID de transferencia debe ser un número positivo menor a 18446744073709551615"
+    },
     "cardano" : {
       "memoPlaceholder" : "Opcional",
       "memo" : "Memo"
@@ -5077,12 +5089,12 @@
       "description" : "Inténtalo de nuevo."
     },
     "DisconnectedDevice" : {
-      "title" : "Parece que tu dispositivo se ha desconectado",
-      "description" : "Conéctalo e inténtalo de nuevo."
+      "title" : "Dispositivo desconectado",
+      "description" : "Ledger Live no se pudo conectar a tu dispositivo. Inténtalo de nuevo."
     },
     "DisconnectedDeviceDuringOperation" : {
-      "title" : "Parece que tu dispositivo se ha desconectado",
-      "description" : "Conéctalo e inténtalo de nuevo."
+      "title" : "Dispositivo desconectado",
+      "description" : "Ledger Live no se pudo conectar a tu dispositivo. Inténtalo de nuevo."
     },
     "EConnReset" : {
       "title" : "No se puede establecer contacto con la tienda de aplicaciones de Ledger",
@@ -5310,6 +5322,10 @@
       "title" : "Acción rechazada",
       "description" : "El usuario rechazó la operación en el dispositivo"
     },
+    "ExpertModeRequired" : {
+      "title" : "Se requiere el modo Experto",
+      "description" : "Es necesario activar el modo Experto."
+    },
     "TransactionRefusedOnDevice" : {
       "title" : "Operación denegada en el dispositivo",
       "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
@@ -5360,6 +5376,15 @@
     "CantOpenDevice" : {
       "title" : "La conexión ha fallado",
       "description" : "Dispositivo detectado pero conexión fallida. Inténtalo de nuevo o contacta al Soporte de Ledger si persiste el problema."
+    },
+    "CasperInvalidTransferId" : {
+      "title" : "El ID de transferencia debe ser un número positivo menor que {{maxTransferId}}"
+    },
+    "InvalidMinimumAmount" : {
+      "title" : "La cantidad mínima de transferencia es {{minAmount}}"
+    },
+    "MayBlockAccount" : {
+      "title" : "Tu cuenta quedará con menos de la cantidad mínima necesaria de {{minAmount}} para realizar un envío"
     },
     "ETHAddressNonEIP" : {
       "title" : "Verificación automática no disponible: verifica cuidadosamente la dirección.",
@@ -5795,31 +5820,33 @@
     "managerCTARemove" : "Eliminar",
     "steps" : {
       "choose" : {
-        "stepLabel" : "Elige una imagen",
+        "stepLabel" : "Elegir imagen",
         "description" : "Elige una imagen para establecerla como (...)",
         "pickFromNftGallery" : "Elegir de la galería de NFTs",
         "myNfts" : "Mis NFTs",
-        "upload" : "Cargar desde mi PC",
+        "upload" : "Cargar desde PC",
         "chooseNft" : "Elige un NFT",
         "remove" : "Eliminar imagen actual",
         "selectNft" : "Elegir NFT",
-        "previousSelectNft" : "Atrás",
         "nftEmptyStateTitle" : "Todavía no hay NFTs para mostrar",
         "nftEmptyStateDescription" : "Empieza agregando NFTs a tu billetera."
       },
       "adjust" : {
-        "stepLabel" : "Ajustar imagen",
-        "rotate" : "Girar"
+        "stepLabel" : "Recortar",
+        "rotate" : "Girar",
+        "confirmCrop" : "Confirmar recorte"
       },
       "contrast" : {
-        "stepLabel" : "Elegir contraste"
+        "stepLabel" : "Ajustar contraste",
+        "confirmContrast" : "Confirmar contraste"
       },
       "transfer" : {
-        "stepLabel" : "Transferir",
-        "uploadAnotherImage" : "Cargar otra imagen",
-        "allowPreview" : "Permite que la imagen de la pantalla de bloqueo se cargue en tu {{productName}}",
+        "stepLabel" : "Cargar",
+        "useAnotherPicture" : "Cargar otra imagen",
+        "allowPreview" : "Toca “Cargar imagen” para personalizar la pantalla de bloqueo.",
         "allowConfirmPreview" : "Permitir la restauración de la imagen de pantalla de bloqueo en {{productName}}",
         "loadingPicture" : "Cargando...",
+        "voila" : "¡Voilà!",
         "imageLoaded" : "Imagen cargada en {{productName}}",
         "confirmPicture" : "¿Te gusta lo que ves?\n¡Pues consérvalo!",
         "confirmRestorePicture" : "Confirmar la restauración de la imagen de pantalla de bloqueo",
@@ -5827,12 +5854,12 @@
       }
     },
     "postOnboarding" : {
-      "title" : "Personalizar mi dispositivo",
-      "description" : "adaptando la pantalla a mis necesidades",
+      "title" : "Personalizar la pantalla de bloqueo",
+      "description" : "Elige el NFT o la imagen que quieres usar como pantalla de bloqueo de tu Ledger Stax.",
       "actionCompletedPopupLabel" : "Dispositivo personalizado"
     },
-    "customImageSet" : "Pantalla de bloqueo establecida",
-    "finishCTA" : "Finalizar"
+    "customImageSet" : "Pantalla de bloqueo personalizada",
+    "finishCTA" : "Cerrar"
   },
   "onboardingAppInstall" : {
     "restore" : {
@@ -5878,7 +5905,6 @@
     "networkError" : {
       "title" : "Error de red",
       "subtitle" : "Algo ha salido mal. Inténtalo de nuevo. Si el problema persiste, guarda el registro y ponte en contacto con el Soporte de Ledger.",
-      "tryAgain" : "Inténtalo de nuevo",
       "contactSupport" : "Ponte en contacto con el Soporte de Ledger",
       "saveLog" : "Guardar registro"
     }
