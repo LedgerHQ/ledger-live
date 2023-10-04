@@ -122,6 +122,7 @@
     "search" : "Rechercher...",
     "searchWithoutEllipsis" : "Rechercher",
     "manage" : "Gérer",
+    "tryAgain" : "Réessayer",
     "lockScreen" : {
       "title" : "Bienvenue",
       "subTitle" : null,
@@ -546,6 +547,10 @@
           "body" : "Recevez des cryptos dans votre wallet."
         }
       }
+    },
+    "getFundsModal" : {
+      "text" : "Recevez des {{coin}} pour staker",
+      "description" : "Achetez, échangez ou recevez des cryptos directement sur votre appareil Ledger via Ledger Live."
     }
   },
   "lottieDebugger" : {
@@ -1280,7 +1285,7 @@
     },
     "postOnboardingBanner" : {
       "title" : "Que faire ensuite avec votre Ledger Stax ?",
-      "description" : "Demandez votre NFT Infinity Pass, personnalisez\n l’écran de verrouillage ou transférez vos actifs.",
+      "description" : "Demandez votre NFT Infinity Pass, personnalisez\n le fond d’écran ou transférez vos actifs.",
       "link" : "Découvrir la suite"
     }
   },
@@ -1700,7 +1705,8 @@
   "DeviceAction" : {
     "allowAppPermission" : "Ouvrez l’app {{wording}} sur votre appareil",
     "allowAppPermissionSubtitleToken" : "pour gérer vos tokens {{token}}",
-    "allowManagerPermission" : "Autorisez {{wording}} sur votre appareil.",
+    "allowManagerPermission" : "Autorisez la connexion sécurisée sur votre appareil",
+    "allowRenaming" : "Autorisez le changement de nom sur votre appareil",
     "loading" : "Chargement...",
     "connectAndUnlockDevice" : "Connectez et déverrouillez votre appareil.",
     "unlockDevice" : "Déverrouillez votre appareil.",
@@ -2064,7 +2070,8 @@
         "parentAccount" : "1. Sélectionnez le compte {{currencyName}}.",
         "token" : "2. Sélectionnez un token.",
         "verifyTokenType" : "Vérifiez que <0>{{token}}</0> est bien un token <0>{{tokenType}}</0>. Tout autre crypto-actif envoyé sur un compte {{currency}} risque d’être perdu.",
-        "warningTokenType" : "Envoyez uniquement des <0>{{ticker}}</0> ou tokens <0>{{tokenType}}</0> sur des comptes {{currency}}. Tout autre crypto-actif risque d’être définitivement perdu."
+        "warningTokenType" : "Envoyez uniquement des <0>{{ticker}}</0> ou tokens <0>{{tokenType}}</0> sur des comptes {{currency}}. Tout autre crypto-actif risque d’être définitivement perdu.",
+        "depositFromCexBannerTitle" : "Recevoir des cryptos de votre compte Coinbase"
       },
       "connectDevice" : {
         "title" : "Appareil",
@@ -4061,7 +4068,7 @@
     "downloadProgress" : "{{progress}} % terminés",
     "checking" : "Vérification de la mise à jour...",
     "checkSuccess" : "Nouvelle mise à jour de Ledger Live disponible. Elle s’installera automatiquement à la fermeture de l’application.",
-    "quitAndInstall" : "Installer maintenant",
+    "quitAndInstall" : "Installer maintenant et relancer",
     "updateAvailable" : "Mise à jour disponible vers la version Ledger Live {{version}}",
     "error" : "Erreur lors de la mise à jour. Merci de recommencer le téléchargement.",
     "reDownload" : "Recommencer le téléchargement",
@@ -4873,6 +4880,11 @@
     "cta" : "Continuer"
   },
   "families" : {
+    "casper" : {
+      "transferIdPlaceholder" : "Facultatif",
+      "transferId" : "Identifiant de transfert",
+      "transferIdWarningText" : "L’identifiant de transfert doit être un nombre positif inférieur à 18446744073709551615"
+    },
     "cardano" : {
       "memoPlaceholder" : "Facultatif",
       "memo" : "Mémo"
@@ -5077,12 +5089,12 @@
       "description" : "Veuillez réessayer."
     },
     "DisconnectedDevice" : {
-      "title" : "Votre appareil semble avoir été déconnecté.",
-      "description" : "Reconnectez votre appareil et réessayez."
+      "title" : "Appareil déconnecté",
+      "description" : "Ledger Live n’a pas pu se connecter à votre appareil. Veuillez réessayer."
     },
     "DisconnectedDeviceDuringOperation" : {
-      "title" : "Votre appareil semble avoir été déconnecté.",
-      "description" : "Reconnectez votre appareil et réessayez."
+      "title" : "Appareil déconnecté",
+      "description" : "Ledger Live n’a pas pu se connecter à votre appareil. Veuillez réessayer."
     },
     "EConnReset" : {
       "title" : "Impossible d’accéder au Catalogue d’apps de Ledger",
@@ -5310,6 +5322,10 @@
       "title" : "Action rejetée",
       "description" : "Vous avez refusé l’opération sur votre appareil."
     },
+    "ExpertModeRequired" : {
+      "title" : "Mode Expert requis",
+      "description" : "Veuillez activer le mode Expert."
+    },
     "TransactionRefusedOnDevice" : {
       "title" : "Opération refusée sur l’appareil",
       "description" : "Veuillez réessayer ou contacter l’Assistance Ledger."
@@ -5360,6 +5376,15 @@
     "CantOpenDevice" : {
       "title" : "Échec de la connexion",
       "description" : "L’appareil a été détecté mais la connexion a échoué. Veuillez réessayer ou contacter l’Assistance Ledger si le problème persiste."
+    },
+    "CasperInvalidTransferId" : {
+      "title" : "L’identifiant de transfert doit être un nombre positif inférieur à {{maxTransferId}}"
+    },
+    "InvalidMinimumAmount" : {
+      "title" : "Le montant minimal doit être de {{minAmount}}"
+    },
+    "MayBlockAccount" : {
+      "title" : "Votre compte sera inférieur à {{minAmount}}, le montant minimal requis pour effectuer un transfert"
     },
     "ETHAddressNonEIP" : {
       "title" : "Vérification automatique indisponible : vérifiez l’adresse attentivement.",
@@ -5699,8 +5724,8 @@
       "description" : "Si ce fond d’écran ne vous plaît pas, choisissez une autre image."
     },
     "ImageDoesNotExistOnDevice" : {
-      "title" : "Aucun fond d’écran de verrouillage à supprimer sur votre Ledger Stax",
-      "description" : "Vous avez déjà supprimé votre fond d’écran de verrouillage."
+      "title" : "Aucun fond d’écran à supprimer sur votre Ledger Stax",
+      "description" : "Vous avez déjà supprimé votre fond d’écran."
     },
     "RestoreImageCommitRefusedOnDevice" : {
       "title" : "Restauration du fond d’écran annulée sur votre Ledger Stax",
@@ -5789,37 +5814,39 @@
     }
   },
   "customImage" : {
-    "title" : "Écran de verrouillage personnalisé",
-    "cta" : "Écran de verrouillage personnalisé",
+    "title" : "Fond d’écran personnalisé",
+    "cta" : "Fond d’écran personnalisé",
     "managerCTA" : "Fond d’écran",
     "managerCTARemove" : "Retirer",
     "steps" : {
       "choose" : {
-        "stepLabel" : "Choisissez une image",
+        "stepLabel" : "Image",
         "description" : "Choisir une image à définir comme (...)",
         "pickFromNftGallery" : "Sélectionner depuis ma galerie de NFT",
         "myNfts" : "Mes NFT",
-        "upload" : "Télécharger à partir de mon ordinateur",
+        "upload" : "Télécharger à partir de l’ordinateur",
         "chooseNft" : "Choisir un NFT",
         "remove" : "Supprimer le fond d’écran",
         "selectNft" : "Choisir ce NFT",
-        "previousSelectNft" : "Retour",
         "nftEmptyStateTitle" : "Pas (encore) de NFT",
         "nftEmptyStateDescription" : "Commencez par ajouter des NFT à votre wallet."
       },
       "adjust" : {
-        "stepLabel" : "Ajuster l’image",
-        "rotate" : "Pivoter"
+        "stepLabel" : "Recadrage",
+        "rotate" : "Pivoter",
+        "confirmCrop" : "Confirmer le recadrage"
       },
       "contrast" : {
-        "stepLabel" : "Choisissez un contraste"
+        "stepLabel" : "Contraste",
+        "confirmContrast" : "Confirmer le contraste"
       },
       "transfer" : {
-        "stepLabel" : "Transfert",
-        "uploadAnotherImage" : "Télécharger une autre image",
-        "allowPreview" : "Autorisez le chargement du fond d’écran sur votre {{productName}}",
+        "stepLabel" : "Chargement",
+        "useAnotherPicture" : "Télécharger un autre fond d’écran",
+        "allowPreview" : "Appuyez sur Charger pour personnaliser le fond d’écran",
         "allowConfirmPreview" : "Autorisez la restauration du fond d’écran sur {{productName}}.",
         "loadingPicture" : "Chargement...",
+        "voila" : "Voilà !",
         "imageLoaded" : "Image chargée sur votre {{productName}}",
         "confirmPicture" : "C’est parfait ?\nValidez !",
         "confirmRestorePicture" : "Confirmez la restauration du fond d’écran.",
@@ -5827,12 +5854,12 @@
       }
     },
     "postOnboarding" : {
-      "title" : "Personnaliser mon appareil",
-      "description" : "Avec un fond d’écran unique",
+      "title" : "Personnaliser le fond d’écran",
+      "description" : "Choisissez votre NFT ou image préféré comme fond d’écran de votre Ledger Stax.",
       "actionCompletedPopupLabel" : "Appareil personnalisé"
     },
-    "customImageSet" : "Écran de verrouillage défini",
-    "finishCTA" : "Terminer"
+    "customImageSet" : "Fond d’écran personnalisé",
+    "finishCTA" : "Fermer"
   },
   "onboardingAppInstall" : {
     "restore" : {
@@ -5878,7 +5905,6 @@
     "networkError" : {
       "title" : "Erreur réseau",
       "subtitle" : "Une erreur est survenue. Veuillez réessayer. Si le problème persiste, enregistrez votre log et contactez l’Assistance Ledger.",
-      "tryAgain" : "Réessayer",
       "contactSupport" : "Contacter l’Assistance Ledger",
       "saveLog" : "Enregistrer le log"
     }
