@@ -10,10 +10,9 @@ import { defaultIISSContractAddress } from "@ledgerhq/live-common/families/icon/
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import type { TFunction } from "react-i18next";
+import type { TFunction } from "i18next";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/tron/types";
-import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 
 import { localeSelector } from "~/renderer/reducers/settings";
 import Label from "~/renderer/components/Label";
@@ -40,7 +39,7 @@ const InputLeft = styled(Box).attrs(() => ({
   pl: 3,
 }))``;
 
-const AmountButton: ThemedComponent<{ error: boolean, active: boolean }> = styled.button.attrs(
+const AmountButton: ThemedComponent<{ error: boolean; active: boolean }> = styled.button.attrs(
   () => ({
     type: "button",
   }),
@@ -49,8 +48,8 @@ const AmountButton: ThemedComponent<{ error: boolean, active: boolean }> = style
     p.error
       ? p.theme.colors.lightRed
       : p.active
-        ? p.theme.colors.palette.primary.main
-        : p.theme.colors.palette.action.hover};
+      ? p.theme.colors.palette.primary.main
+      : p.theme.colors.palette.action.hover};
   color: ${p =>
     p.active
       ? p.theme.colors.palette.primary.contrastText
@@ -74,13 +73,13 @@ const getDecimalPart = (value: BigNumber, magnitude: number) =>
   value.minus(value.modulo(10 ** magnitude));
 
 type Props = {
-  t: TFunction,
-  account: ?Account,
-  parentAccount: ?Account,
-  transaction: ?Transaction,
-  status: TransactionStatus,
-  onChangeTransaction: Transaction => void,
-  bridgePending: boolean,
+  t: TFunction;
+  account?: Account;
+  parentAccount?: Account;
+  transaction?: Transaction;
+  status: TransactionStatus;
+  onChangeTransaction: (a: Transaction) => void;
+  bridgePending: boolean;
 };
 
 const AmountField = ({
@@ -89,8 +88,6 @@ const AmountField = ({
   onChangeTransaction,
   transaction,
   status,
-  bridgePending,
-  t,
 }: Props) => {
   const locale = useSelector(localeSelector);
   invariant(account && transaction && account.spendableBalance, "account and transaction required");
@@ -100,7 +97,6 @@ const AmountField = ({
   const defaultUnit = getAccountUnit(account);
   const { iconResources } = account;
   const { votingPower, totalDelegated } = iconResources;
-
   invariant(votingPower, "Staked value required");
 
   const [ratio, setRatio] = useState();
@@ -111,7 +107,7 @@ const AmountField = ({
       onChangeTransaction(
         bridge.updateTransaction(transaction, {
           amount: getDecimalPart(value, defaultUnit.magnitude),
-          recipient: defaultIISSContractAddress()
+          recipient: defaultIISSContractAddress(),
         }),
       );
     },
@@ -139,14 +135,18 @@ const AmountField = ({
 
   const totalStaked = useMemo(
     () =>
-      formatCurrencyUnit(defaultUnit, getDecimalPart(votingPower.plus(totalDelegated), defaultUnit.magnitude), {
-        disableRounding: true,
-        showAllDigits: false,
-        showCode: true,
-        locale,
-      }),
+      formatCurrencyUnit(
+        defaultUnit,
+        getDecimalPart(votingPower.plus(totalDelegated), defaultUnit.magnitude),
+        {
+          disableRounding: true,
+          showAllDigits: false,
+          showCode: true,
+          locale,
+        },
+      ),
     [votingPower, totalDelegated, defaultUnit, locale],
-  );;
+  );
 
   const voted = useMemo(
     () =>
@@ -169,23 +169,23 @@ const AmountField = ({
     () =>
       showAmountRatio
         ? [
-          {
-            label: "25%",
-            value: votingPower.multipliedBy(0.25),
-          },
-          {
-            label: "50%",
-            value: votingPower.multipliedBy(0.5),
-          },
-          {
-            label: "75%",
-            value: votingPower.multipliedBy(0.75),
-          },
-          {
-            label: "100%",
-            value: votingPower,
-          },
-        ]
+            {
+              label: "25%",
+              value: votingPower.multipliedBy(0.25),
+            },
+            {
+              label: "50%",
+              value: votingPower.multipliedBy(0.5),
+            },
+            {
+              label: "75%",
+              value: votingPower.multipliedBy(0.75),
+            },
+            {
+              label: "100%",
+              value: votingPower,
+            },
+          ]
         : [],
     [showAmountRatio, votingPower],
   );
@@ -200,9 +200,9 @@ const AmountField = ({
   }
 
   return (
-    <Box vertical flow={1}>
+    <Box flow={1}>
       <Label>
-        <Box vertical textAlign="left">
+        <Box textAlign="left">
           <Text ff="Inter|Bold" textAlign="left">
             <Trans i18nKey="icon.unfreeze.steps.amount.totalStaked" values={{ totalStaked }} />
           </Text>
@@ -211,7 +211,10 @@ const AmountField = ({
           </Text>
         </Box>
         <Text style={{ flex: 1 }} textAlign="right">
-          <Trans i18nKey="icon.unfreeze.steps.amount.amountToUnstake" values={{ amountAvailable }} />
+          <Trans
+            i18nKey="icon.unfreeze.steps.amount.amountToUnstake"
+            values={{ amountAvailable }}
+          />
         </Text>
       </Label>
       <InputCurrency
@@ -241,7 +244,7 @@ const AmountField = ({
           )
         }
       />
-    </Box >
+    </Box>
   );
 };
 

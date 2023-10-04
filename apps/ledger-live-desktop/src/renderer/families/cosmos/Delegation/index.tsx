@@ -50,6 +50,7 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
   const stakingUrl = useLocalizedUrl(urls.stakingCosmos);
   const validatorUrl = useLocalizedUrl(urls.ledgerValidator);
   const delegationEnabled = canDelegate(account);
+  console.log("account", account);
   const mappedDelegations = useCosmosFamilyMappedDelegations(account);
   const currencyId = account.currency.id;
   const { validators } = useCosmosFamilyPreloadData(currencyId);

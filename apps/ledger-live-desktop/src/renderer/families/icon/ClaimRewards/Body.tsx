@@ -21,7 +21,7 @@ import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { closeModal, openModal } from "~/renderer/actions/modals";
+import { closeModal, openModal, OpenModal } from "~/renderer/actions/modals";
 
 import Stepper from "~/renderer/components/Stepper";
 import StepRewards, { StepRewardsFooter } from "./steps/StepRewards";
@@ -29,26 +29,26 @@ import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepCo
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import logger from "~/logger/logger";
 
-type OwnProps = {|
-  stepId: StepId,
-  onClose: () => void,
-  onChangeStepId: StepId => void,
-  params: {
-    account: Account,
-    parentAccount: ?Account,
-    reward: number,
-  },
-  name: string,
-|};
+export type Data = {
+  account: Account | null | undefined;
+  parentAccount: Account | null | undefined;
+  reward?: number;
+};
+type OwnProps = {
+  stepId: StepId;
+  onClose: () => void;
+  onChangeStepId: (a: StepId) => void;
+  params: Data;
+  name: string;
+};
 
-type StateProps = {|
-  t: TFunction,
-  device: ?Device,
-  accounts: Account[],
-  device: ?Device,
-  closeModal: string => void,
-  openModal: string => void,
-|};
+type StateProps = {
+  t: TFunction;
+  accounts: Account[];
+  device: Device | undefined | null;
+  openModal: OpenModal;
+  closeModal: () => void;
+};
 
 type Props = OwnProps & StateProps;
 
@@ -82,16 +82,7 @@ const mapDispatchToProps = {
   openModal,
 };
 
-const Body = ({
-  t,
-  stepId,
-  device,
-  closeModal,
-  openModal,
-  onChangeStepId,
-  params,
-  name,
-}: Props) => {
+const Body = ({ t, stepId, device, openModal, onClose, onChangeStepId, params }: Props) => {
   const [optimisticOperation, setOptimisticOperation] = useState(null);
   const [transactionError, setTransactionError] = useState(null);
   const [signed, setSigned] = useState(false);
@@ -106,15 +97,11 @@ const Body = ({
 
     const transaction = bridge.updateTransaction(t, {
       mode: "claimReward",
-      recipient: defaultIISSContractAddress()
+      recipient: defaultIISSContractAddress(),
     });
 
     return { account, parentAccount, transaction };
   });
-
-  const handleCloseModal = useCallback(() => {
-    closeModal(name);
-  }, [closeModal, name]);
 
   const handleStepChange = useCallback(e => onChangeStepId(e.id), [onChangeStepId]);
 
@@ -159,7 +146,7 @@ const Body = ({
     hideBreadcrumb: !!error,
     onRetry: handleRetry,
     onStepChange: handleStepChange,
-    onClose: handleCloseModal,
+    onClose,
     reward: params.reward,
     error,
     status,
@@ -177,10 +164,8 @@ const Body = ({
     </Stepper>
   );
 };
-
-const C: React$ComponentType<OwnProps> = compose(
+const C = compose<React.ComponentType<OwnProps>>(
   connect(mapStateToProps, mapDispatchToProps),
   withTranslation(),
 )(Body);
-
 export default C;

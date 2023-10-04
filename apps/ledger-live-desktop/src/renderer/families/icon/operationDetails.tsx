@@ -22,7 +22,8 @@ import {
 import { Trans } from "react-i18next";
 import Box from "~/renderer/components/Box/Box";
 import {
-  formatVotes, useIconPublicRepresentatives,
+  formatVotes,
+  useIconPublicRepresentatives,
 } from "@ledgerhq/live-common/families/icon/react";
 import Text from "~/renderer/components/Text";
 import FormattedVal from "~/renderer/components/FormattedVal";
@@ -30,14 +31,13 @@ import CounterValue from "~/renderer/components/CounterValue";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
 
 const helpURL = "https://support.ledger.com/hc/en-us/articles/360013062139";
-
-function getURLFeesInfo(op: Operation): ?string {
+function getURLFeesInfo(op: Operation): string | null | undefined {
   if (op.fee.gt(200000)) {
     return helpURL;
   }
 }
 
-function getURLWhatIsThis(op: Operation): ?string {
+function getURLWhatIsThis(op: Operation): string | null | undefined {
   if (op.type !== "IN" && op.type !== "OUT") {
     return helpURL;
   }
@@ -59,9 +59,9 @@ const AmountField = ({ account, status: { amount }, field }: FieldComponentProps
 );
 
 type OperationsDetailsVotesProps = {
-  votes: ?Array<Vote>,
-  account: Account,
-  isTransactionField?: boolean,
+  votes?: Array<Vote>;
+  account: Account;
+  isTransactionField?: boolean;
 };
 
 export const OperationDetailsVotes = ({
@@ -69,7 +69,7 @@ export const OperationDetailsVotes = ({
   account,
   isTransactionField,
 }: OperationsDetailsVotesProps) => {
-  const sp = useIconPublicRepresentatives(account.currency)
+  const sp = useIconPublicRepresentatives(account.currency);
   const formattedVotes = formatVotes(votes, sp);
 
   const redirectAddress = useCallback(
@@ -123,9 +123,9 @@ export const OperationDetailsVotes = ({
 };
 
 type OperationDetailsExtraProps = {
-  extra: { [key: string]: any },
-  type: string,
-  account: Account,
+  extra: { [key: string]: any };
+  type: string;
+  account: Account;
 };
 
 const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraProps) => {
@@ -180,9 +180,9 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
 };
 
 type Props = {
-  operation: Operation,
-  currency: Currency,
-  unit: Unit,
+  operation: Operation;
+  currency: Currency;
+  unit: Unit;
 };
 
 const FreezeAmountCell = ({ operation, currency, unit }: Props) => {

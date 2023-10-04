@@ -8,7 +8,7 @@ import Popover from "~/renderer/components/Popover";
 import Text from "~/renderer/components/Text";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 
-export default function PRInfoPopover({ ...props }: *) {
+export default function PRInfoPopover({ ...props }) {
   return (
     <Box
       horizontal

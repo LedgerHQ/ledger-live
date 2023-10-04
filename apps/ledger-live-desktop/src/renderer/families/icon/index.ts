@@ -1,17 +1,20 @@
-import {
-  Transaction,
-  TransactionStatus,
-} from "@ledgerhq/live-common/families/internet_computer/types";
-import { LLDCoinFamily } from "../types";
-
+import accountHeaderManageActions from "./AccountHeaderManageActions";
+import AccountBodyHeader from "./AccountBodyHeader";
+import operationDetails from "./operationDetails";
 import AccountSubHeader from "./AccountSubHeader";
+import StakeBanner from "./StakeBanner";
+import transactionConfirmFields from "./TransactionConfirmFields";
+import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
+import { IconFamily } from "./types";
 
-import { Account } from "@ledgerhq/types-live";
-
-const family: LLDCoinFamily<Account, Transaction, TransactionStatus> = {
-
+const family: IconFamily = {
+  accountHeaderManageActions,
+  operationDetails,
+  transactionConfirmFields,
+  AccountBodyHeader,
   AccountSubHeader,
-
+  StakeBanner,
+  AccountBalanceSummaryFooter,
 };
 
 export default family;

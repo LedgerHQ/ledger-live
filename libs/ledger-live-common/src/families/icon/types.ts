@@ -8,12 +8,10 @@ import {
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 
-
 export type PublicRepresentativeData = {
   delegations: PRep[];
   totalDelegated: BigNumber;
 };
-
 
 export type PRep = {
   grade: string | null | undefined;
@@ -89,7 +87,7 @@ export type Transaction = TransactionCommon & {
   txType?: string | null | undefined;
   id?: string | null | undefined;
   votes: Vote[];
-  stepLimit?: BigNumber
+  stepLimit?: BigNumber;
   // add here all transaction-specific fields if you implement other modes than "send"
 };
 
@@ -113,7 +111,7 @@ export type IconPreloadData = {
   somePreloadedData: Record<any, any>;
 };
 
-export type IconAccount = Account & { iconResources: IconResources; };
+export type IconAccount = Account & { iconResources: IconResources };
 
 export type IconAccountRaw = AccountRaw & {
   iconResources: IconResourcesRaw;

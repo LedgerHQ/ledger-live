@@ -29,12 +29,12 @@ import ValidatorSearchInput, {
 } from "~/renderer/components/Delegation/ValidatorSearchInput";
 
 type Props = {
-  t: TFunction,
-  votes: Vote[],
-  account: Account,
-  status: TransactionStatus,
-  onChangeVotes: (updater: (Vote[]) => Vote[]) => void,
-  bridgePending: boolean,
+  t: TFunction;
+  votes: Vote[];
+  account: Account;
+  status: TransactionStatus;
+  onChangeVotes: (updater: any) => void;
+  bridgePending: boolean;
 };
 
 const AmountField = ({ t, account, onChangeVotes, status, bridgePending, votes }: Props) => {
@@ -45,7 +45,7 @@ const AmountField = ({ t, account, onChangeVotes, status, bridgePending, votes }
 
   invariant(iconResources && votes, "icon transaction required");
 
-  const {votingPower, totalDelegated, votes: validators}  = iconResources;
+  const { votingPower, totalDelegated, votes: validators } = iconResources;
 
   const locale = useSelector(localeSelector);
 
@@ -67,8 +67,11 @@ const AmountField = ({ t, account, onChangeVotes, status, bridgePending, votes }
       const voteCount = raw <= 0 || votesSelected > SR_MAX_VOTES ? 0 : raw;
       onChangeVotes(existing => {
         const update = existing.filter(v => v.address !== address);
-        let isRevote =false;
-        (voteCount == 0) && (isRevote = validators.some(item => (item.address == address && item.value > 0 && item.value != voteCount)))
+        let isRevote = false;
+        voteCount == 0 &&
+          (isRevote = validators.some(
+            item => item.address == address && item.value > 0 && item.value != voteCount,
+          ));
         // voting list remain only one item, and user want to revote it
         if (voteCount > 0 || isRevote) {
           update.push({ address, value: voteCount });
@@ -76,7 +79,7 @@ const AmountField = ({ t, account, onChangeVotes, status, bridgePending, votes }
         return update;
       });
     },
-    [onChangeVotes, votesSelected, votes],
+    [votesSelected, onChangeVotes, validators],
   );
 
   const containerRef = useRef();

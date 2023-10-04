@@ -6,7 +6,7 @@ import VoteIconInfoModalBodyMain from "./Main";
 import VoteIconInfoModalBodyFooter from "./Footer";
 
 type Props = {
-  onClose: () => void,
+  onClose: () => void;
 };
 
 export default function VoteIconInfoModalBody({ onClose }: Props) {

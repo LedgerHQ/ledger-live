@@ -1,6 +1,6 @@
 // @flow
 import invariant from "invariant";
-import React, { useCallback } from "react";
+import React from "react";
 
 import { Trans } from "react-i18next";
 
@@ -54,12 +54,13 @@ export function StepAmountFooter({
   onClose,
   status,
   bridgePending,
-  transaction,
-}: StepProps) {
+}: //transaction,
+StepProps) {
   invariant(account, "account required");
   const { errors } = status;
   const hasErrors = Object.keys(errors).length;
   const canNext = !bridgePending && !hasErrors;
+  console.log("bridgePending", bridgePending);
 
   return (
     <Box horizontal>

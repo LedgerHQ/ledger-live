@@ -7,7 +7,7 @@ import { Trans } from "react-i18next";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { BigNumber } from "bignumber.js";
 import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
-
+import { IconAccount } from "@ledgerhq/live-common/families/icon/types";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 
 import Box from "~/renderer/components/Box/Box";
@@ -16,7 +16,7 @@ import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 import { localeSelector } from "~/renderer/reducers/settings";
 
-const Wrapper: ThemedComponent<*> = styled(Box).attrs(() => ({
+const Wrapper: ThemedComponent = styled(Box).attrs(() => ({
   horizontal: true,
   mt: 4,
   p: 5,
@@ -53,8 +53,8 @@ const AmountValue = styled(Text).attrs(() => ({
 }))``;
 
 type Props = {
-  account: any,
-  countervalue: any,
+  account: IconAccount;
+  countervalue: number;
 };
 
 const AccountBalanceSummaryFooter = ({ account, countervalue }: Props) => {
@@ -70,9 +70,7 @@ const AccountBalanceSummaryFooter = ({ account, countervalue }: Props) => {
     locale,
   };
 
-  const {
-    votingPower, totalDelegated, unstake
-  } = account.iconResources;
+  const { votingPower, totalDelegated, unstake } = account.iconResources;
 
   const spendableBalance = formatCurrencyUnit(account.unit, account.spendableBalance, formatConfig);
 
@@ -88,11 +86,7 @@ const AccountBalanceSummaryFooter = ({ account, countervalue }: Props) => {
     formatConfig,
   );
 
-  const unstakeAmount = formatCurrencyUnit(
-    account.unit,
-    BigNumber(unstake || 0),
-    formatConfig,
-  );
+  const unstakeAmount = formatCurrencyUnit(account.unit, BigNumber(unstake || 0), formatConfig);
 
   return (
     <Wrapper>
