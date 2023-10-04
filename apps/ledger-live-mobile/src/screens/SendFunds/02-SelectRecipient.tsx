@@ -70,6 +70,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
       parentAccount,
     }),
   );
+
   const [value, setValue] = useState<string>("");
 
   const shouldSkipAmount = useMemo(() => {
@@ -92,6 +93,12 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
       setValue(navigationTransaction.recipient);
     }
   }, [setTransaction, navigationTransaction]);
+
+  useEffect(() => {
+    if (!value && transaction?.recipient) {
+      setValue(transaction?.recipient);
+    }
+  }, [transaction?.recipient, value]);
 
   const onRecipientFieldFocus = useCallback(() => {
     track("SendRecipientFieldFocused");

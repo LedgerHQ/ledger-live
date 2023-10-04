@@ -226,7 +226,7 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
   // when transaction changes, prepare the transaction
   useEffect(() => {
     let ignore = false;
-    let errorTimeout;
+    let errorTimeout: NodeJS.Timeout | null;
     // If bridge is not pending, transaction change is due to
     // the last onStatus dispatch (prepareTransaction changed original transaction) and must be ignored
     if (!bridgePending) return;

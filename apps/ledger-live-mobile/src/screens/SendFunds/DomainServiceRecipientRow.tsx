@@ -101,8 +101,6 @@ const DomainServiceRecipientInput = ({
     }
   }, [bridge, setTransaction, ensResolution, transaction, isForwardResolution, value]);
 
-  console.log({ value, recipient: transaction.recipient });
-
   return (
     <>
       <View style={styles.inputWrapper}>
