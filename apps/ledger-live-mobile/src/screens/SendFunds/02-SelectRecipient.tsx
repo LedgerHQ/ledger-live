@@ -100,7 +100,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
     if (!value && transaction.recipient) {
       setValue(transaction.recipient);
     }
-  }, [transaction?.recipient, value]);
+  }, [transaction.recipient, value]);
 
   const onRecipientFieldFocus = useCallback(() => {
     track("SendRecipientFieldFocused");
