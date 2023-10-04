@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast < minFees should return the expected patch with coin transaction 1`] = `
+exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast < minFees should return the expected patch for coin transaction 1`] = `
 Object {
   "amount": "0",
   "customGasLimit": "21000",
@@ -38,7 +38,7 @@ Object {
 }
 `;
 
-exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast < minFees should return the expected patch with erc20 transaction 1`] = `
+exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast < minFees should return the expected patch for erc20 transaction 1`] = `
 Object {
   "amount": "0",
   "customGasLimit": "21000",
@@ -76,7 +76,7 @@ Object {
 }
 `;
 
-exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast < minFees should return the expected patch with erc721 transaction 1`] = `
+exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast < minFees should return the expected patch for erc721 transaction 1`] = `
 Object {
   "amount": "0",
   "customGasLimit": "21000",
@@ -114,7 +114,7 @@ Object {
 }
 `;
 
-exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast < minFees should return the expected patch with erc1155 transaction 1`] = `
+exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast < minFees should return the expected patch for erc1155 transaction 1`] = `
 Object {
   "amount": "0",
   "customGasLimit": "21000",
@@ -152,7 +152,7 @@ Object {
 }
 `;
 
-exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast == minFees should return the expected patch with coin transaction 1`] = `
+exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast == minFees should return the expected patch for coin transaction 1`] = `
 Object {
   "amount": "0",
   "customGasLimit": "21000",
@@ -190,7 +190,7 @@ Object {
 }
 `;
 
-exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast == minFees should return the expected patch with erc20 transaction 1`] = `
+exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast == minFees should return the expected patch for erc20 transaction 1`] = `
 Object {
   "amount": "0",
   "customGasLimit": "21000",
@@ -228,7 +228,7 @@ Object {
 }
 `;
 
-exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast == minFees should return the expected patch with erc721 transaction 1`] = `
+exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast == minFees should return the expected patch for erc721 transaction 1`] = `
 Object {
   "amount": "0",
   "customGasLimit": "21000",
@@ -266,7 +266,7 @@ Object {
 }
 `;
 
-exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast == minFees should return the expected patch with erc1155 transaction 1`] = `
+exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast == minFees should return the expected patch for erc1155 transaction 1`] = `
 Object {
   "amount": "0",
   "customGasLimit": "21000",
@@ -304,7 +304,7 @@ Object {
 }
 `;
 
-exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast > minFees should return the expected patch with coin transaction 1`] = `
+exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast > minFees should return the expected patch for coin transaction 1`] = `
 Object {
   "amount": "0",
   "customGasLimit": "21000",
@@ -342,7 +342,7 @@ Object {
 }
 `;
 
-exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast > minFees should return the expected patch with erc20 transaction 1`] = `
+exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast > minFees should return the expected patch for erc20 transaction 1`] = `
 Object {
   "amount": "0",
   "customGasLimit": "21000",
@@ -380,7 +380,7 @@ Object {
 }
 `;
 
-exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast > minFees should return the expected patch with erc721 transaction 1`] = `
+exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast > minFees should return the expected patch for erc721 transaction 1`] = `
 Object {
   "amount": "0",
   "customGasLimit": "21000",
@@ -418,7 +418,7 @@ Object {
 }
 `;
 
-exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast > minFees should return the expected patch with erc1155 transaction 1`] = `
+exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast > minFees should return the expected patch for erc1155 transaction 1`] = `
 Object {
   "amount": "0",
   "customGasLimit": "21000",
@@ -456,7 +456,7 @@ Object {
 }
 `;
 
-exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast < minFees should return the expected patch with coin transaction 1`] = `
+exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast < minFees should return the expected patch for coin transaction 1`] = `
 Object {
   "amount": "0",
   "customGasLimit": "21000",
@@ -494,7 +494,7 @@ Object {
 }
 `;
 
-exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast < minFees should return the expected patch with erc20 transaction 1`] = `
+exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast < minFees should return the expected patch for erc20 transaction 1`] = `
 Object {
   "amount": "0",
   "customGasLimit": "60000",
@@ -532,7 +532,7 @@ Object {
 }
 `;
 
-exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast < minFees should return the expected patch with erc721 transaction 1`] = `
+exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast < minFees should return the expected patch for erc721 transaction 1`] = `
 Object {
   "amount": "0",
   "customGasLimit": "21000",
@@ -570,7 +570,7 @@ Object {
 }
 `;
 
-exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast < minFees should return the expected patch with erc1155 transaction 1`] = `
+exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast < minFees should return the expected patch for erc1155 transaction 1`] = `
 Object {
   "amount": "0",
   "customGasLimit": "60000",
@@ -608,7 +608,7 @@ Object {
 }
 `;
 
-exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast == minFees should return the expected patch with coin transaction 1`] = `
+exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast == minFees should return the expected patch for coin transaction 1`] = `
 Object {
   "amount": "0",
   "customGasLimit": "21000",
@@ -646,7 +646,7 @@ Object {
 }
 `;
 
-exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast == minFees should return the expected patch with erc20 transaction 1`] = `
+exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast == minFees should return the expected patch for erc20 transaction 1`] = `
 Object {
   "amount": "0",
   "customGasLimit": "60000",
@@ -684,7 +684,7 @@ Object {
 }
 `;
 
-exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast == minFees should return the expected patch with erc721 transaction 1`] = `
+exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast == minFees should return the expected patch for erc721 transaction 1`] = `
 Object {
   "amount": "0",
   "customGasLimit": "21000",
@@ -722,7 +722,7 @@ Object {
 }
 `;
 
-exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast == minFees should return the expected patch with erc1155 transaction 1`] = `
+exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast == minFees should return the expected patch for erc1155 transaction 1`] = `
 Object {
   "amount": "0",
   "customGasLimit": "60000",
@@ -760,7 +760,7 @@ Object {
 }
 `;
 
-exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast > minFees should return the expected patch with coin transaction 1`] = `
+exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast > minFees should return the expected patch for coin transaction 1`] = `
 Object {
   "amount": "0",
   "customGasLimit": "21000",
@@ -798,7 +798,7 @@ Object {
 }
 `;
 
-exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast > minFees should return the expected patch with erc20 transaction 1`] = `
+exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast > minFees should return the expected patch for erc20 transaction 1`] = `
 Object {
   "amount": "0",
   "customGasLimit": "60000",
@@ -836,7 +836,7 @@ Object {
 }
 `;
 
-exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast > minFees should return the expected patch with erc721 transaction 1`] = `
+exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast > minFees should return the expected patch for erc721 transaction 1`] = `
 Object {
   "amount": "0",
   "customGasLimit": "21000",
@@ -874,7 +874,7 @@ Object {
 }
 `;
 
-exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast > minFees should return the expected patch with erc1155 transaction 1`] = `
+exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast > minFees should return the expected patch for erc1155 transaction 1`] = `
 Object {
   "amount": "0",
   "customGasLimit": "60000",
@@ -912,7 +912,7 @@ Object {
 }
 `;
 
-exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast < minFees should return the expected patch with coin transaction 1`] = `
+exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast < minFees should return the expected patch for coin transaction 1`] = `
 Object {
   "amount": "100",
   "customGasLimit": "21000",
@@ -970,7 +970,7 @@ Object {
 }
 `;
 
-exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast < minFees should return the expected patch with erc20 transaction 1`] = `
+exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast < minFees should return the expected patch for erc20 transaction 1`] = `
 Object {
   "amount": "100",
   "customGasLimit": "21000",
@@ -1028,7 +1028,7 @@ Object {
 }
 `;
 
-exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast < minFees should return the expected patch with erc721 transaction 1`] = `
+exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast < minFees should return the expected patch for erc721 transaction 1`] = `
 Object {
   "amount": "100",
   "customGasLimit": "21000",
@@ -1086,7 +1086,7 @@ Object {
 }
 `;
 
-exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast < minFees should return the expected patch with erc1155 transaction 1`] = `
+exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast < minFees should return the expected patch for erc1155 transaction 1`] = `
 Object {
   "amount": "100",
   "customGasLimit": "21000",
@@ -1144,7 +1144,7 @@ Object {
 }
 `;
 
-exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast == minFees should return the expected patch with coin transaction 1`] = `
+exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast == minFees should return the expected patch for coin transaction 1`] = `
 Object {
   "amount": "100",
   "customGasLimit": "21000",
@@ -1202,7 +1202,7 @@ Object {
 }
 `;
 
-exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast == minFees should return the expected patch with erc20 transaction 1`] = `
+exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast == minFees should return the expected patch for erc20 transaction 1`] = `
 Object {
   "amount": "100",
   "customGasLimit": "21000",
@@ -1260,7 +1260,7 @@ Object {
 }
 `;
 
-exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast == minFees should return the expected patch with erc721 transaction 1`] = `
+exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast == minFees should return the expected patch for erc721 transaction 1`] = `
 Object {
   "amount": "100",
   "customGasLimit": "21000",
@@ -1318,7 +1318,7 @@ Object {
 }
 `;
 
-exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast == minFees should return the expected patch with erc1155 transaction 1`] = `
+exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast == minFees should return the expected patch for erc1155 transaction 1`] = `
 Object {
   "amount": "100",
   "customGasLimit": "21000",
@@ -1376,7 +1376,7 @@ Object {
 }
 `;
 
-exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast > minFees should return the expected patch with coin transaction 1`] = `
+exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast > minFees should return the expected patch for coin transaction 1`] = `
 Object {
   "amount": "100",
   "customGasLimit": "21000",
@@ -1434,7 +1434,7 @@ Object {
 }
 `;
 
-exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast > minFees should return the expected patch with erc20 transaction 1`] = `
+exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast > minFees should return the expected patch for erc20 transaction 1`] = `
 Object {
   "amount": "100",
   "customGasLimit": "21000",
@@ -1492,7 +1492,7 @@ Object {
 }
 `;
 
-exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast > minFees should return the expected patch with erc721 transaction 1`] = `
+exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast > minFees should return the expected patch for erc721 transaction 1`] = `
 Object {
   "amount": "100",
   "customGasLimit": "21000",
@@ -1550,7 +1550,7 @@ Object {
 }
 `;
 
-exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast > minFees should return the expected patch with erc1155 transaction 1`] = `
+exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast > minFees should return the expected patch for erc1155 transaction 1`] = `
 Object {
   "amount": "100",
   "customGasLimit": "21000",
@@ -1608,7 +1608,7 @@ Object {
 }
 `;
 
-exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast < minFees should return the expected patch with coin transaction 1`] = `
+exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast < minFees should return the expected patch for coin transaction 1`] = `
 Object {
   "amount": "100",
   "customGasLimit": "21000",
@@ -1666,7 +1666,7 @@ Object {
 }
 `;
 
-exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast < minFees should return the expected patch with erc20 transaction 1`] = `
+exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast < minFees should return the expected patch for erc20 transaction 1`] = `
 Object {
   "amount": "100",
   "customGasLimit": "60000",
@@ -1704,7 +1704,7 @@ Object {
 }
 `;
 
-exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast < minFees should return the expected patch with erc721 transaction 1`] = `
+exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast < minFees should return the expected patch for erc721 transaction 1`] = `
 Object {
   "amount": "100",
   "customGasLimit": "21000",
@@ -1762,7 +1762,7 @@ Object {
 }
 `;
 
-exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast < minFees should return the expected patch with erc1155 transaction 1`] = `
+exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast < minFees should return the expected patch for erc1155 transaction 1`] = `
 Object {
   "amount": "0",
   "customGasLimit": "60000",
@@ -1800,7 +1800,7 @@ Object {
 }
 `;
 
-exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast == minFees should return the expected patch with coin transaction 1`] = `
+exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast == minFees should return the expected patch for coin transaction 1`] = `
 Object {
   "amount": "100",
   "customGasLimit": "21000",
@@ -1858,7 +1858,7 @@ Object {
 }
 `;
 
-exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast == minFees should return the expected patch with erc20 transaction 1`] = `
+exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast == minFees should return the expected patch for erc20 transaction 1`] = `
 Object {
   "amount": "100",
   "customGasLimit": "60000",
@@ -1896,7 +1896,7 @@ Object {
 }
 `;
 
-exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast == minFees should return the expected patch with erc721 transaction 1`] = `
+exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast == minFees should return the expected patch for erc721 transaction 1`] = `
 Object {
   "amount": "100",
   "customGasLimit": "21000",
@@ -1954,7 +1954,7 @@ Object {
 }
 `;
 
-exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast == minFees should return the expected patch with erc1155 transaction 1`] = `
+exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast == minFees should return the expected patch for erc1155 transaction 1`] = `
 Object {
   "amount": "0",
   "customGasLimit": "60000",
@@ -1992,7 +1992,7 @@ Object {
 }
 `;
 
-exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast > minFees should return the expected patch with coin transaction 1`] = `
+exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast > minFees should return the expected patch for coin transaction 1`] = `
 Object {
   "amount": "100",
   "customGasLimit": "21000",
@@ -2050,7 +2050,7 @@ Object {
 }
 `;
 
-exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast > minFees should return the expected patch with erc20 transaction 1`] = `
+exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast > minFees should return the expected patch for erc20 transaction 1`] = `
 Object {
   "amount": "100",
   "customGasLimit": "60000",
@@ -2088,7 +2088,7 @@ Object {
 }
 `;
 
-exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast > minFees should return the expected patch with erc721 transaction 1`] = `
+exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast > minFees should return the expected patch for erc721 transaction 1`] = `
 Object {
   "amount": "100",
   "customGasLimit": "21000",
@@ -2146,7 +2146,7 @@ Object {
 }
 `;
 
-exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast > minFees should return the expected patch with erc1155 transaction 1`] = `
+exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast > minFees should return the expected patch for erc1155 transaction 1`] = `
 Object {
   "amount": "0",
   "customGasLimit": "60000",
