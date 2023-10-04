@@ -9,15 +9,12 @@ export const estimateMaxSpendable = async (inputs: {
 }): Promise<BigNumber> => {
   const { account, transaction } = inputs;
 
-  if (account.type === "Account") {
+  if (account.type === "Account" || !transaction) {
     return account.balance;
   }
-  if (transaction) {
-    const { estimatedGasFees: maxTokenFees } = await calculateGasFees(transaction, true);
-    const spendable = account.balance.minus(maxTokenFees);
-    if (spendable.gt(0)) return account.balance.minus(maxTokenFees);
-    return new BigNumber(0);
-  } else {
-    return account.balance;
-  }
+
+  const { estimatedGasFees: maxTokenFees } = await calculateGasFees(transaction, true);
+  const spendable = account.balance.minus(maxTokenFees);
+  if (spendable.gt(0)) return account.balance.minus(maxTokenFees);
+  return new BigNumber(0);
 };
