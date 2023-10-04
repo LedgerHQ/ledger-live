@@ -114,6 +114,7 @@ const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
               error,
               device,
               ...(isRefusedOnStaxError ? { Icon: Icons.Warning, iconColor: "warning.c60" } : {}),
+              hasExportLogButton: false,
             })}
             {}
             <Button
