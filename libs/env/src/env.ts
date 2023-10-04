@@ -234,12 +234,12 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
   },
   ICON_API_ENDPOINT: {
     parser: stringParser,
-    def: "https://icon.coin.ledger.com/indexer/v3",
+    def: "https://tracker.icon.community/api/v1",
     desc: "ICON API url",
   },
   ICON_TESTNET_API_ENDPOINT: {
     parser: stringParser,
-    def: "https://berlin.tracker.solidwallet.io/v3",
+    def: "https://tracker.berlin.icon.community/api/v1",
     desc: "ICON Berlin Testnet API url",
   },
   COINAPPS: {

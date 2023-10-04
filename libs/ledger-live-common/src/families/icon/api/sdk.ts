@@ -32,7 +32,7 @@ export const getAccount = async (addr: string, url: string) => {
  * Returns true if account is the signer
  */
 function isSender(transaction: Transaction, addr: string): boolean {
-  return transaction.fromAddr === addr;
+  return transaction.from_address === addr;
 }
 
 /**
@@ -50,7 +50,7 @@ function getOperationType(
  */
 function getOperationValue(transaction: Transaction, addr: string): BigNumber {
   return isSender(transaction, addr)
-    ? new BigNumber(transaction.amount ?? 0).plus(transaction.fee ?? 0)
+    ? new BigNumber(transaction.amount ?? 0).plus(transaction.transaction_fee ?? 0)
     : new BigNumber(transaction.amount ?? 0);
 }
 
@@ -64,28 +64,26 @@ function transactionToOperation(
 ): Operation {
   const type = getOperationType(transaction, addr);
   return {
-    id: encodeOperationId(accountId, transaction.txHash ?? "", type),
+    id: encodeOperationId(accountId, transaction.hash ?? "", type),
     accountId,
-    fee: new BigNumber(transaction.fee || 0),
+    fee: new BigNumber(transaction.transaction_fee || 0),
     value: getOperationValue(transaction, addr),
     type,
-    hash: transaction.txHash ?? "",
+    hash: transaction.hash ?? "",
     blockHash: null,
-    blockHeight: transaction.height,
-    date: new Date(transaction.createDate ? transaction.createDate : 0),
-    extra: {
-      errorMsg: transaction.errorMsg,
-      dataType: transaction.dataType,
-      targetContractAddr: transaction.targetContractAddr,
-      txType: transaction.txType,
-      id: transaction.id,
+    blockHeight: transaction.block_number,
+    date: new Date(transaction.block_timestamp ? transaction.block_timestamp : 0),
+    senders: [transaction.from_address ?? ""],
+    recipients: transaction.to_address ? [transaction.to_address] : [],
+    extra:{
+      method: transaction.method,
+      data: transaction.data,
+      txType: transaction.transaction_type
     },
-    senders: [transaction.fromAddr ?? ""],
-    recipients: transaction.toAddr ? [transaction.toAddr] : [],
     transactionSequenceNumber: isSender(transaction, addr)
       ? transaction.nonce
       : undefined,
-    hasFailed: transaction.state === 0,
+    hasFailed: transaction.status !== '0x1',
   };
 }
 
@@ -95,10 +93,10 @@ function transactionToOperation(
 export const getOperations = async (
   accountId: string,
   addr: string,
-  startAt: number,
+  skip: number,
   url: string
 ): Promise<Operation[]> => {
-  const rawTransactions = await getHistory(addr, startAt, url);
+  const rawTransactions = await getHistory(addr, skip, url);
   if (!rawTransactions) return rawTransactions;
   return rawTransactions.map((transaction) =>
     transactionToOperation(accountId, addr, transaction)

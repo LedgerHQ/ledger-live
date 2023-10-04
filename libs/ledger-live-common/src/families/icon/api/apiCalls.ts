@@ -24,14 +24,14 @@ export const submit = async (txObj, currency) => {
 };
 
 export const getAccountDetails = async (addr: string, url: string) => {
-  const reps = await network({
+  const resp = await network({
     method: "GET",
-    url: `${url}/address/info?address=${addr.toString()}`,
+    url: `${url}/addresses/details/${addr.toString()}`,
   });
-  const { status, data } = reps;
+  const { status, data } = resp;
   let balance = 0;
-  if (data?.data?.balance) {
-    balance = data?.data?.balance;
+  if (data?.balance) {
+    balance = data?.balance;
   }
   if (status !== 200) {
     throw Error("Cannot get account details");
@@ -42,16 +42,14 @@ export const getAccountDetails = async (addr: string, url: string) => {
 };
 
 export const getLatestBlock = async (url: string) => {
-  //berlin.tracker.solidwallet.io/v3/block/list?page=1&count=1
-  const reps = await network({
+  const resp = await network({
     method: "GET",
-    url: `${url}/block/list?page=1&count=1`,
+    url: `${url}/blocks`,
   });
-
-  const { status, data } = reps;
+  const { status, data } = resp;
   let blockHeight = null;
 
-  blockHeight = data?.data[0]?.height;
+  blockHeight = data[0]?.number;
 
   if (status !== 200) {
     throw Error("Cannot get account details");
@@ -61,33 +59,30 @@ export const getLatestBlock = async (url: string) => {
 
 export const getHistory = async (
   addr: string,
-  startAt: number,
+  skip: number,
   url: string
 ) => {
   const limit = LIMIT;
   const result = await network({
     method: "GET",
-    url: `${url}/address/txList?address=${addr}&page=${startAt}&count=${limit}`,
+    url: `${url}/transactions/address/${addr}?address=${addr}&skip=${skip}&limit=${limit}`,
   });
-  const { data } = result;
-  if (!data?.data) {
+  const { data: respData } = result;
+  if (!respData) {
     return [];
   }
-  const { data: respData, totalSize } = data;
+
 
   let allTransactions = [...respData];
-  let offset = startAt * limit;
-  if (totalSize > allTransactions.length) {
-    while (offset <= totalSize) {
-      startAt++;
+  if (limit == allTransactions.length) {
+    while (limit == allTransactions.length) {
+      skip += limit;
       const { data: res } = await network({
         method: "GET",
-        url: `${url}/address/txList?address=${addr}&page=${startAt}&count=${limit}`,
+        url: `${url}/transactions/address/${addr}?address=${addr}&skip=${skip}&limit=${limit}`,
       });
 
-      allTransactions = [...allTransactions, ...(res?.data || [])];
-
-      offset = startAt * limit;
+      allTransactions = [...allTransactions, ...(res || [])];
     }
   }
 
