@@ -4144,11 +4144,11 @@
       "descriptionProductName": "Tap to update your {{productName}} to OS version {{firmwareVersion}}."
     },
     "title": "Update firmware",
-    "beginUpdate": "Begin update",
+    "beginUpdate": "Start OS update",
     "updateDevice": "{{deviceName}} OS Update",
     "releaseNotesTitle": "What's in this OS update?",
     "updateDone": "Your {{deviceName}} OS is now up to date",
-    "updateDoneDescription": "New OS Version: {{firmwareVersion}}",
+    "updateDoneDescription": "New OS version: {{firmwareVersion}}",
     "preparing": "Preparing the firmware update, please keep your device awake and connected. We will notify you of the progress",
     "confirmIdentifierText": "Verify that the identifier on your device is the same as the identifier below. Confirm and enter your PIN code if requested.",
     "pleaseReinstallApps": "Please reinstall the apps on your device.",
@@ -4171,9 +4171,9 @@
     "updateNotYetComplete": "OS update is in progress",
     "updateNotYetCompleteDescription": "Your settings and apps may not be restored properly if you cancel the update now.",
     "restartUpdate": "Restart OS update",
-    "quitUpdate": "Exit OS Update",
+    "quitUpdate": "Cancel OS Update",
     "continueUpdate": "Continue OS Update",
-    "unlockDeviceToComplete": "Unlock {{deviceName}} to complete installation",
+    "unlockDeviceToComplete": "Unlock {{deviceName}} with your PIN to complete the update.",
     "unlockDeviceWithPin": "Unlock your device with your PIN",
     "reinstallApps": "Reinstall apps.",
     "currentVersionNumber": "Current version",
@@ -4230,7 +4230,7 @@
           "ImageCommitRefusedOnDevice": "Restore of lock screen picture cancelled on {{deviceName}}",
           "UserRefusedAllowManager": "Restore of apps cancelled on {{deviceName}}"
         },
-        "installingApps": "Restoring apps"
+        "installingApps": "Installing apps"
       }
     },
     "newVersion": "Update {{version}} available for your {{deviceName}}",
