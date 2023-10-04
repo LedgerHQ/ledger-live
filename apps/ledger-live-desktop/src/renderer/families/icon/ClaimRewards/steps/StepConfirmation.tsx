@@ -36,7 +36,7 @@ function StepConfirmation({
   theme,
   device,
   signed,
-}: StepProps & { theme: * }) {
+}: StepProps) {
   if (optimisticOperation) {
     return (
       <Container>

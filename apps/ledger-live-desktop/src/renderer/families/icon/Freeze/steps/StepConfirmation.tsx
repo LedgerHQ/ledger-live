@@ -42,7 +42,7 @@ const TooltipContent = () => (
   </Box>
 );
 
-function StepConfirmation({
+const StepConfirmation = ({
   account,
   t,
   optimisticOperation,
@@ -51,8 +51,7 @@ function StepConfirmation({
   device,
   signed,
   transaction,
-}: StepProps & { theme: * }) {
-
+}: StepProps) => {
   if (optimisticOperation) {
     return (
       <Container>
@@ -80,7 +79,7 @@ function StepConfirmation({
   }
 
   return null;
-}
+};
 
 export function StepConfirmationFooter({
   t,

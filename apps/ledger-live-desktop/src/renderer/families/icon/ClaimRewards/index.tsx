@@ -4,7 +4,7 @@ import Modal from "~/renderer/components/Modal";
 import Body from "./Body";
 import type { StepId } from "./types";
 type State = {
-  stepId: StepId,
+  stepId: StepId;
 };
 
 const INITIAL_STATE = {

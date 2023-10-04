@@ -27,15 +27,7 @@ const Container: ThemedComponent<{ shouldSpace?: boolean }> = styled(Box).attrs(
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
 `;
 
-function StepConfirmation({
-  account,
-  t,
-  optimisticOperation,
-  error,
-  theme,
-  device,
-  signed,
-}: StepProps & { theme: * }) {
+function StepConfirmation({ t, onRetry, error, onClose, optimisticOperation, signed }: StepProps) {
   if (optimisticOperation) {
     return (
       <Container>

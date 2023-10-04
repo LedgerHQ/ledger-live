@@ -28,15 +28,15 @@ import Row from "./Row";
 import Footer from "./Footer";
 
 import { BigNumber } from "bignumber.js";
-import moment from "moment";
 import ToolTip from "~/renderer/components/Tooltip";
 import ClaimRewards from "~/renderer/icons/ClaimReward";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
 import { localeSelector } from "~/renderer/reducers/settings";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
 
+const MIN_TRANSACTION_AMOUNT = 1;
 type Props = {
-  account: Account,
+  account: Account;
 };
 
 const Wrapper = styled(Box).attrs(() => ({
@@ -78,7 +78,7 @@ const Delegation = ({ account }: Props) => {
     showCode: true,
     discreet,
     locale,
-    subMagnitude: 3
+    subMagnitude: 3,
   });
 
   const formattedVotes = formatVotes(votes, superRepresentatives);
@@ -87,12 +87,16 @@ const Delegation = ({ account }: Props) => {
 
   const totalDelegated = useMemo(
     () =>
-      formatCurrencyUnit(defaultUnit, getDecimalPart(BigNumber(totalVotesUsed), defaultUnit.magnitude), {
-        disableRounding: true,
-        showAllDigits: false,
-        showCode: true,
-        locale,
-      }),
+      formatCurrencyUnit(
+        defaultUnit,
+        getDecimalPart(BigNumber(totalVotesUsed), defaultUnit.magnitude),
+        {
+          disableRounding: true,
+          showAllDigits: false,
+          showCode: true,
+          locale,
+        },
+      ),
     [totalVotesUsed, defaultUnit, locale],
   );
 
@@ -117,14 +121,11 @@ const Delegation = ({ account }: Props) => {
   );
 
   const hasVotes = formattedVotes.length > 0;
-
   const hasRewards = unwithdrawnReward?.gt(0);
-
-  const canClaimRewards = hasRewards
+  const canClaimRewards = hasRewards;
 
   const earnRewardDisabled =
     votingPower === 0 && (!spendableBalance || !spendableBalance.gte(MIN_TRANSACTION_AMOUNT));
-
   return (
     <TableContainer mb={6}>
       <TableHeader
@@ -146,15 +147,7 @@ const Delegation = ({ account }: Props) => {
           </Button>
         ) : null}
         {formattedVotes.length > 0 || canClaimRewards ? (
-          <ToolTip
-            content={
-              !canClaimRewards ? (
-                (
-                  <Trans i18nKey="icon.voting.noRewards" />
-                )
-              ) : null
-            }
-          >
+          <ToolTip content={!canClaimRewards ? <Trans i18nKey="icon.voting.noRewards" /> : null}>
             <Button
               disabled={!canClaimRewards}
               color="palette.primary.main"
@@ -199,10 +192,7 @@ const Delegation = ({ account }: Props) => {
             />
           ))}
           <Text px={4} py={3} ff="Inter|Bold" color="palette.text.shade100" fontSize={6}>
-            <Trans
-              i18nKey="icon.voting.voted"
-              values={{ amount: totalDelegated }}
-            />
+            <Trans i18nKey="icon.voting.voted" values={{ amount: totalDelegated }} />
           </Text>
           <Footer total={totalPower} used={totalVotesUsed} onClick={onDelegate} />
         </>

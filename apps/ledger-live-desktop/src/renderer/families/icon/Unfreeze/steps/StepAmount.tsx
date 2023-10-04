@@ -50,11 +50,9 @@ export default function StepAmount({
 export function StepAmountFooter({
   transitionTo,
   account,
-  parentAccount,
   onClose,
   status,
   bridgePending,
-  transaction,
 }: StepProps) {
   invariant(account, "account required");
   const { errors } = status;

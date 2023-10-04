@@ -20,13 +20,15 @@ export default function StepVote({
   t,
 }: StepProps) {
   invariant(account && transaction && transaction.votes, "account and transaction required");
-  const { iconResources } = account
+  console.log("iconResourcesaaaa");
+  const { iconResources } = account;
+  console.log("iconResources", iconResources);
   const bridge = getAccountBridge(account, parentAccount);
   let validators = transaction.votes;
   if (transaction.votes.length === 0) {
-    const mergedVotes = [...iconResources.votes, ...transaction.votes]
+    const mergedVotes = [...iconResources.votes, ...transaction.votes];
     const aggregate = {};
-    mergedVotes.forEach((item) => {
+    mergedVotes.forEach(item => {
       if (aggregate[item.address]) {
         aggregate[item.address].value = Number(aggregate[item.address].value) + Number(item.value);
       } else {

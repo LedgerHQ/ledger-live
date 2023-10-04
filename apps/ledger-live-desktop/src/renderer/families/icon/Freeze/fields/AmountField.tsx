@@ -10,9 +10,12 @@ import { defaultIISSContractAddress } from "@ledgerhq/live-common/families/icon/
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import type { TFunction } from "react-i18next";
-import type { Account } from "@ledgerhq/types-live";
-import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/tron/types";
+import type { TFunction } from "i18next";
+import {
+  IconAccount,
+  Transaction,
+  TransactionStatus,
+} from "@ledgerhq/live-common/families/icon/types";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 
 import { localeSelector } from "~/renderer/reducers/settings";
@@ -40,7 +43,7 @@ const InputLeft = styled(Box).attrs(() => ({
   pl: 3,
 }))``;
 
-const AmountButton: ThemedComponent<{ error: boolean, active: boolean }> = styled.button.attrs(
+const AmountButton: ThemedComponent<{ error: boolean; active: boolean }> = styled.button.attrs(
   () => ({
     type: "button",
   }),
@@ -74,13 +77,13 @@ const getDecimalPart = (value: BigNumber, magnitude: number) =>
   value.minus(value.modulo(10 ** magnitude));
 
 type Props = {
-  t: TFunction,
-  account: ?Account,
-  parentAccount: ?Account,
-  transaction: ?Transaction,
-  status: TransactionStatus,
-  onChangeTransaction: Transaction => void,
-  bridgePending: boolean,
+  t: TFunction;
+  account: IconAccount | null | undefined;
+  parentAccount: IconAccount | undefined | null;
+  transaction: Transaction | undefined | null;
+  status: TransactionStatus;
+  onChangeTransaction: (a: Transaction) => void;
+  bridgePending: boolean;
 };
 
 const AmountField = ({
@@ -89,8 +92,6 @@ const AmountField = ({
   onChangeTransaction,
   transaction,
   status,
-  bridgePending,
-  t,
 }: Props) => {
   const locale = useSelector(localeSelector);
   invariant(account && transaction && account.spendableBalance, "account and transaction required");
@@ -99,7 +100,7 @@ const AmountField = ({
 
   const defaultUnit = getAccountUnit(account);
   const { spendableBalance, iconResources } = account;
-  const totalSpendableBalance = spendableBalance.plus(iconResources.unstake)
+  const totalSpendableBalance = spendableBalance.plus(iconResources?.unstake);
 
   const [ratio, setRatio] = useState();
 
@@ -109,7 +110,7 @@ const AmountField = ({
       onChangeTransaction(
         bridge.updateTransaction(transaction, {
           amount: getDecimalPart(value, defaultUnit.magnitude),
-          recipient: defaultIISSContractAddress()
+          recipient: defaultIISSContractAddress(),
         }),
       );
     },
@@ -126,19 +127,23 @@ const AmountField = ({
 
   const amountAvailable = useMemo(
     () =>
-      formatCurrencyUnit(defaultUnit, getDecimalPart(totalSpendableBalance, defaultUnit.magnitude), {
-        disableRounding: true,
-        showAllDigits: false,
-        showCode: true,
-        locale,
-      }),
-    [totalSpendableBalance, defaultUnit, locale, spendableBalance],
+      formatCurrencyUnit(
+        defaultUnit,
+        getDecimalPart(totalSpendableBalance, defaultUnit.magnitude),
+        {
+          disableRounding: true,
+          showAllDigits: false,
+          showCode: true,
+          locale,
+        },
+      ),
+    [totalSpendableBalance, defaultUnit, locale],
   );
 
   /** show amount ratio buttons only if we can ratio the available assets to 25% or less */
   const showAmountRatio = useMemo(
     () => totalSpendableBalance.gt(BigNumber(4 * 10 ** defaultUnit.magnitude)),
-    [spendableBalance, defaultUnit, totalSpendableBalance],
+    [defaultUnit, totalSpendableBalance],
   );
 
   const amountButtons = useMemo(
@@ -163,7 +168,7 @@ const AmountField = ({
             },
           ]
         : [],
-    [showAmountRatio, spendableBalance, totalSpendableBalance],
+    [showAmountRatio, totalSpendableBalance],
   );
 
   if (!status) return null;

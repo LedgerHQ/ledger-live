@@ -40,8 +40,7 @@ function StepConfirmation({
   device,
   signed,
   transaction,
-}: StepProps & { theme: * }) {
-
+}: StepProps) {
   if (optimisticOperation) {
     return (
       <Container>
@@ -91,8 +90,14 @@ export function StepConfirmationFooter({
     <RetryButton ml={2} primary onClick={onRetry} />
   ) : (
     <Box horizontal alignItems="right">
-      <Button ml={2} primary event="Unfreeze Flow Step 3 View OpD Clicked" onClick={onClose} secondary>
-      <Trans i18nKey="icon.unfreeze.steps.confirmation.success.close" />
+      <Button
+        ml={2}
+        primary
+        event="Unfreeze Flow Step 3 View OpD Clicked"
+        onClick={onClose}
+        secondary
+      >
+        <Trans i18nKey="icon.unfreeze.steps.confirmation.success.close" />
       </Button>
     </Box>
   );

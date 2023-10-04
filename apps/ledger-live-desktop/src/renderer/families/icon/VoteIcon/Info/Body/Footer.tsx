@@ -36,8 +36,8 @@ export default function VoteTronInfoModalBodyFooter() {
     dispatch(closeModal(name));
     dispatch(
       openModal("MODAL_VOTE_ICON", {
-        parentAccount,
         account,
+        parentAccount,
       }),
     );
   }, [accountContext, dispatch]);

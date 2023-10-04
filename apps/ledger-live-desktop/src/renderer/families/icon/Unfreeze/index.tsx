@@ -5,7 +5,7 @@ import Modal from "~/renderer/components/Modal";
 import Body from "./Body";
 import type { StepId } from "./types";
 type State = {
-  stepId: StepId,
+  stepId: StepId;
 };
 
 const INITIAL_STATE = {
@@ -13,10 +13,6 @@ const INITIAL_STATE = {
 };
 
 class UnFreezeModal extends PureComponent<{ name: string }, State> {
-  state = INITIAL_STATE;
-
-  handleReset = () => this.setState({ ...INITIAL_STATE });
-
   handleStepChange = (stepId: StepId) => this.setState({ stepId });
 
   handleReset = () =>
@@ -24,17 +20,14 @@ class UnFreezeModal extends PureComponent<{ name: string }, State> {
       stepId: "amount",
     });
 
-  handleStepChange = (stepId: StepId) => this.setState({ stepId });
-
   render() {
     const { stepId } = this.state;
-    const { name } = this.props;
 
     const isModalLocked = ["connectDevice", "confirmation"].includes(stepId);
 
     return (
       <Modal
-        name={name}
+        name="MODAL_ICON_UNFREEZE"
         centered
         refocusWhenChange={stepId}
         onHide={this.handleReset}
@@ -42,7 +35,7 @@ class UnFreezeModal extends PureComponent<{ name: string }, State> {
         render={({ onClose, data }) => (
           <Body
             stepId={stepId}
-            name={name}
+            name="MODAL_ICON_UNFREEZE"
             onClose={onClose}
             onChangeStepId={this.handleStepChange}
             params={data || {}}

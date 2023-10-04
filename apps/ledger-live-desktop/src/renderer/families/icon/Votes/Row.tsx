@@ -16,7 +16,7 @@ import Trophy from "~/renderer/icons/Trophy";
 import Medal from "~/renderer/icons/Medal";
 import Discreet from "~/renderer/components/Discreet";
 
-const Wrapper: ThemedComponent<*> = styled.div`
+const Wrapper: ThemedComponent<{}> = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -32,13 +32,13 @@ const Column: ThemedComponent<{ clickable?: boolean }> = styled(TableLine).attrs
 `;
 
 type Props = {
-  validator: *,
-  address: string,
-  isSR: boolean,
-  amount: React$Node,
-  percentTP: React$Node,
-  currency: *,
-  explorerView: ?ExplorerView,
+  validator: unknown;
+  address: string;
+  isSR: boolean;
+  amount: ReactNode;
+  percentTP: ReactNode;
+  currency: unknown;
+  explorerView: ExplorerView;
 };
 
 const IconContainer = styled.div`
@@ -55,15 +55,7 @@ const IconContainer = styled.div`
     p.isSR ? p.theme.colors.palette.primary.main : p.theme.colors.palette.text.shade60};
 `;
 
-const Row = ({
-  validator,
-  address,
-  amount,
-  isSR,
-  percentTP,
-  currency,
-  explorerView,
-}: Props) => {
+const Row = ({ validator, address, amount, isSR, percentTP, currency, explorerView }: Props) => {
   const srURL = explorerView && getAddressExplorer(explorerView, address);
 
   const openSR = useCallback(() => {

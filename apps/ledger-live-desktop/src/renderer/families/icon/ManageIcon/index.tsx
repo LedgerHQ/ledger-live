@@ -8,7 +8,7 @@ import { BigNumber } from "bignumber.js";
 
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 
-import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { SubAccount } from "@ledgerhq/types-live";
 
 import { openModal } from "~/renderer/actions/modals";
 import Box from "~/renderer/components/Box";
@@ -17,9 +17,12 @@ import Freeze from "~/renderer/icons/Freeze";
 import Vote from "~/renderer/icons/Vote";
 import Unfreeze from "~/renderer/icons/Unfreeze";
 import Text from "~/renderer/components/Text";
-import moment from "moment";
+import { IconAccount } from "@ledgerhq/live-common/families/icon/types";
 import Clock from "~/renderer/icons/Clock";
-
+export type Props = {
+  account: IconAccount | SubAccount;
+  source?: string;
+};
 const IconWrapper = styled.div`
   width: 32px;
   height: 32px;
@@ -86,12 +89,7 @@ const Description = styled(Text).attrs(({ isPill }) => ({
   fontSize: isPill ? 2 : 3,
   color: "palette.text.shade60",
 }))`
-  ${p =>
-    p.isPill
-      ? `
-    text-transform: uppercase;
-  `
-      : ""}
+  ${p => (p.isPill ? `text-transform: uppercase;` : "")}
 `;
 
 const TimerWrapper = styled(Box).attrs(() => ({
@@ -112,47 +110,43 @@ const TimerWrapper = styled(Box).attrs(() => ({
   }
 `;
 
-type Props = {
-  name?: string,
-  account: AccountLike,
-  parentAccount: ?Account,
-  ...
-};
-
-const ManageModal = ({ name, account, parentAccount, ...rest }: Props) => {
-  let MIN_TRANSACTION_AMOUNT = 1
+const ManageModal = ({ account, source, ...rest }: Props) => {
+  console.log("account nef", account);
+  const MIN_TRANSACTION_AMOUNT = 1;
   const dispatch = useDispatch();
-  const mainAccount = getMainAccount(account, parentAccount);
-
-  const { spendableBalance, iconResources } = mainAccount;
+  //const mainAccount = getMainAccount(account, parentAccount);
+  //const { spendableBalance, iconResources } = mainAccount;
+  const { spendableBalance, iconResources } = account;
+  //invariant(iconResources, "icon account expected");
 
   const { votingPower, votes } = iconResources || {};
 
-  const canFreeze = spendableBalance && spendableBalance.gte(MIN_TRANSACTION_AMOUNT) && votingPower == 0;
-
+  const canFreeze =
+    spendableBalance && spendableBalance.gte(MIN_TRANSACTION_AMOUNT) && !votingPower;
   const canUnfreeze = votingPower > 0;
 
   const canVote = votingPower > 0 || votes?.length > 0;
 
   const onSelectAction = useCallback(
-    (name, onClose) => {
+    (name, onClose, params = {}) => {
       onClose();
       dispatch(
         openModal(name, {
-          parentAccount,
           account,
+          source,
+          ...params,
         }),
       );
     },
-    [dispatch, account, parentAccount],
+    [dispatch, account, source],
   );
 
   return (
     <Modal
       {...rest}
-      name={name}
+      name="MODAL_MANAGE_ICON"
       centered
-      render={({ onClose, data }) => (
+      render={({ onClose }) => (
         <ModalBody
           onClose={onClose}
           onBack={undefined}
@@ -173,9 +167,11 @@ const ManageModal = ({ name, account, parentAccount, ...rest }: Props) => {
                       <Trans i18nKey="icon.manage.freeze.title" />
                     </Title>
                     <Description>
-                      {!canVote
-                        ? <Trans i18nKey="icon.manage.freeze.description" />
-                        : <Trans i18nKey="icon.manage.freeze.shouldUseVotingPowerFirst" />}
+                      {!canVote ? (
+                        <Trans i18nKey="icon.manage.freeze.description" />
+                      ) : (
+                        <Trans i18nKey="icon.manage.freeze.shouldUseVotingPowerFirst" />
+                      )}
                     </Description>
                   </InfoWrapper>
                 </ManageButton>
