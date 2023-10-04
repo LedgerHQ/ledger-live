@@ -10,6 +10,7 @@ import {
   hasMinimumFundsToCancel,
   hasMinimumFundsToSpeedUp,
 } from "@ledgerhq/live-common/families/evm/editTransaction/index";
+import { EditType } from "@ledgerhq/live-common/families/evm/editTransaction/types";
 import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 import { getEnv } from "@ledgerhq/live-env";
 import { log } from "@ledgerhq/logs";
@@ -88,15 +89,14 @@ function MethodSelectionComponent({ navigation, route }: Props) {
     transactionToUpdate: transactionToEdit,
   });
 
-  // TODO: options should be a proper type (use EditType in ledger-live-common/src/families/evm/getUpdateTransactionPatch.ts)
-  const [selectedMethod, setSelectedMethod] = useState<"cancel" | "speedup" | null>();
+  const [selectedMethod, setSelectedMethod] = useState<EditType | null>();
 
   // if we are at this step (i.e: in this screen) it means the transaction is editable
   const isOldestEditableOperation = isOldestPendingOperation(mainAccount, transactionToEdit.nonce);
   const bridge: AccountBridge<EvmTransaction> = getAccountBridge(account, parentAccount as Account);
 
   const onSelect = useCallback(
-    async (option: "cancel" | "speedup") => {
+    async (option: EditType) => {
       log("Edit Transaction - Method Selection", "onSelect Cancel/Speed up", option);
 
       const patch = await getEditTransactionPatch({

@@ -1,8 +1,8 @@
+import { TransactionRaw, TransactionStatusRaw } from "@ledgerhq/coin-evm/types/index";
+import { EditType } from "@ledgerhq/live-common/families/evm/editTransaction/types";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { Device } from "@ledgerhq/types-devices";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
-import { TransactionRaw, TransactionStatusRaw } from "@ledgerhq/coin-evm/types/index";
-
 import { ScreenName } from "../../../const";
 
 export type EditTransactionParamList = {
@@ -26,7 +26,7 @@ export type EditTransactionParamList = {
     overrideAmountLabel?: string;
     hideTotal?: boolean;
     appName?: string;
-    editType: "cancel" | "speedup";
+    editType: EditType;
   };
   [ScreenName.EvmCustomFees]: {
     accountId: string;
