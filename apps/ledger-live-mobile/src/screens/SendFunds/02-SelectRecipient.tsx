@@ -106,6 +106,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
 
   const onPressScan = useCallback(() => {
     if (!transaction) return null;
+    setValue("");
     return navigation.navigate(ScreenName.ScanRecipient, {
       ...route.params,
       accountId: route.params?.accountId,
