@@ -259,7 +259,7 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.CosmosClaimRewardsFlow]: NavigatorScreenParams<CosmosClaimRewardsFlowParamList>;
 
   // EVM
-  [NavigatorName.EditTransaction]: NavigatorScreenParams<EditTransactionParamList>;
+  [NavigatorName.EvmEditTransaction]: NavigatorScreenParams<EditTransactionParamList>;
 
   // Solana
   [NavigatorName.SolanaDelegationFlow]: NavigatorScreenParams<SolanaDelegationFlowParamList>;

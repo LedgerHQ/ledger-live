@@ -34,8 +34,8 @@ const EditOperationPanelComponent = ({
     onPress && onPress();
 
     if (account) {
-      navigation.navigate(NavigatorName.EditTransaction, {
-        screen: ScreenName.EditTransactionMethodSelection,
+      navigation.navigate(NavigatorName.EvmEditTransaction, {
+        screen: ScreenName.EvmEditTransactionMethodSelection,
         params: { operation, account, parentAccount },
       });
     }
