@@ -20,9 +20,7 @@ export default function StepVote({
   t,
 }: StepProps) {
   invariant(account && transaction && transaction.votes, "account and transaction required");
-  console.log("iconResourcesaaaa");
   const { iconResources } = account;
-  console.log("iconResources", iconResources);
   const bridge = getAccountBridge(account, parentAccount);
   let validators = transaction.votes;
   if (transaction.votes.length === 0) {

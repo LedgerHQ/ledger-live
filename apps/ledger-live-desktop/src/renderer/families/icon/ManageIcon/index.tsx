@@ -1,12 +1,9 @@
 // @flow
-
-import React, { useCallback, useMemo } from "react";
+import invariant from "invariant";
+import React, { useCallback } from "react";
 import { useDispatch } from "react-redux";
 import styled, { css } from "styled-components";
 import { Trans } from "react-i18next";
-import { BigNumber } from "bignumber.js";
-
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
 
 import type { SubAccount } from "@ledgerhq/types-live";
 
@@ -117,12 +114,13 @@ const ManageModal = ({ account, source, ...rest }: Props) => {
   //const mainAccount = getMainAccount(account, parentAccount);
   //const { spendableBalance, iconResources } = mainAccount;
   const { spendableBalance, iconResources } = account;
-  //invariant(iconResources, "icon account expected");
+  invariant(iconResources, "icon account expected");
 
   const { votingPower, votes } = iconResources || {};
 
   const canFreeze =
-    spendableBalance && spendableBalance.gte(MIN_TRANSACTION_AMOUNT) && !votingPower;
+    spendableBalance && spendableBalance.gte(MIN_TRANSACTION_AMOUNT) && votingPower == 0;
+
   const canUnfreeze = votingPower > 0;
 
   const canVote = votingPower > 0 || votes?.length > 0;
@@ -167,7 +165,7 @@ const ManageModal = ({ account, source, ...rest }: Props) => {
                       <Trans i18nKey="icon.manage.freeze.title" />
                     </Title>
                     <Description>
-                      {!canVote ? (
+                      {canFreeze ? (
                         <Trans i18nKey="icon.manage.freeze.description" />
                       ) : (
                         <Trans i18nKey="icon.manage.freeze.shouldUseVotingPowerFirst" />

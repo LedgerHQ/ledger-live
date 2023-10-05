@@ -20,7 +20,7 @@ export type ModalsData = {
   MODAL_VOTE_ICON: VoteProps;
   MODAL_VOTE_ICON_INFO: VoteInfoProps;
   MODAL_ICON_UNFREEZE: UnFreezeProps;
-  //MODAL_ICON_CLAIM_REWARDS: ClaimRewardsProps;
+  MODAL_ICON_CLAIM_REWARDS: ClaimRewardsProps;
 };
 
 const modals: MakeModalsType<ModalsData> = {
@@ -30,7 +30,7 @@ const modals: MakeModalsType<ModalsData> = {
   MODAL_VOTE_ICON,
   MODAL_VOTE_ICON_INFO,
   MODAL_ICON_UNFREEZE,
-  //MODAL_ICON_CLAIM_REWARDS,
+  MODAL_ICON_CLAIM_REWARDS,
 };
 
 export default modals;

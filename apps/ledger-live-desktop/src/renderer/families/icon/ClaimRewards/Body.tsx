@@ -14,7 +14,7 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 
 import type { StepId, StepProps, St } from "./types";
 import type { Account, Operation } from "@ledgerhq/types-live";
-import type { TFunction } from "react-i18next";
+import type { TFunction } from "i18next";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
@@ -27,7 +27,7 @@ import Stepper from "~/renderer/components/Stepper";
 import StepRewards, { StepRewardsFooter } from "./steps/StepRewards";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
-import logger from "~/logger/logger";
+import logger from "~/renderer/logger";
 
 export type Data = {
   account: Account | null | undefined;
@@ -39,7 +39,6 @@ type OwnProps = {
   onClose: () => void;
   onChangeStepId: (a: StepId) => void;
   params: Data;
-  name: string;
 };
 
 type StateProps = {
