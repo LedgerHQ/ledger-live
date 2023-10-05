@@ -13,10 +13,6 @@ export const StepSummaryFooter = ({
   bridgePending,
   transitionTo,
 }: StepProps) => {
-  if (!account) {
-    return null;
-  }
-
   const mainAccount = getMainAccount(account, parentAccount);
   if (mainAccount.currency.family !== "evm") {
     return null;
