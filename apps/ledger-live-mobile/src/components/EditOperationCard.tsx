@@ -28,8 +28,8 @@ export const EditOperationCard = ({
 
   const onEditTransactionCardPress = useCallback(() => {
     if (account) {
-      navigation.navigate(NavigatorName.EditTransaction, {
-        screen: ScreenName.EditTransactionMethodSelection,
+      navigation.navigate(NavigatorName.EvmEditTransaction, {
+        screen: ScreenName.EvmEditTransactionMethodSelection,
         params: {
           operation: oldestEditableOperation,
           account,
