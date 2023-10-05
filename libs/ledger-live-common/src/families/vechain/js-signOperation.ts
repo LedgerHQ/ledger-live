@@ -18,7 +18,7 @@ const buildOptimisticOperation = async (
   const operation: Operation = {
     id: encodeOperationId(account.id, "", TYPE_OUT),
     hash: "",
-    type: TYPE_OUT,
+    type: subAccountId ? "NONE" : TYPE_OUT,
     value: subAccountId ? new BigNumber(0) : new BigNumber(transaction.amount),
     fee: subAccountId ? new BigNumber(0) : new BigNumber(transaction.estimatedFees),
     blockHash: null,
