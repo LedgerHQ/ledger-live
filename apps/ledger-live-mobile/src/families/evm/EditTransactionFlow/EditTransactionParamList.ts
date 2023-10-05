@@ -9,7 +9,7 @@ export type EditTransactionParamList = {
   [ScreenName.TransactionAlreadyValidatedError]: {
     error: Error;
   };
-  [ScreenName.EditTransactionMethodSelection]: {
+  [ScreenName.EvmEditTransactionMethodSelection]: {
     operation: Operation;
     account: AccountLike;
     parentAccount: Account | undefined | null;
@@ -21,7 +21,7 @@ export type EditTransactionParamList = {
     transaction: Transaction;
     transactionRaw?: TransactionRaw;
     operation?: Operation;
-    currentNavigation: ScreenName.EditTransactionMethodSelection;
+    currentNavigation: ScreenName.EvmEditTransactionMethodSelection;
     nextNavigation: ScreenName.SignTransactionSelectDevice | ScreenName.SendSelectDevice;
     overrideAmountLabel?: string;
     hideTotal?: boolean;
