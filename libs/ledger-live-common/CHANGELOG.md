@@ -1,40 +1,52 @@
 # @ledgerhq/live-common
 
-## 31.8.1-nightly.2
+## 33.0.0
+
+### Major Changes
+
+- [#4285](https://github.com/LedgerHQ/ledger-live/pull/4285) [`533278e2c4`](https://github.com/LedgerHQ/ledger-live/commit/533278e2c40ee764ecb87d4430fa6650f251ff0c) Thanks [@chabroA](https://github.com/chabroA)! - Migrate Ethereum family implementation to EVM family
+
+  Replace the legcay Ethereum familly implementation that was present in ledger-live-common by the coin-evm lib implementation.
+  This change was made in order to improve scalabillity and maintainability of the evm coins, as well as more easilly integrate new evm based chains in the future.
+
+### Minor Changes
+
+- [#4771](https://github.com/LedgerHQ/ledger-live/pull/4771) [`61a891b06f`](https://github.com/LedgerHQ/ledger-live/commit/61a891b06f9028f285f87c321487f691272a9172) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Force nano app min version
+
+- [#4583](https://github.com/LedgerHQ/ledger-live/pull/4583) [`f527d1bb5a`](https://github.com/LedgerHQ/ledger-live/commit/f527d1bb5a2888a916f761d43d2ba5093eaa3e3f) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Integrate injective + gas rework
+
+- [#4741](https://github.com/LedgerHQ/ledger-live/pull/4741) [`a134f28e9d`](https://github.com/LedgerHQ/ledger-live/commit/a134f28e9d220d172148619ed281d4ca897d5532) Thanks [@chabroA](https://github.com/chabroA)! - Add loading state to useGasOptions hook to be used by UI while gasOptions are being fetched
+
+- [#4706](https://github.com/LedgerHQ/ledger-live/pull/4706) [`4dd486d87f`](https://github.com/LedgerHQ/ledger-live/commit/4dd486d87fea4c641cc4a21fc181c6097bab9d3d) Thanks [@Justkant](https://github.com/Justkant)! - feat: send LL version to the manifest-api
 
 ### Patch Changes
 
-- Updated dependencies [[`173d7d6d22`](https://github.com/LedgerHQ/ledger-live/commit/173d7d6d224bcf1cecf364062b6571f52792e371)]:
-  - @ledgerhq/coin-evm@0.6.3-nightly.2
+- [#4879](https://github.com/LedgerHQ/ledger-live/pull/4879) [`51857f5c20`](https://github.com/LedgerHQ/ledger-live/commit/51857f5c2016d435fa970fac899aa906e3f97722) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Remove old obsolete hack on Tezos gas limit
 
-## 31.8.1-nightly.1
+- [#4615](https://github.com/LedgerHQ/ledger-live/pull/4615) [`cf2f585659`](https://github.com/LedgerHQ/ledger-live/commit/cf2f58565937b2a695ac7ff7d225cdbb6e598039) Thanks [@sarneijim](https://github.com/sarneijim)! - Save swap history wallet api exchange
 
-### Patch Changes
+- [#4699](https://github.com/LedgerHQ/ledger-live/pull/4699) [`b21de593ee`](https://github.com/LedgerHQ/ledger-live/commit/b21de593ee705ece38fc812eedb9bf85694e94cb) Thanks [@chabroA](https://github.com/chabroA)! - fix wallet-api complete exchange logic
 
-- [#4867](https://github.com/LedgerHQ/ledger-live/pull/4867) [`bf4c366b6f`](https://github.com/LedgerHQ/ledger-live/commit/bf4c366b6f5b062476645fe37ce62b3925822377) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - include smallest denomination in swap request
+- [#4648](https://github.com/LedgerHQ/ledger-live/pull/4648) [`8b09b0b571`](https://github.com/LedgerHQ/ledger-live/commit/8b09b0b5717a47aedae5a8a80acf6d077af3b40b) Thanks [@cksanders](https://github.com/cksanders)! - Update multibuy manifest to v2 to ensure full backwards compatibility
 
-- [#4884](https://github.com/LedgerHQ/ledger-live/pull/4884) [`df5c9ae02a`](https://github.com/LedgerHQ/ledger-live/commit/df5c9ae02a604ddba13ddc64caf8d9ad079c303d) Thanks [@stephane-lieumont-ledger](https://github.com/stephane-lieumont-ledger)! - Need to add other link firebase for quickAccess Recover
+- [#4533](https://github.com/LedgerHQ/ledger-live/pull/4533) [`70e4277bc9`](https://github.com/LedgerHQ/ledger-live/commit/70e4277bc9dda253b894bdae5f2c8a5f43a9a64e) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Typed useFeature hook
 
-- Updated dependencies []:
-  - @ledgerhq/coin-algorand@0.3.3-nightly.1
-  - @ledgerhq/coin-evm@0.6.3-nightly.1
-  - @ledgerhq/coin-framework@0.5.5-nightly.1
-  - @ledgerhq/coin-polkadot@0.4.3-nightly.1
-  - @ledgerhq/domain-service@1.1.12-nightly.1
-  - @ledgerhq/hw-app-eth@6.34.7-nightly.1
+- Updated dependencies [[`c86637f6e5`](https://github.com/LedgerHQ/ledger-live/commit/c86637f6e57845716a791854dd8f686807152e73), [`72288402ec`](https://github.com/LedgerHQ/ledger-live/commit/72288402ec70f9159022505cb3187e63b24df450), [`f527d1bb5a`](https://github.com/LedgerHQ/ledger-live/commit/f527d1bb5a2888a916f761d43d2ba5093eaa3e3f), [`a134f28e9d`](https://github.com/LedgerHQ/ledger-live/commit/a134f28e9d220d172148619ed281d4ca897d5532), [`4cb507a52b`](https://github.com/LedgerHQ/ledger-live/commit/4cb507a52bf336d395b08b4c1a429bd4956ab22d), [`a134f28e9d`](https://github.com/LedgerHQ/ledger-live/commit/a134f28e9d220d172148619ed281d4ca897d5532), [`49ea3fd98b`](https://github.com/LedgerHQ/ledger-live/commit/49ea3fd98ba1e1e0ed54d29ab5fdc71c4918183f), [`b779f6c964`](https://github.com/LedgerHQ/ledger-live/commit/b779f6c964079b9cd9a4ee985cd5cdbb8c49406e), [`533278e2c4`](https://github.com/LedgerHQ/ledger-live/commit/533278e2c40ee764ecb87d4430fa6650f251ff0c)]:
+  - @ledgerhq/hw-app-eth@6.34.7
+  - @ledgerhq/cryptoassets@11.0.0
+  - @ledgerhq/coin-evm@0.8.0
+  - @ledgerhq/coin-framework@0.7.0
+  - @ledgerhq/live-env@0.6.0
+  - @ledgerhq/coin-algorand@0.3.3
+  - @ledgerhq/coin-polkadot@0.4.3
+  - @ledgerhq/domain-service@1.1.12
+  - @ledgerhq/live-network@1.1.7
 
-## 31.8.1-nightly.0
+## 32.1.0-next.0
 
-### Patch Changes
+### Minor Changes
 
-- Updated dependencies [[`8fadeb17fb`](https://github.com/LedgerHQ/ledger-live/commit/8fadeb17fbf65e671762be9668a5ff72223ebe47)]:
-  - @ledgerhq/cryptoassets@9.14.0-nightly.0
-  - @ledgerhq/coin-algorand@0.3.3-nightly.0
-  - @ledgerhq/coin-evm@0.6.3-nightly.0
-  - @ledgerhq/coin-framework@0.5.5-nightly.0
-  - @ledgerhq/coin-polkadot@0.4.3-nightly.0
-  - @ledgerhq/domain-service@1.1.12-nightly.0
-  - @ledgerhq/hw-app-eth@6.34.7-nightly.0
+- [#4771](https://github.com/LedgerHQ/ledger-live/pull/4771) [`61a891b06f`](https://github.com/LedgerHQ/ledger-live/commit/61a891b06f9028f285f87c321487f691272a9172) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Force nano app min version
 
 ## 31.8.0
 

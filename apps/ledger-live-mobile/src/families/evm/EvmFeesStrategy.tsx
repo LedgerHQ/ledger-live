@@ -22,7 +22,7 @@ const getCustomStrategyFees = (transaction: Transaction): BigNumber | null => {
 };
 
 export default function EvmFeesStrategy({
-  account: accountProp,
+  account,
   parentAccount,
   transaction,
   setTransaction,
@@ -31,13 +31,15 @@ export default function EvmFeesStrategy({
   shouldPrefillEvmGasOptions = true,
   ...props
 }: Props<Transaction>) {
-  const account = getMainAccount(accountProp, parentAccount);
-  const bridge: AccountBridge<Transaction> = getAccountBridge(account);
+  const mainAccount = getMainAccount(account, parentAccount);
+  const bridge: AccountBridge<Transaction> = getAccountBridge(mainAccount);
 
   const [gasOptions, error, loading] = useGasOptions({
-    currency: account.currency,
+    currency: mainAccount.currency,
     transaction,
-    interval: account.currency.blockAvgTime ? account.currency.blockAvgTime * 1000 : undefined,
+    interval: mainAccount.currency.blockAvgTime
+      ? mainAccount.currency.blockAvgTime * 1000
+      : undefined,
   });
 
   if (error) {
@@ -103,10 +105,20 @@ export default function EvmFeesStrategy({
       transaction,
       currentNavigation: ScreenName.SendSummary,
       nextNavigation: ScreenName.SendSelectDevice,
+      gasOptions,
+      goBackOnSetTransaction: false,
       setTransaction,
       setCustomStrategyTransactionPatch,
     });
-  }, [navigation, route.params, account.id, parentAccount, transaction, setTransaction]);
+  }, [
+    navigation,
+    route.params,
+    account.id,
+    parentAccount,
+    gasOptions,
+    transaction,
+    setTransaction,
+  ]);
 
   if (loading) {
     return <InfiniteLoader size={32} />;
@@ -130,7 +142,7 @@ export default function EvmFeesStrategy({
       } as Transaction)}
       onStrategySelect={onFeesSelected}
       onCustomFeesPress={openCustomFees}
-      account={account}
+      account={mainAccount}
       parentAccount={parentAccount}
       transaction={transaction}
       NetworkFeesInfoComponent={EvmNetworkFeeInfo}

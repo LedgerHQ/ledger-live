@@ -1,15 +1,15 @@
 # @ledgerhq/live-env
 
-## 0.6.0-nightly.1
+## 0.6.0
 
-### Patch Changes
+### Minor Changes
 
-- [#4709](https://github.com/LedgerHQ/ledger-live/pull/4709) [`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac) Thanks [@alexandremgo](https://github.com/alexandremgo)! - feat: enable printing logs to stdout for debug
+- [#4285](https://github.com/LedgerHQ/ledger-live/pull/4285) [`533278e2c4`](https://github.com/LedgerHQ/ledger-live/commit/533278e2c40ee764ecb87d4430fa6650f251ff0c) Thanks [@chabroA](https://github.com/chabroA)! - Migrate Ethereum family implementation to EVM family
 
-  - Setup simple tracing system on LLM with context
-  - If `VERBOSE` env var is set, filtered logs can be stdout from the main thread
+  Replace the legcay Ethereum familly implementation that was present in ledger-live-common by the coin-evm lib implementation.
+  This change was made in order to improve scalabillity and maintainability of the evm coins, as well as more easilly integrate new evm based chains in the future.
 
-## 0.6.0-nightly.0
+## 0.6.0-next.0
 
 ### Minor Changes
 
