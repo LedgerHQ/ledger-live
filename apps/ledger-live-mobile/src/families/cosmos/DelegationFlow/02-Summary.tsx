@@ -33,6 +33,7 @@ import { accountScreenSelector } from "../../../reducers/accounts";
 import ValidatorImage from "../shared/ValidatorImage";
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import { CosmosDelegationFlowParamList } from "./types";
+import Config from "react-native-config";
 
 type Props = StackNavigatorProps<
   CosmosDelegationFlowParamList,
@@ -108,26 +109,28 @@ export default function DelegationSummary({ navigation, route }: Props) {
 
   const [rotateAnim] = useState(() => new Animated.Value(0));
   useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(rotateAnim, {
-          toValue: 1,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-        Animated.timing(rotateAnim, {
-          toValue: -1,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-        Animated.timing(rotateAnim, {
-          toValue: 0,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-        Animated.delay(1000),
-      ]),
-    ).start();
+    if (!Config.MOCK) {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(rotateAnim, {
+            toValue: 1,
+            duration: 200,
+            useNativeDriver: true,
+          }),
+          Animated.timing(rotateAnim, {
+            toValue: -1,
+            duration: 300,
+            useNativeDriver: true,
+          }),
+          Animated.timing(rotateAnim, {
+            toValue: 0,
+            duration: 200,
+            useNativeDriver: true,
+          }),
+          Animated.delay(1000),
+        ]),
+      ).start();
+    }
     return () => {
       rotateAnim.setValue(0);
     };

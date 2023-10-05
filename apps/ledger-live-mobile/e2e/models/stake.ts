@@ -1,4 +1,4 @@
-import { delay, getTextOfElement, tapById, waitForElementById } from "../helpers";
+import { getTextOfElement, tapById, waitForElementById } from "../helpers";
 
 export default class StakePage {
   cosmosDelegationSummaryValidatorId = "cosmos-delegation-summary-validator";
@@ -30,13 +30,11 @@ export default class StakePage {
   async setAmount(delegatedPercent: 25 | 50 | 75 | 100) {
     await waitForElementById(this.cosmosDelegationSummaryAmountId);
     await tapById(this.cosmosDelegationSummaryAmountId);
-    await waitForElementById(this.cosmosDelegatedRatioId(delegatedPercent));
-    await delay(200);
     await tapById(this.cosmosDelegatedRatioId(delegatedPercent));
     const max = delegatedPercent == 100;
     const id = max ? this.cosmosAllAssestsUsedText : this.cosmosAssestsRemainingId;
     await waitForElementById(id);
-    const assestsRemaining = max ? "0\u00a0atom" : (await getTextOfElement(id)).split(": ")[1];
+    const assestsRemaining = max ? "0\u00a0ATOM" : (await getTextOfElement(id)).split(": ")[1];
     await tapById("cosmos-delegation-amount-continue");
     await waitForElementById(this.cosmosDelegationSummaryAmountId);
     const assestsDelagated = await this.cosmosDelegationAmountValue();
@@ -44,8 +42,6 @@ export default class StakePage {
   }
 
   async summaryContinue() {
-    await waitForElementById(this.summaryContinueButtonId);
-    await delay(200);
     await tapById(this.summaryContinueButtonId);
   }
 

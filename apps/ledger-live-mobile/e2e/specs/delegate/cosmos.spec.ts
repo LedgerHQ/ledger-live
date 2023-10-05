@@ -1,5 +1,3 @@
-import { device } from "detox";
-
 import { genAccount } from "@ledgerhq/live-common/mock/account";
 import {
   getCryptoCurrencyById,
@@ -34,11 +32,11 @@ const testedAccount = genAccount(id, {
 
 const COSMOS_MIN_SAFE = new BigNumber(100000); // 100000 uAtom
 const COSMOS_MIN_FEES = new BigNumber(6000);
-const formattedAmount = (unit: Unit, amount: BigNumber) =>
+const formattedAmount = (unit: Unit, amount: BigNumber, showAllDigits = false) =>
   // amount formatted with the same unit as what the input should use
   formatCurrencyUnit(unit, amount, {
     showCode: true,
-    showAllDigits: true,
+    showAllDigits: showAllDigits,
     disableRounding: false,
   });
 
@@ -63,33 +61,23 @@ describe("Cosmos delegate flow", () => {
 
   it("goes through the delegate flow", async () => {
     const delegatedPercent = 50;
-    const usableAmount = testedAccount.balance.minus(COSMOS_MIN_SAFE).minus(COSMOS_MIN_FEES);
+    const usableAmount = testedAccount.spendableBalance
+      .minus(COSMOS_MIN_SAFE)
+      .minus(COSMOS_MIN_FEES);
     const delegatedAmount = usableAmount.div(100 / delegatedPercent).integerValue();
     const remainingAmount = usableAmount.minus(delegatedAmount);
 
     await stakePage.selectCurrency(testedCurrency);
     await stakePage.selectAccount(testedAccount.id);
-    await device.disableSynchronization();
 
-    // FIXME : Sometimes the app crash because delegation providers seems to not load at first launch
-    // "validatorName: chosenValidator.name" undefined.
-    await stakePage.delegationStart();
-
-    // FIXME : "account and cosmos transaction required" error because cosmosResources are undefined
     const [assestsDelagated, assestsRemaining] = await stakePage.setAmount(delegatedPercent);
-
     expect(await stakePage.cosmosDelegationSummaryValidator()).toEqual("Ledger");
-
-    // FIXME : Rounding issue
     expect(assestsRemaining).toEqual(formattedAmount(testedAccount.unit, remainingAmount));
-    expect(assestsDelagated).toEqual(formattedAmount(testedAccount.unit, delegatedAmount));
+    expect(assestsDelagated).toEqual(formattedAmount(testedAccount.unit, delegatedAmount, true));
 
-    // FIXME : Continue button is disabled
     await stakePage.summaryContinue();
-
     await deviceAction.selectMockDevice();
     await deviceAction.openApp();
-
     await stakePage.successClose();
   });
 });

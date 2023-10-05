@@ -1,5 +1,11 @@
 import { BigNumber } from "bignumber.js";
-import { NotEnoughBalance, RecipientRequired, InvalidAddress, FeeTooHigh } from "@ledgerhq/errors";
+import {
+  AmountRequired,
+  NotEnoughBalance,
+  RecipientRequired,
+  InvalidAddress,
+  FeeTooHigh,
+} from "@ledgerhq/errors";
 import type { CosmosAccount, CosmosValidatorItem, StatusErrorMap, Transaction } from "../types";
 import {
   scanAccounts,
@@ -14,6 +20,9 @@ import { setCosmosPreloadData, asSafeCosmosPreloadData } from "../preloadedData"
 import { getMainAccount } from "../../../account";
 import mockPreloadedData from "../preloadedData.mock";
 import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
+import { CosmosValidatorsManager } from "../CosmosValidatorsManager";
+import { getCryptoCurrencyById } from "../../../currencies";
 const receive = makeAccountBridgeReceive();
 
 const defaultGetFees = (a, t) => (t.fees || new BigNumber(0)).times(t.gas || new BigNumber(0));
@@ -58,10 +67,16 @@ const getTransactionStatus = (account: Account, t: Transaction) => {
   }
 
   // Fill up recipient errors...
-  if (!t.recipient) {
-    errors.recipient = new RecipientRequired("");
-  } else if (isInvalidRecipient(t.recipient)) {
-    errors.recipient = new InvalidAddress("");
+  if (t.mode === "send") {
+    if (!t.recipient) {
+      errors.recipient = new RecipientRequired("");
+    } else if (isInvalidRecipient(t.recipient)) {
+      errors.recipient = new InvalidAddress("");
+    }
+  }
+
+  if (amount.eq(0)) {
+    errors.amount = new AmountRequired();
   }
 
   return Promise.resolve({
@@ -99,6 +114,8 @@ const accountBridge: AccountBridge<Transaction> = {
   receive,
   signOperation,
   broadcast,
+  assignFromAccountRaw,
+  assignToAccountRaw,
 };
 const currencyBridge: CurrencyBridge = {
   scanAccounts,
@@ -107,6 +124,11 @@ const currencyBridge: CurrencyBridge = {
     return Promise.resolve(mockPreloadedData);
   },
   hydrate: (data: { validators?: CosmosValidatorItem[] }) => {
+    if (!data || typeof data !== "object") return;
+    const { validators } = data;
+    if (!validators || typeof validators !== "object" || !Array.isArray(validators)) return;
+    const cosmosValidatorsManager = new CosmosValidatorsManager(getCryptoCurrencyById("cosmos"));
+    cosmosValidatorsManager.hydrateValidators(validators);
     setCosmosPreloadData("cosmos", asSafeCosmosPreloadData(data));
   },
 };
