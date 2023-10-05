@@ -536,7 +536,7 @@ export default function BaseNavigator() {
           }}
         />
         <Stack.Screen
-          name={NavigatorName.EditTransaction}
+          name={NavigatorName.EvmEditTransaction}
           options={{ headerShown: false }}
           component={EditTransactionNavigator}
         />

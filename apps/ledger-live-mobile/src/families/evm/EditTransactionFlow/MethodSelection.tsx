@@ -47,7 +47,7 @@ const getSpeedUpDescriptionKey = (
 
 type Props = StackNavigatorProps<
   EditTransactionParamList,
-  ScreenName.EditTransactionMethodSelection
+  ScreenName.EvmEditTransactionMethodSelection
 >;
 
 function MethodSelectionComponent({ navigation, route }: Props) {
@@ -163,7 +163,7 @@ function MethodSelectionComponent({ navigation, route }: Props) {
       parentId: parentAccount?.id,
       transaction,
       transactionRaw: operation.transactionRaw as TransactionRaw,
-      currentNavigation: ScreenName.EditTransactionMethodSelection,
+      currentNavigation: ScreenName.EvmEditTransactionMethodSelection,
       nextNavigation: ScreenName.SendSelectDevice,
       editType: selectedMethod,
     });

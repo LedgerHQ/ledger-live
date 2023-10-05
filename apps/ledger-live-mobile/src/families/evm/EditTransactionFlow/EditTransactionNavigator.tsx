@@ -26,7 +26,7 @@ export default function EditTransactionNavigator() {
   return (
     <Stack.Navigator screenOptions={stackNavigationConfig}>
       <Stack.Screen
-        name={ScreenName.EditTransactionMethodSelection}
+        name={ScreenName.EvmEditTransactionMethodSelection}
         component={MethodSelection}
         options={{
           headerTitle: () => <StepHeader title={t("editTransaction.header")} />,
