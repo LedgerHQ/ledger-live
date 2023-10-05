@@ -50,8 +50,8 @@ function getOperationType(
  */
 function getOperationValue(transaction: Transaction, addr: string): BigNumber {
   return isSender(transaction, addr)
-    ? new BigNumber(transaction.amount ?? 0).plus(transaction.transaction_fee ?? 0)
-    : new BigNumber(transaction.amount ?? 0);
+    ? new BigNumber(transaction.value_decimal ?? 0).plus(transaction.transaction_fee ?? 0)
+    : new BigNumber(transaction.value_decimal ?? 0);
 }
 
 /**
@@ -63,19 +63,20 @@ function transactionToOperation(
   transaction: Transaction
 ): Operation {
   const type = getOperationType(transaction, addr);
+  transaction.transaction_fee = new BigNumber(IconAmount.fromLoop((transaction.transaction_fee || 0).toString(), iconUnit))
   return {
     id: encodeOperationId(accountId, transaction.hash ?? "", type),
     accountId,
-    fee: new BigNumber(transaction.transaction_fee || 0),
+    fee: transaction.transaction_fee,
     value: getOperationValue(transaction, addr),
     type,
     hash: transaction.hash ?? "",
     blockHash: null,
     blockHeight: transaction.block_number,
-    date: new Date(transaction.block_timestamp ? transaction.block_timestamp : 0),
+    date: new Date(transaction.block_timestamp ? transaction.block_timestamp / 1000 : 0),
     senders: [transaction.from_address ?? ""],
     recipients: transaction.to_address ? [transaction.to_address] : [],
-    extra:{
+    extra: {
       method: transaction.method,
       data: transaction.data,
       txType: transaction.transaction_type
@@ -273,7 +274,7 @@ export const getStake = async (address, currency) => {
     if (res?.unstakes) {
       const unstakes = res?.unstakes;
       for (let item of unstakes) {
-        const value =BigNumber(IconAmount.fromLoop(item.unstake || 0, iconUnit))
+        const value = BigNumber(IconAmount.fromLoop(item.unstake || 0, iconUnit));
         unstake = unstake.plus(value);
       }
     }

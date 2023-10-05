@@ -24,17 +24,21 @@ export const submit = async (txObj, currency) => {
 };
 
 export const getAccountDetails = async (addr: string, url: string) => {
-  const resp = await network({
-    method: "GET",
-    url: `${url}/addresses/details/${addr.toString()}`,
-  });
-  const { status, data } = resp;
   let balance = 0;
-  if (data?.balance) {
-    balance = data?.balance;
-  }
-  if (status !== 200) {
-    throw Error("Cannot get account details");
+  try {
+    const resp = await network({
+      method: "GET",
+      url: `${url}/addresses/details/${addr.toString()}?address=${addr.toString()}`,
+    });
+    const { status, data } = resp;
+    if (data?.balance) {
+      balance = data?.balance;
+    }
+    if (status !== 200) {
+      throw Error("Cannot get account details");
+    }
+  } catch (error) {
+    console.error(error);
   }
   return {
     balance,

@@ -1,21 +1,36 @@
 {
   "version": "0.2.0",
+  "compounds": [
+    {
+      "name": "Run and Debug LLD",
+      "configurations": ["Debug Main Process", "Debug Renderer Process"],
+      "stopAll": true
+    }
+  ],
   "configurations": [
     {
-      // Start LLD with:
-      //ELECTRON_ARGS=--remote-debugging-port=8315 pnpm dev:lld
-      "name": "Attach Electron Renderer",
-      "type": "chrome",
-      "request": "attach",
-      "port": 8315
+      "name": "Debug Main Process",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "pnpm",
+      "args": ["dev:lld"],
+      "outputCapture": "std",
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/**",
+        "!**/node_modules/**"
+    ],
+      "env": {
+        "ELECTRON_ARGS": "--remote-debugging-port=8315"
+      }
     },
     {
-      // Start LLD with:
-      //LEDGER_INTERNAL_ARGS=--inspect pnpm dev:lld
-      "name": "Attach Electron Main",
-      "type": "node",
+      "name": "Debug Renderer Process",
+      "type": "chrome",
       "request": "attach",
-      "skipFiles": ["<node_internals>/**"]
+      "address": "localhost",
+      "port": 8315,
+      "timeout": 60000
     }
   ]
 }
