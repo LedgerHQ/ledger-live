@@ -13,8 +13,8 @@ const family: IconFamily = {
   transactionConfirmFields,
   AccountBodyHeader,
   AccountSubHeader,
-  StakeBanner,
   AccountBalanceSummaryFooter,
+  StakeBanner,
 };
 
 export default family;

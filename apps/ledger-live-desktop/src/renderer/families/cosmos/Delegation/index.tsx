@@ -45,7 +45,6 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
     unbondings,
   } = cosmosResources;
   const delegationEnabled = canDelegate(account);
-  console.log("account", account);
   const mappedDelegations = useCosmosFamilyMappedDelegations(account);
   const currencyId = account.currency.id;
   const { validators } = useCosmosFamilyPreloadData(currencyId);

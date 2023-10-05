@@ -2,22 +2,20 @@
 
 import React, { PureComponent } from "react";
 import Modal from "~/renderer/components/Modal";
-import Body from "./Body";
+import Body, { Data } from "./Body";
 import type { StepId } from "./types";
 type State = {
   stepId: StepId;
 };
-
-const INITIAL_STATE = {
+const INITIAL_STATE: State = {
   stepId: "amount",
 };
-
-class UnFreezeModal extends PureComponent<{ name: string }, State> {
-  handleStepChange = (stepId: StepId) => this.setState({ stepId });
-
-  handleReset = () =>
+class UnFreezeModal extends PureComponent<Data, State> {
+  state: State = INITIAL_STATE;
+  handleReset = () => this.setState({ ...INITIAL_STATE });
+  handleStepChange = (stepId: StepId) =>
     this.setState({
-      stepId: "amount",
+      stepId,
     });
 
   render() {
