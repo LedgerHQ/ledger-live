@@ -63,15 +63,6 @@ runs:
       if: ${{ inputs.install_playwright }}
       run: pnpm desktop test:playwright:setup
       shell: bash
-    - name: TurboRepo local caching server
-      if: inputs.aws-access-key != '' && inputs.aws-secret-key != ''
-      id: turborepo-cache-server
-      uses: ./tools/actions/turborepo-s3-cache
-      with:
-        server-token: "yolo"
-        cleanup-cache-folder: "true"
-        aws-access-key: ${{ inputs.aws-access-key }}
-        aws-secret-key: ${{ inputs.aws-secret-key }}
     - name: Build dependencies
       run: |
         pnpm build:lld:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
