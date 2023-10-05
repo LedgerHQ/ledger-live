@@ -16,7 +16,6 @@ import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
 import { isOldestPendingOperation } from "@ledgerhq/live-common/operation";
 import { getEnv } from "@ledgerhq/live-env";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
 import { TFunction } from "i18next";
 import invariant from "invariant";
 import React, { useCallback, useEffect, useState } from "react";
@@ -40,12 +39,9 @@ import StepMethod, { StepMethodFooter } from "./steps/StepMethod";
 import { StepSummaryFooter } from "./steps/StepSummaryFooter";
 import { St, StepId, StepProps } from "./types";
 
-export type Params = {
+type Params = {
   account: AccountLike | undefined | null;
   parentAccount: Account | undefined | null;
-  recipient?: string;
-  amount?: BigNumber;
-  transaction?: Transaction;
   transactionRaw: TransactionRaw;
   transactionHash: string;
 };
