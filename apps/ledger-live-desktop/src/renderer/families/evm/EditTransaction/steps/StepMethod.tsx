@@ -71,7 +71,6 @@ const StepMethod = ({
   setEditType,
   t,
 }: StepProps) => {
-  invariant(account, "account required");
   const mainAccount = getMainAccount(account, parentAccount);
   const isCancel = editType === "cancel";
   const isSpeedup = editType === "speedup";
@@ -158,7 +157,6 @@ export const StepMethodFooter: React.FC<StepProps> = ({
   editType,
   account,
   parentAccount,
-  transaction,
   transactionToUpdate,
   transactionHasBeenValidated,
   haveFundToSpeedup,
@@ -172,9 +170,6 @@ export const StepMethodFooter: React.FC<StepProps> = ({
   const canCancel = haveFundToCancel;
 
   const handleContinueClick = async () => {
-    invariant(account, "account required");
-    invariant(transaction, "transaction required");
-    invariant(transactionToUpdate, "transactionToUpdate required");
     invariant(editType, "editType required");
 
     const bridge: AccountBridge<EvmTransaction> = getAccountBridge(account, parentAccount);
@@ -190,10 +185,6 @@ export const StepMethodFooter: React.FC<StepProps> = ({
 
     transitionTo("summary");
   };
-
-  if (!account || !transaction) {
-    return null;
-  }
 
   return (
     <>

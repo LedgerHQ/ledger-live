@@ -25,12 +25,8 @@ const StepFees = ({
   onChangeTransaction,
   updateTransaction,
 }: StepProps) => {
-  const mainAccount = account ? getMainAccount(account, parentAccount) : null;
+  const mainAccount = getMainAccount(account, parentAccount);
   const locale = useSelector(localeSelector);
-
-  if (!mainAccount || !transaction || !transactionToUpdate) {
-    return null;
-  }
 
   // log fees info
   logger.log(`transactionToUpdate.maxFeePerGas: ${transactionToUpdate.maxFeePerGas?.toFixed(0)}`);
@@ -51,24 +47,22 @@ const StepFees = ({
   return (
     <Box flow={4}>
       <CurrencyDownStatusAlert currencies={[mainAccount.currency]} />
-      {account && (
-        <Fragment key={account.id}>
-          <SendAmountFields
-            account={mainAccount}
-            parentAccount={parentAccount}
-            status={status}
-            transaction={transaction}
-            /**
-             * Looks like TS does not like the fact that the arg of the functions
-             * are going from specific (EvmTransaction) to generic (Transaction).
-             */
-            onChange={onChangeTransaction as SendAmountFieldsProps["onChange"]}
-            updateTransaction={updateTransaction as SendAmountFieldsProps["updateTransaction"]}
-            bridgePending={bridgePending}
-            transactionToUpdate={transactionToUpdate}
-          />
-        </Fragment>
-      )}
+      <Fragment key={account.id}>
+        <SendAmountFields
+          account={mainAccount}
+          parentAccount={parentAccount}
+          status={status}
+          transaction={transaction}
+          /**
+           * Looks like TS does not like the fact that the arg of the functions
+           * are going from specific (EvmTransaction) to generic (Transaction).
+           */
+          onChange={onChangeTransaction as SendAmountFieldsProps["onChange"]}
+          updateTransaction={updateTransaction as SendAmountFieldsProps["updateTransaction"]}
+          bridgePending={bridgePending}
+          transactionToUpdate={transactionToUpdate}
+        />
+      </Fragment>
       <Alert type="primary">
         {t("operation.edit.previousFeesInfo.pendingTransactionFeesInfo")}
         <ul style={{ marginLeft: "5%" }}>
@@ -104,10 +98,6 @@ export const StepFeesFooter = ({
   const onClick = async () => {
     transitionTo("summary");
   };
-
-  if (!account) {
-    return null;
-  }
 
   const mainAccount = getMainAccount(account, parentAccount);
 
