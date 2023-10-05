@@ -9,7 +9,7 @@ export type StepId = "method" | "fees" | "summary" | "device" | "confirmation";
 
 export type StepProps = {
   device: Device | undefined | null;
-  account: AccountLike | undefined | null;
+  account: AccountLike;
   parentAccount: Account | undefined | null;
   transaction: Transaction;
   status: TransactionStatus;
