@@ -18,7 +18,7 @@ inputs:
   environment:
     description: if defined, filter a given environment
 runs:
-  using: node20
+  using: node16
   main: build/main.js
 
 branding:

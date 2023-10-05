@@ -23,7 +23,7 @@ outputs:
     description: "The port the local server runs on"
 
 runs:
-  using: node20
+  using: node16
   main: build/main.js
   post: build/cleanup.js
 
