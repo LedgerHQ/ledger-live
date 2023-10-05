@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.33.1-nightly.0
+
+### Patch Changes
+
+- [#4922](https://github.com/LedgerHQ/ledger-live/pull/4922) [`4831135369`](https://github.com/LedgerHQ/ledger-live/commit/48311353690bf352686b7e34874055fa7fd89c02) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Tap and drag to see price over time on graph is buggy on LLM
+
 ## 3.33.0
 
 ### Minor Changes
