@@ -11,6 +11,14 @@ inputs:
   os:
     description: running os to scope json file name
     required: true
+  bucket-name:
+    description: "aws bucket name"
+    required: false
+    default: "ledger-live-ci-screenshot-s3"
+  group-name:
+    description: "running group name"
+    required: true
+
 outputs:
   images:
     description: "string[] of images uploaded to imgur"
