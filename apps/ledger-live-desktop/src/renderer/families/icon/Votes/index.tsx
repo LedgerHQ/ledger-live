@@ -33,10 +33,11 @@ import ClaimRewards from "~/renderer/icons/ClaimReward";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
 import { localeSelector } from "~/renderer/reducers/settings";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
+import { IconAccount } from "@ledgerhq/live-common/families/icon/types";
 
 const MIN_TRANSACTION_AMOUNT = 1;
 type Props = {
-  account: Account;
+  account: IconAccount;
 };
 
 const Wrapper = styled(Box).attrs(() => ({
@@ -69,7 +70,8 @@ const Delegation = ({ account }: Props) => {
   const { iconResources, spendableBalance } = account;
   invariant(iconResources, "icon account expected");
   const { votes, votingPower, unwithdrawnReward } = iconResources;
-
+  const votingPowerNum = new BigNumber(votingPower).toNumber();
+  const unwithdrawnRewardNum = new BigNumber(unwithdrawnReward).toNumber();
   const discreet = useDiscreetMode();
   const defaultUnit = getAccountUnit(account);
   const formattedUnwidthDrawnReward = formatCurrencyUnit(unit, BigNumber(unwithdrawnReward || 0), {
@@ -83,7 +85,7 @@ const Delegation = ({ account }: Props) => {
 
   const formattedVotes = formatVotes(votes, superRepresentatives);
   const totalVotesUsed = votes?.reduce((sum, { value }) => sum + Number(value), 0);
-  const totalPower = BigNumber(votingPower).plus(totalVotesUsed);
+  const totalPower = BigNumber(votingPower).plus(totalVotesUsed).toNumber();
 
   const totalDelegated = useMemo(
     () =>
@@ -114,18 +116,18 @@ const Delegation = ({ account }: Props) => {
     () =>
       dispatch(
         openModal("MODAL_ICON_REWARDS_INFO", {
-          account,
+          account, parentAccount: {} as Account
         }),
       ),
     [account, dispatch],
   );
 
   const hasVotes = formattedVotes.length > 0;
-  const hasRewards = unwithdrawnReward?.gt(0);
+  const hasRewards = unwithdrawnRewardNum > 0;
   const canClaimRewards = hasRewards;
 
   const earnRewardDisabled =
-    votingPower === 0 && (!spendableBalance || !spendableBalance.gte(MIN_TRANSACTION_AMOUNT));
+    votingPowerNum === 0 && (!spendableBalance || !spendableBalance.gte(MIN_TRANSACTION_AMOUNT));
   return (
     <TableContainer mb={6}>
       <TableHeader
@@ -186,7 +188,7 @@ const Delegation = ({ account }: Props) => {
               address={address}
               amount={value}
               isSR={isSR}
-              percentTP={String(Math.round(100 * Number((value * 1e2) / totalPower)) / 100)}
+              percentTP={String(Math.round(100 * Number((Number(value) * 1e2) / totalPower)) / 100)}
               currency={account.currency}
               explorerView={explorerView}
             />
@@ -202,7 +204,7 @@ const Delegation = ({ account }: Props) => {
             <Text ff="Inter|Medium|SemiBold" color="palette.text.shade60" fontSize={5}>
               <Trans
                 i18nKey={
-                  votingPower > 0
+                  votingPowerNum > 0
                     ? "icon.voting.emptyState.votesDesc"
                     : "icon.voting.emptyState.description"
                 }
@@ -231,13 +233,13 @@ const Delegation = ({ account }: Props) => {
                 primary
                 small
                 disabled={earnRewardDisabled}
-                onClick={votingPower > 0 ? onDelegate : onEarnRewards}
+                onClick={votingPowerNum > 0 ? onDelegate : onEarnRewards}
               >
                 <Box horizontal flow={1} alignItems="center">
                   <IconChartLine size={12} />
                   <Box>
                     <Trans
-                      i18nKey={votingPower > 0 ? "icon.voting.emptyState.vote" : "delegation.title"}
+                      i18nKey={votingPowerNum > 0 ? "icon.voting.emptyState.vote" : "delegation.title"}
                     />
                   </Box>
                 </Box>

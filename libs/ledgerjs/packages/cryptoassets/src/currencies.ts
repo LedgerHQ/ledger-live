@@ -1503,8 +1503,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "https://tracker.icon.foundation/transaction/$hash",
-        address: "https://tracker.icon.foundation/address/$address",
+        tx: "https://tracker.icon.community/transaction/$hash",
+        address: "https://tracker.icon.community/address/$address",
       },
     ],
   },
@@ -1512,7 +1512,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     type: "CryptoCurrency",
     id: "icon_berlin_testnet",
     coinType: 4801368,
-    name: "ICON Lisbon Testnet",
+    name: "ICON Berlin Testnet",
     managerAppName: "ICON",
     ticker: "ICX",
     scheme: "icon_berlin_testnet",
@@ -1528,8 +1528,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "https://lisbon.tracker.solidwallet.io/transaction/$hash",
-        address: "https://lisbon.tracker.solidwallet.io/address/$address",
+        tx: "https://tracker.berlin.icon.community/transaction/$hash",
+        address: "https://tracker.berlin.icon.community/address/$address",
       },
     ],
   },

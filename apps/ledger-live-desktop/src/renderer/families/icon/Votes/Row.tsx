@@ -1,12 +1,11 @@
 // @flow
 
-import React, { useCallback } from "react";
+import React, { ReactNode, useCallback } from "react";
 import styled from "styled-components";
 
 import { getAddressExplorer } from "@ledgerhq/live-common/explorers";
 
-import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
-import type { ExplorerView } from "@ledgerhq/types-cryptoassets";
+import type { Currency, ExplorerView } from "@ledgerhq/types-cryptoassets";
 
 import { openURL } from "~/renderer/linking";
 import Ellipsis from "~/renderer/components/Ellipsis";
@@ -15,15 +14,17 @@ import { TableLine } from "./Header";
 import Trophy from "~/renderer/icons/Trophy";
 import Medal from "~/renderer/icons/Medal";
 import Discreet from "~/renderer/components/Discreet";
+import { PRep } from "@ledgerhq/live-common/families/icon/types";
+import BigNumber from "bignumber.js";
 
-const Wrapper: ThemedComponent<{}> = styled.div`
+const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   padding: 16px 20px;
 `;
 
-const Column: ThemedComponent<{ clickable?: boolean }> = styled(TableLine).attrs(p => ({
+const Column = styled(TableLine).attrs(p => ({
   ff: "Inter|SemiBold",
   color: p.strong ? "palette.text.shade100" : "palette.text.shade80",
   fontSize: 3,
@@ -32,13 +33,13 @@ const Column: ThemedComponent<{ clickable?: boolean }> = styled(TableLine).attrs
 `;
 
 type Props = {
-  validator: unknown;
-  address: string;
-  isSR: boolean;
-  amount: ReactNode;
-  percentTP: ReactNode;
-  currency: unknown;
-  explorerView: ExplorerView;
+  validator?: PRep,
+  address?: string | null,
+  isSR?: boolean,
+  amount?: string | BigNumber | null,
+  percentTP?: string,
+  currency?: Currency,
+  explorerView?: ExplorerView | null,
 };
 
 const IconContainer = styled.div`
@@ -49,14 +50,15 @@ const IconContainer = styled.div`
   width: 24px;
   height: 24px;
   border-radius: 4px;
-  background-color: ${p =>
+  background-color: ${(p: any) =>
     p.isSR ? p.theme.colors.palette.action.hover : p.theme.colors.palette.divider};
-  color: ${p =>
-    p.isSR ? p.theme.colors.palette.primary.main : p.theme.colors.palette.text.shade60};
+  color: ${(p: any) =>
+    p.isSR ? p.theme.colors.palette.primary.main : p.theme.colors.palette.text.shade60
+  };
 `;
 
 const Row = ({ validator, address, amount, isSR, percentTP, currency, explorerView }: Props) => {
-  const srURL = explorerView && getAddressExplorer(explorerView, address);
+  const srURL = explorerView && getAddressExplorer(explorerView, address || '');
 
   const openSR = useCallback(() => {
     if (srURL) openURL(srURL);
@@ -71,7 +73,7 @@ const Row = ({ validator, address, amount, isSR, percentTP, currency, explorerVi
         <Ellipsis>{validator ? validator.name : address}</Ellipsis>
       </Column>
       <Column>
-        <Discreet>{amount}</Discreet>
+        <Discreet>{new BigNumber(amount|| 0).toNumber().toLocaleString()}</Discreet>
       </Column>
       <Column>{percentTP}%</Column>
     </Wrapper>

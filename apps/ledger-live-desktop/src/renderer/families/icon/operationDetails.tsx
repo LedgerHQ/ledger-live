@@ -29,10 +29,12 @@ import Text from "~/renderer/components/Text";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import CounterValue from "~/renderer/components/CounterValue";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
+import TransactionConfirmField from "~/renderer/components/TransactionConfirm/TransactionConfirmField";
+import { FieldComponentProps } from "../types";
 
 const helpURL = "https://support.ledger.com/hc/en-us/articles/360013062139";
 function getURLFeesInfo(op: Operation): string | null | undefined {
-  if (op.fee.gt(200000)) {
+  if (op?.fee?.gt(200000)) {
     return helpURL;
   }
 }
