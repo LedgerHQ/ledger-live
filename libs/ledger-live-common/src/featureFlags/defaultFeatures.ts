@@ -149,16 +149,21 @@ export const DEFAULT_FEATURES: Features = {
     params: {
       availableOnDesktop: false,
       account: {
-        homeURI: "ledgerlive://recover/protect-simu?redirectTo=account",
-        loginURI: "ledgerlive://recover/protect-simu?redirectTo=login",
+        homeURI:
+          "ledgerlive://recover/protect-simu?redirectTo=account&source=lld-sidebar-navigation&ajs_prop_source=lld-sidebar-navigation&ajs_prop_campaign=recover-launch",
+        loginURI:
+          "ledgerlive://recover/protect-simu?redirectTo=login&source=lld-sidebar-navigation&ajs_prop_source=lld-sidebar-navigation&ajs_prop_campaign=recover-launch",
       },
       discoverTheBenefitsLink: "https://www.ledger.com/recover",
       onboardingCompleted: {
-        alreadySubscribedURI: "ledgerlive://recover/protect-simu?redirectTo=login",
-        upsellURI: "ledgerlive://recover/protect-simu?redirectTo=upsell",
+        alreadySubscribedURI:
+          "ledgerlive://recover/protect-simu?redirectTo=login&source=lld-onboarding-24g&ajs_prop_source=lld-onboarding-24&ajs_prop_campaign=recover-launch",
+        upsellURI:
+          "ledgerlive://recover/protect-simu?redirectTo=upsell&source=lld-onboarding-24&ajs_prop_source=lld-onboarding-24&ajs_prop_campaign=recover-launch",
       },
       onboardingRestore: {
-        postOnboardingURI: "ledgerlive://recover/protect-simu?redirectTo=restore",
+        postOnboardingURI:
+          "ledgerlive://recover/protect-simu?redirectTo=restore&source=lld-restore-24&ajs_prop_source=lld-restore-24&ajs_prop_campaign=recover-launch",
         restoreInfoDrawer: {
           enabled: true,
           manualStepsURI:
@@ -280,18 +285,24 @@ export const DEFAULT_FEATURES: Features = {
     params: {
       deeplink: "",
       account: {
-        loginURI: "ledgerlive://recover/protect-simu?redirectTo=login",
-        homeURI: "ledgerlive://recover/protect-simu?redirectTo=account",
+        loginURI:
+          "ledgerlive://recover/protect-simu?redirectTo=login&source=llm-myledger-access-card&ajs_prop_source=llm-myledger-access-card&ajs_prop_campaign=recover-launch",
+        homeURI:
+          "ledgerlive://recover/protect-simu?redirectTo=account&source=llm-myledger-access-card&ajs_prop_source=llm-myledger-access-card&ajs_prop_campaign=recover-launch",
       },
       managerStatesData: {
         NEW: {
-          alreadySubscribedURI: "ledgerlive://recover/protect-simu?redirectTo=login",
-          learnMoreURI: "ledgerlive://recover/protect-simu?redirectTo=upsell",
-          quickAccessURI: "ledgerlive://recover/protect-simu?redirectTo=login",
+          alreadySubscribedURI:
+            "ledgerlive://recover/protect-simu?redirectTo=login&source=llm-onboarding-24&ajs_prop_source=llm-onboarding-24&ajs_prop_campaign=recover-launch",
+          learnMoreURI:
+            "ledgerlive://recover/protect-simu?redirectTo=upsell&source=llm-onboarding-24&ajs_prop_source=llm-onboarding-24&ajs_prop_campaign=recover-launch",
+          quickAccessURI:
+            "lledgerlive://recover/protect-simu?redirectTo=upsell&source=llm-navbar-quick-access&ajs_prop_source=llm-navbar-quick-access&ajs_prop_campaign=recover-launch",
         },
       },
       onboardingRestore: {
-        postOnboardingURI: "ledgerlive://recover/protect-simu?redirectTo=restore",
+        postOnboardingURI:
+          "ledgerlive://recover/protect-simu?redirectTo=restore&source=llm-restore-24&ajs_prop_source=llm-restore-24&ajs_prop_campaign=recover-launch",
         restoreInfoDrawer: {
           enabled: true,
           manualStepsURI:
