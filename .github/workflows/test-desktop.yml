@@ -143,14 +143,18 @@ jobs:
         run: |
           pnpm desktop test:playwright
         shell: bash
-      - name: upload diffs to imgur
+      - name: upload diffs to s3
         if: always() && !cancelled()
         uses: ./tools/actions/upload-images
-        id: imgur
+        id: s3
         with:
           path: apps/ledger-live-desktop/tests/artifacts/test-results
           workspace: ${{ github.workspace }}
           os: windows
+          group-name: ${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_number }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_S3_SCREENSHOTS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_S3_SCREENSHOTS_SECRET_ACCESS_KEY }}
       - name: upload ci suggested screenshots
         if: always() && !cancelled()
         uses: actions/upload-artifact@v3
@@ -206,14 +210,18 @@ jobs:
         id: tests
         run: |
           xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
-      - name: upload diffs to imgur
+      - name: upload diffs to s3
         if: always() && !cancelled()
         uses: ./tools/actions/upload-images
-        id: imgur
+        id: s3
         with:
           path: apps/ledger-live-desktop/tests/artifacts/test-results
           workspace: ${{ github.workspace }}
           os: linux
+          group-name: ${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_number }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_S3_SCREENSHOTS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_S3_SCREENSHOTS_SECRET_ACCESS_KEY }}
       - name: upload ci suggested screenshots
         if: always() && !cancelled()
         uses: actions/upload-artifact@v3
@@ -274,14 +282,18 @@ jobs:
           find node_modules/.pnpm/electron*
           readlink -f 'node_modules/.pnpm/electron@25.1.1/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Framework.framework/Electron Framework' || echo "no such Electron Framework"
           pnpm desktop test:playwright
-      - name: upload diffs to imgur
+      - name: upload diffs to s3
         if: always() && !cancelled()
         uses: ./tools/actions/upload-images
-        id: imgur
+        id: s3
         with:
           path: apps/ledger-live-desktop/tests/artifacts/test-results
           workspace: ${{ github.workspace }}
           os: macos
+          group-name: ${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_number }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_S3_SCREENSHOTS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_S3_SCREENSHOTS_SECRET_ACCESS_KEY }}
       - name: upload ci suggested screenshots
         if: always() && !cancelled()
         uses: actions/upload-artifact@v3

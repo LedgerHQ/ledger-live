@@ -28,8 +28,8 @@ saveState("cleanupCacheFolder", cleanupCacheFolder);
 
   subprocess.unref();
 
-  let interval = null;
-  let timeout = null;
+  let interval: ReturnType<typeof setInterval> | null = null;
+  let timeout: ReturnType<typeof setTimeout> | null = null;
 
   try {
     await Promise.race<string | void>([
@@ -52,8 +52,8 @@ saveState("cleanupCacheFolder", cleanupCacheFolder);
   } catch (error) {
     console.error("Timeout while waiting for the server to boot.");
   } finally {
-    clearInterval(interval);
-    clearTimeout(timeout);
+    if (interval) clearInterval(interval);
+    if (timeout) clearTimeout(timeout);
   }
 
   info(`Server PID: ${subprocess.pid}`);
