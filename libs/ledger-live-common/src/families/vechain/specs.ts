@@ -1,3 +1,4 @@
+import invariant from "invariant";
 import expect from "expect";
 import type {
   AppSpec,
@@ -12,7 +13,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import deviceAction from "../vechain/speculos-deviceActions";
 import BigNumber from "bignumber.js";
 
-const vechain: AppSpec<Transaction> = {
+const vechainTest = {
   name: "Vechain",
   currency: getCryptoCurrencyById("vechain"),
   appQuery: {
@@ -20,7 +21,7 @@ const vechain: AppSpec<Transaction> = {
     appName: "Vechain",
   },
   allowEmptyAccounts: true,
-  skipOperationHistory: true,
+  testTimeout: 60 * 1000, // 1 minute
   genericDeviceAction: deviceAction.acceptTransaction,
   onSpeculosDeviceCreated: async ({ transport }) => {
     // enter app vechain
@@ -39,6 +40,10 @@ const vechain: AppSpec<Transaction> = {
     await transport.button(SpeculosButton.RIGHT);
     await transport.button(SpeculosButton.BOTH);
   },
+};
+
+const vet: AppSpec<Transaction> = {
+  ...vechainTest,
   mutations: [
     {
       name: "move ~50% VET",
@@ -49,6 +54,10 @@ const vechain: AppSpec<Transaction> = {
         bridge,
         maxSpendable,
       }: TransactionArg<Transaction>): TransactionRes<Transaction> => {
+        if (!account.subAccounts?.[0]) throw new Error("no VTHO account");
+        invariant(account.balance.gt(0), "Vechain: VET balance is empty");
+        // 0.21 VTHO is the usual fee for a VET transaction
+        invariant(account.subAccounts[0].balance.gt(0.21), "Vechain: VTHO balance is not enough");
         const sibling = pickSiblings(siblings, 2);
         const recipient = sibling.freshAddress;
         const transaction = bridge.createTransaction(account);
@@ -72,6 +81,43 @@ const vechain: AppSpec<Transaction> = {
       },
     },
     {
+      name: "move all VET",
+      maxRun: 1,
+      transaction: ({
+        account,
+        siblings,
+        bridge,
+        maxSpendable,
+      }: TransactionArg<Transaction>): TransactionRes<Transaction> => {
+        if (!account.subAccounts?.[0]) throw new Error("no VTHO account");
+        invariant(account.balance.gt(0), "Vechain: VET balance is empty");
+        // 0.21 VTHO is the usual fee for a VET transaction
+        invariant(account.subAccounts?.[0].balance.gt(0.21), "Vechain: VTHO balance is not enough");
+        const sibling = pickSiblings(siblings, 4);
+        const recipient = sibling.freshAddress;
+        const transaction = bridge.createTransaction(account);
+        transaction.useAllAmount = true;
+        const amount = maxSpendable.integerValue();
+        const updates = [{ amount }, { recipient }];
+        return {
+          transaction,
+          updates,
+        };
+      },
+      test: ({ account }: TransactionTestInput<Transaction>): void | undefined => {
+        botTest("account balance decreased with operation value", () =>
+          expect(account.balance.toString()).toBe(new BigNumber(0).toString()),
+        );
+      },
+    },
+  ],
+};
+
+const vtho: AppSpec<Transaction> = {
+  ...vechainTest,
+  skipOperationHistory: true,
+  mutations: [
+    {
       name: "move ~50% VTHO",
       maxRun: 1,
       transaction: ({
@@ -79,9 +125,11 @@ const vechain: AppSpec<Transaction> = {
         siblings,
         bridge,
       }: TransactionArg<Transaction>): TransactionRes<Transaction> => {
+        if (!account.subAccounts?.[0]) throw new Error("no VTHO account");
+        // 0.51 VTHO is the usual fee for a VTHO transaction
+        invariant(account.subAccounts?.[0].balance.gt(0.51), "Vechain: VTHO balance is not enough");
         const sibling = pickSiblings(siblings, 2);
         const recipient = sibling.freshAddress;
-        if (!account.subAccounts || !account.subAccounts[0]) throw new Error("no VTHO account");
         const tokenAccount = account.subAccounts[0];
         const transaction = bridge.createTransaction(tokenAccount);
         transaction.subAccountId = account.subAccounts[0].id;
@@ -106,32 +154,6 @@ const vechain: AppSpec<Transaction> = {
       },
     },
     {
-      name: "move all VET",
-      maxRun: 1,
-      transaction: ({
-        account,
-        siblings,
-        bridge,
-        maxSpendable,
-      }: TransactionArg<Transaction>): TransactionRes<Transaction> => {
-        const sibling = pickSiblings(siblings, 4);
-        const recipient = sibling.freshAddress;
-        const transaction = bridge.createTransaction(account);
-        transaction.useAllAmount = true;
-        const amount = maxSpendable.integerValue();
-        const updates = [{ amount }, { recipient }];
-        return {
-          transaction,
-          updates,
-        };
-      },
-      test: ({ account }: TransactionTestInput<Transaction>): void | undefined => {
-        botTest("account balance decreased with operation value", () =>
-          expect(account.balance.toString()).toBe(new BigNumber(0).toString()),
-        );
-      },
-    },
-    {
       name: "move all VTHO",
       maxRun: 1,
       transaction: ({
@@ -139,6 +161,9 @@ const vechain: AppSpec<Transaction> = {
         siblings,
         bridge,
       }: TransactionArg<Transaction>): TransactionRes<Transaction> => {
+        if (!account.subAccounts?.[0]) throw new Error("no VTHO account");
+        // 0.51 VTHO is the usual fee for a VTHO transaction
+        invariant(account.subAccounts?.[0].balance.gt(0.51), "Vechain: VTHO balance is not enough");
         const sibling = pickSiblings(siblings, 4);
         const recipient = sibling.freshAddress;
         if (
@@ -166,4 +191,4 @@ const vechain: AppSpec<Transaction> = {
   ],
 };
 
-export default { vechain };
+export default { vet, vtho };
