@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.33.1-nightly.1
+
+### Patch Changes
+
+- [#4930](https://github.com/LedgerHQ/ledger-live/pull/4930) [`bbad6146ce`](https://github.com/LedgerHQ/ledger-live/commit/bbad6146cee4fa55a8d0e2fec47579c945e6e59b) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix of OperationDetails view using the wrong currency in the `useNftMetadata` & `useNftCollectionMetadata` hooks
+
 ## 3.33.1-nightly.0
 
 ### Patch Changes
