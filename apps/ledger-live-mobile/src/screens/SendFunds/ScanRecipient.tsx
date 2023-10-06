@@ -36,8 +36,6 @@ const ScanRecipient = ({ route, navigation }: NavigationProps) => {
         }
       }
 
-      const updatedTransaction = bridge.updateTransaction(transaction, patch);
-
       // FIXME: how can this work?
       // This screen belongs to 2 navigators, Base & SendFunds,
       // but ScreenName.SendSelectRecipient does not exist in Base.
@@ -46,7 +44,7 @@ const ScanRecipient = ({ route, navigation }: NavigationProps) => {
         ...route.params,
         accountId: account.id,
         parentId: parentAccount?.id,
-        transaction: updatedTransaction,
+        transaction: bridge.updateTransaction(transaction, patch),
         justScanned: true,
       });
     },
