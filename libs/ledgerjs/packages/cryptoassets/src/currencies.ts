@@ -3014,22 +3014,18 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     type: "CryptoCurrency",
     id: "vechain",
     coinType: CoinType.VECHAIN,
-    name: "VeChain",
+    name: "Vechain",
     managerAppName: "VeChain",
     ticker: "VET",
     scheme: "vechain",
-    color: "#00C2FF",
+    color: "#82BE00",
     family: "vechain",
-    units: [
-      {
-        name: "VET",
-        code: "VET",
-        magnitude: 8,
-      },
-    ],
+    blockAvgTime: 10,
+    units: ethereumUnits("VET", "VET"),
     explorerViews: [
       {
-        tx: "https://explore.veforge.com/transactions/$hash",
+        tx: "https://explore.vechain.org/transactions/$hash",
+        address: "https://explore.vechain.org/accounts/$address",
       },
     ],
   },

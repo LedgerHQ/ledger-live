@@ -32,6 +32,8 @@ import { NavigatorName, ScreenName } from "../const";
 import { track } from "../analytics";
 import { StackNavigatorNavigation } from "./RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "./RootNavigator/types/BaseNavigator";
+import { GraphPlaceholder } from "./Graph/Placeholder";
+import { tokensWithUnsupportedGraph } from "./Graph/tokensWithUnsupportedGraph";
 
 const { width } = getWindowDimensions();
 
@@ -147,29 +149,43 @@ function AccountGraphCard({
         parentAccount={parentAccount}
         currency={currency}
       />
-
-      <Flex height={120} alignItems="center" justifyContent="center" onTouchEnd={handleGraphTouch}>
-        {!loading ? (
-          <Transitions.Fade duration={400} status="entering">
-            <Graph
-              isInteractive
-              height={120}
-              width={width}
-              color={graphColor}
-              data={history}
-              mapValue={useCounterValue ? mapCounterValue : mapCryptoValue}
-              onItemHover={setHoverItem}
-              verticalRangeRatio={10}
-              fill={colors.background.main}
+      {account.type === "TokenAccount" && tokensWithUnsupportedGraph.includes(account.token.id) ? (
+        <GraphPlaceholder />
+      ) : (
+        <>
+          <Flex
+            height={120}
+            alignItems="center"
+            justifyContent="center"
+            onTouchEnd={handleGraphTouch}
+          >
+            {!loading ? (
+              <Transitions.Fade duration={400} status="entering">
+                <Graph
+                  isInteractive
+                  height={120}
+                  width={width}
+                  color={graphColor}
+                  data={history}
+                  mapValue={useCounterValue ? mapCounterValue : mapCryptoValue}
+                  onItemHover={setHoverItem}
+                  verticalRangeRatio={10}
+                  fill={colors.background.main}
+                />
+              </Transitions.Fade>
+            ) : (
+              <InfiniteLoader size={32} />
+            )}
+          </Flex>
+          <Flex bg="background.main">
+            <GraphTabs
+              activeIndex={activeRangeIndex}
+              onChange={updateRange}
+              labels={rangesLabels}
             />
-          </Transitions.Fade>
-        ) : (
-          <InfiniteLoader size={32} />
-        )}
-      </Flex>
-      <Flex bg="background.main">
-        <GraphTabs activeIndex={activeRangeIndex} onChange={updateRange} labels={rangesLabels} />
-      </Flex>
+          </Flex>
+        </>
+      )}
       <Footer renderAccountSummary={renderAccountSummary} />
     </Flex>
   );

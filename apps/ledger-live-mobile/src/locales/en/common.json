@@ -445,6 +445,18 @@
     "ElrondDelegationBelowMinimumError": {
       "title": "Remaining delegation can't be less than {{formattedAmount}}"
     },
+    "NotEnoughVTHO": {
+      "title": "Sorry, insufficient VTHO funds",
+      "description": "Please make sure the account has enough VTHO."
+    },
+    "MustBeVechain": {
+      "title": "Not a vechain account",
+      "description": "Please make sure the coin is VTHO or VET"
+    },
+    "ImpossibleToCalculateAmountAndFees": {
+      "title": "Impossible to calculate amount and fees",
+      "description": "Impossible to calculate amount and fees"
+    },
     "NotEnoughEGLDForFees": {
       "title": "Not enough EGLD to pay the transaction fees",
       "description": "Please send some EGLD to your account to pay for transactions."
@@ -980,7 +992,8 @@
     "week": "1W",
     "month": "1M",
     "year": "1Y",
-    "all": "ALL"
+    "all": "ALL",
+    "graphNotSupported": "The graph is not available for this token"
   },
   "carousel": {
     "title": "Close banner?",
@@ -3755,6 +3768,11 @@
         "title": "Add Token",
         "disclaimer": "{{tokenName}} is a BEP-20 Token.\nYou can receive tokens directly in a BNB account.",
         "learnMore": "Learn more about BEP-20"
+      },
+      "vip180": {
+        "title": "Add token",
+        "disclaimer": "{{tokenName}} is a VIP180 Token.\nYou can receive tokens directly in a VET account.",
+        "learnMore": "Learn more about VIP180"
       }
     },
     "showMoreChainType": "More address types",

@@ -95,6 +95,7 @@ export const urls = {
     asa: "https://support.ledger.com/hc/en-us/articles/360015896040?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=receive_account_flow",
     bep20:
       "https://support.ledger.com/hc/en-us/articles/4412962166289-Manage-BEP20-tokens?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=receive_account_flow_bep20",
+    vip180: "https://support.ledger.com/hc/en-us/articles/360007655934-VeChain-VET-?support=true",
   },
   celoStakingRewards:
     "https://support.ledger.com/hc/en-us/articles/360020499920-Celo-CELO-?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=celo&docs=true",

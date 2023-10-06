@@ -10,6 +10,8 @@ import stellarTokens, { StellarToken } from "./data/stellar";
 import icpTokens, { ICPToken } from "./data/internet_computer";
 import trc10tokens, { TRC10Token } from "./data/trc10";
 import trc20tokens, { TRC20Token } from "./data/trc20";
+import vechainTokens, { vip180Token } from "./data/vip180";
+
 //import spltokens from "../data/spl";
 const emptyArray = [];
 const tokensArray: TokenCurrency[] = [];
@@ -30,6 +32,7 @@ addTokens(asatokens.map(convertAlgorandASATokens));
 addTokens(esdttokens.map(convertElrondESDTTokens));
 addTokens(cardanoNativeTokens.map(convertCardanoNativeTokens));
 addTokens(stellarTokens.map(convertStellarTokens));
+addTokens(vechainTokens.map(convertVechainToken));
 addTokens(icpTokens.map(convertICPTokens));
 //addTokens(spltokens.map(convertSplTokens));
 type TokensListOptions = {
@@ -353,6 +356,32 @@ function convertTRONTokens(type: "trc10" | "trc20") {
       },
     ],
   });
+}
+
+function convertVechainToken([
+  ticker,
+  name,
+  contractAddress,
+  precision,
+  enableCountervalues,
+]: vip180Token): TokenCurrency {
+  return {
+    type: "TokenCurrency",
+    id: "vechain/vtho",
+    contractAddress: contractAddress,
+    parentCurrency: getCryptoCurrencyById("vechain"),
+    tokenType: "erc20",
+    name,
+    ticker,
+    disableCountervalue: !enableCountervalues,
+    units: [
+      {
+        name,
+        code: ticker,
+        magnitude: precision,
+      },
+    ],
+  };
 }
 
 function convertElrondESDTTokens([

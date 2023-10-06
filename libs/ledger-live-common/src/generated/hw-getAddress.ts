@@ -14,6 +14,7 @@ import stacks from "../families/stacks/hw-getAddress";
 import stellar from "../families/stellar/hw-getAddress";
 import tezos from "../families/tezos/hw-getAddress";
 import tron from "../families/tron/hw-getAddress";
+import vechain from "../families/vechain/hw-getAddress";
 import { resolver as algorand } from "../families/algorand/setup";
 import { resolver as evm } from "../families/evm/setup";
 import { resolver as polkadot } from "../families/polkadot/setup";
@@ -35,6 +36,7 @@ export default {
   stellar,
   tezos,
   tron,
+  vechain,
   algorand,
   evm,
   polkadot,

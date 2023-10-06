@@ -195,6 +195,9 @@ const modes = Object.freeze({
     overridesDerivation: "44'/397'/0'/0'/<account>'",
     mandatoryEmptyAccountSkip: 1,
   },
+  vechain: {
+    overridesDerivation: "44'/818'/0'/0/<account>",
+  },
   internet_computer: {
     overridesDerivation: "44'/223'/0'/0/<account>",
   },
@@ -223,6 +226,7 @@ const legacyDerivations: Record<CryptoCurrencyIds, DerivationMode[]> = {
   cardano: ["cardano"],
   cardano_testnet: ["cardano"],
   near: ["nearbip44h"],
+  vechain: ["vechain"],
   stacks: ["stacks_wallet"],
 };
 
@@ -360,6 +364,7 @@ const disableBIP44: Record<string, boolean> = {
   cardano: true,
   cardano_testnet: true,
   near: true,
+  vechain: true,
   internet_computer: true,
 };
 type SeedInfo = {
@@ -377,6 +382,7 @@ const seedIdentifierPath: Record<string, SeedPathFn> = {
   cardano_testnet: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   internet_computer: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   near: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0'/0'`,
+  vechain: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   _: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'`,
 };
 export const getSeedIdentifierDerivation = (

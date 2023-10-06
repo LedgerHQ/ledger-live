@@ -18,6 +18,8 @@ import { ensureContrast } from "../colors";
 import { track } from "../analytics";
 import { Item } from "./Graph/types";
 import { Merge } from "../types/helpers";
+import { GraphPlaceholder } from "./Graph/Placeholder";
+import { tokensWithUnsupportedGraph } from "./Graph/tokensWithUnsupportedGraph";
 
 const Placeholder = styled(Flex).attrs({
   backgroundColor: "neutral.c40",
@@ -207,25 +209,31 @@ function AssetCentricGraphCard({
       </Flex>
       {accountsEmpty ? null : (
         <>
-          <Flex onTouchEnd={handleGraphTouch}>
-            <Graph
-              isInteractive={isAvailable}
-              height={110}
-              width={getWindowDimensions().width + 1}
-              color={graphColor}
-              data={balanceHistory}
-              onItemHover={setHoverItem}
-              mapValue={mapCounterValue}
-              fill={colors.background.main}
-            />
-          </Flex>
-          <Flex paddingTop={6} background={colors.background.main}>
-            <GraphTabs
-              activeIndex={activeRangeIndex}
-              onChange={updateTimeRange}
-              labels={rangesLabels}
-            />
-          </Flex>
+          {currency.type === "TokenCurrency" && tokensWithUnsupportedGraph.includes(currency.id) ? (
+            <GraphPlaceholder />
+          ) : (
+            <>
+              <Flex onTouchEnd={handleGraphTouch}>
+                <Graph
+                  isInteractive={isAvailable}
+                  height={110}
+                  width={getWindowDimensions().width + 1}
+                  color={graphColor}
+                  data={balanceHistory}
+                  onItemHover={setHoverItem}
+                  mapValue={mapCounterValue}
+                  fill={colors.background.main}
+                />
+              </Flex>
+              <Flex paddingTop={6} background={colors.background.main}>
+                <GraphTabs
+                  activeIndex={activeRangeIndex}
+                  onChange={updateTimeRange}
+                  labels={rangesLabels}
+                />
+              </Flex>
+            </>
+          )}
         </>
       )}
     </Flex>

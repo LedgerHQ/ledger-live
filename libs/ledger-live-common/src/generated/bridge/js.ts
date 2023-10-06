@@ -14,6 +14,7 @@ import stacks from "../../families/stacks/bridge/js";
 import stellar from "../../families/stellar/bridge/js";
 import tezos from "../../families/tezos/bridge/js";
 import tron from "../../families/tron/bridge/js";
+import vechain from "../../families/vechain/bridge/js";
 import { bridge as algorand } from "../../families/algorand/setup";
 import { bridge as evm } from "../../families/evm/setup";
 import { bridge as polkadot } from "../../families/polkadot/setup";
@@ -35,6 +36,7 @@ export default {
   stellar,
   tezos,
   tron,
+  vechain,
   algorand,
   evm,
   polkadot,
