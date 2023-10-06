@@ -1,3 +1,9 @@
+/**
+ * NOTE: this is a copy of the original
+ * apps/ledger-live-mobile/src/screens/SendFunds/04-Summary.tsx file,
+ * with some changes to make it work with our custom flow
+ */
+
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
 import { isCurrencySupported } from "@ledgerhq/coin-framework/currencies/index";
 import { NotEnoughGas } from "@ledgerhq/errors";
