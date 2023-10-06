@@ -8,13 +8,14 @@ import { useTheme } from "styled-components/native";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { ReactNavigationPerformanceView } from "@shopify/react-native-performance-navigation";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { useLearnMoreURI } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
+import { useLearnMoreURI, usePostOnboardingURI } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { useRefreshAccountsOrdering } from "../../actions/general";
 import {
   // TODO: discreetMode is never used 😱 is it safe to remove
   // discreetModeSelector,
   hasBeenUpsoldProtectSelector,
   lastConnectedDeviceSelector,
+  onboardingTypeSelector,
 } from "../../reducers/settings";
 import { setHasBeenUpsoldProtect } from "../../actions/settings";
 
@@ -49,6 +50,7 @@ import {
 import PortfolioAssets from "./PortfolioAssets";
 import { internetReachable } from "../../logic/internetReachable";
 import { UpdateStep } from "../FirmwareUpdate";
+import { OnboardingType } from "../../reducers/types";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -70,8 +72,10 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   const [isAddModalOpened, setAddModalOpened] = useState(false);
   const { colors } = useTheme();
   const { isAWalletCardDisplayed } = useDynamicContent();
+  const onboardingType = useSelector(onboardingTypeSelector);
   const protectFeature = useFeature("protectServicesMobile");
-  const recoverUpsellURL = useLearnMoreURI(protectFeature);
+  const recoverLearnMoreURI = useLearnMoreURI(protectFeature);
+  const recoverPostOnboardingURI = usePostOnboardingURI(protectFeature);
   const dispatch = useDispatch();
 
   const onBackFromUpdate = useCallback(
@@ -84,8 +88,12 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   useEffect(() => {
     const openProtectUpsell = async () => {
       const internetConnected = await internetReachable();
-      if (internetConnected && recoverUpsellURL && protectFeature?.enabled) {
-        Linking.openURL(recoverUpsellURL);
+      if (internetConnected && protectFeature?.enabled) {
+        if (recoverPostOnboardingURI && onboardingType === OnboardingType.restore) {
+          Linking.openURL(recoverPostOnboardingURI)
+        } else if (recoverLearnMoreURI) {
+          Linking.openURL(recoverLearnMoreURI);
+        }
       }
     };
     if (!hasBeenUpsoldProtect && lastConnectedDevice?.modelId === "nanoX") {
@@ -93,9 +101,11 @@ function PortfolioScreen({ navigation }: NavigationProps) {
       dispatch(setHasBeenUpsoldProtect(true));
     }
   }, [
+    onboardingType,
     hasBeenUpsoldProtect,
     lastConnectedDevice,
-    recoverUpsellURL,
+    recoverPostOnboardingURI,
+    recoverLearnMoreURI,
     dispatch,
     protectFeature?.enabled,
   ]);
