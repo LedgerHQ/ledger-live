@@ -3,7 +3,7 @@ import { InfiniteLoader } from "@ledgerhq/react-ui";
 import { WarningSolidMedium } from "@ledgerhq/react-ui/assets/icons";
 import { Operation } from "@ledgerhq/types-live";
 import { TFunction } from "i18next";
-import React, { PureComponent } from "react";
+import React from "react";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
 import OperationDate from "./OperationDate";
@@ -38,47 +38,41 @@ const PendingLoadingIcon = ({ displayWarning }: { displayWarning: boolean }): JS
   return <InfiniteLoader size={12} style={{ verticalAlign: "middle" }} />;
 };
 
-class DateCell extends PureComponent<Props> {
-  // FIXME: still needed? seems unused
-  static defaultProps = {
-    withAccount: false,
+const DateCell = ({ t, operation, compact, text, editable }: Props): JSX.Element => {
+  const ellipsis = {
+    display: "block",
+    textOverflow: "ellipsis",
+    overflow: "hidden",
+    whiteSpace: "nowrap" as const,
   };
 
-  render() {
-    const { t, operation, compact, text, editable } = this.props;
-    const ellipsis = {
-      display: "block",
-      textOverflow: "ellipsis",
-      overflow: "hidden",
-      whiteSpace: "nowrap" as const,
-    };
-    return (
-      <Cell compact={compact}>
-        <Box ff="Inter|SemiBold" fontSize={3} color="palette.text.shade80" style={ellipsis}>
-          {text ||
-            t(operation.hasFailed ? "operationDetails.failed" : `operation.type.${operation.type}`)}
-        </Box>
-        {editable ? (
-          <Box fontSize={3} color="palette.text.shade80">
-            <Box ff="Inter|SemiBold" fontSize={3} color="palette.text.shade80" style={ellipsis}>
-              <PendingLoadingIcon displayWarning={isStuckOperation(operation)} />
-              <Box
-                style={{
-                  marginLeft: "4px",
-                  verticalAlign: "middle",
-                  display: "inline-block",
-                  fontSize: "10px",
-                }}
-              >
-                {t("operation.type.SENDING") + "..."}
-              </Box>
+  return (
+    <Cell compact={compact}>
+      <Box ff="Inter|SemiBold" fontSize={3} color="palette.text.shade80" style={ellipsis}>
+        {text ||
+          t(operation.hasFailed ? "operationDetails.failed" : `operation.type.${operation.type}`)}
+      </Box>
+      {editable ? (
+        <Box fontSize={3} color="palette.text.shade80">
+          <Box ff="Inter|SemiBold" fontSize={3} color="palette.text.shade80" style={ellipsis}>
+            <PendingLoadingIcon displayWarning={isStuckOperation(operation)} />
+            <Box
+              style={{
+                marginLeft: "4px",
+                verticalAlign: "middle",
+                display: "inline-block",
+                fontSize: "10px",
+              }}
+            >
+              {t("operation.type.SENDING") + "..."}
             </Box>
           </Box>
-        ) : (
-          <OperationDate date={operation.date} />
-        )}
-      </Cell>
-    );
-  }
-}
+        </Box>
+      ) : (
+        <OperationDate date={operation.date} />
+      )}
+    </Cell>
+  );
+};
+
 export default DateCell;
