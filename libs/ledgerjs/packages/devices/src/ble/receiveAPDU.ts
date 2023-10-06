@@ -1,5 +1,5 @@
 import { TransportError, DisconnectedDevice } from "@ledgerhq/errors";
-import { Observable } from "rxjs";
+import { Observable, Subject, takeUntil } from "rxjs";
 import { TraceContext, trace } from "@ledgerhq/logs";
 const TagId = 0x05;
 
@@ -19,11 +19,12 @@ export const receiveAPDU = (
     let notifiedIndex = 0;
     let notifiedDataLength = 0;
     let notifiedData = Buffer.alloc(0);
+    const subscriptionCleaner = new Subject<void>();
 
-    const sub = rawStream.subscribe({
+    // The raw stream is listened/subscribed to until a full message (that can be made of several frames) is received
+    rawStream.pipe(takeUntil(subscriptionCleaner)).subscribe({
       complete: () => {
         o.error(new DisconnectedDevice());
-        sub.unsubscribe();
       },
       error: error => {
         trace({
@@ -33,7 +34,6 @@ export const receiveAPDU = (
           context,
         });
         o.error(error);
-        sub.unsubscribe();
       },
       next: value => {
         // Silences emitted errors in next
@@ -52,6 +52,8 @@ export const receiveAPDU = (
         const chunkIndex = value.readUInt16BE(1);
         // `slice` and not `subarray`: this is not a Node Buffer, but probably only a Uint8Array.
         let chunkData = value.slice(3);
+
+        console.log(`🦄 Got an event: chunkIndex: ${chunkIndex}`);
 
         if (tag !== TagId) {
           o.error(new TransportError("Invalid tag " + tag.toString(16), "InvalidTag"));
@@ -91,15 +93,22 @@ export const receiveAPDU = (
           return;
         }
 
+        console.log(
+          `🦄 Data Length check: notifiedData.length: ${notifiedData.length} vs notifiedDataLength: ${notifiedDataLength}`,
+        );
         if (notifiedData.length === notifiedDataLength) {
           o.next(notifiedData);
+
+          // Completing the parent will trigger the cleaning of the child `sub`
           o.complete();
-          sub.unsubscribe();
+          // TODO: necessary ?
+          subscriptionCleaner.next();
         }
       },
     });
 
     return () => {
-      sub.unsubscribe();
+      console.log(`🦄 Cleaning`);
+      subscriptionCleaner.next();
     };
   });

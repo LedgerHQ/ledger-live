@@ -57,6 +57,7 @@ export const sendAPDU = (
       head.writeUInt16BE(apdu.length, 3);
     }
 
+    // No 0-padding is needed
     return Buffer.concat([head, buffer]);
   });
 
