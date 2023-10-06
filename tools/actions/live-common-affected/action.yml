@@ -13,7 +13,7 @@ outputs:
     description: "a list of main directories"
 
 runs:
-  using: node20
+  using: node16
   main: build/main.js
 
 branding:

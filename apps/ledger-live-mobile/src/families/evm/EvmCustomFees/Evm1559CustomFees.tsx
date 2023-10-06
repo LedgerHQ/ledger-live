@@ -36,6 +36,9 @@ const Evm1559CustomFees = ({
 
   const { gasOptions } = originalTransaction;
 
+  // TODO: Make GasOptions optional in the future.
+  // Use fallback mechanisms to infer min & max values based on the FeeData returned by a node
+  // This will make this "advanced" mode compatible with EVM chains without gasTracker
   invariant(gasOptions, "PriorityFeeField: 'transaction.gasOptions' should be defined");
 
   const [maxFeePerGas, setMaxFeePerGas] = useState<BigNumber>(
