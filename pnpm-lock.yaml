@@ -5224,12 +5224,9 @@ importers:
       '@actions/github':
         specifier: ^5.1.1
         version: 5.1.1
-      formdata-node:
-        specifier: ^5.0.1
-        version: 5.0.1
-      node-fetch:
-        specifier: ^3.3.2
-        version: 3.3.2
+      '@aws-sdk/client-s3':
+        specifier: ^3.370.0
+        version: 3.370.0
       tsup:
         specifier: ^7.0.0
         version: 7.0.0(typescript@5.1.3)
@@ -5606,7 +5603,7 @@ packages:
       '@smithy/util-utf8': 1.0.2
       '@smithy/util-waiter': 1.0.2
       fast-xml-parser: 4.2.5
-      tslib: 2.5.0
+      tslib: 2.6.2
     transitivePeerDependencies:
       - '@aws-sdk/signature-v4-crt'
       - aws-crt
@@ -38365,14 +38362,6 @@ packages:
     engines: {node: '>=0.4.x'}
     dev: true
 
-  /formdata-node@5.0.1:
-    resolution: {integrity: sha512-8xnIjMYGKPj+rY2BTbAmpqVpi8der/2FT4d9f7J32FlsCpO5EzZPq3C/N56zdv8KweHzVF6TGijsS1JT6r1H2g==}
-    engines: {node: '>= 14.17'}
-    dependencies:
-      node-domexception: 1.0.0
-      web-streams-polyfill: 4.0.0-beta.3
-    dev: true
-
   /formdata-polyfill@4.0.10:
     resolution: {integrity: sha512-buewHzMvYL29jdeQTVILecSaZKnt/RJWjoZCF5OW60Z67/GmSLBkOFM7qh1PI3zFNtJbaZL5eQu1vLfazOwj4g==}
     engines: {node: '>=12.20.0'}
@@ -61950,11 +61939,6 @@ packages:
   /web-streams-polyfill@3.2.1:
     resolution: {integrity: sha512-e0MO3wdXWKrLbL0DgGnUV7WHVuw9OUvL4hjgnPkIeEvESk74gAITi5G606JtZPp39cd8HA9VQzCIvA49LpPN5Q==}
     engines: {node: '>= 8'}
-    dev: true
-
-  /web-streams-polyfill@4.0.0-beta.3:
-    resolution: {integrity: sha512-QW95TCTaHmsYfHDybGMwO5IJIM93I/6vTRk+daHTWFPhwh+C8Cg7j7XyKrwrj8Ib6vYXe0ocYNrmzY4xAAN6ug==}
-    engines: {node: '>= 14'}
     dev: true
 
   /web-worker@1.2.0:

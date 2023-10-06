@@ -19,7 +19,7 @@ inputs:
     required: false
     default: "false"
 runs:
-  using: node20
+  using: node16
   main: build/main.js
 
 branding:

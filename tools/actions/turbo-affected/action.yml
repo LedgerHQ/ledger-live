@@ -20,7 +20,7 @@ outputs:
     description: "Returns true if package given from inputs is affected (false by default)"
 
 runs:
-  using: node20
+  using: node16
   main: build/main.js
 
 branding:
