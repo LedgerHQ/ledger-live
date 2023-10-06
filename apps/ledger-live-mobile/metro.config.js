@@ -4,7 +4,6 @@
  *
  * @format
  */
-/* eslint-disable no-console */
 
 const extraConfig = require("metro-extra-config");
 
