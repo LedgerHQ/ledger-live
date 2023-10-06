@@ -57,7 +57,21 @@ runs:
     - name: Install dependencies
       env:
         LANG: en_US.UTF-8
-      run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --filter="dummy-*" --unsafe-perm
+      run: |
+        pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --filter="dummy-*" --unsafe-perm
+        F=apps/ledger-live-desktop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Framework.framework
+        if [ -x "$F" ] ; then
+          if [ ! -x "$F/Electron Framework" ] ; then
+            echo "ELECTRON is broken, trying to restore it..."
+            rm -rf node_modules/.pnpm/electron@* apps/ledger-live-desktop/node_modules/electron
+            pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --filter="dummy-*" --unsafe-perm
+          fi
+          if [ ! -x "$F/Electron Framework" ] ; then
+            echo "ELECTRON is still broken, aborting..."
+            exit 1
+          fi
+        fi
+
       shell: bash
     - name: Install playwright dependencies
       if: ${{ inputs.install_playwright }}
