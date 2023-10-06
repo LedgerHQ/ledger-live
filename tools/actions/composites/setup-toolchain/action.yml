@@ -22,21 +22,19 @@ runs:
         dotnet-version: 2.1.816
     - uses: pnpm/action-setup@v2
       if: inputs.pnpm_dest != ''
-      # if: ${{ runner.os == 'Windows' }}
       with:
         version: 8.8
         dest: ${{ inputs.pnpm_dest }}
     - uses: pnpm/action-setup@v2
       if: inputs.pnpm_dest == ''
-      # if: ${{ runner.os == 'Windows' }}
       with:
         version: 8.8
     - uses: actions/setup-node@v3
-      # if: ${{ runner.os == 'Windows' }}
+
       with:
         node-version: 18
-        cache: pnpm
-        cache-dependency-path: "**/pnpm-lock.yaml"
+        # cache: pnpm
+        # cache-dependency-path: "**/pnpm-lock.yaml"
         registry-url: "https://registry.npmjs.org"
     - name: upgrade npm
       if: inputs.upgrade_npm == 'true'
