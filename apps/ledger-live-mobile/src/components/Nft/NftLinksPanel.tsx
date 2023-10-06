@@ -53,7 +53,7 @@ const NftLink = ({
   <LinkTouchable style={style} onPress={onPress}>
     <Flex flexDirection="row" alignItems="center">
       <Box mr={16}>{leftIcon}</Box>
-      <Flex flexDirection="column">
+      <Flex flexDirection="column" flexShrink={1}>
         <Text fontWeight="semiBold" fontSize={16} color={primary ? "primary.c90" : "neutral.c100"}>
           {title}
         </Text>
