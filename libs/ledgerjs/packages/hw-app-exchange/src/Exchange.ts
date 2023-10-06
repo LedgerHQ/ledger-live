@@ -3,6 +3,8 @@ import { BigNumber } from "bignumber.js";
 import { TransportStatusError } from "@ledgerhq/errors";
 import invariant from "invariant";
 
+import { OkStatus, ErrorStatus } from "./ReturnCode";
+
 export const enum RateTypes {
   Fixed = 0x00,
   Floating = 0x01,
@@ -12,7 +14,11 @@ export const enum ExchangeTypes {
   Swap = 0x00,
   Sell = 0x01,
   Fund = 0x02,
+  SwapNg = 0x03,
+  SellNg = 0x04,
+  FundNg = 0x05,
 }
+const ExchangeTypeNg = [ExchangeTypes.SwapNg, ExchangeTypes.SellNg, ExchangeTypes.FundNg];
 
 const START_NEW_TRANSACTION_COMMAND = 0x03;
 const SET_PARTNER_KEY_COMMAND = 0x04;
@@ -23,21 +29,6 @@ const CHECK_PAYOUT_ADDRESS = 0x08;
 const CHECK_ASSET_IN = 0x08;
 const CHECK_REFUND_ADDRESS = 0x09;
 const SIGN_COIN_TRANSACTION = 0x0a;
-
-const OkStatus = 0x9000;
-const ErrorStatus = {
-  INCORRECT_COMMAND_DATA: 0x6a80,
-  DESERIALIZATION_FAILED: 0x6a81,
-  WRONG_TRANSACTION_ID: 0x6a82,
-  INVALID_ADDRESS: 0x6a83,
-  USER_REFUSED: 0x6a84,
-  INTERNAL_ERROR: 0x6a85,
-  WRONG_P1: 0x6a86,
-  WRONG_P2: 0x6a87,
-  CLASS_NOT_SUPPORTED: 0x6e00,
-  INVALID_INSTRUCTION: 0x6d00,
-  SIGN_VERIFICATION_FAIL: 0x9d1a,
-} as const;
 
 const maybeThrowProtocolError = (result: Buffer): void => {
   invariant(result.length >= 2, "ExchangeTransport: Unexpected result length");
@@ -76,13 +67,58 @@ export function getExchageErrorMessage(errorCode: number): string | undefined {
   return undefined;
 }
 
+export type PartnerKeyInfo = {
+  name: string;
+  curve: string;
+  publicKey: Buffer;
+  signatureComputedFormat?: PayloadSignatureComputedFormat;
+};
+const curves = {
+  secp256k1: 0x00,
+  secp256r1: 0x01,
+};
+export type PayloadSignatureComputedFormat = "raw" | "jws";
+const transactionEncodedFormat = {
+  raw: 0x00,
+  base64: 0x01,
+};
+
+/**
+ * Adapt ExchangeTypes following partner info.
+ * For "legacy" partner, we don't change the provided type.
+ * For new one, we call the new APDU commands (Ng, Next Gen).
+ */
+function resolveTransactionType(type: ExchangeTypes, partnerVersion?: number): ExchangeTypes {
+  if (partnerVersion === undefined || partnerVersion === 1) {
+    return type;
+  }
+
+  switch (type) {
+    case ExchangeTypes.Swap:
+      return ExchangeTypes.SwapNg;
+    case ExchangeTypes.Sell:
+      return ExchangeTypes.SellNg;
+    case ExchangeTypes.Fund:
+      return ExchangeTypes.FundNg;
+    default:
+      return type;
+  }
+}
+
+export function createExchange(
+  transport: Transport,
+  transactionType: ExchangeTypes,
+  transactionRate?: RateTypes,
+  version?: number,
+): Exchange {
+  return new Exchange(transport, resolveTransactionType(transactionType, version), transactionRate);
+}
+
 export default class Exchange {
   transport: Transport;
   transactionType: ExchangeTypes;
   transactionRate: RateTypes;
-  allowedStatuses: Array<number> = [
-    0x9000, 0x6a80, 0x6a81, 0x6a82, 0x6a83, 0x6a84, 0x6a85, 0x6e00, 0x6d00, 0x9d1a,
-  ];
+  allowedStatuses: Array<number> = [...Object.values(ErrorStatus), OkStatus];
 
   constructor(transport: Transport, transactionType: ExchangeTypes, transactionRate?: RateTypes) {
     this.transactionType = transactionType;
@@ -111,7 +147,8 @@ export default class Exchange {
     return result.toString("ascii", 0, 10);
   }
 
-  async setPartnerKey(partnerNameAndPublicKey: Buffer): Promise<void> {
+  async setPartnerKey(info: PartnerKeyInfo): Promise<void> {
+    const partnerNameAndPublicKey = this.getPartnerKeyInfo(info);
     const result: Buffer = await this.transport.send(
       0xe0,
       SET_PARTNER_KEY_COMMAND,
@@ -135,16 +172,36 @@ export default class Exchange {
     maybeThrowProtocolError(result);
   }
 
-  async processTransaction(transaction: Buffer, fee: BigNumber): Promise<void> {
-    let hex: string = fee.toString(16);
-    hex = hex.padStart(hex.length + (hex.length % 2), "0");
-    const feeHex: Buffer = Buffer.from(hex, "hex");
-    const bufferToSend: Buffer = Buffer.concat([
-      Buffer.from([transaction.length]),
-      transaction,
-      Buffer.from([feeHex.length]),
-      feeHex,
-    ]);
+  async processTransaction(
+    transaction: Buffer,
+    fee: BigNumber,
+    compFormat?: PayloadSignatureComputedFormat,
+  ): Promise<void> {
+    let bufferToSend: Buffer;
+    if (this.isExchangeTypeNg()) {
+      let hex: string = fee.toString(16);
+      hex = hex.padStart(hex.length + (hex.length % 2), "0");
+      const feeHex: Buffer = Buffer.from(hex, "hex");
+      bufferToSend = Buffer.concat([
+        Buffer.from([
+          compFormat === "jws" ? transactionEncodedFormat.base64 : transactionEncodedFormat.raw,
+        ]),
+        Buffer.from([transaction.length]),
+        transaction,
+        Buffer.from([feeHex.length]),
+        feeHex,
+      ]);
+    } else {
+      let hex: string = fee.toString(16);
+      hex = hex.padStart(hex.length + (hex.length % 2), "0");
+      const feeHex: Buffer = Buffer.from(hex, "hex");
+      bufferToSend = Buffer.concat([
+        Buffer.from([transaction.length]),
+        transaction,
+        Buffer.from([feeHex.length]),
+        feeHex,
+      ]);
+    }
     const result: Buffer = await this.transport.send(
       0xe0,
       PROCESS_TRANSACTION_RESPONSE,
@@ -157,6 +214,14 @@ export default class Exchange {
   }
 
   async checkTransactionSignature(transactionSignature: Buffer): Promise<void> {
+    if (this.isExchangeTypeNg()) {
+      transactionSignature = Buffer.concat([
+        Buffer.from([0x01]),
+        Buffer.from([0x01]),
+        transactionSignature,
+      ]);
+    }
+
     const result: Buffer = await this.transport.send(
       0xe0,
       CHECK_TRANSACTION_SIGNATURE,
@@ -236,5 +301,22 @@ export default class Exchange {
       this.allowedStatuses,
     );
     maybeThrowProtocolError(result);
+  }
+
+  private getPartnerKeyInfo({ name, curve, publicKey }: PartnerKeyInfo): Buffer {
+    if (this.isExchangeTypeNg()) {
+      return Buffer.concat([
+        Buffer.from([name.length]),
+        Buffer.from(name, "ascii"),
+        Buffer.from([curves[curve]]),
+        publicKey,
+      ]);
+    }
+
+    return Buffer.concat([Buffer.from([name.length]), Buffer.from(name, "ascii"), publicKey]);
+  }
+
+  private isExchangeTypeNg(): boolean {
+    return ExchangeTypeNg.includes(this.transactionType);
   }
 }

@@ -2,7 +2,7 @@ import { TransportStatusError, WrongDeviceForAccount } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { firstValueFrom, from, Observable } from "rxjs";
 import secp256k1 from "secp256k1";
-import { getCurrencyExchangeConfig } from "../";
+import { convertToAppExchangePartnerKey, getCurrencyExchangeConfig } from "../";
 import { getAccountCurrency, getMainAccount } from "../../account";
 import { getAccountBridge } from "../../bridge";
 import { TransactionRefusedOnDevice } from "../../errors";
@@ -100,7 +100,7 @@ const completeExchange = (
         }
 
         currentStep = "SET_PARTNER_KEY";
-        await exchange.setPartnerKey(providerConfig.nameAndPubkey);
+        await exchange.setPartnerKey(convertToAppExchangePartnerKey(providerConfig));
         if (unsubscribed) return;
 
         currentStep = "CHECK_PARTNER";

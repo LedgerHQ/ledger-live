@@ -1,4 +1,4 @@
-import { createExchangeProviderNameAndSignature, SwapProviderConfig } from "../";
+import { SwapProviderConfig } from "../";
 import { getEnv } from "@ledgerhq/live-env";
 import {
   AccessDeniedError,
@@ -56,25 +56,35 @@ type ProviderConfig = CEXProviderConfig | DEXProviderConfig;
 
 const swapProviders: Record<string, ProviderConfig> = {
   changelly: {
-    ...createExchangeProviderNameAndSignature({
-      name: "Changelly",
-      publicKey:
+    name: "Changelly",
+    publicKey: {
+      curve: "secp256k1",
+      data: Buffer.from(
         "0480d7c0d3a9183597395f58dda05999328da6f18fabd5cda0aff8e8e3fc633436a2dbf48ecb23d40df7c3c7d3e774b77b4b5df0e9f7e08cf1cdf2dba788eb085b",
-      signature:
-        "3045022100e73339e5071b5d232e8cacecbd7c118c919122a43f8abb8b2062d4bfcd58274e022050b11605d8b7e199f791266146227c43fd11d7645b1d881f705a2f8841d21de5",
-    }),
+        "hex",
+      ),
+    },
+    signature: Buffer.from(
+      "3045022100e73339e5071b5d232e8cacecbd7c118c919122a43f8abb8b2062d4bfcd58274e022050b11605d8b7e199f791266146227c43fd11d7645b1d881f705a2f8841d21de5",
+      "hex",
+    ),
     needsKYC: false,
     needsBearerToken: false,
     type: "CEX",
   },
   cic: {
-    ...createExchangeProviderNameAndSignature({
-      name: "CIC",
-      publicKey:
+    name: "CIC",
+    publicKey: {
+      curve: "secp256k1",
+      data: Buffer.from(
         "0444a71652995d15ef0d4d6fe8de21a0c8ad48bdbfea7f789319973669785ca96abca9fd0c504c3074d9b654f0e3a76dde642a03efe4ccdee3af3ca4ba4afa202d",
-      signature:
-        "3044022078a73433ab6289027b7a169a260f180d16346f7ab55b06a22109f68a756d691d0220190edd6e1214c3309dc1b0afe90d217b728377491561383f2ee543e2c90188eb",
-    }),
+        "hex",
+      ),
+    },
+    signature: Buffer.from(
+      "3044022078a73433ab6289027b7a169a260f180d16346f7ab55b06a22109f68a756d691d0220190edd6e1214c3309dc1b0afe90d217b728377491561383f2ee543e2c90188eb",
+      "hex",
+    ),
     needsKYC: false,
     needsBearerToken: false,
     type: "CEX",

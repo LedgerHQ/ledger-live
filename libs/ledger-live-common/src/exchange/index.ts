@@ -3,6 +3,7 @@ import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets
 import { findExchangeCurrencyConfig as findProdExchangeCurrencyConfig } from "@ledgerhq/cryptoassets";
 import { getEnv } from "@ledgerhq/live-env";
 import { findTestExchangeCurrencyConfig } from "./testCurrencyConfig";
+import { PartnerKeyInfo } from "@ledgerhq/hw-app-exchange";
 // Minimum version of a currency app which has exchange capabilities, meaning it can be used
 // for sell/swap, and do silent signing.
 const exchangeSupportAppVersions = {
@@ -45,7 +46,12 @@ type ExchangeCurrencyNameAndSignature = {
   signature: Buffer;
 };
 export type ExchangeProviderNameAndSignature = {
-  nameAndPubkey: Buffer;
+  name: string;
+  publicKey: {
+    curve: "secp256k1" | "secp256r1";
+    data: Buffer;
+  };
+  version?: number;
   signature: Buffer;
 };
 
@@ -78,25 +84,12 @@ export const isCurrencyExchangeSupported = (currency: CryptoCurrency | TokenCurr
   return !!findExchangeCurrencyConfig(currency.id);
 };
 
-export const createExchangeProviderNameAndSignature = ({
-  name,
-  publicKey,
-  signature,
-}: {
-  name: string;
-  publicKey: string;
-  signature: string;
-}): ExchangeProviderNameAndSignature => ({
-  /**
-   * nameAndPubkey is the concatenation of:
-   * - an empty buffer of the size of the partner name
-   * - a buffer created from the partner name string in ascii encoding
-   * - a buffer created from the hexadecimal version of the partner public key
-   */
-  nameAndPubkey: Buffer.concat([
-    Buffer.from([name.length]),
-    Buffer.from(name, "ascii"),
-    Buffer.from(publicKey, "hex"),
-  ]),
-  signature: Buffer.from(signature, "hex"),
-});
+export function convertToAppExchangePartnerKey(
+  provider: ExchangeProviderNameAndSignature,
+): PartnerKeyInfo {
+  return {
+    name: provider.name,
+    curve: provider.publicKey.curve,
+    publicKey: provider.publicKey.data,
+  };
+}

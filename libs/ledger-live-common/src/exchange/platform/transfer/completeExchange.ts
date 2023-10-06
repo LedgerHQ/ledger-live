@@ -9,7 +9,7 @@ import { getAccountCurrency, getMainAccount } from "../../../account";
 import { getAccountBridge } from "../../../bridge";
 import { TransactionRefusedOnDevice } from "../../../errors";
 import { withDevice } from "../../../hw/deviceAccess";
-import { getCurrencyExchangeConfig } from "../..";
+import { convertToAppExchangePartnerKey, getCurrencyExchangeConfig } from "../..";
 import { getProvider } from ".";
 
 import type {
@@ -70,7 +70,7 @@ const completeExchange = (
         const errorsKeys = Object.keys(errors);
         if (errorsKeys.length > 0) throw errors[errorsKeys[0]]; // throw the first error
 
-        await exchange.setPartnerKey(providerNameAndSignature.nameAndPubkey);
+        await exchange.setPartnerKey(convertToAppExchangePartnerKey(providerNameAndSignature));
         if (unsubscribed) return;
 
         await exchange.checkPartner(providerNameAndSignature.signature);
