@@ -1930,7 +1930,7 @@
       "cancelCta": "Cancel set up",
       "notFoundEntity": {
         "title": "Initiate Genuine Check again",
-        "description": "You must first disable \"My Ledger Provider\" setting. To disable it, open Ledger Live \"Settings\", select \"Experimental features\", and then toggle off \"Manager provider\".",
+        "description": "You must first disable \"My Ledger Provider\" setting. To disable it, open Ledger Live \"Settings\", select \"Experimental features\", and then toggle off \"My Ledger provider\".",
         "settingsCta": "Go to settings"
       }
     },
@@ -2813,7 +2813,7 @@
           "description": "Show developer and testnet apps in the Manager."
         },
         "managerProvider": {
-          "title": "Manager provider",
+          "title": "My Ledger provider",
           "description": "Changing the app provider in the Manager may make it impossible to install or uninstall apps on your Ledger device."
         },
         "experimentalExplorers": {
