@@ -154,8 +154,8 @@ const Body = ({
     bridgeError,
     bridgePending,
   } = useBridgeTransaction<Transaction>(() => {
-    const parentAccount = params && params.parentAccount;
-    const account = (params && params.account) || accounts[0];
+    const parentAccount = params?.parentAccount;
+    const account = params?.account || accounts[0];
     return {
       account,
       parentAccount,
@@ -207,7 +207,7 @@ const Body = ({
     [account, parentAccount, updateAccountWithUpdater],
   );
 
-  const handleStepChange = useCallback(e => onChangeStepId(e.id), [onChangeStepId]);
+  const handleStepChange = useCallback(step => onChangeStepId(step.id), [onChangeStepId]);
   const error = transactionError || bridgeError;
   const mainAccount = getMainAccount(account, parentAccount);
 
