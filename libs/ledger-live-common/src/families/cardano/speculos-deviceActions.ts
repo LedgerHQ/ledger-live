@@ -117,7 +117,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
       button: SpeculosButton.BOTH,
     },
     {
-      title: "to",
+      title: "to pool",
     },
     {
       title: "delegation?",
