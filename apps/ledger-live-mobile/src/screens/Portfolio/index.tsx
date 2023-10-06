@@ -8,7 +8,10 @@ import { useTheme } from "styled-components/native";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { ReactNavigationPerformanceView } from "@shopify/react-native-performance-navigation";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { useLearnMoreURI, usePostOnboardingURI } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
+import {
+  useLearnMoreURI,
+  usePostOnboardingURI,
+} from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { useRefreshAccountsOrdering } from "../../actions/general";
 import {
   // TODO: discreetMode is never used 😱 is it safe to remove
@@ -90,7 +93,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
       const internetConnected = await internetReachable();
       if (internetConnected && protectFeature?.enabled) {
         if (recoverPostOnboardingURI && onboardingType === OnboardingType.restore) {
-          Linking.openURL(recoverPostOnboardingURI)
+          Linking.openURL(recoverPostOnboardingURI);
         } else if (recoverLearnMoreURI) {
           Linking.openURL(recoverLearnMoreURI);
         }

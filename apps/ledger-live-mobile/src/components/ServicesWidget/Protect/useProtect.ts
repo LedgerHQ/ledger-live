@@ -19,7 +19,7 @@ export function useProtect() {
   const onLogin = () => {
     const url = `${loginURI}&source=${urls.recoverSources.myLedger}`;
     Linking.canOpenURL(url).then(() => Linking.openURL(url));
-  }
+  };
 
   const onLearnMore = () => {
     const url = `${learnMoreURI}&source=${urls.recoverSources.myLedger}`;
