@@ -240,7 +240,7 @@ export const withDevice =
         })
         // This catch is here only for errors that might happen at open or at clean up of the transport before doing the job
         .catch(e => {
-          tracer.trace("Error while opening Transport: ", { e });
+          tracer.trace(`Error while opening Transport: ${e}`, { error: e });
           unlockQueuedJob();
           if (e instanceof BluetoothRequired) throw e;
           if (e instanceof TransportWebUSBGestureRequired) throw e;

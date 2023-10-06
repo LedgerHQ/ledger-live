@@ -263,6 +263,7 @@ export default class Transport {
 
     tracer.trace("Starting an exchange", { abortTimeoutMs });
     const response = await this.exchange(
+      // The size of the data is added in 1 byte just before `data`
       Buffer.concat([Buffer.from([cla, ins, p1, p2]), Buffer.from([data.length]), data]),
       { abortTimeoutMs },
     );
@@ -480,6 +481,11 @@ export default class Transport {
    */
   setTraceContext(context?: TraceContext) {
     this.tracer = this.tracer.withContext(context);
+  }
+
+  // TODO: Maybe not useful if remove subject from transportHandler
+  updateTraceContext(contextToAdd: TraceContext) {
+    this.tracer.updateContext(contextToAdd);
   }
 
   /**

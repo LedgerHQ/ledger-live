@@ -162,17 +162,23 @@ export const close = (
   context?: TraceContext,
 ): Promise<void> => {
   trace({ type: LOG_TYPE, message: "Trying to close transport", context });
-  // Tries on the registered TransportModule implementation of close
+
+  // Tries to call close on the registered TransportModule implementation first
   for (let i = 0; i < modules.length; i++) {
     const m = modules[i];
     const p = m.close && m.close(transport, deviceId);
     if (p) {
-      trace({ type: LOG_TYPE, message: `Closing transport ${m.id}`, context });
+      trace({
+        type: LOG_TYPE,
+        message: `Closing transport via registered module: ${m.id}`,
+        context,
+      });
       return p;
     }
   }
 
-  // Otherwise fallbacks on the Transport implementation of close directly
+  trace({ type: LOG_TYPE, message: `Closing transport via the transport implementation`, context });
+  // Otherwise fallbacks on the transport implementation of close directly
   return transport.close();
 };
 export const setAllowAutoDisconnect = (
