@@ -310,8 +310,9 @@ export type Feature_ProtectServicesMobile = Feature<{
       quickAccessURI: string;
     };
   };
-  login: {
+  account: {
     loginURI: string;
+    homeURI: string;
   };
   protectId: string;
 }>;
