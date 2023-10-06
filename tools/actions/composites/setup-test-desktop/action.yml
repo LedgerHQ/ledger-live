@@ -57,7 +57,24 @@ runs:
     - name: Install dependencies
       env:
         LANG: en_US.UTF-8
-      run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --filter="dummy-*" --unsafe-perm
+      run: |
+        pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --filter="dummy-*" --unsafe-perm
+
+        if [ -x "apps/ledger-live-desktop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Framework.framework" ] ; then
+
+          if [ ! -x "apps/ledger-live-desktop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Framework.framework/Electron Framework" ] ; then
+            echo "WORKAROUND CACHE ISSUE WITH ELECTRON!"
+            rm -rf node_modules/.pnpm/electron* apps/ledger-live-desktop/node_modules/electron
+            pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --filter="dummy-*" --unsafe-perm
+          fi
+
+          if [ ! -x "apps/ledger-live-desktop/node_modules/electron/dist/Electron.app/Contents/Frameworks/Electron Framework.framework/Electron Framework" ] ; then
+            echo "STILL CAN NOT RESTORE ELECTRON?!"
+            exit 1
+          fi
+
+        fi
+
       shell: bash
     - name: Install playwright dependencies
       if: ${{ inputs.install_playwright }}
