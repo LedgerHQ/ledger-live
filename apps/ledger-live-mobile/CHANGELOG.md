@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.33.1-nightly.2
+
+### Patch Changes
+
+- [#4927](https://github.com/LedgerHQ/ledger-live/pull/4927) [`1c16480ee5`](https://github.com/LedgerHQ/ledger-live/commit/1c16480ee5f4e1826e64a6c16c092601a0307e42) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - fix display thumbnail of a story
+
 ## 3.33.1-nightly.1
 
 ### Patch Changes
