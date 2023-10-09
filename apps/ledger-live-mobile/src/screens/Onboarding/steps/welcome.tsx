@@ -121,7 +121,7 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
         acceptTerms();
         dispatch(setAnalytics(true));
 
-        const url = `${recoverFeature?.params?.login?.loginURI}&shouldBypassLLOnboarding=true`;
+        const url = `${recoverFeature?.params?.account?.loginURI}&shouldBypassLLOnboarding=true`;
 
         Linking.canOpenURL(url).then(canOpen => {
           if (canOpen) Linking.openURL(url);
@@ -213,7 +213,7 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
           {/* @TODO check if proper URL */}
           {/* @TODO need to disable temporary because of issue pairing device onboarding 
           {recoverFeature?.enabled &&
-          recoverFeature?.params?.onboardingRestore.postOnboardingURI ? (
+          recoverFeature?.params?.onboardingRestore?.postOnboardingURI ? (
             <Button outline type="main" size="large" onPress={recoverLogIn} mt={0} mb={7}>
               {t("onboarding.stepWelcome.recoverLogIn")}
             </Button>
