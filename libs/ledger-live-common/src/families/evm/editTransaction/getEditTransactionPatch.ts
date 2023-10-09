@@ -1,14 +1,14 @@
 import { getGasTracker } from "@ledgerhq/coin-evm/api/gasTracker/index";
+import { getMinEip1559Fees, getMinLegacyFees } from "@ledgerhq/coin-evm/getMinEditTransactionFees";
 import type {
   EvmTransactionEIP1559,
   EvmTransactionLegacy,
   GasOptions,
   Transaction,
+  EditType,
 } from "@ledgerhq/coin-evm/types/index";
 import type { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import { getMinEip1559Fees, getMinLegacyFees } from "./getMinFees";
-import { EditType } from "./types";
 
 /**
  * Can't easily and properly use generics with Partial to avoid type casting
