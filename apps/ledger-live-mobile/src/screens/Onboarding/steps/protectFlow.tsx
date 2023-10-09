@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { NavigatorName, ScreenName } from "../../../const";
 import BaseStepperView, { RestoreWithProtect, PinCodeInstructions } from "./setupDevice/scenes";
-import { TrackScreen } from "../../../analytics";
+import { TrackScreen, track } from "../../../analytics";
 
 import StepLottieAnimation from "./setupDevice/scenes/StepLottieAnimation";
 import { completeOnboarding } from "../../../actions/settings";
@@ -72,6 +72,12 @@ function OnboardingStepProtectFlow({ navigation, route }: NavigationProps) {
     resetCurrentStep();
 
     if (protectFeature?.enabled && (lastConnectedDevice || !hasCompletedOnboarding)) {
+      track("deeplink_clicked", {
+        deeplinkSource: "llm-pairing",
+        deeplinkMedium: "ledger-live",
+        deeplinkCampaign: "recover-launch",
+        live_app: "Recover",
+      });
       navigation.navigate(NavigatorName.Base, {
         screen: ScreenName.Recover,
         params: {
