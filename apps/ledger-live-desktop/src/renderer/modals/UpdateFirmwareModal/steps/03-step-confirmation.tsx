@@ -6,8 +6,8 @@ import { UserRefusedFirmwareUpdate } from "@ledgerhq/errors";
 import { useHistory } from "react-router-dom";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Track from "~/renderer/analytics/Track";
+import { getDeviceModel } from "@ledgerhq/devices";
 import Box from "~/renderer/components/Box";
-import Text from "~/renderer/components/Text";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { StepProps } from "../";
 import { context } from "~/renderer/drawers/Provider";
@@ -27,11 +27,8 @@ const Title = styled(Box).attrs(() => ({
   font-weight: 500;
 `;
 
-const StepConfirmation = ({
-  error,
-  appsToBeReinstalled,
-  finalStepSuccessDescription,
-}: StepProps) => {
+const StepConfirmation = ({ error, deviceModelId }: StepProps) => {
+  const device = getDeviceModel(deviceModelId);
   const { t } = useTranslation();
 
   useEffect(() => () => log("firmware-record-end"), []);
@@ -56,16 +53,9 @@ const StepConfirmation = ({
         size={64}
         iconSize={24}
       />
-      <Title mt={9}>{t("manager.modal.successTitle")}</Title>
-      <Box mt={2} mb={5}>
-        <Text ff="Inter|Regular" fontSize={4} color="palette.text.shade80" textAlign="center">
-          {finalStepSuccessDescription
-            ? finalStepSuccessDescription
-            : appsToBeReinstalled
-            ? t("manager.modal.successTextApps")
-            : t("manager.modal.successTextNoApps")}
-        </Text>
-      </Box>
+      <Title mt={9}>
+        {t("manager.modal.successTitle", { deviceName: device ? device.productName : "" })}
+      </Title>
       <Box mx={7} />
     </Container>
   );
