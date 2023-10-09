@@ -1,22 +1,5 @@
 # @ledgerhq/hw-transport-node-hid-singleton
 
-## 6.29.0-nightly.0
-
-### Minor Changes
-
-- [#4709](https://github.com/LedgerHQ/ledger-live/pull/4709) [`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac) Thanks [@alexandremgo](https://github.com/alexandremgo)! - feat: usage of new tracing system
-
-  The tracing helps keeping a context (for ex a `job id`) that is propagated to other logs,
-  creating a (simple) tracing span
-
-### Patch Changes
-
-- Updated dependencies [[`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac), [`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac)]:
-  - @ledgerhq/logs@6.11.0-nightly.0
-  - @ledgerhq/hw-transport-node-hid-noevents@6.28.0-nightly.0
-  - @ledgerhq/hw-transport@6.29.0-nightly.0
-  - @ledgerhq/devices@8.0.8-nightly.0
-
 ## 6.28.18
 
 ### Patch Changes

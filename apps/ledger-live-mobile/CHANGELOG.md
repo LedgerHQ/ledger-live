@@ -1,23 +1,5 @@
 # live-mobile
 
-## 3.33.1-nightly.2
-
-### Patch Changes
-
-- [#4927](https://github.com/LedgerHQ/ledger-live/pull/4927) [`1c16480ee5`](https://github.com/LedgerHQ/ledger-live/commit/1c16480ee5f4e1826e64a6c16c092601a0307e42) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - fix display thumbnail of a story
-
-## 3.33.1-nightly.1
-
-### Patch Changes
-
-- [#4930](https://github.com/LedgerHQ/ledger-live/pull/4930) [`bbad6146ce`](https://github.com/LedgerHQ/ledger-live/commit/bbad6146cee4fa55a8d0e2fec47579c945e6e59b) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix of OperationDetails view using the wrong currency in the `useNftMetadata` & `useNftCollectionMetadata` hooks
-
-## 3.33.1-nightly.0
-
-### Patch Changes
-
-- [#4922](https://github.com/LedgerHQ/ledger-live/pull/4922) [`4831135369`](https://github.com/LedgerHQ/ledger-live/commit/48311353690bf352686b7e34874055fa7fd89c02) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Tap and drag to see price over time on graph is buggy on LLM
-
 ## 3.33.0
 
 ### Minor Changes

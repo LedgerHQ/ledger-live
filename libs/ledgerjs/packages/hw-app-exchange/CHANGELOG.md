@@ -1,12 +1,5 @@
 # @ledgerhq/hw-app-exchange
 
-## 0.2.4-nightly.0
-
-### Patch Changes
-
-- Updated dependencies [[`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac)]:
-  - @ledgerhq/hw-transport@6.29.0-nightly.0
-
 ## 0.2.3
 
 ### Patch Changes

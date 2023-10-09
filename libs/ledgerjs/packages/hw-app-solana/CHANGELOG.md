@@ -1,13 +1,5 @@
 # @ledgerhq/hw-app-solana
 
-## 7.0.14-nightly.0
-
-### Patch Changes
-
-- Updated dependencies [[`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac), [`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac)]:
-  - @ledgerhq/logs@6.11.0-nightly.0
-  - @ledgerhq/hw-transport@6.29.0-nightly.0
-
 ## 7.0.13
 
 ### Patch Changes
