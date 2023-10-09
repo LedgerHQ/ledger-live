@@ -15,7 +15,7 @@ import {
   Icons,
 } from "@ledgerhq/native-ui";
 
-import { LockedDeviceError, PeerRemovedPairing } from "@ledgerhq/errors";
+import { PeerRemovedPairing } from "@ledgerhq/errors";
 import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
 import Animation from "../Animation";
 import { TrackScreen } from "../../analytics";
@@ -128,26 +128,14 @@ const BleDevicePairing = ({ deviceToPair, onPaired, onRetry }: BleDevicePairingP
     );
   } else if (pairingError) {
     // TODO refactor this into the generic error rendering when possible.
-    let title;
-    let subtitle;
-
-    if ((pairingError as unknown) instanceof LockedDeviceError) {
-      title = t("blePairingFlow.pairing.error.lockedDevice.title");
-      subtitle = t("blePairingFlow.pairing.error.lockedDevice.subtitle", {
-        productName,
-      });
-    } else {
-      title = t("blePairingFlow.pairing.error.generic.title");
-      subtitle = t("blePairingFlow.pairing.error.generic.subtitle", {
-        productName,
-      });
-    }
-
     content = (
       <Flex flex={1}>
         <TrackScreen category="BT failed to pair" />
         <Flex flex={1} alignItems="center" justifyContent="center">
-          <GenericInformationBody title={title} description={subtitle} />
+          <GenericInformationBody
+            title={t("blePairingFlow.pairing.error.generic.title")}
+            description={t("blePairingFlow.pairing.error.generic.subtitle")}
+          />
         </Flex>
         <Button type="main" onPress={onRetry} mb={8}>
           {t("blePairingFlow.pairing.error.retryCta")}

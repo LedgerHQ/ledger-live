@@ -7,7 +7,7 @@ import getVersion from "../../hw/getVersion";
 import { BleError } from "../types";
 
 export type useBleDevicePairingArgs = {
-  deviceId: string;
+  deviceId: string | undefined;
 };
 
 export type PairingError = BleError | null;
@@ -31,6 +31,8 @@ export const useBleDevicePairing = ({
   const [pairingError, setPairingError] = useState<PairingError>(null);
 
   useEffect(() => {
+    if (!deviceId) return;
+
     const requestObservable = withDevice(deviceId)(t => from(getVersion(t))).pipe(first());
 
     const sub = requestObservable.subscribe({

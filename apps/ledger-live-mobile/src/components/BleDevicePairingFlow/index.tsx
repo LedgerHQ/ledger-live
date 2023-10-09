@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { useBleDevicePairing } from "@ledgerhq/live-common/ble/hooks/useBleDevicePairing";
+import { LockedDeviceError } from "@ledgerhq/errors";
 
 import RequiresBLE from "../RequiresBLE";
 import BleDevicesScanning from "./BleDevicesScanning";
@@ -11,6 +13,7 @@ import type { BleDevicePairingProps } from "./BleDevicePairing";
 import { track } from "../../analytics";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import { NavigationHeaderCloseButton } from "../NavigationHeaderCloseButton";
+import UnlockDeviceDrawer from "../../screens/SyncOnboarding/UnlockDeviceDrawer";
 
 const TIMEOUT_AFTER_PAIRED_MS = 2000;
 
@@ -91,22 +94,35 @@ const BleDevicePairingFlow: React.FC<BleDevicePairingFlowProps> = ({
   const [pairingFlowStep, setPairingFlowStep] = useState<PairingFlowStep>("scanning");
 
   const [deviceToPair, setDeviceToPair] = useState<Device | null>(null);
+  const [deviceLocked, setDeviceLocked] = useState<Device | null>(null);
   const [isPaired, setIsPaired] = useState(false);
 
-  const onDeviceSelect = useCallback(
-    (item: Device) => {
-      const deviceToPair = {
-        deviceId: item.deviceId,
-        deviceName: item.deviceName,
-        modelId: item.modelId,
-        wired: false,
-      };
+  const { pairingError } = useBleDevicePairing({
+    deviceId: deviceToPair?.deviceId,
+  });
 
-      setDeviceToPair(deviceToPair);
+  useEffect(() => {
+    if (!deviceToPair) return;
+
+    // This component only handles the 'locked device' error
+    // Other error types are passed on to the next step in the flow
+    if (pairingError instanceof LockedDeviceError) {
+      setDeviceLocked(deviceToPair);
+    } else {
       setPairingFlowStep("pairing");
-    },
-    [setDeviceToPair, setPairingFlowStep],
-  );
+    }
+  }, [deviceToPair, pairingError]);
+
+  const onDeviceSelect = useCallback((item: Device) => {
+    const deviceToPair = {
+      deviceId: item.deviceId,
+      deviceName: item.deviceName,
+      modelId: item.modelId,
+      wired: false,
+    };
+
+    setDeviceToPair(deviceToPair);
+  }, []);
 
   const onPaired = useCallback(
     (device: Device) => {
@@ -155,6 +171,7 @@ const BleDevicePairingFlow: React.FC<BleDevicePairingFlowProps> = ({
     if (!isPaired) {
       track("button_clicked", { button: "Try BT pairing again" });
       setDeviceToPair(null);
+      setDeviceLocked(null);
       setPairingFlowStep("scanning");
     }
   }, [isPaired]);
@@ -207,18 +224,28 @@ const BleDevicePairingFlow: React.FC<BleDevicePairingFlowProps> = ({
 
   return (
     <RequiresBLE>
-      {pairingFlowStep === "pairing" && deviceToPair !== null ? (
-        <BleDevicePairing
-          deviceToPair={deviceToPair}
-          onPaired={onPaired}
-          onRetry={onRetryPairingFlow}
-        />
-      ) : pairingFlowStep === "scanning" ? (
+      {pairingFlowStep === "scanning" || deviceLocked ? (
         <BleDevicesScanning
           filterByDeviceModelId={filterByDeviceModelId}
           areKnownDevicesDisplayed={areKnownDevicesDisplayed}
           areKnownDevicesPairable={areKnownDevicesPairable}
           onDeviceSelect={onDeviceSelect}
+        />
+      ) : pairingFlowStep === "pairing" && deviceToPair !== null ? (
+        <BleDevicePairing
+          deviceToPair={deviceToPair}
+          onPaired={onPaired}
+          onRetry={onRetryPairingFlow}
+        />
+      ) : null}
+
+      {deviceLocked ? (
+        <UnlockDeviceDrawer
+          isOpen={true}
+          device={deviceLocked}
+          onClose={() => {
+            onRetryPairingFlow();
+          }}
         />
       ) : null}
     </RequiresBLE>
