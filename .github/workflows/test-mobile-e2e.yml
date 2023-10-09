@@ -55,19 +55,34 @@ jobs:
           brew update
           brew tap wix/brew
           brew install applesimutils
-      - name: Cache LLM pods
-        uses: actions/cache@v3
-        with:
-          path: |
-            apps/ledger-live-mobile/ios/Pods
-            ~/Library/Caches/CocoaPods
-            ~/.cocoapods
-          key: ${{ runner.os }}-pods-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock') }}
-      - uses: actions/cache/restore@v3
+      # - name: Cache LLM pods
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: |
+      #       apps/ledger-live-mobile/ios/Pods
+      #       ~/Library/Caches/CocoaPods
+      #       ~/.cocoapods
+      #     key: ${{ runner.os }}-pods-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock') }}
+
+      - name: cache detox build
+        uses: whywaita/actions-cache-s3@v2
         id: detox-build
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
-          key: ${{ runner.os }}-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/ledgerlivemobile.xcodeproj/project.pbxproj') }}
+          key: ${{ runner.os }}-detox-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/ledgerlivemobile.xcodeproj/project.pbxproj') }}
+          restore-keys: |
+            ${{ runner.os }}-detox-
+          aws-access-key-id: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          aws-s3-bucket: ll-gha-s3-cache
+          aws-region: eu-west-1
+
+      # - uses: actions/cache/restore@v3
+      #   id: detox-build
+      #   with:
+      #     path: ${{ github.workspace }}/apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
+      #     key: ${{ runner.os }}-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/ledgerlivemobile.xcodeproj/project.pbxproj') }}
+
       - name: TurboRepo local caching server
         id: turborepo-cache-server
         uses: ./tools/actions/turborepo-s3-cache
@@ -95,11 +110,13 @@ jobs:
         if: steps.detox-build.outputs.cache-hit != 'true'
         run: |
           pnpm mobile e2e:build -c ios.sim.release
-      - uses: actions/cache/save@v3
-        if: steps.detox-build.outputs.cache-hit != 'true'
-        with:
-          path: ${{ github.workspace }}/apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
-          key: ${{ steps.detox-build.outputs.cache-primary-key }}
+
+      # - uses: actions/cache/save@v3
+      #   if: steps.detox-build.outputs.cache-hit != 'true'
+      #   with:
+      #     path: ${{ github.workspace }}/apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
+      #     key: ${{ steps.detox-build.outputs.cache-primary-key }}
+
       - name: Build JS Bundle app for Detox test run
         if: steps.detox-build.outputs.cache-hit == 'true'
         run: |
