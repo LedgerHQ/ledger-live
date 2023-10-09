@@ -55,27 +55,28 @@ jobs:
           brew update
           brew tap wix/brew
           brew install applesimutils
-      # - name: Cache LLM pods
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: |
-      #       apps/ledger-live-mobile/ios/Pods
-      #       ~/Library/Caches/CocoaPods
-      #       ~/.cocoapods
-      #     key: ${{ runner.os }}-pods-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock') }}
+      - name: Cache LLM pods
+        uses: actions/cache@v3
+        with:
+          path: |
+            apps/ledger-live-mobile/ios/Pods
+            ~/Library/Caches/CocoaPods
+            ~/.cocoapods
+          key: ${{ runner.os }}-pods-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock') }}
 
       - name: cache detox build
-        uses: whywaita/actions-cache-s3@v2
+        uses: tespkg/actions-cache@v1
         id: detox-build
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
           key: ${{ runner.os }}-detox-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/ledgerlivemobile.xcodeproj/project.pbxproj') }}
           restore-keys: |
             ${{ runner.os }}-detox-
-          aws-access-key-id: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
-          aws-s3-bucket: ll-gha-s3-cache
-          aws-region: eu-west-1
+          accessKey: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          secretKey: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          bucket: ll-gha-s3-cache
+          region: eu-west-1
+          use-fallback: false
 
       # - uses: actions/cache/restore@v3
       #   id: detox-build
@@ -121,6 +122,8 @@ jobs:
         if: steps.detox-build.outputs.cache-hit == 'true'
         run: |
           pnpm mobile bundle:ios
+          pnpm mobile exec detox clean-framework-cache
+          pnpm mobile exec detox build-framework-cache
           cd apps/ledger-live-mobile
           mv main.jsbundle ios/build/Build/Products/Release-iphonesimulator/main.jsbundle
       - name: Test iOS app

@@ -35,17 +35,18 @@ runs:
         echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
 
     - name: Cache pnpm store
-      uses: whywaita/actions-cache-s3@v2
+      uses: tespkg/actions-cache@v1
       if: inputs.no_pnpm_cache == '' && inputs.aws-access-key != '' && inputs.aws-secret-key != ''
       with:
         path: ${{ env.STORE_PATH }}
         key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
         restore-keys: |
           ${{ runner.os }}-pnpm-store-
-        aws-access-key-id: ${{ inputs.aws-access-key }}
-        aws-secret-access-key: ${{ inputs.aws-secret-key }}
-        aws-s3-bucket: ll-gha-s3-cache
-        aws-region: eu-west-1
+        accessKey: ${{ inputs.aws-access-key }}
+        secretKey: ${{ inputs.aws-secret-key }}
+        bucket: ll-gha-s3-cache
+        region: eu-west-1
+        use-fallback: false
 
     - uses: actions/setup-node@v3
       # if: inputs.no_pnpm_cache != ''
