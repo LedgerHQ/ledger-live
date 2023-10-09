@@ -1,7 +1,6 @@
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import {
   useLearnMoreURI,
-  useLoginURI,
   useAlreadySubscribedURI,
 } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { useMemo } from "react";
@@ -12,14 +11,8 @@ import { urls } from "../../../config/urls";
 export function useProtect() {
   const servicesConfig = useFeature("protectServicesMobile");
 
-  const loginURI = useLoginURI(servicesConfig);
   const learnMoreURI = useLearnMoreURI(servicesConfig);
   const alreadySubscribedURI = useAlreadySubscribedURI(servicesConfig);
-
-  const onLogin = () => {
-    const url = `${loginURI}&source=${urls.recoverSources.myLedger}`;
-    Linking.canOpenURL(url).then(() => Linking.openURL(url));
-  };
 
   const onLearnMore = () => {
     const url = `${learnMoreURI}&source=${urls.recoverSources.myLedger}`;
@@ -32,7 +25,7 @@ export function useProtect() {
   };
 
   const onClickCard = () => {
-    onLogin();
+    onLearnMore();
     trackEvent("card_clicked", "Recover Card");
   };
 
