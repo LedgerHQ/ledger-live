@@ -106,11 +106,7 @@ export default function IsUnlocked({ children }: { children: React.ReactNode }):
               icon={<Logo size={50} />}
             />
             <PageTitle>{t("common.lockScreen.title")}</PageTitle>
-            <LockScreenDesc>
-              {t("common.lockScreen.subTitle")}
-              <br />
-              {t("common.lockScreen.description")}
-            </LockScreenDesc>
+            <LockScreenDesc>{t("common.lockScreen.description")}</LockScreenDesc>
             <Box horizontal alignItems="center">
               <Box
                 style={{
