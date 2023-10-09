@@ -1,7 +1,7 @@
-import React, { useMemo, useState, useCallback, useRef } from "react";
+import React, { useMemo, useState, useCallback, useRef, useEffect } from "react";
 import { FlatList, LayoutChangeEvent, ListRenderItemInfo } from "react-native";
 import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Box, Flex } from "@ledgerhq/native-ui";
@@ -35,6 +35,7 @@ import AssetDynamicContent from "./AssetDynamicContent";
 import AssetMarketSection from "./AssetMarketSection";
 import AssetGraph from "./AssetGraph";
 import { ReferralProgram } from "./referralProgram";
+import { setIsDeepLinking } from "../../actions/appstate";
 
 const AnimatedFlatListWithRefreshControl = Animated.createAnimatedComponent(
   accountSyncRefreshControl(FlatList),
@@ -54,6 +55,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
     flattenAccountsByCryptoCurrencyScreenSelector(currency),
     isEqual,
   );
+  const dispatch = useDispatch();
 
   const defaultAccount = cryptoAccounts?.length === 1 ? cryptoAccounts[0] : undefined;
 
@@ -61,6 +63,12 @@ const AssetScreen = ({ route }: NavigationProps) => {
     () => cryptoAccounts.every(account => isAccountEmpty(account)),
     [cryptoAccounts],
   );
+
+  /** Reset privacy lock after content has loaded. */
+  useEffect(() => {
+    const timeout = setTimeout(() => dispatch(setIsDeepLinking(false)), 500);
+    return () => clearTimeout(timeout);
+  }, [dispatch]);
 
   const [graphCardEndPosition, setGraphCardEndPosition] = useState(60);
   const currentPositionY = useSharedValue(0);

@@ -22,6 +22,7 @@ import { lightTheme, darkTheme, Theme } from "../colors";
 import { track } from "../analytics";
 import { setEarnInfoModal } from "../actions/earn";
 import { OptionalFeatureMap } from "@ledgerhq/types-live";
+import { setIsDeepLinking } from "../actions/appstate";
 
 const routingInstrumentation = new Sentry.ReactNavigationInstrumentation();
 
@@ -194,11 +195,14 @@ const linkingOptions = (featureFlags: OptionalFeatureMap) => ({
                       [ScreenName.WalletNftGallery]: "nftgallery",
                       [NavigatorName.PortfolioAccounts]: {
                         screens: {
-                          /**
-                           * @params ?currency: string
-                           * ie: "ledgerlive://account?currency=bitcoin" will open the first bitcoin account
-                           */
-                          [ScreenName.Accounts]: "account",
+                          [NavigatorName.Accounts]: {
+                            screens: {
+                              /**
+                               * "ledgerlive://accounts" opens the main portfolio screen of accounts.
+                               */
+                              [ScreenName.Accounts]: "accounts",
+                            },
+                          },
                         },
                       },
                       ...(featureFlags?.ptxEarn?.enabled && {
@@ -292,14 +296,16 @@ const linkingOptions = (featureFlags: OptionalFeatureMap) => ({
               [ScreenName.SendCoin]: "send",
             },
           },
-
+          /** "ledgerlive://account" will open the list of all accounts. */
           [NavigatorName.Accounts]: {
             screens: {
               /**
-               * @params ?id: string
-               * ie: "ledgerlive://accounts?currency=ethereum&address={{eth_account_address}}"
+               * @params currency: string
+               * @params address?: string
+               * ie: "ledgerlive://account?currency=ethereum&address={{eth_account_address}} will open that account's assets screen.
+               * Currency param alone e.g. "ledgerlive://account?currency=tezos" will open the Tezos Assets screen.
                */
-              [ScreenName.Accounts]: "accounts",
+              [ScreenName.Accounts]: "account",
             },
           },
 
@@ -511,6 +517,10 @@ export const DeeplinksProvider = ({
               );
               return;
             }
+          }
+          if (hostname === "account") {
+            /* Prevent screen lock on deeplinking from earn dashboard to account - resets on account and screen */
+            dispatch(setIsDeepLinking(true));
           }
           if ((hostname === "discover" || hostname === "recover") && platform) {
             if (!hasCompletedOnboarding && !platform.startsWith("protect")) return undefined;
