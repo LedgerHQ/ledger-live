@@ -1,5 +1,13 @@
 # live-mobile
 
+## 3.33.1-nightly.0
+
+### Patch Changes
+
+- [#4871](https://github.com/LedgerHQ/ledger-live/pull/4871) [`97c5941c94`](https://github.com/LedgerHQ/ledger-live/commit/97c5941c948298d27633ffd44020fd3c9404f448) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update Stax wording + add oldVersion -> newVersion to firmware update screen
+
+- [#4929](https://github.com/LedgerHQ/ledger-live/pull/4929) [`46fd5666c1`](https://github.com/LedgerHQ/ledger-live/commit/46fd5666c128cab15e2c23d130b60de77c734b15) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Custom lock screen: remove the "save logs" button if the error is a "refused on device" error
+
 ## 3.33.0
 
 ### Minor Changes

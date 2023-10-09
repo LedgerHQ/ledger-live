@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.70.1-nightly.0
+
+### Patch Changes
+
+- [#4899](https://github.com/LedgerHQ/ledger-live/pull/4899) [`41397ecefa`](https://github.com/LedgerHQ/ledger-live/commit/41397ecefa1d49105637d4a8eaf72fd5397b8bf2) Thanks [@RamyEB](https://github.com/RamyEB)! - Discover section : Apps Description changed to shortDescription
+
 ## 2.70.0
 
 ### Minor Changes
