@@ -265,7 +265,6 @@ jobs:
         with:
           skip_ruby: true
           install_playwright: true
-          pnpm_dest: ${{ runner.temp }}/setup-pnpm
           aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
           aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
           no_pnpm_cache: true

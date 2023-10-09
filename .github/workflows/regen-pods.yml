@@ -55,17 +55,20 @@ jobs:
           git config user.name "live-github-bot[bot]"
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
+        with:
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.1.2
-      - name: Cache LLM pods
-        uses: actions/cache@v3
-        with:
-          path: |
-            apps/ledger-live-mobile/ios/Pods
-            ~/Library/Caches/CocoaPods
-            ~/.cocoapods
-          key: ${{ runner.os }}-pods-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock') }}
+          ruby-version: 3.2.2
+      # - name: Cache LLM pods
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: |
+      #       apps/ledger-live-mobile/ios/Pods
+      #       ~/Library/Caches/CocoaPods
+      #       ~/.cocoapods
+      #     key: ${{ runner.os }}-pods-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock') }}
       - name: install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
       - name: regenerate pods

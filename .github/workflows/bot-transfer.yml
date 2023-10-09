@@ -39,6 +39,9 @@ jobs:
           path: coin-apps
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
+        with:
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: pull docker image
         run: docker pull ghcr.io/ledgerhq/speculos
       - name: install and build
