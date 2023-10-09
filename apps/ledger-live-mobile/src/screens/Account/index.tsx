@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { FlatList, LayoutChangeEvent, ListRenderItemInfo } from "react-native";
 import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
 import { useDispatch, useSelector } from "react-redux";
@@ -39,6 +39,7 @@ import useAccountActions from "./hooks/useAccountActions";
 import type { AccountsNavigatorParamList } from "../../components/RootNavigator/types/AccountsNavigator";
 import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import { setIsDeepLinking } from "../../actions/appstate";
 
 type Props =
   | StackNavigatorProps<AccountsNavigatorParamList, ScreenName.Account>
@@ -48,9 +49,20 @@ const AnimatedFlatListWithRefreshControl = Animated.createAnimatedComponent(
   accountSyncRefreshControl(FlatList),
 );
 
+/** If deep linking params are present, this Account Screen is redirected to from Accounts Screen. */
 function AccountScreen({ route }: Props) {
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
+
+  const dispatch = useDispatch();
+
+  /** Reset privacy lock after content has loaded. */
+  useEffect(() => {
+    const timeout = setTimeout(() => dispatch(setIsDeepLinking(false)), 500);
+    return () => clearTimeout(timeout);
+  }, [dispatch]);
+
   if (!account) return null;
+
   return <AccountScreenInner account={account} parentAccount={parentAccount || undefined} />;
 }
 
@@ -111,43 +123,23 @@ const AccountScreenInner = ({
 
   const { secondaryActions } = useAccountActions({ account, parentAccount });
 
-  const { listHeaderComponents } = useMemo(
-    () =>
-      getListHeaderComponents({
-        account,
-        parentAccount,
-        countervalueAvailable: countervalueAvailable || account.balance.eq(0),
-        useCounterValue,
-        range,
-        history,
-        countervalueChange,
-        cryptoChange,
-        onAccountPress,
-        counterValueCurrency,
-        onSwitchAccountCurrency,
-        onAccountCardLayout,
-        colors,
-        secondaryActions,
-        t,
-      }),
-    [
-      account,
-      parentAccount,
-      countervalueAvailable,
-      useCounterValue,
-      range,
-      history,
-      countervalueChange,
-      cryptoChange,
-      onAccountPress,
-      counterValueCurrency,
-      onSwitchAccountCurrency,
-      onAccountCardLayout,
-      colors,
-      secondaryActions,
-      t,
-    ],
-  );
+  const { listHeaderComponents } = getListHeaderComponents({
+    account,
+    parentAccount,
+    countervalueAvailable: countervalueAvailable || account.balance.eq(0),
+    useCounterValue,
+    range,
+    history,
+    countervalueChange,
+    cryptoChange,
+    onAccountPress,
+    counterValueCurrency,
+    onSwitchAccountCurrency,
+    onAccountCardLayout,
+    colors,
+    secondaryActions,
+    t,
+  });
 
   const data = [
     ...listHeaderComponents,
