@@ -292,7 +292,7 @@ const handlers: SettingsHandlers = {
     const ids = state.blacklistedTokenIds;
     return {
       ...state,
-      blacklistedTokenIds: [...ids, tokenId],
+      blacklistedTokenIds: [...new Set([...ids, tokenId])],
     };
   },
   UNHIDE_NFT_COLLECTION: (state, { payload: collectionId }) => {
