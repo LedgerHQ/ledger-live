@@ -1,22 +1,22 @@
 import { makeAccount } from "@ledgerhq/coin-evm/__tests__/fixtures/common.fixtures";
 import {
   eip1559Tx,
+  erc1155Transaction,
   legacyTx,
-  tokenTransaction,
   nftEip1559tx,
   nftLegacyTx,
-  erc1155Transaction,
+  tokenTransaction,
 } from "@ledgerhq/coin-evm/__tests__/fixtures/transaction.fixtures";
 import { getGasTracker } from "@ledgerhq/coin-evm/api/gasTracker/index";
+import { getMinEip1559Fees, getMinLegacyFees } from "@ledgerhq/coin-evm/getMinEditTransactionFees";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import BigNumber from "bignumber.js";
 import { getEditTransactionPatch } from "./getEditTransactionPatch";
-import { getMinEip1559Fees, getMinLegacyFees } from "./getMinFees";
 
 jest.mock("@ledgerhq/coin-evm/api/gasTracker/index");
 const mockedGetGasTracker = jest.mocked(getGasTracker, true);
 
-jest.mock("./getMinFees");
+jest.mock("@ledgerhq/coin-evm/getMinEditTransactionFees");
 const mockedGetMinLegacyFees = jest.mocked(getMinLegacyFees, true);
 const mockedGetMinEip1559Fees = jest.mocked(getMinEip1559Fees, true);
 
