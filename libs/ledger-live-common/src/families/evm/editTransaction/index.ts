@@ -1,7 +1,7 @@
+import { getEditTransactionStatus } from "@ledgerhq/coin-evm/getTransactionStatus";
+import { getMinFees } from "@ledgerhq/coin-evm/getMinEditTransactionFees";
 import { getEditTransactionPatch } from "./getEditTransactionPatch";
-import { getEditTransactionStatus } from "./getEditTransactionStatus";
 import { getFormattedFeeFields } from "./getFormattedFeeFields";
-import { getMinFees } from "./getMinFees";
 import { hasMinimumFundsToCancel, hasMinimumFundsToSpeedUp } from "./hasMinimumFunds";
 import { isStrategyDisabled } from "./isStrategyDisabled";
 
