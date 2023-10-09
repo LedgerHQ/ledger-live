@@ -149,7 +149,7 @@ const BleDevicePairing = ({ deviceToPair, onPaired, onRetry }: BleDevicePairingP
         <Flex flex={1} alignItems="center" justifyContent="center">
           <GenericInformationBody title={title} description={subtitle} />
         </Flex>
-        <Button type="main" onPress={onRetry} mb={8}>
+        <Button type="main" size="large" onPress={onRetry} mb={8}>
           {t("blePairingFlow.pairing.error.retryCta")}
         </Button>
       </Flex>
