@@ -1,5 +1,5 @@
+import { getMinFees } from "@ledgerhq/coin-evm/getMinEditTransactionFees";
 import type { FeeData, Transaction } from "@ledgerhq/coin-evm/types/index";
-import { getMinFees } from "./getMinFees";
 
 /**
  * A strategy is disabled if it's fees are lower than the minimum fees
