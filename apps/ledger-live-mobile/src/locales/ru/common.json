@@ -273,11 +273,11 @@
     },
     "DisconnectedDevice" : {
       "title" : "Устройство отключено",
-      "description" : "Ledger Live could not connect to your device. Please try it again."
+      "description" : "Ledger Live не удалось подключиться к устройству. Повторите попытку."
     },
     "DisconnectedDeviceDuringOperation" : {
       "title" : "Устройство отключено",
-      "description" : "Ledger Live could not connect to your device. Please try it again."
+      "description" : "Ledger Live не удалось подключиться к устройству. Повторите попытку."
     },
     "ETHAddressNonEIP" : {
       "title" : "Автопроверка недоступна: внимательно проверьте адрес.",
@@ -322,18 +322,18 @@
       "description" : "Пожалуйста, попробуйте ещё раз. Если проблема не уходит, сохраните логи и отправьте их в Поддержку Ledger."
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "Экран блокировки отключён на Ledger Stax",
+      "title" : "Картинка экрана блокировки удалена на Ledger Stax",
       "description" : "Если это изображение не подошло, вы можете попробовать другое.",
       "primaryCTA" : "Загрузить другое изображение"
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "Экран блокировки отключён на Ledger Stax",
+      "title" : "Загрузка картинки экрана блокировки отменена на Ledger Stax",
       "description" : "Если это изображение не подошло, вы можете попробовать другое.",
       "primaryCTA" : "Загрузить другое изображение"
     },
     "ImageDoesNotExistOnDevice" : {
-      "title" : "На вашем Ledger Stax не установлена картинка экрана блокировки",
-      "description" : "Это изображение было удалено раньше."
+      "title" : "Картинка экрана блокировки отсутствует",
+      "description" : "Эта картинка была удалена."
     },
     "InvalidAddress" : {
       "title" : "Некорректный адрес {{currencyName}}"
@@ -427,6 +427,10 @@
     "NetworkDown" : {
       "title" : "Похоже, отсутствует подключение",
       "description" : "Попробуйте проверить подключение к интернету."
+    },
+    "NetworkError" : {
+      "title" : "A network error occurred",
+      "description" : "Повторите попытку позже"
     },
     "NoAddressesFound" : {
       "title" : "К сожалению, счетов не обнаружено",
@@ -596,6 +600,10 @@
     "UserRefusedOnDevice" : {
       "title" : "Операция отменена на устройстве",
       "description" : "Вы отклонили операцию на устройстве."
+    },
+    "ExpertModeRequired" : {
+      "title" : "Требуется Режим эксперта",
+      "description" : "Нужно активировать «Режим эксперта»."
     },
     "WebsocketConnectionError" : {
       "title" : "Сбой подключения",
@@ -772,8 +780,8 @@
       "description" : "Попробуйте другое изображение"
     },
     "ImageDownloadError" : {
-      "title" : "Не удалось загрузить изображение",
-      "description" : "Попробуйте другое изображение"
+      "title" : "Картинка не загрузилась",
+      "description" : "Попробуйте с другой картинкой."
     },
     "NFTMetadataLoadingError" : {
       "title" : "Не удалось загрузить метаданные NFT",
@@ -784,24 +792,24 @@
       "description" : "Попробуйте с другой картинкой."
     },
     "ImageTooLargeError" : {
-      "title" : "Изображение слишком большое",
-      "description" : "Попробуйте использовать изображение меньшего размера"
+      "title" : "Картинка слишком большая",
+      "description" : "Кадрируйте или сожмите её и повторите попытку. Также можно загрузить картинку поменьше."
     },
     "ImageCropError" : {
-      "title" : "Не удалось обрезать изображение",
-      "description" : "Попробуйте другое изображение"
+      "title" : "Сбой обрезки картинки",
+      "description" : "Попробуйте с другой картинкой."
     },
     "ImageResizeError" : {
-      "title" : "Не удалось изменить размер изображения",
-      "description" : "Попробуйте другое изображение"
+      "title" : "Сбой изменения размера картинки",
+      "description" : "Попробуйте с другой картинкой."
     },
     "ImagePreviewError" : {
-      "title" : "Предпросмотр изображения невозможен",
-      "description" : "Попробуйте другое изображение"
+      "title" : "Сбой загрузки предпросмотра",
+      "description" : "Попробуйте с другой картинкой."
     },
     "ImageProcessingError" : {
-      "title" : "Не удалось обработать изображение",
-      "description" : "Попробуйте другое изображение"
+      "title" : "Ошибка обработки картинки",
+      "description" : "Попробуйте с другой картинкой."
     },
     "HederaAddAccountError" : {
       "title" : "Не удалось добавить счёт. Пожалуйста, попробуйте ещё раз."
@@ -1075,10 +1083,10 @@
       }
     },
     "enjoy" : {
-      "title" : "Спасибо за отзыв!",
-      "description" : "Мы были бы очень признательны за ваш отзыв. Ваша поддержка помогает нам охватить больше людей и мотивирует на создание новых функций в приложении.",
+      "title" : "Нравится Ledger Live?\nТогда сделайте нам приятное!",
+      "description" : "Оставьте положительную оценку в App Store.",
       "cta" : {
-        "rate" : "Поставьте нам оценку 5 звёзд",
+        "rate" : "Оценить Ledger Live",
         "notNow" : "Отвечу позже"
       }
     },
@@ -1926,7 +1934,7 @@
       "cancelCta" : "Отменить настройку",
       "notFoundEntity" : {
         "title" : "Перезапустить проверку подлинности",
-        "description" : "Сначала нужно отключить Поставщика приложений в «Мой Ledger».Для этого откройте «Настройки» в Ledger Live, выберите «Экспериментальные функции» и отключите опцию «Поставщик приложений».",
+        "description" : "You must first disable \"My Ledger Provider\" setting. To disable it, open Ledger Live \"Settings\", select \"Experimental features\", and then toggle off \"My Ledger provider\".",
         "settingsCta" : "Перейти в Настройки"
       }
     },
@@ -1969,8 +1977,7 @@
       },
       "completed" : {
         "noUpdateAvailable" : {
-          "title" : "Проверка обновления прошивки",
-          "description" : "Проверка обновления ОС нужна для гарантии того, что {{productName}} обновлён."
+          "title" : "Прошивка {{productName}} актуальна"
         }
       },
       "error" : {
@@ -1989,10 +1996,11 @@
       }
     },
     "firmwareUpdateAvailableDrawer" : {
-      "title" : "Доступно обновление ОС",
+      "title" : "Доступно обновление ОС {{productName}}",
       "description" : "Обновите {{productName}}, чтобы поддерживать актуальный уровень безопасности и функциональности.",
       "descriptionVersion" : "Версия {{firmwareVersion}}",
-      "updateCta" : "Обновить"
+      "updateCta" : "Обновить",
+      "seeWhatsInUpdateCta" : "Детали обновления"
     }
   },
   "syncOnboarding" : {
@@ -2172,6 +2180,13 @@
       "title" : "Рыночная цена {{currencyTicker}}",
       "currencyPrice" : "Цена {{currencyTicker}}",
       "currencyPriceChange" : "Изменение 24ч"
+    },
+    "quickActions" : {
+      "buy" : "Покупка",
+      "swap" : "Обмен",
+      "send" : "Отправить",
+      "deposit" : "Пополнить",
+      "stake" : "Стейкать"
     }
   },
   "addAccountsModal" : {
@@ -2446,12 +2461,16 @@
     },
     "import" : {
       "scan" : {
-        "title" : "Импорт из настольного приложения",
-        "descTop" : {
-          "line1" : "В настольном приложении Ledger Live перейдите в:",
-          "line2" : "Настройки > Счета > Экспорт счетов > Экспортировать"
+        "title" : "Импорт из настольного приложения"
+      },
+      "newScan" : {
+        "title" : "Сканируйте и перенесите счета из Ledger Live для ПК",
+        "instructions" : {
+          "line1" : "Откройте настольную версию Ledger Live.",
+          "line2" : "Настройки > Счета > Экспорт счетов > Экспортировать",
+          "line3" : "Cканируйте QR-код камерой смартфона до 100%."
         },
-        "descBottom" : "Откройте настольное приложение Ledger Live и сканируйте QR-код"
+        "hodl" : "Дождитесь окончания сканирования."
       },
       "result" : {
         "title" : "Импорт счетов",
@@ -2711,7 +2730,7 @@
       "privacyPolicy" : "Политика конфиденциальности",
       "privacyPolicyDesc" : "Узнайте, какие персональные данные мы собираем, и ознакомьтесь со способами и целями обработки.",
       "liveReview" : {
-        "title" : "Feedback",
+        "title" : "Обратная связь",
         "desc" : "Поделитесь своим мнением о приложении",
         "ios" : "Просмотреть в App Store",
         "android" : "Просмотреть в Google Play"
@@ -2798,7 +2817,7 @@
           "description" : "Показывать приложения от разработчиков и из тестнета в «Мой Ledger»."
         },
         "managerProvider" : {
-          "title" : "Поставщик приложений",
+          "title" : "Поставщик приложений в разделе «Мой Ledger»",
           "description" : "Смена поставщика приложений в «Мой Ledger» может сделать невозможной установку или удаление приложений на вашем устройстве Ledger"
         },
         "experimentalExplorers" : {
@@ -2917,7 +2936,8 @@
         "account" : "Счёт: {{count}}",
         "account_plural" : "Счета: {{count}}",
         "subtitle" : "Она должна соответствовать выбранной сети в кошельке или на бирже, куда отправляются криптоактивы.",
-        "bannerTitle" : "Обязательно выберите правильную сеть. Подробнее..."
+        "bannerTitle" : "Обязательно выберите правильную сеть. Подробнее...",
+        "depositFromCexBannerTitle" : "Перенесите криптоактивы с учётной записи Coinbase"
       },
       "stepperHeader" : {
         "range" : "Шаг {{currentStep}} из {{totalSteps}}",
@@ -3389,6 +3409,11 @@
     "walletConnect" : {
       "title" : "WalletConnect",
       "description" : "Подключите кошелёк к децентрализованным приложениям."
+    },
+    "recover" : {
+      "title" : "Ledger Recover",
+      "description" : "Восстановить кошелёк теперь проще простого",
+      "tag" : "Месяц в подарок"
     }
   },
   "signMessage" : {
@@ -3764,7 +3789,8 @@
     "stayInTheAppPlz" : "Оставайтесь в приложении и держите устройство Ledger при себе.",
     "allowAppPermission" : "Откройте приложение {{wording}} на устройстве",
     "allowAppPermissionSubtitleToken" : "для управления {{token}}",
-    "allowManagerPermission" : "Одобрите {{wording}} на {{productName}}",
+    "allowManagerPermission" : "Одобрите работу приложения на {{productName}}",
+    "allowRenaming" : "Одобрите переименование на {{productName}}",
     "allowRemoveCustomLockscreen" : "Подтвердите удаление изображения на Ledger Stax",
     "allowSecureConnection" : "Разрешите безопасное подключение на устройстве",
     "loading" : "Загружаем...",
@@ -3784,7 +3810,7 @@
     },
     "deviceInBootloader" : {
       "title" : "Устройство находится в режиме Bootloader.",
-      "description" : "Click on \"Continue\" to update it."
+      "description" : "Для обновления нажмите «Продолжить»."
     },
     "verifyAddress" : {
       "title" : "Подтвердите адрес на устройстве",
@@ -3846,7 +3872,7 @@
         }
       },
       "genuineCheck" : {
-        "title" : "Откройте «Мой Ledger» на {{productName}}",
+        "title" : "Одобрите включение «Мой Ledger» на {{productName}}",
         "accept" : "Не выключайте Ledger Nano X и предоставьте приложению доступ к устройству."
       },
       "genuineCheckPending" : {
@@ -4019,7 +4045,7 @@
       "modalDesc" : "Чтобы обновить прошивку, скачайте Ledger Live для ПК.",
       "contactUs" : "Связаться с нами"
     },
-    "myApps" : "Мои приложения",
+    "myApps" : "Мои блокчейн-приложения",
     "token" : {
       "title" : "токены {{appName}}",
       "noAppNeeded" : "{{tokenName}} будет работать только с приложением {{appName}}. У вас не установлено нужное приложение.",
@@ -4124,46 +4150,46 @@
       "descriptionProductName" : "Нажмите, чтобы обновить ваш «{{productName}}» до ОС {{firmwareVersion}}."
     },
     "title" : "Обновление прошивки",
-    "beginUpdate" : "Начать обновление",
+    "beginUpdate" : "Start OS update",
     "updateDevice" : "Обновление ОС {{deviceName}}",
     "releaseNotesTitle" : "В этом обновлении ОС",
-    "updateDone" : "На этом всё! Ваш {{deviceName}} актуальный",
+    "updateDone" : "ОС {{deviceName}} актуальна",
     "updateDoneDescription" : "Новая версия ОС: {{firmwareVersion}}",
-    "preparing" : "Preparing the firmware update, please keep your device awake and connected. We will notify you of the progress",
+    "preparing" : "Идёт подготовка к обновлению ОС. Не отключайте устройство. Мы покажем прогресс установки",
     "confirmIdentifierText" : "Убедитесь, что идентификатор на устройстве совпадает с идентификатором ниже. При необходимости подтвердите и введите ПИН-код.",
     "pleaseReinstallApps" : "Осталось переустановить все приложения",
-    "pleaseConfirmUpdate" : "Confirm the update on your device",
+    "pleaseConfirmUpdate" : "Подтвердите обновление на устройстве",
     "pleaseConfirmUpdateOnYourDevice" : "Подтвердите установку на {{deviceName}}",
     "finishUpdateCTA" : "Завершить",
-    "finishUpdate" : "Finish the update on your {{deviceName}}",
-    "identifierTitle" : "Identifier:",
-    "pleaseWaitDownload" : "Please wait for the installer to be downloaded",
-    "doNotLeaveLedgerLive" : "Не выходите из приложения Ledger Live до завершения обновления.",
-    "preparingDevice" : "Preparing your device",
+    "finishUpdate" : "Завершите обновление на {{deviceName}}",
+    "identifierTitle" : "Идентификатор:",
+    "pleaseWaitDownload" : "Дождитесь загрузки установщика",
+    "doNotLeaveLedgerLive" : "Оставайтесь здесь до завершения обновления.",
+    "preparingDevice" : "Готовим ваше устройство",
     "pleaseWaitUpdate" : "Дождитесь завершения обновления",
     "viewUpdateChangelog" : "Открыть список изменений обновления",
-    "waitForFirmwareUpdate" : "Wait for the firmware update to finish on your device",
+    "waitForFirmwareUpdate" : "Дождитесь обновления ОС на устройстве",
     "waitForInstallationToFinish" : "Дождитесь завершения установки на {{deviceName}}",
     "staxBatteryLow" : "Слишком низкий заряд батареи Ledger Stax",
-    "staxBatteryLowDescription" : "Для обновления ОС устройство Ledger должно иметь не менее 20% заряда или быть подключенным к питанию.",
-    "updateCancelled" : "Обновление отменено на {{deviceName}}",
-    "updateCancelledDescription" : "Обновление ОС {{newFirmwareVersion}} было прервано на {{deviceName}}. Если это произошло по ошибке, перезапустите обновление",
-    "updateNotYetComplete" : "Обновление ещё не завершено",
-    "updateNotYetCompleteDescription" : "Если вы прервёте обновление, это может привести к некорректному восстановлению ваших приложений, языка и картинки экрана блокировки.",
+    "staxBatteryLowDescription" : "Для обновления ОС ваш Ledger Stax должен быть заряжен как минимум на 20% или подключён к сети.",
+    "updateCancelled" : "Обновление ОС отменено на {{deviceName}}",
+    "updateCancelledDescription" : "Если это произошло по ошибке, перезапустите его.",
+    "updateNotYetComplete" : "Идёт обновление ОС",
+    "updateNotYetCompleteDescription" : "Если прервать обновление, ваши настройки и приложения могут не восстановиться.",
     "restartUpdate" : "Перезапустить обновление ОС",
-    "quitUpdate" : "Выйти из обновления",
-    "continueUpdate" : "Продолжить обновление",
-    "unlockDeviceToComplete" : "Разблокируйте {{deviceName}} для завершения установки",
-    "unlockDeviceWithPin" : "Unlock your device with your PIN",
+    "quitUpdate" : "Cancel OS Update",
+    "continueUpdate" : "Продолжить",
+    "unlockDeviceToComplete" : "Unlock {{deviceName}} with your PIN to complete the update.",
+    "unlockDeviceWithPin" : "Разблокируйте устройство при помощи ПИН-кода",
     "reinstallApps" : "Переустановить приложения",
-    "currentVersionNumber" : "Current version",
-    "newVersionNumber" : "New version",
+    "currentVersionNumber" : "Текущая версия",
+    "newVersionNumber" : "Новая версия",
     "success" : "Прошивка обновлена",
     "update" : "Обновить",
     "Notifications" : {
-      "confirmOnDevice" : "We require your confirmation on the device",
-      "preparingUpdate" : "Transferring update, we will notify you when we're done",
-      "installing" : "Installing {{progress}}%"
+      "confirmOnDevice" : "Требуется ваше подтверждение на устройстве",
+      "preparingUpdate" : "Идёт передача обновления. Мы сообщим о завершении процесса",
+      "installing" : "Идёт установка ({{progress}}%)"
     },
     "Installing" : {
       "title" : "{{stepName}}...",
@@ -4181,14 +4207,14 @@
           "titlePreparingUpdate" : "Подготовка обновления к установке",
           "description" : "Переносим обновления на {{deviceName}}."
         },
-        "titleBackingUp" : "Сохранение приложений и настроек",
+        "titleBackingUp" : "Подготовка обновления к установке",
         "titleTransferring" : "Перенос обновления",
-        "description" : "Создаём резервную копию ваших настроек и отправляем обновление на {{deviceName}}."
+        "description" : "Сохраняем настройки и приложения. Перенос обновления на {{deviceName}}."
       },
       "installUpdate" : {
         "titleInactive" : "Установка",
         "titleActive" : "Установка обновления",
-        "description" : "{{deviceName}} перезагрузится несколько раз.\n\nПосле окончания установки на {{deviceName}} разблокируйте устройство для завершения операции"
+        "description" : "{{deviceName}} перезагрузится несколько раз.\n\nДля завершения процесса разблокируйте {{deviceName}} с помощью ПИН-кода после установки."
       },
       "restoreSettings" : {
         "earlySecurityCheck" : {
@@ -4199,21 +4225,21 @@
         "description" : "Ваши настройки и приложения будут восстановлены.",
         "restoreLockScreenPicture" : "Восстановление изображения экрана блокировки",
         "restoreLanguage" : "Восстановление языка",
-        "imageLoadRequested" : "Разрешите восстановление изображения экрана блокировки на {{deviceName}}",
-        "imageCommitRequested" : "Подтвердите изображение на {{deviceName}}",
-        "allowLanguageInstallation" : "Разрешите восстановление языка на {{deviceName}}",
-        "allowAppsRestoration" : "Разрешите восстановление приложений на {{deviceName}}",
+        "imageLoadRequested" : "Нажмите «Загрузить картинку» для восстановления картинки экрана блокировки",
+        "imageCommitRequested" : "Нажмите «Оставить» для сохранения картинки экрана блокировки",
+        "allowLanguageInstallation" : "Нажмите «Разрешить», чтобы восстановить язык",
+        "allowAppsRestoration" : "Нажмите «Разрешить», чтобы восстановить приложения",
         "errors" : {
-          "description" : "Если это произошло по ошибке, перезапустите его или пропустите данный этап",
-          "LanguageInstallRefusedOnDevice" : "Языковые изменения отменены на {{deviceName}}",
+          "description" : "Если это произошло случайно, повторите попытку.",
+          "LanguageInstallRefusedOnDevice" : "Восстановление языка отменено на {{deviceName}}",
           "ImageLoadRefusedOnDevice" : "Восстановление картинки экрана блокировки отменено на {{deviceName}}",
           "ImageCommitRefusedOnDevice" : "Восстановление картинки экрана блокировки отменено на {{deviceName}}",
           "UserRefusedAllowManager" : "Восстановление приложений отменено на {{deviceName}}"
         },
-        "installingApps" : "Восстановление приложений"
+        "installingApps" : "Установка приложений"
       }
     },
-    "newVersion" : "Update {{version}} available for your {{deviceName}}",
+    "newVersion" : "Для {{deviceName}} доступно обновление версии {{version}}",
     "drawerUpdate" : {
       "title" : "Обновление прошивки",
       "description" : "Обновите прошивку Nano, подключив кошелёк к настольному приложению Ledger Live",
@@ -4238,7 +4264,7 @@
         "description" : "Не удалось обновить из-за потери подключения к {{deviceName}}"
       },
       "CantOpenDevice" : {
-        "title" : "Сбой подключения",
+        "title" : "Подключение к Ledger прервано",
         "description" : "Не удалось обновить из-за потери подключения к {{deviceName}}."
       }
     }
@@ -4255,7 +4281,7 @@
     }
   },
   "FirmwareUpdateReleaseNotes" : {
-    "introTitle" : "Update {{deviceName}} to version {{version}}",
+    "introTitle" : "Обновить {{deviceName}} до версии {{version}}",
     "recoveryPhraseBackupInstructions" : "Запишите фразу восстановления из 24 слов на специальный лист. Убедитесь, что к нему будет доступ в случае необходимости.",
     "confirmRecoveryPhrase" : "У меня есть фраза восстановления",
     "introDescription1" : "Примечание: все приложения на устройстве будут удалены. Переустановить приложения можно после обновления прошивки.",
@@ -4291,6 +4317,7 @@
     "yesChangeLanguage" : "Да, поменять язык",
     "allowLanguageInstallation" : "Разрешите установку языка на {{deviceName}}",
     "languageInstalled" : "Новый язык устройства — {{language}}",
+    "languageInstalledDesc" : "Язык на вашем устройстве изменён",
     "firmwareUpdatePrompt" : {
       "title" : "Добавить {{language}} язык на устройство {{deviceName}}?",
       "description" : "Теперь {{language}} язык доступен для {{deviceName}}. Можно установить его сейчас или поменять в любое удобное время в разделе «Мой Ledger»."
@@ -6218,18 +6245,18 @@
     "chooseConstrast" : "Указать контраст",
     "uploadAnotherImage" : "Загрузить другое изображение",
     "rotateImage" : "Повернуть",
-    "allowPreview" : "Дождитесь загрузки экрана блокировки на {{productName}}",
+    "allowPreview" : "Нажмите «Загрузить картинку» для настройки экрана блокировки",
     "loadingPicture" : "Загружаем...",
     "loadingPictureAlmostOver" : "Вот и всё!",
     "commitRequested" : "Ну как, нравится?\nТогда так и оставьте!",
     "confirmPicture" : "Подтвердите на {{productName}}",
     "landingPage" : {
-      "title" : "Выберите любой NFT или фото.\nПроявите фантазию.\nНастройте Ledger под себя.",
+      "title" : "Выберите любую цифровую картинку или фото.\nПриукрасьте Ledger Stax.\nНастройте устройство под себя.",
       "choosePicture" : "Выбрать изображение"
     },
     "confirmCrop" : "Подтвердить обрезку",
     "confirmContrast" : "Подтвердить контраст",
-    "nftEntryPointButtonLabel" : "Установить на экран блокировки",
+    "nftEntryPointButtonLabel" : "Установить на экран блокировки Ledger Stax",
     "customImage" : "Пользовательское изображение",
     "doThisLater" : "Не сейчас",
     "preview" : {
@@ -6263,7 +6290,7 @@
   },
   "postOnboarding" : {
     "hub" : {
-      "title" : "А теперь используйте {{productName}} для...",
+      "title" : "Теперь {{productName}} позволит:",
       "allDoneTitle" : "На этом всё!",
       "skip" : "Отложить",
       "viewWallet" : "Посмотреть кошелёк"
@@ -6275,9 +6302,9 @@
     },
     "actions" : {
       "customImage" : {
-        "title" : "Настройки экрана блокировки",
-        "titleCompleted" : "Экран блокировки настроен",
-        "description" : "Выберите любой NFT или изображение и установите его в качестве экрана блокировки Ledger Stax.",
+        "title" : "Настройка картинки экрана блокировки",
+        "titleCompleted" : "Картинка экрана блокировки установлена",
+        "description" : "Выберите любую цифровую картинку или фото и используйте его как экран блокировки.",
         "popupLabel" : "Изображение установлено"
       },
       "claimNft" : {
@@ -6290,7 +6317,7 @@
       "assetsTransfer" : {
         "title" : "Перевода криптоактивов на Ledger",
         "titleCompleted" : "Криптоактивы переведены на Ledger",
-        "description" : "Переведите их с любой криптобиржи или кошелька.",
+        "description" : "Перевести криптоактивы с Coinbase, любой другой биржи или кошелька.",
         "popupLabel" : "Криптоактивы переведены"
       }
     }
@@ -6320,7 +6347,7 @@
       },
       "empty" : {
         "title" : "Пока тут ничего нет",
-        "subtitle" : "Попробуйте получить свой первый NFT.",
+        "subtitle" : "Сначала добавьте NFT в кошелёк",
         "receive" : "Получить NFT",
         "supportLink" : "Как получить NFT с других кошельков?"
       },
@@ -6347,14 +6374,20 @@
   "servicesWidget" : {
     "title" : "Сервисы",
     "subTitle" : "Управление услугами Ledger",
+    "signIn" : "Войти",
+    "recover" : {
+      "cta" : "Попробовать бесплатно",
+      "desc" : "Хватит беспокоиться о возможной потере доступа к своему кошельку.",
+      "tag" : "1 месяц в подарок"
+    },
     "protect" : {
       "status" : {
         "new" : {
           "title" : "Новинка",
-          "desc" : "Хватит беспокоиться о возможной потере доступа к своему кошельку.",
+          "desc" : "Восстановите доступ к кошельку без фразы восстановления.",
           "actions" : {
             "learnMore" : "Изучить Ledger Recover",
-            "alreadySubscribed" : "Уже есть учётная запись? <LinkAccount>Посмотреть подписку</LinkAccount>"
+            "alreadySubscribed" : "Уже подписаны? <LinkAccount>Посмотреть подписку</LinkAccount>"
           }
         }
       }
@@ -6412,6 +6445,10 @@
           "body" : "Получайте криптоактивы прямо на счёт"
         }
       }
+    },
+    "getFundsModal" : {
+      "text" : "Получить {{coin}} для стейкинга",
+      "description" : "Покупайте, обменивайте или получайте крипту сразу на Ledger через Ledger Live."
     }
   }
 }
