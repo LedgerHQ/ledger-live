@@ -4,7 +4,9 @@ import manager from "@ledgerhq/live-common/manager/index";
 import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck";
 import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/deviceSDK/hooks/useGetLatestAvailableFirmware";
 import Body from "./Body";
-import LockedDeviceDrawer, { Props as LockedDeviceDrawerProps } from "../LockedDeviceDrawer";
+import TroubleshootingDrawer, {
+  Props as TroubleshootingDrawerProps,
+} from "../TroubleshootingDrawer";
 import SoftwareCheckAllowSecureChannelDrawer, {
   Props as SoftwareCheckAllowSecureChannelDrawerProps,
 } from "./SoftwareCheckAllowSecureChannelDrawer";
@@ -229,7 +231,8 @@ const EarlySecurityChecks = ({
     getLatestAvailableFirmwareError,
   ]);
 
-  const lockedDeviceModalIsOpen =
+  // at this step we can't have an unlocked device; it's inevitably disconnected
+  const disconnectedDeviceModalIsOpen =
     (devicePermissionState === "unlock-needed" && genuineCheckActive) ||
     (lockedDevice && firmwareUpdateStatus === SoftwareCheckStatus.active);
 
@@ -241,11 +244,12 @@ const EarlySecurityChecks = ({
 
   /** Opening and closing of drawers */
   useEffect(() => {
-    if (lockedDeviceModalIsOpen) {
-      const props: LockedDeviceDrawerProps = {
-        deviceModelId,
+    if (disconnectedDeviceModalIsOpen) {
+      const props: TroubleshootingDrawerProps = {
+        lastKnownDeviceId: deviceModelId,
+        onClose: resetGenuineCheckState,
       };
-      setDrawer(LockedDeviceDrawer, props, commonDrawerProps);
+      setDrawer(TroubleshootingDrawer, props, commonDrawerProps);
     } else if (allowSecureChannelIsOpen) {
       const props: SoftwareCheckAllowSecureChannelDrawerProps = {
         deviceModelId,
@@ -296,7 +300,7 @@ const EarlySecurityChecks = ({
     deviceModelId,
     genuineCheckError,
     getLatestAvailableFirmwareError,
-    lockedDeviceModalIsOpen,
+    disconnectedDeviceModalIsOpen,
     notGenuineIsOpen,
     productName,
     resetGenuineCheckState,
