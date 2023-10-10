@@ -1,4 +1,3 @@
-import { getTransactionByHash } from "@ledgerhq/coin-evm/api/transaction/index";
 import { fromTransactionRaw } from "@ledgerhq/coin-evm/transaction";
 import { Transaction, TransactionRaw } from "@ledgerhq/coin-evm/types/index";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
@@ -10,6 +9,7 @@ import {
   getEditTransactionStatus,
   hasMinimumFundsToCancel,
   hasMinimumFundsToSpeedUp,
+  isTransactionConfirmed,
 } from "@ledgerhq/live-common/families/evm/editTransaction/index";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
@@ -213,8 +213,11 @@ const Body = ({
 
   useEffect(() => {
     const setTransactionHasBeenValidatedCallback = async () => {
-      const tx = await getTransactionByHash(mainAccount.currency, params.transactionHash);
-      if (tx?.confirmations) {
+      const hasBeenConfirmed = await isTransactionConfirmed({
+        currency: mainAccount.currency,
+        hash: params.transactionHash,
+      });
+      if (hasBeenConfirmed) {
         // stop polling as soon as we have a confirmation
         clearInterval(intervalId);
         setTransactionHasBeenValidated(true);
