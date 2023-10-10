@@ -70,6 +70,15 @@ export function useAlreadySubscribedURI(
   return useReplacedURI(uri, id);
 }
 
+export function useHomeURI(
+  servicesConfig: Feature_ProtectServicesMobile | null,
+): string | undefined {
+  const uri = servicesConfig?.params?.account?.homeURI;
+  const id = servicesConfig?.params?.protectId;
+
+  return useReplacedURI(uri, id);
+}
+
 export function useUpsellURI(
   servicesConfig: Feature_ProtectServicesDesktop | null,
 ): string | undefined {
