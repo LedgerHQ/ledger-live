@@ -15,7 +15,7 @@ import { LanguagePrompt } from "./LanguagePrompt";
 import { NavigatorName, ScreenName } from "../../const";
 import { StackNavigationProp } from "@react-navigation/stack";
 import type { UpdateStep } from "../FirmwareUpdate";
-import { urls } from "../../config/urls";
+import { urls } from "../../utils/urls";
 import EarlySecurityCheckBody from "./EarlySecurityCheckBody";
 
 const LOCKED_DEVICE_TIMEOUT_MS = 1000;

@@ -11,7 +11,7 @@ import { accountScreenSelector } from "../../reducers/accounts";
 import { updateAccount } from "../../actions/accounts";
 import TextInput from "../../components/TextInput";
 import { getFontStyle } from "../../components/LText";
-import { Theme, withTheme } from "../../colors";
+import { Theme, withTheme } from "../../utils/colors";
 import Button from "../../components/wrappedUi/Button";
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { ScreenName } from "../../const";

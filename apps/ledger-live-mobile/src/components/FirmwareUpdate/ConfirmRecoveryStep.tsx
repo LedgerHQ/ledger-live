@@ -14,7 +14,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Linking, ScrollView } from "react-native";
 import { track } from "../../analytics";
 import Track from "../../analytics/Track";
-import { urls } from "../../config/urls";
+import { urls } from "../../utils/urls";
 import SafeMarkdown from "../SafeMarkdown";
 
 type Props = {

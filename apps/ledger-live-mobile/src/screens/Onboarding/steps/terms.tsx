@@ -12,7 +12,7 @@ import { ScreenName } from "../../../const";
 import { setAnalytics } from "../../../actions/settings";
 import { useAcceptGeneralTerms } from "../../../logic/terms";
 import { useLocale } from "../../../context/Locale";
-import { urls } from "../../../config/urls";
+import { urls } from "../../../utils/urls";
 import OnboardingView from "../OnboardingView";
 import StyledStatusBar from "../../../components/StyledStatusBar";
 import { StackNavigatorNavigation } from "../../../components/RootNavigator/types/helpers";

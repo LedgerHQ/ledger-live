@@ -1,7 +1,7 @@
 import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
 import { View, StyleSheet, Image } from "react-native";
-import { rgba, Theme, withTheme } from "../colors";
+import { rgba, Theme, withTheme } from "../utils/colors";
 import QueuedDrawer from "./QueuedDrawer";
 import LText from "./LText";
 import Button, { BaseButtonProps } from "./Button";

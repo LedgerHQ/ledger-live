@@ -27,7 +27,7 @@ import { NavigatorName, ScreenName } from "../../const";
 import { useNavigationInterceptor } from "../Onboarding/onboardingContext";
 import GenericErrorView from "../../components/GenericErrorView";
 import { NavigationHeaderBackButton } from "../../components/NavigationHeaderBackButton";
-import { urls } from "../../config/urls";
+import { urls } from "../../utils/urls";
 
 type NavigationProps = RootComposite<
   StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.RedirectToOnboardingRecoverFlow>

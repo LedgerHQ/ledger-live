@@ -21,7 +21,7 @@ import Animation from "../Animation";
 import { TrackScreen } from "../../analytics";
 import GenericErrorView from "../GenericErrorView";
 import { GenericInformationBody } from "../GenericInformationBody";
-import { urls } from "../../config/urls";
+import { urls } from "../../utils/urls";
 
 export type BleDevicePairingProps = {
   onPaired: (device: Device) => void;

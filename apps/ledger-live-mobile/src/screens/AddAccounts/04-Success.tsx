@@ -6,7 +6,7 @@ import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/color";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { ScreenName, NavigatorName } from "../../const";
-import { rgba } from "../../colors";
+import { rgba } from "../../utils/colors";
 import { TrackScreen } from "../../analytics";
 import LText from "../../components/LText";
 import Button from "../../components/Button";

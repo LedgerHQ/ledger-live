@@ -3,7 +3,7 @@ import { Trans } from "react-i18next";
 import { Linking } from "react-native";
 import { ExternalLinkMedium } from "@ledgerhq/native-ui/assets/icons";
 import SettingsRow from "../../../components/SettingsRow";
-import { urls } from "../../../config/urls";
+import { urls } from "../../../utils/urls";
 import { useLocale } from "../../../context/Locale";
 
 function PrivacyPolicyRow() {

@@ -14,7 +14,7 @@ import Graph from "./Graph";
 import { TransactionsPendingConfirmationWarningAllAccounts } from "./TransactionsPendingConfirmationWarning";
 import ParentCurrencyIcon from "./ParentCurrencyIcon";
 import FormatDate from "./DateFormat/FormatDate";
-import { ensureContrast } from "../colors";
+import { ensureContrast } from "../utils/colors";
 import { track } from "../analytics";
 import { Item } from "./Graph/types";
 import { Merge } from "../types/helpers";

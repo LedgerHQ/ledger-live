@@ -25,7 +25,7 @@ import Switch from "../../../../components/Switch";
 import { ScreenName } from "../../../../const";
 import { SettingsNavigatorStackParamList } from "../../../../components/RootNavigator/types/SettingsNavigator";
 import { StackNavigatorProps } from "../../../../components/RootNavigator/types/helpers";
-import { Theme } from "../../../../colors";
+import { Theme } from "../../../../utils/colors";
 
 const tags = ["apdu", "ble-verbose", "error", "ble-frame"];
 const logsObservable = new Observable(o =>

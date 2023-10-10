@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import FastImage, { OnLoadEvent, FastImageProps, ResizeMode } from "react-native-fast-image";
 import { View, StyleSheet, Animated, StyleProp, ViewStyle } from "react-native";
 import ImageNotFoundIcon from "../../icons/ImageNotFound";
-import { Theme, withTheme } from "../../colors";
+import { Theme, withTheme } from "../../utils/colors";
 import Skeleton from "../Skeleton";
 
 const ImageComponent: React.FC<FastImageProps> = props =>

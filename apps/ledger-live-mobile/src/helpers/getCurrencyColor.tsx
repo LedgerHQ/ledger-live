@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { getCurrencyColor as commonGetCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 
-import { ensureContrast } from "../colors";
+import { ensureContrast } from "../utils/colors";
 
 export const getCurrencyColor = (currency: Currency, bg?: string) => {
   const currencyColor = commonGetCurrencyColor(currency);

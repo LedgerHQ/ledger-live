@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { ThemeProvider } from "styled-components/native";
 import theme from "@ledgerhq/native-ui/styles/theme";
 import { palettes } from "@ledgerhq/native-ui/styles/index";
-import { lightTheme as light, darkTheme as dark } from "./colors";
+import { lightTheme as light, darkTheme as dark } from "./utils/colors";
 
 const themes = { light, dark };
 

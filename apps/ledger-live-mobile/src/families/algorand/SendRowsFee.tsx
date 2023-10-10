@@ -12,7 +12,7 @@ import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import CounterValue from "../../components/CounterValue";
 import ExternalLink from "../../icons/ExternalLink";
-import { urls } from "../../config/urls";
+import { urls } from "../../utils/urls";
 import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import type { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
 import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";

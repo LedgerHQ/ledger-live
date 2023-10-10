@@ -1,7 +1,7 @@
 import * as React from "react";
 import Svg, { Path, Defs, LinearGradient, Stop, Mask, G } from "react-native-svg";
 import { useTheme } from "styled-components/native";
-import { ensureContrast } from "../colors";
+import { ensureContrast } from "../utils/colors";
 
 function CurrencyGradient({ gradientColor }: { gradientColor: string }) {
   const { colors } = useTheme();

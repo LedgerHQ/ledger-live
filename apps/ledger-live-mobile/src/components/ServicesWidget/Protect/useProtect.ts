@@ -6,7 +6,7 @@ import {
 import { useMemo } from "react";
 import { Linking } from "react-native";
 import { track } from "../../../analytics";
-import { urls } from "../../../config/urls";
+import { urls } from "../../../utils/urls";
 
 export function useProtect() {
   const servicesConfig = useFeature("protectServicesMobile");

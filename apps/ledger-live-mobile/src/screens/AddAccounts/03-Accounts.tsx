@@ -26,7 +26,7 @@ import { useTheme } from "@react-navigation/native";
 import { replaceAccounts } from "../../actions/accounts";
 import { accountsSelector } from "../../reducers/accounts";
 import logger from "../../logger";
-import { Theme, withTheme } from "../../colors";
+import { Theme, withTheme } from "../../utils/colors";
 import { NavigatorName, ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
 import Button from "../../components/Button";
@@ -46,7 +46,7 @@ import NavigationScrollView from "../../components/NavigationScrollView";
 import { prepareCurrency } from "../../bridge/cache";
 import { blacklistedTokenIdsSelector } from "../../reducers/settings";
 import QueuedDrawer from "../../components/QueuedDrawer";
-import { urls } from "../../config/urls";
+import { urls } from "../../utils/urls";
 import noAssociatedAccountsByFamily from "../../generated/NoAssociatedAccounts";
 import { State } from "../../reducers/types";
 import {

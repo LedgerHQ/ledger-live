@@ -21,7 +21,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/Feather";
 import { useSelector } from "react-redux";
 import { TrackScreen } from "../../../analytics";
-import { rgba } from "../../../colors";
+import { rgba } from "../../../utils/colors";
 import Button from "../../../components/Button";
 import Circle from "../../../components/Circle";
 import CurrencyIcon from "../../../components/CurrencyIcon";

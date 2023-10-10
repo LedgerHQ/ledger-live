@@ -2,7 +2,7 @@ import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import LText from "./LText/index";
-import { rgba } from "../colors";
+import { rgba } from "../utils/colors";
 
 type Props = {
   address: string;

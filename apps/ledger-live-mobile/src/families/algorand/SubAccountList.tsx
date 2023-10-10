@@ -7,7 +7,7 @@ import IconPlus from "../../icons/Plus";
 import Button from "../../components/Button";
 import { NavigatorName, ScreenName } from "../../const";
 import LText from "../../components/LText";
-import { urls } from "../../config/urls";
+import { urls } from "../../utils/urls";
 import ExternalLink from "../../components/ExternalLink";
 import { accountScreenSelector } from "../../reducers/accounts";
 

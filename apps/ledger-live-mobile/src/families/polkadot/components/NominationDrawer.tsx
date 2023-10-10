@@ -7,7 +7,7 @@ import type { AccountLike } from "@ledgerhq/types-live";
 // TODO move to component
 import { useTheme } from "@react-navigation/native";
 import DelegatingContainer from "../../tezos/DelegatingContainer";
-import { rgba } from "../../../colors";
+import { rgba } from "../../../utils/colors";
 import getWindowDimensions from "../../../logic/getWindowDimensions";
 import QueuedDrawer from "../../../components/QueuedDrawer";
 import Circle from "../../../components/Circle";

@@ -15,7 +15,7 @@ import { PurchaseMessage } from "./types";
 import DebugMessageDrawer from "./DebugMessageDrawer";
 import WebViewScreen from "../../components/WebViewScreen";
 import { completeOnboarding, setReadOnlyMode } from "../../actions/settings";
-import { urls } from "../../config/urls";
+import { urls } from "../../utils/urls";
 
 const defaultURL = urls.buyNanoX;
 

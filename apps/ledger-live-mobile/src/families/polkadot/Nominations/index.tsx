@@ -26,7 +26,7 @@ import { AccountLike } from "@ledgerhq/types-live";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { ScreenName, NavigatorName } from "../../../const";
 import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
-import { urls } from "../../../config/urls";
+import { urls } from "../../../utils/urls";
 import AccountSectionLabel from "../../../components/AccountSectionLabel";
 import Alert from "../../../components/Alert";
 

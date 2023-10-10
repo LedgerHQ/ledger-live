@@ -8,7 +8,7 @@ import { useLocale } from "../../../context/Locale";
 import LText from "../../../components/LText";
 import IconChevron from "../../../icons/ArrowRight";
 import AppIcon from "../AppIcon";
-import { Theme } from "../../../colors";
+import { Theme } from "../../../utils/colors";
 
 function getBranchStyle(branch: AppBranch, colors: Theme["colors"]) {
   switch (branch) {

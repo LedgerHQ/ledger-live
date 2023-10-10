@@ -12,7 +12,7 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTheme } from "@react-navigation/native";
 import { TransportBleDevice } from "@ledgerhq/live-common/ble/types";
 import TransportBLE from "../../react-native-hw-transport-ble";
-import { GENUINE_CHECK_TIMEOUT } from "../../constants";
+import { GENUINE_CHECK_TIMEOUT } from "../../utils/constants";
 import { addKnownDevice } from "../../actions/ble";
 import {
   installAppFirstTime,

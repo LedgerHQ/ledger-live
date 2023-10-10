@@ -4,7 +4,7 @@ import { Linking } from "react-native";
 import { Trans } from "react-i18next";
 import { getDeviceModel, DeviceModelId } from "@ledgerhq/devices";
 import { Text, Button, Alert, Flex, IconBox, IconsLegacy } from "@ledgerhq/native-ui";
-import { urls } from "../../../config/urls";
+import { urls } from "../../../utils/urls";
 import QueuedDrawer from "../../../components/QueuedDrawer";
 
 const SeedWarning = ({ deviceModelId }: { deviceModelId: DeviceModelId }) => {

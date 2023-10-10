@@ -2,7 +2,7 @@ import React from "react";
 import Video, { OnLoadData, VideoProperties } from "react-native-video";
 import { View, StyleSheet, Animated, StyleProp, ViewStyle, Platform } from "react-native";
 import { ResizeMode } from "react-native-fast-image";
-import { Theme, withTheme } from "../../colors";
+import { Theme, withTheme } from "../../utils/colors";
 import Skeleton from "../Skeleton";
 import NftImage from "./NftImage";
 import { TouchableOpacity } from "react-native-gesture-handler";

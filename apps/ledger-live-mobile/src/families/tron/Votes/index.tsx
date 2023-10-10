@@ -14,7 +14,7 @@ import { getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { Box, Button, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import { TronAccount } from "@ledgerhq/live-common/families/tron/types";
-import { urls } from "../../../config/urls";
+import { urls } from "../../../utils/urls";
 import Row from "./Row";
 import Header from "./Header";
 import LText from "../../../components/LText";

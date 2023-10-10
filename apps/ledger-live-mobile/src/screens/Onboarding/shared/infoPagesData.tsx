@@ -54,7 +54,7 @@ import WarningOutline from "../../../icons/WarningOutline";
 import Close from "../../../icons/Close";
 import ArrowRight from "../../../icons/ArrowRight";
 import LText from "../../../components/LText";
-import { urls } from "../../../config/urls";
+import { urls } from "@utils";
 
 export const lottieAnimations = {
   nanoS: {

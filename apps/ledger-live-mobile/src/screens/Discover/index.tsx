@@ -9,7 +9,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Illustration from "../../images/illustration/Illustration";
 import { NavigatorName, ScreenName } from "../../const";
 import DiscoverCard from "./DiscoverCard";
-import { urls } from "../../config/urls";
+import { urls } from "../../utils/urls";
 import { TrackScreen, track } from "../../analytics";
 import { TAB_BAR_SAFE_HEIGHT } from "../../components/TabBar/TabBarSafeAreaView";
 import { AnalyticsContext } from "../../analytics/AnalyticsContext";

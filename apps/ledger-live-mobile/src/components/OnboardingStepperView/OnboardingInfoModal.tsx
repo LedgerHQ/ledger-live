@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
-import { rgba } from "../../colors";
+import { rgba } from "../../utils/colors";
 import Styles from "../../navigation/styles";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import LText from "../LText";

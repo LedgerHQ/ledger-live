@@ -27,7 +27,7 @@ import Graph from "./Graph";
 import Touchable from "./Touchable";
 import { TransactionsPendingConfirmationWarningForAccount } from "./TransactionsPendingConfirmationWarning";
 import { NoCountervaluePlaceholder } from "./CounterValue";
-import { ensureContrast } from "../colors";
+import { ensureContrast } from "../utils/colors";
 import { NavigatorName, ScreenName } from "../const";
 import { track } from "../analytics";
 import { StackNavigatorNavigation } from "./RootNavigator/types/helpers";

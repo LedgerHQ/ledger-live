@@ -7,7 +7,7 @@ import { DefaultTheme, useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { chunk } from "lodash";
-import { ensureContrast } from "../../colors";
+import { ensureContrast } from "../../utils/colors";
 import { ScreenName } from "../../const";
 import { useDistribution } from "../../actions/general";
 import RingChart, { ColorableDistributionItem } from "../Analytics/RingChart";

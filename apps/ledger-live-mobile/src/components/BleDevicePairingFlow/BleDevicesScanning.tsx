@@ -15,7 +15,7 @@ import Animation from "../Animation";
 import BleDeviceItem from "./BleDeviceItem";
 import Link from "../../components/wrappedUi/Link";
 import lottie from "./assets/bluetooth.json";
-import { urls } from "../../config/urls";
+import { urls } from "../../utils/urls";
 import { TrackScreen, track } from "../../analytics";
 import { useResetOnNavigationFocusState } from "../../helpers/useResetOnNavigationFocusState";
 import LocationPermissionDenied from "../RequiresLocation/LocationPermissionDenied";

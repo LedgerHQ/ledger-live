@@ -14,7 +14,7 @@ import ClaimRewardIcon from "../../../../../../../icons/ClaimReward";
 import UndelegateIcon from "../../../../../../../icons/Undelegate";
 import WithdrawIcon from "../../../../../../../icons/Withdraw";
 import { ScreenName, NavigatorName } from "../../../../../../../const";
-import { rgba } from "../../../../../../../colors";
+import { rgba } from "../../../../../../../utils/colors";
 
 /*
  * Handle the hook declaration.

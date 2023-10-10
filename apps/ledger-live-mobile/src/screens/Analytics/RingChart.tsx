@@ -5,7 +5,7 @@ import Svg, { Path, G, Circle } from "react-native-svg";
 import { getCurrencyColor, ColorableCurrency } from "@ledgerhq/live-common/currencies/index";
 import { DefaultTheme } from "styled-components/native";
 import type { DistributionItem } from "./DistributionCard";
-import { ensureContrast, withTheme } from "../../colors";
+import { ensureContrast, withTheme } from "../../utils/colors";
 
 /**
  * Type that allows to have a dynamically generated currency "other" that just

@@ -17,7 +17,7 @@ import LText from "../../components/LText";
 import GenericErrorView from "../../components/GenericErrorView";
 import HelpLink from "../../components/HelpLink";
 import IconArrowRight from "../../icons/ArrowRight";
-import { urls } from "../../config/urls";
+import { urls } from "../../utils/urls";
 import LocationDisabled from "../../components/RequiresLocation/LocationDisabled";
 import LocationPermissionDenied from "../../components/RequiresLocation/LocationPermissionDenied";
 

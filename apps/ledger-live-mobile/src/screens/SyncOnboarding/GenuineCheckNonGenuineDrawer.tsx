@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import QueuedDrawer from "../../components/QueuedDrawer";
 import { TrackScreen, track } from "../../analytics";
 import { Linking } from "react-native";
-import { urls } from "../../config/urls";
+import { urls } from "../../utils/urls";
 import { useLocale } from "../../context/Locale";
 import { GenericInformationBody } from "../../components/GenericInformationBody";
 

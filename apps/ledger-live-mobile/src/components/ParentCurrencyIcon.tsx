@@ -3,7 +3,7 @@ import { Flex } from "@ledgerhq/native-ui";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
 import { Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { ensureContrast } from "../colors";
+import { ensureContrast } from "../utils/colors";
 import CurrencyIcon from "./CurrencyIcon";
 
 type Props = {

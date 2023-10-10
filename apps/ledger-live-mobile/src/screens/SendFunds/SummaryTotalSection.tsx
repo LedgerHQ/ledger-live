@@ -14,7 +14,7 @@ import Button from "../../components/Button";
 import Circle from "../../components/Circle";
 import Touchable from "../../components/Touchable";
 import Info from "../../icons/Info";
-import { withTheme, Theme } from "../../colors";
+import { withTheme, Theme } from "../../utils/colors";
 
 type Props = {
   account: AccountLike;

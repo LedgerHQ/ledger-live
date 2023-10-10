@@ -15,7 +15,7 @@ import CollapsibleList from "../../../components/CollapsibleList";
 import ListTreeLine from "../../../icons/ListTreeLine";
 
 import getWindowDimensions from "../../../logic/getWindowDimensions";
-import { Theme } from "../../../colors";
+import { Theme } from "../../../utils/colors";
 
 const { height } = getWindowDimensions();
 

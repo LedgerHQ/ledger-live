@@ -10,7 +10,7 @@ import LText from "../../../components/LText";
 import Button from "../../../components/Button";
 import IconCheck from "../../../icons/Check";
 import IconClock from "../../../icons/Clock";
-import { rgba } from "../../../colors";
+import { rgba } from "../../../utils/colors";
 import { TrackScreen } from "../../../analytics";
 import { PendingOperationParamList } from "../types";
 import { flattenAccountsSelector } from "../../../reducers/accounts";

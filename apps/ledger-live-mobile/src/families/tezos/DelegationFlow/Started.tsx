@@ -4,7 +4,7 @@ import { Trans } from "react-i18next";
 import { Flex, Text, IconsLegacy, List, Link, Log } from "@ledgerhq/native-ui";
 import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
-import { urls } from "../../../config/urls";
+import { urls } from "../../../utils/urls";
 import Illustration from "../../../images/illustration/Illustration";
 import EarnLight from "../../../images/illustration/Light/_003.png";
 import EarnDark from "../../../images/illustration/Dark/_003.png";

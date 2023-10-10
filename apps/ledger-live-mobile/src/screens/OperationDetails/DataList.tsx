@@ -3,7 +3,7 @@ import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 import LText from "../../components/LText";
 import Touchable from "../../components/Touchable";
-import { withTheme, Theme } from "../../colors";
+import { withTheme, Theme } from "../../utils/colors";
 
 type Props = {
   data: string[];

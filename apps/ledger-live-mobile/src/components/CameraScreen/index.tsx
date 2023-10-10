@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { View } from "react-native";
-import { rgba } from "../../colors";
+import { rgba } from "../../utils/colors";
 import QRCodeBottomLayer from "./QRCodeBottomLayer";
 import { Box, Flex, IconsLegacy } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";

@@ -3,7 +3,7 @@ import { View, StyleSheet, TextInput, TextInputProps } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 import Touchable from "./Touchable";
 import { getFontStyle } from "./LText";
-import { Theme, withTheme } from "../colors";
+import { Theme, withTheme } from "../utils/colors";
 
 type Props = {
   secureTextEntry: boolean;

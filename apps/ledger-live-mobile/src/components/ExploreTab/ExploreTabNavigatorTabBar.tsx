@@ -5,7 +5,7 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { TouchableOpacity } from "react-native";
 import { track } from "../../analytics";
-import { rgba } from "../../colors";
+import { rgba } from "../../utils/colors";
 
 const StyledTouchableOpacity = styled(TouchableOpacity)<BaseStyledProps>`
   height: 32px;

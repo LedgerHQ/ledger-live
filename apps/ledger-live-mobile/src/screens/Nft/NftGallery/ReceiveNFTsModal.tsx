@@ -6,7 +6,7 @@ import { Linking, View } from "react-native";
 import Svg, { G, Path, Rect, Mask } from "react-native-svg";
 import { NavigatorName, ScreenName } from "../../../const";
 import { track, TrackScreen } from "../../../analytics";
-import { urls } from "../../../config/urls";
+import { urls } from "../../../utils/urls";
 import QueuedDrawer from "../../../components/QueuedDrawer";
 
 type Props = {

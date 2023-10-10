@@ -14,7 +14,7 @@ import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import CounterValue from "../../components/CounterValue";
 import SectionSeparator from "../../components/SectionSeparator";
 import ExternalLink from "../../icons/ExternalLink";
-import { urls } from "../../config/urls";
+import { urls } from "../../utils/urls";
 import { ScreenName } from "../../const";
 import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";

@@ -11,7 +11,7 @@ import LText from "./LText";
 import Circle from "./Circle";
 import ClockIcon from "../icons/Clock";
 import IconInfo from "../icons/Info";
-import { rgba } from "../colors";
+import { rgba } from "../utils/colors";
 
 const hitSlop = {
   top: 16,

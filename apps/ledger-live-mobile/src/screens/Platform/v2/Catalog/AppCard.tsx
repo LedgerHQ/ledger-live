@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import type { AppBranch, LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import LText from "../../../../components/LText";
 import { AppIcon } from "../AppIcon";
-import { Theme } from "../../../../colors";
+import { Theme } from "../../../../utils/colors";
 
 function getBranchStyle(branch: AppBranch, colors: Theme["colors"]) {
   switch (branch) {

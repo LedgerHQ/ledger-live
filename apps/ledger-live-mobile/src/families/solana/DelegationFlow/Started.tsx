@@ -10,7 +10,7 @@ import Button from "../../../components/Button";
 import ExternalLink from "../../../components/ExternalLink";
 import NavigationScrollView from "../../../components/NavigationScrollView";
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
-import { urls } from "../../../config/urls";
+import { urls } from "../../../utils/urls";
 import { ScreenName } from "../../../const";
 import IlluStaking from "../../tezos/IlluStaking";
 import { SolanaDelegationFlowParamList } from "./types";

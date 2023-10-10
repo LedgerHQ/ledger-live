@@ -14,7 +14,7 @@ import AccountSectionLabel from "../../../../../../components/AccountSectionLabe
 import IlluRewards from "../../../../../../icons/images/Rewards";
 import { ScreenName, NavigatorName } from "../../../../../../const";
 
-import { urls } from "../../../../../../config/urls";
+import { urls } from "../../../../../../utils/urls";
 
 import Delegation from "./components/Delegation";
 import Right from "./components/Right";

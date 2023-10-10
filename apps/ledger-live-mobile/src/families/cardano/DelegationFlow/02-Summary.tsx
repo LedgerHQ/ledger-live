@@ -39,7 +39,7 @@ import PoolImage from "../shared/PoolImage";
 import { ScreenName } from "../../../const";
 import ArrowRight from "../../../icons/ArrowRight";
 import { TrackScreen } from "../../../analytics";
-import { rgba } from "../../../colors";
+import { rgba } from "../../../utils/colors";
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import { CardanoDelegationFlowParamList } from "./types";
 import TranslatedError from "../../../components/TranslatedError";

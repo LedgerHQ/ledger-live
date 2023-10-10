@@ -17,7 +17,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useSelector } from "react-redux";
 
 import Button from "../components/wrappedUi/Button";
-import { urls } from "../config/urls";
+import { urls } from "../utils/urls";
 import { useNavigationInterceptor } from "./Onboarding/onboardingContext";
 import { NavigatorName, ScreenName } from "../const";
 import useIsAppInBackground from "../components/useIsAppInBackground";

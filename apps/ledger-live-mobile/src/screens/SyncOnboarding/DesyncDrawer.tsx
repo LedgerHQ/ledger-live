@@ -5,7 +5,7 @@ import { ExternalLinkMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useTranslation } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { urls } from "../../config/urls";
+import { urls } from "../../utils/urls";
 import QueuedDrawer from "../../components/QueuedDrawer";
 import { TrackScreen, track } from "../../analytics";
 

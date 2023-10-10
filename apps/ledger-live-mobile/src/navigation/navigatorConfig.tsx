@@ -3,7 +3,7 @@ import { DefaultTheme } from "styled-components/native";
 import { NavigationHeaderCloseButtonAdvanced } from "../components/NavigationHeaderCloseButton";
 import HeaderTitle, { Props as HeaderTitleProps } from "../components/HeaderTitle";
 import styles from "./styles";
-import { Theme } from "../colors";
+import { Theme } from "../utils/colors";
 import { NavigationHeaderBackImage } from "../components/NavigationHeaderBackButton";
 
 export const defaultNavigationOptions = {

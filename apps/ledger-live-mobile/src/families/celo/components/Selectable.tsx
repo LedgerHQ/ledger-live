@@ -3,7 +3,7 @@ import { useTheme } from "@react-navigation/native";
 import { StyleSheet, View } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 import { Text } from "@ledgerhq/native-ui";
-import { rgba } from "../../../colors";
+import { rgba } from "../../../utils/colors";
 
 const Selectable = ({ name }: { name: string }) => {
   const { colors } = useTheme();

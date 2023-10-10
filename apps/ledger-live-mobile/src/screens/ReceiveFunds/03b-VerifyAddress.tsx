@@ -23,7 +23,7 @@ import Button from "../../components/Button";
 import Animation from "../../components/Animation";
 import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
 import Illustration from "../../images/illustration/Illustration";
-import { urls } from "../../config/urls";
+import { urls } from "../../utils/urls";
 import { ReceiveFundsStackParamList } from "../../components/RootNavigator/types/ReceiveFundsNavigator";
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 

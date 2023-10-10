@@ -10,7 +10,7 @@ import NavigationScrollView from "../../../components/NavigationScrollView";
 import Illustration from "../../../images/illustration/Illustration";
 import EarnLight from "../../../images/illustration/Light/_003.png";
 import EarnDark from "../../../images/illustration/Dark/_003.png";
-import { urls } from "../../../config/urls";
+import { urls } from "../../../utils/urls";
 import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";

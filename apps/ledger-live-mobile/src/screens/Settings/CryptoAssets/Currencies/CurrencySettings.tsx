@@ -9,7 +9,7 @@ import SettingsRow from "../../../../components/SettingsRow";
 import { confirmationsNbForCurrencySelector } from "../../../../reducers/settings";
 import { State } from "../../../../reducers/types";
 import { updateCurrencySettings } from "../../../../actions/settings";
-import { withTheme } from "../../../../colors";
+import { withTheme } from "../../../../utils/colors";
 import { TrackScreen } from "../../../../analytics";
 import { currencySettingsDefaults } from "../../../../helpers/CurrencySettingsDefaults";
 import CurrencyIcon from "../../../../components/CurrencyIcon";

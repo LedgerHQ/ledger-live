@@ -21,7 +21,7 @@ import FilterTokenOperationsZeroAmountRow from "./FilterTokenOperationsZeroAmoun
 import Close from "../../../icons/Close";
 import { ScreenName } from "../../../const";
 import { SettingsNavigatorStackParamList } from "../../../components/RootNavigator/types/SettingsNavigator";
-import type { Theme } from "../../../colors";
+import type { Theme } from "../../../utils/colors";
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 
 export default function AccountsSettings({

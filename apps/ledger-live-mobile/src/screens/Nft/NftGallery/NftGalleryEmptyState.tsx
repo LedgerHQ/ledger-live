@@ -4,7 +4,7 @@ import { Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import Button from "../../../components/wrappedUi/Button";
-import { urls } from "../../../config/urls";
+import { urls } from "../../../utils/urls";
 import Link from "../../../components/wrappedUi/Link";
 import ReceiveNFTsModal from "./ReceiveNFTsModal";
 import { useReceiveNFTsModal } from "./ReceiveNFTsModal.hook";

@@ -12,7 +12,7 @@ import IlluRewards from "../../../../../../../icons/images/Rewards";
 import Alert from "../../../../../../../components/Alert";
 import BulletList, { BulletGreenCheck } from "../../../../../../../components/BulletList";
 
-import { urls } from "../../../../../../../config/urls";
+import { urls } from "../../../../../../../utils/urls";
 import { TrackScreen } from "../../../../../../../analytics";
 
 import type { EarnRewardsPropsType } from "./types";

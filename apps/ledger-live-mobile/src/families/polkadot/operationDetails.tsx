@@ -20,7 +20,7 @@ import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import CounterValue from "../../components/CounterValue";
 import Section from "../../screens/OperationDetails/Section";
 import { discreetModeSelector, localeSelector } from "../../reducers/settings";
-import { urls } from "../../config/urls";
+import { urls } from "../../utils/urls";
 
 import BondIcon from "../../icons/LinkIcon";
 import UnbondIcon from "../../icons/Undelegate";

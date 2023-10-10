@@ -5,7 +5,7 @@ import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "@react-navigation/native";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import LText from "./LText";
-import { ensureContrast, rgba } from "../colors";
+import { ensureContrast, rgba } from "../utils/colors";
 
 type Props = {
   currency: CryptoOrTokenCurrency;

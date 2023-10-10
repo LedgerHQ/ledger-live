@@ -10,7 +10,7 @@ import { Svg, Defs, Rect, Mask } from "react-native-svg";
 import { useIsFocused } from "@react-navigation/native";
 import { TrackScreen } from "../../analytics";
 import { useNavigateToPostOnboardingHubCallback } from "../../logic/postOnboarding/useNavigateToPostOnboardingHubCallback";
-import { urls } from "../../config/urls";
+import { urls } from "../../utils/urls";
 import RequiresCameraPermissions from "../../components/RequiresCameraPermissions";
 import CameraPermissionContext from "../../components/RequiresCameraPermissions/CameraPermissionContext";
 

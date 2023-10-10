@@ -1,13 +1,6 @@
 import React, { PureComponent } from "react";
 import { withTranslation, Trans } from "react-i18next";
-import {
-  TouchableWithoutFeedback,
-  View,
-  StyleSheet,
-  Vibration,
-  Platform,
-  SafeAreaView,
-} from "react-native";
+import { TouchableWithoutFeedback, View, StyleSheet, Platform, SafeAreaView } from "react-native";
 import * as Keychain from "react-native-keychain";
 import { PasswordIncorrectError } from "@ledgerhq/errors";
 import { compose } from "redux";
@@ -28,9 +21,9 @@ import PasswordInput from "../../components/PasswordInput";
 import KeyboardView from "../../components/KeyboardView";
 import FailBiometrics from "./FailBiometrics";
 import KeyboardBackgroundDismiss from "../../components/KeyboardBackgroundDismiss";
-import { VIBRATION_PATTERN_ERROR } from "../../constants";
-import { withTheme } from "../../colors";
-import type { Theme } from "../../colors";
+import { withTheme } from "../../utils/colors";
+import type { Theme } from "../../utils/colors";
+import { vibration } from "@utils";
 
 type State = {
   passwordError: Error | null | undefined;
@@ -141,7 +134,7 @@ class AuthScreen extends PureComponent<Props, State> {
       if (credentials && credentials.password === password) {
         unlock();
       } else if (credentials) {
-        Vibration.vibrate(VIBRATION_PATTERN_ERROR);
+        vibration.error();
         this.setState({
           passwordError: new PasswordIncorrectError(),
           password: "",

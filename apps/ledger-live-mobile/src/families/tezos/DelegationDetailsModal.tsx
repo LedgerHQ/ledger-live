@@ -28,7 +28,7 @@ import Touchable from "../../components/Touchable";
 import QueuedDrawer from "../../components/QueuedDrawer";
 import Circle from "../../components/Circle";
 import NavigationScrollView from "../../components/NavigationScrollView";
-import { rgba } from "../../colors";
+import { rgba } from "../../utils/colors";
 import { NavigatorName, ScreenName } from "../../const";
 import BakerImage from "./BakerImage";
 import DelegatingContainer from "./DelegatingContainer";

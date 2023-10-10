@@ -7,8 +7,8 @@ import { ScreenName } from "../../const";
 import Scanner from "../../components/Scanner";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
 import getWindowDimensions from "../../logic/getWindowDimensions";
-import { withTheme } from "../../colors";
-import type { Theme } from "../../colors";
+import { withTheme } from "../../utils/colors";
+import type { Theme } from "../../utils/colors";
 import type { ImportAccountsNavigatorParamList } from "../../components/RootNavigator/types/ImportAccountsNavigator";
 import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 

@@ -6,7 +6,7 @@ import { Linking } from "react-native";
 import Button from "../../../../../components/wrappedUi/Button";
 import { TrackScreen } from "../../../../../analytics";
 import QueuedDrawer from "../../../../../components/QueuedDrawer";
-import { urls } from "../../../../../config/urls";
+import { urls } from "../../../../../utils/urls";
 
 const RestoreWithProtectScene = () => {
   const { t } = useTranslation();

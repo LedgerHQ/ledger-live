@@ -2,7 +2,7 @@ import React, { PureComponent } from "react";
 import { StyleSheet, Share } from "react-native";
 import { IconsLegacy, Text } from "@ledgerhq/native-ui";
 import Touchable from "./Touchable";
-import { withTheme } from "../colors";
+import { withTheme } from "../utils/colors";
 
 type Props = {
   children: React.ReactNode;

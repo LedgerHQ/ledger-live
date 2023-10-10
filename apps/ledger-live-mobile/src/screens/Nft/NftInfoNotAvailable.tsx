@@ -5,7 +5,7 @@ import { Linking } from "react-native";
 import styled from "styled-components/native";
 import Button from "../../components/wrappedUi/Button";
 
-import { urls } from "../../config/urls";
+import { urls } from "../../utils/urls";
 import { ModalInfo } from "../../modals/Info";
 
 const IconInfoContainer = styled.TouchableOpacity`

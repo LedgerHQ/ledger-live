@@ -13,7 +13,7 @@ import noAccountsImgLight from "../../images/illustration/Light/_048.png";
 import noAppsImgDark from "../../images/illustration/Dark/_056.png";
 import noAppsImgLight from "../../images/illustration/Light/_056.png";
 import HelpLink from "../../components/HelpLink";
-import { urls } from "../../config/urls";
+import { urls } from "../../utils/urls";
 import Illustration from "../../images/illustration/Illustration";
 import {
   BaseNavigation,

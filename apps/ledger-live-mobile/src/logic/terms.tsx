@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { useLocale } from "../context/Locale";
-import { urls } from "../config/urls";
+import { urls } from "../utils/urls";
 import { generalTermsVersionAcceptedSelector } from "../reducers/settings";
 import { setGeneralTermsVersionAccepted } from "../actions/settings";
 import { StoreType } from "../context/LedgerStore";

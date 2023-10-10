@@ -29,7 +29,7 @@ import CurrencyIcon from "../../../../../../../components/CurrencyIcon";
 import { TrackScreen } from "../../../../../../../analytics";
 import { ScreenName } from "../../../../../../../const";
 
-import { rgba } from "../../../../../../../colors";
+import { rgba } from "../../../../../../../utils/colors";
 
 import type { SetDelegationPropsType } from "./types";
 

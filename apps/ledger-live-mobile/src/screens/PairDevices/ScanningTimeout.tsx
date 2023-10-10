@@ -4,7 +4,7 @@ import { Trans } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { useTheme } from "@react-navigation/native";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { urls } from "../../config/urls";
+import { urls } from "../../utils/urls";
 import { TrackScreen } from "../../analytics";
 import Touchable from "../../components/Touchable";
 import Button from "../../components/Button";

@@ -9,7 +9,7 @@ import { Trans } from "react-i18next";
 import { Linking, StyleSheet, View } from "react-native";
 import CounterValue from "../../components/CounterValue";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import { urls } from "../../config/urls";
+import { urls } from "../../utils/urls";
 import ExternalLink from "../../icons/ExternalLink";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";

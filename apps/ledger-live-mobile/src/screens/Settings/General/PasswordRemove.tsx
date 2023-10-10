@@ -4,13 +4,12 @@ import { connect } from "react-redux";
 import { compose } from "redux";
 import { TFunction, withTranslation } from "react-i18next";
 import { PasswordsDontMatchError } from "@ledgerhq/errors";
-import { Vibration } from "react-native";
 import { disablePrivacy } from "../../../actions/settings";
 import PasswordForm from "./PasswordForm";
-import { VIBRATION_PATTERN_ERROR } from "../../../constants";
 import { ScreenName } from "../../../const";
 import type { PasswordModifyFlowParamList } from "../../../components/RootNavigator/types/PasswordModifyFlowNavigator";
 import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { vibration } from "@utils";
 
 type NavigationProps = StackNavigatorProps<PasswordModifyFlowParamList, ScreenName.PasswordRemove>;
 
@@ -46,7 +45,7 @@ class PasswordRemove extends PureComponent<Props, State> {
       const credentials = await Keychain.getGenericPassword();
       if (credentials) {
         if (credentials.password !== confirmPassword) {
-          Vibration.vibrate(VIBRATION_PATTERN_ERROR);
+          vibration.error();
           throw new PasswordsDontMatchError();
         }
         await Keychain.resetGenericPassword();

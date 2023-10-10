@@ -10,7 +10,7 @@ import { useDispatch } from "react-redux";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { NavigatorName, ScreenName } from "../../../const";
 import StyledStatusBar from "../../../components/StyledStatusBar";
-import { urls } from "../../../config/urls";
+import { urls } from "../../../utils/urls";
 import { useAcceptGeneralTerms } from "../../../logic/terms";
 import { setAnalytics } from "../../../actions/settings";
 import useIsAppInBackground from "../../../components/useIsAppInBackground";

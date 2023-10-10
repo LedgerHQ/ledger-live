@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 import Clipboard from "@react-native-clipboard/clipboard";
 import { IconsLegacy, Text } from "@ledgerhq/native-ui";
 import Touchable, { Props as TouchableProps } from "./Touchable";
-import { withTheme } from "../colors";
+import { withTheme } from "../utils/colors";
 
 type Props = {
   style?: TouchableProps["style"];

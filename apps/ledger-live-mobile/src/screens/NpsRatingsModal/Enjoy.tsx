@@ -3,7 +3,7 @@ import { Trans } from "react-i18next";
 import { Linking, Platform, TouchableOpacity } from "react-native";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
-import { urls } from "../../config/urls";
+import { urls } from "../../utils/urls";
 import { track, TrackScreen } from "../../analytics";
 import useNpsRatings from "../../logic/npsRatings";
 import Love from "../../icons/Love";

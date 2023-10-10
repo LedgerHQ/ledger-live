@@ -21,7 +21,7 @@ import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/in
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { isFirstBond } from "@ledgerhq/live-common/families/polkadot/logic";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
-import { urls } from "../../../config/urls";
+import { urls } from "../../../utils/urls";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";

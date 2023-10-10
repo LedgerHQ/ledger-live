@@ -9,7 +9,7 @@ import LText from "../../../components/LText";
 import ExternalLink from "../../../components/ExternalLink";
 import BulletList, { BulletGreenCheck } from "../../../components/BulletList";
 import Alert from "../../../components/Alert";
-import { urls } from "../../../config/urls";
+import { urls } from "../../../utils/urls";
 import Illustration from "../../../images/illustration/Illustration";
 import EarnLight from "../../../images/illustration/Light/_003.png";
 import EarnDark from "../../../images/illustration/Dark/_003.png";

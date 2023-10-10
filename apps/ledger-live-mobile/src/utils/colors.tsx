@@ -12,13 +12,32 @@ export const ensureContrast = (color1: string, color2: string) => {
   if (lRatio < 1.5) {
     return color(color1).rotate(180).negate().string();
   }
+
   return color1;
 };
 
-export const rgba = (c: string, a: number) => color(c).alpha(a).rgb().toString();
+/**
+ *
+ * @param c a color.
+ * @param r the ratio of alpha you want to apply, from 0 to 1.
+ * @returns the initial color modified with the added alpha as an RGB string.
+ */
+export const rgba = (c: string, alpha: number) => color(c).alpha(alpha).rgb().toString();
 
-export const darken = (c: string, a: number) => color(c).darken(a).toString();
+/**
+ *
+ * @param c a color.
+ * @param r the ratio of dark you want to apply, from 0 to 1.
+ * @returns the initial color modified with the added darkness as a string.
+ */
+export const darken = (c: string, r: number) => color(c).darken(r).toString();
 
+/**
+ *
+ * @param c a color.
+ * @param r the ratio of light you want to apply, from 0 to 1.
+ * @returns the initial color modified with the added lightness as a string.
+ */
 export const lighten = (c: string, a: number) => color(c).lighten(a).toString();
 
 export function withTheme<P>(Component: React.ComponentType<P>) {

@@ -10,7 +10,7 @@ import LText from "../../components/LText";
 import ExternalLink from "../../components/ExternalLink";
 import BulletList, { BulletGreenCheck } from "../../components/BulletList";
 import IlluRewards from "../../icons/images/Rewards";
-import { urls } from "../../config/urls";
+import { urls } from "../../utils/urls";
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { FreezeNavigatorParamList } from "../../components/RootNavigator/types/FreezeNavigator";

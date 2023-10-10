@@ -8,14 +8,11 @@
     "types": ["jest", "@testing-library/jest-native/extend-expect"],
     "noEmit": true,
     "target": "esnext",
-    "incremental": true
+    "incremental": true,
+    "paths": {
+      "@utils": ["./src/utils"]
+    }
   },
   "include": ["src/**/*", "e2e/**/*", "**/*.d.ts", "services/**/*"],
-  "exclude": [
-    "node_modules",
-    "babel.config.js",
-    "metro.config.js",
-    "jest.config.js",
-    "**/*.js"
-  ]
+  "exclude": ["node_modules", "babel.config.js", "metro.config.js", "jest.config.js", "**/*.js"]
 }

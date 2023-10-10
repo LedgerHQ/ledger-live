@@ -9,7 +9,7 @@ import CurrencyIcon from "../../components/CurrencyIcon";
 import Button from "../../components/Button";
 import Alert from "../../components/Alert";
 import LText from "../../components/LText";
-import { urls } from "../../config/urls";
+import { urls } from "../../utils/urls";
 import { ScreenName, NavigatorName } from "../../const";
 import { TrackScreen } from "../../analytics";
 import { AddAccountsNavigatorParamList } from "../../components/RootNavigator/types/AddAccountsNavigator";

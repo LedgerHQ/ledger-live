@@ -27,7 +27,7 @@ import LText from "../../../components/LText";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
-import { rgba } from "../../../colors";
+import { rgba } from "../../../utils/colors";
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import { CardanoUndelegationFlowParamList } from "./types";
 

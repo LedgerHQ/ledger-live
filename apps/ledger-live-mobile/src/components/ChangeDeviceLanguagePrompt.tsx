@@ -4,7 +4,7 @@ import { ImageSourcePropType, Linking } from "react-native";
 import { useTranslation } from "react-i18next";
 import { Language } from "@ledgerhq/types-live";
 import { DeviceModel, DeviceModelId } from "@ledgerhq/types-devices";
-import { urls } from "../config/urls";
+import { urls } from "../utils/urls";
 import Illustration from "../images/illustration/Illustration";
 
 type Props = {

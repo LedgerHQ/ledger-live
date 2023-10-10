@@ -11,7 +11,7 @@ import ExternalLinkIcon from "../../icons/ExternalLink";
 import OpenSeaIcon from "../../icons/OpenSea";
 import RaribleIcon from "../../icons/Rarible";
 import QueuedDrawer from "../QueuedDrawer";
-import { rgba } from "../../colors";
+import { rgba } from "../../utils/colors";
 import HideNftDrawer from "./HideNftDrawer";
 import { track, TrackScreen } from "../../analytics";
 import { extractImageUrlFromNftMetadata } from "../CustomImage/imageUtils";

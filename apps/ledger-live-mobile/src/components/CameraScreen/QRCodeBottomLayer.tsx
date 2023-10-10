@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { Trans } from "react-i18next";
 import { Text, ProgressBar, NumberedList, Box } from "@ledgerhq/native-ui";
-import { rgba } from "../../colors";
+import { rgba } from "../../utils/colors";
 import { useTheme } from "styled-components/native";
 
 type Props = {

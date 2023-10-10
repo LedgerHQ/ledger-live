@@ -9,7 +9,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { track } from "../../analytics";
-import { rgba } from "../../colors";
+import { rgba } from "../../utils/colors";
 import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManager";
 import WalletTabBackgroundGradient from "./WalletTabBackgroundGradient";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";

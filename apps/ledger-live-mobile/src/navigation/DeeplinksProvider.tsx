@@ -18,7 +18,7 @@ import { ScreenName, NavigatorName } from "../const";
 import { setWallectConnectUri } from "../actions/walletconnect";
 import { useGeneralTermsAccepted } from "../logic/terms";
 import { Writeable } from "../types/helpers";
-import { lightTheme, darkTheme, Theme } from "../colors";
+import { lightTheme, darkTheme, Theme } from "../utils/colors";
 import { track } from "../analytics";
 import { setEarnInfoModal } from "../actions/earn";
 import { OptionalFeatureMap } from "@ledgerhq/types-live";

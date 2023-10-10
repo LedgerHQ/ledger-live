@@ -11,7 +11,7 @@ import clamp from "lodash/clamp";
 
 import { localeSelector } from "../reducers/settings";
 import getFontStyle from "./LText/getFontStyle";
-import { Theme, withTheme } from "../colors";
+import { Theme, withTheme } from "../utils/colors";
 import TextInput from "./FocusedTextInput";
 
 function format(

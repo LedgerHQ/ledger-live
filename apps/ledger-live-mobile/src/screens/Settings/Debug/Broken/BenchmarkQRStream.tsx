@@ -2,7 +2,7 @@ import React, { PureComponent } from "react";
 import { StyleSheet, View } from "react-native";
 import Scanner from "../../../../components/Scanner";
 import LText from "../../../../components/LText";
-import { rgba, Theme, withTheme } from "../../../../colors";
+import { rgba, Theme, withTheme } from "../../../../utils/colors";
 import getWindowDimensions from "../../../../logic/getWindowDimensions";
 import { ScreenName } from "../../../../const";
 import { SettingsNavigatorStackParamList } from "../../../../components/RootNavigator/types/SettingsNavigator";

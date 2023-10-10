@@ -8,7 +8,7 @@ import { useNavigation } from "@react-navigation/native";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import ProgressBar from "../../components/ProgressBar";
 import CounterValue from "../../components/CounterValue";
-import { ensureContrast } from "../../colors";
+import { ensureContrast } from "../../utils/colors";
 import CurrencyIcon from "../../components/CurrencyIcon";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import { NavigatorName, ScreenName } from "../../const";

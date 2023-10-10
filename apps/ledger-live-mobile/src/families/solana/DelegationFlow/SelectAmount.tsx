@@ -27,7 +27,7 @@ import GenericErrorBottomModal from "../../../components/GenericErrorBottomModal
 import KeyboardView from "../../../components/KeyboardView";
 import RetryButton from "../../../components/RetryButton";
 import Touchable from "../../../components/Touchable";
-import { urls } from "../../../config/urls";
+import { urls } from "../../../utils/urls";
 import { ScreenName } from "../../../const";
 import InfoIcon from "../../../icons/Info";
 import InfoModal, { ModalInfo } from "../../../modals/Info";

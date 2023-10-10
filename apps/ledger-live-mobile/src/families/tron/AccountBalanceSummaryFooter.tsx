@@ -17,7 +17,7 @@ import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import InfoItem from "../../components/BalanceSummaryInfoItem";
 import { localeSelector } from "../../reducers/settings";
 import Alert from "../../components/Alert";
-import { urls } from "../../config/urls";
+import { urls } from "../../utils/urls";
 
 type Props = {
   account: Account;

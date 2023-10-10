@@ -1,7 +1,7 @@
 import React, { memo, useState, useCallback } from "react";
 import { Image, View, StyleSheet } from "react-native";
 import { DefaultTheme, useTheme } from "styled-components/native";
-import { Theme } from "../../colors";
+import { Theme } from "../../utils/colors";
 import LText from "../../components/LText";
 
 type Props = {

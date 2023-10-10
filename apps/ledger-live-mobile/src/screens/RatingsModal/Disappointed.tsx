@@ -6,7 +6,7 @@ import styled from "styled-components/native";
 import NoResultsFound from "../../icons/NoResultsFound";
 import { track, TrackScreen } from "../../analytics";
 import useRatings from "../../logic/ratings";
-import { urls } from "../../config/urls";
+import { urls } from "../../utils/urls";
 
 const NotNowButton = styled(TouchableOpacity)`
   align-items: center;

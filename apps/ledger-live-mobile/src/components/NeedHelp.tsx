@@ -5,7 +5,7 @@ import { useTheme } from "@react-navigation/native";
 import LText from "./LText";
 import Touchable from "./Touchable";
 import IconHelp from "../icons/Help";
-import { urls } from "../config/urls";
+import { urls } from "../utils/urls";
 
 function NeedHelp() {
   const { colors } = useTheme();

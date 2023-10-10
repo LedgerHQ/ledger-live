@@ -10,7 +10,7 @@ import LText from "../../../../components/LText";
 import ExternalLink from "../../../../components/ExternalLink";
 import BulletList, { BulletGreenCheck } from "../../../../components/BulletList";
 import NavigationScrollView from "../../../../components/NavigationScrollView";
-import { urls } from "../../../../config/urls";
+import { urls } from "../../../../utils/urls";
 import { TrackScreen } from "../../../../analytics";
 import Illustration from "../../../../images/illustration/Illustration";
 import {

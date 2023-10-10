@@ -1,7 +1,7 @@
 import React from "react";
 import { BigNumber } from "bignumber.js";
 import { Line, Circle } from "react-native-svg";
-import { rgba } from "../../colors";
+import { rgba } from "../../utils/colors";
 
 export type Item = {
   date: Date;

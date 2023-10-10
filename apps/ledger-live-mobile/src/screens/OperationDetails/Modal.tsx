@@ -9,8 +9,8 @@ import Circle from "../../components/Circle";
 import IconInfo from "../../icons/Info";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
-import { rgba } from "../../colors";
-import { urls } from "../../config/urls";
+import { rgba } from "../../utils/colors";
+import { urls } from "../../utils/urls";
 
 export type Props = {
   isOpened: boolean;

@@ -12,7 +12,7 @@ import {
 } from "@ledgerhq/native-ui/assets/icons";
 import SettingsNavigationScrollView from "./SettingsNavigationScrollView";
 import SettingsCard from "../../components/SettingsCard";
-import { urls } from "../../config/urls";
+import { urls } from "../../utils/urls";
 
 const Resources = () => {
   const { t } = useTranslation();

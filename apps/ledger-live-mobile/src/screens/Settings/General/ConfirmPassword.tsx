@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useEffect, useState } from "react";
-import { Platform, Vibration } from "react-native";
+import { Platform } from "react-native";
 import * as Keychain from "react-native-keychain";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -8,7 +8,6 @@ import { PasswordsDontMatchError } from "@ledgerhq/errors";
 import { CompositeScreenProps } from "@react-navigation/native";
 import { setPrivacy } from "../../../actions/settings";
 import PasswordForm from "./PasswordForm";
-import { VIBRATION_PATTERN_ERROR } from "../../../constants";
 import { ScreenName } from "../../../const";
 import type { PasswordAddFlowParamList } from "../../../components/RootNavigator/types/PasswordAddFlowNavigator";
 import type { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
@@ -16,6 +15,7 @@ import {
   StackNavigatorNavigation,
   StackNavigatorProps,
 } from "../../../components/RootNavigator/types/helpers";
+import { vibration } from "../../../utils";
 
 type Props = CompositeScreenProps<
   StackNavigatorProps<PasswordAddFlowParamList, ScreenName.ConfirmPassword>,
@@ -64,7 +64,7 @@ const ConfirmPassword = ({ route, navigation }: Props) => {
     if (route.params?.password === confirmPassword) {
       save();
     } else {
-      Vibration.vibrate(VIBRATION_PATTERN_ERROR);
+      vibration.error();
       setError(new PasswordsDontMatchError());
       setConfirmPassword("");
     }

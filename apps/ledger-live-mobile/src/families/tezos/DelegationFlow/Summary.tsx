@@ -26,7 +26,7 @@ import type { AccountLike } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import { Alert } from "@ledgerhq/native-ui";
 import { accountScreenSelector } from "../../../reducers/accounts";
-import { rgba } from "../../../colors";
+import { rgba } from "../../../utils/colors";
 import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
 import { useTransactionChangeFromNavigation } from "../../../logic/screenTransactionHooks";
