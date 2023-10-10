@@ -15,7 +15,7 @@ import {
   StackNavigatorNavigation,
   StackNavigatorProps,
 } from "../../../components/RootNavigator/types/helpers";
-import { vibration } from "../../../utils";
+import { vibration } from "@utils";
 
 type Props = CompositeScreenProps<
   StackNavigatorProps<PasswordAddFlowParamList, ScreenName.ConfirmPassword>,

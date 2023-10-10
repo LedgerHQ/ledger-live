@@ -9,6 +9,7 @@
     "noEmit": true,
     "target": "esnext",
     "incremental": true,
+    "baseUrl": ".",
     "paths": {
       "@utils": ["./src/utils"]
     }
