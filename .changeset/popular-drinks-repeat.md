@@ -2,4 +2,4 @@
 "ledger-live-desktop": patch
 ---
 
-NFTs do not load in the gallery when displayed in list view
+NFTs were not loaded in the gallery when displayed in list view
