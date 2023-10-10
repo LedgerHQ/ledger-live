@@ -685,12 +685,6 @@ export default function Tutorial({ useCase }: Props) {
         search: search ? `?${search}` : undefined,
         state: { deviceId: connectedDevice?.deviceId },
       };
-      track("deeplink_clicked", {
-        deeplinkSource: "llm-pairing",
-        deeplinkMedium: "ledger-live",
-        deeplinkCampaign: "recover-launch",
-        live_app: "Recover",
-      });
       dispatch(saveSettings({ hasCompletedOnboarding: true }));
     }
 
