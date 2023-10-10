@@ -428,6 +428,10 @@
       "title": "Sorry, internet seems to be down",
       "description": "Please check your internet connection."
     },
+    "NetworkError": {
+      "title": "A network error occurred",
+      "description": "Please try again later"
+    },
     "NoAddressesFound": {
       "title": "Sorry, no account was found",
       "description": "Something went wrong with the address calculation. Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
@@ -1930,7 +1934,7 @@
       "cancelCta": "Cancel set up",
       "notFoundEntity": {
         "title": "Initiate Genuine Check again",
-        "description": "You must first disable \"My Ledger Provider\" setting. To disable it, open Ledger Live \"Settings\", select \"Experimental features\", and then toggle off \"Manager provider\".",
+        "description": "You must first disable \"My Ledger Provider\" setting. To disable it, open Ledger Live \"Settings\", select \"Experimental features\", and then toggle off \"My Ledger provider\".",
         "settingsCta": "Go to settings"
       }
     },
@@ -2813,7 +2817,7 @@
           "description": "Show developer and testnet apps in the Manager."
         },
         "managerProvider": {
-          "title": "Manager provider",
+          "title": "My Ledger provider",
           "description": "Changing the app provider in the Manager may make it impossible to install or uninstall apps on your Ledger device."
         },
         "experimentalExplorers": {
