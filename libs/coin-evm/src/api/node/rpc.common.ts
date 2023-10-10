@@ -112,14 +112,14 @@ export const getGasEstimation: NodeApi["getGasEstimation"] = (account, transacti
       const { to, value, data } = transactionToEthersTransaction(transaction);
 
       try {
-        const gasEtimation = await api.estimateGas({
+        const gasEstimation = await api.estimateGas({
           from: account.freshAddress, // should be necessary for some estimations
           to,
           value,
           data,
         });
 
-        return new BigNumber(gasEtimation.toString());
+        return new BigNumber(gasEstimation.toString());
       } catch (e) {
         log("error", "EVM Family: Gas Estimation Error", e);
         throw new GasEstimationError();
