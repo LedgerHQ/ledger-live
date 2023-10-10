@@ -1,5 +1,29 @@
 # live-mobile
 
+## 3.34.0-nightly.1
+
+### Minor Changes
+
+- [#4919](https://github.com/LedgerHQ/ledger-live/pull/4919) [`4d6fa0772e`](https://github.com/LedgerHQ/ledger-live/commit/4d6fa0772e19cdbd4b432fafa43621c42e2a5fdd) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Change network error to better suit node flakiness
+
+### Patch Changes
+
+- [#4953](https://github.com/LedgerHQ/ledger-live/pull/4953) [`ec8a37c9ef`](https://github.com/LedgerHQ/ledger-live/commit/ec8a37c9ef9819f7b708b61fcda660df029d3d6a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update My Ledger provider wording in Experimental feature
+
+- [#4976](https://github.com/LedgerHQ/ledger-live/pull/4976) [`f2b7c63d6d`](https://github.com/LedgerHQ/ledger-live/commit/f2b7c63d6d734926f825008daa5aa37a0b5ef57b) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Fix onboarding issues when closing quiz drawer
+
+- Updated dependencies [[`4d6fa0772e`](https://github.com/LedgerHQ/ledger-live/commit/4d6fa0772e19cdbd4b432fafa43621c42e2a5fdd)]:
+  - @ledgerhq/errors@6.15.0-nightly.0
+  - @ledgerhq/live-common@33.1.0-nightly.0
+  - @ledgerhq/coin-evm@0.8.1-nightly.0
+  - @ledgerhq/coin-framework@0.7.1-nightly.0
+  - @ledgerhq/domain-service@1.1.13-nightly.0
+  - @ledgerhq/devices@8.0.8-nightly.0
+  - @ledgerhq/hw-transport@6.28.9-nightly.0
+  - @ledgerhq/hw-transport-http@6.28.4-nightly.0
+  - @ledgerhq/react-native-hid@6.30.1-nightly.0
+  - @ledgerhq/react-native-hw-transport-ble@6.29.6-nightly.0
+
 ## 3.33.1-nightly.0
 
 ### Patch Changes

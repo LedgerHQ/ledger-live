@@ -1,5 +1,11 @@
 # @ledgerhq/errors
 
+## 6.15.0-nightly.0
+
+### Minor Changes
+
+- [#4919](https://github.com/LedgerHQ/ledger-live/pull/4919) [`4d6fa0772e`](https://github.com/LedgerHQ/ledger-live/commit/4d6fa0772e19cdbd4b432fafa43621c42e2a5fdd) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Change network error to better suit node flakiness
+
 ## 6.14.0
 
 ### Minor Changes

@@ -1,5 +1,12 @@
 # @ledgerhq/evm-tools
 
+## 1.0.9-nightly.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-network@1.1.8-nightly.0
+
 ## 1.0.8
 
 ### Patch Changes
