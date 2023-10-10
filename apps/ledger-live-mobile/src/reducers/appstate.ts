@@ -7,7 +7,7 @@ import type { AppState, State } from "./types";
 import type {
   AppStateAddBackgroundEventPayload,
   AppStateIsConnectedPayload,
-  AppStateIsDeeplinkingPayload,
+  AppStateBlockPasswordLockPayload,
   AppStatePayload,
   AppStateSetHasConnectedDevicePayload,
   AppStateSetModalLockPayload,
@@ -27,7 +27,7 @@ export const INITIAL_STATE: AppState = {
   backgroundEvents: [],
   debugMenuVisible: false,
   isMainNavigatorVisible: true,
-  isDeepLinking: false,
+  isPasswordLockBlocked: false,
 };
 
 const handlers: ReducerMap<AppState, AppStatePayload> = {
@@ -83,15 +83,15 @@ const handlers: ReducerMap<AppState, AppStatePayload> = {
       .payload,
   }),
 
-  /** Prevents deep links from triggering privacy lock. */
-  [AppStateActionTypes.SET_IS_DEEP_LINKING]: (state, action) => ({
+  /** Prevents deep links from triggering privacy lock. See AuthPass. */
+  [AppStateActionTypes.SET_BLOCK_PASSWORD_LOCK]: (state, action) => ({
     ...state,
-    isDeepLinking: (action as Action<AppStateIsDeeplinkingPayload>)?.payload || false,
+    isPasswordLockBlocked: (action as Action<AppStateBlockPasswordLockPayload>)?.payload || false,
   }),
 
   [EarnActionTypes.EARN_INFO_MODAL]: state => ({
     ...state,
-    isDeepLinking: true,
+    isPasswordLockBlocked: true,
   }),
 };
 
@@ -116,6 +116,6 @@ export const networkErrorSelector = createSelector(
   (isConnected: boolean | null) => (!isConnected ? globalNetworkDown : null),
 );
 
-export const isDeepLinkingSelector = (state: State) => state.appstate.isDeepLinking;
+export const isPasswordLockBlocked = (state: State) => state.appstate.isPasswordLockBlocked;
 
 export default handleActions<AppState, AppStatePayload>(handlers, INITIAL_STATE);

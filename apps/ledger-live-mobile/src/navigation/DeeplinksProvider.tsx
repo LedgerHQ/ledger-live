@@ -22,7 +22,7 @@ import { lightTheme, darkTheme, Theme } from "../colors";
 import { track } from "../analytics";
 import { setEarnInfoModal } from "../actions/earn";
 import { OptionalFeatureMap } from "@ledgerhq/types-live";
-import { setIsDeepLinking } from "../actions/appstate";
+import { blockPasswordLock } from "../actions/appstate";
 
 const routingInstrumentation = new Sentry.ReactNavigationInstrumentation();
 
@@ -490,6 +490,17 @@ export const DeeplinksProvider = ({
             appName,
           } = query;
 
+          if (!ajsPropSource) {
+            /** Internal deep links cause the app to "background" on Android.
+             * If "password lock" is enabled then this opens a re-authentication modal every time the user navigates by deep link.
+             * If there is no ajsPropSource then assume deep link is from an internal app, so temporarily prevent password lock:
+             */
+            dispatch(blockPasswordLock(true)); // TODO: Remove this and the timeout after AuthPass refactor
+            setTimeout(() => {
+              dispatch(blockPasswordLock(false));
+            }, 4000); // Allow 4 seconds before resetting password lock
+          }
+
           // Track deeplink only when ajsPropSource attribute exists.
           if (ajsPropSource) {
             track("deeplink_clicked", {
@@ -517,10 +528,6 @@ export const DeeplinksProvider = ({
               );
               return;
             }
-          }
-          if (hostname === "account") {
-            /* Prevent screen lock on deeplinking from earn dashboard to account - resets on account and screen */
-            dispatch(setIsDeepLinking(true));
           }
           if ((hostname === "discover" || hostname === "recover") && platform) {
             if (!hasCompletedOnboarding && !platform.startsWith("protect")) return undefined;

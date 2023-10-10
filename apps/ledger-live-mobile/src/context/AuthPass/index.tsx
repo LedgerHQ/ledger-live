@@ -6,7 +6,7 @@ import { withTranslation } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import { compose } from "redux";
 import { privacySelector } from "../../reducers/settings";
-import { isDeepLinkingSelector } from "../../reducers/appstate";
+import { isPasswordLockBlocked } from "../../reducers/appstate";
 import { SkipLockContext } from "../../components/behaviour/SkipLock";
 import type { Privacy, State as GlobalState, AppState as EventState } from "../../reducers/types";
 import AuthScreen from "./AuthScreen";
@@ -16,11 +16,11 @@ const mapStateToProps = createStructuredSelector<
   GlobalState,
   {
     privacy: Privacy | null | undefined;
-    isDeepLinking: EventState["isDeepLinking"]; // skips screen lock for internal deeplinks from ptx web player.
+    isPasswordLockBlocked: EventState["isPasswordLockBlocked"]; // skips screen lock for internal deeplinks from ptx web player.
   }
 >({
   privacy: privacySelector,
-  isDeepLinking: isDeepLinkingSelector,
+  isPasswordLockBlocked: isPasswordLockBlocked,
 });
 type State = {
   isLocked: boolean;
@@ -37,12 +37,13 @@ type OwnProps = {
 type Props = OwnProps & {
   t: TFunction;
   privacy: Privacy | null | undefined;
-  isDeepLinking: EventState["isDeepLinking"];
+  isPasswordLockBlocked: EventState["isPasswordLockBlocked"];
 };
 // as we needs to be resilient to reboots (not showing unlock again after a reboot)
 // we need to store this global variable to know if we need to isLocked initially
 let wasUnlocked = false;
 
+// If "Password lock" setting is enabled, then this provider opens a re-authentication modal every time the user "backgrounds" or closes the app then re-focuses. Requires refactor.
 class AuthPass extends PureComponent<Props, State> {
   setEnabled = (enabled: boolean) => {
     if (this.state.mounted)
@@ -97,7 +98,7 @@ class AuthPass extends PureComponent<Props, State> {
       this.isBackgrounded(this.state.appState) &&
       nextAppState === "active" &&
       // do not lock if triggered by a deep link flow
-      !this.props.isDeepLinking
+      !this.props.isPasswordLockBlocked
     ) {
       this.lock();
     }
