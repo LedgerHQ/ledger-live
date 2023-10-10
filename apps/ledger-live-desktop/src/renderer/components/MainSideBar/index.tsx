@@ -17,7 +17,7 @@ import {
 } from "~/renderer/reducers/settings";
 import { isNavigationLocked } from "~/renderer/reducers/application";
 import { openModal } from "~/renderer/actions/modals";
-import { setSidebarCollapsed } from "~/renderer/actions/settings";
+import { saveSettings, setSidebarCollapsed } from "~/renderer/actions/settings";
 import useExperimental from "~/renderer/hooks/useExperimental";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { darken, rgba } from "~/renderer/styles/helpers";
@@ -34,6 +34,7 @@ import { CARD_APP_ID } from "~/renderer/screens/card";
 import TopGradient from "./TopGradient";
 import Hide from "./Hide";
 import { track } from "~/renderer/analytics/segment";
+import { useLoginPath } from "@ledgerhq/live-common/lib/hooks/recoverFeatureFlag";
 
 const MAIN_SIDEBAR_WIDTH = 230;
 const TagText = styled.div.attrs<{ collapsed?: boolean }>(p => ({
@@ -311,25 +312,25 @@ const MainSideBar = () => {
     dispatch(openModal("MODAL_RECEIVE", undefined));
   }, [dispatch, maybeRedirectToAccounts]);
 
-  const handleClickRecover = useCallback(() => {
-    const enabled = recoverFeature?.enabled;
-    const openRecoverFromSidebar = recoverFeature?.params?.openRecoverFromSidebar;
-    const liveAppId = recoverFeature?.params?.protectId;
+  const loginPath = useLoginPath(recoverFeature);
 
-    if (enabled && openRecoverFromSidebar && liveAppId) {
-      push(`/recover/${liveAppId}`);
-    } else if (enabled) {
+  const handleClickRecover = useCallback(() => {
+    if (loginPath && recoverFeature?.params?.openRecoverFromSidebar) {
+      dispatch(saveSettings({ hasCompletedOnboarding: true }));
+      history.push(loginPath!);
+    } else if (recoverFeature?.enabled) {
       dispatch(openModal("MODAL_PROTECT_DISCOVER", undefined));
     }
+
     track("button_clicked", {
       button: "Protect",
     });
   }, [
-    recoverFeature?.enabled,
-    recoverFeature?.params?.openRecoverFromSidebar,
-    recoverFeature?.params?.protectId,
-    push,
     dispatch,
+    history,
+    loginPath,
+    recoverFeature?.params?.openRecoverFromSidebar,
+    recoverFeature?.enabled,
   ]);
 
   return (
