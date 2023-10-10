@@ -322,18 +322,18 @@
       "description" : "もう一度お試しください。問題が解決しない場合は、以下のボタンを使ってログを保存し、Ledgerサポートに提出してください。"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "Ledger Staxでロック画面がキャンセルされました",
+      "title" : "Lock screen picture discarded on Ledger Stax",
       "description" : "この画像が正しくない場合は、別の画像で再度お試しいただけます。",
       "primaryCTA" : "別の写真をアップロード"
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "Ledger Staxでロック画面がキャンセルされました",
+      "title" : "Loading of lock screen picture cancelled on Ledger Stax",
       "description" : "この画像が正しくない場合は、別の画像で再度お試しいただけます。",
       "primaryCTA" : "別の写真をアップロード"
     },
     "ImageDoesNotExistOnDevice" : {
-      "title" : "お持ちのLedger Staxには削除するロック画面の画像がありません",
-      "description" : "カスタマイズされたロック画面の画像は既に削除済みです。"
+      "title" : "No lock screen picture",
+      "description" : "The lock screen picture was previously deleted."
     },
     "InvalidAddress" : {
       "title" : "これは有効な{{currencyName}} アドレスではありません。"
@@ -427,6 +427,10 @@
     "NetworkDown" : {
       "title" : "インターネットがダウンしているようです。",
       "description" : "インターネット接続を確認してください。"
+    },
+    "NetworkError" : {
+      "title" : "A network error occurred",
+      "description" : "Please try again later"
     },
     "NoAddressesFound" : {
       "title" : "アカウントが見つかりませんでした。",
@@ -776,8 +780,8 @@
       "description" : "別の画像でもう一度お試しください"
     },
     "ImageDownloadError" : {
-      "title" : "画像のダウンロードに失敗しました",
-      "description" : "別の画像でもう一度お試しください"
+      "title" : "Picture failed to download",
+      "description" : "Try again with a different picture."
     },
     "NFTMetadataLoadingError" : {
       "title" : "NFTメタデータの読み込みに問題が発生しました",
@@ -788,24 +792,24 @@
       "description" : "別の画像でもう一度お試しください。"
     },
     "ImageTooLargeError" : {
-      "title" : "画像が大きすぎます",
-      "description" : "小さい画像でもう一度お試しください"
+      "title" : "The picture is too big",
+      "description" : "Resize or compress the picture and try again, or upload a smaller picture."
     },
     "ImageCropError" : {
-      "title" : "画像のトリミングに失敗しました",
-      "description" : "別の画像でもう一度お試しください"
+      "title" : "Picture crop failed",
+      "description" : "Try again with a different picture."
     },
     "ImageResizeError" : {
-      "title" : "画像のサイズ変更に失敗しました",
-      "description" : "別の画像でもう一度お試しください"
+      "title" : "Picture failed to resize",
+      "description" : "Try again with a different picture."
     },
     "ImagePreviewError" : {
-      "title" : "画像のプレビューに失敗しました",
-      "description" : "別の画像でもう一度お試しください"
+      "title" : "Preview failed to load",
+      "description" : "Try again with a different picture."
     },
     "ImageProcessingError" : {
-      "title" : "画像の処理に失敗しました",
-      "description" : "別の画像でもう一度お試しください"
+      "title" : "Picture processing error",
+      "description" : "Try again with a different picture."
     },
     "HederaAddAccountError" : {
       "title" : "アカウントが追加されていません。もう一度お試しください。"
@@ -1930,7 +1934,7 @@
       "cancelCta" : "セットアップをキャンセルする",
       "notFoundEntity" : {
         "title" : "正規品チェックを再開する",
-        "description" : "まず「My Ledger Provider」設定を無効化してください。無効にするには、Ledger Liveの「設定」を開き、「試験的機能」を選択して、「マネージャープロバイダー（Manager provider）」をオフに切り替えます。",
+        "description" : "You must first disable \"My Ledger Provider\" setting. To disable it, open Ledger Live \"Settings\", select \"Experimental features\", and then toggle off \"My Ledger provider\".",
         "settingsCta" : "設定を開く"
       }
     },
@@ -2620,13 +2624,13 @@
     "resources" : "Ledgerリソース",
     "display" : {
       "title" : "一般",
-      "desc" : "Ledger Liveの一般設定を変更します。",
+      "desc" : "Ledger Liveの一般設定を変更する。",
       "carousel" : "おすすめ",
       "carouselDesc" : "お客様用にパーソナライズされたヒントと最新のオファーが記載されたカードをお見せします。",
       "language" : "表示言語",
       "languageDesc" : "Ledger Liveの表示言語を設定。",
       "dateFormat" : "日付形式",
-      "dateFormatDesc" : "Ledger Liveの日付形式を設定する",
+      "dateFormatDesc" : "Ledger Liveの日付形式を設定。",
       "region" : "地域",
       "regionDesc" : "地域を選択して日付や時間、通貨をアップデートする。",
       "password" : "パスワードロック",
@@ -2646,7 +2650,7 @@
       "stock" : "マーケットインジケーターの色分け",
       "stockDesc" : "マーケットの上昇を緑色で表示したい場合は「ウエスタン」、赤色で表示したい場合は「イースタン」を選択。",
       "reportErrors" : "バグレポート",
-      "reportErrorsDesc" : "製品の向上に役立つレポートを、Ledgerに自動的に送信します。",
+      "reportErrorsDesc" : "製品の向上に役立つレポートを、Ledgerに自動的に送信する。",
       "developerMode" : "デベロッパーモード",
       "developerModeDesc" : "管理ページに開発者用アプリを表示し、Testnetアプリを有効化。",
       "analytics" : "アナリティクス",
@@ -2695,7 +2699,7 @@
     "accounts" : {
       "header" : "アカウント",
       "title" : "アカウント",
-      "desc" : "アプリ内の資産の表示方法を管理します。",
+      "desc" : "アプリ内の資産の表示方法を管理する。",
       "hideTokenCTA" : "トークンを非表示",
       "showContractCTA" : "コントラクトを表示",
       "blacklistedTokens" : "非表示トークンリスト",
@@ -2718,7 +2722,7 @@
     },
     "about" : {
       "title" : "Ledgerについて",
-      "desc" : "アプリ情報、利用規約、およびプライバシーポリシー。",
+      "desc" : "アプリ情報・利用規約・プライバシーポリシーを確認する。",
       "appDescription" : "Ledger Liveを使って暗号資産を安全に保管や売買、スワップをしながら、資産を管理して増やしましょう。すべてを1つの場所で。",
       "appVersion" : "バージョン",
       "termsConditions" : "利用規約",
@@ -2734,7 +2738,7 @@
     },
     "notifications" : {
       "title" : "通知",
-      "desc" : "通知を管理",
+      "desc" : "通知を管理する。",
       "disabledNotifications" : {
         "title" : "通知はオフです",
         "desc" : "{{platform}}はLedger Liveからの通知をブロックしています。スマートフォンで通知を受信するには、デバイスの設定からLedger Liveの通知をオンにしてください。",
@@ -2778,7 +2782,7 @@
     "help" : {
       "title" : "ヘルプ",
       "header" : "ヘルプ",
-      "desc" : "Ledger Liveについての詳細や、ヘルプの利用方法についてはこちらをご覧ください。",
+      "desc" : "Ledger Liveの詳細やヘルプの利用方法を確認する。",
       "support" : "Ledgerサポート",
       "supportDesc" : "問題がある場合は、ハードウェアウォレットでLedger Liveを使用するためのヘルプを参照してください。",
       "configureDevice" : "デバイスのセットアップ",
@@ -2797,7 +2801,7 @@
     },
     "experimental" : {
       "title" : "試験的機能",
-      "desc" : "試験的機能をお試しになり、フィードバックをお寄せください。",
+      "desc" : "試験的機能を試して、フィードバックを送る。",
       "disclaimer" : "これらは、テクノロジーファンのコミュニティ向けに、現状のまま提供される試験的機能です。これらの機能は随時変更、破損、または削除される可能性があります。このオプションを有効にすると、あなたは自己責任でこれらの機能を使用することに同意したことになります。",
       "provider" : "試験的設定「マイLedgerプロバイダー（{{forcedProvider}}）」では、リリースされていないOSとアプリが表示され、互換性の問題が発生する場合があります。これは設定で無効にできます。",
       "providerDevMode" : "試験的設定「My Ledgerプロバイダー（{{forcedProvider}}）」と「デベロッパーモード」では、リリースされていないOSとアプリが表示され、互換性の問題が発生する場合があります。設定にて無効にできます。",
@@ -2813,7 +2817,7 @@
           "description" : "開発者用アプリとテストネットアプリを管理画面に表示します。"
         },
         "managerProvider" : {
-          "title" : "プロバイダー管理",
+          "title" : "My Ledger provider",
           "description" : "プロバイダー管理でアプリプロバイダーを変更すると、Ledgerデバイスにアプリをインストールまたはアンインストールできなくなる場合があります。"
         },
         "experimentalExplorers" : {
@@ -2853,7 +2857,7 @@
     },
     "developer" : {
       "title" : "デベロッパー",
-      "desc" : "試験的機能をお試しになり、フィードバックをお寄せください。",
+      "desc" : "試験的機能を試して、フィードバックを送る。",
       "customManifest" : {
         "title" : "カスタムプラットフォームマニフェストを読み込む"
       }
@@ -3006,22 +3010,22 @@
     },
     "buy" : {
       "title" : "購入",
-      "description" : "暗号資産を現金で安全に購入。"
+      "description" : "暗号資産を安全に購入する。"
     },
     "sell" : {
       "title" : "売却",
-      "description" : "暗号資産を安全に売却して現金化。"
+      "description" : "暗号資産を安全に売却する。"
     },
     "exchange" : {
       "title" : "購入/売却"
     },
     "stake" : {
       "title" : "ステーキング",
-      "description" : "暗号資産を運用しましょう。"
+      "description" : "暗号資産を運用する。"
     },
     "swap" : {
       "title" : "スワップ",
-      "description" : "暗号資産を別の暗号資産と交換。",
+      "description" : "暗号資産を別の暗号資産と交換する。",
       "selectDevice" : "お使いのデバイスを選択してください",
       "broadcasting" : "スワップをブロードキャスト中",
       "loadingFees" : "ネットワーク手数料を読み込み中…",
@@ -3404,7 +3408,12 @@
     },
     "walletConnect" : {
       "title" : "WalletConnect",
-      "description" : "ウォレットをdappsに接続"
+      "description" : "ウォレットをDAppに接続する。"
+    },
+    "recover" : {
+      "title" : "Ledger Recover",
+      "description" : "手軽にウォレットを復元",
+      "tag" : "1ヶ月間無料"
     }
   },
   "signMessage" : {
@@ -3785,7 +3794,7 @@
     "allowRemoveCustomLockscreen" : "Ledger Staxの画像の削除を確定する",
     "allowSecureConnection" : "Ledgerとの安全な接続を許可する",
     "loading" : "読み込み中...",
-    "turnOnAndUnlockDevice" : "デバイスの電源をオンにしてロックを解除する",
+    "turnOnAndUnlockDevice" : "Switch on and unlock your device",
     "connectAndUnlockDevice" : "デバイスを接続してロックを解除する",
     "connectAnotherDevice" : "別のLedgerを接続する",
     "unlockDevice" : "デバイスのロックを解除する",
@@ -4036,7 +4045,7 @@
       "modalDesc" : "デバイスのファームウェアをアップデートするには、コンピューターにLedger Liveをダウンロードしてください。",
       "contactUs" : "お問い合わせ"
     },
-    "myApps" : "マイアプリ",
+    "myApps" : "My blockchain apps",
     "token" : {
       "title" : "{{appName}} トークン",
       "noAppNeeded" : "{{tokenName}}は、{{appName}}アプリを使用するトークンです。インストールするアプリがありません。",
@@ -4141,11 +4150,11 @@
       "descriptionProductName" : "{{productName}}をOSバージョン{{firmwareVersion}}にアップデートする場合は、こちらをタップしてください。"
     },
     "title" : "ファームウェアをアップデート",
-    "beginUpdate" : "アップデートを開始",
+    "beginUpdate" : "Start OS update",
     "updateDevice" : "{{deviceName}}OSアップデート",
     "releaseNotesTitle" : "OSアップデートの内容は？",
-    "updateDone" : "完了です！お客様の{{deviceName}}は、最新の状態です",
-    "updateDoneDescription" : "新しいOSバージョン：{{firmwareVersion}}",
+    "updateDone" : "Your {{deviceName}} OS is now up to date",
+    "updateDoneDescription" : "New OS version: {{firmwareVersion}}",
     "preparing" : "ファームウェアアップデートの準備中はデバイスをスリープ状態にせず、接続を維持してください。進捗状況をお知らせします",
     "confirmIdentifierText" : "デバイスの識別子が以下の識別子と同じであることを認証します。必要に応じて、PINコードを確認して入力します。",
     "pleaseReinstallApps" : "デバイスにアプリを再インストールしてください。",
@@ -4155,22 +4164,22 @@
     "finishUpdate" : "{{deviceName}}でアップデートを完了します",
     "identifierTitle" : "識別子：",
     "pleaseWaitDownload" : "インストールが完了するまでお待ちください",
-    "doNotLeaveLedgerLive" : "アップデートが完了するまでLedger Liveアプリを離れないでください。",
+    "doNotLeaveLedgerLive" : "Stay on this screen until the update is complete.",
     "preparingDevice" : "デバイスの準備中",
     "pleaseWaitUpdate" : "アップデートが完了するまでお待ちください",
     "viewUpdateChangelog" : "更新の変更履歴を表示する",
     "waitForFirmwareUpdate" : "デバイスのファームウェアアップデート完了までお待ちください",
     "waitForInstallationToFinish" : "{{deviceName}}でのインストールが完了するまでお待ちください",
     "staxBatteryLow" : "Ledger Staxのバッテリー不足のためアップデートできません",
-    "staxBatteryLowDescription" : "OSのアップデートを実行するには、Ledgerが20%以上充電されているか、充電中である必要があります。",
-    "updateCancelled" : "{{deviceName}}のアップデートがキャンセルされました",
-    "updateCancelledDescription" : "OSアップデート{{newFirmwareVersion}}のインストールが{{deviceName}}で拒否されました。間違いである場合は、アップデートを再開してください",
-    "updateNotYetComplete" : "アップデートはまだ完了していません",
-    "updateNotYetCompleteDescription" : "アップデートを中断すると、アプリ、言語、ロック画面の画像が正しく復元されない場合があります。",
+    "staxBatteryLowDescription" : "To start the OS update, a minimum of 20% charge is needed, or your Ledger Stax must be charging.",
+    "updateCancelled" : "OS update install cancelled on {{deviceName}}",
+    "updateCancelledDescription" : "If this was a mistake, restart the update.",
+    "updateNotYetComplete" : "OS update is in progress",
+    "updateNotYetCompleteDescription" : "Your settings and apps may not be restored properly if you cancel the update now.",
     "restartUpdate" : "OSアップデートを再開する",
-    "quitUpdate" : "アップデートを終了する",
-    "continueUpdate" : "アップデートを続行",
-    "unlockDeviceToComplete" : "{{deviceName}}のロックを解除してインストールを完了します",
+    "quitUpdate" : "Cancel OS Update",
+    "continueUpdate" : "Continue OS Update",
+    "unlockDeviceToComplete" : "Unlock {{deviceName}} with your PIN to complete the update.",
     "unlockDeviceWithPin" : "PINコードでデバイスのロックを解除",
     "reinstallApps" : "アプリを再インストールします。",
     "currentVersionNumber" : "現在のバージョン",
@@ -4198,14 +4207,14 @@
           "titlePreparingUpdate" : "インストール用のアップデートを準備しています",
           "description" : "アップデートを{{deviceName}}に転送中"
         },
-        "titleBackingUp" : "アプリと設定のバックアップ",
+        "titleBackingUp" : "Preparing update for install",
         "titleTransferring" : "アップデートの転送",
-        "description" : "構成をバックアップし、アップデートを{{deviceName}}に転送します。"
+        "description" : "Backing up your settings and apps. Transferring update to {{deviceName}}."
       },
       "installUpdate" : {
         "titleInactive" : "アップデートをインストール",
         "titleActive" : "アップデートをインストールしています",
-        "description" : "{{deviceName}}は複数回再起動します。\n\n{{deviceName}}でのインストールが完了したら、デバイスのロックを解除してインストールを完了してください"
+        "description" : "{{deviceName}} will restart multiple times.\n\nTo complete the update, unlock {{deviceName}} with your PIN after installation has finished."
       },
       "restoreSettings" : {
         "earlySecurityCheck" : {
@@ -4216,18 +4225,18 @@
         "description" : "設定とブロックチェーンアプリが復元されます。",
         "restoreLockScreenPicture" : "ロック画面の画像を復元",
         "restoreLanguage" : "言語を復元",
-        "imageLoadRequested" : "{{deviceName}}でロック画面の画像の復元を許可する",
-        "imageCommitRequested" : "{{deviceName}}の画像を確定する",
-        "allowLanguageInstallation" : "{{deviceName}}で言語の復元を許可する",
-        "allowAppsRestoration" : "{{deviceName}}でアプリの復元を許可する",
+        "imageLoadRequested" : "Tap on “Load picture” to restore lock screen picture",
+        "imageCommitRequested" : "Tap on “keep” to keep set your lock screen picture",
+        "allowLanguageInstallation" : "Tap on “Allow” to restore language",
+        "allowAppsRestoration" : "Tap on “Allow” to restore apps",
         "errors" : {
-          "description" : "それが間違いであった場合は、復元を再試行できます。または、この手順をスキップすることもできます。",
-          "LanguageInstallRefusedOnDevice" : "{{deviceName}}で言語の変更がキャンセルされました",
-          "ImageLoadRefusedOnDevice" : "{{deviceName}}でロック画面の画像の復元がキャンセルされました",
-          "ImageCommitRefusedOnDevice" : "{{deviceName}}でロック画面の画像の復元がキャンセルされました",
-          "UserRefusedAllowManager" : "{{deviceName}}でアプリの復元がキャンセルされました"
+          "description" : "If this was a mistake, retry now.",
+          "LanguageInstallRefusedOnDevice" : "Language restore cancelled on {{deviceName}}",
+          "ImageLoadRefusedOnDevice" : "Restore of lock screen picture cancelled on {{deviceName}}",
+          "ImageCommitRefusedOnDevice" : "Restore of lock screen picture cancelled on {{deviceName}}",
+          "UserRefusedAllowManager" : "Restore of apps cancelled on {{deviceName}}"
         },
-        "installingApps" : "アプリの復元"
+        "installingApps" : "アプリをインストール"
       }
     },
     "newVersion" : "お使いの{{deviceName}}で{{version}}のアップデートが利用可能です",
@@ -4255,7 +4264,7 @@
         "description" : "{{deviceName}}への接続が失われたため、アップデートを完了できませんでした"
       },
       "CantOpenDevice" : {
-        "title" : "接続に失敗しました",
+        "title" : "Connection to Ledger device lost",
         "description" : "{{deviceName}}への接続が失われたため、アップデートを完了できませんでした。"
       }
     }
@@ -6234,20 +6243,20 @@
     "toastRemove" : "ロック画面の画像が削除されました",
     "cropImage" : "画像のトリミング",
     "chooseConstrast" : "コントラストを選択",
-    "uploadAnotherImage" : "他の画像をアップロードする",
+    "uploadAnotherImage" : "Upload another picture",
     "rotateImage" : "回転",
-    "allowPreview" : "{{productName}}でのロック画面の画像の読み込みを許可します",
+    "allowPreview" : "Tap on “Load picture” to customize the lock screen",
     "loadingPicture" : "読み込み中...",
     "loadingPictureAlmostOver" : "これで完了です！",
     "commitRequested" : "気に入りましたか？\nとっておきましょう！",
     "confirmPicture" : "{{productName}}で確認",
     "landingPage" : {
-      "title" : "任意のNFTか写真を選択。\nカスタマイズ。\nお持ちのLedgerをお客様独自のものにしましょう。",
+      "title" : "Choose any digital art or photo.\nCustomize your Ledger Stax.\nMake it yours.",
       "choosePicture" : "画像を選択"
     },
     "confirmCrop" : "トリミングを確定",
     "confirmContrast" : "コントラストを確定",
-    "nftEntryPointButtonLabel" : "Ledger Staxのロック画面として設定する",
+    "nftEntryPointButtonLabel" : "Ledger Staxロック画面の画像に設定",
     "customImage" : "画像をカスタマイズ",
     "doThisLater" : "後で",
     "preview" : {
@@ -6281,7 +6290,7 @@
   },
   "postOnboarding" : {
     "hub" : {
-      "title" : "次に、{{productName}}を使用して...",
+      "title" : "Next up, use your {{productName}} to:",
       "allDoneTitle" : "はい、終わりぃ！",
       "skip" : "これは後でやります",
       "viewWallet" : "ウォレットを見る"
@@ -6293,10 +6302,10 @@
     },
     "actions" : {
       "customImage" : {
-        "title" : "ロック画面をカスタマイズ",
-        "titleCompleted" : "ロック画面がカスタマイズされました",
-        "description" : "Ledger Staxのロック画面として設定するNFTまたは写真を選択する。",
-        "popupLabel" : "スクリーン設定をロック"
+        "title" : "Set a lock screen picture",
+        "titleCompleted" : "Lock screen picture set",
+        "description" : "Choose any digital art or picture to set as the lock screen.",
+        "popupLabel" : "ロック画面が設定されました"
       },
       "claimNft" : {
         "title" : "Infinity NFTを獲得",
@@ -6308,7 +6317,7 @@
       "assetsTransfer" : {
         "title" : "資産をLedgerに転送する",
         "titleCompleted" : "資産がLedgerに転送されました",
-        "description" : "他の取引所またはウォレットから転送する。",
+        "description" : "Easily transfer assets from Coinbase or any other exchange or wallet.",
         "popupLabel" : "資産が転送されました"
       }
     }
@@ -6337,8 +6346,8 @@
         "button" : "フィルターをリセットする"
       },
       "empty" : {
-        "title" : "表示できるNFTがありません",
-        "subtitle" : "最初のNFTを受け取って開始しましょう。",
+        "title" : "No NFT's to show yet",
+        "subtitle" : "Get started by adding NFTs to your wallet.",
         "receive" : "NFTを受け取る",
         "supportLink" : "別のウォレットからNFTを入手するには？"
       },
@@ -6365,6 +6374,12 @@
   "servicesWidget" : {
     "title" : "サービス",
     "subTitle" : "Ledgerサービスを管理",
+    "signIn" : "サインイン",
+    "recover" : {
+      "cta" : "無料トライアルを開始",
+      "desc" : "ウォレットへのアクセス権を失う不安を解消しましょう。",
+      "tag" : "1ヶ月間無料"
+    },
     "protect" : {
       "status" : {
         "new" : {
