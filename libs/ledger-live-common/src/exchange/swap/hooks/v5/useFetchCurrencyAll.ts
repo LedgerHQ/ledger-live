@@ -9,7 +9,7 @@ export function useFetchCurrencyAll() {
     queryFn: fetchCurrencyAll,
     queryProps: {
       providers: getAvailableProviders(),
-      additionalCoinsFlag: fetchAdditionalCoins.enabled,
+      additionalCoinsFlag: fetchAdditionalCoins?.enabled,
     },
     // assume the all currency list for the given props won't change during a users session.
     staleTimeout: Infinity,

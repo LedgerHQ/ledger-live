@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 import { useFeatureFlags } from "./provider";
 import { FeatureId, Feature, FeatureParam } from "@ledgerhq/types-live";
-import { DEFAULT_FEATURE } from "./defaultFeatures";
 
 /**
  * Hook that returns a feature information based on its `featureId`.
@@ -12,10 +11,10 @@ import { DEFAULT_FEATURE } from "./defaultFeatures";
  * @param featureId
  * @returns a feature.
  */
-const useFeature = <T extends FeatureId>(featureId: T): Feature<FeatureParam<T>> => {
+const useFeature = <T extends FeatureId>(featureId: T): Feature<FeatureParam<T>> | null => {
   const featureFlags = useFeatureFlags();
   const value = useMemo(() => featureFlags.getFeature(featureId), [featureFlags, featureId]);
-  return value ?? DEFAULT_FEATURE;
+  return value;
 };
 
 export default useFeature;
