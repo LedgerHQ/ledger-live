@@ -9,7 +9,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
 
 jobs:
-  run-bot:
+  run-sonarqube-bot:
+    env:
+      FORCE_COLOR: 3
     runs-on: [ledger-live-4xlarge-linux]
     steps:
       - uses: actions/checkout@v3
