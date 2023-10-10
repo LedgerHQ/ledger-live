@@ -3,13 +3,13 @@ import { useFeatureFlags } from "./FeatureFlagsContext";
 import { FeatureId, Feature, FeatureParam } from "@ledgerhq/types-live";
 
 /**
- * Hook that returns a feature information based on its `featureId`.
+ * Hook that returns the value of a feature flag based on its `featureId`.
  *
  * @dev If the value returned by `featureFlags.getFeature` is null it will
  * return null.
  *
  * @param featureId
- * @returns a feature.
+ * @returns a feature flag value or null if the feature flag is not found.
  */
 const useFeature = <T extends FeatureId>(featureId: T): Feature<FeatureParam<T>> | null => {
   const featureFlags = useFeatureFlags();
