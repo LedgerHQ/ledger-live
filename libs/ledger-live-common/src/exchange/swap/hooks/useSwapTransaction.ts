@@ -1,4 +1,10 @@
-import { AmountRequired, NotEnoughGas, NotEnoughGasSwap } from "@ledgerhq/errors";
+import {
+  AmountRequired,
+  FeeNotLoaded,
+  FeeNotLoadedSwap,
+  NotEnoughGas,
+  NotEnoughGasSwap,
+} from "@ledgerhq/errors";
 import { useMemo } from "react";
 import {
   SwapSelectorStateType,
@@ -73,6 +79,11 @@ export const useFromAmountStatusMessage = (
       });
     }
 
+    // convert to swap variation of error to display correct message to frontend.
+    if (relevantStatus instanceof FeeNotLoaded) {
+      return new FeeNotLoadedSwap();
+    }
+
     return relevantStatus;
   }, [statusEntries, currency, estimatedFees, transaction?.amount, account?.id, parentAccount?.id]);
 };
@@ -123,7 +134,7 @@ export const useSwapTransaction = ({
   const { account: toAccount } = toState;
   const transaction = bridgeTransaction?.transaction;
 
-  const fromAmountError = useFromAmountStatusMessage(bridgeTransaction, ["amount"]);
+  const fromAmountError = useFromAmountStatusMessage(bridgeTransaction, ["amount", "gasLimit"]);
   // treat the gasPrice error as a warning for swap.
   const fromAmountWarning = useFromAmountStatusMessage(bridgeTransaction, ["gasPrice"]);
 

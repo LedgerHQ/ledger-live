@@ -302,6 +302,9 @@
     "FeeNotLoaded": {
       "title": "Could not load fee rates"
     },
+    "FeeNotLoadedSwap": {
+      "title": "Network fee estimation failed because of technical issues. Try again or change the assets."
+    },
     "FeeRequired": {
       "title": "Fees are required"
     },
