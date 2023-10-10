@@ -298,9 +298,6 @@ export default function Market({ navigation }: NavigationProps) {
 
   useEffect(() => {
     if (!isConnected) setIsLoading(false);
-  }, [isConnected]);
-
-  useEffect(() => {
     if (initialTop100) {
       refresh({
         limit: 100,
@@ -314,7 +311,7 @@ export default function Market({ navigation }: NavigationProps) {
         top100: true,
       });
     }
-  }, [initialTop100, refresh]);
+  }, [initialTop100, refresh, isConnected]);
 
   const renderItems = useCallback(
     ({ item, index }) => (
@@ -340,7 +337,27 @@ export default function Market({ navigation }: NavigationProps) {
 
   const renderEmptyComponent = useCallback(
     () =>
-      search ? ( // shows up in case of no search results
+      loading ? ( // shows up in case loading is ongoing
+        <InfiniteLoader size={30} />
+      ) : !isConnected ? ( // shows up in case of network down
+        <Flex flex={1} flexDirection="column" alignItems="stretch" p="4" mt={70}>
+          <Flex alignItems="center">
+            <Illustration
+              size={164}
+              lightSource={noNetworkIllustration.light}
+              darkSource={noNetworkIllustration.dark}
+            />
+          </Flex>
+          <Text textAlign="center" variant="h4" my={3}>
+            {t("errors.NetworkDown.title")}
+          </Text>
+          <Text textAlign="center" variant="body" color="neutral.c70">
+            {t("errors.NetworkDown.description")}
+          </Text>
+        </Flex>
+      ) : filterByStarredAccount && starredMarketCoins.length <= 0 ? (
+        <EmptyStarredCoins />
+      ) : (
         <Flex flex={1} flexDirection="column" alignItems="stretch" p="4" mt={70}>
           <Flex alignItems="center">
             <Illustration
@@ -363,28 +380,17 @@ export default function Market({ navigation }: NavigationProps) {
             {t("market.warnings.browseAssets")}
           </Button>
         </Flex>
-      ) : !isConnected ? ( // shows up in case of network down
-        <Flex flex={1} flexDirection="column" alignItems="stretch" p="4" mt={70}>
-          <Flex alignItems="center">
-            <Illustration
-              size={164}
-              lightSource={noNetworkIllustration.light}
-              darkSource={noNetworkIllustration.dark}
-            />
-          </Flex>
-          <Text textAlign="center" variant="h4" my={3}>
-            {t("errors.NetworkDown.title")}
-          </Text>
-          <Text textAlign="center" variant="body" color="neutral.c70">
-            {t("errors.NetworkDown.description")}
-          </Text>
-        </Flex>
-      ) : filterByStarredAccount && starredMarketCoins.length <= 0 ? (
-        <EmptyStarredCoins />
-      ) : (
-        <InfiniteLoader size={30} />
-      ), // shows up in case loading is ongoing
-    [search, t, resetSearch, isConnected, filterByStarredAccount, starredMarketCoins.length],
+        // shows up in case of no search results
+      ),
+    [
+      loading,
+      t,
+      search,
+      resetSearch,
+      isConnected,
+      filterByStarredAccount,
+      starredMarketCoins.length,
+    ],
   );
 
   const onEndReached = useCallback(() => {
@@ -422,25 +428,22 @@ export default function Market({ navigation }: NavigationProps) {
     [isLoading],
   );
 
-  const MarketHeader = useCallback(
-    () =>
-      ptxEarnFeature?.enabled ? (
-        <Flex px={6} pt={6}>
-          <SearchHeader search={search} refresh={refresh} />
-          <BottomSection navigation={navigation} />
-        </Flex>
-      ) : (
-        <Flex px={6}>
-          <Text my={3} variant="h4" fontWeight="semiBold">
-            {t("market.title")}
-          </Text>
+  const MarketHeader = () =>
+    ptxEarnFeature?.enabled ? (
+      <Flex px={6} pt={6}>
+        <SearchHeader search={search} refresh={refresh} />
+        <BottomSection navigation={navigation} />
+      </Flex>
+    ) : (
+      <Flex px={6}>
+        <Text my={3} variant="h4" fontWeight="semiBold">
+          {t("market.title")}
+        </Text>
 
-          <SearchHeader search={search} refresh={refresh} />
-          <BottomSection navigation={navigation} />
-        </Flex>
-      ),
-    [ptxEarnFeature?.enabled, t, refresh, search, navigation],
-  );
+        <SearchHeader search={search} refresh={refresh} />
+        <BottomSection navigation={navigation} />
+      </Flex>
+    );
 
   const [refreshControlVisible, setRefreshControlVisible] = useState(false);
 

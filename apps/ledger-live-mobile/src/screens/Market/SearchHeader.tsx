@@ -12,10 +12,11 @@ type Props = {
 
 function SearchHeader({ search, refresh }: Props) {
   const [inputSearch, setInputSearch] = useState(search);
-  const debouncedSearch = useDebounce(inputSearch, 300);
+  const debouncedSearch = useDebounce(inputSearch, 400);
   const { t } = useTranslation();
 
   useEffect(() => {
+    setInputSearch(search);
     if (debouncedSearch !== search) {
       track("Page Market Query", {
         currencyName: debouncedSearch,
@@ -27,11 +28,7 @@ function SearchHeader({ search, refresh }: Props) {
         limit: 20,
       });
     }
-  }, [debouncedSearch, refresh, search]);
-
-  useEffect(() => {
-    setInputSearch(search);
-  }, [setInputSearch, search]);
+  }, [debouncedSearch, refresh, search, setInputSearch]);
 
   return (
     <SearchInput
