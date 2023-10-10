@@ -1,12 +1,12 @@
 import { useMemo } from "react";
-import { useFeatureFlags } from "./provider";
+import { useFeatureFlags } from "./FeatureFlagsContext";
 import { FeatureId, Feature, FeatureParam } from "@ledgerhq/types-live";
 
 /**
  * Hook that returns a feature information based on its `featureId`.
  *
- * @dev If the value returned by `featureFlags.getFeature` is undefined
- * or null it will return `DEFAULT_FEATURE` instead.
+ * @dev If the value returned by `featureFlags.getFeature` is null it will
+ * return null.
  *
  * @param featureId
  * @returns a feature.

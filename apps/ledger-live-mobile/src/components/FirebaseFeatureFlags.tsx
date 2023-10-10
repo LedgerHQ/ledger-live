@@ -172,12 +172,14 @@ export const FirebaseFeatureFlagsProvider: React.FC<Props> = ({ children }) => {
 
   return (
     <FeatureFlagsProvider
-      isFeature={isFeature}
-      getFeature={wrappedGetFeature}
-      overrideFeature={overrideFeature}
-      resetFeature={resetFeature}
-      resetFeatures={resetFeatures}
-      getAllFlags={getAllFlags}
+      value={{
+        isFeature,
+        getFeature: wrappedGetFeature,
+        overrideFeature,
+        resetFeature,
+        resetFeatures,
+        getAllFlags,
+      }}
     >
       {children}
     </FeatureFlagsProvider>

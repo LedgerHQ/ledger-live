@@ -137,12 +137,14 @@ export const FirebaseFeatureFlagsProvider = ({ children }: Props): JSX.Element =
 
   return (
     <FeatureFlagsProvider
-      isFeature={isFeature}
-      getFeature={getFeature}
-      overrideFeature={overrideFeature}
-      resetFeature={resetFeature}
-      resetFeatures={resetFeatures}
-      getAllFlags={getAllFlags}
+      value={{
+        isFeature,
+        getFeature,
+        overrideFeature,
+        resetFeature,
+        resetFeatures,
+        getAllFlags,
+      }}
     >
       {children}
     </FeatureFlagsProvider>
