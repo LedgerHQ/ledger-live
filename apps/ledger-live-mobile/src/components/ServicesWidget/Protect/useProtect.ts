@@ -1,8 +1,5 @@
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import {
-  useLearnMoreURI,
-  useAlreadySubscribedURI,
-} from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
+import { useLoginURI, useLearnMoreURI } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { useMemo } from "react";
 import { Linking } from "react-native";
 import { track } from "../../../analytics";
@@ -11,16 +8,16 @@ import { urls } from "../../../config/urls";
 export function useProtect() {
   const servicesConfig = useFeature("protectServicesMobile");
 
+  const loginURI = useLoginURI(servicesConfig);
   const learnMoreURI = useLearnMoreURI(servicesConfig);
-  const alreadySubscribedURI = useAlreadySubscribedURI(servicesConfig);
 
   const onLearnMore = () => {
     const url = `${learnMoreURI}&source=${urls.recoverSources.myLedger}`;
     Linking.canOpenURL(url).then(() => Linking.openURL(url));
   };
 
-  const onAlreadySubscribe = () => {
-    const url = `${alreadySubscribedURI}&source=${urls.recoverSources.myLedger}`;
+  const onLogin = () => {
+    const url = `${loginURI}&source=${urls.recoverSources.myLedger}`;
     Linking.canOpenURL(url).then(() => Linking.openURL(url));
   };
 
@@ -30,7 +27,7 @@ export function useProtect() {
   };
 
   const onClickSignIn = () => {
-    onAlreadySubscribe();
+    onLogin();
     trackEvent("button_clicked", "Sign In Recover");
   };
   const onClickFreeTrial = () => {
@@ -46,8 +43,8 @@ export function useProtect() {
   };
 
   const displayService = useMemo(
-    () => servicesConfig?.enabled && learnMoreURI && alreadySubscribedURI,
-    [alreadySubscribedURI, learnMoreURI, servicesConfig?.enabled],
+    () => servicesConfig?.enabled && learnMoreURI && loginURI,
+    [loginURI, learnMoreURI, servicesConfig?.enabled],
   );
 
   return {
