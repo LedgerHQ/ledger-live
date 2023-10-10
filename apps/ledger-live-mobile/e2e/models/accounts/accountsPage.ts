@@ -1,6 +1,6 @@
 import { getElementById, openDeeplink, waitForElementById } from "../../helpers";
 
-const baseLink = "accounts";
+const baseLink = "account";
 
 export default class accountsPage {
   accountTitle = (coin: string) => getElementById(`accounts-title-${coin}`);
