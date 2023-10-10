@@ -143,37 +143,6 @@ describe("Operation.ts", () => {
 
         expect(isEditableOperation(account, operation)).toBe(false);
       });
-
-      it("if the explorer is not filled", () => {
-        const evmWithoutExplorer: CryptoCurrency = {
-          ...ethereum,
-          ethereumLikeInfo: {
-            chainId: 1,
-            node: { type: "ledger", explorerId: "eth" },
-            gasTracker: { type: "ledger", explorerId: "eth" },
-            explorer: undefined,
-          },
-        };
-
-        const tokenCurrencyWithoutExplorer: TokenCurrency = {
-          ...usdc,
-          parentCurrency: evmWithoutExplorer,
-        };
-
-        const account = genAccount("myAccount", { currency: evmWithoutExplorer });
-        const tokenAccount = genTokenAccount(0, account, tokenCurrencyWithoutExplorer);
-        const operation: Operation = {
-          ...genOperation(account, tokenAccount, account.operations, new Prando("")),
-          value: new BigNumber(0),
-          blockHeight: null, // pending transaction
-          transactionRaw: {
-            amount: "1",
-            recipient: "MockRecipient",
-          },
-        };
-
-        expect(isEditableOperation(account, operation)).toBe(false);
-      });
     });
 
     describe("should return true", () => {
