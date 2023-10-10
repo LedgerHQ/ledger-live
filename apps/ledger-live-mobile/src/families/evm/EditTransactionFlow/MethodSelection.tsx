@@ -1,4 +1,5 @@
 import { getTransactionByHash } from "@ledgerhq/coin-evm/api/transaction/index";
+import { EditType } from "@ledgerhq/coin-evm/types/editTransaction";
 import { Transaction as EvmTransaction, TransactionRaw } from "@ledgerhq/coin-evm/types/index";
 import { isOldestPendingOperation } from "@ledgerhq/coin-framework/operation";
 import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
@@ -10,7 +11,6 @@ import {
   hasMinimumFundsToCancel,
   hasMinimumFundsToSpeedUp,
 } from "@ledgerhq/live-common/families/evm/editTransaction/index";
-import { EditType } from "@ledgerhq/live-common/families/evm/editTransaction/types";
 import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 import { getEnv } from "@ledgerhq/live-env";
 import { log } from "@ledgerhq/logs";

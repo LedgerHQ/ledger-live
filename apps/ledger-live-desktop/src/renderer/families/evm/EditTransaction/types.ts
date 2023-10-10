@@ -1,5 +1,5 @@
+import { EditType } from "@ledgerhq/coin-evm/types/editTransaction";
 import { Transaction, TransactionStatus } from "@ledgerhq/coin-evm/types/index";
-import { EditType } from "@ledgerhq/live-common/families/evm/editTransaction/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { TFunction } from "i18next";
