@@ -109,7 +109,6 @@ jobs:
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
-          skip_python: true
           skip_ruby: true
           install_playwright: true
           upgrade_npm: true
@@ -156,9 +155,9 @@ jobs:
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
-          skip_python: true
           skip_ruby: true
           install_playwright: true
+          no_pnpm_cache: true
           pnpm_dest: ${{ runner.temp }}/setup-pnpm
           aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
           aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}

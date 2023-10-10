@@ -10,8 +10,8 @@ _Replace this text by a clear and concise description of what this pull request 
 
 ### ❓ Context
 
-- **Impacted projects**: `` <!-- The list of end user projects impacted by the change. -->
-- **Linked resource(s)**: `` <!-- Attach any ticket number if relevant. (JIRA / Github issue number) -->
+- **Impacted projects**: `` <!-- Add the list of end user projects impacted by the change inside of the ` `, like so `LLM, LLD`. -->
+- **Linked resource(s)**: [] <!-- Attach any ticket number if relevant inside the brackets, like so [LIVE-0000]. (JIRA / Github issue number) -->
 
 ### ✅ Checklist
 

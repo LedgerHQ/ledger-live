@@ -2,4 +2,4 @@
 "ledger-live-desktop": patch
 ---
 
-Update ethereum staking icon
+Fix string display in lockscreen

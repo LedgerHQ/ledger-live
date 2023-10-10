@@ -18,5 +18,5 @@ outputs:
     description: id of builds.zip
 
 runs:
-  using: node20
+  using: node16
   main: "build/main.js"

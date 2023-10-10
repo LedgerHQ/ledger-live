@@ -166,7 +166,9 @@ const OnboardingAppInstallStep = ({ device, deviceToRestore, onComplete, onError
               : t("onboardingAppInstall.default.title", { productName })}
           </Text>
           <Text variant="paragraphLineHeight" color="neutral.c70" textAlign="center" mt={2}>
-            {t(`onboardingAppInstall.${deviceToRestore ? "restore" : "default"}.subtitle`)}
+            {t(`onboardingAppInstall.${deviceToRestore ? "restore" : "default"}.subtitle`, {
+              productName,
+            })}
           </Text>
           <Flex pt={8} pb={2} justifyContent="space-between">
             <Button

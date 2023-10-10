@@ -44,7 +44,7 @@ const Disclaimer = ({ firmware, onContinue, t }: Props) => (
       >
         <Flex flex={1} />
         <Button data-test-id="modal-continue-button" variant="main" onClick={onContinue}>
-          {t("common.continue")}
+          {t("manager.firmware.installUpdate")}
         </Button>
       </Flex>
     </Flex>

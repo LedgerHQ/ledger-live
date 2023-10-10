@@ -628,6 +628,7 @@ export const FirmwareUpdate = ({
         return (
           <ConfirmFirmwareUpdate
             device={device}
+            currentFirmwareVersion={deviceInfo.version}
             newFirmwareVersion={firmwareUpdateContext.final.name}
             t={t}
           />
@@ -681,6 +682,7 @@ export const FirmwareUpdate = ({
     firmwareUpdateContext.final.name,
     firmwareUpdateContext.shouldFlashMCU,
     isBeforeOnboarding,
+    deviceInfo.version,
   ]);
 
   return (

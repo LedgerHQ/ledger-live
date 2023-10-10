@@ -143,14 +143,18 @@ jobs:
         run: |
           pnpm desktop test:playwright
         shell: bash
-      - name: upload diffs to imgur
+      - name: upload diffs to s3
         if: always() && !cancelled()
         uses: ./tools/actions/upload-images
-        id: imgur
+        id: s3
         with:
           path: apps/ledger-live-desktop/tests/artifacts/test-results
           workspace: ${{ github.workspace }}
           os: windows
+          group-name: ${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_number }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_S3_SCREENSHOTS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_S3_SCREENSHOTS_SECRET_ACCESS_KEY }}
       - name: upload ci suggested screenshots
         if: always() && !cancelled()
         uses: actions/upload-artifact@v3
@@ -197,7 +201,6 @@ jobs:
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
-          skip_python: true
           skip_ruby: true
           install_playwright: true
           aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
@@ -206,14 +209,18 @@ jobs:
         id: tests
         run: |
           xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
-      - name: upload diffs to imgur
+      - name: upload diffs to s3
         if: always() && !cancelled()
         uses: ./tools/actions/upload-images
-        id: imgur
+        id: s3
         with:
           path: apps/ledger-live-desktop/tests/artifacts/test-results
           workspace: ${{ github.workspace }}
           os: linux
+          group-name: ${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_number }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_S3_SCREENSHOTS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_S3_SCREENSHOTS_SECRET_ACCESS_KEY }}
       - name: upload ci suggested screenshots
         if: always() && !cancelled()
         uses: actions/upload-artifact@v3
@@ -259,24 +266,28 @@ jobs:
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
-          skip_python: true
           skip_ruby: true
           install_playwright: true
           pnpm_dest: ${{ runner.temp }}/setup-pnpm
           aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
           aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          no_pnpm_cache: true
       - name: Run playwright tests
         id: tests
         run: |
           pnpm desktop test:playwright
-      - name: upload diffs to imgur
+      - name: upload diffs to s3
         if: always() && !cancelled()
         uses: ./tools/actions/upload-images
-        id: imgur
+        id: s3
         with:
           path: apps/ledger-live-desktop/tests/artifacts/test-results
           workspace: ${{ github.workspace }}
           os: macos
+          group-name: ${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_number }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_S3_SCREENSHOTS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_S3_SCREENSHOTS_SECRET_ACCESS_KEY }}
       - name: upload ci suggested screenshots
         if: always() && !cancelled()
         uses: actions/upload-artifact@v3

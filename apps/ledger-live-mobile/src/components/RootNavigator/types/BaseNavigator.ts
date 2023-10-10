@@ -166,17 +166,7 @@ export type BaseNavigatorStackParamList = {
     transaction?: Transaction;
     justScanned?: boolean;
   };
-  [ScreenName.BleDevicePairingFlow]: {
-    filterByDeviceModelId?: DeviceModelId;
-    areKnownDevicesDisplayed?: boolean;
-    areKnownDevicesPairable?: boolean;
-    onSuccessAddToKnownDevices?: boolean;
-    onSuccessNavigateToConfig: {
-      navigateInput: NavigateInput;
-      pathToDeviceParam: PathToDeviceParam;
-      navigationType?: NavigationType;
-    };
-  };
+  [ScreenName.BleDevicePairingFlow]: undefined;
   [ScreenName.AnalyticsAllocation]: undefined;
   [ScreenName.AnalyticsOperations]: {
     accountsIds: string[];
