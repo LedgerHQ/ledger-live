@@ -1,7 +1,6 @@
 import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
 import { getEnv } from "@ledgerhq/live-env";
 import { delay } from "@ledgerhq/live-promise";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation } from "@ledgerhq/types-live";
 import axios from "axios";
 import {
@@ -127,29 +126,8 @@ export const getLastOperations: ExplorerApi["getLastOperations"] = async (
   };
 };
 
-const getTransactionByHash = async (
-  currency: CryptoCurrency,
-  transactionHash: string,
-): Promise<{ confirmations?: number }> => {
-  const { explorer } = currency.ethereumLikeInfo || /* istanbul ignore next */ {};
-
-  if (!isLedgerExplorerConfig(explorer)) {
-    throw new LedgerExplorerUsedIncorrectly(
-      `Ledger explorer used incorrectly with currency: ${currency.id}`,
-    );
-  }
-
-  const { data } = await axios.request({
-    method: "GET",
-    url: `${getEnv("EXPLORER")}/blockchain/v4/${explorer.explorerId}/tx/${transactionHash}`,
-  });
-
-  return data;
-};
-
 const ledgerExplorerAPI: ExplorerApi = {
   getLastOperations,
-  getTransactionByHash,
 };
 
 export default ledgerExplorerAPI;

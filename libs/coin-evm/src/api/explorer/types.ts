@@ -16,13 +16,6 @@ export type ExplorerApi = {
     lastNftOperations: Operation[];
   }>;
 
-  getTransactionByHash?: (
-    currency: CryptoCurrency,
-    transactionHash: string,
-  ) => Promise<{
-    confirmations?: number;
-  }>;
-
   // For now every other exported function should be considered as internal
   // methods as they're unecessary to the synchronization it self.
   // This can be updated with new sync requirements.

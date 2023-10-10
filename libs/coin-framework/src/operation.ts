@@ -248,11 +248,9 @@ export const isEditableOperation = (account: Account, operation: Operation): boo
     return false;
   }
 
-  // gasTracker and explorer are needed to perform the edit transaction logic
-  // - gasTracker is used to estimate the fees and let the user choose them
-  // - explorer is used to check if the transaction has been validated (and thus
-  // if it can still be edited or not)
-  if (!currency.ethereumLikeInfo?.gasTracker || !currency.ethereumLikeInfo?.explorer) {
+  // gasTracker is needed to perform the edit transaction logic,
+  // it is used to estimate the fees and let the user choose them
+  if (!currency.ethereumLikeInfo?.gasTracker) {
     return false;
   }
 

@@ -1,4 +1,3 @@
-import { getTransactionByHash } from "@ledgerhq/coin-evm/api/transaction/index";
 import { EditType } from "@ledgerhq/coin-evm/types/editTransaction";
 import { Transaction as EvmTransaction, TransactionRaw } from "@ledgerhq/coin-evm/types/index";
 import { isOldestPendingOperation } from "@ledgerhq/coin-framework/operation";
@@ -10,6 +9,7 @@ import {
   getEditTransactionPatch,
   hasMinimumFundsToCancel,
   hasMinimumFundsToSpeedUp,
+  isTransactionConfirmed,
 } from "@ledgerhq/live-common/families/evm/editTransaction/index";
 import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 import { getEnv } from "@ledgerhq/live-env";
@@ -123,8 +123,11 @@ function MethodSelectionComponent({ navigation, route }: Props) {
    */
   useEffect(() => {
     const setTransactionHasBeenValidatedCallback = async () => {
-      const tx = await getTransactionByHash(mainAccount.currency, operation.hash);
-      if (tx?.confirmations) {
+      const hasBeenConfirmed = await isTransactionConfirmed({
+        currency: mainAccount.currency,
+        hash: operation.hash,
+      });
+      if (hasBeenConfirmed) {
         // stop polling as soon as we have a confirmation
         clearInterval(intervalId);
         setTransactionHasBeenValidated(true);
