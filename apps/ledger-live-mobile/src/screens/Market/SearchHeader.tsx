@@ -28,7 +28,7 @@ function SearchHeader({ search, refresh }: Props) {
         limit: 20,
       });
     }
-  }, [debouncedSearch, refresh, search, setInputSearch]);
+  }, [debouncedSearch, refresh, search]);
 
   return (
     <SearchInput
