@@ -49,6 +49,7 @@ export const urls = {
   applestoreRate: "https://apps.apple.com/app/id1361671700?action=write-review",
   applestore:
     "itms-apps://itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?id=1361671700&onlyLatestVersion=true&pageNumber=0&sortOrdering=1&type=Purple+Software",
+  ledgerAppleWarningExplainer: "https://support.ledger.com/hc/articles/12309873917853?docs=true",
   feesMoreInfo:
     "https://support.ledger.com/hc/en-us/articles/360021039173-Choose-network-fees?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=fees",
   feesEthereum:

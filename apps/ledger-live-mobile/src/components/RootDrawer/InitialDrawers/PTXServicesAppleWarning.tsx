@@ -8,7 +8,7 @@ import { Button, Checkbox, Flex, IconsLegacy, Link, Text } from "@ledgerhq/nativ
 import { Linking, View } from "react-native";
 import styled from "styled-components/native";
 import { Trans, useTranslation } from "react-i18next";
-import { LEDGER_APPLE_WARNING_EXPLAINER_LINK } from "../../../utils/constants";
+import { urls } from "@utils";
 
 const CheckboxContainer = styled(View)(
   ({ theme }) => `
@@ -51,7 +51,7 @@ export function PTXServicesAppleWarning() {
   }, [openDrawer, exchangeDrawerEnabled, ctaScreensEnabled, _onClose]);
 
   const onLinkPress = useCallback(() => {
-    Linking.openURL(LEDGER_APPLE_WARNING_EXPLAINER_LINK);
+    Linking.openURL(urls.ledgerAppleWarningExplainer);
   }, []);
 
   return (
