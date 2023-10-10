@@ -1,5 +1,5 @@
+import { EditType } from "@ledgerhq/coin-evm/types/editTransaction";
 import { TransactionRaw, TransactionStatusRaw } from "@ledgerhq/coin-evm/types/index";
-import { EditType } from "@ledgerhq/live-common/families/evm/editTransaction/types";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { Device } from "@ledgerhq/types-devices";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
