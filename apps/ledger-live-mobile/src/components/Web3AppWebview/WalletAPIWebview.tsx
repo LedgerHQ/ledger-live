@@ -9,11 +9,21 @@ import { NetworkError } from "./NetworkError";
 import { DEFAULT_MULTIBUY_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
 
 export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
-  ({ manifest, inputs = {}, onStateChange, allowsBackForwardNavigationGestures = true }, ref) => {
+  (
+    {
+      manifest,
+      inputs = {},
+      customHandlers,
+      onStateChange,
+      allowsBackForwardNavigationGestures = true,
+    },
+    ref,
+  ) => {
     const { onMessage, onLoadError, webviewProps, webviewRef } = useWebView(
       {
         manifest,
         inputs,
+        customHandlers,
       },
       ref,
       onStateChange,

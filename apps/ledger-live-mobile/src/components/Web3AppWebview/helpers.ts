@@ -32,7 +32,11 @@ import * as bridge from "../../../e2e/bridge/client";
 import Config from "react-native-config";
 
 export function useWebView(
-  { manifest, inputs }: Pick<WebviewProps, "manifest" | "inputs">,
+  {
+    manifest,
+    inputs,
+    customHandlers,
+  }: Pick<WebviewProps, "manifest" | "inputs" | "customHandlers">,
   ref: React.ForwardedRef<WebviewAPI>,
   onStateChange: WebviewProps["onStateChange"],
 ) {
@@ -86,6 +90,7 @@ export function useWebView(
     config,
     webviewHook,
     uiHook,
+    customHandlers,
   });
 
   const onMessage = useCallback(
