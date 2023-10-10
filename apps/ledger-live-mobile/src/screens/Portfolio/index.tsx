@@ -9,8 +9,9 @@ import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { ReactNavigationPerformanceView } from "@shopify/react-native-performance-navigation";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import {
-  useLearnMoreURI,
+  useAlreadyOnboardedURI,
   usePostOnboardingURI,
+  useHomeURI,
 } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { useRefreshAccountsOrdering } from "../../actions/general";
 import {
@@ -77,8 +78,9 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   const { isAWalletCardDisplayed } = useDynamicContent();
   const onboardingType = useSelector(onboardingTypeSelector);
   const protectFeature = useFeature("protectServicesMobile");
-  const recoverLearnMoreURI = useLearnMoreURI(protectFeature);
+  const recoverAlreadyOnboardedURI = useAlreadyOnboardedURI(protectFeature);
   const recoverPostOnboardingURI = usePostOnboardingURI(protectFeature);
+  const recoverHomeURI = useHomeURI(protectFeature);
   const dispatch = useDispatch();
 
   const onBackFromUpdate = useCallback(
@@ -94,8 +96,10 @@ function PortfolioScreen({ navigation }: NavigationProps) {
       if (internetConnected && protectFeature?.enabled) {
         if (recoverPostOnboardingURI && onboardingType === OnboardingType.restore) {
           Linking.openURL(recoverPostOnboardingURI);
-        } else if (recoverLearnMoreURI) {
-          Linking.openURL(recoverLearnMoreURI);
+        } else if (recoverHomeURI && onboardingType === OnboardingType.setupNew) {
+          Linking.openURL(recoverHomeURI);
+        } else if (recoverAlreadyOnboardedURI) {
+          Linking.openURL(recoverAlreadyOnboardedURI);
         }
       }
     };
@@ -108,7 +112,8 @@ function PortfolioScreen({ navigation }: NavigationProps) {
     hasBeenUpsoldProtect,
     lastConnectedDevice,
     recoverPostOnboardingURI,
-    recoverLearnMoreURI,
+    recoverAlreadyOnboardedURI,
+    recoverHomeURI,
     dispatch,
     protectFeature?.enabled,
   ]);
