@@ -13,33 +13,16 @@ inputs:
   install_playwright:
     description: "install playwright"
     required: false
-  upgrade_npm:
-    description: "should ugrade npm (windows support)"
-    required: false
-  install_dotnet:
-    description: "install dotnet on Windows"
-    required: false
   aws-access-key:
     description: "aws access key"
     required: false
   aws-secret-key:
     description: "aws secret key"
     required: false
-  no_pnpm_cache:
-    description: install node without pnpm cache
-    required: false
 
 runs:
   using: "composite"
   steps:
-    - name: Setup the toolchain
-      uses: ./tools/actions/composites/setup-toolchain
-      with:
-        upgrade_npm: ${{ inputs.upgrade_npm }}
-        install_dotnet: ${{ inputs.install_dotnet }}
-        no_pnpm_cache: ${{ inputs.no_pnpm_cache }}
-        aws-access-key: ${{ inputs.aws-access-key }}
-        aws-secret-key: ${{ inputs.aws-secret-key }}
     - uses: ruby/setup-ruby@v1
       if: ${{ !inputs.skip_ruby }}
       with:

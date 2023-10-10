@@ -49,18 +49,9 @@ runs:
         use-fallback: false
 
     - uses: actions/setup-node@v3
-      # if: inputs.no_pnpm_cache != ''
       with:
         node-version: 18
         registry-url: "https://registry.npmjs.org"
-
-    # - uses: actions/setup-node@v3
-    #   if: inputs.no_pnpm_cache == ''
-    #   with:
-    #     node-version: 18
-    #     cache: pnpm
-    #     cache-dependency-path: "**/pnpm-lock.yaml"
-    #     registry-url: "https://registry.npmjs.org"
 
     - name: upgrade npm
       if: inputs.upgrade_npm == 'true'

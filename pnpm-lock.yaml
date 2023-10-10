@@ -29326,7 +29326,7 @@ packages:
       babel-plugin-syntax-jsx: 6.18.0
       lodash: 4.17.21
       picomatch: 2.3.1
-      styled-components: 5.3.5(react-dom@17.0.2)(react-is@17.0.2)(react@17.0.2)
+      styled-components: 5.3.5(react-is@18.1.0)(react@18.0.0)
 
   /babel-plugin-syntax-jsx@6.18.0:
     resolution: {integrity: sha512-qrPaCSo9c8RHNRHIotaufGbuOBN8rtdC4QrrFFc43vyWCCz7Kl7GL1PGaXtMGQZUXrkCjNEgxDfmAuAabr/rlw==}
@@ -42171,7 +42171,7 @@ packages:
       pretty-format: 28.1.3
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@5.1.3)
+      ts-node: 10.7.0(@types/node@18.15.11)(source-map-support@0.5.21)(typescript@5.1.3)
     transitivePeerDependencies:
       - metro
       - supports-color
@@ -57982,7 +57982,6 @@ packages:
       react-is: 18.1.0
       shallowequal: 1.1.0
       supports-color: 5.5.0
-    dev: false
 
   /styled-components@6.0.7(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-xIwWuiRMYR43mskVsW9MGTRjSo7ol4bcVjT595fGUp3OLBJOlOgaiKaxsHdC4a2HqWKqKnh0CmcRbk5ogyDjTg==}
@@ -59380,7 +59379,7 @@ packages:
     dependencies:
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
-      jest: 28.1.3(@types/node@18.15.3)(ts-node@10.9.1)
+      jest: 28.1.3(@types/node@18.15.11)(ts-node@10.7.0)
       jest-util: 28.1.3
       json5: 2.2.1
       lodash.memoize: 4.1.2

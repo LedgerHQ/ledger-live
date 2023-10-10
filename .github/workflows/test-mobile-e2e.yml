@@ -78,12 +78,6 @@ jobs:
           region: eu-west-1
           use-fallback: false
 
-      # - uses: actions/cache/restore@v3
-      #   id: detox-build
-      #   with:
-      #     path: ${{ github.workspace }}/apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
-      #     key: ${{ runner.os }}-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/ledgerlivemobile.xcodeproj/project.pbxproj') }}
-
       - name: TurboRepo local caching server
         id: turborepo-cache-server
         uses: ./tools/actions/turborepo-s3-cache
@@ -112,12 +106,6 @@ jobs:
         run: |
           pnpm mobile e2e:build -c ios.sim.release
 
-      # - uses: actions/cache/save@v3
-      #   if: steps.detox-build.outputs.cache-hit != 'true'
-      #   with:
-      #     path: ${{ github.workspace }}/apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
-      #     key: ${{ steps.detox-build.outputs.cache-primary-key }}
-
       - name: Build JS Bundle app for Detox test run
         if: steps.detox-build.outputs.cache-hit == 'true'
         run: |
@@ -129,7 +117,7 @@ jobs:
       - name: Test iOS app
         id: detox
         run: |
-          pnpm mobile e2e:test -c ios.sim.release --loglevel error --record-logs all --take-screenshots all --detectOpenHandles --headless --maxWorkers 2
+          pnpm mobile e2e:test -c ios.sim.release --loglevel error --record-logs all --take-screenshots all --detectOpenHandles --headless
       - name: Delete iOS simulator
         if: always()
         run: |
