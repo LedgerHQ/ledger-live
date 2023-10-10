@@ -29,6 +29,22 @@ const Summary = ({ transaction }: Props) => {
   const { status, metadata } = useNftMetadata(nft?.contract, nft?.tokenId, nft?.currencyId);
   const { nftName } = status === "loaded" ? metadata : ({} as Record<string, unknown>);
   const show = useMemo(() => status === "loading", [status]);
+
+  /**
+   * If for any reason, the nft is not found, we don't display the NFT specific
+   * summary.
+   * This can happen if the nft is not in the account's list of nfts (allNfts),
+   * for example in the speedup flow since the NFT is removed from the account
+   * once the transaction is broadcasted.
+   * Not having an nft object at this stage is not necessarily an error, so we
+   * don't want to display an error message to the user or use an invariant.
+   * Furthermore, all NFT related infos will be displayed on the device and at
+   * the device step anyway.
+   */
+  if (!nft) {
+    return null;
+  }
+
   return (
     <>
       <Box horizontal justifyContent="space-between" mb={2}>
@@ -45,7 +61,7 @@ const Summary = ({ transaction }: Props) => {
             <Skeleton width={42} minHeight={18} barHeight={6} show={show}>
               <Text ff="Inter|Medium" color="palette.text.shade60" fontSize={3}>
                 {"ID:"}
-                {centerEllipsis(nft?.tokenId)}
+                {centerEllipsis(nft.tokenId)}
               </Text>
             </Skeleton>
           </Box>
@@ -59,7 +75,7 @@ const Summary = ({ transaction }: Props) => {
           </Skeleton>
         </Box>
       </Box>
-      {nft?.standard === "ERC1155" ? (
+      {nft.standard === "ERC1155" ? (
         <Box horizontal justifyContent="space-between" mb={2}>
           <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
             <Trans i18nKey="send.steps.details.nftQuantity" />
