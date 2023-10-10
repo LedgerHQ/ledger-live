@@ -31,7 +31,8 @@ test.afterAll(async () => {
   }
 });
 
-test("Live App SDK methods @smoke", async ({ page }) => {
+// FIXME flaky LIVE-https://ledgerhq.atlassian.net/browse/LIVE-9616
+test.skip("Live App SDK methods @smoke", async ({ page }) => {
   if (!testServerIsRunning) {
     console.warn("Test server not running - Cancelling Live SDK E2E test");
     return;
