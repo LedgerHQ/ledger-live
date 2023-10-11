@@ -320,7 +320,7 @@ const MainSideBar = () => {
     const liveAppId = recoverFeature?.params?.protectId;
 
     if (enabled && openRecoverFromSidebar && liveAppId && recoverHomePath) {
-      push(recoverHomePath);
+      history.push(recoverHomePath);
     } else if (enabled) {
       dispatch(openModal("MODAL_PROTECT_DISCOVER", undefined));
     }
@@ -332,7 +332,7 @@ const MainSideBar = () => {
     recoverFeature?.params?.openRecoverFromSidebar,
     recoverFeature?.params?.protectId,
     recoverHomePath,
-    push,
+    history,
     dispatch,
   ]);
 
