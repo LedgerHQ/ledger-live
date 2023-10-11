@@ -88,6 +88,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
   useEffect(() => {
     if (initialTransaction.current !== navigationTransaction && navigationTransaction) {
       setTransaction(navigationTransaction);
+      setValue(navigationTransaction.recipient);
     }
   }, [setTransaction, navigationTransaction]);
   const onRecipientFieldFocus = useCallback(() => {
