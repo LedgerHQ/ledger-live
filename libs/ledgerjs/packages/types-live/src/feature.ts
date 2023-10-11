@@ -333,6 +333,7 @@ export type Feature_ProtectServicesDesktop = Feature<{
   onboardingCompleted: {
     upsellURI: string;
     alreadySubscribedURI: string;
+    alreadyDeviceSeededURI: string;
   };
   account: {
     homeURI: string;

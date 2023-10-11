@@ -34,6 +34,7 @@ import { CARD_APP_ID } from "~/renderer/screens/card";
 import TopGradient from "./TopGradient";
 import Hide from "./Hide";
 import { track } from "~/renderer/analytics/segment";
+import { useAccountPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 
 const MAIN_SIDEBAR_WIDTH = 230;
 const TagText = styled.div.attrs<{ collapsed?: boolean }>(p => ({
@@ -229,6 +230,8 @@ const MainSideBar = () => {
   const referralProgramConfig = useFeature("referralProgramDesktopSidebar");
   const ptxEarnConfig = useFeature("ptxEarn");
   const recoverFeature = useFeature("protectServicesDesktop");
+  const recoverHomePath = useAccountPath(recoverFeature);
+
   const handleCollapse = useCallback(() => {
     dispatch(setSidebarCollapsed(!collapsed));
   }, [dispatch, collapsed]);
@@ -316,8 +319,8 @@ const MainSideBar = () => {
     const openRecoverFromSidebar = recoverFeature?.params?.openRecoverFromSidebar;
     const liveAppId = recoverFeature?.params?.protectId;
 
-    if (enabled && openRecoverFromSidebar && liveAppId) {
-      push(`/recover/${liveAppId}`);
+    if (enabled && openRecoverFromSidebar && liveAppId && recoverHomePath) {
+      push(recoverHomePath);
     } else if (enabled) {
       dispatch(openModal("MODAL_PROTECT_DISCOVER", undefined));
     }
@@ -328,6 +331,7 @@ const MainSideBar = () => {
     recoverFeature?.enabled,
     recoverFeature?.params?.openRecoverFromSidebar,
     recoverFeature?.params?.protectId,
+    recoverHomePath,
     push,
     dispatch,
   ]);

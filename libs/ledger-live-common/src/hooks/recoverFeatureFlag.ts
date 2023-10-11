@@ -94,3 +94,39 @@ export function useLoginPath(
 
   return usePath(servicesConfig, uri);
 }
+
+export function useAccountURI(
+  servicesConfig: Feature_ProtectServicesDesktop | null,
+): string | undefined {
+  const uri = servicesConfig?.params?.account?.homeURI;
+  const id = servicesConfig?.params?.protectId;
+
+  return useReplacedURI(uri, id);
+}
+
+export function useAccountPath(
+  servicesConfig: Feature_ProtectServicesDesktop | null,
+): string | undefined {
+  const uri = useAccountURI(servicesConfig);
+
+  return usePath(servicesConfig, uri);
+}
+
+export function useAlreadySeededDeviceURI(
+  servicesConfig: Feature_ProtectServicesDesktop | null,
+): string | undefined {
+  const uri = servicesConfig?.params?.onboardingCompleted?.alreadyDeviceSeededURI;
+  const id = servicesConfig?.params?.protectId;
+
+  return useReplacedURI(uri, id);
+}
+
+export function useAlreadySeededDevicePath(
+  servicesConfig: Feature_ProtectServicesDesktop | null,
+): string | undefined {
+  const uri = useAlreadySeededDeviceURI(servicesConfig);
+
+  return usePath(servicesConfig, uri);
+}
+
+

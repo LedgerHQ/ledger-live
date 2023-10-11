@@ -1,5 +1,6 @@
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import {
+  useAlreadySeededDevicePath,
   usePostOnboardingPath,
   useUpsellPath,
 } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
@@ -231,6 +232,7 @@ export default function Tutorial({ useCase }: Props) {
   const recoverFF = useFeature("protectServicesDesktop");
   const upsellPath = useUpsellPath(recoverFF);
   const postOnboardingPath = usePostOnboardingPath(recoverFF);
+  const devicePairingPath = useAlreadySeededDevicePath(recoverFF);
   const recoverDiscoverPath = useMemo(() => {
     return `/recover/${recoverFF?.params?.protectId}?redirectTo=disclaimerRestore`;
   }, [recoverFF?.params?.protectId]);
@@ -567,15 +569,20 @@ export default function Tutorial({ useCase }: Props) {
             deviceModelId: connectedDevice.modelId,
             fallbackIfNoAction: () => history.push("/"),
           });
-        if (upsellPath) {
+
+        if (useCase === UseCase.setupDevice && upsellPath) {
           history.push(upsellPath);
+        } else if (useCase === UseCase.recoveryPhrase && postOnboardingPath) {
+          history.push(postOnboardingPath);
+        } else if (useCase === UseCase.connectDevice && devicePairingPath) {
+          history.push(devicePairingPath);
         }
       }, 0);
       return () => {
         clearTimeout(timeout);
       };
     }
-  }, [connectedDevice, handleStartPostOnboarding, history, onboardingDone, upsellPath]);
+  }, [connectedDevice, handleStartPostOnboarding, history, onboardingDone, postOnboardingPath]);
 
   const steps = useMemo(() => {
     const stepList = [
