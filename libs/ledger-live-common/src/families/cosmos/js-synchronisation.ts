@@ -14,21 +14,31 @@ import type { OperationType } from "@ledgerhq/types-live";
 import { getMainMessage } from "./helpers";
 import { parseAmountStringToNumber } from "./logic";
 
-const getBlankOperation = (tx, fees, id): CosmosOperation => ({
-  id: "",
-  hash: tx.txhash,
-  type: "" as OperationType,
-  value: new BigNumber(0),
-  fee: fees,
-  blockHash: null,
-  blockHeight: tx.height,
-  senders: [] as string[],
-  recipients: [] as string[],
-  accountId: id,
-  date: new Date(tx.timestamp),
-  extra: {},
-  transactionSequenceNumber: parseInt(tx.tx.auth_info.signer_infos[0].sequence),
-});
+const getBlankOperation = (tx, fees, id): CosmosOperation => {
+  let transactionSequenceNumber: number;
+
+  try {
+    transactionSequenceNumber = parseInt(tx.tx.auth_info.signer_infos[0].sequence);
+  } catch (e) {
+    transactionSequenceNumber = 0;
+  }
+
+  return {
+    id: "",
+    hash: tx.txhash,
+    type: "" as OperationType,
+    value: new BigNumber(0),
+    fee: fees,
+    blockHash: null,
+    blockHeight: tx.height,
+    senders: [] as string[],
+    recipients: [] as string[],
+    accountId: id,
+    date: new Date(tx.timestamp),
+    extra: {},
+    transactionSequenceNumber,
+  };
+};
 
 const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): CosmosOperation[] => {
   const { address, currency } = info;
@@ -37,9 +47,12 @@ const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): Co
   for (const tx of txs) {
     let fees = new BigNumber(0);
 
-    tx.tx.auth_info.fee.amount.forEach(elem => {
-      if (elem.denom === unitCode) fees = fees.plus(elem.amount);
-    });
+    // LIVE-9520
+    if (tx.tx && tx.tx.auth_info && tx.tx.auth_info.fee && tx.tx.auth_info.fee.amount) {
+      tx.tx.auth_info.fee.amount.forEach(elem => {
+        if (elem.denom === unitCode) fees = fees.plus(elem.amount);
+      });
+    }
 
     const op: CosmosOperation = getBlankOperation(tx, fees, accountId);
 
@@ -155,6 +168,7 @@ const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): Co
         break;
       }
     }
+
     if (tx.tx.body.memo != null) {
       op.extra.memo = tx.tx.body.memo;
     }
