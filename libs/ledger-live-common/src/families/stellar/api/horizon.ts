@@ -102,7 +102,7 @@ export const fetchBaseFee = async (): Promise<{
 export const fetchAccount = async (
   addr: string,
 ): Promise<{
-  blockHeight?: number;
+  blockHeight: number;
   balance: BigNumber;
   spendableBalance: BigNumber;
   assets: BalanceAsset[];
@@ -129,7 +129,7 @@ export const fetchAccount = async (
   const spendableBalance = await getAccountSpendableBalance(formattedBalance, account);
 
   return {
-    blockHeight: account.sequence ? Number(account.sequence) : undefined,
+    blockHeight: account.sequence ? Number(account.sequence) : 0,
     balance: formattedBalance,
     spendableBalance,
     assets,
