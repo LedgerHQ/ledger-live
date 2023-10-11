@@ -12,12 +12,12 @@ export function useProtect() {
   const learnMoreURI = useLearnMoreURI(servicesConfig);
 
   const onLearnMore = () => {
-    const url = `${learnMoreURI}&source=${urls.recoverSources.myLedger}`;
+    const url = `${learnMoreURI}`;
     Linking.canOpenURL(url).then(() => Linking.openURL(url));
   };
 
   const onLogin = () => {
-    const url = `${loginURI}&source=${urls.recoverSources.myLedger}`;
+    const url = `${loginURI}`;
     Linking.canOpenURL(url).then(() => Linking.openURL(url));
   };
 
