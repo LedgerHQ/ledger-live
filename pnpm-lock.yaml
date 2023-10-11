@@ -2919,6 +2919,9 @@ importers:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
         version: link:../hw-transport-mocker
+      '@ledgerhq/hw-transport-node-speculos-http':
+        specifier: workspace:^
+        version: link:../hw-transport-node-speculos-http
       '@types/jest':
         specifier: ^29.5.0
         version: 29.5.0

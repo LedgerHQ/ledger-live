@@ -177,24 +177,22 @@ export default class Exchange {
     fee: BigNumber,
     compFormat?: PayloadSignatureComputedFormat,
   ): Promise<void> {
+    let hex = fee.toString(16);
+    hex = hex.padStart(hex.length + (hex.length % 2), "0");
+    const feeHex = Buffer.from(hex, "hex");
+
     let bufferToSend: Buffer;
     if (this.isExchangeTypeNg()) {
-      let hex: string = fee.toString(16);
-      hex = hex.padStart(hex.length + (hex.length % 2), "0");
-      const feeHex: Buffer = Buffer.from(hex, "hex");
+      const encodedFormat =
+        compFormat === "jws" ? transactionEncodedFormat.base64 : transactionEncodedFormat.raw;
       bufferToSend = Buffer.concat([
-        Buffer.from([
-          compFormat === "jws" ? transactionEncodedFormat.base64 : transactionEncodedFormat.raw,
-        ]),
+        Buffer.from([encodedFormat]),
         Buffer.from([transaction.length]),
         transaction,
         Buffer.from([feeHex.length]),
         feeHex,
       ]);
     } else {
-      let hex: string = fee.toString(16);
-      hex = hex.padStart(hex.length + (hex.length % 2), "0");
-      const feeHex: Buffer = Buffer.from(hex, "hex");
       bufferToSend = Buffer.concat([
         Buffer.from([transaction.length]),
         transaction,
@@ -214,10 +212,11 @@ export default class Exchange {
   }
 
   async checkTransactionSignature(transactionSignature: Buffer): Promise<void> {
+    const DOT_PREFIX = 0x01;
+    const RS_FORMAT = 0x01;
     if (this.isExchangeTypeNg()) {
       transactionSignature = Buffer.concat([
-        Buffer.from([0x01]),
-        Buffer.from([0x01]),
+        Buffer.from([DOT_PREFIX, RS_FORMAT]),
         transactionSignature,
       ]);
     }

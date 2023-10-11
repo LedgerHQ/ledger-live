@@ -32,6 +32,7 @@
   },
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "workspace:^",
+    "@ledgerhq/hw-transport-node-speculos-http": "workspace:^",
     "@types/jest": "^29.5.0",
     "@types/node": "^18.15.3",
     "documentation": "13.2.5",

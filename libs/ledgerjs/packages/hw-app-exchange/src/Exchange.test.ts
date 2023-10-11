@@ -84,7 +84,7 @@ describe("setPartnerKey", () => {
       curve: "WHATEVER",
       publicKey: Buffer.from("1234567890abcdef", "hex"),
     };
-    // <DATA_SIZE><DATA>
+    // <OVERALL_LENGTH><DATA_SIZE><DATA>
     //   <DATA> = <NAME_SIZE><NAME><PUBKEY>
     const hexEncodedInfoExpected = "0c034c54581234567890abcdef";
 
@@ -109,7 +109,7 @@ describe("setPartnerKey", () => {
       curve: "secp256k1",
       publicKey: Buffer.from("1234567890abcdef", "hex"),
     };
-    // <DATA_SIZE><DATA>
+    // <OVERALL_LENGTH><DATA_SIZE><DATA>
     //   <DATA> = <NAME_SIZE><NAME><CURVE><PUBKEY>
     const hexEncodedInfoExpected = "0d034c5458001234567890abcdef";
 
@@ -134,7 +134,8 @@ describe("processTransaction", () => {
 
     const tx = Buffer.from("1234567890abcdef", "hex");
     const fee = new BigNumber("10");
-    const hexEncodedInfoExpected = "101234567890abcdef010a";
+    // <OVERALL_LENGTH><TX_LENGTH><TX><FEE_LENGTH><FEE>
+    const hexEncodedInfoExpected = "0b081234567890abcdef010a";
 
     // When
     await exchange.processTransaction(tx, fee);
@@ -155,13 +156,56 @@ describe("processTransaction", () => {
 
     const tx = Buffer.from("1234567890abcdef", "hex");
     const fee = new BigNumber("10");
-    const hexEncodedInfoExpected = "101234567890abcdef010a";
+    // <OVERALL_LENGTH><ENC_TX_FORMAT><TX_LENGTH><TX><FEE_LENGTH><FEE>
+    const hexEncodedInfoExpected = "0c01081234567890abcdef010a";
 
     // When
-    await exchange.processTransaction(tx, fee);
+    await exchange.processTransaction(tx, fee, "jws");
 
     // Then
     const expectCommand = Buffer.from([0xe0, 0x06, RateTypes.Fixed, ExchangeTypes.SwapNg]).toString(
+      "hex",
+    );
+    expect(recordStore.queue[0][0]).toBe(expectCommand + hexEncodedInfoExpected);
+  });
+});
+
+describe("checkTransactionSignature", () => {
+  it("sends legacy info", async () => {
+    // Given
+    const recordStore = new RecordStore();
+    const mockTransport = new MockTransport(Buffer.from([0, 0x90, 0x00]));
+    const transport = createTransportRecorder(mockTransport, recordStore);
+    const exchange = new Exchange(new transport(mockTransport), ExchangeTypes.Swap);
+
+    const txSig = Buffer.from("1234567890abcdef", "hex");
+    const hexEncodedInfoExpected = "081234567890abcdef";
+
+    // When
+    await exchange.checkTransactionSignature(txSig);
+
+    // Then
+    const expectCommand = Buffer.from([0xe0, 0x07, RateTypes.Fixed, ExchangeTypes.Swap]).toString(
+      "hex",
+    );
+    expect(recordStore.queue[0][0]).toBe(expectCommand + hexEncodedInfoExpected);
+  });
+
+  it("sends NG info", async () => {
+    // Given
+    const recordStore = new RecordStore();
+    const mockTransport = new MockTransport(Buffer.from([0, 0x90, 0x00]));
+    const transport = createTransportRecorder(mockTransport, recordStore);
+    const exchange = createExchange(new transport(mockTransport), ExchangeTypes.SwapNg);
+
+    const txSig = Buffer.from("1234567890abcdef", "hex");
+    const hexEncodedInfoExpected = "0a01011234567890abcdef";
+
+    // When
+    await exchange.checkTransactionSignature(txSig);
+
+    // Then
+    const expectCommand = Buffer.from([0xe0, 0x07, RateTypes.Fixed, ExchangeTypes.SwapNg]).toString(
       "hex",
     );
     expect(recordStore.queue[0][0]).toBe(expectCommand + hexEncodedInfoExpected);
