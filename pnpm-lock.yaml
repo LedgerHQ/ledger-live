@@ -3953,8 +3953,8 @@ importers:
         specifier: ^7.8.1
         version: 7.8.1
       uuid:
-        specifier: ^3.4.0
-        version: 3.4.0
+        specifier: ^9.0.1
+        version: 9.0.1
     devDependencies:
       '@types/jest':
         specifier: ^29.5.0
@@ -3962,6 +3962,9 @@ importers:
       '@types/node':
         specifier: ^18.15.3
         version: 18.15.3
+      '@types/uuid':
+        specifier: ^9.0.5
+        version: 9.0.5
       documentation:
         specifier: 13.2.5
         version: 13.2.5
@@ -25473,6 +25476,10 @@ packages:
     resolution: {integrity: sha512-c/I8ZRb51j+pYGAu5CrFMRxqZ2ke4y2grEBO5AUjgSkSk+qT2Ea+OdWElz/OiMf5MNpn2b17kuVBwZLQJXzihw==}
     dev: true
 
+  /@types/uuid@9.0.5:
+    resolution: {integrity: sha512-xfHdwa1FMJ082prjSJpoEI57GZITiQz10r3vEJCHa2khEFQjKy91aWKz6+zybzssCvXUwE1LQWgWVwZ4nYUvHQ==}
+    dev: true
+
   /@types/verror@1.10.6:
     resolution: {integrity: sha512-NNm+gdePAX1VGvPcGZCDKQZKYSiAWigKhKaz5KF94hG6f2s8de9Ow5+7AbXoeKxL8gavZfk4UquSAygOF2duEQ==}
     requiresBuild: true
@@ -45519,7 +45526,7 @@ packages:
       non-layered-tidy-tree-layout: 2.0.2
       stylis: 4.3.0
       ts-dedent: 2.2.0
-      uuid: 9.0.0
+      uuid: 9.0.1
       web-worker: 1.2.0
     transitivePeerDependencies:
       - supports-color
@@ -59280,6 +59287,11 @@ packages:
 
   /uuid@9.0.0:
     resolution: {integrity: sha512-MXcSTerfPa4uqyzStbRoTgt5XIe3x5+42+q1sDuy3R5MDk66URdLMOZe5aPX/SQd+kuYAh0FdP/pO28IkQyTeg==}
+    hasBin: true
+    dev: false
+
+  /uuid@9.0.1:
+    resolution: {integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==}
     hasBin: true
     dev: false
 

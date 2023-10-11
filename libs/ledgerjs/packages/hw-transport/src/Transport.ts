@@ -6,12 +6,9 @@ import {
   StatusCodes,
   getAltStatusMessage,
   TransportStatusError,
-  ExchangeTimeoutError,
 } from "@ledgerhq/errors";
 import { LocalTracer, TraceContext, LogType } from "@ledgerhq/logs";
 export { TransportError, TransportStatusError, StatusCodes, getAltStatusMessage };
-import { TimeoutError, firstValueFrom, from, throwError } from "rxjs";
-import { catchError, finalize, map, tap, timeout } from "rxjs/operators";
 
 const DEFAULT_LOG_TYPE = "transport";
 
@@ -231,6 +228,7 @@ export default class Transport {
 
   /**
    * Send data to the device using the higher level API.
+   *
    * @param {number} cla - The instruction class for the command.
    * @param {number} ins - The instruction code for the command.
    * @param {number} p1 - The first parameter for the instruction.
@@ -315,8 +313,18 @@ export default class Transport {
     });
   }
 
+  // Blocks other exchange to happen concurrently
   exchangeBusyPromise: Promise<void> | null | undefined;
-  exchangeAtomicImpl = async (f: () => Promise<Buffer | void>): Promise<Buffer | void> => {
+
+  /**
+   * Wrapper to make an exchange "atomic" (blocking any other exchange)
+   *
+   * It also handles "unresponsiveness" by emitting "unresponsive" and "responsive" events.
+   *
+   * @param f The exchange job, using the transport to run
+   * @returns a Promise with a Buffer containing the response, or void if not response
+   */
+  async exchangeAtomicImpl<Output>(f: () => Promise<Output>): Promise<Output> {
     const tracer = this.tracer.withUpdatedContext({ function: "exchangeAtomicImpl" });
     tracer.trace("Starting an atomic APDU exchange");
 
@@ -333,6 +341,8 @@ export default class Transport {
       resolveBusy = r;
     });
     this.exchangeBusyPromise = busyPromise;
+
+    // The device unresponsiveness handler
     let unresponsiveReached = false;
     const timeout = setTimeout(() => {
       tracer.trace(`Timeout reached, emitting Transport event "unresponsive"`);
@@ -342,7 +352,6 @@ export default class Transport {
 
     try {
       const res = await f();
-      tracer.trace("Received a response from atomic exchange");
 
       if (unresponsiveReached) {
         tracer.trace("Device was unresponsive, emitting responsive");
@@ -351,92 +360,13 @@ export default class Transport {
 
       return res;
     } finally {
+      tracer.trace("Finalize, clearing busy guard");
+
       clearTimeout(timeout);
       if (resolveBusy) resolveBusy();
       this.exchangeBusyPromise = null;
     }
-  };
-
-  /**
-   * Implementation of an "atomic" (blocking any other exchange) exchange
-   *
-   * To only use on Transport implementation that can handle an exchange that can abort.
-   *
-   * Using the same guard than `exchangeAtomicImpl` (`exchangeBusyPromise`).
-   * When aborted, the inner job might still exist and wait for a response for example (a Promise cannot be cancelled).
-   * But not response will be emitted to the consumer of this function.
-   * Observable makes this easy to implement.
-   *
-   * @param f The job, using the transport to run
-   * @param options Contains optional options for the exchange function
-   *  - abortTimeoutMs: stop the exchange after a given timeout. Another timeout exists
-   *    to detect unresponsive device (see `unresponsiveTimeout`). This timeout aborts the exchange.
-   * @returns a Promise with a Buffer containing the response, or void if not response
-   */
-  abortableExchangeAtomicImpl = async (
-    f: () => Promise<Buffer | void>,
-    { abortTimeoutMs }: { abortTimeoutMs?: number } = {},
-  ): Promise<Buffer> => {
-    const tracer = this.tracer.withUpdatedContext({ function: "abortableExchangeAtomicImpl" });
-    tracer.trace("(new abort) Starting an atomic APDU exchange", { abortTimeoutMs });
-
-    if (this.exchangeBusyPromise) {
-      tracer.trace("❌🚨 Atomic exchange is already busy");
-      throw new TransportRaceCondition(
-        "An action was already pending on the Ledger device. Please deny or reconnect.",
-      );
-    }
-
-    // Sets the atomic guard
-    let resolveBusy;
-    const busyPromise: Promise<void> = new Promise(r => {
-      resolveBusy = r;
-    });
-    this.exchangeBusyPromise = busyPromise;
-
-    let unresponsiveReached = false;
-    const unresponsiveTimer = setTimeout(() => {
-      tracer.trace("Timeout reached, emitting unresponsive");
-      unresponsiveReached = true;
-      this.emit("unresponsive");
-    }, this.unresponsiveTimeout);
-
-    // The subscription will be closed after the observable emits 1 event, an error, or complete
-    return firstValueFrom(
-      from(f()).pipe(
-        map(res => {
-          tracer.trace("Received a response from atomic exchange");
-
-          if (unresponsiveReached) {
-            tracer.trace("Device was unresponsive, emitting responsive");
-            this.emit("responsive");
-          }
-
-          return res ? res : Buffer.from("");
-        }),
-        abortTimeoutMs ? timeout(abortTimeoutMs) : tap(),
-        catchError(error => {
-          tracer.trace("🔥🍕 Atomic exchange caught error", { error, abortTimeoutMs });
-
-          if (error instanceof TimeoutError) {
-            tracer.trace("Aborting exchange due to timeout", { abortTimeoutMs });
-            return throwError(
-              () => new ExchangeTimeoutError("Atomic exchange aborted due to timeout"),
-            );
-          }
-
-          return throwError(() => error);
-        }),
-        finalize(() => {
-          tracer.trace("Finalize, clearing busy guard");
-
-          clearTimeout(unresponsiveTimer);
-          if (resolveBusy) resolveBusy();
-          this.exchangeBusyPromise = null;
-        }),
-      ),
-    );
-  };
+  }
 
   decorateAppAPIMethods(self: Record<string, any>, methods: Array<string>, scrambleKey: string) {
     for (const methodName of methods) {

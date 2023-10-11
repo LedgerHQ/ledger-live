@@ -1,3 +1,4 @@
+import { v4 as uuid } from "uuid";
 import Transport from "@ledgerhq/hw-transport";
 import type {
   Subscription as TransportSubscription,
@@ -13,7 +14,6 @@ import type {
 // See: https://github.com/LedgerHQ/ledger-live/pull/879
 import { sendAPDU } from "@ledgerhq/devices/lib/ble/sendAPDU";
 import { receiveAPDU } from "@ledgerhq/devices/lib/ble/receiveAPDU";
-
 import {
   BleManager,
   ConnectionPriority,
@@ -33,8 +33,19 @@ import {
 } from "@ledgerhq/devices";
 import type { DeviceModel } from "@ledgerhq/devices";
 import { trace, LocalTracer, TraceContext } from "@ledgerhq/logs";
-import { Observable, defer, merge, from, of, throwError, Observer, firstValueFrom } from "rxjs";
-import { share, ignoreElements, first, map, tap, catchError } from "rxjs/operators";
+import {
+  Observable,
+  defer,
+  merge,
+  from,
+  of,
+  throwError,
+  Observer,
+  firstValueFrom,
+  TimeoutError,
+  SchedulerLike,
+} from "rxjs";
+import { share, ignoreElements, first, map, tap, catchError, timeout } from "rxjs/operators";
 import {
   CantOpenDevice,
   DeviceNeedsRestart,
@@ -43,10 +54,16 @@ import {
   PairingFailed,
   PeerRemovedPairing,
   HwTransportError,
+  ExchangeTimeoutError,
 } from "@ledgerhq/errors";
 import { monitorCharacteristic } from "./monitorCharacteristic";
 import { awaitsBleOn } from "./awaitsBleOn";
-import { decoratePromiseErrors, remapError, mapBleErrorToHwTransportError } from "./remapErrors";
+import {
+  decoratePromiseErrors,
+  remapError,
+  mapBleErrorToHwTransportError,
+  IOBleErrorRemap,
+} from "./remapErrors";
 import { ReconnectionConfig } from "./types";
 
 const LOG_TYPE = "ble-verbose";
@@ -126,6 +143,8 @@ const clearDisconnectTimeout = (deviceId: string, context?: TraceContext): void 
  * @param needsReconnect
  * @param timeoutMs Optional Timeout (in ms) applied during the connection with the device
  * @param context Optional tracing/log context
+ * @param injectedDependencies Contains optional injected dependencies used by the transport implementation
+ *  - rxjsScheduler: dependency injected RxJS scheduler to control time. Default AsyncScheduler.
  * @returns A BleTransport instance
  */
 async function open(
@@ -133,6 +152,7 @@ async function open(
   needsReconnect: boolean,
   timeoutMs?: number,
   context?: TraceContext,
+  { rxjsScheduler }: { rxjsScheduler?: SchedulerLike } = {},
 ) {
   const tracer = new LocalTracer(LOG_TYPE, context);
   let device: Device;
@@ -338,10 +358,13 @@ async function open(
     // As long as there is at least one Subscriber this Observable will be subscribed and emitting data.
     share(),
   );
+
+  // Keeps the input from the device observable alive (multicast observable)
   const notif = notifyObservable.subscribe();
 
   const transport = new BleTransport(device, writeC, writeCmdC, notifyObservable, deviceModel, {
     context,
+    rxjsScheduler,
   });
   tracer.trace(`New BleTransport created`);
 
@@ -535,13 +558,16 @@ export default class BleTransport extends Transport {
    * @param {Device | string} deviceOrId
    * @param timeoutMs Applied when trying to connect to a device
    * @param context An optional context object for log/tracing strategy
+   * @param injectedDependencies Contains optional injected dependencies used by the transport implementation
+   *  - rxjsScheduler: dependency injected RxJS scheduler to control time. Default AsyncScheduler.
    */
   static async open(
     deviceOrId: Device | string,
     timeoutMs?: number,
     context?: TraceContext,
+    { rxjsScheduler }: { rxjsScheduler?: SchedulerLike } = {},
   ): Promise<BleTransport> {
-    return open(deviceOrId, true, timeoutMs, context);
+    return open(deviceOrId, true, timeoutMs, context, { rxjsScheduler });
   }
 
   /**
@@ -574,14 +600,28 @@ export default class BleTransport extends Transport {
   notYetDisconnected = true;
   writeCharacteristic: Characteristic;
   writeCmdCharacteristic: Characteristic | undefined;
+  rxjsScheduler?: SchedulerLike;
 
+  /**
+   * The static `open` function is used to handle BleTransport instantiation
+   *
+   * @param device
+   * @param writeCharacteristic
+   * @param writeCmdCharacteristic
+   * @param notifyObservable A multicast observable that emits messages received from the device
+   * @param deviceModel
+   * @param params Contains optional options and injected dependencies used by the transport implementation
+   *  - abortTimeoutMs: stop the exchange after a given timeout. Another timeout exists
+   *    to detect unresponsive device (see `unresponsiveTimeout`). This timeout aborts the exchange.
+   *  - rxjsScheduler: dependency injected RxJS scheduler to control time. Default: AsyncScheduler.
+   */
   constructor(
     device: Device,
     writeCharacteristic: Characteristic,
     writeCmdCharacteristic: Characteristic | undefined,
     notifyObservable: Observable<Buffer | Error>,
     deviceModel: DeviceModel,
-    { context }: { context?: TraceContext } = {},
+    { context, rxjsScheduler }: { context?: TraceContext; rxjsScheduler?: SchedulerLike } = {},
   ) {
     super({ context, logType: LOG_TYPE });
     this.id = device.id;
@@ -590,6 +630,7 @@ export default class BleTransport extends Transport {
     this.writeCmdCharacteristic = writeCmdCharacteristic;
     this.notifyObservable = notifyObservable;
     this.deviceModel = deviceModel;
+    this.rxjsScheduler = rxjsScheduler;
 
     clearDisconnectTimeout(this.id);
 
@@ -597,64 +638,78 @@ export default class BleTransport extends Transport {
   }
 
   /**
-   * Send data to the device using a low level API.
-   * It's recommended to use the "send" method for a higher level API.
+   * A message exchange (APDU request <-> response) with the device that can be aborted
    *
-   * A scoped `tracer` is used because the BleTransport instance is often cached, and its
-   * `context` is updated.
+   * The message will be BLE-encoded/framed before being sent, and the response will be BLE-decoded.
    *
-   * @param {Buffer} apdu - The data to send.
-   * @returns {Promise<Buffer>} A promise that resolves with the response data from the device.
+   * @param message A buffer (u8 array) of a none BLE-encoded message (an APDU for ex) to be sent to the device
+   *   as a request
+   * @param options Contains optional options for the exchange function
+   *  - abortTimeoutMs: stop the exchange after a given timeout. Another timeout exists
+   *    to detect unresponsive device (see `unresponsiveTimeout`). This timeout aborts the exchange.
+   * @returns A promise that resolves with the response data from the device.
    */
   exchange = (
-    apdu: Buffer,
+    message: Buffer,
     { abortTimeoutMs }: { abortTimeoutMs?: number } = {},
   ): Promise<Buffer> => {
+    const transactionId = uuid();
     const tracer = this.tracer.withUpdatedContext({
       function: "exchange",
+      transactionId,
     });
     tracer.trace("Exchanging APDU ...", { abortTimeoutMs });
+    tracer.withType("apdu").trace(`=> ${message.toString("hex")}`);
 
-    return this.abortableExchangeAtomicImpl(
-      async () => {
-        try {
-          const msgIn = apdu.toString("hex");
-          tracer.withType("apdu").trace(`=> ${msgIn}`);
+    return this.exchangeAtomicImpl(() => {
+      return firstValueFrom(
+        // `sendApdu` will only emit if an error occurred, otherwise it will complete,
+        // while `receiveAPDU` will emit the full response.
+        // Consequently it monitors the response while being able to reject on an error from the send.
+        merge(
+          this.notifyObservable.pipe(data => receiveAPDU(data, { context: tracer.getContext() })),
+          sendAPDU(this.getWriteWithTransactionId(transactionId), message, this.mtuSize, {
+            context: tracer.getContext(),
+          }),
+        ).pipe(
+          abortTimeoutMs ? timeout(abortTimeoutMs, this.rxjsScheduler) : tap(),
+          tap(data => {
+            tracer.withType("apdu").trace(`<= ${data.toString("hex")}`);
+          }),
+          catchError(async error => {
+            // Currently only 1 reason the exchange has been explicitly aborted (other than job and transport errors): a timeout
+            if (error instanceof TimeoutError) {
+              tracer.trace("Aborting and trying to cancel exchange due to timeout", {
+                abortTimeoutMs,
+                transactionId,
+              });
 
-          // `sendApdu` will only emit if an error occurred, otherwise it will complete, while `receiveAPDU` will emit the full response.
-          // Consequently `firstValueFrom` with `merge` is monitoring the response while being able to reject on an error from the send.
-          const data = await firstValueFrom(
-            merge(
-              this.notifyObservable.pipe(data =>
-                receiveAPDU(data, { context: tracer.getContext() }),
-              ),
-              sendAPDU(this.write, apdu, this.mtuSize, { context: tracer.getContext() }),
-            ),
-          );
+              // Cancelling `writeCmdCharacteristic.write...` will throw a `BleError` with code `OperationCancelled`
+              // but this error will be ignored because our observable will be unsubscribed.
+              // Also cancelling transaction which doesn't exist is ignored.
+              bleManagerInstance().cancelTransaction(transactionId);
 
-          const msgOut = data.toString("hex");
-          tracer.withType("apdu").trace(`<= ${msgOut}`);
+              throw new ExchangeTimeoutError("Exchange aborted due to timeout");
+            }
 
-          return data;
-        } catch (error: any) {
-          tracer.withType("ble-error").trace(`Error while exchanging APDU`, { error });
+            tracer.withType("ble-error").trace(`Error while exchanging APDU`, { error });
 
-          if (this.notYetDisconnected) {
-            // in such case we will always disconnect because something is bad.
-            await bleManagerInstance()
-              .cancelDeviceConnection(this.id)
-              .catch(() => {}); // but we ignore if disconnect worked.
-          }
+            if (this.notYetDisconnected) {
+              // in such case we will always disconnect because something is bad.
+              await bleManagerInstance()
+                .cancelDeviceConnection(this.id)
+                .catch(() => {}); // but we ignore if disconnect worked.
+            }
 
-          const mappedError = remapError(error);
-          tracer.trace("Error while exchanging APDU, mapped and throws following error", {
-            mappedError,
-          });
-          throw mappedError;
-        }
-      },
-      { abortTimeoutMs },
-    );
+            const mappedError = remapError(error as IOBleErrorRemap);
+            tracer.trace("Error while exchanging APDU, mapped and throws following error", {
+              mappedError,
+            });
+            throw mappedError;
+          }),
+        ),
+      );
+    });
   };
 
   /**
@@ -730,12 +785,19 @@ export default class BleTransport extends Transport {
    * @param buffer
    * @param txid
    */
-  write = async (buffer: Buffer, txid?: string | undefined): Promise<void> => {
+  write = async (buffer: Buffer, transactionId?: string | undefined): Promise<void> => {
+    this.tracer.trace("Writing to device", { willMessageBeAcked: !this.writeCmdCharacteristic });
+
     try {
       if (!this.writeCmdCharacteristic) {
-        await this.writeCharacteristic.writeWithResponse(buffer.toString("base64"), txid);
+        // The message will be acked by the device
+        await this.writeCharacteristic.writeWithResponse(buffer.toString("base64"), transactionId);
       } else {
-        await this.writeCmdCharacteristic.writeWithoutResponse(buffer.toString("base64"), txid);
+        // The message won't be acked by the device
+        await this.writeCmdCharacteristic.writeWithoutResponse(
+          buffer.toString("base64"),
+          transactionId,
+        );
       }
       this.tracer.withType("ble-frame").trace("=> " + buffer.toString("hex"));
     } catch (error: unknown) {
@@ -744,6 +806,13 @@ export default class BleTransport extends Transport {
         error instanceof Error ? error.message : `${error}`,
       );
     }
+  };
+
+  /**
+   * Higher order function returning `write` with a given transaction id
+   */
+  getWriteWithTransactionId = (transactionId: string): ((buffer: Buffer) => Promise<void>) => {
+    return (buffer: Buffer) => this.write(buffer, transactionId);
   };
 
   /**
