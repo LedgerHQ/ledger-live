@@ -1900,13 +1900,13 @@
       "error": {
         "generic": {
           "title": "Pairing unsuccessful",
-          "subtitle": "Looks like something went wrong!\nCheck that your Bluetooth is switched on and your {{productName}} is nearby."
+          "subtitle": "Make sure your {{productName}} is close to\nyour mobile phone and try again."
         },
         "lockedDevice": {
           "title": "Your device is locked",
           "subtitle": "Unlock your {{ productName }} and try again."
         },
-        "retryCta": "Retry",
+        "retryCta": "Retry pairing",
         "openSettingsCta": "Go to Bluetooth settings",
         "howToFixPairingIssue": "How to fix pairing issues"
       }
