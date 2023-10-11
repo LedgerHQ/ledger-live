@@ -53,7 +53,6 @@ const Root: NonNullable<EvmFamily["sendAmountFields"]>["component"] = props => {
           margin: "auto",
         }}
         size={32}
-        id="evm-fee-strategy-gas-options-spinner"
       />
     );
   }

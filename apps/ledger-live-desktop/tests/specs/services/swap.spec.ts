@@ -126,7 +126,8 @@ test.describe.parallel("Swap", () => {
     });
   });
 
-  test("Full Swap with Centralised Exchange @smoke", async ({ page }) => {
+  // FIXME flaky https://ledgerhq.atlassian.net/browse/LIVE-9617
+  test.skip("Full Swap with Centralised Exchange @smoke", async ({ page }) => {
     const swapPage = new SwapPage(page);
     const deviceAction = new DeviceAction(page);
     const drawer = new Drawer(page);
