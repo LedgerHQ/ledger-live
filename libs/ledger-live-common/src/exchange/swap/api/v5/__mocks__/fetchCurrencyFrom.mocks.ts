@@ -7,6 +7,10 @@ export const fetchCurrencyFromMock: ResponseData = {
       supportedCurrencies: ["bitcoin"],
     },
     {
+      network: "dogecoin",
+      supportedCurrencies: ["dogecoin"],
+    },
+    {
       network: "ethereum",
       supportedCurrencies: [
         "ethereum/erc20/celer",
