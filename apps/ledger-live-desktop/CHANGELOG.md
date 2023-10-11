@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.71.0-nightly.2
+
+### Patch Changes
+
+- [#4932](https://github.com/LedgerHQ/ledger-live/pull/4932) [`9d8c602fd2`](https://github.com/LedgerHQ/ledger-live/commit/9d8c602fd21bc21f3255726535b16fafd9ca92d5) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - NFT screen/Stax: only display "custom lock screen" option if the user has connected a Stax once
+
 ## 2.71.0-nightly.1
 
 ### Minor Changes

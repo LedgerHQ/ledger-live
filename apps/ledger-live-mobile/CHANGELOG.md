@@ -1,5 +1,17 @@
 # live-mobile
 
+## 3.34.0-nightly.2
+
+### Patch Changes
+
+- [#4932](https://github.com/LedgerHQ/ledger-live/pull/4932) [`9d8c602fd2`](https://github.com/LedgerHQ/ledger-live/commit/9d8c602fd21bc21f3255726535b16fafd9ca92d5) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - NFT screen/Stax: only display "custom lock screen" option if the user has connected a Stax once
+
+- [#4877](https://github.com/LedgerHQ/ledger-live/pull/4877) [`bb247ac329`](https://github.com/LedgerHQ/ledger-live/commit/bb247ac329fb5594a4742e765bdb4ccc0b69112f) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - improve ble pairing deep links
+
+- [#4991](https://github.com/LedgerHQ/ledger-live/pull/4991) [`fcb3bec5a3`](https://github.com/LedgerHQ/ledger-live/commit/fcb3bec5a3b0180127bf0b6aec96cd41ee4fdbce) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - QR Code scan during Send paste address in input
+
+- [#4877](https://github.com/LedgerHQ/ledger-live/pull/4877) [`bb247ac329`](https://github.com/LedgerHQ/ledger-live/commit/bb247ac329fb5594a4742e765bdb4ccc0b69112f) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Create new bluetooth pairing flow screen for onboarding
+
 ## 3.34.0-nightly.1
 
 ### Minor Changes
