@@ -90,9 +90,12 @@ describe("DeepLinks Tests", () => {
     await accountsPage.waitForAccountsPageToLoad();
   });
 
-  it("should open ETH & BTC Account pages", async () => {
+  it("should open ETH Account page", async () => {
     await accountPage.openViaDeeplink(ethereumLong);
     await accountPage.waitForAccountPageToLoad(ethereumLong);
+  });
+
+  it("should open BTC Account page", async () => {
     await accountPage.openViaDeeplink(bitcoinLong);
     await accountPage.waitForAccountPageToLoad(bitcoinLong);
   });
