@@ -1907,7 +1907,8 @@
           "subtitle": "Unlock your {{ productName }} and try again."
         },
         "retryCta": "Retry",
-        "openSettingsCta": "Go to Bluetooth settings"
+        "openSettingsCta": "Go to Bluetooth settings",
+        "howToFixPairingIssue": "How to fix pairing issues"
       }
     }
   },
