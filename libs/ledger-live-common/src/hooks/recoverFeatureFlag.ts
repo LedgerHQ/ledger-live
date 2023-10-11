@@ -128,5 +128,3 @@ export function useAlreadySeededDevicePath(
 
   return usePath(servicesConfig, uri);
 }
-
-
