@@ -5,6 +5,7 @@ import { genTokenAccount } from "@ledgerhq/coin-framework/mocks/account";
 import { genAccount } from "../../../mock/account";
 import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
+import { basicMockedFeatureFlagsProviderWrapper } from "../../../featureFlags/mock";
 
 const BTC = getCryptoCurrencyById("bitcoin");
 const ETH = getCryptoCurrencyById("ethereum");
@@ -22,13 +23,17 @@ describe("useToState", () => {
   const defaultProps = { accounts, fromCurrencyAccount: selectedAccount };
 
   it("should initialize a blank state", () => {
-    const { result } = renderHook(useToState, { initialProps: defaultProps });
+    const { result } = renderHook(() => useToState(defaultProps), {
+      wrapper: basicMockedFeatureFlagsProviderWrapper,
+    });
     expect(result.current.toState).toMatchObject(selectorStateDefaultValues);
   });
 
   it("should set the account", async () => {
     const [currency, account, parentAccount] = [USDT, subAccount, accounts[1]];
-    const { result } = renderHook(useToState, { initialProps: defaultProps });
+    const { result } = renderHook(() => useToState(defaultProps), {
+      wrapper: basicMockedFeatureFlagsProviderWrapper,
+    });
     act(() => result.current.setToAccount(currency, account, parentAccount));
     expect(result.current.toState).toMatchObject({
       account,
@@ -39,13 +44,17 @@ describe("useToState", () => {
 
   it("should set the amount", () => {
     const amount = new BigNumber(10);
-    const { result } = renderHook(useToState, { initialProps: defaultProps });
+    const { result } = renderHook(() => useToState(defaultProps), {
+      wrapper: basicMockedFeatureFlagsProviderWrapper,
+    });
     act(() => result.current.setToAmount(amount));
     expect(result.current.toState.amount).toBe(amount);
   });
 
   it("should set the currency", () => {
-    const { result } = renderHook(useToState, { initialProps: defaultProps });
+    const { result } = renderHook(() => useToState(defaultProps), {
+      wrapper: basicMockedFeatureFlagsProviderWrapper,
+    });
     act(() => result.current.setToCurrency(BTC));
     expect(result.current.toState).toMatchObject({
       account: accounts[0],

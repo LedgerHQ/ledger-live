@@ -15,9 +15,15 @@ export function makeMockedContextValue(
   };
 }
 
-export function makeMockedFeatureProviderWrapper(mockedContextValue: FeatureFlagsContextValue) {
+export function makeMockedFeatureFlagsProviderWrapper(
+  mockedContextValue: FeatureFlagsContextValue,
+) {
   const MockedFeatureProviderWrapper: React.FC<{ children: React.ReactNode | null }> = ({
     children,
   }) => <FeatureFlagsProvider value={mockedContextValue}>{children}</FeatureFlagsProvider>;
   return MockedFeatureProviderWrapper;
 }
+
+export const basicMockedFeatureFlagsProviderWrapper = makeMockedFeatureFlagsProviderWrapper(
+  makeMockedContextValue({}),
+);

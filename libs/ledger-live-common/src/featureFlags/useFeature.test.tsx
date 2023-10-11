@@ -1,12 +1,12 @@
 import { renderHook } from "@testing-library/react-hooks";
 import useFeature from "./useFeature";
-import { makeMockedFeatureProviderWrapper, makeMockedContextValue } from "./mock";
+import { makeMockedFeatureFlagsProviderWrapper, makeMockedContextValue } from "./mock";
 
 describe("useFeature hook", () => {
   it("should return null if a flag is not defined remotely", () => {
     const mockedFeatures = {};
     const { result } = renderHook(() => useFeature("mockFeature"), {
-      wrapper: makeMockedFeatureProviderWrapper(makeMockedContextValue(mockedFeatures)),
+      wrapper: makeMockedFeatureFlagsProviderWrapper(makeMockedContextValue(mockedFeatures)),
     });
     expect(result.current).toBeNull();
   });
@@ -16,7 +16,7 @@ describe("useFeature hook", () => {
       mockFeature: { enabled: true, params: { blabla: "hello" } },
     };
     const { result } = renderHook(() => useFeature("mockFeature"), {
-      wrapper: makeMockedFeatureProviderWrapper(makeMockedContextValue(mockedFeatures)),
+      wrapper: makeMockedFeatureFlagsProviderWrapper(makeMockedContextValue(mockedFeatures)),
     });
     expect(result.current).toBe(mockedFeatures.mockFeature);
   });
