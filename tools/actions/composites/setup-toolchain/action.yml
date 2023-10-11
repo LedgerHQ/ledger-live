@@ -19,7 +19,7 @@ runs:
   steps:
     # ⚠️ We have issues with the runners and proto,
     # so for the moment we're not using it at all in the CI.
-    - uses: actions/setup-dotnet@v2
+    - uses: actions/setup-dotnet@v3.2.0
       if: inputs.install_dotnet != ''
       with:
         dotnet-version: 2.1.816
