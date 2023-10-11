@@ -1,5 +1,5 @@
 import { TransportError, DisconnectedDevice } from "@ledgerhq/errors";
-import { Observable, Subject, takeUntil } from "rxjs";
+import { Observable, ReplaySubject, takeUntil } from "rxjs";
 import { TraceContext, trace } from "@ledgerhq/logs";
 const TagId = 0x05;
 
@@ -19,7 +19,7 @@ export const receiveAPDU = (
     let notifiedIndex = 0;
     let notifiedDataLength = 0;
     let notifiedData = Buffer.alloc(0);
-    const subscriptionCleaner = new Subject<void>();
+    const subscriptionCleaner = new ReplaySubject<void>();
 
     // The raw stream is listened/subscribed to until a full message (that can be made of several frames) is received
     rawStream.pipe(takeUntil(subscriptionCleaner)).subscribe({
@@ -52,8 +52,6 @@ export const receiveAPDU = (
         const chunkIndex = value.readUInt16BE(1);
         // `slice` and not `subarray`: this is not a Node Buffer, but probably only a Uint8Array.
         let chunkData = value.slice(3);
-
-        console.log(`🦄 Got an event: chunkIndex: ${chunkIndex}`);
 
         if (tag !== TagId) {
           o.error(new TransportError("Invalid tag " + tag.toString(16), "InvalidTag"));
@@ -93,22 +91,16 @@ export const receiveAPDU = (
           return;
         }
 
-        console.log(
-          `🦄 Data Length check: notifiedData.length: ${notifiedData.length} vs notifiedDataLength: ${notifiedDataLength}`,
-        );
         if (notifiedData.length === notifiedDataLength) {
           o.next(notifiedData);
-
-          // Completing the parent will trigger the cleaning of the child `sub`
           o.complete();
-          // TODO: necessary ?
+          // Tries to unsubscribe from the raw stream as soon as we complete the parent observer
           subscriptionCleaner.next();
         }
       },
     });
 
     return () => {
-      console.log(`🦄 Cleaning`);
       subscriptionCleaner.next();
     };
   });
