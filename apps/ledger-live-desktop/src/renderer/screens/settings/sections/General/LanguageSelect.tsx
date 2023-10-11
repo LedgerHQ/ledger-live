@@ -82,7 +82,7 @@ const LanguageSelect: React.FC<Props> = ({ disableLanguagePrompt }) => {
       setDrawer(
         ChangeDeviceLanguagePromptDrawer,
         {
-          deviceModeInfo: lastSeenDevice,
+          deviceModelInfo: lastSeenDevice ?? undefined,
           analyticsContext: "Page LiveLanguageChange",
           onSuccess: refreshDeviceInfo,
           onError: refreshDeviceInfo,
