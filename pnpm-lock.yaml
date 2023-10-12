@@ -2251,8 +2251,8 @@ importers:
         specifier: ^0.4.1
         version: 0.4.1
       stellar-sdk:
-        specifier: ^10.1.1
-        version: 10.1.2
+        specifier: ^10.4.1
+        version: 10.4.1
       superstruct:
         specifier: 0.14.2
         version: 0.14.2
@@ -56086,8 +56086,8 @@ packages:
     resolution: {integrity: sha512-RwNA9Z/7PrK06rYLIzFMlaF+l73iwpzsqRIFgbMLbTcLD6cOao82TaWefPXQvB2fOC4AjuYSEndS7N/mTCbkdQ==}
     engines: {node: '>= 0.8'}
 
-  /stellar-base@8.0.1:
-    resolution: {integrity: sha512-IB7GxyAF59jHmY0jyX5vxzD5k7AJLTGSelRIcjJZwsENsqa7tNWEh9HpnmYGvCgdeG2D+MxaeR5fouEvElaH8A==}
+  /stellar-base@8.2.2:
+    resolution: {integrity: sha512-YVCIuJXU1bPn+vU0ded+g0D99DcpYXH9CEXfpYEDc4Gf04h65YjOVhGojQBm1hqVHq3rKT7m1tgfNACkU84FTA==}
     dependencies:
       base32.js: 0.1.0
       bignumber.js: 4.1.0
@@ -56100,8 +56100,8 @@ packages:
       sodium-native: 3.4.1
     dev: false
 
-  /stellar-sdk@10.1.2:
-    resolution: {integrity: sha512-JfnyeKZp0X+0k3juGlKvzZDvGLvMIsIhkIdzoTozQaBjfy+7cpR/R/MH6do/5LrJuLXRodDRwjZs8UWtaKBCIQ==}
+  /stellar-sdk@10.4.1:
+    resolution: {integrity: sha512-Wdm2UoLuN9SNrSEHO0R/I+iZuRwUkfny1xg4akhGCpO8LQZw8QzuMTJvbEoMT3sHT4/eWYiteVLp7ND21xZf5A==}
     dependencies:
       '@types/eventsource': 1.1.8
       '@types/node': 18.16.19
@@ -56114,7 +56114,7 @@ packages:
       eventsource: 1.1.1
       lodash: 4.17.21
       randombytes: 2.1.0
-      stellar-base: 8.0.1
+      stellar-base: 8.2.2
       toml: 2.3.6
       tslib: 1.14.1
       urijs: 1.19.11
