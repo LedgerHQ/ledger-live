@@ -126,9 +126,6 @@ jobs:
         with:
           ref: ${{ env.REFNAME }}
           base: ${{ inputs.base_ref }}
-      - uses: actions/setup-dotnet@v2
-        with:
-          dotnet-version: 2.1.816
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
