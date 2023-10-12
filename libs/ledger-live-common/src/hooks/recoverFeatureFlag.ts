@@ -128,3 +128,17 @@ export function useAlreadySeededDevicePath(
 
   return usePath(servicesConfig, uri);
 }
+
+export function useCustomPath(
+  servicesConfig: Feature_ProtectServicesDesktop | Feature_ProtectServicesMobile | null,
+  page?: string,
+  source?: string,
+): string | undefined {
+  const uri = usePostOnboardingURI(servicesConfig);
+  const [basicUri] = uri ? uri.split("?") : [];
+  const search = `?${page ? `redirectTo=${page}` : ""}${page && source ? "&" : ""}${
+    source ? `source=${source}` : ""
+  }`;
+
+  return usePath(servicesConfig, basicUri + search);
+}
