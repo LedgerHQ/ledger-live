@@ -49,8 +49,6 @@ export default async function getVersion(
   transport: Transport,
   { abortTimeoutMs }: { abortTimeoutMs?: number } = {},
 ): Promise<FirmwareInfo> {
-  console.log(`🥦 getVersion: ${JSON.stringify({ abortTimeoutMs })}`);
-
   const res = await transport.send(0xe0, 0x01, 0x00, 0x00, undefined, undefined, {
     abortTimeoutMs,
   });
