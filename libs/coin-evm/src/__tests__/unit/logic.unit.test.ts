@@ -539,20 +539,25 @@ describe("EVM Family", () => {
         const coinOperation = makeOperation({
           hash: "0xCoinOp3Hash",
         });
+        const tokenAccountId =
+          coinOperation.accountId + "+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin";
         const tokenOperations = [
           makeOperation({
+            accountId: tokenAccountId,
             hash: coinOperation.hash,
             contract: "0xTokenContract",
             value: new BigNumber(1),
             type: "OUT",
           }),
           makeOperation({
+            accountId: tokenAccountId,
             hash: coinOperation.hash,
             contract: "0xTokenContract",
             value: new BigNumber(2),
             type: "IN",
           }),
           makeOperation({
+            accountId: tokenAccountId,
             hash: "0xUnknownHash",
             contract: "0xOtherTokenContract",
             value: new BigNumber(2),

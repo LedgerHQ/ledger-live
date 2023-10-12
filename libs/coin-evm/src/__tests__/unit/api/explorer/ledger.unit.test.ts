@@ -322,8 +322,8 @@ describe("EVM Family", () => {
           ],
           lastTokenOperations: [
             {
-              id: "js:2:ethereum:0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d:+ethereum%2Ferc20%2Fusd__coin-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-OUT-i0",
-              accountId: accountId + "+ethereum%2Ferc20%2Fusd__coin",
+              id: "js:2:ethereum:0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d:+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-OUT-i0",
+              accountId: accountId + "+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin",
               blockHash: coinOperation1.block.hash,
               blockHeight: coinOperation1.block.height,
               contract: eip55.encode(coinOperation1.to),
