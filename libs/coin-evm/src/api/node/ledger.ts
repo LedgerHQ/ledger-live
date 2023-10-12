@@ -232,8 +232,8 @@ export const getFeeData: NodeApi["getFeeData"] = async (currency, transaction) =
   });
 
   const { feesStrategy } = transaction;
-  
-  if(feesStrategy === "slow" || feesStrategy === "medium" || feesStrategy === "fast") {
+
+  if (feesStrategy === "slow" || feesStrategy === "medium" || feesStrategy === "fast") {
     return gasOptions[feesStrategy];
   } else {
     return gasOptions.medium;
