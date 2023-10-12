@@ -121,7 +121,7 @@
     "@cosmjs/amino": "^0.31.1",
     "@crypto-org-chain/chain-jslib": "1.1.2",
     "@dfinity/agent": "^0.15.6",
-    "@dfinity/candid": "^0.15.6",
+    "@dfinity/candid": "^0.19.0",
     "@dfinity/principal": "^0.15.6",
     "@elrondnetwork/erdjs": "11.0.0",
     "@elrondnetwork/erdjs-network-providers": "^1.1.2",
