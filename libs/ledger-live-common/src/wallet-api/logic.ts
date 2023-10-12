@@ -338,7 +338,7 @@ export function completeExchangeLogic(
     },
     {
       ...liveTx,
-      feesStrategy,
+      feesStrategy: feesStrategy.toLowerCase(),
       subAccountId,
     },
   );
