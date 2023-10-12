@@ -47,7 +47,6 @@ const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): Co
   for (const tx of txs) {
     let fees = new BigNumber(0);
 
-    // LIVE-9520
     if (tx.tx && tx.tx.auth_info && tx.tx.auth_info.fee && tx.tx.auth_info.fee.amount) {
       tx.tx.auth_info.fee.amount.forEach(elem => {
         if (elem.denom === unitCode) fees = fees.plus(elem.amount);
