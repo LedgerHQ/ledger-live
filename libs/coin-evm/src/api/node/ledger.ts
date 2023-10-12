@@ -213,7 +213,7 @@ export const getFeeData: NodeApi["getFeeData"] = async (currency, transaction) =
     throw new LedgerNodeUsedIncorrectly();
   }
 
-  const { medium } = await getGasOptions({
+  const gasOptions = await getGasOptions({
     currency: {
       ...currency,
       ethereumLikeInfo: {
@@ -231,7 +231,13 @@ export const getFeeData: NodeApi["getFeeData"] = async (currency, transaction) =
     options: { useEIP1559: transaction.type === 2 },
   });
 
-  return medium;
+  const { feesStrategy } = transaction;
+  
+  if(feesStrategy === "slow" || feesStrategy === "medium" || feesStrategy === "fast") {
+    return gasOptions[feesStrategy];
+  } else {
+    return gasOptions.medium;
+  }
 };
 
 /**
