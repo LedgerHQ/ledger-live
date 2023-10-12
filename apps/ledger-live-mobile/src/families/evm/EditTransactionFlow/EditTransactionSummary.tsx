@@ -125,7 +125,6 @@ function EditTransactionSummary({ navigation, route }: Props) {
   const currencyOrToken = getAccountCurrency(account);
 
   const hasNonEmptySubAccounts =
-    account &&
     account.type === "Account" &&
     (account.subAccounts || []).some(subAccount => subAccount.balance.gt(0));
 
@@ -148,7 +147,7 @@ function EditTransactionSummary({ navigation, route }: Props) {
   }, [navigateToNext, warnings.feeTooHigh]);
 
   // FIXME: why is recipient sometimes empty?
-  if (!account || !transaction || !transaction.recipient || !currencyOrToken) {
+  if (!transaction.recipient) {
     return null;
   }
 
