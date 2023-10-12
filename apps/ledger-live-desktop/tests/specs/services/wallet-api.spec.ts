@@ -8,6 +8,7 @@ import { DeviceAction } from "../../models/DeviceAction";
 import { randomUUID } from "crypto";
 import { LiveAppWebview } from "../../models/LiveAppWebview";
 import BigNumber from "bignumber.js";
+import { version as LLD_VERSION } from "../../../package.json";
 
 const methods = [
   "account.request",
@@ -301,7 +302,7 @@ test("Wallet API methods @smoke", async ({ page }) => {
 
   await test.step("currency.list", async () => {
     const id = randomUUID();
-    const response = liveAppWebview.send({
+    const response = await liveAppWebview.send({
       jsonrpc: "2.0",
       id,
       method: "currency.list",
@@ -310,39 +311,41 @@ test("Wallet API methods @smoke", async ({ page }) => {
       },
     });
 
-    await expect(response).resolves.toMatchObject({
+    expect(response).toMatchObject({
       id,
-      currencies: [
-        {
-          type: "CryptoCurrency",
-          id: "ethereum",
-          ticker: "ETH",
-          name: "Ethereum",
-          family: "ethereum",
-          color: "#0ebdcd",
-          decimals: 18,
-        },
-        {
-          type: "CryptoCurrency",
-          id: "bitcoin",
-          ticker: "BTC",
-          name: "Bitcoin",
-          family: "bitcoin",
-          color: "#ffae35",
-          decimals: 8,
-        },
-        {
-          type: "TokenCurrency",
-          standard: "ERC20",
-          id: "ethereum/erc20/usd_tether__erc20_",
-          ticker: "USDT",
-          contract: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
-          name: "Tether USD",
-          parent: "ethereum",
-          color: "#0ebdcd",
-          decimals: 6,
-        },
-      ],
+      result: {
+        currencies: [
+          {
+            type: "CryptoCurrency",
+            id: "bitcoin",
+            ticker: "BTC",
+            name: "Bitcoin",
+            family: "bitcoin",
+            color: "#ffae35",
+            decimals: 8,
+          },
+          {
+            type: "CryptoCurrency",
+            id: "ethereum",
+            ticker: "ETH",
+            name: "Ethereum",
+            family: "ethereum",
+            color: "#0ebdcd",
+            decimals: 18,
+          },
+          {
+            type: "TokenCurrency",
+            standard: "ERC20",
+            id: "ethereum/erc20/usd_tether__erc20_",
+            ticker: "USDT",
+            contract: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+            name: "Tether USD",
+            parent: "ethereum",
+            color: "#0ebdcd",
+            decimals: 6,
+          },
+        ],
+      },
     });
   });
 
@@ -488,7 +491,7 @@ test("Wallet API methods @smoke", async ({ page }) => {
       jsonrpc: "2.0",
       result: {
         tracking: true,
-        wallet: { name: "ledger-live-desktop", version: "2.66.1" },
+        wallet: { name: "ledger-live-desktop", version: LLD_VERSION },
       },
     });
   });
