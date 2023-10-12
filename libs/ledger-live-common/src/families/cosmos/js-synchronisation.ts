@@ -14,7 +14,7 @@ import type { OperationType } from "@ledgerhq/types-live";
 import { getMainMessage } from "./helpers";
 import { parseAmountStringToNumber } from "./logic";
 
-const getBlankOperation = (tx, fees, id): CosmosOperation => {
+const getBlankOperation = (tx: CosmosTx, fees: BigNumber, accountId: string): CosmosOperation => {
   let transactionSequenceNumber: number;
 
   try {
@@ -30,10 +30,10 @@ const getBlankOperation = (tx, fees, id): CosmosOperation => {
     value: new BigNumber(0),
     fee: fees,
     blockHash: null,
-    blockHeight: tx.height,
+    blockHeight: parseInt(tx.height),
     senders: [] as string[],
     recipients: [] as string[],
-    accountId: id,
+    accountId,
     date: new Date(tx.timestamp),
     extra: {},
     transactionSequenceNumber,
