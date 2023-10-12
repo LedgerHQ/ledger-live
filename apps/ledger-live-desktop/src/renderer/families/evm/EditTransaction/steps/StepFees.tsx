@@ -14,6 +14,17 @@ import { localeSelector } from "~/renderer/reducers/settings";
 import { TransactionErrorBanner } from "../components/TransactionErrorBanner";
 import { StepProps } from "../types";
 
+/**
+ * Since onChangeTransaction and updateTransaction are used by SendAmountFields,
+ * which expect a generic Transaction type, we need to "generalize" the type
+ * (going from specific (EvmTransaction) to generic (Transaction)) of these 2
+ * functions
+ */
+type StepFeesProps = Omit<StepProps, "onChangeTransaction" | "updateTransaction"> & {
+  onChangeTransaction: SendAmountFieldsProps["onChange"];
+  updateTransaction: SendAmountFieldsProps["updateTransaction"];
+};
+
 const StepFees = ({
   account,
   parentAccount,
@@ -24,7 +35,7 @@ const StepFees = ({
   t,
   onChangeTransaction,
   updateTransaction,
-}: StepProps) => {
+}: StepFeesProps) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const locale = useSelector(localeSelector);
 
@@ -53,12 +64,8 @@ const StepFees = ({
           parentAccount={parentAccount}
           status={status}
           transaction={transaction}
-          /**
-           * Looks like TS does not like the fact that the arg of the functions
-           * are going from specific (EvmTransaction) to generic (Transaction).
-           */
-          onChange={onChangeTransaction as SendAmountFieldsProps["onChange"]}
-          updateTransaction={updateTransaction as SendAmountFieldsProps["updateTransaction"]}
+          onChange={onChangeTransaction}
+          updateTransaction={updateTransaction}
           bridgePending={bridgePending}
           transactionToUpdate={transactionToUpdate}
         />
@@ -145,4 +152,4 @@ export const StepFeesFooter = ({
   );
 };
 
-export default memo<StepProps>(StepFees);
+export default memo<StepFeesProps>(StepFees);
