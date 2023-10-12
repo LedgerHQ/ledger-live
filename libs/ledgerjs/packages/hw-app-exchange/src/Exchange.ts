@@ -187,7 +187,7 @@ export default class Exchange {
         compFormat === "jws" ? transactionEncodedFormat.base64 : transactionEncodedFormat.raw;
       bufferToSend = Buffer.concat([
         Buffer.from([encodedFormat]),
-        Buffer.from([transaction.length]),
+        Buffer.from([0x00, transaction.length]),
         transaction,
         Buffer.from([feeHex.length]),
         feeHex,
