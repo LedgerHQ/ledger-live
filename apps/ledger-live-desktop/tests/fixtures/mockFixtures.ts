@@ -28,7 +28,6 @@ export const test = base.extend<TestFixtures>({
       "https://explorers.api.live.ledger.com/blockchain/v4/btc/fees",
       async route => {
         console.log("Mocking Fees endpoint");
-        console.log("THE DATE: ", Date.now());
         route.fulfill({
           headers: { teststatus: "mocked" },
           body: JSON.stringify({ "2": 15067, "4": 15067, "6": 15067, last_updated: Date.now() }),
