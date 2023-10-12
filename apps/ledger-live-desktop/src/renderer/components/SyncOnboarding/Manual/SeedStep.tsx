@@ -32,6 +32,7 @@ const SeedStep = ({ seedPathStatus, deviceModelId }: Props) => {
               productName,
             })}
           </StepText>
+          {/* @ts-expect-error weird props issue with React 18 */}
           <StepText mb={6}>
             <Trans i18nKey="syncOnboarding.manual.seedContent.newSeedDescription2">
               <Text fontWeight="bold" variant="body" color="neutral.c80">
@@ -39,8 +40,11 @@ const SeedStep = ({ seedPathStatus, deviceModelId }: Props) => {
               </Text>
             </Trans>
           </StepText>
+          {/* @ts-expect-error weird props issue with React 18 */}
           <StepText mb={6}>{t("syncOnboarding.manual.seedContent.newSeedDescription3")}</StepText>
+          {/* @ts-expect-error weird props issue with React 18 */}
           <StepText mb={6}>{t("syncOnboarding.manual.seedContent.newSeedDescription4")}</StepText>
+          {/* @ts-expect-error weird props issue with React 18 */}
           <StepText>{t("syncOnboarding.manual.seedContent.newSeedDescription5")}</StepText>
           <ContinueOnDeviceWithAnim
             deviceModelId={deviceModelId}
@@ -93,6 +97,7 @@ const SeedStep = ({ seedPathStatus, deviceModelId }: Props) => {
               productName,
             })}
           </StepText>
+          {/* @ts-expect-error weird props issue with React 18 */}
           <StepText mb={6}>
             <Trans
               i18nKey="syncOnboarding.manual.seedContent.selectionNewLedger"
@@ -103,6 +108,7 @@ const SeedStep = ({ seedPathStatus, deviceModelId }: Props) => {
               </Text>
             </Trans>
           </StepText>
+          {/* @ts-expect-error weird props issue with React 18 */}
           <StepText>
             <Trans
               i18nKey="syncOnboarding.manual.seedContent.selectionRestore"
