@@ -234,7 +234,7 @@ export default function Tutorial({ useCase }: Props) {
   const upsellPath = useUpsellPath(recoverFF);
   const postOnboardingPath = usePostOnboardingPath(recoverFF);
   const devicePairingPath = useAlreadySeededDevicePath(recoverFF);
-  const recoverPath = useCustomPath(recoverFF, "upsell", "lld-restore-with-recover");
+  const recoverRestorePath = useCustomPath(recoverFF, "restore", "lld-restore-with-recover");
   const recoverDiscoverPath = useMemo(() => {
     return `/recover/${recoverFF?.params?.protectId}?redirectTo=disclaimerRestore`;
   }, [recoverFF?.params?.protectId]);
@@ -699,8 +699,8 @@ export default function Tutorial({ useCase }: Props) {
   const handleNextPin = useCallback(() => {
     let targetPath: string | object = `${path}/${ScreenId.existingRecoveryPhrase}`;
 
-    if (useCase === UseCase.recover && recoverPath) {
-      const [pathname, search] = recoverPath.split("?");
+    if (useCase === UseCase.recover && recoverRestorePath) {
+      const [pathname, search] = recoverRestorePath.split("?");
       targetPath = {
         pathname,
         search: search ? `?${search}` : undefined,
@@ -714,7 +714,7 @@ export default function Tutorial({ useCase }: Props) {
     }
 
     handleNextInDrawer(setHelpPinCode, targetPath);
-  }, [connectedDevice?.deviceId, dispatch, handleNextInDrawer, path, recoverPath, useCase]);
+  }, [connectedDevice?.deviceId, dispatch, handleNextInDrawer, path, recoverRestorePath, useCase]);
 
   return (
     <>
