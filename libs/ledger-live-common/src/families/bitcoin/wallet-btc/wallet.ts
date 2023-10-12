@@ -1,24 +1,22 @@
-import { flatten } from "lodash";
-import BigNumber from "bignumber.js";
-import Btc from "@ledgerhq/hw-app-btc";
-import { log } from "@ledgerhq/logs";
-import { Transaction } from "@ledgerhq/hw-app-btc/types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import Btc from "@ledgerhq/hw-app-btc";
+import { Transaction } from "@ledgerhq/hw-app-btc/types";
+import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-
-import { Currency } from "./crypto/types";
-import { TransactionInfo, DerivationModes } from "./types";
-import { Account, SerializedAccount } from "./account";
-import Xpub from "./xpub";
-import { IExplorer } from "./explorer/types";
-import { Output } from "./storage/types";
-import BitcoinLikeStorage from "./storage";
-import { PickingStrategy } from "./pickingstrategies/types";
-import * as utils from "./utils";
-import cryptoFactory from "./crypto/factory";
-import BitcoinLikeExplorer from "./explorer";
-import { TX, Address } from "./storage/types";
+import BigNumber from "bignumber.js";
+import { flatten } from "lodash";
 import { blockchainBaseURL } from "../../../explorer";
+import { Account, SerializedAccount } from "./account";
+import cryptoFactory from "./crypto/factory";
+import { Currency } from "./crypto/types";
+import BitcoinLikeExplorer from "./explorer";
+import { IExplorer } from "./explorer/types";
+import { PickingStrategy } from "./pickingstrategies/types";
+import BitcoinLikeStorage from "./storage";
+import { Address, Output, TX } from "./storage/types";
+import { DerivationModes, TransactionInfo } from "./types";
+import * as utils from "./utils";
+import Xpub from "./xpub";
 
 class BitcoinLikeWallet {
   explorers: { [currencyId: string]: IExplorer } = {};
@@ -215,19 +213,33 @@ class BitcoinLikeWallet {
       onDeviceSignatureGranted,
       onDeviceStreaming,
     } = params;
+
+    const orderedInputs: TransactionInfo["inputs"] = utils.lexicographicalIndexingTransactionInputs(
+      { inputs: txInfo.inputs },
+    );
+    const orderedOutputs: TransactionInfo["outputs"] =
+      utils.lexicographicalIndexingTransactionOutputs({
+        outputs: txInfo.outputs,
+      });
+
     let hasTimestamp = params.hasTimestamp;
-    let length = txInfo.outputs.reduce((sum, output) => {
+
+    let length = orderedOutputs.reduce((sum, output) => {
       return sum + 8 + output.script.length + 1;
     }, 1);
+
     // refer to https://github.com/LedgerHQ/lib-ledger-core/blob/fc9d762b83fc2b269d072b662065747a64ab2816/core/src/wallet/bitcoin/api_impl/BitcoinLikeTransactionApi.cpp#L478
     // Decred has a witness and an expiry height
     if (additionals && additionals.includes("decred")) {
-      length += 2 * txInfo.outputs.length;
+      length += 2 * orderedOutputs.length;
     }
+
     const buffer = Buffer.allocUnsafe(length);
+
     let bufferOffset = 0;
-    bufferOffset = utils.writeVarInt(buffer, txInfo.outputs.length, bufferOffset);
-    txInfo.outputs.forEach(txOut => {
+    bufferOffset = utils.writeVarInt(buffer, orderedOutputs.length, bufferOffset);
+
+    orderedOutputs.forEach(txOut => {
       // refer to https://github.com/bitcoinjs/bitcoinjs-lib/blob/59b21162a2c4645c64271ca004c7a3755a3d72fb/ts_src/bufferutils.ts#L26
       buffer.writeUInt32LE(txOut.value.modulo(new BigNumber(0x100000000)).toNumber(), bufferOffset);
       buffer.writeUInt32LE(
@@ -242,13 +254,15 @@ class BitcoinLikeWallet {
       bufferOffset = utils.writeVarInt(buffer, txOut.script.length, bufferOffset);
       bufferOffset += txOut.script.copy(buffer, bufferOffset);
     });
+
     const outputScriptHex = buffer.toString("hex");
     const associatedKeysets = txInfo.associatedDerivations.map(
       ([account, index]) =>
         `${fromAccount.params.path}/${fromAccount.params.index}'/${account}/${index}`,
     );
+
     type Inputs = [Transaction, number, string | null | undefined, number | null | undefined][];
-    const inputs: Inputs = txInfo.inputs.map(i => {
+    const inputs: Inputs = orderedInputs.map(i => {
       if (additionals && additionals.includes("peercoin")) {
         // remove timestamp for new version of peercoin input, refer to https://github.com/peercoin/rfcs/issues/5 and https://github.com/LedgerHQ/ledgerjs/issues/701
         const version = i.txHex.substring(0, 8);
@@ -269,20 +283,20 @@ class BitcoinLikeWallet {
       ];
     });
 
-    const lastOutputIndex = txInfo.outputs.length - 1;
+    const lastOutputIndex = orderedOutputs.length - 1;
 
     log("hw", `createPaymentTransaction`, {
       inputs,
       associatedKeysets,
       outputScriptHex,
-      ...(params.lockTime && { lockTime: params.lockTime }),
-      ...(params.sigHashType && { sigHashType: params.sigHashType }),
-      ...(params.segwit && { segwit: params.segwit }),
+      lockTime: params.lockTime,
+      sigHashType: params.sigHashType,
+      segwit: params.segwit,
       initialTimestamp,
-      ...(params.expiryHeight && { expiryHeight: params.expiryHeight }),
-      ...(txInfo.outputs[lastOutputIndex]?.isChange && {
-        changePath: `${fromAccount.params.path}/${fromAccount.params.index}'/${txInfo.changeAddress.account}/${txInfo.changeAddress.index}`,
-      }),
+      expiryHeight: params.expiryHeight,
+      changePath: orderedOutputs[lastOutputIndex]?.isChange
+        ? `${fromAccount.params.path}/${fromAccount.params.index}'/${txInfo.changeAddress.account}/${txInfo.changeAddress.index}`
+        : undefined,
       additionals: additionals || [],
     });
 
@@ -290,14 +304,14 @@ class BitcoinLikeWallet {
       inputs,
       associatedKeysets,
       outputScriptHex,
-      ...(params.lockTime && { lockTime: params.lockTime }),
-      ...(params.sigHashType && { sigHashType: params.sigHashType }),
-      ...(params.segwit && { segwit: params.segwit }),
+      lockTime: params.lockTime,
+      sigHashType: params.sigHashType,
+      segwit: params.segwit,
       initialTimestamp,
-      ...(params.expiryHeight && { expiryHeight: params.expiryHeight }),
-      ...(txInfo.outputs[lastOutputIndex]?.isChange && {
-        changePath: `${fromAccount.params.path}/${fromAccount.params.index}'/${txInfo.changeAddress.account}/${txInfo.changeAddress.index}`,
-      }),
+      expiryHeight: params.expiryHeight,
+      changePath: orderedOutputs[lastOutputIndex]?.isChange
+        ? `${fromAccount.params.path}/${fromAccount.params.index}'/${txInfo.changeAddress.account}/${txInfo.changeAddress.index}`
+        : undefined,
       additionals: additionals || [],
       onDeviceSignatureRequested,
       onDeviceSignatureGranted,

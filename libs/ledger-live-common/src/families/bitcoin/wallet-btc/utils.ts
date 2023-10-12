@@ -1,9 +1,9 @@
-import { DerivationModes } from "./types";
-import { Currency, ICrypto } from "./crypto/types";
-import cryptoFactory from "./crypto/factory";
-import { fallbackValidateAddress } from "./crypto/base";
-import { UnsupportedDerivation } from "../../../errors";
 import varuint from "varuint-bitcoin";
+import { UnsupportedDerivation } from "../../../errors";
+import { fallbackValidateAddress } from "./crypto/base";
+import cryptoFactory from "./crypto/factory";
+import { Currency, ICrypto } from "./crypto/types";
+import { DerivationModes, TransactionInfo } from "./types";
 
 export function byteSize(count: number): number {
   if (count < 0xfd) {
@@ -193,3 +193,80 @@ export function writeVarInt(buffer: Buffer, i: number, offset: number): number {
   offset += varuint.encode.bytes;
   return offset;
 }
+
+const strcmp = (a: string, b: string): number => {
+  if (a === b) {
+    return 0;
+  }
+
+  if (a > b) {
+    return 1;
+  }
+
+  return -1;
+};
+
+/**
+ * Sorts transaction inputs lexicographically by txHex and output_index
+ * Following BIP-69 specifiction
+ * https://en.bitcoin.it/wiki/BIP_0069
+ */
+export const lexicographicalIndexingTransactionInputs = ({
+  inputs,
+}: {
+  inputs: TransactionInfo["inputs"];
+}): TransactionInfo["inputs"] => {
+  return inputs.sort((a, b) => {
+    /**
+     * Previous transaction hashes (in reversed byte-order) are to be sorted in
+     * ascending order, lexicographically.
+     */
+    const txHexComp = strcmp(a.txHex, b.txHex);
+
+    if (txHexComp !== 0) {
+      return txHexComp;
+    }
+
+    /**
+     * In the event of two matching transaction hashes, the respective previous
+     * output indices will be compared by their integer value, in ascending order.
+     * If the previous output indices match, the inputs are considered equal.
+     */
+
+    return a.output_index - b.output_index;
+  });
+};
+
+/**
+ * Sorts transaction outputs lexicographically by scriptPubKey (script) and
+ * amount (value)
+ * Following BIP-69 specifiction
+ * https://en.bitcoin.it/wiki/BIP_0069
+ */
+export const lexicographicalIndexingTransactionOutputs = ({
+  outputs,
+}: {
+  outputs: TransactionInfo["outputs"];
+}): TransactionInfo["outputs"] => {
+  return outputs.sort((a, b) => {
+    /**
+     * Transaction output amounts (as 64-bit unsigned integers) are to be sorted
+     * in ascending order
+     */
+
+    const valueComp = a.value.comparedTo(b.value);
+
+    if (valueComp !== 0) {
+      return valueComp;
+    }
+
+    /**
+     * In the event of two matching output amounts, the respective output
+     * scriptPubKeys (as a byte-array) will be compared lexicographically,
+     * in ascending order. If the scriptPubKeys match, the outputs are
+     * considered equal.
+     */
+
+    return a.script.compare(b.script);
+  });
+};
