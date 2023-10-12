@@ -108,7 +108,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
   const [seedPathStatus, setSeedPathStatus] = useState<SeedPathStatus>("choice_new_or_restore");
 
   const servicesConfig = useFeature("protectServicesDesktop");
-  const postStaxOnboardingPath = useCustomPath(servicesConfig, "restore");
+  const recoverRestoreStaxPath = useCustomPath(servicesConfig, "restore", "lld-stax-onboarding");
 
   const productName = device
     ? getDeviceModel(device.modelId).productName || device.modelId
@@ -454,15 +454,15 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
   }, [device, allowedError, handleDesyncTimerRunsOut, desyncTimeout]);
 
   useEffect(() => {
-    if (seedPathStatus === "recover_seed" && postStaxOnboardingPath) {
-      const [pathname, search] = postStaxOnboardingPath.split("?");
+    if (seedPathStatus === "recover_seed" && recoverRestoreStaxPath) {
+      const [pathname, search] = recoverRestoreStaxPath.split("?");
       history.push({
         pathname,
         search: search ? `?${search}` : undefined,
         state: { fromOnboarding: true },
       });
     }
-  }, [history, postStaxOnboardingPath, seedPathStatus]);
+  }, [history, recoverRestoreStaxPath, seedPathStatus]);
 
   return (
     <Flex width="100%" height="100%" flexDirection="column" justifyContent="flex-start">
