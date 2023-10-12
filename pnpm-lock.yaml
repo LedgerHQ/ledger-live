@@ -561,8 +561,8 @@ importers:
         specifier: ^1.2.6
         version: 1.2.6(@types/react@17.0.53)
       '@types/react-motion':
-        specifier: ^0.0.34
-        version: 0.0.34(@types/react@17.0.53)
+        specifier: ^0.0.35
+        version: 0.0.35(@types/react@17.0.53)
       '@types/react-redux':
         specifier: ^7.1.24
         version: 7.1.24(@types/react@17.0.53)
@@ -25668,8 +25668,8 @@ packages:
       '@types/react': 17.0.53
     dev: true
 
-  /@types/react-motion@0.0.34(@types/react@17.0.53):
-    resolution: {integrity: sha512-/rFI22Vg4Xzb47hXtS06WkzUGRu+Vb3yDleuxiqzGj0JbXYXQUCgwSa2ZU12K7ubKi4C8xsdIN3xt4Z4fjSdPw==}
+  /@types/react-motion@0.0.35(@types/react@17.0.53):
+    resolution: {integrity: sha512-7e0rlyG4wgvL1F5G8FMpgEYgPF54i7tmOy3b9KSp6kPjU2hEAV6BiRrl3qMPGrJXZ9soH/OlUYx1Ae5C9AJLGA==}
     peerDependencies:
       '@types/react': '*'
     peerDependenciesMeta:
