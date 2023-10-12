@@ -50,19 +50,20 @@ export type FeatureFlagsContextValue = {
  * @dev do not export this, it should be accessed exclusively through
  * useFeatureFlags and FeatureFlagsProvider
  */
-const FeatureFlagsContext = createContext<FeatureFlagsContextValue | undefined>(undefined);
+const FeatureFlagsContext = createContext<FeatureFlagsContextValue>({
+  isFeature: _ => false,
+  getFeature: _ => null,
+  overrideFeature: _ => {},
+  resetFeature: _ => {},
+  resetFeatures: () => {},
+  getAllFlags: () => ({}),
+});
 
 export const FeatureFlagsProvider = FeatureFlagsContext.Provider;
 
 /**
  * Hook to consume a FeatureFlagsContext
- * Throws an error if it is not rendered within a FeatureFlagsProvider.
  */
 export function useFeatureFlags(): FeatureFlagsContextValue {
-  const contextValue = useContext(FeatureFlagsContext);
-  if (contextValue === undefined)
-    throw new Error(
-      "useFeatureFlags must be used within a FeatureFlagsProvider (React context provider)",
-    );
-  return contextValue;
+  return useContext(FeatureFlagsContext);
 }

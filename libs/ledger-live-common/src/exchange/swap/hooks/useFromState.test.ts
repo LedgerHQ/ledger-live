@@ -26,15 +26,12 @@ const allAccounts = [...mockedAccounts, mockedTokenAccount] as Account[];
 
 describe("useFromState", () => {
   test("call hook without arguments", () => {
-    const { result } = renderHook(
-      () => {
-        const bridgeTransaction = useBridgeTransaction();
-        return useFromState({
-          bridgeTransaction,
-        });
-      },
-      { wrapper: basicMockedFeatureFlagsProviderWrapper },
-    );
+    const { result } = renderHook(() => {
+      const bridgeTransaction = useBridgeTransaction();
+      return useFromState({
+        bridgeTransaction,
+      });
+    });
     expect(result.current).toMatchObject({
       fromState: selectorStateDefaultValues,
     });
@@ -43,16 +40,13 @@ describe("useFromState", () => {
   test("call hook with default currency", () => {
     const defaultCurrency = BTC;
 
-    const { result } = renderHook(
-      () => {
-        const bridgeTransaction = useBridgeTransaction();
-        return useFromState({
-          defaultCurrency,
-          bridgeTransaction,
-        });
-      },
-      { wrapper: basicMockedFeatureFlagsProviderWrapper },
-    );
+    const { result } = renderHook(() => {
+      const bridgeTransaction = useBridgeTransaction();
+      return useFromState({
+        defaultCurrency,
+        bridgeTransaction,
+      });
+    });
     expect(result.current).toMatchObject({
       fromState: {
         ...selectorStateDefaultValues,
@@ -65,17 +59,14 @@ describe("useFromState", () => {
     const defaultAccount = mockedTokenAccount;
     const defaultParentAccount = mockedAccounts[1];
 
-    const { result } = renderHook(
-      () => {
-        const bridgeTransaction = useBridgeTransaction();
-        return useFromState({
-          defaultAccount,
-          defaultParentAccount,
-          bridgeTransaction,
-        });
-      },
-      { wrapper: basicMockedFeatureFlagsProviderWrapper },
-    );
+    const { result } = renderHook(() => {
+      const bridgeTransaction = useBridgeTransaction();
+      return useFromState({
+        defaultAccount,
+        defaultParentAccount,
+        bridgeTransaction,
+      });
+    });
     expect(result.current).toMatchObject({
       fromState: {
         ...selectorStateDefaultValues,
@@ -86,19 +77,16 @@ describe("useFromState", () => {
   });
 
   test("call hook and set the account and all the related properties", () => {
-    const { result } = renderHook(
-      () => {
-        const bridgeTransaction = useBridgeTransaction();
-        return {
-          ...useFromState({
-            accounts: allAccounts,
-            bridgeTransaction,
-          }),
+    const { result } = renderHook(() => {
+      const bridgeTransaction = useBridgeTransaction();
+      return {
+        ...useFromState({
+          accounts: allAccounts,
           bridgeTransaction,
-        };
-      },
-      { wrapper: basicMockedFeatureFlagsProviderWrapper },
-    );
+        }),
+        bridgeTransaction,
+      };
+    });
 
     expect(result.current).toMatchObject({
       fromState: selectorStateDefaultValues,
@@ -124,16 +112,13 @@ describe("useFromState", () => {
   });
 
   test("call hook and set the amount after 400ms", () => {
-    const { result } = renderHook(
-      () => {
-        const bridgeTransaction = useBridgeTransaction();
-        return useFromState({
-          accounts: allAccounts,
-          bridgeTransaction,
-        });
-      },
-      { wrapper: basicMockedFeatureFlagsProviderWrapper },
-    );
+    const { result } = renderHook(() => {
+      const bridgeTransaction = useBridgeTransaction();
+      return useFromState({
+        accounts: allAccounts,
+        bridgeTransaction,
+      });
+    });
 
     expect(result.current).toMatchObject({
       fromState: selectorStateDefaultValues,
@@ -163,16 +148,13 @@ describe("useFromState", () => {
   });
 
   test("call hook and set the the most recent amount input after 400ms", () => {
-    const { result } = renderHook(
-      () => {
-        const bridgeTransaction = useBridgeTransaction();
-        return useFromState({
-          accounts: allAccounts,
-          bridgeTransaction,
-        });
-      },
-      { wrapper: basicMockedFeatureFlagsProviderWrapper },
-    );
+    const { result } = renderHook(() => {
+      const bridgeTransaction = useBridgeTransaction();
+      return useFromState({
+        accounts: allAccounts,
+        bridgeTransaction,
+      });
+    });
 
     expect(result.current).toMatchObject({
       fromState: selectorStateDefaultValues,
