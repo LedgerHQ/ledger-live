@@ -10,7 +10,7 @@ import React, {
 import { useHistory } from "react-router-dom";
 import { Box, Flex, Text, VerticalTimeline } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelInfo, SeedPhraseType } from "@ledgerhq/types-live";
@@ -34,6 +34,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import LockedDeviceDrawer, { Props as LockedDeviceDrawerProps } from "./LockedDeviceDrawer";
 import { LockedDeviceError } from "@ledgerhq/errors";
+import { saveSettings } from "~/renderer/actions/settings";
 
 const READY_REDIRECT_DELAY_MS = 2500;
 const POLLING_PERIOD_MS = 1000;
@@ -101,6 +102,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
 }) => {
   const { t } = useTranslation();
   const history = useHistory<RecoverState>();
+  const dispatch = useDispatch();
   const [stepKey, setStepKey] = useState<StepKey>(StepKey.Paired);
   const [shouldRestoreApps, setShouldRestoreApps] = useState<boolean>(false);
   const deviceToRestore = useSelector(lastSeenDeviceSelector) as DeviceModelInfo | null | undefined;
@@ -456,13 +458,18 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
   useEffect(() => {
     if (seedPathStatus === "recover_seed" && recoverRestoreStaxPath) {
       const [pathname, search] = recoverRestoreStaxPath.split("?");
+      dispatch(
+        saveSettings({
+          hasCompletedOnboarding: true,
+        }),
+      );
       history.push({
         pathname,
         search: search ? `?${search}` : undefined,
         state: { fromOnboarding: true },
       });
     }
-  }, [history, recoverRestoreStaxPath, seedPathStatus]);
+  }, [dispatch, history, recoverRestoreStaxPath, seedPathStatus]);
 
   return (
     <Flex width="100%" height="100%" flexDirection="column" justifyContent="flex-start">
