@@ -17,8 +17,8 @@ const vechainTest = {
   name: "Vechain",
   currency: getCryptoCurrencyById("vechain"),
   appQuery: {
-    model: DeviceModelId.nanoS,
-    appName: "Vechain",
+    model: DeviceModelId.nanoSP,
+    appName: "VeChain",
   },
   allowEmptyAccounts: true,
   testTimeout: 60 * 1000, // 1 minute
