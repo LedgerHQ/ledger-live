@@ -7,7 +7,6 @@ import useBridgeTransaction from "../../../bridge/useBridgeTransaction";
 import { genTokenAccount } from "@ledgerhq/coin-framework/mocks/account";
 import { genAccount } from "../../../mock/account";
 import { useFromState } from "./useFromState";
-import { basicMockedFeatureFlagsProviderWrapper } from "../../../featureFlags/mock";
 
 const BTC = getCryptoCurrencyById("bitcoin");
 const ETH = getCryptoCurrencyById("ethereum");
