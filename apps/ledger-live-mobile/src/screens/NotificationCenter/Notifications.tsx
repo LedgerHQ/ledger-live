@@ -117,9 +117,7 @@ export default function NotificationCenter() {
         contentcard: item.title,
       });
 
-      dispatch(
-        setDynamicContentNotificationCards(notificationCards.filter(n => n.id !== item.id)),
-      );
+      dispatch(setDynamicContentNotificationCards(notificationCards.filter(n => n.id !== item.id)));
     },
     [dispatch, logDismissCard, notificationCards, trackContentCardEvent],
   );
