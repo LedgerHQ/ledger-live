@@ -7,17 +7,32 @@ import { NavigatorName } from "../../../const";
 import { privacySelector } from "../../../reducers/settings";
 import SettingsRow from "../../../components/SettingsRow";
 import BiometricsRow from "./BiometricsRow";
+import { ScreenName } from "../../../const";
+import { track } from "../../../analytics";
 
+/** COMPONENT */
 export default function AuthSecurityToggle() {
+  /** CONSTANTS */
   const { t } = useTranslation();
 
   const privacy = useSelector(privacySelector);
   const { navigate } = useNavigation();
 
-  const onValueChange = (authSecurityEnabled: boolean): void =>
+  /** CALLBACKS */
+
+  const onValueChange = (authSecurityEnabled: boolean): void => {
+    // Add onClick Analytics
+    track("toggle_clicked", {
+      toggle: "Password Lock", // Moyen de chopper la key non traduite ?
+      page: ScreenName.GeneralSettings,
+      enabled: !privacy?.hasPassword,
+    });
+
     navigate(
       authSecurityEnabled ? NavigatorName.PasswordAddFlow : NavigatorName.PasswordModifyFlow,
     );
+  };
+  /** RENDER */
 
   return (
     <>
@@ -26,9 +41,13 @@ export default function AuthSecurityToggle() {
         title={t("settings.display.password")}
         desc={t("settings.display.passwordDesc")}
       >
-        <Switch checked={!!privacy} onChange={onValueChange} testID="password-settings-switch" />
+        <Switch
+          checked={!!privacy?.hasPassword}
+          onChange={onValueChange}
+          testID="password-settings-switch"
+        />
       </SettingsRow>
-      {privacy ? <BiometricsRow /> : null}
+      <BiometricsRow />
     </>
   );
 }

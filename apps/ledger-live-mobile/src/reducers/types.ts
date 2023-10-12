@@ -157,6 +157,8 @@ export type CurrencySettings = {
 };
 
 export type Privacy = {
+  // Is a password setted by the user ?
+  hasPassword: boolean;
   // when we set the privacy, we also retrieve the biometricsType info
   biometricsType?: string | null;
   // this tells if the biometrics was enabled by user yet

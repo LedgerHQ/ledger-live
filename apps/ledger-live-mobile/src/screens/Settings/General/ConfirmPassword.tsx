@@ -42,6 +42,7 @@ const ConfirmPassword = ({ route, navigation }: Props) => {
       await Keychain.setGenericPassword("ledger", route.params?.password, options);
       dispatch(
         setPrivacy({
+          hasPassword: true,
           biometricsType,
           biometricsEnabled: false,
         }),
