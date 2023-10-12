@@ -1,6 +1,6 @@
 import React from "react";
-import { Divider, Flex, VerticalTimeline } from "@ledgerhq/react-ui";
-import { useTranslation } from "react-i18next";
+import { Divider, Flex, VerticalTimeline, Text } from "@ledgerhq/react-ui";
+import { useTranslation, Trans } from "react-i18next";
 import { StepText } from "./shared";
 import ContinueOnDeviceWithAnim from "./ContinueOnDeviceWithAnim";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -26,11 +26,21 @@ const SeedStep = ({ seedPathStatus, deviceModelId }: Props) => {
     <Flex flexDirection="column">
       {seedPathStatus === "new_seed" ? (
         <Flex flexDirection="column">
-          <StepText>
-            {t("syncOnboarding.manual.seedContent.newSeedDescription", {
+          <StepText mb={6}>
+            {t("syncOnboarding.manual.seedContent.newSeedDescription1", {
               productName,
             })}
           </StepText>
+          <StepText mb={6}>
+            <Trans i18nKey="syncOnboarding.manual.seedContent.newSeedDescription2">
+              <Text fontWeight="bold" variant="body" color="neutral.c80">
+                {""}
+              </Text>
+            </Trans>
+          </StepText>
+          <StepText mb={6}>{t("syncOnboarding.manual.seedContent.newSeedDescription3")}</StepText>
+          <StepText mb={6}>{t("syncOnboarding.manual.seedContent.newSeedDescription4")}</StepText>
+          <StepText>{t("syncOnboarding.manual.seedContent.newSeedDescription5")}</StepText>
           <ContinueOnDeviceWithAnim
             deviceModelId={deviceModelId}
             text={t("syncOnboarding.manual.seedContent.newSeedContinueOnDevice", {
@@ -63,17 +73,37 @@ const SeedStep = ({ seedPathStatus, deviceModelId }: Props) => {
           <StepText>{t("syncOnboarding.manual.seedContent.restoreSeed", { productName })}</StepText>
           <ContinueOnDeviceWithAnim
             deviceModelId={deviceModelId}
-            text={t("syncOnboarding.manual.continueOnDevice", { productName })}
+            text={t("syncOnboarding.manual.seedContent.followInstructions", { productName })}
           />
         </>
       ) : seedPathStatus === "recover_seed" ? (
         <StepText>{t("syncOnboarding.manual.seedContent.recoverSeed")}</StepText>
       ) : (
         <Flex flexDirection="column">
-          <StepText>
+          <StepText mb={6}>
             {t("syncOnboarding.manual.seedContent.selection", {
               productName,
             })}
+          </StepText>
+          <StepText mb={6}>
+            <Trans
+              i18nKey="syncOnboarding.manual.seedContent.selectionNewLedger"
+              values={{ deviceName: productName }}
+            >
+              <Text fontWeight="bold" variant="body" color="neutral.c80">
+                {""}
+              </Text>
+            </Trans>
+          </StepText>
+          <StepText>
+            <Trans
+              i18nKey="syncOnboarding.manual.seedContent.selectionRestore"
+              values={{ deviceName: productName }}
+            >
+              <Text fontWeight="bold" variant="body" color="neutral.c80">
+                {""}
+              </Text>
+            </Trans>
           </StepText>
           <ContinueOnDeviceWithAnim
             deviceModelId={deviceModelId}

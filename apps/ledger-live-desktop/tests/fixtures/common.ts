@@ -29,7 +29,7 @@ type TestFixtures = {
 
 const IS_DEBUG_MODE = !!process.env.PWDEBUG;
 
-const test = base.extend<TestFixtures>({
+export const test = base.extend<TestFixtures>({
   env: undefined,
   lang: "en-US",
   theme: "dark",
@@ -149,6 +149,7 @@ const test = base.extend<TestFixtures>({
 
     console.log(`Video for test recorded at: ${await page.video()?.path()}\n`);
   },
+
   // below is used for the logging file at `artifacts/networkResponses.log`
   recordTestNamesForApiResponseLogging: [
     async ({}, use, testInfo) => {

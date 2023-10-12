@@ -1,6 +1,7 @@
 import React from "react";
 import Lottie, { LottieProps } from "react-lottie";
 import { Flex } from "@ledgerhq/react-ui";
+import { getEnv } from "@ledgerhq/live-env";
 const Animation = ({
   animation,
   loop = true,
@@ -34,7 +35,10 @@ const Animation = ({
         isClickToPauseDisabled
         ariaRole="animation"
         isPaused={isPaused}
-        isStopped={isStopped}
+        isStopped={
+          // in case of playwright tests, we want to completely stop the animation
+          !!getEnv("PLAYWRIGHT_RUN") || isStopped
+        }
         options={{
           loop: loop,
           autoplay: autoplay,

@@ -114,7 +114,6 @@ jobs:
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
-          skip_python: true
           skip_ruby: true
           install_playwright: true
       - name: Run playwright tests [Linux => xvfb-run]

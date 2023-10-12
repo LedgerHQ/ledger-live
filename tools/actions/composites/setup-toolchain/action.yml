@@ -10,29 +10,35 @@ inputs:
   install_dotnet:
     description: "dotnet setup for Windows"
     required: false
+  no_pnpm_cache:
+    description: should install without pnpm cache
+    required: false
 
 runs:
   using: "composite"
   steps:
     # ⚠️ We have issues with the runners and proto,
     # so for the moment we're not using it at all in the CI.
-    - uses: actions/setup-dotnet@v2
+    - uses: actions/setup-dotnet@v3.2.0
       if: inputs.install_dotnet != ''
       with:
         dotnet-version: 2.1.816
     - uses: pnpm/action-setup@v2
       if: inputs.pnpm_dest != ''
-      # if: ${{ runner.os == 'Windows' }}
       with:
-        version: 8.7
+        version: 8.8
         dest: ${{ inputs.pnpm_dest }}
     - uses: pnpm/action-setup@v2
       if: inputs.pnpm_dest == ''
-      # if: ${{ runner.os == 'Windows' }}
       with:
-        version: 8.7
+        version: 8.8
     - uses: actions/setup-node@v3
-      # if: ${{ runner.os == 'Windows' }}
+      if: inputs.no_pnpm_cache != ''
+      with:
+        node-version: 18
+        registry-url: "https://registry.npmjs.org"
+    - uses: actions/setup-node@v3
+      if: inputs.no_pnpm_cache == ''
       with:
         node-version: 18
         cache: pnpm

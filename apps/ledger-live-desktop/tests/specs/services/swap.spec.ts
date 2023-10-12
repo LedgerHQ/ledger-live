@@ -1,4 +1,5 @@
-import test from "../../fixtures/common";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import test from "../../fixtures/mockFixtures";
 import { expect } from "@playwright/test";
 import { SwapPage } from "../../models/SwapPage";
 import { DeviceAction } from "../../models/DeviceAction";
@@ -12,7 +13,6 @@ import {
   getBitcoinToEthereumRatesMock,
   getEthereumToTetherRatesMock,
 } from "./services-api-mocks/getRates.mock";
-import { getStatusMock } from "./services-api-mocks/getStatus.mock";
 
 test.use({
   userdata: "1AccountBTC1AccountETH",
@@ -27,7 +27,11 @@ test.use({
 // could add pause to HTTP mock to test 'LOADING' component
 
 test.describe.parallel("Swap", () => {
-  test("Add accounts via Swap page @smoke", async ({ page }) => {
+  test("Add accounts via Swap page @smoke", async ({
+    page,
+    mockProviderSvgs,
+    mockFeesEndpoint,
+  }) => {
     const layout = new Layout(page);
     const accountsPage = new AccountsPage(page);
     const accountPage = new AccountPage(page);
@@ -79,7 +83,7 @@ test.describe.parallel("Swap", () => {
     });
   });
 
-  test("Filter Rates @smoke", async ({ page }) => {
+  test("Filter Rates @smoke", async ({ page, mockProviderSvgs, mockFeesEndpoint }) => {
     const swapPage = new SwapPage(page);
     const layout = new Layout(page);
 
@@ -126,7 +130,14 @@ test.describe.parallel("Swap", () => {
     });
   });
 
-  test("Full Swap with Centralised Exchange @smoke", async ({ page }) => {
+  test("Full Swap with Centralised Exchange @smoke", async ({
+    page,
+    mockProviderSvgs,
+    mockFeesEndpoint,
+    mockSwapAcceptedEndpoint,
+    mockSwapCancelledEndpoint,
+    mockSwapStatusEndpoint,
+  }) => {
     const swapPage = new SwapPage(page);
     const deviceAction = new DeviceAction(page);
     const drawer = new Drawer(page);
@@ -137,22 +148,22 @@ test.describe.parallel("Swap", () => {
       route.fulfill({ headers: { teststatus: "mocked" }, body: mockRatesResponse });
     });
 
-    // We mock the 'cancelled' swap response because the transaction isn't broadcast when run locally.
-    // If 'cancelled' is called then it's a successful test
-    await page.route("https://swap.ledger.com/v5/swap/cancelled", async route => {
-      console.log("Mocking swap cancelled HTTP response");
-      route.fulfill({ headers: { teststatus: "mocked" }, body: "" });
-    });
-
-    await page.route("https://swap.ledger.com/v5/swap/accepted", async route => {
-      console.log("Mocking swap accepted HTTP response");
-      route.fulfill({ headers: { teststatus: "mocked" }, body: "" });
-    });
-
-    await page.route("https://swap.ledger.com/v5/swap/status", async route => {
-      console.log("Mocking swap status HTTP response");
-      const mockStatusResponse = getStatusMock();
-      route.fulfill({ headers: { teststatus: "mocked" }, body: mockStatusResponse });
+    await page.route("https://swap.ledger.com/v5/currencies/to**", async route => {
+      route.fulfill({
+        headers: { teststatus: "mocked" },
+        body: JSON.stringify({
+          currencyGroups: [
+            {
+              network: "dogecoin",
+              supportedCurrencies: ["dogecoin"],
+            },
+            {
+              network: "ethereum",
+              supportedCurrencies: ["ethereum", "ethereum/erc20/usd_tether__erc20_"],
+            },
+          ],
+        }),
+      });
     });
 
     await test.step("Open Swap Page", async () => {
