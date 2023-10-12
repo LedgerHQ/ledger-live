@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.71.0-nightly.3
+
+### Patch Changes
+
+- [#5020](https://github.com/LedgerHQ/ledger-live/pull/5020) [`aa094f44cc`](https://github.com/LedgerHQ/ledger-live/commit/aa094f44cc885a82356a6e2e1b4f25d58ff8937e) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Fix translation text
+
 ## 2.71.0-nightly.2
 
 ### Patch Changes
