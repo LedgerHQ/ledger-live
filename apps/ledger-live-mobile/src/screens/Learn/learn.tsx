@@ -23,11 +23,6 @@ function LearnSection() {
     setTimeout(() => setIsLoading(false), 750);
   }, []);
 
-  const sortedLearnCards = useMemo(
-    () => learnCards.sort((a, b) => b.createdAt - a.createdAt),
-    [learnCards],
-  );
-
   const onClickItem = useCallback(
     (card: LearnContentCard) => {
       if (!card.link) return;
@@ -63,7 +58,7 @@ function LearnSection() {
     <Flex>
       <TrackScreen category="Learn" />
       <FlatList
-        data={sortedLearnCards}
+        data={learnCards}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         showsVerticalScrollIndicator={false}

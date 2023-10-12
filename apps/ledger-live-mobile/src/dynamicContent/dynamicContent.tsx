@@ -113,14 +113,6 @@ const useDynamicContent = () => {
     () => assetsCards.filter((ac: AssetContentCard) => !hiddenCards.includes(ac.id)),
     [assetsCards, hiddenCards],
   );
-  const orderedNotificationsCards = useMemo(
-    () =>
-      notificationCards.sort(
-        (notif: NotificationContentCard, nt: NotificationContentCard) =>
-          nt.createdAt - notif.createdAt,
-      ),
-    [notificationCards],
-  );
   const isAWalletCardDisplayed = useMemo(
     () => walletCardsDisplayed.length >= 1,
     [walletCardsDisplayed],
@@ -182,7 +174,6 @@ const useDynamicContent = () => {
     dismissCard,
     trackContentCardEvent,
     notificationCards,
-    orderedNotificationsCards,
     refreshDynamicContent,
   };
 };

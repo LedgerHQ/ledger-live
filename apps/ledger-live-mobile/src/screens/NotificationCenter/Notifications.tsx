@@ -43,7 +43,7 @@ export default function NotificationCenter() {
   const dispatch = useDispatch();
   const { colors } = useTheme();
   const {
-    orderedNotificationsCards,
+    notificationCards,
     logImpressionCard,
     logDismissCard,
     logClickCard,
@@ -54,17 +54,17 @@ export default function NotificationCenter() {
 
   const logCardsImpression = useCallback(() => {
     // TODO: REWORK like in the Carousel maybe? For Log impression only when it's clearly visible
-    orderedNotificationsCards.forEach(item => {
+    notificationCards.forEach(item => {
       logImpressionCard(item.id);
     });
 
-    const cards = orderedNotificationsCards.map(n => ({
+    const cards = notificationCards.map(n => ({
       ...n,
       viewed: true,
     }));
 
     dispatch(setDynamicContentNotificationCards(cards));
-  }, [orderedNotificationsCards, dispatch, logImpressionCard]);
+  }, [notificationCards, dispatch, logImpressionCard]);
 
   const refreshNotifications = useCallback(async () => {
     setIsDynamicContentLoading(true);
@@ -118,10 +118,10 @@ export default function NotificationCenter() {
       });
 
       dispatch(
-        setDynamicContentNotificationCards(orderedNotificationsCards.filter(n => n.id !== item.id)),
+        setDynamicContentNotificationCards(notificationCards.filter(n => n.id !== item.id)),
       );
     },
-    [dispatch, logDismissCard, orderedNotificationsCards, trackContentCardEvent],
+    [dispatch, logDismissCard, notificationCards, trackContentCardEvent],
   );
 
   const onClickCard = useCallback(
@@ -200,7 +200,7 @@ export default function NotificationCenter() {
       }
     >
       <FlatList<NotificationContentCard>
-        data={orderedNotificationsCards}
+        data={notificationCards}
         keyExtractor={(card: NotificationContentCard) => card.id}
         renderItem={elem => ListItem(elem.item)}
         ItemSeparatorComponent={() => <Box height={1} width="100%" backgroundColor="neutral.c30" />}
