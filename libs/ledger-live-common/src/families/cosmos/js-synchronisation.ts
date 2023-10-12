@@ -15,14 +15,6 @@ import { getMainMessage } from "./helpers";
 import { parseAmountStringToNumber } from "./logic";
 
 const getBlankOperation = (tx: CosmosTx, fees: BigNumber, accountId: string): CosmosOperation => {
-  let transactionSequenceNumber: number;
-
-  try {
-    transactionSequenceNumber = parseInt(tx.tx.auth_info.signer_infos[0].sequence);
-  } catch (e) {
-    transactionSequenceNumber = 0;
-  }
-
   return {
     id: "",
     hash: tx.txhash,
@@ -36,7 +28,7 @@ const getBlankOperation = (tx: CosmosTx, fees: BigNumber, accountId: string): Co
     accountId,
     date: new Date(tx.timestamp),
     extra: {},
-    transactionSequenceNumber,
+    transactionSequenceNumber: parseInt(tx?.tx?.auth_info?.signer_infos[0]?.sequence || "0"),
   };
 };
 
@@ -48,9 +40,15 @@ const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): Co
     let fees = new BigNumber(0);
 
     if (tx.tx && tx.tx.auth_info && tx.tx.auth_info.fee && tx.tx.auth_info.fee.amount) {
-      tx.tx.auth_info.fee.amount.forEach(elem => {
-        if (elem.denom === unitCode) fees = fees.plus(elem.amount);
-      });
+      fees = tx.tx.auth_info.fee.amount.reduce(
+        (acc: BigNumber, curr: { denom: string; amount: string }) => {
+          if (curr.denom === unitCode) {
+            return acc.plus(curr.amount);
+          }
+          return acc;
+        },
+        new BigNumber(0),
+      );
     }
 
     const op: CosmosOperation = getBlankOperation(tx, fees, accountId);
