@@ -32,7 +32,7 @@ export default {
 
     if (arg.currency) {
       // Remapping to match arg format in libs/ledger-live-common/src/bot/cli.ts
-      arg.filter = { currencies: arg.currency };
+      arg.filter = { currencies: [arg.currency] };
       delete arg.currency;
     }
 
