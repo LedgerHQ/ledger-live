@@ -1445,8 +1445,8 @@ importers:
         specifier: ^4.14.198
         version: 4.14.198
       '@types/node':
-        specifier: 20.6.3
-        version: 20.6.3
+        specifier: 20.6.5
+        version: 20.6.5
       '@types/react':
         specifier: '>=18.2'
         version: 18.2.0
@@ -25475,10 +25475,6 @@ packages:
 
   /@types/node@20.5.7:
     resolution: {integrity: sha512-dP7f3LdZIysZnmvP3ANJYTSwg+wLLl8p7RqniVlV7j+oXSXAbt9h0WIBFmJy5inWZoX9wZN6eXx+YXd9Rh3RBA==}
-    dev: true
-
-  /@types/node@20.6.3:
-    resolution: {integrity: sha512-HksnYH4Ljr4VQgEy2lTStbCKv/P590tmPe5HqOnv9Gprffgv5WXAY+Y5Gqniu0GGqeTCUdBnzC3QSrzPkBkAMA==}
     dev: true
 
   /@types/node@20.6.5:
