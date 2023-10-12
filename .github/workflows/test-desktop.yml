@@ -245,7 +245,7 @@ jobs:
 
   e2e-tests-mac:
     name: "Desktop E2E (macOS X)"
-    runs-on: [m1, ARM64]
+    runs-on: [m1, ARM64, macos-latest]
     outputs:
       status: ${{ steps.tests.outcome }}
     env:

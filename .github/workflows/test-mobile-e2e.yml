@@ -32,7 +32,7 @@ concurrency:
 jobs:
   detox-tests-ios:
     name: "Ledger Live Mobile - iOS Detox Tests"
-    runs-on: [m1, ARM64]
+    runs-on: [m1, ARM64, macos-latest]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       LANG: en_US.UTF-8

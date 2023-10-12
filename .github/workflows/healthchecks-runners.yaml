@@ -217,7 +217,7 @@ jobs:
           ref: main
           token: ${{ github.token }}
   checks-macos:
-    runs-on: [m1, ARM64]
+    runs-on: [m1, ARM64, macos-latest]
     outputs:
       check-node: ${{ steps.check-node.outputs.result }}
       check-pnpm: ${{ steps.check-pnpm.outputs.result }}
