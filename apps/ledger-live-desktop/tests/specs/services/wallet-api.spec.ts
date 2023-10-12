@@ -7,19 +7,152 @@ import { Modal } from "../../models/Modal";
 import { DeviceAction } from "../../models/DeviceAction";
 import { randomUUID } from "crypto";
 import { LiveAppWebview } from "../../models/LiveAppWebview";
-import {
-  account_list as account_list_mock,
-  account_receive as account_receive_mock,
-  account_request as account_request_mock,
-  bitcoin_xPub as bitcoin_xPub_mock,
-  currency_list as currency_list_mock,
-  transaction_sign as transaction_sign_mock,
-  transaction_signAndBroadcast as transaction_signAndBroadcast_mock,
-  wallet_capabilities as wallet_capabilities_mock,
-  wallet_info as wallet_info_mock,
-  wallet_userId as wallet_userId_mock,
-} from "./mocks.wallet-api";
 import BigNumber from "bignumber.js";
+
+const methods = [
+  "account.request",
+  "account.receive",
+  "message.sign",
+  "storage.get",
+  "storage.set",
+  "transaction.sign",
+  "transaction.signAndBroadcast",
+  "device.transport",
+  "device.select",
+  "device.open",
+  "device.exchange",
+  "device.close",
+  "bitcoin.getXPub",
+  "exchange.start",
+  "exchange.complete",
+  "account.list",
+  "currency.list",
+  "wallet.capabilities",
+  "wallet.info",
+  "wallet.userId",
+];
+
+const account_list_mock = {
+  rawAccounts: [
+    {
+      id: "2d23ca2a-069e-579f-b13d-05bc706c7583",
+      name: "Bitcoin 1 (legacy)",
+      address: "1xeyL26EKAAR3pStd7wEveajk4MQcrYezeJ",
+      currency: "bitcoin",
+      balance: "35688397",
+      spendableBalance: "35688397",
+      blockHeight: 194870,
+    },
+    {
+      id: "3463fc5b-deb9-5b19-a27e-4554624f2090",
+      name: "Bitcoin 2 (legacy)",
+      address: "19qAJ5F2eH7CRPFfj5c94x22zFcXpa8rZ77",
+      currency: "bitcoin",
+      balance: "128092473",
+      spendableBalance: "128092473",
+      blockHeight: 124828,
+    },
+    {
+      id: "b60265f4-e52d-5800-9203-1609b9461654",
+      name: "Bitcoin 3 (legacy)",
+      address: "13x7TUzymwejUWQmoWusnYcdmC8RNMGG17f",
+      currency: "bitcoin",
+      balance: "0",
+      spendableBalance: "0",
+      blockHeight: 136277,
+    },
+    {
+      id: "e86e3bc1-49e1-53fd-a329-96ba6f1b06d3",
+      name: "Ethereum 1",
+      address: "0x6EB963EFD0FEF7A4CFAB6CE6F1421C3279D11707",
+      currency: "ethereum",
+      balance: "10135465432293584185",
+      spendableBalance: "10135465432293584185",
+      blockHeight: 122403,
+    },
+    {
+      id: "7c99915b-f186-5b44-82cc-fb21fa084292",
+      name: "Ethereum 1 (DAI)",
+      address: "0x6EB963EFD0FEF7A4CFAB6CE6F1421C3279D11707",
+      currency: "ethereum/erc20/dai_stablecoin_v2_0",
+      balance: "82865885",
+      spendableBalance: "82865885",
+      blockHeight: 122403,
+    },
+    {
+      id: "d9d1d396-2081-53e1-9c67-f0623e0c4d3a",
+      name: "Ethereum 2",
+      address: "0x046615F0862392BC5E6FB43C92AAD73DE158D235",
+      currency: "ethereum",
+      balance: "11310048568372696785",
+      spendableBalance: "11310048568372696785",
+      blockHeight: 168357,
+    },
+    {
+      id: "f5a525d7-1ec6-57ca-a26a-d34fc5158e84",
+      name: "Ethereum 2 (DAI)",
+      address: "0x046615F0862392BC5E6FB43C92AAD73DE158D235",
+      currency: "ethereum/erc20/dai_stablecoin_v2_0",
+      balance: "81381327",
+      spendableBalance: "81381327",
+      blockHeight: 168357,
+    },
+    {
+      id: "54b2563c-bd90-52c1-aca0-6099c701221f",
+      name: "Ethereum 2 (USDT)",
+      address: "0x046615F0862392BC5E6FB43C92AAD73DE158D235",
+      currency: "ethereum/erc20/usd_tether__erc20_",
+      balance: "84437760",
+      spendableBalance: "84437760",
+      blockHeight: 168357,
+    },
+    {
+      id: "80828eb7-49ca-54e8-8454-79c0e5557aec",
+      name: "Ethereum 2 (USDC)",
+      address: "0x046615F0862392BC5E6FB43C92AAD73DE158D235",
+      currency: "ethereum/erc20/usd__coin",
+      balance: "102966480",
+      spendableBalance: "102966480",
+      blockHeight: 168357,
+    },
+    {
+      id: "2f374bf7-948a-56b8-b967-fd6acd9e1f3d",
+      name: "Ethereum 3",
+      address: "0xE9CAF97C863A92EBB4D76FF37EE71C84D7E09723",
+      currency: "ethereum",
+      balance: "0",
+      spendableBalance: "0",
+      blockHeight: 181116,
+    },
+    {
+      id: "e9ee57d1-f29c-55ed-ad85-de9b6426ce45",
+      name: "Ethereum 3 (DAI)",
+      address: "0xE9CAF97C863A92EBB4D76FF37EE71C84D7E09723",
+      currency: "ethereum/erc20/dai_stablecoin_v2_0",
+      balance: "45480062",
+      spendableBalance: "45480062",
+      blockHeight: 181116,
+    },
+    {
+      id: "753b0907-3616-5350-bccb-2484cefb2bec",
+      name: "Ethereum 3 (USDT)",
+      address: "0xE9CAF97C863A92EBB4D76FF37EE71C84D7E09723",
+      currency: "ethereum/erc20/usd_tether__erc20_",
+      balance: "71817412",
+      spendableBalance: "71817412",
+      blockHeight: 181116,
+    },
+    {
+      id: "d53ce93d-61d1-5ae1-8258-85a03e47f096",
+      name: "Ethereum 3 (USDC)",
+      address: "0xE9CAF97C863A92EBB4D76FF37EE71C84D7E09723",
+      currency: "ethereum/erc20/usd__coin",
+      balance: "106621194",
+      spendableBalance: "106621194",
+      blockHeight: 181116,
+    },
+  ],
+};
 
 test.use({ userdata: "1AccountBTC1AccountETH" });
 
@@ -39,28 +172,7 @@ test.beforeAll(async () => {
         en: "App to test the Wallet API with Playwright",
       },
     },
-    permissions: [
-      "account.request",
-      "account.receive",
-      "message.sign",
-      "storage.get",
-      "storage.set",
-      "transaction.sign",
-      "transaction.signAndBroadcast",
-      "device.transport",
-      "device.select",
-      "device.open",
-      "device.exchange",
-      "device.close",
-      "bitcoin.getXPub",
-      "exchange.start",
-      "exchange.complete",
-      "account.list",
-      "currency.list",
-      "wallet.capabilities",
-      "wallet.info",
-      "wallet.userId",
-    ],
+    permissions: methods,
   });
 
   if (!testServerIsRunning) {
@@ -107,7 +219,21 @@ test("Wallet API methods @smoke", async ({ page }) => {
     await drawer.selectCurrency("bitcoin");
     await drawer.selectAccount("bitcoin");
 
-    await expect(response).resolves.toMatchObject({ id, ...account_request_mock });
+    await expect(response).resolves.toMatchObject({
+      id,
+      jsonrpc: "2.0",
+      result: {
+        rawAccount: {
+          id: "2d23ca2a-069e-579f-b13d-05bc706c7583",
+          address: "1xeyL26EKAAR3pStd7wEveajk4MQcrYezeJ",
+          balance: "35688397",
+          blockHeight: 194870,
+          currency: "bitcoin",
+          name: "Bitcoin 1 (legacy)",
+          spendableBalance: "35688397",
+        },
+      },
+    });
   });
 
   await test.step("account.receive", async () => {
@@ -123,7 +249,13 @@ test("Wallet API methods @smoke", async ({ page }) => {
 
     await deviceAction.openApp();
     await modal.waitForModalToDisappear();
-    await expect(response).resolves.toStrictEqual({ id, ...account_receive_mock });
+    await expect(response).resolves.toStrictEqual({
+      id,
+      jsonrpc: "2.0",
+      result: {
+        address: "1xeyL26EKAAR3pStd7wEveajk4MQcrYezeJ",
+      },
+    });
   });
 
   await test.step("account.list", async () => {
@@ -158,7 +290,13 @@ test("Wallet API methods @smoke", async ({ page }) => {
       },
     });
 
-    await expect(response).resolves.toStrictEqual({ id, ...bitcoin_xPub_mock });
+    await expect(response).resolves.toStrictEqual({
+      id,
+      jsonrpc: "2.0",
+      result: {
+        xPub: "D2C2B76D346B6EA64EB4F8C6E9995F81C39E0A2449CA1B3D87AF9D720ABD35C2",
+      },
+    });
   });
 
   await test.step("currency.list", async () => {
@@ -167,9 +305,45 @@ test("Wallet API methods @smoke", async ({ page }) => {
       jsonrpc: "2.0",
       id,
       method: "currency.list",
+      params: {
+        currencyIds: ["bitcoin", "ethereum", "ethereum/erc20/usd_tether__erc20_"],
+      },
     });
 
-    await expect(response).resolves.toStrictEqual({ id, ...currency_list_mock });
+    await expect(response).resolves.toMatchObject({
+      id,
+      currencies: [
+        {
+          type: "CryptoCurrency",
+          id: "ethereum",
+          ticker: "ETH",
+          name: "Ethereum",
+          family: "ethereum",
+          color: "#0ebdcd",
+          decimals: 18,
+        },
+        {
+          type: "CryptoCurrency",
+          id: "bitcoin",
+          ticker: "BTC",
+          name: "Bitcoin",
+          family: "bitcoin",
+          color: "#ffae35",
+          decimals: 8,
+        },
+        {
+          type: "TokenCurrency",
+          standard: "ERC20",
+          id: "ethereum/erc20/usd_tether__erc20_",
+          ticker: "USDT",
+          contract: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+          name: "Tether USD",
+          parent: "ethereum",
+          color: "#0ebdcd",
+          decimals: 6,
+        },
+      ],
+    });
   });
 
   await test.step("storage", async () => {
@@ -229,7 +403,8 @@ test("Wallet API methods @smoke", async ({ page }) => {
 
     await expect(response).resolves.toStrictEqual({
       id,
-      ...transaction_sign_mock,
+      jsonrpc: "2.0",
+      result: { signedTransactionHex: "" },
     });
   });
 
@@ -258,7 +433,10 @@ test("Wallet API methods @smoke", async ({ page }) => {
 
     await expect(response).resolves.toStrictEqual({
       id,
-      ...transaction_signAndBroadcast_mock,
+      jsonrpc: "2.0",
+      result: {
+        transactionHash: "32BEBB4660C4C328F7E130D0E1F45D5B2AFD9129B903E0F3B6EA52756329CD25",
+      },
     });
   });
 
@@ -273,7 +451,10 @@ test("Wallet API methods @smoke", async ({ page }) => {
 
     await expect(response).resolves.toStrictEqual({
       id,
-      ...wallet_capabilities_mock,
+      jsonrpc: "2.0",
+      result: {
+        methodIds: methods,
+      },
     });
   });
 
@@ -288,7 +469,8 @@ test("Wallet API methods @smoke", async ({ page }) => {
 
     await expect(response).resolves.toStrictEqual({
       id,
-      ...wallet_userId_mock,
+      jsonrpc: "2.0",
+      result: { userId: "08cf3393-c5eb-4ea7-92de-0deea22e3971" },
     });
   });
 
@@ -303,7 +485,11 @@ test("Wallet API methods @smoke", async ({ page }) => {
 
     await expect(response).resolves.toStrictEqual({
       id,
-      ...wallet_info_mock,
+      jsonrpc: "2.0",
+      result: {
+        tracking: true,
+        wallet: { name: "ledger-live-desktop", version: "2.66.1" },
+      },
     });
   });
 });

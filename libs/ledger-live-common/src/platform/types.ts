@@ -46,11 +46,6 @@ export type AppPlatform = "ios" | "android" | "desktop";
 export type AppBranch = "stable" | "experimental" | "soon" | "debug";
 export type Visibility = "complete" | "searchable" | "deep";
 
-export type AppPermission = {
-  method: string;
-  params?: any;
-};
-
 export type ParamsWithDappUrl = {
   dappUrl: string;
 };
