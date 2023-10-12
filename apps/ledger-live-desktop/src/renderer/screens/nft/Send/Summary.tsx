@@ -27,7 +27,7 @@ const Summary = ({ transaction }: Props) => {
   );
   const nft = useMemo(() => getNFT(contract, tokenId, allNfts), [allNfts, contract, tokenId]);
   const { status, metadata } = useNftMetadata(nft?.contract, nft?.tokenId, nft?.currencyId);
-  const { nftName } = status === "loaded" ? metadata : ({} as Record<string, unknown>);
+  const { nftName } = status === "loaded" ? metadata : ({} as Record<string, never>);
   const show = useMemo(() => status === "loading", [status]);
 
   /**
