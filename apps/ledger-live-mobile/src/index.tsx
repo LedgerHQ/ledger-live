@@ -84,6 +84,7 @@ import {
   useFetchCurrencyAll,
   useFetchCurrencyFrom,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import useUpdateUserPropertiesOnAccountsChange from "./hooks/useUpdateUserPropertiesOnAccountsChange";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -175,6 +176,7 @@ function App() {
     getChangesStats: getPostOnboardingStateChanged,
     lense: postOnboardingSelector,
   });
+  useUpdateUserPropertiesOnAccountsChange();
 
   return (
     <GestureHandlerRootView style={styles.root}>

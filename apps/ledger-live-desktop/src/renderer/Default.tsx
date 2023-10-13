@@ -70,6 +70,7 @@ import {
   useFetchCurrencyAll,
   useFetchCurrencyFrom,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import useUpdateUserPropertiesOnAccountsChange from "./hooks/useUpdateUserPropertiesOnAccountsChange";
 
 // in order to test sentry integration, we need the ability to test it out.
 const LetThisCrashForCrashTest = () => {
@@ -147,6 +148,7 @@ export default function Default() {
   const history = useHistory();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
 
+  useUpdateUserPropertiesOnAccountsChange();
   useListenToHidDevices();
   useDeeplink();
   useUSBTroubleshooting();
