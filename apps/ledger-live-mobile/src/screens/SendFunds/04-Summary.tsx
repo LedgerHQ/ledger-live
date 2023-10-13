@@ -142,15 +142,15 @@ function SendSummary({ navigation, route }: Props) {
     account.type === "Account" &&
     (account.subAccounts || []).some(subAccount => subAccount.balance.gt(0));
 
-  const onBuyEth = useCallback(() => {
+  const onBuy = useCallback(() => {
     navigation.navigate(NavigatorName.Exchange, {
       screen: ScreenName.ExchangeBuy,
       params: {
-        defaultAccountId: account?.id,
-        defaultCurrencyId: currencyOrToken?.id,
+        defaultAccountId: mainAccount.id,
+        defaultCurrencyId: mainAccount.currency.id,
       },
     });
-  }, [navigation, account?.id, currencyOrToken?.id]);
+  }, [navigation, mainAccount]);
 
   // FIXME: why is recipient sometimes empty?
   if (!account || !transaction || !transaction.recipient || !currencyOrToken) {
@@ -258,13 +258,23 @@ function SendSummary({ navigation, route }: Props) {
           <TranslatedError error={transactionError} />
         </LText>
         {error && error instanceof NotEnoughGas ? (
-          isCurrencySupported(currencyOrToken) && (
+          // If the user does not enough funds for gas, he needs to buy
+          // the main account currency (which is not necessarily ETH depending
+          // on the EVM network used)
+          isCurrencySupported(mainAccount.currency) && (
             <Button
               event="SummaryBuyEth"
               type="primary"
-              title={<Trans i18nKey="common.buyEth" />}
+              title={
+                <Trans
+                  i18nKey="buyCurrency.buyCTA"
+                  values={{
+                    currencyNameOrTicker: mainAccount.currency.name,
+                  }}
+                />
+              }
               containerStyle={styles.continueButton}
-              onPress={onBuyEth}
+              onPress={onBuy}
             />
           )
         ) : (
