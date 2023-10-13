@@ -50,11 +50,16 @@ jobs:
         with:
           ref: ${{ env.REFNAME }}
           base: ${{ inputs.base_ref }}
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
+        with:
+          install_dotnet: true
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
           skip_builds: true
-          install_dotnet: true
           aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
           aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: lint
@@ -84,6 +89,11 @@ jobs:
         with:
           ref: ${{ env.REFNAME }}
           base: ${{ inputs.base_ref }}
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
+        with:
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
@@ -106,6 +116,11 @@ jobs:
         with:
           ref: ${{ env.REFNAME }}
           base: ${{ inputs.base_ref }}
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
+        with:
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
@@ -133,16 +148,18 @@ jobs:
         with:
           ref: ${{ env.REFNAME }}
           base: ${{ inputs.base_ref }}
-      - uses: actions/setup-dotnet@v2
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
         with:
-          dotnet-version: 2.1.816
+          upgrade_npm: true
+          install_dotnet: true
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
           install_node_gyp: true
           install_playwright: true
-          upgrade_npm: true
-          install_dotnet: true
           aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
           aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: Run playwright tests
@@ -206,6 +223,11 @@ jobs:
         with:
           ref: ${{ env.REFNAME }}
           base: ${{ inputs.base_ref }}
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
+        with:
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
@@ -278,13 +300,18 @@ jobs:
         with:
           ref: ${{ env.REFNAME }}
           base: ${{ inputs.base_ref }}
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
+        with:
+          no_pnpm_cache: true
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
           skip_python: true
           skip_ruby: true
           install_playwright: true
-          pnpm_dest: ${{ runner.temp }}/setup-pnpm
           aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
           aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: Run playwright tests

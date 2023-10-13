@@ -1,14 +1,19 @@
 name: "Setup Toolchain"
 description: "Setup the toolchain for an action"
 inputs:
-  pnpm_dest:
-    description: "the location where to install pnpm"
-    required: false
   upgrade_npm:
     description: "should update npm (windows support)"
     required: false
   install_dotnet:
     description: "dotnet setup for Windows"
+  no_pnpm_cache:
+    description: should install without pnpm cache
+    required: false
+  aws-access-key:
+    description: "aws access key"
+    required: false
+  aws-secret-key:
+    description: "aws secret key"
     required: false
 
 runs:
@@ -20,24 +25,34 @@ runs:
       if: inputs.install_dotnet != ''
       with:
         dotnet-version: 2.1.816
+
     - uses: pnpm/action-setup@v2
-      if: inputs.pnpm_dest != ''
-      # if: ${{ runner.os == 'Windows' }}
       with:
-        version: 8.7
-        dest: ${{ inputs.pnpm_dest }}
-    - uses: pnpm/action-setup@v2
-      if: inputs.pnpm_dest == ''
-      # if: ${{ runner.os == 'Windows' }}
+        version: 8.8
+    - name: Get pnpm store directory
+      shell: bash
+      run: |
+        echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+    - name: Cache pnpm store
+      uses: tespkg/actions-cache@v1
+      if: inputs.no_pnpm_cache == '' && inputs.aws-access-key != '' && inputs.aws-secret-key != ''
       with:
-        version: 8.7
+        path: ${{ env.STORE_PATH }}
+        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-pnpm-store-
+        accessKey: ${{ inputs.aws-access-key }}
+        secretKey: ${{ inputs.aws-secret-key }}
+        bucket: ll-gha-s3-cache
+        region: eu-west-1
+        use-fallback: false
+
     - uses: actions/setup-node@v3
-      # if: ${{ runner.os == 'Windows' }}
       with:
         node-version: 18
-        cache: pnpm
-        cache-dependency-path: "**/pnpm-lock.yaml"
         registry-url: "https://registry.npmjs.org"
+
     - name: upgrade npm
       if: inputs.upgrade_npm == 'true'
       run: |

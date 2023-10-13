@@ -32,7 +32,7 @@ import { languageSelector } from "./src/reducers/settings";
 import { store } from "./src/context/LedgerStore";
 
 if (__DEV__) {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires, import/no-extraneous-dependencies
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   require("react-native-performance-flipper-reporter").setupDefaultFlipperReporter();
 }
 

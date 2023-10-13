@@ -6,6 +6,8 @@
     "postinstall": "zx ./scripts/post.mjs",
     "pod": "cd ios && bundle exec pod install --repo-update",
     "start": "react-native start",
+    "bundle:ios": "react-native bundle --entry-file index.js --bundle-output main.jsbundle",
+    "bundle:android": "react-native bundle --platform android --entry-file index.js --bundle-output main.jsbundle",
     "ios": "react-native run-ios",
     "android": "react-native run-android --appIdSuffix=debug --active-arch-only",
     "android:gradleClean": "cd android && ./gradlew clean",
@@ -192,7 +194,6 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@actions/core": "^1.5.0",
     "@babel/core": "^7.22.8",
     "@babel/plugin-proposal-export-namespace-from": "^7.18.9",
     "@babel/plugin-proposal-nullish-coalescing-operator": "^7.18.6",

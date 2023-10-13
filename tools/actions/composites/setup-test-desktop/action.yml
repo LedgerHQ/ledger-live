@@ -16,15 +16,6 @@ inputs:
   install_playwright:
     description: "install playwright"
     required: false
-  pnpm_dest:
-    description: "the location where to install pnpm"
-    required: false
-  upgrade_npm:
-    description: "should ugrade npm (windows support)"
-    required: false
-  install_dotnet:
-    description: "install dotnet on Windows"
-    required: false
   aws-access-key:
     description: "aws access key"
     required: false
@@ -35,16 +26,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Setup the toolchain
-      uses: ./tools/actions/composites/setup-toolchain
-      with:
-        pnpm_dest: ${{ inputs.pnpm_dest }}
-        upgrade_npm: ${{ inputs.upgrade_npm }}
-        install_dotnet: ${{ inputs.install_dotnet }}
-    - uses: actions/setup-python@v4
-      if: ${{ !inputs.skip_python }}
-      with:
-        python-version: "3.x"
     - uses: ruby/setup-ruby@v1
       if: ${{ !inputs.skip_ruby }}
       with:
