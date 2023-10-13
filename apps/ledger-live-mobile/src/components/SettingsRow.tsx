@@ -5,7 +5,7 @@ import { ChevronRightMedium, InfoMedium } from "@ledgerhq/native-ui/assets/icons
 import styled from "styled-components/native";
 import Touchable from "./Touchable";
 
-const StyledTouchableRowContainer = styled(Flex)<{
+const StyledRowContainer = styled(Flex)<{
   compact?: boolean;
   hasBorderTop?: boolean;
 }>`
@@ -105,7 +105,7 @@ export default function SettingsRow({
   }
 
   return (
-    <StyledTouchableRowContainer hasBorderTop={hasBorderTop} compact={compact}>
+    <StyledRowContainer hasBorderTop={hasBorderTop} compact={compact}>
       <StyledTouchableRow
         onPress={onPress}
         onLongPress={onLongPress}
@@ -149,6 +149,6 @@ export default function SettingsRow({
           ) : null}
         </Box>
       </StyledTouchableRow>
-    </StyledTouchableRowContainer>
+    </StyledRowContainer>
   );
 }

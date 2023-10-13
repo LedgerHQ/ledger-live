@@ -36,8 +36,6 @@ export default function BiometricsRow({ iconLeft }: Props) {
 
   const onValueChange = useCallback(
     async (biometricsEnabled: boolean) => {
-      console.error(validationPending);
-
       // Add onClick Analytics
       track("toggle_clicked", {
         toggle: "biometrics", // Moyen de chopper la key non traduite ?
