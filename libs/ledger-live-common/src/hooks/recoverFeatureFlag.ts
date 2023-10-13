@@ -43,10 +43,37 @@ export function useLearnMoreURI(
   return useReplacedURI(uri, id);
 }
 
+export function useQuickAccessURI(
+  servicesConfig: Feature_ProtectServicesMobile | null,
+): string | undefined {
+  const uri = servicesConfig?.params?.managerStatesData?.NEW?.quickAccessURI;
+  const id = servicesConfig?.params?.protectId;
+
+  return useReplacedURI(uri, id);
+}
+
+export function useAlreadyOnboardedURI(
+  servicesConfig: Feature_ProtectServicesMobile | null,
+): string | undefined {
+  const uri = servicesConfig?.params?.managerStatesData?.NEW?.alreadyOnboardedURI;
+  const id = servicesConfig?.params?.protectId;
+
+  return useReplacedURI(uri, id);
+}
+
 export function useAlreadySubscribedURI(
   servicesConfig: Feature_ProtectServicesMobile | null,
 ): string | undefined {
   const uri = servicesConfig?.params?.managerStatesData?.NEW?.alreadySubscribedURI;
+  const id = servicesConfig?.params?.protectId;
+
+  return useReplacedURI(uri, id);
+}
+
+export function useHomeURI(
+  servicesConfig: Feature_ProtectServicesMobile | null,
+): string | undefined {
+  const uri = servicesConfig?.params?.account?.homeURI;
   const id = servicesConfig?.params?.protectId;
 
   return useReplacedURI(uri, id);
@@ -70,7 +97,7 @@ export function useUpsellPath(
 }
 
 export function useLoginURI(
-  servicesConfig: Feature_ProtectServicesDesktop | null,
+  servicesConfig: Feature_ProtectServicesMobile | Feature_ProtectServicesDesktop | null,
 ): string | undefined {
   const uri = servicesConfig?.params?.account?.loginURI;
   const id = servicesConfig?.params?.protectId;

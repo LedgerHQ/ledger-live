@@ -3405,6 +3405,11 @@
     "walletConnect": {
       "title": "WalletConnect",
       "description": "Connect your wallet to dapps"
+    },
+    "recover": {
+      "title": "Ledger Recover",
+      "description": "Wallet recovery made easy",
+      "tag": "One month free"
     }
   },
   "signMessage": {
@@ -6371,6 +6376,12 @@
   "servicesWidget": {
     "title": "Services",
     "subTitle": "Manage your Ledger services",
+    "signIn": "Sign in",
+    "recover": {
+      "cta": "Start your free trial",
+      "desc": "Stop worrying about getting locked out of your own wallet.",
+      "tag": "1 month free"
+    },
     "protect": {
       "status": {
         "new": {
