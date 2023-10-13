@@ -3,7 +3,6 @@ import { useLoginURI, useLearnMoreURI } from "@ledgerhq/live-common/hooks/recove
 import { useMemo } from "react";
 import { Linking } from "react-native";
 import { track } from "../../../analytics";
-import { urls } from "../../../config/urls";
 
 export function useProtect() {
   const servicesConfig = useFeature("protectServicesMobile");
