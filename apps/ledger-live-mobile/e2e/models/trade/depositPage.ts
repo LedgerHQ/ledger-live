@@ -1,21 +1,25 @@
-import { expect, element, by } from "detox";
 import {
+  currencyParam,
   getElementById,
-  tapById,
   getElementByText,
-  waitForElementById,
-  typeTextByElement,
-  tapByText,
+  getTextOfElement,
+  openDeeplink,
   tapByElement,
-  waitForElementByText,
-} from "../helpers";
+  tapById,
+  waitForElementById,
+} from "../../helpers";
+import { by, element, expect } from "detox";
+import jestExpect from "expect";
 
-export default class depositPage {
-  searchBar = () => getElementById("common-search-field");
+const baseLink = "receive";
+
+export default class DepositPage {
+  noVerifyAddressButton = "button-DontVerify-my-address";
+  noVerifyValidateButton = "button-confirm-dont-verify";
+  accountAddress = "receive-fresh-address";
+  accountFreshAddressTitle = "receive-verifyAddress-title";
+  accountFreshAddress = "receive-verifyAddress-freshAdress";
   buttonVerifyAddressId = "button-verify-my-address";
-  buttonVerifyAddress = () => getElementById(this.buttonVerifyAddressId);
-  buttonDontVerifyAddressId = "button-DontVerify-my-address";
-  buttonDontVerifyAddress = () => getElementById(this.buttonDontVerifyAddressId);
   currencyRowSearchPageId = "test-id-account-";
   currencyRowInNetworkListId = "big-currency-row-";
   subtitleRowInNetworkListId = "subtitle-row-";
@@ -24,39 +28,51 @@ export default class depositPage {
   buttonCreateAccount = () => getElementById(this.buttonCreateAccountId);
   buttonContinueId = "add-accounts-continue-button";
   buttonContinue = () => getElementById(this.buttonContinueId);
-  depositStep2TitleId = "receive-header-step2-title";
-  depositStep2Title = () => getElementById(this.depositStep2TitleId);
-  buttonConfirmDontVerifyAddressId = "button-confirm-dont-verify";
-  buttonConfirmDontVerifyAddress = () => getElementById(this.buttonConfirmDontVerifyAddressId);
+  step1HeaderTitle = () => getElementById("receive-header-step1-title");
+  step2HeaderTitleId = "receive-header-step2-title";
+  step2HeaderTitle = () => getElementById(this.step2HeaderTitleId);
   titleDepositConfirmationPageId = "deposit-confirmation-title-";
   accountNameDepositId = "deposit-account-name-";
-  searchFieldId = "common-search-field";
 
-  async searchAsset(asset: string) {
-    await waitForElementById(this.searchFieldId);
-    return typeTextByElement(this.searchBar(), asset);
+  step2Accounts = () => getElementById("receive-header-step2-accounts");
+  step2Networks = () => getElementById("receive-header-step2-networks");
+
+  openViaDeeplink() {
+    return openDeeplink(baseLink);
   }
 
-  async selectAsset(asset: string) {
-    await waitForElementByText(asset);
-    return tapByText(asset);
+  async receiveViaDeeplink(currencyLong?: string) {
+    const link = currencyLong ? baseLink + currencyParam + currencyLong : baseLink;
+
+    await openDeeplink(link);
+  }
+
+  async selectCurrency(currencyId: string) {
+    const id = this.currencyRowInNetworkListId + currencyId;
+    await waitForElementById(id);
+    await tapById(id);
+  }
+
+  async selectAsset(assetId: string) {
+    const id = this.subtitleRowInNetworkListId + assetId;
+    await waitForElementById(id);
+    return tapById(id);
   }
 
   async selectAccount(account: string) {
     const CurrencyRowId = this.currencyRowSearchPageId + account;
     await waitForElementById(CurrencyRowId);
-    return tapById(CurrencyRowId);
+    await tapById(CurrencyRowId);
   }
 
   async selectVerifyAddress() {
     await waitForElementById(this.buttonVerifyAddressId);
-    return tapByElement(this.buttonVerifyAddress());
+    await tapById(this.buttonVerifyAddressId);
   }
 
   async expectAddressIsVerified(address: string) {
-    await waitForElementByText(address);
-    await expect(getElementByText(address)).toBeVisible();
-    await expect(getElementByText("Verify address")).toBeVisible();
+    await waitForElementById(this.accountFreshAddressTitle);
+    jestExpect(await getTextOfElement(this.accountFreshAddress)).toEqual(address);
   }
 
   async expectNumberOfAccountInListIsDisplayed(currencyName: string, accountNumber: number) {
@@ -78,28 +94,28 @@ export default class depositPage {
 
   async createAccount() {
     await waitForElementById(this.buttonCreateAccountId);
-    return tapByElement(this.buttonCreateAccount());
+    return tapById(this.buttonCreateAccountId);
   }
 
   async continueCreateAccount() {
     await waitForElementById(this.buttonContinueId);
-    return tapByElement(this.buttonContinue());
+    return tapById(this.buttonContinueId);
   }
 
   async expectAccountIsCreated(accountName: string) {
-    await waitForElementById(this.depositStep2TitleId);
-    await expect(this.depositStep2Title()).toBeVisible();
+    await waitForElementById(this.step2HeaderTitleId);
+    await expect(this.step2HeaderTitle()).toBeVisible();
     await expect(getElementByText(accountName)).toBeVisible();
   }
 
   async selectDontVerifyAddress() {
-    await waitForElementById(this.buttonDontVerifyAddressId);
-    return tapByElement(this.buttonDontVerifyAddress());
+    await waitForElementById(this.noVerifyAddressButton);
+    return tapById(this.noVerifyAddressButton);
   }
 
   async selectReconfirmDontVerify() {
-    await waitForElementById(this.buttonConfirmDontVerifyAddressId);
-    return tapByElement(this.buttonConfirmDontVerifyAddress());
+    await waitForElementById(this.noVerifyValidateButton);
+    return tapById(this.noVerifyValidateButton);
   }
 
   async expectDepositPageIsDisplayed(tickerName: string, accountName: string) {

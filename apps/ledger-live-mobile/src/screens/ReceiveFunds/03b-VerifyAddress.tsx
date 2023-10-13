@@ -174,14 +174,14 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
       ) : (
         <Flex flex={1} alignItems="center" justifyContent="center" p={6}>
           <TrackScreen category="Deposit" name="Verify Address" />
-          <LText variant="h4" textAlign="center" mb={6}>
+          <LText variant="h4" textAlign="center" mb={6} testID={"receive-verifyAddress-title"}>
             {t("transfer.receive.verifyAddress.title")}
           </LText>
           <LText variant="body" color="neutral.c70" textAlign="center">
             {t("transfer.receive.verifyAddress.subtitle")}
           </LText>
           <Flex mt={10} bg={"neutral.c30"} borderRadius={8} p={6} mx={6}>
-            <LText semiBold textAlign="center">
+            <LText semiBold textAlign="center" testID={"receive-verifyAddress-freshAdress"}>
               {mainAccount.freshAddress}
             </LText>
           </Flex>

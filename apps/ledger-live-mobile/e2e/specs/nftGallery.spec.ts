@@ -4,14 +4,14 @@ import WalletTabNavigatorPage from "../models/wallet/walletTabNavigator";
 import NftViewerPage from "../models/nft/nftViewerPage";
 import NftGalleryPage from "../models/wallet/nftGalleryPage";
 import { tapByElement, tapByText } from "../helpers";
-import ReceivePage from "../models/trade/receivePage";
+import DepositPage from "../models/trade/depositPage";
 import { loadConfig } from "../bridge/server";
 
 let portfolioPage: PortfolioPage;
 let walletTabNavigatorPage: WalletTabNavigatorPage;
 let nftGalleryPage: NftGalleryPage;
 let nftViewerPage: NftViewerPage;
-let receivePage: ReceivePage;
+let depositPage: DepositPage;
 
 describe("NFT Gallery screen", () => {
   beforeAll(async () => {
@@ -21,7 +21,7 @@ describe("NFT Gallery screen", () => {
     walletTabNavigatorPage = new WalletTabNavigatorPage();
     nftGalleryPage = new NftGalleryPage();
     nftViewerPage = new NftViewerPage();
-    receivePage = new ReceivePage();
+    depositPage = new DepositPage();
 
     await portfolioPage.waitForPortfolioPageToLoad();
     await nftGalleryPage.openViaDeeplink();
@@ -64,14 +64,14 @@ describe("NFT Gallery screen", () => {
   });
 
   it("should let you pick a crypto account to receive NFT", async () => {
-    await expect(receivePage.getStep1HeaderTitle()).not.toBeVisible();
+    await expect(depositPage.step1HeaderTitle()).not.toBeVisible();
     await nftGalleryPage.continueFromReceiveNFTsModal();
-    await expect(receivePage.getStep1HeaderTitle()).toBeVisible();
-    await expect(receivePage.getStep2HeaderTitle()).not.toExist();
+    await expect(depositPage.step1HeaderTitle()).toBeVisible();
+    await expect(depositPage.step2HeaderTitle()).not.toExist();
     await tapByText("Ethereum");
-    await expect(receivePage.getStep2HeaderTitle()).toBeVisible();
+    await expect(depositPage.step2HeaderTitle()).toBeVisible();
     await tapByText("Ethereum");
-    await expect(receivePage.getStep2Accounts()).toBeVisible();
+    await expect(depositPage.step2Accounts()).toBeVisible();
   });
 
   it("should let users hide NFT's", async () => {

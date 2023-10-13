@@ -8,11 +8,12 @@ import ManagerPage from "../models/manager/managerPage";
 import PortfolioPage from "../models/wallet/portfolioPage";
 import SendPage from "../models/trade/sendPage";
 import SwapFormPage from "../models/trade/swapFormPage";
-import ReceivePage from "../models/trade/receivePage";
+import DepositPage from "../models/trade/depositPage";
 import OnboardingSteps from "../models/onboarding/onboardingSteps";
-import AccountAssetPage from "../models/accounts/accountAssetPage";
+import AccountPage from "../models/accounts/accountPage";
+import Common from "../models/common";
 
-let accountAssetPage: AccountAssetPage;
+let accountPage: AccountPage;
 let onboardingSteps: OnboardingSteps;
 let customLockscreenPage: CustomLockscreenPage;
 let discoverPage: DiscoverPage;
@@ -20,7 +21,8 @@ let managerPage: ManagerPage;
 let portfolioPage: PortfolioPage;
 let sendPage: SendPage;
 let swapFormPage: SwapFormPage;
-let receivePage: ReceivePage;
+let depositPage: DepositPage;
+let common: Common;
 
 const ethereumLong = "Ethereum";
 const bitcoinLong = "Bitcoin";
@@ -56,8 +58,7 @@ describe("DeepLinks Tests", () => {
   beforeAll(async () => {
     loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
 
-    // accountPage = new AccountPage();
-    accountAssetPage = new AccountAssetPage();
+    accountPage = new AccountPage();
     onboardingSteps = new OnboardingSteps();
     customLockscreenPage = new CustomLockscreenPage();
     discoverPage = new DiscoverPage();
@@ -65,7 +66,8 @@ describe("DeepLinks Tests", () => {
     portfolioPage = new PortfolioPage();
     sendPage = new SendPage();
     swapFormPage = new SwapFormPage();
-    receivePage = new ReceivePage();
+    depositPage = new DepositPage();
+    common = new Common();
   });
 
   it("should open on Portofolio page", async () => {
@@ -78,16 +80,19 @@ describe("DeepLinks Tests", () => {
     await onboardingSteps.addDeviceViaBluetooth("David");
   });
 
+  it("should open Account page", async () => {
+    await accountPage.openViaDeeplink();
+    await accountPage.waitForAccountsPageToLoad();
+  });
+
   it("should open ETH Account Asset page when given currency param", async () => {
-    await accountAssetPage.openAssetScreenViaDeeplink(ethereumLong);
-    await accountAssetPage.waitForAccountAssetsToLoad(ethereumLong);
-    await expect(getElementByText("Your Ethereum")).toBeVisible();
+    await accountPage.openViaDeeplink(ethereumLong);
+    await accountPage.waitForAccountAssetsToLoad(ethereumLong);
   });
 
   it("should open BTC Account Asset page when given currency param", async () => {
-    await accountAssetPage.openAssetScreenViaDeeplink(bitcoinLong);
-    // await accountAssetPage.waitForAccountAssetsToLoad(bitcoinLong); // FIXME: times out - unclear why
-    await expect(getElementByText("Your Bitcoin")).toBeVisible();
+    await accountPage.openViaDeeplink(bitcoinLong);
+    await accountPage.waitForAccountAssetsToLoad(bitcoinLong);
   });
 
   it("should open Custom Lock Screen page", async () => {
@@ -124,16 +129,16 @@ describe("DeepLinks Tests", () => {
     await portfolioPage.openViaDeeplink();
     await sendPage.sendViaDeeplink(ethereumLong);
     await expect(sendPage.getStep1HeaderTitle()).toBeVisible();
-    await expect(sendPage.getSearchField()).toHaveText(ethereumLong);
+    await expect(common.searchBar()).toHaveText(ethereumLong);
   });
 
   it("should open Receive pages", async () => {
-    await receivePage.openViaDeeplink();
-    await expect(receivePage.getStep1HeaderTitle()).toBeVisible();
+    await depositPage.openViaDeeplink();
+    await expect(depositPage.step1HeaderTitle()).toBeVisible();
     await portfolioPage.openViaDeeplink();
-    await receivePage.receiveViaDeeplink(ethereumLong);
-    await expect(receivePage.getStep2HeaderTitle()).toBeVisible();
-    await expect(receivePage.getStep2Networks()).toBeVisible();
+    await depositPage.receiveViaDeeplink(ethereumLong);
+    await expect(depositPage.step2HeaderTitle()).toBeVisible();
+    await expect(depositPage.step2Networks()).toBeVisible();
     await expect(getElementByText(ethereumLong)).toBeVisible();
     await expect(getElementByText(arbitrumLong)).toBeVisible();
     await expect(getElementByText(bobaLong)).toBeVisible();

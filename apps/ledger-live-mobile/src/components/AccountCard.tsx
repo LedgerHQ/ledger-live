@@ -44,7 +44,12 @@ const AccountCard = ({
     account?.derivationMode !== null &&
     currency.type === "CryptoCurrency" &&
     getTagDerivationMode(currency, account.derivationMode as DerivationMode);
-
+  const name =
+    account.type === "TokenAccount"
+      ? parentAccount
+        ? `${parentAccount!.name} (${currency.ticker})`
+        : currency.ticker
+      : account.name;
   return (
     <TouchableOpacity disabled={disabled} onPress={onPress} testID={"account-card-" + account.id}>
       <Card
@@ -70,13 +75,9 @@ const AccountCard = ({
               numberOfLines={1}
               color={disabled ? "neutral.c50" : "neutral.c100"}
               flexShrink={1}
-              testID={"test-id-account-" + account.name}
+              testID={"test-id-account-" + name}
             >
-              {account.type === "TokenAccount"
-                ? parentAccount
-                  ? `${parentAccount!.name} (${currency.ticker})`
-                  : currency.ticker
-                : account.name}
+              {name}
             </Text>
             {AccountSubTitle}
 
