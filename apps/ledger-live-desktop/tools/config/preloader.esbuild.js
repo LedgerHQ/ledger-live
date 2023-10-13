@@ -7,6 +7,6 @@ module.exports = {
   entryNames: "preloader.bundle",
   platform: "node",
   format: "cjs",
-  target: ["chrome91"],
+  target: ["chrome114"],
   external: [...electronPreloaderExternals],
 };

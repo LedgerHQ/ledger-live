@@ -13,6 +13,7 @@ module.exports = {
   nodePaths: ["node_modules", path.resolve(rootFolder, "node_modules")],
   sourcemap: true,
   minify: true,
+  treeShaking: true,
   color: true,
   metafile: true,
   plugins: [
