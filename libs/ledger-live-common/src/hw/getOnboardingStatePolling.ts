@@ -1,5 +1,5 @@
-import { from, of, throwError, Observable, TimeoutError } from "rxjs";
-import { map, catchError, first, timeout, repeatWhen, delay } from "rxjs/operators";
+import { from, of, throwError, Observable, TimeoutError, timer, SchedulerLike } from "rxjs";
+import { map, catchError, first, timeout, repeat } from "rxjs/operators";
 import getVersion from "./getVersion";
 import { withDevice } from "./deviceAccess";
 import {
@@ -29,6 +29,7 @@ export type GetOnboardingStatePollingArgs = {
   pollingPeriodMs: number;
   transportAbortTimeoutMs?: number;
   safeGuardTimeoutMs?: number;
+  rxjsScheduler?: SchedulerLike;
 };
 
 /**
@@ -123,7 +124,9 @@ export const getOnboardingStatePolling = ({
   };
 
   return getOnboardingStateOnce().pipe(
-    repeatWhen(completed => completed.pipe(delay(pollingPeriodMs))),
+    repeat({
+      delay: _count => timer(pollingPeriodMs),
+    }),
   );
 };
 
