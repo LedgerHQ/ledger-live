@@ -264,7 +264,7 @@ export function convertERC20([
   };
 }
 
-function convertBEP20([
+export function convertBEP20([
   parentCurrencyId,
   token,
   ticker,
