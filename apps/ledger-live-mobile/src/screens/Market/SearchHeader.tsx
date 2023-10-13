@@ -16,22 +16,20 @@ function SearchHeader({ search, refresh }: Props) {
   const { t } = useTranslation();
 
   useEffect(() => {
-    if (debouncedSearch !== search) {
-      track("Page Market Query", {
-        currencyName: debouncedSearch,
-      });
-      refresh({
-        search: debouncedSearch ? debouncedSearch.trim() : "",
-        starred: [],
-        liveCompatible: false,
-        limit: 20,
-      });
-    }
-  }, [debouncedSearch, refresh, search]);
+    track("Page Market Query", {
+      currencyName: debouncedSearch,
+    });
+    refresh({
+      search: debouncedSearch ? debouncedSearch.trim() : "",
+      starred: [],
+      liveCompatible: false,
+      limit: 20,
+    });
+  }, [debouncedSearch, refresh]);
 
   useEffect(() => {
     setInputSearch(search);
-  }, [setInputSearch, search]);
+  }, [search]);
 
   return (
     <SearchInput
