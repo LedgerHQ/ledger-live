@@ -97,7 +97,7 @@ export function useUpsellPath(
 }
 
 export function useLoginURI(
-  servicesConfig: Feature_ProtectServicesDesktop | null,
+  servicesConfig: Feature_ProtectServicesMobile | Feature_ProtectServicesDesktop | null,
 ): string | undefined {
   const uri = servicesConfig?.params?.account?.loginURI;
   const id = servicesConfig?.params?.protectId;
