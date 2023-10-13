@@ -49,7 +49,7 @@ describe("Check SWAP until payload signature", () => {
     const estimatedFees = new BigNumber(0);
     await exchange.processTransaction(encodedPayload, estimatedFees);
 
-    const payloadSignature = await signMessage(encodedPayload, partnerPrivKey);
+    const payloadSignature = await signMessage(encodedPayload, partnerPrivKey, "der");
     await exchange.checkTransactionSignature(payloadSignature);
   });
 
@@ -62,7 +62,7 @@ describe("Check SWAP until payload signature", () => {
 
     // Then
     expect(transactionId).toEqual(expect.any(String));
-    expect(transactionId).toHaveLength(10);
+    expect(transactionId).toHaveLength(64);
 
     const { partnerInfo, partnerSigned, partnerPrivKey } = await appExchangeDatasetTest(
       ngSignFormat,
@@ -73,22 +73,24 @@ describe("Check SWAP until payload signature", () => {
 
     const amount = new BigNumber(100000);
     const amountToWallet = new BigNumber(1000);
-    const encodedPayload = await generatePayloadProtobuf({
+    let encodedPayload = await generatePayloadProtobuf({
       payinAddress: "0xd692Cb1346262F584D17B4B470954501f6715a82",
       refundAddress: "0xDad77910DbDFdE764fC21FCD4E74D71bBACA6D8D",
-      payoutAddress: "bc1qer57ma0fzhqys2cmydhuj9cprf9eg0nw922a8j",
+      // payoutAddress: "bc1qer57ma0fzhqys2cmydhuj9cprf9eg0nw922a8j",
+      payoutAddress: "bc1qer",
       currencyFrom: "ETH",
       currencyTo: "BTC",
       amountToProvider: Buffer.from(amount.toString(16), "hex"),
       amountToWallet: Buffer.from(amountToWallet.toString(16), "hex"),
-      deviceTransactionId: transactionId,
-      // deviceTransactionIdNg: Buffer.from(transactionId),
+      // deviceTransactionId: transactionId,
+      deviceTransactionIdNg: Buffer.from(transactionId.padStart(32, "0"), "hex"),
     });
+    encodedPayload = convertToBase64URL(encodedPayload);
 
     const estimatedFees = new BigNumber(0);
-    await exchange.processTransaction(convertToBase64URL(encodedPayload), estimatedFees, "jws");
+    await exchange.processTransaction(encodedPayload, estimatedFees, "jws");
 
-    const payloadSignature = await signMessage(encodedPayload, partnerPrivKey);
+    const payloadSignature = await signMessage(encodedPayload, partnerPrivKey, "rs");
     await exchange.checkTransactionSignature(payloadSignature);
   });
 });
@@ -133,7 +135,7 @@ async function appExchangeDatasetTest(signFormat: PartnerSignFormat) {
   };
   const msg = signFormat(partnerInfo);
 
-  const sig = await signMessage(msg, LEDGER_FAKE_PRIVATE_KEY);
+  const sig = await signMessage(msg, LEDGER_FAKE_PRIVATE_KEY, "der");
 
   return {
     partnerInfo,
@@ -142,7 +144,7 @@ async function appExchangeDatasetTest(signFormat: PartnerSignFormat) {
   };
 }
 
-type Payload = {
+type PayloadCore = {
   payinAddress: string;
   refundAddress: string;
   payoutAddress: string;
@@ -150,9 +152,14 @@ type Payload = {
   currencyTo: string;
   amountToProvider: Buffer;
   amountToWallet: Buffer;
-  deviceTransactionId: string;
+};
+type PayloadLegacy = PayloadCore & {
+  deviceTransactionId?: string;
+};
+type PayloadNg = PayloadCore & {
   deviceTransactionIdNg?: Buffer;
 };
+type Payload = PayloadLegacy | PayloadNg;
 async function generatePayloadProtobuf(payload: Payload): Promise<Buffer> {
   const root = await protobuf.load("protocol.proto");
   const TransactionResponse = root.lookupType("ledger_swap.NewTransactionResponse");
@@ -162,25 +169,41 @@ async function generatePayloadProtobuf(payload: Payload): Promise<Buffer> {
   }
   const message = TransactionResponse.create(payload);
   const messageEncoded = TransactionResponse.encode(message).finish();
+
+  // Check encoding
+  const truc = TransactionResponse.decode(messageEncoded).toJSON();
+  console.log(truc);
+
   return Buffer.from(messageEncoded);
 }
 
+type SigFormat = "der" | "rs";
 /**
  * Sign message in ECDSA-SHA256 with secp256k1 curve.
  * @returns A DER format signature
  */
-async function signMessage(message: Buffer, privKey: Buffer): Promise<Buffer> {
+async function signMessage(
+  message: Buffer,
+  privKey: Buffer,
+  sigFormat: SigFormat,
+): Promise<Buffer> {
   const hashBuffer = await subtle.digest("SHA-256", message);
   const hash = new Uint8Array(hashBuffer);
 
   const sig = secp256k1.ecdsaSign(hash, privKey).signature;
-  return convertSignatureToDER(sig);
+  if (sigFormat === "der") {
+    return convertSignatureToDER(sig);
+  }
+  return sig;
 }
 
 function convertSignatureToDER(sig: Uint8Array): Buffer {
   return secp256k1.signatureExport(sig);
 }
 
+/**
+ * Convert raw buffer to a JWS compatible one: '.'+base64Url(raw)
+ */
 function convertToBase64URL(raw: Buffer): Buffer {
-  return Buffer.from("." + raw.toString("base64"));
+  return Buffer.from("."+raw.toString("base64url"));
 }

@@ -137,14 +137,15 @@ export default class Exchange {
     );
     maybeThrowProtocolError(result);
 
-    if (
-      this.transactionType === ExchangeTypes.Sell ||
-      this.transactionType === ExchangeTypes.Fund
-    ) {
-      return result.slice(0, 32).toString("base64");
+    switch (this.transactionType) {
+      case ExchangeTypes.Sell:
+      case ExchangeTypes.Fund:
+        return result.slice(0, 32).toString("base64");
+      case ExchangeTypes.Swap:
+        return result.toString("ascii", 0, 10);
+      default:
+        return result.subarray(0, 32).toString("hex");
     }
-
-    return result.toString("ascii", 0, 10);
   }
 
   async setPartnerKey(info: PartnerKeyInfo): Promise<void> {
@@ -181,17 +182,64 @@ export default class Exchange {
     hex = hex.padStart(hex.length + (hex.length % 2), "0");
     const feeHex = Buffer.from(hex, "hex");
 
+    const P2None = 0x00 << 4;
+    const P2Extend = 0x01 << 4;
+    const P2More = 0x02 << 4;
+
     let bufferToSend: Buffer;
     if (this.isExchangeTypeNg()) {
       const encodedFormat =
         compFormat === "jws" ? transactionEncodedFormat.base64 : transactionEncodedFormat.raw;
+
+      if (encodedFormat === transactionEncodedFormat.base64) {
+        transaction = transaction.subarray(1);
+      }
+
       bufferToSend = Buffer.concat([
         Buffer.from([encodedFormat]),
-        Buffer.from([0x00, transaction.length]),
+        Buffer.from([(transaction.length >> 8) % 256, transaction.length % 256]),
         transaction,
         Buffer.from([feeHex.length]),
         feeHex,
       ]);
+
+      if (bufferToSend.length >= 256) {
+        console.log("OVERSIZED");
+        const dataLength = bufferToSend.length;
+
+        for (let i = 0; i < Math.floor(dataLength / 256); i++) {
+          const start = 255 * i;
+          const end = start + 255;
+          const data = bufferToSend.subarray(start, end);
+
+          const extFlag = i == 0 ? P2More : P2More << P2Extend;
+
+          console.log("SEND SIZE:", data.length);
+
+          await this.transport.send(
+            0xe0,
+            PROCESS_TRANSACTION_RESPONSE,
+            this.transactionRate,
+            this.transactionType | extFlag,
+            data,
+            this.allowedStatuses,
+          );
+        }
+
+        console.log("TERMINAL SEND");
+
+        const result: Buffer = await this.transport.send(
+          0xe0,
+          PROCESS_TRANSACTION_RESPONSE,
+          this.transactionRate,
+          this.transactionType | P2Extend,
+          bufferToSend.subarray(dataLength - (dataLength % 255), dataLength),
+          this.allowedStatuses,
+        );
+
+        maybeThrowProtocolError(result);
+        return;
+      }
     } else {
       bufferToSend = Buffer.concat([
         Buffer.from([transaction.length]),
@@ -204,7 +252,7 @@ export default class Exchange {
       0xe0,
       PROCESS_TRANSACTION_RESPONSE,
       this.transactionRate,
-      this.transactionType,
+      this.transactionType | P2None,
       bufferToSend,
       this.allowedStatuses,
     );

@@ -157,16 +157,58 @@ describe("processTransaction", () => {
     const tx = Buffer.from("1234567890abcdef", "hex");
     const fee = new BigNumber("10");
     // <OVERALL_LENGTH><ENC_TX_FORMAT><TX_LENGTH><TX><FEE_LENGTH><FEE>
-    const hexEncodedInfoExpected = "0c01081234567890abcdef010a";
+    const hexEncodedInfoExpected = "0d" + "00" + "0008" + "1234567890abcdef" + "01" + "0a";
 
     // When
-    await exchange.processTransaction(tx, fee, "jws");
+    await exchange.processTransaction(tx, fee, "raw");
 
     // Then
     const expectCommand = Buffer.from([0xe0, 0x06, RateTypes.Fixed, ExchangeTypes.SwapNg]).toString(
       "hex",
     );
     expect(recordStore.queue[0][0]).toBe(expectCommand + hexEncodedInfoExpected);
+  });
+
+  it("sends NG info of larger than 255 bytes", async () => {
+    // Given
+    const recordStore = new RecordStore();
+    const mockTransport = new MockTransport(Buffer.from([0, 0x90, 0x00]));
+    const transport = createTransportRecorder(mockTransport, recordStore);
+    const exchange = createExchange(new transport(mockTransport), ExchangeTypes.SwapNg);
+
+    const value = Array(600).fill("a").join("");
+    const tx = Buffer.from(value, "hex");
+    const fee = new BigNumber("10");
+    // <ENC_TX_FORMAT><TX_LENGTH><TX><FEE_LENGTH><FEE>
+    console.log("LENGTH", value.length);
+    const hexEncodedInfoExpected = "00" + "012c" + value + "01" + "0a";
+
+    // When
+    await exchange.processTransaction(tx, fee, "raw");
+
+    // Then
+    let expectCommand = Buffer.from([
+      0xe0,
+      0x06,
+      RateTypes.Fixed,
+      ExchangeTypes.SwapNg | (0x02 << 4),
+    ]).toString("hex");
+    const dataLength = "ff";
+    expect(recordStore.queue[0][0]).toBe(
+      expectCommand + dataLength + hexEncodedInfoExpected.substring(0, 255 * 2),
+    );
+    expectCommand = Buffer.from([
+      0xe0,
+      0x06,
+      RateTypes.Fixed,
+      ExchangeTypes.SwapNg | (0x01 << 4),
+    ]).toString("hex");
+    const remainingDataLength = (hexEncodedInfoExpected.length - 255 * 2) / 2;
+    expect(recordStore.queue[1][0]).toBe(
+      expectCommand +
+        remainingDataLength.toString(16) +
+        hexEncodedInfoExpected.substring(255 * 2, hexEncodedInfoExpected.length),
+    );
   });
 });
 
