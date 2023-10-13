@@ -301,7 +301,9 @@ export default class Transport {
 
     if (this.exchangeBusyPromise) {
       tracer.trace("Atomic exchange is already busy");
-      throw new TransportRaceCondition();
+      throw new TransportRaceCondition(
+        "An action was already pending on the Ledger device. Please deny or reconnect.",
+      );
     }
 
     // Sets the atomic guard
