@@ -11,9 +11,9 @@ import {
   HorizonAxiosClient,
   BASE_FEE,
   Asset,
-  Operation as StellarOperation,
-  Account as StellarAccount,
-  Transaction as StellarTransaction,
+  Operation as StellarSdkOperation,
+  Account as StellarSdkAccount,
+  Transaction as StellarSdkTransaction,
   TransactionBuilder,
   Networks,
   ServerApi,
@@ -273,7 +273,7 @@ export const fetchSigners = async (a: Account): Promise<Signer[]> => {
 };
 
 export const broadcastTransaction = async (signedTransaction: string): Promise<string> => {
-  const transaction = new StellarTransaction(signedTransaction, Networks.PUBLIC);
+  const transaction = new StellarSdkTransaction(signedTransaction, Networks.PUBLIC);
   const res = await server.submitTransaction(transaction, {
     skipMemoRequiredCheck: true,
   });
@@ -295,7 +295,7 @@ export const buildPaymentOperation = ({
   // Non-native assets should always have asset code and asset issuer. If an
   // asset doesn't have both, we assume it is native asset.
   const asset = assetCode && assetIssuer ? new Asset(assetCode, assetIssuer) : Asset.native();
-  return StellarOperation.payment({
+  return StellarSdkOperation.payment({
     destination: destination,
     amount: formattedAmount,
     asset,
@@ -304,19 +304,19 @@ export const buildPaymentOperation = ({
 
 export const buildCreateAccountOperation = (destination: string, amount: BigNumber) => {
   const formattedAmount = getFormattedAmount(amount);
-  return StellarOperation.createAccount({
+  return StellarSdkOperation.createAccount({
     destination: destination,
     startingBalance: formattedAmount,
   });
 };
 
 export const buildChangeTrustOperation = (assetCode: string, assetIssuer: string) => {
-  return StellarOperation.changeTrust({
+  return StellarSdkOperation.changeTrust({
     asset: new Asset(assetCode, assetIssuer),
   });
 };
 
-export const buildTransactionBuilder = (source: StellarAccount, fee: BigNumber) => {
+export const buildTransactionBuilder = (source: StellarSdkAccount, fee: BigNumber) => {
   const formattedFee = fee.toString();
   return new TransactionBuilder(source, {
     fee: formattedFee,
