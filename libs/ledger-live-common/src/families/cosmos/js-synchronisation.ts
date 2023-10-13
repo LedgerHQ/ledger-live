@@ -37,19 +37,16 @@ const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): Co
   const unitCode = currency.units[1].code;
   const ops: CosmosOperation[] = [];
   for (const tx of txs) {
-    let fees = new BigNumber(0);
+    const amounts = tx?.tx?.auth_info?.fee?.amount;
 
-    if (tx.tx && tx.tx.auth_info && tx.tx.auth_info.fee && tx.tx.auth_info.fee.amount) {
-      fees = tx.tx.auth_info.fee.amount.reduce(
-        (acc: BigNumber, curr: { denom: string; amount: string }) => {
+    const fees = !amounts
+      ? new BigNumber(0)
+      : amounts.reduce((acc: BigNumber, curr: { denom: string; amount: string }) => {
           if (curr.denom === unitCode) {
             return acc.plus(curr.amount);
           }
           return acc;
-        },
-        new BigNumber(0),
-      );
-    }
+        }, new BigNumber(0));
 
     const op: CosmosOperation = getBlankOperation(tx, fees, accountId);
 
