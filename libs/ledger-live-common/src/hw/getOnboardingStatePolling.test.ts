@@ -246,7 +246,7 @@ describe("getOnboardingStatePolling", () => {
       // Did not manage to test that the polling is repeated by using jest's fake timer
       // and advanceTimersByTime method or equivalent.
       // Hacky test: spy on the repeatWhen operator to see if it has been called.
-      const spiedRepeatWhen = jest.spyOn(rxjsOperators, "repeatWhen");
+      const spiedRepeat = jest.spyOn(rxjsOperators, "repeat");
 
       onboardingStatePollingSubscription = getOnboardingStatePolling({
         deviceId: device.deviceId,
@@ -258,7 +258,7 @@ describe("getOnboardingStatePolling", () => {
             expect(value.onboardingState).toEqual(anOnboardingState);
             expect(value.allowedError).toBeNull();
             expect(value.lockedDevice).toBe(false);
-            expect(spiedRepeatWhen).toHaveBeenCalledTimes(1);
+            expect(spiedRepeat).toHaveBeenCalledTimes(1);
             done();
           } catch (expectError) {
             done(expectError);
@@ -268,8 +268,6 @@ describe("getOnboardingStatePolling", () => {
           done(error);
         },
       });
-
-      jest.advanceTimersByTime(1);
     });
   });
 
