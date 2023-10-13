@@ -77,21 +77,21 @@ export const fetchBaseFee = async (): Promise<{
     };
   }
 
-  const baseFee = Number(BASE_FEE) || FALLBACK_BASE_FEE;
+  const baseFee = new BigNumber(BASE_FEE).toNumber() || FALLBACK_BASE_FEE;
   let recommendedFee = baseFee;
   let networkCongestionLevel = NetworkCongestionLevel.MEDIUM;
 
   try {
     const feeStats = await server.feeStats();
     const ledgerCapacityUsage = feeStats.ledger_capacity_usage;
-    recommendedFee = Number(feeStats.fee_charged.mode);
+    recommendedFee = new BigNumber(feeStats.fee_charged.mode).toNumber();
 
     if (
-      Number(ledgerCapacityUsage) > TRESHOLD_LOW &&
-      Number(ledgerCapacityUsage) <= TRESHOLD_MEDIUM
+      new BigNumber(ledgerCapacityUsage).toNumber() > TRESHOLD_LOW &&
+      new BigNumber(ledgerCapacityUsage).toNumber() <= TRESHOLD_MEDIUM
     ) {
       networkCongestionLevel = NetworkCongestionLevel.MEDIUM;
-    } else if (Number(ledgerCapacityUsage) > TRESHOLD_MEDIUM) {
+    } else if (new BigNumber(ledgerCapacityUsage).toNumber() > TRESHOLD_MEDIUM) {
       networkCongestionLevel = NetworkCongestionLevel.HIGH;
     } else {
       networkCongestionLevel = NetworkCongestionLevel.LOW;
@@ -128,7 +128,7 @@ export const fetchAccount = async (
   try {
     account = await server.accounts().accountId(addr).call();
     balance =
-      account.balances.find(balance => {
+      account.balances?.find(balance => {
         return balance.asset_type === "native";
       })?.balance || "0";
     // Getting all non-native (XLM) assets on the account
@@ -144,7 +144,7 @@ export const fetchAccount = async (
   const spendableBalance = await getAccountSpendableBalance(formattedBalance, account);
 
   return {
-    blockHeight: account.sequence ? Number(account.sequence) : 0,
+    blockHeight: account.sequence ? new BigNumber(account.sequence).toNumber() : 0,
     balance: formattedBalance,
     spendableBalance,
     assets,
