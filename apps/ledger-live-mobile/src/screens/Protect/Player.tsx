@@ -16,6 +16,8 @@ import { BaseNavigatorStackParamList } from "../../components/RootNavigator/type
 import { RootComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { NavigatorName, ScreenName } from "../../const";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { counterValueCurrencySelector } from "../../reducers/settings";
+import { useSelector } from "react-redux";
 
 export type Props = RootComposite<
   StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.Recover>
@@ -32,7 +34,9 @@ export function RecoverPlayer({ navigation, route }: Props) {
   const remoteManifest = useRemoteLiveAppManifest(appId);
   const { state: remoteLiveAppState } = useRemoteLiveAppContext();
   const { locale } = useLocale();
-  const manifest = localManifest || remoteManifest;
+  const currencySettings = useSelector(counterValueCurrencySelector);
+  const currency = currencySettings.ticker;
+  const manifest = localManifest || remoteManifest;  
 
   const { onboardingState } = useOnboardingStatePolling({
     device: device || null,
@@ -80,6 +84,7 @@ export function RecoverPlayer({ navigation, route }: Props) {
         inputs={{
           theme,
           lang: locale,
+          currency,
           deviceId: device?.deviceId,
           ...params,
         }}
