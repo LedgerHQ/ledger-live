@@ -19,9 +19,9 @@ jobs:
         uses: ./tools/actions/composites/setup-toolchain
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version:
-            3.1.2 # Not needed with a .ruby-version file
-            # runs 'bundle install' and caches installed gems automatically
+          ruby-version: 3.2.2
+          # Not needed with a .ruby-version file
+          # runs 'bundle install' and caches installed gems automatically
       - name: Install Dependencies
         run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli"
       - name: Create Release Pull Request or Publish to npm/Github

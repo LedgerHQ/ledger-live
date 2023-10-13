@@ -11,13 +11,19 @@ jobs:
       pull-requests: write
     runs-on: ubuntu-latest
     steps:
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - uses: actions/labeler@v4
         with:
-          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          repo-token: ${{ steps.generate-token.outputs.token }}
       - uses: actions/github-script@v6
         if: github.event.pull_request.head.repo.fork
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ steps.generate-token.outputs.token }}
           script: |
             try {
               const { data: rawLabels } = await github.rest.issues.listLabelsOnIssue({

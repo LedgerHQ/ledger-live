@@ -1095,9 +1095,6 @@ importers:
         specifier: ^8.3.2
         version: 8.3.2
     devDependencies:
-      '@actions/core':
-        specifier: ^1.5.0
-        version: 1.8.0
       '@babel/core':
         specifier: ^7.22.8
         version: 7.22.8
@@ -5033,8 +5030,8 @@ importers:
   tools/actions/change-product-name:
     devDependencies:
       '@actions/core':
-        specifier: ^1.10.0
-        version: 1.10.0
+        specifier: ^1.10.1
+        version: 1.10.1
       '@actions/github':
         specifier: ^5.1.1
         version: 5.1.1
@@ -5045,8 +5042,8 @@ importers:
   tools/actions/generate-bot-super-report:
     devDependencies:
       '@actions/core':
-        specifier: ^1.10.0
-        version: 1.10.0
+        specifier: ^1.10.1
+        version: 1.10.1
       '@actions/github':
         specifier: ^5.1.1
         version: 5.1.1
@@ -5072,8 +5069,8 @@ importers:
   tools/actions/generate-release-message:
     devDependencies:
       '@actions/core':
-        specifier: ^1.10.0
-        version: 1.10.0
+        specifier: ^1.10.1
+        version: 1.10.1
       '@actions/github':
         specifier: ^5.1.1
         version: 5.1.1
@@ -5087,8 +5084,8 @@ importers:
   tools/actions/get-package-infos:
     devDependencies:
       '@actions/core':
-        specifier: ^1.10.0
-        version: 1.10.0
+        specifier: ^1.10.1
+        version: 1.10.1
       '@actions/github':
         specifier: ^5.1.1
         version: 5.1.1
@@ -5102,8 +5099,8 @@ importers:
   tools/actions/get-workflow-artifacts-id:
     devDependencies:
       '@actions/core':
-        specifier: ^1.10.0
-        version: 1.10.0
+        specifier: ^1.10.1
+        version: 1.10.1
       '@actions/github':
         specifier: ^5.1.1
         version: 5.1.1
@@ -5114,8 +5111,8 @@ importers:
   tools/actions/live-common-affected:
     devDependencies:
       '@actions/core':
-        specifier: ^1.10.0
-        version: 1.10.0
+        specifier: ^1.10.1
+        version: 1.10.1
       '@actions/github':
         specifier: ^5.1.1
         version: 5.1.1
@@ -5126,8 +5123,8 @@ importers:
   tools/actions/prepare-comment-screenshots:
     devDependencies:
       '@actions/core':
-        specifier: ^1.10.0
-        version: 1.10.0
+        specifier: ^1.10.1
+        version: 1.10.1
       '@actions/github':
         specifier: ^5.1.1
         version: 5.1.1
@@ -5138,8 +5135,8 @@ importers:
   tools/actions/submit-bot-report:
     devDependencies:
       '@actions/core':
-        specifier: ^1.10.0
-        version: 1.10.0
+        specifier: ^1.10.1
+        version: 1.10.1
       '@actions/github':
         specifier: ^5.1.1
         version: 5.1.1
@@ -5153,8 +5150,8 @@ importers:
   tools/actions/turbo-affected:
     devDependencies:
       '@actions/core':
-        specifier: ^1.10.0
-        version: 1.10.0
+        specifier: ^1.10.1
+        version: 1.10.1
       '@actions/github':
         specifier: ^5.1.1
         version: 5.1.1
@@ -5168,8 +5165,8 @@ importers:
         specifier: ^3.0.4
         version: 3.0.4
       '@actions/core':
-        specifier: ^1.10.0
-        version: 1.10.0
+        specifier: ^1.10.1
+        version: 1.10.1
       '@actions/github':
         specifier: ^5.1.1
         version: 5.1.1
@@ -5192,14 +5189,17 @@ importers:
         specifier: ^3.0.4
         version: 3.0.4
       '@actions/core':
-        specifier: ^1.10.0
-        version: 1.10.0
+        specifier: ^1.10.1
+        version: 1.10.1
       '@actions/github':
         specifier: ^5.1.1
         version: 5.1.1
       '@aws-sdk/client-s3':
         specifier: ^3.370.0
         version: 3.370.0
+      '@types/express':
+        specifier: ^4.17.18
+        version: 4.17.19
       '@types/fs-extra':
         specifier: ^9.0.13
         version: 9.0.13
@@ -5364,7 +5364,7 @@ packages:
   /@actions/cache@3.0.4:
     resolution: {integrity: sha512-9RwVL8/ISJoYWFNH1wR/C26E+M3HDkGPWmbFJMMCKwTkjbNZJreMT4XaR/EB1bheIvN4PREQxEQQVJ18IPnf/Q==}
     dependencies:
-      '@actions/core': 1.10.0
+      '@actions/core': 1.10.1
       '@actions/exec': 1.1.1
       '@actions/glob': 0.1.2
       '@actions/http-client': 2.0.1
@@ -5385,10 +5385,11 @@ packages:
       uuid: 8.3.2
     dev: true
 
-  /@actions/core@1.8.0:
-    resolution: {integrity: sha512-XirM+Zo/PFlA+1h+i4bkfvagujta+LIM2AOSzPbt8JqXbbuxb1HTB+FqIyaKmue9yiCx/JIJY6pXsOl3+T8JGw==}
+  /@actions/core@1.10.1:
+    resolution: {integrity: sha512-3lBR9EDAY+iYIpTnTIXmWcNbX3T2kCkAEQGIQx4NVQ0575nk2k3GRZDTPQG+vVtS2izSLmINlxXf0uLtnrTP+g==}
     dependencies:
-      '@actions/http-client': 1.0.11
+      '@actions/http-client': 2.0.1
+      uuid: 8.3.2
     dev: true
 
   /@actions/exec@1.1.1:
@@ -5411,14 +5412,8 @@ packages:
   /@actions/glob@0.1.2:
     resolution: {integrity: sha512-SclLR7Ia5sEqjkJTPs7Sd86maMDw43p769YxBOxvPvEWuPEhpAnBsQfENOpXjFYMmhCqd127bmf+YdvJqVqR4A==}
     dependencies:
-      '@actions/core': 1.10.0
+      '@actions/core': 1.10.1
       minimatch: 3.1.2
-    dev: true
-
-  /@actions/http-client@1.0.11:
-    resolution: {integrity: sha512-VRYHGQV1rqnROJqdMvGUbY/Kn8vriQe/F9HR2AlYHzmKuM/p3kjNuXhmdBfcVgsvRWTz5C5XW5xvndZrVBuAYg==}
-    dependencies:
-      tunnel: 0.0.6
     dev: true
 
   /@actions/http-client@2.0.1:
@@ -25149,11 +25144,27 @@ packages:
       '@types/qs': 6.9.7
       '@types/range-parser': 1.2.4
 
+  /@types/express-serve-static-core@4.17.37:
+    resolution: {integrity: sha512-ZohaCYTgGFcOP7u6aJOhY9uIZQgZ2vxC2yWoArY+FeDXlqeH66ZVBjgvg+RLVAS/DWNq4Ap9ZXu1+SUQiiWYMg==}
+    dependencies:
+      '@types/node': 18.16.19
+      '@types/qs': 6.9.7
+      '@types/range-parser': 1.2.4
+      '@types/send': 0.17.2
+
   /@types/express@4.17.13:
     resolution: {integrity: sha512-6bSZTPaTIACxn48l50SR+axgrqm6qXFIxrdAKaG6PaJk3+zuUr35hBlgT7vOmJcum+OEaIBLtHV/qloEAFITeA==}
     dependencies:
       '@types/body-parser': 1.19.2
       '@types/express-serve-static-core': 4.17.28
+      '@types/qs': 6.9.7
+      '@types/serve-static': 1.13.10
+
+  /@types/express@4.17.19:
+    resolution: {integrity: sha512-UtOfBtzN9OvpZPPbnnYunfjM7XCI4jyk1NvnFhTVz5krYAnW4o5DCoIekvms+8ApqhB4+9wSge1kBijdfTSmfg==}
+    dependencies:
+      '@types/body-parser': 1.19.2
+      '@types/express-serve-static-core': 4.17.37
       '@types/qs': 6.9.7
       '@types/serve-static': 1.13.10
 
@@ -25959,6 +25970,12 @@ packages:
   /@types/semver@7.5.0:
     resolution: {integrity: sha512-G8hZ6XJiHnuhQKR7ZmysCeJWE08o8T0AXtk5darsCaTVsYZhhgUrq53jizaR2FvsoeCwJhlmwTjkXBY5Pn/ZHw==}
 
+  /@types/send@0.17.2:
+    resolution: {integrity: sha512-aAG6yRf6r0wQ29bkS+x97BIs64ZLxeE/ARwyS6wrldMm3C1MdKwCcnnEwMC1slI8wuxJOpiUH9MioC0A0i+GJw==}
+    dependencies:
+      '@types/mime': 1.3.2
+      '@types/node': 18.16.19
+
   /@types/serve-handler@6.1.1:
     resolution: {integrity: sha512-bIwSmD+OV8w0t2e7EWsuQYlGoS1o5aEdVktgkXaa43Zm0qVWi21xaSRb3DQA1UXD+DJ5bRq1Rgu14ZczB+CjIQ==}
     dependencies:
@@ -25968,7 +25985,7 @@ packages:
   /@types/serve-index@1.9.1:
     resolution: {integrity: sha512-d/Hs3nWDxNL2xAczmOVZNj92YZCS6RGxfBPjKzuu/XirCgXdpKEb88dYNbrYGint6IVWLNP+yonwVAuRC0T2Dg==}
     dependencies:
-      '@types/express': 4.17.13
+      '@types/express': 4.17.19
 
   /@types/serve-static@1.13.10:
     resolution: {integrity: sha512-nCkHGI4w7ZgAdNkrEu0bv+4xNV/XDqW+DydknebMOQwkpDGx8G+HTlj7R7ABI8i8nKxVw0wtKPi1D+lPOkh4YQ==}
@@ -29309,7 +29326,7 @@ packages:
       babel-plugin-syntax-jsx: 6.18.0
       lodash: 4.17.21
       picomatch: 2.3.1
-      styled-components: 5.3.5(react-dom@17.0.2)(react-is@17.0.2)(react@17.0.2)
+      styled-components: 5.3.5(react-is@18.1.0)(react@18.0.0)
 
   /babel-plugin-syntax-jsx@6.18.0:
     resolution: {integrity: sha512-qrPaCSo9c8RHNRHIotaufGbuOBN8rtdC4QrrFFc43vyWCCz7Kl7GL1PGaXtMGQZUXrkCjNEgxDfmAuAabr/rlw==}
@@ -52735,7 +52752,7 @@ packages:
       '@probot/get-private-key': 1.1.1
       '@probot/octokit-plugin-config': 1.1.5(@octokit/core@3.6.0)
       '@probot/pino': 2.3.5
-      '@types/express': 4.17.13
+      '@types/express': 4.17.19
       '@types/ioredis': 4.28.10
       '@types/pino': 6.3.12
       '@types/pino-http': 5.8.1
@@ -57965,7 +57982,6 @@ packages:
       react-is: 18.1.0
       shallowequal: 1.1.0
       supports-color: 5.5.0
-    dev: false
 
   /styled-components@6.0.7(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-xIwWuiRMYR43mskVsW9MGTRjSo7ol4bcVjT595fGUp3OLBJOlOgaiKaxsHdC4a2HqWKqKnh0CmcRbk5ogyDjTg==}
