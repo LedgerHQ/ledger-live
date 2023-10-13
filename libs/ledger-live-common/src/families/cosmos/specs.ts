@@ -525,6 +525,16 @@ const onomy = {
   }),
 };
 
+const seiMinimalTransactionAmount = new BigNumber(5000);
+const sei = {
+  ...generateGenericCosmosTest("sei_network", false, {
+    minViableAmount: onomyMinimalTransactionAmount,
+    mutations: cosmosLikeMutations(seiMinimalTransactionAmount),
+    testTimeout: 8 * 60 * 1000,
+    skipOperationHistory: true,
+  }),
+};
+
 const axelarMinimalTransactionAmount = new BigNumber(10000);
 const axelar = {
   ...generateGenericCosmosTest("axelar", false, {
@@ -580,6 +590,7 @@ export default {
   quicksilver,
   onomy,
   secretNetwork,
+  sei,
   stargaze,
   coreum,
   injective,
