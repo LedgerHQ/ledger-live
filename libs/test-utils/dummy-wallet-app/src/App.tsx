@@ -1,9 +1,14 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useE2EInjection } from "./hooks";
 import "./App.css";
+import { useWalletAPIClient } from "@ledgerhq/wallet-api-client-react";
 
 export default function App() {
   useE2EInjection();
+  const { client } = useWalletAPIClient();
+  useEffect(() => {
+    console.log(client?.custom);
+  });
 
   const params = useMemo(
     () => Array.from(new URLSearchParams(window.location.search).entries()),
