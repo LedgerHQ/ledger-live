@@ -130,7 +130,10 @@ const applicationsByDevice: (params: {
     });
     return r.data.application_versions;
   },
-  p => `${p.provider}_${p.current_se_firmware_final_version}_${p.device_version}`,
+  p =>
+    `${getEnv("MANAGER_API_BASE")}_${p.provider}_${p.current_se_firmware_final_version}_${
+      p.device_version
+    }`,
 );
 
 /**
@@ -168,7 +171,7 @@ const catalogForDevice: (params: {
 
     return data.map(mapApplicationV2ToApp);
   },
-  _ => "",
+  a => `${getEnv("MANAGER_API_BASE")}_${a.provider}_${a.targetId}_${a.firmwareVersion}`,
 );
 
 const listApps: () => Promise<Array<Application>> = makeLRUCache(
@@ -189,7 +192,7 @@ const listApps: () => Promise<Array<Application>> = makeLRUCache(
 
     return data;
   },
-  () => "",
+  () => getEnv("MANAGER_API_BASE"),
 );
 
 const listCategories = async (): Promise<Array<Category>> => {
@@ -218,7 +221,7 @@ const getMcus: () => Promise<any> = makeLRUCache(
     });
     return data;
   },
-  () => "",
+  () => getEnv("MANAGER_API_BASE"),
 );
 
 const compatibleMCUForDeviceInfo = (
@@ -320,7 +323,10 @@ const getLatestFirmware: (arg0: {
 
     return data.se_firmware_osu_version;
   },
-  a => `${a.current_se_firmware_final_version}_${a.device_version}_${a.provider}`,
+  a =>
+    `${getEnv("MANAGER_API_BASE")}_${a.current_se_firmware_final_version}_${a.device_version}_${
+      a.provider
+    }`,
 );
 
 const getCurrentOSU: (input: {
@@ -345,7 +351,7 @@ const getCurrentOSU: (input: {
     });
     return data;
   },
-  a => `${a.version}_${a.deviceId}_${a.provider}`,
+  a => `${getEnv("MANAGER_API_BASE")}_${a.version}_${a.deviceId}_${a.provider}`,
 );
 const getCurrentFirmware: (input: {
   version: string;
@@ -373,7 +379,7 @@ const getCurrentFirmware: (input: {
     });
     return data;
   },
-  a => `${a.version}_${a.deviceId}_${a.provider}`,
+  a => `${getEnv("MANAGER_API_BASE")}_${a.version}_${a.deviceId}_${a.provider}`,
 );
 const getFinalFirmwareById: (id: number) => Promise<FinalFirmware> = makeLRUCache(
   async id => {
@@ -392,7 +398,7 @@ const getFinalFirmwareById: (id: number) => Promise<FinalFirmware> = makeLRUCach
     });
     return data;
   },
-  id => String(id),
+  id => `${getEnv("MANAGER_API_BASE")}}_${String(id)}`,
 );
 
 /**
@@ -428,7 +434,7 @@ const getAppsByHash: (hashes: string[]) => Promise<Array<App | null>> = makeLRUC
 
     return data.map(appV2 => (appV2 ? mapApplicationV2ToApp(appV2) : null));
   },
-  hashes => String(hashes),
+  hashes => `${getEnv("MANAGER_API_BASE")}_${String(hashes)}`,
 );
 
 const getDeviceVersion: (targetId: string | number, provider: number) => Promise<DeviceVersion> =
@@ -463,7 +469,7 @@ const getDeviceVersion: (targetId: string | number, provider: number) => Promise
       });
       return data;
     },
-    (targetId, provider) => `${targetId}_${provider}`,
+    (targetId, provider) => `${getEnv("MANAGER_API_BASE")}_${targetId}_${provider}`,
   );
 
 const install = (
