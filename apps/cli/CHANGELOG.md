@@ -1,5 +1,14 @@
 # @ledgerhq/live-cli
 
+## 22.13.1-nightly.1
+
+### Patch Changes
+
+- [#5040](https://github.com/LedgerHQ/ledger-live/pull/5040) [`ffca7bef87`](https://github.com/LedgerHQ/ledger-live/commit/ffca7bef877dafa8bea20b34e64174195bd3f944) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Fixes in getAddress and bot command
+
+- Updated dependencies [[`f52baa219e`](https://github.com/LedgerHQ/ledger-live/commit/f52baa219e1cd85fdb50d47f0c64e10e8533c926)]:
+  - @ledgerhq/live-common@33.1.0-nightly.1
+
 ## 22.13.1-nightly.0
 
 ### Patch Changes

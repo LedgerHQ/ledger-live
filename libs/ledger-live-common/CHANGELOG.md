@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 33.1.0-nightly.1
+
+### Patch Changes
+
+- [#5039](https://github.com/LedgerHQ/ledger-live/pull/5039) [`f52baa219e`](https://github.com/LedgerHQ/ledger-live/commit/f52baa219e1cd85fdb50d47f0c64e10e8533c926) Thanks [@sarneijim](https://github.com/sarneijim)! - Fix WalletAPI fee strategy implementation
+
 ## 33.1.0-nightly.0
 
 ### Minor Changes
