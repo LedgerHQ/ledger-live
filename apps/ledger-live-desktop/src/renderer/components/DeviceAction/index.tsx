@@ -1,4 +1,5 @@
 import React, { useEffect, Component } from "react";
+import BigNumber from "bignumber.js";
 import { Trans, useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { Action } from "@ledgerhq/live-common/hw/actions/types";
@@ -324,15 +325,41 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     return renderListingApps();
   }
 
-  if (completeExchangeStarted && !completeExchangeResult && !completeExchangeError) {
+  if (completeExchangeStarted && !completeExchangeResult && !completeExchangeError && !isLoading) {
     const { exchangeType } = request as { exchangeType: number };
 
     // FIXME: could use a TS enum (when LLD will be in TS) or a JS object instead of raw numbers for switch values for clarity
     switch (exchangeType) {
       // swap
       case 0x00: {
-        // FIXME: should use `renderSwapDeviceConfirmationV2` but all params not available in hookState for this SDK exchange flow
-        return <div>{"Confirm swap on your device"}</div>;
+        const {
+          transaction,
+          exchange,
+          provider,
+          rate = 1,
+          amountExpectedTo = 0,
+        } = request as {
+          transaction: Transaction;
+          exchange: Exchange;
+          provider: string;
+          rate: number;
+          amountExpectedTo: number;
+        };
+        const { estimatedFees } = hookState;
+
+        return renderSwapDeviceConfirmation({
+          modelId: device.modelId,
+          type,
+          transaction,
+          exchangeRate: {
+            provider,
+            rate: new BigNumber(rate),
+          } as ExchangeRate,
+          exchange,
+          swapDefaultTrack,
+          amountExpectedTo: amountExpectedTo.toString() ?? undefined,
+          estimatedFees: estimatedFees?.toString() ?? undefined,
+        });
       }
 
       case 0x01: // sell
