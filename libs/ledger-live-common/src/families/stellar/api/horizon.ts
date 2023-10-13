@@ -111,7 +111,7 @@ export const fetchBaseFee = async (): Promise<{
  * Get all account-related data
  *
  * @async
- * @param {*} addr
+ * @param {string} addr
  */
 export const fetchAccount = async (
   addr: string,
@@ -132,7 +132,7 @@ export const fetchAccount = async (
         return balance.asset_type === "native";
       })?.balance || "0";
     // Getting all non-native (XLM) assets on the account
-    assets = account.balances.filter(balance => {
+    assets = account.balances?.filter(balance => {
       return balance.asset_type !== "native";
     }) as BalanceAsset[];
   } catch (e) {
