@@ -26,9 +26,8 @@ export async function fetchCurrencyTo({
   providers,
   additionalCoinsFlag = false,
 }: Props) {
-  if (isIntegrationTestEnv()) {
+  if (isIntegrationTestEnv())
     return Promise.resolve(flattenV5CurrenciesToAndFrom(fetchCurrencyToMock));
-  }
 
   const url = new URL(`${getSwapAPIBaseURL()}/currencies/to`);
 
