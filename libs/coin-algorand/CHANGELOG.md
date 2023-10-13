@@ -1,5 +1,12 @@
 # @ledgerhq/coin-algorand
 
+## 0.3.4-hotfix.1
+
+### Patch Changes
+
+- Updated dependencies [[`3b4f7501cc`](https://github.com/LedgerHQ/ledger-live/commit/3b4f7501cc5f09be94a2994f20f9998898682975)]:
+  - @ledgerhq/coin-framework@0.8.0-hotfix.1
+
 ## 0.3.4-hotfix.0
 
 ### Patch Changes

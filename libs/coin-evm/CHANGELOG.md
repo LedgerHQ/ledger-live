@@ -1,5 +1,16 @@
 # @ledgerhq/coin-evm
 
+## 0.9.0-hotfix.1
+
+### Minor Changes
+
+- [#5042](https://github.com/LedgerHQ/ledger-live/pull/5042) [`3b4f7501cc`](https://github.com/LedgerHQ/ledger-live/commit/3b4f7501cc5f09be94a2994f20f9998898682975) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Ensure compatiblity with @ledgerhq/coin-framework change regarding `TokenAccounts` ids & update `preload` & `hydrate` method to use the `convertBEP20` method instead of the `convertERC20` method when dealing with the bsc chain. This last fix is technically useless as BEP20 = ERC20, it's only here in order to prevent breaking changes with the different backends at Ledger. As soon as those backends have the possibility of changing the "bsc/bep20/XYZ" token ids into "bsc/erc20/XYZ", this fix should be removed in order to avoid useless complexity.
+
+### Patch Changes
+
+- Updated dependencies [[`3b4f7501cc`](https://github.com/LedgerHQ/ledger-live/commit/3b4f7501cc5f09be94a2994f20f9998898682975)]:
+  - @ledgerhq/coin-framework@0.8.0-hotfix.1
+
 ## 0.8.1-hotfix.0
 
 ### Patch Changes
