@@ -1,5 +1,19 @@
 # @ledgerhq/live-common
 
+## 33.0.1-hotfix.0
+
+### Patch Changes
+
+- [#4895](https://github.com/LedgerHQ/ledger-live/pull/4895) [`ce18546c0a`](https://github.com/LedgerHQ/ledger-live/commit/ce18546c0a0b9dd5ed78b1745cac19b7eef7b5eb) Thanks [@stephane-lieumont-ledger](https://github.com/stephane-lieumont-ledger)! - feat(protect-2592): add other link on firebase for quick access recover
+
+- Updated dependencies []:
+  - @ledgerhq/coin-algorand@0.3.4-hotfix.0
+  - @ledgerhq/coin-evm@0.8.1-hotfix.0
+  - @ledgerhq/coin-framework@0.7.1-hotfix.0
+  - @ledgerhq/coin-polkadot@0.4.4-hotfix.0
+  - @ledgerhq/domain-service@1.1.13-hotfix.0
+  - @ledgerhq/hw-app-eth@6.34.8-hotfix.0
+
 ## 33.0.0
 
 ### Major Changes

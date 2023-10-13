@@ -1,5 +1,16 @@
 # ledger-live-desktop
 
+## 2.70.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`ce18546c0a`](https://github.com/LedgerHQ/ledger-live/commit/ce18546c0a0b9dd5ed78b1745cac19b7eef7b5eb)]:
+  - @ledgerhq/live-common@33.0.1-hotfix.0
+  - @ledgerhq/types-live@6.41.1-hotfix.0
+  - @ledgerhq/coin-evm@0.8.1-hotfix.0
+  - @ledgerhq/coin-framework@0.7.1-hotfix.0
+  - @ledgerhq/domain-service@1.1.13-hotfix.0
+
 ## 2.70.0
 
 ### Minor Changes

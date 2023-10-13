@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/test-utils",
-  "version": "0.0.7",
+  "version": "0.0.8-hotfix.0",
   "private": true,
   "description": "Dummy apps and utils for tests",
   "keywords": [

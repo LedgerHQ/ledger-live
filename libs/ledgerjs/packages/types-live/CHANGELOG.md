@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.41.1-hotfix.0
+
+### Patch Changes
+
+- [#4895](https://github.com/LedgerHQ/ledger-live/pull/4895) [`ce18546c0a`](https://github.com/LedgerHQ/ledger-live/commit/ce18546c0a0b9dd5ed78b1745cac19b7eef7b5eb) Thanks [@stephane-lieumont-ledger](https://github.com/stephane-lieumont-ledger)! - feat(protect-2592): add other link on firebase for quick access recover
+
 ## 6.41.0
 
 ### Minor Changes

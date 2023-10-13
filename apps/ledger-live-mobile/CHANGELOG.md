@@ -1,5 +1,26 @@
 # live-mobile
 
+## 3.33.1-hotfix.0
+
+### Patch Changes
+
+- [#4895](https://github.com/LedgerHQ/ledger-live/pull/4895) [`ce18546c0a`](https://github.com/LedgerHQ/ledger-live/commit/ce18546c0a0b9dd5ed78b1745cac19b7eef7b5eb) Thanks [@stephane-lieumont-ledger](https://github.com/stephane-lieumont-ledger)! - feat(protect-2592): add other link on firebase for quick access recover
+
+- [#4915](https://github.com/LedgerHQ/ledger-live/pull/4915) [`ef6bc3319c`](https://github.com/LedgerHQ/ledger-live/commit/ef6bc3319ca90dd06c0a1f089e732416d1e6b3dc) Thanks [@stephane-lieumont-ledger](https://github.com/stephane-lieumont-ledger)! - Need to allow restore on onboarding state without device selected yet
+
+- [#4924](https://github.com/LedgerHQ/ledger-live/pull/4924) [`ae2c209be4`](https://github.com/LedgerHQ/ledger-live/commit/ae2c209be4c82ded56faf8a2539fcf27cf07fbb4) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - small modif on the name of a param from the protectServicesMobile feature flag. Also the recover button is now displayed before the wallet connect button in the quick actions
+
+- [#4882](https://github.com/LedgerHQ/ledger-live/pull/4882) [`b5f6faf0df`](https://github.com/LedgerHQ/ledger-live/commit/b5f6faf0df5e484dc56b422883e16e04d181903f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add New Entry in TransferDrawer for Recover
+
+- [#4862](https://github.com/LedgerHQ/ledger-live/pull/4862) [`112fc4deb0`](https://github.com/LedgerHQ/ledger-live/commit/112fc4deb0b391ccde19f655efd76bf7de063c99) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update UI in Manager for Services Recover
+
+- Updated dependencies [[`ce18546c0a`](https://github.com/LedgerHQ/ledger-live/commit/ce18546c0a0b9dd5ed78b1745cac19b7eef7b5eb)]:
+  - @ledgerhq/live-common@33.0.1-hotfix.0
+  - @ledgerhq/types-live@6.41.1-hotfix.0
+  - @ledgerhq/coin-evm@0.8.1-hotfix.0
+  - @ledgerhq/coin-framework@0.7.1-hotfix.0
+  - @ledgerhq/domain-service@1.1.13-hotfix.0
+
 ## 3.33.0
 
 ### Minor Changes

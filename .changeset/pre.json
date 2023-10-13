@@ -90,5 +90,11 @@
     "pnpm-utils": "1.0.1",
     "@ledgerhq/react-devtools": "0.0.0"
   },
-  "changesets": []
+  "changesets": [
+    "dry-numbers-sniff",
+    "poor-moons-jog",
+    "popular-monkeys-mix",
+    "smooth-shoes-wait",
+    "strong-flowers-draw"
+  ]
 }
