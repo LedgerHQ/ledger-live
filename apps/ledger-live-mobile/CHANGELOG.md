@@ -1,5 +1,22 @@
 # live-mobile
 
+## 3.34.0-nightly.4
+
+### Minor Changes
+
+- [#4916](https://github.com/LedgerHQ/ledger-live/pull/4916) [`254ba13ccb`](https://github.com/LedgerHQ/ledger-live/commit/254ba13ccbf0539747110127037de52e1df1ef47) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Integrate SEI Network
+
+### Patch Changes
+
+- [#4933](https://github.com/LedgerHQ/ledger-live/pull/4933) [`b959dba2b4`](https://github.com/LedgerHQ/ledger-live/commit/b959dba2b429e06444c16596afe8e32ebf8c367b) Thanks [@lvndry](https://github.com/lvndry)! - fix scan of ethereum addresses from qr code
+
+- Updated dependencies [[`254ba13ccb`](https://github.com/LedgerHQ/ledger-live/commit/254ba13ccbf0539747110127037de52e1df1ef47), [`18d4fb6077`](https://github.com/LedgerHQ/ledger-live/commit/18d4fb6077480fe68cbe215019c77fa21a17be48)]:
+  - @ledgerhq/types-live@6.42.0-nightly.0
+  - @ledgerhq/live-common@33.1.0-nightly.2
+  - @ledgerhq/coin-evm@0.8.1-nightly.1
+  - @ledgerhq/coin-framework@0.7.1-nightly.1
+  - @ledgerhq/domain-service@1.1.13-nightly.1
+
 ## 3.34.0-nightly.3
 
 ### Patch Changes

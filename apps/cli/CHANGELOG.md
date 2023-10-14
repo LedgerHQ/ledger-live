@@ -1,5 +1,18 @@
 # @ledgerhq/live-cli
 
+## 22.14.0-nightly.2
+
+### Minor Changes
+
+- [#4916](https://github.com/LedgerHQ/ledger-live/pull/4916) [`254ba13ccb`](https://github.com/LedgerHQ/ledger-live/commit/254ba13ccbf0539747110127037de52e1df1ef47) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Integrate SEI Network
+
+### Patch Changes
+
+- Updated dependencies [[`254ba13ccb`](https://github.com/LedgerHQ/ledger-live/commit/254ba13ccbf0539747110127037de52e1df1ef47), [`18d4fb6077`](https://github.com/LedgerHQ/ledger-live/commit/18d4fb6077480fe68cbe215019c77fa21a17be48)]:
+  - @ledgerhq/cryptoassets@11.1.0-nightly.0
+  - @ledgerhq/live-common@33.1.0-nightly.2
+  - @ledgerhq/coin-framework@0.7.1-nightly.1
+
 ## 22.13.1-nightly.1
 
 ### Patch Changes

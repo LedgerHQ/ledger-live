@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.42.0-nightly.0
+
+### Minor Changes
+
+- [#4916](https://github.com/LedgerHQ/ledger-live/pull/4916) [`254ba13ccb`](https://github.com/LedgerHQ/ledger-live/commit/254ba13ccbf0539747110127037de52e1df1ef47) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Integrate SEI Network
+
 ## 6.41.0
 
 ### Minor Changes
