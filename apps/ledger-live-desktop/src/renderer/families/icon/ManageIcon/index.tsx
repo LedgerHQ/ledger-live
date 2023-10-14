@@ -108,11 +108,8 @@ const TimerWrapper = styled(Box).attrs(() => ({
 `;
 
 const ManageModal = ({ account, source, ...rest }: Props) => {
-  console.log("account nef", account);
   const MIN_TRANSACTION_AMOUNT = 1;
   const dispatch = useDispatch();
-  //const mainAccount = getMainAccount(account, parentAccount);
-  //const { spendableBalance, iconResources } = mainAccount;
   const { spendableBalance, iconResources } = account;
   invariant(iconResources, "icon account expected");
 
