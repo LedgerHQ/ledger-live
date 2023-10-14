@@ -52,6 +52,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyQuicksilver: DEFAULT_FEATURE,
   currencyRsk: DEFAULT_FEATURE,
   currencySecretNetwork: DEFAULT_FEATURE,
+  currencySeiNetwork: DEFAULT_FEATURE,
   currencyStacks: DEFAULT_FEATURE,
   currencyStargaze: DEFAULT_FEATURE,
   currencySyscoin: DEFAULT_FEATURE,

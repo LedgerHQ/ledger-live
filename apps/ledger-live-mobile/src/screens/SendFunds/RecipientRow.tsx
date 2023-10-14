@@ -32,8 +32,6 @@ const RecipientRow = ({
           }}
           onFocus={onRecipientFieldFocus}
           onChangeText={onChangeText}
-          // FIXME: onInputCleared PROP DOES NOT EXISTS
-          // onInputCleared={clear}
           value={transaction.recipient}
         />
       </View>

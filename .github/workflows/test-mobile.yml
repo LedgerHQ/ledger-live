@@ -38,9 +38,12 @@ jobs:
           base: ${{ inputs.base_ref }}
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
+        with:
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7
+          ruby-version: 3.2.2
       - name: TurboRepo local caching server
         id: turborepo-cache-server
         uses: ./tools/actions/turborepo-s3-cache

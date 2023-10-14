@@ -45,6 +45,9 @@ jobs:
           git config user.name "live-github-bot[bot]"
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
+        with:
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - uses: ./tools/actions/composites/setup-build-desktop
         id: build-desktop
         with:
@@ -77,6 +80,8 @@ jobs:
         uses: ./tools/actions/composites/setup-toolchain
         with:
           install_dotnet: true
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - uses: ./tools/actions/composites/setup-build-desktop
         id: build-desktop
         with:
@@ -111,7 +116,8 @@ jobs:
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
         with:
-          pnpm_dest: ${{ runner.temp }}/setup-pnpm
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - uses: ./tools/actions/composites/setup-build-desktop
         id: build-desktop
         with:
