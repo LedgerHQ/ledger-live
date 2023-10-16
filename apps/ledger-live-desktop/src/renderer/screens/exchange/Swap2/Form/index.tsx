@@ -132,10 +132,7 @@ const SwapForm = () => {
   }, [idleState]);
 
   const swapWebAppRedirection = useCallback(async () => {
-    const {
-      swap,
-      status: { estimatedFees: initFeeTotalValue },
-    } = swapTransaction;
+    const { swap } = swapTransaction;
     const { to, from } = swap;
     const transaction = swapTransaction.transaction;
     const { account: fromAccount, parentAccount: fromParentAccount } = from;
@@ -147,9 +144,11 @@ const SwapForm = () => {
       const toAccountId = accountToWalletAPIAccount(toAccount, toParentAccount)?.id;
       const fromAmount = convertToNonAtomicUnit(transaction?.amount, fromAccount);
 
-      const customFeeConfig =
-        feesStrategy === "custom" ? getCustomFeesPerFamily(transaction) : null;
-
+      const customFeeConfig = getCustomFeesPerFamily(transaction);
+      // The Swap web app will automatically recreate the transaction with "default" fees.
+      // However, if you wish to use a different fee type, you will need to set it as custom.
+      const isCustomFee =
+        feesStrategy === "slow" || feesStrategy === "fast" || feesStrategy === "custom";
       history.push({
         pathname: "/swap-web",
         state: {
@@ -159,9 +158,8 @@ const SwapForm = () => {
           fromAmount,
           quoteId: rateId ? rateId : undefined,
           rate,
-          feeStrategy: feesStrategy?.toUpperCase(),
+          feeStrategy: (isCustomFee ? "custom" : "medium")?.toUpperCase(),
           customFeeConfig: customFeeConfig ? JSON.stringify(customFeeConfig) : undefined,
-          initFeeTotalValue,
         },
       });
     }
