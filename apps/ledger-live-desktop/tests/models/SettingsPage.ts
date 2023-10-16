@@ -59,8 +59,12 @@ export class SettingsPage {
   }
 
   async changeLanguage(fromLanguage: string, toLanguage: string) {
-    await this.page.locator(`text="${fromLanguage}"`).click();
-    await this.page.locator(`text="${toLanguage}"`).click();
+    await this.page
+      .locator(`[data-test-id='setting-language-dropDown'] text="${fromLanguage}"`)
+      .click();
+    await this.page
+      .locator(`[data-test-id='setting-language-dropDown'] text="${toLanguage}"`)
+      .click();
   }
 
   async enableDevMode() {
