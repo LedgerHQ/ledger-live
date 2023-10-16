@@ -402,7 +402,7 @@ export default class Transport {
   }
 
   /**
-   * Updates the context used by the logging/tracing mechanism
+   * Sets the context used by the logging/tracing mechanism
    *
    * Useful when re-using (cached) the same Transport instance,
    * but with a new tracing context.
@@ -413,7 +413,13 @@ export default class Transport {
     this.tracer = this.tracer.withContext(context);
   }
 
-  // TODO: Maybe not useful if remove subject from transportHandler
+  /**
+   * Updates the context used by the logging/tracing mechanism
+   *
+   * The update only overrides the key-value that are already defined in the current context.
+   *
+   * @param contextToAdd A TraceContext that will be added to the current context
+   */
   updateTraceContext(contextToAdd: TraceContext) {
     this.tracer.updateContext(contextToAdd);
   }
