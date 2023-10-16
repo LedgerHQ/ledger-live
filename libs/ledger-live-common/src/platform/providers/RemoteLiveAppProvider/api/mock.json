@@ -115,29 +115,7 @@
         "en": "Swap your crypto with ParaSwap that aggregates and provides the best quotes decentralised exchanges."
       }
     },
-    "permissions": [
-      {
-        "method": "account.list",
-        "params": {
-          "currencies": ["ethereum", "bsc"]
-        }
-      },
-      {
-        "method": "account.request",
-        "params": {
-          "currencies": ["ethereum", "bsc"]
-        }
-      },
-      {
-        "method": "transaction.sign",
-        "params": {
-          "nanoApp": ["paraswap"]
-        }
-      },
-      {
-        "method": "transaction.broadcast"
-      }
-    ],
+    "permissions": ["account.list", "account.request", "transaction.sign", "transaction.broadcast"],
     "domains": ["https://*"],
     "visibility": "complete"
   },

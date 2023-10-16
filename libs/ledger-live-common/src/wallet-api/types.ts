@@ -33,11 +33,6 @@ export type AppBranch = "stable" | "experimental" | "soon" | "debug";
 // deep: only appears via deeplink
 export type Visibility = "complete" | "searchable" | "deep";
 
-export type AppPermission = {
-  method: string;
-  params?: any;
-};
-
 // TODO update to the new manifest types from wallet-api when released
 export type AppManifest = LiveAppManifest;
 
