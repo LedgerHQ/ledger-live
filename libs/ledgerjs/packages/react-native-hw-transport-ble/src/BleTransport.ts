@@ -379,8 +379,11 @@ async function open(
 
   // Keeping it as a comment for now but if no new bluetooth issues occur, we will be able to remove it
   // await transport.requestConnectionPriority("High");
+
   // eslint-disable-next-line prefer-const
   let disconnectedSub: Subscription;
+
+  // Callbacks on `react-native-ble-plx` notifying the device has been disconnected
   const onDisconnect = (error: BleError | null) => {
     transport.isConnected = false;
     transport.notYetDisconnected = false;
@@ -423,7 +426,7 @@ async function open(
       }
 
       if (needsReconnect) {
-        await BleTransport.disconnect(transport.id).catch(() => {});
+        await BleTransport.disconnectDevice(transport.id);
         await delay(reconnectionConfig.delayAfterFirstPairing);
       }
     } else {
@@ -519,7 +522,7 @@ export default class BleTransport extends Transport {
         if (devices.length) {
           tracer.trace("Disconnecting from all devices", { deviceCount: devices.length });
 
-          await Promise.all(devices.map(d => BleTransport.disconnect(d.id).catch(() => {})));
+          await Promise.all(devices.map(d => BleTransport.disconnectDevice(d.id)));
         }
 
         if (unsubscribed) return;
@@ -583,19 +586,22 @@ export default class BleTransport extends Transport {
    * Exposes method from the ble-plx library to disconnect a device
    *
    * Disconnects from {@link Device} if it's connected or cancels pending connection.
+   * A "disconnect" event will normally be emitted by the ble-plx lib once the device is disconnected.
+   * Errors are logged but silenced.
    */
-  static disconnect = async (id: DeviceId, context?: TraceContext): Promise<void> => {
-    trace({
-      type: LOG_TYPE,
-      message: `Trying to disconnect device ${id})`,
-      context,
-    });
-    await bleManagerInstance().cancelDeviceConnection(id);
-    trace({
-      type: LOG_TYPE,
-      message: `Device ${id} disconnected`,
-      context,
-    });
+  static disconnectDevice = async (id: DeviceId, context?: TraceContext): Promise<void> => {
+    const tracer = new LocalTracer(LOG_TYPE, context);
+    tracer.trace(`Trying to disconnect device ${id})`);
+
+    await bleManagerInstance()
+      .cancelDeviceConnection(id)
+      .catch(error => {
+        // Only log, ignore if disconnect did not work
+        tracer
+          .withType("ble-error")
+          .trace(`Error while trying to cancel device connection`, { error });
+      });
+    tracer.trace(`Device ${id} disconnected`);
   };
 
   device: Device;
@@ -706,10 +712,9 @@ export default class BleTransport extends Transport {
             tracer.withType("ble-error").trace(`Error while exchanging APDU`, { error });
 
             if (this.notYetDisconnected) {
-              // in such case we will always disconnect because something is bad.
-              await bleManagerInstance()
-                .cancelDeviceConnection(this.id)
-                .catch(() => {}); // but we ignore if disconnect worked.
+              // In such case we will always disconnect because something is bad.
+              // This sends a "disconnect" event
+              await BleTransport.disconnectDevice(this.id);
             }
 
             const mappedError = remapError(error as IOBleErrorRemap);
@@ -786,9 +791,7 @@ export default class BleTransport extends Transport {
       } catch (error: any) {
         this.tracer.withType("ble-error").trace("Error while inferring MTU", { mtu });
 
-        await bleManagerInstance()
-          .cancelDeviceConnection(this.id)
-          .catch(() => {}); // but we ignore if disconnect worked.
+        await BleTransport.disconnectDevice(this.id);
 
         const mappedError = remapError(error);
         this.tracer.trace("Error while inferring APDU, mapped and throws following error", {
@@ -885,7 +888,7 @@ export default class BleTransport extends Transport {
 
     this.disconnectTimeout = setTimeout(() => {
       if (this.isConnected) {
-        BleTransport.disconnect(this.id, this.tracer.getContext())
+        BleTransport.disconnectDevice(this.id, this.tracer.getContext())
           .catch(() => {})
           .finally(resolve);
       } else {
