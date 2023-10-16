@@ -462,7 +462,7 @@
       "description": "Try reinstalling the app from the Manager"
     },
     "NotEnoughGas": {
-      "title": "Insufficient ETH for network fee",
+      "title": "Insufficient {{ticker}} for network fee",
       "description": "Please send some ETH to your account to pay for ERC20 token transactions."
     },
     "NotEnoughGasSwap": {
