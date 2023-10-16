@@ -142,15 +142,18 @@ function SendSummary({ navigation, route }: Props) {
     account.type === "Account" &&
     (account.subAccounts || []).some(subAccount => subAccount.balance.gt(0));
 
-  const onBuy = useCallback(() => {
-    navigation.navigate(NavigatorName.Exchange, {
-      screen: ScreenName.ExchangeBuy,
-      params: {
-        defaultAccountId: mainAccount.id,
-        defaultCurrencyId: mainAccount.currency.id,
-      },
-    });
-  }, [navigation, mainAccount]);
+  const onBuy = useCallback(
+    (account: Account) => {
+      navigation.navigate(NavigatorName.Exchange, {
+        screen: ScreenName.ExchangeBuy,
+        params: {
+          defaultAccountId: account.id,
+          defaultCurrencyId: account.currency.id,
+        },
+      });
+    },
+    [navigation],
+  );
 
   // FIXME: why is recipient sometimes empty?
   if (!account || !transaction || !transaction.recipient || !currencyOrToken) {
@@ -274,7 +277,7 @@ function SendSummary({ navigation, route }: Props) {
                 />
               }
               containerStyle={styles.continueButton}
-              onPress={onBuy}
+              onPress={() => onBuy(mainAccount)}
             />
           )
         ) : (
