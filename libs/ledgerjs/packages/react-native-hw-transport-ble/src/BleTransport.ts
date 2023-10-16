@@ -45,7 +45,16 @@ import {
   TimeoutError,
   SchedulerLike,
 } from "rxjs";
-import { share, ignoreElements, first, map, tap, catchError, timeout } from "rxjs/operators";
+import {
+  share,
+  ignoreElements,
+  first,
+  map,
+  tap,
+  catchError,
+  timeout,
+  finalize,
+} from "rxjs/operators";
 import {
   CantOpenDevice,
   DeviceNeedsRestart,
@@ -601,6 +610,8 @@ export default class BleTransport extends Transport {
   writeCharacteristic: Characteristic;
   writeCmdCharacteristic: Characteristic | undefined;
   rxjsScheduler?: SchedulerLike;
+  // Transaction ids of communication operations that are currently pending
+  currentTransactionIds: Array<string>;
 
   /**
    * The static `open` function is used to handle BleTransport instantiation
@@ -631,6 +642,7 @@ export default class BleTransport extends Transport {
     this.notifyObservable = notifyObservable;
     this.deviceModel = deviceModel;
     this.rxjsScheduler = rxjsScheduler;
+    this.currentTransactionIds = [];
 
     clearDisconnectTimeout(this.id);
 
@@ -653,10 +665,8 @@ export default class BleTransport extends Transport {
     message: Buffer,
     { abortTimeoutMs }: { abortTimeoutMs?: number } = {},
   ): Promise<Buffer> => {
-    const transactionId = uuid();
     const tracer = this.tracer.withUpdatedContext({
       function: "exchange",
-      transactionId,
     });
     tracer.trace("Exchanging APDU ...", { abortTimeoutMs });
     tracer.withType("apdu").trace(`=> ${message.toString("hex")}`);
@@ -668,7 +678,7 @@ export default class BleTransport extends Transport {
         // Consequently it monitors the response while being able to reject on an error from the send.
         merge(
           this.notifyObservable.pipe(data => receiveAPDU(data, { context: tracer.getContext() })),
-          sendAPDU(this.getWriteWithTransactionId(transactionId), message, this.mtuSize, {
+          sendAPDU(this.write, message, this.mtuSize, {
             context: tracer.getContext(),
           }),
         ).pipe(
@@ -679,15 +689,16 @@ export default class BleTransport extends Transport {
           catchError(async error => {
             // Currently only 1 reason the exchange has been explicitly aborted (other than job and transport errors): a timeout
             if (error instanceof TimeoutError) {
-              tracer.trace("Aborting and trying to cancel exchange due to timeout", {
-                abortTimeoutMs,
-                transactionId,
-              });
+              tracer.trace(
+                "Aborting due to timeout and trying to cancel all communication write of the current exchange",
+                {
+                  abortTimeoutMs,
+                  transactionIds: this.currentTransactionIds,
+                },
+              );
 
-              // Cancelling `writeCmdCharacteristic.write...` will throw a `BleError` with code `OperationCancelled`
-              // but this error will be ignored because our observable will be unsubscribed.
-              // Also cancelling transaction which doesn't exist is ignored.
-              bleManagerInstance().cancelTransaction(transactionId);
+              // No concurrent exchange should happen at the same time, so all pending operations are part of the same exchange
+              this.cancelPendingOperations();
 
               throw new ExchangeTimeoutError("Exchange aborted due to timeout");
             }
@@ -707,10 +718,43 @@ export default class BleTransport extends Transport {
             });
             throw mappedError;
           }),
+          finalize(() => {
+            tracer.trace("Clearing current transaction ids", {
+              currentTransactionIds: this.currentTransactionIds,
+            });
+            this.clearCurrentTransactionIds();
+          }),
         ),
       );
     });
   };
+
+  /**
+   * Tries to cancel all operations that have a recorded transaction and are pending
+   *
+   * Cancelling transaction which doesn't exist is ignored.
+   *
+   * Note: cancelling `writeCmdCharacteristic.write...` will throw a `BleError` with code `OperationCancelled`
+   * but this error should be ignored. (In `exchange` our observable is unsubscribed before `cancelPendingOperations`
+   * is called so the error is ignored)
+   */
+  private cancelPendingOperations() {
+    for (const transactionId of this.currentTransactionIds) {
+      try {
+        this.tracer.trace("Cancelling operation", { transactionId });
+        bleManagerInstance().cancelTransaction(transactionId);
+      } catch (error) {
+        this.tracer.trace("Error while cancelling operation", { transactionId, error });
+      }
+    }
+  }
+
+  /**
+   * Sets the collection of current transaction ids to an empty array
+   */
+  private clearCurrentTransactionIds() {
+    this.currentTransactionIds = [];
+  }
 
   /**
    * Negotiate with the device the maximum transfer unit for the ble frames
@@ -751,6 +795,9 @@ export default class BleTransport extends Transport {
           mappedError,
         });
         throw mappedError;
+      } finally {
+        // When negotiating the MTU, a message is sent/written to the device, and a transaction id was associated to this write
+        this.clearCurrentTransactionIds();
       }
     });
 
@@ -782,11 +829,21 @@ export default class BleTransport extends Transport {
   /**
    * Do not call this directly unless you know what you're doing. Communication
    * with a Ledger device should be through the {@link exchange} method.
-   * @param buffer
-   * @param txid
+   *
+   * For each call a transaction id is added to the current stack of transaction ids.
+   * With this transaction id, a pending BLE communication operations can be cancelled.
+   * Note: each frame/packet of a longer BLE-encoded message to be sent should have their unique transaction id.
+   *
+   * @param buffer BLE-encoded packet to send to the device
+   * @param frameId Frame id to make `write` aware of a bigger message that this frame/packet is part of.
+   *  Helps creating related a collection of transaction ids
    */
-  write = async (buffer: Buffer, transactionId?: string | undefined): Promise<void> => {
-    this.tracer.trace("Writing to device", { willMessageBeAcked: !this.writeCmdCharacteristic });
+  write = async (buffer: Buffer): Promise<void> => {
+    const transactionId = uuid();
+    this.currentTransactionIds.push(transactionId);
+
+    const tracer = this.tracer.withUpdatedContext({ transactionId });
+    tracer.trace("Writing to device", { willMessageBeAcked: !this.writeCmdCharacteristic });
 
     try {
       if (!this.writeCmdCharacteristic) {
@@ -799,20 +856,13 @@ export default class BleTransport extends Transport {
           transactionId,
         );
       }
-      this.tracer.withType("ble-frame").trace("=> " + buffer.toString("hex"));
+      tracer.withType("ble-frame").trace("=> " + buffer.toString("hex"));
     } catch (error: unknown) {
-      this.tracer.trace("Error while writing APDU", { error });
+      tracer.trace("Error while writing APDU", { error });
       throw new DisconnectedDeviceDuringOperation(
         error instanceof Error ? error.message : `${error}`,
       );
     }
-  };
-
-  /**
-   * Higher order function returning `write` with a given transaction id
-   */
-  getWriteWithTransactionId = (transactionId: string): ((buffer: Buffer) => Promise<void>) => {
-    return (buffer: Buffer) => this.write(buffer, transactionId);
   };
 
   /**

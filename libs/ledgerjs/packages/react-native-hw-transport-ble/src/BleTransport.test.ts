@@ -4,6 +4,7 @@ import { Subscription, VirtualTimeScheduler } from "rxjs";
 
 let mockNoResponseFromDevice = false;
 const mockCancelTransaction = jest.fn();
+let mockNegotiatedMtu: Buffer;
 
 /**
  * It is essential to mock the BLE component of a BLE transport to verify
@@ -153,7 +154,7 @@ jest.mock("react-native-ble-plx", () => {
                       switch (hex) {
                         // MTU handshake
                         case "0800000000":
-                          value = Buffer.from("080000000199", "hex");
+                          value = mockNegotiatedMtu;
                           break;
                         // getAppAndVersion - returning BOLOS on 1.0.0-rc9
                         case "0500000005b010000000":
@@ -194,8 +195,10 @@ jest.mock("react-native-ble-plx", () => {
 describe("BleTransport connectivity test coverage", () => {
   const deviceId = "20EDD96F-7430-6E33-AB22-DD8AAB857CD4";
 
-  beforeAll(() => {
+  beforeEach(() => {
     mockNoResponseFromDevice = false;
+    // MTU of 153 bytes
+    mockNegotiatedMtu = Buffer.from("080000000099", "hex");
     mockCancelTransaction.mockClear();
   });
 
@@ -263,7 +266,7 @@ describe("BleTransport connectivity test coverage", () => {
       expect((transport.disconnectTimeout as any)._destroyed).toBe(true);
     });
 
-    describe("exchange", () => {
+    describe("When the message to exchange fits in 1 frame", () => {
       it("should handle exchanges if all goes well", async () => {
         const transport = await BleTransport.open(deviceId);
         expect(transport.isConnected).toBe(true);
@@ -279,7 +282,7 @@ describe("BleTransport connectivity test coverage", () => {
         await expect(transport.exchange(Buffer.from("b010000000", "hex"))).rejects.toThrow(); // More specific errors some day.
       });
 
-      describe("When a abort timeout is set", () => {
+      describe("And when an abort timeout is set", () => {
         const abortTimeoutMs = 1000;
 
         it("should throw an error and cancel the transaction if the abort timeout was reached", done => {
@@ -298,7 +301,49 @@ describe("BleTransport connectivity test coverage", () => {
               })
               .catch(error => {
                 expect(error).toBeInstanceOf(ExchangeTimeoutError);
-                expect(mockCancelTransaction).toHaveBeenCalled();
+                expect(mockCancelTransaction).toHaveBeenCalledTimes(1);
+                done();
+              });
+
+            rxjsScheduler.flush();
+          }
+
+          asyncFn();
+        });
+      });
+    });
+
+    // Multi-frames message response is not handled by our current mocked react-native-ble-plx
+    // The logic of encoding a message into several frames is tested directly with unit tests on ledgerhq/devices/lib/ble/sendAPDU
+    describe("When the message to exchange needs more than 1 frame", () => {
+      beforeEach(() => {
+        // MTU of 25 bytes
+        mockNegotiatedMtu = Buffer.from("080000000019", "hex");
+      });
+
+      describe("And when an abort timeout is set", () => {
+        const abortTimeoutMs = 1000;
+
+        it("should throw an error and cancel the transactions of all operations if the abort timeout was reached", done => {
+          const rxjsScheduler = new VirtualTimeScheduler();
+
+          async function asyncFn() {
+            const transport = await BleTransport.open(deviceId);
+            expect(transport.isConnected).toBe(true);
+            // Once we got the transport (MTU exchanged), we stop the communication
+            mockNoResponseFromDevice = true;
+
+            // Imaginary APDU that will create an encoded message longer than MTU = 25 bytes
+            transport
+              .exchange(Buffer.from("b010000000b010000000b010000000b010000000b010000000", "hex"), {
+                abortTimeoutMs,
+              })
+              .then(() => {
+                done("It should not succeed");
+              })
+              .catch(error => {
+                expect(error).toBeInstanceOf(ExchangeTimeoutError);
+                expect(mockCancelTransaction).toHaveBeenCalledTimes(2);
                 done();
               });
 
