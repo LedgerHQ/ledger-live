@@ -284,8 +284,8 @@ importers:
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/types-live
       '@polkadot/react-identicon':
-        specifier: 2.11.3
-        version: 2.11.3(react-dom@18.2.0)(react-is@17.0.2)(react@18.2.0)(styled-components@5.3.5)
+        specifier: ^3.6.3
+        version: 3.6.3(react-dom@18.2.0)(react-is@17.0.2)(react@18.2.0)
       '@sentry/electron':
         specifier: ^4.3.0
         version: 4.3.0
@@ -18438,17 +18438,18 @@ packages:
       tslib: 2.6.2
     dev: false
 
-  /@polkadot/networks@10.4.2:
-    resolution: {integrity: sha512-FAh/znrEvWBiA/LbcT5GXHsCFUl//y9KqxLghSr/CreAmAergiJNT0MVUezC7Y36nkATgmsr4ylFwIxhVtuuCw==}
-    engines: {node: '>=14.0.0'}
+  /@polkadot/networks@12.5.1:
+    resolution: {integrity: sha512-PP6UUdzz6iHHZH4q96cUEhTcydHj16+61sqeaYEJSF6Q9iY+5WVWQ26+rdjmre/EBdrMQkSS/CKy73mO5z/JkQ==}
+    engines: {node: '>=16'}
     dependencies:
-      '@babel/runtime': 7.22.15
-      '@polkadot/util': 10.4.2
-      '@substrate/ss58-registry': 1.38.0
+      '@polkadot/util': 12.5.1
+      '@substrate/ss58-registry': 1.43.0
+      tslib: 2.6.2
     dev: false
 
-  /@polkadot/react-identicon@2.11.3(react-dom@18.2.0)(react-is@17.0.2)(react@18.2.0)(styled-components@5.3.5):
-    resolution: {integrity: sha512-7GBnOPfpOP8ziK5ByYcnD6Yb18VpSwK6wZwl/ZhyXrr1Hz2PpzDd2wXn8UltP4QKGz/r8TgJKoy0/c7iUO3RjA==}
+  /@polkadot/react-identicon@3.6.3(react-dom@18.2.0)(react-is@17.0.2)(react@18.2.0):
+    resolution: {integrity: sha512-6VfaYEtwnbgszvzIwRpEkE6pMHbuIwUS+aLKJDL02wjFUkJBy7YFfOtJf2WrKt863MpxiLZ+7Y5GRnHJI8Vw7A==}
+    engines: {node: '>=16'}
     peerDependencies:
       react: '*'
       react-dom: '*'
@@ -18465,7 +18466,11 @@ packages:
       react-copy-to-clipboard: 5.1.0(react@18.2.0)
       react-dom: 18.2.0(react@18.2.0)
       react-is: 17.0.2
-      styled-components: 5.3.5(react-dom@18.2.0)(react-is@17.0.2)(react@18.2.0)
+      styled-components: 6.0.8(react-dom@18.2.0)(react@18.2.0)
+      tslib: 2.6.2
+    transitivePeerDependencies:
+      - babel-plugin-styled-components
+      - supports-color
     dev: false
 
   /@polkadot/reactnative-identicon@2.11.3(react-native@0.72.3)(react@18.2.0):
@@ -18474,10 +18479,9 @@ packages:
       react: '*'
       react-native: '*'
     dependencies:
-      '@babel/runtime': 7.22.15
-      '@polkadot/ui-shared': 2.12.1(@polkadot/util-crypto@10.4.2)(@polkadot/util@10.4.2)
-      '@polkadot/util': 10.4.2
-      '@polkadot/util-crypto': 10.4.2
+      '@polkadot/ui-shared': 3.6.3(@polkadot/util-crypto@12.5.1)(@polkadot/util@12.5.1)
+      '@polkadot/util': 12.5.1
+      '@polkadot/util-crypto': 12.5.1(@polkadot/util@12.5.1)
       react: 18.2.0
       react-native: 0.72.3(@babel/core@7.22.8)(react@18.2.0)
       react-native-svg: 12.5.1(react-native@0.72.3)(react@18.2.0)
@@ -31300,10 +31304,10 @@ packages:
 
   /colord@2.9.2:
     resolution: {integrity: sha512-Uqbg+J445nc1TKn4FoDPS6ZZqAvEDnwrH42yo8B40JSOgSLxMZ/gt3h4nmCtPLQeXhjJJkqBx7SCY35WnIixaQ==}
+    dev: true
 
   /colord@2.9.3:
     resolution: {integrity: sha512-jeC1axXpnb0/2nn/Y1LPuLdgXBLH7aDcHu4KEKfqw3CUhX7ZpfBSlPKyqXE6btIgEzfWtrX3/tyBCaCvXvMkOw==}
-    dev: false
 
   /colorette@1.4.0:
     resolution: {integrity: sha512-Y2oEozpomLn7Q3HFP7dpww7AtMJplbM9lGZP6RDfHqmbeRjiwRg4n6VM6j4KLmRke85uWEI7JqF17f3pqdRA0g==}
@@ -51006,7 +51010,7 @@ packages:
     dependencies:
       browserslist: 4.21.10
       caniuse-api: 3.0.0
-      colord: 2.9.2
+      colord: 2.9.3
       postcss: 8.4.29
       postcss-value-parser: 4.2.0
 
@@ -51672,7 +51676,7 @@ packages:
     peerDependencies:
       postcss: ^8.2.15
     dependencies:
-      colord: 2.9.2
+      colord: 2.9.3
       cssnano-utils: 3.1.0(postcss@8.4.29)
       postcss: 8.4.29
       postcss-value-parser: 4.2.0
@@ -57679,7 +57683,7 @@ packages:
       - supports-color
     dev: false
 
-  /styled-components@6.0.8(react-dom@17.0.2)(react@17.0.2):
+  /styled-components@6.0.8(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-AwI02MTWZwqjzfXgR5QcbmcSn5xVjY4N2TLjSuYnmuBGF3y7GicHz3ysbpUq2EMJP5M8/Nc22vcmF3V3WNZDFA==}
     engines: {node: '>= 16'}
     peerDependencies:
@@ -57705,9 +57709,9 @@ packages:
       '@types/stylis': 4.2.0
       css-to-react-native: 3.2.0
       csstype: 3.1.2
-      postcss: 8.4.29
-      react: 17.0.2
-      react-dom: 17.0.2(react@17.0.2)
+      postcss: 8.4.31
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
       shallowequal: 1.1.0
       stylis: 4.3.0
       tslib: 2.6.2
