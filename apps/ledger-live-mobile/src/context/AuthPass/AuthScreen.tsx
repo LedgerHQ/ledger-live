@@ -28,7 +28,7 @@ import PasswordInput from "../../components/PasswordInput";
 import KeyboardView from "../../components/KeyboardView";
 import FailBiometrics from "./FailBiometrics";
 import KeyboardBackgroundDismiss from "../../components/KeyboardBackgroundDismiss";
-import { VIBRATION_PATTERN_ERROR } from "../../constants";
+import { VIBRATION_PATTERN_ERROR } from "@utils/constants";
 import { withTheme } from "../../colors";
 import type { Theme } from "../../colors";
 
