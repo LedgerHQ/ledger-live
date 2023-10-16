@@ -44,34 +44,6 @@ const maybeThrowProtocolError = (result: Buffer): void => {
   }
 };
 
-export function getExchageErrorMessage(errorCode: number): string | undefined {
-  switch (errorCode) {
-    case ErrorStatus.INCORRECT_COMMAND_DATA:
-      return "Incorrect command data";
-    case ErrorStatus.DESERIALIZATION_FAILED:
-      return "Payload deserialzation failed";
-    case ErrorStatus.WRONG_TRANSACTION_ID:
-      return "Wrond transaction id";
-    case ErrorStatus.INVALID_ADDRESS:
-      return "Invalid address";
-    case ErrorStatus.USER_REFUSED:
-      return "User refused";
-    case ErrorStatus.INTERNAL_ERROR:
-      return "Internal error";
-    case ErrorStatus.WRONG_P1:
-      return "Wrong P1";
-    case ErrorStatus.WRONG_P2:
-      return "Wrong P2";
-    case ErrorStatus.CLASS_NOT_SUPPORTED:
-      return "Class not supported";
-    case ErrorStatus.INVALID_INSTRUCTION:
-      return "Invalid instruction";
-    case ErrorStatus.SIGN_VERIFICATION_FAIL:
-      return "Signature verification failed";
-  }
-  return undefined;
-}
-
 export type PartnerKeyInfo = {
   name: string;
   curve: string;
@@ -145,7 +117,7 @@ export default class Exchange {
     switch (this.transactionType) {
       case ExchangeTypes.Sell:
       case ExchangeTypes.Fund:
-        return result.slice(0, 32).toString("base64");
+        return result.subarray(0, 32).toString("base64");
       case ExchangeTypes.Swap:
         return result.toString("ascii", 0, 10);
       default:
