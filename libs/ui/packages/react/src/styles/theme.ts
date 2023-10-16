@@ -177,22 +177,18 @@ const fadeInUp = keyframes`
     }
   `;
 const animations = {
-  fadeIn: () =>
-    css`
-      ${fadeIn} ${animationDuration} ${easings.outQuadratic} forwards
-    `,
-  fadeOut: () =>
-    css`
-      ${fadeOut} ${animationDuration} ${easings.outQuadratic} forwards
-    `,
-  fadeInGrowX: () =>
-    css`
-      ${fadeInGrowX} 0.6s ${easings.outQuadratic} forwards
-    `,
-  fadeInUp: () =>
-    css`
-      ${fadeInUp} ${animationDuration} ${easings.outQuadratic} forwards
-    `,
+  fadeIn: () => css`
+    ${fadeIn} ${animationDuration} ${easings.outQuadratic} forwards
+  `,
+  fadeOut: () => css`
+    ${fadeOut} ${animationDuration} ${easings.outQuadratic} forwards
+  `,
+  fadeInGrowX: () => css`
+    ${fadeInGrowX} 0.6s ${easings.outQuadratic} forwards
+  `,
+  fadeInUp: () => css`
+    ${fadeInUp} ${animationDuration} ${easings.outQuadratic} forwards
+  `,
 };
 const overflow = {
   x: css`

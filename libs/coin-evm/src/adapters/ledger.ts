@@ -97,7 +97,7 @@ export const ledgerOperationToOperations = (
         nftOperations: [],
         hasFailed,
         extra: {},
-      } as Operation),
+      }) as Operation,
   );
 };
 
@@ -147,7 +147,7 @@ export const ledgerERC20EventToOperations = (
         accountId: tokenAccountId,
         date,
         extra: {},
-      } as Operation),
+      }) as Operation,
   );
 };
 
@@ -199,7 +199,7 @@ export const ledgerERC721EventToOperations = (
         value,
         date,
         extra: {},
-      } as Operation),
+      }) as Operation,
   );
 };
 
@@ -251,7 +251,7 @@ export const ledgerERC1155EventToOperations = (
           value: new BigNumber(quantity),
           date,
           extra: {},
-        } as Operation),
+        }) as Operation,
     );
   });
 };
