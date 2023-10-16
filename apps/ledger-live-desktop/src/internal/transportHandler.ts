@@ -43,19 +43,21 @@ export const transportOpen = ({ data, requestId }: MessagesMap["transport:open"]
         if (e.type === "exchange") {
           transport
             .exchange(Buffer.from(e.apduHex, "hex"))
-            .then(response =>
-              process.send?.({
-                type: transportExchangeChannel,
-                data: response.toString("hex"),
-                requestId: e.requestId,
-              }),
+            .then(
+              response =>
+                process.send?.({
+                  type: transportExchangeChannel,
+                  data: response.toString("hex"),
+                  requestId: e.requestId,
+                }),
             )
-            .catch(error =>
-              process.send?.({
-                type: transportExchangeChannel,
-                error: serializeError(error),
-                requestId: e.requestId,
-              }),
+            .catch(
+              error =>
+                process.send?.({
+                  type: transportExchangeChannel,
+                  error: serializeError(error),
+                  requestId: e.requestId,
+                }),
             );
         } else if (e.type === "exchangeBulk") {
           const apdus = e.apdusHex.map(apduHex => Buffer.from(apduHex, "hex"));

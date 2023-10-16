@@ -28,7 +28,7 @@ export const mapAsPortfolioContentCard = (card: ClassicCard) =>
     image: card.extras?.image,
     url: card.extras?.url,
     path: card.extras?.path,
-  } as PortfolioContentCard);
+  }) as PortfolioContentCard;
 
 export const mapAsNotificationContentCard = (card: ClassicCard) =>
   ({
@@ -41,7 +41,7 @@ export const mapAsNotificationContentCard = (card: ClassicCard) =>
     cta: card.extras?.cta,
     createdAt: card.created,
     viewed: card.viewed,
-  } as NotificationContentCard);
+  }) as NotificationContentCard;
 
 export async function useBraze() {
   const dispatch = useDispatch();

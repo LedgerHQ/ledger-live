@@ -276,10 +276,13 @@ const useNotifications = () => {
     const marketCoinStarredParams = pushNotificationsFeature?.params?.marketCoinStarred;
     if (marketCoinStarredParams?.enabled) {
       dispatch(setRatingsModalLocked(true));
-      const timeout = setTimeout(() => {
-        dispatch(setNotificationsModalType("market"));
-        setPushNotificationsModalOpenCallback(true);
-      }, marketCoinStarredParams?.timer);
+      const timeout = setTimeout(
+        () => {
+          dispatch(setNotificationsModalType("market"));
+          setPushNotificationsModalOpenCallback(true);
+        },
+        marketCoinStarredParams?.timer,
+      );
       dispatch(
         setNotificationsEventTriggered({
           route_name: "MarketDetail",
@@ -301,9 +304,12 @@ const useNotifications = () => {
     const justFinishedOnboardingParams = pushNotificationsFeature?.params?.justFinishedOnboarding;
     if (justFinishedOnboardingParams?.enabled) {
       dispatch(setRatingsModalLocked(true));
-      const timeout = setTimeout(() => {
-        setPushNotificationsModalOpenCallback(true);
-      }, justFinishedOnboardingParams?.timer);
+      const timeout = setTimeout(
+        () => {
+          setPushNotificationsModalOpenCallback(true);
+        },
+        justFinishedOnboardingParams?.timer,
+      );
       dispatch(
         setNotificationsEventTriggered({
           route_name: "Portfolio",

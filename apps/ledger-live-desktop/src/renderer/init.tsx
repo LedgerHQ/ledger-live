@@ -9,7 +9,7 @@ import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/
 import i18n from "i18next";
 import { webFrame, ipcRenderer } from "electron";
 import * as remote from "@electron/remote";
-import { render } from "react-dom";
+import { createRoot } from "react-dom/client";
 import moment from "moment";
 import each from "lodash/each";
 import { reload, getKey, loadLSS } from "~/renderer/storage";
@@ -48,7 +48,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { listCachedCurrencyIds } from "./bridge/cache";
 import { LogEntry } from "winston";
 
-const rootNode = document.getElementById("react-root");
+const domNode = document.getElementById("react-root");
 const TAB_KEY = 9;
 
 async function init() {
@@ -249,8 +249,9 @@ async function init() {
   };
 }
 function r(Comp: JSX.Element) {
-  if (rootNode) {
-    render(Comp, rootNode);
+  if (domNode) {
+    const rootNode = createRoot(domNode);
+    rootNode.render(Comp);
   }
 }
 init()

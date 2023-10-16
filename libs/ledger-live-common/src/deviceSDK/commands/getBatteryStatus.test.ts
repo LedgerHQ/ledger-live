@@ -10,7 +10,7 @@ const mockTransportGenerator = out =>
     on: () => {},
     off: () => {},
     setExchangeUnresponsiveTimeout: () => {},
-  } as unknown as Transport);
+  }) as unknown as Transport;
 
 describe("getBatteryStatus", () => {
   test("battery percentage OK", async () => {
