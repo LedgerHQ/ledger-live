@@ -64,7 +64,7 @@ const Ball = styled.div<BallProps>`
 type Props = {
   isChecked: boolean;
   disabled?: boolean;
-  onChange?: Function;
+  onChange?: (a: boolean) => void;
   small?: boolean;
   medium?: boolean;
   forceBgColor?: string;

@@ -2,7 +2,7 @@ import React, { useCallback, useState, useMemo } from "react";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 import take from "lodash/take";
-import { StyleSheet, View, FlatList } from "react-native";
+import { StyleSheet, View, FlatList, ListRenderItem } from "react-native";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { Account, SubAccount, TokenAccount } from "@ledgerhq/types-live";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
@@ -195,7 +195,7 @@ export default function SubAccountsList({
     accountId,
   ]);
 
-  const renderItem = useCallback(
+  const renderItem: ListRenderItem<SubAccount> = useCallback(
     ({ item }) => (
       <Flex alignItems={"center"}>
         <SubAccountRow

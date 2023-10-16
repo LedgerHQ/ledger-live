@@ -134,7 +134,7 @@ export function SelectAccount({ navigation, route: { params } }: SelectAccountPa
   }, [navigation, params, selectableCurrencyIds, track]);
 
   const renderList = useCallback(
-    items => {
+    (items: typeof allAccounts) => {
       const formatedList = formatSearchResults(items, accounts);
       return (
         <FlatList

@@ -73,7 +73,7 @@ const NftCollection = ({ route }: NavigationProps) => {
   };
 
   const renderNftItem = useCallback(
-    ({ item, index }) => (
+    ({ item, index }: { item: ProtoNFT; index: number }) => (
       <NftCard
         key={item.id}
         nft={item}

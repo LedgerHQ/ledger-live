@@ -13,6 +13,7 @@ import Text from "~/renderer/components/Text";
 import DelegationSelectorField from "../fields/DelegationSelectorField";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
+import { ElrondTransactionMode, Transaction } from "@ledgerhq/live-common/families/elrond/types";
 import { StepProps } from "../types";
 
 const StepClaimRewards = (props: StepProps) => {
@@ -30,13 +31,13 @@ const StepClaimRewards = (props: StepProps) => {
 
   const bridge = getAccountBridge(account);
   const updateClaimRewards = useCallback(
-    newTransaction => {
+    (newTransaction: Partial<Transaction>) => {
       onUpdateTransaction(transaction => bridge.updateTransaction(transaction, newTransaction));
     },
     [bridge, onUpdateTransaction],
   );
   const onChangeMode = useCallback(
-    (mode: string) => {
+    (mode: ElrondTransactionMode) => {
       updateClaimRewards({
         ...transaction,
         mode,
@@ -45,6 +46,8 @@ const StepClaimRewards = (props: StepProps) => {
     [updateClaimRewards, transaction],
   );
   const onDelegationChange = useCallback(
+    // @ts-expect-error the expected type should be ElrondProvider | null
+    // however if we do that, there is no `delegation` key on validator halp
     validator => {
       updateClaimRewards({
         ...transaction,

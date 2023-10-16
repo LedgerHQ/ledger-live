@@ -7,7 +7,7 @@ const EnableLearnPageStagingUrl = () => {
   const dispatch = useDispatch();
   const enableLearnPageStagingUrl = useSelector(enableLearnPageStagingUrlSelector);
   const onSetEnablePlatformDevTools = useCallback(
-    checked => dispatch(setEnableLearnPageStagingUrl(checked)),
+    (checked: boolean) => dispatch(setEnableLearnPageStagingUrl(checked)),
     [dispatch],
   );
   return (

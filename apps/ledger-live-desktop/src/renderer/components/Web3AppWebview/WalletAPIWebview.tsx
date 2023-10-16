@@ -237,7 +237,7 @@ function useWebView({ manifest }: Pick<Props, "manifest">, webviewRef: RefObject
   });
 
   const handleMessage = useCallback(
-    event => {
+    (event: Electron.IpcMessageEvent) => {
       if (event.channel === "webviewToParent") {
         onMessage(event.args[0]);
       }

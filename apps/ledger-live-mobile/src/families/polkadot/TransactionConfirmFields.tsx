@@ -37,7 +37,7 @@ function PolkadotValidatorsField({ account, transaction, field }: FieldProps) {
     [validators, polkadotValidators],
   );
   const redirectAddressCreator = useCallback(
-    address => () => {
+    (address: string) => () => {
       const url = getAddressExplorer(getDefaultExplorerView(account.currency), address);
       if (url) Linking.openURL(url);
     },

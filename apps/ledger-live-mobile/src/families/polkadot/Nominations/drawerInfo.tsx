@@ -39,6 +39,7 @@ export function getDrawerInfo({
   const formattedCommission = validator?.commission
     ? `${validator?.commission.multipliedBy(100).toFixed(2)} %`
     : "-";
+  // @ts-expect-error return type is not matching what we return
   return [
     ...(validator?.identity
       ? [
@@ -91,7 +92,7 @@ export function getDrawerInfo({
             !nomination.status ? "orange" : nomination.status === "active" ? "success" : "darkBlue"
           }
         >
-          {t(`polkadot.nomination.${nomination.status || "notValidator"}`)}
+          {t(`polkadot.nomination.${nomination.status || "notValidator"}`) as string}
         </LText>
       ),
     },
@@ -120,12 +121,12 @@ export function getDrawerInfo({
                 color={validator?.isOversubscribed ? "orange" : "darkBlue"}
               >
                 {validator?.isOversubscribed
-                  ? t(`polkadot.nomination.oversubscribed`, {
+                  ? (t(`polkadot.nomination.oversubscribed`, {
                       nominatorsCount: validator?.nominatorsCount,
-                    })
-                  : t(`polkadot.nomination.nominatorsCount`, {
+                    }) as string)
+                  : (t(`polkadot.nomination.nominatorsCount`, {
                       nominatorsCount: validator?.nominatorsCount,
-                    })}
+                    }) as string)}
               </LText>
             ),
           },

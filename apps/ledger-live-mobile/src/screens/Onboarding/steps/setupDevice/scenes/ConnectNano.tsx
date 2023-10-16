@@ -46,7 +46,7 @@ const ConnectNanoScene = ({
   );
 
   const directNext = useCallback(
-    async device => {
+    async (device: Device) => {
       dispatch(setLastConnectedDevice(device));
       dispatch(setReadOnlyMode(false));
       dispatch(setHasOrderedNano(false));

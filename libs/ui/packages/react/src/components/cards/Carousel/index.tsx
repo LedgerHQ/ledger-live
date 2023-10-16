@@ -119,10 +119,13 @@ const Carousel = ({
   const [index, setIndex] = useState(0);
   const [wantToDismiss, setWantToDismiss] = useState(false);
   const [paused, setPaused] = useState(false);
-  const childFactory = useCallback(child => React.cloneElement(child, { direction }), [direction]);
+  const childFactory = useCallback(
+    (child: any) => React.cloneElement(child, { direction }),
+    [direction],
+  );
 
   const wrappedSetIndex = useCallback(
-    newIndex => {
+    (newIndex: number) => {
       setDirection(newIndex > index ? "left" : "right");
       setIndex(newIndex);
     },

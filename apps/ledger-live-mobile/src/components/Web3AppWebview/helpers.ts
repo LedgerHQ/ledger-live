@@ -14,7 +14,7 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import BigNumber from "bignumber.js";
 import { useSelector } from "react-redux";
 import { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
-import { WebViewProps, WebView } from "react-native-webview";
+import { WebViewProps, WebView, WebViewMessageEvent } from "react-native-webview";
 import VersionNumber from "react-native-version-number";
 import { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
@@ -89,7 +89,7 @@ export function useWebView(
   });
 
   const onMessage = useCallback(
-    e => {
+    (e: WebViewMessageEvent) => {
       if (e.nativeEvent?.data) {
         try {
           const msg = JSON.parse(e.nativeEvent.data);

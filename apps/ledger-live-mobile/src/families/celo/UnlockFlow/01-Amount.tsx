@@ -83,7 +83,7 @@ export default function UnlockAmount({ navigation, route }: Props) {
   }, [account, parentAccount, debouncedTransaction, bridge]);
 
   const onChange = useCallback(
-    amount => {
+    (amount: BigNumber) => {
       if (!amount.isNaN()) {
         setTransaction(bridge.updateTransaction(transaction, { amount }));
       }

@@ -60,7 +60,7 @@ const RunLocalAppButton = () => {
         </Button>
       </Row>
       {liveAppByIndex.map(manifest => (
-        <Row key={manifest.id} title={manifest.name} desc={manifest.url}>
+        <Row key={manifest.id} title={manifest.name} desc={manifest.url as string}>
           <ButtonContainer>
             <Button small primary onClick={() => history.push(`/platform/${manifest.id}`)}>
               {t("settings.developer.runLocalAppOpenButton")}

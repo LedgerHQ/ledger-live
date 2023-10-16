@@ -47,9 +47,12 @@ const Init = ({ closeModal, setStep }: Props) => {
       source: ratingsHappyMoment?.route_name,
       params: ratingsFeatureParams,
     });
-    handleRatingsSetDateOfNextAllowedRequest(ratingsFeatureParams?.conditions?.disappointed_delay, {
-      satisfaction: "disappointed",
-    });
+    handleRatingsSetDateOfNextAllowedRequest(
+      ratingsFeatureParams?.conditions?.disappointed_delay as Duration,
+      {
+        satisfaction: "disappointed",
+      },
+    );
     updateIdentify();
   }, [
     setStep,

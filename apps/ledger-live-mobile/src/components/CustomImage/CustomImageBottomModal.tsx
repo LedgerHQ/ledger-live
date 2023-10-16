@@ -105,7 +105,7 @@ const CustomImageBottomModal: React.FC<Props> = props => {
   }, [setDeviceHasImage, wrappedOnClose, pushToast, t]);
 
   const onError = useCallback(
-    error => {
+    (error: Error) => {
       if (error instanceof ImageDoesNotExistOnDevice) {
         if (setDeviceHasImage) {
           setDeviceHasImage(false);

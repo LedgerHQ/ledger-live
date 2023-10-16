@@ -10,6 +10,7 @@ import { TFunction } from "i18next";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { ElrondProvider, Transaction } from "@ledgerhq/live-common/families/elrond/types";
 import { UnbondingType } from "~/renderer/families/elrond/types";
+import { Option as FilterOption } from "react-select/src/filters";
 
 type NoOptionsMessageCallbackType = {
   inputValue: string;
@@ -71,13 +72,15 @@ const DelegationSelectorField = (props: Props) => {
     [t],
   );
   const filterOptions = useCallback(
-    (option, needle: string): boolean =>
+    (option: FilterOption, needle: string): boolean =>
       option.data.validator.identity.name
         ? option.data.validator.identity.name.toLowerCase().includes(needle.toLowerCase())
         : false,
     [],
   );
   const onValueChange = useCallback(
+    // @ts-expect-error another amazing typing between this function, the one expected by Select
+    // and the onChange we use here...
     option => {
       setValue(option);
       if (onChange) {

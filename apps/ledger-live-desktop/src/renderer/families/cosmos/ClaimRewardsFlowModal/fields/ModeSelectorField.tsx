@@ -5,6 +5,7 @@ import ToggleButton from "~/renderer/components/ToggleButton";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import Text from "~/renderer/components/Text";
 import Popover from "~/renderer/components/Popover";
+import { CosmosLikeTransaction } from "@ledgerhq/live-common/families/cosmos/types";
 const options = [
   {
     value: "claimRewardCompound",
@@ -19,7 +20,7 @@ export default function ModeSelectorField({
   mode,
   onChange,
 }: {
-  mode: string;
+  mode: CosmosLikeTransaction["mode"];
   onChange: (r: string) => void;
 }) {
   return (

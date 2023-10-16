@@ -12,10 +12,10 @@ import { View } from "react-native";
 import QueuedDrawer from "../../../QueuedDrawer";
 
 type Props = {
-  readonly isOpen: boolean;
-  readonly onClose: () => void;
-  readonly toggleFilter: (filter: keyof NftGalleryChainFiltersState) => void;
-  readonly filters: NftGalleryChainFiltersState;
+  isOpen: boolean;
+  onClose: () => void;
+  toggleFilter: (filter: keyof NftGalleryChainFiltersState) => void;
+  filters: NftGalleryChainFiltersState;
 };
 const NftFilterDraw: FC<Props> = ({ onClose, isOpen, filters, toggleFilter }) => {
   const { t } = useTranslation();

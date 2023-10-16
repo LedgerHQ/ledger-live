@@ -78,7 +78,7 @@ const LanguageSelect: React.FC<Props> = ({ disableLanguagePrompt }) => {
   }, [i18n, language]);
 
   const openDrawer = useCallback(
-    language => {
+    (language?: Language | null) => {
       setDrawer(
         ChangeDeviceLanguagePromptDrawer,
         {

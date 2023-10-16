@@ -7,7 +7,7 @@ import styled from "styled-components";
 import { track } from "~/renderer/analytics/segment";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
-import SelectFeeStrategy from "~/renderer/components/SelectFeeStrategy";
+import SelectFeeStrategy, { OnClickType } from "~/renderer/components/SelectFeeStrategy";
 import SendFeeMode from "~/renderer/components/SendFeeMode";
 import Text from "~/renderer/components/Text";
 import Tooltip from "~/renderer/components/Tooltip";
@@ -58,7 +58,7 @@ const Fields: Props = ({
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const onFeeStrategyClick = useCallback(
-    ({ amount, feesStrategy }) => {
+    ({ amount, feesStrategy }: OnClickType) => {
       track("button_clicked", {
         ...trackProperties,
         button: feesStrategy,
@@ -76,7 +76,7 @@ const Fields: Props = ({
     [updateTransaction, bridge],
   );
   const setAdvanceModeAndTrack = useCallback(
-    state => {
+    (state: boolean) => {
       track("button_clicked", {
         ...trackProperties,
         button: state ? "advanced" : "standard",
@@ -86,7 +86,7 @@ const Fields: Props = ({
     [trackProperties],
   );
   const onChangeAndTrack = useCallback(
-    params => {
+    (params: Transaction) => {
       track("button_clicked", {
         ...trackProperties,
         button: "fees",
@@ -137,6 +137,7 @@ const Fields: Props = ({
             <CoinControlModal
               transaction={transaction}
               account={account}
+              // @ts-expect-error We use the same onChangeTrack function on 2 components yet their onChange signature is different, please halp
               onChange={onChangeAndTrack}
               status={status}
               isOpened={coinControlOpened}

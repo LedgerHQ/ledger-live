@@ -63,7 +63,7 @@ const Screen = connect(mapStateToProps)(
       memoType: item.value,
     }),
     keyExtractor: item => item.value,
-    formatItem: item => i18next.t(`stellar.memoType.${item.label}`),
+    formatItem: item => i18next.t(`stellar.memoType.${item.label}`) as React.ReactNode,
     ListHeaderComponent: () => (
       <View style={styles.memo}>
         <LText style={styles.text}>

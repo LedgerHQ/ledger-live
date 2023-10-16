@@ -1,7 +1,7 @@
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
 import React, { useCallback, useMemo } from "react";
-import { FlatList, StyleSheet, View, SafeAreaView } from "react-native";
+import { FlatList, StyleSheet, View, SafeAreaView, ListRenderItem } from "react-native";
 import { useSelector } from "react-redux";
 import {
   CeloAccount,
@@ -53,18 +53,19 @@ export default function SelectValidator({ navigation, route }: Props) {
     [navigation, route.params],
   );
 
-  const renderItem = useCallback(
-    ({ item }) => (
-      <ValidatorRow
-        account={account}
-        validator={item.validatorGroup}
-        vote={item.vote}
-        onPress={onItemPress}
-        amount={item.vote.amount}
-      />
-    ),
-    [onItemPress, account],
-  );
+  const renderItem: ListRenderItem<{ vote: CeloVote; validatorGroup: CeloValidatorGroup }> =
+    useCallback(
+      ({ item }) => (
+        <ValidatorRow
+          account={account}
+          validator={item.validatorGroup}
+          vote={item.vote}
+          onPress={onItemPress}
+          amount={item.vote.amount}
+        />
+      ),
+      [onItemPress, account],
+    );
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>

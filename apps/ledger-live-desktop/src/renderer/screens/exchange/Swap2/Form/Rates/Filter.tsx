@@ -38,7 +38,7 @@ export const Btn = styled(Button).attrs(p => {
 export default function Filter({ onClick }: Props) {
   const [filter, setFilter] = useState<string[]>([]);
   const updateFilter = useCallback(
-    type => {
+    (type: keyof typeof FILTER) => {
       let newFilter: string[] = [];
       if (filter.includes(type)) {
         newFilter = filter.filter(e => e !== type);

@@ -117,7 +117,8 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
   }, [navigation, transaction, route.params]);
 
   const onChangeText = useCallback(
-    recipient => {
+    (recipient: string) => {
+      if (!account) return;
       const bridge = getAccountBridge(account, parentAccount);
       setTransaction(
         bridge.updateTransaction(transaction, {

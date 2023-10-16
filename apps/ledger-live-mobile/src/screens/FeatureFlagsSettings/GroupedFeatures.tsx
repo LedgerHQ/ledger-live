@@ -47,7 +47,7 @@ const GroupedFeatures: React.FC<Props> = ({ groupName, focused, setFocusedGroupN
   });
 
   const handleSwitchChange = useCallback(
-    enabled => {
+    (enabled: boolean) => {
       featureIds.forEach(featureId =>
         overrideFeature(featureId, { ...getFeature(featureId), enabled }),
       );

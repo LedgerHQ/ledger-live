@@ -11,6 +11,7 @@ import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import Alert from "~/renderer/components/Alert";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import AssetSelector, { getAssetObject } from "../fields/AssetSelector";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 export default function StepAsset({
   account,
   parentAccount,
@@ -24,7 +25,9 @@ export default function StepAsset({
   invariant(account && transaction, "account and transaction required");
   const bridge = getAccountBridge(account, parentAccount);
   const onUpdateAsset = useCallback(
-    ({ id: assetId }) => {
+    (token?: TokenCurrency | null) => {
+      if (!token) return;
+      const { id: assetId } = token;
       onUpdateTransaction(transaction =>
         bridge.updateTransaction(transaction, getAssetObject(assetId)),
       );

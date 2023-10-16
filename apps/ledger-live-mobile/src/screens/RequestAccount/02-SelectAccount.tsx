@@ -75,7 +75,7 @@ const List = ({
   renderItem,
   renderFooter,
 }: {
-  items: { account: AccountLike; subAccount: SubAccount }[];
+  items: { account: AccountLike; subAccount?: SubAccount | null }[];
   renderItem: ListRenderItem<SearchResult>;
   renderFooter: React.ComponentType | React.ReactElement | null | undefined;
 }) => {
@@ -112,7 +112,7 @@ function SelectAccount({ navigation, route }: Props) {
     [navigation, onSuccess],
   );
 
-  const renderItem = useCallback(
+  const renderItem: ListRenderItem<SearchResult> = useCallback(
     ({ item }) => <Item item={item} onSelect={onSelect} />,
     [onSelect],
   );
@@ -151,7 +151,9 @@ function SelectAccount({ navigation, route }: Props) {
   );
 
   const renderList = useCallback(
-    items => <List items={items} renderItem={renderItem} renderFooter={renderFooter} />,
+    (items: { account: AccountLike; subAccount?: SubAccount | null }[]) => (
+      <List items={items} renderItem={renderItem} renderFooter={renderFooter} />
+    ),
     [renderFooter, renderItem],
   );
 
