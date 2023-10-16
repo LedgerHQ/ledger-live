@@ -169,7 +169,7 @@
     "stylelint-processor-styled-components": "^1.10.0",
     "util": "^0.12.5",
     "victory": "^35.5.5",
-    "webpack": "^5.76.1",
+    "webpack": "^5.76.0",
     "webpack-dev-server": "^4.12.0"
   }
 }
