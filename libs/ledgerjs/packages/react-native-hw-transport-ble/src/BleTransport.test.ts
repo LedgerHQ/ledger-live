@@ -210,7 +210,7 @@ describe("BleTransport connectivity test coverage", () => {
 
     it("should be disconnectable, and cleanup", async () => {
       const transport = await BleTransport.open(deviceId);
-      await BleTransport.disconnect(deviceId);
+      await BleTransport.disconnectDevice(deviceId);
       expect(transport.isConnected).toBe(false);
     });
 
@@ -262,7 +262,7 @@ describe("BleTransport connectivity test coverage", () => {
       // Nb due to the different environments, the timeout behaves differently here
       // and I can't check against a number for it to be cleared or not.
       expect((transport.disconnectTimeout as any)._destroyed).toBe(false);
-      await BleTransport.disconnect(deviceId);
+      await BleTransport.disconnectDevice(deviceId);
       expect((transport.disconnectTimeout as any)._destroyed).toBe(true);
     });
 
@@ -278,7 +278,7 @@ describe("BleTransport connectivity test coverage", () => {
       it("should throw on exchanges if disconnected", async () => {
         const transport = await BleTransport.open(deviceId);
         expect(transport.isConnected).toBe(true);
-        await BleTransport.disconnect(deviceId);
+        await BleTransport.disconnectDevice(deviceId);
         await expect(transport.exchange(Buffer.from("b010000000", "hex"))).rejects.toThrow(); // More specific errors some day.
       });
 
@@ -316,9 +316,17 @@ describe("BleTransport connectivity test coverage", () => {
     // Multi-frames message response is not handled by our current mocked react-native-ble-plx
     // The logic of encoding a message into several frames is tested directly with unit tests on ledgerhq/devices/lib/ble/sendAPDU
     describe("When the message to exchange needs more than 1 frame", () => {
-      beforeEach(() => {
+      beforeEach(async () => {
+        // Triggering a disconnection and clearing the transport cache
+        await BleTransport.disconnectDevice(deviceId);
+
         // MTU of 25 bytes
         mockNegotiatedMtu = Buffer.from("080000000019", "hex");
+      });
+
+      afterEach(async () => {
+        // Triggering a disconnection and clearing the transport cache
+        await BleTransport.disconnectDevice(deviceId);
       });
 
       describe("And when an abort timeout is set", () => {
