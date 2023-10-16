@@ -123,13 +123,13 @@ jobs:
         run: |
           xcrun simctl delete ${{ steps.simulator.outputs.id }}
       - name: Upload test artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: always()
         with:
           name: test-ios-artifacts
           path: apps/ledger-live-mobile/artifacts
       - name: Upload Allure report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: always()
         with:
           name: "allure-ios-reports"
@@ -177,7 +177,7 @@ jobs:
           java-version: "11"
           cache: "gradle"
       - name: setup Android SDK
-        uses: android-actions/setup-android@v2.0.8
+        uses: android-actions/setup-android@v2.0.10
       - name: Gradle cache
         uses: gradle/gradle-build-action@v2
 
@@ -216,11 +216,11 @@ jobs:
         env:
           DETOX_INSTALL_TIMEOUT: 120000
         with:
-          api-level: 31
+          api-level: 33
           arch: x86_64
           profile: pixel_5
           target: google_apis
-          avd-name: "Pixel_5_API_31"
+          avd-name: "Pixel_5_API_33"
           force-avd-creation: true
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           cores: 4
@@ -231,12 +231,12 @@ jobs:
           script: pnpm mobile e2e:test -c android.emu.release --loglevel error --record-logs all --take-screenshots all --record-videos failing --forceExit --detectOpenHandles --headless --retries 1
       - name: Upload test artifacts
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: test-android-artifacts
           path: apps/ledger-live-mobile/artifacts/
       - name: Upload Allure Report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: always()
         with:
           name: "allure-android-reports"
