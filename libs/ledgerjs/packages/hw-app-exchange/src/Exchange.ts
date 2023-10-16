@@ -59,6 +59,9 @@ const transactionEncodedFormat = {
   raw: 0x00,
   base64: 0x01,
 };
+function computedFormatToEncodedFormat(format: PayloadSignatureComputedFormat | undefined) {
+  return format === "jws" ? transactionEncodedFormat.base64 : transactionEncodedFormat.raw;
+}
 
 /**
  * Adapt ExchangeTypes following partner info.
@@ -159,10 +162,10 @@ export default class Exchange {
     hex = hex.padStart(hex.length + (hex.length % 2), "0");
     const feeHex = Buffer.from(hex, "hex");
 
+    let p2Value = this.transactionType | P2_NONE;
     let bufferToSend: Buffer;
     if (this.isExchangeTypeNg()) {
-      const encodedFormat =
-        compFormat === "jws" ? transactionEncodedFormat.base64 : transactionEncodedFormat.raw;
+      const encodedFormat = computedFormatToEncodedFormat(compFormat);
 
       // In JWS we expect the transaction to be in the following form: "." + base64Url(payload)
       // However, app-exchange doesn't expect the leading dot (i.e. ".")
@@ -179,38 +182,8 @@ export default class Exchange {
       ]);
 
       if (bufferToSend.length >= 256) {
-        const dataLength = bufferToSend.length;
-        console.log("APDU too long, let's split it", dataLength);
-
-        for (let i = 0; i < Math.floor(dataLength / 256); i++) {
-          const start = 255 * i;
-          const end = start + 255;
-          const data = bufferToSend.subarray(start, end);
-
-          const extFlag = i == 0 ? P2_MORE : P2_MORE | P2_EXTEND;
-
-          const result = await this.transport.send(
-            0xe0,
-            PROCESS_TRANSACTION_RESPONSE,
-            this.transactionRate,
-            this.transactionType | extFlag,
-            data,
-            this.allowedStatuses,
-          );
-          maybeThrowProtocolError(result);
-        }
-
-        const result = await this.transport.send(
-          0xe0,
-          PROCESS_TRANSACTION_RESPONSE,
-          this.transactionRate,
-          this.transactionType | P2_EXTEND,
-          bufferToSend.subarray(dataLength - (dataLength % 255)),
-          this.allowedStatuses,
-        );
-
-        maybeThrowProtocolError(result);
-        return;
+        bufferToSend = await this.processSplitTransaction(bufferToSend);
+        p2Value = this.transactionType | P2_EXTEND;
       }
     } else {
       bufferToSend = Buffer.concat([
@@ -220,15 +193,44 @@ export default class Exchange {
         feeHex,
       ]);
     }
+
     const result: Buffer = await this.transport.send(
       0xe0,
       PROCESS_TRANSACTION_RESPONSE,
       this.transactionRate,
-      this.transactionType | P2_NONE,
+      p2Value,
       bufferToSend,
       this.allowedStatuses,
     );
     maybeThrowProtocolError(result);
+  }
+
+  /**
+   *
+   * @param bufferToSend Remaining buffer to send
+   */
+  private async processSplitTransaction(bufferToSend: Buffer): Promise<Buffer> {
+    const dataLength = bufferToSend.length;
+
+    for (let i = 0; i < Math.floor(dataLength / 256); i++) {
+      const start = 255 * i;
+      const end = start + 255;
+      const data = bufferToSend.subarray(start, end);
+
+      const extFlag = i == 0 ? P2_MORE : P2_MORE | P2_EXTEND;
+
+      const result = await this.transport.send(
+        0xe0,
+        PROCESS_TRANSACTION_RESPONSE,
+        this.transactionRate,
+        this.transactionType | extFlag,
+        data,
+        this.allowedStatuses,
+      );
+      maybeThrowProtocolError(result);
+    }
+
+    return bufferToSend.subarray(dataLength - (dataLength % 255));
   }
 
   async checkTransactionSignature(transactionSignature: Buffer): Promise<void> {

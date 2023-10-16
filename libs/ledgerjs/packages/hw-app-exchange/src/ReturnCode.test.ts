@@ -13,6 +13,6 @@ describe("getExchageErrorMessage", () => {
     const result = getExchageErrorMessage(0x6a77);
 
     // Then
-    expect(result).toBeUndefined()
+    expect(result).toBeUndefined();
   });
 });

@@ -27,15 +27,18 @@ describe("Contrustructor", () => {
 });
 
 describe("startNewTransaction", () => {
-  const textEncoder = new TextEncoder();
-  const mockResponse = "2ac38f187c"; // Response of length 10
+  const recordStore = new RecordStore();
+
+  afterEach(() => {
+    recordStore.queue = [];
+  });
 
   it("sends a correct sequence of APDU", async () => {
     // Given
-    const recordStore = new RecordStore();
+    const mockNonceResponse = "2ac38f187c"; // Response of length 10
     const mockTransport = new MockTransport(
       Buffer.concat([
-        textEncoder.encode(mockResponse),
+        Buffer.from(mockNonceResponse),
         Buffer.from([0x90, 0x00]), // StatusCodes.OK
       ]),
     );
@@ -54,15 +57,42 @@ describe("startNewTransaction", () => {
       0x00, // Data
     ]).toString("hex");
     expect(recordStore.queue[0][0]).toBe(expectCommand);
-    expect(result).toEqual(mockResponse);
+    expect(result).toEqual(mockNonceResponse);
+  });
+
+  it("returns a 32 bytes nonce when NG", async () => {
+    // Given
+    const mockNonceResponse = Buffer.from("2ac38f187c2ac38f187c2ac38f187c7c"); // Response of 32 bytes
+    const mockTransport = new MockTransport(
+      Buffer.concat([
+        mockNonceResponse,
+        Buffer.from([0x90, 0x00]), // StatusCodes.OK
+      ]),
+    );
+    const transport = createTransportRecorder(mockTransport, recordStore);
+    const exchange = new Exchange(new transport(mockTransport), ExchangeTypes.SwapNg);
+
+    // When
+    const result = await exchange.startNewTransaction();
+
+    // Then
+    const expectCommand = Buffer.from([
+      0xe0,
+      0x03, // Start Exchance
+      RateTypes.Fixed,
+      ExchangeTypes.SwapNg,
+      0x00, // Data
+    ]).toString("hex");
+    expect(recordStore.queue[0][0]).toBe(expectCommand);
+    expect(result).toEqual(mockNonceResponse.toString("hex"));
   });
 
   // TOFIX: TransportError is not recognize as an Error type
   xit("throws an error if status is not ok", async () => {
     // Given
-    const recordStore = new RecordStore();
+    const mockResponse = "2ac38f187c"; // Response of length 10
     const mockTransport = new MockTransport(
-      Buffer.concat([textEncoder.encode(mockResponse), Buffer.from([0x6a, 0x80])]),
+      Buffer.concat([Buffer.from(mockResponse), Buffer.from([0x6a, 0x80])]),
     );
     const transport = createTransportRecorder(mockTransport, recordStore);
     const exchange = new Exchange(new transport(mockTransport), ExchangeTypes.Swap);
