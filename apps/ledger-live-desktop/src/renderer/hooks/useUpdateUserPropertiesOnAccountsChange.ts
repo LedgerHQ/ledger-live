@@ -5,7 +5,7 @@ import debounce from "lodash/debounce";
 import type { Account } from "@ledgerhq/types-live";
 import { updateIdentify } from "../analytics/segment";
 
-function hasAccountsWithFundsChanged(accounts: Account[], oldAccounts: Account[]): boolean {
+export function hasAccountsWithFundsChanged(accounts: Account[], oldAccounts: Account[]): boolean {
   if (accounts.length !== oldAccounts.length) {
     return true;
   }
