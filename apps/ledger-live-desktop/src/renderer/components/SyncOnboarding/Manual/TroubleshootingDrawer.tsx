@@ -25,7 +25,7 @@ const TroubleshootingDrawer: React.FC<Props> = ({ onClose, lastKnownDeviceId }) 
   const theme = useTheme();
 
   const handleFixClicked = useCallback(() => {
-    history.push("/USBTroubleshooting");
+    history.replace("/USBTroubleshooting");
     track("button_clicked", {
       button: "fix it",
       page: "drawer troubleshoot USB connection",

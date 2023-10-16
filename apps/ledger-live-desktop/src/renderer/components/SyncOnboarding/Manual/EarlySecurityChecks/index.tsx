@@ -29,6 +29,7 @@ import { track } from "~/renderer/analytics/segment";
 import { log } from "@ledgerhq/logs";
 import { useDynamicUrl } from "~/renderer/terms";
 import { FinalFirmware } from "@ledgerhq/types-live";
+import { useHistory } from "react-router-dom";
 
 export type Props = {
   onComplete: () => void;
@@ -81,6 +82,7 @@ const EarlySecurityChecks = ({
     SoftwareCheckStatus.inactive,
   );
   const [availableFirmwareVersion, setAvailableFirmwareVersion] = useState<string>("");
+  const history = useHistory();
 
   const deviceId = device.deviceId ?? "";
   const deviceModelId = device.modelId;
@@ -247,7 +249,10 @@ const EarlySecurityChecks = ({
     if (disconnectedDeviceModalIsOpen) {
       const props: TroubleshootingDrawerProps = {
         lastKnownDeviceId: deviceModelId,
-        onClose: resetGenuineCheckState,
+        onClose: () => {
+          resetGenuineCheckState();
+          history.push("/onboarding/select-device");
+        },
       };
       setDrawer(TroubleshootingDrawer, props, commonDrawerProps);
     } else if (allowSecureChannelIsOpen) {
@@ -304,6 +309,7 @@ const EarlySecurityChecks = ({
     notGenuineIsOpen,
     productName,
     resetGenuineCheckState,
+    history,
   ]);
 
   return (
