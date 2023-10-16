@@ -36,7 +36,7 @@ export function RecoverPlayer({ navigation, route }: Props) {
   const { locale } = useLocale();
   const currencySettings = useSelector(counterValueCurrencySelector);
   const currency = currencySettings.ticker;
-  const manifest = localManifest || remoteManifest;  
+  const manifest = localManifest || remoteManifest;
 
   const { onboardingState } = useOnboardingStatePolling({
     device: device || null,
