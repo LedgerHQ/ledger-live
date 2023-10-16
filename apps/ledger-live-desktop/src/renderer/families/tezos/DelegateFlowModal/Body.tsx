@@ -190,7 +190,7 @@ const Body = ({ stepId, params, onChangeStepId, onClose }: Props) => {
     [account, parentAccount, dispatch],
   );
 
-  const handleStepChange = useCallback(e => onChangeStepId(e.id), [onChangeStepId]);
+  const handleStepChange = useCallback((e: Step) => onChangeStepId(e.id), [onChangeStepId]);
 
   const titles = useMemo(() => {
     const titles: Record<StepId | "undelegate", string> = {
