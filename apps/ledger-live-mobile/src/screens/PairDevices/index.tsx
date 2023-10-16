@@ -196,7 +196,7 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
         } finally {
           transport.close();
           // eslint-disable-next-line @typescript-eslint/no-empty-function
-          await TransportBLE.disconnect(device.deviceId).catch(() => {});
+          await TransportBLE.disconnectDevice(device.deviceId).catch(() => {});
           await delay(500);
         }
       } catch (error) {

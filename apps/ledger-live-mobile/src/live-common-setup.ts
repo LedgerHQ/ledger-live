@@ -184,7 +184,7 @@ registerTransportModule({
   id: "ble",
   open: (id: string, timeoutMs?: number, context?: TraceContext) =>
     BluetoothTransport.open(id, timeoutMs, context),
-  disconnect: id => BluetoothTransport.disconnect(id),
+  disconnect: id => BluetoothTransport.disconnectDevice(id),
 });
 
 if (process.env.NODE_ENV === "production") {
