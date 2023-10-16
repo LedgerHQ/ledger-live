@@ -32,7 +32,6 @@
     "bignumber.js": "^9.1.2",
     "bufferutil": "^4.0.7",
     "encoding": "^0.1.13",
-    "eslint": "8.49.0",
     "eslint-config-next": "13.5.4",
     "invariant": "^2.2.4",
     "lodash": "^4.17.21",
