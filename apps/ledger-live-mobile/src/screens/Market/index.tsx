@@ -2,7 +2,6 @@ import React, { useMemo, useCallback, useState, useEffect, useRef, useContext } 
 import { useTheme } from "styled-components/native";
 import {
   Flex,
-  Button,
   Text,
   ScrollContainerHeader,
   Icon,
@@ -31,13 +30,13 @@ import SearchHeader from "./SearchHeader";
 import { ScreenName } from "../../const";
 import { track } from "../../analytics";
 import TrackScreen from "../../analytics/TrackScreen";
-import Illustration from "../../images/illustration/Illustration";
 import { TAB_BAR_SAFE_HEIGHT } from "../../components/TabBar/TabBarSafeAreaView";
 import { setMarketFilterByStarredAccounts, setMarketRequestParams } from "../../actions/settings";
 import { AnalyticsContext } from "../../analytics/AnalyticsContext";
 import EmptyStarredCoins from "./EmptyStarredCoins";
 import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { MarketNavigatorStackParamList } from "../../components/RootNavigator/types/MarketNavigator";
+import EmptyState from "./EmptyState";
 
 const noResultIllustration = {
   dark: require("../../images/illustration/Dark/_051.png"),
@@ -338,54 +337,50 @@ export default function Market({ navigation }: NavigationProps) {
     [counterCurrency, locale, navigation, range, selectCurrency, t],
   );
 
-  const renderEmptyComponent = useCallback(
-    () =>
-      search ? ( // shows up in case of no search results
-        <Flex flex={1} flexDirection="column" alignItems="stretch" p="4" mt={70}>
-          <Flex alignItems="center">
-            <Illustration
-              size={164}
-              lightSource={noResultIllustration.light}
-              darkSource={noResultIllustration.dark}
-            />
-          </Flex>
-          <Text textAlign="center" variant="h4" my={3}>
-            {t("market.warnings.noCryptosFound")}
-          </Text>
-          <Text textAlign="center" variant="body" color="neutral.c70">
+  const renderEmptyComponent = useCallback(() => {
+    if (marketDataFiltered?.length === 0 && search && !loading) {
+      // No search results
+      return (
+        <EmptyState
+          illustrationSource={noResultIllustration}
+          title={t("market.warnings.noCryptosFound")}
+          description={
             <Trans i18nKey="market.warnings.noSearchResultsFor" values={{ search }}>
               <Text fontWeight="bold" variant="body" color="neutral.c70">
                 {""}
               </Text>
             </Trans>
-          </Text>
-          <Button mt={8} onPress={resetSearch} type="main">
-            {t("market.warnings.browseAssets")}
-          </Button>
-        </Flex>
-      ) : !isConnected ? ( // shows up in case of network down
-        <Flex flex={1} flexDirection="column" alignItems="stretch" p="4" mt={70}>
-          <Flex alignItems="center">
-            <Illustration
-              size={164}
-              lightSource={noNetworkIllustration.light}
-              darkSource={noNetworkIllustration.dark}
-            />
-          </Flex>
-          <Text textAlign="center" variant="h4" my={3}>
-            {t("errors.NetworkDown.title")}
-          </Text>
-          <Text textAlign="center" variant="body" color="neutral.c70">
-            {t("errors.NetworkDown.description")}
-          </Text>
-        </Flex>
-      ) : filterByStarredAccount && starredMarketCoins.length <= 0 ? (
-        <EmptyStarredCoins />
-      ) : (
-        <InfiniteLoader size={30} />
-      ), // shows up in case loading is ongoing
-    [search, t, resetSearch, isConnected, filterByStarredAccount, starredMarketCoins.length],
-  );
+          }
+          buttonText={t("market.warnings.browseAssets")}
+          onButtonClick={resetSearch}
+        />
+      );
+    } else if (!isConnected) {
+      // Network down
+      return (
+        <EmptyState
+          illustrationSource={noNetworkIllustration}
+          title={t("errors.NetworkDown.title")}
+          description={t("errors.NetworkDown.description")}
+        />
+      );
+    } else if (filterByStarredAccount && starredMarketCoins.length <= 0) {
+      // Empty starred coins
+      return <EmptyStarredCoins />;
+    } else {
+      // Loading ongoing
+      return <InfiniteLoader size={30} />;
+    }
+  }, [
+    marketDataFiltered?.length,
+    search,
+    loading,
+    isConnected,
+    filterByStarredAccount,
+    starredMarketCoins.length,
+    t,
+    resetSearch,
+  ]);
 
   const onEndReached = useCallback(() => {
     if (
@@ -420,26 +415,6 @@ export default function Market({ navigation }: NavigationProps) {
       </Flex>
     ),
     [isLoading],
-  );
-
-  const MarketHeader = useCallback(
-    () =>
-      ptxEarnFeature?.enabled ? (
-        <Flex px={6} pt={6}>
-          <SearchHeader search={search} refresh={refresh} />
-          <BottomSection navigation={navigation} />
-        </Flex>
-      ) : (
-        <Flex px={6}>
-          <Text my={3} variant="h4" fontWeight="semiBold">
-            {t("market.title")}
-          </Text>
-
-          <SearchHeader search={search} refresh={refresh} />
-          <BottomSection navigation={navigation} />
-        </Flex>
-      ),
-    [ptxEarnFeature?.enabled, t, refresh, search, navigation],
   );
 
   const [refreshControlVisible, setRefreshControlVisible] = useState(false);
@@ -477,7 +452,15 @@ export default function Market({ navigation }: NavigationProps) {
       mt={insets.top}
       bg="background.main"
     >
-      <MarketHeader />
+      <Flex px={6} pt={ptxEarnFeature?.enabled ? 6 : 0}>
+        {!ptxEarnFeature?.enabled && (
+          <Text my={3} variant="h4" fontWeight="semiBold">
+            {t("market.title")}
+          </Text>
+        )}
+        <SearchHeader search={search} refresh={refresh} />
+        <BottomSection navigation={navigation} />
+      </Flex>
 
       <FlatList
         contentContainerStyle={{
