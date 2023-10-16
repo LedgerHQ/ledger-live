@@ -202,6 +202,7 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
       }),
     [dispatch],
   );
+
   const setTransaction = useCallback(
     transaction =>
       dispatch({
@@ -218,6 +219,7 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
       }),
     [dispatch],
   );
+
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const errorDelay = useRef(INITIAL_ERROR_RETRY_DELAY);
   const statusIsPending = useRef(false); // Stores if status already being processed

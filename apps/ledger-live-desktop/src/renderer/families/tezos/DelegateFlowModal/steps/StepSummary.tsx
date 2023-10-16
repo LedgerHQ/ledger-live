@@ -6,7 +6,8 @@ import {
   getAccountName,
   getAccountUnit,
 } from "@ledgerhq/live-common/account/index";
-import { useBaker, useDelegation, Baker } from "@ledgerhq/live-common/families/tezos/bakers";
+import { useBaker, useDelegation } from "@ledgerhq/live-common/families/tezos/bakers";
+import { Baker } from "@ledgerhq/live-common/families/tezos/types";
 import { Trans } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { openURL } from "~/renderer/linking";
@@ -23,7 +24,9 @@ import InfoCircle from "~/renderer/icons/InfoCircle";
 import BakerImage from "../../BakerImage";
 import DelegationContainer from "../DelegationContainer";
 import { StepProps } from "../types";
+
 const urlDelegationHelp = "https://support.ledger.com/hc/en-us/articles/360010653260";
+
 const Container = styled(Box)`
   width: 148px;
   min-height: 170px;
@@ -41,16 +44,12 @@ const Container = styled(Box)`
     margin-bottom: 10px;
   }
 `;
+
 const Placeholder = styled(Box)`
   height: 14px;
 `;
-const StepSummary = ({
-  account,
-  transaction,
-  transitionTo,
-  isRandomChoice,
-  eventType,
-}: StepProps) => {
+
+const StepSummary = ({ account, transaction, eventType, transitionTo }: StepProps) => {
   invariant(
     account && transaction && transaction.family === "tezos",
     "step summary requires account and transaction settled",
@@ -61,6 +60,7 @@ const StepSummary = ({
   const unit = getAccountUnit(account);
   const getBakerName = (baker: Baker | undefined | null, fallback: string) =>
     baker ? baker.name : fallback;
+
   return (
     <Box flow={4} mx={40}>
       <TrackPage
@@ -162,12 +162,6 @@ const StepSummary = ({
                   <Placeholder />
                 )}
               </Container>
-
-              {isRandomChoice ? (
-                <Text ff="Inter|Medium" color="palette.text.shade60" fontSize={2}>
-                  <Trans i18nKey="delegation.flow.steps.summary.randomly" />
-                </Text>
-              ) : null}
             </Box>
           ) : delegation ? (
             <Box>
@@ -213,7 +207,9 @@ const StepSummary = ({
     </Box>
   );
 };
+
 export default StepSummary;
+
 export const StepSummaryFooter = ({
   t,
   account,

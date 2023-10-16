@@ -17,7 +17,7 @@ import { RecipientRequired } from "@ledgerhq/errors";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import type { Transaction as TezosTransaction } from "@ledgerhq/live-common/families/tezos/types";
-import type { Baker } from "@ledgerhq/live-common/families/tezos/bakers";
+import type { Baker } from "@ledgerhq/live-common/families/tezos/types";
 import { useBakers } from "@ledgerhq/live-common/families/tezos/bakers";
 import whitelist from "@ledgerhq/live-common/families/tezos/bakers.whitelist-default";
 import { useTheme } from "@react-navigation/native";
