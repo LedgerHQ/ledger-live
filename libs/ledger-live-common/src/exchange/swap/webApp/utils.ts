@@ -3,8 +3,15 @@ import { getGasLimit } from "@ledgerhq/coin-evm/logic";
 import { getAccountUnit } from "../../../account/index";
 
 export const getCustomFeesPerFamily = transaction => {
-  const { family, maxFeePerGas, maxPriorityFeePerGas, customGasLimit, feePerByte, fees, utxoStrategy } =
-    transaction;
+  const {
+    family,
+    maxFeePerGas,
+    maxPriorityFeePerGas,
+    customGasLimit,
+    feePerByte,
+    fees,
+    utxoStrategy,
+  } = transaction;
 
   switch (family) {
     case "evm": {
