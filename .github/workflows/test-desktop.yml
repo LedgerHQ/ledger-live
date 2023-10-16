@@ -135,7 +135,7 @@ jobs:
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
-    runs-on: ${{ github.ref_name == 'develop' && 'windows-latest' || 'ledger-live-4xlarge-windows-2022' }}
+    runs-on: ${{ github.ref_name != 'develop' && 'windows-latest' || 'ledger-live-4xlarge-windows-2022' }}
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
@@ -270,7 +270,7 @@ jobs:
 
   e2e-tests-mac:
     name: "Desktop E2E (macOS X)"
-    runs-on: ${{ github.ref_name == 'develop' && 'macos-latest' || fromJson('["m1", "ARM64"]') }}
+    runs-on: ${{ github.ref_name != 'develop' && 'macos-latest' || fromJson('["m1", "ARM64"]') }}
     outputs:
       status: ${{ steps.tests.outcome }}
     env:
