@@ -71,21 +71,61 @@ describe("Check SWAP until payload signature", () => {
 
     await exchange.checkPartner(partnerSigned);
 
-    const amount = new BigNumber(100000);
-    const amountToWallet = new BigNumber(1000);
+    const amount = new BigNumber(100_000);
+    const amountToWallet = new BigNumber(100_000_000_000);
     let encodedPayload = await generatePayloadProtobuf({
       payinAddress: "0xd692Cb1346262F584D17B4B470954501f6715a82",
       refundAddress: "0xDad77910DbDFdE764fC21FCD4E74D71bBACA6D8D",
-      // payoutAddress: "bc1qer57ma0fzhqys2cmydhuj9cprf9eg0nw922a8j",
-      payoutAddress: "bc1qer",
+      payoutAddress: "bc1qer57ma0fzhqys2cmydhuj9cprf9eg0nw922a8j",
       currencyFrom: "ETH",
       currencyTo: "BTC",
       amountToProvider: Buffer.from(amount.toString(16), "hex"),
       amountToWallet: Buffer.from(amountToWallet.toString(16), "hex"),
-      // deviceTransactionId: transactionId,
       deviceTransactionIdNg: Buffer.from(transactionId.padStart(32, "0"), "hex"),
     });
-    encodedPayload = convertToBase64URL(encodedPayload);
+    encodedPayload = convertToJWSPayload(encodedPayload);
+
+    const estimatedFees = new BigNumber(0);
+    await exchange.processTransaction(encodedPayload, estimatedFees, "jws");
+
+    const payloadSignature = await signMessage(encodedPayload, partnerPrivKey, "rs");
+    await exchange.checkTransactionSignature(payloadSignature);
+  });
+
+  it("NG SWAP with more than 255 bytes in process transaction", async () => {
+    // Given
+    const exchange = new Exchange(transport, ExchangeTypes.SwapNg);
+
+    // When
+    const transactionId = await exchange.startNewTransaction();
+
+    // Then
+    expect(transactionId).toEqual(expect.any(String));
+    expect(transactionId).toHaveLength(64);
+
+    const { partnerInfo, partnerSigned, partnerPrivKey } = await appExchangeDatasetTest(
+      ngSignFormat,
+    );
+    await exchange.setPartnerKey(partnerInfo);
+
+    await exchange.checkPartner(partnerSigned);
+
+    const amount = new BigNumber(100_000);
+    const amountToWallet = new BigNumber(100_000_000_000);
+    let encodedPayload = await generatePayloadProtobuf({
+      payinAddress: "0xd692Cb1346262F584D17B4B470954501f6715a82",
+      payinExtraId: "0xd692Cb1346262F584D17B4B470954501f6715a82",
+      refundAddress: "0xDad77910DbDFdE764fC21FCD4E74D71bBACA6D8D",
+      refundExtraId: "0xDad77910DbDFdE764fC21FCD4E74D71bBACA6D8D",
+      payoutAddress: "bc1qer57ma0fzhqys2cmydhuj9cprf9eg0nw922a8j",
+      payoutExtraId: "bc1qer57ma0fzhqys2cmydhuj9cprf9eg0nw922a8j",
+      currencyFrom: "ETH",
+      currencyTo: "BTC",
+      amountToProvider: Buffer.from(amount.toString(16), "hex"),
+      amountToWallet: Buffer.from(amountToWallet.toString(16), "hex"),
+      deviceTransactionIdNg: Buffer.from(transactionId.padStart(32, "0"), "hex"),
+    });
+    encodedPayload = convertToJWSPayload(encodedPayload);
 
     const estimatedFees = new BigNumber(0);
     await exchange.processTransaction(encodedPayload, estimatedFees, "jws");
@@ -146,8 +186,11 @@ async function appExchangeDatasetTest(signFormat: PartnerSignFormat) {
 
 type PayloadCore = {
   payinAddress: string;
+  payinExtraId?: string;
   refundAddress: string;
+  refundExtraId?: string;
   payoutAddress: string;
+  payoutExtraId?: string;
   currencyFrom: string;
   currencyTo: string;
   amountToProvider: Buffer;
@@ -169,10 +212,6 @@ async function generatePayloadProtobuf(payload: Payload): Promise<Buffer> {
   }
   const message = TransactionResponse.create(payload);
   const messageEncoded = TransactionResponse.encode(message).finish();
-
-  // Check encoding
-  const truc = TransactionResponse.decode(messageEncoded).toJSON();
-  console.log(truc);
 
   return Buffer.from(messageEncoded);
 }
@@ -204,6 +243,6 @@ function convertSignatureToDER(sig: Uint8Array): Buffer {
 /**
  * Convert raw buffer to a JWS compatible one: '.'+base64Url(raw)
  */
-function convertToBase64URL(raw: Buffer): Buffer {
-  return Buffer.from("."+raw.toString("base64url"));
+function convertToJWSPayload(raw: Buffer): Buffer {
+  return Buffer.from("." + raw.toString("base64url"));
 }

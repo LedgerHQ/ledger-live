@@ -30,6 +30,11 @@ const CHECK_ASSET_IN = 0x08;
 const CHECK_REFUND_ADDRESS = 0x09;
 const SIGN_COIN_TRANSACTION = 0x0a;
 
+// Extension for PROCESS_TRANSACTION_RESPONSE APDU
+const P2_NONE = 0x00 << 4;
+const P2_EXTEND = 0x01 << 4;
+const P2_MORE = 0x02 << 4;
+
 const maybeThrowProtocolError = (result: Buffer): void => {
   invariant(result.length >= 2, "ExchangeTransport: Unexpected result length");
   const resultCode = result.readUInt16BE(result.length - 2);
@@ -182,15 +187,13 @@ export default class Exchange {
     hex = hex.padStart(hex.length + (hex.length % 2), "0");
     const feeHex = Buffer.from(hex, "hex");
 
-    const P2None = 0x00 << 4;
-    const P2Extend = 0x01 << 4;
-    const P2More = 0x02 << 4;
-
     let bufferToSend: Buffer;
     if (this.isExchangeTypeNg()) {
       const encodedFormat =
         compFormat === "jws" ? transactionEncodedFormat.base64 : transactionEncodedFormat.raw;
 
+      // In JWS we expect the transaction to be in the following form: "." + base64Url(payload)
+      // However, app-exchange doesn't expect the leading dot (i.e. ".")
       if (encodedFormat === transactionEncodedFormat.base64) {
         transaction = transaction.subarray(1);
       }
@@ -204,19 +207,17 @@ export default class Exchange {
       ]);
 
       if (bufferToSend.length >= 256) {
-        console.log("OVERSIZED");
         const dataLength = bufferToSend.length;
+        console.log("APDU too long, let's split it", dataLength);
 
         for (let i = 0; i < Math.floor(dataLength / 256); i++) {
           const start = 255 * i;
           const end = start + 255;
           const data = bufferToSend.subarray(start, end);
 
-          const extFlag = i == 0 ? P2More : P2More << P2Extend;
+          const extFlag = i == 0 ? P2_MORE : P2_MORE | P2_EXTEND;
 
-          console.log("SEND SIZE:", data.length);
-
-          await this.transport.send(
+          const result = await this.transport.send(
             0xe0,
             PROCESS_TRANSACTION_RESPONSE,
             this.transactionRate,
@@ -224,16 +225,15 @@ export default class Exchange {
             data,
             this.allowedStatuses,
           );
+          maybeThrowProtocolError(result);
         }
 
-        console.log("TERMINAL SEND");
-
-        const result: Buffer = await this.transport.send(
+        const result = await this.transport.send(
           0xe0,
           PROCESS_TRANSACTION_RESPONSE,
           this.transactionRate,
-          this.transactionType | P2Extend,
-          bufferToSend.subarray(dataLength - (dataLength % 255), dataLength),
+          this.transactionType | P2_EXTEND,
+          bufferToSend.subarray(dataLength - (dataLength % 255)),
           this.allowedStatuses,
         );
 
@@ -252,7 +252,7 @@ export default class Exchange {
       0xe0,
       PROCESS_TRANSACTION_RESPONSE,
       this.transactionRate,
-      this.transactionType | P2None,
+      this.transactionType | P2_NONE,
       bufferToSend,
       this.allowedStatuses,
     );

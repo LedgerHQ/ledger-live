@@ -176,7 +176,7 @@ describe("processTransaction", () => {
     const transport = createTransportRecorder(mockTransport, recordStore);
     const exchange = createExchange(new transport(mockTransport), ExchangeTypes.SwapNg);
 
-    const value = Array(600).fill("a").join("");
+    const value = Array(200).fill("abc").join("");
     const tx = Buffer.from(value, "hex");
     const fee = new BigNumber("10");
     // <ENC_TX_FORMAT><TX_LENGTH><TX><FEE_LENGTH><FEE>
