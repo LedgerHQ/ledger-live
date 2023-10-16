@@ -39,20 +39,24 @@
         *   [Parameters](#parameters-7)
     *   [send](#send)
         *   [Parameters](#parameters-8)
-    *   [setTraceContext](#settracecontext)
+    *   [exchangeAtomicImpl](#exchangeatomicimpl)
         *   [Parameters](#parameters-9)
+    *   [setTraceContext](#settracecontext)
+        *   [Parameters](#parameters-10)
+    *   [updateTraceContext](#updatetracecontext)
+        *   [Parameters](#parameters-11)
     *   [getTraceContext](#gettracecontext)
     *   [isSupported](#issupported)
     *   [list](#list)
         *   [Examples](#examples)
     *   [listen](#listen)
-        *   [Parameters](#parameters-10)
+        *   [Parameters](#parameters-12)
         *   [Examples](#examples-1)
     *   [open](#open)
-        *   [Parameters](#parameters-11)
+        *   [Parameters](#parameters-13)
         *   [Examples](#examples-2)
     *   [create](#create)
-        *   [Parameters](#parameters-12)
+        *   [Parameters](#parameters-14)
         *   [Examples](#examples-3)
 
 ### Subscription
@@ -102,6 +106,10 @@ It's recommended to use the "send" method for a higher level API.
 ##### Parameters
 
 *   `_apdu` **[Buffer](https://nodejs.org/api/buffer.html)** 
+*   `options` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** Contains optional options for the exchange function*   abortTimeoutMs: stop the exchange after a given timeout. Another timeout exists
+        to detect unresponsive device (see `unresponsiveTimeout`). This timeout aborts the exchange. (optional, default `{}`)
+
+    *   `options.abortTimeoutMs`  
 *   `apdu` **[Buffer](https://nodejs.org/api/buffer.html)** The data to send.
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Buffer](https://nodejs.org/api/buffer.html)>** A promise that resolves with the response data from the device.
@@ -198,12 +206,28 @@ Send data to the device using the higher level API.
 *   `p2` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** The second parameter for the instruction.
 *   `data` **[Buffer](https://nodejs.org/api/buffer.html)** The data to be sent. Defaults to an empty buffer. (optional, default `Buffer.alloc(0)`)
 *   `statusList` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)>** A list of acceptable status codes for the response. Defaults to \[StatusCodes.OK]. (optional, default `[StatusCodes.OK]`)
+*   `options` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** Contains optional options for the exchange function*   abortTimeoutMs: stop the send after a given timeout. Another timeout exists
+        to detect unresponsive device (see `unresponsiveTimeout`). This timeout aborts the exchange. (optional, default `{}`)
+
+    *   `options.abortTimeoutMs`  
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Buffer](https://nodejs.org/api/buffer.html)>** A promise that resolves with the response data from the device.
 
+#### exchangeAtomicImpl
+
+Wrapper to make an exchange "atomic" (blocking any other exchange)
+
+It also handles "unresponsiveness" by emitting "unresponsive" and "responsive" events.
+
+##### Parameters
+
+*   `f` **function (): [Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<Output>** The exchange job, using the transport to run
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<Output>** a Promise with a Buffer containing the response, or void if not response
+
 #### setTraceContext
 
-Updates the context used by the logging/tracing mechanism
+Sets the context used by the logging/tracing mechanism
 
 Useful when re-using (cached) the same Transport instance,
 but with a new tracing context.
@@ -211,6 +235,16 @@ but with a new tracing context.
 ##### Parameters
 
 *   `context` **TraceContext?** A TraceContext, that can undefined to reset the context
+
+#### updateTraceContext
+
+Updates the context used by the logging/tracing mechanism
+
+The update only overrides the key-value that are already defined in the current context.
+
+##### Parameters
+
+*   `contextToAdd` **TraceContext** A TraceContext that will be added to the current context
 
 #### getTraceContext
 

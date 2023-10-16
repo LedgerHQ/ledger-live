@@ -10,28 +10,117 @@ Logic for all Ledger devices.
 
 #### Table of Contents
 
-*   [createHIDframing](#createhidframing)
+*   [receiveAPDU](#receiveapdu)
     *   [Parameters](#parameters)
+*   [createChunkedBuffers](#createchunkedbuffers)
+    *   [Parameters](#parameters-1)
+*   [sendAPDU](#sendapdu)
+    *   [Parameters](#parameters-2)
+*   [createHIDframing](#createhidframing)
+    *   [Parameters](#parameters-3)
+*   [makeBlocks](#makeblocks)
+    *   [Parameters](#parameters-4)
+*   [reduceResponse](#reduceresponse)
+    *   [Parameters](#parameters-5)
+*   [getReducedResult](#getreducedresult)
+    *   [Parameters](#parameters-6)
 *   [IIGenericHID](#iigenerichid)
 *   [ledgerUSBVendorId](#ledgerusbvendorid)
 *   [getDeviceModel](#getdevicemodel)
-    *   [Parameters](#parameters-1)
+    *   [Parameters](#parameters-7)
 *   [identifyTargetId](#identifytargetid)
-    *   [Parameters](#parameters-2)
+    *   [Parameters](#parameters-8)
 *   [identifyUSBProductId](#identifyusbproductid)
-    *   [Parameters](#parameters-3)
+    *   [Parameters](#parameters-9)
 *   [getBluetoothServiceUuids](#getbluetoothserviceuuids)
 *   [getInfosForServiceUuid](#getinfosforserviceuuid)
-    *   [Parameters](#parameters-4)
+    *   [Parameters](#parameters-10)
 *   [DeviceModel](#devicemodel)
 *   [BluetoothInfos](#bluetoothinfos)
 
+### receiveAPDU
+
+Parses a raw stream coming from a BLE communication into an APDU response
+
+#### Parameters
+
+*   `rawStream` **Observable<([Buffer](https://nodejs.org/api/buffer.html) | [Error](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Error))>** An observable containing the raw stream as emitted buffers
+*   `options` **{context: TraceContext?}** Optional options containing:*   context An optional context object for log/tracing strategy (optional, default `{}`)
+
+    *   `options.context`  
+
+Returns **Observable<[Buffer](https://nodejs.org/api/buffer.html)>** An observable containing the APDU response as one emitted buffer
+
+### createChunkedBuffers
+
+Creates a list of chunked buffer from one buffer
+
+If this is using a Node buffer: the chunked buffers reference to the same memory as the original buffer.
+If this is using a Uint8Array: each part of the original buffer is copied into the chunked buffers
+
+#### Parameters
+
+*   `buffer` **[Buffer](https://nodejs.org/api/buffer.html)** a Node Buffer, or a Uint8Array
+*   `sizeForIndex` **function (arg0: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)): [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** A function that takes an index (on the buffer) and returns the size of the chunk at that index
+
+Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Buffer](https://nodejs.org/api/buffer.html)>** a list of chunked buffers
+
+### sendAPDU
+
+Sends an APDU by encoding it into chunks and sending the chunks using the given `write` function
+
+#### Parameters
+
+*   `write` **function (arg0: [Buffer](https://nodejs.org/api/buffer.html)): [Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<void>** The function to send each chunk to the device
+*   `apdu` **[Buffer](https://nodejs.org/api/buffer.html)** 
+*   `mtuSize` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** The negotiated maximum size of the data to be sent in one chunk
+*   `options` **{context: TraceContext?}** Optional options containing:*   context An optional context object for log/tracing strategy (optional, default `{}`)
+
+    *   `options.context`  
+
+Returns **Observable<[Buffer](https://nodejs.org/api/buffer.html)>** An observable that will only emit if an error occurred, otherwise it will complete
+
 ### createHIDframing
+
+Object to handle HID frames (encoding and decoding)
 
 #### Parameters
 
 *   `channel` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
-*   `packetSize` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
+*   `packetSize` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** The HID protocol packet size in bytes (usually 64)
+
+### makeBlocks
+
+Frames/encodes an APDU message into HID USB packets/frames
+
+#### Parameters
+
+*   `apdu` **[Buffer](https://nodejs.org/api/buffer.html)** The APDU message to send, in a Buffer containing \[cla, ins, p1, p2, data length, data(if not empty)]
+
+Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Buffer](https://nodejs.org/api/buffer.html)>** an array of HID USB frames ready to be sent
+
+### reduceResponse
+
+Reduces HID USB packets/frames to one response.
+
+#### Parameters
+
+*   `acc` **ResponseAcc** The value resulting from (accumulating) the previous call of reduceResponse.
+    On first call initialized to `initialAcc`. The accumulator enables handling multi-frames messages.
+*   `chunk` **[Buffer](https://nodejs.org/api/buffer.html)** Current chunk to reduce into accumulator
+
+Returns **ResponseAcc** An accumulator value updated with the current chunk
+
+### getReducedResult
+
+Returns the response message that has been reduced from the HID USB frames
+
+#### Parameters
+
+*   `acc` **ResponseAcc** The accumulator
+
+Returns **([Buffer](https://nodejs.org/api/buffer.html) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** A Buffer containing the cleaned response message, or null if no response message, or undefined if the
+accumulator is incorrect (message length is not valid)
 
 ### IIGenericHID
 
@@ -77,6 +166,11 @@ based on the first two bytes.
 Returns **([DeviceModel](#devicemodel) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
 
 ### identifyUSBProductId
+
+From a given USB product id, return the deviceModel associated to it.
+
+The mapping from the product id is only based on the 2 most significant bytes.
+For example, Stax is defined with a product id of 0x60ii, a product id 0x6011 would be mapped to it.
 
 #### Parameters
 
