@@ -64,7 +64,7 @@ jobs:
 
   build-desktop-app-windows:
     name: "Build Ledger Live Desktop (Windows)"
-    runs-on: [ledger-live-4xlarge-windows-2022]
+    runs-on: [windows-latest]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
@@ -100,7 +100,7 @@ jobs:
 
   build-desktop-app-macos:
     name: "Build Ledger Live Desktop (Mac OS X)"
-    runs-on: [m1, ARM64]
+    runs-on: [macos-latest]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
