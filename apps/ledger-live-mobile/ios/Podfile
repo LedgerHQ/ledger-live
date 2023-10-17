@@ -1,15 +1,10 @@
-# Use the node resolver because pnpm nests modules.
-def relative_path(module_name)
-  module_pathname = Pathname.new File.dirname(`node --print "require.resolve('#{module_name}/package.json')"`)
-  module_pathname.relative_path_from(Pathname.new File.absolute_path ".")
-end
-
-expo_autolinking = File.join(relative_path("expo"), "scripts/autolinking")
-rct_text = File.join(relative_path("react-native"), "Libraries/Text")
-
-require expo_autolinking
-require_relative '../node_modules/react-native/scripts/react_native_pods'
-require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+require File.join(File.dirname(`node --print "require.resolve('expo/package.json')"`), "scripts/autolinking")
+# Resolve react_native_pods.rb with node to allow for hoisting
+require Pod::Executable.execute_command('node', ['-p',
+  'require.resolve(
+    "react-native/scripts/react_native_pods.rb",
+    {paths: [process.argv[1]]},
+  )', __dir__]).strip
 
 platform :ios, '13.0'
 prepare_react_native_project!
@@ -24,6 +19,7 @@ prepare_react_native_project!
 #     ...(process.env.NO_FLIPPER ? { 'react-native-flipper': { platforms: { ios: null } } } : {}),
 # ```
 flipper_config = ENV['NO_FLIPPER'] == "1" ? FlipperConfiguration.disabled : FlipperConfiguration.enabled
+
 linkage = ENV['USE_FRAMEWORKS']
 if linkage != nil
   Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
@@ -32,6 +28,13 @@ end
 
 target 'ledgerlivemobile' do
   use_expo_modules!
+  post_integrate do |installer|
+    begin
+      expo_patch_react_imports!(installer)
+    rescue => e
+      Pod::UI.warn e
+    end
+  end
   config = use_native_modules!
 
   # Flags change depending on the env values.
@@ -53,11 +56,11 @@ target 'ledgerlivemobile' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
-  pod 'React-RCTText', :path => rct_text, :modular_headers => true
-
   post_install do |installer|
+    # https://github.com/ledger/live/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
     react_native_post_install(
       installer,
+      config[:reactNativePath],
       # Set `mac_catalyst_enabled` to `true` in order to apply patches
       # necessary for Mac Catalyst builds
       :mac_catalyst_enabled => false

@@ -89,7 +89,7 @@ export const styles = StyleSheet.create({
     textAlign: "center",
   },
   PageListsShow: {
-    minHeight: "100vh",
+    minHeight: "100%",
     backgroundColor: "white",
   },
   PageListsShowhead: {

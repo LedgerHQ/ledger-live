@@ -1,5 +1,5 @@
 import React from "react";
-import { FlatListProps, View } from "react-native";
+import { FlatList, FlatListProps, ScrollViewProps, View } from "react-native";
 import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
 
 import Flex from "../Flex";
@@ -7,19 +7,19 @@ import Header from "./Header";
 import type { HeaderProps } from "./Header";
 import baseStyled, { BaseStyledProps } from "../../styled";
 
-const StyledFlatList = baseStyled.FlatList<BaseStyledProps>``;
+const StyledFlatList = baseStyled(FlatList)<BaseStyledProps>``;
 
-const AnimatedFlatList: any = Animated.createAnimatedComponent(StyledFlatList);
+const AnimatedFlatList = Animated.createAnimatedComponent(StyledFlatList);
 
-type ScrollContainerHeaderProps = BaseStyledProps &
+type ScrollContainerHeaderProps<ItemType> = BaseStyledProps &
   Omit<HeaderProps, "currentPositionY"> &
-  Omit<FlatListProps<any>, "onScroll" | "data" | "renderItem"> & {
+  Omit<FlatListProps<ItemType>, "onScroll" | "data" | "renderItem"> & {
     children?: React.ReactNode;
     onScroll?: (y: number) => void;
     containerProps?: BaseStyledProps;
-  };
+  } & Pick<ScrollViewProps, "stickyHeaderIndices">;
 
-const ScrollContainerHeader = ({
+const ScrollContainerHeader = <ItemType,>({
   TopLeftSection,
   TopRightSection,
   TopMiddleSection,
@@ -29,7 +29,7 @@ const ScrollContainerHeader = ({
   onScroll,
   containerProps,
   ...props
-}: ScrollContainerHeaderProps): JSX.Element => {
+}: ScrollContainerHeaderProps<ItemType>): JSX.Element => {
   const currentPositionY = useSharedValue(0);
   const handleScroll = useAnimatedScrollHandler((event) => {
     currentPositionY.value = event.contentOffset.y;
@@ -52,7 +52,7 @@ const ScrollContainerHeader = ({
         scrollEventThrottle={16}
         data={[...React.Children.toArray(children)]}
         renderItem={({ item }: { item: React.ReactNode }) => <View>{item}</View>}
-        keyExtractor={(_: any, index: number) => index}
+        keyExtractor={(_: unknown, index: number) => index.toString()}
       ></AnimatedFlatList>
     </Flex>
   );

@@ -85,7 +85,7 @@ function readPackage(pkg, context) {
       }),
       /* React Native and Metro bundler packages */
       // Crashes ios build if removed /!\
-      addDependencies("react-native-codegen", {
+      addDependencies("@react-native/codegen", {
         glob: "*",
         invariant: "*",
       }),
@@ -94,8 +94,12 @@ function readPackage(pkg, context) {
         mkdirp: "*",
         yargs: "*",
       }),
+
       addPeerDependencies("@react-native-community/cli", {
         "metro-resolver": "*",
+      }),
+      addPeerDependencies("@react-native-community/cli-tools", {
+        "find-up": "*",
       }),
       addPeerDependencies("metro-config", {
         "metro-transform-worker": "*",
@@ -136,6 +140,8 @@ function readPackage(pkg, context) {
       addPeerDependencies("expo", {
         "react-native": "*",
         react: "*",
+        "expo-modules-autolinking": "*",
+        "expo-modules-core": "*",
       }),
       addPeerDependencies(/^expo-/, {
         "expo-modules-core": "*",
@@ -144,6 +150,7 @@ function readPackage(pkg, context) {
         react: "*",
       }),
       addPeerDependencies("expo-asset", {
+        "expo-modules-core": "*",
         "expo-file-system": "*",
       }),
       addPeerDependencies("expo-font", {
