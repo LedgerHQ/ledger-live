@@ -48,12 +48,11 @@ const ScrollContainerHeader = <ItemType,>({
       />
       <AnimatedFlatList
         {...props}
-        /* @ts-expect-error FIXME this prop definitely exists */
         onScroll={handleScroll}
         scrollEventThrottle={16}
         data={[...React.Children.toArray(children)]}
         renderItem={({ item }: { item: React.ReactNode }) => <View>{item}</View>}
-        keyExtractor={(_, index: number) => index.toString()}
+        keyExtractor={(_: unknown, index: number) => index.toString()}
       ></AnimatedFlatList>
     </Flex>
   );
