@@ -13,8 +13,25 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import deviceAction from "../vechain/speculos-deviceActions";
 import BigNumber from "bignumber.js";
 
+const prepareVeChainApp = async transport => {
+  // enter app vechain
+  await transport.button(SpeculosButton.BOTH);
+  // enable contract data
+  await transport.button(SpeculosButton.RIGHT);
+  await transport.button(SpeculosButton.BOTH);
+  await transport.button(SpeculosButton.BOTH);
+  await transport.button(SpeculosButton.RIGHT);
+  await transport.button(SpeculosButton.BOTH);
+  // enable multi-clause
+  await transport.button(SpeculosButton.RIGHT);
+  await transport.button(SpeculosButton.BOTH);
+  await transport.button(SpeculosButton.RIGHT);
+  await transport.button(SpeculosButton.BOTH);
+  await transport.button(SpeculosButton.RIGHT);
+  await transport.button(SpeculosButton.BOTH);
+};
+
 const vechainTest = {
-  name: "Vechain",
   currency: getCryptoCurrencyById("vechain"),
   appQuery: {
     model: DeviceModelId.nanoSP,
@@ -23,26 +40,11 @@ const vechainTest = {
   allowEmptyAccounts: true,
   testTimeout: 60 * 1000, // 1 minute
   genericDeviceAction: deviceAction.acceptTransaction,
-  onSpeculosDeviceCreated: async ({ transport }) => {
-    // enter app vechain
-    await transport.button(SpeculosButton.BOTH);
-    // enable contract data
-    await transport.button(SpeculosButton.RIGHT);
-    await transport.button(SpeculosButton.BOTH);
-    await transport.button(SpeculosButton.BOTH);
-    await transport.button(SpeculosButton.RIGHT);
-    await transport.button(SpeculosButton.BOTH);
-    // enable multi-clause
-    await transport.button(SpeculosButton.RIGHT);
-    await transport.button(SpeculosButton.BOTH);
-    await transport.button(SpeculosButton.RIGHT);
-    await transport.button(SpeculosButton.BOTH);
-    await transport.button(SpeculosButton.RIGHT);
-    await transport.button(SpeculosButton.BOTH);
-  },
+  onSpeculosDeviceCreated: async ({ transport }) => await prepareVeChainApp(transport),
 };
 
 const vet: AppSpec<Transaction> = {
+  name: "VeChain VET",
   ...vechainTest,
   mutations: [
     {
@@ -114,6 +116,7 @@ const vet: AppSpec<Transaction> = {
 };
 
 const vtho: AppSpec<Transaction> = {
+  name: "VeChain VTHO",
   ...vechainTest,
   skipOperationHistory: true,
   mutations: [
