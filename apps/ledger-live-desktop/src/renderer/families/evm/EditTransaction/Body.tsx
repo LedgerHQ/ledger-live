@@ -62,7 +62,7 @@ type StateProps = {
   updateAccountWithUpdater: (b: string, a: (a: Account) => Account) => void;
 };
 
-type Props = OwnProps & StateProps;
+export type Props = OwnProps & StateProps;
 
 /**
  * Method used to dynamically change the title of the stepper depending on the
@@ -207,7 +207,7 @@ const Body = ({
     [account, parentAccount, updateAccountWithUpdater],
   );
 
-  const handleStepChange = useCallback(step => onChangeStepId(step.id), [onChangeStepId]);
+  const handleStepChange = useCallback((step: St) => onChangeStepId(step.id), [onChangeStepId]);
   const error = transactionError || bridgeError;
   const mainAccount = getMainAccount(account, parentAccount);
 
@@ -253,7 +253,10 @@ const Body = ({
       ? "cancel"
       : undefined,
   );
-  const handleSetEditType = useCallback(editType => setEditType(editType), []);
+  const handleSetEditType: StepProps["setEditType"] = useCallback(
+    editType => setEditType(editType),
+    [],
+  );
 
   /**
    * In order to display the relevant informations in the summary step, regarding
