@@ -1,14 +1,3 @@
-import React, { useMemo, Component, useCallback } from "react";
-import { connect, useDispatch } from "react-redux";
-import { useHistory, useLocation } from "react-router-dom";
-import { TFunction } from "i18next";
-import { Trans, useTranslation } from "react-i18next";
-import styled from "styled-components";
-import uniq from "lodash/uniq";
-import { getEnv } from "@ledgerhq/live-env";
-import { colors } from "~/renderer/styles/theme";
-import Alert from "~/renderer/components/Alert";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import {
   findSubAccountById,
   getAccountCurrency,
@@ -19,6 +8,8 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import { getDefaultExplorerView, getTransactionExplorer } from "@ledgerhq/live-common/explorers";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useNftMetadata } from "@ledgerhq/live-common/nft/NftMetadataProvider/index";
 import {
   findOperationInAccount,
   getOperationAmountNumber,
@@ -27,54 +18,63 @@ import {
   isEditableOperation,
   isStuckOperation,
 } from "@ledgerhq/live-common/operation";
+import { getEnv } from "@ledgerhq/live-env";
 import { Account, AccountLike, NFTMetadata, Operation, OperationType } from "@ledgerhq/types-live";
-import { useNftMetadata } from "@ledgerhq/live-common/nft/NftMetadataProvider/index";
-import Skeleton from "~/renderer/components/Nft/Skeleton";
+import { TFunction } from "i18next";
+import invariant from "invariant";
+import uniq from "lodash/uniq";
+import React, { Component, useCallback, useMemo } from "react";
+import { Trans, useTranslation } from "react-i18next";
+import { connect, useDispatch } from "react-redux";
+import { useHistory, useLocation } from "react-router-dom";
+import styled from "styled-components";
 import { urls } from "~/config/urls";
+import { openModal } from "~/renderer/actions/modals";
 import TrackPage, { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
+import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
-import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import CopyWithFeedback from "~/renderer/components/CopyWithFeedback";
 import CounterValue from "~/renderer/components/CounterValue";
+import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import Ellipsis from "~/renderer/components/Ellipsis";
 import FakeLink from "~/renderer/components/FakeLink";
+import FormattedDate from "~/renderer/components/FormattedDate";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import LabelInfoTooltip from "~/renderer/components/LabelInfoTooltip";
 import Link from "~/renderer/components/Link";
 import LinkHelp from "~/renderer/components/LinkHelp";
+import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
+import Skeleton from "~/renderer/components/Nft/Skeleton";
+import { SplitAddress } from "~/renderer/components/OperationsList/AddressCell";
 import ConfirmationCheck from "~/renderer/components/OperationsList/ConfirmationCheck";
 import OperationComponent from "~/renderer/components/OperationsList/Operation";
 import Text, { TextProps } from "~/renderer/components/Text";
+import ToolTip from "~/renderer/components/Tooltip";
+import { getLLDCoinFamily } from "~/renderer/families";
 import IconChevronRight from "~/renderer/icons/ChevronRight";
 import IconExternalLink from "~/renderer/icons/ExternalLink";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import { openURL } from "~/renderer/linking";
+import { State } from "~/renderer/reducers";
 import { accountSelector } from "~/renderer/reducers/accounts";
 import { confirmationsNbForCurrencySelector } from "~/renderer/reducers/settings";
-import { getMarketColor, centerEllipsis } from "~/renderer/styles/helpers";
-import {
-  OpDetailsSection,
-  OpDetailsTitle,
-  GradientHover,
-  OpDetailsData,
-  B,
-  TextEllipsis,
-  Separator,
-  HashContainer,
-  OpDetailsSideButton,
-} from "./styledComponents";
-import ToolTip from "~/renderer/components/Tooltip";
-import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
-import FormattedDate from "~/renderer/components/FormattedDate";
+import { centerEllipsis, getMarketColor } from "~/renderer/styles/helpers";
+import { colors } from "~/renderer/styles/theme";
 import { setDrawer } from "../Provider";
-import { SplitAddress } from "~/renderer/components/OperationsList/AddressCell";
-import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import AmountDetails from "./AmountDetails";
 import NFTOperationDetails from "./NFTOperationDetails";
-import { State } from "~/renderer/reducers";
-import { openModal } from "~/renderer/actions/modals";
-import { getLLDCoinFamily } from "~/renderer/families";
-import invariant from "invariant";
+import {
+  B,
+  GradientHover,
+  HashContainer,
+  OpDetailsData,
+  OpDetailsSection,
+  OpDetailsSideButton,
+  OpDetailsTitle,
+  Separator,
+  TextEllipsis,
+} from "./styledComponents";
 
 const mapStateToProps = (
   state: State,
