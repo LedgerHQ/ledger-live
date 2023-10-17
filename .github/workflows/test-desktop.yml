@@ -138,7 +138,6 @@ jobs:
     runs-on: ${{ github.ref_name != 'develop' && 'windows-latest' || 'ledger-live-4xlarge-windows-2022' }}
     steps:
       - name: Setup screen size
-        if: github.ref_name != 'develop'
         run: |
           Set-DisplayResolution -Width 1920 -Height 1080 -Force
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
