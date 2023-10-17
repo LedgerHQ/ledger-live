@@ -29,7 +29,7 @@ export function hasAccountsWithFundsChanged(accounts: Account[], oldAccounts: Ac
   for (const oldAccount of oldAccounts) {
     const matchingAccount = accounts.find(acc => acc.id === oldAccount.id);
 
-    // Means that account has been deleted
+    // Means that oldAccount has been deleted
     if (!matchingAccount) {
       if (oldAccount.balance.isGreaterThan(0)) {
         return true;
