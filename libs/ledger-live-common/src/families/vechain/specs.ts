@@ -194,4 +194,4 @@ const vtho: AppSpec<Transaction> = {
   ],
 };
 
-export default { vet, vtho };
+export default { vet };
