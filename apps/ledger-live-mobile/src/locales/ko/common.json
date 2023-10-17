@@ -302,6 +302,9 @@
     "FeeNotLoaded" : {
       "title" : "수수료 요율을 로드할 수 없습니다"
     },
+    "FeeNotLoadedSwap" : {
+      "title" : "기술 문제로 네트워크 수수료 산정에 실패했습니다.다시 시도하거나 자산을 변경하세요."
+    },
     "FeeRequired" : {
       "title" : "수수료가 필요합니다"
     },
@@ -322,18 +325,18 @@
       "description" : "다시 시도해 주세요. 문제가 지속될 경우, 아래 버튼을 이용해 로그를 저장하고 Ledger 지원 부서로 보내주세요."
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "Ledger Stax에서 잠금 화면이 취소되었습니다.",
+      "title" : "Ledger Stax에서 잠금 화면 사진이 삭제되었습니다",
       "description" : "적합한 이미지가 아니라면 다른 이미지로 다시 시도해볼 수 있습니다.",
       "primaryCTA" : "다른 사진을 업로드하세요"
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "Ledger Stax에서 잠금 화면이 취소되었습니다.",
+      "title" : "Ledger Stax에서 잠금 화면 사진 로드가 취소되었습니다",
       "description" : "적합한 이미지가 아니라면 다른 이미지로 다시 시도해볼 수 있습니다.",
       "primaryCTA" : "다른 사진을 업로드하세요"
     },
     "ImageDoesNotExistOnDevice" : {
-      "title" : "Ledger Stax에 제거할 잠금 화면 이미지가 없습니다",
-      "description" : "사용자 지정 잠금 화면 이미지가 이미 제거된 상태입니다."
+      "title" : "잠금화면 사진 없음",
+      "description" : "잠금 화면 사진이 이미 삭제된 상태입니다."
     },
     "InvalidAddress" : {
       "title" : "유효한 {{currencyName}} 주소가 아닙니다"
@@ -427,6 +430,10 @@
     "NetworkDown" : {
       "title" : "죄송하지만 인터넷이 끊긴 것 같습니다",
       "description" : "인터넷 연결을 확인하세요."
+    },
+    "NetworkError" : {
+      "title" : "네트워크 오류가 발생했습니다",
+      "description" : "나중에 다시 시도해 주세요"
     },
     "NoAddressesFound" : {
       "title" : "죄송하지만 발견된 계정이 없습니다",
@@ -776,8 +783,8 @@
       "description" : "다른 이미지로 다시 시도하세요"
     },
     "ImageDownloadError" : {
-      "title" : "이미지 다운로드 실패",
-      "description" : "다른 이미지로 다시 시도하세요"
+      "title" : "사진을 다운로드하지 못했습니다",
+      "description" : "다른 사진으로 다시 시도해 보세요."
     },
     "NFTMetadataLoadingError" : {
       "title" : "NFT 메타데이터 로딩 문제",
@@ -788,24 +795,24 @@
       "description" : "다른 사진으로 다시 시도해 보세요."
     },
     "ImageTooLargeError" : {
-      "title" : "이미지 크기 초과",
-      "description" : "작은 이미지로 다시 시도하세요"
+      "title" : "사진이 너무 큽니다",
+      "description" : "사진의 크기를 조정하거나 압축한 후 다시 시도하거나 더 작은 사진을 업로드하세요."
     },
     "ImageCropError" : {
-      "title" : "이미지 크롭 실패",
-      "description" : "다른 이미지로 다시 시도하세요"
+      "title" : "사진을 자르지 못했습니다",
+      "description" : "다른 사진으로 다시 시도해 보세요."
     },
     "ImageResizeError" : {
-      "title" : "이미지 사이즈 변경 실패",
-      "description" : "다른 이미지로 다시 시도하세요"
+      "title" : "사진 크기를 조정하지 못했습니다",
+      "description" : "다른 사진으로 다시 시도해 보세요."
     },
     "ImagePreviewError" : {
-      "title" : "이미지 미리보기 실패",
-      "description" : "다른 이미지로 다시 시도하세요"
+      "title" : "미리보기를 로드하지 못했습니다",
+      "description" : "다른 사진으로 다시 시도해 보세요."
     },
     "ImageProcessingError" : {
-      "title" : "이미지 처리 실패",
-      "description" : "다른 이미지로 다시 시도하세요"
+      "title" : "사진 처리 오류",
+      "description" : "다른 사진으로 다시 시도해 보세요."
     },
     "HederaAddAccountError" : {
       "title" : "귀하의 계정이 추가되지 않았습니다. 다시 시도해 주세요."
@@ -1930,7 +1937,7 @@
       "cancelCta" : "설정 취소",
       "notFoundEntity" : {
         "title" : "정품 확인을 다시 시작하세요",
-        "description" : "먼저 \"나의 Ledger 공급자\" 설정을 비활성화해야 합니다.이를 비활성화하려면 Ledger Live의 \"설정\"을 열고 \"실험 기능\"을 선택한 다음 \"공급자 관리\"를 끕니다",
+        "description" : "먼저 \"나의 Ledger 공급자\" 설정을 비활성화해야 합니다. 이를 비활성화하려면 Ledger Live의 \"설정\"을 열고 \"실험 기능\"을 선택한 다음 \"나의 Ledger 공급자\"를 끕니다.",
         "settingsCta" : "설정으로 이동"
       }
     },
@@ -2813,7 +2820,7 @@
           "description" : "관리자에 개발자 및 테스트넷 앱을 보여줍니다."
         },
         "managerProvider" : {
-          "title" : "관리자 공급자",
+          "title" : "내 Ledger 공급자",
           "description" : "관리자에서 앱 공급자를 변경하면 Ledger 기기에서 앱 설치 또는 삭제가 불가능해질 수 있습니다."
         },
         "experimentalExplorers" : {
@@ -3405,6 +3412,11 @@
     "walletConnect" : {
       "title" : "WalletConnect",
       "description" : "지갑을 디앱에 연결합니다"
+    },
+    "recover" : {
+      "title" : "Ledger Recover",
+      "description" : "손쉬운 지갑 복구",
+      "tag" : "한 달 무료"
     }
   },
   "signMessage" : {
@@ -3785,7 +3797,7 @@
     "allowRemoveCustomLockscreen" : "Ledger Stax에서 이미지 삭제 확인",
     "allowSecureConnection" : "Ledger와 보안 연결을 허용",
     "loading" : "로딩...",
-    "turnOnAndUnlockDevice" : "장치를 켜고 잠금 해제하세요",
+    "turnOnAndUnlockDevice" : "장치를 켜고 잠금을 해제하세요",
     "connectAndUnlockDevice" : "장치를 연결하고 잠금 해제하세요",
     "connectAnotherDevice" : "다른 Ledger 장치 연결하기",
     "unlockDevice" : "장치를 잠금 해제하세요",
@@ -4036,7 +4048,7 @@
       "modalDesc" : "컴퓨터에 Ledger Live를 다운로드하여 장치 펌웨어를 업데이트하세요.",
       "contactUs" : "문의하기"
     },
-    "myApps" : "내 앱",
+    "myApps" : "내 블록체인 앱",
     "token" : {
       "title" : "{{appName}}개의 토큰",
       "noAppNeeded" : "{{tokenName}}는 {{appName}} 앱을 사용하는 토큰입니다. 설치할 앱이 없습니다.",
@@ -4141,10 +4153,10 @@
       "descriptionProductName" : "탭하여 {{productName}} 장치를 OS 버전 {{firmwareVersion}}로 업데이트하세요."
     },
     "title" : "펌웨어를 업데이트하세요",
-    "beginUpdate" : "업데이트 시작",
+    "beginUpdate" : "OS 업데이트 시작",
     "updateDevice" : "{{deviceName}} OS 업데이트",
     "releaseNotesTitle" : "OS에 무엇이 새롭게 업데이트되었나요?",
-    "updateDone" : "모두 완료되었습니다! {{deviceName}}가 최신 상태입니다",
+    "updateDone" : "사용 중인 {{deviceName}} OS가 이제 최신 상태입니다",
     "updateDoneDescription" : "신규 OS 버전: {{firmwareVersion}}",
     "preparing" : "펌웨어 업데이트를 준비 중입니다. 장치의 전원을 끄지 말고 연결 상태를 유지하세요. 진행 상황을 알려드립니다",
     "confirmIdentifierText" : "장치의 식별자가 아래 식별자와 동일한지 확인하세요. 요청 받은 경우 PIN 코드를 확인하여 입력하세요",
@@ -4155,22 +4167,22 @@
     "finishUpdate" : "{{deviceName}}에서 업데이트를 완료하세요.",
     "identifierTitle" : "식별자",
     "pleaseWaitDownload" : "설치 프로그램이 다운로드될 때까지 기다리세요.",
-    "doNotLeaveLedgerLive" : "업데이트가 완료될 때까지 Ledger Live 앱을 종료하지 마세요.",
+    "doNotLeaveLedgerLive" : "업데이트가 완료될 때까지 이 화면을 그대로 유지하세요",
     "preparingDevice" : "장치 준비 중",
     "pleaseWaitUpdate" : "업데이트가 완료될 때까지 기다려 주세요",
     "viewUpdateChangelog" : "업데이트 변경 로그 보기",
     "waitForFirmwareUpdate" : "장치에서 펌웨어 업데이트가 완료될 때까지 기다리세요.",
     "waitForInstallationToFinish" : "{{deviceName}}에 설치를 완료할 때까지 기다려주세요",
     "staxBatteryLow" : "Ledger Stax 배터리 부족으로 업데이트 불가",
-    "staxBatteryLowDescription" : "OS를 업데이트하려면 Ledger가 20% 이상 충전된 상태이거나, 현재 충전 중이어야 합니다.",
-    "updateCancelled" : "{{deviceName}}에서 업데이트 취소",
-    "updateCancelledDescription" : "{{deviceName}}에서 {{newFirmwareVersion}} 버전 OS 업데이트가 거절되었습니다. 실수로 거절한 경우, 업데이트를 재시작하세요.",
-    "updateNotYetComplete" : "업데이트 완료되지 않음",
-    "updateNotYetCompleteDescription" : "업데이트를 중단하면 앱, 언어 및 잠금 화면 이미지가 정확하게 복원되지 않을 수 있습니다.",
+    "staxBatteryLowDescription" : "OS 업데이트를 시작하려면 최소 20%의 충전이 필요하거나 Ledger Stax가 충전 중이어야 합니다.",
+    "updateCancelled" : "{{deviceName}}에서 OS 업데이트 설치가 취소되었습니다",
+    "updateCancelledDescription" : "실수로 거절한 경우, 업데이트를 다시 시작하세요.",
+    "updateNotYetComplete" : "OS 업데이트가 진행 중입니다",
+    "updateNotYetCompleteDescription" : "지금 업데이트를 취소하면 설정 및 앱이 제대로 복구되지 않을 수 있습니다.",
     "restartUpdate" : "OS 업데이트 재시작",
-    "quitUpdate" : "업데이트 종료",
-    "continueUpdate" : "업데이트 계속하기",
-    "unlockDeviceToComplete" : "{{deviceName}}의 잠금을 해제해 설치를 완료하세요",
+    "quitUpdate" : "OS 업데이트 취소",
+    "continueUpdate" : "OS 업데이트 계속",
+    "unlockDeviceToComplete" : "PIN을 통해 {{deviceName}}의 잠금을 해제하고 업데이트를 완료하세요.",
     "unlockDeviceWithPin" : "PIN으로 장치를 잠금 해제하세요.",
     "reinstallApps" : "앱 재설치",
     "currentVersionNumber" : "현재 버전",
@@ -4198,14 +4210,14 @@
           "titlePreparingUpdate" : "업데이트 설치 준비 중",
           "description" : "{{deviceName}}에 업데이트 전송 중."
         },
-        "titleBackingUp" : "앱 및 설정 백업",
+        "titleBackingUp" : "업데이트 설치 준비 중",
         "titleTransferring" : "업데이트 전송 중",
-        "description" : "구성을 백업하고 업데이트를 {{deviceName}} 장치로 전송합니다."
+        "description" : "설정 및 앱 백업 {{deviceName}}에 업데이트 전송 중."
       },
       "installUpdate" : {
         "titleInactive" : "업데이트 설치",
         "titleActive" : "업데이트 설치 중",
-        "description" : "{{deviceName}} 장치가 여러 번 다시 시작됩니다.\n\n{{deviceName}}에서 설치가 마친 후, 장치의 잠금을 해제해 설치를 완료하세요"
+        "description" : "{{deviceName}} 장치가 여러 번 다시 시작됩니다.\n\n업데이트를 완료하려면 설치가 완료된 후 PIN을 사용해 {{deviceName}}를 잠금 해제하세요."
       },
       "restoreSettings" : {
         "earlySecurityCheck" : {
@@ -4216,18 +4228,18 @@
         "description" : "설정과 블록체인 앱이 복원됩니다.",
         "restoreLockScreenPicture" : "잠금 화면 이미지 복원",
         "restoreLanguage" : "언어 복원",
-        "imageLoadRequested" : "{{deviceName}}에서 잠금 화면 이미지 복원 허용",
-        "imageCommitRequested" : "{{deviceName}}에서 사진을 확인하세요",
-        "allowLanguageInstallation" : "{{deviceName}}에서 언어 복구를 허용하세요",
-        "allowAppsRestoration" : "{{deviceName}}에서 앱 복구를 허용하세요",
+        "imageLoadRequested" : "잠금 화면 사진을 복구하려면 \"사진 로드\"를 탭하세요",
+        "imageCommitRequested" : "잠금 화면 사진 설정을 유지하려면 '유지'를 탭하세요",
+        "allowLanguageInstallation" : "언어를 복구하려면 “허용”을 탭하세요",
+        "allowAppsRestoration" : "앱을 복구하려면 “허용”을 탭하세요",
         "errors" : {
-          "description" : "실수로 취소한 경우 복구를 다시 시도하거나 이 단계를 건너뛸 수 있습니다",
-          "LanguageInstallRefusedOnDevice" : "{{deviceName}}에서 언어 변경이 취소되었습니다",
-          "ImageLoadRefusedOnDevice" : "{{deviceName}}에서 잠금 화면 이미지 복구가 취소되었습니다",
-          "ImageCommitRefusedOnDevice" : "{{deviceName}}에서 잠금 화면 이미지 복구가 취소되었습니다",
+          "description" : "실수인 경우 지금 다시 시도하세요.",
+          "LanguageInstallRefusedOnDevice" : "{{deviceName}}에서 언어 복구가 취소되었습니다",
+          "ImageLoadRefusedOnDevice" : "{{deviceName}}에서 잠금 화면 사진 복구가 취소되었습니다",
+          "ImageCommitRefusedOnDevice" : "{{deviceName}}에서 잠금 화면 사진 복구가 취소되었습니다",
           "UserRefusedAllowManager" : "{{deviceName}}에서 앱 복구가 취소되었습니다"
         },
-        "installingApps" : "앱 복원"
+        "installingApps" : "앱 설치"
       }
     },
     "newVersion" : "{{deviceName}}에 사용할 수 있는 업데이트 {{version}}",
@@ -4255,7 +4267,7 @@
         "description" : "{{deviceName}}의 연결이 끊어져 업데이트를 완료하지 못했습니다"
       },
       "CantOpenDevice" : {
-        "title" : "죄송하지만, 연결에 실패했습니다",
+        "title" : "Ledger 장치 연결이 끊겼습니다",
         "description" : "{{deviceName}}의 연결이 끊어져 업데이트를 완료하지 못했습니다."
       }
     }
@@ -6234,20 +6246,20 @@
     "toastRemove" : "잠금 화면 사진이 삭제됨",
     "cropImage" : "크롭 기능으로 사진을 잘라주세요",
     "chooseConstrast" : "대비 선택",
-    "uploadAnotherImage" : "다른 이미지 업로드",
+    "uploadAnotherImage" : "다른 사진을 업로드하세요",
     "rotateImage" : "회전",
-    "allowPreview" : "잠금 화면 사진이 {{productName}}에 로드되도록 허용하세요",
+    "allowPreview" : "잠금 화면을 사용자 정의하려면 \"사진 로드\"를 탭하세요.",
     "loadingPicture" : "로딩 중...",
     "loadingPictureAlmostOver" : "짜잔!",
     "commitRequested" : "마음에 드시나요?\n그러면 저장하세요!",
     "confirmPicture" : "{{productName}}에서 확인",
     "landingPage" : {
-      "title" : "NFT나 사진을 고르세요.\n원하는 대로 꾸미세요.\n자신만의 Ledger를 만나보세요.",
+      "title" : "디지털 아트나 사진을 선택하세요.\nLedger Stax를 원하는 대로 꾸미세요.\n자신만의 것으로 만들어 보세요.",
       "choosePicture" : "사진 선택"
     },
     "confirmCrop" : "크롭한 이미지를 확인하세요",
     "confirmContrast" : "대비를 확인하세요",
-    "nftEntryPointButtonLabel" : "Ledger Stax 잠금화면으로 설정하세요",
+    "nftEntryPointButtonLabel" : "Ledger Stax 잠금화면 사진으로 설정하세요",
     "customImage" : "커스텀 사진",
     "doThisLater" : "다음에 결정하기",
     "preview" : {
@@ -6281,7 +6293,7 @@
   },
   "postOnboarding" : {
     "hub" : {
-      "title" : "다음으로 {{productName}}를 사용해...",
+      "title" : "다음으로 {{productName}}를 사용해 다음을 수행하세요.",
       "allDoneTitle" : "이상입니다!",
       "skip" : "나중에 할께요",
       "viewWallet" : "내 지갑 보기"
@@ -6293,9 +6305,9 @@
     },
     "actions" : {
       "customImage" : {
-        "title" : "잠금화면을 취향대로 꾸며보세요",
-        "titleCompleted" : "잠금화면 꾸미기 완료",
-        "description" : "Ledger Stax의 잠금화면으로 설정할 NFT나 사진을 선택하세요.",
+        "title" : "잠금 화면 사진을 설정하세요",
+        "titleCompleted" : "잠금 화면 사진 설정",
+        "description" : "잠금 화면으로 설정할 디지털 아트나 사진을 선택하세요.",
         "popupLabel" : "잠금화면을 설정하세요"
       },
       "claimNft" : {
@@ -6308,7 +6320,7 @@
       "assetsTransfer" : {
         "title" : "자산을 Ledger로 이체하세요",
         "titleCompleted" : "Ledger로 자산 이체 완료",
-        "description" : "거래소나 다른 지갑의 자산을 이체하세요.",
+        "description" : "코인베이스나 기타 거래소, 또는 지갑에서 자산을 쉽게 전송하세요.",
         "popupLabel" : "자산 이체 완료"
       }
     }
@@ -6338,7 +6350,7 @@
       },
       "empty" : {
         "title" : "아직 표시할 NFT가 없습니다",
-        "subtitle" : "첫 NFT를 받고 시작해 보세요.",
+        "subtitle" : "지갑에 NFT를 추가하고 시작하세요.",
         "receive" : "NFT 수령",
         "supportLink" : "다른 지갑에서 NFT를 받는 방법은 무엇인가요?"
       },
@@ -6365,6 +6377,12 @@
   "servicesWidget" : {
     "title" : "서비스",
     "subTitle" : "Ledger 서비스 관리",
+    "signIn" : "로그인",
+    "recover" : {
+      "cta" : "무료 평가판을 시작하세요",
+      "desc" : "지갑 잠김에 대해 걱정하지 마세요.",
+      "tag" : "1달 무료"
+    },
     "protect" : {
       "status" : {
         "new" : {
