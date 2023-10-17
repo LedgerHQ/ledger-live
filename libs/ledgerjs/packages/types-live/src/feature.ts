@@ -100,6 +100,7 @@ export type CurrencyFeatures = {
   currencySyscoin: DefaultFeature;
   currencyAxelar: DefaultFeature;
   currencySecretNetwork: DefaultFeature;
+  currencySeiNetwork: DefaultFeature;
   currencyDesmos: DefaultFeature;
   currencyUmee: DefaultFeature;
   currencyStargaze: DefaultFeature;

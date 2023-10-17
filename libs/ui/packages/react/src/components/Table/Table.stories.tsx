@@ -465,10 +465,10 @@ const CustomRowContainer = styled(Table.RowContainer).attrs<{ onClick: () => voi
 `;
 
 export const CustomRows: StoryTemplate<Props<BalanceElement>> = args => {
-  const [selectedRowIndex, setSelectedRowIndex] = useState(null);
+  const [selectedRowIndex, setSelectedRowIndex] = useState<number | undefined>();
 
   const renderRow = useCallback(
-    (rowIndex, children) => (
+    (rowIndex: number, children?: React.ReactNode) => (
       <CustomRowContainer rowIndex={rowIndex} onClick={() => setSelectedRowIndex(rowIndex)}>
         {children}
       </CustomRowContainer>

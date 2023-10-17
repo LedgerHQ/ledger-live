@@ -48,8 +48,8 @@ const PerformanceConsole = () => {
   const handleSlidingComplete = useCallback(() => {
     setPreviewTransparent(false);
   }, []);
-  const handleSliderValueChange = useCallback(val => {
-    setTransparentHeightPercentage(Math.min(100, Math.max(0, Math.round(val))));
+  const handleSliderValueChange = useCallback((val: string | number) => {
+    setTransparentHeightPercentage(Math.min(100, Math.max(0, Math.round(val as number))));
   }, []);
 
   const { bottom } = useSafeAreaInsets();

@@ -4,18 +4,11 @@
  *
  * @format
  */
-/* eslint-disable import/no-extraneous-dependencies */
-/* eslint-disable no-console */
 
 const extraConfig = require("metro-extra-config");
 
 // Dependencies that are forcefully resolved from the LLM folder.
-const forcedDependencies = [
-  "react-redux",
-  "react-native",
-  "react-native-svg",
-  "styled-components",
-];
+const forcedDependencies = ["react-redux", "react-native", "react-native-svg", "styled-components"];
 
 const specificConfig = {
   resolver: {
@@ -39,10 +32,7 @@ const extraConfigOptions = {
 
     // "package.js" contains "module.meta" calls that will not work with the react-native env.
     // To solve this replace with "packageInfo.cjs" which is safe.
-    if (
-      originModulePath.includes("@polkadot") &&
-      moduleName.endsWith("packageInfo.js")
-    ) {
+    if (originModulePath.includes("@polkadot") && moduleName.endsWith("packageInfo.js")) {
       return moduleName.replace("packageInfo.js", "packageInfo.cjs");
     }
 

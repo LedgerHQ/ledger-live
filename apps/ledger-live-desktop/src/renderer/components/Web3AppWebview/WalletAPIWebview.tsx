@@ -200,7 +200,10 @@ const useGetUserId = () => {
   return userId;
 };
 
-function useWebView({ manifest }: Pick<Props, "manifest">, webviewRef: RefObject<WebviewTag>) {
+function useWebView(
+  { manifest, customHandlers }: Pick<WebviewProps, "manifest" | "customHandlers">,
+  webviewRef: RefObject<WebviewTag>,
+) {
   const accounts = useSelector(flattenAccountsSelector);
 
   const uiHook = useUiHook(manifest);
@@ -234,10 +237,11 @@ function useWebView({ manifest }: Pick<Props, "manifest">, webviewRef: RefObject
     config,
     webviewHook,
     uiHook,
+    customHandlers,
   });
 
   const handleMessage = useCallback(
-    event => {
+    (event: Electron.IpcMessageEvent) => {
       if (event.channel === "webviewToParent") {
         onMessage(event.args[0]);
       }
@@ -293,13 +297,8 @@ function useWebView({ manifest }: Pick<Props, "manifest">, webviewRef: RefObject
   return { webviewRef, widgetLoaded, onReload, webviewStyle };
 }
 
-interface Props {
-  manifest: AppManifest;
-  inputs?: Record<string, string | undefined>;
-}
-
 export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
-  ({ manifest, inputs = {}, onStateChange }, ref) => {
+  ({ manifest, inputs = {}, customHandlers, onStateChange }, ref) => {
     const { webviewState, webviewRef, webviewProps, handleRefresh } = useWebviewState(
       { manifest, inputs },
       ref,
@@ -313,6 +312,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     const { webviewStyle, widgetLoaded } = useWebView(
       {
         manifest,
+        customHandlers,
       },
       webviewRef,
     );

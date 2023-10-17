@@ -43,21 +43,9 @@ export const convertToNonAtomicUnit = (amount, account) => {
   return amount.shiftedBy(-fromMagnitude);
 };
 
-export const convertParametersToValidFormat = ({
-  operation,
-  swapId,
-  fromAccount,
-  toAccount,
-  rate,
-}) => {
-  const result = { operation, swapId };
+export const getMagnitudeAwareRate = ({ fromAccount, toAccount, rate }): BigNumber => {
   const unitFrom = getAccountUnit(fromAccount);
   const unitTo = getAccountUnit(toAccount);
-  const magnitudeAwareRate = new BigNumber(rate).div(
-    new BigNumber(10).pow(unitFrom.magnitude - unitTo.magnitude),
-  );
-  return {
-    result,
-    magnitudeAwareRate,
-  };
+  const magnitudeAwareRate = new BigNumber(rate).shiftedBy(unitTo.magnitude - unitFrom.magnitude);
+  return magnitudeAwareRate;
 };

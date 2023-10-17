@@ -4224,7 +4224,7 @@
         "restoreLockScreenPicture": "Restoring lock screen picture",
         "restoreLanguage": "Restoring language",
         "imageLoadRequested": "Tap on “Load picture” to restore lock screen picture",
-        "imageCommitRequested": "Tap on “keep” to keep set your lock screen picture",
+        "imageCommitRequested": "Tap on “keep” to confirm your lock screen picture",
         "allowLanguageInstallation": "Tap on “Allow” to restore language",
         "allowAppsRestoration": "Tap on “Allow” to restore apps",
         "errors": {

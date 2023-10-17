@@ -34,7 +34,10 @@ const ValidatorGroupsField = ({
   const [showAll, setShowAll] = useState(false);
   const unit = getAccountUnit(account);
   const validatorGroups = useValidatorGroups(search);
-  const onSearch = useCallback(evt => setSearch(evt.target.value), [setSearch]);
+  const onSearch = useCallback(
+    (evt: React.ChangeEvent<HTMLInputElement>) => setSearch(evt.target.value),
+    [setSearch],
+  );
   const chosenValidatorGroup = useMemo(() => {
     if (chosenValidatorGroupAddress !== null) {
       return validatorGroups.find(v => v.address === chosenValidatorGroupAddress);

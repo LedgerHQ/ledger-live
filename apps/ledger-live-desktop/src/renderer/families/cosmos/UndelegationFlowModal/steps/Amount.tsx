@@ -4,7 +4,10 @@ import React, { useCallback, useMemo } from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { StepProps } from "../types";
-import { CosmosMappedDelegation } from "@ledgerhq/live-common/families/cosmos/types";
+import {
+  CosmosDelegationInfo,
+  CosmosMappedDelegation,
+} from "@ledgerhq/live-common/families/cosmos/types";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -25,7 +28,7 @@ export default function StepAmount({
   invariant(account && transaction && transaction.validators, "account and transaction required");
   const bridge = getAccountBridge(account);
   const updateValidator = useCallback(
-    validatorFields => {
+    (validatorFields: Partial<CosmosDelegationInfo>) => {
       onUpdateTransaction(tx =>
         bridge.updateTransaction(tx, {
           ...tx,

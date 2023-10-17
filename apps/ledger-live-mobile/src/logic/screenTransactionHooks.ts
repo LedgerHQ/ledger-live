@@ -248,7 +248,13 @@ export function useSignedTxHandler({
   return useCallback(
     // TODO: fix type error
 
-    async ({ signedOperation, transactionSignError }) => {
+    async ({
+      signedOperation,
+      transactionSignError,
+    }: {
+      signedOperation: SignedOperation;
+      transactionSignError?: Error;
+    }) => {
       try {
         if (transactionSignError) {
           throw transactionSignError;
@@ -293,7 +299,13 @@ export function useSignedTxHandlerWithoutBroadcast({
   const navigation = useNavigation();
   const route = useRoute();
   return useCallback(
-    async ({ signedOperation, transactionSignError }) => {
+    async ({
+      signedOperation,
+      transactionSignError,
+    }: {
+      signedOperation: SignedOperation;
+      transactionSignError?: Error;
+    }) => {
       try {
         if (transactionSignError) {
           throw transactionSignError;

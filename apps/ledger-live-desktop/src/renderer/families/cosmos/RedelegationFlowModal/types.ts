@@ -26,7 +26,7 @@ export type StepProps = {
   optimisticOperation: Operation | undefined;
   error: Error | undefined;
   signed: boolean;
-  transaction: Transaction | undefined | null;
+  transaction?: Transaction | null;
   status: TransactionStatus;
   onChangeTransaction: (a: Transaction) => void;
   onUpdateTransaction: (a: (a: Transaction) => Transaction) => void;

@@ -35,3 +35,7 @@
   background-color: #b8b8b9;
   text-align: start;
 }
+
+pre {
+  text-align: initial;
+}

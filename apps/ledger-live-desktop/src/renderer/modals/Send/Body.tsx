@@ -11,7 +11,7 @@ import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/accou
 import { getNFT, getNftCapabilities, decodeNftId } from "@ledgerhq/live-common/nft/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
+import { Account, AccountLike, NFT, NFTStandard, Operation } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import logger from "~/renderer/logger";
 import Stepper from "~/renderer/components/Stepper";
@@ -227,13 +227,13 @@ const Body = ({
     [account, setAccount],
   );
   const handleChangeNFT = useCallback(
-    nextNft => {
+    (nextNft: NFT) => {
       setAccount(mainAccount, undefined);
       const specific = getLLDCoinFamily(mainAccount.currency.family);
       if (!specific.nft || !transaction) return;
 
       const bridge = getAccountBridge(mainAccount);
-      const standard = nextNft.standard.toLowerCase();
+      const standard = nextNft.standard.toLowerCase() as NFTStandard;
       const newTransaction = specific.nft.injectNftIntoTransaction(
         transaction,
         {
@@ -249,7 +249,7 @@ const Body = ({
     [mainAccount, setAccount, setTransaction, transaction],
   );
   const handleChangeQuantities = useCallback(
-    nextQuantity => {
+    (nextQuantity: string) => {
       const specific = getLLDCoinFamily(mainAccount.currency.family);
       if (!specific.nft || !transaction) return;
 
@@ -289,7 +289,10 @@ const Body = ({
     },
     [account, parentAccount, updateAccountWithUpdater],
   );
-  const handleStepChange = useCallback(e => onChangeStepId(e.id), [onChangeStepId]);
+  const handleStepChange = useCallback(
+    (e: { id: StepId }) => onChangeStepId(e.id),
+    [onChangeStepId],
+  );
   const errorSteps = [];
   if (transactionError) {
     errorSteps.push(3);

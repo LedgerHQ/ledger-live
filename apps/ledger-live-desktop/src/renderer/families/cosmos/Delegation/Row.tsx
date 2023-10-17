@@ -112,8 +112,8 @@ export function Row({
   onExternalLink,
 }: Props) {
   const onSelect = useCallback(
-    action => {
-      onManageAction(validatorAddress, action.key);
+    (action: (typeof dropDownItems)[number]) => {
+      onManageAction(validatorAddress, action.key as DelegationActionsModalName);
     },
     [onManageAction, validatorAddress],
   );

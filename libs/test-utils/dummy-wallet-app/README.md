@@ -25,6 +25,8 @@ pnpm test-utils:dummy-wallet-app build
 ### Desktop
 pnpm build:lld:deps
 pnpm desktop build:testing
+### Run the setup only once if not done yet
+pnpm desktop test:playwright:setup
 pnpm desktop test:playwright wallet-api.spec.ts
 
 ###  Mobie

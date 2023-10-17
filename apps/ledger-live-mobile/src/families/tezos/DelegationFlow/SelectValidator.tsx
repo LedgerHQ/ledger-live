@@ -8,6 +8,7 @@ import {
   Platform,
   Linking,
   KeyboardEventListener,
+  ListRenderItem,
 } from "react-native";
 import { useSelector } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -17,7 +18,7 @@ import { RecipientRequired } from "@ledgerhq/errors";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import type { Transaction as TezosTransaction } from "@ledgerhq/live-common/families/tezos/types";
-import type { Baker } from "@ledgerhq/live-common/families/tezos/bakers";
+import type { Baker } from "@ledgerhq/live-common/families/tezos/types";
 import { useBakers } from "@ledgerhq/live-common/families/tezos/bakers";
 import whitelist from "@ledgerhq/live-common/families/tezos/bakers.whitelist-default";
 import { useTheme } from "@react-navigation/native";
@@ -176,7 +177,7 @@ export default function SelectValidator({ navigation, route }: Props) {
   }
 
   const onChangeText = useCallback(
-    recipient => {
+    (recipient: string) => {
       const bridge = getAccountBridge(account, parentAccount);
       setTransaction(
         bridge.updateTransaction(transaction, {
@@ -220,7 +221,7 @@ export default function SelectValidator({ navigation, route }: Props) {
     },
     [account, parentAccount, route.params, navigation, status],
   );
-  const renderItem = useCallback(
+  const renderItem: ListRenderItem<Baker> = useCallback(
     ({ item }) => <BakerRow baker={item} onPress={onItemPress} />,
     [onItemPress],
   );

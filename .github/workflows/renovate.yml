@@ -4,7 +4,7 @@ on:
   schedule:
     # The "*" (#42, asterisk) character has special semantics in YAML, so this
     # string has to be quoted.
-    - cron: "0/30 * * * *"
+    - cron: "* 22 * * 1-5"
   workflow_dispatch:
 
 jobs:

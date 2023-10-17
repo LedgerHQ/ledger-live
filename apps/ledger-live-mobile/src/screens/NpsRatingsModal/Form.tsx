@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { Flex } from "@ledgerhq/native-ui";
-import { WebView } from "react-native-webview";
+import { WebView, WebViewMessageEvent } from "react-native-webview";
 import VersionNumber from "react-native-version-number";
 import { Platform } from "react-native";
 import styled from "styled-components/native";
@@ -77,7 +77,7 @@ const Form = ({ setStep }: Props) => {
   const language = useSelector(languageSelector);
   const devices = useSelector(knownDevicesSelector);
   const lastDevice = useSelector(lastSeenDeviceSelector) || devices[devices.length - 1];
-  const [selectedRate, setSelectedRate] = useState();
+  const [selectedRate, setSelectedRate] = useState<number>();
 
   const notifications = useSelector(notificationsSelector);
   const notificationsAllowed = notifications.areNotificationsAllowed;
@@ -87,10 +87,10 @@ const Form = ({ setStep }: Props) => {
     .join(",");
 
   const onMessage = useCallback(
-    event => {
+    (event: WebViewMessageEvent) => {
       const { data } = event.nativeEvent;
       if (data.startsWith("nps-submit")) {
-        const rate = data.split("-")[2];
+        const rate = parseInt(data.split("-")[2], 10);
         setSelectedRate(rate);
         if (rate <= 8) {
           screen(
@@ -109,7 +109,7 @@ const Form = ({ setStep }: Props) => {
         }
       }
       if (data === "form-submit") {
-        updateNpsRating(selectedRate);
+        updateNpsRating(selectedRate as number);
         if (!selectedRate || selectedRate <= 7) {
           setStep("disappointedDone");
         } else {

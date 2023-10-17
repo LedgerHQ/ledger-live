@@ -25,7 +25,10 @@ export function useFeatureFlags(): State {
   return useContext<State>(FeatureFlagsContext);
 }
 
-export const FeatureFlagsProvider: React.FC<State> = ({ children, ...providerState }) => {
+export const FeatureFlagsProvider: React.FC<State & { children: React.ReactNode }> = ({
+  children,
+  ...providerState
+}) => {
   return (
     <FeatureFlagsContext.Provider value={providerState}>{children}</FeatureFlagsContext.Provider>
   );

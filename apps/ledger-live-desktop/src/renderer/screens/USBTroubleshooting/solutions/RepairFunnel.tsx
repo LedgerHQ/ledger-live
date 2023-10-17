@@ -24,7 +24,7 @@ const RepairFunnelSolution = ({
     sendEvent("PREVIOUS");
   }, [sendEvent]);
   const onSelectDevice = useCallback(
-    deviceModel => {
+    (deviceModel: string) => {
       if (deviceModel === "nanoS") {
         // NB click forwarded into the repair button.
         repairRef.current?.click();
@@ -37,7 +37,7 @@ const RepairFunnelSolution = ({
     [repairRef, sendEvent],
   );
   const onRepairDeviceClose = useCallback(
-    ({ needHelp }) => {
+    ({ needHelp }: { needHelp?: boolean }) => {
       if (needHelp) {
         sendEvent("DONE", {
           deviceModel: "nanoS",

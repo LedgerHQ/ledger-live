@@ -1,3 +1,4 @@
+import "./env";
 import "~/live-common-setup-base";
 import { captureException } from "~/sentry/main";
 import { ipcMain } from "electron";

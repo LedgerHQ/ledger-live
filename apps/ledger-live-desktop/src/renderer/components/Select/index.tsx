@@ -140,6 +140,7 @@ class MenuList<
       >
         {({ index, style }) => (
           <Row className={"option"} style={style}>
+            {/* @ts-expect-error I have no idea what's up here */}
             {children[index]}
           </Row>
         )}

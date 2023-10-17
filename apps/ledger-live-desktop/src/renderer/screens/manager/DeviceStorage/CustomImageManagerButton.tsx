@@ -23,7 +23,7 @@ const CustomImageManagerButton = (props: Props) => {
   }, []);
 
   const onRemove = useCallback(() => {
-    setDrawer(RemoveCustomImage);
+    setDrawer<{ onClose?: () => void }>(RemoveCustomImage);
   }, []);
 
   return (

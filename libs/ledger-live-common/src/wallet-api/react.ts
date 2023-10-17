@@ -23,7 +23,7 @@ import {
   getAccountIdFromWalletAccountId,
 } from "./converters";
 import { isWalletAPISupportedCurrency } from "./helpers";
-import { WalletAPICurrency, AppManifest, WalletAPIAccount } from "./types";
+import { WalletAPICurrency, AppManifest, WalletAPIAccount, WalletAPICustomHandlers } from "./types";
 import { getMainAccount, getParentAccount } from "../account";
 import { listCurrencies, findCryptoCurrencyById, findTokenById } from "../currencies";
 import { TrackingAPI } from "./tracking";
@@ -264,6 +264,19 @@ function useDeviceTransport({ manifest, tracking }) {
 
 const allCurrenciesAndTokens = listCurrencies(true);
 
+export type useWalletAPIServerOptions = {
+  manifest: AppManifest;
+  accounts: AccountLike[];
+  tracking: TrackingAPI;
+  config: ServerConfig;
+  webviewHook: {
+    reload: () => void;
+    postMessage: (message: string) => void;
+  };
+  uiHook: Partial<UiHook>;
+  customHandlers?: WalletAPICustomHandlers;
+};
+
 export function useWalletAPIServer({
   manifest,
   accounts,
@@ -283,17 +296,8 @@ export function useWalletAPIServer({
     "exchange.start": uiExchangeStart,
     "exchange.complete": uiExchangeComplete,
   },
-}: {
-  manifest: AppManifest;
-  accounts: AccountLike[];
-  tracking: TrackingAPI;
-  config: ServerConfig;
-  webviewHook: {
-    reload: () => void;
-    postMessage: (message: string) => void;
-  };
-  uiHook: Partial<UiHook>;
-}): {
+  customHandlers,
+}: useWalletAPIServerOptions): {
   onMessage: (event: string) => void;
   widgetLoaded: boolean;
   onLoad: () => void;
@@ -313,6 +317,7 @@ export function useWalletAPIServer({
     accounts: walletAPIAccounts,
     currencies: walletAPICurrencies,
     permission,
+    customHandlers,
   });
 
   useEffect(() => {

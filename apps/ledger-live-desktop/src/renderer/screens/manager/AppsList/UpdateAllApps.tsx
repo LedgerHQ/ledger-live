@@ -1,4 +1,4 @@
-import React, { useCallback, memo, useState, useMemo, useEffect } from "react";
+import React, { useCallback, memo, useState, useMemo, useEffect, SyntheticEvent } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import {
@@ -75,7 +75,7 @@ const UpdateAllApps = ({ update, state, optimisticState, dispatch, isIncomplete 
   const visible = update.length > 0;
   const updateProgress = updateAllProgress(state);
   const onUpdateAll = useCallback(
-    e => {
+    (e: SyntheticEvent<HTMLButtonElement>) => {
       if (open) e.stopPropagation();
       dispatch({
         type: "updateAll",
@@ -160,7 +160,7 @@ const UpdateAllApps = ({ update, state, optimisticState, dispatch, isIncomplete 
       </>
     );
   const mapApp = useCallback(
-    (app, i) => (
+    (app: App, i: number) => (
       <Item
         optimisticState={optimisticState}
         state={state}

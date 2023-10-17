@@ -102,7 +102,7 @@ function AccountGraphCard({
   const activeRangeIndex = ranges.findIndex(r => r.value === timeRange);
 
   const updateRange = useCallback(
-    index => {
+    (index: number) => {
       if (ranges[index]) {
         const range = ranges[index].value as PortfolioRange;
         track("timeframe_clicked", { timeframe: range });
@@ -128,8 +128,11 @@ function AccountGraphCard({
 
   const [hoveredItem, setHoverItem] = useState<Item | null>();
 
-  const mapCryptoValue = useCallback(d => d.value || 0, []);
-  const mapCounterValue = useCallback(d => (d.countervalue ? d.countervalue : 0), []);
+  const mapCryptoValue = useCallback((d: Item) => d.value || 0, []);
+  const mapCounterValue = useCallback(
+    (d: Item) => (d && "countervalue" in d ? d.countervalue : 0),
+    [],
+  );
 
   const graphColor = ensureContrast(getCurrencyColor(currency), colors.background.main);
 

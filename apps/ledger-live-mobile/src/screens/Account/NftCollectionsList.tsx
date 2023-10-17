@@ -41,10 +41,10 @@ export default function NftCollectionsList({ account }: Props) {
   ) as [string, ProtoNFT[]][];
 
   const [isCollectionMenuOpen, setIsCollectionMenuOpen] = useState(false);
-  const [selectedCollection, setSelectedCollection] = useState();
+  const [selectedCollection, setSelectedCollection] = useState<ProtoNFT[]>();
 
   const onSelectCollection = useCallback(
-    collection => {
+    (collection: ProtoNFT[]) => {
       setSelectedCollection(collection);
       setIsCollectionMenuOpen(true);
     },
@@ -68,7 +68,7 @@ export default function NftCollectionsList({ account }: Props) {
   );
 
   const navigateToCollection = useCallback(
-    collection =>
+    (collection: ProtoNFT[]) =>
       navigation.navigate(NavigatorName.Accounts, {
         screen: ScreenName.NftCollection,
         params: {

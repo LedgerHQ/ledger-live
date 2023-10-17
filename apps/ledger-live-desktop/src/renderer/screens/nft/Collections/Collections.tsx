@@ -60,7 +60,8 @@ const Collections = ({ account }: Props) => {
     [account, dispatch],
   );
   const onOpenCollection = useCallback(
-    collectionAddress => history.push(`/account/${account.id}/nft-collection/${collectionAddress}`),
+    (collectionAddress: string) =>
+      history.push(`/account/${account.id}/nft-collection/${collectionAddress}`),
     [account.id, history],
   );
   const collections = useMemo(() => nftsByCollections(account.nfts), [account.nfts]);

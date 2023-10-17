@@ -308,7 +308,7 @@ function MarketList({
   const resetSearch = useCallback(() => refresh({ search: "" }), [refresh]);
 
   const toggleStar = useCallback(
-    (id, isStarred) => {
+    (id: string, isStarred: boolean) => {
       if (isStarred) {
         dispatch(removeStarredMarketCoins(id));
       } else {
@@ -319,7 +319,7 @@ function MarketList({
   );
 
   const toggleSortBy = useCallback(
-    newOrderBy => {
+    (newOrderBy: string) => {
       const isFreshSort = newOrderBy !== orderBy;
       refresh(
         isFreshSort

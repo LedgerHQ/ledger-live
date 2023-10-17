@@ -62,6 +62,7 @@ export const BaseInputRenderSideExempleStory = () => {
       value={value}
       onChange={onChange}
       renderLeft={renderLeft}
+      // @ts-expect-error inconsistenties in props
       renderRight={renderRight}
       placeholder={"test"}
       disabled={disabled}

@@ -123,10 +123,11 @@ export default function DelegationStarted({ navigation, route }: Props) {
   );
   const options = listTokensForCryptoCurrency(mainAccount.currency);
   const [infoModalOpen, setInfoModalOpen] = useState(false);
+  // @ts-expect-error this does not make any type of sense... we get a string yet we pass it to a function expecting a boolean
   const openModal = useCallback(token => setInfoModalOpen(token), [setInfoModalOpen]);
   const closeModal = useCallback(() => setInfoModalOpen(false), [setInfoModalOpen]);
   const renderList = useCallback(
-    list => (
+    (list: TokenCurrency[]) => (
       <FlatList
         data={list}
         renderItem={({ item }: { item: TokenCurrency }) => (
@@ -137,6 +138,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
                 sub.type === "TokenAccount" && sub.token && sub.token.id === item.id,
             )}
             onPress={() => onNext(item.id)}
+            // FIXME: why to we pass a string to a function that accepts boolean ?
             onDisabledPress={() => openModal(item.name)}
           />
         )}

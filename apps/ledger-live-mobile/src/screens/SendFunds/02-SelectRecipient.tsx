@@ -8,7 +8,6 @@ import {
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
-import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { Operation } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import {
@@ -63,7 +62,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
   );
   const { enabled: isDomainResolutionEnabled, params } = useFeature("domainInputResolution");
   const isCurrencySupported =
-    params?.supportedCurrencyIds?.includes(mainAccount.currency.id as CryptoCurrencyId) || false;
+    params?.supportedCurrencyIds?.includes(mainAccount.currency.id) || false;
 
   const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
     () => ({
@@ -71,6 +70,9 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
       parentAccount,
     }),
   );
+
+  invariant(transaction, `couldn't get transaction from ${mainAccount.currency.name} bridge`);
+
   const [value, setValue] = useState<string>("");
 
   const shouldSkipAmount = useMemo(() => {
@@ -80,22 +82,32 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
 
     return false;
   }, [transaction]);
+
   const isNftSend = isNftTransaction(transaction);
 
   // handle changes from camera qr code
   const initialTransaction = useRef(transaction);
   const navigationTransaction = route.params?.transaction;
+
   useEffect(() => {
     if (initialTransaction.current !== navigationTransaction && navigationTransaction) {
       setTransaction(navigationTransaction);
       setValue(navigationTransaction.recipient);
     }
   }, [setTransaction, navigationTransaction]);
+
+  useEffect(() => {
+    if (!value && transaction.recipient) {
+      setValue(transaction.recipient);
+    }
+  }, [transaction.recipient, value]);
+
   const onRecipientFieldFocus = useCallback(() => {
     track("SendRecipientFieldFocused");
   }, []);
+
   const onPressScan = useCallback(() => {
-    if (!transaction) return null;
+    setValue("");
     return navigation.navigate(ScreenName.ScanRecipient, {
       ...route.params,
       accountId: route.params?.accountId,
@@ -103,8 +115,9 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
       transaction,
     });
   }, [navigation, transaction, route.params]);
+
   const onChangeText = useCallback(
-    recipient => {
+    (recipient: string) => {
       if (!account) return;
       const bridge = getAccountBridge(account, parentAccount);
       setTransaction(
@@ -117,25 +130,24 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
     [account, parentAccount, setTransaction, transaction, setValue],
   );
 
-  // FIXME: PROP IS NOT USED. REMOVE ?
-  // const clear = useCallback(() => onChangeText(""), [onChangeText]);
   const [bridgeErr, setBridgeErr] = useState(bridgeError);
   useEffect(() => setBridgeErr(bridgeError), [bridgeError]);
-  invariant(account, "account is needed ");
+
   const currency = getAccountCurrency(account);
+
   const onBridgeErrorCancel = useCallback(() => {
     setBridgeErr(null);
     const parent = navigation.getParent();
     if (parent) parent.goBack();
   }, [navigation]);
+
   const onBridgeErrorRetry = useCallback(() => {
     setBridgeErr(null);
-    if (!transaction) return;
     const bridge = getAccountBridge(account, parentAccount);
     setTransaction(bridge.updateTransaction(transaction, {}));
   }, [setTransaction, account, parentAccount, transaction]);
+
   const onPressContinue = useCallback(async () => {
-    if (!account || !transaction) return null;
     // ERC721 transactions are always sending 1 NFT, so amount step is unecessary
     if (shouldSkipAmount) {
       return navigation.navigate(ScreenName.SendSummary, {

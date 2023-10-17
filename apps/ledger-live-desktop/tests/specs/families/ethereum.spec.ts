@@ -25,6 +25,6 @@ test("Send flow", async ({ page }) => {
     await sendFeeMode.waitFor({ state: "visible" });
 
     await expect.soft(sendModal.container).toHaveScreenshot("send-modal-eth-max-network-fees.png");
-    expect(sendModal.container.getByText("Max Network fees").isVisible()).toBeTruthy();
+    expect(await sendModal.container.getByText("Max Network fees").isVisible()).toBeTruthy();
   });
 });

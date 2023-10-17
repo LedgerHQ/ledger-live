@@ -21,7 +21,7 @@ function NoAssociatedAccounts({ style }: Props) {
   const onPress = useCallback(() => Linking.openURL(urls.hedera.supportArticleLink), []);
   return (
     <Touchable onPress={onPress} style={[style?.paddingHorizontal, styles.root]}>
-      <Text>{i18next.t("hedera.createHederaAccountHelp.text")}</Text>
+      <Text>{i18next.t("hedera.createHederaAccountHelp.text") as React.ReactNode}</Text>
       <LText
         style={[
           {
@@ -30,7 +30,7 @@ function NoAssociatedAccounts({ style }: Props) {
           },
         ]}
       >
-        {i18next.t("hedera.createHederaAccountHelp.link")}
+        {i18next.t("hedera.createHederaAccountHelp.link") as React.ReactNode}
       </LText>
       <ExternalLink size={fontSize + 2} color={c} />
     </Touchable>

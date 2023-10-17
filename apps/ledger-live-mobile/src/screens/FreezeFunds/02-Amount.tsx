@@ -69,7 +69,7 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
   const defaultUnit = getAccountUnit(account);
   const { spendableBalance } = account;
 
-  const [selectedRatio, selectRatio] = useState();
+  const [selectedRatio, selectRatio] = useState<BigNumber>();
 
   const [infoModalOpen, setInfoModalOpen] = useState<boolean>();
 
@@ -157,7 +157,7 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
   }, [setInfoModalOpen]);
 
   const onRatioPress = useCallback(
-    value => {
+    (value: BigNumber) => {
       blur();
       selectRatio(value);
       onChange(value, true);
@@ -166,7 +166,7 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
   );
 
   const onChangeResource = useCallback(
-    optionIndex => {
+    (optionIndex: number) => {
       setTransaction(
         bridge.updateTransaction(transaction, {
           resource: options[optionIndex].value,

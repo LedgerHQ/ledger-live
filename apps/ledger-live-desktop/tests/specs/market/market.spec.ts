@@ -14,14 +14,7 @@ test.beforeAll(async () => {
   testServerIsRunning = await LiveAppWebview.startLiveApp("dummy-ptx-app/public", {
     name: "Buy App",
     id: "multibuy-v2",
-    permissions: [
-      {
-        method: "account.request",
-        params: {
-          currencies: ["ethereum", "bitcoin", "algorand"],
-        },
-      },
-    ],
+    permissions: ["account.request"],
   });
 
   if (!testServerIsRunning) {
