@@ -1,5 +1,34 @@
 # @ledgerhq/live-common
 
+## 33.1.0-nightly.3
+
+### Patch Changes
+
+- [#4827](https://github.com/LedgerHQ/ledger-live/pull/4827) [`fc121ce96d`](https://github.com/LedgerHQ/ledger-live/commit/fc121ce96dbcc4f30cfd9836644f778b85f997b7) Thanks [@valpinkman](https://github.com/valpinkman)! - Update react to react 18
+
+- [#4675](https://github.com/LedgerHQ/ledger-live/pull/4675) [`bbb72841c5`](https://github.com/LedgerHQ/ledger-live/commit/bbb72841c5e74614789d4e4933dc26921e817bac) Thanks [@lvndry](https://github.com/lvndry)! - Add 'Ledger By Kiln' in the list of Tezos bakers
+
+- Updated dependencies [[`fc121ce96d`](https://github.com/LedgerHQ/ledger-live/commit/fc121ce96dbcc4f30cfd9836644f778b85f997b7), [`6b7fc5d071`](https://github.com/LedgerHQ/ledger-live/commit/6b7fc5d0711a83ed2fcacacd02795862a4a3bf1d)]:
+  - @ledgerhq/domain-service@1.1.13-nightly.2
+  - @ledgerhq/hw-transport@6.28.9-nightly.1
+  - @ledgerhq/coin-evm@0.8.1-nightly.2
+  - @ledgerhq/hw-app-eth@6.34.8-nightly.2
+  - @ledgerhq/hw-app-algorand@6.27.20-nightly.1
+  - @ledgerhq/hw-app-btc@10.0.9-nightly.1
+  - @ledgerhq/hw-app-cosmos@6.28.6-nightly.1
+  - @ledgerhq/hw-app-exchange@0.2.4-nightly.1
+  - @ledgerhq/hw-app-near@6.27.15-nightly.1
+  - @ledgerhq/hw-app-polkadot@6.27.20-nightly.1
+  - @ledgerhq/hw-app-solana@7.0.14-nightly.1
+  - @ledgerhq/hw-app-str@6.27.20-nightly.1
+  - @ledgerhq/hw-app-tezos@6.27.20-nightly.1
+  - @ledgerhq/hw-app-trx@6.27.20-nightly.1
+  - @ledgerhq/hw-app-xrp@6.27.20-nightly.1
+  - @ledgerhq/hw-transport-mocker@6.27.20-nightly.1
+  - @ledgerhq/hw-transport-node-speculos@6.27.20-nightly.1
+  - @ledgerhq/hw-transport-node-speculos-http@6.27.20-nightly.1
+  - @ledgerhq/coin-framework@0.7.1-nightly.1
+
 ## 33.1.0-nightly.2
 
 ### Minor Changes

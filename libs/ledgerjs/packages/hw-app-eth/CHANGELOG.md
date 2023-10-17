@@ -1,5 +1,14 @@
 # @ledgerhq/hw-app-eth
 
+## 6.34.8-nightly.2
+
+### Patch Changes
+
+- Updated dependencies [[`fc121ce96d`](https://github.com/LedgerHQ/ledger-live/commit/fc121ce96dbcc4f30cfd9836644f778b85f997b7), [`6b7fc5d071`](https://github.com/LedgerHQ/ledger-live/commit/6b7fc5d0711a83ed2fcacacd02795862a4a3bf1d)]:
+  - @ledgerhq/domain-service@1.1.13-nightly.2
+  - @ledgerhq/hw-transport@6.28.9-nightly.1
+  - @ledgerhq/hw-transport-mocker@6.27.20-nightly.1
+
 ## 6.34.8-nightly.1
 
 ### Patch Changes

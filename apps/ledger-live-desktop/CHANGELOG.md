@@ -1,5 +1,26 @@
 # ledger-live-desktop
 
+## 2.71.0-nightly.6
+
+### Patch Changes
+
+- [#4827](https://github.com/LedgerHQ/ledger-live/pull/4827) [`fc121ce96d`](https://github.com/LedgerHQ/ledger-live/commit/fc121ce96dbcc4f30cfd9836644f778b85f997b7) Thanks [@valpinkman](https://github.com/valpinkman)! - Update react to react 18
+
+- [#5063](https://github.com/LedgerHQ/ledger-live/pull/5063) [`6b7fc5d071`](https://github.com/LedgerHQ/ledger-live/commit/6b7fc5d0711a83ed2fcacacd02795862a4a3bf1d) Thanks [@sarneijim](https://github.com/sarneijim)! - fix: fix TransportRaceCondition literal
+
+- [#4675](https://github.com/LedgerHQ/ledger-live/pull/4675) [`bbb72841c5`](https://github.com/LedgerHQ/ledger-live/commit/bbb72841c5e74614789d4e4933dc26921e817bac) Thanks [@lvndry](https://github.com/lvndry)! - Add 'Ledger By Kiln' in the list of Tezos bakers
+
+- Updated dependencies [[`fc121ce96d`](https://github.com/LedgerHQ/ledger-live/commit/fc121ce96dbcc4f30cfd9836644f778b85f997b7), [`6b7fc5d071`](https://github.com/LedgerHQ/ledger-live/commit/6b7fc5d0711a83ed2fcacacd02795862a4a3bf1d), [`bbb72841c5`](https://github.com/LedgerHQ/ledger-live/commit/bbb72841c5e74614789d4e4933dc26921e817bac)]:
+  - @ledgerhq/live-common@33.1.0-nightly.3
+  - @ledgerhq/react-ui@0.14.10-nightly.0
+  - @ledgerhq/domain-service@1.1.13-nightly.2
+  - @ledgerhq/hw-transport@6.28.9-nightly.1
+  - @ledgerhq/coin-evm@0.8.1-nightly.2
+  - @ledgerhq/hw-transport-http@6.28.4-nightly.1
+  - @ledgerhq/hw-transport-node-hid-singleton@6.28.19-nightly.1
+  - @ledgerhq/hw-transport-vault@1.1.4-nightly.1
+  - @ledgerhq/coin-framework@0.7.1-nightly.1
+
 ## 2.71.0-nightly.5
 
 ### Minor Changes

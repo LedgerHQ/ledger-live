@@ -1,5 +1,26 @@
 # live-mobile
 
+## 3.34.0-nightly.5
+
+### Patch Changes
+
+- [#5068](https://github.com/LedgerHQ/ledger-live/pull/5068) [`4c292d6a54`](https://github.com/LedgerHQ/ledger-live/commit/4c292d6a545d19883be679b4e110130210801b79) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Search input Market was refreshing for each input
+
+- [#4827](https://github.com/LedgerHQ/ledger-live/pull/4827) [`fc121ce96d`](https://github.com/LedgerHQ/ledger-live/commit/fc121ce96dbcc4f30cfd9836644f778b85f997b7) Thanks [@valpinkman](https://github.com/valpinkman)! - Update react to react 18
+
+- [#4675](https://github.com/LedgerHQ/ledger-live/pull/4675) [`bbb72841c5`](https://github.com/LedgerHQ/ledger-live/commit/bbb72841c5e74614789d4e4933dc26921e817bac) Thanks [@lvndry](https://github.com/lvndry)! - Add 'Ledger By Kiln' in the list of Tezos bakers
+
+- Updated dependencies [[`fc121ce96d`](https://github.com/LedgerHQ/ledger-live/commit/fc121ce96dbcc4f30cfd9836644f778b85f997b7), [`6b7fc5d071`](https://github.com/LedgerHQ/ledger-live/commit/6b7fc5d0711a83ed2fcacacd02795862a4a3bf1d), [`bbb72841c5`](https://github.com/LedgerHQ/ledger-live/commit/bbb72841c5e74614789d4e4933dc26921e817bac)]:
+  - @ledgerhq/live-common@33.1.0-nightly.3
+  - @ledgerhq/native-ui@0.22.1-nightly.0
+  - @ledgerhq/domain-service@1.1.13-nightly.2
+  - @ledgerhq/hw-transport@6.28.9-nightly.1
+  - @ledgerhq/coin-evm@0.8.1-nightly.2
+  - @ledgerhq/hw-transport-http@6.28.4-nightly.1
+  - @ledgerhq/react-native-hid@6.30.1-nightly.1
+  - @ledgerhq/react-native-hw-transport-ble@6.29.6-nightly.1
+  - @ledgerhq/coin-framework@0.7.1-nightly.1
+
 ## 3.34.0-nightly.4
 
 ### Minor Changes

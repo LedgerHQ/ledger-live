@@ -1,7 +1,7 @@
 {
   "name": "next.js-example",
   "private": true,
-  "version": "0.0.6",
+  "version": "0.0.7-nightly.0",
   "license": "MIT",
   "scripts": {
     "dev": "next dev",

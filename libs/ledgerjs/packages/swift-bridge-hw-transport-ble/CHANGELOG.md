@@ -1,5 +1,12 @@
 # @ledgerhq/swift-bridge-hw-transport-ble
 
+## 1.0.9-nightly.1
+
+### Patch Changes
+
+- Updated dependencies [[`6b7fc5d071`](https://github.com/LedgerHQ/ledger-live/commit/6b7fc5d0711a83ed2fcacacd02795862a4a3bf1d)]:
+  - @ledgerhq/hw-transport@6.28.9-nightly.1
+
 ## 1.0.9-nightly.0
 
 ### Patch Changes

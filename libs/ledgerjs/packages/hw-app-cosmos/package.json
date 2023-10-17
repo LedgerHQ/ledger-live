@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-cosmos",
-  "version": "6.28.6-nightly.0",
+  "version": "6.28.6-nightly.1",
   "description": "Ledger Hardware Wallet Cosmos Application API",
   "keywords": [
     "Ledger",

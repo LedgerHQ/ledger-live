@@ -1,5 +1,16 @@
 # dummy-wallet-app
 
+## 0.1.25-nightly.3
+
+### Patch Changes
+
+- [#4827](https://github.com/LedgerHQ/ledger-live/pull/4827) [`fc121ce96d`](https://github.com/LedgerHQ/ledger-live/commit/fc121ce96dbcc4f30cfd9836644f778b85f997b7) Thanks [@valpinkman](https://github.com/valpinkman)! - Update react to react 18
+
+- Updated dependencies [[`fc121ce96d`](https://github.com/LedgerHQ/ledger-live/commit/fc121ce96dbcc4f30cfd9836644f778b85f997b7), [`6b7fc5d071`](https://github.com/LedgerHQ/ledger-live/commit/6b7fc5d0711a83ed2fcacacd02795862a4a3bf1d), [`bbb72841c5`](https://github.com/LedgerHQ/ledger-live/commit/bbb72841c5e74614789d4e4933dc26921e817bac)]:
+  - @ledgerhq/live-common@33.1.0-nightly.3
+  - @ledgerhq/hw-transport@6.28.9-nightly.1
+  - @ledgerhq/hw-app-eth@6.34.8-nightly.2
+
 ## 0.1.25-nightly.2
 
 ### Patch Changes

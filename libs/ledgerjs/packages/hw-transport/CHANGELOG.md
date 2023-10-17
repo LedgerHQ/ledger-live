@@ -1,5 +1,11 @@
 # @ledgerhq/hw-transport
 
+## 6.28.9-nightly.1
+
+### Patch Changes
+
+- [#5063](https://github.com/LedgerHQ/ledger-live/pull/5063) [`6b7fc5d071`](https://github.com/LedgerHQ/ledger-live/commit/6b7fc5d0711a83ed2fcacacd02795862a4a3bf1d) Thanks [@sarneijim](https://github.com/sarneijim)! - fix: fix TransportRaceCondition literal
+
 ## 6.28.9-nightly.0
 
 ### Patch Changes
