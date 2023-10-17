@@ -111,6 +111,9 @@ export const test = base.extend<TestFixtures>({
     const logFile = testInfo.outputPath("logs.log");
     page.on("console", msg => {
       const txt = msg.text();
+      if (msg.type() == "error") {
+        console.error(txt);
+      }
       if (IS_DEBUG_MODE) {
         // Direct Electron console to Node terminal.
         console.log(txt);
