@@ -1,10 +1,10 @@
-import React, { useCallback, useState, memo } from "react";
-import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
-import Modal from "~/renderer/components/Modal";
-import Body from "./Body";
-import { Account, AccountLike, TransactionCommonRaw } from "@ledgerhq/types-live";
-import { StepId } from "./types";
 import { TransactionRaw } from "@ledgerhq/coin-evm/types/index";
+import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
+import { Account, AccountLike, TransactionCommonRaw } from "@ledgerhq/types-live";
+import React, { memo, useCallback, useState } from "react";
+import Modal from "~/renderer/components/Modal";
+import Body, { Props as BodyProps } from "./Body";
+import { StepId } from "./types";
 
 export type EditTransactionModalProps = {
   account: AccountLike | undefined | null;
@@ -21,7 +21,10 @@ const EditTransactionModalComponent = ({
 }: EditTransactionModalProps) => {
   const [stepId, setStepId] = useState<StepId>("method");
   const handleReset = useCallback(() => setStepId("method"), []);
-  const handleStepChange = useCallback(stepId => setStepId(stepId), []);
+  const handleStepChange: BodyProps["onChangeStepId"] = useCallback(
+    stepId => setStepId(stepId),
+    [],
+  );
 
   return (
     <DomainServiceProvider>

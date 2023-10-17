@@ -74,6 +74,7 @@ import NFTOperationDetails from "./NFTOperationDetails";
 import { State } from "~/renderer/reducers";
 import { openModal } from "~/renderer/actions/modals";
 import { getLLDCoinFamily } from "~/renderer/families";
+import invariant from "invariant";
 
 const mapStateToProps = (
   state: State,
@@ -237,25 +238,21 @@ const OperationD = (props: Props) => {
   const editEthTx = useFeature("editEthTx");
   const editable = editEthTx?.enabled && isEditableOperation(mainAccount, operation);
   const dispatch = useDispatch();
-  const handleOpenEditModal = useCallback(
-    (account, parentAccount, transactionRaw, transactionHash) => {
-      setDrawer(undefined);
-      // if the operation is a token operation, (ERC-20 send for example),
-      // we need to find the subAccount in order to speedup/cancel
-      const isTokenOperation = isToken && subOperations.length > 0;
-      dispatch(
-        openModal("MODAL_EVM_EDIT_TRANSACTION", {
-          account: isTokenOperation
-            ? findSubAccountById(account, subOperations[0].accountId)
-            : account,
-          parentAccount: isTokenOperation ? account : parentAccount,
-          transactionRaw,
-          transactionHash,
-        }),
-      );
-    },
-    [dispatch, isToken, subOperations],
-  );
+
+  const handleOpenEditModal = useCallback(() => {
+    setDrawer(undefined);
+
+    invariant(operation.transactionRaw, "operation.transactionRaw is required");
+
+    dispatch(
+      openModal("MODAL_EVM_EDIT_TRANSACTION", {
+        account,
+        parentAccount,
+        transactionRaw: operation.transactionRaw,
+        transactionHash: operation.hash,
+      }),
+    );
+  }, [dispatch, account, parentAccount, operation.transactionRaw, operation.hash]);
 
   const isStuck = isStuckOperation(operation);
   const feesCurrency = useMemo(() => getFeesCurrency(mainAccount), [mainAccount]);
@@ -380,14 +377,7 @@ const OperationD = (props: Props) => {
           <div>
             <Link
               style={{ textDecoration: "underline", fontSize: "13px" }}
-              onClick={() => {
-                handleOpenEditModal(
-                  account,
-                  parentAccount,
-                  operation.transactionRaw,
-                  operation.hash,
-                );
-              }}
+              onClick={handleOpenEditModal}
             >
               <Trans i18nKey="operation.edit.title" />
             </Link>

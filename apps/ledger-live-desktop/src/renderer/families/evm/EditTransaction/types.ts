@@ -35,7 +35,7 @@ export type StepProps = {
   setSigned: (a: boolean) => void;
   updateTransaction: (updater: (a: Transaction) => Transaction) => void;
   transitionTo: (a: string) => void;
-  setEditType: (a: string) => void;
+  setEditType: (a: EditType) => void;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
