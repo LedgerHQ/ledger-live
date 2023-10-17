@@ -7,9 +7,11 @@ import "./index.css";
 import App from "./App";
 
 function getCustomModule(client: WalletAPIClient) {
-  return {
-    logger: new CustomLogger(client),
-  };
+  return new CustomLogger(client);
+  // We need to improve the types to make this work better
+  // return {
+  //   logger: new CustomLogger(client),
+  // };
 }
 
 function TransportProvider({ children }: PropsWithChildren<object>) {
