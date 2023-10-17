@@ -147,6 +147,10 @@ export enum ERC1155_CLEAR_SIGNED_SELECTORS {
   SAFE_BATCH_TRANSFER_FROM = "0x2eb2c2d6",
 }
 
+export enum SWAP_CLEAR_SIGNED_SELECTORS {
+  SWAP = "0x12aa3caf",
+}
+
 export const tokenSelectors = Object.values(ERC20_CLEAR_SIGNED_SELECTORS);
 export const nftSelectors = [
   ...Object.values(ERC721_CLEAR_SIGNED_SELECTORS),

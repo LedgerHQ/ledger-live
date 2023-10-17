@@ -2,6 +2,7 @@ import {
   ERC20_CLEAR_SIGNED_SELECTORS,
   ERC721_CLEAR_SIGNED_SELECTORS,
   ERC1155_CLEAR_SIGNED_SELECTORS,
+  SWAP_CLEAR_SIGNED_SELECTORS,
 } from "@ledgerhq/hw-app-eth";
 import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
@@ -358,6 +359,92 @@ const inferDeviceTransactionConfigWalletApi = (
         return fields;
       }
     }
+  }
+
+  // todo add address of contract that follow this swap interface
+  if (selector == SWAP_CLEAR_SIGNED_SELECTORS.SWAP) {
+    const [
+      executor,
+      srcToken,
+      dstToken,
+      srcReceiver,
+      dstReceiver,
+      amount,
+      minReturnAmount,
+      flags,
+      permit,
+      data,
+    ] = ethers.utils.defaultAbiCoder.decode(
+      [
+        "address",
+        "address",
+        "address",
+        "address",
+        "address",
+        "uint256",
+        "uint256",
+        "uint256",
+        "bytes",
+        "bytes",
+      ],
+      argumentsBuffer,
+    ) as [
+      string,
+      string,
+      string,
+      string,
+      string,
+      ethers.BigNumber,
+      ethers.BigNumber,
+      ethers.BigNumber,
+      ethers.Bytes,
+      ethers.Bytes,
+    ];
+
+    //todo get native token??
+    const srcTokenObj = findTokenByAddress(srcToken) || {
+      ticker: "ETH",
+      units: [{ name: "Ethereum", code: "ETH", magnitude: 18 }],
+    };
+    const destTokenObj = findTokenByAddress(dstToken) || {
+      ticker: "ETH",
+      units: [{ name: "Ethereum", code: "ETH", magnitude: 18 }],
+    };
+
+    fields.push(
+      {
+        type: "text",
+        label: "1inch",
+        value: "Swap",
+      },
+      {
+        type: "text",
+        label: "Send",
+        value: `${srcTokenObj.ticker} ${formatCurrencyUnit(
+          srcTokenObj.units[0],
+          new BigNumber(amount.toString()),
+        )}`,
+      },
+      {
+        type: "text",
+        label: "Receive min",
+        value: `${destTokenObj.ticker} ${formatCurrencyUnit(
+          destTokenObj.units[0],
+          new BigNumber(minReturnAmount.toString()),
+        )}`,
+      },
+      {
+        type: "text",
+        label: "Beneficiary",
+        value: dstReceiver,
+      },
+      {
+        type: "text",
+        label: "Partial fill",
+        value: "enabled",
+      },
+    );
+    return fields;
   }
 
   throw new Error("Fallback on Blind Signing");
