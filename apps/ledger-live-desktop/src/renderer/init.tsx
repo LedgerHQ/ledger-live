@@ -52,6 +52,9 @@ const rootNode = document.getElementById("react-root");
 const TAB_KEY = 9;
 
 async function init() {
+  // at this step. we know the app error handling will happen here. so we can unset the global onerror
+  window.onerror = null;
+
   const logVerbose = getEnv("VERBOSE");
 
   // Sets up a debug console printing of logs (from the renderer thread)
