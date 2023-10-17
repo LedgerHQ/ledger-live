@@ -31,7 +31,7 @@ const BuyButton = ({ currency, account }: { currency: CryptoCurrency; account: A
   }
 
   return (
-    <Button mr={1} primary inverted onClick={onClick}>
+    <Button mr={1} primary onClick={onClick}>
       <Trans
         i18nKey="buy.buyCTA"
         values={{
