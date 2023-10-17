@@ -23,7 +23,7 @@ export default function StepAmount({
   const [staked, setStaked] = useState(transaction.amount);
   const bridge = getAccountBridge(account);
   const updateValidator = useCallback(
-    ({ address, amount }) => {
+    ({ address, amount }: { address: string; amount: BigNumber }) => {
       onUpdateTransaction(tx =>
         bridge.updateTransaction(tx, {
           ...tx,

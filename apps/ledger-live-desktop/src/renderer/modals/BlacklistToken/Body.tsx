@@ -29,11 +29,8 @@ const Body = ({ onClose, token }: { onClose?: () => void; token: TokenCurrency }
               }}
             >
               {"This action will hide all "}
-              {/* $FlowFixMe */}
               <Text ff="Inter|SemiBold" color="palette.text.shade100">
-                {{
-                  tokenName: token.name,
-                }}
+                {token.name}
               </Text>
               {"accounts, you can restore their visibility at any time from "}
               <Text ff="Inter|SemiBold" color="palette.text.shade100">

@@ -6,7 +6,7 @@ import { Trans, withTranslation } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import Track from "~/renderer/analytics/Track";
-import { Account, AccountLike } from "@ledgerhq/types-live";
+import { Account, AccountLike, SubAccount } from "@ledgerhq/types-live";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
@@ -132,7 +132,7 @@ const Body = ({
   const currency = getAccountCurrency(account);
   const currencyName = currency ? currency.name : undefined;
   const handleChangeAccount = useCallback(
-    (account, parentAccount) => {
+    (account: Account | SubAccount, parentAccount?: Account | null) => {
       setAccount(account);
       setParentAccount(parentAccount);
     },
@@ -141,7 +141,11 @@ const Body = ({
   const handleCloseModal = useCallback(() => {
     closeModal("MODAL_RECEIVE");
   }, [closeModal]);
-  const handleStepChange = useCallback(e => onChangeStepId(e.id), [onChangeStepId]);
+
+  const handleStepChange = useCallback(
+    (e: Step<StepId, StepProps>) => onChangeStepId(e.id),
+    [onChangeStepId],
+  );
   const handleResetSkip = useCallback(() => {
     setDisabledSteps([]);
   }, [setDisabledSteps]);
@@ -164,9 +168,9 @@ const Body = ({
   useEffect(() => {
     if (!account) {
       if (params && params.account) {
-        handleChangeAccount(params.account, params.parentAccount);
+        handleChangeAccount(params.account, params?.parentAccount);
       } else {
-        handleChangeAccount(accounts[0], null);
+        handleChangeAccount(accounts[0]);
       }
     }
   }, [accounts, account, params, handleChangeAccount]);

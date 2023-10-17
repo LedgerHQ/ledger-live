@@ -30,6 +30,7 @@ const StepWithdraw = (props: StepProps) => {
   } = props;
   const bridge: AccountBridge<Transaction> = getAccountBridge(account);
   const onDelegationChange = useCallback(
+    // @ts-expect-error another TS puzzle for another day
     validator => {
       onUpdateTransaction(transaction =>
         bridge.updateTransaction(transaction, {

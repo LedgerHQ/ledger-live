@@ -108,7 +108,7 @@ function App() {
   useFetchCurrencyFrom();
   useListenToHidDevices();
 
-  const getSettingsChanged = useCallback((a, b) => a.settings !== b.settings, []);
+  const getSettingsChanged = useCallback((a: State, b: State) => a.settings !== b.settings, []);
   const getAccountsChanged = useCallback(
     (
       oldState: State,
@@ -135,7 +135,7 @@ function App() {
   );
 
   const getPostOnboardingStateChanged = useCallback(
-    (a, b) => !isEqual(a.postOnboarding, b.postOnboarding),
+    (a: State, b: State) => !isEqual(a.postOnboarding, b.postOnboarding),
     [],
   );
 

@@ -73,7 +73,7 @@ export default function PolkadotUnbondAmount({ navigation, route }: Props) {
     };
   }, [account, parentAccount, debouncedTransaction]);
   const onChange = useCallback(
-    amount => {
+    (amount: BigNumber) => {
       if (!amount.isNaN()) {
         setTransaction(
           bridge.updateTransaction(transaction, {

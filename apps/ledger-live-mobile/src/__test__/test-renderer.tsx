@@ -9,7 +9,7 @@ import { i18n } from "../context/Locale";
 
 import StyleProvider from "../StyleProvider";
 
-const ProvidersWrapper: React.FC = ({ children }) => {
+const ProvidersWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <Provider store={store}>
       <StyleProvider selectedPalette="light">

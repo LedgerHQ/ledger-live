@@ -65,6 +65,7 @@ export default function ConnectDevice({
   );
 
   const onResult = useCallback(
+    // @ts-expect-error should be AppResult but navigation.navigate does not agree
     payload => {
       if (!account) {
         return null;

@@ -20,7 +20,7 @@ Array [
     "index": 0,
     "name": "Algorand 1",
     "nfts": undefined,
-    "operationsCount": 132,
+    "operationsCount": 133,
     "pendingOperations": Array [],
     "seedIdentifier": "c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4",
     "starred": false,
@@ -232,12 +232,11 @@ Array [
   Array [
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8534040,
       "contract": undefined,
       "extra": Object {
         "assetId": 312769,
-        "memo": undefined,
         "rewards": "593",
       },
       "fee": "1000",
@@ -257,12 +256,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 5246238,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -282,12 +279,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8458165,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -307,12 +302,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23006893,
       "contract": undefined,
       "extra": Object {
         "assetId": 378382099,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -332,12 +326,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23006996,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -357,12 +349,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 5148929,
       "contract": undefined,
       "extra": Object {
         "assetId": 604,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -382,12 +373,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 5107421,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "55458",
       },
       "fee": "1000",
@@ -407,12 +396,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 5246217,
       "contract": undefined,
       "extra": Object {
         "assetId": 604,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -432,12 +420,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8459560,
       "contract": undefined,
       "extra": Object {
         "assetId": 438828,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -457,12 +444,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8459254,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -482,12 +467,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 5344657,
       "contract": undefined,
       "extra": Object {
         "assetId": 604,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -507,12 +491,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 5344993,
       "contract": undefined,
       "extra": Object {
         "assetId": 604,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -532,12 +515,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8459650,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -557,12 +538,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 5487790,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "19929",
       },
       "fee": "1000",
@@ -582,12 +561,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 5148908,
       "contract": undefined,
       "extra": Object {
         "assetId": 604,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -607,12 +585,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23430100,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -632,12 +608,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 5133172,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -657,12 +631,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 14213831,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "22",
       },
       "fee": "1000",
@@ -682,12 +654,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23410964,
       "contract": undefined,
       "extra": Object {
         "assetId": 604,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -707,12 +678,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23411476,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -732,12 +701,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8457597,
       "contract": undefined,
       "extra": Object {
         "assetId": 312769,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -757,12 +725,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 14213857,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "2",
       },
       "fee": "1000",
@@ -782,12 +748,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23411158,
       "contract": undefined,
       "extra": Object {
         "assetId": 465865291,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -807,12 +772,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23007066,
       "contract": undefined,
       "extra": Object {
         "assetId": 287867876,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -832,12 +796,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 4835146,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -857,12 +819,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 26958775,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -882,12 +842,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 5148815,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "4293",
       },
       "fee": "1000",
@@ -907,12 +865,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23429922,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -932,12 +888,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 5246226,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "27",
       },
       "fee": "1000",
@@ -957,12 +911,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 5344997,
       "contract": undefined,
       "extra": Object {
         "assetId": 604,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -982,12 +935,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 5667363,
       "contract": undefined,
       "extra": Object {
         "assetId": 604,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -1007,12 +959,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 5487780,
       "contract": undefined,
       "extra": Object {
         "assetId": 604,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -1032,12 +983,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 3308920,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -1057,12 +1006,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8459277,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -1082,12 +1029,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 5487796,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -1107,12 +1052,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8457553,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "12400",
       },
       "fee": "1000",
@@ -1132,12 +1075,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 14212204,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "3",
       },
       "fee": "1000",
@@ -1157,12 +1098,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 4879700,
       "contract": undefined,
       "extra": Object {
         "assetId": 604,
-        "memo": undefined,
         "rewards": "1134",
       },
       "fee": "1000",
@@ -1182,12 +1122,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8459034,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "18",
       },
       "fee": "1000",
@@ -1207,12 +1145,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 14213950,
       "contract": undefined,
       "extra": Object {
         "assetId": 312769,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -1232,12 +1169,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 4879725,
       "contract": undefined,
       "extra": Object {
         "assetId": 604,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -1257,12 +1193,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23410933,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -1282,12 +1216,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8459203,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -1307,11 +1239,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 22629197,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
         "memo": "SGkgIQ==",
         "rewards": "0",
       },
@@ -1332,12 +1263,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23007138,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -1357,12 +1286,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23008354,
       "contract": undefined,
       "extra": Object {
         "assetId": 604,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -1382,11 +1310,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 4834978,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
         "memo": "g/uFL2Tu4rs=",
         "rewards": "0",
       },
@@ -1407,12 +1334,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 14214356,
       "contract": undefined,
       "extra": Object {
         "assetId": 312769,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -1432,12 +1358,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 5544900,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "21",
       },
       "fee": "1000",
@@ -1457,12 +1381,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23411298,
       "contract": undefined,
       "extra": Object {
         "assetId": 604,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -1482,11 +1405,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 4835043,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
         "memo": "VGVzdCBkZSBub3RlIHBvdXIgRnJhbmNlc2Nv",
         "rewards": "36",
       },
@@ -1507,11 +1429,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 4835235,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
         "memo": "VGVzdA==",
         "rewards": "68",
       },
@@ -1532,12 +1453,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 5148819,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -1557,12 +1476,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 4835046,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -1582,12 +1499,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23006858,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -1607,12 +1522,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8459164,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -1632,12 +1545,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23006720,
       "contract": undefined,
       "extra": Object {
         "assetId": 604,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -1657,12 +1569,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 5544823,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -1682,12 +1592,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 5148901,
       "contract": undefined,
       "extra": Object {
         "assetId": 604,
-        "memo": undefined,
         "rewards": "27",
       },
       "fee": "1000",
@@ -1707,12 +1616,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 5344962,
       "contract": undefined,
       "extra": Object {
         "assetId": 604,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -1732,12 +1640,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23411446,
       "contract": undefined,
       "extra": Object {
         "assetId": 287867876,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -1757,12 +1664,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 14212078,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "50861",
       },
       "fee": "1000",
@@ -1782,12 +1687,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23411602,
       "contract": undefined,
       "extra": Object {
         "assetId": 239444645,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -1807,12 +1711,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 5798943,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "10287",
       },
       "fee": "1000",
@@ -1832,12 +1734,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8458219,
       "contract": undefined,
       "extra": Object {
         "assetId": 312769,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -1857,12 +1758,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 14214334,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "1",
       },
       "fee": "1000",
@@ -1882,12 +1781,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 5344671,
       "contract": undefined,
       "extra": Object {
         "assetId": 604,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -1907,12 +1805,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 14213938,
       "contract": undefined,
       "extra": Object {
         "assetId": 312769,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -1932,12 +1829,35 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
+      "blockHeight": 30991429,
+      "contract": undefined,
+      "extra": Object {
+        "memo": "MTIxMg==",
+        "rewards": "0",
+      },
+      "fee": "1000",
+      "hash": "JSQQ32DFEMM6Q7NCIFNYVRNL27Z3I3SU554NWLJHFBXM4WGBGRGA",
+      "id": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:-JSQQ32DFEMM6Q7NCIFNYVRNL27Z3I3SU554NWLJHFBXM4WGBGRGA-IN",
+      "operator": undefined,
+      "recipients": Array [
+        "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
+      ],
+      "senders": Array [
+        "VMZTCZV2IDQAVZBB4BZNZHCN62U654SYK7AJ5J4U73AWOM5DHITWQ3QU7Q",
+      ],
+      "standard": undefined,
+      "tokenId": undefined,
+      "type": "IN",
+      "value": "2031",
+    },
+    Object {
+      "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
+      "blockHash": null,
       "blockHeight": 14213987,
       "contract": undefined,
       "extra": Object {
         "assetId": 312769,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -1957,7 +1877,7 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 5544819,
       "contract": undefined,
       "extra": Object {
@@ -1982,12 +1902,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8264147,
       "contract": undefined,
       "extra": Object {
         "assetId": 604,
-        "memo": undefined,
         "rewards": "8",
       },
       "fee": "1000",
@@ -2007,12 +1926,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 5148922,
       "contract": undefined,
       "extra": Object {
         "assetId": 604,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -2032,12 +1950,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23007059,
       "contract": undefined,
       "extra": Object {
         "assetId": 604,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -2057,12 +1974,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 5384178,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "21",
       },
       "fee": "1000",
@@ -2082,12 +1997,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8459236,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -2107,12 +2020,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23411152,
       "contract": undefined,
       "extra": Object {
         "assetId": 465865291,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -2132,12 +2044,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 4860520,
       "contract": undefined,
       "extra": Object {
         "assetId": 604,
-        "memo": undefined,
         "rewards": "12111",
       },
       "fee": "1000",
@@ -2157,12 +2068,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23008225,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -2182,12 +2091,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 4835081,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -2208,12 +2115,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 5133166,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "7155",
       },
       "fee": "1000",
@@ -2233,12 +2138,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 5344651,
       "contract": undefined,
       "extra": Object {
         "assetId": 604,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -2258,12 +2162,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8457685,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "8",
       },
       "fee": "1000",
@@ -2283,12 +2185,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23411114,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -2308,12 +2208,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23430121,
       "contract": undefined,
       "extra": Object {
         "assetId": 2757561,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -2333,12 +2232,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 14212305,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "3",
       },
       "fee": "1000",
@@ -2358,12 +2255,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 14212278,
       "contract": undefined,
       "extra": Object {
         "assetId": 312769,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -2383,12 +2279,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23411018,
       "contract": undefined,
       "extra": Object {
         "assetId": 438839,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -2408,12 +2303,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 5133182,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -2433,12 +2326,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 14212318,
       "contract": undefined,
       "extra": Object {
         "assetId": 312769,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -2458,12 +2350,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23006878,
       "contract": undefined,
       "extra": Object {
         "assetId": 604,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -2483,12 +2374,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8459245,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -2508,12 +2397,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8263994,
       "contract": undefined,
       "extra": Object {
         "assetId": 604,
-        "memo": undefined,
         "rewards": "513",
       },
       "fee": "1000",
@@ -2533,12 +2421,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8459186,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "4",
       },
       "fee": "1000",
@@ -2558,12 +2444,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8459068,
       "contract": undefined,
       "extra": Object {
         "assetId": 312769,
-        "memo": undefined,
         "rewards": "5",
       },
       "fee": "1000",
@@ -2583,12 +2468,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23007087,
       "contract": undefined,
       "extra": Object {
         "assetId": 287867876,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -2608,12 +2492,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8256964,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "183231",
       },
       "fee": "1000",
@@ -2633,12 +2515,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8264013,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -2658,12 +2538,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 5344968,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "104",
       },
       "fee": "1000",
@@ -2683,12 +2561,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23411567,
       "contract": undefined,
       "extra": Object {
         "assetId": 239444645,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -2708,12 +2585,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23006540,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -2733,12 +2608,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 4876800,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "7788",
       },
       "fee": "1000",
@@ -2758,12 +2631,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 14214165,
       "contract": undefined,
       "extra": Object {
         "assetId": 312769,
-        "memo": undefined,
         "rewards": "1",
       },
       "fee": "1000",
@@ -2783,12 +2655,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23411245,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -2808,12 +2678,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 4935120,
       "contract": undefined,
       "extra": Object {
         "assetId": 604,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -2833,11 +2702,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 5667303,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
         "memo": "dGVzdCBkZSBtZW1v",
         "rewards": "22659",
       },
@@ -2858,12 +2726,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 14214183,
       "contract": undefined,
       "extra": Object {
         "assetId": 312769,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -2883,12 +2750,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 5384161,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "7854",
       },
       "fee": "1000",
@@ -2908,12 +2773,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8459549,
       "contract": undefined,
       "extra": Object {
         "assetId": 438837,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -2933,12 +2797,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23007049,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -2958,12 +2820,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 5344499,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "29543",
       },
       "fee": "1000",
@@ -2983,12 +2843,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 5344507,
       "contract": undefined,
       "extra": Object {
         "assetId": 604,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -3008,12 +2867,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23411439,
       "contract": undefined,
       "extra": Object {
         "assetId": 287867876,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -3033,12 +2891,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 5244431,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "25893",
       },
       "fee": "1000",
@@ -3058,12 +2914,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23411141,
       "contract": undefined,
       "extra": Object {
         "assetId": 312769,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -3083,12 +2938,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 5344643,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "26",
       },
       "fee": "1000",
@@ -3108,12 +2961,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8459158,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -3133,12 +2984,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8458580,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "24",
       },
       "fee": "1000",
@@ -3158,12 +3007,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23410994,
       "contract": undefined,
       "extra": Object {
         "assetId": 27165954,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -3183,12 +3031,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23006884,
       "contract": undefined,
       "extra": Object {
         "assetId": 6587142,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -3208,12 +3055,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 14212162,
       "contract": undefined,
       "extra": Object {
         "assetId": 6587142,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -3233,12 +3079,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 5246149,
       "contract": undefined,
       "extra": Object {
         "assetId": 604,
-        "memo": undefined,
         "rewards": "459",
       },
       "fee": "1000",
@@ -3258,12 +3103,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 14214058,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "2",
       },
       "fee": "1000",
@@ -3283,12 +3126,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 5133176,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -3308,12 +3149,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8458251,
       "contract": undefined,
       "extra": Object {
         "assetId": 438839,
-        "memo": undefined,
         "rewards": "8",
       },
       "fee": "1000",
@@ -3333,12 +3173,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 16224927,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "15603",
       },
       "fee": "1000",
@@ -3358,12 +3196,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 5544904,
       "contract": undefined,
       "extra": Object {
         "assetId": 604,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -3383,12 +3220,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23411491,
       "contract": undefined,
       "extra": Object {
         "assetId": 604,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -3408,12 +3244,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 4935089,
       "contract": undefined,
       "extra": Object {
         "assetId": 604,
-        "memo": undefined,
         "rewards": "21681",
       },
       "fee": "1000",
@@ -3433,12 +3268,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23008253,
       "contract": undefined,
       "extra": Object {
         "assetId": 137594422,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -3458,12 +3292,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 5345003,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -3483,12 +3315,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 4863465,
       "contract": undefined,
       "extra": Object {
         "assetId": 604,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -3508,12 +3339,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23007135,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -3535,7 +3364,7 @@ Array [
   Array [
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:+312769",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8534040,
       "contract": undefined,
       "extra": Object {},
@@ -3556,7 +3385,7 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:+312769",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 14213950,
       "contract": undefined,
       "extra": Object {},
@@ -3577,7 +3406,7 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:+312769",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 14214356,
       "contract": undefined,
       "extra": Object {},
@@ -3598,7 +3427,7 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:+312769",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8458219,
       "contract": undefined,
       "extra": Object {},
@@ -3619,7 +3448,7 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:+312769",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 14213938,
       "contract": undefined,
       "extra": Object {},
@@ -3640,7 +3469,7 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:+312769",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 14212278,
       "contract": undefined,
       "extra": Object {},
@@ -3661,7 +3490,7 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:+312769",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 14212318,
       "contract": undefined,
       "extra": Object {},
@@ -3682,7 +3511,7 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:+312769",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8459068,
       "contract": undefined,
       "extra": Object {},
@@ -3703,7 +3532,7 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:+312769",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 14214165,
       "contract": undefined,
       "extra": Object {},
@@ -3724,7 +3553,7 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:+312769",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 14214183,
       "contract": undefined,
       "extra": Object {},
@@ -3745,7 +3574,7 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:+312769",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23411141,
       "contract": undefined,
       "extra": Object {},
@@ -3773,12 +3602,10 @@ Array [
   Array [
     Object {
       "accountId": "js:2:algorand:EGZQNDFCXGR3BMP4NDM6ZPLBMY7WSV6GRKOHM6VBJKFLWQ3RQDTE3JYNFE:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8458165,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "24",
       },
       "fee": "1000",
@@ -3798,12 +3625,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:EGZQNDFCXGR3BMP4NDM6ZPLBMY7WSV6GRKOHM6VBJKFLWQ3RQDTE3JYNFE:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8459218,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -3823,12 +3648,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:EGZQNDFCXGR3BMP4NDM6ZPLBMY7WSV6GRKOHM6VBJKFLWQ3RQDTE3JYNFE:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8459424,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -3848,12 +3671,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:EGZQNDFCXGR3BMP4NDM6ZPLBMY7WSV6GRKOHM6VBJKFLWQ3RQDTE3JYNFE:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8458655,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -3873,12 +3694,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:EGZQNDFCXGR3BMP4NDM6ZPLBMY7WSV6GRKOHM6VBJKFLWQ3RQDTE3JYNFE:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8457685,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -3898,12 +3717,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:EGZQNDFCXGR3BMP4NDM6ZPLBMY7WSV6GRKOHM6VBJKFLWQ3RQDTE3JYNFE:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8459186,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "5",
       },
       "fee": "1000",
@@ -3923,12 +3740,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:EGZQNDFCXGR3BMP4NDM6ZPLBMY7WSV6GRKOHM6VBJKFLWQ3RQDTE3JYNFE:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8458580,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -3948,12 +3763,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:EGZQNDFCXGR3BMP4NDM6ZPLBMY7WSV6GRKOHM6VBJKFLWQ3RQDTE3JYNFE:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 16224927,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -3975,12 +3788,10 @@ Array [
   Array [
     Object {
       "accountId": "js:2:algorand:ZQVVJ2S4XWS542KXBBVIINOEHIDOEZKZWK725PWFNN2I5RNCUBI53RT2EY:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8458655,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -4002,12 +3813,11 @@ Array [
   Array [
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8534040,
       "contract": undefined,
       "extra": Object {
         "assetId": 312769,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -4027,12 +3837,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23006996,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -4052,12 +3860,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8459254,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -4077,12 +3883,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8459505,
       "contract": undefined,
       "extra": Object {
         "assetId": 312769,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -4102,12 +3907,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8459650,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -4127,12 +3930,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23430100,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -4152,12 +3953,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23410964,
       "contract": undefined,
       "extra": Object {
         "assetId": 604,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -4177,12 +3977,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23411476,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -4202,12 +4000,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8459218,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -4227,12 +4023,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8459424,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -4252,12 +4046,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23429922,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -4277,12 +4069,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8459277,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -4302,12 +4092,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8459034,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -4327,12 +4115,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23410933,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -4352,12 +4138,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8459203,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "1",
       },
       "fee": "1000",
@@ -4377,11 +4161,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 22629197,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
         "memo": "SGkgIQ==",
         "rewards": "0",
       },
@@ -4402,12 +4185,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23007138,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -4427,12 +4208,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23008354,
       "contract": undefined,
       "extra": Object {
         "assetId": 604,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -4452,12 +4232,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23411298,
       "contract": undefined,
       "extra": Object {
         "assetId": 604,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -4477,12 +4256,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23006858,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -4502,12 +4279,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8459164,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -4527,12 +4302,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8459480,
       "contract": undefined,
       "extra": Object {
         "assetId": 312769,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -4552,12 +4326,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23006720,
       "contract": undefined,
       "extra": Object {
         "assetId": 604,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -4577,12 +4350,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23006684,
       "contract": undefined,
       "extra": Object {
         "assetId": 604,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -4602,12 +4374,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23007059,
       "contract": undefined,
       "extra": Object {
         "assetId": 604,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -4627,12 +4398,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8459236,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -4652,12 +4421,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8459518,
       "contract": undefined,
       "extra": Object {
         "assetId": 312769,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -4677,12 +4445,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23411114,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -4702,12 +4468,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 14212305,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -4727,12 +4491,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 14212278,
       "contract": undefined,
       "extra": Object {
         "assetId": 312769,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -4752,12 +4515,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 14212318,
       "contract": undefined,
       "extra": Object {
         "assetId": 312769,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -4777,12 +4539,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23006878,
       "contract": undefined,
       "extra": Object {
         "assetId": 604,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -4802,12 +4563,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8459245,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -4827,12 +4586,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8459052,
       "contract": undefined,
       "extra": Object {
         "assetId": 312769,
-        "memo": undefined,
         "rewards": "1",
       },
       "fee": "1000",
@@ -4852,12 +4610,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8459068,
       "contract": undefined,
       "extra": Object {
         "assetId": 312769,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -4877,12 +4634,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23006540,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -4902,12 +4657,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23411245,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -4927,12 +4680,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23007049,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -4952,12 +4703,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23411141,
       "contract": undefined,
       "extra": Object {
         "assetId": 312769,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -4977,12 +4727,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8459158,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -5002,12 +4750,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 29181588,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -5027,12 +4773,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8459340,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "6",
       },
       "fee": "1000",
@@ -5052,12 +4796,11 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23411491,
       "contract": undefined,
       "extra": Object {
         "assetId": 604,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -5077,12 +4820,10 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23007135,
       "contract": undefined,
       "extra": Object {
-        "assetId": undefined,
-        "memo": undefined,
         "rewards": "0",
       },
       "fee": "1000",
@@ -5104,7 +4845,7 @@ Array [
   Array [
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:+312769",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8534040,
       "contract": undefined,
       "extra": Object {},
@@ -5125,7 +4866,7 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:+312769",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8459505,
       "contract": undefined,
       "extra": Object {},
@@ -5146,7 +4887,7 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:+312769",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8459480,
       "contract": undefined,
       "extra": Object {},
@@ -5167,7 +4908,7 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:+312769",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8459518,
       "contract": undefined,
       "extra": Object {},
@@ -5188,7 +4929,7 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:+312769",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 14212278,
       "contract": undefined,
       "extra": Object {},
@@ -5209,7 +4950,7 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:+312769",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 14212318,
       "contract": undefined,
       "extra": Object {},
@@ -5230,7 +4971,7 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:+312769",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 8459068,
       "contract": undefined,
       "extra": Object {},
@@ -5251,7 +4992,7 @@ Array [
     },
     Object {
       "accountId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:+312769",
-      "blockHash": undefined,
+      "blockHash": null,
       "blockHeight": 23411141,
       "contract": undefined,
       "extra": Object {},

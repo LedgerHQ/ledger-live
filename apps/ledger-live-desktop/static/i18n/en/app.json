@@ -5325,7 +5325,7 @@
     },
     "TransportRaceCondition": {
       "title": "Something went wrong. Please reconnect your device",
-      "description": "{{message}}"
+      "description": "An action was already pending on the Ledger device. Please deny or reconnect."
     },
     "TransportStatusError": {
       "title": "Something went wrong. Please reconnect your device",

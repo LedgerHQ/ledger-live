@@ -87,7 +87,7 @@ function AssetCentricGraphCard({
   ];
 
   const updateTimeRange = useCallback(
-    index => {
+    (index: number) => {
       track("timeframe_clicked", {
         timeframe: timeRangeItems[index],
       });
@@ -96,7 +96,7 @@ function AssetCentricGraphCard({
     [setTimeRange, timeRangeItems],
   );
 
-  const mapCounterValue = useCallback(d => d.value || 0, []);
+  const mapCounterValue = useCallback((d: Item) => d.value || 0, []);
 
   const range = assetPortfolio.range;
   const isAvailable = assetPortfolio.balanceAvailable;

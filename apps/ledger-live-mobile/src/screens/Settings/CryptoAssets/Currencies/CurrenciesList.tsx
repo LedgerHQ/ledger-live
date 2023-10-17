@@ -57,7 +57,7 @@ function CurrenciesList({
     [navigation],
   );
 
-  const keyExtractor = useCallback(item => item.id, []);
+  const keyExtractor = useCallback((item: CryptoCurrency) => item.id, []);
 
   return (
     <Box backgroundColor={"background.main"} height={"100%"}>

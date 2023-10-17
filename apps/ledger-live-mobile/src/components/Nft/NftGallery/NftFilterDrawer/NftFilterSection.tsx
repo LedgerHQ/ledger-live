@@ -9,9 +9,10 @@ import { View } from "react-native";
 import { NftFilterItemProps } from "./NftFilterItem";
 
 type Props = {
-  readonly title: string;
-  readonly footer?: string;
-  readonly onSeeAllPress?: () => void;
+  title: string;
+  footer?: string;
+  onSeeAllPress?: () => void;
+  children?: React.ReactNode;
 };
 
 const NftFilterSection: FC<Props> = ({ title, onSeeAllPress, footer, children }) => {

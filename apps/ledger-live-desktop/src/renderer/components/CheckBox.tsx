@@ -86,7 +86,7 @@ type Props = {
 function CheckBox({ label, ...props }: Props) {
   const { isChecked, onChange, isRadio, disabled } = props;
   const onClick = useCallback(
-    e => {
+    (e: React.SyntheticEvent) => {
       if (!onChange) return;
       e.stopPropagation();
       onChange && onChange(!isChecked);

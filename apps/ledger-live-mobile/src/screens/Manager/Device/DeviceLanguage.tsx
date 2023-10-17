@@ -66,9 +66,9 @@ const DeviceLanguage: React.FC<Props> = ({
     onLanguageChange();
   }, [onLanguageChange]);
 
-  const errorTracked = useRef(null);
+  const errorTracked = useRef<Error | null>(null);
   const handleError = useCallback(
-    error => {
+    (error: Error) => {
       if (errorTracked.current !== error) {
         track("Page Manager LanguageInstallError", { error, type: "drawer" });
         errorTracked.current = error;

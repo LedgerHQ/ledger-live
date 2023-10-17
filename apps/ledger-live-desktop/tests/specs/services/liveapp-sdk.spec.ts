@@ -16,7 +16,7 @@ test.beforeAll(async () => {
   testServerIsRunning = await LiveAppWebview.startLiveApp("dummy-live-app/build", {
     name: "Dummy Live App",
     id: "dummy-live-app",
-    permissions: [{ method: "*" }],
+    permissions: [],
   });
 
   if (!testServerIsRunning) {

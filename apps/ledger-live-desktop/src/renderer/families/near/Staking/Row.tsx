@@ -99,8 +99,8 @@ export function Row({
   const unstakingEnabled = canUnstake(stakingPosition);
   const withdawingEnabled = canWithdraw(stakingPosition);
   const onSelect = useCallback(
-    action => {
-      onManageAction(validatorId, action.key);
+    (action: (typeof dropDownItems)[number]) => {
+      onManageAction(validatorId, action.key as "MODAL_NEAR_UNSTAKE" | "MODAL_NEAR_WITHDRAW");
     },
     [onManageAction, validatorId],
   );

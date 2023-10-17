@@ -53,7 +53,7 @@ export function SelectCurrency({
   const sortedCurrencies = useCurrenciesByMarketcap(currencies);
 
   const renderList = useCallback(
-    items => (
+    (items: (TokenCurrency | CryptoCurrency)[]) => (
       <FlatList
         contentContainerStyle={styles.list}
         removeClippedSubviews={true}
@@ -80,6 +80,7 @@ export function SelectCurrency({
         <FilteredSearchBar
           keys={getEnv("CRYPTO_ASSET_SEARCH_KEYS")}
           inputWrapperStyle={styles.filteredSearchInputWrapperStyle}
+          // @ts-expect-error dissonance between Currency[] & (TokenCurrency | CryptoCurrency)[]
           list={sortedCurrencies}
           renderList={renderList}
           renderEmptySearch={renderEmptyList(t)}

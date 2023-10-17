@@ -18,7 +18,9 @@ const TextEllipsis = styled.div`
   text-overflow: ellipsis;
 `;
 
-const RemoveCustomImage: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
+type Props = { onClose?: () => void };
+
+const RemoveCustomImage: React.FC<Props> = ({ onClose }) => {
   const request = useMemo(() => ({}), []);
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -41,7 +43,7 @@ const RemoveCustomImage: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
   }, [dispatch]);
 
   const onError = useCallback(
-    error => {
+    (error: Error) => {
       setError(error);
       if (error instanceof ImageDoesNotExistOnDevice) {
         dispatch(clearLastSeenCustomImage());

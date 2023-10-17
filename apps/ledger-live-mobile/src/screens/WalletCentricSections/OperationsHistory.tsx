@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import {
+  AccountLike,
   AccountLikeArray,
   DailyOperationsSection,
   Operation,
@@ -41,7 +42,7 @@ const OperationsHistory = ({ accounts }: Props) => {
     filterTokenOperationsZeroAmountEnabledSelector,
   );
   const filterOperation = useCallback(
-    (operation, account) => {
+    (operation: Operation, account: AccountLike) => {
       // Remove operations linked to address poisoning
       const removeZeroAmountTokenOp =
         shouldFilterTokenOpsZeroAmount && isAddressPoisoningOperation(operation, account);

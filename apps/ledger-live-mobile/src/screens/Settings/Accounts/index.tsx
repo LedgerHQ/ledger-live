@@ -65,7 +65,7 @@ export default function AccountsSettings({
     [colors, dispatch],
   );
 
-  const keyExtractor = useCallback(token => token.id, []);
+  const keyExtractor = useCallback((token: TokenCurrency) => token.id, []);
 
   const renderHeader = useCallback(
     () => (

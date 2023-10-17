@@ -113,7 +113,7 @@ function MarkeCoinChartComponent({
   }, [chartData, range]);
 
   const setRange = useCallback(
-    index => {
+    (index: number) => {
       const newRange = ranges[index];
       if (range !== newRange) refreshChart({ range: newRange });
     },

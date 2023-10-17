@@ -46,7 +46,7 @@ const NavigationGuard = ({
 
   /** show modal if needed and location to go to on confirm */
   const showModal = useCallback(
-    location => {
+    (location: Location) => {
       setModalVisible(!noModal);
       setLastLocation(location);
     },

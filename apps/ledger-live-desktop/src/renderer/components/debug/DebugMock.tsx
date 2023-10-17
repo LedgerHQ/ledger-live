@@ -401,14 +401,14 @@ const DebugMock = () => {
   );
   const toggleExpandedNotif = useCallback(() => setExpandedNotif(!expandedNotif), [expandedNotif]);
   const queueEvent = useCallback(
-    event => {
+    (event: RawEvents) => {
       setQueue([...queue, event]);
       window.mock.events.mockDeviceEvent(event);
     },
     [queue, setQueue],
   );
   const unQueueEventByIndex = useCallback(
-    i => {
+    (i: number) => {
       window.mock.events.queue.splice(i, 1);
       setQueue(window.mock.events.queue);
     },
@@ -465,9 +465,11 @@ const DebugMock = () => {
     notifLiveCommonVersions,
     updateCache,
   ]);
+
   const setValue = useCallback(
-    setter => (evt: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-      setter(evt.target.value),
+    (setter: (value: string) => void) =>
+      (evt: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+        setter(evt.target.value),
     [],
   );
   return (

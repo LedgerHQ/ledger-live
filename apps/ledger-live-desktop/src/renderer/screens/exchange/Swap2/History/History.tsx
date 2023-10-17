@@ -8,7 +8,7 @@ import OperationRow from "./OperationRow";
 import { isSwapOperationPending } from "@ledgerhq/live-common/exchange/swap/index";
 import getCompleteSwapHistory from "@ledgerhq/live-common/exchange/swap/getCompleteSwapHistory";
 import updateAccountSwapStatus from "@ledgerhq/live-common/exchange/swap/updateAccountSwapStatus";
-import { SwapHistorySection } from "@ledgerhq/live-common/exchange/swap/types";
+import { MappedSwapOperation, SwapHistorySection } from "@ledgerhq/live-common/exchange/swap/types";
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import { mappedSwapOperationsToCSV } from "@ledgerhq/live-common/exchange/swap/csvExport";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
@@ -145,7 +145,7 @@ const History = () => {
     }
   }, 10000);
   const openSwapOperationDetailsModal = useCallback(
-    mappedSwapOperation =>
+    (mappedSwapOperation: MappedSwapOperation) =>
       setDrawer(SwapOperationDetails, {
         mappedSwapOperation,
       }),

@@ -39,7 +39,7 @@ const FeatureFlagEdit: React.FC<{
 
   const { t } = useTranslation();
 
-  const handleInputChange = useCallback(value => {
+  const handleInputChange = useCallback((value: string) => {
     setError(undefined);
     setInputValue(value);
   }, []);
@@ -71,7 +71,7 @@ const FeatureFlagEdit: React.FC<{
   }, [inputValueDefaulted]);
 
   const handleSwitchChange = useCallback(
-    enabled => {
+    (enabled: boolean) => {
       featureFlagsProvider.overrideFeature(flagName, { ...flagValue, enabled });
     },
     [featureFlagsProvider, flagName, flagValue],
@@ -85,7 +85,7 @@ const FeatureFlagEdit: React.FC<{
         </Flex>
       ) : null}
       <BaseInput
-        value={inputValueDefaulted}
+        value={inputValueDefaulted as string}
         onChange={handleInputChange}
         renderRight={() => (
           <InputRenderRightContainer>
