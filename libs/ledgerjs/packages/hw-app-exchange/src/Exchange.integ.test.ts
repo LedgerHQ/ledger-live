@@ -218,10 +218,7 @@ async function generatePayloadProtobuf(payload: Payload): Promise<Buffer> {
 }
 
 type SigFormat = "der" | "rs";
-/**
- * Sign message in ECDSA-SHA256 with secp256k1 curve.
- * @returns A DER format signature
- */
+// Sign message in ECDSA-SHA256 with secp256k1 curve and returnsa DER format signature
 async function signMessage(
   message: Buffer,
   privKey: Buffer,
@@ -241,9 +238,7 @@ function convertSignatureToDER(sig: Uint8Array): Buffer {
   return secp256k1.signatureExport(sig);
 }
 
-/**
- * Convert raw buffer to a JWS compatible one: '.'+base64Url(raw)
- */
+// Convert raw buffer to a JWS compatible one: '.'+base64Url(raw)
 function convertToJWSPayload(raw: Buffer): Buffer {
   return Buffer.from("." + raw.toString("base64url"));
 }
