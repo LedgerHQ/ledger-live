@@ -1,13 +1,11 @@
-import { describe, expect, test, jest, beforeAll } from "@jest/globals";
-import { renderHook } from "@testing-library/react-hooks";
-import * as redux from "react-redux";
-import useUpdateUserPropertiesOnAccountsChange, {
-  hasAccountsWithFundsChanged
-} from "./useUpdateUserPropertiesOnAccountsChange";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+/**
+ * @jest-environment jsdom
+ */
+
+import { hasAccountsWithFundsChanged } from "./useAccountsWithFundsListener";
 import { Account } from "@ledgerhq/types-live";
+import { getCryptoCurrencyById } from "../currencies/index";
 import BigNumber from "bignumber.js";
-import { updateIdentify } from "../analytics/segment";
 
 const eth = getCryptoCurrencyById("ethereum");
 const polygon = getCryptoCurrencyById("polygon");
@@ -96,42 +94,57 @@ const polygonMockAccount: Account = {
   subAccounts: [],
 };
 
-describe("useUpdateUserPropertiesOnAccountsChange", () => {
-  describe("falsy test", () => {
-    // prepare mocking useSelector
-    const spy = jest.spyOn(redux, "useSelector");
-    jest.mock('updateIdentify')
+describe("useAccountsWithFundsListener", () => {
+  describe("Test the hasAccountsWithFundsChanged helper function", () => {
+    test("should return true when an account with funds is added", () => {
+      const newAccounts: Account[] = [ethMockAccount];
+      const oldAccounts: Account[] = [];
 
-    const setAccounts_Mock = (accounts: Account[]) => {
-      spy.mockReturnValue(accounts);
-    };
+      const res = hasAccountsWithFundsChanged(newAccounts, oldAccounts);
 
-    test("should format date properly", () => {
-      // Set empty accounts
-      setAccounts_Mock([]);
+      expect(res).toBeTruthy();
+    });
+    test("should return true when an account with funds is deleted", () => {
+      const newAccounts: Account[] = [];
+      const oldAccounts: Account[] = [ethMockAccount];
 
-      // Watch for changes in accounts
-      renderHook(() => useUpdateUserPropertiesOnAccountsChange());
+      const res = hasAccountsWithFundsChanged(newAccounts, oldAccounts);
 
-      expect(updateIdentify).not.toHaveBeenCalled();
+      expect(res).toBeTruthy();
+    });
+    test("should return true when an account with funds is deleted and another one is added at the same time", () => {
+      const newAccounts: Account[] = [ethMockAccount];
+      const oldAccounts: Account[] = [polygonMockAccount];
 
-      // Set new accounts
-      setAccounts_Mock([ethMockAccount, polygonMockAccount]);
+      const res = hasAccountsWithFundsChanged(newAccounts, oldAccounts);
 
-      expect(updateIdentify).not.toHaveBeenCalled();
+      expect(res).toBeTruthy();
+    });
+    test("should return true when an account with funds is emptied", () => {
+      const newAccounts: Account[] = [ethMockAccount];
+      const oldAccounts: Account[] = [{ ...ethMockAccount, balance: new BigNumber(0) }];
 
-      // Wait for 3 seconds (time of the debounce)
-      jest.useFakeTimers();
-      jest.runAllTimers();
-      expect(updateIdentify).toHaveBeenCalledTimes(1);
+      const res = hasAccountsWithFundsChanged(newAccounts, oldAccounts);
 
-      // // Change the balance of one of the accounts
+      expect(res).toBeTruthy();
+    });
+    test("should return true when an empty account receives funds", () => {
+      const newAccounts: Account[] = [{ ...ethMockAccount, balance: new BigNumber(0) }];
+      const oldAccounts: Account[] = [ethMockAccount];
 
-      // expect(updateIdentify).toHaveBeenCalledTimes(1);
+      const res = hasAccountsWithFundsChanged(newAccounts, oldAccounts);
 
-      // // Wait for 3 seconds (time of the debounce)
+      expect(res).toBeTruthy();
+    });
+    test("should return false when the balance of an account with funds changes but isn't emptied", () => {
+      const newAccounts: Account[] = [ethMockAccount];
+      const oldAccounts: Account[] = [
+        { ...ethMockAccount, balance: new BigNumber("10000000000000000") },
+      ];
 
-      // expect(updateIdentify).toHaveBeenCalledTimes(2);
+      const res = hasAccountsWithFundsChanged(newAccounts, oldAccounts);
+
+      expect(res).toBeFalsy();
     });
   });
 });

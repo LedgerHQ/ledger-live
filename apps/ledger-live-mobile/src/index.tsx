@@ -35,7 +35,7 @@ import {
   osThemeSelector,
   themeSelector,
 } from "./reducers/settings";
-import { exportSelector as accountsExportSelector } from "./reducers/accounts";
+import { accountsSelector, exportSelector as accountsExportSelector } from "./reducers/accounts";
 import { exportSelector as bleSelector } from "./reducers/ble";
 import LocaleProvider, { i18n } from "./context/Locale";
 import RebootProvider from "./context/Reboot";
@@ -84,7 +84,8 @@ import {
   useFetchCurrencyAll,
   useFetchCurrencyFrom,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
-import useUpdateUserPropertiesOnAccountsChange from "./hooks/useUpdateUserPropertiesOnAccountsChange";
+import useAccountsWithFundsListener from "@/ledgerhq/live-common/hooks/useAccountsWithFundsListener";
+import { updateIdentify } from "./analytics";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -104,6 +105,9 @@ const styles = StyleSheet.create({
 });
 
 function App() {
+  const accounts = useSelector(accountsSelector);
+
+  useAccountsWithFundsListener(accounts, updateIdentify);
   useAppStateListener();
   useFetchCurrencyAll();
   useFetchCurrencyFrom();
@@ -176,7 +180,6 @@ function App() {
     getChangesStats: getPostOnboardingStateChanged,
     lense: postOnboardingSelector,
   });
-  useUpdateUserPropertiesOnAccountsChange();
 
   return (
     <GestureHandlerRootView style={styles.root}>

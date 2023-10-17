@@ -1,18 +1,21 @@
 import { useEffect, useMemo, useRef } from "react";
-import { useSelector } from "react-redux";
-import { accountsSelector } from "../reducers/accounts";
 import debounce from "lodash/debounce";
 import type { Account } from "@ledgerhq/types-live";
-import { updateIdentify } from "../analytics/segment";
 
 export function hasAccountsWithFundsChanged(accounts: Account[], oldAccounts: Account[]): boolean {
-  if (accounts.length !== oldAccounts.length) {
-    return true;
-  }
   for (const account of accounts) {
     const matchingOldAccount = oldAccounts.find(acc => acc.id === account.id);
-    if (!matchingOldAccount) continue;
 
+    // Means that account has been added
+    if (!matchingOldAccount) {
+      if (account.balance.isGreaterThan(0)) {
+        return true;
+      } else {
+        continue;
+      }
+    }
+
+    // Means that account has been modified
     const hasAccountBeenEmptied =
       account?.balance.isZero() && matchingOldAccount?.balance.isGreaterThan(0);
     const hasAccountReceivedFunds =
@@ -22,26 +25,41 @@ export function hasAccountsWithFundsChanged(accounts: Account[], oldAccounts: Ac
       return true;
     }
   }
+
+  for (const oldAccount of oldAccounts) {
+    const matchingAccount = accounts.find(acc => acc.id === oldAccount.id);
+
+    // Means that account has been deleted
+    if (!matchingAccount) {
+      if (oldAccount.balance.isGreaterThan(0)) {
+        return true;
+      } else {
+        continue;
+      }
+    }
+  }
   return false;
 }
 
-function useUpdateUserPropertiesOnAccountsChange() {
-  const accounts = useSelector(accountsSelector);
+function useAccountsWithFundsListener(
+  accounts: Account[],
+  cb: () => void,
+  debounceTimer: number = 3000,
+) {
   const oldAccounts = useRef<Account[]>([]);
 
   const debouncedUseEffect = useMemo(
     () =>
       debounce(() => {
         if (hasAccountsWithFundsChanged(accounts, oldAccounts.current)) {
-          updateIdentify();
-          console.log("ACCOUNTS CHANGED LLD");
+          cb();
         }
         oldAccounts.current = accounts;
-      }, 3000),
+      }, debounceTimer),
     [accounts],
   );
 
   useEffect(debouncedUseEffect, [debouncedUseEffect]);
 }
 
-export default useUpdateUserPropertiesOnAccountsChange;
+export default useAccountsWithFundsListener;
