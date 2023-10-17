@@ -1,13 +1,13 @@
 import Transport from "@ledgerhq/hw-transport";
-import { withDevice } from "./deviceAccess";
+import { withTransport } from "./core";
 import { from, of } from "rxjs";
 
 jest.useFakeTimers();
 
 // Only mocks `open`
-jest.mock(".", () => {
+jest.mock("../../hw/index", () => {
   // Imports and retains the original functionalities
-  const originalModule = jest.requireActual(".");
+  const originalModule = jest.requireActual("../../hw/index");
 
   return {
     ...originalModule,
@@ -17,15 +17,17 @@ jest.mock(".", () => {
 
 const deviceId = "test_device";
 
-describe("withDevice", () => {
+describe("withTransport", () => {
   describe("When there is only 1 job", () => {
     it("should provide a transport and run the given job", done => {
       const job = jest.fn().mockReturnValue(of("job test result"));
 
-      withDevice(deviceId)(job).subscribe({
+      withTransport(deviceId)(job).subscribe({
         next: () => {
           try {
-            expect(job).toHaveBeenCalledWith(expect.any(Transport));
+            expect(job).toHaveBeenCalledWith({
+              transportRef: expect.objectContaining({ current: expect.any(Transport) }),
+            });
             done();
           } catch (expectError) {
             done(expectError);
@@ -52,7 +54,7 @@ describe("withDevice", () => {
 
         let job1_ended = false;
         // Registers first the job1
-        withDevice(deviceId)(job1).subscribe({
+        withTransport(deviceId)(job1).subscribe({
           next: () => {
             job1_ended = true;
           },
@@ -60,12 +62,16 @@ describe("withDevice", () => {
         });
 
         // And then job2, that should wait that job1 is finished
-        withDevice(deviceId)(job2).subscribe({
+        withTransport(deviceId)(job2).subscribe({
           next: () => {
             try {
               // job1 should have been called before
-              expect(job1).toHaveBeenCalledWith(expect.any(Transport));
-              expect(job2).toHaveBeenCalledWith(expect.any(Transport));
+              expect(job1).toHaveBeenCalledWith({
+                transportRef: expect.objectContaining({ current: expect.any(Transport) }),
+              });
+              expect(job2).toHaveBeenCalledWith({
+                transportRef: expect.objectContaining({ current: expect.any(Transport) }),
+              });
               done();
             } catch (expectError) {
               done(expectError);
@@ -97,7 +103,7 @@ describe("withDevice", () => {
 
         let job1_ended = false;
         // Registers first the job1
-        withDevice(deviceId)(job1).subscribe({
+        withTransport(deviceId)(job1).subscribe({
           next: () => {
             done(`Job 1 should not have succeeded`);
           },
@@ -107,12 +113,16 @@ describe("withDevice", () => {
         });
 
         // And then job2, that should wait that job1 is finished
-        withDevice(deviceId)(job2).subscribe({
+        withTransport(deviceId)(job2).subscribe({
           next: () => {
             try {
               // job1 should have been called before
-              expect(job1).toHaveBeenCalledWith(expect.any(Transport));
-              expect(job2).toHaveBeenCalledWith(expect.any(Transport));
+              expect(job1).toHaveBeenCalledWith({
+                transportRef: expect.objectContaining({ current: expect.any(Transport) }),
+              });
+              expect(job2).toHaveBeenCalledWith({
+                transportRef: expect.objectContaining({ current: expect.any(Transport) }),
+              });
               done();
             } catch (expectError) {
               done(expectError);
