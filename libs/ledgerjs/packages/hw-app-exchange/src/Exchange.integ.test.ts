@@ -112,13 +112,14 @@ describe("Check SWAP until payload signature", () => {
 
     const amount = new BigNumber(100_000);
     const amountToWallet = new BigNumber(100_000_000_000);
+    // Extra properties have a limited size of 20 (i.e. app-exchange/src/proto/protocol.options)
     let encodedPayload = await generatePayloadProtobuf({
       payinAddress: "0xd692Cb1346262F584D17B4B470954501f6715a82",
-      payinExtraId: "0xd692Cb1346262F584D17B4B470954501f6715a82",
+      payinExtraId: '{ extraInfo: "Go" }',
       refundAddress: "0xDad77910DbDFdE764fC21FCD4E74D71bBACA6D8D",
-      refundExtraId: "0xDad77910DbDFdE764fC21FCD4E74D71bBACA6D8D",
+      refundExtraId: '{ extraInfo: "Go" }',
       payoutAddress: "bc1qer57ma0fzhqys2cmydhuj9cprf9eg0nw922a8j",
-      payoutExtraId: "bc1qer57ma0fzhqys2cmydhuj9cprf9eg0nw922a8j",
+      payoutExtraId: "bc1qer57ma0fzhqys2c",
       currencyFrom: "ETH",
       currencyTo: "BTC",
       amountToProvider: Buffer.from(amount.toString(16), "hex"),

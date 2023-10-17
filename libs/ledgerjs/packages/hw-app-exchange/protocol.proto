@@ -13,7 +13,7 @@ message NewTransactionResponse {
     bytes  amount_to_provider = 9;
     bytes  amount_to_wallet = 10;
     string device_transaction_id = 11;
-    bytes device_transaction_id_ng = 12;
+    bytes  device_transaction_id_ng = 12;
 }
 
 // (coefficient) * 10^(- exponent)
