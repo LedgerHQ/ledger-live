@@ -58,6 +58,7 @@ type Props = {
   isChoiceDrawerDisplayedOnAddDevice?: boolean;
   withMyLedgerTracking?: boolean;
   filterByDeviceModelId?: DeviceModelId;
+  paddingBottom?: number;
 };
 
 export default function SelectDevice({
@@ -69,6 +70,7 @@ export default function SelectDevice({
   hasPostOnboardingEntryPointCard,
   withMyLedgerTracking,
   filterByDeviceModelId,
+  paddingBottom,
 }: Props) {
   const [USBDevice, setUSBDevice] = useState<Device | undefined>();
   const [ProxyDevice, setProxyDevice] = useState<Device | undefined>();
@@ -307,7 +309,7 @@ export default function SelectDevice({
   );
 
   return (
-    <>
+    <Flex flex={1} pb={paddingBottom && !isPairingDevices ? paddingBottom : 0}>
       {withMyLedgerTracking ? <TrackScreen {...trackScreenProps} /> : null}
       <RequiresBluetoothDrawer
         isOpenedOnIssue={isBleRequired}
@@ -486,6 +488,6 @@ export default function SelectDevice({
           </QueuedDrawer>
         </Flex>
       )}
-    </>
+    </Flex>
   );
 }

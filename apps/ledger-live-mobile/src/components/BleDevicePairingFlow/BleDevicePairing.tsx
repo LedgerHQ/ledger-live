@@ -22,6 +22,7 @@ import { TrackScreen } from "../../analytics";
 import GenericErrorView from "../GenericErrorView";
 import { GenericInformationBody } from "../GenericInformationBody";
 import { urls } from "../../config/urls";
+import ExternalLink from "../ExternalLink";
 
 export type BleDevicePairingProps = {
   onPaired: (device: Device) => void;
@@ -144,14 +145,19 @@ const BleDevicePairing = ({ deviceToPair, onPaired, onRetry }: BleDevicePairingP
     }
 
     content = (
-      <Flex flex={1}>
+      <Flex flex={1} mb={6}>
         <TrackScreen category="BT failed to pair" />
         <Flex flex={1} alignItems="center" justifyContent="center">
           <GenericInformationBody title={title} description={subtitle} />
         </Flex>
-        <Button type="main" onPress={onRetry} mb={8}>
+        <Button type="main" size="large" onPress={onRetry} mb={7}>
           {t("blePairingFlow.pairing.error.retryCta")}
         </Button>
+        <ExternalLink
+          type="main"
+          text={t("blePairingFlow.pairing.error.howToFixPairingIssue")}
+          onPress={onOpenHelp}
+        />
       </Flex>
     );
   } else {

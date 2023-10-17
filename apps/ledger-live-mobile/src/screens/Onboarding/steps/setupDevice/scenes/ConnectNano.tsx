@@ -111,6 +111,7 @@ const ConnectNanoScene = ({
 };
 
 ConnectNanoScene.id = "ConnectNanoScene";
+ConnectNanoScene.contentContainerStyle = { padding: 16, flex: 1 };
 
 const Next = ({ onNext }: { onNext: () => void }) => {
   const dispatch = useDispatch();
