@@ -1,4 +1,4 @@
-import React, { ReactNode, useCallback, useEffect } from "react";
+import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import { Linking } from "react-native";
 import { useTheme } from "styled-components/native";
 import { useBleDevicePairing } from "@ledgerhq/live-common/ble/hooks/useBleDevicePairing";
@@ -23,6 +23,7 @@ import GenericErrorView from "../GenericErrorView";
 import { GenericInformationBody } from "../GenericInformationBody";
 import { urls } from "../../config/urls";
 import ExternalLink from "../ExternalLink";
+import UnlockDeviceDrawer from "../UnlockDeviceDrawer";
 
 export type BleDevicePairingProps = {
   onPaired: (device: Device) => void;
@@ -44,6 +45,7 @@ const BleDevicePairing = ({ deviceToPair, onPaired, onRetry }: BleDevicePairingP
   const { t } = useTranslation();
   const { colors } = useTheme();
   const theme = colors.type as "dark" | "light";
+  const [deviceLocked, setDeviceLocked] = useState<Device | null>(null);
 
   const productName = getDeviceModel(deviceToPair.modelId).productName || deviceToPair.modelId;
   const deviceName = deviceToPair.deviceName || productName;
@@ -51,6 +53,15 @@ const BleDevicePairing = ({ deviceToPair, onPaired, onRetry }: BleDevicePairingP
   const { isPaired, pairingError } = useBleDevicePairing({
     deviceId: deviceToPair.deviceId,
   });
+
+  useEffect(() => {
+    if (pairingError instanceof LockedDeviceError) {
+      setDeviceLocked(deviceToPair);
+      return;
+    }
+
+    setDeviceLocked(null);
+  }, [deviceToPair, pairingError]);
 
   const onOpenHelp = useCallback(() => {
     Linking.openURL(urls.errors.PairingFailed);
@@ -127,28 +138,18 @@ const BleDevicePairing = ({ deviceToPair, onPaired, onRetry }: BleDevicePairingP
         </Flex>
       </Flex>
     );
-  } else if (pairingError) {
+  } else if (pairingError && !((pairingError as unknown) instanceof LockedDeviceError)) {
     // TODO refactor this into the generic error rendering when possible.
-    let title;
-    let subtitle;
-
-    if ((pairingError as unknown) instanceof LockedDeviceError) {
-      title = t("blePairingFlow.pairing.error.lockedDevice.title");
-      subtitle = t("blePairingFlow.pairing.error.lockedDevice.subtitle", {
-        productName,
-      });
-    } else {
-      title = t("blePairingFlow.pairing.error.generic.title");
-      subtitle = t("blePairingFlow.pairing.error.generic.subtitle", {
-        productName,
-      });
-    }
-
     content = (
       <Flex flex={1} mb={6}>
         <TrackScreen category="BT failed to pair" />
         <Flex flex={1} alignItems="center" justifyContent="center">
-          <GenericInformationBody title={title} description={subtitle} />
+          <GenericInformationBody
+            title={t("blePairingFlow.pairing.error.generic.title")}
+            description={t("blePairingFlow.pairing.error.generic.subtitle", {
+              productName,
+            })}
+          />
         </Flex>
         <Button type="main" size="large" onPress={onRetry} mb={7}>
           {t("blePairingFlow.pairing.error.retryCta")}
@@ -198,6 +199,10 @@ const BleDevicePairing = ({ deviceToPair, onPaired, onRetry }: BleDevicePairingP
   return (
     <Flex flex={1} width="100%">
       {content}
+
+      {deviceLocked ? (
+        <UnlockDeviceDrawer isOpen={true} device={deviceLocked} onClose={onRetry} />
+      ) : null}
     </Flex>
   );
 };
