@@ -295,14 +295,7 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "ledgerlivemobile" */;
 			buildPhases = (
 				4DF9F9E3531CD6D92E72B140 /* [CP] Check Pods Manifest.lock */,
-<<<<<<< HEAD
-<<<<<<< HEAD
 				7707F4C7A182655B8C8EE1E6 /* [Expo] Configure project */,
-=======
-				30C781496360E2ED952F2155 /* [Expo] Configure project */,
->>>>>>> cf84e3478c (lockfile)
-=======
->>>>>>> b1e4ed5fc0 (project.pbxproj)
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
