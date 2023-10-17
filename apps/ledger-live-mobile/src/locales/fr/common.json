@@ -327,12 +327,12 @@
       "primaryCTA" : "Télécharger un autre fond d’écran"
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "Fond d’écran refusé sur votre Ledger Stax",
+      "title" : "Chargement du fond d’écran annulé sur votre Ledger Stax",
       "description" : "Si ce fond d’écran ne vous plaît pas, choisissez une autre image.",
       "primaryCTA" : "Télécharger un autre fond d’écran"
     },
     "ImageDoesNotExistOnDevice" : {
-      "title" : "Aucun fond d’écran à supprimer sur votre Ledger Stax",
+      "title" : "Pas de fond d’écran",
       "description" : "Vous avez déjà supprimé votre fond d’écran."
     },
     "InvalidAddress" : {
@@ -428,6 +428,10 @@
       "title" : "Pas de connexion Internet",
       "description" : "Vérifiez votre connexion Internet."
     },
+    "NetworkError" : {
+      "title" : "Une erreur réseau s’est produite",
+      "description" : "Veuillez réessayer plus tard."
+    },
     "NoAddressesFound" : {
       "title" : "Aucun compte trouvé",
       "description" : "Une erreur est survenue lors du calcul de l’adresse. Si le problème persiste, enregistrez vos logs en utilisant le bouton ci-dessous et transmettez-les à l’Assistance Ledger."
@@ -444,6 +448,18 @@
     },
     "ElrondDelegationBelowMinimumError" : {
       "title" : "Le montant restant à déléguer ne peut pas être inférieur à {{formattedAmount}}."
+    },
+    "NotEnoughVTHO" : {
+      "title" : "Solde en VTHO insuffisant",
+      "description" : "Votre compte doit avoir un solde en VTHO suffisant."
+    },
+    "MustBeVechain" : {
+      "title" : "Ce n’est pas un compte VeChain",
+      "description" : "La crypto doit être le VTHO ou le VET."
+    },
+    "ImpossibleToCalculateAmountAndFees" : {
+      "title" : "Impossible de calculer le montant et les frais",
+      "description" : "Impossible de calculer le montant et les frais"
     },
     "NotEnoughEGLDForFees" : {
       "title" : "Solde d’EGLD insuffisant pour payer les frais de transaction",
@@ -788,8 +804,8 @@
       "description" : "Veuillez réessayer avec une autre image."
     },
     "ImageTooLargeError" : {
-      "title" : "Image trop grande",
-      "description" : "Veuillez essayer avec une image plus petite."
+      "title" : "L’image est trop volumineuse",
+      "description" : "Redimensionnez ou compressez l’image et réessayez, ou téléchargez une image moins volumineuse."
     },
     "ImageCropError" : {
       "title" : "Échec du recadrage de l’image",
@@ -800,11 +816,11 @@
       "description" : "Veuillez réessayer avec une autre image."
     },
     "ImagePreviewError" : {
-      "title" : "Aperçu de l’image indisponible",
+      "title" : "Échec du chargement de l’aperçu",
       "description" : "Veuillez réessayer avec une autre image."
     },
     "ImageProcessingError" : {
-      "title" : "Échec du traitement de l’image",
+      "title" : "Erreur de traitement de l’image",
       "description" : "Veuillez réessayer avec une autre image."
     },
     "HederaAddAccountError" : {
@@ -891,9 +907,9 @@
     "open" : "Ouvrir autorisa. des apps",
     "authorize" : "Autoriser",
     "bluetooth" : {
-      "modalTitle" : "Autorisation requise pour appairer votre Ledger via Bluetooth",
-      "modalDescriptionBase" : "Pour appairer votre Ledger via Bluetooth, autorisez Ledger Live à rechercher les appareils à proximité.",
-      "modalDescriptionSettingsVariant" : "Pour appairer votre Ledger via Bluetooth, accédez aux paramètres de votre téléphone et autorisez Ledger Live à rechercher les appareils à proximité.",
+      "modalTitle" : "Autorisation requise pour appairer votre appareil Ledger via Bluetooth",
+      "modalDescriptionBase" : "Pour appairer votre appareil Ledger via Bluetooth, autorisez Ledger Live à rechercher les appareils à proximité.",
+      "modalDescriptionSettingsVariant" : "Pour appairer votre appareil Ledger via Bluetooth, accédez aux paramètres de votre téléphone et autorisez Ledger Live à rechercher les appareils à proximité.",
       "modalButtonLabelBase" : "Autoriser",
       "modalButtonLabelSettingsVariant" : "Accéder aux Paramètres",
       "dontPair" : "Ne pas appairer"
@@ -980,7 +996,8 @@
     "week" : "1S",
     "month" : "1M",
     "year" : "1A",
-    "all" : "TOUT"
+    "all" : "TOUT",
+    "graphNotSupported" : "Graphique non disponible pour ce token"
   },
   "carousel" : {
     "title" : "Fermer la bannière ?",
@@ -1930,7 +1947,7 @@
       "cancelCta" : "Annuler la configuration",
       "notFoundEntity" : {
         "title" : "Relancer la vérification de l’authenticité",
-        "description" : "Vous devez d’abord désactiver le paramètre « Fournisseur de My Ledger ». Pour le désactiver, ouvrez les paramètres de Ledger Live, sélectionnez « Fonctionnalités expérimentales », puis désactivez « Fournisseur du Gestionnaire ».",
+        "description" : "Vous devez d’abord désactiver le paramètre « Fournisseur de My Ledger ». Pour le désactiver, ouvrez les paramètres de Ledger Live, sélectionnez « Fonctionnalités expérimentales », puis désactivez « Fournisseur de My Ledger ».",
         "settingsCta" : "Accéder aux Paramètres"
       }
     },
@@ -2813,7 +2830,7 @@
           "description" : "Affichez les applications développeurs et testnet dans le Gestionnaire."
         },
         "managerProvider" : {
-          "title" : "Fournisseur du Gestionnaire",
+          "title" : "Fournisseur de My Ledger",
           "description" : "Changer le fournisseur d’applications dans le Gestionnaire peut rendre impossible l’installation ou désinstallation d’applications sur votre appareil Ledger."
         },
         "experimentalExplorers" : {
@@ -3405,6 +3422,11 @@
     "walletConnect" : {
       "title" : "WalletConnect",
       "description" : "Connectez votre wallet aux dApps"
+    },
+    "recover" : {
+      "title" : "Ledger Recover",
+      "description" : "Récupérez votre wallet, tout simplement",
+      "tag" : "Un mois offert"
     }
   },
   "signMessage" : {
@@ -3752,6 +3774,11 @@
         "title" : "Ajouter Token",
         "disclaimer" : "{{tokenName}} est un token BEP-20.\nVous pouvez recevoir ces tokens directement sur un compte BNB.",
         "learnMore" : "En savoir plus sur les BEP-20"
+      },
+      "vip180" : {
+        "title" : "Ajouter un token",
+        "disclaimer" : "{{tokenName}} est un token VIP180.\nVous pouvez recevoir ces tokens directement sur un compte VET.",
+        "learnMore" : "En savoir plus sur les VIP180"
       }
     },
     "showMoreChainType" : "Plus de types d’adresses",
@@ -3785,7 +3812,7 @@
     "allowRemoveCustomLockscreen" : "Confirmez la suppression du fond d’écran sur votre Ledger Stax",
     "allowSecureConnection" : "Autorisez la connexion sécurisée avec Ledger",
     "loading" : "Chargement...",
-    "turnOnAndUnlockDevice" : "Allumez et déverrouillez votre appareil.",
+    "turnOnAndUnlockDevice" : "Allumez votre appareil Ledger et déverrouillez-le",
     "connectAndUnlockDevice" : "Connectez et déverrouillez votre appareil.",
     "connectAnotherDevice" : "Connecter un autre wallet Ledger",
     "unlockDevice" : "Déverrouillez votre appareil.",
@@ -4036,7 +4063,7 @@
       "modalDesc" : "Téléchargez Ledger Live sur votre ordinateur pour mettre à jour le micrologiciel de votre appareil.",
       "contactUs" : "Nous contacter"
     },
-    "myApps" : "Mes apps",
+    "myApps" : "Mes apps blockchain",
     "token" : {
       "title" : "Tokens {{appName}}",
       "noAppNeeded" : "{{tokenName}} est un token utilisant l’app {{appName}}. Aucune app supplémentaire à installer.",
@@ -4141,10 +4168,10 @@
       "descriptionProductName" : "Appuyez pour mettre à jour le système d’exploitation de votre {{productName}} vers la version {{firmwareVersion}}."
     },
     "title" : "Mettre à jour le micrologiciel",
-    "beginUpdate" : "Lancer la mise à jour",
+    "beginUpdate" : "Démarrer la mise à jour",
     "updateDevice" : "Mise à jour de votre {{deviceName}}",
     "releaseNotesTitle" : "Nouveautés de cette version",
-    "updateDone" : "Vous avez terminé ! Votre {{deviceName}} est à jour",
+    "updateDone" : "Le système d’exploitation de votre {{deviceName}} est à jour",
     "updateDoneDescription" : "Nouvelle version du système d’exploitation : {{firmwareVersion}}",
     "preparing" : "Préparation de la mise à jour du micrologiciel... Veuillez garder votre appareil allumé et connecté. Nous vous informerons de la progression de la mise à jour.",
     "confirmIdentifierText" : "Vérifiez que l’identifiant sur votre appareil est le même que l’identifiant affiché ci-dessous. Confirmez et saisissez votre code PIN si demandé.",
@@ -4155,22 +4182,22 @@
     "finishUpdate" : "Terminez la mise à jour sur votre {{deviceName}}",
     "identifierTitle" : "Identifiant :",
     "pleaseWaitDownload" : "Patientez pendant le téléchargement du programme d’installation",
-    "doNotLeaveLedgerLive" : "Ne quittez pas l’application Ledger Live avant la fin de la mise à jour.",
+    "doNotLeaveLedgerLive" : "Ne quittez pas cet écran avant la fin de la mise à jour.",
     "preparingDevice" : "Préparation de votre appareil",
     "pleaseWaitUpdate" : "Merci d’attendre que la mise à jour soit terminée.",
     "viewUpdateChangelog" : "Voir le changelog de la mise à jour",
     "waitForFirmwareUpdate" : "Attendez la fin de la mise à jour du micrologiciel sur votre appareil",
     "waitForInstallationToFinish" : "Attendez la fin de l’installation sur votre {{deviceName}}",
     "staxBatteryLow" : "Batterie de votre Ledger Stax trop faible pour la mise à jour",
-    "staxBatteryLowDescription" : "Pour mettre à jour le système d’exploitation, votre appareil Ledger doit disposer d’au moins 20 % de batterie ou être en charge.",
-    "updateCancelled" : "Mise à jour annulée sur votre {{deviceName}}",
-    "updateCancelledDescription" : "L’installation de la mise à jour du système d’exploitation {{newFirmwareVersion}} a été refusée sur votre {{deviceName}}. S’il s’agit d’une erreur, veuillez relancer la mise à jour.",
-    "updateNotYetComplete" : "La mise à jour n’est pas encore terminée",
-    "updateNotYetCompleteDescription" : "Si vous interrompez la mise à jour, vos apps, langue et fond d’écran peuvent ne pas être restaurées correctement.",
+    "staxBatteryLowDescription" : "Avant de lancer la mise à jour du système d’exploitation, votre Ledger Stax doit être chargé à au moins 20 % ou être en cours de chargement.",
+    "updateCancelled" : "Installation de la mise à jour annulée sur votre {{deviceName}}",
+    "updateCancelledDescription" : "S’il s’agit d’une erreur, veuillez relancer la mise à jour.",
+    "updateNotYetComplete" : "Mise à jour en cours",
+    "updateNotYetCompleteDescription" : "Vos paramètres et applications risquent de ne pas être restaurés correctement si vous annulez la mise à jour maintenant.",
     "restartUpdate" : "Relancer la mise à jour",
-    "quitUpdate" : "Quitter la mise à jour",
+    "quitUpdate" : "Annuler la mise à jour",
     "continueUpdate" : "Continuer la mise à jour",
-    "unlockDeviceToComplete" : "Déverrouillez votre {{deviceName}} pour terminer l’installation",
+    "unlockDeviceToComplete" : "Déverrouillez votre {{deviceName}} avec votre code PIN pour terminer la mise à jour.",
     "unlockDeviceWithPin" : "Déverrouillez votre appareil avec votre code PIN",
     "reinstallApps" : "Réinstaller les apps",
     "currentVersionNumber" : "Version actuelle",
@@ -4198,14 +4225,14 @@
           "titlePreparingUpdate" : "Préparation de l’installation de la mise à jour",
           "description" : "Transfert de la mise à jour vers votre {{deviceName}}."
         },
-        "titleBackingUp" : "Sauvegarde des apps et des réglages",
+        "titleBackingUp" : "Préparation de l’installation",
         "titleTransferring" : "Transfert de la mise à jour",
-        "description" : "Sauvegarde de vos réglages et transfert de la mise à jour vers votre {{deviceName}}."
+        "description" : "Sauvegarde de vos paramètres et apps. Transfert de la mise à jour vers votre {{deviceName}}."
       },
       "installUpdate" : {
         "titleInactive" : "Installer la mise à jour",
         "titleActive" : "Installation de la mise à jour",
-        "description" : "Votre {{deviceName}} redémarrera plusieurs fois.\n\nUne fois la mise à jour installée sur votre {{deviceName}}, déverrouillez votre appareil pour terminer le processus."
+        "description" : "Votre {{deviceName}} va redémarrer plusieurs fois.\n\nPour terminer la mise à jour, déverrouillez votre {{deviceName}} avec votre code PIN une fois l’installation terminée."
       },
       "restoreSettings" : {
         "earlySecurityCheck" : {
@@ -4216,18 +4243,18 @@
         "description" : "Vos paramètres et vos apps blockchain seront restaurés.",
         "restoreLockScreenPicture" : "Restauration du fond d’écran",
         "restoreLanguage" : "Restauration de la langue",
-        "imageLoadRequested" : "Autorisez la restauration du fond d’écran sur {{deviceName}}.",
-        "imageCommitRequested" : "Confirmez ce fond d’écran sur votre {{deviceName}}",
-        "allowLanguageInstallation" : "Autorisez la restauration de la langue sur votre {{deviceName}}",
-        "allowAppsRestoration" : "Autorisez la restauration des apps sur votre {{deviceName}}",
+        "imageLoadRequested" : "Appuyez sur Charger pour restaurer le fond d’écran",
+        "imageCommitRequested" : "Appuyez sur Conserver pour garder le fond d’écran",
+        "allowLanguageInstallation" : "Appuyez sur Autoriser pour restaurer la langue",
+        "allowAppsRestoration" : "Appuyez sur Autoriser pour restaurer les apps",
         "errors" : {
-          "description" : "Vous pouvez réessayer de restaurer, ou choisir de sauter cette étape.",
-          "LanguageInstallRefusedOnDevice" : "Changement de langue annulé sur {{deviceName}}",
+          "description" : "S’il s’agit d’une erreur, réessayez maintenant.",
+          "LanguageInstallRefusedOnDevice" : "Restauration de la langue annulée sur {{deviceName}}",
           "ImageLoadRefusedOnDevice" : "Restauration du fond d’écran annulée sur {{deviceName}}",
           "ImageCommitRefusedOnDevice" : "Restauration du fond d’écran annulée sur {{deviceName}}",
           "UserRefusedAllowManager" : "Restauration des apps annulée sur {{deviceName}}"
         },
-        "installingApps" : "Restauration des apps"
+        "installingApps" : "Installation des apps"
       }
     },
     "newVersion" : "Nouvelle version {{version}} disponible pour votre {{deviceName}}",
@@ -4255,7 +4282,7 @@
         "description" : "La connexion avec votre {{deviceName}} a été perdue. La mise à jour n’a pas pu être terminée."
       },
       "CantOpenDevice" : {
-        "title" : "Échec de la connexion",
+        "title" : "Connexion à votre appareil Ledger perdue",
         "description" : "La connexion avec votre {{deviceName}} a été perdue. La mise à jour n’a pas pu être terminée."
       }
     }
@@ -6236,18 +6263,18 @@
     "chooseConstrast" : "Choisissez un contraste",
     "uploadAnotherImage" : "Télécharger une autre image",
     "rotateImage" : "Pivoter",
-    "allowPreview" : "Autorisez le chargement du fond d’écran sur votre {{productName}}",
+    "allowPreview" : "Appuyez sur Charger pour personnaliser le fond d’écran",
     "loadingPicture" : "Chargement...",
     "loadingPictureAlmostOver" : "Voilà !",
     "commitRequested" : "C’est parfait ?\nValidez !",
     "confirmPicture" : "Confirmez sur votre {{productName}}",
     "landingPage" : {
-      "title" : "Choisissez un NFT ou une image.\nCréez votre style.\nPersonnalisez votre appareil.",
+      "title" : "Choisissez une œuvre d’art numérique ou une image.\nPersonnalisez votre Ledger Stax.\nCréez votre style.",
       "choosePicture" : "Choisissez une image"
     },
     "confirmCrop" : "Confirmer le recadrage",
     "confirmContrast" : "Confirmer le contraste",
-    "nftEntryPointButtonLabel" : "Afficher sur l’écran du Ledger Stax",
+    "nftEntryPointButtonLabel" : "Définir comme fond d’écran sur Ledger Stax",
     "customImage" : "Fond d’écran personnalisé",
     "doThisLater" : "Pas maintenant",
     "preview" : {
@@ -6281,7 +6308,7 @@
   },
   "postOnboarding" : {
     "hub" : {
-      "title" : "Utilisez ensuite votre {{productName}} pour...",
+      "title" : "Utilisez ensuite votre {{productName}} pour :",
       "allDoneTitle" : "Félicitations !",
       "skip" : "Plus tard",
       "viewWallet" : "Voir mon wallet"
@@ -6293,9 +6320,9 @@
     },
     "actions" : {
       "customImage" : {
-        "title" : "Personnaliser le fond d’écran",
-        "titleCompleted" : "Fond d’écran personnalisé",
-        "description" : "Choisissez votre NFT ou image préféré comme fond d’écran de votre Ledger Stax.",
+        "title" : "Définir un fond d’écran de verrouillage",
+        "titleCompleted" : "Fond d’écran de verrouillage défini",
+        "description" : "Choisissez une œuvre d’art numérique ou une image comme fond d’écran.",
         "popupLabel" : "Fond d’écran défini"
       },
       "claimNft" : {
@@ -6306,9 +6333,9 @@
         "tagLabel" : "Cadeau"
       },
       "assetsTransfer" : {
-        "title" : "Transférez vos actifs vers votre wallet Ledger",
+        "title" : "Transférer vos actifs vers votre wallet Ledger",
         "titleCompleted" : "Actifs transférés sur votre Ledger",
-        "description" : "Envoyez-les depuis la plateforme d’échange ou le wallet de votre choix.",
+        "description" : "Transférez facilement des actifs depuis Coinbase ou la plateforme d’échange/wallet de votre choix.",
         "popupLabel" : "Actifs transférés"
       }
     }
@@ -6338,7 +6365,7 @@
       },
       "empty" : {
         "title" : "Pas (encore) de NFT",
-        "subtitle" : "Lancez-vous et recevez votre premier NFT.",
+        "subtitle" : "Commencez par ajouter des NFT à votre wallet.",
         "receive" : "Recevoir des NFT",
         "supportLink" : "Comment importer mes NFT d’un autre wallet ?"
       },
@@ -6365,6 +6392,12 @@
   "servicesWidget" : {
     "title" : "Services",
     "subTitle" : "Gérez vos services Ledger",
+    "signIn" : "Se connecter",
+    "recover" : {
+      "cta" : "Commencer votre essai gratuit",
+      "desc" : "Ne craignez plus de perdre l’accès à votre wallet.",
+      "tag" : "1 mois offert"
+    },
     "protect" : {
       "status" : {
         "new" : {
