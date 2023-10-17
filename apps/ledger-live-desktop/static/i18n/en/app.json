@@ -3823,7 +3823,7 @@
         "button": "Done",
         "title": "Scan to export to mobile",
         "listTitle": "On the Ledger Live mobile app:",
-        "step1": "Tap the <highlight><icon>+</icon></highlight> button in <highlight>accounts</highlight>",
+        "step1": "Tap <highlight>Add account</highlight> or <highlight>See All Assets</highlight> in the main screen and tap the <highlight><icon>+</icon></highlight> button.",
         "step2": "Tap <highlight>Import desktop accounts</highlight>",
         "step3": "Scan the <highlight>LiveQR code</highlight> until the loader hits 100%"
       }
