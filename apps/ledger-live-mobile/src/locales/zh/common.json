@@ -302,6 +302,9 @@
     "FeeNotLoaded" : {
       "title" : "无法加载费率"
     },
+    "FeeNotLoadedSwap" : {
+      "title" : "由于技术问题，网络费用估算失败。请重试或更改资产。"
+    },
     "FeeRequired" : {
       "title" : "需要费用"
     },
@@ -322,18 +325,18 @@
       "description" : "请重试。如果问题依旧存在，请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "Ledger Stax 锁屏已取消",
+      "title" : "已在 Ledger Stax 上弃用锁屏图片",
       "description" : "如果这张图片不合适，您可以使用另一张图片重试。",
       "primaryCTA" : "上传另一张图片"
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "Ledger Stax 锁屏已取消",
+      "title" : "已在 Ledger Stax 上取消加载锁屏图片",
       "description" : "如果这张图片不合适，您可以使用另一张图片重试。",
       "primaryCTA" : "上传另一张图片"
     },
     "ImageDoesNotExistOnDevice" : {
-      "title" : "您的 Ledger Stax 没有可移除的锁屏图片",
-      "description" : "之前移除了自定义锁屏图片。"
+      "title" : "没有锁屏图片",
+      "description" : "之前已删除锁屏图片。"
     },
     "InvalidAddress" : {
       "title" : "该{{currencyName}} 地址无效"
@@ -427,6 +430,10 @@
     "NetworkDown" : {
       "title" : "抱歉，网络连接似乎已断开",
       "description" : "请检查您的网络连接。"
+    },
+    "NetworkError" : {
+      "title" : "发生网络错误",
+      "description" : "请稍后重试"
     },
     "NoAddressesFound" : {
       "title" : "抱歉，没有找到账户",
@@ -777,7 +784,7 @@
     },
     "ImageDownloadError" : {
       "title" : "图片下载失败",
-      "description" : "请使用另一张图片重试"
+      "description" : "使用其他图片重试。"
     },
     "NFTMetadataLoadingError" : {
       "title" : "NFT 元数据加载问题",
@@ -788,24 +795,24 @@
       "description" : "使用其他图片重试。"
     },
     "ImageTooLargeError" : {
-      "title" : "图片过大",
-      "description" : "请尝试使用较小的图片"
+      "title" : "图片太大",
+      "description" : "调整图片大小或压缩图片后重试，或上传小一点的图片。"
     },
     "ImageCropError" : {
       "title" : "图片裁剪失败",
-      "description" : "请使用另一张图片重试"
+      "description" : "使用其他图片重试。"
     },
     "ImageResizeError" : {
-      "title" : "调整图片大小失败",
-      "description" : "请使用另一张图片重试"
+      "title" : "图片大小调整失败",
+      "description" : "使用其他图片重试。"
     },
     "ImagePreviewError" : {
-      "title" : "图片预览失败",
-      "description" : "请使用另一张图片重试"
+      "title" : "预览加载失败",
+      "description" : "使用其他图片重试。"
     },
     "ImageProcessingError" : {
-      "title" : "图片处理失败",
-      "description" : "请使用另一张图片重试"
+      "title" : "图片处理出错",
+      "description" : "使用其他图片重试。"
     },
     "HederaAddAccountError" : {
       "title" : "您的账户尚未添加。请再次尝试。"
@@ -1930,7 +1937,7 @@
       "cancelCta" : "取消设置",
       "notFoundEntity" : {
         "title" : "再次启动正品检查",
-        "description" : "您必须先禁用“我的 Ledger 提供商”设置。要禁用该设置，请打开 Ledger Live“设置”，选择“实验性功能”，然后关闭“管理器提供商”。",
+        "description" : "您必须先禁用“我的 Ledger 提供商”设置。要禁用该设置，请打开 Ledger Live“设置”，选择“实验性功能”，然后关闭“我的 Ledger 提供商”。",
         "settingsCta" : "前往设置选项"
       }
     },
@@ -2813,7 +2820,7 @@
           "description" : "在管理器中显示开发者和测试网应用程序。"
         },
         "managerProvider" : {
-          "title" : "管理器提供方",
+          "title" : "\"我的 Ledger\" 提供商",
           "description" : "在管理器中更改应用程序提供方可能会导致无法在您的 Ledger 设备上安装或卸载应用程序。"
         },
         "experimentalExplorers" : {
@@ -3405,6 +3412,11 @@
     "walletConnect" : {
       "title" : "WalletConnect",
       "description" : "将您的钱包连接到去中心化应用程序"
+    },
+    "recover" : {
+      "title" : "Ledger Recover",
+      "description" : "钱包恢复，垂手可得",
+      "tag" : "免费一个月"
     }
   },
   "signMessage" : {
@@ -3785,7 +3797,7 @@
     "allowRemoveCustomLockscreen" : "确认移除 Ledger Stax 上的图片",
     "allowSecureConnection" : "允许与 Ledger 设备建立安全连接",
     "loading" : "正在加载……",
-    "turnOnAndUnlockDevice" : "启动并解锁您的设备",
+    "turnOnAndUnlockDevice" : "开机并解锁您的设备",
     "connectAndUnlockDevice" : "连接并解锁您的设备",
     "connectAnotherDevice" : "连接另一台 Ledger 设备",
     "unlockDevice" : "解锁您的设备",
@@ -4036,7 +4048,7 @@
       "modalDesc" : "请在您的电脑上下载 Ledger Live，从而更新设备固件。",
       "contactUs" : "联系我们"
     },
-    "myApps" : "我的应用",
+    "myApps" : "我的区块链应用程序",
     "token" : {
       "title" : "{{appName}} 枚代币",
       "noAppNeeded" : "{{tokenName}} 是使用 {{appName}} 应用程序的代币。没有应用程序可以安装。",
@@ -4141,10 +4153,10 @@
       "descriptionProductName" : "点按将您的 {{productName}} 更新到操作系统版本 {{firmwareVersion}}。"
     },
     "title" : "更新固件",
-    "beginUpdate" : "开始更新",
+    "beginUpdate" : "启动操作系统更新",
     "updateDevice" : "{{deviceName}} 操作系统更新",
     "releaseNotesTitle" : "此操作系统更新包含哪些内容？",
-    "updateDone" : "操作完成！您的 {{deviceName}} 是最新的",
+    "updateDone" : "您的 {{deviceName}} 操作系统现为最新版",
     "updateDoneDescription" : "新操作系统版本：{{firmwareVersion}}",
     "preparing" : "正在准备固件更新，请确保设备处于唤醒状态并保持连接。我们会通知您更新进度",
     "confirmIdentifierText" : "请确认您设备上的标识符和下方的标识符一致。如果需要，请确认并输入您的 PIN 识别密码。",
@@ -4155,22 +4167,22 @@
     "finishUpdate" : "在您的 {{deviceName}} 上完成更新",
     "identifierTitle" : "标识符：",
     "pleaseWaitDownload" : "请等待安装程序下载完成",
-    "doNotLeaveLedgerLive" : "在更新完成之前，请勿退出 Ledger Live 应用程序。",
+    "doNotLeaveLedgerLive" : "停留在此界面，直至更新完成。",
     "preparingDevice" : "正在准备您的设备",
     "pleaseWaitUpdate" : "请等待更新完成",
     "viewUpdateChangelog" : "查看更新变更日志",
     "waitForFirmwareUpdate" : "等待设备上的固件更新完成",
     "waitForInstallationToFinish" : "等待在 {{deviceName}} 上完成安装",
     "staxBatteryLow" : "Ledger Stax 电池电量太低，无法更新",
-    "staxBatteryLowDescription" : "要执行操作系统更新，您的 Ledger 设备必须至少有 20% 的电量，或者正在充电。",
-    "updateCancelled" : "已在 {{deviceName}} 上取消更新",
-    "updateCancelledDescription" : "已在 {{deviceName}} 拒绝安装操作系统更新 {{newFirmwareVersion}}。如果是误操作，请重新启动更新",
-    "updateNotYetComplete" : "更新尚未完成",
-    "updateNotYetCompleteDescription" : "如果您中断更新，您的应用程序、语言和锁屏图片可能无法正确恢复。",
+    "staxBatteryLowDescription" : "要开始更新操作系统，您的 Ledger Stax 必须至少有 20% 的电量，或者正在充电。",
+    "updateCancelled" : "已在 {{deviceName}} 上取消安装操作系统更新",
+    "updateCancelledDescription" : "如果是误操作，请重新启动更新。",
+    "updateNotYetComplete" : "正在更新操作系统",
+    "updateNotYetCompleteDescription" : "如果您现在取消更新，您的设置和应用程序可能无法正确恢复。",
     "restartUpdate" : "重新启动操作系统更新",
-    "quitUpdate" : "退出更新",
-    "continueUpdate" : "继续更新",
-    "unlockDeviceToComplete" : "解锁 {{deviceName}} 以完成安装",
+    "quitUpdate" : "取消操作系统更新",
+    "continueUpdate" : "继续操作系统更新",
+    "unlockDeviceToComplete" : "使用您的识别码解锁 {{deviceName}} 以完成更新。",
     "unlockDeviceWithPin" : "使用识别码解锁您的设备",
     "reinstallApps" : "重新安装应用程序。",
     "currentVersionNumber" : "当前版本",
@@ -4198,14 +4210,14 @@
           "titlePreparingUpdate" : "正在准备安装更新",
           "description" : "正在传输更新到 {{deviceName}}。"
         },
-        "titleBackingUp" : "备份应用程序和设置",
+        "titleBackingUp" : "正在准备安装更新",
         "titleTransferring" : "正在传输更新",
-        "description" : "备份您的配置并将更新传输到 {{deviceName}}。"
+        "description" : "正在备份您的设置和应用程序。正在将更新传输到 {{deviceName}}。"
       },
       "installUpdate" : {
         "titleInactive" : "安装更新",
         "titleActive" : "正在安装更新",
-        "description" : "{{deviceName}} 会重启多次。\n\n在您的 {{deviceName}} 上完成安装后，解锁您的设备以完成安装"
+        "description" : "{{deviceName}} 会重启多次。\n\n要完成更新，请在安装完成后使用您的识别码解锁 {{deviceName}}。"
       },
       "restoreSettings" : {
         "earlySecurityCheck" : {
@@ -4216,18 +4228,18 @@
         "description" : "您的设置和区块链应用程序将恢复。",
         "restoreLockScreenPicture" : "恢复锁屏图片",
         "restoreLanguage" : "恢复语言",
-        "imageLoadRequested" : "允许在 {{deviceName}} 上恢复锁屏图片",
-        "imageCommitRequested" : "确认 {{deviceName}} 上的图片",
-        "allowLanguageInstallation" : "允许在 {{deviceName}} 上恢复语言",
-        "allowAppsRestoration" : "允许在 {{deviceName}} 上恢复应用程序",
+        "imageLoadRequested" : "点按“Load picture”（加载图片）恢复锁屏图片",
+        "imageCommitRequested" : "点按“Keep”（保留）保留您的锁屏图片设置",
+        "allowLanguageInstallation" : "点按“Allow”（允许）恢复语言",
+        "allowAppsRestoration" : "点按“Allow”（允许）恢复应用程序",
         "errors" : {
-          "description" : "如果是误操作，您可以重新尝试恢复，也可以跳过此步骤",
-          "LanguageInstallRefusedOnDevice" : "已取消在 {{deviceName}} 上更改语言",
-          "ImageLoadRefusedOnDevice" : "已取消在 {{deviceName}} 上恢复锁屏图片",
-          "ImageCommitRefusedOnDevice" : "已取消在 {{deviceName}} 上恢复锁屏图片",
-          "UserRefusedAllowManager" : "已取消在 {{deviceName}} 上恢复应用程序"
+          "description" : "如果是误操作，请立即重试。",
+          "LanguageInstallRefusedOnDevice" : "已在 {{deviceName}} 上取消恢复语言",
+          "ImageLoadRefusedOnDevice" : "已在 {{deviceName}} 上取消恢复锁屏图片",
+          "ImageCommitRefusedOnDevice" : "已在 {{deviceName}} 上取消恢复锁屏图片",
+          "UserRefusedAllowManager" : "已在 {{deviceName}} 上取消恢复应用程序"
         },
-        "installingApps" : "正在恢复应用程序"
+        "installingApps" : "安装应用程序"
       }
     },
     "newVersion" : "更新适用于您的 {{deviceName}} 的版本 {{version}}",
@@ -4255,7 +4267,7 @@
         "description" : "与 {{deviceName}} 的连接断开，无法完成更新"
       },
       "CantOpenDevice" : {
-        "title" : "抱歉，连接失败",
+        "title" : "与 Ledger 设备的连接丢失",
         "description" : "与 {{deviceName}} 的连接断开，未能完成更新。"
       }
     }
@@ -6236,18 +6248,18 @@
     "chooseConstrast" : "选择对比度",
     "uploadAnotherImage" : "上传另一张图片",
     "rotateImage" : "旋转",
-    "allowPreview" : "允许在您的 {{productName}} 上加载锁屏图片",
+    "allowPreview" : "点按“Load picture”（加载图片）自定义锁屏界面",
     "loadingPicture" : "正在加载……",
     "loadingPictureAlmostOver" : "就是这样！",
     "commitRequested" : "与您看到的一样？\n保存下来！",
     "confirmPicture" : "在 {{productName}} 上确认",
     "landingPage" : {
-      "title" : "选择任意 NFT 或照片。\n自定义。\n打造您的专属 Ledger 设备。",
+      "title" : "选择任意数字艺术或照片。\n自定义您的 Ledger Stax。\n打造您的个性风格。",
       "choosePicture" : "选择图片"
     },
     "confirmCrop" : "确认剪裁",
     "confirmContrast" : "确认对比",
-    "nftEntryPointButtonLabel" : "设置为 Ledger Stax 锁屏",
+    "nftEntryPointButtonLabel" : "设置为 Ledger Stax 锁屏图片",
     "customImage" : "自定义图片",
     "doThisLater" : "以后再说",
     "preview" : {
@@ -6281,7 +6293,7 @@
   },
   "postOnboarding" : {
     "hub" : {
-      "title" : "接下来，使用您的 {{productName}}...",
+      "title" : "接下来，使用您的 {{productName}}：",
       "allDoneTitle" : "到此结束！",
       "skip" : "以后再说",
       "viewWallet" : "查看我的钱包"
@@ -6293,9 +6305,9 @@
     },
     "actions" : {
       "customImage" : {
-        "title" : "自定义锁屏界面",
-        "titleCompleted" : "已自定义锁屏界面",
-        "description" : "选择任意 NFT 或图片，将其设置为 Ledger Stax 的锁屏界面。",
+        "title" : "设置锁屏图片",
+        "titleCompleted" : "锁屏图片已设置",
+        "description" : "选择要设置为锁屏界面的任意数字艺术或图片。",
         "popupLabel" : "锁屏已设置"
       },
       "claimNft" : {
@@ -6308,7 +6320,7 @@
       "assetsTransfer" : {
         "title" : "将您的资产转移至 Ledger",
         "titleCompleted" : "资产已转入 Ledger",
-        "description" : "从任意其他交易所或钱包转出。",
+        "description" : "轻松从比特币基地 (Coinbase) 或任何其他交易所或钱包转移资产。",
         "popupLabel" : "资产已转移"
       }
     }
@@ -6338,7 +6350,7 @@
       },
       "empty" : {
         "title" : "暂时没有 NFT 可显示",
-        "subtitle" : "从接收您的第一个 NFT 开始。",
+        "subtitle" : "首先将 NFT 添加到您的钱包",
         "receive" : "接收 NFT",
         "supportLink" : "如何从其他钱包获取 NFT？"
       },
@@ -6365,6 +6377,12 @@
   "servicesWidget" : {
     "title" : "服务",
     "subTitle" : "管理您的 Ledger 服务",
+    "signIn" : "登录",
+    "recover" : {
+      "cta" : "开始免费试用",
+      "desc" : "无需再为失去对您钱包的访问权而担忧。",
+      "tag" : "免费一个月"
+    },
     "protect" : {
       "status" : {
         "new" : {
