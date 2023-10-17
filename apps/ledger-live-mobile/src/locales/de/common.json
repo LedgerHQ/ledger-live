@@ -1,4 +1,7 @@
 {
+  "buyCurrency" : {
+    "buyCTA" : "{{ currencyNameOrTicker }} kaufen"
+  },
   "common" : {
     "cancel" : "Abbrechen",
     "apply" : "Anwenden",
@@ -86,7 +89,6 @@
     },
     "seeMore" : "Mehr anzeigen",
     "moreInfo" : "Mehr Infos",
-    "buyEth" : "Ethereum kaufen",
     "popular" : "beliebt",
     "getSupport" : "Hilfe",
     "comingSoon" : "Bald verfügbar",
@@ -98,6 +100,10 @@
     }
   },
   "errors" : {
+    "ReplacementTransactionUnderpriced" : {
+      "title" : "Preis für Ersatztransaktion zu niedrig",
+      "description" : "Die Netzwerkgebühr muss mindestens 10 % höher sein als die Gebühr der ursprünglichen Transaktion."
+    },
     "countervaluesUnavailable" : {
       "title" : "Wir können derzeit keinen Gegenwert für diesen Vermögenswert angeben"
     },
@@ -322,18 +328,18 @@
       "description" : "Bitte versuchen Sie es erneut. Wenn das Problem weiterhin besteht, speichern Sie bitte Ihre Protokolle über die Schaltfläche unten und stellen Sie sie dem Ledger-Support zur Verfügung."
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "Sperrbildschirm auf Ledger Stax deaktiviert",
+      "title" : "Sperrbildschirm-Bild auf Ledger Stax verworfen",
       "description" : "Sollte dieses Bild nicht passen, können Sie es mit einem anderen Bild erneut versuchen.",
       "primaryCTA" : "Ein weiteres Bild hochladen"
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "Sperrbildschirm auf Ledger Stax deaktiviert",
+      "title" : "Das Laden des Sperrbildschirm-Bildes auf dem Ledger Stax wurde abgebrochen",
       "description" : "Sollte dieses Bild nicht passen, können Sie es mit einem anderen Bild erneut versuchen.",
       "primaryCTA" : "Ein weiteres Bild hochladen"
     },
     "ImageDoesNotExistOnDevice" : {
-      "title" : "Ihr Ledger Stax hat kein entfernbares Sperrbildschirm-Bild",
-      "description" : "Das benutzerdefinierte Sperrbildschirm-Bild wurde bereits entfernt."
+      "title" : "Kein Sperrbildschirm-Bild",
+      "description" : "Das Sperrbildschirm-Bild wurde zuvor gelöscht."
     },
     "InvalidAddress" : {
       "title" : "Dies ist keine gültige {{currencyName}} Adresse"
@@ -427,6 +433,10 @@
     "NetworkDown" : {
       "title" : "Entschuldigung, das Internet scheint ausgefallen zu sein",
       "description" : "Bitte überprüfen Sie Ihre Internetverbindung."
+    },
+    "NetworkError" : {
+      "title" : "Ein Netzwerkfehler ist aufgetreten",
+      "description" : "Versuchen Sie es bitte später noch einmal"
     },
     "NoAddressesFound" : {
       "title" : "Entschuldigung, es wurde kein Konto gefunden",
@@ -776,8 +786,8 @@
       "description" : "Bitte versuchen Sie es noch einmal mit einem anderen Bild"
     },
     "ImageDownloadError" : {
-      "title" : "Bilddownload fehlgeschlagen",
-      "description" : "Bitte versuchen Sie es noch einmal mit einem anderen Bild"
+      "title" : "Das Bild konnte nicht heruntergeladen werden",
+      "description" : "Versuchen Sie es noch einmal mit einem anderen Bild."
     },
     "NFTMetadataLoadingError" : {
       "title" : "Problem beim Laden der NFT-Metadaten",
@@ -789,23 +799,23 @@
     },
     "ImageTooLargeError" : {
       "title" : "Das Bild ist zu groß",
-      "description" : "Bitte versuchen Sie es mit einem kleineren Bild"
+      "description" : "Verkleinern oder komprimieren Sie das Bild und versuchen Sie es noch einmal, oder laden Sie ein kleineres Bild hoch."
     },
     "ImageCropError" : {
-      "title" : "Das Zuschneiden des Bildes ist fehlgeschlagen",
-      "description" : "Bitte versuchen Sie es noch einmal mit einem anderen Bild"
+      "title" : "Zuschneiden des Bildes fehlgeschlagen",
+      "description" : "Versuchen Sie es noch einmal mit einem anderen Bild."
     },
     "ImageResizeError" : {
-      "title" : "Die Größenänderung des Bildes ist fehlgeschlagen",
-      "description" : "Bitte versuchen Sie es noch einmal mit einem anderen Bild"
+      "title" : "Größenänderung des Bildes fehlgeschlagen",
+      "description" : "Versuchen Sie es noch einmal mit einem anderen Bild."
     },
     "ImagePreviewError" : {
-      "title" : "Die Vorschau des Bildes ist fehlgeschlagen",
-      "description" : "Bitte versuchen Sie es noch einmal mit einem anderen Bild"
+      "title" : "Vorschau konnte nicht geladen werden",
+      "description" : "Versuchen Sie es noch einmal mit einem anderen Bild."
     },
     "ImageProcessingError" : {
-      "title" : "Die Verarbeitung des Bildes ist fehlgeschlagen",
-      "description" : "Bitte versuchen Sie es noch einmal mit einem anderen Bild"
+      "title" : "Fehler bei der Bildverarbeitung",
+      "description" : "Versuchen Sie es noch einmal mit einem anderen Bild."
     },
     "HederaAddAccountError" : {
       "title" : "Ihr Konto wurde nicht hinzugefügt. Bitte versuchen Sie es erneut."
@@ -1930,7 +1940,7 @@
       "cancelCta" : "Einrichtung abbrechen",
       "notFoundEntity" : {
         "title" : "Echtheitsprüfung erneut einleiten",
-        "description" : "Sie müssen zuerst die Einstellung „Mein Ledger-Anbieter“ deaktivieren. Hierzu öffnen Sie in Ledger Live die Einstellungen, wählen „Experimentelle Features“ aus und deaktivieren dann die Option „Manager-Anbieter“.",
+        "description" : "Sie müssen zuerst die Einstellung „Mein Ledger-Anbieter“ deaktivieren. Hierzu öffnen Sie in Ledger Live die Einstellungen, wählen „Experimentelle Features“ aus und deaktivieren dann die Option „Anbieter in My Ledger“.",
         "settingsCta" : "Gehen Sie zu Einstellungen"
       }
     },
@@ -2813,7 +2823,7 @@
           "description" : "Zeige Entwickler- und Testnet-Apps im Manager."
         },
         "managerProvider" : {
-          "title" : "Manager-Anbieter",
+          "title" : "Anbieter in My Ledger",
           "description" : "Das Ändern des App-Anbieters im Manager kann es unmöglich machen, Apps auf Ihrem Ledger-Gerät zu installieren oder zu deinstallieren."
         },
         "experimentalExplorers" : {
@@ -3405,6 +3415,11 @@
     "walletConnect" : {
       "title" : "WalletConnect",
       "description" : "Verbinden Sie Ihre Wallet mit dApps"
+    },
+    "recover" : {
+      "title" : "Ledger Recover",
+      "description" : "Wallet-Wiederherstellung leicht gemacht",
+      "tag" : "1 Monat gratis"
     }
   },
   "signMessage" : {
@@ -3552,10 +3567,10 @@
     },
     "previousFeesInfo" : {
       "pendingTransactionFeesInfo" : "Informationen über ausstehende Transaktionsgebühren: ",
-      "networkfee" : "Netzwerkgebühr: {{amount}} {{unit}}",
-      "maxFee" : "Max Gebühr: {{amount}} Gwei",
-      "maxPriorityFee" : "Max. Prioritätsgebühr: {{amount}} Gwei",
-      "gasPrice" : "Gaspreis: {{amount}} Gwei"
+      "networkfee" : "Netzwerkgebühr: {{amount}}",
+      "maxFee" : "Maximale Gebühr: {{amount}}",
+      "maxPriorityFee" : "Maximale Prioritätsgebühr: {{amount}}",
+      "gasPrice" : "Gaspreis: {{amount}}"
     },
     "speedUp" : {
       "title" : "Beschleunigen",
@@ -3570,7 +3585,7 @@
       "notEnoughFundsToSpeedup" : "Die Beschleunigung der Transaktion ist nicht möglich, da Ihr Konto nicht genügend Guthaben aufweist.",
       "notlowestNonceToSpeedup" : "Die Funktion „Speed up“ (Beschleunigen) ist nicht verfügbar. Ihre Transaktion ist ausstehend, da eine vorherige Transaktion stecken geblieben ist. Sie können auf die Bestätigung der Transaktion warten, die Transaktion beschleunigen oder sie stornieren.",
       "TransactionHasBeenValidatedError" : {
-        "title" : "Kann nicht beschleunigt oder abgebrochen werden",
+        "title" : "Beschleunigung oder Stornierung nicht möglich",
         "description" : "Diese Transaktion wurde bereits validiert"
       }
     }
@@ -4036,7 +4051,7 @@
       "modalDesc" : "Bitte laden Sie Ledger Live auf Ihren Computer herunter, um die Geräte-Firmware zu aktualisieren.",
       "contactUs" : "Kontakt"
     },
-    "myApps" : "Meine Apps",
+    "myApps" : "Meine Blockchain-Apps",
     "token" : {
       "title" : "{{appName}} Token",
       "noAppNeeded" : "{{tokenName}} ist ein Token der die {{appName}} App verwendet. Es gibt keine App zu installieren.",
@@ -4141,10 +4156,10 @@
       "descriptionProductName" : "Tippen Sie hier, um Ihr {{productName}}-Gerät auf Betriebssystemversion {{firmwareVersion}} zu aktualisieren."
     },
     "title" : "Firmware aktualisieren",
-    "beginUpdate" : "Update starten",
+    "beginUpdate" : "Betriebssystem-Update starten",
     "updateDevice" : "Betriebssystem-Update für {{deviceName}}",
     "releaseNotesTitle" : "Was ist in diesem Betriebssystem-Update enthalten?",
-    "updateDone" : "Fertig! Ihr Gerät {{deviceName}} ist auf dem neuesten Stand",
+    "updateDone" : "Das Betriebssystem Ihres {{deviceName}}-Geräts ist jetzt auf dem neuesten Stand",
     "updateDoneDescription" : "Neue Betriebssystemversion: {{firmwareVersion}}",
     "preparing" : "Das Firmware-Update wird vorbereitet. Bitte stellen Sie sicher, dass Ihr Gerät während des Updates entsperrt und verbunden ist. Wir informieren Sie über den Fortschritt des Vorgangs.",
     "confirmIdentifierText" : "Vergewissern Sie sich, dass die Kennung auf Ihrem Gerät mit der unten stehenden Kennung übereinstimmt. Bestätigen Sie und geben Sie Ihren PIN-Code ein, wenn Sie dazu aufgefordert werden.",
@@ -4155,22 +4170,22 @@
     "finishUpdate" : "Schließen Sie das Update auf Ihrer {{deviceName}} ab",
     "identifierTitle" : "Kennung:",
     "pleaseWaitDownload" : "Bitte warten Sie, bis der Download des Installationsprogramms abgeschlossen ist",
-    "doNotLeaveLedgerLive" : "Verlassen Sie die Ledger Live-App nicht, bevor das Update abgeschlossen ist.",
+    "doNotLeaveLedgerLive" : "Bis zum Abschluss des Updates dürfen Sie diesen Bildschirm nicht verlassen.",
     "preparingDevice" : "Ihr Gerät wird vorbereitet",
     "pleaseWaitUpdate" : "Bitte warten Sie, bis das Update beendet ist",
     "viewUpdateChangelog" : "Update-Änderungsprotokoll anzeigen",
     "waitForFirmwareUpdate" : "Warten Sie, bis das Firmware-Update auf Ihrem Gerät abgeschlossen ist",
     "waitForInstallationToFinish" : "Warten Sie, bis die Installation auf Ihrem {{deviceName}} abgeschlossen ist",
     "staxBatteryLow" : "Ledger Stax Batterie zu schwach für Update",
-    "staxBatteryLowDescription" : "Damit Sie ein Betriebssystem-Update durchführen können, muss Ihr Ledger-Gerät einen Ladestand von mindestens 20 % aufweisen oder aufgeladen werden.",
-    "updateCancelled" : "Update wurde auf dem {{deviceName}} abgebrochen",
-    "updateCancelledDescription" : "Die Installation des BS-Updates {{newFirmwareVersion}} wurde auf dem {{deviceName}} abgelehnt. Wenn dies ein Fehler war, starten Sie das Update erneut",
-    "updateNotYetComplete" : "Update ist noch nicht vollständig",
-    "updateNotYetCompleteDescription" : "Wenn Sie das Update unterbrechen, werden Ihre Anwendungen, Ihre Sprache und das Bild auf dem Sperrbildschirm möglicherweise nicht korrekt wiederhergestellt.",
+    "staxBatteryLowDescription" : "Um das Betriebssystem-Update zu starten, muss Ihr Ledger Stax entweder einen Akkuladestand von mindestens 20 % aufweisen oder an das Ladegerät angeschlossen sein.",
+    "updateCancelled" : "Installation des Betriebssystem-Updates auf {{deviceName}} abgebrochen",
+    "updateCancelledDescription" : "Wenn dies irrtümlich geschehen ist, starten Sie das Update erneut.",
+    "updateNotYetComplete" : "Betriebssystem-Update in Bearbeitung",
+    "updateNotYetCompleteDescription" : "Wenn Sie das Update jetzt abbrechen, werden möglicherweise nicht alle Einstellungen und Apps korrekt wiederhergestellt.",
     "restartUpdate" : "BS-Update erneut starten",
-    "quitUpdate" : "Update verlassen",
-    "continueUpdate" : "Update fortsetzen",
-    "unlockDeviceToComplete" : "Geben Sie das {{deviceName}} frei, um die Installation abzuschließen",
+    "quitUpdate" : "Betriebssystem-Update abbrechen",
+    "continueUpdate" : "Betriebssystem-Update fortsetzen",
+    "unlockDeviceToComplete" : "Entsperren Sie Ihr {{deviceName}}-Gerät mit Ihrer PIN, um das Update abzuschließen.",
     "unlockDeviceWithPin" : "Entsperren Sie Ihr Gerät mit Ihrer PIN",
     "reinstallApps" : "Installieren Sie die Apps neu.",
     "currentVersionNumber" : "Aktuelle Version",
@@ -4198,14 +4213,14 @@
           "titlePreparingUpdate" : "Update wird für Installation vorbereitet",
           "description" : "Das Update wird an {{deviceName}} übertragen."
         },
-        "titleBackingUp" : "Apps und Einstellungen werden gesichert",
+        "titleBackingUp" : "Update wird für Installation vorbereitet",
         "titleTransferring" : "Update wird übertragen",
-        "description" : "Eine Sicherheitskopie Ihrer Konfiguration wird erstellt und das Update auf Ihr Gerät {{deviceName}} übertragen."
+        "description" : "Ihre Einstellungen und Apps werden gesichert. Das Update wird auf {{deviceName}} übertragen."
       },
       "installUpdate" : {
         "titleInactive" : "Update installieren",
         "titleActive" : "Installiert Update",
-        "description" : "{{deviceName}} wird mehrere Male neugestartet.\n\nNachdem die Installation auf Ihrem {{deviceName}} abgeschlossen ist, geben Sie Ihr Gerät frei, um die Installation zu beenden"
+        "description" : "{{deviceName}} wird mehrere Male neu gestartet.\n\nZum Fertigstellen des Updates entsperren Sie Ihr {{deviceName}}-Gerät mit Ihrer PIN, nachdem die Installation abgeschlossen wurde."
       },
       "restoreSettings" : {
         "earlySecurityCheck" : {
@@ -4216,18 +4231,18 @@
         "description" : "Ihre Einstellungen und Blockchain-Apps werden wiederhergestellt.",
         "restoreLockScreenPicture" : "Bild für Sperrbildschirm wird wiederhergestellt",
         "restoreLanguage" : "Sprache wird wiederhergestellt",
-        "imageLoadRequested" : "Wiederherstellung des Sperrbildschirmbildes auf {{deviceName}} erlauben",
-        "imageCommitRequested" : "Bestätigen Sie das Bild auf Ihrer {{deviceName}}",
-        "allowLanguageInstallation" : "Wiederherstellung der Sprache erlauben auf {{deviceName}}",
-        "allowAppsRestoration" : "Wiederherstellung der Apps erlauben auf {{deviceName}}",
+        "imageLoadRequested" : "Tippen Sie auf „Load picture“ (Bild laden), um das Sperrbildschirm-Bild wiederherzustellen",
+        "imageCommitRequested" : "Tap on “keep” to confirm your lock screen picture",
+        "allowLanguageInstallation" : "Tippen Sie auf „Allow“ (Erlauben), um die Sprache wiederherzustellen",
+        "allowAppsRestoration" : "Tippen Sie auf „Allow“ (Erlauben), um die Apps wiederherzustellen",
         "errors" : {
-          "description" : "Wenn dies irrtümlich geschehen ist, können Sie die Wiederherstellung neu starten oder aber diesen Schritt überspringen",
-          "LanguageInstallRefusedOnDevice" : "Die Sprachumstellung auf {{deviceName}} wurde abgebrochen",
-          "ImageLoadRefusedOnDevice" : "Die Wiederherstellung des Sperrbildschirmbildes auf {{deviceName}} wurde abgebrochen",
-          "ImageCommitRefusedOnDevice" : "Die Wiederherstellung des Sperrbildschirmbildes auf {{deviceName}} wurde abgebrochen",
-          "UserRefusedAllowManager" : "Die Wiederherstellung von Apps auf {{deviceName}} wurde abgebrochen"
+          "description" : "Im Falle eines Irrtums wiederholen Sie den Vorgang.",
+          "LanguageInstallRefusedOnDevice" : "Sprachwiederherstellung auf {{deviceName}} abgebrochen",
+          "ImageLoadRefusedOnDevice" : "Wiederherstellung des Sperrbildschirm-Bildes auf {{deviceName}} abgebrochen",
+          "ImageCommitRefusedOnDevice" : "Wiederherstellung des Sperrbildschirm-Bildes auf {{deviceName}} abgebrochen",
+          "UserRefusedAllowManager" : "Wiederherstellung von Apps auf {{deviceName}} abgebrochen"
         },
-        "installingApps" : "Apps werden wiederhergestellt"
+        "installingApps" : "Apps werden installiert"
       }
     },
     "newVersion" : "Update {{version}} steht für Ihre {{deviceName}} bereit",
@@ -4255,7 +4270,7 @@
         "description" : "Das Update konnte nicht abgeschlossen werden, weil wir die Verbindung zum {{deviceName}} verloren haben."
       },
       "CantOpenDevice" : {
-        "title" : "Entschuldigung, Verbindung fehlgeschlagen",
+        "title" : "Verbindung zum Ledger-Gerät getrennt",
         "description" : "Das Update konnte nicht abgeschlossen werden, da die Verbindung zu {{deviceName}} verloren gegangen ist."
       }
     }
@@ -6236,18 +6251,18 @@
     "chooseConstrast" : "Kontrast auswählen",
     "uploadAnotherImage" : "Ein weiteres Bild hochladen",
     "rotateImage" : "Drehen",
-    "allowPreview" : "Erlauben Sie das Laden eines Bildes im Sperrbildschirm auf Ihrem {{productName}}",
+    "allowPreview" : "Tippen Sie auf „Load picture“ (Bild laden), um den Sperrbildschirm anzupassen",
     "loadingPicture" : "Lade Daten...",
     "loadingPictureAlmostOver" : "Voilà!",
     "commitRequested" : "Gefällt Ihnen, was Sie sehen?\nBehalten Sie es!",
     "confirmPicture" : "Bestätigen auf {{productName}}",
     "landingPage" : {
-      "title" : "Irgendein NFT oder Foto auswählen.\nAnpassen.\nMachen Sie Ihren Ledger zu Ihrem Gerät.",
+      "title" : "Wählen Sie eine beliebige digitale Grafik oder ein Foto aus.\nPersonalisieren Sie Ihren Ledger Stax.\nDenn er gehört Ihnen.",
       "choosePicture" : "Wählen Sie ein Bild aus"
     },
     "confirmCrop" : "Ausschnitt bestätigen",
     "confirmContrast" : "Kontrast bestätigen",
-    "nftEntryPointButtonLabel" : "Als Sperrbildschirm für das Ledger Stax festlegen",
+    "nftEntryPointButtonLabel" : "Als Bild für den Ledger Stax Sperrbildschirm festlegen",
     "customImage" : "Benutzerdefiniertes Bild",
     "doThisLater" : "Vielleicht später",
     "preview" : {
@@ -6281,7 +6296,7 @@
   },
   "postOnboarding" : {
     "hub" : {
-      "title" : "Als nächstes nutzen Sie Ihr {{productName}} und...",
+      "title" : "Danach haben Sie bei Ihrem {{productName}}-Gerät folgende Möglichkeiten:",
       "allDoneTitle" : "und das ist alles!",
       "skip" : "Ich mache das später",
       "viewWallet" : "Meine Wallet anzeigen"
@@ -6293,9 +6308,9 @@
     },
     "actions" : {
       "customImage" : {
-        "title" : "Passen Sie den Sperrbildschirm an",
-        "titleCompleted" : "Sperrbildschirm angepasst",
-        "description" : "Wählen Sie ein beliebiges NFT oder Bild, das Sie als Sperrbildschirm Ihres Ledger Stax festlegen möchten.",
+        "title" : "Sperrbildschirm-Bild festlegen",
+        "titleCompleted" : "Sperrbildschirm-Bild festgelegt",
+        "description" : "Wählen Sie eine beliebige digitale Grafik oder ein Bild für den Sperrbildschirm aus.",
         "popupLabel" : "Sperrbildschirm festgelegt"
       },
       "claimNft" : {
@@ -6308,7 +6323,7 @@
       "assetsTransfer" : {
         "title" : "Übertragen Sie Ihre Vermögenswerte in Ihr Ledger",
         "titleCompleted" : "Vermögenswerte in Ihr Ledger übertragen",
-        "description" : "Übertragung von jeder Krypto-Börse oder Wallet.",
+        "description" : "Übertragen Sie Vermögenswerte ganz einfach von Coinbase oder einer anderen Börse oder von einer Wallet.",
         "popupLabel" : "Vermögenswerte übertragen"
       }
     }
@@ -6337,8 +6352,8 @@
         "button" : "Filter zurücksetzen"
       },
       "empty" : {
-        "title" : "Noch keine NFTs zu zeigen",
-        "subtitle" : "Fangen Sie an, indem Sie Ihr erstes NFT erhalten.",
+        "title" : "Es können noch keine NFTs angezeigt werden",
+        "subtitle" : "Fügen Sie NFTs zu Ihrer Wallet hinzu, um loszulegen.",
         "receive" : "NFT erhalten",
         "supportLink" : "Wie erhalten Sie NFTs von anderen Wallets?"
       },
@@ -6365,6 +6380,12 @@
   "servicesWidget" : {
     "title" : "Services",
     "subTitle" : "Ihre Ledger-Dienste verwalten",
+    "signIn" : "Anmelden",
+    "recover" : {
+      "cta" : "Starten Sie Ihre kostenlose Testphase",
+      "desc" : "Machen Sie sich nie wieder Sorgen, den Zugang zu Ihrer Wallet zu verlieren.",
+      "tag" : "1 Monat gratis"
+    },
     "protect" : {
       "status" : {
         "new" : {
