@@ -1,4 +1,7 @@
 {
+  "buyCurrency" : {
+    "buyCTA" : "Comprar {{ currencyNameOrTicker }}"
+  },
   "common" : {
     "cancel" : "Cancelar",
     "apply" : "Aplicar",
@@ -86,7 +89,6 @@
     },
     "seeMore" : "Ver más",
     "moreInfo" : "Más información",
-    "buyEth" : "Comprar Ethereum",
     "popular" : "popular",
     "getSupport" : "Obtener ayuda",
     "comingSoon" : "Próximamente",
@@ -98,6 +100,10 @@
     }
   },
   "errors" : {
+    "ReplacementTransactionUnderpriced" : {
+      "title" : "El precio de la transacción de sustitución es más bajo",
+      "description" : "La tarifa de red debe ser al menos un 10% mayor que la tarifa de la transacción original."
+    },
     "countervaluesUnavailable" : {
       "title" : "No es posible ofrecerte una contraparte para este activo en este momento"
     },
@@ -322,18 +328,18 @@
       "description" : "Inténtalo de nuevo. Si el problema persiste, guarda los registros con el botón que aparece a continuación y envíalos al Soporte de Ledger."
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "Pantalla de bloqueo cancelada en Ledger Stax",
+      "title" : "Imagen de pantalla de bloqueo descartada en Ledger Stax",
       "description" : "Si la imagen no era la adecuada, puedes intentarlo de nuevo con una diferente.",
       "primaryCTA" : "Cargar otra imagen"
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "Pantalla de bloqueo cancelada en Ledger Stax",
+      "title" : "Carga de imagen de pantalla de bloqueo cancelada en Ledger Stax",
       "description" : "Si la imagen no era la adecuada, puedes intentarlo de nuevo con una diferente.",
       "primaryCTA" : "Cargar otra imagen"
     },
     "ImageDoesNotExistOnDevice" : {
-      "title" : "Tu Ledger Stax no tiene una imagen de pantalla de bloqueo que quitar",
-      "description" : "La imagen de pantalla de bloqueo personalizada ya se ha quitado."
+      "title" : "Sin imagen de pantalla de bloqueo",
+      "description" : "La imagen de pantalla de bloqueo había sido eliminada."
     },
     "InvalidAddress" : {
       "title" : "Esta no es una dirección de {{currencyName}} válida"
@@ -427,6 +433,10 @@
     "NetworkDown" : {
       "title" : "Parece que no hay conexión a Internet",
       "description" : "Comprueba tu conexión a Internet."
+    },
+    "NetworkError" : {
+      "title" : "Se ha producido un error de red",
+      "description" : "Inténtalo de nuevo más tarde"
     },
     "NoAddressesFound" : {
       "title" : "No se encontró ninguna cuenta",
@@ -776,8 +786,8 @@
       "description" : "Vuelve a intentarlo con otra imagen"
     },
     "ImageDownloadError" : {
-      "title" : "Error al descargar la imagen",
-      "description" : "Vuelve a intentarlo con otra imagen"
+      "title" : "Error de descarga de imagen",
+      "description" : "Inténtalo de nuevo con otra imagen."
     },
     "NFTMetadataLoadingError" : {
       "title" : "Problema de carga de los metadatos del NFT",
@@ -788,24 +798,24 @@
       "description" : "Inténtalo de nuevo con otra imagen."
     },
     "ImageTooLargeError" : {
-      "title" : "Imagen demasiado grande",
-      "description" : "Vuelve a intentarlo con una imagen más pequeña"
+      "title" : "La imagen es demasiado grande",
+      "description" : "Cambia el tamaño de la imagen o comprime la imagen e inténtalo de nuevo, o carga una imagen más pequeña."
     },
     "ImageCropError" : {
-      "title" : "Error al recortar la imagen",
-      "description" : "Vuelve a intentarlo con otra imagen"
+      "title" : "Error al recortar imagen",
+      "description" : "Inténtalo de nuevo con otra imagen."
     },
     "ImageResizeError" : {
-      "title" : "Error al cambiar el tamaño de la imagen",
-      "description" : "Vuelve a intentarlo con otra imagen"
+      "title" : "Error al cambiar tamaño de imagen",
+      "description" : "Inténtalo de nuevo con otra imagen."
     },
     "ImagePreviewError" : {
-      "title" : "Error al previsualizar la imagen",
-      "description" : "Vuelve a intentarlo con otra imagen"
+      "title" : "Error al cargar vista previa",
+      "description" : "Inténtalo de nuevo con otra imagen."
     },
     "ImageProcessingError" : {
-      "title" : "Error al procesar la imagen",
-      "description" : "Vuelve a intentarlo con otra imagen"
+      "title" : "Error al procesar imagen",
+      "description" : "Inténtalo de nuevo con otra imagen."
     },
     "HederaAddAccountError" : {
       "title" : "Tu cuenta no ha sido agregada. Inténtalo de nuevo."
@@ -1930,7 +1940,7 @@
       "cancelCta" : "Cancelar configuración",
       "notFoundEntity" : {
         "title" : "Iniciar Verificación de Autenticidad de nuevo",
-        "description" : "Primero tienes que desactivar el ajuste \"My Ledger Provider\" (Mi proveedor de Ledger). Para desactivarlo, abre los \"Ajustes\" de Ledger Live, selecciona \"Funciones experimentales\" y desactiva \"Proveedor de Manager\".",
+        "description" : "Primero tienes que desactivar el ajuste \"My Ledger Provider\" (Mi proveedor de Ledger). Para desactivarlo, abre los \"Ajustes\" de Ledger Live, selecciona \"Funciones experimentales\" y desactiva \"Mi proveedor de Ledger\".",
         "settingsCta" : "Ir a Ajustes"
       }
     },
@@ -2813,7 +2823,7 @@
           "description" : "Mostrar aplicaciones de desarrollador y testnet en el Manager."
         },
         "managerProvider" : {
-          "title" : "Proveedor de Manager",
+          "title" : "Proveedor de Mi Ledger",
           "description" : "Cambiar el proveedor de aplicaciones en el Manager puede imposibilitar la instalación o desinstalación de aplicaciones en tu dispositivo Ledger."
         },
         "experimentalExplorers" : {
@@ -3405,6 +3415,11 @@
     "walletConnect" : {
       "title" : "WalletConnect",
       "description" : "Conecta tu billetera a dApps"
+    },
+    "recover" : {
+      "title" : "Ledger Recover",
+      "description" : "Fácil recuperación de billeteras",
+      "tag" : "Un mes gratis"
     }
   },
   "signMessage" : {
@@ -3552,10 +3567,10 @@
     },
     "previousFeesInfo" : {
       "pendingTransactionFeesInfo" : "Información sobre las tarifas de transacciones pendientes: ",
-      "networkfee" : "Tarifa de red = {{amount}} {{unit}}",
-      "maxFee" : "Tarifa máxima = {{amount}} Gweis",
-      "maxPriorityFee" : "Tarifa de prioridad máxima = {{amount}} Gweis",
-      "gasPrice" : "Precio del gas = {{amount}} Gweis"
+      "networkfee" : "Tarifa de red = {{amount}}",
+      "maxFee" : "Tarifa máxima = {{amount}}",
+      "maxPriorityFee" : "Tarifa de prioridad máxima = {{amount}}",
+      "gasPrice" : "Precio del gas = {{amount}}"
     },
     "speedUp" : {
       "title" : "Acelerar",
@@ -3570,7 +3585,7 @@
       "notEnoughFundsToSpeedup" : "La aceleración de la transacción no está disponible porque no tienes fondos suficientes en tu cuenta.",
       "notlowestNonceToSpeedup" : "La función de aceleración no está disponible. Tu transacción está pendiente porque hay una transacción anterior atascada. Puedes esperar a que se confirme, acelerarla o cancelarla.",
       "TransactionHasBeenValidatedError" : {
-        "title" : "No es posible acelerarla ni cancelarla",
+        "title" : "No se puede acelerar ni cancelar",
         "description" : "Esta transacción ya se ha validado"
       }
     }
@@ -4036,7 +4051,7 @@
       "modalDesc" : "Descarga Ledger Live en tu PC para actualizar el firmware del dispositivo.",
       "contactUs" : "Contacto"
     },
-    "myApps" : "Mis aplicaciones",
+    "myApps" : "Mis aplicaciones de cadena de bloques",
     "token" : {
       "title" : "{{appName}} tokens",
       "noAppNeeded" : "{{tokenName}} es un token que utiliza la aplicación {{appName}}. No hay ninguna aplicación a instalar.",
@@ -4141,10 +4156,10 @@
       "descriptionProductName" : "Toca para actualizar tu {{productName}} a la versión {{firmwareVersion}} del SO."
     },
     "title" : "Actualizar firmware",
-    "beginUpdate" : "Comenzar actualización",
+    "beginUpdate" : "Iniciar actualización del SO",
     "updateDevice" : "Actualización de SO de {{deviceName}}",
     "releaseNotesTitle" : "¿Qué incluye la actualización del SO?",
-    "updateDone" : "¡Listo! Tu {{deviceName}} se ha actualizado",
+    "updateDone" : "El SO de tu {{deviceName}} está actualizado",
     "updateDoneDescription" : "Nueva versión del sistema operativo: {{firmwareVersion}}",
     "preparing" : "Preparando la actualización de firmware. No desconectes ni dejes entrar en suspensión a tu dispositivo. Te informaremos del progreso",
     "confirmIdentifierText" : "Comprueba que el identificador de tu dispositivo coincida con el identificador a continuación. Confirma e introduce tu código PIN, si así lo indica la aplicación.",
@@ -4155,22 +4170,22 @@
     "finishUpdate" : "Finaliza la actualización en tu {{deviceName}}",
     "identifierTitle" : "Identificador:",
     "pleaseWaitDownload" : "Espera a que se descargue el instalador",
-    "doNotLeaveLedgerLive" : "No cierres la aplicación Ledger Live hasta que finalice la actualización.",
+    "doNotLeaveLedgerLive" : "Sigue en esta pantalla hasta que se complete la actualización.",
     "preparingDevice" : "Preparando tu dispositivo",
     "pleaseWaitUpdate" : "Espera a que finalice la actualización",
     "viewUpdateChangelog" : "Ver registro de cambios de la actualización",
     "waitForFirmwareUpdate" : "Espera a que finalice la actualización de firmware en tu dispositivo",
     "waitForInstallationToFinish" : "Espera a que finalice la instalación en {{deviceName}}",
     "staxBatteryLow" : "Ledger Stax no tiene suficiente batería para realizar la actualización",
-    "staxBatteryLowDescription" : "Para actualizar el SO, tu dispositivo Ledger debe estar, como mínimo, al 20% de carga o en carga.",
-    "updateCancelled" : "Se ha cancelado la actualización en {{deviceName}}",
-    "updateCancelledDescription" : "Se ha rechazado la instalación de la actualización del SO {{newFirmwareVersion}} en {{deviceName}}. Si se trata de un error, vuelve a iniciar la actualización",
-    "updateNotYetComplete" : "La actualización no ha finalizado todavía",
-    "updateNotYetCompleteDescription" : "Si interrumpes la actualización, es posible que no puedas restaurar correctamente las aplicaciones, el idioma y la imagen de pantalla de bloqueo.",
+    "staxBatteryLowDescription" : "Para iniciar la actualización del SO, necesitas una carga mínima del 20% o mantener tu Ledger Stax cargando.",
+    "updateCancelled" : "Instalación de actualización de SO cancelada en {{deviceName}}",
+    "updateCancelledDescription" : "Si se trata de un error, vuelve a iniciar la actualización.",
+    "updateNotYetComplete" : "La actualización del SO está en curso",
+    "updateNotYetCompleteDescription" : "Si cancelas la actualización ahora, tus ajustes y aplicaciones podrían no restaurarse correctamente.",
     "restartUpdate" : "Reiniciar actualización de SO",
-    "quitUpdate" : "Cerrar actualización",
-    "continueUpdate" : "Continuar con la actualización",
-    "unlockDeviceToComplete" : "Desbloquear {{deviceName}} para finalizar la instalación",
+    "quitUpdate" : "Cancelar actualización del SO",
+    "continueUpdate" : "Continuar con actualización del SO",
+    "unlockDeviceToComplete" : "Desbloquea {{deviceName}} con tu PIN para terminar la actualización.",
     "unlockDeviceWithPin" : "Desbloquea tu dispositivo con el PIN",
     "reinstallApps" : "Vuelve a instalar las aplicaciones.",
     "currentVersionNumber" : "Versión actual",
@@ -4198,14 +4213,14 @@
           "titlePreparingUpdate" : "Preparando actualización para instalar",
           "description" : "Transfiriendo la actualización a {{deviceName}}."
         },
-        "titleBackingUp" : "Haciendo copia de respaldo de aplicaciones y ajustes",
+        "titleBackingUp" : "Preparando actualización para instalar",
         "titleTransferring" : "Transfiriendo actualización",
-        "description" : "Estamos haciendo una copia de seguridad de la configuración y transfiriendo la actualización a {{deviceName}}."
+        "description" : "Copia de seguridad de tus ajustes y tus aplicaciones. Transfiriendo la actualización a {{deviceName}}."
       },
       "installUpdate" : {
         "titleInactive" : "Instalar actualización",
         "titleActive" : "Instalando actualización",
-        "description" : "{{deviceName}} se reiniciará varias veces.\n\nUna vez que finalice la instalación en {{deviceName}}, desbloquea el dispositivo para finalizar la instalación"
+        "description" : "{{deviceName}} se reiniciará varias veces.\n\nPara completar la actualización, desbloquea {{deviceName}} con tu PIN cuando finalice la instalación."
       },
       "restoreSettings" : {
         "earlySecurityCheck" : {
@@ -4216,18 +4231,18 @@
         "description" : "Los ajustes y las aplicaciones de cadena de bloques se restaurarán.",
         "restoreLockScreenPicture" : "Restaurando imagen de pantalla de bloqueo",
         "restoreLanguage" : "Restaurando idioma",
-        "imageLoadRequested" : "Permitir la restauración de la imagen de pantalla de bloqueo en {{deviceName}}",
-        "imageCommitRequested" : "Confirma la imagen en tu {{deviceName}}",
-        "allowLanguageInstallation" : "Permitir la restauración del idioma en {{deviceName}}",
-        "allowAppsRestoration" : "Permitir la restauración de la aplicación en {{deviceName}}",
+        "imageLoadRequested" : "Toca “Cargar imagen” para restaurar la imagen de pantalla de bloqueo",
+        "imageCommitRequested" : "Tap on “keep” to confirm your lock screen picture",
+        "allowLanguageInstallation" : "Toca “Permitir” para restaurar el idioma",
+        "allowAppsRestoration" : "Toca “Permitir” para restaurar las aplicaciones",
         "errors" : {
-          "description" : "Si ha sido un error, puedes intentar la restauración de nuevo u omitir este paso.",
-          "LanguageInstallRefusedOnDevice" : "Cambio de idioma cancelado en {{deviceName}}",
-          "ImageLoadRefusedOnDevice" : "La restauración de la imagen de pantalla de bloqueo se canceló en {{deviceName}}",
-          "ImageCommitRefusedOnDevice" : "La restauración de la imagen de pantalla de bloqueo se canceló en {{deviceName}}",
-          "UserRefusedAllowManager" : "La restauración de aplicaciones se canceló en {{deviceName}}"
+          "description" : "Si hubo un error, inténtalo de nuevo.",
+          "LanguageInstallRefusedOnDevice" : "Restauración de idioma cancelada en {{deviceName}}",
+          "ImageLoadRefusedOnDevice" : "Restauración de imagen de pantalla de bloqueo cancelada en {{deviceName}}",
+          "ImageCommitRefusedOnDevice" : "Restauración de imagen de pantalla de bloqueo cancelada en {{deviceName}}",
+          "UserRefusedAllowManager" : "Restauración de aplicaciones cancelada en {{deviceName}}"
         },
-        "installingApps" : "Restaurando aplicaciones"
+        "installingApps" : "Instalando aplicaciones"
       }
     },
     "newVersion" : "Actualización {{version}} disponible para {{deviceName}}",
@@ -4255,7 +4270,7 @@
         "description" : "No ha sido posible finalizar la actualización porque hemos perdido la conexión con {{deviceName}}"
       },
       "CantOpenDevice" : {
-        "title" : "La conexión ha fallado",
+        "title" : "Se ha perdido la conexión al dispositivo Ledger",
         "description" : "No ha sido posible finalizar la actualización porque hemos perdido la conexión con {{deviceName}}."
       }
     }
@@ -6236,18 +6251,18 @@
     "chooseConstrast" : "Elegir contraste",
     "uploadAnotherImage" : "Cargar otra imagen",
     "rotateImage" : "Girar",
-    "allowPreview" : "Permite que la imagen de la pantalla de bloqueo se cargue en tu {{productName}}",
+    "allowPreview" : "Toca “Cargar imagen” para personalizar la pantalla de bloqueo.",
     "loadingPicture" : "Cargando...",
     "loadingPictureAlmostOver" : "¡Voilà!",
     "commitRequested" : "¿Te gusta lo que ves?\n¡Pues consérvalo!",
     "confirmPicture" : "Confirmar en {{productName}}",
     "landingPage" : {
-      "title" : "Elige cualquier NFT o foto.\nPersonalízalo.\nHaz tuyo tu Ledger.",
+      "title" : "Elige cualquier ejemplo de arte digital o foto.\nPersonaliza tu Ledger Stax.\nHazlo tuyo.",
       "choosePicture" : "Elige una imagen"
     },
     "confirmCrop" : "Confirmar recorte",
     "confirmContrast" : "Confirmar contraste",
-    "nftEntryPointButtonLabel" : "Definir como pantalla de bloqueo del Ledger Stax",
+    "nftEntryPointButtonLabel" : "Establecer como imagen de la pantalla de bloqueo del Ledger Stax",
     "customImage" : "Imagen personalizada",
     "doThisLater" : "Quizás más tarde",
     "preview" : {
@@ -6281,7 +6296,7 @@
   },
   "postOnboarding" : {
     "hub" : {
-      "title" : "A continuación, usa tu {{productName}} para...",
+      "title" : "A continuación, usa tu {{productName}} para:",
       "allDoneTitle" : "¡y eso es todo!",
       "skip" : "Lo haré más tarde",
       "viewWallet" : "Ver mi billetera"
@@ -6293,9 +6308,9 @@
     },
     "actions" : {
       "customImage" : {
-        "title" : "Personalizar la pantalla de bloqueo",
-        "titleCompleted" : "Pantalla de bloqueo personalizada",
-        "description" : "Elige el NFT o la imagen que quieres usar como pantalla de bloqueo de tu Ledger Stax.",
+        "title" : "Seleccionar una imagen de pantalla de bloqueo",
+        "titleCompleted" : "Imagen de pantalla de bloqueo seleccionada",
+        "description" : "Elige cualquier ejemplo de arte digital o imagen como pantalla de bloqueo.",
         "popupLabel" : "Pantalla de bloqueo establecida"
       },
       "claimNft" : {
@@ -6308,7 +6323,7 @@
       "assetsTransfer" : {
         "title" : "Transferir tus activos al Ledger",
         "titleCompleted" : "Activos transferidos al Ledger",
-        "description" : "Transfiere desde cualquier otro exchange o billetera.",
+        "description" : "Transfiere fácilmente activos desde Coinbase o cualquier otro exchange o billetera.",
         "popupLabel" : "Activos transferidos"
       }
     }
@@ -6338,7 +6353,7 @@
       },
       "empty" : {
         "title" : "Todavía no hay NFTs para mostrar",
-        "subtitle" : "Recibe tu primer NFT para comenzar",
+        "subtitle" : "Empieza agregando NFTs a tu billetera.",
         "receive" : "Recibir NFTs",
         "supportLink" : "¿Cómo recibir NFTs de otras billeteras?"
       },
@@ -6365,6 +6380,12 @@
   "servicesWidget" : {
     "title" : "Servicios",
     "subTitle" : "Gestiona tus servicios de Ledger",
+    "signIn" : "Iniciar sesión",
+    "recover" : {
+      "cta" : "Comienza tu prueba gratuita",
+      "desc" : "Deja de preocuparte de perder el acceso a tu billetera.",
+      "tag" : "1 mes gratis"
+    },
     "protect" : {
       "status" : {
         "new" : {
