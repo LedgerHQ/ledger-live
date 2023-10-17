@@ -9,7 +9,7 @@ import { TransactionRefusedOnDevice } from "../../errors";
 import perFamily from "../../generated/exchange";
 import { withDevice } from "../../hw/deviceAccess";
 import { delay } from "../../promise";
-import ExchangeTransport, { getExchageErrorMessage } from "@ledgerhq/hw-app-exchange";
+import { createExchange, getExchangeErrorMessage } from "@ledgerhq/hw-app-exchange";
 import type { CompleteExchangeInputSwap, CompleteExchangeRequestEvent } from "../platform/types";
 import { getProviderConfig } from "./";
 
@@ -44,7 +44,7 @@ function convertTransportError(
 ): SwapCompleteExchangeError | unknown {
   if (err instanceof TransportStatusError) {
     // @ts-expect-error TransportStatusError to be typed on ledgerjs
-    const errorMessage = getExchageErrorMessage(err.statusCode);
+    const errorMessage = getExchangeErrorMessage(err.statusCode);
     return new SwapCompleteExchangeError(step, errorMessage);
   }
   return err;
@@ -68,7 +68,11 @@ const completeExchange = (
     const confirmExchange = async () => {
       await withDevicePromise(deviceId, async transport => {
         const providerConfig = getProviderConfig(provider);
-        const exchange = new ExchangeTransport(transport, exchangeType, rateType);
+        if (providerConfig.type !== "CEX") {
+          throw new Error(`Unsupported provider type ${providerConfig.type}`);
+        }
+
+        const exchange = createExchange(transport, exchangeType, rateType, providerConfig.version);
         const refundAccount = getMainAccount(fromAccount, fromParentAccount);
         const payoutAccount = getMainAccount(toAccount, toParentAccount);
         const accountBridge = getAccountBridge(refundAccount);
@@ -94,10 +98,6 @@ const completeExchange = (
 
         const errorsKeys = Object.keys(errors);
         if (errorsKeys.length > 0) throw errors[errorsKeys[0]]; // throw the first error
-
-        if (providerConfig.type !== "CEX") {
-          throw new Error(`Unsupported provider type ${providerConfig.type}`);
-        }
 
         currentStep = "SET_PARTNER_KEY";
         await exchange.setPartnerKey(convertToAppExchangePartnerKey(providerConfig));

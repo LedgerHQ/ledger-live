@@ -89,6 +89,24 @@ const swapProviders: Record<string, ProviderConfig> = {
     needsBearerToken: false,
     type: "CEX",
   },
+  moonpay: {
+    name: "moonpay",
+    publicKey: {
+      curve: "secp256k1",
+      data: Buffer.from(
+        "04b2779a60948b55963f86e62cd018d131a02f40d843baeadf356dbc7fe8294bc6a0127c6684693e83c8221cdee13d05fd078d9b68f3f4816e6274f1d5a9ead70e",
+        "hex",
+      ),
+    },
+    signature: Buffer.from(
+      "304402206fc56b6dd1428418d1c93807e8bf36ca4179cfd2f427adf69b065aabbe8335920220067080466d9fc3a6b86d6c0ddb84ef96b6e02efb4aea64158a5f05277bea4bdf",
+      "hex",
+    ),
+    needsKYC: false,
+    needsBearerToken: false,
+    type: "CEX",
+    version: 2,
+  },
   oneinch: {
     type: "DEX",
     needsKYC: false,

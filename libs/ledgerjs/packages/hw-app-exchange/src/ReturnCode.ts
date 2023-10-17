@@ -21,7 +21,7 @@ export const ErrorStatus = {
   SIGN_VERIFICATION_FAIL: 0x9d1a,
 } as const;
 
-export function getExchageErrorMessage(errorCode: number): string | undefined {
+export function getExchangeErrorMessage(errorCode: number): string | undefined {
   switch (errorCode) {
     case ErrorStatus.INCORRECT_COMMAND_DATA:
       return "Incorrect command data";
