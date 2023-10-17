@@ -1,4 +1,7 @@
 {
+  "buyCurrency" : {
+    "buyCTA" : "{{ currencyNameOrTicker }} satın al"
+  },
   "common" : {
     "cancel" : "İptal et",
     "apply" : "Uygula",
@@ -86,7 +89,6 @@
     },
     "seeMore" : "Daha fazla gör",
     "moreInfo" : "Daha fazla bilgi",
-    "buyEth" : "Ethereum Satın Al",
     "popular" : "popüler",
     "getSupport" : "Destek alın",
     "comingSoon" : "Çok yakında",
@@ -98,6 +100,10 @@
     }
   },
   "errors" : {
+    "ReplacementTransactionUnderpriced" : {
+      "title" : "Yeni işlemin ücreti düşük",
+      "description" : "Ağ ücreti, ilk işlemin ücretinden en az %10 daha yüksek olmalıdır."
+    },
     "countervaluesUnavailable" : {
       "title" : "Şu anda bu varlık için bir karşı değer sağlayamıyoruz"
     },
@@ -322,18 +328,18 @@
       "description" : "Lütfen tekrar deneyin. Sorun devam ederse, lütfen aşağıdaki butonu kullanarak loglarınızı kaydedin ve Ledger Destek'e gönderin."
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "Kilitli ekran, Ledger Stax'te iptal edildi",
+      "title" : "Ledger Stax'te kilitli ekran resmi silindi",
       "description" : "Bu resim uygun olmadıysa başka bir resim seçerek tekrar deneyebilirsiniz.",
       "primaryCTA" : "Başka bir resim yükleyin"
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "Kilitli ekran, Ledger Stax'te iptal edildi",
+      "title" : "Ledger Stax'te kilitli ekran resmi yüklemesi iptal edildi",
       "description" : "Bu resim uygun olmadıysa başka bir resim seçerek tekrar deneyebilirsiniz.",
       "primaryCTA" : "Başka bir resim yükleyin"
     },
     "ImageDoesNotExistOnDevice" : {
-      "title" : "Ledger Stax'inizde kaldırılacak kilitli ekran resmi yok",
-      "description" : "Özelleştirilmiş kilitli ekran resmi önceden kaldırılmış."
+      "title" : "Kilitli ekran resmi yok",
+      "description" : "Kilitli ekran resmi daha önce silinmiş."
     },
     "InvalidAddress" : {
       "title" : "Bu geçerli bir {{currencyName}} adresi değil"
@@ -427,6 +433,10 @@
     "NetworkDown" : {
       "title" : "Üzgünüz, internet bağlantısı görünmüyor",
       "description" : "Lütfen internet bağlantınızı kontrol edin."
+    },
+    "NetworkError" : {
+      "title" : "Bir ağ hatası oluştu",
+      "description" : "Lütfen daha sonra tekrar deneyin"
     },
     "NoAddressesFound" : {
       "title" : "Üzgünüz, hesap bulunamadı",
@@ -776,8 +786,8 @@
       "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
     },
     "ImageDownloadError" : {
-      "title" : "Görüntü indirilemedi",
-      "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
+      "title" : "Resim indirilemedi",
+      "description" : "Farklı bir resimle tekrar deneyin."
     },
     "NFTMetadataLoadingError" : {
       "title" : "NFT metaverileri yüklenirken sorun oluştu",
@@ -788,24 +798,24 @@
       "description" : "Farklı bir resimle tekrar deneyin."
     },
     "ImageTooLargeError" : {
-      "title" : "Görüntü çok büyük",
-      "description" : "Lütfen daha küçük bir görüntü seçmeyi deneyin"
+      "title" : "Resim çok büyük",
+      "description" : "Resmi yeniden boyutlandırdıktan veya sıkıştırdıktan sonra tekrar deneyin ya da daha küçük bir resim yükleyin."
     },
     "ImageCropError" : {
-      "title" : "Görüntü kırpılamadı",
-      "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
+      "title" : "Resim kırpılamadı",
+      "description" : "Farklı bir resimle tekrar deneyin."
     },
     "ImageResizeError" : {
-      "title" : "Görüntü yeniden boyutlandırılamadı",
-      "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
+      "title" : "Resim yeniden boyutlandırılamadı",
+      "description" : "Farklı bir resimle tekrar deneyin."
     },
     "ImagePreviewError" : {
-      "title" : "Görüntü ön izlemesi yapılamadı",
-      "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
+      "title" : "Ön izleme yüklenemedi",
+      "description" : "Farklı bir resimle tekrar deneyin."
     },
     "ImageProcessingError" : {
-      "title" : "Görüntü işlenemedi",
-      "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
+      "title" : "Resim işleme hatası",
+      "description" : "Farklı bir resimle tekrar deneyin."
     },
     "HederaAddAccountError" : {
       "title" : "Hesabınız eklenemedi. Lütfen tekrar deneyin."
@@ -906,9 +916,9 @@
     },
     "camera" : {
       "title" : "Kamera izni",
-      "authorizeDescription" : "QR kodlarını taramak için lütfen Kameraya erişim izni verin.",
+      "authorizeDescription" : "Karekodları okutmak için lütfen Kameraya erişim izni verin.",
       "authorizeButtonTitle" : "İzin ver",
-      "goToSettingsDescription" : "QR kodlarını taramak için lütfen Ayarlar kısmından Kameraya erişim izni verin.",
+      "goToSettingsDescription" : "Karekodları okutmak için lütfen Ayarlar kısmından Kameraya erişim izni verin.",
       "goToSettingsButtonTitle" : "Ayarlara git"
     }
   },
@@ -1584,13 +1594,13 @@
           "label" : "Seçmek için iki tuşa aynı anda basın."
         },
         "1" : {
-          "title" : "“Ledger Recover kullanarak geri yükle” seçimini yapın",
+          "title" : "“Restore using Ledger Recover” (Ledger Recover kullanarak geri yükle) seçimini yapın",
           "label" : "Seçmek için iki tuşa aynı anda basın."
         }
       },
       "nextStep" : "Devam",
       "extraInfo" : {
-        "tooltip" : "“Ledger Recover kullanarak geri yükle” seçeneği yok",
+        "tooltip" : "“Restore using Ledger Recover” (Ledger Recover kullanarak geri yükle) seçeneği yok",
         "title" : "Ledger Nano X cihazındaki işletim sisteminin güncellenmesi gerekiyor",
         "desc" : "İşletim sistemini güncellemeyi deneyebilir veya yardım almak için Ledger Destek ile iletişime geçebilirsiniz.",
         "cta" : "Güncelleme yönergeleri",
@@ -1930,7 +1940,7 @@
       "cancelCta" : "Kurulumu iptal et",
       "notFoundEntity" : {
         "title" : "Orijinallik Denetimini tekrar başlatın",
-        "description" : "İlk önce \"My Ledger Sağlayıcım\" ayarını devre dışı bırakmanız gerekmektedir. Bunu devre dışı bırakmak için Ledger Live'da \"Ayarlar\"ı açın, \"Deneysel özellikler\"i seçin ve \"Yönetici sağlayıcısı\" ayarını kapalı hâle getirin.",
+        "description" : "İlk önce \"My Ledger Sağlayıcım\" ayarını devre dışı bırakmanız gerekmektedir. Bunu devre dışı bırakmak için Ledger Live'da \"Ayarlar\"ı açın, \"Deneysel özellikler\"i seçin ve \"My Ledger sağlayıcısı\" ayarını kapalı hâle getirin.",
         "settingsCta" : "Ayarlara git"
       }
     },
@@ -2464,7 +2474,7 @@
         "instructions" : {
           "line1" : "Ledger Live Masaüstü sürümünü açın.",
           "line2" : "Ayarlar > Hesaplar > Hesapları dışa aktar",
-          "line3" : "Yükleyici %100 olana kadar QR kodunu tarayın."
+          "line3" : "Yükleyici %100 olana kadar karekodu tarayın."
         },
         "hodl" : "Tarama işlemi tamamlanana kadar tutun."
       },
@@ -2813,7 +2823,7 @@
           "description" : "Yönetici sayfasında geliştirici ve testnet uygulamalarını gösterir."
         },
         "managerProvider" : {
-          "title" : "Yönetici sağlayıcısı",
+          "title" : "My Ledger sağlayıcısı",
           "description" : "Yönetici'de uygulama sağlayıcısını değiştirmek, Ledger cihazınıza uygulama yüklemeyi veya kaldırmayı imkansız hale getirebilir."
         },
         "experimentalExplorers" : {
@@ -3405,6 +3415,11 @@
     "walletConnect" : {
       "title" : "WalletConnect",
       "description" : "Cüzdanınızı dApp'lere bağlayın"
+    },
+    "recover" : {
+      "title" : "Ledger Recover",
+      "description" : "Cüzdan kurtarmak artık çok kolay",
+      "tag" : "Bir ay ücretsiz"
     }
   },
   "signMessage" : {
@@ -3429,12 +3444,12 @@
     },
     "highFeeModal" : "Dikkatli olun; ağ ücretleri tutarın <1>%10'undan</1> fazla. Devam etmek istiyor musunuz?",
     "scan" : {
-      "title" : "QR kodunu tarayın",
-      "descBottom" : "Lütfen QR kodunu karenin içine ortalayın.",
+      "title" : "Karekodu okutun",
+      "descBottom" : "Lütfen karekodu karenin içine ortalayın.",
       "fallback" : {
-        "header" : "QR kodunu tarayın",
+        "header" : "Karekodu okutun",
         "title" : "Kamerayı etkinleştirin",
-        "desc" : "QR kodlarını taramak için lütfen Ayarlardan Kamerayı etkinleştirin.",
+        "desc" : "Karekodları okutmak için lütfen Ayarlardan Kamerayı etkinleştirin.",
         "buttonTitle" : "Ayarlara Git"
       }
     },
@@ -3451,7 +3466,7 @@
       "selectNft" : "NFT"
     },
     "recipient" : {
-      "scan" : "QR kodunu tarayın",
+      "scan" : "Karekodu okutun",
       "enterAddress" : "Adresi girin",
       "input" : "Adresi girin",
       "verifyAddress" : "Adresin, alıcıyla paylaşılan adres ile eşleştiğini doğrulayın.",
@@ -3552,10 +3567,10 @@
     },
     "previousFeesInfo" : {
       "pendingTransactionFeesInfo" : "Bekleyen işlem ücreti bilgileri: ",
-      "networkfee" : "Ağ ücreti = {{amount}} {{unit}}",
-      "maxFee" : "Ücret üst limiti = {{amount}} Gwei",
-      "maxPriorityFee" : "Öncelik ücreti üst limiti = {{amount}} Gwei",
-      "gasPrice" : "Gas ücreti = {{amount}} Gwei"
+      "networkfee" : "Ağ ücreti = {{amount}}",
+      "maxFee" : "Maks. ücret = {{amount}}",
+      "maxPriorityFee" : "Maks. Öncelik ücreti = {{amount}}",
+      "gasPrice" : "Gas Ücreti = {{amount}}"
     },
     "speedUp" : {
       "title" : "Hızlandırın",
@@ -3570,7 +3585,7 @@
       "notEnoughFundsToSpeedup" : "Hesabınızda yeterince fon olmadığı için işlem hızlandırılamıyor.",
       "notlowestNonceToSpeedup" : "Hızlandırma özelliği kullanılamıyor. Önceki bir işlem takıldığı için işleminiz beklemede. Onaylanmasını bekleyebilir, hızlandırabilir veya iptal edebilirsiniz.",
       "TransactionHasBeenValidatedError" : {
-        "title" : "Hızlandırılamıyor veya iptal edilemiyor",
+        "title" : "Hızlandırılamaz ve iptal edilemez",
         "description" : "Bu işlem zaten doğrulanmış"
       }
     }
@@ -4036,7 +4051,7 @@
       "modalDesc" : "Donanım yazılımını güncellemek için lütfen Ledger Live'ı bilgisayarınıza indirin.",
       "contactUs" : "Bize ulaşın"
     },
-    "myApps" : "Uygulamalarım",
+    "myApps" : "Blok zinciri uygulamalarım",
     "token" : {
       "title" : "{{appName}} token",
       "noAppNeeded" : "{{tokenName}}, {{appName}} uygulamasını kullanan bir token'dır. Yüklenecek bir uygulama bulunmuyor.",
@@ -4144,7 +4159,7 @@
     "beginUpdate" : "Güncellemeyi başlat",
     "updateDevice" : "{{deviceName}} Güncellemesi",
     "releaseNotesTitle" : "Bu güncellemede neler var?",
-    "updateDone" : "Hepsi bu kadar! {{deviceName}} cihazınız güncel",
+    "updateDone" : "{{deviceName}} işletim sisteminiz artık güncel",
     "updateDoneDescription" : "Yeni İşletim Sistemi Sürümü: {{firmwareVersion}}",
     "preparing" : "Donanım yazılımı güncellemesi hazırlanıyor, lütfen cihazınızı açık ve bağlı tutun. İlerleme durumunu bildireceğiz",
     "confirmIdentifierText" : "Cihazınızdaki tanımlayıcının aşağıdaki tanımlayıcıyla aynı olduğunu doğrulayın. İstenirse PIN kodunuzu girin ve onaylayın.",
@@ -4155,22 +4170,22 @@
     "finishUpdate" : "{{deviceName}} cihazınızdaki güncellemeyi tamamlayın",
     "identifierTitle" : "Tanımlayıcı:",
     "pleaseWaitDownload" : "Lütfen yükleyicinin indirilmesini bekleyin",
-    "doNotLeaveLedgerLive" : "Güncelleme tamamlanana kadar Ledger Live uygulamasından ayrılmayın.",
+    "doNotLeaveLedgerLive" : "Güncelleme tamamlanıncaya kadar bu ekranda kalın.",
     "preparingDevice" : "Cihazınız hazırlanıyor",
     "pleaseWaitUpdate" : "Lütfen güncellemenin bitmesini bekleyin",
     "viewUpdateChangelog" : "Güncelleme değişiklik günlüğünü görüntüle",
     "waitForFirmwareUpdate" : "Cihazınızda donanım yazılımı güncellemesinin bitmesini bekleyin",
     "waitForInstallationToFinish" : "Kurulum {{deviceName}} cihazında tamamlanıyor",
     "staxBatteryLow" : "Ledger Stax'in şarj seviyesi güncelleme için yeterli değil",
-    "staxBatteryLowDescription" : "İşletim sistemi güncellemesi yapabilmeniz için, Ledger şarjının en az %20 olması veya Ledger'ın şarja takılı olması gerekir.",
-    "updateCancelled" : "Güncelleme {{deviceName}} cihazında iptal edildi",
-    "updateCancelledDescription" : "{{newFirmwareVersion}} işletim sistemi güncellemesinin kurulumu {{deviceName}} cihazında reddedildi. Bunu yanlışlıkla yaptıysanız güncellemeyi yeniden başlatın",
-    "updateNotYetComplete" : "Güncelleme henüz tamamlanmadı",
-    "updateNotYetCompleteDescription" : "Güncellemeyi yarıda keserseniz uygulamalar, dil ve kilit ekranı resmi düzgün şekilde geri yüklenmeyebilir.",
+    "staxBatteryLowDescription" : "İşletim sistemi güncellemesini başlatabilmek için en az %20 şarj gereklidir veya Ledger Stax'iniz şarjda olmalıdır.",
+    "updateCancelled" : "{{deviceName}} işletim sistemi güncellemesinin yüklemesi iptal edildi",
+    "updateCancelledDescription" : "Bunu yanlışlıkla yaptıysanız güncellemeyi yeniden başlatın.",
+    "updateNotYetComplete" : "Güncelleme devam ediyor",
+    "updateNotYetCompleteDescription" : "Güncellemeyi şimdi iptal ederseniz ayarlarınız ve uygulamalarınız düzgün bir şekilde geri yüklenmeyebilir.",
     "restartUpdate" : "Güncellemeyi yeniden başlat",
-    "quitUpdate" : "Güncellemeden çık",
+    "quitUpdate" : "Güncellemeyi iptal et",
     "continueUpdate" : "Güncellemeye devam et",
-    "unlockDeviceToComplete" : "Kurulumu tamamlamak için {{deviceName}} cihazının kilidini açın",
+    "unlockDeviceToComplete" : "Güncellemeyi tamamlamak için PIN Kodunuzla {{deviceName}} cihazınızın kilidini açın.",
     "unlockDeviceWithPin" : "Cihazınızın kilidini PIN koduyla açın",
     "reinstallApps" : "Uygulamaları yeniden yükle",
     "currentVersionNumber" : "Mevcut sürüm",
@@ -4198,14 +4213,14 @@
           "titlePreparingUpdate" : "Güncelleme kurulum için hazırlanıyor",
           "description" : "Güncelleme, {{deviceName}} cihazına aktarılıyor."
         },
-        "titleBackingUp" : "Uygulamalar ve ayarlar yedekleniyor",
+        "titleBackingUp" : "Güncelleme kurulum için hazırlanıyor",
         "titleTransferring" : "Güncelleme aktarılıyor",
-        "description" : "Yapılandırmanız yedekleniyor ve güncelleme, {{deviceName}} cihazına aktarılıyor."
+        "description" : "Ayarlarınız ve uygulamalarınız yedekleniyor. Güncelleme {{deviceName}} cihazına aktarılıyor"
       },
       "installUpdate" : {
         "titleInactive" : "Güncelleme yükleniyor",
         "titleActive" : "Güncelleme yükleniyor",
-        "description" : "{{deviceName}} birkaç kez yeniden başlatılacak.\n\nKurulum {{deviceName}} cihazınızda tamamlandıktan sonra kurulumu tamamlamak için cihazınızın kilidini açın"
+        "description" : "{{deviceName}} birkaç kez yeniden başlatılacak.\n\nGüncellemeyi tamamlamak için, kurulum tamamlandıktan sonra {{deviceName}} cihazının kilidini PIN kodunuzla açın."
       },
       "restoreSettings" : {
         "earlySecurityCheck" : {
@@ -4216,18 +4231,18 @@
         "description" : "Ayarlarınız ve blok zinciri uygulamalarınız geri yüklenecek.",
         "restoreLockScreenPicture" : "Kilit ekranı resmi geri yükleniyor",
         "restoreLanguage" : "Dil geri yükleniyor",
-        "imageLoadRequested" : "{{deviceName}} cihazında kilitli ekran resminin geri yüklenmesine izin verin",
-        "imageCommitRequested" : "{{deviceName}} cihazında resmi onaylayın",
-        "allowLanguageInstallation" : "{{deviceName}} cihazında dilin geri yüklenmesine izin verin",
-        "allowAppsRestoration" : "{{deviceName}} cihazında uygulamaların geri yüklenmesine izin verin",
+        "imageLoadRequested" : "Kilitli ekran resmini geri yüklemek için \"Resim yükle\" seçeneğine dokunun",
+        "imageCommitRequested" : "Tap on “keep” to confirm your lock screen picture",
+        "allowLanguageInstallation" : "Dili geri yüklemek için \"İzin ver\" seçeneğine dokunun",
+        "allowAppsRestoration" : "Uygulamaları geri yüklemek için \"İzin ver\" seçeneğine dokunun",
         "errors" : {
-          "description" : "Bunun bir hata olduğunu düşünüyorsanız geri yükleme işlemini tekrar deneyebilir veya bu adımı atlayabilirsiniz",
-          "LanguageInstallRefusedOnDevice" : "Dil değiştirme işlemi {{deviceName}} cihazında iptal edildi",
-          "ImageLoadRefusedOnDevice" : "Kilitli ekran resmini geri yükleme işlemi {{deviceName}} cihazında iptal edildi",
-          "ImageCommitRefusedOnDevice" : "Kilitli ekran resmini geri yükleme işlemi {{deviceName}} cihazında iptal edildi",
-          "UserRefusedAllowManager" : "Uygulamaları geri yükleme işlemi {{deviceName}} cihazında iptal edildi"
+          "description" : "Bunu yanlışlıkla yaptıysanız şimdi tekrar deneyin.",
+          "LanguageInstallRefusedOnDevice" : "{{deviceName}} cihazında dili geri yükleme iptal edildi",
+          "ImageLoadRefusedOnDevice" : "{{deviceName}} cihazında kilitli ekran resmini geri yükleme iptal edildi",
+          "ImageCommitRefusedOnDevice" : "{{deviceName}} cihazında kilitli ekran resmini geri yükleme iptal edildi",
+          "UserRefusedAllowManager" : "{{deviceName}} cihazında uygulamaları geri yükleme iptal edildi"
         },
-        "installingApps" : "Uygulamalar geri yükleniyor"
+        "installingApps" : "Uygulamalar yükleniyor"
       }
     },
     "newVersion" : "{{deviceName}} cihazınız için {{version}} güncellemesi mevcut",
@@ -4255,7 +4270,7 @@
         "description" : "{{deviceName}} bağlantısı kesildiği için güncelleme tamamlanamadı"
       },
       "CantOpenDevice" : {
-        "title" : "Üzgünüz, bağlantı başarısız",
+        "title" : "Ledger cihazıyla bağlantı kesildi",
         "description" : "{{deviceName}} bağlantısı kesildiği için güncelleme tamamlanamadı."
       }
     }
@@ -6234,20 +6249,20 @@
     "toastRemove" : "Kilitli ekran resmi kaldırıldı",
     "cropImage" : "Resmi kırp",
     "chooseConstrast" : "Kontrastı seç",
-    "uploadAnotherImage" : "Başka bir görsel yükleyin",
+    "uploadAnotherImage" : "Başka bir resim yükleyin",
     "rotateImage" : "Döndür",
-    "allowPreview" : "{{productName}} cihazınızda kilit ekranı resminin yüklenmesine izin verin",
+    "allowPreview" : "Kilit ekranını özelleştirmek için “Resmi yükle” seçeneğine dokunun",
     "loadingPicture" : "Yükleniyor...",
     "loadingPictureAlmostOver" : "İşte bu kadar!",
     "commitRequested" : "Gördüğünüz şey hoşunuza gitti mi?\nO zaman böyle kalsın!",
     "confirmPicture" : "{{productName}} cihazında onaylayın",
     "landingPage" : {
-      "title" : "İstediğiniz NFT'yi ya da fotoğrafı seçebilirsiniz.\nKişiselleştirin.\nLedger’ınız sizi yansıtsın.",
+      "title" : "İstediğiniz bir dijital sanat eserini veya fotoğrafı seçin.\nLedger Stax'inizi özelleştirin.\nKişiselleştirin.",
       "choosePicture" : "Bir resim seçin"
     },
     "confirmCrop" : "Kırpmayı onayla",
     "confirmContrast" : "Zıtlığı onayla",
-    "nftEntryPointButtonLabel" : "Ledger Stax kilitli ekranı olarak belirle",
+    "nftEntryPointButtonLabel" : "Ledger Stax kilit ekranı resmi olarak belirle",
     "customImage" : "Özel resim",
     "doThisLater" : "Belki sonra",
     "preview" : {
@@ -6273,15 +6288,15 @@
       "backButton" : "Market Pass'imi aldım"
     },
     "qrScan" : {
-      "title" : "Ledger Market Pass'inizdeki QR kodunu taratın",
+      "title" : "Ledger Market Pass'inizdeki karekodu taratın",
       "description" : {
-        "1" : "Özel Ledger Market Pass'inizi, Ledger Stax'inizin kutusunda bulabilirsiniz.\n\nPass'in arkasındaki QR kodunu çerçevenin içine oturtarak işleme başlayın. Kartı aydınlık bir ortamda, açık renkli ve sade bir arka plan üzerinde tutun."
+        "1" : "Özel Ledger Market Pass'inizi, Ledger Stax'inizin kutusunda bulabilirsiniz.\n\nPass'in arkasındaki karekodu çerçevenin içine oturtarak işleme başlayın. Kartı aydınlık bir ortamda, açık renkli ve sade bir arka plan üzerinde tutun."
       }
     }
   },
   "postOnboarding" : {
     "hub" : {
-      "title" : "Sırada, {{productName}} ürününüz ile...",
+      "title" : "Ardından, {{productName}} ürününüz ile...",
       "allDoneTitle" : "ve işte, bu kadar!",
       "skip" : "Daha sonra yapacağım",
       "viewWallet" : "Cüzdanımı görüntüle"
@@ -6293,9 +6308,9 @@
     },
     "actions" : {
       "customImage" : {
-        "title" : "Kilit ekranını kişiselleştirin",
-        "titleCompleted" : "Kilit ekranı kişiselleştirildi",
-        "description" : "Ledger Stax cihazınızın kilit ekranında gösterilmesini istediğiniz NFT'yi ya da resmi seçin.",
+        "title" : "Bir kilitli ekran resmi belirleyin",
+        "titleCompleted" : "Kilitli ekran resmi belirlendi",
+        "description" : "Kilitli ekran yapmak için istediğiniz bir dijital sanat eserini veya resmi seçin.",
         "popupLabel" : "Kilit ekranı belirlendi"
       },
       "claimNft" : {
@@ -6308,7 +6323,7 @@
       "assetsTransfer" : {
         "title" : "Varlıklarınızı Ledger’a taşıyın",
         "titleCompleted" : "Varlıklar Ledger’a taşındı",
-        "description" : "Diğer tüm borsa veya cüzdanlardan aktarım yapabilirsiniz.",
+        "description" : "Coinbase'den veya diğer herhangi bir borsa veya cüzdandan varlıkları kolayca aktarabilirsiniz.",
         "popupLabel" : "Varlıklar aktarıldı"
       }
     }
@@ -6338,7 +6353,7 @@
       },
       "empty" : {
         "title" : "Gösterilecek NFT yok",
-        "subtitle" : "Başlangıç olarak ilk NFT'nizi alın.",
+        "subtitle" : "Öncelikle cüzdanınıza NFT ekleyin.",
         "receive" : "NFT al",
         "supportLink" : "Diğer cüzdanlardaki NFT'ler nasıl alınır?"
       },
@@ -6365,6 +6380,12 @@
   "servicesWidget" : {
     "title" : "Hizmetler",
     "subTitle" : "Ledger hizmetlerinizi yönetin",
+    "signIn" : "Oturum aç",
+    "recover" : {
+      "cta" : "Ücretsiz denemenizi başlatın",
+      "desc" : "Cüzdanınıza erişiminizi kaybetmekten korkmayın.",
+      "tag" : "1 ay ücretsiz"
+    },
     "protect" : {
       "status" : {
         "new" : {
