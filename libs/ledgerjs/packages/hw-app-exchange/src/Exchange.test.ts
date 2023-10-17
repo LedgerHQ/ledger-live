@@ -5,7 +5,6 @@ import {
   RecordStore,
 } from "@ledgerhq/hw-transport-mocker";
 import Exchange, { createExchange, ExchangeTypes, RateTypes } from "./Exchange";
-import { TextEncoder } from "util";
 import BigNumber from "bignumber.js";
 
 describe("Contrustructor", () => {
