@@ -1,5 +1,6 @@
 import { test as base, Page, ElectronApplication, _electron as electron } from "@playwright/test";
 import * as fs from "fs";
+import fsPromises from "fs/promises";
 import * as path from "path";
 import * as crypto from "crypto";
 import { OptionalFeatureMap } from "@ledgerhq/types-live";
@@ -50,10 +51,10 @@ export const test = base.extend<TestFixtures>({
     use,
   ) => {
     // create userdata path
-    fs.mkdirSync(userdataDestinationPath, { recursive: true });
+    await fsPromises.mkdir(userdataDestinationPath, { recursive: true });
 
     if (userdata) {
-      fs.copyFileSync(userdataOriginalFile, `${userdataDestinationPath}/app.json`);
+      await fsPromises.copyFile(userdataOriginalFile, `${userdataDestinationPath}/app.json`);
     }
 
     // default environment variables
