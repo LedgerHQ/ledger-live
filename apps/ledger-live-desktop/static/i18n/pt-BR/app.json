@@ -122,9 +122,9 @@
     "search" : "Pesquisar...",
     "searchWithoutEllipsis" : "Pesquisar",
     "manage" : "Gerenciar",
+    "tryAgain" : "Tente novamente",
     "lockScreen" : {
       "title" : "Boas-vindas de volta",
-      "subTitle" : null,
       "description" : "Insira sua senha para continuar",
       "inputPlaceholder" : "Insira sua senha",
       "lostPassword" : "Perdi minha senha"
@@ -406,12 +406,12 @@
     "missingApp" : {
       "title" : "Instale o aplicativo {{appName}} no seu dispositivo",
       "subtitle" : "Vá à Minha Ledger e instale o aplicativo {{appName}} para trocar ativos.",
-      "cta" : "Vá à Minha Ledger"
+      "cta" : "Ir para Minha Ledger"
     },
     "outdatedApp" : {
       "title" : "Atualize o aplicativo {{appName}} no seu dispositivo",
       "subtitle" : "Vá à Minha Ledger e atualize o aplicativo {{appName}} para trocar ativos.",
-      "cta" : "Vá à Minha Ledger"
+      "cta" : "Ir para Minha Ledger"
     },
     "providers" : {
       "title" : "Escolha um provedor para trocar criptos",
@@ -539,13 +539,17 @@
         "swap" : {
           "title" : "Trocar",
           "label" : "Populares",
-          "body" : "Converta cripto para cripto em segurança"
+          "body" : "Troque cripto por cripto em segurança"
         },
         "receive" : {
           "title" : "Receber",
           "body" : "Receba cripto na sua carteira"
         }
       }
+    },
+    "getFundsModal" : {
+      "text" : "Obter {{coin}} para fazer staking",
+      "description" : "Compre, troque ou receba criptomoedas diretamente em sua Ledger pelo Ledger Live."
     }
   },
   "lottieDebugger" : {
@@ -1140,42 +1144,46 @@
     "exitCTA" : "Sair das configurações",
     "connection" : {
       "searching" : {
-        "title" : "Conecte a {{deviceModelName}} ao seu computador",
-        "connectionTrouble" : "Está tendo problemas para conectar seu dispositivo?"
+        "title" : "Conecte sua {{deviceModelName}} ao seu computador usando o cabo USB",
+        "connectionTrouble" : "Está tendo problemas para conectar sua Ledger?"
       },
       "success" : {
         "title" : "Conectado à {{ deviceName }}"
       }
     },
     "manual" : {
-      "title" : "Configurar {{deviceName}}",
+      "title" : "Configurar sua {{deviceName}}",
       "continueOnDevice" : "Execute essa ação em sua {{productName}}",
       "pairedContent" : {
-        "title" : "A {{deviceName}} está segura",
-        "description" : "Continuar a configuração em {{deviceName}}",
-        "text" : "Esta tela mudará dinamicamente para fornecer a você informações relevantes enquanto você configura sua {{deviceName}}",
-        "continueOnDevice" : "Toque em {{productName}} para ver a próxima tela."
+        "title" : "Esta {{deviceName}} é autêntica",
+        "description" : "É seguro usar esta Ledger Stax. Você pode prosseguir com a configuração.",
+        "continueOnDevice" : "Toque em sua {{productName}} para iniciar a configuração"
       },
       "pinContent" : {
-        "title" : "Definir seu PIN",
-        "description" : "Seu PIN pode conter de 4 a 8 dígitos",
-        "text" : "Qualquer pessoa com acesso à sua {{deviceName}} e ao seu PIN pode também acessar todos os seus criptoativos e NFTs.",
-        "continueOnDevice" : "Defina seu PIN em {{productName}}"
+        "title" : "PIN",
+        "description" : "Assim como qualquer senha ou código de acesso, o PIN permite que você desbloqueie sua {{productName}} e evite acessos indesejados.",
+        "continueOnDevice" : "Definir PIN em sua {{productName}}"
       },
       "seedContent" : {
         "title" : "Frase de Recuperação Secreta",
         "recoverSeed" : "Placeholder: Recover",
-        "restoreSeed" : "Para a recuperação, certifique-se de usar uma Frase de Recuperação Secreta gerada por um dispositivo Ledger para garantir a segurança de seus ativos.\n\nNão tem um? Use sua {{productName}} para gerar uma nova Frase.",
-        "selection" : "Na {{productName}}, escolha a opção de configuração que for melhor para você.",
-        "selectionContinueOnDevice" : "Toque em uma opção na {{productName}}",
-        "newSeedDescription" : "Assista aos vídeos abaixo para saber mais sobre suas palavras secretas.",
-        "newSeedContinueOnDevice" : "Faça isso em sua {{productName}}",
-        "recovery" : "Para recuperar, certifique-se de usar uma Frase de Recuperação Secreta gerada por um dispositivo Ledger para garantir a segurança de seus ativos.\n\nNão tem um? Use sua {{productName}} para gerar uma nova frase.",
+        "restoreSeed" : "Certifique-se de usar uma Frase de Recuperação Secreta gerada por um dispositivo Ledger para garantir segurança máxima sobre seus ativos. \n\n Não possui uma? Use a sua {{productName}} para gerar uma nova Frase.",
+        "selection" : "Escolha a opção de configuração que for melhor para você:",
+        "selectionNewLedger" : "<0>“Set up as a new Ledger”</0> (“Configurar como uma nova Ledger”) permite que você crie uma nova carteira. Isso gera uma nova Frase de Recuperação Secreta.",
+        "selectionRestore" : "<0>“Restore”</0> (“Restaurar”) permite restaurar o acesso aos seus ativos com a sua Frase de Recuperação Secreta ou com o Ledger Recover.",
+        "selectionContinueOnDevice" : "Escolha a opção relevante em sua {{productName}}",
+        "newSeedDescription1" : "Sua {{productName}} gerará a Frase de Recuperação Secreta—uma lista única de 24 palavras. É a única maneira de recuperar seus ativos se a sua Ledger for roubada, perdida ou se você esquecer seu PIN.",
+        "newSeedDescription2" : "<0>Guarde-a em segredo:</0>\nsua Frase de Recuperação Secreta controla todos os seus ativos e é insubstituível. Qualquer pessoa que tenha sua Frase também pode controlar seus ativos e roubá-los. Se você perder sua Frase, a Ledger não poderá lhe ajudar.",
+        "newSeedDescription3" : "Cuidado com qualquer pessoa ou software que solicite sua Frase de Recuperação Secreta. Isso é um golpe. ",
+        "newSeedDescription4" : "O único lugar em que você deve inserir sua Frase de Recuperação Secreta é no seu dispositivo Ledger.",
+        "newSeedDescription5" : "Não a compartilhe. Não a perca.",
+        "newSeedContinueOnDevice" : "Veja e anote a Frase de Recuperação Secreta gerada em sua {{productName}}",
         "restoreChoiceContinueOnDevice" : "Escolha uma opção em sua {{productName}}",
         "restoreChoiceSRPTitle" : "Restaurar usando a Frase de Recuperação Secreta",
-        "restoreChoiceSRPDescription" : "Certifique-se de usar uma Frase gerada por uma Ledger para garantir a segurança de seus ativos.",
+        "restoreChoiceSRPDescription" : "Use uma Frase de Recuperação Secreta gerada por um dispositivo Ledger para ter a segurança máxima.",
         "restoreChoiceRecoverTitle" : "Restaurar usando o Ledger Recover",
-        "restoreChoiceRecoverDescription" : "Restaure o backup da sua frase de recuperação entrando na sua conta Ledger e confirmando sua identidade."
+        "restoreChoiceRecoverDescription" : "Se você se inscreveu no Ledger Recover, entre com os seus dados para restaurar a sua Frase de Recuperação Secreta.",
+        "followInstructions" : "Siga as instruções que aparecem em sua {{productName}}."
       },
       "softwareCheckContent" : {
         "title" : {
@@ -1183,27 +1191,27 @@
           "completed" : "A sua {{modelName}} é autêntica e está atualizada"
         },
         "exitWarningDrawer" : {
-          "title" : "Tem certeza de que deseja sair das configurações?",
-          "description" : "Não é possível configurar a Ledger Stax sem permitir essa verificação.",
-          "cancelCheckCTA" : "Cancelar verificação",
-          "resumeCheckCTA" : "Retomar a verificação"
+          "title" : "Cancelar a Verificação de Autenticidade e a verificação de atualização do sistema operacional?",
+          "description" : "A Verificação de Autenticidade é obrigatória para continuar configurando a Ledger Stax usando o aplicativo Ledger Live.",
+          "cancelCheckCTA" : "Cancelar verificações",
+          "resumeCheckCTA" : "Retomar verificações"
         },
         "genuineCheckErrorDrawer" : {
-          "quitSetupCTA" : "Sair das configurações",
+          "quitSetupCTA" : "Cancelar configuração",
           "goToSettingsCTA" : "Ir para Configurações",
-          "retryCTA" : "Tentar Novamente",
+          "retryCTA" : "Tentar novamente",
           "contactSupportCTA" : "Fale com o Suporte Ledger",
           "notFoundEntityError" : {
-            "title" : "Não foi possível verificar se este dispositivo é autêntico.",
-            "description" : "A configuração experimental \"Provedor da Minha Ledger ({{providerNumber}})\" pode estar em conflito com a verificação de autenticidade. Você pode desativá-la nas configurações."
+            "title" : "Iniciar novamente a Verificação de Autenticidade",
+            "description" : "Primeiro, você deve desativar a configuração “Provedor da Minha Ledger ({{providerNumber}})”. Para desativá-la, abra as “Configurações” do Ledger Live, selecione “Recursos experimentais” e, em seguida, desative o “Provedor da Minha Ledger”."
           },
           "deviceNotGenuineError" : {
             "title" : "Esta {{productName}} não é autêntica",
             "description" : "Esta {{productName}} não é segura para usar.\nEntre em contato com o Suporte Ledger."
           }
         },
-        "whyPerformChecksLink" : "Por que realizar essas verificações de segurança?",
-        "startChecksCTA" : "Iniciar verificações",
+        "whyPerformChecksLink" : "Saiba mais sobre a Verificação de Autenticidade",
+        "startChecksCTA" : "Verificar minha {{modelName}}",
         "continueCTA" : "Seguir para configuração",
         "genuineCheck" : {
           "title" : {
@@ -1212,31 +1220,31 @@
             "cancelled" : "Verificação de autenticidade recusada"
           },
           "subtitle" : {
-            "active" : "Esta verificação certifica que sua {{modelName}} é um hardware Ledger oficial",
-            "cancelled" : "Não é possível configurar sua {{modelName}} sem permitir essa verificação"
+            "active" : "Esta Verificação de Autenticidade certifica que sua {{modelName}} é uma Ledger oficial.",
+            "cancelled" : "A Verificação é obrigatória para continuar configurando a {{modelName}} usando o aplicativo Ledger Live."
           },
-          "resumeCTA" : "Retomar verificação de autenticidade"
+          "resumeCTA" : "Retomar Verificação de Autenticidade"
         },
         "firmwareUpdate" : {
           "title" : {
             "active" : "Verificação de atualização do sistema operacional",
-            "completed" : "O sistema operacional da {{modelName}} está atualizado",
-            "updateAvailable" : "A atualização do sistema operacional da {{firmwareVersion}} está disponível"
+            "completed" : "O sistema operacional da sua {{modelName}} está atualizado",
+            "updateAvailable" : "Atualização do OS da {{firmwareVersion}} disponível"
           },
           "subtitle" : {
-            "active" : "Esta verificação certifica que o sistema operacional da {{modelName}} está atualizado",
-            "updateAvailable" : "Recomendamos executar essa atualização para ter acesso aos recursos de segurança mais recentes"
+            "active" : "Isto verifica se o sistema operacional da sua {{modelName}} está atualizado ou não.",
+            "updateAvailable" : "Atualize para maior segurança e acesso aos recursos mais recentes."
           },
-          "viewUpdateCTA" : "Visualizar atualização",
+          "viewUpdateCTA" : "Atualizar OS da {{modelName}}",
           "resumeUpdateCTA" : "Retomar atualização",
           "skipUpdateCTA" : "Pular atualização",
-          "retryUpdateCTA" : "Tentar Novamente",
+          "retryUpdateCTA" : "Tentar novamente",
           "finalStepSuccessDescription" : "Voltar para a verificação do sistema operacional",
-          "finalStepSuccessButtonLabel" : "Continuar"
+          "finalStepSuccessButtonLabel" : "Finalizar"
         }
       },
       "installApplications" : {
-        "title" : "Instalar aplicativos de blockchain",
+        "title" : "Instalando aplicativos em {{productName}}",
         "install" : "Instalar",
         "skip" : "Farei isso mais tarde",
         "info" : "Aplicativos da {{deviceName}} são usados para aprovar transações. Você pode adicioná-los ou removê-los a qualquer momento."
@@ -1245,7 +1253,7 @@
         "title" : "Fim da configuração"
       },
       "softwareCheckAllowSecureChannelDrawer" : {
-        "title" : "Permitir uma conexão segura com a Ledger"
+        "title" : "Toque em “Permitir” para iniciar a Verificação de Autenticidade"
       },
       "softwareCheckLockedDeviceDrawer" : {
         "title" : "Desbloquear seu dispositivo"
@@ -1257,13 +1265,13 @@
         "supportButton" : "Fale com um humano"
       },
       "troubleshootingDrawer" : {
-        "title" : "Solução de problemas de conexão USB",
-        "description" : "Parece haver um problema ao conectar seu dispositivo. Não se preocupe, você pode tentar diferentes soluções até que seu dispositivo se conecte!",
-        "fixButton" : "Resolver",
+        "title" : "Conexão USB",
+        "description" : "Houve um problema ao conectar sua Ledger. Selecione “Troubleshoot issue” (Solucionar problema) para obter instruções sobre como resolver este problema.",
+        "fixButton" : "Solucionar problema",
         "closeButton" : "Fechar"
       },
       "desyncOverlay" : {
-        "errorMessage" : "Parece que a conexão com sua {{deviceName}} foi perdida. Estamos tentado reconectar."
+        "errorMessage" : "Conexão com {{deviceName}} perdida. Tentando reconectar."
       },
       "header" : {
         "helpButton" : "Precisa de ajuda?"
@@ -1387,7 +1395,7 @@
       },
       "swap" : {
         "title" : "Trocar",
-        "description" : "Converta cripto para cripto em segurança",
+        "description" : "Troque cripto por cripto em segurança",
         "label" : "Populares"
       },
       "earn" : {
@@ -1410,7 +1418,7 @@
       "title" : "Instalar aplicativos no seu dispositivo",
       "desc" : "Vá à Minha Ledger para instalar aplicativos no seu dispositivo. Você pode adicionar contas quando tiver aplicativos instalados.",
       "buttons" : {
-        "installApp" : "Vá à Minha Ledger",
+        "installApp" : "Ir para Minha Ledger",
         "help" : "Ajuda"
       }
     },
@@ -1700,7 +1708,8 @@
   "DeviceAction" : {
     "allowAppPermission" : "Abra o aplicativo {{wording}} no seu dispositivo",
     "allowAppPermissionSubtitleToken" : "para gerenciar seus tokens {{token}}",
-    "allowManagerPermission" : "Permitir {{wording}} no seu dispositivo",
+    "allowManagerPermission" : "Permitir uma conexão segura no seu dispositivo",
+    "allowRenaming" : "Permitir renomeação do seu dispositivo",
     "loading" : "Carregando...",
     "connectAndUnlockDevice" : "Conecte e desbloqueie seu dispositivo",
     "unlockDevice" : "Desbloqueie seu dispositivo",
@@ -1863,11 +1872,12 @@
       "dontHaveSeed" : "Não está com sua frase de recuperação? ",
       "followTheGuide" : "Siga nosso guia passo a passo de atualização",
       "removeApps" : "Desinstale todos os aplicativos antes de atualizar",
-      "update" : "Atualizar a {{productName}}",
+      "update" : "Atualização do sistema operacional da {{productName}}",
       "updateBtn" : "Atualizar Firmware",
+      "installUpdate" : "Instalar atualização",
       "banner" : {
         "warning" : "Atualização do firmware {{latestFirmware}} disponível",
-        "cta" : "Vá à Minha Ledger",
+        "cta" : "Ir para Minha Ledger",
         "old" : {
           "warning" : "A versão do firmware do dispositivo é antiga demais para ser atualizada. Contate o Suporte Ledger para substituir o dispositivo.",
           "cta" : "Falar com o suporte"
@@ -1877,13 +1887,17 @@
       "latest" : "A versão {{version}} do firmware está disponível",
       "contactSupport" : "Falar com o suporte",
       "deprecated" : "A versão do firmware do dispositivo é antiga demais para ser atualizada. Contate o Suporte Ledger para substituir o dispositivo.",
-      "prepareSeed" : "Por precaução, certifique-se de que sua frase de recuperação de 24 palavras esteja anotada na folha de recuperação e esteja disponível.",
-      "disclaimerTitle" : "Você está prestes a instalar a <1>versão {{version}} do firmware</1>."
+      "prepareSeed" : "Por precaução, certifique-se de que sua frase de recuperação de 24 palavras esteja anotada na folha de recuperação e por perto.",
+      "disclaimerTitle" : "Você está prestes a instalar a <1>versão {{version}} do firmware</1>.",
+      "cancelUpdate" : "Cancelar atualização",
+      "continueUpdate" : "Continuar atualização",
+      "cancelUpdateWarning" : "Se cancelar a atualização agora, seus aplicativos e configurações podem não ser restaurados corretamente.",
+      "updateInProgress" : "Atualização do sistema operacional em andamento"
     },
     "modal" : {
-      "title" : "Atualizar a {{productName}}",
+      "title" : "Atualização de OS da {{productName}}",
       "steps" : {
-        "preparingUpdate" : "Preparando atualização",
+        "preparingUpdate" : "Fazendo backup de suas configurações e aplicativos",
         "transferringUpdate" : "Transferindo atualização à {{productName}}",
         "prepare" : "Preparar atualização",
         "install" : "Instalar atualização",
@@ -1900,7 +1914,7 @@
         "flash" : "Preparando seu dispositivo..."
       },
       "confirmIdentifier" : "Verifique o identificador",
-      "confirmIdentifierText" : "Confirmar instalação na {{productName}}",
+      "confirmIdentifierText" : "Toque em “Instalar” para iniciar a atualização do sistema operacional",
       "identifier" : "Identificador",
       "newFirmware" : "Novo firmware {{version}}",
       "confirmUpdate" : "Confirme a atualização no seu dispositivo",
@@ -1911,9 +1925,7 @@
       "mcuSecondNanoX" : "Mantenha pressionado o botão esquerdo até que <1><0>{{bootloaderOption}}</0></1> seja exibido. Pressione ambos os botões para confirmar e reconectar seu dispositivo.",
       "mcuBlueFirst" : "Mantenha pressionado o botão lateral por 10 segundos para desligar seu dispositivo. Solte o botão.",
       "mcuBlueSecond" : "Pressione e segure o botão por pelo menos 5 segundos até que as opções de inicialização sejam exibidas. Selecione o modo bootloader",
-      "successTitle" : "Sistema Operacional atualizado com êxito.",
-      "successTextApps" : "Reinstale os aplicativos no seu dispositivo",
-      "successTextNoApps" : "Agora você pode instalar aplicativos no seu dispositivo",
+      "successTitle" : "O sistema operacional da sua {{deviceName}} está atualizado.",
       "sucessCTAApps" : "Reinstalar aplicativos",
       "SuccessCTANoApps" : "Instalar Aplicativos",
       "cancelReinstallCTA" : "Instalar Atualização",
@@ -2064,7 +2076,8 @@
         "parentAccount" : "1. Selecione a conta {{currencyName}}",
         "token" : "2. Selecione um token",
         "verifyTokenType" : "Verifique se <0>{{token}}</0> é um token <0>{{tokenType}}</0>. Qualquer outro criptoativo enviado para uma conta de {{currency}} poderá ser perdido.",
-        "warningTokenType" : "Envie apenas <0>{{ticker}}</0> ou tokens <0>{{tokenType}}</0> para contas de {{currency}}. O envio de outros criptoativos poderá resultar na perda permanente dos fundos."
+        "warningTokenType" : "Envie apenas <0>{{ticker}}</0> ou tokens <0>{{tokenType}}</0> para contas de {{currency}}. O envio de outros criptoativos poderá resultar na perda permanente dos fundos.",
+        "depositFromCexBannerTitle" : "Depositar criptomoedas da sua conta Coinbase"
       },
       "connectDevice" : {
         "title" : "Dispositivo",
@@ -2229,13 +2242,13 @@
   },
   "deviceLocalization" : {
     "language" : "Idioma",
-    "deviceLanguage" : "Mudar idioma do dispositivo",
-    "changeLanguage" : "Alterar",
+    "deviceLanguage" : "Mudar Idioma do Dispositivo",
+    "changeLanguage" : "Mudar Idioma",
     "dontChangeLanguage" : "Não alterar",
     "changeDeviceLanguage" : "Alterar o idioma do seu dispositivo?",
     "changeDeviceLanguagePrompt" : {
-      "title" : "{{language}} também está disponível para a sua {{deviceName}}",
-      "description" : "Gostaria de mudar o idioma para {{language}}?"
+      "title" : "Mudar idioma da sua {{deviceName}} para {{language}}?",
+      "description" : "Usar sua {{deviceName}} e o aplicativo Ledger Live no mesmo idioma?"
     },
     "firmwareUpdatePrompt" : {
       "title" : "Colocar sua {{deviceName}} em {{language}}?",
@@ -3535,6 +3548,9 @@
       }
     }
   },
+  "graph" : {
+    "noGraphWarning" : "O gráfico não está disponível para esse token"
+  },
   "near" : {
     "account" : {
       "stakedBalance" : "Saldo aplicado",
@@ -3888,8 +3904,8 @@
     },
     "experimental" : {
       "disclaimer" : "Estes são recursos experimentais que fornecemos \"tal como se encontram\" para serem testados pela nossa comunidade de especialistas em tecnologia. Eles podem mudar, quebrar ou ser removidos a qualquer momento. Ao habilitá-los, você concorda em usá-los por sua conta e risco.",
-      "provider" : "A configuração experimental \"Provedor da Minha Ledger ({{forcedProvider}})\" pode mostrar sistemas operacionais e aplicativos ainda não lançados, o que pode causar problemas compatibilidade. Você pode desativá-la nas configurações.",
-      "providerDevMode" : "As configurações experimentais \"Provedor da Minha Ledger ({{forcedProvider}})\" e \"Modo desenvolvedor\" podem mostrar sistemas operacionais e aplicativos ainda não lançados, o que pode causar problemas compatibilidade. Você pode desativá-las nas configurações.",
+      "provider" : "A configuração experimental \"Provedor da Minha Ledger ({{forcedProvider}})\" pode mostrar sistemas operacionais e aplicativos ainda não lançados, o que pode causar problemas de compatibilidade. Você pode desativá-la nas configurações.",
+      "providerDevMode" : "As configurações experimentais \"Provedor da Minha Ledger ({{forcedProvider}})\" e \"Modo desenvolvedor\" podem mostrar sistemas operacionais e aplicativos ainda não lançados, o que pode causar problemas de compatibilidade. Você pode desativá-las nas configurações.",
       "devMode" : "A configuração experimental \"Modo desenvolvedor\" pode mostrar sistemas operacionais e aplicativos ainda não lançados, o que pode causar problemas de compatibilidade. Você pode desativá-la nas configurações.",
       "providerCTA" : "Ir para Configurações",
       "features" : {
@@ -4061,7 +4077,7 @@
     "downloadProgress" : "{{progress}}% concluído",
     "checking" : "Verificando Atualização...",
     "checkSuccess" : "Nova atualização do Ledger Live disponível, ela será instalada automaticamente quando você fechar o aplicativo",
-    "quitAndInstall" : "Instalar agora",
+    "quitAndInstall" : "Instalar e reiniciar agora",
     "updateAvailable" : "Atualização para a versão {{version}} do Ledger Live disponível",
     "error" : "Erro durante a atualização. Baixe Novamente",
     "reDownload" : "Baixar Novamente",
@@ -4244,7 +4260,7 @@
         }
       },
       "selectDevice" : {
-        "title" : "Selecione seu dispositivo",
+        "title" : "Qual é a sua Ledger?",
         "selectLabel" : "Selecionar"
       },
       "selectUseCase" : {
@@ -5077,12 +5093,12 @@
       "description" : "Tente Novamente."
     },
     "DisconnectedDevice" : {
-      "title" : "Parece que seu dispositivo está desconectado",
-      "description" : "Reconecte-o e tente novamente."
+      "title" : "Dispositivo desconectado",
+      "description" : "O Ledger Live não conseguiu se conectar ao seu dispositivo. Tente Novamente."
     },
     "DisconnectedDeviceDuringOperation" : {
-      "title" : "Parece que seu dispositivo está desconectado",
-      "description" : "Reconecte-o e tente novamente."
+      "title" : "Dispositivo desconectado",
+      "description" : "O Ledger Live não conseguiu se conectar ao seu dispositivo. Tente Novamente."
     },
     "EConnReset" : {
       "title" : "A loja de aplicativos da Ledger não pode ser acessada",
@@ -5190,6 +5206,10 @@
       "title" : "A internet parece estar desconectada",
       "description" : "Verifique sua conexão à internet."
     },
+    "NetworkError" : {
+      "title" : "Ocorreu um erro de rede",
+      "description" : "Tente novamente mais tarde."
+    },
     "NoAddressesFound" : {
       "title" : "Nenhuma conta encontrada",
       "description" : "Algo deu errado com o cálculo do endereço, tente novamente ou contate o Suporte Ledger"
@@ -5210,6 +5230,18 @@
     "NotEnoughEGLDForFees" : {
       "title" : "EGLD insuficientes para pagar as taxas de transação",
       "description" : "Envie um pouco de EGLD para a sua conta para pagar pelas transações."
+    },
+    "NotEnoughVTHO" : {
+      "title" : "Fundos VTHO insuficientes",
+      "description" : "Certifique-se de que a conta tenha VTHO suficiente."
+    },
+    "MustBeVechain" : {
+      "title" : "Não é uma conta vechain",
+      "description" : "Certifique-se de que a moeda seja VTHO ou VET"
+    },
+    "ImpossibleToCalculateAmountAndFees" : {
+      "title" : "Impossível calcular quantia e taxas",
+      "description" : "Impossível calcular quantia e taxas"
     },
     "NotEnoughBalance" : {
       "title" : "Fundos Insuficientes",
@@ -5309,6 +5341,10 @@
     "UserRefusedOnDevice" : {
       "title" : "Ação Rejeitada",
       "description" : "O usuário rejeitou a operação no dispositivo"
+    },
+    "ExpertModeRequired" : {
+      "title" : "Requer modo Expert",
+      "description" : "É necessário ativar o modo Expert."
     },
     "TransactionRefusedOnDevice" : {
       "title" : "Operação negada no dispositivo",
@@ -5502,7 +5538,7 @@
     },
     "GenuineCheckFailed" : {
       "title" : "Falha da verificação de autenticidade",
-      "description" : "Algo deu errado. Tente novamente ou contate o Suporte Ledger em caso de dúvidas."
+      "description" : "Algo deu errado. Tente novamente ou fale com o Suporte Ledger em caso de dúvida."
     },
     "EthAppPleaseEnableContractData" : {
       "title" : "Habilite os dados de contrato nas configurações do aplicativo Ethereum"
@@ -5795,31 +5831,33 @@
     "managerCTARemove" : "Remover",
     "steps" : {
       "choose" : {
-        "stepLabel" : "Escolha uma imagem",
+        "stepLabel" : "Escolher foto",
         "description" : "Escolha uma imagem para definir como (...)",
         "pickFromNftGallery" : "Selecionar na minha galeria de NFTs",
         "myNfts" : "Meus NFTs",
-        "upload" : "Carregar do meu computador",
+        "upload" : "Enviar do computador",
         "chooseNft" : "Escolha um NFT",
         "remove" : "Remover a imagem atual",
         "selectNft" : "Escolher NFT",
-        "previousSelectNft" : "voltar",
         "nftEmptyStateTitle" : "Sem NFTs para mostrar ainda",
         "nftEmptyStateDescription" : "Comece adicionando NFTs à sua carteira."
       },
       "adjust" : {
-        "stepLabel" : "Ajustar imagem",
-        "rotate" : "Girar"
+        "stepLabel" : "Cortar",
+        "rotate" : "Girar",
+        "confirmCrop" : "Confirmar corte"
       },
       "contrast" : {
-        "stepLabel" : "Escolher contraste"
+        "stepLabel" : "Definir contraste",
+        "confirmContrast" : "Confirmar contraste"
       },
       "transfer" : {
-        "stepLabel" : "Transferência",
-        "uploadAnotherImage" : "Enviar outra imagem",
-        "allowPreview" : "Permitir que a imagem da tela de bloqueio seja carregada em sua {{productName}}",
+        "stepLabel" : "Carregar",
+        "useAnotherPicture" : "Enviar outra foto",
+        "allowPreview" : "Toque em “Carregar imagem” para personalizar a tela de bloqueio",
         "allowConfirmPreview" : "Permitir restauração da imagem da tela de bloqueio em {{productName}}",
         "loadingPicture" : "Carregando...",
+        "voila" : "Voilà!",
         "imageLoaded" : "Imagem carregada em {{productName}}",
         "confirmPicture" : "Gostou do que está vendo?\nMantenha assim!",
         "confirmRestorePicture" : "Confirme a restauração da imagem da tela de bloqueio",
@@ -5827,25 +5865,25 @@
       }
     },
     "postOnboarding" : {
-      "title" : "Personalizar meu dispositivo",
-      "description" : "Customizando a tela",
+      "title" : "Personalizar a tela de bloqueio",
+      "description" : "Escolha qualquer NFT ou foto como a tela de bloqueio de sua Ledger Stax.",
       "actionCompletedPopupLabel" : "Dispositivo personalizado"
     },
-    "customImageSet" : "Tela de bloqueio definida",
-    "finishCTA" : "Finalizar"
+    "customImageSet" : "Tela de bloqueio personalizada",
+    "finishCTA" : "Fechar"
   },
   "onboardingAppInstall" : {
     "restore" : {
       "title" : "Instalar os mesmos aplicativos da {{deviceName}}?",
       "titleNoDeviceName" : "Instalar os mesmos aplicativos do dispositivo Ledger anterior?",
       "subtitle" : "Você pode instalar ou remover aplicativos a qualquer hora.",
-      "installCTA" : "Restaurar aplicativos",
+      "installCTA" : "Instalar agora",
       "skipCTA" : "Vou fazer isso mais tarde."
     },
     "default" : {
-      "title" : "A {{ productName }} utiliza aplicativos para permitir transações seguras em blockchains",
-      "subtitle" : "Recomendamos que você baixe um conjunto padrão de aplicativos. Você pode baixar outros mais tarde.",
-      "installCTA" : "Instalar aplicativos",
+      "title" : "A {{ productName }} tem seus próprios aplicativos. Você precisa deles para fazer transações.",
+      "subtitle" : "Por exemplo, o aplicativo Bitcoin da {{productName}} é necessário para assinar transações de Bitcoin.\n\nInstale os aplicativos padrão para deixar sua {{productName}} pronta para fazer transações.",
+      "installCTA" : "Instalar agora",
       "skipCTA" : "Vou fazer isso mais tarde."
     },
     "progress" : {
@@ -5854,7 +5892,8 @@
       "progress" : "Permaneça no Ledger Live enquanto os aplicativos estão sendo instalados.",
       "disclaimer" : "Adicione ou remova aplicativos a qualquer hora com o Ledger Live.",
       "skippedInfo" : "Alguns aplicativos não estão disponíveis. Eles ainda serão desenvolvidos para {{ productName }}.",
-      "skipped" : "Ainda indisponíveis para {{ productName }}"
+      "skipped" : "Ainda indisponíveis para {{ productName }}",
+      "app" : "Aplicativo {{appName}}"
     },
     "cancelled" : {
       "title" : "A instalação do aplicativo foi cancelada na {{productName}}",
@@ -5878,7 +5917,6 @@
     "networkError" : {
       "title" : "Erro de rede",
       "subtitle" : "Algo deu errado. Tente novamente. Se o problema persistir, salve seu registro e entre em contato com o Suporte Ledger.",
-      "tryAgain" : "Tente novamente",
       "contactSupport" : "Fale com o Suporte Ledger",
       "saveLog" : "Salvar registro"
     }
