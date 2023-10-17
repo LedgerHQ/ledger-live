@@ -93,14 +93,6 @@ const Row = ({ app, state, dispatch, setAppUninstallWithDependencies, deviceInfo
   </Flex>
 );
 
-const modalStyleOverrides = {
-  modal: {
-    flex: 1,
-    justifyContent: "flex-end" as const,
-    margin: 0,
-  },
-};
-
 type Props = {
   isOpen: boolean;
   onClose: () => void;

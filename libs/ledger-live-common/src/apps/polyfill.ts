@@ -1,11 +1,7 @@
 // polyfill the unfinished support of apps logic
 import uniq from "lodash/uniq";
 import semver from "semver";
-import {
-  listCryptoCurrencies,
-  findCryptoCurrencyById,
-  findCryptoCurrency,
-} from "@ledgerhq/cryptoassets";
+import { listCryptoCurrencies, findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { App, AppType, Application, ApplicationV2 } from "@ledgerhq/types-live";
 import type { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 const directDep = {};
