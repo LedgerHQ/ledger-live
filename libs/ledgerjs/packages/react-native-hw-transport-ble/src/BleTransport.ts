@@ -393,7 +393,7 @@ async function open(
     clearDisconnectTimeout(transport.id);
     delete transportsCache[transport.id];
     tracer.trace(
-      `On device disconnected callback: cleared cached transport for ${transport.id}, emitting Transport event "disconnect"`,
+      `On device disconnected callback: cleared cached transport for ${transport.id}, emitting Transport event "disconnect. Error: ${error}"`,
       { reason: error },
     );
     transport.emit("disconnect", error);
@@ -426,6 +426,7 @@ async function open(
       }
 
       if (needsReconnect) {
+        tracer.trace(`Device needs reconnection. Triggering a disconnect`);
         await BleTransport.disconnectDevice(transport.id);
         await delay(reconnectionConfig.delayAfterFirstPairing);
       }
@@ -591,7 +592,7 @@ export default class BleTransport extends Transport {
    */
   static disconnectDevice = async (id: DeviceId, context?: TraceContext): Promise<void> => {
     const tracer = new LocalTracer(LOG_TYPE, context);
-    tracer.trace(`Trying to disconnect device ${id})`);
+    tracer.trace(`Trying to disconnect device ${id}`);
 
     await bleManagerInstance()
       .cancelDeviceConnection(id)
@@ -877,7 +878,8 @@ export default class BleTransport extends Transport {
    * @returns {Promise<void>}
    */
   async close(): Promise<void> {
-    this.tracer.trace("Closing, queuing a disconnect ...");
+    const tracer = this.tracer.withUpdatedContext({ hola: "hihi" });
+    tracer.trace("Closing, queuing a disconnect with a timeout ...");
 
     let resolve: (value: void | PromiseLike<void>) => void;
     const disconnectPromise = new Promise<void>(innerResolve => {
@@ -887,8 +889,9 @@ export default class BleTransport extends Transport {
     clearDisconnectTimeout(this.id);
 
     this.disconnectTimeout = setTimeout(() => {
+      tracer.trace("Disconnect timeout has been reached ...");
       if (this.isConnected) {
-        BleTransport.disconnectDevice(this.id, this.tracer.getContext())
+        BleTransport.disconnectDevice(this.id, tracer.getContext())
           .catch(() => {})
           .finally(resolve);
       } else {

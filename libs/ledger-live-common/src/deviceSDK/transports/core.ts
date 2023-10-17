@@ -272,7 +272,7 @@ const initialErrorRemapping = (error: unknown, context?: TraceContext) => {
 
   trace({
     type: LOG_TYPE,
-    message: "Initial error remapping",
+    message: `Initial error remapping: ${error}`,
     data: { error, mappedError },
     context,
   });
