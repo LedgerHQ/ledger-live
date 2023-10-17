@@ -3,7 +3,6 @@ import * as SentryMainModule from "@sentry/electron/main";
 import { ElectronMainOptions } from "@sentry/electron/main";
 import pname from "./pname";
 import anonymizer from "./anonymizer";
-import "../env";
 import { getOperatingSystemSupportStatus } from "~/support/os";
 
 /* eslint-disable no-continue */
