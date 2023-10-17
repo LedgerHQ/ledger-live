@@ -6,7 +6,7 @@ const Electron = require("./utils/Electron");
 const processReleaseNotes = require("./utils/processReleaseNotes");
 const {
   processNativeModules,
-  copyFolderRecursivelySync,
+  copyFolderRecursively,
   esBuildExternalsPlugin,
 } = require("native-modules-tools");
 const path = require("path");
@@ -82,9 +82,9 @@ const build = async argv => {
 
   if (!process.env.TESTING) {
     // Find native modules and copy them to ./dist/node_modules with their dependencies.
-    mappedNativeModules = processNativeModules({ root: lldRoot, destination: "dist" });
+    mappedNativeModules = await processNativeModules({ root: lldRoot, destination: "dist" });
     // Also copy to ./node_modules to be able to run the production build with playwright.
-    copyFolderRecursivelySync(
+    await copyFolderRecursively(
       path.join(lldRoot, "dist", "node_modules"),
       path.join(lldRoot, "node_modules"),
     );
