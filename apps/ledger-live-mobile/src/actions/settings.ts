@@ -66,6 +66,7 @@ import {
   SettingsSetClosedNetworkBannerPayload,
   SettingsSetClosedWithdrawBannerPayload,
   SettingsSetUserNps,
+  SettingsSetSupportedCounterValues,
 } from "./types";
 import { ImageType } from "../components/CustomImage/types";
 
@@ -273,6 +274,10 @@ export const setGeneralTermsVersionAccepted = createAction<SettingsSetGeneralTer
 );
 
 export const setUserNps = createAction<SettingsSetUserNps>(SettingsActionTypes.SET_USER_NPS);
+
+export const setSupportedCounterValues = createAction<SettingsSetSupportedCounterValues>(
+  SettingsActionTypes.SET_SUPPORTED_COUNTER_VALUES,
+);
 
 type PortfolioRangeOption = {
   key: PortfolioRange;

@@ -4,9 +4,9 @@ import React, { useCallback, memo, useState, useRef, useEffect } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { FlatList, TouchableOpacity, Image, TextInput } from "react-native";
 import styled, { useTheme } from "styled-components/native";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Search from "../../components/Search";
-import { supportedCountervalues } from "../../reducers/settings";
+import { getSupportedCounterValues } from "../../reducers/settings";
 import { setMarketCounterCurrency } from "../../actions/settings";
 import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
@@ -52,6 +52,7 @@ type Props = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.MarketC
 function MarketCurrencySelect({ navigation }: Props) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const supportedCountervalues = useSelector(getSupportedCounterValues);
   const { colors } = useTheme();
   const { counterCurrency, supportedCounterCurrencies, setCounterCurrency } = useMarketData();
   const [search, setSearch] = useState("");
@@ -65,7 +66,7 @@ function MarketCurrencySelect({ navigation }: Props) {
     .filter(({ ticker }) => supportedCounterCurrencies.includes(ticker.toLowerCase()))
     .map(cur => ({
       value: cur.ticker.toLowerCase(),
-      label: cur.name,
+      label: cur.label,
     }))
     .sort(a => (a.value === counterCurrency ? -1 : 0));
 

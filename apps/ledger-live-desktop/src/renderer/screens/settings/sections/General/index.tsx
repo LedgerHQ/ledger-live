@@ -13,9 +13,22 @@ import SentryLogsButton from "./SentryLogsButton";
 import ShareAnalyticsButton from "./ShareAnalyticsButton";
 import CarouselVisibility from "./CarouselVisibility";
 import { hasPasswordSelector } from "~/renderer/reducers/application";
+import { setSupportedCounterValues } from "~/renderer/actions/settings";
+import { getsupportedCountervalues } from "~/renderer/reducers/settings";
+import { useDispatch } from "react-redux";
+
+const useInitSupportedCounterValues = async () => {
+  const dispatch = useDispatch();
+
+  const supportedCounterValues = await getsupportedCountervalues();
+  dispatch(setSupportedCounterValues(supportedCounterValues));
+};
+
 const SectionGeneral = () => {
   const hasPassword = useSelector(hasPasswordSelector);
   const { t } = useTranslation();
+  useInitSupportedCounterValues();
+
   return (
     <>
       <TrackPage category="Settings" name="Display" />
