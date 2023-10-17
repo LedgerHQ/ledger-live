@@ -86,8 +86,9 @@ const UninstallDependenciesModal = ({ appUninstallWithDependencies, dispatch, on
     ),
     [colors.grey],
   );
+
   return (
-    <QueuedDrawer isRequestingToBeOpened={!!app} onClose={onClose}>
+    <QueuedDrawer isForcingToBeOpened={!!app} onClose={onClose}>
       <Flex alignItems="center">
         {app && dependents.length && (
           <View style={{ width: "100%" }}>

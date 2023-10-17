@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useMemo, useEffect } from "react";
 
-import { Text, Flex, Button, BaseModal } from "@ledgerhq/native-ui";
+import { Text, Flex, Button } from "@ledgerhq/native-ui";
 import { FlatList } from "react-native";
 import { App, DeviceInfo } from "@ledgerhq/types-live";
 import { State, Action } from "@ledgerhq/live-common/apps/index";
@@ -9,6 +9,7 @@ import AppIcon from "../AppsList/AppIcon";
 import ByteSize from "../../../components/ByteSize";
 import AppUninstallButton from "../AppsList/AppUninstallButton";
 import AppProgressButton from "../AppsList/AppProgressButton";
+import QueuedDrawer from "../../../components/QueuedDrawer";
 
 type HeaderProps = {
   illustration: JSX.Element;
@@ -141,14 +142,8 @@ const InstalledAppsModal = ({
   }, [appList, onClose]);
 
   return (
-    <BaseModal
-      isOpen={isOpen}
-      onClose={onClose}
-      modalStyle={modalStyleOverrides.modal}
-      containerStyle={{ height: "100%" }}
-      propagateSwipe={true}
-    >
-      <Flex flex={1}>
+    <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose} propagateSwipe={true}>
+      <Flex flexShrink={0} flexGrow={1}>
         <FlatList
           data={appList}
           renderItem={renderItem}
@@ -160,7 +155,7 @@ const InstalledAppsModal = ({
       <Button mt={6} mb={6} size="large" type="error" onPress={onUninstallAll}>
         <Trans i18nKey={"manager.uninstall.uninstallAll"} />
       </Button>
-    </BaseModal>
+    </QueuedDrawer>
   );
 };
 
