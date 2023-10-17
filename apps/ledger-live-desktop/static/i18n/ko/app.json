@@ -122,9 +122,9 @@
     "search" : "검색 중...",
     "searchWithoutEllipsis" : "검색",
     "manage" : "관리",
+    "tryAgain" : "다시 시도하세요",
     "lockScreen" : {
       "title" : "다시 돌아오신 것을 환영합니다.",
-      "subTitle" : null,
       "description" : "계속하려면 암호를 입력하세요",
       "inputPlaceholder" : "암호를 입력하세요",
       "lostPassword" : "암호를 잊어버렸습니다"
@@ -196,11 +196,11 @@
       "description" : "트랜잭션이 진행 중입니다. 트랜잭션을 취소하거나 네트워크 수수료를 올려 속도를 높일 수 있습니다.",
       "stuckDescription" : "트랜잭션이 중단되었습니다. 트랜잭션을 취소하거나 네트워크 수수료를 올려 속도를 높이세요.",
       "previousFeesInfo" : {
-        "pendingTransactionFeesInfo" : "보류 중인 트랜잭션 수수료 정보: ",
-        "networkfee" : "네트워크 수수료 = ",
-        "maxFee" : "최대 비용 = ",
-        "maxPriorityFee" : "최대 우선 수수료 = ",
-        "gasPrice" : "가스비 = "
+        "pendingTransactionFeesInfo" : "보류 중인 트랜잭션 수수료 정보:",
+        "networkfee" : "네트워크 수수료 = {{amount}}",
+        "maxFee" : "최대 수수료 = {{amount}}",
+        "maxPriorityFee" : "최대 우선 수수료 = {{amount}}",
+        "gasPrice" : "가스비 = {{amount}}"
       },
       "learnMore" : "더 자세히 알고 싶어요",
       "panel" : {
@@ -209,11 +209,11 @@
       },
       "speedUp" : {
         "title" : "스피드 업",
-        "description" : "네트워크 수수료를 높여 트랜잭션을 다시 제출하세요."
+        "description" : "네트워크 수수료를 높여 트랜잭션을 다시 제출하세요.\n\n네트워크 수수료는 기존 트랜잭션 수수료보다 30% 이상 높아야 합니다."
       },
       "cancel" : {
         "title" : "취소",
-        "description" : "0의 {{ticker}}를 본인 주소로 전송하기 취소를 담보하기 위해 네트워크 수수료는 취소하려는 트랜잭션 수수료보다 30% 더 높습니다."
+        "description" : "0의 {{ticker}}를 본인 주소로 전송하기.\n\n네트워크 수수료는 기존 트랜잭션 수수료보다 30% 이상 높아야 합니다."
       },
       "steps" : {
         "method" : {
@@ -546,6 +546,10 @@
           "body" : "본인 지갑에서 암호화폐 수령"
         }
       }
+    },
+    "getFundsModal" : {
+      "text" : "{{coin}} 코인을 스테이킹하세요",
+      "description" : "Ledger Live를 사용해 Ledger로 직접 암호화폐를 구매, 스왑, 수령하세요."
     }
   },
   "lottieDebugger" : {
@@ -561,7 +565,7 @@
     "modal" : {
       "title" : "Ledger Vault 연결하기",
       "info" : "아래 필드를 작성하여 Ledger Vault 워크스페이스 계정을 연결하고 Ledger Live에서 트랜잭션을 생성하세요. 설정 > 외부 지갑 서명인에서 정보를 찾으세요.",
-      "info_link" : "Learn more",
+      "info_link" : "자세히 알아보기",
       "host" : {
         "title" : "URL 엔드포인트",
         "placeholder" : "ws://localhost:3030"
@@ -572,9 +576,9 @@
       },
       "token" : {
         "title" : "운영자 API 토큰",
-        "placeholder" : "Token"
+        "placeholder" : "토큰"
       },
-      "submit" : "Connect"
+      "submit" : "연결"
     }
   },
   "fullNode" : {
@@ -1140,42 +1144,46 @@
     "exitCTA" : "설정 나가기",
     "connection" : {
       "searching" : {
-        "title" : "{{deviceModelName}} 장치를 컴퓨터에 연결",
-        "connectionTrouble" : "장치 연결에 문제가 있나요?"
+        "title" : "USB 케이블을 사용해 컴퓨터에 {{deviceModelName}}를 연결하세요.",
+        "connectionTrouble" : "Ledger 연결에 문제가 있나요?"
       },
       "success" : {
         "title" : "{{ deviceName }}에 연결"
       }
     },
     "manual" : {
-      "title" : "{{deviceName}} 설정",
+      "title" : "{{deviceName}} 설정하기",
       "continueOnDevice" : "{{productName}}에서 이 동작을 실행합니다",
       "pairedContent" : {
-        "title" : "{{deviceName}}가 안전하게 보호되고 있습니다",
-        "description" : "{{deviceName}}에서 설정을 계속 진행하세요",
-        "text" : "이 화면은 {{deviceName}} 설정이 진행되는 동안 관련 정보 제공을 위해 동적으로 변경됩니다.",
-        "continueOnDevice" : "{{productName}}에서 탭하여 다음 화면을 확인하세요."
+        "title" : "이 {{deviceName}} 장치는 정품입니다",
+        "description" : "이 Ledger Stax를 사용해도 안전합니다. 설정을 진행하시면 됩니다.",
+        "continueOnDevice" : "설정을 시작하려면 {{productName}}를 탭하세요."
       },
       "pinContent" : {
-        "title" : "PIN 설정",
-        "description" : "PIN은 4~8자리입니다.",
-        "text" : "{{deviceName}} 및 PIN에 액세스할 수 있으면 누구나 사용자가 가진 모든 암호화폐와 NFT 자산에 액세스할 수 있습니다.",
-        "continueOnDevice" : "{{productName}}에서 PIN을 설정하세요"
+        "title" : "PIN",
+        "description" : "다른 비밀번호와 마찬가지로 PIN을 사용하면 {{productName}}의 잠금을 해제하고 원치 않는 액세스를 방지할 수 있습니다.",
+        "continueOnDevice" : "{{productName}}에 PIN을 설정하세요"
       },
       "seedContent" : {
         "title" : "비밀 복구 문구",
         "recoverSeed" : "자리 표시자: 복구",
-        "restoreSeed" : "반드시 Ledger 장치에서 생성되는 비밀 복구 문구를 사용하여 자산에 대한 확실한 보안을 보장받으세요.\n\n복구 문구가 없으신가요? {{productName}}을 사용해 새로운 복구 문구를 생성하세요.",
-        "selection" : "{{productName}}에서 가장 적합한 설정 옵션을 선택하세요.",
-        "selectionContinueOnDevice" : "{{productName}}에서 옵션을 탭하세요",
-        "newSeedDescription" : "아래 동영상에서 비밀번호 설정에 대해 알아보세요.",
-        "newSeedContinueOnDevice" : "{{productName}}에서 실행해보세요",
-        "recovery" : "반드시 Ledger 장치에서 생성되는 비밀 복구 문구를 사용하여 자산에 대한 확실한 보안을 보장받으세요.\n\n복구 문구가 없으신가요? {{productName}}을 사용해 새로운 복구 문구를 생성하세요.",
-        "restoreChoiceContinueOnDevice" : "{{productName}}에서 옵션을 선택하세요",
+        "restoreSeed" : "Ledger 장치에서 생성된 비밀 복구 문구를 사용해 자산에 대한 보안을 극대화하세요.\n\n복구 문구가 없으신가요? {{productName}}을 사용해 새로운 복구 문구를 생성하세요.",
+        "selection" : "가장 적합한 설정 옵션을 선택하세요.",
+        "selectionNewLedger" : "<0>“새 Ledger로 설정”</0>을 통해 새 지갑을 만들 수 있습니다. 이를 통해 새로운 비밀 복구 문구가 생성됩니다.",
+        "selectionRestore" : "<0>“복구”기능을 통해 비밀 복구 문구 또는 Ledger Recover를 사용해 기존 자산에 대한 액세스를 복구할 수 있습니다.",
+        "selectionContinueOnDevice" : "{{productName}}에서 관련 옵션을 선택하세요",
+        "newSeedDescription1" : "{{productName}}는 24개 단어로 구성된 고유한 목록인 비밀 복구 문구를 생성합니다. 이는 Ledger를 도난당하거나 분실하거나 PIN을 잊어버린 경우 자산을 복구할 수 있는 유일한 방법입니다.",
+        "newSeedDescription2" : "<0>비밀 복구 문구를 안전하게 비공개로 유지하세요.</0>\n이 비밀 문구는 모든 보유 자산을 제어하며 대체가 불가능합니다. 이 문구를 손에 넣은 사람이면 누구나 여러분의 자산을 제어하거나 훔칠 수 있습니다. 이를 분실하면 Ledger가 도와드릴 수 없습니다",
+        "newSeedDescription3" : "비밀 복구 문구를 요구하는 사람이나 소프트웨어를 조심하세요. 그것은 사기입니다. ",
+        "newSeedDescription4" : "비밀 복구 문구를 입력해야 하는 유일한 장소는 Ledger 장치뿐입니다.",
+        "newSeedDescription5" : "타인과 공유하지 마세요. 잃어버리지 마세요.",
+        "newSeedContinueOnDevice" : "{{productName}}에 생성된 비밀 복구 문구를 확인하고 기록해두세요",
+        "restoreChoiceContinueOnDevice" : "{{productName}}에서 관련 옵션을 선택하세요",
         "restoreChoiceSRPTitle" : "비밀 복구 문구를 사용해 복원하세요",
-        "restoreChoiceSRPDescription" : "LEDGER가 생성한 문구를 사용해 자산에 대한 확실한 보안을 보장받으세요.",
+        "restoreChoiceSRPDescription" : "Ledger 장치에서 생성된 비밀 복구 문구를 사용해 보안을 극대화하세요.",
         "restoreChoiceRecoverTitle" : "Ledger Recover를 이용한 복구",
-        "restoreChoiceRecoverDescription" : "Ledger 계정에 로그인하고 신원을 확인하여 복구 문구 백업을 복원하세요."
+        "restoreChoiceRecoverDescription" : "Ledger Recover를 구독하는 경우 구독 서비스에 로그인하여 비밀 복구 문구의 백업을 복구하세요.",
+        "followInstructions" : "{{productName}}에 표시되는 지침을 따르세요."
       },
       "softwareCheckContent" : {
         "title" : {
@@ -1183,27 +1191,27 @@
           "completed" : "귀하의 {{modelName}}는 정품이며 최신 상태입니다"
         },
         "exitWarningDrawer" : {
-          "title" : "정말 설정에서 나가시겠습니까?",
-          "description" : "이 점검을 허용하지 않으면 Ledger Stax의 설정을 완료할 수 없습니다.",
+          "title" : "정품 확인 및 OS 업데이트 확인을 취소하시겠어요?",
+          "description" : "Ledger Live 앱을 사용해 Ledger Stax 설정을 계속 진행하려면 정품 확인이 필수입니다.",
           "cancelCheckCTA" : "확인 취소",
           "resumeCheckCTA" : "확인 재개"
         },
         "genuineCheckErrorDrawer" : {
-          "quitSetupCTA" : "설정 종료",
+          "quitSetupCTA" : "설정 취소",
           "goToSettingsCTA" : "설정으로 이동",
-          "retryCTA" : "다시 시도",
+          "retryCTA" : "다시 시도하세요",
           "contactSupportCTA" : "Ledger 지원 부서에 문의해주세요",
           "notFoundEntityError" : {
-            "title" : "해당 장치가 정품인지 확인하지 못했습니다.",
-            "description" : "실험 설정인 “My Ledger 공급자({{providerNumber}})”가 정품 확인 기능과 충돌할 수 있습니다. 이는 설정에서 비활성화할 수 있습니다."
+            "title" : "정품 확인을 다시 시작하세요",
+            "description" : "먼저 “나의 Ledger 공급자({{providerNumber}})” 설정을 비활성화해야 합니다. 이를 비활성화하려면 Ledger Live의 \"설정\"을 열고 \"실험기능\"을 선택한 다음 \"관리자 공급자\"를 끕니다."
           },
           "deviceNotGenuineError" : {
             "title" : "이 {{productName}} 장치는 정품입니다",
             "description" : "이 {{productName}} 장치는 사용하기에 안전합니다.\nLedger 지원 부서로 문의하세요"
           }
         },
-        "whyPerformChecksLink" : "왜 이러한 보안 검사를 수행하나요?",
-        "startChecksCTA" : "확인 시작",
+        "whyPerformChecksLink" : "정품 확인 자세히 알아보기",
+        "startChecksCTA" : "내 {{modelName}} 확인하기",
         "continueCTA" : "설정 계속하기",
         "genuineCheck" : {
           "title" : {
@@ -1212,31 +1220,31 @@
             "cancelled" : "정품 확인이 거부되었습니다"
           },
           "subtitle" : {
-            "active" : "본 점검을 통해 귀하의 {{modelName}}가 Ledger의 공식 하드웨어임을 확인합니다",
-            "cancelled" : "이 점검을 허용하지 않으면 {{modelName}}의 설정을 완료할 수 없습니다"
+            "active" : "이를 통해 사용 중인 {{modelName}} 제품이 공식 Ledger 제품임을 확인합니다.",
+            "cancelled" : "Ledger Live 앱을 사용해 {{modelName}} 설정을 계속 진행하려면 이 확인이 필수입니다."
           },
           "resumeCTA" : "정품 확인 재개"
         },
         "firmwareUpdate" : {
           "title" : {
             "active" : "OS 업데이트 확인",
-            "completed" : "{{modelName}} OS는 최신 상태입니다",
-            "updateAvailable" : "OS 업데이트 {{firmwareVersion}} 버전을 사용할 수 있습니다"
+            "completed" : "사용 중인 {{modelName}} OS가 최신 상태입니다",
+            "updateAvailable" : "OS 업데이트 {{firmwareVersion}} 사용 가능"
           },
           "subtitle" : {
-            "active" : "본 점검을 통해 귀하의 {{modelName}} OS가 최신 상태임을 확인합니다",
-            "updateAvailable" : "최신 보안 기능에 액세스하려면 이 업데이트를 수행하는 것이 좋습니다"
+            "active" : "이를 통해 사용 중인 {{modelName}} 운영 시스템이 최신 상태인지 확인합니다.",
+            "updateAvailable" : "업데이트하여 최적의 보안과 최신 기능에 대한 액세스를 누리세요."
           },
-          "viewUpdateCTA" : "업데이트 보기",
+          "viewUpdateCTA" : "{{modelName}} OS 업데이트",
           "resumeUpdateCTA" : "업데이트 재개",
           "skipUpdateCTA" : "업데이트 건너뛰기",
-          "retryUpdateCTA" : "다시 시도",
+          "retryUpdateCTA" : "다시 시도하세요",
           "finalStepSuccessDescription" : "OS 확인으로 돌아가기",
-          "finalStepSuccessButtonLabel" : "계속"
+          "finalStepSuccessButtonLabel" : "완료"
         }
       },
       "installApplications" : {
-        "title" : "블록체인 앱 설치",
+        "title" : "{{productName}}에 앱 설치하기",
         "install" : "설치",
         "skip" : "나중에",
         "info" : "{{deviceName}}의 앱은 트랜잭션 승인에 사용됩니다. 언제든지 추가나 삭제가 가능합니다."
@@ -1245,7 +1253,7 @@
         "title" : "설정 종료"
       },
       "softwareCheckAllowSecureChannelDrawer" : {
-        "title" : "Ledger와 보안 연결을 허용"
+        "title" : "정품 확인을 시작하려면 \"허용\"을 탭하세요."
       },
       "softwareCheckLockedDeviceDrawer" : {
         "title" : "장치를 잠금 해제하세요"
@@ -1257,13 +1265,13 @@
         "supportButton" : "상담원과 대화"
       },
       "troubleshootingDrawer" : {
-        "title" : "USB 연결 문제 해결",
-        "description" : "장치 연결에 문제가 있는 것 같습니다. 걱정 마세요. 장치가 무사히 연결될 때까지 다양한 해결책을 하나씩 시도해볼 수 있습니다!",
-        "fixButton" : "해결하세요",
+        "title" : "USB 연결",
+        "description" : "Ledger에 연결하는 중에 문제가 발생했습니다. 이 문제 해결에 대한 지침을 보려면 \"문제 해결\"을 선택하세요.",
+        "fixButton" : "문제 해결",
         "closeButton" : "닫기"
       },
       "desyncOverlay" : {
-        "errorMessage" : "{{deviceName}}와의 연결이 끊어진 것 같습니다. 다시 연결을 시도하고 있습니다."
+        "errorMessage" : "{{deviceName}}와의 연결이 끊어졌습니다. 재연결 시도."
       },
       "header" : {
         "helpButton" : "도움이 필요하십니까?"
@@ -1700,7 +1708,8 @@
   "DeviceAction" : {
     "allowAppPermission" : "내 장치에서 {{wording}} 앱 열기",
     "allowAppPermissionSubtitleToken" : "나의 {{token}} 토큰 관리",
-    "allowManagerPermission" : "장치에서 {{wording}} 허용",
+    "allowManagerPermission" : "장치에서 Ledger 관리자를 허용하세요",
+    "allowRenaming" : "장치에서 이름 변경을 허용하세요",
     "loading" : "로딩...",
     "connectAndUnlockDevice" : "장치를 연결하고 잠금 해제하세요",
     "unlockDevice" : "장치를 잠금 해제하세요",
@@ -1863,8 +1872,9 @@
       "dontHaveSeed" : "복구 문구가 없나요? ",
       "followTheGuide" : "단계별 업데이트 가이드를 따르세요",
       "removeApps" : "모든 앱을 삭제하고 업데이트하세요",
-      "update" : "{{productName}} 업데이트",
+      "update" : "{{productName} OS 업데이트",
       "updateBtn" : "펌웨어를 업데이트하세요",
+      "installUpdate" : "업데이트 설치",
       "banner" : {
         "warning" : "펌웨어 {{latestFirmware}}으로 업데이트하실 수 있습니다",
         "cta" : "내 Ledger로 이동",
@@ -1878,12 +1888,16 @@
       "contactSupport" : "지원 부서 연락",
       "deprecated" : "장치 펌웨어가 오래되어 업데이트가 불가능합니다. Leger 지원에 연락하여 교체를 요청하세요.",
       "prepareSeed" : "만약을 대비하여 24개의 단어 복구 문구를 복구 시트에 반드시 기록해 두고 언제든 사용 가능한 상태로 준비해 두세요.",
-      "disclaimerTitle" : "곧 <1>펌웨어 버전 {{version}}</1> 설치가 시작됩니다."
+      "disclaimerTitle" : "곧 <1>펌웨어 버전 {{version}}</1> 설치가 시작됩니다.",
+      "cancelUpdate" : "업데이트 취소",
+      "continueUpdate" : "업데이트 계속하기",
+      "cancelUpdateWarning" : "지금 업데이트를 취소하면 설정 및 앱이 제대로 복구되지 않을 수 있습니다.",
+      "updateInProgress" : "OS 업데이트 진행 중"
     },
     "modal" : {
-      "title" : "{{productName}} 업데이트",
+      "title" : "{{productName}} OS 업데이트",
       "steps" : {
-        "preparingUpdate" : "업데이트 준비 중",
+        "preparingUpdate" : "설정 및 앱 백업",
         "transferringUpdate" : "{{productName}}에 업데이트 전송 중",
         "prepare" : "업데이트 준비",
         "install" : "업데이트 설치",
@@ -1900,7 +1914,7 @@
         "flash" : "장치 준비 중..."
       },
       "confirmIdentifier" : "식별자 확인",
-      "confirmIdentifierText" : "{{productName}}에 설치 확인",
+      "confirmIdentifierText" : "\"설치\"를 탭하여 OS 업데이트를 시작하세요",
       "identifier" : "식별자",
       "newFirmware" : "새 펌웨어 {{version}}",
       "confirmUpdate" : "장치에서 업데이트를 확인하세요",
@@ -1911,9 +1925,7 @@
       "mcuSecondNanoX" : "<1><0>{{bootloaderOption}}</0></1>이 표시될 때까지 왼쪽 버튼을 길게 누르세요. 버튼 두 개를 모두 눌러 장치를 확인하고 재연결하세요.",
       "mcuBlueFirst" : "측면 버튼을 10초간 길게 눌러 장치를 끄세요. 버튼에서 손을 떼세요.",
       "mcuBlueSecond" : "부팅 옵션이 표시될 때까지 버튼을 5초 이상 누르세요. Bootloader 모드 탭",
-      "successTitle" : "OS 업데이트 정상 완료.",
-      "successTextApps" : "장치에 앱을 다시 설치하세요",
-      "successTextNoApps" : "이제 장치에 앱을 설치할 수 있습니다",
+      "successTitle" : "사용 중인 {{deviceName}} OS가 최신 상태입니다.",
       "sucessCTAApps" : "앱 재설치",
       "SuccessCTANoApps" : "앱 설치하기",
       "cancelReinstallCTA" : "업데이트 설치",
@@ -2064,7 +2076,8 @@
         "parentAccount" : "1. {{currencyName}} 계정을 선택하세요",
         "token" : "2. 토큰을 선택하세요",
         "verifyTokenType" : "<0>{{token}}</0>이 <0>{{tokenType}}</0> 토큰인지 확인하세요. 다른 암호화폐가 {{currency}} 계정으로 전송되면 소실될 수 있습니다.",
-        "warningTokenType" : "<0>{{ticker}}</0> 또는 <0>{{tokenType}}</0> 토큰은 {{currency}} 계정으로만 보내세요. 다른 암호화폐를 보내면 영구적인 자금 손실을 초래할 수 있습니다."
+        "warningTokenType" : "<0>{{ticker}}</0> 또는 <0>{{tokenType}}</0> 토큰은 {{currency}} 계정으로만 보내세요. 다른 암호화폐를 보내면 영구적인 자금 손실을 초래할 수 있습니다.",
+        "depositFromCexBannerTitle" : "코인베이스 계정의 암호화폐를 예치하세요"
       },
       "connectDevice" : {
         "title" : "장치",
@@ -2230,12 +2243,12 @@
   "deviceLocalization" : {
     "language" : "언어",
     "deviceLanguage" : "장치 언어 변경",
-    "changeLanguage" : "변경",
+    "changeLanguage" : "언어 변경",
     "dontChangeLanguage" : "변경 금지",
     "changeDeviceLanguage" : "장치 언어를 변경하시겠습니까?",
     "changeDeviceLanguagePrompt" : {
-      "title" : "{{deviceName}}에서 {{language}}도 지원됩니다",
-      "description" : "언어를 {{language}}로 변경하시겠습니까?"
+      "title" : "{{deviceName}}에서 언어를 {{language}}로 변경하시겠어요?",
+      "description" : "{{deviceName}}와 Ledger Live 앱을 동일한 언어로 사용하시겠어요?"
     },
     "firmwareUpdatePrompt" : {
       "title" : "{{deviceName}} 장치 언어를 {{language}}로 설정하시겠습니까?",
@@ -2934,7 +2947,7 @@
             }
           },
           "amount" : {
-            "title" : "Amount"
+            "title" : "금액"
           },
           "validator" : {
             "title" : "검증인"
@@ -3006,7 +3019,7 @@
             "newDelegation" : "새로운 위임",
             "chooseValidator" : "검증인 선택",
             "warning" : "다시 마음이 바뀌어 새로운 검증인 교체하고 재위임하려면 <0>{{numberOfDays}}일</0>을 기다려야 합니다",
-            "amountLabel" : "Amount to redelegate"
+            "amountLabel" : "재위임할 금액"
           },
           "device" : {
             "title" : "장치"
@@ -3790,7 +3803,7 @@
         "button" : "완료",
         "title" : "모바일로 내보내려면 스캔해주세요",
         "listTitle" : "Ledger Live 모바일 앱에서:",
-        "step1" : "Tap the <highlight><icon>+</icon></highlight> button in <highlight>accounts</highlight>",
+        "step1" : "Tap <highlight>Add account</highlight> or <highlight>See All Assets</highlight> in the main screen and tap the <highlight><icon>+</icon></highlight> button.",
         "step2" : "<highlight>데스크탑 계정 가져오기</highlight>를 탭하세요",
         "step3" : "100% 로딩될 때까지 <highlight>LiveQR 코드</highlight> 를 스캔하세요"
       }
@@ -4061,7 +4074,7 @@
     "downloadProgress" : "{{progress}}% 완료됨",
     "checking" : "업데이트 확인 중...",
     "checkSuccess" : "새로운 Ledger Live 업데이트가 있습니다. 앱을 닫으면 자동으로 설치됩니다.",
-    "quitAndInstall" : "지금 설치",
+    "quitAndInstall" : "지금 설치하고 다시 시작하기",
     "updateAvailable" : "Ledger Live {{version}} 버전을 업데이트할 수 있습니다",
     "error" : "업데이트 중 오류가 발생했습니다. 다시 다운로드하세요",
     "reDownload" : "다시 다운로드",
@@ -4244,7 +4257,7 @@
         }
       },
       "selectDevice" : {
-        "title" : "장치를 선택하세요",
+        "title" : "어떤 Ledger를 사용하시나요?",
         "selectLabel" : "선택"
       },
       "selectUseCase" : {
@@ -4922,6 +4935,10 @@
     }
   },
   "errors" : {
+    "ReplacementTransactionUnderpriced" : {
+      "title" : "시세 이하의 대체 트랜잭션",
+      "description" : "네트워크 수수료는 기존 트랜잭션 수수료보다 10% 이상 높아야 합니다."
+    },
     "NoSuchAppOnProvider" : {
       "title" : "특정 구성에 대한 {{appName}} 앱을 찾을 수 없습니다.",
       "description" : "내 Ledger에서 앱을 다시 설치해 보세요"
@@ -5077,12 +5094,12 @@
       "description" : "다시 시도해 주세요."
     },
     "DisconnectedDevice" : {
-      "title" : "죄송하지만 장치 연결이 해제된 것 같습니다",
-      "description" : "다시 연결하여 재시도해주세요."
+      "title" : "장치 연결 해제됨",
+      "description" : "Ledger Live를 장치에 연결할 수 없습니다. 다시 시도해 주세요."
     },
     "DisconnectedDeviceDuringOperation" : {
-      "title" : "죄송하지만 장치 연결이 해제된 것 같습니다",
-      "description" : "다시 연결하여 재시도해주세요."
+      "title" : "장치 연결 해제됨",
+      "description" : "Ledger Live를 장치에 연결할 수 없습니다. 다시 시도해 주세요."
     },
     "EConnReset" : {
       "title" : "Ledger 애플리케이션 스토어에 연결할 수 없습니다.",
@@ -5190,6 +5207,10 @@
       "title" : "죄송하지만 인터넷이 끊긴 것 같습니다",
       "description" : "인터넷 연결을 확인하세요."
     },
+    "NetworkError" : {
+      "title" : "네트워크 오류가 발생했습니다",
+      "description" : "나중에 다시 시도해 주세요."
+    },
     "NoAddressesFound" : {
       "title" : "죄송하지만 발견된 계정이 없습니다",
       "description" : "주소 계산에 문제가 발생했습니다. 재시도하거나 Ledger 지원 부서에 연락하세요"
@@ -5285,7 +5306,7 @@
     },
     "TransportRaceCondition" : {
       "title" : "문제가 발생했습니다. 장치를 다시 연결하세요",
-      "description" : "{{message}}"
+      "description" : "An action was already pending on the Ledger device. Please deny or reconnect."
     },
     "TransportStatusError" : {
       "title" : "문제가 발생했습니다. 장치를 다시 연결하세요",
@@ -5309,6 +5330,10 @@
     "UserRefusedOnDevice" : {
       "title" : "거부된 조치",
       "description" : "사용자가 장치에서 거래를 거부했습니다"
+    },
+    "ExpertModeRequired" : {
+      "title" : "전문가 모드 필요",
+      "description" : "전문가 모드를 활성화해야 합니다."
     },
     "TransactionRefusedOnDevice" : {
       "title" : "장치에서 거래 거부",
@@ -5370,7 +5395,7 @@
       "description" : "NFT 보내기 기능은 Nano X 및 Nano S+에서만 사용할 수 있습니다. Nano S로 NFT를 보내는 방법을 알아보려면 고객 지원 플랫폼을 방문하세요."
     },
     "TransactionHasBeenValidatedError" : {
-      "title" : "속도를 높이거나 취소할 수 없습니다.",
+      "title" : "속도를 높이거나 취소할 수 없음",
       "description" : "이 트랜잭션은 이미 검증되었습니다"
     },
     "CantScanQRCode" : {
@@ -5599,7 +5624,7 @@
       "title" : "이전 트랜잭션이 아직 처리되지 않았습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
     },
     "SolanaTxConfirmationTimeout" : {
-      "title" : "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+      "title" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
     },
     "NotEnoughNftOwned" : {
       "title" : "사용 가능한 토큰 수를 초과했습니다"
@@ -5795,31 +5820,33 @@
     "managerCTARemove" : "제거",
     "steps" : {
       "choose" : {
-        "stepLabel" : "이미지 선택",
+        "stepLabel" : "사진 선택",
         "description" : "(...)로 설정할 이미지 선택",
         "pickFromNftGallery" : "내 NFT 갤러리에서 선택",
         "myNfts" : "내 NFT",
-        "upload" : "내 컴퓨터에서 업로드",
+        "upload" : "컴퓨터에서 업로드",
         "chooseNft" : "NFT 선택하기",
         "remove" : "현재 사진 삭제",
         "selectNft" : "NFT 선택",
-        "previousSelectNft" : "뒤로",
         "nftEmptyStateTitle" : "아직 표시할 NFT가 없습니다",
         "nftEmptyStateDescription" : "지갑에 NFT를 추가하고 시작하세요."
       },
       "adjust" : {
-        "stepLabel" : "이미지 조정",
-        "rotate" : "회전"
+        "stepLabel" : "잘라내기",
+        "rotate" : "회전",
+        "confirmCrop" : "크롭한 이미지를 확인하세요"
       },
       "contrast" : {
-        "stepLabel" : "대비 선택"
+        "stepLabel" : "대비 설정",
+        "confirmContrast" : "대비를 확인하세요"
       },
       "transfer" : {
-        "stepLabel" : "전송",
-        "uploadAnotherImage" : "다른 이미지 업로드",
-        "allowPreview" : "잠금 화면 사진이 {{productName}}에 로드되도록 허용하세요",
+        "stepLabel" : "로드",
+        "useAnotherPicture" : "다른 사진을 업로드하세요",
+        "allowPreview" : "잠금 화면을 사용자 정의하려면 \"사진 로드\"를 탭하세요.",
         "allowConfirmPreview" : "{{productName}}에서 잠금 화면 이미지 복원 허용",
         "loadingPicture" : "로딩 중...",
+        "voila" : "짜잔!",
         "imageLoaded" : "{{productName}}에서 로드한 이미지",
         "confirmPicture" : "마음에 드시나요?\n그러면 저장하세요!",
         "confirmRestorePicture" : "잠금 화면 이미지 복원 확인",
@@ -5827,25 +5854,25 @@
       }
     },
     "postOnboarding" : {
-      "title" : "내 장치 커스텀",
-      "description" : "화면 커스텀을 통해",
+      "title" : "잠금화면을 취향대로 꾸며보세요",
+      "description" : "Ledger Stax의 잠금화면으로 설정할 NFT나 사진을 선택하세요.",
       "actionCompletedPopupLabel" : "장치 커스텀 완료"
     },
-    "customImageSet" : "잠금화면을 설정하세요",
-    "finishCTA" : "완료"
+    "customImageSet" : "잠금화면 꾸미기 완료",
+    "finishCTA" : "닫기"
   },
   "onboardingAppInstall" : {
     "restore" : {
       "title" : "{{deviceName}}에서와 동일한 앱을 설치하시겠어요?",
       "titleNoDeviceName" : "이전 Ledger 장치에서와 동일한 앱을 설치하시겠어요?",
       "subtitle" : "언제든지 앱을 설치하거나 제거할 수 있습니다.",
-      "installCTA" : "애플리케이션 복구",
+      "installCTA" : "지금 설치",
       "skipCTA" : "나중에 할게요"
     },
     "default" : {
-      "title" : "{{ productName }} 제품은 앱을 사용하여 안전한 블록체인 트랜잭션을 지원합니다",
-      "subtitle" : "기본 앱 세트를 다운로드를 권장드립니다. 이후 추가로 다운로드할 수 있습니다.",
-      "installCTA" : "애플리케이션 설치",
+      "title" : "{{ productName }}는 자체 앱을 보유하며 거래 시 필요합니다.",
+      "subtitle" : "예를 들어, {{productName}}용 비트코인 앱은 비트코인 트랜잭션 서명에 필요합니다.\n기본 앱을 설치하여 사용 중이신 {{productName}} 트랜잭션 전용으로 사용하세요.",
+      "installCTA" : "지금 설치",
       "skipCTA" : "나중에 할게요"
     },
     "progress" : {
@@ -5854,7 +5881,8 @@
       "progress" : "앱을 설치하는 동안 Ledger Live를 종료하지 마세요.",
       "disclaimer" : "Ledger Live에서 언제든지 앱을 추가하거나 제거하세요.",
       "skippedInfo" : "일부 앱은 이용할 수 없습니다. 아직 {{ productName }}용으로 개발되지 않았습니다.",
-      "skipped" : "아직 {{ productName }}에서 이용할 수 없습니다"
+      "skipped" : "아직 {{ productName }}에서 이용할 수 없습니다",
+      "app" : "{{appName}} 앱"
     },
     "cancelled" : {
       "title" : "{{productName}}에서 앱 설치가 취소되었습니다",
@@ -5878,7 +5906,6 @@
     "networkError" : {
       "title" : "네트워크 오류",
       "subtitle" : "문제가 발생했습니다. 다시 시도해주세요. 문제가 지속될 경우, 로그를 저장하고 Ledger 지원 부서에 연락하세요.",
-      "tryAgain" : "다시 시도하세요",
       "contactSupport" : "Ledger 지원 부서에 문의해주세요",
       "saveLog" : "로그 저장"
     }
