@@ -61,7 +61,7 @@ Array [
     Object {
       "accountId": "js:2:sei_network:sei1gyauvl44q2apn3u3aujm36q8zrj74vryc50pfg:",
       "blockHash": null,
-      "blockHeight": "30140638",
+      "blockHeight": 30140638,
       "contract": undefined,
       "extra": Object {
         "memo": "Ledger Live",
@@ -87,7 +87,7 @@ Array [
     Object {
       "accountId": "js:2:sei_network:sei1gyauvl44q2apn3u3aujm36q8zrj74vryc50pfg:",
       "blockHash": null,
-      "blockHeight": "30140333",
+      "blockHeight": 30140333,
       "contract": undefined,
       "extra": Object {
         "memo": "memo test",
@@ -111,7 +111,7 @@ Array [
     Object {
       "accountId": "js:2:sei_network:sei1gyauvl44q2apn3u3aujm36q8zrj74vryc50pfg:",
       "blockHash": null,
-      "blockHeight": "30140516",
+      "blockHeight": 30140516,
       "contract": undefined,
       "extra": Object {
         "memo": "memo 2",
