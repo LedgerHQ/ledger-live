@@ -12,7 +12,7 @@ import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { setDrawer } from "~/renderer/drawers/Provider";
 
-type Props = {
+export type Props = {
   currentLanguage: Language;
   analyticsContext: string;
   deviceModelInfo?: DeviceModelInfo;
