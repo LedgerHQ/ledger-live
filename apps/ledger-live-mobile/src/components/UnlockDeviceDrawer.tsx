@@ -3,8 +3,8 @@ import { useTranslation } from "react-i18next";
 import { Flex } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTheme } from "styled-components/native";
-import { renderConnectYourDevice as ConnectYourDevice } from "../../components/DeviceAction/rendering";
-import QueuedDrawer from "../../components/QueuedDrawer";
+import { renderConnectYourDevice as ConnectYourDevice } from "./DeviceAction/rendering";
+import QueuedDrawer from "./QueuedDrawer";
 
 export type Props = {
   isOpen: boolean;

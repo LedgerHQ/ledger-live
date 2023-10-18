@@ -14,7 +14,7 @@ const CarouselRow = () => {
 
   const dispatch = useDispatch();
   const onSetDynamicCardsVisibility = useCallback(
-    checked => {
+    (checked: boolean) => {
       dispatch(
         setDismissedDynamicCards(
           checked ? [] : [...walletCards, ...assetsCards].map(card => card.id),

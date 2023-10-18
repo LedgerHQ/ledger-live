@@ -42,7 +42,7 @@ export const ChartCardDefault = (args: typeof ChartCardDefaultArgs): JSX.Element
   const [rangeRequest, setRangeRequest] = useState("24h");
 
   const refreshChart = useCallback(
-    (request) => {
+    (request: any) => {
       if (request && request.range) {
         const { range } = request;
         setRangeRequest(range);

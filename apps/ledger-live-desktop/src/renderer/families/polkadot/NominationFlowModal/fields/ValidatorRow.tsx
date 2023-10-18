@@ -160,7 +160,7 @@ const ValidatorRow = ({
   const commissionBN = BigNumber(commission); // FIXME: Y U NO BIGNUMBER ?
   const totalBN = BigNumber(totalBonded); // FIXME: Y U NO BIGNUMBER ?
 
-  const onTitleClick = useCallback(
+  const onTitleClick: React.MouseEventHandler<HTMLDivElement> = useCallback(
     e => {
       e.stopPropagation();
       onExternalLink(address);

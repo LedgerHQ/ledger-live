@@ -166,7 +166,7 @@ export const OperationDetailsRewardFrom = ({
   );
 
   const redirectAddressCreator = useCallback(
-    address => () => {
+    (address: string) => () => {
       const url = getAddressExplorer(getDefaultExplorerView(account.currency), address);
       if (url) Linking.openURL(url);
     },
@@ -222,7 +222,7 @@ export function OperationDetailsValidators({
   );
 
   const redirectAddressCreator = useCallback(
-    address => () => {
+    (address: string) => () => {
       const url = getAddressExplorer(getDefaultExplorerView(account.currency), address);
       if (url) Linking.openURL(url);
     },

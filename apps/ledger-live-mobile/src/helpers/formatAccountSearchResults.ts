@@ -68,7 +68,7 @@ export const formatSearchResults = (searchResults: AccountLike[], accounts: Acco
 export const formatSearchResultsTuples = (
   searchResults: {
     account: AccountLike;
-    subAccount: SubAccount;
+    subAccount?: SubAccount | null;
   }[],
 ): SearchResult[] => {
   const formated = reduce(

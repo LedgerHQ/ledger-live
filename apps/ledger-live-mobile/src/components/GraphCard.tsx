@@ -63,7 +63,7 @@ function GraphCard({
   const { colors } = useTheme();
 
   const updateTimeRange = useCallback(
-    index => {
+    (index: number) => {
       track("timeframe_clicked", {
         timeframe: timeRangeItems[index].value,
       });
@@ -72,7 +72,7 @@ function GraphCard({
     [setTimeRange, timeRangeItems],
   );
 
-  const mapGraphValue = useCallback(d => d.value || 0, []);
+  const mapGraphValue = useCallback((d: Item) => d.value || 0, []);
 
   const range = portfolio.range;
   const isAvailable = portfolio.balanceAvailable;

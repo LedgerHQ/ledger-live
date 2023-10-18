@@ -30,21 +30,22 @@
   // You can add your custom initial props in the dictionary below.
   // They will be passed down to the ViewController used by React Native.
   self.initialProps = @{};
-
+  
   // Initialize Braze
   NSString *brazeApiKeyFromEnv = [ReactNativeConfig envFor:@"BRAZE_IOS_API_KEY"];
   [Appboy startWithApiKey:brazeApiKeyFromEnv inApplication:application withLaunchOptions:launchOptions];
-
+  
   if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_9_x_Max) {
     UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+
     center.delegate = self;
     UNAuthorizationOptions options = UNAuthorizationOptionAlert | UNAuthorizationOptionSound | UNAuthorizationOptionBadge;
     if (@available(iOS 12.0, *)) {
-    options = options | UNAuthorizationOptionProvisional;
+      options = options | UNAuthorizationOptionProvisional;
     }
     [center requestAuthorizationWithOptions:options
                           completionHandler:^(BOOL granted, NSError * _Nullable error) {
-                            [[Appboy sharedInstance] pushAuthorizationFromUserNotificationCenter:granted];
+      [[Appboy sharedInstance] pushAuthorizationFromUserNotificationCenter:granted];
     }];
     [[UIApplication sharedApplication] registerForRemoteNotifications];
   } else {
@@ -52,22 +53,23 @@
     [[UIApplication sharedApplication] registerForRemoteNotifications];
     [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
   }
-
+  
   [[AppboyReactUtils sharedInstance] populateInitialUrlFromLaunchOptions:launchOptions];
-
+  
   // Retrieve the correct GoogleService-Info.plist file name for a given environment
   NSString *googleServiceInfoEnvName = [ReactNativeConfig envFor:@"GOOGLE_SERVICE_INFO_NAME"];
   NSString *googleServiceInfoName = googleServiceInfoEnvName;
-
+  
   if ([googleServiceInfoName length] == 0) {
     googleServiceInfoName = @"GoogleService-Info";
   }
-
+  
   // Initialize Firebase with the correct GoogleService-Info.plist file
   NSString *filePath = [[NSBundle mainBundle] pathForResource:googleServiceInfoName ofType:@"plist"];
   FIROptions *options = [[FIROptions alloc] initWithContentsOfFile:filePath];
   [FIRApp configureWithOptions:options];
-
+  
+  
   return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
 
@@ -79,23 +81,23 @@
   blurEffectView.frame = [self.window bounds];
   blurEffectView.tag = 12345;
   logoView.tag = 12346;
-
+  
   blurEffectView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
   [self.window addSubview:blurEffectView];
   [self.window addSubview:logoView];
   [self.window bringSubviewToFront:logoView];
-
+  
   [logoView setContentHuggingPriority:251 forAxis:UILayoutConstraintAxisHorizontal];
   [logoView setContentHuggingPriority:251 forAxis:UILayoutConstraintAxisVertical];
   logoView.frame = CGRectMake(0, 0, 128, 128);
-
+  
   logoView.center = CGPointMake(self.window.frame.size.width  / 2,self.window.frame.size.height / 2);
 }
 
 - (void) hideOverlay{
   UIView *blurEffectView = [self.window viewWithTag:12345];
   UIView *logoView = [self.window viewWithTag:12346];
-
+  
   [UIView animateWithDuration:0.5 animations:^{
     blurEffectView.alpha = 0;
     logoView.alpha = 0;
@@ -154,8 +156,8 @@
 }
 
 - (BOOL)application:(UIApplication *)application
-   openURL:(NSURL *)url
-   options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
+            openURL:(NSURL *)url
+            options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
 {
   return [RCTLinkingManager application:application openURL:url options:options];
 }
@@ -163,8 +165,8 @@
 // Handle universal links -> forwarding URL to RCTLinkingManager lib
 // similar implementation as the method above (application:openURL:options)
 - (BOOL)application:(UIApplication *)application
-   continueUserActivity:(NSUserActivity *)userActivity
-   restorationHandler:(void (^)(NSArray<id<UIUserActivityRestoring>> *restorableObjects))restorationHandler
+continueUserActivity:(NSUserActivity *)userActivity
+ restorationHandler:(void (^)(NSArray<id<UIUserActivityRestoring>> *restorableObjects))restorationHandler
 {
   NSURL *url = userActivity.webpageURL;
   return [RCTLinkingManager application:application
@@ -173,3 +175,4 @@
 }
 
 @end
+

@@ -16,6 +16,7 @@ import Touchable from "../../components/Touchable";
 import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { CustomImageNavigatorParamList } from "../../components/RootNavigator/types/CustomImageNavigator";
 import { TrackScreen } from "../../analytics";
+import { LayoutChangeEvent } from "react-native";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<CustomImageNavigatorParamList, ScreenName.CustomImageStep1Crop>
@@ -76,7 +77,7 @@ const Step1Cropping = ({ navigation, route }: NavigationProps) => {
   }, [cropperRef, rotated, setRotated]);
 
   const [containerDimensions, setContainerDimensions] = useState<ImageDimensions | null>(null);
-  const onContainerLayout = useCallback(({ nativeEvent: { layout } }) => {
+  const onContainerLayout = useCallback(({ nativeEvent: { layout } }: LayoutChangeEvent) => {
     setContainerDimensions({ height: layout.height, width: layout.width });
   }, []);
 

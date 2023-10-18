@@ -136,7 +136,7 @@ const ValidatorField = ({
     .map(nomination => nomination.address);
   const validatorsSelected = validators.length;
   const onUpdateNomination = useCallback(
-    (address, isSelected) => {
+    (address: string, isSelected: boolean) => {
       onChangeNominations(existing => {
         const update = existing.filter(v => v !== address);
         if (isSelected) {
@@ -156,7 +156,10 @@ const ValidatorField = ({
     },
     [explorerView],
   );
-  const onSearch = useCallback(evt => setSearch(evt.target.value), [setSearch]);
+  const onSearch = useCallback(
+    (evt: React.ChangeEvent<HTMLInputElement>) => setSearch(evt.target.value),
+    [setSearch],
+  );
 
   /** auto focus first input on mount */
   useEffect(() => {

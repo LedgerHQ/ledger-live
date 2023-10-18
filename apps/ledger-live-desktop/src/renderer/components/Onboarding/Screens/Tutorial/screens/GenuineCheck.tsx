@@ -44,6 +44,7 @@ export function GenuineCheck({ connectedDevice, setConnectedDevice }: Props) {
   }, [device, setConnectedDevice]);
 
   const [passed, setPassed] = useState(null);
+  // @ts-expect-error don't know how to get result
   const onResult = useCallback(result => {
     setPassed(result);
   }, []);

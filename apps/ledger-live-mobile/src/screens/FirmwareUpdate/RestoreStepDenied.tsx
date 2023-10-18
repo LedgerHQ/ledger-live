@@ -41,12 +41,14 @@ export const RestoreStepDenied = ({
       <TrackScreen category={analyticsDrawerName} refreshSource={false} />
       <IconBadge iconColor="primary.c100" iconSize={32} Icon={IconsLegacy.InfoAltFillMedium} />
       <Text fontSize={7} fontWeight="semiBold" textAlign="center" mt={6}>
-        {t(`FirmwareUpdate.steps.restoreSettings.errors.${stepDeniedError.name}`, {
-          deviceName: getDeviceModel(device.modelId).productName,
-        })}
+        {
+          t(`FirmwareUpdate.steps.restoreSettings.errors.${stepDeniedError.name}`, {
+            deviceName: getDeviceModel(device.modelId).productName,
+          }) as string
+        }
       </Text>
       <Text fontSize={4} textAlign="center" color="neutral.c80" mt={6}>
-        {t("FirmwareUpdate.steps.restoreSettings.errors.description")}
+        {t("FirmwareUpdate.steps.restoreSettings.errors.description") as string}
       </Text>
       <Button
         event="button_clicked"
@@ -61,7 +63,7 @@ export const RestoreStepDenied = ({
         mt={8}
         alignSelf="stretch"
       >
-        {t("common.retry")}
+        {t("common.retry") as string}
       </Button>
       <Flex mt={8} mb={6} alignSelf="stretch">
         <Link
@@ -73,7 +75,7 @@ export const RestoreStepDenied = ({
           }}
           onPress={onPressSkip}
         >
-          {t("common.skip")}
+          {t("common.skip") as string}
         </Link>
       </Flex>
     </Flex>

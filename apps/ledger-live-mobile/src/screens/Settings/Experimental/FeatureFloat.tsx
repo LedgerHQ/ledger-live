@@ -29,6 +29,7 @@ const FeatureInteger = ({
   const navigation = useNavigation();
   const inputRef = useRef<TextInput>(null);
   const constraintValue = useCallback(
+    // @ts-expect-error supposed to be number | string but this means casting everywhere
     v => {
       let value = v;
       if (typeof maxValue === "number" && parseInt(value, 10) > maxValue) {
@@ -81,7 +82,7 @@ const FeatureInteger = ({
   }, [enabled, value, setInputValue, constraintValue]);
 
   const onInputChange = useCallback(
-    str => {
+    (str: string) => {
       if (!enabled) return;
       const sanitized = str.replace(/[^0-9.]/g, "");
       if (sanitized.length > 0) {
@@ -94,7 +95,7 @@ const FeatureInteger = ({
   );
 
   const onEnableChange = useCallback(
-    e => {
+    (e: boolean) => {
       setEnabled(!!e);
       if (e) {
         setTimeout(() => {

@@ -157,7 +157,7 @@ const Step2ChooseContrast = ({ navigation, route }: NavigationProps) => {
   }, [imageProcessorRef, setRawResultLoading]);
 
   const setSelectedIndexWrapped = useCallback(
-    newIndex => {
+    (newIndex: number) => {
       setSelectedIndex(newIndex);
       animSelectedIndex.value = withTiming(newIndex, { duration: 300 });
     },

@@ -42,7 +42,7 @@ jobs:
       - uses: ruby/setup-ruby@v1
         if: always()
         with:
-          ruby-version: 3.1.2
+          ruby-version: 3.2.2
         env:
           ImageOS: ubuntu20
       - uses: actions/setup-java@v3
@@ -241,7 +241,7 @@ jobs:
       # - uses: ruby/setup-ruby@v1
       #   if: always()
       #   with:
-      #     ruby-version: 3.1.2
+      #     ruby-version: 3.2.2
       #   env:
       #     ImageOS: macos11
       - name: check pnpm

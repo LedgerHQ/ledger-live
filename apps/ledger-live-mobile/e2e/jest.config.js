@@ -12,6 +12,7 @@ module.exports = {
       "ts-jest",
       {
         babelConfig: "<rootDir>/e2e/babel.config.detox.js",
+        tsconfig: "<rootDir>/e2e/tsconfig.test.json",
       },
     ],
   },

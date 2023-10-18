@@ -77,7 +77,7 @@ const Gallery = () => {
     );
   }, [dispatch, account]);
   const onSelectCollection = useCallback(
-    collectionAddress => {
+    (collectionAddress: string) => {
       history.push({
         pathname: `/account/${account?.id}/nft-collection/${collectionAddress}`,
       });

@@ -16,13 +16,13 @@ import { context } from "~/renderer/drawers/Provider";
 
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectManager);
 const Manager = () => {
-  const [appsToRestore, setRestoreApps] = useState([]);
+  const [appsToRestore, setRestoreApps] = useState<string[]>([]);
   const { setDrawer } = useContext(context);
   const [result, setResult] = useState<Result | null>(null);
   const [hasReset, setHasReset] = useState(false);
   const onReset = useCallback(
-    (apps, firmwareUpdateOpened) => {
-      setRestoreApps(apps);
+    (apps?: string[] | null, firmwareUpdateOpened?: boolean | null) => {
+      setRestoreApps(apps ?? []);
       setResult(null);
       setDrawer(); // Nb prevent zombie flows.
       if (!firmwareUpdateOpened) setHasReset(true);
@@ -47,7 +47,7 @@ const Manager = () => {
       });
     }
   }, [result, dispatch]);
-  const onResult = useCallback(result => setResult(result), []);
+  const onResult = useCallback((result: Result) => setResult(result), []);
   return (
     <>
       <SyncSkipUnderPriority priority={999} />

@@ -424,7 +424,10 @@ export const DeeplinksProvider = ({
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const ptxEarnFeature = useFeature("ptxEarn");
-  const features = useMemo(() => ({ ptxEarn: ptxEarnFeature }), [ptxEarnFeature]);
+  const features = useMemo(
+    () => (ptxEarnFeature ? { ptxEarn: ptxEarnFeature } : {}),
+    [ptxEarnFeature],
+  );
 
   const { state } = useRemoteLiveAppContext();
   const liveAppProviderInitialized = !!state.value || !!state.error;

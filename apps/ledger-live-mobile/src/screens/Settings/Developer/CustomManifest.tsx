@@ -133,7 +133,7 @@ export default function CustomManifest({ navigation }: Props) {
 function useCustomManifest() {
   const [manifest, setManifest] = useState("");
   const { addLocalManifest } = useLocalLiveAppContext();
-  const onChange = useCallback(val => {
+  const onChange = useCallback((val: string) => {
     try {
       const json = JSON.parse(val);
       setManifest(JSON.stringify(json, null, 2));

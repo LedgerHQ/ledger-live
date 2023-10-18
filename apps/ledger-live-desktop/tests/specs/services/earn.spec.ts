@@ -20,11 +20,7 @@ test.beforeAll(async () => {
     name: "Earn",
     id: "earn",
     apiVersion: "^2.0.0",
-    permissions: [
-      {
-        method: "account.list",
-      },
-    ],
+    permissions: ["account.list"],
   });
 
   if (!testServerIsRunning) {

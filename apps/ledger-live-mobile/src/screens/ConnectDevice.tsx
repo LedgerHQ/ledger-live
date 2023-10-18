@@ -53,6 +53,7 @@ import { TronVoteFlowParamList } from "../families/tron/VoteFlow/types";
 import { SignTransactionNavigatorParamList } from "../components/RootNavigator/types/SignTransactionNavigator";
 import { SignMessageNavigatorStackParamList } from "../components/RootNavigator/types/SignMessageNavigator";
 import { useTransactionDeviceAction } from "../hooks/deviceActions";
+import { SignedOperation } from "@ledgerhq/types-live";
 
 type Props =
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendConnectDevice>
@@ -130,7 +131,7 @@ export default function ConnectDevice({ route, navigation }: Props) {
     parentAccount,
   });
   const onResult = useCallback(
-    payload => {
+    (payload: { signedOperation: SignedOperation; transactionSignError?: Error }) => {
       handleTx(payload);
       return renderLoading({
         t,
@@ -160,6 +161,7 @@ export default function ConnectDevice({ route, navigation }: Props) {
         >
           <TrackScreen category={route.name.replace("ConnectDevice", "")} name="ConnectDevice" />
           <DeviceAction
+            // @ts-expect-error what is going on with this
             action={action}
             request={{
               account,

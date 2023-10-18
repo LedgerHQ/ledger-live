@@ -14,7 +14,7 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import BigNumber from "bignumber.js";
 import { useSelector } from "react-redux";
 import { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
-import { WebViewProps, WebView } from "react-native-webview";
+import { WebViewProps, WebView, WebViewMessageEvent } from "react-native-webview";
 import VersionNumber from "react-native-version-number";
 import { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
@@ -32,7 +32,11 @@ import * as bridge from "../../../e2e/bridge/client";
 import Config from "react-native-config";
 
 export function useWebView(
-  { manifest, inputs }: Pick<WebviewProps, "manifest" | "inputs">,
+  {
+    manifest,
+    inputs,
+    customHandlers,
+  }: Pick<WebviewProps, "manifest" | "inputs" | "customHandlers">,
   ref: React.ForwardedRef<WebviewAPI>,
   onStateChange: WebviewProps["onStateChange"],
 ) {
@@ -86,10 +90,11 @@ export function useWebView(
     config,
     webviewHook,
     uiHook,
+    customHandlers,
   });
 
   const onMessage = useCallback(
-    e => {
+    (e: WebViewMessageEvent) => {
       if (e.nativeEvent?.data) {
         try {
           const msg = JSON.parse(e.nativeEvent.data);

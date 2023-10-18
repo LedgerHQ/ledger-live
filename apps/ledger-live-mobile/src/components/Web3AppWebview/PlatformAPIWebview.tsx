@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect, useMemo, forwardRef } from "react";
 import { useSelector } from "react-redux";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
-import { WebView as RNWebView } from "react-native-webview";
+import { WebView as RNWebView, WebViewMessageEvent } from "react-native-webview";
 import { useNavigation } from "@react-navigation/native";
 import { JSONRPCRequest } from "json-rpc-2.0";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
@@ -475,7 +475,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     );
     const [receive] = useJSONRPCServer(handlers, handleSend);
     const handleMessage = useCallback(
-      e => {
+      (e: WebViewMessageEvent) => {
         // FIXME: event isn't the same on desktop & mobile
         // if (e.isTrusted && e.origin === manifest.url.origin && e.data) {
         if (e.nativeEvent?.data) {

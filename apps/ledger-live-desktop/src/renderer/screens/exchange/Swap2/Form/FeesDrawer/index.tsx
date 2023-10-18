@@ -10,7 +10,7 @@ import {
 import { DrawerTitle } from "../DrawerTitle";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { useGetSwapTrackingProperties } from "../../utils/index";
-import { Account } from "@ledgerhq/types-live";
+import { Account, FeeStrategy } from "@ledgerhq/types-live";
 
 type Props = {
   setTransaction: SwapTransactionType["setTransaction"];
@@ -36,7 +36,7 @@ export default function FeesDrawer({
   const transaction = useSelector(transactionSelector);
 
   const mapStrategies = useCallback(
-    strategy =>
+    (strategy: FeeStrategy) =>
       strategy.label === "slow" && disableSlowStrategy
         ? {
             ...strategy,

@@ -8,10 +8,10 @@ type Props = {
 
 export function useIsSwapLiveApp({ currencyFrom }: Props) {
   const ptxSwapLiveApp = useFeature("ptxSwapLiveApp");
-  const { families, currencies } = ptxSwapLiveApp.params || {};
+  const { families, currencies } = ptxSwapLiveApp?.params || {};
 
   if (!currencyFrom || (!families && !currencies)) {
-    return ptxSwapLiveApp.enabled;
+    return ptxSwapLiveApp?.enabled;
   }
 
   const familyOfCurrencyFrom = isCryptoCurrency(currencyFrom)
@@ -21,5 +21,5 @@ export function useIsSwapLiveApp({ currencyFrom }: Props) {
   const familyIsEnabled = families?.length ? families.includes(familyOfCurrencyFrom) : true;
   const currencyIsEnabled = currencies?.length ? currencies.includes(currencyFrom.id) : true;
 
-  return ptxSwapLiveApp.enabled && (familyIsEnabled || currencyIsEnabled);
+  return ptxSwapLiveApp?.enabled && (familyIsEnabled || currencyIsEnabled);
 }

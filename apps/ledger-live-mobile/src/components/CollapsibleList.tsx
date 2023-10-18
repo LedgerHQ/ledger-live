@@ -19,7 +19,7 @@ import { useTheme } from "@react-navigation/native";
 import LText from "./LText";
 import Chevron from "../icons/Chevron";
 
-const renderListItem = <T,>({ item, index }: { item: T; index: number }) => (
+const renderListItem = <T extends React.ReactNode>({ item, index }: { item: T; index: number }) => (
   <View key={index}>{item}</View>
 );
 

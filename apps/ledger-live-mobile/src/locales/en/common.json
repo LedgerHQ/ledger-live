@@ -1,4 +1,7 @@
 {
+  "buyCurrency": {
+    "buyCTA": "Buy {{ currencyNameOrTicker }}"
+  },
   "common": {
     "cancel": "Cancel",
     "apply": "Apply",
@@ -86,7 +89,6 @@
     },
     "seeMore": "See more",
     "moreInfo": "More info",
-    "buyEth": "Buy Ethereum",
     "popular": "popular",
     "getSupport": "Get support",
     "comingSoon": "Coming soon",
@@ -1913,14 +1915,15 @@
       "error": {
         "generic": {
           "title": "Pairing unsuccessful",
-          "subtitle": "Looks like something went wrong!\nCheck that your Bluetooth is switched on and your {{productName}} is nearby."
+          "subtitle": "Make sure your {{productName}} is close to\nyour mobile phone and try again."
         },
         "lockedDevice": {
           "title": "Your device is locked",
           "subtitle": "Unlock your {{ productName }} and try again."
         },
-        "retryCta": "Retry",
-        "openSettingsCta": "Go to Bluetooth settings"
+        "retryCta": "Retry pairing",
+        "openSettingsCta": "Go to Bluetooth settings",
+        "howToFixPairingIssue": "How to fix pairing issues"
       }
     }
   },
@@ -4242,7 +4245,7 @@
         "restoreLockScreenPicture": "Restoring lock screen picture",
         "restoreLanguage": "Restoring language",
         "imageLoadRequested": "Tap on “Load picture” to restore lock screen picture",
-        "imageCommitRequested": "Tap on “keep” to keep set your lock screen picture",
+        "imageCommitRequested": "Tap on “keep” to confirm your lock screen picture",
         "allowLanguageInstallation": "Tap on “Allow” to restore language",
         "allowAppsRestoration": "Tap on “Allow” to restore apps",
         "errors": {

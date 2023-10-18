@@ -20,7 +20,7 @@ export default function Order() {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const onChange = useCallback(
-    o => {
+    (o: { key: string; label: string }) => {
       if (!o) return;
       dispatch(
         saveSettings({
@@ -31,7 +31,16 @@ export default function Order() {
     },
     [refreshAccountsOrdering, dispatch],
   );
-  const renderItem = useCallback(props => <OrderItem {...props} />, []);
+  const renderItem = useCallback(
+    (props: {
+      isActive: boolean;
+      item: {
+        key: string;
+        label: string;
+      };
+    }) => <OrderItem {...props} />,
+    [],
+  );
   const items = useMemo(
     () =>
       ["balance|desc", "balance|asc", "name|asc", "name|desc"].map(key => ({
