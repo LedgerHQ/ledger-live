@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import manager from "../manager/index";
 
-export const useLatestFirmware: (
+export const useGetLatestFirmware: (
   _?: DeviceInfo | null,
 ) => FirmwareUpdateContext | null = deviceInfo => {
   const [latestFirmware, setLatestFirmware] = useState<FirmwareUpdateContext | null>(null);

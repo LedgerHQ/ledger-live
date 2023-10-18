@@ -10,7 +10,9 @@ import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { StackNavigationProp } from "@react-navigation/stack";
 import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwareUpdateVersionSupported";
-import useLatestFirmware from "@ledgerhq/live-common/hooks/useLatestFirmware";
+import { useLatestFirmware } from "@ledgerhq/live-common/device/hooks/useLatestFirmware";
+import { useBatteryStatuses } from "@ledgerhq/live-common/deviceSDK/hooks/useBatteryStatuses";
+import { BatteryStatusFlags } from "@ledgerhq/types-devices";
 
 import { ScreenName, NavigatorName } from "~/const";
 import {
