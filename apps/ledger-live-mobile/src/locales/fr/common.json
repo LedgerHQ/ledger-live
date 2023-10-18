@@ -891,9 +891,9 @@
     "open" : "Ouvrir autorisa. des apps",
     "authorize" : "Autoriser",
     "bluetooth" : {
-      "modalTitle" : "Autorisation requise pour appairer votre Ledger via Bluetooth",
-      "modalDescriptionBase" : "Pour appairer votre Ledger via Bluetooth, autorisez Ledger Live à rechercher les appareils à proximité.",
-      "modalDescriptionSettingsVariant" : "Pour appairer votre Ledger via Bluetooth, accédez aux paramètres de votre téléphone et autorisez Ledger Live à rechercher les appareils à proximité.",
+      "modalTitle" : "Autorisation requise pour appairer votre appareil Ledger via Bluetooth",
+      "modalDescriptionBase" : "Pour appairer votre appareil Ledger via Bluetooth, autorisez Ledger Live à rechercher les appareils à proximité.",
+      "modalDescriptionSettingsVariant" : "Pour appairer votre appareil Ledger via Bluetooth, accédez aux paramètres de votre téléphone et autorisez Ledger Live à rechercher les appareils à proximité.",
       "modalButtonLabelBase" : "Autoriser",
       "modalButtonLabelSettingsVariant" : "Accéder aux Paramètres",
       "dontPair" : "Ne pas appairer"
@@ -3405,6 +3405,11 @@
     "walletConnect" : {
       "title" : "WalletConnect",
       "description" : "Connectez votre wallet aux dApps"
+    },
+    "recover" : {
+      "title" : "Ledger Recover",
+      "description" : "Récupérez votre wallet, tout simplement",
+      "tag" : "Un mois offert"
     }
   },
   "signMessage" : {
@@ -4205,7 +4210,7 @@
       "installUpdate" : {
         "titleInactive" : "Installer la mise à jour",
         "titleActive" : "Installation de la mise à jour",
-        "description" : "Votre {{deviceName}} redémarrera plusieurs fois.\n\nUne fois la mise à jour installée sur votre {{deviceName}}, déverrouillez votre appareil pour terminer le processus."
+        "description" : "Votre {{deviceName}} va redémarrer plusieurs fois.\n\nUne fois la mise à jour installée sur votre {{deviceName}}, déverrouillez votre appareil pour terminer le processus."
       },
       "restoreSettings" : {
         "earlySecurityCheck" : {
@@ -6247,7 +6252,7 @@
     },
     "confirmCrop" : "Confirmer le recadrage",
     "confirmContrast" : "Confirmer le contraste",
-    "nftEntryPointButtonLabel" : "Afficher sur l’écran du Ledger Stax",
+    "nftEntryPointButtonLabel" : "Définir comme fond d’écran sur Ledger Stax",
     "customImage" : "Fond d’écran personnalisé",
     "doThisLater" : "Pas maintenant",
     "preview" : {
@@ -6306,7 +6311,7 @@
         "tagLabel" : "Cadeau"
       },
       "assetsTransfer" : {
-        "title" : "Transférez vos actifs vers votre wallet Ledger",
+        "title" : "Transférer vos actifs vers votre wallet Ledger",
         "titleCompleted" : "Actifs transférés sur votre Ledger",
         "description" : "Envoyez-les depuis la plateforme d’échange ou le wallet de votre choix.",
         "popupLabel" : "Actifs transférés"
@@ -6365,6 +6370,12 @@
   "servicesWidget" : {
     "title" : "Services",
     "subTitle" : "Gérez vos services Ledger",
+    "signIn" : "Se connecter",
+    "recover" : {
+      "cta" : "Commencer votre essai gratuit",
+      "desc" : "Ne craignez plus de perdre l’accès à votre wallet.",
+      "tag" : "1 mois offert"
+    },
     "protect" : {
       "status" : {
         "new" : {
