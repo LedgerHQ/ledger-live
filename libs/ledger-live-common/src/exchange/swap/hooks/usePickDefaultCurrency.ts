@@ -1,5 +1,6 @@
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useEffect } from "react";
+import { currenciesByMarketcap } from "../../../currencies";
 
 // Pick a default currency target if none are selected.
 export const usePickDefaultCurrency = (
@@ -14,7 +15,14 @@ export const usePickDefaultCurrency = (
       const defaultCurrency = currencies.find(
         currency => currency.id === "ethereum" || currency.id === "bitcoin",
       );
-      defaultCurrency && setCurrency(defaultCurrency);
+
+      if (defaultCurrency) {
+        setCurrency(defaultCurrency);
+      } else {
+        currenciesByMarketcap(currencies).then(sortedCurrencies => {
+          setCurrency(sortedCurrencies[0]);
+        });
+      }
     }
   }, [currency, currencies, setCurrency]);
 };
