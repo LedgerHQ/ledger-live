@@ -318,16 +318,15 @@ const createOperationIcon =
     failed?: boolean;
     size?: number;
     type: OperationType;
-  }) =>
-    (
-      <OperationStatusWrapper
-        size={size}
-        Icon={Icon}
-        confirmed={confirmed}
-        failed={failed}
-        type={type}
-      />
-    );
+  }) => (
+    <OperationStatusWrapper
+      size={size}
+      Icon={Icon}
+      confirmed={confirmed}
+      failed={failed}
+      type={type}
+    />
+  );
 
 const amountCell = {
   BOND: BondAmountCell,

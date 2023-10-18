@@ -542,7 +542,7 @@ export const DeeplinksProvider = ({
 
           return getStateFromPath(path, config);
         },
-      } as LinkingOptions<ReactNavigation.RootParamList>),
+      }) as LinkingOptions<ReactNavigation.RootParamList>,
     [
       hasCompletedOnboarding,
       dispatch,
