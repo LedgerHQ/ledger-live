@@ -47,7 +47,7 @@ const AccountSelector = ({
   );
 
   const renderList = useCallback(
-    items => {
+    (items: AccountLike[]) => {
       const formatedList = formatSearchResults(items, accounts);
 
       return (

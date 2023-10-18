@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { from } from "rxjs";
-import { first } from "rxjs/operators";
+import { from, throwError, timer } from "rxjs";
+import { first, retry } from "rxjs/operators";
 import type { FirmwareInfo } from "@ledgerhq/types-live";
+import { LockedDeviceError } from "@ledgerhq/errors";
 import { withDevice } from "../../hw/deviceAccess";
 import getVersion from "../../hw/getVersion";
 import { BleError } from "../types";
@@ -23,6 +24,9 @@ export type useBleDevicePairingResult = {
  * @returns An object containing:
  * - isPaired: a boolean set to true if the device has been paired, false otherwise
  * - pairingError: any PairingError that occurred, null otherwise
+ *
+ * When the device is locked, notify the pairing error and retry
+ * until the device is unlocked
  */
 export const useBleDevicePairing = ({
   deviceId,
@@ -31,8 +35,19 @@ export const useBleDevicePairing = ({
   const [pairingError, setPairingError] = useState<PairingError>(null);
 
   useEffect(() => {
-    const requestObservable = withDevice(deviceId)(t => from(getVersion(t))).pipe(first());
+    const requestObservable = withDevice(deviceId)(t => from(getVersion(t))).pipe(
+      first(),
+      retry({
+        delay: (err: BleError) => {
+          if (err instanceof LockedDeviceError) {
+            setPairingError(err);
+            return timer(1000);
+          }
 
+          return throwError(() => err);
+        },
+      }),
+    );
     const sub = requestObservable.subscribe({
       next: (_value: FirmwareInfo) => {
         setIsPaired(true);

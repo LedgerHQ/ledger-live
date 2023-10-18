@@ -1,17 +1,18 @@
 {
   "name": "dummy-wallet-app",
-  "version": "0.1.22",
+  "version": "0.1.24",
   "private": true,
   "dependencies": {
     "@ledgerhq/hw-app-eth": "workspace:*",
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/live-common": "workspace:*",
-    "@ledgerhq/wallet-api-client": "^1.1.0",
-    "@ledgerhq/wallet-api-simulator": "^1.0.5",
+    "@ledgerhq/wallet-api-client": "^1.2.0",
+    "@ledgerhq/wallet-api-client-react": "^1.1.1",
+    "@ledgerhq/wallet-api-simulator": "^1.1.0",
     "bignumber.js": "^9.1.2",
     "buffer": "^6.0.3",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "react-scripts": "5.0.1"
   },
   "scripts": {
@@ -33,8 +34,8 @@
   "devDependencies": {
     "@types/jest": "^27.0.1",
     "@types/node": "^18.0.0",
-    "@types/react": "^17.0.53",
-    "@types/react-dom": "^17.0.9",
+    "@types/react": "^18.2.21",
+    "@types/react-dom": "^18.2.13",
     "cross-env": "^7.0.3"
   }
 }

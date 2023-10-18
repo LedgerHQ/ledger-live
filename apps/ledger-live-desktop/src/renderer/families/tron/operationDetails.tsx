@@ -51,7 +51,7 @@ export const OperationDetailsVotes = ({
   const sp = useTronSuperRepresentatives();
   const formattedVotes = formatVotes(votes, sp);
   const redirectAddress = useCallback(
-    address => {
+    (address: string) => {
       const url = getAddressExplorer(getDefaultExplorerView(account.currency), address);
       if (url) openURL(url);
     },

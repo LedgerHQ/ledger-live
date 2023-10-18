@@ -30,7 +30,9 @@ const Bar = styled.div.attrs<{ state: TransitionStatus; withPaddingTop: boolean 
   height: 100%;
   z-index: ${p => p.index};
   transform: translateX(${p => (p.index === 0 ? 0 : 100)}%);
-  transition: all ${DURATION}ms ease-in-out, padding none;
+  transition:
+    all ${DURATION}ms ease-in-out,
+    padding none;
   will-change: transform;
   background-color: ${p => p.theme.colors.palette.background.paper};
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.03);

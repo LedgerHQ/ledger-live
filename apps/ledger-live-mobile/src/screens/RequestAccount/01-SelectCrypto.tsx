@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
-import { StyleSheet, View, FlatList, SafeAreaView } from "react-native";
+import { StyleSheet, View, FlatList, SafeAreaView, ListRenderItem } from "react-native";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "@react-navigation/native";
@@ -46,12 +46,12 @@ export default function RequestAccountsSelectCrypto({ navigation, route }: Props
     },
     [navigation, route.params],
   );
-  const renderItem = useCallback(
+  const renderItem: ListRenderItem<CryptoOrTokenCurrency> = useCallback(
     ({ item }) => <CurrencyRow currency={item} onPress={onPressCurrency} />,
     [onPressCurrency],
   );
   const renderList = useCallback(
-    items => (
+    (items: CryptoOrTokenCurrency[]) => (
       <FlatList
         initialNumToRender={20}
         contentContainerStyle={styles.list}

@@ -25,7 +25,7 @@ function getRandomChartValue() {
 const generateData = () => {
   return new Array(20)
     .fill({})
-    .map(() => ({ value: getRandomChartValue(), date: getRandomChartDate() } as Item))
+    .map(() => ({ value: getRandomChartValue(), date: getRandomChartDate() }) as Item)
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 };
 
@@ -42,7 +42,7 @@ export const ChartCardDefault = (args: typeof ChartCardDefaultArgs): JSX.Element
   const [rangeRequest, setRangeRequest] = useState("24h");
 
   const refreshChart = useCallback(
-    (request) => {
+    (request: any) => {
       if (request && request.range) {
         const { range } = request;
         setRangeRequest(range);

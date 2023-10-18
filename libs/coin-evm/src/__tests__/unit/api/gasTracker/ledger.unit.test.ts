@@ -5,7 +5,7 @@ import { AssertionError } from "assert";
 import BigNumber from "bignumber.js";
 import { getGasOptions } from "../../../../api/gasTracker/ledger";
 import { LedgerGasTrackerUsedIncorrectly, NoGasTrackerFound } from "../../../../errors";
-import { GasOptions, Strategy } from "../../../../types";
+import { GasOptions } from "../../../../types";
 
 jest.mock("@ledgerhq/live-network/network");
 const mockedNetwork = jest.mocked(network);
@@ -113,10 +113,8 @@ describe("EVM Family", () => {
             },
           });
 
-          Object.keys(gasOptions).forEach(key => {
-            const strategy = key as Strategy;
-
-            const { maxFeePerGas } = gasOptions[strategy];
+          Object.entries(gasOptions).forEach(([key, value]) => {
+            const { maxFeePerGas } = value;
 
             expect(maxFeePerGas?.isInteger(), `${key}:maxFeePerGas - got ${maxFeePerGas}`).toBe(
               true,
@@ -149,12 +147,8 @@ describe("EVM Family", () => {
             },
           });
 
-          Object.keys(gasOptions).forEach(key => {
-            const strategy = key as Strategy;
-
-            const feeData = gasOptions[strategy];
-
-            const { maxFeePerGas, maxPriorityFeePerGas, nextBaseFee } = feeData;
+          Object.entries(gasOptions).forEach(([key, value]) => {
+            const { maxFeePerGas, maxPriorityFeePerGas, nextBaseFee } = value;
 
             expect(maxFeePerGas?.isInteger(), `${key}:maxFeePerGas - got ${maxFeePerGas}`).toBe(
               true,
@@ -256,12 +250,8 @@ describe("EVM Family", () => {
             },
           });
 
-          Object.keys(gasOptions).forEach(key => {
-            const strategy = key as Strategy;
-
-            const feeData = gasOptions[strategy];
-
-            const { gasPrice } = feeData;
+          Object.entries(gasOptions).forEach(([key, value]) => {
+            const { gasPrice } = value;
 
             expect(gasPrice?.isInteger(), `${key}:gasPrice - got ${gasPrice}`).toBe(true);
           });

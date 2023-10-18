@@ -1,5 +1,6 @@
 import { test as base, Page, ElectronApplication, _electron as electron } from "@playwright/test";
 import * as fs from "fs";
+import fsPromises from "fs/promises";
 import * as path from "path";
 import * as crypto from "crypto";
 import { OptionalFeatureMap } from "@ledgerhq/types-live";
@@ -7,6 +8,10 @@ import { responseLogfilePath } from "../utils/networkResponseLogger";
 
 export function generateUUID(): string {
   return crypto.randomBytes(16).toString("hex");
+}
+
+function appendFileErrorHandler(e: Error | null) {
+  if (e) console.error("couldn't append file", e);
 }
 
 type TestFixtures = {
@@ -25,7 +30,7 @@ type TestFixtures = {
 
 const IS_DEBUG_MODE = !!process.env.PWDEBUG;
 
-const test = base.extend<TestFixtures>({
+export const test = base.extend<TestFixtures>({
   env: undefined,
   lang: "en-US",
   theme: "dark",
@@ -46,16 +51,17 @@ const test = base.extend<TestFixtures>({
     use,
   ) => {
     // create userdata path
-    fs.mkdirSync(userdataDestinationPath, { recursive: true });
+    await fsPromises.mkdir(userdataDestinationPath, { recursive: true });
 
     if (userdata) {
-      fs.copyFileSync(userdataOriginalFile, `${userdataDestinationPath}/app.json`);
+      await fsPromises.copyFile(userdataOriginalFile, `${userdataDestinationPath}/app.json`);
     }
 
     // default environment variables
     env = Object.assign(
       {
         ...process.env,
+        VERBOSE: true,
         MOCK: true,
         MOCK_COUNTERVALUES: true,
         HIDE_DEBUG_MOCK: true,
@@ -64,7 +70,6 @@ const test = base.extend<TestFixtures>({
         CRASH_ON_INTERNAL_CRASH: true,
         LEDGER_MIN_HEIGHT: 768,
         FEATURE_FLAGS: JSON.stringify(featureFlags),
-        DESKTOP_LOGS_FILE: path.join(__dirname, "../artifacts/logs"),
       },
       env,
     );
@@ -99,9 +104,23 @@ const test = base.extend<TestFixtures>({
     // close app
     await electronApp.close();
   },
-  page: async ({ electronApp }, use) => {
+  page: async ({ electronApp }, use, testInfo) => {
     // app is ready
     const page = await electronApp.firstWindow();
+
+    // record all logs into an artifact
+    const logFile = testInfo.outputPath("logs.log");
+    page.on("console", msg => {
+      const txt = msg.text();
+      if (msg.type() == "error") {
+        console.error(txt);
+      }
+      if (IS_DEBUG_MODE) {
+        // Direct Electron console to Node terminal.
+        console.log(txt);
+      }
+      fs.appendFile(logFile, `${txt}\n`, appendFileErrorHandler);
+    });
 
     // start recording all network responses in artifacts/networkResponse.log
     page.on("response", async data => {
@@ -111,22 +130,19 @@ const test = base.extend<TestFixtures>({
       const headers = await data.allHeaders();
 
       if (headers.teststatus && headers.teststatus === "mocked") {
-        fs.appendFileSync(
+        fs.appendFile(
           responseLogfilePath,
           `[${timestamp}] MOCKED RESPONSE: ${data.request().url()}\n`,
+          appendFileErrorHandler,
         );
       } else {
-        fs.appendFileSync(
+        fs.appendFile(
           responseLogfilePath,
           `[${timestamp}] REAL RESPONSE: ${data.request().url()}\n`,
+          appendFileErrorHandler,
         );
       }
     });
-
-    if (IS_DEBUG_MODE) {
-      // Direct Electron console to Node terminal.
-      page.on("console", console.log);
-    }
 
     // app is loaded
     await page.waitForLoadState("domcontentloaded");
@@ -137,17 +153,19 @@ const test = base.extend<TestFixtures>({
 
     console.log(`Video for test recorded at: ${await page.video()?.path()}\n`);
   },
+
   // below is used for the logging file at `artifacts/networkResponses.log`
   recordTestNamesForApiResponseLogging: [
     async ({}, use, testInfo) => {
-      fs.appendFileSync(
+      fs.appendFile(
         responseLogfilePath,
         `Network call responses for test: '${testInfo.title}':\n`,
+        appendFileErrorHandler,
       );
 
       await use();
 
-      fs.appendFileSync(responseLogfilePath, `\n`);
+      fs.appendFile(responseLogfilePath, `\n`, appendFileErrorHandler);
     },
     { auto: true },
   ],

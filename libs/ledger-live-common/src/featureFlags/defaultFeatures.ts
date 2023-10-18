@@ -1,9 +1,9 @@
 import { DefaultFeature, Feature, Features } from "@ledgerhq/types-live";
 
 /**
- * Default feature.
+ * Default disabled feature.
  */
-export const DEFAULT_FEATURE: DefaultFeature = {
+const DEFAULT_FEATURE: DefaultFeature = {
   enabled: false,
 };
 
@@ -52,6 +52,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyQuicksilver: DEFAULT_FEATURE,
   currencyRsk: DEFAULT_FEATURE,
   currencySecretNetwork: DEFAULT_FEATURE,
+  currencySeiNetwork: DEFAULT_FEATURE,
   currencyStacks: DEFAULT_FEATURE,
   currencyStargaze: DEFAULT_FEATURE,
   currencySyscoin: DEFAULT_FEATURE,
@@ -284,8 +285,9 @@ export const DEFAULT_FEATURES: Features = {
       },
       managerStatesData: {
         NEW: {
-          alreadySubscribedURI: `ledgerlive://recover/protect-simu?redirectTo=login`,
-          learnMoreURI: `ledgerlive://recover/protect-simu?redirectTo=upsell`,
+          alreadySubscribedURI: `ledgerlive://recover/protect-simu?redirectTo=login&source=llm_onboarding_24&ajs_prop_source=llm_onboarding_24&ajs_prop_campaign=launch`,
+          learnMoreURI: `ledgerlive://recover/protect-simu?redirectTo=upsell&source=llm_onboarding_24&ajs_prop_source=llm_onboarding_24&ajs_prop_campaign=launch`,
+          quickAccessURI: `ledgerlive://recover/protect-simu?redirectTo=login&source=llm-navbar-quick-access&ajs_prop_source=llm-navbar-quick-access&ajs_prop_campaign=launch`,
         },
       },
       onboardingRestore: {

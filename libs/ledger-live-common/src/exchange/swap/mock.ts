@@ -103,7 +103,7 @@ export const mockGetExchangeRates = async (
       providerType: "DEX",
       expirationDate: new Date(),
       tradeMethod: "float",
-      providerURL: `/platform/1inch/#/1/unified/swap/eth/usdt?sourceTokenAmount=${transaction.amount}`,
+      providerURL: `https://app.1inch.io/#/1/unified/swap/eth/usdt?ledgerLive=true&sourceTokenAmount=${transaction.amount}`,
     },
   ];
 };

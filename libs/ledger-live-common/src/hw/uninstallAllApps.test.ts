@@ -4,7 +4,7 @@ import Transport from "@ledgerhq/hw-transport";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore next-line
-const mockTransportGenerator = out => ({ send: () => out } as Transport);
+const mockTransportGenerator = out => ({ send: () => out }) as Transport;
 
 describe("uninstallAllApps", () => {
   test("should complete with TRUE if user approves", async () => {

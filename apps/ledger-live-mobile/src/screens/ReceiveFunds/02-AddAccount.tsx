@@ -217,7 +217,7 @@ function AddAccountsAccounts({ navigation, route }: Props) {
     [currency.ticker, t],
   );
 
-  const keyExtractor = useCallback(item => item?.id, []);
+  const keyExtractor = useCallback((item: Account) => item?.id, []);
 
   return (
     <>

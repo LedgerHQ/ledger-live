@@ -1,9 +1,6 @@
 name: "Setup Ledger Live Desktop Tests"
 description: "Composite job to setup the CI for Ledger Live Desktop tests"
 inputs:
-  skip_python:
-    description: "skip the step to setup python"
-    required: false
   skip_ruby:
     description: "skip the step to setup ruby"
     required: false
@@ -16,15 +13,6 @@ inputs:
   install_playwright:
     description: "install playwright"
     required: false
-  pnpm_dest:
-    description: "the location where to install pnpm"
-    required: false
-  upgrade_npm:
-    description: "should ugrade npm (windows support)"
-    required: false
-  install_dotnet:
-    description: "install dotnet on Windows"
-    required: false
   aws-access-key:
     description: "aws access key"
     required: false
@@ -35,20 +23,10 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Setup the toolchain
-      uses: ./tools/actions/composites/setup-toolchain
-      with:
-        pnpm_dest: ${{ inputs.pnpm_dest }}
-        upgrade_npm: ${{ inputs.upgrade_npm }}
-        install_dotnet: ${{ inputs.install_dotnet }}
-    - uses: actions/setup-python@v4
-      if: ${{ !inputs.skip_python }}
-      with:
-        python-version: "3.x"
     - uses: ruby/setup-ruby@v1
       if: ${{ !inputs.skip_ruby }}
       with:
-        ruby-version: 3.1.2
+        ruby-version: 3.2.2
     - name: Install node-gyp globally
       if: ${{ inputs.install_node_gyp }}
       run: |

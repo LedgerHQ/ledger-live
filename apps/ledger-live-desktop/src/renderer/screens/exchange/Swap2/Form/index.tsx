@@ -2,12 +2,13 @@ import {
   useSwapTransaction,
   usePageState,
   useIsSwapLiveApp,
+  SetExchangeRateCallback,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import {
   getCustomFeesPerFamily,
   convertToNonAtomicUnit,
 } from "@ledgerhq/live-common/exchange/swap/webApp/index";
-import { getProviderName, getCustomDappUrl } from "@ledgerhq/live-common/exchange/swap/utils/index";
+import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
@@ -35,6 +36,7 @@ import { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { SWAP_RATES_TIMEOUT } from "../../config";
+import { OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
 
 const Wrapper = styled(Box).attrs({
   p: 20,
@@ -65,14 +67,14 @@ const SwapForm = () => {
   const exchangeRate = useSelector(rateSelector);
   const walletApiPartnerList = useFeature("swapWalletApiPartnerList");
 
-  const setExchangeRate = useCallback(
+  const setExchangeRate: SetExchangeRateCallback = useCallback(
     rate => {
       dispatch(updateRateAction(rate));
     },
     [dispatch],
   );
 
-  const onNoRates = useCallback(
+  const onNoRates: OnNoRatesCallback = useCallback(
     ({ toState }) => {
       track("error_message", {
         message: "no_rates",
@@ -132,10 +134,7 @@ const SwapForm = () => {
   }, [idleState]);
 
   const swapWebAppRedirection = useCallback(async () => {
-    const {
-      swap,
-      status: { estimatedFees: initFeeTotalValue },
-    } = swapTransaction;
+    const { swap } = swapTransaction;
     const { to, from } = swap;
     const transaction = swapTransaction.transaction;
     const { account: fromAccount, parentAccount: fromParentAccount } = from;
@@ -147,9 +146,11 @@ const SwapForm = () => {
       const toAccountId = accountToWalletAPIAccount(toAccount, toParentAccount)?.id;
       const fromAmount = convertToNonAtomicUnit(transaction?.amount, fromAccount);
 
-      const customFeeConfig =
-        feesStrategy === "custom" ? getCustomFeesPerFamily(transaction) : null;
-
+      const customFeeConfig = getCustomFeesPerFamily(transaction);
+      // The Swap web app will automatically recreate the transaction with "default" fees.
+      // However, if you wish to use a different fee type, you will need to set it as custom.
+      const isCustomFee =
+        feesStrategy === "slow" || feesStrategy === "fast" || feesStrategy === "custom";
       history.push({
         pathname: "/swap-web",
         state: {
@@ -159,9 +160,8 @@ const SwapForm = () => {
           fromAmount,
           quoteId: rateId ? rateId : undefined,
           rate,
-          feeStrategy: feesStrategy?.toUpperCase(),
+          feeStrategy: (isCustomFee ? "custom" : "medium")?.toUpperCase(),
           customFeeConfig: customFeeConfig ? JSON.stringify(customFeeConfig) : undefined,
-          initFeeTotalValue,
         },
       });
     }
@@ -227,14 +227,7 @@ const SwapForm = () => {
     if (providerType === "DEX") {
       const from = swapTransaction.swap.from;
       const fromAccountId = from.parentAccount?.id || from.account?.id;
-      const customParams = {
-        provider,
-        providerURL,
-      } as {
-        provider: string;
-        providerURL?: string;
-      };
-      const customDappUrl = getCustomDappUrl(customParams);
+
       const pathname = `/platform/${getProviderName(provider).toLowerCase()}`;
       const getAccountId = ({
         accountId,
@@ -262,7 +255,7 @@ const SwapForm = () => {
         // This looks like an issue, the proper signature is: push(path, [state]) - (function) Pushes a new entry onto the history stack
         // It seems possible to also pass a LocationDescriptorObject but it does not expect extra properties
         // @ts-expect-error so customDappUrl is not expected to be here
-        customDappUrl,
+        customDappUrl: providerURL,
         pathname,
         state: {
           returnTo: "/swap",

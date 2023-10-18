@@ -94,7 +94,10 @@ export const trace = ({
  * @param context Anything representing the context where the log occurred
  */
 export class LocalTracer {
-  constructor(private type: LogType, private context?: TraceContext) {}
+  constructor(
+    private type: LogType,
+    private context?: TraceContext,
+  ) {}
 
   trace(message: string, data?: TraceContext) {
     trace({

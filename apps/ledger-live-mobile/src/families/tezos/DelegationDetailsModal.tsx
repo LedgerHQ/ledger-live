@@ -9,7 +9,7 @@ import {
   getAddressExplorer,
 } from "@ledgerhq/live-common/explorers";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
-import type { Delegation } from "@ledgerhq/live-common/families/tezos/bakers";
+import type { Delegation } from "@ledgerhq/live-common/families/tezos/types";
 import {
   getMainAccount,
   getAccountCurrency,

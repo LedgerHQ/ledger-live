@@ -108,7 +108,7 @@ const HiddenNftCollections = () => {
     [dispatch],
   );
 
-  const keyExtractor = useCallback(item => item, []);
+  const keyExtractor = useCallback((item: string) => item, []);
 
   return (
     <Box backgroundColor={"background.main"} height={"100%"}>

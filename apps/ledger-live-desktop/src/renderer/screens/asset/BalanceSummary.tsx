@@ -40,7 +40,7 @@ export default function BalanceSummary({
   const displayCountervalue = countervalueFirst && countervalueAvailable;
   const chartMagnitude = displayCountervalue ? counterValue.units[0].magnitude : unit.magnitude;
   const renderTooltip = useCallback(
-    d => {
+    (d: Data[number]) => {
       const data = [
         {
           val: d.value,

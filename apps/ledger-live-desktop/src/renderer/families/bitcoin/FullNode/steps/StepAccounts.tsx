@@ -38,7 +38,7 @@ const Accounts = ({
   const currency = getCryptoCurrencyById("bitcoin");
   const bitcoinAccounts = accounts.filter(a => getAccountCurrency(a) === currency);
   const onUpdateNumberOfAccountsToScan = useCallback(
-    value => {
+    (value: string) => {
       if (value) {
         let newNumberOfAccounts = parseInt(value, 10) || 1;
         if (

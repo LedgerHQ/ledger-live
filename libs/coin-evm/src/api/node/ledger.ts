@@ -167,7 +167,10 @@ export const getTransactionCount: NodeApi["getTransactionCount"] = async (curren
 /**
  * Get an estimated gas limit for a transaction
  */
-export const getGasEstimation: NodeApi["getGasEstimation"] = async (account, transaction) => {
+export const getGasEstimation: NodeApi["getGasEstimation"] = async (
+  account,
+  transaction,
+): Promise<BigNumber> => {
   const { currency } = account;
   const { node } = currency.ethereumLikeInfo || /* istanbul ignore next */ {};
   if (!isLedgerNodeConfig(node)) {

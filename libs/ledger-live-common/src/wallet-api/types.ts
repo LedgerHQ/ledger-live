@@ -1,10 +1,11 @@
 import type { SignedOperation } from "@ledgerhq/types-live";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Transaction as WalletAPITransaction } from "@ledgerhq/wallet-api-core";
+import type { CustomHandlers as WalletAPICustomHandlers } from "@ledgerhq/wallet-api-server";
 import type { Transaction } from "../generated/types";
 import { LiveAppManifest } from "../platform/types";
 
-export type { WalletAPITransaction };
+export type { WalletAPITransaction, WalletAPICustomHandlers };
 
 export type {
   Families as WalletAPIFamilies,
@@ -32,11 +33,6 @@ export type AppBranch = "stable" | "experimental" | "soon" | "debug";
 // searchable: only appears via search
 // deep: only appears via deeplink
 export type Visibility = "complete" | "searchable" | "deep";
-
-export type AppPermission = {
-  method: string;
-  params?: any;
-};
 
 // TODO update to the new manifest types from wallet-api when released
 export type AppManifest = LiveAppManifest;

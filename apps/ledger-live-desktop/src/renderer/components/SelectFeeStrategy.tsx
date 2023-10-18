@@ -13,7 +13,7 @@ import { getFeesCurrency, getFeesUnit, getMainAccount } from "@ledgerhq/live-com
 import { Account, FeeStrategy } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 
-type OnClickType = {
+export type OnClickType = {
   amount: BigNumber;
   feesStrategy: string;
 };

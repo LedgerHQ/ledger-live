@@ -1,5 +1,4 @@
 import network from "@ledgerhq/live-network/network";
-import { isIntegrationTestEnv } from "../../utils/isIntegrationTestEnv";
 import { DEFAULT_SWAP_TIMEOUT_MS } from "../../const/timeout";
 import axios from "axios";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
@@ -8,6 +7,7 @@ import { ResponseData as ResponseDataTo } from "./fetchCurrencyTo";
 import { ResponseData as ResponseDataFrom } from "./fetchCurrencyFrom";
 import { flattenV5CurrenciesAll } from "../../utils/flattenV5CurrenciesAll";
 import { getSwapAPIBaseURL } from "../..";
+import { getEnv } from "@ledgerhq/live-env";
 
 type Props = {
   providers: Array<string>;
@@ -20,7 +20,8 @@ export type ResponseDataAll = {
 };
 
 export async function fetchCurrencyAll({ providers, additionalCoinsFlag = false }: Props) {
-  if (isIntegrationTestEnv()) return Promise.resolve(flattenV5CurrenciesAll(fetchCurrencyAllMock));
+  if (getEnv("MOCK") || getEnv("PLAYWRIGHT_RUN"))
+    return Promise.resolve(flattenV5CurrenciesAll(fetchCurrencyAllMock));
 
   const url = new URL(`${getSwapAPIBaseURL()}/currencies/all`);
   url.searchParams.append("providers-whitelist", providers.join(","));

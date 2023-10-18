@@ -82,7 +82,7 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
   const timeout = useRef<ReturnType<typeof setTimeout>>();
 
   const handleNavigateToFeatureFlagsSettings = useCallback(
-    nb => {
+    (nb: string) => {
       if (nb === "1") countTitle.current++;
       else if (nb === "2") countSubtitle.current++;
       if (countTitle.current > 3 && countSubtitle.current > 5) {
