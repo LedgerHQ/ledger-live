@@ -135,16 +135,15 @@ const InstalledAppsModal = ({
 
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose} propagateSwipe={true}>
-      <Flex flexShrink={0} flexGrow={1}>
-        <FlatList
-          data={appList}
-          renderItem={renderItem}
-          keyExtractor={item => "" + item.id}
-          ListHeaderComponent={<Header illustration={illustration} />}
-          showsVerticalScrollIndicator={false}
-        />
-      </Flex>
-      <Button mt={6} mb={6} size="large" type="error" onPress={onUninstallAll}>
+      <Header illustration={illustration} />
+      <FlatList
+        data={appList}
+        renderItem={renderItem}
+        keyExtractor={item => "" + item.id}
+        overScrollMode="never"
+        showsVerticalScrollIndicator={false}
+      />
+      <Button mt={6} size="large" type="error" onPress={onUninstallAll}>
         <Trans i18nKey={"manager.uninstall.uninstallAll"} />
       </Button>
     </QueuedDrawer>
