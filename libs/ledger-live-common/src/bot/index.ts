@@ -167,7 +167,7 @@ export async function bot({ disabled, filter }: Arg = {}): Promise<void> {
   console.log("familySpecs", allSpecs["vechain"]);
 
   console.log("filter", filter);
-  console.log("disabled", filter);
+  console.log("disabled", disabled);
 
   const specs = getSpecs({ disabled, filter });
 
