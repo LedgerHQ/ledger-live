@@ -4,7 +4,6 @@ import { TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
 
 import { Action } from "@ledgerhq/live-common/apps/index";
-import { App } from "@ledgerhq/types-live";
 
 import styled from "styled-components/native";
 import { Flex, IconsLegacy, Text, Button } from "@ledgerhq/native-ui";
@@ -12,9 +11,10 @@ import { hasInstalledAnyAppSelector } from "../../../reducers/settings";
 import { installAppFirstTime } from "../../../actions/settings";
 import AppIcon from "../AppsList/AppIcon";
 import QueuedDrawer from "../../../components/QueuedDrawer";
+import { AppWithDependencies } from "../AppsInstallUninstallWithDependenciesContext";
 
 type Props = {
-  appInstallWithDependencies: { app: App; dependencies: App[] };
+  appWithDependenciesToInstall: AppWithDependencies | null;
   dispatch: (_: Action) => void;
   onClose: () => void;
 };
@@ -60,14 +60,14 @@ const CancelButton = styled(TouchableOpacity)`
 `;
 
 function AppDependenciesModal({
-  appInstallWithDependencies,
+  appWithDependenciesToInstall,
   dispatch: dispatchProps,
   onClose,
 }: Props) {
   const dispatch = useDispatch();
   const hasInstalledAnyApp = useSelector(hasInstalledAnyAppSelector);
 
-  const { app, dependencies = [] } = appInstallWithDependencies || {};
+  const { app, dependencies = [] } = appWithDependenciesToInstall || {};
   const { name } = app || {};
 
   const installAppDependencies = useCallback(() => {

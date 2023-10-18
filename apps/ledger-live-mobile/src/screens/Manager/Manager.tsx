@@ -1,7 +1,6 @@
 import React, { useState, useCallback, useEffect, memo, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { firstValueFrom, from } from "rxjs";
-import type { App } from "@ledgerhq/types-live";
 import { predictOptimisticState } from "@ledgerhq/live-common/apps/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { CommonActions } from "@react-navigation/native";
@@ -25,6 +24,11 @@ import { ManagerNavigatorStackParamList } from "../../components/RootNavigator/t
 import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { lastConnectedDeviceSelector } from "../../reducers/settings";
 import { UpdateStep } from "../FirmwareUpdate";
+import {
+  AppWithDependencies,
+  AppWithDependents,
+  AppsInstallUninstallWithDependenciesContextProvider,
+} from "./AppsInstallUninstallWithDependenciesContext";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<ManagerNavigatorStackParamList, ScreenName.ManagerMain>
@@ -91,15 +95,11 @@ const Manager = ({ navigation, route }: NavigationProps) => {
   /** storage warning modal state */
   const [storageWarning, setStorageWarning] = useState<string | null>(null);
   /** install app with dependencies modal state */
-  const [appInstallWithDependencies, setAppInstallWithDependencies] = useState<{
-    app: App;
-    dependencies: App[];
-  } | null>(null);
-  /** uninstall app with dependencies modal state */
-  const [appUninstallWithDependencies, setAppUninstallWithDependencies] = useState<{
-    dependents: App[];
-    app: App;
-  } | null>(null);
+  const [appWithDependenciesToInstall, setAppWithDependenciesToInstall] =
+    useState<AppWithDependencies | null>(null);
+  /** uninstall app with dependents modal state */
+  const [appWithDependentsToUninstall, setAppWithDependentsToUninstall] =
+    useState<AppWithDependents | null>(null);
 
   /** open error modal each time a new error appears in state.currentError */
   useEffect(() => {
@@ -140,12 +140,12 @@ const Manager = ({ navigation, route }: NavigationProps) => {
   const closeErrorModal = useCallback(() => setError(null), [setError]);
 
   const resetAppInstallWithDependencies = useCallback(() => {
-    setAppInstallWithDependencies(null);
-  }, [setAppInstallWithDependencies]);
+    setAppWithDependenciesToInstall(null);
+  }, []);
 
   const resetAppUninstallWithDependencies = useCallback(() => {
-    setAppUninstallWithDependencies(null);
-  }, [setAppUninstallWithDependencies]);
+    setAppWithDependentsToUninstall(null);
+  }, []);
 
   const closeQuitManagerModal = useCallback(
     () => setQuitManagerAction(null),
@@ -198,6 +198,14 @@ const Manager = ({ navigation, route }: NavigationProps) => {
     [device, navigation],
   );
 
+  const contextValue = useMemo(
+    () => ({
+      setAppWithDependenciesToInstall,
+      setAppWithDependentsToUninstall,
+    }),
+    [],
+  );
+
   return (
     <>
       <TrackScreen
@@ -208,26 +216,26 @@ const Manager = ({ navigation, route }: NavigationProps) => {
         appLength={result ? result.installed.length : 0}
       />
       <SyncSkipUnderPriority priority={100} />
-      <AppsScreen
-        state={state}
-        dispatch={dispatch}
-        device={device}
-        navigation={navigation}
-        setAppInstallWithDependencies={setAppInstallWithDependencies}
-        setAppUninstallWithDependencies={setAppUninstallWithDependencies}
-        setStorageWarning={setStorageWarning}
-        deviceId={deviceId}
-        initialDeviceName={deviceName}
-        pendingInstalls={pendingInstalls}
-        deviceInfo={deviceInfo}
-        searchQuery={searchQuery}
-        updateModalOpened={updateModalOpened}
-        optimisticState={optimisticState}
-        tab={tab}
-        result={result}
-        onLanguageChange={refreshDeviceInfo}
-        onBackFromUpdate={onBackFromNewUpdateUx}
-      />
+      <AppsInstallUninstallWithDependenciesContextProvider value={contextValue}>
+        <AppsScreen
+          state={state}
+          dispatch={dispatch}
+          device={device}
+          navigation={navigation}
+          setStorageWarning={setStorageWarning}
+          deviceId={deviceId}
+          initialDeviceName={deviceName}
+          pendingInstalls={pendingInstalls}
+          deviceInfo={deviceInfo}
+          searchQuery={searchQuery}
+          updateModalOpened={updateModalOpened}
+          optimisticState={optimisticState}
+          tab={tab}
+          result={result}
+          onLanguageChange={refreshDeviceInfo}
+          onBackFromUpdate={onBackFromNewUpdateUx}
+        />
+      </AppsInstallUninstallWithDependenciesContextProvider>
       <GenericErrorBottomModal error={error} onClose={closeErrorModal} />
       <QuitManagerModal
         isOpened={!!quitManagerAction}
@@ -238,12 +246,12 @@ const Manager = ({ navigation, route }: NavigationProps) => {
       />
       <StorageWarningModal warning={storageWarning} onClose={resetStorageWarning} />
       <AppDependenciesModal
-        appInstallWithDependencies={appInstallWithDependencies!}
+        appWithDependenciesToInstall={appWithDependenciesToInstall}
         onClose={resetAppInstallWithDependencies}
         dispatch={dispatch}
       />
       <UninstallDependenciesModal
-        appUninstallWithDependencies={appUninstallWithDependencies!}
+        appWithDependentsToUninstall={appWithDependentsToUninstall}
         onClose={resetAppUninstallWithDependencies}
         dispatch={dispatch}
       />

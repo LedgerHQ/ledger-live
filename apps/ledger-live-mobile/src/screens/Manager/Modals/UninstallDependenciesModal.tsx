@@ -16,11 +16,12 @@ import ListTreeLine from "../../../icons/ListTreeLine";
 
 import getWindowDimensions from "../../../logic/getWindowDimensions";
 import { Theme } from "../../../colors";
+import { AppWithDependents } from "../AppsInstallUninstallWithDependenciesContext";
 
 const { height } = getWindowDimensions();
 
 type Props = {
-  appUninstallWithDependencies: { app: App; dependents: App[] };
+  appWithDependentsToUninstall: AppWithDependents | null;
   dispatch: (_: Action) => void;
   onClose: () => void;
 };
@@ -56,9 +57,9 @@ const ButtonsContainer = styled(Flex).attrs({
   width: "100%",
 })``;
 
-const UninstallDependenciesModal = ({ appUninstallWithDependencies, dispatch, onClose }: Props) => {
+const UninstallDependenciesModal = ({ appWithDependentsToUninstall, dispatch, onClose }: Props) => {
   const { colors } = useTheme() as DefaultTheme & Theme;
-  const { app, dependents = [] } = appUninstallWithDependencies || {};
+  const { app, dependents = [] } = appWithDependentsToUninstall || {};
   const { name } = app || {};
 
   const unInstallApp = useCallback(() => {
