@@ -166,6 +166,12 @@ export async function bot({ disabled, filter }: Arg = {}): Promise<void> {
   const specsLogs: string[][] = [];
   const specs = getSpecs({ disabled, filter });
 
+  console.log("specsLength", specs.length);
+  console.log(
+    "specs",
+    specs.map(spec => spec.name),
+  );
+
   const timeBefore = Date.now();
   const results: Array<SpecReport<any>> = await promiseAllBatched(
     getEnv("BOT_MAX_CONCURRENT"),
