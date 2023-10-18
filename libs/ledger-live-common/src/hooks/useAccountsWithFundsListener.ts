@@ -2,6 +2,12 @@ import { useEffect, useMemo, useRef } from "react";
 import debounce from "lodash/debounce";
 import type { Account } from "@ledgerhq/types-live";
 
+/**
+ * This function returns true if the acccounts with funds changed between the accounts and the oldAccounts properties.
+ * Meaning that at least one account with a positive balance has been added, removed, the balance of an existing empty
+ * account is now positive or the balance of an existing account was positive and is now 0.
+ * Else this function returns false.
+ */
 export function hasAccountsWithFundsChanged(accounts: Account[], oldAccounts: Account[]): boolean {
   for (const account of accounts) {
     const matchingOldAccount = oldAccounts.find(acc => acc.id === account.id);

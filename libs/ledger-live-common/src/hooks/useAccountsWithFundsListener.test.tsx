@@ -104,6 +104,7 @@ describe("useAccountsWithFundsListener", () => {
 
       expect(res).toBeTruthy();
     });
+
     test("should return true when an account with funds is deleted", () => {
       const newAccounts: Account[] = [];
       const oldAccounts: Account[] = [ethMockAccount];
@@ -112,6 +113,7 @@ describe("useAccountsWithFundsListener", () => {
 
       expect(res).toBeTruthy();
     });
+
     test("should return true when an account with funds is deleted and another one is added at the same time", () => {
       const newAccounts: Account[] = [ethMockAccount];
       const oldAccounts: Account[] = [polygonMockAccount];
@@ -120,6 +122,7 @@ describe("useAccountsWithFundsListener", () => {
 
       expect(res).toBeTruthy();
     });
+
     test("should return true when an account with funds is emptied", () => {
       const newAccounts: Account[] = [ethMockAccount];
       const oldAccounts: Account[] = [{ ...ethMockAccount, balance: new BigNumber(0) }];
@@ -128,6 +131,7 @@ describe("useAccountsWithFundsListener", () => {
 
       expect(res).toBeTruthy();
     });
+
     test("should return true when an empty account receives funds", () => {
       const newAccounts: Account[] = [{ ...ethMockAccount, balance: new BigNumber(0) }];
       const oldAccounts: Account[] = [ethMockAccount];
@@ -136,6 +140,7 @@ describe("useAccountsWithFundsListener", () => {
 
       expect(res).toBeTruthy();
     });
+
     test("should return false when the balance of an account with funds changes but isn't emptied", () => {
       const newAccounts: Account[] = [ethMockAccount];
       const oldAccounts: Account[] = [
