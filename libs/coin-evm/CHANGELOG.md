@@ -1,5 +1,11 @@
 # @ledgerhq/coin-evm
 
+## 0.8.1-nightly.3
+
+### Patch Changes
+
+- [#5088](https://github.com/LedgerHQ/ledger-live/pull/5088) [`2fc6d1efa0`](https://github.com/LedgerHQ/ledger-live/commit/2fc6d1efa0233a90b0fa273782cff1dd6344d52c) Thanks [@sarneijim](https://github.com/sarneijim)! - Fix swap-web-app fees
+
 ## 0.8.1-nightly.2
 
 ### Patch Changes
