@@ -22,8 +22,8 @@ const { height } = getWindowDimensions();
 
 type Props = {
   appWithDependentsToUninstall: AppWithDependents | null;
-  dispatch: (_: Action) => void;
   onClose: () => void;
+  uninstallAppsWithDependents: () => void;
 };
 
 const LIST_HEIGHT = height - 420;
@@ -57,15 +57,14 @@ const ButtonsContainer = styled(Flex).attrs({
   width: "100%",
 })``;
 
-const UninstallDependenciesModal = ({ appWithDependentsToUninstall, dispatch, onClose }: Props) => {
+const UninstallAppDependenciesModal = ({
+  appWithDependentsToUninstall,
+  uninstallAppsWithDependents,
+  onClose,
+}: Props) => {
   const { colors } = useTheme() as DefaultTheme & Theme;
   const { app, dependents = [] } = appWithDependentsToUninstall || {};
   const { name } = app || {};
-
-  const unInstallApp = useCallback(() => {
-    dispatch({ type: "uninstall", name });
-    onClose();
-  }, [dispatch, onClose, name]);
 
   const renderDepLine = useCallback(
     ({ item }: { item: App }) => (
@@ -117,7 +116,7 @@ const UninstallDependenciesModal = ({ appWithDependentsToUninstall, dispatch, on
               }}
             />
             <ButtonsContainer>
-              <Button size="large" type="error" onPress={unInstallApp}>
+              <Button size="large" type="error" onPress={uninstallAppsWithDependents}>
                 <Trans i18nKey="AppAction.uninstall.continueUninstall" values={{ app: name }} />
               </Button>
             </ButtonsContainer>
@@ -128,4 +127,4 @@ const UninstallDependenciesModal = ({ appWithDependentsToUninstall, dispatch, on
   );
 };
 
-export default memo(UninstallDependenciesModal);
+export default memo(UninstallAppDependenciesModal);

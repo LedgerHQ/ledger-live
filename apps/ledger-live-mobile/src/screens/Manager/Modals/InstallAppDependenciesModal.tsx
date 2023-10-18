@@ -1,22 +1,16 @@
-import React, { memo, useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { memo } from "react";
 import { TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
-
-import { Action } from "@ledgerhq/live-common/apps/index";
-
 import styled from "styled-components/native";
 import { Flex, IconsLegacy, Text, Button } from "@ledgerhq/native-ui";
-import { hasInstalledAnyAppSelector } from "../../../reducers/settings";
-import { installAppFirstTime } from "../../../actions/settings";
 import AppIcon from "../AppsList/AppIcon";
 import QueuedDrawer from "../../../components/QueuedDrawer";
 import { AppWithDependencies } from "../AppsInstallUninstallWithDependenciesContext";
 
 type Props = {
   appWithDependenciesToInstall: AppWithDependencies | null;
-  dispatch: (_: Action) => void;
   onClose: () => void;
+  installAppWithDependencies: () => void;
 };
 
 const IconContainer = styled(Flex).attrs({
@@ -59,24 +53,13 @@ const CancelButton = styled(TouchableOpacity)`
   margin-top: 25;
 `;
 
-function AppDependenciesModal({
+function InstallAppDependenciesModal({
   appWithDependenciesToInstall,
-  dispatch: dispatchProps,
   onClose,
+  installAppWithDependencies,
 }: Props) {
-  const dispatch = useDispatch();
-  const hasInstalledAnyApp = useSelector(hasInstalledAnyAppSelector);
-
   const { app, dependencies = [] } = appWithDependenciesToInstall || {};
   const { name } = app || {};
-
-  const installAppDependencies = useCallback(() => {
-    if (!hasInstalledAnyApp) {
-      dispatch(installAppFirstTime(true));
-    }
-    dispatchProps({ type: "install", name });
-    onClose();
-  }, [dispatch, dispatchProps, onClose, name, hasInstalledAnyApp]);
 
   return (
     <QueuedDrawer isRequestingToBeOpened={!!app} onClose={onClose}>
@@ -112,7 +95,7 @@ function AppDependenciesModal({
               </ModalText>
             </TextContainer>
             <ButtonsContainer>
-              <Button size="large" type="main" onPress={installAppDependencies}>
+              <Button size="large" type="main" onPress={installAppWithDependencies}>
                 <Trans i18nKey="AppAction.install.continueInstall" />
               </Button>
               <CancelButton onPress={onClose}>
@@ -128,4 +111,4 @@ function AppDependenciesModal({
   );
 }
 
-export default memo(AppDependenciesModal);
+export default memo(InstallAppDependenciesModal);

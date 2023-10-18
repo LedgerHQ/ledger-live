@@ -14,7 +14,7 @@ export type AppWithDependencies = {
 /**
  * Represents an installed app that has other installed apps depending on it.
  * For instance:
- * { app: ethereumApp, dependents: [polygonApp] }`
+ * `{ app: ethereumApp, dependents: [polygonApp] }`
  */
 export type AppWithDependents = {
   app: App;
@@ -26,6 +26,11 @@ type AppsInstallUninstallWithDependenciesValue = {
   setAppWithDependentsToUninstall: (appWithDependents: AppWithDependents | null) => void; // TODO: rename in uninstall with dependents
 };
 
+/**
+ * Defines setters for apps to install with their dependencies or apps to
+ * uninstall with their dependents.
+ * This context was introduced to avoid prop drilling.
+ */
 const AppsInstallUninstallWithDependenciesContext = React.createContext<
   AppsInstallUninstallWithDependenciesValue | undefined
 >(undefined);

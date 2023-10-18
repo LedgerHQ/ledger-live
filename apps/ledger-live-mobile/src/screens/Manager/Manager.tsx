@@ -14,8 +14,8 @@ import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
 import { TrackScreen } from "../../analytics";
 import QuitManagerModal from "./Modals/QuitManagerModal";
 import StorageWarningModal from "./Modals/StorageWarningModal";
-import AppDependenciesModal from "./Modals/AppDependenciesModal";
-import UninstallDependenciesModal from "./Modals/UninstallDependenciesModal";
+import InstallAppDependenciesModal from "./Modals/InstallAppDependenciesModal";
+import UninstallAppDependenciesModal from "./Modals/UninstallAppDependenciesModal";
 import { useLockNavigation } from "../../components/RootNavigator/CustomBlockRouterNavigator";
 import { setLastSeenDeviceInfo } from "../../actions/settings";
 import { ScreenName } from "../../const";
@@ -139,14 +139,6 @@ const Manager = ({ navigation, route }: NavigationProps) => {
 
   const closeErrorModal = useCallback(() => setError(null), [setError]);
 
-  const resetAppInstallWithDependencies = useCallback(() => {
-    setAppWithDependenciesToInstall(null);
-  }, []);
-
-  const resetAppUninstallWithDependencies = useCallback(() => {
-    setAppWithDependentsToUninstall(null);
-  }, []);
-
   const closeQuitManagerModal = useCallback(
     () => setQuitManagerAction(null),
     [setQuitManagerAction],
@@ -198,13 +190,35 @@ const Manager = ({ navigation, route }: NavigationProps) => {
     [device, navigation],
   );
 
-  const contextValue = useMemo(
+  const appsInstallUninstallWithDependenciesContextValue = useMemo(
     () => ({
       setAppWithDependenciesToInstall,
       setAppWithDependentsToUninstall,
     }),
     [],
   );
+
+  const onCloseInstallAppDependenciesModal = useCallback(() => {
+    setAppWithDependenciesToInstall(null);
+  }, []);
+
+  const installAppWithDependencies = useCallback(() => {
+    if (appWithDependenciesToInstall) {
+      dispatch({ type: "install", name: appWithDependenciesToInstall?.app.name });
+    }
+    onCloseInstallAppDependenciesModal();
+  }, [appWithDependenciesToInstall, onCloseInstallAppDependenciesModal, dispatch]);
+
+  const onCloseUninstallAppDependenciesModal = useCallback(() => {
+    setAppWithDependentsToUninstall(null);
+  }, []);
+
+  const uninstallAppsWithDependents = useCallback(() => {
+    if (appWithDependentsToUninstall) {
+      dispatch({ type: "uninstall", name: appWithDependentsToUninstall?.app.name });
+    }
+    onCloseUninstallAppDependenciesModal();
+  }, [appWithDependentsToUninstall, dispatch, onCloseUninstallAppDependenciesModal]);
 
   return (
     <>
@@ -216,7 +230,9 @@ const Manager = ({ navigation, route }: NavigationProps) => {
         appLength={result ? result.installed.length : 0}
       />
       <SyncSkipUnderPriority priority={100} />
-      <AppsInstallUninstallWithDependenciesContextProvider value={contextValue}>
+      <AppsInstallUninstallWithDependenciesContextProvider
+        value={appsInstallUninstallWithDependenciesContextValue}
+      >
         <AppsScreen
           state={state}
           dispatch={dispatch}
@@ -245,15 +261,15 @@ const Manager = ({ navigation, route }: NavigationProps) => {
         uninstallQueue={uninstallQueue}
       />
       <StorageWarningModal warning={storageWarning} onClose={resetStorageWarning} />
-      <AppDependenciesModal
+      <InstallAppDependenciesModal
         appWithDependenciesToInstall={appWithDependenciesToInstall}
-        onClose={resetAppInstallWithDependencies}
-        dispatch={dispatch}
+        onClose={onCloseInstallAppDependenciesModal}
+        installAppWithDependencies={installAppWithDependencies}
       />
-      <UninstallDependenciesModal
+      <UninstallAppDependenciesModal
         appWithDependentsToUninstall={appWithDependentsToUninstall}
-        onClose={resetAppUninstallWithDependencies}
-        dispatch={dispatch}
+        onClose={onCloseUninstallAppDependenciesModal}
+        uninstallAppsWithDependents={uninstallAppsWithDependents}
       />
       <FirmwareUpdateScreen
         device={device}
