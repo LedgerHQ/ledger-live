@@ -141,7 +141,7 @@
     "@ledgerhq/react-devtools": "workspace:^",
     "@ledgerhq/test-utils": "workspace:^",
     "@octokit/rest": "^18.12.0",
-    "@playwright/test": "^1.38.1",
+    "@playwright/test": "^1.39.0",
     "@sentry/cli": "^2.13.0",
     "@sentry/types": "^7.47.0",
     "@testing-library/dom": "^9.3.1",
