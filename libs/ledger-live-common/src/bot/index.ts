@@ -164,6 +164,9 @@ export async function bot({ disabled, filter }: Arg = {}): Promise<void> {
   const SEED = getEnv("SEED");
   invariant(SEED, "SEED required");
   const specsLogs: string[][] = [];
+  console.log("filter", filter);
+  console.log("disabled", filter);
+
   const specs = getSpecs({ disabled, filter });
 
   console.log("specsLength", specs.length);
