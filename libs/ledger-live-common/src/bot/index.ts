@@ -164,6 +164,8 @@ export async function bot({ disabled, filter }: Arg = {}): Promise<void> {
   const SEED = getEnv("SEED");
   invariant(SEED, "SEED required");
   const specsLogs: string[][] = [];
+  console.log("familySpecs", allSpecs["vechain"]);
+
   console.log("filter", filter);
   console.log("disabled", filter);
 
