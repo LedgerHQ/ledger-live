@@ -3405,6 +3405,11 @@
     "walletConnect" : {
       "title" : "WalletConnect",
       "description" : "قم بتوصيل محفظتك بالتطبيقات اللامركزية"
+    },
+    "recover" : {
+      "title" : "Ledger Recover",
+      "description" : "جعل استعادة المحفظة أسهل",
+      "tag" : "شهر واحد مجاناً"
     }
   },
   "signMessage" : {
@@ -6365,6 +6370,12 @@
   "servicesWidget" : {
     "title" : "الخدمات",
     "subTitle" : "إدارة خدمات Ledger لديك",
+    "signIn" : "تسجيل الدخول",
+    "recover" : {
+      "cta" : "ابدأ التجربة المجانية",
+      "desc" : "لا تقلق بشأن فقد الوصول إلى محفظتك الخاصة.",
+      "tag" : "1 شهر مجاناً"
+    },
     "protect" : {
       "status" : {
         "new" : {
