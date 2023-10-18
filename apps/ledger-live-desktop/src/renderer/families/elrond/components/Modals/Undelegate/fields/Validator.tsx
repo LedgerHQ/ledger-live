@@ -7,6 +7,7 @@ import Label from "~/renderer/components/Label";
 import Select from "~/renderer/components/Select";
 import Text from "~/renderer/components/Text";
 import { DelegationType } from "~/renderer/families/elrond/types";
+import { Option } from "react-select/src/filters";
 
 type NoOptionsMessageCallbackType = {
   inputValue: string;
@@ -69,14 +70,15 @@ const Dropdown = (props: Props) => {
     [t],
   );
   const filterOptions = useCallback(
-    (option, needle: string): boolean =>
+    (option: Option, needle: string): boolean =>
       option.data.validator.identity.name
         ? option.data.validator.identity.name.toLowerCase().includes(needle.toLowerCase())
         : false,
     [],
   );
   const onValueChange = useCallback(
-    option => {
+    (option?: DelegationType | null) => {
+      if (!option) return;
       setValue(option);
       if (onChange) {
         onChange(option);

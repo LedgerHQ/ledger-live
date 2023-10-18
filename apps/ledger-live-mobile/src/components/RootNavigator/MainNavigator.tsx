@@ -49,7 +49,7 @@ export default function MainNavigator() {
   );
 
   const managerLockAwareCallback = useCallback(
-    callback => {
+    (callback: () => void) => {
       // NB This is conditionally going to show the confirmation modal from the manager
       // in the event of having ongoing installs/uninstalls.
       managerNavLockCallback ? managerNavLockCallback(() => callback) : callback();

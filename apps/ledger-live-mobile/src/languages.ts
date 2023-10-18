@@ -73,10 +73,13 @@ export const fullySupportedLocales: Locale[] = [
   "pt",
   "ar",
 ];
-export const locales = supportedLocales.reduce((obj, key) => {
-  obj[key] = allLocales[key]; // eslint-disable-line no-param-reassign
-  return obj;
-}, {} as { [k in localeKeys]: ResourceLanguage });
+export const locales = supportedLocales.reduce(
+  (obj, key) => {
+    obj[key] = allLocales[key]; // eslint-disable-line no-param-reassign
+    return obj;
+  },
+  {} as { [k in localeKeys]: ResourceLanguage },
+);
 
 /** For the "language" setting which is used for translations. */
 export const DEFAULT_LANGUAGE_LOCALE = "en";

@@ -125,7 +125,7 @@ const completeExchange = (
 
         o.next({
           type: "complete-exchange-requested",
-          estimatedFees,
+          estimatedFees: estimatedFees.toString(),
         });
 
         if (unsubscribed) return;

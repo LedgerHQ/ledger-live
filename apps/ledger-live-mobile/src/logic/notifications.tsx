@@ -117,7 +117,7 @@ const useNotifications = () => {
   }, []);
 
   const setPushNotificationsModalOpenCallback = useCallback(
-    isModalOpen => {
+    (isModalOpen: boolean) => {
       if (!isModalOpen) {
         dispatch(setNotificationsModalType("generic"));
         dispatch(setNotificationsModalOpen(isModalOpen));
@@ -202,7 +202,7 @@ const useNotifications = () => {
   );
 
   const onPushNotificationsRouteChange = useCallback(
-    (newRoute, isOtherModalOpened = false) => {
+    (newRoute: string, isOtherModalOpened = false) => {
       if (pushNotificationsEventTriggered?.timeout) {
         clearTimeout(pushNotificationsEventTriggered?.timeout);
         dispatch(setRatingsModalLocked(false));
@@ -276,10 +276,13 @@ const useNotifications = () => {
     const marketCoinStarredParams = pushNotificationsFeature?.params?.marketCoinStarred;
     if (marketCoinStarredParams?.enabled) {
       dispatch(setRatingsModalLocked(true));
-      const timeout = setTimeout(() => {
-        dispatch(setNotificationsModalType("market"));
-        setPushNotificationsModalOpenCallback(true);
-      }, marketCoinStarredParams?.timer);
+      const timeout = setTimeout(
+        () => {
+          dispatch(setNotificationsModalType("market"));
+          setPushNotificationsModalOpenCallback(true);
+        },
+        marketCoinStarredParams?.timer,
+      );
       dispatch(
         setNotificationsEventTriggered({
           route_name: "MarketDetail",
@@ -301,9 +304,12 @@ const useNotifications = () => {
     const justFinishedOnboardingParams = pushNotificationsFeature?.params?.justFinishedOnboarding;
     if (justFinishedOnboardingParams?.enabled) {
       dispatch(setRatingsModalLocked(true));
-      const timeout = setTimeout(() => {
-        setPushNotificationsModalOpenCallback(true);
-      }, justFinishedOnboardingParams?.timer);
+      const timeout = setTimeout(
+        () => {
+          setPushNotificationsModalOpenCallback(true);
+        },
+        justFinishedOnboardingParams?.timer,
+      );
       dispatch(
         setNotificationsEventTriggered({
           route_name: "Portfolio",
@@ -321,7 +327,7 @@ const useNotifications = () => {
   ]);
 
   const handleSetDateOfNextAllowedRequest = useCallback(
-    (delay, additionalParams?: Partial<DataOfUser>) => {
+    (delay?: Duration, additionalParams?: Partial<DataOfUser>) => {
       if (delay !== null && delay !== undefined) {
         const dateOfNextAllowedRequest: Date = add(Date.now(), delay);
         updatePushNotificationsDataOfUserInStateAndStore({

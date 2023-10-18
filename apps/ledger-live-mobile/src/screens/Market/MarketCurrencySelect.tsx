@@ -79,7 +79,7 @@ function MarketCurrencySelect({ navigation }: Props) {
   );
 
   const renderItem = useCallback(
-    ({ item, index }) => {
+    ({ item, index }: { item: (typeof items)[number]; index: number }) => {
       const isChecked = counterCurrency === item.value;
       const color = isChecked ? "primary.c80" : "neutral.c100";
       const labelColor = isChecked ? "primary.c80" : "neutral.c80";
@@ -114,7 +114,7 @@ function MarketCurrencySelect({ navigation }: Props) {
   );
 
   const renderList = useCallback(
-    list => (
+    (list: typeof items) => (
       <FlatList
         data={list}
         renderItem={renderItem}
@@ -138,10 +138,9 @@ function MarketCurrencySelect({ navigation }: Props) {
         items={items}
         render={renderList}
         // This props is badly type
-        renderEmptySearch={(
-          () => () =>
-            <RenderEmptyList theme={colors.palette.type} search={search} />
-        )()}
+        renderEmptySearch={(() => () => (
+          <RenderEmptyList theme={colors.palette.type} search={search} />
+        ))()}
       />
     </Flex>
   );

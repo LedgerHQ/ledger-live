@@ -28,6 +28,7 @@ export default function StepDelegation({
   const { cardanoResources } = account;
   invariant(cardanoResources, "cardanoResources required");
   const delegation = cardanoResources.delegation;
+
   const selectPool = (stakePool: StakePool) => {
     setSelectedPool(stakePool);
     const bridge: AccountBridge<CardanoTransaction> = getAccountBridge(account);
@@ -39,7 +40,9 @@ export default function StepDelegation({
       return updatedTransaction;
     });
   };
+
   const selectedPoolId = (transaction as CardanoTransaction).poolId;
+
   return (
     <Box flow={1}>
       <TrackPage category="Delegation Flow" name="Step Validator" />
@@ -68,6 +71,7 @@ export function StepDelegationFooter({
   const { errors } = status;
   const canNext = !bridgePending && !errors.amount && transaction;
   const displayError = errors.amount?.message === "CardanoNotEnoughFunds" ? errors.amount : "";
+
   return (
     <Box horizontal alignItems="center" flow={2} grow>
       {displayError ? (

@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import { Flex, Text, Icon } from "@ledgerhq/react-ui";
 import { useSelector, useDispatch } from "react-redux";
 import { useHistory, useParams } from "react-router-dom";
@@ -15,16 +15,15 @@ import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/
 import { Button } from "..";
 import MarketCoinChart from "./MarketCoinChart";
 import MarketInfo from "./MarketInfo";
-import { useProviders } from "../../exchange/Swap2/Form";
 import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { openModal } from "~/renderer/actions/modals";
-import { getAllSupportedCryptoCurrencyTickers } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
-import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
+import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import useStakeFlow from "../../stake";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
+import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 
 const CryptoCurrencyIconWrapper = styled.div`
   height: 56px;
@@ -67,16 +66,8 @@ export default function MarketCoinScreen() {
   const locale = useSelector(localeSelector);
   const allAccounts = useSelector(accountsSelector);
   const flattenedAccounts = flattenAccounts(allAccounts);
-  const { providers, storedProviders } = useProviders();
   const swapDefaultTrack = useGetSwapTrackingProperties();
-
-  const swapAvailableIds = useMemo(() => {
-    return providers || storedProviders
-      ? (providers || storedProviders)!
-          .map(({ pairs }) => pairs.map(({ from, to }) => [from, to]))
-          .flat(2)
-      : [];
-  }, [providers, storedProviders]);
+  const { data: currenciesAll } = useFetchCurrencyAll();
 
   const {
     selectedCoinData: currency,
@@ -88,8 +79,6 @@ export default function MarketCoinScreen() {
     setCounterCurrency,
     supportedCounterCurrencies,
   } = useSingleCoinMarketData();
-
-  const rampCatalog = useRampCatalog();
 
   const {
     id,
@@ -115,16 +104,12 @@ export default function MarketCoinScreen() {
     chartData,
   } = currency || {};
 
-  const onRampAvailableTickers = useMemo(() => {
-    if (!rampCatalog.value) {
-      return [];
-    }
-    return getAllSupportedCryptoCurrencyTickers(rampCatalog.value.onRamp);
-  }, [rampCatalog.value]);
+  const { isCurrencyAvailable } = useRampCatalog();
 
-  const availableOnBuy =
-    currency && currency.ticker && onRampAvailableTickers.includes(currency.ticker?.toUpperCase());
-  const availableOnSwap = internalCurrency && swapAvailableIds.includes(internalCurrency.id);
+  const availableOnBuy = !!currency && isCurrencyAvailable(currency.id, "onRamp");
+
+  const availableOnSwap = internalCurrency && currenciesAll.includes(internalCurrency.id);
+
   const stakeProgramsFeatureFlag = useFeature("stakePrograms");
   const listFlag = stakeProgramsFeatureFlag?.params?.list ?? [];
   const stakeProgramsEnabled = stakeProgramsFeatureFlag?.enabled ?? false;

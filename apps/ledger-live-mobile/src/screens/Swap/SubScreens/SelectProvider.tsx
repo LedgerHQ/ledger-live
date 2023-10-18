@@ -79,7 +79,6 @@ export function SelectProvider({ navigation, route }: SelectProviderParamList) {
             <TouchableOpacity
               key={`${rate.provider}_${rate.tradeMethod}`}
               onPress={() => onSelect(rate)}
-              disabled={isSelected}
             >
               <Flex
                 flexDirection="row"

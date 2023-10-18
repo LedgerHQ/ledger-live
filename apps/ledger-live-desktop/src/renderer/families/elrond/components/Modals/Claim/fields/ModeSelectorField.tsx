@@ -5,9 +5,11 @@ import ToggleButton from "~/renderer/components/ToggleButton";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import Text from "~/renderer/components/Text";
 import Popover from "~/renderer/components/Popover";
+import { ElrondTransactionMode } from "@ledgerhq/live-common/families/elrond/types";
+
 export interface Props {
   mode: string;
-  onChange: (mode: string) => void;
+  onChange: (mode: ElrondTransactionMode) => void;
 }
 const options = [
   {
@@ -28,7 +30,7 @@ const ModeSelectorField = (props: Props) => {
       }}
       alignSelf="center"
     >
-      <ToggleButton value={mode} options={options} onChange={onChange} />
+      <ToggleButton value={mode} options={options} onChange={onChange as (a: string) => void} />
 
       <Box
         horizontal={true}

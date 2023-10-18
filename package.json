@@ -111,7 +111,8 @@
     "ui:shared": "pnpm --filter ui-shared",
     "ui:example:next": "pnpm  --filter=\"next.js-example\"",
     "ui:example:webpack": "pnpm  --filter=\"webpack.js-example\"",
-    "actions": "pnpm --filter @actions/*"
+    "actions": "pnpm --filter @actions/*",
+    "import:cal-tokens": "pnpm --filter=\"./libs/ledgerjs/**\" import-cal-tokens"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.4.8",
@@ -122,13 +123,13 @@
     "@typescript-eslint/eslint-plugin": "^6.2.0",
     "@typescript-eslint/parser": "^6.2.0",
     "create-release-hash": "workspace:*",
-    "eslint": "^8.41.0",
+    "eslint": "^8.51.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-json": "^3.1.0",
-    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-prettier": "^5.0.1",
     "migrate-branch": "workspace:*",
     "pnpm-utils": "workspace:*",
-    "prettier": "^2.8.1",
+    "prettier": "^3.0.3",
     "rimraf": "^4.4.1",
     "turbo": "^1.10.1",
     "typescript": "^5.1.3",

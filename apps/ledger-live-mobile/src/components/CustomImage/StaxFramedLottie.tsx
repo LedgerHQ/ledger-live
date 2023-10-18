@@ -15,6 +15,7 @@ export type Props = {
   lottieSource: React.ComponentProps<typeof AnimatedLottieView>["source"];
   source?: FramedImageProps["source"];
   loadingProgress?: FramedImageProps["loadingProgress"];
+  children?: React.ReactNode;
 };
 
 const StaxFramedLottie: React.FC<Props> = ({ source, lottieSource, loadingProgress }) => {

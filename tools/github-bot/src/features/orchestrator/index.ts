@@ -29,7 +29,8 @@ export function orchestrator(app: Probot) {
    * When a workflow is requested for the first time:
    *  - Create the related check run
    */
-  app.on("workflow_run.requested", async (context): Promise<void> => {
+  // @ts-expect-error ts pls
+  app.on("workflow_run.requested", async context => {
     const { payload, octokit } = context;
 
     const { owner, repo } = context.repo();
@@ -390,9 +391,8 @@ export function orchestrator(app: Probot) {
           payload.workflow_run.id,
         );
 
-        const artifactId = artifacts.find(
-          artifact => artifact.name === matchedWorkflow.summaryFile,
-        )?.id;
+        const artifactId = artifacts.find(artifact => artifact.name === matchedWorkflow.summaryFile)
+          ?.id;
 
         if (artifactId) {
           try {
@@ -638,9 +638,8 @@ export function orchestrator(app: Probot) {
 
         const artifacts = await listWorkflowRunArtifacts(octokit, owner, repo, workflowRun.id);
 
-        const artifactId = artifacts.find(
-          artifact => artifact.name === workflowMeta[1].summaryFile,
-        )?.id;
+        const artifactId = artifacts.find(artifact => artifact.name === workflowMeta[1].summaryFile)
+          ?.id;
 
         if (artifactId) {
           try {

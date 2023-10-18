@@ -5,6 +5,9 @@ import type { Announcement, AnnouncementsUserSettings, State, AnnouncementsApi }
 import { localizeAnnouncements, filterAnnouncements } from "./logic";
 import defaultFetchApi from "./api";
 import { announcementMachine } from "./machine";
+
+// FIXME: SOME WEIRD TYPES I HAVE TRICKED WITH ANY BUT NEEDS REWORKING
+
 type Props = {
   children: React.ReactNode;
   handleLoad: () => Promise<{
@@ -104,10 +107,10 @@ export const AnnouncementProvider = ({
     },
     [handleSave],
   );
-  const [state, send] = useMachine(announcementMachine, {
+  const [state, send] = useMachine(announcementMachine as unknown as any, {
     actions: {
       saveData,
-      emitNewAnnouncement,
+      emitNewAnnouncement: emitNewAnnouncement as any,
     },
     services: {
       loadData,
@@ -128,11 +131,13 @@ export const AnnouncementProvider = ({
         send({
           type: "SET_AS_SEEN",
           seenId,
-        });
+        } as any);
       },
     }),
     [send],
   );
   const value = { ...state.context, ...api };
-  return <AnnouncementsContext.Provider value={value}>{children}</AnnouncementsContext.Provider>;
+  return (
+    <AnnouncementsContext.Provider value={value as any}>{children}</AnnouncementsContext.Provider>
+  );
 };

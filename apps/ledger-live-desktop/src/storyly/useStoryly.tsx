@@ -48,6 +48,7 @@ export const useStoryly = (instanceId: StorylyInstanceID) => {
   const storyly = useFeature("storyly");
 
   useLayoutEffect(() => {
+    if (!storyly) return;
     ref.current?.init({
       layout: "classic",
       //

@@ -1,8 +1,6 @@
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getDefaultExplorerView, getStakePoolExplorer } from "@ledgerhq/live-common/explorers";
 import { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
-import { useSelector } from "react-redux";
-import { useDiscreetMode } from "~/renderer/components/Discreet";
 import { BigNumber } from "bignumber.js";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
@@ -14,7 +12,6 @@ import Check from "~/renderer/icons/Check";
 import { openURL } from "~/renderer/linking";
 import LedgerPoolIcon from "../LedgerPoolIcon";
 import { StakePool } from "@ledgerhq/live-common/families/cardano/api/api-types";
-import { localeSelector } from "~/renderer/reducers/settings";
 
 type Props = {
   currency: CryptoCurrency;
@@ -25,8 +22,6 @@ type Props = {
 };
 
 function CardanoPoolRow({ pool, active, onClick, unit, currency }: Props) {
-  const discreet = useDiscreetMode();
-  const locale = useSelector(localeSelector);
   const explorerView = getDefaultExplorerView(currency);
   const onExternalLink = useCallback(
     (poolId: string) => {
@@ -35,14 +30,7 @@ function CardanoPoolRow({ pool, active, onClick, unit, currency }: Props) {
     },
     [explorerView],
   );
-  const formatConfig = {
-    disableRounding: true,
-    alwaysShowSign: false,
-    showCode: true,
-    discreet,
-    locale,
-  };
-  const poolCost = formatCurrencyUnit(unit, new BigNumber(pool.cost), formatConfig);
+
   return (
     <StyledValidatorRow
       onClick={() => onClick(pool)}
@@ -89,14 +77,12 @@ function CardanoPoolRow({ pool, active, onClick, unit, currency }: Props) {
           <Text ff="Inter|Medium" fontSize={2} color="palette.text.shade50">
             <Trans i18nKey="cardano.delegation.commission" /> {`${pool.margin} %`}
           </Text>
-          <Text ff="Inter|Medium" ml={2} fontSize={2} color="palette.text.shade50">
-            <Trans i18nKey="cardano.delegation.cost" mr={2} /> {poolCost}
-          </Text>
         </Box>
       }
     ></StyledValidatorRow>
   );
 }
+
 const StyledValidatorRow = styled(ValidatorRow)`
   border-color: transparent;
   margin-bottom: 0;

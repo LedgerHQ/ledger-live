@@ -80,6 +80,10 @@ import StyleProvider from "./StyleProvider";
 import { performanceReportSubject } from "./components/PerformanceConsole/usePerformanceReportsLog";
 import { setOsTheme } from "./actions/settings";
 import TransactionsAlerts from "./components/TransactionsAlerts";
+import {
+  useFetchCurrencyAll,
+  useFetchCurrencyFrom,
+} from "@ledgerhq/live-common/exchange/swap/hooks/index";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -100,9 +104,11 @@ const styles = StyleSheet.create({
 
 function App() {
   useAppStateListener();
+  useFetchCurrencyAll();
+  useFetchCurrencyFrom();
   useListenToHidDevices();
 
-  const getSettingsChanged = useCallback((a, b) => a.settings !== b.settings, []);
+  const getSettingsChanged = useCallback((a: State, b: State) => a.settings !== b.settings, []);
   const getAccountsChanged = useCallback(
     (
       oldState: State,
@@ -129,7 +135,7 @@ function App() {
   );
 
   const getPostOnboardingStateChanged = useCallback(
-    (a, b) => !isEqual(a.postOnboarding, b.postOnboarding),
+    (a: State, b: State) => !isEqual(a.postOnboarding, b.postOnboarding),
     [],
   );
 

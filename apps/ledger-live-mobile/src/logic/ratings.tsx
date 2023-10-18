@@ -78,7 +78,7 @@ const useRatings = () => {
   const dispatch = useDispatch();
 
   const setRatingsModalOpenCallback = useCallback(
-    isRatingsModalOpen => {
+    (isRatingsModalOpen: boolean) => {
       if (!isRatingsModalOpen) {
         dispatch(setRatingsModalOpen(isRatingsModalOpen));
         dispatch(setNotificationsModalLocked(false));
@@ -171,7 +171,7 @@ const useRatings = () => {
   );
 
   const onRatingsRouteChange = useCallback(
-    (ratingsNewRoute, isOtherModalOpened = false) => {
+    (ratingsNewRoute: string, isOtherModalOpened = false) => {
       if (ratingsHappyMoment?.timeout) {
         dispatch(setNotificationsModalLocked(false));
         clearTimeout(ratingsHappyMoment?.timeout);
@@ -212,7 +212,7 @@ const useRatings = () => {
   );
 
   const updateRatingsDataOfUserInStateAndStore = useCallback(
-    ratingsDataOfUserUpdated => {
+    (ratingsDataOfUserUpdated: RatingsDataOfUser) => {
       dispatch(setRatingsDataOfUser(ratingsDataOfUserUpdated));
       setRatingsDataOfUserInStorage(ratingsDataOfUserUpdated);
     },
@@ -254,7 +254,7 @@ const useRatings = () => {
   }, [isRatingsModalLocked, dispatch, ratingsFeature?.params, setRatingsModalOpenCallback]);
 
   const handleRatingsSetDateOfNextAllowedRequest = useCallback(
-    (delay, additionalParams = {}) => {
+    (delay: Duration, additionalParams = {}) => {
       if (delay !== null && delay !== undefined) {
         const dateOfNextAllowedRequest: Date = add(Date.now(), delay);
         updateRatingsDataOfUserInStateAndStore({
@@ -279,7 +279,7 @@ const useRatings = () => {
       });
     } else {
       handleRatingsSetDateOfNextAllowedRequest(
-        ratingsFeature?.params?.conditions?.satisfied_then_not_now_delay,
+        ratingsFeature?.params?.conditions?.satisfied_then_not_now_delay as Duration,
         {
           alreadyClosedFromEnjoyStep: true,
         },
@@ -302,9 +302,12 @@ const useRatings = () => {
         doNotAskAgain: true,
       });
     } else {
-      handleRatingsSetDateOfNextAllowedRequest(ratingsFeature?.params?.conditions?.not_now_delay, {
-        alreadyClosedFromInitStep: true,
-      });
+      handleRatingsSetDateOfNextAllowedRequest(
+        ratingsFeature?.params?.conditions?.not_now_delay as Duration,
+        {
+          alreadyClosedFromInitStep: true,
+        },
+      );
     }
   }, [
     handleRatingsSetDateOfNextAllowedRequest,

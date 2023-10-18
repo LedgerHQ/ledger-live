@@ -506,7 +506,7 @@ describe("EVM Family", () => {
               blockHash: "hash",
               timestamp: 101010010,
               nonce: 1,
-            } as any),
+            }) as any,
         );
 
         const operationStatus = await synchronization.getOperationStatus(
@@ -564,7 +564,7 @@ describe("EVM Family", () => {
         }));
         jest
           .spyOn(nodeApi, "getBlockByHeight")
-          .mockImplementationOnce(async () => ({ timestamp: Date.now() / 1000 } as any));
+          .mockImplementationOnce(async () => ({ timestamp: Date.now() / 1000 }) as any);
 
         const expectedAddition = {
           blockHash: "hash",

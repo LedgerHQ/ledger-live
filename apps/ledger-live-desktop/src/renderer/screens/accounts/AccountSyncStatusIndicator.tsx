@@ -115,7 +115,7 @@ const AccountSyncStatusIndicator = ({ accountId, account, isUpToDateAccount }: P
   const currency = getAccountCurrency(account);
   const showSatStackIcon = !!satStackAlreadyConfigured && currency.id === "bitcoin";
   const onClick = useCallback(
-    e => {
+    (e: React.SyntheticEvent<HTMLDivElement>) => {
       e.stopPropagation();
       sync({
         type: "SYNC_ONE_ACCOUNT",

@@ -1,20 +1,19 @@
 import React, { useMemo, useCallback } from "react";
 import { Text, Flex, IconsLegacy, Box } from "@ledgerhq/native-ui";
-import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
-import { getAllSupportedCryptoCurrencyTickers } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
+import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
 import { StyleProp, ViewStyle } from "react-native";
 import CoinsIcon from "./CoinsIcon";
-import { useProviders } from "../../screens/Swap/Form";
 import TransferButton from "../TransferButton";
 import { NavigatorName, ScreenName } from "../../const";
 import { TrackScreen, useAnalytics, track } from "../../analytics";
 import type { NoFundsNavigatorParamList } from "../RootNavigator/types/NoFundsNavigator";
 import { StackNavigatorProps } from "../RootNavigator/types/helpers";
 import { Currency } from "@ledgerhq/types-cryptoassets";
+import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 
 const useText = (entryPoint: "noFunds" | "getFunds", currency: Currency) => {
   const { t } = useTranslation();
@@ -51,35 +50,19 @@ type ButtonItem = {
 /** Entry point is either "stake" button but user has insufficient funds in account, or "Get <ticker>" button on Earn dashboard, so text differs accordingly.  */
 export default function NoFunds({ route }: Props) {
   const { t } = useTranslation();
+  const { data: currenciesAll } = useFetchCurrencyAll();
   const { account, parentAccount, entryPoint } = route?.params;
-  const rampCatalog = useRampCatalog();
-  const { providers } = useProviders();
   const navigation = useNavigation();
-
-  const text = useText(entryPoint === "get-funds" ? "getFunds" : "noFunds", account.currency);
-
-  const onRampAvailableTickers = useMemo(() => {
-    if (!rampCatalog.value) {
-      return [];
-    }
-    return getAllSupportedCryptoCurrencyTickers(rampCatalog.value.onRamp);
-  }, [rampCatalog.value]);
-
-  const swapAvailableIds = useMemo(() => {
-    return providers
-      ? providers
-          .map(provider => {
-            return provider.pairs.map(({ from, to }) => {
-              return [from, to];
-            });
-          })
-          .flat(2)
-      : [];
-  }, [providers]);
-
   const currency = parentAccount?.currency || account?.currency;
+
+  const { isCurrencyAvailable } = useRampCatalog();
+
+  const availableOnBuy = !!currency && isCurrencyAvailable(currency.id, "onRamp");
+
+  const swapAvailableIds = currenciesAll;
+
   const availableOnReceive = true;
-  const availableOnBuy = currency && onRampAvailableTickers.includes(currency.ticker.toUpperCase());
+
   const availableOnSwap = useMemo(() => {
     return currency && swapAvailableIds.includes(currency.id);
   }, [currency, swapAvailableIds]);
@@ -155,6 +138,8 @@ export default function NoFunds({ route }: Props) {
       rightArrow: true,
     },
   ];
+
+  const text = useText(entryPoint === "get-funds" ? "getFunds" : "noFunds", account.currency);
 
   return (
     <Flex style={{ height: "100%" }} justifyContent="center">

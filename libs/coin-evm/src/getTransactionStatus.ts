@@ -90,11 +90,17 @@ const validateAmount = (
   const warnings: ValidationIssues = {};
 
   const isTokenTransaction = account?.type === "TokenAccount";
-  const isSmartContractInteraction = isTokenTransaction || transaction.data; // if the transaction is a smart contract interaction, it's normal that transaction has no amount
-  const transactionHasFees =
-    legacyTransactionHasFees(transaction as EvmTransactionLegacy) ||
-    eip1559TransactionHasFees(transaction as EvmTransactionEIP1559);
-  const canHaveZeroAmount = isSmartContractInteraction && transactionHasFees;
+  const isSmartContractInteraction = !!transaction.data;
+
+  /**
+   * A transaction can have no amount if:
+   * - it's a smart contract interaction not crafted by the Live
+   * (i.e: data coming from a third party using Wallet-API for example)
+   * OR
+   * - it's an NFT transaction
+   * (since for an NFT transaction, the "amount" is under the `nft.quantity` property)
+   */
+  const canHaveZeroAmount = isSmartContractInteraction && !isTokenTransaction;
 
   // if no amount or 0
   if ((!transaction.amount || transaction.amount.isZero()) && !canHaveZeroAmount) {

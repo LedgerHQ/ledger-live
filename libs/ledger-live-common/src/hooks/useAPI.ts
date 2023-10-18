@@ -37,7 +37,7 @@ export function useAPI<T, P extends Record<PropertyKey, unknown> | undefined>({
 
   const cacheKey = queryFn.name + JSON.stringify(queryProps);
 
-  const fetch = useCallback(async () => {
+  const fetch = async () => {
     setIsLoading(true);
     setData(undefined);
     setError(undefined);
@@ -56,7 +56,7 @@ export function useAPI<T, P extends Record<PropertyKey, unknown> | undefined>({
     } finally {
       setIsLoading(false);
     }
-  }, [cacheKey, onError, onSuccess, queryFn, queryProps]);
+  };
 
   const execute = useCallback(() => {
     if (enabled) {
@@ -71,7 +71,12 @@ export function useAPI<T, P extends Record<PropertyKey, unknown> | undefined>({
         fetch();
       }
     }
-  }, [cacheKey, staleTimeout, enabled, fetch, onSuccess]);
+    // Since cache key is a string representation of function name and the query props
+    // we only want to create a new version of this function when it changes.
+    // passing in an object here would create a new function on every render
+    // which would cause unnecessary calls to the backend.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cacheKey, staleTimeout, enabled]);
 
   useEffect(() => {
     execute();

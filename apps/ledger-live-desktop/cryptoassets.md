@@ -60,6 +60,7 @@
 | Quicksilver | QCK | YES | quicksilver |
 | RSK | RBTC | YES | rsk |
 | SecretNetwork | SCRT | YES | secret_network |
+| SeiNetwork | SEI | YES | sei_network |
 | Solana | SOL | YES | solana |
 | Songbird | SGB | YES | songbird |
 | Stacks | STX | YES | stacks |
@@ -126,7 +127,6 @@
 | Ravencoin | RVN | NO | ravencoin |
 | Resistance | RES | NO | resistance |
 | Rise | RISE | NO | rise |
-| SeiNetwork | SEI | NO | sei_network |
 | Shyft | SHFT | NO | shyft |
 | Stride | STRD | NO | stride |
 | Thundercore | TT | NO | thundercore |

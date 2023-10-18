@@ -460,12 +460,12 @@ const defaultsForCurrency: (a: Currency) => CurrencySettings = crypto => {
   };
 };
 
-export type SupportedCoutervaluesData = {
+export type SupportedCountervaluesData = {
   value: string;
   label: string;
   currency: Currency;
 };
-export const supportedCountervalues: SupportedCoutervaluesData[] = [
+export const supportedCountervalues: SupportedCountervaluesData[] = [
   ...listSupportedFiats(),
   ...possibleIntermediaries,
 ]

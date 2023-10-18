@@ -18,8 +18,8 @@ export function MinimumCard(props: PropsRaw) {
           <Text overflow="hidden" whiteSpace="nowrap" textOverflow="ellipsis" fontSize={14}>
             {manifest.name}
           </Text>
-
-          <Subtitle>{manifest.usedAt}</Subtitle>
+          {/* FIXME: Expecting ReactI18NextChildren  */}
+          <Subtitle>{manifest?.usedAt as unknown as string}</Subtitle>
         </Flex>
       </Flex>
     </Container>

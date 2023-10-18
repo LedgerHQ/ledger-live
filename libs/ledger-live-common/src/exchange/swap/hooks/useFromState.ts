@@ -7,6 +7,7 @@ import { Result as UseBridgeTransactionReturnType } from "../../../bridge/useBri
 import { SwapSelectorStateType, SwapTransactionType } from "../types";
 import BigNumber from "bignumber.js";
 import { debounce } from "../utils/debounce";
+import { useFetchCurrencyFrom } from "./v5/useFetchCurrencyFrom";
 
 export const useFromState = ({
   accounts,
@@ -21,10 +22,12 @@ export const useFromState = ({
   defaultParentAccount?: SwapSelectorStateType["parentAccount"];
   bridgeTransaction: UseBridgeTransactionReturnType;
 }): {
+  fromCurrencies: string[];
   fromState: SwapSelectorStateType;
   setFromAccount: SwapTransactionType["setFromAccount"];
   setFromAmount: SwapTransactionType["setFromAmount"];
 } => {
+  const { data: fromCurrencies } = useFetchCurrencyFrom();
   const [fromState, setFromState] = useState<SwapSelectorStateType>({
     ...selectorStateDefaultValues,
     currency: defaultCurrency ?? selectorStateDefaultValues.currency,
@@ -79,6 +82,7 @@ export const useFromState = ({
   );
 
   return {
+    fromCurrencies: fromCurrencies ?? [],
     fromState,
     setFromAccount,
     setFromAmount,

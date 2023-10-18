@@ -99,7 +99,7 @@ const ErrorDrawer: React.FC<Props> = ({ error, onClickRetry, closeable = false }
               onClickRetry();
             }}
           >
-            {t("syncOnboarding.manual.softwareCheckContent.genuineCheckErrorDrawer.retryCTA")}
+            {t("common.tryAgain")}
           </Button>
         )}
       </DrawerFooter>

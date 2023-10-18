@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { ReactNode, useCallback } from "react";
 import ReactNativeModal, { ModalProps } from "react-native-modal";
 import styled from "styled-components/native";
 import { StyleProp, ViewStyle } from "react-native";
@@ -28,7 +28,7 @@ export type BaseModalProps = {
   subtitle?: string;
   children?: React.ReactNode;
   noCloseButton?: boolean;
-  CustomHeader?: React.ComponentType;
+  CustomHeader?: React.ComponentType<{ children?: ReactNode }>;
 } & Partial<ModalProps>;
 
 const SafeContainer = styled.SafeAreaView`

@@ -217,6 +217,13 @@ const envDefinitions = {
     parser: intParser,
     desc: "define the default value of spec.skipMutationsTimeout (if not overriden by spec)",
   },
+  BUY_API_BASE: {
+    def: "https://buy.api.live.ledger.com/buy/v1",
+
+    parser: stringParser,
+    desc: "Buy crypto API base url - version 1",
+  },
+
   CARDANO_API_ENDPOINT: {
     def: "https://cardano.coin.ledger.com/api",
     parser: stringParser,
@@ -579,14 +586,9 @@ const envDefinitions = {
     desc: "Use speculos websocket interface instead of Rest API",
   },
   SWAP_API_BASE: {
-    def: "https://swap.ledger.com/v4",
+    def: "https://swap.ledger.com/v5",
     parser: stringParser,
     desc: "Swap API base",
-  },
-  SWAP_API_BASE_V5: {
-    def: "https://swap-stg.ledger.com/v5",
-    parser: stringParser,
-    desc: "Swap API base staging version 5",
   },
   SYNC_ALL_INTERVAL: {
     def: 8 * 60 * 1000,

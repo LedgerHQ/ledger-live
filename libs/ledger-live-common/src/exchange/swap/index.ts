@@ -17,10 +17,11 @@ import {
   ValidationError,
 } from "../../errors";
 import getCompleteSwapHistory from "./getCompleteSwapHistory";
-import getExchangeRates from "./getExchangeRates";
-import getProviders from "./getProviders";
 import initSwap from "./initSwap";
 import { postSwapAccepted, postSwapCancelled } from "./postSwapState";
+import getExchangeRates from "./getExchangeRates";
+import getProviders from "./getProviders";
+import { isIntegrationTestEnv } from "./utils/isIntegrationTestEnv";
 
 export const operationStatusList = {
   finishedOK: ["finished"],
@@ -100,7 +101,12 @@ const getProviderConfig = (providerName: string): ProviderConfig => {
   return res;
 };
 
-export const getAvailableProviders = (): string[] => Object.keys(swapProviders);
+export const getAvailableProviders = (): string[] => {
+  if (isIntegrationTestEnv()) {
+    return Object.keys(swapProviders).filter(p => p !== "changelly");
+  }
+  return Object.keys(swapProviders);
+};
 
 const USStates = {
   AL: "Alabama",
@@ -185,10 +191,10 @@ export {
   getSwapAPIBaseURL,
   getSwapAPIVersion,
   getProviderConfig,
-  getProviders,
-  getExchangeRates,
   getCompleteSwapHistory,
   postSwapAccepted,
+  getExchangeRates,
+  getProviders,
   postSwapCancelled,
   initSwap,
   USStates,

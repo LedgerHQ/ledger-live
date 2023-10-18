@@ -8,4 +8,3 @@ export type { StellarToken } from "./data/stellar";
 export type { CasperToken } from "./data/casper";
 export type { TRC10Token } from "./data/trc10";
 export type { TRC20Token } from "./data/trc20";
-export type { ICPToken } from "./data/internet_computer";

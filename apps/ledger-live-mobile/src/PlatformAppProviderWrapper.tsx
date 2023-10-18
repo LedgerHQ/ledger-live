@@ -20,10 +20,6 @@ export default function PlatformAppProviderWrapper({ children }: PlatformAppProv
 
   const isDebugAppEnabled = useEnv<"PLATFORM_DEBUG">("PLATFORM_DEBUG") as boolean;
 
-  // There is no more staging since migration to manifest API. Everything points to prod by default.
-  // const provider = __DEV__ ? "staging" : "production";
-  const provider = "production";
-
   return (
     <RemoteLiveAppProvider
       updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}
@@ -35,7 +31,7 @@ export default function PlatformAppProviderWrapper({ children }: PlatformAppProv
       }}
     >
       <LocalLiveAppProvider>
-        <RampCatalogProvider provider={provider} updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}>
+        <RampCatalogProvider updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}>
           {children}
         </RampCatalogProvider>
       </LocalLiveAppProvider>

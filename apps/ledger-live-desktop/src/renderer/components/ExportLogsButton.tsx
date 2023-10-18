@@ -114,7 +114,7 @@ const ExportLogsBtn = ({
     }
   }, [exporting, setExporting, exportLogs]);
   const onKeyHandle = useCallback(
-    e => {
+    (e: React.KeyboardEvent) => {
       if (e.ctrlKey) {
         handleExportLogs();
       }

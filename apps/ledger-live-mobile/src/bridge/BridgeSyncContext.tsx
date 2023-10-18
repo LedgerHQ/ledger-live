@@ -7,16 +7,18 @@ import { accountsSelector } from "../reducers/accounts";
 import { blacklistedTokenIdsSelector } from "../reducers/settings";
 import { track } from "../analytics/segment";
 import { prepareCurrency, hydrateCurrency } from "./cache";
+import { Account } from "@ledgerhq/types-live";
 
 export const BridgeSyncProvider = ({ children }: { children: React.ReactNode }) => {
   const accounts = useSelector(accountsSelector);
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const dispatch = useDispatch();
   const updateAccount = useCallback(
-    (accountId, updater) => dispatch(updateAccountWithUpdater({ accountId, updater })),
+    (accountId: string, updater: (arg0: Account) => Account) =>
+      dispatch(updateAccountWithUpdater({ accountId, updater })),
     [dispatch],
   );
-  const recoverError = useCallback(error => {
+  const recoverError = useCallback((error: Error) => {
     logger.critical(error);
   }, []);
   return (
