@@ -2799,8 +2799,8 @@
       "title" : "Recursos experimentais",
       "desc" : "Ative os recursos experimentais e nos conte o que achou.",
       "disclaimer" : "Estes são recursos experimentais que fornecemos \"tal como se encontram\" para serem testados pela nossa comunidade de especialistas em tecnologia. Eles podem mudar, quebrar ou ser removidos a qualquer momento. Ao habilitá-los, você concorda em usá-los por sua conta e risco.",
-      "provider" : "A configuração experimental \"Provedor da Minha Ledger ({{forcedProvider}})\" pode mostrar sistemas operacionais e aplicativos ainda não lançados, o que pode causar problemas compatibilidade. Você pode desativá-la nas configurações.",
-      "providerDevMode" : "As configurações experimentais \"Provedor da Minha Ledger ({{forcedProvider}})\" e \"Modo desenvolvedor\" podem mostrar sistemas operacionais e aplicativos ainda não lançados, o que pode causar problemas compatibilidade. Você pode desativá-las nas configurações.",
+      "provider" : "A configuração experimental \"Provedor da Minha Ledger ({{forcedProvider}})\" pode mostrar sistemas operacionais e aplicativos ainda não lançados, o que pode causar problemas de compatibilidade. Você pode desativá-la nas configurações.",
+      "providerDevMode" : "As configurações experimentais \"Provedor da Minha Ledger ({{forcedProvider}})\" e \"Modo desenvolvedor\" podem mostrar sistemas operacionais e aplicativos ainda não lançados, o que pode causar problemas de compatibilidade. Você pode desativá-las nas configurações.",
       "devMode" : "A configuração experimental \"Modo desenvolvedor\" pode mostrar sistemas operacionais e aplicativos ainda não lançados, o que pode causar problemas de compatibilidade. Você pode desativá-la nas configurações.",
       "providerCTA" : "Ir para Configurações",
       "experimentalFeatures" : {
@@ -3405,6 +3405,11 @@
     "walletConnect" : {
       "title" : "WalletConnect",
       "description" : "Conecte sua carteira a DApps."
+    },
+    "recover" : {
+      "title" : "Ledger Recover",
+      "description" : "Nunca perca o acesso à sua cripto",
+      "tag" : "Um mês grátis"
     }
   },
   "signMessage" : {
@@ -6365,6 +6370,12 @@
   "servicesWidget" : {
     "title" : "Serviços",
     "subTitle" : "Gerenciar seus serviços Ledger",
+    "signIn" : "Entrar",
+    "recover" : {
+      "cta" : "Iniciar sua avaliação gratuita",
+      "desc" : "Nunca mais se preocupe em perder acesso à sua carteira.",
+      "tag" : "1 mês grátis"
+    },
     "protect" : {
       "status" : {
         "new" : {
