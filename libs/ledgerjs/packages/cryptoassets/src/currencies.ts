@@ -327,35 +327,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [],
   },
-  binance_beacon_chain: {
-    type: "CryptoCurrency",
-    id: "binance_beacon_chain",
-    coinType: CoinType.ATOM,
-    name: "BinanceBeaconChain",
-    managerAppName: "Cosmos",
-    ticker: "BNB",
-    scheme: "BinanceBeaconChain",
-    color: "#f0b90b",
-    family: "cosmos",
-    units: [
-      {
-        name: "BNB",
-        code: "BNB",
-        magnitude: 6,
-      },
-      {
-        name: "Micro-BNB",
-        code: "ubnb",
-        magnitude: 0,
-      },
-    ],
-    explorerViews: [
-      {
-        tx: "https://binance.mintscan.io/txs/$hash",
-        address: "https://binance.mintscan.io/validators/$address",
-      },
-    ],
-  },
   bitcoin: {
     type: "CryptoCurrency",
     id: "bitcoin",
@@ -4368,6 +4339,37 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         tx: "https://www.klaytnfinder.io/tx/$hash",
         address: "https://www.klaytnfinder.io/account/$address",
         token: "https://www.klaytnfinder.io/token/$address",
+      },
+    ],
+  },
+  // Keep it at the bottom
+  // Tickers dup
+  binance_beacon_chain: {
+    type: "CryptoCurrency",
+    id: "binance_beacon_chain",
+    coinType: CoinType.ATOM,
+    name: "BinanceBeaconChain",
+    managerAppName: "Cosmos",
+    ticker: "BNB",
+    scheme: "BinanceBeaconChain",
+    color: "#f0b90b",
+    family: "cosmos",
+    units: [
+      {
+        name: "BNB",
+        code: "BNB",
+        magnitude: 6,
+      },
+      {
+        name: "Micro-BNB",
+        code: "ubnb",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://binance.mintscan.io/txs/$hash",
+        address: "https://binance.mintscan.io/validators/$address",
       },
     ],
   },
