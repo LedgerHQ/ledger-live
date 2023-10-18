@@ -194,6 +194,19 @@ export function writeVarInt(buffer: Buffer, i: number, offset: number): number {
   return offset;
 }
 
+/**
+ * Any reason not to use localeCompare instead?
+ * cf. https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/localeCompare
+ * Fair point, I though about it but the main reason is because localeCompare
+ * relies on locale which can impact the sort function.
+ * If no local param is defined, "the default locale of the JavaScript runtime"
+ * is used (which does not seem reliable since is dependant on the host environment).
+ * One could say I could force the local to `en` for example, but then again,
+ * I don't want to have anything to do with local, I just want a simple ASCI
+ * char sort algorithm.
+ * So better be safe than sorry and have a simple function for that rather than
+ * relying on a function that brings locales into the mix
+ */
 const strcmp = (a: string, b: string): number => {
   if (a === b) {
     return 0;

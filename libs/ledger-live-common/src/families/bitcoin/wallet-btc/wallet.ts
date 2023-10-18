@@ -283,35 +283,42 @@ class BitcoinLikeWallet {
       ];
     });
 
-    const lastOutputIndex = orderedOutputs.length - 1;
+    const lastOutputIndex = txInfo.outputs.length - 1;
 
     log("hw", `createPaymentTransaction`, {
       inputs,
       associatedKeysets,
       outputScriptHex,
-      lockTime: params.lockTime,
-      sigHashType: params.sigHashType,
-      segwit: params.segwit,
+      ...(params.lockTime && { lockTime: params.lockTime }),
+      ...(params.sigHashType && { sigHashType: params.sigHashType }),
+      ...(params.segwit && { segwit: params.segwit }),
       initialTimestamp,
-      expiryHeight: params.expiryHeight,
-      changePath: orderedOutputs[lastOutputIndex]?.isChange
-        ? `${fromAccount.params.path}/${fromAccount.params.index}'/${txInfo.changeAddress.account}/${txInfo.changeAddress.index}`
-        : undefined,
+      ...(params.expiryHeight && { expiryHeight: params.expiryHeight }),
+      ...(txInfo.outputs[lastOutputIndex]?.isChange && {
+        changePath: `${fromAccount.params.path}/${fromAccount.params.index}'/${txInfo.changeAddress.account}/${txInfo.changeAddress.index}`,
+      }),
       additionals: additionals || [],
     });
 
+    /**
+     * The arguments are passed to this function with this weird destructuring syntax
+     * because providing these params as `undefined` seem to cause some errors with
+     * the BtcOld `createPaymentTransaction` implementation, and it is
+     * required to not provide them instead...
+     * cf.: libs/ledgerjs/packages/hw-app-btc/src/BtcOld.ts
+     */
     const tx = await btc.createPaymentTransaction({
       inputs,
       associatedKeysets,
       outputScriptHex,
-      lockTime: params.lockTime,
-      sigHashType: params.sigHashType,
-      segwit: params.segwit,
+      ...(params.lockTime && { lockTime: params.lockTime }),
+      ...(params.sigHashType && { sigHashType: params.sigHashType }),
+      ...(params.segwit && { segwit: params.segwit }),
       initialTimestamp,
-      expiryHeight: params.expiryHeight,
-      changePath: orderedOutputs[lastOutputIndex]?.isChange
-        ? `${fromAccount.params.path}/${fromAccount.params.index}'/${txInfo.changeAddress.account}/${txInfo.changeAddress.index}`
-        : undefined,
+      ...(params.expiryHeight && { expiryHeight: params.expiryHeight }),
+      ...(txInfo.outputs[lastOutputIndex]?.isChange && {
+        changePath: `${fromAccount.params.path}/${fromAccount.params.index}'/${txInfo.changeAddress.account}/${txInfo.changeAddress.index}`,
+      }),
       additionals: additionals || [],
       onDeviceSignatureRequested,
       onDeviceSignatureGranted,
