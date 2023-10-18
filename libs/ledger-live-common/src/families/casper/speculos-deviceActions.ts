@@ -20,7 +20,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
       expectedValue: () => "Token transfer",
     },
     {
-      title: "Chain lD",
+      title: "Chain ID",
       button: SpeculosButton.RIGHT,
       expectedValue: () => "casper",
     },
