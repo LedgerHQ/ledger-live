@@ -1,5 +1,14 @@
 # @ledgerhq/hw-app-eth
 
+## 6.34.8-hotfix.1
+
+### Patch Changes
+
+- Updated dependencies [[`fbeebfe04b`](https://github.com/LedgerHQ/ledger-live/commit/fbeebfe04b297b33ec258440b694cdfb6213af24)]:
+  - @ledgerhq/cryptoassets@11.0.1-hotfix.0
+  - @ledgerhq/domain-service@1.1.13-hotfix.1
+  - @ledgerhq/evm-tools@1.0.9-hotfix.0
+
 ## 6.34.8-hotfix.0
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # @ledgerhq/test-utils
 
+## 0.0.8-hotfix.2
+
+### Patch Changes
+
+- Updated dependencies [[`fbeebfe04b`](https://github.com/LedgerHQ/ledger-live/commit/fbeebfe04b297b33ec258440b694cdfb6213af24)]:
+  - @ledgerhq/live-common@33.0.1-hotfix.2
+
 ## 0.0.8-hotfix.1
 
 ### Patch Changes

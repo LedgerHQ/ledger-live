@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 11.0.1-hotfix.0
+
+### Patch Changes
+
+- [#5115](https://github.com/LedgerHQ/ledger-live/pull/5115) [`fbeebfe04b`](https://github.com/LedgerHQ/ledger-live/commit/fbeebfe04b297b33ec258440b694cdfb6213af24) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Reordering bsc & binance_beacon_chain to avoid errors while sorting by market cap due to token collision
+
 ## 11.0.0
 
 ### Major Changes

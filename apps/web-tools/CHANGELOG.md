@@ -1,5 +1,15 @@
 # web-tools
 
+## 0.1.2-hotfix.2
+
+### Patch Changes
+
+- Updated dependencies [[`fbeebfe04b`](https://github.com/LedgerHQ/ledger-live/commit/fbeebfe04b297b33ec258440b694cdfb6213af24)]:
+  - @ledgerhq/live-common@33.0.1-hotfix.2
+  - @ledgerhq/coin-framework@0.8.0-hotfix.2
+  - @ledgerhq/domain-service@1.1.13-hotfix.1
+  - @ledgerhq/hw-app-eth@6.34.8-hotfix.1
+
 ## 0.1.2-hotfix.1
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-polkadot",
-  "version": "0.4.4-hotfix.1",
+  "version": "0.4.4-hotfix.2",
   "description": "Ledger Polkadot Coin integration",
   "keywords": [
     "Ledger",

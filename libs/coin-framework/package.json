@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-framework",
-  "version": "0.8.0-hotfix.1",
+  "version": "0.8.0-hotfix.2",
   "description": "Ledger framework for Coin integration",
   "keywords": [
     "Ledger",

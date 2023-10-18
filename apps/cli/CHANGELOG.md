@@ -1,5 +1,14 @@
 # @ledgerhq/live-cli
 
+## 22.13.1-hotfix.2
+
+### Patch Changes
+
+- Updated dependencies [[`fbeebfe04b`](https://github.com/LedgerHQ/ledger-live/commit/fbeebfe04b297b33ec258440b694cdfb6213af24), [`fbeebfe04b`](https://github.com/LedgerHQ/ledger-live/commit/fbeebfe04b297b33ec258440b694cdfb6213af24)]:
+  - @ledgerhq/cryptoassets@11.0.1-hotfix.0
+  - @ledgerhq/live-common@33.0.1-hotfix.2
+  - @ledgerhq/coin-framework@0.8.0-hotfix.2
+
 ## 22.13.1-hotfix.1
 
 ### Patch Changes
