@@ -84,7 +84,7 @@ import {
   useFetchCurrencyAll,
   useFetchCurrencyFrom,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
-import useAccountsWithFundsListener from "@/ledgerhq/live-common/hooks/useAccountsWithFundsListener";
+import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccountsWithFundsListener";
 import { updateIdentify } from "./analytics";
 
 if (Config.DISABLE_YELLOW_BOX) {
