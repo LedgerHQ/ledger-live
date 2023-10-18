@@ -47,9 +47,13 @@ export function hasAccountsWithFundsChanged(accounts: Account[], oldAccounts: Ac
   return false;
 }
 
+/**
+ * Watches for changes in the accounts with funds (see comment on the function above for more details) and it triggers
+ * the callback function when a change occurs.
+ */
 function useAccountsWithFundsListener(
   accounts: Account[],
-  cb: () => void,
+  callback: () => void,
   debounceTimer: number = 3000,
 ) {
   const oldAccounts = useRef<Account[]>([]);
@@ -58,7 +62,7 @@ function useAccountsWithFundsListener(
     () =>
       debounce(() => {
         if (hasAccountsWithFundsChanged(accounts, oldAccounts.current)) {
-          cb();
+          callback();
         }
         oldAccounts.current = accounts;
       }, debounceTimer),
