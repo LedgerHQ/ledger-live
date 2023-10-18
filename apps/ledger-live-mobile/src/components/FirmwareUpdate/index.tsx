@@ -6,7 +6,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Button, Icons } from "@ledgerhq/native-ui";
 import { DeviceInfo } from "@ledgerhq/types-live";
 import { BluetoothNotSupportedError } from "@ledgerhq/live-common/errors";
-import useLatestFirmware from "@ledgerhq/live-common/hooks/useLatestFirmware";
+import { useLatestFirmware } from "@ledgerhq/live-common/device/hooks/useLatestFirmware";
 import {
   DisconnectedDevice,
   DisconnectedDeviceDuringOperation,
