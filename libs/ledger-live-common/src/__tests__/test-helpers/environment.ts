@@ -90,6 +90,7 @@ setSupportedCurrencies([
   "telos_evm",
   "coreum",
   "injective",
+  "vechain",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);
