@@ -139,10 +139,12 @@ export function getSpecs({ disabled, filter }) {
 
       if (disabledCurrencies.includes(spec.currency.id)) {
         // We don't want to test disabled currencies
+        console.log("currency disabled", spec.currency.id);
         continue;
       }
 
       if (!isCurrencySupported(spec.currency) || spec.disabled) {
+        console.log("currency not supported", spec.currency.id);
         // We do not want to add the spec if currency isn't supported or is disabled
         continue;
       }
