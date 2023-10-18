@@ -3,8 +3,8 @@ import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Icon, Text } from "@ledgerhq/react-ui";
-import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
-import { getAllSupportedCryptoCurrencyTickers } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
+import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
+
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { closeModal, openModal } from "~/renderer/actions/modals";
 import Modal, { ModalBody } from "~/renderer/components/Modal";
@@ -45,20 +45,11 @@ const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeM
   const history = useHistory();
   const { data: currenciesAll } = useFetchCurrencyAll();
 
-  const rampCatalog = useRampCatalog();
-
-  const onRampAvailableTickers: string[] = useMemo(() => {
-    if (!rampCatalog.value) {
-      return [];
-    }
-    return getAllSupportedCryptoCurrencyTickers(rampCatalog.value.onRamp);
-  }, [rampCatalog.value]);
-
   const currency: CryptoCurrency = parentAccount?.currency || (account as Account).currency;
 
-  const text = useText(entryPoint === "get-funds" ? "getFunds" : "noFunds", currency);
+  const { isCurrencyAvailable } = useRampCatalog();
 
-  const availableOnBuy = currency && onRampAvailableTickers.includes(currency.ticker.toUpperCase());
+  const availableOnBuy = !!currency && isCurrencyAvailable(currency.id, "onRamp");
 
   const availableOnSwap = useMemo(() => {
     return currency && currenciesAll.includes(currency.id);
@@ -141,6 +132,8 @@ const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeM
     .map((action, i) =>
       i === 0 ? `${action.substring(0, 1).toUpperCase()}${action.slice(1)}` : action,
     );
+
+  const text = useText(entryPoint === "get-funds" ? "getFunds" : "noFunds", currency);
 
   return (
     <Modal name={modalName} centered>

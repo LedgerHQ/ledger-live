@@ -1,9 +1,9 @@
 import { DefaultFeature, Feature, Features } from "@ledgerhq/types-live";
 
 /**
- * Default feature.
+ * Default disabled feature.
  */
-export const DEFAULT_FEATURE: DefaultFeature = {
+const DEFAULT_FEATURE: DefaultFeature = {
   enabled: false,
 };
 

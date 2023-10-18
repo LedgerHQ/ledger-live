@@ -1,4 +1,4 @@
-import React, { useCallback, ReactNode, useEffect } from "react";
+import React, { useCallback, ReactNode, useEffect, useMemo } from "react";
 import isEqual from "lodash/isEqual";
 import semver from "semver";
 import { useDispatch, useSelector } from "react-redux";
@@ -119,13 +119,16 @@ export const FirebaseFeatureFlagsProvider = ({ children }: Props): JSX.Element =
     [dispatch, getFeature],
   );
 
-  const resetFeature = (key: FeatureId): void => {
-    dispatch(setOverriddenFeatureFlag(key, undefined));
-  };
+  const resetFeature = useCallback(
+    (key: FeatureId): void => {
+      dispatch(setOverriddenFeatureFlag(key, undefined));
+    },
+    [dispatch],
+  );
 
-  const resetFeatures = (): void => {
+  const resetFeatures = useCallback((): void => {
     dispatch(setOverriddenFeatureFlags({}));
-  };
+  }, [dispatch]);
 
   useEffect(() => {
     if (remoteConfig) {
@@ -135,16 +138,17 @@ export const FirebaseFeatureFlagsProvider = ({ children }: Props): JSX.Element =
     return () => setAnalyticsFeatureFlagMethod(null);
   }, [remoteConfig, getFeature]);
 
-  return (
-    <FeatureFlagsProvider
-      isFeature={isFeature}
-      getFeature={getFeature}
-      overrideFeature={overrideFeature}
-      resetFeature={resetFeature}
-      resetFeatures={resetFeatures}
-      getAllFlags={getAllFlags}
-    >
-      {children}
-    </FeatureFlagsProvider>
+  const contextValue = useMemo(
+    () => ({
+      isFeature,
+      getFeature,
+      overrideFeature,
+      resetFeature,
+      resetFeatures,
+      getAllFlags,
+    }),
+    [getAllFlags, getFeature, isFeature, overrideFeature, resetFeature, resetFeatures],
   );
+
+  return <FeatureFlagsProvider value={contextValue}>{children}</FeatureFlagsProvider>;
 };

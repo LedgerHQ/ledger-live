@@ -23,7 +23,7 @@ import EarlySecurityCheckMandatoryDrawer from "./EarlySecurityCheckMandatoryDraw
 import { PlainOverlay } from "./DesyncOverlay";
 import { track } from "../../analytics";
 import { NavigationHeaderCloseButton } from "../../components/NavigationHeaderCloseButton";
-import UnlockDeviceDrawer from "./UnlockDeviceDrawer";
+import UnlockDeviceDrawer from "../../components/UnlockDeviceDrawer";
 import AutoRepairDrawer from "./AutoRepairDrawer";
 
 export type SyncOnboardingScreenProps = CompositeScreenProps<

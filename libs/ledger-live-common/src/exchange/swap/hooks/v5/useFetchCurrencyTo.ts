@@ -21,7 +21,7 @@ export function useFetchCurrencyTo({ fromCurrencyAccount }: Props) {
     queryProps: {
       providers: getAvailableProviders(),
       currencyFromId,
-      additionalCoinsFlag: fetchAdditionalCoins.enabled,
+      additionalCoinsFlag: fetchAdditionalCoins?.enabled,
     },
     // assume a currency list for the given props won't change during a users session.
     staleTimeout: Infinity,
