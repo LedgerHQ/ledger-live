@@ -53,7 +53,7 @@ function getDeviceTransactionConfig({
     case 'freeze':
       fields.push({
         type: "address",
-        label: "Freeze to",
+        label: "Stake to",
         address: transaction.recipient,
       });
       break;
@@ -61,7 +61,7 @@ function getDeviceTransactionConfig({
     case 'unfreeze':
       fields.push({
         type: "address",
-        label: "Unfreeze From",
+        label: "Unstake From",
         address: transaction.recipient,
       });
       break;

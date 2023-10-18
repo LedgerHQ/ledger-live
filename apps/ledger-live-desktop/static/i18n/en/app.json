@@ -2619,8 +2619,8 @@
         "confirmation": {
           "success": {
             "title": "",
-            "textNRG": "You will start earning ISCORE once you vote for Public Representatives",
-            "text": "You will start earning ISCORE once you vote for Public Representatives",
+            "textNRG": "You will start earning I-Score once you vote for Public Representatives",
+            "text": "You will start earning I-Score once you vote for Public Representatives",
             "votePending": "Vote in {{time}}",
             "vote": "Vote",
             "later": "Vote later"
@@ -2633,7 +2633,7 @@
     },
     "voting": {
       "emptyState": {
-        "description": "You can now earn rewards by freezing and voting.",
+        "description": "You can now earn rewards by staking and voting.",
         "info": "How voting works",
         "votesDesc": "Cast your votes for one or more representatives to start earning staking rewards.",
         "vote": "Cast votes",
@@ -2656,11 +2656,11 @@
       "flow": {
         "steps": {
           "starter": {
-            "description": "Freeze ICX to earn rewards and still keep full security and control of your assets.",
+            "description": "Stake ICX to earn rewards and still keep full security and control of your assets.",
             "bullet": {
               "delegate": "Delegated assets stay yours.",
               "access": "The unlock period may vary between 5 and 20 days",
-              "ledger": "Freeze and vote securely with your Ledger device."
+              "ledger": "Stake and vote securely with your Ledger device."
             },
             "help": "How voting works",
             "termsAndPrivacy": "Delegating your voting rights does not guarantee any rewards from your Public representative."
@@ -2719,13 +2719,13 @@
     "manage": {
       "title": "Manage assets",
       "freeze": {
-        "title": "Freeze",
-        "description": "Freeze ICX to earn I_SCORE. 1000 I-Score can be exchange with 1 ICX. You'll also be able to vote for Public representatives.",
+        "title": "Stake",
+        "description": "Stake ICX to earn I_SCORE. 1000 I-Score can be exchange with 1 ICX. You'll also be able to vote for Public representatives.",
         "shouldUseVotingPowerFirst": "You have to use voting power remain before stake more"
       },
       "unfreeze": {
-        "title": "Unfreeze",
-        "description": "Unfreeze ICX to have them back in your available balance. You will no longer earn rewards."
+        "title": "Unstake",
+        "description": "Unstake ICX to have them back in your available balance. You will no longer earn rewards."
       },
       "vote": {
         "title": "Vote",

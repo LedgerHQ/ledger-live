@@ -5271,12 +5271,12 @@
     "manage": {
       "title": "Manage Icon Voting Power",
       "freeze": {
-        "title": "Freeze",
-        "description": "Freeze ICX to earn Bandwidth or Energy. You can also vote for Super Representatives."
+        "title": "Stake",
+        "description": "Stake ICX to earn Bandwidth or Energy. You can also vote for Super Representatives."
       },
       "unfreeze": {
-        "title": "Unfreeze",
-        "description": "Unfreeze ICX to add them back to your available balance. You will no longer earn rewards."
+        "title": "Unstake",
+        "description": "Unstake ICX to add them back to your available balance. You will no longer earn rewards."
       },
       "vote": {
         "title": "Vote",
