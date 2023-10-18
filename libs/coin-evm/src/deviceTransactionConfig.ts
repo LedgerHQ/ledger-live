@@ -22,7 +22,6 @@ const inferDeviceTransactionConfigWalletApi = (
 ): Array<DeviceTransactionField> => {
   if (!transaction.data) throw new Error();
   const fields: Array<DeviceTransactionField> = [];
-
   const hasValidDomain = validateDomain(transaction.recipientDomain?.domain);
 
   const selector = `0x${transaction.data.toString("hex").substring(0, 8)}`;
@@ -401,15 +400,16 @@ const inferDeviceTransactionConfigWalletApi = (
       ethers.Bytes,
     ];
 
-    //todo get native token??
-    const srcTokenObj = findTokenByAddress(srcToken) || {
-      ticker: "ETH",
-      units: [{ name: "Ethereum", code: "ETH", magnitude: 18 }],
-    };
-    const destTokenObj = findTokenByAddress(dstToken) || {
-      ticker: "ETH",
-      units: [{ name: "Ethereum", code: "ETH", magnitude: 18 }],
-    };
+    // @dev all native token from 1inch are using 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE
+    // so we can't rely on findTokenByAddress to get BNB or Matic
+    const srcTokenObj =
+      srcToken == "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
+        ? mainAccount.currency
+        : findTokenByAddress(srcToken) || mainAccount.currency;
+    const destTokenObj =
+      dstToken == "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
+        ? mainAccount.currency
+        : findTokenByAddress(dstToken) || mainAccount.currency;
 
     fields.push(
       {
