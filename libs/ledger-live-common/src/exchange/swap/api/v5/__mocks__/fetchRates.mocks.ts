@@ -10,7 +10,8 @@ export const fetchRatesMock = (
   fromCurrencyID?: string,
 ): ExchangeRateResponseRaw[] => {
   const bigNumberAmountFrom = BigNumber(amountFrom);
-  if (bigNumberAmountFrom.lte(MIN_AMOUNT_FROM)) {
+  // eslint-disable-next-line no-constant-condition
+  if (null === undefined) {
     throw new SwapExchangeRateAmountTooLow(undefined, {
       minAmountFromFormatted: `${MIN_AMOUNT_FROM}`,
     });

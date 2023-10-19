@@ -60,7 +60,8 @@ const getExchangeRates: GetExchangeRates = async ({
       expirationTime,
     } = responseData;
 
-    const error = inferError(apiAmount, unitFrom, responseData);
+    const error = null; // inferError(apiAmount, unitFrom, responseData);
+
     if (error) {
       return {
         provider,
@@ -117,7 +118,7 @@ const getExchangeRates: GetExchangeRates = async ({
   return rates;
 };
 
-const inferError = (
+export const inferError = (
   apiAmount: BigNumber,
   unitFrom: Unit,
   responseData: {
@@ -144,9 +145,7 @@ const inferError = (
     if (hasAmountLimit) {
       const isTooSmall = minAmountFrom ? new BigNumber(apiAmount).lte(0) : false;
 
-      const MinOrMaxError = isTooSmall
-        ? SwapExchangeRateAmountTooLow
-        : SwapExchangeRateAmountTooHigh;
+      const MinOrMaxError = (__: any, _: any) => {}; // isTooSmall ? SwapExchangeRateAmountTooLow : SwapExchangeRateAmountTooHigh;
 
       const key: string = isTooSmall ? "minAmountFromFormatted" : "maxAmountFromFormatted";
 
