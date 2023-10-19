@@ -6,6 +6,7 @@ import Button from "../../components/wrappedUi/Button";
 import type { Step, UiCheckStatus } from "./EarlySecurityCheck";
 import CheckCard from "./CheckCard";
 import { useTheme } from "styled-components/native";
+import { EarlySecurityCheckEndedCta } from "./EarlySecurityCheckEndedCta";
 
 export type Props = {
   productName: string;
@@ -111,9 +112,9 @@ const EarlySecurityCheckBody: React.FC<Props> = ({
       );
 
       primaryBottomCta = (
-        <Button type="main" size="large" onPress={notifyOnboardingEarlyCheckEnded}>
+        <EarlySecurityCheckEndedCta onPress={notifyOnboardingEarlyCheckEnded}>
           {t("earlySecurityCheck.completed.continueCta")}
-        </Button>
+        </EarlySecurityCheckEndedCta>
       );
       break;
     case "error":
