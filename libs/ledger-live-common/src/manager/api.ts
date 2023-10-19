@@ -47,6 +47,7 @@ import {
 } from "../socket/socket.mock";
 import { getUserHashes } from "../user";
 import { getProviderId } from "./provider";
+import fetchMcusUseCase from "../device/use-cases/managerApi/fetchMcusUseCase";
 
 declare global {
   namespace NodeJS {
@@ -206,22 +207,6 @@ const listCategories = async (): Promise<Array<Category>> => {
   });
   return r.data;
 };
-
-const getMcus: () => Promise<any> = makeLRUCache(
-  async () => {
-    const { data } = await network({
-      method: "GET",
-      url: URL.format({
-        pathname: `${getEnv("MANAGER_API_BASE")}/mcu_versions`,
-        query: {
-          livecommonversion,
-        },
-      }),
-    });
-    return data;
-  },
-  () => getEnv("MANAGER_API_BASE"),
-);
 
 const compatibleMCUForDeviceInfo = (
   mcus: McuVersion[],
@@ -636,7 +621,7 @@ const installMcu = (
 };
 
 function retrieveMcuVersion(finalFirmware: FinalFirmware): Promise<McuVersion | undefined> {
-  return getMcus()
+  return fetchMcusUseCase()
     .then(mcus =>
       mcus.filter(deviceInfo => {
         const provider = getProviderId(deviceInfo);
@@ -657,7 +642,6 @@ const API = {
   listApps,
   listInstalledApps,
   listCategories,
-  getMcus,
   getLanguagePackagesForDevice,
   getLatestFirmware,
   getAppsByHash,

@@ -10,6 +10,7 @@ import type { Input as ConnectManagerInput, ConnectManagerEvent } from "../conne
 import type { Action, Device } from "./types";
 import { currentMode } from "./app";
 import { getImplementation } from "./implementations";
+import fetchLatestFirmwareUseCase from "../../device/use-cases/fetchLatestFirmwareUseCase";
 
 type State = {
   isLoading: boolean;
@@ -207,7 +208,7 @@ export const createAction = (
     useEffect(() => {
       if (!deviceInfo) return;
       // Preload latest firmware in parallel
-      manager.getLatestFirmwareForDevice(deviceInfo).catch((e: Error) => {
+      fetchLatestFirmwareUseCase(deviceInfo).catch((e: Error) => {
         log("warn", e.message);
       });
     }, [deviceInfo]);

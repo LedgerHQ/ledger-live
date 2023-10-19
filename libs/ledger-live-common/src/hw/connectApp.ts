@@ -29,8 +29,8 @@ import quitApp from "./quitApp";
 import { LatestFirmwareVersionRequired } from "../errors";
 import { mustUpgrade } from "../apps";
 import isUpdateAvailable from "./isUpdateAvailable";
-import manager from "../manager";
 import { LockedDeviceEvent } from "./actions/types";
+import fetchLatestFirmwareUseCase from "../device/use-cases/fetchLatestFirmwareUseCase";
 
 export type RequiresDerivation = {
   currencyId: string;
@@ -137,7 +137,7 @@ export const openAppFromDashboard = (
       merge(
         // Nb Allows LLD/LLM to update lastSeenDevice, this can run in parallel
         // since there are no more device exchanges.
-        from(manager.getLatestFirmwareForDevice(deviceInfo)).pipe(
+        from(fetchLatestFirmwareUseCase(deviceInfo)).pipe(
           concatMap(latestFirmware =>
             of<ConnectAppEvent>({
               type: "device-update-last-seen",
@@ -306,7 +306,7 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
                 if (requireLatestFirmware || outdatedApp) {
                   return from(getDeviceInfo(transport)).pipe(
                     mergeMap((deviceInfo: DeviceInfo) =>
-                      from(manager.getLatestFirmwareForDevice(deviceInfo)).pipe(
+                      from(fetchLatestFirmwareUseCase(deviceInfo)).pipe(
                         mergeMap((latest: FirmwareUpdateContext | undefined | null) => {
                           const isLatest =
                             !latest || semver.eq(deviceInfo.version, latest.final.version);
