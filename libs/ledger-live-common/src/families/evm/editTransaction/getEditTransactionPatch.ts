@@ -1,14 +1,15 @@
 import { getGasTracker } from "@ledgerhq/coin-evm/api/gasTracker/index";
 import { getMinEip1559Fees, getMinLegacyFees } from "@ledgerhq/coin-evm/getMinEditTransactionFees";
 import type {
+  EditType,
   EvmTransactionEIP1559,
   EvmTransactionLegacy,
   GasOptions,
   Transaction,
-  EditType,
 } from "@ledgerhq/coin-evm/types/index";
 import type { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
+import invariant from "invariant";
 
 /**
  * Can't easily and properly use generics with Partial to avoid type casting
@@ -78,6 +79,7 @@ const getCommonCancelPatch = ({
     amount: new BigNumber(0),
     // removing the subAccountId to transform a token tx to main coin tx
     subAccountId: undefined,
+    // removing the data to transform a contract tx to a simple send tx
     data: undefined,
     nonce: transaction.nonce,
     mode: "send",
@@ -110,9 +112,7 @@ const getLegacyPatch = ({
 }): Partial<EvmTransactionLegacy> => {
   const fastFeeData = gasOptions.fast;
 
-  if (!fastFeeData.gasPrice) {
-    throw new Error("gasOptions.fast.gasPrice is required");
-  }
+  invariant(fastFeeData.gasPrice, "gasOptions.fast.gasPrice is required");
 
   // we get the minimum possible fees values needed to update the transaction
   const { gasPrice: minGasPrice } = getMinLegacyFees({ gasPrice: transaction.gasPrice });
@@ -172,13 +172,8 @@ const getEip1559Patch = ({
 }): Partial<EvmTransactionEIP1559> => {
   const fastFeeData = gasOptions.fast;
 
-  if (!fastFeeData.maxFeePerGas) {
-    throw new Error("gasOptions.fast.maxFeePerGas is required");
-  }
-
-  if (!fastFeeData.maxPriorityFeePerGas) {
-    throw new Error("gasOptions.fast.maxPriorityFeePerGas is required");
-  }
+  invariant(fastFeeData.maxFeePerGas, "gasOptions.fast.maxFeePerGas is required");
+  invariant(fastFeeData.maxPriorityFeePerGas, "gasOptions.fast.maxPriorityFeePerGas is required");
 
   // we get the minimum possible fees values needed to update the transaction
   const { maxFeePerGas: minMaxFeePerGas, maxPriorityFeePerGas: minMaxPriorityFeePerGas } =
