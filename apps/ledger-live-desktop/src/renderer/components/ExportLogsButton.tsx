@@ -1,6 +1,5 @@
 import moment from "moment";
 import { ipcRenderer, webFrame } from "electron";
-import * as remote from "@electron/remote";
 import React, { useState, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -86,7 +85,7 @@ const ExportLogsBtn = ({
       },
       accountsIds: accounts.map(a => a.id),
     });
-    const path = await remote.dialog.showSaveDialog({
+    const path = await ipcRenderer.invoke("show-save-dialog", {
       title: "Export logs",
       defaultPath: `ledgerlive-logs-${moment().format("YYYY.MM.DD-HH.mm.ss")}-${
         __GIT_REVISION__ || "unversioned"
