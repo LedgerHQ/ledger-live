@@ -1,7 +1,15 @@
 // From libs/ledger-live-common/src/manager/api.ts
-import CacheAPI from "../../manager/index"
+import { DeviceInfo } from "@ledgerhq/types-live";
+import { getProviderId } from "../../manager/index";
+import getLatestFirmwareForDevice from "../../device-core/use-cases/getLatestFirmwareForDevice";
+import { getEnv } from "@ledgerhq/live-env";
+import { version } from "../../../package.json";
 
-const {getLatestFirmwareForDevice: fetchLatestFirmwareUseCase} = CacheAPI
-
-export default fetchLatestFirmwareUseCase;
-
+export default function fetchLatestFirmwareUseCase(deviceInfo: DeviceInfo) {
+  return getLatestFirmwareForDevice({
+    deviceInfo,
+    providerId: getProviderId(deviceInfo),
+    managerApiBase: getEnv("MANAGER_API_BASE"),
+    liveCommonVersion: version,
+  });
+}

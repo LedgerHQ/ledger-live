@@ -1,16 +1,20 @@
 import { DeviceInfoEntity } from "../entities/DeviceInfoEntity";
 import { FirmwareUpdateContextEntity } from "../entities/FirmwareUpdateContextEntity";
+import fetchMcus, { FetchMcusParams } from "./managerApi/fetchMcus";
 
-export default async function getLatestFirmwareForDevice(
-  deviceInfo: DeviceInfoEntity,
-  providerId: number,
-): Promise<FirmwareUpdateContextEntity | null> {
-  const mcusPromise = ManagerAPI.getMcus();
+type GetLatestFirmwareForDeviceParams = {
+  deviceInfo: DeviceInfoEntity;
+  providerId: number;
+} & FetchMcusParams;
+
+export default async function getLatestFirmwareForDevice({
+  deviceInfo,
+  providerId,
+  ...fetchMcusParams
+}: GetLatestFirmwareForDeviceParams): Promise<FirmwareUpdateContextEntity | null> {
+  const mcusPromise = fetchMcus(fetchMcusParams);
   // Get device infos from targetId
-  const deviceVersion = await ManagerAPI.getDeviceVersion(
-    deviceInfo.targetId,
-    providerId,
-  );
+  const deviceVersion = await ManagerAPI.getDeviceVersion(deviceInfo.targetId, providerId);
   let osu;
 
   if (deviceInfo.isOSU) {
@@ -48,4 +52,4 @@ export default async function getLatestFirmwareForDevice(
     osu,
     shouldFlashMCU,
   };
-};
+}
