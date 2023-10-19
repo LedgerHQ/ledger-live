@@ -12,13 +12,14 @@ import CollectionName from "~/renderer/components/Nft/CollectionName";
 import TokensList from "./TokensList";
 import Box from "~/renderer/components/Box";
 import Spinner from "~/renderer/components/Spinner";
-import useOnScreen from "../useOnScreen";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Button from "~/renderer/components/Button";
 import Text from "~/renderer/components/Text";
 import GridListToggle from "./GridListToggle";
 import { State } from "~/renderer/reducers";
 import { ProtoNFT } from "@ledgerhq/types-live";
+import theme from "@ledgerhq/react-ui/styles/theme";
+import { useOnScreen } from "../useOnScreen";
 
 const SpinnerContainer = styled.div`
   display: flex;
@@ -43,6 +44,11 @@ const ClickableCollectionName = styled(Box)`
     cursor: pointer;
   }
 `;
+
+const Footer = styled.footer`
+  height: calc(${theme.space[10]} * 2);
+`;
+
 const Gallery = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -84,16 +90,17 @@ const Gallery = () => {
     },
     [account?.id, history],
   );
-  const ref = useRef<HTMLDivElement>(null);
-  const isAtBottom = useOnScreen(ref);
+  const listFooterRef = useRef<HTMLDivElement>(null);
   const [maxVisibleNFTs, setMaxVisibleNFTs] = useState(1);
-  useEffect(() => {
-    if (isAtBottom && account?.nfts && maxVisibleNFTs < account?.nfts.length) {
-      setMaxVisibleNFTs(maxVisibleNFTs => maxVisibleNFTs + 5);
-    }
-    // Exception to the rule, other deps must not be provided in this case
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAtBottom]);
+  const updateMaxVisibleNtfs = () => setMaxVisibleNFTs(maxVisibleNFTs => maxVisibleNFTs + 5);
+
+  useOnScreen({
+    enabled: maxVisibleNFTs < (account?.nfts?.length ?? 0),
+    onIntersect: updateMaxVisibleNtfs,
+    target: listFooterRef,
+    threshold: 0.5,
+  });
+
   const [collectionsRender, isLoading] = useMemo(() => {
     const collectionsRender: JSX.Element[] = [];
     let isLoading = false;
@@ -119,6 +126,7 @@ const Gallery = () => {
     });
     return [collectionsRender, isLoading];
   }, [collections, maxVisibleNFTs, account, onSelectCollection]);
+
   return (
     <>
       <TrackPage category="Page" name="NFT Gallery" />
@@ -145,14 +153,15 @@ const Gallery = () => {
           </Text>
         </Box>
       )}
-      <div ref={ref} />
-      {isLoading && (
-        <SpinnerContainer>
-          <SpinnerBackground>
-            <Spinner size={14} />
-          </SpinnerBackground>
-        </SpinnerContainer>
-      )}
+      <Footer ref={listFooterRef}>
+        {isLoading && (
+          <SpinnerContainer>
+            <SpinnerBackground>
+              <Spinner size={14} />
+            </SpinnerBackground>
+          </SpinnerContainer>
+        )}
+      </Footer>
     </>
   );
 };
