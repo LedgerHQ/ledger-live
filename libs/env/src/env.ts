@@ -785,6 +785,11 @@ const envDefinitions = {
     parser: intParser,
     desc: "Default interval to poll for transaction confirmation in speedup/cancel evm flow (in ms)",
   },
+  LOW_BATTERY_PERCENTAGE: {
+    def: 20,
+    parser: intParser,
+    desc: "Configure the low battery percentage threshold",
+  },
 };
 
 export const getDefinition = (name: string): EnvDef<any> => {
