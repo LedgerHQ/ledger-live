@@ -6,6 +6,7 @@ import { Flex, IconsLegacy, Text, Button } from "@ledgerhq/native-ui";
 import AppIcon from "../AppsList/AppIcon";
 import QueuedDrawer from "../../../components/QueuedDrawer";
 import { AppWithDependencies } from "../AppsInstallUninstallWithDependenciesContext";
+import Link from "../../../components/wrappedUi/Link";
 
 type Props = {
   appWithDependenciesToInstall: AppWithDependencies | null;
@@ -50,7 +51,7 @@ const ButtonsContainer = styled(Flex).attrs({
 const CancelButton = styled(TouchableOpacity)`
   align-items: center;
   justify-content: center;
-  margin-top: 25;
+  margin-top: 25px;
 `;
 
 function InstallAppDependenciesModal({
@@ -95,14 +96,12 @@ function InstallAppDependenciesModal({
               </ModalText>
             </TextContainer>
             <ButtonsContainer>
-              <Button size="large" type="main" onPress={installAppWithDependencies}>
+              <Button size="large" type="main" mb={7} onPress={installAppWithDependencies}>
                 <Trans i18nKey="AppAction.install.continueInstall" />
               </Button>
-              <CancelButton onPress={onClose}>
-                <Text variant="large" fontWeight="semiBold" color="neutral.c100">
-                  <Trans i18nKey="common.cancel" />
-                </Text>
-              </CancelButton>
+              <Link size="large" onPress={onClose}>
+                <Trans i18nKey="common.cancel" />
+              </Link>
             </ButtonsContainer>
           </>
         )}
