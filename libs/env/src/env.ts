@@ -800,6 +800,11 @@ const envDefinitions = {
     parser: stringArrayParser,
     desc: 'Sets up debug console printing of logs. `VERBOSE=1` or `VERBOSE=true`: to print all logs | `VERBOSE="apdu,hw,transport,hid-verbose"` : filtering on a list of log `type` separated by a `,`',
   },
+  LOW_BATTERY_PERCENTAGE: {
+    def: 20,
+    parser: intParser,
+    desc: "Configure the low battery percentage threshold",
+  },
 };
 
 export const getDefinition = (name: string): EnvDef<any> => {
