@@ -331,6 +331,11 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
         ) {
           setFirmwareUpdateCheckStatus("completed");
           currentDisplayedDrawer = "none";
+        } else if (isAlreadyGenuine) {
+          // When isAlreadyGenuine is true, it indicates that the user is already informed
+          // about the new firmware update, so there's no need to show the drawer again
+          currentDisplayedDrawer = "none";
+          firmwareUpdateUiStepStatus = "firmwareUpdateRefused";
         } else {
           currentDisplayedDrawer = "new-firmware-available";
         }
