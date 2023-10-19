@@ -1,8 +1,7 @@
 import { device, expect } from "detox";
 import { loadConfig } from "../bridge/server";
-import { getElementByText, isAndroid } from "../helpers";
+import { getElementByUniqueId, getElementByText, isAndroid } from "../helpers";
 import AccountPage from "../models/accounts/accountPage";
-import AccountsPage from "../models/accounts/accountsPage";
 import CustomLockscreenPage from "../models/stax/customLockscreenPage";
 import DiscoverPage from "../models/discover/discoverPage";
 import ManagerPage from "../models/manager/managerPage";
@@ -14,7 +13,6 @@ import OnboardingSteps from "../models/onboarding/onboardingSteps";
 
 let accountPage: AccountPage;
 let onboardingSteps: OnboardingSteps;
-let accountsPage: AccountsPage;
 let customLockscreenPage: CustomLockscreenPage;
 let discoverPage: DiscoverPage;
 let managerPage: ManagerPage;
@@ -59,7 +57,6 @@ describe("DeepLinks Tests", () => {
 
     accountPage = new AccountPage();
     onboardingSteps = new OnboardingSteps();
-    accountsPage = new AccountsPage();
     customLockscreenPage = new CustomLockscreenPage();
     discoverPage = new DiscoverPage();
     managerPage = new ManagerPage();
@@ -85,19 +82,19 @@ describe("DeepLinks Tests", () => {
     await expect(customLockscreenPage.welcomeChoosePictureButton()).toBeVisible();
   });
 
-  it("should open Accounts page", async () => {
-    await accountsPage.openViaDeeplink();
-    await accountsPage.waitForAccountsPageToLoad();
+  it("should open Accounts page when no parameters", async () => {
+    await accountPage.openViaDeeplink();
+    await expect(getElementByUniqueId("accounts-list")).toBeVisible();
   });
 
-  it("should open ETH Account page", async () => {
+  it("should open ETH Account Asset page when given currency param", async () => {
     await accountPage.openViaDeeplink(ethereumLong);
-    await accountPage.waitForAccountPageToLoad(ethereumLong);
+    await accountPage.waitForAssetPageToLoad(ethereumLong);
   });
 
-  it("should open BTC Account page", async () => {
+  it("should open BTC Account Asset page when given currency param", async () => {
     await accountPage.openViaDeeplink(bitcoinLong);
-    await accountPage.waitForAccountPageToLoad(bitcoinLong);
+    await accountPage.waitForAssetPageToLoad(bitcoinLong);
   });
 
   it("should open the Discover page", async () => {

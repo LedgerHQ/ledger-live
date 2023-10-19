@@ -1,14 +1,13 @@
-import { currencyParam, openDeeplink, waitForElementById } from "../../helpers";
+import { currencyParam, openDeeplink, waitForElementToExistWithUniqueId } from "../../helpers";
 
-const baseLink = "account";
+const hostname = "account";
 
 export default class accountPage {
-  async waitForAccountPageToLoad(coin: string) {
-    await waitForElementById(`account-assets-${coin}`);
-  }
+  waitForAssetPageToLoad = (coin: string) =>
+    waitForElementToExistWithUniqueId(`account-assets-${coin}`);
 
   async openViaDeeplink(currencyLong?: string) {
-    const link = currencyLong ? baseLink + currencyParam + currencyLong : baseLink;
+    const link = currencyLong ? hostname + currencyParam + currencyLong : hostname;
     await openDeeplink(link);
   }
 }
