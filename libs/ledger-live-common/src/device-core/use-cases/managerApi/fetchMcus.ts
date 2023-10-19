@@ -2,10 +2,10 @@ import URL from "url";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import network from "@ledgerhq/live-network/network";
 
-type FetchMcuParams = {managerApiBase: string, liveCommonVersion: string};
+export type FetchMcusParams = { managerApiBase: string; liveCommonVersion: string };
 
-const fetchMcus: (params: FetchMcuParams) => Promise<any> = makeLRUCache(
-  async ({managerApiBase, liveCommonVersion}: FetchMcuParams) => {
+const fetchMcus: (params: FetchMcusParams) => Promise<any> = makeLRUCache(
+  async ({ managerApiBase, liveCommonVersion }: FetchMcusParams) => {
     const { data } = await network({
       method: "GET",
       url: URL.format({
