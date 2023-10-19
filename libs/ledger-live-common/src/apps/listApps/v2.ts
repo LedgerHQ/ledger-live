@@ -45,8 +45,16 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
       const deviceModel = getDeviceModel(deviceModelId);
       const bytesPerBlock = deviceModel.getBlockSize(deviceInfo.version);
 
-      let listAppsResponsePromise: Promise<ListAppResponse>;
+      /** The following are several asynchonous sequences running in parallel */
 
+      /**
+       * Sequence 1: obtain the full data regarding apps installed on the device
+       *  -> list raw data of apps installed on device
+       *  -> then filter apps (eliminate language packs and such)
+       *  -> then fetch matching app metadata using apps' hashes 
+       */
+
+      let listAppsResponsePromise: Promise<ListAppResponse>;
       if (deviceInfo.managerAllowed) {
         // If the user has already allowed a secure channel during this session we can directly
         // ask the device for the installed applications instead of going through a scriptrunner,
@@ -77,6 +85,25 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
         });
       }
 
+      const filteredListAppsPromise = listAppsResponsePromise.then(result => {
+        // Empty HashData can come from apps that are not real apps (such as langauge packs)
+        // or custom applications that have been sideloaded.
+        return result
+          .filter(({ hash_code_data }) => hash_code_data !== emptyHashData)
+          .map(({ hash, name }) => ({ hash, name }));
+      });
+
+      const listAppsAndMatchesPromise = filteredListAppsPromise.then(result => {
+        const hashes = result.map(({ hash }) => hash);
+        const matches = result.length ? ManagerAPI.getAppsByHash(hashes) : [];
+        return Promise.all([result, matches]);
+      });
+
+      /**
+       * Sequence 2: get information about current and latest firmware available
+       * for the device
+       */
+
       const deviceVersionPromise = ManagerAPI.getDeviceVersion(deviceInfo.targetId, provider);
 
       const currentFirmwarePromise = deviceVersionPromise.then(deviceVersion =>
@@ -94,30 +121,25 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
         })),
       );
 
+      /**
+       * Sequence 3: get catalog of apps available for the device
+       */
+
       const catalogForDevicesPromise = ManagerAPI.catalogForDevice({
         provider,
         targetId: deviceInfo.targetId,
         firmwareVersion: deviceInfo.version,
       });
 
+      /**
+       * Sequence 4: list all currencies, sorted by market cp
+       */
+
       const sortedCryptoCurrenciesPromise = currenciesByMarketcap(
         listCryptoCurrencies(isDevMode, true),
       );
 
-      const filteredListAppsPromise = listAppsResponsePromise.then(result => {
-        // Empty HashData can come from apps that are not real apps (such as langauge packs)
-        // or custom applications that have been sideloaded.
-        return result
-          .filter(({ hash_code_data }) => hash_code_data !== emptyHashData)
-          .map(({ hash, name }) => ({ hash, name }));
-      });
-
-      const listAppsAndMatchesPromise = filteredListAppsPromise.then(result => {
-        const hashes = result.map(({ hash }) => hash);
-        const matches = result.length ? ManagerAPI.getAppsByHash(hashes) : [];
-        return Promise.all([result, matches]);
-      });
-
+      /* Running all sequences 1 2 3 4 defined above in parallel */
       const [[listApps, matches], catalogForDevice, firmware, sortedCryptoCurrencies] =
         await Promise.all([
           listAppsAndMatchesPromise,
@@ -125,6 +147,25 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
           latestFirmwarePromise,
           sortedCryptoCurrenciesPromise,
         ]);
+
+      
+      /**
+       * Associate a market cap sorting index to each app of the catalog of
+       * available apps.
+       */
+
+      catalogForDevice.forEach(app => {
+        const crypto = app.currencyId && findCryptoCurrencyById(app.currencyId);
+        if (crypto) {
+          app.indexOfMarketCap = sortedCryptoCurrencies.indexOf(crypto);
+        }
+      });
+
+
+      /**
+       * Aggregate the data obtained above to build the list of installed apps
+       * with their full metadata.
+       */
 
       const installedList: App[] = [];
 
@@ -140,13 +181,6 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
         log("list-apps", `falling back to catalog for ${localName}`);
         if (matchFromCatalog) {
           installedList.push(matchFromCatalog);
-        }
-      });
-
-      catalogForDevice.forEach(app => {
-        const crypto = app.currencyId && findCryptoCurrencyById(app.currencyId);
-        if (crypto) {
-          app.indexOfMarketCap = sortedCryptoCurrencies.indexOf(crypto);
         }
       });
 
@@ -185,6 +219,12 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
       const appsListNames = catalogForDevice
         .filter(({ isDevTools, name }) => isDevMode || !isDevTools || name in installedAppNames)
         .map(({ name }) => name);
+
+      /**
+       * Obtain remaining metadata:
+       * - Ledger Stax custom picture: number of blocks taken in storage
+       * - Device name
+       * */
 
       // Stax specific, account for the size of the CLS for the storage bar.
       let customImageBlocks = 0;
