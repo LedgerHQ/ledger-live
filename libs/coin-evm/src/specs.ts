@@ -43,6 +43,7 @@ const minBalancePerCurrencyId: Partial<Record<CryptoCurrency["id"], number>> = {
   ethereum: 0.001,
   ethereum_goerli: 0.001,
   ethereum_classic: 0.05,
+  neon_evm: 0.001,
 };
 
 /**

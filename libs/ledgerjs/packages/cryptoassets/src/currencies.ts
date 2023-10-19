@@ -4342,6 +4342,30 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  neon_evm: {
+    type: "CryptoCurrency",
+    id: "neon_evm",
+    coinType: CoinType.ETH,
+    name: "Neon Evm",
+    managerAppName: "Ethereum",
+    ticker: "NEON",
+    scheme: "neon_evm",
+    color: "#D13BB7",
+    family: "evm",
+    units: ethereumUnits("NEON", "NEON"),
+    ethereumLikeInfo: {
+      chainId: 245022934,
+      node: { type: "external", uri: "https://neon-mainnet.everstake.one" },
+      explorer: { type: "blockscout", uri: "https://neon.blockscout.com" },
+    },
+    explorerViews: [
+      {
+        tx: "https://neonscan.org/tx/$hash",
+        address: "https://neonscan.org/address/$address",
+        token: "https://neonscan.org/token/$address",
+      },
+    ],
+  },
   // Keep it at the bottom
   // Tickers dup
   binance_beacon_chain: {

@@ -99,6 +99,7 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   coreum: "core19rl4cm2hmr8afy4kldpxz3fka4jguq0a0w4xcw",
   injective: "inj1npvwllfr9dqr8erajqqr6s0vxnk2ak55re90dz",
   sei_network: "sei19rl4cm2hmr8afy4kldpxz3fka4jguq0a3vute5",
+  neon_evm: "0x000000000000000000000000000000000000dEaD",
 };
 
 /**
