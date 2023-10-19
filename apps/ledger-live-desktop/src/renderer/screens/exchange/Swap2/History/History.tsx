@@ -1,5 +1,4 @@
 import { ipcRenderer } from "electron";
-import * as remote from "@electron/remote";
 import React, { useMemo, useEffect, useState, useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
@@ -62,7 +61,7 @@ const History = () => {
   const defaultOpenedSwapOperationId = history?.location?.state?.swapId;
   const onExportOperations = useCallback(() => {
     async function asyncExport() {
-      const path = await remote.dialog.showSaveDialog({
+      const path = await ipcRenderer.invoke("show-save-dialog", {
         title: "Exported swap history",
         defaultPath: `ledgerlive-swap-history-${moment().format("YYYY.MM.DD")}.csv`,
         filters: [

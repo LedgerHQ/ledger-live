@@ -3,7 +3,7 @@ import { BrowserWindow, screen, app } from "electron";
 import path from "path";
 import { delay } from "@ledgerhq/live-common/promise";
 import { URL } from "url";
-import * as remoteMain from "@electron/remote/main";
+
 const intFromEnv = (key: string, def: number): number => {
   const v = process.env[key];
   if (v && !isNaN(+v)) return parseInt(v, 10);
@@ -71,8 +71,11 @@ export const loadWindow = async () => {
      * - appLocale, cf. https://www.electronjs.org/fr/docs/latest/api/app#appgetlocale
      * */
     const fullUrl = new URL(url);
+    fullUrl.searchParams.append("appDirname", app.dirname || "");
     fullUrl.searchParams.append("theme", theme || "");
     fullUrl.searchParams.append("appLocale", app.getLocale());
+    fullUrl.searchParams.append("pathUserdata", app.getPath("userData"));
+    fullUrl.searchParams.append("pathHome", app.getPath("home"));
     await mainWindow.loadURL(fullUrl.href);
   }
 };
@@ -114,7 +117,7 @@ export async function createMainWindow(
     },
   };
   mainWindow = new BrowserWindow(windowOptions);
-  remoteMain.enable(mainWindow.webContents);
+
   mainWindow.name = "MainWindow";
   loadWindow();
   if (DEV_TOOLS && !DISABLE_DEV_TOOLS) {
