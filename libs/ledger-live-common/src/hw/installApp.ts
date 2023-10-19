@@ -13,6 +13,7 @@ export default function installApp(
   transport: Transport,
   targetId: string | number,
   app: ApplicationVersion | App,
+  { retryLimit, retryDelayMs }: { retryLimit?: number; retryDelayMs?: number } = {},
 ): Observable<{
   progress: number;
 }> {
@@ -25,8 +26,8 @@ export default function installApp(
     hash: app.hash,
   }).pipe(
     retry({
-      count: APP_INSTALL_RETRY_LIMIT,
-      delay: APP_INSTALL_RETRY_DELAY,
+      count: retryLimit || APP_INSTALL_RETRY_LIMIT,
+      delay: retryDelayMs || APP_INSTALL_RETRY_DELAY,
     }),
     filter((e: any) => e.type === "bulk-progress"), // only bulk progress interests the UI
     throttleTime(100), // throttle to only emit 10 event/s max, to not spam the UI
