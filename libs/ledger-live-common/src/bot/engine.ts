@@ -12,6 +12,7 @@ import {
   mergeMap,
   timeout,
   distinctUntilChanged,
+  retry,
 } from "rxjs/operators";
 import { log } from "@ledgerhq/logs";
 import { getCurrencyBridge, getAccountBridge } from "../bridge";
@@ -52,7 +53,6 @@ import type {
 } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "../generated/types";
 import { botTest } from "@ledgerhq/coin-framework/bot/bot-test-context";
-import { retryWithDelay } from "../rxjs/operators/retryWithDelay";
 
 let appCandidates;
 const localCache = {};
@@ -159,10 +159,10 @@ export async function runWithAppSpec<T extends Transaction>(
           syncConfig,
         })
         .pipe(
-          retryWithDelay(
-            delayBetweenScanAccountRetries,
-            spec.scanAccountsRetries || defaultScanAccountsRetries,
-          ),
+          retry({
+            count: spec.scanAccountsRetries || defaultScanAccountsRetries,
+            delay: delayBetweenScanAccountRetries,
+          }),
           filter(e => e.type === "discovered"),
           map(e => deepFreezeAccount(e.account)),
           reduce<Account, Account[]>((all, a) => all.concat(a), []),
