@@ -4229,7 +4229,7 @@
     "waitForFirmwareUpdate": "Wait for the firmware update to finish on your device",
     "waitForInstallationToFinish": "Wait for installation to finish on your {{deviceName}}",
     "staxBatteryLow": "Ledger Stax battery too low to update",
-    "staxBatteryLowDescription": "To start the OS update, a minimum of 20% charge is needed, or your Ledger Stax must be charging.",
+    "staxBatteryLowDescription": "To start the OS update, a minimum of {{lowBatteryPercentage}}% charge is needed, or your Ledger Stax must be charging.",
     "updateCancelled": "OS update install cancelled on {{deviceName}}",
     "updateCancelledDescription": "If this was a mistake, restart the update.",
     "updateNotYetComplete": "OS update is in progress",
@@ -4244,6 +4244,7 @@
     "newVersionNumber": "New version",
     "success": "Firmware updated",
     "update": "Update",
+    "retryBatteryCheck": "Retry after pluggin",
     "Notifications": {
       "confirmOnDevice": "We require your confirmation on the device",
       "preparingUpdate": "Transferring update, we will notify you when we're done",
