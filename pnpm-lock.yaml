@@ -3902,8 +3902,8 @@ importers:
         specifier: ^18.15.3
         version: 18.15.3
       '@types/react-native':
-        specifier: ^0.66.24
-        version: 0.66.24
+        specifier: ^0.72.0
+        version: 0.72.5
       documentation:
         specifier: 13.2.5
         version: 13.2.5
@@ -4495,8 +4495,8 @@ importers:
         specifier: ^18.2.13
         version: 18.2.13(@types/react@18.2.28)
       '@types/react-native':
-        specifier: ^0.65.27
-        version: 0.65.27(@types/react@18.2.28)
+        specifier: ^0.72.0
+        version: 0.72.5(@types/react@18.2.28)
       '@types/styled-components':
         specifier: ^5.1.14
         version: 5.1.25(@types/react@18.2.28)
@@ -18958,6 +18958,15 @@ packages:
   /@react-native/normalize-colors@0.72.0:
     resolution: {integrity: sha512-285lfdqSXaqKuBbbtP9qL2tDrfxdOFtIMvkKadtleRQkdOxx+uzGvFr82KHmc/sSiMtfXGp7JnFYWVh4sFl7Yw==}
 
+  /@react-native/virtualized-lists@0.72.8:
+    resolution: {integrity: sha512-J3Q4Bkuo99k7mu+jPS9gSUSgq+lLRSI/+ahXNwV92XgJ/8UgOTxu2LPwhJnBk/sQKxq7E8WkZBnBiozukQMqrw==}
+    peerDependencies:
+      react-native: '*'
+    dependencies:
+      invariant: 2.2.4
+      nullthrows: 1.1.1
+    dev: true
+
   /@react-native/virtualized-lists@0.72.8(react-native@0.72.6):
     resolution: {integrity: sha512-J3Q4Bkuo99k7mu+jPS9gSUSgq+lLRSI/+ahXNwV92XgJ/8UgOTxu2LPwhJnBk/sQKxq7E8WkZBnBiozukQMqrw==}
     peerDependencies:
@@ -25066,15 +25075,6 @@ packages:
       '@types/react': 18.2.28
     dev: true
 
-  /@types/react-native@0.66.24:
-    resolution: {integrity: sha512-3YR4yfs1u6FmzcONstdPW5i0TUhHI8rg05fSLT6hLdcTYqfAw9oEAujavx28CPzTp7EO9CdP1aKjRTCj5oc70Q==}
-    peerDependencies:
-      '@types/react': '*'
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
-    dev: true
-
   /@types/react-native@0.66.24(@types/react@18.2.28):
     resolution: {integrity: sha512-3YR4yfs1u6FmzcONstdPW5i0TUhHI8rg05fSLT6hLdcTYqfAw9oEAujavx28CPzTp7EO9CdP1aKjRTCj5oc70Q==}
     peerDependencies:
@@ -25095,6 +25095,33 @@ packages:
         optional: true
     dependencies:
       '@types/react': 18.2.28
+    dev: true
+
+  /@types/react-native@0.72.5:
+    resolution: {integrity: sha512-HAt+EC576kbyg3+qruzbOLgVhgDHTHJ3d3rTkWRJ0wukze+l3ldWUkh1IarERHqsUlWwmkuYu0+4TQE5y1EjwA==}
+    peerDependencies:
+      '@types/react': '*'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+    dependencies:
+      '@react-native/virtualized-lists': 0.72.8
+    transitivePeerDependencies:
+      - react-native
+    dev: true
+
+  /@types/react-native@0.72.5(@types/react@18.2.28):
+    resolution: {integrity: sha512-HAt+EC576kbyg3+qruzbOLgVhgDHTHJ3d3rTkWRJ0wukze+l3ldWUkh1IarERHqsUlWwmkuYu0+4TQE5y1EjwA==}
+    peerDependencies:
+      '@types/react': '*'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+    dependencies:
+      '@react-native/virtualized-lists': 0.72.8
+      '@types/react': 18.2.28
+    transitivePeerDependencies:
+      - react-native
     dev: true
 
   /@types/react-native@0.72.5(@types/react@18.2.28)(react-native@0.72.6):
