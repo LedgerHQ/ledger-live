@@ -3,12 +3,8 @@ import type { Unit } from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";
 import { getAccountCurrency, getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
-import {
-  SwapExchangeRateAmountTooHigh,
-  SwapExchangeRateAmountTooLow,
-  SwapExchangeRateAmountTooLowOrTooHigh,
-} from "../../errors";
-import { getProviderConfig, getSwapAPIBaseURL, getSwapAPIError } from "./";
+import { SwapExchangeRateAmountTooHigh, SwapExchangeRateAmountTooLow } from "../../errors";
+import { getSwapAPIBaseURL, getSwapAPIError } from "./";
 import { mockGetExchangeRates } from "./mock";
 import type { CustomMinOrMaxError, GetExchangeRates } from "./types";
 import { isIntegrationTestEnv } from "./utils/isIntegrationTestEnv";
@@ -135,16 +131,7 @@ const inferError = (
   },
 ): Error | CustomMinOrMaxError | undefined => {
   const tenPowMagnitude = new BigNumber(10).pow(unitFrom.magnitude);
-  const { amountTo, minAmountFrom, maxAmountFrom, errorCode, errorMessage, provider, status } =
-    responseData;
-  const isDex = getProviderConfig(provider).type === "DEX";
-
-  // DEX quotes are out of limits error. We do not know if it is a low or high limit, neither the amount.
-  if ((!minAmountFrom || !maxAmountFrom) && status === "error" && errorCode !== 300 && isDex) {
-    return new SwapExchangeRateAmountTooLowOrTooHigh(undefined, {
-      message: "",
-    });
-  }
+  const { amountTo, minAmountFrom, maxAmountFrom, errorCode, errorMessage } = responseData;
 
   if (!amountTo) {
     // We are in an error case regardless of api version.
@@ -155,7 +142,7 @@ const inferError = (
     // For out of range errors we will have a min/max pairing
     const hasAmountLimit = minAmountFrom || maxAmountFrom;
     if (hasAmountLimit) {
-      const isTooSmall = minAmountFrom ? new BigNumber(apiAmount).lte(minAmountFrom) : false;
+      const isTooSmall = minAmountFrom ? new BigNumber(apiAmount).lte(0) : false;
 
       const MinOrMaxError = isTooSmall
         ? SwapExchangeRateAmountTooLow
