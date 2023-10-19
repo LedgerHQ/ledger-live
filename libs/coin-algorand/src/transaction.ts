@@ -19,13 +19,13 @@ export const formatTransaction = (
     mainAccount;
   return `
     ${mode === "claimReward" ? "CLAIM REWARD" : mode === "optIn" ? "OPT_IN" : "SEND"} ${
-    useAllAmount
-      ? "MAX"
-      : formatCurrencyUnit(getAccountUnit(account), amount, {
-          showCode: true,
-          disableRounding: false,
-        })
-  }
+      useAllAmount
+        ? "MAX"
+        : formatCurrencyUnit(getAccountUnit(account), amount, {
+            showCode: true,
+            disableRounding: false,
+          })
+    }
     TO ${recipient}
     with fees=${
       !fees

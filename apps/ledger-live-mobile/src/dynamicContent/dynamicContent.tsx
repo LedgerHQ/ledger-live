@@ -37,7 +37,7 @@ export const mapAsWalletContentCard = (card: BrazeContentCard) =>
     link: card.extras.link,
     background: Background[card.extras.background as Background] || Background.purple,
     createdAt: card.created,
-  } as WalletContentCard);
+  }) as WalletContentCard;
 
 export const mapAsAssetContentCard = (card: BrazeContentCard) =>
   ({
@@ -51,7 +51,7 @@ export const mapAsAssetContentCard = (card: BrazeContentCard) =>
     assets: card.extras.assets ?? "",
     displayOnEveryAssets: Boolean(card.extras.displayOnEveryAssets) ?? false,
     createdAt: card.created,
-  } as AssetContentCard);
+  }) as AssetContentCard;
 
 export const mapAsLearnContentCard = (card: BrazeContentCard) =>
   ({
@@ -62,7 +62,7 @@ export const mapAsLearnContentCard = (card: BrazeContentCard) =>
     image: card.extras.image,
     link: card.extras.link,
     createdAt: card.created,
-  } as LearnContentCard);
+  }) as LearnContentCard;
 
 export const mapAsNotificationContentCard = (card: BrazeContentCard) =>
   ({
@@ -75,7 +75,7 @@ export const mapAsNotificationContentCard = (card: BrazeContentCard) =>
     cta: card.extras.cta,
     createdAt: card.created,
     viewed: card.viewed,
-  } as NotificationContentCard);
+  }) as NotificationContentCard;
 
 const useDynamicContent = () => {
   const dispatch = useDispatch();

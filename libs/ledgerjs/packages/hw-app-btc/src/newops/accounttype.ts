@@ -71,7 +71,10 @@ export interface AccountType {
 interface BaseAccount extends AccountType {}
 
 abstract class BaseAccount implements AccountType {
-  constructor(protected psbt: PsbtV2, protected masterFp: Buffer) {}
+  constructor(
+    protected psbt: PsbtV2,
+    protected masterFp: Buffer,
+  ) {}
 }
 
 /**
