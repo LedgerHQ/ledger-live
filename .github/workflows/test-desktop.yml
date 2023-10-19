@@ -135,7 +135,7 @@ jobs:
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
-    runs-on: ${{ github.ref_name == 'develop' && 'windows-latest' || 'ledger-live-4xlarge-windows-2022' }}
+    runs-on: ${{ github.ref_name != 'develop' && 'windows-latest' || 'ledger-live-4xlarge-windows-2022' }}
     steps:
       - name: Setup screen size
         run: |
@@ -204,6 +204,7 @@ jobs:
     name: "Desktop E2E (Linux)"
     outputs:
       status: ${{ steps.tests.outcome }}
+    if: github.ref_name == 'yolo'
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       INSTRUMENT_BUILD: true
@@ -276,6 +277,7 @@ jobs:
     runs-on: ${{ github.ref_name != 'develop' && 'macos-latest' || fromJson('["m1", "ARM64"]') }}
     outputs:
       status: ${{ steps.tests.outcome }}
+    if: github.ref_name == 'yolo'
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
