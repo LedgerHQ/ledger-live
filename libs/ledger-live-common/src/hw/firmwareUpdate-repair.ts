@@ -91,7 +91,7 @@ const repair = (
             (deviceInfo.majMin === "0.6" || deviceInfo.majMin === "0.7")
           ) {
             // finish earlier
-            return throwError(new MCUNotGenuineToDashboard());
+            return throwError(() => new MCUNotGenuineToDashboard());
           }
 
           if (forceMCU) {
@@ -159,9 +159,8 @@ const repair = (
                         log("hw", "firmwareUpdate-repair got mcu", { mcu });
 
                         if (!mcu) return EMPTY;
-                        const expectedBootloaderVersion = semver.coerce(
-                          mcu.from_bootloader_version,
-                        )?.version;
+                        const expectedBootloaderVersion = semver.coerce(mcu.from_bootloader_version)
+                          ?.version;
                         const currentBootloaderVersion = semver.coerce(mcuBlVersion)?.version;
 
                         log("hw", "firmwareUpdate-repair bootloader versions", {

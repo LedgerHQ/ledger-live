@@ -112,7 +112,7 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectManagerEvent> =>
                 );
               }
 
-              return throwError(e);
+              return throwError(() => e);
             }),
           )
           .subscribe(o);

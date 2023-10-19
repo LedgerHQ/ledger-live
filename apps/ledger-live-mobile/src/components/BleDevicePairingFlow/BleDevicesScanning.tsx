@@ -73,7 +73,7 @@ const BleDevicesScanning = ({
   }, []);
 
   const onWrappedDeviceSelect = useCallback(
-    device => {
+    (device: Device) => {
       setStopBleScanning(true);
       onDeviceSelect(device);
     },

@@ -1,5 +1,5 @@
 import { MonoTypeOperatorFunction } from "rxjs";
-import { delay as delayOperator, retryWhen, scan } from "rxjs/operators";
+import { delay as delayOperator, retry, scan } from "rxjs/operators";
 import { throwIf } from "./throwIf";
 
 // from https://github.com/NiklasPor/rxjs-boost (MIT)
@@ -16,18 +16,23 @@ import { throwIf } from "./throwIf";
 export function retryWithDelay<T>(delay: number, count = 1): MonoTypeOperatorFunction<T> {
   return input =>
     input.pipe(
-      retryWhen(errors =>
-        errors.pipe(
-          scan((acc, error) => ({ count: acc.count + 1, error }), {
-            count: 0,
-            error: undefined as any,
-          }),
-          throwIf(
-            current => current.count > count,
-            current => current.error,
+      retry({
+        count,
+        delay: errors =>
+          errors.pipe(
+            scan<Error & { count: number }, { count: number; error?: Error }>(
+              (acc, error) => ({ count: acc.count + 1, error }),
+              {
+                count: 0,
+                error: undefined as any,
+              },
+            ),
+            throwIf<{ count: number; error?: Error }>(
+              current => current.count > count,
+              current => current.error,
+            ),
+            delayOperator(delay),
           ),
-          delayOperator(delay),
-        ),
-      ),
+      }),
     );
 }

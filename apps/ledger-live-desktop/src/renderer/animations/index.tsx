@@ -1,6 +1,7 @@
 import React from "react";
 import Lottie, { LottieProps } from "react-lottie";
 import { Flex } from "@ledgerhq/react-ui";
+import { getEnv } from "@ledgerhq/live-env";
 const Animation = ({
   animation,
   loop = true,
@@ -21,8 +22,10 @@ const Animation = ({
   rendererSettings?: LottieProps["options"]["rendererSettings"];
   isPaused?: boolean;
   isStopped?: boolean;
-}) =>
-  animation ? (
+}) => {
+  // in case of playwright tests, we want to completely stop the animation
+  const isPlaywright = !!getEnv("PLAYWRIGHT_RUN");
+  return animation ? (
     <Flex
       style={{
         maxHeight: `200px`,
@@ -37,11 +40,12 @@ const Animation = ({
         isStopped={isStopped}
         options={{
           loop: loop,
-          autoplay: autoplay,
+          autoplay: !isPlaywright && autoplay,
           animationData: animation,
           rendererSettings,
         }}
       />
     </Flex>
   ) : null;
+};
 export default Animation;

@@ -15,6 +15,8 @@ export type SharedTaskEvent = { type: "error"; error: Error; retrying: boolean }
 export const NO_RESPONSE_TIMEOUT_MS = 30000;
 export const RETRY_ON_ERROR_DELAY_MS = 500;
 
+export const LOG_TYPE = "device-sdk-task";
+
 /**
  * Wraps a task function to add some common logic to it:
  * - Timeout for no response
@@ -60,7 +62,7 @@ export function sharedLogicTaskWrapper<TaskArgsType, TaskEventsType>(
                   acceptedError = true;
                 }
 
-                return acceptedError ? timer(RETRY_ON_ERROR_DELAY_MS) : throwError(error);
+                return acceptedError ? timer(RETRY_ON_ERROR_DELAY_MS) : throwError(() => error);
               }),
             ),
           ),
@@ -166,7 +168,7 @@ export function retryOnErrorsCommandWrapper<CommandArgsWithoutTransportType, Com
             }
 
             // If the error is not part of the allowed errors, it is thrown
-            return throwError(error);
+            return throwError(() => error);
           }),
         ),
       ),

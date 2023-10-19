@@ -45,7 +45,6 @@ export default {
           throw new Error("--path is required");
         }
 
-        asDerivationMode(arg.derivationMode as string);
         return withDevice(arg.device || "")(t =>
           from(
             getAddress(t, {

@@ -1,4 +1,4 @@
-import { EMPTY, Observable, interval } from "rxjs";
+import { Observable, interval, of } from "rxjs";
 import { debounce, scan, tap } from "rxjs/operators";
 import { useEffect, useCallback, useState } from "react";
 import { log } from "@ledgerhq/logs";
@@ -193,7 +193,7 @@ export const createAction = (
       const sub = impl
         .pipe(
           tap((e: any) => log("actions-manager-event", e.type, e)),
-          debounce((e: Event) => ("replaceable" in e && e.replaceable ? interval(100) : EMPTY)),
+          debounce((e: Event) => ("replaceable" in e && e.replaceable ? interval(100) : of(null))),
           scan(reducer, getInitialState()),
         )
         .subscribe(setState);

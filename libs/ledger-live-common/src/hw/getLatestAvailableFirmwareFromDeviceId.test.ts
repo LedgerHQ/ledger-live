@@ -48,6 +48,10 @@ describe("getLatestAvailableFirmwareFromDeviceId", () => {
   beforeEach(() => {
     aDeviceInfo = aDeviceInfoBuilder();
     aLatestFirmwareContext = aLatestFirmwareContextBuilder();
+
+    // @ts-expect-error the mocked function expects an Observable<0>
+    // while we give it an Observable<1>, timer has multiple signatures and I can't figure
+    // out why it doesn't understand the correct one
     mockedTimer.mockReturnValue(of(1));
   });
 
@@ -169,6 +173,10 @@ describe("getLatestAvailableFirmwareFromDeviceId", () => {
       beforeEach(() => {
         // Mocked timer: pushes and complete after a timeout
         // Needed so the retry is not triggered before unsubscribing during our test
+
+        // @ts-expect-error the mocked function expects an Observable<0>
+        // while we give it an Observable<1>, timer has multiple signatures and I can't figure
+        // out why it doesn't understand the correct one
         mockedTimer.mockImplementation((dueTime?: number | Date) => {
           if (typeof dueTime === "number") {
             return new Observable<number>(subscriber => {

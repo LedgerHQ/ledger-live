@@ -386,10 +386,19 @@ const getOnboardingLinkingOptions = (
     screens: !acceptedTermsOfUse
       ? {}
       : {
+          [NavigatorName.BaseOnboarding]: {
+            screens: {
+              [NavigatorName.Onboarding]: {
+                initialRouteName: ScreenName.OnboardingWelcome,
+                screens: {
+                  [ScreenName.OnboardingBleDevicePairingFlow]: "sync-onboarding",
+                },
+              },
+            },
+          },
           [NavigatorName.Base]: {
             screens: {
               [ScreenName.PostBuyDeviceScreen]: "hw-purchase-success",
-              [ScreenName.BleDevicePairingFlow]: "sync-onboarding",
               /**
                * @params ?platform: string
                * ie: "ledgerlive://discover/protect?theme=light" will open the catalog and the protect dapp with a light theme as parameter
@@ -415,7 +424,10 @@ export const DeeplinksProvider = ({
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const ptxEarnFeature = useFeature("ptxEarn");
-  const features = useMemo(() => ({ ptxEarn: ptxEarnFeature }), [ptxEarnFeature]);
+  const features = useMemo(
+    () => (ptxEarnFeature ? { ptxEarn: ptxEarnFeature } : {}),
+    [ptxEarnFeature],
+  );
 
   const { state } = useRemoteLiveAppContext();
   const liveAppProviderInitialized = !!state.value || !!state.error;
@@ -530,7 +542,7 @@ export const DeeplinksProvider = ({
 
           return getStateFromPath(path, config);
         },
-      } as LinkingOptions<ReactNavigation.RootParamList>),
+      }) as LinkingOptions<ReactNavigation.RootParamList>,
     [
       hasCompletedOnboarding,
       dispatch,

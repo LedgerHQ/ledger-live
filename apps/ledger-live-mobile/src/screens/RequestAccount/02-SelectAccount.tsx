@@ -75,7 +75,7 @@ const List = ({
   renderItem,
   renderFooter,
 }: {
-  items: { account: AccountLike; subAccount: SubAccount }[];
+  items: { account: AccountLike; subAccount?: SubAccount | null }[];
   renderItem: ListRenderItem<SearchResult>;
   renderFooter: React.ComponentType | React.ReactElement | null | undefined;
 }) => {
@@ -96,7 +96,7 @@ const List = ({
 
 function SelectAccount({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { accounts$, currency, allowAddAccount, onSuccess, onError } = route.params;
+  const { accounts$, currency, allowAddAccount, onSuccess } = route.params;
   const accountIds = useGetAccountIds(accounts$);
   const accounts = useSelector(accountsByCryptoCurrencyScreenSelector(currency, accountIds)) as {
     account: AccountLike;
@@ -112,7 +112,7 @@ function SelectAccount({ navigation, route }: Props) {
     [navigation, onSuccess],
   );
 
-  const renderItem = useCallback(
+  const renderItem: ListRenderItem<SearchResult> = useCallback(
     ({ item }) => <Item item={item} onSelect={onSelect} />,
     [onSelect],
   );
@@ -122,15 +122,10 @@ function SelectAccount({ navigation, route }: Props) {
       screen: ScreenName.AddAccountsSelectDevice,
       params: {
         currency: currency as CryptoOrTokenCurrency,
-        onSuccess: () =>
-          navigation.navigate(NavigatorName.RequestAccount, {
-            screen: ScreenName.RequestAccountsSelectAccount,
-            params: route.params,
-          }),
-        onError,
+        onSuccess: () => navigation.navigate(ScreenName.RequestAccountsSelectAccount, route.params),
       },
     });
-  }, [currency, navigation, onError, route.params]);
+  }, [currency, navigation, route.params]);
 
   const renderFooter = useCallback(
     () =>
@@ -156,7 +151,9 @@ function SelectAccount({ navigation, route }: Props) {
   );
 
   const renderList = useCallback(
-    items => <List items={items} renderItem={renderItem} renderFooter={renderFooter} />,
+    (items: { account: AccountLike; subAccount?: SubAccount | null }[]) => (
+      <List items={items} renderItem={renderItem} renderFooter={renderFooter} />
+    ),
     [renderFooter, renderItem],
   );
 

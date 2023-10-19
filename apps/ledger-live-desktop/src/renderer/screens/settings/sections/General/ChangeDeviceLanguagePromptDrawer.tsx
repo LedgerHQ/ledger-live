@@ -12,7 +12,7 @@ import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { setDrawer } from "~/renderer/drawers/Provider";
 
-type Props = {
+export type Props = {
   currentLanguage: Language;
   analyticsContext: string;
   deviceModelInfo?: DeviceModelInfo;
@@ -114,9 +114,7 @@ const ChangeDeviceLanguagePromptDrawer: React.FC<Props> = ({
             deviceName,
           })}
           descriptionWording={t("deviceLocalization.changeDeviceLanguagePrompt.description", {
-            language: t(
-              `deviceLocalization.languages.${Languages[currentLanguage].deviceSupport?.label}`,
-            ),
+            deviceName,
           })}
         />
       )}

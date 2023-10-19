@@ -56,7 +56,7 @@ export default function DelegationSelectorField({
 }: {
   account: AlgorandAccount;
   transaction: Transaction;
-  onChange: (token: TokenCurrency | undefined | null) => void;
+  onChange: (token?: TokenCurrency | null) => void;
   t: TFunction;
 }) {
   const [query, setQuery] = useState("");

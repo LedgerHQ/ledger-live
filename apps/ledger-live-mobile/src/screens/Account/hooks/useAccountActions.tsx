@@ -9,21 +9,18 @@ import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useRoute } from "@react-navigation/native";
 import { IconsLegacy } from "@ledgerhq/native-ui";
-import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
+import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { getAllSupportedCryptoCurrencyIds } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 import { DefaultTheme } from "styled-components/native";
 import { NavigatorName, ScreenName } from "../../../const";
-import {
-  readOnlyModeEnabledSelector,
-  swapSelectableCurrenciesSelector,
-} from "../../../reducers/settings";
+import { readOnlyModeEnabledSelector } from "../../../reducers/settings";
 import perFamilyAccountActions from "../../../generated/accountActions";
 
 import ZeroBalanceDisabledModalContent from "../../../components/FabActions/modals/ZeroBalanceDisabledModalContent";
 import { ActionButtonEvent } from "../../../components/FabActions";
 import { useCanShowStake } from "./useCanShowStake";
 import { PtxToast } from "../../../components/Toast/PtxToast";
+import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 
 type Props = {
   account: AccountLike;
@@ -61,26 +58,13 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
 
   const isWalletConnectSupported = ["ethereum", "bsc", "polygon"].includes(currency.id);
 
-  const rampCatalog = useRampCatalog();
+  const { isCurrencyAvailable } = useRampCatalog();
 
-  const [canBeBought, canBeSold] = useMemo(() => {
-    if (!rampCatalog.value || !currency) {
-      return [false, false];
-    }
+  const canBeBought = !!currency && isCurrencyAvailable(currency.id, "onRamp");
+  const canBeSold = !!currency && isCurrencyAvailable(currency.id, "offRamp");
 
-    const allBuyableCryptoCurrencyIds = getAllSupportedCryptoCurrencyIds(rampCatalog.value.onRamp);
-    const allSellableCryptoCurrencyIds = getAllSupportedCryptoCurrencyIds(
-      rampCatalog.value.offRamp,
-    );
-
-    return [
-      allBuyableCryptoCurrencyIds.includes(currency.id),
-      allSellableCryptoCurrencyIds.includes(currency.id),
-    ];
-  }, [rampCatalog.value, currency]);
-
-  const swapSelectableCurrencies = useSelector(swapSelectableCurrenciesSelector);
-  const availableOnSwap = swapSelectableCurrencies.includes(currency.id);
+  const { data: currenciesAll } = useFetchCurrencyAll();
+  const availableOnSwap = currency && currenciesAll.includes(currency.id);
 
   const extraSendActionParams = useMemo(
     () =>

@@ -10,7 +10,7 @@ import {
   Platform,
 } from "react-native";
 import { v4 as uuid } from "uuid";
-import { from, Observable, Subscription } from "rxjs";
+import { firstValueFrom, from, Observable, Subscription } from "rxjs";
 import { listen } from "@ledgerhq/logs";
 import type { Log } from "@ledgerhq/logs";
 import { bufferTime, shareReplay } from "rxjs/operators";
@@ -168,13 +168,15 @@ class DebugBLE extends Component<
     const msg = Buffer.from(useBLEframe ? bleframe : apdu, "hex");
 
     try {
-      await withDevice(deviceId)(t =>
-        from(
-          useBLEframe
-            ? (t as BluetoothTransport).write(msg)
-            : (t as BluetoothTransport).exchange(msg),
+      await firstValueFrom(
+        withDevice(deviceId)(t =>
+          from(
+            useBLEframe
+              ? (t as BluetoothTransport).write(msg)
+              : (t as BluetoothTransport).exchange(msg),
+          ),
         ),
-      ).toPromise();
+      );
     } catch (error) {
       this.addError(error as Error, "send");
     }
@@ -183,9 +185,9 @@ class DebugBLE extends Component<
     const deviceId = this.props.route.params?.deviceId;
 
     try {
-      const mtu = await withDevice(deviceId)(t =>
-        from((t as BluetoothTransport).inferMTU()),
-      ).toPromise();
+      const mtu = await firstValueFrom(
+        withDevice(deviceId)(t => from((t as BluetoothTransport).inferMTU())),
+      );
 
       if (Platform.OS === "android") {
         ToastAndroid.show("mtu set to " + mtu, ToastAndroid.SHORT);
@@ -205,9 +207,11 @@ class DebugBLE extends Component<
     this.currentConnectionPriority = nextPriority;
 
     try {
-      await withDevice(deviceId)(t =>
-        from((t as BluetoothTransport).requestConnectionPriority(nextPriority)),
-      ).toPromise();
+      await firstValueFrom(
+        withDevice(deviceId)(t =>
+          from((t as BluetoothTransport).requestConnectionPriority(nextPriority)),
+        ),
+      );
       if (Platform.OS === "android") {
         ToastAndroid.show("connection priority set to " + nextPriority, ToastAndroid.SHORT);
       } else {
@@ -221,7 +225,7 @@ class DebugBLE extends Component<
     const deviceId = this.props.route.params?.deviceId;
     // TODO with auto disconnect this wouldn't work.
     try {
-      await withDevice(deviceId)(() => from([{}])).toPromise();
+      await firstValueFrom(withDevice(deviceId)(() => from([{}])));
     } catch (error) {
       this.addError(error as Error, "connect");
     }

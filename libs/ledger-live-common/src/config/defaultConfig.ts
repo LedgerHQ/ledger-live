@@ -45,6 +45,10 @@ const defaultConfig = {
         lcd: "https://lcd.secret.express",
         minGasPrice: 0.25,
       },
+      sei_network: {
+        lcd: "https://sei-api.polkachu.com",
+        minGasPrice: 0.1,
+      },
       stargaze: {
         lcd: "https://stargaze-api.polkachu.com",
         minGasPrice: 1,

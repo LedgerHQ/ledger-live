@@ -1,13 +1,19 @@
 import styled, { createGlobalStyle } from "styled-components";
 import Text from "~/renderer/components/Text";
 import { rgba } from "~/renderer/styles/helpers";
+
+// For playwright, we need to disable all animations and transitions that could make the tests flaky
 const MockedGlobalStyle = createGlobalStyle`
   *, :before, :after {
     caret-color: transparent !important;
     transition-property: none !important;
     animation: none !important;
   }
+  ::-webkit-scrollbar {
+    display: none;
+  }
 `;
+
 const Item = styled(Text)`
   color: white;
   padding: 5px;

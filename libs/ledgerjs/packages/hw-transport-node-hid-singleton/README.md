@@ -30,22 +30,31 @@ For a smooth and quick integration:
 #### Table of Contents
 
 *   [TransportNodeHidSingleton](#transportnodehidsingleton)
+    *   [Parameters](#parameters)
     *   [Examples](#examples)
     *   [exchange](#exchange)
-        *   [Parameters](#parameters)
+        *   [Parameters](#parameters-1)
     *   [isSupported](#issupported)
     *   [list](#list)
     *   [listen](#listen)
-        *   [Parameters](#parameters-1)
+        *   [Parameters](#parameters-2)
     *   [autoDisconnect](#autodisconnect)
     *   [disconnect](#disconnect)
     *   [open](#open)
+        *   [Parameters](#parameters-3)
 
 ### TransportNodeHidSingleton
 
 **Extends TransportNodeHidNoEvents**
 
 node-hid Transport implementation
+
+#### Parameters
+
+*   `device` **HID.HID** 
+*   `$1` **{context: TraceContext?}**  (optional, default `{}`)
+
+    *   `$1.context`  
 
 #### Examples
 
@@ -89,6 +98,17 @@ globally disconnect the transport singleton
 
 #### open
 
-if path="" is not provided, the library will take the first device
+Connects to the first Ledger device connected via USB
+
+Reusing the same TransportNodeHidSingleton instance until a disconnection happens.
+Pitfall: this implementation only handles 1 device connected via USB
+
+Legacy: `_descriptor` is needed to follow the Transport definition
+
+##### Parameters
+
+*   `_descriptor` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+*   `_timeoutMs` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?** 
+*   `context` **TraceContext?** 
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[TransportNodeHidSingleton](#transportnodehidsingleton)>** 

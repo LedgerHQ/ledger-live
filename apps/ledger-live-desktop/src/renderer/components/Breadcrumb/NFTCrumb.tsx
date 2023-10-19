@@ -59,7 +59,7 @@ const NFTCrumb = () => {
     [collectionAddress, items],
   );
   const onCollectionSelected = useCallback(
-    item => {
+    (item: DropDownItemType<ProtoNFT>) => {
       if (!item) return;
       setTrackingSource("NFT breadcrumb");
       history.push({

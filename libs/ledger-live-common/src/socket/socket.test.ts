@@ -3,6 +3,7 @@ import { toArray } from "rxjs/operators";
 import WS from "isomorphic-ws";
 import scenarios from "./scenarios.mock";
 import { createDeviceSocket } from ".";
+import { firstValueFrom } from "rxjs";
 /**
  * Both ends of the exchange are mocked in this test file and we are merely testing
  * the logic that happens in-between.
@@ -77,11 +78,11 @@ describe("Scriptrunner logic", () => {
 
       // Mock the socket connection
       try {
-        const resolved = await createDeviceSocket(transport, {
-          url: "no-need-for-a-url",
-        })
-          .pipe(toArray())
-          .toPromise();
+        const resolved = await firstValueFrom(
+          createDeviceSocket(transport, {
+            url: "no-need-for-a-url",
+          }).pipe(toArray()),
+        );
         expect(resolved).toMatchSnapshot();
       } catch (error: unknown) {
         expect(error).toMatchSnapshot();

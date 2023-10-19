@@ -137,3 +137,5 @@ ui-lib/storybook-static/*
 
 # release-notes generated file
 release-notes.json
+
+metafile.*.json

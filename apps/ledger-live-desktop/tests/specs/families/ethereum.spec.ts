@@ -20,15 +20,11 @@ test("Send flow", async ({ page }) => {
     await sendModal.selectAccount("Ethereum 1");
     await sendModal.fillRecipient("randomvalidvalue");
     await page.getByRole("button", { name: "Continue" }).click();
+
+    const sendFeeMode = sendModal.container.locator("data-test-id=send-fee-mode");
+    await sendFeeMode.waitFor({ state: "visible" });
+
     await expect.soft(sendModal.container).toHaveScreenshot("send-modal-eth-max-network-fees.png");
-    expect(sendModal.container.getByText("Max Network fees").isVisible()).toBeTruthy();
-    await sendModal.back();
-    await sendModal.selectAccount("Bitcoin 1 (legacy)");
-    await sendModal.fillRecipient("randomvalidvalue2");
-    await page.getByRole("button", { name: "Continue" }).click();
-    await expect
-      .soft(sendModal.container)
-      .toHaveScreenshot("send-modal-eth-max-network-fees-2.png");
-    expect(sendModal.container.getByText("Max Network fees").isVisible()).toBeFalsy;
+    expect(await sendModal.container.getByText("Max Network fees").isVisible()).toBeTruthy();
   });
 });

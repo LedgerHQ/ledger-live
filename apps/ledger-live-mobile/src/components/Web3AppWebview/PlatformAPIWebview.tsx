@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect, useMemo, forwardRef } from "react";
 import { useSelector } from "react-redux";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
-import { WebView as RNWebView } from "react-native-webview";
+import { WebView as RNWebView, WebViewMessageEvent } from "react-native-webview";
 import { useNavigation } from "@react-navigation/native";
 import { JSONRPCRequest } from "json-rpc-2.0";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
@@ -134,9 +134,9 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
             resolve(serializePlatformAccount(accountToPlatformAccount(account, parentAccount)));
           };
 
-          const onError = (error: Error) => {
+          const onClose = () => {
             tracking.platformRequestAccountFail(manifest);
-            reject(error);
+            reject(new Error("User cancelled"));
           };
 
           // if single currency available redirect to select account directly
@@ -157,8 +157,8 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
                 currency,
                 allowAddAccount,
                 onSuccess,
-                onError,
               },
+              onClose,
             });
           } else {
             navigation.navigate(NavigatorName.RequestAccount, {
@@ -167,8 +167,8 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
                 currencies: allCurrencies,
                 allowAddAccount,
                 onSuccess,
-                onError,
               },
+              onClose,
             });
           }
         }),
@@ -233,44 +233,41 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
             );
 
             return new Promise((resolve, reject) => {
-              (navigation as StackNavigatorNavigation<BaseNavigatorStackParamList>).navigate(
-                NavigatorName.SignTransaction,
-                {
-                  screen: ScreenName.SignTransactionSummary,
-                  params: {
-                    currentNavigation: ScreenName.SignTransactionSummary,
-                    nextNavigation: ScreenName.SignTransactionSelectDevice,
-                    transaction: tx as Transaction,
-                    accountId,
-                    parentId: parentAccount?.id,
-                    appName: params?.useApp,
-                    onSuccess: ({
-                      signedOperation,
-                      transactionSignError,
-                    }: {
-                      signedOperation: SignedOperation;
-                      transactionSignError: Error;
-                    }) => {
-                      if (transactionSignError) {
-                        tracking.platformSignTransactionFail(manifest);
-                        reject(transactionSignError);
-                      } else {
-                        tracking.platformSignTransactionSuccess(manifest);
-                        resolve(serializePlatformSignedTransaction(signedOperation));
-                        const n =
-                          navigation.getParent<
-                            StackNavigatorNavigation<BaseNavigatorStackParamList>
-                          >() || navigation;
-                        n.pop();
-                      }
-                    },
-                    onError: (error: Error) => {
+              navigation.navigate(NavigatorName.SignTransaction, {
+                screen: ScreenName.SignTransactionSummary,
+                params: {
+                  currentNavigation: ScreenName.SignTransactionSummary,
+                  nextNavigation: ScreenName.SignTransactionSelectDevice,
+                  transaction: tx as Transaction,
+                  accountId,
+                  parentId: parentAccount?.id,
+                  appName: params?.useApp,
+                  onSuccess: ({
+                    signedOperation,
+                    transactionSignError,
+                  }: {
+                    signedOperation: SignedOperation;
+                    transactionSignError: Error;
+                  }) => {
+                    if (transactionSignError) {
                       tracking.platformSignTransactionFail(manifest);
-                      reject(error);
-                    },
+                      reject(transactionSignError);
+                    } else {
+                      tracking.platformSignTransactionSuccess(manifest);
+                      resolve(serializePlatformSignedTransaction(signedOperation));
+                      const n =
+                        navigation.getParent<
+                          StackNavigatorNavigation<BaseNavigatorStackParamList>
+                        >() || navigation;
+                      n.pop();
+                    }
+                  },
+                  onError: (error: Error) => {
+                    tracking.platformSignTransactionFail(manifest);
+                    reject(error);
                   },
                 },
-              );
+              });
             });
           },
         ),
@@ -435,7 +432,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
                 },
                 onClose: () => {
                   tracking.platformSignMessageUserRefused(manifest);
-                  reject(UserRefusedOnDevice());
+                  reject(new UserRefusedOnDevice());
                 },
               });
             }),
@@ -478,7 +475,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     );
     const [receive] = useJSONRPCServer(handlers, handleSend);
     const handleMessage = useCallback(
-      e => {
+      (e: WebViewMessageEvent) => {
         // FIXME: event isn't the same on desktop & mobile
         // if (e.isTrusted && e.origin === manifest.url.origin && e.data) {
         if (e.nativeEvent?.data) {

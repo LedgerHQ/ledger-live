@@ -3,7 +3,8 @@ import invariant from "invariant";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { useBakers, Baker } from "@ledgerhq/live-common/families/tezos/bakers";
+import { useBakers } from "@ledgerhq/live-common/families/tezos/bakers";
+import { Baker } from "@ledgerhq/live-common/families/tezos/types";
 import bakersWhitelistDefault from "@ledgerhq/live-common/families/tezos/bakers.whitelist-default";
 import { openURL } from "~/renderer/linking";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -14,6 +15,7 @@ import ModalContent from "~/renderer/components/Modal/ModalContent";
 import UserPlusIcon from "~/renderer/icons/UserPlus";
 import BakerImage from "../../BakerImage";
 import { StepProps } from "../types";
+
 const Row = styled(Box).attrs(() => ({
   horizontal: true,
 }))`
@@ -35,6 +37,7 @@ const Row = styled(Box).attrs(() => ({
     margin-bottom: 0;
   }
 `;
+
 const BakerRow = ({ baker, onClick }: { baker: Baker; onClick: (a: Baker) => void }) => (
   <Row onClick={() => onClick(baker)}>
     <Box horizontal alignItems="center">
@@ -74,6 +77,7 @@ const BakerRow = ({ baker, onClick }: { baker: Baker; onClick: (a: Baker) => voi
     </Text>
   </Row>
 );
+
 const StepValidator = ({
   account,
   parentAccount,
@@ -85,8 +89,9 @@ const StepValidator = ({
   invariant(account, "account is required");
   const contentRef = useRef(null);
   const bakers = useBakers(bakersWhitelistDefault);
+
   const onBakerClick = useCallback(
-    baker => {
+    (baker: Baker) => {
       onChangeTransaction(
         getAccountBridge(account, parentAccount).updateTransaction(transaction, {
           recipient: baker.address,
@@ -96,9 +101,11 @@ const StepValidator = ({
     },
     [account, onChangeTransaction, parentAccount, transaction, transitionTo],
   );
+
   const openPartner = useCallback(() => {
     openURL("https://baking-bad.org/");
   }, []);
+
   return (
     <Box flow={4} mx={20}>
       <TrackPage
@@ -172,4 +179,5 @@ const StepValidator = ({
     </Box>
   );
 };
+
 export default StepValidator;

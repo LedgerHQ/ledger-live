@@ -29,7 +29,7 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
   log("list-apps", "using new version");
 
   if (deviceInfo.isOSU || deviceInfo.isBootloader) {
-    return throwError(new UnexpectedBootloader(""));
+    return throwError(() => new UnexpectedBootloader(""));
   }
 
   const deviceModelId =

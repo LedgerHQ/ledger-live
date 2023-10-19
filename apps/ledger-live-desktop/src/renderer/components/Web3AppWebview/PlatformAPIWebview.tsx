@@ -247,7 +247,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
                   },
                   onClose: () => {
                     tracking.platformSignMessageUserRefused(manifest);
-                    reject(UserRefusedOnDevice());
+                    reject(new UserRefusedOnDevice());
                   },
                 }),
               );
@@ -296,7 +296,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     const [receive] = useJSONRPCServer(handlers, handleSend);
 
     const handleMessage = useCallback(
-      event => {
+      (event: Electron.IpcMessageEvent) => {
         if (event.channel === "webviewToParent") {
           receive(JSON.parse(event.args[0]));
         }

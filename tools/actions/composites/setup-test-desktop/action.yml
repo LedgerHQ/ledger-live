@@ -1,9 +1,6 @@
 name: "Setup Ledger Live Desktop Tests"
 description: "Composite job to setup the CI for Ledger Live Desktop tests"
 inputs:
-  skip_python:
-    description: "skip the step to setup python"
-    required: false
   skip_ruby:
     description: "skip the step to setup ruby"
     required: false
@@ -29,7 +26,7 @@ runs:
     - uses: ruby/setup-ruby@v1
       if: ${{ !inputs.skip_ruby }}
       with:
-        ruby-version: 3.1.2
+        ruby-version: 3.2.2
     - name: Install node-gyp globally
       if: ${{ inputs.install_node_gyp }}
       run: |

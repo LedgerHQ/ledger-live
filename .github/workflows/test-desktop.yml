@@ -23,18 +23,12 @@ on:
         description: true if the PR is in draft
         required: false
         default: "false"
-      full-tests:
-        description: Set to true to run the full e2e tests
-        required: false
-        type: boolean
-        default: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
   cancel-in-progress: true
 
 env:
-  RUN_FULL_SUITE: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.full-tests) }}
   REFNAME: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
 
 jobs:
@@ -142,7 +136,6 @@ jobs:
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
     runs-on: [ledger-live-4xlarge-windows-2022]
-    if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.full-tests) }}
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
@@ -167,26 +160,24 @@ jobs:
         run: |
           pnpm desktop test:playwright
         shell: bash
-      - name: upload diffs to imgur
+      - name: upload diffs to s3
         if: always() && !cancelled()
         uses: ./tools/actions/upload-images
-        id: imgur
+        id: s3
         with:
           path: apps/ledger-live-desktop/tests/artifacts/test-results
           workspace: ${{ github.workspace }}
           os: windows
+          group-name: ${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_number }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_S3_SCREENSHOTS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_S3_SCREENSHOTS_SECRET_ACCESS_KEY }}
       - name: upload ci suggested screenshots
         if: always() && !cancelled()
         uses: actions/upload-artifact@v3
         with:
           name: images
           path: images-windows.json
-      - name: upload network responses
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: windows-network-responses
-          path: apps/ledger-live-desktop/tests/artifacts/networkResponses.log
       - name: Upload playwright test results [On Failure]
         uses: actions/upload-artifact@v3
         if: failure() && !cancelled()
@@ -198,6 +189,7 @@ jobs:
             apps/ledger-live-desktop/tests/artifacts/coverage
             apps/ledger-live-desktop/tests/artifacts/videos
             apps/ledger-live-desktop/tests/artifacts/logs
+            apps/ledger-live-desktop/tests/artifacts/*.log
       - name: Upload Allure Report
         if: always()
         uses: actions/upload-artifact@v3
@@ -231,7 +223,6 @@ jobs:
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
-          skip_python: true
           skip_ruby: true
           install_playwright: true
           aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
@@ -239,31 +230,25 @@ jobs:
       - name: Run playwright tests [Linux => xvfb-run]
         id: tests
         run: |
-          if [[ $RUN_FULL_SUITE == true ]]; then
-            xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
-          else
-            xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright:smoke
-          fi
-      - name: upload diffs to imgur
+          xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
+      - name: upload diffs to s3
         if: always() && !cancelled()
         uses: ./tools/actions/upload-images
-        id: imgur
+        id: s3
         with:
           path: apps/ledger-live-desktop/tests/artifacts/test-results
           workspace: ${{ github.workspace }}
           os: linux
+          group-name: ${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_number }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_S3_SCREENSHOTS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_S3_SCREENSHOTS_SECRET_ACCESS_KEY }}
       - name: upload ci suggested screenshots
         if: always() && !cancelled()
         uses: actions/upload-artifact@v3
         with:
           name: images
           path: images-linux.json
-      - name: upload network responses
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: linux-network-responses
-          path: apps/ledger-live-desktop/tests/artifacts/networkResponses.log
       - name: Upload playwright test results [On Failure]
         uses: actions/upload-artifact@v3
         if: failure() && !cancelled()
@@ -275,6 +260,7 @@ jobs:
             apps/ledger-live-desktop/tests/artifacts/coverage
             apps/ledger-live-desktop/tests/artifacts/videos
             apps/ledger-live-desktop/tests/artifacts/logs
+            apps/ledger-live-desktop/tests/artifacts/*.log
       - name: Upload Allure Report
         if: always()
         uses: actions/upload-artifact@v3
@@ -294,7 +280,6 @@ jobs:
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
-    if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.full-tests) }}
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
@@ -309,7 +294,6 @@ jobs:
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
-          skip_python: true
           skip_ruby: true
           install_playwright: true
           aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
@@ -318,26 +302,24 @@ jobs:
         id: tests
         run: |
           pnpm desktop test:playwright
-      - name: upload diffs to imgur
+      - name: upload diffs to s3
         if: always() && !cancelled()
         uses: ./tools/actions/upload-images
-        id: imgur
+        id: s3
         with:
           path: apps/ledger-live-desktop/tests/artifacts/test-results
           workspace: ${{ github.workspace }}
           os: macos
+          group-name: ${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_number }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_S3_SCREENSHOTS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_S3_SCREENSHOTS_SECRET_ACCESS_KEY }}
       - name: upload ci suggested screenshots
         if: always() && !cancelled()
         uses: actions/upload-artifact@v3
         with:
           name: images
           path: images-macos.json
-      - name: upload network responses
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: macos-network-responses
-          path: apps/ledger-live-desktop/tests/artifacts/networkResponses.log
       - name: Upload playwright test results [On Failure]
         uses: actions/upload-artifact@v3
         if: failure() && !cancelled()
@@ -349,6 +331,7 @@ jobs:
             apps/ledger-live-desktop/tests/artifacts/coverage
             apps/ledger-live-desktop/tests/artifacts/videos
             apps/ledger-live-desktop/tests/artifacts/logs
+            apps/ledger-live-desktop/tests/artifacts/*.log
       - name: Upload Allure Report
         if: always()
         uses: actions/upload-artifact@v3
@@ -379,7 +362,7 @@ jobs:
         with:
           script: |
             const fs = require("fs");
-            const files = ${{ env.RUN_FULL_SUITE }} ? ["images-linux", "images-windows", "images-macos"] : ["images-linux"]
+            const files = ["images-linux", "images-windows", "images-macos"];
             let result = {};
             for (const file of files) {
               try {
@@ -449,7 +432,7 @@ jobs:
               pass: ${{ needs.deadcodecheck.result == 'success' }},
             };
 
-            const report = ${{ env.RUN_FULL_SUITE }} ? {
+            const report = {
               mac: {
                 pass: ${{ needs.e2e-tests-mac.outputs.status == 'success' }},
                 status: "${{ needs.e2e-tests-mac.outputs.status }}",
@@ -461,11 +444,6 @@ jobs:
               windows: {
                 pass: ${{ needs.e2e-tests-windows.outputs.status == 'success' }},
                 status: "${{ needs.e2e-tests-windows.outputs.status }}",
-              },
-            } : {
-              linux: {
-                pass: ${{ needs.e2e-tests-linux.outputs.status == 'success' }},
-                status: "${{ needs.e2e-tests-linux.outputs.status }}",
               },
             };
 
@@ -606,20 +584,11 @@ jobs:
                   }
                 },
                 {
-                  ...(${{ env.RUN_FULL_SUITE }} ? {
-                    "type": "section",
-                    "text": {
-                      "type": "mrkdwn",
-                      "text": `- 🐧 linux: ${report.linux.pass ? "✅" : "❌"}\n - 🪟 windows: ${report.windows.pass ? "✅" : "❌"}\n - 🍏 macos: ${report.mac.pass ? "✅" : "❌"}\n`
-                    }
-                  } :
-                  {
-                    "type": "section",
-                    "text": {
-                      "type": "mrkdwn",
-                      "text": `- 🐧 linux: ${report.linux.pass ? "✅" : "❌"}\n`
-                    }
-                  })
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": `- 🐧 linux: ${report.linux.pass ? "✅" : "❌"}\n - 🪟 windows: ${report.windows.pass ? "✅" : "❌"}\n - 🍏 macos: ${report.mac.pass ? "✅" : "❌"}\n`
+                  }
                 },
                 {
                   "type": "divider"

@@ -11,7 +11,7 @@ import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { assignToAccountRaw, assignFromAccountRaw } from "../serialization";
 import Ada, { ExtendedPublicKey } from "@cardano-foundation/ledgerjs-hw-app-cardano";
 import { withDevice } from "../../../hw/deviceAccess";
-import { from } from "rxjs";
+import { firstValueFrom, from } from "rxjs";
 
 const receive = makeAccountBridgeReceive();
 
@@ -19,7 +19,7 @@ const signerContext: SignerContext = (
   deviceId: string,
   fn: (signer) => Promise<ExtendedPublicKey>,
 ): Promise<ExtendedPublicKey> => {
-  return withDevice(deviceId)(transport => from(fn(new Ada(transport)))).toPromise();
+  return firstValueFrom(withDevice(deviceId)(transport => from(fn(new Ada(transport)))));
 };
 
 const accountBridge: AccountBridge<Transaction> = {

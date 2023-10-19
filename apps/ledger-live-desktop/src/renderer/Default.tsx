@@ -59,7 +59,6 @@ import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
 import Market from "~/renderer/screens/market";
 import MarketCoinScreen from "~/renderer/screens/market/MarketCoinScreen";
 import Learn from "~/renderer/screens/learn";
-import { useProviders } from "~/renderer/screens/exchange/Swap2/Form";
 import WelcomeScreenSettings from "~/renderer/screens/settings/WelcomeScreenSettings";
 import SyncOnboarding from "./components/SyncOnboarding";
 import RecoverPlayer from "~/renderer/screens/recover/Player";
@@ -67,6 +66,10 @@ import { updateIdentify } from "./analytics/segment";
 import { useDiscoverDB } from "./screens/platform/v2/hooks";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { enableListAppsV2 } from "@ledgerhq/live-common/apps/hw";
+import {
+  useFetchCurrencyAll,
+  useFetchCurrencyFrom,
+} from "@ledgerhq/live-common/exchange/swap/hooks/index";
 
 // in order to test sentry integration, we need the ability to test it out.
 const LetThisCrashForCrashTest = () => {
@@ -147,7 +150,8 @@ export default function Default() {
   useListenToHidDevices();
   useDeeplink();
   useUSBTroubleshooting();
-  useProviders(); // prefetch data from swap providers here
+  useFetchCurrencyAll();
+  useFetchCurrencyFrom();
   const discoverDB = useDiscoverDB();
 
   const listAppsV2 = useFeature("listAppsV2");

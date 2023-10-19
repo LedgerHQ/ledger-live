@@ -26,17 +26,21 @@ export const rampCatalogContext = createContext<RampCatalogContextType>({
 
 type RampCatalogProviderProps = {
   children: React.ReactNode;
-  provider: string;
   updateFrequency: number;
+  provider?: string; // "production" - only for backwards compatibility
 };
 
-export function useRampCatalog(): Loadable<RampCatalog> {
-  return useContext(rampCatalogContext).state;
+export function useRampCatalogContext() {
+  const context = useContext(rampCatalogContext);
+
+  if (context === undefined) {
+    throw new Error("useRampCatalog must be used within a RampCatalogProvider");
+  }
+  return context.state;
 }
 
 export function RampCatalogProvider({
   children,
-  provider,
   updateFrequency,
 }: RampCatalogProviderProps): JSX.Element {
   const [state, setState] = useState<Loadable<RampCatalog>>(initialState);
@@ -49,7 +53,7 @@ export function RampCatalogProvider({
     }));
 
     try {
-      const value = await api.fetchRampCatalog(provider);
+      const value = await api.fetchRampCatalog();
       setState(() => ({
         isLoading: false,
         value,
@@ -62,7 +66,7 @@ export function RampCatalogProvider({
         error,
       }));
     }
-  }, [provider]);
+  }, []);
 
   const value: RampCatalogContextType = useMemo(
     () => ({

@@ -14,6 +14,7 @@ import { deviceInfo155, mockListAppsResult, mockExecWithInstalledContext } from 
 // import { prettyActionPlan, prettyInstalled } from "./formatting";
 import { setEnv } from "@ledgerhq/live-env";
 import { Action } from "./types";
+import { firstValueFrom } from "rxjs";
 
 setEnv("MANAGER_INSTALL_DELAY", 0);
 // TODO reactivate this test after bitcoin 2.1.0 nano app
@@ -335,10 +336,10 @@ scenarios.forEach((scenario) => {
       state = (<any[]>[]).concat(action.dispatch).reduce(reducer, state);
       expect(prettyActionPlan(getActionPlan(state))).toBe(action.expectPlan);
       const optimisticState = predictOptimisticState(state);
-      state = await runAll(
+      state = await firstValueFrom(runAll(
         state,
         mockExecWithInstalledContext(state.installed)
-      ).toPromise();
+      ));
 
       if (action.expectInstalled) {
         expect(prettyInstalled(state.installed)).toBe(action.expectInstalled);
@@ -437,11 +438,9 @@ test("global progress", async () => {
   const total = 4;
 
   while ((next = getNextAppOp(state))) {
-    state = await runOneAppOp(
-      state,
-      next,
-      mockExecWithInstalledContext(state.installed),
-    ).toPromise();
+    state = await firstValueFrom(
+      runOneAppOp(state, next, mockExecWithInstalledContext(state.installed)),
+    );
     expect(updateAllProgress(state)).toBe(++i / total);
   }
 

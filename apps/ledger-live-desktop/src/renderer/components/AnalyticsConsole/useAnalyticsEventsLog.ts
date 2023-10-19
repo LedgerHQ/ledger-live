@@ -7,7 +7,7 @@ export default function useAnalyticsEventsLog(limit = 40) {
   const id = useRef(0);
   const [items, setItems] = useState<LoggableEventRenderable[]>([]);
   const addItem = useCallback(
-    item => {
+    (item: LoggableEventRenderable) => {
       setItems(currentItems => [...currentItems.slice(-(limit - 1)), item]);
     },
     [limit],

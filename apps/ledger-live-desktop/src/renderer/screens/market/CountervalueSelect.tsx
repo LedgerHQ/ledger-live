@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, memo } from "react";
-import { supportedCountervalues, SupportedCoutervaluesData } from "~/renderer/reducers/settings";
+import { supportedCountervalues, SupportedCountervaluesData } from "~/renderer/reducers/settings";
 import Dropdown from "./DropDown";
 import Track from "~/renderer/analytics/Track";
 import { useTranslation } from "react-i18next";
@@ -29,7 +29,7 @@ function CounterValueSelect({
 
   const options = useMemo(
     () =>
-      supportedCountervalues.filter(({ value }: SupportedCoutervaluesData) =>
+      supportedCountervalues.filter(({ value }: SupportedCountervaluesData) =>
         supportedCounterCurrencies.includes(value?.toLowerCase()),
       ),
     [supportedCounterCurrencies],
@@ -38,7 +38,7 @@ function CounterValueSelect({
   const cvOption = useMemo(
     () =>
       supportedCountervalues.find(
-        (f: SupportedCoutervaluesData) =>
+        (f: SupportedCountervaluesData) =>
           f?.value?.toLowerCase() === counterCurrency?.toLowerCase(),
       ),
     [counterCurrency],

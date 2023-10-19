@@ -100,6 +100,7 @@ export type CurrencyFeatures = {
   currencySyscoin: DefaultFeature;
   currencyAxelar: DefaultFeature;
   currencySecretNetwork: DefaultFeature;
+  currencySeiNetwork: DefaultFeature;
   currencyDesmos: DefaultFeature;
   currencyUmee: DefaultFeature;
   currencyStargaze: DefaultFeature;
@@ -176,6 +177,8 @@ export type Features = CurrencyFeatures & {
   llmWalletQuickActions: Feature_LlmWalletQuickActions;
   cexDepositEntryPointsDesktop: Feature_CexDepositEntryPointsDesktop;
   cexDepositEntryPointsMobile: Feature_CexDepositEntryPointsMobile;
+  fetchAdditionalCoins: Feature_FetchAdditionalCoins;
+  ptxSwapLiveApp: Feature_PtxSwapLiveApp;
 };
 
 /**
@@ -439,6 +442,11 @@ export type Feature_CexDepositEntryPointsMobile = Feature<{
   };
 }>;
 
+export type Feature_PtxSwapLiveApp = Feature<{
+  currencies?: Array<string>;
+  families?: Array<string>;
+}>;
+
 export type Feature_LlmNewFirmwareUpdateUx = DefaultFeature;
 export type Feature_CounterValue = DefaultFeature;
 export type Feature_MockFeature = DefaultFeature;
@@ -463,6 +471,7 @@ export type Feature_ListAppsV2 = DefaultFeature;
 export type Feature_BrazeLearn = DefaultFeature;
 export type Feature_LlmNewDeviceSelection = DefaultFeature;
 export type Feature_LlmWalletQuickActions = DefaultFeature;
+export type Feature_FetchAdditionalCoins = DefaultFeature;
 
 /**
  * Utils types.

@@ -3,7 +3,6 @@ import invariant from "invariant";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { Transaction } from "@ledgerhq/coin-evm/types/index";
 import { SendFundsNavigatorStackParamList } from "../../../components/RootNavigator/types/SendFundsNavigator";
 import { accountScreenSelector } from "../../../reducers/accounts";
@@ -27,7 +26,7 @@ const options = {
 
 export default function EvmCustomFees({ route }: Props) {
   const {
-    setTransaction,
+    setCustomStrategyTransactionPatch,
     transaction: baseTransaction,
     gasOptions,
     goBackOnSetTransaction = true,
@@ -38,22 +37,6 @@ export default function EvmCustomFees({ route }: Props) {
   const mainAccount = getMainAccount(account, parentAccount);
   invariant(mainAccount, "no main account found");
 
-  const bridge = getAccountBridge(mainAccount);
-
-  const onValidateFees = useCallback(
-    (transactionPatch: Partial<Transaction>) => () => {
-      setTransaction(bridge.updateTransaction(route.params.transaction, transactionPatch));
-      // In the context of some UI flows like the swap, the main component might already
-      // be providing a navigation after updating the transaction. On those cases,
-      // we'll remove the default "go back" behaviour and
-      // let the parent UI decide how to navigate.
-      if (goBackOnSetTransaction) {
-        navigation.goBack();
-      }
-    },
-    [bridge, navigation, route.params, setTransaction, goBackOnSetTransaction],
-  );
-
   // The transaction might be coming without gasOptions already added to it, like for the swap flow
   //
   // TODO: Make the Evm1559CustomFees & EvmLegacyCustomFees Components capable of working without
@@ -62,6 +45,20 @@ export default function EvmCustomFees({ route }: Props) {
   const transaction = useMemo(
     () => (baseTransaction.gasOptions ? baseTransaction : { ...baseTransaction, gasOptions }),
     [baseTransaction, gasOptions],
+  );
+
+  const onValidateFees = useCallback(
+    (transactionPatch: Partial<Transaction>) => () => {
+      setCustomStrategyTransactionPatch(transactionPatch);
+      // In the context of some UI flows like the swap, the main component might already
+      // be providing a navigation after updating the transaction. On those cases,
+      // we'll remove the default "go back" behaviour and
+      // let the parent UI decide how to navigate.
+      if (goBackOnSetTransaction) {
+        navigation.goBack();
+      }
+    },
+    [navigation, setCustomStrategyTransactionPatch, goBackOnSetTransaction],
   );
 
   const shouldUseEip1559 = transaction.type === 2;

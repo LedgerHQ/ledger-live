@@ -18,7 +18,6 @@ function VerifyAddress({
 }) {
   const { theme } = useTheme();
   const { t } = useTranslation();
-
   useEffect(() => {
     if (!device) return;
 

@@ -5,14 +5,16 @@ import { getAccountBridge } from "../../bridge";
 import { accountDataToAccount, accountToAccountData } from "../../cross";
 import "../../__tests__/test-helpers/setup";
 import { bitcoin1 } from "./datasets/bitcoin";
+import { firstValueFrom } from "rxjs";
 
 async function syncAccount(initialAccount: Account): Promise<Account> {
-  const acc = await getAccountBridge(initialAccount)
-    .sync(initialAccount, {
-      paginationConfig: {},
-    })
-    .pipe(reduce((a, f: (arg0: Account) => Account) => f(a), initialAccount))
-    .toPromise();
+  const acc = await firstValueFrom(
+    getAccountBridge(initialAccount)
+      .sync(initialAccount, {
+        paginationConfig: {},
+      })
+      .pipe(reduce((a, f: (arg0: Account) => Account) => f(a), initialAccount)),
+  );
   return acc;
 }
 

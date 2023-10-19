@@ -14,6 +14,7 @@ export function useScrollToTop(
   >,
 ) {
   const isFocused = useIsFocused();
+  // @ts-expect-error expecting a weir type
   useNativeScrollToTop(ref);
   useEffect(() => {
     const subscription = scrollSubject.subscribe(() => {
@@ -73,5 +74,5 @@ function scrollSectionListToTop(compRef: SectionList | Animated<SectionList>): v
 }
 
 export function scrollToTop(): void {
-  scrollSubject.next();
+  scrollSubject.next(null);
 }

@@ -7,7 +7,7 @@ import RNRestart from "react-native-restart";
 import { useDispatch, useSelector } from "react-redux";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { from } from "rxjs";
+import { firstValueFrom, from } from "rxjs";
 import { DeviceModelInfo, idsToLanguage, Language } from "@ledgerhq/types-live";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
@@ -53,11 +53,11 @@ function OnboardingStepLanguage({ navigation }: NavigationProps) {
   const onActionFinished = useCallback(() => {
     setPreventPromptBackdropClick(false);
     if (lastConnectedDevice && lastSeenDevice) {
-      withDevice(lastConnectedDevice?.deviceId)(transport => from(getDeviceInfo(transport)))
-        .toPromise()
-        .then(deviceInfo => {
-          dispatch(setLastSeenDevice(deviceInfo));
-        });
+      firstValueFrom(
+        withDevice(lastConnectedDevice?.deviceId)(transport => from(getDeviceInfo(transport))),
+      ).then(deviceInfo => {
+        dispatch(setLastSeenDevice(deviceInfo));
+      });
     }
   }, [lastConnectedDevice, lastSeenDevice, dispatch]);
 

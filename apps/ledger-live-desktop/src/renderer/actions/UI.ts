@@ -1,4 +1,5 @@
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { createAction } from "redux-actions";
 export const openInformationCenter = createAction(
   "INFORMATION_CENTER_OPEN",
@@ -30,7 +31,7 @@ export const openPlatformAppDisclaimerDrawer = createAction(
   }: {
     manifest: LiveAppManifest | undefined | null;
     disclaimerId: string;
-    next: () => void;
+    next: (manifest: AppManifest, isChecked: boolean) => void;
   }) => ({
     type: "DAPP_DISCLAIMER",
     manifest,

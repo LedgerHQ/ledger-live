@@ -148,7 +148,7 @@ export const WORKFLOWS = {
     checkRunName: "@Mobile • Test App End-2-End",
     description: "Run Detox end-to-end tests on Ledger Live Mobile",
     runsOn: RUNNERS.internal,
-    required: false,
+    required: true,
     affected: ["live-mobile"],
     summaryFile: "summary.json",
     getInputs: commonGetInputs,

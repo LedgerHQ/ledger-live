@@ -4,6 +4,7 @@ import invariant from "invariant";
 import React, { memo, useCallback } from "react";
 import FeeSliderField from "~/renderer/components/FeeSliderField";
 import { EvmFamily } from "../types";
+import BigNumber from "bignumber.js";
 
 let lastNetworkGasPrice: Range | undefined; // local cache of last value to prevent extra blinks
 
@@ -16,7 +17,7 @@ const FeesField: NonNullable<EvmFamily["sendAmountFields"]>["component"] = ({
   invariant(transaction.family === "evm", "GasPriceField: evm family expected");
   const bridge = getAccountBridge(account);
   const onGasPriceChange = useCallback(
-    gasPrice => {
+    (gasPrice: BigNumber) => {
       updateTransaction(transaction =>
         bridge.updateTransaction(transaction, {
           gasPrice,

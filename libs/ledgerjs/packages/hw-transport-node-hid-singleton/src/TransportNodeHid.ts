@@ -1,10 +1,12 @@
 import HID from "node-hid";
 import TransportNodeHidNoEvents, { getDevices } from "@ledgerhq/hw-transport-node-hid-noevents";
 import type { Observer, DescriptorEvent, Subscription } from "@ledgerhq/hw-transport";
-import { log } from "@ledgerhq/logs";
+import { LocalTracer, TraceContext, log } from "@ledgerhq/logs";
 import { identifyUSBProductId } from "@ledgerhq/devices";
 import { CantOpenDevice } from "@ledgerhq/errors";
 import { listenDevices } from "./listenDevices";
+
+const LOG_TYPE = "hid-verbose";
 
 let transportInstance;
 
@@ -33,9 +35,13 @@ export type ListenDescriptorEvent = DescriptorEvent<any>;
  * ...
  * TransportNodeHid.create().then(transport => ...)
  */
-
 export default class TransportNodeHidSingleton extends TransportNodeHidNoEvents {
   preventAutoDisconnect = false;
+
+  constructor(device: HID.HID, { context }: { context?: TraceContext } = {}) {
+    super(device, { context, logType: LOG_TYPE });
+  }
+
   /**
    *
    */
@@ -130,24 +136,39 @@ export default class TransportNodeHidSingleton extends TransportNodeHidNoEvents 
   }
 
   /**
-   * if path="" is not provided, the library will take the first device
+   * Connects to the first Ledger device connected via USB
+   *
+   * Reusing the same TransportNodeHidSingleton instance until a disconnection happens.
+   * Pitfall: this implementation only handles 1 device connected via USB
+   *
+   * Legacy: `_descriptor` is needed to follow the Transport definition
    */
-  static open(): Promise<TransportNodeHidSingleton> {
+  static open(
+    _descriptor: string,
+    _timeoutMs?: number,
+    context?: TraceContext,
+  ): Promise<TransportNodeHidSingleton> {
+    const tracer = new LocalTracer(LOG_TYPE, context);
     clearDisconnectTimeout();
+
     return Promise.resolve().then(() => {
       if (transportInstance) {
-        log("hid-verbose", "reusing opened transport instance");
+        tracer.trace("Reusing already opened transport instance");
         return transportInstance;
       }
 
       const device = getDevices()[0];
       if (!device) throw new CantOpenDevice("no device found");
-      log("hid-verbose", "new HID transport");
-      transportInstance = new TransportNodeHidSingleton(new HID.HID(device.path as string));
+
+      tracer.trace("Found a device, creating HID transport instance ...", { device });
+      transportInstance = new TransportNodeHidSingleton(new HID.HID(device.path as string), {
+        context,
+      });
+
       const unlisten = listenDevices(
         () => {},
         () => {
-          // assume any ledger disconnection concerns current transport
+          // Assumes any ledger disconnection concerns current transport
           if (transportInstance) {
             transportInstance.emit("disconnect");
           }
@@ -156,7 +177,7 @@ export default class TransportNodeHidSingleton extends TransportNodeHidNoEvents 
 
       const onDisconnect = () => {
         if (!transportInstance) return;
-        log("hid-verbose", "transport instance was disconnected");
+        tracer.trace("Device was disconnected, clearing transport instance ...");
         transportInstance.off("disconnect", onDisconnect);
         transportInstance = null;
         unlisten();
@@ -173,6 +194,7 @@ export default class TransportNodeHidSingleton extends TransportNodeHidNoEvents 
 
   /**
    * Exchange with the device using APDU protocol.
+   *
    * @param apdu
    * @returns a promise of apdu response
    */

@@ -15,12 +15,8 @@ import { RecoverState } from "~/renderer/screens/recover/Player";
 import SyncOnboardingCompanion from "./SyncOnboardingCompanion";
 import EarlySecurityChecks from "./EarlySecurityChecks";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
-import { DeviceInfo } from "@ledgerhq/types-live";
 import connectManager from "@ledgerhq/live-common/hw/connectManager";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
-import { from } from "rxjs";
-import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import { getEnv } from "@ledgerhq/live-env";
 import ExitChecksDrawer, {
   Props as ExitChecksDrawerProps,
@@ -34,8 +30,7 @@ import TroubleshootingDrawer, {
 } from "./TroubleshootingDrawer";
 import LockedDeviceDrawer, { Props as LockedDeviceDrawerProps } from "./LockedDeviceDrawer";
 import { LockedDeviceError, UnexpectedBootloader } from "@ledgerhq/errors";
-import ErrorDrawer from "./EarlySecurityChecks/ErrorDrawer";
-import logger from "~/renderer/logger";
+import { FinalFirmware } from "@ledgerhq/types-live";
 
 const POLLING_PERIOD_MS = 1000;
 const DESYNC_TIMEOUT_MS = 20000;
@@ -87,11 +82,18 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
   const [toggleOnboardingEarlyCheckType, setToggleOnboardingEarlyCheckType] = useState<
     null | "enter" | "exit"
   >(null);
+  const [fwUpdateInterrupted, setFwUpdateInterrupted] = useState<FinalFirmware | null>(null);
 
   /* The early security checks are run again after a firmware update. */
   const [isInitialRunOfSecurityChecks, setIsInitialRunOfSecurityChecks] = useState(true);
 
-  const { onboardingState, allowedError, fatalError, lockedDevice } = useOnboardingStatePolling({
+  const {
+    onboardingState,
+    allowedError,
+    fatalError,
+    lockedDevice,
+    resetStates: resetPollingStates,
+  } = useOnboardingStatePolling({
     device: lastSeenDevice,
     pollingPeriodMs: POLLING_PERIOD_MS,
     stopPolling: !isPollingOn || isBootloader,
@@ -102,46 +104,6 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
     toggleType: toggleOnboardingEarlyCheckType,
   });
 
-  useEffect(() => {
-    let dead = false;
-    function refreshIsBootloaderMode() {
-      if (!device) return;
-      withDevice(device.deviceId)(transport => from(getDeviceInfo(transport)))
-        .toPromise()
-        .then(({ isBootloader }: DeviceInfo) => {
-          if (dead) return;
-          setIsBootloader(isBootloader);
-        })
-        .catch(error => {
-          if (dead) return;
-          if (error instanceof LockedDeviceError) {
-            // Here we just want to know if the device is in bootloader mode.
-            // It can't be locked in bootloader mode so we can just ignore the
-            // error, another LockedDeviceError error will be handled in the
-            // polling hook.
-            setIsBootloader(false);
-            return;
-          }
-          logger.error(error);
-          setDrawer(
-            ErrorDrawer,
-            {
-              onClickRetry: () => {
-                setDrawer();
-                refreshIsBootloaderMode();
-              },
-              error,
-            },
-            { preventBackdropClick: true, forceDisableFocusTrap: true },
-          );
-        });
-    }
-    refreshIsBootloaderMode();
-    return () => {
-      dead = true;
-    };
-  }, [device]);
-
   // Called when the ESC is complete
   const notifyOnboardingEarlyCheckEnded = useCallback(() => {
     setToggleOnboardingEarlyCheckType("exit");
@@ -151,8 +113,9 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
   const notifyOnboardingEarlyCheckShouldReset = useCallback(() => {
     setIsPollingOn(true);
     setCurrentStep("loading");
+    resetPollingStates();
     setMustRecoverIfBootloader(true);
-  }, []);
+  }, [resetPollingStates]);
 
   const restartChecksAfterUpdate = useCallback(() => {
     setIsInitialRunOfSecurityChecks(false);
@@ -325,7 +288,8 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
         onComplete={notifyOnboardingEarlyCheckEnded}
         restartChecksAfterUpdate={restartChecksAfterUpdate}
         isInitialRunOfSecurityChecks={isInitialRunOfSecurityChecks}
-        isBootloader={isBootloader}
+        setFwUpdateInterrupted={setFwUpdateInterrupted}
+        fwUpdateInterrupted={fwUpdateInterrupted}
       />
     );
   } else if (currentStep === "companion" && lastSeenDevice) {

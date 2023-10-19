@@ -66,7 +66,7 @@
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
     "react-native-get-random-values": "^1.8.0",
-    "rxjs": "^6.6.7"
+    "rxjs": "^7.8.1"
   },
   "devDependencies": {
     "@types/invariant": "^2.2.2",

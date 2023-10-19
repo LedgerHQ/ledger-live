@@ -31,6 +31,7 @@ import { RootComposite, StackNavigatorProps } from "../../components/RootNavigat
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import { ScreenName } from "../../const";
 import { BaseOnboardingNavigatorParamList } from "../../components/RootNavigator/types/BaseOnboardingNavigator";
+import { firstValueFrom } from "rxjs";
 
 type NavigationProps = RootComposite<
   | StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.PairDevices>
@@ -142,8 +143,8 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
             payload: device,
           });
           let appsInstalled;
-          await listApps(transport, deviceInfo)
-            .pipe(
+          await firstValueFrom(
+            listApps(transport, deviceInfo).pipe(
               timeout(GENUINE_CHECK_TIMEOUT),
               tap(e => {
                 if (e.type === "result") {
@@ -165,8 +166,8 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
                   payload: e.type === "allow-manager-requested",
                 });
               }),
-            )
-            .toPromise();
+            ),
+          );
           if (unmounted.current) return;
           const name = (await getDeviceName(transport)) || device.deviceName || "";
           if (unmounted.current) return;

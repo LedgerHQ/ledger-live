@@ -1,4 +1,3 @@
-import "./env";
 import { setEnv } from "@ledgerhq/live-env";
 if (process.env.NODE_ENV === "production") {
   const value = `lld/${__APP_VERSION__}`;

@@ -3,7 +3,7 @@ import { Result, createAction } from "@ledgerhq/live-common/hw/actions/manager";
 import Dashboard from "~/renderer/screens/manager/Dashboard";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import DeviceAction from "~/renderer/components/DeviceAction";
-import { from } from "rxjs";
+import { firstValueFrom, from } from "rxjs";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import connectManager from "@ledgerhq/live-common/hw/connectManager";
@@ -16,13 +16,13 @@ import { context } from "~/renderer/drawers/Provider";
 
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectManager);
 const Manager = () => {
-  const [appsToRestore, setRestoreApps] = useState([]);
+  const [appsToRestore, setRestoreApps] = useState<string[]>([]);
   const { setDrawer } = useContext(context);
   const [result, setResult] = useState<Result | null>(null);
   const [hasReset, setHasReset] = useState(false);
   const onReset = useCallback(
-    (apps, firmwareUpdateOpened) => {
-      setRestoreApps(apps);
+    (apps?: string[] | null, firmwareUpdateOpened?: boolean | null) => {
+      setRestoreApps(apps ?? []);
       setResult(null);
       setDrawer(); // Nb prevent zombie flows.
       if (!firmwareUpdateOpened) setHasReset(true);
@@ -32,22 +32,22 @@ const Manager = () => {
   const dispatch = useDispatch();
   const refreshDeviceInfo = useCallback(() => {
     if (result?.device) {
-      withDevice(result.device.deviceId)(transport => from(getDeviceInfo(transport)))
-        .toPromise()
-        .then(deviceInfo => {
-          setResult({
-            ...result,
-            deviceInfo,
-          });
-          dispatch(
-            setLastSeenDevice({
-              deviceInfo,
-            }),
-          );
+      firstValueFrom(
+        withDevice(result.device.deviceId)(transport => from(getDeviceInfo(transport))),
+      ).then(deviceInfo => {
+        setResult({
+          ...result,
+          deviceInfo,
         });
+        dispatch(
+          setLastSeenDevice({
+            deviceInfo,
+          }),
+        );
+      });
     }
   }, [result, dispatch]);
-  const onResult = useCallback(result => setResult(result), []);
+  const onResult = useCallback((result: Result) => setResult(result), []);
   return (
     <>
       <SyncSkipUnderPriority priority={999} />

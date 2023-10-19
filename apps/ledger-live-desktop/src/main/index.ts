@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require("@electron/remote/main").initialize();
 
-import "./setup";
+import "./setup"; // Needs to be imported first
 import { app, Menu, ipcMain, session, webContents, shell, BrowserWindow } from "electron";
 import Store from "electron-store";
 import menu from "./menu";

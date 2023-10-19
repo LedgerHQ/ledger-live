@@ -8,7 +8,7 @@ const AllowDebugAppsToggle = () => {
   const dispatch = useDispatch();
   const allowDebugApps = useSelector(allowDebugAppsSelector);
   const onSetAllowDebugApps = useCallback(
-    checked => dispatch(setAllowDebugApps(checked)),
+    (checked: boolean) => dispatch(setAllowDebugApps(checked)),
     [dispatch],
   );
   return (

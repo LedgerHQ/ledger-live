@@ -9,7 +9,7 @@ import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/
 import i18n from "i18next";
 import { webFrame, ipcRenderer } from "electron";
 import * as remote from "@electron/remote";
-import { render } from "react-dom";
+import { createRoot } from "react-dom/client";
 import moment from "moment";
 import each from "lodash/each";
 import { reload, getKey, loadLSS } from "~/renderer/storage";
@@ -46,12 +46,38 @@ import { expectOperatingSystemSupportStatus } from "~/support/os";
 import { addDevice, removeDevice, resetDevices } from "~/renderer/actions/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { listCachedCurrencyIds } from "./bridge/cache";
-if (process.env.VERBOSE) {
-  enableDebugLogger();
-}
-const rootNode = document.getElementById("react-root");
+import { LogEntry } from "winston";
+
+const domNode = document.getElementById("react-root");
 const TAB_KEY = 9;
+
 async function init() {
+  // at this step. we know the app error handling will happen here. so we can unset the global onerror
+  window.onerror = null;
+
+  const logVerbose = getEnv("VERBOSE");
+
+  // Sets up a debug console printing of logs (from the renderer thread)
+  //
+  // Usage: a filtering (only on console printing) on Ledger libs are possible:
+  // - VERBOSE="apdu,hw,transport,hid-verbose" : filtering on a list of log `type` separated by a `,`
+  // - VERBOSE=1 or VERBOSE=true : to print all logs
+  if (logVerbose) {
+    const everyLogs =
+      logVerbose.length === 1 && (logVerbose[0] === "true" || logVerbose[0] === "1");
+
+    const filters = everyLogs ? [] : logVerbose;
+
+    // eslint-disable-next-line no-console
+    console.log(
+      `Logs console display setup (renderer thread): ${JSON.stringify({
+        everyLogs,
+        filters,
+      })}`,
+    );
+    enableDebugLogger((log: LogEntry) => everyLogs || (log?.type && filters.includes(log.type)));
+  }
+
   checkLibs({
     NotEnoughBalance,
     React,
@@ -223,8 +249,9 @@ async function init() {
   };
 }
 function r(Comp: JSX.Element) {
-  if (rootNode) {
-    render(Comp, rootNode);
+  if (domNode) {
+    const rootNode = createRoot(domNode);
+    rootNode.render(Comp);
   }
 }
 init()
