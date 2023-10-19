@@ -17,12 +17,35 @@ export function waitForElementByText(text: string, timeout: number = DEFAULT_TIM
   return waitFor(getElementByText(text)).toBeVisible().withTimeout(timeout);
 }
 
+export function waitForElementToExistWithUniqueId(id: string, timeout: number = DEFAULT_TIMEOUT) {
+  return waitFor(element(by.id(id)))
+    .toExist()
+    .withTimeout(timeout);
+}
+
+export function waitForElementWithUniqueText(text: string, timeout: number = DEFAULT_TIMEOUT) {
+  return waitFor(getElementByUniqueText(text)).toExist().withTimeout(timeout);
+}
+
+/**
+ * NB: Index is not recommended. Use unique ids or text instead.
+ * Indices may not match between iOS and Android. Relying on indices may also introduce flakiness in tests as the UI is updated. See: https://wix.github.io/Detox/docs/api/matchers/#atindexindex
+ */
 export function getElementById(id: string, index = 0) {
   return element(by.id(id)).atIndex(index);
 }
 
 export function getElementByText(text: string, index = 0) {
   return element(by.text(text)).atIndex(index);
+}
+
+export function getElementByUniqueId(id: string) {
+  return element(by.id(id));
+}
+
+/** Text should be unique */
+export function getElementByUniqueText(text: string) {
+  return element(by.text(text));
 }
 
 export function tapById(id: string, index = 0) {
@@ -103,8 +126,9 @@ export async function delay(ms: number) {
   });
 }
 
-export function openDeeplink(link?: string) {
-  return device.openURL({ url: BASE_DEEPLINK + link });
+/** @param path the part after "ledgerlive://", e.g. "portfolio", or "discover?param=123"  */
+export function openDeeplink(path?: string) {
+  return device.openURL({ url: BASE_DEEPLINK + path });
 }
 
 export function isAndroid() {
