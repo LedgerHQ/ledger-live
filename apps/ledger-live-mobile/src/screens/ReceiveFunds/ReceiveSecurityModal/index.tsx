@@ -38,10 +38,9 @@ const ReceiveSecurityModal = ({
         setTimeout(() => {
           setIsModalOpen(true);
         }, 800);
-      } else {
-        triggerSuccessEvent();
       }
     });
+    triggerSuccessEvent();
   }, [triggerSuccessEvent]);
 
   const [step, setStep] = useState("initMessage");
