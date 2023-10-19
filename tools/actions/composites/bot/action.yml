@@ -45,7 +45,7 @@ runs:
   steps:
     - uses: pnpm/action-setup@v2
       with:
-        version: 8.7
+        version: 8.8
     - uses: actions/setup-node@v3
       with:
         node-version: 18
@@ -81,6 +81,7 @@ runs:
         explorerinput: ${{ inputs.EXPLORER }}
         SPECULOS_USE_WEBSOCKET: ${{inputs.speculos_websocket}}
       run: |
+        git status
         export COINAPPS=$PWD/coin-apps
         export NODE_ENV=production
         mkdir libs/ledger-live-common/botreport

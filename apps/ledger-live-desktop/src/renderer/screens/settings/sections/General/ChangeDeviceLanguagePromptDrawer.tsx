@@ -114,9 +114,7 @@ const ChangeDeviceLanguagePromptDrawer: React.FC<Props> = ({
             deviceName,
           })}
           descriptionWording={t("deviceLocalization.changeDeviceLanguagePrompt.description", {
-            language: t(
-              `deviceLocalization.languages.${Languages[currentLanguage].deviceSupport?.label}`,
-            ),
+            deviceName,
           })}
         />
       )}

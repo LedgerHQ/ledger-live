@@ -47,7 +47,7 @@ const TokenParentSelection = ({
   mainAccount: Account;
 }) => {
   const filterAccountSelect = useCallback(
-    a => getAccountCurrency(a) === mainAccount.currency,
+    (a: AccountLike) => getAccountCurrency(a) === mainAccount.currency,
     [mainAccount],
   );
   return (

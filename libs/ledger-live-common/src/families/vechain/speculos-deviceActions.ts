@@ -13,7 +13,7 @@ const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
       button: SpeculosButton.RIGHT,
     },
     { title: "Address", button: SpeculosButton.RIGHT },
-    { title: "MaxFee", button: SpeculosButton.RIGHT },
+    { title: "Max Fees", button: SpeculosButton.RIGHT },
     {
       title: "Accept",
       button: SpeculosButton.BOTH,

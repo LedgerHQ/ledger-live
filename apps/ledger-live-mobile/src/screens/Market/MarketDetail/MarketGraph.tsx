@@ -51,7 +51,7 @@ function MarketGraph({
   );
 
   const setRange = useCallback(
-    index => {
+    (index: number) => {
       if (isLoading) return;
       const newRange = ranges[index]?.value;
       if (range !== newRange) refreshChart({ range: newRange });
@@ -59,7 +59,7 @@ function MarketGraph({
     [isLoading, range, ranges, refreshChart],
   );
 
-  const mapGraphValue = useCallback(d => d?.value || 0, []);
+  const mapGraphValue = useCallback((d: Item) => d?.value || 0, []);
 
   return (
     <Flex flexDirection="column" mt={20} borderRadius={8}>

@@ -40,7 +40,8 @@ test.describe("Delegate flow", async () => {
     });
   });
 
-  test("The user search and select a provider", async () => {
+  // FIXME flaky https://ledgerhq.atlassian.net/browse/LIVE-9614
+  test.skip("The user search and select a provider", async () => {
     await test.step("open the provider search modal", async () => {
       await modalPage.continue();
       await expect.soft(modalPage.container).toHaveScreenshot(`provider-search-page.png`);

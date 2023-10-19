@@ -45,7 +45,7 @@ type Props = {
 
 export default function ExchangeDrawer({ swapTransaction, exchangeRate, onCompleteSwap }: Props) {
   const dispatch = useDispatch();
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<Error | null>(null);
   const [result, setResult] = useState<{
     operation: Operation;
     swapId: string;
@@ -71,13 +71,13 @@ export default function ExchangeDrawer({ swapTransaction, exchangeRate, onComple
   ) as Exchange;
 
   const onError = useCallback(
-    errorResult => {
+    (errorResult: { error: Error; swapId?: string }) => {
       const { error, swapId } = errorResult;
 
       // Consider the swap as cancelled (on provider perspective) in case of error
       postSwapCancelled({
         provider: exchangeRate.provider,
-        swapId,
+        swapId: swapId ?? "",
       });
       track("error_message", {
         message: "drawer_error",

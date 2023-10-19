@@ -3,6 +3,14 @@ import { ResponseDataAll } from "../fetchCurrencyAll";
 export const fetchCurrencyAllMock: ResponseDataAll = {
   from: [
     {
+      network: "bitcoin",
+      supportedCurrencies: ["bitcoin"],
+    },
+    {
+      network: "dogecoin",
+      supportedCurrencies: ["dogecoin"],
+    },
+    {
       network: "ethereum",
       supportedCurrencies: [
         "ethereum/erc20/synth_susd",

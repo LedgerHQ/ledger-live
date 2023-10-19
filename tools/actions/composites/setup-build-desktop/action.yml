@@ -34,16 +34,10 @@ runs:
         aws-access-key: ${{ inputs.aws-access-key }}
         aws-secret-key: ${{ inputs.aws-secret-key }}
     - name: install dependencies
-      if: ${{ inputs.os != 'mac' }}
-      run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --unsafe-perm
-      shell: bash
-    - name: install dependencies
-      if: ${{ inputs.os == 'mac' }}
       env:
         LC_ALL: en_US.UTF-8
         LANG: en_US.UTF-8
-      run: |
-        pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --unsafe-perm
+      run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --unsafe-perm
       shell: bash
     - uses: ./tools/actions/get-package-infos
       id: version

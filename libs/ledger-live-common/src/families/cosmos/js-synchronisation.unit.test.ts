@@ -650,4 +650,43 @@ describe("getAccountShape", () => {
       },
     ]);
   });
+
+  it("should parse an operation correctly with missing auth_info", async () => {
+    mockAccountInfo({
+      txs: [
+        mockCosmosTx({
+          tx: {
+            body: { memo: "memo" },
+          },
+          logs: [
+            {
+              type: "transfer",
+              events: [
+                {
+                  type: "transfer",
+                  attributes: [
+                    {
+                      key: "amount",
+                      value: "5uatom",
+                    },
+                    {
+                      key: "recipient",
+                      value: "senderAddress",
+                    },
+                    {
+                      key: "sender",
+                      value: "address",
+                    },
+                  ],
+                },
+              ],
+              attributes: [],
+            },
+          ],
+        } as Partial<CosmosTx>),
+      ],
+    });
+    const account = await getAccountShape(infoMock, syncConfig);
+    expect((account.operations as CosmosOperation[])[0].value).toBeDefined();
+  });
 });

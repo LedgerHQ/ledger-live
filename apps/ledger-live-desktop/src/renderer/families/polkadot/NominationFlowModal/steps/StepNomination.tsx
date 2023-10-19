@@ -28,7 +28,7 @@ export default function StepNomination({
     });
   }, [onClose, openModal, account]);
   const updateNomination = useCallback(
-    updater => {
+    (updater: (a: string[]) => string[]) => {
       onUpdateTransaction(transaction =>
         bridge?.updateTransaction(transaction, {
           validators: updater(transaction.validators || []),

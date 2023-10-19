@@ -11,6 +11,7 @@ setSupportedCurrencies([
   "umee",
   "desmos",
   "onomy",
+  "sei_network",
   "quicksilver",
   "persistence",
   "bitcoin",
@@ -58,4 +59,5 @@ setSupportedCurrencies([
   "flare",
   "near",
   "coreum",
+  "vechain",
 ]);

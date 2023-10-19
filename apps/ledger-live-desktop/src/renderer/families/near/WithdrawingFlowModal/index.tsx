@@ -8,7 +8,7 @@ export default function WithdrawingModal() {
   const onHide = useCallback(() => {
     setStepId("amount");
   }, []);
-  const onChange = useCallback(id => {
+  const onChange = useCallback((id: StepId) => {
     setStepId(id);
   }, []);
   const isModalLocked = ["device", "confirmation"].includes(stepId);

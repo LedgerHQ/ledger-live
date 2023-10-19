@@ -117,7 +117,7 @@ function ClaimRewardsAmount({ navigation, route }: Props) {
     });
   }, [navigation, transaction, route]);
   const onChangeMode = useCallback(
-    mode => {
+    (mode: string) => {
       updateTransaction(() =>
         bridge.updateTransaction(transaction, {
           mode,

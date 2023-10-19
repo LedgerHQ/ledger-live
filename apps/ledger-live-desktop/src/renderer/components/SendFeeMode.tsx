@@ -36,7 +36,7 @@ const SendFeeMode = ({ isAdvanceMode, setAdvanceMode }: Props) => {
   const setAdvanced = useCallback(() => setAdvanceMode(true), [setAdvanceMode]);
   const setStandard = useCallback(() => setAdvanceMode(false), [setAdvanceMode]);
   return (
-    <Box horizontal alignItems="center" justifyContent="space-between">
+    <Box data-test-id="send-fee-mode" horizontal alignItems="center" justifyContent="space-between">
       <LabelWithExternalIcon
         onClick={() => {
           openURL(urls.feesMoreInfo);

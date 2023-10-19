@@ -14,7 +14,7 @@ import {
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import addToSwapHistory from "@ledgerhq/live-common/exchange/swap/addToSwapHistory";
 import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
-import { AccountLike, DeviceInfo, SignedOperation } from "@ledgerhq/types-live";
+import { AccountLike, DeviceInfo, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { postSwapAccepted, postSwapCancelled } from "@ledgerhq/live-common/exchange/swap/index";
 import { getEnv } from "@ledgerhq/live-env";
@@ -91,7 +91,7 @@ export function Confirmation({
   const navigation = useNavigation<NavigationProp>();
 
   const onComplete = useCallback(
-    result => {
+    (result: { operation: Operation; swapId: string }) => {
       const { operation, swapId } = result;
       /**
        * If transaction broadcast are disabled, consider the swap as cancelled

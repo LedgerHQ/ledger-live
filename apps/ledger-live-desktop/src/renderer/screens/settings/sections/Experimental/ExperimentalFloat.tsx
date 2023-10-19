@@ -25,7 +25,7 @@ const ExperimentalFloat = ({
   maxValue,
 }: Props) => {
   const constraintValue = useCallback(
-    v => {
+    (v: number) => {
       let value = v;
       if (typeof maxValue === "number" && value > maxValue) value = maxValue;
       if (typeof minValue === "number" && value < minValue) value = minValue;
@@ -37,11 +37,11 @@ const ExperimentalFloat = ({
   const [inputValue, setInputValue] = useState(String(constraintValue(value)));
   useEffect(() => {
     if (isDefault && !enabled) {
-      setInputValue(constraintValue(value));
+      setInputValue(String(constraintValue(value)));
     }
   }, [isDefault, enabled, value, setInputValue, constraintValue]);
   const onInputChange = useCallback(
-    str => {
+    (str: string) => {
       if (!enabled) return;
       const sanitized = str.replace(/[^0-9.]/g, "");
       if (sanitized.length > 0) {
@@ -53,7 +53,7 @@ const ExperimentalFloat = ({
     [name, onChange, constraintValue, enabled],
   );
   const onEnableChange = useCallback(
-    e => {
+    (e: boolean) => {
       setEnabled(!!e);
       if (e) {
         onChange(name, constraintValue(value));

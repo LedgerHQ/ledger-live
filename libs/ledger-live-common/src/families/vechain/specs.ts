@@ -13,36 +13,42 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import deviceAction from "../vechain/speculos-deviceActions";
 import BigNumber from "bignumber.js";
 
+const MIN_VET_TRANSACTION_AMOUNT = 1000000000000000000;
+const MAX_VTHO_FEE_FOR_VTHO_TRANSACTION = 1040000000000000000;
+const MAX_VTHO_FEE_FOR_VET_TRANSACTION = 420000000000000000;
+
+const prepareVeChainApp = async transport => {
+  // enter app vechain
+  await transport.button(SpeculosButton.BOTH);
+  // enable contract data
+  await transport.button(SpeculosButton.RIGHT);
+  await transport.button(SpeculosButton.BOTH);
+  await transport.button(SpeculosButton.BOTH);
+  await transport.button(SpeculosButton.RIGHT);
+  await transport.button(SpeculosButton.BOTH);
+  // enable multi-clause
+  await transport.button(SpeculosButton.RIGHT);
+  await transport.button(SpeculosButton.BOTH);
+  await transport.button(SpeculosButton.RIGHT);
+  await transport.button(SpeculosButton.BOTH);
+  await transport.button(SpeculosButton.RIGHT);
+  await transport.button(SpeculosButton.BOTH);
+};
+
 const vechainTest = {
-  name: "Vechain",
   currency: getCryptoCurrencyById("vechain"),
   appQuery: {
-    model: DeviceModelId.nanoS,
-    appName: "Vechain",
+    model: DeviceModelId.nanoSP,
+    appName: "VeChain",
   },
   allowEmptyAccounts: true,
   testTimeout: 60 * 1000, // 1 minute
   genericDeviceAction: deviceAction.acceptTransaction,
-  onSpeculosDeviceCreated: async ({ transport }) => {
-    // enter app vechain
-    await transport.button(SpeculosButton.BOTH);
-    // enable contract data
-    await transport.button(SpeculosButton.RIGHT);
-    await transport.button(SpeculosButton.BOTH);
-    await transport.button(SpeculosButton.BOTH);
-    await transport.button(SpeculosButton.RIGHT);
-    await transport.button(SpeculosButton.BOTH);
-    // enable multi-clause
-    await transport.button(SpeculosButton.RIGHT);
-    await transport.button(SpeculosButton.BOTH);
-    await transport.button(SpeculosButton.RIGHT);
-    await transport.button(SpeculosButton.BOTH);
-    await transport.button(SpeculosButton.RIGHT);
-    await transport.button(SpeculosButton.BOTH);
-  },
+  onSpeculosDeviceCreated: async ({ transport }) => await prepareVeChainApp(transport),
 };
 
 const vet: AppSpec<Transaction> = {
+  name: "VeChain VET",
   ...vechainTest,
   mutations: [
     {
@@ -55,9 +61,11 @@ const vet: AppSpec<Transaction> = {
         maxSpendable,
       }: TransactionArg<Transaction>): TransactionRes<Transaction> => {
         if (!account.subAccounts?.[0]) throw new Error("no VTHO account");
-        invariant(account.balance.gt(0), "Vechain: VET balance is empty");
-        // 0.21 VTHO is the usual fee for a VET transaction
-        invariant(account.subAccounts[0].balance.gt(0.21), "Vechain: VTHO balance is not enough");
+        invariant(account.balance.gt(MIN_VET_TRANSACTION_AMOUNT), "Vechain: VET balance is empty");
+        invariant(
+          account.subAccounts[0].balance.gt(MAX_VTHO_FEE_FOR_VET_TRANSACTION),
+          "Vechain: VTHO balance is not enough",
+        );
         const sibling = pickSiblings(siblings, 2);
         const recipient = sibling.freshAddress;
         const transaction = bridge.createTransaction(account);
@@ -90,9 +98,11 @@ const vet: AppSpec<Transaction> = {
         maxSpendable,
       }: TransactionArg<Transaction>): TransactionRes<Transaction> => {
         if (!account.subAccounts?.[0]) throw new Error("no VTHO account");
-        invariant(account.balance.gt(0), "Vechain: VET balance is empty");
-        // 0.21 VTHO is the usual fee for a VET transaction
-        invariant(account.subAccounts?.[0].balance.gt(0.21), "Vechain: VTHO balance is not enough");
+        invariant(account.balance.gt(MIN_VET_TRANSACTION_AMOUNT), "Vechain: VET balance is empty");
+        invariant(
+          account.subAccounts?.[0].balance.gt(MAX_VTHO_FEE_FOR_VET_TRANSACTION),
+          "Vechain: VTHO balance is not enough",
+        );
         const sibling = pickSiblings(siblings, 4);
         const recipient = sibling.freshAddress;
         const transaction = bridge.createTransaction(account);
@@ -114,6 +124,7 @@ const vet: AppSpec<Transaction> = {
 };
 
 const vtho: AppSpec<Transaction> = {
+  name: "VeChain VTHO",
   ...vechainTest,
   skipOperationHistory: true,
   mutations: [
@@ -126,15 +137,24 @@ const vtho: AppSpec<Transaction> = {
         bridge,
       }: TransactionArg<Transaction>): TransactionRes<Transaction> => {
         if (!account.subAccounts?.[0]) throw new Error("no VTHO account");
-        // 0.51 VTHO is the usual fee for a VTHO transaction
-        invariant(account.subAccounts?.[0].balance.gt(0.51), "Vechain: VTHO balance is not enough");
+        invariant(
+          account.subAccounts?.[0].balance.gt(MAX_VTHO_FEE_FOR_VTHO_TRANSACTION * 2),
+          "Vechain: VTHO balance is not enough",
+        );
         const sibling = pickSiblings(siblings, 2);
         const recipient = sibling.freshAddress;
+        if (
+          !account.subAccounts ||
+          !account.subAccounts[0] ||
+          !(account.subAccounts[0].type == "TokenAccount")
+        )
+          throw new Error("no VTHO account");
         const tokenAccount = account.subAccounts[0];
         const transaction = bridge.createTransaction(tokenAccount);
-        transaction.subAccountId = account.subAccounts[0].id;
+        transaction.subAccountId = tokenAccount.id;
         const amount = tokenAccount.balance.div(2).integerValue();
-        const updates = [{ amount }, { recipient }, { subAccountId: account.subAccounts[0].id }];
+        const updates = [{ amount }, { recipient }, { subAccountId: tokenAccount.id }];
+
         return {
           transaction,
           updates,
@@ -162,8 +182,10 @@ const vtho: AppSpec<Transaction> = {
         bridge,
       }: TransactionArg<Transaction>): TransactionRes<Transaction> => {
         if (!account.subAccounts?.[0]) throw new Error("no VTHO account");
-        // 0.51 VTHO is the usual fee for a VTHO transaction
-        invariant(account.subAccounts?.[0].balance.gt(0.51), "Vechain: VTHO balance is not enough");
+        invariant(
+          account.subAccounts?.[0].balance.gt(MAX_VTHO_FEE_FOR_VTHO_TRANSACTION),
+          "Vechain: VTHO balance is not enough",
+        );
         const sibling = pickSiblings(siblings, 4);
         const recipient = sibling.freshAddress;
         if (
@@ -172,11 +194,13 @@ const vtho: AppSpec<Transaction> = {
           !(account.subAccounts[0].type == "TokenAccount")
         )
           throw new Error("no VTHO account");
-        const transaction = bridge.createTransaction(account);
+        const tokenAccount = account.subAccounts[0];
+        const transaction = bridge.createTransaction(tokenAccount);
+        transaction.subAccountId = tokenAccount.id;
         transaction.useAllAmount = true;
-        transaction.subAccountId = account.subAccounts[0].id;
-        const amount = account.subAccounts[0].spendableBalance.integerValue();
-        const updates = [{ amount }, { recipient }, { subAccountId: account.subAccounts[0].id }];
+        const amount = tokenAccount.spendableBalance.integerValue();
+
+        const updates = [{ amount }, { recipient }, { subAccountId: tokenAccount.id }];
         return {
           transaction,
           updates,

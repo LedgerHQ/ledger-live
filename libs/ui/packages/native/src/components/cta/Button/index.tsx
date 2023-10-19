@@ -1,7 +1,14 @@
 import React, { useCallback, useState, useMemo } from "react";
 import styled, { useTheme } from "styled-components/native";
 
-import { ActivityIndicator, TouchableOpacity, TouchableOpacityProps, View } from "react-native";
+import {
+  ActivityIndicator,
+  NativeSyntheticEvent,
+  NativeTouchEvent,
+  TouchableOpacity,
+  TouchableOpacityProps,
+  View,
+} from "react-native";
 import { buttonSizeStyle, getButtonColorStyle } from "../../cta/Button/getButtonStyle";
 import { ctaIconSize, ctaTextType } from "../../cta/getCtaStyle";
 import Text from "../../Text";
@@ -194,7 +201,7 @@ export const PromisableButton = (props: ButtonProps): React.ReactElement => {
   const theme = useTheme();
 
   const onPressHandler = useCallback(
-    async (event) => {
+    async (event: NativeSyntheticEvent<NativeTouchEvent>) => {
       if (!onPress) return;
       setSpinnerOn(true);
       try {

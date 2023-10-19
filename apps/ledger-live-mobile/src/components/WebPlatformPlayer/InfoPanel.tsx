@@ -27,7 +27,7 @@ export function InfoPanel({ name, icon, description, url, uri, isOpened, setIsOp
   const onClose = useCallback(() => {
     setIsOpened(false);
   }, [setIsOpened]);
-  const onLinkPress = useCallback(url => {
+  const onLinkPress = useCallback((url: string) => {
     Linking.openURL(url);
   }, []);
   return (

@@ -23,6 +23,7 @@ import OnboardingNewDevice from "../../screens/Onboarding/steps/setupDevice";
 import OnboardingRecoveryPhrase from "../../screens/Onboarding/steps/recoveryPhrase";
 import OnboardingInfoModal from "../OnboardingStepperView/OnboardingInfoModal";
 
+import OnboardingBleDevicePairingFlow from "../../screens/Onboarding/steps/BleDevicePairingFlow";
 import OnboardingPairNew from "../../screens/Onboarding/steps/pairNew";
 import OnboardingImportAccounts from "../../screens/Onboarding/steps/importAccounts";
 import OnboardingPreQuizModal from "../../screens/Onboarding/steps/setupDevice/drawers/OnboardingPreQuizModal";
@@ -144,6 +145,14 @@ export default function OnboardingNavigator() {
       <Stack.Screen
         name={ScreenName.OnboardingDeviceSelection}
         component={OnboardingDeviceSelection}
+        options={{
+          headerShown: true,
+          headerLeft: () => <NavigationHeaderBackButton />,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.OnboardingBleDevicePairingFlow}
+        component={OnboardingBleDevicePairingFlow}
         options={{
           headerShown: true,
           headerLeft: () => <NavigationHeaderBackButton />,

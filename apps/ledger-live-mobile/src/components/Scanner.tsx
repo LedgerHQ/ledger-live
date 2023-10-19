@@ -40,6 +40,7 @@ const Scanner = ({ onResult, liveQrCode, progress, instruction }: Props) => {
   }, [colors, hasPermission, navigation]);
 
   if (!hasPermission) return <View />;
+
   return (
     <ForceTheme selectedPalette="dark">
       <Flex flex={1}>

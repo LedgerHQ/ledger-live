@@ -1,4 +1,5 @@
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import WebView from "react-native-webview";
 
 export type WebviewProps = {
@@ -6,6 +7,7 @@ export type WebviewProps = {
   inputs?: Record<string, string | undefined>;
   onStateChange?: (webviewState: WebviewState) => void;
   allowsBackForwardNavigationGestures?: boolean;
+  customHandlers?: WalletAPICustomHandlers;
 };
 
 export type WebviewState = {

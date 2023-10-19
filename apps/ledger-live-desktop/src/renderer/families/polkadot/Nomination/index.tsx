@@ -176,7 +176,10 @@ const Nomination = ({ account }: { account: PolkadotAccount }) => {
   const withdrawEnabled =
     !electionOpen && hasUnlockedBalance && !hasPendingWithdrawUnbondedOperation;
   const renderNomination = useCallback(
-    ({ nomination, validator }, index) => (
+    (
+      { nomination, validator }: { nomination: PolkadotNomination; validator?: PolkadotValidator },
+      index: number,
+    ) => (
       <Row
         key={index}
         account={account}
@@ -188,7 +191,7 @@ const Nomination = ({ account }: { account: PolkadotAccount }) => {
     [account, onExternalLink],
   );
   const renderShowInactiveNominations = useCallback(
-    collapsed => (
+    (collapsed: boolean) => (
       <Trans
         i18nKey={
           collapsed
@@ -203,11 +206,13 @@ const Nomination = ({ account }: { account: PolkadotAccount }) => {
     [mappedNominations],
   );
   const renderUnlocking = useCallback(
-    (unlocking, index) => <UnlockingRow key={index} account={account} unlocking={unlocking} />,
+    (unlocking: PolkadotUnlocking, index: number) => (
+      <UnlockingRow key={index} account={account} unlocking={unlocking} />
+    ),
     [account],
   );
   const renderShowAllUnlockings = useCallback(
-    collapsed => (
+    (collapsed: boolean) => (
       <Trans
         i18nKey={
           collapsed
@@ -294,6 +299,7 @@ const Nomination = ({ account }: { account: PolkadotAccount }) => {
           <CollapsibleList
             collapsedItems={mappedNominations.collapsed}
             uncollapsedItems={mappedNominations.uncollapsed}
+            // @ts-expect-error renderItem hell
             renderItem={renderNomination}
             renderShowMore={renderShowInactiveNominations}
           >
@@ -446,6 +452,7 @@ const Nomination = ({ account }: { account: PolkadotAccount }) => {
           <CollapsibleList
             uncollapsedItems={mappedUnlockings.uncollapsed}
             collapsedItems={mappedUnlockings.collapsed}
+            // @ts-expect-error renderItem hell
             renderItem={renderUnlocking}
             renderShowMore={renderShowAllUnlockings}
           >

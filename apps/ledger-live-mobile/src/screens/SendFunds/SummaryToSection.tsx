@@ -69,7 +69,7 @@ function SummaryToSection({ transaction, currency }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
 
-  const { enabled: isDomainResolutionEnabled, params } = useFeature("domainInputResolution");
+  const { enabled: isDomainResolutionEnabled, params } = useFeature("domainInputResolution") ?? {};
   const isCurrencySupported = params?.supportedCurrencyIds?.includes(currency.id) || false;
 
   const shouldTryResolvingDomain = useMemo(() => {

@@ -14,15 +14,6 @@ type Props = {
   };
 };
 const Sort = ({ onSortChange, sort }: Props) => {
-  const onSortChangeWrapper = useCallback(
-    item => {
-      if (!item) {
-        return;
-      }
-      onSortChange(item.sort);
-    },
-    [onSortChange],
-  );
   const sortItems = [
     {
       key: "marketcap_desc",
@@ -49,8 +40,18 @@ const Sort = ({ onSortChange, sort }: Props) => {
       label: <Trans i18nKey="manager.applist.sort.name_desc" />,
     },
   ];
+  const onSortChangeWrapper = useCallback(
+    (item: (typeof sortItems)[number]) => {
+      if (!item) {
+        return;
+      }
+      onSortChange(item.sort);
+    },
+    [onSortChange],
+  );
+
   const renderItem = useCallback(
-    ({ item, isActive }) => (
+    ({ item, isActive }: { item: (typeof sortItems)[number]; isActive: boolean }) => (
       <DropDownItem
         alignItems="center"
         justifyContent="flex-start"

@@ -17,7 +17,7 @@ const MemoValueField = ({
 }) => {
   const bridge = getAccountBridge(account);
   const onMemoValueChange = useCallback(
-    memoValue => {
+    (memoValue: string) => {
       onChange(bridge.updateTransaction(transaction, { memoValue }));
     },
     [onChange, transaction, bridge],

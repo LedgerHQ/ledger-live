@@ -117,7 +117,7 @@ const useNotifications = () => {
   }, []);
 
   const setPushNotificationsModalOpenCallback = useCallback(
-    isModalOpen => {
+    (isModalOpen: boolean) => {
       if (!isModalOpen) {
         dispatch(setNotificationsModalType("generic"));
         dispatch(setNotificationsModalOpen(isModalOpen));
@@ -202,7 +202,7 @@ const useNotifications = () => {
   );
 
   const onPushNotificationsRouteChange = useCallback(
-    (newRoute, isOtherModalOpened = false) => {
+    (newRoute: string, isOtherModalOpened = false) => {
       if (pushNotificationsEventTriggered?.timeout) {
         clearTimeout(pushNotificationsEventTriggered?.timeout);
         dispatch(setRatingsModalLocked(false));
@@ -321,7 +321,7 @@ const useNotifications = () => {
   ]);
 
   const handleSetDateOfNextAllowedRequest = useCallback(
-    (delay, additionalParams?: Partial<DataOfUser>) => {
+    (delay?: Duration, additionalParams?: Partial<DataOfUser>) => {
       if (delay !== null && delay !== undefined) {
         const dateOfNextAllowedRequest: Date = add(Date.now(), delay);
         updatePushNotificationsDataOfUserInStateAndStore({

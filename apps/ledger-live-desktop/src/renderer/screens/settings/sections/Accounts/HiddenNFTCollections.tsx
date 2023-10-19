@@ -82,7 +82,7 @@ export default function HiddenNftCollections() {
   const dispatch = useDispatch();
   const [sectionVisible, setSectionVisible] = useState(false);
   const onUnhideCollection = useCallback(
-    collectionId => {
+    (collectionId: string) => {
       dispatch(unhideNftCollection(collectionId));
     },
     [dispatch],
