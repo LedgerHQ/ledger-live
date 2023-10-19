@@ -45,7 +45,7 @@ const Dashboard = ({
   const params = new URLSearchParams(search || "");
   const openFirmwareUpdate = params.get("firmwareUpdate") === "true";
   useEffect(() => {
-    manager.getLatestFirmwareForDevice(deviceInfo).then(setFirmware, setFirmwareError);
+    fetchLatestFirmwareUseCase(deviceInfo).then(setFirmware, setFirmwareError);
   }, [deviceInfo]);
 
   // on disconnect, go back to connect

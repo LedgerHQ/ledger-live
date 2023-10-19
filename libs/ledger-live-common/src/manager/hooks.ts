@@ -5,6 +5,7 @@ import manager from ".";
 import { getProviderId } from "./provider";
 import ManagerAPI from "./api";
 import type { DeviceModelInfo, DeviceInfo, Language } from "@ledgerhq/types-live";
+import fetchLatestFirmwareUseCase from "../device/use-cases/fetchLatestFirmwareUseCase";
 
 async function hasOudatedApps({ deviceInfo, apps }: DeviceModelInfo): Promise<boolean> {
   const provider = getProviderId(deviceInfo);
@@ -41,7 +42,7 @@ export function useManagerBlueDot(dmi: DeviceModelInfo | null | undefined): bool
     }
 
     const { deviceInfo } = dmi;
-    Promise.all([manager.getLatestFirmwareForDevice(deviceInfo), hasOudatedApps(dmi)])
+    Promise.all([fetchLatestFirmwareUseCase(deviceInfo), hasOudatedApps(dmi)])
       .then(([fw, outdatedApp]) => {
         if (cancelled) return;
 

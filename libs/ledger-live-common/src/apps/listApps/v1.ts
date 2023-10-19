@@ -5,7 +5,7 @@ import { Observable, throwError } from "rxjs";
 import { App, AppType, DeviceInfo, idsToLanguage, languageIds } from "@ledgerhq/types-live";
 import { LocalTracer } from "@ledgerhq/logs";
 import type { ListAppsEvent, ListAppsResult } from "../types";
-import manager, { getProviderId } from "../../manager";
+import { getProviderId } from "../../manager";
 import staxFetchImageSize from "../../hw/staxFetchImageSize";
 import {
   listCryptoCurrencies,
@@ -17,6 +17,7 @@ import { getEnv } from "@ledgerhq/live-env";
 
 import { calculateDependencies, polyfillApp, polyfillApplication } from "../polyfill";
 import getDeviceName from "../../hw/getDeviceName";
+import fetchLatestFirmwareUseCase from "../../device/use-cases/fetchLatestFirmwareUseCase";
 
 const appsThatKeepChangingHashes = ["Fido U2F", "Security Key"];
 
@@ -86,7 +87,7 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
         }),
       );
 
-      const latestFirmwareForDeviceP = manager.getLatestFirmwareForDevice(deviceInfo);
+      const latestFirmwareForDeviceP = fetchLatestFirmwareUseCase(deviceInfo);
 
       const firmwareP = Promise.all([firmwareDataP, latestFirmwareForDeviceP]).then(
         ([firmwareData, updateAvailable]) => ({

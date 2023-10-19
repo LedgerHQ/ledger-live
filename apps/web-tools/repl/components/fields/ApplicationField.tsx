@@ -32,7 +32,7 @@ const ApplicationField = ({ value, onChange, dependencies: { deviceInfo } }: Pro
       }),
     );
 
-    const latestFirmwareForDeviceP = manager.getLatestFirmwareForDevice(deviceInfo);
+    const latestFirmwareForDeviceP = fetchLatestFirmwareUseCase(deviceInfo);
 
     Promise.all([firmwareDataP, latestFirmwareForDeviceP]).then(
       ([firmwareData, updateAvailable]) => ({

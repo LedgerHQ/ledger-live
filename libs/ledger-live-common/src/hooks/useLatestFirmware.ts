@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
-import manager from "../manager/index";
+import fetchLatestFirmwareUseCase from "../device/use-cases/fetchLatestFirmwareUseCase";
 
 export const useLatestFirmware: (
   _?: DeviceInfo | null,
@@ -10,7 +10,7 @@ export const useLatestFirmware: (
   useEffect(() => {
     const getLatestFirmwareForDevice = async () => {
       if (deviceInfo) {
-        const fw = await manager.getLatestFirmwareForDevice(deviceInfo);
+        const fw = await fetchLatestFirmwareUseCase(deviceInfo);
         setLatestFirmware(fw);
       }
     };

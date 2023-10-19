@@ -6,7 +6,7 @@ import { withDevice } from "../../hw/deviceAccess";
 import { from, Observable, of } from "rxjs";
 import { switchMap, catchError } from "rxjs/operators";
 import { SharedTaskEvent, sharedLogicTaskWrapper } from "./core";
-import manager from "../../manager";
+import fetchLatestFirmwareUseCase from "../../device/use-cases/fetchLatestFirmwareUseCase";
 
 export type GetLatestFirmwareTaskArgs = {
   deviceId: DeviceId;
@@ -33,7 +33,7 @@ function internalGetLatestFirmwareTask({
     return withDevice(deviceId)(transport =>
       quitApp(transport).pipe(
         switchMap(() => {
-          return from(manager.getLatestFirmwareForDevice(deviceInfo));
+          return from(fetchLatestFirmwareUseCase(deviceInfo));
         }),
         switchMap(firmwareUpdateContext => {
           if (firmwareUpdateContext) {

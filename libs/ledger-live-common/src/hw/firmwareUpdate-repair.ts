@@ -15,6 +15,7 @@ import {
   followDeviceUpdate,
 } from "../deviceWordings";
 import { getDeviceRunningMode } from "./getDeviceRunningMode";
+import fetchMcusUseCase from "../device/use-cases/managerApi/fetchMcusUseCase";
 
 const wait2s = of({
   type: "wait",
@@ -55,7 +56,7 @@ const repair = (
   progress: number;
 }> => {
   log("hw", "firmwareUpdate-repair");
-  const mcusPromise = ManagerAPI.getMcus();
+  const mcusPromise = fetchMcusUseCase();
   const withDeviceInfo = withDevicePolling(deviceId)(
     transport => from(getDeviceInfo(transport)),
     () => true, // accept all errors. we're waiting forever condition that make getDeviceInfo work
