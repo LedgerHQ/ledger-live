@@ -6450,7 +6450,7 @@
           "body": "Convert crypto to crypto securely"
         },
         "receive": {
-          "title": "Deposit",
+          "title": "Receive",
           "body": "Receive crypto in your wallet"
         }
       }
