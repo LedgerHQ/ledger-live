@@ -1,5 +1,19 @@
 # ledger-live-desktop
 
+## 2.71.0-nightly.8
+
+### Patch Changes
+
+- [#5025](https://github.com/LedgerHQ/ledger-live/pull/5025) [`68d9962468`](https://github.com/LedgerHQ/ledger-live/commit/68d996246855ef903e06b25864ee99cef5a35d93) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - display appropriate device image in change language prompt drawer
+
+- [#5004](https://github.com/LedgerHQ/ledger-live/pull/5004) [`fea037ca91`](https://github.com/LedgerHQ/ledger-live/commit/fea037ca910f3e4d68c54906fc9e28c73cf5fc5a) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Display troubleshooting usb drawer instead of locked device drawer if stax is unplugged during genuine check
+
+- Updated dependencies [[`38ea4700ff`](https://github.com/LedgerHQ/ledger-live/commit/38ea4700ff7ccf9c663c03b6deb21ac7c7a6fd28)]:
+  - @ledgerhq/live-common@33.1.0-nightly.5
+  - @ledgerhq/coin-evm@0.8.1-nightly.4
+  - @ledgerhq/coin-framework@0.7.1-nightly.2
+  - @ledgerhq/domain-service@1.1.13-nightly.3
+
 ## 2.71.0-nightly.7
 
 ### Minor Changes

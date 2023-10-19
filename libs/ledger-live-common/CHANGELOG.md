@@ -1,5 +1,20 @@
 # @ledgerhq/live-common
 
+## 33.1.0-nightly.5
+
+### Patch Changes
+
+- [#5114](https://github.com/LedgerHQ/ledger-live/pull/5114) [`38ea4700ff`](https://github.com/LedgerHQ/ledger-live/commit/38ea4700ff7ccf9c663c03b6deb21ac7c7a6fd28) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Correct hedera estimated fees to allow max spendable to work as intended
+
+- Updated dependencies [[`54b1d185c9`](https://github.com/LedgerHQ/ledger-live/commit/54b1d185c9df5ae84dc7e85d58249c06550df5f1)]:
+  - @ledgerhq/cryptoassets@11.1.0-nightly.1
+  - @ledgerhq/coin-algorand@0.3.4-nightly.2
+  - @ledgerhq/coin-evm@0.8.1-nightly.4
+  - @ledgerhq/coin-framework@0.7.1-nightly.2
+  - @ledgerhq/coin-polkadot@0.4.4-nightly.2
+  - @ledgerhq/domain-service@1.1.13-nightly.3
+  - @ledgerhq/hw-app-eth@6.34.8-nightly.3
+
 ## 33.1.0-nightly.4
 
 ### Minor Changes

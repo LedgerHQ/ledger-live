@@ -1,5 +1,17 @@
 # live-mobile
 
+## 3.34.0-nightly.7
+
+### Patch Changes
+
+- [#5103](https://github.com/LedgerHQ/ledger-live/pull/5103) [`76d57f7f0c`](https://github.com/LedgerHQ/ledger-live/commit/76d57f7f0ce2ef36498ec72e077897785f04c966) Thanks [@lvndry](https://github.com/lvndry)! - Align NotEnoughGas error in LLD and LLM
+
+- Updated dependencies [[`38ea4700ff`](https://github.com/LedgerHQ/ledger-live/commit/38ea4700ff7ccf9c663c03b6deb21ac7c7a6fd28)]:
+  - @ledgerhq/live-common@33.1.0-nightly.5
+  - @ledgerhq/coin-evm@0.8.1-nightly.4
+  - @ledgerhq/coin-framework@0.7.1-nightly.2
+  - @ledgerhq/domain-service@1.1.13-nightly.3
+
 ## 3.34.0-nightly.6
 
 ### Minor Changes
