@@ -1,5 +1,4 @@
 import { ipcRenderer, shell } from "electron";
-import * as remote from "@electron/remote";
 import { useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { log } from "@ledgerhq/logs";
@@ -21,8 +20,7 @@ export async function killInternalProcess() {
   return delay(1000);
 }
 function reload() {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  require("@electron/remote").getCurrentWindow().webContents.reload();
+  ipcRenderer.send("app-reload");
 }
 export async function hardReset() {
   log("clear-cache", "clearBridgeCache()");
@@ -57,5 +55,5 @@ export function useSoftReset() {
 }
 export async function openUserDataFolderAndQuit() {
   shell.showItemInFolder(resolveUserDataDirectory());
-  remote.app.quit();
+  ipcRenderer.send("app-quit");
 }
