@@ -106,9 +106,7 @@ const vet: AppSpec<Transaction> = {
         const sibling = pickSiblings(siblings, 4);
         const recipient = sibling.freshAddress;
         const transaction = bridge.createTransaction(account);
-        transaction.useAllAmount = true;
-        const amount = maxSpendable.integerValue();
-        const updates = [{ amount }, { recipient }];
+        const updates = [{ useAllAmount: true }, { recipient }];
         return {
           transaction,
           updates,
@@ -151,7 +149,6 @@ const vtho: AppSpec<Transaction> = {
           throw new Error("no VTHO account");
         const tokenAccount = account.subAccounts[0];
         const transaction = bridge.createTransaction(tokenAccount);
-        transaction.subAccountId = tokenAccount.id;
         const amount = tokenAccount.balance.div(2).integerValue();
         const updates = [{ amount }, { recipient }, { subAccountId: tokenAccount.id }];
 
@@ -194,13 +191,12 @@ const vtho: AppSpec<Transaction> = {
           !(account.subAccounts[0].type == "TokenAccount")
         )
           throw new Error("no VTHO account");
-        const tokenAccount = account.subAccounts[0];
-        const transaction = bridge.createTransaction(tokenAccount);
-        transaction.subAccountId = tokenAccount.id;
-        transaction.useAllAmount = true;
-        const amount = tokenAccount.spendableBalance.integerValue();
-
-        const updates = [{ amount }, { recipient }, { subAccountId: tokenAccount.id }];
+        const transaction = bridge.createTransaction(account);
+        const updates = [
+          { useAllAmount: true },
+          { recipient },
+          { subAccountId: account.subAccounts[0].id },
+        ];
         return {
           transaction,
           updates,
