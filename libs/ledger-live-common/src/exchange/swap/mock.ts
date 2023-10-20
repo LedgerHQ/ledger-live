@@ -29,8 +29,7 @@ export const mockGetExchangeRates = async (
   const minAmountFrom = new BigNumber(0.0001);
   const maxAmountFrom = new BigNumber(1000);
 
-  // eslint-disable-next-line no-constant-condition
-  if (null === undefined) {
+  if (amountFrom.lte(minAmountFrom)) {
     throw new SwapExchangeRateAmountTooLow(undefined, {
       minAmountFromFormatted: formatCurrencyUnit(
         unitFrom,

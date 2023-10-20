@@ -3,8 +3,12 @@ import type { Unit } from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";
 import { getAccountCurrency, getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
-import { SwapExchangeRateAmountTooHigh, SwapExchangeRateAmountTooLow } from "../../errors";
-import { getSwapAPIBaseURL, getSwapAPIError } from "./";
+import {
+  SwapExchangeRateAmountTooHigh,
+  SwapExchangeRateAmountTooLow,
+  SwapExchangeRateAmountTooLowOrTooHigh,
+} from "../../errors";
+import { getProviderConfig, getSwapAPIBaseURL, getSwapAPIError } from "./";
 import { mockGetExchangeRates } from "./mock";
 import type { CustomMinOrMaxError, GetExchangeRates } from "./types";
 import { isIntegrationTestEnv } from "./utils/isIntegrationTestEnv";
@@ -60,8 +64,7 @@ const getExchangeRates: GetExchangeRates = async ({
       expirationTime,
     } = responseData;
 
-    const error = null; // inferError(apiAmount, unitFrom, responseData);
-
+    const error = inferError(apiAmount, unitFrom, responseData);
     if (error) {
       return {
         provider,
@@ -118,7 +121,7 @@ const getExchangeRates: GetExchangeRates = async ({
   return rates;
 };
 
-export const inferError = (
+const inferError = (
   apiAmount: BigNumber,
   unitFrom: Unit,
   responseData: {
@@ -132,7 +135,16 @@ export const inferError = (
   },
 ): Error | CustomMinOrMaxError | undefined => {
   const tenPowMagnitude = new BigNumber(10).pow(unitFrom.magnitude);
-  const { amountTo, minAmountFrom, maxAmountFrom, errorCode, errorMessage } = responseData;
+  const { amountTo, minAmountFrom, maxAmountFrom, errorCode, errorMessage, provider, status } =
+    responseData;
+  const isDex = getProviderConfig(provider).type === "DEX";
+
+  // DEX quotes are out of limits error. We do not know if it is a low or high limit, neither the amount.
+  if ((!minAmountFrom || !maxAmountFrom) && status === "error" && errorCode !== 300 && isDex) {
+    return new SwapExchangeRateAmountTooLowOrTooHigh(undefined, {
+      message: "",
+    });
+  }
 
   if (!amountTo) {
     // We are in an error case regardless of api version.
@@ -143,9 +155,11 @@ export const inferError = (
     // For out of range errors we will have a min/max pairing
     const hasAmountLimit = minAmountFrom || maxAmountFrom;
     if (hasAmountLimit) {
-      const isTooSmall = minAmountFrom ? new BigNumber(apiAmount).lte(0) : false;
+      const isTooSmall = minAmountFrom ? new BigNumber(apiAmount).lte(minAmountFrom) : false;
 
-      const MinOrMaxError = (__: any, _: any) => {}; // isTooSmall ? SwapExchangeRateAmountTooLow : SwapExchangeRateAmountTooHigh;
+      const MinOrMaxError = isTooSmall
+        ? SwapExchangeRateAmountTooLow
+        : SwapExchangeRateAmountTooHigh;
 
       const key: string = isTooSmall ? "minAmountFromFormatted" : "maxAmountFromFormatted";
 
