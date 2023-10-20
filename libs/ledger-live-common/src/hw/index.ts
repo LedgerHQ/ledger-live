@@ -6,7 +6,7 @@ import Transport from "@ledgerhq/hw-transport";
 import { TraceContext, trace } from "@ledgerhq/logs";
 import { CantOpenDevice } from "@ledgerhq/errors";
 
-const LOG_TYPE = "hw";
+export const LOG_TYPE = "hw";
 
 export type DeviceEvent = {
   type: "add" | "remove";

@@ -1,9 +1,14 @@
 import { TestScheduler } from "rxjs/testing";
 import installApp from "./installApp";
-import { App } from "@ledgerhq/types-live";
-import Transport from "@ledgerhq/hw-transport";
 import ManagerAPI from "../manager/api";
 import { defer } from "rxjs";
+import { anAppBuilder } from "../mock/fixtures/anApp";
+import { aTransportBuilder } from "@ledgerhq/hw-transport-mocker";
+import {
+  LockedDeviceError,
+  ManagerDeviceLockedError,
+  UnresponsiveDeviceError,
+} from "@ledgerhq/errors";
 
 // Mocking ManagerAPI
 jest.mock("../manager/api", () => {
@@ -31,7 +36,7 @@ describe("installApp", () => {
       let count = 0;
       const fakeEvent = {
         type: "bulk-progress",
-        progress: 80,
+        progress: 0.8,
       };
 
       // The first time an error is thrown. The 2nd time a correct event is emitted.
@@ -50,7 +55,7 @@ describe("installApp", () => {
       );
 
       // The `transport` and `app` can be fake as the ManagerAPI.install is mocked
-      const installObservable = installApp({} as Transport, "target-test", {} as App, {
+      const installObservable = installApp(aTransportBuilder(), "target-test", anAppBuilder(), {
         retryDelayMs: 500,
         retryLimit: 1,
       });
@@ -58,7 +63,7 @@ describe("installApp", () => {
       const expectedResult = "- 499ms a";
       expectObservable(installObservable).toBe(expectedResult, {
         a: {
-          progress: 80,
+          progress: 0.8,
         },
       });
     });
@@ -71,7 +76,7 @@ describe("installApp", () => {
       let count = 0;
       const fakeEvent = {
         type: "bulk-progress",
-        progress: 80,
+        progress: 0.8,
       };
 
       // The first time an error is thrown. The 2nd time a correct event is emitted.
@@ -92,7 +97,7 @@ describe("installApp", () => {
       );
 
       // The `transport` and `app` can be fake as the ManagerAPI.install is mocked
-      const installObservable = installApp({} as Transport, "target-test", {} as App, {
+      const installObservable = installApp(aTransportBuilder(), "target-test", anAppBuilder(), {
         retryDelayMs: 500,
         retryLimit,
       });
@@ -100,5 +105,48 @@ describe("installApp", () => {
       const expectedResult = "- 499ms - 499ms - 499ms #";
       expectObservable(installObservable).toBe(expectedResult);
     });
+  });
+
+  test("On a locked device error, it should not retry and throw directly the error", () => {
+    const lockedDeviceErrors = [
+      new LockedDeviceError(),
+      new ManagerDeviceLockedError(),
+      new UnresponsiveDeviceError(),
+    ];
+
+    for (const error of lockedDeviceErrors) {
+      testScheduler.run(({ cold, expectObservable }) => {
+        let count = 0;
+        const fakeEvent = {
+          type: "bulk-progress",
+          progress: 0.8,
+        };
+
+        // The first time an error is thrown. The 2nd time a correct event is emitted.
+        mockManagerApiInstall.mockReturnValueOnce(
+          defer(() => {
+            if (count > 0) {
+              return cold("a", {
+                a: fakeEvent,
+              });
+            }
+
+            count += 1;
+            // Throws an error
+            return cold("#", undefined, error);
+          }),
+        );
+
+        // The `transport` and `app` can be fake as the ManagerAPI.install is mocked
+        const installObservable = installApp(aTransportBuilder(), "target-test", anAppBuilder(), {
+          retryDelayMs: 500,
+          retryLimit: 1,
+        });
+
+        // It emits the error without any retry
+        const expectedResult = "#";
+        expectObservable(installObservable).toBe(expectedResult, undefined, error);
+      });
+    }
   });
 });
