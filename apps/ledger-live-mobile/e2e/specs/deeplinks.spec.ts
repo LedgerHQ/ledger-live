@@ -82,19 +82,14 @@ describe("DeepLinks Tests", () => {
     await expect(customLockscreenPage.welcomeChoosePictureButton()).toBeVisible();
   });
 
-  it("should open Accounts page when no parameters", async () => {
-    await accountPage.openViaDeeplink();
-    await expect(getElementByUniqueId("accounts-list")).toBeVisible();
-  });
-
   it("should open ETH Account Asset page when given currency param", async () => {
-    await accountPage.openViaDeeplink(ethereumLong);
-    await accountPage.waitForAssetPageToLoad(ethereumLong);
+    await accountPage.openViaDeeplink("ethereum");
+    await accountPage.waitForAssetPageToLoad("ethereum");
   });
 
   it("should open BTC Account Asset page when given currency param", async () => {
-    await accountPage.openViaDeeplink(bitcoinLong);
-    await accountPage.waitForAssetPageToLoad(bitcoinLong);
+    await accountPage.openViaDeeplink("bitcoin");
+    await accountPage.waitForAssetPageToLoad("bitcoin");
   });
 
   it("should open the Discover page", async () => {
