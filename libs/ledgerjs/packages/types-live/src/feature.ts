@@ -116,6 +116,7 @@ export type CurrencyFeatures = {
   currencyBase: DefaultFeature;
   currencyBaseGoerli: DefaultFeature;
   currencyKlaytn: DefaultFeature;
+  currencyVechain: DefaultFeature;
 };
 
 /**
