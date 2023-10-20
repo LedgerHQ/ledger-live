@@ -1,15 +1,20 @@
-import BigNumber from "bignumber.js";
+import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 import {
   encodeERC1155OperationId,
   encodeERC721OperationId,
 } from "@ledgerhq/coin-framework/nft/nftOperationId";
-import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
-import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
+import BigNumber from "bignumber.js";
 import buildOptimisticOperation from "../../buildOptimisticOperation";
-import { Transaction as EvmTransaction } from "../../types";
 import { getEstimatedFees } from "../../logic";
+import { Transaction as EvmTransaction } from "../../types";
+import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
+import {
+  erc1155TokenTransactionRaw,
+  erc20TokenTransactionRaw,
+  erc721TokenTransactionRaw,
+} from "../fixtures/transaction.fixtures";
 
 const currency = getCryptoCurrencyById("ethereum");
 const tokenCurrency = getTokenById("ethereum/erc20/usd__coin");
@@ -26,68 +31,6 @@ const account = makeAccount(
   currency,
   [tokenAccount],
 );
-
-const erc20TokenTransactionRaw = {
-  amount: "0",
-  chainId: 1,
-  data: "a9059cbb00000000000000000000000059569e96d0e3d9728dc07bf5c1443809e6f237fd0000000000000000000000000000000000000000000000000c06701668d322ac",
-  family: "evm",
-  feesStrategy: "custom",
-  gasLimit: "60000",
-  maxFeePerGas: "100",
-  maxPriorityFeePerGas: "100",
-  mode: "send",
-  nonce: 0,
-  recipient: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-  subAccountId:
-    "js:2:ethereum:0x055C1e159E345cB4197e3844a86A61E0a801d856:+ethereum%2Ferc20%2Fusd__coin",
-  type: 2,
-  useAllAmount: false,
-};
-
-const erc721TokenTransactionRaw = {
-  amount: "0",
-  chainId: 1,
-  data: "b88d4fde0000000000000000000000006cbcd73cd8e8a42844662f0a0e76d7f79afd933d00000000000000000000000051df0af74a0dbae16cb845b46daf2a35cb1d4168000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000000",
-  family: "evm",
-  feesStrategy: "custom",
-  gasLimit: "60000",
-  maxFeePerGas: "100",
-  maxPriorityFeePerGas: "100",
-  mode: "erc721",
-  nft: {
-    collectionName: "BAYC",
-    contract: "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
-    quantity: "1",
-    tokenId: "1",
-  },
-  nonce: 0,
-  recipient: "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
-  type: 2,
-  useAllAmount: false,
-};
-
-const erc1155TokenTransactionRaw = {
-  amount: "0",
-  chainId: 1,
-  data: "b88d4fde0000000000000000000000006cbcd73cd8e8a42844662f0a0e76d7f79afd933d00000000000000000000000051df0af74a0dbae16cb845b46daf2a35cb1d4168000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000000",
-  family: "evm",
-  feesStrategy: "custom",
-  gasLimit: "60000",
-  maxFeePerGas: "100",
-  maxPriorityFeePerGas: "100",
-  mode: "erc1155",
-  nft: {
-    collectionName: "BAYC",
-    contract: "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
-    quantity: "10",
-    tokenId: "1",
-  },
-  nonce: 0,
-  recipient: "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
-  type: 2,
-  useAllAmount: false,
-};
 
 describe("EVM Family", () => {
   describe("buildOptimisticOperation.ts", () => {
@@ -368,7 +311,7 @@ describe("EVM Family", () => {
           useAllAmount: false,
           recipient: "0x51DF0aF74a0DBae16cB845B46dAF2a35cB1D4168", // michel.eth
           data: Buffer.from(
-            "b88d4fde0000000000000000000000006cbcd73cd8e8a42844662f0a0e76d7f79afd933d00000000000000000000000051df0af74a0dbae16cb845b46daf2a35cb1d4168000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000000",
+            "f242432a0000000000000000000000006cbcd73cd8e8a42844662f0a0e76d7f79afd933d00000000000000000000000051df0af74a0dbae16cb845b46daf2a35cb1d41680000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000a00000000000000000000000000000000000000000000000000000000000000a00000000000000000000000000000000000000000000000000000000000000000",
             "hex",
           ),
           feesStrategy: "custom",
