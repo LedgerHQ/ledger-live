@@ -201,11 +201,11 @@ export function useDeepLinkHandler() {
 
           if (url === "delegate" && currency !== "tezos") return;
 
-          const c = findCryptoCurrencyByKeyword(
+          const foundCurrency = findCryptoCurrencyByKeyword(
             typeof currency === "string" ? currency.toUpperCase() : "",
           ) as Currency;
 
-          if (!currency || !c || c.type === "FiatCurrency") {
+          if (!currency || !foundCurrency || foundCurrency.type === "FiatCurrency") {
             dispatch(
               openModal(modal, {
                 recipient,
@@ -213,12 +213,12 @@ export function useDeepLinkHandler() {
             );
             return;
           }
-          const found = getAccountsOrSubAccountsByCurrency(c, accounts || []);
+          const found = getAccountsOrSubAccountsByCurrency(foundCurrency, accounts || []);
 
           if (!found.length) {
             dispatch(
               openModal("MODAL_ADD_ACCOUNTS", {
-                currency: c,
+                currency: foundCurrency,
               }),
             );
             return;
@@ -232,7 +232,7 @@ export function useDeepLinkHandler() {
                 recipient,
                 amount:
                   amount && typeof amount === "string"
-                    ? parseCurrencyUnit(c.units[0], amount)
+                    ? parseCurrencyUnit(foundCurrency.units[0], amount)
                     : undefined,
               }),
             );
@@ -244,7 +244,7 @@ export function useDeepLinkHandler() {
                 recipient,
                 amount:
                   amount && typeof amount === "string"
-                    ? parseCurrencyUnit(c.units[0], amount)
+                    ? parseCurrencyUnit(foundCurrency.units[0], amount)
                     : undefined,
               }),
             );
