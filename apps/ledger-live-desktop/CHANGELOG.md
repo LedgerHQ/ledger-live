@@ -1,5 +1,13 @@
 # ledger-live-desktop
 
+## 2.71.0-nightly.9
+
+### Patch Changes
+
+- [#4920](https://github.com/LedgerHQ/ledger-live/pull/4920) [`72a9dbc795`](https://github.com/LedgerHQ/ledger-live/commit/72a9dbc795903797ef49fd1207b78742d3499366) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - NFTs were not loaded in the gallery when displayed in list view
+
+- [#4970](https://github.com/LedgerHQ/ledger-live/pull/4970) [`57510072ff`](https://github.com/LedgerHQ/ledger-live/commit/57510072ff4b39b13be6cd3e6e3af9db0b7e5b71) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Hide tokens feature doesnt seem to work with some tokens
+
 ## 2.71.0-nightly.8
 
 ### Patch Changes

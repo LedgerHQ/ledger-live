@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.34.0-nightly.8
+
+### Patch Changes
+
+- [#5119](https://github.com/LedgerHQ/ledger-live/pull/5119) [`2691a1419d`](https://github.com/LedgerHQ/ledger-live/commit/2691a1419de5ea299d72eeb973ad3792898850d3) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix success event on last step in Deposit flow
+
 ## 3.34.0-nightly.7
 
 ### Patch Changes
