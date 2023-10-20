@@ -1,6 +1,9 @@
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { createAction } from "redux-actions";
+import { Data as CompleteExchangeData } from "~/renderer/modals/Platform/Exchange/CompleteExchange/Drawer";
+import { ExchangeType } from "@ledgerhq/live-common/wallet-api/react";
+
 export const openInformationCenter = createAction(
   "INFORMATION_CENTER_OPEN",
   (tabId: string | undefined) => ({
@@ -20,6 +23,26 @@ export const openPlatformAppInfoDrawer = createAction(
     type: "DAPP_INFO",
     title: "platform.app.informations.title",
     manifest,
+  }),
+);
+export const openExchangeDrawer = createAction(
+  "EXCHANGE_APP_DRAWER_OPEN",
+  ({
+    type,
+    ...data
+  }:
+    | {
+        type: "EXCHANGE_START";
+        exchangeType: ExchangeType;
+        onResult: (nonce: string) => void;
+        onCancel: (error: Error) => void;
+      }
+    | ({
+        type: "EXCHANGE_COMPLETE";
+      } & CompleteExchangeData)) => ({
+    type,
+    title: "swap2.exchangeDrawer.title",
+    data,
   }),
 );
 export const openPlatformAppDisclaimerDrawer = createAction(
