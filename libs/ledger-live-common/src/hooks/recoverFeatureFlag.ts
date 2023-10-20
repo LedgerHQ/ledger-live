@@ -133,12 +133,18 @@ export function useCustomPath(
   servicesConfig: Feature_ProtectServicesDesktop | Feature_ProtectServicesMobile | null,
   page?: string,
   source?: string,
+  deeplinkCampaign?: string,
 ): string | undefined {
-  const uri = usePostOnboardingURI(servicesConfig);
-  const [basicUri] = uri ? uri.split("?") : [];
-  const search = `?${page ? `redirectTo=${page}` : ""}${page && source ? "&" : ""}${
-    source ? `source=${source}` : ""
-  }`;
+  const modelUri = usePostOnboardingURI(servicesConfig);
+  const [basicUri] = modelUri ? modelUri.split("?") : [];
+  const uri = new URL(basicUri);
 
-  return usePath(servicesConfig, basicUri + search);
+  if (page) uri.searchParams.append("redirectTo", page);
+  if (source) uri.searchParams.append("source", source);
+  if (source && deeplinkCampaign) {
+    uri.searchParams.append("ajs_recover_source", source);
+    uri.searchParams.append("ajs_recover_campaign", deeplinkCampaign);
+  }
+
+  return usePath(servicesConfig, uri.toString()) ?? undefined;
 }
