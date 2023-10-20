@@ -136,6 +136,22 @@ export function useDeepLinkHandler() {
           navigate("/accounts");
           break;
         }
+        case "add-account": {
+          const { currency } = query;
+
+          const foundCurrency = findCryptoCurrencyByKeyword(
+            typeof currency === "string" ? currency.toUpperCase() : "",
+          ) as Currency;
+
+          if (foundCurrency.type === "FiatCurrency") return;
+
+          dispatch(
+            openModal("MODAL_ADD_ACCOUNTS", {
+              currency: foundCurrency,
+            }),
+          );
+          break;
+        }
         case "buy":
           navigate("/exchange", undefined, search);
           break;
