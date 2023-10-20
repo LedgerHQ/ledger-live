@@ -17,6 +17,10 @@ const defaultConfig = {
         lcd: "https://desmos-api.ibs.team",
         minGasPrice: 0.0025,
       },
+      dydx: {
+        lcd: "https://dydx-testnet-archive.allthatnode.com:1317",
+        minGasPrice: 0.0025,
+      },
       nyx: {
         lcd: "https://api.nyx.nodes.guru",
         minGasPrice: 0,

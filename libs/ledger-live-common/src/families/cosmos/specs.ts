@@ -485,6 +485,16 @@ const desmos = {
   }),
 };
 
+const dydxMinimalTransactionAmount = new BigNumber(500);
+const dydx = {
+  ...generateGenericCosmosTest("desmos", false, {
+    minViableAmount: dydxMinimalTransactionAmount,
+    mutations: cosmosLikeMutations(dydxMinimalTransactionAmount),
+    testTimeout: 8 * 60 * 1000,
+    skipOperationHistory: true,
+  }),
+};
+
 const umeeMinimalTransactionAmount = new BigNumber(15000);
 const umee = {
   ...generateGenericCosmosTest("umee", false, {
@@ -585,6 +595,7 @@ export default {
   cosmos,
   osmosis,
   desmos,
+  dydx,
   umee,
   persistence,
   quicksilver,
