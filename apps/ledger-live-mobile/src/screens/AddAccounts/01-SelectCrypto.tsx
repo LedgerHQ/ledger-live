@@ -173,16 +173,22 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   );
 
   const cryptoCurrencies = useMemo(() => {
-    const currencies = [...listSupportedCurrencies(), ...listSupportedTokens()].filter(
-      ({ id }) => filterCurrencyIds.length <= 0 || filterCurrencyIds.includes(id),
-    );
+    const supportedCurrenciesAndTokens: CryptoOrTokenCurrency[] = [
+      ...listSupportedCurrencies(),
+      ...listSupportedTokens(),
+    ].filter(({ id }) => filterCurrencyIds.length <= 0 || filterCurrencyIds.includes(id));
+
     const deactivatedCurrencies = mock
-      ? []
+      ? [] // mock mode: all currencies are available for e2e tests
       : Object.entries(featureFlaggedCurrencies)
           .filter(([, feature]) => !feature?.enabled)
-          .map(([name]) => name);
+          .map(([id]) => id);
 
-    const currenciesFiltered = currencies.filter(c => !deactivatedCurrencies.includes(c.id));
+    const currenciesFiltered = supportedCurrenciesAndTokens.filter(
+      c =>
+        (c.type === "CryptoCurrency" && !deactivatedCurrencies.includes(c.id)) ||
+        (c.type === "TokenCurrency" && !deactivatedCurrencies.includes(c.parentCurrency.id)),
+    );
 
     if (!devMode) {
       return currenciesFiltered.filter(c => c.type !== "CryptoCurrency" || !c.isTestnetFor);
