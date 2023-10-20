@@ -27,7 +27,8 @@ const Disclaimer = ({ firmware, onContinue, t }: Props) => (
       {firmware && firmware.osu ? (
         <div style={{ overflow: "scroll", flex: 1 }}>
           <Notes>
-            <Markdown>{firmware.osu.notes}</Markdown>
+            {/*  */}
+            <Markdown>{firmware.osu.notes as string}</Markdown>
           </Notes>
         </div>
       ) : null}

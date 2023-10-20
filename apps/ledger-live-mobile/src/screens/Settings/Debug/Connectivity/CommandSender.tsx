@@ -40,7 +40,7 @@ const CommandSender = ({ route }: Props) => {
   const [running, setRunning] = useState<boolean>(false);
 
   const onCommandSend = useCallback(
-    id => {
+    (id: keyof typeof commandsById) => {
       const { deviceId } = params;
       if (!deviceId) return;
 

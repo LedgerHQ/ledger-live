@@ -60,6 +60,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const umee = useFeature("currencyUmee");
   const desmos = useFeature("currencyDesmos");
   const onomy = useFeature("currencyOnomy");
+  const seiNetwork = useFeature("currencySeiNetwork");
   const quicksilver = useFeature("currencyQuicksilver");
   const persistence = useFeature("currencyPersistence");
   const avaxCChain = useFeature("currencyAvalancheCChain");
@@ -97,6 +98,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       desmos,
       secret_network: secretNetwork,
       onomy,
+      sei_network: seiNetwork,
       quicksilver,
       persistence,
       avalanche_c_chain: avaxCChain,
@@ -133,6 +135,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       desmos,
       secretNetwork,
       onomy,
+      seiNetwork,
       quicksilver,
       persistence,
       avaxCChain,

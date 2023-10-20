@@ -1,4 +1,7 @@
 {
+  "buyCurrency": {
+    "buyCTA": "Buy {{ currencyNameOrTicker }}"
+  },
   "common": {
     "cancel": "Cancel",
     "apply": "Apply",
@@ -86,7 +89,6 @@
     },
     "seeMore": "See more",
     "moreInfo": "More info",
-    "buyEth": "Buy Ethereum",
     "popular": "popular",
     "getSupport": "Get support",
     "comingSoon": "Coming soon",
@@ -462,8 +464,8 @@
       "description": "Try reinstalling the app from the Manager"
     },
     "NotEnoughGas": {
-      "title": "Insufficient ETH for network fee",
-      "description": "Please send some ETH to your account to pay for ERC20 token transactions."
+      "title": "The parent account balance is insufficient for network fees",
+      "description": "Please send some coins to your account to pay for token transactions."
     },
     "NotEnoughGasSwap": {
       "title": "You need {{fees}} {{ticker}} for network fees to swap as you are on {{cryptoName}} network. <link0>Buy {{ticker}}</link0>"
@@ -1900,14 +1902,15 @@
       "error": {
         "generic": {
           "title": "Pairing unsuccessful",
-          "subtitle": "Looks like something went wrong!\nCheck that your Bluetooth is switched on and your {{productName}} is nearby."
+          "subtitle": "Make sure your {{productName}} is close to\nyour mobile phone and try again."
         },
         "lockedDevice": {
           "title": "Your device is locked",
           "subtitle": "Unlock your {{ productName }} and try again."
         },
-        "retryCta": "Retry",
-        "openSettingsCta": "Go to Bluetooth settings"
+        "retryCta": "Retry pairing",
+        "openSettingsCta": "Go to Bluetooth settings",
+        "howToFixPairingIssue": "How to fix pairing issues"
       }
     }
   },
@@ -2185,7 +2188,7 @@
       "buy": "Buy",
       "swap": "Swap",
       "send": "Send",
-      "deposit": "Deposit",
+      "deposit": "Receive",
       "stake": "Stake"
     }
   },
@@ -2400,7 +2403,7 @@
       "seeLess": "See fewer subaccounts"
     },
     "send": "Send",
-    "receive": "Deposit",
+    "receive": "Receive",
     "buy": "Buy",
     "walletconnect": "WalletConnect",
     "stake": "Stake",
@@ -2414,7 +2417,7 @@
       "descWithBuy": "Make sure the <1><0>{{managerAppName}}</0></1> app is installed so you can buy or receive <3><0>{{currencyTicker}}</0></3>",
       "descToken": "Make sure the <1><0>{{managerAppName}}</0></1> app is installed and start receiving <3><0>{{currencyTicker}}</0></3> and <5><0>{{tokenType}}</0> tokens</5>",
       "buttons": {
-        "receiveFunds": "Deposit",
+        "receiveFunds": "Receive",
         "buyCrypto": "Buy"
       },
       "addAccountCta": "Add Account"
@@ -2913,7 +2916,7 @@
       "title": "Edit fees"
     },
     "receive": {
-      "title": "Deposit",
+      "title": "Receive",
       "description": "Deposit crypto from another wallet.",
       "titleReadOnly": "Unverified address",
       "headerTitle": "Crypto asset",
@@ -4224,7 +4227,7 @@
         "restoreLockScreenPicture": "Restoring lock screen picture",
         "restoreLanguage": "Restoring language",
         "imageLoadRequested": "Tap on “Load picture” to restore lock screen picture",
-        "imageCommitRequested": "Tap on “keep” to keep set your lock screen picture",
+        "imageCommitRequested": "Tap on “keep” to confirm your lock screen picture",
         "allowLanguageInstallation": "Tap on “Allow” to restore language",
         "allowAppsRestoration": "Tap on “Allow” to restore apps",
         "errors": {
@@ -6447,7 +6450,7 @@
           "body": "Convert crypto to crypto securely"
         },
         "receive": {
-          "title": "Deposit",
+          "title": "Receive",
           "body": "Receive crypto in your wallet"
         }
       }

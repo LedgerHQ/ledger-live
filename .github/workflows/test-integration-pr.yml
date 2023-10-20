@@ -55,6 +55,8 @@ jobs:
         uses: ./tools/actions/composites/setup-toolchain
         with:
           upgrade_npm: ${{ matrix.os == 'windows-latest' }}
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: Install node-gyp globally
         if: runner.os == 'Windows'
         run: |

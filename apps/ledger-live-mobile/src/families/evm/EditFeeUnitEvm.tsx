@@ -17,13 +17,13 @@ const FeeSlider = React.memo(
     range,
   }: {
     value: BigNumber;
-    onChange: (arg: unknown) => void;
+    onChange: (arg: BigNumber) => void;
     range: Range;
   }) => {
     const { colors } = useTheme();
     const index = reverseRangeIndex(range, value);
     const setValueIndex = useCallback(
-      i => onChange(projectRangeIndex(range, i)),
+      (i: number | string) => onChange(projectRangeIndex(range, i as number)),
       [range, onChange],
     );
     return (
@@ -53,7 +53,7 @@ export default function EditFeeUnitEvm({ account, feeAmount, onChange, range, ti
   const unit = getDefaultFeeUnit(account.currency);
 
   const onChangeF = useCallback(
-    value => {
+    (value: BigNumber) => {
       onChange(value);
     },
     [onChange],

@@ -8,8 +8,7 @@ import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
 import i18n from "i18next";
 import { webFrame, ipcRenderer } from "electron";
-import * as remote from "@electron/remote";
-import { render } from "react-dom";
+import { createRoot } from "react-dom/client";
 import moment from "moment";
 import each from "lodash/each";
 import { reload, getKey, loadLSS } from "~/renderer/storage";
@@ -48,10 +47,13 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { listCachedCurrencyIds } from "./bridge/cache";
 import { LogEntry } from "winston";
 
-const rootNode = document.getElementById("react-root");
+const domNode = document.getElementById("react-root");
 const TAB_KEY = 9;
 
 async function init() {
+  // at this step. we know the app error handling will happen here. so we can unset the global onerror
+  window.onerror = null;
+
   const logVerbose = getEnv("VERBOSE");
 
   // Sets up a debug console printing of logs (from the renderer thread)
@@ -147,7 +149,6 @@ async function init() {
   setEnvOnAllThreads("HIDE_EMPTY_TOKEN_ACCOUNTS", hideEmptyTokenAccounts);
   const filterTokenOperationsZeroAmount = filterTokenOperationsZeroAmountSelector(state);
   setEnvOnAllThreads("FILTER_ZERO_AMOUNT_ERC20_EVENTS", filterTokenOperationsZeroAmount);
-  const isMainWindow = remote.getCurrentWindow().name === "MainWindow";
 
   // hydrate the store with the bridge/cache
   await Promise.allSettled(
@@ -178,28 +179,27 @@ async function init() {
       }),
     );
   }
-  if (isMainWindow) {
-    webFrame.setVisualZoomLevelLimits(1, 1);
-    const matcher = window.matchMedia("(prefers-color-scheme: dark)");
-    const updateOSTheme = () => store.dispatch(setOSDarkMode(matcher.matches));
-    matcher.addListener(updateOSTheme);
-    events({
-      store,
-    });
-    window.addEventListener("keydown", (e: KeyboardEvent) => {
-      if (e.which === TAB_KEY) {
-        if (!isGlobalTabEnabled()) enableGlobalTab();
-        logger.onTabKey(document.activeElement as HTMLElement);
-      }
-    });
-    window.addEventListener("click", () => {
-      if (isGlobalTabEnabled()) disableGlobalTab();
-    });
-    window.addEventListener("beforeunload", async () => {
-      // This event is triggered when we reload the app, we want it to forget what it knows
-      reload();
-    });
-  }
+  webFrame.setVisualZoomLevelLimits(1, 1);
+  const matcher = window.matchMedia("(prefers-color-scheme: dark)");
+  const updateOSTheme = () => store.dispatch(setOSDarkMode(matcher.matches));
+  matcher.addListener(updateOSTheme);
+  events({
+    store,
+  });
+  window.addEventListener("keydown", (e: KeyboardEvent) => {
+    if (e.which === TAB_KEY) {
+      if (!isGlobalTabEnabled()) enableGlobalTab();
+      logger.onTabKey(document.activeElement as HTMLElement);
+    }
+  });
+  window.addEventListener("click", () => {
+    if (isGlobalTabEnabled()) disableGlobalTab();
+  });
+  window.addEventListener("beforeunload", async () => {
+    // This event is triggered when we reload the app, we want it to forget what it knows
+    reload();
+  });
+
   document.addEventListener(
     "dragover",
     (event: Event) => {
@@ -246,8 +246,9 @@ async function init() {
   };
 }
 function r(Comp: JSX.Element) {
-  if (rootNode) {
-    render(Comp, rootNode);
+  if (domNode) {
+    const rootNode = createRoot(domNode);
+    rootNode.render(Comp);
   }
 }
 init()

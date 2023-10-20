@@ -1,4 +1,4 @@
-import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
+import { Transaction as EvmTransaction, Strategy } from "@ledgerhq/coin-evm/types/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useGasOptions } from "@ledgerhq/live-common/families/evm/react";
 import { log } from "@ledgerhq/logs";
@@ -36,7 +36,7 @@ const Root: NonNullable<EvmFamily["sendAmountFields"]>["component"] = props => {
   const shouldUseEip1559 = transaction.type === 2;
 
   const onFeeStrategyClick = useCallback(
-    ({ feesStrategy }) => {
+    ({ feesStrategy }: { feesStrategy: Strategy }) => {
       updateTransaction((tx: EvmTransaction) =>
         bridge.updateTransaction(tx, {
           feesStrategy,

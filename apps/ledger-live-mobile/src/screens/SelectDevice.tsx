@@ -33,7 +33,7 @@ export default function SelectDevice({
   const { colors } = useTheme();
   const dispatchRedux = useReduxDispatch();
   const onNavigate = useCallback(
-    device => {
+    (device: Device) => {
       // Assumes that it will always navigate to a "ConnectDevice"
       // type of component accepting mostly the same params as this one.
       navigation.navigate(route.name.replace("SelectDevice", "ConnectDevice"), {

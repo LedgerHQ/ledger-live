@@ -1,7 +1,6 @@
 import React, { useMemo, useCallback } from "react";
 import { Text, Flex, IconsLegacy, Box } from "@ledgerhq/native-ui";
-import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
-import { getAllSupportedCryptoCurrencyTickers } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
+import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -53,23 +52,17 @@ export default function NoFunds({ route }: Props) {
   const { t } = useTranslation();
   const { data: currenciesAll } = useFetchCurrencyAll();
   const { account, parentAccount, entryPoint } = route?.params;
-  const rampCatalog = useRampCatalog();
   const navigation = useNavigation();
+  const currency = parentAccount?.currency || account?.currency;
 
-  const text = useText(entryPoint === "get-funds" ? "getFunds" : "noFunds", account.currency);
+  const { isCurrencyAvailable } = useRampCatalog();
 
-  const onRampAvailableTickers = useMemo(() => {
-    if (!rampCatalog.value) {
-      return [];
-    }
-    return getAllSupportedCryptoCurrencyTickers(rampCatalog.value.onRamp);
-  }, [rampCatalog.value]);
+  const availableOnBuy = !!currency && isCurrencyAvailable(currency.id, "onRamp");
 
   const swapAvailableIds = currenciesAll;
 
-  const currency = parentAccount?.currency || account?.currency;
   const availableOnReceive = true;
-  const availableOnBuy = currency && onRampAvailableTickers.includes(currency.ticker.toUpperCase());
+
   const availableOnSwap = useMemo(() => {
     return currency && swapAvailableIds.includes(currency.id);
   }, [currency, swapAvailableIds]);
@@ -145,6 +138,8 @@ export default function NoFunds({ route }: Props) {
       rightArrow: true,
     },
   ];
+
+  const text = useText(entryPoint === "get-funds" ? "getFunds" : "noFunds", account.currency);
 
   return (
     <Flex style={{ height: "100%" }} justifyContent="center">

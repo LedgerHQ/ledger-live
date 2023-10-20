@@ -141,7 +141,7 @@ function ReceiveSelectAccount({
     }
   }, [currency, navigationAccount]);
 
-  const keyExtractor = useCallback(item => item?.id, []);
+  const keyExtractor = useCallback((item: AccountLike) => item?.id, []);
 
   return currency && aggregatedAccounts && aggregatedAccounts.length > 0 ? (
     <>

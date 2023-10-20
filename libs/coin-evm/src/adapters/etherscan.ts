@@ -63,7 +63,7 @@ export const etherscanOperationToOperations = (
         nftOperations: [],
         hasFailed,
         extra: {},
-      } as Operation),
+      }) as Operation,
   );
 };
 
@@ -114,7 +114,7 @@ export const etherscanERC20EventToOperations = (
         accountId: tokenAccountId,
         date: new Date(parseInt(event.timeStamp, 10) * 1000),
         extra: {},
-      } as Operation),
+      }) as Operation,
   );
 };
 
@@ -166,7 +166,7 @@ export const etherscanERC721EventToOperations = (
         value,
         date: new Date(parseInt(event.timeStamp, 10) * 1000),
         extra: {},
-      } as Operation),
+      }) as Operation,
   );
 };
 
@@ -216,6 +216,6 @@ export const etherscanERC1155EventToOperations = (
         value,
         date: new Date(parseInt(event.timeStamp, 10) * 1000),
         extra: {},
-      } as Operation),
+      }) as Operation,
   );
 };

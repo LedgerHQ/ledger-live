@@ -35,7 +35,6 @@ const QuickActionList = ({
       horizontal={false}
       renderItem={renderItem}
       numColumns={numColumns}
-      style={{ width: "100%" }}
     />
   );
 };

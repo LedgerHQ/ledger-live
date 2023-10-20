@@ -35,11 +35,14 @@ jobs:
         with:
           ref: ${{ github.ref_name }}
           base: ${{ inputs.base_ref }}
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
+        with:
+          install_dotnet: true
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
           skip_builds: true
-          install_dotnet: true
       - name: lint
         run: |
           pnpm lint --filter="ledger-live-desktop" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo" -- --format="json" -o="lint.json"
@@ -67,6 +70,8 @@ jobs:
         with:
           ref: ${{ github.ref_name }}
           base: ${{ inputs.base_ref }}
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
@@ -87,6 +92,10 @@ jobs:
         with:
           ref: ${{ github.ref_name }}
           base: ${{ inputs.base_ref }}
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
+        with:
+          install_dotnet: true
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
@@ -111,6 +120,10 @@ jobs:
         with:
           ref: ${{ github.ref_name }}
           base: ${{ inputs.base_ref }}
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
+        with:
+          install_dotnet: true
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:

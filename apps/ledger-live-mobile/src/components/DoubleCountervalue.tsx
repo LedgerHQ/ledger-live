@@ -25,7 +25,7 @@ type Props = {
   placeholderProps?: unknown;
   // as we can't render View inside Text, provide ability to pass
   // wrapper component from outside
-  Wrapper?: React.ComponentType;
+  Wrapper?: React.ComponentType<{ children?: React.ReactNode }>;
   subMagnitude?: number;
   tooltipDateLabel?: React.ReactNode;
   tooltipCompareDateLabel?: React.ReactNode;

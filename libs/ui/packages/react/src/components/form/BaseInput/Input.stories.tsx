@@ -67,6 +67,7 @@ export const RenderSideExemple = (): JSX.Element => {
       error={error}
       onChange={setValue}
       renderLeft={renderLeft}
+      // @ts-expect-error inconsistencie in props
       renderRight={renderRight}
       placeholder={"test"}
     />

@@ -8,6 +8,7 @@ import {
   FlatList,
   StyleProp,
   ViewStyle,
+  LayoutChangeEvent,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
@@ -192,7 +193,7 @@ const SelectableAccount = ({
   const [editNameButtonWidth, setEditNameButtonWidth] = useState(0);
 
   const setLayout = useCallback(
-    event => {
+    (event: LayoutChangeEvent) => {
       const buttonWidth = event?.nativeEvent?.layout?.width;
       if (buttonWidth) {
         setEditNameButtonWidth(buttonWidth);

@@ -16,7 +16,7 @@ test.beforeAll(async () => {
   testServerIsRunning = await LiveAppWebview.startLiveApp("dummy-live-app/build", {
     name: "Dummy Live App",
     id: "dummy-live-app",
-    permissions: [{ method: "*" }],
+    permissions: [],
   });
 
   if (!testServerIsRunning) {
@@ -31,8 +31,7 @@ test.afterAll(async () => {
   }
 });
 
-// FIXME flaky LIVE-https://ledgerhq.atlassian.net/browse/LIVE-9616
-test.skip("Live App SDK methods @smoke", async ({ page }) => {
+test("Live App SDK methods @smoke", async ({ page }) => {
   if (!testServerIsRunning) {
     console.warn("Test server not running - Cancelling Live SDK E2E test");
     return;
@@ -97,6 +96,11 @@ test.skip("Live App SDK methods @smoke", async ({ page }) => {
    * START OF SIGN BITCOIN TRANSACTION TESTS
    */
 
+  /**
+   * This test is flaky, so disabling for now.
+   * Sometimes the transaction amount is simply 0 with no fees
+   */
+  /*
   await test.step("Sign bitcoin Transaction - info modal", async () => {
     await liveAppWebview.signBitcoinTransaction();
     await expect.soft(page).toHaveScreenshot("live-app-sign-bitcoin-transaction-info.png", {
@@ -118,6 +122,7 @@ test.skip("Live App SDK methods @smoke", async ({ page }) => {
     await modal.waitForModalToDisappear();
     await liveAppWebview.waitForCorrectTextInWebview("mock_op_100_mock:1:bitcoin:true_bitcoin_0:");
   });
+  */
 
   /**
    * END OF SIGN BITCOIN TRANSACTION TESTS

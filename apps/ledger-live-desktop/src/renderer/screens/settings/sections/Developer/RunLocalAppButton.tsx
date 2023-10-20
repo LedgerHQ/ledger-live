@@ -1,12 +1,13 @@
+import { ipcRenderer } from "electron";
 import React, { useCallback } from "react";
 import Button from "~/renderer/components/Button";
 import { useTranslation } from "react-i18next";
-import * as remote from "@electron/remote";
 import { readFile } from "fs";
 import { useLocalLiveAppContext } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import { SettingsSectionRow as Row } from "../../SettingsSection";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
+
 const ButtonContainer = styled.div`
   display: flex;
   flex-direction: row;
@@ -20,8 +21,8 @@ const RunLocalAppButton = () => {
   } = useLocalLiveAppContext();
   const history = useHistory();
   const onBrowseLocalManifest = useCallback(() => {
-    remote.dialog
-      .showOpenDialog({
+    ipcRenderer
+      .invoke("show-open-dialog", {
         properties: ["openFile"],
       })
       .then(function (response) {
@@ -60,7 +61,7 @@ const RunLocalAppButton = () => {
         </Button>
       </Row>
       {liveAppByIndex.map(manifest => (
-        <Row key={manifest.id} title={manifest.name} desc={manifest.url}>
+        <Row key={manifest.id} title={manifest.name} desc={manifest.url as string}>
           <ButtonContainer>
             <Button small primary onClick={() => history.push(`/platform/${manifest.id}`)}>
               {t("settings.developer.runLocalAppOpenButton")}

@@ -6,7 +6,7 @@ import { Camera } from "expo-camera";
 import { Flex, Switch, BaseInput, Text, IconsLegacy } from "@ledgerhq/native-ui";
 import { TouchableOpacity } from "react-native";
 import { InputRenderRightContainer } from "@ledgerhq/native-ui/components/Form/Input/BaseInput/index";
-import { CameraType } from "expo-camera/build/Camera.types";
+import { BarCodeScanningResult, CameraType } from "expo-camera/build/Camera.types";
 import QueuedDrawer from "../QueuedDrawer";
 
 type Props = {
@@ -29,7 +29,7 @@ const StoriesConfig: React.FC<Props> = ({ instanceID }) => {
   const { testingEnabled, token } = storyConfig;
 
   const overrideStoryConfig = useCallback(
-    val => {
+    (val: { testingEnabled: boolean; token: string }) => {
       overrideFeature("storyly", {
         ...featureValue,
         enabled: true,
@@ -46,21 +46,21 @@ const StoriesConfig: React.FC<Props> = ({ instanceID }) => {
   );
 
   const handleSwitchChange = useCallback(
-    val => {
+    (val: boolean) => {
       overrideStoryConfig({ ...storyConfig, testingEnabled: val });
     },
     [overrideStoryConfig, storyConfig],
   );
 
   const handleTokenChange = useCallback(
-    input => {
+    (input: string) => {
       overrideStoryConfig({ ...storyConfig, token: input });
     },
     [overrideStoryConfig, storyConfig],
   );
 
   const handleBarCodeScanned = useCallback(
-    ({ data }) => {
+    ({ data }: BarCodeScanningResult) => {
       try {
         const parsedData = JSON.parse(data);
         const { token } = parsedData;

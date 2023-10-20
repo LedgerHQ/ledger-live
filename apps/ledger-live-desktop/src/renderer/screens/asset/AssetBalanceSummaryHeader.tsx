@@ -16,8 +16,7 @@ import Button from "~/renderer/components/ButtonV3";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
-import { getAllSupportedCryptoCurrencyIds } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
+import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import useStakeFlow from "~/renderer/screens/stake";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
@@ -72,19 +71,16 @@ export default function AssetBalanceSummaryHeader({
   }, [countervalueFirst, data]);
   const primaryKey = data[0].unit.code;
   const secondaryKey = data[1].unit.code;
-  const rampCatalog = useRampCatalog();
-  const availableOnBuy = useMemo(() => {
-    if (!rampCatalog.value) {
-      return false;
-    }
-    const allBuyableCryptoCurrencyIds = getAllSupportedCryptoCurrencyIds(rampCatalog.value.onRamp);
-    return allBuyableCryptoCurrencyIds.includes(currency.id);
-  }, [rampCatalog.value, currency.id]);
+  const { isCurrencyAvailable } = useRampCatalog();
+
+  const availableOnBuy = !!currency && isCurrencyAvailable(currency.id, "onRamp");
+
   const startStakeFlow = useStakeFlow();
   const stakeProgramsFeatureFlag = useFeature("stakePrograms");
   const listFlag = stakeProgramsFeatureFlag?.params?.list ?? [];
   const stakeProgramsEnabled = stakeProgramsFeatureFlag?.enabled ?? false;
   const availableOnStake = stakeProgramsEnabled && currency && listFlag.includes(currency?.id);
+
   const availableOnSwap = currenciesAll.includes(currency.id);
 
   const onBuy = useCallback(() => {

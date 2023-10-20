@@ -342,13 +342,14 @@ const elrondSpec: AppSpec<Transaction> = {
         invariant(delegations?.length, "account doesn't have any delegations");
         invariant(
           // among all delegations
-          delegations.some(d =>
-            // among all undelegating amounts
-            d.userUndelegatedList?.some(
-              u =>
-                new BigNumber(u.amount).gt(0) && // the undelegation has a positive amount
-                new BigNumber(u.seconds).eq(0), // the undelegation period has ended
-            ),
+          delegations.some(
+            d =>
+              // among all undelegating amounts
+              d.userUndelegatedList?.some(
+                u =>
+                  new BigNumber(u.amount).gt(0) && // the undelegation has a positive amount
+                  new BigNumber(u.seconds).eq(0), // the undelegation period has ended
+              ),
           ),
           "no withdrawable stake for account",
         );

@@ -58,7 +58,8 @@ export const fetchRatesMock = (
     {
       provider: "oneinch",
       providerType: "DEX",
-      providerURL: "/platform/1inch/#/1/unified/swap/usdt/eth?sourceTokenAmount=100",
+      providerURL:
+        "https://app.1inch.io/#/1/unified/swap/usdt/eth?ledgerLive=true&sourceTokenAmount=100",
       from: "ethereum/erc20/usd_tether__erc20_",
       to: "ethereum",
       amountFrom: "100",

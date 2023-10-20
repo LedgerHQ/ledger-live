@@ -14,32 +14,39 @@ import type { OperationType } from "@ledgerhq/types-live";
 import { getMainMessage } from "./helpers";
 import { parseAmountStringToNumber } from "./logic";
 
-const getBlankOperation = (tx, fees, id): CosmosOperation => ({
-  id: "",
-  hash: tx.txhash,
-  type: "" as OperationType,
-  value: new BigNumber(0),
-  fee: fees,
-  blockHash: null,
-  blockHeight: tx.height,
-  senders: [] as string[],
-  recipients: [] as string[],
-  accountId: id,
-  date: new Date(tx.timestamp),
-  extra: {},
-  transactionSequenceNumber: parseInt(tx.tx.auth_info.signer_infos[0].sequence),
-});
+const getBlankOperation = (tx: CosmosTx, fees: BigNumber, accountId: string): CosmosOperation => {
+  return {
+    id: "",
+    hash: tx.txhash,
+    type: "" as OperationType,
+    value: new BigNumber(0),
+    fee: fees,
+    blockHash: null,
+    blockHeight: parseInt(tx.height),
+    senders: [] as string[],
+    recipients: [] as string[],
+    accountId,
+    date: new Date(tx.timestamp),
+    extra: {},
+    transactionSequenceNumber: parseInt(tx?.tx?.auth_info?.signer_infos[0]?.sequence || "0"),
+  };
+};
 
 const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): CosmosOperation[] => {
   const { address, currency } = info;
   const unitCode = currency.units[1].code;
   const ops: CosmosOperation[] = [];
   for (const tx of txs) {
-    let fees = new BigNumber(0);
+    const amounts = tx?.tx?.auth_info?.fee?.amount;
 
-    tx.tx.auth_info.fee.amount.forEach(elem => {
-      if (elem.denom === unitCode) fees = fees.plus(elem.amount);
-    });
+    const fees = !amounts
+      ? new BigNumber(0)
+      : amounts.reduce((acc: BigNumber, curr: { denom: string; amount: string }) => {
+          if (curr.denom === unitCode) {
+            return acc.plus(curr.amount);
+          }
+          return acc;
+        }, new BigNumber(0));
 
     const op: CosmosOperation = getBlankOperation(tx, fees, accountId);
 
@@ -120,12 +127,10 @@ const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): Co
         const redelegateShards: { amount: BigNumber; address: string }[] = [];
         for (const message of correspondingMessages) {
           const amount = message.attributes.find(attr => attr.key === "amount")?.value;
-          const validatorDst = message.attributes.find(
-            attr => attr.key === "destination_validator",
-          )?.value;
-          const validatorSrc = message.attributes.find(
-            attr => attr.key === "source_validator",
-          )?.value;
+          const validatorDst = message.attributes.find(attr => attr.key === "destination_validator")
+            ?.value;
+          const validatorSrc = message.attributes.find(attr => attr.key === "source_validator")
+            ?.value;
           if (amount && validatorDst && validatorSrc && amount.endsWith(unitCode)) {
             op.extra.sourceValidator = validatorSrc;
             redelegateShards.push({
@@ -155,6 +160,7 @@ const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): Co
         break;
       }
     }
+
     if (tx.tx.body.memo != null) {
       op.extra.memo = tx.tx.body.memo;
     }

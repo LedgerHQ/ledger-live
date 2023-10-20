@@ -76,7 +76,7 @@ export async function unsafeGetCountervalues(): Promise<CounterValuesStateRaw> {
       ({
         ...prev,
         [keys[i].split(COUNTERVALUES_DB_PREFIX)[1]]: val,
-      } as CounterValuesStateRaw),
+      }) as CounterValuesStateRaw,
     {} as CounterValuesStateRaw,
   );
 }

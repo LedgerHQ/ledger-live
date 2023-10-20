@@ -1,5 +1,6 @@
 import { test as base, Page, ElectronApplication, _electron as electron } from "@playwright/test";
 import * as fs from "fs";
+import fsPromises from "fs/promises";
 import * as path from "path";
 import * as crypto from "crypto";
 import { OptionalFeatureMap } from "@ledgerhq/types-live";
@@ -29,7 +30,7 @@ type TestFixtures = {
 
 const IS_DEBUG_MODE = !!process.env.PWDEBUG;
 
-const test = base.extend<TestFixtures>({
+export const test = base.extend<TestFixtures>({
   env: undefined,
   lang: "en-US",
   theme: "dark",
@@ -50,10 +51,10 @@ const test = base.extend<TestFixtures>({
     use,
   ) => {
     // create userdata path
-    fs.mkdirSync(userdataDestinationPath, { recursive: true });
+    await fsPromises.mkdir(userdataDestinationPath, { recursive: true });
 
     if (userdata) {
-      fs.copyFileSync(userdataOriginalFile, `${userdataDestinationPath}/app.json`);
+      await fsPromises.copyFile(userdataOriginalFile, `${userdataDestinationPath}/app.json`);
     }
 
     // default environment variables
@@ -111,6 +112,9 @@ const test = base.extend<TestFixtures>({
     const logFile = testInfo.outputPath("logs.log");
     page.on("console", msg => {
       const txt = msg.text();
+      if (msg.type() == "error") {
+        console.error(txt);
+      }
       if (IS_DEBUG_MODE) {
         // Direct Electron console to Node terminal.
         console.log(txt);
@@ -149,6 +153,7 @@ const test = base.extend<TestFixtures>({
 
     console.log(`Video for test recorded at: ${await page.video()?.path()}\n`);
   },
+
   // below is used for the logging file at `artifacts/networkResponses.log`
   recordTestNamesForApiResponseLogging: [
     async ({}, use, testInfo) => {
