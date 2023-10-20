@@ -822,14 +822,17 @@ function useCategoriesRaw(manifests: AppManifest[]): {
   manifestsByCategories: Map<string, AppManifest[]>;
 } {
   const manifestsByCategories = useMemo(() => {
-    const res = manifests.reduce((res, m) => {
-      m.categories.forEach(c => {
-        const list = res.has(c) ? [...res.get(c), m] : [m];
-        res.set(c, list);
-      });
+    const res = manifests.reduce(
+      (res, m) => {
+        m.categories.forEach(c => {
+          const list = res.has(c) ? [...res.get(c), m] : [m];
+          res.set(c, list);
+        });
 
-      return res;
-    }, new Map().set("all", manifests));
+        return res;
+      },
+      new Map().set("all", manifests),
+    );
 
     return res;
   }, [manifests]);

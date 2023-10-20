@@ -22,7 +22,10 @@ export class YieldCommand extends ClientCommand {
 
   code = ClientCommandCode.YIELD;
 
-  constructor(results: Buffer[], private progressCallback: () => void) {
+  constructor(
+    results: Buffer[],
+    private progressCallback: () => void,
+  ) {
     super();
     this.results = results;
   }

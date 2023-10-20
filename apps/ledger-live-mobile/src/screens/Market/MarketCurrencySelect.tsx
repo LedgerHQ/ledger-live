@@ -138,10 +138,9 @@ function MarketCurrencySelect({ navigation }: Props) {
         items={items}
         render={renderList}
         // This props is badly type
-        renderEmptySearch={(
-          () => () =>
-            <RenderEmptyList theme={colors.palette.type} search={search} />
-        )()}
+        renderEmptySearch={(() => () => (
+          <RenderEmptyList theme={colors.palette.type} search={search} />
+        ))()}
       />
     </Flex>
   );

@@ -76,7 +76,10 @@ export class BufferWriter {
 }
 
 export class BufferReader {
-  constructor(public buffer: Buffer, public offset: number = 0) {}
+  constructor(
+    public buffer: Buffer,
+    public offset: number = 0,
+  ) {}
 
   available(): number {
     return this.buffer.length - this.offset;

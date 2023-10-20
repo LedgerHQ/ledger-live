@@ -140,7 +140,7 @@
 | lisk | LSK | NO | lisk |
 | æternity | AE | NO | aeternity |
 
-## Tokens (11561)
+## Tokens (11560)
 | parent currency | ticker | contract | name | status | ledger id |
 |--|--|--|--|--|--|
 | Algorand | ARCC | MESEJMPXKL7YUWEQGNRCKSLMQDKHOHWIZ3RBWP7BV4JDMUJXFUVQZWUBJM | Asia Reserve Currency Coin |  | algorand/asa/163650 |
@@ -8243,7 +8243,6 @@
 | Ethereum Ropsten | tWETH | 0xc778417E063141139Fce010982780140Aa0cD5Ab | Uniswap Wrapped Ether | delisted | ethereum_ropsten/erc20/uniswap_weth |
 | Ethereum Ropsten | tVLC | 0xF62ef17b7c919b84A9D9f33609bb2cf4405a5682 | Vault Coin |  | ethereum_ropsten/erc20/vault_coin |
 | Ethereum Ropsten | tHASKELL | 0x63652B9Dd39565332B22BB815104c8210934Ae45 | haskell | delisted | ethereum_ropsten/erc20/haskell |
-| Internet Computer | USDC | GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN | USDC |  | icp/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN |
 | MultiversX | AERO | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | Aerovek |  | elrond/esdt/4145524f2d343538626266 |
 | MultiversX | ASH | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | AshSwap |  | elrond/esdt/4153482d346365343434 |
 | MultiversX | BHAT | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | BHNetwork |  | elrond/esdt/424841542d633166646533 |
