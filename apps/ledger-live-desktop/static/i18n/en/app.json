@@ -3843,6 +3843,9 @@
       "carouselVisibilityDesc": "Enable visibility of the carousel on Portfolio"
     },
     "developer": {
+      "open": "Open",
+      "hide": "Hide",
+      "show": "Show",
       "toast": {
         "title": "You are now a developer !",
         "text": "Welcome to wonderland"
@@ -3865,6 +3868,7 @@
       "featureFlagsRestore": "Restore",
       "featureFlagsOverride": "Override",
       "featureFlagsRestoreAll": "Restore all flags values",
+      "flagHint": "If a feature flag is defined in the targeted Firebase environment \nbut it is missing from the following list, you can type its **exact** name in \nthe search input and it will appear in the list. Type the \nflag name in camelCase without the 'feature' prefix.",
       "showButtonDesc": "Always display the Feature Flags button in the Sidebar",
       "buttonTitle": "Flags overridden locally",
       "firebaseProject": "Firebase project targeted by this build:",
@@ -3960,11 +3964,13 @@
         },
         "testAnimations": {
           "title": "Test Lottie animations",
-          "description": "Test all animations used in Ledger Live"
+          "description": "Test all animations used in Ledger Live",
+          "longDesc": "This is a tool provided as-is for the team to validate lottie animations used in the app."
         },
         "testStories": {
           "title": "Test Storyly stories",
-          "description": "Test all stories used in Ledger Live"
+          "description": "Test all stories used in Ledger Live",
+          "longDesc": "This is a tool provided as-is for the team to validate storyly stories used in the app."
         },
         "testPostonboarding": {
           "title": "Test Post Onboarding",
