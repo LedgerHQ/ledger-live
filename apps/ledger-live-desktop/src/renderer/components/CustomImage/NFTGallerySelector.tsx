@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { Flex, Grid, InfiniteLoader, Text } from "@ledgerhq/react-ui";
 import { NFTMetadata } from "@ledgerhq/types-live";
@@ -8,7 +8,7 @@ import isEqual from "lodash/isEqual";
 import NFTItem from "./NFTItem";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import useOnScreen from "~/renderer/screens/nft/useOnScreen";
+import { useOnScreen } from "~/renderer/screens/nft/useOnScreen";
 
 const ScrollContainer = styled(Flex).attrs({
   flexDirection: "column",
@@ -52,10 +52,14 @@ const NFTGallerySelector = ({ handlePickNft, selectedNftId }: Props) => {
   );
 
   const loaderContainerRef = useRef<HTMLDivElement>(null);
-  const isLoaderVisible = useOnScreen(loaderContainerRef);
-  useEffect(() => {
-    if (isLoaderVisible) setDisplayedCount(displayedCount => displayedCount + 10);
-  }, [isLoaderVisible]);
+  const updateDisplayable = () => setDisplayedCount(displayedCount => displayedCount + 10);
+
+  useOnScreen({
+    enabled: displayedCount < nftsOrdered.length,
+    onIntersect: updateDisplayable,
+    target: loaderContainerRef,
+    threshold: 0.5,
+  });
 
   if (nftsOrdered.length <= 0) return <NftGalleryEmptyState />;
 

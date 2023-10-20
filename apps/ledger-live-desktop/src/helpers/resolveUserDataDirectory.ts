@@ -1,8 +1,14 @@
+// FIXME find a better way to do this
 const resolveUserDataDirectory = () => {
   const { LEDGER_CONFIG_DIRECTORY } = process.env;
   if (LEDGER_CONFIG_DIRECTORY) return LEDGER_CONFIG_DIRECTORY;
 
-  const electron = process.type === "browser" ? require("electron") : require("@electron/remote");
-  return electron.app.getPath("userData");
+  if (process.type === "browser") {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const electron = require("electron");
+    return electron.app.getPath("userData");
+  }
+  return window.api.pathUserdata;
 };
+
 export default resolveUserDataDirectory;
