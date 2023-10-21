@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.71.0-nightly.10
+
+### Patch Changes
+
+- [#5060](https://github.com/LedgerHQ/ledger-live/pull/5060) [`518e5d888b`](https://github.com/LedgerHQ/ledger-live/commit/518e5d888b2f46967ed25188c1ee88cdace9f56d) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM / LLD - refresh segment user properties when accounts changes
+
 ## 2.71.0-nightly.9
 
 ### Patch Changes

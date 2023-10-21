@@ -1,5 +1,15 @@
 # live-mobile
 
+## 3.34.0-nightly.9
+
+### Patch Changes
+
+- [#5060](https://github.com/LedgerHQ/ledger-live/pull/5060) [`518e5d888b`](https://github.com/LedgerHQ/ledger-live/commit/518e5d888b2f46967ed25188c1ee88cdace9f56d) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM / LLD - refresh segment user properties when accounts changes
+
+- [#5118](https://github.com/LedgerHQ/ledger-live/pull/5118) [`c21faee219`](https://github.com/LedgerHQ/ledger-live/commit/c21faee2195d4839a8d498ec76421424f1acc06d) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Add new analytics user properties for notifications preferences
+
+- [#5137](https://github.com/LedgerHQ/ledger-live/pull/5137) [`0d177abe59`](https://github.com/LedgerHQ/ledger-live/commit/0d177abe599f37eb0626eb170a698b5a9bb0f7f3) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Rename Deposit into Receive
+
 ## 3.34.0-nightly.8
 
 ### Patch Changes
