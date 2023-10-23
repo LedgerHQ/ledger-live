@@ -162,7 +162,7 @@ export class OperationsList extends PureComponent<Props, State> {
                       onOperationClick={this.handleClickOperation}
                       t={t}
                       withAccount={withAccount}
-                      editable={account && isEditableOperation(mainAccount, operation)}
+                      editable={account && isEditableOperation({ account: mainAccount, operation })}
                     />
                   );
                 })}
