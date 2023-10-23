@@ -1,4 +1,12 @@
-import { makeAccount } from "@ledgerhq/coin-evm/__tests__/fixtures/common.fixtures";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import BigNumber from "bignumber.js";
+import { getGasTracker } from "../../../api/gasTracker/index";
+import { getEditTransactionPatch } from "../../../editTransaction/getEditTransactionPatch";
+import {
+  getMinEip1559Fees,
+  getMinLegacyFees,
+} from "../../../editTransaction/getMinEditTransactionFees";
+import { makeAccount } from "../../fixtures/common.fixtures";
 import {
   eip1559Tx,
   erc1155Transaction,
@@ -6,19 +14,14 @@ import {
   nftEip1559tx,
   nftLegacyTx,
   tokenTransaction,
-} from "@ledgerhq/coin-evm/__tests__/fixtures/transaction.fixtures";
-import { getGasTracker } from "@ledgerhq/coin-evm/api/gasTracker/index";
-import { getMinEip1559Fees, getMinLegacyFees } from "@ledgerhq/coin-evm/getMinEditTransactionFees";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import BigNumber from "bignumber.js";
-import { getEditTransactionPatch } from "./getEditTransactionPatch";
+} from "../../fixtures/transaction.fixtures";
 
-jest.mock("@ledgerhq/coin-evm/api/gasTracker/index");
-const mockedGetGasTracker = jest.mocked(getGasTracker, true);
+jest.mock("../../../api/gasTracker/index");
+const mockedGetGasTracker = jest.mocked(getGasTracker);
 
-jest.mock("@ledgerhq/coin-evm/getMinEditTransactionFees");
-const mockedGetMinLegacyFees = jest.mocked(getMinLegacyFees, true);
-const mockedGetMinEip1559Fees = jest.mocked(getMinEip1559Fees, true);
+jest.mock("../../../editTransaction/getMinEditTransactionFees");
+const mockedGetMinLegacyFees = jest.mocked(getMinLegacyFees);
+const mockedGetMinEip1559Fees = jest.mocked(getMinEip1559Fees);
 
 const mockedGetGasOptions = jest.fn();
 
@@ -239,6 +242,7 @@ describe.each(["speedup", "cancel"])("with editType %s", editType => {
       describe.each([{ cond: "<" }, { cond: ">" }, { cond: "==" }])(
         "with gasOptionFast $cond minFees",
         ({ cond }) => {
+          // @ts-expect-error using quick test utils (not typed to handle any "number")
           const { gasOptions, minFees } = gasOptionFastAndMinFeesByTypeAndTest[txType][cond];
 
           beforeEach(() => {
@@ -264,6 +268,7 @@ describe.each(["speedup", "cancel"])("with editType %s", editType => {
           it.each([{ mode: "coin" }, { mode: "erc20" }, { mode: "erc721" }, { mode: "erc1155" }])(
             "should return the expected patch for $mode transaction",
             async ({ mode }) => {
+              // @ts-expect-error using quick test utils (not typed to handle any "number")
               const transaction = txByTypeAndMode[txType][mode];
 
               const patch = await getEditTransactionPatch({
