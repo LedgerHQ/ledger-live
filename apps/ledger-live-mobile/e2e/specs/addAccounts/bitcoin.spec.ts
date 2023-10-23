@@ -9,7 +9,6 @@ import { getElementByText, waitForElementByText } from "../../helpers";
 
 let portfolioPage: PortfolioPage;
 let deviceAction: DeviceAction;
-let accountPage: AccountPage;
 let addAccountDrawer: AddAccountDrawer;
 
 const knownDevice = {
@@ -25,7 +24,6 @@ describe("Add Bitcoin Accounts", () => {
 
     portfolioPage = new PortfolioPage();
     deviceAction = new DeviceAction(knownDevice);
-    accountPage = new AccountPage();
     addAccountDrawer = new AddAccountDrawer();
 
     await portfolioPage.waitForPortfolioPageToLoad();
@@ -46,7 +44,7 @@ describe("Add Bitcoin Accounts", () => {
   });
 
   it("displays Bitcoin accounts page summary", async () => {
-    await accountPage.waitForAssetPageToLoad("Bitcoin");
+    await expect(getElementByText("Your Bitcoin")).toBeVisible();
 
     await waitForElementByText("1.19576 BTC");
   });

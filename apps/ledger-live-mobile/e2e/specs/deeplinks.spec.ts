@@ -1,6 +1,6 @@
 import { device, expect } from "detox";
 import { loadConfig } from "../bridge/server";
-import { getElementByUniqueId, getElementByText, isAndroid } from "../helpers";
+import { getElementByText, isAndroid } from "../helpers";
 import AccountPage from "../models/accounts/accountPage";
 import CustomLockscreenPage from "../models/stax/customLockscreenPage";
 import DiscoverPage from "../models/discover/discoverPage";
@@ -84,12 +84,14 @@ describe("DeepLinks Tests", () => {
 
   it("should open ETH Account Asset page when given currency param", async () => {
     await accountPage.openViaDeeplink("ethereum");
-    await accountPage.waitForAssetPageToLoad("ethereum");
+
+    await expect(getElementByText("Your Ethereum")).toExist();
   });
 
   it("should open BTC Account Asset page when given currency param", async () => {
     await accountPage.openViaDeeplink("bitcoin");
-    await accountPage.waitForAssetPageToLoad("bitcoin");
+
+    await expect(getElementByText("Your Bitcoin")).toExist();
   });
 
   it("should open the Discover page", async () => {

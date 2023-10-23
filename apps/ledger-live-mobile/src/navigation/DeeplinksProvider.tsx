@@ -196,14 +196,10 @@ const linkingOptions = (featureFlags: OptionalFeatureMap) => ({
                       [ScreenName.WalletNftGallery]: "nftgallery",
                       [NavigatorName.PortfolioAccounts]: {
                         screens: {
-                          [NavigatorName.Accounts]: {
-                            screens: {
-                              /**
-                               * "ledgerlive://accounts" opens the main portfolio screen of accounts.
-                               */
-                              [ScreenName.Accounts]: "accounts",
-                            },
-                          },
+                          /**
+                           * "ledgerlive://accounts" opens the main portfolio screen of accounts.
+                           */
+                          [ScreenName.Accounts]: "accounts",
                         },
                       },
                       ...(featureFlags?.ptxEarn?.enabled && {
