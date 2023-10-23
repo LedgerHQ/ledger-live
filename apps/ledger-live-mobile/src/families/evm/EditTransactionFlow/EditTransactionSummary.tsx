@@ -4,12 +4,12 @@
  * with some changes to make it work with our custom flow
  */
 
+import { getEditTransactionStatus } from "@ledgerhq/coin-evm/editTransaction/index";
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
 import { isCurrencySupported } from "@ledgerhq/coin-framework/currencies/index";
 import { NotEnoughGas } from "@ledgerhq/errors";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { getEditTransactionStatus } from "@ledgerhq/live-common/families/evm/editTransaction/index";
 import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
 import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
