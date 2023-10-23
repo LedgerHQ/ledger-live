@@ -1,6 +1,6 @@
 import { getEnv } from "@ledgerhq/live-env";
 import { BigNumber } from "bignumber.js";
-import type { Transaction } from "./types/transaction";
+import type { Transaction } from "../types/transaction";
 
 /**
  * Returns the minimum fees values to update a legacy transaction
