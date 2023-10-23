@@ -3874,6 +3874,12 @@
       "flagHint": "If a feature flag is defined in the targeted Firebase environment \nbut it is missing from the following list, you can type its **exact** name in \nthe search input and it will appear in the list. Type the \nflag name in camelCase without the 'feature' prefix.",
       "showButtonDesc": "Always display the Feature Flags button in the Sidebar",
       "buttonTitle": "Flags overridden locally",
+      "overridden": {
+        "byEnv": "overridden by env",
+        "overriddenLocally": "overridden locally",
+        "disableForLanguage": "disabled for current language",
+        "disableForVersion": "disabled for current version"
+      },
       "firebaseProject": "Firebase project targeted by this build:",
       "addLocalApp": "Add a local app",
       "addLocalAppDesc": "Browse local files and add a local app using a local manifest",
