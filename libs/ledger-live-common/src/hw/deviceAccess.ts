@@ -285,7 +285,7 @@ export const withDevice =
             });
         })
         .catch(error => {
-          tracer.trace("Caught error on job execution step", { error });
+          tracer.trace(`Caught error on job execution step: ${error}`, { error });
           o.error(error);
         });
 
