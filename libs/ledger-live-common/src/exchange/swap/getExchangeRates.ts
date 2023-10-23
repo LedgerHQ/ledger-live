@@ -65,6 +65,8 @@ const getExchangeRates: GetExchangeRates = async ({
     } = responseData;
 
     const error = inferError(apiAmount, unitFrom, responseData);
+    console.log({ inferError: error, request });
+
     if (error) {
       return {
         provider,
