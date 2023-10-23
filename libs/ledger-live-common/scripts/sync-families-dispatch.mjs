@@ -17,6 +17,7 @@ const targets = [
   "presync.ts",
   "platformAdapter.ts",
   "walletApiAdapter.ts",
+  "operation.ts",
 ];
 
 // Coins using coin-framework
