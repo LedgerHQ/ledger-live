@@ -3743,8 +3743,8 @@ importers:
         specifier: ^18.15.3
         version: 18.15.3
       '@types/web-bluetooth':
-        specifier: ^0.0.18
-        version: 0.0.18
+        specifier: ^0.0.19
+        version: 0.0.19
       documentation:
         specifier: 13.2.5
         version: 13.2.5
@@ -25456,8 +25456,8 @@ packages:
   /@types/w3c-web-usb@1.0.6:
     resolution: {integrity: sha512-cSjhgrr8g4KbPnnijAr/KJDNKa/bBa+ixYkywFRvrhvi9n1WEl7yYbtRyzE6jqNQiSxxJxoAW3STaOQwJHndaw==}
 
-  /@types/web-bluetooth@0.0.18:
-    resolution: {integrity: sha512-v/ZHEj9xh82usl8LMR3GarzFY1IrbXJw5L4QfQhokjRV91q+SelFqxQWSep1ucXEZ22+dSTwLFkXeur25sPIbw==}
+  /@types/web-bluetooth@0.0.19:
+    resolution: {integrity: sha512-0Eoq1m8n3qXnV8tUJpL+Dgk09jJOp7IN1kXuwn65+i1VgxzNRW6sArEDrD9uPe5+wgBp3ZNYMAAtrminQf5RjA==}
     dev: true
 
   /@types/webpack-env@1.16.4:
