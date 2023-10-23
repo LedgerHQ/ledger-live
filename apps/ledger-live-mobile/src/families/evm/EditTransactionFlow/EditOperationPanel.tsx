@@ -26,7 +26,7 @@ const EditOperationPanelComponent = ({
   onPress,
 }: EditOperationPanelProps) => {
   const { t } = useTranslation();
-  const { enabled } = useFeature("editEthTx");
+  const editEthTxFeature = useFeature("editEthTx");
   const navigation = useNavigation();
   const { colors } = useTheme();
 
@@ -41,7 +41,7 @@ const EditOperationPanelComponent = ({
     }
   }, [account, parentAccount, operation, navigation, onPress]);
 
-  if (!enabled) {
+  if (!editEthTxFeature?.enabled) {
     return null;
   }
 
