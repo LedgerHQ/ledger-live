@@ -1,13 +1,14 @@
-import { isEqual } from "lodash";
-import BigNumber from "bignumber.js";
-import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
-import { getAdditionalLayer2Fees, getEstimatedFees, isNftTransaction } from "./logic";
-import { EvmNftTransaction, Transaction as EvmTransaction, FeeData, Strategy } from "./types";
-import { getTransactionData, getTypedTransaction } from "./transaction";
-import { validateRecipient } from "./getTransactionStatus";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import { isEqual } from "lodash";
 import { getNftCollectionMetadata } from "./api/nft";
 import { getNodeApi } from "./api/node/index";
+import { DEFAULT_NONCE } from "./createTransaction";
+import { validateRecipient } from "./getTransactionStatus";
+import { getAdditionalLayer2Fees, getEstimatedFees, isNftTransaction } from "./logic";
+import { getTransactionData, getTypedTransaction } from "./transaction";
+import { EvmNftTransaction, Transaction as EvmTransaction, FeeData, Strategy } from "./types";
 
 /**
  * Prepare basic coin transactions or smart contract interactions (other than live ERC20 transfers)
@@ -227,17 +228,14 @@ export const prepareTransaction = async (
 export const prepareForSignOperation = async ({
   account,
   transaction,
-  /**
-   * specify if the nonce of the transaction should be used or replaced by the
-   * one returned by the node
-   */
-  isValidNonce = false,
 }: {
   account: Account;
   transaction: EvmTransaction;
   isValidNonce?: boolean;
 }): Promise<EvmTransaction> => {
   const nodeApi = getNodeApi(account.currency);
+
+  const isValidNonce = transaction.nonce !== DEFAULT_NONCE;
 
   const nonce = isValidNonce
     ? transaction.nonce
