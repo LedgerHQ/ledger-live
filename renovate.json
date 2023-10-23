@@ -39,7 +39,7 @@
       "groupName": null
     }
   ],
-  "prConcurrentLimit": 10,
+  "prConcurrentLimit": 5,
   "separateMinorPatch": true,
   "timezone": "Europe/Paris",
   "enabledManagers": ["npm"]

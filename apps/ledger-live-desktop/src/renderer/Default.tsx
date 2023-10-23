@@ -70,6 +70,8 @@ import {
   useFetchCurrencyAll,
   useFetchCurrencyFrom,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccountsWithFundsListener";
+import { accountsSelector } from "./reducers/accounts";
 
 // in order to test sentry integration, we need the ability to test it out.
 const LetThisCrashForCrashTest = () => {
@@ -146,7 +148,9 @@ const NightlyLayer = React.memo(NightlyLayerR);
 export default function Default() {
   const history = useHistory();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+  const accounts = useSelector(accountsSelector);
 
+  useAccountsWithFundsListener(accounts, updateIdentify);
   useListenToHidDevices();
   useDeeplink();
   useUSBTroubleshooting();
