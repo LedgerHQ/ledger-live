@@ -17,7 +17,7 @@ const EditStuckTransactionPanelBodyHeader = ({ account, parentAccount }: Props) 
     return null;
   }
   invariant(account, "account required");
-  // for evm family, check if there is a stuck transaction. If so, display a warning panel with "speed up or cancel" button
+  // check if there is a stuck transaction. If so, display a warning panel with "speed up or cancel" button
   const stuckAccountAndOperation = getStuckAccountAndOperation(account, parentAccount);
 
   if (!stuckAccountAndOperation) {
