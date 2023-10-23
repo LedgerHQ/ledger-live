@@ -1,5 +1,4 @@
 import { ipcRenderer } from "electron";
-import * as remote from "@electron/remote";
 import React, { memo, useState, useCallback } from "react";
 import { Trans } from "react-i18next";
 import { connect } from "react-redux";
@@ -58,7 +57,7 @@ function ExportOperations({ accounts, closeModal, countervalueCurrency }: Props)
   const [success, setSuccess] = useState(false);
   const countervalueState = useCountervaluesState();
   const exportCsv = useCallback(async () => {
-    const path = await remote.dialog.showSaveDialog({
+    const path = await ipcRenderer.invoke("show-save-dialog", {
       title: "Exported account transactions",
       defaultPath: `ledgerlive-operations-${moment().format("YYYY.MM.DD")}.csv`,
       filters: [
