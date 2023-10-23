@@ -1,4 +1,4 @@
-import { from, of, throwError, Observable, TimeoutError, timer, SchedulerLike } from "rxjs";
+import { from, of, throwError, Observable, TimeoutError, timer } from "rxjs";
 import { map, catchError, first, timeout, repeat } from "rxjs/operators";
 import getVersion from "./getVersion";
 import { withDevice } from "./deviceAccess";
@@ -29,7 +29,6 @@ export type GetOnboardingStatePollingArgs = {
   pollingPeriodMs: number;
   transportAbortTimeoutMs?: number;
   safeGuardTimeoutMs?: number;
-  rxjsScheduler?: SchedulerLike;
 };
 
 /**
