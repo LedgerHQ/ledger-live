@@ -57,7 +57,6 @@ import {
 } from "rxjs/operators";
 import {
   CantOpenDevice,
-  DeviceNeedsRestart,
   TransportError,
   DisconnectedDeviceDuringOperation,
   PairingFailed,
@@ -255,16 +254,13 @@ async function open(
           productName,
         });
       }
-      // This is a rare error scenario where the device was communicating in bluetooth
-      // and cut its BLE stack (seed generation for ex) without restarting it correctly.
-      // It seems that there is no way to recover without restarting the device.
+      // This case should not happen, but recording logs to be warned if we see it in production
       else if (error.errorCode === BleErrorCode.DeviceAlreadyConnected) {
         tracer.trace(`Device already connected, while it was not supposed to`, {
           error,
         });
-        throw new DeviceNeedsRestart(
-          "BleTransport: device already connected, while it was not supposed to",
-        );
+
+        throw remapError(error);
       } else {
         throw remapError(error);
       }
