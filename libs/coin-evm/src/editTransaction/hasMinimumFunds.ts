@@ -1,8 +1,8 @@
-import { getEstimatedFees } from "@ledgerhq/coin-evm/logic";
-import type { Transaction } from "@ledgerhq/coin-evm/types/index";
 import { getEnv } from "@ledgerhq/live-env";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
+import { getEstimatedFees } from "../logic";
+import type { Transaction } from "../types/index";
 
 export const hasMinimumFundsToCancel = ({
   mainAccount,

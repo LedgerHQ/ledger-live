@@ -1,9 +1,9 @@
-import { getEstimatedFees } from "@ledgerhq/coin-evm/logic";
-import type { Transaction } from "@ledgerhq/coin-evm/types/index";
 import { getAccountUnit } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import type { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
+import { getEstimatedFees } from "../logic";
+import type { Transaction } from "../types/index";
 
 /**
  * Used to display the pending transaction (the original transaction being sped
