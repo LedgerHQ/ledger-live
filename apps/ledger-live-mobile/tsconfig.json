@@ -9,10 +9,8 @@
     "noEmit": true,
     "target": "esnext",
     "incremental": true,
-    "moduleResolution": "node",
     "baseUrl": ".",
     "paths": {
-      // Follow this structure: "@{package}/*": ["{any/path}/*"]
       "@utils/*": ["./src/utils/*"]
     }
   },

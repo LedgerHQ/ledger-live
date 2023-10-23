@@ -1,6 +1,5 @@
 const fs = require("fs");
 const path = require("path");
-const JSON5 = require("json5");
 
 const TSCONFIG_FILE = "tsconfig.json";
 const DEFAULT_BASE_URL = ".";
@@ -56,7 +55,7 @@ const optimizePath = paths => {
  */
 module.exports = ({ projectRoot }) => {
   // Fetch tsconfig file
-  const tsconfig = JSON5.parse(fs.readFileSync(path.join(projectRoot, TSCONFIG_FILE)));
+  const tsconfig = require(path.join(projectRoot, TSCONFIG_FILE));
 
   // Initialize `baseUrl` and `paths`
   const baseUrl = tsconfig.compilerOptions.baseUrl ?? DEFAULT_BASE_URL;
