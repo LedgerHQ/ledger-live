@@ -3843,6 +3843,9 @@
       "carouselVisibilityDesc": "Enable visibility of the carousel on Portfolio"
     },
     "developer": {
+      "search": "Search",
+      "all": "All",
+      "groups": "Groups",
       "open": "Open",
       "hide": "Hide",
       "show": "Show",

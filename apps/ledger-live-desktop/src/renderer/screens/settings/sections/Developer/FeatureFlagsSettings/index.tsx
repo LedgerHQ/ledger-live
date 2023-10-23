@@ -155,7 +155,7 @@ export const FeatureFlagContent = withV3StyleProvider((props: { expanded?: boole
             </Tag>
           </Flex>
           <SearchInput
-            placeholder="Search"
+            placeholder={t("settings.developer.search")}
             value={searchInput}
             onChange={setSearchInput}
             clearable
@@ -183,7 +183,7 @@ export const FeatureFlagContent = withV3StyleProvider((props: { expanded?: boole
             onIndexChange={handleChangeTab}
             defaultIndex={activeTabIndex}
             index={activeTabIndex}
-            tabs={["All", "Groups"]}
+            tabs={[t("settings.developer.all"), t("settings.developer.groups")]}
             separator
             withId
             fontSize={14}
