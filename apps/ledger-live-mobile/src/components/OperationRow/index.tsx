@@ -3,7 +3,12 @@ import { TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
 import styled, { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
-import { getOperationAmountNumber, isConfirmedOperation } from "@ledgerhq/live-common/operation";
+import {
+  getOperationAmountNumber,
+  isConfirmedOperation,
+  isEditableOperation,
+  isStuckOperation,
+} from "@ledgerhq/live-common/operation";
 import {
   getMainAccount,
   getAccountCurrency,
@@ -16,7 +21,6 @@ import { WarningMedium } from "@ledgerhq/native-ui/assets/icons";
 import debounce from "lodash/debounce";
 import { isEqual } from "lodash";
 import { useSelector } from "react-redux";
-import { isEditableOperation, isStuckOperation } from "@ledgerhq/coin-framework/operation";
 import CurrencyUnitValue from "../CurrencyUnitValue";
 import CounterValue from "../CounterValue";
 import OperationIcon from "../OperationIcon";
@@ -164,7 +168,8 @@ function OperationRow({
   const text = <Trans i18nKey={`operations.types.${operation.type}`} />;
   const isOptimistic = operation.blockHeight === null;
   const isOperationStuck =
-    isEditableOperation(mainAccount, operation) && isStuckOperation(operation);
+    isEditableOperation({ account: mainAccount, operation }) &&
+    isStuckOperation({ family: mainAccount.currency.family, operation });
 
   const spinner = isOperationStuck ? (
     <WarningMedium />

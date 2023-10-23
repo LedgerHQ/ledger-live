@@ -15,11 +15,12 @@ import {
   getOperationAmountNumber,
   isConfirmedOperation,
   getOperationConfirmationDisplayableNumber,
+  isEditableOperation,
+  isStuckOperation,
 } from "@ledgerhq/live-common/operation";
 import { useNftCollectionMetadata, useNftMetadata } from "@ledgerhq/live-common/nft/index";
 import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { isEditableOperation, isStuckOperation } from "@ledgerhq/coin-framework/operation";
 import { NavigatorName, ScreenName } from "../../const";
 import LText from "../../components/LText";
 import OperationIcon from "../../components/OperationIcon";
@@ -132,8 +133,8 @@ export default function Content({
     currencySettings.confirmationsNb,
   );
 
-  const isEditable = isEditableOperation(mainAccount, operation);
-  const isOperationStuck = isStuckOperation(operation);
+  const isEditable = isEditableOperation({ account: mainAccount, operation });
+  const isOperationStuck = isStuckOperation({ family: mainAccount.currency.family, operation });
 
   const specific =
     byFamiliesOperationDetails[
