@@ -16,7 +16,7 @@ import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
 import { NearAccount } from "@ledgerhq/live-common/families/near/types";
-import { isEditableOperation, isStuckOperation } from "@ledgerhq/coin-framework/operation";
+import { isEditableOperation, isStuckOperation } from "@ledgerhq/live-common/operation";
 import Header from "./Header";
 import AccountGraphCard from "../../components/AccountGraphCard";
 import SubAccountsList from "./SubAccountsList";
@@ -113,11 +113,13 @@ export function getListHeaderComponents({
 
   const [oldestEditableOperation] = account.pendingOperations
     .filter(pendingOperation => {
-      return isEditableOperation(mainAccount, pendingOperation);
+      return isEditableOperation({ account: mainAccount, operation: pendingOperation });
     })
     .sort((a, b) => a.transactionSequenceNumber! - b.transactionSequenceNumber!);
 
-  const isOperationStuck = oldestEditableOperation && isStuckOperation(oldestEditableOperation);
+  const isOperationStuck =
+    oldestEditableOperation &&
+    isStuckOperation({ family: mainAccount.currency.family, operation: oldestEditableOperation });
 
   return {
     listHeaderComponents: [

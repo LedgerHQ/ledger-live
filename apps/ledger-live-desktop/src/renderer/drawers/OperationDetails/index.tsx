@@ -236,7 +236,7 @@ const OperationD = (props: Props) => {
       : currency.name
     : undefined;
   const editEthTx = useFeature("editEthTx");
-  const editable = editEthTx?.enabled && isEditableOperation(mainAccount, operation);
+  const editable = editEthTx?.enabled && isEditableOperation({ account: mainAccount, operation });
   const dispatch = useDispatch();
 
   const handleOpenEditModal = useCallback(() => {
@@ -254,7 +254,7 @@ const OperationD = (props: Props) => {
     );
   }, [dispatch, account, parentAccount, operation.transactionRaw, operation.hash]);
 
-  const isStuck = isStuckOperation(operation);
+  const isStuck = isStuckOperation({ family: mainAccount.currency.family, operation });
   const feesCurrency = useMemo(() => getFeesCurrency(mainAccount), [mainAccount]);
   const feesUnit = useMemo(() => getFeesUnit(feesCurrency), [feesCurrency]);
 
