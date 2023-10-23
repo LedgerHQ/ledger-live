@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { isStrategyDisabled } from "./isStrategyDisabled";
+import { isStrategyDisabled } from "../../../editTransaction/isStrategyDisabled";
 
 describe("isStrategyDisabled", () => {
   describe("EIP1559 transaction (type 2)", () => {
