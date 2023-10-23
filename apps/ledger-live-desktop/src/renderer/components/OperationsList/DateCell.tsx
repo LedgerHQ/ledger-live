@@ -20,6 +20,7 @@ const Cell = styled(Box).attrs(() => ({
 
 type Props = {
   t: TFunction;
+  family: string;
   operation: Operation;
   text?: string;
   compact?: boolean;
@@ -38,7 +39,7 @@ const PendingLoadingIcon = ({ displayWarning }: { displayWarning: boolean }): JS
   return <InfiniteLoader size={12} style={{ verticalAlign: "middle" }} />;
 };
 
-const DateCell = ({ t, operation, compact, text, editable }: Props): JSX.Element => {
+const DateCell = ({ t, family, operation, compact, text, editable }: Props): JSX.Element => {
   const ellipsis = {
     display: "block",
     textOverflow: "ellipsis",
@@ -55,7 +56,7 @@ const DateCell = ({ t, operation, compact, text, editable }: Props): JSX.Element
       {editable ? (
         <Box fontSize={3} color="palette.text.shade80">
           <Box ff="Inter|SemiBold" fontSize={3} color="palette.text.shade80" style={ellipsis}>
-            <PendingLoadingIcon displayWarning={isStuckOperation(operation)} />
+            <PendingLoadingIcon displayWarning={isStuckOperation({ family, operation })} />
             <Box
               style={{
                 marginLeft: "4px",
