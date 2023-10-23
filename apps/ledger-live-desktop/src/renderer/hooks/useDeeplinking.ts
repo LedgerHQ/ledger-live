@@ -146,9 +146,14 @@ export function useDeepLinkHandler() {
           if (foundCurrency.type === "FiatCurrency") return;
 
           dispatch(
-            openModal("MODAL_ADD_ACCOUNTS", {
-              currency: foundCurrency,
-            }),
+            openModal(
+              "MODAL_ADD_ACCOUNTS",
+              foundCurrency
+                ? {
+                    currency: foundCurrency,
+                  }
+                : undefined,
+            ),
           );
           break;
         }
