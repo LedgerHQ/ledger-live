@@ -22,6 +22,7 @@ import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import CompleteExchange, {
   Data as CompleteExchangeData,
 } from "~/renderer/modals/Platform/Exchange/CompleteExchange/Drawer";
+import { Operation } from "@ledgerhq/types-live";
 
 const Divider = styled(Box)`
   border: 1px solid ${p => p.theme.colors.palette.divider};
@@ -132,7 +133,7 @@ export const LiveAppDrawer = () => {
               }}
               onResult={result => {
                 if ("startExchangeResult" in result) {
-                  data.onResult(result.startExchangeResult);
+                  data.onResult(result.startExchangeResult as unknown as Operation);
                 }
               }}
             />
