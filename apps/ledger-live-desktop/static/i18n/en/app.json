@@ -209,11 +209,11 @@
       },
       "speedUp": {
         "title": "Speed Up",
-        "description": "Re-submit the transaction with a higher network fee.\n\nThe network fee must be at least 30% higher than the fee of the original transaction."
+        "description": "Re-submit the transaction with a higher network fee."
       },
       "cancel": {
         "title": "Cancel",
-        "description": "Sending 0 {{ticker}} to your own address.\n\nThe network fee must be at least 30% higher than the fee of the original transaction."
+        "description": "Sending 0 {{ticker}} to your own address."
       },
       "steps": {
         "method": {
@@ -4979,7 +4979,7 @@
   "errors": {
     "ReplacementTransactionUnderpriced": {
       "title": "Replacement transaction underpriced",
-      "description": "The network fee must be at least 10% higher than the fee of the original transaction."
+      "description": "The network fee might be too low. Please increase"
     },
     "NoSuchAppOnProvider": {
       "title": "The {{appName}} app cannot be found for your specific configuration.",
