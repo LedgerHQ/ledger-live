@@ -1,6 +1,11 @@
 import { device, expect } from "detox";
 import { loadConfig } from "../bridge/server";
-import { getElementByText, isAndroid } from "../helpers";
+import {
+  getElementByText,
+  isAndroid,
+  waitForElementByText,
+  waitForElementWithUniqueText,
+} from "../helpers";
 import AccountPage from "../models/accounts/accountPage";
 import CustomLockscreenPage from "../models/stax/customLockscreenPage";
 import DiscoverPage from "../models/discover/discoverPage";
@@ -53,6 +58,7 @@ const openNCheckApp = (l10n: { name: string; url: string }) => {
 
 describe("DeepLinks Tests", () => {
   beforeAll(async () => {
+    await device.launchApp();
     loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
 
     accountPage = new AccountPage();
@@ -83,15 +89,15 @@ describe("DeepLinks Tests", () => {
   });
 
   it("should open ETH Account Asset page when given currency param", async () => {
-    await accountPage.openViaDeeplink("ethereum");
+    await accountPage.openViaDeeplink(ethereumLong);
 
-    await expect(getElementByText("Your Ethereum")).toExist();
+    await waitForElementWithUniqueText("Your Ethereum");
   });
 
   it("should open BTC Account Asset page when given currency param", async () => {
-    await accountPage.openViaDeeplink("bitcoin");
+    await accountPage.openViaDeeplink(bitcoinLong);
 
-    await expect(getElementByText("Your Bitcoin")).toExist();
+    await waitForElementByText("Your Bitcoin");
   });
 
   it("should open the Discover page", async () => {

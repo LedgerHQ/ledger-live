@@ -3,7 +3,6 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import { loadBleState, loadConfig } from "../../bridge/server";
 import PortfolioPage from "../../models/wallet/portfolioPage";
 import DeviceAction from "../../models/DeviceAction";
-import AccountPage from "../../models/accounts/accountPage";
 import AddAccountDrawer from "../../models/accounts/addAccountDrawer";
 import { getElementByText, waitForElementByText } from "../../helpers";
 
