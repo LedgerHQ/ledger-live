@@ -5,7 +5,6 @@ import ThemeSettingsRow from "./ThemeSettingsRow";
 import AuthSecurityToggle from "./AuthSecurityToggle";
 import ReportErrorsRow from "./ReportErrorsRow";
 import AnalyticsRow from "./AnalyticsRow";
-import CarouselRow from "./CarouselRow";
 import LanguageRow from "./LanguageRow";
 import SettingsNavigationScrollView from "../SettingsNavigationScrollView";
 import DateFormatRow from "./DateFormatRow";
@@ -21,7 +20,6 @@ export default function GeneralSettings() {
       <AuthSecurityToggle />
       <ReportErrorsRow />
       <AnalyticsRow />
-      <CarouselRow />
     </SettingsNavigationScrollView>
   );
 }
