@@ -10,15 +10,11 @@ import BiometricsRow from "./BiometricsRow";
 import { ScreenName } from "../../../const";
 import { track } from "../../../analytics";
 
-/** COMPONENT */
 export default function AuthSecurityToggle() {
-  /** CONSTANTS */
   const { t } = useTranslation();
 
   const privacy = useSelector(privacySelector);
   const { navigate } = useNavigation();
-
-  /** CALLBACKS */
 
   const onValueChange = (authSecurityEnabled: boolean): void => {
     // Add onClick Analytics
@@ -32,7 +28,6 @@ export default function AuthSecurityToggle() {
       authSecurityEnabled ? NavigatorName.PasswordAddFlow : NavigatorName.PasswordModifyFlow,
     );
   };
-  /** RENDER */
 
   return (
     <>

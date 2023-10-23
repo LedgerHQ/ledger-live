@@ -10,15 +10,11 @@ import { useBiometricAuth } from "../../../components/RequestBiometricAuth";
 import { ScreenName } from "../../../const";
 import { track } from "../../../analytics";
 
-/** TYPES */
-
 type Props = {
   iconLeft?: React.ReactNode;
 };
 
-/** COMPONENT */
 export default function BiometricsRow({ iconLeft }: Props) {
-  /** CONSTANTS */
   const { t } = useTranslation();
 
   const dispatch = useDispatch();
@@ -31,8 +27,6 @@ export default function BiometricsRow({ iconLeft }: Props) {
 
   const biometricsType =
     t(`auth.enableBiometrics.${privacy?.biometricsType?.toLowerCase()}`) ?? privacy?.biometricsType;
-
-  /** CALLBACKS */
 
   const onValueChange = useCallback(
     async (biometricsEnabled: boolean) => {
@@ -77,7 +71,6 @@ export default function BiometricsRow({ iconLeft }: Props) {
     }
   }, [privacy, biometricsEnabled]);
 
-  /** RENDER */
   return (
     <>
       {privacy?.biometricsType ? (
