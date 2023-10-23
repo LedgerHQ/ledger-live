@@ -1,3 +1,4 @@
+import { isStrategyDisabled } from "@ledgerhq/coin-evm/editTransaction/index";
 import { getEstimatedFees } from "@ledgerhq/coin-evm/logic";
 import { getTypedTransaction } from "@ledgerhq/coin-evm/transaction";
 import {
@@ -6,7 +7,6 @@ import {
   Strategy,
 } from "@ledgerhq/coin-evm/types/index";
 import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
-import { isStrategyDisabled } from "@ledgerhq/live-common/families/evm/editTransaction/index";
 import { Account } from "@ledgerhq/types-live";
 import React, { memo, useMemo } from "react";
 import { Trans } from "react-i18next";

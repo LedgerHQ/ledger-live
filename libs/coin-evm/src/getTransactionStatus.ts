@@ -20,7 +20,7 @@ import { Account, AccountBridge, SubAccount, TransactionStatusCommon } from "@le
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import { NotEnoughNftOwned, NotOwnedNft, QuantityNeedsToBePositive } from "./errors";
-import { getMinEip1559Fees, getMinLegacyFees } from "./getMinEditTransactionFees";
+import { getMinEip1559Fees, getMinLegacyFees } from "./editTransaction/getMinEditTransactionFees";
 import { eip1559TransactionHasFees, getEstimatedFees, legacyTransactionHasFees } from "./logic";
 import { DEFAULT_GAS_LIMIT } from "./transaction";
 import {

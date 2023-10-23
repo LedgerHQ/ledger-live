@@ -1,5 +1,5 @@
+import { getFormattedFeeFields } from "@ledgerhq/coin-evm/editTransaction/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { getFormattedFeeFields } from "@ledgerhq/live-common/families/evm/editTransaction/index";
 import React, { Fragment, memo } from "react";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
