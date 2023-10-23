@@ -23,7 +23,7 @@ export const EditOperationCard = ({
   parentAccount,
 }: EditOperationCardProps) => {
   const { t } = useTranslation();
-  const { enabled } = useFeature("editEthTx");
+  const editEthTxFeature = useFeature("editEthTx");
   const navigation = useNavigation();
 
   const onEditTransactionCardPress = useCallback(() => {
@@ -39,7 +39,7 @@ export const EditOperationCard = ({
     }
   }, [account, oldestEditableOperation, parentAccount, navigation]);
 
-  if (!enabled) {
+  if (!editEthTxFeature?.enabled) {
     return null;
   }
 
