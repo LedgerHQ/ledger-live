@@ -15,7 +15,6 @@ import { EvmAddress, EvmSignature, EvmSigner } from "./signer";
 import { prepareForSignOperation } from "./prepareTransaction";
 import { getSerializedTransaction } from "./transaction";
 import { Transaction } from "./types";
-import { DEFAULT_NONCE } from "./createTransaction";
 
 /**
  * Transforms the ECDSA signature paremeter v hexadecimal string received
@@ -64,7 +63,6 @@ export const buildSignOperation =
         const preparedTransaction = await prepareForSignOperation({
           account,
           transaction,
-          isValidNonce: transaction.nonce !== DEFAULT_NONCE,
         });
         const serializedTxHexString = getSerializedTransaction(preparedTransaction).slice(2); // Remove 0x prefix
 
