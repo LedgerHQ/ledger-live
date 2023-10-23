@@ -95,6 +95,23 @@ export function useLoginPath(
   return usePath(servicesConfig, uri);
 }
 
+export function useRestore24URI(
+  servicesConfig: Feature_ProtectServicesDesktop | null,
+): string | undefined {
+  const uri = servicesConfig?.params?.onboardingCompleted?.restore24URI;
+  const id = servicesConfig?.params?.protectId;
+
+  return useReplacedURI(uri, id);
+}
+
+export function useRestore24Path(
+  servicesConfig: Feature_ProtectServicesDesktop | null,
+): string | undefined {
+  const uri = useRestore24URI(servicesConfig);
+
+  return usePath(servicesConfig, uri);
+}
+
 export function useAccountURI(
   servicesConfig: Feature_ProtectServicesDesktop | null,
 ): string | undefined {

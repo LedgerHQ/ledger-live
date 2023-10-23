@@ -1,7 +1,7 @@
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import {
   useAlreadySeededDevicePath,
-  usePostOnboardingPath,
+  useRestore24Path,
   useUpsellPath,
   useCustomPath,
 } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
@@ -232,7 +232,7 @@ export default function Tutorial({ useCase }: Props) {
   const { pathname } = useLocation();
   const recoverFF = useFeature("protectServicesDesktop");
   const upsellPath = useUpsellPath(recoverFF);
-  const postOnboardingPath = usePostOnboardingPath(recoverFF);
+  const restore24Path = useRestore24Path(recoverFF);
   const devicePairingPath = useAlreadySeededDevicePath(recoverFF);
   const recoverRestorePath = useCustomPath(recoverFF, "restore", "lld-restore-with-recover");
   const recoverDiscoverPath = useMemo(() => {
@@ -574,8 +574,8 @@ export default function Tutorial({ useCase }: Props) {
 
         if (useCase === UseCase.setupDevice && upsellPath) {
           history.push(upsellPath);
-        } else if (useCase === UseCase.recoveryPhrase && postOnboardingPath) {
-          history.push(postOnboardingPath);
+        } else if (useCase === UseCase.recoveryPhrase && restore24Path) {
+          history.push(restore24Path);
         } else if (useCase === UseCase.connectDevice && devicePairingPath) {
           history.push(devicePairingPath);
         }
@@ -590,7 +590,7 @@ export default function Tutorial({ useCase }: Props) {
     handleStartPostOnboarding,
     history,
     onboardingDone,
-    postOnboardingPath,
+    restore24Path,
     upsellPath,
     useCase,
   ]);
