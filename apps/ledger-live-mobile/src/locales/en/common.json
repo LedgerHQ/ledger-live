@@ -102,7 +102,7 @@
   "errors": {
     "ReplacementTransactionUnderpriced": {
       "title": "Replacement transaction underpriced",
-      "description": "The network fee must be at least 10% higher than the fee of the original transaction."
+      "description": "The network fee might be too low. Please increase"
     },
     "countervaluesUnavailable": {
       "title": "We're not able to provide a countervalue for this asset at the moment"
@@ -3600,7 +3600,7 @@
     },
     "cancel": {
       "title": "Cancel",
-      "description": "Sending 0 {{ticker}} to your own address.\nTo ensure cancellation, the network fee is 30% higher than the fee of the transaction meant to be cancelled."
+      "description": "Sending 0 {{ticker}} to your own address."
     },
     "error": {
       "notEnoughFundsToCancel": "Cancelling transaction is not available because you don't have enough funds on your account.",
