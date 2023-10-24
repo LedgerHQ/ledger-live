@@ -18,7 +18,7 @@ export const usePickDefaultCurrency = (
 
       if (defaultCurrency) {
         setCurrency(defaultCurrency);
-      } else {
+      } else if (currencies.length > 0) {
         currenciesByMarketcap(currencies).then(sortedCurrencies => {
           setCurrency(sortedCurrencies[0]);
         });
