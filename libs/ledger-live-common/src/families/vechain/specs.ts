@@ -42,7 +42,6 @@ const vechainTest = {
     appName: "VeChain",
   },
   allowEmptyAccounts: true,
-  testTimeout: 60 * 1000, // 1 minute
   genericDeviceAction: deviceAction.acceptTransaction,
   onSpeculosDeviceCreated: async ({ transport }) => await prepareVeChainApp(transport),
 };
