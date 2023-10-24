@@ -4,7 +4,7 @@ import {
   GetWalletAPITransactionSignFlowInfos,
 } from "../../wallet-api/types";
 
-import { Transaction } from "@ledgerhq/coin-polkadot/types";
+import { Transaction } from "@ledgerhq/coin-polkadot/types/index";
 
 const CAN_EDIT_FEES = false;
 

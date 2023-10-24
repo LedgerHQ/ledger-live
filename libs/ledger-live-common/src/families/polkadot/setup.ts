@@ -3,7 +3,7 @@
 import { createBridges } from "@ledgerhq/coin-polkadot/bridge/js";
 import makeCliTools from "@ledgerhq/coin-polkadot/cli-transaction";
 import polkadotResolver from "@ledgerhq/coin-polkadot/hw-getAddress";
-import { Transaction } from "@ledgerhq/coin-polkadot/types";
+import { Transaction } from "@ledgerhq/coin-polkadot/types/index";
 import Polkadot from "@ledgerhq/hw-app-polkadot";
 import Transport from "@ledgerhq/hw-transport";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";

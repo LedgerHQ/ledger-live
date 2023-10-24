@@ -26,8 +26,8 @@ import { makeGetAccountShape } from "../js-synchronisation";
 import { loadPolkadotCrypto } from "../polkadot-crypto";
 import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
 import { getPreloadStrategy, hydrate, preload } from "../preload";
-import type { Transaction } from "../types";
-import { PolkadotAddress, PolkadotSignature, PolkadotSigner } from "../signer";
+import type { PolkadotAddress, PolkadotSignature, Transaction } from "../types";
+import { PolkadotSigner } from "../types";
 
 /**
  * Broadcast the signed transaction
