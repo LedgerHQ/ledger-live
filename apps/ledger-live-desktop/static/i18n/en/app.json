@@ -376,6 +376,11 @@
         "disclaimer": "Take note of your Swap ID number in case you’d need assistance from <0><0>{{provider}}</0> support</0>.",
         "seeDetails": "See details"
       }
+    },
+    "webviewErrorDrawer": {
+      "title": "Sorry, try again.",
+      "description": "The server could not handle your request. Please try again later or contact Ledger Support.",
+      "code": "Code: {{errorCode}}"
     }
   },
   "swap": {
