@@ -17,7 +17,7 @@ import StorageWarningModal from "./Modals/StorageWarningModal";
 import InstallAppDependenciesModal from "./Modals/InstallAppDependenciesModal";
 import UninstallAppDependenciesModal from "./Modals/UninstallAppDependenciesModal";
 import { useLockNavigation } from "../../components/RootNavigator/CustomBlockRouterNavigator";
-import { setLastSeenDeviceInfo } from "../../actions/settings";
+import { setHasInstalledAnyApp, setLastSeenDeviceInfo } from "../../actions/settings";
 import { ScreenName } from "../../const";
 import FirmwareUpdateScreen from "../../components/FirmwareUpdate";
 import { ManagerNavigatorStackParamList } from "../../components/RootNavigator/types/ManagerNavigator";
@@ -204,6 +204,7 @@ const Manager = ({ navigation, route }: NavigationProps) => {
 
   const installAppWithDependencies = useCallback(() => {
     if (appWithDependenciesToInstall) {
+      dispatch(setHasInstalledAnyApp(true));
       dispatch({ type: "install", name: appWithDependenciesToInstall?.app.name });
     }
     onCloseInstallAppDependenciesModal();
