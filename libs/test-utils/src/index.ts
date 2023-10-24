@@ -12,7 +12,7 @@ export const dummyAppServer: http.Server = http.createServer(
     // More details here: https://github.com/vercel/serve-handler#options
 
     handler(request, response, {
-      public: path.resolve(__dirname, "..", dummyAppPath),
+      public: path.resolve(__dirname, "..", "..", "..", "tests", dummyAppPath),
     });
   },
 );

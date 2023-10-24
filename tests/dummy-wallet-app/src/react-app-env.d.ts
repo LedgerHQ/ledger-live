@@ -4,7 +4,7 @@ interface Window {
   ledger: {
     e2e: {
       walletApi: {
-        send: (params: unknown) => void;
+        send: (params: string) => Promise<unknown>;
       };
     };
   };

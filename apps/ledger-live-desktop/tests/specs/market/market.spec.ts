@@ -10,7 +10,7 @@ test.use({ userdata: "skip-onboarding" });
 let testServerIsRunning = false;
 
 test.beforeAll(async () => {
-  // Check that dummy app in libs/test-utils/dummy-ptx-app has been started successfully
+  // Check that dummy app in tests/dummy-ptx-app has been started successfully
   testServerIsRunning = await LiveAppWebview.startLiveApp("dummy-ptx-app/public", {
     name: "Buy App",
     id: "multibuy-v2",

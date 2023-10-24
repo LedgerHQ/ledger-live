@@ -21,7 +21,7 @@ describe("Wallet API methods", () => {
     liveAppWebview = new LiveAppWebview();
     cryptoDrawer = new CryptoDrawer();
 
-    // Check that dummy app in tests/utils/dummy-app-build has been started successfully
+    // Check that dummy app in tests/dummy-app-build has been started successfully
     continueTest = await liveAppWebview.startLiveApp("dummy-wallet-app", 52619);
 
     if (!continueTest || !isAndroid()) {
