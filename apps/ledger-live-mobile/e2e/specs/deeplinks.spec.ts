@@ -12,7 +12,6 @@ import ReceivePage from "../models/trade/receivePage";
 import OnboardingSteps from "../models/onboarding/onboardingSteps";
 import AccountAssetPage from "../models/accounts/accountAssetPage";
 
-// let accountPage: AccountPage;
 let accountAssetPage: AccountAssetPage;
 let onboardingSteps: OnboardingSteps;
 let customLockscreenPage: CustomLockscreenPage;
@@ -79,22 +78,22 @@ describe("DeepLinks Tests", () => {
     await onboardingSteps.addDeviceViaBluetooth("David");
   });
 
-  it("should open Custom Lock Screen page", async () => {
-    await customLockscreenPage.openViaDeeplink();
-    await customLockscreenPage.expectCustomLockscreenPage();
-    await expect(customLockscreenPage.welcomeChoosePictureButton()).toBeVisible();
-  });
-
-  it.only("should open ETH Account Asset page when given currency param", async () => {
+  it("should open ETH Account Asset page when given currency param", async () => {
     await accountAssetPage.openAssetScreenViaDeeplink(ethereumLong);
     await accountAssetPage.waitForAccountAssetsToLoad(ethereumLong);
     await expect(getElementByText("Your Ethereum")).toBeVisible();
   });
 
-  it.only("should open BTC Account Asset page when given currency param", async () => {
+  it("should open BTC Account Asset page when given currency param", async () => {
     await accountAssetPage.openAssetScreenViaDeeplink(bitcoinLong);
-    // await accountAssetPage.waitForAccountAssetsToLoad(bitcoinLong);
+    // await accountAssetPage.waitForAccountAssetsToLoad(bitcoinLong); // FIXME: times out - unclear why
     await expect(getElementByText("Your Bitcoin")).toBeVisible();
+  });
+
+  it("should open Custom Lock Screen page", async () => {
+    await customLockscreenPage.openViaDeeplink();
+    await customLockscreenPage.expectCustomLockscreenPage();
+    await expect(customLockscreenPage.welcomeChoosePictureButton()).toBeVisible();
   });
 
   it("should open the Discover page", async () => {
