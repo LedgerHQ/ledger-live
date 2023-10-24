@@ -9,10 +9,10 @@ The app is a simple [Create React App](https://github.com/facebook/create-react-
 
 ## How to run locally for development
 
-Run `pnpm --filter="dummy-*" install` and `pnpm test-utils:dummy-live-app start`
+Run `pnpm --filter="dummy-*" install` and `pnpm dummy-live-app start`
 
 ## Quick script to build the app from scratch
 
 To use the Dummy app in the Playwright tests, you must install and build the dependencies and source code for the dummy app. To do this run the following from the root folder of this monorepo:
 
-`pnpm test-utils:dummy-live-app i` and `pnpm test-utils:dummy-live-app build`. You can then run the apps with `npx http-server` in the same folder as the apps. Alternatively this app is started automatically in the playwright tests.
+`pnpm dummy-live-app i` and `pnpm dummy-live-app build`. You can then run the apps with `npx http-server` in the same folder as the apps. Alternatively this app is started automatically in the playwright tests.
