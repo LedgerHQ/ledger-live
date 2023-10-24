@@ -5,6 +5,7 @@ import fetchMcus, { FetchMcusParams } from "./managerApi/fetchMcus";
 type GetLatestFirmwareForDeviceParams = {
   deviceInfo: DeviceInfoEntity;
   providerId: number;
+  userId: string;
 } & FetchMcusParams;
 
 export default async function getLatestFirmwareForDevice({

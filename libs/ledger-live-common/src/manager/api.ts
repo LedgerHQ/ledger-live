@@ -275,9 +275,17 @@ const getLatestFirmware: (arg0: {
   current_se_firmware_final_version: Id;
   device_version: Id;
   provider: number;
+  userId: string;
+  managerApiBase: string;
 }) => Promise<OsuFirmware | null | undefined> = makeLRUCache(
-  async ({ current_se_firmware_final_version, device_version, provider }) => {
-    const salt = getUserHashes().firmwareSalt;
+  async ({
+    current_se_firmware_final_version,
+    device_version,
+    provider,
+    userId,
+    managerApiBase,
+  }) => {
+    const salt = getUserHashes(userId).firmwareSalt;
     const {
       data,
     }: {
@@ -288,7 +296,7 @@ const getLatestFirmware: (arg0: {
     } = await network({
       method: "POST",
       url: URL.format({
-        pathname: `${getEnv("MANAGER_API_BASE")}/get_latest_firmware`,
+        pathname: `${managerApiBase}/get_latest_firmware`,
         query: {
           livecommonversion,
           salt,
