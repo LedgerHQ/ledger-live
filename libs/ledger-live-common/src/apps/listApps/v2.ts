@@ -51,7 +51,7 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
        * Sequence 1: obtain the full data regarding apps installed on the device
        *  -> list raw data of apps installed on device
        *  -> then filter apps (eliminate language packs and such)
-       *  -> then fetch matching app metadata using apps' hashes 
+       *  -> then fetch matching app metadata using apps' hashes
        */
 
       let listAppsResponsePromise: Promise<ListAppResponse>;
@@ -148,7 +148,6 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
           sortedCryptoCurrenciesPromise,
         ]);
 
-      
       /**
        * Associate a market cap sorting index to each app of the catalog of
        * available apps.
@@ -160,7 +159,6 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
           app.indexOfMarketCap = sortedCryptoCurrencies.indexOf(crypto);
         }
       });
-
 
       /**
        * Aggregate the data obtained above to build the list of installed apps

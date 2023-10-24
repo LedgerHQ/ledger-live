@@ -1,5 +1,4 @@
 import React, { memo } from "react";
-import { TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
 import styled from "styled-components/native";
 import { Flex, IconsLegacy, Text, Button } from "@ledgerhq/native-ui";
@@ -47,12 +46,6 @@ const SeparatorText = styled(Text).attrs({
 const ButtonsContainer = styled(Flex).attrs({
   width: "100%",
 })``;
-
-const CancelButton = styled(TouchableOpacity)`
-  align-items: center;
-  justify-content: center;
-  margin-top: 25px;
-`;
 
 function InstallAppDependenciesModal({
   appWithDependenciesToInstall,

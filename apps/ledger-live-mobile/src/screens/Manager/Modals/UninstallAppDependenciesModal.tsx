@@ -1,8 +1,6 @@
 import React, { memo, useCallback } from "react";
 import { View } from "react-native";
 import { Trans } from "react-i18next";
-
-import { Action } from "@ledgerhq/live-common/apps/index";
 import { App } from "@ledgerhq/types-live";
 
 import styled, { DefaultTheme, useTheme } from "styled-components/native";
