@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.34.0-nightly.10
+
+### Patch Changes
+
+- [#5106](https://github.com/LedgerHQ/ledger-live/pull/5106) [`af02880169`](https://github.com/LedgerHQ/ledger-live/commit/af02880169368df0ea1f14046f9adbc6326c9fcf) Thanks [@ak-ledger](https://github.com/ak-ledger)! - Display correct transaction date in the Wallet transaction history
+
 ## 3.34.0-nightly.9
 
 ### Patch Changes
