@@ -120,12 +120,22 @@ BRAZE_CUSTOM_ENDPOINT="sdk.fra-02.braze.eu"`;
     );
   }
 
-  const hashesAreEquals = runHashChecks();
+  let hashesAreEquals = false;
+  try {
+    hashesAreEquals = runHashChecks();
+  } catch (error) {
+    echo(chalk.red(error));
+  }
+
   if (os.platform() === "darwin" && !process.env["SKIP_BUNDLE_CHECK"] && !hashesAreEquals) {
     cd("ios");
     try {
       await $`bundle exec pod install --deployment --repo-update`;
-      runHashChecks(true);
+      try {
+        runHashChecks(true);
+      } catch (error) {
+        echo(chalk.red(error));
+      }
     } catch (error) {
       const str = `
         ________________________________________
