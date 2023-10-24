@@ -874,7 +874,7 @@ export default class BleTransport extends Transport {
    * @returns {Promise<void>}
    */
   async close(): Promise<void> {
-    const tracer = this.tracer.withUpdatedContext({ hola: "hihi" });
+    const tracer = this.tracer.withUpdatedContext({ function: "close" });
     tracer.trace("Closing, queuing a disconnect with a timeout ...");
 
     let resolve: (value: void | PromiseLike<void>) => void;
