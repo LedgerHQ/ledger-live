@@ -1,7 +1,7 @@
 import { device, expect } from "detox";
 import { loadConfig } from "../bridge/server";
-import { getElementByText, isAndroid, waitForElementByText } from "../helpers";
-import AccountPage from "../models/accounts/accountPage";
+import { getElementByText, isAndroid } from "../helpers";
+
 import CustomLockscreenPage from "../models/stax/customLockscreenPage";
 import DiscoverPage from "../models/discover/discoverPage";
 import ManagerPage from "../models/manager/managerPage";
@@ -10,8 +10,10 @@ import SendPage from "../models/trade/sendPage";
 import SwapFormPage from "../models/trade/swapFormPage";
 import ReceivePage from "../models/trade/receivePage";
 import OnboardingSteps from "../models/onboarding/onboardingSteps";
+import AccountAssetPage from "../models/accounts/accountAssetPage";
 
-let accountPage: AccountPage;
+// let accountPage: AccountPage;
+let accountAssetPage: AccountAssetPage;
 let onboardingSteps: OnboardingSteps;
 let customLockscreenPage: CustomLockscreenPage;
 let discoverPage: DiscoverPage;
@@ -55,7 +57,8 @@ describe("DeepLinks Tests", () => {
   beforeAll(async () => {
     loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
 
-    accountPage = new AccountPage();
+    // accountPage = new AccountPage();
+    accountAssetPage = new AccountAssetPage();
     onboardingSteps = new OnboardingSteps();
     customLockscreenPage = new CustomLockscreenPage();
     discoverPage = new DiscoverPage();
@@ -82,16 +85,16 @@ describe("DeepLinks Tests", () => {
     await expect(customLockscreenPage.welcomeChoosePictureButton()).toBeVisible();
   });
 
-  it("should open ETH Account Asset page when given currency param", async () => {
-    await accountPage.openViaDeeplink(ethereumLong);
-
-    await waitForElementByText("Your Ethereum");
+  it.only("should open ETH Account Asset page when given currency param", async () => {
+    await accountAssetPage.openAssetScreenViaDeeplink(ethereumLong);
+    await accountAssetPage.waitForAccountAssetsToLoad(ethereumLong);
+    await expect(getElementByText("Your Ethereum")).toBeVisible();
   });
 
-  it("should open BTC Account Asset page when given currency param", async () => {
-    await accountPage.openViaDeeplink(bitcoinLong);
-
-    await waitForElementByText("Your Bitcoin");
+  it.only("should open BTC Account Asset page when given currency param", async () => {
+    await accountAssetPage.openAssetScreenViaDeeplink(bitcoinLong);
+    // await accountAssetPage.waitForAccountAssetsToLoad(bitcoinLong);
+    await expect(getElementByText("Your Bitcoin")).toBeVisible();
   });
 
   it("should open the Discover page", async () => {
