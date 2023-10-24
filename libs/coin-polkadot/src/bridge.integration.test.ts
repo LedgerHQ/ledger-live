@@ -8,6 +8,7 @@ import {
   AmountRequired,
   NotEnoughBalanceBecauseDestinationNotCreated,
 } from "@ledgerhq/errors";
+import type { CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
 import {
   PolkadotUnauthorizedOperation,
   PolkadotNotValidator,
@@ -15,8 +16,7 @@ import {
   PolkadotValidatorsRequired,
   PolkadotAllFundsWarning,
   PolkadotDoMaxSendInstead,
-} from "./errors";
-import type { CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
+} from "./types";
 import { fromTransactionRaw } from "./transaction";
 import type { PolkadotAccount, Transaction } from "./types";
 const ACCOUNT_SAME_STASHCONTROLLER = "12YA86tRQhHgwU3SSj56aesUKB7GKvdnZTTTXRop4vd3YgDV";

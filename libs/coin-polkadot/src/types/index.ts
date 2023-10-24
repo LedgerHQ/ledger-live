@@ -10,6 +10,9 @@ import type {
 } from "@ledgerhq/types-live";
 import type { BigNumber } from "bignumber.js";
 
+export * from "./errors";
+export * from "./signer";
+
 export type RewardDestinationType = "Staked" | "Stash" | "Account" | "Controller";
 export type PolkadotNominationStatus = "active" | "inactive" | "waiting" | null;
 export type PolkadotOperationMode =

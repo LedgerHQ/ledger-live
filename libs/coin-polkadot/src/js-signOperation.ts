@@ -21,7 +21,7 @@ import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { buildTransaction } from "./js-buildTransaction";
 import { calculateAmount, getNonce, isFirstBond } from "./logic";
 import { PolkadotAPI } from "./api";
-import { PolkadotAddress, PolkadotSignature, PolkadotSigner } from "./signer";
+import { PolkadotAddress, PolkadotSignature, PolkadotSigner } from "./types";
 
 const MODE_TO_TYPE = {
   send: "OUT",

@@ -1,5 +1,5 @@
 import createTransaction from "@ledgerhq/coin-polkadot/js-createTransaction";
-import { Transaction } from "@ledgerhq/coin-polkadot/types";
+import { Transaction } from "@ledgerhq/coin-polkadot/types/index";
 import { PolkadotTransaction as WalletAPIPolkadotTransaction } from "@ledgerhq/wallet-api-core";
 import {
   AreFeesProvided,

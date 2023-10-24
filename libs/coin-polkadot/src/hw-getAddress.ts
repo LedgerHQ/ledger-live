@@ -1,7 +1,7 @@
 import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
-import { PolkadotAddress, PolkadotSignature, PolkadotSigner } from "./signer";
+import type { PolkadotAddress, PolkadotSignature, PolkadotSigner } from "./types";
 
 const resolver = (
   signerContext: SignerContext<PolkadotSigner, PolkadotAddress | PolkadotSignature>,

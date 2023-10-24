@@ -22,7 +22,7 @@ import {
   PolkadotMaxUnbonding,
   PolkadotValidatorsRequired,
   PolkadotDoMaxSendInstead,
-} from "./errors";
+} from "./types";
 import {
   EXISTENTIAL_DEPOSIT,
   FEES_SAFETY_BUFFER,
