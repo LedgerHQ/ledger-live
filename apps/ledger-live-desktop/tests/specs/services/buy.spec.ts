@@ -55,6 +55,7 @@ test("Buy / Sell @smoke", async ({ page }) => {
 
   await test.step("Navigate to Buy app from portfolio banner", async () => {
     await portfolioPage.startBuyFlow();
+    await liveAppWebview.waitForLoaded();
     await expect(await liveAppWebview.waitForCorrectTextInWebview("theme: dark")).toBe(true);
     await expect(await liveAppWebview.waitForCorrectTextInWebview("lang: en")).toBe(true);
     await expect
