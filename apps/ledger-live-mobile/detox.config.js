@@ -71,7 +71,7 @@ module.exports = {
     emulator: {
       type: "android.emulator",
       device: {
-        avdName: "Pixel_5_API_33",
+        avdName: "Pixel_5_API_31",
       },
       gpuMode: "swiftshader_indirect",
       headless: process.env.CI ? true : false,
