@@ -1,7 +1,7 @@
-import type { PolkadotAccount, Transaction } from "./types";
-import getEstimatedFees from "./js-getFeesForTransaction";
-import { loadPolkadotCrypto } from "./polkadot-crypto";
-import { PolkadotAPI } from "./api";
+import type { PolkadotAccount, Transaction } from "../types";
+import getEstimatedFees from "./getFeesForTransaction";
+import { loadPolkadotCrypto } from "../polkadot-crypto";
+import { PolkadotAPI } from "../api";
 import BigNumber from "bignumber.js";
 
 const sameFees = (a: BigNumber, b?: BigNumber | null) => (!a || !b ? a === b : a.eq(b));

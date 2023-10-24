@@ -17,12 +17,12 @@ import type {
 } from "@ledgerhq/types-live";
 import { PolkadotAPI } from "../api";
 import resolver from "../hw-getAddress";
-import createTransaction from "../js-createTransaction";
-import estimateMaxSpendable from "../js-estimateMaxSpendable";
-import getTransactionStatus from "../js-getTransactionStatus";
-import prepareTransaction from "../js-prepareTransaction";
-import buildSignOperation from "../js-signOperation";
-import { makeGetAccountShape } from "../js-synchronisation";
+import createTransaction from "./createTransaction";
+import estimateMaxSpendable from "./estimateMaxSpendable";
+import getTransactionStatus from "./getTransactionStatus";
+import prepareTransaction from "./prepareTransaction";
+import buildSignOperation from "./signOperation";
+import { makeGetAccountShape } from "./synchronisation";
 import { loadPolkadotCrypto } from "../polkadot-crypto";
 import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
 import { getPreloadStrategy, hydrate, preload } from "../preload";

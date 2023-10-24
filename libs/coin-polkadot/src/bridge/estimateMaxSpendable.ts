@@ -1,12 +1,12 @@
 import { BigNumber } from "bignumber.js";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
-import type { PolkadotAccount, Transaction } from "./types";
-import { calculateAmount } from "./logic";
-import getEstimatedFees from "./js-getFeesForTransaction";
-import createTransaction from "./js-createTransaction";
-import { loadPolkadotCrypto } from "./polkadot-crypto";
-import { PolkadotAPI } from "./api";
+import type { PolkadotAccount, Transaction } from "../types";
+import { calculateAmount } from "../logic";
+import getEstimatedFees from "./getFeesForTransaction";
+import createTransaction from "./createTransaction";
+import { loadPolkadotCrypto } from "../polkadot-crypto";
+import { PolkadotAPI } from "../api";
 
 /**
  * Returns the maximum possible amount for transaction

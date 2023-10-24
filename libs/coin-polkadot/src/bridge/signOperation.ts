@@ -8,7 +8,7 @@ import type {
   PolkadotOperation,
   PolkadotOperationExtra,
   Transaction,
-} from "./types";
+} from "../types";
 import type {
   Account,
   DeviceId,
@@ -18,10 +18,10 @@ import type {
 } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { buildTransaction } from "./js-buildTransaction";
-import { calculateAmount, getNonce, isFirstBond } from "./logic";
-import { PolkadotAPI } from "./api";
-import { PolkadotAddress, PolkadotSignature, PolkadotSigner } from "./types";
+import { buildTransaction } from "./buildTransaction";
+import { calculateAmount, getNonce, isFirstBond } from "../logic";
+import { PolkadotAPI } from "../api";
+import { PolkadotAddress, PolkadotSignature, PolkadotSigner } from "../types";
 
 const MODE_TO_TYPE = {
   send: "OUT",
