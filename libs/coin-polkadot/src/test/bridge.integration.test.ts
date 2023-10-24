@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import { canUnbond, MAX_UNLOCKINGS } from "./logic";
+import { canUnbond, MAX_UNLOCKINGS } from "../logic";
 import {
   NotEnoughBalance,
   RecipientRequired,
@@ -16,9 +16,9 @@ import {
   PolkadotValidatorsRequired,
   PolkadotAllFundsWarning,
   PolkadotDoMaxSendInstead,
-} from "./types";
-import { fromTransactionRaw } from "./transaction";
-import type { PolkadotAccount, Transaction } from "./types";
+} from "../types";
+import { fromTransactionRaw } from "../transaction";
+import type { PolkadotAccount, Transaction } from "../types";
 const ACCOUNT_SAME_STASHCONTROLLER = "12YA86tRQhHgwU3SSj56aesUKB7GKvdnZTTTXRop4vd3YgDV";
 const ACCOUNT_STASH = "13jAJfhpFkRZj1TSSdFopaiFeKnof2q7g4GNdcxcg8Lvx6QN";
 const ACCOUNT_CONTROLLER = "15oodc5d8DWJodZhTD6qsxxSQRYWhdkWCrwqNHajDirXRrAD";

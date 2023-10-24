@@ -7,10 +7,13 @@ import {
   getCryptoCurrencyById,
   formatCurrencyUnit,
 } from "@ledgerhq/coin-framework/currencies/index";
-import { SidecarValidatorsParamAddresses, SidecarValidatorsParamStatus } from "./api/sidecar.types";
+import {
+  SidecarValidatorsParamAddresses,
+  SidecarValidatorsParamStatus,
+} from "../api/sidecar.types";
 import { AccountLike } from "@ledgerhq/types-live";
-import { PolkadotAccount, PolkadotValidator, Transaction } from "./types";
-import { PolkadotAPI } from "./api";
+import { PolkadotAccount, PolkadotValidator, Transaction } from "../types";
+import { PolkadotAPI } from "../api";
 import { NetworkRequestCall } from "@ledgerhq/coin-framework/network";
 import { LRUCacheFn } from "@ledgerhq/coin-framework/cache";
 const options = [

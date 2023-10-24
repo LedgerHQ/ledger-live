@@ -18,7 +18,6 @@ import tron from "../families/tron/specs";
 import vechain from "../families/vechain/specs";
 import algorand from "@ledgerhq/coin-algorand/specs";
 import evm from "@ledgerhq/coin-evm/specs";
-import polkadot from "@ledgerhq/coin-polkadot/specs";
 
 export default {
   bitcoin,
@@ -41,5 +40,4 @@ export default {
   vechain,
   algorand,
   evm,
-  polkadot,
 };
