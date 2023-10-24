@@ -1,5 +1,5 @@
 import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
-import type { PolkadotAccount, Transaction } from "./types";
+import type { PolkadotAccount, Transaction } from "../types";
 import {
   deviceActionFlow,
   formatDeviceAmount,
