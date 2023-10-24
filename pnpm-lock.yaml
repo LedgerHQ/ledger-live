@@ -1221,9 +1221,6 @@ importers:
       babel-jest:
         specifier: ^28.0.0
         version: 28.1.3(@babel/core@7.22.8)
-      babel-plugin-module-resolver:
-        specifier: ^4.1.0
-        version: 4.1.0
       detox:
         specifier: ^20.11.0
         version: 20.11.0(patch_hash=s7677qnx4lewyjdetvacseh6fm)(jest@29.7.0)

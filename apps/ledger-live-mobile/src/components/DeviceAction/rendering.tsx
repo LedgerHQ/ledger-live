@@ -44,7 +44,7 @@ import { ParamListBase } from "@react-navigation/native";
 import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwareUpdateVersionSupported";
 import ProviderIcon from "../ProviderIcon";
 import { lastSeenDeviceSelector } from "../../reducers/settings";
-import { urls } from "../../config/urls";
+import { urls } from "@utils/urls";
 import Alert from "../Alert";
 import { lighten, Theme } from "../../colors";
 import Button from "../Button";
