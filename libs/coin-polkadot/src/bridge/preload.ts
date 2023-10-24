@@ -2,9 +2,9 @@
 import { BigNumber } from "bignumber.js";
 import { Observable, Subject } from "rxjs";
 import { log } from "@ledgerhq/logs";
-import type { PolkadotPreloadData, PolkadotStakingProgress, PolkadotValidator } from "./types";
+import type { PolkadotPreloadData, PolkadotStakingProgress, PolkadotValidator } from "../types";
 import { loadPolkadotCrypto } from "./polkadot-crypto";
-import { PolkadotAPI } from "./api";
+import { PolkadotAPI } from "../api";
 
 const PRELOAD_MAX_AGE = 60 * 1000;
 

@@ -1,6 +1,6 @@
 import type { PolkadotAccount, Transaction } from "../types";
 import getEstimatedFees from "./getFeesForTransaction";
-import { loadPolkadotCrypto } from "../polkadot-crypto";
+import { loadPolkadotCrypto } from "./polkadot-crypto";
 import { PolkadotAPI } from "../api";
 import BigNumber from "bignumber.js";
 

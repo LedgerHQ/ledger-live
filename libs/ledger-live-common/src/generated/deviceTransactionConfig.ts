@@ -17,7 +17,6 @@ import tezos from "../families/tezos/deviceTransactionConfig";
 import tron from "../families/tron/deviceTransactionConfig";
 import algorand from "@ledgerhq/coin-algorand/deviceTransactionConfig";
 import evm from "@ledgerhq/coin-evm/deviceTransactionConfig";
-import polkadot from "@ledgerhq/coin-polkadot/deviceTransactionConfig";
 
 export default {
   bitcoin,
@@ -39,7 +38,6 @@ export default {
   tron,
   algorand,
   evm,
-  polkadot,
 };
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_casper } from "../families/casper/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_cosmos } from "../families/cosmos/deviceTransactionConfig";
@@ -48,7 +46,6 @@ import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_stacks } fro
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_stellar } from "../families/stellar/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_tezos } from "../families/tezos/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_tron } from "../families/tron/deviceTransactionConfig";
-import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_polkadot } from "@ledgerhq/coin-polkadot/deviceTransactionConfig";
 
 export type ExtraDeviceTransactionField =
   | ExtraDeviceTransactionField_casper
@@ -57,5 +54,4 @@ export type ExtraDeviceTransactionField =
   | ExtraDeviceTransactionField_stacks
   | ExtraDeviceTransactionField_stellar
   | ExtraDeviceTransactionField_tezos
-  | ExtraDeviceTransactionField_tron
-  | ExtraDeviceTransactionField_polkadot;
+  | ExtraDeviceTransactionField_tron;

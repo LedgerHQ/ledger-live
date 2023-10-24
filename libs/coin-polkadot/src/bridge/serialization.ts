@@ -4,10 +4,10 @@ import type {
   PolkadotResources,
   PolkadotAccount,
   PolkadotAccountRaw,
-} from "./types";
+} from "../types";
 import { Account, AccountRaw } from "@ledgerhq/types-live";
 
-export function toPolkadotResourcesRaw(r: PolkadotResources): PolkadotResourcesRaw {
+function toPolkadotResourcesRaw(r: PolkadotResources): PolkadotResourcesRaw {
   const { nonce, controller, stash } = r;
   return {
     controller,
@@ -28,7 +28,7 @@ export function toPolkadotResourcesRaw(r: PolkadotResources): PolkadotResourcesR
     numSlashingSpans: r.numSlashingSpans,
   };
 }
-export function fromPolkadotResourcesRaw(r: PolkadotResourcesRaw): PolkadotResources {
+function fromPolkadotResourcesRaw(r: PolkadotResourcesRaw): PolkadotResources {
   const { nonce, controller, stash } = r;
   return {
     controller,

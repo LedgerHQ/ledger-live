@@ -41,5 +41,4 @@ export default {
   vechain,
   algorand,
   evm,
-  polkadot,
 };

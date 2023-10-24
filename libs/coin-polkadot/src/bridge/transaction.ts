@@ -1,4 +1,4 @@
-import type { Transaction, TransactionRaw } from "./types";
+import type { Transaction, TransactionRaw } from "../types";
 import { BigNumber } from "bignumber.js";
 import {
   formatTransactionStatusCommon as formatTransactionStatus,
@@ -10,6 +10,7 @@ import {
 import type { Account } from "@ledgerhq/types-live";
 import { getAccountUnit } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+
 export const formatTransaction = (
   { mode, amount, recipient, validators, useAllAmount }: Transaction,
   account: Account,
@@ -25,6 +26,7 @@ ${mode.toUpperCase()} ${
         disableRounding: true,
       })
 }${recipient ? `\nTO ${recipient}` : ""}${!validators ? "" : validators.join("\n")}`;
+
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);
   return {
@@ -38,6 +40,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     numSlashingSpans: tr.numSlashingSpans,
   };
 };
+
 export const toTransactionRaw = (t: Transaction): TransactionRaw => {
   const common = toTransactionCommonRaw(t);
   return {

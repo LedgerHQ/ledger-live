@@ -5,7 +5,7 @@ import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { getEnv } from "@ledgerhq/live-env";
 import { getOperationType } from "./common";
 import type { OperationType } from "@ledgerhq/types-live";
-import { isValidAddress } from "../address";
+import { isValidAddress } from "../common";
 import { PolkadotOperation, PolkadotOperationExtra } from "../types";
 
 const LIMIT = 200;
