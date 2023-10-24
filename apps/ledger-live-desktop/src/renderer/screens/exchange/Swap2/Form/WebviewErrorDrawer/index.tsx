@@ -43,11 +43,12 @@ const ErrorDescription = styled(Text).attrs({
   user-select: text;
 `;
 
+export type SwapLiveError = {
+  message?: string;
+  code?: string;
+};
 type Props = {
-  error?: {
-    message?: string;
-    code?: string;
-  };
+  error?: SwapLiveError;
 };
 
 export default function WebviewErrorDrawer({ error }: Props) {
