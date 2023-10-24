@@ -145,7 +145,6 @@ const vtho: AppSpec<Transaction> = {
           throw new Error("no VTHO account");
         const tokenAccount = account.subAccounts[0];
         const transaction = bridge.createTransaction(tokenAccount);
-        transaction.subAccountId = tokenAccount.id;
         const amount = tokenAccount.balance.div(2).integerValue();
         const updates = [{ amount }, { recipient }, { subAccountId: tokenAccount.id }];
 
