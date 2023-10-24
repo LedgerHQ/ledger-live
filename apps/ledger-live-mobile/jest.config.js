@@ -1,4 +1,5 @@
-const { defaults: tsjPreset } = require("ts-jest/presets");
+const { pathsToModuleNameMapper } = require("ts-jest");
+const { compilerOptions } = require("./tsconfig");
 
 const transformIncludePatterns = [
   "@react-native/polyfills",
@@ -16,17 +17,18 @@ const transformIncludePatterns = [
 
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 module.exports = {
-  ...tsjPreset,
   verbose: true,
   preset: "react-native",
+  modulePaths: [compilerOptions.baseUrl],
   setupFilesAfterEnv: ["@testing-library/jest-native/extend-expect", "./jest-setup.js"],
   testMatch: ["**/src/**/*.test.(ts|tsx)"],
   transform: {
-    "^.+\\.(js|jsx)?$": "babel-jest",
-    "^.+\\.(ts|tsx)?$": [
-      "ts-jest",
+    "^.+\\.(t)sx?$": [
+      "@swc/jest",
       {
-        babelConfig: true,
+        jsc: {
+          target: "esnext",
+        },
       },
     ],
   },
@@ -44,8 +46,8 @@ module.exports = {
     "!src/__mocks__/*.{ts,tsx}",
   ],
   coverageReporters: ["json", "lcov", "json-summary"],
-  coverageDirectory: "<rootDir>/coverage",
   moduleNameMapper: {
+    ...pathsToModuleNameMapper(compilerOptions.paths),
     "^react-native/(.*)$": "<rootDir>/node_modules/react-native/$1",
     "^react-native$": "<rootDir>/node_modules/react-native",
     "^victory-native$": "victory",
