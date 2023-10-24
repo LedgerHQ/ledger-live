@@ -204,11 +204,11 @@ const Manager = ({ navigation, route }: NavigationProps) => {
 
   const installAppWithDependencies = useCallback(() => {
     if (appWithDependenciesToInstall) {
-      dispatch(setHasInstalledAnyApp(true));
+      reduxDispatch(setHasInstalledAnyApp(true));
       dispatch({ type: "install", name: appWithDependenciesToInstall?.app.name });
     }
     onCloseInstallAppDependenciesModal();
-  }, [appWithDependenciesToInstall, onCloseInstallAppDependenciesModal, dispatch]);
+  }, [appWithDependenciesToInstall, onCloseInstallAppDependenciesModal, reduxDispatch, dispatch]);
 
   const onCloseUninstallAppDependenciesModal = useCallback(() => {
     setAppWithDependentsToUninstall(null);
