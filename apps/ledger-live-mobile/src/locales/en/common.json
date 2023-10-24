@@ -2866,6 +2866,8 @@
       }
     },
     "debug": {
+      "title": "Debug",
+      "desc": "Use at your own risk – Developer tools",
       "featureFlagsTitle": "Defined feature flags used in Ledger Live",
       "featureFlagsDesc": "Overridden values will be reset if the app is relaunched. Only valid JSON strings will be accepted.",
       "featureFlagsEdit": "Edit",
