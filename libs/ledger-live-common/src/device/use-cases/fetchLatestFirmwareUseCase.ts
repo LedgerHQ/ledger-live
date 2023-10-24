@@ -10,6 +10,7 @@ export default function fetchLatestFirmwareUseCase(deviceInfo: DeviceInfo) {
     deviceInfo,
     providerId: getProviderId(deviceInfo),
     managerApiBase: getEnv("MANAGER_API_BASE"),
+    userId: getEnv("USER_ID"),
     liveCommonVersion: version,
   });
 }
