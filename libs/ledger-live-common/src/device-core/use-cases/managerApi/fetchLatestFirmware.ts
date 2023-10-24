@@ -4,18 +4,22 @@ import { getUserHashes } from "../getUserHashes";
 import network from "@ledgerhq/live-network/lib/network";
 import URL from "url";
 
-export const fetchLatestFirmware: (arg0: {
+export type FetchLatestFirmwareParams = {
   current_se_firmware_final_version: Id;
   device_version: Id;
-  provider: number;
+  providerId: number;
   userId: string;
   managerApiBase: string;
   liveCommonVersion: string;
-}) => Promise<OsuFirmware | null | undefined> = makeLRUCache(
+};
+
+export const fetchLatestFirmware: (
+  arg0: FetchLatestFirmwareParams,
+) => Promise<OsuFirmware | null | undefined> = makeLRUCache(
   async ({
     current_se_firmware_final_version,
     device_version,
-    provider,
+    providerId,
     userId,
     managerApiBase,
     liveCommonVersion,
@@ -40,7 +44,7 @@ export const fetchLatestFirmware: (arg0: {
       data: {
         current_se_firmware_final_version,
         device_version,
-        provider,
+        providerId,
       },
     });
 
@@ -50,5 +54,5 @@ export const fetchLatestFirmware: (arg0: {
 
     return data.se_firmware_osu_version;
   },
-  a => `${a.current_se_firmware_final_version}_${a.device_version}_${a.provider}`,
+  a => `${a.current_se_firmware_final_version}_${a.device_version}_${a.providerId}`,
 );
