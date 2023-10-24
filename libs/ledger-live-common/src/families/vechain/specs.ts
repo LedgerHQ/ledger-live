@@ -17,24 +17,6 @@ const MIN_VET_TRANSACTION_AMOUNT = 1000000000000000000;
 const MAX_VTHO_FEE_FOR_VTHO_TRANSACTION = 1040000000000000000;
 const MAX_VTHO_FEE_FOR_VET_TRANSACTION = 420000000000000000;
 
-const prepareVeChainApp = async transport => {
-  // enter app vechain
-  await transport.button(SpeculosButton.BOTH);
-  // enable contract data
-  await transport.button(SpeculosButton.RIGHT);
-  await transport.button(SpeculosButton.BOTH);
-  await transport.button(SpeculosButton.BOTH);
-  await transport.button(SpeculosButton.RIGHT);
-  await transport.button(SpeculosButton.BOTH);
-  // enable multi-clause
-  await transport.button(SpeculosButton.RIGHT);
-  await transport.button(SpeculosButton.BOTH);
-  await transport.button(SpeculosButton.RIGHT);
-  await transport.button(SpeculosButton.BOTH);
-  await transport.button(SpeculosButton.RIGHT);
-  await transport.button(SpeculosButton.BOTH);
-};
-
 const vechainTest = {
   currency: getCryptoCurrencyById("vechain"),
   appQuery: {
@@ -44,7 +26,23 @@ const vechainTest = {
   allowEmptyAccounts: true,
   testTimeout: 60 * 1000, // 1 minute
   genericDeviceAction: deviceAction.acceptTransaction,
-  onSpeculosDeviceCreated: async ({ transport }) => await prepareVeChainApp(transport),
+  onSpeculosDeviceCreated: async ({ transport }) => {
+    // enter app vechain
+    await transport.button(SpeculosButton.BOTH);
+    // enable contract data
+    await transport.button(SpeculosButton.RIGHT);
+    await transport.button(SpeculosButton.BOTH);
+    await transport.button(SpeculosButton.BOTH);
+    await transport.button(SpeculosButton.RIGHT);
+    await transport.button(SpeculosButton.BOTH);
+    // enable multi-clause
+    await transport.button(SpeculosButton.RIGHT);
+    await transport.button(SpeculosButton.BOTH);
+    await transport.button(SpeculosButton.RIGHT);
+    await transport.button(SpeculosButton.BOTH);
+    await transport.button(SpeculosButton.RIGHT);
+    await transport.button(SpeculosButton.BOTH);
+  },
 };
 
 const vet: AppSpec<Transaction> = {
