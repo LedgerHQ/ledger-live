@@ -1,20 +1,26 @@
+import { UnknownMCU } from "@ledgerhq/errors";
 import { DeviceInfoEntity } from "../entities/DeviceInfoEntity";
 import { FirmwareUpdateContextEntity } from "../entities/FirmwareUpdateContextEntity";
-import fetchMcus, { FetchMcusParams } from "./managerApi/fetchMcus";
+import { fetchLatestFirmware } from "./managerApi/fetchLatestFirmware";
+import { fetchMcus } from "./managerApi/fetchMcus";
 
 type GetLatestFirmwareForDeviceParams = {
   deviceInfo: DeviceInfoEntity;
   providerId: number;
   userId: string;
-} & FetchMcusParams;
+  managerApiBase: string;
+  liveCommonVersion: string;
+};
 
 export default async function getLatestFirmwareForDevice({
   deviceInfo,
   providerId,
-  ...fetchMcusParams
+  userId,
+  managerApiBase,
+  liveCommonVersion,
 }: GetLatestFirmwareForDeviceParams): Promise<FirmwareUpdateContextEntity | null> {
-  const mcusPromise = fetchMcus(fetchMcusParams);
-  // Get device infos from targetId
+  const mcusPromise = fetchMcus({ managerApiBase, liveCommonVersion });
+  // Gets device infos from targetId
   const deviceVersion = await ManagerAPI.getDeviceVersion(deviceInfo.targetId, providerId);
   let osu;
 
@@ -25,17 +31,20 @@ export default async function getLatestFirmwareForDevice({
       version: deviceInfo.version,
     });
   } else {
-    // Get firmware infos with firmware name and device version
+    // Gets firmware infos with firmware name and device version
     const seFirmwareVersion = await ManagerAPI.getCurrentFirmware({
       version: deviceInfo.version,
       deviceId: deviceVersion.id,
       provider: providerId,
     });
-    // Fetch next possible firmware
-    osu = await ManagerAPI.getLatestFirmware({
+    // Fetches next possible firmware
+    osu = await fetchLatestFirmware({
       current_se_firmware_final_version: seFirmwareVersion.id,
       device_version: deviceVersion.id,
-      provider: providerId,
+      managerApiBase,
+      userId,
+      providerId,
+      liveCommonVersion,
     });
   }
 

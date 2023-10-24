@@ -4,7 +4,7 @@ import network from "@ledgerhq/live-network/network";
 
 export type FetchMcusParams = { managerApiBase: string; liveCommonVersion: string };
 
-const fetchMcus: (params: FetchMcusParams) => Promise<any> = makeLRUCache(
+export const fetchMcus: (params: FetchMcusParams) => Promise<any> = makeLRUCache(
   async ({ managerApiBase, liveCommonVersion }: FetchMcusParams) => {
     const { data } = await network({
       method: "GET",
@@ -19,5 +19,3 @@ const fetchMcus: (params: FetchMcusParams) => Promise<any> = makeLRUCache(
   },
   () => "",
 );
-
-export default fetchMcus;
