@@ -7,7 +7,7 @@ export function useE2EInjection() {
   const queue = useRef<PendingRequests>({});
   const transport = useRef(new WindowMessageTransport());
 
-  const send = useCallback(async jsonStr => {
+  const send = useCallback(async (jsonStr: string): Promise<unknown> => {
     const { id } = JSON.parse(jsonStr);
 
     const promise = new Promise(resolve => {

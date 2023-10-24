@@ -103,6 +103,7 @@ const exchangeSlide: ContentCard = {
       },
     },
   ],
+  createdAt: new Date(),
 };
 const swapSlide: ContentCard = {
   path: "/swap",
@@ -167,6 +168,7 @@ const swapSlide: ContentCard = {
       },
     },
   ],
+  createdAt: new Date(),
 };
 
 type SlideRes = {

@@ -86,7 +86,7 @@ export enum AppStateActionTypes {
   CLEAR_BACKGROUND_EVENTS = "CLEAR_BACKGROUND_EVENTS",
   DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
   UPDATE_MAIN_NAVIGATOR_VISIBILITY = "UPDATE_MAIN_NAVIGATOR_VISIBILITY",
-  SET_IS_DEEP_LINKING = "SET_IS_DEEP_LINKING",
+  SET_BLOCK_PASSWORD_LOCK = "SET_BLOCK_PASSWORD_LOCK",
 }
 
 export type AppStateIsConnectedPayload = AppState["isConnected"];
@@ -95,7 +95,7 @@ export type AppStateSetModalLockPayload = AppState["modalLock"];
 export type AppStateAddBackgroundEventPayload = {
   event: FwUpdateBackgroundEvent;
 };
-export type AppStateIsDeeplinkingPayload = boolean;
+export type AppStateBlockPasswordLockPayload = boolean;
 
 export type AppStateUpdateMainNavigatorVisibilityPayload = AppState["isMainNavigatorVisible"];
 export type AppStatePayload =
@@ -104,7 +104,7 @@ export type AppStatePayload =
   | AppStateSetModalLockPayload
   | AppStateAddBackgroundEventPayload
   | AppStateUpdateMainNavigatorVisibilityPayload
-  | AppStateIsDeeplinkingPayload;
+  | AppStateBlockPasswordLockPayload;
 
 // === BLE ACTIONS ===
 

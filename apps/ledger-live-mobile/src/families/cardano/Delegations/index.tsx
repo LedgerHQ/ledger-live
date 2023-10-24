@@ -21,7 +21,7 @@ import LText from "../../../components/LText";
 import Touchable from "../../../components/Touchable";
 import { rgba } from "../../../colors";
 import IlluRewards from "../../../icons/images/Rewards";
-import { urls } from "../../../config/urls";
+import { urls } from "@utils/urls";
 import { ScreenName, NavigatorName } from "../../../const";
 import RedelegateIcon from "../../../icons/Redelegate";
 import UndelegateIcon from "../../../icons/Undelegate";

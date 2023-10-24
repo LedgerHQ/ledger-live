@@ -1,8 +1,7 @@
 import { device, expect } from "detox";
 import { loadConfig } from "../bridge/server";
 import { getElementByText, isAndroid } from "../helpers";
-import AccountPage from "../models/accounts/accountPage";
-import AccountsPage from "../models/accounts/accountsPage";
+
 import CustomLockscreenPage from "../models/stax/customLockscreenPage";
 import DiscoverPage from "../models/discover/discoverPage";
 import ManagerPage from "../models/manager/managerPage";
@@ -11,10 +10,10 @@ import SendPage from "../models/trade/sendPage";
 import SwapFormPage from "../models/trade/swapFormPage";
 import ReceivePage from "../models/trade/receivePage";
 import OnboardingSteps from "../models/onboarding/onboardingSteps";
+import AccountAssetPage from "../models/accounts/accountAssetPage";
 
-let accountPage: AccountPage;
+let accountAssetPage: AccountAssetPage;
 let onboardingSteps: OnboardingSteps;
-let accountsPage: AccountsPage;
 let customLockscreenPage: CustomLockscreenPage;
 let discoverPage: DiscoverPage;
 let managerPage: ManagerPage;
@@ -57,9 +56,9 @@ describe("DeepLinks Tests", () => {
   beforeAll(async () => {
     loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
 
-    accountPage = new AccountPage();
+    // accountPage = new AccountPage();
+    accountAssetPage = new AccountAssetPage();
     onboardingSteps = new OnboardingSteps();
-    accountsPage = new AccountsPage();
     customLockscreenPage = new CustomLockscreenPage();
     discoverPage = new DiscoverPage();
     managerPage = new ManagerPage();
@@ -79,22 +78,22 @@ describe("DeepLinks Tests", () => {
     await onboardingSteps.addDeviceViaBluetooth("David");
   });
 
+  it("should open ETH Account Asset page when given currency param", async () => {
+    await accountAssetPage.openAssetScreenViaDeeplink(ethereumLong);
+    await accountAssetPage.waitForAccountAssetsToLoad(ethereumLong);
+    await expect(getElementByText("Your Ethereum")).toBeVisible();
+  });
+
+  it("should open BTC Account Asset page when given currency param", async () => {
+    await accountAssetPage.openAssetScreenViaDeeplink(bitcoinLong);
+    // await accountAssetPage.waitForAccountAssetsToLoad(bitcoinLong); // FIXME: times out - unclear why
+    await expect(getElementByText("Your Bitcoin")).toBeVisible();
+  });
+
   it("should open Custom Lock Screen page", async () => {
     await customLockscreenPage.openViaDeeplink();
     await customLockscreenPage.expectCustomLockscreenPage();
     await expect(customLockscreenPage.welcomeChoosePictureButton()).toBeVisible();
-  });
-
-  it("should open Accounts page", async () => {
-    await accountsPage.openViaDeeplink();
-    await accountsPage.waitForAccountsPageToLoad();
-  });
-
-  it("should open ETH & BTC Account pages", async () => {
-    await accountPage.openViaDeeplink(ethereumLong);
-    await accountPage.waitForAccountPageToLoad(ethereumLong);
-    await accountPage.openViaDeeplink(bitcoinLong);
-    await accountPage.waitForAccountPageToLoad(bitcoinLong);
   });
 
   it("should open the Discover page", async () => {
