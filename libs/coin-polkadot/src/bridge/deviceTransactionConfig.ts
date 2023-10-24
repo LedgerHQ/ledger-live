@@ -1,5 +1,5 @@
 import type { AccountLike, Account } from "@ledgerhq/types-live";
-import type { PolkadotAccount, Transaction, TransactionStatus } from "./types";
+import type { PolkadotAccount, Transaction, TransactionStatus } from "../types";
 import type { CommonDeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import {

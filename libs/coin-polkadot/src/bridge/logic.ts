@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import type { Account, OperationType } from "@ledgerhq/types-live";
-import type { PolkadotAccount, Transaction } from "./types";
+import type { PolkadotAccount, Transaction } from "../types";
 import { getCurrentPolkadotPreloadData } from "./preload";
 
 export const EXISTENTIAL_DEPOSIT = new BigNumber(10000000000);

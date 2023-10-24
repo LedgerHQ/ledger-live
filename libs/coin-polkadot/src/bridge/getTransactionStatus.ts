@@ -35,10 +35,10 @@ import {
   getMinimumAmountToBond,
   getMinimumBalance,
   EXISTENTIAL_DEPOSIT_RECOMMENDED_MARGIN,
-} from "../logic";
-import { isValidAddress } from "../address";
-import { getCurrentPolkadotPreloadData } from "../preload";
-import { loadPolkadotCrypto } from "../polkadot-crypto";
+} from "./logic";
+import { isValidAddress } from "../common";
+import { getCurrentPolkadotPreloadData } from "./preload";
+import { loadPolkadotCrypto } from "./polkadot-crypto";
 import { PolkadotAPI } from "../api";
 
 // Should try to refacto

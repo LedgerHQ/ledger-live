@@ -1,5 +1,4 @@
 import { BigNumber } from "bignumber.js";
-import { canUnbond, MAX_UNLOCKINGS } from "../logic";
 import {
   NotEnoughBalance,
   RecipientRequired,
@@ -17,7 +16,8 @@ import {
   PolkadotAllFundsWarning,
   PolkadotDoMaxSendInstead,
 } from "../types";
-import { fromTransactionRaw } from "../transaction";
+// FIXME
+import { fromTransactionRaw } from "../bridge/transaction";
 import type { PolkadotAccount, Transaction } from "../types";
 const ACCOUNT_SAME_STASHCONTROLLER = "12YA86tRQhHgwU3SSj56aesUKB7GKvdnZTTTXRop4vd3YgDV";
 const ACCOUNT_STASH = "13jAJfhpFkRZj1TSSdFopaiFeKnof2q7g4GNdcxcg8Lvx6QN";
@@ -685,68 +685,3 @@ export const dataset: DatasetTest<Transaction> = {
   },
 };
 
-describe("canUnbond", () => {
-  test("can unbond", () => {
-    const account: Partial<PolkadotAccount> = {
-      polkadotResources: {
-        controller: "",
-        stash: "",
-        nonce: 0,
-        numSlashingSpans: 0,
-        lockedBalance: new BigNumber(10000),
-        unlockedBalance: new BigNumber(0),
-        unlockingBalance: new BigNumber(0),
-        nominations: [],
-        unlockings: [
-          ...Array(MAX_UNLOCKINGS - 1).map(() => ({
-            amount: new BigNumber(100000),
-            completionDate: new Date(),
-          })),
-        ],
-      },
-    };
-    expect(canUnbond(account as PolkadotAccount)).toBeTruthy();
-  });
-  test("can't unbond because unlockings is too much", () => {
-    const account: Partial<PolkadotAccount> = {
-      polkadotResources: {
-        controller: "",
-        stash: "",
-        nonce: 0,
-        numSlashingSpans: 0,
-        lockedBalance: new BigNumber(1000000),
-        unlockedBalance: new BigNumber(0),
-        unlockingBalance: new BigNumber(0),
-        nominations: [],
-        unlockings: [
-          ...Array(MAX_UNLOCKINGS).map(() => ({
-            amount: new BigNumber(100000),
-            completionDate: new Date(),
-          })),
-        ],
-      },
-    };
-    expect(canUnbond(account as PolkadotAccount)).toBeFalsy();
-  });
-  test("can't unbond because not enough lockedBalance", () => {
-    const account: Partial<PolkadotAccount> = {
-      polkadotResources: {
-        controller: "",
-        stash: "",
-        nonce: 0,
-        numSlashingSpans: 0,
-        lockedBalance: new BigNumber(100),
-        unlockedBalance: new BigNumber(0),
-        unlockingBalance: new BigNumber(100),
-        nominations: [],
-        unlockings: [
-          ...Array(MAX_UNLOCKINGS).map(() => ({
-            amount: new BigNumber(100000),
-            completionDate: new Date(),
-          })),
-        ],
-      },
-    };
-    expect(canUnbond(account as PolkadotAccount)).toBeFalsy();
-  });
-});
