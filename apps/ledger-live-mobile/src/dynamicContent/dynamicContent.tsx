@@ -117,10 +117,6 @@ const useDynamicContent = () => {
     () => walletCardsDisplayed.length >= 1,
     [walletCardsDisplayed],
   );
-  const isAtLeastOneCardDisplayed = useMemo(
-    () => isAWalletCardDisplayed || assetsCardsDisplayed.length >= 1,
-    [isAWalletCardDisplayed, assetsCardsDisplayed],
-  );
 
   const getAssetCardByIdOrTicker = useCallback(
     (currency: CryptoOrTokenCurrency): AssetContentCard | undefined => {
@@ -167,7 +163,6 @@ const useDynamicContent = () => {
     assetsCards,
     learnCards,
     getAssetCardByIdOrTicker,
-    isAtLeastOneCardDisplayed,
     logClickCard,
     logDismissCard,
     logImpressionCard,
