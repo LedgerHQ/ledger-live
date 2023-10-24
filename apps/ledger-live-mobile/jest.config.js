@@ -36,10 +36,12 @@ module.exports = {
   ],
   testPathIgnorePatterns: ["<rootDir>/node_modules/"],
   moduleDirectories: ["node_modules"],
-  collectCoverage: false,
   collectCoverageFrom: [
     "src/**/*.{ts,tsx}",
     "!src/**/*.test.{ts,tsx}",
+    "!src/**/*.spec.{ts,tsx}",
+    "!src/__tests__/*.{ts,tsx}",
+    "!src/__mocks__/*.{ts,tsx}",
   ],
   coverageReporters: ["json", "lcov", "json-summary"],
   coverageDirectory: "<rootDir>/coverage",
