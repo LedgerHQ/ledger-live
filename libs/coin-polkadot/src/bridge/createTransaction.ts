@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import type { Transaction } from "./types";
+import type { Transaction } from "../types";
 
 /**
  * Create an empty transaction

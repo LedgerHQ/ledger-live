@@ -9,7 +9,7 @@ import {
   FeeNotLoaded,
 } from "@ledgerhq/errors";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import type { PolkadotAccount, Transaction, TransactionStatus } from "./types";
+import type { PolkadotAccount, Transaction, TransactionStatus } from "../types";
 import {
   PolkadotUnauthorizedOperation,
   PolkadotElectionClosed,
@@ -22,7 +22,7 @@ import {
   PolkadotMaxUnbonding,
   PolkadotValidatorsRequired,
   PolkadotDoMaxSendInstead,
-} from "./types";
+} from "../types";
 import {
   EXISTENTIAL_DEPOSIT,
   FEES_SAFETY_BUFFER,
@@ -35,11 +35,11 @@ import {
   getMinimumAmountToBond,
   getMinimumBalance,
   EXISTENTIAL_DEPOSIT_RECOMMENDED_MARGIN,
-} from "./logic";
-import { isValidAddress } from "./address";
-import { getCurrentPolkadotPreloadData } from "./preload";
-import { loadPolkadotCrypto } from "./polkadot-crypto";
-import { PolkadotAPI } from "./api";
+} from "../logic";
+import { isValidAddress } from "../address";
+import { getCurrentPolkadotPreloadData } from "../preload";
+import { loadPolkadotCrypto } from "../polkadot-crypto";
+import { PolkadotAPI } from "../api";
 
 // Should try to refacto
 const getSendTransactionStatus =

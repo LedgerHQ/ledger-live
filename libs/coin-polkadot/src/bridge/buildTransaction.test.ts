@@ -1,8 +1,8 @@
 import BigNumber from "bignumber.js";
 import { cryptocurrenciesById } from "@ledgerhq/cryptoassets";
-import { PolkadotAccount, PolkadotOperationMode, Transaction } from "./types";
-import { buildTransaction } from "./js-buildTransaction";
-import { PolkadotAPI } from "./api";
+import { PolkadotAccount, PolkadotOperationMode, Transaction } from "../types";
+import { buildTransaction } from "./buildTransaction";
+import { PolkadotAPI } from "../api";
 import { TypeRegistry } from "@polkadot/types";
 import { NetworkRequestCall } from "@ledgerhq/coin-framework/network";
 import { makeNoCache } from "@ledgerhq/coin-framework/cache";

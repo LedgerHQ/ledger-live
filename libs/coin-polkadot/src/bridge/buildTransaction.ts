@@ -1,8 +1,8 @@
 import { stringCamelCase } from "@polkadot/util";
-import type { PolkadotAccount, Transaction } from "./types";
-import { isFirstBond, getNonce } from "./logic";
-import { loadPolkadotCrypto } from "./polkadot-crypto";
-import { PolkadotAPI } from "./api";
+import type { PolkadotAccount, Transaction } from "../types";
+import { isFirstBond, getNonce } from "../logic";
+import { loadPolkadotCrypto } from "../polkadot-crypto";
+import { PolkadotAPI } from "../api";
 const EXTRINSIC_VERSION = 4;
 // Default values for tx parameters, if the user doesn't specify any
 const DEFAULTS = {
