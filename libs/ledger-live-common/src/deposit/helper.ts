@@ -11,7 +11,7 @@ const groupCurrenciesByProvider = (
   }
   const assetsByProviderId: Record<string, CurrenciesByProviderId> = {};
   for (const ledgerCurrency of currenciesSupported) {
-    const asset = assetsByLedgerId[ledgerCurrency.id];
+    const asset = assetsByLedgerId[ledgerCurrency.id.toLowerCase()];
     if (asset) {
       if (!assetsByProviderId[asset.providerId]) {
         assetsByProviderId[asset.providerId] = {
