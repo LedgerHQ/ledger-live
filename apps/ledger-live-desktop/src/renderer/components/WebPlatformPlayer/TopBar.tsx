@@ -110,6 +110,7 @@ export const Separator = styled.div`
 `;
 
 export type TopBarConfig = {
+  shouldHideToolbarOverride?: boolean;
   shouldDisplayName?: boolean;
   shouldDisplayInfo?: boolean;
   shouldDisplayClose?: boolean;
@@ -129,6 +130,7 @@ export const TopBar = ({ manifest, onClose, config = {}, webviewAPIRef, webviewS
   const { name, icon } = manifest;
 
   const {
+    shouldHideToolbarOverride,
     shouldDisplayName = true,
     shouldDisplayInfo = true,
     shouldDisplayClose = !!onClose,
@@ -167,6 +169,10 @@ export const TopBar = ({ manifest, onClose, config = {}, webviewAPIRef, webviewS
   }, [webviewAPIRef]);
 
   const isLoading = useDebounce(webviewState.loading, 100);
+
+  if (shouldHideToolbarOverride === true) {
+    return null;
+  }
 
   return (
     <Container>

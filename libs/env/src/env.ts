@@ -360,7 +360,7 @@ const envDefinitions = {
     desc: "enable an experimental swap interface",
   },
   EXPLORER: {
-    def: "https://explorers.api.live.ledger.com",
+    def: "http://localhost:8020",
     parser: stringParser,
     desc: "Ledger generic explorer API",
   },
