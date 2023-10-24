@@ -2197,7 +2197,7 @@
       "buy": "Buy",
       "swap": "Swap",
       "send": "Send",
-      "deposit": "Deposit",
+      "deposit": "Receive",
       "stake": "Stake"
     }
   },
@@ -2413,7 +2413,7 @@
       "seeLess": "See fewer subaccounts"
     },
     "send": "Send",
-    "receive": "Deposit",
+    "receive": "Receive",
     "buy": "Buy",
     "walletconnect": "WalletConnect",
     "stake": "Stake",
@@ -2427,7 +2427,7 @@
       "descWithBuy": "Make sure the <1><0>{{managerAppName}}</0></1> app is installed so you can buy or receive <3><0>{{currencyTicker}}</0></3>",
       "descToken": "Make sure the <1><0>{{managerAppName}}</0></1> app is installed and start receiving <3><0>{{currencyTicker}}</0></3> and <5><0>{{tokenType}}</0> tokens</5>",
       "buttons": {
-        "receiveFunds": "Deposit",
+        "receiveFunds": "Receive",
         "buyCrypto": "Buy"
       },
       "addAccountCta": "Add Account"
@@ -2876,6 +2876,8 @@
       }
     },
     "debug": {
+      "title": "Debug",
+      "desc": "Use at your own risk – Developer tools",
       "featureFlagsTitle": "Defined feature flags used in Ledger Live",
       "featureFlagsDesc": "Overridden values will be reset if the app is relaunched. Only valid JSON strings will be accepted.",
       "featureFlagsEdit": "Edit",
@@ -2926,7 +2928,7 @@
       "title": "Edit fees"
     },
     "receive": {
-      "title": "Deposit",
+      "title": "Receive",
       "description": "Deposit crypto from another wallet.",
       "titleReadOnly": "Unverified address",
       "headerTitle": "Crypto asset",
@@ -6462,7 +6464,7 @@
           "body": "Convert crypto to crypto securely"
         },
         "receive": {
-          "title": "Deposit",
+          "title": "Receive",
           "body": "Receive crypto in your wallet"
         }
       }

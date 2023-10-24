@@ -1,4 +1,6 @@
 const path = require("path");
+const fs = require("fs");
+const crypto = require("crypto");
 const {
   AliasPlugin,
   HtmlPlugin,
@@ -9,14 +11,25 @@ const {
 const { DOTENV_FILE } = require("../utils");
 const common = require("./common.esbuild");
 
+const ensureDirectoryExistence = filePath => {
+  const dirname = path.dirname(filePath);
+  if (fs.existsSync(dirname)) {
+    return true;
+  }
+  ensureDirectoryExistence(dirname);
+  fs.mkdirSync(dirname);
+};
+
 module.exports = {
   ...common,
   entryPoints: ["src/renderer/index.ts"],
   entryNames: "renderer.bundle",
+  jsx: "automatic",
   platform: "browser",
-  target: ["chrome91"],
+  target: ["chrome114"],
   format: "iife",
   mainFields: ["browser", "module", "main"],
+  assetNames: "assets/[name]-[hash]",
   external: [...nodeExternals, ...electronRendererExternals],
   resolveExtensions: process.env.V3
     ? [".v3.tsx", ".v3.ts", ".tsx", ".ts", ".js", ".jsx", ".json"]
@@ -43,18 +56,31 @@ module.exports = {
       ],
     }),
     DotEnvPlugin(DOTENV_FILE),
-    // {
-    //   name: "Side Effects",
-    //   setup(build) {
-    //     build.onResolve({ filter: /\.woff2$/ }, async args => {
-    //       if (args.importer.endsWith("libs/ui/packages/react/lib/assets/fonts.js")) {
-    //         console.log(args.path);
-    //         return {
-    //           sideEffects: true,
-    //         };
-    //       }
-    //     });
-    //   },
-    // },
+    {
+      name: "assets-plugin",
+      setup(build) {
+        build.onResolve({ filter: /\.(json)$/ }, args => {
+          if (args.resolveDir.includes("ledger-live-desktop/src")) {
+            const sourcePath = path.resolve(args.resolveDir, args.path);
+            const fileContent = fs.readFileSync(sourcePath);
+
+            const hash = crypto.createHash("sha1").update(fileContent).digest("hex");
+
+            const fileName = `${hash}-${path.basename(args.path)}`;
+            const targetPath = path.resolve(".webpack/assets", fileName);
+
+            ensureDirectoryExistence(targetPath);
+            fs.copyFileSync(sourcePath, targetPath);
+
+            return {
+              path: targetPath,
+              external: true,
+            };
+          }
+
+          return undefined;
+        });
+      },
+    },
   ],
 };

@@ -112,6 +112,10 @@ export class LiveAppWebview {
     return waitFor(() => this.textIsPresent(textToCheck));
   }
 
+  async waitForLoaded() {
+    return this.page.waitForLoadState("domcontentloaded");
+  }
+
   async textIsPresent(textToCheck: string) {
     const result: boolean = await this.page.evaluate(textToCheck => {
       const webview = document.querySelector("webview");

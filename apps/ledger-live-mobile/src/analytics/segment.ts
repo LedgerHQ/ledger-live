@@ -104,7 +104,13 @@ const extraProperties = async (store: AppStore) => {
     : {};
   const onboardingHasDevice = onboardingHasDeviceSelector(state);
   const notifications = notificationsSelector(state);
-  const notificationsAllowed = notifications.areNotificationsAllowed;
+  const notificationsOptedIn = {
+    notificationsAllowed: notifications.areNotificationsAllowed,
+    optInAnnouncements: notifications.announcementsCategory,
+    optInRecommendations: notifications.recommendationsCategory,
+    optInLargeMovers: notifications.largeMoverCategory,
+    optInTxAlerts: notifications.transactionsAlertsCategory,
+  };
   const notificationsBlacklisted = Object.entries(notifications)
     .filter(([key, value]) => key !== "areNotificationsAllowed" && value === false)
     .map(([key]) => key);
@@ -151,8 +157,8 @@ const extraProperties = async (store: AppStore) => {
         }
       : {}),
     ...deviceInfo,
-    notificationsAllowed,
     notificationsBlacklisted,
+    ...notificationsOptedIn,
     userId: user?.id,
     braze_external_id: user?.id, // Needed for braze with this exact name
     accountsWithFunds,
