@@ -139,12 +139,10 @@ export function getSpecs({ disabled, filter }) {
 
       if (disabledCurrencies.includes(spec.currency.id)) {
         // We don't want to test disabled currencies
-        console.log("currency disabled", spec.currency.id);
         continue;
       }
 
       if (!isCurrencySupported(spec.currency) || spec.disabled) {
-        console.log("currency not supported", spec.currency.id);
         // We do not want to add the spec if currency isn't supported or is disabled
         continue;
       }
@@ -166,18 +164,8 @@ export async function bot({ disabled, filter }: Arg = {}): Promise<void> {
   const SEED = getEnv("SEED");
   invariant(SEED, "SEED required");
   const specsLogs: string[][] = [];
-  console.log("familySpecs", allSpecs["vechain"]);
-
-  console.log("filter", filter);
-  console.log("disabled", disabled);
 
   const specs = getSpecs({ disabled, filter });
-
-  console.log("specsLength", specs.length);
-  console.log(
-    "specs",
-    specs.map(spec => spec.name),
-  );
 
   const timeBefore = Date.now();
   const results: Array<SpecReport<any>> = await promiseAllBatched(

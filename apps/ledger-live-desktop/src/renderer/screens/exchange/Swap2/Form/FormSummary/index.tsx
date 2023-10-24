@@ -17,7 +17,8 @@ const Form = styled.section.attrs<{ ready?: boolean }>(({ ready }) => ({
   display: grid;
   row-gap: 1.25rem;
   color: white;
-  transition: max-height 800ms cubic-bezier(0.47, 0, 0.75, 0.72),
+  transition:
+    max-height 800ms cubic-bezier(0.47, 0, 0.75, 0.72),
     opacity 400ms 400ms cubic-bezier(0.47, 0, 0.75, 0.72);
   transform-origin: top;
   height: auto;

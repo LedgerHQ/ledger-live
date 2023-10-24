@@ -26,13 +26,19 @@ import { SatStackStatus } from "@ledgerhq/live-common/families/bitcoin/satstack"
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { NetworkDown } from "@ledgerhq/errors";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
-import { CryptoCurrencyId, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import {
+  CryptoCurrencyId,
+  CryptoOrTokenCurrency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
 import { Feature } from "@ledgerhq/types-live";
 
 const listSupportedTokens = () =>
   listTokens().filter(token => isCurrencySupported(token.parentCurrency));
 
 const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
+  const mock = useEnv("MOCK");
+
   const axelar = useFeature("currencyAxelar");
   const stargaze = useFeature("currencyStargaze");
   const secretNetwork = useFeature("currencySecretNetwork");
@@ -67,8 +73,8 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const base = useFeature("currencyBase");
   const baseGoerli = useFeature("currencyBaseGoerli");
   const klaytn = useFeature("currencyKlaytn");
-  const mock = useEnv("MOCK");
   const injective = useFeature("currencyInjective");
+  const vechain = useFeature("currencyVechain");
 
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
@@ -107,6 +113,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       base_goerli: baseGoerli,
       klaytn,
       injective,
+      vechain,
     }),
     [
       axelar,
@@ -144,11 +151,12 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       baseGoerli,
       klaytn,
       injective,
+      vechain,
     ],
   );
 
   const currencies = useMemo(() => {
-    const currencies = (listSupportedCurrencies() as CryptoOrTokenCurrency[]).concat(
+    const supportedCurrenciesAndTokens: CryptoOrTokenCurrency[] = listSupportedCurrencies().concat(
       listSupportedTokens(),
     );
 
@@ -156,8 +164,13 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       ? [] // mock mode: all currencies are available for playwrigth tests
       : Object.entries(featureFlaggedCurrencies)
           .filter(([, feature]) => !feature?.enabled)
-          .map(([name]) => name);
-    return currencies.filter(c => !deactivatedCurrencies.includes(c.id));
+          .map(([id]) => id);
+
+    return supportedCurrenciesAndTokens.filter(
+      c =>
+        (c.type === "CryptoCurrency" && !deactivatedCurrencies.includes(c.id)) ||
+        (c.type === "TokenCurrency" && !deactivatedCurrencies.includes(c.parentCurrency.id)),
+    );
   }, [featureFlaggedCurrencies, mock]);
 
   const url =
@@ -174,7 +187,6 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       ) : currency ? (
         <CurrencyDownStatusAlert currencies={[currency]} />
       ) : null}
-      {/* $FlowFixMe: onChange type is not good */}
       <SelectCurrency currencies={currencies} autoFocus onChange={setCurrency} value={currency} />
       <FullNodeStatus currency={currency} />
       {currency && currency.type === "TokenCurrency" ? (

@@ -18,8 +18,6 @@ const arg: Partial<{
 arg.filter = {};
 arg.disabled = {};
 
-console.log(BOT_FILTER_CURRENCIES);
-
 if (BOT_FILTER_CURRENCIES) {
   arg.filter.currencies = BOT_FILTER_CURRENCIES.split(",");
 }
