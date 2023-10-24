@@ -14,7 +14,7 @@ import {
   SettingsHideNftCollectionPayload,
   SettingsImportDesktopPayload,
   SettingsImportPayload,
-  SettingsInstallAppFirstTimePayload,
+  SettingsSetHasInstalledAnyAppPayload,
   SettingsLastSeenDeviceInfoPayload,
   SettingsLastSeenDevicePayload,
   SettingsRemoveStarredMarketcoinsPayload,
@@ -115,8 +115,8 @@ export const clearLastSeenCustomImage = () =>
 export const completeOnboarding = createAction<SettingsCompleteOnboardingPayload>(
   SettingsActionTypes.SETTINGS_COMPLETE_ONBOARDING,
 );
-export const installAppFirstTime = createAction<SettingsInstallAppFirstTimePayload>(
-  SettingsActionTypes.SETTINGS_INSTALL_APP_FIRST_TIME,
+export const setHasInstalledAnyApp = createAction<SettingsSetHasInstalledAnyAppPayload>(
+  SettingsActionTypes.SETTINGS_SET_HAS_INSTALLED_ANY_APP,
 );
 export const switchCountervalueFirst = createAction(
   SettingsActionTypes.SETTINGS_SWITCH_COUNTERVALUE_FIRST,

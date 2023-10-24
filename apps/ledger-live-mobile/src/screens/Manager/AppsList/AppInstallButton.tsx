@@ -9,7 +9,7 @@ import { useAppInstallNeedsDeps } from "@ledgerhq/live-common/apps/react";
 import styled from "styled-components/native";
 import { IconsLegacy, Box } from "@ledgerhq/native-ui";
 import { hasInstalledAnyAppSelector } from "../../../reducers/settings";
-import { installAppFirstTime } from "../../../actions/settings";
+import { setHasInstalledAnyApp } from "../../../actions/settings";
 import { useSetAppsWithDependenciesToInstallUninstall } from "../AppsInstallUninstallWithDependenciesContext";
 
 type Props = {
@@ -64,7 +64,7 @@ export default function AppInstallButton({
       dispatchProps({ type: "install", name });
     }
     if (!hasInstalledAnyApp) {
-      dispatch(installAppFirstTime(true));
+      dispatch(setHasInstalledAnyApp(true));
     }
   }, [
     disabled,
