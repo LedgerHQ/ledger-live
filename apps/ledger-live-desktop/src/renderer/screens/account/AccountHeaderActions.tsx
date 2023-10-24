@@ -54,6 +54,8 @@ type RenderActionParams = {
   disabled?: boolean;
   tooltip?: string;
   accountActionsTestId?: string;
+  contrastText: string;
+  currency: TokenCurrency | CryptoCurrency;
 };
 
 const ButtonSettings = styled(Tabbable).attrs<{ disabled?: boolean }>(() => ({
@@ -93,6 +95,36 @@ type Props = {
   t: TFunction;
   openModal: Function;
 } & OwnProps;
+
+const ActionItem = ({
+  label,
+  onClick,
+  event,
+  eventProperties,
+  icon,
+  disabled,
+  tooltip,
+  accountActionsTestId,
+  contrastText,
+  currency,
+}: RenderActionParams) => {
+  const Icon = icon;
+  const Action = (
+    <ActionDefault
+      disabled={disabled}
+      onClick={onClick}
+      event={event}
+      eventProperties={eventProperties}
+      iconComponent={Icon && <Icon size={14} overrideColor={contrastText} currency={currency} />}
+      labelComponent={label}
+      accountActionsTestId={accountActionsTestId}
+    />
+  );
+  if (tooltip) {
+    return <Tooltip content={tooltip}>{Action}</Tooltip>;
+  }
+  return Action;
+};
 
 const AccountHeaderSettingsButtonComponent = ({ account, parentAccount, openModal, t }: Props) => {
   const mainAccount = getMainAccount(account, parentAccount);
@@ -246,37 +278,11 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
     });
   }, [openModal, parentAccount, account, buttonSharedTrackingFields]);
 
-  const renderAction = ({
-    label,
-    onClick,
-    event,
-    eventProperties,
-    icon,
-    disabled,
-    tooltip,
-    accountActionsTestId,
-  }: RenderActionParams) => {
-    const Icon = icon;
-    const Action = (
-      <ActionDefault
-        disabled={disabled}
-        onClick={onClick}
-        event={event}
-        eventProperties={eventProperties}
-        iconComponent={Icon && <Icon size={14} overrideColor={contrastText} currency={currency} />}
-        labelComponent={label}
-        accountActionsTestId={accountActionsTestId}
-      />
-    );
-    if (tooltip) {
-      return <Tooltip content={tooltip}>{Action}</Tooltip>;
-    }
-    return Action;
-  };
-
   const manageActions: RenderActionParams[] = [
     ...manageList.map(item => ({
       ...item,
+      contrastText,
+      currency,
       eventProperties: {
         ...buttonSharedTrackingFields,
         ...item.eventProperties,
@@ -287,7 +293,9 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   const buyHeader = <BuyActionDefault onClick={() => onBuySell("buy")} />;
   const sellHeader = <SellActionDefault onClick={() => onBuySell("sell")} />;
   const swapHeader = <SwapActionDefault onClick={onSwap} />;
-  const manageActionsHeader = manageActions.map(item => renderAction(item));
+  const manageActionsHeader = manageActions.map(item => (
+    <ActionItem {...item} key={item.accountActionsTestId} />
+  ));
 
   const NonEmptyAccountHeader = (
     <FadeInButtonsContainer data-test-id="account-buttons-group" show={showButtons}>

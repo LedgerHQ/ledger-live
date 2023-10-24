@@ -150,9 +150,9 @@ function MarketInfo({
         <Line>
           <Label>{t("market.detailsPage.24hLowHight")}</Label>
           <LoadingLabel loading={loading}>
-            {counterValueFormatter({ value: high24h, currency: counterCurrency, locale })}
-            {" / "}
             {counterValueFormatter({ value: low24h, currency: counterCurrency, locale })}
+            {" / "}
+            {counterValueFormatter({ value: high24h, currency: counterCurrency, locale })}
           </LoadingLabel>
         </Line>
         <Line>

@@ -198,10 +198,14 @@ export function useDeepLinkHandler() {
           const modal =
             url === "send" ? "MODAL_SEND" : url === "receive" ? "MODAL_RECEIVE" : "MODAL_DELEGATE";
           const { currency, recipient, amount } = query;
-          if (!currency || typeof currency !== "string") return;
+
           if (url === "delegate" && currency !== "tezos") return;
-          const c = findCryptoCurrencyByKeyword(currency.toUpperCase()) as Currency;
-          if (!c || c.type === "FiatCurrency") {
+
+          const foundCurrency = findCryptoCurrencyByKeyword(
+            typeof currency === "string" ? currency.toUpperCase() : "",
+          ) as Currency;
+
+          if (!currency || !foundCurrency || foundCurrency.type === "FiatCurrency") {
             dispatch(
               openModal(modal, {
                 recipient,
@@ -209,15 +213,12 @@ export function useDeepLinkHandler() {
             );
             return;
           }
-          const found = getAccountsOrSubAccountsByCurrency(c, accounts || []);
+          const found = getAccountsOrSubAccountsByCurrency(foundCurrency, accounts || []);
+
           if (!found.length) {
             dispatch(
-              openModal(modal, {
-                recipient,
-                amount:
-                  amount && typeof amount === "string"
-                    ? parseCurrencyUnit(c.units[0], amount)
-                    : undefined,
+              openModal("MODAL_ADD_ACCOUNTS", {
+                currency: foundCurrency,
               }),
             );
             return;
@@ -231,7 +232,7 @@ export function useDeepLinkHandler() {
                 recipient,
                 amount:
                   amount && typeof amount === "string"
-                    ? parseCurrencyUnit(c.units[0], amount)
+                    ? parseCurrencyUnit(foundCurrency.units[0], amount)
                     : undefined,
               }),
             );
@@ -243,7 +244,7 @@ export function useDeepLinkHandler() {
                 recipient,
                 amount:
                   amount && typeof amount === "string"
-                    ? parseCurrencyUnit(c.units[0], amount)
+                    ? parseCurrencyUnit(foundCurrency.units[0], amount)
                     : undefined,
               }),
             );

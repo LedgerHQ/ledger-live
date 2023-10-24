@@ -1,8 +1,5 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-require("@electron/remote/main").initialize();
-
 import "./setup"; // Needs to be imported first
-import { app, Menu, ipcMain, session, webContents, shell, BrowserWindow } from "electron";
+import { app, Menu, ipcMain, session, webContents, shell, BrowserWindow, dialog } from "electron";
 import Store from "electron-store";
 import menu from "./menu";
 import path from "path";
@@ -171,6 +168,33 @@ app.on("ready", async () => {
   );
   await clearSessionCache(window.webContents.session);
 });
+
+ipcMain.on("set-background-color", (_, color) => {
+  const w = getMainWindow();
+  if (w) {
+    w.setBackgroundColor(color);
+  }
+});
+
+ipcMain.on("app-quit", () => {
+  app.quit();
+});
+
+ipcMain.handle("show-open-dialog", (_, opts) => dialog.showOpenDialog(opts));
+ipcMain.handle("show-save-dialog", (_, opts) => dialog.showSaveDialog(opts));
+
+ipcMain.on("deep-linking", (_, l) => {
+  const win = getMainWindow();
+  if (win) win.webContents.send("deep-linking", l);
+});
+
+ipcMain.on("app-reload", () => {
+  const w = getMainWindow();
+  if (w) {
+    w.reload();
+  }
+});
+
 ipcMain.on("ready-to-show", () => {
   const w = getMainWindow();
   if (w) {
