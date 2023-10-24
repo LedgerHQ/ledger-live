@@ -3,7 +3,6 @@ import { Trans } from "react-i18next";
 import styled from "styled-components";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
-import { setDrawer } from "~/renderer/drawers/Provider";
 import { useGetSwapTrackingProperties } from "../../utils/index";
 import { Text } from "@ledgerhq/react-ui";
 import ErrorNoBorder from "~/renderer/icons/ErrorNoBorder";

@@ -23,7 +23,7 @@ import ButtonBase from "~/renderer/components/Button";
 import { context } from "~/renderer/drawers/Provider";
 import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import { trackSwapError, useGetSwapTrackingProperties } from "../utils/index";
-import WebviewErrorDrawer, { SwapLiveError } from "./WebviewErrorDrawer/index";
+// import WebviewErrorDrawer, { SwapLiveError } from "./WebviewErrorDrawer/index";
 import ExchangeDrawer from "./ExchangeDrawer/index";
 import SwapFormSelectors from "./FormSelectors";
 import SwapFormSummary from "./FormSummary";
@@ -309,11 +309,12 @@ const SwapForm = () => {
   const toggleMax = () => {
     swapTransaction.toggleMax();
   };
-  const onWebviewError = (error: SwapLiveError) => {
-    setDrawer(WebviewErrorDrawer, {
-      error,
-    });
-  };
+  // TODO: add swapWebApp error integration
+  // const onWebviewError = (error: SwapLiveError) => {
+  //   setDrawer(WebviewErrorDrawer, {
+  //     error,
+  //   });
+  // };
 
   return (
     <Wrapper>
