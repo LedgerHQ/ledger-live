@@ -324,7 +324,7 @@ export const erc20TokenTransactionRaw: EvmTransactionEIP1559Raw = Object.freeze(
   nonce: 0,
   recipient: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
   subAccountId:
-    "js:2:ethereum:0x055C1e159E345cB4197e3844a86A61E0a801d856:+ethereum%2Ferc20%2Fusd__coin",
+    "js:2:ethereum:0x055C1e159E345cB4197e3844a86A61E0a801d856:+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin",
   type: 2,
   useAllAmount: false,
 });
