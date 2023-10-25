@@ -28,5 +28,8 @@ export const execWithTransport =
  */
 let listAppsV2Enabled = false;
 export const enableListAppsV2 = (enabled: boolean) => (listAppsV2Enabled = enabled);
-export const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<ListAppsEvent> =>
+export const listApps = (
+  transport: Transport,
+  deviceInfo: DeviceInfo,
+): Observable<ListAppsEvent> =>
   listAppsV2Enabled ? listAppsV2(transport, deviceInfo) : listAppsV1(transport, deviceInfo);
