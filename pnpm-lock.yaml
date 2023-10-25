@@ -1881,8 +1881,8 @@ importers:
         specifier: workspace:^
         version: link:../live-network
       crypto-js:
-        specifier: 4.1.1
-        version: 4.1.1
+        specifier: 4.2.0
+        version: 4.2.0
       ethers:
         specifier: 5.7.2
         version: 5.7.2
@@ -2218,8 +2218,8 @@ importers:
         specifier: ^1.1.7
         version: 1.1.7
       crypto-js:
-        specifier: ^4.1.1
-        version: 4.1.1
+        specifier: ^4.2.0
+        version: 4.2.0
       date-fns:
         specifier: ^2.23.0
         version: 2.28.0
@@ -16980,7 +16980,7 @@ packages:
       expo: ^44.0.5
     dependencies:
       bignumber.js: 9.1.2
-      crypto-js: 4.1.1
+      crypto-js: 4.2.0
       elliptic: 6.5.4
       expo-crypto: 10.2.0(react-native@0.72.6)(react@18.2.0)
       expo-random: 12.2.0(react-native@0.72.6)(react@18.2.0)
@@ -17012,7 +17012,7 @@ packages:
       '@hashgraph/cryptography': 1.1.2(react-native@0.72.6)(react@18.2.0)
       '@hashgraph/proto': 2.4.1
       bignumber.js: 9.1.2
-      crypto-js: 4.1.1
+      crypto-js: 4.2.0
       js-base64: 3.7.2
       js-logger: 1.6.1
       long: 4.0.0
@@ -18358,7 +18358,7 @@ packages:
       bip32: 2.0.6
       bip39: 3.0.4
       buffer: 6.0.3
-      crypto-js: 4.1.1
+      crypto-js: 4.2.0
       elliptic: 6.5.4
       sha.js: 2.4.11
     dev: false
@@ -33881,8 +33881,8 @@ packages:
       randombytes: 2.1.0
       randomfill: 1.0.4
 
-  /crypto-js@4.1.1:
-    resolution: {integrity: sha512-o2JlM7ydqd3Qk9CA0L4NL6mTzU2sdx96a+oOfPu8Mkl/PK51vSyoi8/rQ8NknZtk44vq15lmhAj9CIAGwgeWKw==}
+  /crypto-js@4.2.0:
+    resolution: {integrity: sha512-KALDyEYgpY+Rlob/iriUtjV6d5Eq+Y191A5g4UqLAi8CyGP9N1+FdVbkc1SxKc2r4YAYqG8JzO2KGL+AizD70Q==}
     dev: false
 
   /crypto-random-string@1.0.0:

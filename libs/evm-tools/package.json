@@ -48,7 +48,7 @@
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
-    "crypto-js": "4.1.1",
+    "crypto-js": "4.2.0",
     "ethers": "5.7.2"
   },
   "devDependencies": {
