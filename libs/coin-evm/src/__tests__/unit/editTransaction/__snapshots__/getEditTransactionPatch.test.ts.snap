@@ -1699,7 +1699,7 @@ Object {
   "mode": "send",
   "nonce": 0,
   "recipient": "0x51DF0aF74a0DBae16cB845B46dAF2a35cB1D4168",
-  "subAccountId": "js:2:ethereum:0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d:+ethereum%2Ferc20%2Fusd__coin",
+  "subAccountId": "js:2:ethereum:0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d:+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin",
   "useAllAmount": false,
 }
 `;
@@ -1891,7 +1891,7 @@ Object {
   "mode": "send",
   "nonce": 0,
   "recipient": "0x51DF0aF74a0DBae16cB845B46dAF2a35cB1D4168",
-  "subAccountId": "js:2:ethereum:0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d:+ethereum%2Ferc20%2Fusd__coin",
+  "subAccountId": "js:2:ethereum:0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d:+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin",
   "useAllAmount": false,
 }
 `;
@@ -2083,7 +2083,7 @@ Object {
   "mode": "send",
   "nonce": 0,
   "recipient": "0x51DF0aF74a0DBae16cB845B46dAF2a35cB1D4168",
-  "subAccountId": "js:2:ethereum:0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d:+ethereum%2Ferc20%2Fusd__coin",
+  "subAccountId": "js:2:ethereum:0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d:+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin",
   "useAllAmount": false,
 }
 `;
