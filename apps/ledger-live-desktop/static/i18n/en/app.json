@@ -4912,7 +4912,7 @@
     "casper": {
       "transferIdPlaceholder": "Optional",
       "transferId": "Transfer ID (Memo)",
-      "transferIdWarningText": "Transfer ID should be a positive number smaller than 18446744073709551615"
+      "transferIdWarningText": "When using a memo, carefully check the information with the recipient"
     },
     "cardano": {
       "memoPlaceholder": "Optional",
