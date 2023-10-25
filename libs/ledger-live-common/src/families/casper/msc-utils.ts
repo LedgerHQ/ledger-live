@@ -20,7 +20,7 @@ export const isError = (r: { returnCode: number; errorMessage: string }): void =
 export const methodToString = (method: number): string => {
   switch (method) {
     case 0:
-      return "Token Transfer";
+      return "Token transfer";
     default:
       return "Unknown";
   }

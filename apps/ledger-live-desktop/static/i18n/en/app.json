@@ -4911,7 +4911,7 @@
   "families": {
     "casper": {
       "transferIdPlaceholder": "Optional",
-      "transferId": "Transfer ID",
+      "transferId": "Transfer ID (Memo)",
       "transferIdWarningText": "Transfer ID should be a positive number smaller than 18446744073709551615"
     },
     "cardano": {

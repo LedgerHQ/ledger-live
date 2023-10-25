@@ -28,13 +28,8 @@ function getDeviceTransactionConfig({
   });
   fields.push({
     type: "casper.extendedAmount",
-    label: "Fees",
+    label: "Fee",
     value: transaction.fees,
-  });
-  fields.push({
-    type: "text",
-    label: "Target (Account hash)",
-    value: casperPubKeyToAccountHash(transaction.recipient),
   });
   fields.push({
     type: "casper.extendedAmount",
