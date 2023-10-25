@@ -153,15 +153,18 @@ export function useCustomPath(
   deeplinkCampaign?: string,
 ): string | undefined {
   const modelUri = usePostOnboardingURI(servicesConfig);
-  const [basicUri] = modelUri ? modelUri.split("?") : [];
-  const uri = new URL(basicUri);
+  const customUri = useMemo(() => {
+    const [basicUri] = modelUri ? modelUri.split("?") : [];
+    const uri = new URL(basicUri);
 
-  if (page) uri.searchParams.append("redirectTo", page);
-  if (source) uri.searchParams.append("source", source);
-  if (source && deeplinkCampaign) {
-    uri.searchParams.append("ajs_recover_source", source);
-    uri.searchParams.append("ajs_recover_campaign", deeplinkCampaign);
-  }
+    if (page) uri.searchParams.append("redirectTo", page);
+    if (source) uri.searchParams.append("source", source);
+    if (source && deeplinkCampaign) {
+      uri.searchParams.append("ajs_recover_source", source);
+      uri.searchParams.append("ajs_recover_campaign", deeplinkCampaign);
+    }
+    return uri;
+  }, [deeplinkCampaign, modelUri, page, source]);
 
-  return usePath(servicesConfig, uri.toString()) ?? undefined;
+  return usePath(servicesConfig, customUri.toString()) ?? undefined;
 }
