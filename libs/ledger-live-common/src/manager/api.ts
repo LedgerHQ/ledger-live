@@ -434,7 +434,7 @@ const getAppsByHash: (hashes: string[]) => Promise<Array<App | null>> = makeLRUC
 
     return data.map(appV2 => (appV2 ? mapApplicationV2ToApp(appV2) : null));
   },
-  hashes => `${getEnv("MANAGER_API_BASE")}_${String(hashes)}`,
+  hashes => `${getEnv("MANAGER_API_BASE")}_${hashes.join("-")}`,
 );
 
 const getDeviceVersion: (targetId: string | number, provider: number) => Promise<DeviceVersion> =
