@@ -1,6 +1,6 @@
 {
   "name": "metro-extra-config",
-  "version": "1.0.0",
+  "version": "1.0.1-nightly.0",
   "description": "Extra helpers for configuring the metro bundler",
   "main": "index.js",
   "private": true,

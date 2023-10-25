@@ -1,5 +1,19 @@
 # ledger-live-desktop
 
+## 2.71.0-nightly.11
+
+### Minor Changes
+
+- [#5072](https://github.com/LedgerHQ/ledger-live/pull/5072) [`7b40140199`](https://github.com/LedgerHQ/ledger-live/commit/7b4014019964d2ecce1135853ec15694c61593d5) Thanks [@KVNLS](https://github.com/KVNLS)! - Improve startup time with lazy loading + remove json files from renderer bundle
+
+- [#4881](https://github.com/LedgerHQ/ledger-live/pull/4881) [`a3038fc1eb`](https://github.com/LedgerHQ/ledger-live/commit/a3038fc1eb8e9fd77fb6142970880a2e82738b8b) Thanks [@nparigi-ledger](https://github.com/nparigi-ledger)! - Custom sort for content cards
+
+### Patch Changes
+
+- [#5141](https://github.com/LedgerHQ/ledger-live/pull/5141) [`e6472c5d06`](https://github.com/LedgerHQ/ledger-live/commit/e6472c5d0616b0adfb35347a985d9e1c7f729a8b) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix Send/receive deeplinks edge cases
+
+- [#5156](https://github.com/LedgerHQ/ledger-live/pull/5156) [`2e5e511556`](https://github.com/LedgerHQ/ledger-live/commit/2e5e511556f03c1a49a7b97ac9af2bdb3d901e10) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - high-low inversion in market stats
+
 ## 2.71.0-nightly.10
 
 ### Patch Changes

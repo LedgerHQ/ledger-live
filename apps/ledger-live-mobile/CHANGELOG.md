@@ -1,5 +1,22 @@
 # live-mobile
 
+## 3.34.0-nightly.11
+
+### Minor Changes
+
+- [#4979](https://github.com/LedgerHQ/ledger-live/pull/4979) [`68488f4d7e`](https://github.com/LedgerHQ/ledger-live/commit/68488f4d7e372c9890d38c2ab7a74f4a0aea1dd1) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Update deep link routing on mobile to redirect to account screen on /account?currency={{id}}... in line with desktop deep links.
+
+### Patch Changes
+
+- [#5158](https://github.com/LedgerHQ/ledger-live/pull/5158) [`54a648ae4e`](https://github.com/LedgerHQ/ledger-live/commit/54a648ae4ec8e337e7137402e5bb22f82c863444) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - LLM Experimental features section translation is done
+
+- [#5170](https://github.com/LedgerHQ/ledger-live/pull/5170) [`5ec0f1fc32`](https://github.com/LedgerHQ/ledger-live/commit/5ec0f1fc325fdca70da5c990a8e399f838bc3c15) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Remove Recommendations section in the settings
+
+- [#5001](https://github.com/LedgerHQ/ledger-live/pull/5001) [`a733486230`](https://github.com/LedgerHQ/ledger-live/commit/a7334862309bb85480c48b471ccd5a7232f5a795) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Added Path Mappings to LLM
+
+- Updated dependencies []:
+  - @ledgerhq/native-ui@0.22.1-nightly.1
+
 ## 3.34.0-nightly.10
 
 ### Patch Changes
