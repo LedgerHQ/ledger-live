@@ -44,6 +44,7 @@ import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/provider
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { counterValueCurrencySelector, languageSelector } from "~/renderer/reducers/settings";
 import useTheme from "~/renderer/hooks/useTheme";
+import { v4 } from "uuid";
 
 type SwapWebProps = Partial<{
   provider: string;
@@ -109,11 +110,7 @@ const SwapWeb = ({ pageState, ...props }: SwapWebProps) => {
       <WebPlatformPlayer
         config={{
           topBarConfig: {
-            shouldHideToolbarOverride: false,
-            shouldDisplayName: false,
-            shouldDisplayInfo: false,
-            shouldDisplayClose: false,
-            shouldDisplayNavigation: false,
+            shouldHideToolbarOverride: true,
           },
         }}
         manifest={manifest}
@@ -240,8 +237,8 @@ const SwapForm = () => {
       feeStrategy: (isCustomFee ? "custom" : "medium")?.toUpperCase(),
       customFeeConfig: customFeeConfig ? JSON.stringify(customFeeConfig) : undefined,
       pageState,
+      cacheKey: v4(),
     };
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     provider,
@@ -348,20 +345,21 @@ const SwapForm = () => {
         },
       });
     } else {
-      if (!isSwapLiveAppEnabled) {
-        setDrawer(
-          ExchangeDrawer,
-          {
-            swapTransaction,
-            exchangeRate,
-          },
-          {
-            preventBackdropClick: true,
-          },
-        );
-      } else {
+      if (isSwapLiveAppEnabled) {
         setSwapWebProps(getSwapWebAppProps());
+        return;
       }
+
+      setDrawer(
+        ExchangeDrawer,
+        {
+          swapTransaction,
+          exchangeRate,
+        },
+        {
+          preventBackdropClick: true,
+        },
+      );
     }
   };
 
