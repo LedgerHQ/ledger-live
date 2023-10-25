@@ -112,3 +112,77 @@ export function useLoginPath(
 
   return usePath(servicesConfig, uri);
 }
+
+export function useRestore24URI(
+  servicesConfig: Feature_ProtectServicesDesktop | null,
+): string | undefined {
+  const uri = servicesConfig?.params?.onboardingCompleted?.restore24URI;
+  const id = servicesConfig?.params?.protectId;
+
+  return useReplacedURI(uri, id);
+}
+
+export function useRestore24Path(
+  servicesConfig: Feature_ProtectServicesDesktop | null,
+): string | undefined {
+  const uri = useRestore24URI(servicesConfig);
+
+  return usePath(servicesConfig, uri);
+}
+
+export function useAccountURI(
+  servicesConfig: Feature_ProtectServicesDesktop | null,
+): string | undefined {
+  const uri = servicesConfig?.params?.account?.homeURI;
+  const id = servicesConfig?.params?.protectId;
+
+  return useReplacedURI(uri, id);
+}
+
+export function useAccountPath(
+  servicesConfig: Feature_ProtectServicesDesktop | null,
+): string | undefined {
+  const uri = useAccountURI(servicesConfig);
+
+  return usePath(servicesConfig, uri);
+}
+
+export function useAlreadySeededDeviceURI(
+  servicesConfig: Feature_ProtectServicesDesktop | null,
+): string | undefined {
+  const uri = servicesConfig?.params?.onboardingCompleted?.alreadyDeviceSeededURI;
+  const id = servicesConfig?.params?.protectId;
+
+  return useReplacedURI(uri, id);
+}
+
+export function useAlreadySeededDevicePath(
+  servicesConfig: Feature_ProtectServicesDesktop | null,
+): string | undefined {
+  const uri = useAlreadySeededDeviceURI(servicesConfig);
+
+  return usePath(servicesConfig, uri);
+}
+
+export function useCustomPath(
+  servicesConfig: Feature_ProtectServicesDesktop | Feature_ProtectServicesMobile | null,
+  page?: string,
+  source?: string,
+  deeplinkCampaign?: string,
+): string | undefined {
+  const modelUri = usePostOnboardingURI(servicesConfig);
+  const customUri = useMemo(() => {
+    const [basicUri] = modelUri ? modelUri.split("?") : [];
+    const uri = new URL(basicUri);
+
+    if (page) uri.searchParams.append("redirectTo", page);
+    if (source) uri.searchParams.append("source", source);
+    if (source && deeplinkCampaign) {
+      uri.searchParams.append("ajs_recover_source", source);
+      uri.searchParams.append("ajs_recover_campaign", deeplinkCampaign);
+    }
+    return uri;
+  }, [deeplinkCampaign, modelUri, page, source]);
+
+  return usePath(servicesConfig, customUri.toString()) ?? undefined;
+}
