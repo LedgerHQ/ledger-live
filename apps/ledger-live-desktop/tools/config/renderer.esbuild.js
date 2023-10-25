@@ -1,6 +1,6 @@
 const path = require("path");
-// const fs = require("fs");
-// const crypto = require("crypto");
+const fs = require("fs");
+const crypto = require("crypto");
 const {
   AliasPlugin,
   HtmlPlugin,
@@ -11,14 +11,14 @@ const {
 const { DOTENV_FILE } = require("../utils");
 const common = require("./common.esbuild");
 
-/*const ensureDirectoryExistence = filePath => {
+const ensureDirectoryExistence = filePath => {
   const dirname = path.dirname(filePath);
   if (fs.existsSync(dirname)) {
     return true;
   }
   ensureDirectoryExistence(dirname);
   fs.mkdirSync(dirname);
-};*/
+};
 
 module.exports = {
   ...common,
@@ -29,7 +29,7 @@ module.exports = {
   target: ["chrome114"],
   format: "iife",
   mainFields: ["browser", "module", "main"],
-  //assetNames: "assets/[name]-[hash]",
+  assetNames: "assets/[name]-[hash]",
   external: [...nodeExternals, ...electronRendererExternals],
   resolveExtensions: process.env.V3
     ? [".v3.tsx", ".v3.ts", ".tsx", ".ts", ".js", ".jsx", ".json"]
@@ -56,7 +56,7 @@ module.exports = {
       ],
     }),
     DotEnvPlugin(DOTENV_FILE),
-    /*{
+    {
       name: "assets-plugin",
       setup(build) {
         build.onResolve({ filter: /\.(json)$/ }, args => {
@@ -67,13 +67,13 @@ module.exports = {
             const hash = crypto.createHash("sha1").update(fileContent).digest("hex");
 
             const fileName = `${hash}-${path.basename(args.path)}`;
-            const targetPath = path.resolve(".webpack/assets", fileName);
+            const targetPath = path.join(".webpack/assets", fileName);
 
             ensureDirectoryExistence(targetPath);
             fs.copyFileSync(sourcePath, targetPath);
 
             return {
-              path: targetPath,
+              path: `./assets/${fileName}`,
               external: true,
             };
           }
@@ -81,6 +81,6 @@ module.exports = {
           return undefined;
         });
       },
-    },*/
+    },
   ],
 };
