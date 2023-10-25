@@ -29,7 +29,7 @@ module.exports = {
   target: ["chrome114"],
   format: "iife",
   mainFields: ["browser", "module", "main"],
-  assetNames: "assets/[name]-[hash]",
+  assetNames: "build/assets/[name]-[hash]",
   external: [...nodeExternals, ...electronRendererExternals],
   resolveExtensions: process.env.V3
     ? [".v3.tsx", ".v3.ts", ".tsx", ".ts", ".js", ".jsx", ".json"]
@@ -67,7 +67,7 @@ module.exports = {
             const hash = crypto.createHash("sha1").update(fileContent).digest("hex");
 
             const fileName = `${hash}-${path.basename(args.path)}`;
-            const targetPath = path.resolve(".webpack/assets", fileName);
+            const targetPath = path.resolve(".webpack/build/assets", fileName);
 
             ensureDirectoryExistence(targetPath);
             fs.copyFileSync(sourcePath, targetPath);
