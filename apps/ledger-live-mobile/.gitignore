@@ -94,6 +94,7 @@ src/generated/
 
 # CocoaPods
 /ios/Pods/
+/ios/.podhash.json
 /vendor/bundle/
 
 # jest

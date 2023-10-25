@@ -19,7 +19,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import Alert from "../../../components/Alert";
 import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
 import IlluRewards from "../../../icons/images/Rewards";
-import { urls } from "../../../config/urls";
+import { urls } from "@utils/urls";
 import AccountSectionLabel from "../../../components/AccountSectionLabel";
 import DelegationDrawer from "../../../components/DelegationDrawer";
 import type { IconProps } from "../../../components/DelegationDrawer";

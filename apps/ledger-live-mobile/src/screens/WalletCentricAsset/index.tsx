@@ -102,7 +102,12 @@ const AssetScreen = ({ route }: NavigationProps) => {
 
   const data = useMemo(
     () => [
-      <Box mt={6} onLayout={onGraphCardLayout} key="AssetGraph">
+      <Box
+        mt={6}
+        onLayout={onGraphCardLayout}
+        key="AssetGraph"
+        testID={`account-assets-${currency.name}`}
+      >
         <AssetGraph
           accounts={cryptoAccounts}
           currency={currency}

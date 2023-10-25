@@ -36,6 +36,7 @@ export class AddAccountModal extends Modal {
   }
 
   async getFirstAccountName() {
+    await this.page.waitForTimeout(500);
     const firstAccountName = await this.accountsList.locator("input").first().inputValue();
     return firstAccountName;
   }

@@ -160,7 +160,7 @@ test.use({ userdata: "1AccountBTC1AccountETH" });
 let testServerIsRunning = false;
 
 test.beforeAll(async () => {
-  // Check that dummy app in libs/test-utils/dummy-live-app has been started successfully
+  // Check that dummy app in tests/dummy-live-app has been started successfully
   testServerIsRunning = await LiveAppWebview.startLiveApp("dummy-wallet-app/build", {
     name: "Dummy Wallet API Live App",
     id: "dummy-live-app",
