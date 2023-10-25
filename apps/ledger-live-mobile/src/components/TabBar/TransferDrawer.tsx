@@ -199,6 +199,25 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       testID: "swap-transfer-button",
     },
 
+    ...(RECOVER
+      ? [
+          {
+            eventProperties: {
+              button: "transfer_recover",
+              page,
+              drawer: "trade",
+            },
+            tag: t("transfer.recover.tag"),
+            title: t("transfer.recover.title"),
+            description: t("transfer.recover.description"),
+            Icon: RECOVER.icon,
+            onPress: () => onNavigateRecover(),
+            disabled: RECOVER.disabled,
+            testID: "transfer-recover-button",
+          },
+        ]
+      : []),
+
     ...(WALLET_CONNECT
       ? [
           {

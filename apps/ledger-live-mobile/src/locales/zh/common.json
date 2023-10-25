@@ -3405,6 +3405,11 @@
     "walletConnect" : {
       "title" : "WalletConnect",
       "description" : "将您的钱包连接到去中心化应用程序"
+    },
+    "recover" : {
+      "title" : "Ledger Recover",
+      "description" : "钱包恢复，垂手可得",
+      "tag" : "免费一个月"
     }
   },
   "signMessage" : {
@@ -6365,6 +6370,12 @@
   "servicesWidget" : {
     "title" : "服务",
     "subTitle" : "管理您的 Ledger 服务",
+    "signIn" : "登录",
+    "recover" : {
+      "cta" : "开始免费试用",
+      "desc" : "无需再为失去对您钱包的访问权而担忧。",
+      "tag" : "免费一个月"
+    },
     "protect" : {
       "status" : {
         "new" : {

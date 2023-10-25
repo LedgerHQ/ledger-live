@@ -3405,6 +3405,11 @@
     "walletConnect" : {
       "title" : "WalletConnect",
       "description" : "Подключите кошелёк к децентрализованным приложениям."
+    },
+    "recover" : {
+      "title" : "Ledger Recover",
+      "description" : "Восстановить кошелёк теперь проще простого",
+      "tag" : "Месяц в подарок"
     }
   },
   "signMessage" : {
@@ -6365,6 +6370,12 @@
   "servicesWidget" : {
     "title" : "Сервисы",
     "subTitle" : "Управление услугами Ledger",
+    "signIn" : "Войти",
+    "recover" : {
+      "cta" : "Попробовать бесплатно",
+      "desc" : "Хватит беспокоиться о возможной потере доступа к своему кошельку.",
+      "tag" : "1 месяц в подарок"
+    },
     "protect" : {
       "status" : {
         "new" : {

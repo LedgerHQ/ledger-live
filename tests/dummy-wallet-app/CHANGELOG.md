@@ -1,5 +1,36 @@
 # dummy-wallet-app
 
+## 0.1.25
+
+### Patch Changes
+
+- Updated dependencies [[`ce18546c0a`](https://github.com/LedgerHQ/ledger-live/commit/ce18546c0a0b9dd5ed78b1745cac19b7eef7b5eb), [`fbeebfe04b`](https://github.com/LedgerHQ/ledger-live/commit/fbeebfe04b297b33ec258440b694cdfb6213af24)]:
+  - @ledgerhq/live-common@33.0.1
+  - @ledgerhq/hw-app-eth@6.34.8
+
+## 0.1.25-hotfix.2
+
+### Patch Changes
+
+- Updated dependencies [[`fbeebfe04b`](https://github.com/LedgerHQ/ledger-live/commit/fbeebfe04b297b33ec258440b694cdfb6213af24)]:
+  - @ledgerhq/live-common@33.0.1-hotfix.2
+  - @ledgerhq/hw-app-eth@6.34.8-hotfix.1
+
+## 0.1.25-hotfix.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@33.0.1-hotfix.1
+
+## 0.1.25-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`ce18546c0a`](https://github.com/LedgerHQ/ledger-live/commit/ce18546c0a0b9dd5ed78b1745cac19b7eef7b5eb)]:
+  - @ledgerhq/live-common@33.0.1-hotfix.0
+  - @ledgerhq/hw-app-eth@6.34.8-hotfix.0
+
 ## 0.1.24
 
 ### Patch Changes
