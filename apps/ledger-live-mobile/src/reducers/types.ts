@@ -70,7 +70,7 @@ export type AppState = {
   backgroundEvents: Array<FwUpdateBackgroundEvent>;
   isMainNavigatorVisible: boolean;
   /** For deep links that inadvertently trigger privacy lock. Reset to false on close. */
-  isDeepLinking: boolean;
+  isPasswordLockBlocked: boolean;
 };
 
 // === BLE STATE ===

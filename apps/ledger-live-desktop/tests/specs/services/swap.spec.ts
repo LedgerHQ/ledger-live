@@ -45,6 +45,24 @@ test.describe.parallel("Swap", () => {
       route.fulfill({ headers: { teststatus: "mocked" }, body: mockRatesResponse });
     });
 
+    await page.route("https://swap.ledger.com/v5/currencies/to**", async route => {
+      route.fulfill({
+        headers: { teststatus: "mocked" },
+        body: JSON.stringify({
+          currencyGroups: [
+            {
+              network: "dogecoin",
+              supportedCurrencies: ["dogecoin"],
+            },
+            {
+              network: "ethereum",
+              supportedCurrencies: ["ethereum", "ethereum/erc20/usd_tether__erc20_"],
+            },
+          ],
+        }),
+      });
+    });
+
     await test.step("Navigate to swap via account page", async () => {
       await layout.goToAccounts();
       await accountsPage.navigateToAccountByName(ethereumAccountName);

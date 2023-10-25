@@ -1,5 +1,37 @@
 # @ledgerhq/coin-algorand
 
+## 0.3.4
+
+### Patch Changes
+
+- Updated dependencies [[`ce18546c0a`](https://github.com/LedgerHQ/ledger-live/commit/ce18546c0a0b9dd5ed78b1745cac19b7eef7b5eb), [`3b4f7501cc`](https://github.com/LedgerHQ/ledger-live/commit/3b4f7501cc5f09be94a2994f20f9998898682975), [`fbeebfe04b`](https://github.com/LedgerHQ/ledger-live/commit/fbeebfe04b297b33ec258440b694cdfb6213af24)]:
+  - @ledgerhq/types-live@6.41.1
+  - @ledgerhq/coin-framework@0.8.0
+  - @ledgerhq/cryptoassets@11.0.1
+
+## 0.3.4-hotfix.2
+
+### Patch Changes
+
+- Updated dependencies [[`fbeebfe04b`](https://github.com/LedgerHQ/ledger-live/commit/fbeebfe04b297b33ec258440b694cdfb6213af24)]:
+  - @ledgerhq/cryptoassets@11.0.1-hotfix.0
+  - @ledgerhq/coin-framework@0.8.0-hotfix.2
+
+## 0.3.4-hotfix.1
+
+### Patch Changes
+
+- Updated dependencies [[`3b4f7501cc`](https://github.com/LedgerHQ/ledger-live/commit/3b4f7501cc5f09be94a2994f20f9998898682975)]:
+  - @ledgerhq/coin-framework@0.8.0-hotfix.1
+
+## 0.3.4-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`ce18546c0a`](https://github.com/LedgerHQ/ledger-live/commit/ce18546c0a0b9dd5ed78b1745cac19b7eef7b5eb)]:
+  - @ledgerhq/types-live@6.41.1-hotfix.0
+  - @ledgerhq/coin-framework@0.7.1-hotfix.0
+
 ## 0.3.3
 
 ### Patch Changes

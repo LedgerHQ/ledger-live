@@ -1,5 +1,37 @@
 # @ledgerhq/coin-framework
 
+## 0.8.0
+
+### Minor Changes
+
+- [#5042](https://github.com/LedgerHQ/ledger-live/pull/5042) [`3b4f7501cc`](https://github.com/LedgerHQ/ledger-live/commit/3b4f7501cc5f09be94a2994f20f9998898682975) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Modify token ids encoding in `TokenAccounts` ids which could contain characters preventing the correct "deserialization" of those ids.
+
+### Patch Changes
+
+- Updated dependencies [[`ce18546c0a`](https://github.com/LedgerHQ/ledger-live/commit/ce18546c0a0b9dd5ed78b1745cac19b7eef7b5eb), [`fbeebfe04b`](https://github.com/LedgerHQ/ledger-live/commit/fbeebfe04b297b33ec258440b694cdfb6213af24)]:
+  - @ledgerhq/types-live@6.41.1
+  - @ledgerhq/cryptoassets@11.0.1
+
+## 0.8.0-hotfix.2
+
+### Patch Changes
+
+- Updated dependencies [[`fbeebfe04b`](https://github.com/LedgerHQ/ledger-live/commit/fbeebfe04b297b33ec258440b694cdfb6213af24)]:
+  - @ledgerhq/cryptoassets@11.0.1-hotfix.0
+
+## 0.8.0-hotfix.1
+
+### Minor Changes
+
+- [#5042](https://github.com/LedgerHQ/ledger-live/pull/5042) [`3b4f7501cc`](https://github.com/LedgerHQ/ledger-live/commit/3b4f7501cc5f09be94a2994f20f9998898682975) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Modify token ids encoding in `TokenAccounts` ids which could contain characters preventing the correct "deserialization" of those ids.
+
+## 0.7.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`ce18546c0a`](https://github.com/LedgerHQ/ledger-live/commit/ce18546c0a0b9dd5ed78b1745cac19b7eef7b5eb)]:
+  - @ledgerhq/types-live@6.41.1-hotfix.0
+
 ## 0.7.0
 
 ### Minor Changes

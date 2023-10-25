@@ -2,4 +2,4 @@
 "ledger-live-desktop": patch
 ---
 
-Remove Cardano Poolcost
+high-low inversion in market stats

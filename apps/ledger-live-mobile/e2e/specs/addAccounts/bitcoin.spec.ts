@@ -3,13 +3,11 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import { loadBleState, loadConfig } from "../../bridge/server";
 import PortfolioPage from "../../models/wallet/portfolioPage";
 import DeviceAction from "../../models/DeviceAction";
-import AccountsPage from "../../models/accounts/accountsPage";
 import AddAccountDrawer from "../../models/accounts/addAccountDrawer";
-import { getElementByText } from "../../helpers";
+import { getElementByText, waitForElementByText } from "../../helpers";
 
 let portfolioPage: PortfolioPage;
 let deviceAction: DeviceAction;
-let accountsPage: AccountsPage;
 let addAccountDrawer: AddAccountDrawer;
 
 const knownDevice = {
@@ -25,7 +23,6 @@ describe("Add Bitcoin Accounts", () => {
 
     portfolioPage = new PortfolioPage();
     deviceAction = new DeviceAction(knownDevice);
-    accountsPage = new AccountsPage();
     addAccountDrawer = new AddAccountDrawer();
 
     await portfolioPage.waitForPortfolioPageToLoad();
@@ -45,8 +42,9 @@ describe("Add Bitcoin Accounts", () => {
     await addAccountDrawer.tapSuccessCta();
   });
 
-  it("displays accounts page summary", async () => {
-    await accountsPage.waitForAccountsCoinPageToLoad("Bitcoin");
-    await expect(getElementByText("1.19576 BTC")).toBeVisible();
+  it("displays Bitcoin accounts page summary", async () => {
+    await expect(getElementByText("Your Bitcoin")).toBeVisible();
+
+    await waitForElementByText("1.19576 BTC");
   });
 });

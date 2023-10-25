@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Linking } from "react-native";
 import SplashScreen from "react-native-splash-screen";
 import { getStateFromPath, LinkingOptions, NavigationContainer } from "@react-navigation/native";
+import Config from "react-native-config";
 import { useFlipper } from "@react-navigation/devtools";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { DEFAULT_MULTIBUY_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
@@ -10,8 +11,8 @@ import { DEFAULT_MULTIBUY_APP_ID } from "@ledgerhq/live-common/wallet-api/consta
 import Braze from "react-native-appboy-sdk";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-
 import * as Sentry from "@sentry/react-native";
+
 import { hasCompletedOnboardingSelector } from "../reducers/settings";
 import { navigationRef, isReadyRef } from "../rootnavigation";
 import { ScreenName, NavigatorName } from "../const";
@@ -22,6 +23,7 @@ import { lightTheme, darkTheme, Theme } from "../colors";
 import { track } from "../analytics";
 import { setEarnInfoModal } from "../actions/earn";
 import { OptionalFeatureMap } from "@ledgerhq/types-live";
+import { blockPasswordLock } from "../actions/appstate";
 
 const routingInstrumentation = new Sentry.ReactNavigationInstrumentation();
 
@@ -195,10 +197,9 @@ const linkingOptions = (featureFlags: OptionalFeatureMap) => ({
                       [NavigatorName.PortfolioAccounts]: {
                         screens: {
                           /**
-                           * @params ?currency: string
-                           * ie: "ledgerlive://account?currency=bitcoin" will open the first bitcoin account
+                           * "ledgerlive://accounts" opens the main portfolio screen of accounts.
                            */
-                          [ScreenName.Accounts]: "account",
+                          [ScreenName.Accounts]: "accounts",
                         },
                       },
                       ...(featureFlags?.ptxEarn?.enabled && {
@@ -292,14 +293,16 @@ const linkingOptions = (featureFlags: OptionalFeatureMap) => ({
               [ScreenName.SendCoin]: "send",
             },
           },
-
+          /** "ledgerlive://account" will open the list of all accounts, where the redirection logic is. */
           [NavigatorName.Accounts]: {
             screens: {
               /**
-               * @params ?id: string
-               * ie: "ledgerlive://accounts?currency=ethereum&address={{eth_account_address}}"
+               * @params ?currency: string
+               * @params ?address: string
+               * ie: "ledgerlive://account?currency=ethereum&address={{eth_account_address}} will open that account's assets screen.
+               * Currency param alone e.g. "ledgerlive://account?currency=tezos" will open the Tezos Assets screen.
                */
-              [ScreenName.Accounts]: "accounts",
+              [ScreenName.Accounts]: "account",
             },
           },
 
@@ -483,6 +486,17 @@ export const DeeplinksProvider = ({
             installApp,
             appName,
           } = query;
+
+          if (!ajsPropSource && !Config.MOCK) {
+            /** Internal deep links cause the app to "background" on Android.
+             * If "password lock" is enabled then this opens a re-authentication modal every time the user navigates by deep link.
+             * If there is no ajsPropSource then assume deep link is from an internal app, so temporarily prevent password lock:
+             */
+            dispatch(blockPasswordLock(true)); // TODO: Remove this and the timeout after AuthPass refactor
+            setTimeout(() => {
+              dispatch(blockPasswordLock(false));
+            }, 4000); // Allow 4 seconds before resetting password lock, unless on Detox e2e test, as this breaks CI.
+          }
 
           // Track deeplink only when ajsPropSource attribute exists.
           if (ajsPropSource) {

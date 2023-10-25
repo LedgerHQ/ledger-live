@@ -8,7 +8,7 @@ import { PasswordsDontMatchError } from "@ledgerhq/errors";
 import { CompositeScreenProps } from "@react-navigation/native";
 import { setPrivacy } from "../../../actions/settings";
 import PasswordForm from "./PasswordForm";
-import { VIBRATION_PATTERN_ERROR } from "../../../constants";
+import { VIBRATION_PATTERN_ERROR } from "@utils/constants";
 import { ScreenName } from "../../../const";
 import type { PasswordAddFlowParamList } from "../../../components/RootNavigator/types/PasswordAddFlowNavigator";
 import type { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
