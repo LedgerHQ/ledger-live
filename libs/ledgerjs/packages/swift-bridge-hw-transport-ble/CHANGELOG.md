@@ -1,5 +1,12 @@
 # @ledgerhq/swift-bridge-hw-transport-ble
 
+## 1.0.9-tag-word.0
+
+### Patch Changes
+
+- Updated dependencies [[`6b7fc5d071`](https://github.com/LedgerHQ/ledger-live/commit/6b7fc5d0711a83ed2fcacacd02795862a4a3bf1d), [`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac)]:
+  - @ledgerhq/hw-transport@6.29.0-tag-word.0
+
 ## 1.0.8
 
 ### Patch Changes

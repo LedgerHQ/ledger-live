@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 11.0.2-tag-word.0
+
+### Patch Changes
+
+- [#5113](https://github.com/LedgerHQ/ledger-live/pull/5113) [`54b1d185c9`](https://github.com/LedgerHQ/ledger-live/commit/54b1d185c9df5ae84dc7e85d58249c06550df5f1) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - remove tokens definition for ICP chain
+
 ## 11.0.1
 
 ### Patch Changes

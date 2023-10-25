@@ -1,5 +1,19 @@
 # @ledgerhq/hw-app-eth
 
+## 6.34.9-tag-word.0
+
+### Patch Changes
+
+- Updated dependencies [[`fc121ce96d`](https://github.com/LedgerHQ/ledger-live/commit/fc121ce96dbcc4f30cfd9836644f778b85f997b7), [`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac), [`6b7fc5d071`](https://github.com/LedgerHQ/ledger-live/commit/6b7fc5d0711a83ed2fcacacd02795862a4a3bf1d), [`df5c9ae02a`](https://github.com/LedgerHQ/ledger-live/commit/df5c9ae02a604ddba13ddc64caf8d9ad079c303d), [`54b1d185c9`](https://github.com/LedgerHQ/ledger-live/commit/54b1d185c9df5ae84dc7e85d58249c06550df5f1), [`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac), [`4d6fa0772e`](https://github.com/LedgerHQ/ledger-live/commit/4d6fa0772e19cdbd4b432fafa43621c42e2a5fdd)]:
+  - @ledgerhq/domain-service@1.1.14-tag-word.0
+  - @ledgerhq/logs@6.11.0-tag-word.0
+  - @ledgerhq/hw-transport@6.29.0-tag-word.0
+  - @ledgerhq/types-live@6.41.2-tag-word.0
+  - @ledgerhq/cryptoassets@11.0.2-tag-word.0
+  - @ledgerhq/errors@6.15.0-tag-word.0
+  - @ledgerhq/hw-transport-mocker@6.27.20-tag-word.0
+  - @ledgerhq/evm-tools@1.0.10-tag-word.0
+
 ## 6.34.8
 
 ### Patch Changes

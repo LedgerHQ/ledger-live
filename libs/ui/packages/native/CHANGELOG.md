@@ -1,5 +1,17 @@
 # @ledgerhq/native-ui
 
+## 0.22.1-tag-word.0
+
+### Patch Changes
+
+- [#4289](https://github.com/LedgerHQ/ledger-live/pull/4289) [`29d9d40f11`](https://github.com/LedgerHQ/ledger-live/commit/29d9d40f11515de9502995349f2fd7fbd5cb8757) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Upgrade peerDependency react-native-reanimated to 3.3.0, devDependency expo to expo SDK 49 and metro to 0.79.0
+
+- [#4827](https://github.com/LedgerHQ/ledger-live/pull/4827) [`fc121ce96d`](https://github.com/LedgerHQ/ledger-live/commit/fc121ce96dbcc4f30cfd9836644f778b85f997b7) Thanks [@valpinkman](https://github.com/valpinkman)! - Update react to react 18
+
+- Updated dependencies [[`fc121ce96d`](https://github.com/LedgerHQ/ledger-live/commit/fc121ce96dbcc4f30cfd9836644f778b85f997b7)]:
+  - @ledgerhq/crypto-icons-ui@0.5.2-tag-word.0
+  - @ledgerhq/icons-ui@0.6.2-tag-word.0
+
 ## 0.22.0
 
 ### Minor Changes

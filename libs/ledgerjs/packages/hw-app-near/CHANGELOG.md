@@ -1,5 +1,13 @@
 # @ledgerhq/hw-app-near
 
+## 6.27.15-tag-word.0
+
+### Patch Changes
+
+- Updated dependencies [[`6b7fc5d071`](https://github.com/LedgerHQ/ledger-live/commit/6b7fc5d0711a83ed2fcacacd02795862a4a3bf1d), [`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac), [`4d6fa0772e`](https://github.com/LedgerHQ/ledger-live/commit/4d6fa0772e19cdbd4b432fafa43621c42e2a5fdd)]:
+  - @ledgerhq/hw-transport@6.29.0-tag-word.0
+  - @ledgerhq/errors@6.15.0-tag-word.0
+
 ## 6.27.14
 
 ### Patch Changes

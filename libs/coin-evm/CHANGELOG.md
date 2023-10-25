@@ -1,5 +1,27 @@
 # @ledgerhq/coin-evm
 
+## 0.9.1-tag-word.0
+
+### Patch Changes
+
+- [#4856](https://github.com/LedgerHQ/ledger-live/pull/4856) [`173d7d6d22`](https://github.com/LedgerHQ/ledger-live/commit/173d7d6d224bcf1cecf364062b6571f52792e371) Thanks [@chabroA](https://github.com/chabroA)! - return error when tx from tokenAccount has no amount
+
+- [#5088](https://github.com/LedgerHQ/ledger-live/pull/5088) [`2fc6d1efa0`](https://github.com/LedgerHQ/ledger-live/commit/2fc6d1efa0233a90b0fa273782cff1dd6344d52c) Thanks [@sarneijim](https://github.com/sarneijim)! - Fix swap-web-app fees
+
+- Updated dependencies [[`fc121ce96d`](https://github.com/LedgerHQ/ledger-live/commit/fc121ce96dbcc4f30cfd9836644f778b85f997b7), [`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac), [`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac), [`df5c9ae02a`](https://github.com/LedgerHQ/ledger-live/commit/df5c9ae02a604ddba13ddc64caf8d9ad079c303d), [`54b1d185c9`](https://github.com/LedgerHQ/ledger-live/commit/54b1d185c9df5ae84dc7e85d58249c06550df5f1), [`4d6fa0772e`](https://github.com/LedgerHQ/ledger-live/commit/4d6fa0772e19cdbd4b432fafa43621c42e2a5fdd)]:
+  - @ledgerhq/domain-service@1.1.14-tag-word.0
+  - @ledgerhq/logs@6.11.0-tag-word.0
+  - @ledgerhq/live-env@0.6.1-tag-word.0
+  - @ledgerhq/types-live@6.41.2-tag-word.0
+  - @ledgerhq/cryptoassets@11.0.2-tag-word.0
+  - @ledgerhq/errors@6.15.0-tag-word.0
+  - @ledgerhq/hw-app-eth@6.34.9-tag-word.0
+  - @ledgerhq/coin-framework@0.8.1-tag-word.0
+  - @ledgerhq/devices@8.0.8-tag-word.0
+  - @ledgerhq/live-network@1.1.8-tag-word.0
+  - @ledgerhq/live-promise@0.0.2-tag-word.0
+  - @ledgerhq/evm-tools@1.0.10-tag-word.0
+
 ## 0.9.0
 
 ### Minor Changes

@@ -1,5 +1,17 @@
 # @ledgerhq/coin-framework
 
+## 0.8.1-tag-word.0
+
+### Patch Changes
+
+- Updated dependencies [[`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac), [`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac), [`df5c9ae02a`](https://github.com/LedgerHQ/ledger-live/commit/df5c9ae02a604ddba13ddc64caf8d9ad079c303d), [`54b1d185c9`](https://github.com/LedgerHQ/ledger-live/commit/54b1d185c9df5ae84dc7e85d58249c06550df5f1), [`4d6fa0772e`](https://github.com/LedgerHQ/ledger-live/commit/4d6fa0772e19cdbd4b432fafa43621c42e2a5fdd)]:
+  - @ledgerhq/logs@6.11.0-tag-word.0
+  - @ledgerhq/live-env@0.6.1-tag-word.0
+  - @ledgerhq/types-live@6.41.2-tag-word.0
+  - @ledgerhq/cryptoassets@11.0.2-tag-word.0
+  - @ledgerhq/errors@6.15.0-tag-word.0
+  - @ledgerhq/devices@8.0.8-tag-word.0
+
 ## 0.8.0
 
 ### Minor Changes
