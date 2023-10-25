@@ -206,15 +206,6 @@ const SwapForm = () => {
     }, idleTime);
   }, [idleState]);
 
-  const hasSwapWebProps = !!swapWebProps;
-  useEffect(() => {
-    if (hasSwapWebProps) {
-      setTimeout(() => {
-        setSwapWebProps(undefined);
-      }, 5000);
-    }
-  }, [hasSwapWebProps]);
-
   const getSwapWebAppProps = useCallback(() => {
     const { swap } = swapTransaction;
     const { to, from } = swap;
