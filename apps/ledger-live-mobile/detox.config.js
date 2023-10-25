@@ -11,9 +11,9 @@ module.exports = {
       config: "e2e/jest.config.js",
     },
     jest: {
-      setupTimeout: 1000000,
+      setupTimeout: 500000,
     },
-    retries: 1,
+    retries: 0,
   },
   logger: {
     level: process.env.DEBUG_DETOX ? "trace" : "info",
