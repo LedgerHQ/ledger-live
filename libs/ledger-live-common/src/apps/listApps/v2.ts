@@ -45,7 +45,7 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
       const deviceModel = getDeviceModel(deviceModelId);
       const bytesPerBlock = deviceModel.getBlockSize(deviceInfo.version);
 
-      /** The following are several asynchonous sequences running in parallel */
+      /** The following are several asynchronous sequences running in parallel */
 
       /**
        * Sequence 1: obtain the full data regarding apps installed on the device
@@ -86,7 +86,7 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
       }
 
       const filteredListAppsPromise = listAppsResponsePromise.then(result => {
-        // Empty HashData can come from apps that are not real apps (such as langauge packs)
+        // Empty HashData can come from apps that are not real apps (such as language packs)
         // or custom applications that have been sideloaded.
         return result
           .filter(({ hash_code_data }) => hash_code_data !== emptyHashData)
