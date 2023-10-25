@@ -17,9 +17,8 @@ export default function AuthSecurityToggle() {
   const { navigate } = useNavigation();
 
   const onValueChange = (authSecurityEnabled: boolean): void => {
-    // Add onClick Analytics
     track("toggle_clicked", {
-      toggle: "Password Lock", // Moyen de chopper la key non traduite ?
+      toggle: "Password Lock",
       page: ScreenName.GeneralSettings,
       enabled: !privacy?.hasPassword,
     });

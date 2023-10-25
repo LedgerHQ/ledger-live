@@ -30,9 +30,8 @@ export default function BiometricsRow({ iconLeft }: Props) {
 
   const onValueChange = useCallback(
     async (biometricsEnabled: boolean) => {
-      // Add onClick Analytics
       track("toggle_clicked", {
-        toggle: "biometrics", // Moyen de chopper la key non traduite ?
+        toggle: "biometrics",
         page: ScreenName.GeneralSettings,
         enabled: biometricsEnabled,
       });
