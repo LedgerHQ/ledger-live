@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useHistory, useLocation } from "react-router-dom";
@@ -331,6 +331,12 @@ const MainSideBar = () => {
     push,
     dispatch,
   ]);
+  const isReferralProgramActive = useMemo(() => {
+    return (
+      referralProgramConfig?.params &&
+      location.pathname.startsWith(referralProgramConfig.params.path)
+    );
+  }, [referralProgramConfig, location]);
 
   return (
     <Transition
@@ -409,7 +415,7 @@ const MainSideBar = () => {
                   icon={IconsLegacy.PlanetMedium}
                   iconSize={20}
                   iconActiveColor="wallet"
-                  isActive={location.pathname.startsWith("/platform")}
+                  isActive={location.pathname.startsWith("/platform") && !isReferralProgramActive}
                   onClick={handleClickCatalog}
                   collapsed={secondAnim}
                 />
@@ -483,10 +489,7 @@ const MainSideBar = () => {
                     iconSize={20}
                     iconActiveColor="wallet"
                     onClick={handleClickRefer}
-                    isActive={
-                      referralProgramConfig?.params &&
-                      location.pathname.startsWith(referralProgramConfig.params.path)
-                    }
+                    isActive={isReferralProgramActive}
                     collapsed={secondAnim}
                     NotifComponent={
                       referralProgramConfig?.params?.amount ? (
