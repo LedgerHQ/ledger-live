@@ -23,7 +23,7 @@ export type AppWithDependents = {
 
 type AppsInstallUninstallWithDependenciesValue = {
   setAppWithDependenciesToInstall: (appWithDependencies: AppWithDependencies | null) => void;
-  setAppWithDependentsToUninstall: (appWithDependents: AppWithDependents | null) => void; // TODO: rename in uninstall with dependents
+  setAppWithDependentsToUninstall: (appWithDependents: AppWithDependents | null) => void;
 };
 
 /**
