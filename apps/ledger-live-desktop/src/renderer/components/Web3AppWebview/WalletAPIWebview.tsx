@@ -30,9 +30,21 @@ import { getStoreValue, setStoreValue } from "~/renderer/store";
 import { NetworkErrorScreen } from "./NetworkError";
 import getUser from "~/helpers/user";
 import { openExchangeDrawer } from "~/renderer/actions/UI";
+import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 
 const wallet = { name: "ledger-live-desktop", version: __APP_VERSION__ };
-const tracking = trackingWrapper(track);
+const tracking = trackingWrapper(
+  (eventName: string, properties?: Record<string, unknown> | null, mandatory?: boolean | null) =>
+    track(
+      eventName,
+      {
+        ...properties,
+        flowInitiatedFrom:
+          currentRouteNameRef.current === "Platform Catalog" ? "Discover" : "Native",
+      },
+      mandatory,
+    ),
+);
 
 function useUiHook(manifest: AppManifest): Partial<UiHook> {
   const { pushToast } = useToasts();

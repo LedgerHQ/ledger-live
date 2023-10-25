@@ -28,6 +28,7 @@ import { openModal } from "../../actions/modals";
 import { flattenAccountsSelector } from "../../reducers/accounts";
 import BigSpinner from "../BigSpinner";
 import { track } from "~/renderer/analytics/segment";
+import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import {
   requestAccountLogic,
   broadcastTransactionLogic,
@@ -37,7 +38,19 @@ import { Loader } from "./styled";
 import { WebviewAPI, WebviewProps } from "./types";
 import { useWebviewState } from "./helpers";
 
-const tracking = trackingWrapper(track);
+const tracking = trackingWrapper(
+  (eventName: string, properties?: Record<string, unknown> | null, mandatory?: boolean | null) =>
+    track(
+      eventName,
+      {
+        ...properties,
+        flowInitiatedFrom:
+          currentRouteNameRef.current === "Platform Catalog" ? "Discover" : "Native",
+      },
+      mandatory,
+    ),
+);
+
 export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
   ({ manifest, inputs = {}, onStateChange }, ref) => {
     const { webviewState, webviewRef, webviewProps } = useWebviewState({ manifest, inputs }, ref);
