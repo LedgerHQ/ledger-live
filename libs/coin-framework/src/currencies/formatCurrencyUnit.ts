@@ -49,22 +49,14 @@ type FormatFragment =
       kind: "separator";
       value: string;
     };
+
 type FormatFragmentTypes = "value" | "sign" | "code" | "separator";
+
 export function formatCurrencyUnitFragment(
   unit: Unit,
   value: BigNumber,
   _options?: formatCurrencyUnitOptions,
 ): FormatFragment[] {
-  if (!BigNumber.isBigNumber(value)) {
-    console.warn("formatCurrencyUnit called with value=", value);
-    return [];
-  }
-
-  if (value.isNaN()) {
-    console.warn("formatCurrencyUnit called with NaN value!");
-    return [];
-  }
-
   if (!value.isFinite()) {
     console.warn("formatCurrencyUnit called with infinite value=", value);
     return [];
@@ -95,6 +87,7 @@ export function formatCurrencyUnitFragment(
     dynamicSignificantDigits,
     staticSignificantDigits,
   } = { ...defaultFormatOptions, ...unit, ...options };
+
   const { magnitude, code } = unit;
   const floatValue = value.div(new BigNumber(10).pow(magnitude));
   const floatValueAbs = floatValue.abs();
@@ -112,6 +105,7 @@ export function formatCurrencyUnitFragment(
           ),
         ),
       );
+
   const fragValueByKind = {
     sign: alwaysShowSign || floatValue.isNegative() ? (floatValue.isNegative() ? "-" : "+") : null,
     code: showCode ? code : null,
@@ -124,9 +118,11 @@ export function formatCurrencyUnitFragment(
         }),
     separator: nonBreakableSpace,
   };
+
   const frags: FormatFragment[] = [];
   let nonSepIndex = -1;
   let sepConsumed = true;
+
   (unit.prefixCode ? prefixFormat : suffixFormat).forEach(kind => {
     const v = fragValueByKind[kind];
     if (!v) return;
@@ -139,10 +135,12 @@ export function formatCurrencyUnitFragment(
       value: v,
     });
   });
+
   frags.splice(nonSepIndex + 1); // remove extra space at the end
 
   return frags;
 }
+
 // simplification of formatCurrencyUnitFragment if no fragmented styles is needed
 export function formatCurrencyUnit(
   unit: Unit,
@@ -150,7 +148,8 @@ export function formatCurrencyUnit(
   options?: formatCurrencyUnitOptions,
 ): string {
   const joinFragmentsSeparator =
-    (options && options.joinFragmentsSeparator) || defaultFormatOptions.joinFragmentsSeparator;
+    options?.joinFragmentsSeparator || defaultFormatOptions.joinFragmentsSeparator;
+
   return formatCurrencyUnitFragment(unit, value, options)
     .map(f => f.value)
     .join(joinFragmentsSeparator);

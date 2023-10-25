@@ -20,8 +20,10 @@ const getFormatForLocale = (locale: string) => {
     // non-breaking space
     fractionGroupSize: 0,
   };
+
   if (typeof decimal === "string") opts.decimalSeparator = decimal;
   if (typeof thousands === "string") opts.groupSeparator = thousands;
+
   return opts;
 };
 
@@ -32,13 +34,10 @@ export const toLocaleString = (
 ): string => {
   let locale = localeInput;
   if (!locale) locale = "en";
-  const minimumFractionDigits: number =
-    "minimumFractionDigits" in options ? (options.minimumFractionDigits as number) : 0;
+  const minimumFractionDigits: number = options.minimumFractionDigits || 0;
   const maximumFractionDigits: number =
-    "maximumFractionDigits" in options
-      ? (options.maximumFractionDigits as number)
-      : Math.max(minimumFractionDigits, 3);
-  const useGrouping = "useGrouping" in options ? options.useGrouping : true;
+    options.maximumFractionDigits || Math.max(minimumFractionDigits, 3);
+  const useGrouping = options.useGrouping || true;
   const format = getFormatForLocale(locale);
 
   if (!useGrouping) {

@@ -26,9 +26,10 @@ export function useFetchRates({
   const unitTo = toCurrency?.units[0];
 
   const formattedCurrencyAmount =
-    (unitFrom && formatCurrencyUnit(unitFrom, fromCurrencyAmount)) ?? "0";
+    (unitFrom && formatCurrencyUnit(unitFrom, fromCurrencyAmount))?.replace(",", "") ?? "0";
 
   const toCurrencyId = toCurrency?.id;
+
   return useAPI({
     queryFn: fetchRates,
     queryProps: {
