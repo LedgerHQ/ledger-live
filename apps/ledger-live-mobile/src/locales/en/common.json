@@ -970,7 +970,7 @@
     },
     "enableBiometrics": {
       "title": "{{biometricsType}}",
-      "desc": "Unlock with {{biometricsType}}",
+      "desc": "To enable and set {{biometricsType}} activate “App lock”.",
       "touchid": "TouchID",
       "faceid": "FaceID",
       "fingerprint": "Fingerprint"
@@ -2636,8 +2636,9 @@
       "dateFormatDesc": "Set the date format for Ledger Live",
       "region": "Region",
       "regionDesc": "Choose your region to update formats of dates, time and currencies.",
-      "password": "Password lock",
-      "passwordDesc": "Set a password to protect Ledger Live data on your phone.",
+      "password": "App lock",
+      "passwordDesc": "Set a password to lock the Ledger Live app.",
+      "passwordDescBioCompat": "Set a password or {{biometricsType}} to lock the Ledger Live app.",
       "counterValue": "Preferred currency",
       "theme": "Theme",
       "themeDesc": "Set the app UI theme",
