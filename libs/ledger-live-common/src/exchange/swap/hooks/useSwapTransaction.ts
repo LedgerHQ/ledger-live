@@ -141,8 +141,7 @@ export const useSwapTransaction = ({
     setFromAmount,
     account: fromAccount,
     parentAccount: fromParentAccount,
-    transaction,
-    feesStrategy: transaction?.feesStrategy,
+    bridge: bridgeTransaction,
   });
 
   const { rates, refetchRates, updateSelectedRate } = useProviderRates({
@@ -172,17 +171,7 @@ export const useSwapTransaction = ({
       targetAccounts,
     },
     setFromAmount,
-    toggleMax: () => {
-      /**
-       * When toggle max is triggered, we should also update `useAllAmount`
-       * This `useAllAmount` field should be standard / mandatory
-       */
-      bridgeTransaction.updateTransaction((tx) => {
-        tx.useAllAmount = !isMaxEnabled
-        return tx;
-      });
-      toggleMax();
-    },
+    toggleMax,
     fromAmountError,
     fromAmountWarning,
     setToAccount,
