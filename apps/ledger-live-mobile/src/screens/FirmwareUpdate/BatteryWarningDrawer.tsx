@@ -8,14 +8,21 @@ import { Device } from "@ledgerhq/types-devices";
 
 type Props = QueuedDrawerProps & {
   state: GetBatteryStatusesActionState;
+  lowBatteryPercentage: number;
   device: Device;
   onRetry: () => void;
   onQuit: () => void;
 };
 
-const BatteryWarningDrawer: React.FC<Props> = ({ device, state, onRetry, onQuit, ...props }) => {
+const BatteryWarningDrawer: React.FC<Props> = ({
+  device,
+  state,
+  lowBatteryPercentage,
+  onRetry,
+  onQuit,
+  ...props
+}) => {
   const { t } = useTranslation();
-  const lowBatteryPercentage = useEnv("LOW_BATTERY_PERCENTAGE");
 
   return (
     <>
