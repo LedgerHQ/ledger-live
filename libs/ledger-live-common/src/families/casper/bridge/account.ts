@@ -36,7 +36,7 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
-import { CasperInvalidTransferId, MayBlockAccount, InvalidMinimumAmount } from "../errors";
+import { CasperInvalidTransferId } from "../errors";
 import { broadcastTx } from "../api";
 import { getMainAccount } from "../../../account/helpers";
 import { createNewDeploy, deployHashToString } from "./bridgeHelpers/txn";
