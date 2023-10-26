@@ -27,9 +27,8 @@ describe("Check SWAP until payload signature", () => {
     expect(transactionId).toEqual(expect.any(String));
     expect(transactionId).toHaveLength(10);
 
-    const { partnerInfo, partnerSigned, partnerPrivKey } = await appExchangeDatasetTest(
-      legacySignFormat,
-    );
+    const { partnerInfo, partnerSigned, partnerPrivKey } =
+      await appExchangeDatasetTest(legacySignFormat);
     await exchange.setPartnerKey(partnerInfo);
 
     await exchange.checkPartner(partnerSigned);
@@ -64,9 +63,8 @@ describe("Check SWAP until payload signature", () => {
     expect(transactionId).toEqual(expect.any(String));
     expect(transactionId).toHaveLength(64);
 
-    const { partnerInfo, partnerSigned, partnerPrivKey } = await appExchangeDatasetTest(
-      ngSignFormat,
-    );
+    const { partnerInfo, partnerSigned, partnerPrivKey } =
+      await appExchangeDatasetTest(ngSignFormat);
     await exchange.setPartnerKey(partnerInfo);
 
     await exchange.checkPartner(partnerSigned);
@@ -103,9 +101,8 @@ describe("Check SWAP until payload signature", () => {
     expect(transactionId).toEqual(expect.any(String));
     expect(transactionId).toHaveLength(64);
 
-    const { partnerInfo, partnerSigned, partnerPrivKey } = await appExchangeDatasetTest(
-      ngSignFormat,
-    );
+    const { partnerInfo, partnerSigned, partnerPrivKey } =
+      await appExchangeDatasetTest(ngSignFormat);
     await exchange.setPartnerKey(partnerInfo);
 
     await exchange.checkPartner(partnerSigned);
