@@ -235,13 +235,18 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     privacy: {
       ...state.privacy,
+      hasPassword: state.privacy?.hasPassword || false,
       biometricsEnabled: (action as Action<SettingsSetPrivacyBiometricsPayload>).payload,
     },
   }),
 
   [SettingsActionTypes.SETTINGS_DISABLE_PRIVACY]: (state: SettingsState) => ({
     ...state,
-    privacy: null,
+    privacy: {
+      ...state.privacy,
+      hasPassword: false,
+      biometricsEnabled: false,
+    },
   }),
 
   [SettingsActionTypes.SETTINGS_SET_REPORT_ERRORS]: (state, action) => ({
