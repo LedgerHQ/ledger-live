@@ -16,8 +16,20 @@ import { selectAccountAndCurrency } from "../../drawers/DataSelector/logic";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
+import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 
-const tracking = trackingWrapper(track);
+const tracking = trackingWrapper(
+  (eventName: string, properties?: Record<string, unknown> | null, mandatory?: boolean | null) =>
+    track(
+      eventName,
+      {
+        ...properties,
+        flowInitiatedFrom:
+          currentRouteNameRef.current === "Platform Catalog" ? "Discover" : "Native",
+      },
+      mandatory,
+    ),
+);
 
 type WebPlatformContext = {
   manifest: LiveAppManifest;
