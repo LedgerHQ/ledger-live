@@ -12,6 +12,7 @@ const ContentBox = styled(Box)`
   justify-content: center;
   height: 100%;
 `;
+
 const Logo = styled(Box)`
   display: flex;
   flex-direction: column;
