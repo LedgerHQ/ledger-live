@@ -32,19 +32,6 @@ import * as bridge from "../../../e2e/bridge/client";
 import Config from "react-native-config";
 import { currentRouteNameRef } from "../../analytics/screenRefs";
 
-const tracking = trackingWrapper(
-  (eventName: string, properties?: Record<string, unknown> | null, mandatory?: boolean | null) =>
-    track(
-      eventName,
-      {
-        ...properties,
-        flowInitiatedFrom:
-          currentRouteNameRef.current === "Platform Catalog" ? "Discover" : "Native",
-      },
-      mandatory,
-    ),
-);
-
 export function useWebView(
   {
     manifest,
@@ -54,6 +41,25 @@ export function useWebView(
   ref: React.ForwardedRef<WebviewAPI>,
   onStateChange: WebviewProps["onStateChange"],
 ) {
+  const tracking = useMemo(
+    trackingWrapper(
+      (
+        eventName: string,
+        properties?: Record<string, unknown> | null,
+        mandatory?: boolean | null,
+      ) =>
+        track(
+          eventName,
+          {
+            ...properties,
+            flowInitiatedFrom: currentRouteNameRef.current === "Swap" ? "Native" : "Discover",
+          },
+          mandatory,
+        ),
+    ),
+    [],
+  );
+
   const { webviewProps, webviewRef } = useWebviewState(
     {
       manifest: manifest as AppManifest,
