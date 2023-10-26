@@ -58,7 +58,8 @@
     "test-deep-links": "ws --spa ./deep-links-test-page.html",
     "download-hermes-profile": "zx ./scripts/download-hermes-profile.mjs",
     "e2e:loadConfig": "ts-node ./e2e/bridge/start-server.ts",
-    "check": "pnpm lint; pnpm typecheck"
+    "check": "pnpm lint; pnpm typecheck",
+    "unimported": "unimported"
   },
   "dependencies": {
     "@azure/core-asynciterator-polyfill": "^1.0.2",
