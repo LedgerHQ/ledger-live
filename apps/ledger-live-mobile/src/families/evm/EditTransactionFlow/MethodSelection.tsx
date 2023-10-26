@@ -1,3 +1,9 @@
+import {
+  getEditTransactionPatch,
+  hasMinimumFundsToCancel,
+  hasMinimumFundsToSpeedUp,
+  isTransactionConfirmed,
+} from "@ledgerhq/coin-evm/editTransaction/index";
 import { EditType } from "@ledgerhq/coin-evm/types/editTransaction";
 import { Transaction as EvmTransaction, TransactionRaw } from "@ledgerhq/coin-evm/types/index";
 import { isOldestPendingOperation } from "@ledgerhq/coin-framework/operation";
@@ -5,17 +11,12 @@ import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import {
-  getEditTransactionPatch,
-  hasMinimumFundsToCancel,
-  hasMinimumFundsToSpeedUp,
-  isTransactionConfirmed,
-} from "@ledgerhq/coin-evm/editTransaction/index";
 import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 import { getEnv } from "@ledgerhq/live-env";
 import { log } from "@ledgerhq/logs";
 import { Box, Flex, SelectableList } from "@ledgerhq/native-ui";
 import { Account, AccountBridge } from "@ledgerhq/types-live";
+import { urls } from "@utils/urls";
 import invariant from "invariant";
 import React, { memo, useCallback, useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
@@ -23,7 +24,6 @@ import { Dimensions, Linking } from "react-native";
 import { TrackScreen } from "../../../analytics";
 import LText from "../../../components/LText";
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
-import { urls } from "../../../config/urls";
 import { ScreenName } from "../../../const";
 import { EditTransactionParamList } from "./EditTransactionParamList";
 
