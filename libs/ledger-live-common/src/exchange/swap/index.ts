@@ -1,4 +1,4 @@
-import { createExchangeProviderNameAndSignature, SwapProviderConfig } from "../";
+import { SwapProviderConfig } from "../";
 import { getEnv } from "@ledgerhq/live-env";
 import {
   AccessDeniedError,
@@ -56,28 +56,56 @@ type ProviderConfig = CEXProviderConfig | DEXProviderConfig;
 
 const swapProviders: Record<string, ProviderConfig> = {
   changelly: {
-    ...createExchangeProviderNameAndSignature({
-      name: "Changelly",
-      publicKey:
+    name: "Changelly",
+    publicKey: {
+      curve: "secp256k1",
+      data: Buffer.from(
         "0480d7c0d3a9183597395f58dda05999328da6f18fabd5cda0aff8e8e3fc633436a2dbf48ecb23d40df7c3c7d3e774b77b4b5df0e9f7e08cf1cdf2dba788eb085b",
-      signature:
-        "3045022100e73339e5071b5d232e8cacecbd7c118c919122a43f8abb8b2062d4bfcd58274e022050b11605d8b7e199f791266146227c43fd11d7645b1d881f705a2f8841d21de5",
-    }),
+        "hex",
+      ),
+    },
+    signature: Buffer.from(
+      "3045022100e73339e5071b5d232e8cacecbd7c118c919122a43f8abb8b2062d4bfcd58274e022050b11605d8b7e199f791266146227c43fd11d7645b1d881f705a2f8841d21de5",
+      "hex",
+    ),
     needsKYC: false,
     needsBearerToken: false,
     type: "CEX",
   },
   cic: {
-    ...createExchangeProviderNameAndSignature({
-      name: "CIC",
-      publicKey:
+    name: "CIC",
+    publicKey: {
+      curve: "secp256k1",
+      data: Buffer.from(
         "0444a71652995d15ef0d4d6fe8de21a0c8ad48bdbfea7f789319973669785ca96abca9fd0c504c3074d9b654f0e3a76dde642a03efe4ccdee3af3ca4ba4afa202d",
-      signature:
-        "3044022078a73433ab6289027b7a169a260f180d16346f7ab55b06a22109f68a756d691d0220190edd6e1214c3309dc1b0afe90d217b728377491561383f2ee543e2c90188eb",
-    }),
+        "hex",
+      ),
+    },
+    signature: Buffer.from(
+      "3044022078a73433ab6289027b7a169a260f180d16346f7ab55b06a22109f68a756d691d0220190edd6e1214c3309dc1b0afe90d217b728377491561383f2ee543e2c90188eb",
+      "hex",
+    ),
     needsKYC: false,
     needsBearerToken: false,
     type: "CEX",
+  },
+  moonpay: {
+    name: "moonpay",
+    publicKey: {
+      curve: "secp256k1",
+      data: Buffer.from(
+        "04b2779a60948b55963f86e62cd018d131a02f40d843baeadf356dbc7fe8294bc6a0127c6684693e83c8221cdee13d05fd078d9b68f3f4816e6274f1d5a9ead70e",
+        "hex",
+      ),
+    },
+    signature: Buffer.from(
+      "304402206fc56b6dd1428418d1c93807e8bf36ca4179cfd2f427adf69b065aabbe8335920220067080466d9fc3a6b86d6c0ddb84ef96b6e02efb4aea64158a5f05277bea4bdf",
+      "hex",
+    ),
+    needsKYC: false,
+    needsBearerToken: false,
+    type: "CEX",
+    version: 2,
   },
   oneinch: {
     type: "DEX",
