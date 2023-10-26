@@ -26,7 +26,7 @@ import type {
   SettingsHideNftCollectionPayload,
   SettingsImportDesktopPayload,
   SettingsImportPayload,
-  SettingsInstallAppFirstTimePayload,
+  SettingsSetHasInstalledAnyAppPayload,
   SettingsLastSeenDeviceInfoPayload,
   SettingsPayload,
   SettingsRemoveStarredMarketcoinsPayload,
@@ -304,9 +304,9 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     };
   },
 
-  [SettingsActionTypes.SETTINGS_INSTALL_APP_FIRST_TIME]: (state, action) => ({
+  [SettingsActionTypes.SETTINGS_SET_HAS_INSTALLED_ANY_APP]: (state, action) => ({
     ...state,
-    hasInstalledAnyApp: (action as Action<SettingsInstallAppFirstTimePayload>).payload,
+    hasInstalledAnyApp: (action as Action<SettingsSetHasInstalledAnyAppPayload>).payload,
   }),
 
   [SettingsActionTypes.SETTINGS_SET_READONLY_MODE]: (state, action) => ({

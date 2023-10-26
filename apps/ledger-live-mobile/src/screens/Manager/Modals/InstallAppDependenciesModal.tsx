@@ -1,22 +1,16 @@
-import React, { memo, useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { TouchableOpacity } from "react-native";
+import React, { memo } from "react";
 import { Trans } from "react-i18next";
-
-import { Action } from "@ledgerhq/live-common/apps/index";
-import { App } from "@ledgerhq/types-live";
-
 import styled from "styled-components/native";
 import { Flex, IconsLegacy, Text, Button } from "@ledgerhq/native-ui";
-import { hasInstalledAnyAppSelector } from "../../../reducers/settings";
-import { installAppFirstTime } from "../../../actions/settings";
 import AppIcon from "../AppsList/AppIcon";
 import QueuedDrawer from "../../../components/QueuedDrawer";
+import { AppWithDependencies } from "../AppsInstallUninstallWithDependenciesContext";
+import Link from "../../../components/wrappedUi/Link";
 
 type Props = {
-  appInstallWithDependencies: { app: App; dependencies: App[] };
-  dispatch: (_: Action) => void;
+  appWithDependenciesToInstall: AppWithDependencies | null;
   onClose: () => void;
+  installAppWithDependencies: () => void;
 };
 
 const IconContainer = styled(Flex).attrs({
@@ -53,30 +47,13 @@ const ButtonsContainer = styled(Flex).attrs({
   width: "100%",
 })``;
 
-const CancelButton = styled(TouchableOpacity)`
-  align-items: center;
-  justify-content: center;
-  margin-top: 25;
-`;
-
-function AppDependenciesModal({
-  appInstallWithDependencies,
-  dispatch: dispatchProps,
+function InstallAppDependenciesModal({
+  appWithDependenciesToInstall,
   onClose,
+  installAppWithDependencies,
 }: Props) {
-  const dispatch = useDispatch();
-  const hasInstalledAnyApp = useSelector(hasInstalledAnyAppSelector);
-
-  const { app, dependencies = [] } = appInstallWithDependencies || {};
+  const { app, dependencies = [] } = appWithDependenciesToInstall || {};
   const { name } = app || {};
-
-  const installAppDependencies = useCallback(() => {
-    if (!hasInstalledAnyApp) {
-      dispatch(installAppFirstTime(true));
-    }
-    dispatchProps({ type: "install", name });
-    onClose();
-  }, [dispatch, dispatchProps, onClose, name, hasInstalledAnyApp]);
 
   return (
     <QueuedDrawer isRequestingToBeOpened={!!app} onClose={onClose}>
@@ -112,14 +89,12 @@ function AppDependenciesModal({
               </ModalText>
             </TextContainer>
             <ButtonsContainer>
-              <Button size="large" type="main" onPress={installAppDependencies}>
+              <Button size="large" type="main" mb={7} onPress={installAppWithDependencies}>
                 <Trans i18nKey="AppAction.install.continueInstall" />
               </Button>
-              <CancelButton onPress={onClose}>
-                <Text variant="large" fontWeight="semiBold" color="neutral.c100">
-                  <Trans i18nKey="common.cancel" />
-                </Text>
-              </CancelButton>
+              <Link size="large" onPress={onClose}>
+                <Trans i18nKey="common.cancel" />
+              </Link>
             </ButtonsContainer>
           </>
         )}
@@ -128,4 +103,4 @@ function AppDependenciesModal({
   );
 }
 
-export default memo(AppDependenciesModal);
+export default memo(InstallAppDependenciesModal);
