@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.41.2-nightly.0
+
+### Patch Changes
+
+- [#5027](https://github.com/LedgerHQ/ledger-live/pull/5027) [`3dc4937cc0`](https://github.com/LedgerHQ/ledger-live/commit/3dc4937cc0c77f6dc40ac7c628e9ab165dfb899f) Thanks [@stephane-lieumont-ledger](https://github.com/stephane-lieumont-ledger)! - Add specific deeplinks for useCase tutorial onboarding
+
 ## 6.41.1
 
 ### Patch Changes

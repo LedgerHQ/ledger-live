@@ -1,5 +1,23 @@
 # @ledgerhq/live-common
 
+## 33.0.2-nightly.0
+
+### Patch Changes
+
+- [#5184](https://github.com/LedgerHQ/ledger-live/pull/5184) [`2ec5360679`](https://github.com/LedgerHQ/ledger-live/commit/2ec53606794c84a08fa49898c31ee976f3a8b9cc) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Fix networks not displaying for some tokens on receive screen
+
+- [#5027](https://github.com/LedgerHQ/ledger-live/pull/5027) [`3dc4937cc0`](https://github.com/LedgerHQ/ledger-live/commit/3dc4937cc0c77f6dc40ac7c628e9ab165dfb899f) Thanks [@stephane-lieumont-ledger](https://github.com/stephane-lieumont-ledger)! - Add specific deeplinks for useCase tutorial onboarding
+
+- [#5155](https://github.com/LedgerHQ/ledger-live/pull/5155) [`3ce4f6e485`](https://github.com/LedgerHQ/ledger-live/commit/3ce4f6e485ac07c27e11def153cf2e3b656d5ab2) Thanks [@Justkant](https://github.com/Justkant)! - refactor: add missing types for the wallet-api CustomLogger
+
+- Updated dependencies []:
+  - @ledgerhq/coin-algorand@0.3.5-nightly.0
+  - @ledgerhq/coin-evm@0.9.1-nightly.0
+  - @ledgerhq/coin-framework@0.8.1-nightly.0
+  - @ledgerhq/coin-polkadot@0.4.5-nightly.0
+  - @ledgerhq/domain-service@1.1.14-nightly.0
+  - @ledgerhq/hw-app-eth@6.34.9-nightly.0
+
 ## 33.0.1
 
 ### Patch Changes

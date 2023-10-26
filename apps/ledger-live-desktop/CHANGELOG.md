@@ -1,5 +1,20 @@
 # ledger-live-desktop
 
+## 2.70.2-nightly.0
+
+### Patch Changes
+
+- [#5027](https://github.com/LedgerHQ/ledger-live/pull/5027) [`3dc4937cc0`](https://github.com/LedgerHQ/ledger-live/commit/3dc4937cc0c77f6dc40ac7c628e9ab165dfb899f) Thanks [@stephane-lieumont-ledger](https://github.com/stephane-lieumont-ledger)! - Add specific deeplinks for useCase tutorial onboarding
+
+- [#5157](https://github.com/LedgerHQ/ledger-live/pull/5157) [`56c1223e38`](https://github.com/LedgerHQ/ledger-live/commit/56c1223e3879fc4071d5ff659580a80c39782372) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix some localizations issues in Developers tabs
+
+- Updated dependencies [[`2ec5360679`](https://github.com/LedgerHQ/ledger-live/commit/2ec53606794c84a08fa49898c31ee976f3a8b9cc), [`3dc4937cc0`](https://github.com/LedgerHQ/ledger-live/commit/3dc4937cc0c77f6dc40ac7c628e9ab165dfb899f), [`3ce4f6e485`](https://github.com/LedgerHQ/ledger-live/commit/3ce4f6e485ac07c27e11def153cf2e3b656d5ab2)]:
+  - @ledgerhq/live-common@33.0.2-nightly.0
+  - @ledgerhq/types-live@6.41.2-nightly.0
+  - @ledgerhq/coin-evm@0.9.1-nightly.0
+  - @ledgerhq/coin-framework@0.8.1-nightly.0
+  - @ledgerhq/domain-service@1.1.14-nightly.0
+
 ## 2.70.1
 
 ### Patch Changes

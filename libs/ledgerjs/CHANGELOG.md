@@ -1,5 +1,11 @@
 # ledger-libs
 
+## 0.1.3-nightly.0
+
+### Patch Changes
+
+- [#5195](https://github.com/LedgerHQ/ledger-live/pull/5195) [`1261d2bb69`](https://github.com/LedgerHQ/ledger-live/commit/1261d2bb696afe159e41078f49b7beedbc136534) Thanks [@chabroA](https://github.com/chabroA)! - remove reference to deleted file
+
 ## 0.1.2
 
 ### Patch Changes
