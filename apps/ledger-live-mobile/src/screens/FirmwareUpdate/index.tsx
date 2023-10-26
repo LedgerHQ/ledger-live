@@ -182,6 +182,7 @@ export const FirmwareUpdate = ({
     triggerRequest: triggerBatteryCheck,
     cancelRequest: cancelBatteryCheck,
     isBatteryLow,
+    lowBatteryPercentage,
   } = useBatteryStatuses({
     deviceId: device.deviceId,
     statuses: requiredBatteryStatuses,
@@ -780,6 +781,7 @@ export const FirmwareUpdate = ({
       <BatteryWarningDrawer
         device={device}
         state={batteryStatusesState}
+        lowBatteryPercentage={lowBatteryPercentage}
         isRequestingToBeOpened={showBatteryWarningDrawer}
         onQuit={quitUpdate}
         onRetry={onRetryBatteryCheck}
