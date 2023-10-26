@@ -28,12 +28,17 @@ export default function AuthSecurityToggle() {
     );
   };
 
+  const getPasswordDesc = () =>
+    privacy?.biometricsType
+      ? t("settings.display.passwordDescBioCompat", { biometricsType: privacy.biometricsType })
+      : t("settings.display.passwordDesc");
+
   return (
     <>
       <SettingsRow
         event="AuthSecurityToggle"
         title={t("settings.display.password")}
-        desc={t("settings.display.passwordDesc")}
+        desc={getPasswordDesc()}
       >
         <Switch
           checked={!!privacy?.hasPassword}
