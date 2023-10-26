@@ -4346,7 +4346,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     type: "CryptoCurrency",
     id: "neon_evm",
     coinType: CoinType.ETH,
-    name: "Neon Evm",
+    name: "Neon EVM",
     managerAppName: "Ethereum",
     ticker: "NEON",
     scheme: "neon_evm",

@@ -46,7 +46,7 @@
 | Moonriver | MOVR | YES | moonriver |
 | MultiversX | EGLD | YES | elrond |
 | NEAR | NEAR | YES | near |
-| Neon Evm | NEON | YES | neon_evm |
+| Neon EVM | NEON | YES | neon_evm |
 | OP Mainnet | ETH | YES | optimism |
 | Onomy | NOM | YES | onomy |
 | Osmosis | OSMO | YES | osmo |
