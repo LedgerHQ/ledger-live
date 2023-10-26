@@ -139,10 +139,8 @@ export const useSwapTransaction = ({
 
   const { isMaxEnabled, toggleMax, isMaxLoading } = useUpdateMaxAmount({
     setFromAmount,
-    account: fromAccount,
-    parentAccount: fromParentAccount,
-    transaction,
-    feesStrategy: transaction?.feesStrategy,
+    fromState,
+    bridge: bridgeTransaction,
   });
 
   const { rates, refetchRates, updateSelectedRate } = useProviderRates({

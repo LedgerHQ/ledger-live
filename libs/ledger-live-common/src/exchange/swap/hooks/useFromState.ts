@@ -66,14 +66,19 @@ export const useFromState = ({
   const debouncedSetFromAmount = useMemo(
     () =>
       debounce((amount: BigNumber) => {
-        bridgeTransaction.updateTransaction(transaction => ({
-          ...transaction,
-          amount,
-        }));
+        if (
+          !bridgeTransaction.transaction?.amount ||
+          !amount.isEqualTo(bridgeTransaction.transaction.amount)
+        ) {
+          bridgeTransaction.updateTransaction(transaction => ({
+            ...transaction,
+            amount,
+          }));
+        }
         setFromState(previousState => ({ ...previousState, amount: amount }));
       }, 400),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [bridgeTransaction.updateTransaction],
+    [bridgeTransaction.updateTransaction, bridgeTransaction.transaction],
   );
 
   const setFromAmount: SwapTransactionType["setFromAmount"] = useCallback(

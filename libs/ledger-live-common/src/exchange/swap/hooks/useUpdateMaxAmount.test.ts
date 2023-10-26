@@ -6,6 +6,7 @@ import ethBridge from "../../../families/evm/bridge/mock";
 import { genTokenAccount } from "@ledgerhq/coin-framework/mocks/account";
 import { genAccount } from "../../../mock/account";
 import { useUpdateMaxAmount, ZERO } from "./useUpdateMaxAmount";
+import useBridgeTransaction from "../../../bridge/useBridgeTransaction";
 
 // Needs to be mocked since userSupportedCurrencies is initially empty.
 jest.mock("../../../account/support");
@@ -24,13 +25,16 @@ const account = genTokenAccount(1, parentAccount, USDT);
 
 describe("updateAmountUsingMax", () => {
   const setFromAmount = jest.fn();
+  const bridgeTransaction = renderHook(useBridgeTransaction, {
+    initialProps: () => ({
+      account,
+      parentAccount,
+    }),
+  });
 
   const defaultProps = {
     setFromAmount,
-    account,
-    parentAccount,
-    transaction: { amount: new BigNumber(1) } as any,
-    feesStrategy: "slow" as any,
+    bridgeTransaction,
   };
 
   beforeAll(() => {

@@ -1,23 +1,19 @@
 import BigNumber from "bignumber.js";
 import { useCallback, useEffect, useState } from "react";
-import { getAccountBridge } from "../../../bridge";
-import { SwapDataType, SwapSelectorStateType, SwapTransactionType } from "../types";
+import { Result as UseBridgeTransactionResult } from "../../../bridge/useBridgeTransaction";
+import { SwapDataType, SwapTransactionType } from "../types";
 import { Transaction } from "../../../generated/types";
 
 export const ZERO = new BigNumber(0);
 
 export const useUpdateMaxAmount = ({
   setFromAmount,
-  account,
-  parentAccount,
-  transaction,
-  feesStrategy,
+  fromState,
+  bridge,
 }: {
   setFromAmount: SwapTransactionType["setFromAmount"];
-  account: SwapSelectorStateType["account"];
-  parentAccount: SwapSelectorStateType["parentAccount"];
-  transaction: SwapTransactionType["transaction"];
-  feesStrategy: Transaction["feesStrategy"];
+  fromState: SwapDataType["from"];
+  bridge: UseBridgeTransactionResult;
 }): {
   isMaxEnabled: SwapDataType["isMaxEnabled"];
   toggleMax: SwapTransactionType["toggleMax"];
@@ -26,42 +22,34 @@ export const useUpdateMaxAmount = ({
   const [isMaxEnabled, setIsMaxEnabled] = useState<SwapDataType["isMaxEnabled"]>(false);
   const [isMaxLoading, setIsMaxLoading] = useState(false);
 
-  const toggleMax: SwapTransactionType["toggleMax"] = useCallback(
-    () =>
-      setIsMaxEnabled(previous => {
-        if (previous) {
-          setFromAmount(ZERO);
-          setIsMaxLoading(false);
-        }
-        return !previous;
-      }),
-    [setFromAmount],
-  );
+  const toggleMax: SwapTransactionType["toggleMax"] = useCallback(() => {
+    setIsMaxEnabled(!isMaxEnabled);
+    bridge.updateTransaction((previousTransaction: Transaction) => ({
+      ...previousTransaction,
+      amount: ZERO,
+      useAllAmount: !isMaxEnabled,
+    }));
+  }, [bridge, isMaxEnabled]);
 
-  /* UPDATE from amount to the estimate max spendable on account
-     change when the amount feature is enabled */
-  useEffect(
-    () => {
-      const updateAmountUsingMax = async () => {
-        if (!account) return;
-        const bridge = getAccountBridge(account, parentAccount);
-        setIsMaxLoading(true);
-        const amount = await bridge.estimateMaxSpendable({
-          account,
-          parentAccount,
-          transaction,
-        });
-        setIsMaxLoading(false);
-        setFromAmount(amount);
-      };
+  useEffect(() => {
+    setIsMaxEnabled(!!bridge.transaction?.useAllAmount);
+    setIsMaxLoading(bridge.bridgePending && !!bridge.transaction?.useAllAmount);
 
-      if (isMaxEnabled) {
-        updateAmountUsingMax();
+    if (!bridge.bridgePending) {
+      if (
+        !fromState.amount ||
+        (fromState.amount && !fromState.amount.isEqualTo(bridge.status.amount))
+      ) {
+        setFromAmount(bridge.status.amount);
       }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [setFromAmount, isMaxEnabled, account, parentAccount, feesStrategy],
-  );
+    }
+  }, [
+    fromState.amount,
+    setFromAmount,
+    bridge.bridgePending,
+    bridge.transaction?.useAllAmount,
+    bridge.status.amount,
+  ]);
 
   return { isMaxEnabled, toggleMax, isMaxLoading };
 };
