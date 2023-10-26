@@ -173,6 +173,13 @@ export type Pair = {
 
 export type Theme = "system" | "light" | "dark";
 
+export type supportedCountervaluesData = {
+  value: string;
+  ticker: string;
+  label: string;
+  currency: Currency;
+};
+
 export type SettingsState = {
   counterValue: string;
   counterValueExchange: string | null | undefined;
@@ -239,6 +246,7 @@ export type SettingsState = {
     hasClosedWithdrawBanner: boolean;
   };
   userNps: number | null;
+  supportedCounterValues: supportedCountervaluesData[];
 };
 
 export type NotificationsSettings = {

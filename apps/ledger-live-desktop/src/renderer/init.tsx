@@ -126,6 +126,7 @@ async function init() {
     deepLinkUrl = url;
   });
   const initialSettings = (await getKey("app", "settings")) || {};
+
   fetchSettings(
     deepLinkUrl
       ? {
