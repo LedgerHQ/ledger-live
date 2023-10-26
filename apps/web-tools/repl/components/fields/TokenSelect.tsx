@@ -1,6 +1,6 @@
 import React from "react";
 import Select from "react-select";
-import { listTokens, useCurrenciesByMarketcap } from "@ledgerhq/live-common/lib/currencies/index";
+import { listTokens, useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/index";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 type Props = {
