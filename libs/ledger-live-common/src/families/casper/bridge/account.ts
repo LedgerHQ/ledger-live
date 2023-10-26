@@ -15,8 +15,8 @@ import BigNumber from "bignumber.js";
 import {
   CASPER_MINIMUM_VALID_AMOUNT_MOTES,
   CASPER_MAX_TRANSFER_ID,
-  CASPER_MINIMUM_VALID_AMOUNT_CSPR,
-  CASPER_FEES_CSPR,
+  MayBlockAccountError,
+  InvalidMinimumAmountError,
 } from "../consts";
 import {
   getAddress,
@@ -122,17 +122,13 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
   }
 
   if (amount.lt(CASPER_MINIMUM_VALID_AMOUNT_MOTES) && !errors.amount) {
-    errors.amount = new InvalidMinimumAmount("", {
-      minAmount: `${CASPER_MINIMUM_VALID_AMOUNT_CSPR} CSPR`,
-    });
+    errors.amount = InvalidMinimumAmountError;
   }
 
   if (
     spendableBalance.minus(totalSpent).minus(estimatedFees).lt(CASPER_MINIMUM_VALID_AMOUNT_MOTES)
   ) {
-    warnings.amount = new MayBlockAccount("", {
-      minAmount: `${CASPER_MINIMUM_VALID_AMOUNT_CSPR + CASPER_FEES_CSPR} CSPR`,
-    });
+    warnings.amount = MayBlockAccountError;
   }
 
   // log("debug", "[getTransactionStatus] finish fn");
