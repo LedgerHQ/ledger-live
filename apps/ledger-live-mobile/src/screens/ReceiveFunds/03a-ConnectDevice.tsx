@@ -36,7 +36,7 @@ import { useAppDeviceAction } from "../../hooks/deviceActions";
 export const connectDeviceHeaderOptions = (
   onHeaderBackButtonPress: () => void,
 ): ReactNavigationHeaderOptions => ({
-  headerRight: () => <NavigationHeaderCloseButton />,
+  headerRight: () => <NavigationHeaderCloseButton onPress={onHeaderBackButtonPress} />,
   headerLeft: () => <NavigationHeaderBackButton onPress={onHeaderBackButtonPress} />,
 });
 
