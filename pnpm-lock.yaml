@@ -1943,43 +1943,19 @@ importers:
         version: 1.1.2
       '@dfinity/agent':
         specifier: ^0.15.6
-        version: 0.15.6(@dfinity/candid@0.15.6)(@dfinity/principal@0.15.6)(@types/node@18.15.11)(source-map-support@0.5.21)(typescript@5.1.3)
+        version: 0.15.6(@dfinity/candid@0.15.6)(@dfinity/principal@0.15.6)(@types/node@18.15.11)(typescript@5.1.3)
       '@dfinity/candid':
         specifier: ^0.15.6
-        version: 0.15.6(@types/node@18.15.11)(source-map-support@0.5.21)(typescript@5.1.3)
+        version: 0.15.6(@types/node@18.15.11)(typescript@5.1.3)
       '@dfinity/principal':
         specifier: ^0.15.6
-        version: 0.15.6(@types/node@18.15.11)(source-map-support@0.5.21)(typescript@5.1.3)
+        version: 0.15.6(@types/node@18.15.11)(typescript@5.1.3)
       '@elrondnetwork/erdjs':
         specifier: 11.0.0
         version: 11.0.0
       '@elrondnetwork/erdjs-network-providers':
         specifier: ^1.1.2
         version: 1.2.0
-      '@ethereumjs/common':
-        specifier: ^2.6.2
-        version: 2.6.4
-      '@ethereumjs/tx':
-        specifier: ^3.5.0
-        version: 3.5.1
-      '@ethersproject/bignumber':
-        specifier: ^5.7.0
-        version: 5.7.0
-      '@ethersproject/bytes':
-        specifier: ^5.7.0
-        version: 5.7.0
-      '@ethersproject/keccak256':
-        specifier: ^5.7.0
-        version: 5.7.0
-      '@ethersproject/logger':
-        specifier: ^5.7.0
-        version: 5.7.0
-      '@ethersproject/properties':
-        specifier: ^5.7.0
-        version: 5.7.0
-      '@ethersproject/strings':
-        specifier: ^5.7.0
-        version: 5.7.0
       '@hashgraph/sdk':
         specifier: ^2.10.1
         version: 2.14.2(react-native@0.72.6)(react@18.2.0)
@@ -2010,9 +1986,6 @@ importers:
       '@ledgerhq/devices':
         specifier: workspace:^
         version: link:../ledgerjs/packages/devices
-      '@ledgerhq/domain-service':
-        specifier: workspace:^
-        version: link:../domain-service
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
@@ -2157,9 +2130,6 @@ importers:
       axios:
         specifier: 0.26.1
         version: 0.26.1
-      axios-retry:
-        specifier: ^3.2.4
-        version: 3.2.5
       bchaddrjs:
         specifier: ^0.5.2
         version: 0.5.2
@@ -2199,9 +2169,6 @@ importers:
       bs58check:
         specifier: ^2.1.2
         version: 2.1.2
-      buffer:
-        specifier: ^6.0.3
-        version: 6.0.3
       c32check:
         specifier: 1.1.3
         version: 1.1.3
@@ -2214,45 +2181,18 @@ importers:
       cosmjs-types:
         specifier: 0.2.1
         version: 0.2.1
-      crc:
-        specifier: ^4.2.0
-        version: 4.2.0(buffer@6.0.3)
       create-hmac:
         specifier: ^1.1.7
         version: 1.1.7
-      crypto-js:
-        specifier: ^4.2.0
-        version: 4.2.0
       date-fns:
         specifier: ^2.23.0
         version: 2.28.0
-      eip55:
-        specifier: ^2.1.1
-        version: 2.1.1
-      eth-sig-util:
-        specifier: 3.0.1
-        version: 3.0.1
-      ethereumjs-abi:
-        specifier: ^0.6.8
-        version: 0.6.8
-      ethereumjs-util:
-        specifier: ^7.1.4
-        version: 7.1.4
-      ethers:
-        specifier: ^5.6.9
-        version: 5.7.0
-      events:
-        specifier: ^3.3.0
-        version: 3.3.0
       expect:
         specifier: ^27.4.6
         version: 27.5.1
       fuse.js:
         specifier: ^6.6.2
         version: 6.6.2
-      generic-pool:
-        specifier: ^3.8.2
-        version: 3.9.0
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
@@ -2262,9 +2202,6 @@ importers:
       json-rpc-2.0:
         specifier: ^0.2.19
         version: 0.2.19
-      jwt-decode:
-        specifier: ^3.1.2
-        version: 3.1.2
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -2274,9 +2211,6 @@ importers:
       near-api-js:
         specifier: ^0.44.2
         version: 0.44.2
-      numeral:
-        specifier: ^2.0.6
-        version: 2.0.6
       object-hash:
         specifier: ^2.2.0
         version: 2.2.0
@@ -2292,9 +2226,6 @@ importers:
       qs:
         specifier: ^6.10.1
         version: 6.10.3
-      redux:
-        specifier: ^4.1.2
-        version: 4.2.0
       reselect:
         specifier: ^4.1.5
         version: 4.1.5
@@ -2325,18 +2256,12 @@ importers:
       simple-cbor:
         specifier: ^0.4.1
         version: 0.4.1
-      source-map-support:
-        specifier: ^0.5.21
-        version: 0.5.21
       stellar-sdk:
         specifier: ^10.1.1
         version: 10.1.2
       superstruct:
         specifier: 0.14.2
         version: 0.14.2
-      tiny-secp256k1:
-        specifier: ^1.1.6
-        version: 1.1.6
       triple-beam:
         specifier: ^1.3.0
         version: 1.3.0
@@ -2475,7 +2400,7 @@ importers:
         version: 28.0.7(jest@28.1.3)(typescript@5.1.3)
       ts-node:
         specifier: ^10.4.0
-        version: 10.7.0(@types/node@18.15.11)(source-map-support@0.5.21)(typescript@5.1.3)
+        version: 10.7.0(@types/node@18.15.11)(typescript@5.1.3)
       uuid:
         specifier: ^8.3.2
         version: 8.3.2
@@ -6263,7 +6188,7 @@ packages:
       gensync: 1.0.0-beta.2
       json5: 2.2.3
       lodash: 4.17.21
-      resolve: 1.22.1
+      resolve: 1.22.8
       semver: 5.7.1
       source-map: 0.5.7
     transitivePeerDependencies:
@@ -6287,7 +6212,7 @@ packages:
       gensync: 1.0.0-beta.2
       json5: 2.2.3
       lodash: 4.17.21
-      resolve: 1.22.1
+      resolve: 1.22.8
       semver: 5.7.1
       source-map: 0.5.7
     transitivePeerDependencies:
@@ -6671,7 +6596,7 @@ packages:
       '@babel/traverse': 7.22.17
       debug: 4.3.4
       lodash.debounce: 4.0.8
-      resolve: 1.22.1
+      resolve: 1.22.8
       semver: 6.3.1
     transitivePeerDependencies:
       - supports-color
@@ -6689,7 +6614,7 @@ packages:
       '@babel/traverse': 7.22.17
       debug: 4.3.4
       lodash.debounce: 4.0.8
-      resolve: 1.22.1
+      resolve: 1.22.8
       semver: 6.3.1
     transitivePeerDependencies:
       - supports-color
@@ -6704,7 +6629,7 @@ packages:
       '@babel/helper-plugin-utils': 7.22.5
       debug: 4.3.4
       lodash.debounce: 4.0.8
-      resolve: 1.22.1
+      resolve: 1.22.8
       semver: 6.3.1
     transitivePeerDependencies:
       - supports-color
@@ -6719,7 +6644,7 @@ packages:
       '@babel/helper-plugin-utils': 7.22.5
       debug: 4.3.4
       lodash.debounce: 4.0.8
-      resolve: 1.22.1
+      resolve: 1.22.8
       semver: 6.3.1
     transitivePeerDependencies:
       - supports-color
@@ -6735,7 +6660,7 @@ packages:
       '@babel/helper-plugin-utils': 7.22.5
       debug: 4.3.4
       lodash.debounce: 4.0.8
-      resolve: 1.22.1
+      resolve: 1.22.8
       semver: 6.3.1
     transitivePeerDependencies:
       - supports-color
@@ -6750,7 +6675,7 @@ packages:
       '@babel/helper-plugin-utils': 7.22.5
       debug: 4.3.4
       lodash.debounce: 4.0.8
-      resolve: 1.22.1
+      resolve: 1.22.8
       semver: 6.3.1
     transitivePeerDependencies:
       - supports-color
@@ -6766,7 +6691,7 @@ packages:
       '@babel/helper-plugin-utils': 7.22.5
       debug: 4.3.4
       lodash.debounce: 4.0.8
-      resolve: 1.22.1
+      resolve: 1.22.8
       semver: 6.3.1
     transitivePeerDependencies:
       - supports-color
@@ -13843,7 +13768,6 @@ packages:
         optional: true
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
-    dev: true
 
   /@cspotcode/source-map-support@0.8.1(source-map-support@0.5.21):
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
@@ -13856,6 +13780,7 @@ packages:
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
       source-map-support: 0.5.21
+    dev: true
 
   /@csstools/normalize.css@12.0.0:
     resolution: {integrity: sha512-M0qqxAcwCsIVfpFQSlGN5XjXWu8l5JDZN+fPt1LeW5SZexQTgnaEvgXAY+CeygRw0EeppWHi12JxESWiWrB0Sg==}
@@ -14186,21 +14111,21 @@ packages:
       ajv-keywords: 3.5.2(ajv@6.12.6)
     dev: true
 
-  /@dfinity/agent@0.15.6(@dfinity/candid@0.15.6)(@dfinity/principal@0.15.6)(@types/node@18.15.11)(source-map-support@0.5.21)(typescript@5.1.3):
+  /@dfinity/agent@0.15.6(@dfinity/candid@0.15.6)(@dfinity/principal@0.15.6)(@types/node@18.15.11)(typescript@5.1.3):
     resolution: {integrity: sha512-Ch+tXAszPap0zwRgr/oFEgJLDld4RDwBdFDqR1JUg38xhHWTFMrTkjMT6uQFvqf6d2wDXnh3zwhqbg5P7OCv7A==}
     peerDependencies:
       '@dfinity/candid': ^0.15.6
       '@dfinity/principal': ^0.15.6
     dependencies:
-      '@dfinity/candid': 0.15.6(@types/node@18.15.11)(source-map-support@0.5.21)(typescript@5.1.3)
-      '@dfinity/principal': 0.15.6(@types/node@18.15.11)(source-map-support@0.5.21)(typescript@5.1.3)
+      '@dfinity/candid': 0.15.6(@types/node@18.15.11)(typescript@5.1.3)
+      '@dfinity/principal': 0.15.6(@types/node@18.15.11)(typescript@5.1.3)
       base64-arraybuffer: 0.2.0
       bignumber.js: 9.1.2
       borc: 2.1.2
       buffer: 6.0.3
       js-sha256: 0.9.0
       simple-cbor: 0.4.1
-      ts-node: 10.9.1(@types/node@18.15.11)(source-map-support@0.5.21)(typescript@5.1.3)
+      ts-node: 10.9.1(@types/node@18.15.11)(typescript@5.1.3)
     transitivePeerDependencies:
       - '@swc/core'
       - '@swc/wasm'
@@ -14209,11 +14134,11 @@ packages:
       - typescript
     dev: false
 
-  /@dfinity/candid@0.15.6(@types/node@18.15.11)(source-map-support@0.5.21)(typescript@5.1.3):
+  /@dfinity/candid@0.15.6(@types/node@18.15.11)(typescript@5.1.3):
     resolution: {integrity: sha512-Q9PGvhTE/1dTLfSo0pu0+ifzA7NA4X1rgSy9TE6O1Glk6Kl8Nf+Pg2sCHS2hWt0RAiKfR2glEVlbUAm6S8vRxA==}
     dependencies:
-      '@dfinity/principal': 0.15.6(@types/node@18.15.11)(source-map-support@0.5.21)(typescript@5.1.3)
-      ts-node: 10.9.1(@types/node@18.15.11)(source-map-support@0.5.21)(typescript@5.1.3)
+      '@dfinity/principal': 0.15.6(@types/node@18.15.11)(typescript@5.1.3)
+      ts-node: 10.9.1(@types/node@18.15.11)(typescript@5.1.3)
     transitivePeerDependencies:
       - '@swc/core'
       - '@swc/wasm'
@@ -14222,11 +14147,11 @@ packages:
       - typescript
     dev: false
 
-  /@dfinity/principal@0.15.6(@types/node@18.15.11)(source-map-support@0.5.21)(typescript@5.1.3):
+  /@dfinity/principal@0.15.6(@types/node@18.15.11)(typescript@5.1.3):
     resolution: {integrity: sha512-eMsS5YofRk5Hm6LlhzyBvw1RzDxM5FWPtepQuYeZbZyD/ztq4TrUiScqoKBFw/LLODd0znt8rGnNgqtt+7JnQA==}
     dependencies:
       js-sha256: 0.9.0
-      ts-node: 10.9.1(@types/node@18.15.11)(source-map-support@0.5.21)(typescript@5.1.3)
+      ts-node: 10.9.1(@types/node@18.15.11)(typescript@5.1.3)
     transitivePeerDependencies:
       - '@swc/core'
       - '@swc/wasm'
@@ -15425,12 +15350,6 @@ packages:
       '@ethersproject/logger': 5.7.0
     dev: true
 
-  /@ethersproject/networks@5.7.0:
-    resolution: {integrity: sha512-MG6oHSQHd4ebvJrleEQQ4HhVu8Ichr0RDYEfHzsVAVjHNM+w36x9wp9r+hf1JstMXtseXDtkiVoARAG6M959AA==}
-    dependencies:
-      '@ethersproject/logger': 5.7.0
-    dev: false
-
   /@ethersproject/networks@5.7.1:
     resolution: {integrity: sha512-n/MufjFYv3yFcUyfhnXotyDlNdFb7onmkSy8aQERi2PjNcnWQ66xXxa3XlS8nCcA8aJKJjIIMNJTC7tu80GwpQ==}
     dependencies:
@@ -15487,34 +15406,6 @@ packages:
       - bufferutil
       - utf-8-validate
     dev: true
-
-  /@ethersproject/providers@5.7.0:
-    resolution: {integrity: sha512-+TTrrINMzZ0aXtlwO/95uhAggKm4USLm1PbeCBR/3XZ7+Oey+3pMyddzZEyRhizHpy1HXV0FRWRMI1O3EGYibA==}
-    dependencies:
-      '@ethersproject/abstract-provider': 5.7.0
-      '@ethersproject/abstract-signer': 5.7.0
-      '@ethersproject/address': 5.7.0
-      '@ethersproject/base64': 5.7.0
-      '@ethersproject/basex': 5.7.0
-      '@ethersproject/bignumber': 5.7.0
-      '@ethersproject/bytes': 5.7.0
-      '@ethersproject/constants': 5.7.0
-      '@ethersproject/hash': 5.7.0
-      '@ethersproject/logger': 5.7.0
-      '@ethersproject/networks': 5.7.1
-      '@ethersproject/properties': 5.7.0
-      '@ethersproject/random': 5.7.0
-      '@ethersproject/rlp': 5.7.0
-      '@ethersproject/sha2': 5.7.0
-      '@ethersproject/strings': 5.7.0
-      '@ethersproject/transactions': 5.7.0
-      '@ethersproject/web': 5.7.1
-      bech32: 1.1.4
-      ws: 7.4.6
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-    dev: false
 
   /@ethersproject/providers@5.7.2:
     resolution: {integrity: sha512-g34EWZ1WWAVgr4aptGlVBF8mhl3VWjv+8hoAnzStu8Ah22VHBsuGzP17eb6xDVRzw895G4W7vvx60lFFur/1Rg==}
@@ -15746,16 +15637,6 @@ packages:
       '@ethersproject/properties': 5.7.0
       '@ethersproject/strings': 5.7.0
     dev: true
-
-  /@ethersproject/web@5.7.0:
-    resolution: {integrity: sha512-ApHcbbj+muRASVDSCl/tgxaH2LBkRMEYfLOLVa0COipx0+nlu0QKet7U2lEg0vdkh8XRSLf2nd1f1Uk9SrVSGA==}
-    dependencies:
-      '@ethersproject/base64': 5.7.0
-      '@ethersproject/bytes': 5.7.0
-      '@ethersproject/logger': 5.7.0
-      '@ethersproject/properties': 5.7.0
-      '@ethersproject/strings': 5.7.0
-    dev: false
 
   /@ethersproject/web@5.7.1:
     resolution: {integrity: sha512-Gueu8lSvyjBWL4cYsWsjh6MtMwM0+H4HvqFPZfB6dV8ctbP9zFAO73VG1cMWae0FLPCtz0peKPpZY8/ugJJX2w==}
@@ -29992,13 +29873,6 @@ packages:
     resolution: {integrity: sha512-zIURGIS1E1Q4pcrMjp+nnEh+16G56eG/MUllJH8yEvw7asDo7Ac9uhC9KIH5jzpITueEZolfYglnCGIuSBz39g==}
     engines: {node: '>=4'}
 
-  /axios-retry@3.2.5:
-    resolution: {integrity: sha512-a8umkKbfIkTiYJQLx3v3TzKM85TGKB8ZQYz4zwykt2fpO64TsRlUhjaPaAb3fqMWCXFm2YhWcd8V5FHDKO9bSA==}
-    dependencies:
-      '@babel/runtime': 7.20.13
-      is-retry-allowed: 2.2.0
-    dev: false
-
   /axios@0.21.1:
     resolution: {integrity: sha512-dKQiRHxGD9PPRIUNIWvZhPTPpl1rf/OxTYKsqKUDjBwYylTvV7SjSHJb9ratfyzM6wCdLCOYLzs73qpg5c4iGA==}
     dependencies:
@@ -30367,7 +30241,7 @@ packages:
     dependencies:
       '@babel/runtime': 7.22.10
       cosmiconfig: 6.0.0
-      resolve: 1.22.1
+      resolve: 1.22.8
 
   /babel-plugin-macros@3.1.0:
     resolution: {integrity: sha512-Cg7TFGpIr01vOQNODXOOaGz2NpCU5gl8x1qJFbb6hbZxR7XrcE2vtbAsTAbJ7/xwJtUuJEw8K8Zr/AE0LHlesg==}
@@ -30396,7 +30270,7 @@ packages:
       glob: 8.0.3
       pkg-up: 3.1.0
       reselect: 4.1.8
-      resolve: 1.22.1
+      resolve: 1.22.8
 
   /babel-plugin-named-asset-import@0.3.8(@babel/core@7.22.8):
     resolution: {integrity: sha512-WXiAc++qo7XcJ1ZnTYGtLxmBCVbddAml3CEXgWaBzNzLNoxtQ8AiGEFDMOhot9XjTCQbvP5E77Fj9Gk924f00Q==}
@@ -33795,15 +33669,6 @@ packages:
     requiresBuild: true
     dependencies:
       buffer: 5.7.1
-
-  /crc@4.2.0(buffer@6.0.3):
-    resolution: {integrity: sha512-TpRSRyMXRyVu2LYKgu0uxuYvk026DS7BKAk8hdrJ0deOUxArnUTgsFvbPkQc2i3qHoT0upKPBJ+WoKc6t8kCMg==}
-    engines: {node: '>=12'}
-    peerDependencies:
-      buffer: '>=6.0.3'
-    dependencies:
-      buffer: 6.0.3
-    dev: false
 
   /create-ecdh@4.0.4:
     resolution: {integrity: sha512-mf+TCx8wWc9VpuxfP2ht0iSISLZnt0JgWlrOKZiNqyUZWnjIaCIVNQArMHnCZKfEYRg6IM7A+NeJoN8gf/Ws0A==}
@@ -37537,16 +37402,6 @@ packages:
       xhr-request-promise: 0.1.3
     dev: false
 
-  /eth-sig-util@3.0.1:
-    resolution: {integrity: sha512-0Us50HiGGvZgjtWTyAI/+qTzYPMLy5Q451D0Xy68bxq1QMWdoOddDwGvsqcFT27uohKgalM9z/yxplyt+mY2iQ==}
-    deprecated: Deprecated in favor of '@metamask/eth-sig-util'
-    dependencies:
-      ethereumjs-abi: 0.6.8
-      ethereumjs-util: 5.2.1
-      tweetnacl: 1.0.3
-      tweetnacl-util: 0.15.1
-    dev: false
-
   /ethereum-blockies-base64@1.0.2:
     resolution: {integrity: sha512-Vg2HTm7slcWNKaRhCUl/L3b4KrB8ohQXdd5Pu3OI897EcR6tVRvUqdTwAyx+dnmoDzj8e2bwBLDQ50ByFmcz6w==}
     dependencies:
@@ -37577,13 +37432,6 @@ packages:
       scrypt-js: 3.0.1
       secp256k1: 4.0.3
       setimmediate: 1.0.5
-    dev: false
-
-  /ethereumjs-abi@0.6.8:
-    resolution: {integrity: sha512-Tx0r/iXI6r+lRsdvkFDlut0N08jWMnKRZ6Gkq+Nmw75lZe4e6o3EkSnkaBP5NF6+m5PTGAr9JP43N3LyeoglsA==}
-    dependencies:
-      bn.js: 4.12.0
-      ethereumjs-util: 6.2.1
     dev: false
 
   /ethereumjs-common@1.5.2:
@@ -37671,44 +37519,6 @@ packages:
       - bufferutil
       - utf-8-validate
     dev: true
-
-  /ethers@5.7.0:
-    resolution: {integrity: sha512-5Xhzp2ZQRi0Em+0OkOcRHxPzCfoBfgtOQA+RUylSkuHbhTEaQklnYi2hsWbRgs3ztJsXVXd9VKBcO1ScWL8YfA==}
-    dependencies:
-      '@ethersproject/abi': 5.7.0
-      '@ethersproject/abstract-provider': 5.7.0
-      '@ethersproject/abstract-signer': 5.7.0
-      '@ethersproject/address': 5.7.0
-      '@ethersproject/base64': 5.7.0
-      '@ethersproject/basex': 5.7.0
-      '@ethersproject/bignumber': 5.7.0
-      '@ethersproject/bytes': 5.7.0
-      '@ethersproject/constants': 5.7.0
-      '@ethersproject/contracts': 5.7.0
-      '@ethersproject/hash': 5.7.0
-      '@ethersproject/hdnode': 5.7.0
-      '@ethersproject/json-wallets': 5.7.0
-      '@ethersproject/keccak256': 5.7.0
-      '@ethersproject/logger': 5.7.0
-      '@ethersproject/networks': 5.7.0
-      '@ethersproject/pbkdf2': 5.7.0
-      '@ethersproject/properties': 5.7.0
-      '@ethersproject/providers': 5.7.0
-      '@ethersproject/random': 5.7.0
-      '@ethersproject/rlp': 5.7.0
-      '@ethersproject/sha2': 5.7.0
-      '@ethersproject/signing-key': 5.7.0
-      '@ethersproject/solidity': 5.7.0
-      '@ethersproject/strings': 5.7.0
-      '@ethersproject/transactions': 5.7.0
-      '@ethersproject/units': 5.7.0
-      '@ethersproject/wallet': 5.7.0
-      '@ethersproject/web': 5.7.0
-      '@ethersproject/wordlists': 5.7.0
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-    dev: false
 
   /ethers@5.7.2:
     resolution: {integrity: sha512-wswUsmWo1aOK8rR7DIKiWSw9DbLWe6x98Jrn8wcTflTVvaXhAMaB5zGAXy0GYQEQp9iO1iSHWVyARQm11zUtyg==}
@@ -39833,11 +39643,6 @@ packages:
       strip-ansi: 6.0.1
       wide-align: 1.1.5
     dev: true
-
-  /generic-pool@3.9.0:
-    resolution: {integrity: sha512-hymDOu5B53XvN4QT9dBmZxPX4CWhBPPLguTZ9MMFeFa/Kg0xWVfylOVNlJji/E7yTZWFd/q9GO5TxDLq156D7g==}
-    engines: {node: '>= 4'}
-    dev: false
 
   /gensync@1.0.0-beta.2:
     resolution: {integrity: sha512-3hN7NaskYvMDLQY55gnW3NQ+mesEAepTqlg+VEbj7zzqEMBVNhzcGYYeqFo/TlYz6eQiFcp1HcsCZO+nGgS8zg==}
@@ -42070,11 +41875,6 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: false
 
-  /is-retry-allowed@2.2.0:
-    resolution: {integrity: sha512-XVm7LOeLpTW4jV19QSH38vkswxoLud8sQ57YwJVTPWdiaI9I8keEhGFpBlslyVsgdQy4Opg8QOLb8YRgsyZiQg==}
-    engines: {node: '>=10'}
-    dev: false
-
   /is-root@2.1.0:
     resolution: {integrity: sha512-AGOriNp96vNBd3HtU+RzFEc75FfR5ymiYv8E553I71SCeXBiMsVDUtdio1OEFvrPyLIQ9tVR5RxXIFe5PUFjMg==}
     engines: {node: '>=6'}
@@ -43121,7 +42921,7 @@ packages:
       pretty-format: 28.1.3
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.7.0(@types/node@18.15.11)(source-map-support@0.5.21)(typescript@5.1.3)
+      ts-node: 10.7.0(@types/node@18.15.11)(typescript@5.1.3)
     transitivePeerDependencies:
       - metro
       - supports-color
@@ -43203,7 +43003,7 @@ packages:
       pretty-format: 28.1.3
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.9.1(@types/node@18.15.3)(typescript@5.1.3)
+      ts-node: 10.9.1(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@5.1.3)
     transitivePeerDependencies:
       - metro
       - supports-color
@@ -43324,7 +43124,7 @@ packages:
       pretty-format: 28.1.3
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.7.0(@types/node@18.15.11)(source-map-support@0.5.21)(typescript@5.1.3)
+      ts-node: 10.7.0(@types/node@18.15.11)(typescript@5.1.3)
     transitivePeerDependencies:
       - metro
       - supports-color
@@ -43365,7 +43165,7 @@ packages:
       pretty-format: 28.1.3
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.9.1(@types/node@18.15.3)(typescript@5.1.3)
+      ts-node: 10.9.1(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@5.1.3)
     transitivePeerDependencies:
       - metro
       - supports-color
@@ -44336,7 +44136,7 @@ packages:
       jest-pnp-resolver: 1.2.2(jest-resolve@28.1.3)
       jest-util: 28.1.3
       jest-validate: 28.1.3
-      resolve: 1.22.1
+      resolve: 1.22.8
       resolve.exports: 1.1.0
       slash: 3.0.0
     transitivePeerDependencies:
@@ -44353,7 +44153,7 @@ packages:
       jest-pnp-resolver: 1.2.2(jest-resolve@29.6.2)
       jest-util: 29.7.0
       jest-validate: 29.7.0
-      resolve: 1.22.1
+      resolve: 1.22.8
       resolve.exports: 2.0.2
       slash: 3.0.0
     transitivePeerDependencies:
@@ -44370,7 +44170,7 @@ packages:
       jest-pnp-resolver: 1.2.2(jest-resolve@29.7.0)
       jest-util: 29.7.0
       jest-validate: 29.7.0
-      resolve: 1.22.1
+      resolve: 1.22.8
       resolve.exports: 2.0.2
       slash: 3.0.0
     transitivePeerDependencies:
@@ -45952,10 +45752,6 @@ packages:
     dependencies:
       jwa: 1.4.1
       safe-buffer: 5.2.1
-    dev: false
-
-  /jwt-decode@3.1.2:
-    resolution: {integrity: sha512-UfpWE/VZn0iP50d8cz9NrZLM9lSWhcJ+0Gt/nm4by88UL+J1SiKN8/5dkjMmbEzwL2CAe+67GsegCbIKtbp75A==}
     dev: false
 
   /katex@0.16.8:
@@ -49791,7 +49587,7 @@ packages:
       inherits: 2.0.4
       konan: 2.1.1
       readable-stream: 2.3.8
-      resolve: 1.22.1
+      resolve: 1.22.8
       standard-version: 9.3.2
       stream-combiner2: 1.1.1
       subarg: 1.0.0
@@ -50608,7 +50404,7 @@ packages:
     resolution: {integrity: sha512-/5CMN3T0R4XTj4DcGaexo+roZSdSFW/0AOOTROrjxzCG1wrWXEsGbRKevjlIL+ZDE4sZlJr5ED4YW0yqmkK+eA==}
     dependencies:
       hosted-git-info: 2.8.9
-      resolve: 1.22.1
+      resolve: 1.22.8
       semver: 5.7.1
       validate-npm-package-license: 3.0.4
 
@@ -50617,7 +50413,7 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       hosted-git-info: 4.1.0
-      is-core-module: 2.13.0
+      is-core-module: 2.13.1
       semver: 7.5.4
       validate-npm-package-license: 3.0.4
     dev: true
@@ -52421,7 +52217,7 @@ packages:
       postcss: ^7.0.0 || ^8.0.1
       webpack: ^4.0.0 || ^5.0.0
     dependencies:
-      cosmiconfig: 7.0.1
+      cosmiconfig: 7.1.0
       klona: 2.0.5
       loader-utils: 2.0.4
       postcss: 7.0.39
@@ -55771,7 +55567,7 @@ packages:
     resolution: {integrity: sha512-/njmZ8s1wVeR6pjTZ+0nCnv8SpZNRMT2D1RLOJQESlYFDBvwpTA4KWJpZ+sBJ4+vhjILRcK7JIFdGCdxEAAitg==}
     engines: {node: '>= 0.10'}
     dependencies:
-      resolve: 1.22.1
+      resolve: 1.22.8
 
   /recursive-readdir@2.2.3:
     resolution: {integrity: sha512-8HrF5ZsXk5FAH9dgsx3BlUer73nIhuj+9OrQwEbLTPOBzGkL1lsFCR01am+v+0m2Cmbs1nP12hLDl5FA7EszKA==}
@@ -60102,7 +59898,7 @@ packages:
     dependencies:
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
-      jest: 28.1.3(@types/node@18.15.3)(ts-node@10.9.1)
+      jest: 28.1.3
       jest-util: 28.1.3
       json5: 2.2.3
       lodash.memoize: 4.1.2
@@ -60261,6 +60057,39 @@ packages:
       - source-map-support
     dev: true
 
+  /ts-node@10.7.0(@types/node@18.15.11)(typescript@5.1.3):
+    resolution: {integrity: sha512-TbIGS4xgJoX2i3do417KSaep1uRAW/Lu+WAL2doDHC0D6ummjirVOXU5/7aiZotbQ5p1Zp9tP7U6cYhA0O7M8A==}
+    hasBin: true
+    peerDependencies:
+      '@swc/core': '>=1.2.50'
+      '@swc/wasm': '>=1.2.50'
+      '@types/node': '*'
+      typescript: '>=2.7'
+    peerDependenciesMeta:
+      '@swc/core':
+        optional: true
+      '@swc/wasm':
+        optional: true
+    dependencies:
+      '@cspotcode/source-map-support': 0.7.0
+      '@tsconfig/node10': 1.0.8
+      '@tsconfig/node12': 1.0.9
+      '@tsconfig/node14': 1.0.1
+      '@tsconfig/node16': 1.0.2
+      '@types/node': 18.15.11
+      acorn: 8.8.2
+      acorn-walk: 8.2.0
+      arg: 4.1.3
+      create-require: 1.1.1
+      diff: 4.0.2
+      make-error: 1.3.6
+      typescript: 5.1.3
+      v8-compile-cache-lib: 3.0.1
+      yn: 3.1.1
+    transitivePeerDependencies:
+      - source-map-support
+    dev: true
+
   /ts-node@10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@5.1.3):
     resolution: {integrity: sha512-TbIGS4xgJoX2i3do417KSaep1uRAW/Lu+WAL2doDHC0D6ummjirVOXU5/7aiZotbQ5p1Zp9tP7U6cYhA0O7M8A==}
     hasBin: true
@@ -60327,7 +60156,7 @@ packages:
       - source-map-support
     dev: true
 
-  /ts-node@10.9.1(@types/node@18.15.11)(source-map-support@0.5.21)(typescript@5.1.3):
+  /ts-node@10.9.1(@types/node@18.15.11)(typescript@5.1.3):
     resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
     hasBin: true
     peerDependencies:
@@ -60341,7 +60170,7 @@ packages:
       '@swc/wasm':
         optional: true
     dependencies:
-      '@cspotcode/source-map-support': 0.8.1(source-map-support@0.5.21)
+      '@cspotcode/source-map-support': 0.8.1
       '@tsconfig/node10': 1.0.8
       '@tsconfig/node12': 1.0.9
       '@tsconfig/node14': 1.0.1
@@ -60712,10 +60541,6 @@ packages:
       turbo-windows-64: 1.10.1
       turbo-windows-arm64: 1.10.1
     dev: true
-
-  /tweetnacl-util@0.15.1:
-    resolution: {integrity: sha512-RKJBIj8lySrShN4w6i/BonWp2Z/uxwC3h4y7xsRrpP59ZboCd0GpEVsOnMDYLMmKBpYhb5TgHzZXy7wTfYFBRw==}
-    dev: false
 
   /tweetnacl@0.14.5:
     resolution: {integrity: sha512-KXXFFdAbFXY4geFIwoyNK+f5Z1b7swfXABfL7HXCmoIWMKU3dmS26672A4EeQtDzLKy7SXmfBu51JolvEKwtGA==}
