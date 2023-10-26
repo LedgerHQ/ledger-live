@@ -449,6 +449,10 @@ export type Feature_PtxSwapLiveApp = Feature<{
   families?: Array<string>;
 }>;
 
+export type Feature_FetchAdditionalCoins = Feature<{
+  batch: number;
+}>;
+
 export type Feature_LlmNewFirmwareUpdateUx = DefaultFeature;
 export type Feature_CounterValue = DefaultFeature;
 export type Feature_MockFeature = DefaultFeature;
@@ -473,7 +477,6 @@ export type Feature_ListAppsV2minor1 = DefaultFeature;
 export type Feature_BrazeLearn = DefaultFeature;
 export type Feature_LlmNewDeviceSelection = DefaultFeature;
 export type Feature_LlmWalletQuickActions = DefaultFeature;
-export type Feature_FetchAdditionalCoins = DefaultFeature;
 
 /**
  * Utils types.
