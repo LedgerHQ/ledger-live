@@ -1,32 +1,26 @@
 # @ledgerhq/domain-service
 
-## 1.1.13-nightly.3
+## 1.1.13
 
 ### Patch Changes
 
-- Updated dependencies [[`54b1d185c9`](https://github.com/LedgerHQ/ledger-live/commit/54b1d185c9df5ae84dc7e85d58249c06550df5f1)]:
-  - @ledgerhq/cryptoassets@11.1.0-nightly.1
+- Updated dependencies [[`ce18546c0a`](https://github.com/LedgerHQ/ledger-live/commit/ce18546c0a0b9dd5ed78b1745cac19b7eef7b5eb), [`fbeebfe04b`](https://github.com/LedgerHQ/ledger-live/commit/fbeebfe04b297b33ec258440b694cdfb6213af24)]:
+  - @ledgerhq/types-live@6.41.1
+  - @ledgerhq/cryptoassets@11.0.1
 
-## 1.1.13-nightly.2
-
-### Patch Changes
-
-- [#4827](https://github.com/LedgerHQ/ledger-live/pull/4827) [`fc121ce96d`](https://github.com/LedgerHQ/ledger-live/commit/fc121ce96dbcc4f30cfd9836644f778b85f997b7) Thanks [@valpinkman](https://github.com/valpinkman)! - Update react to react 18
-
-## 1.1.13-nightly.1
+## 1.1.13-hotfix.1
 
 ### Patch Changes
 
-- Updated dependencies [[`254ba13ccb`](https://github.com/LedgerHQ/ledger-live/commit/254ba13ccbf0539747110127037de52e1df1ef47)]:
-  - @ledgerhq/cryptoassets@11.1.0-nightly.0
-  - @ledgerhq/types-live@6.42.0-nightly.0
+- Updated dependencies [[`fbeebfe04b`](https://github.com/LedgerHQ/ledger-live/commit/fbeebfe04b297b33ec258440b694cdfb6213af24)]:
+  - @ledgerhq/cryptoassets@11.0.1-hotfix.0
 
-## 1.1.13-nightly.0
+## 1.1.13-hotfix.0
 
 ### Patch Changes
 
-- Updated dependencies [[`4d6fa0772e`](https://github.com/LedgerHQ/ledger-live/commit/4d6fa0772e19cdbd4b432fafa43621c42e2a5fdd)]:
-  - @ledgerhq/errors@6.15.0-nightly.0
+- Updated dependencies [[`ce18546c0a`](https://github.com/LedgerHQ/ledger-live/commit/ce18546c0a0b9dd5ed78b1745cac19b7eef7b5eb)]:
+  - @ledgerhq/types-live@6.41.1-hotfix.0
 
 ## 1.1.12
 

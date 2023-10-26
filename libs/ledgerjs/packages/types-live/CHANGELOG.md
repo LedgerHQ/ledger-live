@@ -1,10 +1,16 @@
 # @ledgerhq/types-live
 
-## 6.42.0-nightly.0
+## 6.41.1
 
-### Minor Changes
+### Patch Changes
 
-- [#4916](https://github.com/LedgerHQ/ledger-live/pull/4916) [`254ba13ccb`](https://github.com/LedgerHQ/ledger-live/commit/254ba13ccbf0539747110127037de52e1df1ef47) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Integrate SEI Network
+- [#4895](https://github.com/LedgerHQ/ledger-live/pull/4895) [`ce18546c0a`](https://github.com/LedgerHQ/ledger-live/commit/ce18546c0a0b9dd5ed78b1745cac19b7eef7b5eb) Thanks [@stephane-lieumont-ledger](https://github.com/stephane-lieumont-ledger)! - feat(protect-2592): add other link on firebase for quick access recover
+
+## 6.41.1-hotfix.0
+
+### Patch Changes
+
+- [#4895](https://github.com/LedgerHQ/ledger-live/pull/4895) [`ce18546c0a`](https://github.com/LedgerHQ/ledger-live/commit/ce18546c0a0b9dd5ed78b1745cac19b7eef7b5eb) Thanks [@stephane-lieumont-ledger](https://github.com/stephane-lieumont-ledger)! - feat(protect-2592): add other link on firebase for quick access recover
 
 ## 6.41.0
 

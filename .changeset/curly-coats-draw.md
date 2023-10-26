@@ -4,4 +4,4 @@
 "@ledgerhq/live-common": patch
 ---
 
-Add feature_ptx_swap_live_app feature flag and logic
+Add specific deeplinks for useCase tutorial onboarding

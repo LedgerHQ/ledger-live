@@ -8,7 +8,6 @@ import { importPolygonTokens } from "./importers/polygon";
 import { importAsaTokens } from "./importers/asa";
 import { importCardanoNativeTokens } from "./importers/cardanoNative";
 import { importESDTTokens } from "./importers/esdt";
-import { importInternetComputerTokens } from "./importers/internet_computer";
 import { importSPLTokens } from "./importers/spl";
 import { importStellarTokens } from "./importers/stellar";
 import { importTRC10Tokens } from "./importers/trc10";
@@ -31,7 +30,6 @@ const importTokens = async () => {
   await importAsaTokens(outputFolder);
   await importCardanoNativeTokens(outputFolder);
   await importESDTTokens(outputFolder);
-  await importInternetComputerTokens(outputFolder);
   await importSPLTokens(outputFolder);
   await importStellarTokens(outputFolder);
   await importTRC10Tokens(outputFolder);

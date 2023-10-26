@@ -1,76 +1,44 @@
 # web-tools
 
-## 0.2.0-nightly.5
+## 0.1.2
 
 ### Patch Changes
 
-- Updated dependencies [[`38ea4700ff`](https://github.com/LedgerHQ/ledger-live/commit/38ea4700ff7ccf9c663c03b6deb21ac7c7a6fd28)]:
-  - @ledgerhq/live-common@33.1.0-nightly.5
-  - @ledgerhq/coin-framework@0.7.1-nightly.2
-  - @ledgerhq/domain-service@1.1.13-nightly.3
-  - @ledgerhq/hw-app-eth@6.34.8-nightly.3
+- Updated dependencies [[`ce18546c0a`](https://github.com/LedgerHQ/ledger-live/commit/ce18546c0a0b9dd5ed78b1745cac19b7eef7b5eb), [`3b4f7501cc`](https://github.com/LedgerHQ/ledger-live/commit/3b4f7501cc5f09be94a2994f20f9998898682975), [`fbeebfe04b`](https://github.com/LedgerHQ/ledger-live/commit/fbeebfe04b297b33ec258440b694cdfb6213af24)]:
+  - @ledgerhq/live-common@33.0.1
+  - @ledgerhq/types-live@6.41.1
+  - @ledgerhq/coin-framework@0.8.0
+  - @ledgerhq/domain-service@1.1.13
+  - @ledgerhq/hw-app-eth@6.34.8
 
-## 0.2.0-nightly.4
-
-### Patch Changes
-
-- Updated dependencies [[`29d9d40f11`](https://github.com/LedgerHQ/ledger-live/commit/29d9d40f11515de9502995349f2fd7fbd5cb8757), [`bfb567c519`](https://github.com/LedgerHQ/ledger-live/commit/bfb567c5199cb667f1d8bf3017e909e2b98d5494), [`da8617e08e`](https://github.com/LedgerHQ/ledger-live/commit/da8617e08e681a25b34b02ec489819df074e1e68), [`9d9f8bb5d2`](https://github.com/LedgerHQ/ledger-live/commit/9d9f8bb5d2b5dcf5d8223b15c7847c7261dade77), [`5883eccc3b`](https://github.com/LedgerHQ/ledger-live/commit/5883eccc3b023c8c18615283a88fea08d705ef6a), [`da8617e08e`](https://github.com/LedgerHQ/ledger-live/commit/da8617e08e681a25b34b02ec489819df074e1e68), [`719047f16a`](https://github.com/LedgerHQ/ledger-live/commit/719047f16a69ee51945de539514ed491d07c49dd), [`e9af8df166`](https://github.com/LedgerHQ/ledger-live/commit/e9af8df16658fbab689af98f4b6f7e5c21967802)]:
-  - @ledgerhq/live-common@33.1.0-nightly.4
-
-## 0.2.0-nightly.3
+## 0.1.2-hotfix.2
 
 ### Patch Changes
 
-- [#4827](https://github.com/LedgerHQ/ledger-live/pull/4827) [`fc121ce96d`](https://github.com/LedgerHQ/ledger-live/commit/fc121ce96dbcc4f30cfd9836644f778b85f997b7) Thanks [@valpinkman](https://github.com/valpinkman)! - Update react to react 18
+- Updated dependencies [[`fbeebfe04b`](https://github.com/LedgerHQ/ledger-live/commit/fbeebfe04b297b33ec258440b694cdfb6213af24)]:
+  - @ledgerhq/live-common@33.0.1-hotfix.2
+  - @ledgerhq/coin-framework@0.8.0-hotfix.2
+  - @ledgerhq/domain-service@1.1.13-hotfix.1
+  - @ledgerhq/hw-app-eth@6.34.8-hotfix.1
 
-- Updated dependencies [[`fc121ce96d`](https://github.com/LedgerHQ/ledger-live/commit/fc121ce96dbcc4f30cfd9836644f778b85f997b7), [`6b7fc5d071`](https://github.com/LedgerHQ/ledger-live/commit/6b7fc5d0711a83ed2fcacacd02795862a4a3bf1d), [`bbb72841c5`](https://github.com/LedgerHQ/ledger-live/commit/bbb72841c5e74614789d4e4933dc26921e817bac)]:
-  - @ledgerhq/live-common@33.1.0-nightly.3
-  - @ledgerhq/domain-service@1.1.13-nightly.2
-  - @ledgerhq/hw-transport@6.28.9-nightly.1
-  - @ledgerhq/hw-app-eth@6.34.8-nightly.2
-  - @ledgerhq/hw-transport-http@6.28.4-nightly.1
-  - @ledgerhq/hw-transport-web-ble@6.27.20-nightly.1
-  - @ledgerhq/hw-transport-webhid@6.27.20-nightly.1
-  - @ledgerhq/hw-transport-webusb@6.27.20-nightly.1
-  - @ledgerhq/coin-framework@0.7.1-nightly.1
-
-## 0.2.0-nightly.2
-
-### Minor Changes
-
-- [#4916](https://github.com/LedgerHQ/ledger-live/pull/4916) [`254ba13ccb`](https://github.com/LedgerHQ/ledger-live/commit/254ba13ccbf0539747110127037de52e1df1ef47) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Integrate SEI Network
+## 0.1.2-hotfix.1
 
 ### Patch Changes
 
-- Updated dependencies [[`254ba13ccb`](https://github.com/LedgerHQ/ledger-live/commit/254ba13ccbf0539747110127037de52e1df1ef47), [`18d4fb6077`](https://github.com/LedgerHQ/ledger-live/commit/18d4fb6077480fe68cbe215019c77fa21a17be48)]:
-  - @ledgerhq/types-live@6.42.0-nightly.0
-  - @ledgerhq/live-common@33.1.0-nightly.2
-  - @ledgerhq/coin-framework@0.7.1-nightly.1
-  - @ledgerhq/domain-service@1.1.13-nightly.1
-  - @ledgerhq/hw-app-eth@6.34.8-nightly.1
+- Updated dependencies [[`3b4f7501cc`](https://github.com/LedgerHQ/ledger-live/commit/3b4f7501cc5f09be94a2994f20f9998898682975)]:
+  - @ledgerhq/coin-framework@0.8.0-hotfix.1
+  - @ledgerhq/live-common@33.0.1-hotfix.1
 
-## 0.1.2-nightly.1
+## 0.1.2-hotfix.0
 
 ### Patch Changes
 
-- Updated dependencies [[`f52baa219e`](https://github.com/LedgerHQ/ledger-live/commit/f52baa219e1cd85fdb50d47f0c64e10e8533c926)]:
-  - @ledgerhq/live-common@33.1.0-nightly.1
-
-## 0.1.2-nightly.0
-
-### Patch Changes
-
-- Updated dependencies [[`4d6fa0772e`](https://github.com/LedgerHQ/ledger-live/commit/4d6fa0772e19cdbd4b432fafa43621c42e2a5fdd)]:
-  - @ledgerhq/errors@6.15.0-nightly.0
-  - @ledgerhq/live-common@33.1.0-nightly.0
-  - @ledgerhq/coin-framework@0.7.1-nightly.0
-  - @ledgerhq/domain-service@1.1.13-nightly.0
-  - @ledgerhq/hw-app-eth@6.34.8-nightly.0
-  - @ledgerhq/hw-transport@6.28.9-nightly.0
-  - @ledgerhq/hw-transport-http@6.28.4-nightly.0
-  - @ledgerhq/hw-transport-web-ble@6.27.20-nightly.0
-  - @ledgerhq/hw-transport-webhid@6.27.20-nightly.0
-  - @ledgerhq/hw-transport-webusb@6.27.20-nightly.0
+- Updated dependencies [[`ce18546c0a`](https://github.com/LedgerHQ/ledger-live/commit/ce18546c0a0b9dd5ed78b1745cac19b7eef7b5eb)]:
+  - @ledgerhq/live-common@33.0.1-hotfix.0
+  - @ledgerhq/types-live@6.41.1-hotfix.0
+  - @ledgerhq/coin-framework@0.7.1-hotfix.0
+  - @ledgerhq/domain-service@1.1.13-hotfix.0
+  - @ledgerhq/hw-app-eth@6.34.8-hotfix.0
 
 ## 0.1.1
 

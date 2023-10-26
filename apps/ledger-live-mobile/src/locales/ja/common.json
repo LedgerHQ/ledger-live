@@ -2620,13 +2620,13 @@
     "resources" : "Ledgerリソース",
     "display" : {
       "title" : "一般",
-      "desc" : "Ledger Liveの一般設定を変更します。",
+      "desc" : "Ledger Liveの一般設定を変更する。",
       "carousel" : "おすすめ",
       "carouselDesc" : "お客様用にパーソナライズされたヒントと最新のオファーが記載されたカードをお見せします。",
       "language" : "表示言語",
       "languageDesc" : "Ledger Liveの表示言語を設定。",
       "dateFormat" : "日付形式",
-      "dateFormatDesc" : "Ledger Liveの日付形式を設定する",
+      "dateFormatDesc" : "Ledger Liveの日付形式を設定。",
       "region" : "地域",
       "regionDesc" : "地域を選択して日付や時間、通貨をアップデートする。",
       "password" : "パスワードロック",
@@ -2646,7 +2646,7 @@
       "stock" : "マーケットインジケーターの色分け",
       "stockDesc" : "マーケットの上昇を緑色で表示したい場合は「ウエスタン」、赤色で表示したい場合は「イースタン」を選択。",
       "reportErrors" : "バグレポート",
-      "reportErrorsDesc" : "製品の向上に役立つレポートを、Ledgerに自動的に送信します。",
+      "reportErrorsDesc" : "製品の向上に役立つレポートを、Ledgerに自動的に送信する。",
       "developerMode" : "デベロッパーモード",
       "developerModeDesc" : "管理ページに開発者用アプリを表示し、Testnetアプリを有効化。",
       "analytics" : "アナリティクス",
@@ -2695,7 +2695,7 @@
     "accounts" : {
       "header" : "アカウント",
       "title" : "アカウント",
-      "desc" : "アプリ内の資産の表示方法を管理します。",
+      "desc" : "アプリ内の資産の表示方法を管理する。",
       "hideTokenCTA" : "トークンを非表示",
       "showContractCTA" : "コントラクトを表示",
       "blacklistedTokens" : "非表示トークンリスト",
@@ -2718,7 +2718,7 @@
     },
     "about" : {
       "title" : "Ledgerについて",
-      "desc" : "アプリ情報、利用規約、およびプライバシーポリシー。",
+      "desc" : "アプリ情報・利用規約・プライバシーポリシーを確認する。",
       "appDescription" : "Ledger Liveを使って暗号資産を安全に保管や売買、スワップをしながら、資産を管理して増やしましょう。すべてを1つの場所で。",
       "appVersion" : "バージョン",
       "termsConditions" : "利用規約",
@@ -2734,7 +2734,7 @@
     },
     "notifications" : {
       "title" : "通知",
-      "desc" : "通知を管理",
+      "desc" : "通知を管理する。",
       "disabledNotifications" : {
         "title" : "通知はオフです",
         "desc" : "{{platform}}はLedger Liveからの通知をブロックしています。スマートフォンで通知を受信するには、デバイスの設定からLedger Liveの通知をオンにしてください。",
@@ -2778,7 +2778,7 @@
     "help" : {
       "title" : "ヘルプ",
       "header" : "ヘルプ",
-      "desc" : "Ledger Liveについての詳細や、ヘルプの利用方法についてはこちらをご覧ください。",
+      "desc" : "Ledger Liveの詳細やヘルプの利用方法を確認する。",
       "support" : "Ledgerサポート",
       "supportDesc" : "問題がある場合は、ハードウェアウォレットでLedger Liveを使用するためのヘルプを参照してください。",
       "configureDevice" : "デバイスのセットアップ",
@@ -2797,7 +2797,7 @@
     },
     "experimental" : {
       "title" : "試験的機能",
-      "desc" : "試験的機能をお試しになり、フィードバックをお寄せください。",
+      "desc" : "試験的機能を試して、フィードバックを送る。",
       "disclaimer" : "これらは、テクノロジーファンのコミュニティ向けに、現状のまま提供される試験的機能です。これらの機能は随時変更、破損、または削除される可能性があります。このオプションを有効にすると、あなたは自己責任でこれらの機能を使用することに同意したことになります。",
       "provider" : "試験的設定「マイLedgerプロバイダー（{{forcedProvider}}）」では、リリースされていないOSとアプリが表示され、互換性の問題が発生する場合があります。これは設定で無効にできます。",
       "providerDevMode" : "試験的設定「My Ledgerプロバイダー（{{forcedProvider}}）」と「デベロッパーモード」では、リリースされていないOSとアプリが表示され、互換性の問題が発生する場合があります。設定にて無効にできます。",
@@ -2853,7 +2853,7 @@
     },
     "developer" : {
       "title" : "デベロッパー",
-      "desc" : "試験的機能をお試しになり、フィードバックをお寄せください。",
+      "desc" : "試験的機能を試して、フィードバックを送る。",
       "customManifest" : {
         "title" : "カスタムプラットフォームマニフェストを読み込む"
       }
@@ -3006,22 +3006,22 @@
     },
     "buy" : {
       "title" : "購入",
-      "description" : "暗号資産を現金で安全に購入。"
+      "description" : "暗号資産を安全に購入する。"
     },
     "sell" : {
       "title" : "売却",
-      "description" : "暗号資産を安全に売却して現金化。"
+      "description" : "暗号資産を安全に売却する。"
     },
     "exchange" : {
       "title" : "購入/売却"
     },
     "stake" : {
       "title" : "ステーキング",
-      "description" : "暗号資産を運用しましょう。"
+      "description" : "暗号資産を運用する。"
     },
     "swap" : {
       "title" : "スワップ",
-      "description" : "暗号資産を別の暗号資産と交換。",
+      "description" : "暗号資産を別の暗号資産と交換する。",
       "selectDevice" : "お使いのデバイスを選択してください",
       "broadcasting" : "スワップをブロードキャスト中",
       "loadingFees" : "ネットワーク手数料を読み込み中…",
@@ -3404,7 +3404,12 @@
     },
     "walletConnect" : {
       "title" : "WalletConnect",
-      "description" : "ウォレットをdappsに接続"
+      "description" : "ウォレットをDAppに接続する。"
+    },
+    "recover" : {
+      "title" : "Ledger Recover",
+      "description" : "手軽にウォレットを復元",
+      "tag" : "1ヶ月間無料"
     }
   },
   "signMessage" : {
@@ -6365,6 +6370,12 @@
   "servicesWidget" : {
     "title" : "サービス",
     "subTitle" : "Ledgerサービスを管理",
+    "signIn" : "サインイン",
+    "recover" : {
+      "cta" : "無料トライアルを開始",
+      "desc" : "ウォレットへのアクセス権を失う不安を解消しましょう。",
+      "tag" : "1ヶ月間無料"
+    },
     "protect" : {
       "status" : {
         "new" : {

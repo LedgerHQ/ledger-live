@@ -311,10 +311,12 @@ export type Feature_ProtectServicesMobile = Feature<{
       learnMoreURI: string;
       alreadySubscribedURI: string;
       quickAccessURI: string;
+      alreadyOnboardedURI: string;
     };
   };
-  login: {
+  account: {
     loginURI: string;
+    homeURI: string;
   };
   protectId: string;
 }>;
@@ -333,7 +335,9 @@ export type Feature_ProtectServicesDesktop = Feature<{
   };
   onboardingCompleted: {
     upsellURI: string;
+    restore24URI: string;
     alreadySubscribedURI: string;
+    alreadyDeviceSeededURI: string;
   };
   account: {
     homeURI: string;

@@ -1,43 +1,32 @@
 # @ledgerhq/hw-app-eth
 
-## 6.34.8-nightly.3
+## 6.34.8
 
 ### Patch Changes
 
-- Updated dependencies [[`54b1d185c9`](https://github.com/LedgerHQ/ledger-live/commit/54b1d185c9df5ae84dc7e85d58249c06550df5f1)]:
-  - @ledgerhq/cryptoassets@11.1.0-nightly.1
-  - @ledgerhq/domain-service@1.1.13-nightly.3
-  - @ledgerhq/evm-tools@1.0.9-nightly.2
+- Updated dependencies [[`ce18546c0a`](https://github.com/LedgerHQ/ledger-live/commit/ce18546c0a0b9dd5ed78b1745cac19b7eef7b5eb), [`fbeebfe04b`](https://github.com/LedgerHQ/ledger-live/commit/fbeebfe04b297b33ec258440b694cdfb6213af24)]:
+  - @ledgerhq/types-live@6.41.1
+  - @ledgerhq/cryptoassets@11.0.1
+  - @ledgerhq/domain-service@1.1.13
+  - @ledgerhq/evm-tools@1.0.9
 
-## 6.34.8-nightly.2
-
-### Patch Changes
-
-- Updated dependencies [[`fc121ce96d`](https://github.com/LedgerHQ/ledger-live/commit/fc121ce96dbcc4f30cfd9836644f778b85f997b7), [`6b7fc5d071`](https://github.com/LedgerHQ/ledger-live/commit/6b7fc5d0711a83ed2fcacacd02795862a4a3bf1d)]:
-  - @ledgerhq/domain-service@1.1.13-nightly.2
-  - @ledgerhq/hw-transport@6.28.9-nightly.1
-  - @ledgerhq/hw-transport-mocker@6.27.20-nightly.1
-
-## 6.34.8-nightly.1
+## 6.34.8-hotfix.1
 
 ### Patch Changes
 
-- Updated dependencies [[`254ba13ccb`](https://github.com/LedgerHQ/ledger-live/commit/254ba13ccbf0539747110127037de52e1df1ef47)]:
-  - @ledgerhq/cryptoassets@11.1.0-nightly.0
-  - @ledgerhq/types-live@6.42.0-nightly.0
-  - @ledgerhq/domain-service@1.1.13-nightly.1
-  - @ledgerhq/evm-tools@1.0.9-nightly.1
+- Updated dependencies [[`fbeebfe04b`](https://github.com/LedgerHQ/ledger-live/commit/fbeebfe04b297b33ec258440b694cdfb6213af24)]:
+  - @ledgerhq/cryptoassets@11.0.1-hotfix.0
+  - @ledgerhq/domain-service@1.1.13-hotfix.1
+  - @ledgerhq/evm-tools@1.0.9-hotfix.0
 
-## 6.34.8-nightly.0
+## 6.34.8-hotfix.0
 
 ### Patch Changes
 
-- Updated dependencies [[`4d6fa0772e`](https://github.com/LedgerHQ/ledger-live/commit/4d6fa0772e19cdbd4b432fafa43621c42e2a5fdd)]:
-  - @ledgerhq/errors@6.15.0-nightly.0
-  - @ledgerhq/domain-service@1.1.13-nightly.0
-  - @ledgerhq/hw-transport@6.28.9-nightly.0
-  - @ledgerhq/hw-transport-mocker@6.27.20-nightly.0
-  - @ledgerhq/evm-tools@1.0.9-nightly.0
+- Updated dependencies [[`ce18546c0a`](https://github.com/LedgerHQ/ledger-live/commit/ce18546c0a0b9dd5ed78b1745cac19b7eef7b5eb)]:
+  - @ledgerhq/types-live@6.41.1-hotfix.0
+  - @ledgerhq/domain-service@1.1.13-hotfix.0
+  - @ledgerhq/evm-tools@1.0.8
 
 ## 6.34.7
 

@@ -1,10 +1,16 @@
 # ledger-libs
 
-## 0.1.2-nightly.0
+## 0.1.2
 
 ### Patch Changes
 
-- [#5113](https://github.com/LedgerHQ/ledger-live/pull/5113) [`54b1d185c9`](https://github.com/LedgerHQ/ledger-live/commit/54b1d185c9df5ae84dc7e85d58249c06550df5f1) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - remove tokens definition for ICP chain
+- [#4895](https://github.com/LedgerHQ/ledger-live/pull/4895) [`ce18546c0a`](https://github.com/LedgerHQ/ledger-live/commit/ce18546c0a0b9dd5ed78b1745cac19b7eef7b5eb) Thanks [@stephane-lieumont-ledger](https://github.com/stephane-lieumont-ledger)! - feat(protect-2592): add other link on firebase for quick access recover
+
+## 0.1.2-hotfix.0
+
+### Patch Changes
+
+- [#4895](https://github.com/LedgerHQ/ledger-live/pull/4895) [`ce18546c0a`](https://github.com/LedgerHQ/ledger-live/commit/ce18546c0a0b9dd5ed78b1745cac19b7eef7b5eb) Thanks [@stephane-lieumont-ledger](https://github.com/stephane-lieumont-ledger)! - feat(protect-2592): add other link on firebase for quick access recover
 
 ## 0.1.1
 

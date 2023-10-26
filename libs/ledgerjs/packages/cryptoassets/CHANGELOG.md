@@ -1,16 +1,16 @@
 # @ledgerhq/cryptoassets
 
-## 11.1.0-nightly.1
+## 11.0.1
 
 ### Patch Changes
 
-- [#5113](https://github.com/LedgerHQ/ledger-live/pull/5113) [`54b1d185c9`](https://github.com/LedgerHQ/ledger-live/commit/54b1d185c9df5ae84dc7e85d58249c06550df5f1) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - remove tokens definition for ICP chain
+- [#5115](https://github.com/LedgerHQ/ledger-live/pull/5115) [`fbeebfe04b`](https://github.com/LedgerHQ/ledger-live/commit/fbeebfe04b297b33ec258440b694cdfb6213af24) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Reordering bsc & binance_beacon_chain to avoid errors while sorting by market cap due to token collision
 
-## 11.1.0-nightly.0
+## 11.0.1-hotfix.0
 
-### Minor Changes
+### Patch Changes
 
-- [#4916](https://github.com/LedgerHQ/ledger-live/pull/4916) [`254ba13ccb`](https://github.com/LedgerHQ/ledger-live/commit/254ba13ccbf0539747110127037de52e1df1ef47) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Integrate SEI Network
+- [#5115](https://github.com/LedgerHQ/ledger-live/pull/5115) [`fbeebfe04b`](https://github.com/LedgerHQ/ledger-live/commit/fbeebfe04b297b33ec258440b694cdfb6213af24) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Reordering bsc & binance_beacon_chain to avoid errors while sorting by market cap due to token collision
 
 ## 11.0.0
 

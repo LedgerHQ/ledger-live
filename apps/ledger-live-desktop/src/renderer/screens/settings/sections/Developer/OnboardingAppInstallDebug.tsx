@@ -8,6 +8,7 @@ import { setDrawer } from "~/renderer/drawers/Provider";
 import OnboardingAppInstallStep from "~/renderer/components/OnboardingAppInstall";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
+import { useTranslation } from "react-i18next";
 
 const defaultDeviceToRestore: DeviceModelInfo = {
   modelId: DeviceModelId.nanoX,
@@ -141,6 +142,7 @@ const OnboardingAppInstallDebugScreen = () => {
 const StyledOnboardingAppInstallDebugScreen = withV3StyleProvider(OnboardingAppInstallDebugScreen);
 
 const OnboardingAppInstallDebugButton = () => {
+  const { t } = useTranslation();
   const handleOpenDebugScreen = useCallback(() => {
     setDrawer(
       StyledOnboardingAppInstallDebugScreen,
@@ -156,7 +158,7 @@ const OnboardingAppInstallDebugButton = () => {
       onClick={handleOpenDebugScreen}
       data-test-id="debug-install-set-of-apps-button"
     >
-      Open
+      {t("settings.developer.open")}
     </ButtonV2>
   );
 };

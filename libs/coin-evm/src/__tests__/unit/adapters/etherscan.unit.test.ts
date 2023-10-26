@@ -390,7 +390,7 @@ describe("EVM Family", () => {
           const tokenAccountId = encodeTokenAccountId(accountId, tokenCurrency!);
 
           const expectedOperation: Operation = {
-            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:+ethereum%2Ferc20%2Fusd__coin-0x02b972f304dc24c9bc362e6435c4ad654241f9af916689a4790145c9bcbdf4cf-OUT-i0",
+            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin-0x02b972f304dc24c9bc362e6435c4ad654241f9af916689a4790145c9bcbdf4cf-OUT-i0",
             hash: "0x02b972f304dc24c9bc362e6435c4ad654241f9af916689a4790145c9bcbdf4cf",
             accountId: tokenAccountId,
             blockHash: "0x58ee7556044cd139e569c87c173a6dedbfbeb9ada6693ee6090fd510acee9c21",
@@ -445,7 +445,7 @@ describe("EVM Family", () => {
           const tokenAccountId = encodeTokenAccountId(accountId, tokenCurrency!);
 
           const expectedOperation: Operation = {
-            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:+ethereum%2Ferc20%2Fusd__coin-0x02b972f304dc24c9bc362e6435c4ad654241f9af916689a4790145c9bcbdf4cf-IN-i0",
+            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin-0x02b972f304dc24c9bc362e6435c4ad654241f9af916689a4790145c9bcbdf4cf-IN-i0",
             hash: "0x02b972f304dc24c9bc362e6435c4ad654241f9af916689a4790145c9bcbdf4cf",
             accountId: tokenAccountId,
             blockHash: "0x58ee7556044cd139e569c87c173a6dedbfbeb9ada6693ee6090fd510acee9c21",
@@ -535,7 +535,7 @@ describe("EVM Family", () => {
 
           const expectedOperations: Operation[] = [
             {
-              id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:+ethereum%2Ferc20%2Fusd__coin-0x02b972f304dc24c9bc362e6435c4ad654241f9af916689a4790145c9bcbdf4cf-IN-i0",
+              id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin-0x02b972f304dc24c9bc362e6435c4ad654241f9af916689a4790145c9bcbdf4cf-IN-i0",
               hash: "0x02b972f304dc24c9bc362e6435c4ad654241f9af916689a4790145c9bcbdf4cf",
               accountId: tokenAccountId,
               blockHash: "0x58ee7556044cd139e569c87c173a6dedbfbeb9ada6693ee6090fd510acee9c21",
@@ -551,7 +551,7 @@ describe("EVM Family", () => {
               extra: {},
             },
             {
-              id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:+ethereum%2Ferc20%2Fusd__coin-0x02b972f304dc24c9bc362e6435c4ad654241f9af916689a4790145c9bcbdf4cf-OUT-i0",
+              id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin-0x02b972f304dc24c9bc362e6435c4ad654241f9af916689a4790145c9bcbdf4cf-OUT-i0",
               hash: "0x02b972f304dc24c9bc362e6435c4ad654241f9af916689a4790145c9bcbdf4cf",
               accountId: tokenAccountId,
               blockHash: "0x58ee7556044cd139e569c87c173a6dedbfbeb9ada6693ee6090fd510acee9c21",
