@@ -12,7 +12,7 @@ import { Account } from "@ledgerhq/types-live";
 import { InvalidAddress } from "@ledgerhq/errors";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
-import { Transaction, TransactionStatus } from "@ledgerhq/live-common/lib/generated/types";
+import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import RecipientField from "./RecipientField";
 import { TFunction } from "i18next";
 
