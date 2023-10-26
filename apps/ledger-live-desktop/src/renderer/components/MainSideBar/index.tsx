@@ -331,11 +331,15 @@ const MainSideBar = () => {
     push,
     dispatch,
   ]);
-  const isReferralProgramActive = useMemo(() => {
-    return (
-      referralProgramConfig?.params &&
-      location.pathname.startsWith(referralProgramConfig.params.path)
-    );
+
+  // Check if the selected tab is a Live-App under discovery tab
+  const isLiveAppTabSelected = useCallback(() => {
+    const tabs = [];
+
+    // Add "refer-a-friend"
+    referralProgramConfig?.params && tabs.push(referralProgramConfig.params.path);
+
+    return tabs.find((liveTab: string) => location.pathname.includes(liveTab));
   }, [referralProgramConfig, location]);
 
   return (
@@ -415,7 +419,7 @@ const MainSideBar = () => {
                   icon={IconsLegacy.PlanetMedium}
                   iconSize={20}
                   iconActiveColor="wallet"
-                  isActive={location.pathname.startsWith("/platform") && !isReferralProgramActive}
+                  isActive={location.pathname.startsWith("/platform") && !isLiveAppTabSelected()}
                   onClick={handleClickCatalog}
                   collapsed={secondAnim}
                 />
@@ -489,7 +493,10 @@ const MainSideBar = () => {
                     iconSize={20}
                     iconActiveColor="wallet"
                     onClick={handleClickRefer}
-                    isActive={isReferralProgramActive}
+                    isActive={
+                      referralProgramConfig?.params &&
+                      location.pathname.startsWith(referralProgramConfig.params.path)
+                    }
                     collapsed={secondAnim}
                     NotifComponent={
                       referralProgramConfig?.params?.amount ? (
