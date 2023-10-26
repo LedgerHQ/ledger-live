@@ -35,6 +35,7 @@ export const useBatteryStatuses = ({
   triggerRequest: () => void;
   cancelRequest: () => void;
   isBatteryLow: boolean;
+  lowBatteryPercentage: number;
 } => {
   const [batteryStatusesState, setBatteryStatusesState] =
     useState<GetBatteryStatusesActionState>(initialState);
@@ -93,5 +94,6 @@ export const useBatteryStatuses = ({
     requestCompleted,
     cancelRequest,
     isBatteryLow,
+    lowBatteryPercentage,
   };
 };
