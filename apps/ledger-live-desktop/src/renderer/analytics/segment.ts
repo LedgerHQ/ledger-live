@@ -14,7 +14,7 @@ import {
   devicesModelListSelector,
 } from "~/renderer/reducers/settings";
 import { State } from "~/renderer/reducers";
-import { AccountLike, FeatureId, Features, idsToLanguage } from "@ledgerhq/types-live";
+import { AccountLike, Feature, FeatureId, Features, idsToLanguage } from "@ledgerhq/types-live";
 import { getAccountName } from "@ledgerhq/live-common/account/index";
 import { accountsSelector } from "../reducers/accounts";
 import {
@@ -46,7 +46,9 @@ const getContext = () => ({
 type ReduxStore = ReturnType<typeof createStore>;
 
 let storeInstance: ReduxStore | null | undefined; // is the redux store. it's also used as a flag to know if analytics is on or off.
-let analyticsFeatureFlagMethod: null | (<T extends FeatureId>(key: T) => Features[T] | null);
+let analyticsFeatureFlagMethod:
+  | null
+  | (<T extends FeatureId>(key: T) => Feature<Features[T]["params"]> | null);
 
 export function setAnalyticsFeatureFlagMethod(method: typeof analyticsFeatureFlagMethod): void {
   analyticsFeatureFlagMethod = method;
