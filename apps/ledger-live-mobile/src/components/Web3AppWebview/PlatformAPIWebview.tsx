@@ -46,8 +46,20 @@ import { RootNavigationComposite, StackNavigatorNavigation } from "../RootNaviga
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { WebviewAPI, WebviewProps } from "./types";
 import { useWebviewState } from "./helpers";
+import { currentRouteNameRef } from "../../analytics/screenRefs";
 
-const tracking = trackingWrapper(track);
+const tracking = trackingWrapper(
+  (eventName: string, properties?: Record<string, unknown> | null, mandatory?: boolean | null) =>
+    track(
+      eventName,
+      {
+        ...properties,
+        flowInitiatedFrom:
+          currentRouteNameRef.current === "Platform Catalog" ? "Discover" : "Native",
+      },
+      mandatory,
+    ),
+);
 
 function renderLoading() {
   return (

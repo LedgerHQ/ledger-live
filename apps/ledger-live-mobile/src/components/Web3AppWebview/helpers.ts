@@ -30,6 +30,20 @@ import { track } from "../../analytics";
 import getOrCreateUser from "../../user";
 import * as bridge from "../../../e2e/bridge/client";
 import Config from "react-native-config";
+import { currentRouteNameRef } from "../../analytics/screenRefs";
+
+const tracking = trackingWrapper(
+  (eventName: string, properties?: Record<string, unknown> | null, mandatory?: boolean | null) =>
+    track(
+      eventName,
+      {
+        ...properties,
+        flowInitiatedFrom:
+          currentRouteNameRef.current === "Platform Catalog" ? "Discover" : "Native",
+      },
+      mandatory,
+    ),
+);
 
 export function useWebView(
   {
@@ -442,8 +456,6 @@ const wallet = {
   name: "ledger-live-mobile",
   version: VersionNumber.appVersion,
 };
-
-const tracking = trackingWrapper(track);
 
 function useGetUserId() {
   const [userId, setUserId] = useState("");
