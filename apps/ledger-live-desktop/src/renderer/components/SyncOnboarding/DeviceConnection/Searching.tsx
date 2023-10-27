@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from "react";
+import React, { useCallback, useContext, useEffect } from "react";
 import { Flex, Link, Text } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
@@ -8,6 +8,8 @@ import { OnboardingContext } from "../../Onboarding";
 import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
 import Animation from "~/renderer/animations";
 import useTheme from "~/renderer/hooks/useTheme";
+import { useSelector } from "react-redux";
+import { getCurrentDevice } from "~/renderer/reducers/devices";
 
 export type SyncOnboardingDeviceConnectionSearchingProps = {
   deviceModelId: DeviceModelId;
@@ -21,6 +23,14 @@ const SyncOnboardingDeviceConnectionSearching = ({
   const history = useHistory();
   const { setDeviceModelId } = useContext(OnboardingContext);
   const theme = useTheme();
+  const currentDevice = useSelector(getCurrentDevice);
+
+  useEffect(() => {
+    if (currentDevice && currentDevice.modelId !== deviceModelId) {
+      setDeviceModelId(currentDevice.modelId);
+      history.replace("/onboarding/select-use-case");
+    }
+  }, [currentDevice, deviceModelId, history, setDeviceModelId]);
 
   const handleConnectionTrouble = useCallback(() => {
     setDeviceModelId(deviceModelId);
