@@ -1,7 +1,7 @@
 import { useMemo, useCallback } from "react";
 import { PropsRaw } from "./types";
 import { LiveAppManifestParams } from "@ledgerhq/live-common/platform/types";
-import { LiveAppManifestParamsDapp } from "@ledgerhq/live-common/lib/platform/types";
+import { LiveAppManifestParamsDapp } from "@ledgerhq/live-common/platform/types";
 
 const hasDappUrl = (params: LiveAppManifestParams): params is LiveAppManifestParamsDapp => {
   return "dappUrl" in params;

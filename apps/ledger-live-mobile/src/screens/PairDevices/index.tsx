@@ -15,7 +15,7 @@ import TransportBLE from "../../react-native-hw-transport-ble";
 import { GENUINE_CHECK_TIMEOUT } from "@utils/constants";
 import { addKnownDevice } from "../../actions/ble";
 import {
-  installAppFirstTime,
+  setHasInstalledAnyApp,
   setLastSeenDeviceInfo,
   setReadOnlyMode,
 } from "../../actions/settings";
@@ -154,7 +154,7 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
                     const hasAnyAppInstalled = e.result && e.result.installed.length > 0;
 
                     if (!hasAnyAppInstalled) {
-                      dispatchRedux(installAppFirstTime(false));
+                      dispatchRedux(setHasInstalledAnyApp(false));
                     }
                   }
 

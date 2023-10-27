@@ -59,6 +59,14 @@ const ChangeDeviceLanguagePromptDrawer: React.FC<Props> = ({
     [onError, analyticsContext],
   );
 
+  const getTextToDisplay = (key: "description" | "title") =>
+    t(`deviceLocalization.changeDeviceLanguagePrompt.${key}`, {
+      deviceName,
+      language: t(
+        `deviceLocalization.languages.${Languages[currentLanguage].deviceSupport?.label}`,
+      ),
+    });
+
   return (
     <Flex
       flexDirection="column"
@@ -107,15 +115,8 @@ const ChangeDeviceLanguagePromptDrawer: React.FC<Props> = ({
             });
             setInstallingLanguage(true);
           }}
-          titleWording={t("deviceLocalization.changeDeviceLanguagePrompt.title", {
-            language: t(
-              `deviceLocalization.languages.${Languages[currentLanguage].deviceSupport?.label}`,
-            ),
-            deviceName,
-          })}
-          descriptionWording={t("deviceLocalization.changeDeviceLanguagePrompt.description", {
-            deviceName,
-          })}
+          titleWording={getTextToDisplay("title")}
+          descriptionWording={getTextToDisplay("description")}
         />
       )}
     </Flex>

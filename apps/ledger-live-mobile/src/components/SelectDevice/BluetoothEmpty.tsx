@@ -44,6 +44,7 @@ function BluetoothEmpty({ onPairNewDevice, hideAnimation }: Props) {
 const styles = StyleSheet.create({
   imageContainer: {
     minHeight: 200,
+    maxWidth: 550,
     position: "relative",
     overflow: "visible",
   },

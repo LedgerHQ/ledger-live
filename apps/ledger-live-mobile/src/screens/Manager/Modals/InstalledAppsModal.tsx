@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useMemo, useEffect } from "react";
 
-import { Text, Flex, Button, BaseModal } from "@ledgerhq/native-ui";
+import { Text, Flex, Button } from "@ledgerhq/native-ui";
 import { FlatList } from "react-native";
 import { App, DeviceInfo } from "@ledgerhq/types-live";
 import { State, Action } from "@ledgerhq/live-common/apps/index";
@@ -9,6 +9,7 @@ import AppIcon from "../AppsList/AppIcon";
 import ByteSize from "../../../components/ByteSize";
 import AppUninstallButton from "../AppsList/AppUninstallButton";
 import AppProgressButton from "../AppsList/AppProgressButton";
+import QueuedDrawer from "../../../components/QueuedDrawer";
 
 type HeaderProps = {
   illustration: JSX.Element;
@@ -27,15 +28,9 @@ type UninstallButtonProps = {
   app: App;
   state: State;
   dispatch: (_: Action) => void;
-  setAppUninstallWithDependencies: (_: { dependents: App[]; app: App }) => void;
 };
 
-const UninstallButton = ({
-  app,
-  state,
-  dispatch,
-  setAppUninstallWithDependencies,
-}: UninstallButtonProps) => {
+const UninstallButton = ({ app, state, dispatch }: UninstallButtonProps) => {
   const { uninstallQueue } = state;
   const uninstalling = useMemo(() => uninstallQueue.includes(app.name), [uninstallQueue, app.name]);
   const renderAppState = () => {
@@ -43,15 +38,7 @@ const UninstallButton = ({
       case uninstalling:
         return <AppProgressButton state={state} name={app.name} size={34} />;
       default:
-        return (
-          <AppUninstallButton
-            app={app}
-            state={state}
-            dispatch={dispatch}
-            setAppUninstallWithDependencies={setAppUninstallWithDependencies}
-            size={34}
-          />
-        );
+        return <AppUninstallButton app={app} state={state} dispatch={dispatch} size={34} />;
     }
   };
 
@@ -62,11 +49,10 @@ type RowProps = {
   app: App;
   state: State;
   dispatch: (_: Action) => void;
-  setAppUninstallWithDependencies: (_: { dependents: App[]; app: App }) => void;
   deviceInfo: DeviceInfo;
 };
 
-const Row = ({ app, state, dispatch, setAppUninstallWithDependencies, deviceInfo }: RowProps) => (
+const Row = ({ app, state, dispatch, deviceInfo }: RowProps) => (
   <Flex flexDirection="row" py={4} alignItems="center" justifyContent="space-between">
     <Flex flexDirection="row" alignItems="center">
       <AppIcon app={app} size={24} radius={8} />
@@ -82,23 +68,10 @@ const Row = ({ app, state, dispatch, setAppUninstallWithDependencies, deviceInfo
           firmwareVersion={deviceInfo.version}
         />
       </Text>
-      <UninstallButton
-        app={app}
-        state={state}
-        dispatch={dispatch}
-        setAppUninstallWithDependencies={setAppUninstallWithDependencies}
-      />
+      <UninstallButton app={app} state={state} dispatch={dispatch} />
     </Flex>
   </Flex>
 );
-
-const modalStyleOverrides = {
-  modal: {
-    flex: 1,
-    justifyContent: "flex-end" as const,
-    margin: 0,
-  },
-};
 
 type Props = {
   isOpen: boolean;
@@ -106,7 +79,6 @@ type Props = {
   state: State;
   dispatch: (_: Action) => void;
   appList?: App[];
-  setAppUninstallWithDependencies: (_: { dependents: App[]; app: App }) => void;
   illustration: JSX.Element;
   deviceInfo: DeviceInfo;
 };
@@ -117,7 +89,6 @@ const InstalledAppsModal = ({
   state,
   dispatch,
   appList,
-  setAppUninstallWithDependencies,
   illustration,
   deviceInfo,
 }: Props) => {
@@ -125,15 +96,9 @@ const InstalledAppsModal = ({
 
   const renderItem = useCallback(
     ({ item }: { item: App }) => (
-      <Row
-        app={item}
-        state={state}
-        dispatch={dispatch}
-        setAppUninstallWithDependencies={setAppUninstallWithDependencies}
-        deviceInfo={deviceInfo}
-      />
+      <Row app={item} state={state} dispatch={dispatch} deviceInfo={deviceInfo} />
     ),
-    [deviceInfo, dispatch, setAppUninstallWithDependencies, state],
+    [deviceInfo, dispatch, state],
   );
 
   useEffect(() => {
@@ -141,26 +106,19 @@ const InstalledAppsModal = ({
   }, [appList, onClose]);
 
   return (
-    <BaseModal
-      isOpen={isOpen}
-      onClose={onClose}
-      modalStyle={modalStyleOverrides.modal}
-      containerStyle={{ height: "100%" }}
-      propagateSwipe={true}
-    >
-      <Flex flex={1}>
-        <FlatList
-          data={appList}
-          renderItem={renderItem}
-          keyExtractor={item => "" + item.id}
-          ListHeaderComponent={<Header illustration={illustration} />}
-          showsVerticalScrollIndicator={false}
-        />
-      </Flex>
-      <Button mt={6} mb={6} size="large" type="error" onPress={onUninstallAll}>
+    <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose} propagateSwipe={true}>
+      <Header illustration={illustration} />
+      <FlatList
+        data={appList}
+        renderItem={renderItem}
+        keyExtractor={item => "" + item.id}
+        overScrollMode="never"
+        showsVerticalScrollIndicator={false}
+      />
+      <Button mt={6} size="large" type="error" onPress={onUninstallAll}>
         <Trans i18nKey={"manager.uninstall.uninstallAll"} />
       </Button>
-    </BaseModal>
+    </QueuedDrawer>
   );
 };
 

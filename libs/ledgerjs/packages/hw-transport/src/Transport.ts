@@ -381,6 +381,13 @@ export default class Transport {
     this.tracer = this.tracer.withContext(context);
   }
 
+  /**
+   * Gets the tracing context of the transport instance
+   */
+  getTraceContext(): TraceContext | undefined {
+    return this.tracer.getContext();
+  }
+
   static ErrorMessage_ListenTimeout = "No Ledger device found (timeout)";
   static ErrorMessage_NoDeviceFound = "No Ledger device found";
 }

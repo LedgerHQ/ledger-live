@@ -1,5 +1,5 @@
 import Transport from "@ledgerhq/hw-transport";
-import { log } from "@ledgerhq/logs";
+import { LocalTracer, TraceContext } from "@ledgerhq/logs";
 import WS from "isomorphic-ws";
 import { Observable, Subject } from "rxjs";
 import {
@@ -14,25 +14,33 @@ import {
 import { cancelDeviceAction } from "../hw/deviceAccess";
 import { getEnv } from "@ledgerhq/live-env";
 import type { SocketEvent } from "@ledgerhq/types-live";
+
+const LOG_TYPE = "socket";
+const ALLOW_SECURE_CHANNEL_DELAY = 500;
+
 const warningsSubject = new Subject<string>();
 export const warnings: Observable<string> = warningsSubject.asObservable();
-const ALLOW_SECURE_CHANNEL_DELAY = 500;
 
 /**
  * use Ledger WebSocket API to exchange data with the device
  * Returns an Observable of the final result
  */
-export const createDeviceSocket = (
+export function createDeviceSocket(
   transport: Transport,
   {
     url,
     unresponsiveExpectedDuringBulk,
+    context,
   }: {
     url: string;
     unresponsiveExpectedDuringBulk?: boolean;
+    context?: TraceContext;
   },
-): Observable<SocketEvent> =>
-  new Observable(o => {
+): Observable<SocketEvent> {
+  const tracer = new LocalTracer(LOG_TYPE, { ...context, function: "createDeviceSocket" });
+  tracer.trace("Starting web socket communication", { url, unresponsiveExpectedDuringBulk });
+
+  return new Observable(o => {
     let deviceError: Error | null = null; // error originating from device (connection/response/rejection...)
     let unsubscribed = false; // subscriber wants to stops everything
     let bulkSubscription: null | { unsubscribe: () => void } = null; // subscription to the bulk observable
@@ -42,14 +50,14 @@ export const createDeviceSocket = (
     const ws = new WS(url);
 
     ws.onopen = () => {
-      log("socket-opened", url);
+      tracer.trace("socket opened", { url });
       o.next({
         type: "opened",
       });
     };
 
     ws.onerror = e => {
-      log("socket-error", e.message);
+      tracer.trace("socket error", { e });
       if (inBulkMode) return; // in bulk case, we ignore any network events because we just need to unroll APDUs with the device
 
       o.error(
@@ -60,7 +68,7 @@ export const createDeviceSocket = (
     };
 
     ws.onclose = () => {
-      log("socket-close");
+      tracer.trace("socket closed", { url });
       if (inBulkMode) return; // in bulk case, we ignore any network events because we just need to unroll APDUs with the device
 
       if (correctlyFinished) {
@@ -78,7 +86,7 @@ export const createDeviceSocket = (
 
       try {
         const input = JSON.parse(e.data);
-        log("socket-in", input.query, input);
+        tracer.trace("socket in", { input });
 
         switch (input.query) {
           case "exchange": {
@@ -164,7 +172,7 @@ export const createDeviceSocket = (
               data: data.toString("hex"),
             };
 
-            log("socket-out", msg.response);
+            tracer.trace("socket out", { response: msg.response });
             const strMsg = JSON.stringify(msg);
             ws.send(strMsg);
             break;
@@ -204,7 +212,7 @@ export const createDeviceSocket = (
               });
             });
             if (unsubscribed) {
-              log("socket", "unsubscribed before end of bulk");
+              tracer.trace("unsubscribed before end of bulk");
               return;
             }
 
@@ -251,19 +259,31 @@ export const createDeviceSocket = (
         }
       } catch (err: any) {
         deviceError = err;
-        log("socket-message-error", err.message);
+        tracer.trace("socket message error", { err });
         o.error(err);
       }
     };
 
     const onDisconnect = e => {
       transport.off("disconnect", onDisconnect);
+
+      tracer.trace(
+        `Socket disconnected. Emitting a DisconnectedDeviceDuringOperation. Error: ${e}`,
+        { error: e },
+      );
       const error = new DisconnectedDeviceDuringOperation((e && e.message) || "");
       deviceError = error;
       o.error(error);
     };
 
     const onUnresponsiveDevice = () => {
+      tracer.trace(`Device unresponsive`, {
+        inBulkMode,
+        unresponsiveExpectedDuringBulk,
+        allowSecureChannelTimeout,
+        unsubscribed,
+      });
+
       // Nb Don't consider the device as locked if we are in a blocking apdu exchange, ie
       // one that requires user confirmation to complete.
       if (inBulkMode && unresponsiveExpectedDuringBulk) return;
@@ -296,3 +316,4 @@ export const createDeviceSocket = (
       }
     };
   });
+}

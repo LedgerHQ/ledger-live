@@ -225,7 +225,7 @@ export enum SettingsActionTypes {
   SETTINGS_SET_SELECTED_TIME_RANGE = "SETTINGS_SET_SELECTED_TIME_RANGE",
   SETTINGS_COMPLETE_ONBOARDING = "SETTINGS_COMPLETE_ONBOARDING",
   SETTINGS_COMPLETE_CUSTOM_IMAGE_FLOW = "SETTINGS_COMPLETE_CUSTOM_IMAGE_FLOW",
-  SETTINGS_INSTALL_APP_FIRST_TIME = "SETTINGS_INSTALL_APP_FIRST_TIME",
+  SETTINGS_SET_HAS_INSTALLED_ANY_APP = "SETTINGS_SET_HAS_INSTALLED_ANY_APP",
   SETTINGS_SET_READONLY_MODE = "SETTINGS_SET_READONLY_MODE",
   SETTINGS_SET_EXPERIMENTAL_USB_SUPPORT = "SETTINGS_SET_EXPERIMENTAL_USB_SUPPORT",
   SETTINGS_SWITCH_COUNTERVALUE_FIRST = "SETTINGS_SWITCH_COUNTERVALUE_FIRST",
@@ -278,6 +278,7 @@ export enum SettingsActionTypes {
   SET_CLOSED_NETWORK_BANNER = "SET_CLOSED_NETWORK_BANNER",
   SET_CLOSED_WITHDRAW_BANNER = "SET_CLOSED_WITHDRAW_BANNER",
   SET_USER_NPS = "SET_USER_NPS",
+  SET_SUPPORTED_COUNTER_VALUES = "SET_SUPPORTED_COUNTER_VALUES",
 }
 
 export type SettingsImportPayload = Partial<SettingsState>;
@@ -297,7 +298,7 @@ export type SettingsSetCountervaluePayload = SettingsState["counterValue"];
 export type SettingsSetOrderAccountsPayload = SettingsState["orderAccounts"];
 export type SettingsSetPairsPayload = { pairs: Array<Pair> };
 export type SettingsSetSelectedTimeRangePayload = SettingsState["selectedTimeRange"];
-export type SettingsInstallAppFirstTimePayload = SettingsState["hasInstalledAnyApp"];
+export type SettingsSetHasInstalledAnyAppPayload = SettingsState["hasInstalledAnyApp"];
 export type SettingsSetReadOnlyModePayload = SettingsState["readOnlyModeEnabled"];
 export type SettingsHideEmptyTokenAccountsPayload = SettingsState["hideEmptyTokenAccounts"];
 export type SettingsFilterTokenOperationsZeroAmountPayload =
@@ -375,6 +376,7 @@ export type SettingsSetHasBeenUpsoldProtectPayload = SettingsState["hasBeenUpsol
 export type SettingsCompleteOnboardingPayload = void | SettingsState["hasCompletedOnboarding"];
 export type SettingsSetGeneralTermsVersionAccepted = SettingsState["generalTermsVersionAccepted"];
 export type SettingsSetUserNps = number;
+export type SettingsSetSupportedCounterValues = SettingsState["supportedCounterValues"];
 
 export type SettingsPayload =
   | SettingsImportPayload
@@ -388,7 +390,7 @@ export type SettingsPayload =
   | SettingsSetOrderAccountsPayload
   | SettingsSetPairsPayload
   | SettingsSetSelectedTimeRangePayload
-  | SettingsInstallAppFirstTimePayload
+  | SettingsSetHasInstalledAnyAppPayload
   | SettingsSetReadOnlyModePayload
   | SettingsHideEmptyTokenAccountsPayload
   | SettingsShowTokenPayload
@@ -429,7 +431,8 @@ export type SettingsPayload =
   | SettingsSetHasBeenUpsoldProtectPayload
   | SettingsSetOnboardingTypePayload
   | SettingsSetClosedNetworkBannerPayload
-  | SettingsSetUserNps;
+  | SettingsSetUserNps
+  | SettingsSetSupportedCounterValues;
 
 // === WALLET CONNECT ACTIONS ===
 export enum WalletConnectActionTypes {
