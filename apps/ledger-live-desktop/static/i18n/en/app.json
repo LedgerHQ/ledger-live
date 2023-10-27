@@ -3163,7 +3163,7 @@
     "unlockedBalance": "Unbonded",
     "unlockedTooltip": "Unbonded assets can now be moved using the withdraw operation.",
     "networkFees": "Network fees are automatically set by the Polkadot consensus, you won't be able to review them on your device",
-    "bondedBalanceBelowMinimum": "Your bonded balance is below the current minimum of {{minimumBondBalance}}. Your nominations are at risk of being removed.",
+    "bondedBalanceBelowMinimum": "As a nominator, a minimum of {{minimumBondBalance}} is required to submit an intention to nominate",
     "nomination": {
       "emptyState": {
         "description": "You can earn rewards by bonding assets and then nominating your validator(s).",
