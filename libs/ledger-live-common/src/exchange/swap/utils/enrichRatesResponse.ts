@@ -43,7 +43,7 @@ export function enrichRatesResponse(
     }
 
     const error = r.status === "error" ? inferError(r, unitFrom) : undefined;
-    console.log({ error, r });
+
     return {
       magnitudeAwareRate: BigNumber(0),
       payoutNetworkFees: BigNumber(0),
