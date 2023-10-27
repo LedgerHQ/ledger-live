@@ -5391,7 +5391,7 @@
     "unlockingBalance": "Unbonding balance",
     "unlockedBalance": "Unbonded balance",
     "networkFees": "Network fees are automatically set by the Polkadot consensus, you won't be able to review them on your device",
-    "bondedBalanceBelowMinimum": "Your bonded balance is below the current minimum of {{minimumBondBalance}}. Your nominations are at risk of being removed.",
+    "bondedBalanceBelowMinimum": "As a nominator, a minimum of {{minimumBondBalance}} is required to submit an intention to nominate",
     "info": {
       "available": {
         "title": "DOT available",
