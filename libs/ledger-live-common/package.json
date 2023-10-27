@@ -213,7 +213,7 @@
     "cosmjs-types": "0.2.1",
     "crc": "^4.2.0",
     "create-hmac": "^1.1.7",
-    "crypto-js": "^4.1.1",
+    "crypto-js": "^4.2.0",
     "date-fns": "^2.23.0",
     "eip55": "^2.1.1",
     "eth-sig-util": "3.0.1",
