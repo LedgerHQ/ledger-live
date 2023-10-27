@@ -41,7 +41,8 @@
     "test:playwright:update-snapshots": "pnpm test:playwright --update-snapshots",
     "test:playwright:recorder": "playwright test tests/specs/recorder.spec.ts",
     "test:playwright:clean": "git clean -fdX tests/artifacts",
-    "typecheck": "node scripts/typecheck.js"
+    "typecheck": "node scripts/typecheck.js",
+    "check": "pnpm lint; pnpm typecheck"
   },
   "dependencies": {
     "@braze/web-sdk": "^4.6.3",
