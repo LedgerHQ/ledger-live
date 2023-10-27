@@ -117,7 +117,7 @@ function useInfo(account: PolkadotAccount): Record<InfoName, ModalInfo[]> {
     discreet: false,
   });
 
-  const currency = account.currency;
+  const { currency } = account;
   const PolkadotIcon = getCryptoCurrencyIcon(currency);
   invariant(PolkadotIcon, "Icon is expected");
 
