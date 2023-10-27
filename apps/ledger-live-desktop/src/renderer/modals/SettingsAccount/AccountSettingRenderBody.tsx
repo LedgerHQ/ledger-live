@@ -1,6 +1,5 @@
 import React, { PureComponent, memo } from "react";
 import styled from "styled-components";
-import get from "lodash/get";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { TFunction } from "i18next";
@@ -34,7 +33,9 @@ type State = {
 };
 type OwnProps = {
   onClose?: () => void;
-  data: unknown;
+  data: {
+    account: Account;
+  };
 };
 type Props = {
   setDataModal: Function;
@@ -62,9 +63,9 @@ class AccountSettingRenderBody extends PureComponent<Props, State> {
     ...defaultState,
   };
 
-  getAccount(data: unknown): Account {
+  getAccount(data: { account: Account }): Account {
     const { accountName } = this.state;
-    const account = get(data, "account", {});
+    const account = data?.account;
     return {
       ...account,
       ...(accountName !== null
