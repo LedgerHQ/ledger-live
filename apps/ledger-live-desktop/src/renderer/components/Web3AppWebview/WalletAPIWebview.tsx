@@ -39,8 +39,9 @@ const tracking = trackingWrapper(
       eventName,
       {
         ...properties,
-        flowInitiatedFrom:
-          currentRouteNameRef.current === "Platform Catalog" ? "Discover" : "Native",
+        flowInitiatedFrom: currentRouteNameRef.current?.toLowerCase().startsWith("swap form")
+          ? "Native"
+          : "Discover",
       },
       mandatory,
     ),
