@@ -96,6 +96,7 @@
     "ljs:hw-transport-node-hid-singleton": "pnpm --filter hw-transport-node-hid-singleton",
     "ljs:hw-transport-node-speculos": "pnpm --filter hw-transport-node-speculos",
     "ljs:hw-transport-node-speculos-http": "pnpm --filter hw-transport-node-speculos-http",
+    "ljs:hw-transport-vault": "pnpm --filter hw-transport-vault",
     "ljs:hw-transport-web-ble": "pnpm --filter hw-transport-web-ble",
     "ljs:hw-transport-webhid": "pnpm --filter hw-transport-webhid",
     "ljs:hw-transport-webusb": "pnpm --filter hw-transport-webusb",
