@@ -41,7 +41,7 @@ export function useWebView(
   ref: React.ForwardedRef<WebviewAPI>,
   onStateChange: WebviewProps["onStateChange"],
 ) {
-  const tracking = useMemo(
+  const tracking = useMemo(() =>
     trackingWrapper(
       (
         eventName: string,
