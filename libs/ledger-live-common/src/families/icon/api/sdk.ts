@@ -3,14 +3,14 @@ import IconService from "icon-sdk-js";
 import type { PRep, Transaction } from "../types";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import { encodeOperationId } from "../../../operation";
-import {
-  getAccountDetails,
-  getHistory,
-  submit,
-  getLatestBlock,
-} from "./apiCalls";
+import { getAccountDetails, getHistory, submit, getLatestBlock } from "./apiCalls";
 import { formatPRepData, getRpcUrl } from "../logic";
-import { GOVERNANCE_SCORE_ADDRESS, IISS_SCORE_ADDRESS, I_SCORE_UNIT, STEP_LIMIT } from "../constants";
+import {
+  GOVERNANCE_SCORE_ADDRESS,
+  IISS_SCORE_ADDRESS,
+  I_SCORE_UNIT,
+  STEP_LIMIT,
+} from "../constants";
 const { HttpProvider } = IconService;
 const { IconBuilder, IconAmount } = IconService;
 const iconUnit = IconAmount.Unit.ICX.toString();
@@ -22,7 +22,7 @@ export const getAccount = async (addr: string, url: string) => {
   const blockHeight = await getLatestBlock(url);
   return {
     blockHeight: Number(blockHeight) || undefined,
-    balance: new BigNumber(balance),
+    balance: new BigNumber(balance).times(100),
     additionalBalance: 0,
     nonce: 0,
   };
@@ -38,10 +38,7 @@ function isSender(transaction: Transaction, addr: string): boolean {
 /**
  * Map transaction to an Operation Type
  */
-function getOperationType(
-  transaction: Transaction,
-  addr: string
-): OperationType {
+function getOperationType(transaction: Transaction, addr: string): OperationType {
   return isSender(transaction, addr) ? "OUT" : "IN";
 }
 
@@ -60,10 +57,12 @@ function getOperationValue(transaction: Transaction, addr: string): BigNumber {
 function transactionToOperation(
   accountId: string,
   addr: string,
-  transaction: Transaction
+  transaction: Transaction,
 ): Operation {
   const type = getOperationType(transaction, addr);
-  transaction.transaction_fee = new BigNumber(IconAmount.fromLoop((transaction.transaction_fee || 0).toString(), iconUnit))
+  transaction.transaction_fee = new BigNumber(
+    IconAmount.fromLoop((transaction.transaction_fee || 0).toString(), iconUnit),
+  );
   return {
     id: encodeOperationId(accountId, transaction.hash ?? "", type),
     accountId,
@@ -79,12 +78,10 @@ function transactionToOperation(
     extra: {
       method: transaction.method,
       data: transaction.data,
-      txType: transaction.transaction_type
+      txType: transaction.transaction_type,
     },
-    transactionSequenceNumber: isSender(transaction, addr)
-      ? transaction.nonce
-      : undefined,
-    hasFailed: transaction.status !== '0x1',
+    transactionSequenceNumber: isSender(transaction, addr) ? transaction.nonce : undefined,
+    hasFailed: transaction.status !== "0x1",
   };
 }
 
@@ -95,13 +92,11 @@ export const getOperations = async (
   accountId: string,
   addr: string,
   skip: number,
-  url: string
+  url: string,
 ): Promise<Operation[]> => {
   const rawTransactions = await getHistory(addr, skip, url);
   if (!rawTransactions) return rawTransactions;
-  return rawTransactions.map((transaction) =>
-    transactionToOperation(accountId, addr, transaction)
-  );
+  return rawTransactions.map(transaction => transactionToOperation(accountId, addr, transaction));
 };
 
 /**
@@ -142,21 +137,15 @@ export const getStepPrice = async (account): Promise<BigNumber> => {
   const httpProvider = new HttpProvider(rpcURL);
   const iconService = new IconService(httpProvider);
   const txBuilder: any = new IconBuilder.CallBuilder();
-  const stepPriceTx = txBuilder
-    .to(GOVERNANCE_SCORE_ADDRESS)
-    .method("getStepPrice")
-    .build();
+  const stepPriceTx = txBuilder.to(GOVERNANCE_SCORE_ADDRESS).method("getStepPrice").build();
   let res;
   try {
     res = await iconService.call(stepPriceTx).execute();
   } catch (error) {
     // TODO: handle show log
   }
-  return new BigNumber(
-    IconAmount.fromLoop(res || 10000000000, iconUnit)
-  );
+  return new BigNumber(IconAmount.fromLoop(res || 10000000000, iconUnit));
 };
-
 
 /**
  * Get step price from governance contract
@@ -170,12 +159,11 @@ export const getPreps = async (currency): Promise<PRep[]> => {
     .method("getPReps")
     .build();
 
-
-  let preps: PRep[] = [];
+  const preps: PRep[] = [];
   try {
     const res = await iconService.call(prepTx).execute();
     if (res?.preps) {
-      for (let pr of res?.preps) {
+      for (const pr of res?.preps) {
         const prepFormatted = formatPRepData(pr);
         preps.push(prepFormatted);
       }
@@ -195,7 +183,7 @@ export const getDelegation = async (address, currency) => {
     .to(IISS_SCORE_ADDRESS)
     .method("getDelegation")
     .params({
-      address
+      address,
     })
     .build();
 
@@ -208,9 +196,12 @@ export const getDelegation = async (address, currency) => {
     console.log(error);
   }
   return {
-    delegations: res?.delegations.map(item => { return { ...item, value: new BigNumber(IconAmount.fromLoop(item.value || 0, iconUnit)) }; }) || [],
+    delegations:
+      res?.delegations.map(item => {
+        return { ...item, value: new BigNumber(IconAmount.fromLoop(item.value || 0, iconUnit)) };
+      }) || [],
     totalDelegated: new BigNumber(IconAmount.fromLoop(res?.totalDelegated || 0, iconUnit)),
-    votingPower: new BigNumber(IconAmount.fromLoop(res?.votingPower || 0, iconUnit))
+    votingPower: new BigNumber(IconAmount.fromLoop(res?.votingPower || 0, iconUnit)),
   };
 };
 
@@ -273,7 +264,7 @@ export const getStake = async (address, currency) => {
     res = await iconService.call(prepTx).execute();
     if (res?.unstakes) {
       const unstakes = res?.unstakes;
-      for (let item of unstakes) {
+      for (const item of unstakes) {
         const value = BigNumber(IconAmount.fromLoop(item.unstake || 0, iconUnit));
         unstake = unstake.plus(value);
       }
@@ -284,4 +275,3 @@ export const getStake = async (address, currency) => {
   }
   return { ...res, unstake };
 };
-

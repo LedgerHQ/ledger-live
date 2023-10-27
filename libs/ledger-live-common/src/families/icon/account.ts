@@ -20,14 +20,11 @@ function formatAccountSpecifics(account: IconAccount): string {
 
   let str = " ";
 
-  str +=
-    formatCurrencyUnit(unit, account.spendableBalance, formatConfig) +
-    " spendable. ";
+  str += formatCurrencyUnit(unit, account.spendableBalance, formatConfig) + " spendable. ";
 
   if (iconResources.additionalBalance.gt(0)) {
     str +=
-      formatCurrencyUnit(unit, iconResources.additionalBalance, formatConfig) +
-      " additional. ";
+      formatCurrencyUnit(unit, iconResources.additionalBalance, formatConfig) + " additional. ";
   }
 
   if (iconResources.nonce) {
@@ -37,10 +34,7 @@ function formatAccountSpecifics(account: IconAccount): string {
   return str;
 }
 
-function formatOperationSpecifics(
-  op: Operation,
-  unit: Unit | null | undefined
-): string {
+function formatOperationSpecifics(op: Operation, unit: Unit | null | undefined): string {
   const { additionalField } = op.extra;
 
   let str = " ";
@@ -49,14 +43,13 @@ function formatOperationSpecifics(
     disableRounding: true,
     alwaysShowSign: false,
     showCode: true,
+    subMagnitude: 2,
   };
 
   str +=
     additionalField && !Number.isNaN(additionalField)
       ? `\n    additionalField: ${
-          unit
-            ? formatCurrencyUnit(unit, additionalField, formatConfig)
-            : additionalField
+          unit ? formatCurrencyUnit(unit, additionalField, formatConfig) : additionalField
         }`
       : "";
 

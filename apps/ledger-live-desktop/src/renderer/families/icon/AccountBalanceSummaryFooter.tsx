@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { BigNumber } from "bignumber.js";
 import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
 import { IconAccount } from "@ledgerhq/live-common/families/icon/types";
@@ -61,7 +62,7 @@ const AccountBalanceSummaryFooter = ({ account, countervalue }: Props) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   if (!account.iconResources) return null;
-
+  const unit = getAccountUnit(account);
   const formatConfig = {
     disableRounding: true,
     alwaysShowSign: false,
@@ -72,7 +73,7 @@ const AccountBalanceSummaryFooter = ({ account, countervalue }: Props) => {
 
   const { votingPower, totalDelegated, unstake } = account.iconResources;
 
-  const spendableBalance = formatCurrencyUnit(account.unit, account.spendableBalance, formatConfig);
+  const spendableBalance = formatCurrencyUnit(unit, account.spendableBalance, formatConfig);
 
   const votingPowerAmount = formatCurrencyUnit(
     account.unit,
