@@ -2451,24 +2451,6 @@ importers:
         specifier: ^10.9.1
         version: 10.9.1(@types/node@20.5.7)(typescript@5.1.3)
 
-  libs/ledgerjs/flow-support:
-    devDependencies:
-      '@ledgerhq/cryptoassets':
-        specifier: workspace:^
-        version: link:../packages/cryptoassets
-      '@ledgerhq/devices':
-        specifier: workspace:^
-        version: link:../packages/devices
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../packages/errors
-      '@ledgerhq/logs':
-        specifier: workspace:^
-        version: link:../packages/logs
-      glob:
-        specifier: ^7.1.7
-        version: 7.2.0
-
   libs/ledgerjs/packages/cryptoassets:
     dependencies:
       invariant:
