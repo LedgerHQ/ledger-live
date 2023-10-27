@@ -2997,9 +2997,6 @@ importers:
       '@ledgerhq/hw-transport':
         specifier: workspace:^
         version: link:../hw-transport
-      '@ledgerhq/logs':
-        specifier: workspace:^
-        version: link:../logs
       bip32-path:
         specifier: ^0.4.2
         version: 0.4.2
