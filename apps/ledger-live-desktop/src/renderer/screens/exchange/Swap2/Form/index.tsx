@@ -9,7 +9,7 @@ import {
   convertToNonAtomicUnit,
 } from "@ledgerhq/live-common/exchange/swap/webApp/index";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
@@ -39,24 +39,33 @@ import BigNumber from "bignumber.js";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { SWAP_RATES_TIMEOUT } from "../../config";
 import { OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
-import WebPlatformPlayer from "~/renderer/components/WebPlatformPlayer";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { counterValueCurrencySelector, languageSelector } from "~/renderer/reducers/settings";
 import useTheme from "~/renderer/hooks/useTheme";
 import { v4 } from "uuid";
+import { Web3AppWebview } from "~/renderer/components/Web3AppWebview";
+import { WebviewAPI, WebviewState } from "~/renderer/components/Web3AppWebview/types";
+import { initialWebviewState } from "~/renderer/components/Web3AppWebview/helpers";
+import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
+import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
+import { setStoreValue } from "~/renderer/store";
 
-type SwapWebProps = Partial<{
-  provider: string;
-  fromAccountId: string;
-  toAccountId: string;
-  fromAmount: string;
-  quoteId: string;
-  rate: string;
-  feeStrategy: string;
-  customFeeConfig: string;
+type SwapWebProps = {
+  inputs: Partial<{
+    provider: string;
+    fromAccountId: string;
+    toAccountId: string;
+    fromAmount: string;
+    quoteId: string;
+    rate: string;
+    feeStrategy: string;
+    customFeeConfig: string;
+  }>;
   pageState: ReturnType<typeof usePageState>;
-}>;
+  onUnknownError?(): void;
+  onKnownError?(errorCode: string): void;
+};
 
 const Wrapper = styled(Box).attrs({
   p: 20,
@@ -85,12 +94,14 @@ const SwapWebAppWrapper = styled.div(
 `,
 );
 
-const SwapWeb = ({ pageState, ...props }: SwapWebProps) => {
+const SwapWeb = ({ pageState, inputs, onUnknownError, onKnownError }: SwapWebProps) => {
   const {
     colors: {
       palette: { type: themeType },
     },
   } = useTheme();
+  const webviewAPIRef = useRef<WebviewAPI>(null);
+  const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
   const fiatCurrency = useSelector(counterValueCurrencySelector);
   const locale = useSelector(languageSelector);
   const localManifest = useLocalLiveAppManifest(SWAP_WEB_MANIFEST_ID);
@@ -98,28 +109,47 @@ const SwapWeb = ({ pageState, ...props }: SwapWebProps) => {
   const manifest = localManifest || remoteManifest;
 
   const hasManifest = !!manifest;
-  const hasProps = !!props;
+  const hasInputs = !!inputs;
   const isPageStateLoaded = pageState === "loaded";
 
-  if (!hasManifest || !hasProps || !isPageStateLoaded) {
+  const customHandlers = useMemo<WalletAPICustomHandlers>(() => {
+    return {
+      ...loggerHandlers,
+      "storage.set": ({ params: { key, value } }: { params: { key: string; value: string } }) => {
+        if (key === "error") {
+          try {
+            const { name: code } = JSON.parse(value) as { name: string };
+            onKnownError?.(code);
+          } catch (_) {
+            onUnknownError?.();
+          }
+        }
+        setStoreValue(key, value, SWAP_WEB_MANIFEST_ID);
+      },
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (webviewState.url.includes("/unknown-error")) {
+      // the live app has re-directed to /unknown-error. Handle this in callback, probably wallet-api failure.
+      onUnknownError?.();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [webviewState.url]);
+
+  if (!hasManifest || !hasInputs || !isPageStateLoaded) {
     return null;
   }
 
   return (
     <SwapWebAppWrapper>
-      <WebPlatformPlayer
-        config={{
-          topBarConfig: {
-            shouldHideToolbarOverride: true,
-          },
-        }}
+      <Web3AppWebview
         manifest={manifest}
-        inputs={{
-          theme: themeType,
-          lang: locale,
-          currencyTicker: fiatCurrency.ticker,
-          ...(props as unknown as Record<string, string>),
-        }}
+        inputs={{ ...inputs, theme: themeType, lang: locale, currencyTicker: fiatCurrency.ticker }}
+        onStateChange={setWebviewState}
+        ref={webviewAPIRef}
+        customHandlers={customHandlers}
       />
     </SwapWebAppWrapper>
   );
@@ -186,7 +216,7 @@ const SwapForm = () => {
   const pageState = usePageState(swapTransaction, swapError);
   const provider = exchangeRate?.provider;
   const idleTimeout = useRef<NodeJS.Timeout | undefined>();
-  const [swapWebProps, setSwapWebProps] = useState<SwapWebProps | undefined>(undefined);
+  const [swapWebProps, setSwapWebProps] = useState<SwapWebProps["inputs"] | undefined>(undefined);
 
   const { setDrawer } = React.useContext(context);
 
@@ -203,7 +233,7 @@ const SwapForm = () => {
     }, idleTime);
   }, [idleState]);
 
-  const getSwapWebAppProps = useCallback(() => {
+  const getSwapWebAppInputProps = useCallback(() => {
     const { swap } = swapTransaction;
     const { to, from } = swap;
     const transaction = swapTransaction.transaction;
@@ -236,7 +266,6 @@ const SwapForm = () => {
       rate: rate?.toString(),
       feeStrategy: (isCustomFee ? "custom" : "medium")?.toUpperCase(),
       customFeeConfig: customFeeConfig ? JSON.stringify(customFeeConfig) : undefined,
-      pageState,
       cacheKey: v4(),
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -346,7 +375,7 @@ const SwapForm = () => {
       });
     } else {
       if (isSwapLiveAppEnabled) {
-        setSwapWebProps(getSwapWebAppProps());
+        setSwapWebProps(getSwapWebAppInputProps());
         return;
       }
 
@@ -398,6 +427,11 @@ const SwapForm = () => {
   //   });
   // };
 
+  const onKnownError = useCallback((code: string) => {
+    // handle a known error here.
+    console.log("%cerror index.tsx line:424 ", "color: red; display: block; width: 100%;", code);
+  }, []);
+
   return (
     <Wrapper>
       <TrackPage category="Swap" name="Form" provider={provider} {...swapDefaultTrack} />
@@ -446,7 +480,9 @@ const SwapForm = () => {
           {t("common.exchange")}
         </Button>
       </Box>
-      {!!swapWebProps && <SwapWeb {...swapWebProps} />}
+      {!!swapWebProps && (
+        <SwapWeb inputs={swapWebProps} pageState={pageState} onKnownError={onKnownError} />
+      )}
     </Wrapper>
   );
 };
