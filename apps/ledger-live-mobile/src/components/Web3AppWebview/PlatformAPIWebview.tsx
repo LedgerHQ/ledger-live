@@ -192,7 +192,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     const receiveOnAccount = useCallback(
       ({ accountId }: { accountId: string }) =>
         receiveOnAccountLogic(
-          { manifest, accounts, tracking },
+          { manifest, accounts, tracking: tracking() },
           accountId,
           (account, parentAccount, accountAddress) =>
             new Promise((resolve, reject) => {
@@ -425,7 +425,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     const signMessage = useCallback(
       ({ accountId, message }: { accountId: string; message: string }) =>
         signMessageLogic(
-          { manifest, accounts, tracking },
+          { manifest, accounts, tracking: tracking() },
           accountId,
           message,
           ({ id: accountId }, message) =>
