@@ -5,7 +5,7 @@ import semver from "semver";
 import remoteConfig from "@react-native-firebase/remote-config";
 import VersionNumber from "react-native-version-number";
 import { FeatureFlagsProvider, DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/index";
-import { FeatureId, Feature } from "@ledgerhq/types-live";
+import { FeatureId, Feature, Features } from "@ledgerhq/types-live";
 import { getEnv } from "@ledgerhq/live-env";
 
 import { formatToFirebaseFeatureId } from "./FirebaseRemoteConfig";
@@ -163,7 +163,7 @@ export const FirebaseFeatureFlagsProvider: React.FC<Props> = ({ children }) => {
 
   // Nb wrapped because the method is also called from outside.
   const wrappedGetFeature = useCallback(
-    (key: FeatureId): Feature => getFeature({ key, appLanguage, localOverrides }),
+    <T extends FeatureId>(key: T): Features[T] => getFeature({ key, appLanguage, localOverrides }),
     [localOverrides, appLanguage],
   );
 
