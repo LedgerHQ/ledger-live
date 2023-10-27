@@ -4059,9 +4059,6 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../ledgerjs/packages/logs
-      '@types/node':
-        specifier: ^20.2.5
-        version: 20.2.5
       axios:
         specifier: 0.26.1
         version: 0.26.1
@@ -4078,6 +4075,9 @@ importers:
       '@types/jest':
         specifier: ^29.2.4
         version: 29.5.0
+      '@types/node':
+        specifier: ^20.2.5
+        version: 20.2.5
       jest:
         specifier: ^28.1.1
         version: 28.1.3(@types/node@20.2.5)
@@ -26613,6 +26613,7 @@ packages:
 
   /@types/node@20.2.5:
     resolution: {integrity: sha512-JJulVEQXmiY9Px5axXHeYGLSjhkZEnD+MDPDGbCbIAbMslkKwmygtZFy1X6s/075Yo94sf8GuSlFfPzysQrWZQ==}
+    dev: true
 
   /@types/node@20.5.7:
     resolution: {integrity: sha512-dP7f3LdZIysZnmvP3ANJYTSwg+wLLl8p7RqniVlV7j+oXSXAbt9h0WIBFmJy5inWZoX9wZN6eXx+YXd9Rh3RBA==}
