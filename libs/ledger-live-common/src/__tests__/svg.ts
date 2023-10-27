@@ -59,15 +59,15 @@ test("svg icons valid", async () => {
           "Must not contain style attrs. " + element,
         );
       } else {
-        expect(/svg|path|line|rect|ellipse|polyline|polygon|circle|g/.test(element)).toBeValidSvg(
+        expect(/svg|path|line|rect|ellipse|polyline|polygon|circle|linearGradient|stop|g/.test(element)).toBeValidSvg(
           svgFileName,
-          "must only contain svg|path|line|rect|ellipse|polyline|polygon|circle|g",
+          "must only contain svg|path|line|rect|ellipse|polyline|polygon|circle|linearGradient|stop|g",
         );
         expect(
-          !/style=|clipPath|mask|id=|class=|url\(|clip-path|data|defs/.test(element),
+          !/style=|clipPath|mask|class=|clip-path|data|defs/.test(element),
         ).toBeValidSvg(
           svgFileName,
-          "must not contain style=|clipPath|mask|id|class|url|clip-path|data|defs",
+          "must not contain style=|clipPath|mask|class|clip-path|data|defs",
         );
       }
     });
