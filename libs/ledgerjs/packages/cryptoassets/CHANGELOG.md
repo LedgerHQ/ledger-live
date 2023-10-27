@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 11.0.2-nightly.0
+
+### Patch Changes
+
+- [#5196](https://github.com/LedgerHQ/ledger-live/pull/5196) [`9b49ff233c`](https://github.com/LedgerHQ/ledger-live/commit/9b49ff233ccfad68c98d15cd648927dee12a8b0b) Thanks [@chabroA](https://github.com/chabroA)! - Update data from CAL
+
 ## 11.0.1
 
 ### Patch Changes

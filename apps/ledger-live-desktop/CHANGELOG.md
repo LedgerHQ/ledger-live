@@ -1,5 +1,29 @@
 # ledger-live-desktop
 
+## 2.70.2-nightly.1
+
+### Patch Changes
+
+- [#5200](https://github.com/LedgerHQ/ledger-live/pull/5200) [`1a5ded912b`](https://github.com/LedgerHQ/ledger-live/commit/1a5ded912b2dd448e05d4bdb0dd2a5761052f1d7) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix placeholder text when changing device language from Settings
+
+- [#4896](https://github.com/LedgerHQ/ledger-live/pull/4896) [`95cf52eb66`](https://github.com/LedgerHQ/ledger-live/commit/95cf52eb66769228feb45dd5e799c444e80c5072) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Feature flag listAppsV2 replaced by listAppsV2minor1
+  Fix listApps v2 logic: adapt to breaking changes in the API and fix "polyfilling" logic of data of apps
+
+- [#5201](https://github.com/LedgerHQ/ledger-live/pull/5201) [`f83e060bf4`](https://github.com/LedgerHQ/ledger-live/commit/f83e060bf474a6b6133406eff49cb054e813046f) Thanks [@mle-gall](https://github.com/mle-gall)! - New supported countervalues source from API.
+
+- [#5185](https://github.com/LedgerHQ/ledger-live/pull/5185) [`c446992171`](https://github.com/LedgerHQ/ledger-live/commit/c446992171a15f118015a16afdf6ce2b27254490) Thanks [@sarneijim](https://github.com/sarneijim)! - swap webview generic error drawer
+
+- Updated dependencies [[`95cf52eb66`](https://github.com/LedgerHQ/ledger-live/commit/95cf52eb66769228feb45dd5e799c444e80c5072), [`3b2b2bf847`](https://github.com/LedgerHQ/ledger-live/commit/3b2b2bf847a7e9797b49f48fd31c23368c830a91), [`f83e060bf4`](https://github.com/LedgerHQ/ledger-live/commit/f83e060bf474a6b6133406eff49cb054e813046f), [`7968dfc551`](https://github.com/LedgerHQ/ledger-live/commit/7968dfc551acca00b7fabf00a726758d74be33de), [`7968dfc551`](https://github.com/LedgerHQ/ledger-live/commit/7968dfc551acca00b7fabf00a726758d74be33de), [`7968dfc551`](https://github.com/LedgerHQ/ledger-live/commit/7968dfc551acca00b7fabf00a726758d74be33de)]:
+  - @ledgerhq/types-live@6.41.2-nightly.1
+  - @ledgerhq/live-common@33.1.0-nightly.1
+  - @ledgerhq/coin-framework@0.8.1-nightly.1
+  - @ledgerhq/hw-transport@6.28.9-nightly.2
+  - @ledgerhq/coin-evm@0.9.1-nightly.1
+  - @ledgerhq/domain-service@1.1.14-nightly.1
+  - @ledgerhq/hw-transport-http@6.28.4-nightly.2
+  - @ledgerhq/hw-transport-node-hid-singleton@6.28.19-nightly.2
+  - @ledgerhq/hw-transport-vault@1.1.4-nightly.2
+
 ## 2.70.2-nightly.0
 
 ### Patch Changes

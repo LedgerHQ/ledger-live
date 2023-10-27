@@ -1,5 +1,13 @@
 # @ledgerhq/hw-transport
 
+## 6.28.9-nightly.2
+
+### Patch Changes
+
+- [#5142](https://github.com/LedgerHQ/ledger-live/pull/5142) [`7968dfc551`](https://github.com/LedgerHQ/ledger-live/commit/7968dfc551acca00b7fabf00a726758d74be33de) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: new mock fixture aTransportBuilder
+
+  For unit tests where a real implementation of a Transport is not necessary.
+
 ## 6.28.9-nightly.1
 
 ### Patch Changes

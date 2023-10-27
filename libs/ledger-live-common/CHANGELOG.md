@@ -1,5 +1,48 @@
 # @ledgerhq/live-common
 
+## 33.1.0-nightly.1
+
+### Minor Changes
+
+- [#4954](https://github.com/LedgerHQ/ledger-live/pull/4954) [`3b2b2bf847`](https://github.com/LedgerHQ/ledger-live/commit/3b2b2bf847a7e9797b49f48fd31c23368c830a91) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Support new app-exchange version
+
+### Patch Changes
+
+- [#4896](https://github.com/LedgerHQ/ledger-live/pull/4896) [`95cf52eb66`](https://github.com/LedgerHQ/ledger-live/commit/95cf52eb66769228feb45dd5e799c444e80c5072) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Feature flag listAppsV2 replaced by listAppsV2minor1
+  Fix listApps v2 logic: adapt to breaking changes in the API and fix "polyfilling" logic of data of apps
+
+- [#5142](https://github.com/LedgerHQ/ledger-live/pull/5142) [`7968dfc551`](https://github.com/LedgerHQ/ledger-live/commit/7968dfc551acca00b7fabf00a726758d74be33de) Thanks [@alexandremgo](https://github.com/alexandremgo)! - fix: wrong error when user tries to install apps when device is locked
+
+  The bug was due to a wrong implementation of the rxjs operator `retry`.
+
+  The `bot/engine.ts` retry mechanism has been updated too.
+
+- [#5142](https://github.com/LedgerHQ/ledger-live/pull/5142) [`7968dfc551`](https://github.com/LedgerHQ/ledger-live/commit/7968dfc551acca00b7fabf00a726758d74be33de) Thanks [@alexandremgo](https://github.com/alexandremgo)! - feat: disable retry mechanism on locked device errors for install app
+
+- Updated dependencies [[`3b2b2bf847`](https://github.com/LedgerHQ/ledger-live/commit/3b2b2bf847a7e9797b49f48fd31c23368c830a91), [`f83e060bf4`](https://github.com/LedgerHQ/ledger-live/commit/f83e060bf474a6b6133406eff49cb054e813046f), [`7968dfc551`](https://github.com/LedgerHQ/ledger-live/commit/7968dfc551acca00b7fabf00a726758d74be33de), [`9b49ff233c`](https://github.com/LedgerHQ/ledger-live/commit/9b49ff233ccfad68c98d15cd648927dee12a8b0b)]:
+  - @ledgerhq/hw-app-exchange@0.3.0-nightly.2
+  - @ledgerhq/coin-framework@0.8.1-nightly.1
+  - @ledgerhq/hw-transport-mocker@6.27.20-nightly.2
+  - @ledgerhq/hw-transport@6.28.9-nightly.2
+  - @ledgerhq/cryptoassets@11.0.2-nightly.0
+  - @ledgerhq/coin-algorand@0.3.5-nightly.1
+  - @ledgerhq/coin-evm@0.9.1-nightly.1
+  - @ledgerhq/coin-polkadot@0.4.5-nightly.1
+  - @ledgerhq/domain-service@1.1.14-nightly.1
+  - @ledgerhq/hw-app-eth@6.34.9-nightly.1
+  - @ledgerhq/hw-app-algorand@6.27.20-nightly.2
+  - @ledgerhq/hw-app-btc@10.0.9-nightly.2
+  - @ledgerhq/hw-app-cosmos@6.28.6-nightly.2
+  - @ledgerhq/hw-app-near@6.27.15-nightly.2
+  - @ledgerhq/hw-app-polkadot@6.27.20-nightly.2
+  - @ledgerhq/hw-app-solana@7.0.14-nightly.2
+  - @ledgerhq/hw-app-str@6.27.20-nightly.2
+  - @ledgerhq/hw-app-tezos@6.27.20-nightly.2
+  - @ledgerhq/hw-app-trx@6.27.20-nightly.2
+  - @ledgerhq/hw-app-xrp@6.27.20-nightly.2
+  - @ledgerhq/hw-transport-node-speculos@6.27.20-nightly.2
+  - @ledgerhq/hw-transport-node-speculos-http@6.27.20-nightly.2
+
 ## 33.0.2-nightly.0
 
 ### Patch Changes

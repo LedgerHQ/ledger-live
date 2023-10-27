@@ -1,5 +1,12 @@
 # @ledgerhq/evm-tools
 
+## 1.0.10-nightly.0
+
+### Patch Changes
+
+- Updated dependencies [[`9b49ff233c`](https://github.com/LedgerHQ/ledger-live/commit/9b49ff233ccfad68c98d15cd648927dee12a8b0b)]:
+  - @ledgerhq/cryptoassets@11.0.2-nightly.0
+
 ## 1.0.9
 
 ### Patch Changes

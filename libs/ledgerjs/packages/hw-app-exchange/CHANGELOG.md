@@ -1,5 +1,16 @@
 # @ledgerhq/hw-app-exchange
 
+## 0.3.0-nightly.2
+
+### Minor Changes
+
+- [#4954](https://github.com/LedgerHQ/ledger-live/pull/4954) [`3b2b2bf847`](https://github.com/LedgerHQ/ledger-live/commit/3b2b2bf847a7e9797b49f48fd31c23368c830a91) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Support new app-exchange version
+
+### Patch Changes
+
+- Updated dependencies [[`7968dfc551`](https://github.com/LedgerHQ/ledger-live/commit/7968dfc551acca00b7fabf00a726758d74be33de)]:
+  - @ledgerhq/hw-transport@6.28.9-nightly.2
+
 ## 0.2.4-nightly.1
 
 ### Patch Changes
