@@ -48,19 +48,6 @@ import { WebviewAPI, WebviewProps } from "./types";
 import { useWebviewState } from "./helpers";
 import { currentRouteNameRef } from "../../analytics/screenRefs";
 
-const tracking = (isNativeSwap?: boolean) =>
-  trackingWrapper(
-    (eventName: string, properties?: Record<string, unknown> | null, mandatory?: boolean | null) =>
-      track(
-        eventName,
-        {
-          ...properties,
-          flowInitiatedFrom: isNativeSwap ? "Native" : "Discover",
-        },
-        mandatory,
-      ),
-  );
-
 function renderLoading() {
   return (
     <View style={styles.center}>
@@ -70,7 +57,25 @@ function renderLoading() {
 }
 export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
   ({ manifest, inputs = {}, onStateChange }, ref) => {
-    const isNativeSwap = useMemo(() => currentRouteNameRef.current === "Swap", []);
+    const tracking = useMemo(
+      () =>
+        trackingWrapper(
+          (
+            eventName: string,
+            properties?: Record<string, unknown> | null,
+            mandatory?: boolean | null,
+          ) =>
+            track(
+              eventName,
+              {
+                ...properties,
+                flowInitiatedFrom: currentRouteNameRef.current === "Swap" ? "Native" : "Discover",
+              },
+              mandatory,
+            ),
+        ),
+      [],
+    );
 
     const { webviewProps, webviewRef } = useWebviewState(
       {
@@ -103,7 +108,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         includeTokens?: boolean;
       }): Promise<RawPlatformAccount> =>
         new Promise((resolve, reject) => {
-          tracking().platformRequestAccountRequested(manifest);
+          tracking.platformRequestAccountRequested(manifest);
 
           /**
            * make sure currencies are strings
@@ -131,7 +136,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
 
           // @TODO replace with correct error
           if (foundAccounts.length <= 0 && !allowAddAccount) {
-            tracking().platformRequestAccountFail(manifest);
+            tracking.platformRequestAccountFail(manifest);
             reject(new Error("No accounts found matching request"));
             return;
           }
@@ -144,12 +149,12 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
                 .filter((c, i, arr) => cryptoCurrencyIds.includes(c) && i === arr.indexOf(c));
 
           const onSuccess = (account: AccountLike, parentAccount?: Account) => {
-            tracking().platformRequestAccountSuccess(manifest);
+            tracking.platformRequestAccountSuccess(manifest);
             resolve(serializePlatformAccount(accountToPlatformAccount(account, parentAccount)));
           };
 
           const onClose = () => {
-            tracking().platformRequestAccountFail(manifest);
+            tracking.platformRequestAccountFail(manifest);
             reject(new Error("User cancelled"));
           };
 
@@ -158,7 +163,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
             const currency = allCurrencies.find(c => c.id === currenciesDiff[0]);
 
             if (!currency) {
-              tracking().platformRequestAccountFail(manifest);
+              tracking.platformRequestAccountFail(manifest);
               // @TODO replace with correct error
               reject(new Error("Currency not found"));
               return;
@@ -186,13 +191,13 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
             });
           }
         }),
-      [manifest, accounts, navigation],
+      [manifest, accounts, navigation, tracking],
     );
 
     const receiveOnAccount = useCallback(
       ({ accountId }: { accountId: string }) =>
         receiveOnAccountLogic(
-          { manifest, accounts, tracking: tracking() },
+          { manifest, accounts, tracking },
           accountId,
           (account, parentAccount, accountAddress) =>
             new Promise((resolve, reject) => {
@@ -200,22 +205,22 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
                 account,
                 parentId: parentAccount ? parentAccount.id : undefined,
                 onSuccess: (_account: AccountLike) => {
-                  tracking().platformReceiveSuccess(manifest);
+                  tracking.platformReceiveSuccess(manifest);
                   resolve(accountAddress);
                 },
                 onClose: () => {
-                  tracking().platformReceiveFail(manifest);
+                  tracking.platformReceiveFail(manifest);
                   reject(new Error("User cancelled"));
                 },
                 onError: (error: Error) => {
-                  tracking().platformReceiveFail(manifest);
+                  tracking.platformReceiveFail(manifest);
                   // @TODO put in correct error text maybe
                   reject(error);
                 },
               });
             }),
         ),
-      [manifest, accounts, navigation],
+      [manifest, accounts, navigation, tracking],
     );
 
     const signTransaction = useCallback(
@@ -236,7 +241,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         };
       }) =>
         signTransactionLogic(
-          { manifest, accounts, tracking: tracking() },
+          { manifest, accounts, tracking },
           accountId,
           transaction,
           (account, parentAccount, { liveTx }) => {
@@ -264,10 +269,10 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
                     transactionSignError: Error;
                   }) => {
                     if (transactionSignError) {
-                      tracking().platformSignTransactionFail(manifest);
+                      tracking.platformSignTransactionFail(manifest);
                       reject(transactionSignError);
                     } else {
-                      tracking().platformSignTransactionSuccess(manifest);
+                      tracking.platformSignTransactionSuccess(manifest);
                       resolve(serializePlatformSignedTransaction(signedOperation));
                       const n =
                         navigation.getParent<
@@ -277,7 +282,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
                     }
                   },
                   onError: (error: Error) => {
-                    tracking().platformSignTransactionFail(manifest);
+                    tracking.platformSignTransactionFail(manifest);
                     reject(error);
                   },
                 },
@@ -285,7 +290,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
             });
           },
         ),
-      [manifest, accounts, navigation],
+      [manifest, accounts, navigation, tracking],
     );
 
     const broadcastTransaction = useCallback(
@@ -297,7 +302,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         signedTransaction: RawPlatformSignedTransaction;
       }) =>
         broadcastTransactionLogic(
-          { manifest, accounts, tracking: tracking(isNativeSwap) },
+          { manifest, accounts, tracking },
           accountId,
           signedTransaction,
           async (account, parentAccount, signedOperation) => {
@@ -310,9 +315,9 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
                   parentAccount,
                   signedOperation,
                 );
-                tracking(isNativeSwap).platformBroadcastSuccess(manifest);
+                tracking.platformBroadcastSuccess(manifest);
               } catch (error) {
-                tracking(isNativeSwap).platformBroadcastFail(manifest);
+                tracking.platformBroadcastFail(manifest);
                 throw error;
               }
             }
@@ -320,12 +325,12 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
             return optimisticOperation.hash;
           },
         ),
-      [manifest, accounts, isNativeSwap],
+      [manifest, accounts, tracking],
     );
 
     const startExchange = useCallback(
       ({ exchangeType }: { exchangeType: number }) => {
-        tracking().platformStartExchangeRequested(manifest);
+        tracking.platformStartExchangeRequested(manifest);
 
         return new Promise((resolve, reject) => {
           navigation.navigate(NavigatorName.PlatformExchange, {
@@ -340,12 +345,12 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
                 device?: Device;
               }) => {
                 if (result.startExchangeError) {
-                  tracking().platformStartExchangeFail(manifest);
+                  tracking.platformStartExchangeFail(manifest);
                   reject(result.startExchangeError);
                 }
 
                 if (result.startExchangeResult) {
-                  tracking().platformStartExchangeSuccess(manifest);
+                  tracking.platformStartExchangeSuccess(manifest);
                   setDevice(result.device);
                   resolve(result.startExchangeResult);
                 }
@@ -359,7 +364,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           });
         });
       },
-      [manifest, navigation],
+      [manifest, navigation, tracking],
     );
 
     const completeExchange = useCallback(
@@ -374,7 +379,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         exchangeType: number;
       }) =>
         completeExchangeLogic(
-          { manifest, accounts, tracking: tracking() },
+          { manifest, accounts, tracking },
           request,
           ({
             provider,
@@ -401,11 +406,11 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
                   device,
                   onResult: (result: { operation?: Operation; error?: Error }) => {
                     if (result.error) {
-                      tracking().platformStartExchangeFail(manifest);
+                      tracking.platformStartExchangeFail(manifest);
                       reject(result.error);
                     }
                     if (result.operation) {
-                      tracking().platformStartExchangeSuccess(manifest);
+                      tracking.platformStartExchangeSuccess(manifest);
                       resolve(result.operation);
                     }
                     setDevice(undefined);
@@ -419,13 +424,13 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
               });
             }),
         ),
-      [accounts, manifest, navigation, device],
+      [accounts, manifest, navigation, device, tracking],
     );
 
     const signMessage = useCallback(
       ({ accountId, message }: { accountId: string; message: string }) =>
         signMessageLogic(
-          { manifest, accounts, tracking: tracking() },
+          { manifest, accounts, tracking },
           accountId,
           message,
           ({ id: accountId }, message) =>
@@ -436,22 +441,22 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
                   message,
                   accountId,
                   onConfirmationHandler: (message: string) => {
-                    tracking().platformSignMessageSuccess(manifest);
+                    tracking.platformSignMessageSuccess(manifest);
                     resolve(message);
                   },
                   onFailHandler: (error: Error) => {
-                    tracking().platformSignMessageFail(manifest);
+                    tracking.platformSignMessageFail(manifest);
                     reject(error);
                   },
                 },
                 onClose: () => {
-                  tracking().platformSignMessageUserRefused(manifest);
+                  tracking.platformSignMessageUserRefused(manifest);
                   reject(new UserRefusedOnDevice());
                 },
               });
             }),
         ),
-      [accounts, manifest, navigation],
+      [accounts, manifest, navigation, tracking],
     );
 
     const handlers = useMemo(
@@ -500,12 +505,12 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     );
 
     const handleError = useCallback(() => {
-      tracking().platformLoadFail(manifest);
-    }, [manifest]);
+      tracking.platformLoadFail(manifest);
+    }, [manifest, tracking]);
 
     useEffect(() => {
-      tracking().platformLoad(manifest);
-    }, [manifest]);
+      tracking.platformLoad(manifest);
+    }, [manifest, tracking]);
 
     const javaScriptCanOpenWindowsAutomatically = manifest.id === DEFAULT_MULTIBUY_APP_ID;
 
