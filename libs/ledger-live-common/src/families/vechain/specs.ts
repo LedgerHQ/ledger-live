@@ -28,7 +28,7 @@ const vechainTest = {
   genericDeviceAction: deviceAction.acceptTransaction,
   onSpeculosDeviceCreated: async ({ transport }) => {
     // enter app vechain
-    await transport.button(SpeculosButton.BOTH);
+    // await transport.button(SpeculosButton.BOTH);
     // enable contract data
     await transport.button(SpeculosButton.RIGHT);
     await transport.button(SpeculosButton.BOTH);
