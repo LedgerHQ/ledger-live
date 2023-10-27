@@ -126,7 +126,7 @@ const AmountField = ({ t, account, onChangeVotes, status, bridgePending, votes }
           subtitle={
             <Trans
               i18nKey="vote.steps.castVotes.totalVotes"
-              values={{ total: pr.power.toLocaleString(locale) }}
+              values={{ total: Math.round(pr.delegated.toNumber()).toLocaleString(locale) }}
             >
               <b></b>
             </Trans>

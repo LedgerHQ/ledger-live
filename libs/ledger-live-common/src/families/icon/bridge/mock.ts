@@ -1,10 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import {
-  NotEnoughBalance,
-  RecipientRequired,
-  InvalidAddress,
-  FeeTooHigh,
-} from "@ledgerhq/errors";
+import { NotEnoughBalance, RecipientRequired, InvalidAddress, FeeTooHigh } from "@ledgerhq/errors";
 import type { Transaction } from "../types";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import {
@@ -36,9 +31,7 @@ const prepareTransaction = async (a, t) => t;
 const estimateMaxSpendable = ({ account, parentAccount, transaction }) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const estimatedFees = transaction?.fees || new BigNumber(5000);
-  return Promise.resolve(
-    BigNumber.max(0, mainAccount.balance.minus(estimatedFees))
-  );
+  return Promise.resolve(BigNumber.max(0, mainAccount.balance.minus(estimatedFees)));
 };
 
 const getTransactionStatus = (account, t) => {
@@ -48,13 +41,9 @@ const getTransactionStatus = (account, t) => {
 
   const estimatedFees = new BigNumber(5000);
 
-  const totalSpent = useAllAmount
-    ? account.balance
-    : new BigNumber(t.amount).plus(estimatedFees);
+  const totalSpent = useAllAmount ? account.balance : new BigNumber(t.amount).plus(estimatedFees);
 
-  const amount = useAllAmount
-    ? account.balance.minus(estimatedFees)
-    : new BigNumber(t.amount);
+  const amount = useAllAmount ? account.balance.minus(estimatedFees) : new BigNumber(t.amount);
 
   if (amount.gt(0) && estimatedFees.times(10).gt(amount)) {
     warnings.amount = new FeeTooHigh();

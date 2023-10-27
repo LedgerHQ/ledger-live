@@ -15,9 +15,7 @@ export const submit = async (txObj, currency) => {
     getSignature: () => txObj.signature,
   };
 
-  const response = await iconService
-    .sendTransaction(signedTransaction)
-    .execute();
+  const response = await iconService.sendTransaction(signedTransaction).execute();
   return {
     hash: response,
   };
@@ -61,11 +59,7 @@ export const getLatestBlock = async (url: string) => {
   return blockHeight;
 };
 
-export const getHistory = async (
-  addr: string,
-  skip: number,
-  url: string
-) => {
+export const getHistory = async (addr: string, skip: number, url: string) => {
   const limit = LIMIT;
   const result = await network({
     method: "GET",
@@ -75,7 +69,6 @@ export const getHistory = async (
   if (!respData) {
     return [];
   }
-
 
   let allTransactions = [...respData];
   if (limit == allTransactions.length) {
