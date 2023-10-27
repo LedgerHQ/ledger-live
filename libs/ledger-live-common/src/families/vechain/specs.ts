@@ -22,6 +22,7 @@ const vechainTest = {
   appQuery: {
     model: DeviceModelId.nanoSP,
     appName: "VeChain",
+    appVersion: "1.1.1"
   },
   allowEmptyAccounts: true,
   testTimeout: 60 * 1000, // 1 minute
