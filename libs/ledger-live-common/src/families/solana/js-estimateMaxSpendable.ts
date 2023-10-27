@@ -24,16 +24,21 @@ const estimateMaxSpendableWithAPI = async (
       const txKind = transaction?.model.kind ?? "transfer";
       const txFee = await estimateTxFee(api, mainAccount, txKind);
 
+      const rentExemptMin = await getAccountMinimumBalanceForRentExemption(
+        api,
+        account.freshAddress,
+      );
+
       switch (txKind) {
         case "stake.createAccount": {
           const stakeAccRentExempt = await getStakeAccountMinimumBalanceForRentExemption(api);
-          return BigNumber.max(account.spendableBalance.minus(txFee).minus(stakeAccRentExempt), 0);
+
+          return BigNumber.max(
+            account.spendableBalance.minus(txFee).minus(rentExemptMin).minus(stakeAccRentExempt),
+            0,
+          );
         }
         default: {
-          const rentExemptMin = await getAccountMinimumBalanceForRentExemption(
-            api,
-            account.freshAddress,
-          );
           return BigNumber.max(account.spendableBalance.minus(txFee).minus(rentExemptMin), 0);
         }
       }
