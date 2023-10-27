@@ -3367,6 +3367,9 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../logs
+      rxjs:
+        specifier: ^7.8.1
+        version: 7.8.1
     devDependencies:
       '@types/jest':
         specifier: ^29.5.0

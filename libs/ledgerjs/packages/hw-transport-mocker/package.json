@@ -26,7 +26,8 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/hw-transport": "workspace:^",
-    "@ledgerhq/logs": "workspace:^"
+    "@ledgerhq/logs": "workspace:^",
+    "rxjs": "^7.8.1"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
