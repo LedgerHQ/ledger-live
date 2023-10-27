@@ -295,6 +295,7 @@
     "src/families/tron/data.mock.ts",
     "src/featureFlags/mock.tsx",
     "src/hw/getBitcoinLikeInfo.ts",
+    "src/hw/actions/uninstallAllApps.ts",
     "src/migrations/accounts-dataset.ts",
     "src/notifications/AnnouncementProvider/helpers.ts",
     "src/rxjs/operators/throwIf.ts",
