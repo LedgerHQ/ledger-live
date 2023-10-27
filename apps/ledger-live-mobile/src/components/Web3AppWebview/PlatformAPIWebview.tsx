@@ -320,7 +320,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
             return optimisticOperation.hash;
           },
         ),
-      [manifest, accounts],
+      [manifest, accounts, isNativeSwap],
     );
 
     const startExchange = useCallback(

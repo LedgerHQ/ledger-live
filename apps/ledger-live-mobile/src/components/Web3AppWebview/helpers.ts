@@ -41,22 +41,23 @@ export function useWebView(
   ref: React.ForwardedRef<WebviewAPI>,
   onStateChange: WebviewProps["onStateChange"],
 ) {
-  const tracking = useMemo(() =>
-    trackingWrapper(
-      (
-        eventName: string,
-        properties?: Record<string, unknown> | null,
-        mandatory?: boolean | null,
-      ) =>
-        track(
-          eventName,
-          {
-            ...properties,
-            flowInitiatedFrom: currentRouteNameRef.current === "Swap" ? "Native" : "Discover",
-          },
-          mandatory,
-        ),
-    ),
+  const tracking = useMemo(
+    () =>
+      trackingWrapper(
+        (
+          eventName: string,
+          properties?: Record<string, unknown> | null,
+          mandatory?: boolean | null,
+        ) =>
+          track(
+            eventName,
+            {
+              ...properties,
+              flowInitiatedFrom: currentRouteNameRef.current === "Swap" ? "Native" : "Discover",
+            },
+            mandatory,
+          ),
+      ),
     [],
   );
 
