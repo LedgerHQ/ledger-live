@@ -11,8 +11,7 @@
     "src/serialization.ts",
     "src/specs.ts",
     "src/transaction.ts",
-    "src/tokens.ts",
-    "src/types.ts"
+    "src/tokens.ts"
   ],
   "ignoreUnimported": []
 }
