@@ -76,18 +76,22 @@ const AccountBalanceSummaryFooter = ({ account, countervalue }: Props) => {
   const spendableBalance = formatCurrencyUnit(unit, account.spendableBalance, formatConfig);
 
   const votingPowerAmount = formatCurrencyUnit(
-    account.unit,
+    { ...account.unit, magnitude: 0 },
     BigNumber(votingPower || 0),
     formatConfig,
   );
 
   const votedAmount = formatCurrencyUnit(
-    account.unit,
+    { ...account.unit, magnitude: 0 },
     BigNumber(totalDelegated || 0),
     formatConfig,
   );
 
-  const unstakeAmount = formatCurrencyUnit(account.unit, BigNumber(unstake || 0), formatConfig);
+  const unstakeAmount = formatCurrencyUnit(
+    { ...account.unit, magnitude: 0 },
+    BigNumber(unstake || 0),
+    formatConfig,
+  );
 
   return (
     <Wrapper>

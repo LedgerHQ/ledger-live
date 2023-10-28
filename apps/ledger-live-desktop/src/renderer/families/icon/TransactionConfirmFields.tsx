@@ -6,7 +6,7 @@ import styled from "styled-components";
 import { Trans } from "react-i18next";
 
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import { getMainAccount,getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { getMainAccount, getAccountUnit } from "@ledgerhq/live-common/account/index";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 
 import TransactionConfirmField from "~/renderer/components/TransactionConfirm/TransactionConfirmField";
@@ -38,7 +38,6 @@ const AddressText = styled(Text).attrs(() => ({
   max-width: 50%;
 `;
 
-
 const IconVotesField = ({ account, parentAccount, transaction, field }: FieldComponentProps) => {
   const mainAccount = getMainAccount(account, parentAccount);
   invariant(transaction.family === "icon", "icon transaction");
@@ -62,7 +61,7 @@ const IconFreesField = ({ account, parentAccount, transaction, field }: FieldCom
       <TransactionConfirmField label={field.label} />
       <FormattedVal
         color={"palette.text.shade80"}
-        unit={feesUnit}
+        unit={{ ...feesUnit, magnitude: 0 }}
         val={fees}
         fontSize={3}
         inline
@@ -78,8 +77,8 @@ const Warning = ({
   transaction,
   recipientWording,
 }: {
-  transaction: Transaction,
-  recipientWording: string,
+  transaction: Transaction;
+  recipientWording: string;
 }) => {
   invariant(transaction.family === "icon", "icon transaction");
 
@@ -110,7 +109,7 @@ const Title = ({ transaction }: { transaction: Transaction }) => {
 
 const fieldComponents = {
   "icon.votes": IconVotesField,
-  "icon.fees": IconFreesField
+  "icon.fees": IconFreesField,
 };
 
 export default {
