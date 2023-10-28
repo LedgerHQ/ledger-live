@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.41.2-nightly.2
+
+### Patch Changes
+
+- [#5211](https://github.com/LedgerHQ/ledger-live/pull/5211) [`b259781b72`](https://github.com/LedgerHQ/ledger-live/commit/b259781b7212aa7758437640e7c48c5d17b0fa79) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Include swap batch in segment identity
+
 ## 6.41.2-nightly.1
 
 ### Patch Changes

@@ -1,5 +1,17 @@
 # @ledgerhq/live-common
 
+## 33.1.0-nightly.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-algorand@0.3.5-nightly.2
+  - @ledgerhq/coin-evm@0.9.1-nightly.2
+  - @ledgerhq/coin-framework@0.8.1-nightly.2
+  - @ledgerhq/coin-polkadot@0.4.5-nightly.2
+  - @ledgerhq/domain-service@1.1.14-nightly.2
+  - @ledgerhq/hw-app-eth@6.34.9-nightly.2
+
 ## 33.1.0-nightly.1
 
 ### Minor Changes

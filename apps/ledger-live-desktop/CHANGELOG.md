@@ -1,5 +1,22 @@
 # ledger-live-desktop
 
+## 2.70.2-nightly.2
+
+### Patch Changes
+
+- [#4992](https://github.com/LedgerHQ/ledger-live/pull/4992) [`bf9145040f`](https://github.com/LedgerHQ/ledger-live/commit/bf9145040ff9217b21044cf4eaa20d2c58eeac59) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - fix an infinite loop on select stax with lnx plugged during onboarding
+
+- [#5231](https://github.com/LedgerHQ/ledger-live/pull/5231) [`d6cebdc99b`](https://github.com/LedgerHQ/ledger-live/commit/d6cebdc99b2ecb270c7430454e85189c25f1a2bc) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Add check script
+
+- [#5211](https://github.com/LedgerHQ/ledger-live/pull/5211) [`b259781b72`](https://github.com/LedgerHQ/ledger-live/commit/b259781b7212aa7758437640e7c48c5d17b0fa79) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Include swap batch in segment identity
+
+- Updated dependencies [[`b259781b72`](https://github.com/LedgerHQ/ledger-live/commit/b259781b7212aa7758437640e7c48c5d17b0fa79)]:
+  - @ledgerhq/types-live@6.41.2-nightly.2
+  - @ledgerhq/coin-evm@0.9.1-nightly.2
+  - @ledgerhq/coin-framework@0.8.1-nightly.2
+  - @ledgerhq/domain-service@1.1.14-nightly.2
+  - @ledgerhq/live-common@33.1.0-nightly.2
+
 ## 2.70.2-nightly.1
 
 ### Patch Changes
