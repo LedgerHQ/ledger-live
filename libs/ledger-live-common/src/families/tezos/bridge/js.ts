@@ -1,9 +1,9 @@
 // @flow
 import { BigNumber } from "bignumber.js";
-import { TezosToolkit, DEFAULT_FEE, DEFAULT_STORAGE_LIMIT } from "@taquito/taquito";
+import { TezosToolkit, DEFAULT_FEE, DEFAULT_STORAGE_LIMIT, Estimate } from "@taquito/taquito";
 import { DerivationType } from "@taquito/ledger-signer";
 import { compressPublicKey } from "@taquito/ledger-signer/dist/lib/utils";
-import { b58cencode, prefix, Prefix } from "@taquito/utils";
+import { b58cencode, prefix, Prefix, validateAddress, ValidationResult } from "@taquito/utils";
 import {
   AmountRequired,
   NotEnoughBalance,
@@ -15,7 +15,6 @@ import {
   RecipientRequired,
   InvalidAddress,
 } from "@ledgerhq/errors";
-import { validateAddress, ValidationResult } from "@taquito/utils";
 import type { CurrencyBridge, AccountBridge, Account, AccountLike } from "@ledgerhq/types-live";
 import { makeSync, makeScanAccounts, makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
 import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
@@ -190,6 +189,7 @@ const prepareTransaction = async (
     if (!transaction.recipient) {
       return Promise.resolve(transaction);
     }
+
     const { recipientError } = await validateRecipient(account.currency, transaction.recipient);
     if (recipientError) {
       return Promise.resolve(transaction);
@@ -202,6 +202,7 @@ const prepareTransaction = async (
   );
 
   const tezos = new TezosToolkit(getEnv("API_TEZOS_NODE"));
+
   tezos.setProvider({
     signer: {
       publicKeyHash: async () => account.freshAddress,
@@ -211,7 +212,7 @@ const prepareTransaction = async (
     },
   });
 
-  const t: Transaction = { ...transaction, taquitoError: null };
+  const tx: Transaction = { ...transaction, taquitoError: null };
 
   let amount = transaction.amount;
   if (transaction.useAllAmount) {
@@ -219,10 +220,10 @@ const prepareTransaction = async (
   }
 
   try {
-    let out;
+    let estimate: Estimate;
     switch (transaction.mode) {
       case "send":
-        out = await tezos.estimate.transfer({
+        estimate = await tezos.estimate.transfer({
           mutez: true,
           to: transaction.recipient,
           amount: amount.toNumber(),
@@ -230,21 +231,22 @@ const prepareTransaction = async (
         });
         break;
       case "delegate":
-        out = await tezos.estimate.setDelegate({
+        estimate = await tezos.estimate.setDelegate({
           source: account.freshAddress,
           delegate: transaction.recipient,
         });
         break;
       case "undelegate":
-        out = await tezos.estimate.setDelegate({
+        estimate = await tezos.estimate.setDelegate({
           source: account.freshAddress,
         });
         break;
       default:
         throw new Error("unsupported mode=" + transaction.mode);
     }
-    if (t.useAllAmount) {
-      const totalFees = out.suggestedFeeMutez + out.burnFeeMutez;
+
+    if (tx.useAllAmount) {
+      const totalFees = estimate.suggestedFeeMutez + estimate.burnFeeMutez;
       const maxAmount = account.balance
         .minus(totalFees + (tezosResources.revealed ? 0 : DEFAULT_FEE.REVEAL))
         .toNumber();
@@ -256,30 +258,30 @@ const prepareTransaction = async (
       const increasedFee = (gasBuffer: number, opSize: number) => {
         return gasBuffer * MINIMAL_FEE_PER_GAS_MUTEZ + opSize;
       };
-      const incr = increasedFee(gasBuffer, Number(out.opSize));
-      t.fees = new BigNumber(out.suggestedFeeMutez + incr);
-      t.gasLimit = new BigNumber(out.gasLimit + gasBuffer);
-      t.amount = maxAmount - incr > 0 ? new BigNumber(maxAmount - incr) : new BigNumber(0);
+      const incr = increasedFee(gasBuffer, Number(estimate.opSize));
+      tx.fees = new BigNumber(estimate.suggestedFeeMutez + incr);
+      tx.gasLimit = new BigNumber(estimate.gasLimit + gasBuffer);
+      tx.amount = maxAmount - incr > 0 ? new BigNumber(maxAmount - incr) : new BigNumber(0);
     } else {
-      t.fees = new BigNumber(out.suggestedFeeMutez);
-      t.gasLimit = new BigNumber(out.gasLimit);
-      t.storageLimit = new BigNumber(out.storageLimit);
+      tx.fees = new BigNumber(estimate.suggestedFeeMutez);
+      tx.gasLimit = new BigNumber(estimate.gasLimit);
+      tx.storageLimit = new BigNumber(estimate.storageLimit);
     }
 
-    t.storageLimit = new BigNumber(out.storageLimit);
-    t.estimatedFees = t.fees;
+    tx.storageLimit = new BigNumber(estimate.storageLimit);
+    tx.estimatedFees = tx.fees;
     if (!tezosResources.revealed) {
-      t.estimatedFees = t.estimatedFees.plus(DEFAULT_FEE.REVEAL);
+      tx.estimatedFees = tx.estimatedFees.plus(DEFAULT_FEE.REVEAL);
     }
   } catch (e) {
     if (typeof e !== "object" || !e) throw e;
     if ("id" in e) {
-      t.taquitoError = (e as { id: string }).id;
-      log("taquito-error", "taquito got error " + t.taquitoError);
+      tx.taquitoError = (e as { id: string }).id;
+      log("taquito-error", "taquito got error " + tx.taquitoError);
     } else if ("status" in e) {
       // in case of http 400, log & ignore (more case to handle)
       log("taquito-network-error", String((e as unknown as { message: string }).message || ""), {
-        transaction: t,
+        transaction: tx,
       });
       throw e;
     } else {
@@ -289,17 +291,17 @@ const prepareTransaction = async (
 
   // nothing changed
   if (
-    bnEq(t.estimatedFees, transaction.estimatedFees) &&
-    bnEq(t.fees, transaction.fees) &&
-    bnEq(t.gasLimit, transaction.gasLimit) &&
-    bnEq(t.storageLimit, transaction.storageLimit) &&
-    bnEq(t.amount, transaction.amount) &&
-    t.taquitoError === transaction.taquitoError
+    bnEq(tx.estimatedFees, transaction.estimatedFees) &&
+    bnEq(tx.fees, transaction.fees) &&
+    bnEq(tx.gasLimit, transaction.gasLimit) &&
+    bnEq(tx.storageLimit, transaction.storageLimit) &&
+    bnEq(tx.amount, transaction.amount) &&
+    tx.taquitoError === transaction.taquitoError
   ) {
     return transaction;
   }
 
-  return t;
+  return tx;
 };
 
 function bnEq(a: BigNumber | null | undefined, b: BigNumber | null | undefined): boolean {

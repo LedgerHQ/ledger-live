@@ -37,7 +37,10 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props
       />
     );
   };
-  const onSearch = useCallback(evt => setSearch(evt.target.value), [setSearch]);
+  const onSearch = useCallback(
+    (evt: React.ChangeEvent<HTMLInputElement>) => setSearch(evt.target.value),
+    [setSearch],
+  );
   if (!chosenVoteAccAddr && validators[0].validatorAddress === FIGMENT_NEAR_VALIDATOR_ADDRESS) {
     onChangeValidator({
       address: FIGMENT_NEAR_VALIDATOR_ADDRESS,

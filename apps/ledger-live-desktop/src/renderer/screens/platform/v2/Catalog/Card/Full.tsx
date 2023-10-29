@@ -47,7 +47,7 @@ export function FullCard(props: PropsRaw) {
       </Flex>
 
       <Text fontSize={13} color="opacityDefault.c70">
-        {manifest.content.description[language] ?? manifest.content.description.en}
+        {manifest.content.shortDescription[language] ?? manifest.content.shortDescription.en}
       </Text>
     </Container>
   );

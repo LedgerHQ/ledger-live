@@ -7,7 +7,7 @@ import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import { Observable, firstValueFrom, from } from "rxjs";
 import secp256k1 from "secp256k1";
-import { getCurrencyExchangeConfig } from "../";
+import { convertToAppExchangePartnerKey, getCurrencyExchangeConfig } from "../";
 import { getAccountCurrency, getAccountUnit, getMainAccount } from "../../account";
 import { getAccountBridge } from "../../bridge";
 import { getEnv } from "@ledgerhq/live-env";
@@ -69,6 +69,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         const data = {
           provider,
           amountFrom: apiAmount.toString(),
+          amountFromInSmallestDenomination: amount.toNumber(),
           from: refundCurrency.id,
           to: payoutCurrency.id,
           address: payoutAccount.freshAddress,
@@ -149,7 +150,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         }
 
         // Prepare swap app to receive the tx to forward.
-        await swap.setPartnerKey(swapProviderConfig.nameAndPubkey);
+        await swap.setPartnerKey(convertToAppExchangePartnerKey(swapProviderConfig));
         if (unsubscribed) return;
 
         await swap.checkPartner(swapProviderConfig.signature);

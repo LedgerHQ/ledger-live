@@ -35,7 +35,7 @@ import {
   osThemeSelector,
   themeSelector,
 } from "./reducers/settings";
-import { exportSelector as accountsExportSelector } from "./reducers/accounts";
+import { accountsSelector, exportSelector as accountsExportSelector } from "./reducers/accounts";
 import { exportSelector as bleSelector } from "./reducers/ble";
 import LocaleProvider, { i18n } from "./context/Locale";
 import RebootProvider from "./context/Reboot";
@@ -84,6 +84,8 @@ import {
   useFetchCurrencyAll,
   useFetchCurrencyFrom,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccountsWithFundsListener";
+import { updateIdentify } from "./analytics";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -103,12 +105,15 @@ const styles = StyleSheet.create({
 });
 
 function App() {
+  const accounts = useSelector(accountsSelector);
+
+  useAccountsWithFundsListener(accounts, updateIdentify);
   useAppStateListener();
   useFetchCurrencyAll();
   useFetchCurrencyFrom();
   useListenToHidDevices();
 
-  const getSettingsChanged = useCallback((a, b) => a.settings !== b.settings, []);
+  const getSettingsChanged = useCallback((a: State, b: State) => a.settings !== b.settings, []);
   const getAccountsChanged = useCallback(
     (
       oldState: State,
@@ -135,7 +140,7 @@ function App() {
   );
 
   const getPostOnboardingStateChanged = useCallback(
-    (a, b) => !isEqual(a.postOnboarding, b.postOnboarding),
+    (a: State, b: State) => !isEqual(a.postOnboarding, b.postOnboarding),
     [],
   );
 

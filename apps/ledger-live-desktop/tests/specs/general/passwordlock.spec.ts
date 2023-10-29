@@ -4,7 +4,7 @@ import { Layout } from "../../models/Layout";
 import { Modal } from "../../models/Modal";
 import { PasswordlockModal } from "../../models/PasswordlockModal";
 import { LockscreenPage } from "../../models/LockscreenPage";
-import * as fs from "fs";
+import fsPromises from "fs/promises";
 
 test.use({ userdata: "skip-onboarding" });
 
@@ -14,8 +14,8 @@ test("Enable password lock", async ({ page, userdataFile }) => {
   const passwordlockModal = new PasswordlockModal(page);
   const lockscreenPage = new LockscreenPage(page);
 
-  const getUserdata = () => {
-    const jsonFile = fs.readFileSync(userdataFile, "utf-8");
+  const getUserdata = async () => {
+    const jsonFile = await fsPromises.readFile(userdataFile, "utf-8");
     return JSON.parse(jsonFile);
   };
 
@@ -33,7 +33,7 @@ test("Enable password lock", async ({ page, userdataFile }) => {
 
   await test.step("User data should be encrypted", async () => {
     // NOTE: this test might fail if other tests are running at the same time.
-    expect.poll(() => typeof getUserdata().data.accounts).toBe("string");
+    expect.poll(async () => typeof (await getUserdata()).data.accounts).toBe("string");
   });
 
   await test.step("Open change password modal", async () => {
@@ -90,6 +90,6 @@ test("Enable password lock", async ({ page, userdataFile }) => {
   });
 
   await test.step("User data shouldn't be encrypted", async () => {
-    await expect.poll(() => typeof getUserdata().data.accounts).toBe("object");
+    await expect.poll(async () => typeof (await getUserdata()).data.accounts).toBe("object");
   });
 });

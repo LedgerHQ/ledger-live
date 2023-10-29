@@ -76,7 +76,7 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
   }, [onStart, validDevice]);
 
   const handleResult = useCallback(
-    lastSeenCustomImage => {
+    (lastSeenCustomImage: { imageSize: number; imageHash: string }) => {
       if (onResult && validDevice) {
         dispatch(setLastSeenCustomImage(lastSeenCustomImage));
         onResult();

@@ -4,10 +4,10 @@ import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import flatMap from "lodash/flatMap";
 import type { Account, AccountLike, AccountLikeArray, SubAccount } from "@ledgerhq/types-live";
-import type { Transaction } from "./types";
-import type { Baker } from "./bakers";
+import type { Transaction, Baker } from "./types";
 import { listBakers, fetchAllBakers } from "./bakers";
 import defaultList from "./bakers.whitelist-default";
+
 const options = [
   {
     name: "mode",

@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { ReactNode, useCallback } from "react";
 import styled from "styled-components/native";
 import RnRangeSlider from "rn-range-slider";
 import Text from "../../Text";
@@ -35,7 +35,7 @@ const Slider = ({
 }: SliderProps) => {
   const renderRail = useCallback(() => <Rail />, []);
   const renderRailSelected = useCallback(() => <RailSelected />, []);
-  const renderLabel = useCallback((value) => <Label>{value}</Label>, []);
+  const renderLabel = useCallback((value: ReactNode) => <Label>{value}</Label>, []);
   const renderNotch = useCallback(() => <Notch />, []);
 
   return (

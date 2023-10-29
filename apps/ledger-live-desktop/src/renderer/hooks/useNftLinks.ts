@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { TFunction } from "i18next";
 import { useTranslation } from "react-i18next";
 import { Account, ProtoNFT, NFTMetadata, NFTMedias } from "@ledgerhq/types-live";
@@ -14,6 +14,8 @@ import { setDrawer } from "../drawers/Provider";
 import CustomImage from "~/renderer/screens/customImage";
 import NFTViewerDrawer from "~/renderer/drawers/NFTViewerDrawer";
 import { ContextMenuItemType } from "../components/ContextMenu/ContextMenuWrapper";
+import { devicesModelListSelector } from "../reducers/settings";
+import { DeviceModelId } from "@ledgerhq/devices";
 
 function safeList(items: (ContextMenuItemType | "" | undefined)[]): ContextMenuItemType[] {
   return items.filter(Boolean) as ContextMenuItemType[];
@@ -166,21 +168,25 @@ export default (
   }, [account, customImageUri, isInsideDrawer, nft.id, t]);
 
   const customImageEnabled = useFeature("customImage")?.enabled;
+  const devicesModelList = useSelector(devicesModelListSelector);
   const links = useMemo(() => {
     const metadataLinks = linksPerCurrency[account.currency.id]?.(t, metadata?.links) || [];
     return [
       ...metadataLinks,
-      ...(customImageEnabled && customImageUri ? [customImage] : []),
+      ...(devicesModelList?.includes(DeviceModelId.stax) && customImageEnabled && customImageUri
+        ? [customImage]
+        : []),
       hideCollection,
     ];
   }, [
     account.currency.id,
-    hideCollection,
-    metadata?.links,
-    customImageUri,
-    customImageEnabled,
-    customImage,
     t,
+    metadata?.links,
+    devicesModelList,
+    customImageEnabled,
+    customImageUri,
+    customImage,
+    hideCollection,
   ]);
   return links;
 };

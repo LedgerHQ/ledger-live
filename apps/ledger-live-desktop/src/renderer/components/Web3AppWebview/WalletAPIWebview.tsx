@@ -1,6 +1,5 @@
 /* eslint-disable react/prop-types */
 
-import * as remote from "@electron/remote";
 import React, { forwardRef, RefObject, useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
@@ -200,7 +199,10 @@ const useGetUserId = () => {
   return userId;
 };
 
-function useWebView({ manifest }: Pick<Props, "manifest">, webviewRef: RefObject<WebviewTag>) {
+function useWebView(
+  { manifest, customHandlers }: Pick<WebviewProps, "manifest" | "customHandlers">,
+  webviewRef: RefObject<WebviewTag>,
+) {
   const accounts = useSelector(flattenAccountsSelector);
 
   const uiHook = useUiHook(manifest);
@@ -234,10 +236,11 @@ function useWebView({ manifest }: Pick<Props, "manifest">, webviewRef: RefObject
     config,
     webviewHook,
     uiHook,
+    customHandlers,
   });
 
   const handleMessage = useCallback(
-    event => {
+    (event: Electron.IpcMessageEvent) => {
       if (event.channel === "webviewToParent") {
         onMessage(event.args[0]);
       }
@@ -293,13 +296,8 @@ function useWebView({ manifest }: Pick<Props, "manifest">, webviewRef: RefObject
   return { webviewRef, widgetLoaded, onReload, webviewStyle };
 }
 
-interface Props {
-  manifest: AppManifest;
-  inputs?: Record<string, string | undefined>;
-}
-
 export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
-  ({ manifest, inputs = {}, onStateChange }, ref) => {
+  ({ manifest, inputs = {}, customHandlers, onStateChange }, ref) => {
     const { webviewState, webviewRef, webviewProps, handleRefresh } = useWebviewState(
       { manifest, inputs },
       ref,
@@ -313,6 +311,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     const { webviewStyle, widgetLoaded } = useWebView(
       {
         manifest,
+        customHandlers,
       },
       webviewRef,
     );
@@ -332,7 +331,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
            */
           style={webviewStyle}
           // eslint-disable-next-line react/no-unknown-property
-          preload={`file://${remote.app.dirname}/webviewPreloader.bundle.js`}
+          preload={`file://${window.api.appDirname}/webviewPreloader.bundle.js`}
           /**
            * There seems to be an issue between Electron webview and react
            * Hence, the normal `allowpopups` prop does not work and we need to

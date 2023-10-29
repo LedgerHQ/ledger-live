@@ -34,7 +34,7 @@ function BluetoothEmpty({ onPairNewDevice, hideAnimation }: Props) {
           </Text>
         </Box>
       </Flex>
-      <Button mb={8} event="PairDevice" type="main" onPress={onPairNewDevice} testID="pair-device">
+      <Button mb={5} event="PairDevice" type="main" onPress={onPairNewDevice} testID="pair-device">
         <Trans i18nKey="SelectDevice.deviceNotFoundPairNewDevice" />
       </Button>
     </>
@@ -44,6 +44,7 @@ function BluetoothEmpty({ onPairNewDevice, hideAnimation }: Props) {
 const styles = StyleSheet.create({
   imageContainer: {
     minHeight: 200,
+    maxWidth: 550,
     position: "relative",
     overflow: "visible",
   },

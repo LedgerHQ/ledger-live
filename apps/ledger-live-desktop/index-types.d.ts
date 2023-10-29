@@ -39,7 +39,10 @@ interface Window {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__: any;
 
-  api?: {
+  api: {
+    pathUserdata: string;
+    pathHome: string;
+    appDirname: string;
     appLoaded: () => void;
     reloadRenderer: () => void;
     openWindow: (id: number) => void;

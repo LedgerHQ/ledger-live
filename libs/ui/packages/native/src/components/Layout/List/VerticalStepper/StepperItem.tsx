@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Pressable } from "react-native";
+import { LayoutChangeEvent, Pressable } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import styled from "styled-components/native";
 import { CheckAloneMedium } from "@ledgerhq/icons-ui/nativeLegacy";
@@ -43,7 +43,7 @@ export default function StepperItem({
    */
   const sharedHeight = useSharedValue<number | null>(null);
   const handleLayout = useCallback(
-    ({ nativeEvent: { layout } }) => {
+    ({ nativeEvent: { layout } }: LayoutChangeEvent) => {
       sharedHeight.value = withTiming(layout.height, { duration: 300 });
     },
     [sharedHeight],

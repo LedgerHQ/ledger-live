@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
 import { from } from "rxjs";
 import type { ScanCommonOpts } from "../scan";
-import installLanguage from "@ledgerhq/live-common/lib/hw/installLanguage";
-import uninstallLanguage from "@ledgerhq/live-common/lib/hw/uninstallLanguage";
+import installLanguage from "@ledgerhq/live-common/hw/installLanguage";
+import uninstallLanguage from "@ledgerhq/live-common/hw/uninstallLanguage";
 import type { Language } from "@ledgerhq/types-live";
 import { deviceOpt } from "../scan";
 

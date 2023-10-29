@@ -10,7 +10,7 @@ import React, {
 import { useHistory } from "react-router-dom";
 import { Box, Flex, Text, VerticalTimeline } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelInfo, SeedPhraseType } from "@ledgerhq/types-live";
@@ -19,7 +19,7 @@ import {
   fromSeedPhraseTypeToNbOfSeedWords,
 } from "@ledgerhq/live-common/hw/extractOnboardingState";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { usePostOnboardingPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
+import { useCustomPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
 import { DesyncOverlay } from "./DesyncOverlay";
 import SeedStep, { SeedPathStatus } from "./SeedStep";
@@ -34,6 +34,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import LockedDeviceDrawer, { Props as LockedDeviceDrawerProps } from "./LockedDeviceDrawer";
 import { LockedDeviceError } from "@ledgerhq/errors";
+import { saveSettings } from "~/renderer/actions/settings";
 
 const READY_REDIRECT_DELAY_MS = 2500;
 const POLLING_PERIOD_MS = 1000;
@@ -101,6 +102,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
 }) => {
   const { t } = useTranslation();
   const history = useHistory<RecoverState>();
+  const dispatch = useDispatch();
   const [stepKey, setStepKey] = useState<StepKey>(StepKey.Paired);
   const [shouldRestoreApps, setShouldRestoreApps] = useState<boolean>(false);
   const deviceToRestore = useSelector(lastSeenDeviceSelector) as DeviceModelInfo | null | undefined;
@@ -108,7 +110,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
   const [seedPathStatus, setSeedPathStatus] = useState<SeedPathStatus>("choice_new_or_restore");
 
   const servicesConfig = useFeature("protectServicesDesktop");
-  const postOnboardingPath = usePostOnboardingPath(servicesConfig);
+  const recoverRestoreStaxPath = useCustomPath(servicesConfig, "restore", "lld-stax-onboarding");
 
   const productName = device
     ? getDeviceModel(device.modelId).productName || device.modelId
@@ -133,13 +135,17 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
               category={`Set up ${productName}: Step 1 device paired`}
               flow={analyticsFlowName}
             />
+            {/* @ts-expect-error StepText weird children prop issue */}
             <StepText mb={6}>
-              {t("syncOnboarding.manual.pairedContent.description", {
-                deviceName: productName,
-              })}
+              {
+                t("syncOnboarding.manual.pairedContent.description", {
+                  deviceName: productName,
+                }) as string
+              }
             </StepText>
+            {/* @ts-expect-error StepText weird children prop issue */}
             <StepText>
-              {t("syncOnboarding.manual.pairedContent.text", {
+              {t("syncOnboarding.manual.pairedContent.description", {
                 deviceName: productName,
               })}
             </StepText>
@@ -157,11 +163,11 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
         renderBody: () => (
           <Flex flexDirection="column">
             <TrackPage category={`Set up ${productName}: Step 2 PIN`} flow={analyticsFlowName} />
+            {/* @ts-expect-error StepText weird children prop issue */}
             <StepText mb={6}>{t("syncOnboarding.manual.pinContent.description")}</StepText>
+            {/* @ts-expect-error StepText weird children prop issue */}
             <StepText>
-              {t("syncOnboarding.manual.pinContent.text", {
-                deviceName: productName,
-              })}
+              {t("syncOnboarding.manual.pinContent.description", { productName })}
             </StepText>
             <ContinueOnDeviceWithAnim
               deviceModelId={device.modelId}
@@ -187,7 +193,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
       {
         key: StepKey.Applications,
         status: "inactive",
-        title: t("syncOnboarding.manual.installApplications.title"),
+        title: t("syncOnboarding.manual.installApplications.title", { productName }),
         renderBody: () => (
           <OnboardingAppInstallStep
             device={device}
@@ -462,15 +468,20 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
   }, [device, allowedError, handleDesyncTimerRunsOut, desyncTimeout]);
 
   useEffect(() => {
-    if (seedPathStatus === "recover_seed" && postOnboardingPath) {
-      const [pathname, search] = postOnboardingPath.split("?");
+    if (seedPathStatus === "recover_seed" && recoverRestoreStaxPath) {
+      const [pathname, search] = recoverRestoreStaxPath.split("?");
+      dispatch(
+        saveSettings({
+          hasCompletedOnboarding: true,
+        }),
+      );
       history.push({
         pathname,
         search: search ? `?${search}` : undefined,
         state: { fromOnboarding: true },
       });
     }
-  }, [history, postOnboardingPath, seedPathStatus]);
+  }, [dispatch, history, recoverRestoreStaxPath, seedPathStatus]);
 
   return (
     <Flex width="100%" height="100%" flexDirection="column" justifyContent="flex-start">

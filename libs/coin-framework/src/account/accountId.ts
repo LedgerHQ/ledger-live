@@ -11,6 +11,26 @@ function ensureNoColon(value: string, ctx: string): string {
   return value;
 }
 
+export function safeEncodeTokenId(tokenId: string): string {
+  if (!tokenId) return "";
+
+  const URIEncoded = encodeURIComponent(tokenId);
+  const dashUnderscoreSafe = URIEncoded.replace(/-/g, "~!dash!~").replace(/_/g, "~!underscore!~");
+
+  return dashUnderscoreSafe;
+}
+
+export function safeDecodeTokenId(encodedTokenId: string): string {
+  if (!encodedTokenId) return "";
+
+  const dashUnderscoreUnsafe = encodedTokenId
+    .replace(/~!dash!~/g, "-")
+    .replace(/~!underscore!~/g, "_");
+  const decodedURIComponent = decodeURIComponent(dashUnderscoreUnsafe);
+
+  return decodedURIComponent;
+}
+
 export function encodeAccountId({
   type,
   version,
@@ -27,14 +47,14 @@ export function encodeAccountId({
   )}`;
 }
 export function encodeTokenAccountId(accountId: string, token: TokenCurrency): string {
-  return accountId + "+" + encodeURIComponent(token.id);
+  return accountId + "+" + safeEncodeTokenId(token.id);
 }
 export function decodeTokenAccountId(id: string): {
   accountId: string;
   token: TokenCurrency | null | undefined;
 } {
   const [accountId, tokenId] = id.split("+");
-  const decodedTokenId = decodeURIComponent(tokenId);
+  const decodedTokenId = safeDecodeTokenId(tokenId);
   let token = findTokenById(decodedTokenId);
   if (!token) {
     const { currencyId } = decodeAccountId(accountId);

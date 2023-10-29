@@ -4,21 +4,18 @@
  *
  * @format
  */
-/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable no-console */
 
 const extraConfig = require("metro-extra-config");
-
+const { getDefaultConfig, mergeConfig } = require("@react-native/metro-config");
 // Dependencies that are forcefully resolved from the LLM folder.
-const forcedDependencies = [
-  "react-redux",
-  "react-native",
-  "react-native-svg",
-  "styled-components",
-];
+const forcedDependencies = ["react-redux", "react-native", "react-native-svg", "styled-components"];
 
 const specificConfig = {
   resolver: {
+    unstable_enableSymlinks: true,
+    unstable_enablePackageExports: true,
     extraNodeModules: {
       ...require("node-libs-react-native"),
       fs: require.resolve("react-native-level-fs"),
@@ -39,10 +36,7 @@ const extraConfigOptions = {
 
     // "package.js" contains "module.meta" calls that will not work with the react-native env.
     // To solve this replace with "packageInfo.cjs" which is safe.
-    if (
-      originModulePath.includes("@polkadot") &&
-      moduleName.endsWith("packageInfo.js")
-    ) {
+    if (originModulePath.includes("@polkadot") && moduleName.endsWith("packageInfo.js")) {
       return moduleName.replace("packageInfo.js", "packageInfo.cjs");
     }
 
@@ -51,4 +45,7 @@ const extraConfigOptions = {
   },
 };
 
-module.exports = extraConfig(extraConfigOptions, specificConfig);
+module.exports = module.exports = mergeConfig(
+  getDefaultConfig(__dirname),
+  extraConfig(extraConfigOptions, specificConfig),
+);

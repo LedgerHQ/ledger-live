@@ -34,7 +34,8 @@ const OperationDetailsExtra = ({ operation, type, account }: Props) => {
   const optimisticOperation = useRoute<Navigation["route"]>().params?.operation ?? null;
 
   const redirectAddressCreator = useCallback(
-    address => () => {
+    (address?: string) => () => {
+      if (!address) return;
       const url = getAddressExplorer(getDefaultExplorerView(account.currency), address);
       if (url) Linking.openURL(url);
     },

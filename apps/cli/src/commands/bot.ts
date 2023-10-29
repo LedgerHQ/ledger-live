@@ -30,6 +30,12 @@ export default {
       throw new Error("Please define a SEED env variable to run this bot.");
     }
 
+    if (arg.currency) {
+      // Remapping to match arg format in libs/ledger-live-common/src/bot/cli.ts
+      arg.filter = { currencies: [arg.currency] };
+      delete arg.currency;
+    }
+
     return from(bot(arg));
   },
 };

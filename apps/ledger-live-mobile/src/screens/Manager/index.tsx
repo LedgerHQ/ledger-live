@@ -154,7 +154,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
       ) : null}
 
       {newDeviceSelectionFeatureFlag?.enabled ? (
-        <Flex flex={1} px={16} pb={insets.bottom + TAB_BAR_SAFE_HEIGHT}>
+        <Flex flex={1} px={16}>
           <SelectDevice2
             onSelect={onSelectDevice}
             stopBleScanning={!!device}
@@ -162,11 +162,12 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
             requestToSetHeaderOptions={requestToSetHeaderOptions}
             withMyLedgerTracking
             hasPostOnboardingEntryPointCard
+            paddingBottom={insets.bottom + TAB_BAR_SAFE_HEIGHT}
           />
         </Flex>
       ) : (
         <NavigationScrollView
-          style={{ paddingBottom: insets.bottom + TAB_BAR_SAFE_HEIGHT }}
+          style={{ marginBottom: insets.bottom + TAB_BAR_SAFE_HEIGHT }}
           contentContainerStyle={styles.scrollContainer}
         >
           <SelectDevice

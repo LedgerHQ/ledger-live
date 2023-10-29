@@ -36,7 +36,7 @@ import { useAppDeviceAction } from "../../hooks/deviceActions";
 export const connectDeviceHeaderOptions = (
   onHeaderBackButtonPress: () => void,
 ): ReactNavigationHeaderOptions => ({
-  headerRight: () => <NavigationHeaderCloseButton />,
+  headerRight: () => <NavigationHeaderCloseButton onPress={onHeaderBackButtonPress} />,
   headerLeft: () => <NavigationHeaderBackButton onPress={onHeaderBackButtonPress} />,
 });
 
@@ -65,6 +65,7 @@ export default function ConnectDevice({
   );
 
   const onResult = useCallback(
+    // @ts-expect-error should be AppResult but navigation.navigate does not agree
     payload => {
       if (!account) {
         return null;

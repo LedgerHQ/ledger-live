@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from "react";
+import React, { useCallback } from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { withTranslation, Trans } from "react-i18next";
@@ -15,12 +15,11 @@ import lightEmptyStateAccount from "~/renderer/images/light-empty-state-account.
 import darkEmptyStateAccount from "~/renderer/images/dark-empty-state-account.svg";
 import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
-import { getAllSupportedCryptoCurrencyIds } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 import styled from "styled-components";
 import { useHistory, withRouter } from "react-router-dom";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
-import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
+import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 const mapDispatchToProps = {
   openModal,
 };
@@ -36,18 +35,11 @@ type Props = OwnProps & {
 function EmptyStateAccount({ t, account, parentAccount, openModal }: Props) {
   const mainAccount = getMainAccount(account, parentAccount);
   const currency = getAccountCurrency(account);
-  const rampCatalog = useRampCatalog();
+  const { isCurrencyAvailable } = useRampCatalog();
   const history = useHistory();
 
-  // eslint-disable-next-line no-unused-vars
-  const availableOnBuy = useMemo(() => {
-    if (!rampCatalog.value) {
-      return false;
-    }
-    const allBuyableCryptoCurrencyIds = getAllSupportedCryptoCurrencyIds(rampCatalog.value.onRamp);
+  const availableOnBuy = !!currency && isCurrencyAvailable(currency.id, "onRamp");
 
-    return allBuyableCryptoCurrencyIds.includes(currency.id);
-  }, [rampCatalog.value, currency.id]);
   const hasTokens =
     mainAccount.subAccounts &&
     mainAccount.subAccounts.length &&

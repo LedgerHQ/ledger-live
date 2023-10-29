@@ -20,7 +20,7 @@ import {
   loadCountervalues,
 } from "@ledgerhq/live-common/countervalues/logic";
 import { Account, TransactionCommon } from "@ledgerhq/types-live";
-import { AppSpec } from "@ledgerhq/live-common/lib/bot/types";
+import { AppSpec } from "@ledgerhq/live-common/bot/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 const CONCURRENT = parseInt(process.env.CONCURRENCY || "2", 10);

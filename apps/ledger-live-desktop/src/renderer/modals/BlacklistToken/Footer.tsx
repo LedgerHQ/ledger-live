@@ -9,7 +9,7 @@ import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 const Footer = ({ onClose, token }: { onClose?: () => void; token: TokenCurrency }) => {
   const dispatch = useDispatch();
   const confirmBlacklistToken = useCallback(
-    tokenId => {
+    (tokenId: string) => {
       dispatch(blacklistToken(tokenId));
     },
     [dispatch],

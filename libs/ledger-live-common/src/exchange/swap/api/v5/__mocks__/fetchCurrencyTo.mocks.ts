@@ -3,6 +3,14 @@ import { ResponseData } from "../fetchCurrencyTo";
 export const fetchCurrencyToMock: ResponseData = {
   currencyGroups: [
     {
+      network: "bitcoin",
+      supportedCurrencies: ["bitcoin"],
+    },
+    {
+      network: "dogecoin",
+      supportedCurrencies: ["dogecoin"],
+    },
+    {
       network: "ethereum",
       supportedCurrencies: [
         "ethereum/erc20/celer",

@@ -56,7 +56,10 @@ type StoryGroupItemWrapperProps = {
 };
 
 const AnimatedStoryGroupWrapper = Animated.createAnimatedComponent<
-  FlexBoxProps & StoryGroupItemWrapperProps
+  FlexBoxProps &
+    StoryGroupItemWrapperProps & {
+      children?: React.ReactNode;
+    }
 >(
   styled(Flex).attrs<StoryGroupItemWrapperProps>(p => ({
     mr: p.isLast || p.vertical ? 0 : 5,

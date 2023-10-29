@@ -20,7 +20,7 @@ import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import CounterValue from "../../components/CounterValue";
 import Section from "../../screens/OperationDetails/Section";
 import { discreetModeSelector, localeSelector } from "../../reducers/settings";
-import { urls } from "../../config/urls";
+import { urls } from "@utils/urls";
 
 import BondIcon from "../../icons/LinkIcon";
 import UnbondIcon from "../../icons/Undelegate";
@@ -166,7 +166,7 @@ export const OperationDetailsRewardFrom = ({
   );
 
   const redirectAddressCreator = useCallback(
-    address => () => {
+    (address: string) => () => {
       const url = getAddressExplorer(getDefaultExplorerView(account.currency), address);
       if (url) Linking.openURL(url);
     },
@@ -222,7 +222,7 @@ export function OperationDetailsValidators({
   );
 
   const redirectAddressCreator = useCallback(
-    address => () => {
+    (address: string) => () => {
       const url = getAddressExplorer(getDefaultExplorerView(account.currency), address);
       if (url) Linking.openURL(url);
     },
@@ -318,16 +318,15 @@ const createOperationIcon =
     failed?: boolean;
     size?: number;
     type: OperationType;
-  }) =>
-    (
-      <OperationStatusWrapper
-        size={size}
-        Icon={Icon}
-        confirmed={confirmed}
-        failed={failed}
-        type={type}
-      />
-    );
+  }) => (
+    <OperationStatusWrapper
+      size={size}
+      Icon={Icon}
+      confirmed={confirmed}
+      failed={failed}
+      type={type}
+    />
+  );
 
 const amountCell = {
   BOND: BondAmountCell,

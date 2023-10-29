@@ -72,7 +72,7 @@ export default function StepValidators({
     return { address: found.validatorAddress, amount: found.amount };
   }, [account, transaction.sourceValidator]);
   const updateRedelegation = useCallback(
-    newTransaction => {
+    (newTransaction: Partial<NonNullable<StepProps["transaction"]>>) => {
       onUpdateTransaction(transaction => bridge.updateTransaction(transaction, newTransaction));
     },
     [bridge, onUpdateTransaction],
@@ -102,7 +102,7 @@ export default function StepValidators({
     [updateRedelegation, transaction, account.cosmosResources],
   );
   const onChangeAmount = useCallback(
-    amount =>
+    (amount: BigNumber) =>
       updateRedelegation({
         ...transaction,
         validators:

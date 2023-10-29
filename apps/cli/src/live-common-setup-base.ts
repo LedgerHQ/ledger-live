@@ -78,6 +78,7 @@ setSupportedCurrencies([
   "umee",
   "desmos",
   "onomy",
+  "sei_network",
   "persistence",
   "quicksilver",
   "internet_computer",

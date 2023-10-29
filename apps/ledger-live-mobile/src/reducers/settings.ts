@@ -3,9 +3,7 @@ import type { Action } from "redux-actions";
 import merge from "lodash/merge";
 import {
   findCurrencyByTicker,
-  getCryptoCurrencyById,
   getFiatCurrencyByTicker,
-  listSupportedFiats,
 } from "@ledgerhq/live-common/currencies/index";
 import { getEnv, setEnvUnsafe } from "@ledgerhq/live-env";
 import { createSelector } from "reselect";
@@ -26,7 +24,7 @@ import type {
   SettingsHideNftCollectionPayload,
   SettingsImportDesktopPayload,
   SettingsImportPayload,
-  SettingsInstallAppFirstTimePayload,
+  SettingsSetHasInstalledAnyAppPayload,
   SettingsLastSeenDeviceInfoPayload,
   SettingsPayload,
   SettingsRemoveStarredMarketcoinsPayload,
@@ -77,6 +75,7 @@ import type {
   SettingsSetClosedNetworkBannerPayload,
   SettingsSetClosedWithdrawBannerPayload,
   SettingsSetUserNps,
+  SettingsSetSupportedCounterValues,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -84,14 +83,6 @@ import {
 } from "../actions/types";
 import { ScreenName } from "../const";
 
-const bitcoin = getCryptoCurrencyById("bitcoin");
-const ethereum = getCryptoCurrencyById("ethereum");
-export const possibleIntermediaries = [bitcoin, ethereum];
-export const supportedCountervalues = [...listSupportedFiats(), ...possibleIntermediaries];
-export const intermediaryCurrency = (from: Currency, _to: Currency) => {
-  if (from === ethereum || from.type === "TokenCurrency") return ethereum;
-  return bitcoin;
-};
 export const timeRangeDaysByKey = {
   day: 1,
   week: 7,
@@ -184,6 +175,7 @@ export const INITIAL_STATE: SettingsState = {
     hasClosedWithdrawBanner: false,
   },
   userNps: null,
+  supportedCounterValues: [],
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
@@ -235,13 +227,18 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     privacy: {
       ...state.privacy,
+      hasPassword: state.privacy?.hasPassword || false,
       biometricsEnabled: (action as Action<SettingsSetPrivacyBiometricsPayload>).payload,
     },
   }),
 
   [SettingsActionTypes.SETTINGS_DISABLE_PRIVACY]: (state: SettingsState) => ({
     ...state,
-    privacy: null,
+    privacy: {
+      ...state.privacy,
+      hasPassword: false,
+      biometricsEnabled: false,
+    },
   }),
 
   [SettingsActionTypes.SETTINGS_SET_REPORT_ERRORS]: (state, action) => ({
@@ -304,9 +301,9 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     };
   },
 
-  [SettingsActionTypes.SETTINGS_INSTALL_APP_FIRST_TIME]: (state, action) => ({
+  [SettingsActionTypes.SETTINGS_SET_HAS_INSTALLED_ANY_APP]: (state, action) => ({
     ...state,
-    hasInstalledAnyApp: (action as Action<SettingsInstallAppFirstTimePayload>).payload,
+    hasInstalledAnyApp: (action as Action<SettingsSetHasInstalledAnyAppPayload>).payload,
   }),
 
   [SettingsActionTypes.SETTINGS_SET_READONLY_MODE]: (state, action) => ({
@@ -625,6 +622,10 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     userNps: (action as Action<SettingsSetUserNps>).payload,
   }),
+  [SettingsActionTypes.SET_SUPPORTED_COUNTER_VALUES]: (state, action) => ({
+    ...state,
+    supportedCounterValues: (action as Action<SettingsSetSupportedCounterValues>).payload,
+  }),
 };
 
 export default handleActions<SettingsState, SettingsPayload>(handlers, INITIAL_STATE);
@@ -813,3 +814,4 @@ export const hasBeenUpsoldProtectSelector = (state: State) => state.settings.has
 export const generalTermsVersionAcceptedSelector = (state: State) =>
   state.settings.generalTermsVersionAccepted;
 export const userNpsSelector = (state: State) => state.settings.userNps;
+export const getSupportedCounterValues = (state: State) => state.settings.supportedCounterValues;

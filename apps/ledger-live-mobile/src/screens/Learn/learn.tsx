@@ -1,6 +1,6 @@
 import { InformativeCard, Flex } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
-import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
+import React, { memo, useCallback, useEffect, useState } from "react";
 import { FlatList } from "react-native";
 import { TouchableHighlight } from "react-native-gesture-handler";
 import styled, { useTheme } from "styled-components/native";
@@ -22,11 +22,6 @@ function LearnSection() {
   useEffect(() => {
     setTimeout(() => setIsLoading(false), 750);
   }, []);
-
-  const sortedLearnCards = useMemo(
-    () => learnCards.sort((a, b) => b.createdAt - a.createdAt),
-    [learnCards],
-  );
 
   const onClickItem = useCallback(
     (card: LearnContentCard) => {
@@ -63,7 +58,7 @@ function LearnSection() {
     <Flex>
       <TrackScreen category="Learn" />
       <FlatList
-        data={sortedLearnCards}
+        data={learnCards}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         showsVerticalScrollIndicator={false}

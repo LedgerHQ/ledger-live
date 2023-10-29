@@ -12,6 +12,7 @@ describe("cryptoFactory test", () => {
       "desmos",
       "nyx",
       "onomy",
+      "sei_network",
       "persistence",
       "quicksilver",
       "secret_network",

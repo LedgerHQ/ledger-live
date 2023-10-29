@@ -20,7 +20,7 @@ export default function SideDrawerFilter({
     [refresh],
   );
   const onChange = useCallback(
-    option => {
+    (option?: { label: string; value: string } | null) => {
       if (!option) return;
       switch (option.value) {
         case "all":

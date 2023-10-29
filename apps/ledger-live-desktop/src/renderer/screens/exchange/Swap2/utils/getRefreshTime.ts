@@ -1,4 +1,4 @@
-import { ExchangeRate } from "@ledgerhq/live-common/lib/exchange/swap/types";
+import { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
 
 const defaultRefreshTime = 60 * 1000;
 

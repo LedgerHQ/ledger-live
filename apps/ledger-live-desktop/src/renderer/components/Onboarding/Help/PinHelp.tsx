@@ -36,7 +36,7 @@ const ruleTypes = {
 
 type RuleProps = {
   type: "success" | "error";
-  children: unknown;
+  children: React.ReactNode;
 };
 
 function Rule({ type, children }: RuleProps) {

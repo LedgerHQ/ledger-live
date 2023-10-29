@@ -35,7 +35,7 @@ const FeatureFlagEdit: React.FC<{ flagName: FeatureId; flagValue: Feature }> = p
 
   const { t } = useTranslation();
 
-  const handleInputChange = useCallback(value => {
+  const handleInputChange = useCallback((value?: string) => {
     setError(undefined);
     setInputValue(value);
   }, []);

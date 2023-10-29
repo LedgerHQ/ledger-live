@@ -22,7 +22,7 @@ const MemoValueField = ({
   const { t } = useTranslation();
   const bridge = getAccountBridge(account);
   const onMemoValueChange = useCallback(
-    memo => {
+    (memo: string) => {
       onChange(
         bridge.updateTransaction(transaction, {
           memo,

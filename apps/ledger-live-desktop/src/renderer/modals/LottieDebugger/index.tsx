@@ -332,9 +332,7 @@ const LottieDebugger = () => {
           render={() => (
             <ScrollArea>
               <Alert type="warning">
-                {
-                  "This is a tool provided as-is for the team to validate lottie animations used in the app."
-                }
+                <Trans i18nKey="settings.experimental.features.testAnimations.longDesc" />
               </Alert>
               <div>{!key ? "Select Animation" : `Showing '${key}' for ${modelId}`}</div>
               <AnimationWrapper>

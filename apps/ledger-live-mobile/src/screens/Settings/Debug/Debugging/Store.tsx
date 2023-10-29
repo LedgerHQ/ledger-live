@@ -38,7 +38,7 @@ export default function Store() {
   const dispatch = useDispatch();
 
   const onEdit = useCallback(
-    (path, type) => {
+    (path: string, type: string) => {
       const currentValue = get(modifiedState, path);
       setTargetType(type);
 
@@ -54,6 +54,7 @@ export default function Store() {
   );
 
   const onChangeText = useCallback(
+    // @ts-expect-error string | number but it means casting in the function
     value => {
       const currentValue = get(state, targetPath);
 
@@ -168,6 +169,7 @@ export default function Store() {
       </Flex>
       <Separator />
       <ScrollView contentContainerStyle={{ flex: 0, paddingBottom: 170 }}>
+        {/* @ts-expect-error onEdit gives (a: string, type?: string) => but our function needs type (and it seems always defined anyway) */}
         <Node data={modifiedState} onEdit={onEdit} />
       </ScrollView>
       <QueuedDrawer isRequestingToBeOpened={isModalOpen} onClose={onRestore}>

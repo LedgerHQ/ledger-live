@@ -159,9 +159,8 @@ const repair = (
                         log("hw", "firmwareUpdate-repair got mcu", { mcu });
 
                         if (!mcu) return EMPTY;
-                        const expectedBootloaderVersion = semver.coerce(
-                          mcu.from_bootloader_version,
-                        )?.version;
+                        const expectedBootloaderVersion = semver.coerce(mcu.from_bootloader_version)
+                          ?.version;
                         const currentBootloaderVersion = semver.coerce(mcuBlVersion)?.version;
 
                         log("hw", "firmwareUpdate-repair bootloader versions", {

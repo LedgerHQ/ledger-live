@@ -4,8 +4,8 @@ import {
   getMainAccount,
   isAccountEmpty,
 } from "@ledgerhq/live-common/account/index";
-import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
-import { getAllSupportedCryptoCurrencyIds } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
+import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
+
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo } from "react";
 import { TFunction } from "i18next";
@@ -54,6 +54,8 @@ type RenderActionParams = {
   disabled?: boolean;
   tooltip?: string;
   accountActionsTestId?: string;
+  contrastText: string;
+  currency: TokenCurrency | CryptoCurrency;
 };
 
 const ButtonSettings = styled(Tabbable).attrs<{ disabled?: boolean }>(() => ({
@@ -93,6 +95,36 @@ type Props = {
   t: TFunction;
   openModal: Function;
 } & OwnProps;
+
+const ActionItem = ({
+  label,
+  onClick,
+  event,
+  eventProperties,
+  icon,
+  disabled,
+  tooltip,
+  accountActionsTestId,
+  contrastText,
+  currency,
+}: RenderActionParams) => {
+  const Icon = icon;
+  const Action = (
+    <ActionDefault
+      disabled={disabled}
+      onClick={onClick}
+      event={event}
+      eventProperties={eventProperties}
+      iconComponent={Icon && <Icon size={14} overrideColor={contrastText} currency={currency} />}
+      labelComponent={label}
+      accountActionsTestId={accountActionsTestId}
+    />
+  );
+  if (tooltip) {
+    return <Tooltip content={tooltip}>{Action}</Tooltip>;
+  }
+  return Action;
+};
 
 const AccountHeaderSettingsButtonComponent = ({ account, parentAccount, openModal, t }: Props) => {
   const mainAccount = getMainAccount(account, parentAccount);
@@ -169,22 +201,10 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   const ReceiveAction = specific?.accountActions?.ReceiveAction || ReceiveActionDefault;
   const currency = getAccountCurrency(account);
 
-  const rampCatalog = useRampCatalog();
+  const { isCurrencyAvailable } = useRampCatalog();
 
-  // eslint-disable-next-line no-unused-vars
-  const [availableOnBuy, availableOnSell] = useMemo(() => {
-    if (!rampCatalog.value) {
-      return [false, false];
-    }
-    const allBuyableCryptoCurrencyIds = getAllSupportedCryptoCurrencyIds(rampCatalog.value.onRamp);
-    const allSellableCryptoCurrencyIds = getAllSupportedCryptoCurrencyIds(
-      rampCatalog.value.offRamp,
-    );
-    return [
-      allBuyableCryptoCurrencyIds.includes(currency.id),
-      allSellableCryptoCurrencyIds.includes(currency.id),
-    ];
-  }, [rampCatalog.value, currency.id]);
+  const availableOnBuy = !!currency && isCurrencyAvailable(currency.id, "onRamp");
+  const availableOnSell = !!currency && isCurrencyAvailable(currency.id, "offRamp");
 
   // don't show buttons until we know whether or not we can show swap button, otherwise possible click jacking
   const showButtons = !!getAvailableProviders();
@@ -258,37 +278,11 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
     });
   }, [openModal, parentAccount, account, buttonSharedTrackingFields]);
 
-  const renderAction = ({
-    label,
-    onClick,
-    event,
-    eventProperties,
-    icon,
-    disabled,
-    tooltip,
-    accountActionsTestId,
-  }: RenderActionParams) => {
-    const Icon = icon;
-    const Action = (
-      <ActionDefault
-        disabled={disabled}
-        onClick={onClick}
-        event={event}
-        eventProperties={eventProperties}
-        iconComponent={Icon && <Icon size={14} overrideColor={contrastText} currency={currency} />}
-        labelComponent={label}
-        accountActionsTestId={accountActionsTestId}
-      />
-    );
-    if (tooltip) {
-      return <Tooltip content={tooltip}>{Action}</Tooltip>;
-    }
-    return Action;
-  };
-
   const manageActions: RenderActionParams[] = [
     ...manageList.map(item => ({
       ...item,
+      contrastText,
+      currency,
       eventProperties: {
         ...buttonSharedTrackingFields,
         ...item.eventProperties,
@@ -299,7 +293,9 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   const buyHeader = <BuyActionDefault onClick={() => onBuySell("buy")} />;
   const sellHeader = <SellActionDefault onClick={() => onBuySell("sell")} />;
   const swapHeader = <SwapActionDefault onClick={onSwap} />;
-  const manageActionsHeader = manageActions.map(item => renderAction(item));
+  const manageActionsHeader = manageActions.map(item => (
+    <ActionItem {...item} key={item.accountActionsTestId} />
+  ));
 
   const NonEmptyAccountHeader = (
     <FadeInButtonsContainer data-test-id="account-buttons-group" show={showButtons}>

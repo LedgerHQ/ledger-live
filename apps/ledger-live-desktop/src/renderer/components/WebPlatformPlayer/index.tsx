@@ -1,5 +1,7 @@
-import React, { useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import styled from "styled-components";
+import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
+import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
 import { Web3AppWebview } from "../Web3AppWebview";
 import { TopBar, TopBarConfig } from "./TopBar";
 import Box from "../Box";
@@ -32,6 +34,12 @@ export default function WebPlatformPlayer({ manifest, inputs, onClose, config }:
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
 
+  const customHandlers = useMemo<WalletAPICustomHandlers>(() => {
+    return {
+      ...loggerHandlers,
+    };
+  }, []);
+
   return (
     <Container>
       <Wrapper>
@@ -47,6 +55,7 @@ export default function WebPlatformPlayer({ manifest, inputs, onClose, config }:
           inputs={inputs}
           onStateChange={setWebviewState}
           ref={webviewAPIRef}
+          customHandlers={customHandlers}
         />
       </Wrapper>
     </Container>

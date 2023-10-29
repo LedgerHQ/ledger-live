@@ -42,7 +42,7 @@ const SendAmountNFT = ({ route }: Props) => {
   invariant(transaction, "transaction required");
 
   const onQuantityChange = useCallback(
-    text => {
+    (text: string) => {
       const newQuantity = new BigNumber(text.replace(/\D/g, ""));
       if (!bridge) return;
 
