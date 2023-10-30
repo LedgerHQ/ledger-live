@@ -29,6 +29,7 @@ import { useWebviewState } from "./helpers";
 import { getStoreValue, setStoreValue } from "~/renderer/store";
 import { NetworkErrorScreen } from "./NetworkError";
 import getUser from "~/helpers/user";
+import { openExchangeDrawer } from "~/renderer/actions/UI";
 
 const wallet = { name: "ledger-live-desktop", version: __APP_VERSION__ };
 const tracking = trackingWrapper(track);
@@ -153,7 +154,8 @@ function useUiHook(manifest: AppManifest): Partial<UiHook> {
       },
       "exchange.start": ({ exchangeType, onSuccess, onCancel }) => {
         dispatch(
-          openModal("MODAL_PLATFORM_EXCHANGE_START", {
+          openExchangeDrawer({
+            type: "EXCHANGE_START",
             exchangeType: ExchangeType[exchangeType],
             onResult: (nonce: string) => {
               onSuccess(nonce);
@@ -166,7 +168,8 @@ function useUiHook(manifest: AppManifest): Partial<UiHook> {
       },
       "exchange.complete": ({ exchangeParams, onSuccess, onCancel }) => {
         dispatch(
-          openModal("MODAL_PLATFORM_EXCHANGE_COMPLETE", {
+          openExchangeDrawer({
+            type: "EXCHANGE_COMPLETE",
             ...exchangeParams,
             onResult: (operation: Operation) => {
               onSuccess(operation.hash);
