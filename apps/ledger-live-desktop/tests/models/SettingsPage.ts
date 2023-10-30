@@ -78,6 +78,10 @@ export class SettingsPage {
     await this.themeChoiceLight.click();
   }
 
+  async waitForDeviceLanguagesLoaded() {
+    await this.page.waitForSelector('[aria-label="Select language"]', { state: "attached" });
+  }
+
   async enableAndGoToDeveloperTab() {
     await this.goToAboutTab();
     for (let i = 0; i < 10; i++) {

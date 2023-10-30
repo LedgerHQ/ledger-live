@@ -44,7 +44,6 @@ export type Props<
   };
   // Allows overriding react-select components. See: https://react-select.com/components
   disabledTooltipText?: string;
-  selectDataTestId?: string;
   theme?: DefaultTheme;
 } & ReactSelectProps<OptionType, IsMulti, GroupType>;
 
@@ -107,7 +106,6 @@ class MenuList<
       maxHeight,
       getValue,
       selectProps: { noOptionsMessage, rowHeight },
-      selectDataTestId,
     } = this.props;
     const { children } = this.state;
     if (!children) return null;
@@ -136,7 +134,6 @@ class MenuList<
         itemCount={children.length}
         itemSize={rowHeight}
         initialScrollOffset={initialOffset}
-        data-test-id={selectDataTestId}
       >
         {({ index, style }) => (
           <Row className={"option"} style={style}>
@@ -217,7 +214,6 @@ class Select<
       rowHeight = small ? 34 : 48,
       autoFocus,
       extraRenderers,
-      selectDataTestId,
       ...props
     } = this.props;
     const Comp = (async ? AsyncReactSelect : ReactSelect) as typeof ReactSelect;
@@ -279,7 +275,6 @@ class Select<
         menuPortalTarget={document.body}
         rowHeight={rowHeight}
         onChange={this.handleChange}
-        data-test-id={selectDataTestId}
       />
     );
   }
