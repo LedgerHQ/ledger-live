@@ -272,23 +272,42 @@ export const getBlockByHeight: NodeApi["getBlockByHeight"] = async (
     throw new LedgerNodeUsedIncorrectly();
   }
 
-  const { hash, height, time } = await fetchWithRetries<{
-    hash: string;
-    height: number;
-    time: string;
-    txs: string[];
-  }>({
+  if (blockHeight === "latest") {
+    const { hash, height, time } = await fetchWithRetries<{
+      hash: string;
+      height: number;
+      time: string;
+      txs: string[];
+    }>({
+      method: "GET",
+      url: `${getEnv("EXPLORER")}/blockchain/v4/${node.explorerId}/block/current`,
+    });
+
+    return { hash, height, timestamp: Math.floor(new Date(time).getTime() / 1000) };
+  }
+
+  /**
+   * for some reason, this explorer endpoint doesn't return the block object
+   * but an array of one element with the requested block
+   */
+  const [{ hash, height, time }] = await fetchWithRetries<
+    [
+      {
+        hash: string;
+        height: number;
+        time: string;
+        txs: string[];
+      },
+    ]
+  >({
     method: "GET",
-    url:
-      blockHeight === "latest"
-        ? `${getEnv("EXPLORER")}/blockchain/v4/${node.explorerId}/block/current`
-        : `${getEnv("EXPLORER")}/blockchain/v4/${node.explorerId}/block/${blockHeight}`,
+    url: `${getEnv("EXPLORER")}/blockchain/v4/${node.explorerId}/block/${blockHeight}`,
   });
 
   return {
     hash,
     height,
-    timestamp: new Date(time).getTime(),
+    timestamp: Math.floor(new Date(time).getTime() / 1000),
   };
 };
 

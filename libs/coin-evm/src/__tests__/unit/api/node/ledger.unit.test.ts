@@ -417,24 +417,26 @@ describe("EVM Family", () => {
                 },
               }
             : {
-                data: {
-                  hash: "0xhash",
-                  height: 123,
-                  time: new Date().toISOString(),
-                  txs: ["0xTx1", "0xTx2"],
-                },
+                data: [
+                  {
+                    hash: "0xhash",
+                    height: 123,
+                    time: new Date().toISOString(),
+                    txs: ["0xTx1", "0xTx2"],
+                  },
+                ],
               },
         );
 
         expect(await LEDGER_API.getBlockByHeight(currency, 12)).toEqual({
           hash: "0xhash",
           height: 123,
-          timestamp: Date.now(),
+          timestamp: Math.floor(Date.now() / 1000),
         });
         expect(await LEDGER_API.getBlockByHeight(currency, "latest")).toEqual({
           hash: "0xhashLatest",
           height: 456,
-          timestamp: Date.now(),
+          timestamp: Math.floor(Date.now() / 1000),
         });
       });
     });
