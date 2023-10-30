@@ -3405,6 +3405,11 @@
     "walletConnect" : {
       "title" : "WalletConnect",
       "description" : "Conecta tu billetera a dApps"
+    },
+    "recover" : {
+      "title" : "Ledger Recover",
+      "description" : "Fácil recuperación de billeteras",
+      "tag" : "Un mes gratis"
     }
   },
   "signMessage" : {
@@ -6365,6 +6370,12 @@
   "servicesWidget" : {
     "title" : "Servicios",
     "subTitle" : "Gestiona tus servicios de Ledger",
+    "signIn" : "Iniciar sesión",
+    "recover" : {
+      "cta" : "Comienza tu prueba gratuita",
+      "desc" : "Deja de preocuparte de perder el acceso a tu billetera.",
+      "tag" : "1 mes gratis"
+    },
     "protect" : {
       "status" : {
         "new" : {

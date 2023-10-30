@@ -18,7 +18,7 @@ import SetupDeviceBanner from "../SetupDeviceBanner";
 import { track, useAnalytics } from "../../analytics";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import useQuickActions from "../../hooks/useQuickActions";
-import { PTX_SERVICES_TOAST_ID } from "../../constants";
+import { PTX_SERVICES_TOAST_ID } from "@utils/constants";
 
 import { useQuickAccessURI } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 
@@ -198,6 +198,25 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       disabled: SWAP.disabled,
       testID: "swap-transfer-button",
     },
+
+    ...(RECOVER
+      ? [
+          {
+            eventProperties: {
+              button: "transfer_recover",
+              page,
+              drawer: "trade",
+            },
+            tag: t("transfer.recover.tag"),
+            title: t("transfer.recover.title"),
+            description: t("transfer.recover.description"),
+            Icon: RECOVER.icon,
+            onPress: () => onNavigateRecover(),
+            disabled: RECOVER.disabled,
+            testID: "transfer-recover-button",
+          },
+        ]
+      : []),
 
     ...(WALLET_CONNECT
       ? [

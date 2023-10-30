@@ -29,7 +29,11 @@ function computeMetaHash(paths, inputHash) {
 
 function compareHashes(cacheFile = {}, current = {}) {
   if (!cacheFile || !current) return false;
-  return cacheFile.lock === current.lock && cacheFile.podsHash === current.podsHash;
+  return (
+    cacheFile.lock === current.lock &&
+    cacheFile.podsHash === current.podsHash &&
+    cacheFile.pkg === current.pkg
+  );
 }
 
 function getCache(path) {
@@ -47,29 +51,30 @@ function getCache(path) {
 function runHashChecks(writeCache = false) {
   const pods = join(__dirname, "..", "ios", "Pods");
   const lock = join(__dirname, "..", "ios", "Podfile.lock");
+  const pkg = join(__dirname, "..", "package.json");
 
   if (!existsSync(pods)) return false;
 
   const podsHash = computeMetaHash([pods]);
   const lockHash = computeMetaHash([lock]);
+  const packageHash = computeMetaHash([pkg]);
   const cachePath = join(__dirname, "..", "ios", ".podhash.json");
 
   const result = {
     lock: lockHash,
     pod: podsHash,
+    pkg: packageHash,
   };
 
   const cache = getCache(cachePath);
 
-  if (!cache) {
-    if (writeCache) {
-      try {
-        const data = JSON.stringify(result);
-        writeFileSync(cachePath, data);
-      } catch (error) {
-        echo(chal.red(error));
-        return false;
-      }
+  if (!cache || writeCache) {
+    try {
+      const data = JSON.stringify(result);
+      writeFileSync(cachePath, data);
+    } catch (error) {
+      echo(chal.red(error));
+      return false;
     }
 
     return false;
@@ -123,6 +128,7 @@ BRAZE_CUSTOM_ENDPOINT="sdk.fra-02.braze.eu"`;
   let hashesAreEquals = false;
   try {
     hashesAreEquals = runHashChecks();
+    echo(JSON.stringify({ hashesAreEquals }));
   } catch (error) {
     echo(chalk.red(error));
   }

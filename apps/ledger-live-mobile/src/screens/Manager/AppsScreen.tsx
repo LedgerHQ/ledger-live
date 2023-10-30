@@ -55,8 +55,6 @@ type NavigationProps = BaseComposite<
 type Props = {
   state: State;
   dispatch: (_: Action) => void;
-  setAppInstallWithDependencies: (_: { app: App; dependencies: App[] }) => void;
-  setAppUninstallWithDependencies: (_: { dependents: App[]; app: App }) => void;
   setStorageWarning: (value: string | null) => void;
   deviceId: string;
   initialDeviceName?: string | null;
@@ -76,8 +74,6 @@ type Props = {
 const AppsScreen = ({
   state,
   dispatch,
-  setAppInstallWithDependencies,
-  setAppUninstallWithDependencies,
   setStorageWarning,
   updateModalOpened,
   deviceId,
@@ -232,20 +228,11 @@ const AppsScreen = ({
         app={item}
         state={state}
         dispatch={dispatch}
-        setAppInstallWithDependencies={setAppInstallWithDependencies}
-        setAppUninstallWithDependencies={setAppUninstallWithDependencies}
         setStorageWarning={setStorageWarning}
         optimisticState={optimisticState}
       />
     ),
-    [
-      state,
-      dispatch,
-      setAppInstallWithDependencies,
-      setAppUninstallWithDependencies,
-      setStorageWarning,
-      optimisticState,
-    ],
+    [state, dispatch, setStorageWarning, optimisticState],
   );
 
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
@@ -267,7 +254,6 @@ const AppsScreen = ({
               initialDeviceName={initialDeviceName}
               pendingInstalls={pendingInstalls}
               deviceInfo={deviceInfo}
-              setAppUninstallWithDependencies={setAppUninstallWithDependencies}
               dispatch={dispatch}
               device={device}
               appList={deviceApps}
@@ -325,7 +311,6 @@ const AppsScreen = ({
       initialDeviceName,
       pendingInstalls,
       deviceInfo,
-      setAppUninstallWithDependencies,
       dispatch,
       device,
       deviceApps,

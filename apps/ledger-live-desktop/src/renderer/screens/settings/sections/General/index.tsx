@@ -13,9 +13,13 @@ import SentryLogsButton from "./SentryLogsButton";
 import ShareAnalyticsButton from "./ShareAnalyticsButton";
 import CarouselVisibility from "./CarouselVisibility";
 import { hasPasswordSelector } from "~/renderer/reducers/application";
+import { useInitSupportedCounterValues } from "~/renderer/hooks/useInitSupportedCounterValues";
+
 const SectionGeneral = () => {
   const hasPassword = useSelector(hasPasswordSelector);
   const { t } = useTranslation();
+  useInitSupportedCounterValues();
+
   return (
     <>
       <TrackPage category="Settings" name="Display" />

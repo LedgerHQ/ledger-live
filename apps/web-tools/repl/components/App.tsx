@@ -6,7 +6,7 @@ import { useDropzone } from "react-dropzone";
 import { from, defer, Observable, Subscription } from "rxjs";
 import { filter } from "rxjs/operators";
 import { listen } from "@ledgerhq/logs";
-import { open } from "@ledgerhq/live-common/lib/hw/index";
+import { open } from "@ledgerhq/live-common/hw/index";
 import { commands } from "../commands";
 import { execCommand, getDefaultValue, resolveDependencies } from "../helpers/commands";
 import type { Command, ResolvedDeps } from "../helpers/commands";

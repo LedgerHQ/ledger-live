@@ -7,7 +7,7 @@ function CurrencyGradient({ gradientColor }: { gradientColor: string }) {
   const { colors } = useTheme();
   const contrastedColor = ensureContrast(gradientColor, colors.background.main);
   return (
-    <Svg width={541} height={454} viewBox="0 0 541 454" fill="none">
+    <Svg width={850} height={454} viewBox="0 0 850 454" fill="none">
       <Mask
         id="a"
         // @ts-expect-error maskType is not in the type definition
@@ -17,15 +17,15 @@ function CurrencyGradient({ gradientColor }: { gradientColor: string }) {
         maskUnits={"userSpaceOnUse" as const}
         x={0}
         y={0}
-        width={541}
+        width={850}
         height={454}
       >
-        <Path fill="#fff" d="M0 0H541V454H0z" />
+        <Path fill="#fff" d="M0 0H850V454H0z" />
       </Mask>
       <G mask="url(#a)">
-        <Path fill={colors.background.main} d="M0 0H541V454H0z" />
-        <Path fill="url(#paint0_linear_22_3)" fillOpacity={0.3} d="M0 0H541V450.077H0z" />
-        <Path fill="url(#paint1_linear_22_3)" d="M0 0H541V450.077H0z" />
+        <Path fill={colors.background.main} d="M0 0H850V454H0z" />
+        <Path fill="url(#paint0_linear_22_3)" fillOpacity={0.3} d="M0 0H850V454.077H0z" />
+        <Path fill="url(#paint1_linear_22_3)" d="M0 0H850V454.077H0z" />
       </G>
       <Defs>
         <LinearGradient

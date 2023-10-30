@@ -165,9 +165,23 @@ export const getSyncHash = (currency: CryptoCurrency): string => {
     .join("");
   const isNftSupported = isNFTActive(currency);
   const { node = {}, explorer = {} } = currency.ethereumLikeInfo || {};
+  // Did the migration of token accounts IDs
+  // e.g. binance-peg_bsc-usd to binance#!dash!#peg#!underscore!#bsc#!dash!#usd
+  //
+  // This could theorically be removed after a decent amount of releases (~3/4),
+  // just the time necessary for every user to have a different
+  // hash at least once to avoid duplicated TokenAccounts.
+  // For a user with duplicates, a "clear cache"
+  // shoud be enough to fix everything.
+  const hasSafeTokenIdAccount = true;
+
   return ethers.utils.sha256(
     Buffer.from(
-      basicTokensListString + isNftSupported + JSON.stringify(node) + JSON.stringify(explorer),
+      basicTokensListString +
+        isNftSupported +
+        JSON.stringify(node) +
+        JSON.stringify(explorer) +
+        hasSafeTokenIdAccount,
     ),
   );
 };

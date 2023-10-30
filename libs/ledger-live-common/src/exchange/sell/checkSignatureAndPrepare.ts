@@ -4,7 +4,7 @@ import { WrongDeviceForAccount } from "@ledgerhq/errors";
 import invariant from "invariant";
 import Exchange, { ExchangeTypes } from "@ledgerhq/hw-app-exchange";
 import { getAccountCurrency, getMainAccount } from "../../account";
-import { getCurrencyExchangeConfig } from "../";
+import { convertToAppExchangePartnerKey, getCurrencyExchangeConfig } from "../";
 import perFamily from "../../generated/exchange";
 import type { SellRequestEvent } from "./types";
 import type { Transaction, TransactionStatus } from "../../generated/types";
@@ -28,7 +28,7 @@ export default async (transport: Transport, input: SellInput): Promise<SellReque
   const { estimatedFees } = status;
   const provider = getProvider("coinify"); // FIXME Don't forget to switch to prod
 
-  await exchange.setPartnerKey(provider.nameAndPubkey);
+  await exchange.setPartnerKey(convertToAppExchangePartnerKey(provider));
   await exchange.checkPartner(provider.signature);
   await exchange.processTransaction(Buffer.from(binaryPayload, "ascii"), estimatedFees);
   await exchange.checkTransactionSignature(Buffer.from(payloadSignature, "base64"));

@@ -3405,6 +3405,11 @@
     "walletConnect" : {
       "title" : "WalletConnect",
       "description" : "Verbinden Sie Ihre Wallet mit dApps"
+    },
+    "recover" : {
+      "title" : "Ledger Recover",
+      "description" : "Wallet-Wiederherstellung leicht gemacht",
+      "tag" : "1 Monat gratis"
     }
   },
   "signMessage" : {
@@ -6365,6 +6370,12 @@
   "servicesWidget" : {
     "title" : "Services",
     "subTitle" : "Ihre Ledger-Dienste verwalten",
+    "signIn" : "Anmelden",
+    "recover" : {
+      "cta" : "Starten Sie Ihre kostenlose Testphase",
+      "desc" : "Machen Sie sich nie wieder Sorgen, den Zugang zu Ihrer Wallet zu verlieren.",
+      "tag" : "1 Monat gratis"
+    },
     "protect" : {
       "status" : {
         "new" : {

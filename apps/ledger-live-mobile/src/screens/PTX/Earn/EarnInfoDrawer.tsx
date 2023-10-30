@@ -7,7 +7,6 @@ import QueuedDrawer from "../../../components/QueuedDrawer";
 import { useDispatch, useSelector } from "react-redux";
 import { earnInfoModalSelector } from "../../../reducers/earn";
 import { setEarnInfoModal } from "../../../actions/earn";
-import { setIsDeepLinking } from "../../../actions/appstate";
 
 export function EarnInfoDrawer() {
   const { t } = useTranslation();
@@ -19,7 +18,6 @@ export function EarnInfoDrawer() {
   const closeModal = useCallback(async () => {
     await dispatch(setEarnInfoModal({}));
     await setModalOpened(false);
-    dispatch(setIsDeepLinking(false));
   }, [dispatch]);
   const { message, messageTitle } = useSelector(earnInfoModalSelector);
 

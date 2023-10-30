@@ -67,13 +67,13 @@ module.exports = {
             const hash = crypto.createHash("sha1").update(fileContent).digest("hex");
 
             const fileName = `${hash}-${path.basename(args.path)}`;
-            const targetPath = path.resolve(".webpack/assets", fileName);
+            const targetPath = path.join(".webpack/assets", fileName);
 
             ensureDirectoryExistence(targetPath);
             fs.copyFileSync(sourcePath, targetPath);
 
             return {
-              path: targetPath,
+              path: `./assets/${fileName}`,
               external: true,
             };
           }

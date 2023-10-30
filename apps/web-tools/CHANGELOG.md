@@ -1,5 +1,45 @@
 # web-tools
 
+## 0.1.2
+
+### Patch Changes
+
+- Updated dependencies [[`ce18546c0a`](https://github.com/LedgerHQ/ledger-live/commit/ce18546c0a0b9dd5ed78b1745cac19b7eef7b5eb), [`3b4f7501cc`](https://github.com/LedgerHQ/ledger-live/commit/3b4f7501cc5f09be94a2994f20f9998898682975), [`fbeebfe04b`](https://github.com/LedgerHQ/ledger-live/commit/fbeebfe04b297b33ec258440b694cdfb6213af24)]:
+  - @ledgerhq/live-common@33.0.1
+  - @ledgerhq/types-live@6.41.1
+  - @ledgerhq/coin-framework@0.8.0
+  - @ledgerhq/domain-service@1.1.13
+  - @ledgerhq/hw-app-eth@6.34.8
+
+## 0.1.2-hotfix.2
+
+### Patch Changes
+
+- Updated dependencies [[`fbeebfe04b`](https://github.com/LedgerHQ/ledger-live/commit/fbeebfe04b297b33ec258440b694cdfb6213af24)]:
+  - @ledgerhq/live-common@33.0.1-hotfix.2
+  - @ledgerhq/coin-framework@0.8.0-hotfix.2
+  - @ledgerhq/domain-service@1.1.13-hotfix.1
+  - @ledgerhq/hw-app-eth@6.34.8-hotfix.1
+
+## 0.1.2-hotfix.1
+
+### Patch Changes
+
+- Updated dependencies [[`3b4f7501cc`](https://github.com/LedgerHQ/ledger-live/commit/3b4f7501cc5f09be94a2994f20f9998898682975)]:
+  - @ledgerhq/coin-framework@0.8.0-hotfix.1
+  - @ledgerhq/live-common@33.0.1-hotfix.1
+
+## 0.1.2-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`ce18546c0a`](https://github.com/LedgerHQ/ledger-live/commit/ce18546c0a0b9dd5ed78b1745cac19b7eef7b5eb)]:
+  - @ledgerhq/live-common@33.0.1-hotfix.0
+  - @ledgerhq/types-live@6.41.1-hotfix.0
+  - @ledgerhq/coin-framework@0.7.1-hotfix.0
+  - @ledgerhq/domain-service@1.1.13-hotfix.0
+  - @ledgerhq/hw-app-eth@6.34.8-hotfix.0
+
 ## 0.1.1
 
 ### Patch Changes
