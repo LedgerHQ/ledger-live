@@ -3,4 +3,4 @@
 "live-mobile": patch
 ---
 
-Rename some of the Stax tracking event to not include the product name in their eventName
+Rename some of the Stax tracking events to not include the product name in their eventName
