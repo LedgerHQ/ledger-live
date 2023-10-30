@@ -299,6 +299,11 @@ export type Feature_NewsfeedPage = Feature<{
 
 export type Feature_ProtectServicesMobile = Feature<{
   deeplink: string;
+  compatibleDevices: Array<{
+    available: boolean;
+    comingSoon: boolean;
+    name: string;
+  }>;
   onboardingRestore: {
     restoreInfoDrawer: {
       enabled: boolean;
@@ -326,6 +331,11 @@ export type Feature_ProtectServicesDesktop = Feature<{
   availableOnDesktop: boolean;
   openRecoverFromSidebar: boolean;
   discoverTheBenefitsLink: string;
+  compatibleDevices: Array<{
+    available: boolean;
+    comingSoon: boolean;
+    name: string;
+  }>;
   onboardingRestore: {
     restoreInfoDrawer: {
       enabled: boolean;
