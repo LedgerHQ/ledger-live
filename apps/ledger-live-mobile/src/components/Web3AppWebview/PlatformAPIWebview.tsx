@@ -69,7 +69,10 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
               eventName,
               {
                 ...properties,
-                flowInitiatedFrom: currentRouteNameRef.current === "Swap" ? "Native" : "Discover",
+                flowInitiatedFrom:
+                  currentRouteNameRef.current === "Platform Catalog"
+                    ? "Discover"
+                    : currentRouteNameRef.current,
               },
               mandatory,
             ),

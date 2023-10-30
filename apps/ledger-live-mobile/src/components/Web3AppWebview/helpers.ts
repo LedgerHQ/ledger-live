@@ -53,7 +53,10 @@ export function useWebView(
             eventName,
             {
               ...properties,
-              flowInitiatedFrom: currentRouteNameRef.current === "Swap" ? "Native" : "Discover",
+              flowInitiatedFrom:
+                currentRouteNameRef.current === "Platform Catalog"
+                  ? "Discover"
+                  : currentRouteNameRef.current,
             },
             mandatory,
           ),
