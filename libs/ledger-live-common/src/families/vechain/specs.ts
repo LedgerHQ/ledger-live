@@ -30,6 +30,7 @@ const vechainTest = {
   onSpeculosDeviceCreated: async ({ transport }) => {
     // enter app vechain
     // await transport.button(SpeculosButton.BOTH);
+    console.log("onSpeculosDeviceCreated");
     // enable contract data
     await transport.button(SpeculosButton.RIGHT);
     await transport.button(SpeculosButton.BOTH);
