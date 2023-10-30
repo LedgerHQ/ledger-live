@@ -50,6 +50,7 @@ import { initialWebviewState } from "~/renderer/components/Web3AppWebview/helper
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
 import { setStoreValue } from "~/renderer/store";
+import { TopBar } from "~/renderer/components/WebPlatformPlayer/TopBar";
 
 type SwapWebProps = {
   inputs: Partial<{
@@ -142,16 +143,27 @@ const SwapWeb = ({ pageState, inputs, onUnknownError, onKnownError }: SwapWebPro
     return null;
   }
 
+  const isDevelopment = process.env.NODE_ENV === "development";
   return (
-    <SwapWebAppWrapper>
-      <Web3AppWebview
-        manifest={manifest}
-        inputs={{ ...inputs, theme: themeType, lang: locale, currencyTicker: fiatCurrency.ticker }}
-        onStateChange={setWebviewState}
-        ref={webviewAPIRef}
-        customHandlers={customHandlers}
-      />
-    </SwapWebAppWrapper>
+    <>
+      {isDevelopment && (
+        <TopBar manifest={manifest} webviewAPIRef={webviewAPIRef} webviewState={webviewState} />
+      )}
+      <SwapWebAppWrapper>
+        <Web3AppWebview
+          manifest={manifest}
+          inputs={{
+            ...inputs,
+            theme: themeType,
+            lang: locale,
+            currencyTicker: fiatCurrency.ticker,
+          }}
+          onStateChange={setWebviewState}
+          ref={webviewAPIRef}
+          customHandlers={customHandlers}
+        />
+      </SwapWebAppWrapper>
+    </>
   );
 };
 
