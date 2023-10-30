@@ -6,7 +6,7 @@ import { Language } from "@ledgerhq/types-live";
 import { DeviceModel, DeviceModelId } from "@ledgerhq/types-devices";
 import { urls } from "@utils/urls";
 import Illustration from "../images/illustration/Illustration";
-import { TrackScreen } from "src/analytics";
+import { TrackScreen } from "../analytics";
 import Button from "./wrappedUi/Button";
 
 type Props = {
