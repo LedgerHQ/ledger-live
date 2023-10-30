@@ -10,6 +10,9 @@ import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { useTranslation } from "react-i18next";
 
+type Steps = NonNullable<React.ComponentProps<typeof VerticalTimeline>["steps"]>;
+type Step = Steps[number] & { key: number };
+
 const defaultDeviceToRestore: DeviceModelInfo = {
   modelId: DeviceModelId.nanoX,
   deviceInfo: {} as DeviceInfo,
@@ -68,7 +71,7 @@ const OnboardingAppInstallDebugScreen = () => {
     setDeviceToRestore(defaultDeviceToRestore);
   }, []);
 
-  const steps = [
+  const steps: Step[] = [
     {
       key: 0,
       status: "completed",
