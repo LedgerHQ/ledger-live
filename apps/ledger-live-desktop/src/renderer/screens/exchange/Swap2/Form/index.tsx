@@ -143,9 +143,12 @@ const SwapWeb = ({ pageState, inputs, onUnknownError, onKnownError }: SwapWebPro
     return null;
   }
 
+  const isDevelopment = process.env.NODE_ENV === "development";
   return (
     <>
-      <TopBar manifest={manifest} webviewAPIRef={webviewAPIRef} webviewState={webviewState} />
+      {isDevelopment && (
+        <TopBar manifest={manifest} webviewAPIRef={webviewAPIRef} webviewState={webviewState} />
+      )}
       <SwapWebAppWrapper>
         <Web3AppWebview
           manifest={manifest}
