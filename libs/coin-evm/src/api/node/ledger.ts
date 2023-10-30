@@ -283,7 +283,7 @@ export const getBlockByHeight: NodeApi["getBlockByHeight"] = async (
       url: `${getEnv("EXPLORER")}/blockchain/v4/${node.explorerId}/block/current`,
     });
 
-    return { hash, height, timestamp: Math.floor(new Date(time).getTime() / 1000) };
+    return { hash, height, timestamp: new Date(time).getTime() };
   }
 
   /**
@@ -307,7 +307,7 @@ export const getBlockByHeight: NodeApi["getBlockByHeight"] = async (
   return {
     hash,
     height,
-    timestamp: Math.floor(new Date(time).getTime() / 1000),
+    timestamp: new Date(time).getTime(),
   };
 };
 
