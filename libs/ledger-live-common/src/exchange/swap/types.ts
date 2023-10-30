@@ -16,8 +16,16 @@ export type ExchangeRaw = {
   toParentAccount: AccountRaw | null | undefined;
   toAccount: AccountRawLike;
 };
+
+export type ExchangeRateError = {
+  name?: string;
+  amount?: BigNumber;
+  minAmountFromFormatted?: string;
+  maxAmountFromFormatted?: string;
+};
+
 export type ExchangeRate = {
-  rate: BigNumber | undefined;
+  rate?: BigNumber;
   // NB Raw rate, for display
   magnitudeAwareRate: BigNumber;
   // NB rate between satoshi units
@@ -29,7 +37,7 @@ export type ExchangeRate = {
   provider: string;
   providerType: ExchangeProviderType;
   tradeMethod: "fixed" | "float";
-  error?: Error;
+  error?: ExchangeRateError;
   providerURL?: string;
   expirationTime?: number;
 };
