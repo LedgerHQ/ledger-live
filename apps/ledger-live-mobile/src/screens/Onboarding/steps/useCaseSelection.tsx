@@ -1,5 +1,6 @@
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { checkRecoverCompatibility } from "@ledgerhq/live-common/featureFlags/helper";
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useState } from "react";
@@ -117,7 +118,7 @@ const OnboardingStepUseCaseSelection = () => {
             onPress: onPressRecoveryPhrase,
             icon: <Icons.Note color={colors.primary.c80} />,
           },
-          ...(servicesConfig?.enabled
+          ...(checkRecoverCompatibility(servicesConfig, deviceModelId)
             ? [
                 {
                   title: t("onboarding.stepUseCase.protect.title"),

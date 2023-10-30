@@ -6,6 +6,7 @@ import {
   useCustomPath,
 } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/index";
+import { checkRecoverCompatibility } from "@ledgerhq/live-common/featureFlags/helper";
 import {
   Aside,
   Button,
@@ -572,12 +573,14 @@ export default function Tutorial({ useCase }: Props) {
             fallbackIfNoAction: () => history.push("/"),
           });
 
-        if (useCase === UseCase.setupDevice && upsellPath) {
-          history.push(upsellPath);
-        } else if (useCase === UseCase.recoveryPhrase && restore24Path) {
-          history.push(restore24Path);
-        } else if (useCase === UseCase.connectDevice && devicePairingPath) {
-          history.push(devicePairingPath);
+        if (checkRecoverCompatibility(recoverFF, connectedDevice?.modelId)) {
+          if (useCase === UseCase.setupDevice && upsellPath) {
+            history.push(upsellPath);
+          } else if (useCase === UseCase.recoveryPhrase && restore24Path) {
+            history.push(restore24Path);
+          } else if (useCase === UseCase.connectDevice && devicePairingPath) {
+            history.push(devicePairingPath);
+          }
         }
       }, 0);
       return () => {
@@ -593,6 +596,7 @@ export default function Tutorial({ useCase }: Props) {
     restore24Path,
     upsellPath,
     useCase,
+    recoverFF,
   ]);
 
   const steps = useMemo(() => {
