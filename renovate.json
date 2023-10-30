@@ -6,6 +6,11 @@
   "automerge": false,
   "detectGlobalManagerConfig": true,
   "ignoreScripts": false,
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "labels": ["security"],
+    "prPriority": 999
+  },
   "packageRules": [
     {
       "description": "Core Ownership Rules",
