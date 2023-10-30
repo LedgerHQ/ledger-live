@@ -354,7 +354,7 @@ const getMutations = (currencyId: CryptoCurrency["id"]): AppSpec<EvmTransaction>
     case "polygon_zk_evm_testnet":
       return evmBasicMutations({ maxAccount: 3 });
     default:
-      return evmBasicMutations({ maxAccount: 3 }).concat(moveErc20Mutation);
+      return evmBasicMutations({ maxAccount: 4 }).concat(moveErc20Mutation);
   }
 };
 
