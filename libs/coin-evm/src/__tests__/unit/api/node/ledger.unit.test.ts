@@ -431,12 +431,12 @@ describe("EVM Family", () => {
         expect(await LEDGER_API.getBlockByHeight(currency, 12)).toEqual({
           hash: "0xhash",
           height: 123,
-          timestamp: Date.now(),
+          timestamp: Math.floor(Date.now() / 1000),
         });
         expect(await LEDGER_API.getBlockByHeight(currency, "latest")).toEqual({
           hash: "0xhashLatest",
           height: 456,
-          timestamp: Date.now(),
+          timestamp: Math.floor(Date.now() / 1000),
         });
       });
     });
