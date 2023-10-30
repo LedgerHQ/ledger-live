@@ -27,6 +27,9 @@
       "cache": false,
       "dependsOn": ["^build"]
     },
+    "unimported": {
+      "cache": false
+    },
     "android:apk:local": {
       "dependsOn": ["^build"]
     },
