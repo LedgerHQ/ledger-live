@@ -5397,9 +5397,7 @@
         "title": "Validators election ongoing",
         "description": "The election of new validators is currently ongoing. As such, staking operations are not available for 15 minutes at most."
       },
-      "minBondWarning": {
-        "title": "Not enough bonded"
-      }
+      "notEnoughBonded": "Not enough bonded"
     },
     "nomination": {
       "emptyState": {
