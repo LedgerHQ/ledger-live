@@ -25,7 +25,7 @@ runs:
     - id: branch-name
       uses: tj-actions/branch-names@v6
     - name: Download Allure Report
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v3
       with:
         name: ${{ inputs.path }}
         path: ${{ inputs.path }}
