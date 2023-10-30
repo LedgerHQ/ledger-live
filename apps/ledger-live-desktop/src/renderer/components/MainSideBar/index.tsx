@@ -1,7 +1,7 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useHistory, useLocation } from "react-router-dom";
+import { Link, useHistory, useLocation, PromptProps } from "react-router-dom";
 import { Transition } from "react-transition-group";
 import styled from "styled-components";
 import { useManagerBlueDot } from "@ledgerhq/live-common/manager/hooks";
@@ -34,6 +34,8 @@ import { CARD_APP_ID } from "~/renderer/screens/card";
 import TopGradient from "./TopGradient";
 import Hide from "./Hide";
 import { track } from "~/renderer/analytics/segment";
+
+type Location = Parameters<Exclude<PromptProps["message"], string>>[0];
 
 const MAIN_SIDEBAR_WIDTH = 230;
 const TagText = styled.div.attrs<{ collapsed?: boolean }>(p => ({
@@ -210,6 +212,11 @@ const TagContainerFeatureFlags = ({ collapsed }: { collapsed: boolean }) => {
     </Tag>
   ) : null;
 };
+
+// Check if the selected tab is a Live-App under discovery tab
+const checkLiveAppTabSelection = (location: Location, liveAppPaths: Array<string>) =>
+  liveAppPaths.find((liveTab: string) => location?.pathname?.includes(liveTab));
+
 const MainSideBar = () => {
   const history = useHistory();
   const location = useLocation();
@@ -332,15 +339,13 @@ const MainSideBar = () => {
     dispatch,
   ]);
 
-  // Check if the selected tab is a Live-App under discovery tab
-  const isLiveAppTabSelected = useCallback(() => {
-    const tabs = [];
-
-    // Add "refer-a-friend"
-    referralProgramConfig?.params && tabs.push(referralProgramConfig.params.path);
-
-    return tabs.find((liveTab: string) => location.pathname.includes(liveTab));
-  }, [referralProgramConfig, location]);
+  // Add your live-app path here if you don't want discovery and the live-app tabs to be both selected
+  const isLiveAppTabSelected = checkLiveAppTabSelection(
+    location,
+    [
+      referralProgramConfig.params.path, // Refer-a-friend
+    ].filter(Boolean),
+  );
 
   return (
     <Transition
@@ -419,7 +424,7 @@ const MainSideBar = () => {
                   icon={IconsLegacy.PlanetMedium}
                   iconSize={20}
                   iconActiveColor="wallet"
-                  isActive={location.pathname.startsWith("/platform") && !isLiveAppTabSelected()}
+                  isActive={location.pathname.startsWith("/platform") && !isLiveAppTabSelected}
                   onClick={handleClickCatalog}
                   collapsed={secondAnim}
                 />
