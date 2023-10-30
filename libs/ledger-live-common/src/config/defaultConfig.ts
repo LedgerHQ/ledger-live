@@ -18,7 +18,7 @@ const defaultConfig = {
         minGasPrice: 0.0025,
       },
       dydx: {
-        lcd: "https://dydx-testnet-archive.allthatnode.com:1317",
+        lcd: "https://api.dydx.nodestake.top:443",
         minGasPrice: 0.0025,
       },
       nyx: {
