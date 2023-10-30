@@ -36,12 +36,34 @@ import {
 import { Loader } from "./styled";
 import { WebviewAPI, WebviewProps } from "./types";
 import { useWebviewState } from "./helpers";
-
-const tracking = trackingWrapper(track);
+import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 
 export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
   ({ manifest, inputs = {}, onStateChange }, ref) => {
     const { webviewState, webviewRef, webviewProps } = useWebviewState({ manifest, inputs }, ref);
+
+    const tracking = useMemo(
+      () =>
+        trackingWrapper(
+          (
+            eventName: string,
+            properties?: Record<string, unknown> | null,
+            mandatory?: boolean | null,
+          ) =>
+            track(
+              eventName,
+              {
+                ...properties,
+                flowInitiatedFrom:
+                  currentRouteNameRef.current === "Platform Catalog"
+                    ? "Discover"
+                    : currentRouteNameRef.current,
+              },
+              mandatory,
+            ),
+        ),
+      [],
+    );
 
     useEffect(() => {
       if (onStateChange) {
@@ -92,7 +114,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
             );
           },
         ),
-      [manifest, accounts, dispatch],
+      [manifest, accounts, dispatch, tracking],
     );
 
     const signTransaction = useCallback(
@@ -138,7 +160,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           },
         );
       },
-      [manifest, dispatch, accounts],
+      [manifest, dispatch, accounts, tracking],
     );
 
     const broadcastTransaction = useCallback(
@@ -150,14 +172,14 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         signedTransaction: RawPlatformSignedTransaction;
       }) => {
         return broadcastTransactionLogic(
-          { manifest, dispatch, accounts },
+          { manifest, dispatch, accounts, tracking },
           accountId,
           signedTransaction,
           pushToast,
           t,
         );
       },
-      [manifest, accounts, pushToast, dispatch, t],
+      [manifest, accounts, pushToast, dispatch, t, tracking],
     );
 
     const startExchange = useCallback(
@@ -180,7 +202,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           ),
         );
       },
-      [manifest, dispatch],
+      [manifest, dispatch, tracking],
     );
 
     const completeExchange = useCallback(
@@ -222,7 +244,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
             }),
         );
       },
-      [accounts, dispatch, manifest],
+      [accounts, dispatch, manifest, tracking],
     );
 
     const signMessage = useCallback(
@@ -254,7 +276,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
             }),
         );
       },
-      [accounts, dispatch, manifest],
+      [accounts, dispatch, manifest, tracking],
     );
 
     const handlers = useMemo(
@@ -322,7 +344,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     const handleLoad = useCallback(() => {
       tracking.platformLoadSuccess(manifest);
       setWidgetLoaded(true);
-    }, [manifest]);
+    }, [manifest, tracking]);
 
     const handleDomReady = useCallback(() => {
       const webview = webviewRef.current;

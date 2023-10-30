@@ -16,26 +16,14 @@ import { selectAccountAndCurrency } from "../../drawers/DataSelector/logic";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
-import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 
-const tracking = trackingWrapper(
-  (eventName: string, properties?: Record<string, unknown> | null, mandatory?: boolean | null) =>
-    track(
-      eventName,
-      {
-        ...properties,
-        flowInitiatedFrom: currentRouteNameRef.current?.toLowerCase().startsWith("swap form")
-          ? "Native"
-          : "Discover",
-      },
-      mandatory,
-    ),
-);
+const trackingLiveAppSDKLogic = trackingWrapper(track);
 
 type WebPlatformContext = {
   manifest: LiveAppManifest;
   dispatch: Dispatch;
   accounts: AccountLike[];
+  tracking: typeof trackingLiveAppSDKLogic;
 };
 
 export type RequestAccountParams = {
@@ -44,10 +32,10 @@ export type RequestAccountParams = {
   includeTokens?: boolean;
 };
 export const requestAccountLogic = async (
-  { manifest }: Omit<WebPlatformContext, "accounts" | "dispatch">,
+  { manifest }: Omit<WebPlatformContext, "accounts" | "dispatch" | "tracking">,
   { currencies, includeTokens }: RequestAccountParams,
 ) => {
-  tracking.platformRequestAccountRequested(manifest);
+  trackingLiveAppSDKLogic.platformRequestAccountRequested(manifest);
 
   /**
    * make sure currencies are strings
@@ -63,7 +51,7 @@ export const requestAccountLogic = async (
 };
 
 export const broadcastTransactionLogic = (
-  { manifest, dispatch, accounts }: WebPlatformContext,
+  { manifest, dispatch, accounts, tracking }: WebPlatformContext,
   accountId: string,
   signedTransaction: RawPlatformSignedTransaction,
   pushToast: (data: ToastData) => void,
