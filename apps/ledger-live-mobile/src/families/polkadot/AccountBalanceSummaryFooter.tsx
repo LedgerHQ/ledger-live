@@ -153,7 +153,7 @@ function useInfo(account: PolkadotAccount): Record<InfoName, ModalInfo[]> {
     minBondWarning: [
       {
         Icon: () => <WarningIcon color={colors.orange} size={18} />,
-        title: t("polkadot.info.minBondWarning.title"),
+        title: t("polkadot.info.notEnoughBonded"),
         description: t("polkadot.bondedBalanceBelowMinimum", {
           minimumBondBalance: minimumBondBalanceStr,
         }),
