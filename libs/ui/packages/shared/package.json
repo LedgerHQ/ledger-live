@@ -32,7 +32,8 @@
   "scripts": {
     "build": "tsc && node scripts/transpile",
     "prepublishOnly": "npm run build",
-    "clean": "rimraf lib"
+    "clean": "rimraf lib",
+    "unimported": "unimported"
   },
   "devDependencies": {
     "esbuild": "^0.19.0",

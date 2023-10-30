@@ -52,17 +52,14 @@
     "storybook": "start-storybook  -c .storybook-web -p 6006",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "exit 0",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "unimported": "unimported"
   },
   "dependencies": {
     "@ledgerhq/crypto-icons-ui": "workspace:^",
     "@ledgerhq/icons-ui": "workspace:^",
     "@ledgerhq/ui-shared": "workspace:^",
-    "@types/color": "^3.0.3",
-    "@types/styled-system": "^5.1.13",
     "color": "^4.0.0",
-    "moment": "^2.29.1",
-    "react-native-animatable": "^1.3.3",
     "react-native-modal": "^13.0.0",
     "react-native-svg": "^13.11.0",
     "rn-range-slider": "2.1.1",
@@ -70,15 +67,13 @@
     "victory-native": "^35.5.5"
   },
   "peerDependencies": {
-    "@types/react": "*",
-    "@types/styled-components": "^5.3.3",
-    "@types/styled-components-react-native": "^5.3.3",
     "react": ">=17",
     "react-native": ">=0.64.0",
     "react-native-reanimated": "~3.3.0",
     "styled-components": "^5.3.3"
   },
   "devDependencies": {
+    "@types/color": "^3.0.3",
     "@babel/core": "^7.22.8",
     "@babel/generator": "^7.17.2",
     "@babel/plugin-proposal-class-properties": "^7.13.0",
@@ -122,6 +117,7 @@
     "@types/react-native": "0.72.5",
     "@types/styled-components": "^5.1.3",
     "@types/styled-components-react-native": "^5.1.3",
+    "@types/styled-system": "^5.1.13",
     "assert": "^2.0.0",
     "babel-loader": "^8.2.2",
     "babel-plugin-module-resolver": "^4.1.0",
