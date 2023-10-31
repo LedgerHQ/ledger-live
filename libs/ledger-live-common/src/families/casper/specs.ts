@@ -8,7 +8,7 @@ import { getCryptoCurrencyById } from "../../currencies";
 import { genericTestDestination, pickSiblings, botTest } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { acceptTransaction } from "./speculos-deviceActions";
-import { CASPER_MINIMUM_VALID_AMOUNT_MOTES } from "./consts";
+import { CASPER_MINIMUM_VALID_AMOUNT_MOTES, MayBlockAccountError } from "./consts";
 import { getRandomTransferID } from "./msc-utils";
 
 const MIN_SAFE = new BigNumber(CASPER_MINIMUM_VALID_AMOUNT_MOTES);
@@ -98,6 +98,12 @@ const casperSpecs: AppSpec<Transaction> = {
           updates,
         };
       },
+      expectStatusWarnings: _ => {
+        return {
+          amount: MayBlockAccountError,
+        };
+      },
+      testDestination: genericTestDestination,
       test: ({ account, transaction, operation }) => {
         botTest("account spendable balance is zero", () =>
           expect(account.spendableBalance.toString()).toBe("0"),
