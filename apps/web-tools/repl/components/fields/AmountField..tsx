@@ -1,10 +1,7 @@
 import React, { useState } from "react";
 import { BigNumber } from "bignumber.js";
 import styled from "styled-components";
-import {
-  formatCurrencyUnit,
-  sanitizeValueString,
-} from "@ledgerhq/live-common/lib/currencies/index";
+import { formatCurrencyUnit, sanitizeValueString } from "@ledgerhq/live-common/currencies/index";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 
 const Container = styled.div`

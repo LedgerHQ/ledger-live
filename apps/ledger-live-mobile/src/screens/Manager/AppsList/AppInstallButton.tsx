@@ -9,14 +9,14 @@ import { useAppInstallNeedsDeps } from "@ledgerhq/live-common/apps/react";
 import styled from "styled-components/native";
 import { IconsLegacy, Box } from "@ledgerhq/native-ui";
 import { hasInstalledAnyAppSelector } from "../../../reducers/settings";
-import { installAppFirstTime } from "../../../actions/settings";
+import { setHasInstalledAnyApp } from "../../../actions/settings";
+import { useSetAppsWithDependenciesToInstallUninstall } from "../AppsInstallUninstallWithDependenciesContext";
 
 type Props = {
   app: App;
   state: State;
   dispatch: (_: Action) => void;
   notEnoughMemoryToInstall: boolean;
-  setAppInstallWithDependencies: (_: { app: App; dependencies: App[] }) => void;
   storageWarning: (_: string) => void;
 };
 
@@ -34,7 +34,6 @@ export default function AppInstallButton({
   state,
   dispatch: dispatchProps,
   notEnoughMemoryToInstall,
-  setAppInstallWithDependencies,
   storageWarning,
 }: Props) {
   const dispatch = useDispatch();
@@ -45,6 +44,8 @@ export default function AppInstallButton({
   const { updateAllQueue } = state;
 
   const needsDependencies = useAppInstallNeedsDeps(state, app);
+
+  const { setAppWithDependenciesToInstall } = useSetAppsWithDependenciesToInstallUninstall();
 
   const disabled = useMemo(
     () => !canBeInstalled || updateAllQueue.length > 0,
@@ -57,13 +58,13 @@ export default function AppInstallButton({
       storageWarning(name);
       return;
     }
-    if (needsDependencies && setAppInstallWithDependencies) {
-      setAppInstallWithDependencies(needsDependencies);
+    if (needsDependencies) {
+      setAppWithDependenciesToInstall(needsDependencies);
     } else {
       dispatchProps({ type: "install", name });
     }
     if (!hasInstalledAnyApp) {
-      dispatch(installAppFirstTime(true));
+      dispatch(setHasInstalledAnyApp(true));
     }
   }, [
     disabled,
@@ -71,7 +72,7 @@ export default function AppInstallButton({
     dispatchProps,
     name,
     needsDependencies,
-    setAppInstallWithDependencies,
+    setAppWithDependenciesToInstall,
     hasInstalledAnyApp,
     notEnoughMemoryToInstall,
     storageWarning,

@@ -7,11 +7,11 @@ const groupCurrenciesByProvider = (
 ) => {
   const assetsByLedgerId: Record<string, MappedAsset> = {};
   for (const asset of assets) {
-    assetsByLedgerId[asset.ledgerId] = asset;
+    assetsByLedgerId[asset.ledgerId.toLowerCase()] = asset;
   }
   const assetsByProviderId: Record<string, CurrenciesByProviderId> = {};
   for (const ledgerCurrency of currenciesSupported) {
-    const asset = assetsByLedgerId[ledgerCurrency.id];
+    const asset = assetsByLedgerId[ledgerCurrency.id.toLowerCase()];
     if (asset) {
       if (!assetsByProviderId[asset.providerId]) {
         assetsByProviderId[asset.providerId] = {

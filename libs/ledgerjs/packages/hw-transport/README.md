@@ -41,6 +41,7 @@
         *   [Parameters](#parameters-8)
     *   [setTraceContext](#settracecontext)
         *   [Parameters](#parameters-9)
+    *   [getTraceContext](#gettracecontext)
     *   [isSupported](#issupported)
     *   [list](#list)
         *   [Examples](#examples)
@@ -210,6 +211,12 @@ but with a new tracing context.
 ##### Parameters
 
 *   `context` **TraceContext?** A TraceContext, that can undefined to reset the context
+
+#### getTraceContext
+
+Gets the tracing context of the transport instance
+
+Returns **(TraceContext | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
 
 #### isSupported
 

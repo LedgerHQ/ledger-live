@@ -4,7 +4,7 @@ import "./live-common-set-supported-currencies";
 import {
   getAbandonSeedAddress,
   listSupportedCurrencies,
-} from "@ledgerhq/live-common/lib/currencies/index";
+} from "@ledgerhq/live-common/currencies/index";
 
 describe("supported currencies are ready to work for LLD", () => {
   listSupportedCurrencies().forEach(c =>

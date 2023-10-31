@@ -75,7 +75,6 @@ export const DEFAULT_FEATURES: Features = {
   syncOnboarding: DEFAULT_FEATURE,
   walletConnectEntryPoint: DEFAULT_FEATURE,
   counterValue: DEFAULT_FEATURE,
-  listAppsV2: DEFAULT_FEATURE,
   llmNewDeviceSelection: DEFAULT_FEATURE,
   llmNewFirmwareUpdateUx: DEFAULT_FEATURE,
   mockFeature: DEFAULT_FEATURE,
@@ -91,7 +90,7 @@ export const DEFAULT_FEATURES: Features = {
   staxWelcomeScreen: DEFAULT_FEATURE,
   protectServicesDiscoverDesktop: DEFAULT_FEATURE,
   llmWalletQuickActions: DEFAULT_FEATURE,
-
+  listAppsV2minor1: DEFAULT_FEATURE,
   ethStakingProviders: initFeature(),
   referralProgramDiscoverCard: initFeature(),
   newsfeedPage: initFeature(),
@@ -150,16 +149,24 @@ export const DEFAULT_FEATURES: Features = {
     params: {
       availableOnDesktop: false,
       account: {
-        homeURI: "ledgerlive://recover/protect-simu?redirectTo=account",
-        loginURI: "ledgerlive://recover/protect-simu?redirectTo=login",
+        homeURI:
+          "ledgerlive://recover/protect-simu?redirectTo=account&source=lld-sidebar-navigation&ajs_recover_source=lld-sidebar-navigation&ajs_recover_campaign=recover-launch",
+        loginURI:
+          "ledgerlive://recover/protect-simu?redirectTo=login&source=lld-welcome-login&ajs_recover_source=lld-welcome-login&ajs_recover_campaign=recover-launch",
       },
       discoverTheBenefitsLink: "https://www.ledger.com/recover",
       onboardingCompleted: {
         alreadySubscribedURI: "ledgerlive://recover/protect-simu?redirectTo=login",
-        upsellURI: "ledgerlive://recover/protect-simu?redirectTo=upsell",
+        alreadyDeviceSeededURI:
+          "ledgerlive://recover/protect-simu?redirectTo=upsell&source=lld-pairing&ajs_recover_source=lld-pairing&ajs_recover_campaign=recover-launch",
+        upsellURI:
+          "ledgerlive://recover/protect-simu?redirectTo=upsell&source=lld-onboarding-24&ajs_recover_source=lld-onboarding-24&ajs_recover_campaign=recover-launch",
+        restore24URI:
+          "ledgerlive://recover/protect-simu?redirectTo=upsell&source=lld-restore-24&ajs_recover_source=lld-restore-24&ajs_recover_campaign=recover-launch",
       },
       onboardingRestore: {
-        postOnboardingURI: "ledgerlive://recover/protect-simu?redirectTo=restore",
+        postOnboardingURI:
+          "ledgerlive://recover/protect-simu?redirectTo=restore&source=lld-restore",
         restoreInfoDrawer: {
           enabled: true,
           manualStepsURI:
