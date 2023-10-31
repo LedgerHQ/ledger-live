@@ -1,9 +1,13 @@
 name: "@Desktop • Build App (external)"
-run-name: "@Desktop • Build App (external) triggered by ${{ github.actor }}  ${{ format('on ref {0}', github.ref_name) }}"
+run-name: "@Desktop • Build App (external) triggered by ${{ inputs.login }}  ${{ format('on ref {0}', github.ref_name) }}"
 
 on:
   workflow_dispatch:
     inputs:
+      # This input is mainly used by the github bot (cf. https://github.com/LedgerHQ/ledger-live/tree/develop/tools/github-bot)
+      login:
+        description: The GitHub username that triggered the workflow
+        required: false
       base_ref:
         description: The base branch to merge the head into when checking out the code
         required: false
