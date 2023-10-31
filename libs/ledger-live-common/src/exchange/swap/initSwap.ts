@@ -5,9 +5,9 @@ import network from "@ledgerhq/live-network/network";
 import { log } from "@ledgerhq/logs";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
-import { Observable, from } from "rxjs";
+import { Observable, firstValueFrom, from } from "rxjs";
 import secp256k1 from "secp256k1";
-import { getCurrencyExchangeConfig } from "../";
+import { convertToAppExchangePartnerKey, getCurrencyExchangeConfig } from "../";
 import { getAccountCurrency, getAccountUnit, getMainAccount } from "../../account";
 import { getAccountBridge } from "../../bridge";
 import { getEnv } from "@ledgerhq/live-env";
@@ -20,7 +20,7 @@ import { mockInitSwap } from "./mock";
 import type { InitSwapInput, SwapRequestEvent } from "./types";
 
 const withDevicePromise = (deviceId, fn) =>
-  withDevice(deviceId)(transport => from(fn(transport))).toPromise();
+  firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
 
 // init a swap with the Exchange app
 // throw if TransactionStatus have errors
@@ -69,6 +69,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         const data = {
           provider,
           amountFrom: apiAmount.toString(),
+          amountFromInSmallestDenomination: amount.toNumber(),
           from: refundCurrency.id,
           to: payoutCurrency.id,
           address: payoutAccount.freshAddress,
@@ -149,7 +150,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         }
 
         // Prepare swap app to receive the tx to forward.
-        await swap.setPartnerKey(swapProviderConfig.nameAndPubkey);
+        await swap.setPartnerKey(convertToAppExchangePartnerKey(swapProviderConfig));
         if (unsubscribed) return;
 
         await swap.checkPartner(swapProviderConfig.signature);

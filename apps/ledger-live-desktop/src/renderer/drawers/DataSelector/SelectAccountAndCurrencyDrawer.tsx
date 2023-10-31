@@ -11,7 +11,7 @@ import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import Text from "~/renderer/components/Text";
 import { CurrencyList } from "./CurrencyList";
 import SelectAccountDrawer from "./SelectAccountDrawer";
-import { Observable } from "rxjs7";
+import { Observable } from "rxjs";
 import { getEnv } from "@ledgerhq/live-env";
 
 const options = {
@@ -75,7 +75,7 @@ function SelectAccountAndCurrencyDrawer(props: SelectAccountAndCurrencyDrawerPro
     return fuzzySearch(sortedCurrencies, searchValue);
   }, [searchValue, sortedCurrencies]);
   const handleCurrencySelected = useCallback(
-    currency => {
+    (currency: CryptoOrTokenCurrency) => {
       setDrawer(
         SelectAccountDrawer,
         {
@@ -95,7 +95,13 @@ function SelectAccountAndCurrencyDrawer(props: SelectAccountAndCurrencyDrawerPro
     [onAccountSelected, props, onClose, accounts$],
   );
   if (currencies.length === 1) {
-    return <SelectAccountDrawer currency={currencies[0]} onAccountSelected={onAccountSelected} />;
+    return (
+      <SelectAccountDrawer
+        currency={currencies[0]}
+        onAccountSelected={onAccountSelected}
+        accounts$={accounts$}
+      />
+    );
   }
   return (
     <SelectAccountAndCurrencyDrawerContainer>
@@ -120,6 +126,7 @@ function SelectAccountAndCurrencyDrawer(props: SelectAccountAndCurrencyDrawerPro
             onChange={setSearchValue}
           />
         </SearchInputContainer>
+        {/* @ts-expect-error compatibility issue betwenn CryptoOrTokenCurrency and Currency (which includes Fiat) and the SelectAccountDrawer components  */}
         <CurrencyList currencies={filteredCurrencies} onCurrencySelect={handleCurrencySelected} />
       </SelectorContent>
     </SelectAccountAndCurrencyDrawerContainer>

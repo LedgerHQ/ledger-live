@@ -1,5 +1,5 @@
 import secp256k1 from "secp256k1";
-import { from, Observable } from "rxjs";
+import { firstValueFrom, from, Observable } from "rxjs";
 import { TransportStatusError, WrongDeviceForAccount } from "@ledgerhq/errors";
 
 import { delay } from "../../../promise";
@@ -9,7 +9,7 @@ import { getAccountCurrency, getMainAccount } from "../../../account";
 import { getAccountBridge } from "../../../bridge";
 import { TransactionRefusedOnDevice } from "../../../errors";
 import { withDevice } from "../../../hw/deviceAccess";
-import { getCurrencyExchangeConfig } from "../..";
+import { convertToAppExchangePartnerKey, getCurrencyExchangeConfig } from "../..";
 import { getProvider } from ".";
 
 import type {
@@ -19,7 +19,7 @@ import type {
 } from "../types";
 
 const withDevicePromise = (deviceId, fn) =>
-  withDevice(deviceId)(transport => from(fn(transport))).toPromise();
+  firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
 
 const completeExchange = (
   input: CompleteExchangeInputFund | CompleteExchangeInputSell,
@@ -70,7 +70,7 @@ const completeExchange = (
         const errorsKeys = Object.keys(errors);
         if (errorsKeys.length > 0) throw errors[errorsKeys[0]]; // throw the first error
 
-        await exchange.setPartnerKey(providerNameAndSignature.nameAndPubkey);
+        await exchange.setPartnerKey(convertToAppExchangePartnerKey(providerNameAndSignature));
         if (unsubscribed) return;
 
         await exchange.checkPartner(providerNameAndSignature.signature);
@@ -125,7 +125,7 @@ const completeExchange = (
 
         o.next({
           type: "complete-exchange-requested",
-          estimatedFees,
+          estimatedFees: estimatedFees.toString(),
         });
 
         if (unsubscribed) return;

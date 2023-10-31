@@ -83,6 +83,7 @@ type EvmTransactionBaseRaw = TransactionCommonRaw & {
   data?: string | null;
   type?: number;
   additionalFees?: string;
+  gasOptions?: GasOptionsRaw;
   nft?: EvmTransactionNftParamRaw;
 };
 
@@ -133,10 +134,22 @@ export type FeeData = {
   nextBaseFee: BigNumber | null;
 };
 
+export type FeeDataRaw = {
+  maxFeePerGas: string | null;
+  maxPriorityFeePerGas: string | null;
+  gasPrice: string | null;
+  // only used by UI send flow in advanced mode for EIP-1559
+  nextBaseFee: string | null;
+};
+
 export type Strategy = "slow" | "medium" | "fast";
 
 export type GasOptions = {
   [key in Strategy]: FeeData;
+};
+
+export type GasOptionsRaw = {
+  [key in Strategy]: FeeDataRaw;
 };
 
 export type EvmTransactionNftParam = {

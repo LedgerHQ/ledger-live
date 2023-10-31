@@ -1,17 +1,7 @@
 {
-  "entry": [
-    "index.js"
-  ],
-  "extensions": [
-    ".ts",
-    ".js",
-    ".jsx",
-    ".tsx",
-    ".d.ts"
-  ],
-  "ignorePatterns": [
-    "**/node_modules/**"
-  ],
+  "entry": ["index.js"],
+  "extensions": [".ts", ".js", ".jsx", ".tsx", ".d.ts"],
+  "ignorePatterns": ["**/node_modules/**"],
   "ignoreUnresolved": [],
   "ignoreUnimported": [
     "**/*.test.*",
@@ -28,6 +18,8 @@
   "ignoreUnused": [
     "@ledgerhq/react-native-passcode-auth",
     "@react-native-masked-view/masked-view",
+    "@react-native/gradle-plugin",
+    "@react-native/metro-config",
     "@segment/sovran-react-native",
     "expo-file-system",
     "expo-image-loader",
@@ -41,7 +33,6 @@
     "react-native-randombytes",
     "react-native-tcp",
     "react-native-tcp-socket",
-    "react-native-udp",
-    "rxjs-compat"
+    "react-native-udp"
   ]
 }

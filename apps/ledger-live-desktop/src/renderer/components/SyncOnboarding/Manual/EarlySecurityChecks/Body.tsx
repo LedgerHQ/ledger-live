@@ -122,7 +122,9 @@ const SoftwareCheckContent = ({
             <Button variant="main" size="small" outline={false} onClick={onClickViewUpdate}>
               {updateSkippable
                 ? t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.resumeUpdateCTA")
-                : t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.viewUpdateCTA")}
+                : t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.viewUpdateCTA", {
+                    modelName,
+                  })}
             </Button>
             {updateSkippable ? (
               <Button
@@ -164,7 +166,9 @@ const SoftwareCheckContent = ({
             {t("syncOnboarding.manual.softwareCheckContent.whyPerformChecksLink")}
           </Link>
           <Button onClick={onClickStartChecks} variant="main" size="large" outline={false}>
-            {t("syncOnboarding.manual.softwareCheckContent.startChecksCTA")}
+            {t("syncOnboarding.manual.softwareCheckContent.startChecksCTA", {
+              modelName,
+            })}
           </Button>
         </Flex>
       ) : null}

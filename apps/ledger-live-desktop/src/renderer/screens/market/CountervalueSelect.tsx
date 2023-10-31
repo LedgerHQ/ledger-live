@@ -1,9 +1,13 @@
 import React, { useCallback, useMemo, memo } from "react";
-import { supportedCountervalues, SupportedCoutervaluesData } from "~/renderer/reducers/settings";
+import {
+  supportedCounterValuesSelector,
+  SupportedCountervaluesData,
+} from "~/renderer/reducers/settings";
 import Dropdown from "./DropDown";
 import Track from "~/renderer/analytics/Track";
 import { useTranslation } from "react-i18next";
 import { Currency } from "@ledgerhq/types-cryptoassets";
+import { useSelector } from "react-redux";
 
 type Props = {
   counterCurrency?: string;
@@ -17,6 +21,7 @@ function CounterValueSelect({
   supportedCounterCurrencies,
 }: Props) {
   const { t } = useTranslation();
+  const supportedCountervalues = useSelector(supportedCounterValuesSelector);
 
   const handleChangeCounterValue = useCallback(
     (item: { currency: Currency } | null) => {
@@ -29,19 +34,19 @@ function CounterValueSelect({
 
   const options = useMemo(
     () =>
-      supportedCountervalues.filter(({ value }: SupportedCoutervaluesData) =>
+      supportedCountervalues.filter(({ value }: SupportedCountervaluesData) =>
         supportedCounterCurrencies.includes(value?.toLowerCase()),
       ),
-    [supportedCounterCurrencies],
+    [supportedCounterCurrencies, supportedCountervalues],
   );
 
   const cvOption = useMemo(
     () =>
       supportedCountervalues.find(
-        (f: SupportedCoutervaluesData) =>
+        (f: SupportedCountervaluesData) =>
           f?.value?.toLowerCase() === counterCurrency?.toLowerCase(),
       ),
-    [counterCurrency],
+    [counterCurrency, supportedCountervalues],
   );
 
   return (

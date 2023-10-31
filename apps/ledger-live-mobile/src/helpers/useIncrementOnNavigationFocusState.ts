@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { NavigationProp } from "@react-navigation/native";
+import { NavigationProp, ParamListBase } from "@react-navigation/native";
 
 // Returns a counter that increments itself when the component using it
 // gets a new focus from the navigation mechanism
 export function useIncrementOnNavigationFocusState<
-  NavigationType extends NavigationProp<Record<string, unknown>>,
+  NavigationType extends NavigationProp<ParamListBase>,
 >(navigation: NavigationType): number {
   const [nonce, setNonce] = useState<number>(0);
   // Avoids forcing the rendering on the first focus on the screen.

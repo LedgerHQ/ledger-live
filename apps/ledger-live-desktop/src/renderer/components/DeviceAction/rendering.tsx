@@ -195,6 +195,13 @@ const Circle = styled(Flex)`
   justify-content: center;
 `;
 
+const Separator = styled.div`
+  width: calc(100% + 60px);
+  height: 1px;
+  background-color: ${({ theme }) => theme.colors.palette.text.shade10};
+  margin: 24px -30px;
+`;
+
 // these are not components because we want reconciliation to not remount the sub elements
 
 export const renderRequestQuitApp = ({
@@ -406,11 +413,11 @@ export const renderListingApps = () => (
 export const renderAllowManager = ({
   modelId,
   type,
-  wording,
+  requestType = "manager",
 }: {
   modelId: DeviceModelId;
   type: Theme["theme"];
-  wording: string;
+  requestType?: "manager" | "rename";
 }) => (
   <Wrapper>
     <DeviceBlocker />
@@ -420,7 +427,11 @@ export const renderAllowManager = ({
     </AnimationWrapper>
     <Footer>
       <Title>
-        <Trans i18nKey="DeviceAction.allowManagerPermission" values={{ wording }} />
+        {requestType === "rename" ? (
+          <Trans i18nKey="DeviceAction.allowRenaming" />
+        ) : (
+          <Trans i18nKey="DeviceAction.allowManagerPermission" />
+        )}
       </Title>
     </Footer>
   </Wrapper>
@@ -547,7 +558,7 @@ export const renderLockedDeviceError = ({
   inlineRetry,
 }: {
   t: TFunction;
-  device?: Device;
+  device?: Device | null;
   onRetry?: (() => void) | null | undefined;
   inlineRetry?: boolean;
 }) => {
@@ -577,7 +588,13 @@ export const renderLockedDeviceError = ({
   );
 };
 
-export const RenderDeviceNotOnboardedError = ({ t, device }: { t: TFunction; device?: Device }) => {
+export const RenderDeviceNotOnboardedError = ({
+  t,
+  device,
+}: {
+  t: TFunction;
+  device?: Device | null;
+}) => {
   const productName = device ? getDeviceModel(device.modelId).productName : null;
   const history = useHistory();
   const { setDrawer } = useContext(context);
@@ -676,7 +693,7 @@ export const renderError = ({
   managerAppName?: string;
   requireFirmwareUpdate?: boolean;
   withOnboardingCTA?: boolean;
-  device?: Device;
+  device?: Device | null;
   inlineRetry?: boolean;
   Icon?: (props: { color?: string | undefined; size?: number | undefined }) => JSX.Element;
 }) => {
@@ -915,7 +932,7 @@ export const renderSwapDeviceConfirmation = ({
             />
           </Alert>
         </Box>
-        <Box mx={6} data-test-id="device-swap-summary">
+        <Box mx={3} data-test-id="device-swap-summary">
           {map(
             {
               amountSent: (
@@ -983,7 +1000,10 @@ export const renderSwapDeviceConfirmation = ({
         </Box>
         {renderVerifyUnwrapped({ modelId, type })}
       </ConfirmWrapper>
-      <DrawerFooter provider={exchangeRate.provider} />
+      <Separator />
+      <Flex width="100%" mb={3}>
+        <DrawerFooter provider={exchangeRate.provider} />
+      </Flex>
     </>
   );
 };
@@ -1117,9 +1137,14 @@ export const renderLoadingImage = ({
 }) => {
   return (
     <ImageLoadingGeneric
-      title={t("customImage.steps.transfer.loadingPicture", {
-        productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
-      })}
+      title={t(
+        progress && progress > 0.9
+          ? "customImage.steps.transfer.voila"
+          : "customImage.steps.transfer.loadingPicture",
+        {
+          productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
+        },
+      )}
       testId={`device-action-image-loading-${progress}`}
     >
       <AnimationWrapper>

@@ -10,7 +10,7 @@ import { useDispatch } from "react-redux";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { NavigatorName, ScreenName } from "../../../const";
 import StyledStatusBar from "../../../components/StyledStatusBar";
-import { urls } from "../../../config/urls";
+import { urls } from "@utils/urls";
 import { useAcceptGeneralTerms } from "../../../logic/terms";
 import { setAnalytics } from "../../../actions/settings";
 import useIsAppInBackground from "../../../components/useIsAppInBackground";
@@ -82,7 +82,7 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
   const timeout = useRef<ReturnType<typeof setTimeout>>();
 
   const handleNavigateToFeatureFlagsSettings = useCallback(
-    nb => {
+    (nb: string) => {
       if (nb === "1") countTitle.current++;
       else if (nb === "2") countSubtitle.current++;
       if (countTitle.current > 3 && countSubtitle.current > 5) {
@@ -114,18 +114,21 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
     ? videoSources.welcomeScreenStax
     : videoSources.welcomeScreen;
 
-  const recoverFeature = useFeature("protectServicesMobile");
+  {
+    /* @TODO need to disable temporary because of issue pairing device onboarding RECOVER - LLM
+    const recoverFeature = useFeature("protectServicesMobile");
+      const recoverLogIn = useCallback(() => {
+        acceptTerms();
+        dispatch(setAnalytics(true));
 
-  const recoverLogIn = useCallback(() => {
-    acceptTerms();
-    dispatch(setAnalytics(true));
+        const url = `${recoverFeature?.params?.account?.loginURI}&shouldBypassLLOnboarding=true`;
 
-    const url = `${recoverFeature?.params?.login?.loginURI}&shouldBypassLLOnboarding=true`;
-
-    Linking.canOpenURL(url).then(canOpen => {
-      if (canOpen) Linking.openURL(url);
-    });
-  }, [acceptTerms, dispatch, recoverFeature?.params?.login?.loginURI]);
+        Linking.canOpenURL(url).then(canOpen => {
+          if (canOpen) Linking.openURL(url);
+        });
+      }, [acceptTerms, dispatch, recoverFeature?.params?.login?.loginURI]);
+    */
+  }
 
   return (
     <ForceTheme selectedPalette={"dark"}>
@@ -208,12 +211,14 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
             {t("onboarding.stepWelcome.start")}
           </Button>
           {/* @TODO check if proper URL */}
+          {/* @TODO need to disable temporary because of issue pairing device onboarding 
           {recoverFeature?.enabled &&
-          recoverFeature?.params?.onboardingRestore.postOnboardingURI ? (
+          recoverFeature?.params?.onboardingRestore?.postOnboardingURI ? (
             <Button outline type="main" size="large" onPress={recoverLogIn} mt={0} mb={7}>
               {t("onboarding.stepWelcome.recoverLogIn")}
             </Button>
           ) : null}
+          */}
           <Text variant="small" textAlign="center" color="neutral.c100">
             {t("onboarding.stepWelcome.terms")}
           </Text>

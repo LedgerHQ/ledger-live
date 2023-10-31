@@ -4,7 +4,9 @@ import manager from "@ledgerhq/live-common/manager/index";
 import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck";
 import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/deviceSDK/hooks/useGetLatestAvailableFirmware";
 import Body from "./Body";
-import LockedDeviceDrawer, { Props as LockedDeviceDrawerProps } from "../LockedDeviceDrawer";
+import TroubleshootingDrawer, {
+  Props as TroubleshootingDrawerProps,
+} from "../TroubleshootingDrawer";
 import SoftwareCheckAllowSecureChannelDrawer, {
   Props as SoftwareCheckAllowSecureChannelDrawerProps,
 } from "./SoftwareCheckAllowSecureChannelDrawer";
@@ -26,6 +28,8 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
 import { log } from "@ledgerhq/logs";
 import { useDynamicUrl } from "~/renderer/terms";
+import { FinalFirmware } from "@ledgerhq/types-live";
+import { useHistory } from "react-router-dom";
 
 export type Props = {
   onComplete: () => void;
@@ -40,7 +44,10 @@ export type Props = {
    * */
   isInitialRunOfSecurityChecks: boolean;
   restartChecksAfterUpdate: () => void;
-  isBootloader: boolean | null;
+  // Pulling this state out of the early security check component because it gets
+  // unmounted when we restart the polling after the user interrupts an update."
+  fwUpdateInterrupted: FinalFirmware | null;
+  setFwUpdateInterrupted: (finalFirmware: FinalFirmware) => void;
 };
 
 const commonDrawerProps = {
@@ -61,7 +68,8 @@ const EarlySecurityChecks = ({
   device,
   restartChecksAfterUpdate,
   isInitialRunOfSecurityChecks,
-  isBootloader,
+  setFwUpdateInterrupted,
+  fwUpdateInterrupted,
 }: Props) => {
   const { t } = useTranslation();
   const whySecurityChecksUrl = useDynamicUrl("genuineCheck");
@@ -74,7 +82,7 @@ const EarlySecurityChecks = ({
     SoftwareCheckStatus.inactive,
   );
   const [availableFirmwareVersion, setAvailableFirmwareVersion] = useState<string>("");
-  const [updateInterrupted, setUpdateInterrupted] = useState(false);
+  const history = useHistory();
 
   const deviceId = device.deviceId ?? "";
   const deviceModelId = device.modelId;
@@ -129,7 +137,13 @@ const EarlySecurityChecks = ({
       ),
       onDrawerClose: () => {
         closeFwUpdateDrawer();
-        setUpdateInterrupted(true);
+        setFwUpdateInterrupted(latestFirmware?.final);
+        restartChecksAfterUpdate();
+      },
+      onRequestClose: () => {
+        closeFwUpdateDrawer();
+        setFwUpdateInterrupted(latestFirmware.final);
+        restartChecksAfterUpdate();
       },
       status: modal,
       stepId,
@@ -156,10 +170,8 @@ const EarlySecurityChecks = ({
     setDrawer(UpdateFirmwareModal, updateFirmwareModalProps, {
       preventBackdropClick: true,
       forceDisableFocusTrap: true,
-      onRequestClose: () => {
-        closeFwUpdateDrawer();
-        setUpdateInterrupted(true);
-      },
+      withPaddingTop: false,
+      onRequestClose: undefined,
     });
   }, [
     closeFwUpdateDrawer,
@@ -168,14 +180,9 @@ const EarlySecurityChecks = ({
     deviceModelId,
     latestFirmware,
     restartChecksAfterUpdate,
+    setFwUpdateInterrupted,
     t,
   ]);
-
-  useEffect(() => {
-    if (updateInterrupted && isBootloader) {
-      restartChecksAfterUpdate();
-    }
-  }, [isBootloader, restartChecksAfterUpdate, updateInterrupted]);
 
   useEffect(() => {
     if (devicePermissionState === "refused") {
@@ -226,7 +233,8 @@ const EarlySecurityChecks = ({
     getLatestAvailableFirmwareError,
   ]);
 
-  const lockedDeviceModalIsOpen =
+  // at this step we can't have an unlocked device; it's inevitably disconnected
+  const disconnectedDeviceModalIsOpen =
     (devicePermissionState === "unlock-needed" && genuineCheckActive) ||
     (lockedDevice && firmwareUpdateStatus === SoftwareCheckStatus.active);
 
@@ -238,11 +246,15 @@ const EarlySecurityChecks = ({
 
   /** Opening and closing of drawers */
   useEffect(() => {
-    if (lockedDeviceModalIsOpen) {
-      const props: LockedDeviceDrawerProps = {
-        deviceModelId,
+    if (disconnectedDeviceModalIsOpen) {
+      const props: TroubleshootingDrawerProps = {
+        lastKnownDeviceId: deviceModelId,
+        onClose: () => {
+          resetGenuineCheckState();
+          history.push("/onboarding/select-device");
+        },
       };
-      setDrawer(LockedDeviceDrawer, props, commonDrawerProps);
+      setDrawer(TroubleshootingDrawer, props, commonDrawerProps);
     } else if (allowSecureChannelIsOpen) {
       const props: SoftwareCheckAllowSecureChannelDrawerProps = {
         deviceModelId,
@@ -293,10 +305,11 @@ const EarlySecurityChecks = ({
     deviceModelId,
     genuineCheckError,
     getLatestAvailableFirmwareError,
-    lockedDeviceModalIsOpen,
+    disconnectedDeviceModalIsOpen,
     notGenuineIsOpen,
     productName,
     resetGenuineCheckState,
+    history,
   ]);
 
   return (
@@ -330,7 +343,7 @@ const EarlySecurityChecks = ({
         }
         availableFirmwareVersion={availableFirmwareVersion}
         modelName={productName}
-        updateSkippable={updateInterrupted}
+        updateSkippable={latestFirmware?.final.id === fwUpdateInterrupted?.id}
         onClickStartChecks={() => {
           track("button_clicked", { button: "Start checks" });
           setGenuineCheckStatus(SoftwareCheckStatus.active);

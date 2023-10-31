@@ -44,7 +44,7 @@ export const NetworkErrorScreen = ({ refresh }: { refresh: () => void }) => {
         onClick={refresh}
         borderRadius="44px"
       >
-        {t("webview.networkError.tryAgain")}
+        {t("common.tryAgain")}
       </Button>
       <ExportLogsButton
         customComponent={(handleSaveLogPress: () => Promise<void>) => (

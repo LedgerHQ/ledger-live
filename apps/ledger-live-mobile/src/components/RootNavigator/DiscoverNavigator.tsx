@@ -16,7 +16,7 @@ export default function DiscoverNavigator() {
 
   return (
     <Stack.Navigator screenOptions={stackNavigationConfig}>
-      {(!config.enabled || config.params?.version === "1") && (
+      {(!config?.enabled || config?.params?.version === "1") && (
         <Stack.Screen
           name={ScreenName.DiscoverScreen}
           component={Discover}

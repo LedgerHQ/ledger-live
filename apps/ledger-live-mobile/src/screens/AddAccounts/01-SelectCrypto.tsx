@@ -60,6 +60,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const umee = useFeature("currencyUmee");
   const desmos = useFeature("currencyDesmos");
   const onomy = useFeature("currencyOnomy");
+  const seiNetwork = useFeature("currencySeiNetwork");
   const quicksilver = useFeature("currencyQuicksilver");
   const persistence = useFeature("currencyPersistence");
   const avaxCChain = useFeature("currencyAvalancheCChain");
@@ -88,6 +89,9 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const baseGoerli = useFeature("currencyBaseGoerli");
   const klaytn = useFeature("currencyKlaytn");
   const mock = useEnv("MOCK");
+  const injective = useFeature("currencyInjective");
+  const neonEvm = useFeature("currencyNeonEvm");
+
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
       axelar,
@@ -96,6 +100,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       desmos,
       secret_network: secretNetwork,
       onomy,
+      sei_network: seiNetwork,
       quicksilver,
       persistence,
       avalanche_c_chain: avaxCChain,
@@ -123,6 +128,8 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       base,
       base_goerli: baseGoerli,
       klaytn,
+      injective,
+      neon_evm: neonEvm,
     }),
     [
       axelar,
@@ -131,6 +138,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       desmos,
       secretNetwork,
       onomy,
+      seiNetwork,
       quicksilver,
       persistence,
       avaxCChain,
@@ -158,6 +166,8 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       base,
       baseGoerli,
       klaytn,
+      injective,
+      neonEvm,
     ],
   );
 

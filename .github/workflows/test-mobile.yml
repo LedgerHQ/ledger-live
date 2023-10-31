@@ -38,9 +38,12 @@ jobs:
           base: ${{ inputs.base_ref }}
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
+        with:
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7
+          ruby-version: 3.2.2
       - name: TurboRepo local caching server
         id: turborepo-cache-server
         uses: ./tools/actions/turborepo-s3-cache
@@ -56,7 +59,7 @@ jobs:
           pnpm lint --filter="live-mobile" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo" -- --format="json" -o="lint.json"
           node -p "require('./node_modules/eslint/lib/cli-engine/formatters/stylish.js')(require('./apps/ledger-live-mobile/lint.json'))"
       - name: check for dead code
-        run: cd apps/ledger-live-mobile && npx unimported
+        run: pnpm mobile unimported
         shell: bash
       - name: Run code checkers
         run: pnpm typecheck --filter="live-mobile" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"

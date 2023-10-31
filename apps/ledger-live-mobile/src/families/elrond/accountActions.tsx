@@ -77,7 +77,7 @@ const getMainActions = ({
     {
       id: "stake",
       label: <Trans i18nKey="account.stake" />,
-      Icon: IconsLegacy.ClaimRewardsMedium,
+      Icon: IconsLegacy.CoinsMedium,
       navigationParams: navigationParams as unknown as NavigationParamsType,
       event: "button_clicked",
       eventProperties: {

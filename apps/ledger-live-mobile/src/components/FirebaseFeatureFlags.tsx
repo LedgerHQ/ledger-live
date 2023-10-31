@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import isEqual from "lodash/isEqual";
 import remoteConfig from "@react-native-firebase/remote-config";
@@ -9,7 +9,7 @@ import {
   checkFeatureFlagVersion,
 } from "@ledgerhq/live-common/featureFlags/index";
 import type { FirebaseFeatureFlagsProviderProps as Props } from "@ledgerhq/live-common/featureFlags/index";
-import { FeatureId, Feature } from "@ledgerhq/types-live";
+import { FeatureId, Feature, Features } from "@ledgerhq/types-live";
 import { getEnv } from "@ledgerhq/live-env";
 import { languageSelector, overriddenFeatureFlagsSelector } from "../reducers/settings";
 import { setOverriddenFeatureFlag, setOverriddenFeatureFlags } from "../actions/settings";
@@ -123,13 +123,16 @@ export const FirebaseFeatureFlagsProvider: React.FC<Props> = ({ children }) => {
     [appLanguage, dispatch],
   );
 
-  const resetFeature = (key: FeatureId): void => {
-    dispatch(setOverriddenFeatureFlag({ id: key, value: undefined }));
-  };
+  const resetFeature = useCallback(
+    (key: FeatureId): void => {
+      dispatch(setOverriddenFeatureFlag({ id: key, value: undefined }));
+    },
+    [dispatch],
+  );
 
-  const resetFeatures = (): void => {
+  const resetFeatures = useCallback((): void => {
     dispatch(setOverriddenFeatureFlags({}));
-  };
+  }, [dispatch]);
 
   const getAllFlags = useCallback((): Record<string, Feature> => {
     const allFeatures = remoteConfig().getAll();
@@ -142,7 +145,7 @@ export const FirebaseFeatureFlagsProvider: React.FC<Props> = ({ children }) => {
 
   // Nb wrapped because the method is also called from outside.
   const wrappedGetFeature = useCallback(
-    (key: FeatureId): Feature => getFeature({ key, appLanguage, localOverrides }),
+    <T extends FeatureId>(key: T): Features[T] => getFeature({ key, appLanguage, localOverrides }),
     [localOverrides, appLanguage],
   );
 
@@ -152,16 +155,17 @@ export const FirebaseFeatureFlagsProvider: React.FC<Props> = ({ children }) => {
     return () => setAnalyticsFeatureFlagMethod(null);
   }, [wrappedGetFeature]);
 
-  return (
-    <FeatureFlagsProvider
-      isFeature={isFeature}
-      getFeature={wrappedGetFeature}
-      overrideFeature={overrideFeature}
-      resetFeature={resetFeature}
-      resetFeatures={resetFeatures}
-      getAllFlags={getAllFlags}
-    >
-      {children}
-    </FeatureFlagsProvider>
+  const contextValue = useMemo(
+    () => ({
+      isFeature,
+      getFeature: wrappedGetFeature,
+      overrideFeature,
+      resetFeature,
+      resetFeatures,
+      getAllFlags,
+    }),
+    [getAllFlags, overrideFeature, resetFeature, resetFeatures, wrappedGetFeature],
   );
+
+  return <FeatureFlagsProvider value={contextValue}>{children}</FeatureFlagsProvider>;
 };

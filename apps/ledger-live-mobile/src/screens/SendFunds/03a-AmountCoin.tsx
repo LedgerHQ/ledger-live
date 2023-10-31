@@ -19,7 +19,7 @@ import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { ScreenName } from "../../const";
-import { urls } from "../../config/urls";
+import { urls } from "@utils/urls";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
 import LText from "../../components/LText";
@@ -74,7 +74,7 @@ export default function SendAmountCoin({ navigation, route }: Props) {
   }, [account, parentAccount, debouncedTransaction]);
   invariant(account, "account is needed");
   const onChange = useCallback(
-    amount => {
+    (amount: BigNumber) => {
       if (!amount.isNaN()) {
         if (!account) return;
         const bridge = getAccountBridge(account, parentAccount);

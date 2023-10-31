@@ -162,7 +162,7 @@ export default function fetchImage({ deviceId, request }: Input): Observable<Fet
                   }),
                 );
               }
-              return throwError(e);
+              return throwError(() => e);
             }),
           )
           .subscribe(subscriber);

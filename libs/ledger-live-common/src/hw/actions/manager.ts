@@ -1,4 +1,4 @@
-import { EMPTY, Observable, interval } from "rxjs";
+import { Observable, interval, of } from "rxjs";
 import { debounce, scan, tap } from "rxjs/operators";
 import { useEffect, useCallback, useState } from "react";
 import { log } from "@ledgerhq/logs";
@@ -15,7 +15,7 @@ type State = {
   isLoading: boolean;
   requestQuitApp: boolean;
   unresponsive: boolean;
-  allowManagerRequestedWording: string | null | undefined;
+  allowManagerRequested: boolean;
   allowManagerGranted: boolean;
   device: Device | null | undefined;
   deviceInfo: DeviceInfo | null | undefined;
@@ -78,7 +78,7 @@ const getInitialState = (device?: Device | null | undefined): State => ({
   requestQuitApp: false,
   unresponsive: false,
   isLocked: false,
-  allowManagerRequestedWording: null,
+  allowManagerRequested: false,
   allowManagerGranted: false,
   device,
   deviceInfo: null,
@@ -139,7 +139,7 @@ const reducer = (state: State, e: Event): State => {
         ...state,
         unresponsive: false,
         isLocked: false,
-        allowManagerRequestedWording: e.wording,
+        allowManagerRequested: true,
       };
 
     case "device-permission-granted":
@@ -147,7 +147,7 @@ const reducer = (state: State, e: Event): State => {
         ...state,
         unresponsive: false,
         isLocked: false,
-        allowManagerRequestedWording: null,
+        allowManagerRequested: false,
         allowManagerGranted: true,
       };
 
@@ -193,7 +193,7 @@ export const createAction = (
       const sub = impl
         .pipe(
           tap((e: any) => log("actions-manager-event", e.type, e)),
-          debounce((e: Event) => ("replaceable" in e && e.replaceable ? interval(100) : EMPTY)),
+          debounce((e: Event) => ("replaceable" in e && e.replaceable ? interval(100) : of(null))),
           scan(reducer, getInitialState()),
         )
         .subscribe(setState);

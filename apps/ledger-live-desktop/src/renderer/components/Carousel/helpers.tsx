@@ -103,6 +103,7 @@ const exchangeSlide: ContentCard = {
       },
     },
   ],
+  createdAt: new Date(),
 };
 const swapSlide: ContentCard = {
   path: "/swap",
@@ -167,6 +168,7 @@ const swapSlide: ContentCard = {
       },
     },
   ],
+  createdAt: new Date(),
 };
 
 type SlideRes = {
@@ -187,7 +189,7 @@ export const useDefaultSlides = (): {
   }, []);
 
   const logSlideImpression = useCallback(
-    index => {
+    (index: number) => {
       if (portfolioCards && portfolioCards.length > index) {
         const slide = portfolioCards[index];
         if (slide?.id) {
@@ -203,7 +205,7 @@ export const useDefaultSlides = (): {
   );
 
   const logSlideClick = useCallback(
-    cardId => {
+    (cardId: string) => {
       const currentCard = cachedContentCards.find(card => card.id === cardId);
 
       if (currentCard) {

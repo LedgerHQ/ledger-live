@@ -19,6 +19,7 @@ type Props = {
   status?: TransactionStatus;
   setTransaction: (..._: Array<Transaction>) => void;
   disabledStrategies?: Array<string>;
+  shouldPrefillEvmGasOptions?: boolean;
 } & CompositeScreenProps<
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
   | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.SignTransactionSummary>

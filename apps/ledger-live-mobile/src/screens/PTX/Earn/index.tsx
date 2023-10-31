@@ -19,7 +19,7 @@ import {
   languageSelector,
 } from "../../../reducers/settings";
 import { useSelector } from "react-redux";
-import { MAIN_BUTTON_SIZE } from "../../../components/TabBar/shared";
+import { TAB_BAR_SAFE_HEIGHT } from "../../../components/TabBar/shared";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 export type Props = StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenName.Earn>;
@@ -62,7 +62,8 @@ export function EarnScreen({ route }: Props) {
        */
       flex={1}
       pt={insets.top}
-      pb={MAIN_BUTTON_SIZE} // Avoid nav button at the bottom
+      pb={TAB_BAR_SAFE_HEIGHT} // Avoid nav button at the bottom
+      backgroundColor={"background.main"} // Earn app bg color
     >
       <TrackScreen category="EarnDashboard" name="Earn" />
       <WebPTXPlayer

@@ -13,6 +13,16 @@ import { ScreenName } from "../../../const";
 import { sharedSwapTracking } from "../utils";
 import { getEnv } from "@ledgerhq/live-env";
 
+function keyExtractor({ id }: CryptoCurrency | TokenCurrency) {
+  return id;
+}
+
+const getItemLayout = (_: unknown, index: number) => ({
+  length: 64,
+  offset: 64 * index,
+  index,
+});
+
 export function SelectCurrency({
   navigation,
   route: {
@@ -32,22 +42,34 @@ export function SelectCurrency({
       // @ts-expect-error navigation type is only partially declared
       navigation.navigate(ScreenName.SwapForm, { currency });
     },
-    [track, navigation],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
   );
+
+  const RenderItem = ({ item }: { item: CryptoCurrency | TokenCurrency }) => {
+    return <CurrencyRow currency={item} onPress={onSelect} />;
+  };
+
   const sortedCurrencies = useCurrenciesByMarketcap(currencies);
 
   const renderList = useCallback(
-    items => (
+    (items: (TokenCurrency | CryptoCurrency)[]) => (
       <FlatList
         contentContainerStyle={styles.list}
+        removeClippedSubviews={true}
         data={items}
-        renderItem={({ item }) => <CurrencyRow currency={item} onPress={onSelect} />}
-        keyExtractor={currency => currency.id}
+        renderItem={RenderItem}
+        keyExtractor={keyExtractor}
         showsVerticalScrollIndicator={false}
         keyboardDismissMode="on-drag"
+        getItemLayout={getItemLayout}
+        maxToRenderPerBatch={13}
+        windowSize={7}
+        initialNumToRender={13}
       />
     ),
-    [onSelect],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
   );
 
   return (
@@ -58,6 +80,7 @@ export function SelectCurrency({
         <FilteredSearchBar
           keys={getEnv("CRYPTO_ASSET_SEARCH_KEYS")}
           inputWrapperStyle={styles.filteredSearchInputWrapperStyle}
+          // @ts-expect-error dissonance between Currency[] & (TokenCurrency | CryptoCurrency)[]
           list={sortedCurrencies}
           renderList={renderList}
           renderEmptySearch={renderEmptyList(t)}

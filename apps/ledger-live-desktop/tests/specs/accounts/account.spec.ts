@@ -31,6 +31,7 @@ test.describe.parallel("Accounts @smoke", () => {
 
       await test.step(`[${currency}] Select currency`, async () => {
         await addAccountModal.select(currency);
+        await page.mouse.move(0, 0); // prevent instability if select is hovered
         await expect.soft(addAccountModal.container).toHaveScreenshot(`${currency}-select.png`);
         await addAccountModal.continue();
       });
@@ -60,6 +61,7 @@ test.describe.parallel("Accounts @smoke", () => {
       await test.step(`Navigate to first account`, async () => {
         await layout.goToAccounts();
         await accountsPage.navigateToAccountByName(firstAccountName);
+        await accountPage.settingsButton.waitFor({ state: "visible" });
         await expect.soft(page).toHaveScreenshot(`${currency}-firstAccountPage.png`);
       });
 

@@ -3,9 +3,9 @@ import { reduce } from "lodash";
 import { formatToFirebaseFeatureId } from "./firebaseFeatureFlags";
 
 /**
- * Default feature.
+ * Default disabled feature.
  */
-export const DEFAULT_FEATURE: DefaultFeature = {
+const DEFAULT_FEATURE: DefaultFeature = {
   enabled: false,
 };
 
@@ -39,6 +39,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyDesmos: DEFAULT_FEATURE,
   currencyEnergyWeb: DEFAULT_FEATURE,
   currencyEvmosEvm: DEFAULT_FEATURE,
+  currencyInjective: DEFAULT_FEATURE,
   currencyInternetComputer: DEFAULT_FEATURE,
   currencyKavaEvm: DEFAULT_FEATURE,
   currencyKlaytn: DEFAULT_FEATURE,
@@ -53,12 +54,14 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyQuicksilver: DEFAULT_FEATURE,
   currencyRsk: DEFAULT_FEATURE,
   currencySecretNetwork: DEFAULT_FEATURE,
+  currencySeiNetwork: DEFAULT_FEATURE,
   currencyStacks: DEFAULT_FEATURE,
   currencyStargaze: DEFAULT_FEATURE,
   currencySyscoin: DEFAULT_FEATURE,
   currencyTelosEvm: DEFAULT_FEATURE,
   currencyUmee: DEFAULT_FEATURE,
   currencyVelasEvm: DEFAULT_FEATURE,
+  currencyNeonEvm: DEFAULT_FEATURE,
 };
 
 /**
@@ -75,7 +78,6 @@ export const DEFAULT_FEATURES: Features = {
   syncOnboarding: DEFAULT_FEATURE,
   walletConnectEntryPoint: DEFAULT_FEATURE,
   counterValue: DEFAULT_FEATURE,
-  listAppsV2: DEFAULT_FEATURE,
   llmNewDeviceSelection: DEFAULT_FEATURE,
   llmNewFirmwareUpdateUx: DEFAULT_FEATURE,
   mockFeature: DEFAULT_FEATURE,
@@ -91,7 +93,7 @@ export const DEFAULT_FEATURES: Features = {
   staxWelcomeScreen: DEFAULT_FEATURE,
   protectServicesDiscoverDesktop: DEFAULT_FEATURE,
   llmWalletQuickActions: DEFAULT_FEATURE,
-
+  listAppsV2minor1: DEFAULT_FEATURE,
   ethStakingProviders: initFeature(),
   referralProgramDiscoverCard: initFeature(),
   newsfeedPage: initFeature(),
@@ -150,16 +152,24 @@ export const DEFAULT_FEATURES: Features = {
     params: {
       availableOnDesktop: false,
       account: {
-        homeURI: "ledgerlive://recover/protect-simu?redirectTo=account",
-        loginURI: "ledgerlive://recover/protect-simu?redirectTo=login",
+        homeURI:
+          "ledgerlive://recover/protect-simu?redirectTo=account&source=lld-sidebar-navigation&ajs_recover_source=lld-sidebar-navigation&ajs_recover_campaign=recover-launch",
+        loginURI:
+          "ledgerlive://recover/protect-simu?redirectTo=login&source=lld-welcome-login&ajs_recover_source=lld-welcome-login&ajs_recover_campaign=recover-launch",
       },
       discoverTheBenefitsLink: "https://www.ledger.com/recover",
       onboardingCompleted: {
         alreadySubscribedURI: "ledgerlive://recover/protect-simu?redirectTo=login",
-        upsellURI: "ledgerlive://recover/protect-simu?redirectTo=upsell",
+        alreadyDeviceSeededURI:
+          "ledgerlive://recover/protect-simu?redirectTo=upsell&source=lld-pairing&ajs_recover_source=lld-pairing&ajs_recover_campaign=recover-launch",
+        upsellURI:
+          "ledgerlive://recover/protect-simu?redirectTo=upsell&source=lld-onboarding-24&ajs_recover_source=lld-onboarding-24&ajs_recover_campaign=recover-launch",
+        restore24URI:
+          "ledgerlive://recover/protect-simu?redirectTo=upsell&source=lld-restore-24&ajs_recover_source=lld-restore-24&ajs_recover_campaign=recover-launch",
       },
       onboardingRestore: {
-        postOnboardingURI: "ledgerlive://recover/protect-simu?redirectTo=restore",
+        postOnboardingURI:
+          "ledgerlive://recover/protect-simu?redirectTo=restore&source=lld-restore",
         restoreInfoDrawer: {
           enabled: true,
           manualStepsURI:
@@ -280,17 +290,27 @@ export const DEFAULT_FEATURES: Features = {
     enabled: false,
     params: {
       deeplink: "",
-      login: {
-        loginURI: "ledgerlive://recover/protect-simu?redirectTo=login",
+      account: {
+        homeURI:
+          "ledgerlive://recover/protect-simu?redirectTo=account&source=llm-myledger-access-card&ajs_prop_source=llm-myledger-access-card&ajs_prop_campaign=recover-launch",
+        loginURI:
+          "ledgerlive://recover/protect-simu?redirectTo=login&source=llm-myledger-access-card&ajs_prop_source=llm-myledger-access-card&ajs_prop_campaign=recover-launch",
       },
       managerStatesData: {
         NEW: {
-          alreadySubscribedURI: `ledgerlive://recover/protect-simu?redirectTo=login`,
-          learnMoreURI: `ledgerlive://recover/protect-simu?redirectTo=upsell`,
+          learnMoreURI:
+            "ledgerlive://recover/protect-simu?redirectTo=upsell&source=llm-onboarding-24&ajs_prop_source=llm-onboarding-24&ajs_prop_campaign=recover-launch",
+          alreadySubscribedURI:
+            "ledgerlive://recover/protect-simu?redirectTo=login&source=llm-onboarding-24&ajs_prop_source=llm-onboarding-24&ajs_prop_campaign=recover-launch",
+          quickAccessURI:
+            "ledgerlive://recover/protect-simu?redirectTo=upsell&source=llm-navbar-quick-access&ajs_prop_source=llm-navbar-quick-access&ajs_prop_campaign=recover-launch",
+          alreadyOnboardedURI:
+            "ledgerlive://recover/protect-simu?redirectTo=upsell&source=llm-pairing&ajs_prop_source=llm-pairing&ajs_prop_campaign=recover-launch",
         },
       },
       onboardingRestore: {
-        postOnboardingURI: `ledgerlive://recover/protect-simu?redirectTo=restore`,
+        postOnboardingURI:
+          "ledgerlive://recover/protect-simu?redirectTo=restore&source=llm-restore-24&ajs_prop_source=llm-restore-24&ajs_prop_campaign=recover-launch",
         restoreInfoDrawer: {
           enabled: true,
           manualStepsURI:
@@ -354,7 +374,7 @@ export const DEFAULT_FEATURES: Features = {
   cexDepositEntryPointsDesktop: {
     enabled: false,
     params: {
-      path: "/discover/ledger-cex-deposit",
+      path: "/platform/ledger-cex-deposit",
       locations: {
         selectCrypto: true,
       },
@@ -369,6 +389,14 @@ export const DEFAULT_FEATURES: Features = {
         selectCrypto: true,
       },
     },
+  },
+
+  fetchAdditionalCoins: {
+    enabled: false,
+  },
+
+  ptxSwapLiveApp: {
+    enabled: false,
   },
 };
 

@@ -15,7 +15,7 @@ const StepAmount = (props: StepProps) => {
   const { t, account, transaction, onChangeTransaction, error, status, bridgePending } = props;
   const mainAccount = account ? getMainAccount(account) : null;
   const onUpdateTransactionCallback = useCallback(
-    transaction =>
+    (transaction: NonNullable<StepProps["transaction"]>) =>
       onChangeTransaction({
         ...transaction,
         mode: "delegate",

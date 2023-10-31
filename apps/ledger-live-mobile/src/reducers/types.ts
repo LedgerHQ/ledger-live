@@ -70,7 +70,7 @@ export type AppState = {
   backgroundEvents: Array<FwUpdateBackgroundEvent>;
   isMainNavigatorVisible: boolean;
   /** For deep links that inadvertently trigger privacy lock. Reset to false on close. */
-  isDeepLinking: boolean;
+  isPasswordLockBlocked: boolean;
 };
 
 // === BLE STATE ===
@@ -157,6 +157,8 @@ export type CurrencySettings = {
 };
 
 export type Privacy = {
+  // Is a password setted by the user ?
+  hasPassword: boolean;
   // when we set the privacy, we also retrieve the biometricsType info
   biometricsType?: string | null;
   // this tells if the biometrics was enabled by user yet
@@ -170,6 +172,13 @@ export type Pair = {
 };
 
 export type Theme = "system" | "light" | "dark";
+
+export type supportedCountervaluesData = {
+  value: string;
+  ticker: string;
+  label: string;
+  currency: Currency;
+};
 
 export type SettingsState = {
   counterValue: string;
@@ -237,6 +246,7 @@ export type SettingsState = {
     hasClosedWithdrawBanner: boolean;
   };
   userNps: number | null;
+  supportedCounterValues: supportedCountervaluesData[];
 };
 
 export type NotificationsSettings = {

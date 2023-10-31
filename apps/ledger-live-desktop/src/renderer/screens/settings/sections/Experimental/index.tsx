@@ -37,7 +37,7 @@ const ExperimentalFeatureRow = ({
   const envValue = useEnv(feature.name);
   const isDefault = isEnvDefault(feature.name);
   const onChange = useCallback(
-    (name: EnvName, value) => {
+    (name: EnvName, value: unknown) => {
       if (dirty) {
         onDirtyChange();
       }

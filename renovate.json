@@ -6,6 +6,11 @@
   "automerge": false,
   "detectGlobalManagerConfig": true,
   "ignoreScripts": false,
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "labels": ["security"],
+    "prPriority": 999
+  },
   "packageRules": [
     {
       "description": "Core Ownership Rules",
@@ -39,7 +44,7 @@
       "groupName": null
     }
   ],
-  "prConcurrentLimit": 10,
+  "prConcurrentLimit": 5,
   "separateMinorPatch": true,
   "timezone": "Europe/Paris",
   "enabledManagers": ["npm"]

@@ -23,6 +23,7 @@ export type QuickActionsList = {
   SWAP: QuickAction;
   STAKE?: QuickAction;
   WALLET_CONNECT?: QuickAction;
+  RECOVER?: QuickAction;
 };
 
 function useQuickActions() {
@@ -33,6 +34,7 @@ function useQuickActions() {
   const areAccountsEmpty = useSelector(areAccountsEmptySelector);
 
   const walletConnectEntryPoint = useFeature("walletConnectEntryPoint");
+  const recoverEntryPoint = useFeature("protectServicesMobile");
   const stakePrograms = useFeature("stakePrograms");
 
   const ptxServiceCtaExchangeDrawer = useFeature("ptxServiceCtaExchangeDrawer");
@@ -99,7 +101,7 @@ function useQuickActions() {
             params: { parentRoute: route },
           },
         ],
-        icon: IconsLegacy.ClaimRewardsMedium,
+        icon: IconsLegacy.CoinsMedium,
       };
     }
 
@@ -115,6 +117,20 @@ function useQuickActions() {
         icon: IconsLegacy.WalletConnectMedium,
       };
     }
+
+    if (recoverEntryPoint?.enabled) {
+      list.RECOVER = {
+        disabled: readOnlyModeEnabled,
+        route: [
+          NavigatorName.Base,
+          {
+            screen: ScreenName.Manager,
+          },
+        ],
+        icon: IconsLegacy.ShieldCheckMedium,
+      };
+    }
+
     return list;
   }, [
     accountsCount,
@@ -124,6 +140,7 @@ function useQuickActions() {
     route,
     stakePrograms?.enabled,
     walletConnectEntryPoint?.enabled,
+    recoverEntryPoint?.enabled,
   ]);
 
   return { quickActionsList };

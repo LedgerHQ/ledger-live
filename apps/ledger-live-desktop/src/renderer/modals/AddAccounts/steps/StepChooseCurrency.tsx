@@ -39,6 +39,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const umee = useFeature("currencyUmee");
   const desmos = useFeature("currencyDesmos");
   const onomy = useFeature("currencyOnomy");
+  const seiNetwork = useFeature("currencySeiNetwork");
   const quicksilver = useFeature("currencyQuicksilver");
   const persistence = useFeature("currencyPersistence");
   const avaxCChain = useFeature("currencyAvalancheCChain");
@@ -67,6 +68,8 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const baseGoerli = useFeature("currencyBaseGoerli");
   const klaytn = useFeature("currencyKlaytn");
   const mock = useEnv("MOCK");
+  const injective = useFeature("currencyInjective");
+  const neonEvm = useFeature("currencyNeonEvm");
 
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
@@ -76,6 +79,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       umee,
       desmos,
       onomy,
+      sei_network: seiNetwork,
       quicksilver,
       persistence,
       avalanche_c_chain: avaxCChain,
@@ -103,6 +107,8 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       base,
       base_goerli: baseGoerli,
       klaytn,
+      injective,
+      neon_evm: neonEvm,
     }),
     [
       axelar,
@@ -111,6 +117,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       umee,
       desmos,
       onomy,
+      seiNetwork,
       quicksilver,
       persistence,
       avaxCChain,
@@ -138,6 +145,8 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       base,
       baseGoerli,
       klaytn,
+      injective,
+      neonEvm,
     ],
   );
 

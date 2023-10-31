@@ -44,7 +44,7 @@ import { ParamListBase } from "@react-navigation/native";
 import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwareUpdateVersionSupported";
 import ProviderIcon from "../ProviderIcon";
 import { lastSeenDeviceSelector } from "../../reducers/settings";
-import { urls } from "../../config/urls";
+import { urls } from "@utils/urls";
 import Alert from "../Alert";
 import { lighten, Theme } from "../../colors";
 import Button from "../Button";
@@ -354,46 +354,28 @@ function FieldItem({ title, children }: { title: string; children: React.ReactNo
   );
 }
 
-export function renderConfirmSell({
-  t,
-  device,
-}: RawProps & {
-  device: Device;
-}) {
-  return (
-    <Wrapper>
-      <Alert type="primary" learnMoreUrl={urls.swap.learnMore}>
-        {t("DeviceAction.confirmSell.alert")}
-      </Alert>
-      <AnimationContainer marginTop="16px">
-        <Animation
-          source={getDeviceAnimation({ device, key: "sign" })}
-          style={animationStyles(device.modelId)}
-        />
-      </AnimationContainer>
-      <TitleText>{t("DeviceAction.confirmSell.title")}</TitleText>
-    </Wrapper>
-  );
-}
-
 export function renderAllowManager({
   t,
-  wording,
   device,
   theme,
+  requestType = "manager",
 }: RawProps & {
-  wording: string;
   device: Device;
+  requestType?: "manager" | "rename";
 }) {
   // TODO: disable gesture, modal close, hide header buttons
   return (
     <Wrapper pb={6} pt={6}>
       <Flex>
         <Text fontWeight="semiBold" fontSize={24} textAlign="center" mb={10}>
-          {t("DeviceAction.allowManagerPermission", {
-            wording,
-            productName: getDeviceModel(device.modelId)?.productName,
-          })}
+          {t(
+            requestType === "rename"
+              ? "DeviceAction.allowRenaming"
+              : "DeviceAction.allowManagerPermission",
+            {
+              productName: getDeviceModel(device.modelId)?.productName,
+            },
+          )}
         </Text>
       </Flex>
       <AnimationContainer>

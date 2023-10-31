@@ -2,7 +2,7 @@ import { UserRefusedAddress } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import invariant from "invariant";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { from, Observable } from "rxjs";
+import { firstValueFrom, from, Observable } from "rxjs";
 import perFamily from "../../generated/hw-signMessage";
 import { Account, AnyMessage } from "@ledgerhq/types-live";
 import type { AppRequest, AppState } from "../actions/app";
@@ -116,10 +116,12 @@ export const createAction = (
       }
 
       try {
-        result = await signMessage({
-          request,
-          deviceId: device.deviceId,
-        }).toPromise();
+        result = await firstValueFrom(
+          signMessage({
+            request,
+            deviceId: device.deviceId,
+          }),
+        );
       } catch (e: any) {
         if (e.name === "UserRefusedAddress") {
           e.name = "UserRefusedOnDevice";

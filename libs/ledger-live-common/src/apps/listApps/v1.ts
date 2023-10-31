@@ -28,7 +28,7 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
   log("list-apps", "using legacy version");
 
   if (deviceInfo.isOSU || deviceInfo.isBootloader) {
-    return throwError(new UnexpectedBootloader(""));
+    return throwError(() => new UnexpectedBootloader(""));
   }
 
   const deviceModelId =
@@ -160,7 +160,6 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
           if (application.compatibleWalletsJSON) {
             try {
               const parsed = JSON.parse(application.compatibleWalletsJSON);
-
               if (parsed && Array.isArray(parsed)) {
                 parsed.forEach(w => {
                   if (w && typeof w === "object" && w.name) {

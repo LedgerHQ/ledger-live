@@ -1,4 +1,3 @@
-import "./env";
 import { setEnv } from "@ledgerhq/live-env";
 import { AppConfig } from "@ledgerhq/live-common/featureFlags/index";
 

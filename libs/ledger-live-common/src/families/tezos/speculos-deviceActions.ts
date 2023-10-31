@@ -38,7 +38,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
       button: SpeculosButton.RIGHT,
       expectedValue: ({ account, transaction }) =>
         formatDeviceAmount(account.currency, transaction.amount, {
-          hideCode: true,
+          postfixCode: true,
         }),
     },
     {
@@ -46,7 +46,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
       button: SpeculosButton.RIGHT,
       expectedValue: ({ account, status }) =>
         formatDeviceAmount(account.currency, status.estimatedFees, {
-          hideCode: true,
+          postfixCode: true,
         }),
     },
     {

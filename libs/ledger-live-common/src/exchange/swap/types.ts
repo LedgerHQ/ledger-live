@@ -16,8 +16,16 @@ export type ExchangeRaw = {
   toParentAccount: AccountRaw | null | undefined;
   toAccount: AccountRawLike;
 };
+
+export type ExchangeRateError = {
+  name?: string;
+  amount?: BigNumber;
+  minAmountFromFormatted?: string;
+  maxAmountFromFormatted?: string;
+};
+
 export type ExchangeRate = {
-  rate: BigNumber | undefined;
+  rate?: BigNumber;
   // NB Raw rate, for display
   magnitudeAwareRate: BigNumber;
   // NB rate between satoshi units
@@ -27,41 +35,70 @@ export type ExchangeRate = {
   // There's a delta somewhere between from times rate and the api.
   rateId?: string;
   provider: string;
-  providerType: "CEX" | "DEX";
+  providerType: ExchangeProviderType;
   tradeMethod: "fixed" | "float";
-  error?: Error;
+  error?: ExchangeRateError;
   providerURL?: string;
   expirationTime?: number;
 };
 
-type ExchangeRateV5ProviderType = "DEX" | "CEX" | "DISABLED";
+type ExchangeProviderType = "CEX" | "DEX";
 
-type ExchangeRateV5CommonProperties = {
+type ExchangeRateCommonRaw = {
   provider: string;
-  providerType: ExchangeRateV5ProviderType;
+  providerType: ExchangeProviderType;
   from: string;
   to: string;
   amountFrom: string;
+  amountRequested?: string;
   amountTo: string;
   payoutNetworkFees: string;
-  status: string;
+  status: "success";
+  errorCode?: number;
+  errorMessage?: string;
   providerURL?: string;
 };
 
-type ExchangeRateV5FloatRate = ExchangeRateV5CommonProperties & {
+type ExchangeRateFloatRateRaw = ExchangeRateCommonRaw & {
   tradeMethod: "float";
   rateId?: string;
   minAmountFrom: string;
   maxAmountFrom?: string;
 };
 
-type ExchangeRateV5FixedRate = ExchangeRateV5CommonProperties & {
+type ExchangeRateFixedRateRaw = ExchangeRateCommonRaw & {
   tradeMethod: "fixed";
   rateId: string;
   expirationTime: string;
+  rate: string;
 };
 
-export type ExchangeRateV5Response = ExchangeRateV5FloatRate | ExchangeRateV5FixedRate;
+type ExchangeRateErrorCommon = {
+  status: "error";
+  tradeMethod: TradeMethod;
+  from: string;
+  to: string;
+  providerType: ExchangeProviderType;
+  provider: string;
+};
+
+type ExchangeRateErrorDefault = ExchangeRateErrorCommon & {
+  errorCode: number;
+  errorMessage: string;
+};
+
+type ExchangeRateErrorMinMaxAmount = ExchangeRateErrorCommon & {
+  amountRequested: string;
+  minAmountFrom: string;
+  maxAmountFrom: string;
+};
+
+export type ExchangeRateErrors = ExchangeRateErrorDefault | ExchangeRateErrorMinMaxAmount;
+
+export type ExchangeRateResponseRaw =
+  | ExchangeRateFloatRateRaw
+  | ExchangeRateFixedRateRaw
+  | ExchangeRateErrors;
 
 export type TradeMethod = "fixed" | "float";
 
@@ -94,6 +131,8 @@ export interface Pair {
   tradeMethod: string;
 }
 
+export type GetProviders = () => Promise<AvailableProvider[]>;
+
 type TradeMethodGroup = {
   methods: TradeMethod[];
   pairs: {
@@ -120,8 +159,6 @@ export type ExchangeObject = {
 export type GetExchangeRates = (
   exchangeObject: ExchangeObject,
 ) => Promise<(ExchangeRate & { expirationDate?: Date })[]>;
-
-export type GetProviders = () => Promise<AvailableProvider[]>;
 
 export type InitSwapResult = {
   transaction: Transaction;
@@ -267,7 +304,7 @@ export type OnNoRatesCallback = (arg: {
   toState: SwapSelectorStateType;
 }) => void;
 
-export type OnBeforeTransaction = () => void;
+export type OnBeforeFetchRates = () => void;
 
 export type RatesReducerState = {
   status?: string | null;

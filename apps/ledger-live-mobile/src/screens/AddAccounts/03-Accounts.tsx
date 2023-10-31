@@ -46,7 +46,7 @@ import NavigationScrollView from "../../components/NavigationScrollView";
 import { prepareCurrency } from "../../bridge/cache";
 import { blacklistedTokenIdsSelector } from "../../reducers/settings";
 import QueuedDrawer from "../../components/QueuedDrawer";
-import { urls } from "../../config/urls";
+import { urls } from "@utils/urls";
 import noAssociatedAccountsByFamily from "../../generated/NoAssociatedAccounts";
 import { State } from "../../reducers/types";
 import {

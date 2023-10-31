@@ -14,6 +14,7 @@ import {
   mapAsNotificationContentCard,
   mapAsLearnContentCard,
   getMobileContentCards,
+  compareCards,
 } from "./dynamicContent";
 import { LocationContentCard } from "./types";
 
@@ -26,22 +27,24 @@ export const useDynamicContentLogic = () => {
     const contentCards = await Braze.getContentCards();
     const mobileContentCards = getMobileContentCards(contentCards);
     // Filtering v0
-    const walletCards = filterByPage(mobileContentCards, LocationContentCard.Wallet).map(card =>
-      mapAsWalletContentCard(card),
-    );
+    const walletCards = filterByPage(mobileContentCards, LocationContentCard.Wallet)
+      .map(card => mapAsWalletContentCard(card))
+      .sort(compareCards);
 
-    const assetCards = filterByPage(mobileContentCards, LocationContentCard.Asset).map(card =>
-      mapAsAssetContentCard(card),
-    );
+    const assetCards = filterByPage(mobileContentCards, LocationContentCard.Asset)
+      .map(card => mapAsAssetContentCard(card))
+      .sort(compareCards);
 
     const notificationCards = filterByPage(
       mobileContentCards,
       LocationContentCard.NotificationCenter,
-    ).map(card => mapAsNotificationContentCard(card));
+    )
+      .map(card => mapAsNotificationContentCard(card))
+      .sort(compareCards);
 
-    const learnCards = filterByPage(mobileContentCards, LocationContentCard.Learn).map(card =>
-      mapAsLearnContentCard(card),
-    );
+    const learnCards = filterByPage(mobileContentCards, LocationContentCard.Learn)
+      .map(card => mapAsLearnContentCard(card))
+      .sort(compareCards);
 
     dispatch(setDynamicContentWalletCards(walletCards));
     dispatch(setDynamicContentAssetsCards(assetCards));

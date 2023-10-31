@@ -14,6 +14,7 @@ import {
 } from "~/config/transportChannels";
 import { Observer } from "rxjs";
 import { DescriptorEvent } from "@ledgerhq/types-devices";
+
 const rendererRequest = (channel: string, data: unknown) => {
   return new Promise((resolve, reject) => {
     const requestId = uuidv4();
@@ -87,18 +88,18 @@ export class IPCTransport extends Transport {
 
   async exchange(apdu: Buffer): Promise<Buffer> {
     const apduHex = apdu.toString("hex");
-    log("apdu", "=> " + apduHex);
+    log("ipc-apdu", "=> " + apduHex);
     const responseHex = await rendererRequest(transportExchangeChannel, {
       descriptor: this.id,
       apduHex,
     });
-    log("apdu", "<= " + responseHex);
+    log("ipc-apdu", "<= " + responseHex);
     return Buffer.from(responseHex as string, "hex");
   }
 
   exchangeBulk(apdus: Buffer[], observer: Observer<Buffer>) {
     const apdusHex = apdus.map(apdu => apdu.toString("hex"));
-    log("apdu-info", "bulk of " + apdusHex.length + " apdus");
+    log("ipc-apdu-info", "bulk of " + apdusHex.length + " apdus");
     const requestId = uuidv4();
     const replyChannel = `${transportExchangeBulkChannel}_RESPONSE_${requestId}`;
     const handler = (

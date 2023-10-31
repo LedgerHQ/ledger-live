@@ -8,7 +8,7 @@ import withStaticURL from "@ledgerhq/hw-transport-http";
 import TransportWebUSB from "@ledgerhq/hw-transport-webusb";
 import TransportWebBLE from "@ledgerhq/hw-transport-web-ble";
 import TransportWebHID from "@ledgerhq/hw-transport-webhid";
-import { registerTransportModule } from "@ledgerhq/live-common/lib/hw/index";
+import { registerTransportModule } from "@ledgerhq/live-common/hw/index";
 
 const webusbDevices: Record<string, USBDevice> = {};
 

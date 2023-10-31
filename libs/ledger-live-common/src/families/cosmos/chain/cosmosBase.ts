@@ -5,6 +5,7 @@ abstract class cosmosBase {
   abstract ledgerValidator?: string;
   abstract validatorPrefix: string;
   abstract prefix: string;
+  defaultPubKeyType = "/cosmos.crypto.secp256k1.PubKey";
   defaultGas = 100000;
   minGasPrice = 0.0025;
   version = "v1beta1";

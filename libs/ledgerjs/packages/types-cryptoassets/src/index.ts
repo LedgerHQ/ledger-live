@@ -151,12 +151,14 @@ export type CryptoCurrencyId =
   | "velas_evm"
   | "syscoin"
   | "internet_computer"
+  | "injective"
   | "telos_evm"
   | "klaytn"
   | "polygon_zk_evm"
   | "polygon_zk_evm_testnet"
   | "base"
-  | "base_goerli";
+  | "base_goerli"
+  | "neon_evm";
 
 export type LedgerExplorerId =
   | "btc"

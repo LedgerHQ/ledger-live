@@ -9,6 +9,7 @@ setSupportedCurrencies([
   "umee",
   "desmos",
   "onomy",
+  "sei_network",
   "quicksilver",
   "persistence",
   "avalanche_c_chain",
@@ -81,4 +82,6 @@ setSupportedCurrencies([
   "stacks",
   "telos_evm",
   "coreum",
+  "injective",
+  "neon_evm",
 ]);

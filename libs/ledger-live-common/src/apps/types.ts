@@ -20,7 +20,6 @@ export type InstalledItem = {
 export type ListAppsEvent =
   | {
       type: "device-permission-requested";
-      wording: string;
     }
   | {
       type: "device-permission-granted";
@@ -35,7 +34,6 @@ export type ListAppsEvent =
 export type InlineAppInstallEvent =
   | {
       type: "device-permission-requested";
-      wording: string;
     }
   | {
       type: "listing-apps";

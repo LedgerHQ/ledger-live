@@ -49,6 +49,8 @@ export class PortfolioPage {
   }
 
   async scrollToOperations() {
-    await this.page.locator("id=operation-list").scrollIntoViewIfNeeded();
+    await this.page.waitForTimeout(500);
+    const operationList = this.page.locator("id=operation-list");
+    await operationList.scrollIntoViewIfNeeded({ timeout: 1000 });
   }
 }

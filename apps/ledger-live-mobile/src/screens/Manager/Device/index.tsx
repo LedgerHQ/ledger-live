@@ -50,7 +50,6 @@ type Props = PropsWithChildren<{
   pendingInstalls: boolean;
   deviceInfo: DeviceInfo;
   device: Device;
-  setAppUninstallWithDependencies: (params: { dependents: App[]; app: App }) => void;
   dispatch: (action: Action) => void;
   appList: App[];
   onLanguageChange: () => void;
@@ -69,7 +68,6 @@ const DeviceCard = ({
   initialDeviceName,
   pendingInstalls,
   deviceInfo,
-  setAppUninstallWithDependencies,
   dispatch,
   appList,
   onLanguageChange,
@@ -202,7 +200,6 @@ const DeviceCard = ({
         state={state}
         dispatch={dispatch}
         appList={appList}
-        setAppUninstallWithDependencies={setAppUninstallWithDependencies}
         illustration={illustration}
         deviceInfo={deviceInfo}
       />

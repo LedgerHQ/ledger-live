@@ -14,9 +14,9 @@ import {
 } from "../../load/speculos";
 import { makeBridgeCacheSystem } from "../../bridge/cache";
 import { getCurrencyBridge } from "../../bridge";
-import { filter, map, reduce, timeoutWith } from "rxjs/operators";
+import { filter, map, reduce, timeout } from "rxjs/operators";
 import { getEnv } from "@ledgerhq/live-env";
-import { throwError } from "rxjs";
+import { firstValueFrom, throwError } from "rxjs";
 import { Report } from "./types";
 import { toAccountRaw } from "../../account";
 import { Audit } from "./audits";
@@ -95,22 +95,24 @@ async function main(): Promise<Report> {
     };
 
     await cache.prepareCurrency(currency);
-    const accounts = await bridge
-      .scanAccounts({
-        currency,
-        deviceId: device.id,
-        syncConfig,
-      })
-      .pipe(
-        filter(e => e.type === "discovered"),
-        map(e => e.account),
-        reduce<Account, Account[]>((all, a) => all.concat(a), []),
-        timeoutWith(
-          getEnv("BOT_TIMEOUT_SCAN_ACCOUNTS"),
-          throwError(new Error("scan accounts timeout for currency " + currency.name)),
+    const accounts = await firstValueFrom(
+      bridge
+        .scanAccounts({
+          currency,
+          deviceId: device.id,
+          syncConfig,
+        })
+        .pipe(
+          filter(e => e.type === "discovered"),
+          map(e => e.account),
+          reduce<Account, Account[]>((all, a) => all.concat(a), []),
+          timeout({
+            each: getEnv("BOT_TIMEOUT_SCAN_ACCOUNTS"),
+            with: () =>
+              throwError(() => new Error("scan accounts timeout for currency " + currency.name)),
+          }),
         ),
-      )
-      .toPromise();
+    );
 
     audit.end();
 

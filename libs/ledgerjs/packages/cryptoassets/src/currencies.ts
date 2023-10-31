@@ -327,35 +327,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [],
   },
-  binance_beacon_chain: {
-    type: "CryptoCurrency",
-    id: "binance_beacon_chain",
-    coinType: CoinType.ATOM,
-    name: "BinanceBeaconChain",
-    managerAppName: "Cosmos",
-    ticker: "BNB",
-    scheme: "BinanceBeaconChain",
-    color: "#f0b90b",
-    family: "cosmos",
-    units: [
-      {
-        name: "BNB",
-        code: "BNB",
-        magnitude: 6,
-      },
-      {
-        name: "Micro-BNB",
-        code: "ubnb",
-        magnitude: 0,
-      },
-    ],
-    explorerViews: [
-      {
-        tx: "https://binance.mintscan.io/txs/$hash",
-        address: "https://binance.mintscan.io/validators/$address",
-      },
-    ],
-  },
   bitcoin: {
     type: "CryptoCurrency",
     id: "bitcoin",
@@ -3179,8 +3150,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "https://chain.so/tx/ZEC/$hash",
-        address: "https://chain.so/address/ZEC/$address",
+        tx: "https://zcashblockexplorer.com/transactions/$hash",
+        address: "https://zcashblockexplorer.com/address/$address",
       },
     ],
     explorerId: "zec",
@@ -3596,6 +3567,35 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       {
         tx: "https://dashboard.internetcomputer.org/transaction/$hash",
         address: "https://dashboard.internetcomputer.org/account/$address",
+      },
+    ],
+  },
+  injective: {
+    type: "CryptoCurrency",
+    id: "injective",
+    coinType: 60,
+    name: "Injective",
+    managerAppName: "Cosmos",
+    ticker: "INJ",
+    scheme: "injective",
+    color: "#0bd",
+    family: "cosmos",
+    units: [
+      {
+        name: "Injective",
+        code: "INJ",
+        magnitude: 18,
+      },
+      {
+        name: "Micro-Injective",
+        code: "inj",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://www.mintscan.io/injective/txs/$hash",
+        address: "https://www.mintscan.io/injective/validators/$address",
       },
     ],
   },
@@ -4339,6 +4339,61 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         tx: "https://www.klaytnfinder.io/tx/$hash",
         address: "https://www.klaytnfinder.io/account/$address",
         token: "https://www.klaytnfinder.io/token/$address",
+      },
+    ],
+  },
+  neon_evm: {
+    type: "CryptoCurrency",
+    id: "neon_evm",
+    coinType: CoinType.ETH,
+    name: "Neon EVM",
+    managerAppName: "Ethereum",
+    ticker: "NEON",
+    scheme: "neon_evm",
+    color: "#D13BB7",
+    family: "evm",
+    units: ethereumUnits("NEON", "NEON"),
+    ethereumLikeInfo: {
+      chainId: 245022934,
+      node: { type: "external", uri: "https://neon-mainnet.everstake.one" },
+      explorer: { type: "blockscout", uri: "https://neon.blockscout.com" },
+    },
+    explorerViews: [
+      {
+        tx: "https://neonscan.org/tx/$hash",
+        address: "https://neonscan.org/address/$address",
+        token: "https://neonscan.org/token/$address",
+      },
+    ],
+  },
+  // Keep it at the bottom
+  // Tickers dup
+  binance_beacon_chain: {
+    type: "CryptoCurrency",
+    id: "binance_beacon_chain",
+    coinType: CoinType.ATOM,
+    name: "BinanceBeaconChain",
+    managerAppName: "Cosmos",
+    ticker: "BNB",
+    scheme: "BinanceBeaconChain",
+    color: "#f0b90b",
+    family: "cosmos",
+    units: [
+      {
+        name: "BNB",
+        code: "BNB",
+        magnitude: 6,
+      },
+      {
+        name: "Micro-BNB",
+        code: "ubnb",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://binance.mintscan.io/txs/$hash",
+        address: "https://binance.mintscan.io/validators/$address",
       },
     ],
   },

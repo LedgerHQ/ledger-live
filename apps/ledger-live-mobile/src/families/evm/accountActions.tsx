@@ -67,7 +67,7 @@ const getMainActions = ({ account, parentAccount, parentRoute }: Props) => {
         id: "stake",
         navigationParams,
         label: <Trans i18nKey="account.stake" />,
-        Icon: IconsLegacy.ClaimRewardsMedium,
+        Icon: IconsLegacy.CoinsMedium,
         event: "button_clicked",
         eventProperties: {
           button: "stake",

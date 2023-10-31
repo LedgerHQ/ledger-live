@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import isEqual from "lodash/isEqual";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -7,7 +7,7 @@ import {
   checkFeatureFlagVersion,
 } from "@ledgerhq/live-common/featureFlags/index";
 import type { FirebaseFeatureFlagsProviderProps as Props } from "@ledgerhq/live-common/featureFlags/index";
-import { Feature, FeatureId } from "@ledgerhq/types-live";
+import { Feature, FeatureId, Features } from "@ledgerhq/types-live";
 import { getAll, getValue } from "firebase/remote-config";
 import { getEnv } from "@ledgerhq/live-env";
 import { useFirebaseRemoteConfig } from "./FirebaseRemoteConfig";
@@ -56,7 +56,7 @@ export const FirebaseFeatureFlagsProvider = ({ children }: Props): JSX.Element =
   );
 
   const getFeature = useCallback(
-    (key: FeatureId, allowOverride = true): Feature | null => {
+    <T extends FeatureId>(key: T, allowOverride = true): Feature<Features[T]["params"]> | null => {
       if (!remoteConfig) {
         return null;
       }
@@ -104,13 +104,16 @@ export const FirebaseFeatureFlagsProvider = ({ children }: Props): JSX.Element =
     [dispatch, getFeature],
   );
 
-  const resetFeature = (key: FeatureId): void => {
-    dispatch(setOverriddenFeatureFlag({ key, value: undefined }));
-  };
+  const resetFeature = useCallback(
+    (key: FeatureId): void => {
+      dispatch(setOverriddenFeatureFlag({ key, value: undefined }));
+    },
+    [dispatch],
+  );
 
-  const resetFeatures = (): void => {
+  const resetFeatures = useCallback((): void => {
     dispatch(setOverriddenFeatureFlags({}));
-  };
+  }, [dispatch]);
 
   useEffect(() => {
     if (remoteConfig) {
@@ -120,16 +123,17 @@ export const FirebaseFeatureFlagsProvider = ({ children }: Props): JSX.Element =
     return () => setAnalyticsFeatureFlagMethod(null);
   }, [remoteConfig, getFeature]);
 
-  return (
-    <FeatureFlagsProvider
-      isFeature={isFeature}
-      getFeature={getFeature}
-      overrideFeature={overrideFeature}
-      resetFeature={resetFeature}
-      resetFeatures={resetFeatures}
-      getAllFlags={getAllFlags}
-    >
-      {children}
-    </FeatureFlagsProvider>
+  const contextValue = useMemo(
+    () => ({
+      isFeature,
+      getFeature,
+      overrideFeature,
+      resetFeature,
+      resetFeatures,
+      getAllFlags,
+    }),
+    [getAllFlags, getFeature, isFeature, overrideFeature, resetFeature, resetFeatures],
   );
+
+  return <FeatureFlagsProvider value={contextValue}>{children}</FeatureFlagsProvider>;
 };

@@ -125,8 +125,8 @@ export default function Settings({
       />
       {debugVisible || __DEV__ ? (
         <SettingsCard
-          title="Debug"
-          desc="Use at your own risk – Developer tools"
+          title={t("settings.debug.title")}
+          desc={t("settings.debug.desc")}
           Icon={IconsLegacy.ToolsMedium}
           onClick={() => navigation.navigate(ScreenName.DebugSettings)}
           arrowRight

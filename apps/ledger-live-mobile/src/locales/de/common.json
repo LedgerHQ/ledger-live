@@ -597,6 +597,10 @@
       "title" : "Bedienung am Gerät abgebrochen",
       "description" : "Sie haben den Vorgang auf dem Gerät abgelehnt."
     },
+    "ExpertModeRequired" : {
+      "title" : "Expertenmodus erforderlich",
+      "description" : "Der Expertenmodus muss aktiviert werden."
+    },
     "WebsocketConnectionError" : {
       "title" : "Entschuldigung, Verbindung fehlgeschlagen",
       "description" : "Bitte versuchen Sie es erneut mit einer besseren Netzwerkverbindung (Websocket-Fehler)."
@@ -1075,10 +1079,10 @@
       }
     },
     "enjoy" : {
-      "title" : "Vielen Dank für Ihr Feedback.",
-      "description" : "Wir wären Ihnen sehr dankbar, wenn Sie sich einen Moment Zeit nähmen, um uns eine Rezension zu hinterlassen. Ihr Feedback hilft und motiviert uns, mehr Menschen zu erreichen und neue App-Funktionen einzuführen.",
+      "title" : "Gefällt Ihnen Ledger Live?\nTeilen Sie Ihre Begeisterung!",
+      "description" : "Geben Sie uns eine positive Bewertung im App Store.",
       "cta" : {
-        "rate" : "Geben Sie uns 5 Sterne",
+        "rate" : "Ledger Live bewerten",
         "notNow" : "Nicht jetzt"
       }
     },
@@ -1969,8 +1973,7 @@
       },
       "completed" : {
         "noUpdateAvailable" : {
-          "title" : "Prüfung auf Betriebssystem-Update",
-          "description" : "Mit der Prüfung auf Betriebssystem-Updates wird sichergestellt, dass das Betriebssystem für {{productName}} auf dem aktuellen Stand ist."
+          "title" : "Das Betriebssystem Ihres Geräts {{productName}} ist auf dem neusten Stand"
         }
       },
       "error" : {
@@ -1989,10 +1992,11 @@
       }
     },
     "firmwareUpdateAvailableDrawer" : {
-      "title" : "Betriebssystem-Update verfügbar",
+      "title" : "Betriebssystem-Update für {{productName}} verfügbar",
       "description" : "Aktualisieren Sie Ihr {{productName}}-Gerät, um von den neuesten Sicherheits- und Funktionsmerkmalen profitieren zu können.",
       "descriptionVersion" : "Version {{firmwareVersion}}",
-      "updateCta" : "Jetzt aktualisieren"
+      "updateCta" : "Jetzt aktualisieren",
+      "seeWhatsInUpdateCta" : "Erfahren Sie, was im Update enthalten ist"
     }
   },
   "syncOnboarding" : {
@@ -2172,6 +2176,13 @@
       "title" : "Marktpreis für {{currencyTicker}}",
       "currencyPrice" : "Preis für 1 {{currencyTicker}}",
       "currencyPriceChange" : "Änderung in den letzten 24 Stunden"
+    },
+    "quickActions" : {
+      "buy" : "Kaufen",
+      "swap" : "Umtauschen",
+      "send" : "Senden",
+      "deposit" : "Einzahlung",
+      "stake" : "Staken"
     }
   },
   "addAccountsModal" : {
@@ -2396,7 +2407,7 @@
     "emptyState" : {
       "title" : "Noch keine Krypto-Werte?",
       "desc" : "Stellen Sie sicher, dass die <1><0>{{managerAppName}}</0></1>-App installiert ist und beginnen Sie mit dem Empfang von",
-      "descWithBuy" : "Make sure the <1><0>{{managerAppName}}</0></1> app is installed so you can buy or receive <3><0>{{currencyTicker}}</0></3>",
+      "descWithBuy" : "Stellen Sie sicher, dass die <1><0>{{managerAppName}}</0></1>-App installiert ist. Danach können Sie dem Kaufen oder Empfangen von <3><0>{{currencyTicker}}</0></3> beginnen.",
       "descToken" : "Stellen Sie sicher, dass die <1><0>{{managerAppName}}</0></1>App installiert ist und empfangen Sie <3><0>{{currencyTicker}}</0></3>und <5><0>{{tokenType}}</0>Tokens</5>",
       "buttons" : {
         "receiveFunds" : "Einzahlung",
@@ -2446,12 +2457,16 @@
     },
     "import" : {
       "scan" : {
-        "title" : "Vom Desktop importieren",
-        "descTop" : {
-          "line1" : "Gehen Sie in Ledger Live Desktop zu:",
-          "line2" : "Einstellungen > Konten > Konten exportieren > Exportieren"
+        "title" : "Vom Desktop importieren"
+      },
+      "newScan" : {
+        "title" : "Scannen und importieren Sie Ihre Konten von Ledger Live Desktop",
+        "instructions" : {
+          "line1" : "Öffnen Sie Ledger Live Desktop.",
+          "line2" : "Einstellungen > Konten > Konten exportieren",
+          "line3" : "Scannen Sie den QR-Code, bis der Fortschrittsbalken 100 % anzeigt."
         },
-        "descBottom" : "Öffnen Sie Ledger Live Desktop & scannen Sie den QR-Code"
+        "hodl" : "Gedrückt halten, bis der Scanvorgang abgeschlossen ist."
       },
       "result" : {
         "title" : "Konten importieren",
@@ -2917,7 +2932,8 @@
         "account" : "{{count}} Konto",
         "account_plural" : "{{count}} Konten",
         "subtitle" : "Dieses muss mit dem Netzwerk identisch sein, das auf der Wallet oder an der Börse für die Übertragung der Kryptowährung ausgewählt wurde.",
-        "bannerTitle" : "Stellen Sie sicher, dass Sie das richtige Netzwerk auswählen. So funktioniert es."
+        "bannerTitle" : "Stellen Sie sicher, dass Sie das richtige Netzwerk auswählen. So funktioniert es.",
+        "depositFromCexBannerTitle" : "Krypto von Ihrem Coinbase-Konto einzahlen"
       },
       "stepperHeader" : {
         "range" : "Schritt {{currentStep}} von {{totalSteps}}",
@@ -3389,6 +3405,11 @@
     "walletConnect" : {
       "title" : "WalletConnect",
       "description" : "Verbinden Sie Ihre Wallet mit dApps"
+    },
+    "recover" : {
+      "title" : "Ledger Recover",
+      "description" : "Wallet-Wiederherstellung leicht gemacht",
+      "tag" : "1 Monat gratis"
     }
   },
   "signMessage" : {
@@ -3764,7 +3785,8 @@
     "stayInTheAppPlz" : "Bleiben Sie in der Ledger Live-App und halten Sie Ihren Ledger bereit.",
     "allowAppPermission" : "Öffnen Sie die {{wording}} App auf Ihrem Gerät",
     "allowAppPermissionSubtitleToken" : "zum Verwalten Ihrer {{token}}-Tokens",
-    "allowManagerPermission" : "Erlauben Sie {{wording}} auf Ihrem {{productName}}",
+    "allowManagerPermission" : "Ledger Manager auf Ihrem {{productName}}-Gerät zulassen",
+    "allowRenaming" : "Umbenennen auf Ihrem {{productName}}-Gerät zulassen",
     "allowRemoveCustomLockscreen" : "Bestätigen Sie die Entfernung des Bildes auf Ihrem Ledger Stax",
     "allowSecureConnection" : "Lassen eine sichere Verbindung mit Ledger zu",
     "loading" : "Lade Daten...",
@@ -4291,6 +4313,7 @@
     "yesChangeLanguage" : "Ja, Sprache umstellen",
     "allowLanguageInstallation" : "Sprachinstallation auf {{deviceName}} genehmigen",
     "languageInstalled" : "Sprache umgestellt auf {{language}}",
+    "languageInstalledDesc" : "Ihr Ledger-Gerät verwendet jetzt die von Ihnen gewählte Sprache",
     "firmwareUpdatePrompt" : {
       "title" : "Ihr {{deviceName}} auf {{language}} einstellen?",
       "description" : "{{language}} ist jetzt für {{deviceName}} verfügbar. Sie können die Sprache Ihres Geräts jetzt einstellen oder jederzeit über My Ledger ändern."
@@ -6347,14 +6370,20 @@
   "servicesWidget" : {
     "title" : "Services",
     "subTitle" : "Ihre Ledger-Dienste verwalten",
+    "signIn" : "Anmelden",
+    "recover" : {
+      "cta" : "Starten Sie Ihre kostenlose Testphase",
+      "desc" : "Machen Sie sich nie wieder Sorgen, den Zugang zu Ihrer Wallet zu verlieren.",
+      "tag" : "1 Monat gratis"
+    },
     "protect" : {
       "status" : {
         "new" : {
           "title" : "Neu",
-          "desc" : "Machen Sie sich keine Sorgen mehr, den Zugang zu Ihrer Wallet zu verlieren.",
+          "desc" : "Stellen Sie den Zugang zu Ihrer Wallet ohne Ihre geheime Wiederherstellungsphrase wieder her.",
           "actions" : {
             "learnMore" : "Jetzt Ledger Recover kennenlernen",
-            "alreadySubscribed" : "Ich habe bereits einen Anmeldenamen. <LinkAccount>Mein Abonnement anzeigen</LinkAccount>"
+            "alreadySubscribed" : "Bereits abonniert? <LinkAccount>Abonnement anzeigen</LinkAccount>"
           }
         }
       }
@@ -6412,6 +6441,10 @@
           "body" : "Empfangen Sie Kryptowährungen in Ihrer Wallet"
         }
       }
+    },
+    "getFundsModal" : {
+      "text" : "Holen Sie sich {{coin}} zum Staken",
+      "description" : "Kaufen, tauschen oder empfangen Sie Kryptowährungen mit Ledger Live direkt auf Ihrem Ledger-Gerät."
     }
   }
 }

@@ -108,7 +108,7 @@ const Body = ({ t, stepId, device, openModal, onChangeStepId, params, onClose, m
     };
   });
 
-  const handleStepChange = useCallback(e => onChangeStepId(e.id), [onChangeStepId]);
+  const handleStepChange = useCallback((e: St) => onChangeStepId(e.id), [onChangeStepId]);
   const handleRetry = useCallback(() => {
     setTransactionError(null);
     onChangeStepId("connectDevice");

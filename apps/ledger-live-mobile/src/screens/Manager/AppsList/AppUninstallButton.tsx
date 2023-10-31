@@ -8,12 +8,12 @@ import type { Action, State } from "@ledgerhq/live-common/apps/index";
 
 import styled from "styled-components/native";
 import { IconsLegacy, Box } from "@ledgerhq/native-ui";
+import { useSetAppsWithDependenciesToInstallUninstall } from "../AppsInstallUninstallWithDependenciesContext";
 
 type Props = {
   app: App;
   state: State;
   dispatch: (_: Action) => void;
-  setAppUninstallWithDependencies: (_: { dependents: App[]; app: App }) => void;
   size?: number;
 };
 
@@ -23,16 +23,13 @@ const ButtonContainer = styled(Box).attrs({
   justifyContent: "center",
 })``;
 
-const AppUninstallButton = ({
-  app,
-  state,
-  dispatch,
-  setAppUninstallWithDependencies,
-  size = 48,
-}: Props) => {
+const AppUninstallButton = ({ app, state, dispatch, size = 48 }: Props) => {
   const { name } = app;
 
   const needsDependencies = useAppUninstallNeedsDeps(state, app);
+
+  const { setAppWithDependentsToUninstall: setAppUninstallWithDependencies } =
+    useSetAppsWithDependenciesToInstallUninstall();
 
   const uninstallApp = useCallback(() => {
     if (needsDependencies && setAppUninstallWithDependencies)

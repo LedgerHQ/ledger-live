@@ -21,7 +21,7 @@ const SyncOnboardingDeviceConnection = ({
 
   const deviceModelId = stringToDeviceModelId(strDeviceModelId, DeviceModelId.stax);
 
-  if (currentDevice) {
+  if (currentDevice && currentDevice.modelId === deviceModelId) {
     setTimeout(
       () =>
         // Uses the modelId from the newly connected device, in case the route prop strDeviceModelId is different

@@ -1,5 +1,95 @@
 # @ledgerhq/coin-evm
 
+## 0.9.0
+
+### Minor Changes
+
+- [#5042](https://github.com/LedgerHQ/ledger-live/pull/5042) [`3b4f7501cc`](https://github.com/LedgerHQ/ledger-live/commit/3b4f7501cc5f09be94a2994f20f9998898682975) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Ensure compatiblity with @ledgerhq/coin-framework change regarding `TokenAccounts` ids & update `preload` & `hydrate` method to use the `convertBEP20` method instead of the `convertERC20` method when dealing with the bsc chain. This last fix is technically useless as BEP20 = ERC20, it's only here in order to prevent breaking changes with the different backends at Ledger. As soon as those backends have the possibility of changing the "bsc/bep20/XYZ" token ids into "bsc/erc20/XYZ", this fix should be removed in order to avoid useless complexity.
+
+### Patch Changes
+
+- Updated dependencies [[`ce18546c0a`](https://github.com/LedgerHQ/ledger-live/commit/ce18546c0a0b9dd5ed78b1745cac19b7eef7b5eb), [`3b4f7501cc`](https://github.com/LedgerHQ/ledger-live/commit/3b4f7501cc5f09be94a2994f20f9998898682975), [`fbeebfe04b`](https://github.com/LedgerHQ/ledger-live/commit/fbeebfe04b297b33ec258440b694cdfb6213af24)]:
+  - @ledgerhq/types-live@6.41.1
+  - @ledgerhq/coin-framework@0.8.0
+  - @ledgerhq/cryptoassets@11.0.1
+  - @ledgerhq/domain-service@1.1.13
+  - @ledgerhq/evm-tools@1.0.9
+  - @ledgerhq/hw-app-eth@6.34.8
+
+## 0.9.0-hotfix.2
+
+### Patch Changes
+
+- Updated dependencies [[`fbeebfe04b`](https://github.com/LedgerHQ/ledger-live/commit/fbeebfe04b297b33ec258440b694cdfb6213af24)]:
+  - @ledgerhq/cryptoassets@11.0.1-hotfix.0
+  - @ledgerhq/coin-framework@0.8.0-hotfix.2
+  - @ledgerhq/domain-service@1.1.13-hotfix.1
+  - @ledgerhq/evm-tools@1.0.9-hotfix.0
+  - @ledgerhq/hw-app-eth@6.34.8-hotfix.1
+
+## 0.9.0-hotfix.1
+
+### Minor Changes
+
+- [#5042](https://github.com/LedgerHQ/ledger-live/pull/5042) [`3b4f7501cc`](https://github.com/LedgerHQ/ledger-live/commit/3b4f7501cc5f09be94a2994f20f9998898682975) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Ensure compatiblity with @ledgerhq/coin-framework change regarding `TokenAccounts` ids & update `preload` & `hydrate` method to use the `convertBEP20` method instead of the `convertERC20` method when dealing with the bsc chain. This last fix is technically useless as BEP20 = ERC20, it's only here in order to prevent breaking changes with the different backends at Ledger. As soon as those backends have the possibility of changing the "bsc/bep20/XYZ" token ids into "bsc/erc20/XYZ", this fix should be removed in order to avoid useless complexity.
+
+### Patch Changes
+
+- Updated dependencies [[`3b4f7501cc`](https://github.com/LedgerHQ/ledger-live/commit/3b4f7501cc5f09be94a2994f20f9998898682975)]:
+  - @ledgerhq/coin-framework@0.8.0-hotfix.1
+
+## 0.8.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`ce18546c0a`](https://github.com/LedgerHQ/ledger-live/commit/ce18546c0a0b9dd5ed78b1745cac19b7eef7b5eb)]:
+  - @ledgerhq/types-live@6.41.1-hotfix.0
+  - @ledgerhq/coin-framework@0.7.1-hotfix.0
+  - @ledgerhq/domain-service@1.1.13-hotfix.0
+  - @ledgerhq/evm-tools@1.0.8
+  - @ledgerhq/hw-app-eth@6.34.8-hotfix.0
+
+## 0.8.0
+
+### Minor Changes
+
+- [#4741](https://github.com/LedgerHQ/ledger-live/pull/4741) [`a134f28e9d`](https://github.com/LedgerHQ/ledger-live/commit/a134f28e9d220d172148619ed281d4ca897d5532) Thanks [@chabroA](https://github.com/chabroA)! - Add gasOption serialisation and deserialisation to evm transactions
+
+- [#4791](https://github.com/LedgerHQ/ledger-live/pull/4791) [`b779f6c964`](https://github.com/LedgerHQ/ledger-live/commit/b779f6c964079b9cd9a4ee985cd5cdbb8c49406e) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update `getDeviceTransactionConfig` to return correctly nano fields when the transaction has been crafted by a third party (like the Wallet API)
+
+- [#4285](https://github.com/LedgerHQ/ledger-live/pull/4285) [`533278e2c4`](https://github.com/LedgerHQ/ledger-live/commit/533278e2c40ee764ecb87d4430fa6650f251ff0c) Thanks [@chabroA](https://github.com/chabroA)! - Migrate Ethereum family implementation to EVM family
+
+  Replace the legcay Ethereum familly implementation that was present in ledger-live-common by the coin-evm lib implementation.
+  This change was made in order to improve scalabillity and maintainability of the evm coins, as well as more easilly integrate new evm based chains in the future.
+
+### Patch Changes
+
+- [#4804](https://github.com/LedgerHQ/ledger-live/pull/4804) [`4cb507a52b`](https://github.com/LedgerHQ/ledger-live/commit/4cb507a52bf336d395b08b4c1a429bd4956ab22d) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add cache to CDN requests during preload
+
+- Updated dependencies [[`c86637f6e5`](https://github.com/LedgerHQ/ledger-live/commit/c86637f6e57845716a791854dd8f686807152e73), [`72288402ec`](https://github.com/LedgerHQ/ledger-live/commit/72288402ec70f9159022505cb3187e63b24df450), [`f527d1bb5a`](https://github.com/LedgerHQ/ledger-live/commit/f527d1bb5a2888a916f761d43d2ba5093eaa3e3f), [`a134f28e9d`](https://github.com/LedgerHQ/ledger-live/commit/a134f28e9d220d172148619ed281d4ca897d5532), [`49ea3fd98b`](https://github.com/LedgerHQ/ledger-live/commit/49ea3fd98ba1e1e0ed54d29ab5fdc71c4918183f), [`533278e2c4`](https://github.com/LedgerHQ/ledger-live/commit/533278e2c40ee764ecb87d4430fa6650f251ff0c), [`70e4277bc9`](https://github.com/LedgerHQ/ledger-live/commit/70e4277bc9dda253b894bdae5f2c8a5f43a9a64e)]:
+  - @ledgerhq/hw-app-eth@6.34.7
+  - @ledgerhq/cryptoassets@11.0.0
+  - @ledgerhq/types-cryptoassets@7.6.0
+  - @ledgerhq/types-live@6.41.0
+  - @ledgerhq/coin-framework@0.7.0
+  - @ledgerhq/live-env@0.6.0
+  - @ledgerhq/domain-service@1.1.12
+  - @ledgerhq/evm-tools@1.0.8
+  - @ledgerhq/live-network@1.1.7
+
+## 0.6.2
+
+### Patch Changes
+
+- Updated dependencies [[`6c83521fee`](https://github.com/LedgerHQ/ledger-live/commit/6c83521fee8da656858630c1cb37a5af95df3362)]:
+  - @ledgerhq/types-cryptoassets@7.5.0
+  - @ledgerhq/cryptoassets@9.13.0
+  - @ledgerhq/types-live@6.40.0
+  - @ledgerhq/coin-framework@0.5.4
+  - @ledgerhq/domain-service@1.1.11
+  - @ledgerhq/evm-tools@1.0.7
+  - @ledgerhq/hw-app-eth@6.34.6
+
 ## 0.6.1
 
 ### Patch Changes

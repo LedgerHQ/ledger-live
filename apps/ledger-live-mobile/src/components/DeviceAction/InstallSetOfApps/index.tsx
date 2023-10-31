@@ -76,7 +76,7 @@ const InstallSetOfApps = ({
   const status = action.useHook(userConfirmed ? selectedDevice : undefined, commandRequest);
 
   const {
-    allowManagerRequestedWording,
+    allowManagerRequested,
     skippedAppOps,
     installQueue,
     listedApps,
@@ -160,7 +160,7 @@ const InstallSetOfApps = ({
         })}
       </Flex>
       <QueuedDrawer
-        isRequestingToBeOpened={!!allowManagerRequestedWording || !!error}
+        isRequestingToBeOpened={allowManagerRequested || !!error}
         onClose={onWrappedError}
         onModalHide={onWrappedError}
       >

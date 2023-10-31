@@ -4,7 +4,6 @@ import { Exchange, ExchangeSwap } from "@ledgerhq/live-common/exchange/platform/
 import { Exchange as SwapExchange } from "@ledgerhq/live-common/exchange/swap/types";
 import { setBroadcastTransaction } from "@ledgerhq/live-common/exchange/swap/setBroadcastTransaction";
 import { getUpdateAccountWithUpdaterParams } from "@ledgerhq/live-common/exchange/swap/getUpdateAccountWithUpdaterParams";
-import { convertParametersToValidFormat } from "@ledgerhq/live-common/exchange/swap/webApp/index";
 import { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -13,6 +12,7 @@ import { ModalBody } from "~/renderer/components/Modal";
 import Box from "~/renderer/components/Box";
 import { useBroadcast } from "~/renderer/hooks/useBroadcast";
 import { BodyContent } from "./BodyContent";
+import { getMagnitudeAwareRate } from "@ledgerhq/live-common/exchange/swap/webApp/index";
 
 export type Data = {
   provider: string;
@@ -32,12 +32,21 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   const dispatch = useDispatch();
   const { onResult, onCancel, swapId, rate, ...exchangeParams } = data;
   const { exchange, provider, transaction: transactionParams } = exchangeParams;
+  const { amount } = transactionParams;
   const {
     fromAccount: account,
     fromParentAccount: parentAccount,
     toAccount,
   } = exchange as ExchangeSwap;
-  const request = { ...exchangeParams };
+
+  const magnitudeAwareRate = getMagnitudeAwareRate({
+    fromAccount: account,
+    toAccount,
+    rate,
+  });
+  const amountExpectedTo = +amount * +magnitudeAwareRate;
+
+  const request = { ...exchangeParams, amountExpectedTo };
 
   const tokenCurrency: TokenCurrency | undefined =
     account.type === "TokenAccount" ? account.token : undefined;
@@ -72,13 +81,10 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
       broadcast(signedOperation).then(operation => {
         // Save swap history
         if (swapId && rate && toAccount) {
-          const { result, magnitudeAwareRate } = convertParametersToValidFormat({
+          const result = {
             operation,
             swapId,
-            fromAccount: account,
-            toAccount,
-            rate,
-          });
+          };
           setBroadcastTransaction({
             result,
             provider,
@@ -112,6 +118,7 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
     onResult,
     signedOperation,
     transaction,
+    magnitudeAwareRate,
   ]);
 
   return (

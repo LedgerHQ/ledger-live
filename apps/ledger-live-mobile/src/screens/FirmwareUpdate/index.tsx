@@ -536,7 +536,7 @@ export const FirmwareUpdate = ({
       });
     }
 
-    if (restoreAppsState.allowManagerRequestedWording) {
+    if (restoreAppsState.allowManagerRequested) {
       return (
         <AllowManager
           device={device}
@@ -547,7 +547,7 @@ export const FirmwareUpdate = ({
       );
     }
 
-    if (connectManagerState.allowManagerRequestedWording) {
+    if (connectManagerState.allowManagerRequested) {
       return <AllowManager device={device} wording={t("DeviceAction.allowSecureConnection")} />;
     }
 
@@ -628,6 +628,7 @@ export const FirmwareUpdate = ({
         return (
           <ConfirmFirmwareUpdate
             device={device}
+            currentFirmwareVersion={deviceInfo.version}
             newFirmwareVersion={firmwareUpdateContext.final.name}
             t={t}
           />
@@ -664,8 +665,8 @@ export const FirmwareUpdate = ({
     hasReconnectErrors,
     staxLoadImageState.imageLoadRequested,
     staxLoadImageState.imageCommitRequested,
-    restoreAppsState.allowManagerRequestedWording,
-    connectManagerState.allowManagerRequestedWording,
+    restoreAppsState.allowManagerRequested,
+    connectManagerState.allowManagerRequested,
     installLanguageState.languageInstallationRequested,
     restoreStepDeniedError,
     userSolvableError,
@@ -681,6 +682,7 @@ export const FirmwareUpdate = ({
     firmwareUpdateContext.final.name,
     firmwareUpdateContext.shouldFlashMCU,
     isBeforeOnboarding,
+    deviceInfo.version,
   ]);
 
   return (

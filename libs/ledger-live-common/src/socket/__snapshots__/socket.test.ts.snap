@@ -136,7 +136,6 @@ Array [
   },
   Object {
     "type": "device-permission-requested",
-    "wording": "Ledger Manager",
   },
   Object {
     "type": "device-permission-granted",

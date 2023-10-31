@@ -46,7 +46,7 @@ export default function AddAccountsSelectDevice({
   const newDeviceSelectionFeatureFlag = useFeature("llmNewDeviceSelection");
 
   const onSetDevice = useCallback(
-    device => {
+    (device: Device) => {
       dispatch(setLastConnectedDevice(device));
       setDevice(device);
     },
@@ -58,6 +58,7 @@ export default function AddAccountsSelectDevice({
   }, []);
 
   const onResult = useCallback(
+    // @ts-expect-error should be AppResult but navigation.navigate does not agree
     meta => {
       setDevice(null);
       const { inline } = route.params;

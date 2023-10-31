@@ -4,8 +4,6 @@ import { ParamListBase, useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { NavigatorName } from "../const";
 import type { DrawerProps, RootDrawerProps } from "../components/RootDrawer/types";
-import { setIsDeepLinking } from "../actions/appstate";
-import { useDispatch } from "react-redux";
 
 const rootDrawerEmitter = new EventEmitter();
 
@@ -35,7 +33,6 @@ export function useRootDrawerContext() {
 export function RootDrawerProvider({ drawer, children }: PropsWithChildren<RootDrawerProps>) {
   const [isOpen, setIsOpen] = useState(false);
   const navigation = useNavigation<StackNavigationProp<ParamListBase, string, NavigatorName>>();
-  const dispatch = useDispatch();
 
   const onModalHide = () => {
     const parent = navigation.getParent(NavigatorName.RootNavigator);
@@ -64,10 +61,8 @@ export function RootDrawerProvider({ drawer, children }: PropsWithChildren<RootD
       if (callback) {
         rootDrawerEmitter.once("ll-root-drawer-on-modal-hide", callback);
       }
-
-      dispatch(setIsDeepLinking(false));
     },
-    [setIsOpen, dispatch],
+    [setIsOpen],
   );
 
   const openDrawer = useCallback(() => setIsOpen(true), [setIsOpen]);

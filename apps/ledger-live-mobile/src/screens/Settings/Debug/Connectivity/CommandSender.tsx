@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { of } from "rxjs";
+import { firstValueFrom, of } from "rxjs";
 import { StyleSheet, ScrollView } from "react-native";
 import { Flex, Button, Alert, Tag } from "@ledgerhq/native-ui";
 
@@ -40,16 +40,17 @@ const CommandSender = ({ route }: Props) => {
   const [running, setRunning] = useState<boolean>(false);
 
   const onCommandSend = useCallback(
-    id => {
+    (id: keyof typeof commandsById) => {
       const { deviceId } = params;
       if (!deviceId) return;
 
       const runCommand = async () => {
-        withDevice(deviceId)(transport => {
-          setRunning(true);
-          return of(commandsById[id](transport));
-        })
-          .toPromise()
+        firstValueFrom(
+          withDevice(deviceId)(transport => {
+            setRunning(true);
+            return of(commandsById[id](transport));
+          }),
+        )
           .then(result => {
             setResult(result ?? "No output");
           })

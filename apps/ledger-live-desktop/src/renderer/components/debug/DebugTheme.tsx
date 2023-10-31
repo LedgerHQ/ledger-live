@@ -15,7 +15,7 @@ const Item = styled.div`
 const DebugTheme = () => {
   const dispatch = useDispatch();
   const handleChangeTheme = useCallback(
-    theme => {
+    (theme: string) => {
       dispatch(setTheme(theme));
     },
     [dispatch],

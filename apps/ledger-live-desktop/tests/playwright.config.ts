@@ -6,7 +6,7 @@ const config: PlaywrightTestConfig = {
   outputDir: "./artifacts/test-results",
   timeout: process.env.CI ? 190000 : 600000,
   expect: {
-    timeout: 30000,
+    timeout: 41000,
     toHaveScreenshot: {
       /**
        * do not increase unless it makes most tests flaky
@@ -37,7 +37,8 @@ const config: PlaywrightTestConfig = {
   preserveOutput: process.env.CI ? "failures-only" : "always",
   maxFailures: process.env.CI ? 5 : undefined,
   reportSlowTests: process.env.CI ? { max: 0, threshold: 60000 } : null,
-  workers: process.env.CI ? 1 : 1, // NOTE: 'macos-latest' and 'windows-latest' can't run 3 concurrent workers
+  fullyParallel: true,
+  workers: "50%", // NOTE: 'macos-latest' and 'windows-latest' can't run 3 concurrent workers
   retries: process.env.CI ? 2 : 0, // FIXME: --update-snapshots doesn't work with --retries
   reporter: process.env.CI
     ? [

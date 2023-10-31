@@ -45,6 +45,10 @@ const defaultConfig = {
         lcd: "https://lcd.secret.express",
         minGasPrice: 0.25,
       },
+      sei_network: {
+        lcd: "https://sei-api.polkachu.com",
+        minGasPrice: 0.1,
+      },
       stargaze: {
         lcd: "https://stargaze-api.polkachu.com",
         minGasPrice: 1,
@@ -56,6 +60,10 @@ const defaultConfig = {
       coreum: {
         lcd: "https://full-node.mainnet-1.coreum.dev:1317",
         minGasPrice: 0.1,
+      },
+      injective: {
+        lcd: "https://injective-api.polkachu.com",
+        minGasPrice: 900000000,
       },
     } as { [currency: string]: CosmosCurrencyConfig },
   },

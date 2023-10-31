@@ -1,11 +1,11 @@
 import { log } from "@ledgerhq/logs";
-import { from } from "rxjs";
+import { firstValueFrom, from } from "rxjs";
 import Exchange from "@ledgerhq/hw-app-exchange";
 import { Observable } from "rxjs";
 import { withDevice } from "../../hw/deviceAccess";
 import type { ExchangeRequestEvent } from "../../hw/actions/startExchange";
 const withDevicePromise = (deviceId, fn) =>
-  withDevice(deviceId)(transport => from(fn(transport))).toPromise();
+  firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
 
 type StartExchangeInput = {
   deviceId: string;
