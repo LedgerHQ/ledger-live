@@ -343,7 +343,7 @@ const MainSideBar = () => {
   const isLiveAppTabSelected = checkLiveAppTabSelection(
     location,
     [
-      referralProgramConfig.params.path, // Refer-a-friend
+      referralProgramConfig?.params?.path, // Refer-a-friend
     ].filter(Boolean),
   );
 
