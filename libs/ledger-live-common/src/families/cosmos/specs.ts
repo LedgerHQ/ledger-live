@@ -487,7 +487,7 @@ const desmos = {
 
 const dydxMinimalTransactionAmount = new BigNumber(500);
 const dydx = {
-  ...generateGenericCosmosTest("desmos", false, {
+  ...generateGenericCosmosTest("dydx", false, {
     minViableAmount: dydxMinimalTransactionAmount,
     mutations: cosmosLikeMutations(dydxMinimalTransactionAmount),
     testTimeout: 8 * 60 * 1000,
