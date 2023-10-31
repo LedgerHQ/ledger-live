@@ -121,7 +121,6 @@ export const useSwapTransaction = ({
   } = fromState;
 
   const { account: toAccount } = toState;
-  const transaction = bridgeTransaction?.transaction;
 
   const fromAmountError = useFromAmountStatusMessage(bridgeTransaction, ["amount"]);
   // treat the gasPrice error as a warning for swap.
