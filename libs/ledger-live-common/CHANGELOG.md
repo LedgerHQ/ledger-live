@@ -1,5 +1,19 @@
 # @ledgerhq/live-common
 
+## 33.1.0-nightly.3
+
+### Minor Changes
+
+- [#5194](https://github.com/LedgerHQ/ledger-live/pull/5194) [`e12ab4c986`](https://github.com/LedgerHQ/ledger-live/commit/e12ab4c9863f4c74a32d081637826d807aee7bcb) Thanks [@cng-ledger](https://github.com/cng-ledger)! - adding polkadot support to ledger live common
+
+### Patch Changes
+
+- [#5226](https://github.com/LedgerHQ/ledger-live/pull/5226) [`c3aea5b42d`](https://github.com/LedgerHQ/ledger-live/commit/c3aea5b42defc71ff381bcd0c3dbb7a9ea9332fe) Thanks [@sarneijim](https://github.com/sarneijim)! - Fix min max limit in swap
+
+- [#5222](https://github.com/LedgerHQ/ledger-live/pull/5222) [`22df6b230c`](https://github.com/LedgerHQ/ledger-live/commit/22df6b230c72d82d18375fb7ae7e8da599f41070) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - update injective icons
+
+- [#5197](https://github.com/LedgerHQ/ledger-live/pull/5197) [`6b68e895fb`](https://github.com/LedgerHQ/ledger-live/commit/6b68e895fbee723a2426f7a956796cac31a45454) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - init swap live app from native swap
+
 ## 33.1.0-nightly.2
 
 ### Patch Changes

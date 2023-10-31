@@ -1,5 +1,11 @@
 # @ledgerhq/icons-ui
 
+## 0.5.2-nightly.1
+
+### Patch Changes
+
+- [#5222](https://github.com/LedgerHQ/ledger-live/pull/5222) [`22df6b230c`](https://github.com/LedgerHQ/ledger-live/commit/22df6b230c72d82d18375fb7ae7e8da599f41070) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - update injective icons
+
 ## 0.5.2-nightly.0
 
 ### Patch Changes

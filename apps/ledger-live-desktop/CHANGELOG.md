@@ -1,5 +1,23 @@
 # ledger-live-desktop
 
+## 2.70.2-nightly.3
+
+### Patch Changes
+
+- [#5249](https://github.com/LedgerHQ/ledger-live/pull/5249) [`c78070eae3`](https://github.com/LedgerHQ/ledger-live/commit/c78070eae3fe1b61e185b5172f7fb94a763f6ee5) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Fix exit from beginning of Send flow modal
+
+- [#5248](https://github.com/LedgerHQ/ledger-live/pull/5248) [`b65a2a9e92`](https://github.com/LedgerHQ/ledger-live/commit/b65a2a9e926885d475842a85533b0511c6e89671) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - reintroduce topbar for swap live app
+
+- [#5197](https://github.com/LedgerHQ/ledger-live/pull/5197) [`6b68e895fb`](https://github.com/LedgerHQ/ledger-live/commit/6b68e895fbee723a2426f7a956796cac31a45454) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - init swap live app from native swap
+
+- [#5154](https://github.com/LedgerHQ/ledger-live/pull/5154) [`f65bdafc4b`](https://github.com/LedgerHQ/ledger-live/commit/f65bdafc4b71eb11959a34c2bbb1a9ab6e588fd6) Thanks [@sarneijim](https://github.com/sarneijim)! - Convert exchange flow modals in drawers
+
+- [#5215](https://github.com/LedgerHQ/ledger-live/pull/5215) [`279e4e0920`](https://github.com/LedgerHQ/ledger-live/commit/279e4e0920dd762e30a2991963e350e10e401756) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - track flowInitiatedFrom on mobile and desktop for broadcast success
+
+- Updated dependencies [[`c3aea5b42d`](https://github.com/LedgerHQ/ledger-live/commit/c3aea5b42defc71ff381bcd0c3dbb7a9ea9332fe), [`22df6b230c`](https://github.com/LedgerHQ/ledger-live/commit/22df6b230c72d82d18375fb7ae7e8da599f41070), [`6b68e895fb`](https://github.com/LedgerHQ/ledger-live/commit/6b68e895fbee723a2426f7a956796cac31a45454), [`e12ab4c986`](https://github.com/LedgerHQ/ledger-live/commit/e12ab4c9863f4c74a32d081637826d807aee7bcb)]:
+  - @ledgerhq/live-common@33.1.0-nightly.3
+  - @ledgerhq/react-ui@0.14.10-nightly.1
+
 ## 2.70.2-nightly.2
 
 ### Patch Changes
