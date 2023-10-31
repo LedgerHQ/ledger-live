@@ -1,4 +1,4 @@
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, checkRecoverCompatibility } from "@ledgerhq/live-common/featureFlags/index";
 import {
   useAlreadySeededDevicePath,
   useRestore24Path,
@@ -6,7 +6,6 @@ import {
   useCustomPath,
 } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/index";
-import { checkRecoverCompatibility } from "@ledgerhq/live-common/featureFlags/helper";
 import {
   Aside,
   Button,
