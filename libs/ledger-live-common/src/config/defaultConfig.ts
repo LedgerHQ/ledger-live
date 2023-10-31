@@ -20,6 +20,7 @@ const defaultConfig = {
       dydx: {
         lcd: "https://api.dydx.nodestake.top:443",
         minGasPrice: 12500000000,
+        ledgerValidator: "dydxvaloper1gffkd68xcnfpzcsplf0fsuetxkysunud6a900w",
       },
       nyx: {
         lcd: "https://api.nyx.nodes.guru",
