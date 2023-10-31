@@ -344,7 +344,7 @@ const MainSideBar = () => {
     location,
     [
       referralProgramConfig?.params?.path, // Refer-a-friend
-    ].filter(Boolean),
+    ].filter((path): path is string => !!path), // Filter undefined values,
   );
 
   return (
