@@ -1,6 +1,5 @@
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { checkRecoverCompatibility } from "@ledgerhq/live-common/featureFlags/helper";
+import { useFeature, checkRecoverCompatibility } from "@ledgerhq/live-common/featureFlags/index";
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useState } from "react";
