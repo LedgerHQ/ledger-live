@@ -10,11 +10,19 @@ import Box from "~/renderer/components/Box";
 import { dismissBanner } from "~/renderer/actions/settings";
 import { closePlatformAppDrawer } from "~/renderer/actions/UI";
 import { platformAppDrawerStateSelector } from "~/renderer/reducers/UI";
-import Text from "../Text";
-import { AppDetails } from "../Platform/AppDetails";
-import ExternalLink from "../ExternalLink/index";
-import LiveAppDisclaimer from "./LiveAppDisclaimer";
+import Text from "./Text";
+import { AppDetails } from "./Platform/AppDetails";
+import ExternalLink from "./ExternalLink/index";
+import LiveAppDisclaimer from "./WebPlatformPlayer/LiveAppDisclaimer";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
+import DeviceAction from "~/renderer/components/DeviceAction";
+import { createAction } from "@ledgerhq/live-common/hw/actions/startExchange";
+import startExchange from "@ledgerhq/live-common/exchange/platform/startExchange";
+import connectApp from "@ledgerhq/live-common/hw/connectApp";
+import CompleteExchange, {
+  Data as CompleteExchangeData,
+} from "~/renderer/modals/Platform/Exchange/CompleteExchange/Drawer";
+import { Operation } from "@ledgerhq/types-live";
 
 const Divider = styled(Box)`
   border: 1px solid ${p => p.theme.colors.palette.divider};
@@ -33,6 +41,7 @@ export const LiveAppDrawer = () => {
       type: string;
       manifest: AppManifest;
       disclaimerId: string;
+      data?: CompleteExchangeData;
       next: (manifest: AppManifest, isChecked: boolean) => void;
     };
   } = useSelector(platformAppDrawerStateSelector);
@@ -50,10 +59,11 @@ export const LiveAppDrawer = () => {
     }
   }, [dismissDisclaimerChecked, dispatch, payload]);
   const drawerContent = useCallback(() => {
-    if (!payload || (payload && !payload.manifest)) {
+    if (!payload) {
       return null;
     }
-    const { type, manifest } = payload;
+    const { type, manifest, data } = payload;
+    const action = createAction(connectApp, startExchange);
     switch (type) {
       case "DAPP_INFO":
         return manifest ? (
@@ -113,6 +123,24 @@ export const LiveAppDrawer = () => {
             </Box>
           </>
         );
+      case "EXCHANGE_START":
+        return data ? (
+          <Box alignItems={"center"} height={"100%"} px={32}>
+            <DeviceAction
+              action={action}
+              request={{
+                exchangeType: data.exchangeType,
+              }}
+              onResult={result => {
+                if ("startExchangeResult" in result) {
+                  data.onResult(result.startExchangeResult as unknown as Operation);
+                }
+              }}
+            />
+          </Box>
+        ) : null;
+      case "EXCHANGE_COMPLETE":
+        return data ? <CompleteExchange data={data} /> : null;
       default:
         return null;
     }

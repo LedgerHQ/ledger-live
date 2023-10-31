@@ -15,6 +15,7 @@ const exchangeSupportAppVersions = {
   dogecoin: "1.5.0",
   ethereum: "1.4.0",
   litecoin: "1.5.0",
+  polkadot: "24.9430.3",
   qtum: "1.5.0",
   ripple: "2.1.0",
   solana: "1.4.0",

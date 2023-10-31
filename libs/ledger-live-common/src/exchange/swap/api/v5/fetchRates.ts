@@ -19,6 +19,62 @@ type Props = {
   unitFrom: Unit;
 };
 
+export const throwRateError = (response: ExchangeRate[]) => {
+  // ranked errors so incases where all rates error we return
+  // the highest priority error to the user.
+  // lowest number is the highest rank.
+  // highest number is lowest rank.
+  const errorsRank = {
+    SwapExchangeRateAmountTooLowOrTooHigh: 1,
+    SwapExchangeRateAmountTooLow: 2,
+    SwapExchangeRateAmountTooHigh: 3,
+  };
+
+  const filterLimitResponse = response.filter(rate => {
+    const name = rate.error && rate.error["name"];
+    return name && errorsRank[name];
+  });
+  if (!filterLimitResponse.length) throw new SwapGenericAPIError();
+
+  // get the highest ranked error and throw it.
+  const initError = filterLimitResponse[0].error;
+  const error = filterLimitResponse.reduce((acc, curr) => {
+    const currError = curr.error;
+    if (!acc || !currError || !acc["name"] || !currError["name"]) return acc;
+    const currErrorRank: number = errorsRank[currError["name"]];
+    const accErrorRank: number = errorsRank[acc["name"]];
+
+    if (currErrorRank <= accErrorRank) {
+      if (currErrorRank === 1) return currError;
+
+      const currErrorLimit = currError["amount"];
+      const accErrorLimit = acc["amount"];
+
+      // Get smallest amount supported
+      if (
+        currErrorRank === 2 &&
+        currErrorLimit &&
+        currErrorLimit.isLessThan(accErrorLimit || Infinity)
+      ) {
+        return curr.error;
+      }
+
+      // Get highest amount supported
+      if (
+        currErrorRank === 3 &&
+        currErrorLimit &&
+        currErrorLimit.isGreaterThan(accErrorLimit || -Infinity)
+      ) {
+        return curr.error;
+      }
+    }
+
+    return acc;
+  }, initError);
+
+  throw error;
+};
+
 export async function fetchRates({
   providers,
   currencyFrom,
@@ -53,29 +109,7 @@ export async function fetchRates({
     const allErrored = enrichedResponse.every(res => !!res.error);
 
     if (allErrored) {
-      // ranked errors so incases where all rates error we return
-      // the highest priority error to the user.
-      // lowest number is the highest rank.
-      // highest number is lowest rank.
-      const errorsRank = {
-        SwapExchangeRateAmountTooLowOrTooHigh: 1,
-        SwapExchangeRateAmountTooLow: 2,
-        SwapExchangeRateAmountTooHigh: 3,
-      };
-
-      // get the highest ranked error and throw it.
-      const error = enrichedResponse.reduce<Error>((acc, curr) => {
-        if (!curr.error) return acc;
-
-        const currErrorRank: number = errorsRank[curr.error.name] ?? Infinity;
-        const accErrorRank: number = errorsRank[acc.name] ?? Infinity;
-
-        if (currErrorRank < accErrorRank) {
-          return curr.error;
-        }
-        return acc;
-      }, new SwapGenericAPIError());
-      throw error;
+      throwRateError(enrichedResponse);
     }
 
     // if some of the rates are successful then return those.
