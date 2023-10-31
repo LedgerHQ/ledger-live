@@ -1422,6 +1422,7 @@ Array [
   "polygon_zk_evm",
   "base",
   "klaytn",
+  "neon_evm",
   "binance_beacon_chain",
   "ethereum/erc20/$aapl",
   "ethereum/erc20/$based",

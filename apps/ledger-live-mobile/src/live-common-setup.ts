@@ -116,6 +116,7 @@ setSupportedCurrencies([
   "telos_evm",
   "coreum",
   "injective",
+  "neon_evm",
 ]);
 
 if (Config.BLE_LOG_LEVEL) BluetoothTransport.setLogLevel(Config.BLE_LOG_LEVEL);
