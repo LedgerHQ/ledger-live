@@ -13,6 +13,79 @@ import { languageSelector, overriddenFeatureFlagsSelector } from "../reducers/se
 import { setOverriddenFeatureFlag, setOverriddenFeatureFlags } from "../actions/settings";
 import { setAnalyticsFeatureFlagMethod } from "../analytics/segment";
 
+<<<<<<< HEAD
+=======
+const isFeature = (key: string): boolean => {
+  try {
+    const value = remoteConfig().getValue(formatToFirebaseFeatureId(key));
+
+    if (!value || !value.asString()) {
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error(`Failed to check if feature "${key}" exists`);
+    return false;
+  }
+};
+
+const getFeature = (args: {
+  key: FeatureId;
+  appLanguage: string;
+  localOverrides?: { [key in FeatureId]?: Feature };
+  allowOverride?: boolean;
+}) => {
+  const { key, appLanguage, localOverrides, allowOverride = true } = args;
+  try {
+    // Nb prioritize local overrides
+    if (allowOverride && localOverrides && localOverrides[key]) {
+      const feature = localOverrides[key];
+      if (feature) {
+        return checkFeatureFlagVersion(feature);
+      }
+    }
+
+    const envFlags = getEnv("FEATURE_FLAGS") as { [key in FeatureId]?: Feature } | undefined;
+
+    if (allowOverride && envFlags) {
+      const feature = envFlags[key];
+      if (feature)
+        return {
+          ...feature,
+          overridesRemote: true,
+          overriddenByEnv: true,
+        };
+    }
+    const config = remoteConfig();
+
+    if (__DEV__) {
+      config.setConfigSettings({ minimumFetchIntervalMillis: 0 });
+    }
+
+    const value = remoteConfig().getValue(formatToFirebaseFeatureId(key));
+    const feature = JSON.parse(value.asString());
+
+    if (
+      feature.enabled &&
+      ((feature.languages_whitelisted && !feature.languages_whitelisted.includes(appLanguage)) ||
+        (feature.languages_blacklisted && feature.languages_blacklisted.includes(appLanguage)))
+    ) {
+      return {
+        enabledOverriddenForCurrentLanguage: true,
+        ...feature,
+        enabled: false,
+      };
+    }
+
+    return checkFeatureFlagVersion(feature);
+  } catch (error) {
+    console.error(`Failed to retrieve feature "${key}"`);
+    return null;
+  }
+};
+
+>>>>>>> f26e979d8c (refactoring)
 /**
  * @returns all flags that have different defaults are exported as a key value map
  */

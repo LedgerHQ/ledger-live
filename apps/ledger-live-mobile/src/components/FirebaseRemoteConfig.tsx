@@ -17,6 +17,7 @@ export const FirebaseRemoteConfigProvider = ({ children }: Props): JSX.Element |
         await remoteConfig().setDefaults({
           ...formatDefaultFeatures(DEFAULT_FEATURES),
         });
+
         await remoteConfig().fetchAndActivate();
         LiveConfig.setProviderGetValueMethod({
           firebaseRemoteConfig: (key: string) => {
