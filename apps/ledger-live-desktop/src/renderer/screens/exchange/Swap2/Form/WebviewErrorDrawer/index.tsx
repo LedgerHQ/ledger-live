@@ -44,6 +44,7 @@ const ErrorDescription = styled(Text).attrs({
 `;
 
 export type SwapLiveError = {
+  type?: string;
   message?: string;
   code?: string;
 };
@@ -66,12 +67,12 @@ export default function WebviewErrorDrawer({ error }: Props) {
         </ErrorTitle>
         <ErrorDescription>
           <Trans i18nKey={`swap2.webviewErrorDrawer.description`} />
-          {error?.code && (
+          {error?.cause?.swapCode && (
             <Trans
               mr={2}
               i18nKey={`swap2.webviewErrorDrawer.code`}
               values={{
-                errorCode: error.code,
+                errorCode: error.cause.swapCode,
               }}
             />
           )}

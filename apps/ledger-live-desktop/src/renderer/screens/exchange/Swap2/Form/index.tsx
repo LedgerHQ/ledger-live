@@ -23,8 +23,7 @@ import ButtonBase from "~/renderer/components/Button";
 import { context } from "~/renderer/drawers/Provider";
 import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import { trackSwapError, useGetSwapTrackingProperties } from "../utils/index";
-// TODO: remove "**/WebviewErrorDrawer/*" from ignoreUnimported
-// import WebviewErrorDrawer, { SwapLiveError } from "./WebviewErrorDrawer/index";
+import WebviewErrorDrawer, { SwapLiveError } from "./WebviewErrorDrawer/index";
 import ExchangeDrawer from "./ExchangeDrawer/index";
 import SwapFormSelectors from "./FormSelectors";
 import SwapFormSummary from "./FormSummary";
@@ -64,8 +63,6 @@ type SwapWebProps = {
     customFeeConfig: string;
   }>;
   pageState: ReturnType<typeof usePageState>;
-  onUnknownError?(): void;
-  onKnownError?(errorCode: string): void;
 };
 
 const Wrapper = styled(Box).attrs({
@@ -95,13 +92,14 @@ const SwapWebAppWrapper = styled.div(
 `,
 );
 
-const SwapWeb = ({ pageState, inputs, onUnknownError, onKnownError }: SwapWebProps) => {
+const SwapWeb = ({ pageState, inputs }: SwapWebProps) => {
   const {
     colors: {
       palette: { type: themeType },
     },
   } = useTheme();
   const webviewAPIRef = useRef<WebviewAPI>(null);
+  const { setDrawer } = React.useContext(context);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
   const fiatCurrency = useSelector(counterValueCurrencySelector);
   const locale = useSelector(languageSelector);
@@ -117,15 +115,10 @@ const SwapWeb = ({ pageState, inputs, onUnknownError, onKnownError }: SwapWebPro
     return {
       ...loggerHandlers,
       "storage.set": ({ params: { key, value } }: { params: { key: string; value: string } }) => {
-        if (key === "error") {
-          try {
-            const { name: code } = JSON.parse(value) as { name: string };
-            onKnownError?.(code);
-          } catch (_) {
-            onUnknownError?.();
-          }
+        if (key === "error" && value.origin === "swap-web-app") {
+          onSwapWebviewError(value);
         }
-        setStoreValue(key, value, SWAP_WEB_MANIFEST_ID);
+        setStoreValue(key, {}, SWAP_WEB_MANIFEST_ID);
       },
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -134,7 +127,7 @@ const SwapWeb = ({ pageState, inputs, onUnknownError, onKnownError }: SwapWebPro
   useEffect(() => {
     if (webviewState.url.includes("/unknown-error")) {
       // the live app has re-directed to /unknown-error. Handle this in callback, probably wallet-api failure.
-      onUnknownError?.();
+      onSwapWebviewError();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [webviewState.url]);
@@ -142,6 +135,12 @@ const SwapWeb = ({ pageState, inputs, onUnknownError, onKnownError }: SwapWebPro
   if (!hasManifest || !hasInputs || !isPageStateLoaded) {
     return null;
   }
+  const onSwapWebviewError = (error: SwapLiveError) => {
+    console.error(error);
+    setDrawer(WebviewErrorDrawer, {
+      error,
+    });
+  };
 
   const isDevelopment = process.env.NODE_ENV === "development";
   return (
@@ -432,17 +431,6 @@ const SwapForm = () => {
   const toggleMax = () => {
     swapTransaction.toggleMax();
   };
-  // TODO: add swapWebApp error integration
-  // const onWebviewError = (error: SwapLiveError) => {
-  //   setDrawer(WebviewErrorDrawer, {
-  //     error,
-  //   });
-  // };
-
-  const onKnownError = useCallback((code: string) => {
-    // handle a known error here.
-    console.log("%cerror index.tsx line:424 ", "color: red; display: block; width: 100%;", code);
-  }, []);
 
   return (
     <Wrapper>
@@ -492,9 +480,7 @@ const SwapForm = () => {
           {t("common.exchange")}
         </Button>
       </Box>
-      {!!swapWebProps && (
-        <SwapWeb inputs={swapWebProps} pageState={pageState} onKnownError={onKnownError} />
-      )}
+      {!!swapWebProps && <SwapWeb inputs={swapWebProps} pageState={pageState} />}
     </Wrapper>
   );
 };
