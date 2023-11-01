@@ -44,14 +44,15 @@ const ErrorDescription = styled(Text).attrs({
 `;
 
 export type SwapLiveError = {
-  message?: string;
-  code?: string;
-};
-type Props = {
-  error?: SwapLiveError;
+  origin: "swap-web-app";
+  type?: string;
+  cause: {
+    message?: string;
+    swapCode?: string;
+  };
 };
 
-export default function WebviewErrorDrawer({ error }: Props) {
+export default function WebviewErrorDrawer(error?: SwapLiveError) {
   const swapDefaultTrack = useGetSwapTrackingProperties();
   return (
     <ContentBox>
@@ -66,12 +67,12 @@ export default function WebviewErrorDrawer({ error }: Props) {
         </ErrorTitle>
         <ErrorDescription>
           <Trans i18nKey={`swap2.webviewErrorDrawer.description`} />
-          {error?.code && (
+          {error?.cause?.swapCode && (
             <Trans
               mr={2}
               i18nKey={`swap2.webviewErrorDrawer.code`}
               values={{
-                errorCode: error.code,
+                errorCode: error.cause.swapCode,
               }}
             />
           )}
