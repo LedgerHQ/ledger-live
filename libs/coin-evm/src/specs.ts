@@ -254,6 +254,7 @@ const evmBasicMutations: ({
 const moveErc20Mutation: MutationSpec<EvmTransaction> = {
   name: "move some ERC20 like (ERC20, BEP20, etc...)",
   maxRun: 1,
+  testDestination: testCoinDestination,
   transaction: ({ account, siblings, bridge }): TransactionRes<EvmTransaction> => {
     const erc20Account = sample((account.subAccounts || []).filter(a => a.balance.gt(0)));
     invariant(erc20Account, "no erc20 account");
@@ -354,7 +355,7 @@ const getMutations = (currencyId: CryptoCurrency["id"]): AppSpec<EvmTransaction>
     case "polygon_zk_evm_testnet":
       return evmBasicMutations({ maxAccount: 3 });
     default:
-      return evmBasicMutations({ maxAccount: 3 }).concat(moveErc20Mutation);
+      return evmBasicMutations({ maxAccount: 4 }).concat(moveErc20Mutation);
   }
 };
 

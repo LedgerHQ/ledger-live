@@ -83,4 +83,5 @@ setSupportedCurrencies([
   "telos_evm",
   "coreum",
   "injective",
+  "neon_evm",
 ]);

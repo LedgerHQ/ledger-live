@@ -178,9 +178,9 @@ export async function runWithAppSpec<T extends Transaction>(
     // check if there are more accounts than mutation declared as a hint for the dev
     if (accounts.length <= spec.mutations.length) {
       hintWarnings.push(
-        "There are not enough accounts to cover all mutations. Please increase the account target to at least " +
-          (spec.mutations.length + 1) +
-          " accounts",
+        `There are not enough accounts (${accounts.length}) to cover all mutations (${
+          spec.mutations.length
+        }).\nPlease increase the account target to at least ${spec.mutations.length + 1} accounts`,
       );
     }
 
