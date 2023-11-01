@@ -1,5 +1,11 @@
 # @ledgerhq/types-cryptoassets
 
+## 7.7.0-nightly.0
+
+### Minor Changes
+
+- [#5173](https://github.com/LedgerHQ/ledger-live/pull/5173) [`17ba334e47`](https://github.com/LedgerHQ/ledger-live/commit/17ba334e47b901e34fbb083396aa3f9952e5233e) Thanks [@chabroA](https://github.com/chabroA)! - Add neon_evm support
+
 ## 7.6.0
 
 ### Minor Changes

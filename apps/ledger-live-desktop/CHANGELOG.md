@@ -1,5 +1,21 @@
 # ledger-live-desktop
 
+## 2.71.0-nightly.4
+
+### Minor Changes
+
+- [#5173](https://github.com/LedgerHQ/ledger-live/pull/5173) [`17ba334e47`](https://github.com/LedgerHQ/ledger-live/commit/17ba334e47b901e34fbb083396aa3f9952e5233e) Thanks [@chabroA](https://github.com/chabroA)! - Add neon_evm support
+
+### Patch Changes
+
+- Updated dependencies [[`17ba334e47`](https://github.com/LedgerHQ/ledger-live/commit/17ba334e47b901e34fbb083396aa3f9952e5233e)]:
+  - @ledgerhq/types-cryptoassets@7.7.0-nightly.0
+  - @ledgerhq/types-live@6.42.0-nightly.3
+  - @ledgerhq/live-common@33.1.0-nightly.4
+  - @ledgerhq/coin-evm@0.10.0-nightly.3
+  - @ledgerhq/coin-framework@0.8.1-nightly.3
+  - @ledgerhq/domain-service@1.1.14-nightly.3
+
 ## 2.70.2-nightly.3
 
 ### Patch Changes

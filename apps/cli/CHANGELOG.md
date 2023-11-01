@@ -1,5 +1,18 @@
 # @ledgerhq/live-cli
 
+## 22.14.0-nightly.4
+
+### Minor Changes
+
+- [#5173](https://github.com/LedgerHQ/ledger-live/pull/5173) [`17ba334e47`](https://github.com/LedgerHQ/ledger-live/commit/17ba334e47b901e34fbb083396aa3f9952e5233e) Thanks [@chabroA](https://github.com/chabroA)! - Add neon_evm support
+
+### Patch Changes
+
+- Updated dependencies [[`17ba334e47`](https://github.com/LedgerHQ/ledger-live/commit/17ba334e47b901e34fbb083396aa3f9952e5233e)]:
+  - @ledgerhq/cryptoassets@11.1.0-nightly.1
+  - @ledgerhq/live-common@33.1.0-nightly.4
+  - @ledgerhq/coin-framework@0.8.1-nightly.3
+
 ## 22.13.2-nightly.3
 
 ### Patch Changes
