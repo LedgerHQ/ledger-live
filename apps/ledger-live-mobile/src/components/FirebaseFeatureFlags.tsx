@@ -40,7 +40,10 @@ const getFeature = (args: {
   try {
     // Nb prioritize local overrides
     if (allowOverride && localOverrides && localOverrides[key]) {
-      return checkFeatureFlagVersion(localOverrides[key]);
+      const feature = localOverrides[key];
+      if (feature) {
+        return checkFeatureFlagVersion(feature);
+      }
     }
 
     const envFlags = getEnv("FEATURE_FLAGS") as { [key in FeatureId]?: Feature } | undefined;
