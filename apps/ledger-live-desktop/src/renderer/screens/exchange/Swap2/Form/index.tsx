@@ -9,7 +9,7 @@ import {
   convertToNonAtomicUnit,
 } from "@ledgerhq/live-common/exchange/swap/webApp/index";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
@@ -23,7 +23,6 @@ import ButtonBase from "~/renderer/components/Button";
 import { context } from "~/renderer/drawers/Provider";
 import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import { trackSwapError, useGetSwapTrackingProperties } from "../utils/index";
-import WebviewErrorDrawer, { SwapLiveError } from "./WebviewErrorDrawer/index";
 import ExchangeDrawer from "./ExchangeDrawer/index";
 import SwapFormSelectors from "./FormSelectors";
 import SwapFormSummary from "./FormSummary";
@@ -38,18 +37,8 @@ import BigNumber from "bignumber.js";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { SWAP_RATES_TIMEOUT } from "../../config";
 import { OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
-import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
-import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import { counterValueCurrencySelector, languageSelector } from "~/renderer/reducers/settings";
-import useTheme from "~/renderer/hooks/useTheme";
 import { v4 } from "uuid";
-import { Web3AppWebview } from "~/renderer/components/Web3AppWebview";
-import { WebviewAPI, WebviewState } from "~/renderer/components/Web3AppWebview/types";
-import { initialWebviewState } from "~/renderer/components/Web3AppWebview/helpers";
-import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
-import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
-import { setStoreValue } from "~/renderer/store";
-import { TopBar } from "~/renderer/components/WebPlatformPlayer/TopBar";
+import SwapWebView from "./SwapWebView";
 
 type SwapWebProps = {
   inputs: Partial<{
@@ -82,89 +71,6 @@ const idleTime = 60 * 60000; // 1 hour
 const Button = styled(ButtonBase)`
   justify-content: center;
 `;
-
-const SWAP_WEB_MANIFEST_ID = "swap-live-app-demo-0";
-
-const SwapWebAppWrapper = styled.div(
-  () => `
-  height: 0px;
-  width: 0px;
-`,
-);
-
-const SwapWeb = ({ pageState, inputs }: SwapWebProps) => {
-  const {
-    colors: {
-      palette: { type: themeType },
-    },
-  } = useTheme();
-  const webviewAPIRef = useRef<WebviewAPI>(null);
-  const { setDrawer } = React.useContext(context);
-  const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
-  const fiatCurrency = useSelector(counterValueCurrencySelector);
-  const locale = useSelector(languageSelector);
-  const localManifest = useLocalLiveAppManifest(SWAP_WEB_MANIFEST_ID);
-  const remoteManifest = useRemoteLiveAppManifest(SWAP_WEB_MANIFEST_ID);
-  const manifest = localManifest || remoteManifest;
-
-  const hasManifest = !!manifest;
-  const hasInputs = !!inputs;
-  const isPageStateLoaded = pageState === "loaded";
-
-  const customHandlers = useMemo<WalletAPICustomHandlers>(() => {
-    return {
-      ...loggerHandlers,
-      "storage.set": ({ params: { key, value } }: { params: { key: string; value: string } }) => {
-        if (key === "error" && value.origin === "swap-web-app") {
-          onSwapWebviewError(value);
-        }
-        setStoreValue(key, {}, SWAP_WEB_MANIFEST_ID);
-      },
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    if (webviewState.url.includes("/unknown-error")) {
-      // the live app has re-directed to /unknown-error. Handle this in callback, probably wallet-api failure.
-      onSwapWebviewError();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [webviewState.url]);
-
-  if (!hasManifest || !hasInputs || !isPageStateLoaded) {
-    return null;
-  }
-  const onSwapWebviewError = (error: SwapLiveError) => {
-    console.error(error);
-    setDrawer(WebviewErrorDrawer, {
-      error,
-    });
-  };
-
-  const isDevelopment = process.env.NODE_ENV === "development";
-  return (
-    <>
-      {isDevelopment && (
-        <TopBar manifest={manifest} webviewAPIRef={webviewAPIRef} webviewState={webviewState} />
-      )}
-      <SwapWebAppWrapper>
-        <Web3AppWebview
-          manifest={manifest}
-          inputs={{
-            ...inputs,
-            theme: themeType,
-            lang: locale,
-            currencyTicker: fiatCurrency.ticker,
-          }}
-          onStateChange={setWebviewState}
-          ref={webviewAPIRef}
-          customHandlers={customHandlers}
-        />
-      </SwapWebAppWrapper>
-    </>
-  );
-};
 
 const SwapForm = () => {
   const swapDefaultTrack = useGetSwapTrackingProperties();
@@ -480,7 +386,7 @@ const SwapForm = () => {
           {t("common.exchange")}
         </Button>
       </Box>
-      {!!swapWebProps && <SwapWeb inputs={swapWebProps} pageState={pageState} />}
+      {!!swapWebProps && <SwapWebView inputs={swapWebProps} pageState={pageState} />}
     </Wrapper>
   );
 };
