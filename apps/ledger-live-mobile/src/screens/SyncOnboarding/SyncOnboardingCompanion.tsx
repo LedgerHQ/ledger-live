@@ -328,7 +328,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
       !analyticsSeedingTracked.current
     ) {
       screen(
-        `Set up ${productName}: Step 3 Seed Success`,
+        "Set up device: Step 3 Seed Success",
         undefined,
         {
           seedPhraseType: analyticsSeedPhraseType.current
@@ -500,9 +500,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
           title: t("syncOnboarding.earlySecurityCheckCompletedStep.title", { productName }),
           renderBody: () => (
             <>
-              <TrackScreen
-                category={`Set up ${productName}: Step 1 early security check completed`}
-              />
+              <TrackScreen category={"Set up device: Step 1 device paired"} />
               <ContinueOnDeviceWithAnim
                 deviceModelId={device.modelId}
                 text={t("syncOnboarding.earlySecurityCheckCompletedStep.description", {
@@ -519,7 +517,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
           doneTitle: t("syncOnboarding.pinStep.doneTitle"),
           renderBody: () => (
             <Flex>
-              <TrackScreen category={`Set up ${productName}: Step 2 PIN`} />
+              <TrackScreen category={"Set up device: Step 2 PIN"} />
               <BodyText>{t("syncOnboarding.pinStep.description", { productName })}</BodyText>
               <ContinueOnDeviceWithAnim
                 deviceModelId={device.modelId}
@@ -536,7 +534,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
           doneTitle: t("syncOnboarding.seedStep.doneTitle"),
           renderBody: () => (
             <Flex>
-              <TrackScreen category={`Set up ${productName}: Step 3 Seed Intro`} />
+              <TrackScreen category={"Set up device: Step 3 Seed Intro"} />
               {seedPathStatus === "new_seed" ? (
                 <Flex pb={1}>
                   <BodyText mb={6}>
@@ -666,7 +664,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
             }
           />
           {companionStepKey === CompanionStepKey.Exit ? (
-            <TrackScreen category="Stax Set Up - Final step: Stax is ready" />
+            <TrackScreen category="Set up device: Final Step Your device is ready" />
           ) : null}
         </Flex>
       </Flex>

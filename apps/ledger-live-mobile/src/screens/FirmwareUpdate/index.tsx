@@ -308,9 +308,7 @@ export const FirmwareUpdate = ({
           : t("FirmwareUpdate.steps.prepareUpdate.titleBackingUp"),
         renderBody: () => (
           <>
-            <TrackScreen
-              category={`Update ${productName} - Step 1: preparing updates for install`}
-            />
+            <TrackScreen category={"Update device - Step 1: preparing updates for install"} />
             <Text variant="bodyLineHeight" color="neutral.c80">
               {isBeforeOnboarding
                 ? t("FirmwareUpdate.steps.prepareUpdate.earlySecurityCheck.description", {
@@ -328,10 +326,7 @@ export const FirmwareUpdate = ({
         title: t("FirmwareUpdate.steps.installUpdate.titleInactive"),
         renderBody: () => (
           <>
-            <TrackScreen
-              category={`Update ${productName} - Step 2: installing updates`}
-              avoidDuplicates
-            />
+            <TrackScreen category={"Update device - Step 2: installing updates"} avoidDuplicates />
             <Text variant="bodyLineHeight" color="neutral.c80">
               {t("FirmwareUpdate.steps.installUpdate.description", {
                 deviceName: productName,
@@ -347,7 +342,7 @@ export const FirmwareUpdate = ({
           : t("FirmwareUpdate.steps.restoreSettings.titleInactive"),
         renderBody: () => (
           <Flex>
-            <TrackScreen category={`Update ${productName} - Step 3: restore apps and settings`} />
+            <TrackScreen category={"Update device - Step 3: restore apps and settings"} />
             <Text variant="bodyLineHeight" color="neutral.c80">
               {isBeforeOnboarding
                 ? t("FirmwareUpdate.steps.restoreSettings.earlySecurityCheck.description")
@@ -694,7 +689,7 @@ export const FirmwareUpdate = ({
         />
       ) : fullUpdateComplete ? (
         <Flex flex={1} px={6} pb={7}>
-          <TrackScreen category={`${productName} OS successfully updated`} />
+          <TrackScreen category={"device OS successfully updated"} />
           <Flex flex={1} justifyContent="center">
             <GenericInformationBody
               Icon={Icons.CheckmarkCircleFill}
@@ -739,18 +734,15 @@ export const FirmwareUpdate = ({
         />
       </QueuedDrawer>
       {updateStep === "languageRestore" ? (
-        <TrackScreen key="a" category={`Update ${productName} - Step 3a: restore language`} />
+        <TrackScreen key="a" category={"Update device - Step 3a: restore language"} />
       ) : updateStep === "imageRestore" ? (
-        <TrackScreen
-          key="b"
-          category={`Update ${productName} - Step 3b: restore lock screen picture`}
-        />
+        <TrackScreen key="b" category={"Update device - Step 3b: restore lock screen picture"} />
       ) : updateStep === "appsRestore" ? (
-        <TrackScreen key="c" category={`Update ${productName} - Step 3c: reinstall apps`} />
+        <TrackScreen key="c" category={"Update device - Step 3b: reinstall apps"} />
       ) : updateStep === "completed" ? (
         <TrackScreen
           key="d"
-          category={`Update ${productName} - Step 3d: apps and settings successfully restored`}
+          category={"Update device - Step 3d: apps and settings successfully restored"}
         />
       ) : null}
       {staxFetchImageState.hexImage ? (

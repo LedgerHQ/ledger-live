@@ -26,7 +26,7 @@ type Props = {
   onSkip?: () => void;
 };
 
-const analyticsScreenNameRefusedOnStax = "Lock screen cancelled on Ledger Stax";
+const analyticsScreenNameRefusedOnStax = "Lock screen cancelled on device";
 const analyticsRefusedOnStaxUploadAnotherEventProps = {
   button: "Upload another image",
 };
