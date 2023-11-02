@@ -30,6 +30,8 @@ import { log } from "@ledgerhq/logs";
 import { useDynamicUrl } from "~/renderer/terms";
 import { FinalFirmware } from "@ledgerhq/types-live";
 import { useHistory } from "react-router-dom";
+import { NetworkDown } from "@ledgerhq/errors";
+import { NetworkStatus, useNetworkStatus } from "~/renderer/hooks/useNetworkStatus";
 
 export type Props = {
   onComplete: () => void;
@@ -101,6 +103,8 @@ const EarlySecurityChecks = ({
     isHookEnabled: genuineCheckActive,
     deviceId,
   });
+
+  const { networkStatus } = useNetworkStatus();
 
   const {
     state: {
@@ -277,6 +281,18 @@ const EarlySecurityChecks = ({
       };
       setDrawer(ErrorDrawer, props, commonDrawerProps);
     } else if (
+      networkStatus === NetworkStatus.OFFLINE &&
+      genuineCheckStatus !== SoftwareCheckStatus.inactive
+    ) {
+      const props: ErrorDrawerProps = {
+        onClickRetry: () => {
+          resetGenuineCheckState();
+          setGenuineCheckStatus(SoftwareCheckStatus.active);
+        },
+        error: new NetworkDown(),
+      };
+      setDrawer(ErrorDrawer, props, commonDrawerProps);
+    } else if (
       getLatestAvailableFirmwareError &&
       !(
         getLatestAvailableFirmwareError.type === "SharedError" &&
@@ -310,6 +326,8 @@ const EarlySecurityChecks = ({
     productName,
     resetGenuineCheckState,
     history,
+    networkStatus,
+    genuineCheckStatus,
   ]);
 
   return (
