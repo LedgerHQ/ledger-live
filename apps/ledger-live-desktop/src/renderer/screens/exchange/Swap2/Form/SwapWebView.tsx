@@ -30,7 +30,7 @@ type SwapWebProps = {
   pageState: ReturnType<typeof usePageState>;
 };
 
-const SWAP_WEB_MANIFEST_ID = "swap-live-app-demo-0";
+export const SWAP_WEB_MANIFEST_ID = "swap-live-app-demo-0";
 
 const SwapWebAppWrapper = styled.div(
   () => `
