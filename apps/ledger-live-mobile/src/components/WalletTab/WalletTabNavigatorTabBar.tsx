@@ -94,7 +94,7 @@ function Tab({
       });
       navigation.navigate(route.name);
     }
-  }, [isActive, navigation, route.key, route.name]);
+  }, [isActive, navigation, route]);
 
   return (
     <StyledTouchableOpacity onPress={onPress} testID={`wallet-tab-${route.name}`}>
