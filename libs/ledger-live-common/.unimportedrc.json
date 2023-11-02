@@ -303,7 +303,8 @@
     "src/index.ts",
     "src/jest.d.ts",
     "src/postOnboarding/mock.ts",
-    "src/reactNativeSvg.d.ts"
+    "src/reactNativeSvg.d.ts",
+    "src/currencies/mock.ts"
   ],
   "ignoreUnused": [
     "@types/bchaddrjs",
