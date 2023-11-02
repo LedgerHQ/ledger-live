@@ -111,7 +111,6 @@ export function useUserSettings() {
     [trackingPairs],
   );
 }
-
 export function addExtraSessionTrackingPair(trackingPair: TrackingPair) {
   const value = extraSessionTrackingPairsChanges.value;
   if (!value.some(tp => tp.from === trackingPair.from && tp.to === trackingPair.to))
@@ -125,7 +124,6 @@ export function useExtraSessionTrackingPair() {
   }, []);
   return extraSessionTrackingPair;
 }
-
 export function useTrackingPairs(): TrackingPair[] {
   const accounts = useSelector(accountsSelector);
   const countervalue = useSelector(counterValueCurrencySelector);

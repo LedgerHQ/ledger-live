@@ -12,7 +12,6 @@ import {
 import { pairId } from "@ledgerhq/live-common/countervalues/helpers";
 import { setKey } from "~/renderer/storage";
 import { useUserSettings } from "../actions/general";
-
 export default function CountervaluesProvider({
   children,
   initialState,
@@ -21,14 +20,12 @@ export default function CountervaluesProvider({
   initialState: CounterValuesStateRaw;
 }) {
   const userSettings = useUserSettings();
-
   return (
     <Countervalues userSettings={userSettings} savedState={initialState}>
       <CountervaluesManager userSettings={userSettings}>{children}</CountervaluesManager>
     </Countervalues>
   );
 }
-
 function CountervaluesManager({
   children,
   userSettings,
@@ -40,7 +37,6 @@ function CountervaluesManager({
   usePollingManager();
   return <>{children}</>;
 }
-
 function useCacheManager(userSettings: CountervaluesSettings) {
   const { status, ...state } = useCountervaluesExport();
   useEffect(() => {
@@ -62,7 +58,6 @@ function useCacheManager(userSettings: CountervaluesSettings) {
     });
   }, [state, userSettings, status]);
 }
-
 function usePollingManager() {
   const { start, stop } = useCountervaluesPolling();
   useEffect(() => {

@@ -119,7 +119,7 @@ export const resolveTrackingPair = (pair: {
   to: Currency;
 } => {
   return modules.reduce(
-    (pair, m) => (m.resolveTrackingPair ? m.resolveTrackingPair(pair) : pair),
+    (pair, module) => (module.resolveTrackingPair ? module.resolveTrackingPair(pair) : pair),
     pair,
   );
 };
