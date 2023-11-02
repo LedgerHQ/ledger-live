@@ -2173,8 +2173,8 @@ importers:
         specifier: ^5.1.0
         version: 5.2.1
       cosmjs-types:
-        specifier: 0.2.1
-        version: 0.2.1
+        specifier: 0.9.0
+        version: 0.9.0
       create-hmac:
         specifier: ^1.1.7
         version: 1.1.7
@@ -32313,6 +32313,10 @@ packages:
       protobufjs: 6.11.3
     dev: false
 
+  /cosmjs-types@0.9.0:
+    resolution: {integrity: sha512-MN/yUe6mkJwHnCFfsNPeCfXVhyxHYW6c/xDUzrSbBycYzw++XvWDMJArXp2pLdgD6FQ8DW79vkPjeNKVrXaHeQ==}
+    dev: false
+
   /cp-file@7.0.0:
     resolution: {integrity: sha512-0Cbj7gyvFVApzpK/uhCtQ/9kE9UnYpxMzaq5nQQC/Dh4iaj5fxp7iEFIullrYwzj8nf0qnsI1Qsx34hAeAebvw==}
     engines: {node: '>=8'}
@@ -46984,7 +46988,7 @@ packages:
     resolution: {integrity: sha512-mE1fxVAnJKmwwJyDtThildxxos9+DGs9+vTrx2ktSFMEVTtXS/bIv2W6hux1pqivqAfyJpTeACXHk5u2DgGvIQ==}
     engines: {node: '>=16'}
     peerDependencies:
-      metro-minify-terser: 0.76.8
+      metro-minify-terser: '*'
     peerDependenciesMeta:
       metro-minify-terser:
         optional: true
@@ -47012,7 +47016,7 @@ packages:
     resolution: {integrity: sha512-tXMvmhZZZwNw78TAPtwud1NgSzzVOx9BZ3QN3P9FpAHIsPNjnKmigVdZIk0THAb4qidUPgLOoSZXodqswvZnpg==}
     engines: {node: '>=18'}
     peerDependencies:
-      metro-minify-terser: 0.80.0
+      metro-minify-terser: '*'
     peerDependenciesMeta:
       metro-minify-terser:
         optional: true
@@ -47038,7 +47042,7 @@ packages:
     resolution: {integrity: sha512-tXMvmhZZZwNw78TAPtwud1NgSzzVOx9BZ3QN3P9FpAHIsPNjnKmigVdZIk0THAb4qidUPgLOoSZXodqswvZnpg==}
     engines: {node: '>=18'}
     peerDependencies:
-      metro-minify-terser: 0.80.0
+      metro-minify-terser: '*'
     peerDependenciesMeta:
       metro-minify-terser:
         optional: true
