@@ -1,7 +1,5 @@
 import { CurrenciesData } from "@ledgerhq/types-live";
 import type { Transaction } from "../types";
-import { fromTransactionRaw } from "../transaction";
-import BigNumber from "bignumber.js";
 
 const dataset: CurrenciesData<Transaction> = {
   FIXME_ignoreAccountFields: [
