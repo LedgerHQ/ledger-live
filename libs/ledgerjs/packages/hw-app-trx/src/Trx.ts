@@ -16,7 +16,6 @@
  ********************************************************************************/
 // FIXME drop:
 import { splitPath, foreach, decodeVarint } from "./utils";
-//import { StatusCodes, TransportStatusError } from "@ledgerhq/errors";
 import type Transport from "@ledgerhq/hw-transport";
 
 const remapTransactionRelatedErrors = e => {

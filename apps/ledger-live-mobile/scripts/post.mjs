@@ -128,7 +128,11 @@ BRAZE_CUSTOM_ENDPOINT="sdk.fra-02.braze.eu"`;
   let hashesAreEquals = false;
   try {
     hashesAreEquals = runHashChecks();
-    echo(JSON.stringify({ hashesAreEquals }));
+    if (hashesAreEquals) {
+      echo(chalk.green("Pods hashes are equal, skipping Pods install"));
+    } else {
+      echo(chalk.yellow("Pods hashes are not in sync, installing Pods"));
+    }
   } catch (error) {
     echo(chalk.red(error));
   }
