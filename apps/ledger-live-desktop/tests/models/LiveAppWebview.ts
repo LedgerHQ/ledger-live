@@ -120,12 +120,7 @@ export class LiveAppWebview {
     const result: boolean = await this.page.evaluate(textToCheck => {
       const webview = document.querySelector("webview");
       return (webview as WebviewTag)
-        .executeJavaScript(
-          `(function() {
-        return document.querySelector('*').innerHTML;
-      })();
-    `,
-        )
+        .executeJavaScript("document.body.innerHTML")
         .then((text: string) => {
           return text.includes(textToCheck);
         });
