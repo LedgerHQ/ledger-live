@@ -1,24 +1,14 @@
 const path = require("path");
-const fs = require("fs");
-const crypto = require("crypto");
 const {
   AliasPlugin,
   HtmlPlugin,
   DotEnvPlugin,
+  JsonPlugin,
   electronRendererExternals,
   nodeExternals,
 } = require("esbuild-utils");
 const { DOTENV_FILE } = require("../utils");
 const common = require("./common.esbuild");
-
-const ensureDirectoryExistence = filePath => {
-  const dirname = path.dirname(filePath);
-  if (fs.existsSync(dirname)) {
-    return true;
-  }
-  ensureDirectoryExistence(dirname);
-  fs.mkdirSync(dirname);
-};
 
 module.exports = {
   ...common,
@@ -56,31 +46,11 @@ module.exports = {
       ],
     }),
     DotEnvPlugin(DOTENV_FILE),
-    {
-      name: "assets-plugin",
-      setup(build) {
-        build.onResolve({ filter: /\.(json)$/ }, args => {
-          if (args.resolveDir.includes("ledger-live-desktop/src")) {
-            const sourcePath = path.resolve(args.resolveDir, args.path);
-            const fileContent = fs.readFileSync(sourcePath);
-
-            const hash = crypto.createHash("sha1").update(fileContent).digest("hex");
-
-            const fileName = `${hash}-${path.basename(args.path)}`;
-            const targetPath = path.join(".webpack/assets", fileName);
-
-            ensureDirectoryExistence(targetPath);
-            fs.copyFileSync(sourcePath, targetPath);
-
-            return {
-              path: `./assets/${fileName}`,
-              external: true,
-            };
-          }
-
-          return undefined;
-        });
-      },
-    },
+    JsonPlugin({
+      regexp: /\.(json)$/,
+      folderFilter: path.join("ledger-live-desktop", "src"),
+      targetPathPrefix: path.join(".webpack", "assets"),
+      pathPrefix: "./assets",
+    }),
   ],
 };
