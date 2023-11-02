@@ -1238,8 +1238,7 @@
       "terms": "By continuing, you agree to Ledger's",
       "termsLink": "Terms & Conditions",
       "privacyLink": "Privacy Policy",
-      "and": "and",
-      "recoverLogIn": "Log in to Ledger Recover"
+      "and": "and"
     },
     "postWelcomeStep": {
       "title": "Let’s get started",
