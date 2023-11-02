@@ -1,5 +1,19 @@
 # @ledgerhq/cryptoassets
 
+## 11.1.0-next.0
+
+### Minor Changes
+
+- [#5167](https://github.com/LedgerHQ/ledger-live/pull/5167) [`f5a5c315ea`](https://github.com/LedgerHQ/ledger-live/commit/f5a5c315ea2200cd5b52ef3a0b377d1327b1144e) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Integrate Dydx
+
+- [#5173](https://github.com/LedgerHQ/ledger-live/pull/5173) [`17ba334e47`](https://github.com/LedgerHQ/ledger-live/commit/17ba334e47b901e34fbb083396aa3f9952e5233e) Thanks [@chabroA](https://github.com/chabroA)! - Add neon_evm support
+
+### Patch Changes
+
+- [#5113](https://github.com/LedgerHQ/ledger-live/pull/5113) [`54b1d185c9`](https://github.com/LedgerHQ/ledger-live/commit/54b1d185c9df5ae84dc7e85d58249c06550df5f1) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - remove tokens definition for ICP chain
+
+- [#5196](https://github.com/LedgerHQ/ledger-live/pull/5196) [`9b49ff233c`](https://github.com/LedgerHQ/ledger-live/commit/9b49ff233ccfad68c98d15cd648927dee12a8b0b) Thanks [@chabroA](https://github.com/chabroA)! - Update data from CAL
+
 ## 11.0.1
 
 ### Patch Changes
