@@ -323,16 +323,9 @@ function convertAlgorandASATokens([
 }
 
 function convertTRONTokens(type: "trc10" | "trc20") {
-  return ([
-    id,
-    abbr,
-    name,
-    contractAddress,
-    precision,
-    delisted,
-    ledgerSignature,
-    enableCountervalues,
-  ]: TRC10Token | TRC20Token): TokenCurrency => ({
+  return ([id, abbr, name, contractAddress, precision, delisted, ledgerSignature]:
+    | TRC10Token
+    | TRC20Token): TokenCurrency => ({
     type: "TokenCurrency",
     id: `tron/${type}/${id}`,
     contractAddress,
@@ -341,7 +334,7 @@ function convertTRONTokens(type: "trc10" | "trc20") {
     name,
     ticker: abbr,
     delisted,
-    disableCountervalue: !enableCountervalues,
+    disableCountervalue: false,
     ledgerSignature,
     units: [
       {

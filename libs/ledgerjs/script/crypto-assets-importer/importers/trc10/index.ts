@@ -33,7 +33,7 @@ type TRC10Token = [
   number, // precision
   boolean, // delisted
   string, // ledgerSignature
-  boolean?, // enableCountervalues
+  boolean, // enableCountervalues
 ];
 
 type TrongridAssetResponse = {
@@ -79,6 +79,7 @@ const convertTRC10 = ({
   precision || 0,
   delisted,
   ledgerSignature,
+  true,
 ];
 
 const TRONGRID_TOKENS_URL = "https://api.trongrid.io/v1/assets?limit=200";
