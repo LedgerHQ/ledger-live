@@ -86,4 +86,5 @@ setSupportedCurrencies([
   "injective",
   "casper",
   "neon_evm",
+  "lukso",
 ]);
