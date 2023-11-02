@@ -5,13 +5,21 @@ import fs from "fs";
 const splTokens = [["chainId", "symbol", "name", "address", 6, null]];
 
 describe("import Spl tokens", () => {
+  let mockedAxios;
+
   beforeEach(() => {
-    const mockedAxios = jest.spyOn(axios, "get");
+    mockedAxios = jest.spyOn(axios, "get");
     mockedAxios.mockImplementation(() => Promise.resolve({ data: splTokens }));
   });
 
   afterEach(() => {
     jest.clearAllMocks();
+  });
+
+  it("should retrieve the correct file from CDN", async () => {
+    await importSPLTokens(".");
+
+    expect(mockedAxios).toHaveBeenCalledWith(expect.stringMatching(/.*\/spl.json/));
   });
 
   it("should output the file in the correct format", async () => {

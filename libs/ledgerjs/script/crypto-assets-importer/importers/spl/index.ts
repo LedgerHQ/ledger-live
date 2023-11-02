@@ -13,7 +13,7 @@ type SPLToken = [
 
 export const importSPLTokens = async (outputDir: string) => {
   console.log("importing spl tokens...");
-  const splTokens = await fetchTokens<SPLToken[]>("asa.json");
+  const splTokens = await fetchTokens<SPLToken[]>("spl.json");
   const filePath = path.join(outputDir, "spl");
 
   const splTypeStringified = `export type SPLToken = [
