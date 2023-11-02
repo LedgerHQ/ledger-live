@@ -3,7 +3,7 @@ import { useHistory } from "react-router-dom";
 import { useTranslation, Trans } from "react-i18next";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { useFeature, checkRecoverCompatibility } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, isRecoverDisplayed } from "@ledgerhq/live-common/featureFlags/index";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import { UseCaseOption } from "./UseCaseOption";
@@ -188,7 +188,7 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
                 );
               }}
             />
-            {checkRecoverCompatibility(servicesConfig, deviceModelId) && (
+            {isRecoverDisplayed(servicesConfig, deviceModelId) && (
               <UseCaseOption
                 dataTestId="v3-onboarding-restore-using-recover"
                 id="restore-device"

@@ -1,4 +1,4 @@
-import { useFeature, checkRecoverCompatibility } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, isRecoverDisplayed } from "@ledgerhq/live-common/featureFlags/index";
 import {
   useAlreadySeededDevicePath,
   useRestore24Path,
@@ -572,7 +572,7 @@ export default function Tutorial({ useCase }: Props) {
             fallbackIfNoAction: () => history.push("/"),
           });
 
-        if (checkRecoverCompatibility(recoverFF, connectedDevice?.modelId)) {
+        if (isRecoverDisplayed(recoverFF, connectedDevice?.modelId)) {
           if (useCase === UseCase.setupDevice && upsellPath) {
             history.push(upsellPath);
           } else if (useCase === UseCase.recoveryPhrase && restore24Path) {

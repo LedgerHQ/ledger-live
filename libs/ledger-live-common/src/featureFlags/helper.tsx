@@ -1,5 +1,4 @@
-// Recover compatibility check function, based on feature and device
-export function checkRecoverCompatibility(feature, deviceModelId) {
+export function isRecoverDisplayed(feature, deviceModelId) {
   return (
     feature?.enabled &&
     feature?.params?.compatibleDevices?.find(
