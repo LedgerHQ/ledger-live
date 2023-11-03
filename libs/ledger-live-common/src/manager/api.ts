@@ -461,7 +461,8 @@ const getDeviceVersion: (targetId: string | number, provider: number) => Promise
 
         if (status === 404 && error.message === "not found entity") {
           throw new FirmwareNotRecognized("manager api did not recognize targetId=" + targetId, {
-            targetId, provider,
+            targetId,
+            provider,
           });
         }
 
