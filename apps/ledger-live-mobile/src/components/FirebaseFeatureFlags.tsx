@@ -57,11 +57,6 @@ const getFeature = (args: {
           overriddenByEnv: true,
         };
     }
-    const config = remoteConfig();
-
-    if (__DEV__) {
-      config.setConfigSettings({ minimumFetchIntervalMillis: 0 });
-    }
 
     const value = remoteConfig().getValue(formatToFirebaseFeatureId(key));
     const feature = JSON.parse(value.asString());

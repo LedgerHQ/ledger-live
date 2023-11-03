@@ -884,9 +884,6 @@ importers:
       expo-modules-core:
         specifier: ^1.5.9
         version: 1.5.11(react-native@0.72.6)(react@18.2.0)
-      firebase:
-        specifier: ^9.6.6
-        version: 9.8.1
       fuse.js:
         specifier: ^6.4.6
         version: 6.6.2
