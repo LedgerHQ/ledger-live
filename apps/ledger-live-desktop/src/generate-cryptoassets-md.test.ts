@@ -5,10 +5,10 @@
 import { test, expect } from "@jest/globals";
 import fs from "fs";
 import "./live-common-set-supported-currencies";
-import { generateFile, outputFile } from "./generate-cryptoassets-md";
+import { generateMarkdown, outputFile } from "./generate-cryptoassets-md";
 
 test("generate cryptoassets.md", () => {
-  const md = generateFile();
+  const md = generateMarkdown();
   const existing = fs.readFileSync(outputFile, "utf-8");
   expect(existing).toBe(md);
 });
