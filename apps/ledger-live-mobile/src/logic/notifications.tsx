@@ -26,6 +26,7 @@ import { track } from "../analytics";
 import { notificationsSelector, INITIAL_STATE as settingsInitialState } from "../reducers/settings";
 import { setNotifications } from "../actions/settings";
 import { NotificationsSettings } from "../reducers/types";
+import Braze from "@braze/react-native-sdk";
 
 export type EventTrigger = {
   timeout: NodeJS.Timeout;
@@ -102,6 +103,15 @@ const useNotifications = () => {
     if (Platform.OS === "android") {
       Linking.openSettings();
     } else {
+      // const permissionOptions = {
+      //   alert: true,
+      //   sound: true,
+      //   badge: true,
+      //   provisional: false
+      // };
+
+      // Braze.requestPushPermission(permissionOptions);
+
       const fcm = messaging();
       const permission = await fcm.hasPermission();
 
@@ -376,7 +386,7 @@ const useNotifications = () => {
     } else {
       handleSetDateOfNextAllowedRequest(
         pushNotificationsFeature?.params?.conditions?.maybe_later_delay ||
-          pushNotificationsFeature?.params?.conditions?.default_delay_between_two_prompts,
+        pushNotificationsFeature?.params?.conditions?.default_delay_between_two_prompts,
         {
           alreadyDelayedToLater: true,
         },
