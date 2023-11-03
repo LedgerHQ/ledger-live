@@ -29,7 +29,8 @@
   "scripts": {
     "build": "pnpm run clean && node scripts/buildReactIcons && tsc --noEmit false && node scripts/transpile",
     "prepublishOnly": "pnpm run build",
-    "clean": "rimraf react native src/react src/native"
+    "clean": "rimraf react native src/react src/native",
+    "unimported": "unimported"
   },
   "peerDependencies": {
     "@types/react": "*",

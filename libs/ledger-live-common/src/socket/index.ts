@@ -37,7 +37,11 @@ export function createDeviceSocket(
     context?: TraceContext;
   },
 ): Observable<SocketEvent> {
-  const tracer = new LocalTracer(LOG_TYPE, { ...context, function: "createDeviceSocket" });
+  const tracer = new LocalTracer(LOG_TYPE, {
+    ...context,
+    function: "createDeviceSocket",
+    transportContext: transport.getTraceContext(),
+  });
   tracer.trace("Starting web socket communication", { url, unresponsiveExpectedDuringBulk });
 
   return new Observable(o => {
@@ -50,14 +54,14 @@ export function createDeviceSocket(
     const ws = new WS(url);
 
     ws.onopen = () => {
-      tracer.trace("socket opened", { url });
+      tracer.trace("Socket opened", { url });
       o.next({
         type: "opened",
       });
     };
 
     ws.onerror = e => {
-      tracer.trace("socket error", { e });
+      tracer.trace("Socket error", { e });
       if (inBulkMode) return; // in bulk case, we ignore any network events because we just need to unroll APDUs with the device
 
       o.error(
@@ -68,12 +72,16 @@ export function createDeviceSocket(
     };
 
     ws.onclose = () => {
-      tracer.trace("socket closed", { url });
+      tracer.trace("Socket closed", { url, inBulkMode, correctlyFinished });
       if (inBulkMode) return; // in bulk case, we ignore any network events because we just need to unroll APDUs with the device
 
       if (correctlyFinished) {
         o.complete();
       } else {
+        tracer.trace(`Socket closed, not correctly finished, device error: ${deviceError}`, {
+          deviceError,
+          inBulkMode,
+        });
         // Nb Give priority to the cached error from a device connection, since websocket closes give
         // us no information on what caused the close.
         o.error(deviceError || new WebsocketConnectionError("closed"));
@@ -86,11 +94,16 @@ export function createDeviceSocket(
 
       try {
         const input = JSON.parse(e.data);
-        tracer.trace("socket in", { input });
+        tracer.trace("Socket in", { type: input.query });
 
         switch (input.query) {
           case "exchange": {
-            // a single ping-pong apdu with the HSM
+            tracer.trace("Socket in: exchange", {
+              nonce: input?.nonce,
+              uuid: input?.uuid,
+              session: input?.session,
+            });
+            // A single ping-pong apdu with the HSM
             const { nonce } = input;
             const apdu = Buffer.from(input.data, "hex");
             o.next({
@@ -172,16 +185,24 @@ export function createDeviceSocket(
               data: data.toString("hex"),
             };
 
-            tracer.trace("socket out", { response: msg.response });
+            tracer.trace("Socket out", { response: msg.response });
             const strMsg = JSON.stringify(msg);
             ws.send(strMsg);
             break;
           }
 
           case "bulk": {
-            // in bulk, we just have to unroll a lot of apdus, we no longer need the WS
+            tracer.trace("Socket in: bulk", {
+              apduCount: input?.data?.length,
+              nonce: input?.nonce,
+              uuid: input?.uuid,
+              session: input?.session,
+            });
+
+            // In bulk, a lot of APDUs will be unrolled, and the web socket is no longer needed
             inBulkMode = true;
             ws.close();
+
             const { data } = input;
 
             const notify = index =>
@@ -222,27 +243,62 @@ export function createDeviceSocket(
           }
 
           case "success": {
-            // a final success event with some data payload
+            // A final success event with some data payload
             const payload = input.result || input.data;
-            if (payload)
+
+            tracer.trace("Socket in: success", {
+              payload,
+              inBulkMode,
+              nonce: input?.nonce,
+              uuid: input?.uuid,
+              session: input?.session,
+            });
+
+            // Once entered in bulk mode, we close the websocket and don't react to any other messages
+            if (inBulkMode) break;
+
+            if (payload) {
               o.next({
                 type: "result",
                 payload,
               });
+            }
             correctlyFinished = true;
             o.complete();
             break;
           }
 
           case "error": {
-            // an error from HSM
+            tracer.trace("Socket in: error", {
+              errorData: input?.data,
+              inBulkMode,
+              nonce: input?.nonce,
+              uuid: input?.uuid,
+              session: input?.session,
+            });
+
+            // Once entered in bulk mode, we close the websocket and don't react to any other messages
+            if (inBulkMode) break;
+
+            // An error from HSM
             throw new DeviceSocketFail(input.data, {
               url,
             });
           }
 
           case "warning": {
-            // a warning from HSM
+            tracer.trace("Socket in: warning", {
+              warningData: input?.data,
+              inBulkMode,
+              nonce: input?.nonce,
+              uuid: input?.uuid,
+              session: input?.session,
+            });
+
+            // Once entered in bulk mode, we close the websocket and don't react to any other messages
+            if (inBulkMode) break;
+
+            // A warning from HSM
             o.next({
               type: "warning",
               message: input.data,
@@ -252,14 +308,11 @@ export function createDeviceSocket(
           }
 
           default:
-            console.warn(`Cannot handle msg of type ${input.query}`, {
-              query: input.query,
-              url,
-            });
+            tracer.trace("Socket in: cannot handle msg of type", { input });
         }
       } catch (err: any) {
         deviceError = err;
-        tracer.trace("socket message error", { err });
+        tracer.trace("Socket message error", { err });
         o.error(err);
       }
     };

@@ -105,14 +105,6 @@ export function useLoginURI(
   return useReplacedURI(uri, id);
 }
 
-export function useLoginPath(
-  servicesConfig: Feature_ProtectServicesDesktop | null,
-): string | undefined {
-  const uri = useLoginURI(servicesConfig);
-
-  return usePath(servicesConfig, uri);
-}
-
 export function useRestore24URI(
   servicesConfig: Feature_ProtectServicesDesktop | null,
 ): string | undefined {

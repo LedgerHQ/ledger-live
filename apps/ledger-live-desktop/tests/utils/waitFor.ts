@@ -6,8 +6,8 @@
  */
 export async function waitFor(
   predicate: () => Promise<boolean>,
-  intervalMs = 100,
-  timeout = 10000,
+  intervalMs = 200,
+  timeout = 30000,
 ): Promise<boolean> {
   return new Promise((resolve, reject) => {
     const interval = setInterval(async () => {

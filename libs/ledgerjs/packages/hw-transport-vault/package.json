@@ -28,11 +28,8 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/errors": "workspace:^",
-    "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/hw-transport-http": "workspace:^",
-    "@ledgerhq/logs": "workspace:^",
-    "axios": "^0.26.1",
-    "ws": "^7.5.2"
+    "@ledgerhq/logs": "workspace:^"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
@@ -41,7 +38,8 @@
     "watch": "tsc --watch",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx",
     "lint:fix": "pnpm lint --fix",
-    "test": "jest"
+    "test": "jest",
+    "unimported": "unimported"
   },
   "devDependencies": {
     "@types/jest": "^29.5.0",

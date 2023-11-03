@@ -11,7 +11,8 @@
   "types": "lib/index.d.ts",
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "build": "tsc && tsc -m ES6 --outDir lib-es"
+    "build": "tsc && tsc -m ES6 --outDir lib-es",
+    "unimported": "unimported"
   },
   "dependencies": {
     "@ledgerhq/live-common": "workspace:^",
