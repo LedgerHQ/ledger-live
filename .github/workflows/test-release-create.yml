@@ -8,6 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
+      RELEASE_BRANCH: "import-cal-token-test-release"
     steps:
       - name: generate token
         id: generate-token
@@ -25,7 +26,7 @@ jobs:
           git config user.name "live-github-bot[bot]"
       - name: create test release release branch
         run: |
-          git checkout -b import-cal-token-test-release
+          git checkout -b $RELEASE_BRANCH
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
       - name: install dependencies
@@ -58,7 +59,7 @@ jobs:
           echo "date=$(date +%F)" >> $GITHUB_OUTPUT
       - name: push
         run: |
-          git push origin release
+          git push origin $RELEASE_BRANCH
           gh pr create --title ":rocket: Release ${{ steps.date.outputs.date }}" -F .github/templates/release.md --base main --head release
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
