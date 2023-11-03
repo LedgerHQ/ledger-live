@@ -31,7 +31,7 @@ describe("Market page for user with no device", () => {
   });
 
   // FIXME Javascript error on webview
-  it.skip("should redirect to the buy a nano marketplace page", async () => {
+  it("should redirect to the buy a nano marketplace page", async () => {
     await marketPage.openAssetPage("Bitcoin (BTC)");
     await marketPage.buyNano();
     await marketPage.openMarketPlace();
