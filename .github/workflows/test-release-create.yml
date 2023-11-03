@@ -1,10 +1,10 @@
-name: "[Release] Create Branch"
+name: "[Import CAL Tokens test Release] Create Branch"
 on:
   workflow_dispatch:
 
 jobs:
-  create-release:
-    name: Create Release
+  create-test-release:
+    name: Create test Release
     runs-on: ubuntu-latest
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -23,9 +23,9 @@ jobs:
         run: |
           git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
           git config user.name "live-github-bot[bot]"
-      - name: create release branch
+      - name: create test release release branch
         run: |
-          git checkout -b release
+          git checkout -b import-cal-token-test-release
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
       - name: install dependencies
