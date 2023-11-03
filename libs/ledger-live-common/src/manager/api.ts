@@ -459,9 +459,9 @@ const getDeviceVersion: (targetId: string | number, provider: number) => Promise
       }).catch(error => {
         const status = error && (error.status || (error.response && error.response.status)); // FIXME LLD is doing error remapping already. we probably need to move the remapping in live-common
 
-        if (status === 404) {
+        if (status === 404 && error.message === "not found entity") {
           throw new FirmwareNotRecognized("manager api did not recognize targetId=" + targetId, {
-            targetId,
+            targetId, provider,
           });
         }
 

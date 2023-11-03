@@ -875,6 +875,10 @@
     },
     "InvalidMemoICP": {
       "title": "Memo is required to be a number"
+    },
+    "FirmwareNotRecognized": {
+      "title": "Invalid Provider",
+      "description": "You have to change \"My Ledger Provider\" setting. To change it, open Ledger Live \"Settings\", select \"Experimental features\", and then select a different Provider."
     }
   },
   "crash": {
