@@ -10,16 +10,9 @@ jobs:
       NODE_OPTIONS: "--max-old-space-size=7168"
       RELEASE_BRANCH: "import-cal-token-test-release"
     steps:
-      - name: generate token
-        id: generate-token
-        uses: tibdex/github-app-token@v1
-        with:
-          app_id: ${{ secrets.GH_BOT_APP_ID }}
-          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - uses: actions/checkout@v3
         with:
           ref: develop
-          token: ${{ steps.generate-token.outputs.token }}
       - name: set git user
         run: |
           git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
