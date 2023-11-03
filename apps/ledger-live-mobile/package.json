@@ -127,7 +127,6 @@
     "expo-image-manipulator": "~11.3.0",
     "expo-modules-autolinking": "^1.5.0",
     "expo-modules-core": "^1.5.9",
-    "firebase": "^9.6.6",
     "fuse.js": "^6.4.6",
     "hoist-non-react-statics": "3.3.2",
     "i18next": "20.6.1",
