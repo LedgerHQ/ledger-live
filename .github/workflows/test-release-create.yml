@@ -38,7 +38,7 @@ jobs:
           git commit -m 'chore(prerelease) update cryptoassets'
       - name: update cryptoassets.md
         run: |
-          pnpm desktop test:jest src/generate-cryptoassets-md.test.ts
+          pnpm generate:cryptoassets-md
           git add .
           git commit -m 'update cryptoassets.md'
       - name: update sortByMarketcap snapshot

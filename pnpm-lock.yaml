@@ -524,6 +524,12 @@ importers:
       '@sentry/types':
         specifier: ^7.47.0
         version: 7.48.0
+      '@swc-node/register':
+        specifier: ^1.6.8
+        version: 1.6.8(@swc/core@1.3.95)(typescript@5.1.3)
+      '@swc/core':
+        specifier: ^1.3.95
+        version: 1.3.95
       '@testing-library/dom':
         specifier: ^9.3.1
         version: 9.3.1
@@ -23323,6 +23329,40 @@ packages:
       - supports-color
     dev: false
 
+  /@swc-node/core@1.10.6(@swc/core@1.3.95):
+    resolution: {integrity: sha512-lDIi/rPosmKIknWzvs2/Fi9zWRtbkx8OJ9pQaevhsoGzJSal8Pd315k1W5AIrnknfdAB4HqRN12fk6AhqnrEEw==}
+    engines: {node: '>= 10'}
+    peerDependencies:
+      '@swc/core': '>= 1.3'
+    dependencies:
+      '@swc/core': 1.3.95
+    dev: true
+
+  /@swc-node/register@1.6.8(@swc/core@1.3.95)(typescript@5.1.3):
+    resolution: {integrity: sha512-74ijy7J9CWr1Z88yO+ykXphV29giCrSpANQPQRooE0bObpkTO1g4RzQovIfbIaniBiGDDVsYwDoQ3FIrCE8HcQ==}
+    peerDependencies:
+      '@swc/core': '>= 1.3'
+      typescript: '>= 4.3'
+    dependencies:
+      '@swc-node/core': 1.10.6(@swc/core@1.3.95)
+      '@swc-node/sourcemap-support': 0.3.0
+      '@swc/core': 1.3.95
+      colorette: 2.0.20
+      debug: 4.3.4
+      pirates: 4.0.6
+      tslib: 2.6.2
+      typescript: 5.1.3
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
+  /@swc-node/sourcemap-support@0.3.0:
+    resolution: {integrity: sha512-gqBJSmJMWomZFxlppaKea7NeAqFrDrrS0RMt24No92M3nJWcyI9YKGEQKl+EyJqZ5gh6w1s0cTklMHMzRwA1NA==}
+    dependencies:
+      source-map-support: 0.5.21
+      tslib: 2.6.2
+    dev: true
+
   /@swc/core-darwin-arm64@1.3.95:
     resolution: {integrity: sha512-VAuBAP3MNetO/yBIBzvorUXq7lUBwhfpJxYViSxyluMwtoQDhE/XWN598TWMwMl1ZuImb56d7eUsuFdjgY7pJw==}
     engines: {node: '>=10'}
@@ -23458,17 +23498,6 @@ packages:
     resolution: {integrity: sha512-E4KcWTpoLHqwPHLxidpOqQbcrZVgi0rsmmZXUle1jXmJfuIf/UWpczUJ7MZZ5tlxytgJXyp0w4PGkkeLiuIdZw==}
     dependencies:
       tslib: 2.6.2
-
-  /@swc/jest@0.2.29(@swc/core@1.3.95):
-    resolution: {integrity: sha512-8reh5RvHBsSikDC3WGCd5ZTd2BXKkyOdK7QwynrCH58jk2cQFhhHhFBg/jvnWZehUQe/EoOImLENc9/DwbBFow==}
-    engines: {npm: '>= 7.0.0'}
-    peerDependencies:
-      '@swc/core': '*'
-    dependencies:
-      '@jest/create-cache-key-function': 27.5.1
-      '@swc/core': 1.3.95
-      jsonc-parser: 3.2.0
-    dev: true
 
   /@swc/types@0.1.5:
     resolution: {integrity: sha512-myfUej5naTBWnqOCc/MdVOLVjXUXtIA+NpDrDBKJtLLg2shUjBu3cZmB/85RyitKc55+lUUyl7oRfLOvkr2hsw==}
