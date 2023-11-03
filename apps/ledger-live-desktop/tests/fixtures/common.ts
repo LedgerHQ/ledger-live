@@ -32,6 +32,7 @@ type TestFixtures = {
   page: Page;
   featureFlags: OptionalFeatureMap;
   recordTestNamesForApiResponseLogging: void;
+  simulateCamera: string;
 };
 
 const IS_DEBUG_MODE = !!process.env.PWDEBUG;
@@ -42,6 +43,7 @@ export const test = base.extend<TestFixtures>({
   theme: "dark",
   userdata: undefined,
   featureFlags: undefined,
+  simulateCamera: undefined,
   userdataDestinationPath: async ({}, use) => {
     use(path.join(__dirname, "../artifacts/userdata", generateUUID()));
   },
@@ -53,7 +55,16 @@ export const test = base.extend<TestFixtures>({
     use(fullFilePath);
   },
   electronApp: async (
-    { lang, theme, userdata, userdataDestinationPath, userdataOriginalFile, env, featureFlags },
+    {
+      lang,
+      theme,
+      userdata,
+      userdataDestinationPath,
+      userdataOriginalFile,
+      env,
+      featureFlags,
+      simulateCamera,
+    },
     use,
   ) => {
     // create userdata path
@@ -93,6 +104,12 @@ export const test = base.extend<TestFixtures>({
         // "--use-gl=swiftshader"
         "--no-sandbox",
         "--enable-logging",
+        ...(simulateCamera
+          ? [
+              "--use-fake-device-for-media-stream",
+              `--use-file-for-fake-video-capture=${simulateCamera}`,
+            ]
+          : []),
       ],
       recordVideo: {
         dir: `${path.join(__dirname, "../artifacts/videos/")}`,
