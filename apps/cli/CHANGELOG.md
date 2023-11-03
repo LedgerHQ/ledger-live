@@ -1,5 +1,20 @@
 # @ledgerhq/live-cli
 
+## 22.14.0-nightly.5
+
+### Minor Changes
+
+- [#5167](https://github.com/LedgerHQ/ledger-live/pull/5167) [`f5a5c315ea`](https://github.com/LedgerHQ/ledger-live/commit/f5a5c315ea2200cd5b52ef3a0b377d1327b1144e) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Integrate Dydx
+
+### Patch Changes
+
+- Updated dependencies [[`a40169babf`](https://github.com/LedgerHQ/ledger-live/commit/a40169babff5f5ea4938464326dd90bc7e0a8a4a), [`f5a5c315ea`](https://github.com/LedgerHQ/ledger-live/commit/f5a5c315ea2200cd5b52ef3a0b377d1327b1144e), [`17a0822f95`](https://github.com/LedgerHQ/ledger-live/commit/17a0822f953a6fc57ed6732b881886b83cfa233b), [`710fed08da`](https://github.com/LedgerHQ/ledger-live/commit/710fed08daf6d54727065657e9cb9feaa1a2e54a), [`b4e7201b0b`](https://github.com/LedgerHQ/ledger-live/commit/b4e7201b0b70d146de7d936ff2c9e9e443164243), [`f3b2e7d0eb`](https://github.com/LedgerHQ/ledger-live/commit/f3b2e7d0eb1413781fc45e27c690e73c1058fec6)]:
+  - @ledgerhq/live-common@33.1.0-nightly.5
+  - @ledgerhq/cryptoassets@11.1.0-nightly.2
+  - @ledgerhq/hw-transport-mocker@6.27.20-nightly.3
+  - @ledgerhq/coin-framework@0.8.1-nightly.4
+  - @ledgerhq/hw-app-btc@10.0.9-nightly.2
+
 ## 22.14.0-nightly.4
 
 ### Minor Changes

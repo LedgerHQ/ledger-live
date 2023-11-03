@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.42.0-nightly.4
+
+### Minor Changes
+
+- [#5167](https://github.com/LedgerHQ/ledger-live/pull/5167) [`f5a5c315ea`](https://github.com/LedgerHQ/ledger-live/commit/f5a5c315ea2200cd5b52ef3a0b377d1327b1144e) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Integrate Dydx
+
 ## 6.42.0-nightly.3
 
 ### Minor Changes

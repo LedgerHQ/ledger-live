@@ -1,5 +1,14 @@
 # @ledgerhq/hw-transport-mocker
 
+## 6.27.20-nightly.3
+
+### Patch Changes
+
+- [#5232](https://github.com/LedgerHQ/ledger-live/pull/5232) [`f3b2e7d0eb`](https://github.com/LedgerHQ/ledger-live/commit/f3b2e7d0eb1413781fc45e27c690e73c1058fec6) Thanks [@alexandremgo](https://github.com/alexandremgo)! - fix: ignore web socket messages coming from the HSM once a bulk message has been received
+
+  - Added unit/snapshot case test on receiving a message after a bulk message
+  - Enabled a blocker on exchange method on mocked TransportReplayer
+
 ## 6.27.20-nightly.2
 
 ### Patch Changes

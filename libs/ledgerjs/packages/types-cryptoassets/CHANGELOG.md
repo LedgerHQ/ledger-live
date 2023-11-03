@@ -1,5 +1,11 @@
 # @ledgerhq/types-cryptoassets
 
+## 7.7.0-nightly.1
+
+### Minor Changes
+
+- [#5167](https://github.com/LedgerHQ/ledger-live/pull/5167) [`f5a5c315ea`](https://github.com/LedgerHQ/ledger-live/commit/f5a5c315ea2200cd5b52ef3a0b377d1327b1144e) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Integrate Dydx
+
 ## 7.7.0-nightly.0
 
 ### Minor Changes

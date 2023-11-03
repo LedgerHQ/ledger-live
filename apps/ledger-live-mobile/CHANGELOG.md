@@ -1,5 +1,28 @@
 # live-mobile
 
+## 3.34.0-nightly.5
+
+### Minor Changes
+
+- [#5167](https://github.com/LedgerHQ/ledger-live/pull/5167) [`f5a5c315ea`](https://github.com/LedgerHQ/ledger-live/commit/f5a5c315ea2200cd5b52ef3a0b377d1327b1144e) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Integrate Dydx
+
+### Patch Changes
+
+- [#5251](https://github.com/LedgerHQ/ledger-live/pull/5251) [`0ea184bdbf`](https://github.com/LedgerHQ/ledger-live/commit/0ea184bdbfc3c73095669732e27e7050a6ef2770) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Rename some of the Stax tracking events to not include the product name in their eventName
+
+- [#5278](https://github.com/LedgerHQ/ledger-live/pull/5278) [`0a133fe2c9`](https://github.com/LedgerHQ/ledger-live/commit/0a133fe2c98ed25ba40c6db78fa0d57b8695e288) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix text Onboarding partners mention
+
+- [#5263](https://github.com/LedgerHQ/ledger-live/pull/5263) [`efb63747a7`](https://github.com/LedgerHQ/ledger-live/commit/efb63747a7dc37ac56786754ffdacc54f7d8b88e) Thanks [@ak-ledger](https://github.com/ak-ledger)! - Remove "Login to Ledger Recover" button
+
+- Updated dependencies [[`a40169babf`](https://github.com/LedgerHQ/ledger-live/commit/a40169babff5f5ea4938464326dd90bc7e0a8a4a), [`f5a5c315ea`](https://github.com/LedgerHQ/ledger-live/commit/f5a5c315ea2200cd5b52ef3a0b377d1327b1144e), [`17a0822f95`](https://github.com/LedgerHQ/ledger-live/commit/17a0822f953a6fc57ed6732b881886b83cfa233b), [`710fed08da`](https://github.com/LedgerHQ/ledger-live/commit/710fed08daf6d54727065657e9cb9feaa1a2e54a), [`f3b2e7d0eb`](https://github.com/LedgerHQ/ledger-live/commit/f3b2e7d0eb1413781fc45e27c690e73c1058fec6)]:
+  - @ledgerhq/live-common@33.1.0-nightly.5
+  - @ledgerhq/types-cryptoassets@7.7.0-nightly.1
+  - @ledgerhq/types-live@6.42.0-nightly.4
+  - @ledgerhq/coin-evm@0.10.0-nightly.4
+  - @ledgerhq/coin-framework@0.8.1-nightly.4
+  - @ledgerhq/domain-service@1.1.14-nightly.4
+  - @ledgerhq/native-ui@0.22.1-nightly.3
+
 ## 3.34.0-nightly.4
 
 ### Minor Changes

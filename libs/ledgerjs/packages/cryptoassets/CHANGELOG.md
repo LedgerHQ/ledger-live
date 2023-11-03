@@ -1,5 +1,15 @@
 # @ledgerhq/cryptoassets
 
+## 11.1.0-nightly.2
+
+### Minor Changes
+
+- [#5167](https://github.com/LedgerHQ/ledger-live/pull/5167) [`f5a5c315ea`](https://github.com/LedgerHQ/ledger-live/commit/f5a5c315ea2200cd5b52ef3a0b377d1327b1144e) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Integrate Dydx
+
+### Patch Changes
+
+- [#5283](https://github.com/LedgerHQ/ledger-live/pull/5283) [`b4e7201b0b`](https://github.com/LedgerHQ/ledger-live/commit/b4e7201b0b70d146de7d936ff2c9e9e443164243) Thanks [@lvndry](https://github.com/lvndry)! - Update cryptoasset list
+
 ## 11.1.0-nightly.1
 
 ### Minor Changes
