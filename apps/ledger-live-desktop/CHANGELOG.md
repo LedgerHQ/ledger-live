@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.71.0-next.1
+
+### Patch Changes
+
+- [#5305](https://github.com/LedgerHQ/ledger-live/pull/5305) [`1a914e801e`](https://github.com/LedgerHQ/ledger-live/commit/1a914e801e333fe2ad99319122d8e9a64029eaba) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Fix: added locked device errors to Sentry ignore list
+
 ## 2.71.0-next.0
 
 ### Minor Changes
