@@ -9,18 +9,14 @@ export class LiveAppWebview {
   readonly liveAppTitle: Locator;
   readonly liveAppLoadingSpinner: Locator;
   readonly webview: Locator;
-  readonly selectAssetTitle: Locator;
   readonly selectAssetSearchBar: Locator;
-  readonly selectAccountTitle: Locator;
 
   constructor(page: Page) {
     this.page = page;
     this.webview = page.locator("webview");
     this.liveAppTitle = page.locator("data-test-id=live-app-title");
     this.liveAppLoadingSpinner = page.locator("data-test-id=live-app-loading-spinner");
-    this.selectAssetTitle = page.locator("data-test-id=select-asset-drawer-title");
     this.selectAssetSearchBar = page.locator("data-test-id=select-asset-drawer-search-input");
-    this.selectAccountTitle = page.locator("data-test-id=select-account-drawer-title");
   }
 
   static async startLiveApp(

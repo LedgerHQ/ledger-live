@@ -240,7 +240,6 @@ const SwapForm = () => {
     swapTransaction.swap.from.amount.gt(0);
 
   const onSubmit = () => {
-    setSwapWebProps(undefined);
     if (!exchangeRate) return;
 
     const { provider, providerURL, providerType } = exchangeRate;
@@ -387,7 +386,7 @@ const SwapForm = () => {
           {t("common.exchange")}
         </Button>
       </Box>
-      {!!swapWebProps && <SwapWebView inputs={swapWebProps} pageState={pageState} />}
+      <SwapWebView swapState={swapWebProps} pageState={pageState} />
     </Wrapper>
   );
 };

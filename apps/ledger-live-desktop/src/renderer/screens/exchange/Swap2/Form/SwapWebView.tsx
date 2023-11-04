@@ -11,13 +11,15 @@ import useTheme from "~/renderer/hooks/useTheme";
 import { Web3AppWebview } from "~/renderer/components/Web3AppWebview";
 import { WebviewAPI, WebviewState } from "~/renderer/components/Web3AppWebview/types";
 import { initialWebviewState } from "~/renderer/components/Web3AppWebview/helpers";
-import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
-import { setStoreValue } from "~/renderer/store";
 import { TopBar } from "~/renderer/components/WebPlatformPlayer/TopBar";
 
+type CustomHandlersParams<Params> = {
+  params: Params;
+};
+
 type SwapWebProps = {
-  inputs: Partial<{
+  swapState?: Partial<{
     provider: string;
     fromAccountId: string;
     toAccountId: string;
@@ -26,20 +28,21 @@ type SwapWebProps = {
     rate: string;
     feeStrategy: string;
     customFeeConfig: string;
+    cacheKey: string;
   }>;
   pageState: ReturnType<typeof usePageState>;
 };
 
 export const SWAP_WEB_MANIFEST_ID = "swap-live-app-demo-0";
 
-const SwapWebAppWrapper = styled.div(
-  () => `
-  height: 0px;
-  width: 0px;
+const SwapWebAppWrapper = styled.div<{ isDevelopment: boolean }>(
+  ({ isDevelopment }) => `
+  ${!isDevelopment ? "height: 0px;" : ""}
+  ${!isDevelopment ? "width: 0px;" : ""}
 `,
 );
 
-const SwapWebView = ({ pageState, inputs }: SwapWebProps) => {
+const SwapWebView = ({ pageState, swapState }: SwapWebProps) => {
   const {
     colors: {
       palette: { type: themeType },
@@ -55,25 +58,32 @@ const SwapWebView = ({ pageState, inputs }: SwapWebProps) => {
   const manifest = localManifest || remoteManifest;
 
   const hasManifest = !!manifest;
-  const hasInputs = !!inputs;
+  const hasSwapState = !!swapState;
   const isPageStateLoaded = pageState === "loaded";
 
-  const customHandlers = useMemo<WalletAPICustomHandlers>(() => {
+  const customHandlers = useMemo(() => {
     return {
       ...loggerHandlers,
-      "storage.set": ({
-        params: { key, value },
-      }: {
-        params: { key: string; value: SwapLiveError };
-      }) => {
-        if (key === "error" && value.origin === "swap-web-app") {
-          onSwapWebviewError(value);
-        }
-        setStoreValue(key, {}, SWAP_WEB_MANIFEST_ID);
+      "custom.swapStateGet": () => {
+        return Promise.resolve(swapState);
+      },
+      // TODO: when we need bidirectional communication
+      // "custom.swapStateSet": (params: CustomHandlersParams<unknown>) => {
+      //   return Promise.resolve();
+      // },
+      "custom.throwExchangeErrorToLedgerLive": ({
+        params,
+      }: CustomHandlersParams<SwapLiveError>) => {
+        onSwapWebviewError(params);
+        return Promise.resolve();
+      },
+      "custom.throwGenericErrorToLedgerLive": () => {
+        onSwapWebviewError();
+        return Promise.resolve();
       },
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [swapState?.cacheKey]);
 
   useEffect(() => {
     if (webviewState.url.includes("/unknown-error")) {
@@ -83,7 +93,7 @@ const SwapWebView = ({ pageState, inputs }: SwapWebProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [webviewState.url]);
 
-  if (!hasManifest || !hasInputs || !isPageStateLoaded) {
+  if (!hasManifest || !hasSwapState || !isPageStateLoaded) {
     return null;
   }
   const onSwapWebviewError = (error?: SwapLiveError) => {
@@ -97,18 +107,18 @@ const SwapWebView = ({ pageState, inputs }: SwapWebProps) => {
       {isDevelopment && (
         <TopBar manifest={manifest} webviewAPIRef={webviewAPIRef} webviewState={webviewState} />
       )}
-      <SwapWebAppWrapper>
+      <SwapWebAppWrapper isDevelopment={isDevelopment}>
         <Web3AppWebview
           manifest={manifest}
           inputs={{
-            ...inputs,
+            cacheKey: swapState.cacheKey,
             theme: themeType,
             lang: locale,
             currencyTicker: fiatCurrency.ticker,
           }}
           onStateChange={setWebviewState}
           ref={webviewAPIRef}
-          customHandlers={customHandlers}
+          customHandlers={customHandlers as never}
         />
       </SwapWebAppWrapper>
     </>

@@ -1208,7 +1208,7 @@
           "contactSupportCTA": "Contact Ledger support",
           "notFoundEntityError": {
             "title": "Initiate Genuine Check again",
-            "description": "You must first disable “My Ledger Provider ({{providerNumber}})” setting. To disable it, open Ledger Live “Settings”, select “Experimental features”, and then toggle off “Manager provider”."
+            "description": "You must first disable “My Ledger Provider ({{providerNumber}})” setting. To disable it, open Ledger Live “Settings”, select “Experimental features”, and then toggle off “My Ledger provider”."
           },
           "deviceNotGenuineError": {
             "title": "This {{productName}} is not genuine",
