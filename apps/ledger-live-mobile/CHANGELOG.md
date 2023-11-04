@@ -1,5 +1,17 @@
 # live-mobile
 
+## 3.34.0-nightly.6
+
+### Minor Changes
+
+- [#5279](https://github.com/LedgerHQ/ledger-live/pull/5279) [`4aed614347`](https://github.com/LedgerHQ/ledger-live/commit/4aed6143474e999f0f8f9ad4a903ff4fb1a6cc16) Thanks [@KVNLS](https://github.com/KVNLS)! - Update Android SDK from 33 to 34
+
+### Patch Changes
+
+- [#5277](https://github.com/LedgerHQ/ledger-live/pull/5277) [`1e3692f0f7`](https://github.com/LedgerHQ/ledger-live/commit/1e3692f0f7619b2f1ed62d3ad8947a0bc0eee61e) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix analytics on tabs in header
+
+- [#5288](https://github.com/LedgerHQ/ledger-live/pull/5288) [`6d782bb877`](https://github.com/LedgerHQ/ledger-live/commit/6d782bb877451f18000a65c44524b9a79cf3403b) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix wording mentioning "Manager"/"the manager" instead of "My Ledger" which is the correct name for this screen
+
 ## 3.34.0-nightly.5
 
 ### Minor Changes

@@ -1,5 +1,13 @@
 # ledger-live-desktop
 
+## 2.71.0-nightly.6
+
+### Patch Changes
+
+- [#5285](https://github.com/LedgerHQ/ledger-live/pull/5285) [`b1d4fdf4cc`](https://github.com/LedgerHQ/ledger-live/commit/b1d4fdf4ccbc6c04a9192a5761834cd042bb0bec) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - add custom handlers to manange state and errors between lld and swap-live-app
+
+- [#5288](https://github.com/LedgerHQ/ledger-live/pull/5288) [`6d782bb877`](https://github.com/LedgerHQ/ledger-live/commit/6d782bb877451f18000a65c44524b9a79cf3403b) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix wording mentioning "Manager"/"the manager" instead of "My Ledger" which is the correct name for this screen
+
 ## 2.71.0-nightly.5
 
 ### Minor Changes
