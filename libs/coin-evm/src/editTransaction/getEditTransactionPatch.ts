@@ -1,14 +1,14 @@
 import type { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
-import { getGasTracker } from "..//api/gasTracker/index";
+import { getGasTracker } from "../api/gasTracker/index";
 import type {
   EditType,
   EvmTransactionEIP1559,
   EvmTransactionLegacy,
   GasOptions,
   Transaction,
-} from "..//types/index";
+} from "../types/index";
 import { getMinEip1559Fees, getMinLegacyFees } from "./getMinEditTransactionFees";
 
 /**
