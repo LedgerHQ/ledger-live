@@ -84,10 +84,11 @@ export const getMinimumAmountToBond = (
  *
  * @param {PolkadotAccount} a
  */
-export const hasMinimumBondBalance = (a: PolkadotAccount): boolean => {
+export const hasMinimumBondBalance = (account: PolkadotAccount): boolean => {
   const { minimumBondBalance } = getCurrentPolkadotPreloadData();
   return (
-    !a.polkadotResources || a.polkadotResources.lockedBalance.gte(new BigNumber(minimumBondBalance))
+    !account.polkadotResources ||
+    account.polkadotResources.lockedBalance.gte(new BigNumber(minimumBondBalance))
   );
 };
 
