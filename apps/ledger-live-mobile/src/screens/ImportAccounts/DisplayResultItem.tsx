@@ -29,7 +29,7 @@ type Props = {
 };
 
 const DisplayResultItem = ({ account, mode, checked, importing, onSwitch }: Props) => {
-  const _onSwitch = () => {
+  const handleSwitch = () => {
     track(checked ? "AccountSwitchOff" : "AccountSwitchOn");
     onSwitch(!checked, account);
   };
@@ -38,7 +38,7 @@ const DisplayResultItem = ({ account, mode, checked, importing, onSwitch }: Prop
 
   return (
     <TouchableOpacity
-      onPress={importing ? undefined : _onSwitch}
+      onPress={importing ? undefined : handleSwitch}
       style={[styles.root, { opacity: selectable ? 1 : 0.5 }]}
     >
       <Flex flex={1}>
@@ -46,7 +46,11 @@ const DisplayResultItem = ({ account, mode, checked, importing, onSwitch }: Prop
       </Flex>
       {!selectable ? null : (
         <Flex ml={8}>
-          {importing ? <InfiniteLoader /> : <CheckBox onChange={_onSwitch} isChecked={checked} />}
+          {importing ? (
+            <InfiniteLoader />
+          ) : (
+            <CheckBox onChange={handleSwitch} isChecked={checked} />
+          )}
         </Flex>
       )}
     </TouchableOpacity>
