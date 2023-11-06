@@ -3,11 +3,19 @@ import { snakeCase } from "lodash";
 import semver from "semver";
 import { Feature } from "@ledgerhq/types-live";
 
+export declare interface Value {
+  asBoolean(): boolean;
+  asNumber(): number;
+  asString(): string;
+}
+
 export class AppConfig {
   public appVersion?: string;
   public platform?: string;
   public environment?: string;
-  private static instance: AppConfig;
+  public providerGetvalueMethod?: { [provider: string]: (key: string) => Value };
+
+  private static instance: AppConfig; // Singleton instance
   private constructor() {}
   public static init(config: { appVersion: string; platform: string; environment: string }) {
     if (!AppConfig.instance) {
@@ -18,6 +26,16 @@ export class AppConfig {
       throw new Error("AppConfig instance is already initialized");
     }
   }
+
+  public static setProviderGetValueMethod(provider2Method: {
+    [provider: string]: (key: string) => Value;
+  }) {
+    if (!AppConfig.instance) {
+      throw new Error("AppConfig instance is not initialized. Call init() first.");
+    }
+    AppConfig.instance.providerGetvalueMethod = provider2Method;
+  }
+
   public static getInstance(): AppConfig {
     if (!AppConfig.instance) {
       throw new Error("AppConfig instance is not initialized. Call init() first.");
