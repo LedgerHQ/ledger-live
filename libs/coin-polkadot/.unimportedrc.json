@@ -1,0 +1,18 @@
+{
+  "entry": [
+    "src/account.ts",
+    "src/bridge/js.ts",
+    "src/cli-transaction.ts",
+    "src/deviceTransactionConfig.ts",
+    "src/errors.ts",
+    "src/hw-getAddress.ts",
+    "src/logic.ts",
+    "src/platformAdapter.ts",
+    "src/preload.ts",
+    "src/serialization.ts",
+    "src/specs.ts",
+    "src/transaction.ts"
+  ],
+  "ignoreUnimported": ["src/api/subscan.ts", "src/api/websocket.ts"],
+  "ignoreUnresolved": []
+}

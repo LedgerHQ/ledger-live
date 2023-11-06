@@ -135,13 +135,6 @@ const build = async argv => {
     ),
   ]);
 
-  // Ensure that we keep our bundle size under thresholds
-  if (results[0].metafile.outputs[".webpack/main.bundle.js"].bytes > 5 * 1024 * 1024) {
-    throw new Error(
-      "main bundle must be kept under 5 MB. This indicates a possible regression of importing too much modules. Most of Ledger Live must be run on renderer side.",
-    );
-  }
-
   if (process.env.GENERATE_METAFILES) {
     // analyze bundle sizes. use it with https://esbuild.github.io/analyze/
     fs.writeFileSync("metafile.main.json", JSON.stringify(results[0].metafile), "utf-8");
@@ -153,6 +146,18 @@ const build = async argv => {
     );
     fs.writeFileSync("metafile.renderer.json", JSON.stringify(results[3].metafile), "utf-8");
     fs.writeFileSync("metafile.renderer.worker.json", JSON.stringify(results[4].metafile), "utf-8");
+  }
+
+  // Ensure that we keep our bundle size under thresholds
+  if (results[0].metafile.outputs[".webpack/main.bundle.js"].bytes > 5 * 1024 * 1024) {
+    throw new Error(
+      "main bundle must be kept under 5 MB. This indicates a possible regression of importing too much modules. Most of Ledger Live must be run on renderer side.",
+    );
+  }
+  if (results[3].metafile.outputs[".webpack/renderer.bundle.js"].bytes > 40 * 1024 * 1024) {
+    throw new Error(
+      "renderer bundle must be kept under 40 MB. This indicates a possible regression of importing too much modules. If you change the threshold, please justify why / schedule tech debt tasks to reduce it back to lower.",
+    );
   }
 };
 
