@@ -2,6 +2,13 @@
   InfoPlist.strings
   ledgerlivemobile
 
-  Created by Martin CAYUELAS on 03/11/2023.
+  Created by Martin CAYUELAS on 06/11/2023.
   Copyright © 2023 Ledger SAS. All rights reserved.
 */
+
+"NSBluetoothAlwaysUsageDescription"="Ledger Live doit se connecter à votre appareil Ledger pour gérer vos actifs cryptographiques.";
+"NSBluetoothPeripheralUsageDescription"="The Ledger Live app needs access device";
+"NSCameraUsageDescription"="L'application Ledger Live a besoin d'un accès à votre appareil photo pour scanner les codes QR.";
+"NSFaceIDUsageDescription"="This app requires Face ID permission to authenticate using Face recognition.";
+"NSMicrophoneUsageDescription"="Allow $(PRODUCT_NAME) to use the microphone in French";
+"NSPhotoLibraryUsageDescription"="Allow $(PRODUCT_NAME) to access your photos in French";
