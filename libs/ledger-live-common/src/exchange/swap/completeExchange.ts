@@ -9,7 +9,7 @@ import { TransactionRefusedOnDevice } from "../../errors";
 import perFamily from "../../generated/exchange";
 import { withDevice } from "../../hw/deviceAccess";
 import { delay } from "../../promise";
-import { createExchange, getExchangeErrorMessage } from "@ledgerhq/hw-app-exchange";
+import { ExchangeTypes, createExchange, getExchangeErrorMessage } from "@ledgerhq/hw-app-exchange";
 import type { CompleteExchangeInputSwap, CompleteExchangeRequestEvent } from "../platform/types";
 import { getProviderConfig } from "./";
 
@@ -111,7 +111,7 @@ const completeExchange = (
         await exchange.processTransaction(Buffer.from(binaryPayload, "hex"), estimatedFees);
         if (unsubscribed) return;
 
-        const goodSign = <Buffer>secp256k1.signatureExport(Buffer.from(signature, "hex"));
+        const goodSign = convertSignature(signature, exchangeType);
         currentStep = "CHECK_TRANSACTION_SIGNATURE";
 
         await exchange.checkTransactionSignature(goodSign);
@@ -228,5 +228,11 @@ const completeExchange = (
     };
   });
 };
+
+function convertSignature(signature: string, exchangeType: ExchangeTypes): Buffer {
+  return exchangeType === ExchangeTypes.SwapNg
+    ? Buffer.from(signature, "base64url")
+    : <Buffer>secp256k1.signatureExport(Buffer.from(signature, "hex"));
+}
 
 export default completeExchange;
