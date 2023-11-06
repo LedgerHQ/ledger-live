@@ -10,7 +10,9 @@
     "src/transaction.ts",
     "src/api/gasTracker/index.ts",
     "src/api/node/rpc.native.ts",
-    "src/bridge/js.ts"
+    "src/bridge/js.ts",
+    "src/editTransaction/index.ts",
+    "src/operation.ts"
   ],
-  "ignoreUnimported": ["src/datasets/ethereum1.ts"]
+  "ignoreUnimported": ["src/__tests__/*", "**/*.test.*", "**/*.spec.*", "src/datasets/ethereum1.ts"]
 }
