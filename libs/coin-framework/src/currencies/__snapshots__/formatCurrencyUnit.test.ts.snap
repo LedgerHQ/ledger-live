@@ -186,6 +186,8 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Neo unit (NEO) 1`] = `"12.345.678.900.000.000- -NEO"`;
 
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Neon EVM unit (NEON) 1`] = `"0,012345678900000000- -NEON"`;
+
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Nervos unit (CKB) 1`] = `"123.456.789,00000000- -CKB"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Nimiq unit (NIM) 1`] = `"123.456.789.000,00000- -NIM"`;
@@ -309,6 +311,8 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Zcash unit (zcash) 1`] = `"123.456.789,00000000- -ZEC"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Zilliqa unit (ZIL) 1`] = `"12.345,678900000000- -ZIL"`;
+
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format dYdX unit (dYdX) 1`] = `"0,012345678900000000- -dydx"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format lisk unit (LSK) 1`] = `"123.456.789,00000000- -LSK"`;
 
@@ -500,6 +504,8 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Neo unit (NEO) 1`] = `"12,345,678,900,000,000- -NEO"`;
 
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Neon EVM unit (NEON) 1`] = `"0.012345678900000000- -NEON"`;
+
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Nervos unit (CKB) 1`] = `"123,456,789.00000000- -CKB"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Nimiq unit (NIM) 1`] = `"123,456,789,000.00000- -NIM"`;
@@ -623,6 +629,8 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Zcash unit (zcash) 1`] = `"123,456,789.00000000- -ZEC"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Zilliqa unit (ZIL) 1`] = `"12,345.678900000000- -ZIL"`;
+
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format dYdX unit (dYdX) 1`] = `"0.012345678900000000- -dydx"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format lisk unit (LSK) 1`] = `"123,456,789.00000000- -LSK"`;
 
@@ -814,6 +822,8 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Neo unit (NEO) 1`] = `"12.345.678.900.000.000- -NEO"`;
 
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Neon EVM unit (NEON) 1`] = `"0,012345678900000000- -NEON"`;
+
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Nervos unit (CKB) 1`] = `"123.456.789,00000000- -CKB"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Nimiq unit (NIM) 1`] = `"123.456.789.000,00000- -NIM"`;
@@ -937,6 +947,8 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Zcash unit (zcash) 1`] = `"123.456.789,00000000- -ZEC"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Zilliqa unit (ZIL) 1`] = `"12.345,678900000000- -ZIL"`;
+
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format dYdX unit (dYdX) 1`] = `"0,012345678900000000- -dydx"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format lisk unit (LSK) 1`] = `"123.456.789,00000000- -LSK"`;
 
@@ -1128,6 +1140,8 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Neo unit (NEO) 1`] = `"12 345 678 900 000 000- -NEO"`;
 
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Neon EVM unit (NEON) 1`] = `"0,012345678900000000- -NEON"`;
+
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Nervos unit (CKB) 1`] = `"123 456 789,00000000- -CKB"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Nimiq unit (NIM) 1`] = `"123 456 789 000,00000- -NIM"`;
@@ -1251,6 +1265,8 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Zcash unit (zcash) 1`] = `"123 456 789,00000000- -ZEC"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Zilliqa unit (ZIL) 1`] = `"12 345,678900000000- -ZIL"`;
+
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format dYdX unit (dYdX) 1`] = `"0,012345678900000000- -dydx"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format lisk unit (LSK) 1`] = `"123 456 789,00000000- -LSK"`;
 
@@ -1442,6 +1458,8 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Neo unit (NEO) 1`] = `"12,345,678,900,000,000- -NEO"`;
 
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Neon EVM unit (NEON) 1`] = `"0.012345678900000000- -NEON"`;
+
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Nervos unit (CKB) 1`] = `"123,456,789.00000000- -CKB"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Nimiq unit (NIM) 1`] = `"123,456,789,000.00000- -NIM"`;
@@ -1565,6 +1583,8 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Zcash unit (zcash) 1`] = `"123,456,789.00000000- -ZEC"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Zilliqa unit (ZIL) 1`] = `"12,345.678900000000- -ZIL"`;
+
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format dYdX unit (dYdX) 1`] = `"0.012345678900000000- -dydx"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format lisk unit (LSK) 1`] = `"123,456,789.00000000- -LSK"`;
 
@@ -1756,6 +1776,8 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Neo unit (NEO) 1`] = `"12,345,678,900,000,000- -NEO"`;
 
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Neon EVM unit (NEON) 1`] = `"0.012345678900000000- -NEON"`;
+
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Nervos unit (CKB) 1`] = `"123,456,789.00000000- -CKB"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Nimiq unit (NIM) 1`] = `"123,456,789,000.00000- -NIM"`;
@@ -1879,6 +1901,8 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Zcash unit (zcash) 1`] = `"123,456,789.00000000- -ZEC"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Zilliqa unit (ZIL) 1`] = `"12,345.678900000000- -ZIL"`;
+
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format dYdX unit (dYdX) 1`] = `"0.012345678900000000- -dydx"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format lisk unit (LSK) 1`] = `"123,456,789.00000000- -LSK"`;
 
@@ -2070,6 +2094,8 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Neo unit (NEO) 1`] = `"12.345.678.900.000.000- -NEO"`;
 
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Neon EVM unit (NEON) 1`] = `"0,012345678900000000- -NEON"`;
+
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Nervos unit (CKB) 1`] = `"123.456.789,00000000- -CKB"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Nimiq unit (NIM) 1`] = `"123.456.789.000,00000- -NIM"`;
@@ -2193,6 +2219,8 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Zcash unit (zcash) 1`] = `"123.456.789,00000000- -ZEC"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Zilliqa unit (ZIL) 1`] = `"12.345,678900000000- -ZIL"`;
+
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format dYdX unit (dYdX) 1`] = `"0,012345678900000000- -dydx"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format lisk unit (LSK) 1`] = `"123.456.789,00000000- -LSK"`;
 
@@ -2384,6 +2412,8 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Neo unit (NEO) 1`] = `"12 345 678 900 000 000- -NEO"`;
 
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Neon EVM unit (NEON) 1`] = `"0,012345678900000000- -NEON"`;
+
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Nervos unit (CKB) 1`] = `"123 456 789,00000000- -CKB"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Nimiq unit (NIM) 1`] = `"123 456 789 000,00000- -NIM"`;
@@ -2507,6 +2537,8 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Zcash unit (zcash) 1`] = `"123 456 789,00000000- -ZEC"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Zilliqa unit (ZIL) 1`] = `"12 345,678900000000- -ZIL"`;
+
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format dYdX unit (dYdX) 1`] = `"0,012345678900000000- -dydx"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format lisk unit (LSK) 1`] = `"123 456 789,00000000- -LSK"`;
 
@@ -2698,6 +2730,8 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Neo unit (NEO) 1`] = `"12.345.678.900.000.000- -NEO"`;
 
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Neon EVM unit (NEON) 1`] = `"0,012345678900000000- -NEON"`;
+
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Nervos unit (CKB) 1`] = `"123.456.789,00000000- -CKB"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Nimiq unit (NIM) 1`] = `"123.456.789.000,00000- -NIM"`;
@@ -2821,6 +2855,8 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Zcash unit (zcash) 1`] = `"123.456.789,00000000- -ZEC"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Zilliqa unit (ZIL) 1`] = `"12.345,678900000000- -ZIL"`;
+
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format dYdX unit (dYdX) 1`] = `"0,012345678900000000- -dydx"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format lisk unit (LSK) 1`] = `"123.456.789,00000000- -LSK"`;
 
@@ -3012,6 +3048,8 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Neo unit (NEO) 1`] = `"12,345,678,900,000,000- -NEO"`;
 
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Neon EVM unit (NEON) 1`] = `"0.012345678900000000- -NEON"`;
+
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Nervos unit (CKB) 1`] = `"123,456,789.00000000- -CKB"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Nimiq unit (NIM) 1`] = `"123,456,789,000.00000- -NIM"`;
@@ -3135,6 +3173,8 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Zcash unit (zcash) 1`] = `"123,456,789.00000000- -ZEC"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Zilliqa unit (ZIL) 1`] = `"12,345.678900000000- -ZIL"`;
+
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format dYdX unit (dYdX) 1`] = `"0.012345678900000000- -dydx"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format lisk unit (LSK) 1`] = `"123,456,789.00000000- -LSK"`;
 
@@ -3326,6 +3366,8 @@ exports[`formatCurrencyUnit with default options should correctly format Nano un
 
 exports[`formatCurrencyUnit with default options should correctly format Neo unit (NEO) 1`] = `"12,345,678,900,000,000"`;
 
+exports[`formatCurrencyUnit with default options should correctly format Neon EVM unit (NEON) 1`] = `"0.0123456"`;
+
 exports[`formatCurrencyUnit with default options should correctly format Nervos unit (CKB) 1`] = `"123,456,789"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Nimiq unit (NIM) 1`] = `"123,456,789,000"`;
@@ -3449,6 +3491,8 @@ exports[`formatCurrencyUnit with default options should correctly format ZCoin u
 exports[`formatCurrencyUnit with default options should correctly format Zcash unit (zcash) 1`] = `"123,456,789"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Zilliqa unit (ZIL) 1`] = `"12,345.6"`;
+
+exports[`formatCurrencyUnit with default options should correctly format dYdX unit (dYdX) 1`] = `"0.0123456"`;
 
 exports[`formatCurrencyUnit with default options should correctly format lisk unit (LSK) 1`] = `"123,456,789"`;
 
