@@ -13,7 +13,7 @@ import {
   ExchangeType,
 } from "@ledgerhq/live-common/wallet-api/react";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
-import trackingWrapper from "@ledgerhq/live-common/wallet-api/tracking";
+import trackingWrapper, { TrackingAPI } from "@ledgerhq/live-common/wallet-api/tracking";
 import { openModal } from "../../actions/modals";
 import { updateAccountWithUpdater } from "../../actions/accounts";
 import { flattenAccountsSelector } from "../../reducers/accounts";
@@ -29,11 +29,16 @@ import { useWebviewState } from "./helpers";
 import { getStoreValue, setStoreValue } from "~/renderer/store";
 import { NetworkErrorScreen } from "./NetworkError";
 import getUser from "~/helpers/user";
+import { openExchangeDrawer } from "~/renderer/actions/UI";
+import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
+import { TrackFunction } from "@ledgerhq/live-common/platform/tracking";
 
 const wallet = { name: "ledger-live-desktop", version: __APP_VERSION__ };
-const tracking = trackingWrapper(track);
 
-function useUiHook(manifest: AppManifest): Partial<UiHook> {
+function useUiHook(
+  manifest: AppManifest,
+  tracking: Record<string, TrackFunction>,
+): Partial<UiHook> {
   const { pushToast } = useToasts();
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -153,7 +158,8 @@ function useUiHook(manifest: AppManifest): Partial<UiHook> {
       },
       "exchange.start": ({ exchangeType, onSuccess, onCancel }) => {
         dispatch(
-          openModal("MODAL_PLATFORM_EXCHANGE_START", {
+          openExchangeDrawer({
+            type: "EXCHANGE_START",
             exchangeType: ExchangeType[exchangeType],
             onResult: (nonce: string) => {
               onSuccess(nonce);
@@ -166,7 +172,8 @@ function useUiHook(manifest: AppManifest): Partial<UiHook> {
       },
       "exchange.complete": ({ exchangeParams, onSuccess, onCancel }) => {
         dispatch(
-          openModal("MODAL_PLATFORM_EXCHANGE_COMPLETE", {
+          openExchangeDrawer({
+            type: "EXCHANGE_COMPLETE",
             ...exchangeParams,
             onResult: (operation: Operation) => {
               onSuccess(operation.hash);
@@ -179,7 +186,7 @@ function useUiHook(manifest: AppManifest): Partial<UiHook> {
         );
       },
     }),
-    [dispatch, manifest, pushToast, t],
+    [dispatch, manifest, pushToast, t, tracking],
   );
 }
 
@@ -202,10 +209,11 @@ const useGetUserId = () => {
 function useWebView(
   { manifest, customHandlers }: Pick<WebviewProps, "manifest" | "customHandlers">,
   webviewRef: RefObject<WebviewTag>,
+  tracking: TrackingAPI,
 ) {
   const accounts = useSelector(flattenAccountsSelector);
 
-  const uiHook = useUiHook(manifest);
+  const uiHook = useUiHook(manifest, tracking);
   const shareAnalytics = useSelector(shareAnalyticsSelector);
   const userId = useGetUserId();
   const config = useConfig({
@@ -298,6 +306,29 @@ function useWebView(
 
 export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
   ({ manifest, inputs = {}, customHandlers, onStateChange }, ref) => {
+    const tracking = useMemo(
+      () =>
+        trackingWrapper(
+          (
+            eventName: string,
+            properties?: Record<string, unknown> | null,
+            mandatory?: boolean | null,
+          ) =>
+            track(
+              eventName,
+              {
+                ...properties,
+                flowInitiatedFrom:
+                  currentRouteNameRef.current === "Platform Catalog"
+                    ? "Discover"
+                    : currentRouteNameRef.current,
+              },
+              mandatory,
+            ),
+        ),
+      [],
+    );
+
     const { webviewState, webviewRef, webviewProps, handleRefresh } = useWebviewState(
       { manifest, inputs },
       ref,
@@ -314,6 +345,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         customHandlers,
       },
       webviewRef,
+      tracking,
     );
 
     return (

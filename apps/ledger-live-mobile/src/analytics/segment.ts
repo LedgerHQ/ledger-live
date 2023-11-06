@@ -16,7 +16,7 @@ import {
 } from "@react-navigation/native";
 import { snakeCase } from "lodash";
 import React, { MutableRefObject, useCallback } from "react";
-import { Feature, FeatureId, idsToLanguage } from "@ledgerhq/types-live";
+import { FeatureId, Features, idsToLanguage } from "@ledgerhq/types-live";
 import {
   hasNftInAccounts,
   GENESIS_PASS_COLLECTION_CONTRACT,
@@ -57,7 +57,7 @@ type MaybeAppStore = Maybe<AppStore>;
 
 let storeInstance: MaybeAppStore; // is the redux store. it's also used as a flag to know if analytics is on or off.
 let segmentClient: SegmentClient | undefined;
-let analyticsFeatureFlagMethod: null | ((key: FeatureId) => Feature | null);
+let analyticsFeatureFlagMethod: null | (<T extends FeatureId>(key: T) => Features[T] | null);
 
 export function setAnalyticsFeatureFlagMethod(method: typeof analyticsFeatureFlagMethod): void {
   analyticsFeatureFlagMethod = method;
@@ -66,11 +66,22 @@ export function setAnalyticsFeatureFlagMethod(method: typeof analyticsFeatureFla
 const getFeatureFlagProperties = (): Record<string, boolean | string> => {
   try {
     if (!analyticsFeatureFlagMethod) return {};
+    const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
+
+    const isBatch1Enabled =
+      !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
+    const isBatch2Enabled =
+      !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 2;
+    const isBatch3Enabled =
+      !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 3;
     const ptxEarnFeatureFlag = analyticsFeatureFlagMethod("ptxEarn");
     const llmWalletQuickActions = analyticsFeatureFlagMethod("llmWalletQuickActions");
     return {
       ptxEarnEnabled: !!ptxEarnFeatureFlag?.enabled,
       llmWalletQuickActionsEnabled: !!llmWalletQuickActions?.enabled,
+      isBatch1Enabled,
+      isBatch2Enabled,
+      isBatch3Enabled,
     };
   } catch (e) {
     return {};

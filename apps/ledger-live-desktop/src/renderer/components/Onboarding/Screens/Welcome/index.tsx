@@ -1,5 +1,3 @@
-import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { useLoginPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { Button, Flex, IconsLegacy, InvertThemeV3, Logos, Text } from "@ledgerhq/react-ui";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -93,17 +91,6 @@ export function Welcome() {
     }
   }, [hasCompletedOnboarding, history]);
 
-  const recoverFeature = useFeature("protectServicesDesktop");
-  const loginPath = useLoginPath(recoverFeature);
-
-  const recoverLogIn = useCallback(() => {
-    if (!loginPath) return;
-
-    acceptTerms();
-    dispatch(saveSettings({ hasCompletedOnboarding: true }));
-    history.push(loginPath);
-  }, [dispatch, history, loginPath]);
-
   const urlBuyNew = useDynamicUrl("buyNew");
   const buyNanoX = () => openURL(urlBuyNew);
 
@@ -179,19 +166,6 @@ export function Welcome() {
           >
             {t("onboarding.screens.welcome.nextButton")}
           </Button>
-          <FeatureToggle featureId="protectServicesDesktop">
-            <Button
-              iconPosition="right"
-              variant="main"
-              onClick={recoverLogIn}
-              outline={true}
-              flexDirection="column"
-              whiteSpace="normal"
-              mb="5"
-            >
-              {t("onboarding.screens.welcome.recoverSignIn")}
-            </Button>
-          </FeatureToggle>
           <Button
             iconPosition="right"
             variant="main"

@@ -37,6 +37,22 @@ import BigNumber from "bignumber.js";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { SWAP_RATES_TIMEOUT } from "../../config";
 import { OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
+import { v4 } from "uuid";
+import SwapWebView, { SWAP_WEB_MANIFEST_ID } from "./SwapWebView";
+
+type SwapWebProps = {
+  inputs: Partial<{
+    provider: string;
+    fromAccountId: string;
+    toAccountId: string;
+    fromAmount: string;
+    quoteId: string;
+    rate: string;
+    feeStrategy: string;
+    customFeeConfig: string;
+  }>;
+  pageState: ReturnType<typeof usePageState>;
+};
 
 const Wrapper = styled(Box).attrs({
   p: 20,
@@ -97,6 +113,7 @@ const SwapForm = () => {
 
   const isSwapLiveAppEnabled = useIsSwapLiveApp({
     currencyFrom: swapTransaction.swap.from.currency,
+    swapWebManifestId: SWAP_WEB_MANIFEST_ID,
   });
 
   // @TODO: Try to check if we can directly have the right state from `useSwapTransaction`
@@ -117,6 +134,7 @@ const SwapForm = () => {
   const pageState = usePageState(swapTransaction, swapError);
   const provider = exchangeRate?.provider;
   const idleTimeout = useRef<NodeJS.Timeout | undefined>();
+  const [swapWebProps, setSwapWebProps] = useState<SwapWebProps["inputs"] | undefined>(undefined);
 
   const { setDrawer } = React.useContext(context);
 
@@ -133,7 +151,7 @@ const SwapForm = () => {
     }, idleTime);
   }, [idleState]);
 
-  const swapWebAppRedirection = useCallback(async () => {
+  const getSwapWebAppInputProps = useCallback(() => {
     const { swap } = swapTransaction;
     const { to, from } = swap;
     const transaction = swapTransaction.transaction;
@@ -141,31 +159,41 @@ const SwapForm = () => {
     const { account: toAccount, parentAccount: toParentAccount } = to;
     const { feesStrategy } = transaction || {};
     const { rate, rateId } = exchangeRate || {};
-    if (fromAccount && toAccount) {
-      const fromAccountId = accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id;
-      const toAccountId = accountToWalletAPIAccount(toAccount, toParentAccount)?.id;
-      const fromAmount = convertToNonAtomicUnit(transaction?.amount, fromAccount);
 
-      const customFeeConfig = getCustomFeesPerFamily(transaction);
-      // The Swap web app will automatically recreate the transaction with "default" fees.
-      // However, if you wish to use a different fee type, you will need to set it as custom.
-      const isCustomFee =
-        feesStrategy === "slow" || feesStrategy === "fast" || feesStrategy === "custom";
-      history.push({
-        pathname: "/swap-web",
-        state: {
-          provider,
-          fromAccountId,
-          toAccountId,
-          fromAmount,
-          quoteId: rateId ? rateId : undefined,
-          rate,
-          feeStrategy: (isCustomFee ? "custom" : "medium")?.toUpperCase(),
-          customFeeConfig: customFeeConfig ? JSON.stringify(customFeeConfig) : undefined,
-        },
+    const fromAccountId =
+      fromAccount && accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id;
+    const toAccountId = toAccount && accountToWalletAPIAccount(toAccount, toParentAccount)?.id;
+    const fromAmount =
+      fromAccount &&
+      convertToNonAtomicUnit({
+        amount: transaction?.amount,
+        account: fromAccount,
       });
-    }
-  }, [swapTransaction, exchangeRate, history, provider]);
+
+    const customFeeConfig = transaction && getCustomFeesPerFamily(transaction);
+    // The Swap web app will automatically recreate the transaction with "default" fees.
+    // However, if you wish to use a different fee type, you will need to set it as custom.
+    const isCustomFee =
+      feesStrategy === "slow" || feesStrategy === "fast" || feesStrategy === "custom";
+    return {
+      provider,
+      fromAccountId,
+      toAccountId,
+      fromAmount: fromAmount?.toString(),
+      quoteId: rateId ? rateId : undefined,
+      rate: rate?.toString(),
+      feeStrategy: (isCustomFee ? "custom" : "medium")?.toUpperCase(),
+      customFeeConfig: customFeeConfig ? JSON.stringify(customFeeConfig) : undefined,
+      cacheKey: v4(),
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    provider,
+    swapTransaction.swap.from.account?.id,
+    swapTransaction.swap.to.currency?.id,
+    exchangeRate?.providerType,
+    exchangeRate?.tradeMethod,
+  ]);
 
   useEffect(() => {
     if (swapTransaction.swap.rates.status === "success") {
@@ -264,19 +292,20 @@ const SwapForm = () => {
       });
     } else {
       if (isSwapLiveAppEnabled) {
-        swapWebAppRedirection();
-      } else {
-        setDrawer(
-          ExchangeDrawer,
-          {
-            swapTransaction,
-            exchangeRate,
-          },
-          {
-            preventBackdropClick: true,
-          },
-        );
+        setSwapWebProps(getSwapWebAppInputProps());
+        return;
       }
+
+      setDrawer(
+        ExchangeDrawer,
+        {
+          swapTransaction,
+          exchangeRate,
+        },
+        {
+          preventBackdropClick: true,
+        },
+      );
     }
   };
 
@@ -357,6 +386,7 @@ const SwapForm = () => {
           {t("common.exchange")}
         </Button>
       </Box>
+      <SwapWebView swapState={swapWebProps} pageState={pageState} />
     </Wrapper>
   );
 };

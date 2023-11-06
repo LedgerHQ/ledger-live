@@ -28,7 +28,7 @@ runs:
 
     - uses: pnpm/action-setup@v2
       with:
-        version: 8.8
+        version: 8.10
     - name: Get pnpm store directory
       shell: bash
       run: |
@@ -39,7 +39,7 @@ runs:
       if: inputs.no_pnpm_cache == '' && inputs.aws-access-key != '' && inputs.aws-secret-key != ''
       with:
         path: ${{ env.STORE_PATH }}
-        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
         restore-keys: |
           ${{ runner.os }}-pnpm-store-
         accessKey: ${{ inputs.aws-access-key }}

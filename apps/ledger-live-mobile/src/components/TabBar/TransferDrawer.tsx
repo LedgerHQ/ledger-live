@@ -18,7 +18,7 @@ import SetupDeviceBanner from "../SetupDeviceBanner";
 import { track, useAnalytics } from "../../analytics";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import useQuickActions from "../../hooks/useQuickActions";
-import { PTX_SERVICES_TOAST_ID } from "../../constants";
+import { PTX_SERVICES_TOAST_ID } from "@utils/constants";
 
 import { useQuickAccessURI } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 
@@ -199,23 +199,6 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       testID: "swap-transfer-button",
     },
 
-    ...(WALLET_CONNECT
-      ? [
-          {
-            eventProperties: {
-              button: "transfer_walletConnect",
-              page,
-              drawer: "trade",
-            },
-            title: t("transfer.walletConnect.title"),
-            description: t("transfer.walletConnect.description"),
-            Icon: WALLET_CONNECT.icon,
-            onPress: () => onNavigate(...WALLET_CONNECT.route),
-            disabled: WALLET_CONNECT.disabled,
-            testID: "transfer-walletconnect-button",
-          },
-        ]
-      : []),
     ...(RECOVER
       ? [
           {
@@ -231,6 +214,24 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
             onPress: () => onNavigateRecover(),
             disabled: RECOVER.disabled,
             testID: "transfer-recover-button",
+          },
+        ]
+      : []),
+
+    ...(WALLET_CONNECT
+      ? [
+          {
+            eventProperties: {
+              button: "transfer_walletConnect",
+              page,
+              drawer: "trade",
+            },
+            title: t("transfer.walletConnect.title"),
+            description: t("transfer.walletConnect.description"),
+            Icon: WALLET_CONNECT.icon,
+            onPress: () => onNavigate(...WALLET_CONNECT.route),
+            disabled: WALLET_CONNECT.disabled,
+            testID: "transfer-walletconnect-button",
           },
         ]
       : []),

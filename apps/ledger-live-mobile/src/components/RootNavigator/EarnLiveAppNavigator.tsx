@@ -1,9 +1,9 @@
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import { useTheme } from "styled-components/native";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { useFocusEffect, useRoute } from "@react-navigation/native";
+import { useRoute } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 
@@ -15,7 +15,6 @@ import { EarnScreen } from "../../screens/PTX/Earn";
 import { shallowAccountsSelector } from "../../reducers/accounts";
 import { EarnInfoDrawer } from "../../screens/PTX/Earn/EarnInfoDrawer";
 import { useStakingDrawer } from "../Stake/useStakingDrawer";
-import { setIsDeepLinking } from "../../actions/appstate";
 
 const Stack = createStackNavigator<EarnLiveAppNavigatorParamList>();
 
@@ -55,9 +54,6 @@ const Earn = (props: NavigationProps) => {
       });
 
     function deeplinkRouting() {
-      /** Deeplinks cause app to background on Android. Temporarily prevent privacy lock while deeplinking: */
-      dispatch(setIsDeepLinking(true));
-
       switch (paramAction) {
         case "stake":
           navigation.navigate(NavigatorName.StakeFlow, {
@@ -126,13 +122,6 @@ const Earn = (props: NavigationProps) => {
     openStakingDrawer,
     dispatch,
   ]);
-
-  /** Reset deeplinking state so that privacy lock can be re-enabled. */
-  useFocusEffect(
-    useCallback(() => {
-      dispatch(setIsDeepLinking(false));
-    }, [dispatch]),
-  );
 
   return (
     <>

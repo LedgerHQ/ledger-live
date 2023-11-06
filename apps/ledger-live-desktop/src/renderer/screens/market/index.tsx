@@ -10,6 +10,7 @@ import MarketList from "./MarketList";
 import SideDrawerFilter from "./SideDrawerFilter";
 import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
 import TrackPage from "~/renderer/analytics/TrackPage";
+import { useInitSupportedCounterValues } from "~/renderer/hooks/useInitSupportedCounterValues";
 
 const Container = styled(Flex).attrs({
   flex: "1",
@@ -70,6 +71,8 @@ export default function Market() {
   const { search = "", range, starred = [], liveCompatible, order } = requestParams;
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
   const starFilterOn = starred.length > 0;
+
+  useInitSupportedCounterValues();
 
   const updateSearch = useCallback(
     (value: string) => {

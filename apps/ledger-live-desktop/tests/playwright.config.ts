@@ -6,8 +6,7 @@ const config: PlaywrightTestConfig = {
   outputDir: "./artifacts/test-results",
   timeout: process.env.CI ? 190000 : 600000,
   expect: {
-    // we need to give enough time for the playwright app to start. when the CI is slow, 30s was apprently not enough.
-    timeout: 61000,
+    timeout: 41000,
     toHaveScreenshot: {
       /**
        * do not increase unless it makes most tests flaky

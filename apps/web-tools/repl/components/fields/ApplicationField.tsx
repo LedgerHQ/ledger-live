@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Select from "react-select";
-import manager, { getProviderId } from "@ledgerhq/live-common/lib/manager/index";
-import ManagerAPI from "@ledgerhq/live-common/lib/manager/api";
+import manager, { getProviderId } from "@ledgerhq/live-common/manager/index";
+import ManagerAPI from "@ledgerhq/live-common/manager/api";
 import type { ApplicationVersion, DeviceInfo } from "@ledgerhq/types-live";
 
 export type DataTypeApplication = {

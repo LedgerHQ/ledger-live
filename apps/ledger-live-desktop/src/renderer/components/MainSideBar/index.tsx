@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useHistory, useLocation } from "react-router-dom";
+import { Link, useHistory, useLocation, PromptProps } from "react-router-dom";
 import { Transition } from "react-transition-group";
 import styled from "styled-components";
 import { useManagerBlueDot } from "@ledgerhq/live-common/manager/hooks";
@@ -34,6 +34,9 @@ import { CARD_APP_ID } from "~/renderer/screens/card";
 import TopGradient from "./TopGradient";
 import Hide from "./Hide";
 import { track } from "~/renderer/analytics/segment";
+import { useAccountPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
+
+type Location = Parameters<Exclude<PromptProps["message"], string>>[0];
 
 const MAIN_SIDEBAR_WIDTH = 230;
 const TagText = styled.div.attrs<{ collapsed?: boolean }>(p => ({
@@ -210,6 +213,11 @@ const TagContainerFeatureFlags = ({ collapsed }: { collapsed: boolean }) => {
     </Tag>
   ) : null;
 };
+
+// Check if the selected tab is a Live-App under discovery tab
+const checkLiveAppTabSelection = (location: Location, liveAppPaths: Array<string>) =>
+  liveAppPaths.find((liveTab: string) => location?.pathname?.includes(liveTab));
+
 const MainSideBar = () => {
   const history = useHistory();
   const location = useLocation();
@@ -229,6 +237,8 @@ const MainSideBar = () => {
   const referralProgramConfig = useFeature("referralProgramDesktopSidebar");
   const ptxEarnConfig = useFeature("ptxEarn");
   const recoverFeature = useFeature("protectServicesDesktop");
+  const recoverHomePath = useAccountPath(recoverFeature);
+
   const handleCollapse = useCallback(() => {
     dispatch(setSidebarCollapsed(!collapsed));
   }, [dispatch, collapsed]);
@@ -316,8 +326,8 @@ const MainSideBar = () => {
     const openRecoverFromSidebar = recoverFeature?.params?.openRecoverFromSidebar;
     const liveAppId = recoverFeature?.params?.protectId;
 
-    if (enabled && openRecoverFromSidebar && liveAppId) {
-      push(`/recover/${liveAppId}`);
+    if (enabled && openRecoverFromSidebar && liveAppId && recoverHomePath) {
+      history.push(recoverHomePath);
     } else if (enabled) {
       dispatch(openModal("MODAL_PROTECT_DISCOVER", undefined));
     }
@@ -328,9 +338,18 @@ const MainSideBar = () => {
     recoverFeature?.enabled,
     recoverFeature?.params?.openRecoverFromSidebar,
     recoverFeature?.params?.protectId,
-    push,
+    recoverHomePath,
+    history,
     dispatch,
   ]);
+
+  // Add your live-app path here if you don't want discovery and the live-app tabs to be both selected
+  const isLiveAppTabSelected = checkLiveAppTabSelection(
+    location,
+    [
+      referralProgramConfig?.params?.path, // Refer-a-friend
+    ].filter((path): path is string => !!path), // Filter undefined values,
+  );
 
   return (
     <Transition
@@ -409,7 +428,7 @@ const MainSideBar = () => {
                   icon={IconsLegacy.PlanetMedium}
                   iconSize={20}
                   iconActiveColor="wallet"
-                  isActive={location.pathname.startsWith("/platform")}
+                  isActive={location.pathname.startsWith("/platform") && !isLiveAppTabSelected}
                   onClick={handleClickCatalog}
                   collapsed={secondAnim}
                 />

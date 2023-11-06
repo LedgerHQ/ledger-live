@@ -26,15 +26,14 @@ export const RestoreStepDenied = ({
   onPressSkip: () => void;
   stepDeniedError: Error;
 }) => {
-  const deviceName = getDeviceModel(device.modelId).productName;
   const analyticsDrawerName =
     stepDeniedError instanceof LanguageInstallRefusedOnDevice
-      ? `Error: the language change was cancelled on ${deviceName}`
+      ? `Error: the language change was cancelled on the device`
       : (stepDeniedError as Error) instanceof ImageLoadRefusedOnDevice ||
         (stepDeniedError as Error) instanceof ImageCommitRefusedOnDevice
-      ? `Error: the restoration of lock screen picture was cancelled on ${deviceName}`
+      ? `Error: the restoration of lock screen picture was cancelled on the device`
       : (stepDeniedError as Error) instanceof UserRefusedAllowManager
-      ? `Error: the restoration of apps was cancelled on ${deviceName}`
+      ? `Error: the restoration of apps was cancelled on the device`
       : `Error: ${(stepDeniedError as Error).name}`;
   return (
     <Flex alignItems="center" justifyContent="center" px={1}>

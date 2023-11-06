@@ -195,6 +195,13 @@ const Circle = styled(Flex)`
   justify-content: center;
 `;
 
+const Separator = styled.div`
+  width: calc(100% + 60px);
+  height: 1px;
+  background-color: ${({ theme }) => theme.colors.palette.text.shade10};
+  margin: 24px -30px;
+`;
+
 // these are not components because we want reconciliation to not remount the sub elements
 
 export const renderRequestQuitApp = ({
@@ -925,7 +932,7 @@ export const renderSwapDeviceConfirmation = ({
             />
           </Alert>
         </Box>
-        <Box mx={6} data-test-id="device-swap-summary">
+        <Box mx={3} data-test-id="device-swap-summary">
           {map(
             {
               amountSent: (
@@ -993,7 +1000,10 @@ export const renderSwapDeviceConfirmation = ({
         </Box>
         {renderVerifyUnwrapped({ modelId, type })}
       </ConfirmWrapper>
-      <DrawerFooter provider={exchangeRate.provider} />
+      <Separator />
+      <Flex width="100%" mb={3}>
+        <DrawerFooter provider={exchangeRate.provider} />
+      </Flex>
     </>
   );
 };

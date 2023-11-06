@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-evm",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "Ledger EVM Coin integration",
   "keywords": [
     "Ledger",
@@ -86,6 +86,7 @@
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "typecheck": "tsc --noEmit",
-    "test": "jest"
+    "test": "jest",
+    "unimported": "unimported"
   }
 }

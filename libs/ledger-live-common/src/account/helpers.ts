@@ -107,6 +107,7 @@ export const getVotesCount = (
     case "secret_network":
     case "sei_network":
     case "desmos":
+    case "dydx":
     case "umee":
     case "binance_beacon_chain":
     case "osmosis":

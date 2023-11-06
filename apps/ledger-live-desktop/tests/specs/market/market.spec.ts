@@ -10,7 +10,7 @@ test.use({ userdata: "skip-onboarding" });
 let testServerIsRunning = false;
 
 test.beforeAll(async () => {
-  // Check that dummy app in libs/test-utils/dummy-ptx-app has been started successfully
+  // Check that dummy app in tests/dummy-ptx-app has been started successfully
   testServerIsRunning = await LiveAppWebview.startLiveApp("dummy-ptx-app/public", {
     name: "Buy App",
     id: "multibuy-v2",
@@ -39,6 +39,75 @@ test("Market", async ({ page }) => {
     await layout.goToMarket();
     await marketPage.waitForLoading();
     await expect.soft(page).toHaveScreenshot("market-page-no-scrollbar.png");
+  });
+
+  await page.route("https://countervalues.live.ledger.com/v2/supported-to", async route => {
+    route.fulfill({
+      headers: { teststatus: "mocked" },
+      body: JSON.stringify([
+        "aed",
+        "ars",
+        "aud",
+        "bch",
+        "bdt",
+        "bhd",
+        "bits",
+        "bmd",
+        "bnb",
+        "brl",
+        "btc",
+        "cad",
+        "chf",
+        "clp",
+        "cny",
+        "czk",
+        "dkk",
+        "dot",
+        "eos",
+        "eth",
+        "eur",
+        "gbp",
+        "hkd",
+        "huf",
+        "idr",
+        "ils",
+        "inr",
+        "jpy",
+        "krw",
+        "kwd",
+        "link",
+        "lkr",
+        "ltc",
+        "mmk",
+        "mxn",
+        "myr",
+        "ngn",
+        "nok",
+        "nzd",
+        "php",
+        "pkr",
+        "pln",
+        "rub",
+        "sar",
+        "sats",
+        "sek",
+        "sgd",
+        "thb",
+        "try",
+        "twd",
+        "uah",
+        "usd",
+        "vef",
+        "vnd",
+        "xag",
+        "xau",
+        "xdr",
+        "xlm",
+        "xrp",
+        "yfi",
+        "zar",
+      ]),
+    });
   });
 
   await test.step("change countervalue", async () => {

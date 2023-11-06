@@ -140,7 +140,7 @@
       }
     },
     "ConnectManagerTimeout": {
-      "title": "Sorry, Manager connection failed",
+      "title": "Sorry, My Ledger connection failed",
       "description": {
         "ios": {
           "nanoX": "Please make sure your {{productName}} is unlocked and has Bluetooth enabled."
@@ -231,7 +231,7 @@
       "description": "Please save your logs using the button below and provide them to Ledger Support."
     },
     "DeviceAppVerifyNotSupported": {
-      "title": "Open Manager to update this app",
+      "title": "Open My Ledger to update this app",
       "description": "The app verification is not supported."
     },
     "DeviceGenuineSocketEarlyClose": {
@@ -318,7 +318,7 @@
     },
     "FirmwareOrAppUpdateRequired": {
       "title": "Firmware or app update needed",
-      "description": "Please use the Manager to uninstall all apps then check if a firmware update is available before reinstalling them."
+      "description": "Please use My Ledger to uninstall all apps then check if a firmware update is available before reinstalling them."
     },
     "LatestFirmwareVersionRequired": {
       "title": "Device update required on desktop",
@@ -386,7 +386,7 @@
       "description": "Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
     },
     "ManagerAPIsFail": {
-      "title": "Sorry, Manager services are unavailable",
+      "title": "Sorry, My Ledger services are unavailable",
       "description": "Please check the network status."
     },
     "ManagerAppAlreadyInstalled": {
@@ -423,7 +423,7 @@
         "description": "Quitting will cancel the app updates in progress.",
         "stay": "Continue update"
       },
-      "quit": "Quit Manager"
+      "quit": "Quit My Ledger"
     },
     "ManagerUninstallBTCDep": {
       "title": "Sorry, this app is needed",
@@ -470,7 +470,7 @@
     },
     "NoSuchAppOnProvider": {
       "title": "The {{appName}} app cannot be found for your specific configuration.",
-      "description": "Try reinstalling the app from the Manager"
+      "description": "Try reinstalling the app from My Ledger"
     },
     "NotEnoughGas": {
       "title": "The parent account balance is insufficient for network fees",
@@ -589,8 +589,8 @@
     },
     "UpdateYourApp": {
       "title": "App update needed",
-      "description": "Please uninstall then reinstall the {{managerAppName}} app in the Manager.",
-      "primaryCTA": "Open Manager"
+      "description": "Please uninstall then reinstall the {{managerAppName}} app in My Ledger.",
+      "primaryCTA": "Open My Ledger"
     },
     "UserRefusedAllowManager": {
       "title": "Manager disabled on device",
@@ -979,7 +979,7 @@
     },
     "enableBiometrics": {
       "title": "{{biometricsType}}",
-      "desc": "Unlock with {{biometricsType}}",
+      "desc": "To enable and set {{biometricsType}} activate “App lock”.",
       "touchid": "TouchID",
       "faceid": "FaceID",
       "fingerprint": "Fingerprint"
@@ -1129,7 +1129,7 @@
     },
     "2": {
       "title": "Your key to Web3",
-      "desc": "You can buy, sell and swap major cryptocurrencies from our partners safely with your Ledger."
+      "desc": "You can buy, sell and swap major cryptocurrencies from our providers safely with your Ledger."
     },
     "3": {
       "title": "Certified security",
@@ -1247,8 +1247,7 @@
       "terms": "By continuing, you agree to Ledger's",
       "termsLink": "Terms & Conditions",
       "privacyLink": "Privacy Policy",
-      "and": "and",
-      "recoverLogIn": "Log in to Ledger Recover"
+      "and": "and"
     },
     "postWelcomeStep": {
       "title": "Let’s get started",
@@ -2154,7 +2153,7 @@
     },
     "emptyState": {
       "noAppsTitle": "Install an app on my device",
-      "noAppsDesc": "Install apps on your device before adding accounts in Ledger Live. Go to the Manager to install apps.",
+      "noAppsDesc": "Install apps on your device before adding accounts in Ledger Live. Go to My Ledger to install apps.",
       "noAccountsTitle": "You don't have any accounts…",
       "noAccountsDesc": "Please add accounts to your Portfolio.",
       "buttons": {
@@ -2646,8 +2645,9 @@
       "dateFormatDesc": "Set the date format for Ledger Live",
       "region": "Region",
       "regionDesc": "Choose your region to update formats of dates, time and currencies.",
-      "password": "Password lock",
-      "passwordDesc": "Set a password to protect Ledger Live data on your phone.",
+      "password": "App lock",
+      "passwordDesc": "Set a password to lock the Ledger Live app.",
+      "passwordDescBioCompat": "Set a password or {{biometricsType}} to lock the Ledger Live app.",
       "counterValue": "Preferred currency",
       "theme": "Theme",
       "themeDesc": "Set the app UI theme",
@@ -2665,7 +2665,7 @@
       "reportErrors": "Bug reports",
       "reportErrorsDesc": "Automatically send reports to help Ledger improve its products.",
       "developerMode": "Developer mode",
-      "developerModeDesc": "Show developer apps in the Manager and enable Testnet apps.",
+      "developerModeDesc": "Show developer apps in My Ledger and enable Testnet apps.",
       "analytics": "Analytics",
       "analyticsDesc": "Enable analytics to help Ledger improve user experience.",
       "analyticsModal": {
@@ -2827,11 +2827,11 @@
         },
         "developerMode": {
           "title": "Developer mode",
-          "description": "Show developer and testnet apps in the Manager."
+          "description": "Show developer and testnet apps in My Ledger."
         },
         "managerProvider": {
           "title": "My Ledger provider",
-          "description": "Changing the app provider in the Manager may make it impossible to install or uninstall apps on your Ledger device."
+          "description": "Changing the app provider in My Ledger may make it impossible to install or uninstall apps on your Ledger device."
         },
         "experimentalExplorers": {
           "title": "Experimental Explorers API",
@@ -3103,8 +3103,8 @@
         },
         "noApp": {
           "title": "{{appName}} app not installed",
-          "desc": "Please go to Manager to install the {{appName}} app.",
-          "cta": "Go to Manager",
+          "desc": "Please go to My Ledger to install the {{appName}} app.",
+          "cta": "Go to My Ledger",
           "close": "Close"
         },
         "noAccounts": {
@@ -3116,7 +3116,7 @@
         "outdatedApp": {
           "title": "App update available",
           "desc": "You need to update the {{appName}} app.",
-          "cta": "Go to Manager",
+          "cta": "Go to My Ledger",
           "close": "Close"
         },
         "summary": {
@@ -3157,13 +3157,13 @@
       },
       "missingApp": {
         "title": "Please install the Exchange app on your device",
-        "description": "Go to manager and install Exchange app to swap assets",
-        "button": "Go to Manager"
+        "description": "Go to My Ledger and install Exchange app to swap assets",
+        "button": "Go to My Ledger"
       },
       "outdatedApp": {
         "title": "Please update the Exchange app on your device",
-        "description": "Go to manager and update Exchange app to swap assets",
-        "button": "Go to Manager"
+        "description": "Go to My Ledger and update Exchange app to swap assets",
+        "button": "Go to My Ledger"
       },
       "emptyState": {
         "title": "No {{currency}} account",
@@ -3814,7 +3814,7 @@
     "connectAnotherDevice": "Connect another Ledger",
     "unlockDevice": "Unlock your device",
     "outdated": "App version outdated",
-    "outdatedDesc": "An important update is available for the {{appName}} application on your device. Please go to the Manager to update it.",
+    "outdatedDesc": "An important update is available for the {{appName}} application on your device. Please go to My Ledger to update it.",
     "quitApp": "Quit the application on your device",
     "appNotInstalled": "Please install the {{appName}} app",
     "appNotInstalled_plural": "Please install the {{appName}} apps",
@@ -3858,7 +3858,7 @@
       "alert": "Verify the Fund details on your device before sending it. The addresses are exchanged securely so you don't have to verify them."
     },
     "button": {
-      "openManager": "Open Manager",
+      "openManager": "Open My Ledger",
       "openOnboarding": "Setup device"
     },
     "installApp": "{{appName}} App installation {{percentage}}",
@@ -3901,7 +3901,7 @@
         "description": "",
         "footer": {
           "appInstalled": "You don't have the app installed",
-          "goManager": "Go to the Manager"
+          "goManager": "Go to My Ledger"
         }
       },
       "accountApp": {
@@ -4097,7 +4097,7 @@
       "title": "{{number}} app update",
       "title_plural": "{{number}} app updates",
       "step": "Update step {{step}}:",
-      "updateWarn": "Do not quit the Manager during the update.",
+      "updateWarn": "Do not quit My Ledger during the update.",
       "progress": "Updating all...",
       "button": "Update all",
       "version": "New {{version}}",
@@ -4355,7 +4355,7 @@
   },
   "FirmwareUpdateConfirmation": {
     "title": "Firmware updated",
-    "description": "Go to Manager to reinstall apps on your device."
+    "description": "Go to My Ledger to reinstall apps on your device."
   },
   "RepairDevice": {
     "title": "Repair",

@@ -30,6 +30,7 @@ export type CryptoCurrencyId =
   | "decred"
   | "desmos"
   | "dexon"
+  | "dydx"
   | "ellaism"
   | "dogecoin"
   | "digibyte"
@@ -158,7 +159,8 @@ export type CryptoCurrencyId =
   | "polygon_zk_evm_testnet"
   | "base"
   | "base_goerli"
-  | "casper";
+  | "casper"
+  | "neon_evm";
 
 export type LedgerExplorerId =
   | "btc"

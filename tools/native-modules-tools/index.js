@@ -7,8 +7,16 @@ async function copyFolderRecursively(source, target) {
   if (fs.existsSync(target) && !fs.lstatSync(target).isDirectory()) {
     return; // we skip if the top level folder already exists and isn't a dir (e.g. a symlink)
   }
-
-  await cp(source, target, { recursive: true });
+  await cp(source, target, {
+    recursive: true,
+    filter: (src, dest) => {
+      if (fs.existsSync(dest) && fs.lstatSync(dest).isSymbolicLink()) {
+        // cp don't manage to copy symlinks, if the dest exists
+        return false;
+      }
+      return true;
+    },
+  });
 }
 
 // Given a module subfolder, finds the nearest root.

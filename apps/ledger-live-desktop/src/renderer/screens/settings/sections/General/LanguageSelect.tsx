@@ -137,7 +137,12 @@ const LanguageSelect: React.FC<Props> = ({ disableLanguagePrompt }) => {
       <Track onUpdate event="LanguageSelect" currentRegion={selectedLanguage.value} />
 
       <Select
-        aria-label="Select language"
+        aria-label={
+          // we only set the aria lavel once the device languages are fully loaded and available
+          availableDeviceLanguages && availableDeviceLanguages.length > 0
+            ? "Select language"
+            : undefined
+        }
         small
         minWidth={260}
         isSearchable={false}

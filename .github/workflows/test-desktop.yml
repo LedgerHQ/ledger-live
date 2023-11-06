@@ -95,7 +95,7 @@ jobs:
           aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
           aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: check for dead code
-        run: cd apps/ledger-live-desktop && npx unimported
+        run: pnpm desktop unimported
         shell: bash
 
   unit-tests:
@@ -122,7 +122,7 @@ jobs:
           aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
           aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: Run unit tests
-        run: pnpm desktop test:jest
+        run: pnpm desktop test:jest:coverage
 
   e2e-tests-windows:
     name: "Desktop E2E (Windows)"
@@ -453,7 +453,7 @@ jobs:
               - ${typecheck.pass ? "✅" : "❌"} **Type checks** ended with status \`${typecheck.status}\`
 
             ### Dead Code Check
-            ${deadcodecheck.pass ? "Dead code checks are fine" : "Unfortunately, dead code checks did not pass. Try \`npx unimported\` in apps/ledger-live-desktop"}
+            ${deadcodecheck.pass ? "Dead code checks are fine" : "Unfortunately, dead code checks did not pass. Try \`pnpm desktop unimported\` in apps/ledger-live-desktop"}
               - ${deadcodecheck.pass ? "✅" : "❌"}
 
             ### Unit Tests (Jest)

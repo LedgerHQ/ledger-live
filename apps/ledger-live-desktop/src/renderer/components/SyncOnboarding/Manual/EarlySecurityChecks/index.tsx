@@ -325,7 +325,7 @@ const EarlySecurityChecks = ({
       )}
       {genuineCheckStatus === SoftwareCheckStatus.completed &&
         firmwareUpdateStatus === SoftwareCheckStatus.completed && (
-          <TrackPage category="The Stax is genuine and up to date" />
+          <TrackPage category="The device is genuine and up to date" />
         )}
       {firmwareUpdateStatus === SoftwareCheckStatus.updateAvailable && (
         <TrackPage category="Download OS update" />

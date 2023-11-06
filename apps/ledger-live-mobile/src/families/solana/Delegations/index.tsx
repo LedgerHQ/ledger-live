@@ -33,7 +33,7 @@ import AccountSectionLabel from "../../../components/AccountSectionLabel";
 import Circle from "../../../components/Circle";
 import DelegationDrawer, { IconProps } from "../../../components/DelegationDrawer";
 import Touchable from "../../../components/Touchable";
-import { urls } from "../../../config/urls";
+import { urls } from "@utils/urls";
 import { NavigatorName, ScreenName } from "../../../const";
 import ClaimRewardIcon from "../../../icons/ClaimReward";
 import DelegateIcon from "../../../icons/Delegate";
