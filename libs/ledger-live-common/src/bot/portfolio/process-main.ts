@@ -65,7 +65,7 @@ promiseAllBatched(parallelRuns, specsPerBots, async ({ env, family, key, seed })
     : undefined;
 
   if (localFolder) {
-    await mkdirp(localFolder);
+    mkdirp.sync(localFolder);
   }
 
   const reportPromise = new Promise<Report>(resolve => {
@@ -149,7 +149,7 @@ promiseAllBatched(parallelRuns, specsPerBots, async ({ env, family, key, seed })
     const csvs = csvReports(results, specsPerBots);
     for (const { filename, content } of csvs) {
       const folder = path.join(REPORT_FOLDER, path.dirname(filename));
-      await mkdirp(folder);
+      mkdirp.sync(folder);
       await fs.writeFile(path.join(folder, path.basename(filename)), content);
     }
   }

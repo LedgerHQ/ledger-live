@@ -37,14 +37,14 @@ export const getTxToBroadcast = async (
   const { anchorMode, network, xpub } = rawData;
 
   const options: UnsignedTokenTransferOptions = {
-    amount: new BN(BigNumber(value).minus(fee).toFixed()),
+    amount: new BN(BigNumber(value).minus(fee).toFixed()) as any,
     recipient: recipients[0],
     anchorMode,
     memo,
     network: StacksNetwork[network],
     publicKey: xpub,
-    fee: new BN(BigNumber(fee).toFixed()),
-    nonce: new BN(operation.transactionSequenceNumber ?? 0),
+    fee: new BN(BigNumber(fee).toFixed()) as any,
+    nonce: new BN(operation.transactionSequenceNumber ?? 0) as any,
   };
 
   const tx = await makeUnsignedSTXTokenTransfer(options);

@@ -44,7 +44,7 @@ export function filterCurrencies(
     if (
       filterCurrencyRegexes &&
       filterCurrencyRegexes.length &&
-      !filterCurrencyRegexes.some(regex => currency.id.match(regex))
+      !filterCurrencyRegexes.some(regex => currency.id.match(regex as any))
     ) {
       return false;
     }

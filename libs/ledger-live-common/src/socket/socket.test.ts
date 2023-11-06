@@ -20,7 +20,7 @@ describe("Scriptrunner logic", () => {
     it(describe, async () => {
       // Generate a transport replayer with the data from the test
       const transport = await openTransportReplayer(RecordStore.fromString(device));
-
+      // @ts-expect-error mockImplementation on WS
       WS.mockImplementation(() => {
         let msgIndex = 0;
 

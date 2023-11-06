@@ -1,7 +1,3 @@
-function withTrailingSlash(arr) {
-  return arr.reduce((acc, elt) => [...acc, elt, elt + "/"], []);
-}
-
 const electronBaseExternals = [
   "clipboard",
   "crash-reporter",

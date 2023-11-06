@@ -102,7 +102,7 @@ describe.skip("testing xpub legacy litecoin transactions", () => {
         hash: tx.getId(),
         index: input.output_index,
         nonWitnessUtxo,
-      });
+      } as any);
     });
     outputs.forEach(output => {
       psbt.addOutput({

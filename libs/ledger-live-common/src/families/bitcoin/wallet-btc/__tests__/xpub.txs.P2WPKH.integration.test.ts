@@ -111,7 +111,7 @@ describe.skip("testing xpub native segwit transactions", () => {
           script: Buffer.from(`0014${publickeyHash}`, "hex"),
           value: Number(input.value),
         },
-      });
+      } as any);
     });
 
     outputs.forEach(output => {

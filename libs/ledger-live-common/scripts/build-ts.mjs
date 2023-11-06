@@ -1,11 +1,12 @@
 #!/usr/bin/env zx
+/* eslint-disable no-undef */
 import "zx/globals";
-import rimraf from "rimraf";
+import { rimrafSync } from "rimraf";
 
 cd(path.join(__dirname, ".."));
 
 if (!process.env.CI) {
-  await rimraf([
+  rimrafSync([
     "lib",
     "src/data/icons/react",
     "src/data/icons/reactNative",

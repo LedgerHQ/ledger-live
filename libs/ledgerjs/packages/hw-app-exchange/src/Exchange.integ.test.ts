@@ -29,7 +29,7 @@ describe("Check SWAP until payload signature", () => {
 
     const { partnerInfo, partnerSigned, partnerPrivKey } =
       await appExchangeDatasetTest(legacySignFormat);
-    await exchange.setPartnerKey(partnerInfo);
+    await exchange.setPartnerKey(partnerInfo as any);
 
     await exchange.checkPartner(partnerSigned);
 
@@ -65,7 +65,7 @@ describe("Check SWAP until payload signature", () => {
 
     const { partnerInfo, partnerSigned, partnerPrivKey } =
       await appExchangeDatasetTest(ngSignFormat);
-    await exchange.setPartnerKey(partnerInfo);
+    await exchange.setPartnerKey(partnerInfo as any);
 
     await exchange.checkPartner(partnerSigned);
 
@@ -103,7 +103,7 @@ describe("Check SWAP until payload signature", () => {
 
     const { partnerInfo, partnerSigned, partnerPrivKey } =
       await appExchangeDatasetTest(ngSignFormat);
-    await exchange.setPartnerKey(partnerInfo);
+    await exchange.setPartnerKey(partnerInfo as any);
 
     await exchange.checkPartner(partnerSigned);
 
@@ -228,11 +228,11 @@ async function signMessage(
   if (sigFormat === "der") {
     return convertSignatureToDER(sig);
   }
-  return sig;
+  return sig as any;
 }
 
 function convertSignatureToDER(sig: Uint8Array): Buffer {
-  return secp256k1.signatureExport(sig);
+  return secp256k1.signatureExport(sig) as any;
 }
 
 // Convert raw buffer to a JWS compatible one: '.'+base64Url(raw)

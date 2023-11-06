@@ -4,7 +4,7 @@ const yargs = require("yargs");
 const Listr = require("listr");
 const verboseRenderer = require("listr-verbose-renderer");
 const path = require("path");
-const rimraf = require("rimraf");
+const { rimrafSync } = require("rimraf");
 const pkg = require("../../package.json");
 const Draft = require("./draft");
 const healthChecksTasks = require("./health-checks");
@@ -34,7 +34,7 @@ const exec = async (file, args, options = {}) => {
 
 const rmDir = dir => {
   const fullPath = path.resolve(__dirname, rootFolder, dir);
-  return rimraf(fullPath);
+  return rimrafSync(fullPath);
 };
 
 const cleaningTasks = _args => [

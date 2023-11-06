@@ -25,7 +25,7 @@ export function filterPlatformAccounts(
   return accounts.filter(account => {
     if (
       filterCurrencyRegexes &&
-      !filterCurrencyRegexes.some(regex => account.currency.match(regex))
+      !filterCurrencyRegexes.some(regex => account.currency.match(regex as any))
     ) {
       return false;
     }
@@ -51,7 +51,10 @@ export function filterPlatformCurrencies(
       return false;
     }
 
-    if (filterCurrencyRegexes && !filterCurrencyRegexes.some(regex => currency.id.match(regex))) {
+    if (
+      filterCurrencyRegexes &&
+      !filterCurrencyRegexes.some(regex => currency.id.match(regex as any))
+    ) {
       return false;
     }
 

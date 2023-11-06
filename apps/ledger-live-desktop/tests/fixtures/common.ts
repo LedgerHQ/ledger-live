@@ -76,7 +76,6 @@ export const test = base.extend<TestFixtures>({
 
     // launch app
     const windowSize = { width: 1024, height: 768 };
-
     const electronApp: ElectronApplication = await electron.launch({
       args: [
         `${path.join(__dirname, "../../.webpack/main.bundle.js")}`,

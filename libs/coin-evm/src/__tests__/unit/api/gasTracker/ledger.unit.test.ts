@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
 import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
@@ -115,10 +116,8 @@ describe("EVM Family", () => {
 
           Object.entries(gasOptions).forEach(([key, value]) => {
             const { maxFeePerGas } = value;
-
-            expect(maxFeePerGas?.isInteger(), `${key}:maxFeePerGas - got ${maxFeePerGas}`).toBe(
-              true,
-            );
+            console.log(`${key}:maxFeePerGas - got ${maxFeePerGas}`);
+            expect(maxFeePerGas?.isInteger()).toBe(true);
           });
 
           setEnv("EIP1559_BASE_FEE_MULTIPLIER", TEST_EIP1559_BASE_FEE_MULTIPLIER);
@@ -149,15 +148,12 @@ describe("EVM Family", () => {
 
           Object.entries(gasOptions).forEach(([key, value]) => {
             const { maxFeePerGas, maxPriorityFeePerGas, nextBaseFee } = value;
-
-            expect(maxFeePerGas?.isInteger(), `${key}:maxFeePerGas - got ${maxFeePerGas}`).toBe(
-              true,
-            );
-            expect(
-              maxPriorityFeePerGas?.isInteger(),
-              `${key}:maxPriorityFeePerGas - got ${maxPriorityFeePerGas}`,
-            ).toBe(true);
-            expect(nextBaseFee?.isInteger(), `${key}:nextBaseFee - got ${nextBaseFee}`).toBe(true);
+            console.log(`${key}:maxFeePerGas - got ${maxFeePerGas}`);
+            expect(maxFeePerGas?.isInteger()).toBe(true);
+            console.log(`${key}:maxPriorityFeePerGas - got ${maxPriorityFeePerGas}`);
+            expect(maxPriorityFeePerGas?.isInteger()).toBe(true);
+            console.log(`${key}:nextBaseFee - got ${nextBaseFee}`);
+            expect(nextBaseFee?.isInteger()).toBe(true);
           });
         });
       });
@@ -252,8 +248,8 @@ describe("EVM Family", () => {
 
           Object.entries(gasOptions).forEach(([key, value]) => {
             const { gasPrice } = value;
-
-            expect(gasPrice?.isInteger(), `${key}:gasPrice - got ${gasPrice}`).toBe(true);
+            console.log(`${key}:gasPrice - got ${gasPrice}`);
+            expect(gasPrice?.isInteger()).toBe(true);
           });
         });
       });

@@ -32,23 +32,28 @@ export const buildTransaction = async (
         nearAPI.transactions.functionCall(
           "deposit_and_stake",
           {},
-          getStakingGas().toNumber(),
-          parsedNearAmount,
+          getStakingGas().toNumber() as any,
+          parsedNearAmount as any,
         ),
       );
       break;
     case "unstake":
       if (t.useAllAmount) {
         actions.push(
-          nearAPI.transactions.functionCall("unstake_all", {}, getStakingGas().toNumber(), "0"),
+          nearAPI.transactions.functionCall(
+            "unstake_all",
+            {},
+            getStakingGas().toNumber() as any,
+            "0" as any,
+          ),
         );
       } else {
         actions.push(
           nearAPI.transactions.functionCall(
             "unstake",
             { amount: parsedNearAmount },
-            getStakingGas().toNumber(),
-            "0",
+            getStakingGas().toNumber() as any,
+            "0" as any,
           ),
         );
       }
@@ -56,21 +61,26 @@ export const buildTransaction = async (
     case "withdraw":
       if (t.useAllAmount) {
         actions.push(
-          nearAPI.transactions.functionCall("withdraw_all", {}, getStakingGas(t).toNumber(), "0"),
+          nearAPI.transactions.functionCall(
+            "withdraw_all",
+            {},
+            getStakingGas(t).toNumber() as any,
+            "0" as any,
+          ),
         );
       } else {
         actions.push(
           nearAPI.transactions.functionCall(
             "withdraw",
             { amount: parsedNearAmount },
-            getStakingGas().toNumber(),
-            "0",
+            getStakingGas().toNumber() as any,
+            "0" as any,
           ),
         );
       }
       break;
     default:
-      actions.push(nearAPI.transactions.transfer(parsedNearAmount));
+      actions.push(nearAPI.transactions.transfer(parsedNearAmount as any));
   }
 
   const transaction = nearAPI.transactions.createTransaction(

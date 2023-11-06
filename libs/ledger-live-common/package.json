@@ -273,6 +273,7 @@
     "react-redux": "^7.2.9",
     "react-test-renderer": "^18.2.0",
     "redux-actions": "2.6.5",
+    "rimraf": "5.0.5",
     "timemachine": "^0.3.2",
     "ts-jest": "^28.0.5",
     "ts-node": "^10.4.0",

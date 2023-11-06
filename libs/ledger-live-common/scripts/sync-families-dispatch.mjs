@@ -1,6 +1,7 @@
 #!/usr/bin/env zx
+/* eslint-disable no-undef */
 import "zx/globals";
-import rimraf from "rimraf";
+import { rimrafSync } from "rimraf";
 
 const targets = [
   "hw-getAddress.ts",
@@ -22,7 +23,7 @@ const targets = [
 const familiesWPackage = ["algorand", "evm", "polkadot"];
 
 cd(path.join(__dirname, "..", "src"));
-await rimraf("generated");
+await rimrafSync("generated");
 await fs.promises.mkdir("generated");
 await fs.promises.mkdir("generated/bridge");
 

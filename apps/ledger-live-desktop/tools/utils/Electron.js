@@ -1,4 +1,4 @@
-const defaultElectronPath = "./node_modules/.bin/electron";
+const defaultElectronPath = "../../node_modules/.bin/electron";
 
 class Electron {
   constructor(bundlePath, execa, electronPath = defaultElectronPath) {
@@ -12,6 +12,7 @@ class Electron {
     if (!this.instance) {
       const args = (process.env.ELECTRON_ARGS || "").split(/[ ]+/).filter(Boolean);
       if (args.length) console.log("electron starts with", args);
+      console.log(this.electronPath)
       this.instance = this.execa(this.electronPath, [this.bundlePath, ...args]);
       this.instance.stdout.pipe(process.stdout);
       this.instance.stderr.pipe(process.stderr);

@@ -299,7 +299,7 @@ export const buildTransaction = ({
             },
             multi: undefined,
           },
-          sequence: Long.fromString(sequence),
+          sequence: Long.fromString(sequence) as any,
         },
       ],
       fee: Fee.fromPartial({

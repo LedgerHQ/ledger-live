@@ -121,7 +121,7 @@ describe.skip("testing xpub segwit transactions", () => {
           value: Number(input.value),
         },
         redeemScript: redeemScript ? Buffer.from(redeemScript, "hex") : undefined,
-      });
+      } as any);
     });
     outputs.forEach(output => {
       psbt.addOutput({

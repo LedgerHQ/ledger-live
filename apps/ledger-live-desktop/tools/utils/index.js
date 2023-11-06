@@ -88,12 +88,12 @@ const buildViteConfig = argv =>
           path.dirname(require.resolve("@ledgerhq/react-ui/package.json")),
           "lib",
         ),
-        electron: path.join(__dirname, "electronRendererStubs.js"),
+        //electron: path.join(__dirname, "electronRendererStubs.js"),
       },
     },
     optimizeDeps: {
       // The common.js dependencies and files need to be force-added below:
-      include: ["@ledgerhq/hw-app-eth/erc20"],
+      //include: ["@ledgerhq/hw-app-eth/erc20"],
       exclude: ["@braze/web-sdk"],
       esbuildOptions: {
         target: ["es2020"],

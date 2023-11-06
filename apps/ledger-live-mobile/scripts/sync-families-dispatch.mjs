@@ -1,11 +1,11 @@
 #!/usr/bin/env zx
 import "zx/globals";
-import rimraf from "rimraf";
+import { rimrafSync } from "rimraf";
 
 const basePath = path.join(__dirname, "..", "src");
 const generatedPath = path.join(basePath, "generated");
 
-await rimraf(generatedPath);
+await rimrafSync(generatedPath);
 await fs.promises.mkdir(generatedPath);
 
 const dirContent = await fs.promises.readdir(path.join(basePath, "families"), {

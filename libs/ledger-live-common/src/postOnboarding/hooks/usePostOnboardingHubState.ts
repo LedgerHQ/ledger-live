@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { useMemo } from "react";
-import { PostOnboardingHubState } from "@ledgerhq/types-live";
+import { PostOnboardingAction, PostOnboardingHubState } from "@ledgerhq/types-live";
 import { useFeatureFlags } from "../../featureFlags";
 import { hubStateSelector } from "../reducer";
 import { usePostOnboardingContext } from "./usePostOnboardingContext";
@@ -27,7 +27,7 @@ export function usePostOnboardingHubState(): PostOnboardingHubState {
       };
     const actionsState = hubState.actionsToComplete
       .map(actionId => ({
-        ...getPostOnboardingAction(actionId),
+        ...(getPostOnboardingAction(actionId) as PostOnboardingAction),
         completed: !!hubState.actionsCompleted[actionId],
       }))
       .filter(

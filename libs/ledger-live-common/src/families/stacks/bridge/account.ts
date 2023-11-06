@@ -141,7 +141,7 @@ const estimateMaxSpendable = async ({
     memo,
     network,
     publicKey: xpub,
-    amount: new BN(amount.toFixed()),
+    amount: new BN(amount.toFixed()) as any,
   };
 
   const tx = await makeUnsignedSTXTokenTransfer(options);
@@ -170,7 +170,7 @@ const prepareTransaction = async (a: Account, t: Transaction): Promise<Transacti
       memo,
       network,
       publicKey: xpub,
-      amount: new BN(amount.toFixed()),
+      amount: new BN(amount.toFixed()) as any,
     };
 
     const tx = await makeUnsignedSTXTokenTransfer(options);
@@ -222,14 +222,14 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
           const blockstack = new BlockstackApp(transport);
 
           const options: UnsignedTokenTransferOptions = {
-            amount: new BN(amount.toFixed()),
+            amount: new BN(amount.toFixed()) as any,
             recipient,
             anchorMode,
             network: StacksNetwork[network],
             memo,
             publicKey: xpub,
-            fee: new BN(fee.toFixed()),
-            nonce: new BN(nonce.toFixed()),
+            fee: new BN(fee.toFixed()) as any,
+            nonce: new BN(nonce.toFixed()) as any,
           };
 
           const tx = await makeUnsignedSTXTokenTransfer(options);

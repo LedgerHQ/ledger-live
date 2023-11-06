@@ -108,7 +108,7 @@ describe.skip("testing xpub legacy transactions", () => {
         hash: tx.getId(),
         index: i.output_index,
         nonWitnessUtxo,
-      });
+      } as any);
     });
     outputs.forEach((output: OutputInfo) => {
       psbt.addOutput({
@@ -211,7 +211,7 @@ describe.skip("testing xpub legacy transactions", () => {
         hash: tx.getId(),
         index: i.output_index,
         nonWitnessUtxo,
-      });
+      } as any);
     });
 
     outputs.forEach(output => {
@@ -329,7 +329,7 @@ describe.skip("Build transactions", () => {
         hash: tx.getId(),
         index: i.output_index,
         nonWitnessUtxo,
-      });
+      } as any);
     });
 
     outputs.forEach(output => {

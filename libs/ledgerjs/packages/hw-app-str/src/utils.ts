@@ -95,7 +95,7 @@ export function verifyEd25519Signature(
 }
 export function hash(data: Buffer) {
   const hasher = new sha256();
-  hasher.update(data, "utf8");
+  hasher.update(data as any, "utf8");
   return hasher.digest();
 }
 export function checkStellarBip32Path(path: string): void {
