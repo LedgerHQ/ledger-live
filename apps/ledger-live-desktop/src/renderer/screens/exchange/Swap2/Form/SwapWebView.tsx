@@ -1,4 +1,3 @@
-import { usePageState } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
@@ -30,7 +29,7 @@ type SwapWebProps = {
     customFeeConfig: string;
     cacheKey: string;
     loading: boolean;
-    error: loading;
+    error: boolean;
   }>;
 };
 

@@ -50,6 +50,7 @@ type SwapWebProps = {
     rate: string;
     feeStrategy: string;
     customFeeConfig: string;
+    cacheKey: string;
     error: boolean;
     loading: boolean;
   }>;
@@ -332,11 +333,13 @@ const SwapForm = () => {
   }, [
     isSwapLiveAppEnabled,
     provider,
+    exchangeRate,
     swapTransaction.swap.from.account?.id,
     swapTransaction.swap.to.currency?.id,
     exchangeRate?.providerType,
     exchangeRate?.tradeMethod,
     swapError,
+    swapTransaction,
     swapTransaction.bridgePending,
     exchangeRatesState.status,
   ]);
