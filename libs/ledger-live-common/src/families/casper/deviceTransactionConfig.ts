@@ -3,7 +3,6 @@ import { Account, AccountLike } from "@ledgerhq/types-live";
 import type { DeviceTransactionField } from "../../transaction";
 import { Transaction, TransactionStatus } from "./types";
 import { methodToString } from "./msc-utils";
-import { casperPubKeyToAccountHash } from "./bridge/bridgeHelpers/addresses";
 import BigNumber from "bignumber.js";
 
 export type ExtraDeviceTransactionField = {

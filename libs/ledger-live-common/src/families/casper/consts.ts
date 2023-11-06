@@ -1,4 +1,4 @@
-import {InvalidMinimumAmount, MayBlockAccount} from "./errors";
+import { InvalidMinimumAmount, MayBlockAccount } from "./errors";
 
 export const CASPER_FEES_MOTES = 0.1 * 1e9;
 export const CASPER_FEES_CSPR = 0.1;
