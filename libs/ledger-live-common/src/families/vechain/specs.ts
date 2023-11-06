@@ -44,6 +44,7 @@ const vechainTest = {
     await transport.button(SpeculosButton.BOTH);
     await transport.button(SpeculosButton.RIGHT);
     await transport.button(SpeculosButton.BOTH);
+    console.log("EndonSpeculosDeviceCreated");
   },
 };
 
