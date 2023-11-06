@@ -69,10 +69,11 @@ async function deriveCommandDescriptor(
   api: ChainAPI,
 ): Promise<CommandDescriptor> {
   const { model } = tx;
+  const maxSpendableBalance = await estimateMaxSpendableBalance(mainAccount, api);
 
   switch (model.kind) {
     case "transfer":
-      return deriveTransferCommandDescriptor(mainAccount, tx, model, api);
+      return deriveTransferCommandDescriptor(mainAccount, tx, model, api, maxSpendableBalance);
     case "token.transfer":
       return deriveTokenTransferCommandDescriptor(mainAccount, tx, model, api);
     case "token.createATA":
@@ -90,6 +91,18 @@ async function deriveCommandDescriptor(
     default:
       return assertUnreachable(model);
   }
+}
+
+async function estimateMaxSpendableBalance(
+  mainAccount: SolanaAccount,
+  api: ChainAPI,
+): Promise<BigNumber> {
+  const rentExemptMin = await getAccountMinimumBalanceForRentExemption(
+    api,
+    mainAccount.freshAddress,
+  );
+
+  return BigNumber.max(mainAccount.spendableBalance.minus(rentExemptMin), 0);
 }
 
 const prepareTransaction = async (
@@ -286,6 +299,7 @@ async function deriveTransferCommandDescriptor(
   tx: Transaction,
   model: TransactionModel & { kind: TransferTransaction["kind"] },
   api: ChainAPI,
+  maxSpendableBalance: BigNumber,
 ): Promise<CommandDescriptor> {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
@@ -300,14 +314,7 @@ async function deriveTransferCommandDescriptor(
 
   const fee = await estimateTxFee(api, mainAccount, "transfer");
 
-  const rentExemptMin = await getAccountMinimumBalanceForRentExemption(
-    api,
-    mainAccount.freshAddress,
-  );
-
-  const txAmount = tx.useAllAmount
-    ? BigNumber.max(mainAccount.spendableBalance.minus(fee).minus(rentExemptMin), 0)
-    : tx.amount;
+  const txAmount = tx.useAllAmount ? BigNumber.max(maxSpendableBalance.minus(fee), 0) : tx.amount;
 
   if (tx.useAllAmount) {
     if (txAmount.eq(0)) {
@@ -316,10 +323,11 @@ async function deriveTransferCommandDescriptor(
   } else {
     if (txAmount.lte(0)) {
       errors.amount = new AmountRequired();
-    } else if (txAmount.plus(fee).plus(rentExemptMin).gt(mainAccount.spendableBalance)) {
+    } else if (txAmount.plus(fee).gt(maxSpendableBalance)) {
       errors.amount = new NotEnoughBalance();
     }
   }
+
   const command: TransferCommand = {
     kind: "transfer",
     amount: txAmount.toNumber(),
