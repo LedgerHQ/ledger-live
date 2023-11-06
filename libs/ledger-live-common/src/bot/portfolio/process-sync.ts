@@ -52,7 +52,7 @@ async function main(): Promise<Report> {
 
   const appCandidates = await listAppCandidates(COINAPPS);
 
-  const { appQuery, currency, dependency } = spec;
+  const { appQuery, currency, dependency, onSpeculosDeviceCreated } = spec;
   const appCandidate = findAppCandidate(appCandidates, appQuery);
   if (!appCandidate) {
     console.warn("no app found for " + spec.name);
@@ -68,13 +68,10 @@ async function main(): Promise<Report> {
     seed: SEED,
     dependency,
     coinapps: COINAPPS,
+    onSpeculosDeviceCreated,
   };
 
   const device = await createSpeculosDevice(deviceParams);
-
-  if (spec.onSpeculosDeviceCreated) {
-    await spec.onSpeculosDeviceCreated(device);
-  }
 
   try {
     const audit = new Audit();
