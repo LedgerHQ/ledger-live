@@ -12,12 +12,13 @@ const SetEnvsFromSettings = () => {
     filterTokenOperationsZeroAmountEnabledSelector,
   );
 
-  const apply = () => {
+  useEffect(() => {
     setEnvUnsafe("HIDE_EMPTY_TOKEN_ACCOUNTS", hideEmptyTokenAccountsEnabled);
-    setEnvUnsafe("FILTER_ZERO_AMOUNT_ERC20_EVENTS", filterTokenOperationsZeroAmountEnabled);
-  };
+  }, [hideEmptyTokenAccountsEnabled]);
 
-  useEffect(() => apply());
+  useEffect(() => {
+    setEnvUnsafe("FILTER_ZERO_AMOUNT_ERC20_EVENTS", filterTokenOperationsZeroAmountEnabled);
+  }, [filterTokenOperationsZeroAmountEnabled]);
 
   return null;
 };
