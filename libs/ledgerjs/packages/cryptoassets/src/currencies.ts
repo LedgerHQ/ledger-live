@@ -512,13 +512,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       explorer: { type: "ledger", explorerId: "bnb" },
       gasTracker: { type: "ledger", explorerId: "bnb" },
     },
-    units: [
-      {
-        name: "BNB",
-        code: "BNB",
-        magnitude: 18,
-      },
-    ],
+    units: ethereumUnits("BNB", "BNB"),
     explorerViews: [
       {
         tx: "https://bscscan.com/tx/$hash",
@@ -2224,13 +2218,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       explorer: { type: "ledger", explorerId: "matic" },
       gasTracker: { type: "ledger", explorerId: "matic" },
     },
-    units: [
-      {
-        name: "MATIC",
-        code: "MATIC",
-        magnitude: 18,
-      },
-    ],
+    units: ethereumUnits("MATIC", "MATIC"),
     explorerViews: [
       {
         tx: "https://polygonscan.com/tx/$hash",
@@ -3898,13 +3886,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "btt",
     color: "#000000",
     family: "evm",
-    units: [
-      {
-        name: "BTT",
-        code: "BTT",
-        magnitude: 18,
-      },
-    ],
+    units: ethereumUnits("BTT", "BTT"),
     ethereumLikeInfo: {
       chainId: 199,
       node: { type: "external", uri: "https://rpc.bt.io" },
@@ -3931,13 +3913,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "kava_evm",
     color: "#FF232F",
     family: "evm",
-    units: [
-      {
-        name: "KAVA",
-        code: "KAVA",
-        magnitude: 18,
-      },
-    ],
+    units: ethereumUnits("KAVA", "KAVA"),
     ethereumLikeInfo: {
       chainId: 2222,
       node: { type: "external", uri: "https://evm2.kava.io" },
@@ -3964,13 +3940,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "evmos",
     color: "#ED4E33",
     family: "evm",
-    units: [
-      {
-        name: "EVMOS",
-        code: "EVMOS",
-        magnitude: 18,
-      },
-    ],
+    units: ethereumUnits("EVMOS", "EVMOS"),
     ethereumLikeInfo: {
       chainId: 9001,
       node: { type: "external", uri: "https://evmos-evm.publicnode.com" },
@@ -4163,13 +4133,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "moonriver",
     color: "#F2B705",
     family: "evm",
-    units: [
-      {
-        name: "MOVR",
-        code: "MOVR",
-        magnitude: 18,
-      },
-    ],
+    units: ethereumUnits("MOVR", "MOVR"),
     ethereumLikeInfo: {
       chainId: 1285,
       node: { type: "external", uri: "https://rpc.api.moonriver.moonbeam.network" },
@@ -4196,13 +4160,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "velas",
     color: "#000000",
     family: "evm",
-    units: [
-      {
-        name: "VLX",
-        code: "VLX",
-        magnitude: 18,
-      },
-    ],
+    units: ethereumUnits("VLX", "VLX"),
     ethereumLikeInfo: {
       chainId: 106,
       node: { type: "external", uri: "https://evmexplorer.velas.com/rpc" },
