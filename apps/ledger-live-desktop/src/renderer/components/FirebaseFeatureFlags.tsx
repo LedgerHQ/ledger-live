@@ -6,6 +6,7 @@ import {
   formatToFirebaseFeatureId,
   checkFeatureFlagVersion,
   AppConfig,
+  isFeature,
 } from "@ledgerhq/live-common/featureFlags/index";
 import type { FirebaseFeatureFlagsProviderProps as Props } from "@ledgerhq/live-common/featureFlags/index";
 import { Feature, FeatureId, Features } from "@ledgerhq/types-live";
@@ -20,28 +21,6 @@ export const FirebaseFeatureFlagsProvider = ({ children }: Props): JSX.Element =
 
   const localOverrides = useSelector(overriddenFeatureFlagsSelector);
   const dispatch = useDispatch();
-
-  const isFeature = useCallback(
-    (key: string): boolean => {
-      if (!remoteConfig) {
-        return false;
-      }
-
-      try {
-        const value = AppConfig.getInstance().providerGetvalueMethod!["firebase"](
-          formatToFirebaseFeatureId(key),
-        );
-        if (!value || !value.asString()) {
-          return false;
-        }
-        return true;
-      } catch (error) {
-        console.error(`Failed to check if feature "${key}" exists`);
-        return false;
-      }
-    },
-    [remoteConfig],
-  );
 
   const getFeature = useCallback(
     <T extends FeatureId>(key: T, allowOverride = true): Feature<Features[T]["params"]> | null => {
@@ -120,7 +99,7 @@ export const FirebaseFeatureFlagsProvider = ({ children }: Props): JSX.Element =
       resetFeature,
       resetFeatures,
     }),
-    [getFeature, isFeature, overrideFeature, resetFeature, resetFeatures],
+    [getFeature, overrideFeature, resetFeature, resetFeatures],
   );
 
   return <FeatureFlagsProvider value={contextValue}>{children}</FeatureFlagsProvider>;

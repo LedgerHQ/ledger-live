@@ -33,7 +33,9 @@ export class AppConfig {
     if (!AppConfig.instance) {
       throw new Error("AppConfig instance is not initialized. Call init() first.");
     }
-    AppConfig.instance.providerGetvalueMethod = provider2Method;
+    if (!AppConfig.instance.providerGetvalueMethod) {
+      AppConfig.instance.providerGetvalueMethod = provider2Method;
+    }
   }
 
   public static getInstance(): AppConfig {
@@ -71,4 +73,22 @@ export const checkFeatureFlagVersion = (feature: Feature) => {
     }
   }
   return feature;
+};
+
+export const isFeature = (key: string): boolean => {
+  if (!AppConfig.getInstance().providerGetvalueMethod) {
+    return false;
+  }
+  try {
+    const value = AppConfig.getInstance().providerGetvalueMethod!["firebase"](
+      formatToFirebaseFeatureId(key),
+    );
+    if (!value || !value.asString()) {
+      return false;
+    }
+    return true;
+  } catch (error) {
+    console.error(`Failed to check if feature "${key}" exists`);
+    return false;
+  }
 };

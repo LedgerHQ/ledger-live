@@ -1,12 +1,13 @@
 import React, { useCallback, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import isEqual from "lodash/isEqual";
-import remoteConfig from "@react-native-firebase/remote-config";
 import {
   FeatureFlagsProvider,
   DEFAULT_FEATURES,
   formatToFirebaseFeatureId,
   checkFeatureFlagVersion,
+  AppConfig,
+  isFeature,
 } from "@ledgerhq/live-common/featureFlags/index";
 import type { FirebaseFeatureFlagsProviderProps as Props } from "@ledgerhq/live-common/featureFlags/index";
 import { FeatureId, Feature, Features } from "@ledgerhq/types-live";
@@ -14,21 +15,6 @@ import { getEnv } from "@ledgerhq/live-env";
 import { languageSelector, overriddenFeatureFlagsSelector } from "../reducers/settings";
 import { setOverriddenFeatureFlag, setOverriddenFeatureFlags } from "../actions/settings";
 import { setAnalyticsFeatureFlagMethod } from "../analytics/segment";
-
-const isFeature = (key: string): boolean => {
-  try {
-    const value = remoteConfig().getValue(formatToFirebaseFeatureId(key));
-
-    if (!value || !value.asString()) {
-      return false;
-    }
-
-    return true;
-  } catch (error) {
-    console.error(`Failed to check if feature "${key}" exists`);
-    return false;
-  }
-};
 
 const getFeature = (args: {
   key: FeatureId;
@@ -58,7 +44,10 @@ const getFeature = (args: {
         };
     }
 
-    const value = remoteConfig().getValue(formatToFirebaseFeatureId(key));
+    const value = AppConfig.getInstance().providerGetvalueMethod!["firebase"](
+      formatToFirebaseFeatureId(key),
+    );
+
     const feature = JSON.parse(value.asString());
 
     if (

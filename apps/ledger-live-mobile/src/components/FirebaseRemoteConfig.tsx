@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import remoteConfig from "@react-native-firebase/remote-config";
-import { DEFAULT_FEATURES, formatDefaultFeatures } from "@ledgerhq/live-common/featureFlags/index";
+import {
+  DEFAULT_FEATURES,
+  formatDefaultFeatures,
+  formatToFirebaseFeatureId,
+} from "@ledgerhq/live-common/featureFlags/index";
 import type { FirebaseFeatureFlagsProviderProps as Props } from "@ledgerhq/live-common/featureFlags/index";
 import { AppConfig } from "@ledgerhq/live-common/featureFlags/index";
 import VersionNumber from "react-native-version-number";
@@ -11,7 +15,11 @@ AppConfig.init({
   platform: Platform.OS,
   environment: process.env.NODE_ENV ?? "development",
 });
-
+AppConfig.setProviderGetValueMethod({
+  firebase: (key: string) => {
+    return remoteConfig().getValue(formatToFirebaseFeatureId(key));
+  },
+});
 export const FirebaseRemoteConfigProvider = ({ children }: Props): JSX.Element | null => {
   const [loaded, setLoaded] = useState<boolean>(false);
 
