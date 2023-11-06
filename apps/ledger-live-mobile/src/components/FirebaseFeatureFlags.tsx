@@ -132,15 +132,6 @@ export const FirebaseFeatureFlagsProvider: React.FC<Props> = ({ children }) => {
     dispatch(setOverriddenFeatureFlags({}));
   }, [dispatch]);
 
-  const getAllFlags = useCallback((): Record<string, Feature> => {
-    const allFeatures = remoteConfig().getAll();
-    const parsedFeatures = Object.entries(allFeatures).map(([key, value]) => {
-      return [key, JSON.parse(value.asString())];
-    });
-
-    return Object.fromEntries(parsedFeatures);
-  }, []);
-
   // Nb wrapped because the method is also called from outside.
   const wrappedGetFeature = useCallback(
     <T extends FeatureId>(key: T): Features[T] => getFeature({ key, appLanguage, localOverrides }),
@@ -160,9 +151,8 @@ export const FirebaseFeatureFlagsProvider: React.FC<Props> = ({ children }) => {
       overrideFeature,
       resetFeature,
       resetFeatures,
-      getAllFlags,
     }),
-    [getAllFlags, overrideFeature, resetFeature, resetFeatures, wrappedGetFeature],
+    [overrideFeature, resetFeature, resetFeatures, wrappedGetFeature],
   );
 
   return <FeatureFlagsProvider value={contextValue}>{children}</FeatureFlagsProvider>;

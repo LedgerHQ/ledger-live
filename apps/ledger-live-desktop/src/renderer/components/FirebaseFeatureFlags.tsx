@@ -5,10 +5,10 @@ import {
   FeatureFlagsProvider,
   formatToFirebaseFeatureId,
   checkFeatureFlagVersion,
+  AppConfig,
 } from "@ledgerhq/live-common/featureFlags/index";
 import type { FirebaseFeatureFlagsProviderProps as Props } from "@ledgerhq/live-common/featureFlags/index";
 import { Feature, FeatureId, Features } from "@ledgerhq/types-live";
-import { getAll, getValue } from "firebase/remote-config";
 import { getEnv } from "@ledgerhq/live-env";
 import { useFirebaseRemoteConfig } from "./FirebaseRemoteConfig";
 import { overriddenFeatureFlagsSelector } from "../reducers/settings";
@@ -21,19 +21,6 @@ export const FirebaseFeatureFlagsProvider = ({ children }: Props): JSX.Element =
   const localOverrides = useSelector(overriddenFeatureFlagsSelector);
   const dispatch = useDispatch();
 
-  const getAllFlags = useCallback((): Record<string, Feature> => {
-    if (remoteConfig) {
-      const allFeatures = getAll(remoteConfig);
-      const parsedFeatures = Object.entries(allFeatures).map(([key, value]) => {
-        return [key, JSON.parse(value.asString())];
-      });
-
-      return Object.fromEntries(parsedFeatures);
-    }
-
-    return {};
-  }, [remoteConfig]);
-
   const isFeature = useCallback(
     (key: string): boolean => {
       if (!remoteConfig) {
@@ -41,8 +28,9 @@ export const FirebaseFeatureFlagsProvider = ({ children }: Props): JSX.Element =
       }
 
       try {
-        const value = getValue(remoteConfig, formatToFirebaseFeatureId(key));
-
+        const value = AppConfig.getInstance().providerGetvalueMethod!["firebase"](
+          formatToFirebaseFeatureId(key),
+        );
         if (!value || !value.asString()) {
           return false;
         }
@@ -60,7 +48,6 @@ export const FirebaseFeatureFlagsProvider = ({ children }: Props): JSX.Element =
       if (!remoteConfig) {
         return null;
       }
-
       try {
         // Nb prioritize local overrides
         if (allowOverride && localOverrides[key]) {
@@ -78,7 +65,9 @@ export const FirebaseFeatureFlagsProvider = ({ children }: Props): JSX.Element =
             };
         }
 
-        const value = getValue(remoteConfig, formatToFirebaseFeatureId(key));
+        const value = AppConfig.getInstance().providerGetvalueMethod!["firebase"](
+          formatToFirebaseFeatureId(key),
+        );
         const feature: Feature = JSON.parse(value.asString());
 
         return checkFeatureFlagVersion(feature);
@@ -130,9 +119,8 @@ export const FirebaseFeatureFlagsProvider = ({ children }: Props): JSX.Element =
       overrideFeature,
       resetFeature,
       resetFeatures,
-      getAllFlags,
     }),
-    [getAllFlags, getFeature, isFeature, overrideFeature, resetFeature, resetFeatures],
+    [getFeature, isFeature, overrideFeature, resetFeature, resetFeatures],
   );
 
   return <FeatureFlagsProvider value={contextValue}>{children}</FeatureFlagsProvider>;

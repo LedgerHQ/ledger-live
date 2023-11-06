@@ -1,9 +1,19 @@
 import React, { useContext, useEffect, useState } from "react";
 import { initializeApp } from "firebase/app";
-import { getRemoteConfig, fetchAndActivate, RemoteConfig } from "firebase/remote-config";
-import { DEFAULT_FEATURES, formatDefaultFeatures } from "@ledgerhq/live-common/featureFlags/index";
+import { getRemoteConfig, fetchAndActivate, RemoteConfig, getValue } from "firebase/remote-config";
+import {
+  DEFAULT_FEATURES,
+  formatDefaultFeatures,
+  AppConfig,
+} from "@ledgerhq/live-common/featureFlags/index";
 import type { FirebaseFeatureFlagsProviderProps as Props } from "@ledgerhq/live-common/featureFlags/index";
 import { getFirebaseConfig } from "~/firebase-setup";
+
+AppConfig.init({
+  appVersion: __APP_VERSION__,
+  platform: "desktop",
+  environment: process.env.NODE_ENV || "development",
+});
 
 export const FirebaseRemoteConfigContext = React.createContext<RemoteConfig | null>(null);
 
@@ -35,9 +45,15 @@ export const FirebaseRemoteConfigProvider = ({ children }: Props): JSX.Element |
         };
         await fetchAndActivate(remoteConfig);
         setConfig(remoteConfig);
+        AppConfig.setProviderGetValueMethod({
+          firebase: (key: string) => {
+            return getValue(remoteConfig, key);
+          },
+        });
       } catch (error) {
         console.error(`Failed to fetch Firebase remote config with error: ${error}`);
       }
+
       setLoaded(true);
     };
 
