@@ -228,7 +228,8 @@ export const getBlockByHeight: NodeApi["getBlockByHeight"] = (currency, blockHei
     return {
       hash,
       height: number,
-      timestamp,
+      // timestamp is returned in seconds by getBlock, we need milliseconds
+      timestamp: timestamp * 1000,
     };
   });
 

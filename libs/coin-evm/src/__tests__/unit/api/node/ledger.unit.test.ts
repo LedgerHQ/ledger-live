@@ -433,12 +433,14 @@ describe("EVM Family", () => {
                 },
               }
             : {
-                data: {
-                  hash: "0xhash",
-                  height: 123,
-                  time: new Date().toISOString(),
-                  txs: ["0xTx1", "0xTx2"],
-                },
+                data: [
+                  {
+                    hash: "0xhash",
+                    height: 123,
+                    time: new Date().toISOString(),
+                    txs: ["0xTx1", "0xTx2"],
+                  },
+                ],
               },
         );
 
