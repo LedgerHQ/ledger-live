@@ -50,8 +50,9 @@ type SwapWebProps = {
     rate: string;
     feeStrategy: string;
     customFeeConfig: string;
+    error: boolean;
+    loading: boolean;
   }>;
-  pageState: ReturnType<typeof usePageState>;
 };
 
 const Wrapper = styled(Box).attrs({
@@ -151,50 +152,6 @@ const SwapForm = () => {
     }, idleTime);
   }, [idleState]);
 
-  const getSwapWebAppInputProps = useCallback(() => {
-    const { swap } = swapTransaction;
-    const { to, from } = swap;
-    const transaction = swapTransaction.transaction;
-    const { account: fromAccount, parentAccount: fromParentAccount } = from;
-    const { account: toAccount, parentAccount: toParentAccount } = to;
-    const { feesStrategy } = transaction || {};
-    const { rate, rateId } = exchangeRate || {};
-
-    const fromAccountId =
-      fromAccount && accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id;
-    const toAccountId = toAccount && accountToWalletAPIAccount(toAccount, toParentAccount)?.id;
-    const fromAmount =
-      fromAccount &&
-      convertToNonAtomicUnit({
-        amount: transaction?.amount,
-        account: fromAccount,
-      });
-
-    const customFeeConfig = transaction && getCustomFeesPerFamily(transaction);
-    // The Swap web app will automatically recreate the transaction with "default" fees.
-    // However, if you wish to use a different fee type, you will need to set it as custom.
-    const isCustomFee =
-      feesStrategy === "slow" || feesStrategy === "fast" || feesStrategy === "custom";
-    return {
-      provider,
-      fromAccountId,
-      toAccountId,
-      fromAmount: fromAmount?.toString(),
-      quoteId: rateId ? rateId : undefined,
-      rate: rate?.toString(),
-      feeStrategy: (isCustomFee ? "custom" : "medium")?.toUpperCase(),
-      customFeeConfig: customFeeConfig ? JSON.stringify(customFeeConfig) : undefined,
-      cacheKey: v4(),
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    provider,
-    swapTransaction.swap.from.account?.id,
-    swapTransaction.swap.to.currency?.id,
-    exchangeRate?.providerType,
-    exchangeRate?.tradeMethod,
-  ]);
-
   useEffect(() => {
     if (swapTransaction.swap.rates.status === "success") {
       refreshIdle();
@@ -291,11 +248,6 @@ const SwapForm = () => {
         },
       });
     } else {
-      if (isSwapLiveAppEnabled) {
-        setSwapWebProps(getSwapWebAppInputProps());
-        return;
-      }
-
       setDrawer(
         ExchangeDrawer,
         {
@@ -337,6 +289,57 @@ const SwapForm = () => {
   const toggleMax = () => {
     swapTransaction.toggleMax();
   };
+
+  useEffect(() => {
+    if (isSwapLiveAppEnabled) {
+      const { swap } = swapTransaction;
+      const { to, from } = swap;
+      const transaction = swapTransaction.transaction;
+      const { account: fromAccount, parentAccount: fromParentAccount } = from;
+      const { account: toAccount, parentAccount: toParentAccount } = to;
+      const { feesStrategy } = transaction || {};
+      const { rate, rateId } = exchangeRate || {};
+
+      const fromAccountId =
+        fromAccount && accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id;
+      const toAccountId = toAccount && accountToWalletAPIAccount(toAccount, toParentAccount)?.id;
+      const fromAmount =
+        fromAccount &&
+        convertToNonAtomicUnit({
+          amount: transaction?.amount,
+          account: fromAccount,
+        });
+
+      const customFeeConfig = transaction && getCustomFeesPerFamily(transaction);
+      // The Swap web app will automatically recreate the transaction with "default" fees.
+      // However, if you wish to use a different fee type, you will need to set it as custom.
+      const isCustomFee =
+        feesStrategy === "slow" || feesStrategy === "fast" || feesStrategy === "custom";
+      setSwapWebProps({
+        provider,
+        fromAccountId,
+        toAccountId,
+        fromAmount: fromAmount?.toString(),
+        quoteId: rateId ? rateId : undefined,
+        rate: rate?.toString(),
+        feeStrategy: (isCustomFee ? "custom" : "medium")?.toUpperCase(),
+        customFeeConfig: customFeeConfig ? JSON.stringify(customFeeConfig) : undefined,
+        cacheKey: v4(),
+        error: !!swapError,
+        loading: swapTransaction.bridgePending || exchangeRatesState.status === "loading",
+      });
+    }
+  }, [
+    isSwapLiveAppEnabled,
+    provider,
+    swapTransaction.swap.from.account?.id,
+    swapTransaction.swap.to.currency?.id,
+    exchangeRate?.providerType,
+    exchangeRate?.tradeMethod,
+    swapError,
+    swapTransaction.bridgePending,
+    exchangeRatesState.status,
+  ]);
 
   return (
     <Wrapper>
@@ -380,13 +383,15 @@ const SwapForm = () => {
           />
         </>
       )}
-
-      <Box>
-        <Button primary disabled={!isSwapReady} onClick={onSubmit} data-test-id="exchange-button">
-          {t("common.exchange")}
-        </Button>
-      </Box>
-      <SwapWebView swapState={swapWebProps} pageState={pageState} />
+      {isSwapLiveAppEnabled ? (
+        <SwapWebView swapState={swapWebProps} />
+      ) : (
+        <Box>
+          <Button primary disabled={!isSwapReady} onClick={onSubmit} data-test-id="exchange-button">
+            {t("common.exchange")}
+          </Button>
+        </Box>
+      )}
     </Wrapper>
   );
 };
