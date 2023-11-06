@@ -2,7 +2,6 @@
   InfoPlist.strings
   ledgerlivemobile
 
-  Created by Martin CAYUELAS on 03/11/2023.
   Copyright © 2023 Ledger SAS. All rights reserved.
 */
 "NSBluetoothAlwaysUsageDescription"="Ledger Live needs to connect to your Ledger device to manage your crypto assets";
