@@ -22,7 +22,7 @@ const vechainTest = {
   appQuery: {
     model: DeviceModelId.nanoSP,
     appName: "VeChain",
-    appVersion: "1.1.1"
+    appVersion: "1.1.1",
   },
   allowEmptyAccounts: true,
   testTimeout: 60 * 1000, // 1 minute
@@ -211,4 +211,7 @@ const vtho: AppSpec<Transaction> = {
   ],
 };
 
-export default { vet, vtho };
+const standalone = vet;
+standalone.mutations = [...standalone.mutations, ...vtho.mutations];
+
+export default { standalone };
