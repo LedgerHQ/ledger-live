@@ -7,7 +7,7 @@ import { Box, Switch, Text, Button, IconsLegacy, InfiniteLoader } from "@ledgerh
 import SettingsNavigationScrollView from "../SettingsNavigationScrollView";
 import SettingsRow from "../../../components/SettingsRow";
 import { track, TrackScreen, updateIdentify } from "../../../analytics";
-import { neverClickedOnAllowNotificationsButtonSelector, notificationsSelector } from "../../../reducers/settings";
+import { notificationsSelector } from "../../../reducers/settings";
 import { setNotifications } from "../../../actions/settings";
 import type { State } from "../../../reducers/types";
 import useNotifications from "../../../logic/notifications";
@@ -66,7 +66,6 @@ function NotificationSettingsRow({ disabled, notificationKey, label }: Notificat
 function NotificationsSettings() {
   const { t } = useTranslation();
   const notifications = useSelector(notificationsSelector);
-  const neverClickedOnAllowNotificationsButton = useSelector(neverClickedOnAllowNotificationsButtonSelector);
   const {
     getIsNotifEnabled,
     handlePushNotificationsPermission,
@@ -110,15 +109,15 @@ function NotificationsSettings() {
     () =>
       Platform.OS === "ios"
         ? {
-          osName: "iOS",
-          ctaTransKey: "turnOnNotif",
-          ctaIcon: IconsLegacy.NotificationsMedium,
-        }
+            osName: "iOS",
+            ctaTransKey: "turnOnNotif",
+            ctaIcon: IconsLegacy.NotificationsMedium,
+          }
         : {
-          osName: "Android",
-          ctaTransKey: "goToSettings",
-          ctaIcon: IconsLegacy.SettingsMedium,
-        },
+            osName: "Android",
+            ctaTransKey: "goToSettings",
+            ctaIcon: IconsLegacy.SettingsMedium,
+          },
     [],
   );
 
@@ -160,28 +159,28 @@ function NotificationsSettings() {
             opacity={isNotifPermissionEnabled && notifications.areNotificationsAllowed ? 1 : 0.2}
           >
             {!notificationsCategoriesHidden ||
-              !notificationsCategoriesHidden.includes("announcementsCategory") ? (
+            !notificationsCategoriesHidden.includes("announcementsCategory") ? (
               <NotificationSettingsRow
                 notificationKey={"announcementsCategory"}
                 disabled={disableSubSettings}
               />
             ) : null}
             {!notificationsCategoriesHidden ||
-              !notificationsCategoriesHidden.includes("recommendationsCategory") ? (
+            !notificationsCategoriesHidden.includes("recommendationsCategory") ? (
               <NotificationSettingsRow
                 notificationKey={"recommendationsCategory"}
                 disabled={disableSubSettings}
               />
             ) : null}
             {!notificationsCategoriesHidden ||
-              !notificationsCategoriesHidden.includes("largeMoverCategory") ? (
+            !notificationsCategoriesHidden.includes("largeMoverCategory") ? (
               <NotificationSettingsRow
                 notificationKey={"largeMoverCategory"}
                 disabled={disableSubSettings}
               />
             ) : null}
             {!notificationsCategoriesHidden ||
-              !notificationsCategoriesHidden.includes("transactionsAlertsCategory") ? (
+            !notificationsCategoriesHidden.includes("transactionsAlertsCategory") ? (
               <NotificationSettingsRow
                 notificationKey={"transactionsAlertsCategory"}
                 disabled={disableSubSettings}

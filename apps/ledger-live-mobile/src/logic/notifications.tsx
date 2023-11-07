@@ -23,7 +23,11 @@ import {
 } from "../actions/notifications";
 import { setRatingsModalLocked } from "../actions/ratings";
 import { track } from "../analytics";
-import { notificationsSelector, INITIAL_STATE as settingsInitialState, neverClickedOnAllowNotificationsButtonSelector } from "../reducers/settings";
+import {
+  notificationsSelector,
+  INITIAL_STATE as settingsInitialState,
+  neverClickedOnAllowNotificationsButtonSelector,
+} from "../reducers/settings";
 import { setNeverClickedOnAllowNotificationsButton, setNotifications } from "../actions/settings";
 import { NotificationsSettings } from "../reducers/types";
 import Braze from "@braze/react-native-sdk";
@@ -91,7 +95,9 @@ const useNotifications = () => {
     .map((notificationsCategory: NotificationCategory) => notificationsCategory?.category || "");
   const isPushNotificationsModalOpen = useSelector(notificationsModalOpenSelector);
   const isPushNotificationsModalLocked = useSelector(notificationsModalLockedSelector);
-  const neverClickedOnAllowNotificationsButton = useSelector(neverClickedOnAllowNotificationsButtonSelector);
+  const neverClickedOnAllowNotificationsButton = useSelector(
+    neverClickedOnAllowNotificationsButtonSelector,
+  );
   const pushNotificationsModalType = useSelector(notificationsModalTypeSelector);
   const pushNotificationsOldRoute = useSelector(notificationsCurrentRouteNameSelector);
   const pushNotificationsEventTriggered = useSelector(notificationsEventTriggeredSelector);
@@ -388,7 +394,7 @@ const useNotifications = () => {
     } else {
       handleSetDateOfNextAllowedRequest(
         pushNotificationsFeature?.params?.conditions?.maybe_later_delay ||
-        pushNotificationsFeature?.params?.conditions?.default_delay_between_two_prompts,
+          pushNotificationsFeature?.params?.conditions?.default_delay_between_two_prompts,
         {
           alreadyDelayedToLater: true,
         },

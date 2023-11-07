@@ -576,7 +576,9 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
 
   [SettingsActionTypes.SET_NEVER_CLICKED_ON_ALLOW_NOTIFICATIONS_BUTTON]: (state, action) => ({
     ...state,
-    neverClickedOnAllowNotificationsButton: (action as Action<SettingsSetNeverClickedOnAllowNotificationsButton>).payload,
+    neverClickedOnAllowNotificationsButton: (
+      action as Action<SettingsSetNeverClickedOnAllowNotificationsButton>
+    ).payload,
   }),
 
   [SettingsActionTypes.WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB]: (state, action) => ({
@@ -810,7 +812,8 @@ export const hasClosedNetworkBannerSelector = (state: State) =>
 export const hasClosedWithdrawBannerSelector = (state: State) =>
   state.settings.depositFlow.hasClosedWithdrawBanner;
 export const notificationsSelector = (state: State) => state.settings.notifications;
-export const neverClickedOnAllowNotificationsButtonSelector = (s: State) => s.settings.neverClickedOnAllowNotificationsButton;
+export const neverClickedOnAllowNotificationsButtonSelector = (s: State) =>
+  s.settings.neverClickedOnAllowNotificationsButton;
 export const walletTabNavigatorLastVisitedTabSelector = (state: State) =>
   state.settings.walletTabNavigatorLastVisitedTab;
 export const dateFormatSelector = (state: State) => state.settings.dateFormat;

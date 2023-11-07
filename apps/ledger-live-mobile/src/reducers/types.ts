@@ -35,32 +35,32 @@ export type AccountsState = {
 
 export type FwUpdateBackgroundEvent =
   | {
-    type: "confirmPin";
-  }
+      type: "confirmPin";
+    }
   | {
-    type: "downloadingUpdate";
-    progress?: number;
-  }
+      type: "downloadingUpdate";
+      progress?: number;
+    }
   | {
-    type: "confirmUpdate";
-  }
+      type: "confirmUpdate";
+    }
   | {
-    type: "flashingMcu";
-    progress?: number;
-    installing?: string | null;
-  }
+      type: "flashingMcu";
+      progress?: number;
+      installing?: string | null;
+    }
   | {
-    type: "firmwareUpdated";
-    updatedDeviceInfo?: DeviceInfo;
-  }
+      type: "firmwareUpdated";
+      updatedDeviceInfo?: DeviceInfo;
+    }
   | {
-    type: "error";
-    error: Error;
-  }
+      type: "error";
+      error: Error;
+    }
   | {
-    type: "log";
-    message: string;
-  };
+      type: "log";
+      message: string;
+    };
 
 export type AppState = {
   debugMenuVisible: boolean;
