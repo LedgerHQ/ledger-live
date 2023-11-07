@@ -1,4 +1,4 @@
-import React, { PureComponent } from "react";
+import React from "react";
 import { Trans } from "react-i18next";
 import type { Account } from "@ledgerhq/types-live";
 import { CompositeScreenProps } from "@react-navigation/native";
@@ -18,22 +18,19 @@ type Props = {
   account: Account;
 };
 
-class AccountAdvancedLogsRow extends PureComponent<Props> {
-  render() {
-    const { navigation, account } = this.props;
-    return (
-      <SettingsRow
-        event="AccountAdvancedLogsRow"
-        title={<Trans i18nKey="account.settings.advanced.title" />}
-        arrowRight
-        onPress={() =>
-          navigation.navigate(ScreenName.AdvancedLogs, {
-            accountId: account.id,
-          })
-        }
-      />
-    );
-  }
-}
+const AccountAdvancedLogsRow = ({ navigation, account }: Props) => {
+  return (
+    <SettingsRow
+      event="AccountAdvancedLogsRow"
+      title={<Trans i18nKey="account.settings.advanced.title" />}
+      arrowRight
+      onPress={() =>
+        navigation.navigate(ScreenName.AdvancedLogs, {
+          accountId: account.id,
+        })
+      }
+    />
+  );
+};
 
 export default AccountAdvancedLogsRow;
