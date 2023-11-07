@@ -6,16 +6,16 @@ import {
   formatToFirebaseFeatureId,
 } from "@ledgerhq/live-common/featureFlags/index";
 import type { FirebaseFeatureFlagsProviderProps as Props } from "@ledgerhq/live-common/featureFlags/index";
-import { AppConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { LiveConfig } from "@ledgerhq/live-common/featureFlags/index";
 import VersionNumber from "react-native-version-number";
 import { Platform } from "react-native";
 
-AppConfig.init({
+LiveConfig.init({
   appVersion: VersionNumber.appVersion,
   platform: Platform.OS,
   environment: process.env.NODE_ENV ?? "development",
 });
-AppConfig.setProviderGetValueMethod({
+LiveConfig.setProviderGetValueMethod({
   firebase: (key: string) => {
     return remoteConfig().getValue(formatToFirebaseFeatureId(key));
   },

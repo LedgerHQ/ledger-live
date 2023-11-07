@@ -4,12 +4,12 @@ import { getRemoteConfig, fetchAndActivate, RemoteConfig, getValue } from "fireb
 import {
   DEFAULT_FEATURES,
   formatDefaultFeatures,
-  AppConfig,
+  LiveConfig,
 } from "@ledgerhq/live-common/featureFlags/index";
 import type { FirebaseFeatureFlagsProviderProps as Props } from "@ledgerhq/live-common/featureFlags/index";
 import { getFirebaseConfig } from "~/firebase-setup";
 
-AppConfig.init({
+LiveConfig.init({
   appVersion: __APP_VERSION__,
   platform: "desktop",
   environment: process.env.NODE_ENV || "development",
@@ -45,7 +45,7 @@ export const FirebaseRemoteConfigProvider = ({ children }: Props): JSX.Element |
         };
         await fetchAndActivate(remoteConfig);
         setConfig(remoteConfig);
-        AppConfig.setProviderGetValueMethod({
+        LiveConfig.setProviderGetValueMethod({
           firebase: (key: string) => {
             return getValue(remoteConfig, key);
           },
