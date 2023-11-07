@@ -1,7 +1,8 @@
 import { PropsWithChildren } from "react";
 import { snakeCase } from "lodash";
 import semver from "semver";
-import { Feature } from "@ledgerhq/types-live";
+import { Feature, FeatureId } from "@ledgerhq/types-live";
+import { getEnv } from "@ledgerhq/live-env";
 
 export declare interface Value {
   asBoolean(): boolean;
@@ -94,5 +95,62 @@ export const isFeature = (key: string): boolean => {
   } catch (error) {
     console.error(`Failed to check if feature "${key}" exists`);
     return false;
+  }
+};
+
+export const getFeature = (args: {
+  key: FeatureId;
+  appLanguage?: string;
+  localOverrides?: { [key in FeatureId]?: Feature };
+  allowOverride?: boolean;
+}) => {
+  if (!AppConfig.getInstance().providerGetvalueMethod) {
+    return null;
+  }
+  const { key, appLanguage, localOverrides, allowOverride = true } = args;
+  try {
+    // Nb prioritize local overrides
+    if (allowOverride && localOverrides && localOverrides[key]) {
+      const feature = localOverrides[key];
+      if (feature) {
+        return checkFeatureFlagVersion(feature);
+      }
+    }
+
+    const envFlags = getEnv("FEATURE_FLAGS") as { [key in FeatureId]?: Feature } | undefined;
+
+    if (allowOverride && envFlags) {
+      const feature = envFlags[key];
+      if (feature)
+        return {
+          ...feature,
+          overridesRemote: true,
+          overriddenByEnv: true,
+        };
+    }
+
+    const value = AppConfig.getInstance().providerGetvalueMethod!["firebase"](
+      formatToFirebaseFeatureId(key),
+    );
+
+    const feature = JSON.parse(value.asString());
+
+    if (
+      feature.enabled &&
+      appLanguage &&
+      ((feature.languages_whitelisted && !feature.languages_whitelisted.includes(appLanguage)) ||
+        (feature.languages_blacklisted && feature.languages_blacklisted.includes(appLanguage)))
+    ) {
+      return {
+        enabledOverriddenForCurrentLanguage: true,
+        ...feature,
+        enabled: false,
+      };
+    }
+
+    return checkFeatureFlagVersion(feature);
+  } catch (error) {
+    console.error(`Failed to retrieve feature "${key}"`);
+    return null;
   }
 };
