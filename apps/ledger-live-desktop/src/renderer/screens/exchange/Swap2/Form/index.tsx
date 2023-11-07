@@ -32,11 +32,11 @@ import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/conv
 import useRefreshRates from "./hooks/useRefreshRates";
 import LoadingState from "./Rates/LoadingState";
 import EmptyState from "./Rates/EmptyState";
-import { AccountLike } from "@ledgerhq/types-live";
+import { Account, AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { SWAP_RATES_TIMEOUT } from "../../config";
-import { OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
+import { OnNoRatesCallback, SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
 import { v4 } from "uuid";
 import SwapWebView, { SWAP_WEB_MANIFEST_ID } from "./SwapWebView";
 
@@ -151,6 +151,90 @@ const SwapForm = () => {
     }, idleTime);
   }, [idleState]);
 
+  const isAccount = (value: unknown): value is Account =>
+    Boolean(value && typeof value === "object" && "type" in value && value.type === "Account");
+
+  const getTokenAddress = (account: AccountLike | undefined) => {
+    if (isTokenAccount(account)) {
+      return account.token.contractAddress;
+    }
+    if (isAccount(account)) {
+      // Default to native currency
+      return "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
+    }
+  };
+
+  const getAccountWalletAddress = (swapTransaction: SwapTransactionType) => {
+    if (swapTransaction.parentAccount) {
+      return swapTransaction.parentAccount.freshAddress;
+    }
+    if (isAccount(swapTransaction.account)) {
+      return swapTransaction.account.freshAddress;
+    }
+  };
+
+  type GetAccountIdProps = {
+    accounts: Account[];
+    accountId?: string;
+  };
+
+  const getSwapWebAppPropsDex = useCallback(() => {
+    const { swap } = swapTransaction;
+    const { to, from } = swap;
+    const transaction = swapTransaction.transaction;
+    const { account: fromAccount, parentAccount: fromParentAccount } = from;
+    const { account: toAccount, parentAccount: toParentAccount } = to;
+    const { feesStrategy } = transaction || {};
+    const { rate, rateId } = exchangeRate || {};
+
+    const fromAccountId =
+      fromAccount && accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id;
+    const toAccountId = toAccount && accountToWalletAPIAccount(toAccount, toParentAccount)?.id;
+    const fromAmount =
+      fromAccount &&
+      convertToNonAtomicUnit({
+        amount: transaction?.amount,
+        account: fromAccount,
+      });
+    console.log("swap");
+    console.log(swap);
+    const toTokenAddress = getTokenAddress(toAccount);
+    const fromTokenAddress = getTokenAddress(fromAccount);
+    const walletAddress = getAccountWalletAddress(swapTransaction);
+
+    const customFeeConfig = transaction && getCustomFeesPerFamily(transaction);
+    // The Swap web app will automatically recreate the transaction with "default" fees.
+    // However, if you wish to use a different fee type, you will need to set it as custom.
+    const isCustomFee =
+      feesStrategy === "slow" || feesStrategy === "fast" || feesStrategy === "custom";
+    return {
+      provider,
+      providerType: "DEX",
+      fromTokenAddress,
+      fromAccountId,
+      fromParentAccountId: fromParentAccount
+        ? accountToWalletAPIAccount(fromParentAccount)?.id
+        : undefined,
+      toAccountId,
+      toTokenAddress,
+      walletAddress,
+      fromAmountWei: transaction?.amount.toString(),
+      fromAmount: fromAmount?.toString(),
+      rate: rate?.toString(),
+      feeStrategy: (isCustomFee ? "custom" : "medium")?.toUpperCase(),
+      customFeeConfig: customFeeConfig ? JSON.stringify(customFeeConfig) : undefined,
+      pageState,
+      cacheKey: v4(),
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    provider,
+    swapTransaction.swap.from.account?.id,
+    swapTransaction.swap.to.currency?.id,
+    exchangeRate?.providerType,
+    exchangeRate?.tradeMethod,
+  ]);
+
   const getSwapWebAppInputProps = useCallback(() => {
     const { swap } = swapTransaction;
     const { to, from } = swap;
@@ -253,43 +337,8 @@ const SwapForm = () => {
     });
 
     if (providerType === "DEX") {
-      const from = swapTransaction.swap.from;
-      const fromAccountId = from.parentAccount?.id || from.account?.id;
-
-      const pathname = `/platform/${getProviderName(provider).toLowerCase()}`;
-      const getAccountId = ({
-        accountId,
-        provider,
-      }: {
-        accountId: string | undefined;
-        provider: string;
-      }) => {
-        if (
-          !walletApiPartnerList?.enabled ||
-          !walletApiPartnerList?.params?.list.includes(provider)
-        ) {
-          return accountId;
-        }
-        const account = accounts.find(a => a.id === accountId);
-        if (!account) return accountId;
-        const parentAccount = isTokenAccount(account)
-          ? getParentAccount(account, accounts)
-          : undefined;
-        const walletApiId = accountToWalletAPIAccount(account, parentAccount)?.id;
-        return walletApiId || accountId;
-      };
-      const accountId = getAccountId({ accountId: fromAccountId, provider });
-      history.push({
-        // This looks like an issue, the proper signature is: push(path, [state]) - (function) Pushes a new entry onto the history stack
-        // It seems possible to also pass a LocationDescriptorObject but it does not expect extra properties
-        // @ts-expect-error so customDappUrl is not expected to be here
-        customDappUrl: providerURL,
-        pathname,
-        state: {
-          returnTo: "/swap",
-          accountId,
-        },
-      });
+      setSwapWebProps(getSwapWebAppPropsDex());
+      return;
     } else {
       if (isSwapLiveAppEnabled) {
         setSwapWebProps(getSwapWebAppInputProps());

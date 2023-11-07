@@ -1,6 +1,6 @@
 import { usePageState } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
 import { context } from "~/renderer/drawers/Provider";
 import WebviewErrorDrawer, { SwapLiveError } from "./WebviewErrorDrawer/index";
@@ -13,6 +13,7 @@ import { WebviewAPI, WebviewState } from "~/renderer/components/Web3AppWebview/t
 import { initialWebviewState } from "~/renderer/components/Web3AppWebview/helpers";
 import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
 import { TopBar } from "~/renderer/components/WebPlatformPlayer/TopBar";
+import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 
 type CustomHandlersParams<Params> = {
   params: Params;
@@ -75,6 +76,29 @@ const SwapWebView = ({ pageState, swapState }: SwapWebProps) => {
         params,
       }: CustomHandlersParams<SwapLiveError>) => {
         onSwapWebviewError(params);
+        return Promise.resolve();
+      },
+      "custom.saveSwapToHistory": ({ params }: any) => {
+        const dispatch = useDispatch();
+
+        // dispatch(
+        //   updateAccountWithUpdater({
+        //     accountId: mainAccount.id,
+        //     updater: account =>
+        //       addPendingOperation(
+        //         addToSwapHistory({
+        //           account,
+        //           operation,
+        //           transaction: swapTx.current.transaction as Transaction,
+        //           swap: {
+        //             exchange,
+        //             exchangeRate: exchangeRate.current,
+        //           },
+        //           swapId,
+        //         }),
+        //         operation,
+        //       ),
+        //   }),
         return Promise.resolve();
       },
       "custom.throwGenericErrorToLedgerLive": () => {
