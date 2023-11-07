@@ -70,18 +70,22 @@ const Delegation = ({ account }: Props) => {
   const { iconResources, spendableBalance } = account;
   invariant(iconResources, "icon account expected");
   const { votes, votingPower, unwithdrawnReward } = iconResources;
+  const formattedRewardInUnit = unwithdrawnReward.times(1000000);
   const votingPowerNum = new BigNumber(votingPower).toNumber();
   const unwithdrawnRewardNum = new BigNumber(unwithdrawnReward).toNumber();
   const discreet = useDiscreetMode();
   const defaultUnit = getAccountUnit(account);
-  const formattedUnwidthDrawnReward = formatCurrencyUnit(unit, BigNumber(unwithdrawnReward || 0), {
-    disableRounding: true,
-    alwaysShowSign: false,
-    showCode: true,
-    discreet,
-    locale,
-    subMagnitude: 3,
-  });
+  const formattedUnwidthDrawnReward = formatCurrencyUnit(
+    unit,
+    BigNumber(formattedRewardInUnit || 0),
+    {
+      disableRounding: true,
+      alwaysShowSign: false,
+      showCode: true,
+      discreet,
+      locale,
+    },
+  );
 
   const formattedVotes = formatVotes(votes, superRepresentatives);
   const totalVotesUsed = votes?.reduce((sum, { value }) => sum + Number(value), 0);
@@ -116,7 +120,8 @@ const Delegation = ({ account }: Props) => {
     () =>
       dispatch(
         openModal("MODAL_ICON_REWARDS_INFO", {
-          account, parentAccount: {} as Account
+          account,
+          parentAccount: {} as Account,
         }),
       ),
     [account, dispatch],
@@ -239,7 +244,9 @@ const Delegation = ({ account }: Props) => {
                   <IconChartLine size={12} />
                   <Box>
                     <Trans
-                      i18nKey={votingPowerNum > 0 ? "icon.voting.emptyState.vote" : "delegation.title"}
+                      i18nKey={
+                        votingPowerNum > 0 ? "icon.voting.emptyState.vote" : "delegation.title"
+                      }
                     />
                   </Box>
                 </Box>

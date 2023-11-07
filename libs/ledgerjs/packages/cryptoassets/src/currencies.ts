@@ -1498,7 +1498,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       {
         name: "ICX",
         code: "ICX",
-        magnitude: 2,
+        magnitude: 6,
       },
     ],
     explorerViews: [
@@ -1523,7 +1523,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       {
         name: "ICX",
         code: "ICX",
-        magnitude: 2,
+        magnitude: 6,
       },
     ],
     explorerViews: [
