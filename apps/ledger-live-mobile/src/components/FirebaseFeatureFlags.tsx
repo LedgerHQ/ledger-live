@@ -18,10 +18,13 @@ import { setAnalyticsFeatureFlagMethod } from "../analytics/segment";
 
 const getFeature = (args: {
   key: FeatureId;
-  appLanguage: string;
+  appLanguage?: string;
   localOverrides?: { [key in FeatureId]?: Feature };
   allowOverride?: boolean;
 }) => {
+  if (!AppConfig.getInstance().providerGetvalueMethod) {
+    return null;
+  }
   const { key, appLanguage, localOverrides, allowOverride = true } = args;
   try {
     // Nb prioritize local overrides
@@ -52,6 +55,7 @@ const getFeature = (args: {
 
     if (
       feature.enabled &&
+      appLanguage &&
       ((feature.languages_whitelisted && !feature.languages_whitelisted.includes(appLanguage)) ||
         (feature.languages_blacklisted && feature.languages_blacklisted.includes(appLanguage)))
     ) {
@@ -129,7 +133,6 @@ export const FirebaseFeatureFlagsProvider: React.FC<Props> = ({ children }) => {
 
   useEffect(() => {
     setAnalyticsFeatureFlagMethod(wrappedGetFeature);
-
     return () => setAnalyticsFeatureFlagMethod(null);
   }, [wrappedGetFeature]);
 
