@@ -103,14 +103,14 @@ const useNotifications = () => {
     if (Platform.OS === "android") {
       Linking.openSettings();
     } else {
-      // const permissionOptions = {
-      //   alert: true,
-      //   sound: true,
-      //   badge: true,
-      //   provisional: false
-      // };
+      const permissionOptions = {
+        alert: true,
+        sound: true,
+        badge: true,
+        provisional: false
+      };
 
-      // Braze.requestPushPermission(permissionOptions);
+      Braze.requestPushPermission(permissionOptions);
 
       const fcm = messaging();
       const permission = await fcm.hasPermission();
