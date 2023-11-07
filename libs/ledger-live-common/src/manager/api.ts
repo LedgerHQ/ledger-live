@@ -379,9 +379,7 @@ const getCurrentFirmware: (input: {
     }).catch(error => {
       const status = error?.status || error?.response?.status;
 
-      if (status === 404 && error.message === "not found entity") {
-        throw new FirmwareNotRecognized();
-      }
+      if (status === 404) throw new FirmwareNotRecognized();
 
       throw error;
     });
@@ -467,11 +465,10 @@ const getDeviceVersion: (targetId: string | number, provider: number) => Promise
       }).catch(error => {
         const status = error?.status || error?.response?.status;
 
-        if (status === 404 && error.message === "not found entity") {
+        if (status === 404)
           throw new FirmwareNotRecognized("manager api did not recognize targetId=" + targetId, {
             targetId,
           });
-        }
 
         throw error;
       });
