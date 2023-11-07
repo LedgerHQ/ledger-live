@@ -1286,7 +1286,8 @@
   "postOnboarding": {
     "postOnboardingScreen": {
       "title": "Next up, use your\nLedger Stax to... ",
-      "titleCompleted": "and that's a\nwrap!"
+      "titleCompleted": "You're all set !\nKeep going and explore your wallet.",
+      "exploreCTA": "Explore wallet"
     },
     "postOnboardingContent": {
       "skipLink": "I'll do this later"
