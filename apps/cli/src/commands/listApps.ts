@@ -4,6 +4,7 @@ import listApps from "@ledgerhq/live-common/hw/listApps";
 import { deviceOpt } from "../scan";
 
 export default {
+  description: "list all installed apps on the device",
   args: [deviceOpt],
   job: ({
     device,
