@@ -18,14 +18,14 @@ export type EVMToken = [
 ];
 
 export const importEVMTokens = async (outputDir: string) => {
+  console.log("Importing evm tokens...");
+
   const supportedChainIds = Object.values(cryptocurrenciesById)
     .filter(cryptocurrency => cryptocurrency.ethereumLikeInfo?.chainId)
     .map(cryptocurrency => cryptocurrency.ethereumLikeInfo!.chainId)
     .sort((a, b) => a - b);
 
   const chainNames = new Map<number, string>();
-
-  console.log("Importing evm tokens...");
 
   for await (const chainId of supportedChainIds) {
     try {
