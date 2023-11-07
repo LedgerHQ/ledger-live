@@ -1,5 +1,13 @@
 # @ledgerhq/live-common
 
+## 33.1.0-nightly.6
+
+### Patch Changes
+
+- [#5333](https://github.com/LedgerHQ/ledger-live/pull/5333) [`3aef1832ea`](https://github.com/LedgerHQ/ledger-live/commit/3aef1832ea76ba32c999bee6e408251e7ecb0b3b) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix list apps v2 polyfill: don't use currencyId if there is no matching cryptocurrency
+
+- [#5326](https://github.com/LedgerHQ/ledger-live/pull/5326) [`da9e3cd1e6`](https://github.com/LedgerHQ/ledger-live/commit/da9e3cd1e6f3b9b8846260b552e18fde19e18b32) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Manage signature format expected for swap ng
+
 ## 33.1.0-nightly.5
 
 ### Minor Changes

@@ -1,5 +1,16 @@
 # ledger-live-desktop
 
+## 2.71.0-nightly.7
+
+### Patch Changes
+
+- [#5291](https://github.com/LedgerHQ/ledger-live/pull/5291) [`98aeaf3f23`](https://github.com/LedgerHQ/ledger-live/commit/98aeaf3f23e387d0473e31c6df33b8f390e2c7a8) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Immediatly display a network down error drawer during ESC
+
+- [#5330](https://github.com/LedgerHQ/ledger-live/pull/5330) [`69f8f7da6c`](https://github.com/LedgerHQ/ledger-live/commit/69f8f7da6c5a839a91e2265b1e8fe4c3726353b1) Thanks [@gre](https://github.com/gre)! - Fix the QR Code Camera Picker fallback mode to properly display in dark mode context. Also add a 20s timeout in specific cases where OS would "never end" instead of failing the getUserMedia call.
+
+- Updated dependencies [[`3aef1832ea`](https://github.com/LedgerHQ/ledger-live/commit/3aef1832ea76ba32c999bee6e408251e7ecb0b3b), [`da9e3cd1e6`](https://github.com/LedgerHQ/ledger-live/commit/da9e3cd1e6f3b9b8846260b552e18fde19e18b32)]:
+  - @ledgerhq/live-common@33.1.0-nightly.6
+
 ## 2.71.0-nightly.6
 
 ### Patch Changes
