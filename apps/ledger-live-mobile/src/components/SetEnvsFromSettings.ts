@@ -1,45 +1,26 @@
-import { PureComponent } from "react";
-import { connect } from "react-redux";
-import { createStructuredSelector } from "reselect";
 import { setEnvUnsafe } from "@ledgerhq/live-env";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
 import {
-  hideEmptyTokenAccountsEnabledSelector,
   filterTokenOperationsZeroAmountEnabledSelector,
+  hideEmptyTokenAccountsEnabledSelector,
 } from "../reducers/settings";
-import { State } from "../reducers/types";
 
-const mapStateToProps = createStructuredSelector<
-  State,
-  {
-    hideEmptyTokenAccountsEnabled: boolean;
-    filterTokenOperationsZeroAmountEnabled: boolean;
-  }
->({
-  hideEmptyTokenAccountsEnabled: hideEmptyTokenAccountsEnabledSelector,
-  filterTokenOperationsZeroAmountEnabled: filterTokenOperationsZeroAmountEnabledSelector,
-});
+const SetEnvsFromSettings = () => {
+  const hideEmptyTokenAccountsEnabled = useSelector(hideEmptyTokenAccountsEnabledSelector);
+  const filterTokenOperationsZeroAmountEnabled = useSelector(
+    filterTokenOperationsZeroAmountEnabledSelector,
+  );
 
-class SetEnvsFromSettings extends PureComponent<{
-  hideEmptyTokenAccountsEnabled: boolean;
-  filterTokenOperationsZeroAmountEnabled: boolean;
-}> {
-  apply() {
-    const { hideEmptyTokenAccountsEnabled, filterTokenOperationsZeroAmountEnabled } = this.props;
+  useEffect(() => {
     setEnvUnsafe("HIDE_EMPTY_TOKEN_ACCOUNTS", hideEmptyTokenAccountsEnabled);
+  }, [hideEmptyTokenAccountsEnabled]);
+
+  useEffect(() => {
     setEnvUnsafe("FILTER_ZERO_AMOUNT_ERC20_EVENTS", filterTokenOperationsZeroAmountEnabled);
-  }
+  }, [filterTokenOperationsZeroAmountEnabled]);
 
-  componentDidMount() {
-    this.apply();
-  }
+  return null;
+};
 
-  componentDidUpdate() {
-    this.apply();
-  }
-
-  render() {
-    return null;
-  }
-}
-
-export default connect(mapStateToProps)(SetEnvsFromSettings);
+export default SetEnvsFromSettings;

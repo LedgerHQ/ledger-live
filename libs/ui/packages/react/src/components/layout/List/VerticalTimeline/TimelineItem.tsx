@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Theme } from "src/styles/theme";
+import { Theme } from "../../../../styles/theme";
 import styled, { useTheme } from "styled-components";
 
 import { Item, ItemStatus } from ".";

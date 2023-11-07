@@ -10,6 +10,7 @@ describe("cryptoFactory test", () => {
       "binance_beacon_chain",
       "coreum",
       "desmos",
+      "dydx",
       "nyx",
       "onomy",
       "sei_network",

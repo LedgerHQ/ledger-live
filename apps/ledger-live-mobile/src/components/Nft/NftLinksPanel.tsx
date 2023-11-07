@@ -121,7 +121,7 @@ const NftLinksPanel = ({ nftContract, nftId, links, isOpen, onClose, nftMetadata
   const handlePressCustomImage = useCallback(() => {
     if (!customImageUri) return;
     track("button_clicked", {
-      button: "Set as Ledger Stax lockscreen picture",
+      button: "Set as device lockscreen picture",
       drawer: "NFT settings",
     });
     navigation.navigate(NavigatorName.CustomImage, {

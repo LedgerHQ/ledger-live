@@ -122,7 +122,7 @@ jobs:
           aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
           aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: Run unit tests
-        run: pnpm desktop test:jest
+        run: pnpm desktop test:jest:coverage
 
   e2e-tests-windows:
     name: "Desktop E2E (Windows)"

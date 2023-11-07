@@ -1,0 +1,4 @@
+{
+  "entry": ["src/Eth.ts"],
+  "ignoreUnused": ["@ledgerhq/hw-transport-mocker"]
+}

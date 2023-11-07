@@ -30,6 +30,7 @@ export type CryptoCurrencyId =
   | "decred"
   | "desmos"
   | "dexon"
+  | "dydx"
   | "ellaism"
   | "dogecoin"
   | "digibyte"

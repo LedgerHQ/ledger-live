@@ -10,6 +10,7 @@ setSupportedCurrencies([
   "secret_network",
   "umee",
   "desmos",
+  "dydx",
   "onomy",
   "sei_network",
   "quicksilver",

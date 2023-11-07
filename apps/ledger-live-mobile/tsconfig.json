@@ -10,8 +10,11 @@
     "target": "esnext",
     "incremental": true,
     "baseUrl": ".",
+    "rootDir": ".",
     "paths": {
-      "@utils/*": ["./src/utils/*"]
+      "~/*": ["src/*"],
+      "@utils/*": ["./src/utils/*"],
+      "@tests/*": ["src/__tests__/*"]
     }
   },
   "include": ["src/**/*", "e2e/**/*", "**/*.d.ts", "services/**/*"],

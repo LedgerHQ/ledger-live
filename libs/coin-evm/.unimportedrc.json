@@ -1,0 +1,16 @@
+{
+  "entry": [
+    "src/cli-transaction.ts",
+    "src/deviceTransactionConfig.ts",
+    "src/errors.ts",
+    "src/hw-getAddress.ts",
+    "src/hw-signMessage.ts",
+    "src/logic.ts",
+    "src/specs.ts",
+    "src/transaction.ts",
+    "src/api/gasTracker/index.ts",
+    "src/api/node/rpc.native.ts",
+    "src/bridge/js.ts"
+  ],
+  "ignoreUnimported": ["src/datasets/ethereum1.ts"]
+}

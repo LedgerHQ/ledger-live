@@ -15,7 +15,7 @@ import { TrackScreen } from "../../analytics";
 import DeviceAction from "../DeviceAction";
 import { useStaxRemoveImageDeviceAction } from "../../hooks/deviceActions";
 
-const analyticsDrawerName = "Choose an image to set as your Stax lockscreen";
+const analyticsDrawerName = "Choose an image to set as your device lockscreen";
 
 const analyticsButtonChoosePhoneGalleryEventProps = {
   button: "Choose from my picture gallery",

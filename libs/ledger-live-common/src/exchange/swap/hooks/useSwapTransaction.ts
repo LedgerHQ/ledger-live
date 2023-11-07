@@ -121,7 +121,6 @@ export const useSwapTransaction = ({
   } = fromState;
 
   const { account: toAccount } = toState;
-  const transaction = bridgeTransaction?.transaction;
 
   const fromAmountError = useFromAmountStatusMessage(bridgeTransaction, ["amount"]);
   // treat the gasPrice error as a warning for swap.
@@ -141,8 +140,7 @@ export const useSwapTransaction = ({
     setFromAmount,
     account: fromAccount,
     parentAccount: fromParentAccount,
-    transaction,
-    feesStrategy: transaction?.feesStrategy,
+    bridge: bridgeTransaction,
   });
 
   const { rates, refetchRates, updateSelectedRate } = useProviderRates({
