@@ -330,16 +330,15 @@ const SwapForm = () => {
         loading: swapTransaction.bridgePending || exchangeRatesState.status === "loading",
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     isSwapLiveAppEnabled,
     provider,
-    exchangeRate,
     swapTransaction.swap.from.account?.id,
     swapTransaction.swap.to.currency?.id,
     exchangeRate?.providerType,
     exchangeRate?.tradeMethod,
     swapError,
-    swapTransaction,
     swapTransaction.bridgePending,
     exchangeRatesState.status,
   ]);
