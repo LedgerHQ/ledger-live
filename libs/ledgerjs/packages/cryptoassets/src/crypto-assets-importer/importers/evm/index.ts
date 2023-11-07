@@ -17,65 +17,82 @@ export type EVMToken = [
   string?, // coumpound_for (legacy)
 ];
 
-const chainNames: string[] = [];
+export const importEVMTokens = async (outputDir: string) => {
+  const supportedChainIds = Object.values(cryptocurrenciesById)
+    .filter(cryptocurrency => cryptocurrency.ethereumLikeInfo?.chainId)
+    .map(cryptocurrency => cryptocurrency.ethereumLikeInfo!.chainId)
+    .sort((a, b) => a - b);
 
-const importTokenByChainId = async (outputDir: string, chainId: number) => {
-  console.log(`importing chain with chainId: ${chainId}...`);
-  const erc20 = await fetchTokens<EVMToken[]>(`evm/${chainId}/erc20.json`);
-  const erc20Signatures = await fetchTokens<string>(`evm/${chainId}/erc20-signatures.json`);
-  const indexTsStringified = `import tokens from "./erc20.json";
+  const chainNames = new Map<number, string>();
+
+  console.log("Importing evm tokens...");
+
+  for await (const chainId of supportedChainIds) {
+    try {
+      console.log(`importing chain with chainId: ${chainId}...`);
+      const erc20 = await fetchTokens<EVMToken[]>(`evm/${chainId}/erc20.json`);
+      const erc20Signatures = await fetchTokens<string>(`evm/${chainId}/erc20-signatures.json`);
+      const indexTsStringified = `import tokens from "./erc20.json";
 import signatures from "./erc20-signatures.json";
+
 export default { tokens, signatures };
 `;
 
-  if (erc20 && erc20Signatures) {
-    const dirPath = path.join(outputDir, "evm", chainId.toString());
-    if (!fs.existsSync(dirPath)) {
-      fs.mkdirSync(dirPath, { recursive: true });
+      if (erc20 && erc20Signatures) {
+        const dirPath = path.join(outputDir, "evm", chainId.toString());
+        if (!fs.existsSync(dirPath)) {
+          fs.mkdirSync(dirPath, { recursive: true });
+        }
+
+        const [coinName] = erc20[0];
+        chainNames.set(chainId, coinName);
+        fs.writeFileSync(path.join(dirPath, "erc20.json"), JSON.stringify(erc20));
+        fs.writeFileSync(
+          path.join(dirPath, "erc20-signatures.json"),
+          JSON.stringify(erc20Signatures),
+        );
+        fs.writeFileSync(path.join(dirPath, "index.ts"), indexTsStringified);
+
+        console.log(`importing chain with chainId: ${chainId} (${coinName}) success`);
+      }
+    } catch (err) {
+      console.error(err);
     }
-    const [coinName] = erc20[0];
-    chainNames.push(coinName);
-    fs.writeFileSync(path.join(dirPath, "erc20.json"), JSON.stringify(erc20));
-    fs.writeFileSync(path.join(dirPath, "erc20-signatures.json"), JSON.stringify(erc20Signatures));
-    fs.writeFileSync(path.join(dirPath, "index.ts"), indexTsStringified);
-
-    console.log(`importing token with chainId: ${chainId} (${coinName}) success`);
   }
-};
 
-export const importEVMTokens = async (outputDir: string) => {
-  try {
-    console.log("Importing evm tokens...");
-
-    const supportedChainIds = Object.values(cryptocurrenciesById)
-      .filter(cryptocurrency => cryptocurrency.ethereumLikeInfo?.chainId)
-      .map(cryptocurrency => cryptocurrency.ethereumLikeInfo!.chainId)
-      .sort((a, b) => a - b);
-
-    const promises = supportedChainIds.map(chainId => importTokenByChainId(outputDir, chainId));
-
-    await Promise.allSettled(promises);
-
-    const rootIndexStringified = `${supportedChainIds
-      .map((chainId, index) => `import ${chainNames[index]}_tokens from "./${chainId}/erc20.json"`)
-      .join(";" + String.fromCharCode(10))};
+  const rootIndexStringified = `${supportedChainIds
+    .map(chainId =>
+      chainNames.has(chainId)
+        ? `import ${chainNames.get(chainId)}_tokens from "./${chainId}/erc20.json"`
+        : null,
+    )
+    .filter(Boolean)
+    .join(";" + String.fromCharCode(10))};
 
 ${supportedChainIds
-  .map(
-    (chainId, index) =>
-      `import ${chainNames[index]}_signatures from "./${chainId}/erc20-signatures.json"`,
+  .map(chainId =>
+    chainNames.has(chainId)
+      ? `import ${chainNames.get(chainId)}_signatures from "./${chainId}/erc20-signatures.json"`
+      : null,
   )
+  .filter(Boolean)
   .join(";" + String.fromCharCode(10))};
 
 export const tokens = {
 ${supportedChainIds
-  .map((chainId, index) => `  ${chainId}: ${chainNames[index]}_tokens`)
+  .map(chainId =>
+    chainNames.has(chainId) ? `  ${chainId}: ${chainNames.get(chainId)}_tokens` : null,
+  )
+  .filter(Boolean)
   .join("," + String.fromCharCode(10))},
 };
 
 export const signatures = {
 ${supportedChainIds
-  .map((chainId, index) => `  ${chainId}: ${chainNames[index]}_signatures`)
+  .map(chainId =>
+    chainNames.has(chainId) ? `  ${chainId}: ${chainNames.get(chainId)}_signatures` : null,
+  )
+  .filter(Boolean)
   .join("," + String.fromCharCode(10))},
 };
 
@@ -85,10 +102,7 @@ export default {
 };
 `;
 
-    fs.writeFileSync(`${outputDir}/evm/index.ts`, rootIndexStringified);
+  fs.writeFileSync(`${outputDir}/evm/index.ts`, rootIndexStringified);
 
-    console.log("Importing evm tokens success");
-  } catch (err) {
-    console.error(err);
-  }
+  console.log("Importing evm tokens success");
 };

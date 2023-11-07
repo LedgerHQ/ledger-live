@@ -12,13 +12,14 @@ type AlgorandASAToken = [
 ];
 
 export const importAsaTokens = async (outputDir: string) => {
-  console.log("importing asa tokens...");
-  const asaTokens = await fetchTokens<AlgorandASAToken[]>("asa.json");
-  const filePath = path.join(outputDir, "asa");
-  fs.writeFileSync(`${filePath}.json`, JSON.stringify(asaTokens));
-  fs.writeFileSync(
-    `${filePath}.ts`,
-    `export type AlgorandASAToken = [
+  try {
+    console.log("importing asa tokens...");
+    const asaTokens = await fetchTokens<AlgorandASAToken[]>("asa.json");
+    const filePath = path.join(outputDir, "asa");
+    fs.writeFileSync(`${filePath}.json`, JSON.stringify(asaTokens));
+    fs.writeFileSync(
+      `${filePath}.ts`,
+      `export type AlgorandASAToken = [
   string, // id
   string, // abbr
   string, // name
@@ -31,7 +32,10 @@ import tokens from "./asa.json";
 
 export default tokens as AlgorandASAToken[];
 `,
-  );
+    );
 
-  console.log("importing asa tokens sucess");
+    console.log("importing asa tokens sucess");
+  } catch (err) {
+    console.error(err);
+  }
 };
