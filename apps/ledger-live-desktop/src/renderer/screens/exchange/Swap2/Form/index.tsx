@@ -191,11 +191,6 @@ const SwapForm = () => {
       const fromAccountId = from.parentAccount?.id || from.account?.id;
 
       const pathname = `/platform/${getProviderName(provider).toLowerCase()}`;
-      console.log(
-        "%cindex.tsx line:194 walletApiPartnerList",
-        "color: #007acc;",
-        walletApiPartnerList,
-      );
       const account = accounts.find(a => a.id === fromAccountId);
       if (!account) return;
       const parentAccount = isTokenAccount(account)
