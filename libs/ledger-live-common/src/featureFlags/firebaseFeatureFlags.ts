@@ -34,8 +34,12 @@ export class AppConfig {
       throw new Error("AppConfig instance is not initialized. Call init() first.");
     }
     if (!AppConfig.instance.providerGetvalueMethod) {
-      AppConfig.instance.providerGetvalueMethod = provider2Method;
+      AppConfig.instance.providerGetvalueMethod = {};
     }
+    AppConfig.instance.providerGetvalueMethod = {
+      ...AppConfig.instance.providerGetvalueMethod,
+      ...provider2Method,
+    };
   }
 
   public static getInstance(): AppConfig {
