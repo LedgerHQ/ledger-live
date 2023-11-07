@@ -235,10 +235,6 @@ const SwapForm = () => {
       targetCurrency: targetCurrency?.name,
       partner: provider,
     });
-    if (isSwapLiveAppEnabled) {
-      setSwapWebProps(getSwapWebAppInputProps());
-      return;
-    }
 
     if (providerType === "DEX") {
       redirectToProviderApp(provider);
