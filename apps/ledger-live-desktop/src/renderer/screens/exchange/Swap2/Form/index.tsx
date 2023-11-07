@@ -38,23 +38,7 @@ import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { SWAP_RATES_TIMEOUT } from "../../config";
 import { OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
 import { v4 } from "uuid";
-import SwapWebView, { SWAP_WEB_MANIFEST_ID } from "./SwapWebView";
-
-type SwapWebProps = {
-  inputs: Partial<{
-    provider: string;
-    fromAccountId: string;
-    toAccountId: string;
-    fromAmount: string;
-    quoteId: string;
-    rate: string;
-    feeStrategy: string;
-    customFeeConfig: string;
-    cacheKey: string;
-    error: boolean;
-    loading: boolean;
-  }>;
-};
+import SwapWebView, { SWAP_WEB_MANIFEST_ID, SwapWebProps } from "./SwapWebView";
 
 const Wrapper = styled(Box).attrs({
   p: 20,
@@ -136,7 +120,9 @@ const SwapForm = () => {
   const pageState = usePageState(swapTransaction, swapError);
   const provider = exchangeRate?.provider;
   const idleTimeout = useRef<NodeJS.Timeout | undefined>();
-  const [swapWebProps, setSwapWebProps] = useState<SwapWebProps["inputs"] | undefined>(undefined);
+  const [swapWebProps, setSwapWebProps] = useState<SwapWebProps["swapState"] | undefined>(
+    undefined,
+  );
 
   const { setDrawer } = React.useContext(context);
 
@@ -152,6 +138,46 @@ const SwapForm = () => {
       setIdleState(true);
     }, idleTime);
   }, [idleState]);
+
+  const redirectToProviderApp = useCallback(
+    (provider: string): void => {
+      const { providerURL } = exchangeRate ?? {};
+      const from = swapTransaction.swap.from;
+      const fromAccountId = from.parentAccount?.id || from.account?.id;
+
+      const pathname = `/platform/${getProviderName(provider).toLowerCase()}`;
+      const account = accounts.find(a => a.id === fromAccountId);
+      if (!account) return;
+      const parentAccount = isTokenAccount(account)
+        ? getParentAccount(account, accounts)
+        : undefined;
+
+      const accountId =
+        walletApiPartnerList?.enabled && walletApiPartnerList?.params?.list.includes(provider)
+          ? accountToWalletAPIAccount(account, parentAccount)?.id
+          : fromAccountId;
+
+      history.push({
+        // This looks like an issue, the proper signature is: push(path, [state]) - (function) Pushes a new entry onto the history stack
+        // It seems possible to also pass a LocationDescriptorObject but it does not expect extra properties
+        // @ts-expect-error so customDappUrl is not expected to be here
+        customDappUrl: providerURL,
+        pathname,
+        state: {
+          returnTo: "/swap",
+          accountId,
+        },
+      });
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [
+      swapTransaction.swap.from.account?.id,
+      swapTransaction.swap.to.currency?.id,
+      exchangeRate?.providerType,
+      exchangeRate?.tradeMethod,
+      exchangeRate?.provider,
+    ],
+  );
 
   useEffect(() => {
     if (swapTransaction.swap.rates.status === "success") {
@@ -200,7 +226,7 @@ const SwapForm = () => {
   const onSubmit = () => {
     if (!exchangeRate) return;
 
-    const { provider, providerURL, providerType } = exchangeRate;
+    const { provider, providerType } = exchangeRate;
     track("button_clicked", {
       button: "Request",
       page: "Page Swap Form",
@@ -209,45 +235,13 @@ const SwapForm = () => {
       targetCurrency: targetCurrency?.name,
       partner: provider,
     });
+    if (isSwapLiveAppEnabled) {
+      setSwapWebProps(getSwapWebAppInputProps());
+      return;
+    }
 
     if (providerType === "DEX") {
-      const from = swapTransaction.swap.from;
-      const fromAccountId = from.parentAccount?.id || from.account?.id;
-
-      const pathname = `/platform/${getProviderName(provider).toLowerCase()}`;
-      const getAccountId = ({
-        accountId,
-        provider,
-      }: {
-        accountId: string | undefined;
-        provider: string;
-      }) => {
-        if (
-          !walletApiPartnerList?.enabled ||
-          !walletApiPartnerList?.params?.list.includes(provider)
-        ) {
-          return accountId;
-        }
-        const account = accounts.find(a => a.id === accountId);
-        if (!account) return accountId;
-        const parentAccount = isTokenAccount(account)
-          ? getParentAccount(account, accounts)
-          : undefined;
-        const walletApiId = accountToWalletAPIAccount(account, parentAccount)?.id;
-        return walletApiId || accountId;
-      };
-      const accountId = getAccountId({ accountId: fromAccountId, provider });
-      history.push({
-        // This looks like an issue, the proper signature is: push(path, [state]) - (function) Pushes a new entry onto the history stack
-        // It seems possible to also pass a LocationDescriptorObject but it does not expect extra properties
-        // @ts-expect-error so customDappUrl is not expected to be here
-        customDappUrl: providerURL,
-        pathname,
-        state: {
-          returnTo: "/swap",
-          accountId,
-        },
-      });
+      redirectToProviderApp(provider);
     } else {
       setDrawer(
         ExchangeDrawer,
@@ -385,8 +379,9 @@ const SwapForm = () => {
           />
         </>
       )}
+
       {isSwapLiveAppEnabled ? (
-        <SwapWebView swapState={swapWebProps} />
+        <SwapWebView redirectToProviderApp={redirectToProviderApp} swapState={swapWebProps} />
       ) : (
         <Box>
           <Button primary disabled={!isSwapReady} onClick={onSubmit} data-test-id="exchange-button">
