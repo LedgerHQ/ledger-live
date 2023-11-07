@@ -115,10 +115,7 @@ const useNotifications = () => {
         Linking.openSettings();
       }
     } else {
-      Braze.requestPushPermission();
-
-      const fcm = messaging();
-      const permission = await fcm.hasPermission();
+      const permission = await messaging().hasPermission();
 
       if (permission === messaging.AuthorizationStatus.DENIED) {
         Linking.openSettings();
@@ -126,7 +123,7 @@ const useNotifications = () => {
         permission === messaging.AuthorizationStatus.NOT_DETERMINED ||
         permission === messaging.AuthorizationStatus.PROVISIONAL
       ) {
-        fcm.requestPermission();
+        Braze.requestPushPermission();
       }
     }
     if (neverClickedOnAllowNotificationsButton) {
