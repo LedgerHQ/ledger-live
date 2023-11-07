@@ -23,8 +23,8 @@ import {
 } from "../actions/notifications";
 import { setRatingsModalLocked } from "../actions/ratings";
 import { track } from "../analytics";
-import { notificationsSelector, INITIAL_STATE as settingsInitialState } from "../reducers/settings";
-import { setNotifications } from "../actions/settings";
+import { notificationsSelector, INITIAL_STATE as settingsInitialState, neverClickedOnAllowNotificationsButtonSelector } from "../reducers/settings";
+import { setNeverClickedOnAllowNotificationsButton, setNotifications } from "../actions/settings";
 import { NotificationsSettings } from "../reducers/types";
 import Braze from "@braze/react-native-sdk";
 
@@ -91,6 +91,7 @@ const useNotifications = () => {
     .map((notificationsCategory: NotificationCategory) => notificationsCategory?.category || "");
   const isPushNotificationsModalOpen = useSelector(notificationsModalOpenSelector);
   const isPushNotificationsModalLocked = useSelector(notificationsModalLockedSelector);
+  const neverClickedOnAllowNotificationsButton = useSelector(neverClickedOnAllowNotificationsButtonSelector);
   const pushNotificationsModalType = useSelector(notificationsModalTypeSelector);
   const pushNotificationsOldRoute = useSelector(notificationsCurrentRouteNameSelector);
   const pushNotificationsEventTriggered = useSelector(notificationsEventTriggeredSelector);
@@ -101,16 +102,14 @@ const useNotifications = () => {
 
   const handlePushNotificationsPermission = useCallback(async () => {
     if (Platform.OS === "android") {
-      Linking.openSettings();
+      // Braze.requestPushPermission() is a no-op on Android 12 and below so we only call it on Android 13 and above
+      if (neverClickedOnAllowNotificationsButton && Platform.Version >= 33) {
+        Braze.requestPushPermission();
+      } else {
+        Linking.openSettings();
+      }
     } else {
-      const permissionOptions = {
-        alert: true,
-        sound: true,
-        badge: true,
-        provisional: false
-      };
-
-      Braze.requestPushPermission(permissionOptions);
+      Braze.requestPushPermission();
 
       const fcm = messaging();
       const permission = await fcm.hasPermission();
@@ -124,7 +123,10 @@ const useNotifications = () => {
         fcm.requestPermission();
       }
     }
-  }, []);
+    if (neverClickedOnAllowNotificationsButton) {
+      dispatch(setNeverClickedOnAllowNotificationsButton(false));
+    }
+  }, [neverClickedOnAllowNotificationsButton, dispatch]);
 
   const setPushNotificationsModalOpenCallback = useCallback(
     (isModalOpen: boolean) => {

@@ -5,8 +5,8 @@
 #import "ReactNativeConfig.h"
 #import "RNSplashScreen.h"  // here
 #import <BrazeKit/BrazeKit-Swift.h>
-#import "BrazeReactBridge.h"
 #import "BrazeReactUtils.h"
+#import "BrazeReactBridge.h"
 
 #import <Firebase.h>
 
@@ -25,53 +25,15 @@
 
 @implementation AppDelegate
 
+static NSString *const iOSPushAutoEnabledKey = @"iOSPushAutoEnabled";
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
   self.moduleName = @"ledgerlivemobile";
   // You can add your custom initial props in the dictionary below.
   // They will be passed down to the ViewController used by React Native.
   self.initialProps = @{};
-  
-  // Initialize Braze
-  // NSString *brazeApiKeyFromEnv = [ReactNativeConfig envFor:@"BRAZE_IOS_API_KEY"];
-  // [Appboy startWithApiKey:brazeApiKeyFromEnv inApplication:application withLaunchOptions:launchOptions];
-  
-  // [[AppboyReactUtils sharedInstance] populateInitialUrlFromLaunchOptions:launchOptions];
 
-  // Setup Braze
-  NSString *BRAZE_IOS_API_KEY = [ReactNativeConfig envFor:@"BRAZE_IOS_API_KEY"];
-  NSString *BRAZE_CUSTOM_ENDPOINT = [ReactNativeConfig envFor:@"BRAZE_CUSTOM_ENDPOINT"];
-  BRZConfiguration *configuration = [[BRZConfiguration alloc] initWithApiKey:BRAZE_IOS_API_KEY
-                                                                    endpoint:BRAZE_CUSTOM_ENDPOINT];
-  // Enable logging and customize the configuration here.
-  configuration.logger.level = BRZLoggerLevelInfo;
-  configuration.push.automation = [[BRZConfigurationPushAutomation alloc] initEnablingAllAutomations:YES];
-  configuration.push.automation.requestAuthorizationAtLaunch = NO;
-
-  Braze *braze = [BrazeReactBridge initBraze:configuration];
-  AppDelegate.braze = braze;
-
-  // if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_9_x_Max) {
-  //   UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-
-  //   center.delegate = self;
-  //   UNAuthorizationOptions options = UNAuthorizationOptionAlert | UNAuthorizationOptionSound | UNAuthorizationOptionBadge;
-  //   if (@available(iOS 12.0, *)) {
-  //     options = options | UNAuthorizationOptionProvisional;
-  //   }
-  //   [center requestAuthorizationWithOptions:options
-  //                         completionHandler:^(BOOL granted, NSError * _Nullable error) {
-  //     [[Appboy sharedInstance] pushAuthorizationFromUserNotificationCenter:granted];
-  //   }];
-  //   [[UIApplication sharedApplication] registerForRemoteNotifications];
-  // } else {
-  //   UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeBadge | UIUserNotificationTypeAlert | UIUserNotificationTypeSound) categories:nil];
-  //   [[UIApplication sharedApplication] registerForRemoteNotifications];
-  //   [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
-  // }
-
-  [[BrazeReactUtils sharedInstance] populateInitialUrlFromLaunchOptions:launchOptions];
-  
   // Retrieve the correct GoogleService-Info.plist file name for a given environment
   NSString *googleServiceInfoEnvName = [ReactNativeConfig envFor:@"GOOGLE_SERVICE_INFO_NAME"];
   NSString *googleServiceInfoName = googleServiceInfoEnvName;
@@ -85,13 +47,87 @@
   FIROptions *options = [[FIROptions alloc] initWithContentsOfFile:filePath];
   [FIRApp configureWithOptions:options];
   
-  
+  // Setup Braze
+  NSString *brazeApiKeyFromEnv = [ReactNativeConfig envFor:@"BRAZE_IOS_API_KEY"];
+  NSString *brazeCustomEndpointFromEnv = [ReactNativeConfig envFor:@"BRAZE_CUSTOM_ENDPOINT"];
+
+  BRZConfiguration *configuration = [[BRZConfiguration alloc] initWithApiKey:brazeApiKeyFromEnv endpoint:brazeCustomEndpointFromEnv];
+  configuration.triggerMinimumTimeInterval = 1;
+  configuration.logger.level = BRZLoggerLevelInfo;
+
+  // Default to automically set up push notifications
+  BOOL pushAutoEnabled = YES;
+  if ([[NSUserDefaults standardUserDefaults] objectForKey:iOSPushAutoEnabledKey]) {
+    pushAutoEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:iOSPushAutoEnabledKey];
+  }
+  if (pushAutoEnabled) {
+    NSLog(@"iOS Push Auto enabled.");
+    configuration.push.automation =
+        [[BRZConfigurationPushAutomation alloc] initEnablingAllAutomations:YES];
+    configuration.push.automation.requestAuthorizationAtLaunch = NO;
+  }
+
+  Braze *braze = [BrazeReactBridge initBraze:configuration];
+  AppDelegate.braze = braze;
+
+  if (!pushAutoEnabled) {
+    // If the user explicitly disables Push Auto, register for push manually
+    NSLog(@"iOS Push Auto disabled - Registering for push manually.");
+    [self registerForPushNotifications];
+  }
+
+  [[BrazeReactUtils sharedInstance] populateInitialUrlFromLaunchOptions:launchOptions];
+    
   return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
 
-#pragma mark - AppDelegate.braze
+- (void)registerForPushNotifications {
+  UNUserNotificationCenter *center = UNUserNotificationCenter.currentNotificationCenter;
+  [center setNotificationCategories:BRZNotifications.categories];
+  center.delegate = self;
+  [UIApplication.sharedApplication registerForRemoteNotifications];
+  // Authorization is requested later in the JavaScript layer via `Braze.requestPushPermission`.
+}
 
-static Braze *_braze = nil;
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+  BOOL processedByBraze = AppDelegate.braze != nil && [AppDelegate.braze.notifications handleBackgroundNotificationWithUserInfo:userInfo
+                                                                                                         fetchCompletionHandler:completionHandler];
+  if (processedByBraze) {
+    return;
+  }
+
+  completionHandler(UIBackgroundFetchResultNoData);
+}
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center
+  didReceiveNotificationResponse:(UNNotificationResponse *)response
+         withCompletionHandler:(void (^)(void))completionHandler {
+  [[BrazeReactUtils sharedInstance] populateInitialUrlForCategories:response.notification.request.content.userInfo];
+  BOOL processedByBraze = AppDelegate.braze != nil && [AppDelegate.braze.notifications handleUserNotificationWithResponse:response
+                                                                                                    withCompletionHandler:completionHandler];
+  if (processedByBraze) {
+    return;
+  }
+
+  completionHandler();
+}
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center
+       willPresentNotification:(UNNotification *)notification
+         withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler {
+  if (@available(iOS 14.0, *)) {
+    completionHandler(UNNotificationPresentationOptionList | UNNotificationPresentationOptionBanner);
+  } else {
+    completionHandler(UNNotificationPresentationOptionAlert);
+  }
+}
+
+- (void)application:(UIApplication *)application
+  didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+  [AppDelegate.braze.notifications registerDeviceToken:deviceToken];
+}
+
+static Braze *_braze;
 
 + (Braze *)braze {
   return _braze;
@@ -142,26 +178,6 @@ static Braze *_braze = nil;
 
 - (void)applicationDidEnterBackground:(UIApplication *)application {
   [self showOverlay];
-}
-
-// - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-//   [[Appboy sharedInstance] registerDeviceToken:deviceToken];
-// }
-
-// - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
-//   [[Appboy sharedInstance] registerApplication:application didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
-// }
-
-// - (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)(void))completionHandler {
-//   [[Appboy sharedInstance] userNotificationCenter:center didReceiveNotificationResponse:response withCompletionHandler:completionHandler];
-// }
-
-- (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler {
-  if (@available(iOS 14.0, *)) {
-    completionHandler(UNNotificationPresentationOptionList | UNNotificationPresentationOptionBanner);
-  } else {
-    completionHandler(UNNotificationPresentationOptionAlert);
-  }
 }
 
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
