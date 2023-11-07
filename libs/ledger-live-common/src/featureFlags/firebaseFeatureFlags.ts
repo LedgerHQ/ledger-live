@@ -3,59 +3,13 @@ import { snakeCase } from "lodash";
 import semver from "semver";
 import { Feature, FeatureId } from "@ledgerhq/types-live";
 import { getEnv } from "@ledgerhq/live-env";
-
-export declare interface Value {
-  asBoolean(): boolean;
-  asNumber(): number;
-  asString(): string;
-}
-
-export class AppConfig {
-  public appVersion?: string;
-  public platform?: string;
-  public environment?: string;
-  public providerGetvalueMethod?: { [provider: string]: (key: string) => Value };
-
-  private static instance: AppConfig; // Singleton instance
-  private constructor() {}
-  public static init(config: { appVersion: string; platform: string; environment: string }) {
-    if (!AppConfig.instance) {
-      AppConfig.instance = new AppConfig();
-      AppConfig.instance.appVersion = config.appVersion;
-      AppConfig.instance.platform = config.platform;
-    } else {
-      throw new Error("AppConfig instance is already initialized");
-    }
-  }
-
-  public static setProviderGetValueMethod(provider2Method: {
-    [provider: string]: (key: string) => Value;
-  }) {
-    if (!AppConfig.instance) {
-      throw new Error("AppConfig instance is not initialized. Call init() first.");
-    }
-    if (!AppConfig.instance.providerGetvalueMethod) {
-      AppConfig.instance.providerGetvalueMethod = {};
-    }
-    AppConfig.instance.providerGetvalueMethod = {
-      ...AppConfig.instance.providerGetvalueMethod,
-      ...provider2Method,
-    };
-  }
-
-  public static getInstance(): AppConfig {
-    if (!AppConfig.instance) {
-      throw new Error("AppConfig instance is not initialized. Call init() first.");
-    }
-    return AppConfig.instance;
-  }
-}
+import { LiveConfig } from "./LiveConfig";
 
 export type FirebaseFeatureFlagsProviderProps = PropsWithChildren<unknown>;
 export const formatToFirebaseFeatureId = (id: string) => `feature_${snakeCase(id)}`;
 
 export const checkFeatureFlagVersion = (feature: Feature) => {
-  const platform = AppConfig.getInstance().platform;
+  const platform = LiveConfig.getInstance().platform;
   if (feature && feature.enabled && platform) {
     let featureSpecificVersion: string | undefined;
     if (platform === "desktop") {
@@ -66,7 +20,7 @@ export const checkFeatureFlagVersion = (feature: Feature) => {
     }
     if (
       featureSpecificVersion &&
-      !semver.satisfies(AppConfig.getInstance().appVersion, featureSpecificVersion, {
+      !semver.satisfies(LiveConfig.getInstance().appVersion, featureSpecificVersion, {
         includePrerelease: true,
       })
     ) {
@@ -81,11 +35,11 @@ export const checkFeatureFlagVersion = (feature: Feature) => {
 };
 
 export const isFeature = (key: string): boolean => {
-  if (!AppConfig.getInstance().providerGetvalueMethod) {
+  if (!LiveConfig.getInstance().providerGetvalueMethod) {
     return false;
   }
   try {
-    const value = AppConfig.getInstance().providerGetvalueMethod!["firebase"](
+    const value = LiveConfig.getInstance().providerGetvalueMethod!["firebase"](
       formatToFirebaseFeatureId(key),
     );
     if (!value || !value.asString()) {
@@ -104,7 +58,7 @@ export const getFeature = (args: {
   localOverrides?: { [key in FeatureId]?: Feature };
   allowOverride?: boolean;
 }) => {
-  if (!AppConfig.getInstance().providerGetvalueMethod) {
+  if (!LiveConfig.getInstance().providerGetvalueMethod) {
     return null;
   }
   const { key, appLanguage, localOverrides, allowOverride = true } = args;
@@ -129,7 +83,7 @@ export const getFeature = (args: {
         };
     }
 
-    const value = AppConfig.getInstance().providerGetvalueMethod!["firebase"](
+    const value = LiveConfig.getInstance().providerGetvalueMethod!["firebase"](
       formatToFirebaseFeatureId(key),
     );
 
