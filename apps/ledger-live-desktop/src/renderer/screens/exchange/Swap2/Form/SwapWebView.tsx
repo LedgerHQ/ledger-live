@@ -18,7 +18,7 @@ type CustomHandlersParams<Params> = {
   params: Params;
 };
 
-type SwapWebProps = {
+export type SwapWebProps = {
   swapState?: Partial<{
     provider: string;
     fromAccountId: string;
@@ -30,6 +30,7 @@ type SwapWebProps = {
     customFeeConfig: string;
     cacheKey: string;
   }>;
+  redirectToProviderApp(_: string): void;
   pageState: ReturnType<typeof usePageState>;
 };
 
@@ -42,7 +43,7 @@ const SwapWebAppWrapper = styled.div<{ isDevelopment: boolean }>(
 `,
 );
 
-const SwapWebView = ({ pageState, swapState }: SwapWebProps) => {
+const SwapWebView = ({ pageState, swapState, redirectToProviderApp }: SwapWebProps) => {
   const {
     colors: {
       palette: { type: themeType },
@@ -80,6 +81,9 @@ const SwapWebView = ({ pageState, swapState }: SwapWebProps) => {
       "custom.throwGenericErrorToLedgerLive": () => {
         onSwapWebviewError();
         return Promise.resolve();
+      },
+      "custom.redirectToProviderApp": ({ params }: { params: string }) => {
+        redirectToProviderApp(params);
       },
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
