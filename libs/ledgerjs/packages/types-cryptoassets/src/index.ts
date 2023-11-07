@@ -159,6 +159,7 @@ export type CryptoCurrencyId =
   | "polygon_zk_evm_testnet"
   | "base"
   | "base_goerli"
+  | "casper"
   | "neon_evm";
 
 export type LedgerExplorerId =
