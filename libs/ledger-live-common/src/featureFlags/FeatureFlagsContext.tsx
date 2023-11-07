@@ -36,12 +36,6 @@ export type FeatureFlagsContextValue = {
    * @returns undefined
    */
   resetFeatures: () => void;
-
-  /**
-   *
-   * @returns the values of all the defined feature flags
-   */
-  getAllFlags: () => Record<string, Feature>;
 };
 
 /**
@@ -56,7 +50,6 @@ const FeatureFlagsContext = createContext<FeatureFlagsContextValue>({
   overrideFeature: _ => {},
   resetFeature: _ => {},
   resetFeatures: () => {},
-  getAllFlags: () => ({}),
 });
 
 export const FeatureFlagsProvider = FeatureFlagsContext.Provider;

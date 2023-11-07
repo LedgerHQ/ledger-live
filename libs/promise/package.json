@@ -35,6 +35,7 @@
     "watch": "tsc --watch",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
-    "test": "jest"
+    "test": "jest",
+    "unimported": "unimported"
   }
 }

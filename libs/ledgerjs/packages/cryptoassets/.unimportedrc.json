@@ -1,0 +1,9 @@
+{
+  "entry": [
+    "src/index.ts",
+    "src/data/evm/index.ts",
+    "src/data/eip712.ts",
+    "src/data/erc20-signatures.ts"
+  ],
+  "ignoreUnimported": ["src/data/**/index.ts", "src/data/spl.ts"]
+}

@@ -56,11 +56,19 @@ jobs:
           aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: Build the app
         run: pnpm build:lld --api="http://127.0.0.1:${{ steps.build-desktop.outputs.port }}" --token="yolo" --team="foo"
+        env:
+          GENERATE_METAFILES: 1
       - name: Upload linux app
         uses: actions/upload-artifact@v3
         with:
           name: ${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
           path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
+      - name: Upload bundle metafiles
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: linux-js-bundle-metafiles
+          path: ${{ github.workspace }}/apps/ledger-live-desktop/metafile.*
 
   build-desktop-app-windows:
     name: "Build Ledger Live Desktop (Windows)"
@@ -92,11 +100,19 @@ jobs:
         run: |
           pnpm build:lld --api="http://127.0.0.1:${{ steps.build-desktop.outputs.port }}" --token="yolo" --team="foo"
         shell: bash
+        env:
+          GENERATE_METAFILES: 1
       - name: Upload windows
         uses: actions/upload-artifact@v3
         with:
           name: ${{ steps.build-desktop.outputs.version }}-win-x64.exe
           path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-win-x64.exe
+      - name: Upload bundle metafiles
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: windows-js-bundle-metafiles
+          path: ${{ github.workspace }}/apps/ledger-live-desktop/metafile.*
 
   build-desktop-app-macos:
     name: "Build Ledger Live Desktop (Mac OS X)"
@@ -127,11 +143,19 @@ jobs:
       - name: Build the app
         run: |
           pnpm build:lld --api="http://127.0.0.1:${{ steps.build-desktop.outputs.port }}" --token="yolo" --team="foo"
+        env:
+          GENERATE_METAFILES: 1
       - name: Upload macOS app
         uses: actions/upload-artifact@v3
         with:
           name: ${{ steps.build-desktop.outputs.version }}-mac.dmg
           path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-mac.dmg
+      - name: Upload bundle metafiles
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: mac-js-bundle-metafiles
+          path: ${{ github.workspace }}/apps/ledger-live-desktop/metafile.*
 
   report:
     needs: [build-desktop-app-linux, build-desktop-app-macos, build-desktop-app-windows]

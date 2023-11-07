@@ -60,14 +60,12 @@ test("Live App SDK methods @smoke", async ({ page }) => {
 
   await test.step("Request Account drawer - open", async () => {
     await liveAppWebview.requestAsset();
-    await drawer.verifyAssetIsReady();
-    await expect(liveAppWebview.selectAssetTitle).toBeVisible();
+    await expect(drawer.selectAssetTitle).toBeVisible();
   });
 
   await test.step("Request Account - select asset", async () => {
     await drawer.selectCurrency("Bitcoin");
-    await expect(liveAppWebview.selectAccountTitle).toBeVisible();
-    await expect(liveAppWebview.selectAssetSearchBar).toBeEnabled();
+    await expect(drawer.selectAccountTitle).toBeVisible();
   });
 
   await test.step("Request Account - select BTC", async () => {

@@ -1,35 +1,35 @@
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import remoteConfig from "@react-native-firebase/remote-config";
-import { DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/index";
-import { reduce, snakeCase } from "lodash";
-import { FeatureMap } from "@ledgerhq/types-live";
+import {
+  DEFAULT_FEATURES,
+  formatDefaultFeatures,
+  formatToFirebaseFeatureId,
+} from "@ledgerhq/live-common/featureFlags/index";
+import type { FirebaseFeatureFlagsProviderProps as Props } from "@ledgerhq/live-common/featureFlags/index";
+import { LiveConfig } from "@ledgerhq/live-common/featureFlags/index";
+import VersionNumber from "react-native-version-number";
+import { Platform } from "react-native";
 
-export const formatToFirebaseFeatureId = (id: string) => {
-  return `feature_${snakeCase(id)}`;
-};
-
-// Firebase SDK treat JSON values as strings
-const formatDefaultFeatures = (config: FeatureMap) =>
-  reduce(
-    config,
-    (acc, feature, featureId) => ({
-      ...acc,
-      [formatToFirebaseFeatureId(featureId)]: JSON.stringify(feature),
-    }),
-    {},
-  );
-
-type Props = {
-  children?: ReactNode;
-};
-
+LiveConfig.init({
+  appVersion: VersionNumber.appVersion,
+  platform: Platform.OS,
+  environment: process.env.NODE_ENV ?? "development",
+});
+LiveConfig.setProviderGetValueMethod({
+  firebase: (key: string) => {
+    return remoteConfig().getValue(formatToFirebaseFeatureId(key));
+  },
+});
 export const FirebaseRemoteConfigProvider = ({ children }: Props): JSX.Element | null => {
   const [loaded, setLoaded] = useState<boolean>(false);
 
   useEffect(() => {
     let unmounted = false;
-    const loadRemoteConfig = async () => {
+    const fetchConfig = async () => {
       try {
+        if (__DEV__) {
+          remoteConfig().setConfigSettings({ minimumFetchIntervalMillis: 0 });
+        }
         await remoteConfig().setDefaults({
           ...formatDefaultFeatures(DEFAULT_FEATURES),
         });
@@ -43,7 +43,7 @@ export const FirebaseRemoteConfigProvider = ({ children }: Props): JSX.Element |
         setLoaded(true);
       }
     };
-    loadRemoteConfig();
+    fetchConfig();
 
     return () => {
       unmounted = true;

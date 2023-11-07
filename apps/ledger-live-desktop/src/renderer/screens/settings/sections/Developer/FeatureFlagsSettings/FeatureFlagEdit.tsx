@@ -20,7 +20,7 @@ const FeatureFlagEdit: React.FC<{ flagName: FeatureId; flagValue: Feature }> = p
     overriddenByEnv, // eslint-disable-line @typescript-eslint/no-unused-vars
     overridesRemote, // eslint-disable-line @typescript-eslint/no-unused-vars
     enabledOverriddenForCurrentLanguage, // eslint-disable-line @typescript-eslint/no-unused-vars
-    enabledOverriddenForCurrentDesktopVersion, // eslint-disable-line @typescript-eslint/no-unused-vars
+    enabledOverriddenForCurrentVersion, // eslint-disable-line @typescript-eslint/no-unused-vars
     ...pureValue
   } = flagValue || {};
 

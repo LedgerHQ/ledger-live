@@ -11,7 +11,6 @@ export function makeMockedContextValue(
     overrideFeature: () => {},
     resetFeature: () => {},
     resetFeatures: () => {},
-    getAllFlags: () => mockedFeatures,
   };
 }
 

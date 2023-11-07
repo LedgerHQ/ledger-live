@@ -1,4 +1,6 @@
-import { DefaultFeature, Feature, Features } from "@ledgerhq/types-live";
+import { DefaultFeature, Feature, Features, FeatureMap } from "@ledgerhq/types-live";
+import { reduce } from "lodash";
+import { formatToFirebaseFeatureId } from "./firebaseFeatureFlags";
 
 /**
  * Default disabled feature.
@@ -35,6 +37,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyBoba: DEFAULT_FEATURE,
   currencyCoreum: DEFAULT_FEATURE,
   currencyDesmos: DEFAULT_FEATURE,
+  currencyDydx: DEFAULT_FEATURE,
   currencyEnergyWeb: DEFAULT_FEATURE,
   currencyEvmosEvm: DEFAULT_FEATURE,
   currencyInjective: DEFAULT_FEATURE,
@@ -397,3 +400,14 @@ export const DEFAULT_FEATURES: Features = {
     enabled: false,
   },
 };
+
+// Firebase SDK treat JSON values as strings
+export const formatDefaultFeatures = (config: FeatureMap) =>
+  reduce(
+    config,
+    (acc, feature, featureId) => ({
+      ...acc,
+      [formatToFirebaseFeatureId(featureId)]: JSON.stringify(feature),
+    }),
+    {},
+  );
