@@ -1,14 +1,14 @@
 import invariant from "invariant";
 import { useCallback } from "react";
 import { log } from "@ledgerhq/logs";
-import { getMainAccount, formatOperation } from "@ledgerhq/live-common/account/index";
-import type { SignedOperation, Operation, AccountLike, Account } from "@ledgerhq/types-live";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { execAndWaitAtLeast } from "@ledgerhq/live-common/promise";
+import { SignedOperation, Operation, AccountLike, Account } from "@ledgerhq/types-live";
 import { getEnv } from "@ledgerhq/live-env";
+import { formatOperation, getMainAccount } from "../account/index";
+import { getAccountBridge } from "../bridge/index";
+import { execAndWaitAtLeast } from "../promise";
 
 type SignTransactionArgs = {
-  account?: AccountLike | null;
+  account: AccountLike;
   parentAccount?: Account | null;
 };
 
