@@ -1079,7 +1079,9 @@ const ImageLoadingGenericWithoutStyleProvider: React.FC<{
       </Flex>
       <Flex flexDirection={"column"} alignItems="center" alignSelf="stretch">
         {children}
-        <Title mb={pullDown ? "-24px" : undefined}>{title}</Title>
+        <Text mb={pullDown ? "-24px" : undefined} variant="h5Inter" textAlign="center">
+          {title}
+        </Text>
       </Flex>
       <Flex flex={1} flexDirection="column" alignItems={"center"}>
         {bottom}
