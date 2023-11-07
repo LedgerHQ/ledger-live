@@ -49,7 +49,8 @@ export const importEVMTokens = async (outputDir: string) => {
 
     const supportedChainIds = Object.values(cryptocurrenciesById)
       .filter(cryptocurrency => cryptocurrency.ethereumLikeInfo?.chainId)
-      .map(cryptocurrency => cryptocurrency.ethereumLikeInfo!.chainId);
+      .map(cryptocurrency => cryptocurrency.ethereumLikeInfo!.chainId)
+      .sort((a, b) => a - b);
 
     const promises = supportedChainIds.map(chainId => importTokenByChainId(outputDir, chainId));
 
