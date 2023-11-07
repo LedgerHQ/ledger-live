@@ -45,6 +45,7 @@ type PollingImplementationParams<Request, EmittedEvents> = {
   deviceSubject: ReplaySubject<Device | null | undefined>;
   task: (params: { deviceId: string; request: Request }) => Observable<EmittedEvents>;
   request: Request;
+  retryErrorsWhitelist?: ReadonlyArray<ErrorConstructor>;
   config?: PollingImplementationConfig;
 };
 
@@ -147,17 +148,16 @@ const pollingImplementation: Implementation = <SpecificType, GenericRequestType>
 
             debounce((event: EmittedEvent<SpecificType> | ImplementationEvent) => {
               if (event.type === "error" && "error" in event) {
+                const {
+                  retryErrorsWhitelist = [DisconnectedDevice, DisconnectedDeviceDuringOperation],
+                } = params;
                 const error = event.error as unknown;
-                if (
-                  // Delay emission of disconnects to allow reconnection.
-                  error instanceof DisconnectedDevice ||
-                  error instanceof DisconnectedDeviceDuringOperation
-                ) {
+                if (retryErrorsWhitelist.find(e => error instanceof e)) {
+                  // Delay emission of allowed disconnects to allow reconnection.
                   return timer(reconnectWaitTime);
-                } else {
-                  // Other errors should cancel the loop.
-                  shouldStopPolling = true;
                 }
+                // Other errors should cancel the loop.
+                shouldStopPolling = true;
               }
               // All other events pass through.
               return of(null);
