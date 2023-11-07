@@ -14,11 +14,12 @@ type CardanoNativeToken = [
 ];
 
 export const importCardanoNativeTokens = async (outputDir: string) => {
-  console.log("importing cardanoNative tokens...");
-  const cardanoNativeTokens = await fetchTokens<CardanoNativeToken[]>("cardanoNative.json");
-  const filePath = path.join(outputDir, "cardanoNative");
+  try {
+    console.log("importing cardanoNative tokens...");
+    const cardanoNativeTokens = await fetchTokens<CardanoNativeToken[]>("cardanoNative.json");
+    const filePath = path.join(outputDir, "cardanoNative");
 
-  const cardanoNativeTypeStringified = `export type CardanoNativeToken = [
+    const cardanoNativeTypeStringified = `export type CardanoNativeToken = [
   string, // parentCurrencyId
   string, // policyId
   string, // assetName
@@ -29,16 +30,19 @@ export const importCardanoNativeTokens = async (outputDir: string) => {
   boolean // disableCountervalue
 ];`;
 
-  fs.writeFileSync(`${filePath}.json`, JSON.stringify(cardanoNativeTokens));
-  fs.writeFileSync(
-    `${filePath}.ts`,
-    `${cardanoNativeTypeStringified}
+    fs.writeFileSync(`${filePath}.json`, JSON.stringify(cardanoNativeTokens));
+    fs.writeFileSync(
+      `${filePath}.ts`,
+      `${cardanoNativeTypeStringified}
 
 import tokens from "./cardanoNative.json";
 
 export default tokens as CardanoNativeToken[];
 `,
-  );
+    );
 
-  console.log("importing cardanoNative tokens sucess");
+    console.log("importing cardanoNative tokens sucess");
+  } catch (err) {
+    console.error(err);
+  }
 };

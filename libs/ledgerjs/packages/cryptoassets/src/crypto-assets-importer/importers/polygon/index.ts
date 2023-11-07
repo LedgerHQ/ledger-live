@@ -17,9 +17,10 @@ type PolygonToken = [
 ];
 
 export const importPolygonTokens = async (outputDir: string) => {
-  console.log("importing polygon tokens...");
-  const polygonTokens = await fetchTokens<PolygonToken[]>("polygon-erc20.json");
-  if (polygonTokens) {
+  try {
+    console.log("importing polygon tokens...");
+    const polygonTokens = await fetchTokens<PolygonToken[]>("polygon-erc20.json");
+
     const filePath = path.join(outputDir, "polygon-erc20");
     fs.writeFileSync(`${filePath}.json`, JSON.stringify(polygonTokens));
 
@@ -48,5 +49,7 @@ export default tokens as PolygonERC20Token[];
     );
 
     console.log("import polygon tokens success");
+  } catch (err) {
+    console.error(err);
   }
 };
