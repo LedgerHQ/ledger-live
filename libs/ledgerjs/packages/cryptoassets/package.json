@@ -32,10 +32,12 @@
   },
   "dependencies": {
     "axios": "^1.6.0",
+    "bs58check": "^2.1.2",
     "invariant": "2"
   },
   "devDependencies": {
     "@ledgerhq/types-cryptoassets": "workspace:^",
+    "@types/bs58check": "^2.1.0",
     "@types/jest": "^29.5.0",
     "@types/node": "^18.15.3",
     "documentation": "13.2.5",
