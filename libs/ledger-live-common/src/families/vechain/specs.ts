@@ -28,9 +28,6 @@ const vechainTest = {
   testTimeout: 60 * 1000, // 1 minute
   genericDeviceAction: deviceAction.acceptTransaction,
   onSpeculosDeviceCreated: async ({ transport }) => {
-    // enter app vechain
-    // await transport.button(SpeculosButton.BOTH);
-    console.log("onSpeculosDeviceCreated");
     // enable contract data
     await transport.button(SpeculosButton.RIGHT);
     await transport.button(SpeculosButton.BOTH);
@@ -44,7 +41,6 @@ const vechainTest = {
     await transport.button(SpeculosButton.BOTH);
     await transport.button(SpeculosButton.RIGHT);
     await transport.button(SpeculosButton.BOTH);
-    console.log("EndonSpeculosDeviceCreated");
   },
 };
 
