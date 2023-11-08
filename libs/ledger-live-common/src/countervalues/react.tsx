@@ -107,6 +107,7 @@ export function Countervalues({
   useEffect(() => {
     setTriggerLoad(true);
   }, [debouncedUserSettings]);
+
   // loadCountervalues logic
   useEffect(() => {
     if (pending || !triggerLoad) return;
@@ -114,6 +115,7 @@ export function Countervalues({
     dispatch({
       type: "pending",
     });
+
     loadCountervalues(state, userSettings).then(
       state => {
         dispatch({
@@ -129,6 +131,7 @@ export function Countervalues({
       },
     );
   }, [pending, state, userSettings, triggerLoad]);
+
   // save the state when it changes
   useEffect(() => {
     if (!savedState?.status || !Object.keys(savedState.status).length) return;
@@ -137,11 +140,12 @@ export function Countervalues({
       payload: importCountervalues(savedState, userSettings),
     }); // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [savedState]);
+
   // manage the auto polling loop and the interface for user land to trigger a reload
   const [isPolling, setIsPolling] = useState(true);
   useEffect(() => {
     if (!isPolling) return;
-    let pollingTimeout;
+    let pollingTimeout: NodeJS.Timeout;
 
     function pollingLoop() {
       setTriggerLoad(true);
@@ -151,6 +155,7 @@ export function Countervalues({
     pollingTimeout = setTimeout(pollingLoop, pollInitDelay);
     return () => clearTimeout(pollingTimeout);
   }, [autopollInterval, pollInitDelay, isPolling]);
+
   const polling = useMemo<Polling>(
     () => ({
       wipe: () => {
@@ -166,6 +171,7 @@ export function Countervalues({
     }),
     [pending, error],
   );
+
   return (
     <CountervaluesPollingContext.Provider value={polling}>
       <CountervaluesContext.Provider value={state}>{children}</CountervaluesContext.Provider>

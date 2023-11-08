@@ -70,6 +70,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const klaytn = useFeature("currencyKlaytn");
   const mock = useEnv("MOCK");
   const injective = useFeature("currencyInjective");
+  const casper = useFeature("currencyCasper");
   const neonEvm = useFeature("currencyNeonEvm");
 
   const featureFlaggedCurrencies = useMemo(
@@ -110,6 +111,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       base_goerli: baseGoerli,
       klaytn,
       injective,
+      casper,
       neon_evm: neonEvm,
     }),
     [
@@ -149,6 +151,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       baseGoerli,
       klaytn,
       injective,
+      casper,
       neonEvm,
     ],
   );

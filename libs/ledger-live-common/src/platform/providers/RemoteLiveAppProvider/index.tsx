@@ -55,7 +55,9 @@ export function useRemoteLiveAppManifest(appId?: string): LiveAppManifest | unde
     return undefined;
   }
 
-  return liveAppRegistry.value.liveAppById[appId];
+  return (
+    liveAppRegistry.value.liveAppFilteredById[appId] || liveAppRegistry.value.liveAppById[appId]
+  );
 }
 
 export function useRemoteLiveAppContext(): LiveAppContextType {
@@ -131,6 +133,10 @@ export function RemoteLiveAppProvider({
         value: {
           liveAppByIndex: allManifests,
           liveAppFiltered: catalogManifests,
+          liveAppFilteredById: catalogManifests.reduce((acc, liveAppManifest) => {
+            acc[liveAppManifest.id] = liveAppManifest;
+            return acc;
+          }, {}),
           liveAppById: allManifests.reduce((acc, liveAppManifest) => {
             acc[liveAppManifest.id] = liveAppManifest;
             return acc;
