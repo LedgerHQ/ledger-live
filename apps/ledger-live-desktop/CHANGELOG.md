@@ -1,5 +1,28 @@
 # ledger-live-desktop
 
+## 2.71.0-nightly.8
+
+### Minor Changes
+
+- [#4819](https://github.com/LedgerHQ/ledger-live/pull/4819) [`c5981ae341`](https://github.com/LedgerHQ/ledger-live/commit/c5981ae3411abc4c8594adf2efcb52aacddac143) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add support for casper blockchain
+
+### Patch Changes
+
+- [#5342](https://github.com/LedgerHQ/ledger-live/pull/5342) [`4d47fcdde3`](https://github.com/LedgerHQ/ledger-live/commit/4d47fcdde340255fc06249fa630e84a805e0cc13) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - add handler for custom.redirectToProviderApp
+
+- Updated dependencies [[`c5981ae341`](https://github.com/LedgerHQ/ledger-live/commit/c5981ae3411abc4c8594adf2efcb52aacddac143), [`3122c64b07`](https://github.com/LedgerHQ/ledger-live/commit/3122c64b07177468016f2becaa036bc67c8743f5)]:
+  - @ledgerhq/live-common@33.1.0-nightly.7
+  - @ledgerhq/errors@6.15.0-nightly.1
+  - @ledgerhq/coin-evm@0.10.0-nightly.5
+  - @ledgerhq/coin-framework@0.8.1-nightly.5
+  - @ledgerhq/domain-service@1.1.14-nightly.5
+  - @ledgerhq/devices@8.0.8-nightly.1
+  - @ledgerhq/hw-transport@6.28.9-nightly.3
+  - @ledgerhq/hw-transport-http@6.28.4-nightly.3
+  - @ledgerhq/hw-transport-node-hid-singleton@6.28.19-nightly.3
+  - @ledgerhq/hw-transport-vault@1.1.4-nightly.3
+  - @ledgerhq/live-network@1.1.8-nightly.1
+
 ## 2.71.0-nightly.7
 
 ### Patch Changes

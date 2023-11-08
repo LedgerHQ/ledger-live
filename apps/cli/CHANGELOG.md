@@ -1,5 +1,29 @@
 # @ledgerhq/live-cli
 
+## 22.14.0-nightly.7
+
+### Minor Changes
+
+- [#4819](https://github.com/LedgerHQ/ledger-live/pull/4819) [`c5981ae341`](https://github.com/LedgerHQ/ledger-live/commit/c5981ae3411abc4c8594adf2efcb52aacddac143) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add support for casper blockchain
+
+### Patch Changes
+
+- [#5349](https://github.com/LedgerHQ/ledger-live/pull/5349) [`57497fb3d7`](https://github.com/LedgerHQ/ledger-live/commit/57497fb3d7c2d28b48141c9b4e98813ed24411db) Thanks [@aussedatlo](https://github.com/aussedatlo)! - add listApps command to display all installed apps on device
+
+- Updated dependencies [[`c5981ae341`](https://github.com/LedgerHQ/ledger-live/commit/c5981ae3411abc4c8594adf2efcb52aacddac143), [`317685e696`](https://github.com/LedgerHQ/ledger-live/commit/317685e69678e6fe1f489f0c071e7613d329d389), [`3122c64b07`](https://github.com/LedgerHQ/ledger-live/commit/3122c64b07177468016f2becaa036bc67c8743f5)]:
+  - @ledgerhq/live-common@33.1.0-nightly.7
+  - @ledgerhq/cryptoassets@11.1.0-nightly.3
+  - @ledgerhq/errors@6.15.0-nightly.1
+  - @ledgerhq/coin-framework@0.8.1-nightly.5
+  - @ledgerhq/hw-transport@6.28.9-nightly.3
+  - @ledgerhq/hw-transport-http@6.28.4-nightly.3
+  - @ledgerhq/hw-transport-node-ble@6.27.20-nightly.3
+  - @ledgerhq/hw-transport-node-hid@6.27.22-nightly.3
+  - @ledgerhq/hw-transport-node-speculos@6.27.20-nightly.3
+  - @ledgerhq/live-network@1.1.8-nightly.1
+  - @ledgerhq/hw-app-btc@10.0.9-nightly.3
+  - @ledgerhq/hw-transport-mocker@6.27.20-nightly.4
+
 ## 22.14.0-nightly.6
 
 ### Patch Changes

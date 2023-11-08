@@ -1,5 +1,15 @@
 # @ledgerhq/cryptoassets
 
+## 11.1.0-nightly.3
+
+### Minor Changes
+
+- [#4819](https://github.com/LedgerHQ/ledger-live/pull/4819) [`c5981ae341`](https://github.com/LedgerHQ/ledger-live/commit/c5981ae3411abc4c8594adf2efcb52aacddac143) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add support for casper blockchain
+
+### Patch Changes
+
+- [#5276](https://github.com/LedgerHQ/ledger-live/pull/5276) [`317685e696`](https://github.com/LedgerHQ/ledger-live/commit/317685e69678e6fe1f489f0c071e7613d329d389) Thanks [@lvndry](https://github.com/lvndry)! - Enable tron tokens countervalues by default
+
 ## 11.1.0-nightly.2
 
 ### Minor Changes

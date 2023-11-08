@@ -1,5 +1,13 @@
 # @ledgerhq/hw-transport-http
 
+## 6.28.4-nightly.3
+
+### Patch Changes
+
+- Updated dependencies [[`c5981ae341`](https://github.com/LedgerHQ/ledger-live/commit/c5981ae3411abc4c8594adf2efcb52aacddac143)]:
+  - @ledgerhq/errors@6.15.0-nightly.1
+  - @ledgerhq/hw-transport@6.28.9-nightly.3
+
 ## 6.28.4-nightly.2
 
 ### Patch Changes
