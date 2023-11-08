@@ -27,6 +27,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@jest/globals": "^29.6.2",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-promise": "workspace:^",
