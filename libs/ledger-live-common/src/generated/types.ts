@@ -10,6 +10,10 @@ import { Transaction as cardanoTransaction } from "../families/cardano/types";
 import { TransactionRaw as cardanoTransactionRaw } from "../families/cardano/types";
 import { TransactionStatus as cardanoTransactionStatus } from "../families/cardano/types";
 import { TransactionStatusRaw as cardanoTransactionStatusRaw } from "../families/cardano/types";
+import { Transaction as casperTransaction } from "../families/casper/types";
+import { TransactionRaw as casperTransactionRaw } from "../families/casper/types";
+import { TransactionStatus as casperTransactionStatus } from "../families/casper/types";
+import { TransactionStatusRaw as casperTransactionStatusRaw } from "../families/casper/types";
 import { Transaction as celoTransaction } from "../families/celo/types";
 import { TransactionRaw as celoTransactionRaw } from "../families/celo/types";
 import { TransactionStatus as celoTransactionStatus } from "../families/celo/types";
@@ -79,6 +83,7 @@ export type Transaction =
   | algorandTransaction
   | bitcoinTransaction
   | cardanoTransaction
+  | casperTransaction
   | celoTransaction
   | cosmosTransaction
   | crypto_orgTransaction
@@ -100,6 +105,7 @@ export type TransactionRaw =
   | algorandTransactionRaw
   | bitcoinTransactionRaw
   | cardanoTransactionRaw
+  | casperTransactionRaw
   | celoTransactionRaw
   | cosmosTransactionRaw
   | crypto_orgTransactionRaw
@@ -121,6 +127,7 @@ export type TransactionStatus =
   | algorandTransactionStatus
   | bitcoinTransactionStatus
   | cardanoTransactionStatus
+  | casperTransactionStatus
   | celoTransactionStatus
   | cosmosTransactionStatus
   | crypto_orgTransactionStatus
@@ -142,6 +149,7 @@ export type TransactionStatusRaw =
   | algorandTransactionStatusRaw
   | bitcoinTransactionStatusRaw
   | cardanoTransactionStatusRaw
+  | casperTransactionStatusRaw
   | celoTransactionStatusRaw
   | cosmosTransactionStatusRaw
   | crypto_orgTransactionStatusRaw

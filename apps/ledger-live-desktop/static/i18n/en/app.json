@@ -4928,6 +4928,11 @@
     "cta": "Continue"
   },
   "families": {
+    "casper": {
+      "transferIdPlaceholder": "Optional",
+      "transferId": "Transfer ID (Memo)",
+      "transferIdWarningText": "When using a memo, carefully check the information with the recipient"
+    },
     "cardano": {
       "memoPlaceholder": "Optional",
       "memo": "Memo"
@@ -5423,6 +5428,15 @@
     "CantOpenDevice": {
       "title": "Sorry, connection failed",
       "description": "Device detected but connection failed. Please try again or contact Ledger Support if the problem persists."
+    },
+    "CasperInvalidTransferId": {
+      "title": "Transfer ID should be a positive number smaller than {{maxTransferId}}"
+    },
+    "InvalidMinimumAmount": {
+      "title": "Minimum amount to transfer is {{minAmount}}"
+    },
+    "MayBlockAccount": {
+      "title": "Your account will be left with less than the {{minAmount}} required to perform a send"
     },
     "ETHAddressNonEIP": {
       "title": "Auto-verification not available: carefully verify the address",
