@@ -5,9 +5,9 @@
   Copyright © 2023 Ledger SAS. All rights reserved.
 */
 
-"NSBluetoothAlwaysUsageDescription"="Ledger Live needs to connect to your Ledger device to manage your crypto assets";
-"NSBluetoothPeripheralUsageDescription"="The Ledger Live app needs access device";
-"NSCameraUsageDescription"="The Ledger Live app needs access to your camera to scan QR codes";
-"NSFaceIDUsageDescription"="This app requires Face ID permission to authenticate using Face recognition.";
-"NSMicrophoneUsageDescription"="Allow $(PRODUCT_NAME) to use the microphone";
-"NSPhotoLibraryUsageDescription"="Allow $(PRODUCT_NAME) to access your photos";
+"NSBluetoothAlwaysUsageDescription"="Ledger Liveは、暗号資産を管理するためにLedgerデバイスに接続する必要があります";
+"NSBluetoothPeripheralUsageDescription"="Ledger Liveアプリにはアクセスデバイスが必要です";
+"NSCameraUsageDescription"="Ledger LiveアプリはQRコードをスキャンする際にカメラにアクセスする必要があります";
+"NSFaceIDUsageDescription"="このアプリでは、顔認識を使用するために、Face IDの権限を許可する必要があります。";
+"NSMicrophoneUsageDescription"="$(PRODUCT_NAME)にマイクの使用を許可する";
+"NSPhotoLibraryUsageDescription"="$(PRODUCT_NAME)に写真へのアクセスを許可する";

@@ -108,6 +108,7 @@
 		E9558F082AF93CE200BBEB55 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		E9558F092AF93CE300BBEB55 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		E9558F0A2AF93CE500BBEB55 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		E9558F0B2AFBCE2B00BBEB55 /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		F3993D7FF61549FE9270BC06 /* Inter-SemiBold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-SemiBold.otf"; path = "../assets/fonts/Inter-SemiBold.otf"; sourceTree = "<group>"; };
 		F69BAEE5598632AB3E5F7706 /* libPods-ledgerlivemobile-ledgerlivemobileTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ledgerlivemobile-ledgerlivemobileTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F706F7BE3B5F9DD387AB929A /* Pods-ledgerlivemobile.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ledgerlivemobile.debug.xcconfig"; path = "Target Support Files/Pods-ledgerlivemobile/Pods-ledgerlivemobile.debug.xcconfig"; sourceTree = "<group>"; };
@@ -370,6 +371,7 @@
 				ru,
 				tr,
 				zh,
+				ar,
 			);
 			mainGroup = 83CBB9F61A601CBA00E9B192;
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
@@ -638,6 +640,7 @@
 				E9558F082AF93CE200BBEB55 /* ru */,
 				E9558F092AF93CE300BBEB55 /* es */,
 				E9558F0A2AF93CE500BBEB55 /* tr */,
+				E9558F0B2AFBCE2B00BBEB55 /* ar */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
