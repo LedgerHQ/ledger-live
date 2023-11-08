@@ -172,11 +172,11 @@ jobs:
           app_id: ${{ secrets.GH_BOT_APP_ID }}
           private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - uses: ./tools/actions/desktop-build-checks
-        # TODO we will need to filter only if there is a pr number... for instance: if: github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)
+        if: inputs.prNumber != ''
         with:
           token: ${{ steps.generate-token.outputs.token }}
-          baseBranch: "develop" # i think it needs to be whatever the PR targets...
-          prNumber: 5346 # FIXME we don't have this info.. pr number is not in context of the orchestrator which triggers the flow at the moment
+          baseBranch: ${{ inputs.base_ref || 'develop' }}
+          prNumber: ${{ inputs.prNumber }}
       - uses: actions/github-script@v6
         name: build summary
         with:
