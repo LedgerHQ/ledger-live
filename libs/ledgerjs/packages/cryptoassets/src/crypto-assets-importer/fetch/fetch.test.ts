@@ -16,7 +16,7 @@ describe("fetcher", () => {
     expect(tokens).toBe(response);
   });
 
-  it("should throw error if error", async () => {
+  it("should throw error if fetch failed", async () => {
     mockedAxios.get.mockImplementation(() => Promise.reject({ message: "could not fetch" }));
     expect(async () => {
       await fetchTokens("tokens.json");
