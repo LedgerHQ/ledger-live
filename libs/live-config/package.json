@@ -27,17 +27,23 @@
     "test": "jest"
   },
   "dependencies": {
+    "@jest/globals": "^29.6.2",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-promise": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
-    "firebase": "^9.6.6"
+    "@ledgerhq/types-live": "workspace:^",
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
+    "@testing-library/react": "12",
+    "@testing-library/react-hooks": "^8.0.0",
     "@types/invariant": "^2.2.35",
-    "@types/jest": "^29.2.4",
+    "@types/jest": "^29.5.4",
+    "@types/lodash": "^4.14.182",
     "@types/node": "^20.2.5",
     "jest": "^28.1.1",
+    "semver": "^7.3.5",
     "ts-jest": "^28.0.5"
   },
   "typesVersions": {
