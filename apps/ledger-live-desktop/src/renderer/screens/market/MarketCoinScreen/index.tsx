@@ -20,7 +20,11 @@ import { accountsSelector } from "~/renderer/reducers/accounts";
 import { openModal } from "~/renderer/actions/modals";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
+<<<<<<< HEAD
 import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+=======
+import { useFeature } from "@ledgerhq/live-config/FeatureFlags/index";
+>>>>>>> f8e0133b13 (fix: refactoring)
 import useStakeFlow from "../../stake";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";

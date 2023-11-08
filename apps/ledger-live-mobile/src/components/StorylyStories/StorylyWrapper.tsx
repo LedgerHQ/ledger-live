@@ -2,7 +2,11 @@ import React, { ForwardedRef, forwardRef, useCallback, useMemo, useState } from 
 import { useSelector } from "react-redux";
 import { Storyly } from "storyly-react-native";
 import { StorylyInstanceID } from "@ledgerhq/types-live";
+<<<<<<< HEAD
 import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+=======
+import useFeature from "@ledgerhq/live-config/FeatureFlags/useFeature";
+>>>>>>> f8e0133b13 (fix: refactoring)
 import { languageSelector } from "../../reducers/settings";
 
 export type Props = {

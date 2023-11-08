@@ -17,7 +17,11 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Animatable from "react-native-animatable";
 import { setCloseNetworkBanner } from "../../actions/settings";
 import { hasClosedNetworkBannerSelector } from "../../reducers/settings";
+<<<<<<< HEAD
 import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+=======
+import useFeature from "@ledgerhq/live-config/FeatureFlags/useFeature";
+>>>>>>> f8e0133b13 (fix: refactoring)
 import BigCurrencyRow from "../../components/BigCurrencyRow";
 import { findAccountByCurrency } from "../../logic/deposit";
 import { AccountLike } from "@ledgerhq/types-live";

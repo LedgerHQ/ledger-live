@@ -1,8 +1,13 @@
 import React, { useCallback, useRef } from "react";
 import { IconsLegacy, Alert as AlertBox, Flex } from "@ledgerhq/native-ui";
 import { Alert, TouchableWithoutFeedback, View } from "react-native";
+<<<<<<< HEAD
 import { useFeatureFlags } from "@ledgerhq/live-config/featureFlags/FeatureFlagsContext";
 import { groupedFeatures } from "@ledgerhq/live-config/featureFlags/groupedFeatures";
+=======
+import { useFeatureFlags } from "@ledgerhq/live-config/FeatureFlags/FeatureFlagsContext";
+import { groupedFeatures } from "@ledgerhq/live-config/FeatureFlags/groupedFeatures";
+>>>>>>> f8e0133b13 (fix: refactoring)
 import { TrackScreen } from "../../../analytics";
 import SettingsRow from "../../../components/SettingsRow";
 import { ScreenName } from "../../../const";

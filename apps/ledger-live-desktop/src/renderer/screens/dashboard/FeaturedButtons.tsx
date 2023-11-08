@@ -5,7 +5,11 @@ import { useTranslation } from "react-i18next";
 import EntryButton from "~/renderer/components/EntryButton/EntryButton";
 import { useHistory } from "react-router-dom";
 import useStakeFlow from "~/renderer/screens/stake";
+<<<<<<< HEAD
 import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+=======
+import { useFeature } from "@ledgerhq/live-config/FeatureFlags/index";
+>>>>>>> f8e0133b13 (fix: refactoring)
 import { track } from "~/renderer/analytics/segment";
 
 const ButtonGrid = styled(Grid).attrs(() => ({

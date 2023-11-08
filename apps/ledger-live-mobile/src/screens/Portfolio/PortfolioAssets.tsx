@@ -9,7 +9,11 @@ import { useDistribution } from "../../actions/general";
 import { TrackScreen } from "../../analytics";
 import { NavigatorName, ScreenName } from "../../const";
 import { Box } from "@ledgerhq/native-ui";
+<<<<<<< HEAD
 import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+=======
+import { useFeature } from "@ledgerhq/live-config/FeatureFlags/index";
+>>>>>>> f8e0133b13 (fix: refactoring)
 import { blacklistedTokenIdsSelector, discreetModeSelector } from "../../reducers/settings";
 import Assets from "./Assets";
 import PortfolioQuickActionsBar from "./PortfolioQuickActionsBar";

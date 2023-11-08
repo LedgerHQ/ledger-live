@@ -6,7 +6,11 @@ import { IconsLegacy } from "@ledgerhq/native-ui";
 import { getParentAccount, isTokenAccount } from "@ledgerhq/live-common/account/index";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+<<<<<<< HEAD
 import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+=======
+import { useFeature } from "@ledgerhq/live-config/FeatureFlags/index";
+>>>>>>> f8e0133b13 (fix: refactoring)
 import { useRoute } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "../../../const";
 import { readOnlyModeEnabledSelector } from "../../../reducers/settings";

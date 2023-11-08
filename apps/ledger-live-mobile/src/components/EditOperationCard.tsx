@@ -3,10 +3,15 @@ import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { SideImageCard } from "@ledgerhq/native-ui";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
+<<<<<<< HEAD
 import { useNavigation } from "@react-navigation/core";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { NavigatorName, ScreenName } from "../const";
+=======
+import { useFeature } from "@ledgerhq/live-config/FeatureFlags/index";
+// import { useNavigation } from "@react-navigation/core";
+>>>>>>> f8e0133b13 (fix: refactoring)
 import SectionContainer from "../screens/WalletCentricSections/SectionContainer";
 
 type EditOperationCardProps = {

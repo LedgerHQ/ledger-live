@@ -13,7 +13,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { Linking, TouchableOpacity } from "react-native";
+<<<<<<< HEAD
 import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+=======
+import { useFeature } from "@ledgerhq/live-config/FeatureFlags/index";
+>>>>>>> f8e0133b13 (fix: refactoring)
 import { useSelector } from "react-redux";
 
 import Button from "../components/wrappedUi/Button";

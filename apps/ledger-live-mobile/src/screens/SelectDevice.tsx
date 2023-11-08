@@ -3,7 +3,11 @@ import { StyleSheet } from "react-native";
 import { useDispatch as useReduxDispatch } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+<<<<<<< HEAD
 import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+=======
+import { useFeature } from "@ledgerhq/live-config/FeatureFlags/index";
+>>>>>>> f8e0133b13 (fix: refactoring)
 import { useTheme } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
 import { StackScreenProps } from "@react-navigation/stack";

@@ -1,7 +1,11 @@
 import React, { useCallback, useState, useMemo } from "react";
 import { ScrollView } from "react-native";
 import { useTranslation } from "react-i18next";
+<<<<<<< HEAD
 import { useFeatureFlags } from "@ledgerhq/live-config/featureFlags/index";
+=======
+import { useFeatureFlags } from "@ledgerhq/live-config/FeatureFlags/index";
+>>>>>>> f8e0133b13 (fix: refactoring)
 import type { FeatureId, Feature } from "@ledgerhq/types-live";
 
 import { BaseInput, Text, Flex, Button, Switch } from "@ledgerhq/native-ui";

@@ -2,7 +2,11 @@ import { useDispatch } from "react-redux";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { usePostOnboardingContext } from "./usePostOnboardingContext";
 import { useCallback } from "react";
+<<<<<<< HEAD
 import { useFeatureFlags } from "@ledgerhq/live-config/featureFlags/index";
+=======
+import { useFeatureFlags } from "@ledgerhq/live-config/FeatureFlags/index";
+>>>>>>> f8e0133b13 (fix: refactoring)
 import { initPostOnboarding } from "../actions";
 
 type StartPostOnboardingOptions = {

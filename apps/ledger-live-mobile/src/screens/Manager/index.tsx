@@ -5,7 +5,11 @@ import { Trans } from "react-i18next";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { BluetoothRequired } from "@ledgerhq/errors";
 import { Result } from "@ledgerhq/live-common/hw/actions/manager";
+<<<<<<< HEAD
 import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+=======
+import { useFeature } from "@ledgerhq/live-config/FeatureFlags/index";
+>>>>>>> f8e0133b13 (fix: refactoring)
 import { Flex, Text } from "@ledgerhq/native-ui";
 import TabBarSafeAreaView from "../../components/TabBar/TabBarSafeAreaView";
 import { ScreenName } from "../../const";

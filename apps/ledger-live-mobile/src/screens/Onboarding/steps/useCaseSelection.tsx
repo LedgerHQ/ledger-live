@@ -1,5 +1,9 @@
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
+<<<<<<< HEAD
 import { useFeature, isRecoverDisplayed } from "@ledgerhq/live-config/featureFlags/index";
+=======
+import { useFeature } from "@ledgerhq/live-config/FeatureFlags/index";
+>>>>>>> f8e0133b13 (fix: refactoring)
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useState } from "react";

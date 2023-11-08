@@ -3,7 +3,11 @@ import { Linking, Platform, ScrollView } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
+<<<<<<< HEAD
 import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+=======
+import useFeature from "@ledgerhq/live-config/FeatureFlags/useFeature";
+>>>>>>> f8e0133b13 (fix: refactoring)
 import { StackNavigationProp } from "@react-navigation/stack";
 import TabBarSafeAreaView from "../../components/TabBar/TabBarSafeAreaView";
 import Illustration from "../../images/illustration/Illustration";

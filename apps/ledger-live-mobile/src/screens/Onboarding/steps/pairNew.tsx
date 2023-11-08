@@ -3,7 +3,11 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
 import { useDispatch } from "react-redux";
 import { DeviceModelId } from "@ledgerhq/devices";
+<<<<<<< HEAD
 import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+=======
+import { useFeature } from "@ledgerhq/live-config/FeatureFlags/index";
+>>>>>>> f8e0133b13 (fix: refactoring)
 import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { NavigatorName, ScreenName } from "../../../const";
 import BaseStepperView, { PairNew, ConnectNano } from "./setupDevice/scenes";

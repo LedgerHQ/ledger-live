@@ -2,7 +2,11 @@ import React, { useCallback } from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { Linking } from "react-native";
 import { Flex, IconsLegacy, ScrollListContainer, Box, Text } from "@ledgerhq/native-ui";
+<<<<<<< HEAD
 import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+=======
+import useFeature from "@ledgerhq/live-config/FeatureFlags/useFeature";
+>>>>>>> f8e0133b13 (fix: refactoring)
 import { urls } from "@utils/urls";
 import Button from "../../../../../components/wrappedUi/Button";
 

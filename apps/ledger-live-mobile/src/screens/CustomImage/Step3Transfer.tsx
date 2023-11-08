@@ -4,7 +4,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { Flex } from "@ledgerhq/native-ui";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
+<<<<<<< HEAD
 import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+=======
+import { useFeature } from "@ledgerhq/live-config/FeatureFlags/index";
+>>>>>>> f8e0133b13 (fix: refactoring)
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import {

@@ -4,7 +4,11 @@ import {
   createMaterialTopTabNavigator,
   MaterialTopTabBarProps,
 } from "@react-navigation/material-top-tabs";
+<<<<<<< HEAD
 import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+=======
+import useFeature from "@ledgerhq/live-config/FeatureFlags/useFeature";
+>>>>>>> f8e0133b13 (fix: refactoring)
 import { ExploreTabNavigatorStackParamList } from "./types/ExploreTabNavigator";
 import { ScreenName } from "../../const/navigation";
 import NewsfeedPage from "../../screens/Newsfeed";

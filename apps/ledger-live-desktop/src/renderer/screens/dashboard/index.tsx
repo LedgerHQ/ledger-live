@@ -1,5 +1,9 @@
 import React, { useCallback, useMemo } from "react";
+<<<<<<< HEAD
 import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+=======
+import { useFeature } from "@ledgerhq/live-config/FeatureFlags/index";
+>>>>>>> f8e0133b13 (fix: refactoring)
 import { isAddressPoisoningOperation } from "@ledgerhq/live-common/operation";
 import Box from "~/renderer/components/Box";
 import { accountsSelector, currenciesSelector } from "~/renderer/reducers/accounts";

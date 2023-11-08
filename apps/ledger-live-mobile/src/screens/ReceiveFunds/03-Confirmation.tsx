@@ -32,7 +32,11 @@ import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigat
 import styled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
 import Clipboard from "@react-native-clipboard/clipboard";
 import ConfirmationHeaderTitle from "./ConfirmationHeaderTitle";
+<<<<<<< HEAD
 import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+=======
+import useFeature from "@ledgerhq/live-config/FeatureFlags/useFeature";
+>>>>>>> f8e0133b13 (fix: refactoring)
 import { BankMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { hasClosedWithdrawBannerSelector } from "../../reducers/settings";

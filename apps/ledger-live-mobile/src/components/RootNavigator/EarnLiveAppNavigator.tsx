@@ -2,7 +2,11 @@ import React, { useEffect, useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import { useTheme } from "styled-components/native";
+<<<<<<< HEAD
 import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+=======
+import { useFeature } from "@ledgerhq/live-config/FeatureFlags/index";
+>>>>>>> f8e0133b13 (fix: refactoring)
 import { useRoute } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";

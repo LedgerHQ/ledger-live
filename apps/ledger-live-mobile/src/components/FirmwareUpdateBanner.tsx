@@ -7,7 +7,11 @@ import { useSelector } from "react-redux";
 import { Alert, Text, Flex, Icons } from "@ledgerhq/native-ui";
 import { DownloadMedium, UsbMedium } from "@ledgerhq/native-ui/assets/icons";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
+<<<<<<< HEAD
 import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+=======
+import { useFeature } from "@ledgerhq/live-config/FeatureFlags/index";
+>>>>>>> f8e0133b13 (fix: refactoring)
 import { StackNavigationProp } from "@react-navigation/stack";
 import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwareUpdateVersionSupported";
 import useLatestFirmware from "@ledgerhq/live-common/hooks/useLatestFirmware";

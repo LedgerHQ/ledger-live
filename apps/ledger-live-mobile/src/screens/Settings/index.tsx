@@ -3,7 +3,11 @@ import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { View, TouchableWithoutFeedback } from "react-native";
 import { IconsLegacy } from "@ledgerhq/native-ui";
+<<<<<<< HEAD
 import { FeatureToggle, useFeature } from "@ledgerhq/live-config/featureFlags/index";
+=======
+import { FeatureToggle, useFeature } from "@ledgerhq/live-config/FeatureFlags/index";
+>>>>>>> f8e0133b13 (fix: refactoring)
 import Config from "react-native-config";
 import { ScreenName } from "../../const";
 import { hasNoAccountsSelector } from "../../reducers/accounts";

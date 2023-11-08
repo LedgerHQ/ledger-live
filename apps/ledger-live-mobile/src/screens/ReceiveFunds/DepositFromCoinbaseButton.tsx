@@ -2,7 +2,11 @@ import React from "react";
 import { Linking } from "react-native";
 import { useTranslation } from "react-i18next";
 import { Flex, BannerCard } from "@ledgerhq/native-ui";
+<<<<<<< HEAD
 import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+=======
+import { useFeature } from "@ledgerhq/live-config/FeatureFlags/index";
+>>>>>>> f8e0133b13 (fix: refactoring)
 import { CexDepositEntryPointsLocationsMobile } from "@ledgerhq/types-live/lib/cexDeposit";
 import { track } from "../../analytics";
 import CoinbaseIcon from "../../icons/Coinbase";

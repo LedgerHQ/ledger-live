@@ -7,7 +7,11 @@ import Video from "react-native-video";
 import { Linking, StyleSheet } from "react-native";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { useDispatch } from "react-redux";
+<<<<<<< HEAD
 import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+=======
+import useFeature from "@ledgerhq/live-config/FeatureFlags/useFeature";
+>>>>>>> f8e0133b13 (fix: refactoring)
 import { NavigatorName, ScreenName } from "../../../const";
 import StyledStatusBar from "../../../components/StyledStatusBar";
 import { urls } from "@utils/urls";

@@ -10,7 +10,11 @@ import {
   useFeature,
   useFeatureFlags,
   useHasLocallyOverriddenFeatureFlags,
+<<<<<<< HEAD
 } from "@ledgerhq/live-config/featureFlags/index";
+=======
+} from "@ledgerhq/live-config/FeatureFlags/index";
+>>>>>>> f8e0133b13 (fix: refactoring)
 import { Flex, SearchInput, Alert, Tag, Text, Switch } from "@ledgerhq/react-ui";
 import { SettingsSectionRow as Row } from "../../../SettingsSection";
 import { FeatureId } from "@ledgerhq/types-live";
