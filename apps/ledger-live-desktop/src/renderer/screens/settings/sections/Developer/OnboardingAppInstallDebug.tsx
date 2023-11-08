@@ -79,13 +79,14 @@ const OnboardingAppInstallDebugScreen = () => {
     },
     {
       key: 1,
-      estimatedTime: 120,
+      hasLoader: true,
       status: installDone ? "completed" : "active",
       title: "Install default set of apps",
       renderBody: () => (
         <OnboardingAppInstallStep
           deviceToRestore={restore ? deviceToRestore : undefined}
           device={device}
+          setHeaderLoader={() => {}}
           onComplete={() => setInstallDone(true)}
           onError={() => setInstallDone(false)}
         />
