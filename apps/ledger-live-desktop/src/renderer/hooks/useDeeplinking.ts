@@ -138,20 +138,21 @@ export function useDeepLinkHandler() {
         }
         case "account": {
           const { address, currency } = query;
-          console.log(address, currency);
+
           if (!currency || typeof currency !== "string") return;
           const c = findCryptoCurrencyByKeyword(currency.toUpperCase()) as Currency;
           if (!c || c.type === "FiatCurrency") return;
           const foundAccounts = getAccountsOrSubAccountsByCurrency(c, accounts || []);
           if (!foundAccounts.length) return;
 
-          console.log(address, currency);
           // Navigate to a specific account if a valid 'address' is provided and the account currency matches the 'currency' param in the deeplink URL
           if (address && typeof address === "string") {
             const account = accounts.find(
-              acc => acc.freshAddress === address && acc.currency.id === currency.toLowerCase(),
+              acc =>
+                acc.freshAddress === address &&
+                acc.currency.id.toLowerCase() === currency.toLowerCase(),
             );
-            console.log(accounts, account);
+
             if (account) {
               navigate(`/account/${account.id}`);
             }
