@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.71.0-next.2
+
+### Patch Changes
+
+- [#5361](https://github.com/LedgerHQ/ledger-live/pull/5361) [`6e8d436612`](https://github.com/LedgerHQ/ledger-live/commit/6e8d43661251e2a6a326bf2303512b8bad39d01e) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Fix the QR Code Camera Picker fallback mode to properly display in dark mode context. Also add a 20s timeout in specific cases where OS would "never end" instead of failing the getUserMedia call.
+
 ## 2.71.0-next.1
 
 ### Patch Changes
