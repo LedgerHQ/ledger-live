@@ -165,17 +165,29 @@ jobs:
     runs-on: ubuntu-latest
     if: always() && !cancelled() && github.event_name == 'workflow_dispatch'
     steps:
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+        with:
+          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
+          base: ${{ inputs.base_ref }}
+          persist-credentials: false
       - name: generate token
         id: generate-token
         uses: tibdex/github-app-token@v1
         with:
           app_id: ${{ secrets.GH_BOT_APP_ID }}
           private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+      - uses: actions/download-artifact@v3
         with:
-          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
-          base: ${{ inputs.base_ref }}
-          persist-credentials: false
+          name: linux-js-bundle-metafiles
+          path: linux-js-bundle-metafiles
+      - uses: actions/download-artifact@v3
+        with:
+          name: windows-js-bundle-metafiles
+          path: windows-js-bundle-metafiles
+      - uses: actions/download-artifact@v3
+        with:
+          name: mac-js-bundle-metafiles
+          path: mac-js-bundle-metafiles
       - uses: ./tools/actions/desktop-build-checks
         if: inputs.prNumber != ''
         with:

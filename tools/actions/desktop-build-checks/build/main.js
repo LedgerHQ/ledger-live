@@ -39604,7 +39604,6 @@ var require_StreamValues = __commonJS({
 });
 
 // src/main.ts
-var import_path = __toESM(require("path"));
 var core = __toESM(require_core());
 var github2 = __toESM(require_github());
 
@@ -39615,6 +39614,7 @@ var import_unzipper = __toESM(require_unzip2());
 var import_stream_json = __toESM(require_stream_json());
 var import_StreamValues = __toESM(require_StreamValues());
 var import_stream = require("stream");
+var import_path = __toESM(require("path"));
 var metafilesKeys = {
   main: "metafile.main.json",
   preloader: "metafile.preloader.json",
@@ -39682,8 +39682,29 @@ function zipStreamToMetafiles(stream) {
     });
   });
 }
-async function retrieveLocalMetafiles(zipFile) {
-  return zipStreamToMetafiles(import_fs.default.createReadStream(zipFile));
+async function jsonFileToMetafiles(folder) {
+  return new Promise((resolve, reject) => {
+    const files = import_fs.default.readdirSync(folder);
+    const bundles = {};
+    for (const file of files) {
+      const p = import_path.default.join(folder, file);
+      if (!import_fs.default.lstatSync(p).isFile())
+        return;
+      if (file.includes("metafile")) {
+        try {
+          const content = import_fs.default.readFileSync(p, "utf8");
+          const parsed = JSON.parse(content);
+          bundles[file] = parsed;
+        } catch (error) {
+          reject(error);
+        }
+      }
+    }
+    resolve(bundles);
+  });
+}
+async function retrieveLocalMetafiles(folder) {
+  return jsonFileToMetafiles(folder);
 }
 async function submitCommentToPR({
   reporter,
@@ -39736,7 +39757,6 @@ function formatSize(bytes) {
 async function main() {
   const githubToken = core.getInput("token");
   const prNumber = core.getInput("prNumber");
-  const artifactsFolder = core.getInput("artifactsFolder");
   const baseBranch = core.getInput("baseBranch");
   const octokit = github2.getOctokit(githubToken);
   const latestLinux = await getRecentArtifactFromBranch(
@@ -39751,9 +39771,9 @@ async function main() {
     latestLinux.archive_download_url
   );
   const all = await Promise.all([
-    retrieveLocalMetafiles(import_path.default.join(artifactsFolder, "linux-js-bundle-metafiles.zip")),
-    retrieveLocalMetafiles(import_path.default.join(artifactsFolder, "mac-js-bundle-metafiles.zip")),
-    retrieveLocalMetafiles(import_path.default.join(artifactsFolder, "windows-js-bundle-metafiles.zip"))
+    retrieveLocalMetafiles("linux-js-bundle-metafiles"),
+    retrieveLocalMetafiles("mac-js-bundle-metafiles"),
+    retrieveLocalMetafiles("windows-js-bundle-metafiles")
   ]);
   const reporter = new Reporter();
   crossPlatformChecks(reporter, all, ["Linux", "Mac", "Windows"]);

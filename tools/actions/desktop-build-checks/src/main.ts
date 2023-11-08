@@ -1,4 +1,3 @@
-import path from "path";
 import * as core from "@actions/core";
 import * as github from "@actions/github";
 import {
@@ -17,7 +16,7 @@ import {
 async function main() {
   const githubToken = core.getInput("token");
   const prNumber = core.getInput("prNumber");
-  const artifactsFolder = core.getInput("artifactsFolder");
+  // const artifactsFolder = core.getInput("artifactsFolder");
   const baseBranch = core.getInput("baseBranch");
   const octokit = github.getOctokit(githubToken);
 
@@ -34,9 +33,9 @@ async function main() {
   );
 
   const all = await Promise.all([
-    retrieveLocalMetafiles(path.join(artifactsFolder, "linux-js-bundle-metafiles.zip")),
-    retrieveLocalMetafiles(path.join(artifactsFolder, "mac-js-bundle-metafiles.zip")),
-    retrieveLocalMetafiles(path.join(artifactsFolder, "windows-js-bundle-metafiles.zip")),
+    retrieveLocalMetafiles("linux-js-bundle-metafiles"),
+    retrieveLocalMetafiles("mac-js-bundle-metafiles"),
+    retrieveLocalMetafiles("windows-js-bundle-metafiles"),
   ]);
 
   const reporter = new Reporter();

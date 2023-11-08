@@ -4,6 +4,7 @@ import { Parse } from "unzipper";
 import { parser } from "stream-json";
 import { streamValues } from "stream-json/streamers/StreamValues";
 import { Readable } from "stream";
+import path from "path";
 
 export const metafilesKeys = {
   main: "metafile.main.json",
@@ -134,8 +135,30 @@ function zipStreamToMetafiles(stream: Readable): Promise<Metafiles> {
   });
 }
 
-export async function retrieveLocalMetafiles(zipFile: string): Promise<Metafiles> {
-  return zipStreamToMetafiles(fs.createReadStream(zipFile));
+export async function jsonFileToMetafiles(folder: string): Promise<Metafiles> {
+  return new Promise((resolve, reject) => {
+    const files = fs.readdirSync(folder);
+    const bundles: Metafiles = {};
+    for (const file of files) {
+      const p = path.join(folder, file);
+      if (!fs.lstatSync(p).isFile()) return;
+
+      if (file.includes("metafile")) {
+        try {
+          const content = fs.readFileSync(p, "utf8");
+          const parsed = JSON.parse(content) as Metafile;
+          bundles[file as MetafileKey] = parsed;
+        } catch (error) {
+          reject(error);
+        }
+      }
+    }
+    resolve(bundles);
+  });
+}
+
+export async function retrieveLocalMetafiles(folder: string): Promise<Metafiles> {
+  return jsonFileToMetafiles(folder);
 }
 
 export async function submitCommentToPR({
