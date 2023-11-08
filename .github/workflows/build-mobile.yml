@@ -117,6 +117,7 @@ jobs:
         with:
           aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
           aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          upgrade_npm: true
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.2.2
