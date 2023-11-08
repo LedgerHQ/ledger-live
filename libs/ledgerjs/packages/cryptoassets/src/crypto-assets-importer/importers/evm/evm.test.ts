@@ -1,6 +1,6 @@
 import axios from "axios";
-import { importEVMTokens } from ".";
-import fs from "fs";
+import { importTokenByChainId } from ".";
+import fs from "fs/promises";
 
 const evmToken = [
   ["ethereum", "$aapl", "$AAPL", 18, "$AAPL", "signature", "address", true, false, null],
@@ -27,12 +27,13 @@ describe("import EVM Token", () => {
   });
 
   it("should output the file in the correct format", async () => {
-    const mockedFs = (fs.writeFileSync = jest.fn());
+    const mockedFs = (fs.writeFile = jest.fn());
 
-    await importEVMTokens(".");
+    await importTokenByChainId(".", 1);
 
     const expectedIndex = `import tokens from "./erc20.json";
 import signatures from "./erc20-signatures.json";
+
 export default { tokens, signatures };
 `;
 

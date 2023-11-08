@@ -20,7 +20,7 @@ export type EVMToken = [
 
 const chainNames = new Map<number, string>();
 
-const importTokenByChainId = async (outputDir: string, chainId: number) => {
+export const importTokenByChainId = async (outputDir: string, chainId: number) => {
   try {
     console.log(`importing chain with chainId: ${chainId}...`);
     const erc20 = await fetchTokens<EVMToken[]>(`evm/${chainId}/erc20.json`);
