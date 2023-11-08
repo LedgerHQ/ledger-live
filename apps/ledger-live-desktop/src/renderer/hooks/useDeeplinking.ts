@@ -139,22 +139,22 @@ export function useDeepLinkHandler() {
         case "add-account": {
           const { currency } = query;
 
-          const foundCurrency = findCryptoCurrencyByKeyword(
-            typeof currency === "string" ? currency.toUpperCase() : "",
-          ) as Currency;
+          if (!currency) {
+            dispatch(openModal("MODAL_ADD_ACCOUNTS", undefined));
+          } else {
+            const foundCurrency = findCryptoCurrencyByKeyword(
+              typeof currency === "string" ? currency.toUpperCase() : "",
+            ) as Currency;
 
-          if (foundCurrency.type === "FiatCurrency") return;
+            if (!foundCurrency || foundCurrency.type === "FiatCurrency") return;
 
-          dispatch(
-            openModal(
-              "MODAL_ADD_ACCOUNTS",
-              foundCurrency
-                ? {
-                    currency: foundCurrency,
-                  }
-                : undefined,
-            ),
-          );
+            dispatch(
+              openModal("MODAL_ADD_ACCOUNTS", {
+                currency: foundCurrency,
+              }),
+            );
+          }
+
           break;
         }
         case "buy":
