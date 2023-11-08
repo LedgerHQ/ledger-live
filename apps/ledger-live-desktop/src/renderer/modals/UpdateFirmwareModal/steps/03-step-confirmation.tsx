@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useEffect } from "react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { log } from "@ledgerhq/logs";
-import { UserRefusedFirmwareUpdate } from "@ledgerhq/errors";
+import { LockedDeviceError, UserRefusedFirmwareUpdate } from "@ledgerhq/errors";
 import { useHistory } from "react-router-dom";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Track from "~/renderer/analytics/Track";
@@ -84,14 +84,16 @@ export const StepConfirmFooter = ({
 
   if (error) {
     const isUserRefusedFirmwareUpdate = error instanceof UserRefusedFirmwareUpdate;
+    const isDeviceLockedError = error instanceof LockedDeviceError;
+    const isRetryableError = isUserRefusedFirmwareUpdate || isDeviceLockedError;
     return (
       <>
-        <Button variant={!isUserRefusedFirmwareUpdate ? "main" : undefined} onClick={onCloseReload}>
+        <Button variant={"main"} outline={isRetryableError} onClick={onCloseReload}>
           {t("common.close")}
         </Button>
-        {isUserRefusedFirmwareUpdate ? (
+        {isRetryableError ? (
           <Button variant="main" ml={4} onClick={() => onRetry()}>
-            {t("manager.modal.cancelReinstallCTA")}
+            {isDeviceLockedError ? t("common.retry") : t("manager.modal.cancelReinstallCTA")}
           </Button>
         ) : null}
       </>
