@@ -212,7 +212,4 @@ const vtho: AppSpec<Transaction> = {
   ],
 };
 
-const standalone = vet;
-standalone.mutations = [...standalone.mutations, ...vtho.mutations];
-
-export default { standalone };
+export default { vtho, vet };
