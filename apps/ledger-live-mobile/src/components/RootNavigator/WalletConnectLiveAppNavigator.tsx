@@ -3,7 +3,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "styled-components/native";
 import { useDispatch, useSelector } from "react-redux";
 
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-config/FeatureFlags/useFeature";
 import { Flex, IconsLegacy } from "@ledgerhq/native-ui";
 import { useRoute } from "@react-navigation/native";
 import { ScreenName } from "../../const";

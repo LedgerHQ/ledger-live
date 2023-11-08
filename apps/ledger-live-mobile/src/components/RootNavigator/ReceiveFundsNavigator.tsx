@@ -26,7 +26,7 @@ import { ReceiveFundsStackParamList } from "./types/ReceiveFundsNavigator";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import { Flex } from "@ledgerhq/native-ui";
 import HelpButton from "../../screens/ReceiveFunds/HelpButton";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-config/FeatureFlags/useFeature";
 import { useSelector } from "react-redux";
 import {
   hasClosedNetworkBannerSelector,

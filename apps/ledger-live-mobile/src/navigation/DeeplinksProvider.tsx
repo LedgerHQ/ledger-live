@@ -10,7 +10,7 @@ import { DEFAULT_MULTIBUY_APP_ID } from "@ledgerhq/live-common/wallet-api/consta
 
 import Braze from "react-native-appboy-sdk";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-config/FeatureFlags/useFeature";
 import * as Sentry from "@sentry/react-native";
 
 import { hasCompletedOnboardingSelector } from "../reducers/settings";

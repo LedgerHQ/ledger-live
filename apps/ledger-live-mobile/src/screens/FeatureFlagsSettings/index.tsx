@@ -6,7 +6,7 @@ import {
   useFeature,
   useFeatureFlags,
   useHasLocallyOverriddenFeatureFlags,
-} from "@ledgerhq/live-common/featureFlags/index";
+} from "@ledgerhq/live-config/FeatureFlags/index";
 import type { FeatureId } from "@ledgerhq/types-live";
 
 import {

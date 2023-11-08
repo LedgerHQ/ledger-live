@@ -15,7 +15,7 @@ import {
 } from "@ledgerhq/native-ui";
 import { DownloadMedium, UsbMedium } from "@ledgerhq/native-ui/assets/icons";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-config/FeatureFlags/index";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { BatteryStatusTypes } from "@ledgerhq/live-common/hw/getBatteryStatus";
 import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwareUpdateVersionSupported";

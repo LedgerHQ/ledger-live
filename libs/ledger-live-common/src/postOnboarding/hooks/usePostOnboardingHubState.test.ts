@@ -1,4 +1,4 @@
-import { useFeatureFlags } from "../../featureFlags";
+import { useFeatureFlags } from "@ledgerhq/live-config/FeatureFlags/index";
 import { hubStateSelector } from "../reducer";
 import { usePostOnboardingContext } from "./usePostOnboardingContext";
 import { getPostOnboardingAction, mockedFeatureIdToTest } from "../mock";

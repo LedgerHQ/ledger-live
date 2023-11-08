@@ -22,7 +22,7 @@ import setupNanoDark from "./assets/setupNanoDark.png";
 import restoreUsingRecoverDark from "./assets/restoreUsingRecoverDark.png";
 
 import Illustration from "~/renderer/components/Illustration";
-import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
+import { FeatureToggle } from "@ledgerhq/live-config/FeatureFlags/index";
 import { openModal } from "~/renderer/actions/modals";
 
 registerAssets([

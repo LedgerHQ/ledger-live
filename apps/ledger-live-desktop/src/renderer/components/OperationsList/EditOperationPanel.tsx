@@ -7,7 +7,7 @@ import Alert from "~/renderer/components/Alert";
 import Link from "~/renderer/components/Link";
 import { closeModal } from "~/renderer/actions/modals";
 import { useDispatch } from "react-redux";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-config/FeatureFlags/index";
 import invariant from "invariant";
 
 type Props = {

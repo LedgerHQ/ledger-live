@@ -1,5 +1,5 @@
 import React from "react";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-config/FeatureFlags/useFeature";
 import { Catalog as Catalog1 } from "./Catalog";
 import { Catalog as Catalog2 } from "./v2/Catalog";
 import { RecentlyUsedDB } from "@ledgerhq/live-common/wallet-api/react";

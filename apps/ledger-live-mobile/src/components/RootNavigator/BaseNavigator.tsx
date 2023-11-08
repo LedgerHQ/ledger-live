@@ -10,7 +10,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-config/FeatureFlags/useFeature";
 import { useSelector } from "react-redux";
 
 import { ScreenName, NavigatorName } from "../../const";

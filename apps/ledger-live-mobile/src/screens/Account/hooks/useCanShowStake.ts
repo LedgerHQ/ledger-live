@@ -1,4 +1,4 @@
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-config/FeatureFlags/useFeature";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 export function useCanShowStake(currency?: CryptoCurrency | TokenCurrency): boolean {

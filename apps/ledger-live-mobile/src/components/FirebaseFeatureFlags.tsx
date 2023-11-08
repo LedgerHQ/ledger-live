@@ -6,8 +6,8 @@ import {
   DEFAULT_FEATURES,
   isFeature,
   getFeature,
-} from "@ledgerhq/live-common/featureFlags/index";
-import type { FirebaseFeatureFlagsProviderProps as Props } from "@ledgerhq/live-common/featureFlags/index";
+} from "@ledgerhq/live-config/FeatureFlags/index";
+import type { FirebaseFeatureFlagsProviderProps as Props } from "@ledgerhq/live-config/FeatureFlags/index";
 import { FeatureId, Feature, Features } from "@ledgerhq/types-live";
 import { languageSelector, overriddenFeatureFlagsSelector } from "../reducers/settings";
 import { setOverriddenFeatureFlag, setOverriddenFeatureFlags } from "../actions/settings";
