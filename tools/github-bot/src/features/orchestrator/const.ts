@@ -59,7 +59,7 @@ export const WORKFLOWS = {
       draft?: boolean,
     ) => {
       const common = commonGetInputs(payload, metadata, localRef);
-      return { ...common, draft: `${draft}` };
+      return { ...common, draft: `${draft}`, prNumber: `${metadata?.number}` };
     },
   },
   "build-desktop-external.yml": {
