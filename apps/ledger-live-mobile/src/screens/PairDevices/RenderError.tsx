@@ -8,6 +8,7 @@ import {
   HwTransportError,
   HwTransportErrorType,
   PeerRemovedPairing,
+  FirmwareNotRecognized,
 } from "@ledgerhq/errors";
 import { Flex, Button, IconsLegacy } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
@@ -38,7 +39,9 @@ const hitSlop = {
 function RenderError({ error, status, onBypassGenuine, onRetry }: Props) {
   const { colors } = useTheme();
   const isPairingStatus = status === "pairing";
+  const isFirmwareNotRecognized = error instanceof FirmwareNotRecognized;
   const isGenuineCheckStatus = status === "genuinecheck";
+  const isGenuineCheckSkippableError = isGenuineCheckStatus && !isFirmwareNotRecognized;
   const isBrokenPairing = error instanceof PeerRemovedPairing;
 
   const url = isBrokenPairing
@@ -74,7 +77,7 @@ function RenderError({ error, status, onBypassGenuine, onRetry }: Props) {
   const outerError =
     isPairingStatus && !isBrokenPairing
       ? new PairingFailed()
-      : isGenuineCheckStatus
+      : isGenuineCheckSkippableError
       ? new GenuineCheckFailed()
       : null;
 
@@ -107,18 +110,12 @@ function RenderError({ error, status, onBypassGenuine, onRetry }: Props) {
         ) : (
           <>
             <Flex mt={30} flexDirection={"row"}>
-              <Button
-                flex={1}
-                iconPosition="left"
-                Icon={IconsLegacy.ExternalLinkMedium}
-                type="main"
-                onPress={onRetry}
-              >
+              <Button flex={1} iconPosition="left" type="main" onPress={onRetry}>
                 <Trans i18nKey="common.retry" />
               </Button>
             </Flex>
 
-            {isGenuineCheckStatus ? (
+            {isGenuineCheckSkippableError ? (
               <Touchable
                 event="PairDevicesBypassGenuine"
                 onPress={onBypassGenuine}
@@ -136,7 +133,7 @@ function RenderError({ error, status, onBypassGenuine, onRetry }: Props) {
           </>
         )}
       </Flex>
-      {isGenuineCheckStatus ? (
+      {isGenuineCheckSkippableError ? (
         <Flex height={48}>
           <HelpLink style={styles.linkContainerGenuine} />
         </Flex>
