@@ -157,10 +157,19 @@ export const mergeSubAccounts = (
  * A pseudo private Map used to memoize the very long
  * string used to detect a change in the CAL
  * tokens and its corresponding hash.
- *
- * Exported for testing purposes.
  */
-export const simpleSyncHashMemoize: Record<string, string> = {};
+const simpleSyncHashMemoize: Record<string, string> = {};
+
+/**
+ * Helper clearing the simpleSyncHashMemoize object
+ * Exported & used only by test runners
+ */
+export const __testOnlyClearSyncHashMemoize = (): void => {
+  for (const key in simpleSyncHashMemoize) {
+    delete simpleSyncHashMemoize[key];
+  }
+};
+
 /**
  * Method creating a hash that will help triggering or not a full synchronization on an account.
  * As of now, it's checking if a token has been added, removed of changed regarding important properties
