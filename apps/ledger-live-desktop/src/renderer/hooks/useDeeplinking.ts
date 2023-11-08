@@ -136,6 +136,37 @@ export function useDeepLinkHandler() {
           navigate("/accounts");
           break;
         }
+        case "account": {
+          const { address, currency } = query;
+          console.log(address, currency);
+          if (!currency || typeof currency !== "string") return;
+          const c = findCryptoCurrencyByKeyword(currency.toUpperCase()) as Currency;
+          if (!c || c.type === "FiatCurrency") return;
+          const foundAccounts = getAccountsOrSubAccountsByCurrency(c, accounts || []);
+          if (!foundAccounts.length) return;
+
+          console.log(address, currency);
+          // Navigate to a specific account if a valid 'address' is provided and the account currency matches the 'currency' param in the deeplink URL
+          if (address && typeof address === "string") {
+            const account = accounts.find(
+              acc => acc.freshAddress === address && acc.currency.id === currency.toLowerCase(),
+            );
+            console.log(accounts, account);
+            if (account) {
+              navigate(`/account/${account.id}`);
+            }
+            break;
+          }
+
+          const [chosenAccount] = foundAccounts;
+
+          if (chosenAccount?.type === "Account") {
+            navigate(`/account/${chosenAccount.id}`);
+          } else {
+            navigate(`/account/${chosenAccount?.parentId}/${chosenAccount?.id}`);
+          }
+          break;
+        }
         case "add-account": {
           const { currency } = query;
 
@@ -175,32 +206,7 @@ export function useDeepLinkHandler() {
         case "swap":
           navigate("/swap");
           break;
-        case "account": {
-          const { address, currency } = query;
 
-          if (!currency || typeof currency !== "string") return;
-          const c = findCryptoCurrencyByKeyword(currency.toUpperCase()) as Currency;
-          if (!c || c.type === "FiatCurrency") return;
-          const foundAccounts = getAccountsOrSubAccountsByCurrency(c, accounts || []);
-          if (!foundAccounts.length) return;
-          const [chosenAccount] = foundAccounts;
-
-          // Navigate to a specific account if a valid 'address' is provided and the account currency matches the 'currency' param in the deeplink URL
-          if (address && typeof address === "string") {
-            const account = accounts.find(acc => acc.freshAddress === address);
-            if (account && account.currency.id === currency) {
-              navigate(`/account/${account.id}`);
-            }
-            break;
-          }
-
-          if (chosenAccount?.type === "Account") {
-            navigate(`/account/${chosenAccount.id}`);
-          } else {
-            navigate(`/account/${chosenAccount?.parentId}/${chosenAccount?.id}`);
-          }
-          break;
-        }
         case "bridge": {
           const { origin, appName } = query;
           dispatch(closeAllModal());
