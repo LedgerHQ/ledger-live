@@ -384,6 +384,8 @@ test("Wallet API methods @smoke", async ({ page }) => {
   await test.step("transaction.sign", async () => {
     const id = randomUUID();
 
+    const recipient = "0x046615F0862392BC5E6FB43C92AAD73DE158D235";
+
     const response = liveAppWebview.send({
       jsonrpc: "2.0",
       id,
@@ -394,14 +396,21 @@ test("Wallet API methods @smoke", async ({ page }) => {
         rawTransaction: {
           family: "ethereum",
           amount: new BigNumber(100000000000000),
-          recipient: "0x046615F0862392BC5E6FB43C92AAD73DE158D235",
+          recipient,
           data: Buffer.from("SomeDataInHex").toString("hex"),
         },
       },
     });
 
+    // Step Fees
+    await expect(page.getByText("Max estimated fee")).toBeVisible();
     await modal.continueToSignTransaction();
+
+    // Step Recipient
+    await expect(page.getByText(recipient)).toBeVisible();
     await modal.continueToSignTransaction();
+
+    // Step Device
     await deviceAction.silentSign();
 
     await expect(response).resolves.toStrictEqual({
@@ -414,6 +423,8 @@ test("Wallet API methods @smoke", async ({ page }) => {
   await test.step("transaction.signAndBroadcast", async () => {
     const id = randomUUID();
 
+    const recipient = "0x046615F0862392BC5E6FB43C92AAD73DE158D235";
+
     const response = liveAppWebview.send({
       jsonrpc: "2.0",
       id,
@@ -424,14 +435,21 @@ test("Wallet API methods @smoke", async ({ page }) => {
         rawTransaction: {
           family: "ethereum",
           amount: new BigNumber(100000000000000),
-          recipient: "0x046615F0862392BC5E6FB43C92AAD73DE158D235",
+          recipient,
           data: Buffer.from("SomeDataInHex").toString("hex"),
         },
       },
     });
 
+    // Step Fees
+    await expect(page.getByText("Max estimated fee")).toBeVisible();
     await modal.continueToSignTransaction();
+
+    // Step Recipient
+    await expect(page.getByText(recipient)).toBeVisible();
     await modal.continueToSignTransaction();
+
+    // Step Device
     await deviceAction.silentSign();
 
     await expect(response).resolves.toStrictEqual({
@@ -455,6 +473,7 @@ test("Wallet API methods @smoke", async ({ page }) => {
     await expect(response).resolves.toStrictEqual({
       id,
       jsonrpc: "2.0",
+
       result: {
         methodIds: methods,
       },

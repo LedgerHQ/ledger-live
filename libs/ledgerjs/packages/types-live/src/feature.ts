@@ -102,6 +102,7 @@ export type CurrencyFeatures = {
   currencySecretNetwork: DefaultFeature;
   currencySeiNetwork: DefaultFeature;
   currencyDesmos: DefaultFeature;
+  currencyDydx: DefaultFeature;
   currencyUmee: DefaultFeature;
   currencyStargaze: DefaultFeature;
   currencyOnomy: DefaultFeature;
@@ -116,6 +117,7 @@ export type CurrencyFeatures = {
   currencyBase: DefaultFeature;
   currencyBaseGoerli: DefaultFeature;
   currencyKlaytn: DefaultFeature;
+  currencyCasper: DefaultFeature;
   currencyNeonEvm: DefaultFeature;
 };
 

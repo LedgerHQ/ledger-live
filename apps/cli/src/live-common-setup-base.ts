@@ -75,6 +75,7 @@ setSupportedCurrencies([
   "secret_network",
   "umee",
   "desmos",
+  "dydx",
   "onomy",
   "sei_network",
   "persistence",
@@ -89,6 +90,7 @@ setSupportedCurrencies([
   "telos_evm",
   "coreum",
   "injective",
+  "casper",
   "neon_evm",
 ]);
 

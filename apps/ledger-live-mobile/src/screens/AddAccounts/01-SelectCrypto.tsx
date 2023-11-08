@@ -59,6 +59,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const secretNetwork = useFeature("currencySecretNetwork");
   const umee = useFeature("currencyUmee");
   const desmos = useFeature("currencyDesmos");
+  const dydx = useFeature("currencyDydx");
   const onomy = useFeature("currencyOnomy");
   const seiNetwork = useFeature("currencySeiNetwork");
   const quicksilver = useFeature("currencyQuicksilver");
@@ -90,6 +91,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const klaytn = useFeature("currencyKlaytn");
   const mock = useEnv("MOCK");
   const injective = useFeature("currencyInjective");
+  const casper = useFeature("currencyCasper");
   const neonEvm = useFeature("currencyNeonEvm");
 
   const featureFlaggedCurrencies = useMemo(
@@ -98,6 +100,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       stargaze,
       umee,
       desmos,
+      dydx,
       secret_network: secretNetwork,
       onomy,
       sei_network: seiNetwork,
@@ -129,6 +132,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       base_goerli: baseGoerli,
       klaytn,
       injective,
+      casper,
       neon_evm: neonEvm,
     }),
     [
@@ -136,6 +140,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       stargaze,
       umee,
       desmos,
+      dydx,
       secretNetwork,
       onomy,
       seiNetwork,
@@ -167,6 +172,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       baseGoerli,
       klaytn,
       injective,
+      casper,
       neonEvm,
     ],
   );

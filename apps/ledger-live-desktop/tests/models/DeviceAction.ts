@@ -38,7 +38,7 @@ export class DeviceAction {
       window.mock.events.mockDeviceEvent({ type: "opened" });
     });
 
-    await this.loader.waitFor({ state: "visible" }).catch(e => {
+    await this.loader.waitFor({ state: "visible", timeout: 20000 }).catch(e => {
       console.warn(
         "loader is accepted not to be visible at all if the UI was fast enough. this is a very rare case.",
         e,

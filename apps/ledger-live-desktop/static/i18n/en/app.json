@@ -1208,7 +1208,7 @@
           "contactSupportCTA": "Contact Ledger support",
           "notFoundEntityError": {
             "title": "Initiate Genuine Check again",
-            "description": "You must first disable “My Ledger Provider ({{providerNumber}})” setting. To disable it, open Ledger Live “Settings”, select “Experimental features”, and then toggle off “Manager provider”."
+            "description": "You must first disable “My Ledger Provider ({{providerNumber}})” setting. To disable it, open Ledger Live “Settings”, select “Experimental features”, and then toggle off “My Ledger provider”."
           },
           "deviceNotGenuineError": {
             "title": "This {{productName}} is not genuine",
@@ -4268,7 +4268,6 @@
         "nextButton": "Get started",
         "noDevice": "No device?",
         "buyLink": "No device? Buy a Ledger Nano X",
-        "recoverSignIn": "Log in to Ledger Recover",
         "byTapping": "By tapping \"Get Started\" you consent and agree to our",
         "termsAndConditions": "Terms and conditions",
         "and": "and",
@@ -4929,6 +4928,11 @@
     "cta": "Continue"
   },
   "families": {
+    "casper": {
+      "transferIdPlaceholder": "Optional",
+      "transferId": "Transfer ID (Memo)",
+      "transferIdWarningText": "When using a memo, carefully check the information with the recipient"
+    },
     "cardano": {
       "memoPlaceholder": "Optional",
       "memo": "Memo"
@@ -5424,6 +5428,15 @@
     "CantOpenDevice": {
       "title": "Sorry, connection failed",
       "description": "Device detected but connection failed. Please try again or contact Ledger Support if the problem persists."
+    },
+    "CasperInvalidTransferId": {
+      "title": "Transfer ID should be a positive number smaller than {{maxTransferId}}"
+    },
+    "InvalidMinimumAmount": {
+      "title": "Minimum amount to transfer is {{minAmount}}"
+    },
+    "MayBlockAccount": {
+      "title": "Your account will be left with less than the {{minAmount}} required to perform a send"
     },
     "ETHAddressNonEIP": {
       "title": "Auto-verification not available: carefully verify the address",

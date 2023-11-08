@@ -35,6 +35,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyBoba: DEFAULT_FEATURE,
   currencyCoreum: DEFAULT_FEATURE,
   currencyDesmos: DEFAULT_FEATURE,
+  currencyDydx: DEFAULT_FEATURE,
   currencyEnergyWeb: DEFAULT_FEATURE,
   currencyEvmosEvm: DEFAULT_FEATURE,
   currencyInjective: DEFAULT_FEATURE,
@@ -59,6 +60,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyTelosEvm: DEFAULT_FEATURE,
   currencyUmee: DEFAULT_FEATURE,
   currencyVelasEvm: DEFAULT_FEATURE,
+  currencyCasper: DEFAULT_FEATURE,
   currencyNeonEvm: DEFAULT_FEATURE,
 };
 

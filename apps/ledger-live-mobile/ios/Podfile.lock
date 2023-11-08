@@ -733,9 +733,9 @@ PODS:
     - React-RCTText
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNScreens (3.20.0):
+  - RNScreens (3.27.0):
+    - RCT-Folly (= 2021.07.22.00)
     - React-Core
-    - React-RCTImage
   - RNSentry (5.3.0):
     - React-Core
     - Sentry/HybridSDK (= 8.3.3)
@@ -782,7 +782,7 @@ DEPENDENCIES:
   - "EXCamera (from `../../../node_modules/.pnpm/expo-camera@13.4.4_expo-modules-core@1.5.11_expo@49.0.13_react-native@0.72.6_react@18.2.0/node_modules/expo-camera/ios`)"
   - "EXFileSystem (from `../../../node_modules/.pnpm/expo-file-system@15.4.4_expo-modules-core@1.5.11_expo@49.0.13_react-native@0.72.6_react@18.2.0/node_modules/expo-file-system/ios`)"
   - "EXImageLoader (from `../../../node_modules/.pnpm/expo-image-loader@4.3.0_expo-modules-core@1.5.11_expo@49.0.13_react-native@0.72.6_react@18.2.0/node_modules/expo-image-loader/ios`)"
-  - "Expo (from `../../../node_modules/.pnpm/expo@49.0.13_@babel+core@7.22.8_expo-modules-autolinking@1.5.1_expo-modules-core@1.5.11_react-native@0.72.6_react@18.2.0/node_modules/expo`)"
+  - "Expo (from `../../../node_modules/.pnpm/expo@49.0.13_@babel+core@7.23.2_expo-modules-autolinking@1.5.1_expo-modules-core@1.5.11_react-native@0.72.6_react@18.2.0/node_modules/expo`)"
   - "ExpoImageManipulator (from `../../../node_modules/.pnpm/expo-image-manipulator@11.3.0_expo-modules-core@1.5.11_expo@49.0.13_react-native@0.72.6_react@18.2.0/node_modules/expo-image-manipulator/ios`)"
   - "ExpoModulesCore (from `../../../node_modules/.pnpm/expo-modules-core@1.5.11_react-native@0.72.6_react@18.2.0/node_modules/expo-modules-core`)"
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
@@ -953,7 +953,7 @@ EXTERNAL SOURCES:
   EXImageLoader:
     :path: "../../../node_modules/.pnpm/expo-image-loader@4.3.0_expo-modules-core@1.5.11_expo@49.0.13_react-native@0.72.6_react@18.2.0/node_modules/expo-image-loader/ios"
   Expo:
-    :path: "../../../node_modules/.pnpm/expo@49.0.13_@babel+core@7.22.8_expo-modules-autolinking@1.5.1_expo-modules-core@1.5.11_react-native@0.72.6_react@18.2.0/node_modules/expo"
+    :path: "../../../node_modules/.pnpm/expo@49.0.13_@babel+core@7.23.2_expo-modules-autolinking@1.5.1_expo-modules-core@1.5.11_react-native@0.72.6_react@18.2.0/node_modules/expo"
   ExpoImageManipulator:
     :path: "../../../node_modules/.pnpm/expo-image-manipulator@11.3.0_expo-modules-core@1.5.11_expo@49.0.13_react-native@0.72.6_react@18.2.0/node_modules/expo-image-manipulator/ios"
   ExpoModulesCore:
@@ -1246,8 +1246,8 @@ SPEC CHECKSUMS:
   RNKeychain: f75b8c8b2f17d3b2aa1f25b4a0ac5b83d947ff8f
   RNLocalize: cbcb55d0e19c78086ea4eea20e03fe8000bbbced
   RNReactNativeHapticFeedback: afa5bf2794aecbb2dba2525329253da0d66656df
-  RNReanimated: 8a732260b07e0f4812aed291a70a03733a1005c0
-  RNScreens: 218801c16a2782546d30bd2026bb625c0302d70f
+  RNReanimated: f63db1d32b7411c173784b38f659e08dbb4dd92a
+  RNScreens: 3c2d122f5e08c192e254c510b212306da97d2581
   RNSentry: 8363f1eff1c685a502e15080b5e2f447969897c5
   RNShare: be91a5c149585affb02c25b351bd07ba927c7006
   RNSVG: 03e4d258ca355d7836a0a5dd4d4dc63c1eb49cbb

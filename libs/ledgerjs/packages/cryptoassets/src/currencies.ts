@@ -977,6 +977,35 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     keywords: ["doge", "dogecoin"],
     explorerId: "doge",
   },
+  dydx: {
+    type: "CryptoCurrency",
+    id: "dydx",
+    coinType: CoinType.ATOM,
+    name: "dYdX",
+    managerAppName: "Cosmos",
+    ticker: "DYDX",
+    scheme: "dydx",
+    color: "#6666FF",
+    family: "cosmos",
+    units: [
+      {
+        name: "dYdX",
+        code: "dydx",
+        magnitude: 18,
+      },
+      {
+        name: "Micro-dydx",
+        code: "adydx",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://www.mintscan.io/dydx/txs/$hash",
+        address: "https://www.mintscan.io/dydx/validators/$address",
+      },
+    ],
+  },
   elastos: {
     type: "CryptoCurrency",
     id: "elastos",
@@ -3596,6 +3625,35 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       {
         tx: "https://www.mintscan.io/injective/txs/$hash",
         address: "https://www.mintscan.io/injective/validators/$address",
+      },
+    ],
+  },
+  casper: {
+    name: "Casper",
+    ticker: "CSPR",
+    coinType: CoinType.CSPR,
+    color: "#000000",
+    family: "casper",
+    id: "casper",
+    managerAppName: "Casper",
+    scheme: "casper",
+    type: "CryptoCurrency",
+    explorerViews: [
+      {
+        tx: "https://cspr.live/deploy/$hash",
+        address: "https://cspr.live/account/$address",
+      },
+    ],
+    units: [
+      {
+        name: "CSPR",
+        code: "CSPR",
+        magnitude: 9,
+      },
+      {
+        name: "motes",
+        code: "motes",
+        magnitude: 0,
       },
     ],
   },
