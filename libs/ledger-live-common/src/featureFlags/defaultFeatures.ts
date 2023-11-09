@@ -157,6 +157,7 @@ export const DEFAULT_FEATURES: Features = {
         loginURI:
           "ledgerlive://recover/protect-simu?redirectTo=login&source=lld-welcome-login&ajs_recover_source=lld-welcome-login&ajs_recover_campaign=recover-launch",
       },
+      compatibleDevices: [],
       discoverTheBenefitsLink: "https://www.ledger.com/recover",
       onboardingCompleted: {
         alreadySubscribedURI: "ledgerlive://recover/protect-simu?redirectTo=login",
@@ -290,6 +291,7 @@ export const DEFAULT_FEATURES: Features = {
     enabled: false,
     params: {
       deeplink: "",
+      compatibleDevices: [],
       account: {
         homeURI:
           "ledgerlive://recover/protect-simu?redirectTo=account&source=llm-myledger-access-card&ajs_prop_source=llm-myledger-access-card&ajs_prop_campaign=recover-launch",
