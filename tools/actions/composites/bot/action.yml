@@ -81,7 +81,6 @@ runs:
         explorerinput: ${{ inputs.EXPLORER }}
         SPECULOS_USE_WEBSOCKET: ${{inputs.speculos_websocket}}
       run: |
-        git status
         export COINAPPS=$PWD/coin-apps
         export NODE_ENV=production
         mkdir libs/ledger-live-common/botreport
