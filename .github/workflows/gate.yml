@@ -3,11 +3,6 @@ run-name: "@Gate triggered by ${{ github.actor }} ${{ format('on branch {0}', gi
 
 on:
   pull_request:
-    branches:
-      - develop
-      - main
-      - release
-      - hotfix
   merge_group:
 
 concurrency:
