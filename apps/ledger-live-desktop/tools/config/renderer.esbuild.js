@@ -46,11 +46,13 @@ module.exports = {
       ],
     }),
     DotEnvPlugin(DOTENV_FILE),
+    /*
     JsonPlugin({
       regexp: /\.(json)$/,
       folderFilter: path.join("ledger-live-desktop", "src"),
       targetPathPrefix: path.join(".webpack", "assets"),
       pathPrefix: "./assets",
     }),
+    */
   ],
 };
