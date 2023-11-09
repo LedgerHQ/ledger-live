@@ -3628,6 +3628,35 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  casper: {
+    name: "Casper",
+    ticker: "CSPR",
+    coinType: CoinType.CSPR,
+    color: "#000000",
+    family: "casper",
+    id: "casper",
+    managerAppName: "Casper",
+    scheme: "casper",
+    type: "CryptoCurrency",
+    explorerViews: [
+      {
+        tx: "https://cspr.live/deploy/$hash",
+        address: "https://cspr.live/account/$address",
+      },
+    ],
+    units: [
+      {
+        name: "CSPR",
+        code: "CSPR",
+        magnitude: 9,
+      },
+      {
+        name: "motes",
+        code: "motes",
+        magnitude: 0,
+      },
+    ],
+  },
   // ethereum nanoapp currencies
   // Light Integrations are at the end of the list until we figure out a way to fix the ticker/managerApp collisions
   arbitrum: {

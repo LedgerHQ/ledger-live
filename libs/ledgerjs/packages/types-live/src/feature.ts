@@ -117,6 +117,7 @@ export type CurrencyFeatures = {
   currencyBase: DefaultFeature;
   currencyBaseGoerli: DefaultFeature;
   currencyKlaytn: DefaultFeature;
+  currencyCasper: DefaultFeature;
   currencyNeonEvm: DefaultFeature;
 };
 
@@ -298,8 +299,15 @@ export type Feature_NewsfeedPage = Feature<{
   whitelistedLocales: string[];
 }>;
 
+export type CompatibleDevice = {
+  available: boolean;
+  comingSoon: boolean;
+  name: string;
+};
+
 export type Feature_ProtectServicesMobile = Feature<{
   deeplink: string;
+  compatibleDevices: CompatibleDevice[];
   onboardingRestore: {
     restoreInfoDrawer: {
       enabled: boolean;
@@ -327,6 +335,7 @@ export type Feature_ProtectServicesDesktop = Feature<{
   availableOnDesktop: boolean;
   openRecoverFromSidebar: boolean;
   discoverTheBenefitsLink: string;
+  compatibleDevices: CompatibleDevice[];
   onboardingRestore: {
     restoreInfoDrawer: {
       enabled: boolean;

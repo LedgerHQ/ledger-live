@@ -53,7 +53,7 @@ export class AccountPage {
   async scrollToOperations() {
     const operationList = this.page.locator("id=operation-list");
     await operationList.waitFor();
-    await operationList.scrollIntoViewIfNeeded({ timeout: 1000 });
+    await operationList.scrollIntoViewIfNeeded();
   }
 
   async startCosmosStakingFlow() {

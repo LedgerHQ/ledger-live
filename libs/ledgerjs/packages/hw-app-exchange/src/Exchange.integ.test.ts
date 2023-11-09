@@ -131,6 +131,37 @@ describe("Check SWAP until payload signature", () => {
     const payloadSignature = await signMessage(encodedPayload, partnerPrivKey, "rs");
     await exchange.checkTransactionSignature(payloadSignature);
   });
+
+  it("NG SWAP with prepared data", async () => {
+    // Given
+    const exchange = new Exchange(transport, ExchangeTypes.SwapNg);
+
+    // When
+    const transactionId = await exchange.startNewTransaction();
+
+    // Then
+    expect(transactionId).toEqual(expect.any(String));
+    expect(transactionId).toHaveLength(64);
+
+    const { partnerInfo, partnerSigned } = await appExchangeDataset(ngSignFormat);
+    await exchange.setPartnerKey(partnerInfo);
+
+    await exchange.checkPartner(partnerSigned);
+
+    const encodedPayload = Buffer.from(
+      ".CipiYzFxYXIwc3Jycjd4Zmt2eTVsNjQzbHlkbnc5cmU1OWd0enp3ZjVtZHEaKmJjMXFhcjBzcnJyN3hma3Z5NWw2NDNseWRudzlyZTU5Z3R6endmNHRlcSoqMHhiNzk0ZjVlYTBiYTM5NDk0Y2U4Mzk2MTNmZmZiYTc0Mjc5NTc5MjY4OgNCVENCA0JBVEoCBH5SBgV0-95gAGIgNQrqDJf3R_HQ92CBRhSkdSOAGxrrfQvLuqKk9Gv4GEs=",
+    );
+
+    const estimatedFees = new BigNumber(0);
+    await exchange.processTransaction(encodedPayload, estimatedFees, "jws");
+
+    // const payloadSignature = await signMessage(encodedPayload, partnerPrivKey, "rs");
+    const payloadSignature = Buffer.from(
+      "zGcNUYKM8sLxvT7zPU1C8vrMmanVlUroELnAeil4weo1LCk0zUBRse5-3Acv7I7II90xVTIxm26BnxRbZvVmTQ==",
+      "base64url",
+    );
+    await exchange.checkTransactionSignature(payloadSignature);
+  });
 });
 
 // Those information comes from dataset test of app-exchange (i.e. check signing_authority.py file).
@@ -179,6 +210,27 @@ async function appExchangeDatasetTest(signFormat: PartnerSignFormat) {
     partnerInfo,
     partnerSigned: sig,
     partnerPrivKey: privKey,
+  };
+}
+async function appExchangeDataset(signFormat: PartnerSignFormat) {
+  const pubKey = Buffer.from(
+    "0478d5facdae2305f48795d3ce7d9244f5060d2f800901da5746d1f4177ae8d7bbe63f3870efc0d36af8f91962811e1d8d9df91ce3b3ea2cd9f550c7d465f8b7b3",
+    "hex",
+  );
+  secp256k1.publicKeyVerify(pubKey);
+
+  const partnerInfo = {
+    name: "SWAP_TEST",
+    curve: "secp256k1",
+    publicKey: pubKey,
+  };
+  const msg = signFormat(partnerInfo);
+
+  const sig = await signMessage(msg, LEDGER_FAKE_PRIVATE_KEY, "der");
+
+  return {
+    partnerInfo,
+    partnerSigned: sig,
   };
 }
 

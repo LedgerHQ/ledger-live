@@ -44,7 +44,6 @@ const ErrorDescription = styled(Text).attrs({
 `;
 
 export type SwapLiveError = {
-  origin: "swap-web-app";
   type?: string;
   cause: {
     message?: string;

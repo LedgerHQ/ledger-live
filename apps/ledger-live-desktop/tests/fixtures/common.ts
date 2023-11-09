@@ -1,4 +1,10 @@
-import { test as base, Page, ElectronApplication, _electron as electron } from "@playwright/test";
+import {
+  test as base,
+  Page,
+  ElectronApplication,
+  _electron as electron,
+  ChromiumBrowserContext,
+} from "@playwright/test";
 import * as fs from "fs";
 import fsPromises from "fs/promises";
 import * as path from "path";
@@ -26,6 +32,7 @@ type TestFixtures = {
   page: Page;
   featureFlags: OptionalFeatureMap;
   recordTestNamesForApiResponseLogging: void;
+  simulateCamera: string;
 };
 
 const IS_DEBUG_MODE = !!process.env.PWDEBUG;
@@ -36,6 +43,7 @@ export const test = base.extend<TestFixtures>({
   theme: "dark",
   userdata: undefined,
   featureFlags: undefined,
+  simulateCamera: undefined,
   userdataDestinationPath: async ({}, use) => {
     use(path.join(__dirname, "../artifacts/userdata", generateUUID()));
   },
@@ -47,7 +55,16 @@ export const test = base.extend<TestFixtures>({
     use(fullFilePath);
   },
   electronApp: async (
-    { lang, theme, userdata, userdataDestinationPath, userdataOriginalFile, env, featureFlags },
+    {
+      lang,
+      theme,
+      userdata,
+      userdataDestinationPath,
+      userdataOriginalFile,
+      env,
+      featureFlags,
+      simulateCamera,
+    },
     use,
   ) => {
     // create userdata path
@@ -87,6 +104,12 @@ export const test = base.extend<TestFixtures>({
         // "--use-gl=swiftshader"
         "--no-sandbox",
         "--enable-logging",
+        ...(simulateCamera
+          ? [
+              "--use-fake-device-for-media-stream",
+              `--use-file-for-fake-video-capture=${simulateCamera}`,
+            ]
+          : []),
       ],
       recordVideo: {
         dir: `${path.join(__dirname, "../artifacts/videos/")}`,
@@ -109,6 +132,13 @@ export const test = base.extend<TestFixtures>({
     const page = await electronApp.firstWindow();
     // we need to give enough time for the playwright app to start. when the CI is slow, 30s was apprently not enough.
     page.setDefaultTimeout(99000);
+
+    if (process.env.PLAYWRIGHT_CPU_THROTTLING_RATE) {
+      const client = await (page.context() as ChromiumBrowserContext).newCDPSession(page);
+      await client.send("Emulation.setCPUThrottlingRate", {
+        rate: parseInt(process.env.PLAYWRIGHT_CPU_THROTTLING_RATE),
+      });
+    }
 
     // record all logs into an artifact
     const logFile = testInfo.outputPath("logs.log");

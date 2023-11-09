@@ -373,6 +373,9 @@ Usage: ledger-live i18n       # Test e2e functionality for device localization s
  -i, --install <String>       : install a language pack by its id
  -u, --uninstall <String>     : uninstall a language pack by its id
 
+Usage: ledger-live listApps   # list all installed apps on the device
+ -d, --device <String>        : provide a specific HID path of a device
+
 Usage: ledger-live liveData   # utility for Ledger Live app.json file
  -d, --device <String>        : provide a specific HID path of a device
      --xpub <String>          : use an xpub (alternatively to --device) [DEPRECATED: prefer use of id]

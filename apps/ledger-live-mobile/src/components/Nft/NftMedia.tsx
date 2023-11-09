@@ -21,36 +21,30 @@ type Props = {
   children?: React.ReactNode | null;
 };
 
-type State = {
-  useFallback: boolean;
-};
+export const NftMedia = (props: Props) => {
+  const { metadata, mediaFormat, status } = props;
 
-class NftMedia extends React.PureComponent<Props, State> {
-  render() {
-    const { metadata, mediaFormat, status } = this.props;
+  let { uri } = metadata?.medias?.[mediaFormat] || {};
+  let contentType = getMetadataMediaType(metadata, mediaFormat);
 
-    let { uri } = metadata?.medias?.[mediaFormat] || {};
-    let contentType = getMetadataMediaType(metadata, mediaFormat);
+  const noData = status === "nodata";
+  const metadataError = status === "error";
+  const noSource = status === "loaded" && !uri;
 
-    const noData = status === "nodata";
-    const metadataError = status === "error";
-    const noSource = status === "loaded" && !uri;
-
-    if (noData || metadataError || noSource) {
-      uri = metadata?.medias?.preview?.uri;
-      contentType = getMetadataMediaType(metadata, "preview");
-    }
-
-    const Component = contentType === "video" ? NftVideo : NftImage;
-
-    return (
-      <Component
-        {...this.props}
-        src={uri as string}
-        srcFallback={metadata?.medias?.preview?.uri as string}
-      />
-    );
+  if (noData || metadataError || noSource) {
+    uri = metadata?.medias?.preview?.uri;
+    contentType = getMetadataMediaType(metadata, "preview");
   }
-}
+
+  const Component = contentType === "video" ? NftVideo : NftImage;
+
+  return (
+    <Component
+      {...props}
+      src={uri as string}
+      srcFallback={metadata?.medias?.preview?.uri as string}
+    />
+  );
+};
 
 export default withTheme(NftMedia);
