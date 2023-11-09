@@ -1,5 +1,22 @@
 # @ledgerhq/hw-transport-mocker
 
+## 6.27.20
+
+### Patch Changes
+
+- [#5142](https://github.com/LedgerHQ/ledger-live/pull/5142) [`7968dfc551`](https://github.com/LedgerHQ/ledger-live/commit/7968dfc551acca00b7fabf00a726758d74be33de) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: new mock fixture aTransportBuilder
+
+  For unit tests where a real implementation of a Transport is not necessary.
+
+- [#5232](https://github.com/LedgerHQ/ledger-live/pull/5232) [`f3b2e7d0eb`](https://github.com/LedgerHQ/ledger-live/commit/f3b2e7d0eb1413781fc45e27c690e73c1058fec6) Thanks [@alexandremgo](https://github.com/alexandremgo)! - fix: ignore web socket messages coming from the HSM once a bulk message has been received
+
+  - Added unit/snapshot case test on receiving a message after a bulk message
+  - Enabled a blocker on exchange method on mocked TransportReplayer
+
+- Updated dependencies [[`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac), [`7968dfc551`](https://github.com/LedgerHQ/ledger-live/commit/7968dfc551acca00b7fabf00a726758d74be33de), [`6b7fc5d071`](https://github.com/LedgerHQ/ledger-live/commit/6b7fc5d0711a83ed2fcacacd02795862a4a3bf1d), [`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac)]:
+  - @ledgerhq/logs@6.11.0
+  - @ledgerhq/hw-transport@6.29.0
+
 ## 6.27.20-next.0
 
 ### Patch Changes

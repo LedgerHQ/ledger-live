@@ -1,5 +1,19 @@
 # @ledgerhq/hw-app-eth
 
+## 6.34.9
+
+### Patch Changes
+
+- Updated dependencies [[`3dc4937cc0`](https://github.com/LedgerHQ/ledger-live/commit/3dc4937cc0c77f6dc40ac7c628e9ab165dfb899f), [`fc121ce96d`](https://github.com/LedgerHQ/ledger-live/commit/fc121ce96dbcc4f30cfd9836644f778b85f997b7), [`95cf52eb66`](https://github.com/LedgerHQ/ledger-live/commit/95cf52eb66769228feb45dd5e799c444e80c5072), [`f5a5c315ea`](https://github.com/LedgerHQ/ledger-live/commit/f5a5c315ea2200cd5b52ef3a0b377d1327b1144e), [`17ba334e47`](https://github.com/LedgerHQ/ledger-live/commit/17ba334e47b901e34fbb083396aa3f9952e5233e), [`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac), [`7968dfc551`](https://github.com/LedgerHQ/ledger-live/commit/7968dfc551acca00b7fabf00a726758d74be33de), [`6b7fc5d071`](https://github.com/LedgerHQ/ledger-live/commit/6b7fc5d0711a83ed2fcacacd02795862a4a3bf1d), [`df5c9ae02a`](https://github.com/LedgerHQ/ledger-live/commit/df5c9ae02a604ddba13ddc64caf8d9ad079c303d), [`54b1d185c9`](https://github.com/LedgerHQ/ledger-live/commit/54b1d185c9df5ae84dc7e85d58249c06550df5f1), [`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac), [`9b49ff233c`](https://github.com/LedgerHQ/ledger-live/commit/9b49ff233ccfad68c98d15cd648927dee12a8b0b), [`f3b2e7d0eb`](https://github.com/LedgerHQ/ledger-live/commit/f3b2e7d0eb1413781fc45e27c690e73c1058fec6), [`4d6fa0772e`](https://github.com/LedgerHQ/ledger-live/commit/4d6fa0772e19cdbd4b432fafa43621c42e2a5fdd), [`b259781b72`](https://github.com/LedgerHQ/ledger-live/commit/b259781b7212aa7758437640e7c48c5d17b0fa79)]:
+  - @ledgerhq/types-live@6.42.0
+  - @ledgerhq/domain-service@1.1.14
+  - @ledgerhq/cryptoassets@11.1.0
+  - @ledgerhq/logs@6.11.0
+  - @ledgerhq/hw-transport-mocker@6.27.20
+  - @ledgerhq/hw-transport@6.29.0
+  - @ledgerhq/errors@6.15.0
+  - @ledgerhq/evm-tools@1.0.10
+
 ## 6.34.9-next.0
 
 ### Patch Changes

@@ -1,5 +1,24 @@
 # @ledgerhq/types-live
 
+## 6.42.0
+
+### Minor Changes
+
+- [#5167](https://github.com/LedgerHQ/ledger-live/pull/5167) [`f5a5c315ea`](https://github.com/LedgerHQ/ledger-live/commit/f5a5c315ea2200cd5b52ef3a0b377d1327b1144e) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Integrate Dydx
+
+- [#5173](https://github.com/LedgerHQ/ledger-live/pull/5173) [`17ba334e47`](https://github.com/LedgerHQ/ledger-live/commit/17ba334e47b901e34fbb083396aa3f9952e5233e) Thanks [@chabroA](https://github.com/chabroA)! - Add neon_evm support
+
+### Patch Changes
+
+- [#5027](https://github.com/LedgerHQ/ledger-live/pull/5027) [`3dc4937cc0`](https://github.com/LedgerHQ/ledger-live/commit/3dc4937cc0c77f6dc40ac7c628e9ab165dfb899f) Thanks [@stephane-lieumont-ledger](https://github.com/stephane-lieumont-ledger)! - Add specific deeplinks for useCase tutorial onboarding
+
+- [#4896](https://github.com/LedgerHQ/ledger-live/pull/4896) [`95cf52eb66`](https://github.com/LedgerHQ/ledger-live/commit/95cf52eb66769228feb45dd5e799c444e80c5072) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Feature flag listAppsV2 replaced by listAppsV2minor1
+  Fix listApps v2 logic: adapt to breaking changes in the API and fix "polyfilling" logic of data of apps
+
+- [#4884](https://github.com/LedgerHQ/ledger-live/pull/4884) [`df5c9ae02a`](https://github.com/LedgerHQ/ledger-live/commit/df5c9ae02a604ddba13ddc64caf8d9ad079c303d) Thanks [@stephane-lieumont-ledger](https://github.com/stephane-lieumont-ledger)! - Need to add other link firebase for quickAccess Recover
+
+- [#5211](https://github.com/LedgerHQ/ledger-live/pull/5211) [`b259781b72`](https://github.com/LedgerHQ/ledger-live/commit/b259781b7212aa7758437640e7c48c5d17b0fa79) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Include swap batch in segment identity
+
 ## 6.42.0-next.0
 
 ### Minor Changes

@@ -1,5 +1,17 @@
 # @ledgerhq/icons-ui
 
+## 0.6.0
+
+### Minor Changes
+
+- [#5167](https://github.com/LedgerHQ/ledger-live/pull/5167) [`f5a5c315ea`](https://github.com/LedgerHQ/ledger-live/commit/f5a5c315ea2200cd5b52ef3a0b377d1327b1144e) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Integrate Dydx
+
+### Patch Changes
+
+- [#4827](https://github.com/LedgerHQ/ledger-live/pull/4827) [`fc121ce96d`](https://github.com/LedgerHQ/ledger-live/commit/fc121ce96dbcc4f30cfd9836644f778b85f997b7) Thanks [@valpinkman](https://github.com/valpinkman)! - Update react to react 18
+
+- [#5222](https://github.com/LedgerHQ/ledger-live/pull/5222) [`22df6b230c`](https://github.com/LedgerHQ/ledger-live/commit/22df6b230c72d82d18375fb7ae7e8da599f41070) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - update injective icons
+
 ## 0.6.0-next.0
 
 ### Minor Changes
