@@ -39,7 +39,7 @@ export const SWAP_WEB_MANIFEST_ID = "swap-live-app-demo-0";
 const SwapWebAppWrapper = styled.div<{ isDevelopment: boolean }>(
   ({ isDevelopment }) => `
   ${!isDevelopment ? "height: 0px;" : ""}
-  ${"width: 100%;"}
+  width: 100%;
 `,
 );
 
