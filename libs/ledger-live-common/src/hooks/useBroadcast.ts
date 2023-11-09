@@ -1,4 +1,3 @@
-import invariant from "invariant";
 import { useCallback } from "react";
 import { log } from "@ledgerhq/logs";
 import { SignedOperation, Operation, AccountLike, Account } from "@ledgerhq/types-live";
@@ -8,14 +7,14 @@ import { getAccountBridge } from "../bridge/index";
 import { execAndWaitAtLeast } from "../promise";
 
 type SignTransactionArgs = {
-  account: AccountLike;
+  account?: AccountLike | null;
   parentAccount?: Account | null;
 };
 
 export const useBroadcast = ({ account, parentAccount }: SignTransactionArgs) => {
   const broadcast = useCallback(
     async (signedOperation: SignedOperation): Promise<Operation> => {
-      invariant(account, "account not present");
+      if (!account) throw new Error("account not present");
       const mainAccount = getMainAccount(account, parentAccount);
       const bridge = getAccountBridge(account, parentAccount);
 
