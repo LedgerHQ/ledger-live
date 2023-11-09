@@ -400,7 +400,6 @@ const SwapForm = () => {
         </Button>
       </Box>
       <SwapWebView
-        redirectToProviderApp={redirectToProviderApp}
         swapState={swapWebProps}
         pageState={pageState}
       />
