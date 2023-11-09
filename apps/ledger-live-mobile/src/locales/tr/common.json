@@ -906,9 +906,9 @@
     },
     "camera" : {
       "title" : "Kamera izni",
-      "authorizeDescription" : "QR kodlarını taramak için lütfen Kameraya erişim izni verin.",
+      "authorizeDescription" : "Karekodları okutmak için lütfen Kameraya erişim izni verin.",
       "authorizeButtonTitle" : "İzin ver",
-      "goToSettingsDescription" : "QR kodlarını taramak için lütfen Ayarlar kısmından Kameraya erişim izni verin.",
+      "goToSettingsDescription" : "Karekodları okutmak için lütfen Ayarlar kısmından Kameraya erişim izni verin.",
       "goToSettingsButtonTitle" : "Ayarlara git"
     }
   },
@@ -1584,13 +1584,13 @@
           "label" : "Seçmek için iki tuşa aynı anda basın."
         },
         "1" : {
-          "title" : "“Ledger Recover kullanarak geri yükle” seçimini yapın",
+          "title" : "“Restore using Ledger Recover” (Ledger Recover kullanarak geri yükle) seçimini yapın",
           "label" : "Seçmek için iki tuşa aynı anda basın."
         }
       },
       "nextStep" : "Devam",
       "extraInfo" : {
-        "tooltip" : "“Ledger Recover kullanarak geri yükle” seçeneği yok",
+        "tooltip" : "“Restore using Ledger Recover” (Ledger Recover kullanarak geri yükle) seçeneği yok",
         "title" : "Ledger Nano X cihazındaki işletim sisteminin güncellenmesi gerekiyor",
         "desc" : "İşletim sistemini güncellemeyi deneyebilir veya yardım almak için Ledger Destek ile iletişime geçebilirsiniz.",
         "cta" : "Güncelleme yönergeleri",
@@ -2464,7 +2464,7 @@
         "instructions" : {
           "line1" : "Ledger Live Masaüstü sürümünü açın.",
           "line2" : "Ayarlar > Hesaplar > Hesapları dışa aktar",
-          "line3" : "Yükleyici %100 olana kadar QR kodunu tarayın."
+          "line3" : "Yükleyici %100 olana kadar karekodu tarayın."
         },
         "hodl" : "Tarama işlemi tamamlanana kadar tutun."
       },
@@ -3405,6 +3405,11 @@
     "walletConnect" : {
       "title" : "WalletConnect",
       "description" : "Cüzdanınızı dApp'lere bağlayın"
+    },
+    "recover" : {
+      "title" : "Ledger Recover",
+      "description" : "Cüzdan kurtarmak artık çok kolay",
+      "tag" : "Bir ay ücretsiz"
     }
   },
   "signMessage" : {
@@ -3429,12 +3434,12 @@
     },
     "highFeeModal" : "Dikkatli olun; ağ ücretleri tutarın <1>%10'undan</1> fazla. Devam etmek istiyor musunuz?",
     "scan" : {
-      "title" : "QR kodunu tarayın",
-      "descBottom" : "Lütfen QR kodunu karenin içine ortalayın.",
+      "title" : "Karekodu okutun",
+      "descBottom" : "Lütfen karekodu karenin içine ortalayın.",
       "fallback" : {
-        "header" : "QR kodunu tarayın",
+        "header" : "Karekodu okutun",
         "title" : "Kamerayı etkinleştirin",
-        "desc" : "QR kodlarını taramak için lütfen Ayarlardan Kamerayı etkinleştirin.",
+        "desc" : "Karekodları okutmak için lütfen Ayarlardan Kamerayı etkinleştirin.",
         "buttonTitle" : "Ayarlara Git"
       }
     },
@@ -3451,7 +3456,7 @@
       "selectNft" : "NFT"
     },
     "recipient" : {
-      "scan" : "QR kodunu tarayın",
+      "scan" : "Karekodu okutun",
       "enterAddress" : "Adresi girin",
       "input" : "Adresi girin",
       "verifyAddress" : "Adresin, alıcıyla paylaşılan adres ile eşleştiğini doğrulayın.",
@@ -6273,9 +6278,9 @@
       "backButton" : "Market Pass'imi aldım"
     },
     "qrScan" : {
-      "title" : "Ledger Market Pass'inizdeki QR kodunu taratın",
+      "title" : "Ledger Market Pass'inizdeki karekodu taratın",
       "description" : {
-        "1" : "Özel Ledger Market Pass'inizi, Ledger Stax'inizin kutusunda bulabilirsiniz.\n\nPass'in arkasındaki QR kodunu çerçevenin içine oturtarak işleme başlayın. Kartı aydınlık bir ortamda, açık renkli ve sade bir arka plan üzerinde tutun."
+        "1" : "Özel Ledger Market Pass'inizi, Ledger Stax'inizin kutusunda bulabilirsiniz.\n\nPass'in arkasındaki karekodu çerçevenin içine oturtarak işleme başlayın. Kartı aydınlık bir ortamda, açık renkli ve sade bir arka plan üzerinde tutun."
       }
     }
   },
@@ -6365,6 +6370,12 @@
   "servicesWidget" : {
     "title" : "Hizmetler",
     "subTitle" : "Ledger hizmetlerinizi yönetin",
+    "signIn" : "Oturum aç",
+    "recover" : {
+      "cta" : "Ücretsiz denemenizi başlatın",
+      "desc" : "Cüzdanınıza erişiminizi kaybetmekten korkmayın.",
+      "tag" : "1 ay ücretsiz"
+    },
     "protect" : {
       "status" : {
         "new" : {

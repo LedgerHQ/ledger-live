@@ -39,5 +39,6 @@ export const updateMainNavigatorVisibility =
     AppStateActionTypes.UPDATE_MAIN_NAVIGATOR_VISIBILITY,
   );
 
-/** Set to true to prevent privacy lock being triggered by deep links. Reset to false on re-focus or on close. */
-export const setIsDeepLinking = createAction<boolean>(AppStateActionTypes.SET_IS_DEEP_LINKING);
+/** Set to true to prevent password lock being triggered by deep links.
+ * Resets to false after a delay. Ideally remove after AuthPass refactor. */
+export const blockPasswordLock = createAction<boolean>(AppStateActionTypes.SET_BLOCK_PASSWORD_LOCK);

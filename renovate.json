@@ -6,6 +6,11 @@
   "automerge": false,
   "detectGlobalManagerConfig": true,
   "ignoreScripts": false,
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "labels": ["security"],
+    "prPriority": 999
+  },
   "packageRules": [
     {
       "description": "Core Ownership Rules",
@@ -35,11 +40,25 @@
       "reviewers": ["team:@ledgerhq/live-eng-core", "team:@ledgerhq/live-hub"]
     },
     {
+      "description": "Metro linked updates",
+      "matchPackageNames": [
+        "metro",
+        "metro-core",
+        "metro-config",
+        "metro-resolver",
+        "metro-runtime",
+        "metro-source-map",
+        "metro-transform-worker"
+      ],
+      "groupName": "metro",
+      "reviewers": ["team:@ledgerhq/live-eng-core", "team:@ledgerhq/live-hub"]
+    },
+    {
       "extends": "monorepo:expo",
       "groupName": null
     }
   ],
-  "prConcurrentLimit": 10,
+  "prConcurrentLimit": 5,
   "separateMinorPatch": true,
   "timezone": "Europe/Paris",
   "enabledManagers": ["npm"]

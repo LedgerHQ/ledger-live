@@ -1,7 +1,7 @@
 const fs = require("fs");
 const dotenv = require("dotenv");
 
-const buildDefine = (path) => {
+const buildDefine = path => {
   try {
     const buf = fs.readFileSync(path);
     const define = {};

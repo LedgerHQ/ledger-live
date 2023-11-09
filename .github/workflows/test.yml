@@ -277,6 +277,10 @@ jobs:
       - name: Typecheck affected libraries
         id: typecheck-libs
         run: pnpm typecheck --continue --filter="!./apps/**" --filter="!./tools/**" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+      - name: Test unimported files
+        id: unimported
+        run: pnpm unimported --continue --filter="!./apps/**" --filter="!./tools/**" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+        shell: bash
       - uses: actions/github-script@v6
         if: always()
         with:

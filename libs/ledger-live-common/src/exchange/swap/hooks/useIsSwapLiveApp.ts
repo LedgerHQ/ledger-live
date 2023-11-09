@@ -4,14 +4,22 @@ import { isCryptoCurrency } from "../../../currencies";
 
 type Props = {
   currencyFrom?: CryptoOrTokenCurrency;
+  swapWebManifestId: string;
 };
 
-export function useIsSwapLiveApp({ currencyFrom }: Props) {
+export function useIsSwapLiveApp({ currencyFrom, swapWebManifestId }: Props) {
   const ptxSwapLiveApp = useFeature("ptxSwapLiveApp");
-  const { families, currencies } = ptxSwapLiveApp?.params || {};
+
+  const flagConfig =
+    ptxSwapLiveApp && ptxSwapLiveApp[swapWebManifestId]
+      ? ptxSwapLiveApp[swapWebManifestId]
+      : ptxSwapLiveApp;
+
+  const { enabled, params } = flagConfig || {};
+  const { families, currencies } = params || {};
 
   if (!currencyFrom || (!families && !currencies)) {
-    return ptxSwapLiveApp?.enabled;
+    return enabled;
   }
 
   const familyOfCurrencyFrom = isCryptoCurrency(currencyFrom)
@@ -21,5 +29,5 @@ export function useIsSwapLiveApp({ currencyFrom }: Props) {
   const familyIsEnabled = families?.length ? families.includes(familyOfCurrencyFrom) : true;
   const currencyIsEnabled = currencies?.length ? currencies.includes(currencyFrom.id) : true;
 
-  return ptxSwapLiveApp?.enabled && (familyIsEnabled || currencyIsEnabled);
+  return enabled && (familyIsEnabled || currencyIsEnabled);
 }

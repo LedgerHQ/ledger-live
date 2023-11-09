@@ -27,9 +27,9 @@ export class Drawer {
       page.locator(`data-test-id=currency-row-${currency.toLowerCase()}`);
     this.accountButton = (accountName, index) =>
       page.locator(`data-test-id=account-row-${accountName.toLowerCase()}-${index}`).first();
-    this.selectAssetTitle = page.locator("data-test-id=select-asset-drawer-title");
+    this.selectAssetTitle = page.locator("data-test-id=select-asset-drawer-title").first();
     this.selectAssetSearchBar = page.locator("data-test-id=select-asset-drawer-search-input");
-    this.selectAccountTitle = page.locator("data-test-id=select-account-drawer-title");
+    this.selectAccountTitle = page.locator("data-test-id=select-account-drawer-title").first();
     this.disclaimerCheckbox = page.locator("data-test-id=dismiss-disclaimer");
     this.swapAmountFrom = page.locator("data-test-id=swap-amount-from").first();
     this.swapAmountTo = page.locator("data-test-id=swap-amount-to").first();
@@ -64,10 +64,5 @@ export class Drawer {
 
   async selectAccount(accountName: string, index = 0) {
     await this.accountButton(accountName, index).click();
-  }
-
-  async verifyAssetIsReady() {
-    await this.selectAssetTitle.isVisible();
-    await this.selectAssetSearchBar.isEnabled();
   }
 }

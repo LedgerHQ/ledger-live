@@ -1,11 +1,13 @@
-import { Flex, Text, Button, Link, IconsLegacy } from "@ledgerhq/native-ui";
+import { Flex, Text, Link, IconsLegacy } from "@ledgerhq/native-ui";
 import React from "react";
 import { ImageSourcePropType, Linking } from "react-native";
 import { useTranslation } from "react-i18next";
 import { Language } from "@ledgerhq/types-live";
 import { DeviceModel, DeviceModelId } from "@ledgerhq/types-devices";
-import { urls } from "../config/urls";
+import { urls } from "@utils/urls";
 import Illustration from "../images/illustration/Illustration";
+import { TrackScreen } from "../analytics";
+import Button from "./wrappedUi/Button";
 
 type Props = {
   onConfirm: () => void;
@@ -39,6 +41,7 @@ const ChangeDeviceLanguagePrompt: React.FC<Props> = ({
 
   return (
     <Flex alignItems="center" px={3}>
+      <TrackScreen category="Change device language" refreshSource={false} />
       {illustration ? (
         <Illustration size={200} darkSource={illustration.dark} lightSource={illustration.light} />
       ) : null}
@@ -55,7 +58,14 @@ const ChangeDeviceLanguagePrompt: React.FC<Props> = ({
           })}
         </Text>
       </Flex>
-      <Button size="large" type="main" onPress={onConfirm} alignSelf="stretch">
+      <Button
+        size="large"
+        type="main"
+        onPress={onConfirm}
+        alignSelf="stretch"
+        event="button_clicked"
+        eventProperties={{ drawer: "Change device language", button: "change device language" }}
+      >
         {t("deviceLocalization.yesChangeLanguage")}
       </Button>
       {canSkip && (

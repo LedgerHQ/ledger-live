@@ -3405,6 +3405,11 @@
     "walletConnect" : {
       "title" : "WalletConnect",
       "description" : "지갑을 디앱에 연결합니다"
+    },
+    "recover" : {
+      "title" : "Ledger Recover",
+      "description" : "손쉬운 지갑 복구",
+      "tag" : "한 달 무료"
     }
   },
   "signMessage" : {
@@ -6365,6 +6370,12 @@
   "servicesWidget" : {
     "title" : "서비스",
     "subTitle" : "Ledger 서비스 관리",
+    "signIn" : "로그인",
+    "recover" : {
+      "cta" : "무료 평가판을 시작하세요",
+      "desc" : "지갑 잠김에 대해 걱정하지 마세요.",
+      "tag" : "1달 무료"
+    },
     "protect" : {
       "status" : {
         "new" : {

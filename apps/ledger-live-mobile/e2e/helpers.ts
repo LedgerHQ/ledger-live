@@ -1,7 +1,7 @@
 import { by, element, waitFor, device } from "detox";
 import { Direction } from "react-native-modal";
 
-const DEFAULT_TIMEOUT = 60000;
+const DEFAULT_TIMEOUT = 60000; // 60s !!
 const BASE_DEEPLINK = "ledgerlive://";
 const startPositionY = 0.8; // Needed on Android to scroll views : https://github.com/wix/Detox/issues/3918
 export const currencyParam = "?currency=";
@@ -103,8 +103,9 @@ export async function delay(ms: number) {
   });
 }
 
-export function openDeeplink(link?: string) {
-  return device.openURL({ url: BASE_DEEPLINK + link });
+/** @param path the part after "ledgerlive://", e.g. "portfolio", or "discover?param=123"  */
+export function openDeeplink(path?: string) {
+  return device.openURL({ url: BASE_DEEPLINK + path });
 }
 
 export function isAndroid() {

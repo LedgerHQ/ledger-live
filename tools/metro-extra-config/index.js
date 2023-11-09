@@ -11,7 +11,7 @@ const path = require("path");
 const defaultSourceExts = require("metro-config/src/defaults/defaults").sourceExts;
 const { makeMetroConfig } = require("@rnx-kit/metro-config");
 const MetroSymlinksResolver = require("@rnx-kit/metro-resolver-symlinks");
-// const resolve = require("metro-resolver").resolve;
+const createTsconfigResolver = require("./tsconfigResolver");
 
 function forceDependency(moduleName, filters, nodeModulesPaths) {
   const matches = filters.some(
@@ -49,6 +49,9 @@ module.exports = function (options = {}, config = {}) {
     callbackNodeResolution,
     callbackNodeResolutionError,
   } = options;
+
+  const tsConfigResolver = createTsconfigResolver({ projectRoot });
+
   // Emulate what the ./node_modules/.bin/react-native binary is doing by adding node_modules paths.
   // Needed because the react native prod build scripts call react-native/cli.js which does not set these paths.
   // They will serve as fallbacks when the node resolver used by MetroSymlinksResolver fails to resolve some modules.
@@ -105,8 +108,15 @@ module.exports = function (options = {}, config = {}) {
               nodeModulesPaths,
             );
             if (forcedResolution) return forcedResolution;
-          } catch (_) {
-            // ignore for now…
+          } catch (e) {
+            console.log(e);
+          }
+
+          try {
+            const resolvedModule = tsConfigResolver(moduleName);
+            if (resolvedModule) return resolvedModule;
+          } catch (e) {
+            console.log(e);
           }
 
           // Attempt to resolve using the symlink resolver.

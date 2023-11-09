@@ -23,9 +23,7 @@ const StorylyDebugger = () => {
             <ScrollArea>
               <Flex flexDirection="column" rowGap={4}>
                 <Alert type="warning">
-                  {
-                    "This is a tool provided as-is for the team to validate storyly stories used in the app."
-                  }
+                  <Trans i18nKey="settings.experimental.features.testStories.longDesc" />
                 </Alert>
                 <LanguageSelect disableLanguagePrompt />
                 {Object.entries(StorylyInstanceID).map(([key, instanceId]) => (

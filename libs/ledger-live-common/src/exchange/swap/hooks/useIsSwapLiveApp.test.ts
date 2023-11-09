@@ -14,67 +14,169 @@ describe("useIsSwapLiveApp hook", () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
+  describe("simple flag", () => {
+    it("returns the enabled flag when currencyFrom is not defined", () => {
+      useMockFeature.mockReturnValue({ enabled: true });
 
-  it("returns the enabled flag when currencyFrom is not defined", () => {
-    useMockFeature.mockReturnValue({ enabled: true });
+      const { result } = renderHook(() =>
+        useIsSwapLiveApp({ currencyFrom: undefined, swapWebManifestId: "swap-live-app-demo-0" }),
+      );
 
-    const { result } = renderHook(() => useIsSwapLiveApp({ currencyFrom: undefined }));
-
-    expect(result.current).toBe(true);
-  });
-
-  it("returns the enabled flag when families and currencies are not defined", () => {
-    useMockFeature.mockReturnValue({
-      enabled: true,
-      params: { families: undefined, currencies: undefined },
+      expect(result.current).toBe(true);
     });
 
-    const { result } = renderHook(() => useIsSwapLiveApp({ currencyFrom: bitcoin }));
+    it("returns the enabled flag when families and currencies are not defined", () => {
+      useMockFeature.mockReturnValue({
+        enabled: true,
+        params: { families: undefined, currencies: undefined },
+      });
 
-    expect(result.current).toBe(true);
-  });
+      const { result } = renderHook(() =>
+        useIsSwapLiveApp({ currencyFrom: bitcoin, swapWebManifestId: "swap-live-app-demo-0" }),
+      );
 
-  it("returns true when currencyFrom family is in families array and feature is enabled", () => {
-    useMockFeature.mockReturnValue({
-      enabled: true,
-      params: { families: ["bitcoin"], currencies: [] },
+      expect(result.current).toBe(true);
     });
 
-    const { result } = renderHook(() => useIsSwapLiveApp({ currencyFrom: bitcoin }));
+    it("returns true when currencyFrom family is in families array and feature is enabled", () => {
+      useMockFeature.mockReturnValue({
+        enabled: true,
+        params: { families: ["bitcoin"], currencies: [] },
+      });
 
-    expect(result.current).toBe(true);
-  });
+      const { result } = renderHook(() =>
+        useIsSwapLiveApp({ currencyFrom: bitcoin, swapWebManifestId: "swap-live-app-demo-0" }),
+      );
 
-  it("returns true when currencyFrom is in currencies array and feature is enabled", () => {
-    useMockFeature.mockReturnValue({
-      enabled: true,
-      params: { families: [], currencies: ["bitcoin"] },
+      expect(result.current).toBe(true);
     });
 
-    const { result } = renderHook(() => useIsSwapLiveApp({ currencyFrom: bitcoin }));
+    it("returns true when currencyFrom is in currencies array and feature is enabled", () => {
+      useMockFeature.mockReturnValue({
+        enabled: true,
+        params: { families: [], currencies: ["bitcoin"] },
+      });
 
-    expect(result.current).toBe(true);
-  });
+      const { result } = renderHook(() =>
+        useIsSwapLiveApp({ currencyFrom: bitcoin, swapWebManifestId: "swap-live-app-demo-0" }),
+      );
 
-  it("returns false when currencyFrom family is not in families, currencyFrom is not in currencies, and feature is disabled", () => {
-    useMockFeature.mockReturnValue({
-      enabled: false,
-      params: { families: ["ethereum"], currencies: ["ethereum"] },
+      expect(result.current).toBe(true);
     });
 
-    const { result } = renderHook(() => useIsSwapLiveApp({ currencyFrom: bitcoin }));
+    it("returns false when currencyFrom family is not in families, currencyFrom is not in currencies, and feature is disabled", () => {
+      useMockFeature.mockReturnValue({
+        enabled: false,
+        params: { families: ["ethereum"], currencies: ["ethereum"] },
+      });
 
-    expect(result.current).toBe(false);
-  });
+      const { result } = renderHook(() =>
+        useIsSwapLiveApp({ currencyFrom: bitcoin, swapWebManifestId: "swap-live-app-demo-0" }),
+      );
 
-  it("returns enabled flag if both families and currencies are empty arrays", () => {
-    useMockFeature.mockReturnValue({
-      enabled: true,
-      params: { families: [], currencies: [] },
+      expect(result.current).toBe(false);
     });
 
-    const { result } = renderHook(() => useIsSwapLiveApp({ currencyFrom: bitcoin }));
+    it("returns enabled flag if both families and currencies are empty arrays", () => {
+      useMockFeature.mockReturnValue({
+        enabled: true,
+        params: { families: [], currencies: [] },
+      });
 
-    expect(result.current).toBe(true);
+      const { result } = renderHook(() =>
+        useIsSwapLiveApp({ currencyFrom: bitcoin, swapWebManifestId: "swap-live-app-demo-0" }),
+      );
+
+      expect(result.current).toBe(true);
+    });
+  });
+  describe("flag with nested manifest properties", () => {
+    it("returns the enabled flag when currencyFrom is not defined", () => {
+      useMockFeature.mockReturnValue({ enabled: true, "swap-live-app-demo-0": { enabled: true } });
+
+      const { result } = renderHook(() =>
+        useIsSwapLiveApp({ currencyFrom: undefined, swapWebManifestId: "swap-live-app-demo-0" }),
+      );
+
+      expect(result.current).toBe(true);
+    });
+
+    it("returns the enabled flag when families and currencies are not defined", () => {
+      useMockFeature.mockReturnValue({
+        enabled: false,
+        params: { families: undefined, currencies: undefined },
+        "swap-live-app-demo-0": { enabled: true },
+      });
+
+      const { result } = renderHook(() =>
+        useIsSwapLiveApp({ currencyFrom: bitcoin, swapWebManifestId: "swap-live-app-demo-0" }),
+      );
+
+      expect(result.current).toBe(true);
+    });
+
+    it("returns true when currencyFrom family is in families array and feature is enabled", () => {
+      useMockFeature.mockReturnValue({
+        enabled: false,
+        "swap-live-app-demo-0": {
+          enabled: true,
+          params: { families: ["bitcoin"], currencies: [] },
+        },
+      });
+
+      const { result } = renderHook(() =>
+        useIsSwapLiveApp({ currencyFrom: bitcoin, swapWebManifestId: "swap-live-app-demo-0" }),
+      );
+
+      expect(result.current).toBe(true);
+    });
+
+    it("returns true when currencyFrom is in currencies array and feature is enabled", () => {
+      useMockFeature.mockReturnValue({
+        enabled: false,
+        "swap-live-app-demo-0": {
+          enabled: true,
+          params: { families: [], currencies: ["bitcoin"] },
+        },
+      });
+
+      const { result } = renderHook(() =>
+        useIsSwapLiveApp({ currencyFrom: bitcoin, swapWebManifestId: "swap-live-app-demo-0" }),
+      );
+
+      expect(result.current).toBe(true);
+    });
+
+    it("returns false when currencyFrom family is not in families, currencyFrom is not in currencies, and feature is disabled", () => {
+      useMockFeature.mockReturnValue({
+        enabled: true,
+        "swap-live-app-demo-0": {
+          enabled: false,
+          params: { families: ["ethereum"], currencies: ["ethereum"] },
+        },
+      });
+
+      const { result } = renderHook(() =>
+        useIsSwapLiveApp({ currencyFrom: bitcoin, swapWebManifestId: "swap-live-app-demo-0" }),
+      );
+
+      expect(result.current).toBe(false);
+    });
+
+    it("returns enabled flag if both families and currencies are empty arrays", () => {
+      useMockFeature.mockReturnValue({
+        enabled: false,
+        "swap-live-app-demo-0": {
+          enabled: true,
+          params: { families: [], currencies: [] },
+        },
+      });
+
+      const { result } = renderHook(() =>
+        useIsSwapLiveApp({ currencyFrom: bitcoin, swapWebManifestId: "swap-live-app-demo-0" }),
+      );
+
+      expect(result.current).toBe(true);
+    });
   });
 });

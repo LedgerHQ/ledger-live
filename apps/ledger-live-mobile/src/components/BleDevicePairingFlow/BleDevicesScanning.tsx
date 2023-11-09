@@ -15,7 +15,7 @@ import Animation from "../Animation";
 import BleDeviceItem from "./BleDeviceItem";
 import Link from "../../components/wrappedUi/Link";
 import lottie from "./assets/bluetooth.json";
-import { urls } from "../../config/urls";
+import { urls } from "@utils/urls";
 import { TrackScreen, track } from "../../analytics";
 import { useResetOnNavigationFocusState } from "../../helpers/useResetOnNavigationFocusState";
 import LocationPermissionDenied from "../RequiresLocation/LocationPermissionDenied";
@@ -82,10 +82,10 @@ const BleDevicesScanning = ({
 
   const onCantSeeDevicePress = useCallback(() => {
     track("button_clicked", {
-      button: `Can't find ${productName ?? "device"} Bluetooth`,
+      button: "Can’t find device Bluetooth",
     });
     Linking.openURL(urls.pairingIssues);
-  }, [productName]);
+  }, []);
 
   // If we want to filter on known devices:
   const knownDevices = useSelector(knownDevicesSelector);
@@ -147,7 +147,7 @@ const BleDevicesScanning = ({
 
   return (
     <Flex flex={1}>
-      <TrackScreen category={`Looking for ${productName ?? "device"} Bluetooth`} />
+      <TrackScreen category={"Looking for device Bluetooth"} />
       <Flex flex={1} px={2}>
         <Flex py={16}>
           <Flex height={100} alignItems="center" justifyContent="center" mb={24}>

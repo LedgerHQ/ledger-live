@@ -1,5 +1,5 @@
 import Transport from "@ledgerhq/hw-transport";
-import { log } from "@ledgerhq/logs";
+import { LocalTracer, TraceContext } from "@ledgerhq/logs";
 import WS from "isomorphic-ws";
 import { Observable, Subject } from "rxjs";
 import {
@@ -14,25 +14,37 @@ import {
 import { cancelDeviceAction } from "../hw/deviceAccess";
 import { getEnv } from "@ledgerhq/live-env";
 import type { SocketEvent } from "@ledgerhq/types-live";
+
+const LOG_TYPE = "socket";
+const ALLOW_SECURE_CHANNEL_DELAY = 500;
+
 const warningsSubject = new Subject<string>();
 export const warnings: Observable<string> = warningsSubject.asObservable();
-const ALLOW_SECURE_CHANNEL_DELAY = 500;
 
 /**
  * use Ledger WebSocket API to exchange data with the device
  * Returns an Observable of the final result
  */
-export const createDeviceSocket = (
+export function createDeviceSocket(
   transport: Transport,
   {
     url,
     unresponsiveExpectedDuringBulk,
+    context,
   }: {
     url: string;
     unresponsiveExpectedDuringBulk?: boolean;
+    context?: TraceContext;
   },
-): Observable<SocketEvent> =>
-  new Observable(o => {
+): Observable<SocketEvent> {
+  const tracer = new LocalTracer(LOG_TYPE, {
+    ...context,
+    function: "createDeviceSocket",
+    transportContext: transport.getTraceContext(),
+  });
+  tracer.trace("Starting web socket communication", { url, unresponsiveExpectedDuringBulk });
+
+  return new Observable(o => {
     let deviceError: Error | null = null; // error originating from device (connection/response/rejection...)
     let unsubscribed = false; // subscriber wants to stops everything
     let bulkSubscription: null | { unsubscribe: () => void } = null; // subscription to the bulk observable
@@ -42,14 +54,14 @@ export const createDeviceSocket = (
     const ws = new WS(url);
 
     ws.onopen = () => {
-      log("socket-opened", url);
+      tracer.trace("Socket opened", { url });
       o.next({
         type: "opened",
       });
     };
 
     ws.onerror = e => {
-      log("socket-error", e.message);
+      tracer.trace("Socket error", { e });
       if (inBulkMode) return; // in bulk case, we ignore any network events because we just need to unroll APDUs with the device
 
       o.error(
@@ -60,12 +72,16 @@ export const createDeviceSocket = (
     };
 
     ws.onclose = () => {
-      log("socket-close");
+      tracer.trace("Socket closed", { url, inBulkMode, correctlyFinished });
       if (inBulkMode) return; // in bulk case, we ignore any network events because we just need to unroll APDUs with the device
 
       if (correctlyFinished) {
         o.complete();
       } else {
+        tracer.trace(`Socket closed, not correctly finished, device error: ${deviceError}`, {
+          deviceError,
+          inBulkMode,
+        });
         // Nb Give priority to the cached error from a device connection, since websocket closes give
         // us no information on what caused the close.
         o.error(deviceError || new WebsocketConnectionError("closed"));
@@ -78,11 +94,16 @@ export const createDeviceSocket = (
 
       try {
         const input = JSON.parse(e.data);
-        log("socket-in", input.query, input);
+        tracer.trace("Socket in", { type: input.query });
 
         switch (input.query) {
           case "exchange": {
-            // a single ping-pong apdu with the HSM
+            tracer.trace("Socket in: exchange", {
+              nonce: input?.nonce,
+              uuid: input?.uuid,
+              session: input?.session,
+            });
+            // A single ping-pong apdu with the HSM
             const { nonce } = input;
             const apdu = Buffer.from(input.data, "hex");
             o.next({
@@ -164,16 +185,24 @@ export const createDeviceSocket = (
               data: data.toString("hex"),
             };
 
-            log("socket-out", msg.response);
+            tracer.trace("Socket out", { response: msg.response });
             const strMsg = JSON.stringify(msg);
             ws.send(strMsg);
             break;
           }
 
           case "bulk": {
-            // in bulk, we just have to unroll a lot of apdus, we no longer need the WS
+            tracer.trace("Socket in: bulk", {
+              apduCount: input?.data?.length,
+              nonce: input?.nonce,
+              uuid: input?.uuid,
+              session: input?.session,
+            });
+
+            // In bulk, a lot of APDUs will be unrolled, and the web socket is no longer needed
             inBulkMode = true;
             ws.close();
+
             const { data } = input;
 
             const notify = index =>
@@ -204,7 +233,7 @@ export const createDeviceSocket = (
               });
             });
             if (unsubscribed) {
-              log("socket", "unsubscribed before end of bulk");
+              tracer.trace("unsubscribed before end of bulk");
               return;
             }
 
@@ -214,27 +243,62 @@ export const createDeviceSocket = (
           }
 
           case "success": {
-            // a final success event with some data payload
+            // A final success event with some data payload
             const payload = input.result || input.data;
-            if (payload)
+
+            tracer.trace("Socket in: success", {
+              payload,
+              inBulkMode,
+              nonce: input?.nonce,
+              uuid: input?.uuid,
+              session: input?.session,
+            });
+
+            // Once entered in bulk mode, we close the websocket and don't react to any other messages
+            if (inBulkMode) break;
+
+            if (payload) {
               o.next({
                 type: "result",
                 payload,
               });
+            }
             correctlyFinished = true;
             o.complete();
             break;
           }
 
           case "error": {
-            // an error from HSM
+            tracer.trace("Socket in: error", {
+              errorData: input?.data,
+              inBulkMode,
+              nonce: input?.nonce,
+              uuid: input?.uuid,
+              session: input?.session,
+            });
+
+            // Once entered in bulk mode, we close the websocket and don't react to any other messages
+            if (inBulkMode) break;
+
+            // An error from HSM
             throw new DeviceSocketFail(input.data, {
               url,
             });
           }
 
           case "warning": {
-            // a warning from HSM
+            tracer.trace("Socket in: warning", {
+              warningData: input?.data,
+              inBulkMode,
+              nonce: input?.nonce,
+              uuid: input?.uuid,
+              session: input?.session,
+            });
+
+            // Once entered in bulk mode, we close the websocket and don't react to any other messages
+            if (inBulkMode) break;
+
+            // A warning from HSM
             o.next({
               type: "warning",
               message: input.data,
@@ -244,26 +308,35 @@ export const createDeviceSocket = (
           }
 
           default:
-            console.warn(`Cannot handle msg of type ${input.query}`, {
-              query: input.query,
-              url,
-            });
+            tracer.trace("Socket in: cannot handle msg of type", { input });
         }
       } catch (err: any) {
         deviceError = err;
-        log("socket-message-error", err.message);
+        tracer.trace("Socket message error", { err });
         o.error(err);
       }
     };
 
     const onDisconnect = e => {
       transport.off("disconnect", onDisconnect);
+
+      tracer.trace(
+        `Socket disconnected. Emitting a DisconnectedDeviceDuringOperation. Error: ${e}`,
+        { error: e },
+      );
       const error = new DisconnectedDeviceDuringOperation((e && e.message) || "");
       deviceError = error;
       o.error(error);
     };
 
     const onUnresponsiveDevice = () => {
+      tracer.trace(`Device unresponsive`, {
+        inBulkMode,
+        unresponsiveExpectedDuringBulk,
+        allowSecureChannelTimeout,
+        unsubscribed,
+      });
+
       // Nb Don't consider the device as locked if we are in a blocking apdu exchange, ie
       // one that requires user confirmation to complete.
       if (inBulkMode && unresponsiveExpectedDuringBulk) return;
@@ -296,3 +369,4 @@ export const createDeviceSocket = (
       }
     };
   });
+}

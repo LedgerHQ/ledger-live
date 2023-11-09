@@ -1,6 +1,6 @@
-import { setSupportedCurrencies } from "@ledgerhq/live-common/lib/currencies/index";
-import { setWalletAPIVersion } from "@ledgerhq/live-common/lib/wallet-api/version";
-import { WALLET_API_VERSION } from "@ledgerhq/live-common/lib/wallet-api/constants";
+import { setSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
+import { setWalletAPIVersion } from "@ledgerhq/live-common/wallet-api/version";
+import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 
 setWalletAPIVersion(WALLET_API_VERSION);
 
@@ -10,6 +10,7 @@ setSupportedCurrencies([
   "secret_network",
   "umee",
   "desmos",
+  "dydx",
   "onomy",
   "sei_network",
   "quicksilver",

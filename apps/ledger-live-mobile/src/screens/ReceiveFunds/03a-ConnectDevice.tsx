@@ -36,7 +36,7 @@ import { useAppDeviceAction } from "../../hooks/deviceActions";
 export const connectDeviceHeaderOptions = (
   onHeaderBackButtonPress: () => void,
 ): ReactNavigationHeaderOptions => ({
-  headerRight: () => <NavigationHeaderCloseButton />,
+  headerRight: () => <NavigationHeaderCloseButton onPress={onHeaderBackButtonPress} />,
   headerLeft: () => <NavigationHeaderBackButton onPress={onHeaderBackButtonPress} />,
 });
 
@@ -144,7 +144,7 @@ export default function ConnectDevice({
   }
 
   if (!mainAccount.freshAddress) {
-    return <NotSyncedWarning continue={onSkipDevice} accountId={mainAccount.id} />;
+    return <NotSyncedWarning accountId={mainAccount.id} />;
   }
 
   return (

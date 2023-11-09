@@ -68,7 +68,7 @@ const GroupedFeatures = ({ groupName, focused, setFocusedGroupName }: Props) => 
             <Text mr={1}>{groupName}</Text>
             {someOverridden ? (
               <Tag active mx={1} type="opacity" size="small">
-                overridden locally
+                {t("settings.developer.overridden.overriddenLocally")}
               </Tag>
             ) : null}
             <Flex flexDirection="row" alignItems={"center"}>

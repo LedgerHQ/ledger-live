@@ -11,7 +11,7 @@ import { TrackScreen } from "../../../../../analytics";
 import Button from "../../../../../components/PreventDoubleClickButton";
 
 import {
-  installAppFirstTime,
+  setHasInstalledAnyApp,
   setHasOrderedNano,
   setLastConnectedDevice,
   setReadOnlyMode,
@@ -65,7 +65,7 @@ const ConnectNanoScene = ({
           info.result.installed.length > 0
         );
 
-        dispatch(installAppFirstTime(hasAnyAppinstalled));
+        dispatch(setHasInstalledAnyApp(hasAnyAppinstalled));
         setDevice(undefined);
         dispatch(setReadOnlyMode(false));
         dispatch(setHasOrderedNano(false));

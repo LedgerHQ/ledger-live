@@ -3,7 +3,7 @@ import React, { ReactNode } from "react";
 import TimelineItem from "./TimelineItem";
 import { Flex } from "../..";
 import Text, { TextProps } from "../../../asorted/Text";
-import { BaseStyledProps } from "src/components/styled";
+import { BaseStyledProps } from "../../../styled";
 
 export type ItemStatus = "inactive" | "active" | "completed";
 

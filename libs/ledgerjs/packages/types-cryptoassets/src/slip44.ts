@@ -18,6 +18,7 @@ export enum CoinType {
   CELO = 52752,
   CLUB = 79,
   CRYPTO_ORG = 394,
+  CSPR = 506,
   DASH = 5,
   DECRED = 42,
   DEXON = 237,

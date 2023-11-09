@@ -33,7 +33,6 @@ type TRC10Token = [
   number, // precision
   boolean, // delisted
   string, // ledgerSignature
-  boolean?, // enableCountervalues
 ];
 
 type TrongridAssetResponse = {

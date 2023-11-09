@@ -458,6 +458,8 @@ export enum ScreenName {
 
   // stacks
   StacksEditMemo = "StacksEditMemo",
+  // casper
+  CasperEditTransferId = "CasperEditTransferId",
   // hedera
   HederaEditMemo = "HederaEditMemo",
   // near

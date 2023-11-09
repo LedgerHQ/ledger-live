@@ -20,9 +20,9 @@
   "publishConfig": {
     "access": "public"
   },
-  "main": "lib/Exchange.js",
-  "module": "lib-es/Exchange.js",
-  "types": "lib/Exchange.d.ts",
+  "main": "lib/index.js",
+  "module": "lib-es/index.js",
+  "types": "lib/index.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/errors": "workspace:^",
@@ -32,10 +32,13 @@
   },
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "workspace:^",
+    "@ledgerhq/hw-transport-node-speculos-http": "workspace:^",
     "@types/jest": "^29.5.0",
     "@types/node": "^18.15.3",
     "documentation": "13.2.5",
     "jest": "^28.1.1",
+    "protobufjs": "7.2.5",
+    "secp256k1": "5.0.0",
     "ts-jest": "^28.0.5",
     "ts-node": "^10.4.0"
   },
@@ -47,6 +50,8 @@
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
-    "test": "jest"
+    "test": "jest --config=jest.config.ts",
+    "test-integ": "jest --config=jest.integ.config.ts",
+    "unimported": "unimported"
   }
 }

@@ -327,35 +327,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [],
   },
-  binance_beacon_chain: {
-    type: "CryptoCurrency",
-    id: "binance_beacon_chain",
-    coinType: CoinType.ATOM,
-    name: "BinanceBeaconChain",
-    managerAppName: "Cosmos",
-    ticker: "BNB",
-    scheme: "BinanceBeaconChain",
-    color: "#f0b90b",
-    family: "cosmos",
-    units: [
-      {
-        name: "BNB",
-        code: "BNB",
-        magnitude: 6,
-      },
-      {
-        name: "Micro-BNB",
-        code: "ubnb",
-        magnitude: 0,
-      },
-    ],
-    explorerViews: [
-      {
-        tx: "https://binance.mintscan.io/txs/$hash",
-        address: "https://binance.mintscan.io/validators/$address",
-      },
-    ],
-  },
   bitcoin: {
     type: "CryptoCurrency",
     id: "bitcoin",
@@ -1005,6 +976,35 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     keywords: ["doge", "dogecoin"],
     explorerId: "doge",
+  },
+  dydx: {
+    type: "CryptoCurrency",
+    id: "dydx",
+    coinType: CoinType.ATOM,
+    name: "dYdX",
+    managerAppName: "Cosmos",
+    ticker: "DYDX",
+    scheme: "dydx",
+    color: "#6666FF",
+    family: "cosmos",
+    units: [
+      {
+        name: "dYdX",
+        code: "dydx",
+        magnitude: 18,
+      },
+      {
+        name: "Micro-dydx",
+        code: "adydx",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://www.mintscan.io/dydx/txs/$hash",
+        address: "https://www.mintscan.io/dydx/validators/$address",
+      },
+    ],
   },
   elastos: {
     type: "CryptoCurrency",
@@ -3624,6 +3624,35 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  casper: {
+    name: "Casper",
+    ticker: "CSPR",
+    coinType: CoinType.CSPR,
+    color: "#000000",
+    family: "casper",
+    id: "casper",
+    managerAppName: "Casper",
+    scheme: "casper",
+    type: "CryptoCurrency",
+    explorerViews: [
+      {
+        tx: "https://cspr.live/deploy/$hash",
+        address: "https://cspr.live/account/$address",
+      },
+    ],
+    units: [
+      {
+        name: "CSPR",
+        code: "CSPR",
+        magnitude: 9,
+      },
+      {
+        name: "motes",
+        code: "motes",
+        magnitude: 0,
+      },
+    ],
+  },
   // ethereum nanoapp currencies
   // Light Integrations are at the end of the list until we figure out a way to fix the ticker/managerApp collisions
   arbitrum: {
@@ -4364,6 +4393,61 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         tx: "https://www.klaytnfinder.io/tx/$hash",
         address: "https://www.klaytnfinder.io/account/$address",
         token: "https://www.klaytnfinder.io/token/$address",
+      },
+    ],
+  },
+  neon_evm: {
+    type: "CryptoCurrency",
+    id: "neon_evm",
+    coinType: CoinType.ETH,
+    name: "Neon EVM",
+    managerAppName: "Ethereum",
+    ticker: "NEON",
+    scheme: "neon_evm",
+    color: "#D13BB7",
+    family: "evm",
+    units: ethereumUnits("NEON", "NEON"),
+    ethereumLikeInfo: {
+      chainId: 245022934,
+      node: { type: "external", uri: "https://neon-mainnet.everstake.one" },
+      explorer: { type: "blockscout", uri: "https://neon.blockscout.com" },
+    },
+    explorerViews: [
+      {
+        tx: "https://neonscan.org/tx/$hash",
+        address: "https://neonscan.org/address/$address",
+        token: "https://neonscan.org/token/$address",
+      },
+    ],
+  },
+  // Keep it at the bottom
+  // Tickers dup
+  binance_beacon_chain: {
+    type: "CryptoCurrency",
+    id: "binance_beacon_chain",
+    coinType: CoinType.ATOM,
+    name: "BinanceBeaconChain",
+    managerAppName: "Cosmos",
+    ticker: "BNB",
+    scheme: "BinanceBeaconChain",
+    color: "#f0b90b",
+    family: "cosmos",
+    units: [
+      {
+        name: "BNB",
+        code: "BNB",
+        magnitude: 6,
+      },
+      {
+        name: "Micro-BNB",
+        code: "ubnb",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://binance.mintscan.io/txs/$hash",
+        address: "https://binance.mintscan.io/validators/$address",
       },
     ],
   },

@@ -78,6 +78,11 @@ export class SettingsPage {
     await this.themeChoiceLight.click();
   }
 
+  async waitForDeviceLanguagesLoaded() {
+    await this.page.waitForSelector('[aria-label="Select language"]', { state: "attached" });
+    await this.page.waitForTimeout(500); // need an extra time for it to be loaded? FIXME
+  }
+
   async enableAndGoToDeveloperTab() {
     await this.goToAboutTab();
     for (let i = 0; i < 10; i++) {

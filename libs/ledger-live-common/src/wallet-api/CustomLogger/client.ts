@@ -1,23 +1,24 @@
 import { CustomModule } from "@ledgerhq/wallet-api-client";
+import { LoggerParams, LoggerResponse } from "./types";
 
 export class CustomLogger extends CustomModule {
   debug(message: string) {
-    return this.request("custom.logger.debug", { message });
+    return this.request<LoggerParams, LoggerResponse>("custom.logger.debug", { message });
   }
 
   error(message: string) {
-    return this.request("custom.logger.error", { message });
+    return this.request<LoggerParams, LoggerResponse>("custom.logger.error", { message });
   }
 
   info(message: string) {
-    return this.request("custom.logger.info", { message });
+    return this.request<LoggerParams, LoggerResponse>("custom.logger.info", { message });
   }
 
   log(message: string) {
-    return this.request("custom.logger.log", { message });
+    return this.request<LoggerParams, LoggerResponse>("custom.logger.log", { message });
   }
 
   warn(message: string) {
-    return this.request("custom.logger.warn", { message });
+    return this.request<LoggerParams, LoggerResponse>("custom.logger.warn", { message });
   }
 }

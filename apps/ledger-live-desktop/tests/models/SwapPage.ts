@@ -115,6 +115,7 @@ export class SwapPage {
   }
 
   async selectCurrencyByName(accountName: string) {
+    await this.page.waitForTimeout(500); // TODO: Needs to be fixed once we have accessible element
     await this.currencyByName(accountName).click();
   }
 
@@ -124,6 +125,7 @@ export class SwapPage {
 
   async reverseSwapPair() {
     await this.reverseSwapPairButton.click();
+    await this.page.waitForTimeout(500); // TODO: Needs to be fixed once we have accessible element
   }
 
   async addDestinationAccount() {

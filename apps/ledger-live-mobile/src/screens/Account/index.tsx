@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback } from "react";
 import { FlatList, LayoutChangeEvent, ListRenderItemInfo } from "react-native";
 import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
 import { useDispatch, useSelector } from "react-redux";
@@ -48,9 +48,12 @@ const AnimatedFlatListWithRefreshControl = Animated.createAnimatedComponent(
   accountSyncRefreshControl(FlatList),
 );
 
+/** If deep linking params are present, this Account Screen is redirected to from Accounts Screen. */
 function AccountScreen({ route }: Props) {
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
+
   if (!account) return null;
+
   return <AccountScreenInner account={account} parentAccount={parentAccount || undefined} />;
 }
 
@@ -111,43 +114,23 @@ const AccountScreenInner = ({
 
   const { secondaryActions } = useAccountActions({ account, parentAccount });
 
-  const { listHeaderComponents } = useMemo(
-    () =>
-      getListHeaderComponents({
-        account,
-        parentAccount,
-        countervalueAvailable: countervalueAvailable || account.balance.eq(0),
-        useCounterValue,
-        range,
-        history,
-        countervalueChange,
-        cryptoChange,
-        onAccountPress,
-        counterValueCurrency,
-        onSwitchAccountCurrency,
-        onAccountCardLayout,
-        colors,
-        secondaryActions,
-        t,
-      }),
-    [
-      account,
-      parentAccount,
-      countervalueAvailable,
-      useCounterValue,
-      range,
-      history,
-      countervalueChange,
-      cryptoChange,
-      onAccountPress,
-      counterValueCurrency,
-      onSwitchAccountCurrency,
-      onAccountCardLayout,
-      colors,
-      secondaryActions,
-      t,
-    ],
-  );
+  const { listHeaderComponents } = getListHeaderComponents({
+    account,
+    parentAccount,
+    countervalueAvailable: countervalueAvailable || account.balance.eq(0),
+    useCounterValue,
+    range,
+    history,
+    countervalueChange,
+    cryptoChange,
+    onAccountPress,
+    counterValueCurrency,
+    onSwitchAccountCurrency,
+    onAccountCardLayout,
+    colors,
+    secondaryActions,
+    t,
+  });
 
   const data = [
     ...listHeaderComponents,

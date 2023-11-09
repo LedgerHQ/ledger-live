@@ -13,7 +13,7 @@
   "license": "MIT",
   "private": true,
   "main": "./.webpack/main.bundle.js",
-  "version": "2.70.0",
+  "version": "2.70.1",
   "scripts": {
     "start:prod": "electron ./.webpack/main.bundle.js",
     "start": "cross-env NODE_ENV=development node ./tools/main.js",
@@ -33,15 +33,18 @@
     "nightly": "node ./tools/dist --nightly -v",
     "pre-build": "node ./tools/dist --pre -v",
     "release": "node ./tools/dist --release -v",
-    "test": "pnpm test:jest && pnpm test:playwright",
-    "test:jest": "jest src --silent --ci --coverage --json --testLocationInResults --outputFile=report.json",
+    "test": "pnpm test:jest:coverage && pnpm test:playwright",
+    "test:jest": "jest src --maxWorkers=50%",
+    "test:jest:coverage": "pnpm test:jest --ci --coverage",
     "test:playwright:setup": "playwright install chromium",
     "test:playwright": "playwright test --config=tests/playwright.config.ts",
     "test:playwright:smoke": "pnpm test:playwright --grep @smoke",
     "test:playwright:update-snapshots": "pnpm test:playwright --update-snapshots",
     "test:playwright:recorder": "playwright test tests/specs/recorder.spec.ts",
     "test:playwright:clean": "git clean -fdX tests/artifacts",
-    "typecheck": "node scripts/typecheck.js"
+    "typecheck": "node scripts/typecheck.js",
+    "check": "pnpm lint; pnpm typecheck",
+    "unimported": "unimported"
   },
   "dependencies": {
     "@braze/web-sdk": "^4.6.3",

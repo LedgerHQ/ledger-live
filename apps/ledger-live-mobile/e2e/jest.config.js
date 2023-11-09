@@ -2,13 +2,9 @@ module.exports = {
   rootDir: "..",
   maxWorkers: 1,
   preset: "ts-jest",
-  globals: {
-    "ts-jest": {
-      babelConfig: true,
-    },
-  },
   transform: {
-    "^.+\\.[tj]sx?$": [
+    "^.+\\.(js|jsx)?$": "babel-jest",
+    "^.+\\.(ts|tsx)?$": [
       "ts-jest",
       {
         babelConfig: "<rootDir>/e2e/babel.config.detox.js",

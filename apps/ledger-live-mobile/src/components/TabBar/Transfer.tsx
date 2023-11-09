@@ -201,7 +201,7 @@ export function TransferTabIcon() {
           style={[
             {
               width: screenWidth,
-              maxHeight: screenHeight * 0.9 - bottomInset - topInset,
+              maxHeight: screenHeight - bottomInset - topInset,
               paddingBottom: bottomInset + 16 + MAIN_BUTTON_SIZE + MAIN_BUTTON_BOTTOM,
             },
             opacityStyle,
