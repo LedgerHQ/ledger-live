@@ -48,6 +48,40 @@ export type Metafiles = {
   [K in MetafileKey]?: Metafile;
 };
 
+export function getMetafileBundleSize(metafile: Metafiles, slug: MetafileSlug): number | undefined {
+  const key = metafilesKeys[slug];
+  if (key in metafile) {
+    return metafile[key]?.outputs[`.webpack/${slug}.bundle.js`]?.bytes;
+  }
+}
+
+export function getMetafileDuplicates(metafiles: Metafiles, slug: MetafileSlug): string[] {
+  const all = [];
+  const key = metafilesKeys[slug];
+  if (key in metafiles) {
+    const m = metafiles[key]!;
+    // inspired from https://github.com/esbuild/esbuild.github.io/blob/main/src/analyze/warnings.ts
+    const inputs = m.inputs;
+    const resolvedPaths: Record<string, string[]> = {};
+    for (const i in inputs) {
+      const input = inputs[i];
+      for (const record of input.imports) {
+        if (record.original && record.original[0] !== ".") {
+          const array = resolvedPaths[record.original] || (resolvedPaths[record.original] = []);
+          if (!array.includes(record.path)) array.push(record.path);
+        }
+      }
+    }
+    for (const original in resolvedPaths) {
+      const array = resolvedPaths[original];
+      if (array.length > 1) {
+        all.push(original);
+      }
+    }
+  }
+  return all;
+}
+
 type Octokit = ReturnType<typeof github.getOctokit>;
 export type Artifact = Awaited<
   ReturnType<Octokit["rest"]["actions"]["listArtifactsForRepo"]>
@@ -101,7 +135,7 @@ export async function downloadMetafilesFromArtifact(
   githubToken: string,
   url: string,
 ): Promise<Metafiles> {
-  core.info("Downloading Metafiles: " + url);
+  core.debug("Downloading Metafiles: " + url);
   const res = await fetch(url, {
     headers: {
       Authorization: `Bearer ${githubToken}`,
@@ -211,7 +245,7 @@ export async function createOrUpdateComment({
   const octokit = github.getOctokit(githubToken);
 
   if (found) {
-    core.info(`Updating comment ${found.id}`);
+    core.debug(`Updating comment ${found.id}`);
     await octokit.rest.issues.updateComment({
       repo: "ledger-live",
       owner: "ledgerhq",
@@ -222,7 +256,7 @@ export async function createOrUpdateComment({
     return;
   }
 
-  core.info(`Creating new comment`);
+  core.debug(`Creating new comment`);
   await octokit.rest.issues.createComment({
     repo: "ledger-live",
     owner: "ledgerhq",
@@ -240,15 +274,15 @@ export async function submitCommentToPR({
   prNumber: string;
   githubToken: string;
 }): Promise<void> {
-  core.info("Submiting comment to PR");
+  core.debug("Submiting comment to PR");
   const header = `<!-- bundle-meta-${prNumber} -->`;
-  core.info("Looking for existing comment");
+  core.debug("Looking for existing comment");
   const found = await findComment({ prNumber, githubToken, header });
-  core.info(found ? `Found previous comment ${found.id}` : "No previous comment to update");
+  core.debug(found ? `Found previous comment ${found.id}` : "No previous comment to update");
   const body = reporter.toMarkdown();
 
   if (body.length === 0 && found) {
-    const allGood = "✅ No issues on Dekstop bundle size";
+    const allGood = "✅ Previous issues have all been fixed.";
     await createOrUpdateComment({ body: allGood, prNumber, githubToken, found });
     return;
   }
@@ -283,7 +317,8 @@ export class Reporter {
   }
 }
 
-export function formatSize(bytes: number): string {
+export function formatSize(bytes: number | undefined): string {
+  if (!bytes) return "N/A";
   if (bytes < 1024) {
     return `${bytes} bytes`;
   } else if (bytes < 1024 * 1024) {
