@@ -39,7 +39,13 @@ const PostOnboardingHubContent = () => {
           {t("postOnboarding.postOnboardingContent.skipLink")}
         </Link>
       ) : (
-        <ButtonV3 big variant="main" mt={3} onClick={handleOnboardingOver}>
+        <ButtonV3
+          big
+          variant="main"
+          mt={3}
+          onClick={handleOnboardingOver}
+          buttonTestId="postonboarding-hub-explore-button"
+        >
           {t("postOnboarding.postOnboardingScreen.exploreCTA")}
         </ButtonV3>
       )}
