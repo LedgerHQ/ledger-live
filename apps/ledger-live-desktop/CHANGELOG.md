@@ -1,5 +1,16 @@
 # ledger-live-desktop
 
+## 2.71.0-nightly.9
+
+### Patch Changes
+
+- [#5335](https://github.com/LedgerHQ/ledger-live/pull/5335) [`d163b6f148`](https://github.com/LedgerHQ/ledger-live/commit/d163b6f1486d1164ade7da02c5b3011628dc9054) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Firmware update: add retry button to footer if there is a LockedDeviceError
+
+- [#5315](https://github.com/LedgerHQ/ledger-live/pull/5315) [`19c7484663`](https://github.com/LedgerHQ/ledger-live/commit/19c7484663e9e1592b8b2024bee3cdbeb1853e0a) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Improve wording of "not found entity" error
+
+- Updated dependencies [[`19c7484663`](https://github.com/LedgerHQ/ledger-live/commit/19c7484663e9e1592b8b2024bee3cdbeb1853e0a)]:
+  - @ledgerhq/live-common@33.1.0-nightly.8
+
 ## 2.71.0-nightly.8
 
 ### Minor Changes
