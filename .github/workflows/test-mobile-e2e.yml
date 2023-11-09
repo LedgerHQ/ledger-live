@@ -211,16 +211,23 @@ jobs:
       - name: Build Android app for Detox test run
         run: |
           pnpm mobile e2e:build -c android.emu.release
-      - name: AVD cache
-        uses: actions/cache@v3
-        id: avd-cache
+      - name: cache android emulator
+        uses: tespkg/actions-cache@v1
+        id: detox-avd
         with:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-          key: avd-api-32
+          key: ${{ runner.os }}-detox-avd-${{ hashFiles('~/.android/avd/*/config.ini') }}
+          restore-keys: |
+            ${{ runner.os }}-detox-avd-
+          accessKey: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          secretKey: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          bucket: ll-gha-s3-cache
+          region: eu-west-1
+          use-fallback: false
       - name: create AVD and generate snapshot for caching
-        if: steps.avd-cache.outputs.cache-hit != 'true'
+        if: steps.detox-avd.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 32
