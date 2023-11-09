@@ -725,7 +725,7 @@ var require_tunnel = __commonJS({
         connectOptions.headers = connectOptions.headers || {};
         connectOptions.headers["Proxy-Authorization"] = "Basic " + new Buffer(connectOptions.proxyAuth).toString("base64");
       }
-      debug2("making CONNECT request");
+      debug("making CONNECT request");
       var connectReq = self2.request(connectOptions);
       connectReq.useChunkedEncodingByDefault = false;
       connectReq.once("response", onResponse);
@@ -745,7 +745,7 @@ var require_tunnel = __commonJS({
         connectReq.removeAllListeners();
         socket.removeAllListeners();
         if (res.statusCode !== 200) {
-          debug2(
+          debug(
             "tunneling socket could not be established, statusCode=%d",
             res.statusCode
           );
@@ -757,7 +757,7 @@ var require_tunnel = __commonJS({
           return;
         }
         if (head.length > 0) {
-          debug2("got illegal response body from proxy");
+          debug("got illegal response body from proxy");
           socket.destroy();
           var error = new Error("got illegal response body from proxy");
           error.code = "ECONNRESET";
@@ -765,13 +765,13 @@ var require_tunnel = __commonJS({
           self2.removeSocket(placeholder);
           return;
         }
-        debug2("tunneling connection has established");
+        debug("tunneling connection has established");
         self2.sockets[self2.sockets.indexOf(placeholder)] = socket;
         return cb(socket);
       }
       function onError(cause) {
         connectReq.removeAllListeners();
-        debug2(
+        debug(
           "tunneling socket could not be established, cause=%s\n",
           cause.message,
           cause.stack
@@ -833,9 +833,9 @@ var require_tunnel = __commonJS({
       }
       return target;
     }
-    var debug2;
+    var debug;
     if (process.env.NODE_DEBUG && /\btunnel\b/.test(process.env.NODE_DEBUG)) {
-      debug2 = function() {
+      debug = function() {
         var args = Array.prototype.slice.call(arguments);
         if (typeof args[0] === "string") {
           args[0] = "TUNNEL: " + args[0];
@@ -845,10 +845,10 @@ var require_tunnel = __commonJS({
         console.error.apply(console, args);
       };
     } else {
-      debug2 = function() {
+      debug = function() {
       };
     }
-    exports2.debug = debug2;
+    exports2.debug = debug;
   }
 });
 
@@ -2135,10 +2135,10 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
       return process.env["RUNNER_DEBUG"] === "1";
     }
     exports2.isDebug = isDebug;
-    function debug2(message) {
+    function debug(message) {
       command_1.issueCommand("debug", {}, message);
     }
-    exports2.debug = debug2;
+    exports2.debug = debug;
     function error(message, properties = {}) {
       command_1.issueCommand("error", utils_1.toCommandProperties(properties), message instanceof Error ? message.toString() : message);
     }
@@ -26094,7 +26094,7 @@ var require_nodeback = __commonJS({
 var require_method = __commonJS({
   "../../../node_modules/.pnpm/bluebird@3.4.7/node_modules/bluebird/js/release/method.js"(exports2, module2) {
     "use strict";
-    module2.exports = function(Promise2, INTERNAL, tryConvertToPromise, apiRejection, debug2) {
+    module2.exports = function(Promise2, INTERNAL, tryConvertToPromise, apiRejection, debug) {
       var util = require_util8();
       var tryCatch2 = util.tryCatch;
       Promise2.method = function(fn) {
@@ -26107,7 +26107,7 @@ var require_method = __commonJS({
           ret2._pushContext();
           var value = tryCatch2(fn).apply(this, arguments);
           var promiseCreated = ret2._popContext();
-          debug2.checkForgottenReturns(
+          debug.checkForgottenReturns(
             value,
             promiseCreated,
             "Promise.method",
@@ -26126,7 +26126,7 @@ var require_method = __commonJS({
         ret2._pushContext();
         var value;
         if (arguments.length > 1) {
-          debug2.deprecated("calling Promise.try with more than 1 argument");
+          debug.deprecated("calling Promise.try with more than 1 argument");
           var arg = arguments[1];
           var ctx = arguments[2];
           value = util.isArray(arg) ? tryCatch2(fn).apply(ctx, arg) : tryCatch2(fn).call(ctx, arg);
@@ -26134,7 +26134,7 @@ var require_method = __commonJS({
           value = tryCatch2(fn)();
         }
         var promiseCreated = ret2._popContext();
-        debug2.checkForgottenReturns(
+        debug.checkForgottenReturns(
           value,
           promiseCreated,
           "Promise.try",
@@ -26158,7 +26158,7 @@ var require_method = __commonJS({
 var require_bind = __commonJS({
   "../../../node_modules/.pnpm/bluebird@3.4.7/node_modules/bluebird/js/release/bind.js"(exports2, module2) {
     "use strict";
-    module2.exports = function(Promise2, INTERNAL, tryConvertToPromise, debug2) {
+    module2.exports = function(Promise2, INTERNAL, tryConvertToPromise, debug) {
       var calledBind = false;
       var rejectThis = function(_, e) {
         this._reject(e);
@@ -26179,8 +26179,8 @@ var require_bind = __commonJS({
       Promise2.prototype.bind = function(thisArg) {
         if (!calledBind) {
           calledBind = true;
-          Promise2.prototype._propagateFrom = debug2.propagateFromFunction();
-          Promise2.prototype._boundValue = debug2.boundValueFunction();
+          Promise2.prototype._propagateFrom = debug.propagateFromFunction();
+          Promise2.prototype._boundValue = debug.boundValueFunction();
         }
         var maybePromise = tryConvertToPromise(thisArg);
         var ret2 = new Promise2(INTERNAL);
@@ -26230,13 +26230,13 @@ var require_bind = __commonJS({
 var require_cancel = __commonJS({
   "../../../node_modules/.pnpm/bluebird@3.4.7/node_modules/bluebird/js/release/cancel.js"(exports2, module2) {
     "use strict";
-    module2.exports = function(Promise2, PromiseArray, apiRejection, debug2) {
+    module2.exports = function(Promise2, PromiseArray, apiRejection, debug) {
       var util = require_util8();
       var tryCatch2 = util.tryCatch;
       var errorObj2 = util.errorObj;
       var async = Promise2._async;
       Promise2.prototype["break"] = Promise2.prototype.cancel = function() {
-        if (!debug2.cancellation())
+        if (!debug.cancellation())
           return this._warn("cancellation is disabled");
         var promise = this;
         var child = promise;
@@ -26628,7 +26628,7 @@ var require_join = __commonJS({
 var require_map = __commonJS({
   "../../../node_modules/.pnpm/bluebird@3.4.7/node_modules/bluebird/js/release/map.js"(exports2, module2) {
     "use strict";
-    module2.exports = function(Promise2, PromiseArray, apiRejection, tryConvertToPromise, INTERNAL, debug2) {
+    module2.exports = function(Promise2, PromiseArray, apiRejection, tryConvertToPromise, INTERNAL, debug) {
       var getDomain = Promise2._getDomain;
       var util = require_util8();
       var tryCatch2 = util.tryCatch;
@@ -26679,7 +26679,7 @@ var require_map = __commonJS({
           promise._pushContext();
           var ret2 = tryCatch2(callback).call(receiver, value, index, length);
           var promiseCreated = promise._popContext();
-          debug2.checkForgottenReturns(
+          debug.checkForgottenReturns(
             ret2,
             promiseCreated,
             preservedValues !== null ? "Promise.filter" : "Promise.map",
@@ -26901,7 +26901,7 @@ var require_call_get = __commonJS({
 var require_using = __commonJS({
   "../../../node_modules/.pnpm/bluebird@3.4.7/node_modules/bluebird/js/release/using.js"(exports2, module2) {
     "use strict";
-    module2.exports = function(Promise2, apiRejection, tryConvertToPromise, createContext, INTERNAL, debug2) {
+    module2.exports = function(Promise2, apiRejection, tryConvertToPromise, createContext, INTERNAL, debug) {
       var util = require_util8();
       var TypeError2 = require_errors2().TypeError;
       var inherits2 = require_util8().inherits;
@@ -27071,7 +27071,7 @@ var require_using = __commonJS({
           fn = tryCatch2(fn);
           var ret2 = spreadArgs ? fn.apply(void 0, inspections) : fn(inspections);
           var promiseCreated = promise._popContext();
-          debug2.checkForgottenReturns(
+          debug.checkForgottenReturns(
             ret2,
             promiseCreated,
             "Promise.using",
@@ -27115,7 +27115,7 @@ var require_using = __commonJS({
 var require_timers2 = __commonJS({
   "../../../node_modules/.pnpm/bluebird@3.4.7/node_modules/bluebird/js/release/timers.js"(exports2, module2) {
     "use strict";
-    module2.exports = function(Promise2, INTERNAL, debug2) {
+    module2.exports = function(Promise2, INTERNAL, debug) {
       var util = require_util8();
       var TimeoutError = Promise2.TimeoutError;
       function HandleWrapper(handle) {
@@ -27132,7 +27132,7 @@ var require_timers2 = __commonJS({
         var handle;
         if (value !== void 0) {
           ret2 = Promise2.resolve(value)._then(afterValue, null, null, ms, void 0);
-          if (debug2.cancellation() && value instanceof Promise2) {
+          if (debug.cancellation() && value instanceof Promise2) {
             ret2._setOnCancel(value);
           }
         } else {
@@ -27140,7 +27140,7 @@ var require_timers2 = __commonJS({
           handle = setTimeout(function() {
             ret2._fulfill();
           }, +ms);
-          if (debug2.cancellation()) {
+          if (debug.cancellation()) {
             ret2._setOnCancel(new HandleWrapper(handle));
           }
           ret2._captureStackTrace();
@@ -27185,7 +27185,7 @@ var require_timers2 = __commonJS({
             afterTimeout(ret2, message, parent);
           }
         }, ms));
-        if (debug2.cancellation()) {
+        if (debug.cancellation()) {
           parent = this.then();
           ret2 = parent._then(
             successClear,
@@ -27214,7 +27214,7 @@ var require_timers2 = __commonJS({
 var require_generators = __commonJS({
   "../../../node_modules/.pnpm/bluebird@3.4.7/node_modules/bluebird/js/release/generators.js"(exports2, module2) {
     "use strict";
-    module2.exports = function(Promise2, apiRejection, INTERNAL, tryConvertToPromise, Proxyable, debug2) {
+    module2.exports = function(Promise2, apiRejection, INTERNAL, tryConvertToPromise, Proxyable, debug) {
       var errors = require_errors2();
       var TypeError2 = errors.TypeError;
       var util = require_util8();
@@ -27239,7 +27239,7 @@ var require_generators = __commonJS({
         return null;
       }
       function PromiseSpawn(generatorFunction, receiver, yieldHandler, stack) {
-        if (debug2.cancellation()) {
+        if (debug.cancellation()) {
           var internal = new Promise2(INTERNAL);
           var _finallyPromise = this._finallyPromise = new Promise2(INTERNAL);
           this._promise = internal.lastly(function() {
@@ -27265,7 +27265,7 @@ var require_generators = __commonJS({
       };
       PromiseSpawn.prototype._cleanup = function() {
         this._promise = this._generator = null;
-        if (debug2.cancellation() && this._finallyPromise !== null) {
+        if (debug.cancellation() && this._finallyPromise !== null) {
           this._finallyPromise._fulfill();
           this._finallyPromise = null;
         }
@@ -27415,7 +27415,7 @@ var require_generators = __commonJS({
         yieldHandlers.push(fn);
       };
       Promise2.spawn = function(generatorFunction) {
-        debug2.deprecated("Promise.spawn()", "Promise.coroutine()");
+        debug.deprecated("Promise.spawn()", "Promise.coroutine()");
         if (typeof generatorFunction !== "function") {
           return apiRejection("generatorFunction must be a function\n\n    See http://goo.gl/MqrFmX\n");
         }
@@ -27926,7 +27926,7 @@ var require_race = __commonJS({
 var require_reduce = __commonJS({
   "../../../node_modules/.pnpm/bluebird@3.4.7/node_modules/bluebird/js/release/reduce.js"(exports2, module2) {
     "use strict";
-    module2.exports = function(Promise2, PromiseArray, apiRejection, tryConvertToPromise, INTERNAL, debug2) {
+    module2.exports = function(Promise2, PromiseArray, apiRejection, tryConvertToPromise, INTERNAL, debug) {
       var getDomain = Promise2._getDomain;
       var util = require_util8();
       var tryCatch2 = util.tryCatch;
@@ -28069,7 +28069,7 @@ var require_reduce = __commonJS({
           array._currentCancellable = ret2;
         }
         var promiseCreated = promise._popContext();
-        debug2.checkForgottenReturns(
+        debug.checkForgottenReturns(
           ret2,
           promiseCreated,
           array._eachValues !== void 0 ? "Promise.each" : "Promise.reduce",
@@ -28085,7 +28085,7 @@ var require_reduce = __commonJS({
 var require_settle = __commonJS({
   "../../../node_modules/.pnpm/bluebird@3.4.7/node_modules/bluebird/js/release/settle.js"(exports2, module2) {
     "use strict";
-    module2.exports = function(Promise2, PromiseArray, debug2) {
+    module2.exports = function(Promise2, PromiseArray, debug) {
       var PromiseInspection = Promise2.PromiseInspection;
       var util = require_util8();
       function SettledPromiseArray(values) {
@@ -28114,7 +28114,7 @@ var require_settle = __commonJS({
         return this._promiseResolved(index, ret2);
       };
       Promise2.settle = function(promises) {
-        debug2.deprecated(".settle()", ".reflect()");
+        debug.deprecated(".settle()", ".reflect()");
         return new SettledPromiseArray(promises).promise();
       };
       Promise2.prototype.settle = function() {
@@ -28377,8 +28377,8 @@ var require_promise = __commonJS({
       );
       var Context = require_context2()(Promise2);
       var createContext = Context.create;
-      var debug2 = require_debuggability()(Promise2, Context);
-      var CapturedTrace = debug2.CapturedTrace;
+      var debug = require_debuggability()(Promise2, Context);
+      var CapturedTrace = debug.CapturedTrace;
       var PassThroughHandlerContext = require_finally()(Promise2, tryConvertToPromise);
       var catchFilter = require_catch_filter()(NEXT_FILTER);
       var nodebackForPromise = require_nodeback();
@@ -28436,7 +28436,7 @@ var require_promise = __commonJS({
         );
       };
       Promise2.prototype.then = function(didFulfill, didReject) {
-        if (debug2.warnings() && arguments.length > 0 && typeof didFulfill !== "function" && typeof didReject !== "function") {
+        if (debug.warnings() && arguments.length > 0 && typeof didFulfill !== "function" && typeof didReject !== "function") {
           var msg = ".then() only accepts functions but was passed: " + util.classString(didFulfill);
           if (arguments.length > 1) {
             msg += ", " + util.classString(didReject);
@@ -28721,7 +28721,7 @@ var require_promise = __commonJS({
       Promise2.prototype._rejectCallback = function(reason, synchronous, ignoreNonErrorWarnings) {
         var trace = util.ensureErrorObject(reason);
         var hasStack = trace === reason;
-        if (!hasStack && !ignoreNonErrorWarnings && debug2.warnings()) {
+        if (!hasStack && !ignoreNonErrorWarnings && debug.warnings()) {
           var message = "a promise was rejected with a non-error: " + util.classString(reason);
           this._warn(message, true);
         }
@@ -28769,7 +28769,7 @@ var require_promise = __commonJS({
         } else if (x === errorObj2) {
           promise._rejectCallback(x.e, false);
         } else {
-          debug2.checkForgottenReturns(x, promiseCreated, "", promise, this);
+          debug.checkForgottenReturns(x, promiseCreated, "", promise, this);
           promise._resolveCallback(x);
         }
       };
@@ -28945,7 +28945,7 @@ var require_promise = __commonJS({
         this.promise._rejectCallback(v, false);
       }
       Promise2.defer = Promise2.pending = function() {
-        debug2.deprecated("Promise.defer", "new Promise");
+        debug.deprecated("Promise.defer", "new Promise");
         var promise = new Promise2(INTERNAL);
         return {
           promise,
@@ -28963,10 +28963,10 @@ var require_promise = __commonJS({
         INTERNAL,
         tryConvertToPromise,
         apiRejection,
-        debug2
+        debug
       );
-      require_bind()(Promise2, INTERNAL, tryConvertToPromise, debug2);
-      require_cancel()(Promise2, PromiseArray, apiRejection, debug2);
+      require_bind()(Promise2, INTERNAL, tryConvertToPromise, debug);
+      require_cancel()(Promise2, PromiseArray, apiRejection, debug);
       require_direct_resolve()(Promise2);
       require_synchronous_inspection()(Promise2);
       require_join()(
@@ -28979,17 +28979,17 @@ var require_promise = __commonJS({
       );
       Promise2.Promise = Promise2;
       Promise2.version = "3.4.7";
-      require_map()(Promise2, PromiseArray, apiRejection, tryConvertToPromise, INTERNAL, debug2);
+      require_map()(Promise2, PromiseArray, apiRejection, tryConvertToPromise, INTERNAL, debug);
       require_call_get()(Promise2);
-      require_using()(Promise2, apiRejection, tryConvertToPromise, createContext, INTERNAL, debug2);
-      require_timers2()(Promise2, INTERNAL, debug2);
-      require_generators()(Promise2, apiRejection, INTERNAL, tryConvertToPromise, Proxyable, debug2);
+      require_using()(Promise2, apiRejection, tryConvertToPromise, createContext, INTERNAL, debug);
+      require_timers2()(Promise2, INTERNAL, debug);
+      require_generators()(Promise2, apiRejection, INTERNAL, tryConvertToPromise, Proxyable, debug);
       require_nodeify()(Promise2);
       require_promisify()(Promise2, INTERNAL);
       require_props()(Promise2, PromiseArray, tryConvertToPromise, apiRejection);
       require_race()(Promise2, INTERNAL, tryConvertToPromise, apiRejection);
-      require_reduce()(Promise2, PromiseArray, apiRejection, tryConvertToPromise, INTERNAL, debug2);
-      require_settle()(Promise2, PromiseArray, debug2);
+      require_reduce()(Promise2, PromiseArray, apiRejection, tryConvertToPromise, INTERNAL, debug);
+      require_settle()(Promise2, PromiseArray, debug);
       require_some()(Promise2, PromiseArray, apiRejection);
       require_filter()(Promise2, INTERNAL);
       require_each()(Promise2, INTERNAL);
@@ -29012,7 +29012,7 @@ var require_promise = __commonJS({
       fillTypes(void 0);
       fillTypes(false);
       fillTypes(new Promise2(INTERNAL));
-      debug2.setBounds(Async.firstLineError, util.lastLineError);
+      debug.setBounds(Async.firstLineError, util.lastLineError);
       return Promise2;
     };
   }
@@ -30296,11 +30296,11 @@ var require_stream_readable = __commonJS({
     var util = Object.create(require_util9());
     util.inherits = require_inherits();
     var debugUtil = require("util");
-    var debug2 = void 0;
+    var debug = void 0;
     if (debugUtil && debugUtil.debuglog) {
-      debug2 = debugUtil.debuglog("stream");
+      debug = debugUtil.debuglog("stream");
     } else {
-      debug2 = function() {
+      debug = function() {
       };
     }
     var BufferList = require_BufferList();
@@ -30527,14 +30527,14 @@ var require_stream_readable = __commonJS({
       return state.length;
     }
     Readable2.prototype.read = function(n) {
-      debug2("read", n);
+      debug("read", n);
       n = parseInt(n, 10);
       var state = this._readableState;
       var nOrig = n;
       if (n !== 0)
         state.emittedReadable = false;
       if (n === 0 && state.needReadable && (state.length >= state.highWaterMark || state.ended)) {
-        debug2("read: emitReadable", state.length, state.ended);
+        debug("read: emitReadable", state.length, state.ended);
         if (state.length === 0 && state.ended)
           endReadable(this);
         else
@@ -30548,16 +30548,16 @@ var require_stream_readable = __commonJS({
         return null;
       }
       var doRead = state.needReadable;
-      debug2("need readable", doRead);
+      debug("need readable", doRead);
       if (state.length === 0 || state.length - n < state.highWaterMark) {
         doRead = true;
-        debug2("length less than watermark", doRead);
+        debug("length less than watermark", doRead);
       }
       if (state.ended || state.reading) {
         doRead = false;
-        debug2("reading or ended", doRead);
+        debug("reading or ended", doRead);
       } else if (doRead) {
-        debug2("do read");
+        debug("do read");
         state.reading = true;
         state.sync = true;
         if (state.length === 0)
@@ -30605,7 +30605,7 @@ var require_stream_readable = __commonJS({
       var state = stream._readableState;
       state.needReadable = false;
       if (!state.emittedReadable) {
-        debug2("emitReadable", state.flowing);
+        debug("emitReadable", state.flowing);
         state.emittedReadable = true;
         if (state.sync)
           pna.nextTick(emitReadable_, stream);
@@ -30614,7 +30614,7 @@ var require_stream_readable = __commonJS({
       }
     }
     function emitReadable_(stream) {
-      debug2("emit readable");
+      debug("emit readable");
       stream.emit("readable");
       flow(stream);
     }
@@ -30627,7 +30627,7 @@ var require_stream_readable = __commonJS({
     function maybeReadMore_(stream, state) {
       var len = state.length;
       while (!state.reading && !state.flowing && !state.ended && state.length < state.highWaterMark) {
-        debug2("maybeReadMore read 0");
+        debug("maybeReadMore read 0");
         stream.read(0);
         if (len === state.length)
           break;
@@ -30654,7 +30654,7 @@ var require_stream_readable = __commonJS({
           break;
       }
       state.pipesCount += 1;
-      debug2("pipe count=%d opts=%j", state.pipesCount, pipeOpts);
+      debug("pipe count=%d opts=%j", state.pipesCount, pipeOpts);
       var doEnd = (!pipeOpts || pipeOpts.end !== false) && dest !== process.stdout && dest !== process.stderr;
       var endFn = doEnd ? onend : unpipe;
       if (state.endEmitted)
@@ -30663,7 +30663,7 @@ var require_stream_readable = __commonJS({
         src.once("end", endFn);
       dest.on("unpipe", onunpipe);
       function onunpipe(readable, unpipeInfo) {
-        debug2("onunpipe");
+        debug("onunpipe");
         if (readable === src) {
           if (unpipeInfo && unpipeInfo.hasUnpiped === false) {
             unpipeInfo.hasUnpiped = true;
@@ -30672,14 +30672,14 @@ var require_stream_readable = __commonJS({
         }
       }
       function onend() {
-        debug2("onend");
+        debug("onend");
         dest.end();
       }
       var ondrain = pipeOnDrain(src);
       dest.on("drain", ondrain);
       var cleanedUp = false;
       function cleanup() {
-        debug2("cleanup");
+        debug("cleanup");
         dest.removeListener("close", onclose);
         dest.removeListener("finish", onfinish);
         dest.removeListener("drain", ondrain);
@@ -30695,12 +30695,12 @@ var require_stream_readable = __commonJS({
       var increasedAwaitDrain = false;
       src.on("data", ondata);
       function ondata(chunk) {
-        debug2("ondata");
+        debug("ondata");
         increasedAwaitDrain = false;
         var ret2 = dest.write(chunk);
         if (false === ret2 && !increasedAwaitDrain) {
           if ((state.pipesCount === 1 && state.pipes === dest || state.pipesCount > 1 && indexOf(state.pipes, dest) !== -1) && !cleanedUp) {
-            debug2("false write response, pause", state.awaitDrain);
+            debug("false write response, pause", state.awaitDrain);
             state.awaitDrain++;
             increasedAwaitDrain = true;
           }
@@ -30708,7 +30708,7 @@ var require_stream_readable = __commonJS({
         }
       }
       function onerror(er) {
-        debug2("onerror", er);
+        debug("onerror", er);
         unpipe();
         dest.removeListener("error", onerror);
         if (EElistenerCount(dest, "error") === 0)
@@ -30721,18 +30721,18 @@ var require_stream_readable = __commonJS({
       }
       dest.once("close", onclose);
       function onfinish() {
-        debug2("onfinish");
+        debug("onfinish");
         dest.removeListener("close", onclose);
         unpipe();
       }
       dest.once("finish", onfinish);
       function unpipe() {
-        debug2("unpipe");
+        debug("unpipe");
         src.unpipe(dest);
       }
       dest.emit("pipe", src);
       if (!state.flowing) {
-        debug2("pipe resume");
+        debug("pipe resume");
         src.resume();
       }
       return dest;
@@ -30740,7 +30740,7 @@ var require_stream_readable = __commonJS({
     function pipeOnDrain(src) {
       return function() {
         var state = src._readableState;
-        debug2("pipeOnDrain", state.awaitDrain);
+        debug("pipeOnDrain", state.awaitDrain);
         if (state.awaitDrain)
           state.awaitDrain--;
         if (state.awaitDrain === 0 && EElistenerCount(src, "data")) {
@@ -30808,13 +30808,13 @@ var require_stream_readable = __commonJS({
     };
     Readable2.prototype.addListener = Readable2.prototype.on;
     function nReadingNextTick(self2) {
-      debug2("readable nexttick read 0");
+      debug("readable nexttick read 0");
       self2.read(0);
     }
     Readable2.prototype.resume = function() {
       var state = this._readableState;
       if (!state.flowing) {
-        debug2("resume");
+        debug("resume");
         state.flowing = true;
         resume(this, state);
       }
@@ -30828,7 +30828,7 @@ var require_stream_readable = __commonJS({
     }
     function resume_(stream, state) {
       if (!state.reading) {
-        debug2("resume read 0");
+        debug("resume read 0");
         stream.read(0);
       }
       state.resumeScheduled = false;
@@ -30839,9 +30839,9 @@ var require_stream_readable = __commonJS({
         stream.read(0);
     }
     Readable2.prototype.pause = function() {
-      debug2("call pause flowing=%j", this._readableState.flowing);
+      debug("call pause flowing=%j", this._readableState.flowing);
       if (false !== this._readableState.flowing) {
-        debug2("pause");
+        debug("pause");
         this._readableState.flowing = false;
         this.emit("pause");
       }
@@ -30849,7 +30849,7 @@ var require_stream_readable = __commonJS({
     };
     function flow(stream) {
       var state = stream._readableState;
-      debug2("flow", state.flowing);
+      debug("flow", state.flowing);
       while (state.flowing && stream.read() !== null) {
       }
     }
@@ -30858,7 +30858,7 @@ var require_stream_readable = __commonJS({
       var state = this._readableState;
       var paused = false;
       stream.on("end", function() {
-        debug2("wrapped end");
+        debug("wrapped end");
         if (state.decoder && !state.ended) {
           var chunk = state.decoder.end();
           if (chunk && chunk.length)
@@ -30867,7 +30867,7 @@ var require_stream_readable = __commonJS({
         _this.push(null);
       });
       stream.on("data", function(chunk) {
-        debug2("wrapped data");
+        debug("wrapped data");
         if (state.decoder)
           chunk = state.decoder.write(chunk);
         if (state.objectMode && (chunk === null || chunk === void 0))
@@ -30893,7 +30893,7 @@ var require_stream_readable = __commonJS({
         stream.on(kProxyEvents[n], this.emit.bind(this, kProxyEvents[n]));
       }
       this._read = function(n2) {
-        debug2("wrapped _read", n2);
+        debug("wrapped _read", n2);
         if (paused) {
           paused = false;
           stream.resume();
@@ -32255,11 +32255,11 @@ var require_graceful_fs = __commonJS({
         }
       });
     }
-    var debug2 = noop;
+    var debug = noop;
     if (util.debuglog)
-      debug2 = util.debuglog("gfs4");
+      debug = util.debuglog("gfs4");
     else if (/\bgfs4\b/i.test(process.env.NODE_DEBUG || ""))
-      debug2 = function() {
+      debug = function() {
         var m = util.format.apply(util, arguments);
         m = "GFS4: " + m.split(/\n/).join("\nGFS4: ");
         console.error(m);
@@ -32294,7 +32294,7 @@ var require_graceful_fs = __commonJS({
       }(fs2.closeSync);
       if (/\bgfs4\b/i.test(process.env.NODE_DEBUG || "")) {
         process.on("exit", function() {
-          debug2(fs2[gracefulQueue]);
+          debug(fs2[gracefulQueue]);
           require("assert").equal(fs2[gracefulQueue].length, 0);
         });
       }
@@ -32547,7 +32547,7 @@ var require_graceful_fs = __commonJS({
       return fs3;
     }
     function enqueue(elem) {
-      debug2("ENQUEUE", elem[0].name, elem[1]);
+      debug("ENQUEUE", elem[0].name, elem[1]);
       fs2[gracefulQueue].push(elem);
       retry();
     }
@@ -32574,10 +32574,10 @@ var require_graceful_fs = __commonJS({
       var startTime = elem[3];
       var lastTime = elem[4];
       if (startTime === void 0) {
-        debug2("RETRY", fn.name, args);
+        debug("RETRY", fn.name, args);
         fn.apply(null, args);
       } else if (Date.now() - startTime >= 6e4) {
-        debug2("TIMEOUT", fn.name, args);
+        debug("TIMEOUT", fn.name, args);
         var cb = args.pop();
         if (typeof cb === "function")
           cb.call(null, err);
@@ -32586,7 +32586,7 @@ var require_graceful_fs = __commonJS({
         var sinceStart = Math.max(lastTime - startTime, 1);
         var desiredDelay = Math.min(sinceStart * 1.2, 100);
         if (sinceAttempt >= desiredDelay) {
-          debug2("RETRY", fn.name, args);
+          debug("RETRY", fn.name, args);
           fn.apply(null, args.concat([startTime]));
         } else {
           fs2[gracefulQueue].push(elem);
@@ -33927,7 +33927,7 @@ var require_minimatch = __commonJS({
       this.parseNegate();
       var set = this.globSet = this.braceExpand();
       if (options.debug)
-        this.debug = function debug2() {
+        this.debug = function debug() {
           console.error.apply(console, arguments);
         };
       this.debug(this.pattern, set);
@@ -39793,11 +39793,15 @@ async function submitCommentToPR({
   core.info(found ? `Found previous comment ${found.id}` : "No previous comment to update");
   const body = reporter.toMarkdown();
   if (body.length === 0 && found) {
-    const allGood = "\u2705 No issues on Dekstop bundle size";
+    const allGood = `
+${header}
+
+\u2705 Previous issues have all been fixed.`;
     await createOrUpdateComment({ body: allGood, prNumber, githubToken, found });
     return;
   }
   const comment = `${header}
+
 ${body}
 `;
   await createOrUpdateComment({ body: comment, prNumber, githubToken, found });
@@ -39898,7 +39902,7 @@ function checksAgainstReference(reporter, metafiles, reference) {
   slugsOfInterest.forEach((slug) => {
     const ref = getMetafileBundleSize(reference, slug);
     const size = getMetafileBundleSize(metafiles, slug);
-    core.debug(`${slug} bundle size: ${formatSize(size)}`);
+    core2.info(`${slug} bundle size: ${formatSize(size)}`);
     if (!size) {
       reporter.error(`${slug} bundle size could not be inferred on this PR.`);
     } else if (!ref) {
@@ -39916,7 +39920,7 @@ function checksAgainstReference(reporter, metafiles, reference) {
     }
     const duplicatesRef = getMetafileDuplicates(reference, slug);
     const duplicates = getMetafileDuplicates(metafiles, slug);
-    core.debug(`${slug} duplicates: ${duplicates.join(", ")}`);
+    core2.info(`${slug} duplicates: ${duplicates.join(", ")}`);
     const added = duplicates.filter((d) => !duplicatesRef.includes(d));
     const removed = duplicatesRef.filter((d) => !duplicates.includes(d));
     for (const lib of added) {

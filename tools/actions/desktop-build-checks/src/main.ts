@@ -1,7 +1,6 @@
 import * as core from "@actions/core";
 import * as github from "@actions/github";
 import {
-  metafilesKeys,
   Metafiles,
   downloadMetafilesFromArtifact,
   getRecentArtifactFromBranch,
@@ -96,7 +95,7 @@ function checksAgainstReference(reporter: Reporter, metafiles: Metafiles, refere
     // diff on the bundle size
     const ref = getMetafileBundleSize(reference, slug);
     const size = getMetafileBundleSize(metafiles, slug);
-    core.debug(`${slug} bundle size: ${formatSize(size)}`);
+    core.info(`${slug} bundle size: ${formatSize(size)}`);
     if (!size) {
       reporter.error(`${slug} bundle size could not be inferred on this PR.`);
     } else if (!ref) {
@@ -116,7 +115,7 @@ function checksAgainstReference(reporter: Reporter, metafiles: Metafiles, refere
     // diff on the lib duplicates state
     const duplicatesRef = getMetafileDuplicates(reference, slug as MetafileSlug);
     const duplicates = getMetafileDuplicates(metafiles, slug as MetafileSlug);
-    core.debug(`${slug} duplicates: ${duplicates.join(", ")}`);
+    core.info(`${slug} duplicates: ${duplicates.join(", ")}`);
     const added = duplicates.filter(d => !duplicatesRef.includes(d));
     const removed = duplicatesRef.filter(d => !duplicates.includes(d));
     for (const lib of added) {

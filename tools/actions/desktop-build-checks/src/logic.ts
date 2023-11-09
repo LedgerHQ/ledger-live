@@ -135,7 +135,7 @@ export async function downloadMetafilesFromArtifact(
   githubToken: string,
   url: string,
 ): Promise<Metafiles> {
-  core.debug("Downloading Metafiles: " + url);
+  core.info("Downloading Metafiles: " + url);
   const res = await fetch(url, {
     headers: {
       Authorization: `Bearer ${githubToken}`,
@@ -245,7 +245,7 @@ export async function createOrUpdateComment({
   const octokit = github.getOctokit(githubToken);
 
   if (found) {
-    core.debug(`Updating comment ${found.id}`);
+    core.info(`Updating comment ${found.id}`);
     await octokit.rest.issues.updateComment({
       repo: "ledger-live",
       owner: "ledgerhq",
@@ -256,7 +256,7 @@ export async function createOrUpdateComment({
     return;
   }
 
-  core.debug(`Creating new comment`);
+  core.info(`Creating new comment`);
   await octokit.rest.issues.createComment({
     repo: "ledger-live",
     owner: "ledgerhq",
@@ -274,20 +274,24 @@ export async function submitCommentToPR({
   prNumber: string;
   githubToken: string;
 }): Promise<void> {
-  core.debug("Submiting comment to PR");
+  core.info("Submiting comment to PR");
   const header = `<!-- bundle-meta-${prNumber} -->`;
-  core.debug("Looking for existing comment");
+  core.info("Looking for existing comment");
   const found = await findComment({ prNumber, githubToken, header });
-  core.debug(found ? `Found previous comment ${found.id}` : "No previous comment to update");
+  core.info(found ? `Found previous comment ${found.id}` : "No previous comment to update");
   const body = reporter.toMarkdown();
 
   if (body.length === 0 && found) {
-    const allGood = "✅ Previous issues have all been fixed.";
+    const allGood = `
+${header}
+
+✅ Previous issues have all been fixed.`;
     await createOrUpdateComment({ body: allGood, prNumber, githubToken, found });
     return;
   }
 
   const comment = `${header}
+
 ${body}
 `;
   await createOrUpdateComment({ body: comment, prNumber, githubToken, found });
