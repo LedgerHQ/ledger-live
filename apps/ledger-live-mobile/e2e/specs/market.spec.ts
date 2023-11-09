@@ -30,14 +30,12 @@ describe("Market page for user with no device", () => {
     await expect(getElementByText("Bitcoin (BTC)")).toBeVisible();
   });
 
-  // FIXME Javascript error on webview
   it("should redirect to the buy a nano marketplace page", async () => {
     await marketPage.openAssetPage("Bitcoin (BTC)");
     await marketPage.buyNano();
     await marketPage.openMarketPlace();
-
     if (isAndroid()) {
-      const url = await web.element(by.web.id("main")).getCurrentUrl();
+      const url = await web.element(by.web.id("__next")).getCurrentUrl();
       const expectedUrl = "https://shop.ledger.com/";
 
       jestExpect(url).toContain(expectedUrl);
