@@ -4923,15 +4923,21 @@ importers:
       '@actions/github':
         specifier: ^5.1.1
         version: 5.1.1
+      '@types/lodash':
+        specifier: '4'
+        version: 4.14.198
+      '@types/node':
+        specifier: '20'
+        version: 20.8.9
+      '@types/stream-json':
+        specifier: '1.7'
+        version: 1.7.5
       '@types/unzipper':
         specifier: 0.10.8
         version: 0.10.8
       lodash:
-        specifier: 4.17.21
+        specifier: '4'
         version: 4.17.21
-      node-fetch:
-        specifier: ^3.3.2
-        version: 3.3.2
       stream-json:
         specifier: 1.8.0
         version: 1.8.0
@@ -24871,6 +24877,19 @@ packages:
 
   /@types/stack-utils@2.0.2:
     resolution: {integrity: sha512-g7CK9nHdwjK2n0ymT2CW698FuWJRIx+RP6embAzZ2Qi8/ilIrA1Imt2LVSeHUzKvpoi7BhmmQcXz95eS0f2JXw==}
+
+  /@types/stream-chain@2.0.3:
+    resolution: {integrity: sha512-cwWE6mrdDpmW3B5wr1+vpjbg8h3hZfOr/PbKQ38VE21xNyF64GNjrh855YdNAPCt4kSYXuLwgRqBWkY/dD6KMg==}
+    dependencies:
+      '@types/node': 18.16.19
+    dev: true
+
+  /@types/stream-json@1.7.5:
+    resolution: {integrity: sha512-IVTtojYNqc6RT9FWBlwPLG6QTVdv2gHdqHOyBYPgcsCKfwIxcQpKw0e0ybQVyCvJJT9Le6w9RB5r5c6mo2m+IQ==}
+    dependencies:
+      '@types/node': 18.16.19
+      '@types/stream-chain': 2.0.3
+    dev: true
 
   /@types/styled-components-react-native@5.1.3(@types/react@18.2.28):
     resolution: {integrity: sha512-IXaogtizUkHJNzSxihG4KK3Z+jaHFp4XyHYIh/I7SUHCc1DsBxToQpE33JITPkgP6DzfgeDn9JkGBGhDIy+GIQ==}
