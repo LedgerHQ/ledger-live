@@ -1,5 +1,5 @@
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import React, { useState, useCallback, Component, useEffect } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
@@ -184,7 +184,7 @@ function SendSummary({ navigation, route }: Props) {
           </View>
         ) : null}
         <SummaryFromSection account={account} parentAccount={parentAccount} />
-        <VerticalConnector
+        <View
           style={[
             styles.verticalConnector,
             {
@@ -370,15 +370,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 });
-
-// FIXME: PROBABLY SOME TYPE OF StyleProp<ViewStyle>
-class VerticalConnector extends Component<{
-  style: Record<string, string | number> | Array<Record<string, string | number>>;
-}> {
-  render() {
-    const { style } = this.props;
-    return <View style={style} />;
-  }
-}
 
 export default SendSummary;

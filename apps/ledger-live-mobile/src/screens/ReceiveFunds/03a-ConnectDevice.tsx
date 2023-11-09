@@ -144,7 +144,7 @@ export default function ConnectDevice({
   }
 
   if (!mainAccount.freshAddress) {
-    return <NotSyncedWarning continue={onSkipDevice} accountId={mainAccount.id} />;
+    return <NotSyncedWarning accountId={mainAccount.id} />;
   }
 
   return (
