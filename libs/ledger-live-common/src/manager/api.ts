@@ -376,6 +376,12 @@ const getCurrentFirmware: (input: {
         version_name: input.version,
         provider: input.provider,
       },
+    }).catch(error => {
+      const status = error?.status || error?.response?.status;
+
+      if (status === 404) throw new FirmwareNotRecognized();
+
+      throw error;
     });
     return data;
   },
@@ -457,13 +463,12 @@ const getDeviceVersion: (targetId: string | number, provider: number) => Promise
           target_id: targetId,
         },
       }).catch(error => {
-        const status = error && (error.status || (error.response && error.response.status)); // FIXME LLD is doing error remapping already. we probably need to move the remapping in live-common
+        const status = error?.status || error?.response?.status;
 
-        if (status === 404) {
+        if (status === 404)
           throw new FirmwareNotRecognized("manager api did not recognize targetId=" + targetId, {
             targetId,
           });
-        }
 
         throw error;
       });
