@@ -46,7 +46,7 @@ export const FirebaseRemoteConfigProvider = ({ children }: Props): JSX.Element |
         await fetchAndActivate(remoteConfig);
         setConfig(remoteConfig);
         LiveConfig.setProviderGetValueMethod({
-          firebase: (key: string) => {
+          firebaseRemoteConfig: (key: string) => {
             return getValue(remoteConfig, key);
           },
         });

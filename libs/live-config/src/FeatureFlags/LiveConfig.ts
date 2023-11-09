@@ -1,3 +1,4 @@
+// refer to https://github.com/firebase/firebase-js-sdk/blob/master/packages/remote-config/src/public_types.ts#L71 for the firebase config value interface
 export declare interface Value {
   asBoolean(): boolean;
   asNumber(): number;
@@ -17,8 +18,6 @@ export class LiveConfig {
       LiveConfig.instance = new LiveConfig();
       LiveConfig.instance.appVersion = config.appVersion;
       LiveConfig.instance.platform = config.platform;
-    } else {
-      throw new Error("LiveConfig instance is already initialized");
     }
   }
 

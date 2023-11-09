@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from "react";
 import remoteConfig from "@react-native-firebase/remote-config";
-import {
-  DEFAULT_FEATURES,
-  formatDefaultFeatures,
-  formatToFirebaseFeatureId,
-} from "@ledgerhq/live-config/FeatureFlags/index";
+import { DEFAULT_FEATURES, formatDefaultFeatures } from "@ledgerhq/live-config/FeatureFlags/index";
 import type { FirebaseFeatureFlagsProviderProps as Props } from "@ledgerhq/live-config/FeatureFlags/index";
 import { LiveConfig } from "@ledgerhq/live-config/FeatureFlags/index";
 import VersionNumber from "react-native-version-number";
@@ -16,8 +12,8 @@ LiveConfig.init({
   environment: process.env.NODE_ENV ?? "development",
 });
 LiveConfig.setProviderGetValueMethod({
-  firebase: (key: string) => {
-    return remoteConfig().getValue(formatToFirebaseFeatureId(key));
+  firebaseRemoteConfig: (key: string) => {
+    return remoteConfig().getValue(key);
   },
 });
 export const FirebaseRemoteConfigProvider = ({ children }: Props): JSX.Element | null => {

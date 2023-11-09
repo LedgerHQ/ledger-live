@@ -39,7 +39,7 @@ export const isFeature = (key: string): boolean => {
     return false;
   }
   try {
-    const value = LiveConfig.getInstance().providerGetvalueMethod!["firebase"](
+    const value = LiveConfig.getInstance().providerGetvalueMethod!["firebaseRemoteConfig"](
       formatToFirebaseFeatureId(key),
     );
     if (!value || !value.asString()) {
@@ -83,7 +83,7 @@ export const getFeature = (args: {
         };
     }
 
-    const value = LiveConfig.getInstance().providerGetvalueMethod!["firebase"](
+    const value = LiveConfig.getInstance().providerGetvalueMethod!["firebaseRemoteConfig"](
       formatToFirebaseFeatureId(key),
     );
 
