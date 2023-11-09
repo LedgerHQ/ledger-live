@@ -27,7 +27,7 @@ import {
   releaseSpeculosDevice,
   findAppCandidate,
 } from "../load/speculos";
-import type { AppCandidate, SpeculosTransport } from "@ledgerhq/coin-framework/bot/types";
+import type { AppCandidate } from "@ledgerhq/coin-framework/bot/types";
 import { formatReportForConsole, formatTime, formatAppCandidate, formatError } from "./formatters";
 import type {
   AppSpec,

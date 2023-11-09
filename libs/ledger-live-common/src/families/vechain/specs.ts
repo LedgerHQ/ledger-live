@@ -92,7 +92,6 @@ const vet: AppSpec<Transaction> = {
         account,
         siblings,
         bridge,
-        maxSpendable,
       }: TransactionArg<Transaction>): TransactionRes<Transaction> => {
         if (!account.subAccounts?.[0]) throw new Error("no VTHO account");
         invariant(account.balance.gt(MIN_VET_TRANSACTION_AMOUNT), "Vechain: VET balance is empty");
