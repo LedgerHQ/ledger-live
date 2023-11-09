@@ -163,6 +163,23 @@ const SwapForm = () => {
     // However, if you wish to use a different fee type, you will need to set it as custom.
     const isCustomFee =
       feesStrategy === "slow" || feesStrategy === "fast" || feesStrategy === "custom";
+
+    const providerRedirectFromAccountId =
+      fromAccount &&
+      provider &&
+      walletApiPartnerList?.enabled &&
+      walletApiPartnerList?.params?.list.includes(provider)
+        ? accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id
+        : fromAccount?.id;
+
+    const providerRedirectURLSearch = new URLSearchParams();
+    providerRedirectFromAccountId &&
+      providerRedirectURLSearch.set("accountId", providerRedirectFromAccountId);
+
+    exchangeRate?.providerURL &&
+      providerRedirectURLSearch.set("customDappUrl", exchangeRate.providerURL);
+    providerRedirectURLSearch.set("returnTo", "/swap");
+
     return {
       provider,
       fromAccountId,
@@ -174,6 +191,9 @@ const SwapForm = () => {
       customFeeConfig: customFeeConfig ? JSON.stringify(customFeeConfig) : undefined,
       providerType: exchangeRate?.providerType,
       cacheKey: v4(),
+      providerRedirectURL: `ledgerlive://discover/${getProviderName(
+        provider ?? "",
+      ).toLowerCase()}?${providerRedirectURLSearch.toString()}`,
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -182,6 +202,7 @@ const SwapForm = () => {
     swapTransaction.swap.to.currency?.id,
     exchangeRate?.providerType,
     exchangeRate?.tradeMethod,
+    exchangeRate?.providerURL,
   ]);
 
   const redirectToProviderApp = useCallback(

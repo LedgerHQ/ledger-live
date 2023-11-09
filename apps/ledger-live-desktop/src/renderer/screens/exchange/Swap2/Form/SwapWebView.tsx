@@ -29,6 +29,7 @@ export type SwapWebProps = {
     feeStrategy: string;
     customFeeConfig: string;
     cacheKey: string;
+    providerRedirectURL: string;
   }>;
   redirectToProviderApp(_: string): void;
   pageState: ReturnType<typeof usePageState>;
