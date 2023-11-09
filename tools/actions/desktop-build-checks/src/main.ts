@@ -10,6 +10,8 @@ import {
   submitCommentToPR,
   MetafileSlug,
   formatSize,
+  getMetafileDuplicates,
+  getMetafileBundleSize,
 } from "./logic";
 
 // here is the main logic of the action
@@ -59,10 +61,10 @@ async function main() {
 
 const bundleSizeThreshold = 100 * 1024; // 100kb
 
+const slugsOfInterest: MetafileSlug[] = ["main", "renderer"];
+
 // checks that compare the build between OSes
 function crossPlatformChecks(reporter: Reporter, all: Metafiles[], osNames: string[]) {
-  const slugsOfInterest: MetafileSlug[] = ["main", "renderer"];
-
   slugsOfInterest.forEach(slug => {
     const sizes = all.map(metafiles => getMetafileBundleSize(metafiles, slug));
     const ref = sizes[0];
@@ -90,11 +92,11 @@ function crossPlatformChecks(reporter: Reporter, all: Metafiles[], osNames: stri
 
 // checks that compare one build against a reference (on the same OS)
 function checksAgainstReference(reporter: Reporter, metafiles: Metafiles, reference: Metafiles) {
-  const slugsOfInterest: MetafileSlug[] = ["main", "renderer"];
-
   slugsOfInterest.forEach(slug => {
+    // diff on the bundle size
     const ref = getMetafileBundleSize(reference, slug);
     const size = getMetafileBundleSize(metafiles, slug);
+    core.debug(`${slug} bundle size: ${formatSize(size)}`);
     if (!size) {
       reporter.error(`${slug} bundle size could not be inferred on this PR.`);
     } else if (!ref) {
@@ -110,14 +112,20 @@ function checksAgainstReference(reporter: Reporter, metafiles: Metafiles, refere
         `${slug} bundle size decreased (${formatSize(ref)} -> ${formatSize(size)}). Thanks ❤️`,
       );
     }
-  });
-}
 
-function getMetafileBundleSize(metafile: Metafiles, slug: MetafileSlug): number | undefined {
-  const key = metafilesKeys[slug];
-  if (key in metafile) {
-    return metafile[key]?.outputs[`.webpack/${slug}.bundle.js`]?.bytes;
-  }
+    // diff on the lib duplicates state
+    const duplicatesRef = getMetafileDuplicates(reference, slug as MetafileSlug);
+    const duplicates = getMetafileDuplicates(metafiles, slug as MetafileSlug);
+    core.debug(`${slug} duplicates: ${duplicates.join(", ")}`);
+    const added = duplicates.filter(d => !duplicatesRef.includes(d));
+    const removed = duplicatesRef.filter(d => !duplicates.includes(d));
+    for (const lib of added) {
+      reporter.warning(`${slug}: ${lib} is now duplicated! (regression)`);
+    }
+    for (const lib of removed) {
+      reporter.improvement(`${slug}: deduplicated ${lib}`);
+    }
+  });
 }
 
 main().catch(err => {
