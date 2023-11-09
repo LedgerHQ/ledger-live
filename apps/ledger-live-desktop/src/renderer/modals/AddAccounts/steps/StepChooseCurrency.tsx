@@ -26,11 +26,7 @@ import { SatStackStatus } from "@ledgerhq/live-common/families/bitcoin/satstack"
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { NetworkDown } from "@ledgerhq/errors";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
-import {
-  CryptoCurrencyId,
-  CryptoOrTokenCurrency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrencyId, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Feature } from "@ledgerhq/types-live";
 
 const listSupportedTokens = () =>
