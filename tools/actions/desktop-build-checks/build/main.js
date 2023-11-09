@@ -1144,12 +1144,12 @@ var require_lib = __commonJS({
             throw new Error("Client has already been disposed.");
           }
           const parsedUrl = new URL(requestUrl);
-          let info = this._prepareRequest(verb, parsedUrl, headers);
+          let info3 = this._prepareRequest(verb, parsedUrl, headers);
           const maxTries = this._allowRetries && RetryableHttpVerbs.includes(verb) ? this._maxRetries + 1 : 1;
           let numTries = 0;
           let response;
           do {
-            response = yield this.requestRaw(info, data);
+            response = yield this.requestRaw(info3, data);
             if (response && response.message && response.message.statusCode === HttpCodes.Unauthorized) {
               let authenticationHandler;
               for (const handler2 of this.handlers) {
@@ -1159,7 +1159,7 @@ var require_lib = __commonJS({
                 }
               }
               if (authenticationHandler) {
-                return authenticationHandler.handleAuthentication(this, info, data);
+                return authenticationHandler.handleAuthentication(this, info3, data);
               } else {
                 return response;
               }
@@ -1182,8 +1182,8 @@ var require_lib = __commonJS({
                   }
                 }
               }
-              info = this._prepareRequest(verb, parsedRedirectUrl, headers);
-              response = yield this.requestRaw(info, data);
+              info3 = this._prepareRequest(verb, parsedRedirectUrl, headers);
+              response = yield this.requestRaw(info3, data);
               redirectsRemaining--;
             }
             if (!response.message.statusCode || !HttpResponseRetryCodes.includes(response.message.statusCode)) {
@@ -1212,7 +1212,7 @@ var require_lib = __commonJS({
        * @param info
        * @param data
        */
-      requestRaw(info, data) {
+      requestRaw(info3, data) {
         return __awaiter(this, void 0, void 0, function* () {
           return new Promise((resolve, reject) => {
             function callbackForResult(err, res) {
@@ -1224,7 +1224,7 @@ var require_lib = __commonJS({
                 resolve(res);
               }
             }
-            this.requestRawWithCallback(info, data, callbackForResult);
+            this.requestRawWithCallback(info3, data, callbackForResult);
           });
         });
       }
@@ -1234,12 +1234,12 @@ var require_lib = __commonJS({
        * @param data
        * @param onResult
        */
-      requestRawWithCallback(info, data, onResult) {
+      requestRawWithCallback(info3, data, onResult) {
         if (typeof data === "string") {
-          if (!info.options.headers) {
-            info.options.headers = {};
+          if (!info3.options.headers) {
+            info3.options.headers = {};
           }
-          info.options.headers["Content-Length"] = Buffer.byteLength(data, "utf8");
+          info3.options.headers["Content-Length"] = Buffer.byteLength(data, "utf8");
         }
         let callbackCalled = false;
         function handleResult(err, res) {
@@ -1248,7 +1248,7 @@ var require_lib = __commonJS({
             onResult(err, res);
           }
         }
-        const req = info.httpModule.request(info.options, (msg) => {
+        const req = info3.httpModule.request(info3.options, (msg) => {
           const res = new HttpClientResponse(msg);
           handleResult(void 0, res);
         });
@@ -1260,7 +1260,7 @@ var require_lib = __commonJS({
           if (socket) {
             socket.end();
           }
-          handleResult(new Error(`Request timeout: ${info.options.path}`));
+          handleResult(new Error(`Request timeout: ${info3.options.path}`));
         });
         req.on("error", function(err) {
           handleResult(err);
@@ -1287,27 +1287,27 @@ var require_lib = __commonJS({
         return this._getAgent(parsedUrl);
       }
       _prepareRequest(method, requestUrl, headers) {
-        const info = {};
-        info.parsedUrl = requestUrl;
-        const usingSsl = info.parsedUrl.protocol === "https:";
-        info.httpModule = usingSsl ? https : http;
+        const info3 = {};
+        info3.parsedUrl = requestUrl;
+        const usingSsl = info3.parsedUrl.protocol === "https:";
+        info3.httpModule = usingSsl ? https : http;
         const defaultPort = usingSsl ? 443 : 80;
-        info.options = {};
-        info.options.host = info.parsedUrl.hostname;
-        info.options.port = info.parsedUrl.port ? parseInt(info.parsedUrl.port) : defaultPort;
-        info.options.path = (info.parsedUrl.pathname || "") + (info.parsedUrl.search || "");
-        info.options.method = method;
-        info.options.headers = this._mergeHeaders(headers);
+        info3.options = {};
+        info3.options.host = info3.parsedUrl.hostname;
+        info3.options.port = info3.parsedUrl.port ? parseInt(info3.parsedUrl.port) : defaultPort;
+        info3.options.path = (info3.parsedUrl.pathname || "") + (info3.parsedUrl.search || "");
+        info3.options.method = method;
+        info3.options.headers = this._mergeHeaders(headers);
         if (this.userAgent != null) {
-          info.options.headers["user-agent"] = this.userAgent;
+          info3.options.headers["user-agent"] = this.userAgent;
         }
-        info.options.agent = this._getAgent(info.parsedUrl);
+        info3.options.agent = this._getAgent(info3.parsedUrl);
         if (this.handlers) {
           for (const handler2 of this.handlers) {
-            handler2.prepareRequest(info.options);
+            handler2.prepareRequest(info3.options);
           }
         }
-        return info;
+        return info3;
       }
       _mergeHeaders(headers) {
         if (this.requestOptions && this.requestOptions.headers) {
@@ -2143,18 +2143,18 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
       command_1.issueCommand("error", utils_1.toCommandProperties(properties), message instanceof Error ? message.toString() : message);
     }
     exports2.error = error;
-    function warning(message, properties = {}) {
+    function warning2(message, properties = {}) {
       command_1.issueCommand("warning", utils_1.toCommandProperties(properties), message instanceof Error ? message.toString() : message);
     }
-    exports2.warning = warning;
+    exports2.warning = warning2;
     function notice(message, properties = {}) {
       command_1.issueCommand("notice", utils_1.toCommandProperties(properties), message instanceof Error ? message.toString() : message);
     }
     exports2.notice = notice;
-    function info(message) {
+    function info3(message) {
       process.stdout.write(message + os.EOL);
     }
-    exports2.info = info;
+    exports2.info = info3;
     function startGroup(name) {
       command_1.issue("group", name);
     }
@@ -18330,12 +18330,12 @@ var require_lib2 = __commonJS({
             throw new Error("Client has already been disposed.");
           }
           const parsedUrl = new URL(requestUrl);
-          let info = this._prepareRequest(verb, parsedUrl, headers);
+          let info3 = this._prepareRequest(verb, parsedUrl, headers);
           const maxTries = this._allowRetries && RetryableHttpVerbs.includes(verb) ? this._maxRetries + 1 : 1;
           let numTries = 0;
           let response;
           do {
-            response = yield this.requestRaw(info, data);
+            response = yield this.requestRaw(info3, data);
             if (response && response.message && response.message.statusCode === HttpCodes.Unauthorized) {
               let authenticationHandler;
               for (const handler2 of this.handlers) {
@@ -18345,7 +18345,7 @@ var require_lib2 = __commonJS({
                 }
               }
               if (authenticationHandler) {
-                return authenticationHandler.handleAuthentication(this, info, data);
+                return authenticationHandler.handleAuthentication(this, info3, data);
               } else {
                 return response;
               }
@@ -18368,8 +18368,8 @@ var require_lib2 = __commonJS({
                   }
                 }
               }
-              info = this._prepareRequest(verb, parsedRedirectUrl, headers);
-              response = yield this.requestRaw(info, data);
+              info3 = this._prepareRequest(verb, parsedRedirectUrl, headers);
+              response = yield this.requestRaw(info3, data);
               redirectsRemaining--;
             }
             if (!response.message.statusCode || !HttpResponseRetryCodes.includes(response.message.statusCode)) {
@@ -18398,7 +18398,7 @@ var require_lib2 = __commonJS({
        * @param info
        * @param data
        */
-      requestRaw(info, data) {
+      requestRaw(info3, data) {
         return __awaiter(this, void 0, void 0, function* () {
           return new Promise((resolve, reject) => {
             function callbackForResult(err, res) {
@@ -18410,7 +18410,7 @@ var require_lib2 = __commonJS({
                 resolve(res);
               }
             }
-            this.requestRawWithCallback(info, data, callbackForResult);
+            this.requestRawWithCallback(info3, data, callbackForResult);
           });
         });
       }
@@ -18420,12 +18420,12 @@ var require_lib2 = __commonJS({
        * @param data
        * @param onResult
        */
-      requestRawWithCallback(info, data, onResult) {
+      requestRawWithCallback(info3, data, onResult) {
         if (typeof data === "string") {
-          if (!info.options.headers) {
-            info.options.headers = {};
+          if (!info3.options.headers) {
+            info3.options.headers = {};
           }
-          info.options.headers["Content-Length"] = Buffer.byteLength(data, "utf8");
+          info3.options.headers["Content-Length"] = Buffer.byteLength(data, "utf8");
         }
         let callbackCalled = false;
         function handleResult(err, res) {
@@ -18434,7 +18434,7 @@ var require_lib2 = __commonJS({
             onResult(err, res);
           }
         }
-        const req = info.httpModule.request(info.options, (msg) => {
+        const req = info3.httpModule.request(info3.options, (msg) => {
           const res = new HttpClientResponse(msg);
           handleResult(void 0, res);
         });
@@ -18446,7 +18446,7 @@ var require_lib2 = __commonJS({
           if (socket) {
             socket.end();
           }
-          handleResult(new Error(`Request timeout: ${info.options.path}`));
+          handleResult(new Error(`Request timeout: ${info3.options.path}`));
         });
         req.on("error", function(err) {
           handleResult(err);
@@ -18482,27 +18482,27 @@ var require_lib2 = __commonJS({
         return this._getProxyAgentDispatcher(parsedUrl, proxyUrl);
       }
       _prepareRequest(method, requestUrl, headers) {
-        const info = {};
-        info.parsedUrl = requestUrl;
-        const usingSsl = info.parsedUrl.protocol === "https:";
-        info.httpModule = usingSsl ? https : http;
+        const info3 = {};
+        info3.parsedUrl = requestUrl;
+        const usingSsl = info3.parsedUrl.protocol === "https:";
+        info3.httpModule = usingSsl ? https : http;
         const defaultPort = usingSsl ? 443 : 80;
-        info.options = {};
-        info.options.host = info.parsedUrl.hostname;
-        info.options.port = info.parsedUrl.port ? parseInt(info.parsedUrl.port) : defaultPort;
-        info.options.path = (info.parsedUrl.pathname || "") + (info.parsedUrl.search || "");
-        info.options.method = method;
-        info.options.headers = this._mergeHeaders(headers);
+        info3.options = {};
+        info3.options.host = info3.parsedUrl.hostname;
+        info3.options.port = info3.parsedUrl.port ? parseInt(info3.parsedUrl.port) : defaultPort;
+        info3.options.path = (info3.parsedUrl.pathname || "") + (info3.parsedUrl.search || "");
+        info3.options.method = method;
+        info3.options.headers = this._mergeHeaders(headers);
         if (this.userAgent != null) {
-          info.options.headers["user-agent"] = this.userAgent;
+          info3.options.headers["user-agent"] = this.userAgent;
         }
-        info.options.agent = this._getAgent(info.parsedUrl);
+        info3.options.agent = this._getAgent(info3.parsedUrl);
         if (this.handlers) {
           for (const handler2 of this.handlers) {
-            handler2.prepareRequest(info.options);
+            handler2.prepareRequest(info3.options);
           }
         }
-        return info;
+        return info3;
       }
       _mergeHeaders(headers) {
         if (this.requestOptions && this.requestOptions.headers) {
@@ -25226,8 +25226,8 @@ var require_debuggability = __commonJS({
         promiseChained: function(name, promise, child) {
           return { promise, child };
         },
-        warning: function(name, warning) {
-          return { warning };
+        warning: function(name, warning2) {
+          return { warning: warning2 };
         },
         unhandledRejection: function(name, reason, promise) {
           return { reason, promise };
@@ -25468,18 +25468,18 @@ var require_debuggability = __commonJS({
       function warn(message, shouldUseOwnTrace, promise) {
         if (!config.warnings)
           return;
-        var warning = new Warning(message);
+        var warning2 = new Warning(message);
         var ctx;
         if (shouldUseOwnTrace) {
-          promise._attachExtraTrace(warning);
+          promise._attachExtraTrace(warning2);
         } else if (config.longStackTraces && (ctx = Promise2._peekContext())) {
-          ctx.attachExtraTrace(warning);
+          ctx.attachExtraTrace(warning2);
         } else {
-          var parsed = parseStackAndMessage(warning);
-          warning.stack = parsed.message + "\n" + parsed.stack.join("\n");
+          var parsed = parseStackAndMessage(warning2);
+          warning2.stack = parsed.message + "\n" + parsed.stack.join("\n");
         }
-        if (!activeFireEvent("warning", warning)) {
-          formatAndLogError(warning, "", true);
+        if (!activeFireEvent("warning", warning2)) {
+          formatAndLogError(warning2, "", true);
         }
       }
       function reconstructStack(message, stacks) {
@@ -25674,9 +25674,9 @@ var require_debuggability = __commonJS({
         shouldIgnore = function(line) {
           if (bluebirdFramePattern.test(line))
             return true;
-          var info = parseLineInfo(line);
-          if (info) {
-            if (info.fileName === firstFileName && (firstIndex <= info.line && info.line <= lastIndex)) {
+          var info3 = parseLineInfo(line);
+          if (info3) {
+            if (info3.fileName === firstFileName && (firstIndex <= info3.line && info3.line <= lastIndex)) {
               return true;
             }
           }
@@ -39604,12 +39604,13 @@ var require_StreamValues = __commonJS({
 });
 
 // src/main.ts
-var core = __toESM(require_core());
+var core2 = __toESM(require_core());
 var github2 = __toESM(require_github());
 
 // src/logic.ts
 var import_fs = __toESM(require("fs"));
 var github = __toESM(require_github());
+var core = __toESM(require_core());
 var import_unzipper = __toESM(require_unzip2());
 var import_stream_json = __toESM(require_stream_json());
 var import_StreamValues = __toESM(require_StreamValues());
@@ -39656,7 +39657,7 @@ async function getRecentArtifactFromBranch(octokit, name, branch, maxDays = 7) {
   return artifactsByDate[0][0];
 }
 async function downloadMetafilesFromArtifact(githubToken, url) {
-  console.log("retrieving " + url);
+  core.info("Downloading Metafiles: " + url);
   const res = await fetch(url, {
     headers: {
       Authorization: `Bearer ${githubToken}`,
@@ -39706,21 +39707,67 @@ async function jsonFileToMetafiles(folder) {
 async function retrieveLocalMetafiles(folder) {
   return jsonFileToMetafiles(folder);
 }
+async function findComment({
+  prNumber,
+  githubToken,
+  header
+}) {
+  const octokit = github.getOctokit(githubToken);
+  const comments = await octokit.rest.issues.listComments({
+    issue_number: parseInt(prNumber, 10),
+    repo: "ledger-live",
+    owner: "ledgerhq"
+  });
+  return comments.data.find((c) => {
+    var _a2;
+    return (_a2 = c.body) == null ? void 0 : _a2.includes(header);
+  });
+}
+async function createOrUpdateComment({
+  body,
+  prNumber,
+  githubToken,
+  found
+}) {
+  const octokit = github.getOctokit(githubToken);
+  if (found) {
+    core.info(`Updating comment ${found.id}`);
+    await octokit.rest.issues.updateComment({
+      repo: "ledger-live",
+      owner: "ledgerhq",
+      comment_id: found == null ? void 0 : found.id,
+      body
+    });
+    return;
+  }
+  core.info(`Creating new comment`);
+  await octokit.rest.issues.createComment({
+    repo: "ledger-live",
+    owner: "ledgerhq",
+    issue_number: parseInt(prNumber, 10),
+    body
+  });
+}
 async function submitCommentToPR({
   reporter,
   prNumber,
   githubToken
 }) {
-  const octokit = github.getOctokit(githubToken);
+  core.info("Submiting comment to PR");
+  const header = `<!-- bundle-meta-${prNumber} -->`;
+  core.info("Looking for existing comment");
+  const found = await findComment({ prNumber, githubToken, header });
+  core.info(found ? `Found previous comment ${found.id}` : "No previous comment to update");
   const body = reporter.toMarkdown();
-  if (body.length === 0)
+  if (body.length === 0 && found) {
+    const allGood = "\u2705 No issues on Dekstop bundle size";
+    await createOrUpdateComment({ body: allGood, prNumber, githubToken, found });
     return;
-  await octokit.rest.issues.createComment({
-    owner: "ledgerhq",
-    repo: "ledger-live",
-    issue_number: parseInt(prNumber, 10),
-    body
-  });
+  }
+  const comment = `${header}
+${body}
+`;
+  await createOrUpdateComment({ body: comment, prNumber, githubToken, found });
 }
 var delay = (ms) => new Promise((f) => setTimeout(f, ms));
 function isDateBefore(a, b) {
@@ -39755,29 +39802,36 @@ function formatSize(bytes) {
 
 // src/main.ts
 async function main() {
-  const githubToken = core.getInput("token");
-  const prNumber = core.getInput("prNumber");
-  const baseBranch = core.getInput("baseBranch");
+  const githubToken = core2.getInput("token");
+  const prNumber = core2.getInput("prNumber");
+  const baseBranch = core2.getInput("baseBranch");
   const octokit = github2.getOctokit(githubToken);
   const latestLinux = await getRecentArtifactFromBranch(
     octokit,
     "linux-js-bundle-metafiles",
     baseBranch
   );
-  if (!latestLinux)
+  if (!latestLinux) {
+    core2.warning(`Could not find previous metadata files from ${baseBranch}`);
     return;
+  }
+  core2.info(`Downloading most recent artifacts from ${baseBranch}`);
   const referenceMetafiles = await downloadMetafilesFromArtifact(
     githubToken,
     latestLinux.archive_download_url
   );
+  core2.info(`Getting current builds metadata files`);
   const all = await Promise.all([
     retrieveLocalMetafiles("linux-js-bundle-metafiles"),
     retrieveLocalMetafiles("mac-js-bundle-metafiles"),
     retrieveLocalMetafiles("windows-js-bundle-metafiles")
   ]);
   const reporter = new Reporter();
+  core2.info("Doing cross platform checks...");
   crossPlatformChecks(reporter, all, ["Linux", "Mac", "Windows"]);
+  core2.info(`Checking agains builds metadata files from ${baseBranch}`);
   checksAgainstReference(reporter, all[0], referenceMetafiles);
+  core2.info("Submitting comment to PR");
   await submitCommentToPR({ reporter, prNumber, githubToken });
 }
 var bundleSizeThreshold = 100 * 1024;
@@ -39835,7 +39889,7 @@ function getMetafileBundleSize(metafile, slug) {
   }
 }
 main().catch((err) => {
-  core.setFailed(err);
+  core2.setFailed(err);
 });
 /*! Bundled license information:
 

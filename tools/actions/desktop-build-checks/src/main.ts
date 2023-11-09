@@ -25,13 +25,18 @@ async function main() {
     "linux-js-bundle-metafiles",
     baseBranch,
   );
-  if (!latestLinux) return; // TODO handle failure when there is nothing to compare with
+  if (!latestLinux) {
+    core.warning(`Could not find previous metadata files from ${baseBranch}`);
+    return; // TODO handle failure when there is nothing to compare with
+  }
 
+  core.info(`Downloading most recent artifacts from ${baseBranch}`);
   const referenceMetafiles = await downloadMetafilesFromArtifact(
     githubToken,
     latestLinux.archive_download_url,
   );
 
+  core.info(`Getting current builds metadata files`);
   const all = await Promise.all([
     retrieveLocalMetafiles("linux-js-bundle-metafiles"),
     retrieveLocalMetafiles("mac-js-bundle-metafiles"),
@@ -40,10 +45,13 @@ async function main() {
 
   const reporter = new Reporter();
 
+  core.info("Doing cross platform checks...");
   crossPlatformChecks(reporter, all, ["Linux", "Mac", "Windows"]);
 
+  core.info(`Checking agains builds metadata files from ${baseBranch}`);
   checksAgainstReference(reporter, all[0], referenceMetafiles);
 
+  core.info("Submitting comment to PR");
   await submitCommentToPR({ reporter, prNumber, githubToken });
 }
 

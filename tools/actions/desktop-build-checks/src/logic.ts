@@ -1,5 +1,6 @@
 import fs from "fs";
 import * as github from "@actions/github";
+import * as core from "@actions/core";
 import { Parse } from "unzipper";
 import { parser } from "stream-json";
 import { streamValues } from "stream-json/streamers/StreamValues";
@@ -100,7 +101,7 @@ export async function downloadMetafilesFromArtifact(
   githubToken: string,
   url: string,
 ): Promise<Metafiles> {
-  console.log("retrieving " + url);
+  core.info("Downloading Metafiles: " + url);
   const res = await fetch(url, {
     headers: {
       Authorization: `Bearer ${githubToken}`,
@@ -161,6 +162,75 @@ export async function retrieveLocalMetafiles(folder: string): Promise<Metafiles>
   return jsonFileToMetafiles(folder);
 }
 
+export async function findComment({
+  prNumber,
+  githubToken,
+  header,
+}: {
+  header: string;
+  prNumber: string;
+  githubToken: string;
+}) {
+  const octokit = github.getOctokit(githubToken);
+  const comments = await octokit.rest.issues.listComments({
+    issue_number: parseInt(prNumber, 10),
+    repo: "ledger-live",
+    owner: "ledgerhq",
+  });
+
+  return comments.data.find(c => c.body?.includes(header));
+}
+
+export async function deleteComment({
+  githubToken,
+  found,
+}: {
+  githubToken: string;
+  found: Awaited<ReturnType<typeof findComment>>;
+}) {
+  if (!found) return;
+  const octokit = github.getOctokit(githubToken);
+  await octokit.rest.issues.deleteComment({
+    owner: "ledgerhq",
+    repo: "ledger-live",
+    comment_id: found.id,
+  });
+}
+
+export async function createOrUpdateComment({
+  body,
+  prNumber,
+  githubToken,
+  found,
+}: {
+  body: string;
+  prNumber: string;
+  githubToken: string;
+  found: Awaited<ReturnType<typeof findComment>>;
+}) {
+  const octokit = github.getOctokit(githubToken);
+
+  if (found) {
+    core.info(`Updating comment ${found.id}`);
+    await octokit.rest.issues.updateComment({
+      repo: "ledger-live",
+      owner: "ledgerhq",
+      comment_id: found?.id,
+      body,
+    });
+
+    return;
+  }
+
+  core.info(`Creating new comment`);
+  await octokit.rest.issues.createComment({
+    repo: "ledger-live",
+    owner: "ledgerhq",
+    issue_number: parseInt(prNumber, 10),
+    body,
+  });
+}
+
 export async function submitCommentToPR({
   reporter,
   prNumber,
@@ -170,16 +240,23 @@ export async function submitCommentToPR({
   prNumber: string;
   githubToken: string;
 }): Promise<void> {
-  const octokit = github.getOctokit(githubToken);
+  core.info("Submiting comment to PR");
+  const header = `<!-- bundle-meta-${prNumber} -->`;
+  core.info("Looking for existing comment");
+  const found = await findComment({ prNumber, githubToken, header });
+  core.info(found ? `Found previous comment ${found.id}` : "No previous comment to update");
   const body = reporter.toMarkdown();
-  if (body.length === 0) return;
-  // FIXME we should check if the comment already exists and update it instead
-  await octokit.rest.issues.createComment({
-    owner: "ledgerhq",
-    repo: "ledger-live",
-    issue_number: parseInt(prNumber, 10),
-    body,
-  });
+
+  if (body.length === 0 && found) {
+    const allGood = "✅ No issues on Dekstop bundle size";
+    await createOrUpdateComment({ body: allGood, prNumber, githubToken, found });
+    return;
+  }
+
+  const comment = `${header}
+${body}
+`;
+  await createOrUpdateComment({ body: comment, prNumber, githubToken, found });
 }
 
 const delay = (ms: number): Promise<void> => new Promise(f => setTimeout(f, ms));
