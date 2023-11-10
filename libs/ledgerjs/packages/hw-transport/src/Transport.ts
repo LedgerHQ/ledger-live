@@ -324,7 +324,7 @@ export default class Transport {
    * It also handles "unresponsiveness" by emitting "unresponsive" and "responsive" events.
    *
    * @param f The exchange job, using the transport to run
-   * @returns a Promise with a Buffer containing the response, or void if not response
+   * @returns a Promise resolving with the output of the given job
    */
   async exchangeAtomicImpl<Output>(f: () => Promise<Output>): Promise<Output> {
     const tracer = this.tracer.withUpdatedContext({ function: "exchangeAtomicImpl" });

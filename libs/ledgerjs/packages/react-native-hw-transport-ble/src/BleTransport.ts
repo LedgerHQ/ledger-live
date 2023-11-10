@@ -301,43 +301,44 @@ async function open(
     throw new TransportError("service not found", "BLEServiceNotFound");
   }
 
-  let writeC: Characteristic | null | undefined;
-  let writeCmdC: Characteristic | undefined;
-  let notifyC: Characteristic | null | undefined;
+  let writableWithResponseCharacteristic: Characteristic | null | undefined;
+  let writableWithoutResponseCharacteristic: Characteristic | undefined;
+  // A characteristic that can monitor value changes
+  let notifiableCharacteristic: Characteristic | null | undefined;
 
   for (const c of characteristics) {
     if (c.uuid === writeUuid) {
-      writeC = c;
+      writableWithResponseCharacteristic = c;
     } else if (c.uuid === writeCmdUuid) {
-      writeCmdC = c;
+      writableWithoutResponseCharacteristic = c;
     } else if (c.uuid === notifyUuid) {
-      notifyC = c;
+      notifiableCharacteristic = c;
     }
   }
 
-  if (!writeC) {
+  if (!writableWithResponseCharacteristic) {
     throw new TransportError("write characteristic not found", "BLECharacteristicNotFound");
   }
 
-  if (!notifyC) {
+  if (!notifiableCharacteristic) {
     throw new TransportError("notify characteristic not found", "BLECharacteristicNotFound");
   }
 
-  if (!writeC.isWritableWithResponse) {
+  if (!writableWithResponseCharacteristic.isWritableWithResponse) {
     throw new TransportError(
-      "write characteristic not writableWithResponse",
+      "The writable-with-response characteristic is not writable with response",
       "BLECharacteristicInvalid",
     );
   }
 
-  if (!notifyC.isNotifiable) {
+  if (!notifiableCharacteristic.isNotifiable) {
     throw new TransportError("notify characteristic not notifiable", "BLECharacteristicInvalid");
   }
 
-  if (writeCmdC) {
-    if (!writeCmdC.isWritableWithoutResponse) {
+  if (writableWithoutResponseCharacteristic) {
+    if (!writableWithoutResponseCharacteristic.isWritableWithoutResponse) {
       throw new TransportError(
-        "write cmd characteristic not writableWithoutResponse",
+        "The writable-without-response characteristic is not writable without response",
         "BLECharacteristicInvalid",
       );
     }
@@ -346,7 +347,7 @@ async function open(
   tracer.trace(`device.mtu=${device.mtu}`);
 
   // Inits the observable that will emit received data from the device via BLE
-  const notifyObservable = monitorCharacteristic(notifyC, context).pipe(
+  const notifyObservable = monitorCharacteristic(notifiableCharacteristic, context).pipe(
     catchError(e => {
       // LL-9033 fw 2.0.2 introduced this case, we silence the inner unhandled error.
       // It will be handled when negotiating the MTU in `inferMTU` but will be ignored in other cases.
@@ -367,10 +368,17 @@ async function open(
   // Keeps the input from the device observable alive (multicast observable)
   const notif = notifyObservable.subscribe();
 
-  const transport = new BleTransport(device, writeC, writeCmdC, notifyObservable, deviceModel, {
-    context,
-    rxjsScheduler,
-  });
+  const transport = new BleTransport(
+    device,
+    writableWithResponseCharacteristic,
+    writableWithoutResponseCharacteristic,
+    notifyObservable,
+    deviceModel,
+    {
+      context,
+      rxjsScheduler,
+    },
+  );
   tracer.trace(`New BleTransport created`);
 
   // Keeping it as a comment for now but if no new bluetooth issues occur, we will be able to remove it
@@ -610,8 +618,8 @@ export default class BleTransport extends Transport {
   // Observable emitting data received from the device via BLE
   notifyObservable: Observable<Buffer | Error>;
   notYetDisconnected = true;
-  writeCharacteristic: Characteristic;
-  writeCmdCharacteristic: Characteristic | undefined;
+  writableWithResponseCharacteristic: Characteristic;
+  writableWithoutResponseCharacteristic: Characteristic | undefined;
   rxjsScheduler?: SchedulerLike;
   // Transaction ids of communication operations that are currently pending
   currentTransactionIds: Array<string>;
@@ -620,8 +628,10 @@ export default class BleTransport extends Transport {
    * The static `open` function is used to handle BleTransport instantiation
    *
    * @param device
-   * @param writeCharacteristic
-   * @param writeCmdCharacteristic
+   * @param writableWithResponseCharacteristic A BLE characteristic that we can write on,
+   *   and that will be acknowledged in response from the device when it receives the written value.
+   * @param writableWithoutResponseCharacteristic A BLE characteristic that we can write on,
+   *   and that will not be acknowledged in response from the device
    * @param notifyObservable A multicast observable that emits messages received from the device
    * @param deviceModel
    * @param params Contains optional options and injected dependencies used by the transport implementation
@@ -631,8 +641,8 @@ export default class BleTransport extends Transport {
    */
   constructor(
     device: Device,
-    writeCharacteristic: Characteristic,
-    writeCmdCharacteristic: Characteristic | undefined,
+    writableWithResponseCharacteristic: Characteristic,
+    writableWithoutResponseCharacteristic: Characteristic | undefined,
     notifyObservable: Observable<Buffer | Error>,
     deviceModel: DeviceModel,
     { context, rxjsScheduler }: { context?: TraceContext; rxjsScheduler?: SchedulerLike } = {},
@@ -640,8 +650,8 @@ export default class BleTransport extends Transport {
     super({ context, logType: LOG_TYPE });
     this.id = device.id;
     this.device = device;
-    this.writeCharacteristic = writeCharacteristic;
-    this.writeCmdCharacteristic = writeCmdCharacteristic;
+    this.writableWithResponseCharacteristic = writableWithResponseCharacteristic;
+    this.writableWithoutResponseCharacteristic = writableWithoutResponseCharacteristic;
     this.notifyObservable = notifyObservable;
     this.deviceModel = deviceModel;
     this.rxjsScheduler = rxjsScheduler;
@@ -736,7 +746,7 @@ export default class BleTransport extends Transport {
    *
    * Cancelling transaction which doesn't exist is ignored.
    *
-   * Note: cancelling `writeCmdCharacteristic.write...` will throw a `BleError` with code `OperationCancelled`
+   * Note: cancelling `writableWithoutResponseCharacteristic.write...` will throw a `BleError` with code `OperationCancelled`
    * but this error should be ignored. (In `exchange` our observable is unsubscribed before `cancelPendingOperations`
    * is called so the error is ignored)
    */
@@ -843,15 +853,20 @@ export default class BleTransport extends Transport {
     this.currentTransactionIds.push(transactionId);
 
     const tracer = this.tracer.withUpdatedContext({ transactionId });
-    tracer.trace("Writing to device", { willMessageBeAcked: !this.writeCmdCharacteristic });
+    tracer.trace("Writing to device", {
+      willMessageBeAcked: !this.writableWithoutResponseCharacteristic,
+    });
 
     try {
-      if (!this.writeCmdCharacteristic) {
-        // The message will be acked by the device
-        await this.writeCharacteristic.writeWithResponse(buffer.toString("base64"), transactionId);
+      if (!this.writableWithoutResponseCharacteristic) {
+        // The message will be acked in response by the device
+        await this.writableWithResponseCharacteristic.writeWithResponse(
+          buffer.toString("base64"),
+          transactionId,
+        );
       } else {
-        // The message won't be acked by the device
-        await this.writeCmdCharacteristic.writeWithoutResponse(
+        // The message won't be acked in response by the device
+        await this.writableWithoutResponseCharacteristic.writeWithoutResponse(
           buffer.toString("base64"),
           transactionId,
         );
