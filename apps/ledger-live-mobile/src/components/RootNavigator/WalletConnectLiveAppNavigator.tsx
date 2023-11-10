@@ -15,6 +15,8 @@ import { setWallectConnectUri } from "../../actions/walletconnect";
 import { WalletConnectLiveAppNavigatorParamList } from "./types/WalletConnectLiveAppNavigator";
 import { StackNavigatorProps } from "./types/helpers";
 
+const PLATFORM = "ledger-wallet-connect";
+
 const options = {
   headerBackImage: () => (
     <Flex pl="16px">
@@ -44,8 +46,6 @@ export default function WalletConnectLiveAppNavigator() {
 
   const { params: routeParams } = route;
 
-  const platform = "ledger-wallet-connect";
-
   return (
     <Stack.Navigator screenOptions={stackNavigationConfig}>
       <Stack.Screen name={ScreenName.WalletConnectConnect} options={options}>
@@ -57,7 +57,7 @@ export default function WalletConnectLiveAppNavigator() {
             route={{
               ..._props.route,
               params: {
-                platform,
+                platform: PLATFORM,
                 uri: uri || _props.route.params?.uri,
               },
             }}
