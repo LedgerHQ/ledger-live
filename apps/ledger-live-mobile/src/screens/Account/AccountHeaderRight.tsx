@@ -11,6 +11,10 @@ import TokenContextualModal from "../Settings/Accounts/TokenContextualModal";
 import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import type { AccountsNavigatorParamList } from "../../components/RootNavigator/types/AccountsNavigator";
 
+import { Flex } from "@ledgerhq/native-ui";
+import { WalletConnectAction } from "../WalletCentricAsset/WalletConnectHeader";
+import { isWalletConnectSupported } from "@ledgerhq/live-common/walletConnect/index";
+
 export default function AccountHeaderRight() {
   const navigation =
     useNavigation<
@@ -32,6 +36,7 @@ export default function AccountHeaderRight() {
 
   const currency = getAccountCurrency(account);
   const cryptoAccounts = accounts.filter(account => account.currency.id === currency.id);
+  const isWalletConnectActionDisplayable = isWalletConnectSupported(currency);
 
   useEffect(() => {
     if (!account) {
@@ -60,26 +65,31 @@ export default function AccountHeaderRight() {
 
   if (account.type === "Account") {
     return (
-      <Touchable
-        event="button_clicked"
-        eventProperties={{
-          button: "Account Settings",
-        }}
-        onPress={() => {
-          navigation.navigate(NavigatorName.AccountSettings, {
-            screen: ScreenName.AccountSettingsMain,
-            params: {
-              accountId: account.id,
-              hasOtherAccountsForThisCrypto: cryptoAccounts && cryptoAccounts.length > 1,
-            },
-          });
-        }}
-        style={{ alignItems: "center", justifyContent: "center" }}
-      >
-        <View>
-          <SettingsMedium size={24} color="neutral.c100" />
-        </View>
-      </Touchable>
+      <Flex flexDirection="row">
+        {isWalletConnectActionDisplayable && (
+          <Flex mr={7}>
+            <WalletConnectAction currency={currency} event={"WalletConnect Account Button"} />
+          </Flex>
+        )}
+
+        <Touchable
+          event="button_clicked"
+          eventProperties={{
+            button: "Account Settings",
+          }}
+          onPress={() => {
+            navigation.navigate(NavigatorName.AccountSettings, {
+              screen: ScreenName.AccountSettingsMain,
+              params: {
+                accountId: account.id,
+                hasOtherAccountsForThisCrypto: cryptoAccounts && cryptoAccounts.length > 1,
+              },
+            });
+          }}
+        >
+          <SettingsMedium size={24} />
+        </Touchable>
+      </Flex>
     );
   }
 
