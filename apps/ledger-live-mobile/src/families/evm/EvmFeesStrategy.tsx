@@ -21,6 +21,13 @@ const getCustomStrategyFees = (transaction: Transaction): BigNumber | null => {
   return null;
 };
 
+/**
+ * ⚠️ In the context of some UI flows like the swap, the main component might
+ * be providing a navigation after updating the transaction
+ * (i.e: calling `setTransaction`).
+ * One should therefore be careful regarding this side effect when calling
+ * `setTransaction`.
+ */
 export default function EvmFeesStrategy({
   account,
   parentAccount,
@@ -74,6 +81,32 @@ export default function EvmFeesStrategy({
   const [customStrategyTransactionPatch, setCustomStrategyTransactionPatch] =
     useState<Partial<Transaction>>();
 
+  useEffect(() => {
+    if (!customStrategyTransactionPatch) {
+      return;
+    }
+    const bridge = getAccountBridge<Transaction>(account, parentAccount);
+
+    /**
+     * If the customStrategyTransactionPatch is present, this means the custom
+     * fee has been edited by the user. In this case, we need to update the
+     * transaction with the new fee data.
+     * This also selects the new "custom" strategy in the fees strategy list.
+     */
+    const updatedTransaction = bridge.updateTransaction(transaction, {
+      ...customStrategyTransactionPatch,
+    });
+
+    setTransaction(updatedTransaction);
+  }, [
+    setTransaction,
+    account,
+    parentAccount,
+    transaction,
+    customStrategyTransactionPatch,
+    gasOptions,
+  ]);
+
   const onFeesSelected = useCallback(
     ({ feesStrategy }: { feesStrategy: StrategyWithCustom }) => {
       const bridge = getAccountBridge<Transaction>(account, parentAccount);
@@ -106,7 +139,6 @@ export default function EvmFeesStrategy({
       currentNavigation: ScreenName.SendSummary,
       nextNavigation: ScreenName.SendSelectDevice,
       gasOptions,
-      goBackOnSetTransaction: false,
       setTransaction,
       setCustomStrategyTransactionPatch,
     });
