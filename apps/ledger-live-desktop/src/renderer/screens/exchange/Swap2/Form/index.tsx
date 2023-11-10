@@ -211,6 +211,10 @@ const SwapForm = () => {
       provider,
       providerType: "DEX",
       fromTokenAddress,
+      fromCurrencyId: from?.currency?.id,
+      fromTokenId: from?.account?.id,
+      toCurrencyId: to?.currency?.id,
+      toTokenId: to?.account?.id,
       fromAccountId,
       fromParentAccountId: fromParentAccount
         ? accountToWalletAPIAccount(fromParentAccount)?.id

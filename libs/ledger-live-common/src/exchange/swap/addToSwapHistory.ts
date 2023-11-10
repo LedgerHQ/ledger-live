@@ -39,7 +39,7 @@ export default ({
     operationId,
     swapId,
     // NB We store the reciever main account + tokenId in case the token account doesn't exist yet.
-    receiverAccountId: mainToAccount.id,
+    receiverAccountId: mainToAccount.id, //"js:2:bsc:0xe197a5A43521Fc8f0842E63C232Dc2d616A7A308:"
     tokenId,
     fromAmount: transaction.amount,
     toAmount,

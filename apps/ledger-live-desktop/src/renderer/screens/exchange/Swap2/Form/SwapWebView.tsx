@@ -14,6 +14,10 @@ import { initialWebviewState } from "~/renderer/components/Web3AppWebview/helper
 import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
 import { TopBar } from "~/renderer/components/WebPlatformPlayer/TopBar";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
+import { SwapOperation } from "@ledgerhq/types-live/lib/swap";
+import BigNumber from "bignumber.js";
+import { SubAccount } from "@ledgerhq/types-live";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 
 type CustomHandlersParams<Params> = {
   params: Params;
@@ -49,6 +53,7 @@ const SwapWebView = ({ pageState, swapState }: SwapWebProps) => {
       palette: { type: themeType },
     },
   } = useTheme();
+  const dispatch = useDispatch();
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const { setDrawer } = React.useContext(context);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
@@ -79,26 +84,48 @@ const SwapWebView = ({ pageState, swapState }: SwapWebProps) => {
         return Promise.resolve();
       },
       "custom.saveSwapToHistory": ({ params }: any) => {
-        const dispatch = useDispatch();
+        console.log("custom.saveSwapToHistory params");
+        console.log(params);
 
-        // dispatch(
-        //   updateAccountWithUpdater({
-        //     accountId: mainAccount.id,
-        //     updater: account =>
-        //       addPendingOperation(
-        //         addToSwapHistory({
-        //           account,
-        //           operation,
-        //           transaction: swapTx.current.transaction as Transaction,
-        //           swap: {
-        //             exchange,
-        //             exchangeRate: exchangeRate.current,
-        //           },
-        //           swapId,
-        //         }),
-        //         operation,
-        //       ),
-        //   }),
+        const operationId = `${params.swap.fromTokenId}-${params.transaction_id}-OUT`;
+        // const toCurrency = getAccountCurrency(params.toAccount);
+        const fromCurrency = getAccountCurrency(params.swap.fromAccount);
+
+        // const isFromToken = fromCurrency.type === "TokenCurrency";
+
+        const swapOperation: SwapOperation = {
+          status: "pending",
+          provider: params.swap.provider,
+          operationId,
+          swapId: params.transaction_id,
+          // NB We store the reciever main account + tokenId in case the token account doesn't exist yet.
+          receiverAccountId: params.swap.toTokenId,
+          tokenId: params.swap.toTokenId,
+          fromAmount: new BigNumber(params.swap.fromAmountWei),
+          toAmount: new BigNumber(params.toAmount || 1000), //tmp backend should return the correct value
+        };
+        dispatch(
+          updateAccountWithUpdater(params.swap.fromTokenId, account => {
+            console.log("in dispatcher");
+            console.log(account);
+            console.log(swapOperation);
+            const isFromToken = fromCurrency.type === "TokenCurrency";
+            const subAccounts = account.type === "Account" && account.subAccounts;
+            console.log(subAccounts);
+            return isFromToken && subAccounts
+              ? {
+                  ...account,
+                  subAccounts: subAccounts.map<SubAccount>((a: SubAccount) => {
+                    const subAccount = {
+                      ...a,
+                      swapHistory: [...a.swapHistory, swapOperation],
+                    };
+                    return a.id === params.swap.fromTokenId ? subAccount : a;
+                  }),
+                }
+              : { ...account, swapHistory: [...account.swapHistory, swapOperation] };
+          }),
+        );
         return Promise.resolve();
       },
       "custom.throwGenericErrorToLedgerLive": () => {
