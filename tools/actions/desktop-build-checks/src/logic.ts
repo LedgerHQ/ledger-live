@@ -314,7 +314,7 @@ export class Reporter {
   statements: string[] = [];
 
   improvement(message: string) {
-    this.statements.push(`✅ 💪 ${message}`);
+    this.statements.push(`🚀 ${message}`);
   }
   warning(message: string) {
     this.statements.push(`⚠️ ${message}`);
@@ -324,7 +324,7 @@ export class Reporter {
   }
 
   toMarkdown() {
-    return this.statements.map(o => `- ${o}`).join("\n");
+    return this.statements.join("\n");
   }
 }
 
@@ -338,4 +338,10 @@ export function formatSize(bytes: number | undefined, precision: number = 1): st
   } else {
     return `${Math.round((mag * bytes) / 1024 / 1024) / mag}mb`;
   }
+}
+
+export function formatMarkdownBoldList(items: string[]) {
+  if (items.length === 0) return "";
+  const map = items.map(item => `**${item}**`);
+  return map.slice(0, items.length - 1).join(", ") + " and " + map[items.length - 1];
 }

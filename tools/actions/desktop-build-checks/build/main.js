@@ -39822,7 +39822,7 @@ var Reporter = class {
     this.statements = [];
   }
   improvement(message) {
-    this.statements.push(`\u2705 \u{1F4AA} ${message}`);
+    this.statements.push(`\u{1F680} ${message}`);
   }
   warning(message) {
     this.statements.push(`\u26A0\uFE0F ${message}`);
@@ -39831,7 +39831,7 @@ var Reporter = class {
     this.statements.push(`\u274C ${message}`);
   }
   toMarkdown() {
-    return this.statements.map((o) => `- ${o}`).join("\n");
+    return this.statements.join("\n");
   }
 };
 function formatSize(bytes, precision = 1) {
@@ -39845,6 +39845,12 @@ function formatSize(bytes, precision = 1) {
   } else {
     return `${Math.round(mag * bytes / 1024 / 1024) / mag}mb`;
   }
+}
+function formatMarkdownBoldList(items) {
+  if (items.length === 0)
+    return "";
+  const map = items.map((item) => `**${item}**`);
+  return map.slice(0, items.length - 1).join(", ") + " and " + map[items.length - 1];
 }
 
 // src/main.ts
@@ -39926,18 +39932,42 @@ function checksAgainstReference(reporter, metafiles, reference) {
         `${slug} bundle size decreased (${formatSize(ref)} -> ${formatSize(size)}). Thanks \u2764\uFE0F`
       );
     }
+  });
+  const newDuplicates = {};
+  const removedDuplicates = {};
+  for (const slug of slugsOfInterest) {
     const duplicatesRef = getMetafileDuplicates(reference, slug);
     const duplicates = getMetafileDuplicates(metafiles, slug);
     core2.info(`${slug} duplicates: ${duplicates.join(", ")}`);
     const added = duplicates.filter((d) => !duplicatesRef.includes(d));
     const removed = duplicatesRef.filter((d) => !duplicates.includes(d));
     for (const lib of added) {
-      reporter.warning(`${slug}: ${lib} is now duplicated! (regression)`);
+      if (!(lib in newDuplicates)) {
+        newDuplicates[lib] = [slug];
+      } else {
+        newDuplicates[lib].push(slug);
+      }
     }
     for (const lib of removed) {
-      reporter.improvement(`${slug}: deduplicated ${lib}`);
+      if (!(lib in removedDuplicates)) {
+        removedDuplicates[lib] = [slug];
+      } else {
+        removedDuplicates[lib].push(slug);
+      }
     }
-  });
+  }
+  for (const lib in newDuplicates) {
+    const bundles = newDuplicates[lib];
+    reporter.warning(
+      `\`${lib}\` library is now duplicated in ${formatMarkdownBoldList(bundles)} (regression)`
+    );
+  }
+  for (const lib in removedDuplicates) {
+    const bundles = removedDuplicates[lib];
+    reporter.improvement(
+      `\`${lib}\` library is no longer duplicated in ${formatMarkdownBoldList(bundles)}`
+    );
+  }
 }
 main().catch((err) => {
   core2.setFailed(err);
