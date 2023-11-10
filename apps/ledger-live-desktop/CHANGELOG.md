@@ -1,5 +1,20 @@
 # ledger-live-desktop
 
+## 2.71.0-nightly.10
+
+### Patch Changes
+
+- [#5252](https://github.com/LedgerHQ/ledger-live/pull/5252) [`48487abd29`](https://github.com/LedgerHQ/ledger-live/commit/48487abd297e41629c6725bc0ac9d69bfeaa74d3) Thanks [@ak-ledger](https://github.com/ak-ledger)! - Recover options/promotion remove for uncompatible devices
+
+- [#5225](https://github.com/LedgerHQ/ledger-live/pull/5225) [`de2e03534a`](https://github.com/LedgerHQ/ledger-live/commit/de2e03534ac831fcb66d1f038d0e90e7f65f2545) Thanks [@lvndry](https://github.com/lvndry)! - Update bondedBalanceBelowMinimum message
+
+- Updated dependencies [[`743e1ede3e`](https://github.com/LedgerHQ/ledger-live/commit/743e1ede3eebf806e1e22c8627191b419870a476), [`48487abd29`](https://github.com/LedgerHQ/ledger-live/commit/48487abd297e41629c6725bc0ac9d69bfeaa74d3)]:
+  - @ledgerhq/coin-evm@0.10.0-nightly.6
+  - @ledgerhq/types-live@6.42.0-nightly.5
+  - @ledgerhq/live-common@33.1.0-nightly.9
+  - @ledgerhq/coin-framework@0.8.1-nightly.6
+  - @ledgerhq/domain-service@1.1.14-nightly.6
+
 ## 2.71.0-nightly.9
 
 ### Patch Changes

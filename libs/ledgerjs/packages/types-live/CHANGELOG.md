@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.42.0-nightly.5
+
+### Patch Changes
+
+- [#5252](https://github.com/LedgerHQ/ledger-live/pull/5252) [`48487abd29`](https://github.com/LedgerHQ/ledger-live/commit/48487abd297e41629c6725bc0ac9d69bfeaa74d3) Thanks [@ak-ledger](https://github.com/ak-ledger)! - Recover options/promotion remove for uncompatible devices
+
 ## 6.42.0-nightly.4
 
 ### Minor Changes

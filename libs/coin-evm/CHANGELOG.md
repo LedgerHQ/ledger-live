@@ -1,5 +1,18 @@
 # @ledgerhq/coin-evm
 
+## 0.10.0-nightly.6
+
+### Patch Changes
+
+- [#5364](https://github.com/LedgerHQ/ledger-live/pull/5364) [`743e1ede3e`](https://github.com/LedgerHQ/ledger-live/commit/743e1ede3eebf806e1e22c8627191b419870a476) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Updating the hashing algorithm from SHA256 to MurmurHashV3 for the `getSyncHash` method in order to drastically increase performances on a React Native environment.
+
+- Updated dependencies [[`48487abd29`](https://github.com/LedgerHQ/ledger-live/commit/48487abd297e41629c6725bc0ac9d69bfeaa74d3)]:
+  - @ledgerhq/types-live@6.42.0-nightly.5
+  - @ledgerhq/coin-framework@0.8.1-nightly.6
+  - @ledgerhq/domain-service@1.1.14-nightly.6
+  - @ledgerhq/evm-tools@1.0.10-nightly.3
+  - @ledgerhq/hw-app-eth@6.34.9-nightly.6
+
 ## 0.10.0-nightly.5
 
 ### Patch Changes

@@ -1,5 +1,15 @@
 # @ledgerhq/coin-polkadot
 
+## 0.4.5-nightly.6
+
+### Patch Changes
+
+- [#5225](https://github.com/LedgerHQ/ledger-live/pull/5225) [`de2e03534a`](https://github.com/LedgerHQ/ledger-live/commit/de2e03534ac831fcb66d1f038d0e90e7f65f2545) Thanks [@lvndry](https://github.com/lvndry)! - Can nominate only if hasMinimumBoundingBalance
+
+- Updated dependencies [[`48487abd29`](https://github.com/LedgerHQ/ledger-live/commit/48487abd297e41629c6725bc0ac9d69bfeaa74d3)]:
+  - @ledgerhq/types-live@6.42.0-nightly.5
+  - @ledgerhq/coin-framework@0.8.1-nightly.6
+
 ## 0.4.5-nightly.5
 
 ### Patch Changes

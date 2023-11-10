@@ -1,5 +1,24 @@
 # live-mobile
 
+## 3.34.0-nightly.10
+
+### Patch Changes
+
+- [#5374](https://github.com/LedgerHQ/ledger-live/pull/5374) [`86745e3f3c`](https://github.com/LedgerHQ/ledger-live/commit/86745e3f3ce937b3d0aa05122350b4e9e9d9f7f2) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - TransferDrawer modifications on Swap/buy popular tag and remove entry for WalletConnect
+
+- [#5252](https://github.com/LedgerHQ/ledger-live/pull/5252) [`48487abd29`](https://github.com/LedgerHQ/ledger-live/commit/48487abd297e41629c6725bc0ac9d69bfeaa74d3) Thanks [@ak-ledger](https://github.com/ak-ledger)! - Recover options/promotion remove for uncompatible devices
+
+- [#5225](https://github.com/LedgerHQ/ledger-live/pull/5225) [`de2e03534a`](https://github.com/LedgerHQ/ledger-live/commit/de2e03534ac831fcb66d1f038d0e90e7f65f2545) Thanks [@lvndry](https://github.com/lvndry)! - Update bondedBalanceBelowMinimum message
+
+- [#5376](https://github.com/LedgerHQ/ledger-live/pull/5376) [`f2f0a88d54`](https://github.com/LedgerHQ/ledger-live/commit/f2f0a88d5479cc333328c8dc80aeab7295de79b7) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Update earn dashboard player padding to be platform dependent.
+
+- Updated dependencies [[`743e1ede3e`](https://github.com/LedgerHQ/ledger-live/commit/743e1ede3eebf806e1e22c8627191b419870a476), [`48487abd29`](https://github.com/LedgerHQ/ledger-live/commit/48487abd297e41629c6725bc0ac9d69bfeaa74d3)]:
+  - @ledgerhq/coin-evm@0.10.0-nightly.6
+  - @ledgerhq/types-live@6.42.0-nightly.5
+  - @ledgerhq/live-common@33.1.0-nightly.9
+  - @ledgerhq/coin-framework@0.8.1-nightly.6
+  - @ledgerhq/domain-service@1.1.14-nightly.6
+
 ## 3.34.0-nightly.9
 
 ### Patch Changes

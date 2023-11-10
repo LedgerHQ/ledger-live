@@ -1,5 +1,18 @@
 # @ledgerhq/live-common
 
+## 33.1.0-nightly.9
+
+### Patch Changes
+
+- [#5252](https://github.com/LedgerHQ/ledger-live/pull/5252) [`48487abd29`](https://github.com/LedgerHQ/ledger-live/commit/48487abd297e41629c6725bc0ac9d69bfeaa74d3) Thanks [@ak-ledger](https://github.com/ak-ledger)! - Recover options/promotion remove for uncompatible devices
+
+- Updated dependencies [[`743e1ede3e`](https://github.com/LedgerHQ/ledger-live/commit/743e1ede3eebf806e1e22c8627191b419870a476), [`de2e03534a`](https://github.com/LedgerHQ/ledger-live/commit/de2e03534ac831fcb66d1f038d0e90e7f65f2545)]:
+  - @ledgerhq/coin-evm@0.10.0-nightly.6
+  - @ledgerhq/coin-polkadot@0.4.5-nightly.6
+  - @ledgerhq/coin-algorand@0.3.5-nightly.6
+  - @ledgerhq/coin-framework@0.8.1-nightly.6
+  - @ledgerhq/hw-app-eth@6.34.9-nightly.6
+
 ## 33.1.0-nightly.8
 
 ### Patch Changes
