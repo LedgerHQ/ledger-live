@@ -39787,8 +39787,10 @@ async function submitCommentToPR({
   githubToken
 }) {
   core.info("Submiting comment to PR");
-  const header = `### Desktop Build Checks
-<!-- desktop-build-checks-${prNumber} -->`;
+  const header = `<!-- desktop-build-checks-${prNumber} -->`;
+  const title = `### Desktop Build Checks
+---
+`;
   core.info("Looking for existing comment");
   const found = await findComment({ prNumber, githubToken, header });
   core.info(found ? `Found previous comment ${found.id}` : "No previous comment to update");
@@ -39797,11 +39799,15 @@ async function submitCommentToPR({
     const allGood = `
 ${header}
 
+${title}
+
 \u2705 Previous issues have all been fixed.`;
     await createOrUpdateComment({ body: allGood, prNumber, githubToken, found });
     return;
   }
   const comment = `${header}
+
+${title}
 
 ${body}
 `;
