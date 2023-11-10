@@ -12,11 +12,12 @@ type ElrondESDTToken = [
 ];
 
 export const importESDTTokens = async (outputDir: string) => {
-  console.log("importing esdt tokens...");
-  const esdtTokens = await fetchTokens<ElrondESDTToken[]>("esdt.json");
-  const filePath = path.join(outputDir, "esdt");
+  try {
+    console.log("importing esdt tokens...");
+    const esdtTokens = await fetchTokens<ElrondESDTToken[]>("esdt.json");
+    const filePath = path.join(outputDir, "esdt");
 
-  const estTypeStringified = `export type ElrondESDTToken = [
+    const estTypeStringified = `export type ElrondESDTToken = [
   string, // ticker
   string, // identifier
   number, // decimals
@@ -25,16 +26,19 @@ export const importESDTTokens = async (outputDir: string) => {
   boolean, // disableCountervalue
 ];`;
 
-  fs.writeFileSync(`${filePath}.json`, JSON.stringify(esdtTokens));
-  fs.writeFileSync(
-    `${filePath}.ts`,
-    `${estTypeStringified}
+    fs.writeFileSync(`${filePath}.json`, JSON.stringify(esdtTokens));
+    fs.writeFileSync(
+      `${filePath}.ts`,
+      `${estTypeStringified}
 
 import tokens from "./esdt.json";
 
 export default tokens as ElrondESDTToken[];
 `,
-  );
+    );
 
-  console.log("importing esdt tokens sucess");
+    console.log("importing esdt tokens sucess");
+  } catch (err) {
+    console.error(err);
+  }
 };

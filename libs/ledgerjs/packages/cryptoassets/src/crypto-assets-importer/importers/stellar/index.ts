@@ -12,11 +12,12 @@ type StellarToken = [
 ];
 
 export const importStellarTokens = async (outputDir: string) => {
-  console.log("importing stellar tokens...");
-  const stellarTokens = await fetchTokens<StellarToken[]>("stellar.json");
-  const filePath = path.join(outputDir, "stellar");
+  try {
+    console.log("importing stellar tokens...");
+    const stellarTokens = await fetchTokens<StellarToken[]>("stellar.json");
+    const filePath = path.join(outputDir, "stellar");
 
-  const stellarTypeStringified = `export type StellarToken = [
+    const stellarTypeStringified = `export type StellarToken = [
   string, // assetCode
   string, // assetIssuer
   string, // assetType (note: only used in Receive asset message and always should be "Stellar")
@@ -25,16 +26,19 @@ export const importStellarTokens = async (outputDir: string) => {
   boolean, // enableCountervalues
 ];`;
 
-  fs.writeFileSync(`${filePath}.json`, JSON.stringify(stellarTokens));
-  fs.writeFileSync(
-    `${filePath}.ts`,
-    `${stellarTypeStringified}
+    fs.writeFileSync(`${filePath}.json`, JSON.stringify(stellarTokens));
+    fs.writeFileSync(
+      `${filePath}.ts`,
+      `${stellarTypeStringified}
 
 import tokens from "./stellar.json";
 
 export default tokens as StellarToken[];
 `,
-  );
+    );
 
-  console.log("importing stellar tokens sucess");
+    console.log("importing stellar tokens sucess");
+  } catch (err) {
+    console.error(err);
+  }
 };

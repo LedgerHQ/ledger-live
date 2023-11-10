@@ -3,19 +3,17 @@
   "private": true,
   "version": "0.1.3",
   "scripts": {
-    "test:importer": "jest script/crypto-assets-importer/",
-    "import-cal-tokens": "ts-node script/crypto-assets-importer/index.ts"
+    "test:importer": "jest ./packages/cryptoassets/src/crypto-assets-importer/",
+    "import:cal-tokens": "ts-node ./packages/cryptoassets/src/crypto-assets-importer/index.ts"
   },
   "dependencies": {
     "axios": "^0.27.2",
-    "bs58check": "^2.1.2",
     "buffer": "^6.0.3",
     "invariant": "^2.2.4",
     "js-levenshtein": "^1.1.6",
     "lodash": "^4.17.21"
   },
   "devDependencies": {
-    "@types/bs58check": "^2.1.0",
     "@types/jest": "^29.5.4",
     "@types/node": "^20.5.7",
     "eslint-plugin-react": "^7.33.2",

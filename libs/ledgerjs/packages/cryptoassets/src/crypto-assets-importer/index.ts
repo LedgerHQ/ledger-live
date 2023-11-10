@@ -13,37 +13,47 @@ import { importStellarTokens } from "./importers/stellar";
 import { importTRC10Tokens } from "./importers/trc10";
 import { importTRC20Tokens } from "./importers/trc20";
 
-import { importERC20Signatures } from "./importers/erc20-signature";
-
 import { importBEP20Exchange } from "./exchange/bep20";
 import { importERC20Exchange } from "./exchange/erc20";
 import { importCoinsExchange } from "./exchange/coins";
 
-const outputFolder = path.join(__dirname, "../../packages/cryptoassets/src/data");
+import { importERC20Signatures } from "./importers/erc20-signature";
+
+const outputFolder = path.join(__dirname, "../data");
 
 const importTokens = async () => {
-  await importEIP712(outputFolder);
-  await importERC20(outputFolder);
-  await importEVMTokens(outputFolder);
-  await importBEP20(outputFolder);
-  await importPolygonTokens(outputFolder);
-  await importAsaTokens(outputFolder);
-  await importCardanoNativeTokens(outputFolder);
-  await importESDTTokens(outputFolder);
-  await importSPLTokens(outputFolder);
-  await importStellarTokens(outputFolder);
-  await importTRC10Tokens(outputFolder);
-  await importTRC20Tokens(outputFolder);
+  const promises = [
+    importEIP712(outputFolder),
+    importERC20(outputFolder),
+    importEVMTokens(outputFolder),
+    importBEP20(outputFolder),
+    importPolygonTokens(outputFolder),
+    importAsaTokens(outputFolder),
+    importCardanoNativeTokens(outputFolder),
+    importESDTTokens(outputFolder),
+    importSPLTokens(outputFolder),
+    importStellarTokens(outputFolder),
+    importTRC10Tokens(outputFolder),
+    importTRC20Tokens(outputFolder),
+  ];
+
+  await Promise.allSettled(promises);
 };
 
 const importExchangeTokens = async () => {
-  await importBEP20Exchange(outputFolder);
-  await importERC20Exchange(outputFolder);
-  await importCoinsExchange(outputFolder);
+  const promises = [
+    importBEP20Exchange(outputFolder),
+    importERC20Exchange(outputFolder),
+    importCoinsExchange(outputFolder),
+  ];
+
+  await Promise.allSettled(promises);
 };
 
 const importSignatures = async () => {
-  await importERC20Signatures(outputFolder);
+  const promises = [importERC20Signatures(outputFolder)];
+
+  await Promise.allSettled(promises);
 };
 
 const main = async () => {
