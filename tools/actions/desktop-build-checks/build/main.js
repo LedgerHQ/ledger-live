@@ -39828,15 +39828,16 @@ var Reporter = class {
     return this.statements.map((o) => `- ${o}`).join("\n");
   }
 };
-function formatSize(bytes) {
+function formatSize(bytes, precision = 1) {
   if (!bytes)
     return "N/A";
+  const mag = Math.pow(10, precision);
   if (bytes < 1024) {
     return `${bytes} bytes`;
   } else if (bytes < 1024 * 1024) {
-    return `${Math.round(bytes / 1024)}kb`;
+    return `${Math.round(mag * bytes / 1024) / mag}kb`;
   } else {
-    return `${Math.round(bytes / 1024 / 1024)}mb`;
+    return `${Math.round(mag * bytes / 1024 / 1024) / mag}mb`;
   }
 }
 
