@@ -12,11 +12,12 @@ type SPLToken = [
 ];
 
 export const importSPLTokens = async (outputDir: string) => {
-  console.log("importing spl tokens...");
-  const splTokens = await fetchTokens<SPLToken[]>("asa.json");
-  const filePath = path.join(outputDir, "spl");
+  try {
+    console.log("importing spl tokens...");
+    const splTokens = await fetchTokens<SPLToken[]>("asa.json");
+    const filePath = path.join(outputDir, "spl");
 
-  const splTypeStringified = `export type SPLToken = [
+    const splTypeStringified = `export type SPLToken = [
   number, // chainId
   string, // name
   string, // symbol
@@ -25,16 +26,19 @@ export const importSPLTokens = async (outputDir: string) => {
   boolean?, // enableCountervalues
 ];`;
 
-  fs.writeFileSync(`${filePath}.json`, JSON.stringify(splTokens));
-  fs.writeFileSync(
-    `${filePath}.ts`,
-    `${splTypeStringified}
+    fs.writeFileSync(`${filePath}.json`, JSON.stringify(splTokens));
+    fs.writeFileSync(
+      `${filePath}.ts`,
+      `${splTypeStringified}
 
 import tokens from "./spl.json";
 
 export default tokens as SPLToken[];
 `,
-  );
+    );
 
-  console.log("importing spl tokens sucess");
+    console.log("importing spl tokens sucess");
+  } catch (err) {
+    console.error(err);
+  }
 };

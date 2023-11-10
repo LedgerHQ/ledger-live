@@ -143,13 +143,21 @@
 | lisk | LSK | NO | lisk |
 | æternity | AE | NO | aeternity |
 
-## Tokens (11612)
+## Tokens (11632)
 | parent currency | ticker | contract | name | status | ledger id |
 |--|--|--|--|--|--|
+| Algorand | GEMS | 5XU7ASL2PLB2C43N6JNFPMSXGATO2VIVNF7X6NTJ4BRCCKRGETEYS3LOAQ | AlgoGems |  | algorand/asa/230946361 |
 | Algorand | ARCC | MESEJMPXKL7YUWEQGNRCKSLMQDKHOHWIZ3RBWP7BV4JDMUJXFUVQZWUBJM | Asia Reserve Currency Coin |  | algorand/asa/163650 |
+| Algorand | CHOICE | FG7NNTZU2LMMD2RD3Q5P2T77MESNEU2XXSZKYXKE5TWMXIHTMPJTSCILTA | Choice Coin |  | algorand/asa/297995609 |
+| Algorand | CLTR | SH4W7IGJV3NCRKF5CKGICGRNFT5LHO47RNM6ZDDF2WJVUFTLGKV4IMNZ6U | CollecteursX |  | algorand/asa/1003833031 |
 | Algorand | VAL 1 | GNRGAOG65JPGWVIK2Q45R4XLLVIMF7AWVBK5TEBGWRRAZ3EHPQIN44EGFA | Credit Opportunities Fund I |  | algorand/asa/2838934 |
+| Algorand | DEFLY | 424AJN7WYUD7N4NAHJSWQQO4QXPXSBIQ56YLUYTVCJ3OF5572NICNE7IWY | Defly Token |  | algorand/asa/470842789 |
+| Algorand | EXIT | MAKF3GL52O5O6ENRRLJSEJRLTR74E323JBZIWMMGLZT5PNZ4NDTEEODN7A | Exodus |  | algorand/asa/213345970 |
+| Algorand | AlgoFam | 2BLB6GIAMLNXHOYSCSP4Q7FMS5KZHSYJCALUW46WPANP7KR4KMFTQWDCHM | FAME |  | algorand/asa/142838028 |
+| Algorand | NEXUS |  | GP |  | algorand/asa/403499324 |
 | Algorand | HDL | K3NSXYMHPRCK7PMYT3QUQXUGPZJ4MKWJXW2HJRYPVMQUMKJAOJEIEO4HK4 | HEADLINE |  | algorand/asa/137594422 |
 | Algorand | RHO 1 | GNRGAOG65JPGWVIK2Q45R4XLLVIMF7AWVBK5TEBGWRRAZ3EHPQIN44EGFA | Liquid Mining Fund I |  | algorand/asa/2836760 |
+| Algorand | LTBX | LOOTHTGZ5LIF6M5P6URZMW4BX5UO4IS7KBELOVQDTOJFPS4VGLGD2GA5I4 | Loot Box |  | algorand/asa/408898501 |
 | Algorand | MESX | MESEJMPXKL7YUWEQGNRCKSLMQDKHOHWIZ3RBWP7BV4JDMUJXFUVQZWUBJM | MESE Index Fund |  | algorand/asa/438831 |
 | Algorand | USD-MESE | MESEJMPXKL7YUWEQGNRCKSLMQDKHOHWIZ3RBWP7BV4JDMUJXFUVQZWUBJM | MESE USD Exchange Token |  | algorand/asa/438828 |
 | Algorand | MCAU | 26LYTJVUJZZ2DGPETGJY7TGQABH6KLLHDCULLVQKUGCL7BQAWT3N74VZME | Meld Gold |  | algorand/asa/6547014 |
@@ -161,10 +169,18 @@
 | Algorand | M-NFLX | MESEJMPXKL7YUWEQGNRCKSLMQDKHOHWIZ3RBWP7BV4JDMUJXFUVQZWUBJM | Micro-Netflix |  | algorand/asa/438837 |
 | Algorand | M-TSLA | MESEJMPXKL7YUWEQGNRCKSLMQDKHOHWIZ3RBWP7BV4JDMUJXFUVQZWUBJM | Micro-Tesla |  | algorand/asa/438840 |
 | Algorand | M-TWTR | MESEJMPXKL7YUWEQGNRCKSLMQDKHOHWIZ3RBWP7BV4JDMUJXFUVQZWUBJM | Micro-Twitter |  | algorand/asa/438836 |
+| Algorand | NIMBLE | KIO76PWKBTDXFGSEJ2SOTJZIQNZLZTM6UHDHG3ZNIL2XW4QMDKBTHENC7A | Nimble |  | algorand/asa/922346083 |
+| Algorand | OPUL | V537CZUKQJH2ETEJRXHAQI6OUHL54MZU5OIBCAU4J6OE3557ODF74WVQCA | Opulous |  | algorand/asa/287867876 |
 | Algorand | PLANETS | BY6UJNZ2MD3AZC2K2KQJW7W7OWPGGIBNOSZGFZQ6L426BTGO5G2FOI6VPI | PLANET |  | algorand/asa/27165954 |
+| Algorand | RST | GNRGAOG65JPGWVIK2Q45R4XLLVIMF7AWVBK5TEBGWRRAZ3EHPQIN44EGFA | Realio Security Token |  | algorand/asa/2725935 |
 | Algorand | RIO | GNRGAOG65JPGWVIK2Q45R4XLLVIMF7AWVBK5TEBGWRRAZ3EHPQIN44EGFA | Realio Token |  | algorand/asa/2751733 |
+| Algorand | SMILE | KAIPTDPRZBJ7BIDQXEO7ICQ2U2R2E5ATKFOBR3PSKYJRC56WHNYHBW4WVE | Smile Coin |  | algorand/asa/300208676 |
 | Algorand | USDT | XIU7HGGAJ3QOTATPDSIIHPFVKMICXKHMOR2FJKHTVLII4FAOA3CYZQDLG4 | Tether USDt |  | algorand/asa/312769 |
 | Algorand | USDC | 2UEQTE5QDNXPI7M3TU44G6SYKLFWLPQO7EBZM7K7MHMQQMFI4QJPLHQFHM | USDC |  | algorand/asa/31566704 |
+| Algorand | YLDY |  | Yieldly |  | algorand/asa/226701642 |
+| Algorand | goBTC | NLTFR6Y7AAQ6BFFE7NMNJRK3CIZ5U7KSSD6UDMVZ3WOW2TPALOEV57MEEA | goBTC |  | algorand/asa/386192725 |
+| Algorand | goETH | NLTFR6Y7AAQ6BFFE7NMNJRK3CIZ5U7KSSD6UDMVZ3WOW2TPALOEV57MEEA | goETH |  | algorand/asa/386195940 |
+| Algorand | goMINT | ETGSQKACKC56JWGMDAEP5S2JVQWRKTQUVKCZTMPNUGZLDVCWPY63LSI3H4 | goMINT |  | algorand/asa/441139422 |
 | Algorand | RUSD | GNRGAOG65JPGWVIK2Q45R4XLLVIMF7AWVBK5TEBGWRRAZ3EHPQIN44EGFA | realioUSD |  | algorand/asa/2757561 |
 | Binance Smart Chain | DEL | 0xec6432B90e7fD4d9f872cc5C781f05B617DB861E | (DEL) |  | bsc/bep20/(del) |
 | Binance Smart Chain | 10SET | 0x1F64fdAD335ED784898EFFb5ce22D54d8f432523 | 10Set Token |  | bsc/bep20/10set_token |
@@ -3932,6 +3948,7 @@
 | Ethereum | GMCI | 0x5Dc74029509752F4ed9A609C2bb52216275E4c1D | GameCity |  | ethereum/erc20/gamecity |
 | Ethereum | GFN | 0x3930E4dDb4d24ef2F4CB54C1f009a3694b708428 | GameFanz |  | ethereum/erc20/gamefanz |
 | Ethereum | GME | 0x9eb6bE354d88fD88795a04DE899a57A77C545590 | GameStop.Finance |  | ethereum/erc20/gamestop_finance |
+| Ethereum | GSWIFT | 0x580E933D90091b9cE380740E3a4A39c67eB85B4c | GameSwift |  | ethereum/erc20/gameswift |
 | Ethereum | GHX | 0x728f30fa2f100742C7949D1961804FA8E0B1387d | GamerCoin |  | ethereum/erc20/gamercoin |
 | Ethereum | GAMMA | 0x6BeA7CFEF803D1e3d5f7C0103f7ded065644e197 | Gamma |  | ethereum/erc20/gamma |
 | Ethereum | GAMMA | 0x1E1EEd62F8D82ecFd8230B8d283D5b5c1bA81B55 | Gamma Token |  | ethereum/erc20/gamma_token |
@@ -8507,8 +8524,10 @@
 | Polygon | GMEE | 0xcf32822ff397Ef82425153a9dcb726E5fF61DCA7 | GAMEE |  | polygon/erc20/gamee |
 | Polygon | GFC | 0x071AC29d569a47EbfFB9e57517F855Cb577DCc4C | GCOIN | delisted | polygon/erc20/gcoin |
 | Polygon | GEO | 0xf1428850f92B87e629c6f3A3B75BffBC496F7Ba6 | GEOPOLY |  | polygon/erc20/geopoly |
+| Polygon | GOAL | 0x468aC716493c51184162681130035b61BaFf040B | GOAL (PoS) |  | polygon/erc20/goal_(pos) |
 | Polygon | GRAMZ | 0xF40D9de56b1fBAfF388f4d1B97Dc8Dfc184d34cE | GRAMZ |  | polygon/erc20/gramz |
 | Polygon | GNS | 0xE5417Af564e4bFDA1c483642db72007871397896 | Gains Network |  | polygon/erc20/gains_network |
+| Polygon | GSWIFT | 0x580E933D90091b9cE380740E3a4A39c67eB85B4c | GameSwift |  | polygon/erc20/gameswift |
 | Polygon | GUSD | 0xC8A94a3d3D2dabC3C1CaffFFDcA6A7543c3e3e65 | Gemini dollar |  | polygon/erc20/gemini_dollar |
 | Polygon | IUX | 0x346404079b3792a6c548B072B9C4DDdFb92948d5 | GeniuX |  | polygon/erc20/geniux |
 | Polygon | GEOD | 0xAC0F66379A6d7801D7726d5a943356A172549Adb | Geodnet Token | delisted | polygon/erc20/geodnet_token |
@@ -8825,6 +8844,7 @@
 | Polygon | TUT | 0x12a34A6759c871C4C1E8A0A42CFc97e4D7Aaf68d | Tutellus token | delisted | polygon/erc20/tutellus_token |
 | Polygon | UMA | 0x3066818837c5e6eD6601bd5a91B0762877A6B731 | UMA Voting Token v1 |  | polygon/erc20/uma_voting_token_v1 |
 | Polygon | IFUND | 0x4ba47B10EA8f544F8969BA61dF3E5bE67692a122 | UNIFUND |  | polygon/erc20/unifund |
+| Polygon | USDC | 0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359 | USD Coin |  | polygon/erc20/usd_coin |
 | Polygon | USDC | 0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174 | USD Coin (PoS) |  | polygon/erc20/usd_coin_(pos) |
 | Polygon | USDPL | 0x236eeC6359fb44CCe8f97E99387aa7F8cd5cdE1f | USD Plus |  | polygon/erc20/usd_plus |
 | Polygon | USDK | 0xD07A7FAc2857901E4bEC0D89bBDAe764723AAB86 | USDK |  | polygon/erc20/usdk |
