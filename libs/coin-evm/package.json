@@ -58,7 +58,7 @@
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "axios": "0.26.1",
+    "axios": "1.6.0",
     "bignumber.js": "^9.1.2",
     "eip55": "^2.1.1",
     "ethers": "5.7.2",
