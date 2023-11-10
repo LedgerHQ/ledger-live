@@ -1,4 +1,4 @@
-import { ExchangeTimeoutError } from "@ledgerhq/errors";
+import { TransportExchangeTimeoutError } from "@ledgerhq/errors";
 import BleTransport from "../src/BleTransport";
 import { Subscription, VirtualTimeScheduler } from "rxjs";
 
@@ -300,7 +300,7 @@ describe("BleTransport connectivity test coverage", () => {
                 done("It should not succeed");
               })
               .catch(error => {
-                expect(error).toBeInstanceOf(ExchangeTimeoutError);
+                expect(error).toBeInstanceOf(TransportExchangeTimeoutError);
                 expect(mockCancelTransaction).toHaveBeenCalledTimes(1);
                 done();
               });
@@ -350,7 +350,7 @@ describe("BleTransport connectivity test coverage", () => {
                 done("It should not succeed");
               })
               .catch(error => {
-                expect(error).toBeInstanceOf(ExchangeTimeoutError);
+                expect(error).toBeInstanceOf(TransportExchangeTimeoutError);
                 expect(mockCancelTransaction).toHaveBeenCalledTimes(2);
                 done();
               });

@@ -11,7 +11,7 @@ import {
   TransportRaceCondition,
   LockedDeviceError,
   UnexpectedBootloader,
-  ExchangeTimeoutError,
+  TransportExchangeTimeoutError,
 } from "@ledgerhq/errors";
 import { FirmwareInfo } from "@ledgerhq/types-live";
 import { extractOnboardingState, OnboardingState } from "./extractOnboardingState";
@@ -134,7 +134,7 @@ export const isAllowedOnboardingStatePollingError = (error: unknown): boolean =>
     error &&
     // Timeout error is thrown by rxjs's timeout
     (error instanceof TimeoutError ||
-      error instanceof ExchangeTimeoutError ||
+      error instanceof TransportExchangeTimeoutError ||
       error instanceof DisconnectedDevice ||
       error instanceof CantOpenDevice ||
       error instanceof TransportRaceCondition ||

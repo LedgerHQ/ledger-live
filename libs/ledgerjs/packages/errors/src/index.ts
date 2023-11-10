@@ -44,7 +44,6 @@ export const DeviceExtractOnboardingStateError = createCustomErrorClass(
 export const DeviceOnboardingStatePollingError = createCustomErrorClass(
   "DeviceOnboardingStatePollingError",
 );
-export const ExchangeTimeoutError = createCustomErrorClass("ExchangeTimeoutError");
 export const EnpointConfigError = createCustomErrorClass("EnpointConfig");
 export const EthAppPleaseEnableContractData = createCustomErrorClass(
   "EthAppPleaseEnableContractData",
@@ -131,6 +130,9 @@ export const TransportWebUSBGestureRequired = createCustomErrorClass(
 );
 export const TransactionHasBeenValidatedError = createCustomErrorClass(
   "TransactionHasBeenValidatedError",
+);
+export const TransportExchangeTimeoutError = createCustomErrorClass(
+  "TransportExchangeTimeoutError",
 );
 export const DeviceShouldStayInApp = createCustomErrorClass("DeviceShouldStayInApp");
 export const WebsocketConnectionError = createCustomErrorClass("WebsocketConnectionError");

@@ -62,7 +62,7 @@ import {
   PairingFailed,
   PeerRemovedPairing,
   HwTransportError,
-  ExchangeTimeoutError,
+  TransportExchangeTimeoutError,
 } from "@ledgerhq/errors";
 import { monitorCharacteristic } from "./monitorCharacteristic";
 import { awaitsBleOn } from "./awaitsBleOn";
@@ -703,7 +703,7 @@ export default class BleTransport extends Transport {
               // No concurrent exchange should happen at the same time, so all pending operations are part of the same exchange
               this.cancelPendingOperations();
 
-              throw new ExchangeTimeoutError("Exchange aborted due to timeout");
+              throw new TransportExchangeTimeoutError("Exchange aborted due to timeout");
             }
 
             tracer.withType("ble-error").trace(`Error while exchanging APDU`, { error });
