@@ -39787,7 +39787,8 @@ async function submitCommentToPR({
   githubToken
 }) {
   core.info("Submiting comment to PR");
-  const header = `<!-- bundle-meta-${prNumber} -->`;
+  const header = `### Desktop Build Checks
+<!-- desktop-build-checks-${prNumber} -->`;
   core.info("Looking for existing comment");
   const found = await findComment({ prNumber, githubToken, header });
   core.info(found ? `Found previous comment ${found.id}` : "No previous comment to update");
