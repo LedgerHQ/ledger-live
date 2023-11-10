@@ -6,7 +6,7 @@ import Button from "../../components/wrappedUi/Button";
 import type { Step, UiCheckStatus } from "./EarlySecurityCheck";
 import CheckCard from "./CheckCard";
 import { useTheme } from "styled-components/native";
-import { EarlySecurityCheckEndedCta } from "./EarlySecurityCheckEndedCta";
+import { OnePressCta } from "~/components/OnePressCta";
 
 export type Props = {
   productName: string;
@@ -112,9 +112,9 @@ const EarlySecurityCheckBody: React.FC<Props> = ({
       );
 
       primaryBottomCta = (
-        <EarlySecurityCheckEndedCta onPress={notifyOnboardingEarlyCheckEnded}>
+        <OnePressCta onPress={notifyOnboardingEarlyCheckEnded}>
           {t("earlySecurityCheck.completed.continueCta")}
-        </EarlySecurityCheckEndedCta>
+        </OnePressCta>
       );
       break;
     case "error":
@@ -154,9 +154,14 @@ const EarlySecurityCheckBody: React.FC<Props> = ({
       }
 
       secondaryBottomCta = (
-        <Link size="large" onPress={onSkipFirmwareUpdate}>
+        <OnePressCta
+          PressableComponent={({ pending, ...props }) => (
+            <Link size="large" disabled={pending} {...props} />
+          )}
+          onPress={onSkipFirmwareUpdate}
+        >
           {t("earlySecurityCheck.firmwareUpdateCheckStep.refused.skipCta")}
-        </Link>
+        </OnePressCta>
       );
 
       break;
