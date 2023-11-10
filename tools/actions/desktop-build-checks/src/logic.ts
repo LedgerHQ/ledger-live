@@ -275,7 +275,7 @@ export async function submitCommentToPR({
   githubToken: string;
 }): Promise<void> {
   core.info("Submiting comment to PR");
-  const header = `<!-- bundle-meta-${prNumber} -->`;
+  const header = `### Desktop Build Checks\n<!-- desktop-build-checks-${prNumber} -->`;
   core.info("Looking for existing comment");
   const found = await findComment({ prNumber, githubToken, header });
   core.info(found ? `Found previous comment ${found.id}` : "No previous comment to update");
@@ -321,13 +321,14 @@ export class Reporter {
   }
 }
 
-export function formatSize(bytes: number | undefined): string {
+export function formatSize(bytes: number | undefined, precision: number = 1): string {
   if (!bytes) return "N/A";
+  const mag = Math.pow(10, precision);
   if (bytes < 1024) {
     return `${bytes} bytes`;
   } else if (bytes < 1024 * 1024) {
-    return `${Math.round(bytes / 1024)}kb`;
+    return `${Math.round((mag * bytes) / 1024) / mag}kb`;
   } else {
-    return `${Math.round(bytes / 1024 / 1024)}mb`;
+    return `${Math.round((mag * bytes) / 1024 / 1024) / mag}mb`;
   }
 }
