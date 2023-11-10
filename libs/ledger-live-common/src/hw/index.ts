@@ -90,10 +90,15 @@ export const discoverDevices = (
 /**
  * Tries to call `open` on the 1st matching registered transport implementation
  *
- * An optional timeout can be added. A timeout is applied directly in this function (racing between the matching Transport and the timeout).
- * But also passed to each `open` Transport implementation. As there is no easy way to abort a Promise (returned by `open`), the Transport will
- * continue to try connecting to the device even if this function timeout was reached. But certain Transport implementations can also use this
- * timeout to try to stop the connection attempt.
+ * An optional timeout `timeoutMs` can be set. It is/can be used in 2 different places:
+ * - A `timeoutMs` timeout is applied directly in this function: racing between the matching Transport opening and this timeout
+ * - And the `timeoutMs` parameter is also passed to the `open` method of the transport module so each transport implementation
+ *  can make use of that parameter and implement their timeout mechanism internally
+ *
+ * Why using it in 2 places ?
+ * As there is no easy way to abort a Promise (returned by `open`), the Transport will continue to try connecting to the device
+ * even if this function timeout was reached. But certain Transport implementations can also use this timeout to try to stop
+ * the connection attempt internally.
  *
  * @param deviceId
  * @param timeoutMs Optional timeout that limits in time the open attempt of the matching registered transport.
@@ -138,7 +143,7 @@ export const open = (
 
           return transport;
         }),
-        new Promise((_resolve, rejects) => {
+        new Promise((_resolve, reject) => {
           timer = setTimeout(() => {
             trace({
               type: LOG_TYPE,
@@ -146,7 +151,7 @@ export const open = (
               context,
             });
 
-            return rejects(new CantOpenDevice(`Timeout while opening device on transport ${m.id}`));
+            return reject(new CantOpenDevice(`Timeout while opening device on transport ${m.id}`));
           }, timeoutMs);
         }),
       ]) as Promise<Transport>;
