@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.42.1-nightly.0
+
+### Patch Changes
+
+- [#5292](https://github.com/LedgerHQ/ledger-live/pull/5292) [`08dde174fd`](https://github.com/LedgerHQ/ledger-live/commit/08dde174fdeaadbce85dcd914383839f788f21dd) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Lukso
+
 ## 6.42.0
 
 ### Minor Changes
