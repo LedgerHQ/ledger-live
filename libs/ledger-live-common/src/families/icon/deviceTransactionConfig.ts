@@ -50,7 +50,7 @@ function getDeviceTransactionConfig({
   }
 
   switch (mode) {
-    case 'freeze':
+    case "freeze":
       fields.push({
         type: "address",
         label: "Stake to",
@@ -58,7 +58,7 @@ function getDeviceTransactionConfig({
       });
       break;
 
-    case 'unfreeze':
+    case "unfreeze":
       fields.push({
         type: "address",
         label: "Unstake From",

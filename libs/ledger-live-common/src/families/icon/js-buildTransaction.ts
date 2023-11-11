@@ -11,24 +11,20 @@ const { IconBuilder, IconConverter, IconAmount, IconUtil } = IconService;
  * @param {Account} a
  * @param {Transaction} t
  */
-export const buildTransaction = async (
-  a: IconAccount,
-  t: Transaction,
-  stepLimit?: BigNumber
-) => {
+export const buildTransaction = async (a: IconAccount, t: Transaction, stepLimit?: BigNumber) => {
   let iconTxData;
   switch (t.mode) {
-    case 'send':
+    case "send":
       iconTxData = buildSendingTransaction(a, t, stepLimit);
       break;
-    case 'unfreeze':
-    case 'freeze':
+    case "unfreeze":
+    case "freeze":
       iconTxData = buildStakingTransaction(a, t, stepLimit);
       break;
-    case 'vote':
+    case "vote":
       iconTxData = buildVotingTransaction(a, t, stepLimit);
       break;
-    case 'claimReward':
+    case "claimReward":
       iconTxData = buildClaimIScoreTransaction(a, t, stepLimit);
       break;
     default:
@@ -36,17 +32,12 @@ export const buildTransaction = async (
   }
 
   return {
-    unsigned: IconUtil.generateHashKey(
-      IconConverter.toRawTransaction(iconTxData)
-    ),
+    unsigned: IconUtil.generateHashKey(IconConverter.toRawTransaction(iconTxData)),
     rawTransaction: iconTxData,
   };
 };
 
-const buildSendingTransaction = (
-  a: IconAccount,
-  t: Transaction,
-  stepLimit?: BigNumber) => {
+const buildSendingTransaction = (a: IconAccount, t: Transaction, stepLimit?: BigNumber) => {
   const address = a.freshAddress;
 
   const icxTransactionBuilder = new IconBuilder.IcxTransactionBuilder();
@@ -55,63 +46,69 @@ const buildSendingTransaction = (
     .to(t.recipient)
     .nid(IconConverter.toHexNumber(getNid(a.currency)))
     .value(
-      IconConverter.toHexNumber(
-        IconAmount.of(t.amount, IconAmount.Unit.ICX).toLoop()
-      )
+      IconConverter.toHexNumber(IconAmount.of(t.amount, IconAmount.Unit.ICX).toLoop().div(1000000)),
     )
     .timestamp(IconConverter.toHexNumber(new Date().getTime() * 1000))
     .version(IconConverter.toHexNumber(RPC_VERSION));
   if (stepLimit) {
-    icxTransferData.stepLimit(IconConverter.toHexNumber(stepLimit.toNumber()));
+    icxTransferData.stepLimit(IconConverter.toHexNumber(stepLimit.div(1000000).toNumber()));
   }
 
   return icxTransferData.build();
 };
 
-const buildStakingTransaction = (
-  a: IconAccount,
-  t: Transaction,
-  stepLimit?: BigNumber) => {
+const buildStakingTransaction = (a: IconAccount, t: Transaction, stepLimit?: BigNumber) => {
   const { iconResources } = a;
   let amount = t.amount;
-  if (t.mode == 'freeze') {
+  if (t.mode == "freeze") {
     amount = t.amount.plus(iconResources.totalDelegated);
   } else {
-    amount = BigNumber(iconResources.votingPower).minus(t.amount).plus(a.iconResources?.totalDelegated || 0);
+    amount = BigNumber(iconResources.votingPower)
+      .minus(t.amount)
+      .plus(a.iconResources?.totalDelegated || 0);
   }
 
-  return buildCallTrantraction(a, t, 'setStake', {
-    value: IconConverter.toHexNumber(
-      IconAmount.of(amount, IconAmount.Unit.ICX).toLoop()
-    )
-  }, stepLimit);
+  return buildCallTrantraction(
+    a,
+    t,
+    "setStake",
+    {
+      value: IconConverter.toHexNumber(IconAmount.of(amount, IconAmount.Unit.ICX).toLoop()),
+    },
+    stepLimit,
+  );
 };
 
-const buildVotingTransaction = (
-  a: IconAccount,
-  t: Transaction,
-  stepLimit?: BigNumber) => {
-
+const buildVotingTransaction = (a: IconAccount, t: Transaction, stepLimit?: BigNumber) => {
   const votes = t?.votes || [];
 
-  return buildCallTrantraction(a, t, 'setDelegation', {
-    delegations: votes.map(item => {
-      return {
-        ...item, value: IconConverter.toHexNumber(
-          IconAmount.of(item.value, IconAmount.Unit.ICX).toLoop()
-        )
-      };
-    })
-  }, stepLimit);
+  return buildCallTrantraction(
+    a,
+    t,
+    "setDelegation",
+    {
+      delegations: votes.map(item => {
+        return {
+          ...item,
+          value: IconConverter.toHexNumber(IconAmount.of(item.value, IconAmount.Unit.ICX).toLoop()),
+        };
+      }),
+    },
+    stepLimit,
+  );
 };
 
-const buildClaimIScoreTransaction = (
+const buildClaimIScoreTransaction = (a: IconAccount, t: Transaction, stepLimit) => {
+  return buildCallTrantraction(a, t, "claimIScore", {}, stepLimit);
+};
+
+const buildCallTrantraction = (
   a: IconAccount,
-  t: Transaction, stepLimit) => {
-  return buildCallTrantraction(a, t, 'claimIScore', {}, stepLimit);
-};
-
-const buildCallTrantraction = (a: IconAccount, t: Transaction, method: string, param: any, stepLimit?: BigNumber) => {
+  t: Transaction,
+  method: string,
+  param: any,
+  stepLimit?: BigNumber,
+) => {
   const address = a.freshAddress;
 
   const icxTransferData = new IconBuilder.CallTransactionBuilder()
@@ -123,7 +120,7 @@ const buildCallTrantraction = (a: IconAccount, t: Transaction, method: string, p
     .timestamp(IconConverter.toHexNumber(new Date().getTime() * 1000))
     .version(IconConverter.toHexNumber(IconConverter.toBigNumber(3)));
   if (stepLimit) {
-    icxTransferData.stepLimit(IconConverter.toHexNumber(stepLimit.toNumber()));
+    icxTransferData.stepLimit(IconConverter.toHexNumber(stepLimit.div(1000000).toNumber()));
   }
 
   return icxTransferData.build();
