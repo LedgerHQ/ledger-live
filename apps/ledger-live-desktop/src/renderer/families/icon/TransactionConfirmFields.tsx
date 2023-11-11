@@ -56,18 +56,18 @@ const IconFreesField = ({ account, parentAccount, transaction, field }: FieldCom
   invariant(transaction.family === "icon", "icon transaction");
   const feesUnit = getAccountUnit(mainAccount);
   const { fees } = transaction;
+
   return (
     <Box horizontal justifyContent="space-between" mb={2}>
       <TransactionConfirmField label={field.label} />
       <FormattedVal
         color={"palette.text.shade80"}
-        unit={{ ...feesUnit, magnitude: 0 }}
+        unit={feesUnit}
         val={fees}
         fontSize={3}
         inline
         showCode
         alwaysShowValue
-        subMagnitude={5}
       />
     </Box>
   );
