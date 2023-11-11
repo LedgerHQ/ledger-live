@@ -1,27 +1,22 @@
 # webpack.js-example
 
-## 0.0.7-nightly.2
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/react-ui@0.14.10-nightly.2
-
-## 0.0.7-nightly.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/react-ui@0.14.10-nightly.1
-
-## 0.0.7-nightly.0
+## 0.0.7
 
 ### Patch Changes
 
 - [#4827](https://github.com/LedgerHQ/ledger-live/pull/4827) [`fc121ce96d`](https://github.com/LedgerHQ/ledger-live/commit/fc121ce96dbcc4f30cfd9836644f778b85f997b7) Thanks [@valpinkman](https://github.com/valpinkman)! - Update react to react 18
 
 - Updated dependencies [[`fc121ce96d`](https://github.com/LedgerHQ/ledger-live/commit/fc121ce96dbcc4f30cfd9836644f778b85f997b7)]:
-  - @ledgerhq/react-ui@0.14.10-nightly.0
+  - @ledgerhq/react-ui@0.14.10
+
+## 0.0.7-next.0
+
+### Patch Changes
+
+- [#4827](https://github.com/LedgerHQ/ledger-live/pull/4827) [`fc121ce96d`](https://github.com/LedgerHQ/ledger-live/commit/fc121ce96dbcc4f30cfd9836644f778b85f997b7) Thanks [@valpinkman](https://github.com/valpinkman)! - Update react to react 18
+
+- Updated dependencies [[`fc121ce96d`](https://github.com/LedgerHQ/ledger-live/commit/fc121ce96dbcc4f30cfd9836644f778b85f997b7)]:
+  - @ledgerhq/react-ui@0.14.10-next.0
 
 ## 0.0.6
 

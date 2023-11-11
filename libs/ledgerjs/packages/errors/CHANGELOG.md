@@ -1,12 +1,12 @@
 # @ledgerhq/errors
 
-## 6.15.0-nightly.1
+## 6.15.0
 
-### Patch Changes
+### Minor Changes
 
-- [#4819](https://github.com/LedgerHQ/ledger-live/pull/4819) [`c5981ae341`](https://github.com/LedgerHQ/ledger-live/commit/c5981ae3411abc4c8594adf2efcb52aacddac143) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add support for casper blockchain
+- [#4919](https://github.com/LedgerHQ/ledger-live/pull/4919) [`4d6fa0772e`](https://github.com/LedgerHQ/ledger-live/commit/4d6fa0772e19cdbd4b432fafa43621c42e2a5fdd) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Change network error to better suit node flakiness
 
-## 6.15.0-nightly.0
+## 6.15.0-next.0
 
 ### Minor Changes
 

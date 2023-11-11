@@ -1,34 +1,22 @@
 # @ledgerhq/hw-transport-http
 
-## 6.28.4-nightly.3
+## 6.28.4
 
 ### Patch Changes
 
-- Updated dependencies [[`c5981ae341`](https://github.com/LedgerHQ/ledger-live/commit/c5981ae3411abc4c8594adf2efcb52aacddac143)]:
-  - @ledgerhq/errors@6.15.0-nightly.1
-  - @ledgerhq/hw-transport@6.28.9-nightly.3
+- Updated dependencies [[`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac), [`7968dfc551`](https://github.com/LedgerHQ/ledger-live/commit/7968dfc551acca00b7fabf00a726758d74be33de), [`6b7fc5d071`](https://github.com/LedgerHQ/ledger-live/commit/6b7fc5d0711a83ed2fcacacd02795862a4a3bf1d), [`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac), [`4d6fa0772e`](https://github.com/LedgerHQ/ledger-live/commit/4d6fa0772e19cdbd4b432fafa43621c42e2a5fdd)]:
+  - @ledgerhq/logs@6.11.0
+  - @ledgerhq/hw-transport@6.29.0
+  - @ledgerhq/errors@6.15.0
 
-## 6.28.4-nightly.2
-
-### Patch Changes
-
-- Updated dependencies [[`7968dfc551`](https://github.com/LedgerHQ/ledger-live/commit/7968dfc551acca00b7fabf00a726758d74be33de)]:
-  - @ledgerhq/hw-transport@6.28.9-nightly.2
-
-## 6.28.4-nightly.1
+## 6.28.4-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`6b7fc5d071`](https://github.com/LedgerHQ/ledger-live/commit/6b7fc5d0711a83ed2fcacacd02795862a4a3bf1d)]:
-  - @ledgerhq/hw-transport@6.28.9-nightly.1
-
-## 6.28.4-nightly.0
-
-### Patch Changes
-
-- Updated dependencies [[`4d6fa0772e`](https://github.com/LedgerHQ/ledger-live/commit/4d6fa0772e19cdbd4b432fafa43621c42e2a5fdd)]:
-  - @ledgerhq/errors@6.15.0-nightly.0
-  - @ledgerhq/hw-transport@6.28.9-nightly.0
+- Updated dependencies [[`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac), [`7968dfc551`](https://github.com/LedgerHQ/ledger-live/commit/7968dfc551acca00b7fabf00a726758d74be33de), [`6b7fc5d071`](https://github.com/LedgerHQ/ledger-live/commit/6b7fc5d0711a83ed2fcacacd02795862a4a3bf1d), [`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac), [`4d6fa0772e`](https://github.com/LedgerHQ/ledger-live/commit/4d6fa0772e19cdbd4b432fafa43621c42e2a5fdd)]:
+  - @ledgerhq/logs@6.11.0-next.0
+  - @ledgerhq/hw-transport@6.29.0-next.0
+  - @ledgerhq/errors@6.15.0-next.0
 
 ## 6.28.3
 

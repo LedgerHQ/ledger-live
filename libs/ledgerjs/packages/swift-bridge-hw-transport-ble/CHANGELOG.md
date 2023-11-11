@@ -1,32 +1,18 @@
 # @ledgerhq/swift-bridge-hw-transport-ble
 
-## 1.0.9-nightly.3
+## 1.0.9
 
 ### Patch Changes
 
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.28.9-nightly.3
+- Updated dependencies [[`7968dfc551`](https://github.com/LedgerHQ/ledger-live/commit/7968dfc551acca00b7fabf00a726758d74be33de), [`6b7fc5d071`](https://github.com/LedgerHQ/ledger-live/commit/6b7fc5d0711a83ed2fcacacd02795862a4a3bf1d), [`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac)]:
+  - @ledgerhq/hw-transport@6.29.0
 
-## 1.0.9-nightly.2
-
-### Patch Changes
-
-- Updated dependencies [[`7968dfc551`](https://github.com/LedgerHQ/ledger-live/commit/7968dfc551acca00b7fabf00a726758d74be33de)]:
-  - @ledgerhq/hw-transport@6.28.9-nightly.2
-
-## 1.0.9-nightly.1
+## 1.0.9-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`6b7fc5d071`](https://github.com/LedgerHQ/ledger-live/commit/6b7fc5d0711a83ed2fcacacd02795862a4a3bf1d)]:
-  - @ledgerhq/hw-transport@6.28.9-nightly.1
-
-## 1.0.9-nightly.0
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.28.9-nightly.0
+- Updated dependencies [[`7968dfc551`](https://github.com/LedgerHQ/ledger-live/commit/7968dfc551acca00b7fabf00a726758d74be33de), [`6b7fc5d071`](https://github.com/LedgerHQ/ledger-live/commit/6b7fc5d0711a83ed2fcacacd02795862a4a3bf1d), [`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac)]:
+  - @ledgerhq/hw-transport@6.29.0-next.0
 
 ## 1.0.8
 
