@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { log } from "@ledgerhq/logs";
 import { BatteryStatusFlags } from "@ledgerhq/types-devices";
+import { StatusCodes } from "@ledgerhq/errors";
+
 import {
   getBatteryStatusesAction,
   GetBatteryStatusesActionState,
@@ -52,7 +54,10 @@ export const useBatteryStatuses = ({
         statuses,
       }).subscribe({
         next: state => {
-          setBatteryStatusesState(state);
+          // skip APDU unknown error on old devices version
+          if (state.error?.message?.includes(StatusCodes.UNKNOWN_APDU.toString(16)))
+            setBatteryStatusesState({ ...state, error: null });
+          else setBatteryStatusesState(state);
 
           // no battery status flags available
           if (state.batteryStatuses.length <= 1) return;
