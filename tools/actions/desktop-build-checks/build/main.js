@@ -19700,8 +19700,8 @@ function isDefined(value) {
 function isKeyOperator(operator) {
   return operator === ";" || operator === "&" || operator === "?";
 }
-function getValues(context, operator, key, modifier) {
-  var value = context[key], result = [];
+function getValues(context2, operator, key, modifier) {
+  var value = context2[key], result = [];
   if (isDefined(value) && value !== "") {
     if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
       value = value.toString();
@@ -19765,7 +19765,7 @@ function parseUrl(template) {
     expand: expand.bind(null, template)
   };
 }
-function expand(template, context) {
+function expand(template, context2) {
   var operators = ["+", "#", ".", "/", ";", "?", "&"];
   template = template.replace(
     /\{([^\{\}]+)\}|([^\{\}]+)/g,
@@ -19779,7 +19779,7 @@ function expand(template, context) {
         }
         expression.split(/,/g).forEach(function(variable) {
           var tmp = /([^:\*]*)(?::(\d+)|(\*))?/.exec(variable);
-          values.push(getValues(context, operator, tmp[1], tmp[2] || tmp[3]));
+          values.push(getValues(context2, operator, tmp[1], tmp[2] || tmp[3]));
         });
         if (operator && operator !== "+") {
           var separator = ",";
@@ -25261,17 +25261,17 @@ var require_thenables = __commonJS({
       var util = require_util8();
       var errorObj2 = util.errorObj;
       var isObject3 = util.isObject;
-      function tryConvertToPromise(obj2, context) {
+      function tryConvertToPromise(obj2, context2) {
         if (isObject3(obj2)) {
           if (obj2 instanceof Promise2)
             return obj2;
           var then = getThen(obj2);
           if (then === errorObj2) {
-            if (context)
-              context._pushContext();
+            if (context2)
+              context2._pushContext();
             var ret2 = Promise2.reject(then.e);
-            if (context)
-              context._popContext();
+            if (context2)
+              context2._popContext();
             return ret2;
           } else if (typeof then === "function") {
             if (isAnyBluebirdPromise(obj2)) {
@@ -25285,7 +25285,7 @@ var require_thenables = __commonJS({
               );
               return ret2;
             }
-            return doThenable(obj2, then, context);
+            return doThenable(obj2, then, context2);
           }
         }
         return obj2;
@@ -25309,14 +25309,14 @@ var require_thenables = __commonJS({
           return false;
         }
       }
-      function doThenable(x, then, context) {
+      function doThenable(x, then, context2) {
         var promise = new Promise2(INTERNAL);
         var ret2 = promise;
-        if (context)
-          context._pushContext();
+        if (context2)
+          context2._pushContext();
         promise._captureStackTrace();
-        if (context)
-          context._popContext();
+        if (context2)
+          context2._popContext();
         var synchronous = true;
         var result = util.tryCatch(then).call(x, resolve, reject);
         synchronous = false;
@@ -26728,17 +26728,17 @@ var require_bind = __commonJS({
       var rejectThis = function(_, e) {
         this._reject(e);
       };
-      var targetRejected = function(e, context) {
-        context.promiseRejectionQueued = true;
-        context.bindingPromise._then(rejectThis, rejectThis, null, this, e);
+      var targetRejected = function(e, context2) {
+        context2.promiseRejectionQueued = true;
+        context2.bindingPromise._then(rejectThis, rejectThis, null, this, e);
       };
-      var bindingResolved = function(thisArg, context) {
+      var bindingResolved = function(thisArg, context2) {
         if ((this._bitField & 50397184) === 0) {
-          this._resolveCallback(context.target);
+          this._resolveCallback(context2.target);
         }
       };
-      var bindingRejected = function(e, context) {
-        if (!context.promiseRejectionQueued)
+      var bindingRejected = function(e, context2) {
+        if (!context2.promiseRejectionQueued)
           this._reject(e);
       };
       Promise2.prototype.bind = function(thisArg) {
@@ -26753,19 +26753,19 @@ var require_bind = __commonJS({
         var target = this._target();
         ret2._setBoundTo(maybePromise);
         if (maybePromise instanceof Promise2) {
-          var context = {
+          var context2 = {
             promiseRejectionQueued: false,
             promise: ret2,
             target,
             bindingPromise: maybePromise
           };
-          target._then(INTERNAL, targetRejected, void 0, ret2, context);
+          target._then(INTERNAL, targetRejected, void 0, ret2, context2);
           maybePromise._then(
             bindingResolved,
             bindingRejected,
             void 0,
             ret2,
-            context
+            context2
           );
           ret2._setOnCancel(maybePromise);
         } else {
@@ -27517,10 +27517,10 @@ var require_using = __commonJS({
         iterator2();
         return ret2;
       }
-      function Disposer(data, promise, context) {
+      function Disposer(data, promise, context2) {
         this._data = data;
         this._promise = promise;
-        this._context = context;
+        this._context = context2;
       }
       Disposer.prototype.data = function() {
         return this._data;
@@ -27536,12 +27536,12 @@ var require_using = __commonJS({
       };
       Disposer.prototype.tryDispose = function(inspection) {
         var resource = this.resource();
-        var context = this._context;
-        if (context !== void 0)
-          context._pushContext();
+        var context2 = this._context;
+        if (context2 !== void 0)
+          context2._pushContext();
         var ret2 = resource !== NULL ? this.doDispose(resource, inspection) : null;
-        if (context !== void 0)
-          context._popContext();
+        if (context2 !== void 0)
+          context2._popContext();
         this._promise._unsetDisposable();
         this._data = null;
         return ret2;
@@ -27549,8 +27549,8 @@ var require_using = __commonJS({
       Disposer.isDisposer = function(d) {
         return d != null && typeof d.resource === "function" && typeof d.tryDispose === "function";
       };
-      function FunctionDisposer(fn, promise, context) {
-        this.constructor$(fn, promise, context);
+      function FunctionDisposer(fn, promise, context2) {
+        this.constructor$(fn, promise, context2);
       }
       inherits2(FunctionDisposer, Disposer);
       FunctionDisposer.prototype.doDispose = function(resource, inspection) {
@@ -32813,8 +32813,8 @@ var require_graceful_fs = __commonJS({
     }
     function noop() {
     }
-    function publishQueue(context, queue2) {
-      Object.defineProperty(context, gracefulQueue, {
+    function publishQueue(context2, queue2) {
+      Object.defineProperty(context2, gracefulQueue, {
         get: function() {
           return queue2;
         }
@@ -40349,12 +40349,14 @@ async function createOrUpdateComment({
 async function submitCommentToPR({
   reporter,
   prNumber,
-  githubToken
+  githubToken,
+  currentSha,
+  referenceSha
 }) {
   core.info("Submiting comment to PR");
   const header = `<!-- desktop-build-checks-${prNumber} -->`;
   const title = `### Desktop Build Checks
----
+> Comparing ${formatHash(currentSha)} against ${formatHash(referenceSha)}.
 `;
   core.info("Looking for existing comment");
   const found = await findComment({ prNumber, githubToken, header });
@@ -40426,9 +40428,13 @@ function formatMarkdownBoldList(items) {
     return map[0];
   return map.slice(0, items.length - 1).join(", ") + " and " + map[items.length - 1];
 }
+function formatHash(hash) {
+  return hash ? `[\`${hash.slice(0, 7)}\`](https://github.com/LedgerHQ/ledger-live/commit/${hash})` : "_unknown_";
+}
 
 // src/main.ts
 async function main() {
+  var _a2;
   const githubToken = core2.getInput("token");
   const prNumber = core2.getInput("prNumber");
   const baseBranch = core2.getInput("baseBranch");
@@ -40459,7 +40465,13 @@ async function main() {
   core2.info(`Checking agains builds metadata files from ${baseBranch}`);
   checksAgainstReference(reporter, all[0], referenceMetafiles);
   core2.info("Submitting comment to PR");
-  await submitCommentToPR({ reporter, prNumber, githubToken });
+  await submitCommentToPR({
+    reporter,
+    prNumber,
+    githubToken,
+    referenceSha: (_a2 = latestLinux.workflow_run) == null ? void 0 : _a2.head_sha,
+    currentSha: github2.context.sha
+  });
 }
 var bundleSizeThreshold = 100 * 1024;
 var slugsOfInterest = ["main", "renderer"];
