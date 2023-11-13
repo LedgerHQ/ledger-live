@@ -117,10 +117,7 @@ export function RemoteLiveAppProvider({
     allowDebugApps && branches.push("debug");
 
     try {
-      const allManifests = await api.fetchLiveAppManifests(providerURL, {
-        platform,
-        llVersion,
-      });
+      const allManifests = await api.fetchLiveAppManifests(providerURL);
 
       const catalogManifests = await api.fetchLiveAppManifests(providerURL, {
         apiVersion,
