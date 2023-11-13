@@ -30,6 +30,7 @@ export type PlatformExchangeNavigatorParamList = {
       signature: string;
       feesStrategy: string;
       rateType?: number;
+      amountExpectedTo?: number;
     };
     device?: Device;
     onResult: (_: ResultComplete) => void;

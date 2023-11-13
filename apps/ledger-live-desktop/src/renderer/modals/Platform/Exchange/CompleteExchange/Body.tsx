@@ -12,6 +12,8 @@ import Box from "~/renderer/components/Box";
 import { useBroadcast } from "~/renderer/hooks/useBroadcast";
 import { BodyContent } from "./BodyContent";
 import { getMagnitudeAwareRate } from "@ledgerhq/live-common/exchange/swap/webApp/index";
+import { BigNumber } from "bigNumber.js";
+import { AccountLike } from "@ledgerhq/types-live";
 
 export type Data = {
   provider: string;
@@ -25,6 +27,7 @@ export type Data = {
   rateType?: number;
   swapId?: string;
   rate?: number;
+  amountExpectedTo?: number;
 };
 
 const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined }) => {
@@ -32,20 +35,24 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   const { onResult, onCancel, swapId, rate, ...exchangeParams } = data;
   const { exchange, provider, transaction: transactionParams } = exchangeParams;
   const { amount } = transactionParams;
-  const {
-    fromAccount: account,
-    fromParentAccount: parentAccount,
-    toAccount,
-  } = exchange as ExchangeSwap;
+  const { fromAccount: account, fromParentAccount: parentAccount } = exchange;
+  let request = { ...exchangeParams };
+  let amountExpectedTo: number;
+  let toAccount: AccountLike;
+  let magnitudeAwareRate: BigNumber;
+  if ("toAccount" in exchange) {
+    toAccount = exchange.toAccount;
+    if (account && toAccount && rate) {
+      magnitudeAwareRate = getMagnitudeAwareRate({
+        fromAccount: account,
+        toAccount,
+        rate,
+      });
+      amountExpectedTo = +amount * +magnitudeAwareRate;
 
-  const magnitudeAwareRate = getMagnitudeAwareRate({
-    fromAccount: account,
-    toAccount,
-    rate,
-  });
-  const amountExpectedTo = +amount * +magnitudeAwareRate;
-
-  const request = { ...exchangeParams, amountExpectedTo };
+      request = { ...request, amountExpectedTo };
+    }
+  }
 
   const tokenCurrency: TokenCurrency | undefined =
     account.type === "TokenAccount" ? account.token : undefined;
@@ -110,14 +117,12 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
     provider,
     rate,
     swapId,
-    toAccount,
     transactionParams,
     broadcast,
     onClose,
     onResult,
     signedOperation,
     transaction,
-    magnitudeAwareRate,
   ]);
 
   return (
