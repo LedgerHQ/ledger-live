@@ -178,7 +178,7 @@ const OperationD = (props: Props) => {
     : null;
 
   const getTransactionExplorer = specific?.getTransactionExplorer;
-  let url: string = getTransactionExplorer
+  const url: string = getTransactionExplorer
     ? getTransactionExplorer(getDefaultExplorerView(mainAccount.currency), operation)
     : getDefaultTransactionExplorer(getDefaultExplorerView(mainAccount.currency), operation.hash);
 
