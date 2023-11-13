@@ -14,6 +14,12 @@ jobs:
       NODE_OPTIONS: "--max-old-space-size=7168"
       RELEASE_BRANCH: "import-cal-token-test-release"
     steps:
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - uses: actions/checkout@v3
         if: ${{ inputs.ref != null }}
         with:
@@ -62,3 +68,10 @@ jobs:
         id: date
         run: |
           echo "date=$(date +%F)" >> $GITHUB_OUTPUT
+      - name: push
+        run: |
+          git push origin release
+          gh pr create --title ":rocket: Release ${{ steps.date.outputs.date }}" -F .github/templates/release.md --base main --head release
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+  
