@@ -172,7 +172,6 @@ export type SendFundsNavigatorStackParamList = {
     transaction: EvmTransaction;
     setTransaction: Result<EvmTransaction>["setTransaction"];
     gasOptions?: GasOptions;
-    goBackOnSetTransaction?: boolean;
     setCustomStrategyTransactionPatch: React.Dispatch<
       React.SetStateAction<Partial<EvmTransaction> | undefined>
     >;
