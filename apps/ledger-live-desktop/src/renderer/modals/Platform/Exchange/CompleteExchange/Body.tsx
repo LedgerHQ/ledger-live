@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
-import { Exchange, ExchangeSwap } from "@ledgerhq/live-common/exchange/platform/types";
+import { Exchange } from "@ledgerhq/live-common/exchange/platform/types";
 import { Exchange as SwapExchange } from "@ledgerhq/live-common/exchange/swap/types";
 import { setBroadcastTransaction } from "@ledgerhq/live-common/exchange/swap/setBroadcastTransaction";
 import { getUpdateAccountWithUpdaterParams } from "@ledgerhq/live-common/exchange/swap/getUpdateAccountWithUpdaterParams";
@@ -37,9 +37,9 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   const { amount } = transactionParams;
   const { fromAccount: account, fromParentAccount: parentAccount } = exchange;
   let request = { ...exchangeParams };
-  let amountExpectedTo: number;
-  let toAccount: AccountLike;
-  let magnitudeAwareRate: BigNumber;
+  let amountExpectedTo: number | undefined = undefined;
+  let toAccount: AccountLike | undefined = undefined;
+  let magnitudeAwareRate: BigNumber | undefined = undefined;
   if ("toAccount" in exchange) {
     toAccount = exchange.toAccount;
     if (account && toAccount && rate) {
@@ -86,7 +86,7 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
     if (signedOperation) {
       broadcast(signedOperation).then(operation => {
         // Save swap history
-        if (swapId && rate && toAccount) {
+        if (swapId && rate && toAccount && magnitudeAwareRate) {
           const result = {
             operation,
             swapId,
@@ -123,6 +123,8 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
     onResult,
     signedOperation,
     transaction,
+    magnitudeAwareRate,
+    toAccount,
   ]);
 
   return (
