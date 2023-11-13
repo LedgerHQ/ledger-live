@@ -1286,7 +1286,8 @@
   "postOnboarding" : {
     "postOnboardingScreen" : {
       "title" : "Em seguida, use sua\nLedger Stax para... ",
-      "titleCompleted" : "e\npronto!"
+      "titleCompleted" : "You're all set !\nKeep going and explore your wallet.",
+      "exploreCTA" : "Explore wallet"
     },
     "postOnboardingContent" : {
       "skipLink" : "Farei isso mais tarde."
@@ -3151,7 +3152,7 @@
     "unlockedBalance" : "Desvinculado",
     "unlockedTooltip" : "Os ativos desvinculados agora podem ser movidos usando a operação de saque.",
     "networkFees" : "As taxas de rede são automaticamente definidas pelo consenso da Polkadot, você não poderá revisá-las no seu dispositivo",
-    "bondedBalanceBelowMinimum" : "Seu saldo vinculado está abaixo do mínimo atual de {{minimumBondBalance}}. Suas nomeações correm o risco de serem removidas.",
+    "bondedBalanceBelowMinimum" : "Para enviar a sua intenção de nomear como nomeador, é necessário um saldo mínimo de {{minimumBondBalance}}",
     "nomination" : {
       "emptyState" : {
         "description" : "Você pode ganhar recompensas vinculando ativos e, em seguida, nomeando seus validadores.",
@@ -3552,6 +3553,9 @@
         "supportLink" : "Saiba mais sobre a reserva da Kiln"
       }
     }
+  },
+  "graph" : {
+    "noGraphWarning" : "O gráfico não está disponível para esse token"
   },
   "near" : {
     "account" : {
@@ -4248,7 +4252,6 @@
         "nextButton" : "Começar",
         "noDevice" : "Sem dispositivo?",
         "buyLink" : "Sem dispositivo? Compre uma Ledger",
-        "recoverSignIn" : "Entrar no Ledger Recover",
         "byTapping" : "Ao clicar em \"Começar\" você consente e concorda com nossos",
         "termsAndConditions" : "Termos e condições",
         "and" : "e",
@@ -4906,6 +4909,11 @@
     "cta" : "Continuar"
   },
   "families" : {
+    "casper" : {
+      "transferIdPlaceholder" : "Opcional",
+      "transferId" : "ID da Transferência (Memo)",
+      "transferIdWarningText" : "Ao usar um memo, verifique cuidadosamente as informações com o destinatário"
+    },
     "cardano" : {
       "memoPlaceholder" : "Opcional",
       "memo" : "Memo"
@@ -5138,8 +5146,8 @@
       "description" : "Para acessar este recurso, atualize o firmware do seu dispositivo para a versão mais recente"
     },
     "FirmwareNotRecognized" : {
-      "title" : "O firmware do dispositivo não foi reconhecido",
-      "description" : "Entre em contato com o Suporte Ledger"
+      "title" : "Provedor Inválido",
+      "description" : "Você deve mudar a configuração em “Provedor da Minha Ledger”. Para desativá-la, abra as “Configurações” do Ledger Live, selecione “Recursos experimentais” e, em seguida, selecione um provedor diferente."
     },
     "HardResetFail" : {
       "title" : "Não foi possível redefinir",
@@ -5247,6 +5255,18 @@
     "NotEnoughEGLDForFees" : {
       "title" : "EGLD insuficientes para pagar as taxas de transação",
       "description" : "Envie um pouco de EGLD para a sua conta para pagar pelas transações."
+    },
+    "NotEnoughVTHO" : {
+      "title" : "Fundos VTHO insuficientes",
+      "description" : "Certifique-se de que a conta tenha VTHO suficiente."
+    },
+    "MustBeVechain" : {
+      "title" : "Não é uma conta vechain",
+      "description" : "Certifique-se de que a moeda seja VTHO ou VET"
+    },
+    "ImpossibleToCalculateAmountAndFees" : {
+      "title" : "Impossível calcular quantia e taxas",
+      "description" : "Impossível calcular quantia e taxas"
     },
     "NotEnoughBalance" : {
       "title" : "Fundos Insuficientes",
@@ -5402,6 +5422,15 @@
       "title" : "Desculpe, falha de conexão",
       "description" : "Dispositivo detectado mas a conexão falhou. Se o problema persistir, tente novamente ou contate o Suporte Ledger."
     },
+    "CasperInvalidTransferId" : {
+      "title" : "A ID de transferência deve ser um número positivo menor que {{maxTransferId}}"
+    },
+    "InvalidMinimumAmount" : {
+      "title" : "A quantia mínima para transferência é {{minAmount}}"
+    },
+    "MayBlockAccount" : {
+      "title" : "Sua conta ficará com menos do que {{minAmount}}, necessário para realizar um envio"
+    },
     "ETHAddressNonEIP" : {
       "title" : "Verificação automática indisponível: verifique o endereço com cuidado.",
       "description" : null
@@ -5419,6 +5448,9 @@
     },
     "FeeNotLoaded" : {
       "title" : "Não foi possível carregar as taxas. Defina as taxas manualmente"
+    },
+    "FeeNotLoadedSwap" : {
+      "title" : "Falha em estimar a taxa de rede devido a problemas técnicos. Tente novamente ou mude os ativos."
     },
     "FeeRequired" : {
       "title" : "Taxas Necessárias"
