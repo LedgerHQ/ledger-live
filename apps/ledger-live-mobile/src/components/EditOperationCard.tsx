@@ -1,16 +1,18 @@
+import { getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { SideImageCard } from "@ledgerhq/native-ui";
+import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
+import { useNavigation } from "@react-navigation/core";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { SideImageCard } from "@ledgerhq/native-ui";
-import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { useNavigation } from "@react-navigation/core";
-import SectionContainer from "../screens/WalletCentricSections/SectionContainer";
 import { NavigatorName, ScreenName } from "../const";
+import SectionContainer from "../screens/WalletCentricSections/SectionContainer";
 
 type EditOperationCardProps = {
   oldestEditableOperation: Operation;
   isOperationStuck: boolean;
-  account: AccountLike | undefined;
+  account: AccountLike;
   parentAccount: Account | null | undefined;
   onPress?: (operation: Operation) => void;
 };
@@ -23,23 +25,25 @@ export const EditOperationCard = ({
   parentAccount,
 }: EditOperationCardProps) => {
   const { t } = useTranslation();
-  const editEthTxFeature = useFeature("editEthTx");
   const navigation = useNavigation();
 
+  const { enabled: isEditEvmTxEnabled, params } = useFeature("editEvmTx") ?? {};
+  const mainAccount = getMainAccount(account, parentAccount);
+  const isCurrencySupported =
+    params?.supportedCurrencyIds?.includes(mainAccount.currency.id as CryptoCurrencyId) || false;
+
   const onEditTransactionCardPress = useCallback(() => {
-    if (account) {
-      navigation.navigate(NavigatorName.EvmEditTransaction, {
-        screen: ScreenName.EvmEditTransactionMethodSelection,
-        params: {
-          operation: oldestEditableOperation,
-          account,
-          parentAccount,
-        },
-      });
-    }
+    navigation.navigate(NavigatorName.EvmEditTransaction, {
+      screen: ScreenName.EvmEditTransactionMethodSelection,
+      params: {
+        operation: oldestEditableOperation,
+        account,
+        parentAccount,
+      },
+    });
   }, [account, oldestEditableOperation, parentAccount, navigation]);
 
-  if (!editEthTxFeature?.enabled) {
+  if (!isEditEvmTxEnabled || !isCurrencySupported) {
     return null;
   }
 

@@ -231,7 +231,7 @@ function MethodSelectionComponent({ navigation, route }: Props) {
         </SelectableList>
         <LText
           style={{ marginTop: 8, textDecorationLine: "underline" }}
-          onPress={() => Linking.openURL(urls.editEthTx.learnMore)}
+          onPress={() => Linking.openURL(urls.editEvmTx.learnMore)}
         >
           {t("editTransaction.learnMore")}
         </LText>

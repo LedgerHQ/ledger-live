@@ -19,6 +19,7 @@ import {
   isStuckOperation,
 } from "@ledgerhq/live-common/operation";
 import { getEnv } from "@ledgerhq/live-env";
+import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike, NFTMetadata, Operation, OperationType } from "@ledgerhq/types-live";
 import { TFunction } from "i18next";
 import invariant from "invariant";
@@ -235,8 +236,16 @@ const OperationD = (props: Props) => {
       ? currency.parentCurrency.name
       : currency.name
     : undefined;
-  const editEthTx = useFeature("editEthTx");
-  const editable = editEthTx?.enabled && isEditableOperation({ account: mainAccount, operation });
+
+  const { enabled: isEditEvmTxEnabled, params } = useFeature("editEvmTx") ?? {};
+  const isCurrencySupported =
+    params?.supportedCurrencyIds?.includes(mainAccount.currency.id as CryptoCurrencyId) || false;
+
+  const editable =
+    isEditEvmTxEnabled &&
+    isCurrencySupported &&
+    isEditableOperation({ account: mainAccount, operation });
+
   const dispatch = useDispatch();
 
   const handleOpenEditModal = useCallback(() => {
