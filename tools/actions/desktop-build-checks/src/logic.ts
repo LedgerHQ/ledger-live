@@ -284,7 +284,7 @@ export async function submitCommentToPR({
   core.info(found ? `Found previous comment ${found.id}` : "No previous comment to update");
   const body = reporter.toMarkdown();
 
-  if (body.length === 0 && found) {
+  if (!reporter.isEmpty() && found) {
     const allGood = `
 ${header}
 
@@ -292,6 +292,11 @@ ${title}
 
 ✅ Previous issues have all been fixed.`;
     await createOrUpdateComment({ body: allGood, prNumber, githubToken, found });
+    return;
+  }
+
+  if (reporter.isEmpty()) {
+    core.info("Nothing to report");
     return;
   }
 
@@ -321,6 +326,10 @@ export class Reporter {
   }
   error(message: string) {
     this.statements.push(`❌ ${message}`);
+  }
+
+  isEmpty() {
+    return this.statements.length === 0;
   }
 
   toMarkdown() {
