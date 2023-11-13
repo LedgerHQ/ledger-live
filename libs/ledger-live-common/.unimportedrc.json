@@ -269,6 +269,7 @@
     "src/transaction/signOperation.ts",
     "src/transactionsAlerts/index.ts",
     "src/user.ts",
+    "src/walletConnect/index.ts",
     "src/wallet-api/CustomLogger/client.ts",
     "src/wallet-api/constants.ts",
     "src/wallet-api/converters.ts",
