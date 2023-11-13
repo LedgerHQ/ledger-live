@@ -144,7 +144,6 @@ export type Features = CurrencyFeatures & {
   mockFeature: Feature_MockFeature;
   multibuyNavigation: Feature_MultibuyNavigation;
   syncOnboarding: Feature_SyncOnboarding;
-  walletConnectLiveApp: Feature_WalletConnectLiveApp;
   walletConnectEntryPoint: Feature_WalletConnectEntryPoint;
   customImage: Feature_CustomImage;
   referralProgramDiscoverCard: Feature_ReferralProgramDiscoverCard;
@@ -206,10 +205,6 @@ export type Feature_EthStakingProviders = Feature<{
 
 export type Feature_WalletNftGallery = Feature<{
   lazyLoadScreens: boolean;
-}>;
-
-export type Feature_WalletConnectLiveApp = Feature<{
-  liveAppId: string;
 }>;
 
 export type Feature_TransactionsAlerts = Feature<{

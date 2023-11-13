@@ -10,7 +10,6 @@ import {
 import { useTranslation } from "react-i18next";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { useSelector } from "react-redux";
 
 import { ScreenName, NavigatorName } from "../../const";
@@ -102,7 +101,6 @@ export default function BaseNavigator() {
   >();
   const { colors } = useTheme();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
-  const walletConnectLiveApp = useFeature("walletConnectLiveApp");
   const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
   const isAccountsEmpty = useSelector(hasNoAccountsSelector);
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector) && isAccountsEmpty;
@@ -431,16 +429,15 @@ export default function BaseNavigator() {
             headerLeft: () => null,
           }}
         />
-        {walletConnectLiveApp?.enabled && (
-          <Stack.Screen
-            name={NavigatorName.WalletConnect}
-            component={WalletConnectLiveAppNavigator}
-            options={{
-              headerShown: false,
-            }}
-            {...noNanoBuyNanoWallScreenOptions}
-          />
-        )}
+
+        <Stack.Screen
+          name={NavigatorName.WalletConnect}
+          component={WalletConnectLiveAppNavigator}
+          options={{
+            headerShown: false,
+          }}
+          {...noNanoBuyNanoWallScreenOptions}
+        />
 
         <Stack.Screen
           name={NavigatorName.NotificationCenter}
