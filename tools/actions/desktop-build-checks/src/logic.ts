@@ -343,5 +343,6 @@ export function formatSize(bytes: number | undefined, precision: number = 1): st
 export function formatMarkdownBoldList(items: string[]) {
   if (items.length === 0) return "";
   const map = items.map(item => `**${item}**`);
+  if (map.length === 1) return map[0];
   return map.slice(0, items.length - 1).join(", ") + " and " + map[items.length - 1];
 }
