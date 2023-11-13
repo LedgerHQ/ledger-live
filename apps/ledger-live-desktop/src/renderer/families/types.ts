@@ -306,7 +306,7 @@ export type LLDCoinFamily<
   }>;
 
   /**
-   * Function for custom explorer url postfix
+   * Customize the way the explorer URL to a transaction is built
    */
   getTransactionExplorer?: (
     explorerView: ExplorerView | null | undefined,
