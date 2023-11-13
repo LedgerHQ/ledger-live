@@ -84,6 +84,17 @@ const SwapWebView = ({ swapState, redirectToProviderApp }: SwapWebProps) => {
         return Promise.resolve();
       },
       "custom.saveSwapToHistory": ({ params }: any) => {
+        if (
+          !params.swap ||
+          !params.transaction_id ||
+          !params.swap.fromTokenId ||
+          !params.swap.provider ||
+          !params.swap.toTokenId ||
+          !params.swap.fromAmountWei ||
+          !params.swap.toAmountWei
+        ) {
+          return Promise.reject("cannot save swap missing params");
+        }
         const operationId = `${params.swap.fromTokenId}-${params.transaction_id}-OUT`;
 
         const swapOperation: SwapOperation = {
@@ -95,7 +106,7 @@ const SwapWebView = ({ swapState, redirectToProviderApp }: SwapWebProps) => {
           receiverAccountId: params.swap.toTokenId,
           tokenId: params.swap.toTokenId,
           fromAmount: new BigNumber(params.swap.fromAmountWei),
-          toAmount: new BigNumber(params.toAmount || 1000), //tmp backend should return the correct value
+          toAmount: new BigNumber(params.swap.toAmountWei),
         };
 
         dispatch(
