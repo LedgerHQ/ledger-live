@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 33.1.1-hotfix.0
+
+### Patch Changes
+
+- [#5407](https://github.com/LedgerHQ/ledger-live/pull/5407) [`100f41a61f`](https://github.com/LedgerHQ/ledger-live/commit/100f41a61f5958e9ba1426ea0b8069c35ea94cb8) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix format param swap
+
 ## 33.1.0
 
 ### Minor Changes
