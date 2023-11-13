@@ -64,3 +64,35 @@ export const vechain2: AccountRaw = {
   ],
   swapHistory: [],
 };
+
+// account with vtho but no vet
+export const vechain3: AccountRaw = {
+  id: "js:2:vechain:0xC0dFC490f8fba6A573C55a68dd9023f999ccaDA0:vechain",
+  seedIdentifier: "0xC0dFC490f8fba6A573C55a68dd9023f999ccaDA0",
+  name: "Vechain 3",
+  derivationMode: "vechain",
+  index: 1,
+  freshAddress: "0xC0dFC490f8fba6A573C55a68dd9023f999ccaDA0",
+  freshAddressPath: "44'/818'/0'/0/0",
+  freshAddresses: [],
+  blockHeight: 15156315,
+  operations: [],
+  pendingOperations: [],
+  currencyId: "vechain",
+  feesCurrencyId: "vechain/vtho",
+  unitMagnitude: 18,
+  lastSyncDate: "2023-11-13T13:55:32.004Z",
+  balance: "0",
+  subAccounts: [
+    {
+      type: "TokenAccountRaw",
+      id: "js:2:vechain:0xC0dFC490f8fba6A573C55a68dd9023f999ccaDA0:vechain+vechain%2Fvtho",
+      parentId: "js:2:vechain:0xC0dFC490f8fba6A573C55a68dd9023f999ccaDA0:vechain",
+      tokenId: "vechain/vtho",
+      balance: "1000000000000000",
+      operations: [],
+      pendingOperations: [],
+    },
+  ],
+  swapHistory: [],
+};

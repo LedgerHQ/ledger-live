@@ -4,7 +4,7 @@ import type { AccountRaw, DatasetTest } from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
 import { fromTransactionRaw } from "./transaction";
 import { DEFAULT_GAS_COEFFICIENT, MAINNET_CHAIN_TAG } from "./constants";
-import { vechain1, vechain2 } from "./datasets/vechain";
+import { vechain1, vechain3 } from "./datasets/vechain";
 import { generateNonce } from "./utils/transaction-utils";
 import BigNumber from "bignumber.js";
 import {
@@ -206,7 +206,7 @@ const dataset: DatasetTest<Transaction> = {
           ],
         },
         {
-          raw: vechain2 as AccountRaw,
+          raw: vechain3 as AccountRaw,
           transactions: [
             {
               name: "Not enough VTHO to pay fees",
