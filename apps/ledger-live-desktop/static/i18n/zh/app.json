@@ -1208,7 +1208,7 @@
           "contactSupportCTA" : "联系 Ledger 客服",
           "notFoundEntityError" : {
             "title" : "再次启动正品检查",
-            "description" : "您必须先禁用“我的 Ledger 提供商 ({{providerNumber}})”设置。要禁用该设置，请打开 Ledger Live“设置”，选择“实验性功能”，然后关闭“管理器提供商”。"
+            "description" : "您必须先禁用“我的 Ledger 提供商 ({{providerNumber}})”设置。要禁用该设置，请打开 Ledger Live“设置”，选择“实验性功能”，然后关闭“我的 Ledger 提供商”。"
           },
           "deviceNotGenuineError" : {
             "title" : "此 {{productName}} 不是正品",
@@ -1286,7 +1286,8 @@
   "postOnboarding" : {
     "postOnboardingScreen" : {
       "title" : "接下来，使用您的\nLedger Stax…… ",
-      "titleCompleted" : "\n到此结束！"
+      "titleCompleted" : "You're all set !\nKeep going and explore your wallet.",
+      "exploreCTA" : "Explore wallet"
     },
     "postOnboardingContent" : {
       "skipLink" : "我以后再下载"
@@ -3151,7 +3152,7 @@
     "unlockedBalance" : "已解绑",
     "unlockedTooltip" : "现在可使用提取操作转移已解绑的资产。",
     "networkFees" : "网络费用由 Polkadot 波卡共识协议自动设定，您无法在自己的设备上查看它们。",
-    "bondedBalanceBelowMinimum" : "您的绑定余额低于当前最小值{{minimumBondBalance}}。你的提名有可能被删除。",
+    "bondedBalanceBelowMinimum" : "提名者至少需要有 {{minimumBondBalance}} 才能提交提名意向",
     "nomination" : {
       "emptyState" : {
         "description" : "您可以通过绑定资产并随后提名您的（某个或多个）验证者来赚取奖励。",
@@ -3552,6 +3553,9 @@
         "supportLink" : "了解关于 Kiln 池的更多信息"
       }
     }
+  },
+  "graph" : {
+    "noGraphWarning" : "图表不适用于此代币"
   },
   "near" : {
     "account" : {
@@ -4248,7 +4252,6 @@
         "nextButton" : "开始",
         "noDevice" : "没有设备？",
         "buyLink" : "没有设备？购买 Ledger Nano X",
-        "recoverSignIn" : "登录 Ledger Recover",
         "byTapping" : "点按“开始”即表示您应允并同意我们的",
         "termsAndConditions" : "条款与条件",
         "and" : "和",
@@ -4906,6 +4909,11 @@
     "cta" : "继续"
   },
   "families" : {
+    "casper" : {
+      "transferIdPlaceholder" : "可选",
+      "transferId" : "转账 ID（备忘标签）",
+      "transferIdWarningText" : "当使用备忘标签时，请仔细核对接收方的信息。"
+    },
     "cardano" : {
       "memoPlaceholder" : "可选",
       "memo" : "Memo"
@@ -5138,8 +5146,8 @@
       "description" : "请更新您的设备固件到最新版本以访问此功能"
     },
     "FirmwareNotRecognized" : {
-      "title" : "无法识别设备固件",
-      "description" : "请联系 Ledger 客服"
+      "title" : "提供商无效",
+      "description" : "您必须更改“我的 Ledger 提供商”设置。要更改该设置，请打开 Ledger Live“设置”，选择“实验性功能”，然后选择其他提供商。"
     },
     "HardResetFail" : {
       "title" : "抱歉，无法重置",
@@ -5247,6 +5255,18 @@
     "NotEnoughEGLDForFees" : {
       "title" : "EGLD 数额不足以支付交易费用",
       "description" : "请向您的账户发送一些 EGLD 以支付交易费用。"
+    },
+    "NotEnoughVTHO" : {
+      "title" : "很抱歉，VTHO 资金不足",
+      "description" : "请确保账户内有足够的 VTHO。"
+    },
+    "MustBeVechain" : {
+      "title" : "不是 VeChain 账户",
+      "description" : "请确保币种是 VTHO 或 VET"
+    },
+    "ImpossibleToCalculateAmountAndFees" : {
+      "title" : "无法计算金额和费用",
+      "description" : "无法计算金额和费用"
     },
     "NotEnoughBalance" : {
       "title" : "抱歉，资金不足",
@@ -5402,6 +5422,15 @@
       "title" : "抱歉，连接失败",
       "description" : "检测到设备但连接失败。请重试，如果问题仍然存在，请联系 Ledger 客服。"
     },
+    "CasperInvalidTransferId" : {
+      "title" : "转账 ID 应为小于 {{maxTransferId}} 的正数"
+    },
+    "InvalidMinimumAmount" : {
+      "title" : "最低转账数额为 {{minAmount}}"
+    },
+    "MayBlockAccount" : {
+      "title" : "您账户的余额将少于执行发送所需的 {{minAmount}}"
+    },
     "ETHAddressNonEIP" : {
       "title" : "无法自动验证：请仔细核对该地址。",
       "description" : null
@@ -5419,6 +5448,9 @@
     },
     "FeeNotLoaded" : {
       "title" : "无法加载费率。请手动设置费用"
+    },
+    "FeeNotLoadedSwap" : {
+      "title" : "由于技术问题，网络费用估算失败。请重试或更改资产。"
     },
     "FeeRequired" : {
       "title" : "需要费用"
