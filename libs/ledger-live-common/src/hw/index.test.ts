@@ -6,7 +6,7 @@ jest.useFakeTimers();
 
 describe("open", () => {
   describe("When no transport working with the device has been registered", () => {
-    it("should return the associated opened Transport instance", async () => {
+    it("should reject with a CantOpenDevice error", async () => {
       registerTransportModule({
         id: "test_0",
         open: (_id: string, _timeoutMs?: number) => {
