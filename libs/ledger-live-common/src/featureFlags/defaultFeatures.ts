@@ -151,6 +151,7 @@ export const DEFAULT_FEATURES: Features = {
     enabled: false,
     params: {
       availableOnDesktop: false,
+      ledgerliveStorageState: false,
       account: {
         homeURI:
           "ledgerlive://recover/protect-simu?redirectTo=account&source=lld-sidebar-navigation&ajs_recover_source=lld-sidebar-navigation&ajs_recover_campaign=recover-launch",
@@ -158,6 +159,7 @@ export const DEFAULT_FEATURES: Features = {
           "ledgerlive://recover/protect-simu?redirectTo=login&source=lld-welcome-login&ajs_recover_source=lld-welcome-login&ajs_recover_campaign=recover-launch",
       },
       compatibleDevices: [],
+      recoverBanner: [],
       discoverTheBenefitsLink: "https://www.ledger.com/recover",
       onboardingCompleted: {
         alreadySubscribedURI: "ledgerlive://recover/protect-simu?redirectTo=login",
