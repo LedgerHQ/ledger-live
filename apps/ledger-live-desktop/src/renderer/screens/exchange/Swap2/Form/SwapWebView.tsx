@@ -84,14 +84,7 @@ const SwapWebView = ({ swapState, redirectToProviderApp }: SwapWebProps) => {
         return Promise.resolve();
       },
       "custom.saveSwapToHistory": ({ params }: any) => {
-        console.log("custom.saveSwapToHistory params");
-        console.log(params);
-
         const operationId = `${params.swap.fromTokenId}-${params.transaction_id}-OUT`;
-        // const toCurrency = getAccountCurrency(params.toAccount);
-        const fromCurrency = getAccountCurrency(params.swap.fromAccount);
-
-        // const isFromToken = fromCurrency.type === "TokenCurrency";
 
         const swapOperation: SwapOperation = {
           status: "pending",
@@ -104,14 +97,12 @@ const SwapWebView = ({ swapState, redirectToProviderApp }: SwapWebProps) => {
           fromAmount: new BigNumber(params.swap.fromAmountWei),
           toAmount: new BigNumber(params.toAmount || 1000), //tmp backend should return the correct value
         };
+
         dispatch(
           updateAccountWithUpdater(params.swap.fromTokenId, account => {
-            console.log("in dispatcher");
-            console.log(account);
-            console.log(swapOperation);
+            const fromCurrency = getAccountCurrency(account);
             const isFromToken = fromCurrency.type === "TokenCurrency";
             const subAccounts = account.type === "Account" && account.subAccounts;
-            console.log(subAccounts);
             return isFromToken && subAccounts
               ? {
                   ...account,

@@ -49,7 +49,6 @@ const exportOperations = async (
   }
 };
 const History = () => {
-  console.log("history");
   const accounts = useSelector(accountsSelector);
   const [exporting, setExporting] = useState(false);
   const [mappedSwapOperations, setMappedSwapOperations] = useState<
@@ -94,7 +93,6 @@ const History = () => {
     (async function asyncGetCompleteSwapHistory() {
       if (!accounts) return;
       const sections = await getCompleteSwapHistory(flattenAccounts(accounts));
-      console.log("sections", sections);
       setMappedSwapOperations(sections);
     })();
   }, [accounts]);

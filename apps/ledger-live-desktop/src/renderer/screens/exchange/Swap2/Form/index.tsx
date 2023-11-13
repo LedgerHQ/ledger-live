@@ -325,9 +325,7 @@ const SwapForm = () => {
     });
 
     if (providerType === "DEX") {
-      setSwapWebProps(getSwapWebAppPropsDex());
-      return;
-      // redirectToProviderApp(provider);
+      redirectToProviderApp(provider);
     } else {
       setDrawer(
         ExchangeDrawer,
@@ -409,6 +407,9 @@ const SwapForm = () => {
         error: !!swapError,
         loading: swapTransaction.bridgePending || exchangeRatesState.status === "loading",
       });
+      if (provider == "oneinch") {
+        setSwapWebProps(getSwapWebAppPropsDex());
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [

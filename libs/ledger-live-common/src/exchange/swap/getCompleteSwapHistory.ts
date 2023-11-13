@@ -16,7 +16,6 @@ const getSwapOperationMap =
       status,
       tokenId,
     } = swapOperation;
-    console.log("getSwapOperationMap");
     const operation = account.operations.find(o => o.id === operationId);
     const optimisticOperation = !operation
       ? account.pendingOperations.find(o => o.id === operationId)
