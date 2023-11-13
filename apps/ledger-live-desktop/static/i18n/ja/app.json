@@ -1208,7 +1208,7 @@
           "contactSupportCTA" : "Ledgerサポートへ問い合わせ",
           "notFoundEntityError" : {
             "title" : "正規品チェックを再開する",
-            "description" : "まず「My Ledger Provider（{{providerNumber}}）」設定を無効化してください。無効にするには、Ledger Liveの「設定」を開き、「試験的機能」を選択して、「マネージャープロバイダー（Manager provider）」をオフに切り替えます。"
+            "description" : "まず「My Ledgerプロバイダー（{{providerNumber}}）」設定を無効化してください。無効にするには、Ledger Liveの「設定」を開き、「試験的機能」を選択して、「My Ledgerプロバイダー」をオフに切り替えます。"
           },
           "deviceNotGenuineError" : {
             "title" : "この{{productName}}は正規品ではありません",
@@ -1286,7 +1286,8 @@
   "postOnboarding" : {
     "postOnboardingScreen" : {
       "title" : "次に、Ledger Staxを\n使用して... ",
-      "titleCompleted" : "はい、\n終わり！"
+      "titleCompleted" : "You're all set !\nKeep going and explore your wallet.",
+      "exploreCTA" : "Explore wallet"
     },
     "postOnboardingContent" : {
       "skipLink" : "後で行う"
@@ -3151,7 +3152,7 @@
     "unlockedBalance" : "ボンド解除済み",
     "unlockedTooltip" : "ボンド解除済み資産が、引き出し可能になりました。",
     "networkFees" : "ネットワーク手数料は、Polkadotのコンセンサスアルゴリズムによって自動的に設定されるため、デバイス上で確認することはできません",
-    "bondedBalanceBelowMinimum" : "ボンド残高が、下限額{{minimumBondBalance}}を下回っています。ノミネートが解除されてしまう可能性があります。",
+    "bondedBalanceBelowMinimum" : "ノミネーターとして、ノミネートの意向を提出するには、少なくとも{{minimumBondBalance}}が必要です",
     "nomination" : {
       "emptyState" : {
         "description" : "資産をボンド後、バリデーターをノミネートすることで報酬を獲得できます。",
@@ -3552,6 +3553,9 @@
         "supportLink" : "Kilnプールについての詳細を確認"
       }
     }
+  },
+  "graph" : {
+    "noGraphWarning" : "このトークンでは、グラフを使用できません"
   },
   "near" : {
     "account" : {
@@ -4248,7 +4252,6 @@
         "nextButton" : "はじめに",
         "noDevice" : "デバイスをお持ちでない場合",
         "buyLink" : "デバイスをお持ちですか？Nano Xの購入はこちら",
-        "recoverSignIn" : "Ledger Recoverにログイン",
         "byTapping" : "「はじめる」をタップすることで、お客様が同意したことになります。",
         "termsAndConditions" : "利用規約",
         "and" : "そして",
@@ -4906,6 +4909,11 @@
     "cta" : "続行"
   },
   "families" : {
+    "casper" : {
+      "transferIdPlaceholder" : "任意",
+      "transferId" : "送金ID（メモ）",
+      "transferIdWarningText" : "メモを使用する場合は、受取人と情報をしっかりと確認してください"
+    },
     "cardano" : {
       "memoPlaceholder" : "任意",
       "memo" : "メモ"
@@ -5138,8 +5146,8 @@
       "description" : "この機能にアクセスするには、ファームウェアを最新バージョンにアップデートしてください。"
     },
     "FirmwareNotRecognized" : {
-      "title" : "デバイスのファームウェアが認識されません。",
-      "description" : "Ledgerサポートにお問合せください。"
+      "title" : "プロバイダーが無効です",
+      "description" : "「My Ledgerプロバイダー」の設定を変更する必要があります。変更するには、Ledger Live の「設定」を開き、「試験的機能」を選択して、別のプロバイダーを選択します。"
     },
     "HardResetFail" : {
       "title" : "リセットできませんでした。",
@@ -5247,6 +5255,18 @@
     "NotEnoughEGLDForFees" : {
       "title" : "トランザクション手数料の支払いに十分なEGLDがありません",
       "description" : "EGLDをアカウントに送付し、トランザクションの支払いを行ってください。"
+    },
+    "NotEnoughVTHO" : {
+      "title" : "VTHO資金が不足しています",
+      "description" : "アカウントに十分なVTHO資金があることをご確認ください。"
+    },
+    "MustBeVechain" : {
+      "title" : "VeChainアカウントではありません",
+      "description" : "コインがVTHOまたはVETであることをご確認ください"
+    },
+    "ImpossibleToCalculateAmountAndFees" : {
+      "title" : "金額と手数料を算出できません",
+      "description" : "金額と手数料を算出できません"
     },
     "NotEnoughBalance" : {
       "title" : "資金が不足しています。",
@@ -5402,6 +5422,15 @@
       "title" : "接続に失敗しました。",
       "description" : "デバイスが検出されましたが接続できません。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにお問い合わせください。"
     },
+    "CasperInvalidTransferId" : {
+      "title" : "送金IDは、{{maxTransferId}}より小さい正数である必要があります"
+    },
+    "InvalidMinimumAmount" : {
+      "title" : "最低送金額は{{minAmount}}です"
+    },
+    "MayBlockAccount" : {
+      "title" : "アカウントの残高は、送付に必要な{{minAmount}}未満になります"
+    },
     "ETHAddressNonEIP" : {
       "title" : "自動認証が利用できません：アドレスを慎重に確認してください。",
       "description" : null
@@ -5419,6 +5448,9 @@
     },
     "FeeNotLoaded" : {
       "title" : "手数料レートを読み込めませんでした。手動で手数料を設定してください"
+    },
+    "FeeNotLoadedSwap" : {
+      "title" : "技術的な問題のため、ネットワーク手数料の見積もりに失敗しました。再試行するか、資産を変更してください。"
     },
     "FeeRequired" : {
       "title" : "手数料がかかります。"
