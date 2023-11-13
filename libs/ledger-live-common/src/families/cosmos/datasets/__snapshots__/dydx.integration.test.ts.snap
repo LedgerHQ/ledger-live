@@ -1,61 +1,61 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`sei_network currency bridge scanAccounts sei_network seed 1 1`] = `
+exports[`dydx currency bridge scanAccounts dydx seed 1 1`] = `
 Array [
   Object {
-    "balance": "278991",
-    "currencyId": "sei_network",
+    "balance": "7620812500000000",
+    "currencyId": "dydx",
     "derivationMode": "",
-    "freshAddress": "sei1gyauvl44q2apn3u3aujm36q8zrj74vryc50pfg",
+    "freshAddress": "dydx1gyauvl44q2apn3u3aujm36q8zrj74vryupsn07",
     "freshAddressPath": "44'/118'/0'/0/0",
     "freshAddresses": Array [
       Object {
-        "address": "sei1gyauvl44q2apn3u3aujm36q8zrj74vryc50pfg",
+        "address": "dydx1gyauvl44q2apn3u3aujm36q8zrj74vryupsn07",
         "derivationPath": "44'/118'/0'/0/0",
       },
     ],
-    "id": "js:2:sei_network:sei1gyauvl44q2apn3u3aujm36q8zrj74vryc50pfg:",
+    "id": "js:2:dydx:dydx1gyauvl44q2apn3u3aujm36q8zrj74vryupsn07:",
     "index": 0,
-    "name": "SeiNetwork 1",
+    "name": "dYdX 1",
     "nfts": undefined,
     "seedIdentifier": "03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e83",
-    "spendableBalance": "128991",
+    "spendableBalance": "7520812500000000",
     "starred": false,
     "swapHistory": Array [],
     "syncHash": undefined,
-    "unitMagnitude": 6,
+    "unitMagnitude": 18,
     "used": true,
-    "xpub": "sei1gyauvl44q2apn3u3aujm36q8zrj74vryc50pfg",
+    "xpub": "dydx1gyauvl44q2apn3u3aujm36q8zrj74vryupsn07",
   },
   Object {
     "balance": "0",
-    "currencyId": "sei_network",
+    "currencyId": "dydx",
     "derivationMode": "",
-    "freshAddress": "sei1v2mp0m7k96dm9qv60fkspcqlzpkzrwne0fzm20",
+    "freshAddress": "dydx1v2mp0m7k96dm9qv60fkspcqlzpkzrwnetuafve",
     "freshAddressPath": "44'/118'/1'/0/0",
     "freshAddresses": Array [
       Object {
-        "address": "sei1v2mp0m7k96dm9qv60fkspcqlzpkzrwne0fzm20",
+        "address": "dydx1v2mp0m7k96dm9qv60fkspcqlzpkzrwnetuafve",
         "derivationPath": "44'/118'/1'/0/0",
       },
     ],
-    "id": "js:2:sei_network:sei1v2mp0m7k96dm9qv60fkspcqlzpkzrwne0fzm20:",
+    "id": "js:2:dydx:dydx1v2mp0m7k96dm9qv60fkspcqlzpkzrwnetuafve:",
     "index": 1,
-    "name": "SeiNetwork 2",
+    "name": "dYdX 2",
     "nfts": undefined,
     "seedIdentifier": "03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e83",
     "spendableBalance": "0",
     "starred": false,
     "swapHistory": Array [],
     "syncHash": undefined,
-    "unitMagnitude": 6,
+    "unitMagnitude": 18,
     "used": false,
-    "xpub": "sei1v2mp0m7k96dm9qv60fkspcqlzpkzrwne0fzm20",
+    "xpub": "dydx1v2mp0m7k96dm9qv60fkspcqlzpkzrwnetuafve",
   },
 ]
 `;
 
-exports[`sei_network currency bridge scanAccounts sei_network seed 1 2`] = `
+exports[`dydx currency bridge scanAccounts dydx seed 1 2`] = `
 Array [
   Array [],
   Array [],
