@@ -4932,6 +4932,10 @@ importers:
         version: 7.0.0(typescript@5.1.3)
 
   tools/actions/desktop-build-checks:
+    dependencies:
+      undici:
+        specifier: '5'
+        version: 5.27.2
     devDependencies:
       '@actions/core':
         specifier: ^1.10.1
@@ -4951,9 +4955,6 @@ importers:
       tsup:
         specifier: ^7.0.0
         version: 7.0.0(typescript@5.1.3)
-      undici:
-        specifier: ^5.27.2
-        version: 5.27.2
       unzipper:
         specifier: 0.10.14
         version: 0.10.14
@@ -13970,7 +13971,6 @@ packages:
   /@fastify/busboy@2.1.0:
     resolution: {integrity: sha512-+KpH+QxZU7O4675t3mnkQKcZZg56u+K/Ct2K+N2AZYNVK8kyeo/bI18tI8aPm3tvNNRyTWfj6s5tnGNlcbQRsA==}
     engines: {node: '>=14'}
-    dev: true
 
   /@firebase/analytics-compat@0.1.10(@firebase/app-compat@0.1.25)(@firebase/app@0.7.24):
     resolution: {integrity: sha512-7zfB+BBO5RbF7RSHOA4ZPyLvOEEvMOhRbfIjh5ZmizAQY2J6tZB8t+dwQ/q4hqZVGgw4ds4g0JYuRKZKYsWADg==}
@@ -57259,7 +57259,6 @@ packages:
     engines: {node: '>=14.0'}
     dependencies:
       '@fastify/busboy': 2.1.0
-    dev: true
 
   /unfetch@4.2.0:
     resolution: {integrity: sha512-F9p7yYCn6cIW9El1zi0HI6vqpeIvBsr3dSuRO6Xuppb1u5rXpCPmMvLSyECLhybr9isec8Ohl0hPekMVrEinDA==}
