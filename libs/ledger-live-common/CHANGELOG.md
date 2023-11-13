@@ -1,5 +1,13 @@
 # @ledgerhq/live-common
 
+## 33.1.1-hotfix.1
+
+### Patch Changes
+
+- [#5407](https://github.com/LedgerHQ/ledger-live/pull/5407) [`5ea4167efa`](https://github.com/LedgerHQ/ledger-live/commit/5ea4167efa81a0c8257db03e77e833280ece3feb) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - fix: remoteLiveApp hook not returning filtered manifest
+
+  This has an impact now that we return customized manifest when filtering we need to return this one in priority
+
 ## 33.1.1-hotfix.0
 
 ### Patch Changes

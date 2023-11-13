@@ -91,6 +91,7 @@
     "@ledgerhq/react-devtools": "0.0.0"
   },
   "changesets": [
-    "grumpy-pillows-think"
+    "grumpy-pillows-think",
+    "old-laws-melt"
   ]
 }
