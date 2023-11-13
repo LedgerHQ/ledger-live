@@ -12,7 +12,7 @@ import Box from "~/renderer/components/Box";
 import { useBroadcast } from "~/renderer/hooks/useBroadcast";
 import { BodyContent } from "./BodyContent";
 import { getMagnitudeAwareRate } from "@ledgerhq/live-common/exchange/swap/webApp/index";
-import { BigNumber } from "bigNumber.js";
+import { BigNumber } from "bignumber.js";
 import { AccountLike } from "@ledgerhq/types-live";
 
 export type Data = {
