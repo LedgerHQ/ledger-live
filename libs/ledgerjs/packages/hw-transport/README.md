@@ -222,7 +222,7 @@ It also handles "unresponsiveness" by emitting "unresponsive" and "responsive" e
 
 *   `f` **function (): [Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<Output>** The exchange job, using the transport to run
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<Output>** a Promise with a Buffer containing the response, or void if not response
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<Output>** a Promise resolving with the output of the given job
 
 #### setTraceContext
 
