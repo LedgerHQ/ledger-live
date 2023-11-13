@@ -284,7 +284,7 @@ export async function submitCommentToPR({
   core.info(found ? `Found previous comment ${found.id}` : "No previous comment to update");
   const body = reporter.toMarkdown();
 
-  if (!reporter.isEmpty() && found) {
+  if (reporter.isEmpty() && found) {
     const allGood = `
 ${header}
 
