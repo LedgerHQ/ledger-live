@@ -285,6 +285,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
     stepContent = (
       <EarlySecurityChecks
         device={lastSeenDevice}
+        isDeviceConnected={!!device}
         onComplete={notifyOnboardingEarlyCheckEnded}
         restartChecksAfterUpdate={restartChecksAfterUpdate}
         isInitialRunOfSecurityChecks={isInitialRunOfSecurityChecks}

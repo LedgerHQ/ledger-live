@@ -50,6 +50,7 @@ export type Props = {
   // unmounted when we restart the polling after the user interrupts an update."
   fwUpdateInterrupted: FinalFirmware | null;
   setFwUpdateInterrupted: (finalFirmware: FinalFirmware) => void;
+  isDeviceConnected: boolean;
 };
 
 const commonDrawerProps = {
@@ -72,6 +73,7 @@ const EarlySecurityChecks = ({
   isInitialRunOfSecurityChecks,
   setFwUpdateInterrupted,
   fwUpdateInterrupted,
+  isDeviceConnected,
 }: Props) => {
   const { t } = useTranslation();
   const whySecurityChecksUrl = useDynamicUrl("genuineCheck");
@@ -244,7 +246,8 @@ const EarlySecurityChecks = ({
 
   const allowSecureChannelIsOpen =
     devicePermissionState === "requested" &&
-    (genuineCheckActive || firmwareUpdateStatus === SoftwareCheckStatus.active);
+    (genuineCheckActive || firmwareUpdateStatus === SoftwareCheckStatus.active) &&
+    isDeviceConnected;
 
   const notGenuineIsOpen = genuineCheckStatus === SoftwareCheckStatus.notGenuine;
 
