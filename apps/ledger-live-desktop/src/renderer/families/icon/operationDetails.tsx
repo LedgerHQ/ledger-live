@@ -29,8 +29,7 @@ import Text from "~/renderer/components/Text";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import CounterValue from "~/renderer/components/CounterValue";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
-import TransactionConfirmField from "~/renderer/components/TransactionConfirm/TransactionConfirmField";
-import { FieldComponentProps } from "../types";
+import { AmountCellProps } from "../types";
 
 const helpURL = "https://support.ledger.com/hc/en-us/articles/360013062139";
 function getURLFeesInfo(op: Operation): string | null | undefined {
@@ -45,21 +44,18 @@ function getURLWhatIsThis(op: Operation): string | null | undefined {
   }
 }
 
-const AmountField = ({ account, status: { amount }, field }: FieldComponentProps) => (
-  <TransactionConfirmField label={field.label}>
-    <FormattedVal
-      color={"palette.text.shade80"}
-      unit={getAccountUnit(account)}
-      val={amount}
-      fontSize={3}
-      inline
-      showCode
-      alwaysShowValue
-      disableRounding
-    />
-  </TransactionConfirmField>
+const amountCell = ({ amount, operation, unit, currency }: AmountCellProps) => (
+  <FormattedVal
+    color={"palette.text.shade80"}
+    unit={unit}
+    val={amount}
+    fontSize={3}
+    inline
+    showCode
+    alwaysShowValue
+    subMagnitude={2}
+  />
 );
-
 type OperationsDetailsVotesProps = {
   votes?: Array<Vote>;
   account: Account;
@@ -268,5 +264,6 @@ export default {
   getURLFeesInfo,
   getURLWhatIsThis,
   OperationDetailsExtra,
+  amountCell,
   amountCellExtra,
 };

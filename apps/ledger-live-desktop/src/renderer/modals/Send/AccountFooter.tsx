@@ -24,7 +24,6 @@ const AccountFooter = ({ account, parentAccount, status }: Props) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const feesCurrency = getFeesCurrency(mainAccount);
   const feesUnit = getFeesUnit(feesCurrency);
-
   const cryptoCurrency = mainAccount.currency;
   const specific = cryptoCurrency ? getLLDCoinFamily(cryptoCurrency.family) : null;
   const SpecificComponent = specific?.AccountFooter;
