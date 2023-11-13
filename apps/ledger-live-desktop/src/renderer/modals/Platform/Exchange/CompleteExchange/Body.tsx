@@ -8,7 +8,6 @@ import { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
-import { ModalBody } from "~/renderer/components/Modal";
 import Box from "~/renderer/components/Box";
 import { useBroadcast } from "~/renderer/hooks/useBroadcast";
 import { BodyContent } from "./BodyContent";
@@ -20,7 +19,7 @@ export type Data = {
   transaction: Transaction;
   binaryPayload: string;
   signature: string;
-  onResult: (a: Operation) => void;
+  onResult: (operation: Operation) => void;
   onCancel: (a: Error) => void;
   exchangeType: number;
   rateType?: number;
@@ -122,25 +121,17 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   ]);
 
   return (
-    <ModalBody
-      onClose={() => {
-        onCancel(new Error("Interrupted by user"));
-        onClose?.();
-      }}
-      render={() => (
-        <Box alignItems={"center"} justifyContent={"center"} px={32}>
-          <BodyContent
-            error={error}
-            signRequest={signRequest}
-            signedOperation={signedOperation}
-            request={request}
-            onError={setError}
-            onOperationSigned={setSignedOperation}
-            onTransactionComplete={setTransaction}
-          />
-        </Box>
-      )}
-    />
+    <Box alignItems={"center"} justifyContent={"center"} px={32} height={"100%"}>
+      <BodyContent
+        error={error}
+        signRequest={signRequest}
+        signedOperation={signedOperation}
+        request={request}
+        onError={setError}
+        onOperationSigned={setSignedOperation}
+        onTransactionComplete={setTransaction}
+      />
+    </Box>
   );
 };
 
