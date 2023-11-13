@@ -76,7 +76,9 @@ function Header({
   const { t } = useTranslation();
   const shouldUseCounterValue = useSelector(countervalueFirstSelector);
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
-  const isWalletConnectActionDisplayable = isWalletConnectSupported(currency);
+  const isWalletConnectActionDisplayable = isWalletConnectSupported(
+    currency as CryptoOrTokenCurrency,
+  );
 
   const onBackButtonPress = useCallback(() => {
     if (readOnlyModeEnabled) {
