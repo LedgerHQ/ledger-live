@@ -1208,7 +1208,7 @@
           "contactSupportCTA" : "Связаться с Поддержкой",
           "notFoundEntityError" : {
             "title" : "Перезапустить проверку подлинности",
-            "description" : "Сначала нужно отключить Поставщика приложений ({{providerNumber}}) в «Мой Ledger». Для этого откройте «Настройки» в Ledger Live, выберите «Экспериментальные функции» и отключите опцию «Поставщик приложений»."
+            "description" : "Сначала нужно отключить Поставщика приложений ({{providerNumber}}) в «Мой Ledger». Для этого откройте «Настройки» в Ledger Live, выберите «Экспериментальные функции» и отключите опцию «Поставщик приложений для Мой Ledger»."
           },
           "deviceNotGenuineError" : {
             "title" : "Устройство {{productName}} не является подлинным",
@@ -1286,7 +1286,8 @@
   "postOnboarding" : {
     "postOnboardingScreen" : {
       "title" : "Теперь используйте\nLedger Stax для... ",
-      "titleCompleted" : "на этом всё!\n"
+      "titleCompleted" : "You're all set !\nKeep going and explore your wallet.",
+      "exploreCTA" : "Explore wallet"
     },
     "postOnboardingContent" : {
       "skipLink" : "Отложить"
@@ -3151,7 +3152,7 @@
     "unlockedBalance" : "Не заблокировано",
     "unlockedTooltip" : "Теперь разблокированные средства можно вывести.",
     "networkFees" : "Поскольку комиссия устанавливается протоколом Polkadot автоматически, её невозможно будет просмотреть на устройстве",
-    "bondedBalanceBelowMinimum" : "У вас не хватает заблокированных средств (мин. {{minimumBondBalance}}). Ваши назначения могут быть отозваны.",
+    "bondedBalanceBelowMinimum" : "Номинатор может делать назначения при минимальном балансе в {{minimumBondBalance}}",
     "nomination" : {
       "emptyState" : {
         "description" : "Вы можете получать вознаграждения, блокируя активы и назначая валидаторов.",
@@ -3552,6 +3553,9 @@
         "supportLink" : "Подробнее о пуле Kiln"
       }
     }
+  },
+  "graph" : {
+    "noGraphWarning" : "График этого токена недоступен"
   },
   "near" : {
     "account" : {
@@ -4044,7 +4048,7 @@
       "tokenBlacklist" : {
         "title" : "Скрытые токены",
         "desc" : "Чтобы скрыть токены, перейдите к списку токенов, нажмите по названию и удерживайте, а затем выберите «Скрыть токен».",
-        "count" : "{{count}} токен",
+        "count" : "Токенов: {{count}}",
         "count_plural" : "{{count}} токена(ов)"
       },
       "hiddenNftCollections" : {
@@ -4248,7 +4252,6 @@
         "nextButton" : "Приступить",
         "noDevice" : "Нет устройства Ledger?",
         "buyLink" : "Ещё нет кошелька? Приобретите Ledger Nano X",
-        "recoverSignIn" : "Войти в Ledger Recover",
         "byTapping" : "Нажимая «Приступить», вы принимаете наши",
         "termsAndConditions" : "Условия использования",
         "and" : "и",
@@ -4906,6 +4909,11 @@
     "cta" : "Продолжить"
   },
   "families" : {
+    "casper" : {
+      "transferIdPlaceholder" : "Опционально",
+      "transferId" : "ID перевода (Memo)",
+      "transferIdWarningText" : "При использовании Memo необходимо тщательно проверять соответствие типа с получателем"
+    },
     "cardano" : {
       "memoPlaceholder" : "Необязательно",
       "memo" : "Memo"
@@ -5138,8 +5146,8 @@
       "description" : "Чтобы получить доступ к этой функции, пожалуйста, обновите прошивку до последней версии."
     },
     "FirmwareNotRecognized" : {
-      "title" : "Не удаётся распознать прошивку устройства",
-      "description" : "Обратитесь в Поддержку"
+      "title" : "Поставщик недействителен",
+      "description" : "Необходимо изменить опцию Поставщика приложений для «Мой Ledger». Для этого откройте «Настройки» в Ledger Live и выберите «Экспериментальные функции», после чего укажите другого поставщика."
     },
     "HardResetFail" : {
       "title" : "Не удалось сбросить",
@@ -5247,6 +5255,18 @@
     "NotEnoughEGLDForFees" : {
       "title" : "Недостаточно EGLD для оплаты комиссии за транзакцию",
       "description" : "Пожалуйста, пополните счёт EGLD для оплаты транзакций."
+    },
+    "NotEnoughVTHO" : {
+      "title" : "Не хватает VTHO",
+      "description" : "Убедитесь в наличии нужного объёма VTHO на счёте."
+    },
+    "MustBeVechain" : {
+      "title" : "Не выбран счёт VeChain",
+      "description" : "Убедитесь в выборе монеты VTHO или VET"
+    },
+    "ImpossibleToCalculateAmountAndFees" : {
+      "title" : "Невозможно рассчитать сумму и комиссию",
+      "description" : "Невозможно рассчитать сумму и комиссию"
     },
     "NotEnoughBalance" : {
       "title" : "Кажется, у вас недостаточно средств",
@@ -5402,6 +5422,15 @@
       "title" : "Сбой подключения",
       "description" : "Устройство обнаружено, но подключиться не удалось. Повторите попытку или обратите в Поддержку, если проблема не решена."
     },
+    "CasperInvalidTransferId" : {
+      "title" : "ID перевода должен быть положительным числом до {{maxTransferId}}"
+    },
+    "InvalidMinimumAmount" : {
+      "title" : "Минимальная сумма перевода — {{minAmount}}"
+    },
+    "MayBlockAccount" : {
+      "title" : "На вашем счету останется меньше суммы в {{minAmount}}, необходимой для отправки"
+    },
     "ETHAddressNonEIP" : {
       "title" : "Автопроверка недоступна: внимательно проверьте адрес",
       "description" : null
@@ -5419,6 +5448,9 @@
     },
     "FeeNotLoaded" : {
       "title" : "Не удалось подсчитать комиссию. Укажите её вручную"
+    },
+    "FeeNotLoadedSwap" : {
+      "title" : "Не удалось рассчитать комиссию сети из-за технических проблем. Попробуйте ещё раз, либо c другим активом."
     },
     "FeeRequired" : {
       "title" : "Необходимо указать комиссию"
