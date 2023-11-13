@@ -22,7 +22,7 @@ export const getAccount = async (addr: string, url: string) => {
   const blockHeight = await getLatestBlock(url);
   return {
     blockHeight: Number(blockHeight) || undefined,
-    balance: new BigNumber(balance).decimalPlaces(2).times(1000000),
+    balance: new BigNumber(balance).decimalPlaces(2),
     additionalBalance: 0,
     nonce: 0,
   };
@@ -126,7 +126,7 @@ export const getFees = async (unsigned, account): Promise<BigNumber> => {
   } catch (error) {
     // TODO: handle show log
   }
-  return new BigNumber(res || STEP_LIMIT).times(1000000);
+  return new BigNumber(res || STEP_LIMIT);
 };
 
 /**

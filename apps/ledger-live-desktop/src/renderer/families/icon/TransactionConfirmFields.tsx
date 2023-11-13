@@ -68,6 +68,7 @@ const IconFreesField = ({ account, parentAccount, transaction, field }: FieldCom
         inline
         showCode
         alwaysShowValue
+        subMagnitude={5}
       />
     </Box>
   );

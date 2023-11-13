@@ -18,6 +18,8 @@ export const buildTransaction = async (a: IconAccount, t: Transaction, stepLimit
       iconTxData = buildSendingTransaction(a, t, stepLimit);
       break;
     case "unfreeze":
+      iconTxData = buildUnfreezeTransaction(a, t, stepLimit);
+      break;
     case "freeze":
       iconTxData = buildStakingTransaction(a, t, stepLimit);
       break;
@@ -45,13 +47,11 @@ const buildSendingTransaction = (a: IconAccount, t: Transaction, stepLimit?: Big
     .from(address)
     .to(t.recipient)
     .nid(IconConverter.toHexNumber(getNid(a.currency)))
-    .value(
-      IconConverter.toHexNumber(IconAmount.of(t.amount, IconAmount.Unit.ICX).toLoop().div(1000000)),
-    )
+    .value(IconConverter.toHexNumber(IconAmount.of(t.amount, IconAmount.Unit.ICX).toLoop()))
     .timestamp(IconConverter.toHexNumber(new Date().getTime() * 1000))
     .version(IconConverter.toHexNumber(RPC_VERSION));
   if (stepLimit) {
-    icxTransferData.stepLimit(IconConverter.toHexNumber(stepLimit.div(1000000).toNumber()));
+    icxTransferData.stepLimit(IconConverter.toHexNumber(stepLimit.toNumber()));
   }
 
   return icxTransferData.build();
@@ -59,15 +59,23 @@ const buildSendingTransaction = (a: IconAccount, t: Transaction, stepLimit?: Big
 
 const buildStakingTransaction = (a: IconAccount, t: Transaction, stepLimit?: BigNumber) => {
   const { iconResources } = a;
-  let amount = t.amount;
-  if (t.mode == "freeze") {
-    amount = t.amount.plus(iconResources.totalDelegated);
-  } else {
-    amount = BigNumber(iconResources.votingPower)
-      .minus(t.amount)
-      .plus(a.iconResources?.totalDelegated || 0);
-  }
+  const amount = t.amount.plus(iconResources.totalDelegated);
 
+  return buildCallTrantraction(
+    a,
+    t,
+    "setStake",
+    {
+      value: IconConverter.toHexNumber(IconAmount.of(amount, IconAmount.Unit.ICX).toLoop()),
+    },
+    stepLimit,
+  );
+};
+const buildUnfreezeTransaction = (a: IconAccount, t: Transaction, stepLimit?: BigNumber) => {
+  const { iconResources } = a;
+  const amount = BigNumber(iconResources.votingPower)
+    .minus(t.amount)
+    .plus(a.iconResources?.totalDelegated || 0);
   return buildCallTrantraction(
     a,
     t,
@@ -120,7 +128,7 @@ const buildCallTrantraction = (
     .timestamp(IconConverter.toHexNumber(new Date().getTime() * 1000))
     .version(IconConverter.toHexNumber(IconConverter.toBigNumber(3)));
   if (stepLimit) {
-    icxTransferData.stepLimit(IconConverter.toHexNumber(stepLimit.div(1000000).toNumber()));
+    icxTransferData.stepLimit(IconConverter.toHexNumber(stepLimit.toNumber()));
   }
 
   return icxTransferData.build();
