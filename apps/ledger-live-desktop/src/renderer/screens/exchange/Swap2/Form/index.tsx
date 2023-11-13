@@ -161,11 +161,6 @@ const SwapForm = () => {
     }
   };
 
-  type GetAccountIdProps = {
-    accounts: Account[];
-    accountId?: string;
-  };
-
   const getSwapWebAppPropsDex = useCallback(() => {
     const { swap } = swapTransaction;
     const { to, from } = swap;
@@ -184,8 +179,6 @@ const SwapForm = () => {
         amount: transaction?.amount,
         account: fromAccount,
       });
-    console.log("swap");
-    console.log(swap);
     const toTokenAddress = getTokenAddress(toAccount);
     const fromTokenAddress = getTokenAddress(fromAccount);
     const walletAddress = getAccountWalletAddress(swapTransaction);
