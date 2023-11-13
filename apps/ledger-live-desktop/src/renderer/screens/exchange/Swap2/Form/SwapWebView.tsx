@@ -1,4 +1,3 @@
-import { usePageState } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
@@ -23,7 +22,7 @@ type CustomHandlersParams<Params> = {
   params: Params;
 };
 
-type SwapWebProps = {
+export type SwapWebProps = {
   swapState?: Partial<{
     provider: string;
     fromAccountId: string;
@@ -34,8 +33,10 @@ type SwapWebProps = {
     feeStrategy: string;
     customFeeConfig: string;
     cacheKey: string;
+    loading: boolean;
+    error: boolean;
   }>;
-  pageState: ReturnType<typeof usePageState>;
+  redirectToProviderApp(_: string): void;
 };
 
 export const SWAP_WEB_MANIFEST_ID = "swap-live-app-demo-0";
@@ -43,11 +44,11 @@ export const SWAP_WEB_MANIFEST_ID = "swap-live-app-demo-0";
 const SwapWebAppWrapper = styled.div<{ isDevelopment: boolean }>(
   ({ isDevelopment }) => `
   ${!isDevelopment ? "height: 0px;" : ""}
-  ${!isDevelopment ? "width: 0px;" : ""}
+  width: 100%;
 `,
 );
 
-const SwapWebView = ({ pageState, swapState }: SwapWebProps) => {
+const SwapWebView = ({ swapState, redirectToProviderApp }: SwapWebProps) => {
   const {
     colors: {
       palette: { type: themeType },
@@ -65,7 +66,6 @@ const SwapWebView = ({ pageState, swapState }: SwapWebProps) => {
 
   const hasManifest = !!manifest;
   const hasSwapState = !!swapState;
-  const isPageStateLoaded = pageState === "loaded";
 
   const customHandlers = useMemo(() => {
     return {
@@ -132,6 +132,9 @@ const SwapWebView = ({ pageState, swapState }: SwapWebProps) => {
         onSwapWebviewError();
         return Promise.resolve();
       },
+      "custom.redirectToProviderApp": ({ params }: { params: string }) => {
+        redirectToProviderApp(params);
+      },
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [swapState?.cacheKey]);
@@ -144,7 +147,7 @@ const SwapWebView = ({ pageState, swapState }: SwapWebProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [webviewState.url]);
 
-  if (!hasManifest || !hasSwapState || !isPageStateLoaded) {
+  if (!hasManifest || !hasSwapState) {
     return null;
   }
   const onSwapWebviewError = (error?: SwapLiveError) => {

@@ -7,6 +7,7 @@ import erc20tokens, { ERC20Token } from "./data/erc20";
 import esdttokens, { ElrondESDTToken } from "./data/esdt";
 import polygonTokens, { PolygonERC20Token } from "./data/polygon-erc20";
 import stellarTokens, { StellarToken } from "./data/stellar";
+import casperTokens, { CasperToken } from "./data/casper";
 import trc10tokens, { TRC10Token } from "./data/trc10";
 import trc20tokens, { TRC20Token } from "./data/trc20";
 //import spltokens from "../data/spl";
@@ -29,6 +30,7 @@ addTokens(asatokens.map(convertAlgorandASATokens));
 addTokens(esdttokens.map(convertElrondESDTTokens));
 addTokens(cardanoNativeTokens.map(convertCardanoNativeTokens));
 addTokens(stellarTokens.map(convertStellarTokens));
+addTokens(casperTokens.map(convertCasperTokens));
 //addTokens(spltokens.map(convertSplTokens));
 type TokensListOptions = {
   withDelisted: boolean;
@@ -323,16 +325,9 @@ function convertAlgorandASATokens([
 }
 
 function convertTRONTokens(type: "trc10" | "trc20") {
-  return ([
-    id,
-    abbr,
-    name,
-    contractAddress,
-    precision,
-    delisted,
-    ledgerSignature,
-    enableCountervalues,
-  ]: TRC10Token | TRC20Token): TokenCurrency => ({
+  return ([id, abbr, name, contractAddress, precision, delisted, ledgerSignature]:
+    | TRC10Token
+    | TRC20Token): TokenCurrency => ({
     type: "TokenCurrency",
     id: `tron/${type}/${id}`,
     contractAddress,
@@ -341,7 +336,7 @@ function convertTRONTokens(type: "trc10" | "trc20") {
     name,
     ticker: abbr,
     delisted,
-    disableCountervalue: !enableCountervalues,
+    disableCountervalue: false,
     ledgerSignature,
     units: [
       {
@@ -463,6 +458,33 @@ function convertStellarTokens([
     id: `stellar/asset/${assetCode}:${assetIssuer}`,
     contractAddress: assetIssuer,
     parentCurrency: getCryptoCurrencyById("stellar"),
+    tokenType: assetType,
+    name,
+    ticker: assetCode,
+    disableCountervalue: !enableCountervalues,
+    units: [
+      {
+        name,
+        code: assetCode,
+        magnitude: precision,
+      },
+    ],
+  };
+}
+
+function convertCasperTokens([
+  assetCode,
+  assetIssuer,
+  assetType,
+  name,
+  precision,
+  enableCountervalues,
+]: CasperToken): TokenCurrency {
+  return {
+    type: "TokenCurrency",
+    id: `casper/asset/${assetCode}:${assetIssuer}`,
+    contractAddress: assetIssuer,
+    parentCurrency: getCryptoCurrencyById("casper"),
     tokenType: assetType,
     name,
     ticker: assetCode,

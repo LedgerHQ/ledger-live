@@ -1286,7 +1286,8 @@
   "postOnboarding": {
     "postOnboardingScreen": {
       "title": "Next up, use your\nLedger Stax to... ",
-      "titleCompleted": "and that's a\nwrap!"
+      "titleCompleted": "You're all set !\nKeep going and explore your wallet.",
+      "exploreCTA": "Explore wallet"
     },
     "postOnboardingContent": {
       "skipLink": "I'll do this later"
@@ -3163,7 +3164,7 @@
     "unlockedBalance": "Unbonded",
     "unlockedTooltip": "Unbonded assets can now be moved using the withdraw operation.",
     "networkFees": "Network fees are automatically set by the Polkadot consensus, you won't be able to review them on your device",
-    "bondedBalanceBelowMinimum": "Your bonded balance is below the current minimum of {{minimumBondBalance}}. Your nominations are at risk of being removed.",
+    "bondedBalanceBelowMinimum": "As a nominator, a minimum of {{minimumBondBalance}} is required to submit an intention to nominate",
     "nomination": {
       "emptyState": {
         "description": "You can earn rewards by bonding assets and then nominating your validator(s).",
@@ -4928,6 +4929,11 @@
     "cta": "Continue"
   },
   "families": {
+    "casper": {
+      "transferIdPlaceholder": "Optional",
+      "transferId": "Transfer ID (Memo)",
+      "transferIdWarningText": "When using a memo, carefully check the information with the recipient"
+    },
     "cardano": {
       "memoPlaceholder": "Optional",
       "memo": "Memo"
@@ -5160,8 +5166,8 @@
       "description": "Please update your devices Firmware to the latest version to access this feature"
     },
     "FirmwareNotRecognized": {
-      "title": "Device firmware is not recognized",
-      "description": "Please contact Ledger Support"
+      "title": "Invalid Provider",
+      "description": "You have to change \"My Ledger provider\" setting. To change it, open Ledger Live \"Settings\", select \"Experimental features\", and then select a different provider."
     },
     "HardResetFail": {
       "title": "Sorry, could not reset",
@@ -5423,6 +5429,15 @@
     "CantOpenDevice": {
       "title": "Sorry, connection failed",
       "description": "Device detected but connection failed. Please try again or contact Ledger Support if the problem persists."
+    },
+    "CasperInvalidTransferId": {
+      "title": "Transfer ID should be a positive number smaller than {{maxTransferId}}"
+    },
+    "InvalidMinimumAmount": {
+      "title": "Minimum amount to transfer is {{minAmount}}"
+    },
+    "MayBlockAccount": {
+      "title": "Your account will be left with less than the {{minAmount}} required to perform a send"
     },
     "ETHAddressNonEIP": {
       "title": "Auto-verification not available: carefully verify the address",

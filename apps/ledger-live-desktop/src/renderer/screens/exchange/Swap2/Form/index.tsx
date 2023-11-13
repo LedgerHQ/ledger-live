@@ -38,21 +38,7 @@ import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { SWAP_RATES_TIMEOUT } from "../../config";
 import { OnNoRatesCallback, SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
 import { v4 } from "uuid";
-import SwapWebView, { SWAP_WEB_MANIFEST_ID } from "./SwapWebView";
-
-type SwapWebProps = {
-  inputs: Partial<{
-    provider: string;
-    fromAccountId: string;
-    toAccountId: string;
-    fromAmount: string;
-    quoteId: string;
-    rate: string;
-    feeStrategy: string;
-    customFeeConfig: string;
-  }>;
-  pageState: ReturnType<typeof usePageState>;
-};
+import SwapWebView, { SWAP_WEB_MANIFEST_ID, SwapWebProps } from "./SwapWebView";
 
 const Wrapper = styled(Box).attrs({
   p: 20,
@@ -134,7 +120,9 @@ const SwapForm = () => {
   const pageState = usePageState(swapTransaction, swapError);
   const provider = exchangeRate?.provider;
   const idleTimeout = useRef<NodeJS.Timeout | undefined>();
-  const [swapWebProps, setSwapWebProps] = useState<SwapWebProps["inputs"] | undefined>(undefined);
+  const [swapWebProps, setSwapWebProps] = useState<SwapWebProps["swapState"] | undefined>(
+    undefined,
+  );
 
   const { setDrawer } = React.useContext(context);
 
@@ -239,49 +227,45 @@ const SwapForm = () => {
     exchangeRate?.tradeMethod,
   ]);
 
-  const getSwapWebAppInputProps = useCallback(() => {
-    const { swap } = swapTransaction;
-    const { to, from } = swap;
-    const transaction = swapTransaction.transaction;
-    const { account: fromAccount, parentAccount: fromParentAccount } = from;
-    const { account: toAccount, parentAccount: toParentAccount } = to;
-    const { feesStrategy } = transaction || {};
-    const { rate, rateId } = exchangeRate || {};
+  const redirectToProviderApp = useCallback(
+    (provider: string): void => {
+      const { providerURL } = exchangeRate ?? {};
+      const from = swapTransaction.swap.from;
+      const fromAccountId = from.parentAccount?.id || from.account?.id;
 
-    const fromAccountId =
-      fromAccount && accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id;
-    const toAccountId = toAccount && accountToWalletAPIAccount(toAccount, toParentAccount)?.id;
-    const fromAmount =
-      fromAccount &&
-      convertToNonAtomicUnit({
-        amount: transaction?.amount,
-        account: fromAccount,
+      const pathname = `/platform/${getProviderName(provider).toLowerCase()}`;
+      const account = accounts.find(a => a.id === fromAccountId);
+      if (!account) return;
+      const parentAccount = isTokenAccount(account)
+        ? getParentAccount(account, accounts)
+        : undefined;
+
+      const accountId =
+        walletApiPartnerList?.enabled && walletApiPartnerList?.params?.list.includes(provider)
+          ? accountToWalletAPIAccount(account, parentAccount)?.id
+          : fromAccountId;
+
+      history.push({
+        // This looks like an issue, the proper signature is: push(path, [state]) - (function) Pushes a new entry onto the history stack
+        // It seems possible to also pass a LocationDescriptorObject but it does not expect extra properties
+        // @ts-expect-error so customDappUrl is not expected to be here
+        customDappUrl: providerURL,
+        pathname,
+        state: {
+          returnTo: "/swap",
+          accountId,
+        },
       });
-
-    const customFeeConfig = transaction && getCustomFeesPerFamily(transaction);
-    // The Swap web app will automatically recreate the transaction with "default" fees.
-    // However, if you wish to use a different fee type, you will need to set it as custom.
-    const isCustomFee =
-      feesStrategy === "slow" || feesStrategy === "fast" || feesStrategy === "custom";
-    return {
-      provider,
-      fromAccountId,
-      toAccountId,
-      fromAmount: fromAmount?.toString(),
-      quoteId: rateId ? rateId : undefined,
-      rate: rate?.toString(),
-      feeStrategy: (isCustomFee ? "custom" : "medium")?.toUpperCase(),
-      customFeeConfig: customFeeConfig ? JSON.stringify(customFeeConfig) : undefined,
-      cacheKey: v4(),
-    };
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    provider,
-    swapTransaction.swap.from.account?.id,
-    swapTransaction.swap.to.currency?.id,
-    exchangeRate?.providerType,
-    exchangeRate?.tradeMethod,
-  ]);
+    [
+      swapTransaction.swap.from.account?.id,
+      swapTransaction.swap.to.currency?.id,
+      exchangeRate?.providerType,
+      exchangeRate?.tradeMethod,
+      exchangeRate?.provider,
+    ],
+  );
 
   useEffect(() => {
     if (swapTransaction.swap.rates.status === "success") {
@@ -330,7 +314,7 @@ const SwapForm = () => {
   const onSubmit = () => {
     if (!exchangeRate) return;
 
-    const { provider, providerURL, providerType } = exchangeRate;
+    const { provider, providerType } = exchangeRate;
     track("button_clicked", {
       button: "Request",
       page: "Page Swap Form",
@@ -343,12 +327,8 @@ const SwapForm = () => {
     if (providerType === "DEX") {
       setSwapWebProps(getSwapWebAppPropsDex());
       return;
+      // redirectToProviderApp(provider);
     } else {
-      if (isSwapLiveAppEnabled) {
-        setSwapWebProps(getSwapWebAppInputProps());
-        return;
-      }
-
       setDrawer(
         ExchangeDrawer,
         {
@@ -390,6 +370,58 @@ const SwapForm = () => {
   const toggleMax = () => {
     swapTransaction.toggleMax();
   };
+
+  useEffect(() => {
+    if (isSwapLiveAppEnabled) {
+      const { swap } = swapTransaction;
+      const { to, from } = swap;
+      const transaction = swapTransaction.transaction;
+      const { account: fromAccount, parentAccount: fromParentAccount } = from;
+      const { account: toAccount, parentAccount: toParentAccount } = to;
+      const { feesStrategy } = transaction || {};
+      const { rate, rateId } = exchangeRate || {};
+
+      const fromAccountId =
+        fromAccount && accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id;
+      const toAccountId = toAccount && accountToWalletAPIAccount(toAccount, toParentAccount)?.id;
+      const fromAmount =
+        fromAccount &&
+        convertToNonAtomicUnit({
+          amount: transaction?.amount,
+          account: fromAccount,
+        });
+
+      const customFeeConfig = transaction && getCustomFeesPerFamily(transaction);
+      // The Swap web app will automatically recreate the transaction with "default" fees.
+      // However, if you wish to use a different fee type, you will need to set it as custom.
+      const isCustomFee =
+        feesStrategy === "slow" || feesStrategy === "fast" || feesStrategy === "custom";
+      setSwapWebProps({
+        provider,
+        fromAccountId,
+        toAccountId,
+        fromAmount: fromAmount?.toString(),
+        quoteId: rateId ? rateId : undefined,
+        rate: rate?.toString(),
+        feeStrategy: (isCustomFee ? "custom" : "medium")?.toUpperCase(),
+        customFeeConfig: customFeeConfig ? JSON.stringify(customFeeConfig) : undefined,
+        cacheKey: v4(),
+        error: !!swapError,
+        loading: swapTransaction.bridgePending || exchangeRatesState.status === "loading",
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    isSwapLiveAppEnabled,
+    provider,
+    swapTransaction.swap.from.account?.id,
+    swapTransaction.swap.to.currency?.id,
+    exchangeRate?.providerType,
+    exchangeRate?.tradeMethod,
+    swapError,
+    swapTransaction.bridgePending,
+    exchangeRatesState.status,
+  ]);
 
   return (
     <Wrapper>
@@ -434,12 +466,15 @@ const SwapForm = () => {
         </>
       )}
 
-      <Box>
-        <Button primary disabled={!isSwapReady} onClick={onSubmit} data-test-id="exchange-button">
-          {t("common.exchange")}
-        </Button>
-      </Box>
-      <SwapWebView swapState={swapWebProps} pageState={pageState} />
+      {isSwapLiveAppEnabled ? (
+        <SwapWebView redirectToProviderApp={redirectToProviderApp} swapState={swapWebProps} />
+      ) : (
+        <Box>
+          <Button primary disabled={!isSwapReady} onClick={onSubmit} data-test-id="exchange-button">
+            {t("common.exchange")}
+          </Button>
+        </Box>
+      )}
     </Wrapper>
   );
 };
