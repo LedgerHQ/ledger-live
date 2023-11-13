@@ -1,11 +1,12 @@
+import { getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { Box, Flex } from "@ledgerhq/native-ui";
+import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
+import { useNavigation } from "@react-navigation/core";
 import React, { memo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Box, Flex } from "@ledgerhq/native-ui";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { useNavigation } from "@react-navigation/core";
-import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { useTheme } from "styled-components/native";
-
 import LText from "../../../components/LText";
 import Link from "../../../components/wrappedUi/Link";
 import { NavigatorName, ScreenName } from "../../../const";
@@ -13,7 +14,7 @@ import { NavigatorName, ScreenName } from "../../../const";
 type EditOperationPanelProps = {
   isOperationStuck: boolean;
   operation: Operation;
-  account: AccountLike | null | undefined;
+  account: AccountLike;
   parentAccount: Account | null | undefined;
   onPress?: () => void;
 };
@@ -26,9 +27,13 @@ const EditOperationPanelComponent = ({
   onPress,
 }: EditOperationPanelProps) => {
   const { t } = useTranslation();
-  const editEthTxFeature = useFeature("editEthTx");
   const navigation = useNavigation();
   const { colors } = useTheme();
+
+  const { enabled: isEditEvmTxEnabled, params } = useFeature("editEvmTx") ?? {};
+  const mainAccount = getMainAccount(account, parentAccount);
+  const isCurrencySupported =
+    params?.supportedCurrencyIds?.includes(mainAccount.currency.id as CryptoCurrencyId) || false;
 
   const onLinkPress = useCallback(() => {
     onPress && onPress();
@@ -41,7 +46,7 @@ const EditOperationPanelComponent = ({
     }
   }, [account, parentAccount, operation, navigation, onPress]);
 
-  if (!editEthTxFeature?.enabled) {
+  if (!isEditEvmTxEnabled || !isCurrencySupported) {
     return null;
   }
 

@@ -86,7 +86,6 @@ export const DEFAULT_FEATURES: Features = {
   ptxServiceCtaScreens: DEFAULT_FEATURE,
   customImage: DEFAULT_FEATURE,
   referralProgramDesktopBanner: DEFAULT_FEATURE,
-  editEthTx: DEFAULT_FEATURE,
   disableNftLedgerMarket: DEFAULT_FEATURE,
   disableNftRaribleOpensea: DEFAULT_FEATURE,
   disableNftSend: DEFAULT_FEATURE,
@@ -133,6 +132,11 @@ export const DEFAULT_FEATURES: Features = {
   },
 
   domainInputResolution: {
+    enabled: false,
+    params: { supportedCurrencyIds: ["ethereum"] },
+  },
+
+  editEvmTx: {
     enabled: false,
     params: { supportedCurrencyIds: ["ethereum"] },
   },
