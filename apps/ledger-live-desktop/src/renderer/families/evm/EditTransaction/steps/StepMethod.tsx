@@ -90,7 +90,7 @@ const StepMethod = ({
   }, [canCancel, setEditType]);
 
   const handleLearnMoreClick = useCallback(() => {
-    openURL(urls.editEthTx.learnMore);
+    openURL(urls.editEvmTx.learnMore);
   }, []);
 
   return (
