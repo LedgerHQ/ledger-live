@@ -196,11 +196,11 @@
       "description" : "Votre transaction est en cours. Vous pouvez l’accélérer en augmentant les frais de réseau, ou l’annuler.",
       "stuckDescription" : "Votre transaction est bloquée. Accélérez-la en augmentant les frais de réseau, ou annulez-la.",
       "previousFeesInfo" : {
-        "pendingTransactionFeesInfo" : "Info sur les frais des transactions en attente : ",
-        "networkfee" : "Frais de réseau = ",
-        "maxFee" : "Frais maximaux = ",
-        "maxPriorityFee" : "Frais de priorité maximaux = ",
-        "gasPrice" : "Prix du gaz = "
+        "pendingTransactionFeesInfo" : "Info sur les frais des transactions en attente :",
+        "networkfee" : "Frais de réseau = {{amount}}",
+        "maxFee" : "Frais max. = {{amount}}",
+        "maxPriorityFee" : "Frais de priorité maximaux = {{amount}}",
+        "gasPrice" : "Prix du gaz = {{amount}}"
       },
       "learnMore" : "En savoir plus",
       "panel" : {
@@ -213,7 +213,7 @@
       },
       "cancel" : {
         "title" : "Annuler",
-        "description" : "Envoyez 0 {{ticker}} à votre propre adresse. Les frais de réseau doivent être 30 % plus élevés que les frais de la transaction à annuler."
+        "description" : "Envoyez 0 {{ticker}} à votre propre adresse."
       },
       "steps" : {
         "method" : {
@@ -1208,7 +1208,7 @@
           "contactSupportCTA" : "Contacter l’Assistance Ledger",
           "notFoundEntityError" : {
             "title" : "Relancer la vérification de l’authenticité",
-            "description" : "Vous devez d’abord désactiver le paramètre « Fournisseur de My Ledger ({{providerNumber}}) ». Pour le désactiver, ouvrez les paramètres de Ledger Live, sélectionnez « Fonctionnalités expérimentales », puis désactivez « Fournisseur de My Ledger »."
+            "description" : "You must first disable “My Ledger Provider ({{providerNumber}})” setting. To disable it, open Ledger Live “Settings”, select “Experimental features”, and then toggle off “My Ledger provider”."
           },
           "deviceNotGenuineError" : {
             "title" : "Ce {{productName}} n’est pas authentique",
@@ -1286,7 +1286,8 @@
   "postOnboarding" : {
     "postOnboardingScreen" : {
       "title" : "Utilisez ensuite votre\nLedger Stax pour... ",
-      "titleCompleted" : "Félicitations !"
+      "titleCompleted" : "You're all set !\nKeep going and explore your wallet.",
+      "exploreCTA" : "Explore wallet"
     },
     "postOnboardingContent" : {
       "skipLink" : "Plus tard"
@@ -3151,7 +3152,7 @@
     "unlockedBalance" : "Délié",
     "unlockedTooltip" : "Les actifs déliés peuvent maintenant être déplacés en utilisant l’opération de retrait.",
     "networkFees" : "Les frais de réseau sont automatiquement définis par le consensus de Polkadot. Vous ne pourrez pas les voir sur votre appareil.",
-    "bondedBalanceBelowMinimum" : "Votre solde lié est inférieur au minimum requis ({{minimumBondBalance}}). Vos nominations risquent d’être effacées.",
+    "bondedBalanceBelowMinimum" : "Un minimum de {{minimumBondBalance}} est requis pour pouvoir nommer des validateurs.",
     "nomination" : {
       "emptyState" : {
         "description" : "Vous pouvez obtenir des récompenses en liant des actifs, puis en nommant un ou des validateur(s).",
@@ -4248,7 +4249,6 @@
         "nextButton" : "Commencer",
         "noDevice" : "Pas encore d’appareil ?",
         "buyLink" : "Pas encore d’appareil ? Achetez un Ledger Nano X.",
-        "recoverSignIn" : "Connectez-vous à Ledger Recover",
         "byTapping" : "En appuyant sur Commencer, vous acceptez nos",
         "termsAndConditions" : "Conditions d’utilisation",
         "and" : "et",
@@ -4906,6 +4906,11 @@
     "cta" : "Continuer"
   },
   "families" : {
+    "casper" : {
+      "transferIdPlaceholder" : "Facultatif",
+      "transferId" : "Identifiant de transfert (mémo)",
+      "transferIdWarningText" : "Lorsque vous utilisez un mémo, vérifiez soigneusement les informations auprès du bénéficiaire."
+    },
     "cardano" : {
       "memoPlaceholder" : "Facultatif",
       "memo" : "Mémo"
@@ -4955,6 +4960,10 @@
     }
   },
   "errors" : {
+    "ReplacementTransactionUnderpriced" : {
+      "title" : "Frais de réseau trop bas",
+      "description" : "Les frais de réseau peuvent être trop bas. Veuillez les augmenter."
+    },
     "NoSuchAppOnProvider" : {
       "title" : "Échec de la localisation de l’application {{appName}} pour votre appareil.",
       "description" : "Veuillez essayer de réinstaller l’application depuis My Ledger."
@@ -5138,8 +5147,8 @@
       "description" : "Mettez à jour le micrologiciel de votre appareil pour accéder à cette fonctionnalité."
     },
     "FirmwareNotRecognized" : {
-      "title" : "Micrologiciel de l’appareil non reconnu",
-      "description" : "Merci de contacter l’Assistance Ledger"
+      "title" : "Prestataire non valide",
+      "description" : "Vous devez modifier le paramètre « Fournisseur de My Ledger ». Dans Ledger Live, accédez aux Paramètres, sélectionnez « Fonctionnalités expérimentales », puis choisissez un autre prestataire."
     },
     "HardResetFail" : {
       "title" : "Échec de la réinitialisation",
@@ -5402,6 +5411,15 @@
       "title" : "Échec de la connexion",
       "description" : "L’appareil a été détecté mais la connexion a échoué. Veuillez réessayer ou contacter l’Assistance Ledger si le problème persiste."
     },
+    "CasperInvalidTransferId" : {
+      "title" : "L’identifiant de transfert doit être un nombre positif inférieur à {{maxTransferId}}"
+    },
+    "InvalidMinimumAmount" : {
+      "title" : "Le montant minimal doit être de {{minAmount}}"
+    },
+    "MayBlockAccount" : {
+      "title" : "Votre compte sera inférieur à {{minAmount}}, le montant minimal requis pour effectuer un transfert"
+    },
     "ETHAddressNonEIP" : {
       "title" : "Vérification automatique indisponible : vérifiez l’adresse attentivement.",
       "description" : null
@@ -5419,6 +5437,9 @@
     },
     "FeeNotLoaded" : {
       "title" : "Chargement des taux de frais impossible. Merci de définir manuellement les frais."
+    },
+    "FeeNotLoadedSwap" : {
+      "title" : "L’estimation des frais de réseau a échoué en raison de difficultés techniques. Veuillez réessayer ou changer d’actif."
     },
     "FeeRequired" : {
       "title" : "Des frais sont requis."
