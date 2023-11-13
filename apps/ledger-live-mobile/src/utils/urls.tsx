@@ -219,7 +219,7 @@ export const urls = {
     myLedger: "ledgerlive://myledger",
   },
   domainService: "https://support.ledger.com/hc/articles/9710787581469?docs=true",
-  editEthTx: {
+  editEvmTx: {
     learnMore: "https://support.ledger.com/hc/articles/9756122596765?support=true",
   },
   genuineCheck: {
