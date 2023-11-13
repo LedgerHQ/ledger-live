@@ -3,7 +3,6 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "styled-components/native";
 import { useDispatch, useSelector } from "react-redux";
 
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { Flex, IconsLegacy } from "@ledgerhq/native-ui";
 import { useRoute } from "@react-navigation/native";
 import { ScreenName } from "../../const";
@@ -15,6 +14,8 @@ import { uriSelector } from "../../reducers/walletconnect";
 import { setWallectConnectUri } from "../../actions/walletconnect";
 import { WalletConnectLiveAppNavigatorParamList } from "./types/WalletConnectLiveAppNavigator";
 import { StackNavigatorProps } from "./types/helpers";
+
+const PLATFORM = "ledger-wallet-connect";
 
 const options = {
   headerBackImage: () => (
@@ -32,7 +33,6 @@ export default function WalletConnectLiveAppNavigator() {
   const dispatch = useDispatch();
   const { colors } = useTheme();
   const route = useRoute<Navigation["route"]>();
-  const walletConnectLiveApp = useFeature("walletConnectLiveApp");
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
   const uri = useSelector(uriSelector);
@@ -46,8 +46,6 @@ export default function WalletConnectLiveAppNavigator() {
 
   const { params: routeParams } = route;
 
-  const platform = walletConnectLiveApp?.params?.liveAppId || "wallet-connect";
-
   return (
     <Stack.Navigator screenOptions={stackNavigationConfig}>
       <Stack.Screen name={ScreenName.WalletConnectConnect} options={options}>
@@ -59,7 +57,7 @@ export default function WalletConnectLiveAppNavigator() {
             route={{
               ..._props.route,
               params: {
-                platform,
+                platform: PLATFORM,
                 uri: uri || _props.route.params?.uri,
               },
             }}

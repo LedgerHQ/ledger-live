@@ -2,8 +2,8 @@ import { Parse } from "unzipper";
 import { parser } from "stream-json";
 import { streamValues } from "stream-json/streamers/StreamValues";
 import { delay, retry, promiseAllBatched } from "./promise";
-import fetch from "node-fetch";
 import groupBy from "lodash/groupBy";
+import { Readable } from "stream";
 
 type AppCandidate = {
   path: string;
@@ -41,40 +41,38 @@ export type MinimalSerializedReport = {
 export type Artifact = {
   created_at: string;
   archive_download_url: string;
+  name: string;
+  workflow_run: {
+    head_branch: string;
+  };
 };
-
-function handleErrors(response) {
-  if (!response.ok) {
-    throw Error(response.url + ": " + response.status + " " + response.statusText);
-  }
-  return response;
-}
 
 async function downloadArchive(
   githubToken: string,
   url: string,
 ): Promise<MinimalSerializedReport | null> {
   console.log("retrieving " + url);
-  const blob = await retry(() =>
+
+  const blob: Blob | null = await retry(() =>
     fetch(url, {
       headers: {
         Authorization: `Bearer ${githubToken}`,
         "Content-Type": "application/json",
       },
     }),
-  ).then(r => {
-    if (r.ok) {
-      return r.blob();
-    }
-    if (r.status === 410) {
-      return null;
-    }
-    return handleErrors(r);
-  });
+  )
+    .then(r => {
+      // no more content
+      if (r.status === 410) {
+        return null;
+      }
+      return r;
+    })
+    .then(r => (r ? handleErrors(r) : null))
+    .then(r => (r ? r.blob() : null));
   if (!blob) return null;
   return new Promise((resolve, reject) => {
-    blob
-      .stream()
+    Readable.fromWeb(blob.stream() as any)
       .pipe(Parse())
       .on("entry", entry => {
         const fileName = entry.path;
@@ -82,7 +80,7 @@ async function downloadArchive(
           entry
             .pipe(parser())
             .pipe(streamValues())
-            .on("data", e => resolve(e.value))
+            .on("data", (e: { value: any }) => resolve(e.value))
             .on("error", reject);
         } else {
           entry.autodrain();
@@ -92,15 +90,22 @@ async function downloadArchive(
 }
 
 // true if a is before b
-function isDateBefore(a, b) {
+function isDateBefore(a: string | Date, b: string | Date) {
   return new Date(a) < new Date(b);
 }
 
-function successRateDisplay(a, b) {
+function successRateDisplay(a: number, b: number) {
   if (!b) return "N/A";
   if (!a) return "❌ 0%";
   const r = a / b;
   return (r === 1 ? "✅ " : r < 0.8 ? "⚠️ " : "") + Math.round(100 * r) + "%";
+}
+
+function handleErrors(response: Response) {
+  if (!response.ok) {
+    throw Error(response.url + ": " + response.status + " " + response.statusText);
+  }
+  return response;
 }
 
 export async function loadReports({
@@ -126,7 +131,7 @@ export async function loadReports({
   const artifacts: Artifact[] = [];
   let res;
   do {
-    const url = `https://api.github.com/repos/LedgerHQ/ledger-live/actions/artifacts?per_page=100&page=${page}`;
+    const url = `https://api.github.com/repos/LedgerHQ/ledger-live/actions/artifacts?per_page=100&name=report&page=${page}`;
     console.log("retrieving " + url);
     res = await retry(() =>
       fetch(url, {
@@ -137,7 +142,7 @@ export async function loadReports({
       }),
     )
       .then(r => (r.ok ? r.json() : r.status === 502 ? {} : handleErrors(r)))
-      .then(r => {
+      .then((r: { artifacts?: Artifact[] }) => {
         if (r.artifacts) {
           return r.artifacts;
         }
@@ -146,7 +151,7 @@ export async function loadReports({
 
     if (res) {
       res.forEach(a => {
-        if (a.name === "report" && (!branch || a.workflow_run.head_branch === branch)) {
+        if (!branch || a.workflow_run.head_branch === branch) {
           if (!dateFrom || isDateBefore(dateFrom, a.created_at)) {
             artifacts.push(a);
           } else {
@@ -450,7 +455,7 @@ function groupSimilarError(str: string): string {
   return str;
 }
 
-function safeErrorDisplay(txt) {
+function safeErrorDisplay(txt: string) {
   return txt.slice(0, 200).replace(/[\s`]/g, " ");
 }
 

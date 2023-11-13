@@ -140,7 +140,6 @@ export type SwapNavigatorParamList = {
     parentId?: string;
     transaction: EvmTransaction;
     gasOptions?: GasOptions;
-    goBackOnSetTransaction?: boolean;
     currentNavigation:
       | ScreenName.SignTransactionSummary
       | ScreenName.SignTransactionSummary

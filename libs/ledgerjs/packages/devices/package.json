@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/devices",
-  "version": "8.0.7",
+  "version": "8.0.8",
   "description": "Ledger devices",
   "keywords": [
     "Ledger"
@@ -60,7 +60,7 @@
   },
   "devDependencies": {
     "@types/jest": "^29.5.0",
-    "@types/node": "^18.15.3",
+    "@types/node": "^20.8.10",
     "@types/semver": "^7.3.9",
     "documentation": "13.2.5",
     "jest": "^28.1.1",

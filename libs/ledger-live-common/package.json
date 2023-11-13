@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "33.0.1",
+  "version": "33.1.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -253,7 +253,7 @@
     "@types/cbor": "^6.0.0",
     "@types/jest": "^27.5.0",
     "@types/lodash": "^4.14.179",
-    "@types/node": "^18",
+    "@types/node": "^20.8.10",
     "@types/object-hash": "^2.1.0",
     "@types/react": "^18.2.21",
     "@types/uuid": "^8.3.4",

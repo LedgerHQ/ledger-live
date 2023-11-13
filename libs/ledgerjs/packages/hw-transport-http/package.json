@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-transport-http",
-  "version": "6.28.3",
+  "version": "6.28.4",
   "description": "Ledger Hardware Wallet communication layer over http",
   "keywords": [
     "Ledger",
@@ -46,7 +46,7 @@
   "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec",
   "devDependencies": {
     "@types/jest": "^29.5.0",
-    "@types/node": "^18.15.3",
+    "@types/node": "^20.8.10",
     "documentation": "13.2.5",
     "jest": "^28.1.1",
     "rimraf": "^4.4.1",

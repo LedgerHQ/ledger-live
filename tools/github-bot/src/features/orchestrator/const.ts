@@ -59,7 +59,11 @@ export const WORKFLOWS = {
       draft?: boolean,
     ) => {
       const common = commonGetInputs(payload, metadata, localRef);
-      return { ...common, draft: `${draft}` };
+      return {
+        ...common,
+        draft: draft ? `${draft}` : undefined,
+        prNumber: typeof metadata?.number === "number" ? `${metadata?.number}` : undefined,
+      };
     },
   },
   "build-desktop-external.yml": {
@@ -77,7 +81,7 @@ export const WORKFLOWS = {
       draft?: boolean,
     ) => {
       const common = commonGetInputs(payload, metadata, localRef);
-      return { ...common, draft: `${draft}` };
+      return { ...common, draft: draft ? `${draft}` : undefined };
     },
   },
   "test-desktop.yml": {
@@ -95,7 +99,7 @@ export const WORKFLOWS = {
       draft?: boolean,
     ) => {
       const common = commonGetInputs(payload, metadata, localRef);
-      return { ...common, draft: `${draft}` };
+      return { ...common, draft: draft ? `${draft}` : undefined };
     },
   },
   "test-desktop-external.yml": {
@@ -113,7 +117,7 @@ export const WORKFLOWS = {
       draft?: boolean,
     ) => {
       const common = commonGetInputs(payload, metadata, localRef);
-      return { ...common, draft: `${draft}` };
+      return { ...common, draft: draft ? `${draft}` : undefined };
     },
   },
   "build-mobile.yml": {

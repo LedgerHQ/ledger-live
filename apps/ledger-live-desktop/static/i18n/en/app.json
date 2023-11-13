@@ -1286,7 +1286,8 @@
   "postOnboarding": {
     "postOnboardingScreen": {
       "title": "Next up, use your\nLedger Stax to... ",
-      "titleCompleted": "and that's a\nwrap!"
+      "titleCompleted": "You're all set !\nKeep going and explore your wallet.",
+      "exploreCTA": "Explore wallet"
     },
     "postOnboardingContent": {
       "skipLink": "I'll do this later"
@@ -3163,7 +3164,7 @@
     "unlockedBalance": "Unbonded",
     "unlockedTooltip": "Unbonded assets can now be moved using the withdraw operation.",
     "networkFees": "Network fees are automatically set by the Polkadot consensus, you won't be able to review them on your device",
-    "bondedBalanceBelowMinimum": "Your bonded balance is below the current minimum of {{minimumBondBalance}}. Your nominations are at risk of being removed.",
+    "bondedBalanceBelowMinimum": "As a nominator, a minimum of {{minimumBondBalance}} is required to submit an intention to nominate",
     "nomination": {
       "emptyState": {
         "description": "You can earn rewards by bonding assets and then nominating your validator(s).",
@@ -5470,6 +5471,9 @@
     },
     "FeeNotLoaded": {
       "title": "Couldn't load fee rates. Please set manual fees"
+    },
+    "FeeNotLoadedSwap": {
+      "title": "Network fee estimation failed because of technical issues. Try again or change the assets."
     },
     "FeeRequired": {
       "title": "Fees are required"

@@ -42,6 +42,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyInternetComputer: DEFAULT_FEATURE,
   currencyKavaEvm: DEFAULT_FEATURE,
   currencyKlaytn: DEFAULT_FEATURE,
+  currencyLukso: DEFAULT_FEATURE,
   currencyMetis: DEFAULT_FEATURE,
   currencyMoonriver: DEFAULT_FEATURE,
   currencyOnomy: DEFAULT_FEATURE,
@@ -104,7 +105,6 @@ export const DEFAULT_FEATURES: Features = {
   learn: initFeature(),
   receiveStakingFlowConfigDesktop: initFeature(),
   brazePushNotifications: initFeature(),
-  walletConnectLiveApp: initFeature(),
   walletNftGallery: initFeature(),
   stakeAccountBanner: initFeature(),
 

@@ -60,6 +60,8 @@ const excludedErrorName = [
   "GetAppAndVersionUnsupportedFormat",
   "BluetoothRequired",
   "ManagerDeviceLocked",
+  "LockedDeviceError",
+  "UnresponsiveDeviceError",
   // errors coming from the usage of a Transport implementation
   "HwTransportError",
   // other
