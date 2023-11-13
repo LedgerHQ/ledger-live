@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/swift-bridge-hw-app-solana",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Package to facilitate bundling hw-app-solana in the SolanaWrapper Swift package",
   "keywords": [
     "Ledger",
@@ -44,7 +44,7 @@
   "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec",
   "devDependencies": {
     "@types/jest": "^29.5.0",
-    "@types/node": "^18.15.3",
+    "@types/node": "^20.8.10",
     "documentation": "13.2.5",
     "jest": "^28.1.1",
     "rimraf": "^4.4.1",

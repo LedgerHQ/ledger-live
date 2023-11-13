@@ -1,11 +1,3 @@
-import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
-import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets/tokens";
-import { getEIP712FieldsDisplayedOnNano } from "@ledgerhq/evm-tools/message/EIP712/index";
-import { getEnv } from "@ledgerhq/live-env";
-import { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import {
   Account,
   AnyMessage,
@@ -14,7 +6,15 @@ import {
   SubAccount,
 } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { ethers } from "ethers";
+import murmurhash from "imurmurhash";
+import { getEnv } from "@ledgerhq/live-env";
+import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
+import { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets/tokens";
+import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
+import { getEIP712FieldsDisplayedOnNano } from "@ledgerhq/evm-tools/message/EIP712/index";
 import { getNodeApi } from "./api/node/index";
 import {
   EvmNftTransaction,
@@ -154,14 +154,42 @@ export const mergeSubAccounts = (
 };
 
 /**
+ * A pseudo private Map used to memoize the very long
+ * string used to detect a change in the CAL
+ * tokens and its corresponding hash.
+ */
+const simpleSyncHashMemoize: Record<string, string> = {};
+
+/**
+ * Helper clearing the simpleSyncHashMemoize object
+ * Exported & used only by test runners
+ */
+export const __testOnlyClearSyncHashMemoize = (): void => {
+  for (const key in simpleSyncHashMemoize) {
+    delete simpleSyncHashMemoize[key];
+  }
+};
+
+/**
  * Method creating a hash that will help triggering or not a full synchronization on an account.
  * As of now, it's checking if a token has been added, removed of changed regarding important properties
  * and if the NFTs are activated/supported on this chain
+ *
+ * The hashing algorithm selected to create this hash is murmurhash.
+ * It's a fast non cryptographic algorithm with low collisions.
+ * A collision here would only prevent a potential full sync
+ * which would mean not seeing some potential new tokens.
+ * This can be fixed by simply removing the account
+ * and adding it again, now syncing from block 0.
+ *
+ * This computation could be easily simplified
+ * if the CAL files where to include an
+ * already crafted hash per token
  */
 export const getSyncHash = (currency: CryptoCurrency): string => {
   const tokens = listTokensForCryptoCurrency(currency);
   const basicTokensListString = tokens
-    .map(token => token.id + token.contractAddress + token.name + token.ticker + token.delisted)
+    .map(token => token.id + token.contractAddress + token.name + token.ticker)
     .join("");
   const isNftSupported = isNFTActive(currency);
   const { node = {}, explorer = {} } = currency.ethereumLikeInfo || {};
@@ -175,15 +203,17 @@ export const getSyncHash = (currency: CryptoCurrency): string => {
   // shoud be enough to fix everything.
   const hasSafeTokenIdAccount = true;
 
-  return ethers.utils.sha256(
-    Buffer.from(
-      basicTokensListString +
-        isNftSupported +
-        JSON.stringify(node) +
-        JSON.stringify(explorer) +
-        hasSafeTokenIdAccount,
-    ),
-  );
+  const stringToHash =
+    basicTokensListString +
+    isNftSupported +
+    JSON.stringify(node) +
+    JSON.stringify(explorer) +
+    hasSafeTokenIdAccount;
+
+  if (!simpleSyncHashMemoize[stringToHash]) {
+    simpleSyncHashMemoize[stringToHash] = `0x${murmurhash(stringToHash).result().toString(16)}`;
+  }
+  return simpleSyncHashMemoize[stringToHash];
 };
 
 /**

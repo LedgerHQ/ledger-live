@@ -23,6 +23,9 @@ on:
         description: true if the PR is in draft
         required: false
         default: "false"
+      prNumber:
+        description: reference to the PR
+        required: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
@@ -162,6 +165,35 @@ jobs:
     runs-on: ubuntu-latest
     if: always() && !cancelled() && github.event_name == 'workflow_dispatch'
     steps:
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+        with:
+          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
+          base: ${{ inputs.base_ref }}
+          persist-credentials: false
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+      - uses: actions/download-artifact@v3
+        with:
+          name: linux-js-bundle-metafiles
+          path: linux-js-bundle-metafiles
+      - uses: actions/download-artifact@v3
+        with:
+          name: windows-js-bundle-metafiles
+          path: windows-js-bundle-metafiles
+      - uses: actions/download-artifact@v3
+        with:
+          name: mac-js-bundle-metafiles
+          path: mac-js-bundle-metafiles
+      - uses: ./tools/actions/desktop-build-checks
+        if: inputs.prNumber != ''
+        with:
+          token: ${{ steps.generate-token.outputs.token }}
+          baseBranch: ${{ inputs.base_ref || 'develop' }}
+          prNumber: ${{ inputs.prNumber }}
       - uses: actions/github-script@v6
         name: build summary
         with:

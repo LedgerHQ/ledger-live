@@ -81,6 +81,8 @@ const ignoreErrors = [
   "Invalid channel",
   "Ledger Device is busy",
   "ManagerDeviceLocked",
+  "LockedDeviceError",
+  "UnresponsiveDeviceError",
   "PairingFailed",
   "Ledger device: UNKNOWN_ERROR",
   // errors coming from the usage of a Transport implementation

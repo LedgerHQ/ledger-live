@@ -1,5 +1,21 @@
 # ledger-libs
 
+## 0.1.3
+
+### Patch Changes
+
+- [#5195](https://github.com/LedgerHQ/ledger-live/pull/5195) [`1261d2bb69`](https://github.com/LedgerHQ/ledger-live/commit/1261d2bb696afe159e41078f49b7beedbc136534) Thanks [@chabroA](https://github.com/chabroA)! - remove reference to deleted file
+
+- [#5113](https://github.com/LedgerHQ/ledger-live/pull/5113) [`54b1d185c9`](https://github.com/LedgerHQ/ledger-live/commit/54b1d185c9df5ae84dc7e85d58249c06550df5f1) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - remove tokens definition for ICP chain
+
+## 0.1.3-next.0
+
+### Patch Changes
+
+- [#5195](https://github.com/LedgerHQ/ledger-live/pull/5195) [`1261d2bb69`](https://github.com/LedgerHQ/ledger-live/commit/1261d2bb696afe159e41078f49b7beedbc136534) Thanks [@chabroA](https://github.com/chabroA)! - remove reference to deleted file
+
+- [#5113](https://github.com/LedgerHQ/ledger-live/pull/5113) [`54b1d185c9`](https://github.com/LedgerHQ/ledger-live/commit/54b1d185c9df5ae84dc7e85d58249c06550df5f1) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - remove tokens definition for ICP chain
+
 ## 0.1.2
 
 ### Patch Changes

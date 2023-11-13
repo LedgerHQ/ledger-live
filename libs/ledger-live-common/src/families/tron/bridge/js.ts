@@ -619,7 +619,9 @@ const getTransactionStatus = async (a: TronAccount, t: Transaction): Promise<Tra
       );
 
       if (!isValidAddresses) {
-        errors.vote = new InvalidAddress();
+        errors.vote = new InvalidAddress("", {
+          currencyName: a.currency.name,
+        });
       } else if (!isValidVoteCounts) {
         errors.vote = new TronInvalidVoteCount();
       } else {

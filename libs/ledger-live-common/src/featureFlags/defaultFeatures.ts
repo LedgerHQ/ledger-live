@@ -42,6 +42,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyInternetComputer: DEFAULT_FEATURE,
   currencyKavaEvm: DEFAULT_FEATURE,
   currencyKlaytn: DEFAULT_FEATURE,
+  currencyLukso: DEFAULT_FEATURE,
   currencyMetis: DEFAULT_FEATURE,
   currencyMoonriver: DEFAULT_FEATURE,
   currencyOnomy: DEFAULT_FEATURE,
@@ -103,7 +104,6 @@ export const DEFAULT_FEATURES: Features = {
   learn: initFeature(),
   receiveStakingFlowConfigDesktop: initFeature(),
   brazePushNotifications: initFeature(),
-  walletConnectLiveApp: initFeature(),
   walletNftGallery: initFeature(),
   stakeAccountBanner: initFeature(),
 
@@ -157,6 +157,7 @@ export const DEFAULT_FEATURES: Features = {
         loginURI:
           "ledgerlive://recover/protect-simu?redirectTo=login&source=lld-welcome-login&ajs_recover_source=lld-welcome-login&ajs_recover_campaign=recover-launch",
       },
+      compatibleDevices: [],
       discoverTheBenefitsLink: "https://www.ledger.com/recover",
       onboardingCompleted: {
         alreadySubscribedURI: "ledgerlive://recover/protect-simu?redirectTo=login",
@@ -290,6 +291,7 @@ export const DEFAULT_FEATURES: Features = {
     enabled: false,
     params: {
       deeplink: "",
+      compatibleDevices: [],
       account: {
         homeURI:
           "ledgerlive://recover/protect-simu?redirectTo=account&source=llm-myledger-access-card&ajs_prop_source=llm-myledger-access-card&ajs_prop_campaign=recover-launch",

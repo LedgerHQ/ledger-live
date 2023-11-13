@@ -124,7 +124,7 @@
     "ui:example:next": "pnpm  --filter=\"next.js-example\"",
     "ui:example:webpack": "pnpm  --filter=\"webpack.js-example\"",
     "actions": "pnpm --filter @actions/*",
-    "import:cal-tokens": "pnpm --filter=\"./libs/ledgerjs/**\" import-cal-tokens"
+    "import:cal-tokens": "pnpm --filter=\"./libs/ledgerjs/**\" import:cal-tokens"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.4.8",
@@ -149,6 +149,9 @@
     "zx": "^7.2.2"
   },
   "pnpm": {
+    "neverBuiltDependencies": [
+      "blake2"
+    ],
     "overrides": {
       "stellar-base>sodium-native": "^3.2.1",
       "remove-flow-types-loader>flow-remove-types": "^2",
@@ -161,7 +164,7 @@
       "react-native-image-crop-tools@1.6.4": "patches/react-native-image-crop-tools@1.6.4.patch",
       "react-native-webview@11.26.1": "patches/react-native-webview@11.26.1.patch",
       "asyncstorage-down@4.2.0": "patches/asyncstorage-down@4.2.0.patch",
-      "detox@20.13.1": "patches/detox@20.13.1.patch",
+      "detox@20.13.5": "patches/detox@20.13.5.patch",
       "usb@2.9.0": "patches/usb@2.9.0.patch"
     },
     "packageExtensions": {
