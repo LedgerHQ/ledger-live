@@ -40,7 +40,6 @@ import FirmwareUpdateBanner from "~/renderer/components/FirmwareUpdateBanner";
 import VaultSignerBanner from "~/renderer/components/VaultSignerBanner";
 import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
 import { updateIdentify } from "./analytics/segment";
-import { useDiscoverDB } from "./screens/platform/v2/hooks";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { enableListAppsV2 } from "@ledgerhq/live-common/apps/hw";
 import {

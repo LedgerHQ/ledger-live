@@ -5,7 +5,6 @@ import { Catalog as Catalog2 } from "./v2/Catalog";
 export * from "./LiveApp";
 
 export default function PlatformCatalog() {
-
   const config = useFeature("discover");
 
   return config?.enabled && config?.params?.version === "2" ? <Catalog2 /> : <Catalog1 />;
