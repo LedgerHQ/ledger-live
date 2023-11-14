@@ -21,7 +21,7 @@ import startExchange from "@ledgerhq/live-common/exchange/platform/startExchange
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import CompleteExchange, {
   Data as CompleteExchangeData,
-} from "~/renderer/modals/Platform/Exchange/CompleteExchange/Drawer";
+} from "~/renderer/modals/Platform/Exchange/CompleteExchange/Body";
 import { Operation } from "@ledgerhq/types-live";
 
 const Divider = styled(Box)`
