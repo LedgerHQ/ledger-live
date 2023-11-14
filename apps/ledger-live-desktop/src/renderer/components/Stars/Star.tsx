@@ -24,7 +24,7 @@ export default function Star({ accountId, parentId, yellow, rounded }: Props) {
   );
   const dispatch = useDispatch();
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
-  const toggleStar = useCallback(
+  const toggleStar: React.MouseEventHandler<HTMLInputElement> = useCallback(
     e => {
       track(isAccountStarred ? "Account Unstar" : "Account Star");
       e.stopPropagation();

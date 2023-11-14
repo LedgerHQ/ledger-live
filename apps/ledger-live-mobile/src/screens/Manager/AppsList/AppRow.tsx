@@ -17,8 +17,6 @@ type Props = {
   app: App;
   state: State;
   dispatch: (_: Action) => void;
-  setAppInstallWithDependencies: (_: { app: App; dependencies: App[] }) => void;
-  setAppUninstallWithDependencies: (_: { dependents: App[]; app: App }) => void;
   setStorageWarning: (value: string | null) => void;
   optimisticState: State;
 };
@@ -52,15 +50,7 @@ const VersionContainer = styled(Flex).attrs({
   marginTop: 2,
 })``;
 
-const AppRow = ({
-  app,
-  state,
-  dispatch,
-  setAppInstallWithDependencies,
-  setAppUninstallWithDependencies,
-  setStorageWarning,
-  optimisticState,
-}: Props) => {
+const AppRow = ({ app, state, dispatch, setStorageWarning, optimisticState }: Props) => {
   const { name, bytes, version: appVersion, displayName } = app;
   const { installed, deviceInfo } = state;
   const canBeInstalled = useMemo(() => manager.canHandleInstall(app), [app]);
@@ -111,8 +101,6 @@ const AppRow = ({
         dispatch={dispatch}
         notEnoughMemoryToInstall={notEnoughMemoryToInstall}
         isInstalled={!!isInstalled}
-        setAppInstallWithDependencies={setAppInstallWithDependencies}
-        setAppUninstallWithDependencies={setAppUninstallWithDependencies}
         storageWarning={onSizePress}
       />
     </RowContainer>

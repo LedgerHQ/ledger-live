@@ -29,6 +29,9 @@ jobs:
           fetch-depth: 0
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
+        with:
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: Install dependencies
         run: pnpm i --filter="ledger-live"
       - name: Lint commits

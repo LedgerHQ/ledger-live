@@ -88,7 +88,8 @@ test("PostOnboarding state logic", async ({ page }) => {
     );
   });
 
-  await test.step("go to dashboard with automatic redirection", async () => {
+  await test.step("go to dashboard with explore button", async () => {
+    await postOnboarding.goToDashboard();
     await postOnboarding.postOnboardingHubContainer.waitFor({ state: "detached" });
     await expect(page).toHaveScreenshot(
       `${generateScreenshotPrefix()}postonboarding-done-no-banner-in-dashboard.png`,

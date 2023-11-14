@@ -1,8 +1,5 @@
-// FIXME: to update when implementing edit transaction on evm
-
 import type { Operation, AccountLike, Account, DeviceInfo } from "@ledgerhq/types-live";
 import type { NavigatorScreenParams, ParamListBase } from "@react-navigation/native";
-import type { RampCatalogEntry } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/types";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { PropertyPath } from "lodash";
@@ -60,19 +57,11 @@ import type { CosmosClaimRewardsFlowParamList } from "../../../families/cosmos/C
 import type { SolanaDelegationFlowParamList } from "../../../families/solana/DelegationFlow/types";
 import type { StellarAddAssetFlowParamList } from "../../../families/stellar/AddAssetFlow/types";
 import type { TezosDelegationFlowParamList } from "../../../families/tezos/DelegationFlow/types";
-// import type { EditTransactionParamList } from "../../../families/ethereum/EditTransactionFlow/EditTransactionParamList";
+import type { EditTransactionParamList } from "../../../families/evm/EditTransactionFlow/EditTransactionParamList";
 import type { TronVoteFlowParamList } from "../../../families/tron/VoteFlow/types";
 import type { NoFundsNavigatorParamList } from "./NoFundsNavigator";
 import type { StakeNavigatorParamList } from "./StakeNavigator";
 import type { ExploreTabNavigatorStackParamList } from "./ExploreTabNavigator";
-
-type TradeParams = {
-  type: "onRamp" | "offRamp";
-  cryptoCurrencyId: string;
-  fiatCurrencyId: string;
-  fiatAmount?: number;
-  cryptoAmount?: number;
-};
 
 export type NavigateInput<
   ParamList extends ParamListBase = ParamListBase,
@@ -166,17 +155,7 @@ export type BaseNavigatorStackParamList = {
     transaction?: Transaction;
     justScanned?: boolean;
   };
-  [ScreenName.BleDevicePairingFlow]: {
-    filterByDeviceModelId?: DeviceModelId;
-    areKnownDevicesDisplayed?: boolean;
-    areKnownDevicesPairable?: boolean;
-    onSuccessAddToKnownDevices?: boolean;
-    onSuccessNavigateToConfig: {
-      navigateInput: NavigateInput;
-      pathToDeviceParam: PathToDeviceParam;
-      navigationType?: NavigationType;
-    };
-  };
+  [ScreenName.BleDevicePairingFlow]: undefined;
   [ScreenName.AnalyticsAllocation]: undefined;
   [ScreenName.AnalyticsOperations]: {
     accountsIds: string[];
@@ -187,14 +166,7 @@ export type BaseNavigatorStackParamList = {
     currency: CryptoCurrency | TokenCurrency;
     type: "onRamp" | "offRamp";
   };
-  [ScreenName.ProviderView]: {
-    provider: RampCatalogEntry;
-    accountId: string;
-    accountAddress: string;
-    trade: TradeParams;
-    icon?: string | null;
-    name?: string | null;
-  };
+
   [ScreenName.CurrencySettings]: {
     currencyId: string;
     headerTitle?: string | undefined;
@@ -227,8 +199,7 @@ export type BaseNavigatorStackParamList = {
       })
     | undefined;
   [NavigatorName.RequestAccount]: NavigatorScreenParams<RequestAccountNavigatorParamList> & {
-    onError?: (_: Error) => void;
-    error?: Error;
+    onClose?: () => void;
   };
   [NavigatorName.Exchange]: NavigatorScreenParams<ExchangeLiveAppNavigatorParamList> | undefined;
   [NavigatorName.ExchangeStack]: NavigatorScreenParams<ExchangeStackNavigatorParamList> & {
@@ -287,8 +258,8 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.CosmosUndelegationFlow]: NavigatorScreenParams<CosmosUndelegationFlowParamList>;
   [NavigatorName.CosmosClaimRewardsFlow]: NavigatorScreenParams<CosmosClaimRewardsFlowParamList>;
 
-  // Ethereum
-  // [NavigatorName.EditTransaction]: NavigatorScreenParams<EditTransactionParamList>;
+  // EVM
+  [NavigatorName.EvmEditTransaction]: NavigatorScreenParams<EditTransactionParamList>;
 
   // Solana
   [NavigatorName.SolanaDelegationFlow]: NavigatorScreenParams<SolanaDelegationFlowParamList>;

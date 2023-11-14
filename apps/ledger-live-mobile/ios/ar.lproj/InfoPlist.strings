@@ -1,0 +1,13 @@
+/* 
+  InfoPlist.strings
+  ledgerlivemobile
+
+  Copyright © 2023 Ledger SAS. All rights reserved.
+*/
+
+"NSBluetoothAlwaysUsageDescription"="يحتاج Ledger Live إلى الاتصال بجهازك Ledger لإدارة أصولك المشفرة";
+"NSBluetoothPeripheralUsageDescription"="تطبيق Ledger Live يحتاج جهاز الوصول";
+"NSCameraUsageDescription"="تطبيق Ledger Live يحتاج وصول إلى الكاميرا لديك لمسح أكواد QR ضوئياً";
+"NSFaceIDUsageDescription"="يتطلب هذا التطبيق إذن Face ID (التعرّف على الوجه) للمصادقة باستخدام التعرف على الوجه.";
+"NSMicrophoneUsageDescription"="السماح لـ (PRODUCT_NAME)$ باستخدام الميكروفون";
+"NSPhotoLibraryUsageDescription"="السماح لـ (PRODUCT_NAME)$ بالوصول إلى الصور لديك";

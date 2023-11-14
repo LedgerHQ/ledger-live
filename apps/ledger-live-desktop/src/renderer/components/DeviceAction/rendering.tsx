@@ -195,6 +195,13 @@ const Circle = styled(Flex)`
   justify-content: center;
 `;
 
+const Separator = styled.div`
+  width: calc(100% + 60px);
+  height: 1px;
+  background-color: ${({ theme }) => theme.colors.palette.text.shade10};
+  margin: 24px -30px;
+`;
+
 // these are not components because we want reconciliation to not remount the sub elements
 
 export const renderRequestQuitApp = ({
@@ -551,7 +558,7 @@ export const renderLockedDeviceError = ({
   inlineRetry,
 }: {
   t: TFunction;
-  device?: Device;
+  device?: Device | null;
   onRetry?: (() => void) | null | undefined;
   inlineRetry?: boolean;
 }) => {
@@ -581,7 +588,13 @@ export const renderLockedDeviceError = ({
   );
 };
 
-export const RenderDeviceNotOnboardedError = ({ t, device }: { t: TFunction; device?: Device }) => {
+export const RenderDeviceNotOnboardedError = ({
+  t,
+  device,
+}: {
+  t: TFunction;
+  device?: Device | null;
+}) => {
   const productName = device ? getDeviceModel(device.modelId).productName : null;
   const history = useHistory();
   const { setDrawer } = useContext(context);
@@ -680,7 +693,7 @@ export const renderError = ({
   managerAppName?: string;
   requireFirmwareUpdate?: boolean;
   withOnboardingCTA?: boolean;
-  device?: Device;
+  device?: Device | null;
   inlineRetry?: boolean;
   Icon?: (props: { color?: string | undefined; size?: number | undefined }) => JSX.Element;
 }) => {
@@ -919,7 +932,7 @@ export const renderSwapDeviceConfirmation = ({
             />
           </Alert>
         </Box>
-        <Box mx={6} data-test-id="device-swap-summary">
+        <Box mx={3} data-test-id="device-swap-summary">
           {map(
             {
               amountSent: (
@@ -987,7 +1000,10 @@ export const renderSwapDeviceConfirmation = ({
         </Box>
         {renderVerifyUnwrapped({ modelId, type })}
       </ConfirmWrapper>
-      <DrawerFooter provider={exchangeRate.provider} />
+      <Separator />
+      <Flex width="100%" mb={3}>
+        <DrawerFooter provider={exchangeRate.provider} />
+      </Flex>
     </>
   );
 };
@@ -1063,7 +1079,9 @@ const ImageLoadingGenericWithoutStyleProvider: React.FC<{
       </Flex>
       <Flex flexDirection={"column"} alignItems="center" alignSelf="stretch">
         {children}
-        <Title mb={pullDown ? "-24px" : undefined}>{title}</Title>
+        <Text mt={6} mb={pullDown ? "-24px" : undefined} variant="h5Inter" textAlign="center">
+          {title}
+        </Text>
       </Flex>
       <Flex flex={1} flexDirection="column" alignItems={"center"}>
         {bottom}

@@ -1,0 +1,22 @@
+{
+  "entry": [
+    "src/account/index.ts",
+    "src/batcher/index.ts",
+    "src/bot/specs.ts",
+    "src/bot/formatters.ts",
+    "src/bridge/jsHelpers.ts",
+    "src/cache.ts",
+    "src/currencies/index.ts",
+    "src/derivation.ts",
+    "src/mocks/helpers.ts",
+    "src/mocks/account.ts",
+    "src/network.ts",
+    "src/nft/helpers.ts",
+    "src/nft/support.ts",
+    "src/operation.ts",
+    "src/signer.ts",
+    "src/transaction/common.ts"
+  ],
+  "ignoreUnimported": ["src/test-helpers/staticTime.ts"],
+  "ignoreUnresolved": ["follow-redirects"]
+}

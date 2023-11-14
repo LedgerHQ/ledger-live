@@ -1,4 +1,4 @@
-import React, { useCallback, memo, useMemo } from "react";
+import React, { useCallback, memo } from "react";
 import { useMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import styled, { DefaultTheme, StyledComponent } from "styled-components";
 import { Flex, Text, Icon } from "@ledgerhq/react-ui";
@@ -13,16 +13,15 @@ import { Button } from ".";
 import { useSelector, useDispatch } from "react-redux";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { addStarredMarketCoins, removeStarredMarketCoins } from "~/renderer/actions/settings";
-import { useProviders } from "../exchange/Swap2/Form";
 import Track from "~/renderer/analytics/Track";
-import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
-import { getAllSupportedCryptoCurrencyTickers } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
+import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import Image from "~/renderer/components/Image";
 import NoResultsFound from "~/renderer/images/no-results-found.png";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { FlexProps } from "styled-system";
 import { CurrencyData, MarketListRequestParams } from "@ledgerhq/live-common/market/types";
 import TrackPage from "~/renderer/analytics/TrackPage";
+import { useFetchCurrencyFrom } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 
 export const TableCellBase: StyledComponent<"div", DefaultTheme, FlexProps> = styled(Flex).attrs({
   alignItems: "center",
@@ -225,10 +224,9 @@ const CurrencyRow = memo(function CurrencyRowItem({
   starredMarketCoins,
   locale,
   swapAvailableIds,
-  onRampAvailableTickers,
   style,
 }: {
-  data: CurrencyData[];
+  data: CurrencyData[]; // NB: CurrencyData.id is different to Currency.id
   index: number;
   counterCurrency?: string;
   loading: boolean;
@@ -237,14 +235,20 @@ const CurrencyRow = memo(function CurrencyRowItem({
   starredMarketCoins: string[];
   locale: string;
   swapAvailableIds: string[];
-  onRampAvailableTickers: string[];
   range?: string;
   style: React.CSSProperties;
 }) {
   const currency = data ? data[index] : null;
   const internalCurrency = currency ? currency.internalCurrency : null;
   const isStarred = currency && starredMarketCoins.includes(currency.id);
-  const availableOnBuy = currency && onRampAvailableTickers.includes(currency.ticker.toUpperCase());
+
+  const { isCurrencyAvailable } = useRampCatalog();
+
+  const availableOnBuy =
+    !!internalCurrency &&
+    !!internalCurrency?.id &&
+    isCurrencyAvailable(internalCurrency.id, "onRamp");
+
   const availableOnSwap = internalCurrency && swapAvailableIds.includes(internalCurrency.id);
   const stakeProgramsFeatureFlag = useFeature("stakePrograms");
   const listFlag = stakeProgramsFeatureFlag?.params?.list ?? [];
@@ -279,22 +283,6 @@ function MarketList({
 }) {
   const { t } = useTranslation();
   const locale = useSelector(localeSelector);
-  const { providers, storedProviders } = useProviders();
-  const rampCatalog = useRampCatalog();
-
-  const onRampAvailableTickers = useMemo(() => {
-    if (!rampCatalog.value) {
-      return [];
-    }
-    return getAllSupportedCryptoCurrencyTickers(rampCatalog.value.onRamp);
-  }, [rampCatalog.value]);
-
-  const swapAvailableIds =
-    providers || storedProviders
-      ? (providers || storedProviders)!
-          .map(({ pairs }) => pairs.map(({ from, to }) => [from, to]))
-          .flat(2)
-      : [];
 
   const {
     marketData = [],
@@ -312,10 +300,12 @@ function MarketList({
   const currenciesLength = marketData.length;
   const freshLoading = loading && !currenciesLength;
 
+  const { data: fromCurrencies } = useFetchCurrencyFrom();
+
   const resetSearch = useCallback(() => refresh({ search: "" }), [refresh]);
 
   const toggleStar = useCallback(
-    (id, isStarred) => {
+    (id: string, isStarred: boolean) => {
       if (isStarred) {
         dispatch(removeStarredMarketCoins(id));
       } else {
@@ -326,7 +316,7 @@ function MarketList({
   );
 
   const toggleSortBy = useCallback(
-    newOrderBy => {
+    (newOrderBy: string) => {
       const isFreshSort = newOrderBy !== orderBy;
       refresh(
         isFreshSort
@@ -396,8 +386,7 @@ function MarketList({
                         selectCurrency={selectCurrency}
                         starredMarketCoins={starredMarketCoins}
                         locale={locale}
-                        swapAvailableIds={swapAvailableIds}
-                        onRampAvailableTickers={onRampAvailableTickers}
+                        swapAvailableIds={fromCurrencies ?? []}
                         range={range}
                       />
                     )}
@@ -436,8 +425,7 @@ function MarketList({
                             selectCurrency={selectCurrency}
                             starredMarketCoins={starredMarketCoins}
                             locale={locale}
-                            swapAvailableIds={swapAvailableIds}
-                            onRampAvailableTickers={onRampAvailableTickers}
+                            swapAvailableIds={fromCurrencies ?? []}
                             range={range}
                           />
                         )}

@@ -91,6 +91,24 @@ Optional environment variables you can put in `.env`, `.env.production` or `.env
 - `DISABLE_READ_ONLY=1` Disable readonly mode by default.
 - `SKIP_ONBOARDING=1` Skips the onboarding flow.
 
+## Path mappings
+
+Add any desired path mapping in `tsconfig.json`: (for instance `"@utils/*": ["./src/utils/*"]`)
+Then, import `@utils/constants` in your project files and it will automatically resolve to `./src/utils/constants.{js/jsx/ts/tsx}`.
+
+Please respect the following structure: `"@{package}/*": ["{any/path}/*"]`
+
+```
+// tsconfig.json
+ {
+    { ... }
+    "paths": {
+      "@utils/*": ["./src/utils/*"],
+      "@constants/*": ["./src/constants/*"],
+    }
+  }
+```
+
 ## Maintenance
 
 ### Refresh the languages (when we add new languages)

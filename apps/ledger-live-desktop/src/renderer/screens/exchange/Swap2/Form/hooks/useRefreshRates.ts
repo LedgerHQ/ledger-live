@@ -1,5 +1,5 @@
 import { useRef, useMemo, useEffect } from "react";
-import { SwapDataType } from "@ledgerhq/live-common/lib/exchange/swap/types";
+import { SwapDataType } from "@ledgerhq/live-common/exchange/swap/types";
 import { getRefreshTime } from "~/renderer/screens/exchange/Swap2/utils/getRefreshTime";
 
 const useRefreshRates = (

@@ -10,7 +10,7 @@ import { track } from "~/renderer/analytics/segment";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
-import { AccountBannerState } from "@ledgerhq/live-common/lib/families/elrond/banner";
+import { AccountBannerState } from "@ledgerhq/live-common/families/elrond/banner";
 
 const StakeBanner: React.FC<{ account: ElrondAccount }> = ({ account }) => {
   const { t } = useTranslation();

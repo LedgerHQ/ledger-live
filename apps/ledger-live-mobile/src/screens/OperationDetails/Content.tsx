@@ -1,5 +1,3 @@
-// FIXME: to update when implementing edit transaction on evm
-
 import React, { useCallback, useState } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import uniq from "lodash/uniq";
@@ -17,12 +15,12 @@ import {
   getOperationAmountNumber,
   isConfirmedOperation,
   getOperationConfirmationDisplayableNumber,
+  isEditableOperation,
+  isStuckOperation,
 } from "@ledgerhq/live-common/operation";
 import { useNftCollectionMetadata, useNftMetadata } from "@ledgerhq/live-common/nft/index";
 import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-// import { getEnv } from "@ledgerhq/live-env";
-// import { isEditableOperation } from "@ledgerhq/coin-framework/operation";
 import { NavigatorName, ScreenName } from "../../const";
 import LText from "../../components/LText";
 import OperationIcon from "../../components/OperationIcon";
@@ -30,7 +28,7 @@ import OperationRow from "../../components/OperationRow";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import CounterValue from "../../components/CounterValue";
 import Touchable from "../../components/Touchable";
-import { urls } from "../../config/urls";
+import { urls } from "@utils/urls";
 import Info from "../../icons/Info";
 import ExternalLink from "../../icons/ExternalLink";
 import { currencySettingsForAccountSelector } from "../../reducers/settings";
@@ -38,6 +36,7 @@ import DataList from "./DataList";
 import Modal from "./Modal";
 import Section, { styles as sectionStyles } from "./Section";
 import byFamiliesOperationDetails from "../../generated/operationDetails";
+import byFamiliesEditOperationPanel from "../../generated/EditOperationPanel";
 import DefaultOperationDetailsExtra from "./Extra";
 import Skeleton from "../../components/Skeleton";
 import type { State } from "../../reducers/types";
@@ -48,7 +47,6 @@ import type {
   StackNavigatorNavigation,
 } from "../../components/RootNavigator/types/helpers";
 import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-// import { EditOperationPanel } from "../../families/ethereum/EditTransactionFlow/EditOperationPanel";
 
 type HelpLinkProps = {
   event: string;
@@ -135,28 +133,33 @@ export default function Content({
     currencySettings.confirmationsNb,
   );
 
-  // const isEditable = isEditableOperation(mainAccount, operation);
-  // const isOperationStuck =
-  //   isEditable &&
-  //   operation.date.getTime() <= new Date().getTime() - getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT");
+  const isEditable = isEditableOperation({ account: mainAccount, operation });
+  const isOperationStuck = isStuckOperation({ family: mainAccount.currency.family, operation });
 
-  const specific =
+  const specificOperationDetails =
     byFamiliesOperationDetails[
       mainAccount.currency.family as keyof typeof byFamiliesOperationDetails
     ];
 
+  const { EditOperationPanel: SpecificEditOperationPanel = undefined } =
+    byFamiliesEditOperationPanel[
+      mainAccount.currency.family as keyof typeof byFamiliesEditOperationPanel
+    ];
+
   const urlFeesInfo =
-    specific &&
-    (specific as { getURLFeesInfo: (o: Operation, c: string) => string })?.getURLFeesInfo &&
-    (specific as { getURLFeesInfo: (o: Operation, c: string) => string })?.getURLFeesInfo(
-      operation,
-      mainAccount.currency.id,
-    );
+    specificOperationDetails &&
+    (specificOperationDetails as { getURLFeesInfo: (o: Operation, c: string) => string })
+      ?.getURLFeesInfo &&
+    (
+      specificOperationDetails as { getURLFeesInfo: (o: Operation, c: string) => string }
+    )?.getURLFeesInfo(operation, mainAccount.currency.id);
 
   const Extra =
-    specific && (specific as { OperationDetailsExtra: React.ComponentType }).OperationDetailsExtra
+    specificOperationDetails &&
+    (specificOperationDetails as { OperationDetailsExtra: React.ComponentType })
+      .OperationDetailsExtra
       ? (
-          specific as {
+          specificOperationDetails as {
             OperationDetailsExtra: React.ComponentType<{
               type: typeof type;
               account: AccountLike;
@@ -170,12 +173,12 @@ export default function Content({
     ["NFT_IN", "NFT_OUT"].includes(type) && operation.contract && operation.tokenId;
   const { status: collectionStatus, metadata: collectionMetadata } = useNftCollectionMetadata(
     operation.contract,
-    currency.id,
+    mainAccount.currency.id,
   );
   const { status: nftStatus, metadata: nftMetadata } = useNftMetadata(
     operation.contract,
     operation.tokenId,
-    currency.id,
+    mainAccount.currency.id,
   ) as NFTResource & {
     metadata: NFTMetadataResponse["result"];
   };
@@ -323,14 +326,14 @@ export default function Content({
         />
       ) : null}
 
-      {/* {isEditable ? (
-        <EditOperationPanel
+      {isEditable && SpecificEditOperationPanel ? (
+        <SpecificEditOperationPanel
           isOperationStuck={isOperationStuck}
           account={account}
           parentAccount={parentAccount}
           operation={operation}
         />
-      ) : null} */}
+      ) : null}
 
       {!disableAllLinks ? (
         <Section

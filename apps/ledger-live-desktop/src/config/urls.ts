@@ -14,6 +14,7 @@ export const supportLinkByTokenType = {
 };
 
 const errors: Record<string, string> = {
+  NotEnoughGas: "https://support.ledger.com/hc/en-us/articles/9096370252573?support=true",
   CantOpenDevice:
     "https://support.ledger.com/hc/en-us/articles/115005165269?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=error_cantopendevice",
   WrongDeviceForAccount:
@@ -282,7 +283,7 @@ export const urls = {
     learnMore:
       "https://support.ledger.com/hc/en-us/articles/360020499920-Celo-CELO-?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=celo",
   },
-  editEthTx: {
+  editEvmTx: {
     learnMore: "https://support.ledger.com/hc/articles/9756122596765?support=true",
   },
   ledgerByFigmentTC:

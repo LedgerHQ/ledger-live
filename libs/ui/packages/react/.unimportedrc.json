@@ -1,0 +1,28 @@
+{
+  "entry": [
+    "src/index.ts",
+    "src/styles/index.ts",
+    "src/assets/fonts.ts",
+    "src/assets/icons.ts",
+    "src/assets/cryptoIcons.ts",
+    "src/components/animations/GlitchText/index.tsx",
+    "src/components/form/SelectInput/VirtualMenuList.tsx"
+  ],
+  "extensions": [".ts", ".js", ".jsx", ".tsx"],
+  "ignorePatterns": ["**/node_modules/**", "**/*.stories.*"],
+  "ignoreUnimported": [
+    "src/assets/images/images.d.ts",
+    "src/components/Table/stories.helper.tsx",
+    "src/components/helpers.ts",
+    "src/components/navigation/Aside/stories.helper.tsx"
+  ],
+  "ignoreUnresolved": [
+    "@emotion/is-prop-valid",
+    "@emotion/stylis",
+    "@emotion/unitless",
+    "hoist-non-react-statics",
+    "scheduler",
+    "shallowequal"
+  ],
+  "ignoreUnused": ["react", "react-dom", "styled-components"]
+}

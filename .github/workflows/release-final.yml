@@ -44,17 +44,17 @@ jobs:
           git config user.name "live-github-bot[bot]"
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
-      # - uses: ruby/setup-ruby@v1
-      #   with:
-      #     ruby-version: 3.1.2
-      # - name: Cache LLM pods
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: |
-      #       apps/ledger-live-mobile/ios/Pods
-      #       ~/Library/Caches/CocoaPods
-      #       ~/.cocoapods
-      #     key: ${{ runner.os }}-pods-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock') }}
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.2.2
+      - name: Cache LLM pods
+        uses: actions/cache@v3
+        with:
+          path: |
+            apps/ledger-live-mobile/ios/Pods
+            ~/Library/Caches/CocoaPods
+            ~/.cocoapods
+          key: ${{ runner.os }}-pods-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock') }}
       - name: install dependencies
         run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli"
       - name: build libs

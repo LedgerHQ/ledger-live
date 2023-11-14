@@ -28,6 +28,7 @@ export enum ScreenName {
   CurrencySettings = "CurrencySettings",
   DebugBLE = "DebugBLE",
   DebugBLEBenchmark = "DebugBLEBenchmark",
+  DebugBLEDevicePairing = "DebugBLEDevicePairing",
   DebugConfiguration = "DebugConfiguration",
   DebugCommandSender = "DebugCommandSender",
   DebugConnectivity = "DebugConnectivity",
@@ -75,7 +76,6 @@ export enum ScreenName {
   EditAccountName = "EditAccountName",
   EditAccountUnits = "EditAccountUnits",
   EditDeviceName = "EditDeviceName",
-  EditTransactionMethodSelection = "EditTransactionMethodSelection",
   Exchange = "Exchange",
   ExchangeBuy = "ExchangeBuy",
   ExchangeHistory = "ExchangeHistory",
@@ -112,7 +112,6 @@ export enum ScreenName {
   Portfolio = "Wallet",
   PortfolioOperationHistory = "PortfolioOperationHistory",
   ProviderList = "ProviderList",
-  ProviderView = "ProviderView",
   PurchaseDevice = "PurchaseDevice",
   RateProviderSettings = "RateProviderSettings",
   ReceiveAddAccount = "ReceiveAddAccount",
@@ -334,6 +333,8 @@ export enum ScreenName {
   // Evm
   EvmEditGasLimit = "EvmEditGasLimit",
   EvmCustomFees = "EvmCustomFees",
+  EditTransactionSummary = "EditTransactionSummary",
+  EvmEditTransactionMethodSelection = "EvmEditTransactionMethodSelection",
 
   // Polkadot
   PolkadotBondStarted = "PolkadotBondStarted",
@@ -397,15 +398,13 @@ export enum ScreenName {
   OnboardingImportSelectAccount = "OnboardingImportSelectAccount",
   OnboardingQuiz = "OnboardingQuiz",
   OnboardingQuizFinal = "OnboardingQuizFinal",
+  OnboardingBleDevicePairingFlow = "OnboardingBleDevicePairingFlow",
   OnboardingLanguageModal = "OnboardingLanguageModal",
   OnboardingModalSetupNewDevice = "OnboardingModalSetupNewDevice",
   OnboardingModalSetupSteps = "OnboardingModalSetupSteps",
   OnboardingModalSetupSecureRecovery = "OnboardingModalSetupSecureRecovery",
-  OnboardingModalWarning = "OnboardingModalWarning",
   OnboardingModalGeneralInformation = "OnboardingModalGeneralInformation",
   OnboardingPreQuizModal = "OnboardingPreQuizModal",
-  OnboardingModalSyncDesktopInformation = "OnboardingModalSyncDesktopInformation",
-  OnboardingModalRecoveryPhraseWarning = "OnboardingModalRecoveryPhraseWarning",
   OnboardingProtectFlow = "OnboardingProtectFlow",
   SyncOnboardingCompanion = "SyncOnboardingCompanion",
   SyncOnboardingCompletion = "SyncOnboardingCompletion",
@@ -460,6 +459,8 @@ export enum ScreenName {
 
   // stacks
   StacksEditMemo = "StacksEditMemo",
+  // casper
+  CasperEditTransferId = "CasperEditTransferId",
   // hedera
   HederaEditMemo = "HederaEditMemo",
   // near
@@ -563,8 +564,8 @@ export enum NavigatorName {
   RequestAccount = "RequestAccount",
   RequestAccountsAddAccounts = "RequestAccountsAddAccounts",
 
-  // Edit transaction
-  EditTransaction = "EditTransaction",
+  // Evm
+  EvmEditTransaction = "EvmEditTransaction",
 
   // Polkadot
   PolkadotBondFlow = "PolkadotBondFlow",

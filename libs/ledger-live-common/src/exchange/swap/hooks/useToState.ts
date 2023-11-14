@@ -1,20 +1,24 @@
-import { Account } from "@ledgerhq/types-live";
+import { Account, AccountLike } from "@ledgerhq/types-live";
 import { useCallback, useMemo, useState } from "react";
-import { selectorStateDefaultValues } from ".";
+import { selectorStateDefaultValues, useFetchCurrencyTo } from ".";
 import { getAccountTuplesForCurrency } from "../utils";
 import { SwapSelectorStateType, SwapDataType, SwapTransactionType } from "../types";
 
 export const useToState = ({
   accounts,
+  fromCurrencyAccount,
 }: {
   accounts: Account[] | undefined;
+  fromCurrencyAccount: AccountLike | undefined;
 }): {
   toState: SwapSelectorStateType;
+  toCurrencies: string[];
   setToAccount: SwapTransactionType["setToAccount"];
   setToAmount: SwapTransactionType["setToAmount"];
   setToCurrency: SwapTransactionType["setToCurrency"];
   targetAccounts: SwapDataType["targetAccounts"];
 } => {
+  const { data: toCurrencies } = useFetchCurrencyTo({ fromCurrencyAccount });
   const [toState, setToState] = useState<SwapSelectorStateType>(selectorStateDefaultValues);
 
   /* UPDATE to accounts */
@@ -66,6 +70,7 @@ export const useToState = ({
   );
 
   return {
+    toCurrencies: toCurrencies ?? [],
     toState,
     setToAccount,
     setToAmount,

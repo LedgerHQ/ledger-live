@@ -1,5 +1,4 @@
 import { ipcRenderer } from "electron";
-import * as remote from "@electron/remote";
 import React, { useMemo, useEffect, useState, useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
@@ -8,7 +7,7 @@ import OperationRow from "./OperationRow";
 import { isSwapOperationPending } from "@ledgerhq/live-common/exchange/swap/index";
 import getCompleteSwapHistory from "@ledgerhq/live-common/exchange/swap/getCompleteSwapHistory";
 import updateAccountSwapStatus from "@ledgerhq/live-common/exchange/swap/updateAccountSwapStatus";
-import { SwapHistorySection } from "@ledgerhq/live-common/exchange/swap/types";
+import { MappedSwapOperation, SwapHistorySection } from "@ledgerhq/live-common/exchange/swap/types";
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import { mappedSwapOperationsToCSV } from "@ledgerhq/live-common/exchange/swap/csvExport";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
@@ -62,7 +61,7 @@ const History = () => {
   const defaultOpenedSwapOperationId = history?.location?.state?.swapId;
   const onExportOperations = useCallback(() => {
     async function asyncExport() {
-      const path = await remote.dialog.showSaveDialog({
+      const path = await ipcRenderer.invoke("show-save-dialog", {
         title: "Exported swap history",
         defaultPath: `ledgerlive-swap-history-${moment().format("YYYY.MM.DD")}.csv`,
         filters: [
@@ -145,7 +144,7 @@ const History = () => {
     }
   }, 10000);
   const openSwapOperationDetailsModal = useCallback(
-    mappedSwapOperation =>
+    (mappedSwapOperation: MappedSwapOperation) =>
       setDrawer(SwapOperationDetails, {
         mappedSwapOperation,
       }),

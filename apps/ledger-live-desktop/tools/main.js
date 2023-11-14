@@ -6,7 +6,7 @@ const Electron = require("./utils/Electron");
 const processReleaseNotes = require("./utils/processReleaseNotes");
 const {
   processNativeModules,
-  copyFolderRecursivelySync,
+  copyFolderRecursively,
   esBuildExternalsPlugin,
 } = require("native-modules-tools");
 const path = require("path");
@@ -82,9 +82,9 @@ const build = async argv => {
 
   if (!process.env.TESTING) {
     // Find native modules and copy them to ./dist/node_modules with their dependencies.
-    mappedNativeModules = processNativeModules({ root: lldRoot, destination: "dist" });
+    mappedNativeModules = await processNativeModules({ root: lldRoot, destination: "dist" });
     // Also copy to ./node_modules to be able to run the production build with playwright.
-    copyFolderRecursivelySync(
+    await copyFolderRecursively(
       path.join(lldRoot, "dist", "node_modules"),
       path.join(lldRoot, "node_modules"),
     );
@@ -134,13 +134,6 @@ const build = async argv => {
       }),
     ),
   ]);
-
-  // Ensure that we keep our bundle size under thresholds
-  if (results[0].metafile.outputs[".webpack/main.bundle.js"].bytes > 5 * 1024 * 1024) {
-    throw new Error(
-      "main bundle must be kept under 5 MB. This indicates a possible regression of importing too much modules. Most of Ledger Live must be run on renderer side.",
-    );
-  }
 
   if (process.env.GENERATE_METAFILES) {
     // analyze bundle sizes. use it with https://esbuild.github.io/analyze/

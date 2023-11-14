@@ -6,8 +6,6 @@ import type { OperationType, SignOperationFnSignature } from "@ledgerhq/types-li
 import { withDevice } from "../../hw/deviceAccess";
 import { getEnv } from "@ledgerhq/live-env";
 import { FeeNotLoaded } from "@ledgerhq/errors";
-import { upperModulo } from "../../modulo";
-import BigNumber from "bignumber.js";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 
 export const signOperation: SignOperationFnSignature<Transaction> = ({
@@ -18,7 +16,7 @@ export const signOperation: SignOperationFnSignature<Transaction> = ({
   withDevice(deviceId)(
     transport =>
       new Observable(o => {
-        let cancelled;
+        let cancelled = false;
 
         async function main() {
           const { fees } = transaction;
@@ -53,15 +51,6 @@ export const signOperation: SignOperationFnSignature<Transaction> = ({
             storageLimit: transaction.storageLimit?.toNumber() || 0,
             gasLimit: transaction.gasLimit?.toNumber() || 0,
           };
-
-          if (["delegate", "undelegate"].includes(transaction.mode)) {
-            // https://ledgerhq.atlassian.net/browse/LL-8821
-            params.gasLimit = upperModulo(
-              transaction.gasLimit || new BigNumber(0),
-              new BigNumber(136),
-              new BigNumber(1000),
-            ).toNumber();
-          }
 
           switch (transaction.mode) {
             case "send":

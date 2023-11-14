@@ -4,8 +4,8 @@ import {
   getMainAccount,
   isAccountEmpty,
 } from "@ledgerhq/live-common/account/index";
-import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
-import { getAllSupportedCryptoCurrencyIds } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
+import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
+
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo } from "react";
 import { TFunction } from "i18next";
@@ -22,7 +22,6 @@ import Tooltip from "~/renderer/components/Tooltip";
 import useTheme from "~/renderer/hooks/useTheme";
 import IconAccountSettings from "~/renderer/icons/AccountSettings";
 import IconWalletConnect from "~/renderer/icons/WalletConnect";
-import { useProviders } from "~/renderer/screens/exchange/Swap2/Form";
 import { rgba } from "~/renderer/styles/helpers";
 import { track } from "~/renderer/analytics/segment";
 import {
@@ -37,6 +36,9 @@ import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getLLDCoinFamily } from "~/renderer/families";
 import { ManageAction } from "~/renderer/families/types";
+import { getAvailableProviders } from "@ledgerhq/live-common/exchange/swap/index";
+import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import { isWalletConnectSupported } from "@ledgerhq/live-common/walletConnect/index";
 
 type RenderActionParams = {
   label: React.ReactNode;
@@ -53,6 +55,8 @@ type RenderActionParams = {
   disabled?: boolean;
   tooltip?: string;
   accountActionsTestId?: string;
+  contrastText: string;
+  currency: TokenCurrency | CryptoCurrency;
 };
 
 const ButtonSettings = styled(Tabbable).attrs<{ disabled?: boolean }>(() => ({
@@ -93,6 +97,36 @@ type Props = {
   openModal: Function;
 } & OwnProps;
 
+const ActionItem = ({
+  label,
+  onClick,
+  event,
+  eventProperties,
+  icon,
+  disabled,
+  tooltip,
+  accountActionsTestId,
+  contrastText,
+  currency,
+}: RenderActionParams) => {
+  const Icon = icon;
+  const Action = (
+    <ActionDefault
+      disabled={disabled}
+      onClick={onClick}
+      event={event}
+      eventProperties={eventProperties}
+      iconComponent={Icon && <Icon size={14} overrideColor={contrastText} currency={currency} />}
+      labelComponent={label}
+      accountActionsTestId={accountActionsTestId}
+    />
+  );
+  if (tooltip) {
+    return <Tooltip content={tooltip}>{Action}</Tooltip>;
+  }
+  return Action;
+};
+
 const AccountHeaderSettingsButtonComponent = ({ account, parentAccount, openModal, t }: Props) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const currency = getAccountCurrency(account);
@@ -108,6 +142,8 @@ const AccountHeaderSettingsButtonComponent = ({ account, parentAccount, openModa
     });
   }, [mainAccount.id, history]);
 
+  const isWalletConnectActionDisplayable = isWalletConnectSupported(currency);
+
   return (
     <Box horizontal alignItems="center" justifyContent="flex-end" flow={2}>
       <Tooltip content={t("stars.tooltip")}>
@@ -118,7 +154,7 @@ const AccountHeaderSettingsButtonComponent = ({ account, parentAccount, openModa
           rounded
         />
       </Tooltip>
-      {["ethereum", "bsc", "polygon"].includes(currency.id) ? (
+      {isWalletConnectActionDisplayable ? (
         <Tooltip content={t("walletconnect.titleAccount")}>
           <ButtonSettings onClick={onWalletConnectLiveApp}>
             <Box justifyContent="center">
@@ -151,6 +187,7 @@ const AccountHeaderSettingsButtonComponent = ({ account, parentAccount, openModa
 const pageName = "Page Account";
 
 const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
+  const { data: currenciesAll } = useFetchCurrencyAll();
   const mainAccount = getMainAccount(account, parentAccount);
   const contrastText = useTheme().colors.palette.text.shade60;
   const swapDefaultTrack = useGetSwapTrackingProperties();
@@ -167,29 +204,14 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   const ReceiveAction = specific?.accountActions?.ReceiveAction || ReceiveActionDefault;
   const currency = getAccountCurrency(account);
 
-  const rampCatalog = useRampCatalog();
+  const { isCurrencyAvailable } = useRampCatalog();
 
-  // eslint-disable-next-line no-unused-vars
-  const [availableOnBuy, availableOnSell] = useMemo(() => {
-    if (!rampCatalog.value) {
-      return [false, false];
-    }
-    const allBuyableCryptoCurrencyIds = getAllSupportedCryptoCurrencyIds(rampCatalog.value.onRamp);
-    const allSellableCryptoCurrencyIds = getAllSupportedCryptoCurrencyIds(
-      rampCatalog.value.offRamp,
-    );
-    return [
-      allBuyableCryptoCurrencyIds.includes(currency.id),
-      allSellableCryptoCurrencyIds.includes(currency.id),
-    ];
-  }, [rampCatalog.value, currency.id]);
-  const { providers, storedProviders, providersError } = useProviders();
+  const availableOnBuy = !!currency && isCurrencyAvailable(currency.id, "onRamp");
+  const availableOnSell = !!currency && isCurrencyAvailable(currency.id, "offRamp");
 
   // don't show buttons until we know whether or not we can show swap button, otherwise possible click jacking
-  const showButtons = !!(providers || storedProviders || providersError);
-  const availableOnSwap = providers?.concat(storedProviders ?? []).some(({ pairs }) => {
-    return pairs && pairs.find(({ from, to }) => [from, to].includes(currency.id));
-  });
+  const showButtons = !!getAvailableProviders();
+  const availableOnSwap = currenciesAll.includes(currency.id);
 
   const history = useHistory();
   const buttonSharedTrackingFields = useMemo(
@@ -259,37 +281,11 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
     });
   }, [openModal, parentAccount, account, buttonSharedTrackingFields]);
 
-  const renderAction = ({
-    label,
-    onClick,
-    event,
-    eventProperties,
-    icon,
-    disabled,
-    tooltip,
-    accountActionsTestId,
-  }: RenderActionParams) => {
-    const Icon = icon;
-    const Action = (
-      <ActionDefault
-        disabled={disabled}
-        onClick={onClick}
-        event={event}
-        eventProperties={eventProperties}
-        iconComponent={Icon && <Icon size={14} overrideColor={contrastText} currency={currency} />}
-        labelComponent={label}
-        accountActionsTestId={accountActionsTestId}
-      />
-    );
-    if (tooltip) {
-      return <Tooltip content={tooltip}>{Action}</Tooltip>;
-    }
-    return Action;
-  };
-
   const manageActions: RenderActionParams[] = [
     ...manageList.map(item => ({
       ...item,
+      contrastText,
+      currency,
       eventProperties: {
         ...buttonSharedTrackingFields,
         ...item.eventProperties,
@@ -300,7 +296,9 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   const buyHeader = <BuyActionDefault onClick={() => onBuySell("buy")} />;
   const sellHeader = <SellActionDefault onClick={() => onBuySell("sell")} />;
   const swapHeader = <SwapActionDefault onClick={onSwap} />;
-  const manageActionsHeader = manageActions.map(item => renderAction(item));
+  const manageActionsHeader = manageActions.map(item => (
+    <ActionItem {...item} key={item.accountActionsTestId} />
+  ));
 
   const NonEmptyAccountHeader = (
     <FadeInButtonsContainer data-test-id="account-buttons-group" show={showButtons}>

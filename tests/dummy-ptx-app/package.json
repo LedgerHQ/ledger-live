@@ -1,0 +1,11 @@
+{
+  "name": "dummy-ptx-app",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "http-server"
+  },
+  "devDependencies": {
+    "http-server": "^14.0.0"
+  }
+}

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Platform } from "react-native";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import {
   useRemoteLiveAppContext,
@@ -19,7 +20,7 @@ import {
   languageSelector,
 } from "../../../reducers/settings";
 import { useSelector } from "react-redux";
-import { MAIN_BUTTON_SIZE } from "../../../components/TabBar/shared";
+import { MAIN_BUTTON_BOTTOM, MAIN_BUTTON_SIZE } from "../../../components/TabBar/shared";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 export type Props = StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenName.Earn>;
@@ -54,6 +55,8 @@ export function EarnScreen({ route }: Props) {
     }
   }, [localManifest, remoteManifest, manifest]);
 
+  const isAndroid = Platform.OS === "android";
+
   return manifest ? (
     <Flex
       /**
@@ -62,7 +65,8 @@ export function EarnScreen({ route }: Props) {
        */
       flex={1}
       pt={insets.top}
-      pb={MAIN_BUTTON_SIZE} // Avoid nav button at the bottom
+      pb={isAndroid ? MAIN_BUTTON_BOTTOM : MAIN_BUTTON_SIZE} // iOS calculates differently
+      backgroundColor={"background.main"} // Earn app bg color
     >
       <TrackScreen category="EarnDashboard" name="Earn" />
       <WebPTXPlayer

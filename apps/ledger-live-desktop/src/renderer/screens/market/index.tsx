@@ -10,6 +10,7 @@ import MarketList from "./MarketList";
 import SideDrawerFilter from "./SideDrawerFilter";
 import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
 import TrackPage from "~/renderer/analytics/TrackPage";
+import { useInitSupportedCounterValues } from "~/renderer/hooks/useInitSupportedCounterValues";
 
 const Container = styled(Flex).attrs({
   flex: "1",
@@ -71,6 +72,8 @@ export default function Market() {
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
   const starFilterOn = starred.length > 0;
 
+  useInitSupportedCounterValues();
+
   const updateSearch = useCallback(
     (value: string) => {
       refresh({ search: value, starred: [], liveCompatible: false });
@@ -79,6 +82,7 @@ export default function Market() {
   );
 
   const updateTimeRange = useCallback(
+    // @ts-expect-error i don't know how to type this Dropdown function
     ({ value }) => {
       refresh({ range: value });
     },
@@ -137,6 +141,7 @@ export default function Market() {
             <Dropdown
               label={t("common.range")}
               menuPortalTarget={document.body}
+              // @ts-expect-error I don't know what you want Dropdown
               onChange={updateTimeRange}
               options={timeRanges}
               value={timeRangeValue}

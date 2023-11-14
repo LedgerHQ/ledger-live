@@ -12,7 +12,7 @@ import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { setDrawer } from "~/renderer/drawers/Provider";
 
-type Props = {
+export type Props = {
   currentLanguage: Language;
   analyticsContext: string;
   deviceModelInfo?: DeviceModelInfo;
@@ -58,6 +58,14 @@ const ChangeDeviceLanguagePromptDrawer: React.FC<Props> = ({
     },
     [onError, analyticsContext],
   );
+
+  const getTextToDisplay = (key: "description" | "title") =>
+    t(`deviceLocalization.changeDeviceLanguagePrompt.${key}`, {
+      deviceName,
+      language: t(
+        `deviceLocalization.languages.${Languages[currentLanguage].deviceSupport?.label}`,
+      ),
+    });
 
   return (
     <Flex
@@ -107,17 +115,8 @@ const ChangeDeviceLanguagePromptDrawer: React.FC<Props> = ({
             });
             setInstallingLanguage(true);
           }}
-          titleWording={t("deviceLocalization.changeDeviceLanguagePrompt.title", {
-            language: t(
-              `deviceLocalization.languages.${Languages[currentLanguage].deviceSupport?.label}`,
-            ),
-            deviceName,
-          })}
-          descriptionWording={t("deviceLocalization.changeDeviceLanguagePrompt.description", {
-            language: t(
-              `deviceLocalization.languages.${Languages[currentLanguage].deviceSupport?.label}`,
-            ),
-          })}
+          titleWording={getTextToDisplay("title")}
+          descriptionWording={getTextToDisplay("description")}
         />
       )}
     </Flex>

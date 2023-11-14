@@ -41,10 +41,8 @@ export default function SelectPool({ navigation, route }: Props) {
   );
 
   const renderItem = useCallback(
-    ({ item }: { item: StakePool }) => (
-      <PoolRow account={account} pool={item} onPress={onItemPress} />
-    ),
-    [onItemPress, account],
+    ({ item }: { item: StakePool }) => <PoolRow pool={item} onPress={onItemPress} />,
+    [onItemPress],
   );
 
   return (

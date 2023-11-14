@@ -485,6 +485,16 @@ const desmos = {
   }),
 };
 
+const dydxMinimalTransactionAmount = new BigNumber(500);
+const dydx = {
+  ...generateGenericCosmosTest("dydx", false, {
+    minViableAmount: dydxMinimalTransactionAmount,
+    mutations: cosmosLikeMutations(dydxMinimalTransactionAmount),
+    testTimeout: 8 * 60 * 1000,
+    skipOperationHistory: true,
+  }),
+};
+
 const umeeMinimalTransactionAmount = new BigNumber(15000);
 const umee = {
   ...generateGenericCosmosTest("umee", false, {
@@ -520,6 +530,16 @@ const onomy = {
   ...generateGenericCosmosTest("onomy", false, {
     minViableAmount: onomyMinimalTransactionAmount,
     mutations: cosmosLikeMutations(onomyMinimalTransactionAmount),
+    testTimeout: 8 * 60 * 1000,
+    skipOperationHistory: true,
+  }),
+};
+
+const seiMinimalTransactionAmount = new BigNumber(5000);
+const sei = {
+  ...generateGenericCosmosTest("sei_network", false, {
+    minViableAmount: onomyMinimalTransactionAmount,
+    mutations: cosmosLikeMutations(seiMinimalTransactionAmount),
     testTimeout: 8 * 60 * 1000,
     skipOperationHistory: true,
   }),
@@ -575,11 +595,13 @@ export default {
   cosmos,
   osmosis,
   desmos,
+  dydx,
   umee,
   persistence,
   quicksilver,
   onomy,
   secretNetwork,
+  sei,
   stargaze,
   coreum,
   injective,

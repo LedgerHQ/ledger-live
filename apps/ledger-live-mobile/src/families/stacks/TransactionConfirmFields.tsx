@@ -26,7 +26,7 @@ const StacksField = ({
   return (
     <DataRow label={field.label}>
       <LText semiBold style={styles.text}>
-        {(field as ExtraDeviceTransactionField).value}
+        {(field as ExtraDeviceTransactionField).value as React.ReactNode}
       </LText>
     </DataRow>
   );

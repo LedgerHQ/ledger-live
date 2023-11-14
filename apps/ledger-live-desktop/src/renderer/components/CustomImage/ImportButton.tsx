@@ -1,5 +1,5 @@
 import React from "react";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { Flex, Text } from "@ledgerhq/react-ui";
 
 type Props = {
@@ -15,7 +15,6 @@ const Container = styled(Flex).attrs({
   px: 8,
   py: 10,
   borderRadius: 3,
-  bg: "neutral.c30",
   flexDirection: "row",
   justifyContent: "space-between",
   alignItems: "center",
@@ -25,13 +24,15 @@ const Container = styled(Flex).attrs({
 
 const ImportButton: React.FC<Props> = props => {
   const { text, children, Icon, onClick, testId } = props;
+  const { colors } = useTheme();
+
   return (
-    <Container onClick={onClick} data-test-id={testId}>
+    <Container bg={colors.opacityDefault.c05} onClick={onClick} data-test-id={testId}>
       <Text variant="large" fontWeight="semiBold">
         {text}
       </Text>
       {children}
-      <Flex bg="primary.c20" borderRadius={999} padding={5}>
+      <Flex bg={colors.opacityDefault.c05} borderRadius={999} padding={5}>
         <Icon color="primary.c80" size={24} />
       </Flex>
     </Container>

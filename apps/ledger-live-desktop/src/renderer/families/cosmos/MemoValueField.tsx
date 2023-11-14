@@ -23,7 +23,7 @@ const MemoValueField = ({
   invariant(transaction.family === "cosmos", "MemoTypeField: cosmos family expected");
   const bridge = getAccountBridge(account);
   const onMemoValueChange = useCallback(
-    memo => {
+    (memo: string) => {
       onChange(
         bridge.updateTransaction(transaction, {
           memo,

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-xrp",
-  "version": "6.27.19",
+  "version": "6.27.20",
   "description": "Ledger Hardware Wallet Ripple Application API",
   "keywords": [
     "Ledger",
@@ -33,7 +33,7 @@
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@types/jest": "^29.5.0",
-    "@types/node": "^18.15.3",
+    "@types/node": "^20.8.10",
     "documentation": "13.2.5",
     "jest": "^28.1.1",
     "rimraf": "^4.4.1",
@@ -49,7 +49,8 @@
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
-    "test": "jest"
+    "test": "jest",
+    "unimported": "unimported"
   },
   "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec"
 }

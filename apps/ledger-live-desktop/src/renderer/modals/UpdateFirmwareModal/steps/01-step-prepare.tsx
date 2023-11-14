@@ -132,7 +132,7 @@ const Body = ({
         )}
 
         <Text ff="Inter|Regular" textAlign="center" color="palette.text.shade100">
-          {t("manager.modal.confirmIdentifierText", { productName: deviceModel.productName })}
+          {t("manager.modal.confirmIdentifierText")}
         </Text>
       </>
     );

@@ -47,7 +47,7 @@ describe("swap/index", () => {
     test("should return version when SWAP_API_BASE contains one", () => {
       const result = getSwapAPIVersion();
 
-      expect(result).toBe(4);
+      expect(result).toBe(5);
     });
 
     test("should throw an error if no version in SWAP_API_BASE", () => {

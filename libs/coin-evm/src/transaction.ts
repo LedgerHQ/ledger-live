@@ -23,6 +23,7 @@ import type {
   FeeDataRaw,
   GasOptions,
   GasOptionsRaw,
+  Strategy,
 } from "./types";
 
 export const DEFAULT_GAS_LIMIT = new BigNumber(21000);
@@ -51,11 +52,10 @@ ${mode.toUpperCase()} ${
 const fromGasOptionsRaw = (gasOptions: GasOptionsRaw): GasOptions => {
   const gasOptionsFormatted: GasOptions = {} as GasOptions;
 
-  Object.keys(gasOptions).forEach(feeStrategy => {
-    const { gasPrice, maxFeePerGas, maxPriorityFeePerGas, nextBaseFee }: FeeDataRaw =
-      gasOptions[feeStrategy as keyof GasOptionsRaw];
+  Object.entries(gasOptions).forEach(([strategy, feeData]) => {
+    const { gasPrice, maxFeePerGas, maxPriorityFeePerGas, nextBaseFee } = feeData;
 
-    gasOptionsFormatted[feeStrategy as keyof GasOptions] = {
+    gasOptionsFormatted[strategy as Strategy] = {
       gasPrice: gasPrice ? new BigNumber(gasPrice) : null,
       maxFeePerGas: maxFeePerGas ? new BigNumber(maxFeePerGas) : null,
       maxPriorityFeePerGas: maxPriorityFeePerGas ? new BigNumber(maxPriorityFeePerGas) : null,
@@ -69,11 +69,10 @@ const fromGasOptionsRaw = (gasOptions: GasOptionsRaw): GasOptions => {
 const toGasOptionsRaw = (gasOptions: GasOptions): GasOptionsRaw => {
   const gasOptionsFormatted: GasOptionsRaw = {} as GasOptionsRaw;
 
-  Object.keys(gasOptions).forEach(feeStrategy => {
-    const { gasPrice, maxFeePerGas, maxPriorityFeePerGas, nextBaseFee }: FeeData =
-      gasOptions[feeStrategy as keyof GasOptions];
+  Object.entries(gasOptions).forEach(([strategy, feeData]) => {
+    const { gasPrice, maxFeePerGas, maxPriorityFeePerGas, nextBaseFee } = feeData;
 
-    gasOptionsFormatted[feeStrategy as keyof GasOptionsRaw] = {
+    gasOptionsFormatted[strategy as Strategy] = {
       gasPrice: gasPrice?.toFixed() ?? null,
       maxFeePerGas: maxFeePerGas?.toFixed() ?? null,
       maxPriorityFeePerGas: maxPriorityFeePerGas?.toFixed() ?? null,

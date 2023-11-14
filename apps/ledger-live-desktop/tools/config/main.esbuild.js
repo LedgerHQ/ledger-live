@@ -8,7 +8,7 @@ module.exports = {
   ...common,
   entryPoints: ["./src/index.ts"],
   entryNames: "main.bundle",
-  target: ["node12"],
+  target: ["node18"],
   platform: "node",
   format: "cjs",
   // Some modules have different exports signatures depending on the main field. (for instance bignumber.js)

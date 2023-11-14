@@ -28,7 +28,7 @@ import PasswordInput from "../../components/PasswordInput";
 import KeyboardView from "../../components/KeyboardView";
 import FailBiometrics from "./FailBiometrics";
 import KeyboardBackgroundDismiss from "../../components/KeyboardBackgroundDismiss";
-import { VIBRATION_PATTERN_ERROR } from "../../constants";
+import { VIBRATION_PATTERN_ERROR } from "@utils/constants";
 import { withTheme } from "../../colors";
 import type { Theme } from "../../colors";
 
@@ -75,31 +75,34 @@ type FormFooterProps = {
   colors: Theme["colors"];
 };
 
-class FormFooter extends PureComponent<FormFooterProps> {
-  render() {
-    const { inputFocused, passwordEmpty, onSubmit, passwordError, onPress } = this.props;
-    return inputFocused ? (
-      <TouchableWithoutFeedback>
-        <BaseButton
-          event="SubmitUnlock"
-          title={<Trans i18nKey="auth.unlock.login" />}
-          type="primary"
-          onPress={onSubmit}
-          containerStyle={styles.buttonContainer}
-          disabled={!!passwordError || passwordEmpty}
-          isFocused
-          useTouchable
-        />
-      </TouchableWithoutFeedback>
-    ) : (
-      <Touchable event="ForgetPassword" onPress={onPress}>
-        <LText semiBold style={styles.link} color="live">
-          <Trans i18nKey="auth.unlock.forgotPassword" />
-        </LText>
-      </Touchable>
-    );
-  }
-}
+const FormFooter = ({
+  inputFocused,
+  passwordEmpty,
+  onSubmit,
+  passwordError,
+  onPress,
+}: FormFooterProps) => {
+  return inputFocused ? (
+    <TouchableWithoutFeedback>
+      <BaseButton
+        event="SubmitUnlock"
+        title={<Trans i18nKey="auth.unlock.login" />}
+        type="primary"
+        onPress={onSubmit}
+        containerStyle={styles.buttonContainer}
+        disabled={!!passwordError || passwordEmpty}
+        isFocused
+        useTouchable
+      />
+    </TouchableWithoutFeedback>
+  ) : (
+    <Touchable event="ForgetPassword" onPress={onPress}>
+      <LText semiBold style={styles.link} color="live">
+        <Trans i18nKey="auth.unlock.forgotPassword" />
+      </LText>
+    </Touchable>
+  );
+};
 
 class AuthScreen extends PureComponent<Props, State> {
   state = {

@@ -75,7 +75,7 @@ function SelectAccountAndCurrencyDrawer(props: SelectAccountAndCurrencyDrawerPro
     return fuzzySearch(sortedCurrencies, searchValue);
   }, [searchValue, sortedCurrencies]);
   const handleCurrencySelected = useCallback(
-    currency => {
+    (currency: CryptoOrTokenCurrency) => {
       setDrawer(
         SelectAccountDrawer,
         {
@@ -126,6 +126,7 @@ function SelectAccountAndCurrencyDrawer(props: SelectAccountAndCurrencyDrawerPro
             onChange={setSearchValue}
           />
         </SearchInputContainer>
+        {/* @ts-expect-error compatibility issue betwenn CryptoOrTokenCurrency and Currency (which includes Fiat) and the SelectAccountDrawer components  */}
         <CurrencyList currencies={filteredCurrencies} onCurrencySelect={handleCurrencySelected} />
       </SelectorContent>
     </SelectAccountAndCurrencyDrawerContainer>

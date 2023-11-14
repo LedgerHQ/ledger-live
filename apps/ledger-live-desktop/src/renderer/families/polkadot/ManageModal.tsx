@@ -21,6 +21,7 @@ import WithdrawUnbondedIcon from "~/renderer/icons/Coins";
 import Text from "~/renderer/components/Text";
 import ElectionStatusWarning from "./ElectionStatusWarning";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
+import { ModalData } from "~/renderer/modals/types";
 const IconWrapper = styled.div`
   width: 32px;
   height: 32px;
@@ -104,7 +105,7 @@ const ManageModal = ({ account, source, ...rest }: Props) => {
   invariant(polkadotResources, "polkadot account expected");
   const { unlockedBalance, nominations } = polkadotResources;
   const onSelectAction = useCallback(
-    (onClose, name, params = {}) => {
+    (onClose: () => void, name: keyof ModalData, params = {}) => {
       onClose();
       dispatch(
         openModal(name, {

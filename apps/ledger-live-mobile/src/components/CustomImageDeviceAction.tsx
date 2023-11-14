@@ -15,6 +15,7 @@ import Button from "./wrappedUi/Button";
 import Link from "./wrappedUi/Link";
 import { screen, TrackScreen } from "../analytics";
 import { useStaxLoadImageDeviceAction } from "../hooks/deviceActions";
+import { SettingsSetLastSeenCustomImagePayload } from "../actions/types";
 
 type Props = {
   device: Device;
@@ -25,7 +26,7 @@ type Props = {
   onSkip?: () => void;
 };
 
-const analyticsScreenNameRefusedOnStax = "Lock screen cancelled on Ledger Stax";
+const analyticsScreenNameRefusedOnStax = "Lock screen cancelled on device";
 const analyticsRefusedOnStaxUploadAnotherEventProps = {
   button: "Upload another image",
 };
@@ -71,7 +72,7 @@ const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
   }, [setIsModalOpened]);
 
   const handleResult = useCallback(
-    lastSeenCustomImage => {
+    (lastSeenCustomImage: SettingsSetLastSeenCustomImagePayload) => {
       screen("The lock screen has successfully loaded");
       dispatch(setLastSeenCustomImage(lastSeenCustomImage));
       onResult && onResult(lastSeenCustomImage);
@@ -113,7 +114,9 @@ const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
               t,
               error,
               device,
-              ...(isRefusedOnStaxError ? { Icon: Icons.Warning, iconColor: "warning.c60" } : {}),
+              ...(isRefusedOnStaxError
+                ? { Icon: Icons.Warning, iconColor: "warning.c60", hasExportLogButton: false }
+                : {}),
             })}
             {}
             <Button

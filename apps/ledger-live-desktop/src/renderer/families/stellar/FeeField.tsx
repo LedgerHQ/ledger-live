@@ -10,6 +10,7 @@ import Alert from "~/renderer/components/Alert";
 import invariant from "invariant";
 import { Account } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/stellar/types";
+import BigNumber from "bignumber.js";
 
 const FeeField = ({
   onChange,
@@ -25,7 +26,7 @@ const FeeField = ({
   invariant(transaction.family === "stellar", "FeeField: stellar family expected");
   const bridge = getAccountBridge(account);
   const onFeeValueChange = useCallback(
-    fees => {
+    (fees: BigNumber) => {
       onChange(
         bridge.updateTransaction(transaction, {
           fees,

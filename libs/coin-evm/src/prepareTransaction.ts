@@ -1,20 +1,21 @@
-import { isEqual } from "lodash";
-import BigNumber from "bignumber.js";
-import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
-import { getAdditionalLayer2Fees, getEstimatedFees, isNftTransaction } from "./logic";
-import { EvmNftTransaction, Transaction as EvmTransaction, FeeData, GasOptions } from "./types";
-import { getTransactionData, getTypedTransaction } from "./transaction";
-import { validateRecipient } from "./getTransactionStatus";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import { isEqual } from "lodash";
 import { getNftCollectionMetadata } from "./api/nft";
 import { getNodeApi } from "./api/node/index";
+import { DEFAULT_NONCE } from "./createTransaction";
+import { validateRecipient } from "./getTransactionStatus";
+import { getAdditionalLayer2Fees, getEstimatedFees, isNftTransaction } from "./logic";
+import { getTransactionData, getTypedTransaction } from "./transaction";
+import { EvmNftTransaction, Transaction as EvmTransaction, FeeData, Strategy } from "./types";
 
 /**
  * Prepare basic coin transactions or smart contract interactions (other than live ERC20 transfers)
  * Should be used for transactions coming from the wallet API
  * Handling addition of gas limit
  */
-export const prepareCoinTransaction = async (
+const prepareCoinTransaction = async (
   account: Account,
   typedTransaction: EvmTransaction,
 ): Promise<EvmTransaction> => {
@@ -74,7 +75,7 @@ export const prepareCoinTransaction = async (
  * Prepare ERC20 transactions.
  * Handling addition of ERC20 transfer data and gas limit
  */
-export const prepareTokenTransaction = async (
+const prepareTokenTransaction = async (
   account: Account,
   tokenAccount: TokenAccount,
   typedTransaction: EvmTransaction,
@@ -122,7 +123,7 @@ export const prepareTokenTransaction = async (
  * Prepare ERC721/ERC1155 transactions.
  * Handling addition of NFT safeTransferFrom data and gas limit
  */
-export const prepareNftTransaction = async (
+const prepareNftTransaction = async (
   account: Account,
   typedTransaction: EvmNftTransaction & EvmTransaction,
 ): Promise<EvmTransaction> => {
@@ -197,7 +198,7 @@ export const prepareTransaction = async (
       };
     }
 
-    const gasOption = transaction.gasOptions?.[transaction.feesStrategy as keyof GasOptions];
+    const gasOption = transaction.gasOptions?.[transaction.feesStrategy as Strategy];
     return gasOption || nodeApi.getFeeData(currency, transaction);
   })();
 
@@ -224,12 +225,21 @@ export const prepareTransaction = async (
  * with the smart contract address as recipient and add the nonce
  * (which would change as well in the UI if it was done before that step)
  */
-export const prepareForSignOperation = async (
-  account: Account,
-  transaction: EvmTransaction,
-): Promise<EvmTransaction> => {
+export const prepareForSignOperation = async ({
+  account,
+  transaction,
+}: {
+  account: Account;
+  transaction: EvmTransaction;
+  isValidNonce?: boolean;
+}): Promise<EvmTransaction> => {
   const nodeApi = getNodeApi(account.currency);
-  const nonce = await nodeApi.getTransactionCount(account.currency, account.freshAddress);
+
+  const isValidNonce = transaction.nonce !== DEFAULT_NONCE;
+
+  const nonce = isValidNonce
+    ? transaction.nonce
+    : await nodeApi.getTransactionCount(account.currency, account.freshAddress);
 
   if (isNftTransaction(transaction)) {
     return {

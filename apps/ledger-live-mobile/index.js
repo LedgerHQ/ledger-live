@@ -32,7 +32,7 @@ import { languageSelector } from "./src/reducers/settings";
 import { store } from "./src/context/LedgerStore";
 
 if (__DEV__) {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires, import/no-extraneous-dependencies
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   require("react-native-performance-flipper-reporter").setupDefaultFlipperReporter();
 }
 
@@ -59,6 +59,8 @@ const excludedErrorName = [
   "GetAppAndVersionUnsupportedFormat",
   "BluetoothRequired",
   "ManagerDeviceLocked",
+  "LockedDeviceError",
+  "UnresponsiveDeviceError",
   // errors coming from the usage of a Transport implementation
   "HwTransportError",
   // other

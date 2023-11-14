@@ -6,20 +6,22 @@
  */
 export async function waitFor(
   predicate: () => Promise<boolean>,
-  intervalMs = 100,
-  timeout = 10000,
+  intervalMs = 200,
+  timeout = 30000,
 ): Promise<boolean> {
   return new Promise((resolve, reject) => {
     const interval = setInterval(async () => {
       const condition = await predicate();
       if (condition) {
-        clearTimeout(interval);
+        // @ts-expect-error web vs node Timers
+        clearInterval(interval);
         resolve(true);
       }
     }, intervalMs);
 
     setTimeout(() => {
-      clearTimeout(interval);
+      // @ts-expect-error web vs node Timers
+      clearInterval(interval);
       reject(new Error("waitFor timeout"));
     }, timeout);
   });

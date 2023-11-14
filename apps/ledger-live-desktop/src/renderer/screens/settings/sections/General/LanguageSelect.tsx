@@ -1,4 +1,3 @@
-import { DeviceModelId } from "@ledgerhq/devices";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
@@ -21,7 +20,9 @@ import {
   lastSeenDeviceSelector,
   useSystemLanguageSelector,
 } from "~/renderer/reducers/settings";
-import ChangeDeviceLanguagePromptDrawer from "./ChangeDeviceLanguagePromptDrawer";
+import ChangeDeviceLanguagePromptDrawer, {
+  Props as ChangeDeviceLanguagePromptDrawerProps,
+} from "./ChangeDeviceLanguagePromptDrawer";
 
 type ChangeLangArgs = { value: Language | null; label: string };
 
@@ -78,15 +79,14 @@ const LanguageSelect: React.FC<Props> = ({ disableLanguagePrompt }) => {
   }, [i18n, language]);
 
   const openDrawer = useCallback(
-    language => {
-      setDrawer(
+    (language?: Language | null) => {
+      setDrawer<ChangeDeviceLanguagePromptDrawerProps>(
         ChangeDeviceLanguagePromptDrawer,
         {
-          deviceModeInfo: lastSeenDevice,
+          deviceModelInfo: lastSeenDevice ?? undefined,
           analyticsContext: "Page LiveLanguageChange",
           onSuccess: refreshDeviceInfo,
           onError: refreshDeviceInfo,
-          deviceModelId: lastSeenDevice?.modelId ?? DeviceModelId.nanoX,
           currentLanguage: language ?? getInitialLanguageAndLocale().language,
         },
         {},
@@ -137,7 +137,12 @@ const LanguageSelect: React.FC<Props> = ({ disableLanguagePrompt }) => {
       <Track onUpdate event="LanguageSelect" currentRegion={selectedLanguage.value} />
 
       <Select
-        aria-label="Select language"
+        aria-label={
+          // we only set the aria lavel once the device languages are fully loaded and available
+          availableDeviceLanguages && availableDeviceLanguages.length > 0
+            ? "Select language"
+            : undefined
+        }
         small
         minWidth={260}
         isSearchable={false}

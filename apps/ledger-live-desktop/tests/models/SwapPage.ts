@@ -99,7 +99,23 @@ export class SwapPage {
     await this.destinationCurrencyDropdown.click();
   }
 
+  async waitForCurrenciesToExist() {
+    await this.page.getByRole("option");
+  }
+
+  async filterDestinationCurrencyDropdown(filter: string) {
+    await this.waitForCurrenciesToExist();
+    await this.destinationCurrencyDropdown.click();
+    await this.page.keyboard.type(filter);
+  }
+
+  async selectCurrencyFromCurrencyDropdown(textToSelect: string) {
+    await this.waitForCurrenciesToExist();
+    await this.page.getByRole("option").getByText(textToSelect).first().click();
+  }
+
   async selectCurrencyByName(accountName: string) {
+    await this.page.waitForTimeout(500); // TODO: Needs to be fixed once we have accessible element
     await this.currencyByName(accountName).click();
   }
 
@@ -109,6 +125,7 @@ export class SwapPage {
 
   async reverseSwapPair() {
     await this.reverseSwapPairButton.click();
+    await this.page.waitForTimeout(500); // TODO: Needs to be fixed once we have accessible element
   }
 
   async addDestinationAccount() {

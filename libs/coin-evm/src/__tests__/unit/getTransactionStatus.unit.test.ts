@@ -177,11 +177,10 @@ describe("EVM Family", () => {
         expect(res.errors).toEqual({});
       });
 
-      it("should detect tx without amount (because of useAllAmount) but from tokenAccount and not return error", async () => {
+      it("should detect tx without amount from tokenAccount and return error", async () => {
         const tx = {
           ...eip1559Tx,
           amount: new BigNumber(0),
-          useAllAmount: true,
           subAccountId: tokenAccount.id,
         };
         const res = await getTransactionStatus(
@@ -198,7 +197,11 @@ describe("EVM Family", () => {
           tx,
         );
 
-        expect(res.errors).toEqual({});
+        expect(res.errors).toEqual(
+          expect.objectContaining({
+            amount: new AmountRequired(),
+          }),
+        );
       });
 
       it("should detect account not having enough balance for a tx and have an error", async () => {
@@ -234,6 +237,17 @@ describe("EVM Family", () => {
 
           it("should detect a gasLimit = 0 and have an error", async () => {
             const tx: Transaction = { ...defaultTx, gasLimit: new BigNumber(0) };
+            const res = await getTransactionStatus(account, tx);
+
+            expect(res.errors).toEqual(
+              expect.objectContaining({
+                gasLimit: new FeeNotLoaded(),
+              }),
+            );
+          });
+
+          it("should detect a customGasLimit = 0 and have an error", async () => {
+            const tx: Transaction = { ...defaultTx, customGasLimit: new BigNumber(0) };
             const res = await getTransactionStatus(account, tx);
 
             expect(res.errors).toEqual(
@@ -297,6 +311,30 @@ describe("EVM Family", () => {
               }),
             );
           });
+
+          it("should detect custom gas limit being too low in a tx and have an error", async () => {
+            const tx: Transaction = { ...defaultTx, customGasLimit: new BigNumber(20000) }; // min should be 21000
+            const res = await getTransactionStatus(account, tx);
+
+            expect(res.errors).toEqual(
+              expect.objectContaining({
+                gasLimit: new GasLessThanEstimate(),
+              }),
+            );
+          });
+
+          it("should detect customGasLimit being lower than gasLimit and warn", async () => {
+            const response = await getTransactionStatus(account, {
+              ...defaultTx,
+              customGasLimit: defaultTx.gasLimit.minus(1),
+            });
+
+            expect(response.warnings).toEqual(
+              expect.objectContaining({
+                gasLimit: new GasLessThanEstimate(),
+              }),
+            );
+          });
         });
       });
 
@@ -328,19 +366,6 @@ describe("EVM Family", () => {
             expect(response.errors).toEqual(
               expect.objectContaining({
                 maxPriorityFee: new PriorityFeeHigherThanMaxFee(),
-              }),
-            );
-          });
-
-          it("should detect customGasLimit being lower than gasLimit and warn", async () => {
-            const response = await getTransactionStatus(account, {
-              ...eip1559Tx,
-              customGasLimit: eip1559Tx.gasLimit.minus(1),
-            });
-
-            expect(response.warnings).toEqual(
-              expect.objectContaining({
-                gasLimit: new GasLessThanEstimate(),
               }),
             );
           });

@@ -8,7 +8,9 @@ setSupportedCurrencies([
   "secret_network",
   "umee",
   "desmos",
+  "dydx",
   "onomy",
+  "sei_network",
   "quicksilver",
   "persistence",
   "avalanche_c_chain",
@@ -82,4 +84,7 @@ setSupportedCurrencies([
   "telos_evm",
   "coreum",
   "injective",
+  "casper",
+  "neon_evm",
+  "lukso",
 ]);

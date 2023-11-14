@@ -75,6 +75,7 @@ export const ManagerFirmwareNotEnoughSpaceError = createCustomErrorClass(
 export const ManagerNotEnoughSpaceError = createCustomErrorClass("ManagerNotEnoughSpace");
 export const ManagerUninstallBTCDep = createCustomErrorClass("ManagerUninstallBTCDep");
 export const NetworkDown = createCustomErrorClass("NetworkDown");
+export const NetworkError = createCustomErrorClass("NetworkError");
 export const NoAddressesFound = createCustomErrorClass("NoAddressesFound");
 export const NotEnoughBalance = createCustomErrorClass("NotEnoughBalance");
 export const NotEnoughBalanceToDelegate = createCustomErrorClass("NotEnoughBalanceToDelegate");
@@ -139,6 +140,7 @@ export const WrongAppForCurrency = createCustomErrorClass("WrongAppForCurrency")
 export const ETHAddressNonEIP = createCustomErrorClass("ETHAddressNonEIP");
 export const CantScanQRCode = createCustomErrorClass("CantScanQRCode");
 export const FeeNotLoaded = createCustomErrorClass("FeeNotLoaded");
+export const FeeNotLoadedSwap = createCustomErrorClass("FeeNotLoadedSwap");
 export const FeeRequired = createCustomErrorClass("FeeRequired");
 export const FeeTooHigh = createCustomErrorClass("FeeTooHigh");
 export const PendingOperation = createCustomErrorClass("PendingOperation");
@@ -149,6 +151,11 @@ export const GenuineCheckFailed = createCustomErrorClass("GenuineCheckFailed");
 export const LedgerAPI4xx = createCustomErrorClass("LedgerAPI4xx");
 export const LedgerAPI5xx = createCustomErrorClass("LedgerAPI5xx");
 export const FirmwareOrAppUpdateRequired = createCustomErrorClass("FirmwareOrAppUpdateRequired");
+
+// SpeedUp / Cancel EVM tx
+export const ReplacementTransactionUnderpriced = createCustomErrorClass(
+  "ReplacementTransactionUnderpriced",
+);
 
 // Bitcoin family
 export const OpReturnDataSizeLimit = createCustomErrorClass("OpReturnSizeLimit");

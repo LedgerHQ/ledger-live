@@ -1,7 +1,7 @@
 import React, { useCallback, useRef } from "react";
 import { IconsLegacy, Alert as AlertBox, Flex } from "@ledgerhq/native-ui";
 import { Alert, TouchableWithoutFeedback, View } from "react-native";
-import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/provider";
+import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/FeatureFlagsContext";
 import { groupedFeatures } from "@ledgerhq/live-common/featureFlags/groupedFeatures";
 import { TrackScreen } from "../../../analytics";
 import SettingsRow from "../../../components/SettingsRow";

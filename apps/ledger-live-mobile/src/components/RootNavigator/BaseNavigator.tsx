@@ -1,5 +1,3 @@
-// FIXME: to update when implementing edit transaction on evm
-
 import React, { useMemo } from "react";
 import {
   createStackNavigator,
@@ -10,7 +8,6 @@ import {
 import { useTranslation } from "react-i18next";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { useSelector } from "react-redux";
 
 import { ScreenName, NavigatorName } from "../../const";
@@ -85,8 +82,7 @@ import {
   NavigationHeaderCloseButtonAdvanced,
 } from "../NavigationHeaderCloseButton";
 import { RootDrawer } from "../RootDrawer/RootDrawer";
-// to keep until edit transaction on evm is implemented
-// import EditTransactionNavigator from "../../families/ethereum/EditTransactionFlow/EditTransactionNavigator";
+import EditTransactionNavigator from "../../families/evm/EditTransactionFlow/EditTransactionNavigator";
 import { DrawerProps } from "../RootDrawer/types";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
@@ -102,7 +98,6 @@ export default function BaseNavigator() {
   >();
   const { colors } = useTheme();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
-  const walletConnectLiveApp = useFeature("walletConnectLiveApp");
   const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
   const isAccountsEmpty = useSelector(hasNoAccountsSelector);
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector) && isAccountsEmpty;
@@ -216,6 +211,14 @@ export default function BaseNavigator() {
           name={NavigatorName.SignMessage}
           component={SignMessageNavigator}
           options={{ headerShown: false }}
+          listeners={({ route }) => ({
+            beforeRemove: () => {
+              const onClose = route.params?.onClose;
+              if (onClose && typeof onClose === "function") {
+                onClose();
+              }
+            },
+          })}
         />
         <Stack.Screen
           name={NavigatorName.SignTransaction}
@@ -255,17 +258,10 @@ export default function BaseNavigator() {
           }}
           listeners={({ route }) => ({
             beforeRemove: () => {
-              /**
-              react-navigation workaround try to fetch params from current route params
-              or fallback to child navigator route params
-              since this listener is on top of another navigator
-            */
-              const onError =
-                route.params?.onError || (route.params as unknown as typeof route)?.params?.onError;
-              // @TODO This route.params.error mechanism is deprecated, no part of the code is currently using it
-              // WalletAPI are suggesting they will rework that at some point
-              if (onError && typeof onError === "function" && route.params.error)
-                onError(route.params.error);
+              const onClose = route.params?.onClose;
+              if (onClose && typeof onClose === "function") {
+                onClose();
+              }
             },
           })}
         />
@@ -430,16 +426,15 @@ export default function BaseNavigator() {
             headerLeft: () => null,
           }}
         />
-        {walletConnectLiveApp?.enabled && (
-          <Stack.Screen
-            name={NavigatorName.WalletConnect}
-            component={WalletConnectLiveAppNavigator}
-            options={{
-              headerShown: false,
-            }}
-            {...noNanoBuyNanoWallScreenOptions}
-          />
-        )}
+
+        <Stack.Screen
+          name={NavigatorName.WalletConnect}
+          component={WalletConnectLiveAppNavigator}
+          options={{
+            headerShown: false,
+          }}
+          {...noNanoBuyNanoWallScreenOptions}
+        />
 
         <Stack.Screen
           name={NavigatorName.NotificationCenter}
@@ -537,12 +532,11 @@ export default function BaseNavigator() {
             headerLeft: () => null,
           }}
         />
-        {/* to keep until edit transaction on evm is implemented */}
-        {/* <Stack.Screen
-          name={NavigatorName.EditTransaction}
+        <Stack.Screen
+          name={NavigatorName.EvmEditTransaction}
           options={{ headerShown: false }}
           component={EditTransactionNavigator}
-        /> */}
+        />
       </Stack.Navigator>
     </>
   );

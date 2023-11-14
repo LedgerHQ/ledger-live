@@ -84,10 +84,11 @@ export const getMinimumAmountToBond = (
  *
  * @param {PolkadotAccount} a
  */
-export const hasMinimumBondBalance = (a: PolkadotAccount): boolean => {
+export const hasMinimumBondBalance = (account: PolkadotAccount): boolean => {
   const { minimumBondBalance } = getCurrentPolkadotPreloadData();
   return (
-    !a.polkadotResources || a.polkadotResources.lockedBalance.gte(new BigNumber(minimumBondBalance))
+    !account.polkadotResources ||
+    account.polkadotResources.lockedBalance.gte(new BigNumber(minimumBondBalance))
   );
 };
 
@@ -132,10 +133,10 @@ export const canUnbond = (a: PolkadotAccount): boolean => {
 
 /**
  * Returns true if an account can nominate
- *
- * @param {PolkadotAccount} a
  */
-export const canNominate = (a: PolkadotAccount): boolean => isController(a);
+export const canNominate = (account: PolkadotAccount): boolean => {
+  return isController(account) && hasMinimumBondBalance(account);
+};
 
 /**
  * Returns true if account must do a first bond - false for a bond extra

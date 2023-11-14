@@ -23,6 +23,9 @@ on:
         description: true if the PR is in draft
         required: false
         default: "false"
+      prNumber:
+        description: reference to the PR
+        required: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
@@ -45,6 +48,9 @@ jobs:
           git config user.name "live-github-bot[bot]"
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
+        with:
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - uses: ./tools/actions/composites/setup-build-desktop
         id: build-desktop
         with:
@@ -53,15 +59,23 @@ jobs:
           aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: Build the app
         run: pnpm build:lld --api="http://127.0.0.1:${{ steps.build-desktop.outputs.port }}" --token="yolo" --team="foo"
+        env:
+          GENERATE_METAFILES: 1
       - name: Upload linux app
         uses: actions/upload-artifact@v3
         with:
           name: ${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
           path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
+      - name: Upload bundle metafiles
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: linux-js-bundle-metafiles
+          path: ${{ github.workspace }}/apps/ledger-live-desktop/metafile.*
 
   build-desktop-app-windows:
     name: "Build Ledger Live Desktop (Windows)"
-    runs-on: [ledger-live-4xlarge-windows-2022]
+    runs-on: [windows-latest]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
@@ -77,6 +91,8 @@ jobs:
         uses: ./tools/actions/composites/setup-toolchain
         with:
           install_dotnet: true
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - uses: ./tools/actions/composites/setup-build-desktop
         id: build-desktop
         with:
@@ -87,15 +103,23 @@ jobs:
         run: |
           pnpm build:lld --api="http://127.0.0.1:${{ steps.build-desktop.outputs.port }}" --token="yolo" --team="foo"
         shell: bash
+        env:
+          GENERATE_METAFILES: 1
       - name: Upload windows
         uses: actions/upload-artifact@v3
         with:
           name: ${{ steps.build-desktop.outputs.version }}-win-x64.exe
           path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-win-x64.exe
+      - name: Upload bundle metafiles
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: windows-js-bundle-metafiles
+          path: ${{ github.workspace }}/apps/ledger-live-desktop/metafile.*
 
   build-desktop-app-macos:
     name: "Build Ledger Live Desktop (Mac OS X)"
-    runs-on: [m1, ARM64]
+    runs-on: [macos-latest]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
@@ -111,7 +135,8 @@ jobs:
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
         with:
-          pnpm_dest: ${{ runner.temp }}/setup-pnpm
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - uses: ./tools/actions/composites/setup-build-desktop
         id: build-desktop
         with:
@@ -121,17 +146,54 @@ jobs:
       - name: Build the app
         run: |
           pnpm build:lld --api="http://127.0.0.1:${{ steps.build-desktop.outputs.port }}" --token="yolo" --team="foo"
+        env:
+          GENERATE_METAFILES: 1
       - name: Upload macOS app
         uses: actions/upload-artifact@v3
         with:
           name: ${{ steps.build-desktop.outputs.version }}-mac.dmg
           path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-mac.dmg
+      - name: Upload bundle metafiles
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: mac-js-bundle-metafiles
+          path: ${{ github.workspace }}/apps/ledger-live-desktop/metafile.*
 
   report:
     needs: [build-desktop-app-linux, build-desktop-app-macos, build-desktop-app-windows]
     runs-on: ubuntu-latest
     if: always() && !cancelled() && github.event_name == 'workflow_dispatch'
     steps:
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+        with:
+          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
+          base: ${{ inputs.base_ref }}
+          persist-credentials: false
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+      - uses: actions/download-artifact@v3
+        with:
+          name: linux-js-bundle-metafiles
+          path: linux-js-bundle-metafiles
+      - uses: actions/download-artifact@v3
+        with:
+          name: windows-js-bundle-metafiles
+          path: windows-js-bundle-metafiles
+      - uses: actions/download-artifact@v3
+        with:
+          name: mac-js-bundle-metafiles
+          path: mac-js-bundle-metafiles
+      - uses: ./tools/actions/desktop-build-checks
+        if: inputs.prNumber != ''
+        with:
+          token: ${{ steps.generate-token.outputs.token }}
+          baseBranch: ${{ inputs.base_ref || 'develop' }}
+          prNumber: ${{ inputs.prNumber }}
       - uses: actions/github-script@v6
         name: build summary
         with:

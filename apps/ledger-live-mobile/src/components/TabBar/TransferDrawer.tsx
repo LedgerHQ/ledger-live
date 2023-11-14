@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { ScrollView } from "react-native-gesture-handler";
 import { Flex, Text, Box } from "@ledgerhq/native-ui";
-import { StyleProp, ViewStyle } from "react-native";
+import { Linking, StyleProp, ViewStyle } from "react-native";
 import { snakeCase } from "lodash";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
@@ -18,7 +18,9 @@ import SetupDeviceBanner from "../SetupDeviceBanner";
 import { track, useAnalytics } from "../../analytics";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import useQuickActions from "../../hooks/useQuickActions";
-import { PTX_SERVICES_TOAST_ID } from "../../constants";
+import { PTX_SERVICES_TOAST_ID } from "@utils/constants";
+
+import { useQuickAccessURI } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 
 type ButtonItem = {
   title: string;
@@ -37,7 +39,7 @@ type ButtonItem = {
 export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequestingToBeOpened">) {
   const navigation = useNavigation();
   const {
-    quickActionsList: { SEND, RECEIVE, BUY, SELL, SWAP, STAKE, WALLET_CONNECT },
+    quickActionsList: { SEND, RECEIVE, BUY, SELL, SWAP, STAKE, RECOVER },
   } = useQuickActions();
   const { t } = useTranslation();
   const { pushToast, dismissToast } = useToasts();
@@ -54,6 +56,10 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
     [ptxServiceCtaExchangeDrawer],
   );
 
+  const recoverConfig = useFeature("protectServicesMobile");
+
+  const quickAccessURI = useQuickAccessURI(recoverConfig);
+
   const onNavigate = useCallback(
     (name: string, options?: object) => {
       (navigation as StackNavigationProp<{ [key: string]: object | undefined }>).navigate(
@@ -64,6 +70,12 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
     },
     [navigation, onClose],
   );
+  const onNavigateRecover = useCallback(() => {
+    if (quickAccessURI) {
+      Linking.canOpenURL(quickAccessURI).then(() => Linking.openURL(quickAccessURI));
+    }
+    onClose?.();
+  }, [onClose, quickAccessURI]);
 
   const buttonsList: ButtonItem[] = [
     {
@@ -100,7 +112,6 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       },
       title: t("transfer.buy.title"),
       description: t("transfer.buy.description"),
-      tag: t("common.popular"),
       Icon: BUY.icon,
       onPress: () => onNavigate(...BUY.route),
       onDisabledPress: () => {
@@ -170,6 +181,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       title: t("transfer.swap.title"),
       description: t("transfer.swap.description"),
       Icon: SWAP.icon,
+      tag: t("common.popular"),
       onPress: () => onNavigate(...SWAP.route),
       onDisabledPress: () => {
         if (isPtxServiceCtaExchangeDrawerDisabled) {
@@ -187,20 +199,21 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       testID: "swap-transfer-button",
     },
 
-    ...(WALLET_CONNECT
+    ...(RECOVER
       ? [
           {
             eventProperties: {
-              button: "transfer_walletConnect",
+              button: "transfer_recover",
               page,
               drawer: "trade",
             },
-            title: t("transfer.walletConnect.title"),
-            description: t("transfer.walletConnect.description"),
-            Icon: WALLET_CONNECT.icon,
-            onPress: () => onNavigate(...WALLET_CONNECT.route),
-            disabled: WALLET_CONNECT.disabled,
-            testID: "transfer-walletconnect-button",
+            tag: t("transfer.recover.tag"),
+            title: t("transfer.recover.title"),
+            description: t("transfer.recover.description"),
+            Icon: RECOVER.icon,
+            onPress: () => onNavigateRecover(),
+            disabled: RECOVER.disabled,
+            testID: "transfer-recover-button",
           },
         ]
       : []),

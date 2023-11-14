@@ -67,7 +67,7 @@ function StakingAmount({ navigation, route }: Props) {
     });
   }, [navigation, route.params, bridge, value, max]);
   const onChange = useCallback(
-    amount => {
+    (amount: BigNumber) => {
       if (!amount.isNaN()) {
         setValue(amount);
         updateTransaction && updateTransaction(oldTx => ({ ...oldTx, amount }));

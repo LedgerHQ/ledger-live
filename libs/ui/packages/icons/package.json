@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/icons-ui",
   "description": "Icons used by the Ledger design system.",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -44,7 +44,8 @@
   "scripts": {
     "build": "pnpm run clean && node scripts/build && node scripts/buildLegacy && tsc --noEmit false && node scripts/transpile",
     "prepublishOnly": "pnpm run build",
-    "clean": "rimraf react native reactLegacy nativeLegacy src/react src/native src/reactLegacy src/nativeLegacy"
+    "clean": "rimraf react native reactLegacy nativeLegacy src/react src/native src/reactLegacy src/nativeLegacy",
+    "unimported": "unimported"
   },
   "peerDependencies": {
     "@types/react": "*",
@@ -60,16 +61,16 @@
   "devDependencies": {
     "@svgr/core": "^5.5.0",
     "@svgr/plugin-svgo": "^5.5.0",
-    "@types/react": "^17.0.53",
-    "@types/react-dom": "^17.0.11",
-    "@types/react-native": "^0.65.27",
+    "@types/react": "^18.2.21",
+    "@types/react-dom": "^18.2.13",
+    "@types/react-native": "^0.72.0",
     "@types/styled-components": "^5.1.14",
     "@types/styled-components-react-native": "^5.1.3",
     "@types/styled-system": "^5.1.13",
     "camelcase": "^6.2.1",
     "esbuild": "^0.19.0",
     "glob": "^7.2.0",
-    "react": "^18",
+    "react": "^18.2.0",
     "react-native-svg": "13.4.0",
     "rimraf": "^4.4.1",
     "styled-system": "^5.1.5",
