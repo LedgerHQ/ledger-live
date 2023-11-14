@@ -4,6 +4,12 @@ import { Transaction as EvmTransaction } from "./types";
 import { DEFAULT_GAS_LIMIT } from "./transaction";
 
 /**
+ * arbitrary default value for a new transaction nonce
+ * the actual nonce will be set by `prepareForSignOperation`
+ */
+export const DEFAULT_NONCE = -1;
+
+/**
  * EVM Transaction factory.
  * By default the transaction is an EIP-1559 transaction.
  * @see prepareTransaction that will make sure it's compatible or not
@@ -17,7 +23,7 @@ export const createTransaction: AccountBridge<EvmTransaction>["createTransaction
   maxFeePerGas: new BigNumber(0),
   maxPriorityFeePerGas: new BigNumber(0),
   gasLimit: DEFAULT_GAS_LIMIT,
-  nonce: account.operationsCount + 1,
+  nonce: DEFAULT_NONCE,
   chainId: (account as Account).currency?.ethereumLikeInfo?.chainId || 0,
   feesStrategy: "medium",
   type: 2,

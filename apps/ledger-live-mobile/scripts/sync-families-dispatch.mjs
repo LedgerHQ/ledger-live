@@ -29,6 +29,7 @@ const targets = [
   "ReceiveConfirmationPostAlert",
   "ConnectDevice",
   "NoAssociatedAccounts",
+  "EditOperationPanel",
 ];
 
 async function genTarget(target) {
