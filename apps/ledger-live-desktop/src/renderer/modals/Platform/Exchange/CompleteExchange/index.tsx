@@ -1,6 +1,6 @@
 import React from "react";
 import Modal from "~/renderer/components/Modal";
-import Body from "./Body";
+import ModalBody from "./ModalBody";
 
 const CompleteExchange = () => {
   return (
@@ -8,7 +8,7 @@ const CompleteExchange = () => {
       name="MODAL_PLATFORM_EXCHANGE_COMPLETE"
       centered
       preventBackdropClick
-      render={({ data, onClose }) => <Body onClose={onClose} data={data} />}
+      render={({ data, onClose }) => <ModalBody onClose={onClose} data={data} />}
     />
   );
 };
