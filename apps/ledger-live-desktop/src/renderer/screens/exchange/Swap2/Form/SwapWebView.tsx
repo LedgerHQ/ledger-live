@@ -26,11 +26,15 @@ export type SwapProps = {
   provider: string;
   fromAccountId: string;
   fromTokenId: string;
+  fromCurrencyId: string;
+  fromParentAccountId: string;
   toAccountId: string;
   toTokenId: string;
+  toCurrencyId: string;
   fromAmount: string;
   fromAmountWei: string;
   toAmountWei?: string;
+  walletAddress: string;
   quoteId: string;
   rate: string;
   feeStrategy: string;
