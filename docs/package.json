@@ -30,7 +30,7 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@types/node": "^20.6.5",
+    "@types/node": "^20.8.10",
     "eslint-config-next": "13.5.4",
     "typescript": "^5.2.2"
   }

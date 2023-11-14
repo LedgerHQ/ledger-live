@@ -35,7 +35,7 @@
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@types/jest": "^29.5.0",
-    "@types/node": "^18.15.3",
+    "@types/node": "^20.8.10",
     "documentation": "13.2.5",
     "jest": "^28.1.1",
     "rimraf": "^4.4.1",

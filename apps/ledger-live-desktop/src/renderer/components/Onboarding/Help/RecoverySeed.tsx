@@ -32,6 +32,7 @@ export function RecoverySeed(props: { handleNextInDrawer: () => void }) {
           </Text>
           <FakeLink onClick={onClickLink}>
             <Text
+              display="contents"
               mt="8px"
               color="neutral.c100"
               ff="Inter|Regular"
