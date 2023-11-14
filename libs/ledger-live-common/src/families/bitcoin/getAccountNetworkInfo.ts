@@ -18,7 +18,6 @@ export function avoidDups(nums: Array<BigNumber>): Array<BigNumber> {
 export async function getAccountNetworkInfo(account: Account): Promise<NetworkInfo> {
   const walletAccount = getWalletAccount(account);
   const rawFees = await walletAccount.xpub.explorer.getFees();
-  const relayFee = await walletAccount.xpub.explorer.getRelayFee();
   // Convoluted logic to convert from:
   // { "2": 2435, "3": 1241, "6": 1009, "last_updated": 1627973170 }
   // to:
@@ -47,7 +46,6 @@ export async function getAccountNetworkInfo(account: Account): Promise<NetworkIn
       feePerByte,
     })),
     defaultFeePerByte: feesPerByte[Math.floor(feesPerByte.length / 2)] || new BigNumber(0),
-    relayFee,
   };
   return {
     family: "bitcoin",
