@@ -286,24 +286,28 @@ export function getAltStatusMessage(code: number): string | undefined | null {
  * Error thrown when a device returned a non success status.
  * the error.statusCode is one of the `StatusCodes` exported by this library.
  */
-export function TransportStatusError(statusCode: number): void {
-  const statusText =
-    Object.keys(StatusCodes).find(k => StatusCodes[k] === statusCode) || "UNKNOWN_ERROR";
-  const smsg = getAltStatusMessage(statusCode) || statusText;
-  const statusCodeStr = statusCode.toString(16);
-  const message = `Ledger device: ${smsg} (0x${statusCodeStr})`;
+export class TransportStatusError extends Error {
+  statusCode: number;
+  statusText: string;
 
-  // Maps to a LockedDeviceError
-  if (statusCode === StatusCodes.LOCKED_DEVICE) {
-    throw new LockedDeviceError(message);
+  constructor(statusCode: number) {
+    const statusText =
+      Object.keys(StatusCodes).find(k => StatusCodes[k] === statusCode) || "UNKNOWN_ERROR";
+    const smsg = getAltStatusMessage(statusCode) || statusText;
+    const statusCodeStr = statusCode.toString(16);
+    const message = `Ledger device: ${smsg} (0x${statusCodeStr})`;
+
+    // Maps to a LockedDeviceError
+    if (statusCode === StatusCodes.LOCKED_DEVICE) {
+      throw new LockedDeviceError(message);
+    }
+
+    super(message);
+    this.name = "TransportStatusError";
+
+    this.statusCode = statusCode;
+    this.statusText = statusText;
   }
-
-  this.name = "TransportStatusError";
-  this.message = message;
-  this.stack = new Error(message).stack;
-  this.statusCode = statusCode;
-  this.statusText = statusText;
 }
-TransportStatusError.prototype = new Error();
 
 addCustomErrorDeserializer("TransportStatusError", e => new TransportStatusError(e.statusCode));
