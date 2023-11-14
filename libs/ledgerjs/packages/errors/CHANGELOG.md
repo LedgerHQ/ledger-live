@@ -1,5 +1,11 @@
 # @ledgerhq/errors
 
+## 6.15.1-nightly.0
+
+### Patch Changes
+
+- [#4987](https://github.com/LedgerHQ/ledger-live/pull/4987) [`e63205b850`](https://github.com/LedgerHQ/ledger-live/commit/e63205b85071538ed2431157a12818d7a8f0ffa9) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - add 10s timeout to estimate gas
+
 ## 6.15.0
 
 ### Minor Changes

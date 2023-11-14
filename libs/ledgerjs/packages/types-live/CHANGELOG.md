@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.42.1-nightly.1
+
+### Patch Changes
+
+- [#5070](https://github.com/LedgerHQ/ledger-live/pull/5070) [`a4299c5d62`](https://github.com/LedgerHQ/ledger-live/commit/a4299c5d629cd56e6e6795adaa14978ae2b90f42) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Remove walletConnectLiveApp featurFlag
+
 ## 6.42.1-nightly.0
 
 ### Patch Changes

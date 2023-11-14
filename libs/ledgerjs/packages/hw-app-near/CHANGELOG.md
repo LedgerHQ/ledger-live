@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-near
 
+## 6.27.16-nightly.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.29.1-nightly.0
+
 ## 6.27.15
 
 ### Patch Changes

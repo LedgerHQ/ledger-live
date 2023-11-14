@@ -1,5 +1,33 @@
 # ledger-live-desktop
 
+## 2.72.0-nightly.1
+
+### Minor Changes
+
+- [#5375](https://github.com/LedgerHQ/ledger-live/pull/5375) [`b05b4825fc`](https://github.com/LedgerHQ/ledger-live/commit/b05b4825fcfa8f8602ad45adce6d3fe689c847fa) Thanks [@nparigi-ledger](https://github.com/nparigi-ledger)! - Fix link in LLD Onboarding
+
+### Patch Changes
+
+- [#5334](https://github.com/LedgerHQ/ledger-live/pull/5334) [`b3ac48b221`](https://github.com/LedgerHQ/ledger-live/commit/b3ac48b221b8169f5544977974d886266fb2e400) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: adding logs to FirmwareUpdate component
+
+- [#4987](https://github.com/LedgerHQ/ledger-live/pull/4987) [`e63205b850`](https://github.com/LedgerHQ/ledger-live/commit/e63205b85071538ed2431157a12818d7a8f0ffa9) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - add 10s timeout to estimate gas
+
+- [#5366](https://github.com/LedgerHQ/ledger-live/pull/5366) [`043619e807`](https://github.com/LedgerHQ/ledger-live/commit/043619e807dfa355e75054dad0e178b798f962a3) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Fix disconnected device drawer during stax ESC
+
+- Updated dependencies [[`98739b2007`](https://github.com/LedgerHQ/ledger-live/commit/98739b2007ee33ad675881cd824056a41b2907f6), [`a150321fc9`](https://github.com/LedgerHQ/ledger-live/commit/a150321fc90a5256144316ce20f071885065a6d9), [`1b72bebc07`](https://github.com/LedgerHQ/ledger-live/commit/1b72bebc07da1a5be6f16d1b329f5e26c30311f0), [`d53359ee99`](https://github.com/LedgerHQ/ledger-live/commit/d53359ee994d0f06b4c20b382ec471c2a38d02a8), [`a4299c5d62`](https://github.com/LedgerHQ/ledger-live/commit/a4299c5d629cd56e6e6795adaa14978ae2b90f42), [`e63205b850`](https://github.com/LedgerHQ/ledger-live/commit/e63205b85071538ed2431157a12818d7a8f0ffa9)]:
+  - @ledgerhq/live-common@33.1.1-nightly.1
+  - @ledgerhq/types-live@6.42.1-nightly.1
+  - @ledgerhq/errors@6.15.1-nightly.0
+  - @ledgerhq/coin-evm@0.10.1-nightly.1
+  - @ledgerhq/coin-framework@0.8.2-nightly.1
+  - @ledgerhq/domain-service@1.1.15-nightly.1
+  - @ledgerhq/devices@8.0.9-nightly.0
+  - @ledgerhq/hw-transport@6.29.1-nightly.0
+  - @ledgerhq/hw-transport-http@6.28.5-nightly.0
+  - @ledgerhq/hw-transport-node-hid-singleton@6.29.1-nightly.0
+  - @ledgerhq/hw-transport-vault@1.1.5-nightly.0
+  - @ledgerhq/live-network@1.1.9-nightly.0
+
 ## 2.71.1-nightly.0
 
 ### Patch Changes

@@ -1,5 +1,38 @@
 # live-mobile
 
+## 3.35.0-nightly.1
+
+### Minor Changes
+
+- [#5332](https://github.com/LedgerHQ/ledger-live/pull/5332) [`e6aa09cfe1`](https://github.com/LedgerHQ/ledger-live/commit/e6aa09cfe15147f19af09e5963b61ddac3370e3e) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix localization in App Store
+
+### Patch Changes
+
+- [#5387](https://github.com/LedgerHQ/ledger-live/pull/5387) [`d53359ee99`](https://github.com/LedgerHQ/ledger-live/commit/d53359ee994d0f06b4c20b382ec471c2a38d02a8) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Wallet Connect CTA was displayed in the Earn section on supported account page, now it's on the Asset & Account header page when supported
+
+- [#5409](https://github.com/LedgerHQ/ledger-live/pull/5409) [`432714b322`](https://github.com/LedgerHQ/ledger-live/commit/432714b3220cae449b75c810fb8022725013c8d7) Thanks [@chabroA](https://github.com/chabroA)! - Fix set custom fees in evm flow
+
+  When updating the fees in custom mode for an EVM transaction, clicking on the "Valide Fees" CTA would't do anything (expected behaviour would be to return the fee strategy selection screen with new custom entry selected).
+  Fixes this and returns to fee strategy selection screen with the new custom entry selected.
+  PS: for the swap flow, updating the transaction will redirect to the swap summary screen, which is the expected behaviour as of today
+
+- [#5070](https://github.com/LedgerHQ/ledger-live/pull/5070) [`a4299c5d62`](https://github.com/LedgerHQ/ledger-live/commit/a4299c5d629cd56e6e6795adaa14978ae2b90f42) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Remove walletConnectLiveApp featurFlag
+
+- [#4987](https://github.com/LedgerHQ/ledger-live/pull/4987) [`e63205b850`](https://github.com/LedgerHQ/ledger-live/commit/e63205b85071538ed2431157a12818d7a8f0ffa9) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - add 10s timeout to estimate gas
+
+- Updated dependencies [[`98739b2007`](https://github.com/LedgerHQ/ledger-live/commit/98739b2007ee33ad675881cd824056a41b2907f6), [`a150321fc9`](https://github.com/LedgerHQ/ledger-live/commit/a150321fc90a5256144316ce20f071885065a6d9), [`1b72bebc07`](https://github.com/LedgerHQ/ledger-live/commit/1b72bebc07da1a5be6f16d1b329f5e26c30311f0), [`d53359ee99`](https://github.com/LedgerHQ/ledger-live/commit/d53359ee994d0f06b4c20b382ec471c2a38d02a8), [`a4299c5d62`](https://github.com/LedgerHQ/ledger-live/commit/a4299c5d629cd56e6e6795adaa14978ae2b90f42), [`e63205b850`](https://github.com/LedgerHQ/ledger-live/commit/e63205b85071538ed2431157a12818d7a8f0ffa9)]:
+  - @ledgerhq/live-common@33.1.1-nightly.1
+  - @ledgerhq/types-live@6.42.1-nightly.1
+  - @ledgerhq/errors@6.15.1-nightly.0
+  - @ledgerhq/coin-evm@0.10.1-nightly.1
+  - @ledgerhq/coin-framework@0.8.2-nightly.1
+  - @ledgerhq/domain-service@1.1.15-nightly.1
+  - @ledgerhq/devices@8.0.9-nightly.0
+  - @ledgerhq/hw-transport@6.29.1-nightly.0
+  - @ledgerhq/hw-transport-http@6.28.5-nightly.0
+  - @ledgerhq/react-native-hid@6.30.2-nightly.0
+  - @ledgerhq/react-native-hw-transport-ble@6.30.1-nightly.0
+
 ## 3.34.1-nightly.0
 
 ### Patch Changes

@@ -1,5 +1,48 @@
 # @ledgerhq/live-common
 
+## 33.1.1-nightly.1
+
+### Patch Changes
+
+- [#5413](https://github.com/LedgerHQ/ledger-live/pull/5413) [`98739b2007`](https://github.com/LedgerHQ/ledger-live/commit/98739b2007ee33ad675881cd824056a41b2907f6) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: mocking RxJS timer in unit tests
+
+  In order to not depend on real time during tests
+
+- [#5367](https://github.com/LedgerHQ/ledger-live/pull/5367) [`a150321fc9`](https://github.com/LedgerHQ/ledger-live/commit/a150321fc90a5256144316ce20f071885065a6d9) Thanks [@RamyEB](https://github.com/RamyEB)! - Make searchable manifests visible in categories
+
+- [#5391](https://github.com/LedgerHQ/ledger-live/pull/5391) [`1b72bebc07`](https://github.com/LedgerHQ/ledger-live/commit/1b72bebc07da1a5be6f16d1b329f5e26c30311f0) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix invalid recipient address messages wording
+
+- [#5387](https://github.com/LedgerHQ/ledger-live/pull/5387) [`d53359ee99`](https://github.com/LedgerHQ/ledger-live/commit/d53359ee994d0f06b4c20b382ec471c2a38d02a8) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add isWalletConnectSupported in live-common to be used in both platforms
+
+- [#5070](https://github.com/LedgerHQ/ledger-live/pull/5070) [`a4299c5d62`](https://github.com/LedgerHQ/ledger-live/commit/a4299c5d629cd56e6e6795adaa14978ae2b90f42) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Remove walletConnectLiveApp featurFlag
+
+- [#4987](https://github.com/LedgerHQ/ledger-live/pull/4987) [`e63205b850`](https://github.com/LedgerHQ/ledger-live/commit/e63205b85071538ed2431157a12818d7a8f0ffa9) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - add 10s timeout to estimate gas
+
+- Updated dependencies [[`e63205b850`](https://github.com/LedgerHQ/ledger-live/commit/e63205b85071538ed2431157a12818d7a8f0ffa9)]:
+  - @ledgerhq/errors@6.15.1-nightly.0
+  - @ledgerhq/coin-evm@0.10.1-nightly.1
+  - @ledgerhq/coin-algorand@0.3.6-nightly.1
+  - @ledgerhq/coin-framework@0.8.2-nightly.1
+  - @ledgerhq/coin-polkadot@0.4.6-nightly.1
+  - @ledgerhq/hw-app-eth@6.34.10-nightly.1
+  - @ledgerhq/devices@8.0.9-nightly.0
+  - @ledgerhq/hw-app-algorand@6.27.21-nightly.0
+  - @ledgerhq/hw-app-cosmos@6.28.7-nightly.0
+  - @ledgerhq/hw-app-exchange@0.3.1-nightly.0
+  - @ledgerhq/hw-app-polkadot@6.27.21-nightly.0
+  - @ledgerhq/hw-app-solana@7.0.15-nightly.0
+  - @ledgerhq/hw-transport@6.29.1-nightly.0
+  - @ledgerhq/hw-transport-node-speculos@6.27.21-nightly.0
+  - @ledgerhq/hw-transport-node-speculos-http@6.27.21-nightly.0
+  - @ledgerhq/live-network@1.1.9-nightly.0
+  - @ledgerhq/hw-app-btc@10.0.10-nightly.0
+  - @ledgerhq/hw-app-near@6.27.16-nightly.0
+  - @ledgerhq/hw-app-str@6.27.21-nightly.0
+  - @ledgerhq/hw-app-tezos@6.27.21-nightly.0
+  - @ledgerhq/hw-app-trx@6.27.21-nightly.0
+  - @ledgerhq/hw-app-xrp@6.27.21-nightly.0
+  - @ledgerhq/hw-transport-mocker@6.27.21-nightly.0
+
 ## 33.1.1-nightly.0
 
 ### Patch Changes
