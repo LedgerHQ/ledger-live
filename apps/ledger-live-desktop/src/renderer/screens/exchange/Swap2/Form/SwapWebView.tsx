@@ -89,34 +89,34 @@ const SwapWebView = ({ swapState, redirectToProviderApp }: SwapWebProps) => {
         onSwapWebviewError(params);
         return Promise.resolve();
       },
-      "custom.saveSwapToHistory": (params: { swap: SwapProps; transaction_id: string }) => {
+      "custom.saveSwapToHistory": (swap: SwapProps, transaction_id: string) => {
         if (
-          !params.swap ||
-          !params.transaction_id ||
-          !params.swap.fromTokenId ||
-          !params.swap.provider ||
-          !params.swap.toTokenId ||
-          !params.swap.fromAmountWei ||
-          !params.swap.toAmountWei
+          !swap ||
+          !transaction_id ||
+          !swap.fromTokenId ||
+          !swap.provider ||
+          !swap.toTokenId ||
+          !swap.fromAmountWei ||
+          !swap.toAmountWei
         ) {
           return Promise.reject("cannot save swap missing params");
         }
-        const operationId = `${params.swap.fromTokenId}-${params.transaction_id}-OUT`;
+        const operationId = `${swap.fromTokenId}-${transaction_id}-OUT`;
 
         const swapOperation: SwapOperation = {
           status: "pending",
-          provider: params.swap.provider,
+          provider: swap.provider,
           operationId,
-          swapId: params.transaction_id,
+          swapId: transaction_id,
           // NB We store the reciever main account + tokenId in case the token account doesn't exist yet.
-          receiverAccountId: params.swap.toTokenId,
-          tokenId: params.swap.toTokenId,
-          fromAmount: new BigNumber(params.swap.fromAmountWei),
-          toAmount: new BigNumber(params.swap.toAmountWei),
+          receiverAccountId: swap.toTokenId,
+          tokenId: swap.toTokenId,
+          fromAmount: new BigNumber(swap.fromAmountWei),
+          toAmount: new BigNumber(swap.toAmountWei),
         };
 
         dispatch(
-          updateAccountWithUpdater(params.swap.fromTokenId, account => {
+          updateAccountWithUpdater(swap.fromTokenId, account => {
             const fromCurrency = getAccountCurrency(account);
             const isFromToken = fromCurrency.type === "TokenCurrency";
             const subAccounts = account.type === "Account" && account.subAccounts;
@@ -128,7 +128,7 @@ const SwapWebView = ({ swapState, redirectToProviderApp }: SwapWebProps) => {
                       ...a,
                       swapHistory: [...a.swapHistory, swapOperation],
                     };
-                    return a.id === params.swap.fromTokenId ? subAccount : a;
+                    return a.id === swap.fromTokenId ? subAccount : a;
                   }),
                 }
               : { ...account, swapHistory: [...account.swapHistory, swapOperation] };
