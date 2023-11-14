@@ -124,8 +124,8 @@
     "ui:example:next": "pnpm  --filter=\"next.js-example\"",
     "ui:example:webpack": "pnpm  --filter=\"webpack.js-example\"",
     "actions": "pnpm --filter @actions/*",
-    "import:cal-tokens": "pnpm --filter=\"./libs/ledgerjs/**\" import:cal-tokens",
-    "generate:cryptoassets-md": "pnpm --filter=\"@ledgerhq/cryptoassets\" generate:cryptoassets-md"
+    "import:cal-tokens": "pnpm --filter=\"@ledgerhq/cryptoassets\" import:cal-tokens",
+    "generate:cryptoassets-md": "pnpm --filter=\"ledger-live-desktop\" generate:cryptoassets-md"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.4.8",
