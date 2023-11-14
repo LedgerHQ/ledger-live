@@ -1915,7 +1915,8 @@
         "osu": "Installing OSU...",
         "flash-mcu": "MCU updating...",
         "flash-bootloader": "Bootloader updating...",
-        "progress": "Installing update {{current}}/{{total}}",
+        "progress": "Installing update",
+        "progressStep": "Installing update {{current}}/{{total}}",
         "firmware": "Firmware updating...",
         "flash": "Preparing your device..."
       },
@@ -1928,6 +1929,7 @@
       "mcuFirst": "Disconnect the USB cable from your device",
       "mcuSecond": "Press the left button and hold it while you reconnect the USB cable until the <1><0>{{repairProcessing}}</0></1> screen appears",
       "mcuPin": "Please wait for the update to finish",
+      "mcuRestart": "{{device}} might restart multiple times.",
       "mcuSecondNanoX": "Press and hold the left button until <1><0>{{bootloaderOption}}</0></1> appears. Press both buttons to confirm and reconnect your device.",
       "mcuBlueFirst": "Press and hold the side button for 10 seconds to turn off the device. Release the button.",
       "mcuBlueSecond": "Press and hold the button for at least 5 seconds until the Boot Options are displayed. Tap Bootloader Mode",

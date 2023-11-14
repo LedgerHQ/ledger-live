@@ -148,7 +148,7 @@ const EarlySecurityChecks = ({
       },
       onRequestClose: () => {
         closeFwUpdateDrawer();
-        setFwUpdateInterrupted(latestFirmware.final);
+        setFwUpdateInterrupted(latestFirmware?.final);
         restartChecksAfterUpdate();
       },
       status: modal,
@@ -334,7 +334,7 @@ const EarlySecurityChecks = ({
   ]);
 
   return (
-    <Flex flex={1} flexDirection="column" justifyContent="center" alignItems="center">
+    <Flex flex={1} flexDirection="column" alignItems="center" marginTop="64px">
       {isInitialRunOfSecurityChecks && (
         <TrackPage category="Genuine check and OS update check start" />
       )}

@@ -2,18 +2,22 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import Box from "~/renderer/components/Box";
 import { Title } from "~/renderer/components/DeviceAction/rendering";
-import { Text, Flex, ProgressLoader } from "@ledgerhq/react-ui";
+import Text from "~/renderer/components/Text";
+import { Flex, ProgressLoader } from "@ledgerhq/react-ui";
+import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 
 type Props = {
   progress: number;
   installing?: string;
   current: number;
   total: number;
+  deviceModelId: DeviceModelId;
 };
 
-function Installing({ progress, installing, current, total }: Props) {
+function Installing({ progress, installing, current, total, deviceModelId }: Props) {
   const { t } = useTranslation();
   const normalProgress = (progress || 0) * 100;
+  const deviceModel = getDeviceModel(deviceModelId);
 
   return (
     <Box my={5} alignItems="center">
@@ -22,12 +26,16 @@ function Installing({ progress, installing, current, total }: Props) {
           stroke={8}
           infinite={!normalProgress}
           progress={normalProgress}
-          showPercentage={false}
+          showPercentage={!!normalProgress}
         />
       </Flex>
-      <Title>{installing ? t(`manager.modal.steps.progress`, { current, total }) : null}</Title>
-      <Text mt={2} ff="Inter|Regular" textAlign="center" color="palette.text.shade100">
-        {t("manager.modal.mcuPin")}
+      <Title>
+        {installing
+          ? t(`manager.modal.steps.progressStep`, { current, total })
+          : t(`manager.modal.steps.progress`)}
+      </Title>
+      <Text mt={2} ff="Inter|Light" textAlign="center" color="palette.text.shade100">
+        {t("manager.modal.mcuRestart", { device: deviceModel.productName })}
       </Text>
     </Box>
   );

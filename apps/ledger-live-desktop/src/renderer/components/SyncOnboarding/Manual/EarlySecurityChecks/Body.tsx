@@ -119,7 +119,7 @@ const SoftwareCheckContent = ({
       >
         {firmwareUpdateStatus === SoftwareCheckStatus.updateAvailable ? (
           <Flex flexDirection="row" alignItems="center" columnGap={6}>
-            <Button variant="main" size="small" outline={false} onClick={onClickViewUpdate}>
+            <Button variant="main" size="medium" outline={false} onClick={onClickViewUpdate}>
               {updateSkippable
                 ? t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.resumeUpdateCTA")
                 : t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.viewUpdateCTA", {
@@ -129,7 +129,7 @@ const SoftwareCheckContent = ({
             {updateSkippable ? (
               <Button
                 variant="shade"
-                size="small"
+                size="medium"
                 outline
                 onClick={onClickSkipUpdate}
                 Icon={loading ? InfiniteLoader : undefined}

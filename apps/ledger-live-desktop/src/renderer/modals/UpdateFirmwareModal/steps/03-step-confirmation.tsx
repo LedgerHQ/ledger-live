@@ -105,6 +105,7 @@ export const StepConfirmFooter = ({
       <Track event={"FirmwareUpdatedClose"} onUnmount />
       <Button
         variant="main"
+        mt={2}
         onClick={
           finalStepSuccessButtonOnClick
             ? finalStepSuccessButtonOnClick
