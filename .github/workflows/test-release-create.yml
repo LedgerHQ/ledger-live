@@ -43,7 +43,7 @@ jobs:
       - name: install dependencies
         run: pnpm i
       - name: Build libs
-        run: pnpm build:libs
+        run: pnpm build:libs && pnpm build:lld:deps
       - name: import CAL tokens
         run: pnpm import:cal-tokens
       - name: commit new tokens
