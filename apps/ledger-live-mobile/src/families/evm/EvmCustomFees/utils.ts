@@ -8,9 +8,12 @@ const TEN_GWEI = new BigNumber(10e9);
 
 const defaultMaxPriorityFeeRange = inferDynamicRange(TEN_GWEI); // 0 - 10 Gwei
 const defaultMaxFeePerGasRange = inferDynamicRange(TEN_GWEI); // 0 - 10 Gwei
+const defaultGasPriceRange = inferDynamicRange(TEN_GWEI);
 
 export const inferMaxPriorityFeeRange = (gasOptions: GasOptions): Range => {
-  if (!gasOptions) return defaultMaxPriorityFeeRange;
+  if (!gasOptions) {
+    return defaultMaxPriorityFeeRange;
+  }
 
   invariant(
     gasOptions.slow.maxPriorityFeePerGas,
@@ -27,14 +30,18 @@ export const inferMaxPriorityFeeRange = (gasOptions: GasOptions): Range => {
 
   return inferDynamicRange(gasOptions.medium.maxPriorityFeePerGas, {
     minValue: getEnv("EIP1559_MINIMUM_FEES_GATE")
-      ? gasOptions.slow.maxPriorityFeePerGas.times(getEnv("EIP1559_PRIORITY_FEE_LOWER_GATE"))
+      ? gasOptions.slow.maxPriorityFeePerGas
+          .times(getEnv("EIP1559_PRIORITY_FEE_LOWER_GATE"))
+          .integerValue()
       : new BigNumber(0),
     maxValue: gasOptions.fast.maxPriorityFeePerGas,
   });
 };
 
 export const inferMaxFeeRange = (gasOptions: GasOptions): Range => {
-  if (!gasOptions) return defaultMaxFeePerGasRange;
+  if (!gasOptions) {
+    return defaultMaxFeePerGasRange;
+  }
 
   invariant(
     gasOptions.medium.maxFeePerGas,
@@ -45,5 +52,20 @@ export const inferMaxFeeRange = (gasOptions: GasOptions): Range => {
   return inferDynamicRange(gasOptions.medium.maxFeePerGas, {
     minValue: new BigNumber(0),
     maxValue: gasOptions.fast.maxFeePerGas,
+  });
+};
+
+export const inferGasPriceRange = (gasOptions: GasOptions): Range => {
+  if (!gasOptions) {
+    return defaultGasPriceRange;
+  }
+
+  invariant(gasOptions.slow.gasPrice, "gasPrice should be defined for slow gas options");
+  invariant(gasOptions.medium.gasPrice, "gasPrice should be defined for medium gas options");
+  invariant(gasOptions.fast.gasPrice, "gasPrice should be defined for fast gas options");
+
+  return inferDynamicRange(gasOptions.medium.gasPrice, {
+    minValue: gasOptions.slow.gasPrice,
+    maxValue: gasOptions.fast.gasPrice,
   });
 };
