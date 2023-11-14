@@ -44,7 +44,7 @@ const defaultTokenListOptions: TokensListOptions = {
 
 export function createTokenHash(token: TokenCurrency): string {
   return token
-    ? `${token.id}${token.contractAddress}${token.delisted}${token.disableCountervalue}${token.ticker}${token.ledgerSignature}`
+    ? `${token.id}${token.contractAddress}${token.delisted}${token.ticker}${token.ledgerSignature}`
     : "";
 }
 
@@ -159,10 +159,6 @@ export function getTokenById(id: string): TokenCurrency {
   return currency;
 }
 
-function comparePriority(a: TokenCurrency, b: TokenCurrency) {
-  return Number(!!b.disableCountervalue) - Number(!!a.disableCountervalue);
-}
-
 function removeTokenFromArray(array: TokenCurrency[], tokenId: string) {
   if (array && array.length > 0) {
     const index = array.findIndex(currentToken => currentToken && currentToken.id === tokenId);
@@ -213,7 +209,7 @@ export function addTokens(list: (TokenCurrency | undefined)[]): void {
     tokensArrayWithDelisted.push(token);
     tokensById[id] = token;
 
-    if (!tokensByTicker[ticker] || comparePriority(token, tokensByTicker[ticker]) > 0) {
+    if (!tokensByTicker[ticker]) {
       tokensByTicker[ticker] = token;
     }
 
