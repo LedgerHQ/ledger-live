@@ -40,7 +40,7 @@ Tezos API
 
 #### Parameters
 
-*   `transport` **Transport** 
+*   `transport` **Transport**&#x20;
 
 #### Examples
 
