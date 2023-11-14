@@ -22,20 +22,26 @@ type CustomHandlersParams<Params> = {
   params: Params;
 };
 
+export type SwapProps = {
+  provider: string;
+  fromAccountId: string;
+  fromTokenId: string;
+  toAccountId: string;
+  toTokenId: string;
+  fromAmount: string;
+  fromAmountWei: string;
+  toAmountWei?: string;
+  quoteId: string;
+  rate: string;
+  feeStrategy: string;
+  customFeeConfig: string;
+  cacheKey: string;
+  loading: boolean;
+  error: boolean;
+};
+
 export type SwapWebProps = {
-  swapState?: Partial<{
-    provider: string;
-    fromAccountId: string;
-    toAccountId: string;
-    fromAmount: string;
-    quoteId: string;
-    rate: string;
-    feeStrategy: string;
-    customFeeConfig: string;
-    cacheKey: string;
-    loading: boolean;
-    error: boolean;
-  }>;
+  swapState?: Partial<SwapProps>;
   redirectToProviderApp(_: string): void;
 };
 
@@ -83,7 +89,7 @@ const SwapWebView = ({ swapState, redirectToProviderApp }: SwapWebProps) => {
         onSwapWebviewError(params);
         return Promise.resolve();
       },
-      "custom.saveSwapToHistory": ({ params }: any) => {
+      "custom.saveSwapToHistory": (params: { swap: SwapProps; transaction_id: string }) => {
         if (
           !params.swap ||
           !params.transaction_id ||
