@@ -12,7 +12,7 @@
   },
   "scripts": {
     "bump": "changeset version",
-    "clean": "git clean -fdX",
+    "clean": "git clean -fdX && pnpm store prune",
     "changelog": "changeset add",
     "prerelease": "pnpm run build:libs",
     "release": "changeset publish",
