@@ -294,7 +294,7 @@ export default function Default() {
                             <Route path="/card" render={withSuspense(Card)} />
                             <Redirect from="/manager/reload" to="/manager" />
                             <Route path="/manager" render={withSuspense(Manager)} />
-                            <Route path="/platform" render={withSuspense(PlatformCatalog)} />
+                            <Route path="/platform" render={withSuspense(PlatformCatalog)} exact />
                             <Route path="/platform/:appId?" component={LiveApp} />
                             <Route path="/earn" render={withSuspense(Earn)} />
                             <Route exact path="/exchange/:appId?" render={withSuspense(Exchange)} />
