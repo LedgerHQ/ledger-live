@@ -51,11 +51,11 @@ e.g. Error thrown when data received by exchanges are incorrect or if exchanged 
 
 ### TransportStatusError
 
+**Extends Error**
+
 Error thrown when a device returned a non success status.
 the error.statusCode is one of the `StatusCodes` exported by this library.
 
 #### Parameters
 
 *   `statusCode` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
-
-Returns **void**&#x20;
