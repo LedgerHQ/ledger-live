@@ -28,7 +28,8 @@
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
-    "unimported": "unimported"
+    "unimported": "unimported",
+    "import:cal-tokens": "ts-node ./src/crypto-assets-importer/index.ts"
   },
   "dependencies": {
     "axios": "^1.6.0",
