@@ -73,8 +73,15 @@ describe("custom errors", () => {
     expect(error instanceof Error).toBeTruthy();
   });
 
-  test("transport status error contains message", () => {
-    const error: Error = new TransportStatusError(StatusCodes.UNKNOWN_APDU);
-    expect(error.stack).toContain("Ledger device: UNKNOWN_APDU (0x6d02)");
+  describe("TransportStatusError", () => {
+    test.only("TransportStatusError contains the expected name, message, stack, status code and status message (non-regression)", () => {
+      const error = new TransportStatusError(StatusCodes.UNKNOWN_APDU);
+
+      expect(error.name).toEqual("TransportStatusError");
+      expect(error.message).toEqual("Ledger device: UNKNOWN_APDU (0x6d02)");
+      expect(error.stack).toContain("Ledger device: UNKNOWN_APDU (0x6d02)");
+      expect(error.statusText).toEqual("UNKNOWN_APDU");
+      expect(error.statusCode).toEqual(0x6d02);
+    });
   });
 });
