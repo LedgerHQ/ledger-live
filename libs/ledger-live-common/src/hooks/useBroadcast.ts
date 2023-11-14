@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { log } from "@ledgerhq/logs";
-import { SignedOperation, Operation, AccountLike, Account } from "@ledgerhq/types-live";
+import type { SignedOperation, Operation, AccountLike, Account } from "@ledgerhq/types-live";
 import { getEnv } from "@ledgerhq/live-env";
 import { formatOperation, getMainAccount } from "../account/index";
 import { getAccountBridge } from "../bridge/index";
