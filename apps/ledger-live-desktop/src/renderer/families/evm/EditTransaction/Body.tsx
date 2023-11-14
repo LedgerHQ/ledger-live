@@ -225,7 +225,7 @@ const Body = ({
     };
 
     setTransactionHasBeenValidatedCallback();
-    const intervalId = setInterval(
+    const intervalId = window.setInterval(
       () => setTransactionHasBeenValidatedCallback(),
       mainAccount.currency.blockAvgTime
         ? mainAccount.currency.blockAvgTime * 1000
