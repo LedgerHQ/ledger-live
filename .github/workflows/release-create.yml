@@ -4,8 +4,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  create-test-release:
-    name: Create test Release
+  create-release:
+    name: Create Release
     runs-on: ubuntu-latest
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
