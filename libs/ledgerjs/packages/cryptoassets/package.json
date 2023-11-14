@@ -29,6 +29,7 @@
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
     "unimported": "unimported",
+    "test:importer": "jest ./src/crypto-assets-importer/",
     "import:cal-tokens": "ts-node ./src/crypto-assets-importer/index.ts"
   },
   "dependencies": {
