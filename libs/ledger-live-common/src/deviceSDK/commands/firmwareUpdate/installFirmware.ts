@@ -132,8 +132,7 @@ const remapSocketFirmwareError: (e: Error) => Observable<never> = (e: Error) => 
 
   const status =
     e instanceof TransportStatusError
-      ? // @ts-expect-error TransportStatusError to be typed on ledgerjs
-        e.statusCode.toString(16)
+      ? e.statusCode.toString(16)
       : (e as Error).message.slice((e as Error).message.length - 4);
 
   switch (status) {
