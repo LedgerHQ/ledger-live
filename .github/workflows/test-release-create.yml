@@ -41,7 +41,7 @@ jobs:
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
       - name: install dependencies
-        run: pnpm i -F "ledger-live" -F "ledger-libs"
+        run: pnpm i
       - name: Build libs
         run: pnpm build:libs
       - name: import CAL tokens
