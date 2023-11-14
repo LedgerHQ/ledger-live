@@ -168,7 +168,7 @@ const SwapForm = () => {
     const { account: fromAccount, parentAccount: fromParentAccount } = from;
     const { account: toAccount, parentAccount: toParentAccount } = to;
     const { feesStrategy } = transaction || {};
-    const { rate, rateId } = exchangeRate || {};
+    const { rate } = exchangeRate || {};
 
     const fromAccountId =
       fromAccount && accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id;
