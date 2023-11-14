@@ -54,10 +54,12 @@ export const useBatteryStatuses = ({
         statuses,
       }).subscribe({
         next: state => {
-          // skip APDU unknown error on old devices version
-          if (state.error?.message?.includes(StatusCodes.UNKNOWN_APDU.toString(16)))
-            setBatteryStatusesState({ ...state, error: null });
-          else setBatteryStatusesState(state);
+          // skip unknown APDU error on old devices
+          // if (state.error?.message?.includes(StatusCodes.UNKNOWN_APDU.toString(16)))
+          //   setBatteryStatusesState({ ...state, error: null });
+          // else setBatteryStatusesState(state);
+
+          console.log(state);
 
           // no battery status flags available
           if (state.batteryStatuses.length <= 1) return;
