@@ -72,7 +72,7 @@ jobs:
           echo "date=$(date +%F)" >> $GITHUB_OUTPUT
       - name: push
         run: |
-          git push origin release
+          git push origin RELEASE_BRANCH
           gh pr create --title ":rocket: Release ${{ steps.date.outputs.date }}" -F .github/templates/release.md --base main --head release
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
