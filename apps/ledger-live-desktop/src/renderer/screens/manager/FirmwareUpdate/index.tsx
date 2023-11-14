@@ -18,6 +18,7 @@ import FirmwareUpdateBanner from "~/renderer/components/FirmwareUpdateBanner";
 import { FakeLink } from "~/renderer/components/TopBanner";
 import { context } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
+import { LocalTracer } from "@ledgerhq/logs";
 
 type Props = {
   deviceInfo: DeviceInfo;
@@ -46,9 +47,10 @@ export const initialStepId = ({
     : "idCheck";
 
 /**
- * The rewrite of this flow didn't change the behaviour. This renders a banner if
- * needed and interacting with the banner shows a drawer (used to be a modal) to start
- * the firmware update flow.
+ * Entry point of the firmware update
+ *
+ * This renders a banner if needed and interacting with the banner shows a drawer
+ * (used to be a modal) to start the firmware update flow.
  */
 const FirmwareUpdate = (props: Props) => {
   const {
@@ -68,6 +70,7 @@ const FirmwareUpdate = (props: Props) => {
   const modal = deviceInfo.isOSU ? "install" : props.openFirmwareUpdate ? "disclaimer" : "closed";
   const deviceSpecs = getDeviceModel(device.modelId);
   const isDeprecated = manager.firmwareUnsupported(device.modelId, deviceInfo);
+  const [tracer] = useState(() => new LocalTracer("manager", { component: "FirmwareUpdate" }));
 
   const onDrawerClose = useCallback(() => {
     onReset((installed || []).map(({ name }) => name));
@@ -85,6 +88,8 @@ const FirmwareUpdate = (props: Props) => {
   }, [onReset, setDrawer]);
 
   const onOpenDrawer = useCallback(() => {
+    tracer.trace("Opening drawer", { hasFirmware: !!firmware, function: "onOpenDrawer" });
+
     if (!firmware) return;
     track("Manager Firmware Update Click", {
       firmwareName: firmware.final.name,
@@ -134,6 +139,7 @@ const FirmwareUpdate = (props: Props) => {
     setFirmwareUpdateCompleted,
     setFirmwareUpdateOpened,
     stepId,
+    tracer,
   ]);
 
   useEffect(() => {
@@ -142,11 +148,12 @@ const FirmwareUpdate = (props: Props) => {
       track("Manager Firmware Update Auto", {
         firmwareName: firmware.final.name,
       });
+      tracer.trace("Automatically opening firmware update drawer", { modal, autoOpened, firmware });
 
       setAutoOpened(true);
       onOpenDrawer();
     }
-  }, [autoOpened, modal, onOpenDrawer, firmware]);
+  }, [autoOpened, modal, onOpenDrawer, firmware, tracer]);
 
   if (!firmware) {
     if (!isDeprecated) return null;

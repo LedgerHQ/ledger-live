@@ -117,7 +117,9 @@ export type CurrencyFeatures = {
   currencyBase: DefaultFeature;
   currencyBaseGoerli: DefaultFeature;
   currencyKlaytn: DefaultFeature;
+  currencyCasper: DefaultFeature;
   currencyNeonEvm: DefaultFeature;
+  currencyLukso: DefaultFeature;
 };
 
 /**
@@ -142,7 +144,6 @@ export type Features = CurrencyFeatures & {
   mockFeature: Feature_MockFeature;
   multibuyNavigation: Feature_MultibuyNavigation;
   syncOnboarding: Feature_SyncOnboarding;
-  walletConnectLiveApp: Feature_WalletConnectLiveApp;
   walletConnectEntryPoint: Feature_WalletConnectEntryPoint;
   customImage: Feature_CustomImage;
   referralProgramDiscoverCard: Feature_ReferralProgramDiscoverCard;
@@ -168,7 +169,7 @@ export type Features = CurrencyFeatures & {
   stakePrograms: Feature_StakePrograms;
   portfolioExchangeBanner: Feature_PortfolioExchangeBanner;
   objkt: Feature_Objkt;
-  editEthTx: Feature_EditEthTx;
+  editEvmTx: Feature_EditEvmTx;
   stakeAccountBanner: Feature_StakeAccountBanner;
   newsfeedPage: Feature_NewsfeedPage;
   domainInputResolution: Feature_DomainInputResolution;
@@ -204,10 +205,6 @@ export type Feature_EthStakingProviders = Feature<{
 
 export type Feature_WalletNftGallery = Feature<{
   lazyLoadScreens: boolean;
-}>;
-
-export type Feature_WalletConnectLiveApp = Feature<{
-  liveAppId: string;
 }>;
 
 export type Feature_TransactionsAlerts = Feature<{
@@ -298,8 +295,15 @@ export type Feature_NewsfeedPage = Feature<{
   whitelistedLocales: string[];
 }>;
 
+export type CompatibleDevice = {
+  available: boolean;
+  comingSoon: boolean;
+  name: string;
+};
+
 export type Feature_ProtectServicesMobile = Feature<{
   deeplink: string;
+  compatibleDevices: CompatibleDevice[];
   onboardingRestore: {
     restoreInfoDrawer: {
       enabled: boolean;
@@ -327,6 +331,7 @@ export type Feature_ProtectServicesDesktop = Feature<{
   availableOnDesktop: boolean;
   openRecoverFromSidebar: boolean;
   discoverTheBenefitsLink: string;
+  compatibleDevices: CompatibleDevice[];
   onboardingRestore: {
     restoreInfoDrawer: {
       enabled: boolean;
@@ -370,6 +375,10 @@ export type Feature_Discover = Feature<{
 }>;
 
 export type Feature_DomainInputResolution = Feature<{
+  supportedCurrencyIds: string[];
+}>;
+
+export type Feature_EditEvmTx = Feature<{
   supportedCurrencyIds: string[];
 }>;
 
@@ -473,7 +482,6 @@ export type Feature_PtxServiceCtaExchangeDrawer = DefaultFeature;
 export type Feature_PtxServiceCtaScreens = DefaultFeature;
 export type Feature_PortfolioExchangeBanner = DefaultFeature;
 export type Feature_Objkt = DefaultFeature;
-export type Feature_EditEthTx = DefaultFeature;
 export type Feature_ProtectServicesDiscoverDesktop = DefaultFeature;
 export type Feature_ListAppsV2minor1 = DefaultFeature;
 export type Feature_BrazeLearn = DefaultFeature;

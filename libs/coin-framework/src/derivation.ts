@@ -177,6 +177,9 @@ const modes = Object.freeze({
     startsAt: 1,
     tag: "third-party",
   },
+  casper_wallet: {
+    overridesDerivation: "44'/506'/0'/0/<account>",
+  },
   solanaMain: {
     isNonIterable: true,
     overridesDerivation: "44'/501'",
@@ -220,6 +223,7 @@ const legacyDerivations: Record<CryptoCurrencyIds, DerivationMode[]> = {
   hedera: ["hederaBip44"],
   filecoin: ["gliflegacy", "glif"],
   internet_computer: ["internet_computer"],
+  casper: ["casper_wallet"],
   cardano: ["cardano"],
   cardano_testnet: ["cardano"],
   near: ["nearbip44h"],
@@ -361,6 +365,7 @@ const disableBIP44: Record<string, boolean> = {
   cardano_testnet: true,
   near: true,
   internet_computer: true,
+  casper: true,
 };
 type SeedInfo = {
   purpose: number;
@@ -373,6 +378,7 @@ const seedIdentifierPath: Record<string, SeedPathFn> = {
   stacks: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   solana: ({ purpose, coinType }) => `${purpose}'/${coinType}'`,
   hedera: ({ purpose, coinType }) => `${purpose}/${coinType}`,
+  casper: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   cardano: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   cardano_testnet: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   internet_computer: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,

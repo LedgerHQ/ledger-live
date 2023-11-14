@@ -93,7 +93,13 @@ class OperationComponent extends PureComponent<Props> {
           t={t}
           isConfirmed={isConfirmed}
         />
-        <DateCell text={text} operation={operation} editable={editable} t={t} />
+        <DateCell
+          family={mainAccount.currency.family}
+          text={text}
+          operation={operation}
+          editable={editable}
+          t={t}
+        />
         {withAccount && <AccountCell accountName={getAccountName(account)} currency={currency} />}
         {withAddress ? <AddressCell operation={operation} /> : <Box flex="1" />}
         <AmountCell

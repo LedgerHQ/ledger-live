@@ -1,4 +1,4 @@
-import { Server } from "ws";
+import { Server, WebSocket } from "ws";
 import path from "path";
 import fs from "fs";
 import { toAccountRaw } from "@ledgerhq/live-common/account/index";
@@ -16,17 +16,22 @@ type ServerData = {
 export const e2eBridgeServer = new Subject<ServerData>();
 
 let wss: Server;
+let onConnectionPromise: Promise<WebSocket> | null = null;
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
-export function init(port = 8099, onConnection = () => {}) {
-  wss = new Server({ port });
-  log(`Start listening on localhost:${port}`);
+export function init(port = 8099, onConnection = () => {}): Promise<WebSocket> {
+  onConnectionPromise = new Promise(resolve => {
+    wss = new Server({ port });
+    log(`Start listening on localhost:${port}`);
 
-  wss.on("connection", ws => {
-    log(`Connection`);
-    onConnection();
-    ws.on("message", onMessage);
+    wss.on("connection", ws => {
+      log(`Client connected`);
+      onConnection();
+      resolve(ws); // Resolve the promise when a client connects
+      ws.on("message", onMessage);
+    });
   });
+  return onConnectionPromise;
 }
 
 export function close() {
@@ -136,8 +141,11 @@ function acceptTerms() {
   postMessage({ type: "acceptTerms" });
 }
 
-function postMessage(message: MessageData) {
-  for (const ws of wss.clients.values()) {
+async function postMessage(message: MessageData) {
+  const ws = await onConnectionPromise; // Wait until a client is connected and get the WebSocket instance
+  if (ws) {
     ws.send(JSON.stringify(message));
+  } else {
+    log("WebSocket connection is not open. Message not sent.");
   }
 }

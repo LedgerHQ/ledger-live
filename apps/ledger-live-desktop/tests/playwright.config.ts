@@ -15,9 +15,6 @@ const config: PlaywrightTestConfig = {
        * */
       maxDiffPixelRatio: 0.005,
     },
-    toMatchSnapshot: {
-      maxDiffPixelRatio: 0.01,
-    },
   },
   globalTimeout: 0,
   globalSetup: require.resolve("./utils/global-setup"),
