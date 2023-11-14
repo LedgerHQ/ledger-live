@@ -2458,15 +2458,9 @@ importers:
       axios:
         specifier: ^0.27.2
         version: 0.27.2
-      buffer:
-        specifier: ^6.0.3
-        version: 6.0.3
       invariant:
         specifier: ^2.2.4
         version: 2.2.4
-      js-levenshtein:
-        specifier: ^1.1.6
-        version: 1.1.6
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -42382,11 +42376,6 @@ packages:
 
   /js-encoding-utils@0.5.6:
     resolution: {integrity: sha512-qnAGsUIWrmzh5n+3AXqbxX1KsB9hkQmJZf3aA9DLAS7GpL/NEHCBreFFbW+imramoU+Q0TDyvkwhRbBRH1TVkg==}
-    dev: false
-
-  /js-levenshtein@1.1.6:
-    resolution: {integrity: sha512-X2BB11YZtrRqY4EnQcLX5Rh373zbK4alC1FW7D7MBhL2gtcC17cTnr6DmfHZeS0s2rTHjUTMMHfG7gO8SSdw+g==}
-    engines: {node: '>=0.10.0'}
     dev: false
 
   /js-logger@1.6.1:
