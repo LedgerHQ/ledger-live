@@ -41,9 +41,9 @@ jobs:
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
       - name: install dependencies
-        run: pnpm i -F "@ledgerhq/types-cryptoassets" -F "@ledgerhq/cryptoassets" -F "@ledgerhq/live-common" -F "@ledgerhq/types-devices" -F "@ledgerhq/types-live" -F "ledger-live"
+        run: pnpm i
       - name: Build libs
-        run: pnpm -F @ledgerhq/types-cryptoassets -F @ledgerhq/cryptoassets -F "@ledgerhq/live-common" -F "@ledgerhq/types-live" -F "@ledgerhq/types-devices" build
+        run: pnpm build:libs
       - name: import CAL tokens
         run: pnpm import:cal-tokens
       - name: commit new tokens
