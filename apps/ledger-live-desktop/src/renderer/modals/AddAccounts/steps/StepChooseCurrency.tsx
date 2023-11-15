@@ -164,9 +164,9 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   );
 
   const currencies = useMemo(() => {
-    const supportedCurrenciesAndTokens: CryptoOrTokenCurrency[] = listSupportedCurrencies().concat(
-      listSupportedTokens(),
-    );
+    const supportedCurrenciesAndTokens = (
+      listSupportedCurrencies() as CryptoOrTokenCurrency[]
+    ).concat(listSupportedTokens());
 
     const deactivatedCurrencies = mock
       ? [] // mock mode: all currencies are available for playwrigth tests
