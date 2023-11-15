@@ -3,6 +3,7 @@ import {
   DisconnectedDevice,
   LockedDeviceError,
   TransportRaceCondition,
+  TransportStatusError,
   UnresponsiveDeviceError,
   createCustomErrorClass,
 } from "@ledgerhq/errors";
@@ -77,8 +78,12 @@ export function sharedLogicTaskWrapper<TaskArgsType, TaskEventsType>(
   };
 }
 
-// To update once createCustomErrorClass is not used on Transports errors
-type ErrorClass = ReturnType<typeof createCustomErrorClass>;
+// To update once createCustomErrorClass is not used on Transports errors.
+// The type represents the type of a class, and children do not have the same type than their parent
+type ErrorClass =
+  | ReturnType<typeof createCustomErrorClass>
+  | typeof TransportStatusError
+  | typeof LockedDeviceError;
 
 // To be able to retry a command, the command needs to take an object containing a transport as its argument
 type CommandTransportArgs = { transport: Transport };

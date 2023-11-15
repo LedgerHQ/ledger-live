@@ -32,7 +32,6 @@ export const DeviceHalted = createCustomErrorClass("DeviceHalted");
 export const DeviceNameInvalid = createCustomErrorClass("DeviceNameInvalid");
 export const DeviceSocketFail = createCustomErrorClass("DeviceSocketFail");
 export const DeviceSocketNoBulkStatus = createCustomErrorClass("DeviceSocketNoBulkStatus");
-export const LockedDeviceError = createCustomErrorClass("LockedDeviceError");
 export const UnresponsiveDeviceError = createCustomErrorClass("UnresponsiveDeviceError");
 export const DisconnectedDevice = createCustomErrorClass("DisconnectedDevice");
 export const DisconnectedDeviceDuringOperation = createCustomErrorClass(
@@ -290,23 +289,42 @@ export class TransportStatusError extends Error {
   statusCode: number;
   statusText: string;
 
-  constructor(statusCode: number) {
+  /**
+   * @param statusCode The error status code coming from a Transport implementation
+   * @param options containing:
+   *  - canBeMappedToChildError: enable the mapping of TransportStatusError to an error extending/inheriting from it
+   *  . Ex: LockedDeviceError. Default to true.
+   */
+  constructor(
+    statusCode: number,
+    { canBeMappedToChildError = true }: { canBeMappedToChildError?: boolean } = {},
+  ) {
     const statusText =
       Object.keys(StatusCodes).find(k => StatusCodes[k] === statusCode) || "UNKNOWN_ERROR";
     const smsg = getAltStatusMessage(statusCode) || statusText;
     const statusCodeStr = statusCode.toString(16);
     const message = `Ledger device: ${smsg} (0x${statusCodeStr})`;
 
-    // Maps to a LockedDeviceError
-    if (statusCode === StatusCodes.LOCKED_DEVICE) {
-      throw new LockedDeviceError(message);
-    }
-
     super(message);
     this.name = "TransportStatusError";
 
     this.statusCode = statusCode;
     this.statusText = statusText;
+
+    // Maps to a LockedDeviceError
+    if (canBeMappedToChildError && statusCode === StatusCodes.LOCKED_DEVICE) {
+      return new LockedDeviceError(message);
+    }
+  }
+}
+
+export class LockedDeviceError extends TransportStatusError {
+  constructor(message?: string) {
+    super(StatusCodes.LOCKED_DEVICE, { canBeMappedToChildError: false });
+    if (message) {
+      this.message = message;
+    }
+    this.name = "LockedDeviceError";
   }
 }
 
