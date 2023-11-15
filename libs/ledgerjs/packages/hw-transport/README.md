@@ -61,7 +61,7 @@ Type: {unsubscribe: function (): void}
 
 #### Properties
 
-*   `unsubscribe` **function (): void** 
+*   `unsubscribe` **function (): void**&#x20;
 
 ### Device
 
@@ -91,8 +91,8 @@ It is an abstract class that needs to be implemented.
 
 *   `$0` **{context: TraceContext?, logType: LogType?}**  (optional, default `{}`)
 
-    *   `$0.context`  
-    *   `$0.logType`  
+    *   `$0.context` &#x20;
+    *   `$0.logType` &#x20;
 
 #### exchange
 
@@ -101,7 +101,7 @@ It's recommended to use the "send" method for a higher level API.
 
 ##### Parameters
 
-*   `_apdu` **[Buffer](https://nodejs.org/api/buffer.html)** 
+*   `_apdu` **[Buffer](https://nodejs.org/api/buffer.html)**&#x20;
 *   `apdu` **[Buffer](https://nodejs.org/api/buffer.html)** The data to send.
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Buffer](https://nodejs.org/api/buffer.html)>** A promise that resolves with the response data from the device.
@@ -125,12 +125,11 @@ Each app can have a different scramble key and it is set internally during insta
 
 ##### Parameters
 
-*   `_key` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+*   `_key` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
 *   `key` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** The scramble key to set.
-
-**Meta**
-
-*   **deprecated**: This method is no longer needed for modern transports and should be migrated away from.
+    deprecated This method is no longer needed for modern transports and should be migrated away from.
+    no @ before deprecated as it breaks documentationjs on version 14.0.2
+    <https://github.com/documentationjs/documentation/issues/1596>
 
 #### close
 
@@ -147,9 +146,9 @@ Transport implementations may have specific events. Common events include:
 ##### Parameters
 
 *   `eventName` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** The name of the event to listen for.
-*   `cb` **function (...args: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<any>): any** 
+*   `cb` **function (...args: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<any>): any**&#x20;
 
-Returns **void** 
+Returns **void**&#x20;
 
 #### off
 
@@ -157,10 +156,10 @@ Stop listening to an event on an instance of transport.
 
 ##### Parameters
 
-*   `eventName` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
-*   `cb` **function (...args: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<any>): any** 
+*   `eventName` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
+*   `cb` **function (...args: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<any>): any**&#x20;
 
-Returns **void** 
+Returns **void**&#x20;
 
 #### setDebugMode
 
@@ -172,9 +171,9 @@ Set a timeout (in milliseconds) for the exchange call. Only some transport might
 
 ##### Parameters
 
-*   `exchangeTimeout` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
+*   `exchangeTimeout` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
 
-Returns **void** 
+Returns **void**&#x20;
 
 #### setExchangeUnresponsiveTimeout
 
@@ -182,9 +181,9 @@ Define the delay before emitting "unresponsive" on an exchange that does not res
 
 ##### Parameters
 
-*   `unresponsiveTimeout` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
+*   `unresponsiveTimeout` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
 
-Returns **void** 
+Returns **void**&#x20;
 
 #### send
 
@@ -216,7 +215,7 @@ but with a new tracing context.
 
 Gets the tracing context of the transport instance
 
-Returns **(TraceContext | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
+Returns **(TraceContext | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**&#x20;
 
 #### isSupported
 
@@ -300,7 +299,7 @@ This is a light helper, alternative to using listen() and open() (that you may n
 ##### Parameters
 
 *   `openTimeout`   (optional, default `3000`)
-*   `listenTimeout` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?** 
+*   `listenTimeout` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?**&#x20;
 
 ##### Examples
 
@@ -308,4 +307,4 @@ This is a light helper, alternative to using listen() and open() (that you may n
 TransportFoo.create().then(transport => ...)
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Transport](#transport)>** 
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Transport](#transport)>**&#x20;

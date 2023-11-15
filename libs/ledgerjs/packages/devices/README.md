@@ -30,26 +30,24 @@ Logic for all Ledger devices.
 
 #### Parameters
 
-*   `channel` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
-*   `packetSize` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
+*   `channel` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
+*   `packetSize` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
 
 ### IIGenericHID
 
 The USB product IDs will be defined as MMII, encoding a model (MM) and an interface bitfield (II)
 
 *   Model
-
-Ledger Nano S : 0x10
-Ledger Blue : 0x00
-Ledger Nano X : 0x40
+    Ledger Nano S : 0x10
+    Ledger Blue : 0x00
+    Ledger Nano X : 0x40
 
 *   Interface support bitfield
-
-Generic HID : 0x01
-Keyboard HID : 0x02
-U2F : 0x04
-CCID : 0x08
-WebUSB : 0x10
+    Generic HID : 0x01
+    Keyboard HID : 0x02
+    U2F : 0x04
+    CCID : 0x08
+    WebUSB : 0x10
 
 Type: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)
 
@@ -61,9 +59,9 @@ Type: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 
 #### Parameters
 
-*   `id` **DeviceModelId** 
+*   `id` **DeviceModelId**&#x20;
 
-Returns **[DeviceModel](#devicemodel)** 
+Returns **[DeviceModel](#devicemodel)**&#x20;
 
 ### identifyTargetId
 
@@ -72,29 +70,29 @@ based on the first two bytes.
 
 #### Parameters
 
-*   `targetId` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
+*   `targetId` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
 
-Returns **([DeviceModel](#devicemodel) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
+Returns **([DeviceModel](#devicemodel) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**&#x20;
 
 ### identifyUSBProductId
 
 #### Parameters
 
-*   `usbProductId` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
+*   `usbProductId` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
 
-Returns **([DeviceModel](#devicemodel) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
+Returns **([DeviceModel](#devicemodel) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**&#x20;
 
 ### getBluetoothServiceUuids
 
-Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
+Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**&#x20;
 
 ### getInfosForServiceUuid
 
 #### Parameters
 
-*   `uuid` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+*   `uuid` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
 
-Returns **([BluetoothInfos](#bluetoothinfos) | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
+Returns **([BluetoothInfos](#bluetoothinfos) | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**&#x20;
 
 ### DeviceModel
 
