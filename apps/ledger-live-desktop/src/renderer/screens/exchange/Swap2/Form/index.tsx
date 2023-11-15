@@ -139,28 +139,6 @@ const SwapForm = () => {
     }, idleTime);
   }, [idleState]);
 
-  const isAccount = (value: unknown): value is Account =>
-    Boolean(value && typeof value === "object" && "type" in value && value.type === "Account");
-
-  const getTokenAddress = (account: AccountLike | undefined) => {
-    if (isTokenAccount(account)) {
-      return account.token.contractAddress;
-    }
-    if (isAccount(account)) {
-      // Default to native currency
-      return "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
-    }
-  };
-
-  const getAccountWalletAddress = (swapTransaction: SwapTransactionType) => {
-    if (swapTransaction.parentAccount) {
-      return swapTransaction.parentAccount.freshAddress;
-    }
-    if (isAccount(swapTransaction.account)) {
-      return swapTransaction.account.freshAddress;
-    }
-  };
-
   const redirectToProviderApp = useCallback(
     (provider: string): void => {
       const { providerURL } = exchangeRate ?? {};
