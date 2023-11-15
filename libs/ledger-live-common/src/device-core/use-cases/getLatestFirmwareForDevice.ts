@@ -1,13 +1,13 @@
 import { UnknownMCU } from "@ledgerhq/errors";
 import { DeviceInfoEntity } from "../entities/DeviceInfoEntity";
 import { FirmwareUpdateContextEntity } from "../entities/FirmwareUpdateContextEntity";
-import { ManagerApiRepository } from "../repositories/ManagerApiRepository";
+import { ManagerApiPort } from "../repositories/ManagerApiRepository";
 
 type GetLatestFirmwareForDeviceParams = {
   deviceInfo: DeviceInfoEntity;
   providerId: number;
   userId: string;
-  managerApiRepository: ManagerApiRepository;
+  managerApiRepository: ManagerApiPort;
 };
 
 export async function getLatestFirmwareForDevice({
@@ -17,6 +17,7 @@ export async function getLatestFirmwareForDevice({
   managerApiRepository,
 }: GetLatestFirmwareForDeviceParams): Promise<FirmwareUpdateContextEntity | null> {
   const mcusPromise = managerApiRepository.fetchMcus();
+
   // Gets device infos from targetId
   const deviceVersion = await managerApiRepository.getDeviceVersion({
     targetId: deviceInfo.targetId,
@@ -50,10 +51,12 @@ export async function getLatestFirmwareForDevice({
     return null;
   }
 
-  const final = await managerApiRepository.getFinalFirmwareById(osu.next_se_firmware_final_version);
   const mcus = await mcusPromise;
   const currentMcuVersion = mcus.find(mcu => mcu.name === deviceInfo.mcuVersion);
+
   if (!currentMcuVersion) throw new UnknownMCU();
+
+  const final = await managerApiRepository.getFinalFirmwareById(osu.next_se_firmware_final_version);
   const shouldFlashMCU = !final.mcu_versions.includes(currentMcuVersion.id);
   return {
     final,
