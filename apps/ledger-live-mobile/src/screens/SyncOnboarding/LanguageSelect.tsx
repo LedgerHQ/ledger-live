@@ -38,19 +38,18 @@ const LanguageSelect = () => {
   // triggers the current displayed drawer to close
   let nextDrawerToDisplay: UiDrawerStatus = "none";
 
-  const [selectedLanguage, setSelectedLanguage] = useState(defaultLanguage);
+  const [selectedLanguage, setSelectedLanguage] = useState(currentLocale as string);
 
   const [languageSelectStatus, setLanguageSelectStatus] =
     useState<LanguageSelectStatus>("unrequested");
 
   const [isRestartPromptOpened, setRestartPromptOpened] = useState<boolean>(false);
 
-  const toggleModal = useCallback(
-    () => setRestartPromptOpened(!isRestartPromptOpened),
-    [isRestartPromptOpened],
-  );
+  const toggleRestartPromptModal = useCallback(() => setRestartPromptOpened(true), []);
+
   const closeRestartPromptModal = () => {
     setRestartPromptOpened(false);
+    setSelectedLanguage(defaultLanguage);
   };
 
   // no useCallBack around RNRRestart, or the app might crash.
@@ -66,24 +65,25 @@ const LanguageSelect = () => {
   // Handles a newly selected language to redux-dispatch
   useEffect(() => {
     if (selectedLanguage) {
-      const newDirection = i18next.dir(selectedLanguage);
-      const currentDirection = I18nManager.isRTL ? "rtl" : "ltr";
-
-      if (newDirection !== currentDirection) {
-        dispatch(setLanguage(selectedLanguage));
-        toggleModal();
-      }
-
       dispatch(setLanguage(selectedLanguage));
       updateIdentify();
     }
-  }, [dispatch, selectedLanguage, toggleModal]);
+  }, [dispatch, selectedLanguage]);
 
-  const handleLanguageSelectOnChange = useCallback((l: Locale) => {
-    setSelectedLanguage(l);
+  const handleLanguageSelectOnChange = useCallback(
+    (l: Locale) => {
+      const newDirection = i18next.dir(l);
+      const currentDirection = I18nManager.isRTL ? "rtl" : "ltr";
 
-    setLanguageSelectStatus("completed");
-  }, []);
+      setSelectedLanguage(l);
+      setLanguageSelectStatus("completed");
+
+      if (newDirection !== currentDirection) {
+        toggleRestartPromptModal();
+      }
+    },
+    [toggleRestartPromptModal],
+  );
 
   const handleLanguageSelectOnPress = useCallback(() => {
     track("button_clicked", { button: "language" });
