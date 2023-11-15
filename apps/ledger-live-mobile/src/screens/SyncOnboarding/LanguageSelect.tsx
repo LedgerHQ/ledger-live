@@ -71,11 +71,11 @@ const LanguageSelect = () => {
   }, [dispatch, selectedLanguage]);
 
   const handleLanguageSelectOnChange = useCallback(
-    (l: Locale) => {
-      const newDirection = i18next.dir(l);
+    (language: Locale) => {
+      const newDirection = i18next.dir(language);
       const currentDirection = I18nManager.isRTL ? "rtl" : "ltr";
 
-      setSelectedLanguage(l);
+      setSelectedLanguage(language);
       setLanguageSelectStatus("completed");
 
       if (newDirection !== currentDirection) {
