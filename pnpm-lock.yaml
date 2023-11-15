@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: false
+  excludeLinksFromLockfile: false
+
 neverBuiltDependencies:
   - blake2
 
@@ -1980,8 +1984,8 @@ importers:
         specifier: ^0.9.16
         version: 0.9.16
       '@keplr-wallet/proto-types':
-        specifier: ^0.10.4
-        version: 0.10.4
+        specifier: ^0.12.0
+        version: 0.12.43
       '@ledgerhq/coin-algorand':
         specifier: workspace:^
         version: link:../coin-algorand
@@ -15610,8 +15614,8 @@ packages:
       sha.js: 2.4.11
     dev: false
 
-  /@keplr-wallet/proto-types@0.10.4:
-    resolution: {integrity: sha512-n/ZmiENgvARs1h0hedy/mh57DNF7SH/DgfTqeT89+JKHfwRs2ikrCwXw6HzCn3yaDiv+0H/LudnNPf8WVZcw+w==}
+  /@keplr-wallet/proto-types@0.12.43:
+    resolution: {integrity: sha512-yNY4JSEZzLkaWyrm4faiLsllYFmmXnK+7oLEGffXy6VyWZSIS1vsqZ4cK3/O4AClOZK9/P0lwvX0V8Oeilw3ag==}
     dependencies:
       long: 4.0.0
       protobufjs: 6.11.3
@@ -60027,7 +60031,6 @@ packages:
     resolution: {directory: libs/ui/packages/crypto-icons, type: directory}
     id: file:libs/ui/packages/crypto-icons
     name: '@ledgerhq/crypto-icons-ui'
-    version: 0.6.0
     peerDependencies:
       '@types/react': '*'
       react: '*'
@@ -60047,7 +60050,6 @@ packages:
     resolution: {directory: libs/ui/packages/icons, type: directory}
     id: file:libs/ui/packages/icons
     name: '@ledgerhq/icons-ui'
-    version: 0.6.2
     peerDependencies:
       '@types/react': '*'
       react: '*'
