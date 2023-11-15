@@ -50,8 +50,8 @@ export function LiveApp({ match, appId: propsAppId, location }: Props) {
     const params = new URLSearchParams(search);
     return (
       customDappUrl ||
-      urlParams.customDappUrl ||
-      params.get("customDappUrl") ||
+      urlParams?.customDappUrl ||
+      (params.has("customDappUrl") && params.get("customDappUrl")) ||
       internalParams?.customDappUrl
     );
   }, [search, customDappUrl, urlParams.customDappUrl, internalParams?.customDappUrl]);
