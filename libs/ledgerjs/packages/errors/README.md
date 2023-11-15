@@ -58,4 +58,8 @@ the error.statusCode is one of the `StatusCodes` exported by this library.
 
 #### Parameters
 
-*   `statusCode` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
+*   `statusCode` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** The error status code coming from a Transport implementation
+*   `options` **{canBeMappedToChildError: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?}** containing:*   canBeMappedToChildError: enable the mapping of TransportStatusError to an error extending/inheriting from it
+        . Ex: LockedDeviceError. Default to true. (optional, default `{}`)
+
+    *   `options.canBeMappedToChildError`   (optional, default `true`)
