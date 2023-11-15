@@ -24,6 +24,9 @@ import expo.modules.ExpoModulesPackage;
 import expo.modules.ReactNativeHostWrapper;
 
 public class MainApplication extends Application implements ReactApplication {
+  
+  public static int FW_UPDATE_NOTIFICATION_PROGRESS = 1;
+  public static int FW_UPDATE_NOTIFICATION_USER = 2;
 
   private final ReactNativeHost mReactNativeHost =
       new ReactNativeHostWrapper(this, new DefaultReactNativeHost(this) {
