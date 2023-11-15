@@ -26,7 +26,7 @@ type CustomHandlersParams<Params> = {
 export type SwapProps = {
   provider: string;
   fromAccountId: string;
-  fromParentAccountId: string;
+  fromParentAccountId?: string;
   toAccountId: string;
   fromAmount: string;
   toAmount?: string;

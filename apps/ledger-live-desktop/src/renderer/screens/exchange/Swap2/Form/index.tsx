@@ -32,11 +32,11 @@ import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/conv
 import useRefreshRates from "./hooks/useRefreshRates";
 import LoadingState from "./Rates/LoadingState";
 import EmptyState from "./Rates/EmptyState";
-import { Account, AccountLike } from "@ledgerhq/types-live";
+import { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { SWAP_RATES_TIMEOUT } from "../../config";
-import { OnNoRatesCallback, SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
+import { OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
 import { v4 } from "uuid";
 import SwapWebView, { SWAP_WEB_MANIFEST_ID, SwapWebProps } from "./SwapWebView";
 
