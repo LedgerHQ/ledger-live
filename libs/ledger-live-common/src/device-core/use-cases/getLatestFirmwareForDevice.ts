@@ -1,50 +1,45 @@
 import { UnknownMCU } from "@ledgerhq/errors";
 import { DeviceInfoEntity } from "../entities/DeviceInfoEntity";
 import { FirmwareUpdateContextEntity } from "../entities/FirmwareUpdateContextEntity";
-import { fetchLatestFirmware } from "./managerApi/fetchLatestFirmware";
-import { fetchMcus } from "./managerApi/fetchMcus";
+import { ManagerApiRepository } from "../repositories/ManagerApiRepository";
 
 type GetLatestFirmwareForDeviceParams = {
   deviceInfo: DeviceInfoEntity;
   providerId: number;
   userId: string;
-  managerApiBase: string;
-  liveCommonVersion: string;
+  managerApiRepository: ManagerApiRepository;
 };
 
 export default async function getLatestFirmwareForDevice({
   deviceInfo,
   providerId,
   userId,
-  managerApiBase,
-  liveCommonVersion,
+  managerApiRepository,
 }: GetLatestFirmwareForDeviceParams): Promise<FirmwareUpdateContextEntity | null> {
-  const mcusPromise = fetchMcus({ managerApiBase, liveCommonVersion });
+  const mcusPromise = managerApiRepository.fetchMcus();
   // Gets device infos from targetId
-  const deviceVersion = await ManagerAPI.getDeviceVersion(deviceInfo.targetId, providerId);
+  const deviceVersion = await managerApiRepository.getDeviceVersion(deviceInfo.targetId, providerId);
   let osu;
 
   if (deviceInfo.isOSU) {
-    osu = await ManagerAPI.getCurrentOSU({
+    osu = await managerApiRepository.getCurrentOSU({
       deviceId: deviceVersion.id,
       provider: providerId,
       version: deviceInfo.version,
     });
   } else {
     // Gets firmware infos with firmware name and device version
-    const seFirmwareVersion = await ManagerAPI.getCurrentFirmware({
+    const seFirmwareVersion = await managerApiRepository.getCurrentFirmware({
       version: deviceInfo.version,
       deviceId: deviceVersion.id,
       provider: providerId,
     });
     // Fetches next possible firmware
-    osu = await fetchLatestFirmware({
+    osu = await managerApiRepository.fetchLatestFirmware({
       current_se_firmware_final_version: seFirmwareVersion.id,
       device_version: deviceVersion.id,
-      managerApiBase,
       userId,
       providerId,
-      liveCommonVersion,
     });
   }
 
@@ -52,7 +47,7 @@ export default async function getLatestFirmwareForDevice({
     return null;
   }
 
-  const final = await ManagerAPI.getFinalFirmwareById(osu.next_se_firmware_final_version);
+  const final = await managerApiRepository.getFinalFirmwareById(osu.next_se_firmware_final_version);
   const mcus = await mcusPromise;
   const currentMcuVersion = mcus.find(mcu => mcu.name === deviceInfo.mcuVersion);
   if (!currentMcuVersion) throw new UnknownMCU();

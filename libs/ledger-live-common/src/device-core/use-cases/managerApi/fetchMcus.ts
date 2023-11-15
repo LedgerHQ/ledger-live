@@ -4,6 +4,7 @@ import network from "@ledgerhq/live-network/network";
 
 export type FetchMcusParams = { managerApiBase: string; liveCommonVersion: string };
 
+// TODO: can be removed and replaced by ManagerApiRepository
 export const fetchMcus: (params: FetchMcusParams) => Promise<any> = makeLRUCache(
   async ({ managerApiBase, liveCommonVersion }: FetchMcusParams) => {
     const { data } = await network({
