@@ -17,6 +17,7 @@ import { SwapOperation } from "@ledgerhq/types-live/lib/swap";
 import BigNumber from "bignumber.js";
 import { SubAccount } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
+import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 
 type CustomHandlersParams<Params> = {
   params: Params;
@@ -25,16 +26,10 @@ type CustomHandlersParams<Params> = {
 export type SwapProps = {
   provider: string;
   fromAccountId: string;
-  fromTokenId: string;
-  fromCurrencyId: string;
   fromParentAccountId: string;
   toAccountId: string;
-  toTokenId: string;
-  toCurrencyId: string;
   fromAmount: string;
-  fromAmountWei: string;
-  toAmountWei?: string;
-  walletAddress: string;
+  toAmount?: string;
   quoteId: string;
   rate: string;
   feeStrategy: string;
@@ -93,34 +88,33 @@ const SwapWebView = ({ swapState, redirectToProviderApp }: SwapWebProps) => {
         onSwapWebviewError(params);
         return Promise.resolve();
       },
-      "custom.saveSwapToHistory": (swap: SwapProps, transaction_id: string) => {
-        if (
-          !swap ||
-          !transaction_id ||
-          !swap.fromTokenId ||
-          !swap.provider ||
-          !swap.toTokenId ||
-          !swap.fromAmountWei ||
-          !swap.toAmountWei
-        ) {
-          return Promise.reject("cannot save swap missing params");
+      "custom.saveSwapToHistory": ({
+        params,
+      }: {
+        params: { swap: SwapProps; transaction_id: string };
+      }) => {
+        const { swap, transaction_id } = params;
+        if (!swap || !transaction_id || !swap.provider || !swap.fromAmount || !swap.toAmount) {
+          return Promise.reject("Cannot save swap missing params");
         }
-        const operationId = `${swap.fromTokenId}-${transaction_id}-OUT`;
+        const fromId = getAccountIdFromWalletAccountId(swap.fromAccountId);
+        const toId = getAccountIdFromWalletAccountId(swap.toAccountId);
+        if (!fromId || !toId) return Promise.reject("Accounts not found");
+        const operationId = `${fromId}-${transaction_id}-OUT`;
 
         const swapOperation: SwapOperation = {
           status: "pending",
           provider: swap.provider,
           operationId,
           swapId: transaction_id,
-          // NB We store the reciever main account + tokenId in case the token account doesn't exist yet.
-          receiverAccountId: swap.toTokenId,
-          tokenId: swap.toTokenId,
-          fromAmount: new BigNumber(swap.fromAmountWei),
-          toAmount: new BigNumber(swap.toAmountWei),
+          receiverAccountId: toId,
+          tokenId: toId,
+          fromAmount: new BigNumber(swap.fromAmount),
+          toAmount: new BigNumber(swap.toAmount),
         };
 
         dispatch(
-          updateAccountWithUpdater(swap.fromTokenId, account => {
+          updateAccountWithUpdater(fromId, account => {
             const fromCurrency = getAccountCurrency(account);
             const isFromToken = fromCurrency.type === "TokenCurrency";
             const subAccounts = account.type === "Account" && account.subAccounts;
@@ -132,7 +126,7 @@ const SwapWebView = ({ swapState, redirectToProviderApp }: SwapWebProps) => {
                       ...a,
                       swapHistory: [...a.swapHistory, swapOperation],
                     };
-                    return a.id === swap.fromTokenId ? subAccount : a;
+                    return a.id === fromId ? subAccount : a;
                   }),
                 }
               : { ...account, swapHistory: [...account.swapHistory, swapOperation] };
