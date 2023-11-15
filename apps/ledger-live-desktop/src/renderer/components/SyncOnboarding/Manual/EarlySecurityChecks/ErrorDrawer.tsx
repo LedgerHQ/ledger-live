@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import DrawerFooter from "./DrawerFooter";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import ErrorDisplay from "../../../ErrorDisplay";
-import useEnv from "~/renderer/hooks/useEnv";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { useHistory } from "react-router";
 import { DeviceBlocker } from "../../../DeviceAction/DeviceBlocker";
 import { setDrawer } from "~/renderer/drawers/Provider";

@@ -11,6 +11,7 @@ import {
 } from "../fixtures/prepareTransaction.fixtures";
 import { GasOptions } from "../../types";
 import * as nftAPI from "../../api/nft";
+import { DEFAULT_NONCE } from "../../createTransaction";
 
 describe("EVM Family", () => {
   describe("prepareTransaction.ts", () => {
@@ -619,6 +620,7 @@ describe("EVM Family", () => {
     });
 
     describe("prepareForSignOperation", () => {
+      const mockedNodeApi = jest.mocked(nodeApi);
       beforeEach(() => {
         jest.spyOn(nodeApi, "getTransactionCount").mockImplementation(() => Promise.resolve(10));
       });
@@ -626,28 +628,67 @@ describe("EVM Family", () => {
         jest.restoreAllMocks();
       });
 
-      it("should not change a coin transaction", async () => {
-        expect(await prepareForSignOperation(account, transaction)).toEqual({
-          ...transaction,
-          nonce: 10,
+      describe("if transaction nonce is not already valid", () => {
+        it("should not change a coin transaction", async () => {
+          expect(
+            await prepareForSignOperation({
+              account,
+              transaction: { ...transaction, nonce: DEFAULT_NONCE },
+            }),
+          ).toEqual({
+            ...transaction,
+            nonce: 10,
+          });
+
+          expect(mockedNodeApi.getTransactionCount).toHaveBeenCalledTimes(1);
+        });
+
+        it("should update a token transaction with the correct recipient", async () => {
+          expect(
+            await prepareForSignOperation({
+              account,
+              transaction: { ...tokenTransaction, nonce: DEFAULT_NONCE },
+            }),
+          ).toEqual({
+            ...tokenTransaction,
+            amount: new BigNumber(0),
+            recipient: tokenAccount.token.contractAddress,
+            nonce: 10,
+          });
+
+          expect(mockedNodeApi.getTransactionCount).toHaveBeenCalledTimes(1);
+        });
+
+        it("should update an NFT transaction with the correct recipient", async () => {
+          expect(
+            await prepareForSignOperation({
+              account,
+              transaction: { ...nftTransaction, nonce: DEFAULT_NONCE },
+            }),
+          ).toEqual({
+            ...nftTransaction,
+            amount: new BigNumber(0),
+            recipient: nftTransaction.nft.contract,
+            nonce: 10,
+          });
+
+          expect(mockedNodeApi.getTransactionCount).toHaveBeenCalledTimes(1);
         });
       });
 
-      it("should update a token transaction with the correct recipient", async () => {
-        expect(await prepareForSignOperation(account, tokenTransaction)).toEqual({
-          ...tokenTransaction,
-          amount: new BigNumber(0),
-          recipient: tokenAccount.token.contractAddress,
-          nonce: 10,
-        });
-      });
+      describe("if transaction nonce is already valid", () => {
+        it("should not change the transaction nonce", async () => {
+          expect(
+            await prepareForSignOperation({
+              account,
+              transaction: { ...transaction, nonce: 1 },
+            }),
+          ).toEqual({
+            ...transaction,
+            nonce: 1,
+          });
 
-      it("should update an NFT transaction with the correct recipient", async () => {
-        expect(await prepareForSignOperation(account, nftTransaction)).toEqual({
-          ...nftTransaction,
-          amount: new BigNumber(0),
-          recipient: nftTransaction.nft.contract,
-          nonce: 10,
+          expect(mockedNodeApi.getTransactionCount).not.toHaveBeenCalled();
         });
       });
     });

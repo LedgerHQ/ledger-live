@@ -237,6 +237,7 @@ export type CompleteExchangeRequest = {
   exchangeType: number;
   swapId?: string;
   rate?: number;
+  amountExpectedTo?: number;
 };
 export type CompleteExchangeUiRequest = {
   provider: string;
@@ -248,6 +249,7 @@ export type CompleteExchangeUiRequest = {
   exchangeType: number;
   swapId?: string;
   rate?: number;
+  amountExpectedTo?: number;
 };
 
 export function completeExchangeLogic(
