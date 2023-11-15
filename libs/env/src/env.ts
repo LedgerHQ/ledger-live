@@ -750,30 +750,20 @@ const envDefinitions = {
     parser: intParser,
     desc: "Time after which an optimisc operation is considered stuck",
   },
-  EDIT_TX_LEGACY_GASPRICE_GAP_SPEEDUP_FACTOR: {
-    def: 0.1,
+  EVM_REPLACE_TX_LEGACY_GASPRICE_FACTOR: {
+    def: 1.3,
     parser: floatParser,
-    desc: "Speedup transaction gasprice gap factor for NON-EIP1559 for edit eth transaction feature",
+    desc: "Replace transaction gasprice factor for legacy evm transaction. This value should be 1.1 minimum since this is the minimum increase required by most nodes",
   },
-  EDIT_TX_LEGACY_GASPRICE_GAP_CANCEL_FACTOR: {
-    def: 0.3,
+  EVM_REPLACE_TX_EIP1559_MAXFEE_FACTOR: {
+    def: 1.3,
     parser: floatParser,
-    desc: "Cancel transaction gasprice gap factor for NON-EIP1559 for edit eth transaction feature",
+    desc: "Replace transaction max fee factor for EIP1559 evm transaction. This value should be 1.1 minimum since this is the minimum increase required by most nodes",
   },
-  EDIT_TX_EIP1559_FEE_GAP_SPEEDUP_FACTOR: {
-    def: 0.1,
+  EVM_REPLACE_TX_EIP1559_MAXPRIORITYFEE_FACTOR: {
+    def: 1.1,
     parser: floatParser,
-    desc: "Speedup transaction max priority fee gap factor for EIP1559 for edit eth transaction feature",
-  },
-  EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_CANCEL_FACTOR: {
-    def: 0.1,
-    parser: floatParser,
-    desc: "Cancel transaction max priority fee gap factor for EIP1559 for edit eth transaction feature",
-  },
-  EDIT_TX_EIP1559_MAXFEE_GAP_CANCEL_FACTOR: {
-    def: 0.3,
-    parser: floatParser,
-    desc: "Cancel transaction max fee gap factor for EIP1559 for edit eth transaction feature",
+    desc: "Replace transaction max priority fee factor for EIP1559 evm transaction. This value should be 1.1 minimum since this is the minimum increase required by most nodes",
   },
   ENABLE_NETWORK_LOGS: {
     def: false,
@@ -785,20 +775,15 @@ const envDefinitions = {
     parser: stringArrayParser,
     desc: "Fuse search attributes to find a currency according to user input",
   },
-  EDIT_TX_NON_EIP1559_GASPRICE_GAP_SPEEDUP_FACTOR: {
-    def: 0.1,
-    parser: floatParser,
-    desc: "Speedup transaction gasprice gap factor for NON-EIP1559 for edit eth transaction feature",
-  },
-  EDIT_TX_NON_EIP1559_GASPRICE_GAP_CANCEL_FACTOR: {
-    def: 0.3,
-    parser: floatParser,
-    desc: "Cancel transaction gasprice gap factor for NON-EIP1559 for edit eth transaction feature",
-  },
   VERBOSE: {
     def: [] as Array<string>,
     parser: stringArrayParser,
     desc: 'Sets up debug console printing of logs. `VERBOSE=1` or `VERBOSE=true`: to print all logs | `VERBOSE="apdu,hw,transport,hid-verbose"` : filtering on a list of log `type` separated by a `,`',
+  },
+  DEFAULT_TRANSACTION_POLLING_INTERVAL: {
+    def: 30 * 1000,
+    parser: intParser,
+    desc: "Default interval to poll for transaction confirmation in speedup/cancel evm flow (in ms)",
   },
 };
 

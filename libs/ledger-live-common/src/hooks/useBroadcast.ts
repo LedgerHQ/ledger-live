@@ -1,11 +1,10 @@
-import invariant from "invariant";
 import { useCallback } from "react";
 import { log } from "@ledgerhq/logs";
-import { getMainAccount, formatOperation } from "@ledgerhq/live-common/account/index";
 import type { SignedOperation, Operation, AccountLike, Account } from "@ledgerhq/types-live";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { execAndWaitAtLeast } from "@ledgerhq/live-common/promise";
 import { getEnv } from "@ledgerhq/live-env";
+import { formatOperation, getMainAccount } from "../account/index";
+import { getAccountBridge } from "../bridge/index";
+import { execAndWaitAtLeast } from "../promise";
 
 type SignTransactionArgs = {
   account?: AccountLike | null;
@@ -15,7 +14,7 @@ type SignTransactionArgs = {
 export const useBroadcast = ({ account, parentAccount }: SignTransactionArgs) => {
   const broadcast = useCallback(
     async (signedOperation: SignedOperation): Promise<Operation> => {
-      invariant(account, "account not present");
+      if (!account) throw new Error("account not present");
       const mainAccount = getMainAccount(account, parentAccount);
       const bridge = getAccountBridge(account, parentAccount);
 
