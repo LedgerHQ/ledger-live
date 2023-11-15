@@ -360,7 +360,7 @@ function convertVechainToken([
 ]: vip180Token): TokenCurrency {
   return {
     type: "TokenCurrency",
-    id: "vechain/vtho",
+    id: "vechain/vip180/vtho",
     contractAddress: contractAddress,
     parentCurrency: getCryptoCurrencyById("vechain"),
     tokenType: "vip180",
