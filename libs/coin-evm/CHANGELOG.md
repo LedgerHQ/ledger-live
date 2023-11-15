@@ -1,5 +1,25 @@
 # @ledgerhq/coin-evm
 
+## 0.11.0-nightly.2
+
+### Minor Changes
+
+- [#4886](https://github.com/LedgerHQ/ledger-live/pull/4886) [`771c9d3c1d`](https://github.com/LedgerHQ/ledger-live/commit/771c9d3c1d138ddd68da2e4f9738e2c41ecaf81b) Thanks [@chabroA](https://github.com/chabroA)! - Add speedup / cancel tx feature for evm
+
+### Patch Changes
+
+- [#4886](https://github.com/LedgerHQ/ledger-live/pull/4886) [`771c9d3c1d`](https://github.com/LedgerHQ/ledger-live/commit/771c9d3c1d138ddd68da2e4f9738e2c41ecaf81b) Thanks [@chabroA](https://github.com/chabroA)! - Fix wrong usage of explorer block endpoint in coin evm
+
+- Updated dependencies [[`771c9d3c1d`](https://github.com/LedgerHQ/ledger-live/commit/771c9d3c1d138ddd68da2e4f9738e2c41ecaf81b)]:
+  - @ledgerhq/errors@6.16.0-nightly.1
+  - @ledgerhq/coin-framework@0.9.0-nightly.2
+  - @ledgerhq/live-env@0.7.0-nightly.0
+  - @ledgerhq/domain-service@1.1.15-nightly.2
+  - @ledgerhq/devices@8.0.9-nightly.1
+  - @ledgerhq/hw-app-eth@6.34.10-nightly.2
+  - @ledgerhq/live-network@1.1.9-nightly.1
+  - @ledgerhq/evm-tools@1.0.11-nightly.2
+
 ## 0.10.1-nightly.1
 
 ### Patch Changes

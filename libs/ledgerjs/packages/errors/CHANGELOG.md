@@ -1,5 +1,11 @@
 # @ledgerhq/errors
 
+## 6.16.0-nightly.1
+
+### Minor Changes
+
+- [#4886](https://github.com/LedgerHQ/ledger-live/pull/4886) [`771c9d3c1d`](https://github.com/LedgerHQ/ledger-live/commit/771c9d3c1d138ddd68da2e4f9738e2c41ecaf81b) Thanks [@chabroA](https://github.com/chabroA)! - Add speedup / cancel tx feature for evm
+
 ## 6.15.1-nightly.0
 
 ### Patch Changes

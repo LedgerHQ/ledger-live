@@ -1,5 +1,35 @@
 # ledger-live-desktop
 
+## 2.72.0-nightly.2
+
+### Minor Changes
+
+- [#4886](https://github.com/LedgerHQ/ledger-live/pull/4886) [`771c9d3c1d`](https://github.com/LedgerHQ/ledger-live/commit/771c9d3c1d138ddd68da2e4f9738e2c41ecaf81b) Thanks [@chabroA](https://github.com/chabroA)! - Add speedup / cancel tx feature for evm
+
+- [#5445](https://github.com/LedgerHQ/ledger-live/pull/5445) [`f34793d3c0`](https://github.com/LedgerHQ/ledger-live/commit/f34793d3c0827af1edf57a0ba2f3c9946a667a0a) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Remove useEnv hooks and rely on live-common one
+
+- [#5359](https://github.com/LedgerHQ/ledger-live/pull/5359) [`133ad8f25e`](https://github.com/LedgerHQ/ledger-live/commit/133ad8f25e6b82d779bb5bc92d1ba34e7a65c0e8) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Move useBroadcast from LLD/LLM to live-common
+
+### Patch Changes
+
+- [#5421](https://github.com/LedgerHQ/ledger-live/pull/5421) [`7ee72950da`](https://github.com/LedgerHQ/ledger-live/commit/7ee72950da402030032e41622de39624dd29e3eb) Thanks [@gre](https://github.com/gre)! - Electron 27.0.4
+
+- [#5441](https://github.com/LedgerHQ/ledger-live/pull/5441) [`d61ada1ff5`](https://github.com/LedgerHQ/ledger-live/commit/d61ada1ff5df590f143a04b8f240845af28df634) Thanks [@RamyEB](https://github.com/RamyEB)! - Fix refreshing Discover page on sync
+
+- Updated dependencies [[`771c9d3c1d`](https://github.com/LedgerHQ/ledger-live/commit/771c9d3c1d138ddd68da2e4f9738e2c41ecaf81b), [`771c9d3c1d`](https://github.com/LedgerHQ/ledger-live/commit/771c9d3c1d138ddd68da2e4f9738e2c41ecaf81b), [`133ad8f25e`](https://github.com/LedgerHQ/ledger-live/commit/133ad8f25e6b82d779bb5bc92d1ba34e7a65c0e8)]:
+  - @ledgerhq/errors@6.16.0-nightly.1
+  - @ledgerhq/live-common@33.2.0-nightly.2
+  - @ledgerhq/coin-framework@0.9.0-nightly.2
+  - @ledgerhq/coin-evm@0.11.0-nightly.2
+  - @ledgerhq/live-env@0.7.0-nightly.0
+  - @ledgerhq/domain-service@1.1.15-nightly.2
+  - @ledgerhq/devices@8.0.9-nightly.1
+  - @ledgerhq/hw-transport@6.29.1-nightly.1
+  - @ledgerhq/hw-transport-http@6.28.5-nightly.1
+  - @ledgerhq/hw-transport-node-hid-singleton@6.29.1-nightly.1
+  - @ledgerhq/hw-transport-vault@1.1.5-nightly.1
+  - @ledgerhq/live-network@1.1.9-nightly.1
+
 ## 2.72.0-nightly.1
 
 ### Minor Changes
