@@ -19712,44 +19712,70 @@ var require_has_proto = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/function-bind@1.1.1/node_modules/function-bind/implementation.js
+// ../../../node_modules/.pnpm/function-bind@1.1.2/node_modules/function-bind/implementation.js
 var require_implementation = __commonJS({
-  "../../../node_modules/.pnpm/function-bind@1.1.1/node_modules/function-bind/implementation.js"(exports, module2) {
+  "../../../node_modules/.pnpm/function-bind@1.1.2/node_modules/function-bind/implementation.js"(exports, module2) {
     "use strict";
     var ERROR_MESSAGE = "Function.prototype.bind called on incompatible ";
-    var slice = Array.prototype.slice;
     var toStr = Object.prototype.toString;
+    var max = Math.max;
     var funcType = "[object Function]";
+    var concatty = function concatty2(a5, b5) {
+      var arr = [];
+      for (var i5 = 0; i5 < a5.length; i5 += 1) {
+        arr[i5] = a5[i5];
+      }
+      for (var j5 = 0; j5 < b5.length; j5 += 1) {
+        arr[j5 + a5.length] = b5[j5];
+      }
+      return arr;
+    };
+    var slicy = function slicy2(arrLike, offset) {
+      var arr = [];
+      for (var i5 = offset || 0, j5 = 0; i5 < arrLike.length; i5 += 1, j5 += 1) {
+        arr[j5] = arrLike[i5];
+      }
+      return arr;
+    };
+    var joiny = function(arr, joiner) {
+      var str = "";
+      for (var i5 = 0; i5 < arr.length; i5 += 1) {
+        str += arr[i5];
+        if (i5 + 1 < arr.length) {
+          str += joiner;
+        }
+      }
+      return str;
+    };
     module2.exports = function bind(that) {
       var target = this;
-      if (typeof target !== "function" || toStr.call(target) !== funcType) {
+      if (typeof target !== "function" || toStr.apply(target) !== funcType) {
         throw new TypeError(ERROR_MESSAGE + target);
       }
-      var args = slice.call(arguments, 1);
+      var args = slicy(arguments, 1);
       var bound;
       var binder = function() {
         if (this instanceof bound) {
           var result = target.apply(
             this,
-            args.concat(slice.call(arguments))
+            concatty(args, arguments)
           );
           if (Object(result) === result) {
             return result;
           }
           return this;
-        } else {
-          return target.apply(
-            that,
-            args.concat(slice.call(arguments))
-          );
         }
+        return target.apply(
+          that,
+          concatty(args, arguments)
+        );
       };
-      var boundLength = Math.max(0, target.length - args.length);
+      var boundLength = max(0, target.length - args.length);
       var boundArgs = [];
       for (var i5 = 0; i5 < boundLength; i5++) {
-        boundArgs.push("$" + i5);
+        boundArgs[i5] = "$" + i5;
       }
-      bound = Function("binder", "return function (" + boundArgs.join(",") + "){ return binder.apply(this,arguments); }")(binder);
+      bound = Function("binder", "return function (" + joiny(boundArgs, ",") + "){ return binder.apply(this,arguments); }")(binder);
       if (target.prototype) {
         var Empty = function Empty2() {
         };
@@ -19762,27 +19788,29 @@ var require_implementation = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/function-bind@1.1.1/node_modules/function-bind/index.js
+// ../../../node_modules/.pnpm/function-bind@1.1.2/node_modules/function-bind/index.js
 var require_function_bind = __commonJS({
-  "../../../node_modules/.pnpm/function-bind@1.1.1/node_modules/function-bind/index.js"(exports, module2) {
+  "../../../node_modules/.pnpm/function-bind@1.1.2/node_modules/function-bind/index.js"(exports, module2) {
     "use strict";
     var implementation = require_implementation();
     module2.exports = Function.prototype.bind || implementation;
   }
 });
 
-// ../../../node_modules/.pnpm/has@1.0.3/node_modules/has/src/index.js
-var require_src2 = __commonJS({
-  "../../../node_modules/.pnpm/has@1.0.3/node_modules/has/src/index.js"(exports, module2) {
+// ../../../node_modules/.pnpm/hasown@2.0.0/node_modules/hasown/index.js
+var require_hasown = __commonJS({
+  "../../../node_modules/.pnpm/hasown@2.0.0/node_modules/hasown/index.js"(exports, module2) {
     "use strict";
+    var call = Function.prototype.call;
+    var $hasOwn = Object.prototype.hasOwnProperty;
     var bind = require_function_bind();
-    module2.exports = bind.call(Function.call, Object.prototype.hasOwnProperty);
+    module2.exports = bind.call(call, $hasOwn);
   }
 });
 
-// ../../../node_modules/.pnpm/get-intrinsic@1.2.1/node_modules/get-intrinsic/index.js
+// ../../../node_modules/.pnpm/get-intrinsic@1.2.2/node_modules/get-intrinsic/index.js
 var require_get_intrinsic = __commonJS({
-  "../../../node_modules/.pnpm/get-intrinsic@1.2.1/node_modules/get-intrinsic/index.js"(exports, module2) {
+  "../../../node_modules/.pnpm/get-intrinsic@1.2.2/node_modules/get-intrinsic/index.js"(exports, module2) {
     "use strict";
     var undefined2;
     var $SyntaxError = SyntaxError;
@@ -19978,7 +20006,7 @@ var require_get_intrinsic = __commonJS({
       "%WeakSetPrototype%": ["WeakSet", "prototype"]
     };
     var bind = require_function_bind();
-    var hasOwn = require_src2();
+    var hasOwn = require_hasown();
     var $concat = bind.call(Function.call, Array.prototype.concat);
     var $spliceApply = bind.call(Function.apply, Array.prototype.splice);
     var $replace = bind.call(Function.call, String.prototype.replace);
