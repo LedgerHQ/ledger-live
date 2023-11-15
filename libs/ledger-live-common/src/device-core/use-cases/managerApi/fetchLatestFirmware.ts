@@ -13,6 +13,7 @@ export type FetchLatestFirmwareParams = {
   liveCommonVersion: string;
 };
 
+// TODO: can be removed and replaced by ManagerApiRepository
 export const fetchLatestFirmware: (
   arg0: FetchLatestFirmwareParams,
 ) => Promise<OsuFirmware | null | undefined> = makeLRUCache(
