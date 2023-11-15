@@ -322,7 +322,6 @@ const SwapForm = () => {
           amount: transaction?.amount,
           account: fromAccount,
         });
-      const walletAddress = getAccountWalletAddress(swapTransaction);
 
       const customFeeConfig = transaction && getCustomFeesPerFamily(transaction);
       // The Swap web app will automatically recreate the transaction with "default" fees.
@@ -334,15 +333,9 @@ const SwapForm = () => {
         fromAccountId,
         toAccountId,
         fromAmount: fromAmount?.toString(),
-        fromAmountWei: transaction?.amount.toString(),
-        fromCurrencyId: from?.currency?.id,
-        fromTokenId: from?.account?.id,
-        toCurrencyId: to?.currency?.id,
-        walletAddress,
         fromParentAccountId: fromParentAccount
           ? accountToWalletAPIAccount(fromParentAccount)?.id
           : undefined,
-        toTokenId: to?.account?.id,
         quoteId: rateId ? rateId : undefined,
         rate: rate?.toString(),
         feeStrategy: (isCustomFee ? "custom" : "medium")?.toUpperCase(),
