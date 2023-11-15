@@ -1,10 +1,11 @@
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import network from "@ledgerhq/live-network/lib/network";
 // To refactor: use own entities
-import { DeviceVersion, Id, OsuFirmware } from "@ledgerhq/types-live";
+import { DeviceVersion, FinalFirmware, Id, OsuFirmware } from "@ledgerhq/types-live";
 import { getUserHashes } from "../../user";
 import URL from "url";
 import { FirmwareNotRecognized } from "@ledgerhq/errors";
+import { getEnv } from "@ledgerhq/live-env";
 
 export class ManagerApiRepository {
   private readonly managerApiBase: string;
@@ -115,5 +116,85 @@ export class ManagerApiRepository {
       },
       ({ targetId, providerId }) => `${targetId}_${providerId}`,
     )({ targetId, providerId });
+  }
+
+  async getCurrentOSU(params: {
+    deviceId: string | number;
+    providerId: string | number;
+    version: string;
+  }): Promise<OsuFirmware> {
+    return makeLRUCache(
+      async input => {
+        const { data } = await network({
+          method: "POST",
+          url: URL.format({
+            pathname: `${this.managerApiBase}/get_osu_version`,
+            query: {
+              livecommonversion: this.liveCommonVersion,
+            },
+          }),
+          data: {
+            device_version: input.deviceId,
+            version_name: `${input.version}-osu`,
+            provider: input.providerId,
+          },
+        });
+        return data;
+      },
+      a => `${a.version}_${a.deviceId}_${a.providerId}`,
+    )(params);
+  }
+
+  async getCurrentFirmware(params: {
+    version: string;
+    deviceId: string | number;
+    providerId: number;
+  }): Promise<FinalFirmware> {
+    return makeLRUCache(
+      async input => {
+        const {
+          data,
+        }: {
+          data: FinalFirmware;
+        } = await network({
+          method: "POST",
+          url: URL.format({
+            pathname: `${this.managerApiBase}/get_firmware_version`,
+            query: {
+              livecommonversion: this.liveCommonVersion,
+            },
+          }),
+          data: {
+            device_version: input.deviceId,
+            version_name: input.version,
+            provider: input.providerId,
+          },
+        });
+        return data;
+      },
+      a => `${a.version}_${a.deviceId}_${a.providerId}`,
+    )(params);
+  }
+
+  async getFinalFirmwareById(id: number): Promise<FinalFirmware> {
+    return makeLRUCache(
+      async id => {
+        const {
+          data,
+        }: {
+          data: FinalFirmware;
+        } = await network({
+          method: "GET",
+          url: URL.format({
+            pathname: `${this.managerApiBase}/firmware_final_versions/${id}`,
+            query: {
+              livecommonversion: this.liveCommonVersion,
+            },
+          }),
+        });
+        return data;
+      },
+      id => String(id),
+    )(id);
   }
 }

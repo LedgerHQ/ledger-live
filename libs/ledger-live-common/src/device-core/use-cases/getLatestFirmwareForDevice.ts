@@ -10,7 +10,7 @@ type GetLatestFirmwareForDeviceParams = {
   managerApiRepository: ManagerApiRepository;
 };
 
-export default async function getLatestFirmwareForDevice({
+export async function getLatestFirmwareForDevice({
   deviceInfo,
   providerId,
   userId,
@@ -18,13 +18,16 @@ export default async function getLatestFirmwareForDevice({
 }: GetLatestFirmwareForDeviceParams): Promise<FirmwareUpdateContextEntity | null> {
   const mcusPromise = managerApiRepository.fetchMcus();
   // Gets device infos from targetId
-  const deviceVersion = await managerApiRepository.getDeviceVersion(deviceInfo.targetId, providerId);
+  const deviceVersion = await managerApiRepository.getDeviceVersion({
+    targetId: deviceInfo.targetId,
+    providerId,
+  });
   let osu;
 
   if (deviceInfo.isOSU) {
     osu = await managerApiRepository.getCurrentOSU({
       deviceId: deviceVersion.id,
-      provider: providerId,
+      providerId,
       version: deviceInfo.version,
     });
   } else {
@@ -32,7 +35,7 @@ export default async function getLatestFirmwareForDevice({
     const seFirmwareVersion = await managerApiRepository.getCurrentFirmware({
       version: deviceInfo.version,
       deviceId: deviceVersion.id,
-      provider: providerId,
+      providerId,
     });
     // Fetches next possible firmware
     osu = await managerApiRepository.fetchLatestFirmware({
