@@ -1,7 +1,7 @@
 {
   "name": "ledger-live",
   "version": "0.0.0",
-  "license": "MIT",
+  "license": "MIT AND Apache-2.0",
   "private": true,
   "repository": {
     "type": "git",
