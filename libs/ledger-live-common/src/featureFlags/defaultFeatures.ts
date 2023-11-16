@@ -60,6 +60,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencySyscoin: DEFAULT_FEATURE,
   currencyTelosEvm: DEFAULT_FEATURE,
   currencyUmee: DEFAULT_FEATURE,
+  currencyVechain: DEFAULT_FEATURE,
   currencyVelasEvm: DEFAULT_FEATURE,
   currencyCasper: DEFAULT_FEATURE,
   currencyNeonEvm: DEFAULT_FEATURE,
