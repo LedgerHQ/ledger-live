@@ -4955,8 +4955,8 @@ importers:
         specifier: ^1.7.5
         version: 1.7.5
       '@types/unzipper':
-        specifier: 0.10.8
-        version: 0.10.8
+        specifier: 0.10.9
+        version: 0.10.9
       stream-json:
         specifier: 1.8.0
         version: 1.8.0
@@ -4979,8 +4979,8 @@ importers:
         specifier: 20.8.10
         version: 20.8.10
       '@types/unzipper':
-        specifier: 0.10.8
-        version: 0.10.8
+        specifier: 0.10.9
+        version: 0.10.9
       lodash:
         specifier: 4.17.21
         version: 4.17.21
@@ -24867,8 +24867,8 @@ packages:
     resolution: {integrity: sha512-MFETx3tbTjE7Uk6vvnWINA/1iJ7LuMdO4fcq8UfF0pRbj01aGLduVvQcRyswuACJdpnHgg8E3rQLhaRdNEJS0w==}
     dev: false
 
-  /@types/unzipper@0.10.8:
-    resolution: {integrity: sha512-Cior/4Y78R1ZVF6tnWEHWIkAMDqKxU5pPCbaC62826oEfchPGg90fKdi3sLZ2D7oB7GrFu3+PW2elEMBOtd27w==}
+  /@types/unzipper@0.10.9:
+    resolution: {integrity: sha512-vHbmFZAw8emNAOVkHVbS3qBnbr0x/qHQZ+ei1HE7Oy6Tyrptl+jpqnOX+BF5owcu/HZLOV0nJK+K9sjs1Ox2JA==}
     dependencies:
       '@types/node': 20.8.10
     dev: true
