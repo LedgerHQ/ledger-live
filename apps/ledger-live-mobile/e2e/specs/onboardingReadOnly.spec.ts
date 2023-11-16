@@ -3,6 +3,7 @@ import OnboardingSteps from "../models/onboarding/onboardingSteps";
 import PortfolioPage from "../models/wallet/portfolioPage";
 import MarketPage from "../models/market/marketPage";
 import GetDevicePage from "../models/discover/getDevicePage";
+import { itifAndroid } from "../helpers";
 
 let onboardingSteps: OnboardingSteps;
 let portfolioPage: PortfolioPage;
@@ -17,7 +18,8 @@ describe("Onboarding - Read Only", () => {
     getDevicePage = new GetDevicePage();
   });
 
-  it("is able to buy a nano from the onboarding flow", async () => {
+  // WebView check only available on Android
+  itifAndroid("is able to buy a nano from the onboarding flow", async () => {
     await onboardingSteps.startOnboarding();
     await onboardingSteps.chooseNoLedgerYet();
     await onboardingSteps.chooseToBuyLedger();
@@ -36,7 +38,8 @@ describe("Onboarding - Read Only", () => {
     await portfolioPage.waitForPortfolioReadOnly();
   });
 
-  it("buy a nano from the market page", async () => {
+  // WebView check only available on Android
+  itifAndroid("buy a nano from the market page", async () => {
     await portfolioPage.waitForPortfolioReadOnly();
     await portfolioPage.openWalletTabMarket();
     await marketPage.searchAsset("BTC");
