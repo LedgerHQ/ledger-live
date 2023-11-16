@@ -34,7 +34,7 @@ const getAccountShape: GetAccountShape = async info => {
   const newOperations = await getOperations(accountId, address, startAt);
 
   //Get last token operations
-  const vthoAccountId = encodeTokenAccountId(accountId, findTokenById("vechain/vtho")!);
+  const vthoAccountId = encodeTokenAccountId(accountId, findTokenById("vechain/vip180/vtho")!);
   const vthoOperations = await getTokenOperations(vthoAccountId, address, VTHO_ADDRESS, 1); // from parameter must be 1 otherwise the response is empty
 
   const operations = mergeOps(oldOperations, newOperations);
@@ -55,13 +55,13 @@ const getAccountShape: GetAccountShape = async info => {
     operationsCount: operations.length,
     operations,
     blockHeight,
-    feesCurrency: getTokenById("vechain/vtho"),
+    feesCurrency: getTokenById("vechain/vip180/vtho"),
     subAccounts: [
       {
         type: "TokenAccount" as const,
         id: vthoAccountId,
         parentId: accountId,
-        token: getTokenById("vechain/vtho"),
+        token: getTokenById("vechain/vip180/vtho"),
         balance: new BigNumber(energy),
         spendableBalance: new BigNumber(energy),
         creationDate: minDate != -1 ? new Date(minDate) : new Date(),
