@@ -169,7 +169,7 @@ export type Features = CurrencyFeatures & {
   stakePrograms: Feature_StakePrograms;
   portfolioExchangeBanner: Feature_PortfolioExchangeBanner;
   objkt: Feature_Objkt;
-  editEthTx: Feature_EditEthTx;
+  editEvmTx: Feature_EditEvmTx;
   stakeAccountBanner: Feature_StakeAccountBanner;
   newsfeedPage: Feature_NewsfeedPage;
   domainInputResolution: Feature_DomainInputResolution;
@@ -378,6 +378,10 @@ export type Feature_DomainInputResolution = Feature<{
   supportedCurrencyIds: string[];
 }>;
 
+export type Feature_EditEvmTx = Feature<{
+  supportedCurrencyIds: string[];
+}>;
+
 export type Feature_FirebaseEnvironmentReadOnly = Feature<{
   comment: string;
   project: string;
@@ -478,7 +482,6 @@ export type Feature_PtxServiceCtaExchangeDrawer = DefaultFeature;
 export type Feature_PtxServiceCtaScreens = DefaultFeature;
 export type Feature_PortfolioExchangeBanner = DefaultFeature;
 export type Feature_Objkt = DefaultFeature;
-export type Feature_EditEthTx = DefaultFeature;
 export type Feature_ProtectServicesDiscoverDesktop = DefaultFeature;
 export type Feature_ListAppsV2minor1 = DefaultFeature;
 export type Feature_BrazeLearn = DefaultFeature;

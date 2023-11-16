@@ -705,6 +705,10 @@ export const renderError = ({
     return <RenderDeviceNotOnboardedError t={t} device={device} />;
   }
 
+  // if no supportLink is provided, we fallback on the related url linked to
+  // error name, if any
+  const supportLinkUrl = supportLink ?? urls.errors[error?.name];
+
   return (
     <Wrapper id={`error-${error.name}`}>
       <ErrorBody
@@ -736,8 +740,8 @@ export const renderError = ({
           />
         ) : (
           <>
-            {supportLink ? (
-              <ExternalLinkButton label={t("common.getSupport")} url={supportLink} />
+            {supportLinkUrl ? (
+              <ExternalLinkButton label={t("common.getSupport")} url={supportLinkUrl} />
             ) : null}
             {withExportLogs ? (
               <ExportLogsButton

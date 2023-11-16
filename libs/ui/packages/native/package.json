@@ -73,7 +73,6 @@
     "styled-components": "^5.3.3"
   },
   "devDependencies": {
-    "@types/color": "^3.0.3",
     "@babel/core": "^7.22.10",
     "@babel/generator": "^7.17.2",
     "@babel/plugin-proposal-class-properties": "^7.13.0",
@@ -110,8 +109,9 @@
     "@svgr/core": "^5.5.0",
     "@svgr/plugin-jsx": "^5.5.0",
     "@svgr/plugin-svgo": "^5.5.0",
+    "@types/color": "^3.0.3",
     "@types/hoist-non-react-statics": "^3.3.1",
-    "@types/node": "^18.0.0",
+    "@types/node": "^20.8.10",
     "@types/prop-types": "^15.7.5",
     "@types/react": "^18.2.21",
     "@types/react-native": "0.72.5",

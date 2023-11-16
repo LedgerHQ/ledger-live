@@ -28,6 +28,7 @@ pnpm import:cal-tokens
 *   [abandonSeedAddresses](#abandonseedaddresses)
 *   [getAbandonSeedAddress](#getabandonseedaddress)
     *   [Parameters](#parameters)
+*   [](#)
 *   [registerCryptoCurrency](#registercryptocurrency)
     *   [Parameters](#parameters-1)
 *   [listCryptoCurrencies](#listcryptocurrencies)
@@ -55,9 +56,9 @@ pnpm import:cal-tokens
 *   [getFiatCurrencyByTicker](#getfiatcurrencybyticker)
     *   [Parameters](#parameters-13)
 *   [listFiatCurrencies](#listfiatcurrencies)
-*   [\__clearObject](#\__clearobject)
+*   [\_\_clearObject](#__clearobject)
     *   [Parameters](#parameters-14)
-*   [\__clearAllLists](#\__clearalllists)
+*   [\_\_clearAllLists](#__clearalllists)
 *   [listTokens](#listtokens)
     *   [Parameters](#parameters-15)
 *   [listTokensForCryptoCurrency](#listtokensforcryptocurrency)
@@ -94,9 +95,9 @@ DO NOT USE AS RECIPIENT OR SIGN TRANSACTIONS INTO THEM
 
 #### Parameters
 
-*   `currencyId` **any** 
+*   `currencyId` **any**&#x20;
 
-Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
 
 ###
 
@@ -104,10 +105,10 @@ Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/G
 
 #### Parameters
 
-*   `currency` **CryptoCurrency** 
-*   `id` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+*   `currency` **CryptoCurrency**&#x20;
+*   `id` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
 
-Returns **void** 
+Returns **void**&#x20;
 
 ### listCryptoCurrencies
 
@@ -116,173 +117,173 @@ Returns **void**
 *   `withDevCrypto` **any**  (optional, default `false`)
 *   `withTerminated` **any**  (optional, default `false`)
 
-Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<CryptoCurrency>** 
+Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<CryptoCurrency>**&#x20;
 
 ### findCryptoCurrency
 
 #### Parameters
 
-*   `f` **any** 
+*   `f` **any**&#x20;
 
-Returns **(CryptoCurrency | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
+Returns **(CryptoCurrency | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**&#x20;
 
 ### findCryptoCurrencyByScheme
 
 #### Parameters
 
-*   `scheme` **any** 
+*   `scheme` **any**&#x20;
 
-Returns **(CryptoCurrency | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
+Returns **(CryptoCurrency | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**&#x20;
 
 ### findCryptoCurrencyByTicker
 
 #### Parameters
 
-*   `ticker` **any** 
+*   `ticker` **any**&#x20;
 
-Returns **(CryptoCurrency | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
+Returns **(CryptoCurrency | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**&#x20;
 
 ### findCryptoCurrencyById
 
 #### Parameters
 
-*   `id` **any** 
+*   `id` **any**&#x20;
 
-Returns **(CryptoCurrency | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
+Returns **(CryptoCurrency | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**&#x20;
 
 ### findCryptoCurrencyByKeyword
 
 #### Parameters
 
-*   `keyword` **any** 
+*   `keyword` **any**&#x20;
 *   `tests`   (optional, default `["keywords","name","id","ticker","manager"]`)
 
-Returns **(CryptoCurrency | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
+Returns **(CryptoCurrency | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**&#x20;
 
 ### hasCryptoCurrencyId
 
 #### Parameters
 
-*   `id` **any** 
+*   `id` **any**&#x20;
 
-Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 
+Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**&#x20;
 
 ### getCryptoCurrencyById
 
 #### Parameters
 
-*   `id` **any** 
+*   `id` **any**&#x20;
 
-Returns **CryptoCurrency** 
+Returns **CryptoCurrency**&#x20;
 
 ### findExchangeCurrencyConfig
 
 #### Parameters
 
-*   `id` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+*   `id` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
 
-Returns **({config: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), signature: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)} | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
+Returns **({config: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), signature: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)} | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**&#x20;
 
 ### hasFiatCurrencyTicker
 
 #### Parameters
 
-*   `ticker` **any** 
+*   `ticker` **any**&#x20;
 
-Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 
+Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**&#x20;
 
 ### findFiatCurrencyByTicker
 
 #### Parameters
 
-*   `ticker` **any** 
+*   `ticker` **any**&#x20;
 
-Returns **(FiatCurrency | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
+Returns **(FiatCurrency | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**&#x20;
 
 ### getFiatCurrencyByTicker
 
 #### Parameters
 
-*   `ticker` **any** 
+*   `ticker` **any**&#x20;
 
-Returns **FiatCurrency** 
+Returns **FiatCurrency**&#x20;
 
 ### listFiatCurrencies
 
-Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<FiatCurrency>** 
+Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<FiatCurrency>**&#x20;
 
-### \__clearObject
+### \_\_clearObject
 
 Only for jest purpose, clean object to be empty
 
 #### Parameters
 
-*   `obj` **Record<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), (TokenCurrency | [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<TokenCurrency>)>** 
+*   `obj` **Record<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), (TokenCurrency | [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<TokenCurrency>)>**&#x20;
 
-Returns **void** 
+Returns **void**&#x20;
 
-### \__clearAllLists
+### \_\_clearAllLists
 
 Only for jest purpose, clear all the init list
 
-Returns **void** 
+Returns **void**&#x20;
 
 ### listTokens
 
 #### Parameters
 
-*   `options` **Partial\<TokensListOptions>?** 
+*   `options` **Partial\<TokensListOptions>?**&#x20;
 
-Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<TokenCurrency>** 
+Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<TokenCurrency>**&#x20;
 
 ### listTokensForCryptoCurrency
 
 #### Parameters
 
-*   `currency` **CryptoCurrency** 
-*   `options` **Partial\<TokensListOptions>?** 
+*   `currency` **CryptoCurrency**&#x20;
+*   `options` **Partial\<TokensListOptions>?**&#x20;
 
-Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<TokenCurrency>** 
+Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<TokenCurrency>**&#x20;
 
 ### listTokenTypesForCryptoCurrency
 
 #### Parameters
 
-*   `currency` **CryptoCurrency** 
+*   `currency` **CryptoCurrency**&#x20;
 
-Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
+Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**&#x20;
 
 ### findTokenByTicker
 
 #### Parameters
 
-*   `ticker` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+*   `ticker` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
 
-Returns **(TokenCurrency | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
+Returns **(TokenCurrency | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**&#x20;
 
 ### findTokenById
 
 #### Parameters
 
-*   `id` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+*   `id` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
 
-Returns **(TokenCurrency | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
+Returns **(TokenCurrency | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**&#x20;
 
 ### hasTokenId
 
 #### Parameters
 
-*   `id` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+*   `id` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
 
-Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 
+Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**&#x20;
 
 ### getTokenById
 
 #### Parameters
 
-*   `id` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+*   `id` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
 
-Returns **TokenCurrency** 
+Returns **TokenCurrency**&#x20;
 
 ### removeTokenFromAllLists
 
@@ -290,7 +291,7 @@ Delete previous token entry to all array
 
 #### Parameters
 
-*   `token` **TokenCurrency** 
+*   `token` **TokenCurrency**&#x20;
 
 ### id
 

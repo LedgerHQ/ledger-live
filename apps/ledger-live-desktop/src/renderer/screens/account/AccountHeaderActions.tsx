@@ -38,6 +38,7 @@ import { getLLDCoinFamily } from "~/renderer/families";
 import { ManageAction } from "~/renderer/families/types";
 import { getAvailableProviders } from "@ledgerhq/live-common/exchange/swap/index";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import { isWalletConnectSupported } from "@ledgerhq/live-common/walletConnect/index";
 
 type RenderActionParams = {
   label: React.ReactNode;
@@ -141,6 +142,8 @@ const AccountHeaderSettingsButtonComponent = ({ account, parentAccount, openModa
     });
   }, [mainAccount.id, history]);
 
+  const isWalletConnectActionDisplayable = isWalletConnectSupported(currency);
+
   return (
     <Box horizontal alignItems="center" justifyContent="flex-end" flow={2}>
       <Tooltip content={t("stars.tooltip")}>
@@ -151,7 +154,7 @@ const AccountHeaderSettingsButtonComponent = ({ account, parentAccount, openModa
           rounded
         />
       </Tooltip>
-      {["ethereum", "bsc", "polygon"].includes(currency.id) ? (
+      {isWalletConnectActionDisplayable ? (
         <Tooltip content={t("walletconnect.titleAccount")}>
           <ButtonSettings onClick={onWalletConnectLiveApp}>
             <Box justifyContent="center">
