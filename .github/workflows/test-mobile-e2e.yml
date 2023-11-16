@@ -19,6 +19,10 @@ on:
       base_ref:
         description: The base branch to merge the head into when checking out the code
         required: false
+      enable_ssh:
+        description: Enable SSH term at the end of the workflow
+        required: false
+        default: "false"
 
 # Uncomment to have log-level: trace on detox run and build
 # (cf: apps/ledger-live-mobile/detox.config.js)
@@ -136,6 +140,11 @@ jobs:
         with:
           name: "allure-ios-reports"
           path: apps/ledger-live-mobile/allure-results
+      - name: Setup ssh session
+        uses: lhotari/action-upterm@v1
+        if: ${{ inputs.enable_ssh != 'false' }}
+        with:
+          wait-timeout-minutes: 5
 
   allure-report-ios:
     name: "Allure Reports Export on Server"
@@ -271,7 +280,11 @@ jobs:
         with:
           name: "allure-android-reports"
           path: apps/ledger-live-mobile/allure-results
-
+      - name: Setup ssh session
+        uses: lhotari/action-upterm@v1
+        if: ${{ inputs.enable_ssh != 'false' }}
+        with:
+          wait-timeout-minutes: 5
   allure-report-android:
     name: "Allure Reports Export on Server"
     runs-on: [ledger-live-medium-linux]
