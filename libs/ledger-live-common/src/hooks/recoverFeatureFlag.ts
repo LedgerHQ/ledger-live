@@ -164,7 +164,7 @@ export function useCustomPath(
 ): string | undefined {
   const customUri = useMemo(() => {
     const id = servicesConfig?.params?.protectId;
-    const basicUri = id ? `ledgerlive://recover/${id}` : "ledgerlive://recover/protect-simu";
+    const basicUri = id ? `ledgerlive://recover/${id}` : "ledgerlive://recover/protect-prod";
     const uri = new URL(basicUri);
 
     if (page) uri.searchParams.append("redirectTo", page);
