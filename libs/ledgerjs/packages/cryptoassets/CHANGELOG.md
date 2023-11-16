@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 11.2.0-nightly.1
+
+### Minor Changes
+
+- [#5430](https://github.com/LedgerHQ/ledger-live/pull/5430) [`5964e30bed`](https://github.com/LedgerHQ/ledger-live/commit/5964e30bed11d64a3b7401c6ab51ffc1ad4c427c) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update documentation v14 ledgerjs
+
 ## 11.1.1-nightly.0
 
 ### Patch Changes

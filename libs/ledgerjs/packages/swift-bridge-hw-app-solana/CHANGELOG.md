@@ -1,5 +1,17 @@
 # @ledgerhq/swift-bridge-hw-app-solana
 
+## 1.1.0-nightly.2
+
+### Minor Changes
+
+- [#5430](https://github.com/LedgerHQ/ledger-live/pull/5430) [`5964e30bed`](https://github.com/LedgerHQ/ledger-live/commit/5964e30bed11d64a3b7401c6ab51ffc1ad4c427c) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update documentation v14 ledgerjs
+
+### Patch Changes
+
+- Updated dependencies [[`5964e30bed`](https://github.com/LedgerHQ/ledger-live/commit/5964e30bed11d64a3b7401c6ab51ffc1ad4c427c)]:
+  - @ledgerhq/swift-bridge-hw-transport-ble@1.1.0-nightly.2
+  - @ledgerhq/hw-app-solana@7.1.0-nightly.2
+
 ## 1.0.10-nightly.1
 
 ### Patch Changes

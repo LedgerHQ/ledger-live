@@ -1,5 +1,27 @@
 # live-mobile
 
+## 3.34.2-nightly.0
+
+### Patch Changes
+
+- [#5444](https://github.com/LedgerHQ/ledger-live/pull/5444) [`23d19443fe`](https://github.com/LedgerHQ/ledger-live/commit/23d19443fef6e314e56084b0a8ec8630eb412c7b) Thanks [@chabroA](https://github.com/chabroA)! - update "enable contract data" error message
+
+- Updated dependencies [[`5964e30bed`](https://github.com/LedgerHQ/ledger-live/commit/5964e30bed11d64a3b7401c6ab51ffc1ad4c427c)]:
+  - @ledgerhq/react-native-hw-transport-ble@6.31.0-nightly.2
+  - @ledgerhq/types-cryptoassets@7.8.0-nightly.1
+  - @ledgerhq/hw-transport-http@6.29.0-nightly.2
+  - @ledgerhq/react-native-hid@6.31.0-nightly.2
+  - @ledgerhq/types-devices@6.23.0-nightly.0
+  - @ledgerhq/hw-transport@6.30.0-nightly.2
+  - @ledgerhq/types-live@6.43.0-nightly.2
+  - @ledgerhq/devices@8.1.0-nightly.2
+  - @ledgerhq/errors@6.16.0-nightly.2
+  - @ledgerhq/logs@6.12.0-nightly.0
+  - @ledgerhq/coin-framework@0.9.0-nightly.3
+  - @ledgerhq/live-common@33.1.2-nightly.0
+  - @ledgerhq/coin-evm@0.11.0-nightly.3
+  - @ledgerhq/domain-service@1.1.15-nightly.3
+
 ## 3.34.1
 
 ### Patch Changes

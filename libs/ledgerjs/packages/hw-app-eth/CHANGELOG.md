@@ -1,5 +1,23 @@
 # @ledgerhq/hw-app-eth
 
+## 6.35.0-nightly.3
+
+### Minor Changes
+
+- [#5430](https://github.com/LedgerHQ/ledger-live/pull/5430) [`5964e30bed`](https://github.com/LedgerHQ/ledger-live/commit/5964e30bed11d64a3b7401c6ab51ffc1ad4c427c) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update documentation v14 ledgerjs
+
+### Patch Changes
+
+- Updated dependencies [[`5964e30bed`](https://github.com/LedgerHQ/ledger-live/commit/5964e30bed11d64a3b7401c6ab51ffc1ad4c427c)]:
+  - @ledgerhq/hw-transport-mocker@6.28.0-nightly.2
+  - @ledgerhq/cryptoassets@11.2.0-nightly.1
+  - @ledgerhq/hw-transport@6.30.0-nightly.2
+  - @ledgerhq/types-live@6.43.0-nightly.2
+  - @ledgerhq/errors@6.16.0-nightly.2
+  - @ledgerhq/logs@6.12.0-nightly.0
+  - @ledgerhq/domain-service@1.1.15-nightly.3
+  - @ledgerhq/evm-tools@1.0.11-nightly.3
+
 ## 6.34.10-nightly.2
 
 ### Patch Changes
