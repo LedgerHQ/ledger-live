@@ -26,6 +26,7 @@ export type NodeApi = {
   getBlockByHeight: (
     currency: CryptoCurrency,
     blockHeight: number | "latest",
+    // timestamp is in milliseconds
   ) => Promise<{ hash: string; height: number; timestamp: number }>;
   getOptimismAdditionalFees: (
     currency: CryptoCurrency,

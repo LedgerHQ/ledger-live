@@ -259,7 +259,7 @@ await expect(page).toHaveScreenshot(name);
 > :information_source: You can take a screenshot of the whole page, including overflowing elements.
 >
 > ```javascript
-> expect(page.screenshot({ fullPage: true })).toMatchSnapshot(name);
+> await expect(page).toHaveSceeenshot(name, { fullPage: true });
 > ```
 >
 > :x: This is currently not working with our application, please see [this](https://github.com/microsoft/playwright/issues/11041) issue.

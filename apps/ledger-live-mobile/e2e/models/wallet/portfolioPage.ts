@@ -2,6 +2,7 @@ import {
   getElementById,
   getTextOfElement,
   openDeeplink,
+  scrollToId,
   tapByElement,
   waitForElementById,
 } from "../../helpers";
@@ -12,10 +13,13 @@ export default class PortfolioPage {
   graphCardBalanceId = "graphCard-balance";
   assetBalanceId = "asset-balance";
   readOnlyPortfolioId = "PortfolioReadOnlyList";
+  transferScrollListId = "transfer-scroll-list";
+  stakeMenuButtonId = "transfer-stake-button";
   emptyPortfolioComponent = () => getElementById("PortfolioEmptyAccount");
   portfolioSettingsButton = () => getElementById("settings-icon");
   transferButton = () => getElementById("transfer-button");
   swapTransferMenuButton = () => getElementById("swap-transfer-button");
+  stakeTransferMenuButton = () => getElementById(this.stakeMenuButtonId);
   sendTransferMenuButton = () => getElementById("transfer-send-button");
   sendMenuButton = () => getElementById("send-button");
   marketTabButton = () => getElementById("tab-bar-market");
@@ -40,6 +44,11 @@ export default class PortfolioPage {
 
   async navigateToSendFromTransferMenu() {
     await tapByElement(this.sendTransferMenuButton());
+  }
+
+  async navigateToStakeFromTransferMenu() {
+    await scrollToId(this.stakeMenuButtonId, this.transferScrollListId);
+    return tapByElement(this.stakeTransferMenuButton());
   }
 
   async openAddAccount() {

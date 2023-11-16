@@ -48,6 +48,7 @@ interface CompleteExchangeInputCommon {
   binaryPayload: string;
   signature: string;
   transaction: Transaction;
+  amountExpectedTo?: number;
 }
 export interface CompleteExchangeInputSell extends CompleteExchangeInputCommon {
   readonly exchangeType: ExchangeTypes.Sell;
