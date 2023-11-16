@@ -4,9 +4,10 @@ import fs from "fs";
 
 const asa = [["137594422", "HDL", "HEAD", "K3SN", 6, null]];
 
+const mockedAxios = jest.spyOn(axios, "get");
+
 describe("import ASA tokens", () => {
   beforeEach(() => {
-    const mockedAxios = jest.spyOn(axios, "get");
     mockedAxios.mockImplementation(() => Promise.resolve({ data: asa }));
   });
 
@@ -33,6 +34,7 @@ export default tokens as AlgorandASAToken[];
 
     await importAsaTokens(".");
 
+    expect(mockedAxios).toHaveBeenCalledWith(expect.stringMatching(/.*\/asa.json/));
     expect(mockedFs).toHaveBeenNthCalledWith(1, "asa.json", JSON.stringify(asa));
     expect(mockedFs).toHaveBeenNthCalledWith(2, "asa.ts", expectedFile);
   });
