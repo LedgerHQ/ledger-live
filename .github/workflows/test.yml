@@ -163,7 +163,7 @@ jobs:
         with:
           projectBaseDir: ./libs/ledger-live-common
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_LEDGER_LIVE_COMMON }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
       - name: (On Failure) Upload live-common snapshots and source
         uses: actions/upload-artifact@v3
