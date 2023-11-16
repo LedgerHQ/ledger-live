@@ -160,7 +160,9 @@ export default class Transport {
    * Set the "scramble key" for the next data exchanges with the device.
    * Each app can have a different scramble key and it is set internally during instantiation.
    * @param {string} key - The scramble key to set.
-   * @deprecated This method is no longer needed for modern transports and should be migrated away from.
+   * deprecated This method is no longer needed for modern transports and should be migrated away from.
+   * no @ before deprecated as it breaks documentationjs on version 14.0.2
+   * https://github.com/documentationjs/documentation/issues/1596
    */
   setScrambleKey(_key: string) {}
 

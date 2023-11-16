@@ -77,8 +77,8 @@ WebUSB Transport implementation
 
 #### Parameters
 
-*   `device` **USBDevice** 
-*   `interfaceNumber` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
+*   `device` **USBDevice**&#x20;
+*   `interfaceNumber` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
 
 #### Examples
 
@@ -92,7 +92,7 @@ TransportWebUSB.create().then(transport => ...)
 
 Release the transport device
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<void>** 
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<void>**&#x20;
 
 #### exchange
 
@@ -100,7 +100,7 @@ Exchange with the device using APDU protocol.
 
 ##### Parameters
 
-*   `apdu` **[Buffer](https://nodejs.org/api/buffer.html)** 
+*   `apdu` **[Buffer](https://nodejs.org/api/buffer.html)**&#x20;
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Buffer](https://nodejs.org/api/buffer.html)>** a promise of apdu response
 
@@ -121,9 +121,9 @@ Important: it must be called in the context of a UI click!
 
 ##### Parameters
 
-*   `observer` **Observer\<DescriptorEvent\<USBDevice>>** 
+*   `observer` **Observer\<DescriptorEvent\<USBDevice>>**&#x20;
 
-Returns **Subscription** 
+Returns **Subscription**&#x20;
 
 #### request
 
@@ -139,4 +139,4 @@ Create a Ledger transport with a USBDevice
 
 ##### Parameters
 
-*   `device` **USBDevice** 
+*   `device` **USBDevice**&#x20;

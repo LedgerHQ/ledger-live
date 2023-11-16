@@ -34,8 +34,8 @@ that was used.
 
 #### Parameters
 
-*   `type` **[HwTransportErrorType](#hwtransporterrortype)** 
-*   `message` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+*   `type` **[HwTransportErrorType](#hwtransporterrortype)**&#x20;
+*   `message` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
 
 ### TransportError
 
@@ -46,8 +46,8 @@ e.g. Error thrown when data received by exchanges are incorrect or if exchanged 
 
 #### Parameters
 
-*   `message` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
-*   `id` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+*   `message` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
+*   `id` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
 
 ### TransportStatusError
 
@@ -56,6 +56,6 @@ the error.statusCode is one of the `StatusCodes` exported by this library.
 
 #### Parameters
 
-*   `statusCode` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
+*   `statusCode` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
 
-Returns **void** 
+Returns **void**&#x20;

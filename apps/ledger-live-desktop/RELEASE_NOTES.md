@@ -1,3 +1,11 @@
+# 2.71.1
+
+### 🐛 Fixes
+
+Some users reported issues when accessing the CL Card tab. We've patched this up.
+
+We've fixed the bug that prevented swapping coins or tokens with values above 1,000.
+
 # 2.71.0
 
 ### 🚀 Features
