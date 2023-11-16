@@ -15,7 +15,7 @@ function ConfirmationHeaderTitle({ accountCurrency }: Props) {
       <Text
         variant={"h5"}
         fontWeight={"semiBold"}
-        testID={"deposit-confirmation-title-" + accountCurrency?.ticker}
+        testID={"receive-confirmation-title-" + accountCurrency?.ticker}
       >
         {t("transfer.receive.receiveConfirmation.title", {
           currencyTicker: accountCurrency?.ticker,

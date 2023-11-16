@@ -283,7 +283,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
                   fontWeight={"semiBold"}
                   textAlign={"center"}
                   numberOfLines={1}
-                  testID={"deposit-account-name-" + mainAccount.name}
+                  testID={"receive-account-name-" + mainAccount.name}
                 >
                   {mainAccount.name}
                 </Text>

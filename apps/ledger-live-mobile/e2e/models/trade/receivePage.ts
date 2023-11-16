@@ -13,7 +13,7 @@ import jestExpect from "expect";
 
 const baseLink = "receive";
 
-export default class DepositPage {
+export default class ReceivePage {
   noVerifyAddressButton = "button-DontVerify-my-address";
   noVerifyValidateButton = "button-confirm-dont-verify";
   accountAddress = "receive-fresh-address";
@@ -23,7 +23,7 @@ export default class DepositPage {
   currencyRowSearchPageId = "test-id-account-";
   currencyRowInNetworkListId = "big-currency-row-";
   subtitleRowInNetworkListId = "subtitle-row-";
-  buttonCloseQrDepositPage = () => getElementById("NavigationHeaderCloseButton");
+  buttonCloseQrReceivePage = () => getElementById("NavigationHeaderCloseButton");
   buttonCreateAccountId = "button-create-account";
   buttonCreateAccount = () => getElementById(this.buttonCreateAccountId);
   buttonContinueId = "add-accounts-continue-button";
@@ -31,8 +31,8 @@ export default class DepositPage {
   step1HeaderTitle = () => getElementById("receive-header-step1-title");
   step2HeaderTitleId = "receive-header-step2-title";
   step2HeaderTitle = () => getElementById(this.step2HeaderTitleId);
-  titleDepositConfirmationPageId = "deposit-confirmation-title-";
-  accountNameDepositId = "deposit-account-name-";
+  titleReceiveConfirmationPageId = "receive-confirmation-title-";
+  accountNameReceiveId = "receive-account-name-";
 
   step2Accounts = () => getElementById("receive-header-step2-accounts");
   step2Networks = () => getElementById("receive-header-step2-networks");
@@ -88,8 +88,8 @@ export default class DepositPage {
     ).toBeVisible();
   }
 
-  closeQrCodeDepositPage() {
-    return tapByElement(this.buttonCloseQrDepositPage());
+  closeQrCodeReceivePage() {
+    return tapByElement(this.buttonCloseQrReceivePage());
   }
 
   async createAccount() {
@@ -118,11 +118,11 @@ export default class DepositPage {
     return tapById(this.noVerifyValidateButton);
   }
 
-  async expectDepositPageIsDisplayed(tickerName: string, accountName: string) {
-    const depositTitleTickerId = this.titleDepositConfirmationPageId + tickerName;
-    const accountNameId = this.accountNameDepositId + accountName;
-    await waitForElementById(depositTitleTickerId);
-    await expect(getElementById(depositTitleTickerId)).toBeVisible();
+  async expectReceivePageIsDisplayed(tickerName: string, accountName: string) {
+    const receiveTitleTickerId = this.titleReceiveConfirmationPageId + tickerName;
+    const accountNameId = this.accountNameReceiveId + accountName;
+    await waitForElementById(receiveTitleTickerId);
+    await expect(getElementById(receiveTitleTickerId)).toBeVisible();
     await expect(getElementById(accountNameId)).toBeVisible();
   }
 }

@@ -8,7 +8,7 @@ import ManagerPage from "../models/manager/managerPage";
 import PortfolioPage from "../models/wallet/portfolioPage";
 import SendPage from "../models/trade/sendPage";
 import SwapFormPage from "../models/trade/swapFormPage";
-import DepositPage from "../models/trade/depositPage";
+import ReceivePage from "../models/trade/receivePage";
 import OnboardingSteps from "../models/onboarding/onboardingSteps";
 import AccountPage from "../models/accounts/accountPage";
 import Common from "../models/common";
@@ -21,7 +21,7 @@ let managerPage: ManagerPage;
 let portfolioPage: PortfolioPage;
 let sendPage: SendPage;
 let swapFormPage: SwapFormPage;
-let depositPage: DepositPage;
+let receivePage: ReceivePage;
 let common: Common;
 
 const ethereumLong = "Ethereum";
@@ -66,7 +66,7 @@ describe("DeepLinks Tests", () => {
     portfolioPage = new PortfolioPage();
     sendPage = new SendPage();
     swapFormPage = new SwapFormPage();
-    depositPage = new DepositPage();
+    receivePage = new ReceivePage();
     common = new Common();
   });
 
@@ -133,12 +133,12 @@ describe("DeepLinks Tests", () => {
   });
 
   it("should open Receive pages", async () => {
-    await depositPage.openViaDeeplink();
-    await expect(depositPage.step1HeaderTitle()).toBeVisible();
+    await receivePage.openViaDeeplink();
+    await expect(receivePage.step1HeaderTitle()).toBeVisible();
     await portfolioPage.openViaDeeplink();
-    await depositPage.receiveViaDeeplink(ethereumLong);
-    await expect(depositPage.step2HeaderTitle()).toBeVisible();
-    await expect(depositPage.step2Networks()).toBeVisible();
+    await receivePage.receiveViaDeeplink(ethereumLong);
+    await expect(receivePage.step2HeaderTitle()).toBeVisible();
+    await expect(receivePage.step2Networks()).toBeVisible();
     await expect(getElementByText(ethereumLong)).toBeVisible();
     await expect(getElementByText(arbitrumLong)).toBeVisible();
     await expect(getElementByText(bobaLong)).toBeVisible();

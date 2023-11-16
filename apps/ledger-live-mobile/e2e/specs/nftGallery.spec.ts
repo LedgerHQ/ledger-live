@@ -4,14 +4,14 @@ import WalletTabNavigatorPage from "../models/wallet/walletTabNavigator";
 import NftViewerPage from "../models/nft/nftViewerPage";
 import NftGalleryPage from "../models/wallet/nftGalleryPage";
 import { tapByElement, tapByText } from "../helpers";
-import DepositPage from "../models/trade/depositPage";
+import ReceivePage from "../models/trade/receivePage";
 import { loadConfig } from "../bridge/server";
 
 let portfolioPage: PortfolioPage;
 let walletTabNavigatorPage: WalletTabNavigatorPage;
 let nftGalleryPage: NftGalleryPage;
 let nftViewerPage: NftViewerPage;
-let depositPage: DepositPage;
+let receivePage: ReceivePage;
 
 describe("NFT Gallery screen", () => {
   beforeAll(async () => {
@@ -21,7 +21,7 @@ describe("NFT Gallery screen", () => {
     walletTabNavigatorPage = new WalletTabNavigatorPage();
     nftGalleryPage = new NftGalleryPage();
     nftViewerPage = new NftViewerPage();
-    depositPage = new DepositPage();
+    receivePage = new ReceivePage();
 
     await portfolioPage.waitForPortfolioPageToLoad();
     await nftGalleryPage.openViaDeeplink();
@@ -64,14 +64,14 @@ describe("NFT Gallery screen", () => {
   });
 
   it("should let you pick a crypto account to receive NFT", async () => {
-    await expect(depositPage.step1HeaderTitle()).not.toBeVisible();
+    await expect(receivePage.step1HeaderTitle()).not.toBeVisible();
     await nftGalleryPage.continueFromReceiveNFTsModal();
-    await expect(depositPage.step1HeaderTitle()).toBeVisible();
-    await expect(depositPage.step2HeaderTitle()).not.toExist();
+    await expect(receivePage.step1HeaderTitle()).toBeVisible();
+    await expect(receivePage.step2HeaderTitle()).not.toExist();
     await tapByText("Ethereum");
-    await expect(depositPage.step2HeaderTitle()).toBeVisible();
+    await expect(receivePage.step2HeaderTitle()).toBeVisible();
     await tapByText("Ethereum");
-    await expect(depositPage.step2Accounts()).toBeVisible();
+    await expect(receivePage.step2Accounts()).toBeVisible();
   });
 
   it("should let users hide NFT's", async () => {
