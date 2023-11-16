@@ -4,8 +4,9 @@ import fs from "fs";
 
 const stellarTokens = [["USDC", "id", "stellar", "USDC", 7, true]];
 
+const mockedAxios = jest.spyOn(axios, "get");
+
 describe("import ESDT tokens", () => {
-  const mockedAxios = jest.spyOn(axios, "get");
   beforeEach(() => {
     mockedAxios.mockImplementation(() => Promise.resolve({ data: stellarTokens }));
   });

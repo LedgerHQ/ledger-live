@@ -17,8 +17,9 @@ const poylgonErc20 = [
   ],
 ];
 
+const mockedAxios = jest.spyOn(axios, "get");
+
 describe("import poylgon erc20", () => {
-  const mockedAxios = jest.spyOn(axios, "get");
   beforeEach(() => {
     mockedAxios.mockImplementation(() => Promise.resolve({ data: poylgonErc20 }));
   });
