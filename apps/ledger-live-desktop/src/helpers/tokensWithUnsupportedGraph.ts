@@ -1,1 +1,1 @@
-export const tokensWithUnsupportedGraph = ["vechain/vtho"];
+export const tokensWithUnsupportedGraph = ["vechain/vip180/vtho"];
