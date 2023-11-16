@@ -4,7 +4,6 @@ import ethereum_goerli_tokens from "./5/erc20.json";
 import optimism_tokens from "./10/erc20.json";
 import cronos_tokens from "./25/erc20.json";
 import rsk_tokens from "./30/erc20.json";
-import telos_evm_tokens from "./40/erc20.json";
 import bsc_tokens from "./56/erc20.json";
 import syscoin_tokens from "./57/erc20.json";
 import velas_evm_tokens from "./106/erc20.json";
@@ -32,7 +31,6 @@ import ethereum_goerli_signatures from "./5/erc20-signatures.json";
 import optimism_signatures from "./10/erc20-signatures.json";
 import cronos_signatures from "./25/erc20-signatures.json";
 import rsk_signatures from "./30/erc20-signatures.json";
-import telos_evm_signatures from "./40/erc20-signatures.json";
 import bsc_signatures from "./56/erc20-signatures.json";
 import syscoin_signatures from "./57/erc20-signatures.json";
 import velas_evm_signatures from "./106/erc20-signatures.json";
@@ -61,7 +59,6 @@ export const tokens = {
   10: optimism_tokens,
   25: cronos_tokens,
   30: rsk_tokens,
-  40: telos_evm_tokens,
   56: bsc_tokens,
   57: syscoin_tokens,
   106: velas_evm_tokens,
@@ -91,7 +88,6 @@ export const signatures = {
   10: optimism_signatures,
   25: cronos_signatures,
   30: rsk_signatures,
-  40: telos_evm_signatures,
   56: bsc_signatures,
   57: syscoin_signatures,
   106: velas_evm_signatures,
