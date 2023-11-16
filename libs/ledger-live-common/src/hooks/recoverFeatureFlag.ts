@@ -177,5 +177,5 @@ export function useCustomPath(
     return uri;
   }, [deeplinkCampaign, page, servicesConfig?.params?.protectId, source]);
 
-  return usePath(servicesConfig, customUri.toString()) ?? undefined;
+  return usePath(servicesConfig, customUri.toString());
 }
