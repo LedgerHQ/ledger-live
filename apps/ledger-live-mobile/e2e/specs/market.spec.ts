@@ -1,18 +1,20 @@
-import { expect, web, by } from "detox";
+import { expect } from "detox";
 import PortfolioPage from "../models/wallet/portfolioPage";
 import MarketPage from "../models/market/marketPage";
+import GetDevicePage from "../models/discover/getDevicePage";
 import { loadConfig } from "../bridge/server";
-import { isAndroid, getElementByText } from "../helpers";
-import jestExpect from "expect";
+import { getElementByText } from "../helpers";
 
 let portfolioPage: PortfolioPage;
 let marketPage: MarketPage;
+let getDevicePage: GetDevicePage;
 
 describe("Market page for user with no device", () => {
   beforeAll(async () => {
     loadConfig("1accountEth", true);
     portfolioPage = new PortfolioPage();
     marketPage = new MarketPage();
+    getDevicePage = new GetDevicePage();
   });
 
   it("should find the researched crypto", async () => {
@@ -32,15 +34,8 @@ describe("Market page for user with no device", () => {
 
   it("should redirect to the buy a nano marketplace page", async () => {
     await marketPage.openAssetPage("Bitcoin (BTC)");
-    await marketPage.buyNano();
-    await marketPage.openMarketPlace();
-    if (isAndroid()) {
-      const url = await web.element(by.web.id("__next")).getCurrentUrl();
-      const expectedUrl = "https://shop.ledger.com/";
-
-      jestExpect(url).toContain(expectedUrl);
-    } else {
-      console.warn("Skipping webview check on iOS");
-    }
+    await marketPage.buyAsset();
+    await getDevicePage.buyNano();
+    await getDevicePage.expectBuyNanoWebPage();
   });
 });
