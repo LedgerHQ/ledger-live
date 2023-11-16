@@ -21,7 +21,7 @@ export default class PortfolioPage {
   swapTransferMenuButton = () => getElementById("swap-transfer-button");
   stakeTransferMenuButton = () => getElementById(this.stakeMenuButtonId);
   sendTransferMenuButton = () => getElementById("transfer-send-button");
-  depositTransfertMenuButton = () => getElementById("transfer-deposit-button");
+  receiveTransfertMenuButton = () => getElementById("transfer-receive-button");
   sendMenuButton = () => getElementById("send-button");
   marketTabButton = () => getElementById("tab-bar-market");
   earnButton = () => getElementById("tab-bar-earn");
@@ -50,6 +50,10 @@ export default class PortfolioPage {
   async navigateToStakeFromTransferMenu() {
     await scrollToId(this.stakeMenuButtonId, this.transferScrollListId);
     return tapByElement(this.stakeTransferMenuButton());
+  }
+
+  navigateToReceiveFromTransferMenu() {
+    return tapByElement(this.receiveTransfertMenuButton());
   }
 
   async openAddAccount() {
@@ -83,13 +87,5 @@ export default class PortfolioPage {
 
   openEarnApp() {
     return tapByElement(this.earnButton());
-  }
-
-  waitForTransfertDrawerToLoad() {
-    return waitForElementById("transfer-deposit-button", 120000);
-  }
-
-  navigateToDepositFromTransferMenu() {
-    return tapByElement(this.depositTransfertMenuButton());
   }
 }
