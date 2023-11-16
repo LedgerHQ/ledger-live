@@ -269,15 +269,19 @@ export async function submitCommentToPR({
   reporter,
   prNumber,
   githubToken,
+  currentSha,
+  referenceSha,
 }: {
   reporter: Reporter;
   prNumber: string;
   githubToken: string;
+  currentSha: string;
+  referenceSha: string;
 }): Promise<void> {
   core.info("Submiting comment to PR");
   const header = `<!-- desktop-build-checks-${prNumber} -->`;
   const title = `### Desktop Build Checks
----
+> Comparing ${formatHash(currentSha)} against ${formatHash(referenceSha)}.
 `;
   core.info("Looking for existing comment");
   const found = await findComment({ prNumber, githubToken, header });
@@ -354,4 +358,10 @@ export function formatMarkdownBoldList(items: string[]) {
   const map = items.map(item => `**${item}**`);
   if (map.length === 1) return map[0];
   return map.slice(0, items.length - 1).join(", ") + " and " + map[items.length - 1];
+}
+
+export function formatHash(hash: string | undefined) : string {
+  return hash
+    ? `[\`${hash.slice(0, 7)}\`](https://github.com/LedgerHQ/ledger-live/commit/${hash})`
+    : "_unknown_";
 }
