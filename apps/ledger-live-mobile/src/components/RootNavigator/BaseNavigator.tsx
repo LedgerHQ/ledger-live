@@ -1,6 +1,6 @@
 // FIXME: to update when implementing edit transaction on evm
 
-import React, { useMemo } from "react";
+import React, { useMemo, lazy } from "react";
 import {
   createStackNavigator,
   CardStyleInterpolators,
@@ -14,11 +14,8 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { useSelector } from "react-redux";
 
 import { ScreenName, NavigatorName } from "../../const";
+import { withSuspense } from "~/helpers/withSuspense";
 import * as families from "../../families";
-import OperationDetails from "../../screens/OperationDetails";
-import PairDevices from "../../screens/PairDevices";
-import EditDeviceName from "../../screens/EditDeviceName";
-import ScanRecipient from "../../screens/SendFunds/ScanRecipient";
 import Main from "./MainNavigator";
 import { ErrorHeaderInfo } from "./BaseOnboardingNavigator";
 import SettingsNavigator from "./SettingsNavigator";
@@ -40,32 +37,14 @@ import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
 import PasswordModifyFlowNavigator from "./PasswordModifyFlowNavigator";
 import SwapNavigator from "./SwapNavigator";
 import NotificationCenterNavigator from "./NotificationCenterNavigator";
-import AnalyticsAllocation from "../../screens/Analytics/Allocation";
-import AnalyticsOperations from "../../screens/Analytics/Operations";
 import NftNavigator from "./NftNavigator";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
-import Account from "../../screens/Account";
-import ReadOnlyAccount from "../../screens/Account/ReadOnly/ReadOnlyAccount";
 import TransparentHeaderNavigationOptions from "../../navigation/TransparentHeaderNavigationOptions";
 import styles from "../../navigation/styles";
 import StepHeader from "../StepHeader";
-import PortfolioHistory from "../../screens/Portfolio/PortfolioHistory";
 import RequestAccountNavigator from "./RequestAccountNavigator";
-import VerifyAccount from "../../screens/VerifyAccount";
-import { LiveApp } from "../../screens/Platform";
 import AccountsNavigator from "./AccountsNavigator";
-import MarketCurrencySelect from "../../screens/Market/MarketCurrencySelect";
-import {
-  BleDevicePairingFlow,
-  bleDevicePairingFlowHeaderOptions,
-} from "../../screens/BleDevicePairingFlow";
-
-import PostBuyDeviceScreen from "../../screens/PostBuyDeviceScreen";
-import LearnWebView from "../../screens/Learn/index";
 import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
-import PostBuyDeviceSetupNanoWallScreen from "../../screens/PostBuyDeviceSetupNanoWallScreen";
-import MarketDetail from "../../screens/Market/MarketDetail";
-import CurrencySettings from "../../screens/Settings/CryptoAssets/Currencies/CurrencySettings";
 import WalletConnectLiveAppNavigator from "./WalletConnectLiveAppNavigator";
 import CustomImageNavigator from "./CustomImageNavigator";
 import ClaimNftNavigator from "./ClaimNftNavigator";
@@ -73,12 +52,9 @@ import PostOnboardingNavigator from "./PostOnboardingNavigator";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import { hasNoAccountsSelector } from "../../reducers/accounts";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
-import DeviceConnect, { deviceConnectHeaderOptions } from "../../screens/DeviceConnect";
 import ExploreTabNavigator from "./ExploreTabNavigator";
 import NoFundsFlowNavigator from "./NoFundsFlowNavigator";
 import StakeFlowNavigator from "./StakeFlowNavigator";
-import { RecoverPlayer } from "../../screens/Protect/Player";
-import { RedirectToOnboardingRecoverFlowScreen } from "../../screens/Protect/RedirectToOnboardingRecoverFlow";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import {
   NavigationHeaderCloseButton,
@@ -88,6 +64,32 @@ import { RootDrawer } from "../RootDrawer/RootDrawer";
 // to keep until edit transaction on evm is implemented
 // import EditTransactionNavigator from "../../families/ethereum/EditTransactionFlow/EditTransactionNavigator";
 import { DrawerProps } from "../RootDrawer/types";
+
+import { bleDevicePairingFlowHeaderOptions } from "../../screens/BleDevicePairingFlow";
+import { deviceConnectHeaderOptions } from "../../screens/DeviceConnect";
+import { BleDevicePairingFlow } from "../../screens/BleDevicePairingFlow";
+import { LiveApp } from "../../screens/Platform";
+import { RecoverPlayer } from "../../screens/Protect/Player";
+import { RedirectToOnboardingRecoverFlowScreen } from "../../screens/Protect/RedirectToOnboardingRecoverFlow";
+
+
+const OperationDetails = lazy(() => import("../../screens/OperationDetails"));
+const PairDevices = lazy(() => import("../../screens/PairDevices"));
+const EditDeviceName = lazy(() => import("../../screens/EditDeviceName"));
+const ScanRecipient = lazy(() => import("../../screens/SendFunds/ScanRecipient"));
+const AnalyticsAllocation = lazy(() => import("../../screens/Analytics/Allocation"));
+const AnalyticsOperations = lazy(() => import("../../screens/Analytics/Operations"));
+const Account = lazy(() => import("../../screens/Account"));
+const ReadOnlyAccount = lazy(() => import("../../screens/Account/ReadOnly/ReadOnlyAccount"));
+const PortfolioHistory = lazy(() => import("../../screens/Portfolio/PortfolioHistory"));
+const VerifyAccount = lazy(() => import("../../screens/VerifyAccount"));
+const MarketCurrencySelect = lazy(() => import("../../screens/Market/MarketCurrencySelect"));
+const PostBuyDeviceScreen = lazy(() => import("../../screens/PostBuyDeviceScreen"));
+const LearnWebView = lazy(() => import("../../screens/Learn/index"));
+const PostBuyDeviceSetupNanoWallScreen = lazy(() => import("../../screens/PostBuyDeviceSetupNanoWallScreen"));
+const MarketDetail = lazy(() => import("../../screens/Market/MarketDetail"));
+const CurrencySettings = lazy(() => import("../../screens/Settings/CryptoAssets/Currencies/CurrencySettings"));
+const DeviceConnect = lazy(() => import("../../screens/DeviceConnect"));
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
@@ -127,12 +129,12 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={ScreenName.NoDeviceWallScreen}
-          component={PostBuyDeviceSetupNanoWallScreen}
+          component={withSuspense(PostBuyDeviceSetupNanoWallScreen)}
           {...noNanoBuyNanoWallScreenOptions}
         />
         <Stack.Screen
           name={ScreenName.PostBuyDeviceSetupNanoWallScreen}
-          component={PostBuyDeviceSetupNanoWallScreen}
+          component={withSuspense(PostBuyDeviceSetupNanoWallScreen)}
           options={{
             headerShown: false,
             presentation: "transparentModal",
@@ -148,7 +150,7 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={ScreenName.PostBuyDeviceScreen}
-          component={PostBuyDeviceScreen}
+          component={withSuspense(PostBuyDeviceScreen)}
           options={{
             title: t("postBuyDevice.headerTitle"),
             headerLeft: () => null,
@@ -162,7 +164,7 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={ScreenName.CurrencySettings}
-          component={CurrencySettings}
+          component={withSuspense(CurrencySettings)}
           options={({ route }) => ({
             title: route.params.headerTitle,
             headerRight: () => null,
@@ -190,7 +192,7 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={ScreenName.Recover}
-          component={RecoverPlayer}
+          component={withSuspense(RecoverPlayer)}
           options={{
             headerStyle: styles.headerNoShadow,
           }}
@@ -198,7 +200,7 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={ScreenName.LearnWebView}
-          component={LearnWebView}
+          component={withSuspense(LearnWebView)}
           options={{ headerShown: false }}
         />
         <Stack.Screen
@@ -272,7 +274,7 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={ScreenName.VerifyAccount}
-          component={VerifyAccount}
+          component={withSuspense(VerifyAccount)}
           options={{
             headerLeft: () => null,
             title: t("transfer.receive.headerTitle"),
@@ -301,7 +303,7 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={ScreenName.OperationDetails}
-          component={OperationDetails}
+          component={withSuspense(OperationDetails)}
           options={({ route }) => {
             if (route.params?.isSubOperation) {
               return {
@@ -348,7 +350,7 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={ScreenName.PairDevices}
-          component={PairDevices}
+          component={withSuspense(PairDevices)}
           options={({ navigation, route }) => ({
             title: "",
             headerRight: () => <ErrorHeaderInfo route={route} navigation={navigation} />,
@@ -358,7 +360,7 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={ScreenName.EditDeviceName}
-          component={EditDeviceName}
+          component={withSuspense(EditDeviceName)}
           options={{
             title: t("EditDeviceName.title"),
             headerLeft: () => null,
@@ -377,7 +379,7 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={ScreenName.AnalyticsAllocation}
-          component={AnalyticsAllocation}
+          component={withSuspense(AnalyticsAllocation)}
           options={{
             title: t("analytics.allocation.title"),
             headerRight: () => null,
@@ -386,7 +388,7 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={ScreenName.AnalyticsOperations}
-          component={AnalyticsOperations}
+          component={withSuspense(AnalyticsOperations)}
           options={{
             title: t("analytics.operations.title"),
             headerRight: () => null,
@@ -395,7 +397,7 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={ScreenName.MarketCurrencySelect}
-          component={MarketCurrencySelect}
+          component={withSuspense(MarketCurrencySelect)}
           options={{
             title: t("market.filters.currency"),
             headerLeft: () => null,
@@ -405,7 +407,7 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={ScreenName.PortfolioOperationHistory}
-          component={PortfolioHistory}
+          component={withSuspense(PortfolioHistory)}
           options={{
             headerTitle: t("analytics.operations.title"),
             headerRight: () => null,
@@ -413,12 +415,12 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={ScreenName.Account}
-          component={readOnlyModeEnabled ? ReadOnlyAccount : Account}
+          component={withSuspense(readOnlyModeEnabled ? ReadOnlyAccount : Account)}
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name={ScreenName.ScanRecipient}
-          component={ScanRecipient}
+          component={withSuspense(ScanRecipient)}
           options={{
             ...TransparentHeaderNavigationOptions,
             title: t("send.scan.title"),
@@ -459,7 +461,7 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={ScreenName.MarketDetail}
-          component={MarketDetail}
+          component={withSuspense(MarketDetail)}
           options={{
             headerShown: false,
           }}

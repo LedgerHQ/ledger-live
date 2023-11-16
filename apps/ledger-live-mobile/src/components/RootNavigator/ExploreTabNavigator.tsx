@@ -39,6 +39,7 @@ export default function ExploreTabNavigator() {
       tabBar={isNewsfeedAvailable && isLearnAvailable ? tabBarOptions : tabBarDisabledOptions}
       style={{ backgroundColor: "transparent" }}
       sceneContainerStyle={{ backgroundColor: "transparent" }}
+    // screenOptions={{ lazy: true }}
     >
       {isNewsfeedAvailable && (
         <ExploreTab.Screen

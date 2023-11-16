@@ -1,12 +1,14 @@
-import React, { useMemo } from "react";
+import React, { useMemo, lazy } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "styled-components/native";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { ScreenName } from "../../const";
-import MarketList from "../../screens/Market";
-import MarketDetail from "../../screens/Market/MarketDetail";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import { MarketNavigatorStackParamList } from "./types/MarketNavigator";
+import { withSuspense } from "~/helpers/withSuspense";
+
+const MarketList = lazy(() => import("../../screens/Market"));
+const MarketDetail = lazy(() => import("../../screens/Market/MarketDetail"));
 
 export default function MarketNavigator() {
   const { colors } = useTheme();
@@ -15,21 +17,21 @@ export default function MarketNavigator() {
   const ptxEarnFeature = useFeature("ptxEarn");
   const headerConfig = ptxEarnFeature?.enabled
     ? {
-        headerShown: true,
-        title: "",
-        headerRight: undefined,
-        headerLeft: () => null,
-      }
+      headerShown: true,
+      title: "",
+      headerRight: undefined,
+      headerLeft: () => null,
+    }
     : {
-        headerShown: false,
-      };
+      headerShown: false,
+    };
 
   return (
     <Stack.Navigator screenOptions={stackNavigationConfig} initialRouteName={ScreenName.MarketList}>
-      <Stack.Screen name={ScreenName.MarketList} component={MarketList} options={headerConfig} />
+      <Stack.Screen name={ScreenName.MarketList} component={withSuspense(MarketList)} options={headerConfig} />
       <Stack.Screen
         name={ScreenName.MarketDetail}
-        component={MarketDetail}
+        component={withSuspense(MarketDetail)}
         options={headerConfig}
       />
     </Stack.Navigator>

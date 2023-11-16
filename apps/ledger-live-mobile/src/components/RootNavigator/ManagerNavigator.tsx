@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, lazy } from "react";
 import { TouchableOpacity } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -7,13 +7,16 @@ import { Box, IconsLegacy, Flex, Button } from "@ledgerhq/native-ui";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { ScreenName } from "../../const";
 import { hasAvailableUpdateSelector, lastSeenDeviceSelector } from "../../reducers/settings";
-import Manager, { managerHeaderOptions } from "../../screens/Manager";
-import ManagerMain from "../../screens/Manager/Manager";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import TabIcon from "../TabIcon";
 import { useIsNavLocked } from "./CustomBlockRouterNavigator";
 import { ManagerNavigatorStackParamList } from "./types/ManagerNavigator";
-import FirmwareUpdateScreen from "../../screens/FirmwareUpdate";
+import { withSuspense } from "~/helpers/withSuspense";
+import { managerHeaderOptions } from "../../screens/Manager";
+
+const Manager = lazy(() => import("../../screens/Manager"));
+const ManagerMain = lazy(() => import("../../screens/Manager/Manager"));
+const FirmwareUpdateScreen = lazy(() => import("../../screens/FirmwareUpdate"));
 
 const BadgeContainer = styled(Flex).attrs({
   position: "absolute",
@@ -49,7 +52,7 @@ export default function ManagerNavigator() {
     >
       <Stack.Screen
         name={ScreenName.FirmwareUpdate}
-        component={FirmwareUpdateScreen}
+        component={withSuspense(FirmwareUpdateScreen)}
         options={{
           gestureEnabled: false,
           headerTitle: () => null,
@@ -59,13 +62,13 @@ export default function ManagerNavigator() {
       />
       <Stack.Screen
         name={ScreenName.Manager}
-        component={Manager}
+        component={withSuspense(Manager)}
         options={{
           ...managerHeaderOptions,
           gestureEnabled: false,
         }}
       />
-      <Stack.Screen name={ScreenName.ManagerMain} component={ManagerMain} options={{ title: "" }} />
+      <Stack.Screen name={ScreenName.ManagerMain} component={withSuspense(ManagerMain)} options={{ title: "" }} />
     </Stack.Navigator>
   );
 }
@@ -110,7 +113,7 @@ export function ManagerTabIcon(
 
   if (isNavLocked) {
     // eslint-disable-next-line @typescript-eslint/no-empty-function
-    return <TouchableOpacity onPress={() => {}}>{content}</TouchableOpacity>;
+    return <TouchableOpacity onPress={() => { }}>{content}</TouchableOpacity>;
   }
 
   return content;

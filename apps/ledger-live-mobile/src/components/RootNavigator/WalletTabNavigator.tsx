@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, lazy } from "react";
 import { useTranslation } from "react-i18next";
 import {
   createMaterialTopTabNavigator,
@@ -8,14 +8,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { NavigationContainerEventMap } from "@react-navigation/native";
 import { Box } from "@ledgerhq/native-ui";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import Portfolio from "../../screens/Portfolio";
-import WalletNftGallery from "../../screens/Nft/WalletNftGallery";
 import {
   readOnlyModeEnabledSelector,
   walletTabNavigatorLastVisitedTabSelector,
 } from "../../reducers/settings";
 import { hasNoAccountsSelector } from "../../reducers/accounts";
-import ReadOnlyPortfolio from "../../screens/Portfolio/ReadOnly";
 import { setWalletTabNavigatorLastVisitedTab } from "../../actions/settings";
 import WalletTabNavigatorTabBar from "../WalletTab/WalletTabNavigatorTabBar";
 import WalletTabNavigatorScrollManager from "../WalletTab/WalletTabNavigatorScrollManager";
@@ -23,7 +20,16 @@ import WalletTabHeader from "../WalletTab/WalletTabHeader";
 import WalletTabNavigatorTabBarDisabled from "../WalletTab/WalletTabNavigatorTabBarDisabled";
 import { WalletTabNavigatorStackParamList } from "./types/WalletTabNavigator";
 import { ScreenName, NavigatorName } from "../../const/navigation";
+
+const Portfolio = lazy(() => import("../../screens/Portfolio"));
+const ReadOnlyPortfolio = lazy(() => import("../../screens/Portfolio/ReadOnly"));
+const WalletNftGallery = lazy(() => import("../../screens/Nft/WalletNftGallery"));
+
+// import Portfolio from "../../screens/Portfolio";
+// import ReadOnlyPortfolio from "../../screens/Portfolio/ReadOnly";
+// import WalletNftGallery from "../../screens/Nft/WalletNftGallery";
 import MarketNavigator from "./MarketNavigator";
+import { withSuspense } from "~/helpers/withSuspense";
 
 const WalletTab = createMaterialTopTabNavigator<WalletTabNavigatorStackParamList>();
 
@@ -66,7 +72,7 @@ export default function WalletTabNavigator() {
                 dispatch(
                   setWalletTabNavigatorLastVisitedTab(
                     data.state.routeNames[
-                      data.state.index
+                    data.state.index
                     ] as keyof WalletTabNavigatorStackParamList,
                   ),
                 );
@@ -76,7 +82,7 @@ export default function WalletTabNavigator() {
         >
           <WalletTab.Screen
             name={ScreenName.Portfolio}
-            component={readOnlyModeEnabled && hasNoAccounts ? ReadOnlyPortfolio : Portfolio}
+            component={withSuspense(readOnlyModeEnabled && hasNoAccounts ? ReadOnlyPortfolio : Portfolio)}
             options={{
               title: t("wallet.tabs.crypto"),
             }}
@@ -84,7 +90,7 @@ export default function WalletTabNavigator() {
           {walletNftGalleryFeature?.enabled && (
             <WalletTab.Screen
               name={ScreenName.WalletNftGallery}
-              component={WalletNftGallery}
+              component={withSuspense(WalletNftGallery)}
               options={{
                 title: t("wallet.tabs.nft"),
               }}

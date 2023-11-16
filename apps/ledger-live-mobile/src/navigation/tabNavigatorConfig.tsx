@@ -13,6 +13,7 @@ export const getLineTabNavigatorConfig = (colors: ColorPalette) => ({
       borderBottomWidth: 1,
       borderColor: colors.neutral.c40,
     },
+    // lazy: true,
   },
   sceneContainerStyle: {
     backgroundColor: colors.background.main,
