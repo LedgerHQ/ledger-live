@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.35.0-next.1
+
+### Patch Changes
+
+- [#5473](https://github.com/LedgerHQ/ledger-live/pull/5473) [`b98f9d832e`](https://github.com/LedgerHQ/ledger-live/commit/b98f9d832eafb84397b1a094a664e17b05389f8a) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Fixed unresponsive export logs on android 14
+
 ## 3.35.0-next.0
 
 ### Minor Changes
