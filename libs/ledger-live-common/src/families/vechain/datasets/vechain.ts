@@ -23,7 +23,7 @@ export const vechain1: AccountRaw = {
   subAccounts: [
     {
       type: "TokenAccountRaw",
-      id: "js:2:vechain:0x0fe6688548f0C303932bB197B0A96034f1d74dba:vechain+vechain%2Fvtho",
+      id: "js:2:vechain:0x0fe6688548f0C303932bB197B0A96034f1d74dba:vechain+vechain%2Fvip180%2Fvtho",
       parentId: "js:2:vechain:0x0fe6688548f0C303932bB197B0A96034f1d74dba:vechain",
       tokenId: "vechain/vip180/vtho",
       balance: "10000000000000000000",
@@ -54,7 +54,7 @@ export const vechain2: AccountRaw = {
   subAccounts: [
     {
       type: "TokenAccountRaw",
-      id: "js:2:vechain:0x02961B92B8D20A4ea12f1f1CeFA74Dd7B4355A86:vechain+vechain%2Fvtho",
+      id: "js:2:vechain:0x02961B92B8D20A4ea12f1f1CeFA74Dd7B4355A86:vechain+vechain%2Fvip180%2Fvtho",
       parentId: "js:2:vechain:0x02961B92B8D20A4ea12f1f1CeFA74Dd7B4355A86:vechain",
       tokenId: "vechain/vip180/vtho",
       balance: "0",
@@ -86,7 +86,7 @@ export const vechain3: AccountRaw = {
   subAccounts: [
     {
       type: "TokenAccountRaw",
-      id: "js:2:vechain:0xC0dFC490f8fba6A573C55a68dd9023f999ccaDA0:vechain+vechain%2Fvtho",
+      id: "js:2:vechain:0xC0dFC490f8fba6A573C55a68dd9023f999ccaDA0:vechain+vechain%2Fvip180%2Fvtho",
       parentId: "js:2:vechain:0xC0dFC490f8fba6A573C55a68dd9023f999ccaDA0:vechain",
       tokenId: "vechain/vip180/vtho",
       balance: "1000000000000000",

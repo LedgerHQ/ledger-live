@@ -70,7 +70,7 @@ const dataset: DatasetTest<Transaction> = {
               transaction: fromTransactionRaw({
                 family: "vechain",
                 subAccountId:
-                  "js:2:vechain:0x0fe6688548f0C303932bB197B0A96034f1d74dba:vechain+vechain%2Fvtho",
+                  "js:2:vechain:0x0fe6688548f0C303932bB197B0A96034f1d74dba:vechain+vechain%2Fvip180%2Fvtho",
                 estimatedFees: "515180000000000000",
                 recipient: "0xcf130b42ae31c4931298b4b1c0f1d974b8732957",
                 amount: "1000000000000000000",
@@ -166,7 +166,7 @@ const dataset: DatasetTest<Transaction> = {
               transaction: fromTransactionRaw({
                 family: "vechain",
                 subAccountId:
-                  "js:2:vechain:0x0fe6688548f0C303932bB197B0A96034f1d74dba:vechain+vechain%2Fvtho",
+                  "js:2:vechain:0x0fe6688548f0C303932bB197B0A96034f1d74dba:vechain+vechain%2Fvip180%2Fvtho",
                 estimatedFees: "515820000000000000",
                 recipient: "0xcf130b42ae31c4931298b4b1c0f1d974b8732957",
                 amount: "20000000000000000000",
