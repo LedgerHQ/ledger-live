@@ -53,6 +53,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const { colors } = useTheme();
   const devMode = useEnv("MANAGER_DEV_MODE");
   const { filterCurrencyIds = [], currency } = route.params || {};
+  const filterCurrencyIdsSet = useMemo(() => new Set(filterCurrencyIds), [filterCurrencyIds]);
 
   const axelar = useFeature("currencyAxelar");
   const stargaze = useFeature("currencyStargaze");
@@ -181,22 +182,27 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   );
 
   const cryptoCurrencies = useMemo(() => {
-    const currencies = [...listSupportedCurrencies(), ...listSupportedTokens()].filter(
-      ({ id }) => filterCurrencyIds.length <= 0 || filterCurrencyIds.includes(id),
-    );
-    const deactivatedCurrencies = mock
-      ? []
-      : Object.entries(featureFlaggedCurrencies)
-          .filter(([, feature]) => !feature?.enabled)
-          .map(([name]) => name);
+    let currencies = [...listSupportedCurrencies(), ...listSupportedTokens()];
+    currencies =
+      filterCurrencyIdsSet.size === 0
+        ? currencies
+        : currencies.filter(({ id }) => filterCurrencyIdsSet.has(id));
 
-    const currenciesFiltered = currencies.filter(c => !deactivatedCurrencies.includes(c.id));
+    const deactivatedCurrencies = new Set(
+      mock
+        ? []
+        : Object.entries(featureFlaggedCurrencies)
+            .filter(([, feature]) => !feature?.enabled)
+            .map(([name]) => name),
+    );
+
+    const currenciesFiltered = currencies.filter(c => !deactivatedCurrencies.has(c.id));
 
     if (!devMode) {
       return currenciesFiltered.filter(c => c.type !== "CryptoCurrency" || !c.isTestnetFor);
     }
     return currenciesFiltered;
-  }, [devMode, featureFlaggedCurrencies, filterCurrencyIds, mock]);
+  }, [devMode, featureFlaggedCurrencies, filterCurrencyIdsSet, mock]);
 
   const sortedCryptoCurrencies = useCurrenciesByMarketcap(cryptoCurrencies);
 
