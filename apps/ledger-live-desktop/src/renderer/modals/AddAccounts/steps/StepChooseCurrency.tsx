@@ -164,12 +164,14 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       listSupportedTokens(),
     );
 
-    const deactivatedCurrencies = mock
-      ? [] // mock mode: all currencies are available for playwrigth tests
-      : Object.entries(featureFlaggedCurrencies)
-          .filter(([, feature]) => !feature?.enabled)
-          .map(([name]) => name);
-    return currencies.filter(c => !deactivatedCurrencies.includes(c.id));
+    const deactivatedCurrencies = new Set(
+      mock
+        ? [] // mock mode: all currencies are available for playwrigth tests
+        : Object.entries(featureFlaggedCurrencies)
+            .filter(([, feature]) => !feature?.enabled)
+            .map(([name]) => name),
+    );
+    return currencies.filter(c => !deactivatedCurrencies.has(c.id));
   }, [featureFlaggedCurrencies, mock]);
 
   const url =
