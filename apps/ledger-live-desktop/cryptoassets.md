@@ -74,7 +74,7 @@
 | Tezos | XTZ | YES | tezos |
 | Tron | TRX | YES | tron |
 | Umee | UMEE | YES | umee |
-| VeChain | VET | YES | vechain |
+| Vechain | VET | YES | vechain |
 | Velas EVM | VLX | YES | velas_evm |
 | Vertcoin | VTC | YES | vertcoin |
 | Viacoin | VIA | YES | viacoin |
