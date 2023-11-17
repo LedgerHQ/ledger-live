@@ -1,5 +1,4 @@
-import { DEFAULT_NONCE } from "@ledgerhq/coin-evm/createTransaction";
-import { Transaction } from "@ledgerhq/coin-evm/types/index";
+import { Account } from "@ledgerhq/types-live";
 import { EthereumTransaction as WalletAPITransaction } from "@ledgerhq/wallet-api-core";
 import BigNumber from "bignumber.js";
 import evm from "./walletApiAdapter";
@@ -13,28 +12,32 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
         recipient: "0xABCDEF",
       };
 
-      const expectedLiveTx: Partial<Transaction> = {
-        family: "evm",
-        amount: ethPlatformTx.amount,
-        recipient: ethPlatformTx.recipient,
-        data: undefined,
-        gasLimit: undefined,
-        nonce: DEFAULT_NONCE,
-        customGasLimit: undefined,
-        feesStrategy: "medium",
-        maxFeePerGas: undefined,
-        maxPriorityFeePerGas: undefined,
-        type: 2,
-      };
-
-      const { canEditFees, hasFeesProvided, liveTx } =
-        evm.getWalletAPITransactionSignFlowInfos(ethPlatformTx);
+      const { canEditFees, hasFeesProvided, liveTx } = evm.getWalletAPITransactionSignFlowInfos({
+        walletApiTransaction: ethPlatformTx,
+        account: {} as Account,
+      });
 
       expect(canEditFees).toBe(true);
 
       expect(hasFeesProvided).toBe(false);
 
-      expect(liveTx).toEqual(expectedLiveTx);
+      expect(liveTx).toMatchInlineSnapshot(`
+Object {
+  "amount": "100000",
+  "chainId": 0,
+  "family": "evm",
+  "feesStrategy": "medium",
+  "gasLimit": "21000",
+  "gasPrice": undefined,
+  "maxFeePerGas": undefined,
+  "maxPriorityFeePerGas": undefined,
+  "mode": "send",
+  "nonce": -1,
+  "recipient": "0xABCDEF",
+  "type": 2,
+  "useAllAmount": false,
+}
+`);
     });
 
     test("with fees provided for legacy tx", () => {
@@ -46,27 +49,33 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
         gasLimit: new BigNumber(21000),
       };
 
-      const expectedLiveTx: Partial<Transaction> = {
-        family: "evm",
-        amount: ethPlatformTx.amount,
-        recipient: ethPlatformTx.recipient,
-        gasPrice: ethPlatformTx.gasPrice,
-        gasLimit: ethPlatformTx.gasLimit,
-        customGasLimit: ethPlatformTx.gasLimit,
-        nonce: DEFAULT_NONCE,
-        data: undefined,
-        feesStrategy: "custom",
-        type: 0,
-      };
-
-      const { canEditFees, hasFeesProvided, liveTx } =
-        evm.getWalletAPITransactionSignFlowInfos(ethPlatformTx);
+      const { canEditFees, hasFeesProvided, liveTx } = evm.getWalletAPITransactionSignFlowInfos({
+        walletApiTransaction: ethPlatformTx,
+        account: {} as Account,
+      });
 
       expect(canEditFees).toBe(true);
 
       expect(hasFeesProvided).toBe(true);
 
-      expect(liveTx).toEqual(expectedLiveTx);
+      expect(liveTx).toMatchInlineSnapshot(`
+Object {
+  "amount": "100000",
+  "chainId": 0,
+  "customGasLimit": "21000",
+  "family": "evm",
+  "feesStrategy": "custom",
+  "gasLimit": "21000",
+  "gasPrice": "300",
+  "maxFeePerGas": undefined,
+  "maxPriorityFeePerGas": undefined,
+  "mode": "send",
+  "nonce": -1,
+  "recipient": "0xABCDEF",
+  "type": 0,
+  "useAllAmount": false,
+}
+`);
     });
 
     test("with fees provided for eip1559 tx", () => {
@@ -79,28 +88,33 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
         maxPriorityFeePerGas: new BigNumber(200),
       };
 
-      const expectedLiveTx: Partial<Transaction> = {
-        family: "evm",
-        amount: ethPlatformTx.amount,
-        recipient: ethPlatformTx.recipient,
-        gasLimit: ethPlatformTx.gasLimit,
-        customGasLimit: ethPlatformTx.gasLimit,
-        maxFeePerGas: ethPlatformTx.maxFeePerGas,
-        maxPriorityFeePerGas: ethPlatformTx.maxPriorityFeePerGas,
-        nonce: DEFAULT_NONCE,
-        data: undefined,
-        feesStrategy: "custom",
-        type: 2,
-      };
-
-      const { canEditFees, hasFeesProvided, liveTx } =
-        evm.getWalletAPITransactionSignFlowInfos(ethPlatformTx);
+      const { canEditFees, hasFeesProvided, liveTx } = evm.getWalletAPITransactionSignFlowInfos({
+        walletApiTransaction: ethPlatformTx,
+        account: {} as Account,
+      });
 
       expect(canEditFees).toBe(true);
 
       expect(hasFeesProvided).toBe(true);
 
-      expect(liveTx).toEqual(expectedLiveTx);
+      expect(liveTx).toMatchInlineSnapshot(`
+Object {
+  "amount": "100000",
+  "chainId": 0,
+  "customGasLimit": "21000",
+  "family": "evm",
+  "feesStrategy": "custom",
+  "gasLimit": "21000",
+  "gasPrice": undefined,
+  "maxFeePerGas": "300",
+  "maxPriorityFeePerGas": "200",
+  "mode": "send",
+  "nonce": -1,
+  "recipient": "0xABCDEF",
+  "type": 2,
+  "useAllAmount": false,
+}
+`);
     });
 
     test("with only gasLimit provided", () => {
@@ -111,28 +125,33 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
         gasLimit: new BigNumber(21000),
       };
 
-      const expectedLiveTx: Partial<Transaction> = {
-        family: "evm",
-        amount: ethPlatformTx.amount,
-        recipient: ethPlatformTx.recipient,
-        gasLimit: ethPlatformTx.gasLimit,
-        customGasLimit: ethPlatformTx.gasLimit,
-        feesStrategy: "medium",
-        maxFeePerGas: undefined,
-        maxPriorityFeePerGas: undefined,
-        nonce: DEFAULT_NONCE,
-        data: undefined,
-        type: 2,
-      };
-
-      const { canEditFees, hasFeesProvided, liveTx } =
-        evm.getWalletAPITransactionSignFlowInfos(ethPlatformTx);
+      const { canEditFees, hasFeesProvided, liveTx } = evm.getWalletAPITransactionSignFlowInfos({
+        walletApiTransaction: ethPlatformTx,
+        account: {} as Account,
+      });
 
       expect(canEditFees).toBe(true);
 
       expect(hasFeesProvided).toBe(false);
 
-      expect(liveTx).toEqual(expectedLiveTx);
+      expect(liveTx).toMatchInlineSnapshot(`
+Object {
+  "amount": "100000",
+  "chainId": 0,
+  "customGasLimit": "21000",
+  "family": "evm",
+  "feesStrategy": "medium",
+  "gasLimit": "21000",
+  "gasPrice": undefined,
+  "maxFeePerGas": undefined,
+  "maxPriorityFeePerGas": undefined,
+  "mode": "send",
+  "nonce": -1,
+  "recipient": "0xABCDEF",
+  "type": 2,
+  "useAllAmount": false,
+}
+`);
     });
 
     test("with nonce provided", () => {
@@ -143,28 +162,124 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
         nonce: 1,
       };
 
-      const expectedLiveTx: Partial<Transaction> = {
-        family: "evm",
-        amount: ethPlatformTx.amount,
-        recipient: ethPlatformTx.recipient,
-        data: undefined,
-        gasLimit: undefined,
-        nonce: 1,
-        customGasLimit: undefined,
-        feesStrategy: "medium",
-        maxFeePerGas: undefined,
-        maxPriorityFeePerGas: undefined,
-        type: 2,
-      };
-
-      const { canEditFees, hasFeesProvided, liveTx } =
-        evm.getWalletAPITransactionSignFlowInfos(ethPlatformTx);
+      const { canEditFees, hasFeesProvided, liveTx } = evm.getWalletAPITransactionSignFlowInfos({
+        walletApiTransaction: ethPlatformTx,
+        account: {} as Account,
+      });
 
       expect(canEditFees).toBe(true);
 
       expect(hasFeesProvided).toBe(false);
 
-      expect(liveTx).toEqual(expectedLiveTx);
+      expect(liveTx).toMatchInlineSnapshot(`
+Object {
+  "amount": "100000",
+  "chainId": 0,
+  "family": "evm",
+  "feesStrategy": "medium",
+  "gasLimit": "21000",
+  "gasPrice": undefined,
+  "maxFeePerGas": undefined,
+  "maxPriorityFeePerGas": undefined,
+  "mode": "send",
+  "nonce": 1,
+  "recipient": "0xABCDEF",
+  "type": 2,
+  "useAllAmount": false,
+}
+`);
+    });
+
+    test("with data provided", () => {
+      const ethPlatformTx: WalletAPITransaction = {
+        family: "ethereum",
+        amount: new BigNumber(100000),
+        recipient: "0xABCDEF",
+        data: Buffer.from("testBufferString"),
+      };
+
+      const { canEditFees, hasFeesProvided, liveTx } = evm.getWalletAPITransactionSignFlowInfos({
+        walletApiTransaction: ethPlatformTx,
+        account: {} as Account,
+      });
+
+      expect(canEditFees).toBe(true);
+
+      expect(hasFeesProvided).toBe(false);
+
+      expect(liveTx).toMatchInlineSnapshot(`
+Object {
+  "amount": "100000",
+  "chainId": 0,
+  "data": Object {
+    "data": Array [
+      116,
+      101,
+      115,
+      116,
+      66,
+      117,
+      102,
+      102,
+      101,
+      114,
+      83,
+      116,
+      114,
+      105,
+      110,
+      103,
+    ],
+    "type": "Buffer",
+  },
+  "family": "evm",
+  "feesStrategy": "medium",
+  "gasLimit": "21000",
+  "gasPrice": undefined,
+  "maxFeePerGas": undefined,
+  "maxPriorityFeePerGas": undefined,
+  "mode": "send",
+  "nonce": -1,
+  "recipient": "0xABCDEF",
+  "type": 2,
+  "useAllAmount": false,
+}
+`);
+    });
+
+    test("with account (chainId) provided", () => {
+      const ethPlatformTx: WalletAPITransaction = {
+        family: "ethereum",
+        amount: new BigNumber(100000),
+        recipient: "0xABCDEF",
+      };
+
+      const { canEditFees, hasFeesProvided, liveTx } = evm.getWalletAPITransactionSignFlowInfos({
+        walletApiTransaction: ethPlatformTx,
+        account: { currency: { ethereumLikeInfo: { chainId: 1 } } } as Account,
+      });
+
+      expect(canEditFees).toBe(true);
+
+      expect(hasFeesProvided).toBe(false);
+
+      expect(liveTx).toMatchInlineSnapshot(`
+Object {
+  "amount": "100000",
+  "chainId": 1,
+  "family": "evm",
+  "feesStrategy": "medium",
+  "gasLimit": "21000",
+  "gasPrice": undefined,
+  "maxFeePerGas": undefined,
+  "maxPriorityFeePerGas": undefined,
+  "mode": "send",
+  "nonce": -1,
+  "recipient": "0xABCDEF",
+  "type": 2,
+  "useAllAmount": false,
+}
+`);
     });
   });
 });
