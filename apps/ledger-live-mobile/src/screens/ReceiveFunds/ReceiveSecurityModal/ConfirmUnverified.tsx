@@ -72,7 +72,7 @@ const ConfirmUnverified = ({ closeModal, setStep, setShouldNotRemindUserAgain }:
             onPress={onCloseModal}
             type="main"
             size="large"
-            testID="no-verify-validate-button"
+            testID="button-confirm-dont-verify"
           >
             <Trans i18nKey="transfer.receive.securityDontVerify.yes" />
           </Button>
