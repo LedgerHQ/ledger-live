@@ -1,4 +1,5 @@
 import { BigNumber } from "bignumber.js";
+import { Methods } from "@zondax/izari-filecoin/artifacts";
 
 const validHexRegExp = new RegExp(/[0-9A-Fa-f]{6}/g);
 const validBase64RegExp = new RegExp(
@@ -19,7 +20,8 @@ export const isError = (r: { return_code: number; error_message: string }) => {
 
 export const methodToString = (method: number): string => {
   switch (method) {
-    case 0:
+    case Methods.Transfer:
+    case Methods.InvokeEVM:
       return "Transfer";
     default:
       return "Unknown";

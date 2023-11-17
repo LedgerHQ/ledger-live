@@ -8,6 +8,8 @@ import {
 import { BigNumber } from "bignumber.js";
 import Fil from "@zondax/ledger-filecoin";
 import { Observable } from "rxjs";
+import { Address } from "@zondax/izari-filecoin/address";
+import { Methods } from "@zondax/izari-filecoin/artifacts";
 
 import { makeAccountBridgeReceive, makeSync } from "../../../bridge/jsHelpers";
 import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
@@ -166,6 +168,9 @@ const prepareTransaction = async (a: Account, t: Transaction): Promise<Transacti
       patch.gasPremium = new BigNumber(result.gas_premium);
       patch.gasLimit = new BigNumber(result.gas_limit);
       patch.nonce = result.nonce;
+      patch.method = Address.isFilEthAddress(recipientValidation.parsedAddress)
+        ? Methods.InvokeEVM
+        : Methods.Transfer;
 
       const fee = calculateEstimatedFees(patch.gasFeeCap, patch.gasLimit);
       if (useAllAmount) patch.amount = balance.minus(fee);
