@@ -86,6 +86,7 @@ test("Live App SDK methods @smoke", async ({ page }) => {
   });
 
   await test.step("Verify Address - address output", async () => {
+    await deviceAction.complete();
     await modal.waitForModalToDisappear();
     await liveAppWebview.waitForCorrectTextInWebview("1xey");
   });
