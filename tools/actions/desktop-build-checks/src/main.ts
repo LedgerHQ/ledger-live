@@ -54,7 +54,13 @@ async function main() {
   checksAgainstReference(reporter, all[0], referenceMetafiles);
 
   core.info("Submitting comment to PR");
-  await submitCommentToPR({ reporter, prNumber, githubToken });
+  await submitCommentToPR({
+    reporter,
+    prNumber,
+    githubToken,
+    referenceSha: latestLinux.workflow_run?.head_sha,
+    currentSha: github.context.sha,
+  });
 }
 
 // here is now the logic where we implement the checks

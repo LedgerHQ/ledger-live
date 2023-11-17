@@ -294,7 +294,7 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Umee unit (Umee) 1`] = `"12.345.678.900,000000- -UMEE"`;
 
-exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format VeChain unit (VET) 1`] = `"123.456.789,00000000- -VET"`;
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Vechain unit (VET) 1`] = `"0,012345678900000000- -VET"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Velas EVM unit (VLX) 1`] = `"0,012345678900000000- -VLX"`;
 
@@ -616,7 +616,7 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Umee unit (Umee) 1`] = `"12,345,678,900.000000- -UMEE"`;
 
-exports[`formatCurrencyUnit with custom options with locale en-US should correctly format VeChain unit (VET) 1`] = `"123,456,789.00000000- -VET"`;
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Vechain unit (VET) 1`] = `"0.012345678900000000- -VET"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Velas EVM unit (VLX) 1`] = `"0.012345678900000000- -VLX"`;
 
@@ -938,7 +938,7 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Umee unit (Umee) 1`] = `"12.345.678.900,000000- -UMEE"`;
 
-exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format VeChain unit (VET) 1`] = `"123.456.789,00000000- -VET"`;
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Vechain unit (VET) 1`] = `"0,012345678900000000- -VET"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Velas EVM unit (VLX) 1`] = `"0,012345678900000000- -VLX"`;
 
@@ -1260,7 +1260,7 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Umee unit (Umee) 1`] = `"12 345 678 900,000000- -UMEE"`;
 
-exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format VeChain unit (VET) 1`] = `"123 456 789,00000000- -VET"`;
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Vechain unit (VET) 1`] = `"0,012345678900000000- -VET"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Velas EVM unit (VLX) 1`] = `"0,012345678900000000- -VLX"`;
 
@@ -1582,7 +1582,7 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Umee unit (Umee) 1`] = `"12,345,678,900.000000- -UMEE"`;
 
-exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format VeChain unit (VET) 1`] = `"123,456,789.00000000- -VET"`;
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Vechain unit (VET) 1`] = `"0.012345678900000000- -VET"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Velas EVM unit (VLX) 1`] = `"0.012345678900000000- -VLX"`;
 
@@ -1904,7 +1904,7 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Umee unit (Umee) 1`] = `"12,345,678,900.000000- -UMEE"`;
 
-exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format VeChain unit (VET) 1`] = `"123,456,789.00000000- -VET"`;
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Vechain unit (VET) 1`] = `"0.012345678900000000- -VET"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Velas EVM unit (VLX) 1`] = `"0.012345678900000000- -VLX"`;
 
@@ -2226,7 +2226,7 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Umee unit (Umee) 1`] = `"12.345.678.900,000000- -UMEE"`;
 
-exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format VeChain unit (VET) 1`] = `"123.456.789,00000000- -VET"`;
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Vechain unit (VET) 1`] = `"0,012345678900000000- -VET"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Velas EVM unit (VLX) 1`] = `"0,012345678900000000- -VLX"`;
 
@@ -2548,7 +2548,7 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Umee unit (Umee) 1`] = `"12 345 678 900,000000- -UMEE"`;
 
-exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format VeChain unit (VET) 1`] = `"123 456 789,00000000- -VET"`;
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Vechain unit (VET) 1`] = `"0,012345678900000000- -VET"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Velas EVM unit (VLX) 1`] = `"0,012345678900000000- -VLX"`;
 
@@ -2870,7 +2870,7 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Umee unit (Umee) 1`] = `"12.345.678.900,000000- -UMEE"`;
 
-exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format VeChain unit (VET) 1`] = `"123.456.789,00000000- -VET"`;
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Vechain unit (VET) 1`] = `"0,012345678900000000- -VET"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Velas EVM unit (VLX) 1`] = `"0,012345678900000000- -VLX"`;
 
@@ -3192,7 +3192,7 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Umee unit (Umee) 1`] = `"12,345,678,900.000000- -UMEE"`;
 
-exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format VeChain unit (VET) 1`] = `"123,456,789.00000000- -VET"`;
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Vechain unit (VET) 1`] = `"0.012345678900000000- -VET"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Velas EVM unit (VLX) 1`] = `"0.012345678900000000- -VLX"`;
 
@@ -3514,7 +3514,7 @@ exports[`formatCurrencyUnit with default options should correctly format Ubiq un
 
 exports[`formatCurrencyUnit with default options should correctly format Umee unit (Umee) 1`] = `"12,345,678,900"`;
 
-exports[`formatCurrencyUnit with default options should correctly format VeChain unit (VET) 1`] = `"123,456,789"`;
+exports[`formatCurrencyUnit with default options should correctly format Vechain unit (VET) 1`] = `"0.0123456"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Velas EVM unit (VLX) 1`] = `"0.0123456"`;
 

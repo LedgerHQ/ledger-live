@@ -16,6 +16,7 @@ export class SettingsPage {
   readonly themeChoiceLight: Locator;
   readonly versionRow: Locator;
   readonly developerTab: Locator;
+  readonly deviceLanguagesDrawer: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -40,6 +41,9 @@ export class SettingsPage {
 
     this.themeChoiceLight = page.locator("text='Clair'");
     this.versionRow = page.locator("data-test-id=version-row");
+    this.deviceLanguagesDrawer = page.locator(
+      "data-test-id=device-language-installation-container",
+    );
   }
 
   async goToAccountsTab() {
@@ -80,7 +84,10 @@ export class SettingsPage {
 
   async waitForDeviceLanguagesLoaded() {
     await this.page.waitForSelector('[aria-label="Select language"]', { state: "attached" });
-    await this.page.waitForTimeout(500); // need an extra time for it to be loaded? FIXME
+  }
+
+  async waitForDeviceLauguagesDrawer() {
+    await this.deviceLanguagesDrawer.waitFor({ state: "visible" });
   }
 
   async enableAndGoToDeveloperTab() {

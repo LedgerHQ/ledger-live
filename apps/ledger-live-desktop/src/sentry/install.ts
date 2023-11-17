@@ -76,6 +76,7 @@ const ignoreErrors = [
   "DisconnectedDevice",
   "DisconnectedDeviceDuringOperation",
   "EthAppPleaseEnableContractData",
+  "VechainAppPleaseEnableContractDataAndMultiClause",
   "failed with status code",
   "GetAppAndVersionUnsupportedFormat",
   "Invalid channel",

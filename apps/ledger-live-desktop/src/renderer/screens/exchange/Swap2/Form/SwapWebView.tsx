@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
 import { context } from "~/renderer/drawers/Provider";
 import WebviewErrorDrawer, { SwapLiveError } from "./WebviewErrorDrawer/index";
@@ -12,25 +12,35 @@ import { WebviewAPI, WebviewState } from "~/renderer/components/Web3AppWebview/t
 import { initialWebviewState } from "~/renderer/components/Web3AppWebview/helpers";
 import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
 import { TopBar } from "~/renderer/components/WebPlatformPlayer/TopBar";
+import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
+import { SwapOperation } from "@ledgerhq/types-live/lib/swap";
+import BigNumber from "bignumber.js";
+import { SubAccount } from "@ledgerhq/types-live";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
+import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 
 type CustomHandlersParams<Params> = {
   params: Params;
 };
 
+export type SwapProps = {
+  provider: string;
+  fromAccountId: string;
+  fromParentAccountId?: string;
+  toAccountId: string;
+  fromAmount: string;
+  toAmount?: string;
+  quoteId: string;
+  rate: string;
+  feeStrategy: string;
+  customFeeConfig: string;
+  cacheKey: string;
+  loading: boolean;
+  error: boolean;
+};
+
 export type SwapWebProps = {
-  swapState?: Partial<{
-    provider: string;
-    fromAccountId: string;
-    toAccountId: string;
-    fromAmount: string;
-    quoteId: string;
-    rate: string;
-    feeStrategy: string;
-    customFeeConfig: string;
-    cacheKey: string;
-    loading: boolean;
-    error: boolean;
-  }>;
+  swapState?: Partial<SwapProps>;
   redirectToProviderApp(_: string): void;
 };
 
@@ -49,6 +59,7 @@ const SwapWebView = ({ swapState, redirectToProviderApp }: SwapWebProps) => {
       palette: { type: themeType },
     },
   } = useTheme();
+  const dispatch = useDispatch();
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const { setDrawer } = React.useContext(context);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
@@ -75,6 +86,52 @@ const SwapWebView = ({ swapState, redirectToProviderApp }: SwapWebProps) => {
         params,
       }: CustomHandlersParams<SwapLiveError>) => {
         onSwapWebviewError(params);
+        return Promise.resolve();
+      },
+      "custom.saveSwapToHistory": ({
+        params,
+      }: {
+        params: { swap: SwapProps; transaction_id: string };
+      }) => {
+        const { swap, transaction_id } = params;
+        if (!swap || !transaction_id || !swap.provider || !swap.fromAmount || !swap.toAmount) {
+          return Promise.reject("Cannot save swap missing params");
+        }
+        const fromId = getAccountIdFromWalletAccountId(swap.fromAccountId);
+        const toId = getAccountIdFromWalletAccountId(swap.toAccountId);
+        if (!fromId || !toId) return Promise.reject("Accounts not found");
+        const operationId = `${fromId}-${transaction_id}-OUT`;
+
+        const swapOperation: SwapOperation = {
+          status: "pending",
+          provider: swap.provider,
+          operationId,
+          swapId: transaction_id,
+          receiverAccountId: toId,
+          tokenId: toId,
+          fromAmount: new BigNumber(swap.fromAmount),
+          toAmount: new BigNumber(swap.toAmount),
+        };
+
+        dispatch(
+          updateAccountWithUpdater(fromId, account => {
+            const fromCurrency = getAccountCurrency(account);
+            const isFromToken = fromCurrency.type === "TokenCurrency";
+            const subAccounts = account.type === "Account" && account.subAccounts;
+            return isFromToken && subAccounts
+              ? {
+                  ...account,
+                  subAccounts: subAccounts.map<SubAccount>((a: SubAccount) => {
+                    const subAccount = {
+                      ...a,
+                      swapHistory: [...a.swapHistory, swapOperation],
+                    };
+                    return a.id === fromId ? subAccount : a;
+                  }),
+                }
+              : { ...account, swapHistory: [...account.swapHistory, swapOperation] };
+          }),
+        );
         return Promise.resolve();
       },
       "custom.throwGenericErrorToLedgerLive": () => {

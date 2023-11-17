@@ -107,6 +107,7 @@ setSupportedCurrencies([
   "moonriver",
   "velas_evm",
   "syscoin",
+  "vechain",
   "internet_computer",
   "klaytn",
   "polygon_zk_evm",
