@@ -1408,6 +1408,24 @@
         "title": "Stake",
         "description": "Grow your crypto with Ledger"
       }
+    },
+    "recoverBanner": {
+      "title": "You're almost there!",
+      "subscribeDone": {
+        "description":"Add your credit or debit card to continue subscribing to Ledger Recover.",
+        "primaryCta": "Add my card",
+        "secondaryCta": "Maybe later"
+      },
+      "verifyIdentity": {
+        "description":"Verify your identity to get your backup secure",
+        "primaryCta": "Verify now",
+        "secondaryCta": "Maybe later"
+      },
+      "connectDevice": {
+        "description":"Connect and confirm your details on your Ledger.",
+        "primaryCta": "Connecting your Ledger",
+        "secondaryCta": "Maybe later"
+      }
     }
   },
   "currentAddress": {

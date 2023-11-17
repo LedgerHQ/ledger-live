@@ -156,7 +156,7 @@ export function useAlreadySeededDevicePath(
   return usePath(servicesConfig, uri);
 }
 
-export function useCustomPath(
+export function useCustomURI(
   servicesConfig: Feature_ProtectServicesDesktop | Feature_ProtectServicesMobile | null,
   page?: string,
   source?: string,
@@ -176,5 +176,16 @@ export function useCustomPath(
     return uri;
   }, [deeplinkCampaign, modelUri, page, source]);
 
-  return usePath(servicesConfig, customUri.toString()) ?? undefined;
+  return customUri.toString();
+}
+
+export function useCustomPath(
+  servicesConfig: Feature_ProtectServicesDesktop | Feature_ProtectServicesMobile | null,
+  page?: string,
+  source?: string,
+  deeplinkCampaign?: string,
+): string | undefined {
+  const uri = useCustomURI(servicesConfig, page, source, deeplinkCampaign);
+
+  return usePath(servicesConfig, uri);
 }
