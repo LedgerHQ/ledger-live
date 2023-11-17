@@ -4,7 +4,8 @@ import { Direction } from "react-native-modal";
 const DEFAULT_TIMEOUT = 60000; // 60s !!
 const BASE_DEEPLINK = "ledgerlive://";
 const startPositionY = 0.8; // Needed on Android to scroll views : https://github.com/wix/Detox/issues/3918
-export const itifAndroid = isAndroid() ? it : it.skip;
+export const itifAndroid = (...args: Parameters<typeof test>) =>
+  isAndroid() ? test(...args) : test.skip("[Android only] " + args[0], args[1], args[2]);
 export const currencyParam = "?currency=";
 export const recipientParam = "&recipient=";
 export const amountParam = "&amount=";
