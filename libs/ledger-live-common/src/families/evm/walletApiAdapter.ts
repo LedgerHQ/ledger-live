@@ -1,5 +1,6 @@
-import { EthereumTransaction as WalletAPIEthereumTransaction } from "@ledgerhq/wallet-api-core";
+import { DEFAULT_NONCE } from "@ledgerhq/coin-evm/createTransaction";
 import { Transaction } from "@ledgerhq/coin-evm/types/index";
+import { EthereumTransaction as WalletAPIEthereumTransaction } from "@ledgerhq/wallet-api-core";
 import {
   AreFeesProvided,
   ConvertToLiveTransaction,
@@ -17,9 +18,9 @@ const convertToLiveTransaction: ConvertToLiveTransaction<
 > = tx => {
   const hasFeesProvided = areFeesProvided(tx);
 
-  const params = {
+  const params: Partial<Transaction> = {
     family: "evm" as const,
-    nonce: tx.nonce,
+    nonce: tx.nonce === undefined ? DEFAULT_NONCE : tx.nonce,
     amount: tx.amount,
     recipient: tx.recipient,
     data: tx.data,
