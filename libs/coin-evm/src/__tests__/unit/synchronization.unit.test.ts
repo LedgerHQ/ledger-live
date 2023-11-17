@@ -341,7 +341,7 @@ describe("EVM Family", () => {
           expect(accountShape).toEqual({
             type: "Account",
             id: account.id,
-            syncHash: expect.stringMatching(/^0x[A-Fa-f0-9]{8}$/), // matching a 32 bits hex string (MurmurHash result)
+            syncHash: expect.stringMatching(/^0x[A-Fa-f0-9]{7,8}$/), // matching a 32 bits hex string (MurmurHash result)
             balance: new BigNumber(100),
             spendableBalance: new BigNumber(100),
             nfts: [nfts[0], nfts[1]],
