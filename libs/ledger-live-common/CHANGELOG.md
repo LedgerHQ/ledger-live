@@ -1,5 +1,26 @@
 # @ledgerhq/live-common
 
+## 33.2.0-nightly.1
+
+### Minor Changes
+
+- [#4947](https://github.com/LedgerHQ/ledger-live/pull/4947) [`2edfa533bc`](https://github.com/LedgerHQ/ledger-live/commit/2edfa533bccafbfd8a61aea0f5422c0db79825ea) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - vechain integration
+
+### Patch Changes
+
+- [#5466](https://github.com/LedgerHQ/ledger-live/pull/5466) [`88da01e071`](https://github.com/LedgerHQ/ledger-live/commit/88da01e071a0332236b7fdeda619a0eb0284cec7) Thanks [@stephane-lieumont-ledger](https://github.com/stephane-lieumont-ledger)! - Fix issue on URL constructor when we use hook useCustomPath
+
+- Updated dependencies [[`2edfa533bc`](https://github.com/LedgerHQ/ledger-live/commit/2edfa533bccafbfd8a61aea0f5422c0db79825ea)]:
+  - @ledgerhq/cryptoassets@11.2.0-nightly.2
+  - @ledgerhq/hw-app-vet@0.1.0-nightly.0
+  - @ledgerhq/coin-framework@0.9.0-nightly.4
+  - @ledgerhq/live-env@0.7.0-nightly.1
+  - @ledgerhq/coin-algorand@0.3.6-nightly.4
+  - @ledgerhq/coin-evm@0.11.0-nightly.4
+  - @ledgerhq/coin-polkadot@0.4.6-nightly.4
+  - @ledgerhq/hw-app-eth@6.35.0-nightly.4
+  - @ledgerhq/live-network@1.1.9-nightly.3
+
 ## 33.1.2-nightly.0
 
 ### Patch Changes

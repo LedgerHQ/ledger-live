@@ -1,5 +1,25 @@
 # ledger-live-desktop
 
+## 2.72.0-nightly.1
+
+### Minor Changes
+
+- [#4947](https://github.com/LedgerHQ/ledger-live/pull/4947) [`2edfa533bc`](https://github.com/LedgerHQ/ledger-live/commit/2edfa533bccafbfd8a61aea0f5422c0db79825ea) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - vechain integration
+
+### Patch Changes
+
+- [#5429](https://github.com/LedgerHQ/ledger-live/pull/5429) [`0e909ea3b4`](https://github.com/LedgerHQ/ledger-live/commit/0e909ea3b4425837051eb9212b6e5a2f169ab6ca) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Accounts view: Range and Sort by were reversed
+
+- [#5417](https://github.com/LedgerHQ/ledger-live/pull/5417) [`05065e9522`](https://github.com/LedgerHQ/ledger-live/commit/05065e952209660b9975190e4940403d8b72e7c8) Thanks [@CremaFR](https://github.com/CremaFR)! - Added saveToHistory method to customModule for DEX swap
+
+- Updated dependencies [[`88da01e071`](https://github.com/LedgerHQ/ledger-live/commit/88da01e071a0332236b7fdeda619a0eb0284cec7), [`2edfa533bc`](https://github.com/LedgerHQ/ledger-live/commit/2edfa533bccafbfd8a61aea0f5422c0db79825ea), [`c4bc2688de`](https://github.com/LedgerHQ/ledger-live/commit/c4bc2688de43ad1f5ecec5e83d8e5c88edb6d372)]:
+  - @ledgerhq/live-common@33.2.0-nightly.1
+  - @ledgerhq/coin-framework@0.9.0-nightly.4
+  - @ledgerhq/live-env@0.7.0-nightly.1
+  - @ledgerhq/react-ui@0.14.11-nightly.1
+  - @ledgerhq/coin-evm@0.11.0-nightly.4
+  - @ledgerhq/live-network@1.1.9-nightly.3
+
 ## 2.71.2-nightly.0
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/live-env
 
+## 0.7.0-nightly.1
+
+### Minor Changes
+
+- [#4947](https://github.com/LedgerHQ/ledger-live/pull/4947) [`2edfa533bc`](https://github.com/LedgerHQ/ledger-live/commit/2edfa533bccafbfd8a61aea0f5422c0db79825ea) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - vechain integration
+
 ## 0.7.0-nightly.0
 
 ### Minor Changes
