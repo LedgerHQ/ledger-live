@@ -263,7 +263,7 @@
     "src/postOnboarding/reducer.ts",
     "src/promise.ts",
     "src/range.ts",
-    "src/react.ts",
+    "src/react.tsx",
     "src/reactNative.ts",
     "src/sanityChecks.ts",
     "src/transaction/index.ts",

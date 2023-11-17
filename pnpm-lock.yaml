@@ -2001,6 +2001,9 @@ importers:
       '@ledgerhq/compressjs':
         specifier: github:LedgerHQ/compressjs#d9e8e4d994923e0ea76a32b97289bcccfe71b82e
         version: github.com/LedgerHQ/compressjs/d9e8e4d994923e0ea76a32b97289bcccfe71b82e
+      '@ledgerhq/crypto-icons-ui':
+        specifier: workspace:^
+        version: link:../ui/packages/crypto-icons
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../ledgerjs/packages/cryptoassets
