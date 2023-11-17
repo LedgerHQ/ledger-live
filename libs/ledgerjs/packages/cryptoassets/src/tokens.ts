@@ -10,7 +10,6 @@ import stellarTokens, { StellarToken } from "./data/stellar";
 import casperTokens, { CasperToken } from "./data/casper";
 import trc10tokens, { TRC10Token } from "./data/trc10";
 import trc20tokens, { TRC20Token } from "./data/trc20";
-import vechainTokens, { vip180Token } from "./data/vip180";
 
 const emptyArray = [];
 const tokensArray: TokenCurrency[] = [];
@@ -33,14 +32,15 @@ addTokens(esdttokens.map(convertElrondESDTTokens));
 addTokens(cardanoNativeTokens.map(convertCardanoNativeTokens));
 addTokens(stellarTokens.map(convertStellarTokens));
 addTokens(casperTokens.map(convertCasperTokens));
-addTokens(vechainTokens.map(convertVechainToken));
 
 type TokensListOptions = {
   withDelisted: boolean;
 };
+
 const defaultTokenListOptions: TokensListOptions = {
   withDelisted: false,
 };
+
 export function createTokenHash(token: TokenCurrency): string {
   return token
     ? `${token.id}${token.contractAddress}${token.delisted}${token.disableCountervalue}${token.ticker}${token.ledgerSignature}`
@@ -333,32 +333,6 @@ function convertAlgorandASATokens([
       {
         name,
         code: abbr,
-        magnitude: precision,
-      },
-    ],
-  };
-}
-
-function convertVechainToken([
-  ticker,
-  name,
-  contractAddress,
-  precision,
-  enableCountervalues,
-]: vip180Token): TokenCurrency {
-  return {
-    type: "TokenCurrency",
-    id: "vechain/vip180/vtho",
-    contractAddress: contractAddress,
-    parentCurrency: getCryptoCurrencyById("vechain"),
-    tokenType: "vip180",
-    name,
-    ticker,
-    disableCountervalue: !enableCountervalues,
-    units: [
-      {
-        name,
-        code: ticker,
         magnitude: precision,
       },
     ],
