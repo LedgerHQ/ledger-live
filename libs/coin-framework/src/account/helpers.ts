@@ -246,21 +246,23 @@ export const isUpToDateAccount = (account: Account | null | undefined) => {
   return !outdated;
 };
 
-export const makeEmptyTokenAccount = (account: Account, token: TokenCurrency): TokenAccount => ({
-  type: "TokenAccount",
-  id: account.id + "+" + token.contractAddress,
-  parentId: account.id,
-  token,
-  balance: new BigNumber(0),
-  spendableBalance: new BigNumber(0),
-  operationsCount: 0,
-  creationDate: new Date(),
-  operations: [],
-  pendingOperations: [],
-  starred: false,
-  swapHistory: [],
-  balanceHistoryCache: emptyHistoryCache,
-});
+export const makeEmptyTokenAccount = (account: Account, token: TokenCurrency): TokenAccount => {
+  return {
+    type: "TokenAccount",
+    id: account.id,
+    parentId: account.id,
+    token,
+    balance: new BigNumber(0),
+    spendableBalance: new BigNumber(0),
+    operationsCount: 0,
+    creationDate: new Date(),
+    operations: [],
+    pendingOperations: [],
+    starred: false,
+    swapHistory: [],
+    balanceHistoryCache: emptyHistoryCache,
+  }
+};
 
 /**
  * Enhance an account to force token accounts presence
