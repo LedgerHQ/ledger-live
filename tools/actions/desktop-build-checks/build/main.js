@@ -40545,7 +40545,9 @@ function checksAgainstReference(reporter, metafiles, reference) {
   for (const lib in newDuplicates) {
     const bundles = newDuplicates[lib];
     reporter.warning(
-      `\`${lib}\` library is now duplicated in ${formatMarkdownBoldList(bundles)} (regression)`
+      `\`${lib}\` dependency is now duplicated in ${formatMarkdownBoldList(
+        bundles
+      )}. [Read more](https://github.com/LedgerHQ/ledger-live/wiki/Dependencies-duplicates-management)`
     );
   }
   for (const lib in removedDuplicates) {
