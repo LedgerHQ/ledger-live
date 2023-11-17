@@ -4,9 +4,10 @@ import fs from "fs";
 
 const trc20Tokens = [["id", "abbr", "name", "address", 18]];
 
+const mockedAxios = jest.spyOn(axios, "get");
+
 describe("import ESDT tokens", () => {
   beforeEach(() => {
-    const mockedAxios = jest.spyOn(axios, "get");
     mockedAxios.mockImplementation(() => Promise.resolve({ data: trc20Tokens }));
   });
 
@@ -35,6 +36,7 @@ export default tokens as TRC20Token[];
 
     await importTRC20Tokens(".");
 
+    expect(mockedAxios).toHaveBeenCalledWith(expect.stringMatching(/.*\/trc20.json/));
     expect(mockedFs).toHaveBeenNthCalledWith(1, "trc20.json", JSON.stringify(trc20Tokens));
     expect(mockedFs).toHaveBeenNthCalledWith(2, "trc20.ts", expectedFile);
   });

@@ -4,9 +4,10 @@ import fs from "fs";
 
 const bep20 = [["bsc", "(del)", "DEL", 18, "(DEL)", "ledgersign", "0xec00", false, false, null]];
 
+const mockedAxios = jest.spyOn(axios, "get");
+
 describe("import bep20", () => {
   beforeEach(() => {
-    const mockedAxios = jest.spyOn(axios, "get");
     mockedAxios.mockImplementation(() => Promise.resolve({ data: bep20 }));
   });
 
@@ -37,6 +38,7 @@ export default tokens as BEP20Token[];
 
     await importBEP20(".");
 
+    expect(mockedAxios).toHaveBeenCalledWith(expect.stringMatching(/.*\/bep20.json/));
     expect(mockedFs).toHaveBeenNthCalledWith(1, "bep20.json", JSON.stringify(bep20));
     expect(mockedFs).toHaveBeenNthCalledWith(2, "bep20.ts", expectedFile);
   });

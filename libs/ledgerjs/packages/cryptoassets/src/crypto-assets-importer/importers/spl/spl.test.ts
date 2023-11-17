@@ -4,9 +4,10 @@ import fs from "fs";
 
 const splTokens = [["chainId", "symbol", "name", "address", 6, null]];
 
+const mockedAxios = jest.spyOn(axios, "get");
+
 describe("import Spl tokens", () => {
   beforeEach(() => {
-    const mockedAxios = jest.spyOn(axios, "get");
     mockedAxios.mockImplementation(() => Promise.resolve({ data: splTokens }));
   });
 
@@ -33,6 +34,7 @@ export default tokens as SPLToken[];
 
     await importSPLTokens(".");
 
+    expect(mockedAxios).toHaveBeenCalledWith(expect.stringMatching(/.*\/spl.json/));
     expect(mockedFs).toHaveBeenNthCalledWith(1, "spl.json", JSON.stringify(splTokens));
     expect(mockedFs).toHaveBeenNthCalledWith(2, "spl.ts", expectedFile);
   });
