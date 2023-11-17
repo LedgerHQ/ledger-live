@@ -1,5 +1,14 @@
 # live-mobile
 
+## 3.35.0-next.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-evm@0.11.0-next.1
+  - @ledgerhq/coin-framework@0.9.0-next.1
+  - @ledgerhq/live-common@33.2.0-next.1
+
 ## 3.35.0-next.1
 
 ### Patch Changes

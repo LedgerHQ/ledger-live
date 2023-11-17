@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.72.0-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-evm@0.11.0-next.1
+  - @ledgerhq/coin-framework@0.9.0-next.1
+  - @ledgerhq/live-common@33.2.0-next.1
+
 ## 2.72.0-next.0
 
 ### Minor Changes
