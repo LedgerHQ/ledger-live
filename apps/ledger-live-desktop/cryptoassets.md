@@ -145,7 +145,7 @@
 | lisk | LSK | NO | lisk |
 | æternity | AE | NO | aeternity |
 
-## Tokens (11648)
+## Tokens (11649)
 | parent currency | ticker | contract | name | status | ledger id |
 |--|--|--|--|--|--|
 | Algorand | GEMS | 5XU7ASL2PLB2C43N6JNFPMSXGATO2VIVNF7X6NTJ4BRCCKRGETEYS3LOAQ | AlgoGems |  | algorand/asa/230946361 |
@@ -11796,4 +11796,5 @@
 | Tron | OMGT | TQ7mRLfgZyKiGC1VKppeufPEGfrN69oRVE | zOilMarineGroup | delisted | tron/trc10/1000258 |
 | Tron | XZGZ | TNoFdHVLw5Rm2RezJ7xDhyQvPZKth3bWtS | zigzag | delisted | tron/trc10/1002501 |
 | Tron | ZLX | TPGFoGo5gVyX6axDtV3VnPSPKqVhrVD5Wh | zlotodex | delisted | tron/trc10/1002606 |
+| Vechain | VTHO | 0x0000000000000000000000000000456E65726779 | Vethor |  | vechain/vip180/vtho |
 
