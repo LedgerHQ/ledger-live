@@ -92,6 +92,7 @@
     "@ledgerhq/react-devtools": "0.0.0"
   },
   "changesets": [
+    "angry-bulldogs-dress",
     "bright-crabs-act",
     "bright-mirrors-protect",
     "calm-lizards-accept",
