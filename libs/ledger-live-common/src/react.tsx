@@ -1,7 +1,6 @@
 import React from "react";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import * as icons from "@ledgerhq/crypto-icons-ui/react";
-import * as flags from "./data/flags/react";
 import { inferCryptoCurrencyIcon } from "./currencies/cryptoIcons";
 
 type Icon = React.ComponentType<{
@@ -41,8 +40,4 @@ export function getCryptoCurrencyIcon(currency: CryptoCurrency): Icon | null | u
  */
 export function getTokenCurrencyIcon(token: TokenCurrency): Icon | null | undefined {
   return polyfillIconComponent(inferCryptoCurrencyIcon(icons, token));
-}
-
-export function getFlag(countryCode: string): Icon | undefined {
-  return flags[`${countryCode.toLowerCase()}Flag`];
 }

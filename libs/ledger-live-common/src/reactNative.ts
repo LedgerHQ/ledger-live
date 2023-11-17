@@ -1,5 +1,5 @@
+import React from "react";
 import * as icons from "@ledgerhq/crypto-icons-ui/native";
-import * as flags from "./data/flags/reactNative";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { inferCryptoCurrencyIcon } from "./currencies/cryptoIcons";
 
@@ -20,8 +20,4 @@ export function getCryptoCurrencyIcon(currency: CryptoCurrency): Icon | null | u
  */
 export function getTokenCurrencyIcon(token: TokenCurrency): Icon | null | undefined {
   return inferCryptoCurrencyIcon(icons, token);
-}
-
-export function getFlag(countryCode: string): Icon | undefined {
-  return flags[`${countryCode.toLowerCase()}Flag`];
 }
