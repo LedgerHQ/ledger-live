@@ -1,25 +1,27 @@
-import * as icons from "./data/icons/reactNative";
+import * as icons from "@ledgerhq/crypto-icons-ui/native";
 import * as flags from "./data/flags/reactNative";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { inferCryptoCurrencyIcon } from "./currencies/cryptoIcons";
 
 type Icon = React.ComponentType<{
   size: number;
   color: string;
 }>;
 
-function getIconId({ ticker }: CryptoCurrency | TokenCurrency) {
-  let id = ticker.toLowerCase();
-  if (!isNaN(parseInt(id.charAt(0), 10))) id = `_${id}`; // fix variable name leading with a numerical value
-
-  return id;
-}
-
+/**
+ * @deprecated prefer using @ledgerhq/crypto-icons-ui directly + mapping provided by @ledgerhq/live-common/currencies/cryptoIcons
+ */
 export function getCryptoCurrencyIcon(currency: CryptoCurrency): Icon | null | undefined {
-  return icons[getIconId(currency)];
+  return inferCryptoCurrencyIcon(icons, currency);
 }
+
+/**
+ * @deprecated prefer using @ledgerhq/crypto-icons-ui directly + mapping provided by @ledgerhq/live-common/currencies/cryptoIcons
+ */
 export function getTokenCurrencyIcon(token: TokenCurrency): Icon | null | undefined {
-  return icons[getIconId(token)];
+  return inferCryptoCurrencyIcon(icons, token);
 }
+
 export function getFlag(countryCode: string): Icon | undefined {
   return flags[`${countryCode.toLowerCase()}Flag`];
 }
