@@ -4527,11 +4527,7 @@ export function findCryptoCurrencyByTicker(ticker: string): CryptoCurrency | nul
   return cryptocurrenciesByTicker[ticker];
 }
 
-/**
- *
- * @param {*} id
- */
-export function findCryptoCurrencyById(id: string): CryptoCurrency | null | undefined {
+export function findCryptoCurrencyById(id: string): CryptoCurrency | undefined {
   return cryptocurrenciesById[id];
 }
 
@@ -4588,13 +4584,8 @@ export const findCryptoCurrencyByManagerAppName = (
  */
 export const hasCryptoCurrencyId = (id: string): boolean => id in cryptocurrenciesById;
 
-// TODO: signature should be getCryptoCurrencyById(id: CryptoCurrencyId)
-/**
- *
- * @param {*} id
- */
-export function getCryptoCurrencyById(id: string | undefined): CryptoCurrency {
-  const currency = id && findCryptoCurrencyById(id);
+export function getCryptoCurrencyById(id: string): CryptoCurrency {
+  const currency = findCryptoCurrencyById(id);
 
   if (!currency) {
     throw new Error(`currency with id "${id}" not found`);

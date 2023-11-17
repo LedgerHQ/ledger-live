@@ -37,9 +37,11 @@ addTokens(vechainTokens.map(convertVechainToken));
 type TokensListOptions = {
   withDelisted: boolean;
 };
+
 const defaultTokenListOptions: TokensListOptions = {
   withDelisted: false,
 };
+
 export function createTokenHash(token: TokenCurrency): string {
   return token
     ? `${token.id}${token.contractAddress}${token.delisted}${token.disableCountervalue}${token.ticker}${token.ledgerSignature}`
