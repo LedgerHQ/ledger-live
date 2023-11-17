@@ -108,21 +108,30 @@ const estimateMaxSpendable = async ({
   // log("debug", "[estimateMaxSpendable] start fn");
 
   const a = getMainAccount(account, parentAccount);
-  const { address } = getAddress(a);
+  let { address: sender } = getAddress(a);
 
-  const recipient = transaction?.recipient;
+  let recipient = transaction?.recipient;
 
-  if (!validateAddress(address).isValid) throw new InvalidAddress();
-  if (recipient && !validateAddress(recipient).isValid) throw new InvalidAddress();
+  const senderValidation = validateAddress(sender);
+  if (!senderValidation.isValid) throw new InvalidAddress();
+  sender = senderValidation.parsedAddress.toString();
 
-  const balances = await fetchBalances(address);
+  if (recipient) {
+    const recipientValidation = validateAddress(recipient);
+    if (!recipientValidation.isValid) {
+      throw new InvalidAddress();
+    }
+    recipient = recipientValidation.parsedAddress.toString();
+  }
+
+  const balances = await fetchBalances(sender);
   let balance = new BigNumber(balances.spendable_balance);
 
   if (balance.eq(0)) return balance;
 
   const amount = transaction?.amount;
 
-  const result = await fetchEstimatedFees({ to: recipient, from: address });
+  const result = await fetchEstimatedFees({ to: recipient, from: sender });
   const gasFeeCap = new BigNumber(result.gas_fee_cap);
   const gasLimit = new BigNumber(result.gas_limit);
   const estimatedFees = calculateEstimatedFees(gasFeeCap, gasLimit);
@@ -142,24 +151,27 @@ const prepareTransaction = async (a: Account, t: Transaction): Promise<Transacti
   const { address } = getAddress(a);
   const { recipient, useAllAmount } = t;
 
-  if (
-    recipient &&
-    address &&
-    validateAddress(recipient).isValid &&
-    validateAddress(address).isValid
-  ) {
-    const patch: Partial<Transaction> = {};
+  if (recipient && address) {
+    const recipientValidation = validateAddress(recipient);
+    const senderValidation = validateAddress(address);
 
-    const result = await fetchEstimatedFees({ to: recipient, from: address });
-    patch.gasFeeCap = new BigNumber(result.gas_fee_cap);
-    patch.gasPremium = new BigNumber(result.gas_premium);
-    patch.gasLimit = new BigNumber(result.gas_limit);
-    patch.nonce = result.nonce;
+    if (recipientValidation.isValid && senderValidation.isValid) {
+      const patch: Partial<Transaction> = {};
 
-    const fee = calculateEstimatedFees(patch.gasFeeCap, patch.gasLimit);
-    if (useAllAmount) patch.amount = balance.minus(fee);
+      const result = await fetchEstimatedFees({
+        to: recipientValidation.parsedAddress.toString(),
+        from: senderValidation.parsedAddress.toString(),
+      });
+      patch.gasFeeCap = new BigNumber(result.gas_fee_cap);
+      patch.gasPremium = new BigNumber(result.gas_premium);
+      patch.gasLimit = new BigNumber(result.gas_limit);
+      patch.nonce = result.nonce;
 
-    return defaultUpdateTransaction(t, patch);
+      const fee = calculateEstimatedFees(patch.gasFeeCap, patch.gasLimit);
+      if (useAllAmount) patch.amount = balance.minus(fee);
+
+      return defaultUpdateTransaction(t, patch);
+    }
   }
 
   return t;
@@ -193,11 +205,10 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
         async function main() {
           // log("debug", "[signOperation] start fn");
 
-          const { recipient, method, version, nonce, gasFeeCap, gasLimit, gasPremium } =
-            transaction;
+          const { method, version, nonce, gasFeeCap, gasLimit, gasPremium } = transaction;
           const { amount } = transaction;
           const { id: accountId } = account;
-          const { address, derivationPath } = getAddress(account);
+          const { derivationPath } = getAddress(account);
 
           if (!gasFeeCap.gt(0) || !gasLimit.gt(0)) {
             log(
@@ -217,12 +228,12 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
             const fee = calculateEstimatedFees(gasFeeCap, gasLimit);
 
             // Serialize tx
-            const serializedTx = toCBOR(account, transaction);
+            const { txPayload, parsedSender, parsedRecipient } = toCBOR(account, transaction);
 
-            log("debug", `[signOperation] serialized CBOR tx: [${serializedTx.toString("hex")}]`);
+            log("debug", `[signOperation] serialized CBOR tx: [${txPayload.toString("hex")}]`);
 
             // Sign by device
-            const result = await filecoin.sign(getPath(derivationPath), serializedTx);
+            const result = await filecoin.sign(getPath(derivationPath), txPayload);
             isError(result);
 
             o.next({
@@ -239,8 +250,8 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
               id: encodeOperationId(accountId, txHash, "OUT"),
               hash: txHash,
               type: "OUT",
-              senders: [address],
-              recipients: [recipient],
+              senders: [parsedSender],
+              recipients: [parsedRecipient],
               accountId,
               value: amount.plus(fee),
               fee,
