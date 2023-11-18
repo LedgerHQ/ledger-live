@@ -8,6 +8,54 @@
       "type": "chrome",
       "request": "attach",
       "port": 8315
+    }, "name": "Attach Electron Renderer",
+      "type": "chrome",
+      "request": "attach",
+      "port": 8315
+    }, "name": "Attach Electron Renderer",
+      "type": "chrome",
+      "request": "attach",
+      "port": 8315
+    }, "name": "Attach Electron Renderer",
+      "type": "chrome",
+      "request": "attach",
+      "port": 8315
+    }, "name": "Attach Electron Renderer",
+      "type": "chrome",
+      "request": "attach",
+      "port": 8315
+    }, "name": "Attach Electron Renderer",
+      "type": "chrome",
+      "request": "attach",
+      "port": 8315
+    }, "name": "Attach Electron Renderer",
+      "type": "chrome",
+      "request": "attach",
+      "port": 8315
+    }, "name": "Attach Electron Renderer",
+      "type": "chrome",
+      "request": "attach",
+      "port": 8315
+    }, "name": "Attach Electron Renderer",
+      "type": "chrome",
+      "request": "attach",
+      "port": 8315
+    }, "name": "Attach Electron Renderer",
+      "type": "chrome",
+      "request": "attach",
+      "port": 8315
+    }, "name": "Attach Electron Renderer",
+      "type": "chrome",
+      "request": "attach",
+      "port": 8315
+    }, "name": "Attach Electron Renderer",
+      "type": "chrome",
+      "request": "attach",
+      "port": 8315
+    }, "name": "Attach Electron Renderer",
+      "type": "chrome",
+      "request": "attach",
+      "port": 8315
     },
     {
       // Start LLD with:
