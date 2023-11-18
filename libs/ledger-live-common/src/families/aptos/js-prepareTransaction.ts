@@ -8,7 +8,7 @@ import { getMaxSendBalance } from "./logic";
 
 const prepareTransaction = async (
   account: Account,
-  transaction: Transaction
+  transaction: Transaction,
 ): Promise<Transaction> => {
   if (transaction.amount.isZero() && !transaction.useAllAmount) {
     return {
@@ -27,11 +27,7 @@ const prepareTransaction = async (
 
   const aptosClient = new AptosAPI(account.currency.id);
 
-  const { fees, estimate, errors } = await getEstimatedGas(
-    account,
-    transaction,
-    aptosClient
-  );
+  const { fees, estimate, errors } = await getEstimatedGas(account, transaction, aptosClient);
 
   const options = { ...transaction.options };
   if (transaction.firstEmulation) options.maxGasAmount = estimate.maxGasAmount;

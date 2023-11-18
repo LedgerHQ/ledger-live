@@ -1,8 +1,17 @@
 import { AptosClient, TxnBuilderTypes } from "aptos";
+import { ApolloClient, InMemoryCache } from "@apollo/client";
 import type { Types as AptosTypes } from "aptos";
 import BigNumber from "bignumber.js";
 import network from "@ledgerhq/live-network/network";
 import { getEnv } from "@ledgerhq/live-env";
+
+import {
+  GetAccountTransactionsDataGt,
+  GetAccountTransactionsDataQuery,
+  GetAccountTransactionsData,
+  GetAccountTransactionsDataLt,
+  GetAccountTransactionsDataQueryVariables,
+} from "./graphql/types";
 
 // import { isTestnet } from "../logic";
 import type {
@@ -14,6 +23,7 @@ import type {
 import { isUndefined } from "lodash";
 
 const getApiEndpoint = (_: string) => getEnv("APTOS_TESTNET_API_ENDPOINT");
+const getIndexerEndpoint = (_: string) => getEnv("APTOS_TESTNET_INDEXER_ENDPOINT");
 // TODO: uncomment before release
 // const getApiEndpoint = (currencyId: string) =>
 //   isTestnet(currencyId)
@@ -21,41 +31,94 @@ const getApiEndpoint = (_: string) => getEnv("APTOS_TESTNET_API_ENDPOINT");
 //     : getEnv("APTOS_API_ENDPOINT");
 
 export class AptosAPI {
-  protected defaultEndpoint: string;
-  private client: AptosClient;
+  private apiUrl: string;
+  private indexerUrl: string;
+  private aptosClient: AptosClient;
+  private apolloClient: ApolloClient<object>;
 
   constructor(currencyId: string) {
-    this.defaultEndpoint = getApiEndpoint(currencyId);
-    this.client = new AptosClient(this.defaultEndpoint);
+    this.apiUrl = getApiEndpoint(currencyId);
+    this.indexerUrl = getIndexerEndpoint(currencyId);
+    this.aptosClient = new AptosClient(this.apiUrl);
+    this.apolloClient = new ApolloClient({
+      uri: this.indexerUrl,
+      cache: new InMemoryCache(),
+      headers: {
+        "x-client": "ledger-live",
+      },
+    });
   }
 
-  getAccount = async (address: string): Promise<AptosTypes.AccountData> => {
-    return this.client.getAccount(address);
-  };
+  async fetchTransactions(address: string, lt?: string, gt?: string) {
+    if (!address) {
+      return [];
+    }
 
-  async getAccountInfo(address: string) {
+    // WORKAROUND: Where is no way to pass optional bigint var to query
+    let query = GetAccountTransactionsData;
+    if (lt) {
+      query = GetAccountTransactionsDataLt;
+    }
+    if (gt) {
+      query = GetAccountTransactionsDataGt;
+    }
+
+    const queryResponse = await this.apolloClient.query<
+      GetAccountTransactionsDataQuery,
+      GetAccountTransactionsDataQueryVariables
+    >({
+      query,
+      variables: {
+        address,
+        limit: 1000,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        lt,
+        gt,
+      },
+      fetchPolicy: "network-only",
+    });
+
+    return Promise.all(
+      queryResponse.data.address_version_from_move_resources.map(({ transaction_version }) => {
+        return this.richItemByVersion(transaction_version);
+      }),
+    );
+  }
+
+  async richItemByVersion(version: number): Promise<AptosTransaction | null> {
+    try {
+      const tx: AptosTypes.Transaction = await this.aptosClient.getTransactionByVersion(version);
+      const block = await this.getBlock(version);
+      return {
+        ...tx,
+        block,
+      } as AptosTransaction;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  async getAccount(address: string): Promise<AptosTypes.AccountData> {
+    return this.aptosClient.getAccount(address);
+  }
+
+  async getAccountInfo(address: string, startAt: string) {
     const [balance, transactions, blockHeight] = await Promise.all([
       this.getBalance(address),
-      this.getTransactions(address),
+      this.fetchTransactions(address, undefined, startAt),
       this.getHeight(),
     ]);
 
-    const txs = await Promise.all(
-      transactions.map(async tx => {
-        tx.block = await this.getBlock(parseInt(tx.version));
-        return tx;
-      }),
-    );
-
     return {
       balance,
-      txs,
+      transactions,
       blockHeight,
     };
   }
 
   async estimateGasPrice(): Promise<AptosTypes.GasEstimation> {
-    return this.client.estimateGasPrice();
+    return this.aptosClient.estimateGasPrice();
   }
 
   async generateTransaction(
@@ -80,12 +143,12 @@ export class AptosAPI {
       opts.expiration_timestamp_secs = BigNumber(options.expirationTimestampSecs).toString();
     }
 
-    const tx = await this.client.generateTransaction(address, payload, opts);
+    const tx = await this.aptosClient.generateTransaction(address, payload, opts);
 
     let serverTimestamp = tx.expiration_timestamp_secs;
     if (isUndefined(opts.expiration_timestamp_secs)) {
       try {
-        const ts = (await this.client.getLedgerInfo()).ledger_timestamp;
+        const ts = (await this.aptosClient.getLedgerInfo()).ledger_timestamp;
         serverTimestamp = BigInt(Math.ceil(+ts / 1_000_000 + 2 * 60)); // in microseconds
       } catch (e) {
         // nothing
@@ -108,34 +171,24 @@ export class AptosAPI {
   async simulateTransaction(
     address: TxnBuilderTypes.Ed25519PublicKey,
     tx: TxnBuilderTypes.RawTransaction,
-  ): Promise<AptosTypes.UserTransaction[]> {
-    return this.client.simulateTransaction(address, tx, {
+    options = {
       estimateGasUnitPrice: true,
       estimateMaxGasAmount: true,
       estimatePrioritizedGasUnitPrice: false,
-    });
+    },
+  ): Promise<AptosTypes.UserTransaction[]> {
+    return this.aptosClient.simulateTransaction(address, tx, options);
   }
 
   async broadcast(signature: string): Promise<string> {
     const txBytes = Uint8Array.from(Buffer.from(signature, "hex"));
-    const pendingTx = await this.client.submitTransaction(txBytes);
+    const pendingTx = await this.aptosClient.submitTransaction(txBytes);
     return pendingTx.hash;
-  }
-
-  private async getTransactions(address: string): Promise<AptosTransaction[]> {
-    try {
-      const txs = await this.client.getAccountTransactions(address, {
-        limit: 1000,
-      });
-      return txs as unknown as AptosTransaction[];
-    } catch (e: any) {
-      return [];
-    }
   }
 
   private async getBalance(address: string): Promise<BigNumber> {
     try {
-      const balanceRes = await this.client.getAccountResource(
+      const balanceRes = await this.aptosClient.getAccountResource(
         address,
         "0x1::coin::CoinStore<0x1::aptos_coin::AptosCoin>",
       );
@@ -149,13 +202,13 @@ export class AptosAPI {
   private async getHeight(): Promise<number> {
     const { data } = await network({
       method: "GET",
-      url: this.defaultEndpoint,
+      url: this.apiUrl,
     });
-    return data.block_height;
+    return parseInt(data.block_height);
   }
 
   private async getBlock(version: number) {
-    const block = await this.client.getBlockByVersion(version);
+    const block = await this.aptosClient.getBlockByVersion(version);
     return {
       height: parseInt(block.block_height),
       hash: block.block_hash,

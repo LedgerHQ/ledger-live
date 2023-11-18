@@ -1,12 +1,15 @@
 import BigNumber from "bignumber.js";
 import { HexString, TxnBuilderTypes } from "aptos";
 import type { Account } from "@ledgerhq/types-live";
+import { from, firstValueFrom } from "rxjs";
 
 import { AptosAPI } from "./api";
 import buildTransaction from "./js-buildTransaction";
 import { DEFAULT_GAS, DEFAULT_GAS_PRICE, ESTIMATE_GAS_MUL } from "./logic";
 import type { Transaction, TransactionErrors } from "./types";
+import { withDevice } from "../../hw/deviceAccess";
 import { log } from "@ledgerhq/logs";
+import Aptos from "./hw-app-aptos";
 
 type IGetEstimatedGasReturnType = {
   fees: BigNumber;
@@ -37,12 +40,26 @@ export const getFee = async (
     errors: { ...transaction.errors },
   };
 
-  try {
-    if (!account.xpub) throw Error("Account public key missing to estimate transaction");
+  let gasPrice = DEFAULT_GAS_PRICE;
+  let gasLimit = DEFAULT_GAS;
+  let sequenceNumber = "";
 
-    const tx = await buildTransaction(account, transaction, aptosClient);
-    const pubKeyUint = new HexString(account.xpub as string).toUint8Array();
+  try {
+    const { gas_estimate } = await aptosClient.estimateGasPrice();
+    gasPrice = gas_estimate;
+  } catch (err) {
+    // skip
+  }
+
+  try {
+    const fn = (signer: Aptos) => signer.getAddress(account.freshAddressPath);
+    const result = await firstValueFrom(
+      withDevice("")(transport => from(fn(new Aptos(transport)))),
+    );
+    const publickKey = result.publicKey.toString("hex");
+    const pubKeyUint = new HexString(publickKey).toUint8Array();
     const publicKeyEd = new TxnBuilderTypes.Ed25519PublicKey(pubKeyUint);
+    const tx = await buildTransaction(account, transaction, aptosClient);
     const simulation = await aptosClient.simulateTransaction(publicKeyEd, tx);
     const completedTx = simulation[0];
 
@@ -64,38 +81,34 @@ export const getFee = async (
           throw Error(`Simulation failed with following error: ${completedTx.vm_status}`);
         }
       }
-    } else {
-      res.estimate.maxGasAmount = BigNumber(
-        Math.ceil(completedTx.gas_used ? +completedTx.gas_used * ESTIMATE_GAS_MUL : DEFAULT_GAS),
-      ).toString();
-
-      if (
-        transaction.skipEmulation ||
-        +transaction.options.gasUnitPrice !== DEFAULT_GAS_PRICE ||
-        +transaction.options.maxGasAmount !== DEFAULT_GAS
-      ) {
-        res.fees = res.fees
-          .plus(
-            BigNumber(
-              transaction.options.gasUnitPrice || res.estimate.gasUnitPrice || DEFAULT_GAS_PRICE,
-            ),
-          )
-          .multipliedBy(
-            BigNumber(transaction.options.maxGasAmount || res.estimate.maxGasAmount || DEFAULT_GAS),
-          );
-      } else {
-        res.fees = res.fees
-          .plus(BigNumber(completedTx.gas_unit_price || DEFAULT_GAS_PRICE))
-          .multipliedBy(BigNumber(res.estimate.maxGasAmount));
-      }
-
-      res.estimate.gasUnitPrice = completedTx.gas_unit_price;
-      res.estimate.sequenceNumber = completedTx.sequence_number;
-      res.estimate.expirationTimestampSecs = completedTx.expiration_timestamp_secs;
     }
-  } catch (e: any) {
-    log(e.message);
-    throw e;
+
+    res.estimate.expirationTimestampSecs = completedTx.expiration_timestamp_secs;
+    gasLimit = Number(completedTx.gas_used ?? DEFAULT_GAS);
+  } catch (error: any) {
+    log(error.message);
+    throw error;
+  }
+
+  try {
+    const { sequence_number } = await aptosClient.getAccount(account.freshAddresses[0].address);
+    sequenceNumber = sequence_number;
+  } catch (err) {
+    // skip
+  }
+
+  gasLimit = Math.ceil(gasLimit * ESTIMATE_GAS_MUL);
+
+  res.estimate.gasUnitPrice = gasPrice.toString();
+  res.estimate.sequenceNumber = sequenceNumber.toString();
+  res.estimate.maxGasAmount = gasLimit.toString();
+
+  if (transaction.skipEmulation) {
+    res.fees = res.fees
+      .plus(transaction.options.gasUnitPrice)
+      .multipliedBy(BigNumber(transaction.options.maxGasAmount));
+  } else {
+    res.fees = res.fees.plus(BigNumber(gasPrice)).multipliedBy(BigNumber(gasLimit));
   }
 
   CACHE.delete(getCacheKey(transaction));

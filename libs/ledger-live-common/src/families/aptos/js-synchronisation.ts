@@ -1,138 +1,130 @@
 import BigNumber from "bignumber.js";
 import type { Types as AptosTypes } from "aptos";
-import type { AccountBridge, CurrencyBridge, Operation, OperationType } from "@ledgerhq/types-live";
+import type { Operation, OperationType, Account } from "@ledgerhq/types-live";
 import type { GetAccountShape } from "../../bridge/jsHelpers";
-import type { AptosTransaction, Transaction } from "./types";
+import type { AptosTransaction } from "./types";
 import { makeSync, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
 
 import { encodeAccountId } from "../../account";
 import { encodeOperationId } from "../../operation";
 
 import { AptosAPI } from "./api";
-import Aptos from "./hw-app-aptos";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { AddressData } from "./hw-app-aptos";
+import {
+  TRANSFER_TYPES,
+  TX_TYPE,
+  APTOS_OBJECT_TRANSFER,
+  APTOS_TRANSFER_FUNCTION_ADDRESS,
+  DIRECTION,
+} from "./constants";
+import { compareAddress } from "./utils";
 
-const getBlankOperation = (tx: AptosTransaction, id: string): Operation => ({
+const getBlankOperation = (
+  tx: AptosTransaction,
+  id: string,
+): Operation<Record<string, string>> => ({
   id: "",
   hash: tx.hash,
   type: "" as OperationType,
   value: new BigNumber(0),
   fee: new BigNumber(0),
-  blockHash: tx.block.hash,
-  blockHeight: tx.block.height,
+  blockHash: tx.block?.hash,
+  blockHeight: tx.block?.height,
   senders: [] as string[],
   recipients: [] as string[],
   accountId: id,
   date: new Date(parseInt(tx.timestamp) / 1000),
-  extra: {},
+  extra: { version: tx?.version },
   transactionSequenceNumber: parseInt(tx.sequence_number),
   hasFailed: false,
 });
 
-const txsToOps = (info: any, id: string, txs: AptosTransaction[]) => {
+const txsToOps = (info: any, id: string, txs: (AptosTransaction | null)[]) => {
   const { address } = info;
   const ops: Operation[] = [];
   txs.forEach(tx => {
-    const op: Operation = getBlankOperation(tx, id);
-    op.fee = new BigNumber(tx.gas_used).multipliedBy(BigNumber(tx.gas_unit_price));
+    if (tx !== null) {
+      const op: Operation = getBlankOperation(tx, id);
+      op.fee = new BigNumber(tx.gas_used).multipliedBy(BigNumber(tx.gas_unit_price));
 
-    const entryFunctionPayload = tx.payload as AptosTypes.EntryFunctionPayload;
-    const functionName = entryFunctionPayload.function.slice(
-      entryFunctionPayload.function.lastIndexOf("::") + 2,
-    );
-    (op.extra as any).entryFunction = entryFunctionPayload.function.slice(
-      entryFunctionPayload.function.indexOf("::") + 2,
-    );
+      const payload = tx.payload as AptosTypes.EntryFunctionPayload;
 
-    switch (functionName) {
-      case "transfer": {
-        op.type = "OUT";
-        op.recipients.push(entryFunctionPayload.arguments[0]);
-        op.value = op.value.plus(entryFunctionPayload.arguments[1]);
-        op.value = op.value.plus(op.fee);
-        break;
+      let type;
+      if ("function" in payload) {
+        type = payload.function.split("::").at(-1) as TX_TYPE;
+        (op.extra as any).entryFunction = payload.function.slice(
+          payload.function.indexOf("::") + 2,
+        );
+      } else if ("type" in payload) {
+        type = (payload as any).type as TX_TYPE;
       }
-      case "add_liquidity": {
-        op.type = "ADD_LIQUIDITY";
-        op.value = op.value.plus(entryFunctionPayload.arguments[0]);
-        break;
-      }
-      case "create_account": {
-        op.type = "CREATE_ACCOUNT";
-        op.value = op.value.plus(op.fee);
-        break;
-      }
-      default: {
-        op.type = "CUSTOM_CALL";
-        op.value = op.value.plus(op.fee);
-        break;
+      (op.extra as any).entryFunction = type;
+
+      // TRANSFER & RECEIVE
+      if (TRANSFER_TYPES.includes(type) && "arguments" in payload) {
+        // avoid v2 parse
+        if ("function" in payload && payload.function === APTOS_OBJECT_TRANSFER) {
+          op.type = DIRECTION.UNKNOWN;
+        } else {
+          op.recipients.push(payload.arguments[0]);
+          op.senders.push(tx.sender);
+          op.value = op.value.plus(payload.arguments[1]);
+          if (compareAddress(op.recipients[0], address)) {
+            op.type = DIRECTION.IN;
+          } else {
+            op.type = DIRECTION.OUT;
+          }
+        }
+
+        if (
+          !payload.type_arguments[0] &&
+          "function" in payload &&
+          payload.function !== APTOS_TRANSFER_FUNCTION_ADDRESS
+        ) {
+          op.type = DIRECTION.UNKNOWN;
+        }
+
+        op.hasFailed = !tx.success;
+        op.id = encodeOperationId(id, tx.hash, op.type);
+        ops.push(op);
       }
     }
-
-    op.senders.push(address);
-    op.hasFailed = !tx.success;
-    op.id = encodeOperationId(id, tx.hash, op.type);
-    ops.push(op);
   });
   return ops;
 };
 
-export type SignerContext = (
-  deviceId: string,
-  crypto: CryptoCurrency,
-  fn: (signer: Aptos) => Promise<AddressData>,
-) => Promise<AddressData>;
+const getAccountShape: GetAccountShape = async info => {
+  const { address, initialAccount, derivationMode, currency } = info;
 
-const makeGetAccountShape =
-  (signerContext: SignerContext): GetAccountShape =>
-  async info => {
-    const { address, initialAccount, derivationMode, derivationPath, currency, deviceId } = info;
+  const oldOperations = initialAccount?.operations || [];
+  const startAt = (oldOperations[0]?.extra as any)?.version;
 
-    const oldOperations = initialAccount?.operations || [];
+  const accountId = encodeAccountId({
+    type: "js",
+    version: "2",
+    currencyId: currency.id,
+    xpubOrAddress: address,
+    derivationMode,
+  });
 
-    let xpub = initialAccount?.xpub;
+  const aptosClient = new AptosAPI(currency.id);
+  const { balance, transactions, blockHeight } = await aptosClient.getAccountInfo(address, startAt);
 
-    if (!xpub) {
-      if (deviceId === null || deviceId === undefined) {
-        throw new Error("DeviceId required to generate the xpub");
-      }
-      const r = await signerContext(deviceId, currency, signer =>
-        signer.getAddress(derivationPath),
-      );
-      xpub = r?.publicKey.toString("hex");
-    }
+  const newOperations = txsToOps(info, accountId, transactions);
+  const operations = mergeOps(oldOperations, newOperations);
 
-    const accountId = encodeAccountId({
-      type: "js",
-      version: "2",
-      currencyId: currency.id,
-      xpubOrAddress: address,
-      derivationMode,
-    });
-
-    const aptosClient = new AptosAPI(currency.id);
-
-    const { balance, txs, blockHeight } = await aptosClient.getAccountInfo(address);
-
-    const newOperations = txsToOps(info, accountId, txs);
-    const operations = mergeOps(oldOperations, newOperations);
-
-    const shape = {
-      id: accountId,
-      xpub,
-      balance: balance,
-      spendableBalance: balance,
-      operationsCount: operations.length,
-      blockHeight,
-    };
-
-    return { ...shape, operations };
+  const shape: Partial<Account> = {
+    type: "Account",
+    id: accountId,
+    balance: balance,
+    spendableBalance: balance,
+    operations,
+    operationsCount: operations.length,
+    blockHeight,
+    lastSyncDate: new Date(),
   };
 
-export const scanAccounts = (signerContext: SignerContext): CurrencyBridge["scanAccounts"] =>
-  makeScanAccounts({
-    getAccountShape: makeGetAccountShape(signerContext),
-  });
-export const sync = (signerContext: SignerContext): AccountBridge<Transaction>["sync"] =>
-  makeSync({ getAccountShape: makeGetAccountShape(signerContext) });
+  return shape;
+};
+
+export const scanAccounts = makeScanAccounts({ getAccountShape });
+export const sync = makeSync({ getAccountShape, shouldMergeOps: false });

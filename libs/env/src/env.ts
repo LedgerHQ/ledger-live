@@ -63,14 +63,24 @@ const envDefinitions = {
     desc: "Rosetta API for ICP",
   },
   APTOS_API_ENDPOINT: {
-    def: "https://aptos-mainnet.pontem.network/v1/",
+    def: "https://fullnode.mainnet.aptoslabs.com/v1/",
     parser: stringParser,
-    desc: "API enpoint for aptos",
+    desc: "API enpoint for Aptos",
   },
   APTOS_TESTNET_API_ENDPOINT: {
-    def: "https://aptos-testnet.pontem.network/v1/",
+    def: "https://fullnode.testnet.aptoslabs.com/v1/",
     parser: stringParser,
-    desc: "API enpoint for aptos",
+    desc: "API enpoint for Aptos",
+  },
+  APTOS_INDEXER_ENDPOINT: {
+    def: "https://indexer.mainnet.aptoslabs.com/v1/graphql",
+    parser: stringParser,
+    desc: "Indexer endpoint for Aptos",
+  },
+  APTOS_TESTNET_INDEXER_ENDPOINT: {
+    def: "https://indexer-testnet.staging.gcp.aptosdev.com/v1/graphql",
+    parser: stringParser,
+    desc: "Indexer endpoint for Aptos",
   },
   API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT: {
     def: "https://algorand.coin.ledger.com",

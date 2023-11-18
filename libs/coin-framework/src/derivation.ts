@@ -203,6 +203,9 @@ const modes = Object.freeze({
     startsAt: 1,
     tag: "third-party",
   },
+  aptos: {
+    overridesDerivation: "44'/637'/<account>'/0'/0'",
+  },
 });
 modes as Record<DerivationMode, ModeSpec>; // eslint-disable-line
 

@@ -13,8 +13,7 @@ const LENGTH_WITH_0x = 66;
 export function isValidAddress(address = ""): boolean {
   let str = address;
 
-  const validAddressWithOx =
-    address.startsWith("0x") && address.length === LENGTH_WITH_0x;
+  const validAddressWithOx = address.startsWith("0x") && address.length === LENGTH_WITH_0x;
 
   if (!validAddressWithOx) return false;
 
@@ -41,7 +40,7 @@ export const getMaxSendBalance = (amount: BigNumber): BigNumber => {
 };
 
 export function normalizeTransactionOptions(
-  options: Transaction["options"]
+  options: Transaction["options"],
 ): Transaction["options"] {
   const check = (v: any) => {
     if (v === undefined || v === null || v === "") {

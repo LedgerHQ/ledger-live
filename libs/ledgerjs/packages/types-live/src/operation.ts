@@ -12,9 +12,7 @@ export type OperationType =
   | "CREATE"
   | "REVEAL"
   // APTOS
-  | "ADD_LIQUIDITY"
-  | "CREATE_ACCOUNT"
-  | "CUSTOM_CALL"
+  | "UNKNOWN"
   // COSMOS
   | "DELEGATE"
   | "UNDELEGATE"
