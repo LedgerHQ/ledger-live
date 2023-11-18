@@ -4,6 +4,8 @@ packages:
   - "tests/*"
   - "libs/ledgerjs/**"
   - "libs/ui/packages/*"
+  - "libs/ui/examples/*"- "libs/ui/packages/*"
+  - "libs/ui/examples/*"- "libs/ui/packages/*"
   - "libs/ui/examples/*"
   - "libs/ledger-live-common/tools"
   - "tools/**"
