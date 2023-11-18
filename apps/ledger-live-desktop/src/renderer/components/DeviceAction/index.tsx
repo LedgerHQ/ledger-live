@@ -12,7 +12,6 @@ import {
   LanguageInstallRefusedOnDevice,
   ImageDoesNotExistOnDevice,
 } from "@ledgerhq/live-common/errors";
-import { InitSellResult } from "@ledgerhq/live-common/exchange/sell/types";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import {
   setPreferredDeviceModel,
@@ -123,9 +122,6 @@ type States = PartialNullable<{
   completeExchangeResult: Transaction;
   completeExchangeError: Error;
   imageRemoveRequested: boolean;
-  initSellRequested: boolean;
-  initSellResult: InitSellResult;
-  initSellError: Error;
   installingApp: boolean;
   progress: number;
   listingApps: boolean;
@@ -215,9 +211,6 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     completeExchangeResult,
     completeExchangeError,
     allowOpeningGranted,
-    initSellRequested,
-    initSellResult,
-    initSellError,
     signMessageRequested,
   } = hookState;
 
@@ -392,10 +385,6 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       estimatedFees: estimatedFees ?? undefined,
       swapDefaultTrack,
     });
-  }
-
-  if (initSellRequested && !initSellResult && !initSellError) {
-    return renderSecureTransferDeviceConfirmation({ exchangeType: "sell", modelId, type });
   }
 
   if (allowOpeningRequestedWording || requestOpenApp) {

@@ -153,7 +153,7 @@ export const mapApplicationV2ToApp = ({
   indexOfMarketCap: -1, // We don't know at this point.
   type: name === "Exchange" ? AppType.swap : type,
   ...rest,
-  currencyId: currencyId || getCurrencyIdFromAppName(name),
+  currencyId: findCryptoCurrencyById(currencyId) ? currencyId : getCurrencyIdFromAppName(name),
   compatibleWallets: parseCompatibleWallets(compatibleWallets, name),
 });
 

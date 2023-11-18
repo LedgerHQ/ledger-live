@@ -195,6 +195,13 @@ const Circle = styled(Flex)`
   justify-content: center;
 `;
 
+const Separator = styled.div`
+  width: calc(100% + 60px);
+  height: 1px;
+  background-color: ${({ theme }) => theme.colors.palette.text.shade10};
+  margin: 24px -30px;
+`;
+
 // these are not components because we want reconciliation to not remount the sub elements
 
 export const renderRequestQuitApp = ({
@@ -698,6 +705,10 @@ export const renderError = ({
     return <RenderDeviceNotOnboardedError t={t} device={device} />;
   }
 
+  // if no supportLink is provided, we fallback on the related url linked to
+  // error name, if any
+  const supportLinkUrl = supportLink ?? urls.errors[error?.name];
+
   return (
     <Wrapper id={`error-${error.name}`}>
       <ErrorBody
@@ -729,8 +740,8 @@ export const renderError = ({
           />
         ) : (
           <>
-            {supportLink ? (
-              <ExternalLinkButton label={t("common.getSupport")} url={supportLink} />
+            {supportLinkUrl ? (
+              <ExternalLinkButton label={t("common.getSupport")} url={supportLinkUrl} />
             ) : null}
             {withExportLogs ? (
               <ExportLogsButton
@@ -925,7 +936,7 @@ export const renderSwapDeviceConfirmation = ({
             />
           </Alert>
         </Box>
-        <Box mx={6} data-test-id="device-swap-summary">
+        <Box mx={3} data-test-id="device-swap-summary">
           {map(
             {
               amountSent: (
@@ -993,7 +1004,10 @@ export const renderSwapDeviceConfirmation = ({
         </Box>
         {renderVerifyUnwrapped({ modelId, type })}
       </ConfirmWrapper>
-      <DrawerFooter provider={exchangeRate.provider} />
+      <Separator />
+      <Flex width="100%" mb={3}>
+        <DrawerFooter provider={exchangeRate.provider} />
+      </Flex>
     </>
   );
 };
@@ -1069,7 +1083,9 @@ const ImageLoadingGenericWithoutStyleProvider: React.FC<{
       </Flex>
       <Flex flexDirection={"column"} alignItems="center" alignSelf="stretch">
         {children}
-        <Title mb={pullDown ? "-24px" : undefined}>{title}</Title>
+        <Text mt={6} mb={pullDown ? "-24px" : undefined} variant="h5Inter" textAlign="center">
+          {title}
+        </Text>
       </Flex>
       <Flex flex={1} flexDirection="column" alignItems={"center"}>
         {bottom}

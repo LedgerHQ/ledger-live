@@ -4,7 +4,7 @@ import styled, { useTheme } from "styled-components";
 
 import Flex, { FlexBoxProps as FlexProps } from "../../Flex";
 import { ItemStatus } from "./index";
-import { Theme } from "src/styles/theme";
+import { Theme } from "../../../../styles/theme";
 
 const linesWidth = 2;
 

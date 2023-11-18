@@ -1,6 +1,6 @@
 {
   "name": "@actions/upload-images",
-  "version": "1.0.2",
+  "version": "2.0.0",
   "description": "Uploads images found in a folder to s3 and creates a json file for later reference",
   "author": "Valentin D. Pinkman <valentin.d.pinkman@icloud.com>",
   "license": "MIT",
@@ -11,8 +11,8 @@
     "lint:fix": "pnpm lint --fix"
   },
   "devDependencies": {
-    "@actions/core": "^1.10.0",
-    "@actions/github": "^5.1.1",
+    "@actions/core": "^1.10.1",
+    "@actions/github": "^6.0.0",
     "@aws-sdk/client-s3": "^3.370.0",
     "tsup": "^7.0.0"
   }

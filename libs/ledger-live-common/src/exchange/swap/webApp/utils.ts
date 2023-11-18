@@ -1,6 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import { getGasLimit } from "@ledgerhq/coin-evm/logic";
 import { getAccountUnit } from "../../../account/index";
+import { AccountLike } from "@ledgerhq/types-live";
 
 export const getCustomFeesPerFamily = transaction => {
   const {
@@ -35,15 +36,29 @@ export const getCustomFeesPerFamily = transaction => {
   }
 };
 
-export const convertToNonAtomicUnit = (amount, account) => {
+export const convertToNonAtomicUnit = ({
+  amount,
+  account,
+}: {
+  amount?: BigNumber;
+  account: AccountLike;
+}) => {
   const fromMagnitude =
     account.type === "TokenAccount"
       ? account.token.units[0].magnitude || 0
       : account.currency?.units[0].magnitude || 0;
-  return amount.shiftedBy(-fromMagnitude);
+  return amount?.shiftedBy(-fromMagnitude);
 };
 
-export const getMagnitudeAwareRate = ({ fromAccount, toAccount, rate }): BigNumber => {
+export const getMagnitudeAwareRate = ({
+  fromAccount,
+  toAccount,
+  rate,
+}: {
+  fromAccount: AccountLike;
+  toAccount: AccountLike;
+  rate: number;
+}): BigNumber => {
   const unitFrom = getAccountUnit(fromAccount);
   const unitTo = getAccountUnit(toAccount);
   const magnitudeAwareRate = new BigNumber(rate).shiftedBy(unitTo.magnitude - unitFrom.magnitude);

@@ -13,6 +13,7 @@ setSupportedCurrencies([
   "secret_network",
   "umee",
   "desmos",
+  "dydx",
   "onomy",
   "sei_network",
   "quicksilver",
@@ -90,6 +91,10 @@ setSupportedCurrencies([
   "telos_evm",
   "coreum",
   "injective",
+  "vechain",
+  "casper",
+  "neon_evm",
+  "lukso",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);

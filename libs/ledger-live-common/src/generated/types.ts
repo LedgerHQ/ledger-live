@@ -14,6 +14,10 @@ import { Transaction as cardanoTransaction } from "../families/cardano/types";
 import { TransactionRaw as cardanoTransactionRaw } from "../families/cardano/types";
 import { TransactionStatus as cardanoTransactionStatus } from "../families/cardano/types";
 import { TransactionStatusRaw as cardanoTransactionStatusRaw } from "../families/cardano/types";
+import { Transaction as casperTransaction } from "../families/casper/types";
+import { TransactionRaw as casperTransactionRaw } from "../families/casper/types";
+import { TransactionStatus as casperTransactionStatus } from "../families/casper/types";
+import { TransactionStatusRaw as casperTransactionStatusRaw } from "../families/casper/types";
 import { Transaction as celoTransaction } from "../families/celo/types";
 import { TransactionRaw as celoTransactionRaw } from "../families/celo/types";
 import { TransactionStatus as celoTransactionStatus } from "../families/celo/types";
@@ -78,12 +82,17 @@ import { Transaction as tronTransaction } from "../families/tron/types";
 import { TransactionRaw as tronTransactionRaw } from "../families/tron/types";
 import { TransactionStatus as tronTransactionStatus } from "../families/tron/types";
 import { TransactionStatusRaw as tronTransactionStatusRaw } from "../families/tron/types";
+import { Transaction as vechainTransaction } from "../families/vechain/types";
+import { TransactionRaw as vechainTransactionRaw } from "../families/vechain/types";
+import { TransactionStatus as vechainTransactionStatus } from "../families/vechain/types";
+import { TransactionStatusRaw as vechainTransactionStatusRaw } from "../families/vechain/types";
 
 export type Transaction =
   | algorandTransaction
   | aptosTransaction
   | bitcoinTransaction
   | cardanoTransaction
+  | casperTransaction
   | celoTransaction
   | cosmosTransaction
   | crypto_orgTransaction
@@ -99,13 +108,15 @@ export type Transaction =
   | stacksTransaction
   | stellarTransaction
   | tezosTransaction
-  | tronTransaction;
+  | tronTransaction
+  | vechainTransaction;
 
 export type TransactionRaw =
   | algorandTransactionRaw
   | aptosTransactionRaw
   | bitcoinTransactionRaw
   | cardanoTransactionRaw
+  | casperTransactionRaw
   | celoTransactionRaw
   | cosmosTransactionRaw
   | crypto_orgTransactionRaw
@@ -121,13 +132,15 @@ export type TransactionRaw =
   | stacksTransactionRaw
   | stellarTransactionRaw
   | tezosTransactionRaw
-  | tronTransactionRaw;
+  | tronTransactionRaw
+  | vechainTransactionRaw;
 
 export type TransactionStatus =
   | algorandTransactionStatus
   | aptosTransactionStatus
   | bitcoinTransactionStatus
   | cardanoTransactionStatus
+  | casperTransactionStatus
   | celoTransactionStatus
   | cosmosTransactionStatus
   | crypto_orgTransactionStatus
@@ -143,13 +156,15 @@ export type TransactionStatus =
   | stacksTransactionStatus
   | stellarTransactionStatus
   | tezosTransactionStatus
-  | tronTransactionStatus;
+  | tronTransactionStatus
+  | vechainTransactionStatus;
 
 export type TransactionStatusRaw =
   | algorandTransactionStatusRaw
   | aptosTransactionStatusRaw
   | bitcoinTransactionStatusRaw
   | cardanoTransactionStatusRaw
+  | casperTransactionStatusRaw
   | celoTransactionStatusRaw
   | cosmosTransactionStatusRaw
   | crypto_orgTransactionStatusRaw
@@ -165,4 +180,5 @@ export type TransactionStatusRaw =
   | stacksTransactionStatusRaw
   | stellarTransactionStatusRaw
   | tezosTransactionStatusRaw
-  | tronTransactionStatusRaw;
+  | tronTransactionStatusRaw
+  | vechainTransactionStatusRaw;

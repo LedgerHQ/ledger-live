@@ -46,8 +46,7 @@ import { RootNavigationComposite, StackNavigatorNavigation } from "../RootNaviga
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { WebviewAPI, WebviewProps } from "./types";
 import { useWebviewState } from "./helpers";
-
-const tracking = trackingWrapper(track);
+import { currentRouteNameRef } from "../../analytics/screenRefs";
 
 function renderLoading() {
   return (
@@ -58,6 +57,29 @@ function renderLoading() {
 }
 export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
   ({ manifest, inputs = {}, onStateChange }, ref) => {
+    const tracking = useMemo(
+      () =>
+        trackingWrapper(
+          (
+            eventName: string,
+            properties?: Record<string, unknown> | null,
+            mandatory?: boolean | null,
+          ) =>
+            track(
+              eventName,
+              {
+                ...properties,
+                flowInitiatedFrom:
+                  currentRouteNameRef.current === "Platform Catalog"
+                    ? "Discover"
+                    : currentRouteNameRef.current,
+              },
+              mandatory,
+            ),
+        ),
+      [],
+    );
+
     const { webviewProps, webviewRef } = useWebviewState(
       {
         manifest,
@@ -172,7 +194,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
             });
           }
         }),
-      [manifest, accounts, navigation],
+      [manifest, accounts, navigation, tracking],
     );
 
     const receiveOnAccount = useCallback(
@@ -201,7 +223,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
               });
             }),
         ),
-      [manifest, accounts, navigation],
+      [manifest, accounts, navigation, tracking],
     );
 
     const signTransaction = useCallback(
@@ -271,7 +293,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
             });
           },
         ),
-      [manifest, accounts, navigation],
+      [manifest, accounts, navigation, tracking],
     );
 
     const broadcastTransaction = useCallback(
@@ -306,7 +328,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
             return optimisticOperation.hash;
           },
         ),
-      [manifest, accounts],
+      [manifest, accounts, tracking],
     );
 
     const startExchange = useCallback(
@@ -345,7 +367,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           });
         });
       },
-      [manifest, navigation],
+      [manifest, navigation, tracking],
     );
 
     const completeExchange = useCallback(
@@ -358,6 +380,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         signature: string;
         feesStrategy: string;
         exchangeType: number;
+        amountExpectedTo?: number;
       }) =>
         completeExchangeLogic(
           { manifest, accounts, tracking },
@@ -405,7 +428,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
               });
             }),
         ),
-      [accounts, manifest, navigation, device],
+      [accounts, manifest, navigation, device, tracking],
     );
 
     const signMessage = useCallback(
@@ -437,7 +460,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
               });
             }),
         ),
-      [accounts, manifest, navigation],
+      [accounts, manifest, navigation, tracking],
     );
 
     const handlers = useMemo(
@@ -487,11 +510,11 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
 
     const handleError = useCallback(() => {
       tracking.platformLoadFail(manifest);
-    }, [manifest]);
+    }, [manifest, tracking]);
 
     useEffect(() => {
       tracking.platformLoad(manifest);
-    }, [manifest]);
+    }, [manifest, tracking]);
 
     const javaScriptCanOpenWindowsAutomatically = manifest.id === DEFAULT_MULTIBUY_APP_ID;
 

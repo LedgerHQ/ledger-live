@@ -34,6 +34,7 @@ import getBatteryStatus from "./commands/getBatteryStatus";
 import getDeviceRunningMode from "./commands/getDeviceRunningMode";
 import getTransactionStatus from "./commands/getTransactionStatus";
 import i18n from "./commands/i18n";
+import listApps from "./commands/listApps";
 import liveData from "./commands/liveData";
 import managerListApps from "./commands/managerListApps";
 import portfolio from "./commands/portfolio";
@@ -96,6 +97,7 @@ export default {
   getDeviceRunningMode,
   getTransactionStatus,
   i18n,
+  listApps,
   liveData,
   managerListApps,
   portfolio,

@@ -1,3 +1,25 @@
+# 2.71.1
+
+### 🐛 Fixes
+
+Some users reported issues when accessing the CL Card tab. We've patched this up.
+
+We've fixed the bug that prevented swapping coins or tokens with values above 1,000.
+
+# 2.71.0
+
+### 🚀 Features
+
+ParaSwap and 1inch, which you can access through the Discover section, are now supporting more EVM-compatible chains, including Base and Polygon zkEVM.
+
+### 🐛 Fixes
+
+We fixed a bug that led to an infinite loading error when trying to access the My Ledger tab. 
+
+The bug that caused the UTK tokens not to be displayed in the MultiversX account is now fixed. 
+
+Some users reported that their undelegated Tezos (XTZ) coins are not visible in the transaction history. This has been fixed. 
+
 # 2.69.0
 
 This release includes minor bug fixes and security improvements.

@@ -42,6 +42,7 @@ setSupportedCurrencies([
   "secret_network",
   "umee",
   "desmos",
+  "dydx",
   "onomy",
   "sei_network",
   "quicksilver",
@@ -106,6 +107,7 @@ setSupportedCurrencies([
   "moonriver",
   "velas_evm",
   "syscoin",
+  "vechain",
   "internet_computer",
   "klaytn",
   "polygon_zk_evm",
@@ -116,6 +118,9 @@ setSupportedCurrencies([
   "telos_evm",
   "coreum",
   "injective",
+  "casper",
+  "neon_evm",
+  "lukso",
 ]);
 
 if (Config.BLE_LOG_LEVEL) BluetoothTransport.setLogLevel(Config.BLE_LOG_LEVEL);

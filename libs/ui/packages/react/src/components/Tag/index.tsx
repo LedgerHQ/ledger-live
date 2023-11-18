@@ -1,5 +1,5 @@
 import React from "react";
-import { TextVariants } from "src/styles/theme";
+import { TextVariants } from "../../styles/theme";
 import { border, BorderProps } from "styled-system";
 import Text, { TextProps } from "../asorted/Text";
 import baseStyled, { BaseStyledProps } from "../styled";

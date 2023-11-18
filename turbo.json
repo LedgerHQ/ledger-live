@@ -27,6 +27,9 @@
       "cache": false,
       "dependsOn": ["^build"]
     },
+    "unimported": {
+      "cache": false
+    },
     "android:apk:local": {
       "dependsOn": ["^build"]
     },
@@ -80,14 +83,7 @@
     },
     "@ledgerhq/live-common#build": {
       "dependsOn": ["^build"],
-      "outputs": [
-        "lib/**",
-        "lib-es/**",
-        "src/data/icons/react/**",
-        "src/data/icons/reactNative/**",
-        "src/data/flags/react/**",
-        "src/data/flags/reactNative/**"
-      ]
+      "outputs": ["lib/**", "lib-es/**"]
     },
     "@ledgerhq/live-common#typecheck": {
       "dependsOn": ["build"],

@@ -29,7 +29,7 @@ describe("updateAmountUsingMax", () => {
     setFromAmount,
     account,
     parentAccount,
-    transaction: { amount: new BigNumber(1) } as any,
+    bridge: ethBridge.accountBridge as any,
     feesStrategy: "slow" as any,
   };
 
@@ -45,8 +45,6 @@ describe("updateAmountUsingMax", () => {
     setFromAmount.mockClear();
   });
 
-  const wait = () => new Promise(resolve => setTimeout(resolve, 500));
-
   it("should toggle the amount", async () => {
     const amount = new BigNumber(0.5);
     mockedEstimateMaxSpendable.mockResolvedValue(amount);
@@ -56,20 +54,17 @@ describe("updateAmountUsingMax", () => {
 
     expect(result.current.isMaxEnabled).toBe(false);
     expect(setFromAmount).toBeCalledTimes(0);
-    act(() => result.current.toggleMax());
+    await act(async () => result.current.toggleMax());
     expect(result.current.isMaxEnabled).toBe(true);
 
     // Lest resort solution, since waitFor and other helpers will not work here.
-    await wait();
 
     expect(setFromAmount).toBeCalledTimes(1);
     expect(setFromAmount.mock.calls[0][0]).toBe(amount);
     setFromAmount.mockClear();
 
-    act(() => result.current.toggleMax());
+    await act(async () => result.current.toggleMax());
     expect(result.current.isMaxEnabled).toBe(false);
-
-    await wait();
 
     expect(setFromAmount).toBeCalledTimes(1);
     expect(setFromAmount.mock.calls[0][0]).toBe(ZERO);
@@ -110,8 +105,7 @@ describe("updateAmountUsingMax", () => {
     expect(setFromAmount).toBeCalledTimes(0);
 
     mockedEstimateMaxSpendable.mockResolvedValue(new BigNumber(0));
-    act(() => result.current.toggleMax());
-    await wait();
+    await act(async () => result.current.toggleMax());
 
     // Checking that updating dependencies update the max amount when the toggle is on.
     let idx = 1;
@@ -119,8 +113,7 @@ describe("updateAmountUsingMax", () => {
       const amount = new BigNumber(idx);
       setFromAmount.mockReset();
       mockedEstimateMaxSpendable.mockResolvedValue(amount);
-      rerender(props);
-      await wait();
+      await act(async () => rerender(props));
       expect(setFromAmount).toBeCalledTimes(1);
       expect(setFromAmount.mock.calls[0][0]).toBe(amount);
       idx += 1;

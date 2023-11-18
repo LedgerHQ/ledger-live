@@ -82,9 +82,11 @@ const VerifyOnDevice = ({
     if (!device || skipDevice) return null;
     try {
       if (getEnv("MOCK")) {
-        setTimeout(() => {
-          onAddressVerified(true);
-        }, 3000);
+        window.mock.events.subject.subscribe({
+          complete() {
+            onAddressVerified(true);
+          },
+        });
       } else {
         await firstValueFrom(
           getAccountBridge(mainAccount).receive(mainAccount, {

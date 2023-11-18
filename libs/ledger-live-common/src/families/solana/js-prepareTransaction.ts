@@ -554,7 +554,9 @@ async function deriveStakeSplitCommandDescriptor(
   // TODO: else if amount > stake balance
 
   if (!isValidBase58Address(uiState.stakeAccAddr)) {
-    errors.stakeAccAddr = new InvalidAddress();
+    errors.stakeAccAddr = new InvalidAddress("", {
+      currencyName: mainAccount.currency.name,
+    });
   }
 
   mainAccount.solanaResources?.stakes ?? [];
@@ -617,7 +619,9 @@ async function validateRecipientCommon(
   } else if (mainAccount.freshAddress === tx.recipient) {
     errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
   } else if (!isValidBase58Address(tx.recipient)) {
-    errors.recipient = new InvalidAddress();
+    errors.recipient = new InvalidAddress("", {
+      currencyName: mainAccount.currency.name,
+    });
   } else {
     const recipientWalletIsUnfunded = !(await isAccountFunded(tx.recipient, api));
 
@@ -645,7 +649,9 @@ async function validateValidatorCommon(addr: string, errors: Record<string, Erro
   if (addr.length === 0) {
     errors.voteAccAddr = new SolanaValidatorRequired();
   } else if (!isValidBase58Address(addr)) {
-    errors.voteAccAddr = new InvalidAddress();
+    errors.voteAccAddr = new InvalidAddress("", {
+      currencyName: "Solana",
+    });
   } else {
     const voteAcc = await getMaybeVoteAccount(addr, api);
 
@@ -663,7 +669,9 @@ function validateAndTryGetStakeAccount(
   if (stakeAccAddr.length === 0) {
     errors.stakeAccAddr = new SolanaStakeAccountRequired();
   } else if (!isValidBase58Address(stakeAccAddr)) {
-    errors.stakeAccAddr = new InvalidAddress();
+    errors.stakeAccAddr = new InvalidAddress("", {
+      currencyName: account.currency.name,
+    });
   }
 
   if (!errors.stakeAccAddr) {

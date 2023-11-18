@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/icons-ui",
   "description": "Icons used by the Ledger design system.",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -44,7 +44,8 @@
   "scripts": {
     "build": "pnpm run clean && node scripts/build && node scripts/buildLegacy && tsc --noEmit false && node scripts/transpile",
     "prepublishOnly": "pnpm run build",
-    "clean": "rimraf react native reactLegacy nativeLegacy src/react src/native src/reactLegacy src/nativeLegacy"
+    "clean": "rimraf react native reactLegacy nativeLegacy src/react src/native src/reactLegacy src/nativeLegacy",
+    "unimported": "unimported"
   },
   "peerDependencies": {
     "@types/react": "*",

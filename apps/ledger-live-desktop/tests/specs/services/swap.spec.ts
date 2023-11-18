@@ -226,7 +226,7 @@ test.describe.parallel("Swap", () => {
       await swapPage.selectExchangeQuote("changelly", "float");
       await swapPage.confirmExchange();
       await deviceAction.initiateSwap();
-      await expect.soft(drawer.content).toHaveScreenshot("initiate-swap.png", { timeout: 10000 });
+      await expect.soft(drawer.content).toHaveScreenshot("initiate-swap.png");
     });
 
     await test.step("Confirm swap with Nano App", async () => {

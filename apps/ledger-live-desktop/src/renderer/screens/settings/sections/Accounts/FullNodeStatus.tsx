@@ -7,7 +7,7 @@ import IconBlueSpinner from "~/renderer/icons/BlueSpinner";
 import Tooltip from "~/renderer/components/Tooltip";
 import styled from "styled-components";
 import { colors } from "~/renderer/styles/theme";
-import useEnv from "~/renderer/hooks/useEnv";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import useSatStackStatus from "~/renderer/hooks/useSatStackStatus";
 
 // TODO move to bitcoin family

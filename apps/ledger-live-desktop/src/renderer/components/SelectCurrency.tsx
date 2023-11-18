@@ -4,7 +4,7 @@ import styled from "styled-components";
 import Fuse from "fuse.js";
 import { CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/index";
-import useEnv from "~/renderer/hooks/useEnv";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { getEnv } from "@ledgerhq/live-env";
 import Select from "~/renderer/components/Select";
 import { CreateStylesReturnType } from "~/renderer/components/Select/createStyles";

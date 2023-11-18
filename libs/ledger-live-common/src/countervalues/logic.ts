@@ -81,6 +81,7 @@ export function importCountervalues(
     ),
   };
 }
+
 // infer the tracking pair from user accounts to know which pairs are concerned
 export function inferTrackingPairForAccounts(
   accounts: Account[],
@@ -89,22 +90,25 @@ export function inferTrackingPairForAccounts(
   const yearAgo = new Date();
   yearAgo.setFullYear(yearAgo.getFullYear() - 1);
   yearAgo.setHours(0, 0, 0, 0);
+
   return resolveTrackingPairs(
-    flattenAccounts(accounts).map(a => {
-      const currency = getAccountCurrency(a);
+    flattenAccounts(accounts).map(account => {
+      const currency = getAccountCurrency(account);
       return {
         from: currency,
         to: countervalue,
-        startDate: a.creationDate < yearAgo ? a.creationDate : yearAgo,
+        startDate: account.creationDate < yearAgo ? account.creationDate : yearAgo,
       };
     }),
   );
 }
+
 export const initialState: CounterValuesState = {
   data: {},
   status: {},
   cache: {},
 };
+
 const MAX_RETRY_DELAY = 7 * incrementPerGranularity.daily;
 // synchronize all countervalues incrementally (async update of the countervalues state)
 export async function loadCountervalues(
@@ -116,8 +120,13 @@ export async function loadCountervalues(
   const status = { ...state.status };
   const nowDate = new Date();
   const latestToFetch = settings.trackingPairs;
+
   // determines what historical data need to be fetched
-  const histoToFetch: any[] = [];
+  const histoToFetch: [
+    RateGranularity,
+    { from: Currency; to: Currency; startDate: Date },
+    string,
+  ][] = [];
 
   const rateGranularities: RateGranularity[] = ["daily", "hourly"];
 
@@ -126,13 +135,15 @@ export async function loadCountervalues(
     const earliestHisto = format(nowDate);
     log("countervalues", "earliestHisto=" + earliestHisto);
     const limit = datapointLimits[granularity];
+
     settings.trackingPairs.forEach(({ from, to, startDate }) => {
       const key = pairId({
         from,
         to,
       });
+
       const c: PairRateMapCache | null | undefined = cache[key];
-      const stats = c && c.stats;
+      const stats = c?.stats;
       const s = status[key];
 
       // when there are too much http failures, slow down the rate to be actually re-fetched
@@ -190,10 +201,12 @@ export async function loadCountervalues(
       ]);
     });
   });
+
   log(
     "countervalues",
     `${histoToFetch.length} historical value to fetch (${settings.trackingPairs.length} pairs)`,
   );
+
   // Fetch it all
   const [histo, latest] = await Promise.all([
     promiseAllBatched(10, histoToFetch, ([granularity, pair, key]) =>
@@ -213,6 +226,7 @@ export async function loadCountervalues(
             timestamp: Date.now(),
             oldestDateRequested,
           };
+
           return {
             [key]: rates,
           };
@@ -271,6 +285,7 @@ export async function loadCountervalues(
         return null;
       }),
   ]);
+
   const updates: any[] = histo.concat(latest).filter(Boolean);
   log("countervalues", updates.length + " updates to apply");
   const changesKeys = {};
@@ -287,16 +302,19 @@ export async function loadCountervalues(
       });
     });
   });
+
   // synchronize the cache
   Object.keys(changesKeys).forEach(pair => {
     cache[pair] = generateCache(pair, data[pair], settings);
   });
+
   return {
     data,
     cache,
     status,
   };
 }
+
 export function lenseRateMap(
   state: CounterValuesState,
   pair: {
@@ -420,7 +438,7 @@ function generateCache(
   const oldestDate = oldest ? parseFormattedDate(oldest) : null;
   const earliestDate = earliest ? parseFormattedDate(earliest) : null;
   let earliestStableDate = earliestDate;
-  let fallback;
+  let fallback: number = 0;
   let hasHole = false;
 
   if (oldestDate && oldest) {
@@ -470,6 +488,7 @@ function generateCache(
     earliestDate,
     earliestStableDate,
   };
+
   return {
     map,
     stats,
@@ -477,34 +496,36 @@ function generateCache(
   };
 }
 
-// apply dedup & aliasing logics
 export function resolveTrackingPairs(pairs: TrackingPair[]): TrackingPair[] {
-  const d: Record<string, TrackingPair> = {};
-  pairs.map(p => {
+  const trackingPairs: Record<string, TrackingPair> = {};
+
+  pairs.map(pair => {
     const { from, to } = resolveTrackingPair({
-      from: p.from,
-      to: p.to,
+      from: pair.from,
+      to: pair.to,
     });
+
     if (!isCountervalueEnabled(from) || !isCountervalueEnabled(to)) return;
     if (from === to) return;
-    // dedup and keep oldest date
-    let date = p.startDate;
-    const k = pairId(p);
 
-    if (d[k]) {
-      const { startDate } = d[k];
+    // dedup and keep oldest date
+    let date = pair.startDate;
+    const id = pairId(pair);
+
+    if (trackingPairs[id]) {
+      const { startDate } = trackingPairs[id];
 
       if (startDate && date) {
         date = date < startDate ? date : startDate;
       }
     }
 
-    d[k] = {
+    trackingPairs[id] = {
       from,
       to,
       startDate: date,
     };
   });
-  // $FlowFixMe -_-
-  return Object.values(d);
+
+  return Object.values(trackingPairs);
 }

@@ -35,12 +35,14 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyBoba: DEFAULT_FEATURE,
   currencyCoreum: DEFAULT_FEATURE,
   currencyDesmos: DEFAULT_FEATURE,
+  currencyDydx: DEFAULT_FEATURE,
   currencyEnergyWeb: DEFAULT_FEATURE,
   currencyEvmosEvm: DEFAULT_FEATURE,
   currencyInjective: DEFAULT_FEATURE,
   currencyInternetComputer: DEFAULT_FEATURE,
   currencyKavaEvm: DEFAULT_FEATURE,
   currencyKlaytn: DEFAULT_FEATURE,
+  currencyLukso: DEFAULT_FEATURE,
   currencyMetis: DEFAULT_FEATURE,
   currencyMoonriver: DEFAULT_FEATURE,
   currencyOnomy: DEFAULT_FEATURE,
@@ -58,7 +60,10 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencySyscoin: DEFAULT_FEATURE,
   currencyTelosEvm: DEFAULT_FEATURE,
   currencyUmee: DEFAULT_FEATURE,
+  currencyVechain: DEFAULT_FEATURE,
   currencyVelasEvm: DEFAULT_FEATURE,
+  currencyCasper: DEFAULT_FEATURE,
+  currencyNeonEvm: DEFAULT_FEATURE,
 };
 
 /**
@@ -83,7 +88,6 @@ export const DEFAULT_FEATURES: Features = {
   ptxServiceCtaScreens: DEFAULT_FEATURE,
   customImage: DEFAULT_FEATURE,
   referralProgramDesktopBanner: DEFAULT_FEATURE,
-  editEthTx: DEFAULT_FEATURE,
   disableNftLedgerMarket: DEFAULT_FEATURE,
   disableNftRaribleOpensea: DEFAULT_FEATURE,
   disableNftSend: DEFAULT_FEATURE,
@@ -100,7 +104,6 @@ export const DEFAULT_FEATURES: Features = {
   learn: initFeature(),
   receiveStakingFlowConfigDesktop: initFeature(),
   brazePushNotifications: initFeature(),
-  walletConnectLiveApp: initFeature(),
   walletNftGallery: initFeature(),
   stakeAccountBanner: initFeature(),
 
@@ -134,6 +137,11 @@ export const DEFAULT_FEATURES: Features = {
     params: { supportedCurrencyIds: ["ethereum"] },
   },
 
+  editEvmTx: {
+    enabled: false,
+    params: { supportedCurrencyIds: ["ethereum"] },
+  },
+
   referralProgramDesktopSidebar: {
     enabled: false,
     params: { amount: "$20", isNew: true, path: "/discover/refer-a-friend" },
@@ -154,6 +162,7 @@ export const DEFAULT_FEATURES: Features = {
         loginURI:
           "ledgerlive://recover/protect-simu?redirectTo=login&source=lld-welcome-login&ajs_recover_source=lld-welcome-login&ajs_recover_campaign=recover-launch",
       },
+      compatibleDevices: [],
       discoverTheBenefitsLink: "https://www.ledger.com/recover",
       onboardingCompleted: {
         alreadySubscribedURI: "ledgerlive://recover/protect-simu?redirectTo=login",
@@ -287,6 +296,7 @@ export const DEFAULT_FEATURES: Features = {
     enabled: false,
     params: {
       deeplink: "",
+      compatibleDevices: [],
       account: {
         homeURI:
           "ledgerlive://recover/protect-simu?redirectTo=account&source=llm-myledger-access-card&ajs_prop_source=llm-myledger-access-card&ajs_prop_campaign=recover-launch",

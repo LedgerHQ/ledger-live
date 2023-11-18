@@ -35,7 +35,7 @@ const CLS = ({ onDone, setError, CLSBackup }: Props) => {
         onTryAnotherImage={onVoid}
         blockNavigation={onVoid}
       />
-      <TrackPage category="Allow lock screen picture restoration on Ledger Stax" />
+      <TrackPage category="Allow lock screen picture restoration on the device" />
     </>
   ) : null;
 };

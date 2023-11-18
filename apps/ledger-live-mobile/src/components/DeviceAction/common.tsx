@@ -116,8 +116,7 @@ export const FirmwareUpdateDenied = ({
   onPressRestart: () => void;
   onPressQuit: () => void;
 }) => {
-  const productName = getDeviceModel(device.modelId).productName;
-  const drawerName = `Error: update cancelled on ${productName}`;
+  const drawerName = "Error: update cancelled on device";
   return (
     <Flex alignItems="center" justifyContent="center" px={1}>
       <TrackScreen category={drawerName} type="drawer" refreshSource={false} />

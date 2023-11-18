@@ -105,14 +105,6 @@ export function useLoginURI(
   return useReplacedURI(uri, id);
 }
 
-export function useLoginPath(
-  servicesConfig: Feature_ProtectServicesDesktop | null,
-): string | undefined {
-  const uri = useLoginURI(servicesConfig);
-
-  return usePath(servicesConfig, uri);
-}
-
 export function useRestore24URI(
   servicesConfig: Feature_ProtectServicesDesktop | null,
 ): string | undefined {
@@ -170,9 +162,9 @@ export function useCustomPath(
   source?: string,
   deeplinkCampaign?: string,
 ): string | undefined {
-  const modelUri = usePostOnboardingURI(servicesConfig);
   const customUri = useMemo(() => {
-    const [basicUri] = modelUri ? modelUri.split("?") : [];
+    const id = servicesConfig?.params?.protectId;
+    const basicUri = id ? `ledgerlive://recover/${id}` : "ledgerlive://recover/protect-prod";
     const uri = new URL(basicUri);
 
     if (page) uri.searchParams.append("redirectTo", page);
@@ -181,8 +173,9 @@ export function useCustomPath(
       uri.searchParams.append("ajs_recover_source", source);
       uri.searchParams.append("ajs_recover_campaign", deeplinkCampaign);
     }
-    return uri;
-  }, [deeplinkCampaign, modelUri, page, source]);
 
-  return usePath(servicesConfig, customUri.toString()) ?? undefined;
+    return uri;
+  }, [deeplinkCampaign, page, servicesConfig?.params?.protectId, source]);
+
+  return usePath(servicesConfig, customUri.toString());
 }

@@ -30,6 +30,8 @@ import { log } from "@ledgerhq/logs";
 import { useDynamicUrl } from "~/renderer/terms";
 import { FinalFirmware } from "@ledgerhq/types-live";
 import { useHistory } from "react-router-dom";
+import { NetworkDown } from "@ledgerhq/errors";
+import { NetworkStatus, useNetworkStatus } from "~/renderer/hooks/useNetworkStatus";
 
 export type Props = {
   onComplete: () => void;
@@ -48,6 +50,7 @@ export type Props = {
   // unmounted when we restart the polling after the user interrupts an update."
   fwUpdateInterrupted: FinalFirmware | null;
   setFwUpdateInterrupted: (finalFirmware: FinalFirmware) => void;
+  isDeviceConnected: boolean;
 };
 
 const commonDrawerProps = {
@@ -70,6 +73,7 @@ const EarlySecurityChecks = ({
   isInitialRunOfSecurityChecks,
   setFwUpdateInterrupted,
   fwUpdateInterrupted,
+  isDeviceConnected,
 }: Props) => {
   const { t } = useTranslation();
   const whySecurityChecksUrl = useDynamicUrl("genuineCheck");
@@ -101,6 +105,8 @@ const EarlySecurityChecks = ({
     isHookEnabled: genuineCheckActive,
     deviceId,
   });
+
+  const { networkStatus } = useNetworkStatus();
 
   const {
     state: {
@@ -240,7 +246,8 @@ const EarlySecurityChecks = ({
 
   const allowSecureChannelIsOpen =
     devicePermissionState === "requested" &&
-    (genuineCheckActive || firmwareUpdateStatus === SoftwareCheckStatus.active);
+    (genuineCheckActive || firmwareUpdateStatus === SoftwareCheckStatus.active) &&
+    isDeviceConnected;
 
   const notGenuineIsOpen = genuineCheckStatus === SoftwareCheckStatus.notGenuine;
 
@@ -277,6 +284,18 @@ const EarlySecurityChecks = ({
       };
       setDrawer(ErrorDrawer, props, commonDrawerProps);
     } else if (
+      networkStatus === NetworkStatus.OFFLINE &&
+      genuineCheckStatus !== SoftwareCheckStatus.inactive
+    ) {
+      const props: ErrorDrawerProps = {
+        onClickRetry: () => {
+          resetGenuineCheckState();
+          setGenuineCheckStatus(SoftwareCheckStatus.active);
+        },
+        error: new NetworkDown(),
+      };
+      setDrawer(ErrorDrawer, props, commonDrawerProps);
+    } else if (
       getLatestAvailableFirmwareError &&
       !(
         getLatestAvailableFirmwareError.type === "SharedError" &&
@@ -310,6 +329,8 @@ const EarlySecurityChecks = ({
     productName,
     resetGenuineCheckState,
     history,
+    networkStatus,
+    genuineCheckStatus,
   ]);
 
   return (
@@ -325,7 +346,7 @@ const EarlySecurityChecks = ({
       )}
       {genuineCheckStatus === SoftwareCheckStatus.completed &&
         firmwareUpdateStatus === SoftwareCheckStatus.completed && (
-          <TrackPage category="The Stax is genuine and up to date" />
+          <TrackPage category="The device is genuine and up to date" />
         )}
       {firmwareUpdateStatus === SoftwareCheckStatus.updateAvailable && (
         <TrackPage category="Download OS update" />

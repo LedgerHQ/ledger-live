@@ -11,7 +11,7 @@ type Props = {
 const MODAL_LOCKED: {
   [key in StepId]: boolean;
 } = {
-  recipient: true,
+  recipient: false,
   amount: true,
   summary: true,
   device: true,

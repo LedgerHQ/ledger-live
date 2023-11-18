@@ -354,28 +354,6 @@ function FieldItem({ title, children }: { title: string; children: React.ReactNo
   );
 }
 
-export function renderConfirmSell({
-  t,
-  device,
-}: RawProps & {
-  device: Device;
-}) {
-  return (
-    <Wrapper>
-      <Alert type="primary" learnMoreUrl={urls.swap.learnMore}>
-        {t("DeviceAction.confirmSell.alert")}
-      </Alert>
-      <AnimationContainer marginTop="16px">
-        <Animation
-          source={getDeviceAnimation({ device, key: "sign" })}
-          style={animationStyles(device.modelId)}
-        />
-      </AnimationContainer>
-      <TitleText>{t("DeviceAction.confirmSell.title")}</TitleText>
-    </Wrapper>
-  );
-}
-
 export function renderAllowManager({
   t,
   device,
@@ -432,7 +410,7 @@ export function renderAllowLanguageInstallation({
       alignSelf="stretch"
       flex={fullScreen ? 1 : undefined}
     >
-      <TrackScreen category="Allow language installation on Stax" refreshSource={false} />
+      <TrackScreen category="Allow language installation on device" refreshSource={false} />
       <Text variant="h4" textAlign="center">
         {wording ??
           t("deviceLocalization.allowLanguageInstallation", {

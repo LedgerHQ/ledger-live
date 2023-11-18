@@ -39,7 +39,7 @@ type ButtonItem = {
 export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequestingToBeOpened">) {
   const navigation = useNavigation();
   const {
-    quickActionsList: { SEND, RECEIVE, BUY, SELL, SWAP, STAKE, WALLET_CONNECT, RECOVER },
+    quickActionsList: { SEND, RECEIVE, BUY, SELL, SWAP, STAKE, RECOVER },
   } = useQuickActions();
   const { t } = useTranslation();
   const { pushToast, dismissToast } = useToasts();
@@ -112,7 +112,6 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       },
       title: t("transfer.buy.title"),
       description: t("transfer.buy.description"),
-      tag: t("common.popular"),
       Icon: BUY.icon,
       onPress: () => onNavigate(...BUY.route),
       onDisabledPress: () => {
@@ -128,7 +127,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
         }
       },
       disabled: BUY.disabled,
-      testID: "transfer-receive-button",
+      testID: "transfer-buy-button",
     },
     {
       eventProperties: {
@@ -182,6 +181,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       title: t("transfer.swap.title"),
       description: t("transfer.swap.description"),
       Icon: SWAP.icon,
+      tag: t("common.popular"),
       onPress: () => onNavigate(...SWAP.route),
       onDisabledPress: () => {
         if (isPtxServiceCtaExchangeDrawerDisabled) {
@@ -199,42 +199,6 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       testID: "swap-transfer-button",
     },
 
-    ...(RECOVER
-      ? [
-          {
-            eventProperties: {
-              button: "transfer_recover",
-              page,
-              drawer: "trade",
-            },
-            tag: t("transfer.recover.tag"),
-            title: t("transfer.recover.title"),
-            description: t("transfer.recover.description"),
-            Icon: RECOVER.icon,
-            onPress: () => onNavigateRecover(),
-            disabled: RECOVER.disabled,
-            testID: "transfer-recover-button",
-          },
-        ]
-      : []),
-
-    ...(WALLET_CONNECT
-      ? [
-          {
-            eventProperties: {
-              button: "transfer_walletConnect",
-              page,
-              drawer: "trade",
-            },
-            title: t("transfer.walletConnect.title"),
-            description: t("transfer.walletConnect.description"),
-            Icon: WALLET_CONNECT.icon,
-            onPress: () => onNavigate(...WALLET_CONNECT.route),
-            disabled: WALLET_CONNECT.disabled,
-            testID: "transfer-walletconnect-button",
-          },
-        ]
-      : []),
     ...(RECOVER
       ? [
           {

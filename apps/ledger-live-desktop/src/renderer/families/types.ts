@@ -13,7 +13,6 @@ import {
   OperationType,
   SubAccount,
   TransactionCommon,
-  TransactionCommonRaw,
   MessageProperties,
 } from "@ledgerhq/types-live";
 // FIXME: ideally we need to have <A,T,TS> parametric version of StepProps
@@ -210,7 +209,7 @@ export type LLDCoinFamily<
       mapStrategies?: (a: FeeStrategy) => FeeStrategy;
       bridgePending?: boolean;
       trackProperties?: Record<string, unknown>;
-      transactionRaw?: TransactionCommonRaw;
+      transactionToUpdate?: T;
     }>;
     fields?: string[];
   };
