@@ -1,5 +1,20 @@
 # live-mobile
 
+## 3.35.0-nightly.2
+
+### Patch Changes
+
+- [#5478](https://github.com/LedgerHQ/ledger-live/pull/5478) [`2258116e33`](https://github.com/LedgerHQ/ledger-live/commit/2258116e334d749a26c50555edad2f5d432dbef8) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Fixed unresponsive export logs on android 14
+
+- [#5316](https://github.com/LedgerHQ/ledger-live/pull/5316) [`ff770765cc`](https://github.com/LedgerHQ/ledger-live/commit/ff770765cc5fbb68b61370ac71fb768ae1e345db) Thanks [@ak-ledger](https://github.com/ak-ledger)! - Close open drawer when lock screen appears
+
+- [#4710](https://github.com/LedgerHQ/ledger-live/pull/4710) [`a1f9e209e6`](https://github.com/LedgerHQ/ledger-live/commit/a1f9e209e661a8446216fe21257cfce84840404e) Thanks [@mohammed-ledger](https://github.com/mohammed-ledger)! - Add sonarqube integration
+
+- Updated dependencies []:
+  - @ledgerhq/coin-evm@0.11.0-nightly.5
+  - @ledgerhq/coin-framework@0.9.0-nightly.5
+  - @ledgerhq/live-common@33.2.0-nightly.2
+
 ## 3.35.0-nightly.1
 
 ### Minor Changes

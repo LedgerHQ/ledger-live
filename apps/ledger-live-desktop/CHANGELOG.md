@@ -1,5 +1,16 @@
 # ledger-live-desktop
 
+## 2.72.0-nightly.2
+
+### Patch Changes
+
+- [#4710](https://github.com/LedgerHQ/ledger-live/pull/4710) [`a1f9e209e6`](https://github.com/LedgerHQ/ledger-live/commit/a1f9e209e661a8446216fe21257cfce84840404e) Thanks [@mohammed-ledger](https://github.com/mohammed-ledger)! - Add sonarqube integration
+
+- Updated dependencies []:
+  - @ledgerhq/coin-evm@0.11.0-nightly.5
+  - @ledgerhq/coin-framework@0.9.0-nightly.5
+  - @ledgerhq/live-common@33.2.0-nightly.2
+
 ## 2.72.0-nightly.1
 
 ### Minor Changes

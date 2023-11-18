@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 11.2.0-nightly.3
+
+### Patch Changes
+
+- [#5477](https://github.com/LedgerHQ/ledger-live/pull/5477) [`618307f928`](https://github.com/LedgerHQ/ledger-live/commit/618307f92899af07f4c8ad97c67df483492e3d9d) Thanks [@lvndry](https://github.com/lvndry)! - Only add tokens in ledger live if parent currency is supported
+
 ## 11.2.0-nightly.2
 
 ### Minor Changes
