@@ -111,6 +111,7 @@
     "https": false
   },
   "dependencies": {
+    "@apollo/client": "^3.8.7",
     "@cardano-foundation/ledgerjs-hw-app-cardano": "^5.1.0",
     "@celo/connect": "^3.0.1",
     "@celo/contractkit": "^3.0.1",
@@ -213,6 +214,8 @@
     "eip55": "^2.1.1",
     "expect": "^27.4.6",
     "fuse.js": "^6.6.2",
+    "graphql": "^16.8.1",
+    "graphql-tag": "^2.12.6",
     "invariant": "^2.2.2",
     "isomorphic-ws": "^4.0.1",
     "json-rpc-2.0": "^0.2.19",
