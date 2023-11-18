@@ -63,7 +63,7 @@ jobs:
       - name: merge into main
         run: |
           git checkout main
-          git merge ${{ inputs.ref }}
+          git merge ${{ inputs.ref }} --no-ff
           git push origin main
 
       - name: create PR to develop

@@ -127,7 +127,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
         }
       },
       disabled: BUY.disabled,
-      testID: "transfer-receive-button",
+      testID: "transfer-buy-button",
     },
     {
       eventProperties: {

@@ -63,7 +63,7 @@ jobs:
       - name: merge into main
         run: |
           git checkout main
-          git merge ${{ inputs.ref }}
+          git merge ${{ inputs.ref }} --no-ff
           git push origin main
 
       - name: create PR to develop
@@ -81,7 +81,7 @@ jobs:
         run: |
           if git checkout release
           then
-            if git merge ${{ github.event.inputs.ref }}
+            if git merge ${{ github.event.inputs.ref }} --no-ff
             then
               git push origin release
             else

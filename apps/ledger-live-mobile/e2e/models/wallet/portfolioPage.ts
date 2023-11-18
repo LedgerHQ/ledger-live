@@ -21,6 +21,7 @@ export default class PortfolioPage {
   swapTransferMenuButton = () => getElementById("swap-transfer-button");
   stakeTransferMenuButton = () => getElementById(this.stakeMenuButtonId);
   sendTransferMenuButton = () => getElementById("transfer-send-button");
+  receiveTransfertMenuButton = () => getElementById("transfer-receive-button");
   sendMenuButton = () => getElementById("send-button");
   marketTabButton = () => getElementById("tab-bar-market");
   earnButton = () => getElementById("tab-bar-earn");
@@ -49,6 +50,10 @@ export default class PortfolioPage {
   async navigateToStakeFromTransferMenu() {
     await scrollToId(this.stakeMenuButtonId, this.transferScrollListId);
     return tapByElement(this.stakeTransferMenuButton());
+  }
+
+  navigateToReceiveFromTransferMenu() {
+    return tapByElement(this.receiveTransfertMenuButton());
   }
 
   async openAddAccount() {
