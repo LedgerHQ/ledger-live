@@ -28,6 +28,7 @@ import { ScreenName } from "../../const";
 import FirmwareUpdateBanner from "../../components/FirmwareUpdateBanner";
 import CheckLanguageAvailability from "../../components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "../../components/CheckTermOfUseUpdate";
+import RecoverBanner from "../../components/RecoverBanner";
 import PortfolioEmptyState from "./PortfolioEmptyState";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import SectionContainer from "../WalletCentricSections/SectionContainer";
@@ -141,6 +142,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
 
   const data = useMemo(
     () => [
+      <RecoverBanner key="RecoverBanner" />,
       <Flex px={6} py={4} key="FirmwareUpdateBanner">
         <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
       </Flex>,

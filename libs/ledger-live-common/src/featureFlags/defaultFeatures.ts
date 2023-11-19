@@ -295,6 +295,8 @@ export const DEFAULT_FEATURES: Features = {
   protectServicesMobile: {
     enabled: false,
     params: {
+      ledgerliveStorageState: false,
+      bannerSubscriptionNotification: false,
       deeplink: "",
       compatibleDevices: [],
       account: {
