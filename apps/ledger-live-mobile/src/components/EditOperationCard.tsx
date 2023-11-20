@@ -4,7 +4,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { SideImageCard } from "@ledgerhq/native-ui";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
-import { useFeature } from "@ledgerhq/live-config/FeatureFlags/index";
+import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 // import { useNavigation } from "@react-navigation/core";
 import SectionContainer from "../screens/WalletCentricSections/SectionContainer";
 

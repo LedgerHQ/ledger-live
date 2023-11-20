@@ -1,4 +1,4 @@
-import useFeature from "@ledgerhq/live-config/FeatureFlags/useFeature";
+import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
 import { cryptopanicAvailableRegions, CryptopanicAvailableRegionsType } from "./cryptopanicApi";
 import { useLocale } from "../../context/Locale";
 

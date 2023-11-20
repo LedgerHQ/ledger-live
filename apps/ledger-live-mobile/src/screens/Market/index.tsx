@@ -18,7 +18,7 @@ import { CurrencyData, MarketListRequestParams } from "@ledgerhq/live-common/mar
 import { useRoute, useFocusEffect } from "@react-navigation/native";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import useFeature from "@ledgerhq/live-config/FeatureFlags/useFeature";
+import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
 import {
   marketFilterByStarredAccountsSelector,
   starredMarketCoinsSelector,

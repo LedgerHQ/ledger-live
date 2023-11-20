@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useState, useMemo } from "react";
 import { Flex, IconsLegacy } from "@ledgerhq/native-ui";
-import { useFeature } from "@ledgerhq/live-config/FeatureFlags/index";
+import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { useNavigation } from "@react-navigation/native";
 import { WebViewMessageEvent } from "react-native-webview";
 import { useTranslation } from "react-i18next";

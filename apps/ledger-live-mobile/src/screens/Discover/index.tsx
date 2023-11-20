@@ -3,7 +3,7 @@ import { Linking, Platform, ScrollView } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
-import useFeature from "@ledgerhq/live-config/FeatureFlags/useFeature";
+import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Illustration from "../../images/illustration/Illustration";

@@ -10,7 +10,7 @@ import uniq from "lodash/uniq";
 import { getEnv } from "@ledgerhq/live-env";
 import { colors } from "~/renderer/styles/theme";
 import Alert from "~/renderer/components/Alert";
-import { useFeature } from "@ledgerhq/live-config/FeatureFlags/index";
+import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import {
   findSubAccountById,
   getAccountCurrency,

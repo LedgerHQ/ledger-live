@@ -5,8 +5,8 @@ import {
   DEFAULT_FEATURES,
   formatDefaultFeatures,
   LiveConfig,
-} from "@ledgerhq/live-config/FeatureFlags/index";
-import type { FirebaseFeatureFlagsProviderProps as Props } from "@ledgerhq/live-config/FeatureFlags/index";
+} from "@ledgerhq/live-config/featureFlags/index";
+import type { FirebaseFeatureFlagsProviderProps as Props } from "@ledgerhq/live-config/featureFlags/index";
 import { getFirebaseConfig } from "~/firebase-setup";
 
 LiveConfig.init({

@@ -6,7 +6,7 @@ import { DeviceInfo } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { AppsDistribution } from "@ledgerhq/live-common/apps/index";
 import { DeviceModel, DeviceModelId } from "@ledgerhq/devices";
-import { FeatureToggle } from "@ledgerhq/live-config/FeatureFlags/index";
+import { FeatureToggle } from "@ledgerhq/live-config/featureFlags/index";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import ByteSize from "~/renderer/components/ByteSize";
 import { rgba } from "~/renderer/styles/helpers";

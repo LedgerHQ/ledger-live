@@ -1,5 +1,5 @@
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { useFeature } from "@ledgerhq/live-config/FeatureFlags/index";
+import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { isCryptoCurrency } from "../../../currencies";
 
 type Props = {

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import remoteConfig from "@react-native-firebase/remote-config";
-import { DEFAULT_FEATURES, formatDefaultFeatures } from "@ledgerhq/live-config/FeatureFlags/index";
-import type { FirebaseFeatureFlagsProviderProps as Props } from "@ledgerhq/live-config/FeatureFlags/index";
-import { LiveConfig } from "@ledgerhq/live-config/FeatureFlags/index";
+import { DEFAULT_FEATURES, formatDefaultFeatures } from "@ledgerhq/live-config/featureFlags/index";
+import type { FirebaseFeatureFlagsProviderProps as Props } from "@ledgerhq/live-config/featureFlags/index";
+import { LiveConfig } from "@ledgerhq/live-config/featureFlags/index";
 import VersionNumber from "react-native-version-number";
 import { Platform } from "react-native";
 

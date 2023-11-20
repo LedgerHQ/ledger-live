@@ -1,4 +1,4 @@
-import { useFeature } from "@ledgerhq/live-config/FeatureFlags/index";
+import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { useLoginURI, useLearnMoreURI } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { useMemo } from "react";
 import { Linking } from "react-native";

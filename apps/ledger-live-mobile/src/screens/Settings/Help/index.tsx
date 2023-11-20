@@ -1,5 +1,5 @@
 import React from "react";
-import { useFeature } from "@ledgerhq/live-config/FeatureFlags/index";
+import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { TrackScreen } from "../../../analytics";
 import LedgerSupportRow from "./LedgerSupportRow";
 import ClearCacheRow from "./ClearCacheRow";

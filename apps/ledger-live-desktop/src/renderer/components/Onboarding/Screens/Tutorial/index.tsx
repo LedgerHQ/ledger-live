@@ -1,4 +1,4 @@
-import { useFeature } from "@ledgerhq/live-config/FeatureFlags/index";
+import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import {
   useAlreadySeededDevicePath,
   useRestore24Path,

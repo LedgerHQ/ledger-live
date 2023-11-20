@@ -11,7 +11,7 @@ import Animated, {
 import { Trans } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import Config from "react-native-config";
-import { useHasLocallyOverriddenFeatureFlags } from "@ledgerhq/live-config/FeatureFlags/useHasOverriddenFeatureFlags";
+import { useHasLocallyOverriddenFeatureFlags } from "@ledgerhq/live-config/featureFlags/useHasOverriddenFeatureFlags";
 import { Flex } from "@ledgerhq/native-ui";
 import { useSelector } from "react-redux";
 import { useExperimental } from "../../../experimental";

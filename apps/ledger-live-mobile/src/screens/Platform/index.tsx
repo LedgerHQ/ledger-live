@@ -1,4 +1,4 @@
-import useFeature from "@ledgerhq/live-config/FeatureFlags/useFeature";
+import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
 import React from "react";
 import { Catalog as Catalog1, Props as CatalogProps } from "./Catalog";
 import { Catalog as Catalog2 } from "./v2/Catalog";

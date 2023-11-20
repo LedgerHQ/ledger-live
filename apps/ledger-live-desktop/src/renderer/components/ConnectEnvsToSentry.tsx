@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { ipcRenderer } from "electron";
 import { EnvName, getEnv } from "@ledgerhq/live-env";
-import { DEFAULT_FEATURES, useFeatureFlags } from "@ledgerhq/live-config/FeatureFlags/index";
+import { DEFAULT_FEATURES, useFeatureFlags } from "@ledgerhq/live-config/featureFlags/index";
 import { FeatureId } from "@ledgerhq/types-live";
 import { enabledExperimentalFeatures } from "../experimental";
 import { setTags } from "../../sentry/renderer";

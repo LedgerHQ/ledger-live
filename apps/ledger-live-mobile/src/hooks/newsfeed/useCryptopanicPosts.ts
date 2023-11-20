@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import useFeature from "@ledgerhq/live-config/FeatureFlags/useFeature";
+import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
 import {
   cryptopanicAvailableRegions,
   CryptopanicAvailableRegionsType,

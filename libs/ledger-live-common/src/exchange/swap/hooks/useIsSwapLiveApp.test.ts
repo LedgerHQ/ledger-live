@@ -1,5 +1,5 @@
 import { renderHook } from "@testing-library/react-hooks";
-import { useFeature } from "@ledgerhq/live-config/FeatureFlags/index";
+import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { useIsSwapLiveApp } from "./useIsSwapLiveApp";
 import { cryptocurrenciesById } from "@ledgerhq/cryptoassets/currencies";
 

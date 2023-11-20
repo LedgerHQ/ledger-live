@@ -14,8 +14,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StorylyInstanceID } from "@ledgerhq/types-live";
 import { useNavigation } from "@react-navigation/native";
-import { useFeatureFlags } from "@ledgerhq/live-config/FeatureFlags/FeatureFlagsContext";
-import useFeature from "@ledgerhq/live-config/FeatureFlags/useFeature";
+import { useFeatureFlags } from "@ledgerhq/live-config/featureFlags/FeatureFlagsContext";
+import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
 
 import Stories from "../../../../components/StorylyStories";
 import FeatureFlagDetails from "../../../FeatureFlagsSettings/FeatureFlagDetails";
