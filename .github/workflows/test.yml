@@ -158,26 +158,14 @@ jobs:
         id: test-libs
         run: pnpm run test --continue --filter="!./apps/**" --filter="!./libs/ui/**" --filter="!./tools/**" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
         shell: bash
-      - name: temp test direcotory
-        run: |
-          echo ${{ github.workspace }}
-          if ! test -f /libs/ledger-live-common/coverage/lcov.info; then
-            echo "File does not exist."
-            ls
-            cd libs/ledger-live-common
-            ls
-            cd coverage
-            ls
-          fi
-        shell: bash
-      # - name: scan ledger-live-common
-      #   if: ${{ hashFiles('libs/ledger-live-common/coverage/lcov.info') != '' }}
-      #   uses: sonarsource/sonarqube-scan-action@master
-      #   with:
-      #     projectBaseDir: ./libs/ledger-live-common
-      #   env:
-      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_LEDGER_LIVE_COMMON }}
-      #     SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      - name: scan ledger-live-common
+        if: ${{ hashFiles('libs/ledger-live-common/coverage/lcov.info') != '' }}
+        uses: sonarsource/sonarqube-scan-action@master
+        with:
+          projectBaseDir: ./libs/ledger-live-common
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_LEDGER_LIVE_COMMON }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
       - name: (On Failure) Upload live-common snapshots and source
         uses: actions/upload-artifact@v3
         if: failure()
