@@ -67,6 +67,14 @@ function getDeviceTransactionConfig({
     });
   }
 
+  if (mode === "withdrawExpireUnfreeze") {
+    fields.push({
+      type: "address",
+      label: "Withdraw UnfrozenV2 to",
+      address: mainAccount.freshAddress,
+    });
+  }
+
   if (mode !== "send") {
     fields.push({
       type: "address",

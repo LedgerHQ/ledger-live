@@ -64,6 +64,7 @@ import {
   TronUnexpectedFees,
   TronNotEnoughTronPower,
   TronNotEnoughEnergy,
+  TronNoUnfrozenV2,
 } from "../../../errors";
 import {
   broadcastTron,
@@ -85,6 +86,7 @@ import {
   getContractUserEnergyRatioConsumption,
   freezeV2TronTransaction,
   unFreezeV2TronTransaction,
+  withdrawExpireUnfreezeTronTransaction,
 } from "../api";
 import { activationFees, oneTrx } from "../constants";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
@@ -147,6 +149,9 @@ const signOperation: SignOperationFnSignature<Transaction> = ({ account, transac
 
               case "unFreezeV2":
                 return unFreezeV2TronTransaction(account, transaction);
+
+              case "withdrawExpireUnfreeze":
+                return withdrawExpireUnfreezeTronTransaction(account, transaction);
 
               default:
                 return createTronTransaction(account, transaction, subAccount);
@@ -650,6 +655,20 @@ const getTransactionStatus = async (a: TronAccount, t: Transaction): Promise<Tra
       errors.resource = new TronNoFrozenForBandwidth();
     } else if ((energy?.amount || new BigNumber(0)).lt(t.amount)) {
       errors.resource = new TronNoFrozenForEnergy();
+    }
+  }
+
+  if (mode === "withdrawExpireUnfreeze") {
+    const now = Date.now();
+    if (!a.tronResources.unFrozenV2.bandwidth && !a.tronResources.unFrozenV2.energy) {
+      errors.resource = new TronNoUnfrozenV2();
+    } else if (
+      (a.tronResources.unFrozenV2.bandwidth &&
+        a.tronResources.unFrozenV2.bandwidth.filter(unfrozen => unfrozen.expireTime > now)) ||
+      (a.tronResources.unFrozenV2.energy &&
+        a.tronResources.unFrozenV2.energy.filter(unfrozen => unfrozen.expireTime > now))
+    ) {
+      errors.resource = new TronUnfreezeNotExpired();
     }
   }
 

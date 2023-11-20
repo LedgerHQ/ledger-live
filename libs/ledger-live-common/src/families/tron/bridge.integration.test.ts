@@ -17,6 +17,7 @@ import {
   TronNotEnoughTronPower,
   TronSendTrc20ToNewAccountForbidden,
   TronUnexpectedFees,
+  TronUnfreezeNotExpired,
   TronVoteRequired,
 } from "../../errors";
 import { testBridge } from "../../__tests__/test-helpers/bridge";
@@ -286,6 +287,28 @@ const tron: CurrenciesData<Transaction> = {
             },
             warnings: {},
             totalSpent: new BigNumber("1000000"),
+            estimatedFees: new BigNumber("0"),
+          },
+        },
+        {
+          name: "NoUnfrozenV2Balances",
+          transaction: fromTransactionRaw({
+            family: "tron",
+            recipient: "",
+            amount: "0",
+            networkInfo: null,
+            mode: "withdrawExpireUnfreeze",
+            duration: undefined,
+            votes: [],
+            resource: undefined,
+          }),
+          expectedStatus: {
+            amount: new BigNumber("0"),
+            errors: {
+              resource: new TronUnfreezeNotExpired(),
+            },
+            warnings: {},
+            totalSpent: new BigNumber("0"),
             estimatedFees: new BigNumber("0"),
           },
         },

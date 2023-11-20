@@ -22,6 +22,7 @@ export type OperationType =
   | "UNFREEZE"
   | "FREEZEV2"
   | "UNFREEZEV2"
+  | "WITHDRAWEXPIREUNFREEZE"
   // POLKADOT
   | "VOTE"
   | "REWARD_PAYOUT"

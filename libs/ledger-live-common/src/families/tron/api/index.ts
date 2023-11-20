@@ -29,6 +29,7 @@ import type {
   FreezeV2TransactionData,
   UnFreezeV2TransactionData,
   UnFrozenV2Info,
+  WithdrawExpireUnfreezeTransactionData,
 } from "../types";
 import {
   abiEncodeTrc20Transfer,
@@ -133,6 +134,19 @@ export const unFreezeV2TronTransaction = async (
     unfreeze_balance: t.amount.toNumber(),
   };
   const url = `${getBaseApiUrl()}/wallet/unfreezebalancev2`;
+  const result = await post(url, txData);
+
+  return result;
+};
+
+export const withdrawExpireUnfreezeTronTransaction = async (
+  a: Account,
+  _t: Transaction,
+): Promise<SendTransactionDataSuccess> => {
+  const txData: WithdrawExpireUnfreezeTransactionData = {
+    owner_address: decode58Check(a.freshAddress),
+  };
+  const url = `${getBaseApiUrl()}/wallet/withdrawexpireunfreeze`;
   const result = await post(url, txData);
 
   return result;

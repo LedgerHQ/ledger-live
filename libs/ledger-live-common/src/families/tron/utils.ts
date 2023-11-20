@@ -39,6 +39,7 @@ const parentTx = [
   "ExchangeTransactionContract",
   "FreezeBalanceV2Contract",
   "UnfreezeBalanceV2Contract",
+  "WithdrawExpireUnfreezeContract",
 ];
 
 export const isParentTx = (tx: TrongridTxInfo): boolean => parentTx.includes(tx.type);
@@ -63,6 +64,7 @@ export const getEstimatedBlockSize = (a: Account, t: Transaction): BigNumber => 
     case "freezeV2":
     case "unFreezeV2":
     case "claimReward":
+    case "withdrawExpireUnfreeze":
       return new BigNumber(260);
 
     case "vote":
@@ -95,6 +97,9 @@ export const getOperationTypefromMode = (mode: TronOperationMode): OperationType
 
     case "unFreezeV2":
       return "UNFREEZEV2";
+
+    case "withdrawExpireUnfreeze":
+      return "WITHDRAWEXPIREUNFREEZE";
 
     default:
       return "OUT";
@@ -131,6 +136,9 @@ const getOperationType = (
 
     case "UnfreezeBalanceV2Contract":
       return "UNFREEZEV2";
+
+    case "WithdrawExpireUnfreezeContract":
+      return "WITHDRAWEXPIREUNFREEZE";
 
     default:
       return undefined;
