@@ -262,9 +262,9 @@ export const formatTrongridTxResponse = (
             })),
           };
 
-        case "FreezeBalanceContractV2":
+        case "FreezeBalanceV2Contract":
           return {
-            frozenAmount: new BigNumber(frozen_balance),
+            frozenV2Amount: new BigNumber(frozen_balance),
           };
 
         case "UnfreezeBalanceV2Contract":

@@ -28,6 +28,10 @@ export function fromOperationExtraRaw(extraRaw: TrongridExtraTxInfoRaw): Trongri
     extra.unDelegatedResourceAmount = new BigNumber(extraRaw.unDelegatedResourceAmount);
   }
 
+  if (extraRaw.receiverAddress) {
+    extra.receiverAddress = extraRaw.receiverAddress;
+  }
+
   return extra;
 }
 
@@ -56,6 +60,10 @@ export function toOperationExtraRaw(extra: TrongridExtraTxInfo): TrongridExtraTx
 
   if (extra.unDelegatedResourceAmount) {
     extraRaw.unDelegatedResourceAmount = extra.unDelegatedResourceAmount.toString();
+  }
+
+  if (extra.receiverAddress) {
+    extraRaw.receiverAddress = extra.receiverAddress;
   }
 
   return extraRaw;

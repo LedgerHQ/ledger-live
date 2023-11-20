@@ -109,6 +109,29 @@ const OperationDetailsExtra = ({
   const amount = operation.extra?.frozenAmount
     ? (operation.extra.frozenAmount as BigNumber)
     : new BigNumber(0);
+
+  const frozenV2Amount = operation.extra?.frozenV2Amount
+    ? (operation.extra.frozenV2Amount as BigNumber)
+    : new BigNumber(0);
+
+  const unFrozenV2Amount = operation.extra?.unfreezeV2Amount
+    ? (operation.extra.unfreezeV2Amount as BigNumber)
+    : new BigNumber(10);
+
+  const unDelegatedResourceAmount = operation.extra?.unDelegatedResourceAmount
+    ? (operation.extra.unDelegatedResourceAmount as BigNumber)
+    : new BigNumber(0);
+
+  const receiverAddress = operation.extra?.receiverAddress ? operation.extra.receiverAddress : "";
+
+  const redirectAddress = useCallback(
+    (address: string) => {
+      const url = getAddressExplorer(getDefaultExplorerView(account.currency), address);
+      if (url) openURL(url);
+    },
+    [account],
+  );
+
   switch (type) {
     case "VOTE": {
       const votes = operation.extra?.votes;
@@ -153,6 +176,78 @@ const OperationDetailsExtra = ({
           </OpDetailsData>
         </OpDetailsSection>
       );
+    case "FREEZEV2":
+      return (
+        <OpDetailsSection>
+          <OpDetailsTitle>
+            <Trans i18nKey="operationDetails.extra.frozenAmount" />
+          </OpDetailsTitle>
+          <OpDetailsData>
+            <Box>
+              <FormattedVal
+                val={frozenV2Amount}
+                unit={account.unit}
+                showCode
+                fontSize={4}
+                color="palette.text.shade60"
+              />
+            </Box>
+          </OpDetailsData>
+        </OpDetailsSection>
+      );
+    case "UNFREEZEV2":
+      return (
+        <OpDetailsSection>
+          <OpDetailsTitle>
+            <Trans i18nKey="operationDetails.extra.unfreezeAmount" />
+          </OpDetailsTitle>
+          <OpDetailsData>
+            <Box>
+              <FormattedVal
+                val={unFrozenV2Amount}
+                unit={account.unit}
+                showCode
+                fontSize={4}
+                color="palette.text.shade60"
+              />
+            </Box>
+          </OpDetailsData>
+        </OpDetailsSection>
+      );
+    case "UNDELEGATERESOURCE":
+      return (
+        <>
+          <OpDetailsSection>
+            <OpDetailsTitle>
+              <Trans i18nKey="operationDetails.extra.undelegatedAmount" />
+            </OpDetailsTitle>
+            <OpDetailsData>
+              <Box>
+                <FormattedVal
+                  val={unDelegatedResourceAmount}
+                  unit={account.unit}
+                  showCode
+                  fontSize={4}
+                  color="palette.text.shade60"
+                />
+              </Box>
+            </OpDetailsData>
+          </OpDetailsSection>
+          <OpDetailsSection>
+            <OpDetailsTitle>
+              <Trans i18nKey="operationDetails.extra.undelegatedFrom" />
+            </OpDetailsTitle>
+            <OpDetailsData>
+              <Box>
+                <Address onClick={() => redirectAddress(receiverAddress)}>
+                  {receiverAddress}
+                </Address>
+              </Box>
+            </OpDetailsData>
+          </OpDetailsSection>
+        </>
+      );
+
     default:
       return null;
   }
@@ -179,8 +274,41 @@ const FreezeAmountCell = ({ operation, currency, unit }: Props) => {
     </>
   ) : null;
 };
+
+const FreezeV2AmountCell = ({ operation, currency, unit }: Props) => {
+  const amount = operation.extra?.frozenV2Amount;
+  return amount && !amount.isZero() ? (
+    <>
+      <FormattedVal val={amount} unit={unit} showCode fontSize={4} color={"palette.text.shade80"} />
+
+      <CounterValue
+        color="palette.text.shade60"
+        fontSize={3}
+        date={operation.date}
+        currency={currency}
+        value={amount}
+      />
+    </>
+  ) : null;
+};
 const UnfreezeAmountCell = ({ operation, currency, unit }: Props) => {
   const amount = operation.extra?.unfreezeAmount;
+  return amount && !amount.isZero() ? (
+    <>
+      <FormattedVal val={amount} unit={unit} showCode fontSize={4} color={"palette.text.shade80"} />
+
+      <CounterValue
+        color="palette.text.shade60"
+        fontSize={3}
+        date={operation.date}
+        currency={currency}
+        value={amount}
+      />
+    </>
+  ) : null;
+};
+const UnfreezeV2AmountCell = ({ operation, currency, unit }: Props) => {
+  const amount = operation.extra?.unfreezeV2Amount;
   return amount && !amount.isZero() ? (
     <>
       <FormattedVal val={amount} unit={unit} showCode fontSize={4} color={"palette.text.shade80"} />
@@ -214,7 +342,9 @@ const VoteAmountCell = ({ operation }: Props) => {
 };
 const amountCellExtra = {
   FREEZE: FreezeAmountCell,
+  FREEZEV2: FreezeV2AmountCell,
   UNFREEZE: UnfreezeAmountCell,
+  UNFREEZEV2: UnfreezeV2AmountCell,
   VOTE: VoteAmountCell,
 };
 export default {

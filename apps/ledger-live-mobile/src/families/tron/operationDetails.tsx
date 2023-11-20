@@ -44,7 +44,15 @@ function OperationDetailsExtra({ operation, type, account }: OperationDetailsExt
   const discreet = useSelector(discreetModeSelector);
   const locale = useSelector(localeSelector);
   const {
-    extra: { votes, frozenAmount, unfreezeAmount },
+    extra: {
+      votes,
+      frozenAmount,
+      unfreezeAmount,
+      frozenV2Amount,
+      unfreezeV2Amount,
+      unDelegatedResourceAmount,
+      receiverAddress,
+    },
   } = operation;
 
   switch (type) {
@@ -69,6 +77,42 @@ function OperationDetailsExtra({ operation, type, account }: OperationDetailsExt
         locale,
       });
       return <Section title={t("operationDetails.extra.unfreezeAmount")} value={value} />;
+    }
+
+    case "FREEZEV2": {
+      const value = formatCurrencyUnit(account.unit, frozenV2Amount || new BigNumber(0), {
+        showCode: true,
+        discreet,
+        locale,
+      });
+      return <Section title={t("operationDetails.extra.frozenAmount")} value={value} />;
+    }
+
+    case "UNFREEZEV2": {
+      const value = formatCurrencyUnit(account.unit, unfreezeV2Amount || new BigNumber(0), {
+        showCode: true,
+        discreet,
+        locale,
+      });
+      return <Section title={t("operationDetails.extra.unfreezeAmount")} value={value} />;
+    }
+
+    case "UNDELEGATERESOURCE": {
+      const value = formatCurrencyUnit(
+        account.unit,
+        unDelegatedResourceAmount || new BigNumber(0),
+        {
+          showCode: true,
+          discreet,
+          locale,
+        },
+      );
+      return (
+        <>
+          <Section title={t("operationDetails.extra.undelegatedAmount")} value={value} />
+          <Section title={t("operationDetails.extra.undelegatedFrom")} value={receiverAddress} />
+        </>
+      );
     }
 
     default:
@@ -156,6 +200,16 @@ const UnfreezeAmountCell = ({ operation, currency, unit }: Props) => {
   return <AmountCell amount={amount} operation={operation} currency={currency} unit={unit} />;
 };
 
+const FreezeV2AmountCell = ({ operation, currency, unit }: Props) => {
+  const amount = (operation as TronOperation).extra.frozenV2Amount || new BigNumber(0);
+  return <AmountCell amount={amount} operation={operation} currency={currency} unit={unit} />;
+};
+
+const UnfreezeV2AmountCell = ({ operation, currency, unit }: Props) => {
+  const amount = (operation as TronOperation).extra.unfreezeV2Amount || new BigNumber(0);
+  return <AmountCell amount={amount} operation={operation} currency={currency} unit={unit} />;
+};
+
 const VoteAmountCell = ({ operation }: Props) => {
   const amount = (operation as TronOperation).extra.votes
     ? (operation as TronOperation).extra.votes?.reduce((sum, { voteCount }) => sum + voteCount, 0)
@@ -188,6 +242,8 @@ const styles = StyleSheet.create({
 const amountCell = {
   FREEZE: FreezeAmountCell,
   UNFREEZE: UnfreezeAmountCell,
+  FREEZEV2: FreezeV2AmountCell,
+  UNFREEZEV2: UnfreezeV2AmountCell,
   VOTE: VoteAmountCell,
 };
 export default {
