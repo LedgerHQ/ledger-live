@@ -1,7 +1,6 @@
 import { renderHook } from "@testing-library/react-hooks";
 import useFeature from "./useFeature";
 import { makeMockedFeatureFlagsProviderWrapper, makeMockedContextValue } from "./mock";
-import { describe, it, expect } from "@jest/globals";
 
 describe("useFeature hook", () => {
   it("should return null if a flag is not defined remotely", () => {

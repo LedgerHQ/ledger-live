@@ -10,26 +10,31 @@ export const formatToFirebaseFeatureId = (id: string) => `feature_${snakeCase(id
 
 export const checkFeatureFlagVersion = (feature: Feature) => {
   const platform = LiveConfig.getInstance().platform;
-  if (feature && feature.enabled && platform) {
-    let featureSpecificVersion: string | undefined;
-    if (platform === "desktop") {
-      featureSpecificVersion = feature.desktop_version;
+  if (!feature || !feature.enabled || !platform) {
+    return feature;
+  }
+  const featureSpecificVersion: string | undefined = (() => {
+    switch (platform) {
+      case "desktop":
+        return feature.desktop_version;
+      case "ios":
+      case "android":
+        return feature.mobile_version;
+      default:
+        return undefined;
     }
-    if (["ios", "android"].includes(platform)) {
-      featureSpecificVersion = feature.mobile_version;
-    }
-    if (
-      featureSpecificVersion &&
-      !semver.satisfies(LiveConfig.getInstance().appVersion, featureSpecificVersion, {
-        includePrerelease: true,
-      })
-    ) {
-      return {
-        enabledOverriddenForCurrentVersion: true,
-        ...feature,
-        enabled: false,
-      };
-    }
+  })();
+  if (
+    featureSpecificVersion &&
+    !semver.satisfies(LiveConfig.getInstance().appVersion, featureSpecificVersion, {
+      includePrerelease: true,
+    })
+  ) {
+    return {
+      enabledOverriddenForCurrentVersion: true,
+      ...feature,
+      enabled: false,
+    };
   }
   return feature;
 };
