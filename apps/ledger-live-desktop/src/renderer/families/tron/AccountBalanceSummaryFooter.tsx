@@ -65,12 +65,34 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const energy = tronResources.energy;
   const bandwidthAmount = tronResources.frozen.bandwidth?.amount;
   const energyAmount = tronResources.frozen.energy?.amount;
+  const frozenV2bandwidthAmount = tronResources.frozenV2.bandwidth?.amount;
+  const frozenV2EnergyAmount = tronResources.frozenV2.energy?.amount;
+  const delegatedFrozenV2BandwidthAmount = tronResources.delegatedFrozenV2.bandwidth?.amount;
+  const delegatedFrozenV2EnergyAmount = tronResources.delegatedFrozenV2.energy?.amount;
+  const unfrozenV2BandwidthAmount = tronResources.unFrozenV2.bandwidth
+    ? tronResources.unFrozenV2.bandwidth.reduce((accum, cur) => {
+        return accum.plus(cur.amount);
+      }, new BigNumber(0))
+    : new BigNumber(0);
+  const unfrozenV2EnergyAmount = tronResources.unFrozenV2.energy
+    ? tronResources.unFrozenV2.energy.reduce((accum, cur) => {
+        return accum.plus(cur.amount);
+      }, new BigNumber(0))
+    : new BigNumber(0);
+
   const { freeUsed, freeLimit, gainedUsed, gainedLimit } = tronResources.bandwidth;
 
   const spendableBalance = formatCurrencyUnit(account.unit, account.spendableBalance, formatConfig);
   const frozenAmount = formatCurrencyUnit(
     account.unit,
-    BigNumber(bandwidthAmount || 0).plus(BigNumber(energyAmount || 0)),
+    BigNumber(bandwidthAmount || 0)
+      .plus(BigNumber(energyAmount || 0))
+      .plus(BigNumber(frozenV2bandwidthAmount || 0))
+      .plus(BigNumber(frozenV2EnergyAmount || 0))
+      .plus(BigNumber(delegatedFrozenV2BandwidthAmount || 0))
+      .plus(BigNumber(delegatedFrozenV2EnergyAmount || 0))
+      .plus(BigNumber(unfrozenV2BandwidthAmount))
+      .plus(BigNumber(unfrozenV2EnergyAmount)),
     formatConfig,
   );
   const formatedEnergy = energy && energy.gt(0) ? energy : null;
