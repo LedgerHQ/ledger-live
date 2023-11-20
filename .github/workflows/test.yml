@@ -161,9 +161,8 @@ jobs:
       - name: temp test direcotory
         run: |
           echo ${{ github.workspace }}
-          echo $GITHUB_WORKSPACE
-          echo hashFiles('libs/ledger-live-common/coverage/lcov.info')
-          echo hashFiles('coverage/lcov.info')
+          echo ${{ hashFiles('libs/ledger-live-common/coverage/lcov.info') }}
+          echo ${{ hashFiles('coverage/lcov.info') }}
         shell: bash
       # - name: scan ledger-live-common
       #   if: ${{ hashFiles('libs/ledger-live-common/coverage/lcov.info') != '' }}
