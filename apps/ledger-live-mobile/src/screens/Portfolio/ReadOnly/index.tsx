@@ -26,7 +26,6 @@ import CheckLanguageAvailability from "../../../components/CheckLanguageAvailabi
 import CheckTermOfUseUpdate from "../../../components/CheckTermOfUseUpdate";
 import { TAB_BAR_SAFE_HEIGHT } from "../../../components/TabBar/TabBarSafeAreaView";
 import SetupDeviceBanner from "../../../components/SetupDeviceBanner";
-import RecoverBanner from "../../../components/RecoverBanner";
 import BuyDeviceBanner, { IMAGE_PROPS_BIG_NANO } from "../../../components/BuyDeviceBanner";
 import Assets from "../Assets";
 import { AnalyticsContext } from "../../../analytics/AnalyticsContext";
@@ -97,7 +96,6 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
 
   const data = useMemo(
     () => [
-      <RecoverBanner key="RecoverBanner" />,
       <Box onLayout={onPortfolioCardLayout} key="GraphCardContainer">
         <GraphCardContainer
           counterValueCurrency={counterValueCurrency}

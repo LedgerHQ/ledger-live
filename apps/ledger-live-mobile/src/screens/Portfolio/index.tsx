@@ -142,13 +142,13 @@ function PortfolioScreen({ navigation }: NavigationProps) {
 
   const data = useMemo(
     () => [
-      <RecoverBanner key="RecoverBanner" />,
       <Flex px={6} py={4} key="FirmwareUpdateBanner">
         <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
       </Flex>,
       <PortfolioGraphCard showAssets={showAssets} key="PortfolioGraphCard" />,
       showAssets ? (
         <Box background={colors.background.main} px={6} mt={6} key="PortfolioAssets">
+          <RecoverBanner />
           <PortfolioAssets
             hideEmptyTokenAccount={hideEmptyTokenAccount}
             openAddModal={openAddModal}
@@ -183,9 +183,10 @@ function PortfolioScreen({ navigation }: NavigationProps) {
           ]
         : [
             // If the user has no accounts we display an empty state
-            <Box mx={6} mt={12} key="PortfolioEmptyState">
+            <Flex flexDirection="column" rowGap={30} mx={6} key="PortfolioEmptyState">
+              <RecoverBanner />
               <PortfolioEmptyState openAddAccountModal={openAddModal} />
-            </Box>,
+            </Flex>,
           ]),
     ],
     [

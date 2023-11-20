@@ -2224,21 +2224,17 @@
       "stake": "Stake"
     },
     "recoverBanner": {
-      "title": "You're almost there!",
       "subscribeDone": {
-        "description":"Add your credit or debit card to continue subscribing to Ledger Recover.",
-        "primaryCta": "Add my card",
-        "secondaryCta": "Maybe later"
+        "title": "Add credit or debit card",
+        "description":"Add your payment method to get your backup secure."
       },
       "verifyIdentity": {
-        "description":"Verify your identity to get your backup secure",
-        "primaryCta": "Verify now",
-        "secondaryCta": "Maybe later"
+        "title": "Verify my identity",
+        "description":"Verify your identity to get your backup secure."
       },
       "connectDevice": {
-        "description":"Connect and confirm your details on your Ledger.",
-        "primaryCta": "Connecting your Ledger",
-        "secondaryCta": "Maybe later"
+        "title": "Connect Ledger",
+        "description":"Connect your Ledger to get your backup secure."
       }
     }
   },

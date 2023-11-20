@@ -1,11 +1,11 @@
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { Button, Flex, ProgressLoader, Text } from "@ledgerhq/native-ui";
+import { Box, Flex, Icon, ProgressLoader, Text } from "@ledgerhq/native-ui";
 import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useCustomURI } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { useTheme } from "styled-components/native";
 import { RecoverBannerType } from "./types";
-import { Linking } from "react-native";
+import { GestureResponderEvent, Linking } from "react-native";
 import { getStoreValue, setStoreValue } from "~/store";
 
 function RecoverBanner() {
@@ -62,10 +62,7 @@ function RecoverBanner() {
         return undefined;
     }
 
-    if (recoverBannerWording) {
-      recoverBannerWording.title = t("portfolio.recoverBanner.title");
-      return recoverBannerWording;
-    }
+    return recoverBannerWording;
   }, [storageData, t]);
 
   const onRedirectRecover = () => {
@@ -75,7 +72,9 @@ function RecoverBanner() {
       );
   };
 
-  const onCloseBanner = () => {
+  const onCloseBanner = (event: GestureResponderEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
     setStoreValue("DISPLAY_BANNER", "false", protectID);
     setDisplayBannerData(false);
   };
@@ -87,47 +86,45 @@ function RecoverBanner() {
   if (!bannerIsEnabled || !recoverBannerSelected || !displayBannerData) return null;
 
   return (
-    <Flex justifyContent="center" p={6}>
+    <Flex justifyContent="center" position="relative">
       <Flex
         position="relative"
-        columnGap={3}
-        bg={colors.opacityPurple.c10}
+        columnGap={6}
+        bg={colors.opacityDefault.c05}
         flexDirection="row"
         justifyContent="space-between"
-        borderRadius="8px"
+        alignItems="center"
+        borderRadius={12}
         overflow="hidden"
         width="100%"
+        onTouchEnd={onRedirectRecover}
+        p={3}
       >
-        <Flex alignItems="center" justifyContent="center" p={3} width={68}>
+        <Flex alignItems="center" justifyContent="center" width={45}>
           <ProgressLoader progress={stepNumber / maxStepNumber} radius={20}>
             <Text display="block" flex={1} textAlign="center" fontSize="12px" lineHeight="15px">
-              {`${stepNumber}/${maxStepNumber}`}
+              {`${stepNumber}/${maxStepNumber - 1}`}
             </Text>
           </ProgressLoader>
         </Flex>
         <Flex flex={1} flexDirection="column" py={3} overflow="hidden">
-          <Text fontSize="13px" lineHeight="16px" width="100%" overflow="hidden">
+          <Text variant={"body"} fontWeight={"medium"} width="100%" overflow="hidden">
             {recoverBannerSelected.title}
           </Text>
           <Text
             mt={1}
-            fontSize="12px"
-            lineHeight="15px"
-            fontWeight="medium"
+            variant={"paragraph"}
+            fontWeight={"medium"}
             width="100%"
             overflow="hidden"
+            color={colors.neutral.c80}
           >
             {recoverBannerSelected.description}
           </Text>
         </Flex>
-        <Flex alignItems="center" p={3} pl={0} columnGap={3}>
-          <Button size="small" outline={false} onPress={onCloseBanner}>
-            {recoverBannerSelected.secondaryCta}
-          </Button>
-          <Button type="main" size="small" outline={false} onPress={onRedirectRecover}>
-            {recoverBannerSelected.primaryCta}
-          </Button>
-        </Flex>
+        <Box position="absolute" top={0} right={0} p={3} onTouchEnd={onCloseBanner}>
+          <Icon name="Close" size={16} color={colors.neutral.c100} />
+        </Box>
       </Flex>
     </Flex>
   );
