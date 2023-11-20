@@ -87,7 +87,7 @@ export async function scrollToId(
 
 export async function getTextOfElement(id: string, index = 0) {
   const attributes = await getElementById(id, index).getAttributes();
-  return !("elements" in attributes) ? attributes.text : attributes.elements[index].text;
+  return (!("elements" in attributes) ? attributes.text : attributes.elements[index].text) || "";
 }
 
 /**

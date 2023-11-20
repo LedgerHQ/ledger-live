@@ -60,6 +60,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencySyscoin: DEFAULT_FEATURE,
   currencyTelosEvm: DEFAULT_FEATURE,
   currencyUmee: DEFAULT_FEATURE,
+  currencyVechain: DEFAULT_FEATURE,
   currencyVelasEvm: DEFAULT_FEATURE,
   currencyCasper: DEFAULT_FEATURE,
   currencyNeonEvm: DEFAULT_FEATURE,
@@ -87,7 +88,6 @@ export const DEFAULT_FEATURES: Features = {
   ptxServiceCtaScreens: DEFAULT_FEATURE,
   customImage: DEFAULT_FEATURE,
   referralProgramDesktopBanner: DEFAULT_FEATURE,
-  editEthTx: DEFAULT_FEATURE,
   disableNftLedgerMarket: DEFAULT_FEATURE,
   disableNftRaribleOpensea: DEFAULT_FEATURE,
   disableNftSend: DEFAULT_FEATURE,
@@ -133,6 +133,11 @@ export const DEFAULT_FEATURES: Features = {
   },
 
   domainInputResolution: {
+    enabled: false,
+    params: { supportedCurrencyIds: ["ethereum"] },
+  },
+
+  editEvmTx: {
     enabled: false,
     params: { supportedCurrencyIds: ["ethereum"] },
   },

@@ -1,6 +1,7 @@
+import { isStrategyDisabled } from "@ledgerhq/coin-evm/editTransaction/index";
 import { getEstimatedFees } from "@ledgerhq/coin-evm/logic";
 import { getTypedTransaction } from "@ledgerhq/coin-evm/transaction";
-import type { GasOptions, Strategy, Transaction } from "@ledgerhq/coin-evm/types/index";
+import type { FeeData, GasOptions, Strategy, Transaction } from "@ledgerhq/coin-evm/types/index";
 import { getFeesCurrency, getFeesUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
@@ -43,6 +44,7 @@ type Props = {
   forceUnitLabel?: boolean | React.ReactNode;
   disabledStrategies?: Array<string>;
   NetworkFeesInfoComponent?: React.FC;
+  transactionToUpdate?: Transaction;
 };
 
 const CVWrapper = ({ children }: { children?: React.ReactNode }) => (
@@ -65,6 +67,7 @@ export default function SelectFeesStrategy({
   forceUnitLabel,
   disabledStrategies,
   NetworkFeesInfoComponent,
+  transactionToUpdate,
 }: Props) {
   const { track } = useAnalytics();
   const { t } = useTranslation();
@@ -104,7 +107,25 @@ export default function SelectFeesStrategy({
       return getEstimatedFees(getTypedTransaction(transaction, gasOptions[strategy]));
     })();
 
-    const isDisabled = disabledStrategies?.includes(strategy);
+    const feeData: FeeData =
+      strategy === "custom"
+        ? {
+            maxFeePerGas: transaction.maxFeePerGas ?? null,
+            maxPriorityFeePerGas: transaction.maxPriorityFeePerGas ?? null,
+            gasPrice: transaction.gasPrice ?? null,
+            nextBaseFee: null,
+          }
+        : gasOptions[strategy];
+
+    const isDisabled =
+      disabledStrategies?.includes(strategy) ||
+      (!!transactionToUpdate &&
+        isStrategyDisabled({
+          transaction: transactionToUpdate,
+          feeData,
+        }));
+
+    const isSelected = feesStrategy === strategy && !isDisabled;
 
     return (
       <TouchableOpacity
@@ -113,8 +134,8 @@ export default function SelectFeesStrategy({
         style={[
           styles.feeButton,
           {
-            borderColor: feesStrategy === strategy ? colors.live : colors.background,
-            backgroundColor: feesStrategy === strategy ? colors.lightLive : colors.lightFog,
+            borderColor: isSelected ? colors.live : colors.background,
+            backgroundColor: isSelected ? colors.lightLive : colors.lightFog,
           },
         ]}
       >

@@ -13,15 +13,13 @@ export async function waitFor(
     const interval = setInterval(async () => {
       const condition = await predicate();
       if (condition) {
-        // @ts-expect-error web vs node Timers
-        clearInterval(interval);
+        clearInterval(interval as any as number);
         resolve(true);
       }
     }, intervalMs);
 
     setTimeout(() => {
-      // @ts-expect-error web vs node Timers
-      clearInterval(interval);
+      clearInterval(interval as any as number);
       reject(new Error("waitFor timeout"));
     }, timeout);
   });

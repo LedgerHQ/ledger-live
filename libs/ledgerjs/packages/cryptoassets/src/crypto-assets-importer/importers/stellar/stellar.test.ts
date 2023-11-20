@@ -4,9 +4,10 @@ import fs from "fs";
 
 const stellarTokens = [["USDC", "id", "stellar", "USDC", 7, true]];
 
+const mockedAxios = jest.spyOn(axios, "get");
+
 describe("import ESDT tokens", () => {
   beforeEach(() => {
-    const mockedAxios = jest.spyOn(axios, "get");
     mockedAxios.mockImplementation(() => Promise.resolve({ data: stellarTokens }));
   });
 
@@ -33,6 +34,7 @@ export default tokens as StellarToken[];
 
     await importStellarTokens(".");
 
+    expect(mockedAxios).toHaveBeenCalledWith(expect.stringMatching(/.*\/stellar.json/));
     expect(mockedFs).toHaveBeenNthCalledWith(1, "stellar.json", JSON.stringify(stellarTokens));
     expect(mockedFs).toHaveBeenNthCalledWith(2, "stellar.ts", expectedFile);
   });

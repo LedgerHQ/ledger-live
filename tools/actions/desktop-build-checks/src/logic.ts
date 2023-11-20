@@ -269,22 +269,26 @@ export async function submitCommentToPR({
   reporter,
   prNumber,
   githubToken,
+  currentSha,
+  referenceSha,
 }: {
   reporter: Reporter;
   prNumber: string;
   githubToken: string;
+  currentSha: string;
+  referenceSha: string;
 }): Promise<void> {
   core.info("Submiting comment to PR");
   const header = `<!-- desktop-build-checks-${prNumber} -->`;
   const title = `### Desktop Build Checks
----
+> Comparing ${formatHash(currentSha)} against ${formatHash(referenceSha)}.
 `;
   core.info("Looking for existing comment");
   const found = await findComment({ prNumber, githubToken, header });
   core.info(found ? `Found previous comment ${found.id}` : "No previous comment to update");
   const body = reporter.toMarkdown();
 
-  if (body.length === 0 && found) {
+  if (reporter.isEmpty() && found) {
     const allGood = `
 ${header}
 
@@ -292,6 +296,11 @@ ${title}
 
 ✅ Previous issues have all been fixed.`;
     await createOrUpdateComment({ body: allGood, prNumber, githubToken, found });
+    return;
+  }
+
+  if (reporter.isEmpty()) {
+    core.info("Nothing to report");
     return;
   }
 
@@ -323,6 +332,10 @@ export class Reporter {
     this.statements.push(`❌ ${message}`);
   }
 
+  isEmpty() {
+    return this.statements.length === 0;
+  }
+
   toMarkdown() {
     return this.statements.join("\n");
   }
@@ -343,5 +356,12 @@ export function formatSize(bytes: number | undefined, precision: number = 1): st
 export function formatMarkdownBoldList(items: string[]) {
   if (items.length === 0) return "";
   const map = items.map(item => `**${item}**`);
+  if (map.length === 1) return map[0];
   return map.slice(0, items.length - 1).join(", ") + " and " + map[items.length - 1];
+}
+
+export function formatHash(hash: string | undefined) : string {
+  return hash
+    ? `[\`${hash.slice(0, 7)}\`](https://github.com/LedgerHQ/ledger-live/commit/${hash})`
+    : "_unknown_";
 }
