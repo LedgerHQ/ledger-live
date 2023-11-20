@@ -104,6 +104,10 @@ export function genAccount(id: number | string, opts: GenAccountOptions = {}): A
               bandwidth: null,
               energy: null,
             },
+            delegatedFrozenV2: {
+              bandwidth: null,
+              energy: null,
+            },
             votes: [],
             tronPower: 0,
             energy: BigNumber(0),

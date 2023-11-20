@@ -24,6 +24,10 @@ export function fromOperationExtraRaw(extraRaw: TrongridExtraTxInfoRaw): Trongri
     extra.unfreezeV2Amount = new BigNumber(extraRaw.unfreezeV2Amount);
   }
 
+  if (extraRaw.unDelegatedResourceAmount) {
+    extra.unDelegatedResourceAmount = new BigNumber(extraRaw.unDelegatedResourceAmount);
+  }
+
   return extra;
 }
 
@@ -48,6 +52,10 @@ export function toOperationExtraRaw(extra: TrongridExtraTxInfo): TrongridExtraTx
 
   if (extra.unfreezeV2Amount) {
     extraRaw.unfreezeV2Amount = extra.unfreezeV2Amount.toString();
+  }
+
+  if (extra.unDelegatedResourceAmount) {
+    extraRaw.unDelegatedResourceAmount = extra.unDelegatedResourceAmount.toString();
   }
 
   return extraRaw;

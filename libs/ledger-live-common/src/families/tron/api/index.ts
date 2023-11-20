@@ -30,6 +30,8 @@ import type {
   UnFreezeV2TransactionData,
   UnFrozenV2Info,
   WithdrawExpireUnfreezeTransactionData,
+  UnDelegateResourceTransactionData,
+  TronResource,
 } from "../types";
 import {
   abiEncodeTrc20Transfer,
@@ -151,6 +153,59 @@ export const withdrawExpireUnfreezeTronTransaction = async (
 
   return result;
 };
+
+export const unDelegateResourceTransaction = async (
+  a: Account,
+  t: Transaction,
+): Promise<SendTransactionDataSuccess> => {
+  const txData: UnDelegateResourceTransactionData = {
+    balance: t.amount.toNumber(),
+    resource: t.resource,
+    owner_address: decode58Check(a.freshAddress),
+    receiver_address: decode58Check(t.recipient),
+  };
+
+  const url = `${getBaseApiUrl()}/wallet/undelegateresource`;
+  const result = await post(url, txData);
+
+  return result;
+};
+
+export async function getDelegatedResourceV2(
+  a: Account,
+  t: Transaction,
+  resource: TronResource,
+): Promise<BigNumber> {
+  const url = `${getBaseApiUrl()}/wallet/getdelegatedresourcev2`;
+
+  const { delegatedResource } = await post(url, {
+    fromAddress: decode58Check(a.freshAddress),
+    toAddress: decode58Check(t.recipient),
+  });
+
+  const { frozen_balance_for_bandwidth, frozen_balance_for_energy } =
+    delegatedResource ??
+    [].reduce(
+      (
+        accum: { frozen_balance_for_bandwidth: number; frozen_balance_for_energy: number },
+        cur: { frozen_balance_for_bandwidth: number; frozen_balance_for_energy: number },
+      ) => {
+        if (cur.frozen_balance_for_bandwidth) {
+          accum.frozen_balance_for_bandwidth += cur.frozen_balance_for_bandwidth;
+        }
+        if (cur.frozen_balance_for_energy) {
+          accum.frozen_balance_for_energy += cur.frozen_balance_for_energy;
+        }
+        return accum;
+      },
+      { frozen_balance_for_bandwidth: 0, frozen_balance_for_energy: 0 },
+    );
+
+  const amount =
+    resource === "BANDWIDTH" ? frozen_balance_for_bandwidth : frozen_balance_for_energy;
+
+  return new BigNumber(amount);
+}
 
 // Send trx or trc10/trc20 tokens
 export const createTronTransaction = async (
@@ -534,6 +589,17 @@ export async function getTronResources(
     undefined,
   );
 
+  const delegatedFrozenV2Bandwidth = get(
+    acc,
+    "delegated_frozenV2_balance_for_bandwidth",
+    undefined,
+  );
+  const delegatedFrozenV2Energy = get(
+    acc,
+    "account_resource.delegated_frozenV2_balance_for_energy",
+    undefined,
+  );
+
   const frozenV2Balances: { type?: string; amount?: number }[] = get(acc, "frozenV2", undefined);
 
   const { frozenV2Energy, frozenV2Bandwidth } = frozenV2Balances.reduce(
@@ -622,12 +688,26 @@ export async function getTronResources(
         }
       : undefined,
   };
+  const delegatedFrozenV2 = {
+    bandwidth: delegatedFrozenV2Bandwidth
+      ? {
+          amount: new BigNumber(delegatedFrozenV2Bandwidth),
+        }
+      : undefined,
+    energy: delegatedFrozenV2Energy
+      ? {
+          amount: new BigNumber(delegatedFrozenV2Energy),
+        }
+      : undefined,
+  };
   const tronPower = new BigNumber(get(frozen, "bandwidth.amount", 0))
     .plus(get(frozen, "energy.amount", 0))
     .plus(get(delegatedFrozen, "bandwidth.amount", 0))
     .plus(get(delegatedFrozen, "energy.amount", 0))
     .plus(get(frozenV2, "bandwidth.amount", 0))
     .plus(get(frozenV2, "energy.amount", 0))
+    .plus(get(delegatedFrozenV2, "bandwidth.amount", 0))
+    .plus(get(delegatedFrozenV2, "energy.amount", 0))
     .dividedBy(1000000)
     .integerValue(BigNumber.ROUND_FLOOR)
     .toNumber();
@@ -653,6 +733,7 @@ export async function getTronResources(
     frozenV2,
     unFrozenV2,
     delegatedFrozen,
+    delegatedFrozenV2,
     votes,
     tronPower,
     unwithdrawnReward,

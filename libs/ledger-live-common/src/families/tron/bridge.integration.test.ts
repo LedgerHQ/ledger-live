@@ -10,6 +10,7 @@ import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import {
   TronInvalidFreezeAmount,
+  TronInvalidUnDelegateResourceAmount,
   TronInvalidVoteCount,
   TronNoFrozenForBandwidth,
   TronNoFrozenForEnergy,
@@ -306,6 +307,28 @@ const tron: CurrenciesData<Transaction> = {
             amount: new BigNumber("0"),
             errors: {
               resource: new TronUnfreezeNotExpired(),
+            },
+            warnings: {},
+            totalSpent: new BigNumber("0"),
+            estimatedFees: new BigNumber("0"),
+          },
+        },
+        {
+          name: "InvalidUnDelegateResourceAmount",
+          transaction: fromTransactionRaw({
+            family: "tron",
+            recipient: "TBsyKdNsCKNXLgvneeUJ3rbXgWSgk6paTM",
+            amount: "100",
+            networkInfo: null,
+            mode: "unDelegateResource",
+            duration: undefined,
+            resource: "BANDWIDTH",
+            votes: [],
+          }),
+          expectedStatus: {
+            amount: new BigNumber("0"),
+            errors: {
+              resource: new TronInvalidUnDelegateResourceAmount(),
             },
             warnings: {},
             totalSpent: new BigNumber("0"),

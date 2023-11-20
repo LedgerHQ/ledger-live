@@ -15,7 +15,7 @@ export type ExtraDeviceTransactionField =
     };
 
 function getDeviceTransactionConfig({
-  transaction: { votes, resource, mode },
+  transaction: { votes, resource, mode, recipient },
   account,
   parentAccount,
   status: { amount },
@@ -72,6 +72,14 @@ function getDeviceTransactionConfig({
       type: "address",
       label: "Withdraw UnfrozenV2 to",
       address: mainAccount.freshAddress,
+    });
+  }
+
+  if (mode === "unDelegateResource") {
+    fields.push({
+      type: "address",
+      label: "Undelegate from",
+      address: recipient,
     });
   }
 

@@ -7,6 +7,7 @@ export const toTronResourcesRaw = ({
   frozenV2,
   unFrozenV2,
   delegatedFrozen,
+  delegatedFrozenV2,
   votes,
   tronPower,
   energy,
@@ -23,6 +24,8 @@ export const toTronResourcesRaw = ({
   const cacheTransactionInfoById = {};
   const frozenV2Bandwidth = frozenV2.bandwidth;
   const frozenV2Energy = frozenV2.energy;
+  const delegatedFrozenV2Bandwidth = delegatedFrozenV2.bandwidth;
+  const delegatedFrozenV2Energy = delegatedFrozenV2.energy;
 
   for (const k in cacheTx) {
     const { fee, blockNumber, withdraw_amount, unfreeze_amount } = cacheTx[k];
@@ -80,6 +83,18 @@ export const toTronResourcesRaw = ({
           })
         : undefined,
     },
+    delegatedFrozenV2: {
+      bandwidth: delegatedFrozenV2Bandwidth
+        ? {
+            amount: delegatedFrozenV2Bandwidth.amount.toString(),
+          }
+        : undefined,
+      energy: delegatedFrozenV2Energy
+        ? {
+            amount: delegatedFrozenV2Energy.amount.toString(),
+          }
+        : undefined,
+    },
     votes,
     tronPower,
     energy: energy.toString(),
@@ -102,6 +117,7 @@ export const fromTronResourcesRaw = ({
   frozenV2,
   unFrozenV2,
   delegatedFrozen,
+  delegatedFrozenV2,
   votes,
   tronPower,
   energy,
@@ -118,6 +134,8 @@ export const fromTronResourcesRaw = ({
   const cacheTransactionInfoById = {};
   const frozenV2Bandwidth = frozenV2.bandwidth;
   const frozenV2Energy = frozenV2.energy;
+  const delegatedFrozenV2Bandwidth = delegatedFrozenV2.bandwidth;
+  const delegatedFrozenV2Energy = delegatedFrozenV2.energy;
 
   if (cacheTransactionInfoByIdRaw) {
     for (const k in cacheTransactionInfoByIdRaw) {
@@ -180,6 +198,18 @@ export const fromTronResourcesRaw = ({
         ? unFrozenV2.energy.map(entry => {
             return { amount: new BigNumber(entry.amount), expireTime: entry.expireTime };
           })
+        : undefined,
+    },
+    delegatedFrozenV2: {
+      bandwidth: delegatedFrozenV2Bandwidth
+        ? {
+            amount: new BigNumber(delegatedFrozenV2Bandwidth.amount),
+          }
+        : undefined,
+      energy: delegatedFrozenV2Energy
+        ? {
+            amount: new BigNumber(delegatedFrozenV2Energy.amount),
+          }
         : undefined,
     },
     votes,

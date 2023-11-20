@@ -49,6 +49,9 @@ export const TronNotEnoughTronPower = createCustomErrorClass("TronNotEnoughTronP
 export const TronTransactionExpired = createCustomErrorClass("TronTransactionExpired");
 export const TronNotEnoughEnergy = createCustomErrorClass("TronNotEnoughEnergy");
 export const TronNoUnfrozenV2 = createCustomErrorClass("TronNoUnfrozenV2");
+export const TronInvalidUnDelegateResourceAmount = createCustomErrorClass(
+  "TronInvalidUnDelegateResourceAmount",
+);
 export const AccountAwaitingSendPendingOperations = createCustomErrorClass(
   "AccountAwaitingSendPendingOperations",
 );

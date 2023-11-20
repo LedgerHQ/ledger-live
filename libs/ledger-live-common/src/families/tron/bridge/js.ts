@@ -65,6 +65,7 @@ import {
   TronNotEnoughTronPower,
   TronNotEnoughEnergy,
   TronNoUnfrozenV2,
+  TronInvalidUnDelegateResourceAmount,
 } from "../../../errors";
 import {
   broadcastTron,
@@ -87,6 +88,8 @@ import {
   freezeV2TronTransaction,
   unFreezeV2TronTransaction,
   withdrawExpireUnfreezeTronTransaction,
+  unDelegateResourceTransaction,
+  getDelegatedResourceV2,
 } from "../api";
 import { activationFees, oneTrx } from "../constants";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
@@ -152,6 +155,9 @@ const signOperation: SignOperationFnSignature<Transaction> = ({ account, transac
 
               case "withdrawExpireUnfreeze":
                 return withdrawExpireUnfreezeTronTransaction(account, transaction);
+
+              case "unDelegateResource":
+                return unDelegateResourceTransaction(account, transaction);
 
               default:
                 return createTronTransaction(account, transaction, subAccount);
@@ -234,6 +240,12 @@ const signOperation: SignOperationFnSignature<Transaction> = ({ account, transac
               case "unFreezeV2":
                 return {
                   unfreezeV2Amount: transaction.amount,
+                };
+
+              case "unDelegateResource":
+                return {
+                  unDelegatedResourceAmount: transaction.amount,
+                  receiverAddress: transaction.recipient,
                 };
 
               default:
@@ -400,6 +412,16 @@ const getAccountShape = async (info: AccountShapeInfo, syncConfig) => {
         ? tronResources.unFrozenV2.bandwidth.reduce((accum, cur) => {
             return accum.plus(cur.amount);
           }, new BigNumber(0))
+        : new BigNumber(0),
+    )
+    .plus(
+      tronResources.delegatedFrozenV2.bandwidth
+        ? tronResources.delegatedFrozenV2.bandwidth.amount
+        : new BigNumber(0),
+    )
+    .plus(
+      tronResources.delegatedFrozenV2.energy
+        ? tronResources.delegatedFrozenV2.energy.amount
         : new BigNumber(0),
     );
   const parentTxs = txs.filter(isParentTx);
@@ -608,7 +630,7 @@ const getTransactionStatus = async (a: TronAccount, t: Transaction): Promise<Tra
     errors.recipient = new RecipientRequired();
   }
 
-  if (["send", "freeze", "unfreeze"].includes(mode)) {
+  if (["send", "freeze", "unfreeze", "unDelegateResource"].includes(mode)) {
     if (recipient === a.freshAddress) {
       errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
     } else if (recipient && !(await validateAddress(recipient))) {
@@ -672,6 +694,13 @@ const getTransactionStatus = async (a: TronAccount, t: Transaction): Promise<Tra
     }
   }
 
+  if (mode === "unDelegateResource" && resource && a.tronResources) {
+    const delegatedResourceAmount = await getDelegatedResourceV2(a, t, resource);
+    if (delegatedResourceAmount.lt(t.amount)) {
+      errors.resource = new TronInvalidUnDelegateResourceAmount();
+    }
+  }
+
   if (mode === "vote") {
     if (votes.length === 0) {
       errors.vote = new TronVoteRequired();
@@ -723,7 +752,9 @@ const getTransactionStatus = async (a: TronAccount, t: Transaction): Promise<Tra
       ? BigNumber.max(0, account.spendableBalance.minus(estimatedFees))
       : account.balance;
   const amount = useAllAmount ? balance : t.amount;
-  const amountSpent = ["send", "freeze", "freezeV2", "unFreezeV2"].includes(mode)
+  const amountSpent = ["send", "freeze", "freezeV2", "unFreezeV2", "undelegateResource"].includes(
+    mode,
+  )
     ? amount
     : new BigNumber(0);
 

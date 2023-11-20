@@ -18,7 +18,8 @@ export type TronOperationMode =
   | "claimReward"
   | "freezeV2"
   | "unFreezeV2"
-  | "withdrawExpireUnfreeze";
+  | "withdrawExpireUnfreeze"
+  | "unDelegateResource";
 
 export type TronResource = "BANDWIDTH" | "ENERGY";
 export type NetworkInfo = {
@@ -66,7 +67,8 @@ export type TrongridTxType =
   | "ExchangeTransactionContract"
   | "FreezeBalanceV2Contract"
   | "UnfreezeBalanceV2Contract"
-  | "WithdrawExpireUnfreezeContract";
+  | "WithdrawExpireUnfreezeContract"
+  | "UnDelegateResourceContract";
 
 export type TrongridTxInfo = {
   txID: string;
@@ -92,6 +94,8 @@ export type TrongridExtraTxInfo = {
   votes?: Vote[];
   frozenV2Amount?: BigNumber;
   unfreezeV2Amount?: BigNumber;
+  unDelegatedResourceAmount?: BigNumber;
+  receiverAddress?: string;
 };
 export type TrongridExtraTxInfoRaw = {
   frozenAmount?: string;
@@ -99,6 +103,8 @@ export type TrongridExtraTxInfoRaw = {
   votes?: Vote[];
   frozenV2Amount?: string;
   unfreezeV2Amount?: string;
+  unDelegatedResourceAmount?: string;
+  receiverAddress?: string;
 };
 
 /** Payload types to send to trongrid */
@@ -146,6 +152,13 @@ export type WithdrawExpireUnfreezeTransactionData = {
   owner_address: string;
 };
 
+export type UnDelegateResourceTransactionData = {
+  owner_address: string;
+  resource: TronResource | null | undefined;
+  receiver_address: string;
+  balance: number;
+};
+
 export type SendTransactionDataSuccess = {
   raw_data_hex?: string;
   raw_data: Record<string, any> | undefined;
@@ -187,6 +200,10 @@ export type TronResources = {
     bandwidth: DelegatedFrozenInfo | null | undefined;
     energy: DelegatedFrozenInfo | null | undefined;
   };
+  delegatedFrozenV2: {
+    bandwidth: DelegatedFrozenInfo | null | undefined;
+    energy: DelegatedFrozenInfo | null | undefined;
+  };
   votes: Vote[];
   tronPower: number;
   energy: BigNumber;
@@ -210,6 +227,10 @@ export type TronResourcesRaw = {
     energy: UnFrozenV2InfoRaw[] | null | undefined;
   };
   delegatedFrozen: {
+    bandwidth: DelegatedFrozenInfoRaw | null | undefined;
+    energy: DelegatedFrozenInfoRaw | null | undefined;
+  };
+  delegatedFrozenV2: {
     bandwidth: DelegatedFrozenInfoRaw | null | undefined;
     energy: DelegatedFrozenInfoRaw | null | undefined;
   };

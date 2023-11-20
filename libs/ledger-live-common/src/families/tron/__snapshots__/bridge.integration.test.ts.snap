@@ -31,7 +31,11 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
         "bandwidth": undefined,
         "energy": undefined,
       },
-      "frozen": {
+      "delegatedFrozenV2": Object {
+        "bandwidth": undefined,
+        "energy": undefined,
+      },
+      "frozen": Object {
         "bandwidth": undefined,
         "energy": {
           "amount": "26000000",
@@ -213,8 +217,12 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
         "bandwidth": undefined,
         "energy": undefined,
       },
-      "frozen": {
-        "bandwidth": {
+      "delegatedFrozenV2": Object {
+        "bandwidth": undefined,
+        "energy": undefined,
+      },
+      "frozen": Object {
+        "bandwidth": Object {
           "amount": "2000000",
           "expiredAt": "2022-05-23T08:20:39.000Z",
         },
@@ -463,7 +471,11 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
         "bandwidth": undefined,
         "energy": undefined,
       },
-      "frozen": {
+      "delegatedFrozenV2": Object {
+        "bandwidth": undefined,
+        "energy": undefined,
+      },
+      "frozen": Object {
         "bandwidth": undefined,
         "energy": undefined,
       },
@@ -538,7 +550,11 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
         "bandwidth": undefined,
         "energy": undefined,
       },
-      "frozen": {
+      "delegatedFrozenV2": Object {
+        "bandwidth": undefined,
+        "energy": undefined,
+      },
+      "frozen": Object {
         "bandwidth": undefined,
         "energy": undefined,
       },
@@ -600,7 +616,11 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
         "bandwidth": undefined,
         "energy": undefined,
       },
-      "frozen": {
+      "delegatedFrozenV2": Object {
+        "bandwidth": undefined,
+        "energy": undefined,
+      },
+      "frozen": Object {
         "bandwidth": undefined,
         "energy": undefined,
       },
@@ -675,7 +695,11 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
         "bandwidth": undefined,
         "energy": undefined,
       },
-      "frozen": {
+      "delegatedFrozenV2": Object {
+        "bandwidth": undefined,
+        "energy": undefined,
+      },
+      "frozen": Object {
         "bandwidth": undefined,
         "energy": undefined,
       },
@@ -737,7 +761,11 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
         "bandwidth": undefined,
         "energy": undefined,
       },
-      "frozen": {
+      "delegatedFrozenV2": Object {
+        "bandwidth": undefined,
+        "energy": undefined,
+      },
+      "frozen": Object {
         "bandwidth": undefined,
         "energy": undefined,
       },
@@ -798,7 +826,11 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
         "bandwidth": undefined,
         "energy": undefined,
       },
-      "frozen": {
+      "delegatedFrozenV2": Object {
+        "bandwidth": undefined,
+        "energy": undefined,
+      },
+      "frozen": Object {
         "bandwidth": undefined,
         "energy": undefined,
       },

@@ -40,6 +40,7 @@ const parentTx = [
   "FreezeBalanceV2Contract",
   "UnfreezeBalanceV2Contract",
   "WithdrawExpireUnfreezeContract",
+  "UnDelegateResourceContract",
 ];
 
 export const isParentTx = (tx: TrongridTxInfo): boolean => parentTx.includes(tx.type);
@@ -65,6 +66,7 @@ export const getEstimatedBlockSize = (a: Account, t: Transaction): BigNumber => 
     case "unFreezeV2":
     case "claimReward":
     case "withdrawExpireUnfreeze":
+    case "unDelegateResource":
       return new BigNumber(260);
 
     case "vote":
@@ -100,6 +102,9 @@ export const getOperationTypefromMode = (mode: TronOperationMode): OperationType
 
     case "withdrawExpireUnfreeze":
       return "WITHDRAWEXPIREUNFREEZE";
+
+    case "unDelegateResource":
+      return "UNDELEGATERESOURCE";
 
     default:
       return "OUT";
@@ -139,6 +144,9 @@ const getOperationType = (
 
     case "WithdrawExpireUnfreezeContract":
       return "WITHDRAWEXPIREUNFREEZE";
+
+    case "UnDelegateResourceContract":
+      return "UNDELEGATERESOURCE";
 
     default:
       return undefined;
@@ -192,6 +200,8 @@ export const formatTrongridTxResponse = (
       frozen_balance,
       votes,
       unfreeze_balance,
+      balance,
+      receiver_address,
     } = get(tx, "raw_data.contract[0].parameter.value", {});
     const hasFailed = get(tx, "ret[0].contractRet", "SUCCESS") !== "SUCCESS";
     const tokenId =
@@ -260,6 +270,12 @@ export const formatTrongridTxResponse = (
         case "UnfreezeBalanceV2Contract":
           return {
             unfreezeV2Amount: new BigNumber(unfreeze_balance),
+          };
+
+        case "UnDelegateResourceContract":
+          return {
+            unDelegatedResourceAmount: new BigNumber(balance),
+            receiverAddress: encode58Check(receiver_address),
           };
 
         default:
@@ -336,6 +352,10 @@ export const defaultTronResources: TronResources = {
     energy: undefined,
   },
   delegatedFrozen: {
+    bandwidth: undefined,
+    energy: undefined,
+  },
+  delegatedFrozenV2: {
     bandwidth: undefined,
     energy: undefined,
   },
