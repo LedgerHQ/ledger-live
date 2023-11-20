@@ -71,15 +71,18 @@ const ManageButton = styled.button`
       cursor: pointer;
   `};
 `;
+
 const InfoWrapper = styled(Box).attrs(() => ({
   flex: 1,
   ml: 3,
   textAlign: "start",
 }))``;
+
 const Title = styled(Text).attrs(() => ({
   ff: "Inter|SemiBold",
   fontSize: 4,
 }))``;
+
 const Description = styled(Text).attrs<{
   isPill?: boolean;
 }>(({ isPill }) => ({
@@ -125,7 +128,7 @@ const ManageModal = ({ account, source, ...rest }: Props) => {
   const electionOpen = staking?.electionClosed !== undefined ? !staking?.electionClosed : false;
   const hasUnlockedBalance = unlockedBalance && unlockedBalance.gt(0);
   const hasPendingWithdrawUnbondedOperation = hasPendingOperationType(account, "WITHDRAW_UNBONDED");
-  const nominationEnabled = true; // !electionOpen && canNominate(account);
+  const nominationEnabled = !electionOpen && canNominate(account);
   const chillEnabled = !electionOpen && canNominate(account) && nominations?.length;
   const bondingEnabled = !electionOpen && canBond(account);
   const unbondingEnabled = !electionOpen && canUnbond(account);
