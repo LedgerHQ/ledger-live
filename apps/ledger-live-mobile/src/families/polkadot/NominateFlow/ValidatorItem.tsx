@@ -43,7 +43,7 @@ function Item({ item, selected, disabled, onSelect, onClick }: Props) {
         onPress={() => onClick(address)}
         event="PolkadotNominateSelectValidatorsOpenExplorer"
       >
-        <FirstLetterIcon label={address ?? "-"} round size={32} />
+        <FirstLetterIcon label={address || "-"} round size={32} />
       </Touchable>
 
       <View style={styles.nameWrapper}>
