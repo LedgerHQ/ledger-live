@@ -716,6 +716,9 @@ importers:
       '@azure/core-asynciterator-polyfill':
         specifier: ^1.0.2
         version: 1.0.2
+      '@braze/react-native-sdk':
+        specifier: ^8.0.0
+        version: 8.0.0
       '@formatjs/intl-locale':
         specifier: ^3.0.0
         version: 3.3.2
@@ -950,9 +953,6 @@ importers:
       react-native-animatable:
         specifier: ^1.3.3
         version: 1.3.3(react-native@0.72.6)(react@18.2.0)
-      react-native-appboy-sdk:
-        specifier: ^1.39.0
-        version: 1.40.0
       react-native-biometrics:
         specifier: ^3.0.1
         version: 3.0.1(react-native@0.72.6)
@@ -10309,6 +10309,10 @@ packages:
 
   /@braintree/sanitize-url@6.0.2:
     resolution: {integrity: sha512-Tbsj02wXCbqGmzdnXNk0SOF19ChhRU70BsroIi4Pm6Ehp56in6vch94mfbdQ17DozxkL3BAVjbZ4Qc1a0HFRAg==}
+    dev: false
+
+  /@braze/react-native-sdk@8.0.0:
+    resolution: {integrity: sha512-RFU8hCb+eTsnaNN4rHHbnBK2BN/keexr5sJyEt8vL1Ww7tDmUJrnULF1AuthVuHRHDN782PaHhJBa41dkEfCwA==}
     dev: false
 
   /@braze/web-sdk@4.6.3:
@@ -50664,10 +50668,6 @@ packages:
       prop-types: 15.8.1
       react: 18.2.0
       react-native: 0.72.6(@babel/core@7.23.2)(react@18.2.0)
-    dev: false
-
-  /react-native-appboy-sdk@1.40.0:
-    resolution: {integrity: sha512-wBbk9/1PBhgVKiR44NHA8QYFS4nN6ajy9DAoLHDB08IC6Fq70YBnP4HHd5sYJzi98qu7yF7eN/dYo0ylXzEmSw==}
     dev: false
 
   /react-native-biometrics@3.0.1(react-native@0.72.6):
