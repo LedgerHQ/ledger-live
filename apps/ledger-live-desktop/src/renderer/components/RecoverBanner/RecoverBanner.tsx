@@ -89,14 +89,14 @@ export default function RecoverBanner() {
     <Flex justifyContent="center" mb={20}>
       <Flex
         position="relative"
-        columnGap={3}
+        columnGap={12}
         bg={colors.opacityPurple.c10}
         justifyContent="space-between"
         borderRadius="8px"
         overflow="hidden"
         width="100%"
       >
-        <Flex alignItems="center" justifyContent="center" p={3} width={68}>
+        <Flex alignItems="center" justifyContent="center" ml={3} width={40}>
           <ProgressLoader
             progress={(stepNumber * 100) / maxStepNumber}
             radius={20}
@@ -135,6 +135,7 @@ export default function RecoverBanner() {
             textOverflow="ellipsis"
             width="100%"
             overflow="hidden"
+            color="pallette.neutral.c80"
           >
             {recoverBannerSelected.description}
           </Text>
