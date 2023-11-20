@@ -163,6 +163,11 @@ jobs:
           echo ${{ github.workspace }}
           if ! test -f /libs/ledger-live-common/coverage/lcov.info; then
             echo "File does not exist."
+            ls
+            cd libs/ledger-live-common
+            ls
+            cd coverage
+            ls
           fi
         shell: bash
       # - name: scan ledger-live-common
