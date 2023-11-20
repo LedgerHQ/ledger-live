@@ -4,10 +4,14 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 <<<<<<< HEAD
+<<<<<<< HEAD
 import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
 =======
 import useFeature from "@ledgerhq/live-config/FeatureFlags/useFeature";
 >>>>>>> f8e0133b13 (fix: refactoring)
+=======
+import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+>>>>>>> 5795ae130c (fix: snackcase for folder name)
 import { StackNavigationProp } from "@react-navigation/stack";
 import TabBarSafeAreaView from "../../components/TabBar/TabBarSafeAreaView";
 import Illustration from "../../images/illustration/Illustration";

@@ -27,10 +27,14 @@ import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import { Flex } from "@ledgerhq/native-ui";
 import HelpButton from "../../screens/ReceiveFunds/HelpButton";
 <<<<<<< HEAD
+<<<<<<< HEAD
 import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
 =======
 import useFeature from "@ledgerhq/live-config/FeatureFlags/useFeature";
 >>>>>>> f8e0133b13 (fix: refactoring)
+=======
+import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+>>>>>>> 5795ae130c (fix: snackcase for folder name)
 import { useSelector } from "react-redux";
 import {
   hasClosedNetworkBannerSelector,

@@ -7,10 +7,14 @@ import {
   useFeatureFlags,
   useHasLocallyOverriddenFeatureFlags,
 <<<<<<< HEAD
+<<<<<<< HEAD
 } from "@ledgerhq/live-config/featureFlags/index";
 =======
 } from "@ledgerhq/live-config/FeatureFlags/index";
 >>>>>>> f8e0133b13 (fix: refactoring)
+=======
+} from "@ledgerhq/live-config/featureFlags/index";
+>>>>>>> 5795ae130c (fix: snackcase for folder name)
 import type { FeatureId } from "@ledgerhq/types-live";
 
 import {

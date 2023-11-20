@@ -15,12 +15,17 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { StorylyInstanceID } from "@ledgerhq/types-live";
 import { useNavigation } from "@react-navigation/native";
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { useFeatureFlags } from "@ledgerhq/live-config/featureFlags/FeatureFlagsContext";
 import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
 =======
 import { useFeatureFlags } from "@ledgerhq/live-config/FeatureFlags/FeatureFlagsContext";
 import useFeature from "@ledgerhq/live-config/FeatureFlags/useFeature";
 >>>>>>> f8e0133b13 (fix: refactoring)
+=======
+import { useFeatureFlags } from "@ledgerhq/live-config/featureFlags/FeatureFlagsContext";
+import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+>>>>>>> 5795ae130c (fix: snackcase for folder name)
 
 import Stories from "../../../../components/StorylyStories";
 import FeatureFlagDetails from "../../../FeatureFlagsSettings/FeatureFlagDetails";

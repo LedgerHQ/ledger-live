@@ -18,11 +18,7 @@ import { useTranslation } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useDispatch } from "react-redux";
-<<<<<<< HEAD
 import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
-=======
-import useFeature from "@ledgerhq/live-config/FeatureFlags/useFeature";
->>>>>>> f8e0133b13 (fix: refactoring)
 
 import { SeedPhraseType, StorylyInstanceID } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/types-devices";

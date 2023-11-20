@@ -28,10 +28,14 @@ import SwapFormSelectors from "./FormSelectors";
 import SwapFormSummary from "./FormSummary";
 import SwapFormRates from "./FormRates";
 <<<<<<< HEAD
+<<<<<<< HEAD
 import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
 =======
 import useFeature from "@ledgerhq/live-config/FeatureFlags/useFeature";
 >>>>>>> f8e0133b13 (fix: refactoring)
+=======
+import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+>>>>>>> 5795ae130c (fix: snackcase for folder name)
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import useRefreshRates from "./hooks/useRefreshRates";
 import LoadingState from "./Rates/LoadingState";

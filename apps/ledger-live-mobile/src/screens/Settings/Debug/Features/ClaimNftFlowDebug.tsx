@@ -1,9 +1,5 @@
 import React, { useCallback } from "react";
-<<<<<<< HEAD
 import { FeatureToggle } from "@ledgerhq/live-config/featureFlags/index";
-=======
-import { FeatureToggle } from "@ledgerhq/live-config/FeatureFlags/index";
->>>>>>> f8e0133b13 (fix: refactoring)
 import { useNavigation } from "@react-navigation/native";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import SettingsRow from "../../../../components/SettingsRow";

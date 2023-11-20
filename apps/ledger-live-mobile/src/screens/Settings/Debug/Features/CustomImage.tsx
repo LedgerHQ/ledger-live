@@ -1,9 +1,13 @@
 import React, { useCallback } from "react";
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { FeatureToggle } from "@ledgerhq/live-config/featureFlags/index";
 =======
 import { FeatureToggle } from "@ledgerhq/live-config/FeatureFlags/index";
 >>>>>>> f8e0133b13 (fix: refactoring)
+=======
+import { FeatureToggle } from "@ledgerhq/live-config/featureFlags/index";
+>>>>>>> 5795ae130c (fix: snackcase for folder name)
 import { useNavigation } from "@react-navigation/native";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import SettingsRow from "../../../../components/SettingsRow";

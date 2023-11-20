@@ -5,8 +5,12 @@ import { useDispatch, useSelector } from "react-redux";
 <<<<<<< HEAD
 =======
 
+<<<<<<< HEAD
 import useFeature from "@ledgerhq/live-config/FeatureFlags/useFeature";
 >>>>>>> f8e0133b13 (fix: refactoring)
+=======
+import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+>>>>>>> 5795ae130c (fix: snackcase for folder name)
 import { Flex, IconsLegacy } from "@ledgerhq/native-ui";
 import { useRoute } from "@react-navigation/native";
 import { ScreenName } from "../../const";

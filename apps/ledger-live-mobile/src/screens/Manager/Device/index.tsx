@@ -9,20 +9,14 @@ import React, {
 } from "react";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
-
 import { State, AppsDistribution, Action } from "@ledgerhq/live-common/apps/index";
 import { App, DeviceInfo, idsToLanguage } from "@ledgerhq/types-live";
-
 import { Flex, Text, Button, Divider, IconsLegacy } from "@ledgerhq/native-ui";
 import styled, { useTheme } from "styled-components/native";
 import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
 import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/manager/localization";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-<<<<<<< HEAD
 import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
-=======
-import { useFeature } from "@ledgerhq/live-config/FeatureFlags/index";
->>>>>>> f8e0133b13 (fix: refactoring)
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { lastSeenCustomImageSelector } from "../../../reducers/settings";
 import DeviceAppStorage from "./DeviceAppStorage";

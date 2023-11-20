@@ -5,10 +5,14 @@ import { IconsLegacy } from "@ledgerhq/native-ui";
 import { type ParamListBase } from "@react-navigation/native";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
 <<<<<<< HEAD
+<<<<<<< HEAD
 import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
 =======
 import useFeature from "@ledgerhq/live-config/FeatureFlags/useFeature";
 >>>>>>> f8e0133b13 (fix: refactoring)
+=======
+import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+>>>>>>> 5795ae130c (fix: snackcase for folder name)
 import { NavigatorName, ScreenName } from "../const";
 import { accountsCountSelector, areAccountsEmptySelector } from "../reducers/accounts";
 import { readOnlyModeEnabledSelector } from "../reducers/settings";

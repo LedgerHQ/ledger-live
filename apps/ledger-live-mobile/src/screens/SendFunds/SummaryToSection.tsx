@@ -7,10 +7,14 @@ import { isLoaded } from "@ledgerhq/domain-service/hooks/logic";
 import { useDomain } from "@ledgerhq/domain-service/hooks/index";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 =======
 import { useFeature } from "@ledgerhq/live-config/FeatureFlags/index";
 >>>>>>> f8e0133b13 (fix: refactoring)
+=======
+import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+>>>>>>> 5795ae130c (fix: snackcase for folder name)
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 import SummaryRowCustom from "./SummaryRowCustom";

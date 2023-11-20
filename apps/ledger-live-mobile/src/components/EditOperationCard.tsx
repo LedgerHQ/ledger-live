@@ -4,12 +4,16 @@ import { SideImageCard } from "@ledgerhq/native-ui";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { useNavigation } from "@react-navigation/core";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { NavigatorName, ScreenName } from "../const";
 =======
 import { useFeature } from "@ledgerhq/live-config/FeatureFlags/index";
+=======
+import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+>>>>>>> 5795ae130c (fix: snackcase for folder name)
 // import { useNavigation } from "@react-navigation/core";
 >>>>>>> f8e0133b13 (fix: refactoring)
 import SectionContainer from "../screens/WalletCentricSections/SectionContainer";

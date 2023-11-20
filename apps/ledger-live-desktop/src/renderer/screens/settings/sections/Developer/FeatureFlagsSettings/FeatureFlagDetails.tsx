@@ -1,9 +1,13 @@
 import React, { useCallback } from "react";
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { useFeatureFlags } from "@ledgerhq/live-config/featureFlags/index";
 =======
 import { useFeatureFlags } from "@ledgerhq/live-config/FeatureFlags/index";
 >>>>>>> f8e0133b13 (fix: refactoring)
+=======
+import { useFeatureFlags } from "@ledgerhq/live-config/featureFlags/index";
+>>>>>>> 5795ae130c (fix: snackcase for folder name)
 import { Text, Flex, Tag } from "@ledgerhq/react-ui";
 import { FeatureId } from "@ledgerhq/types-live";
 import Box from "~/renderer/components/Box";

@@ -5,10 +5,14 @@ import { Text, Flex, Button } from "@ledgerhq/native-ui";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useSelector, useDispatch } from "react-redux";
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 =======
 import { useFeature } from "@ledgerhq/live-config/FeatureFlags/index";
 >>>>>>> f8e0133b13 (fix: refactoring)
+=======
+import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+>>>>>>> 5795ae130c (fix: snackcase for folder name)
 import { targetDisplayDimensions } from "../../../CustomImage/shared";
 import { customImageBackupSelector } from "../../../../reducers/settings";
 import { setCustomImageBackup } from "../../../../actions/settings";

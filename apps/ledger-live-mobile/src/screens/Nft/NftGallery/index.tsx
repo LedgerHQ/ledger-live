@@ -5,13 +5,8 @@ import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Account, ProtoNFT } from "@ledgerhq/types-live";
 import { nftsByCollections } from "@ledgerhq/live-common/nft/index";
-<<<<<<< HEAD
-import { useNavigation, useRoute } from "@react-navigation/native";
 import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
-=======
 import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
-import useFeature from "@ledgerhq/live-config/FeatureFlags/useFeature";
->>>>>>> f8e0133b13 (fix: refactoring)
 import { withDiscreetMode } from "../../../context/DiscreetModeContext";
 import LoadingFooter from "../../../components/LoadingFooter";
 import { accountSelector } from "../../../reducers/accounts";

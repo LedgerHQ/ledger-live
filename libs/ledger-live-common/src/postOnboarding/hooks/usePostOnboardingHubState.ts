@@ -1,11 +1,7 @@
 import { useSelector } from "react-redux";
 import { useMemo } from "react";
 import { PostOnboardingHubState } from "@ledgerhq/types-live";
-<<<<<<< HEAD
 import { useFeatureFlags } from "@ledgerhq/live-config/featureFlags/index";
-=======
-import { useFeatureFlags } from "@ledgerhq/live-config/FeatureFlags/index";
->>>>>>> f8e0133b13 (fix: refactoring)
 import { hubStateSelector } from "../reducer";
 import { usePostOnboardingContext } from "./usePostOnboardingContext";
 

@@ -1,10 +1,6 @@
 import React, { useCallback, useEffect } from "react";
 import { NavigationState, useNavigation } from "@react-navigation/native";
-<<<<<<< HEAD
 import { FeatureToggle, useFeature } from "@ledgerhq/live-config/featureFlags/index";
-=======
-import { FeatureToggle, useFeature } from "@ledgerhq/live-config/FeatureFlags/index";
->>>>>>> f8e0133b13 (fix: refactoring)
 import PushNotificationsModal from "../PushNotificationsModal";
 import RatingsModal from "../RatingsModal";
 import NpsRatingsModal from "../NpsRatingsModal";

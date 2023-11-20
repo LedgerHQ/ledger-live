@@ -1,10 +1,15 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { groupedFeatures } from "@ledgerhq/live-config/featureFlags/groupedFeatures";
 import { useFeatureFlags } from "@ledgerhq/live-config/featureFlags/FeatureFlagsContext";
 =======
 import { groupedFeatures } from "@ledgerhq/live-config/FeatureFlags/groupedFeatures";
 import { useFeatureFlags } from "@ledgerhq/live-config/FeatureFlags/FeatureFlagsContext";
 >>>>>>> f8e0133b13 (fix: refactoring)
+=======
+import { groupedFeatures } from "@ledgerhq/live-config/featureFlags/groupedFeatures";
+import { useFeatureFlags } from "@ledgerhq/live-config/featureFlags/FeatureFlagsContext";
+>>>>>>> 5795ae130c (fix: snackcase for folder name)
 import { Flex, Link, Tag, Box, Switch, Text } from "@ledgerhq/react-ui";
 import { FeatureId } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo, useState } from "react";
