@@ -685,10 +685,10 @@ const getTransactionStatus = async (a: TronAccount, t: Transaction): Promise<Tra
     if (!a.tronResources.unFrozenV2.bandwidth && !a.tronResources.unFrozenV2.energy) {
       errors.resource = new TronNoUnfrozenV2();
     } else if (
-      (a.tronResources.unFrozenV2.bandwidth &&
-        a.tronResources.unFrozenV2.bandwidth.filter(unfrozen => unfrozen.expireTime > now)) ||
-      (a.tronResources.unFrozenV2.energy &&
-        a.tronResources.unFrozenV2.energy.filter(unfrozen => unfrozen.expireTime > now))
+      a.tronResources.unFrozenV2.bandwidth &&
+      a.tronResources.unFrozenV2.bandwidth.every(unfrozen => unfrozen.expireTime > now) &&
+      a.tronResources.unFrozenV2.energy &&
+      a.tronResources.unFrozenV2.energy.every(unfrozen => unfrozen.expireTime > now)
     ) {
       errors.resource = new TronUnfreezeNotExpired();
     }
