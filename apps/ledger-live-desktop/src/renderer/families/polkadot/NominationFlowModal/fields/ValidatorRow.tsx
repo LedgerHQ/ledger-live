@@ -10,7 +10,7 @@ import Text from "~/renderer/components/Text";
 import CheckBox from "~/renderer/components/CheckBox";
 import Tooltip from "~/renderer/components/Tooltip";
 import ExternalLink from "~/renderer/icons/ExternalLink";
-import Identicon from "@polkadot/react-identicon";
+import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
 
 const IconContainer = styled.div`
   display: flex;
@@ -54,6 +54,7 @@ const Title = styled(Box).attrs(() => ({
     white-space: nowrap;
   }
 `;
+
 const SubTitle = styled(Box).attrs(() => ({
   horizontal: true,
 }))`
@@ -61,6 +62,7 @@ const SubTitle = styled(Box).attrs(() => ({
   font-weight: 500;
   color: ${p => p.theme.colors.palette.text.shade60};
 `;
+
 const Status = styled(Text)<{
   isElected?: boolean;
 }>`
@@ -68,6 +70,7 @@ const Status = styled(Text)<{
   font-weight: 700;
   color: ${p => (p.isElected ? p.theme.colors.positiveGreen : p.theme.colors.palette.text.shade60)};
 `;
+
 const TotalStake = styled.span`
   margin-left: 4px;
   padding-left: 4px;
@@ -81,16 +84,19 @@ const NominatorsCount = styled.span<{
   color: ${p =>
     p.isOversubscribed ? p.theme.colors.warning : p.theme.colors.palette.text.shade100};
 `;
+
 const Commission = styled.span`
   font-size: 11px;
   font-weight: 500;
 `;
+
 const SideInfo = styled(Box).attrs(() => ({
   alignItems: "flex-end",
   textAlign: "right",
 }))`
   margin-right: 8px;
 `;
+
 const Row = styled(Box).attrs(() => ({
   horizontal: true,
   flex: "0 0 56px",
@@ -128,6 +134,7 @@ const Row = styled(Box).attrs(() => ({
         `
       : ""}
 `;
+
 type ValidatorRowProps = {
   validator: PolkadotValidator;
   unit: Unit;
@@ -138,6 +145,7 @@ type ValidatorRowProps = {
   onExternalLink: (address: string) => void;
   style?: React.CSSProperties;
 };
+
 const ValidatorRow = ({
   validator,
   unit,
@@ -189,7 +197,7 @@ const ValidatorRow = ({
   return (
     <Row style={style} disabled={!!disabled} active={!!isSelected}>
       <IconContainer>
-        <Identicon value={address} size={24} theme="polkadot" />
+        <FirstLetterIcon label={address} />
       </IconContainer>
       <InfoContainer>
         <Tooltip content={identity ? address : null}>

@@ -18,7 +18,7 @@ import ClockIcon from "~/renderer/icons/Clock";
 import ExclamationCircle from "~/renderer/icons/ExclamationCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 import ExternalLink from "~/renderer/icons/ExternalLink";
-import { ValidatorIcon } from "./ValidatorIcon";
+import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
 
 const Wrapper = styled.div`
   display: flex;
@@ -124,12 +124,12 @@ export function Row({
   );
 
   const onExternalLinkClick = useCallback(() => onExternalLink(address), [onExternalLink, address]);
-
+  console.log({ validator });
   return (
     <Wrapper>
       <ValidatorName onClick={onExternalLinkClick}>
         <Box mr={2}>
-          <ValidatorIcon validatorAddress={address} />
+          <FirstLetterIcon label={validator?.identity} />
         </Box>
         <ToolTip content={validator?.identity ? address : null}>
           <Ellipsis>{name}</Ellipsis>
