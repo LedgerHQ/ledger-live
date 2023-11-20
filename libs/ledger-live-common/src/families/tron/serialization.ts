@@ -5,6 +5,7 @@ import { Account, AccountRaw } from "@ledgerhq/types-live";
 export const toTronResourcesRaw = ({
   frozen,
   frozenV2,
+  unFrozenV2,
   delegatedFrozen,
   votes,
   tronPower,
@@ -67,6 +68,18 @@ export const toTronResourcesRaw = ({
           }
         : undefined,
     },
+    unFrozenV2: {
+      bandwidth: unFrozenV2.bandwidth
+        ? unFrozenV2.bandwidth.map(entry => {
+            return { amount: entry.amount.toString(), expireTime: entry.expireTime };
+          })
+        : undefined,
+      energy: unFrozenV2.energy
+        ? unFrozenV2.energy.map(entry => {
+            return { amount: entry.amount.toString(), expireTime: entry.expireTime };
+          })
+        : undefined,
+    },
     votes,
     tronPower,
     energy: energy.toString(),
@@ -87,6 +100,7 @@ export const toTronResourcesRaw = ({
 export const fromTronResourcesRaw = ({
   frozen,
   frozenV2,
+  unFrozenV2,
   delegatedFrozen,
   votes,
   tronPower,
@@ -154,6 +168,18 @@ export const fromTronResourcesRaw = ({
         ? {
             amount: new BigNumber(frozenV2Energy.amount),
           }
+        : undefined,
+    },
+    unFrozenV2: {
+      bandwidth: unFrozenV2.bandwidth
+        ? unFrozenV2.bandwidth.map(entry => {
+            return { amount: new BigNumber(entry.amount), expireTime: entry.expireTime };
+          })
+        : undefined,
+      energy: unFrozenV2.energy
+        ? unFrozenV2.energy.map(entry => {
+            return { amount: new BigNumber(entry.amount), expireTime: entry.expireTime };
+          })
         : undefined,
     },
     votes,

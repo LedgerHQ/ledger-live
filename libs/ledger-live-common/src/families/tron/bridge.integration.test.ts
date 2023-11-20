@@ -12,6 +12,7 @@ import {
   TronInvalidFreezeAmount,
   TronInvalidVoteCount,
   TronNoFrozenForBandwidth,
+  TronNoFrozenForEnergy,
   TronNoReward,
   TronNotEnoughTronPower,
   TronSendTrc20ToNewAccountForbidden,
@@ -239,6 +240,50 @@ const tron: CurrenciesData<Transaction> = {
           expectedStatus: {
             amount: new BigNumber("1000000"),
             errors: {},
+            warnings: {},
+            totalSpent: new BigNumber("1000000"),
+            estimatedFees: new BigNumber("0"),
+          },
+        },
+        {
+          name: "NotEnoughFrozenV2Energy",
+          transaction: fromTransactionRaw({
+            family: "tron",
+            recipient: "TBsyKdNsCKNXLgvneeUJ3rbXgWSgk6paTM",
+            amount: "1000000",
+            networkInfo: null,
+            mode: "unFreezeV2",
+            duration: undefined,
+            resource: "ENERGY",
+            votes: [],
+          }),
+          expectedStatus: {
+            amount: new BigNumber("1000000"),
+            errors: {
+              resource: new TronNoFrozenForEnergy(),
+            },
+            warnings: {},
+            totalSpent: new BigNumber("1000000"),
+            estimatedFees: new BigNumber("0"),
+          },
+        },
+        {
+          name: "NotEnoughFrozenV2Bandwidth",
+          transaction: fromTransactionRaw({
+            family: "tron",
+            recipient: "TBsyKdNsCKNXLgvneeUJ3rbXgWSgk6paTM",
+            amount: "1000000",
+            networkInfo: null,
+            mode: "unFreezeV2",
+            duration: undefined,
+            resource: "BANDWIDTH",
+            votes: [],
+          }),
+          expectedStatus: {
+            amount: new BigNumber("1000000"),
+            errors: {
+              resource: new TronNoFrozenForBandwidth(),
+            },
             warnings: {},
             totalSpent: new BigNumber("1000000"),
             estimatedFees: new BigNumber("0"),

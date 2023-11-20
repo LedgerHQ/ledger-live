@@ -27,6 +27,8 @@ import type {
   TrongridTxInfo,
   UnfreezeTransactionData,
   FreezeV2TransactionData,
+  UnFreezeV2TransactionData,
+  UnFrozenV2Info,
 } from "../types";
 import {
   abiEncodeTrc20Transfer,
@@ -118,6 +120,21 @@ export const unfreezeTronTransaction = async (
   };
   const url = `${getBaseApiUrl()}/wallet/unfreezebalance`;
   const result = await post(url, txData);
+  return result;
+};
+
+export const unFreezeV2TronTransaction = async (
+  a: Account,
+  t: Transaction,
+): Promise<SendTransactionDataSuccess> => {
+  const txData: UnFreezeV2TransactionData = {
+    owner_address: decode58Check(a.freshAddress),
+    resource: t.resource,
+    unfreeze_balance: t.amount.toNumber(),
+  };
+  const url = `${getBaseApiUrl()}/wallet/unfreezebalancev2`;
+  const result = await post(url, txData);
+
   return result;
 };
 
@@ -521,6 +538,32 @@ export async function getTronResources(
     },
   );
 
+  const unFrozenV2Balances: {
+    type: string;
+    unfreeze_amount: number;
+    unfreeze_expire_time: number;
+  }[] = get(acc, "unfrozenV2", undefined);
+
+  const unFrozenV2: { bandwidth: UnFrozenV2Info[]; energy: UnFrozenV2Info[] } = unFrozenV2Balances
+    ? unFrozenV2Balances.reduce(
+        (accum, cur) => {
+          if (cur && cur.type === "ENERGY") {
+            accum.energy.push({
+              amount: new BigNumber(cur.unfreeze_amount),
+              expireTime: cur.unfreeze_expire_time,
+            });
+          } else if (cur) {
+            accum.bandwidth.push({
+              amount: new BigNumber(cur.unfreeze_amount),
+              expireTime: cur.unfreeze_expire_time,
+            });
+          }
+          return accum;
+        },
+        { bandwidth: [] as UnFrozenV2Info[], energy: [] as UnFrozenV2Info[] },
+      )
+    : { bandwidth: [], energy: [] };
+
   const encodedAddress = encode58Check(acc.address);
   const tronNetworkInfo = await getTronAccountNetwork(encodedAddress);
   const unwithdrawnReward = await getUnwithdrawnReward(encodedAddress);
@@ -594,6 +637,7 @@ export async function getTronResources(
     bandwidth,
     frozen,
     frozenV2,
+    unFrozenV2,
     delegatedFrozen,
     votes,
     tronPower,

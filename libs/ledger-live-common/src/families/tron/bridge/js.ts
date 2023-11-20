@@ -84,6 +84,7 @@ import {
   fetchCurrentBlockHeight,
   getContractUserEnergyRatioConsumption,
   freezeV2TronTransaction,
+  unFreezeV2TronTransaction,
 } from "../api";
 import { activationFees, oneTrx } from "../constants";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
@@ -143,6 +144,9 @@ const signOperation: SignOperationFnSignature<Transaction> = ({ account, transac
 
               case "freezeV2":
                 return freezeV2TronTransaction(account, transaction);
+
+              case "unFreezeV2":
+                return unFreezeV2TronTransaction(account, transaction);
 
               default:
                 return createTronTransaction(account, transaction, subAccount);
@@ -220,6 +224,11 @@ const signOperation: SignOperationFnSignature<Transaction> = ({ account, transac
               case "freezeV2":
                 return {
                   frozenV2Amount: transaction.amount,
+                };
+
+              case "unFreezeV2":
+                return {
+                  unfreezeV2Amount: transaction.amount,
                 };
 
               default:
@@ -373,7 +382,21 @@ const getAccountShape = async (info: AccountShapeInfo, syncConfig) => {
     .plus(
       tronResources.frozenV2.bandwidth ? tronResources.frozenV2.bandwidth.amount : new BigNumber(0),
     )
-    .plus(tronResources.frozenV2.energy ? tronResources.frozenV2.energy.amount : new BigNumber(0));
+    .plus(tronResources.frozenV2.energy ? tronResources.frozenV2.energy.amount : new BigNumber(0))
+    .plus(
+      tronResources.unFrozenV2.energy
+        ? tronResources.unFrozenV2.energy.reduce((accum, cur) => {
+            return accum.plus(cur.amount);
+          }, new BigNumber(0))
+        : new BigNumber(0),
+    )
+    .plus(
+      tronResources.unFrozenV2.bandwidth
+        ? tronResources.unFrozenV2.bandwidth.reduce((accum, cur) => {
+            return accum.plus(cur.amount);
+          }, new BigNumber(0))
+        : new BigNumber(0),
+    );
   const parentTxs = txs.filter(isParentTx);
   const parentOperations: TronOperation[] = compact(
     parentTxs.map(tx => txInfoToOperation(accountId, info.address, tx)),
@@ -621,6 +644,15 @@ const getTransactionStatus = async (a: TronAccount, t: Transaction): Promise<Tra
     }
   }
 
+  if (mode === "unFreezeV2") {
+    const { bandwidth, energy } = a.tronResources.frozenV2;
+    if (resource === "BANDWIDTH" && (bandwidth?.amount || new BigNumber(0)).lt(t.amount)) {
+      errors.resource = new TronNoFrozenForBandwidth();
+    } else if ((energy?.amount || new BigNumber(0)).lt(t.amount)) {
+      errors.resource = new TronNoFrozenForEnergy();
+    }
+  }
+
   if (mode === "vote") {
     if (votes.length === 0) {
       errors.vote = new TronVoteRequired();
@@ -672,7 +704,9 @@ const getTransactionStatus = async (a: TronAccount, t: Transaction): Promise<Tra
       ? BigNumber.max(0, account.spendableBalance.minus(estimatedFees))
       : account.balance;
   const amount = useAllAmount ? balance : t.amount;
-  const amountSpent = ["send", "freeze", "freezeV2"].includes(mode) ? amount : new BigNumber(0);
+  const amountSpent = ["send", "freeze", "freezeV2", "unFreezeV2"].includes(mode)
+    ? amount
+    : new BigNumber(0);
 
   if ((mode === "freeze" || mode === "freezeV2") && amount.lt(oneTrx)) {
     errors.amount = new TronInvalidFreezeAmount();

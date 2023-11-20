@@ -59,7 +59,7 @@ function getDeviceTransactionConfig({
     });
   }
 
-  if (mode === "unfreeze") {
+  if (mode === "unfreeze" || mode === "unFreezeV2") {
     fields.push({
       type: "address",
       label: "Delegated To",

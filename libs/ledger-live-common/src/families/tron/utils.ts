@@ -38,6 +38,7 @@ const parentTx = [
   "WithdrawBalanceContract",
   "ExchangeTransactionContract",
   "FreezeBalanceV2Contract",
+  "UnfreezeBalanceV2Contract",
 ];
 
 export const isParentTx = (tx: TrongridTxInfo): boolean => parentTx.includes(tx.type);
@@ -59,6 +60,8 @@ export const getEstimatedBlockSize = (a: Account, t: Transaction): BigNumber => 
 
     case "freeze":
     case "unfreeze":
+    case "freezeV2":
+    case "unFreezeV2":
     case "claimReward":
       return new BigNumber(260);
 
@@ -89,6 +92,9 @@ export const getOperationTypefromMode = (mode: TronOperationMode): OperationType
 
     case "freezeV2":
       return "FREEZEV2";
+
+    case "unFreezeV2":
+      return "UNFREEZEV2";
 
     default:
       return "OUT";
@@ -122,6 +128,9 @@ const getOperationType = (
 
     case "FreezeBalanceV2Contract":
       return "FREEZEV2";
+
+    case "UnfreezeBalanceV2Contract":
+      return "UNFREEZEV2";
 
     default:
       return undefined;
@@ -174,6 +183,7 @@ export const formatTrongridTxResponse = (
       quant,
       frozen_balance,
       votes,
+      unfreeze_balance,
     } = get(tx, "raw_data.contract[0].parameter.value", {});
     const hasFailed = get(tx, "ret[0].contractRet", "SUCCESS") !== "SUCCESS";
     const tokenId =
@@ -237,6 +247,11 @@ export const formatTrongridTxResponse = (
         case "FreezeBalanceContractV2":
           return {
             frozenAmount: new BigNumber(frozen_balance),
+          };
+
+        case "UnfreezeBalanceV2Contract":
+          return {
+            unfreezeV2Amount: new BigNumber(unfreeze_balance),
           };
 
         default:
@@ -305,6 +320,10 @@ export const defaultTronResources: TronResources = {
     energy: undefined,
   },
   frozenV2: {
+    bandwidth: undefined,
+    energy: undefined,
+  },
+  unFrozenV2: {
     bandwidth: undefined,
     energy: undefined,
   },
