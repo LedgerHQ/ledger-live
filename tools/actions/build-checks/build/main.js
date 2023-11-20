@@ -534,7 +534,7 @@ var require_file_command = __commonJS({
     };
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.prepareKeyValueMessage = exports2.issueFileCommand = void 0;
-    var fs2 = __importStar(require("fs"));
+    var fs3 = __importStar(require("fs"));
     var os = __importStar(require("os"));
     var uuid_1 = (init_esm_node(), __toCommonJS(esm_node_exports));
     var utils_1 = require_utils();
@@ -543,10 +543,10 @@ var require_file_command = __commonJS({
       if (!filePath) {
         throw new Error(`Unable to find environment variable for file command ${command}`);
       }
-      if (!fs2.existsSync(filePath)) {
+      if (!fs3.existsSync(filePath)) {
         throw new Error(`Missing file at path: ${filePath}`);
       }
-      fs2.appendFileSync(filePath, `${utils_1.toCommandValue(message)}${os.EOL}`, {
+      fs3.appendFileSync(filePath, `${utils_1.toCommandValue(message)}${os.EOL}`, {
         encoding: "utf8"
       });
     }
@@ -1144,12 +1144,12 @@ var require_lib = __commonJS({
             throw new Error("Client has already been disposed.");
           }
           const parsedUrl = new URL(requestUrl);
-          let info3 = this._prepareRequest(verb, parsedUrl, headers);
+          let info4 = this._prepareRequest(verb, parsedUrl, headers);
           const maxTries = this._allowRetries && RetryableHttpVerbs.includes(verb) ? this._maxRetries + 1 : 1;
           let numTries = 0;
           let response;
           do {
-            response = yield this.requestRaw(info3, data);
+            response = yield this.requestRaw(info4, data);
             if (response && response.message && response.message.statusCode === HttpCodes.Unauthorized) {
               let authenticationHandler;
               for (const handler2 of this.handlers) {
@@ -1159,7 +1159,7 @@ var require_lib = __commonJS({
                 }
               }
               if (authenticationHandler) {
-                return authenticationHandler.handleAuthentication(this, info3, data);
+                return authenticationHandler.handleAuthentication(this, info4, data);
               } else {
                 return response;
               }
@@ -1182,8 +1182,8 @@ var require_lib = __commonJS({
                   }
                 }
               }
-              info3 = this._prepareRequest(verb, parsedRedirectUrl, headers);
-              response = yield this.requestRaw(info3, data);
+              info4 = this._prepareRequest(verb, parsedRedirectUrl, headers);
+              response = yield this.requestRaw(info4, data);
               redirectsRemaining--;
             }
             if (!response.message.statusCode || !HttpResponseRetryCodes.includes(response.message.statusCode)) {
@@ -1212,7 +1212,7 @@ var require_lib = __commonJS({
        * @param info
        * @param data
        */
-      requestRaw(info3, data) {
+      requestRaw(info4, data) {
         return __awaiter(this, void 0, void 0, function* () {
           return new Promise((resolve, reject) => {
             function callbackForResult(err, res) {
@@ -1224,7 +1224,7 @@ var require_lib = __commonJS({
                 resolve(res);
               }
             }
-            this.requestRawWithCallback(info3, data, callbackForResult);
+            this.requestRawWithCallback(info4, data, callbackForResult);
           });
         });
       }
@@ -1234,12 +1234,12 @@ var require_lib = __commonJS({
        * @param data
        * @param onResult
        */
-      requestRawWithCallback(info3, data, onResult) {
+      requestRawWithCallback(info4, data, onResult) {
         if (typeof data === "string") {
-          if (!info3.options.headers) {
-            info3.options.headers = {};
+          if (!info4.options.headers) {
+            info4.options.headers = {};
           }
-          info3.options.headers["Content-Length"] = Buffer.byteLength(data, "utf8");
+          info4.options.headers["Content-Length"] = Buffer.byteLength(data, "utf8");
         }
         let callbackCalled = false;
         function handleResult(err, res) {
@@ -1248,7 +1248,7 @@ var require_lib = __commonJS({
             onResult(err, res);
           }
         }
-        const req = info3.httpModule.request(info3.options, (msg) => {
+        const req = info4.httpModule.request(info4.options, (msg) => {
           const res = new HttpClientResponse(msg);
           handleResult(void 0, res);
         });
@@ -1260,7 +1260,7 @@ var require_lib = __commonJS({
           if (socket) {
             socket.end();
           }
-          handleResult(new Error(`Request timeout: ${info3.options.path}`));
+          handleResult(new Error(`Request timeout: ${info4.options.path}`));
         });
         req.on("error", function(err) {
           handleResult(err);
@@ -1287,27 +1287,27 @@ var require_lib = __commonJS({
         return this._getAgent(parsedUrl);
       }
       _prepareRequest(method, requestUrl, headers) {
-        const info3 = {};
-        info3.parsedUrl = requestUrl;
-        const usingSsl = info3.parsedUrl.protocol === "https:";
-        info3.httpModule = usingSsl ? https : http;
+        const info4 = {};
+        info4.parsedUrl = requestUrl;
+        const usingSsl = info4.parsedUrl.protocol === "https:";
+        info4.httpModule = usingSsl ? https : http;
         const defaultPort = usingSsl ? 443 : 80;
-        info3.options = {};
-        info3.options.host = info3.parsedUrl.hostname;
-        info3.options.port = info3.parsedUrl.port ? parseInt(info3.parsedUrl.port) : defaultPort;
-        info3.options.path = (info3.parsedUrl.pathname || "") + (info3.parsedUrl.search || "");
-        info3.options.method = method;
-        info3.options.headers = this._mergeHeaders(headers);
+        info4.options = {};
+        info4.options.host = info4.parsedUrl.hostname;
+        info4.options.port = info4.parsedUrl.port ? parseInt(info4.parsedUrl.port) : defaultPort;
+        info4.options.path = (info4.parsedUrl.pathname || "") + (info4.parsedUrl.search || "");
+        info4.options.method = method;
+        info4.options.headers = this._mergeHeaders(headers);
         if (this.userAgent != null) {
-          info3.options.headers["user-agent"] = this.userAgent;
+          info4.options.headers["user-agent"] = this.userAgent;
         }
-        info3.options.agent = this._getAgent(info3.parsedUrl);
+        info4.options.agent = this._getAgent(info4.parsedUrl);
         if (this.handlers) {
           for (const handler2 of this.handlers) {
-            handler2.prepareRequest(info3.options);
+            handler2.prepareRequest(info4.options);
           }
         }
-        return info3;
+        return info4;
       }
       _mergeHeaders(headers) {
         if (this.requestOptions && this.requestOptions.headers) {
@@ -2143,18 +2143,18 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
       command_1.issueCommand("error", utils_1.toCommandProperties(properties), message instanceof Error ? message.toString() : message);
     }
     exports2.error = error;
-    function warning2(message, properties = {}) {
+    function warning3(message, properties = {}) {
       command_1.issueCommand("warning", utils_1.toCommandProperties(properties), message instanceof Error ? message.toString() : message);
     }
-    exports2.warning = warning2;
+    exports2.warning = warning3;
     function notice(message, properties = {}) {
       command_1.issueCommand("notice", utils_1.toCommandProperties(properties), message instanceof Error ? message.toString() : message);
     }
     exports2.notice = notice;
-    function info3(message) {
+    function info4(message) {
       process.stdout.write(message + os.EOL);
     }
-    exports2.info = info3;
+    exports2.info = info4;
     function startGroup(name) {
       command_1.issue("group", name);
     }
@@ -5857,18 +5857,18 @@ var require_webidl = __commonJS({
     webidl.errors.exception = function(message) {
       return new TypeError(`${message.header}: ${message.message}`);
     };
-    webidl.errors.conversionFailed = function(context2) {
-      const plural = context2.types.length === 1 ? "" : " one of";
-      const message = `${context2.argument} could not be converted to${plural}: ${context2.types.join(", ")}.`;
+    webidl.errors.conversionFailed = function(context3) {
+      const plural = context3.types.length === 1 ? "" : " one of";
+      const message = `${context3.argument} could not be converted to${plural}: ${context3.types.join(", ")}.`;
       return webidl.errors.exception({
-        header: context2.prefix,
+        header: context3.prefix,
         message
       });
     };
-    webidl.errors.invalidArgument = function(context2) {
+    webidl.errors.invalidArgument = function(context3) {
       return webidl.errors.exception({
-        header: context2.prefix,
-        message: `"${context2.value}" is an invalid ${context2.type}.`
+        header: context3.prefix,
+        message: `"${context3.value}" is an invalid ${context3.type}.`
       });
     };
     webidl.brandCheck = function(V, I, opts = void 0) {
@@ -11187,15 +11187,15 @@ var require_api_request = __commonJS({
         }
         addSignal(this, signal);
       }
-      onConnect(abort, context2) {
+      onConnect(abort, context3) {
         if (!this.callback) {
           throw new RequestAbortedError();
         }
         this.abort = abort;
-        this.context = context2;
+        this.context = context3;
       }
       onHeaders(statusCode, rawHeaders, resume, statusMessage) {
-        const { callback, opaque, abort, context: context2, responseHeaders, highWaterMark } = this;
+        const { callback, opaque, abort, context: context3, responseHeaders, highWaterMark } = this;
         const headers = responseHeaders === "raw" ? util.parseRawHeaders(rawHeaders) : util.parseHeaders(rawHeaders);
         if (statusCode < 200) {
           if (this.onInfo) {
@@ -11222,7 +11222,7 @@ var require_api_request = __commonJS({
               trailers: this.trailers,
               opaque,
               body,
-              context: context2
+              context: context3
             });
           }
         }
@@ -11341,15 +11341,15 @@ var require_api_stream = __commonJS({
         }
         addSignal(this, signal);
       }
-      onConnect(abort, context2) {
+      onConnect(abort, context3) {
         if (!this.callback) {
           throw new RequestAbortedError();
         }
         this.abort = abort;
-        this.context = context2;
+        this.context = context3;
       }
       onHeaders(statusCode, rawHeaders, resume, statusMessage) {
-        const { factory, opaque, context: context2, callback, responseHeaders } = this;
+        const { factory, opaque, context: context3, callback, responseHeaders } = this;
         const headers = responseHeaders === "raw" ? util.parseRawHeaders(rawHeaders) : util.parseHeaders(rawHeaders);
         if (statusCode < 200) {
           if (this.onInfo) {
@@ -11377,7 +11377,7 @@ var require_api_stream = __commonJS({
             statusCode,
             headers,
             opaque,
-            context: context2
+            context: context3
           });
           if (!res || typeof res.write !== "function" || typeof res.end !== "function" || typeof res.on !== "function") {
             throw new InvalidReturnValueError("expected Writable");
@@ -11569,17 +11569,17 @@ var require_api_pipeline = __commonJS({
         this.res = null;
         addSignal(this, signal);
       }
-      onConnect(abort, context2) {
+      onConnect(abort, context3) {
         const { ret: ret2, res } = this;
         assert(!res, "pipeline cannot be retried");
         if (ret2.destroyed) {
           throw new RequestAbortedError();
         }
         this.abort = abort;
-        this.context = context2;
+        this.context = context3;
       }
       onHeaders(statusCode, rawHeaders, resume) {
-        const { opaque, handler: handler2, context: context2 } = this;
+        const { opaque, handler: handler2, context: context3 } = this;
         if (statusCode < 200) {
           if (this.onInfo) {
             const headers = this.responseHeaders === "raw" ? util.parseRawHeaders(rawHeaders) : util.parseHeaders(rawHeaders);
@@ -11597,7 +11597,7 @@ var require_api_pipeline = __commonJS({
             headers,
             opaque,
             body: this.res,
-            context: context2
+            context: context3
           });
         } catch (err) {
           this.res.on("error", util.nop);
@@ -11681,7 +11681,7 @@ var require_api_upgrade = __commonJS({
         this.context = null;
         addSignal(this, signal);
       }
-      onConnect(abort, context2) {
+      onConnect(abort, context3) {
         if (!this.callback) {
           throw new RequestAbortedError();
         }
@@ -11692,7 +11692,7 @@ var require_api_upgrade = __commonJS({
         throw new SocketError("bad upgrade", null);
       }
       onUpgrade(statusCode, rawHeaders, socket) {
-        const { callback, opaque, context: context2 } = this;
+        const { callback, opaque, context: context3 } = this;
         assert.strictEqual(statusCode, 101);
         removeSignal(this);
         this.callback = null;
@@ -11701,7 +11701,7 @@ var require_api_upgrade = __commonJS({
           headers,
           socket,
           opaque,
-          context: context2
+          context: context3
         });
       }
       onError(err) {
@@ -11769,18 +11769,18 @@ var require_api_connect = __commonJS({
         this.abort = null;
         addSignal(this, signal);
       }
-      onConnect(abort, context2) {
+      onConnect(abort, context3) {
         if (!this.callback) {
           throw new RequestAbortedError();
         }
         this.abort = abort;
-        this.context = context2;
+        this.context = context3;
       }
       onHeaders() {
         throw new SocketError("bad connect", null);
       }
       onUpgrade(statusCode, rawHeaders, socket) {
-        const { callback, opaque, context: context2 } = this;
+        const { callback, opaque, context: context3 } = this;
         removeSignal(this);
         this.callback = null;
         let headers = rawHeaders;
@@ -11792,7 +11792,7 @@ var require_api_connect = __commonJS({
           headers,
           socket,
           opaque,
-          context: context2
+          context: context3
         });
       }
       onError(err) {
@@ -18895,12 +18895,12 @@ var require_lib2 = __commonJS({
             throw new Error("Client has already been disposed.");
           }
           const parsedUrl = new URL(requestUrl);
-          let info3 = this._prepareRequest(verb, parsedUrl, headers);
+          let info4 = this._prepareRequest(verb, parsedUrl, headers);
           const maxTries = this._allowRetries && RetryableHttpVerbs.includes(verb) ? this._maxRetries + 1 : 1;
           let numTries = 0;
           let response;
           do {
-            response = yield this.requestRaw(info3, data);
+            response = yield this.requestRaw(info4, data);
             if (response && response.message && response.message.statusCode === HttpCodes.Unauthorized) {
               let authenticationHandler;
               for (const handler2 of this.handlers) {
@@ -18910,7 +18910,7 @@ var require_lib2 = __commonJS({
                 }
               }
               if (authenticationHandler) {
-                return authenticationHandler.handleAuthentication(this, info3, data);
+                return authenticationHandler.handleAuthentication(this, info4, data);
               } else {
                 return response;
               }
@@ -18933,8 +18933,8 @@ var require_lib2 = __commonJS({
                   }
                 }
               }
-              info3 = this._prepareRequest(verb, parsedRedirectUrl, headers);
-              response = yield this.requestRaw(info3, data);
+              info4 = this._prepareRequest(verb, parsedRedirectUrl, headers);
+              response = yield this.requestRaw(info4, data);
               redirectsRemaining--;
             }
             if (!response.message.statusCode || !HttpResponseRetryCodes.includes(response.message.statusCode)) {
@@ -18963,7 +18963,7 @@ var require_lib2 = __commonJS({
        * @param info
        * @param data
        */
-      requestRaw(info3, data) {
+      requestRaw(info4, data) {
         return __awaiter(this, void 0, void 0, function* () {
           return new Promise((resolve, reject) => {
             function callbackForResult(err, res) {
@@ -18975,7 +18975,7 @@ var require_lib2 = __commonJS({
                 resolve(res);
               }
             }
-            this.requestRawWithCallback(info3, data, callbackForResult);
+            this.requestRawWithCallback(info4, data, callbackForResult);
           });
         });
       }
@@ -18985,12 +18985,12 @@ var require_lib2 = __commonJS({
        * @param data
        * @param onResult
        */
-      requestRawWithCallback(info3, data, onResult) {
+      requestRawWithCallback(info4, data, onResult) {
         if (typeof data === "string") {
-          if (!info3.options.headers) {
-            info3.options.headers = {};
+          if (!info4.options.headers) {
+            info4.options.headers = {};
           }
-          info3.options.headers["Content-Length"] = Buffer.byteLength(data, "utf8");
+          info4.options.headers["Content-Length"] = Buffer.byteLength(data, "utf8");
         }
         let callbackCalled = false;
         function handleResult(err, res) {
@@ -18999,7 +18999,7 @@ var require_lib2 = __commonJS({
             onResult(err, res);
           }
         }
-        const req = info3.httpModule.request(info3.options, (msg) => {
+        const req = info4.httpModule.request(info4.options, (msg) => {
           const res = new HttpClientResponse(msg);
           handleResult(void 0, res);
         });
@@ -19011,7 +19011,7 @@ var require_lib2 = __commonJS({
           if (socket) {
             socket.end();
           }
-          handleResult(new Error(`Request timeout: ${info3.options.path}`));
+          handleResult(new Error(`Request timeout: ${info4.options.path}`));
         });
         req.on("error", function(err) {
           handleResult(err);
@@ -19047,27 +19047,27 @@ var require_lib2 = __commonJS({
         return this._getProxyAgentDispatcher(parsedUrl, proxyUrl);
       }
       _prepareRequest(method, requestUrl, headers) {
-        const info3 = {};
-        info3.parsedUrl = requestUrl;
-        const usingSsl = info3.parsedUrl.protocol === "https:";
-        info3.httpModule = usingSsl ? https : http;
+        const info4 = {};
+        info4.parsedUrl = requestUrl;
+        const usingSsl = info4.parsedUrl.protocol === "https:";
+        info4.httpModule = usingSsl ? https : http;
         const defaultPort = usingSsl ? 443 : 80;
-        info3.options = {};
-        info3.options.host = info3.parsedUrl.hostname;
-        info3.options.port = info3.parsedUrl.port ? parseInt(info3.parsedUrl.port) : defaultPort;
-        info3.options.path = (info3.parsedUrl.pathname || "") + (info3.parsedUrl.search || "");
-        info3.options.method = method;
-        info3.options.headers = this._mergeHeaders(headers);
+        info4.options = {};
+        info4.options.host = info4.parsedUrl.hostname;
+        info4.options.port = info4.parsedUrl.port ? parseInt(info4.parsedUrl.port) : defaultPort;
+        info4.options.path = (info4.parsedUrl.pathname || "") + (info4.parsedUrl.search || "");
+        info4.options.method = method;
+        info4.options.headers = this._mergeHeaders(headers);
         if (this.userAgent != null) {
-          info3.options.headers["user-agent"] = this.userAgent;
+          info4.options.headers["user-agent"] = this.userAgent;
         }
-        info3.options.agent = this._getAgent(info3.parsedUrl);
+        info4.options.agent = this._getAgent(info4.parsedUrl);
         if (this.handlers) {
           for (const handler2 of this.handlers) {
-            handler2.prepareRequest(info3.options);
+            handler2.prepareRequest(info4.options);
           }
         }
-        return info3;
+        return info4;
       }
       _mergeHeaders(headers) {
         if (this.requestOptions && this.requestOptions.headers) {
@@ -19700,8 +19700,8 @@ function isDefined(value) {
 function isKeyOperator(operator) {
   return operator === ";" || operator === "&" || operator === "?";
 }
-function getValues(context2, operator, key, modifier) {
-  var value = context2[key], result = [];
+function getValues(context3, operator, key, modifier) {
+  var value = context3[key], result = [];
   if (isDefined(value) && value !== "") {
     if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
       value = value.toString();
@@ -19765,7 +19765,7 @@ function parseUrl(template) {
     expand: expand.bind(null, template)
   };
 }
-function expand(template, context2) {
+function expand(template, context3) {
   var operators = ["+", "#", ".", "/", ";", "?", "&"];
   template = template.replace(
     /\{([^\{\}]+)\}|([^\{\}]+)/g,
@@ -19779,7 +19779,7 @@ function expand(template, context2) {
         }
         expression.split(/,/g).forEach(function(variable) {
           var tmp = /([^:\*]*)(?::(\d+)|(\*))?/.exec(variable);
-          values.push(getValues(context2, operator, tmp[1], tmp[2] || tmp[3]));
+          values.push(getValues(context3, operator, tmp[1], tmp[2] || tmp[3]));
         });
         if (operator && operator !== "+") {
           var separator = ",";
@@ -23190,6 +23190,1081 @@ var require_github = __commonJS({
   }
 });
 
+// ../../../node_modules/.pnpm/stream-json@1.8.0/node_modules/stream-json/utils/Utf8Stream.js
+var require_Utf8Stream = __commonJS({
+  "../../../node_modules/.pnpm/stream-json@1.8.0/node_modules/stream-json/utils/Utf8Stream.js"(exports2, module2) {
+    "use strict";
+    var { Transform } = require("stream");
+    var { StringDecoder } = require("string_decoder");
+    var Utf8Stream = class extends Transform {
+      constructor(options) {
+        super(Object.assign({}, options, { writableObjectMode: false }));
+        this._buffer = "";
+      }
+      _transform(chunk, encoding, callback) {
+        if (typeof chunk == "string") {
+          this._transform = this._transformString;
+        } else {
+          this._stringDecoder = new StringDecoder();
+          this._transform = this._transformBuffer;
+        }
+        this._transform(chunk, encoding, callback);
+      }
+      _transformBuffer(chunk, _, callback) {
+        this._buffer += this._stringDecoder.write(chunk);
+        this._processBuffer(callback);
+      }
+      _transformString(chunk, _, callback) {
+        this._buffer += chunk.toString();
+        this._processBuffer(callback);
+      }
+      _processBuffer(callback) {
+        if (this._buffer) {
+          this.push(this._buffer, "utf8");
+          this._buffer = "";
+        }
+        callback(null);
+      }
+      _flushInput() {
+        if (this._stringDecoder) {
+          this._buffer += this._stringDecoder.end();
+        }
+      }
+      _flush(callback) {
+        this._flushInput();
+        this._processBuffer(callback);
+      }
+    };
+    module2.exports = Utf8Stream;
+  }
+});
+
+// ../../../node_modules/.pnpm/stream-json@1.8.0/node_modules/stream-json/Parser.js
+var require_Parser = __commonJS({
+  "../../../node_modules/.pnpm/stream-json@1.8.0/node_modules/stream-json/Parser.js"(exports2, module2) {
+    "use strict";
+    var Utf8Stream = require_Utf8Stream();
+    var patterns = {
+      value1: /^(?:[\"\{\[\]\-\d]|true\b|false\b|null\b|\s{1,256})/,
+      string: /^(?:[^\"\\]{1,256}|\\[bfnrt\"\\\/]|\\u[\da-fA-F]{4}|\")/,
+      key1: /^(?:[\"\}]|\s{1,256})/,
+      colon: /^(?:\:|\s{1,256})/,
+      comma: /^(?:[\,\]\}]|\s{1,256})/,
+      ws: /^\s{1,256}/,
+      numberStart: /^\d/,
+      numberDigit: /^\d{0,256}/,
+      numberFraction: /^[\.eE]/,
+      numberExponent: /^[eE]/,
+      numberExpSign: /^[-+]/
+    };
+    var MAX_PATTERN_SIZE = 16;
+    var noSticky = true;
+    try {
+      new RegExp(".", "y");
+      noSticky = false;
+    } catch (e) {
+    }
+    !noSticky && Object.keys(patterns).forEach((key) => {
+      let src = patterns[key].source.slice(1);
+      if (src.slice(0, 3) === "(?:" && src.slice(-1) === ")") {
+        src = src.slice(3, -1);
+      }
+      patterns[key] = new RegExp(src, "y");
+    });
+    patterns.numberFracStart = patterns.numberExpStart = patterns.numberStart;
+    patterns.numberFracDigit = patterns.numberExpDigit = patterns.numberDigit;
+    var values = { true: true, false: false, null: null };
+    var expected = { object: "objectStop", array: "arrayStop", "": "done" };
+    var fromHex = (s) => String.fromCharCode(parseInt(s.slice(2), 16));
+    var codes = { b: "\b", f: "\f", n: "\n", r: "\r", t: "	", '"': '"', "\\": "\\", "/": "/" };
+    var Parser = class _Parser extends Utf8Stream {
+      static make(options) {
+        return new _Parser(options);
+      }
+      constructor(options) {
+        super(Object.assign({}, options, { readableObjectMode: true }));
+        this._packKeys = this._packStrings = this._packNumbers = this._streamKeys = this._streamStrings = this._streamNumbers = true;
+        if (options) {
+          "packValues" in options && (this._packKeys = this._packStrings = this._packNumbers = options.packValues);
+          "packKeys" in options && (this._packKeys = options.packKeys);
+          "packStrings" in options && (this._packStrings = options.packStrings);
+          "packNumbers" in options && (this._packNumbers = options.packNumbers);
+          "streamValues" in options && (this._streamKeys = this._streamStrings = this._streamNumbers = options.streamValues);
+          "streamKeys" in options && (this._streamKeys = options.streamKeys);
+          "streamStrings" in options && (this._streamStrings = options.streamStrings);
+          "streamNumbers" in options && (this._streamNumbers = options.streamNumbers);
+          this._jsonStreaming = options.jsonStreaming;
+        }
+        !this._packKeys && (this._streamKeys = true);
+        !this._packStrings && (this._streamStrings = true);
+        !this._packNumbers && (this._streamNumbers = true);
+        this._done = false;
+        this._expect = this._jsonStreaming ? "done" : "value";
+        this._stack = [];
+        this._parent = "";
+        this._open_number = false;
+        this._accumulator = "";
+      }
+      _flush(callback) {
+        this._done = true;
+        super._flush((error) => {
+          if (error)
+            return callback(error);
+          if (this._open_number) {
+            if (this._streamNumbers) {
+              this.push({ name: "endNumber" });
+            }
+            this._open_number = false;
+            if (this._packNumbers) {
+              this.push({ name: "numberValue", value: this._accumulator });
+              this._accumulator = "";
+            }
+          }
+          callback(null);
+        });
+      }
+      _processBuffer(callback) {
+        let match, value, index = 0;
+        main:
+          for (; ; ) {
+            switch (this._expect) {
+              case "value1":
+              case "value":
+                patterns.value1.lastIndex = index;
+                match = patterns.value1.exec(this._buffer);
+                if (!match) {
+                  if (this._done || index + MAX_PATTERN_SIZE < this._buffer.length) {
+                    if (index < this._buffer.length)
+                      return callback(new Error("Parser cannot parse input: expected a value"));
+                    return callback(new Error("Parser has expected a value"));
+                  }
+                  break main;
+                }
+                value = match[0];
+                switch (value) {
+                  case '"':
+                    this._streamStrings && this.push({ name: "startString" });
+                    this._expect = "string";
+                    break;
+                  case "{":
+                    this.push({ name: "startObject" });
+                    this._stack.push(this._parent);
+                    this._parent = "object";
+                    this._expect = "key1";
+                    break;
+                  case "[":
+                    this.push({ name: "startArray" });
+                    this._stack.push(this._parent);
+                    this._parent = "array";
+                    this._expect = "value1";
+                    break;
+                  case "]":
+                    if (this._expect !== "value1")
+                      return callback(new Error("Parser cannot parse input: unexpected token ']'"));
+                    if (this._open_number) {
+                      this._streamNumbers && this.push({ name: "endNumber" });
+                      this._open_number = false;
+                      if (this._packNumbers) {
+                        this.push({ name: "numberValue", value: this._accumulator });
+                        this._accumulator = "";
+                      }
+                    }
+                    this.push({ name: "endArray" });
+                    this._parent = this._stack.pop();
+                    this._expect = expected[this._parent];
+                    break;
+                  case "-":
+                    this._open_number = true;
+                    if (this._streamNumbers) {
+                      this.push({ name: "startNumber" });
+                      this.push({ name: "numberChunk", value: "-" });
+                    }
+                    this._packNumbers && (this._accumulator = "-");
+                    this._expect = "numberStart";
+                    break;
+                  case "0":
+                    this._open_number = true;
+                    if (this._streamNumbers) {
+                      this.push({ name: "startNumber" });
+                      this.push({ name: "numberChunk", value: "0" });
+                    }
+                    this._packNumbers && (this._accumulator = "0");
+                    this._expect = "numberFraction";
+                    break;
+                  case "1":
+                  case "2":
+                  case "3":
+                  case "4":
+                  case "5":
+                  case "6":
+                  case "7":
+                  case "8":
+                  case "9":
+                    this._open_number = true;
+                    if (this._streamNumbers) {
+                      this.push({ name: "startNumber" });
+                      this.push({ name: "numberChunk", value });
+                    }
+                    this._packNumbers && (this._accumulator = value);
+                    this._expect = "numberDigit";
+                    break;
+                  case "true":
+                  case "false":
+                  case "null":
+                    if (this._buffer.length - index === value.length && !this._done)
+                      break main;
+                    this.push({ name: value + "Value", value: values[value] });
+                    this._expect = expected[this._parent];
+                    break;
+                }
+                if (noSticky) {
+                  this._buffer = this._buffer.slice(value.length);
+                } else {
+                  index += value.length;
+                }
+                break;
+              case "keyVal":
+              case "string":
+                patterns.string.lastIndex = index;
+                match = patterns.string.exec(this._buffer);
+                if (!match) {
+                  if (index < this._buffer.length && (this._done || this._buffer.length - index >= 6))
+                    return callback(new Error("Parser cannot parse input: escaped characters"));
+                  if (this._done)
+                    return callback(new Error("Parser has expected a string value"));
+                  break main;
+                }
+                value = match[0];
+                if (value === '"') {
+                  if (this._expect === "keyVal") {
+                    this._streamKeys && this.push({ name: "endKey" });
+                    if (this._packKeys) {
+                      this.push({ name: "keyValue", value: this._accumulator });
+                      this._accumulator = "";
+                    }
+                    this._expect = "colon";
+                  } else {
+                    this._streamStrings && this.push({ name: "endString" });
+                    if (this._packStrings) {
+                      this.push({ name: "stringValue", value: this._accumulator });
+                      this._accumulator = "";
+                    }
+                    this._expect = expected[this._parent];
+                  }
+                } else if (value.length > 1 && value.charAt(0) === "\\") {
+                  const t = value.length == 2 ? codes[value.charAt(1)] : fromHex(value);
+                  if (this._expect === "keyVal" ? this._streamKeys : this._streamStrings) {
+                    this.push({ name: "stringChunk", value: t });
+                  }
+                  if (this._expect === "keyVal" ? this._packKeys : this._packStrings) {
+                    this._accumulator += t;
+                  }
+                } else {
+                  if (this._expect === "keyVal" ? this._streamKeys : this._streamStrings) {
+                    this.push({ name: "stringChunk", value });
+                  }
+                  if (this._expect === "keyVal" ? this._packKeys : this._packStrings) {
+                    this._accumulator += value;
+                  }
+                }
+                if (noSticky) {
+                  this._buffer = this._buffer.slice(value.length);
+                } else {
+                  index += value.length;
+                }
+                break;
+              case "key1":
+              case "key":
+                patterns.key1.lastIndex = index;
+                match = patterns.key1.exec(this._buffer);
+                if (!match) {
+                  if (index < this._buffer.length || this._done)
+                    return callback(new Error("Parser cannot parse input: expected an object key"));
+                  break main;
+                }
+                value = match[0];
+                if (value === '"') {
+                  this._streamKeys && this.push({ name: "startKey" });
+                  this._expect = "keyVal";
+                } else if (value === "}") {
+                  if (this._expect !== "key1")
+                    return callback(new Error("Parser cannot parse input: unexpected token '}'"));
+                  this.push({ name: "endObject" });
+                  this._parent = this._stack.pop();
+                  this._expect = expected[this._parent];
+                }
+                if (noSticky) {
+                  this._buffer = this._buffer.slice(value.length);
+                } else {
+                  index += value.length;
+                }
+                break;
+              case "colon":
+                patterns.colon.lastIndex = index;
+                match = patterns.colon.exec(this._buffer);
+                if (!match) {
+                  if (index < this._buffer.length || this._done)
+                    return callback(new Error("Parser cannot parse input: expected ':'"));
+                  break main;
+                }
+                value = match[0];
+                value === ":" && (this._expect = "value");
+                if (noSticky) {
+                  this._buffer = this._buffer.slice(value.length);
+                } else {
+                  index += value.length;
+                }
+                break;
+              case "arrayStop":
+              case "objectStop":
+                patterns.comma.lastIndex = index;
+                match = patterns.comma.exec(this._buffer);
+                if (!match) {
+                  if (index < this._buffer.length || this._done)
+                    return callback(new Error("Parser cannot parse input: expected ','"));
+                  break main;
+                }
+                if (this._open_number) {
+                  this._streamNumbers && this.push({ name: "endNumber" });
+                  this._open_number = false;
+                  if (this._packNumbers) {
+                    this.push({ name: "numberValue", value: this._accumulator });
+                    this._accumulator = "";
+                  }
+                }
+                value = match[0];
+                if (value === ",") {
+                  this._expect = this._expect === "arrayStop" ? "value" : "key";
+                } else if (value === "}" || value === "]") {
+                  if (value === "}" ? this._expect === "arrayStop" : this._expect !== "arrayStop") {
+                    return callback(new Error("Parser cannot parse input: expected '" + (this._expect === "arrayStop" ? "]" : "}") + "'"));
+                  }
+                  this.push({ name: value === "}" ? "endObject" : "endArray" });
+                  this._parent = this._stack.pop();
+                  this._expect = expected[this._parent];
+                }
+                if (noSticky) {
+                  this._buffer = this._buffer.slice(value.length);
+                } else {
+                  index += value.length;
+                }
+                break;
+              case "numberStart":
+                patterns.numberStart.lastIndex = index;
+                match = patterns.numberStart.exec(this._buffer);
+                if (!match) {
+                  if (index < this._buffer.length || this._done)
+                    return callback(new Error("Parser cannot parse input: expected a starting digit"));
+                  break main;
+                }
+                value = match[0];
+                this._streamNumbers && this.push({ name: "numberChunk", value });
+                this._packNumbers && (this._accumulator += value);
+                this._expect = value === "0" ? "numberFraction" : "numberDigit";
+                if (noSticky) {
+                  this._buffer = this._buffer.slice(value.length);
+                } else {
+                  index += value.length;
+                }
+                break;
+              case "numberDigit":
+                patterns.numberDigit.lastIndex = index;
+                match = patterns.numberDigit.exec(this._buffer);
+                if (!match) {
+                  if (index < this._buffer.length || this._done)
+                    return callback(new Error("Parser cannot parse input: expected a digit"));
+                  break main;
+                }
+                value = match[0];
+                if (value) {
+                  this._streamNumbers && this.push({ name: "numberChunk", value });
+                  this._packNumbers && (this._accumulator += value);
+                  if (noSticky) {
+                    this._buffer = this._buffer.slice(value.length);
+                  } else {
+                    index += value.length;
+                  }
+                } else {
+                  if (index < this._buffer.length) {
+                    this._expect = "numberFraction";
+                    break;
+                  }
+                  if (this._done) {
+                    this._expect = expected[this._parent];
+                    break;
+                  }
+                  break main;
+                }
+                break;
+              case "numberFraction":
+                patterns.numberFraction.lastIndex = index;
+                match = patterns.numberFraction.exec(this._buffer);
+                if (!match) {
+                  if (index < this._buffer.length || this._done) {
+                    this._expect = expected[this._parent];
+                    break;
+                  }
+                  break main;
+                }
+                value = match[0];
+                this._streamNumbers && this.push({ name: "numberChunk", value });
+                this._packNumbers && (this._accumulator += value);
+                this._expect = value === "." ? "numberFracStart" : "numberExpSign";
+                if (noSticky) {
+                  this._buffer = this._buffer.slice(value.length);
+                } else {
+                  index += value.length;
+                }
+                break;
+              case "numberFracStart":
+                patterns.numberFracStart.lastIndex = index;
+                match = patterns.numberFracStart.exec(this._buffer);
+                if (!match) {
+                  if (index < this._buffer.length || this._done)
+                    return callback(new Error("Parser cannot parse input: expected a fractional part of a number"));
+                  break main;
+                }
+                value = match[0];
+                this._streamNumbers && this.push({ name: "numberChunk", value });
+                this._packNumbers && (this._accumulator += value);
+                this._expect = "numberFracDigit";
+                if (noSticky) {
+                  this._buffer = this._buffer.slice(value.length);
+                } else {
+                  index += value.length;
+                }
+                break;
+              case "numberFracDigit":
+                patterns.numberFracDigit.lastIndex = index;
+                match = patterns.numberFracDigit.exec(this._buffer);
+                value = match[0];
+                if (value) {
+                  this._streamNumbers && this.push({ name: "numberChunk", value });
+                  this._packNumbers && (this._accumulator += value);
+                  if (noSticky) {
+                    this._buffer = this._buffer.slice(value.length);
+                  } else {
+                    index += value.length;
+                  }
+                } else {
+                  if (index < this._buffer.length) {
+                    this._expect = "numberExponent";
+                    break;
+                  }
+                  if (this._done) {
+                    this._expect = expected[this._parent];
+                    break;
+                  }
+                  break main;
+                }
+                break;
+              case "numberExponent":
+                patterns.numberExponent.lastIndex = index;
+                match = patterns.numberExponent.exec(this._buffer);
+                if (!match) {
+                  if (index < this._buffer.length) {
+                    this._expect = expected[this._parent];
+                    break;
+                  }
+                  if (this._done) {
+                    this._expect = "done";
+                    break;
+                  }
+                  break main;
+                }
+                value = match[0];
+                this._streamNumbers && this.push({ name: "numberChunk", value });
+                this._packNumbers && (this._accumulator += value);
+                this._expect = "numberExpSign";
+                if (noSticky) {
+                  this._buffer = this._buffer.slice(value.length);
+                } else {
+                  index += value.length;
+                }
+                break;
+              case "numberExpSign":
+                patterns.numberExpSign.lastIndex = index;
+                match = patterns.numberExpSign.exec(this._buffer);
+                if (!match) {
+                  if (index < this._buffer.length) {
+                    this._expect = "numberExpStart";
+                    break;
+                  }
+                  if (this._done)
+                    return callback(new Error("Parser has expected an exponent value of a number"));
+                  break main;
+                }
+                value = match[0];
+                this._streamNumbers && this.push({ name: "numberChunk", value });
+                this._packNumbers && (this._accumulator += value);
+                this._expect = "numberExpStart";
+                if (noSticky) {
+                  this._buffer = this._buffer.slice(value.length);
+                } else {
+                  index += value.length;
+                }
+                break;
+              case "numberExpStart":
+                patterns.numberExpStart.lastIndex = index;
+                match = patterns.numberExpStart.exec(this._buffer);
+                if (!match) {
+                  if (index < this._buffer.length || this._done)
+                    return callback(new Error("Parser cannot parse input: expected an exponent part of a number"));
+                  break main;
+                }
+                value = match[0];
+                this._streamNumbers && this.push({ name: "numberChunk", value });
+                this._packNumbers && (this._accumulator += value);
+                this._expect = "numberExpDigit";
+                if (noSticky) {
+                  this._buffer = this._buffer.slice(value.length);
+                } else {
+                  index += value.length;
+                }
+                break;
+              case "numberExpDigit":
+                patterns.numberExpDigit.lastIndex = index;
+                match = patterns.numberExpDigit.exec(this._buffer);
+                value = match[0];
+                if (value) {
+                  this._streamNumbers && this.push({ name: "numberChunk", value });
+                  this._packNumbers && (this._accumulator += value);
+                  if (noSticky) {
+                    this._buffer = this._buffer.slice(value.length);
+                  } else {
+                    index += value.length;
+                  }
+                } else {
+                  if (index < this._buffer.length || this._done) {
+                    this._expect = expected[this._parent];
+                    break;
+                  }
+                  break main;
+                }
+                break;
+              case "done":
+                patterns.ws.lastIndex = index;
+                match = patterns.ws.exec(this._buffer);
+                if (!match) {
+                  if (index < this._buffer.length) {
+                    if (this._jsonStreaming) {
+                      this._expect = "value";
+                      break;
+                    }
+                    return callback(new Error("Parser cannot parse input: unexpected characters"));
+                  }
+                  break main;
+                }
+                value = match[0];
+                if (this._open_number) {
+                  this._streamNumbers && this.push({ name: "endNumber" });
+                  this._open_number = false;
+                  if (this._packNumbers) {
+                    this.push({ name: "numberValue", value: this._accumulator });
+                    this._accumulator = "";
+                  }
+                }
+                if (noSticky) {
+                  this._buffer = this._buffer.slice(value.length);
+                } else {
+                  index += value.length;
+                }
+                break;
+            }
+          }
+        !noSticky && (this._buffer = this._buffer.slice(index));
+        callback(null);
+      }
+    };
+    Parser.parser = Parser.make;
+    Parser.make.Constructor = Parser;
+    module2.exports = Parser;
+  }
+});
+
+// ../../../node_modules/.pnpm/stream-json@1.8.0/node_modules/stream-json/utils/emit.js
+var require_emit = __commonJS({
+  "../../../node_modules/.pnpm/stream-json@1.8.0/node_modules/stream-json/utils/emit.js"(exports2, module2) {
+    "use strict";
+    var emit = (stream) => stream.on("data", (item) => stream.emit(item.name, item.value));
+    module2.exports = emit;
+  }
+});
+
+// ../../../node_modules/.pnpm/stream-json@1.8.0/node_modules/stream-json/index.js
+var require_stream_json = __commonJS({
+  "../../../node_modules/.pnpm/stream-json@1.8.0/node_modules/stream-json/index.js"(exports2, module2) {
+    "use strict";
+    var Parser = require_Parser();
+    var emit = require_emit();
+    var make = (options) => emit(new Parser(options));
+    make.Parser = Parser;
+    make.parser = Parser.parser;
+    module2.exports = make;
+  }
+});
+
+// ../../../node_modules/.pnpm/stream-json@1.8.0/node_modules/stream-json/Assembler.js
+var require_Assembler = __commonJS({
+  "../../../node_modules/.pnpm/stream-json@1.8.0/node_modules/stream-json/Assembler.js"(exports2, module2) {
+    "use strict";
+    var EventEmitter = require("events");
+    var startObject = (Ctr) => function() {
+      if (this.done) {
+        this.done = false;
+      } else {
+        this.stack.push(this.current, this.key);
+      }
+      this.current = new Ctr();
+      this.key = null;
+    };
+    var Assembler = class _Assembler extends EventEmitter {
+      static connectTo(stream, options) {
+        return new _Assembler(options).connectTo(stream);
+      }
+      constructor(options) {
+        super();
+        this.stack = [];
+        this.current = this.key = null;
+        this.done = true;
+        if (options) {
+          this.reviver = typeof options.reviver == "function" && options.reviver;
+          if (this.reviver) {
+            this.stringValue = this._saveValue = this._saveValueWithReviver;
+          }
+          if (options.numberAsString) {
+            this.numberValue = this.stringValue;
+          }
+        }
+      }
+      connectTo(stream) {
+        stream.on("data", (chunk) => {
+          if (this[chunk.name]) {
+            this[chunk.name](chunk.value);
+            if (this.done)
+              this.emit("done", this);
+          }
+        });
+        return this;
+      }
+      get depth() {
+        return (this.stack.length >> 1) + (this.done ? 0 : 1);
+      }
+      get path() {
+        const path2 = [];
+        for (let i = 0; i < this.stack.length; i += 2) {
+          const key = this.stack[i + 1];
+          path2.push(key === null ? this.stack[i].length : key);
+        }
+        return path2;
+      }
+      dropToLevel(level) {
+        if (level < this.depth) {
+          if (level) {
+            const index = level - 1 << 1;
+            this.current = this.stack[index];
+            this.key = this.stack[index + 1];
+            this.stack.splice(index);
+          } else {
+            this.stack = [];
+            this.current = this.key = null;
+            this.done = true;
+          }
+        }
+        return this;
+      }
+      consume(chunk) {
+        this[chunk.name] && this[chunk.name](chunk.value);
+        return this;
+      }
+      keyValue(value) {
+        this.key = value;
+      }
+      //stringValue() - aliased below to _saveValue()
+      numberValue(value) {
+        this._saveValue(parseFloat(value));
+      }
+      nullValue() {
+        this._saveValue(null);
+      }
+      trueValue() {
+        this._saveValue(true);
+      }
+      falseValue() {
+        this._saveValue(false);
+      }
+      //startObject() - assigned below
+      endObject() {
+        if (this.stack.length) {
+          const value = this.current;
+          this.key = this.stack.pop();
+          this.current = this.stack.pop();
+          this._saveValue(value);
+        } else {
+          this.done = true;
+        }
+      }
+      //startArray() - assigned below
+      //endArray() - aliased below to endObject()
+      _saveValue(value) {
+        if (this.done) {
+          this.current = value;
+        } else {
+          if (this.current instanceof Array) {
+            this.current.push(value);
+          } else {
+            this.current[this.key] = value;
+            this.key = null;
+          }
+        }
+      }
+      _saveValueWithReviver(value) {
+        if (this.done) {
+          this.current = this.reviver("", value);
+        } else {
+          if (this.current instanceof Array) {
+            value = this.reviver("" + this.current.length, value);
+            this.current.push(value);
+            if (value === void 0) {
+              delete this.current[this.current.length - 1];
+            }
+          } else {
+            value = this.reviver(this.key, value);
+            if (value !== void 0) {
+              this.current[this.key] = value;
+            }
+            this.key = null;
+          }
+        }
+      }
+    };
+    Assembler.prototype.stringValue = Assembler.prototype._saveValue;
+    Assembler.prototype.startObject = startObject(Object);
+    Assembler.prototype.startArray = startObject(Array);
+    Assembler.prototype.endArray = Assembler.prototype.endObject;
+    module2.exports = Assembler;
+  }
+});
+
+// ../../../node_modules/.pnpm/stream-json@1.8.0/node_modules/stream-json/streamers/StreamBase.js
+var require_StreamBase = __commonJS({
+  "../../../node_modules/.pnpm/stream-json@1.8.0/node_modules/stream-json/streamers/StreamBase.js"(exports2, module2) {
+    "use strict";
+    var { Transform } = require("stream");
+    var Assembler = require_Assembler();
+    var Counter = class {
+      constructor(initialDepth) {
+        this.depth = initialDepth;
+      }
+      startObject() {
+        ++this.depth;
+      }
+      endObject() {
+        --this.depth;
+      }
+      startArray() {
+        ++this.depth;
+      }
+      endArray() {
+        --this.depth;
+      }
+    };
+    var StreamBase = class extends Transform {
+      constructor(options) {
+        super(Object.assign({}, options, { writableObjectMode: true, readableObjectMode: true }));
+        if (options) {
+          this.objectFilter = options.objectFilter;
+          this.includeUndecided = options.includeUndecided;
+        }
+        if (typeof this.objectFilter != "function") {
+          this._filter = this._transform;
+        }
+        this._transform = this._wait || this._filter;
+        this._assembler = new Assembler(options);
+      }
+      _transform(chunk, encoding, callback) {
+        if (this._assembler[chunk.name]) {
+          this._assembler[chunk.name](chunk.value);
+          if (this._assembler.depth === this._level) {
+            this._push();
+          }
+        }
+        callback(null);
+      }
+      _filter(chunk, encoding, callback) {
+        if (this._assembler[chunk.name]) {
+          this._assembler[chunk.name](chunk.value);
+          const result = this.objectFilter(this._assembler);
+          if (result) {
+            if (this._assembler.depth === this._level) {
+              this._push();
+              this._transform = this._filter;
+            }
+            this._transform = this._accept;
+            return callback(null);
+          }
+          if (result === false) {
+            this._saved_assembler = this._assembler;
+            this._assembler = new Counter(this._saved_assembler.depth);
+            this._saved_assembler.dropToLevel(this._level);
+            if (this._assembler.depth === this._level) {
+              this._assembler = this._saved_assembler;
+              this._transform = this._filter;
+            }
+            this._transform = this._reject;
+            return callback(null);
+          }
+          if (this._assembler.depth === this._level) {
+            this._push(!this.includeUndecided);
+          }
+        }
+        callback(null);
+      }
+      _accept(chunk, encoding, callback) {
+        if (this._assembler[chunk.name]) {
+          this._assembler[chunk.name](chunk.value);
+          if (this._assembler.depth === this._level) {
+            this._push();
+            this._transform = this._filter;
+          }
+        }
+        callback(null);
+      }
+      _reject(chunk, encoding, callback) {
+        if (this._assembler[chunk.name]) {
+          this._assembler[chunk.name](chunk.value);
+          if (this._assembler.depth === this._level) {
+            this._assembler = this._saved_assembler;
+            this._transform = this._filter;
+          }
+        }
+        callback(null);
+      }
+    };
+    module2.exports = StreamBase;
+  }
+});
+
+// ../../../node_modules/.pnpm/stream-chain@2.2.5/node_modules/stream-chain/index.js
+var require_stream_chain = __commonJS({
+  "../../../node_modules/.pnpm/stream-chain@2.2.5/node_modules/stream-chain/index.js"(exports2, module2) {
+    "use strict";
+    var { Readable: Readable2, Writable, Duplex, Transform } = require("stream");
+    var none = Symbol.for("object-stream.none");
+    var finalSymbol = Symbol.for("object-stream.final");
+    var manySymbol = Symbol.for("object-stream.many");
+    var final = (value) => ({ [finalSymbol]: value });
+    var many = (values) => ({ [manySymbol]: values });
+    var isFinal = (o) => o && typeof o == "object" && finalSymbol in o;
+    var isMany = (o) => o && typeof o == "object" && manySymbol in o;
+    var getFinalValue = (o) => o[finalSymbol];
+    var getManyValues = (o) => o[manySymbol];
+    var runAsyncGenerator = async (gen, stream) => {
+      for (; ; ) {
+        let data = gen.next();
+        if (data && typeof data.then == "function") {
+          data = await data;
+        }
+        if (data.done)
+          break;
+        let value = data.value;
+        if (value && typeof value.then == "function") {
+          value = await value;
+        }
+        Chain.sanitize(value, stream);
+      }
+    };
+    var wrapFunction = (fn) => new Transform({
+      writableObjectMode: true,
+      readableObjectMode: true,
+      transform(chunk, encoding, callback) {
+        try {
+          const result = fn.call(this, chunk, encoding);
+          if (result && typeof result.then == "function") {
+            result.then(
+              (result2) => (Chain.sanitize(result2, this), callback(null)),
+              (error) => callback(error)
+            );
+            return;
+          }
+          if (result && typeof result.next == "function") {
+            runAsyncGenerator(result, this).then(
+              () => callback(null),
+              (error) => callback(error)
+            );
+            return;
+          }
+          Chain.sanitize(result, this);
+          callback(null);
+        } catch (error) {
+          callback(error);
+        }
+      }
+    });
+    var wrapArray = (fns) => new Transform({
+      writableObjectMode: true,
+      readableObjectMode: true,
+      transform(chunk, encoding, callback) {
+        try {
+          let value = chunk;
+          for (let i = 0; i < fns.length; ++i) {
+            const result = fns[i].call(this, value, encoding);
+            if (result === Chain.none) {
+              callback(null);
+              return;
+            }
+            if (Chain.isFinal(result)) {
+              value = Chain.getFinalValue(result);
+              break;
+            }
+            value = result;
+          }
+          Chain.sanitize(value, this);
+          callback(null);
+        } catch (error) {
+          callback(error);
+        }
+      }
+    });
+    var isReadableNodeStream = (obj2) => obj2 && typeof obj2.pipe === "function" && typeof obj2.on === "function" && (!obj2._writableState || (typeof obj2._readableState === "object" ? obj2._readableState.readable : null) !== false) && // Duplex
+    (!obj2._writableState || obj2._readableState);
+    var isWritableNodeStream = (obj2) => obj2 && typeof obj2.write === "function" && typeof obj2.on === "function" && (!obj2._readableState || (typeof obj2._writableState === "object" ? obj2._writableState.writable : null) !== false);
+    var isDuplexNodeStream = (obj2) => obj2 && typeof obj2.pipe === "function" && obj2._readableState && typeof obj2.on === "function" && typeof obj2.write === "function";
+    var Chain = class _Chain extends Duplex {
+      constructor(fns, options) {
+        super(options || { writableObjectMode: true, readableObjectMode: true });
+        if (!(fns instanceof Array) || !fns.length) {
+          throw Error("Chain's argument should be a non-empty array.");
+        }
+        this.streams = fns.filter((fn) => fn).map((fn, index, fns2) => {
+          if (typeof fn === "function" || fn instanceof Array)
+            return _Chain.convertToTransform(fn);
+          if (isDuplexNodeStream(fn) || !index && isReadableNodeStream(fn) || index === fns2.length - 1 && isWritableNodeStream(fn)) {
+            return fn;
+          }
+          throw Error("Arguments should be functions, arrays or streams.");
+        }).filter((s) => s);
+        this.input = this.streams[0];
+        this.output = this.streams.reduce((output, stream) => output && output.pipe(stream) || stream);
+        if (!isWritableNodeStream(this.input)) {
+          this._write = (_1, _2, callback) => callback(null);
+          this._final = (callback) => callback(null);
+          this.input.on("end", () => this.end());
+        }
+        if (isReadableNodeStream(this.output)) {
+          this.output.on("data", (chunk) => !this.push(chunk) && this.output.pause());
+          this.output.on("end", () => this.push(null));
+        } else {
+          this._read = () => {
+          };
+          this.resume();
+          this.output.on("finish", () => this.push(null));
+        }
+        if (!options || !options.skipEvents) {
+          this.streams.forEach((stream) => stream.on("error", (error) => this.emit("error", error)));
+        }
+      }
+      _write(chunk, encoding, callback) {
+        let error = null;
+        try {
+          this.input.write(chunk, encoding, (e) => callback(e || error));
+        } catch (e) {
+          error = e;
+        }
+      }
+      _final(callback) {
+        let error = null;
+        try {
+          this.input.end(null, null, (e) => callback(e || error));
+        } catch (e) {
+          error = e;
+        }
+      }
+      _read() {
+        this.output.resume();
+      }
+      static make(fns, options) {
+        return new _Chain(fns, options);
+      }
+      static sanitize(result, stream) {
+        if (_Chain.isFinal(result)) {
+          result = _Chain.getFinalValue(result);
+        } else if (_Chain.isMany(result)) {
+          result = _Chain.getManyValues(result);
+        }
+        if (result !== void 0 && result !== null && result !== _Chain.none) {
+          if (result instanceof Array) {
+            result.forEach((value) => value !== void 0 && value !== null && stream.push(value));
+          } else {
+            stream.push(result);
+          }
+        }
+      }
+      static convertToTransform(fn) {
+        if (typeof fn === "function")
+          return wrapFunction(fn);
+        if (fn instanceof Array)
+          return fn.length ? wrapArray(fn) : null;
+        return null;
+      }
+    };
+    Chain.none = none;
+    Chain.final = final;
+    Chain.isFinal = isFinal;
+    Chain.getFinalValue = getFinalValue;
+    Chain.many = many;
+    Chain.isMany = isMany;
+    Chain.getManyValues = getManyValues;
+    Chain.chain = Chain.make;
+    Chain.make.Constructor = Chain;
+    module2.exports = Chain;
+  }
+});
+
+// ../../../node_modules/.pnpm/stream-json@1.8.0/node_modules/stream-json/utils/withParser.js
+var require_withParser = __commonJS({
+  "../../../node_modules/.pnpm/stream-json@1.8.0/node_modules/stream-json/utils/withParser.js"(exports2, module2) {
+    "use strict";
+    var Chain = require_stream_chain();
+    var Parser = require_Parser();
+    var withParser = (fn, options) => new Chain([new Parser(options), fn(options)], Object.assign({}, options, { writableObjectMode: false, readableObjectMode: true }));
+    module2.exports = withParser;
+  }
+});
+
+// ../../../node_modules/.pnpm/stream-json@1.8.0/node_modules/stream-json/streamers/StreamValues.js
+var require_StreamValues = __commonJS({
+  "../../../node_modules/.pnpm/stream-json@1.8.0/node_modules/stream-json/streamers/StreamValues.js"(exports2, module2) {
+    "use strict";
+    var StreamBase = require_StreamBase();
+    var withParser = require_withParser();
+    var StreamValues = class _StreamValues extends StreamBase {
+      static make(options) {
+        return new _StreamValues(options);
+      }
+      static withParser(options) {
+        return withParser(_StreamValues.make, Object.assign({}, options, { jsonStreaming: true }));
+      }
+      constructor(options) {
+        super(options);
+        this._counter = 0;
+        this._level = 0;
+      }
+      _push(discard) {
+        if (discard) {
+          ++this._counter;
+        } else {
+          this.push({ key: this._counter++, value: this._assembler.current });
+        }
+        this._assembler.current = this._assembler.key = null;
+      }
+    };
+    StreamValues.streamValues = StreamValues.make;
+    StreamValues.make.Constructor = StreamValues;
+    module2.exports = StreamValues;
+  }
+});
+
 // ../../../node_modules/.pnpm/listenercount@1.0.1/node_modules/listenercount/index.js
 var require_listenercount = __commonJS({
   "../../../node_modules/.pnpm/listenercount@1.0.1/node_modules/listenercount/index.js"(exports2, module2) {
@@ -25261,17 +26336,17 @@ var require_thenables = __commonJS({
       var util = require_util8();
       var errorObj2 = util.errorObj;
       var isObject3 = util.isObject;
-      function tryConvertToPromise(obj2, context2) {
+      function tryConvertToPromise(obj2, context3) {
         if (isObject3(obj2)) {
           if (obj2 instanceof Promise2)
             return obj2;
           var then = getThen(obj2);
           if (then === errorObj2) {
-            if (context2)
-              context2._pushContext();
+            if (context3)
+              context3._pushContext();
             var ret2 = Promise2.reject(then.e);
-            if (context2)
-              context2._popContext();
+            if (context3)
+              context3._popContext();
             return ret2;
           } else if (typeof then === "function") {
             if (isAnyBluebirdPromise(obj2)) {
@@ -25285,7 +26360,7 @@ var require_thenables = __commonJS({
               );
               return ret2;
             }
-            return doThenable(obj2, then, context2);
+            return doThenable(obj2, then, context3);
           }
         }
         return obj2;
@@ -25309,14 +26384,14 @@ var require_thenables = __commonJS({
           return false;
         }
       }
-      function doThenable(x, then, context2) {
+      function doThenable(x, then, context3) {
         var promise = new Promise2(INTERNAL);
         var ret2 = promise;
-        if (context2)
-          context2._pushContext();
+        if (context3)
+          context3._pushContext();
         promise._captureStackTrace();
-        if (context2)
-          context2._popContext();
+        if (context3)
+          context3._popContext();
         var synchronous = true;
         var result = util.tryCatch(then).call(x, resolve, reject);
         synchronous = false;
@@ -25791,8 +26866,8 @@ var require_debuggability = __commonJS({
         promiseChained: function(name, promise, child) {
           return { promise, child };
         },
-        warning: function(name, warning2) {
-          return { warning: warning2 };
+        warning: function(name, warning3) {
+          return { warning: warning3 };
         },
         unhandledRejection: function(name, reason, promise) {
           return { reason, promise };
@@ -26033,18 +27108,18 @@ var require_debuggability = __commonJS({
       function warn(message, shouldUseOwnTrace, promise) {
         if (!config.warnings)
           return;
-        var warning2 = new Warning(message);
+        var warning3 = new Warning(message);
         var ctx;
         if (shouldUseOwnTrace) {
-          promise._attachExtraTrace(warning2);
+          promise._attachExtraTrace(warning3);
         } else if (config.longStackTraces && (ctx = Promise2._peekContext())) {
-          ctx.attachExtraTrace(warning2);
+          ctx.attachExtraTrace(warning3);
         } else {
-          var parsed = parseStackAndMessage(warning2);
-          warning2.stack = parsed.message + "\n" + parsed.stack.join("\n");
+          var parsed = parseStackAndMessage(warning3);
+          warning3.stack = parsed.message + "\n" + parsed.stack.join("\n");
         }
-        if (!activeFireEvent("warning", warning2)) {
-          formatAndLogError(warning2, "", true);
+        if (!activeFireEvent("warning", warning3)) {
+          formatAndLogError(warning3, "", true);
         }
       }
       function reconstructStack(message, stacks) {
@@ -26239,9 +27314,9 @@ var require_debuggability = __commonJS({
         shouldIgnore = function(line) {
           if (bluebirdFramePattern.test(line))
             return true;
-          var info3 = parseLineInfo(line);
-          if (info3) {
-            if (info3.fileName === firstFileName && (firstIndex <= info3.line && info3.line <= lastIndex)) {
+          var info4 = parseLineInfo(line);
+          if (info4) {
+            if (info4.fileName === firstFileName && (firstIndex <= info4.line && info4.line <= lastIndex)) {
               return true;
             }
           }
@@ -26728,17 +27803,17 @@ var require_bind = __commonJS({
       var rejectThis = function(_, e) {
         this._reject(e);
       };
-      var targetRejected = function(e, context2) {
-        context2.promiseRejectionQueued = true;
-        context2.bindingPromise._then(rejectThis, rejectThis, null, this, e);
+      var targetRejected = function(e, context3) {
+        context3.promiseRejectionQueued = true;
+        context3.bindingPromise._then(rejectThis, rejectThis, null, this, e);
       };
-      var bindingResolved = function(thisArg, context2) {
+      var bindingResolved = function(thisArg, context3) {
         if ((this._bitField & 50397184) === 0) {
-          this._resolveCallback(context2.target);
+          this._resolveCallback(context3.target);
         }
       };
-      var bindingRejected = function(e, context2) {
-        if (!context2.promiseRejectionQueued)
+      var bindingRejected = function(e, context3) {
+        if (!context3.promiseRejectionQueued)
           this._reject(e);
       };
       Promise2.prototype.bind = function(thisArg) {
@@ -26753,19 +27828,19 @@ var require_bind = __commonJS({
         var target = this._target();
         ret2._setBoundTo(maybePromise);
         if (maybePromise instanceof Promise2) {
-          var context2 = {
+          var context3 = {
             promiseRejectionQueued: false,
             promise: ret2,
             target,
             bindingPromise: maybePromise
           };
-          target._then(INTERNAL, targetRejected, void 0, ret2, context2);
+          target._then(INTERNAL, targetRejected, void 0, ret2, context3);
           maybePromise._then(
             bindingResolved,
             bindingRejected,
             void 0,
             ret2,
-            context2
+            context3
           );
           ret2._setOnCancel(maybePromise);
         } else {
@@ -27517,10 +28592,10 @@ var require_using = __commonJS({
         iterator2();
         return ret2;
       }
-      function Disposer(data, promise, context2) {
+      function Disposer(data, promise, context3) {
         this._data = data;
         this._promise = promise;
-        this._context = context2;
+        this._context = context3;
       }
       Disposer.prototype.data = function() {
         return this._data;
@@ -27536,12 +28611,12 @@ var require_using = __commonJS({
       };
       Disposer.prototype.tryDispose = function(inspection) {
         var resource = this.resource();
-        var context2 = this._context;
-        if (context2 !== void 0)
-          context2._pushContext();
+        var context3 = this._context;
+        if (context3 !== void 0)
+          context3._pushContext();
         var ret2 = resource !== NULL ? this.doDispose(resource, inspection) : null;
-        if (context2 !== void 0)
-          context2._popContext();
+        if (context3 !== void 0)
+          context3._popContext();
         this._promise._unsetDisposable();
         this._data = null;
         return ret2;
@@ -27549,8 +28624,8 @@ var require_using = __commonJS({
       Disposer.isDisposer = function(d) {
         return d != null && typeof d.resource === "function" && typeof d.tryDispose === "function";
       };
-      function FunctionDisposer(fn, promise, context2) {
-        this.constructor$(fn, promise, context2);
+      function FunctionDisposer(fn, promise, context3) {
+        this.constructor$(fn, promise, context3);
       }
       inherits2(FunctionDisposer, Disposer);
       FunctionDisposer.prototype.doDispose = function(resource, inspection) {
@@ -32381,56 +33456,56 @@ var require_polyfills = __commonJS({
     }
     var chdir;
     module2.exports = patch;
-    function patch(fs2) {
+    function patch(fs3) {
       if (constants.hasOwnProperty("O_SYMLINK") && process.version.match(/^v0\.6\.[0-2]|^v0\.5\./)) {
-        patchLchmod(fs2);
+        patchLchmod(fs3);
       }
-      if (!fs2.lutimes) {
-        patchLutimes(fs2);
+      if (!fs3.lutimes) {
+        patchLutimes(fs3);
       }
-      fs2.chown = chownFix(fs2.chown);
-      fs2.fchown = chownFix(fs2.fchown);
-      fs2.lchown = chownFix(fs2.lchown);
-      fs2.chmod = chmodFix(fs2.chmod);
-      fs2.fchmod = chmodFix(fs2.fchmod);
-      fs2.lchmod = chmodFix(fs2.lchmod);
-      fs2.chownSync = chownFixSync(fs2.chownSync);
-      fs2.fchownSync = chownFixSync(fs2.fchownSync);
-      fs2.lchownSync = chownFixSync(fs2.lchownSync);
-      fs2.chmodSync = chmodFixSync(fs2.chmodSync);
-      fs2.fchmodSync = chmodFixSync(fs2.fchmodSync);
-      fs2.lchmodSync = chmodFixSync(fs2.lchmodSync);
-      fs2.stat = statFix(fs2.stat);
-      fs2.fstat = statFix(fs2.fstat);
-      fs2.lstat = statFix(fs2.lstat);
-      fs2.statSync = statFixSync(fs2.statSync);
-      fs2.fstatSync = statFixSync(fs2.fstatSync);
-      fs2.lstatSync = statFixSync(fs2.lstatSync);
-      if (fs2.chmod && !fs2.lchmod) {
-        fs2.lchmod = function(path2, mode, cb) {
+      fs3.chown = chownFix(fs3.chown);
+      fs3.fchown = chownFix(fs3.fchown);
+      fs3.lchown = chownFix(fs3.lchown);
+      fs3.chmod = chmodFix(fs3.chmod);
+      fs3.fchmod = chmodFix(fs3.fchmod);
+      fs3.lchmod = chmodFix(fs3.lchmod);
+      fs3.chownSync = chownFixSync(fs3.chownSync);
+      fs3.fchownSync = chownFixSync(fs3.fchownSync);
+      fs3.lchownSync = chownFixSync(fs3.lchownSync);
+      fs3.chmodSync = chmodFixSync(fs3.chmodSync);
+      fs3.fchmodSync = chmodFixSync(fs3.fchmodSync);
+      fs3.lchmodSync = chmodFixSync(fs3.lchmodSync);
+      fs3.stat = statFix(fs3.stat);
+      fs3.fstat = statFix(fs3.fstat);
+      fs3.lstat = statFix(fs3.lstat);
+      fs3.statSync = statFixSync(fs3.statSync);
+      fs3.fstatSync = statFixSync(fs3.fstatSync);
+      fs3.lstatSync = statFixSync(fs3.lstatSync);
+      if (fs3.chmod && !fs3.lchmod) {
+        fs3.lchmod = function(path2, mode, cb) {
           if (cb)
             process.nextTick(cb);
         };
-        fs2.lchmodSync = function() {
+        fs3.lchmodSync = function() {
         };
       }
-      if (fs2.chown && !fs2.lchown) {
-        fs2.lchown = function(path2, uid, gid, cb) {
+      if (fs3.chown && !fs3.lchown) {
+        fs3.lchown = function(path2, uid, gid, cb) {
           if (cb)
             process.nextTick(cb);
         };
-        fs2.lchownSync = function() {
+        fs3.lchownSync = function() {
         };
       }
       if (platform === "win32") {
-        fs2.rename = typeof fs2.rename !== "function" ? fs2.rename : function(fs$rename) {
+        fs3.rename = typeof fs3.rename !== "function" ? fs3.rename : function(fs$rename) {
           function rename(from, to, cb) {
             var start = Date.now();
             var backoff = 0;
             fs$rename(from, to, function CB(er) {
               if (er && (er.code === "EACCES" || er.code === "EPERM" || er.code === "EBUSY") && Date.now() - start < 6e4) {
                 setTimeout(function() {
-                  fs2.stat(to, function(stater, st) {
+                  fs3.stat(to, function(stater, st) {
                     if (stater && stater.code === "ENOENT")
                       fs$rename(from, to, CB);
                     else
@@ -32448,9 +33523,9 @@ var require_polyfills = __commonJS({
           if (Object.setPrototypeOf)
             Object.setPrototypeOf(rename, fs$rename);
           return rename;
-        }(fs2.rename);
+        }(fs3.rename);
       }
-      fs2.read = typeof fs2.read !== "function" ? fs2.read : function(fs$read) {
+      fs3.read = typeof fs3.read !== "function" ? fs3.read : function(fs$read) {
         function read(fd, buffer, offset, length, position, callback_) {
           var callback;
           if (callback_ && typeof callback_ === "function") {
@@ -32458,23 +33533,23 @@ var require_polyfills = __commonJS({
             callback = function(er, _, __) {
               if (er && er.code === "EAGAIN" && eagCounter < 10) {
                 eagCounter++;
-                return fs$read.call(fs2, fd, buffer, offset, length, position, callback);
+                return fs$read.call(fs3, fd, buffer, offset, length, position, callback);
               }
               callback_.apply(this, arguments);
             };
           }
-          return fs$read.call(fs2, fd, buffer, offset, length, position, callback);
+          return fs$read.call(fs3, fd, buffer, offset, length, position, callback);
         }
         if (Object.setPrototypeOf)
           Object.setPrototypeOf(read, fs$read);
         return read;
-      }(fs2.read);
-      fs2.readSync = typeof fs2.readSync !== "function" ? fs2.readSync : function(fs$readSync) {
+      }(fs3.read);
+      fs3.readSync = typeof fs3.readSync !== "function" ? fs3.readSync : function(fs$readSync) {
         return function(fd, buffer, offset, length, position) {
           var eagCounter = 0;
           while (true) {
             try {
-              return fs$readSync.call(fs2, fd, buffer, offset, length, position);
+              return fs$readSync.call(fs3, fd, buffer, offset, length, position);
             } catch (er) {
               if (er.code === "EAGAIN" && eagCounter < 10) {
                 eagCounter++;
@@ -32484,10 +33559,10 @@ var require_polyfills = __commonJS({
             }
           }
         };
-      }(fs2.readSync);
-      function patchLchmod(fs3) {
-        fs3.lchmod = function(path2, mode, callback) {
-          fs3.open(
+      }(fs3.readSync);
+      function patchLchmod(fs4) {
+        fs4.lchmod = function(path2, mode, callback) {
+          fs4.open(
             path2,
             constants.O_WRONLY | constants.O_SYMLINK,
             mode,
@@ -32497,8 +33572,8 @@ var require_polyfills = __commonJS({
                   callback(err);
                 return;
               }
-              fs3.fchmod(fd, mode, function(err2) {
-                fs3.close(fd, function(err22) {
+              fs4.fchmod(fd, mode, function(err2) {
+                fs4.close(fd, function(err22) {
                   if (callback)
                     callback(err2 || err22);
                 });
@@ -32506,68 +33581,68 @@ var require_polyfills = __commonJS({
             }
           );
         };
-        fs3.lchmodSync = function(path2, mode) {
-          var fd = fs3.openSync(path2, constants.O_WRONLY | constants.O_SYMLINK, mode);
+        fs4.lchmodSync = function(path2, mode) {
+          var fd = fs4.openSync(path2, constants.O_WRONLY | constants.O_SYMLINK, mode);
           var threw = true;
           var ret2;
           try {
-            ret2 = fs3.fchmodSync(fd, mode);
+            ret2 = fs4.fchmodSync(fd, mode);
             threw = false;
           } finally {
             if (threw) {
               try {
-                fs3.closeSync(fd);
+                fs4.closeSync(fd);
               } catch (er) {
               }
             } else {
-              fs3.closeSync(fd);
+              fs4.closeSync(fd);
             }
           }
           return ret2;
         };
       }
-      function patchLutimes(fs3) {
-        if (constants.hasOwnProperty("O_SYMLINK") && fs3.futimes) {
-          fs3.lutimes = function(path2, at, mt, cb) {
-            fs3.open(path2, constants.O_SYMLINK, function(er, fd) {
+      function patchLutimes(fs4) {
+        if (constants.hasOwnProperty("O_SYMLINK") && fs4.futimes) {
+          fs4.lutimes = function(path2, at, mt, cb) {
+            fs4.open(path2, constants.O_SYMLINK, function(er, fd) {
               if (er) {
                 if (cb)
                   cb(er);
                 return;
               }
-              fs3.futimes(fd, at, mt, function(er2) {
-                fs3.close(fd, function(er22) {
+              fs4.futimes(fd, at, mt, function(er2) {
+                fs4.close(fd, function(er22) {
                   if (cb)
                     cb(er2 || er22);
                 });
               });
             });
           };
-          fs3.lutimesSync = function(path2, at, mt) {
-            var fd = fs3.openSync(path2, constants.O_SYMLINK);
+          fs4.lutimesSync = function(path2, at, mt) {
+            var fd = fs4.openSync(path2, constants.O_SYMLINK);
             var ret2;
             var threw = true;
             try {
-              ret2 = fs3.futimesSync(fd, at, mt);
+              ret2 = fs4.futimesSync(fd, at, mt);
               threw = false;
             } finally {
               if (threw) {
                 try {
-                  fs3.closeSync(fd);
+                  fs4.closeSync(fd);
                 } catch (er) {
                 }
               } else {
-                fs3.closeSync(fd);
+                fs4.closeSync(fd);
               }
             }
             return ret2;
           };
-        } else if (fs3.futimes) {
-          fs3.lutimes = function(_a2, _b, _c, cb) {
+        } else if (fs4.futimes) {
+          fs4.lutimes = function(_a2, _b, _c, cb) {
             if (cb)
               process.nextTick(cb);
           };
-          fs3.lutimesSync = function() {
+          fs4.lutimesSync = function() {
           };
         }
       }
@@ -32575,7 +33650,7 @@ var require_polyfills = __commonJS({
         if (!orig)
           return orig;
         return function(target, mode, cb) {
-          return orig.call(fs2, target, mode, function(er) {
+          return orig.call(fs3, target, mode, function(er) {
             if (chownErOk(er))
               er = null;
             if (cb)
@@ -32588,7 +33663,7 @@ var require_polyfills = __commonJS({
           return orig;
         return function(target, mode) {
           try {
-            return orig.call(fs2, target, mode);
+            return orig.call(fs3, target, mode);
           } catch (er) {
             if (!chownErOk(er))
               throw er;
@@ -32599,7 +33674,7 @@ var require_polyfills = __commonJS({
         if (!orig)
           return orig;
         return function(target, uid, gid, cb) {
-          return orig.call(fs2, target, uid, gid, function(er) {
+          return orig.call(fs3, target, uid, gid, function(er) {
             if (chownErOk(er))
               er = null;
             if (cb)
@@ -32612,7 +33687,7 @@ var require_polyfills = __commonJS({
           return orig;
         return function(target, uid, gid) {
           try {
-            return orig.call(fs2, target, uid, gid);
+            return orig.call(fs3, target, uid, gid);
           } catch (er) {
             if (!chownErOk(er))
               throw er;
@@ -32637,14 +33712,14 @@ var require_polyfills = __commonJS({
             if (cb)
               cb.apply(this, arguments);
           }
-          return options ? orig.call(fs2, target, options, callback) : orig.call(fs2, target, callback);
+          return options ? orig.call(fs3, target, options, callback) : orig.call(fs3, target, callback);
         };
       }
       function statFixSync(orig) {
         if (!orig)
           return orig;
         return function(target, options) {
-          var stats = options ? orig.call(fs2, target, options) : orig.call(fs2, target);
+          var stats = options ? orig.call(fs3, target, options) : orig.call(fs3, target);
           if (stats) {
             if (stats.uid < 0)
               stats.uid += 4294967296;
@@ -32676,7 +33751,7 @@ var require_legacy_streams = __commonJS({
     "use strict";
     var Stream = require("stream").Stream;
     module2.exports = legacy;
-    function legacy(fs2) {
+    function legacy(fs3) {
       return {
         ReadStream,
         WriteStream
@@ -32721,7 +33796,7 @@ var require_legacy_streams = __commonJS({
           });
           return;
         }
-        fs2.open(this.path, this.flags, this.mode, function(err, fd) {
+        fs3.open(this.path, this.flags, this.mode, function(err, fd) {
           if (err) {
             self2.emit("error", err);
             self2.readable = false;
@@ -32761,7 +33836,7 @@ var require_legacy_streams = __commonJS({
         this.busy = false;
         this._queue = [];
         if (this.fd === null) {
-          this._open = fs2.open;
+          this._open = fs3.open;
           this._queue.push([this._open, this.path, this.flags, this.mode, void 0]);
           this.flush();
         }
@@ -32797,7 +33872,7 @@ var require_clone = __commonJS({
 var require_graceful_fs = __commonJS({
   "../../../node_modules/.pnpm/graceful-fs@4.2.11/node_modules/graceful-fs/graceful-fs.js"(exports2, module2) {
     "use strict";
-    var fs2 = require("fs");
+    var fs3 = require("fs");
     var polyfills = require_polyfills();
     var legacy = require_legacy_streams();
     var clone = require_clone();
@@ -32813,8 +33888,8 @@ var require_graceful_fs = __commonJS({
     }
     function noop() {
     }
-    function publishQueue(context2, queue2) {
-      Object.defineProperty(context2, gracefulQueue, {
+    function publishQueue(context3, queue2) {
+      Object.defineProperty(context3, gracefulQueue, {
         get: function() {
           return queue2;
         }
@@ -32829,12 +33904,12 @@ var require_graceful_fs = __commonJS({
         m = "GFS4: " + m.split(/\n/).join("\nGFS4: ");
         console.error(m);
       };
-    if (!fs2[gracefulQueue]) {
+    if (!fs3[gracefulQueue]) {
       queue = global[gracefulQueue] || [];
-      publishQueue(fs2, queue);
-      fs2.close = function(fs$close) {
+      publishQueue(fs3, queue);
+      fs3.close = function(fs$close) {
         function close(fd, cb) {
-          return fs$close.call(fs2, fd, function(err) {
+          return fs$close.call(fs3, fd, function(err) {
             if (!err) {
               resetQueue();
             }
@@ -32846,40 +33921,40 @@ var require_graceful_fs = __commonJS({
           value: fs$close
         });
         return close;
-      }(fs2.close);
-      fs2.closeSync = function(fs$closeSync) {
+      }(fs3.close);
+      fs3.closeSync = function(fs$closeSync) {
         function closeSync(fd) {
-          fs$closeSync.apply(fs2, arguments);
+          fs$closeSync.apply(fs3, arguments);
           resetQueue();
         }
         Object.defineProperty(closeSync, previousSymbol, {
           value: fs$closeSync
         });
         return closeSync;
-      }(fs2.closeSync);
+      }(fs3.closeSync);
       if (/\bgfs4\b/i.test(process.env.NODE_DEBUG || "")) {
         process.on("exit", function() {
-          debug(fs2[gracefulQueue]);
-          require("assert").equal(fs2[gracefulQueue].length, 0);
+          debug(fs3[gracefulQueue]);
+          require("assert").equal(fs3[gracefulQueue].length, 0);
         });
       }
     }
     var queue;
     if (!global[gracefulQueue]) {
-      publishQueue(global, fs2[gracefulQueue]);
+      publishQueue(global, fs3[gracefulQueue]);
     }
-    module2.exports = patch(clone(fs2));
-    if (process.env.TEST_GRACEFUL_FS_GLOBAL_PATCH && !fs2.__patched) {
-      module2.exports = patch(fs2);
-      fs2.__patched = true;
+    module2.exports = patch(clone(fs3));
+    if (process.env.TEST_GRACEFUL_FS_GLOBAL_PATCH && !fs3.__patched) {
+      module2.exports = patch(fs3);
+      fs3.__patched = true;
     }
-    function patch(fs3) {
-      polyfills(fs3);
-      fs3.gracefulify = patch;
-      fs3.createReadStream = createReadStream;
-      fs3.createWriteStream = createWriteStream;
-      var fs$readFile = fs3.readFile;
-      fs3.readFile = readFile;
+    function patch(fs4) {
+      polyfills(fs4);
+      fs4.gracefulify = patch;
+      fs4.createReadStream = createReadStream;
+      fs4.createWriteStream = createWriteStream;
+      var fs$readFile = fs4.readFile;
+      fs4.readFile = readFile;
       function readFile(path2, options, cb) {
         if (typeof options === "function")
           cb = options, options = null;
@@ -32895,8 +33970,8 @@ var require_graceful_fs = __commonJS({
           });
         }
       }
-      var fs$writeFile = fs3.writeFile;
-      fs3.writeFile = writeFile;
+      var fs$writeFile = fs4.writeFile;
+      fs4.writeFile = writeFile;
       function writeFile(path2, data, options, cb) {
         if (typeof options === "function")
           cb = options, options = null;
@@ -32912,9 +33987,9 @@ var require_graceful_fs = __commonJS({
           });
         }
       }
-      var fs$appendFile = fs3.appendFile;
+      var fs$appendFile = fs4.appendFile;
       if (fs$appendFile)
-        fs3.appendFile = appendFile;
+        fs4.appendFile = appendFile;
       function appendFile(path2, data, options, cb) {
         if (typeof options === "function")
           cb = options, options = null;
@@ -32930,9 +34005,9 @@ var require_graceful_fs = __commonJS({
           });
         }
       }
-      var fs$copyFile = fs3.copyFile;
+      var fs$copyFile = fs4.copyFile;
       if (fs$copyFile)
-        fs3.copyFile = copyFile;
+        fs4.copyFile = copyFile;
       function copyFile(src, dest, flags, cb) {
         if (typeof flags === "function") {
           cb = flags;
@@ -32950,8 +34025,8 @@ var require_graceful_fs = __commonJS({
           });
         }
       }
-      var fs$readdir = fs3.readdir;
-      fs3.readdir = readdir;
+      var fs$readdir = fs4.readdir;
+      fs4.readdir = readdir;
       var noReaddirOptionVersions = /^v[0-5]\./;
       function readdir(path2, options, cb) {
         if (typeof options === "function")
@@ -32992,21 +34067,21 @@ var require_graceful_fs = __commonJS({
         }
       }
       if (process.version.substr(0, 4) === "v0.8") {
-        var legStreams = legacy(fs3);
+        var legStreams = legacy(fs4);
         ReadStream = legStreams.ReadStream;
         WriteStream = legStreams.WriteStream;
       }
-      var fs$ReadStream = fs3.ReadStream;
+      var fs$ReadStream = fs4.ReadStream;
       if (fs$ReadStream) {
         ReadStream.prototype = Object.create(fs$ReadStream.prototype);
         ReadStream.prototype.open = ReadStream$open;
       }
-      var fs$WriteStream = fs3.WriteStream;
+      var fs$WriteStream = fs4.WriteStream;
       if (fs$WriteStream) {
         WriteStream.prototype = Object.create(fs$WriteStream.prototype);
         WriteStream.prototype.open = WriteStream$open;
       }
-      Object.defineProperty(fs3, "ReadStream", {
+      Object.defineProperty(fs4, "ReadStream", {
         get: function() {
           return ReadStream;
         },
@@ -33016,7 +34091,7 @@ var require_graceful_fs = __commonJS({
         enumerable: true,
         configurable: true
       });
-      Object.defineProperty(fs3, "WriteStream", {
+      Object.defineProperty(fs4, "WriteStream", {
         get: function() {
           return WriteStream;
         },
@@ -33027,7 +34102,7 @@ var require_graceful_fs = __commonJS({
         configurable: true
       });
       var FileReadStream = ReadStream;
-      Object.defineProperty(fs3, "FileReadStream", {
+      Object.defineProperty(fs4, "FileReadStream", {
         get: function() {
           return FileReadStream;
         },
@@ -33038,7 +34113,7 @@ var require_graceful_fs = __commonJS({
         configurable: true
       });
       var FileWriteStream = WriteStream;
-      Object.defineProperty(fs3, "FileWriteStream", {
+      Object.defineProperty(fs4, "FileWriteStream", {
         get: function() {
           return FileWriteStream;
         },
@@ -33087,13 +34162,13 @@ var require_graceful_fs = __commonJS({
         });
       }
       function createReadStream(path2, options) {
-        return new fs3.ReadStream(path2, options);
+        return new fs4.ReadStream(path2, options);
       }
       function createWriteStream(path2, options) {
-        return new fs3.WriteStream(path2, options);
+        return new fs4.WriteStream(path2, options);
       }
-      var fs$open = fs3.open;
-      fs3.open = open;
+      var fs$open = fs4.open;
+      fs4.open = open;
       function open(path2, flags, mode, cb) {
         if (typeof mode === "function")
           cb = mode, mode = null;
@@ -33109,20 +34184,20 @@ var require_graceful_fs = __commonJS({
           });
         }
       }
-      return fs3;
+      return fs4;
     }
     function enqueue(elem) {
       debug("ENQUEUE", elem[0].name, elem[1]);
-      fs2[gracefulQueue].push(elem);
+      fs3[gracefulQueue].push(elem);
       retry();
     }
     var retryTimer;
     function resetQueue() {
       var now = Date.now();
-      for (var i = 0; i < fs2[gracefulQueue].length; ++i) {
-        if (fs2[gracefulQueue][i].length > 2) {
-          fs2[gracefulQueue][i][3] = now;
-          fs2[gracefulQueue][i][4] = now;
+      for (var i = 0; i < fs3[gracefulQueue].length; ++i) {
+        if (fs3[gracefulQueue][i].length > 2) {
+          fs3[gracefulQueue][i][3] = now;
+          fs3[gracefulQueue][i][4] = now;
         }
       }
       retry();
@@ -33130,9 +34205,9 @@ var require_graceful_fs = __commonJS({
     function retry() {
       clearTimeout(retryTimer);
       retryTimer = void 0;
-      if (fs2[gracefulQueue].length === 0)
+      if (fs3[gracefulQueue].length === 0)
         return;
-      var elem = fs2[gracefulQueue].shift();
+      var elem = fs3[gracefulQueue].shift();
       var fn = elem[0];
       var args = elem[1];
       var err = elem[2];
@@ -33154,7 +34229,7 @@ var require_graceful_fs = __commonJS({
           debug("RETRY", fn.name, args);
           fn.apply(null, args.concat([startTime]));
         } else {
-          fs2[gracefulQueue].push(elem);
+          fs3[gracefulQueue].push(elem);
         }
       }
       if (retryTimer === void 0) {
@@ -33207,7 +34282,7 @@ var require_link_reader = __commonJS({
   "../../../node_modules/.pnpm/fstream@1.0.12/node_modules/fstream/lib/link-reader.js"(exports2, module2) {
     "use strict";
     module2.exports = LinkReader;
-    var fs2 = require_graceful_fs();
+    var fs3 = require_graceful_fs();
     var inherits2 = require_inherits();
     var Reader = require_reader();
     inherits2(LinkReader, Reader);
@@ -33223,7 +34298,7 @@ var require_link_reader = __commonJS({
     }
     LinkReader.prototype._stat = function(currentStat) {
       var self2 = this;
-      fs2.readlink(self2._path, function(er, linkpath) {
+      fs3.readlink(self2._path, function(er, linkpath) {
         if (er)
           return self2.error(er);
         self2.linkpath = self2.props.linkpath = linkpath;
@@ -33249,7 +34324,7 @@ var require_dir_reader = __commonJS({
   "../../../node_modules/.pnpm/fstream@1.0.12/node_modules/fstream/lib/dir-reader.js"(exports2, module2) {
     "use strict";
     module2.exports = DirReader;
-    var fs2 = require_graceful_fs();
+    var fs3 = require_graceful_fs();
     var inherits2 = require_inherits();
     var path2 = require("path");
     var Reader = require_reader();
@@ -33277,7 +34352,7 @@ var require_dir_reader = __commonJS({
       if (self2._gotEntries)
         return;
       self2._gotEntries = true;
-      fs2.readdir(self2._path, function(er, entries) {
+      fs3.readdir(self2._path, function(er, entries) {
         if (er)
           return self2.error(er);
         self2.entries = entries;
@@ -33315,7 +34390,7 @@ var require_dir_reader = __commonJS({
       assert(p !== self2._path);
       assert(self2.entries[self2._index]);
       self2._currentEntry = p;
-      fs2[self2.props.follow ? "stat" : "lstat"](p, function(er, stat) {
+      fs3[self2.props.follow ? "stat" : "lstat"](p, function(er, stat) {
         if (er)
           return self2.error(er);
         var who = self2._proxy || self2;
@@ -33451,7 +34526,7 @@ var require_file_reader = __commonJS({
   "../../../node_modules/.pnpm/fstream@1.0.12/node_modules/fstream/lib/file-reader.js"(exports2, module2) {
     "use strict";
     module2.exports = FileReader;
-    var fs2 = require_graceful_fs();
+    var fs3 = require_graceful_fs();
     var inherits2 = require_inherits();
     var Reader = require_reader();
     var EOF = { EOF: true };
@@ -33471,7 +34546,7 @@ var require_file_reader = __commonJS({
     }
     FileReader.prototype._getStream = function() {
       var self2 = this;
-      var stream = self2._stream = fs2.createReadStream(self2._path, self2.props);
+      var stream = self2._stream = fs3.createReadStream(self2._path, self2.props);
       if (self2.props.blksize) {
         stream.bufferSize = self2.props.blksize;
       }
@@ -33600,7 +34675,7 @@ var require_proxy_reader = __commonJS({
     var Reader = require_reader();
     var getType = require_get_type();
     var inherits2 = require_inherits();
-    var fs2 = require_graceful_fs();
+    var fs3 = require_graceful_fs();
     inherits2(ProxyReader, Reader);
     function ProxyReader(props) {
       var self2 = this;
@@ -33616,7 +34691,7 @@ var require_proxy_reader = __commonJS({
       var self2 = this;
       var props = self2.props;
       var stat = props.follow ? "stat" : "lstat";
-      fs2[stat](props.path, function(er, current) {
+      fs3[stat](props.path, function(er, current) {
         var type;
         if (er || !current) {
           type = "File";
@@ -33676,7 +34751,7 @@ var require_reader = __commonJS({
   "../../../node_modules/.pnpm/fstream@1.0.12/node_modules/fstream/lib/reader.js"(exports2, module2) {
     "use strict";
     module2.exports = Reader;
-    var fs2 = require_graceful_fs();
+    var fs3 = require_graceful_fs();
     var Stream = require("stream").Stream;
     var inherits2 = require_inherits();
     var path2 = require("path");
@@ -33765,7 +34840,7 @@ var require_reader = __commonJS({
       if (currentStat)
         process.nextTick(statCb.bind(null, null, currentStat));
       else
-        fs2[stat](self2._path, statCb);
+        fs3[stat](self2._path, statCb);
       function statCb(er, props_) {
         if (er)
           return self2.error(er);
@@ -33863,7 +34938,7 @@ var require_old = __commonJS({
     "use strict";
     var pathModule = require("path");
     var isWindows = process.platform === "win32";
-    var fs2 = require("fs");
+    var fs3 = require("fs");
     var DEBUG = process.env.NODE_DEBUG && /fs/.test(process.env.NODE_DEBUG);
     function rethrow() {
       var callback;
@@ -33928,7 +35003,7 @@ var require_old = __commonJS({
         base = m[0];
         previous = "";
         if (isWindows && !knownHard[base]) {
-          fs2.lstatSync(base);
+          fs3.lstatSync(base);
           knownHard[base] = true;
         }
       }
@@ -33946,7 +35021,7 @@ var require_old = __commonJS({
         if (cache && Object.prototype.hasOwnProperty.call(cache, base)) {
           resolvedLink = cache[base];
         } else {
-          var stat = fs2.lstatSync(base);
+          var stat = fs3.lstatSync(base);
           if (!stat.isSymbolicLink()) {
             knownHard[base] = true;
             if (cache)
@@ -33961,8 +35036,8 @@ var require_old = __commonJS({
             }
           }
           if (linkTarget === null) {
-            fs2.statSync(base);
-            linkTarget = fs2.readlinkSync(base);
+            fs3.statSync(base);
+            linkTarget = fs3.readlinkSync(base);
           }
           resolvedLink = pathModule.resolve(previous, linkTarget);
           if (cache)
@@ -33999,7 +35074,7 @@ var require_old = __commonJS({
         base = m[0];
         previous = "";
         if (isWindows && !knownHard[base]) {
-          fs2.lstat(base, function(err) {
+          fs3.lstat(base, function(err) {
             if (err)
               return cb(err);
             knownHard[base] = true;
@@ -34027,7 +35102,7 @@ var require_old = __commonJS({
         if (cache && Object.prototype.hasOwnProperty.call(cache, base)) {
           return gotResolvedLink(cache[base]);
         }
-        return fs2.lstat(base, gotStat);
+        return fs3.lstat(base, gotStat);
       }
       function gotStat(err, stat) {
         if (err)
@@ -34044,10 +35119,10 @@ var require_old = __commonJS({
             return gotTarget(null, seenLinks[id], base);
           }
         }
-        fs2.stat(base, function(err2) {
+        fs3.stat(base, function(err2) {
           if (err2)
             return cb(err2);
-          fs2.readlink(base, function(err3, target) {
+          fs3.readlink(base, function(err3, target) {
             if (!isWindows)
               seenLinks[id] = target;
             gotTarget(err3, target);
@@ -34080,9 +35155,9 @@ var require_fs = __commonJS({
     realpath.realpathSync = realpathSync;
     realpath.monkeypatch = monkeypatch;
     realpath.unmonkeypatch = unmonkeypatch;
-    var fs2 = require("fs");
-    var origRealpath = fs2.realpath;
-    var origRealpathSync = fs2.realpathSync;
+    var fs3 = require("fs");
+    var origRealpath = fs3.realpath;
+    var origRealpathSync = fs3.realpathSync;
     var version2 = process.version;
     var ok = /^v[0-5]\./.test(version2);
     var old = require_old();
@@ -34120,12 +35195,12 @@ var require_fs = __commonJS({
       }
     }
     function monkeypatch() {
-      fs2.realpath = realpath;
-      fs2.realpathSync = realpathSync;
+      fs3.realpath = realpath;
+      fs3.realpathSync = realpathSync;
     }
     function unmonkeypatch() {
-      fs2.realpath = origRealpath;
-      fs2.realpathSync = origRealpathSync;
+      fs3.realpath = origRealpath;
+      fs3.realpathSync = origRealpathSync;
     }
   }
 });
@@ -34982,7 +36057,7 @@ var require_common = __commonJS({
     function ownProp(obj2, field) {
       return Object.prototype.hasOwnProperty.call(obj2, field);
     }
-    var fs2 = require("fs");
+    var fs3 = require("fs");
     var path2 = require("path");
     var minimatch = require_minimatch();
     var isAbsolute = require_path_is_absolute();
@@ -35037,7 +36112,7 @@ var require_common = __commonJS({
       self2.stat = !!options.stat;
       self2.noprocess = !!options.noprocess;
       self2.absolute = !!options.absolute;
-      self2.fs = options.fs || fs2;
+      self2.fs = options.fs || fs3;
       self2.maxLength = options.maxLength || Infinity;
       self2.cache = options.cache || /* @__PURE__ */ Object.create(null);
       self2.statCache = options.statCache || /* @__PURE__ */ Object.create(null);
@@ -36128,7 +37203,7 @@ var require_rimraf = __commonJS({
     rimraf.sync = rimrafSync;
     var assert = require("assert");
     var path2 = require("path");
-    var fs2 = require("fs");
+    var fs3 = require("fs");
     var glob = void 0;
     try {
       glob = require_glob();
@@ -36151,9 +37226,9 @@ var require_rimraf = __commonJS({
         "readdir"
       ];
       methods.forEach(function(m) {
-        options[m] = options[m] || fs2[m];
+        options[m] = options[m] || fs3[m];
         m = m + "Sync";
-        options[m] = options[m] || fs2[m];
+        options[m] = options[m] || fs3[m];
       });
       options.maxBusyTries = options.maxBusyTries || 3;
       options.emfileWait = options.emfileWait || 1e3;
@@ -36420,7 +37495,7 @@ var require_mkdirp = __commonJS({
   "../../../node_modules/.pnpm/mkdirp@0.5.6/node_modules/mkdirp/index.js"(exports2, module2) {
     "use strict";
     var path2 = require("path");
-    var fs2 = require("fs");
+    var fs3 = require("fs");
     var _0777 = parseInt("0777", 8);
     module2.exports = mkdirP.mkdirp = mkdirP.mkdirP = mkdirP;
     function mkdirP(p, opts, f, made) {
@@ -36431,7 +37506,7 @@ var require_mkdirp = __commonJS({
         opts = { mode: opts };
       }
       var mode = opts.mode;
-      var xfs = opts.fs || fs2;
+      var xfs = opts.fs || fs3;
       if (mode === void 0) {
         mode = _0777;
       }
@@ -36473,7 +37548,7 @@ var require_mkdirp = __commonJS({
         opts = { mode: opts };
       }
       var mode = opts.mode;
-      var xfs = opts.fs || fs2;
+      var xfs = opts.fs || fs3;
       if (mode === void 0) {
         mode = _0777;
       }
@@ -36700,7 +37775,7 @@ var require_link_writer = __commonJS({
   "../../../node_modules/.pnpm/fstream@1.0.12/node_modules/fstream/lib/link-writer.js"(exports2, module2) {
     "use strict";
     module2.exports = LinkWriter;
-    var fs2 = require_graceful_fs();
+    var fs3 = require_graceful_fs();
     var Writer = require_writer();
     var inherits2 = require_inherits();
     var path2 = require("path");
@@ -36728,7 +37803,7 @@ var require_link_writer = __commonJS({
       var lp = hard ? path2.resolve(self2.dirname, self2.linkpath) : self2.linkpath;
       if (hard)
         return clobber(self2, lp, link);
-      fs2.readlink(self2._path, function(er, p) {
+      fs3.readlink(self2._path, function(er, p) {
         if (p && p === lp)
           return finish(self2);
         clobber(self2, lp, link);
@@ -36742,7 +37817,7 @@ var require_link_writer = __commonJS({
       });
     }
     function create(self2, lp, link) {
-      fs2[link](lp, self2._path, function(er) {
+      fs3[link](lp, self2._path, function(er) {
         if (er) {
           if ((er.code === "ENOENT" || er.code === "EACCES" || er.code === "EPERM") && process.platform === "win32") {
             self2.ready = true;
@@ -36778,7 +37853,7 @@ var require_file_writer = __commonJS({
   "../../../node_modules/.pnpm/fstream@1.0.12/node_modules/fstream/lib/file-writer.js"(exports2, module2) {
     "use strict";
     module2.exports = FileWriter;
-    var fs2 = require_graceful_fs();
+    var fs3 = require_graceful_fs();
     var Writer = require_writer();
     var inherits2 = require_inherits();
     var EOF = {};
@@ -36805,7 +37880,7 @@ var require_file_writer = __commonJS({
       so.mode = Writer.filemode;
       if (self2._old && self2._old.blksize)
         so.bufferSize = self2._old.blksize;
-      self2._stream = fs2.createWriteStream(self2._path, so);
+      self2._stream = fs3.createWriteStream(self2._path, so);
       self2._stream.on("open", function() {
         self2.ready = true;
         self2._buffer.forEach(function(c) {
@@ -36875,7 +37950,7 @@ var require_proxy_writer = __commonJS({
     var getType = require_get_type();
     var inherits2 = require_inherits();
     var collect = require_collect();
-    var fs2 = require("fs");
+    var fs3 = require("fs");
     inherits2(ProxyWriter, Writer);
     function ProxyWriter(props) {
       var self2 = this;
@@ -36890,7 +37965,7 @@ var require_proxy_writer = __commonJS({
       var self2 = this;
       var props = self2.props;
       var stat = props.follow ? "stat" : "lstat";
-      fs2[stat](props.path, function(er, current) {
+      fs3[stat](props.path, function(er, current) {
         var type;
         if (er || !current) {
           type = "File";
@@ -36960,7 +38035,7 @@ var require_writer = __commonJS({
   "../../../node_modules/.pnpm/fstream@1.0.12/node_modules/fstream/lib/writer.js"(exports2, module2) {
     "use strict";
     module2.exports = Writer;
-    var fs2 = require_graceful_fs();
+    var fs3 = require_graceful_fs();
     var inherits2 = require_inherits();
     var rimraf = require_rimraf();
     var mkdir = require_mkdirp();
@@ -37034,7 +38109,7 @@ var require_writer = __commonJS({
     }
     Writer.prototype._create = function() {
       var self2 = this;
-      fs2[self2.props.follow ? "stat" : "lstat"](self2._path, function(er) {
+      fs3[self2.props.follow ? "stat" : "lstat"](self2._path, function(er) {
         if (er) {
           return self2.warn("Cannot create " + self2._path + "\nUnsupported type: " + self2.type, "ENOTSUP");
         }
@@ -37049,7 +38124,7 @@ var require_writer = __commonJS({
       if (current)
         statCb(null, current);
       else
-        fs2[stat](self2._path, statCb);
+        fs3[stat](self2._path, statCb);
       function statCb(er, current2) {
         if (self2.filter && !self2.filter.call(who, who, current2)) {
           self2._aborted = true;
@@ -37084,7 +38159,7 @@ var require_writer = __commonJS({
     function endChmod(self2, want, current, path3, cb) {
       var wantMode = want.mode;
       var chmod = want.follow || self2.type !== "SymbolicLink" ? "chmod" : "lchmod";
-      if (!fs2[chmod])
+      if (!fs3[chmod])
         return cb();
       if (typeof wantMode !== "number")
         return cb();
@@ -37092,7 +38167,7 @@ var require_writer = __commonJS({
       wantMode = wantMode & parseInt("0777", 8);
       if (wantMode === curMode)
         return cb();
-      fs2[chmod](path3, wantMode, cb);
+      fs3[chmod](path3, wantMode, cb);
     }
     function endChown(self2, want, current, path3, cb) {
       if (process.platform === "win32")
@@ -37104,22 +38179,22 @@ var require_writer = __commonJS({
       if (current.uid === want.uid && current.gid === want.gid)
         return cb();
       var chown = self2.props.follow || self2.type !== "SymbolicLink" ? "chown" : "lchown";
-      if (!fs2[chown])
+      if (!fs3[chown])
         return cb();
       if (typeof want.uid !== "number")
         want.uid = current.uid;
       if (typeof want.gid !== "number")
         want.gid = current.gid;
-      fs2[chown](path3, want.uid, want.gid, cb);
+      fs3[chown](path3, want.uid, want.gid, cb);
     }
     function endUtimes(self2, want, current, path3, cb) {
-      if (!fs2.utimes || process.platform === "win32")
+      if (!fs3.utimes || process.platform === "win32")
         return cb();
       var utimes = want.follow || self2.type !== "SymbolicLink" ? "utimes" : "lutimes";
-      if (utimes === "lutimes" && !fs2[utimes]) {
+      if (utimes === "lutimes" && !fs3[utimes]) {
         utimes = "utimes";
       }
-      if (!fs2[utimes])
+      if (!fs3[utimes])
         return cb();
       var curA = current.atime;
       var curM = current.mtime;
@@ -37135,7 +38210,7 @@ var require_writer = __commonJS({
         meA = new Date(meM);
       if (meA.getTime() === curA.getTime() && meM.getTime() === curM.getTime())
         return cb();
-      fs2[utimes](path3, meA, meM, cb);
+      fs3[utimes](path3, meA, meM, cb);
     }
     Writer.prototype._finish = function() {
       var self2 = this;
@@ -37151,7 +38226,7 @@ var require_writer = __commonJS({
         setProps(self2._old);
       } else {
         var stat = self2.props.follow ? "stat" : "lstat";
-        fs2[stat](self2._path, function(er, current) {
+        fs3[stat](self2._path, function(er, current) {
           if (er) {
             if (er.code === "ENOENT" && (self2.type === "Link" || self2.type === "SymbolicLink") && process.platform === "win32") {
               self2.ready = true;
@@ -37224,7 +38299,7 @@ var require_writer = __commonJS({
       });
       var todo = 3;
       var errState = null;
-      fs2.stat(p, function(er, current) {
+      fs3.stat(p, function(er, current) {
         if (er)
           return cb(errState = er);
         endChmod(self2, dirProps, current, p, next);
@@ -38984,7 +40059,7 @@ var require_directory = __commonJS({
 var require_Open = __commonJS({
   "../../../node_modules/.pnpm/unzipper@0.10.14/node_modules/unzipper/lib/Open/index.js"(exports2, module2) {
     "use strict";
-    var fs2 = require_graceful_fs();
+    var fs3 = require_graceful_fs();
     var Promise2 = require_bluebird();
     var directory = require_directory();
     var Stream = require("stream");
@@ -39007,11 +40082,11 @@ var require_Open = __commonJS({
       file: function(filename, options) {
         var source = {
           stream: function(offset, length) {
-            return fs2.createReadStream(filename, { start: offset, end: length && offset + length });
+            return fs3.createReadStream(filename, { start: offset, end: length && offset + length });
           },
           size: function() {
             return new Promise2(function(resolve, reject) {
-              fs2.stat(filename, function(err, d) {
+              fs3.stat(filename, function(err, d) {
                 if (err)
                   reject(err);
                 else
@@ -39093,1111 +40168,41 @@ var require_unzip2 = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/stream-json@1.8.0/node_modules/stream-json/utils/Utf8Stream.js
-var require_Utf8Stream = __commonJS({
-  "../../../node_modules/.pnpm/stream-json@1.8.0/node_modules/stream-json/utils/Utf8Stream.js"(exports2, module2) {
-    "use strict";
-    var { Transform } = require("stream");
-    var { StringDecoder } = require("string_decoder");
-    var Utf8Stream = class extends Transform {
-      constructor(options) {
-        super(Object.assign({}, options, { writableObjectMode: false }));
-        this._buffer = "";
-      }
-      _transform(chunk, encoding, callback) {
-        if (typeof chunk == "string") {
-          this._transform = this._transformString;
-        } else {
-          this._stringDecoder = new StringDecoder();
-          this._transform = this._transformBuffer;
-        }
-        this._transform(chunk, encoding, callback);
-      }
-      _transformBuffer(chunk, _, callback) {
-        this._buffer += this._stringDecoder.write(chunk);
-        this._processBuffer(callback);
-      }
-      _transformString(chunk, _, callback) {
-        this._buffer += chunk.toString();
-        this._processBuffer(callback);
-      }
-      _processBuffer(callback) {
-        if (this._buffer) {
-          this.push(this._buffer, "utf8");
-          this._buffer = "";
-        }
-        callback(null);
-      }
-      _flushInput() {
-        if (this._stringDecoder) {
-          this._buffer += this._stringDecoder.end();
-        }
-      }
-      _flush(callback) {
-        this._flushInput();
-        this._processBuffer(callback);
-      }
-    };
-    module2.exports = Utf8Stream;
-  }
-});
-
-// ../../../node_modules/.pnpm/stream-json@1.8.0/node_modules/stream-json/Parser.js
-var require_Parser = __commonJS({
-  "../../../node_modules/.pnpm/stream-json@1.8.0/node_modules/stream-json/Parser.js"(exports2, module2) {
-    "use strict";
-    var Utf8Stream = require_Utf8Stream();
-    var patterns = {
-      value1: /^(?:[\"\{\[\]\-\d]|true\b|false\b|null\b|\s{1,256})/,
-      string: /^(?:[^\"\\]{1,256}|\\[bfnrt\"\\\/]|\\u[\da-fA-F]{4}|\")/,
-      key1: /^(?:[\"\}]|\s{1,256})/,
-      colon: /^(?:\:|\s{1,256})/,
-      comma: /^(?:[\,\]\}]|\s{1,256})/,
-      ws: /^\s{1,256}/,
-      numberStart: /^\d/,
-      numberDigit: /^\d{0,256}/,
-      numberFraction: /^[\.eE]/,
-      numberExponent: /^[eE]/,
-      numberExpSign: /^[-+]/
-    };
-    var MAX_PATTERN_SIZE = 16;
-    var noSticky = true;
-    try {
-      new RegExp(".", "y");
-      noSticky = false;
-    } catch (e) {
-    }
-    !noSticky && Object.keys(patterns).forEach((key) => {
-      let src = patterns[key].source.slice(1);
-      if (src.slice(0, 3) === "(?:" && src.slice(-1) === ")") {
-        src = src.slice(3, -1);
-      }
-      patterns[key] = new RegExp(src, "y");
-    });
-    patterns.numberFracStart = patterns.numberExpStart = patterns.numberStart;
-    patterns.numberFracDigit = patterns.numberExpDigit = patterns.numberDigit;
-    var values = { true: true, false: false, null: null };
-    var expected = { object: "objectStop", array: "arrayStop", "": "done" };
-    var fromHex = (s) => String.fromCharCode(parseInt(s.slice(2), 16));
-    var codes = { b: "\b", f: "\f", n: "\n", r: "\r", t: "	", '"': '"', "\\": "\\", "/": "/" };
-    var Parser = class _Parser extends Utf8Stream {
-      static make(options) {
-        return new _Parser(options);
-      }
-      constructor(options) {
-        super(Object.assign({}, options, { readableObjectMode: true }));
-        this._packKeys = this._packStrings = this._packNumbers = this._streamKeys = this._streamStrings = this._streamNumbers = true;
-        if (options) {
-          "packValues" in options && (this._packKeys = this._packStrings = this._packNumbers = options.packValues);
-          "packKeys" in options && (this._packKeys = options.packKeys);
-          "packStrings" in options && (this._packStrings = options.packStrings);
-          "packNumbers" in options && (this._packNumbers = options.packNumbers);
-          "streamValues" in options && (this._streamKeys = this._streamStrings = this._streamNumbers = options.streamValues);
-          "streamKeys" in options && (this._streamKeys = options.streamKeys);
-          "streamStrings" in options && (this._streamStrings = options.streamStrings);
-          "streamNumbers" in options && (this._streamNumbers = options.streamNumbers);
-          this._jsonStreaming = options.jsonStreaming;
-        }
-        !this._packKeys && (this._streamKeys = true);
-        !this._packStrings && (this._streamStrings = true);
-        !this._packNumbers && (this._streamNumbers = true);
-        this._done = false;
-        this._expect = this._jsonStreaming ? "done" : "value";
-        this._stack = [];
-        this._parent = "";
-        this._open_number = false;
-        this._accumulator = "";
-      }
-      _flush(callback) {
-        this._done = true;
-        super._flush((error) => {
-          if (error)
-            return callback(error);
-          if (this._open_number) {
-            if (this._streamNumbers) {
-              this.push({ name: "endNumber" });
-            }
-            this._open_number = false;
-            if (this._packNumbers) {
-              this.push({ name: "numberValue", value: this._accumulator });
-              this._accumulator = "";
-            }
-          }
-          callback(null);
-        });
-      }
-      _processBuffer(callback) {
-        let match, value, index = 0;
-        main:
-          for (; ; ) {
-            switch (this._expect) {
-              case "value1":
-              case "value":
-                patterns.value1.lastIndex = index;
-                match = patterns.value1.exec(this._buffer);
-                if (!match) {
-                  if (this._done || index + MAX_PATTERN_SIZE < this._buffer.length) {
-                    if (index < this._buffer.length)
-                      return callback(new Error("Parser cannot parse input: expected a value"));
-                    return callback(new Error("Parser has expected a value"));
-                  }
-                  break main;
-                }
-                value = match[0];
-                switch (value) {
-                  case '"':
-                    this._streamStrings && this.push({ name: "startString" });
-                    this._expect = "string";
-                    break;
-                  case "{":
-                    this.push({ name: "startObject" });
-                    this._stack.push(this._parent);
-                    this._parent = "object";
-                    this._expect = "key1";
-                    break;
-                  case "[":
-                    this.push({ name: "startArray" });
-                    this._stack.push(this._parent);
-                    this._parent = "array";
-                    this._expect = "value1";
-                    break;
-                  case "]":
-                    if (this._expect !== "value1")
-                      return callback(new Error("Parser cannot parse input: unexpected token ']'"));
-                    if (this._open_number) {
-                      this._streamNumbers && this.push({ name: "endNumber" });
-                      this._open_number = false;
-                      if (this._packNumbers) {
-                        this.push({ name: "numberValue", value: this._accumulator });
-                        this._accumulator = "";
-                      }
-                    }
-                    this.push({ name: "endArray" });
-                    this._parent = this._stack.pop();
-                    this._expect = expected[this._parent];
-                    break;
-                  case "-":
-                    this._open_number = true;
-                    if (this._streamNumbers) {
-                      this.push({ name: "startNumber" });
-                      this.push({ name: "numberChunk", value: "-" });
-                    }
-                    this._packNumbers && (this._accumulator = "-");
-                    this._expect = "numberStart";
-                    break;
-                  case "0":
-                    this._open_number = true;
-                    if (this._streamNumbers) {
-                      this.push({ name: "startNumber" });
-                      this.push({ name: "numberChunk", value: "0" });
-                    }
-                    this._packNumbers && (this._accumulator = "0");
-                    this._expect = "numberFraction";
-                    break;
-                  case "1":
-                  case "2":
-                  case "3":
-                  case "4":
-                  case "5":
-                  case "6":
-                  case "7":
-                  case "8":
-                  case "9":
-                    this._open_number = true;
-                    if (this._streamNumbers) {
-                      this.push({ name: "startNumber" });
-                      this.push({ name: "numberChunk", value });
-                    }
-                    this._packNumbers && (this._accumulator = value);
-                    this._expect = "numberDigit";
-                    break;
-                  case "true":
-                  case "false":
-                  case "null":
-                    if (this._buffer.length - index === value.length && !this._done)
-                      break main;
-                    this.push({ name: value + "Value", value: values[value] });
-                    this._expect = expected[this._parent];
-                    break;
-                }
-                if (noSticky) {
-                  this._buffer = this._buffer.slice(value.length);
-                } else {
-                  index += value.length;
-                }
-                break;
-              case "keyVal":
-              case "string":
-                patterns.string.lastIndex = index;
-                match = patterns.string.exec(this._buffer);
-                if (!match) {
-                  if (index < this._buffer.length && (this._done || this._buffer.length - index >= 6))
-                    return callback(new Error("Parser cannot parse input: escaped characters"));
-                  if (this._done)
-                    return callback(new Error("Parser has expected a string value"));
-                  break main;
-                }
-                value = match[0];
-                if (value === '"') {
-                  if (this._expect === "keyVal") {
-                    this._streamKeys && this.push({ name: "endKey" });
-                    if (this._packKeys) {
-                      this.push({ name: "keyValue", value: this._accumulator });
-                      this._accumulator = "";
-                    }
-                    this._expect = "colon";
-                  } else {
-                    this._streamStrings && this.push({ name: "endString" });
-                    if (this._packStrings) {
-                      this.push({ name: "stringValue", value: this._accumulator });
-                      this._accumulator = "";
-                    }
-                    this._expect = expected[this._parent];
-                  }
-                } else if (value.length > 1 && value.charAt(0) === "\\") {
-                  const t = value.length == 2 ? codes[value.charAt(1)] : fromHex(value);
-                  if (this._expect === "keyVal" ? this._streamKeys : this._streamStrings) {
-                    this.push({ name: "stringChunk", value: t });
-                  }
-                  if (this._expect === "keyVal" ? this._packKeys : this._packStrings) {
-                    this._accumulator += t;
-                  }
-                } else {
-                  if (this._expect === "keyVal" ? this._streamKeys : this._streamStrings) {
-                    this.push({ name: "stringChunk", value });
-                  }
-                  if (this._expect === "keyVal" ? this._packKeys : this._packStrings) {
-                    this._accumulator += value;
-                  }
-                }
-                if (noSticky) {
-                  this._buffer = this._buffer.slice(value.length);
-                } else {
-                  index += value.length;
-                }
-                break;
-              case "key1":
-              case "key":
-                patterns.key1.lastIndex = index;
-                match = patterns.key1.exec(this._buffer);
-                if (!match) {
-                  if (index < this._buffer.length || this._done)
-                    return callback(new Error("Parser cannot parse input: expected an object key"));
-                  break main;
-                }
-                value = match[0];
-                if (value === '"') {
-                  this._streamKeys && this.push({ name: "startKey" });
-                  this._expect = "keyVal";
-                } else if (value === "}") {
-                  if (this._expect !== "key1")
-                    return callback(new Error("Parser cannot parse input: unexpected token '}'"));
-                  this.push({ name: "endObject" });
-                  this._parent = this._stack.pop();
-                  this._expect = expected[this._parent];
-                }
-                if (noSticky) {
-                  this._buffer = this._buffer.slice(value.length);
-                } else {
-                  index += value.length;
-                }
-                break;
-              case "colon":
-                patterns.colon.lastIndex = index;
-                match = patterns.colon.exec(this._buffer);
-                if (!match) {
-                  if (index < this._buffer.length || this._done)
-                    return callback(new Error("Parser cannot parse input: expected ':'"));
-                  break main;
-                }
-                value = match[0];
-                value === ":" && (this._expect = "value");
-                if (noSticky) {
-                  this._buffer = this._buffer.slice(value.length);
-                } else {
-                  index += value.length;
-                }
-                break;
-              case "arrayStop":
-              case "objectStop":
-                patterns.comma.lastIndex = index;
-                match = patterns.comma.exec(this._buffer);
-                if (!match) {
-                  if (index < this._buffer.length || this._done)
-                    return callback(new Error("Parser cannot parse input: expected ','"));
-                  break main;
-                }
-                if (this._open_number) {
-                  this._streamNumbers && this.push({ name: "endNumber" });
-                  this._open_number = false;
-                  if (this._packNumbers) {
-                    this.push({ name: "numberValue", value: this._accumulator });
-                    this._accumulator = "";
-                  }
-                }
-                value = match[0];
-                if (value === ",") {
-                  this._expect = this._expect === "arrayStop" ? "value" : "key";
-                } else if (value === "}" || value === "]") {
-                  if (value === "}" ? this._expect === "arrayStop" : this._expect !== "arrayStop") {
-                    return callback(new Error("Parser cannot parse input: expected '" + (this._expect === "arrayStop" ? "]" : "}") + "'"));
-                  }
-                  this.push({ name: value === "}" ? "endObject" : "endArray" });
-                  this._parent = this._stack.pop();
-                  this._expect = expected[this._parent];
-                }
-                if (noSticky) {
-                  this._buffer = this._buffer.slice(value.length);
-                } else {
-                  index += value.length;
-                }
-                break;
-              case "numberStart":
-                patterns.numberStart.lastIndex = index;
-                match = patterns.numberStart.exec(this._buffer);
-                if (!match) {
-                  if (index < this._buffer.length || this._done)
-                    return callback(new Error("Parser cannot parse input: expected a starting digit"));
-                  break main;
-                }
-                value = match[0];
-                this._streamNumbers && this.push({ name: "numberChunk", value });
-                this._packNumbers && (this._accumulator += value);
-                this._expect = value === "0" ? "numberFraction" : "numberDigit";
-                if (noSticky) {
-                  this._buffer = this._buffer.slice(value.length);
-                } else {
-                  index += value.length;
-                }
-                break;
-              case "numberDigit":
-                patterns.numberDigit.lastIndex = index;
-                match = patterns.numberDigit.exec(this._buffer);
-                if (!match) {
-                  if (index < this._buffer.length || this._done)
-                    return callback(new Error("Parser cannot parse input: expected a digit"));
-                  break main;
-                }
-                value = match[0];
-                if (value) {
-                  this._streamNumbers && this.push({ name: "numberChunk", value });
-                  this._packNumbers && (this._accumulator += value);
-                  if (noSticky) {
-                    this._buffer = this._buffer.slice(value.length);
-                  } else {
-                    index += value.length;
-                  }
-                } else {
-                  if (index < this._buffer.length) {
-                    this._expect = "numberFraction";
-                    break;
-                  }
-                  if (this._done) {
-                    this._expect = expected[this._parent];
-                    break;
-                  }
-                  break main;
-                }
-                break;
-              case "numberFraction":
-                patterns.numberFraction.lastIndex = index;
-                match = patterns.numberFraction.exec(this._buffer);
-                if (!match) {
-                  if (index < this._buffer.length || this._done) {
-                    this._expect = expected[this._parent];
-                    break;
-                  }
-                  break main;
-                }
-                value = match[0];
-                this._streamNumbers && this.push({ name: "numberChunk", value });
-                this._packNumbers && (this._accumulator += value);
-                this._expect = value === "." ? "numberFracStart" : "numberExpSign";
-                if (noSticky) {
-                  this._buffer = this._buffer.slice(value.length);
-                } else {
-                  index += value.length;
-                }
-                break;
-              case "numberFracStart":
-                patterns.numberFracStart.lastIndex = index;
-                match = patterns.numberFracStart.exec(this._buffer);
-                if (!match) {
-                  if (index < this._buffer.length || this._done)
-                    return callback(new Error("Parser cannot parse input: expected a fractional part of a number"));
-                  break main;
-                }
-                value = match[0];
-                this._streamNumbers && this.push({ name: "numberChunk", value });
-                this._packNumbers && (this._accumulator += value);
-                this._expect = "numberFracDigit";
-                if (noSticky) {
-                  this._buffer = this._buffer.slice(value.length);
-                } else {
-                  index += value.length;
-                }
-                break;
-              case "numberFracDigit":
-                patterns.numberFracDigit.lastIndex = index;
-                match = patterns.numberFracDigit.exec(this._buffer);
-                value = match[0];
-                if (value) {
-                  this._streamNumbers && this.push({ name: "numberChunk", value });
-                  this._packNumbers && (this._accumulator += value);
-                  if (noSticky) {
-                    this._buffer = this._buffer.slice(value.length);
-                  } else {
-                    index += value.length;
-                  }
-                } else {
-                  if (index < this._buffer.length) {
-                    this._expect = "numberExponent";
-                    break;
-                  }
-                  if (this._done) {
-                    this._expect = expected[this._parent];
-                    break;
-                  }
-                  break main;
-                }
-                break;
-              case "numberExponent":
-                patterns.numberExponent.lastIndex = index;
-                match = patterns.numberExponent.exec(this._buffer);
-                if (!match) {
-                  if (index < this._buffer.length) {
-                    this._expect = expected[this._parent];
-                    break;
-                  }
-                  if (this._done) {
-                    this._expect = "done";
-                    break;
-                  }
-                  break main;
-                }
-                value = match[0];
-                this._streamNumbers && this.push({ name: "numberChunk", value });
-                this._packNumbers && (this._accumulator += value);
-                this._expect = "numberExpSign";
-                if (noSticky) {
-                  this._buffer = this._buffer.slice(value.length);
-                } else {
-                  index += value.length;
-                }
-                break;
-              case "numberExpSign":
-                patterns.numberExpSign.lastIndex = index;
-                match = patterns.numberExpSign.exec(this._buffer);
-                if (!match) {
-                  if (index < this._buffer.length) {
-                    this._expect = "numberExpStart";
-                    break;
-                  }
-                  if (this._done)
-                    return callback(new Error("Parser has expected an exponent value of a number"));
-                  break main;
-                }
-                value = match[0];
-                this._streamNumbers && this.push({ name: "numberChunk", value });
-                this._packNumbers && (this._accumulator += value);
-                this._expect = "numberExpStart";
-                if (noSticky) {
-                  this._buffer = this._buffer.slice(value.length);
-                } else {
-                  index += value.length;
-                }
-                break;
-              case "numberExpStart":
-                patterns.numberExpStart.lastIndex = index;
-                match = patterns.numberExpStart.exec(this._buffer);
-                if (!match) {
-                  if (index < this._buffer.length || this._done)
-                    return callback(new Error("Parser cannot parse input: expected an exponent part of a number"));
-                  break main;
-                }
-                value = match[0];
-                this._streamNumbers && this.push({ name: "numberChunk", value });
-                this._packNumbers && (this._accumulator += value);
-                this._expect = "numberExpDigit";
-                if (noSticky) {
-                  this._buffer = this._buffer.slice(value.length);
-                } else {
-                  index += value.length;
-                }
-                break;
-              case "numberExpDigit":
-                patterns.numberExpDigit.lastIndex = index;
-                match = patterns.numberExpDigit.exec(this._buffer);
-                value = match[0];
-                if (value) {
-                  this._streamNumbers && this.push({ name: "numberChunk", value });
-                  this._packNumbers && (this._accumulator += value);
-                  if (noSticky) {
-                    this._buffer = this._buffer.slice(value.length);
-                  } else {
-                    index += value.length;
-                  }
-                } else {
-                  if (index < this._buffer.length || this._done) {
-                    this._expect = expected[this._parent];
-                    break;
-                  }
-                  break main;
-                }
-                break;
-              case "done":
-                patterns.ws.lastIndex = index;
-                match = patterns.ws.exec(this._buffer);
-                if (!match) {
-                  if (index < this._buffer.length) {
-                    if (this._jsonStreaming) {
-                      this._expect = "value";
-                      break;
-                    }
-                    return callback(new Error("Parser cannot parse input: unexpected characters"));
-                  }
-                  break main;
-                }
-                value = match[0];
-                if (this._open_number) {
-                  this._streamNumbers && this.push({ name: "endNumber" });
-                  this._open_number = false;
-                  if (this._packNumbers) {
-                    this.push({ name: "numberValue", value: this._accumulator });
-                    this._accumulator = "";
-                  }
-                }
-                if (noSticky) {
-                  this._buffer = this._buffer.slice(value.length);
-                } else {
-                  index += value.length;
-                }
-                break;
-            }
-          }
-        !noSticky && (this._buffer = this._buffer.slice(index));
-        callback(null);
-      }
-    };
-    Parser.parser = Parser.make;
-    Parser.make.Constructor = Parser;
-    module2.exports = Parser;
-  }
-});
-
-// ../../../node_modules/.pnpm/stream-json@1.8.0/node_modules/stream-json/utils/emit.js
-var require_emit = __commonJS({
-  "../../../node_modules/.pnpm/stream-json@1.8.0/node_modules/stream-json/utils/emit.js"(exports2, module2) {
-    "use strict";
-    var emit = (stream) => stream.on("data", (item) => stream.emit(item.name, item.value));
-    module2.exports = emit;
-  }
-});
-
-// ../../../node_modules/.pnpm/stream-json@1.8.0/node_modules/stream-json/index.js
-var require_stream_json = __commonJS({
-  "../../../node_modules/.pnpm/stream-json@1.8.0/node_modules/stream-json/index.js"(exports2, module2) {
-    "use strict";
-    var Parser = require_Parser();
-    var emit = require_emit();
-    var make = (options) => emit(new Parser(options));
-    make.Parser = Parser;
-    make.parser = Parser.parser;
-    module2.exports = make;
-  }
-});
-
-// ../../../node_modules/.pnpm/stream-json@1.8.0/node_modules/stream-json/Assembler.js
-var require_Assembler = __commonJS({
-  "../../../node_modules/.pnpm/stream-json@1.8.0/node_modules/stream-json/Assembler.js"(exports2, module2) {
-    "use strict";
-    var EventEmitter = require("events");
-    var startObject = (Ctr) => function() {
-      if (this.done) {
-        this.done = false;
-      } else {
-        this.stack.push(this.current, this.key);
-      }
-      this.current = new Ctr();
-      this.key = null;
-    };
-    var Assembler = class _Assembler extends EventEmitter {
-      static connectTo(stream, options) {
-        return new _Assembler(options).connectTo(stream);
-      }
-      constructor(options) {
-        super();
-        this.stack = [];
-        this.current = this.key = null;
-        this.done = true;
-        if (options) {
-          this.reviver = typeof options.reviver == "function" && options.reviver;
-          if (this.reviver) {
-            this.stringValue = this._saveValue = this._saveValueWithReviver;
-          }
-          if (options.numberAsString) {
-            this.numberValue = this.stringValue;
-          }
-        }
-      }
-      connectTo(stream) {
-        stream.on("data", (chunk) => {
-          if (this[chunk.name]) {
-            this[chunk.name](chunk.value);
-            if (this.done)
-              this.emit("done", this);
-          }
-        });
-        return this;
-      }
-      get depth() {
-        return (this.stack.length >> 1) + (this.done ? 0 : 1);
-      }
-      get path() {
-        const path2 = [];
-        for (let i = 0; i < this.stack.length; i += 2) {
-          const key = this.stack[i + 1];
-          path2.push(key === null ? this.stack[i].length : key);
-        }
-        return path2;
-      }
-      dropToLevel(level) {
-        if (level < this.depth) {
-          if (level) {
-            const index = level - 1 << 1;
-            this.current = this.stack[index];
-            this.key = this.stack[index + 1];
-            this.stack.splice(index);
-          } else {
-            this.stack = [];
-            this.current = this.key = null;
-            this.done = true;
-          }
-        }
-        return this;
-      }
-      consume(chunk) {
-        this[chunk.name] && this[chunk.name](chunk.value);
-        return this;
-      }
-      keyValue(value) {
-        this.key = value;
-      }
-      //stringValue() - aliased below to _saveValue()
-      numberValue(value) {
-        this._saveValue(parseFloat(value));
-      }
-      nullValue() {
-        this._saveValue(null);
-      }
-      trueValue() {
-        this._saveValue(true);
-      }
-      falseValue() {
-        this._saveValue(false);
-      }
-      //startObject() - assigned below
-      endObject() {
-        if (this.stack.length) {
-          const value = this.current;
-          this.key = this.stack.pop();
-          this.current = this.stack.pop();
-          this._saveValue(value);
-        } else {
-          this.done = true;
-        }
-      }
-      //startArray() - assigned below
-      //endArray() - aliased below to endObject()
-      _saveValue(value) {
-        if (this.done) {
-          this.current = value;
-        } else {
-          if (this.current instanceof Array) {
-            this.current.push(value);
-          } else {
-            this.current[this.key] = value;
-            this.key = null;
-          }
-        }
-      }
-      _saveValueWithReviver(value) {
-        if (this.done) {
-          this.current = this.reviver("", value);
-        } else {
-          if (this.current instanceof Array) {
-            value = this.reviver("" + this.current.length, value);
-            this.current.push(value);
-            if (value === void 0) {
-              delete this.current[this.current.length - 1];
-            }
-          } else {
-            value = this.reviver(this.key, value);
-            if (value !== void 0) {
-              this.current[this.key] = value;
-            }
-            this.key = null;
-          }
-        }
-      }
-    };
-    Assembler.prototype.stringValue = Assembler.prototype._saveValue;
-    Assembler.prototype.startObject = startObject(Object);
-    Assembler.prototype.startArray = startObject(Array);
-    Assembler.prototype.endArray = Assembler.prototype.endObject;
-    module2.exports = Assembler;
-  }
-});
-
-// ../../../node_modules/.pnpm/stream-json@1.8.0/node_modules/stream-json/streamers/StreamBase.js
-var require_StreamBase = __commonJS({
-  "../../../node_modules/.pnpm/stream-json@1.8.0/node_modules/stream-json/streamers/StreamBase.js"(exports2, module2) {
-    "use strict";
-    var { Transform } = require("stream");
-    var Assembler = require_Assembler();
-    var Counter = class {
-      constructor(initialDepth) {
-        this.depth = initialDepth;
-      }
-      startObject() {
-        ++this.depth;
-      }
-      endObject() {
-        --this.depth;
-      }
-      startArray() {
-        ++this.depth;
-      }
-      endArray() {
-        --this.depth;
-      }
-    };
-    var StreamBase = class extends Transform {
-      constructor(options) {
-        super(Object.assign({}, options, { writableObjectMode: true, readableObjectMode: true }));
-        if (options) {
-          this.objectFilter = options.objectFilter;
-          this.includeUndecided = options.includeUndecided;
-        }
-        if (typeof this.objectFilter != "function") {
-          this._filter = this._transform;
-        }
-        this._transform = this._wait || this._filter;
-        this._assembler = new Assembler(options);
-      }
-      _transform(chunk, encoding, callback) {
-        if (this._assembler[chunk.name]) {
-          this._assembler[chunk.name](chunk.value);
-          if (this._assembler.depth === this._level) {
-            this._push();
-          }
-        }
-        callback(null);
-      }
-      _filter(chunk, encoding, callback) {
-        if (this._assembler[chunk.name]) {
-          this._assembler[chunk.name](chunk.value);
-          const result = this.objectFilter(this._assembler);
-          if (result) {
-            if (this._assembler.depth === this._level) {
-              this._push();
-              this._transform = this._filter;
-            }
-            this._transform = this._accept;
-            return callback(null);
-          }
-          if (result === false) {
-            this._saved_assembler = this._assembler;
-            this._assembler = new Counter(this._saved_assembler.depth);
-            this._saved_assembler.dropToLevel(this._level);
-            if (this._assembler.depth === this._level) {
-              this._assembler = this._saved_assembler;
-              this._transform = this._filter;
-            }
-            this._transform = this._reject;
-            return callback(null);
-          }
-          if (this._assembler.depth === this._level) {
-            this._push(!this.includeUndecided);
-          }
-        }
-        callback(null);
-      }
-      _accept(chunk, encoding, callback) {
-        if (this._assembler[chunk.name]) {
-          this._assembler[chunk.name](chunk.value);
-          if (this._assembler.depth === this._level) {
-            this._push();
-            this._transform = this._filter;
-          }
-        }
-        callback(null);
-      }
-      _reject(chunk, encoding, callback) {
-        if (this._assembler[chunk.name]) {
-          this._assembler[chunk.name](chunk.value);
-          if (this._assembler.depth === this._level) {
-            this._assembler = this._saved_assembler;
-            this._transform = this._filter;
-          }
-        }
-        callback(null);
-      }
-    };
-    module2.exports = StreamBase;
-  }
-});
-
-// ../../../node_modules/.pnpm/stream-chain@2.2.5/node_modules/stream-chain/index.js
-var require_stream_chain = __commonJS({
-  "../../../node_modules/.pnpm/stream-chain@2.2.5/node_modules/stream-chain/index.js"(exports2, module2) {
-    "use strict";
-    var { Readable: Readable2, Writable, Duplex, Transform } = require("stream");
-    var none = Symbol.for("object-stream.none");
-    var finalSymbol = Symbol.for("object-stream.final");
-    var manySymbol = Symbol.for("object-stream.many");
-    var final = (value) => ({ [finalSymbol]: value });
-    var many = (values) => ({ [manySymbol]: values });
-    var isFinal = (o) => o && typeof o == "object" && finalSymbol in o;
-    var isMany = (o) => o && typeof o == "object" && manySymbol in o;
-    var getFinalValue = (o) => o[finalSymbol];
-    var getManyValues = (o) => o[manySymbol];
-    var runAsyncGenerator = async (gen, stream) => {
-      for (; ; ) {
-        let data = gen.next();
-        if (data && typeof data.then == "function") {
-          data = await data;
-        }
-        if (data.done)
-          break;
-        let value = data.value;
-        if (value && typeof value.then == "function") {
-          value = await value;
-        }
-        Chain.sanitize(value, stream);
-      }
-    };
-    var wrapFunction = (fn) => new Transform({
-      writableObjectMode: true,
-      readableObjectMode: true,
-      transform(chunk, encoding, callback) {
-        try {
-          const result = fn.call(this, chunk, encoding);
-          if (result && typeof result.then == "function") {
-            result.then(
-              (result2) => (Chain.sanitize(result2, this), callback(null)),
-              (error) => callback(error)
-            );
-            return;
-          }
-          if (result && typeof result.next == "function") {
-            runAsyncGenerator(result, this).then(
-              () => callback(null),
-              (error) => callback(error)
-            );
-            return;
-          }
-          Chain.sanitize(result, this);
-          callback(null);
-        } catch (error) {
-          callback(error);
-        }
-      }
-    });
-    var wrapArray = (fns) => new Transform({
-      writableObjectMode: true,
-      readableObjectMode: true,
-      transform(chunk, encoding, callback) {
-        try {
-          let value = chunk;
-          for (let i = 0; i < fns.length; ++i) {
-            const result = fns[i].call(this, value, encoding);
-            if (result === Chain.none) {
-              callback(null);
-              return;
-            }
-            if (Chain.isFinal(result)) {
-              value = Chain.getFinalValue(result);
-              break;
-            }
-            value = result;
-          }
-          Chain.sanitize(value, this);
-          callback(null);
-        } catch (error) {
-          callback(error);
-        }
-      }
-    });
-    var isReadableNodeStream = (obj2) => obj2 && typeof obj2.pipe === "function" && typeof obj2.on === "function" && (!obj2._writableState || (typeof obj2._readableState === "object" ? obj2._readableState.readable : null) !== false) && // Duplex
-    (!obj2._writableState || obj2._readableState);
-    var isWritableNodeStream = (obj2) => obj2 && typeof obj2.write === "function" && typeof obj2.on === "function" && (!obj2._readableState || (typeof obj2._writableState === "object" ? obj2._writableState.writable : null) !== false);
-    var isDuplexNodeStream = (obj2) => obj2 && typeof obj2.pipe === "function" && obj2._readableState && typeof obj2.on === "function" && typeof obj2.write === "function";
-    var Chain = class _Chain extends Duplex {
-      constructor(fns, options) {
-        super(options || { writableObjectMode: true, readableObjectMode: true });
-        if (!(fns instanceof Array) || !fns.length) {
-          throw Error("Chain's argument should be a non-empty array.");
-        }
-        this.streams = fns.filter((fn) => fn).map((fn, index, fns2) => {
-          if (typeof fn === "function" || fn instanceof Array)
-            return _Chain.convertToTransform(fn);
-          if (isDuplexNodeStream(fn) || !index && isReadableNodeStream(fn) || index === fns2.length - 1 && isWritableNodeStream(fn)) {
-            return fn;
-          }
-          throw Error("Arguments should be functions, arrays or streams.");
-        }).filter((s) => s);
-        this.input = this.streams[0];
-        this.output = this.streams.reduce((output, stream) => output && output.pipe(stream) || stream);
-        if (!isWritableNodeStream(this.input)) {
-          this._write = (_1, _2, callback) => callback(null);
-          this._final = (callback) => callback(null);
-          this.input.on("end", () => this.end());
-        }
-        if (isReadableNodeStream(this.output)) {
-          this.output.on("data", (chunk) => !this.push(chunk) && this.output.pause());
-          this.output.on("end", () => this.push(null));
-        } else {
-          this._read = () => {
-          };
-          this.resume();
-          this.output.on("finish", () => this.push(null));
-        }
-        if (!options || !options.skipEvents) {
-          this.streams.forEach((stream) => stream.on("error", (error) => this.emit("error", error)));
-        }
-      }
-      _write(chunk, encoding, callback) {
-        let error = null;
-        try {
-          this.input.write(chunk, encoding, (e) => callback(e || error));
-        } catch (e) {
-          error = e;
-        }
-      }
-      _final(callback) {
-        let error = null;
-        try {
-          this.input.end(null, null, (e) => callback(e || error));
-        } catch (e) {
-          error = e;
-        }
-      }
-      _read() {
-        this.output.resume();
-      }
-      static make(fns, options) {
-        return new _Chain(fns, options);
-      }
-      static sanitize(result, stream) {
-        if (_Chain.isFinal(result)) {
-          result = _Chain.getFinalValue(result);
-        } else if (_Chain.isMany(result)) {
-          result = _Chain.getManyValues(result);
-        }
-        if (result !== void 0 && result !== null && result !== _Chain.none) {
-          if (result instanceof Array) {
-            result.forEach((value) => value !== void 0 && value !== null && stream.push(value));
-          } else {
-            stream.push(result);
-          }
-        }
-      }
-      static convertToTransform(fn) {
-        if (typeof fn === "function")
-          return wrapFunction(fn);
-        if (fn instanceof Array)
-          return fn.length ? wrapArray(fn) : null;
-        return null;
-      }
-    };
-    Chain.none = none;
-    Chain.final = final;
-    Chain.isFinal = isFinal;
-    Chain.getFinalValue = getFinalValue;
-    Chain.many = many;
-    Chain.isMany = isMany;
-    Chain.getManyValues = getManyValues;
-    Chain.chain = Chain.make;
-    Chain.make.Constructor = Chain;
-    module2.exports = Chain;
-  }
-});
-
-// ../../../node_modules/.pnpm/stream-json@1.8.0/node_modules/stream-json/utils/withParser.js
-var require_withParser = __commonJS({
-  "../../../node_modules/.pnpm/stream-json@1.8.0/node_modules/stream-json/utils/withParser.js"(exports2, module2) {
-    "use strict";
-    var Chain = require_stream_chain();
-    var Parser = require_Parser();
-    var withParser = (fn, options) => new Chain([new Parser(options), fn(options)], Object.assign({}, options, { writableObjectMode: false, readableObjectMode: true }));
-    module2.exports = withParser;
-  }
-});
-
-// ../../../node_modules/.pnpm/stream-json@1.8.0/node_modules/stream-json/streamers/StreamValues.js
-var require_StreamValues = __commonJS({
-  "../../../node_modules/.pnpm/stream-json@1.8.0/node_modules/stream-json/streamers/StreamValues.js"(exports2, module2) {
-    "use strict";
-    var StreamBase = require_StreamBase();
-    var withParser = require_withParser();
-    var StreamValues = class _StreamValues extends StreamBase {
-      static make(options) {
-        return new _StreamValues(options);
-      }
-      static withParser(options) {
-        return withParser(_StreamValues.make, Object.assign({}, options, { jsonStreaming: true }));
-      }
-      constructor(options) {
-        super(options);
-        this._counter = 0;
-        this._level = 0;
-      }
-      _push(discard) {
-        if (discard) {
-          ++this._counter;
-        } else {
-          this.push({ key: this._counter++, value: this._assembler.current });
-        }
-        this._assembler.current = this._assembler.key = null;
-      }
-    };
-    StreamValues.streamValues = StreamValues.make;
-    StreamValues.make.Constructor = StreamValues;
-    module2.exports = StreamValues;
-  }
-});
-
 // src/main.ts
+var core4 = __toESM(require_core());
+var github4 = __toESM(require_github());
+
+// src/desktop.ts
 var core2 = __toESM(require_core());
 var github2 = __toESM(require_github());
 
 // src/logic.ts
-var import_fs = __toESM(require("fs"));
-var github = __toESM(require_github());
 var core = __toESM(require_core());
-var import_unzipper = __toESM(require_unzip2());
+var github = __toESM(require_github());
+var import_fs = __toESM(require("fs"));
+var import_path = __toESM(require("path"));
+var import_stream = require("stream");
 var import_stream_json = __toESM(require_stream_json());
 var import_StreamValues = __toESM(require_StreamValues());
-var import_stream = require("stream");
-var import_path = __toESM(require("path"));
-var metafilesKeys = {
+var import_unzipper = __toESM(require_unzip2());
+var desktopMetafilesKeys = {
   main: "metafile.main.json",
   preloader: "metafile.preloader.json",
   renderer: "metafile.renderer.json",
   rendererWorker: "metafile.renderer.worker.json",
   webviewPreloader: "metafile.webviewPreloader.json"
 };
+var mobileMetafileKeys = ["main.ios.jsbundle", "main.android.jsbundle"];
 function getMetafileBundleSize(metafile, slug) {
   var _a2, _b;
-  const key = metafilesKeys[slug];
+  const key = desktopMetafilesKeys[slug];
   if (key in metafile) {
     return (_b = (_a2 = metafile[key]) == null ? void 0 : _a2.outputs[`.webpack/${slug}.bundle.js`]) == null ? void 0 : _b.bytes;
   }
 }
 function getMetafileDuplicates(metafiles, slug) {
   const all = [];
-  const key = metafilesKeys[slug];
+  const key = desktopMetafilesKeys[slug];
   if (key in metafiles) {
     const m = metafiles[key];
     const inputs = m.inputs;
@@ -40254,7 +40259,7 @@ async function getRecentArtifactFromBranch(octokit, name, branch, maxDays = 7) {
   }
   return artifactsByDate[0][0];
 }
-async function downloadMetafilesFromArtifact(githubToken, url) {
+async function downloadMetafilesFromArtifact(githubToken, url, type = "desktop") {
   core.info("Downloading Metafiles: " + url);
   const res = await fetch(url, {
     headers: {
@@ -40264,20 +40269,38 @@ async function downloadMetafilesFromArtifact(githubToken, url) {
   });
   const blob = await res.blob();
   const stream = import_stream.Readable.fromWeb(blob.stream());
-  return zipStreamToMetafiles(stream);
+  return type === "desktop" ? zipStreamToDesktopMetafiles(stream) : zipStreamToMobileMetafiles(stream);
 }
-function zipStreamToMetafiles(stream) {
+function zipStreamToDesktopMetafiles(stream) {
   const bundles = {};
   return new Promise((resolve, reject) => {
     stream.pipe((0, import_unzipper.Parse)()).on("entry", (entry) => {
       const fileName = entry.path;
       if (fileName.includes("metafile")) {
-        entry.pipe((0, import_stream_json.parser)()).pipe((0, import_StreamValues.streamValues)()).on("data", (e) => bundles[entry.path] = e.value).on("error", reject);
+        entry.pipe((0, import_stream_json.parser)()).pipe((0, import_StreamValues.streamValues)()).on(
+          "data",
+          (e) => bundles[entry.path] = e.value
+        ).on("error", reject);
       } else {
         entry.autodrain();
       }
     }).on("finish", () => {
       resolve(bundles);
+    });
+  });
+}
+function zipStreamToMobileMetafiles(stream) {
+  let meta;
+  return new Promise((resolve, reject) => {
+    stream.pipe((0, import_unzipper.Parse)()).on("entry", (entry) => {
+      const fileName = entry.path;
+      if (fileName.includes("metafile")) {
+        entry.pipe((0, import_stream_json.parser)()).pipe((0, import_StreamValues.streamValues)()).on("data", (e) => meta = e.value).on("error", reject);
+      } else {
+        entry.autodrain();
+      }
+    }).on("finish", () => {
+      resolve(meta);
     });
   });
 }
@@ -40346,42 +40369,100 @@ async function createOrUpdateComment({
     body
   });
 }
-async function submitCommentToPR({
-  reporter,
-  prNumber,
-  githubToken,
-  currentSha,
-  referenceSha
+function replaceInComment({
+  title,
+  comment,
+  previous
 }) {
-  core.info("Submiting comment to PR");
-  const header = `<!-- desktop-build-checks-${prNumber} -->`;
-  const title = `### Desktop Build Checks
+  let replacing = false;
+  let found = false;
+  let newComment = "";
+  for (const line of previous.split("\n")) {
+    if (!found && line.startsWith(title)) {
+      replacing = true;
+      found = true;
+      newComment += comment;
+      newComment += "\n\n";
+    } else if (replacing && line.startsWith("###")) {
+      replacing = false;
+      newComment += line + "\n";
+    } else if (!replacing) {
+      newComment += line + "\n";
+    }
+  }
+  if (!found) {
+    newComment += `${title}
+
+${comment}`;
+    newComment += "\n";
+  }
+  return newComment;
+}
+async function messageFormatter({
+  currentSha,
+  referenceSha,
+  reporter,
+  found,
+  header,
+  title
+}) {
+  const head = `${title}
 > Comparing ${formatHash(currentSha)} against ${formatHash(referenceSha)}.
 `;
-  core.info("Looking for existing comment");
-  const found = await findComment({ prNumber, githubToken, header });
   core.info(found ? `Found previous comment ${found.id}` : "No previous comment to update");
   const body = reporter.toMarkdown();
-  if (reporter.isEmpty() && found) {
-    const allGood = `
-${header}
+  const bodyText = `${head}
 
-${title}
+${body}`;
+  const allGoodText = `${head}
 
 \u2705 Previous issues have all been fixed.`;
-    await createOrUpdateComment({ body: allGood, prNumber, githubToken, found });
-    return;
+  let comment = "";
+  if (found && found.body) {
+    if (found.body.includes(title)) {
+      comment = replaceInComment({
+        title,
+        comment: reporter.isEmpty() ? allGoodText : bodyText,
+        previous: found.body
+      });
+    } else {
+      comment = `${found.body}
+
+${bodyText}`;
+    }
+    return comment;
   }
   if (reporter.isEmpty()) {
     core.info("Nothing to report");
     return;
   }
-  const comment = `${header}
+  comment = `${header}
 
-${title}
-
-${body}
-`;
+${bodyText}`;
+  return comment;
+}
+async function submitCommentToPR({
+  reporter,
+  prNumber,
+  githubToken,
+  currentSha,
+  referenceSha,
+  title
+}) {
+  core.info("Submiting comment to PR");
+  const header = `<!-- build-checks-${prNumber} -->`;
+  core.info("Looking for existing comment");
+  const found = await findComment({ prNumber, githubToken, header });
+  const comment = await messageFormatter({
+    title,
+    header,
+    currentSha,
+    reporter,
+    referenceSha,
+    found
+  });
+  if (!comment)
+    return;
   await createOrUpdateComment({ body: comment, prNumber, githubToken, found });
 }
 var delay = (ms) => new Promise((f) => setTimeout(f, ms));
@@ -40432,13 +40513,9 @@ function formatHash(hash) {
   return hash ? `[\`${hash.slice(0, 7)}\`](https://github.com/LedgerHQ/ledger-live/commit/${hash})` : "_unknown_";
 }
 
-// src/main.ts
-async function main() {
+// src/desktop.ts
+async function desktopChecks({ baseBranch, octokit, githubToken, prNumber }) {
   var _a2;
-  const githubToken = core2.getInput("token");
-  const prNumber = core2.getInput("prNumber");
-  const baseBranch = core2.getInput("baseBranch");
-  const octokit = github2.getOctokit(githubToken);
   const latestLinux = await getRecentArtifactFromBranch(
     octokit,
     "linux-js-bundle-metafiles",
@@ -40451,7 +40528,8 @@ async function main() {
   core2.info(`Downloading most recent artifacts from ${baseBranch}`);
   const referenceMetafiles = await downloadMetafilesFromArtifact(
     githubToken,
-    latestLinux.archive_download_url
+    latestLinux.archive_download_url,
+    "desktop"
   );
   core2.info(`Getting current builds metadata files`);
   const all = await Promise.all([
@@ -40470,7 +40548,8 @@ async function main() {
     prNumber,
     githubToken,
     referenceSha: (_a2 = latestLinux.workflow_run) == null ? void 0 : _a2.head_sha,
-    currentSha: github2.context.sha
+    currentSha: github2.context.sha,
+    title: "### Desktop Bundle Checks"
   });
 }
 var bundleSizeThreshold = 100 * 1024;
@@ -40545,9 +40624,7 @@ function checksAgainstReference(reporter, metafiles, reference) {
   for (const lib in newDuplicates) {
     const bundles = newDuplicates[lib];
     reporter.warning(
-      `\`${lib}\` dependency is now duplicated in ${formatMarkdownBoldList(
-        bundles
-      )}. [Read more](https://github.com/LedgerHQ/ledger-live/wiki/Dependencies-duplicates-management)`
+      `\`${lib}\` library is now duplicated in ${formatMarkdownBoldList(bundles)} (regression)`
     );
   }
   for (const lib in removedDuplicates) {
@@ -40557,8 +40634,95 @@ function checksAgainstReference(reporter, metafiles, reference) {
     );
   }
 }
+
+// src/mobile.ts
+var core3 = __toESM(require_core());
+var github3 = __toESM(require_github());
+var fs2 = __toESM(require("fs"));
+async function mobileChecks({ octokit, baseBranch, githubToken, prNumber }) {
+  var _a2;
+  const mobileMetaFile = await getRecentArtifactFromBranch(
+    octokit,
+    "mobile.metafile.json",
+    baseBranch
+  );
+  if (!mobileMetaFile) {
+    core3.warning(`Could not find previous metafile from ${baseBranch}`);
+    return;
+  }
+  core3.info(`Downloading most recent artifacts from ${baseBranch}`);
+  const reference = await downloadMetafilesFromArtifact(
+    githubToken,
+    mobileMetaFile.archive_download_url,
+    "mobile"
+  );
+  core3.info(`Getting current bundles metafile`);
+  const file = fs2.readFileSync("mobile.metafile.json", "utf-8");
+  const currentBundles = JSON.parse(file);
+  const reporter = new Reporter();
+  core3.info(`Checking agains builds metadata files from ${baseBranch}`);
+  checksAgainstReference2(reporter, currentBundles, reference);
+  core3.info("Submitting comment to PR");
+  await submitCommentToPR({
+    reporter,
+    prNumber,
+    githubToken,
+    referenceSha: (_a2 = mobileMetaFile.workflow_run) == null ? void 0 : _a2.head_sha,
+    currentSha: github3.context.sha,
+    title: "### Mobile Bundle Checks"
+  });
+}
+var bundleSizeThreshold2 = 100 * 1024;
+function checksAgainstReference2(reporter, current, reference) {
+  mobileMetafileKeys.forEach((slug) => {
+    var _a2, _b;
+    const ref = (_a2 = reference[slug]) == null ? void 0 : _a2.size;
+    const size = (_b = current[slug]) == null ? void 0 : _b.size;
+    core3.info(`${slug} bundle size: ${formatSize(size)}`);
+    if (!size) {
+      reporter.error(`${slug} bundle size could not be inferred on this PR.`);
+    } else if (!ref) {
+      reporter.error(`${slug} bundle size could not be inferred on develop.`);
+    } else if (size > ref + bundleSizeThreshold2) {
+      reporter.warning(
+        `${slug} bundle size significantly increased: ${formatSize(ref)} -> ${formatSize(
+          size
+        )}. Please check if this is expected.`
+      );
+    } else if (size < ref - bundleSizeThreshold2) {
+      reporter.improvement(
+        `${slug} bundle size decreased (${formatSize(ref)} -> ${formatSize(size)}). Thanks \u2764\uFE0F`
+      );
+    }
+  });
+}
+
+// src/main.ts
+async function main() {
+  const githubToken = core4.getInput("token");
+  const prNumber = core4.getInput("prNumber");
+  const mode = core4.getInput("mode");
+  const baseBranch = core4.getInput("baseBranch");
+  const octokit = github4.getOctokit(githubToken);
+  if (mode === "desktop") {
+    desktopChecks({
+      githubToken,
+      prNumber,
+      baseBranch,
+      octokit
+    });
+  }
+  if (mode === "mobile") {
+    mobileChecks({
+      githubToken,
+      prNumber,
+      baseBranch,
+      octokit
+    });
+  }
+}
 main().catch((err) => {
-  core2.setFailed(err);
+  core4.setFailed(err);
 });
 /*! Bundled license information:
 
