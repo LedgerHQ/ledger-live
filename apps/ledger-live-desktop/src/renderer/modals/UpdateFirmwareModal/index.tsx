@@ -111,32 +111,27 @@ const UpdateModal = ({
 
   const createSteps = useCallback(
     ({ withResetStep }: { withResetStep: boolean }) => {
-      const prepareStep: Step = {
-        id: "idCheck",
-        label: firmware?.osu?.hash
-          ? t("manager.modal.identifier")
-          : t("manager.modal.steps.prepare"),
-        component: StepPrepare,
+      const prepareStepsLabel = firmware?.osu?.hash
+        ? t("manager.modal.identifier")
+        : t("manager.modal.steps.prepare");
+
+      const resetStep: Step = {
+        id: "resetDevice",
+        label: t("manager.modal.steps.reset"),
+        component: StepResetDevice,
+        footer: StepResetFooter,
       };
 
-      const finalStep: Step = {
-        id: "finish",
-        label: t("addAccounts.breadcrumb.finish"),
-        component: StepConfirmation,
-        footer: StepConfirmFooter,
+      const prepareStep: Step = {
+        id: "idCheck",
+        label: prepareStepsLabel,
+        component: StepPrepare,
       };
 
       const mcuStep: Step = {
         id: "updateMCU",
-        label: t("manager.modal.steps.updateMCU"),
+        label: prepareStepsLabel,
         component: StepFlashMcu,
-      };
-
-      const restoreStep: Step = {
-        id: "restore",
-        label: t("manager.modal.steps.restore"),
-        component: StepRestore,
-        footer: StepRestoreFooter,
       };
 
       const updatingStep: Step = {
@@ -145,11 +140,18 @@ const UpdateModal = ({
         component: StepUpdating,
       };
 
-      const resetStep: Step = {
-        id: "resetDevice",
-        label: t("manager.modal.steps.reset"),
-        component: StepResetDevice,
-        footer: StepResetFooter,
+      const restoreStep: Step = {
+        id: "restore",
+        label: t("manager.modal.steps.install"),
+        component: StepRestore,
+        footer: StepRestoreFooter,
+      };
+
+      const finalStep: Step = {
+        id: "finish",
+        label: t("manager.modal.steps.install"),
+        component: StepConfirmation,
+        footer: StepConfirmFooter,
       };
 
       const steps: Step[] = [];
@@ -253,7 +255,7 @@ const UpdateModal = ({
         <FlowStepper.Indexed
           activeKey={stateStepId}
           extraStepperContainerProps={{ px: 12 }}
-          extraStepperProps={{ errored: !!error }}
+          extraStepperProps={{ errored: !!error, filterDuplicate: true }}
           extraContainerProps={{ overflowY: "hidden" }}
           extraChildrenContainerProps={{ overflowY: "hidden" }}
           renderChildren={undefined}

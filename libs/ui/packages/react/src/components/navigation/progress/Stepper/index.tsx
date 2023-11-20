@@ -31,6 +31,10 @@ export interface Props extends FlexBoxProps {
    * Steps with indexes contained inside the array will be shown as disabled.
    */
   disabledIndexes?: number[];
+  /**
+   * Delete steps with same following labels
+   */
+  filterDuplicate?: boolean;
 }
 
 export type StepProps = {
@@ -195,12 +199,27 @@ function getState(activeIndex: number, index: number, errored?: boolean, disable
   return "completed";
 }
 
-function Stepper({ steps, activeIndex = 0, errored, disabledIndexes, ...extraProps }: Props) {
+function Stepper({
+  steps,
+  activeIndex = 0,
+  errored,
+  disabledIndexes,
+  filterDuplicate,
+  ...extraProps
+}: Props) {
+  const displayedSteps = filterDuplicate
+    ? steps.filter((step, index) => index === 0 || step !== steps[index - 1])
+    : steps;
+  const dislayedActiveIndex = filterDuplicate
+    ? displayedSteps.findIndex(step => step === steps[activeIndex])
+    : activeIndex;
+
   return (
     <Flex flexWrap="nowrap" justifyContent="space-between" {...extraProps}>
-      {steps.map((step, idx) => {
-        const state = getState(activeIndex, idx, errored, disabledIndexes?.includes(idx));
-        const nextState = idx < steps.length - 1 ? getState(activeIndex, idx + 1) : undefined;
+      {displayedSteps.map((step, idx) => {
+        const state = getState(dislayedActiveIndex, idx, errored, disabledIndexes?.includes(idx));
+        const nextState =
+          idx < displayedSteps.length - 1 ? getState(dislayedActiveIndex, idx + 1) : undefined;
         return (
           <Fragment key={idx}>
             {idx > 0 && <Separator.Step inactive={state === "pending"} />}
