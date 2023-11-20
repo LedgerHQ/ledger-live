@@ -9,12 +9,6 @@ import {
 import type { FirebaseFeatureFlagsProviderProps as Props } from "@ledgerhq/live-config/featureFlags/index";
 import { getFirebaseConfig } from "~/firebase-setup";
 
-LiveConfig.init({
-  appVersion: __APP_VERSION__,
-  platform: "desktop",
-  environment: process.env.NODE_ENV || "development",
-});
-
 export const FirebaseRemoteConfigContext = React.createContext<RemoteConfig | null>(null);
 
 export const useFirebaseRemoteConfig = () => useContext(FirebaseRemoteConfigContext);
