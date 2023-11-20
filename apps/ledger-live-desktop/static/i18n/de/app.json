@@ -196,11 +196,11 @@
       "description" : "Ihre Transaktion ist noch nicht abgeschlossen. Sie können sie mit einer höheren Netzwerkgebühr beschleunigen, oder sie abbrechen.",
       "stuckDescription" : "Ihre Transaktion ist stecken geblieben. Sie können sie mit einer höheren Netzwerkgebühr beschleunigen, oder sie abbrechen.",
       "previousFeesInfo" : {
-        "pendingTransactionFeesInfo" : "Informationen über ausstehende Transaktionsgebühren: ",
-        "networkfee" : "Netzwerkgebühr: ",
-        "maxFee" : "Maximalgebühr: ",
-        "maxPriorityFee" : "Maximale Prioritätsgebühr: ",
-        "gasPrice" : "Gaspreis: "
+        "pendingTransactionFeesInfo" : "Informationen über ausstehende Transaktionsgebühren:",
+        "networkfee" : "Netzwerkgebühr: {{amount}}",
+        "maxFee" : "Maximale Gebühr: {{amount}}",
+        "maxPriorityFee" : "Maximale Prioritätsgebühr: {{amount}}",
+        "gasPrice" : "Gaspreis: {{amount}}"
       },
       "learnMore" : "Ich möchte mehr erfahren",
       "panel" : {
@@ -213,7 +213,7 @@
       },
       "cancel" : {
         "title" : "Abbrechen",
-        "description" : "Sendet 0 {{ticker}} an Ihre eigene Adresse. Um die Stornierung zu gewährleisten, ist die Netzwerkgebühr 30 % höher als die Gebühr für die zu stornierende Transaktion."
+        "description" : "Es werden 0 {{ticker}} an Ihre eigene Adresse gesendet."
       },
       "steps" : {
         "method" : {
@@ -1208,7 +1208,7 @@
           "contactSupportCTA" : "Ledger-Kundenservice kontaktieren",
           "notFoundEntityError" : {
             "title" : "Echtheitsprüfung erneut einleiten",
-            "description" : "Sie müssen zuerst die Einstellung „Mein Ledger-Anbieter ({{providerNumber}})“ deaktivieren. Hierzu öffnen Sie in Ledger Live die Einstellungen, wählen „Experimentelle Features“ aus und deaktivieren dann die Option „Manager-Anbieter“."
+            "description" : "Sie müssen zuerst die Einstellung „My Ledger-Anbieter ({{providerNumber}})“ deaktivieren. Hierzu öffnen Sie in Ledger Live die Einstellungen, wählen „Experimentelle Features“ aus und deaktivieren dann die Option „My Ledger-Anbieter“."
           },
           "deviceNotGenuineError" : {
             "title" : "Dieses Gerät {{productName}} ist nicht echt",
@@ -1286,7 +1286,8 @@
   "postOnboarding" : {
     "postOnboardingScreen" : {
       "title" : "Nutzen Sie als Nächstes Ihren\nLedger Stax, um... ",
-      "titleCompleted" : "und das ist \nalles!"
+      "titleCompleted" : "Alles eingerichtet! \nEntdecken Sie jetzt Ihre Wallet.",
+      "exploreCTA" : "Wallet erkunden"
     },
     "postOnboardingContent" : {
       "skipLink" : "Ich mache das später"
@@ -1914,7 +1915,8 @@
         "osu" : "Installiere OSU ...",
         "flash-mcu" : "MCU-Aktualisierung ...",
         "flash-bootloader" : "Bootloader-Aktualisierung ...",
-        "progress" : "Update {{current}} von {{total}} wird installiert",
+        "progress" : "Installiert Update",
+        "progressStep" : "Update {{current}} von {{total}} wird installiert",
         "firmware" : "Firmware-Aktualisierung ...",
         "flash" : "Ihr Gerät vorbereiten ..."
       },
@@ -1927,6 +1929,7 @@
       "mcuFirst" : "Trennen Sie das USB-Kabel von Ihrem Gerät",
       "mcuSecond" : "Drücken Sie die linke Taste und halten Sie sie gedrückt, während Sie das USB-Kabel wieder einstecken, bis der <1><0>{{repairProcessing}}</0></1> Bildschirm erscheint",
       "mcuPin" : "Bitte warten Sie, bis das Update beendet ist",
+      "mcuRestart" : "{{device}} might restart multiple times.",
       "mcuSecondNanoX" : "Drücken und halten Sie die linke Taste, bis <1><0>{{bootloaderOption}}</0></1> erscheint. Drücken Sie beide Tasten, um zu bestätigen und Ihr Gerät erneut zu verbinden.",
       "mcuBlueFirst" : "Halten Sie die seitliche Taste 10 Sekunden lang gedrückt, um das Gerät auszuschalten. Lassen Sie die Taste danach los.",
       "mcuBlueSecond" : "Halten Sie die Taste für mindestens 5 Sekunden gedrückt, bis die Boot-Optionen angezeigt werden. Tippen Sie auf Bootloader-Modus",
@@ -3151,7 +3154,7 @@
     "unlockedBalance" : "Entbunden",
     "unlockedTooltip" : "Nicht gebundene Vermögenswerte können jetzt mit der Aktion „Zurückziehen“ verschoben werden.",
     "networkFees" : "Die Netzwerkgebühren werden automatisch durch den Polkadot-Konsens festgelegt, Sie können sie nicht auf Ihrem Gerät überprüfen",
-    "bondedBalanceBelowMinimum" : "Ihr Anleiheguthaben liegt unter dem aktuellen Minimum von {{minimumBondBalance}}. Es besteht die Gefahr, dass Ihre Nominierungen entfernt werden.",
+    "bondedBalanceBelowMinimum" : "Als Nominator brauchen Sie ein Mindestguthaben von {{minimumBondBalance}}, um eine Nominierungsabsicht mitzuteilen.",
     "nomination" : {
       "emptyState" : {
         "description" : "Sie können Prämien verdienen, indem Sie Vermögenswerte binden und dann Ihre(n) Validator(en) nominieren.",
@@ -4248,7 +4251,6 @@
         "nextButton" : "Erste Schritte",
         "noDevice" : "Kein Gerät?",
         "buyLink" : "Kein Gerät? Kaufen Sie eine Ledger Nano X",
-        "recoverSignIn" : "Melden Sie sich bei Ledger Recover an",
         "byTapping" : "Indem Sie auf \"Erste Schritte\" tippen, erklären Sie sich einverstanden mit unseren ",
         "termsAndConditions" : "Allgemeine Geschäftsbedingungen",
         "and" : "Hinzu kommt:",
@@ -4906,6 +4908,11 @@
     "cta" : "Weiter"
   },
   "families" : {
+    "casper" : {
+      "transferIdPlaceholder" : "Optional",
+      "transferId" : "Transfer-ID (Memo)",
+      "transferIdWarningText" : "Bei Verwendung eines Memos sollten Sie alle Angaben sorgfältig beim Empfänger verifizieren."
+    },
     "cardano" : {
       "memoPlaceholder" : "Optional",
       "memo" : "Memo"
@@ -4955,6 +4962,10 @@
     }
   },
   "errors" : {
+    "ReplacementTransactionUnderpriced" : {
+      "title" : "Preis für Ersatztransaktion zu niedrig",
+      "description" : "Die Netzwerkgebühr ist möglicherweise zu niedrig. Bitte erhöhen."
+    },
     "NoSuchAppOnProvider" : {
       "title" : "Die {{appName}}-App kann für Ihre spezifische Konfiguration nicht gefunden werden.",
       "description" : "Versuchen Sie, die App über My Ledger neu zu installieren."
@@ -5138,8 +5149,8 @@
       "description" : "Bitte aktualisieren Sie Ihre Geräte-Firmware auf die neueste Version, um diese Funktion nutzen zu können"
     },
     "FirmwareNotRecognized" : {
-      "title" : "Geräte-Firmware wird nicht erkannt",
-      "description" : "Bitte kontaktieren Sie den Ledger-Support"
+      "title" : "Ungültiger Anbieter",
+      "description" : "Sie müssen die Einstellung „Mein Ledger-Anbieter“ ändern. Öffnen Sie dazu die Einstellungen in Ledger Live, navigieren Sie zu „Experimentelle Features“ und wählen Sie einen anderen Anbieter aus."
     },
     "HardResetFail" : {
       "title" : "Entschuldigung, die Verbindung konnte nicht zurückgesetzt werden",
@@ -5402,6 +5413,15 @@
       "title" : "Entschuldigung, Verbindung fehlgeschlagen",
       "description" : "Gerät erkannt, aber Verbindung fehlgeschlagen. Bitte versuchen Sie es erneut oder wenden Sie sich an den Ledger Kundenservice, falls das Problem weiterhin besteht."
     },
+    "CasperInvalidTransferId" : {
+      "title" : "Die Transaktions-ID muss eine positive Zahl sein, die kleiner als {{maxTransferId}} ist"
+    },
+    "InvalidMinimumAmount" : {
+      "title" : "Der Mindestbetrag für einen Transfer beläuft sich auf {{minAmount}}"
+    },
+    "MayBlockAccount" : {
+      "title" : "Der nach dem Transfer auf Ihrem Konto verbleibende Betrag ist kleiner als der zum Senden benötigte Mindestbetrag von {{minAmount}}"
+    },
     "ETHAddressNonEIP" : {
       "title" : "Automatische Verifizierung nicht verfügbar: Überprüfen Sie die Adresse sorgfältig",
       "description" : null
@@ -5411,7 +5431,7 @@
       "description" : "Die Funktion zum Senden von NFTs ist nur für Nano X und Nano S+ verfügbar. Bitte besuchen Sie unsere Kunden-Support-Plattform, um herauszufinden, wie man ein NFT mit einem Nano S sendet."
     },
     "TransactionHasBeenValidatedError" : {
-      "title" : "Kann nicht beschleunigt oder abgebrochen werden",
+      "title" : "Beschleunigung oder Stornierung nicht möglich",
       "description" : "Diese Transaktion wurde bereits validiert"
     },
     "CantScanQRCode" : {
@@ -5419,6 +5439,9 @@
     },
     "FeeNotLoaded" : {
       "title" : "Es konnten keine Gebührensätze geladen werden. Bitte stellen Sie manuelle Gebühren ein"
+    },
+    "FeeNotLoadedSwap" : {
+      "title" : "Aus technischen Gründen ist die Schätzung der Netzwerkgebühr fehlgeschlagen. Versuchen Sie es noch einmal oder wechseln Sie die Vermögenswerte."
     },
     "FeeRequired" : {
       "title" : "Gebühren sind erforderlich"
