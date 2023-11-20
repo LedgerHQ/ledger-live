@@ -205,6 +205,46 @@ const tron: CurrenciesData<Transaction> = {
           },
         },
         {
+          name: "freezeV2BandwidthSuccess",
+          transaction: fromTransactionRaw({
+            family: "tron",
+            recipient: "",
+            amount: "1000000",
+            networkInfo: null,
+            mode: "freezeV2",
+            duration: undefined,
+            resource: "BANDWIDTH",
+            votes: [],
+          }),
+          expectedStatus: {
+            amount: new BigNumber("1000000"),
+            errors: {},
+            warnings: {},
+            totalSpent: new BigNumber("1000000"),
+            estimatedFees: new BigNumber("0"),
+          },
+        },
+        {
+          name: "freezeV2EnergySuccess",
+          transaction: fromTransactionRaw({
+            family: "tron",
+            recipient: "",
+            amount: "1000000",
+            networkInfo: null,
+            mode: "freezeV2",
+            duration: undefined,
+            resource: "ENERGY",
+            votes: [],
+          }),
+          expectedStatus: {
+            amount: new BigNumber("1000000"),
+            errors: {},
+            warnings: {},
+            totalSpent: new BigNumber("1000000"),
+            estimatedFees: new BigNumber("0"),
+          },
+        },
+        {
           name: "recipientRequired",
           transaction: fromTransactionRaw({
             family: "tron",

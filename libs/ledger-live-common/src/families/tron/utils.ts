@@ -37,6 +37,7 @@ const parentTx = [
   "VoteWitnessContract",
   "WithdrawBalanceContract",
   "ExchangeTransactionContract",
+  "FreezeBalanceV2Contract",
 ];
 
 export const isParentTx = (tx: TrongridTxInfo): boolean => parentTx.includes(tx.type);
@@ -86,6 +87,9 @@ export const getOperationTypefromMode = (mode: TronOperationMode): OperationType
     case "claimReward":
       return "REWARD";
 
+    case "freezeV2":
+      return "FREEZEV2";
+
     default:
       return "OUT";
   }
@@ -115,6 +119,9 @@ const getOperationType = (
 
     case "WithdrawBalanceContract":
       return "REWARD";
+
+    case "FreezeBalanceV2Contract":
+      return "FREEZEV2";
 
     default:
       return undefined;
@@ -227,6 +234,11 @@ export const formatTrongridTxResponse = (
             })),
           };
 
+        case "FreezeBalanceContractV2":
+          return {
+            frozenAmount: new BigNumber(frozen_balance),
+          };
+
         default:
           return undefined;
       }
@@ -289,6 +301,10 @@ export const txInfoToOperation = (
 
 export const defaultTronResources: TronResources = {
   frozen: {
+    bandwidth: undefined,
+    energy: undefined,
+  },
+  frozenV2: {
     bandwidth: undefined,
     energy: undefined,
   },

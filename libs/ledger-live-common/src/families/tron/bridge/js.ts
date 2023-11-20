@@ -83,6 +83,7 @@ import {
   voteTronSuperRepresentatives,
   fetchCurrentBlockHeight,
   getContractUserEnergyRatioConsumption,
+  freezeV2TronTransaction,
 } from "../api";
 import { activationFees, oneTrx } from "../constants";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
@@ -139,6 +140,9 @@ const signOperation: SignOperationFnSignature<Transaction> = ({ account, transac
 
               case "claimReward":
                 return claimRewardTronTransaction(account);
+
+              case "freezeV2":
+                return freezeV2TronTransaction(account, transaction);
 
               default:
                 return createTronTransaction(account, transaction, subAccount);
@@ -211,6 +215,11 @@ const signOperation: SignOperationFnSignature<Transaction> = ({ account, transac
               case "vote":
                 return {
                   votes: transaction.votes,
+                };
+
+              case "freezeV2":
+                return {
+                  frozenV2Amount: transaction.amount,
                 };
 
               default:
@@ -360,7 +369,11 @@ const getAccountShape = async (info: AccountShapeInfo, syncConfig) => {
       tronResources.delegatedFrozen.energy
         ? tronResources.delegatedFrozen.energy.amount
         : new BigNumber(0),
-    );
+    )
+    .plus(
+      tronResources.frozenV2.bandwidth ? tronResources.frozenV2.bandwidth.amount : new BigNumber(0),
+    )
+    .plus(tronResources.frozenV2.energy ? tronResources.frozenV2.energy.amount : new BigNumber(0));
   const parentTxs = txs.filter(isParentTx);
   const parentOperations: TronOperation[] = compact(
     parentTxs.map(tx => txInfoToOperation(accountId, info.address, tx)),
@@ -659,16 +672,16 @@ const getTransactionStatus = async (a: TronAccount, t: Transaction): Promise<Tra
       ? BigNumber.max(0, account.spendableBalance.minus(estimatedFees))
       : account.balance;
   const amount = useAllAmount ? balance : t.amount;
-  const amountSpent = ["send", "freeze"].includes(mode) ? amount : new BigNumber(0);
+  const amountSpent = ["send", "freeze", "freezeV2"].includes(mode) ? amount : new BigNumber(0);
 
-  if (mode === "freeze" && amount.lt(oneTrx)) {
+  if ((mode === "freeze" || mode === "freezeV2") && amount.lt(oneTrx)) {
     errors.amount = new TronInvalidFreezeAmount();
   }
 
   // fees are applied in the parent only (TRX)
   const totalSpent = account.type === "Account" ? amountSpent.plus(estimatedFees) : amountSpent;
 
-  if (["send", "freeze"].includes(mode)) {
+  if (["send", "freeze", "freezeV2"].includes(mode)) {
     if (amount.eq(0)) {
       errors.amount = new AmountRequired();
     }

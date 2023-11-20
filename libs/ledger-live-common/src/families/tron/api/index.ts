@@ -26,6 +26,7 @@ import type {
   TronTransactionInfo,
   TrongridTxInfo,
   UnfreezeTransactionData,
+  FreezeV2TransactionData,
 } from "../types";
 import {
   abiEncodeTrc20Transfer,
@@ -88,6 +89,21 @@ export const freezeTronTransaction = async (
   };
   const url = `${getBaseApiUrl()}/wallet/freezebalance`;
   const result = await post(url, txData);
+  return result;
+};
+
+export const freezeV2TronTransaction = async (
+  a: Account,
+  t: Transaction,
+): Promise<SendTransactionDataSuccess> => {
+  const txData: FreezeV2TransactionData = {
+    frozen_balance: t.amount.toNumber(),
+    resource: t.resource,
+    owner_address: decode58Check(a.freshAddress),
+  };
+  const url = `${getBaseApiUrl()}/wallet/freezebalancev2`;
+  const result = await post(url, txData);
+
   return result;
 };
 
@@ -486,6 +502,25 @@ export async function getTronResources(
     "account_resource.delegated_frozen_balance_for_energy",
     undefined,
   );
+
+  const frozenV2Balances: { type?: string; amount?: number }[] = get(acc, "frozenV2", undefined);
+
+  const { frozenV2Energy, frozenV2Bandwidth } = frozenV2Balances.reduce(
+    (accum, cur) => {
+      const amount = new BigNumber(cur?.amount ?? 0);
+      if (cur.type === "ENERGY") {
+        accum.frozenV2Energy = accum.frozenV2Energy.plus(amount);
+      } else if (cur.type === undefined) {
+        accum.frozenV2Bandwidth = accum.frozenV2Bandwidth.plus(amount);
+      }
+      return accum;
+    },
+    {
+      frozenV2Energy: new BigNumber(0),
+      frozenV2Bandwidth: new BigNumber(0),
+    },
+  );
+
   const encodedAddress = encode58Check(acc.address);
   const tronNetworkInfo = await getTronAccountNetwork(encodedAddress);
   const unwithdrawnReward = await getUnwithdrawnReward(encodedAddress);
@@ -517,10 +552,25 @@ export async function getTronResources(
         }
       : undefined,
   };
+
+  const frozenV2 = {
+    bandwidth: frozenV2Bandwidth.isGreaterThan(0)
+      ? {
+          amount: frozenV2Bandwidth,
+        }
+      : undefined,
+    energy: frozenV2Energy.isGreaterThan(0)
+      ? {
+          amount: frozenV2Energy,
+        }
+      : undefined,
+  };
   const tronPower = new BigNumber(get(frozen, "bandwidth.amount", 0))
     .plus(get(frozen, "energy.amount", 0))
     .plus(get(delegatedFrozen, "bandwidth.amount", 0))
     .plus(get(delegatedFrozen, "energy.amount", 0))
+    .plus(get(frozenV2, "bandwidth.amount", 0))
+    .plus(get(frozenV2, "energy.amount", 0))
     .dividedBy(1000000)
     .integerValue(BigNumber.ROUND_FLOOR)
     .toNumber();
@@ -543,6 +593,7 @@ export async function getTronResources(
     energy,
     bandwidth,
     frozen,
+    frozenV2,
     delegatedFrozen,
     votes,
     tronPower,

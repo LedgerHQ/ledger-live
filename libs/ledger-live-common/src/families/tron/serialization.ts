@@ -4,6 +4,7 @@ import { Account, AccountRaw } from "@ledgerhq/types-live";
 
 export const toTronResourcesRaw = ({
   frozen,
+  frozenV2,
   delegatedFrozen,
   votes,
   tronPower,
@@ -19,6 +20,8 @@ export const toTronResourcesRaw = ({
   const delegatedFrozenBandwidth = delegatedFrozen.bandwidth;
   const delegatedFrozenEnergy = delegatedFrozen.energy;
   const cacheTransactionInfoById = {};
+  const frozenV2Bandwidth = frozenV2.bandwidth;
+  const frozenV2Energy = frozenV2.energy;
 
   for (const k in cacheTx) {
     const { fee, blockNumber, withdraw_amount, unfreeze_amount } = cacheTx[k];
@@ -52,6 +55,18 @@ export const toTronResourcesRaw = ({
           }
         : undefined,
     },
+    frozenV2: {
+      bandwidth: frozenV2Bandwidth
+        ? {
+            amount: frozenV2Bandwidth.amount.toString(),
+          }
+        : undefined,
+      energy: frozenV2Energy
+        ? {
+            amount: frozenV2Energy.amount.toString(),
+          }
+        : undefined,
+    },
     votes,
     tronPower,
     energy: energy.toString(),
@@ -71,6 +86,7 @@ export const toTronResourcesRaw = ({
 };
 export const fromTronResourcesRaw = ({
   frozen,
+  frozenV2,
   delegatedFrozen,
   votes,
   tronPower,
@@ -86,6 +102,8 @@ export const fromTronResourcesRaw = ({
   const delegatedFrozenBandwidth = delegatedFrozen.bandwidth;
   const delegatedFrozenEnergy = delegatedFrozen.energy;
   const cacheTransactionInfoById = {};
+  const frozenV2Bandwidth = frozenV2.bandwidth;
+  const frozenV2Energy = frozenV2.energy;
 
   if (cacheTransactionInfoByIdRaw) {
     for (const k in cacheTransactionInfoByIdRaw) {
@@ -123,6 +141,18 @@ export const fromTronResourcesRaw = ({
       energy: delegatedFrozenEnergy
         ? {
             amount: new BigNumber(delegatedFrozenEnergy.amount),
+          }
+        : undefined,
+    },
+    frozenV2: {
+      bandwidth: frozenV2Bandwidth
+        ? {
+            amount: new BigNumber(frozenV2Bandwidth.amount),
+          }
+        : undefined,
+      energy: frozenV2Energy
+        ? {
+            amount: new BigNumber(frozenV2Energy.amount),
           }
         : undefined,
     },

@@ -16,6 +16,10 @@ export function fromOperationExtraRaw(extraRaw: TrongridExtraTxInfoRaw): Trongri
     extra.votes = extraRaw.votes;
   }
 
+  if (extraRaw.frozenV2Amount) {
+    extra.frozenV2Amount = new BigNumber(extraRaw.frozenV2Amount);
+  }
+
   return extra;
 }
 
@@ -32,6 +36,10 @@ export function toOperationExtraRaw(extra: TrongridExtraTxInfo): TrongridExtraTx
 
   if (extra.votes) {
     extraRaw.votes = extra.votes;
+  }
+
+  if (extra.frozenV2Amount) {
+    extraRaw.frozenV2Amount = extra.frozenV2Amount.toString();
   }
 
   return extraRaw;

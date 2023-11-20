@@ -51,7 +51,7 @@ function getDeviceTransactionConfig({
     });
   }
 
-  if (mode === "freeze") {
+  if (mode === "freeze" || mode === "freezeV2") {
     fields.push({
       type: "address",
       label: "Freeze To",

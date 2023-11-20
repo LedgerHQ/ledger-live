@@ -19,7 +19,7 @@ const options = [
   {
     name: "mode",
     type: String,
-    desc: "mode of transaction: send, freeze, unfreeze",
+    desc: "mode of transaction: send, freeze, unfreeze, freezeV2",
   },
   {
     name: "duration",
@@ -88,7 +88,7 @@ function inferTransactions(
 ): Transaction[] {
   const mode = opts.mode || "send";
   invariant(
-    ["send", "freeze", "unfreeze", "vote", "claimReward"].includes(mode),
+    ["send", "freeze", "unfreeze", "vote", "claimReward", "freezeV2"].includes(mode),
     `Unexpected mode: ${mode}`,
   );
   const resource = opts.resource ? opts.resource.toUpperCase() : undefined;

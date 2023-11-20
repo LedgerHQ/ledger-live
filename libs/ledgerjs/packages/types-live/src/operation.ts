@@ -20,6 +20,7 @@ export type OperationType =
   | "FEES"
   | "FREEZE"
   | "UNFREEZE"
+  | "FREEZEV2"
   // POLKADOT
   | "VOTE"
   | "REWARD_PAYOUT"

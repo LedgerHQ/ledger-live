@@ -10,7 +10,13 @@ import {
 } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 
-export type TronOperationMode = "send" | "freeze" | "unfreeze" | "vote" | "claimReward";
+export type TronOperationMode =
+  | "send"
+  | "freeze"
+  | "unfreeze"
+  | "vote"
+  | "claimReward"
+  | "freezeV2";
 export type TronResource = "BANDWIDTH" | "ENERGY";
 export type NetworkInfo = {
   family: "tron";
@@ -54,7 +60,8 @@ export type TrongridTxType =
   | "VoteWitnessContract"
   | "TriggerSmartContract"
   | "WithdrawBalanceContract"
-  | "ExchangeTransactionContract";
+  | "ExchangeTransactionContract"
+  | "FreezeBalanceV2Contract";
 
 export type TrongridTxInfo = {
   txID: string;
@@ -78,11 +85,13 @@ export type TrongridExtraTxInfo = {
   frozenAmount?: BigNumber;
   unfreezeAmount?: BigNumber;
   votes?: Vote[];
+  frozenV2Amount?: BigNumber;
 };
 export type TrongridExtraTxInfoRaw = {
   frozenAmount?: string;
   unfreezeAmount?: string;
   votes?: Vote[];
+  frozenV2Amount?: string;
 };
 
 /** Payload types to send to trongrid */
@@ -113,6 +122,13 @@ export type FreezeTransactionData = {
   frozen_duration: number;
   resource: TronResource | null | undefined;
 };
+
+export type FreezeV2TransactionData = {
+  owner_address: string;
+  frozen_balance: number;
+  resource: TronResource | null | undefined;
+};
+
 export type SendTransactionDataSuccess = {
   raw_data_hex?: string;
   raw_data: Record<string, any> | undefined;
@@ -142,6 +158,10 @@ export type TronResources = {
     bandwidth: FrozenInfo | null | undefined;
     energy: FrozenInfo | null | undefined;
   };
+  frozenV2: {
+    bandwidth: FrozenV2Info | null | undefined;
+    energy: FrozenV2Info | null | undefined;
+  };
   delegatedFrozen: {
     bandwidth: DelegatedFrozenInfo | null | undefined;
     energy: DelegatedFrozenInfo | null | undefined;
@@ -159,6 +179,10 @@ export type TronResourcesRaw = {
   frozen: {
     bandwidth: FrozenInfoRaw | null | undefined;
     energy: FrozenInfoRaw | null | undefined;
+  };
+  frozenV2: {
+    bandwidth: FrozenV2InfoRaw | null | undefined;
+    energy: FrozenV2InfoRaw | null | undefined;
   };
   delegatedFrozen: {
     bandwidth: DelegatedFrozenInfoRaw | null | undefined;
@@ -191,6 +215,15 @@ export type DelegatedFrozenInfo = {
 export type DelegatedFrozenInfoRaw = {
   amount: string;
 };
+
+export type FrozenV2Info = {
+  amount: BigNumber;
+};
+
+export type FrozenV2InfoRaw = {
+  amount: string;
+};
+
 export type BandwidthInfo = {
   freeUsed: BigNumber;
   freeLimit: BigNumber;
